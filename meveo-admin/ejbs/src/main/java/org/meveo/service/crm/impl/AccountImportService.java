@@ -10,13 +10,16 @@ import javax.inject.Inject;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.Auditable;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.AccountStatusEnum;
 import org.meveo.model.billing.BankCoordinates;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingCycle;
 import org.meveo.model.billing.UserAccount;
+import org.meveo.model.crm.CustomFieldInstance;
 import org.meveo.model.crm.Provider;
+import org.meveo.model.jaxb.customer.CustomField;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.shared.Address;
@@ -163,7 +166,26 @@ public class AccountImportService {
 					.getName().getTitle().trim()));
 			billingAccount.setName(name);
 		}
-
+		if(billAccount.getCustomFields()!=null && billAccount.getCustomFields().getCustomField()!=null
+				&& billAccount.getCustomFields().getCustomField().size()>0){
+			for(CustomField customField:billAccount.getCustomFields().getCustomField()){
+				CustomFieldInstance cfi =  new CustomFieldInstance();
+				cfi.setAccount(billingAccount);
+				cfi.setActive(true);
+				cfi.setCode(customField.getCode());
+				cfi.setDateValue(customField.getDateValue());
+				cfi.setDescription(customField.getDescription());
+				cfi.setDoubleValue(customField.getDoubleValue());
+				cfi.setLongValue(customField.getLongValue());
+				cfi.setProvider(provider);
+				cfi.setStringValue(customField.getStringValue());
+				Auditable auditable = new Auditable();
+				auditable.setCreated(new Date());
+				auditable.setCreator(userJob);
+				cfi.setAuditable(auditable);
+				billingAccount.getCustomFields().put(cfi.getCode(), cfi);
+			}
+		}
 		billingAccount.setTradingCountry(tradingCountryService
 				.findByTradingCountryCode(billAccount.getTradingCountryCode(),
 						provider));
@@ -215,7 +237,26 @@ public class AccountImportService {
 					.getName().getTitle().trim()));
 			userAccount.setName(nameUA);
 		}
-
+		if(uAccount.getCustomFields()!=null && uAccount.getCustomFields().getCustomField()!=null
+				&& uAccount.getCustomFields().getCustomField().size()>0){
+			for(CustomField customField:uAccount.getCustomFields().getCustomField()){
+				CustomFieldInstance cfi =  new CustomFieldInstance();
+				cfi.setAccount(userAccount);
+				cfi.setActive(true);
+				cfi.setCode(customField.getCode());
+				cfi.setDateValue(customField.getDateValue());
+				cfi.setDescription(customField.getDescription());
+				cfi.setDoubleValue(customField.getDoubleValue());
+				cfi.setLongValue(customField.getLongValue());
+				cfi.setProvider(provider);
+				cfi.setStringValue(customField.getStringValue());
+				Auditable auditable = new Auditable();
+				auditable.setCreated(new Date());
+				auditable.setCreator(userJob);
+				cfi.setAuditable(auditable);
+				userAccount.getCustomFields().put(cfi.getCode(), cfi);
+			}
+		}
 		userAccount.setStatus(AccountStatusEnum.ACTIVE);
 		userAccount.setStatusDate(new Date());
 		userAccount.setProvider(provider);

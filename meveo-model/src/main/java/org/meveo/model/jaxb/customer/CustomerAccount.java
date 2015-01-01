@@ -55,6 +55,7 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element ref="{}tel2"/>
  *         &lt;element ref="{}SIRET"/>
  *         &lt;element ref="{}tradingCurrencyCode"/>
+ *         &lt;element ref="{}customFields"/>
  *       &lt;/sequence>
  *       &lt;attribute name="code" type="{http://www.w3.org/2001/XMLSchema}string" />
  *       &lt;attribute name="creditCategory" type="{http://www.w3.org/2001/XMLSchema}string" />
@@ -78,8 +79,8 @@ import javax.xml.bind.annotation.XmlType;
     "email",
     "tel1",
     "tel2",
-    "siret",
-    "tradingCurrencyCode"
+    "tradingCurrencyCode",
+    "customFields"
 })
 @XmlRootElement(name = "customerAccount")
 public class CustomerAccount {
@@ -106,12 +107,11 @@ public class CustomerAccount {
     protected String tel1;
     @XmlElement(required = true)
     protected String tel2;
-    @XmlElement(name = "SIRET", required = true)
-    protected String siret;
     @XmlElement(required = true)
     protected String tradingCurrencyCode;
     @XmlAttribute(name = "creditCategory")
     protected String creditCategory;
+    protected CustomFields customFields;
     
 
     /**
@@ -354,30 +354,6 @@ public class CustomerAccount {
         this.tel2 = value;
     }
 
-    /**
-     * Gets the value of the siret property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
-    public String getSIRET() {
-        return siret;
-    }
-
-    /**
-     * Sets the value of the siret property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
-    public void setSIRET(String value) {
-        this.siret = value;
-    }
-
     public String getTradingCurrencyCode() {
 		return tradingCurrencyCode;
 	}
@@ -433,5 +409,13 @@ public class CustomerAccount {
     public void setCreditCategory(String value) {
         this.creditCategory = value;
     }
+
+	public CustomFields getCustomFields() {
+		return customFields;
+	}
+
+	public void setCustomFields(CustomFields customFields) {
+		this.customFields = customFields;
+	}
 
 }

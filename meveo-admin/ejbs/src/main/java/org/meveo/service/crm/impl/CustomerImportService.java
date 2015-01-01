@@ -8,9 +8,12 @@ import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
 import org.apache.commons.lang.RandomStringUtils;
+import org.meveo.model.Auditable;
 import org.meveo.model.admin.User;
+import org.meveo.model.crm.CustomFieldInstance;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.crm.Provider;
+import org.meveo.model.jaxb.customer.CustomField;
 import org.meveo.model.payments.CreditCategoryEnum;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.CustomerAccountStatusEnum;
@@ -147,6 +150,28 @@ public class CustomerImportService {
 			customerAccount.setName(name);
 		}
 
+		if(custAcc.getCustomFields()!=null && custAcc.getCustomFields().getCustomField()!=null
+				&& custAcc.getCustomFields().getCustomField().size()>0){
+			for(CustomField customField:custAcc.getCustomFields().getCustomField()){
+				CustomFieldInstance cfi =  new CustomFieldInstance();
+				cfi.setAccount(customerAccount);
+				cfi.setActive(true);
+				cfi.setCode(customField.getCode());
+				cfi.setDateValue(customField.getDateValue());
+				cfi.setDescription(customField.getDescription());
+				cfi.setDoubleValue(customField.getDoubleValue());
+				cfi.setLongValue(customField.getLongValue());
+				cfi.setProvider(provider);
+				cfi.setStringValue(customField.getStringValue());
+				Auditable auditable = new Auditable();
+				auditable.setCreated(new Date());
+				auditable.setCreator(currentUser);
+				cfi.setAuditable(auditable);
+				customerAccount.getCustomFields().put(cfi.getCode(), cfi);
+			}
+		}
+			
+		
 		customerAccount.setTradingCurrency(tradingCurrencyService
 				.findByTradingCurrencyCode(custAcc.getTradingCurrencyCode(),
 						provider));

@@ -336,12 +336,18 @@ public class ImportCustomersJobBean {
 		}
 
 		if (customerAccountTmp != null) {
-			nbCustomerAccountsIgnored++;
-			nbCustomersIgnored++;
-			log.info("File:" + fileName
-					+ ", typeEntity:CustomerAccount,  indexCustomer:" + i
-					+ ", index:" + j + " code:" + custAcc.getCode()
-					+ ", status:Ignored");
+			if(customerAccountTmp.getCustomer().getCode().equals(cust.getCode())){
+				nbCustomerAccountsIgnored++;
+				nbCustomersIgnored++;
+				log.info("File:" + fileName
+						+ ", typeEntity:CustomerAccount,  indexCustomer:" + i
+						+ ", index:" + j + " code:" + custAcc.getCode()
+						+ ", status:Ignored");
+			}
+			else {
+				nbCustomerAccountsError++;
+				createCustomerAccountError(sell, cust, custAcc, "A customer account with same code exists for another customer");
+			}
 			return;
 		}
 

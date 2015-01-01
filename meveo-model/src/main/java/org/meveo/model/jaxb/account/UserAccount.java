@@ -31,6 +31,8 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
+import org.meveo.model.jaxb.customer.CustomFields;
+
 
 /**
  * <p>Java class for anonymous complex type.
@@ -49,6 +51,7 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element ref="{}company"/>
  *         &lt;element ref="{}name"/>
  *         &lt;element ref="{}address"/>
+ *         &lt;element ref="{}customFields"/>
  *       &lt;/sequence>
  *       &lt;attribute name="code" type="{http://www.w3.org/2001/XMLSchema}string" />
  *     &lt;/restriction>
@@ -66,7 +69,8 @@ import javax.xml.bind.annotation.XmlType;
     "externalRef2",
     "company",
     "name",
-    "address"
+    "address",
+    "customFields"
 })
 @XmlRootElement(name = "userAccount")
 public class UserAccount {
@@ -85,6 +89,7 @@ public class UserAccount {
     protected Name name;
     @XmlElement(required = true)
     protected Address address;
+    protected CustomFields customFields;
     @XmlAttribute(name = "code")
     protected String code;
 
@@ -279,5 +284,13 @@ public class UserAccount {
     public void setCode(String value) {
         this.code = value;
     }
+
+	public CustomFields getCustomFields() {
+		return customFields;
+	}
+
+	public void setCustomFields(CustomFields customFields) {
+		this.customFields = customFields;
+	}
 
 }
