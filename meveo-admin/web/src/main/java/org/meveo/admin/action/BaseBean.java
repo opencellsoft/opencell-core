@@ -23,7 +23,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.annotation.PostConstruct;
 import javax.enterprise.context.Conversation;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
@@ -150,11 +149,6 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 		this.clazz = clazz;
 	}
 
-	@PostConstruct
-	public void postConstruct() {
-		beginConversation();
-	}
-
 	/**
 	 * Returns entity class
 	 * 
@@ -178,7 +172,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 
 	public void preRenderView() {
 		endConversation();
-		entity=null;
+		entity = null;
 		beginConversation();
 	}
 
@@ -228,10 +222,11 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 	 * @return Entity in current view state.
 	 */
 	public T getEntity() {
-		if((entity==null) || 
-			(entity.getId()!=null && objectIdFromParam!=null && objectIdFromParam.get() != null
-			&& entity.getId()!=objectIdFromParam.get())){
-			initEntity(); 
+		if ((entity == null)
+				|| (entity.getId() != null && objectIdFromParam != null
+						&& objectIdFromParam.get() != null && entity.getId() != objectIdFromParam
+						.get())) {
+			initEntity();
 		}
 		return entity;
 	}
