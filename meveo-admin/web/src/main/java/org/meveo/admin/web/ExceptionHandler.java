@@ -41,7 +41,7 @@ public class ExceptionHandler {
 			response.sendRedirect(response.encodeRedirectURL(request
 					.getContextPath() + "/errors/expired.jsf"));
 		} catch (Exception e) {
-			log.info(e.getMessage());
+			log.error(e.getMessage());
 		}
 	}
 
@@ -55,7 +55,7 @@ public class ExceptionHandler {
 			response.sendRedirect(response.encodeRedirectURL(request
 					.getContextPath() + "/errors/expired.jsf"));
 		} catch (Exception e) {
-			log.info(e.getMessage());
+			log.error(e.getMessage());
 		}
 	}
 
@@ -69,7 +69,7 @@ public class ExceptionHandler {
 			response.sendRedirect(response.encodeRedirectURL(request
 					.getContextPath() + "/errors/database.jsf"));
 		} catch (Exception e) {
-			log.info(e.getMessage());
+			log.error(e.getMessage());
 		}
 	}
 
@@ -83,7 +83,7 @@ public class ExceptionHandler {
 			response.sendRedirect(response.encodeRedirectURL(request
 					.getContextPath() + "/errors/bug.jsf"));
 		} catch (Exception e) {
-			log.info(e.getMessage());
+			log.error(e.getMessage());
 		}
 	}
 
@@ -97,7 +97,7 @@ public class ExceptionHandler {
 			response.sendRedirect(response.encodeRedirectURL(request
 					.getContextPath() + "/errors/bug.jsf"));
 		} catch (Exception e) {
-			log.info(e.getMessage());
+			log.error(e.getMessage());
 		}
 	}
 
