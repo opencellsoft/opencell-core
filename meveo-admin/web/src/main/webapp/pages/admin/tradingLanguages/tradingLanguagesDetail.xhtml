@@ -1,7 +1,13 @@
-<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:s="http://jboss.com/products/seam/taglib" xmlns:ui="http://java.sun.com/jsf/facelets"
-	xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html" xmlns:rich="http://richfaces.org/rich"
-	xmlns:a="http://richfaces.org/a4j" xmlns:hftl="http://hftl.org" xmlns:hf="http://java.sun.com/jsf/composite/tags"
-	xmlns:c="http://java.sun.com/jstl/core" template="/layout/template.xhtml">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a="http://richfaces.org/a4j" xmlns:hftl="http://hftl.org"
+	xmlns:hf="http://java.sun.com/jsf/composite/tags"
+	xmlns:c="http://java.sun.com/jstl/core"
+	template="/layout/template.xhtml">
 
 	<ui:define name="navigation">
 		<ui:include src="/layout/navigation.xhtml" />
@@ -9,21 +15,32 @@
 
 	<ui:define name="body">
 		<c:if test="#{tradingLanguageBean.edit}">
-			<hftl:entityPopup id="languagePopup" header="#{messages['tradingLanguage.popup.header']}"
-				updateField=":formPanel:languagesFormId:languageSelectedId:languageSelectedId :formPanel:languagesFormId:prDescription:prDescription_text2" selection="#{tradingLanguageBean.entity.language}"
-				backingBean="#{languageBean}" searchField1Label="#{messages['language.languageCode']}" searchField1="languageCode"
-				column1Label="#{messages['language.languageCode']}" column1="languageCode" column2Label="#{messages['tradingLanguage.prDescription']}"
+			<hftl:entityPopup id="languagePopup"
+				header="#{messages['tradingLanguage.popup.header']}"
+				updateField=":formPanel:languagesFormId:languageSelectedId:languageSelectedId :formPanel:languagesFormId:prDescription:prDescription_text2"
+				selection="#{tradingLanguageBean.entity.language}"
+				backingBean="#{languageBean}"
+				searchField1Label="#{messages['language.languageCode']}"
+				searchField1="languageCode"
+				column1Label="#{messages['language.languageCode']}"
+				column1="languageCode"
+				column2Label="#{messages['tradingLanguage.prDescription']}"
 				column2="descriptionEn" eventBackingBean="#{tradingLanguageBean}">
 			</hftl:entityPopup>
 		</c:if>
 
-		<hf:formPanel id="formPanel" formId="languagesFormId" label="#{messages['tradingLanguage.tradingLanguagePanel']}"
+		<hf:formPanel id="formPanel" formId="languagesFormId"
+			label="#{messages['tradingLanguage.tradingLanguagePanel']}"
 			backingBean="#{tradingLanguageBean}">
 
-			<hf:formEntityField id="languageSelectedId" label="#{messages['tradingLanguage.languageCode']}" field="language" childField="languageCode"
-				popup="true" popupId="languagePopup" clearButton="true" required="true" showPopupOnlyOnNew="true" />
-			<hf:formField label="#{messages['tradingLanguage.prDescription']}" field="prDescription" maxlength="80" id="prDescription"/>
-			<hf:formField label="#{messages['tradingLanguage.disabled']}" field="disabled" isMessage="true" />
+			<hf:formEntityField id="languageSelectedId"
+				label="#{messages['tradingLanguage.languageCode']}" field="language"
+				childField="languageCode" popup="true" popupId="languagePopup"
+				required="true" showPopupOnlyOnNew="true" />
+			<hf:formField label="#{messages['tradingLanguage.prDescription']}"
+				field="prDescription" maxlength="80" id="prDescription" />
+			<hf:formField label="#{messages['tradingLanguage.disabled']}"
+				field="disabled" isMessage="true" />
 
 		</hf:formPanel>
 

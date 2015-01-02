@@ -171,8 +171,11 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 	}
 
 	public void preRenderView() {
-		endConversation();
-		entity = null;
+		if (entity != null && entity.getId() != objectIdFromParam.get()) {
+			endConversation();
+			entity = null;
+		}
+		
 		beginConversation();
 	}
 

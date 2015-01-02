@@ -165,4 +165,5 @@ public class TradingLanguageBean extends StatelessBaseBean<TradingLanguage> {
 	protected String getDefaultSort() {
 		return "language.languageCode";
 	}
+
 }
