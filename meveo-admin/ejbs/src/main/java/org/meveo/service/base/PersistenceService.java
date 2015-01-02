@@ -101,16 +101,6 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService
 	}
 
 	/**
-	 * @see org.meveo.service.base.local.IPersistenceService#remove(java.lang.Long)
-	 */
-	public void remove(Long id) {
-		E e = findById(id);
-		if (e != null) {
-			remove(e);
-		}
-	}
-
-	/**
 	 * @see org.meveo.service.base.local.IPersistenceService#findById(java.lang.Long)
 	 */
 	public E findById(Long id) {
@@ -198,12 +188,23 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService
 	}
 
 	/**
+	 * @see org.meveo.service.base.local.IPersistenceService#remove(java.lang.Long)
+	 */
+	public void remove(Long id) {
+		E e = findById(id);
+		if (e != null) {
+			remove(e);
+		}
+	}
+
+	/**
 	 * @see org.meveo.service.base.local.IPersistenceService#remove(org.manaty.model.BaseEntity)
 	 */
 	public void remove(EntityManager em, E e) {
 		checkProvider(e);
 		log.debug("start of remove {} entity (id={}) ..", getEntityClass()
 				.getSimpleName(), e.getId());
+		checkProvider(e);
 		em.remove(e);
 		em.flush();
 		log.debug("end of remove {} entity (id={}).", getEntityClass()
@@ -510,8 +511,8 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService
 	}
 
 	public EntityManager getEntityManager() {
-		log.debug("em.txKey={}, em.hashCode={}", txReg.getTransactionKey(),
-				em.hashCode());
+		// log.debug("em.txKey={}, em.hashCode={}", txReg.getTransactionKey(),
+		// em.hashCode());
 		return em;
 	}
 
