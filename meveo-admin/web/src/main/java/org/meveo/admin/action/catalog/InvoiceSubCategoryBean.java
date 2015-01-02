@@ -124,6 +124,7 @@ public class InvoiceSubCategoryBean extends
 					messages.info(new BundleKey("messages", "save.successful"));
 				}
 
+				endConversation();
 				return getListViewName();
 			}
 		} catch (Exception e) {
