@@ -23,7 +23,6 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
-import javax.ejb.Stateful;
 import javax.enterprise.context.ConversationScoped;
 import javax.enterprise.inject.Produces;
 import javax.faces.context.FacesContext;
@@ -48,6 +47,7 @@ import org.meveo.model.billing.BillingRunStatusEnum;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.crm.AccountLevelEnum;
 import org.meveo.model.payments.CustomerAccount;
+import org.meveo.model.shared.Name;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.BillingAccountService;
@@ -74,7 +74,6 @@ import com.lowagie.text.pdf.PdfStamper;
  */
 @Named
 @ConversationScoped
-@Stateful
 public class BillingAccountBean extends AccountBean<BillingAccount> {
 
 	private static final long serialVersionUID = 1L;
@@ -142,6 +141,10 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
 		}
 
 		initCustomFields(AccountLevelEnum.BA);
+
+		if (entity.getName() == null) {
+			entity.setName(new Name());
+		}
 
 		return entity;
 	}
@@ -501,7 +504,8 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
 
 	@Override
 	protected List<String> getFormFieldsToFetch() {
-		return Arrays.asList("provider", "customerAccount", "billingCycle");
+		return Arrays.asList("provider", "customerAccount",
+				"customerAccount.billingAccounts", "billingCycle");
 	}
 
 }
