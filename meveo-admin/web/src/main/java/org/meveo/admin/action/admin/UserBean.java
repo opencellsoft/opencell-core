@@ -30,6 +30,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 
+import javax.annotation.PostConstruct;
 import javax.ejb.Stateful;
 import javax.enterprise.context.ConversationScoped;
 import javax.faces.event.ActionEvent;
@@ -131,15 +132,14 @@ public class UserBean extends StatefulBaseBean<User> {
 		super(User.class);
 	}
 
-	// @Override
-	// @PostConstruct
-	// public void postConstruct() {
-	// if (conversation.isTransient()) {
-	// conversation.begin();
-	// createMissingDirectories();
-	// setSelectedFolder(null);
-	// }
-	// }
+	@PostConstruct
+	public void init() {
+		if (conversation.isTransient()) {
+			conversation.begin();
+			createMissingDirectories();
+			setSelectedFolder(null);
+		}
+	}
 
 	/*
 	 * (non-Javadoc)
