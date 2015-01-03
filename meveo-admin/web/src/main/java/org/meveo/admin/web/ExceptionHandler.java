@@ -22,6 +22,8 @@ public class ExceptionHandler {
 			final HttpServletRequest request, final HttpServletResponse response) {
 
 		evt.handled();
+		
+		log.error("Caught exception={}" + evt.getException());
 
 		try {
 			response.sendRedirect(response.encodeRedirectURL(request
@@ -36,6 +38,8 @@ public class ExceptionHandler {
 			final HttpServletRequest request, final HttpServletResponse response) {
 
 		evt.handled();
+		
+		log.error("Caught exception={}" + evt.getException());
 
 		try {
 			response.sendRedirect(response.encodeRedirectURL(request
@@ -50,6 +54,8 @@ public class ExceptionHandler {
 			final HttpServletRequest request, final HttpServletResponse response) {
 
 		evt.handled();
+		
+		log.error("Caught exception={}" + evt.getException());
 
 		try {
 			response.sendRedirect(response.encodeRedirectURL(request
@@ -64,6 +70,8 @@ public class ExceptionHandler {
 			final HttpServletRequest request, final HttpServletResponse response) {
 
 		evt.handled();
+		
+		log.error("Caught exception={}" + evt.getException());
 
 		try {
 			response.sendRedirect(response.encodeRedirectURL(request
@@ -78,6 +86,8 @@ public class ExceptionHandler {
 			final HttpServletRequest request, final HttpServletResponse response) {
 
 		evt.handled();
+		
+		log.error("Caught exception={}" + evt.getException());
 
 		try {
 			response.sendRedirect(response.encodeRedirectURL(request
@@ -92,6 +102,8 @@ public class ExceptionHandler {
 			final HttpServletRequest request, final HttpServletResponse response) {
 
 		evt.handled();
+		
+		log.error("Caught exception={}" + evt.getException());
 
 		try {
 			response.sendRedirect(response.encodeRedirectURL(request
