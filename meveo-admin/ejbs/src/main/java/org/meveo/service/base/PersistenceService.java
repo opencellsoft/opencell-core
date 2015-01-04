@@ -527,11 +527,9 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService
 		 EntityManager result = emfForJobs;
 		if (conversation != null) {
 			try {
-				if(conversation.isTransient()){
-					result = em;
-				}
+				conversation.isTransient();
+				result = em;
 			}catch(Exception e){
-				
 			}
 		}
 		log.debug("emForJob:{}, em.txKey={}, em.hashCode={}",conversation == null, txReg.getTransactionKey(),
