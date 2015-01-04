@@ -97,7 +97,10 @@ public abstract class AccountEntity extends BusinessEntity {
 	}
 
 	public Name getName() {
-		return name;
+		if(name!=null){
+			return name;
+		}
+		return new Name();
 	}
 
 	public void setName(Name name) {
