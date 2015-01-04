@@ -16,7 +16,9 @@
  */
 package org.meveo.admin.action.billing;
 
-import javax.ejb.Stateful;
+import java.util.Arrays;
+import java.util.List;
+
 import javax.enterprise.context.ConversationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -68,4 +70,10 @@ public class BillingAccountListBean extends StatelessBaseBean<BillingAccount> {
 	protected String getDefaultSort() {
 		return "code";
 	}
+
+	@Override
+	protected List<String> getListFieldsToFetch() {
+		return Arrays.asList("name");
+	}
+
 }

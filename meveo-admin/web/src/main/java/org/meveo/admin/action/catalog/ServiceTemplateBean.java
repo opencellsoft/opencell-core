@@ -21,10 +21,12 @@ import java.util.Arrays;
 import java.util.List;
 
 import javax.enterprise.context.ConversationScoped;
+import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.jboss.seam.international.status.builder.BundleKey;
+import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.action.StatelessBaseBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.catalog.OneShotChargeTemplate;
@@ -52,6 +54,8 @@ public class ServiceTemplateBean extends StatelessBaseBean<ServiceTemplate> {
 
 	private static final long serialVersionUID = 1L;
 
+	@Named
+	@Produces
 	private ServiceUsageChargeTemplate serviceUsageChargeTemplate = new ServiceUsageChargeTemplate();
 
 	public void newServiceUsageChargeTemplate() {

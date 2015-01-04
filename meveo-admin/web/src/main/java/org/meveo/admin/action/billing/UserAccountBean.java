@@ -133,8 +133,8 @@ public class UserAccountBean extends AccountBean<UserAccount> {
 					entity.setDefaultLevel(false);
 					throw new DuplicateDefaultAccountException();
 				}
-
 			}
+
 			super.saveOrUpdate(killConversation);
 
 			saveCustomFields();
@@ -176,7 +176,7 @@ public class UserAccountBean extends AccountBean<UserAccount> {
 						entity.getBillingAccount(), entity, getCurrentUser());
 				messages.info(new BundleKey("messages", "save.successful"));
 			} else {
-				entity.updateAudit(getCurrentUser());
+				getPersistenceService().update(entity, getCurrentUser());
 				messages.info(new BundleKey("messages", "update.successful"));
 			}
 		} catch (Exception e) {
