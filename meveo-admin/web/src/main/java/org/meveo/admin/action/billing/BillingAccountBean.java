@@ -23,7 +23,6 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
-import javax.ejb.Stateful;
 import javax.enterprise.context.ConversationScoped;
 import javax.enterprise.inject.Produces;
 import javax.faces.context.FacesContext;
@@ -74,7 +73,6 @@ import com.lowagie.text.pdf.PdfStamper;
  */
 @Named
 @ConversationScoped
-@Stateful
 public class BillingAccountBean extends AccountBean<BillingAccount> {
 
 	private static final long serialVersionUID = 1L;

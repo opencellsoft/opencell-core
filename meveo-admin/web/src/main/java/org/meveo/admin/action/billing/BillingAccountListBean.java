@@ -36,7 +36,6 @@ import org.meveo.service.billing.impl.BillingAccountService;
  */
 @Named
 @ConversationScoped
-@Stateful
 public class BillingAccountListBean extends StatelessBaseBean<BillingAccount> {
 
 	private static final long serialVersionUID = 1L;

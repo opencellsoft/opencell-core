@@ -1,5 +1,7 @@
 package org.meveo.admin.job.logging;
 
+import java.io.Serializable;
+
 import javax.interceptor.AroundInvoke;
 import javax.interceptor.Interceptor;
 import javax.interceptor.InvocationContext;
@@ -12,8 +14,12 @@ import org.slf4j.LoggerFactory;
  **/
 @JobLogged
 @Interceptor
-public class JobLoggingInterceptor {
+public class JobLoggingInterceptor implements Serializable{
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 8509493016090519457L;
 	private Logger log = LoggerFactory.getLogger(this.getClass());
 
 	@AroundInvoke

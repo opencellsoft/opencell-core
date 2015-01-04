@@ -68,7 +68,6 @@ import org.slf4j.LoggerFactory;
  * custom JSF components.
  */
 @Named
-@Stateful
 @ConversationScoped
 public class UserBean extends StatefulBaseBean<User> {
 

@@ -24,7 +24,6 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
-import javax.ejb.Stateful;
 import javax.enterprise.context.ConversationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -59,7 +58,6 @@ import org.meveo.service.billing.impl.WalletOperationService;
 import org.meveo.service.medina.impl.AccessService;
 
 @Named
-@Stateful
 @ConversationScoped
 public class SubscriptionBean extends StatefulBaseBean<Subscription> {
 

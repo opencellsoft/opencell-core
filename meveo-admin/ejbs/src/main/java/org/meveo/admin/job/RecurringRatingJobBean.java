@@ -1,5 +1,6 @@
 package org.meveo.admin.job;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
@@ -20,7 +21,12 @@ import org.meveo.service.billing.impl.WalletOperationService;
 import org.slf4j.Logger;
 
 @Stateless
-public class RecurringRatingJobBean {
+public class RecurringRatingJobBean implements Serializable {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 2226065462536318643L;
 
 	@Inject
 	private RecurringChargeInstanceService recurringChargeInstanceService;
