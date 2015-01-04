@@ -34,15 +34,15 @@ public class Resources {
 	@MeveoJpa
 	private EntityManagerFactory emf;
 
-	// @ExtensionManaged
-	// @Produces
-	// @PersistenceUnit(unitName = "MeveoAdmin")
-	// @MeveoJpaForJobs
-	// private EntityManagerFactory emfForJobs;
-	@Produces
-	@PersistenceContext(unitName = "MeveoAdmin")
-	@MeveoJpaForJobs
-	private EntityManager emfForJobs;
+	 @ExtensionManaged
+	 @Produces
+	 @PersistenceUnit(unitName = "MeveoAdmin")
+	 @MeveoJpaForJobs
+	 private EntityManagerFactory emfForJobs;
+//	@Produces
+//	@PersistenceContext(unitName = "MeveoAdmin")
+//	@MeveoJpaForJobs
+//	private EntityManager emfForJobs;
 
 	/*
 	 * @ExtensionManaged

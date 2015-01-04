@@ -57,7 +57,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService
 
 	@Inject
 	@MeveoJpa
-	protected EntityManager em;
+	private EntityManager em;
 
 	@Inject
 	@MeveoJpaForJobs
@@ -252,7 +252,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService
 			}
 		}
 		checkProvider(e);
-		em.merge(e);
+		getEntityManager().merge(e);
 
 		log.debug("end of update {} entity (id={}).", e.getClass()
 				.getSimpleName(), e.getId());
@@ -281,7 +281,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService
 			((BaseEntity) e).setProvider(provider);
 		}
 
-		em.persist(e);
+		getEntityManager().persist(e);
 
 		log.debug("end of create {}. entity id={}.", e.getClass()
 				.getSimpleName(), e.getId());
@@ -532,7 +532,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService
 			}catch(Exception e){
 			}
 		}
-		log.debug("emForJob:{}, em.txKey={}, em.hashCode={}",conversation == null, txReg.getTransactionKey(),
+		log.debug("emForJob:{}, em.txKey={}, em.hashCode={}",result == emfForJobs, txReg.getTransactionKey(),
 				result.hashCode());
 		return result;
 	}
