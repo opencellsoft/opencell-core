@@ -48,6 +48,7 @@ import javax.xml.bind.annotation.XmlType;
  *       &lt;attribute name="code" type="{http://www.w3.org/2001/XMLSchema}string" />
  *       &lt;attribute name="customerCategory" type="{http://www.w3.org/2001/XMLSchema}string" />
  *       &lt;attribute name="customerBrand" type="{http://www.w3.org/2001/XMLSchema}string" />
+ *       &lt;element ref="{}customFields"/>
  *     &lt;/restriction>
  *   &lt;/complexContent>
  * &lt;/complexType>
@@ -56,7 +57,7 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = { "desCustomer", "customerAccounts" })
+@XmlType(name = "", propOrder = { "desCustomer", "customerAccounts","customFields" })
 @XmlRootElement(name = "customer")
 public class Customer {
 
@@ -68,6 +69,7 @@ public class Customer {
     protected String customerCategory;
     @XmlAttribute(name = "customerBrand")
     protected String customerBrand;
+    protected CustomFields customFields;
 
     /**
      * Gets the value of the desCustomer property.
@@ -174,4 +176,11 @@ public class Customer {
         this.customerBrand = value;
     }
 
+	public CustomFields getCustomFields() {
+		return customFields;
+	}
+
+	public void setCustomFields(CustomFields customFields) {
+		this.customFields = customFields;
+	}
 }

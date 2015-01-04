@@ -24,7 +24,6 @@ import java.util.List;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
-import org.jboss.seam.transaction.Transactional;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.NoAllOperationUnmatchedException;
 import org.meveo.admin.exception.UnbalanceAmountException;
@@ -54,7 +53,6 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
 	@Inject
 	private AccountOperationService accountOperationService;
 
-	@Transactional
 	public MatchingReturnObject matchOperations(Long customerAccountId,
 			String customerAccountCode, List<Long> operationIds,
 			Long operationIdForPartialMatching, User user)
@@ -107,7 +105,6 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
 
 	}
 
-	@Transactional
 	public void unmatching(Long idMatchingCode, User user)
 			throws BusinessException {
 		log.info("start cancelMatching with id:#0,user:#1", idMatchingCode,

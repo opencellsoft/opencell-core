@@ -21,7 +21,6 @@ import java.math.BigDecimal;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
-import org.jboss.seam.transaction.Transactional;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.admin.User;
 import org.meveo.model.payments.AccountOperation;
@@ -35,7 +34,6 @@ public class MatchingAmountService extends PersistenceService<MatchingAmount> {
 	@Inject
 	private AccountOperationService accountOperationService;
 
-	@Transactional
 	public void unmatching(Long idMatchingAmount, User user)
 			throws BusinessException {
 		log.info("start cancelMatchingAmount with id:#0,user:#1",

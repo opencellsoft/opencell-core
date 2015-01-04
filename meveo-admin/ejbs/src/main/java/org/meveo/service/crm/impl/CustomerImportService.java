@@ -94,6 +94,26 @@ public class CustomerImportService {
 					cust.getCustomerCategory(), provider));
 			customer.setSeller(seller);
 			customer.setProvider(provider);
+			if(cust.getCustomFields()!=null && cust.getCustomFields().getCustomField()!=null
+					&& cust.getCustomFields().getCustomField().size()>0){
+				for(CustomField customField:cust.getCustomFields().getCustomField()){
+					CustomFieldInstance cfi =  new CustomFieldInstance();
+					cfi.setAccount(customer);
+					cfi.setActive(true);
+					cfi.setCode(customField.getCode());
+					cfi.setDateValue(customField.getDateValue());
+					cfi.setDescription(customField.getDescription());
+					cfi.setDoubleValue(customField.getDoubleValue());
+					cfi.setLongValue(customField.getLongValue());
+					cfi.setProvider(provider);
+					cfi.setStringValue(customField.getStringValue());
+					Auditable auditable = new Auditable();
+					auditable.setCreated(new Date());
+					auditable.setCreator(currentUser);
+					cfi.setAuditable(auditable);
+					customer.getCustomFields().put(cfi.getCode(), cfi);
+				}
+			}
 			customerService.create(customer, currentUser, provider);
 		}
 

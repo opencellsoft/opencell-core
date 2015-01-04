@@ -24,13 +24,14 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
+import javax.ejb.Stateful;
 import javax.enterprise.context.ConversationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
-import org.meveo.admin.action.StatelessBaseBean;
+import org.meveo.admin.action.StatefulBaseBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.EntityListDataModelPF;
 import org.meveo.model.billing.InstanceStatusEnum;
@@ -58,8 +59,9 @@ import org.meveo.service.billing.impl.WalletOperationService;
 import org.meveo.service.medina.impl.AccessService;
 
 @Named
+@Stateful
 @ConversationScoped
-public class SubscriptionBean extends StatelessBaseBean<Subscription> {
+public class SubscriptionBean extends StatefulBaseBean<Subscription> {
 
 	private static final long serialVersionUID = 1L;
 
