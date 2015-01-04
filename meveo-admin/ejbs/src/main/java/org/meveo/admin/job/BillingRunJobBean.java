@@ -12,6 +12,7 @@ import org.meveo.admin.job.logging.JobLoggingInterceptor;
 import org.meveo.model.Auditable;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.BillingCycle;
+import org.meveo.model.billing.BillingProcessTypesEnum;
 import org.meveo.model.billing.BillingRun;
 import org.meveo.model.billing.BillingRunStatusEnum;
 import org.meveo.model.crm.Provider;
@@ -62,12 +63,16 @@ public class BillingRunJobBean {
 					BillingRun billingRun = new BillingRun();
 					Auditable auditable = new Auditable();
 					auditable.setCreated(new Date());
+					auditable.setCreator(currentUser);
 					billingRun.setAuditable(auditable);
 					billingRun.setBillingCycle(billingCycle);
+					billingRun.setProcessType(BillingProcessTypesEnum.AUTOMATIC);
 					billingRun.setStatus(BillingRunStatusEnum.NEW);
 					billingRunService.create(billingRun, currentUser,
-							currentUser.getProvider());
+							provider);
 					result.registerSucces();
+				} else {
+					result.registerError("Cannot find billingCycle wit code '"+parameter+"' (this code should be the parameter of the job)");
 				}
 			}
 		} catch (Exception e) {
