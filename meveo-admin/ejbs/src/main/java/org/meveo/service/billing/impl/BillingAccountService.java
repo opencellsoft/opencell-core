@@ -264,12 +264,12 @@ public class BillingAccountService extends AccountService<BillingAccount> {
 	}
 
 	@Asynchronous
-	public Future<Boolean> updateBillingAccountTotalAmounts(EntityManager em,
+	public Future<Boolean> updateBillingAccountTotalAmounts(
 			long billingAccountId, BillingRun billingRun, boolean entreprise,
 			User currentUser) {
 		log.info("updateBillingAccountTotalAmounts  billingAccountId:"
 				+ billingAccountId);
-		BillingAccount billingAccount = findById(em, billingAccountId);
+		BillingAccount billingAccount = findById( billingAccountId);
 		ratedTransactionService.billingAccountTotalAmounts(billingAccount,
 				entreprise);
 		billingAccount.setBillingRun(billingRun);

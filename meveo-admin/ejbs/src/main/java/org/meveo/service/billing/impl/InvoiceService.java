@@ -280,13 +280,15 @@ public class InvoiceService extends PersistenceService<Invoice> {
 	}
 
 	@Asynchronous
-	public Future<Boolean> createAgregatesAndInvoice(EntityManager em,
+	public Future<Boolean> createAgregatesAndInvoice(
 			BillingAccount billingAccount, BillingRun billingRun,
 			User currentUser) throws BusinessException, Exception {
 		try {
+			EntityManager em = getEntityManager();
+			//FIXME Rachid : should check provider is owner
 			billingAccount = em.find(BillingAccount.class,
 					billingAccount.getId());
-			billingRun = em.find(BillingRun.class, billingRun.getId());
+			billingRun = getEntityManager().find(BillingRun.class, billingRun.getId());
 			Long startDate = System.currentTimeMillis();
 			BillingCycle billingCycle = billingRun.getBillingCycle();
 			if (billingCycle == null) {
