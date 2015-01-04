@@ -803,6 +803,9 @@ public class UsageRatingService {
 
 	private boolean matchExpression(String expression, EDR edr,
 			WalletOperation walletOperation) {
+		if (StringUtils.isBlank(expression)) {
+			return true;
+		}
 		Map<Object, Object> userMap = new HashMap<Object, Object>();
 		userMap.put("edr", edr);
 		userMap.put("op", walletOperation);

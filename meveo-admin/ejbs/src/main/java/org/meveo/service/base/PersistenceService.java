@@ -532,8 +532,8 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService
 			}catch(Exception e){
 			}
 		}
-		log.debug("emForJob:{}, em.txKey={}, em.hashCode={}",result == emfForJobs, txReg.getTransactionKey(),
-				result.hashCode());
+		//log.debug("emForJob:{}, em.txKey={}, em.hashCode={}",result == emfForJobs, txReg.getTransactionKey(),
+		//		result.hashCode());
 		return result;
 	}
 

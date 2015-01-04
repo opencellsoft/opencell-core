@@ -55,6 +55,7 @@ import org.meveo.service.base.SimpleFunctionMapper;
 import org.meveo.service.base.SimpleVariableMapper;
 import org.meveo.service.catalog.impl.CatMessagesService;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Stateless
 public class RatingService {
@@ -62,8 +63,7 @@ public class RatingService {
 	@PersistenceContext
 	protected EntityManager entityManager;
 
-	@Inject
-	protected Logger log;
+	static protected Logger log=LoggerFactory.getLogger(RatingService.class);
 
 	@Inject
 	protected CatMessagesService catMessagesService;
@@ -308,11 +308,15 @@ public class RatingService {
 				.getChargeTemplate().getEdrTemplates();
 		if (triggeredEDRTemplates.size() > 0) {
 			for (TriggeredEDRTemplate triggeredEDRTemplate : triggeredEDRTemplates) {
-				if (triggeredEDRTemplate.getConditionEl() == null
+				
+				boolean conditionCheck =triggeredEDRTemplate.getConditionEl() == null
 						|| "".equals(triggeredEDRTemplate.getConditionEl())
 						|| matchExpression(
 								triggeredEDRTemplate.getConditionEl(), result,
-								ua)) {
+								ua);
+				log.debug("checking condition for {} : {} -> {}",triggeredEDRTemplate.getCode(),
+						triggeredEDRTemplate.getConditionEl(), conditionCheck);
+				if (conditionCheck) {
 					EDR newEdr = new EDR();
 					newEdr.setCreated(new Date());
 					newEdr.setEventDate(applicationDate);
@@ -334,7 +338,7 @@ public class RatingService {
 					Subscription sub = null;
 					if (StringUtils.isBlank(triggeredEDRTemplate
 							.getSubscriptionEl())) {
-						newEdr.setSubscription(subscription);
+						sub=subscription;
 					} else {
 						String subCode = evaluateStringExpression(
 								triggeredEDRTemplate.getSubscriptionEl(),
@@ -350,6 +354,7 @@ public class RatingService {
 						}
 					}
 					if (sub != null) {
+						newEdr.setSubscription(sub);
 						log.info("trigger EDR from code "
 								+ triggeredEDRTemplate.getCode());
 						if (chargeInstance.getAuditable() == null) {
@@ -927,6 +932,9 @@ public class RatingService {
 
 	private boolean matchExpression(String expression,
 			WalletOperation bareOperation, UserAccount ua) {
+		if (StringUtils.isBlank(expression)) {
+			return true;
+		}
 		Map<Object, Object> userMap = new HashMap<Object, Object>();
 		userMap.put("op", bareOperation);
 		if (expression.indexOf("ua.") >= 0) {
@@ -948,8 +956,12 @@ public class RatingService {
 
 	private String evaluateStringExpression(String expression,
 			WalletOperation walletOperation, UserAccount ua) {
+		if (StringUtils.isBlank(expression)) {
+			return null;
+		}
 		Map<Object, Object> userMap = new HashMap<Object, Object>();
 		userMap.put("op", walletOperation);
+		
 		if (expression.indexOf("ua.") >= 0) {
 			userMap.put("ua", ua);
 		}
@@ -968,6 +980,9 @@ public class RatingService {
 
 	private Double evaluateDoubleExpression(String expression,
 			WalletOperation walletOperation, UserAccount ua) {
+		if (StringUtils.isBlank(expression)) {
+			return null;
+		}
 		Map<Object, Object> userMap = new HashMap<Object, Object>();
 		userMap.put("op", walletOperation);
 		if (expression.indexOf("ua.") >= 0) {
@@ -990,7 +1005,7 @@ public class RatingService {
 			Map<Object, Object> userMap,
 			@SuppressWarnings("rawtypes") Class resultClass) {
 		Object result = null;
-		if (expression == null) {
+		if (StringUtils.isBlank(expression)) {
 			return null;
 		}
 		if (!expression.startsWith("#")) {
@@ -1041,8 +1056,10 @@ public class RatingService {
 			ValueExpression ve = expressionFactory.createValueExpression(
 					context, expression, resultClass);
 			result = ve.getValue(context);
+			log.debug("EL {} => {}",expression,result);
+			
 		} catch (Exception e) {
-
+			log.warn("EL {} throw error {}",expression,e.getMessage());
 		}
 		return result;
 	}
