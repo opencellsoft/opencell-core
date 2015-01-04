@@ -11,6 +11,7 @@ import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.job.logging.JobLoggingInterceptor;
@@ -20,7 +21,6 @@ import org.meveo.model.admin.User;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.service.catalog.impl.PricePlanMatrixService;
-import org.meveo.util.MeveoJpaForJobs;
 import org.slf4j.Logger;
 
 @Stateless
@@ -29,8 +29,7 @@ public class ImportCatalogJobBean {
 	@Inject
 	private PricePlanMatrixService pricePlanService;
 
-	@Inject
-	@MeveoJpaForJobs
+	@PersistenceContext
 	private EntityManager em;
 
 	@Inject

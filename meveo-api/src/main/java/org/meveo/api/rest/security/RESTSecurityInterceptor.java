@@ -9,7 +9,6 @@ import javax.annotation.security.DenyAll;
 import javax.annotation.security.PermitAll;
 import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
-import javax.persistence.EntityManager;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;
 import javax.ws.rs.core.MultivaluedMap;
@@ -27,7 +26,6 @@ import org.meveo.admin.exception.PasswordExpiredException;
 import org.meveo.admin.exception.UnknownUserException;
 import org.meveo.model.admin.User;
 import org.meveo.service.admin.impl.UserService;
-import org.meveo.util.MeveoJpaForJobs;
 import org.slf4j.Logger;
 
 /**
@@ -54,10 +52,6 @@ public class RESTSecurityInterceptor implements ContainerRequestFilter,
 
 	@Inject
 	private UserService userService;
-
-	@Inject
-	@MeveoJpaForJobs
-	private EntityManager em;
 
 	private User currentUser;
 
@@ -112,7 +106,7 @@ public class RESTSecurityInterceptor implements ContainerRequestFilter,
 			log.debug("REST call basic authentication. Username={}", username);
 
 			try {
-				currentUser = userService.loginChecks(em, username, password,
+				currentUser = userService.loginChecks(username, password,
 						false);
 			} catch (LoginException e) {
 				log.error(

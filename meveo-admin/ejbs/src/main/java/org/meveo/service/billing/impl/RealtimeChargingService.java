@@ -41,16 +41,8 @@ public class RealtimeChargingService {
 	@Inject
 	private WalletOperationService walletOperationService;
 
-	public BigDecimal getApplicationPrice(BillingAccount ba,
-			OneShotChargeTemplate chargeTemplate, Date subscriptionDate,
-			String offerCode, BigDecimal quantity, String param1,
-			String param2, String param3, boolean priceWithoutTax)
-			throws BusinessException {
-		return getApplicationPrice(null, ba, chargeTemplate, subscriptionDate,
-				offerCode, quantity, param1, param2, param3, priceWithoutTax);
-	}
 
-	public BigDecimal getApplicationPrice(EntityManager em, BillingAccount ba,
+	public BigDecimal getApplicationPrice(BillingAccount ba,
 			OneShotChargeTemplate chargeTemplate, Date subscriptionDate,
 			String offerCode, BigDecimal quantity, String param1,
 			String param2, String param3, boolean priceWithoutTax)
@@ -73,12 +65,12 @@ public class RealtimeChargingService {
 
 		Seller seller = ba.getCustomerAccount().getCustomer().getSeller();
 
-		return getApplicationPrice(em, provider, seller, currency,
+		return getApplicationPrice(provider, seller, currency,
 				tradingCountry, chargeTemplate, subscriptionDate, offerCode,
 				quantity, param1, param2, param3, priceWithoutTax);
 	}
 
-	public BigDecimal getApplicationPrice(EntityManager em, Provider provider,
+	public BigDecimal getApplicationPrice(Provider provider,
 			Seller seller, TradingCurrency currency,
 			TradingCountry tradingCountry,
 			OneShotChargeTemplate chargeTemplate, Date subscriptionDate,
@@ -97,7 +89,7 @@ public class RealtimeChargingService {
 
 		Long tradingCountryId = tradingCountry.getId();
 		InvoiceSubcategoryCountry invoiceSubcategoryCountry = invoiceSubCategoryCountryService
-				.findInvoiceSubCategoryCountry(em, invoiceSubCategory.getId(),
+				.findInvoiceSubCategoryCountry(invoiceSubCategory.getId(),
 						tradingCountryId, provider);
 		if (invoiceSubcategoryCountry == null) {
 			throw new IncorrectChargeTemplateException(
@@ -140,7 +132,7 @@ public class RealtimeChargingService {
 		op.setStatus(WalletOperationStatusEnum.OPEN);
 		op.setSeller(seller);
 
-		chargeApplicationRatingService.rateBareWalletOperation(em, op, null,
+		chargeApplicationRatingService.rateBareWalletOperation(op, null,
 				null, tradingCountryId, currency, provider);
 
 		return priceWithoutTax ? op.getAmountWithoutTax() : op
@@ -193,7 +185,7 @@ public class RealtimeChargingService {
 		if (serviceTemplate.getSubscriptionCharges() != null) {
 			for (OneShotChargeTemplate charge : serviceTemplate
 					.getSubscriptionCharges()) {
-				result = result.add(getApplicationPrice(em, ba, charge,
+				result = result.add(getApplicationPrice(ba, charge,
 						subscriptionDate, offerCode, quantity, param1, param2,
 						param3, priceWithoutTax));
 			}

@@ -9,6 +9,7 @@ import java.util.List;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.BaseApi;
@@ -43,7 +44,6 @@ import org.meveo.service.billing.impl.TradingCountryService;
 import org.meveo.service.catalog.impl.CatMessagesService;
 import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
 import org.meveo.service.catalog.impl.OneShotChargeTemplateService;
-import org.meveo.util.MeveoJpaForJobs;
 import org.slf4j.Logger;
 
 /**
@@ -79,9 +79,6 @@ public class OneShotChargeTemplateApi extends BaseApi {
 	@Inject
 	private CatMessagesService catMessagesService;
 
-	@Inject
-	@MeveoJpaForJobs
-	private EntityManager em;
 
 	public void create(OneShotChargeTemplateDto postData, User currentUser)
 			throws MeveoApiException {
@@ -368,7 +365,7 @@ public class OneShotChargeTemplateApi extends BaseApi {
 				log.warn("country with code={} does not exists", countryCode);
 			} else {
 				InvoiceSubcategoryCountry invoiceSubcategoryCountry = invoiceSubCategoryCountryService
-						.findInvoiceSubCategoryCountry(em,
+						.findInvoiceSubCategoryCountry(
 								invoiceSubCategory.getId(), country.getId(),
 								provider);
 				if (invoiceSubcategoryCountry != null
@@ -382,7 +379,7 @@ public class OneShotChargeTemplateApi extends BaseApi {
 				}
 				try {
 					BigDecimal unitPrice = realtimeChargingService
-							.getApplicationPrice(em, provider, seller,
+							.getApplicationPrice( provider, seller,
 									currency, country, oneShotChargeTemplate,
 									date, null, BigDecimal.ONE, null, null,
 									null, true);

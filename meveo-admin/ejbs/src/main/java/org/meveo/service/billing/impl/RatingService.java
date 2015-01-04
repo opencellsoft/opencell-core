@@ -23,6 +23,7 @@ import javax.el.ValueExpression;
 import javax.el.VariableMapper;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
 import org.meveo.admin.exception.BusinessException;
@@ -53,14 +54,12 @@ import org.meveo.service.base.SimpleELResolver;
 import org.meveo.service.base.SimpleFunctionMapper;
 import org.meveo.service.base.SimpleVariableMapper;
 import org.meveo.service.catalog.impl.CatMessagesService;
-import org.meveo.util.MeveoJpa;
 import org.slf4j.Logger;
 
 @Stateless
 public class RatingService {
 
-	@Inject
-	@MeveoJpa
+	@PersistenceContext
 	protected EntityManager entityManager;
 
 	@Inject
