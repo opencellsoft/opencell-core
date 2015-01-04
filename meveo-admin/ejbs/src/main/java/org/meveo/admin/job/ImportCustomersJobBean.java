@@ -280,6 +280,7 @@ public class ImportCustomersJobBean {
 				log.info("File:" + fileName + ", typeEntity:Customer, index:"
 						+ i + ", code:" + cust.getCode() + ", status:Ignored");
 				nbCustomersIgnored++;
+				return;
 			}
 
 			if (customerCheckError(sell, cust)) {
