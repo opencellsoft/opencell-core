@@ -521,10 +521,18 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 					.setParameter("startDate", startDate)
 					.setParameter("endDate", endDate)
 					.getSingleResult();
+			result= billingAccountService.findBillingAccounts(
+					billingCycle, startDate, endDate);
 		} else {
+			result= new ArrayList<BillingAccount>();
+			String[] baIds = billingRun.getSelectedBillingAccounts().split(",");
+			for (String id : Arrays.asList(baIds)) {
+				Long baId = Long.valueOf(id);
+				result.add(billingAccountService.findById(baId));
+			}
 			ratedTransactionsAmounts = (Object[]) getEntityManager().createNamedQuery("RatedTransaction.sumbillingRunByList")
 			.setParameter("status", RatedTransactionStatusEnum.OPEN)
-			.setParameter("billingAccountList", billingRun.getSelectedBillingAccounts())
+			.setParameter("billingAccountList", result)
 			.getSingleResult();
 		}
 		if (ratedTransactionsAmounts != null) {
