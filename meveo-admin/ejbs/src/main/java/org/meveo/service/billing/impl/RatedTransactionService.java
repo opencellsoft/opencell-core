@@ -28,6 +28,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
@@ -227,6 +229,7 @@ public class RatedTransactionService extends
 
 
 	@SuppressWarnings({ "unchecked", "rawtypes", "unused" })
+	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public void createInvoiceAndAgregates(
 			BillingAccount billingAccount, Invoice invoice, User currentUser)
 			throws BusinessException {
@@ -545,7 +548,7 @@ public class RatedTransactionService extends
 				invoice.setNetToPay(netToPay);
 			}
 		}
-
+		
 	}
 
 	private void fillAgregates(InvoiceAgregate invoiceAgregate,

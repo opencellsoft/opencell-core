@@ -278,7 +278,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
 		return null;
 	}
 
-	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public void createAgregatesAndInvoice(
 			BillingAccount billingAccount, BillingRun billingRun,
 			User currentUser) throws BusinessException, Exception {
@@ -311,7 +310,21 @@ public class InvoiceService extends PersistenceService<Invoice> {
 			create(invoice, currentUser, currentUser.getProvider());
 			ratedTransactionService.createInvoiceAndAgregates(
 					billingAccount, invoice, currentUser);
-
+			log.debug("invoice attached ? :{}",em.contains(invoice));
+			if(!em.contains(invoice)){
+				em.merge(invoice);
+				log.debug("now invoice attached ? :{}",em.contains(invoice));
+			}
+			log.debug("billingAccount attached ? :{}",em.contains(billingAccount));
+			if(!em.contains(billingAccount)){
+				em.merge(billingAccount);
+				log.debug("now billingAccount attached ? :{}",em.contains(billingAccount));
+			}
+			log.debug("billingRun attached ? :{}",em.contains(billingRun));
+			if(!em.contains(billingRun)){
+				em.merge(billingRun);
+				log.debug("now billingRun attached ? :{}",em.contains(invoice));
+			}
 			if(billingRun.getProvider().isDisplayFreeTransacInInvoice()){
 				em.createNamedQuery("RatedTransaction.updateInvoicedDisplayFree")
 				.setParameter("billingAccount", billingAccount)
