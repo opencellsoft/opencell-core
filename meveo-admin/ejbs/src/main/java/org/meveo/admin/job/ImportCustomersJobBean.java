@@ -7,6 +7,8 @@ import java.util.List;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 import javax.xml.bind.JAXBException;
@@ -118,9 +120,9 @@ public class ImportCustomersJobBean {
 			try {
 				log.info("InputFiles job " + file.getName() + " in progres");
 				currentFile = FileUtils.addExtension(file, ".processing");
-				
+
 				importFile(currentFile, file.getName(), currentUser);
-				
+
 				FileUtils.moveFile(dirOK, currentFile, file.getName());
 				log.info("InputFiles job " + file.getName() + " done");
 				result.registerSucces();
@@ -246,9 +248,9 @@ public class ImportCustomersJobBean {
 		generateReport(fileName, provider);
 		createHistory(currentUser);
 		log.info("end import file ");
-
 	}
 
+	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
 	private void createCustomer(String fileName, User currentUser,
 			org.meveo.model.admin.Seller seller,
 			org.meveo.model.jaxb.customer.Seller sell,
@@ -321,6 +323,7 @@ public class ImportCustomersJobBean {
 		}
 	}
 
+	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
 	private void createCustomerAccount(String fileName, User currentUser,
 			Customer customer, org.meveo.model.admin.Seller seller,
 			org.meveo.model.jaxb.customer.CustomerAccount custAcc,
@@ -337,17 +340,18 @@ public class ImportCustomersJobBean {
 		}
 
 		if (customerAccountTmp != null) {
-			if(customerAccountTmp.getCustomer().getCode().equals(cust.getCode())){
+			if (customerAccountTmp.getCustomer().getCode()
+					.equals(cust.getCode())) {
 				nbCustomerAccountsIgnored++;
 				nbCustomersIgnored++;
 				log.info("File:" + fileName
 						+ ", typeEntity:CustomerAccount,  indexCustomer:" + i
 						+ ", index:" + j + " code:" + custAcc.getCode()
 						+ ", status:Ignored");
-			}
-			else {
+			} else {
 				nbCustomerAccountsError++;
-				createCustomerAccountError(sell, cust, custAcc, "A customer account with same code exists for another customer");
+				createCustomerAccountError(sell, cust, custAcc,
+						"A customer account with same code exists for another customer");
 			}
 			return;
 		}
@@ -500,7 +504,6 @@ public class ImportCustomersJobBean {
 		sellersWarning.getWarnings().getWarningSeller().add(warningSeller);
 	}
 
-	@SuppressWarnings("unused")
 	private void createCustomerAccountError(
 			org.meveo.model.jaxb.customer.Seller sell,
 			org.meveo.model.jaxb.customer.Customer cust,
