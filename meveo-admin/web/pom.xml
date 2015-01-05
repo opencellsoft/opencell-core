@@ -75,7 +75,7 @@
 				</executions>
 				<configuration>
 					<includes>
-						<include>${project.build.directory}/**/persistence.xml</include>
+<!-- 						<include>${project.build.directory}/**/persistence.xml</include> -->
 						<include>${project.build.directory}/**/layout/*.xhtml</include>
 					</includes>
 					<replacements>
