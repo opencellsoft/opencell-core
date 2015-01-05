@@ -576,7 +576,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 	}
 
 	public void validate(BillingRun billingRun, User user) {
-		getEntityManager().merge(billingRun);
+		billingRun=getEntityManager().merge(billingRun);
 		for (Invoice invoice : billingRun.getInvoices()) {
 			invoiceService.setInvoiceNumber(invoice, user);
 			BillingAccount billingAccount = invoice.getBillingAccount();

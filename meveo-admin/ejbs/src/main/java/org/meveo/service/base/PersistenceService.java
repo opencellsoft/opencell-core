@@ -67,7 +67,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService
 	private Conversation conversation;
 
 	@Resource
-	private TransactionSynchronizationRegistry txReg;
+	protected TransactionSynchronizationRegistry txReg;
 
 	private Provider provider;
 

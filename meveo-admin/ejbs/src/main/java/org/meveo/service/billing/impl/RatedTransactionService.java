@@ -229,7 +229,6 @@ public class RatedTransactionService extends
 
 
 	@SuppressWarnings({ "unchecked", "rawtypes", "unused" })
-	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public void createInvoiceAndAgregates(
 			BillingAccount billingAccount, Invoice invoice, User currentUser)
 			throws BusinessException {

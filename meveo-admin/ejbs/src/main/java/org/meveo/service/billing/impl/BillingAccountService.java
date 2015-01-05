@@ -268,11 +268,11 @@ public class BillingAccountService extends AccountService<BillingAccount> {
 			User currentUser) {
 		log.info("updateBillingAccountTotalAmounts  billingAccount:"
 				+ billingAccount.getCode());
-		getEntityManager().merge(billingAccount);
+		billingAccount=getEntityManager().merge(billingAccount);
 		boolean result=ratedTransactionService.isBillingAccountBillable(billingAccount);
 		if(result){
 			ratedTransactionService.billingAccountTotalAmounts(billingAccount);
-			getEntityManager().merge(billingRun);
+			billingRun=getEntityManager().merge(billingRun);
 			billingAccount.setBillingRun(billingRun);
 			setProvider(currentUser.getProvider());
 			update(billingAccount, currentUser);
