@@ -153,7 +153,7 @@ public class ProviderService extends PersistenceService<Provider> {
 	}
 
 	@SuppressWarnings("rawtypes")
-	private QueryBuilder getQuery(PaginationConfiguration config) {
+	public QueryBuilder getQuery(PaginationConfiguration config) {
 
 		QueryBuilder queryBuilder = new QueryBuilder(Provider.class, "a",
 				config.getFetchFields(), null);

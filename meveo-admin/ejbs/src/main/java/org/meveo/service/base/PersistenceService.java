@@ -65,7 +65,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService
 
 	@Inject
 	private Conversation conversation;
-	
+
 	@Resource
 	private TransactionSynchronizationRegistry txReg;
 
@@ -372,7 +372,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService
 	 * @return query to filter entities according pagination configuration data.
 	 */
 	@SuppressWarnings("rawtypes")
-	private QueryBuilder getQuery(PaginationConfiguration config) {
+	public QueryBuilder getQuery(PaginationConfiguration config) {
 
 		final Class<? extends E> entityClass = getEntityClass();
 
@@ -522,18 +522,17 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService
 	}
 
 	public EntityManager getEntityManager() {
-		// log.debug("em.txKey={}, em.hashCode={}", txReg.getTransactionKey(),
-		// em.hashCode());
-		 EntityManager result = emfForJobs;
+		EntityManager result = emfForJobs;
 		if (conversation != null) {
 			try {
 				conversation.isTransient();
 				result = em;
-			}catch(Exception e){
+			} catch (Exception e) {
 			}
 		}
-		//log.debug("emForJob:{}, em.txKey={}, em.hashCode={}",result == emfForJobs, txReg.getTransactionKey(),
-		//		result.hashCode());
+
+		// log.debug("em.txKey={}, em.hashCode={}", txReg.getTransactionKey(),
+		// em.hashCode());
 		return result;
 	}
 
