@@ -28,9 +28,12 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
+import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Expression;
@@ -43,7 +46,6 @@ import org.meveo.admin.exception.IncorrectSusbcriptionException;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.BillingAccount;
-import org.meveo.model.billing.BillingRun;
 import org.meveo.model.billing.CategoryInvoiceAgregate;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.InvoiceAgregate;
@@ -79,22 +81,19 @@ public class RatedTransactionService extends
 	@Inject
 	private CustomerAccountService customerAccountService;
 
-	@SuppressWarnings("unchecked")
 	public List<RatedTransaction> getRatedTransactionsInvoiced(
 			UserAccount userAccount) {
 		if (userAccount == null || userAccount.getWallet() == null) {
 			return null;
 		}
 		return (List<RatedTransaction>) getEntityManager()
-				.createQuery(
-						"from "
-								+ RatedTransaction.class.getSimpleName()
-								+ " where wallet=:wallet and invoice is not null order by usageDate desc")
+				.createNamedQuery("RatedTransaction.listInvoiced",RatedTransaction.class)
 				.setParameter("wallet", userAccount.getWallet())
 				.getResultList();
 	}
 
 	@SuppressWarnings("unchecked")
+	//FIXME: edward please use Named queries
 	public ConsumptionDTO getConsumption(Subscription subscription,
 			String infoType, Integer billingCycle, boolean sumarizeConsumption)
 			throws IncorrectSusbcriptionException {
@@ -228,40 +227,10 @@ public class RatedTransactionService extends
 
 	}
 
-	@SuppressWarnings("unchecked")
-	public void sumbillingRunAmounts(BillingRun billingRun,
-			List<BillingAccount> billingAccounts,
-			RatedTransactionStatusEnum status, boolean entreprise) {
-
-		QueryBuilder qb = new QueryBuilder(
-				"select sum(amountWithoutTax),sum(amountWithTax),sum(amountTax) from RatedTransaction c");
-		qb.addCriterionEnum("c.status", status);
-		qb.addBooleanCriterion("c.doNotTriggerInvoicing", false);
-		qb.addCriterion("c.amountWithoutTax", "<>", BigDecimal.ZERO, false);
-		qb.addSql("c.invoice is null");
-		String ids = "";
-		String sep = "";
-		for (BillingAccount ba : billingAccounts) {
-			ids = ids + sep + ba.getId();
-			sep = ",";
-		}
-		qb.addSql("c.billingAccount.id in (" + ids + ")");
-
-		List<Object[]> ratedTransactions = qb.getQuery(getEntityManager())
-				.getResultList();
-		Object[] ratedTrans = ratedTransactions.size() > 0 ? ratedTransactions
-				.get(0) : null;
-		if (ratedTrans != null) {
-			billingRun.setPrAmountWithoutTax((BigDecimal) ratedTrans[0]);
-			billingRun
-					.setPrAmountWithTax(entreprise ? (BigDecimal) ratedTrans[1]
-							: (BigDecimal) ratedTrans[0]);
-			billingRun.setPrAmountTax((BigDecimal) ratedTrans[2]);
-		}
-	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes", "unused" })
-	public void createInvoiceAndAgregates(EntityManager em,
+	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+	public void createInvoiceAndAgregates(
 			BillingAccount billingAccount, Invoice invoice, User currentUser)
 			throws BusinessException {
 		boolean entreprise = billingAccount.getProvider().isEntreprise();
@@ -271,7 +240,8 @@ public class RatedTransactionService extends
 		for (UserAccount userAccount : billingAccount.getUsersAccounts()) {
 			WalletInstance wallet = userAccount.getWallet();
 
-			CriteriaBuilder cb = em.getCriteriaBuilder();
+			//TODO : use Named queries
+			CriteriaBuilder cb = getEntityManager().getCriteriaBuilder();
 			CriteriaQuery<Object[]> cq = cb.createQuery(Object[].class);
 			Root from = cq.from(RatedTransaction.class);
 			Path<Long> invoiceSubCategoryPath = from.get("invoiceSubCategory")
@@ -310,7 +280,7 @@ public class RatedTransactionService extends
 			}
 
 			List<InvoiceAgregate> invoiceAgregateFList = new ArrayList<InvoiceAgregate>();
-			List<Object[]> invoiceSubCats = em.createQuery(cq).getResultList();
+			List<Object[]> invoiceSubCats = getEntityManager().createQuery(cq).getResultList();
 
 			Map<Long, CategoryInvoiceAgregate> catInvoiceAgregateMap = new HashMap<Long, CategoryInvoiceAgregate>();
 			Map<Long, TaxInvoiceAgregate> taxInvoiceAgregateMap = new HashMap<Long, TaxInvoiceAgregate>();
@@ -578,7 +548,7 @@ public class RatedTransactionService extends
 				invoice.setNetToPay(netToPay);
 			}
 		}
-
+		
 	}
 
 	private void fillAgregates(InvoiceAgregate invoiceAgregate,
@@ -591,44 +561,15 @@ public class RatedTransactionService extends
 		invoiceAgregate.setItemNumber(itemNumber);
 	}
 
-	public void updateRatedTransactions(EntityManager em,
-			BillingRun billingRun, BillingAccount billingAccount,
-			Invoice invoice) {
-		String statment = "UPDATE RatedTransaction r SET r.billingRun=:billingRun,invoice=:invoice,status=:newStatus where r.invoice is null and r.status=:status and r.doNotTriggerInvoicing=:invoicing and r.billingAccount=:billingAccount";
-		if (!billingRun.getProvider().isDisplayFreeTransacInInvoice()) {
-			statment += " and r.amountWithoutTax<>:zeroValue ";
+	public Boolean isBillingAccountBillable(BillingAccount billingAccount) {
+		TypedQuery<Long> q =null;
+		if(billingAccount.getProvider().isDisplayFreeTransacInInvoice()){
+			q=getEntityManager().createNamedQuery("RatedTransaction.countNotInvoincedDisplayFree",Long.class) ;
+		} else {
+			q=getEntityManager().createNamedQuery("RatedTransaction.countNotInvoinced",Long.class) ;
 		}
-
-		Query query = em.createQuery(statment);
-		query.setParameter("billingRun", billingRun);
-		query.setParameter("invoice", invoice);
-		query.setParameter("newStatus", RatedTransactionStatusEnum.BILLED);
-		query.setParameter("status", RatedTransactionStatusEnum.OPEN);
-		query.setParameter("invoicing", false);
-		if (!billingRun.getProvider().isDisplayFreeTransacInInvoice()) {
-			query.setParameter("zeroValue", BigDecimal.ZERO);
-		}
-
-		query.setParameter("billingAccount", billingAccount);
-
-		query.executeUpdate();
-
-	}
-
-	public Boolean isBillingAccountBillable(BillingRun billingRun,
-			Long billingAccountID) {
-		QueryBuilder qb = new QueryBuilder(
-				"select count(*) from RatedTransaction c");
-		qb.addCriterionEnum("c.status", RatedTransactionStatusEnum.OPEN);
-		qb.addCriterionEntity("c.billingAccount.id", billingAccountID);
-		qb.addBooleanCriterion("c.doNotTriggerInvoicing", false);
-		if (!billingRun.getProvider().isDisplayFreeTransacInInvoice()) {
-			qb.addCriterion("c.amountWithoutTax", "<>", BigDecimal.ZERO, false);
-		}
-		qb.addSql("c.invoice is null");
-
-		long count = (Long) qb.getQuery(getEntityManager()).getSingleResult();
-
+		long count = q.setParameter("billingAccount", billingAccount)
+				.getSingleResult();
 		return count > 0 ? true : false;
 	}
 
@@ -659,9 +600,9 @@ public class RatedTransactionService extends
 	}
 
 	@SuppressWarnings("unchecked")
-	public void billingAccountTotalAmounts(BillingAccount billingAccount,
-			boolean entreprise) {
-
+	public void billingAccountTotalAmounts(BillingAccount billingAccount) {
+		//assume BA is attached
+		
 		QueryBuilder qb = new QueryBuilder(
 				"select sum(amountWithoutTax), sum(amountWithTax), sum(amountTax) from RatedTransaction c");
 		qb.addCriterionEnum("c.status", RatedTransactionStatusEnum.OPEN);
@@ -679,9 +620,7 @@ public class RatedTransactionService extends
 				.get(0) : null;
 		if (ratedTrans != null) {
 			billingAccount.setBrAmountWithoutTax((BigDecimal) ratedTrans[0]);
-			billingAccount
-					.setBrAmountWithTax(entreprise ? (BigDecimal) ratedTrans[1]
-							: (BigDecimal) ratedTrans[0]);
+			billingAccount.setBrAmountWithTax((BigDecimal) ratedTrans[1]);
 		}
 	}
 

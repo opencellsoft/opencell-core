@@ -119,7 +119,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 	/**
 	 * Datamodel for lazy dataloading in datatable.
 	 */
-	private LazyDataModel<T> dataModel;
+	protected LazyDataModel<T> dataModel;
 
 	/**
 	 * Bind datatable for search results.

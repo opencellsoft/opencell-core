@@ -207,9 +207,9 @@ public class BillingRunBean extends StatelessBaseBean<BillingRun> {
 					sep = ",";
 					if (!isBillable
 							&& ratedTransactionService
-									.isBillingAccountBillable(billingRun,
-											(Long) ba.getId())) {
+									.isBillingAccountBillable(ba.getBillingAccount())) {
 						isBillable = true;
+						break;
 					}
 				}
 				if (!isBillable) {

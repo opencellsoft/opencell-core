@@ -16,10 +16,12 @@
  */
 package org.meveo.service.admin.impl;
 
+import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -33,10 +35,15 @@ import org.meveo.admin.exception.NoRoleException;
 import org.meveo.admin.exception.PasswordExpiredException;
 import org.meveo.admin.exception.UnknownUserException;
 import org.meveo.admin.exception.UsernameAlreadyExistsException;
+import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.admin.util.security.Sha1Encrypt;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.BaseEntity;
+import org.meveo.model.IEntity;
+import org.meveo.model.IdentifiableEnum;
+import org.meveo.model.UniqueEntity;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.TradingLanguage;
 import org.meveo.model.billing.WalletTemplate;
@@ -353,6 +360,112 @@ public class UserService extends PersistenceService<User> {
 		} catch (NoResultException e) {
 			return null;
 		}
+	}
+
+	@SuppressWarnings("rawtypes")
+	@Override
+	public QueryBuilder getQuery(PaginationConfiguration config) {
+
+		final Class<User> entityClass = getEntityClass();
+
+		Provider provider = null;
+		if (config.isFilteredByProvider()) {
+			provider = getCurrentProvider();
+		}
+
+		QueryBuilder queryBuilder = new QueryBuilder(entityClass, "a",
+				config.getFetchFields(), provider);
+
+		Map<String, Object> filters = config.getFilters();
+		if (filters != null) {
+			if (!filters.isEmpty()) {
+				for (String key : filters.keySet()) {
+					Object filter = filters.get(key);
+					if (filter != null) {
+						// if ranged search (from - to fields)
+						if (key.contains("fromRange-")) {
+							String parsedKey = key.substring(10);
+							if (filter instanceof Double) {
+								BigDecimal rationalNumber = new BigDecimal(
+										(Double) filter);
+								queryBuilder.addCriterion("a." + parsedKey,
+										" >= ", rationalNumber, true);
+							} else if (filter instanceof Number) {
+								queryBuilder.addCriterion("a." + parsedKey,
+										" >= ", filter, true);
+							} else if (filter instanceof Date) {
+								queryBuilder
+										.addCriterionDateRangeFromTruncatedToDay(
+												"a." + parsedKey, (Date) filter);
+							}
+						} else if (key.contains("toRange-")) {
+							String parsedKey = key.substring(8);
+							if (filter instanceof Double) {
+								BigDecimal rationalNumber = new BigDecimal(
+										(Double) filter);
+								queryBuilder.addCriterion("a." + parsedKey,
+										" <= ", rationalNumber, true);
+							} else if (filter instanceof Number) {
+								queryBuilder.addCriterion("a." + parsedKey,
+										" <= ", filter, true);
+							} else if (filter instanceof Date) {
+								queryBuilder
+										.addCriterionDateRangeToTruncatedToDay(
+												"a." + parsedKey, (Date) filter);
+							}
+						} else if (key.contains("list-")) {
+							// if searching elements from list
+							String parsedKey = key.substring(5);
+							queryBuilder.addSqlCriterion(":" + parsedKey
+									+ " in elements(a." + parsedKey + ")",
+									parsedKey, filter);
+						}
+						// if not ranged search
+						else {
+							if (filter instanceof String) {
+								// if contains dot, that means join is needed
+								String filterString = (String) filter;
+								queryBuilder.addCriterionWildcard("a." + key,
+										filterString, true);
+							} else if (filter instanceof Date) {
+								queryBuilder.addCriterionDateTruncatedToDay(
+										"a." + key, (Date) filter);
+							} else if (filter instanceof Number) {
+								queryBuilder.addCriterion("a." + key, " = ",
+										filter, true);
+							} else if (filter instanceof Boolean) {
+								queryBuilder.addCriterion("a." + key, " is ",
+										filter, true);
+							} else if (filter instanceof Enum) {
+								if (filter instanceof IdentifiableEnum) {
+									String enumIdKey = new StringBuilder(key)
+											.append("Id").toString();
+									queryBuilder
+											.addCriterion("a." + enumIdKey,
+													" = ",
+													((IdentifiableEnum) filter)
+															.getId(), true);
+								} else {
+									queryBuilder.addCriterionEnum("a." + key,
+											(Enum) filter);
+								}
+							} else if (BaseEntity.class.isAssignableFrom(filter
+									.getClass())) {
+								queryBuilder.addCriterionEntity("a." + key,
+										filter);
+							} else if (filter instanceof UniqueEntity
+									|| filter instanceof IEntity) {
+								queryBuilder.addCriterionEntity("a." + key,
+										filter);
+							}
+						}
+					}
+				}
+			}
+		}
+		queryBuilder.addPaginationConfiguration(config, "a");
+
+		return queryBuilder;
 	}
 
 }
