@@ -61,7 +61,7 @@ public abstract class AccountEntity extends BusinessEntity {
 	private String externalRef2;
 
 	@Embedded
-	private Name name;
+	private Name name = new Name();
 
 	@Embedded
 	private Address address = new Address();
@@ -97,10 +97,10 @@ public abstract class AccountEntity extends BusinessEntity {
 	}
 
 	public Name getName() {
-		if (name == null) {
-			name = new Name();
+		if(name!=null){
+			return name;
 		}
-		return name;
+		return new Name();
 	}
 
 	public void setName(Name name) {
@@ -213,11 +213,11 @@ public abstract class AccountEntity extends BusinessEntity {
 	}
 
 	public String getCustomFieldsAsJson() {
-		String result="";
-		String sep="";
-		for(Entry<String,CustomFieldInstance> cf:customFields.entrySet()){
-			result+=sep+cf.getValue().toJson();
-			sep=";";
+		String result = "";
+		String sep = "";
+		for (Entry<String, CustomFieldInstance> cf : customFields.entrySet()) {
+			result += sep + cf.getValue().toJson();
+			sep = ";";
 		}
 		return result;
 	}

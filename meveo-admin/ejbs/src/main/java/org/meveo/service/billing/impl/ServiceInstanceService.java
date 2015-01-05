@@ -133,7 +133,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 					"subscription is not active");
 		}
 
-		ServiceInstance serviceInst = findByCodeAndSubscription(em,
+		ServiceInstance serviceInst = findByCodeAndSubscription(
 				serviceCode, subscription);
 		if (serviceInst != null) {
 			throw new IncorrectServiceInstanceException(

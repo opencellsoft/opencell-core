@@ -14,7 +14,7 @@ import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
 
 public abstract class AccountBean<T extends AccountEntity> extends
-		StatefulBaseBean<T> {
+		StatelessBaseBean<T> {
 
 	private static final long serialVersionUID = 3407699633028715707L;
 

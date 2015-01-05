@@ -29,6 +29,9 @@
 			<hftl:column label="#{messages['user.userName']}" field="userName" />
 			<hftl:column label="#{messages['user.roles']}" field="roles"
 				childField="name" isList="true" sort="false" />
+			<hftl:column label="#{messages['commons.connectedProvider']}"
+				field="provider" childField="code"
+				rendered="#{identity.hasPermission('superAdmin','superAdminManagement')}" />
 
 			<hftl:actionsColumn
 				permission="#{identity.hasPermission('administration','administrationManagement')}" />

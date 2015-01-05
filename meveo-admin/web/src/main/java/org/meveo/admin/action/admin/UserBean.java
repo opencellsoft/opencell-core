@@ -27,11 +27,12 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.PostConstruct;
-import javax.ejb.Stateful;
 import javax.enterprise.context.ConversationScoped;
 import javax.faces.event.ActionEvent;
 import javax.inject.Inject;
@@ -43,6 +44,7 @@ import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.action.StatefulBaseBean;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.User;
@@ -56,6 +58,8 @@ import org.meveo.service.crm.impl.ProviderService;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.DualListModel;
+import org.primefaces.model.LazyDataModel;
+import org.primefaces.model.SortOrder;
 import org.primefaces.model.StreamedContent;
 import org.primefaces.model.UploadedFile;
 import org.slf4j.Logger;
@@ -68,7 +72,6 @@ import org.slf4j.LoggerFactory;
  * custom JSF components.
  */
 @Named
-@Stateful
 @ConversationScoped
 public class UserBean extends StatefulBaseBean<User> {
 
@@ -572,4 +575,115 @@ public class UserBean extends StatefulBaseBean<User> {
 		}
 	}
 
+	@Override
+	public LazyDataModel<User> getLazyDataModel(
+			Map<String, Object> inputFilters, boolean forceReload) {
+
+		Role superAdmin = roleService.findByName("superAdministrateur");
+		final boolean filteredByProvider = getCurrentUser().getRoles()
+				.contains(superAdmin) ? false : true;
+
+		if (dataModel == null || forceReload) {
+			final Map<String, Object> filters = inputFilters;
+			dataModel = new LazyDataModel<User>() {
+				private static final long serialVersionUID = 1L;
+
+				private Integer rowCount;
+
+				private Integer rowIndex;
+
+				@Override
+				public List<User> load(int first, int pageSize,
+						String sortField, SortOrder sortOrder,
+						Map<String, String> loadingFilters) {
+
+					if (!StringUtils.isBlank(getDefaultSort())
+							&& StringUtils.isBlank(sortField)) {
+						sortField = getDefaultSort();
+					}
+
+					Map<String, Object> copyOfFilters = new HashMap<String, Object>();
+					copyOfFilters.putAll(filters);
+					PaginationConfiguration paginationConfigurationRowCount = new PaginationConfiguration(
+							first, pageSize, copyOfFilters,
+							getListFieldsToFetch(), sortField, sortOrder);
+					paginationConfigurationRowCount
+							.setFilteredByProvider(filteredByProvider);
+					setRowCount((int) getPersistenceService().count(
+							paginationConfigurationRowCount));
+					if (getRowCount() > 0) {
+						copyOfFilters = new HashMap<String, Object>();
+						copyOfFilters.putAll(filters);
+						PaginationConfiguration paginationConfigurationList = new PaginationConfiguration(
+								first, pageSize, copyOfFilters,
+								getListFieldsToFetch(), sortField, sortOrder);
+						paginationConfigurationList
+								.setFilteredByProvider(filteredByProvider);
+						return getPersistenceService().list(
+								paginationConfigurationList);
+					} else {
+						return null; // no need to load then
+					}
+				}
+
+				@Override
+				public User getRowData(String rowKey) {
+					return getPersistenceService().findById(
+							Long.valueOf(rowKey));
+				}
+
+				@Override
+				public Object getRowKey(User object) {
+					return object.getId();
+				}
+
+				@Override
+				public void setRowIndex(int rowIndex) {
+					if (rowIndex == -1 || getPageSize() == 0) {
+						this.rowIndex = rowIndex;
+					} else {
+						this.rowIndex = rowIndex % getPageSize();
+					}
+				}
+
+				@SuppressWarnings("unchecked")
+				@Override
+				public User getRowData() {
+					return ((List<User>) getWrappedData()).get(rowIndex);
+				}
+
+				@SuppressWarnings({ "unchecked" })
+				@Override
+				public boolean isRowAvailable() {
+					if (getWrappedData() == null) {
+						return false;
+					}
+
+					return rowIndex >= 0
+							&& rowIndex < ((List<User>) getWrappedData())
+									.size();
+				}
+
+				@Override
+				public int getRowIndex() {
+					return this.rowIndex;
+				}
+
+				@Override
+				public void setRowCount(int rowCount) {
+					this.rowCount = rowCount;
+				}
+
+				@Override
+				public int getRowCount() {
+					if (rowCount == null) {
+						rowCount = (int) getPersistenceService().count();
+					}
+					return rowCount;
+				}
+
+			};
+		}
+		return dataModel;
+	}
 }

@@ -30,7 +30,7 @@ import javax.inject.Named;
 
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
-import org.meveo.admin.action.StatelessBaseBean;
+import org.meveo.admin.action.StatefulBaseBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.EntityListDataModelPF;
 import org.meveo.model.billing.InstanceStatusEnum;
@@ -59,7 +59,7 @@ import org.meveo.service.medina.impl.AccessService;
 
 @Named
 @ConversationScoped
-public class SubscriptionBean extends StatelessBaseBean<Subscription> {
+public class SubscriptionBean extends StatefulBaseBean<Subscription> {
 
 	private static final long serialVersionUID = 1L;
 

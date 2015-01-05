@@ -529,7 +529,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 		Long countryId = country.getId();
 
 		InvoiceSubcategoryCountry invoiceSubcategoryCountry = invoiceSubCategoryCountryService
-				.findInvoiceSubCategoryCountry(em, invoiceSubCategory.getId(),
+				.findInvoiceSubCategoryCountry( invoiceSubCategory.getId(),
 						countryId, creator.getProvider());
 		if (invoiceSubcategoryCountry == null) {
 			throw new IncorrectChargeTemplateException(

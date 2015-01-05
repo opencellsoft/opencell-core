@@ -27,6 +27,8 @@ import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -38,6 +40,37 @@ import org.meveo.model.crm.Provider;
 @Entity
 @Table(name = "BILLING_RATED_TRANSACTION")
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_RATED_TRANSACTION_SEQ")
+@NamedQueries({
+		@NamedQuery(name = "RatedTransaction.listInvoiced", query = "SELECT r FROM RatedTransaction r where r.wallet=:wallet and invoice is not null order by usageDate desc "),
+		@NamedQuery(name = "RatedTransaction.countNotInvoinced", query = "SELECT count(r) FROM RatedTransaction r WHERE r.billingAccount=:billingAccount"
+				+ " AND r.status=org.meveo.model.billing.RatedTransactionStatusEnum.OPEN"
+				+ " AND r.doNotTriggerInvoicing=false"
+				+ " AND r.amountWithoutTax<>0" + " AND r.invoice is null "),
+		@NamedQuery(name = "RatedTransaction.countNotInvoincedDisplayFree", query = "SELECT count(r) FROM RatedTransaction r WHERE r.billingAccount=:billingAccount"
+				+ " AND r.status=org.meveo.model.billing.RatedTransactionStatusEnum.OPEN"
+				+ " AND r.doNotTriggerInvoicing=false"
+				+ " AND r.invoice is null "),
+		@NamedQuery(name = "RatedTransaction.sumbillingRunByCycle", query = "SELECT sum(r.amountWithoutTax),sum(r.amountWithTax),sum(r.amountTax) FROM RatedTransaction r"
+				+ " WHERE r.status=:status AND r.doNotTriggerInvoicing=false AND r.amountWithoutTax<>0 AND r.invoice is null"
+				+ " AND r.billingAccount.billingCycle=:billingCycle"
+				+ " AND (r.billingAccount.nextInvoiceDate >= :startDate)"
+				+ " AND (r.billingAccount.nextInvoiceDate < :endDate)"),
+		@NamedQuery(name = "RatedTransaction.sumbillingRunByList", query = "SELECT sum(r.amountWithoutTax),sum(r.amountWithTax),sum(r.amountTax) FROM RatedTransaction r "
+				+ "WHERE r.status=:status AND r.doNotTriggerInvoicing=false AND r.amountWithoutTax<>0 AND r.invoice is null"
+				+ " AND r.billingAccount.id IN :billingAccountList"),
+		@NamedQuery(name = "RatedTransaction.updateInvoiced", query = "UPDATE RatedTransaction r "
+				+ "SET r.billingRun=:billingRun,r.invoice=:invoice,r.status=org.meveo.model.billing.RatedTransactionStatusEnum.BILLED "
+				+ "where r.invoice is null"
+				+ " and r.status=org.meveo.model.billing.RatedTransactionStatusEnum.OPEN "
+				+ " and r.doNotTriggerInvoicing=false"
+				+ " AND r.amountWithoutTax<>0"
+				+ " and r.billingAccount=:billingAccount"),
+		@NamedQuery(name = "RatedTransaction.updateInvoicedDisplayFree", query = "UPDATE RatedTransaction r "
+				+ "SET r.billingRun=:billingRun,r.invoice=:invoice,r.status=org.meveo.model.billing.RatedTransactionStatusEnum.BILLED "
+				+ "where r.invoice is null"
+				+ " and r.status=org.meveo.model.billing.RatedTransactionStatusEnum.OPEN "
+				+ " and r.doNotTriggerInvoicing=false"
+				+ " and r.billingAccount=:billingAccount") })
 public class RatedTransaction extends BaseEntity {
 
 	private static final long serialVersionUID = 1L;

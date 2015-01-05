@@ -31,7 +31,7 @@
 
 		<hftl:entityPopup id="searchCustomerPopup"
 			header="#{messages['customer.popup.header']}"
-			backingBean="#{customerBean}"
+			backingBean="#{customerListBean}"
 			searchField1Label="#{messages['customer.code']}" searchField1="code"
 			column1Label="#{messages['customer.code']}" column1="code"
 			selection="#{customerAccountBean.entity.customer}"
@@ -284,7 +284,8 @@
 											rendered="#{customerAccountBean.isActiveAccount() and !customerAccountBean.edit}"
 											outcome="addBillingAccount"
 											value="#{messages['customerAccount.buttonAddBillingAccount']}">
-											<f:param name="cid" value="#{javax.enterprise.context.conversation.id}" />
+											<f:param name="cid"
+												value="#{javax.enterprise.context.conversation.id}" />
 										</p:button>
 									</hf:formButtons>
 								</p:panel>
@@ -321,7 +322,8 @@
 										outcome="addNewOperation"
 										rendered="#{customerAccountBean.isActiveAccount()}"
 										includeViewParams="true">
-										<f:param name="cid" value="#{javax.enterprise.context.conversation.id}" />
+										<f:param name="cid"
+											value="#{javax.enterprise.context.conversation.id}" />
 									</p:button>
 									<p:commandButton
 										value="#{messages['customerAccount.addPaymentCheck']}"
@@ -332,7 +334,8 @@
 										rendered="#{customerAccountBean.isActiveAccount()}">
 										<f:param name="objectId"
 											value="#{customerAccountBean.entity.id}" />
-										<f:param name="cid" value="#{javax.enterprise.context.conversation.id}" />
+										<f:param name="cid"
+											value="#{javax.enterprise.context.conversation.id}" />
 									</p:button>
 								</p:panelGrid>
 							</h:form>

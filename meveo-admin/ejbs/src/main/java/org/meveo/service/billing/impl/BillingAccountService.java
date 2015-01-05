@@ -21,11 +21,10 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
-import java.util.concurrent.Future;
 
-import javax.ejb.AsyncResult;
-import javax.ejb.Asynchronous;
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
@@ -263,19 +262,22 @@ public class BillingAccountService extends AccountService<BillingAccount> {
 		return null;
 	}
 
-	@Asynchronous
-	public Future<Boolean> updateBillingAccountTotalAmounts(EntityManager em,
-			long billingAccountId, BillingRun billingRun, boolean entreprise,
+	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+	public boolean updateBillingAccountTotalAmounts(
+			BillingAccount billingAccount, BillingRun billingRun,
 			User currentUser) {
-		log.info("updateBillingAccountTotalAmounts  billingAccountId:"
-				+ billingAccountId);
-		BillingAccount billingAccount = findById(em, billingAccountId);
-		ratedTransactionService.billingAccountTotalAmounts(billingAccount,
-				entreprise);
-		billingAccount.setBillingRun(billingRun);
-		setProvider(currentUser.getProvider());
-		update(billingAccount, currentUser);
-		return new AsyncResult<Boolean>(true);
+		log.info("updateBillingAccountTotalAmounts  billingAccount:"
+				+ billingAccount.getCode());
+		getEntityManager().merge(billingAccount);
+		boolean result=ratedTransactionService.isBillingAccountBillable(billingAccount);
+		if(result){
+			ratedTransactionService.billingAccountTotalAmounts(billingAccount);
+			getEntityManager().merge(billingRun);
+			billingAccount.setBillingRun(billingRun);
+			setProvider(currentUser.getProvider());
+			update(billingAccount, currentUser);
+		}
+		return result;
 	}
 
 	@SuppressWarnings("unchecked")

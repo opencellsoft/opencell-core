@@ -18,11 +18,10 @@ package org.meveo.service.billing.impl;
 
 import java.util.Date;
 import java.util.List;
-import java.util.concurrent.Future;
 
-import javax.ejb.AsyncResult;
-import javax.ejb.Asynchronous;
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
@@ -279,14 +278,13 @@ public class InvoiceService extends PersistenceService<Invoice> {
 		return null;
 	}
 
-	@Asynchronous
-	public Future<Boolean> createAgregatesAndInvoice(EntityManager em,
+	public void createAgregatesAndInvoice(
 			BillingAccount billingAccount, BillingRun billingRun,
 			User currentUser) throws BusinessException, Exception {
 		try {
-			billingAccount = em.find(BillingAccount.class,
-					billingAccount.getId());
-			billingRun = em.find(BillingRun.class, billingRun.getId());
+			EntityManager em = getEntityManager();
+			em.merge(billingAccount);
+			em.merge(billingRun);
 			Long startDate = System.currentTimeMillis();
 			BillingCycle billingCycle = billingRun.getBillingCycle();
 			if (billingCycle == null) {
@@ -310,11 +308,37 @@ public class InvoiceService extends PersistenceService<Invoice> {
 			invoice.setPaymentMethod(billingAccount.getPaymentMethod());
 			invoice.setProvider(billingRun.getProvider());
 			create(invoice, currentUser, currentUser.getProvider());
-			ratedTransactionService.createInvoiceAndAgregates(em,
+			ratedTransactionService.createInvoiceAndAgregates(
 					billingAccount, invoice, currentUser);
-
-			ratedTransactionService.updateRatedTransactions(em, billingRun,
-					billingAccount, invoice);
+			log.debug("invoice attached ? :{}",em.contains(invoice));
+			if(!em.contains(invoice)){
+				em.merge(invoice);
+				log.debug("now invoice attached ? :{}",em.contains(invoice));
+			}
+			log.debug("billingAccount attached ? :{}",em.contains(billingAccount));
+			if(!em.contains(billingAccount)){
+				em.merge(billingAccount);
+				log.debug("now billingAccount attached ? :{}",em.contains(billingAccount));
+			}
+			log.debug("billingRun attached ? :{}",em.contains(billingRun));
+			if(!em.contains(billingRun)){
+				em.merge(billingRun);
+				log.debug("now billingRun attached ? :{}",em.contains(invoice));
+			}
+			if(billingRun.getProvider().isDisplayFreeTransacInInvoice()){
+				em.createNamedQuery("RatedTransaction.updateInvoicedDisplayFree")
+				.setParameter("billingAccount", billingAccount)
+				.setParameter("billingRun", billingRun)
+				.setParameter("invoice", invoice)
+				.executeUpdate();
+			} else {
+				em.createNamedQuery("RatedTransaction.updateInvoiced")
+				.setParameter("billingAccount", billingAccount)
+				.setParameter("billingRun", billingRun)
+				.setParameter("invoice", invoice)
+				.executeUpdate();
+				
+			}
 
 			StringBuffer num1 = new StringBuffer("000000000");
 			num1.append(invoice.getId() + "");
@@ -330,17 +354,14 @@ public class InvoiceService extends PersistenceService<Invoice> {
 			log.info("createAgregatesAndInvoice BR_ID=" + billingRun.getId()
 					+ ", BA_ID=" + billingAccount.getId() + ", Time en ms="
 					+ (endDate - startDate));
-
-			return new AsyncResult<Boolean>(true);
 		} catch (Exception e) {
 			log.error("Error for BA=" + billingAccount.getCode() + " : "
 					+ e.getMessage());
+			e.printStackTrace();
 			RejectedBillingAccount rejectedBA = new RejectedBillingAccount(
 					billingAccount, billingRun, e.getMessage());
 			rejectedBillingAccountService.create(rejectedBA);
 		}
-
-		return new AsyncResult<Boolean>(false);
 	}
 
 }

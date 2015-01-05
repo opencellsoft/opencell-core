@@ -25,8 +25,9 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.annotation.Resource;
+import javax.enterprise.context.Conversation;
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.transaction.TransactionSynchronizationRegistry;
 
@@ -43,6 +44,8 @@ import org.meveo.model.UniqueEntity;
 import org.meveo.model.admin.User;
 import org.meveo.model.crm.Provider;
 import org.meveo.service.base.local.IPersistenceService;
+import org.meveo.util.MeveoJpa;
+import org.meveo.util.MeveoJpaForJobs;
 
 /**
  * Generic implementation that provides the default implementation for
@@ -52,8 +55,16 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService
 		implements IPersistenceService<E> {
 	protected final Class<E> entityClass;
 
-	@PersistenceContext(unitName = "MeveoAdmin")
-	protected EntityManager em;
+	@Inject
+	@MeveoJpa
+	private EntityManager em;
+
+	@Inject
+	@MeveoJpaForJobs
+	private EntityManager emfForJobs;
+
+	@Inject
+	private Conversation conversation;
 
 	@Resource
 	private TransactionSynchronizationRegistry txReg;
@@ -241,7 +252,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService
 			}
 		}
 		checkProvider(e);
-		em.merge(e);
+		getEntityManager().merge(e);
 
 		log.debug("end of update {} entity (id={}).", e.getClass()
 				.getSimpleName(), e.getId());
@@ -270,7 +281,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService
 			((BaseEntity) e).setProvider(provider);
 		}
 
-		em.persist(e);
+		getEntityManager().persist(e);
 
 		log.debug("end of create {}. entity id={}.", e.getClass()
 				.getSimpleName(), e.getId());
@@ -361,7 +372,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService
 	 * @return query to filter entities according pagination configuration data.
 	 */
 	@SuppressWarnings("rawtypes")
-	private QueryBuilder getQuery(PaginationConfiguration config) {
+	public QueryBuilder getQuery(PaginationConfiguration config) {
 
 		final Class<? extends E> entityClass = getEntityClass();
 
@@ -511,9 +522,18 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService
 	}
 
 	public EntityManager getEntityManager() {
+		EntityManager result = emfForJobs;
+		if (conversation != null) {
+			try {
+				conversation.isTransient();
+				result = em;
+			} catch (Exception e) {
+			}
+		}
+
 		// log.debug("em.txKey={}, em.hashCode={}", txReg.getTransactionKey(),
 		// em.hashCode());
-		return em;
+		return result;
 	}
 
 	public void updateAudit(E e) {

@@ -16,27 +16,27 @@
 		<hf:formPanel id="formPanel" formId="triggeredTemplateId"
 			label="#{messages['menu.triggeredEdrTemplates']}"
 			backingBean="#{triggeredEDRTemplateBean}">
-
-			<hf:formField label="#{messages['businessEntity.code']}" field="code"
-				required="true" validateUnique="true" />
-			<hf:formField label="#{messages['businessEntity.description']}"
-				field="description" id="description" />
-			<hf:formField label="#{messages['triggeredEdrTemplate.conditionEl']}"
-				field="conditionEl" />
-			<hf:formField label="#{messages['triggeredEdrTemplate.quantityEl']}"
-				field="quantityEl" />
-			<hf:formField label="#{messages['triggeredEdrTemplate.param1El']}"
-				field="param1El" />
-			<hf:formField label="#{messages['triggeredEdrTemplate.param2El']}"
-				field="param2El" />
-			<hf:formField label="#{messages['triggeredEdrTemplate.param3El']}"
-				field="param3El" />
-			<hf:formField label="#{messages['triggeredEdrTemplate.param4El']}"
-				field="param4El" />
-			<hf:formField
-				label="#{messages['triggeredEdrTemplate.subscriptionEl']}"
-				field="subscriptionEl" />
-
+			<p:panelGrid columns="2">
+				<hf:formField label="#{messages['businessEntity.code']}" field="code"
+					required="true" validateUnique="true" />
+				<hf:formField label="#{messages['businessEntity.description']}"
+					field="description" id="description" />
+				<hf:formField label="#{messages['triggeredEdrTemplate.conditionEl']}"
+					field="conditionEl" textArea="true" maxlength="1000"/>
+				<hf:formField label="#{messages['triggeredEdrTemplate.quantityEl']}"
+					field="quantityEl"  textArea="true" maxlength="1000" required="true"/>
+				<hf:formField label="#{messages['triggeredEdrTemplate.param1El']}"
+					field="param1El"  textArea="true" maxlength="1000"/>
+				<hf:formField label="#{messages['triggeredEdrTemplate.param2El']}"
+					field="param2El"  textArea="true" maxlength="1000"/>
+				<hf:formField label="#{messages['triggeredEdrTemplate.param3El']}"
+					field="param3El"  textArea="true" maxlength="1000"/>
+				<hf:formField label="#{messages['triggeredEdrTemplate.param4El']}"
+					field="param4El"  textArea="true" maxlength="1000"/>
+				<hf:formField
+					label="#{messages['triggeredEdrTemplate.subscriptionEl']}"
+					field="subscriptionEl"  textArea="true" maxlength="1000"/>
+			</p:panelGrid>
 		</hf:formPanel>
 
 	</ui:define>

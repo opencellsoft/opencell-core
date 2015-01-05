@@ -23,7 +23,7 @@ public class ExceptionHandler {
 
 		evt.handled();
 		
-		log.error("Caught exception={}" + evt.getException());
+		log.error("Caught exception={}", evt.getException());
 
 		try {
 			response.sendRedirect(response.encodeRedirectURL(request
@@ -39,7 +39,7 @@ public class ExceptionHandler {
 
 		evt.handled();
 		
-		log.error("Caught exception={}" + evt.getException());
+		log.error("Caught exception={}", evt.getException());
 
 		try {
 			response.sendRedirect(response.encodeRedirectURL(request
@@ -55,7 +55,7 @@ public class ExceptionHandler {
 
 		evt.handled();
 		
-		log.error("Caught exception={}" + evt.getException());
+		log.error("Caught exception={}", evt.getException());
 
 		try {
 			response.sendRedirect(response.encodeRedirectURL(request
@@ -71,7 +71,7 @@ public class ExceptionHandler {
 
 		evt.handled();
 		
-		log.error("Caught exception={}" + evt.getException());
+		log.error("Caught exception={}", evt.getException());
 
 		try {
 			response.sendRedirect(response.encodeRedirectURL(request
@@ -87,7 +87,7 @@ public class ExceptionHandler {
 
 		evt.handled();
 		
-		log.error("Caught exception={}" + evt.getException());
+		log.error("Caught exception={}", evt.getException());
 
 		try {
 			response.sendRedirect(response.encodeRedirectURL(request
@@ -103,7 +103,7 @@ public class ExceptionHandler {
 
 		evt.handled();
 		
-		log.error("Caught exception={}" + evt.getException());
+		log.error("Caught exception={}", evt.getException());
 
 		try {
 			response.sendRedirect(response.encodeRedirectURL(request

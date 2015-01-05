@@ -42,7 +42,6 @@ import org.primefaces.component.datatable.DataTable;
 import org.primefaces.model.DualListModel;
 
 @Named
-@Stateful
 @ConversationScoped
 public class UsageChargeTemplateBean extends StatefulBaseBean<UsageChargeTemplate> {
 	private static final long serialVersionUID = 1L;

@@ -25,6 +25,7 @@ import javax.enterprise.context.ConversationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.action.StatelessBaseBean;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.model.catalog.OfferTemplate;
@@ -124,6 +125,7 @@ public class OfferTemplateBean extends StatelessBaseBean<OfferTemplate> {
 		Map<String, Object> filters = getFilters();
 		filters.put("disabled", false);
 		PaginationConfiguration config = new PaginationConfiguration(filters);
+		config.setFetchFields(Arrays.asList("serviceTemplates"));
 
 		return offerTemplateService.list(config);
 	}

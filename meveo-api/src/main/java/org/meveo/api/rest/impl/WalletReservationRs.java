@@ -3,7 +3,6 @@ package org.meveo.api.rest.impl;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
-import javax.persistence.EntityManager;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.POST;
@@ -23,7 +22,6 @@ import org.meveo.api.logging.LoggingInterceptor;
 import org.meveo.api.rest.security.RSSecured;
 import org.meveo.model.crm.Provider;
 import org.meveo.service.crm.impl.ProviderService;
-import org.meveo.util.MeveoJpaForJobs;
 
 /**
  * @author Edward P. Legaspi
@@ -42,17 +40,13 @@ public class WalletReservationRs extends BaseRs {
 	@Inject
 	private ProviderService providerService;
 
-	@MeveoJpaForJobs
-	@Inject
-	private EntityManager em;
-
 	@POST
 	@Path("/")
 	public ActionStatus create(WalletReservationDto walletReservation)
 			throws MeveoApiException, BusinessException {
 		ActionStatus result = new ActionStatus();
 
-		Provider provider = providerService.findByCode(em,
+		Provider provider = providerService.findByCode(
 				paramBean.getProperty("default.provider.code", "DEMO"));
 
 		try {
