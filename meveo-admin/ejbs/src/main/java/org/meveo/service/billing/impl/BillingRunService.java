@@ -447,10 +447,12 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 
 	}
 
+	@SuppressWarnings("unchecked")
 	public List<BillingRun> getbillingRuns(Provider provider,
 			BillingRunStatusEnum... status) {
 		BillingRunStatusEnum bRStatus;
-		log.debug("getbillingRuns for provider "+provider==null?"null":provider.getCode());
+		log.debug("getbillingRuns for provider " + provider == null ? "null"
+				: provider.getCode());
 		QueryBuilder qb = new QueryBuilder(BillingRun.class, "c", null,
 				provider);
 
@@ -463,7 +465,8 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 		}
 		qb.endOrClause();
 
-		List<BillingRun> billingRuns = qb.getQuery(getEntityManager()).getResultList();
+		List<BillingRun> billingRuns = qb.getQuery(getEntityManager())
+				.getResultList();
 
 		return billingRuns;
 	}
@@ -506,69 +509,73 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 		}
 	}
 
-	public List<BillingAccount> getBillingAccounts(BillingRun billingRun){
+	public List<BillingAccount> getBillingAccounts(BillingRun billingRun) {
 		List<BillingAccount> result = null;
 		getEntityManager().merge(billingRun);
 		BillingCycle billingCycle = billingRun.getBillingCycle();
-		
-		Object[] ratedTransactionsAmounts=null;
+
+		Object[] ratedTransactionsAmounts = null;
 		if (billingCycle != null) {
 			Date startDate = billingRun.getStartDate();
 			Date endDate = billingRun.getEndDate();
-			ratedTransactionsAmounts = (Object[]) getEntityManager().createNamedQuery("RatedTransaction.sumbillingRunByCycle")
+			ratedTransactionsAmounts = (Object[]) getEntityManager()
+					.createNamedQuery("RatedTransaction.sumbillingRunByCycle")
 					.setParameter("status", RatedTransactionStatusEnum.OPEN)
-					.setParameter("billinCycle", billingCycle)
+					.setParameter("billingCycle", billingCycle)
 					.setParameter("startDate", startDate)
-					.setParameter("endDate", endDate)
-					.getSingleResult();
-			result= billingAccountService.findBillingAccounts(
-					billingCycle, startDate, endDate);
+					.setParameter("endDate", endDate).getSingleResult();
+			result = billingAccountService.findBillingAccounts(billingCycle,
+					startDate, endDate);
 		} else {
-			result= new ArrayList<BillingAccount>();
+			result = new ArrayList<BillingAccount>();
 			String[] baIds = billingRun.getSelectedBillingAccounts().split(",");
 			for (String id : Arrays.asList(baIds)) {
 				Long baId = Long.valueOf(id);
 				result.add(billingAccountService.findById(baId));
 			}
-			ratedTransactionsAmounts = (Object[]) getEntityManager().createNamedQuery("RatedTransaction.sumbillingRunByList")
-			.setParameter("status", RatedTransactionStatusEnum.OPEN)
-			.setParameter("billingAccountList", result)
-			.getSingleResult();
+			ratedTransactionsAmounts = (Object[]) getEntityManager()
+					.createNamedQuery("RatedTransaction.sumbillingRunByList")
+					.setParameter("status", RatedTransactionStatusEnum.OPEN)
+					.setParameter("billingAccountList", result)
+					.getSingleResult();
 		}
 		if (ratedTransactionsAmounts != null) {
-			billingRun.setPrAmountWithoutTax((BigDecimal) ratedTransactionsAmounts[0]);
+			billingRun
+					.setPrAmountWithoutTax((BigDecimal) ratedTransactionsAmounts[0]);
 			billingRun
 					.setPrAmountWithTax((BigDecimal) ratedTransactionsAmounts[1]);
 			billingRun.setPrAmountTax((BigDecimal) ratedTransactionsAmounts[2]);
 		}
 		return result;
 	}
-	
+
 	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
-	public void createAgregatesAndInvoice(
-			BillingRun billingRun, User currentUser) throws BusinessException,
-			Exception {
-		billingRun = findById( billingRun.getId());
-		List<BillingAccount> billingAccounts = getEntityManager().createNamedQuery("BillingAccount.listByBillingRun",BillingAccount.class)
+	public void createAgregatesAndInvoice(BillingRun billingRun,
+			User currentUser) throws BusinessException, Exception {
+		billingRun = findById(billingRun.getId());
+		List<BillingAccount> billingAccounts = getEntityManager()
+				.createNamedQuery("BillingAccount.listByBillingRun",
+						BillingAccount.class)
 				.setParameter("billingRun", billingRun).getResultList();
 
 		for (BillingAccount billingAccount : billingAccounts) {
 			try {
-				invoiceService.createAgregatesAndInvoice( billingAccount,billingRun, currentUser);
+				invoiceService.createAgregatesAndInvoice(billingAccount,
+						billingRun, currentUser);
 			} catch (Exception e) {
 				log.error("Error for BA=" + billingAccount.getCode() + " : "
 						+ e.getMessage());
 			}
 		}
 
-		billingRun = findById( billingRun.getId(), true);
+		billingRun = findById(billingRun.getId(), true);
 		billingRun.setStatus(BillingRunStatusEnum.TERMINATED);
 
 		setProvider(currentUser.getProvider());
 		update(billingRun, currentUser);
 	}
 
-	public void validate(BillingRun billingRun,User user) {
+	public void validate(BillingRun billingRun, User user) {
 		getEntityManager().merge(billingRun);
 		for (Invoice invoice : billingRun.getInvoices()) {
 			invoiceService.setInvoiceNumber(invoice, user);

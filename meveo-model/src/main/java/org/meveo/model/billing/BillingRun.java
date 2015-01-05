@@ -31,8 +31,6 @@ import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
@@ -102,7 +100,7 @@ public class BillingRun extends AuditableEntity {
 	@OneToMany(mappedBy = "billingRun", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	private Set<BillingRunList> billingRunLists = new HashSet<BillingRunList>();
 
-	@OneToMany(mappedBy = "billingRun",fetch = FetchType.LAZY)
+	@OneToMany(mappedBy = "billingRun", fetch = FetchType.LAZY)
 	private List<BillingAccount> billableBillingAccounts = new ArrayList<BillingAccount>();
 
 	@OneToMany(mappedBy = "billingRun", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
@@ -134,20 +132,19 @@ public class BillingRun extends AuditableEntity {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "PR_LANGUAGE_ID")
 	private Language language;
-	
+
 	@Column(name = "SELECTED_BILLING_ACCOUNTS")
 	private String selectedBillingAccounts;
-	
+
 	@Column(name = "XML_INVOICE_GENERATED")
-	private Boolean xmlInvoiceGenerated=Boolean.FALSE;
+	private Boolean xmlInvoiceGenerated = Boolean.FALSE;
 
 	@Transient
 	PreInvoicingReportsDTO preInvoicingReports = new PreInvoicingReportsDTO();
 
 	@Transient
 	PostInvoicingReportsDTO postInvoicingReports = new PostInvoicingReportsDTO();
-	
-	
+
 	@OneToMany(mappedBy = "billingRun", fetch = FetchType.LAZY)
 	private List<RejectedBillingAccount> rejectedBillingAccounts = new ArrayList<RejectedBillingAccount>();
 
@@ -195,7 +192,8 @@ public class BillingRun extends AuditableEntity {
 		return billableBillingAcountNumber;
 	}
 
-	public void setBillableBillingAcountNumber(Integer billableBillingAcountNumber) {
+	public void setBillableBillingAcountNumber(
+			Integer billableBillingAcountNumber) {
 		this.billableBillingAcountNumber = billableBillingAcountNumber;
 	}
 
@@ -211,7 +209,8 @@ public class BillingRun extends AuditableEntity {
 		return producibleAmountWithoutTax;
 	}
 
-	public void setProducibleAmountWithoutTax(BigDecimal producibleAmountWithoutTax) {
+	public void setProducibleAmountWithoutTax(
+			BigDecimal producibleAmountWithoutTax) {
 		this.producibleAmountWithoutTax = producibleAmountWithoutTax;
 	}
 
@@ -287,7 +286,8 @@ public class BillingRun extends AuditableEntity {
 		return preInvoicingReports;
 	}
 
-	public void setPreInvoicingReports(PreInvoicingReportsDTO preInvoicingReports) {
+	public void setPreInvoicingReports(
+			PreInvoicingReportsDTO preInvoicingReports) {
 		this.preInvoicingReports = preInvoicingReports;
 	}
 
@@ -295,7 +295,8 @@ public class BillingRun extends AuditableEntity {
 		return postInvoicingReports;
 	}
 
-	public void setPostInvoicingReports(PostInvoicingReportsDTO postInvoicingReports) {
+	public void setPostInvoicingReports(
+			PostInvoicingReportsDTO postInvoicingReports) {
 		this.postInvoicingReports = postInvoicingReports;
 	}
 
@@ -303,7 +304,8 @@ public class BillingRun extends AuditableEntity {
 		return billableBillingAccounts;
 	}
 
-	public void setBillableBillingAccounts(List<BillingAccount> selectedBillingAccounts) {
+	public void setBillableBillingAccounts(
+			List<BillingAccount> selectedBillingAccounts) {
 		this.billableBillingAccounts = selectedBillingAccounts;
 	}
 
@@ -367,7 +369,6 @@ public class BillingRun extends AuditableEntity {
 		this.language = language;
 	}
 
-
 	public String getSelectedBillingAccounts() {
 		return selectedBillingAccounts;
 	}
@@ -392,11 +393,11 @@ public class BillingRun extends AuditableEntity {
 			List<RejectedBillingAccount> rejectedBillingAccounts) {
 		this.rejectedBillingAccounts = rejectedBillingAccounts;
 	}
-	
+
 	public void addRejectedBillingAccounts(
 			RejectedBillingAccount rejectedBillingAccount) {
-		if(rejectedBillingAccounts==null){
-			rejectedBillingAccounts=new ArrayList<RejectedBillingAccount>();
+		if (rejectedBillingAccounts == null) {
+			rejectedBillingAccounts = new ArrayList<RejectedBillingAccount>();
 		}
 		rejectedBillingAccounts.add(rejectedBillingAccount);
 	}
