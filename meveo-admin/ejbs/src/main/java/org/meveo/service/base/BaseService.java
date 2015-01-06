@@ -34,7 +34,7 @@ public abstract class BaseService {
 	private static final Random RANDOM = new Random();
 
 	@Inject
-	private Identity identity;
+	protected Identity identity;
 
 	@Inject
 	protected Logger log;

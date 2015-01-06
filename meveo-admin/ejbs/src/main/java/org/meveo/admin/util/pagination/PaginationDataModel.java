@@ -151,7 +151,7 @@ public class PaginationDataModel<T>extends ExtendedDataModel<T> implements Arran
             wrappedKeys.clear();
             wrappedData.clear();
             final List<T> objects = loadData(new PaginationConfiguration(firstRow, numberOfRows, filters, fetchFields,
-                    getSortField(), getSortOrdering(),null));
+                    getSortField(), getSortOrdering()));
             for (T object : objects) {
                 final Serializable id = getId(object);
                 wrappedKeys.add(id);
@@ -169,7 +169,7 @@ public class PaginationDataModel<T>extends ExtendedDataModel<T> implements Arran
     public List<T> list() {
         final int numberOfRows = this.getRowCount();
         final List<T> objects = loadData(new PaginationConfiguration(0, numberOfRows, filters, fetchFields,
-                getSortField(), getSortOrdering(),null));
+                getSortField(), getSortOrdering()));
 
         return objects;
     }

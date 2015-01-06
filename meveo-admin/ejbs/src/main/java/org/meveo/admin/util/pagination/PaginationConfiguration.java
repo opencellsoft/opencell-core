@@ -24,114 +24,99 @@ import org.primefaces.model.SortOrder;
 
 public class PaginationConfiguration implements Serializable {
 
-	private static final long serialVersionUID = -2750287256630146681L;
+    private static final long serialVersionUID = -2750287256630146681L;
 
-	private int firstRow, numberOfRows;
+    private int firstRow, numberOfRows;
 
-	/** Search filters (key = field name, value = search pattern or value). */
-	private Map<String, Object> filters;
-	private Map<String, String> sortOrdering;
+    /** Search filters (key = field name, value = search pattern or value). */
+    private Map<String, Object> filters;
+    private Map<String, String> sortOrdering;
 
-	/**
-	 * Fields that needs to be fetched when selecting (like lists or other
-	 * entities).
-	 */
-	private List<String> fetchFields;
+    /**
+     * Fields that needs to be fetched when selecting (like lists or other entities).
+     */
+    private List<String> fetchFields;
 
-	private String sortField;
-	private SortOrder ordering;
-	private boolean filteredByProvider = true;
+    private String sortField;
+    private SortOrder ordering;
 
-	/**
-	 * @param firstRow
-	 * @param numberOfRows
-	 * @param filters
-	 * @param fetchFields
-	 * @param sortField
-	 * @param sortOrder
-	 */
-	public PaginationConfiguration(int firstRow, int numberOfRows,
-			Map<String, Object> filters, List<String> fetchFields,
-			String sortField, SortOrder sortOrder) {
-		this(firstRow, numberOfRows, filters, fetchFields, sortField,
-				sortOrder, null);
-	}
+    /**
+     * @param firstRow
+     * @param numberOfRows
+     * @param filters
+     * @param fetchFields
+     * @param sortField
+     * @param sortOrder
+     */
+    public PaginationConfiguration(int firstRow, int numberOfRows, Map<String, Object> filters, List<String> fetchFields, String sortField, SortOrder sortOrder) {
+        this(firstRow, numberOfRows, filters, fetchFields, sortField, sortOrder, null);
+    }
 
-	/**
-	 * @param firstRow
-	 * @param numberOfRows
-	 * @param filters
-	 * @param fetchFields
-	 * @param sortField
-	 * @param ordering
-	 * @param sortOrdering
-	 */
-	public PaginationConfiguration(int firstRow, int numberOfRows,
-			Map<String, Object> filters, List<String> fetchFields,
-			String sortField, SortOrder ordering,
-			Map<String, String> sortOrdering) {
-		this.firstRow = firstRow;
-		this.numberOfRows = numberOfRows;
-		this.filters = filters;
-		this.fetchFields = fetchFields;
-		this.sortField = sortField;
-		this.ordering = ordering;
-		this.sortOrdering = sortOrdering;
-	}
+    /**
+     * @param firstRow First row to retrieve
+     * @param numberOfRows Number of rows per page
+     * @param filters Search criteria
+     * @param fetchFields Extra fields to fetch
+     * @param sortField
+     * @param ordering
+     * @param sortOrdering
+     * @param filterByProvider Should filtering by provider be applied
+     */
+    public PaginationConfiguration(int firstRow, int numberOfRows, Map<String, Object> filters, List<String> fetchFields, String sortField, SortOrder ordering,
+            Map<String, String> sortOrdering) {
+        this.firstRow = firstRow;
+        this.numberOfRows = numberOfRows;
+        this.filters = filters;
+        this.fetchFields = fetchFields;
+        this.sortField = sortField;
+        this.ordering = ordering;
+        this.sortOrdering = sortOrdering;
+    }
 
-	/**
-	 * @param filters
-	 */
-	public PaginationConfiguration(Map<String, Object> filters) {
-		this.filters = filters;
-	}
+    /**
+     * @param filters
+     */
+    public PaginationConfiguration(Map<String, Object> filters) {
+        this.filters = filters;
+    }
 
-	public int getFirstRow() {
-		return firstRow;
-	}
+    public int getFirstRow() {
+        return firstRow;
+    }
 
-	public int getNumberOfRows() {
-		return numberOfRows;
-	}
+    public int getNumberOfRows() {
+        return numberOfRows;
+    }
 
-	public String getSortField() {
-		return sortField;
-	}
+    public String getSortField() {
+        return sortField;
+    }
 
-	public Map<String, String> getOrderings() {
-		return sortOrdering;
-	}
+    public Map<String, String> getOrderings() {
+        return sortOrdering;
+    }
 
-	public SortOrder getOrdering() {
-		return ordering;
-	}
+    public SortOrder getOrdering() {
+        return ordering;
+    }
 
-	public Map<String, Object> getFilters() {
-		return filters;
-	}
+    public Map<String, Object> getFilters() {
+        return filters;
+    }
 
-	public List<String> getFetchFields() {
-		return fetchFields;
-	}
+    public List<String> getFetchFields() {
+        return fetchFields;
+    }
 
-	public void setFetchFields(List<String> fetchFields) {
-		this.fetchFields = fetchFields;
-	}
+    public void setFetchFields(List<String> fetchFields) {
+        this.fetchFields = fetchFields;
+    }
 
-	public boolean isSorted() {
-		return ordering != null && sortField != null
-				&& sortField.trim().length() != 0;
-	}
+    public boolean isSorted() {
+        return ordering != null && sortField != null && sortField.trim().length() != 0;
+    }
 
-	public boolean isAscendingSorting() {
-		return ordering != null && ordering == SortOrder.ASCENDING;
-	}
-
-	public boolean isFilteredByProvider() {
-		return filteredByProvider;
-	}
-
-	public void setFilteredByProvider(boolean filteredByProvider) {
-		this.filteredByProvider = filteredByProvider;
-	}
+    public boolean isAscendingSorting() {
+        return ordering != null && ordering == SortOrder.ASCENDING;
+    }
 }

@@ -55,6 +55,8 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService
 		implements IPersistenceService<E> {
 	protected final Class<E> entityClass;
 
+    public static String SEARCH_SKIP_PROVIDER_CONSTRAINT = "skipProviderConstraint";
+
 	@Inject
 	@MeveoJpa
 	private EntityManager em;
@@ -376,13 +378,22 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService
 
 		final Class<? extends E> entityClass = getEntityClass();
 
-		QueryBuilder queryBuilder = new QueryBuilder(entityClass, "a",
-				config.getFetchFields(), getCurrentProvider());
+	    Map<String, Object> filters = config.getFilters();
+	    
+	    // Ignore current provider constraint if "skipProviderConstraint" parameter was passed to search
+        Provider provider = getCurrentProvider();
+        if (filters.containsKey(SEARCH_SKIP_PROVIDER_CONSTRAINT)) {
+            provider = null;
+        }
 
-		Map<String, Object> filters = config.getFilters();
+        QueryBuilder queryBuilder = new QueryBuilder(entityClass, "a", config.getFetchFields(), provider);
+
 		if (filters != null) {
 			if (!filters.isEmpty()) {
 				for (String key : filters.keySet()) {
+                    if (SEARCH_SKIP_PROVIDER_CONSTRAINT.equals(key)) {
+                        continue;
+                    }
 					Object filter = filters.get(key);
 					if (filter != null) {
 						// if ranged search (from - to fields)
@@ -476,29 +487,18 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService
 	 * exception is thrown since different provider should not be allowed to
 	 * modify (update or delete) entity.
 	 */
-	private void checkProvider(E e) {
-		if (getCurrentProvider() != null) {
-			if (e instanceof BaseEntity) {
-				Long providerId = ((BaseEntity) e).getProvider().getId();
-				Provider entityProvider = getEntityManager().find(
-						Provider.class, providerId);
-				boolean notSameProvider = !(entityProvider != null && entityProvider
-						.getId().equals(getCurrentProvider().getId()));
-				log.debug(
-						"CheckProvider getCurrentProvider() id={} code={}, entityProvider id={} code={}",
-						new Object[] {
-								getCurrentProvider().getId(),
-								getCurrentProvider().getCode(),
-								entityProvider != null ? entityProvider.getId()
-										: null,
-								entityProvider != null ? entityProvider
-										.getCode() : null });
-				if (notSameProvider) {
-					throw new ProviderNotAllowedException();
-				}
-			}
-		}
-	}
+    protected void checkProvider(E e) {
+        if (getCurrentProvider() != null) {
+            if (e instanceof BaseEntity) {
+                boolean notSameProvider = !((BaseEntity) e).doesProviderMatch(getCurrentProvider());
+                if (notSameProvider) {
+                    log.debug("CheckProvider getCurrentProvider() id={}, entityProvider id={}",
+                        new Object[] { getCurrentProvider().getId(), ((BaseEntity) e).getProvider().getId() });
+                    throw new ProviderNotAllowedException();
+                }
+            }
+        }
+    }
 
 	public Provider getCurrentProvider() {
 		Provider result = provider;

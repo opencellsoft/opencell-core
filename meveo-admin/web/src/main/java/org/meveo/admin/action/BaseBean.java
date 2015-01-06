@@ -35,7 +35,6 @@ import org.jboss.seam.security.Identity;
 import org.jboss.solder.servlet.http.RequestParam;
 import org.meveo.admin.action.admin.CurrentProvider;
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.IEntity;
 import org.meveo.model.admin.User;
@@ -47,7 +46,6 @@ import org.meveo.service.crm.impl.ProviderService;
 import org.primefaces.component.datatable.DataTable;
 import org.primefaces.event.SelectEvent;
 import org.primefaces.model.LazyDataModel;
-import org.primefaces.model.SortOrder;
 
 /**
  * Base bean class. Other seam backing beans extends this class if they need
@@ -576,145 +574,108 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 		}
 	}
 
-	/**
-	 * DataModel for primefaces lazy loading datatable component.
-	 * 
-	 * @return LazyDataModel implementation.
-	 */
-	public LazyDataModel<T> getLazyDataModel() {
-		return getLazyDataModel(filters, false);
-	}
+    /**
+     * DataModel for primefaces lazy loading datatable component.
+     * 
+     * @return LazyDataModel implementation.
+     */
+    public LazyDataModel<T> getLazyDataModel() {
+        return getLazyDataModel(filters, false);
+    }
 
-	public LazyDataModel<T> getLazyDataModel(Map<String, Object> inputFilters,
-			boolean forceReload) {
-		if (dataModel == null || forceReload) {
-			final Map<String, Object> filters = inputFilters;
-			dataModel = new LazyDataModel<T>() {
-				private static final long serialVersionUID = 1L;
+    public LazyDataModel<T> getLazyDataModel(Map<String, Object> inputFilters, boolean forceReload) {
+        if (dataModel == null || forceReload) {
 
-				private Integer rowCount;
+            final Map<String, Object> filters = inputFilters;
 
-				private Integer rowIndex;
+            dataModel = new ServiceBasedLazyDataModel<T>() {
 
-				@Override
-				public List<T> load(int first, int pageSize, String sortField,
-						SortOrder sortOrder, Map<String, String> loadingFilters) {
+                private static final long serialVersionUID = 1736191234466041033L;
 
-					if (!StringUtils.isBlank(getDefaultSort())
-							&& StringUtils.isBlank(sortField)) {
-						sortField = getDefaultSort();
-					}
+                @Override
+                protected IPersistenceService<T> getPersistenceServiceImpl() {
+                    return getPersistenceService();
+                }
 
-					Map<String, Object> copyOfFilters = new HashMap<String, Object>();
-					copyOfFilters.putAll(filters);
-					setRowCount((int) getPersistenceService().count(
-							new PaginationConfiguration(first, pageSize,
-									copyOfFilters, getListFieldsToFetch(),
-									sortField, sortOrder)));
-					if (getRowCount() > 0) {
-						copyOfFilters = new HashMap<String, Object>();
-						copyOfFilters.putAll(filters);
-						return getPersistenceService().list(
-								new PaginationConfiguration(first, pageSize,
-										copyOfFilters, getListFieldsToFetch(),
-										sortField, sortOrder));
-					} else {
-						return null; // no need to load then
-					}
-				}
+                @Override
+                protected Map<String, Object> getSearchCriteria() {
 
-				@Override
-				public T getRowData(String rowKey) {
-					return getPersistenceService().findById(
-							Long.valueOf(rowKey));
-				}
+                    // Omit empty or null values
+                    Map<String, Object> cleanFilters = new HashMap<String, Object>();
 
-				@Override
-				public Object getRowKey(T object) {
-					return object.getId();
-				}
+                    for (Map.Entry<String, Object> filterEntry : filters.entrySet()) {
+                        if (filterEntry.getValue() == null) {
+                            continue;
+                        }
+                        if (filterEntry.getValue() instanceof String) {
+                            if (StringUtils.isBlank((String) filterEntry.getValue())) {
+                                continue;
+                            }
+                        }
+                        cleanFilters.put(filterEntry.getKey(), filterEntry.getValue());
+                    }
 
-				@Override
-				public void setRowIndex(int rowIndex) {
-					if (rowIndex == -1 || getPageSize() == 0) {
-						this.rowIndex = rowIndex;
-					} else {
-						this.rowIndex = rowIndex % getPageSize();
-					}
-				}
+                    return BaseBean.this.supplementSearchCriteria(cleanFilters);
+                }
 
-				@SuppressWarnings("unchecked")
-				@Override
-				public T getRowData() {
-					return ((List<T>) getWrappedData()).get(rowIndex);
-				}
+                @Override
+                protected String getDefaultSortImpl() {
+                    return getDefaultSort();
+                }
 
-				@SuppressWarnings({ "unchecked" })
-				@Override
-				public boolean isRowAvailable() {
-					if (getWrappedData() == null) {
-						return false;
-					}
+                @Override
+                protected List<String> getListFieldsToFetchImpl() {
+                    return getListFieldsToFetch();
+                }
+            };
+        }
+        return dataModel;
+    }
 
-					return rowIndex >= 0
-							&& rowIndex < ((List<T>) getWrappedData()).size();
-				}
+    /**
+     * Allows to overwrite, or add additional search criteria for filtering a list. Search criteria is a map with filter criteria name as a key and value as a value. <br/>
+     * Criteria name consist of [<condition> ]<field name> (e.g. "like firstName") where <condition> is a condition to apply to field value comparison and <field name> is an entit
+     * attribute name.
+     * 
+     * @param searchCriteria Search criteria - should be same as filters attribute
+     * @return HashMap with filter criteria name as a key and value as a value
+     */
+    protected Map<String, Object> supplementSearchCriteria(Map<String, Object> searchCriteria) {
+        return searchCriteria;
+    }
 
-				@Override
-				public int getRowIndex() {
-					return this.rowIndex;
-				}
+    public DataTable search() {
+        dataTable.reset();
+        return dataTable;
+    }
 
-				@Override
-				public void setRowCount(int rowCount) {
-					this.rowCount = rowCount;
-				}
+    public DataTable getDataTable() {
+        return dataTable;
+    }
 
-				@Override
-				public int getRowCount() {
-					if (rowCount == null) {
-						rowCount = (int) getPersistenceService().count();
-					}
-					return rowCount;
-				}
+    public void setDataTable(DataTable dataTable) {
+        this.dataTable = dataTable;
+    }
 
-			};
-		}
-		return dataModel;
-	}
+    public T[] getSelectedEntities() {
+        return selectedEntities;
+    }
 
-	public DataTable search() {
-		dataTable.reset();
-		return dataTable;
-	}
+    public void setSelectedEntities(T[] selectedEntities) {
+        this.selectedEntities = selectedEntities;
+    }
 
-	public DataTable getDataTable() {
-		return dataTable;
-	}
+    public Long getObjectId() {
+        if (objectIdFromParam != null && objectIdFromParam.get() != null) {
+            objectIdFromSet = objectIdFromParam.get();
+        }
 
-	public void setDataTable(DataTable dataTable) {
-		this.dataTable = dataTable;
-	}
+        return objectIdFromSet;
+    }
 
-	public T[] getSelectedEntities() {
-		return selectedEntities;
-	}
-
-	public void setSelectedEntities(T[] selectedEntities) {
-		this.selectedEntities = selectedEntities;
-	}
-
-	public Long getObjectId() {
-		if (objectIdFromParam != null && objectIdFromParam.get() != null) {
-			objectIdFromSet = objectIdFromParam.get();
-		}
-
-		return objectIdFromSet;
-	}
-
-	public void setObjectId(Long objectId) {
-		objectIdFromSet = objectId;
-	}
+    public void setObjectId(Long objectId) {
+        objectIdFromSet = objectId;
+    }
 
 	public boolean isEdit() {
 		if (edit != null && edit.get() != null
