@@ -32,7 +32,6 @@ import java.util.List;
 import java.util.Map;
 
 import javax.annotation.PostConstruct;
-import javax.ejb.Stateful;
 import javax.enterprise.context.ConversationScoped;
 import javax.faces.event.ActionEvent;
 import javax.inject.Inject;
@@ -67,7 +66,6 @@ import org.slf4j.LoggerFactory;
  * view, delete operations). It works with Manaty custom JSF components.
  */
 @Named
-@Stateful
 @ConversationScoped
 public class UserBean extends StatefulBaseBean<User> {
 
