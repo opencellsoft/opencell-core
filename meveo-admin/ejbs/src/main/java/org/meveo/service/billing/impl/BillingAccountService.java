@@ -262,20 +262,19 @@ public class BillingAccountService extends AccountService<BillingAccount> {
 		return null;
 	}
 
-	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+	//@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public boolean updateBillingAccountTotalAmounts(
 			BillingAccount billingAccount, BillingRun billingRun,
 			User currentUser) {
 		log.info("updateBillingAccountTotalAmounts  billingAccount:"
 				+ billingAccount.getCode());
-		billingAccount=getEntityManager().merge(billingAccount);
 		boolean result=ratedTransactionService.isBillingAccountBillable(billingAccount);
 		if(result){
 			ratedTransactionService.billingAccountTotalAmounts(billingAccount);
-			billingRun=getEntityManager().merge(billingRun);
+			//billingRun=getEntityManager().merge(billingRun);
 			billingAccount.setBillingRun(billingRun);
 			setProvider(currentUser.getProvider());
-			update(billingAccount, currentUser);
+			updateNoCheck(billingAccount);
 		}
 		return result;
 	}

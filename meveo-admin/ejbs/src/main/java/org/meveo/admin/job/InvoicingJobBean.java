@@ -38,7 +38,7 @@ public class InvoicingJobBean {
 	RatedTransactionService ratedTransactionService;
 
 	@Interceptors({ JobLoggingInterceptor.class })
-	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
+	//@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
 	public void execute(JobExecutionResultImpl result, User currentUser) {
 		try {
 			try {
@@ -73,7 +73,8 @@ public class InvoicingJobBean {
 									billingRun.setProcessDate(new Date());
 									billingRun.setStatus(BillingRunStatusEnum.WAITING);
 									billingRun.updateAudit(currentUser);
-									billingRunService.update(billingRun,currentUser);
+									billingRunService.updateNoCheck(billingRun);
+									
 									if (billingRun.getProcessType() == BillingProcessTypesEnum.AUTOMATIC
 											|| currentUser.getProvider().isAutomaticInvoicing()) {
 										billingRunService.createAgregatesAndInvoice( billingRun, currentUser);

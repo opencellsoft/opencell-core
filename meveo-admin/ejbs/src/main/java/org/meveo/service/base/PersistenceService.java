@@ -113,6 +113,11 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService
 		update(e, getCurrentUser());
 	}
 
+
+	public void updateNoCheck(E e) {
+		getEntityManager().merge(e);
+	}
+	
 	/**
 	 * @see org.meveo.service.base.local.IPersistenceService#findById(java.lang.Long)
 	 */

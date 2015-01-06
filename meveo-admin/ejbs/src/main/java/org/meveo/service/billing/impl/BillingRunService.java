@@ -530,6 +530,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 			result = new ArrayList<BillingAccount>();
 			String[] baIds = billingRun.getSelectedBillingAccounts().split(",");
 			for (String id : Arrays.asList(baIds)) {
+				
 				Long baId = Long.valueOf(id);
 				result.add(billingAccountService.findById(baId));
 			}
@@ -549,10 +550,10 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 		return result;
 	}
 
-	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
+	//@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
 	public void createAgregatesAndInvoice(BillingRun billingRun,
 			User currentUser) throws BusinessException, Exception {
-		billingRun = findById(billingRun.getId());
+		//billingRun = findById(billingRun.getId());
 		List<BillingAccount> billingAccounts = getEntityManager()
 				.createNamedQuery("BillingAccount.listByBillingRun",
 						BillingAccount.class)
@@ -571,8 +572,8 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 		billingRun = findById(billingRun.getId(), true);
 		billingRun.setStatus(BillingRunStatusEnum.TERMINATED);
 
-		setProvider(currentUser.getProvider());
-		update(billingRun, currentUser);
+		//setProvider(currentUser.getProvider());
+		updateNoCheck(billingRun);
 	}
 
 	public void validate(BillingRun billingRun, User user) {
