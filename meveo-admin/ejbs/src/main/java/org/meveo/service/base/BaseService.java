@@ -49,8 +49,9 @@ public abstract class BaseService {
 		try {
 			return ((MeveoUser) identity.getUser()).getUser();
 		} catch (Exception e) {
-			log.warn("getCurrentUser cannot retrieve current user from session identity and currentUser has not been set programmatically");
-			return userService.getSystemUser();
+		//	e.printStackTrace();
+		//	log.warn("getCurrentUser cannot retrieve current user from session identity and currentUser has not been set programmatically");
+			return null;//userService.getSystemUser();
 		}
 	}
 

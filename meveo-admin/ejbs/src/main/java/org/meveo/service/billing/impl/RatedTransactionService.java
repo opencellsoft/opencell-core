@@ -600,21 +600,16 @@ public class RatedTransactionService extends
 
 	@SuppressWarnings("unchecked")
 	public void billingAccountTotalAmounts(BillingAccount billingAccount) {
-		//assume BA is attached
-		
-		QueryBuilder qb = new QueryBuilder(
-				"select sum(amountWithoutTax), sum(amountWithTax), sum(amountTax) from RatedTransaction c");
-		qb.addCriterionEnum("c.status", RatedTransactionStatusEnum.OPEN);
-		qb.addBooleanCriterion("c.doNotTriggerInvoicing", false);
-		if (!billingAccount.getProvider().isDisplayFreeTransacInInvoice()) {
-			qb.addCriterion("c.amountWithoutTax", "<>", BigDecimal.ZERO, false);
+		Query q =null;
+		if (billingAccount.getProvider().isDisplayFreeTransacInInvoice()) {
+			q=getEntityManager().createNamedQuery("RatedTransaction.sumBillingAccount")
+			.setParameter("billingAccount",billingAccount);
+		} else {
+			q=getEntityManager().createNamedQuery("RatedTransaction.sumBillingAccountDisplayFree")
+					.setParameter("billingAccount",billingAccount);
 		}
 
-		qb.addCriterionEntity("c.billingAccount", billingAccount);
-		qb.addSql("c.invoice is null");
-
-		List<Object[]> ratedTransactions = qb.getQuery(getEntityManager())
-				.getResultList();
+		List<Object[]> ratedTransactions = q.getResultList();
 		Object[] ratedTrans = ratedTransactions.size() > 0 ? ratedTransactions
 				.get(0) : null;
 		if (ratedTrans != null) {
