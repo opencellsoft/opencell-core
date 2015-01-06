@@ -12,24 +12,6 @@
 	</ui:define>
 
 	<ui:define name="body">
-		<!-- <custom:entityPopup id="providerPopup" showWhenRendered="true"
-			rendered="#{identity.loggedIn and currentProvider==null}"
-			header="#{messages['provider.popup.header']}"
-			backingBean="#{providerBean}" dataModel="#{userProviders}"
-			searchField1Label="#{messages['businessEntity.code']}"
-			searchField1="code"
-			searchField2Label="#{messages['businessEntity.description']}"
-			searchField2="description"
-			column1Label="#{messages['businessEntity.code']}" column1="code"
-			column2Label="#{messages['businessEntity.description']}"
-			column2="description" filtersMap="#{providerBean.filters}"> -->
-		<!-- select link -->
-		<!-- <a:commandLink value="#{messages['commons.select']}"
-				action="#{currentProviderBean.setCurrentProvider(entity)}"
-				oncomplete="Richfaces.hideModalPanel('providerPopup')">
-			</a:commandLink>
-		</custom:entityPopup> -->
-
 		<p:panel>
 			<h:panelGrid columns="2" style="width:100%;text-align:center;">
 				<h:graphicImage value="/img/home.png" style="border:0px;" />

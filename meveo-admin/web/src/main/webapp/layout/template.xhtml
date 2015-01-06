@@ -62,8 +62,14 @@
 						rendered="#{identity.loggedIn}" />
 				</li>
 				<li><h:outputText
-						value="#{messages['commons.connectedProvider']} : #{currentProvider.code} "
-						rendered="#{identity.loggedIn}" /></li>
+						value="#{messages['commons.connectedProvider']} : #{currentProvider.code}"
+						rendered="#{identity.loggedIn and identity.user.user.onlyOneProvider}" />
+
+					<h:link
+						value="#{messages['commons.connectedProvider']} : #{currentProvider.code} wwss"
+						onclick="dlg_providerSelectPopup.show(); return false;"
+						rendered="#{identity.loggedIn and !identity.user.user.onlyOneProvider}" />
+				</li>
 
 
 			</ul>
@@ -84,7 +90,7 @@
 	<div class="body">
 
 		<ui:insert name="body" />
-		
+
 	</div>
 
 	<div class="footer">MEVEO @VERSION_NUMBER@ @BUILD_NUMBER@</div>
@@ -100,7 +106,39 @@
 		</f:facet>
 	</p:ajaxStatus>
 
+
+
+	<p:dialog id="providerSelectPopup"
+		rendered="#{identity.loggedIn and ! identity.user.user.onlyOneProvider}"
+		header="#{messages['provider.popup.header']}"
+		widgetVar="dlg_providerSelectPopup"  modal="true"
+		styleClass="form-dialog">
+		<h:form id="providerSelectPopupForm">
+
+
+			<p:dataTable var="provider" value="#{identity.user.user.providers.toArray()}">
+
+				<p:column headerText="#{messages['businessEntity.code']}">
+					<h:outputText value="#{provider.code}" />
+				</p:column>
+
+				<p:column headerText="#{messages['businessEntity.description']}">
+					<h:outputText value="#{provider.description}" />
+				</p:column>
+				<p:column>
+					<p:commandLink value="#{messages['commons.select']}"
+						action="#{currentProviderBean.setCurrentProvider(provider)}"
+						oncomplete="dlg_providerSelectPopup.hide()">
+					</p:commandLink>
+				</p:column>
+			</p:dataTable>
+		</h:form>
+	</p:dialog>
+
 </h:body>
 	</html>
+
+
+
 
 </f:view>

@@ -18,13 +18,11 @@ package org.meveo.admin.action.admin;
 
 import java.io.Serializable;
 
-import javax.enterprise.context.SessionScoped;
 import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.jboss.seam.security.Identity;
-import org.meveo.model.admin.User;
 import org.meveo.model.crm.Provider;
 import org.meveo.security.MeveoUser;
 import org.slf4j.Logger;
@@ -33,12 +31,9 @@ import org.slf4j.Logger;
  * Class used to set current system provider
  */
 @Named
-@SessionScoped
 public class CurrentProviderBean implements Serializable {
 
-    private static final long serialVersionUID = 2L;
-
-    private Provider currentProvider;
+    private static final long serialVersionUID = 224598087195379100L;
 
     protected Logger log;
 
@@ -49,7 +44,9 @@ public class CurrentProviderBean implements Serializable {
      * Sets current provider
      */
     public String setCurrentProvider(Provider provider) {
-        currentProvider = provider;
+        if (identity.isLoggedIn()) {
+            ((MeveoUser) identity.getUser()).setCurrentProvider(provider);
+        }
 
         return "/home.xhtml?faces-redirect=true";
     }
@@ -58,17 +55,10 @@ public class CurrentProviderBean implements Serializable {
     @Named("currentProvider")
     @CurrentProvider
     public Provider getCurrentProvider() {
-        if (currentProvider == null && identity.isLoggedIn()) {
-            User user = ((MeveoUser) identity.getUser()).getUser();
-            if (user.getProviders().isEmpty()) {
-                currentProvider = user.getProvider();
-            } else {
-                currentProvider = user.getProviders().iterator().next();
-            }
-            currentProvider.getLanguage().getLanguageCode(); // Lazy loading
-                                                             // issue
+        if (identity.isLoggedIn()) {
+            return ((MeveoUser) identity.getUser()).getCurrentProvider();
         }
 
-        return currentProvider;
+        return null;
     }
 }

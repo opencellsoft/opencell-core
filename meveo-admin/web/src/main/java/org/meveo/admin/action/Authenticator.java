@@ -29,6 +29,7 @@ import org.meveo.admin.exception.NoRoleException;
 import org.meveo.admin.exception.PasswordExpiredException;
 import org.meveo.admin.exception.UnknownUserException;
 import org.meveo.model.admin.User;
+import org.meveo.model.crm.Provider;
 import org.meveo.security.MeveoUser;
 import org.meveo.service.admin.impl.UserService;
 import org.picketlink.idm.impl.api.PasswordCredential;
@@ -161,12 +162,25 @@ public class Authenticator extends BaseAuthenticator {
 			setStatus(AuthenticationStatus.FAILURE);
 		} else {
 
-			// homeMessage = "application.home.message";
+            // homeMessage = "application.home.message";
 
-			setStatus(AuthenticationStatus.SUCCESS);
-			setUser(new MeveoUser(user));
+            setStatus(AuthenticationStatus.SUCCESS);
+            MeveoUser meveoUser = new MeveoUser(user);
+            
+            // Choose the first provider as a current provider
+            Provider currentProvider = null;
 
-			log.debug("End of authenticating");
+            if (user.getProviders().isEmpty()) {
+                currentProvider = user.getProvider();
+            } else {
+                currentProvider = user.getProviders().iterator().next();
+            }
+            currentProvider.getLanguage().getLanguageCode(); // Lazy loading issue
+            meveoUser.setCurrentProvider(currentProvider);
+
+            setUser(meveoUser);
+
+            log.debug("End of authenticating");
 		}
 	}
 

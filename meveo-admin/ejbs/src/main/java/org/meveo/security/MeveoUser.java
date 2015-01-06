@@ -2,6 +2,7 @@ package org.meveo.security;
 
 import java.io.Serializable;
 
+import org.meveo.model.crm.Provider;
 import org.picketlink.idm.api.User;
 
 public class MeveoUser implements User, Serializable {
@@ -9,6 +10,8 @@ public class MeveoUser implements User, Serializable {
 	private static final long serialVersionUID = 4333140556503076034L;
 
 	private org.meveo.model.admin.User user;
+	
+	private Provider provider;
 
 	public MeveoUser(org.meveo.model.admin.User user) {
 		this.user = user;
@@ -26,5 +29,13 @@ public class MeveoUser implements User, Serializable {
 
 	public org.meveo.model.admin.User getUser() {
 		return this.user;
+	}
+	
+	public void setCurrentProvider(Provider provider) {
+        this.provider = provider;
+	}
+	
+	public Provider getCurrentProvider() {
+	    return provider;	    
 	}
 }

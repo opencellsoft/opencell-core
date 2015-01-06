@@ -43,6 +43,7 @@ import org.meveo.model.IdentifiableEnum;
 import org.meveo.model.UniqueEntity;
 import org.meveo.model.admin.User;
 import org.meveo.model.crm.Provider;
+import org.meveo.security.MeveoUser;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.util.MeveoJpa;
 import org.meveo.util.MeveoJpaForJobs;
@@ -505,14 +506,17 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService
         }
     }
 
-	public Provider getCurrentProvider() {
-		Provider result = provider;
-		if (result == null && getCurrentUser() != null) {
-			result = getCurrentUser().getProvider();
-		}
+    public Provider getCurrentProvider() {
+        Provider result = provider;
+        if (result == null && identity.isLoggedIn() && identity.getUser() != null) {
+            result = ((MeveoUser) identity.getUser()).getCurrentProvider();
+        }
+        if (result == null && getCurrentUser() != null) {
+            result = getCurrentUser().getProvider();
+        }
 
-		return result;
-	}
+        return result;
+    }
 
 	public Provider getProvider() {
 		return provider;
