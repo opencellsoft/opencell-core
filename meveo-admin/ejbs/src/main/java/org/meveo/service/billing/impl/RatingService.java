@@ -983,7 +983,7 @@ public class RatingService {
 					.getCustomer());
 		}
 
-		Object res = evaluateExpression(expression, userMap, Boolean.class);
+		Object res = evaluateExpression(expression, userMap, String.class);
 		try{
 			result=(String) res;
 		} catch(Exception e){
