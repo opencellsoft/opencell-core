@@ -794,7 +794,7 @@ public class UsageRatingService {
 		edr.setLastUpdate(new Date());
 	}
 
-	private boolean matchExpression(String expression, EDR edr) {
+	private boolean matchExpression(String expression, EDR edr) throws BusinessException {
 		Map<Object, Object> userMap = new HashMap<Object, Object>();
 		userMap.put("edr", edr);
 		return (Boolean) RatingService.evaluateExpression(expression, userMap,
@@ -802,7 +802,7 @@ public class UsageRatingService {
 	}
 
 	private boolean matchExpression(String expression, EDR edr,
-			WalletOperation walletOperation) {
+			WalletOperation walletOperation) throws BusinessException {
 		if (StringUtils.isBlank(expression)) {
 			return true;
 		}
@@ -814,7 +814,7 @@ public class UsageRatingService {
 	}
 
 	private String evaluateStringExpression(String expression, EDR edr,
-			WalletOperation walletOperation) {
+			WalletOperation walletOperation) throws BusinessException {
 		Map<Object, Object> userMap = new HashMap<Object, Object>();
 		userMap.put("edr", edr);
 		userMap.put("op", walletOperation);
@@ -823,7 +823,7 @@ public class UsageRatingService {
 	}
 
 	private Double evaluateDoubleExpression(String expression, EDR edr,
-			WalletOperation walletOperation) {
+			WalletOperation walletOperation) throws BusinessException {
 		Map<Object, Object> userMap = new HashMap<Object, Object>();
 		userMap.put("edr", edr);
 		userMap.put("op", walletOperation);
