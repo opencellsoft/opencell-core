@@ -803,32 +803,52 @@ public class UsageRatingService {
 
 	private boolean matchExpression(String expression, EDR edr,
 			WalletOperation walletOperation) throws BusinessException {
+		boolean result=true;
 		if (StringUtils.isBlank(expression)) {
-			return true;
+			return result;
 		}
 		Map<Object, Object> userMap = new HashMap<Object, Object>();
 		userMap.put("edr", edr);
 		userMap.put("op", walletOperation);
-		return (Boolean) RatingService.evaluateExpression(expression, userMap,
-				Boolean.class);
+
+		Object res = RatingService.evaluateExpression(expression, userMap, Boolean.class);
+		try{
+			result=(Boolean) res;
+		} catch(Exception e){
+			throw new BusinessException("Expression "+expression+" do not evaluate to boolean but "+res);
+		}
+		return result;
 	}
 
 	private String evaluateStringExpression(String expression, EDR edr,
 			WalletOperation walletOperation) throws BusinessException {
+		String result=null;
 		Map<Object, Object> userMap = new HashMap<Object, Object>();
 		userMap.put("edr", edr);
 		userMap.put("op", walletOperation);
-		return (String) RatingService.evaluateExpression(expression, userMap,
-				String.class);
+		Object res = RatingService.evaluateExpression(expression, userMap, String.class);
+		try{
+			result=(String) res;
+		} catch(Exception e){
+			throw new BusinessException("Expression "+expression+" do not evaluate to string but "+res);
+		}
+		return result;
 	}
 
 	private Double evaluateDoubleExpression(String expression, EDR edr,
 			WalletOperation walletOperation) throws BusinessException {
+		Double result=null;
 		Map<Object, Object> userMap = new HashMap<Object, Object>();
 		userMap.put("edr", edr);
 		userMap.put("op", walletOperation);
-		return (Double) RatingService.evaluateExpression(expression, userMap,
-				Double.class);
+		Object res = RatingService.evaluateExpression(expression, userMap, Double.class);
+		try{
+			result=(Double) res;
+		} catch(Exception e){
+			throw new BusinessException("Expression "+expression+" do not evaluate to double but "+res);
+		}
+		
+		return result;
 	}
 
 }
