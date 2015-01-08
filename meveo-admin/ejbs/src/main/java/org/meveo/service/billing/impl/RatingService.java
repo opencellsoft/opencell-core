@@ -531,7 +531,7 @@ public class RatingService {
 	private DiscountPlanMatrix discountPrice(
 			List<DiscountPlanMatrix> listDiscountPlan,
 			WalletOperation bareOperation, Long countryId,
-			TradingCurrency tcurrency, Long sellerId) {
+			TradingCurrency tcurrency, Long sellerId) throws BusinessException {
 		log.info("rate " + bareOperation);
 		for (DiscountPlanMatrix discountPlan : listDiscountPlan) {
 			boolean sellerAreEqual = discountPlan.getSeller() == null
@@ -617,7 +617,7 @@ public class RatingService {
 
 	private PricePlanMatrix ratePrice(List<PricePlanMatrix> listPricePlan,
 			WalletOperation bareOperation, Long countryId,
-			TradingCurrency tcurrency, Long sellerId) {
+			TradingCurrency tcurrency, Long sellerId) throws BusinessException {
 		// FIXME: the price plan properties could be null !
 
 		log.info("rate " + bareOperation);
@@ -931,9 +931,10 @@ public class RatingService {
 	}
 
 	private boolean matchExpression(String expression,
-			WalletOperation bareOperation, UserAccount ua) {
+			WalletOperation bareOperation, UserAccount ua) throws BusinessException {
+		Boolean result=true;
 		if (StringUtils.isBlank(expression)) {
-			return true;
+			return result;
 		}
 		Map<Object, Object> userMap = new HashMap<Object, Object>();
 		userMap.put("op", bareOperation);
@@ -950,14 +951,20 @@ public class RatingService {
 			userMap.put("c", ua.getBillingAccount().getCustomerAccount()
 					.getCustomer());
 		}
-
-		return (Boolean) evaluateExpression(expression, userMap, Boolean.class);
+		Object res = evaluateExpression(expression, userMap, Boolean.class);
+		try{
+			result=(Boolean) res;
+		} catch(Exception e){
+			throw new BusinessException("Expression "+expression+" do not evaluate to boolean but "+res);
+		}
+		return result;
 	}
 
 	private String evaluateStringExpression(String expression,
-			WalletOperation walletOperation, UserAccount ua) {
+			WalletOperation walletOperation, UserAccount ua) throws BusinessException {
+		String result=null;
 		if (StringUtils.isBlank(expression)) {
-			return null;
+			return result;
 		}
 		Map<Object, Object> userMap = new HashMap<Object, Object>();
 		userMap.put("op", walletOperation);
@@ -975,13 +982,21 @@ public class RatingService {
 			userMap.put("c", ua.getBillingAccount().getCustomerAccount()
 					.getCustomer());
 		}
-		return (String) evaluateExpression(expression, userMap, String.class);
+
+		Object res = evaluateExpression(expression, userMap, String.class);
+		try{
+			result=(String) res;
+		} catch(Exception e){
+			throw new BusinessException("Expression "+expression+" do not evaluate to String but "+res);
+		}
+		return result;
 	}
 
 	private Double evaluateDoubleExpression(String expression,
-			WalletOperation walletOperation, UserAccount ua) {
+			WalletOperation walletOperation, UserAccount ua) throws BusinessException {
+		Double result=null;
 		if (StringUtils.isBlank(expression)) {
-			return null;
+			return result;
 		}
 		Map<Object, Object> userMap = new HashMap<Object, Object>();
 		userMap.put("op", walletOperation);
@@ -998,12 +1013,19 @@ public class RatingService {
 			userMap.put("c", ua.getBillingAccount().getCustomerAccount()
 					.getCustomer());
 		}
-		return (Double) evaluateExpression(expression, userMap, Double.class);
+
+		Object res = evaluateExpression(expression, userMap, Double.class);
+		try{
+			result=(Double) res;
+		} catch(Exception e){
+			throw new BusinessException("Expression "+expression+" do not evaluate to double but "+res);
+		}
+		return result;
 	}
 
 	public static Object evaluateExpression(String expression,
 			Map<Object, Object> userMap,
-			@SuppressWarnings("rawtypes") Class resultClass) {
+			@SuppressWarnings("rawtypes") Class resultClass) throws BusinessException {
 		Object result = null;
 		if (StringUtils.isBlank(expression)) {
 			return null;
@@ -1060,6 +1082,7 @@ public class RatingService {
 			
 		} catch (Exception e) {
 			log.warn("EL {} throw error {}",expression,e.getMessage());
+			throw new BusinessException("Error while evaluating expression "+expression+" : "+e.getMessage());
 		}
 		return result;
 	}
