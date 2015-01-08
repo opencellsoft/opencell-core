@@ -117,6 +117,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService
 
 	public void updateNoCheck(E e) {
 		getEntityManager().merge(e);
+		getEntityManager().flush();
 	}
 	
 	/**
