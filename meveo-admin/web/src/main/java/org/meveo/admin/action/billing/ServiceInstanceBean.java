@@ -84,9 +84,11 @@ public class ServiceInstanceBean extends StatelessBaseBean<ServiceInstance> {
 	@Override
 	public ServiceInstance initEntity() {
 		super.initEntity();
+
 		if (offerInstanceId != null && offerInstanceId.get() != null) {
 			// entity.setOfferInstance(offerInstanceService.findById(offerInstanceId.get());
 		}
+
 		return entity;
 	}
 
@@ -116,6 +118,7 @@ public class ServiceInstanceBean extends StatelessBaseBean<ServiceInstance> {
 
 	public String activateService() {
 		log.info("activateService serviceInstanceId:" + entity.getId());
+
 		try {
 			serviceInstanceService.serviceActivation(entity, null, null,
 					getCurrentUser());
@@ -135,6 +138,7 @@ public class ServiceInstanceBean extends StatelessBaseBean<ServiceInstance> {
 
 	public String resiliateService() {
 		log.info("resiliateService serviceInstanceId:" + entity.getId());
+
 		try {
 			// serviceInstanceService.serviceTermination(serviceInstance, new
 			// Date(), currentUser);
@@ -152,6 +156,7 @@ public class ServiceInstanceBean extends StatelessBaseBean<ServiceInstance> {
 
 	public String resiliateWithoutFeeService() {
 		log.info("cancelService serviceInstanceId:" + entity.getId());
+
 		try {
 			// serviceInstanceService.serviceCancellation(serviceInstance, new
 			// Date(), currentUser);
@@ -168,6 +173,7 @@ public class ServiceInstanceBean extends StatelessBaseBean<ServiceInstance> {
 
 	public String cancelService() {
 		log.info("cancelService serviceInstanceId:" + entity.getId());
+
 		try {
 			entity.setStatus(InstanceStatusEnum.CANCELED);
 			serviceInstanceService.update(entity, getCurrentUser());
@@ -184,6 +190,7 @@ public class ServiceInstanceBean extends StatelessBaseBean<ServiceInstance> {
 
 	public String suspendService() {
 		log.info("closeAccount serviceInstanceId:" + entity.getId());
+
 		try {
 			serviceInstanceService.serviceSuspension(entity, new Date(),
 					getCurrentUser());
@@ -200,4 +207,5 @@ public class ServiceInstanceBean extends StatelessBaseBean<ServiceInstance> {
 		}
 		return null;
 	}
+
 }
