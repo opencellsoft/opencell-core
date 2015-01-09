@@ -46,6 +46,7 @@ import org.meveo.service.crm.impl.ProviderService;
 import org.primefaces.component.datatable.DataTable;
 import org.primefaces.event.SelectEvent;
 import org.primefaces.model.LazyDataModel;
+import org.primefaces.model.SortOrder;
 
 /**
  * Base bean class. Other seam backing beans extends this class if they need
@@ -574,108 +575,122 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 		}
 	}
 
-    /**
-     * DataModel for primefaces lazy loading datatable component.
-     * 
-     * @return LazyDataModel implementation.
-     */
-    public LazyDataModel<T> getLazyDataModel() {
-        return getLazyDataModel(filters, false);
-    }
+	/**
+	 * DataModel for primefaces lazy loading datatable component.
+	 * 
+	 * @return LazyDataModel implementation.
+	 */
+	public LazyDataModel<T> getLazyDataModel() {
+		return getLazyDataModel(filters, false);
+	}
 
-    public LazyDataModel<T> getLazyDataModel(Map<String, Object> inputFilters, boolean forceReload) {
-        if (dataModel == null || forceReload) {
+	public LazyDataModel<T> getLazyDataModel(Map<String, Object> inputFilters,
+			boolean forceReload) {
+		if (dataModel == null || forceReload) {
 
-            final Map<String, Object> filters = inputFilters;
+			final Map<String, Object> filters = inputFilters;
 
-            dataModel = new ServiceBasedLazyDataModel<T>() {
+			dataModel = new ServiceBasedLazyDataModel<T>() {
 
-                private static final long serialVersionUID = 1736191234466041033L;
+				private static final long serialVersionUID = 1736191234466041033L;
 
-                @Override
-                protected IPersistenceService<T> getPersistenceServiceImpl() {
-                    return getPersistenceService();
-                }
+				@Override
+				protected IPersistenceService<T> getPersistenceServiceImpl() {
+					return getPersistenceService();
+				}
 
-                @Override
-                protected Map<String, Object> getSearchCriteria() {
+				@Override
+				protected Map<String, Object> getSearchCriteria() {
 
-                    // Omit empty or null values
-                    Map<String, Object> cleanFilters = new HashMap<String, Object>();
+					// Omit empty or null values
+					Map<String, Object> cleanFilters = new HashMap<String, Object>();
 
-                    for (Map.Entry<String, Object> filterEntry : filters.entrySet()) {
-                        if (filterEntry.getValue() == null) {
-                            continue;
-                        }
-                        if (filterEntry.getValue() instanceof String) {
-                            if (StringUtils.isBlank((String) filterEntry.getValue())) {
-                                continue;
-                            }
-                        }
-                        cleanFilters.put(filterEntry.getKey(), filterEntry.getValue());
-                    }
+					for (Map.Entry<String, Object> filterEntry : filters
+							.entrySet()) {
+						if (filterEntry.getValue() == null) {
+							continue;
+						}
+						if (filterEntry.getValue() instanceof String) {
+							if (StringUtils.isBlank((String) filterEntry
+									.getValue())) {
+								continue;
+							}
+						}
+						cleanFilters.put(filterEntry.getKey(),
+								filterEntry.getValue());
+					}
 
-                    return BaseBean.this.supplementSearchCriteria(cleanFilters);
-                }
+					return BaseBean.this.supplementSearchCriteria(cleanFilters);
+				}
 
-                @Override
-                protected String getDefaultSortImpl() {
-                    return getDefaultSort();
-                }
+				@Override
+				protected String getDefaultSortImpl() {
+					return getDefaultSort();
+				}
 
-                @Override
-                protected List<String> getListFieldsToFetchImpl() {
-                    return getListFieldsToFetch();
-                }
-            };
-        }
-        return dataModel;
-    }
+				@Override
+				protected SortOrder getDefaultSortOrderImpl() {
+					return getDefaultSortOrder();
+				}
 
-    /**
-     * Allows to overwrite, or add additional search criteria for filtering a list. Search criteria is a map with filter criteria name as a key and value as a value. <br/>
-     * Criteria name consist of [<condition> ]<field name> (e.g. "like firstName") where <condition> is a condition to apply to field value comparison and <field name> is an entit
-     * attribute name.
-     * 
-     * @param searchCriteria Search criteria - should be same as filters attribute
-     * @return HashMap with filter criteria name as a key and value as a value
-     */
-    protected Map<String, Object> supplementSearchCriteria(Map<String, Object> searchCriteria) {
-        return searchCriteria;
-    }
+				@Override
+				protected List<String> getListFieldsToFetchImpl() {
+					return getListFieldsToFetch();
+				}
+			};
+		}
+		return dataModel;
+	}
 
-    public DataTable search() {
-        dataTable.reset();
-        return dataTable;
-    }
+	/**
+	 * Allows to overwrite, or add additional search criteria for filtering a
+	 * list. Search criteria is a map with filter criteria name as a key and
+	 * value as a value. <br/>
+	 * Criteria name consist of [<condition> ]<field name> (e.g.
+	 * "like firstName") where <condition> is a condition to apply to field
+	 * value comparison and <field name> is an entit attribute name.
+	 * 
+	 * @param searchCriteria
+	 *            Search criteria - should be same as filters attribute
+	 * @return HashMap with filter criteria name as a key and value as a value
+	 */
+	protected Map<String, Object> supplementSearchCriteria(
+			Map<String, Object> searchCriteria) {
+		return searchCriteria;
+	}
 
-    public DataTable getDataTable() {
-        return dataTable;
-    }
+	public DataTable search() {
+		dataTable.reset();
+		return dataTable;
+	}
 
-    public void setDataTable(DataTable dataTable) {
-        this.dataTable = dataTable;
-    }
+	public DataTable getDataTable() {
+		return dataTable;
+	}
 
-    public T[] getSelectedEntities() {
-        return selectedEntities;
-    }
+	public void setDataTable(DataTable dataTable) {
+		this.dataTable = dataTable;
+	}
 
-    public void setSelectedEntities(T[] selectedEntities) {
-        this.selectedEntities = selectedEntities;
-    }
+	public T[] getSelectedEntities() {
+		return selectedEntities;
+	}
 
-    public Long getObjectId() {
-        if (objectIdFromParam != null && objectIdFromParam.get() != null) {
-            objectIdFromSet = objectIdFromParam.get();
-        }
+	public void setSelectedEntities(T[] selectedEntities) {
+		this.selectedEntities = selectedEntities;
+	}
 
-        return objectIdFromSet;
-    }
+	public Long getObjectId() {
+		if (objectIdFromParam != null && objectIdFromParam.get() != null) {
+			objectIdFromSet = objectIdFromParam.get();
+		}
 
-    public void setObjectId(Long objectId) {
-        objectIdFromSet = objectId;
-    }
+		return objectIdFromSet;
+	}
+
+	public void setObjectId(Long objectId) {
+		objectIdFromSet = objectId;
+	}
 
 	public boolean isEdit() {
 		if (edit != null && edit.get() != null
@@ -728,6 +743,10 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 
 	protected String getDefaultSort() {
 		return "";
+	}
+
+	protected SortOrder getDefaultSortOrder() {
+		return SortOrder.DESCENDING;
 	}
 
 	public String getBackView() {
