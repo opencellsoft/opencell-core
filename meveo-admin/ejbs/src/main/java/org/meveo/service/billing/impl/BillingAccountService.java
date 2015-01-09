@@ -271,7 +271,7 @@ public class BillingAccountService extends AccountService<BillingAccount> {
 		boolean result=false;
 		log.debug("updateBillingAccountTotalAmounts  billingAccount:"
 				+ billingAccount.getCode());
-		billingAccount=findById(billingAccount.getId());
+		billingAccount=findById(billingAccount.getId(),true);
 		billingRun=getEntityManager().find(billingRun.getClass(), billingRun.getId());
 		getEntityManager().refresh(billingRun);
 		result= ratedTransactionService.isBillingAccountBillable(billingAccount);

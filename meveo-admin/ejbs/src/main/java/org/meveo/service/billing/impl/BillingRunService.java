@@ -578,8 +578,10 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 		}
 	}
 
+	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public void validate(BillingRun billingRun, User user) {
-		billingRun=getEntityManager().merge(billingRun);
+		billingRun=findById(billingRun.getId(),true);
+		user=getEntityManager().find(User.class, user.getId());
 		for (Invoice invoice : billingRun.getInvoices()) {
 			invoiceService.setInvoiceNumber(invoice, user);
 			BillingAccount billingAccount = invoice.getBillingAccount();
