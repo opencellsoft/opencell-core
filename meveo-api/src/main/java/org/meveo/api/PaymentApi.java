@@ -73,14 +73,14 @@ public class PaymentApi extends BaseApi {
 					"Cannot find customer account with code="
 							+ paymentDto.getCustomerAccountCode());
 		}
-		
+
 		OCCTemplate occTemplate = oCCTemplateService.findByCode(
 				paymentDto.getOccTemplateCode(), provider.getCode());
 		if (occTemplate == null) {
 			throw new BusinessException("Cannot find OCC Template with code="
 					+ paymentDto.getOccTemplateCode());
 		}
-		
+
 		if (!StringUtils.isBlank(paymentDto.getAmount())
 				&& !StringUtils.isBlank(paymentDto.getPaymentMethod())
 				&& !StringUtils.isBlank(paymentDto.getCustomerAccountCode())
@@ -108,7 +108,7 @@ public class PaymentApi extends BaseApi {
 			automatedPayment.setMatchingStatus(MatchingStatusEnum.O);
 			automatedPaymentService.create(automatedPayment, currentUser,
 					provider);
-			
+
 			if (paymentDto.isToMatching()) {
 				MatchingCode matchingCode = new MatchingCode();
 				BigDecimal amountToMatch = BigDecimal.ZERO;
@@ -134,7 +134,7 @@ public class PaymentApi extends BaseApi {
 					accountOperation.getMatchingAmounts().add(matchingAmount);
 					matchingCode.getMatchingAmounts().add(matchingAmount);
 				}
-				
+
 				matchingCode.setMatchingAmountDebit(paymentDto.getAmount());
 				matchingCode.setMatchingAmountCredit(paymentDto.getAmount());
 				matchingCode.setMatchingDate(new Date());
@@ -180,6 +180,8 @@ public class PaymentApi extends BaseApi {
 
 		CustomerAccount customerAccount = customerAccountService.findByCode(
 				customerAccountCode, provider);
+
+		customerAccountService.getEntityManager().refresh(customerAccount);
 
 		if (customerAccount == null) {
 			throw new BusinessException("Customer with Code="
