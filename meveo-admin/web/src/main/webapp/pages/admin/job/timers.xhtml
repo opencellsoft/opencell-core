@@ -55,6 +55,9 @@
 						
 						<hftl:column label="#{messages['timer.schedule']}"
 							field="timerSchedule" sort="false" />
+						
+						<hftl:column label="#{messages['timer.active']}"
+							field="timerInfo" childField="active" sort="false" />
 					</hftl:dataList>
 
 				</h:form>

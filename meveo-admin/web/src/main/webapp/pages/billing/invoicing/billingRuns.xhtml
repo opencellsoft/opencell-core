@@ -34,7 +34,7 @@
 		</hf:searchPanel>
 
 		<hftl:dataList label="#{messages['billingRuns.title']}"
-			backingBean="#{billingRunBean}" checkMany="false">
+			backingBean="#{billingRunBean}" checkMany="false" sortOrder="descending">
 			<hftl:column label="Id" field="id" />
 			<hftl:column label="#{messages['billingRun.status']}" field="status"
 				childField="label" isMessage="true" />

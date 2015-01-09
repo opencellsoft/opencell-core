@@ -42,7 +42,7 @@ public class InvoicingJobBean {
 	Conversation conversation;
 
 	@Interceptors({ JobLoggingInterceptor.class })
-	//@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
+	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public void execute(JobExecutionResultImpl result, User currentUser) {
 		try {
 			try {

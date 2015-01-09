@@ -285,8 +285,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
 		log.debug("createAgregatesAndInvoice tx status={}",txReg.getTransactionStatus());
 		try {
 			EntityManager em = getEntityManager();
-			//billingAccount=em.merge(billingAccount);
-			//billingRun=em.merge(billingRun);
+			billingAccount=em.merge(billingAccount);
+			billingRun=em.merge(billingRun);
 			//currentUser=em.merge(currentUser);
 			Long startDate = System.currentTimeMillis();
 			BillingCycle billingCycle = billingRun.getBillingCycle();
@@ -340,8 +340,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 				key = key + Integer.parseInt(invoiceNumber.substring(i, i + 1));
 			}
 			invoice.setTemporaryInvoiceNumber(invoiceNumber + "-" + key % 10);
-			//setProvider(currentUser.getProvider());
-			updateNoCheck(invoice);
+			//getEntityManager().merge(invoice);
 			Long endDate = System.currentTimeMillis();
 			log.info("createAgregatesAndInvoice BR_ID=" + billingRun.getId()
 					+ ", BA_ID=" + billingAccount.getId() + ", Time en ms="
@@ -352,7 +351,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 			e.printStackTrace();
 			RejectedBillingAccount rejectedBA = new RejectedBillingAccount(
 					billingAccount, billingRun, e.getMessage());
-			rejectedBillingAccountService.create(rejectedBA);
+			rejectedBillingAccountService.create(rejectedBA,currentUser);
 		}
 	}
 

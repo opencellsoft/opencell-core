@@ -162,9 +162,8 @@ public class BillingRunBean extends StatelessBaseBean<BillingRun> {
 
 			entity.setStatus(BillingRunStatusEnum.NEW);
 			entity.setProcessDate(new Date());
-			billingRunService.create(entity);
 			entity.setProvider(entity.getBillingCycle().getProvider());
-
+			billingRunService.create(entity);
 			return "/pages/billing/invoicing/billingRuns.xhtml?edit=false";
 		} catch (Exception e) {
 			log.error(e.getMessage());
