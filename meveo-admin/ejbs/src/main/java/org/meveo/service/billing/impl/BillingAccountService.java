@@ -264,14 +264,16 @@ public class BillingAccountService extends AccountService<BillingAccount> {
 		return null;
 	}
 
+	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public boolean updateBillingAccountTotalAmounts(
 			BillingAccount billingAccount, BillingRun billingRun,
 			User currentUser) {
 		boolean result=false;
 		log.debug("updateBillingAccountTotalAmounts  billingAccount:"
 				+ billingAccount.getCode());
-		//billingAccount=getEntityManager().merge(billingAccount);
-		//billingRun=getEntityManager().merge(billingRun);
+		billingAccount=findById(billingAccount.getId());
+		billingRun=getEntityManager().find(billingRun.getClass(), billingRun.getId());
+		getEntityManager().refresh(billingRun);
 		result= ratedTransactionService.isBillingAccountBillable(billingAccount);
 		if(result){
 			Query q =null;
@@ -293,7 +295,7 @@ public class BillingAccountService extends AccountService<BillingAccount> {
 				log.debug("set brAmount {} in BA {}",queryResult[0],billingAccount.getId());
 			}
 			billingAccount.setBillingRun(billingRun);
-			getEntityManager().merge(billingAccount);
+			//getEntityManager().merge(billingAccount);
 			//getEntityManager().flush();
 		}
 		return result;
