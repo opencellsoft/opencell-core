@@ -561,7 +561,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
 	public void createAgregatesAndInvoice(BillingRun billingRun,
 			User currentUser) throws BusinessException, Exception {
-		billingRun = findById(billingRun.getId());
+		billingRun = findById(billingRun.getId(),true);
 		List<BillingAccount> billingAccounts = getEntityManager()
 				.createNamedQuery("BillingAccount.listByBillingRun",
 						BillingAccount.class)

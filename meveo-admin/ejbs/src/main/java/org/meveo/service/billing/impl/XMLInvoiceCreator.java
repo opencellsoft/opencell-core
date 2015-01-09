@@ -1118,7 +1118,9 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 		if (amount == null) {
 			amount = BigDecimal.ZERO;
 		}
-
+		if(scale==null){
+			scale=2;
+		}
 		amount = amount.setScale(scale, RoundingMode.HALF_UP);
 		return amount.toString();
 	}

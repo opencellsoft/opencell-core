@@ -295,8 +295,8 @@ public class BillingAccountService extends AccountService<BillingAccount> {
 				log.debug("set brAmount {} in BA {}",queryResult[0],billingAccount.getId());
 			}
 			billingAccount.setBillingRun(billingRun);
-			//getEntityManager().merge(billingAccount);
-			//getEntityManager().flush();
+			getEntityManager().merge(billingAccount);
+			getEntityManager().flush();
 		}
 		return result;
 	}
