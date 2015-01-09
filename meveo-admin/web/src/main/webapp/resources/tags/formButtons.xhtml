@@ -34,8 +34,10 @@
 			<f:param name="edit" value="true" />
 			<f:param name="#{cc.attrs.objectIdParamName}"
 				value="#{cc.attrs.backingBean.objectId}" />
-			<f:param name="cid" value="#{javax.enterprise.context.conversation.id}" />
+			<f:param name="cid"
+				value="#{javax.enterprise.context.conversation.id}" />
 		</p:button>
+
 		<p:commandButton id="saveButtonWithObjectId"
 			rendered="#{cc.attrs.edit and empty(cc.attrs.backingBean.objectId)}"
 			value="#{messages['action.save']}"
@@ -43,6 +45,7 @@
 			icon="ui-icon-check" ajax="#{cc.attrs.ajaxSubmit}">
 			<f:param name="edit" value="#{cc.attrs.edit}" />
 		</p:commandButton>
+
 		<p:commandButton id="saveButton"
 			rendered="#{cc.attrs.edit and !empty(cc.attrs.backingBean.objectId)}"
 			value="#{messages['action.save']}"
@@ -63,7 +66,8 @@
 
 			<c:if
 				test="#{conversation.id != null and not cc.attrs.killConversationOnBack}">
-				<f:param name="cid" value="#{javax.enterprise.context.conversation.id}" />
+				<f:param name="cid"
+					value="#{javax.enterprise.context.conversation.id}" />
 			</c:if>
 		</p:button>
 

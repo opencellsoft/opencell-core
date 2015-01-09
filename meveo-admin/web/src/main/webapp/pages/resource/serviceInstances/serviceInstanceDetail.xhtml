@@ -36,7 +36,6 @@
 			selection="#{serviceInstanceDetail.entity.serviceTemplate}">
 		</hftl:entityPopup>
 
-
 		<hftl:entityPopup id="subscriptionPopup"
 			header="#{messages['subscription.popup.header']}"
 			backingBean="#{subscriptionBean}"
@@ -51,8 +50,7 @@
 		</hftl:entityPopup>
 
 		<hf:formPanel label="#{messages['serviceInstance.panel']}"
-			backingBean="#{serviceInstanceBean}" columns="2"
-			killConversationOnBack="#{param['serviceInstanceId'] == null}" killConversationOnSave="#{param['backView'] != null}">
+			backingBean="#{serviceInstanceBean}" columns="2">
 
 			<hf:formEntityField id="serviceSelectedId"
 				label="#{messages['serviceInstance.code']}" field="serviceTemplate"
