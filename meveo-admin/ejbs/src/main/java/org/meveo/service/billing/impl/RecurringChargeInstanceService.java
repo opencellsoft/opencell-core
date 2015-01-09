@@ -49,8 +49,8 @@ public class RecurringChargeInstanceService extends
 			InstanceStatusEnum status, Date maxChargeDate) {
 		List<RecurringChargeInstance> recurringChargeInstances = new ArrayList<RecurringChargeInstance>();
 		try {
-			log.debug("start of find #0 by status (status={})) ..",
-					"RecurringChargeInstance", status);
+			log.debug("start of find RecurringChargeInstance by status {} and date {}",
+					status,maxChargeDate);
 			QueryBuilder qb = new QueryBuilder(RecurringChargeInstance.class,
 					"c");
 			qb.addCriterion("c.status", "=", status, true);

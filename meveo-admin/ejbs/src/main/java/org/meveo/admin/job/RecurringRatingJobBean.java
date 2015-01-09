@@ -43,15 +43,15 @@ public class RecurringRatingJobBean implements Serializable {
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public void execute(JobExecutionResultImpl result, User currentUser) {
 		try {
+			Date maxDate = DateUtils.addDaysToDate(new Date(), 1);
 			List<RecurringChargeInstance> activeRecurringChargeInstances = recurringChargeInstanceService
-					.findByStatus(InstanceStatusEnum.ACTIVE,
-							DateUtils.addDaysToDate(new Date(), 1));
+					.findByStatus(InstanceStatusEnum.ACTIVE,maxDate);
 
-			log.info("charges to rate={}"
-					+ activeRecurringChargeInstances.size());
+			log.info("charges to rate={}", activeRecurringChargeInstances.size());
 
 			for (RecurringChargeInstance activeRecurringChargeInstance : activeRecurringChargeInstances) {
 				try {
+					
 					RecurringChargeTemplate recurringChargeTemplate = (RecurringChargeTemplate) activeRecurringChargeInstance
 							.getRecurringChargeTemplate();
 					if (recurringChargeTemplate.getCalendar() == null) {
@@ -70,7 +70,8 @@ public class RecurringRatingJobBean implements Serializable {
 								.getChargeDate();
 					}
 
-					log.info("applicationDate=" + applicationDate);
+					if(applicationDate.getTime()<=maxDate.getTime()){
+					log.info("applicationDate={}", applicationDate);
 
 					applicationDate = DateUtils.parseDateWithPattern(
 							applicationDate, "dd/MM/yyyy");
@@ -86,6 +87,9 @@ public class RecurringRatingJobBean implements Serializable {
 								activeRecurringChargeInstance, false,
 								recurringChargeTemplate, currentUser);
 						result.registerSucces();
+					}
+					} else {
+						log.info("applicationDate={} is posterior to maxdate={} 2nd level cache is probably in cause",applicationDate,maxDate);
 					}
 				} catch (Exception e) {
 					log.error(e.getMessage());
