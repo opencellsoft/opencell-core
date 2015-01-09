@@ -3,13 +3,7 @@ package org.meveo.api.rest.impl;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.MediaType;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.PaymentApi;
@@ -18,7 +12,7 @@ import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.PaymentDto;
 import org.meveo.api.dto.response.CustomerPaymentsResponse;
 import org.meveo.api.logging.LoggingInterceptor;
-import org.meveo.api.rest.security.RSSecured;
+import org.meveo.api.rest.PaymentRs;
 import org.slf4j.Logger;
 
 /**
@@ -26,21 +20,16 @@ import org.slf4j.Logger;
  * 
  */
 @RequestScoped
-@Path("/payment")
-@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
-@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Interceptors({ LoggingInterceptor.class })
-@RSSecured
-public class PaymentRs extends BaseRs {
+public class PaymentRsImpl extends BaseRs implements PaymentRs {
 
 	@Inject
 	private PaymentApi paymentApi;
-	
+
 	@Inject
 	private Logger log;
 
-	@POST
-	@Path("/create")
+	@Override
 	public ActionStatus create(PaymentDto paymentDto) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
@@ -59,8 +48,7 @@ public class PaymentRs extends BaseRs {
 		return result;
 	}
 
-	@GET
-	@Path("/customerPayment")
+	@Override
 	public CustomerPaymentsResponse list(
 			@QueryParam("customerAccountCode") String customerAccountCode) {
 		CustomerPaymentsResponse result = new CustomerPaymentsResponse();
@@ -78,4 +66,5 @@ public class PaymentRs extends BaseRs {
 
 		return result;
 	}
+
 }
