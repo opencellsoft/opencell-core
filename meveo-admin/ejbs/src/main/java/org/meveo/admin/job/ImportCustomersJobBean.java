@@ -87,6 +87,7 @@ public class ImportCustomersJobBean {
 	CustomerImportHisto customerImportHisto;
 
 	@Interceptors({ JobLoggingInterceptor.class })
+	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public void execute(JobExecutionResultImpl result, User currentUser) {
 		Provider provider = currentUser.getProvider();
 

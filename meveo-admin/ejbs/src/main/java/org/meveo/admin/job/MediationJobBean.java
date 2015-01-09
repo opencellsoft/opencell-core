@@ -54,6 +54,7 @@ public class MediationJobBean {
 	String report;
 
 	@Interceptors({ JobLoggingInterceptor.class })
+	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public void execute(JobExecutionResultImpl result, String parameter,
 			User currentUser) {
 		Provider provider = currentUser.getProvider();

@@ -6,6 +6,8 @@ import java.util.Map;
 import java.util.concurrent.Future;
 
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 
@@ -36,6 +38,7 @@ public class PDFInvoiceGenerationJobBean {
 	private BillingRunService billingRunService;
 
 	@Interceptors({ JobLoggingInterceptor.class })
+	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public void execute(JobExecutionResultImpl result, String parameter,
 			User currentUser) {
 		List<Invoice> invoices = new ArrayList<Invoice>();

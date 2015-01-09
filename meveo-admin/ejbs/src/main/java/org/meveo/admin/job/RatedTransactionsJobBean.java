@@ -3,6 +3,8 @@ package org.meveo.admin.job;
 import java.util.List;
 
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 
@@ -32,6 +34,7 @@ public class RatedTransactionsJobBean {
 	private RatedTransactionService ratedTransactionService;
 
 	@Interceptors({ JobLoggingInterceptor.class })
+	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public JobExecutionResult execute(JobExecutionResultImpl result,
 			User currentUser) {
 		Provider provider = currentUser.getProvider();

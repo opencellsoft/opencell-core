@@ -3,6 +3,8 @@ package org.meveo.admin.job;
 import java.util.List;
 
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 
@@ -28,6 +30,7 @@ public class UsageRatingJobBean {
 	private UsageRatingService usageRatingService;
 
 	@Interceptors({ JobLoggingInterceptor.class })
+	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public void execute(JobExecutionResultImpl result, User currentUser) {
 		try {
 			List<EDR> edrs = edrService.getEDRToRate(currentUser.getProvider());

@@ -6,6 +6,8 @@ import java.util.Date;
 import java.util.List;
 
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 import javax.xml.bind.JAXBException;
@@ -72,6 +74,7 @@ public class ImportAccountsJobBean {
 	AccountImportHisto accountImportHisto;
 
 	@Interceptors({ JobLoggingInterceptor.class })
+	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public void execute(JobExecutionResultImpl result, User currentUser) {
 		log.info("execute ImportAccountsJob.");
 
