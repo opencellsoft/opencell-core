@@ -508,8 +508,12 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService
 
     public Provider getCurrentProvider() {
         Provider result = provider;
-        if (result == null && identity.isLoggedIn() && identity.getUser() != null) {
-            result = ((MeveoUser) identity.getUser()).getCurrentProvider();
+        try{
+	        if (result == null && identity.isLoggedIn() && identity.getUser() != null) {
+	            result = ((MeveoUser) identity.getUser()).getCurrentProvider();
+	        }
+        } catch(Exception e){
+        	e.printStackTrace();
         }
         if (result == null && getCurrentUser() != null) {
             result = getCurrentUser().getProvider();

@@ -28,6 +28,8 @@ import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
+import javax.persistence.Query;
+import javax.persistence.TypedQuery;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ElementNotResiliatedOrCanceledException;
@@ -262,19 +264,37 @@ public class BillingAccountService extends AccountService<BillingAccount> {
 		return null;
 	}
 
-	//@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public boolean updateBillingAccountTotalAmounts(
 			BillingAccount billingAccount, BillingRun billingRun,
 			User currentUser) {
-		log.info("updateBillingAccountTotalAmounts  billingAccount:"
+		boolean result=false;
+		log.debug("updateBillingAccountTotalAmounts  billingAccount:"
 				+ billingAccount.getCode());
-		boolean result=ratedTransactionService.isBillingAccountBillable(billingAccount);
+		//billingAccount=getEntityManager().merge(billingAccount);
+		//billingRun=getEntityManager().merge(billingRun);
+		result= ratedTransactionService.isBillingAccountBillable(billingAccount);
 		if(result){
-			ratedTransactionService.billingAccountTotalAmounts(billingAccount);
-			//billingRun=getEntityManager().merge(billingRun);
+			Query q =null;
+			if (billingAccount.getProvider().isDisplayFreeTransacInInvoice()) {
+				q=getEntityManager().createNamedQuery("RatedTransaction.sumBillingAccount")
+				.setParameter("billingAccount",billingAccount);
+			} else {
+				q=getEntityManager().createNamedQuery("RatedTransaction.sumBillingAccountDisplayFree")
+						.setParameter("billingAccount",billingAccount);
+			}
+	
+			@SuppressWarnings("unchecked")
+			List<Object[]> queryResults = q.getResultList();
+			Object[] queryResult = queryResults.size() > 0 ? queryResults
+					.get(0) : null;
+			if (queryResult != null) {
+				billingAccount.setBrAmountWithoutTax((BigDecimal) queryResult[0]);
+				billingAccount.setBrAmountWithTax((BigDecimal) queryResult[1]);
+				log.debug("set brAmount {} in BA {}",queryResult[0],billingAccount.getId());
+			}
 			billingAccount.setBillingRun(billingRun);
-			setProvider(currentUser.getProvider());
-			updateNoCheck(billingAccount);
+			getEntityManager().merge(billingAccount);
+			//getEntityManager().flush();
 		}
 		return result;
 	}

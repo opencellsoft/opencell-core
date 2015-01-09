@@ -6,6 +6,7 @@ import java.util.List;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
+import javax.enterprise.context.Conversation;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 
@@ -36,9 +37,12 @@ public class InvoicingJobBean {
 	
 	@Inject
 	RatedTransactionService ratedTransactionService;
+	
+	@Inject
+	Conversation conversation;
 
 	@Interceptors({ JobLoggingInterceptor.class })
-	//@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
+	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public void execute(JobExecutionResultImpl result, User currentUser) {
 		try {
 			try {
@@ -78,11 +82,17 @@ public class InvoicingJobBean {
 									if (billingRun.getProcessType() == BillingProcessTypesEnum.AUTOMATIC
 											|| currentUser.getProvider().isAutomaticInvoicing()) {
 										billingRunService.createAgregatesAndInvoice( billingRun, currentUser);
+										billingRun=billingRunService.findById(billingRun.getId());
+										billingRun.setStatus(BillingRunStatusEnum.TERMINATED);
+										billingRunService.updateNoCheck(billingRun);
 									}
 								}
 							} else if (BillingRunStatusEnum.ON_GOING.equals(billingRun
 									.getStatus())) {
 								billingRunService.createAgregatesAndInvoice( billingRun, currentUser);
+								billingRun=billingRunService.findById(billingRun.getId());
+								billingRun.setStatus(BillingRunStatusEnum.TERMINATED);
+								billingRunService.updateNoCheck(billingRun);
 							} else if (BillingRunStatusEnum.CONFIRMED.equals(billingRun
 									.getStatus())) {
 								billingRunService.validate(billingRun,currentUser);

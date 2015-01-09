@@ -96,6 +96,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 			}
 		}
 
+		log.debug("BA in PreInvoicingReport: {}",billingAccounts.size());
 		Integer checkBANumber = 0;
 		Integer directDebitBANumber = 0;
 		Integer tipBANumber = 0;
@@ -468,6 +469,10 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 		List<BillingRun> billingRuns = qb.getQuery(getEntityManager())
 				.getResultList();
 
+		for(BillingRun br:billingRuns){
+			getEntityManager().refresh(br);
+		}
+		
 		return billingRuns;
 	}
 
@@ -511,9 +516,9 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 
 	public List<BillingAccount> getBillingAccounts(BillingRun billingRun) {
 		List<BillingAccount> result = null;
-		getEntityManager().merge(billingRun);
+		//getEntityManager().merge(billingRun);
 		BillingCycle billingCycle = billingRun.getBillingCycle();
-
+		log.debug("getBillingAccounts for billingRun {}",billingRun.getId());
 		Object[] ratedTransactionsAmounts = null;
 		if (billingCycle != null) {
 			Date startDate = billingRun.getStartDate();
@@ -540,6 +545,9 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 					.setParameter("billingAccountList", result)
 					.getSingleResult();
 		}
+		for(BillingAccount ba:result){
+			ba.setBillingRun(billingRun);
+		}
 		if (ratedTransactionsAmounts != null) {
 			billingRun
 					.setPrAmountWithoutTax((BigDecimal) ratedTransactionsAmounts[0]);
@@ -550,10 +558,10 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 		return result;
 	}
 
-	//@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
+	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
 	public void createAgregatesAndInvoice(BillingRun billingRun,
 			User currentUser) throws BusinessException, Exception {
-		//billingRun = findById(billingRun.getId());
+		billingRun = findById(billingRun.getId());
 		List<BillingAccount> billingAccounts = getEntityManager()
 				.createNamedQuery("BillingAccount.listByBillingRun",
 						BillingAccount.class)
@@ -568,12 +576,6 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 						+ e.getMessage());
 			}
 		}
-
-		billingRun = findById(billingRun.getId(), true);
-		billingRun.setStatus(BillingRunStatusEnum.TERMINATED);
-
-		//setProvider(currentUser.getProvider());
-		updateNoCheck(billingRun);
 	}
 
 	public void validate(BillingRun billingRun, User user) {

@@ -598,24 +598,5 @@ public class RatedTransactionService extends
 
 	}
 
-	@SuppressWarnings("unchecked")
-	public void billingAccountTotalAmounts(BillingAccount billingAccount) {
-		Query q =null;
-		if (billingAccount.getProvider().isDisplayFreeTransacInInvoice()) {
-			q=getEntityManager().createNamedQuery("RatedTransaction.sumBillingAccount")
-			.setParameter("billingAccount",billingAccount);
-		} else {
-			q=getEntityManager().createNamedQuery("RatedTransaction.sumBillingAccountDisplayFree")
-					.setParameter("billingAccount",billingAccount);
-		}
-
-		List<Object[]> ratedTransactions = q.getResultList();
-		Object[] ratedTrans = ratedTransactions.size() > 0 ? ratedTransactions
-				.get(0) : null;
-		if (ratedTrans != null) {
-			billingAccount.setBrAmountWithoutTax((BigDecimal) ratedTrans[0]);
-			billingAccount.setBrAmountWithTax((BigDecimal) ratedTrans[1]);
-		}
-	}
 
 }
