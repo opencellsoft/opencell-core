@@ -148,8 +148,8 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 					customer.getExternalRef2() != null ? customer
 							.getExternalRef2() : "");
 			customerTag.setAttribute("sellerCode",customer.getSeller().getCode() != null ? customer.getSeller().getCode()  : "");
-			customerTag.setAttribute("brand",customer.getCustomerBrand().getDescription() != null ? customer.getCustomerBrand().getDescription()  : "");
-			customerTag.setAttribute("category",customer.getCustomerCategory().getDescription() != null ? customer.getCustomerCategory().getDescription()  : "");
+			customerTag.setAttribute("brand",customer.getCustomerBrand().getCode() != null ? customer.getCustomerBrand().getCode()  : "");
+			customerTag.setAttribute("category",customer.getCustomerCategory().getCode() != null ? customer.getCustomerCategory().getCode()  : "");
 			
 			String json = customer.getCustomFieldsAsJson();
 			if (json.length() > 0) {

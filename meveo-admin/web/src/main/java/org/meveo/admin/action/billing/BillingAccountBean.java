@@ -370,14 +370,14 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
 			String selectedBillingAccounts = "";
 			String sep = "";
 			boolean isBillable = false;
-			for (BillingAccount ba : getSelectedEntities()) {
+			for (IEntity ie : getSelectedEntities()) {
+				BillingAccount ba = billingAccountService.findById(new Long(ie.getId().toString()));
 				selectedBillingAccounts = selectedBillingAccounts + sep
 						+ ba.getId();
 				sep = ",";
 				if (!isBillable
 						&& ratedTransactionService.isBillingAccountBillable(ba)) {
 					isBillable = true;
-					break;
 				}
 			}
 			if (!isBillable) {
@@ -390,7 +390,7 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
 			billingRunService.create(billingRun);
 			return "/pages/billing/invoicing/billingRuns.xhtml?edit=false";
 		} catch (Exception e) {
-			log.error("lunchExceptionelInvoicing", e);
+			log.error("launchExceptionelInvoicing", e);
 			messages.error(e.getMessage());
 		}
 		return null;
