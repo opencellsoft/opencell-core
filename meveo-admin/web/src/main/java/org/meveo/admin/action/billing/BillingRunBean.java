@@ -48,6 +48,7 @@ import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.BillingRunService;
 import org.meveo.service.billing.impl.RatedTransactionService;
+import org.primefaces.model.SortOrder;
 
 @Named
 @ConversationScoped
@@ -207,7 +208,8 @@ public class BillingRunBean extends StatelessBaseBean<BillingRun> {
 					sep = ",";
 					if (!isBillable
 							&& ratedTransactionService
-									.isBillingAccountBillable(ba.getBillingAccount())) {
+									.isBillingAccountBillable(ba
+											.getBillingAccount())) {
 						isBillable = true;
 						break;
 					}
@@ -387,6 +389,11 @@ public class BillingRunBean extends StatelessBaseBean<BillingRun> {
 	@Override
 	protected String getDefaultSort() {
 		return "id";
+	}
+
+	@Override
+	protected SortOrder getDefaultSortOrder() {
+		return SortOrder.DESCENDING;
 	}
 
 	public boolean isLaunchInvoicingRejectedBA() {
