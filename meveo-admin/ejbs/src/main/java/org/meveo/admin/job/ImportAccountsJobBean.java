@@ -192,18 +192,25 @@ public class ImportAccountsJobBean {
 			i++;
 			int j = -1;
 			org.meveo.model.billing.BillingAccount billingAccount = null;
-			boolean existBillingAccount = false;
 			try {
 				try {
 					billingAccount = billingAccountService.findByCode(
 							billAccount.getCode(), provider);
-					billingAccount = accountImportService.importBillingAccount(
-							billAccount, provider, currentUser);
-					log.info("file6:" + fileName
-							+ ", typeEntity:BillingAccount, index:" + i
-							+ ", code:" + billAccount.getCode()
-							+ ", status:Created");
-					nbBillingAccountsCreated++;
+					if(billingAccount==null){
+						billingAccount = accountImportService.importBillingAccount(
+								billAccount, provider, currentUser);
+						log.info("file6:" + fileName
+								+ ", typeEntity:BillingAccount, index:" + i
+								+ ", code:" + billAccount.getCode()
+								+ ", status:Created");
+						nbBillingAccountsCreated++;
+					} else  {
+						log.info("file1:" + fileName
+								+ ", typeEntity:BillingAccount, index:" + i
+								+ ", code:" + billAccount.getCode()
+								+ ", status:Ignored");
+						nbBillingAccountsIgnored++;
+					}
 				} catch (ImportWarningException w) {
 					createBillingAccountWarning(billAccount, w.getMessage());
 					nbBillingAccountsWarning++;
@@ -219,18 +226,6 @@ public class ImportAccountsJobBean {
 							+ ", typeEntity:BillingAccount, index:" + i
 							+ ", code:" + billAccount.getCode()
 							+ ", status:Error");
-				}
-				if (billingAccount != null) {
-					log.info("file1:" + fileName
-							+ ", typeEntity:BillingAccount, index:" + i
-							+ ", code:" + billAccount.getCode()
-							+ ", status:Ignored");
-					nbBillingAccountsIgnored++;
-					existBillingAccount = true;
-				}
-
-				if (!existBillingAccount) {
-					// FIXME
 				}
 			} catch (Exception e) {
 				createBillingAccountError(billAccount, ExceptionUtils
