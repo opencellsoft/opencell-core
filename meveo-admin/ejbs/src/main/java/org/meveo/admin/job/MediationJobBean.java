@@ -168,6 +168,13 @@ public class MediationJobBean {
 			log.error(e.getMessage());
 		} finally {
 			try {
+				if (cdrReader != null) {
+					cdrReader.close();
+				}
+			} catch (Exception e) {
+				log.error(e.getMessage());
+			}
+			try {
 				if (rejectFileWriter != null) {
 					rejectFileWriter.close();
 					rejectFileWriter = null;

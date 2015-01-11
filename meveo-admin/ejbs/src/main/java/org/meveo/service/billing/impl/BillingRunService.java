@@ -559,18 +559,18 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 	}
 
 	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
-	public void createAgregatesAndInvoice(BillingRun billingRun,
+	public void createAgregatesAndInvoice(Long billingRunId,
 			User currentUser) throws BusinessException, Exception {
-		billingRun = findById(billingRun.getId(),true);
+		//billingRun = findById(billingRun.getId(),true);
 		List<BillingAccount> billingAccounts = getEntityManager()
-				.createNamedQuery("BillingAccount.listByBillingRun",
+				.createNamedQuery("BillingAccount.listByBillingRunId",
 						BillingAccount.class)
-				.setParameter("billingRun", billingRun).getResultList();
+				.setParameter("billingRunId", billingRunId).getResultList();
 
 		for (BillingAccount billingAccount : billingAccounts) {
 			try {
 				invoiceService.createAgregatesAndInvoice(billingAccount,
-						billingRun, currentUser);
+						billingRunId, currentUser);
 			} catch (Exception e) {
 				log.error("Error for BA=" + billingAccount.getCode() + " : "
 						+ e.getMessage());

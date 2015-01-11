@@ -370,8 +370,7 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
 			String selectedBillingAccounts = "";
 			String sep = "";
 			boolean isBillable = false;
-			for (IEntity ie : getSelectedEntities()) {
-				BillingAccount ba = billingAccountService.findById(new Long(ie.getId().toString()));
+			for (BillingAccount ba : getSelectedEntities()) {
 				selectedBillingAccounts = selectedBillingAccounts + sep
 						+ ba.getId();
 				sep = ",";

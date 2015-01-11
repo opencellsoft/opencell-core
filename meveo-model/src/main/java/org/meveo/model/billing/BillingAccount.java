@@ -47,8 +47,8 @@ import org.meveo.model.payments.PaymentTermEnum;
 @Table(name = "BILLING_BILLING_ACCOUNT")
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_BILLING_ACCOUNT_SEQ")
 @NamedQueries({
-    @NamedQuery(name="BillingAccount.listByBillingRun",
-            query="SELECT b FROM BillingAccount b where b.billingRun=:billingRun")
+    @NamedQuery(name="BillingAccount.listByBillingRunId",
+            query="SELECT b FROM BillingAccount b where b.billingRun.id=:billingRunId")
 })
 public class BillingAccount extends AccountEntity {
 

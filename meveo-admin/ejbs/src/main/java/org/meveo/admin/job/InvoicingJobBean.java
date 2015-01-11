@@ -81,7 +81,7 @@ public class InvoicingJobBean {
 									
 									if (billingRun.getProcessType() == BillingProcessTypesEnum.AUTOMATIC
 											|| currentUser.getProvider().isAutomaticInvoicing()) {
-										billingRunService.createAgregatesAndInvoice( billingRun, currentUser);
+										billingRunService.createAgregatesAndInvoice( billingRun.getId(), currentUser);
 										billingRun=billingRunService.findById(billingRun.getId());
 										billingRun.setStatus(BillingRunStatusEnum.TERMINATED);
 										billingRunService.updateNoCheck(billingRun);
@@ -89,7 +89,7 @@ public class InvoicingJobBean {
 								}
 							} else if (BillingRunStatusEnum.ON_GOING.equals(billingRun
 									.getStatus())) {
-								billingRunService.createAgregatesAndInvoice( billingRun, currentUser);
+								billingRunService.createAgregatesAndInvoice( billingRun.getId(), currentUser);
 								billingRun=billingRunService.findById(billingRun.getId());
 								billingRun.setStatus(BillingRunStatusEnum.TERMINATED);
 								billingRunService.updateNoCheck(billingRun);

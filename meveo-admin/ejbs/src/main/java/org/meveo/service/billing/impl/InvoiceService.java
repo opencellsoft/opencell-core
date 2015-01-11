@@ -280,15 +280,15 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public void createAgregatesAndInvoice(
-			BillingAccount billingAccount, BillingRun billingRun,
+			BillingAccount billingAccount, Long billingRunId,
 			User currentUser) throws BusinessException, Exception {
 		log.debug("createAgregatesAndInvoice tx status={}",txReg.getTransactionStatus());
+		EntityManager em = getEntityManager();
+		BillingRun billingRun=em.find(BillingRun.class,billingRunId);
+		em.refresh(billingRun);
 		try {
-			EntityManager em = getEntityManager();
 			billingAccount=em.find(billingAccount.getClass(),billingAccount.getId());
 			em.refresh(billingAccount);
-			billingRun=em.find(billingRun.getClass(),billingRun.getId());
-			em.refresh(billingRun);
 			currentUser=em.find(currentUser.getClass(),currentUser.getId());
 			em.refresh(currentUser);
 			Long startDate = System.currentTimeMillis();
