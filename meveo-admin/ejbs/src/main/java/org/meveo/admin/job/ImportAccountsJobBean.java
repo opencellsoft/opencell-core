@@ -144,9 +144,9 @@ public class ImportAccountsJobBean {
 
 	public void importFile(File file, String fileName, User currentUser)
 			throws JAXBException, Exception {
-		log.info("start import file :" + fileName);
 
 		Provider provider = currentUser.getProvider();
+		log.info("start import file : {} for provider {}", fileName,provider==null?"null":provider.getCode());
 		billingAccountsWarning = new BillingAccounts();
 		billingAccountsError = new BillingAccounts();
 		nbBillingAccounts = 0;
