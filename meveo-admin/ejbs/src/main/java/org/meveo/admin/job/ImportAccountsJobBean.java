@@ -76,14 +76,14 @@ public class ImportAccountsJobBean {
 	@Interceptors({ JobLoggingInterceptor.class })
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public void execute(JobExecutionResultImpl result, User currentUser) {
-		log.info("execute ImportAccountsJob.");
-
 		Provider provider = currentUser.getProvider();
 
 		String importDir = param.getProperty("providers.rootDir", "/tmp/meveo/") + File.separator + provider.getCode()
 				+ File.separator + "imports" + File.separator + "accounts" + File.separator;
 		String dirIN = importDir + "input";
+
 		log.info("dirIN=" + dirIN);
+
 		String dirOK = importDir + "output";
 		String dirKO = importDir + "reject";
 		String prefix = param.getProperty("connectorCRM.importAccounts.prefix", "ACCOUNT_");
@@ -95,7 +95,9 @@ public class ImportAccountsJobBean {
 		}
 		List<File> files = getFilesToProcess(dir, prefix, ext);
 		int numberOfFiles = files.size();
+
 		log.info("InputFiles job " + numberOfFiles + " to import");
+
 		result.setNbItemsToProcess(numberOfFiles);
 
 		for (File file : files) {
@@ -140,6 +142,7 @@ public class ImportAccountsJobBean {
 
 		Provider provider = currentUser.getProvider();
 		log.info("start import file : {} for provider {}", fileName, provider == null ? "null" : provider.getCode());
+
 		billingAccountsWarning = new BillingAccounts();
 		billingAccountsError = new BillingAccounts();
 		nbBillingAccounts = 0;
@@ -218,7 +221,7 @@ public class ImportAccountsJobBean {
 				j++;
 				UserAccount userAccount = null;
 				log.debug("userAccount found code:" + uAccount.getCode());
-				
+
 				try {
 					userAccount = userAccountService.findByCode(uAccount.getCode(), provider);
 				} catch (Exception e) {
