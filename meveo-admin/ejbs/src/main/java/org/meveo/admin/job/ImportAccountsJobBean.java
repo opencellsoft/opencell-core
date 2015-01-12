@@ -80,20 +80,14 @@ public class ImportAccountsJobBean {
 
 		Provider provider = currentUser.getProvider();
 
-		String importDir = param
-				.getProperty("providers.rootDir", "/tmp/meveo/")
-				+ File.separator
-				+ provider.getCode()
-				+ File.separator
-				+ "imports" + File.separator + "accounts" + File.separator;
+		String importDir = param.getProperty("providers.rootDir", "/tmp/meveo/") + File.separator + provider.getCode()
+				+ File.separator + "imports" + File.separator + "accounts" + File.separator;
 		String dirIN = importDir + "input";
 		log.info("dirIN=" + dirIN);
 		String dirOK = importDir + "output";
 		String dirKO = importDir + "reject";
-		String prefix = param.getProperty("connectorCRM.importAccounts.prefix",
-				"ACCOUNT_");
-		String ext = param.getProperty("connectorCRM.importAccounts.extension",
-				"xml");
+		String prefix = param.getProperty("connectorCRM.importAccounts.prefix", "ACCOUNT_");
+		String ext = param.getProperty("connectorCRM.importAccounts.extension", "xml");
 
 		File dir = new File(dirIN);
 		if (!dir.exists()) {
@@ -109,9 +103,9 @@ public class ImportAccountsJobBean {
 			try {
 				log.info("InputFiles job " + file.getName() + " in progres");
 				currentFile = FileUtils.addExtension(file, ".processing");
-				
+
 				importFile(currentFile, file.getName(), currentUser);
-				
+
 				FileUtils.moveFile(dirOK, currentFile, file.getName());
 				log.info("InputFiles job " + file.getName() + " done");
 				result.registerSucces();
@@ -142,11 +136,10 @@ public class ImportAccountsJobBean {
 		return files;
 	}
 
-	public void importFile(File file, String fileName, User currentUser)
-			throws JAXBException, Exception {
+	public void importFile(File file, String fileName, User currentUser) throws JAXBException, Exception {
 
 		Provider provider = currentUser.getProvider();
-		log.info("start import file : {} for provider {}", fileName,provider==null?"null":provider.getCode());
+		log.info("start import file : {} for provider {}", fileName, provider == null ? "null" : provider.getCode());
 		billingAccountsWarning = new BillingAccounts();
 		billingAccountsError = new BillingAccounts();
 		nbBillingAccounts = 0;
@@ -171,8 +164,7 @@ public class ImportAccountsJobBean {
 			createHistory(provider, currentUser);
 			return;
 		}
-		BillingAccounts billingAccounts = (BillingAccounts) JAXBUtils
-				.unmarshaller(BillingAccounts.class, file);
+		BillingAccounts billingAccounts = (BillingAccounts) JAXBUtils.unmarshaller(BillingAccounts.class, file);
 		log.debug("parsing file ok");
 
 		int i = -1;
@@ -181,107 +173,80 @@ public class ImportAccountsJobBean {
 		if (nbBillingAccounts == 0) {
 			createBillingAccountWarning(null, "Fichier vide");
 		}
-		for (org.meveo.model.jaxb.account.BillingAccount billAccount : billingAccounts
-				.getBillingAccount()) {
-			nbUserAccounts += billAccount.getUserAccounts().getUserAccount()
-					.size();
+		for (org.meveo.model.jaxb.account.BillingAccount billAccount : billingAccounts.getBillingAccount()) {
+			nbUserAccounts += billAccount.getUserAccounts().getUserAccount().size();
 		}
 
-		for (org.meveo.model.jaxb.account.BillingAccount billAccount : billingAccounts
-				.getBillingAccount()) {
+		for (org.meveo.model.jaxb.account.BillingAccount billAccount : billingAccounts.getBillingAccount()) {
 			i++;
 			int j = -1;
 			org.meveo.model.billing.BillingAccount billingAccount = null;
 			try {
 				try {
-					billingAccount = billingAccountService.findByCode(
-							billAccount.getCode(), provider);
-					if(billingAccount==null){
-						billingAccount = accountImportService.importBillingAccount(
-								billAccount, provider, currentUser);
-						log.info("file6:" + fileName
-								+ ", typeEntity:BillingAccount, index:" + i
-								+ ", code:" + billAccount.getCode()
-								+ ", status:Created");
+					billingAccount = billingAccountService.findByCode(billAccount.getCode(), provider);
+					if (billingAccount == null) {
+						billingAccount = accountImportService.importBillingAccount(billAccount, provider, currentUser);
+						log.info("file6:" + fileName + ", typeEntity:BillingAccount, index:" + i + ", code:"
+								+ billAccount.getCode() + ", status:Created");
 						nbBillingAccountsCreated++;
-					} else  {
-						log.info("file1:" + fileName
-								+ ", typeEntity:BillingAccount, index:" + i
-								+ ", code:" + billAccount.getCode()
-								+ ", status:Ignored");
+					} else {
+						log.info("file1:" + fileName + ", typeEntity:BillingAccount, index:" + i + ", code:"
+								+ billAccount.getCode() + ", status:Ignored");
 						nbBillingAccountsIgnored++;
 					}
 				} catch (ImportWarningException w) {
 					createBillingAccountWarning(billAccount, w.getMessage());
 					nbBillingAccountsWarning++;
-					log.info("file5:" + fileName
-							+ ", typeEntity:BillingAccount,  index:" + i
-							+ " code:" + billAccount.getCode()
-							+ ", status:Warning");
+					log.info("file5:" + fileName + ", typeEntity:BillingAccount,  index:" + i + " code:"
+							+ billAccount.getCode() + ", status:Warning");
 
 				} catch (BusinessException e) {
 					createBillingAccountError(billAccount, e.getMessage());
 					nbBillingAccountsError++;
-					log.info("file2:" + fileName
-							+ ", typeEntity:BillingAccount, index:" + i
-							+ ", code:" + billAccount.getCode()
-							+ ", status:Error");
+					log.info("file2:" + fileName + ", typeEntity:BillingAccount, index:" + i + ", code:"
+							+ billAccount.getCode() + ", status:Error");
 				}
 			} catch (Exception e) {
-				createBillingAccountError(billAccount, ExceptionUtils
-						.getRootCause(e).getMessage());
+				createBillingAccountError(billAccount, ExceptionUtils.getRootCause(e).getMessage());
 				nbBillingAccountsError++;
-				log.info("file7:" + fileName
-						+ ", typeEntity:BillingAccount, index:" + i + ", code:"
+				log.info("file7:" + fileName + ", typeEntity:BillingAccount, index:" + i + ", code:"
 						+ billAccount.getCode() + ", status:Error");
 				log.error(e.getMessage());
 			}
 
-			for (org.meveo.model.jaxb.account.UserAccount uAccount : billAccount
-					.getUserAccounts().getUserAccount()) {
+			for (org.meveo.model.jaxb.account.UserAccount uAccount : billAccount.getUserAccounts().getUserAccount()) {
 				j++;
 				UserAccount userAccount = null;
 				log.debug("userAccount found code:" + uAccount.getCode());
+				
 				try {
-					userAccount = userAccountService.findByCode(
-							uAccount.getCode(), provider);
+					userAccount = userAccountService.findByCode(uAccount.getCode(), provider);
 				} catch (Exception e) {
+					log.error(e.getMessage());
 				}
+
 				if (userAccount != null) {
 					nbUserAccountsIgnored++;
-					log.info("file:" + fileName
-							+ ", typeEntity:UserAccount,  indexBillingAccount:"
-							+ i + ", index:" + j + " code:"
-							+ uAccount.getCode() + ", status:Ignored");
+					log.info("file:" + fileName + ", typeEntity:UserAccount,  indexBillingAccount:" + i + ", index:"
+							+ j + " code:" + uAccount.getCode() + ", status:Ignored");
 				} else {
 					try {
-						accountImportService.importUserAccount(billingAccount,
-								billAccount, uAccount, provider, currentUser);
-						log.info("file:"
-								+ fileName
-								+ ", typeEntity:UserAccount,  indexBillingAccount:"
-								+ i + ", index:" + j + " code:"
-								+ uAccount.getCode() + ", status:Created");
+						accountImportService.importUserAccount(billingAccount, billAccount, uAccount, provider,
+								currentUser);
+						log.info("file:" + fileName + ", typeEntity:UserAccount,  indexBillingAccount:" + i
+								+ ", index:" + j + " code:" + uAccount.getCode() + ", status:Created");
 						nbUserAccountsCreated++;
 					} catch (ImportWarningException w) {
-						createUserAccountWarning(billAccount, uAccount,
-								w.getMessage());
+						createUserAccountWarning(billAccount, uAccount, w.getMessage());
 						nbUserAccountsWarning++;
-						log.info("file:"
-								+ fileName
-								+ ", typeEntity:UserAccount,  indexBillingAccount:"
-								+ i + ", index:" + j + " code:"
-								+ uAccount.getCode() + ", status:Warning");
+						log.info("file:" + fileName + ", typeEntity:UserAccount,  indexBillingAccount:" + i
+								+ ", index:" + j + " code:" + uAccount.getCode() + ", status:Warning");
 
 					} catch (BusinessException e) {
-						createUserAccountError(billAccount, uAccount,
-								e.getMessage());
+						createUserAccountError(billAccount, uAccount, e.getMessage());
 						nbUserAccountsError++;
-						log.info("file:"
-								+ fileName
-								+ ", typeEntity:UserAccount,  indexBillingAccount:"
-								+ i + ", index:" + j + " code:"
-								+ uAccount.getCode() + ", status:Error");
+						log.info("file:" + fileName + ", typeEntity:UserAccount,  indexBillingAccount:" + i
+								+ ", index:" + j + " code:" + uAccount.getCode() + ", status:Error");
 					}
 				}
 			}
@@ -291,11 +256,8 @@ public class ImportAccountsJobBean {
 		log.info("end import file ");
 	}
 
-	private void createBillingAccountError(
-			org.meveo.model.jaxb.account.BillingAccount billAccount,
-			String cause) {
-		String generateFullCrmReject = param.getProperty(
-				"connectorCRM.generateFullCrmReject", "true");
+	private void createBillingAccountError(org.meveo.model.jaxb.account.BillingAccount billAccount, String cause) {
+		String generateFullCrmReject = param.getProperty("connectorCRM.generateFullCrmReject", "true");
 		ErrorBillingAccount errorBillingAccount = new ErrorBillingAccount();
 		errorBillingAccount.setCause(cause);
 		errorBillingAccount.setCode(billAccount.getCode());
@@ -309,15 +271,12 @@ public class ImportAccountsJobBean {
 			billingAccountsError.setErrors(new Errors());
 		}
 
-		billingAccountsError.getErrors().getErrorBillingAccount()
-				.add(errorBillingAccount);
+		billingAccountsError.getErrors().getErrorBillingAccount().add(errorBillingAccount);
 	}
 
-	private void createUserAccountError(
-			org.meveo.model.jaxb.account.BillingAccount billAccount,
+	private void createUserAccountError(org.meveo.model.jaxb.account.BillingAccount billAccount,
 			org.meveo.model.jaxb.account.UserAccount uAccount, String cause) {
-		String generateFullCrmReject = param.getProperty(
-				"connectorCRM.generateFullCrmReject", "true");
+		String generateFullCrmReject = param.getProperty("connectorCRM.generateFullCrmReject", "true");
 		ErrorUserAccount errorUserAccount = new ErrorUserAccount();
 		errorUserAccount.setCause(cause);
 		errorUserAccount.setCode(uAccount.getCode());
@@ -332,23 +291,17 @@ public class ImportAccountsJobBean {
 			billingAccountsError.getBillingAccount().add(billAccount);
 		}
 
-		billingAccountsError.getErrors().getErrorUserAccount()
-				.add(errorUserAccount);
+		billingAccountsError.getErrors().getErrorUserAccount().add(errorUserAccount);
 	}
 
-	private void createBillingAccountWarning(
-			org.meveo.model.jaxb.account.BillingAccount billAccount,
-			String cause) {
-		String generateFullCrmReject = param.getProperty(
-				"connectorCRM.generateFullCrmReject", "true");
+	private void createBillingAccountWarning(org.meveo.model.jaxb.account.BillingAccount billAccount, String cause) {
+		String generateFullCrmReject = param.getProperty("connectorCRM.generateFullCrmReject", "true");
 		WarningBillingAccount warningBillingAccount = new WarningBillingAccount();
 		warningBillingAccount.setCause(cause);
-		warningBillingAccount.setCode(billAccount == null ? "" : billAccount
-				.getCode());
+		warningBillingAccount.setCode(billAccount == null ? "" : billAccount.getCode());
 
 		if (!billingAccountsWarning.getBillingAccount().contains(billAccount)
-				&& "true".equalsIgnoreCase(generateFullCrmReject)
-				&& billAccount != null) {
+				&& "true".equalsIgnoreCase(generateFullCrmReject) && billAccount != null) {
 			billingAccountsWarning.getBillingAccount().add(billAccount);
 		}
 
@@ -356,15 +309,12 @@ public class ImportAccountsJobBean {
 			billingAccountsWarning.setWarnings(new Warnings());
 		}
 
-		billingAccountsWarning.getWarnings().getWarningBillingAccount()
-				.add(warningBillingAccount);
+		billingAccountsWarning.getWarnings().getWarningBillingAccount().add(warningBillingAccount);
 	}
 
-	private void createUserAccountWarning(
-			org.meveo.model.jaxb.account.BillingAccount billAccount,
+	private void createUserAccountWarning(org.meveo.model.jaxb.account.BillingAccount billAccount,
 			org.meveo.model.jaxb.account.UserAccount uAccount, String cause) {
-		String generateFullCrmReject = param.getProperty(
-				"connectorCRM.generateFullCrmReject", "true");
+		String generateFullCrmReject = param.getProperty("connectorCRM.generateFullCrmReject", "true");
 		WarningUserAccount warningUserAccount = new WarningUserAccount();
 		warningUserAccount.setCause(cause);
 		warningUserAccount.setCode(uAccount.getCode());
@@ -379,28 +329,20 @@ public class ImportAccountsJobBean {
 			billingAccountsWarning.setWarnings(new Warnings());
 		}
 
-		billingAccountsWarning.getWarnings().getWarningUserAccount()
-				.add(warningUserAccount);
+		billingAccountsWarning.getWarnings().getWarningUserAccount().add(warningUserAccount);
 	}
 
-	private void generateReport(String fileName, Provider provider)
-			throws Exception {
-		String importDir = param
-				.getProperty("providers.rootDir", "/tmp/meveo/")
-				+ File.separator
-				+ provider.getCode()
-				+ File.separator
-				+ "imports" + File.separator + "accounts" + File.separator;
+	private void generateReport(String fileName, Provider provider) throws Exception {
+		String importDir = param.getProperty("providers.rootDir", "/tmp/meveo/") + File.separator + provider.getCode()
+				+ File.separator + "imports" + File.separator + "accounts" + File.separator;
 
 		if (billingAccountsWarning.getWarnings() != null) {
-			String warningDir = importDir + "output" + File.separator
-					+ "warnings";
+			String warningDir = importDir + "output" + File.separator + "warnings";
 			File dir = new File(warningDir);
 			if (!dir.exists()) {
 				dir.mkdirs();
 			}
-			JAXBUtils.marshaller(billingAccountsWarning, new File(warningDir
-					+ File.separator + "WARN_" + fileName));
+			JAXBUtils.marshaller(billingAccountsWarning, new File(warningDir + File.separator + "WARN_" + fileName));
 		}
 
 		if (billingAccountsError.getErrors() != null) {
@@ -410,21 +352,16 @@ public class ImportAccountsJobBean {
 			if (!dir.exists()) {
 				dir.mkdirs();
 			}
-			JAXBUtils.marshaller(billingAccountsError, new File(errorDir
-					+ File.separator + "ERR_" + fileName));
+			JAXBUtils.marshaller(billingAccountsError, new File(errorDir + File.separator + "ERR_" + fileName));
 		}
 	}
 
-	private void createHistory(Provider provider, User userJob)
-			throws Exception {
+	private void createHistory(Provider provider, User userJob) throws Exception {
 		accountImportHisto.setNbBillingAccounts(nbBillingAccounts);
-		accountImportHisto
-				.setNbBillingAccountsCreated(nbBillingAccountsCreated);
+		accountImportHisto.setNbBillingAccountsCreated(nbBillingAccountsCreated);
 		accountImportHisto.setNbBillingAccountsError(nbBillingAccountsError);
-		accountImportHisto
-				.setNbBillingAccountsIgnored(nbBillingAccountsIgnored);
-		accountImportHisto
-				.setNbBillingAccountsWarning(nbBillingAccountsWarning);
+		accountImportHisto.setNbBillingAccountsIgnored(nbBillingAccountsIgnored);
+		accountImportHisto.setNbBillingAccountsWarning(nbBillingAccountsWarning);
 		accountImportHisto.setNbUserAccounts(nbUserAccounts);
 		accountImportHisto.setNbUserAccountsCreated(nbUserAccountsCreated);
 		accountImportHisto.setNbUserAccountsError(nbUserAccountsError);
