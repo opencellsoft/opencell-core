@@ -72,6 +72,8 @@
 		<p:commandButton id="#{resultsId}deletelink" icon="ui-icon-trash"
 			rendered="#{renderDeleteLink}"
 			oncomplete="confirmDeleteWidget.show()">
+			<f:setPropertyActionListener target="#{backingBean.entity}"
+				value="#{entity}"></f:setPropertyActionListener>
 		</p:commandButton>
 
 		<p:confirmDialog id="confirmDialog" styleClass="confirm-dialog"
@@ -80,12 +82,12 @@
 			<p:panel styleClass="confirm-dialog-content">
 				<p:commandButton id="deleteOk" value="#{messages['commons.yes']}"
 					oncomplete="confirmDeleteWidget.hide()"
-					action="#{backingBean.delete(entity.id)}" update="@all" />
+					action="#{backingBean.delete()}" update="@all" />
 				<p:commandButton id="deleteKo" value="#{messages['commons.no']}"
 					onclick="confirmDeleteWidget.hide()" type="button" />
 			</p:panel>
 		</p:confirmDialog>
-		
+
 	</p:column>
 </ui:composition>
 
