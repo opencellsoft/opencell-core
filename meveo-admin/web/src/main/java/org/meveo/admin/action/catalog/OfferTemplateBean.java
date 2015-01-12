@@ -125,7 +125,6 @@ public class OfferTemplateBean extends StatelessBaseBean<OfferTemplate> {
 		Map<String, Object> filters = getFilters();
 		filters.put("disabled", false);
 		PaginationConfiguration config = new PaginationConfiguration(filters);
-		config.setFetchFields(Arrays.asList("serviceTemplates"));
 
 		return offerTemplateService.list(config);
 	}
