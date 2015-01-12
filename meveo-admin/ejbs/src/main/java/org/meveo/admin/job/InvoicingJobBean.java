@@ -1,12 +1,12 @@
 package org.meveo.admin.job;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
-import javax.enterprise.context.Conversation;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 
@@ -20,7 +20,6 @@ import org.meveo.model.crm.Provider;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.billing.impl.BillingRunService;
-import org.meveo.service.billing.impl.RatedTransactionService;
 import org.slf4j.Logger;
 
 @Stateless
@@ -34,12 +33,6 @@ public class InvoicingJobBean {
 
 	@Inject
 	private BillingAccountService billingAccountService;
-	
-	@Inject
-	RatedTransactionService ratedTransactionService;
-	
-	@Inject
-	Conversation conversation;
 
 	@Interceptors({ JobLoggingInterceptor.class })
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
@@ -47,11 +40,8 @@ public class InvoicingJobBean {
 		try {
 			try {
 				Provider provider = currentUser.getProvider();
-				List<BillingRun> billingRuns = billingRunService
-						.getbillingRuns(provider,
-								BillingRunStatusEnum.NEW,
-								BillingRunStatusEnum.ON_GOING,
-								BillingRunStatusEnum.CONFIRMED);
+				List<BillingRun> billingRuns = billingRunService.getbillingRuns(provider, BillingRunStatusEnum.NEW,
+						BillingRunStatusEnum.ON_GOING, BillingRunStatusEnum.CONFIRMED);
 
 				log.info("billingRuns to process={}", billingRuns.size());
 
@@ -67,7 +57,17 @@ public class InvoicingJobBean {
 									int billableBA = 0;
 
 									for (BillingAccount billingAccount : billingAccounts) {
-										if (billingAccountService.updateBillingAccountTotalAmounts(billingAccount,billingRun,currentUser)) {
+										Object[] queryResult = billingAccountService.updateBillingAccountTotalAmounts(
+												billingAccount, billingRun, currentUser);
+										if (queryResult != null) {
+											billingAccount.setBrAmountWithoutTax((BigDecimal) queryResult[0]);
+											billingAccount.setBrAmountWithTax((BigDecimal) queryResult[1]);
+											log.debug("set brAmount {} in BA {}", queryResult[0],
+													billingAccount.getId());
+											billingAccount.setBillingRun(billingRun);
+											billingAccount.updateAudit(currentUser);
+											billingAccountService.updateNoCheck(billingAccount);
+
 											billableBA++;
 										}
 									}
@@ -78,26 +78,25 @@ public class InvoicingJobBean {
 									billingRun.setStatus(BillingRunStatusEnum.WAITING);
 									billingRun.updateAudit(currentUser);
 									billingRunService.updateNoCheck(billingRun);
-									
+
 									if (billingRun.getProcessType() == BillingProcessTypesEnum.AUTOMATIC
 											|| currentUser.getProvider().isAutomaticInvoicing()) {
-										billingRunService.createAgregatesAndInvoice( billingRun.getId(), currentUser);
-										billingRun=billingRunService.findById(billingRun.getId());
+										billingRunService.createAgregatesAndInvoice(billingRun.getId(), currentUser);
+										billingRun = billingRunService.findById(billingRun.getId());
 										billingRun.setStatus(BillingRunStatusEnum.TERMINATED);
 										billingRunService.updateNoCheck(billingRun);
 									}
 								}
-							} else if (BillingRunStatusEnum.ON_GOING.equals(billingRun
-									.getStatus())) {
-								billingRunService.createAgregatesAndInvoice( billingRun.getId(), currentUser);
-								billingRun=billingRunService.findById(billingRun.getId());
+							} else if (BillingRunStatusEnum.ON_GOING.equals(billingRun.getStatus())) {
+								billingRunService.createAgregatesAndInvoice(billingRun.getId(), currentUser);
+								billingRun = billingRunService.findById(billingRun.getId());
 								billingRun.setStatus(BillingRunStatusEnum.TERMINATED);
 								billingRunService.updateNoCheck(billingRun);
-							} else if (BillingRunStatusEnum.CONFIRMED.equals(billingRun
-									.getStatus())) {
-								billingRunService.validate(billingRun,currentUser);
+							} else if (BillingRunStatusEnum.CONFIRMED.equals(billingRun.getStatus())) {
+								billingRunService.validate(billingRun, currentUser);
 							}
 						} catch (Exception e) {
+							log.error("Error: {}", e.getMessage());
 							result.registerError(e.getMessage());
 						}
 					} catch (Exception e) {

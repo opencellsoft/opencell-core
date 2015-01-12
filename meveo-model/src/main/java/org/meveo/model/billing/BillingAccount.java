@@ -46,10 +46,7 @@ import org.meveo.model.payments.PaymentTermEnum;
 @Entity
 @Table(name = "BILLING_BILLING_ACCOUNT")
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_BILLING_ACCOUNT_SEQ")
-@NamedQueries({
-    @NamedQuery(name="BillingAccount.listByBillingRunId",
-            query="SELECT b FROM BillingAccount b where b.billingRun.id=:billingRunId")
-})
+@NamedQueries({ @NamedQuery(name = "BillingAccount.listByBillingRunId", query = "SELECT b FROM BillingAccount b where b.billingRun.id=:billingRunId") })
 public class BillingAccount extends AccountEntity {
 
 	public static final String ACCOUNT_TYPE = "billingAccount.type";
@@ -93,7 +90,7 @@ public class BillingAccount extends AccountEntity {
 	@Column(name = "PAYMENT_METHOD")
 	@Enumerated(EnumType.STRING)
 	private PaymentMethodEnum paymentMethod = PaymentMethodEnum.CHECK;
-	
+
 	@Column(name = "PAYMENT_TERM")
 	@Enumerated(EnumType.STRING)
 	private PaymentTermEnum paymentTerm;
@@ -134,7 +131,7 @@ public class BillingAccount extends AccountEntity {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "BILLING_RUN")
 	private BillingRun billingRun;
-	
+
 	@Column(name = "BR_AMOUNT_WITHOUT_TAX", precision = NB_PRECISION, scale = NB_DECIMALS)
 	private BigDecimal brAmountWithoutTax;
 
@@ -143,11 +140,11 @@ public class BillingAccount extends AccountEntity {
 
 	@Column(name = "INVOICE_PREFIX")
 	private String invoicePrefix;
-	
+
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "TERMIN_REASON_ID", nullable = true)
 	private SubscriptionTerminationReason terminationReason;
-	
+
 	@OneToMany(mappedBy = "billingAccount", fetch = FetchType.LAZY)
 	private List<RatedTransaction> ratedTransactions;
 
@@ -233,9 +230,6 @@ public class BillingAccount extends AccountEntity {
 	}
 
 	public BankCoordinates getBankCoordinates() {
-		if (bankCoordinates == null) {
-			bankCoordinates = new BankCoordinates();
-		}
 		return bankCoordinates;
 	}
 
@@ -333,7 +327,8 @@ public class BillingAccount extends AccountEntity {
 		return terminationReason;
 	}
 
-	public void setTerminationReason(SubscriptionTerminationReason terminationReason) {
+	public void setTerminationReason(
+			SubscriptionTerminationReason terminationReason) {
 		this.terminationReason = terminationReason;
 	}
 
@@ -361,7 +356,4 @@ public class BillingAccount extends AccountEntity {
 		this.paymentTerm = paymentTerm;
 	}
 
-	
-	
-	
 }

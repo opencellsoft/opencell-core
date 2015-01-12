@@ -23,6 +23,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
@@ -58,26 +59,18 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 	@Inject
 	private BillingAccountService billingAccountService;
 
-	@Inject
-	InvoiceService invoiceService;
+	@EJB
+	private InvoiceService invoiceService;
 
-	@Inject
-	RatedTransactionService ratedTransactionService;
-
-	public PreInvoicingReportsDTO generatePreInvoicingReports(
-			BillingRun billingRun) throws BusinessException {
+	public PreInvoicingReportsDTO generatePreInvoicingReports(BillingRun billingRun) throws BusinessException {
 		log.debug("start generatePreInvoicingReports.......");
 		PreInvoicingReportsDTO preInvoicingReportsDTO = new PreInvoicingReportsDTO();
 
-		preInvoicingReportsDTO
-				.setBillingCycleCode(billingRun.getBillingCycle() != null ? billingRun
-						.getBillingCycle().getCode() : null);
-		preInvoicingReportsDTO.setBillingAccountNumber(billingRun
-				.getBillingAccountNumber());
-		preInvoicingReportsDTO.setBillableBillingAccountNumber(billingRun
-				.getBillableBillingAcountNumber());
-		preInvoicingReportsDTO.setAmoutWitountTax(billingRun
-				.getPrAmountWithoutTax());
+		preInvoicingReportsDTO.setBillingCycleCode(billingRun.getBillingCycle() != null ? billingRun.getBillingCycle()
+				.getCode() : null);
+		preInvoicingReportsDTO.setBillingAccountNumber(billingRun.getBillingAccountNumber());
+		preInvoicingReportsDTO.setBillableBillingAccountNumber(billingRun.getBillableBillingAcountNumber());
+		preInvoicingReportsDTO.setAmoutWitountTax(billingRun.getPrAmountWithoutTax());
 
 		BillingCycle billingCycle = billingRun.getBillingCycle();
 
@@ -86,8 +79,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 		endDate = endDate != null ? endDate : new Date();
 		List<BillingAccount> billingAccounts = new ArrayList<BillingAccount>();
 		if (billingCycle != null) {
-			billingAccounts = billingAccountService.findBillingAccounts(
-					billingCycle, startDate, endDate);
+			billingAccounts = billingAccountService.findBillingAccounts(billingCycle, startDate, endDate);
 		} else {
 			String[] baIds = billingRun.getSelectedBillingAccounts().split(",");
 			for (String id : Arrays.asList(baIds)) {
@@ -96,7 +88,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 			}
 		}
 
-		log.debug("BA in PreInvoicingReport: {}",billingAccounts.size());
+		log.debug("BA in PreInvoicingReport: {}", billingAccounts.size());
 		Integer checkBANumber = 0;
 		Integer directDebitBANumber = 0;
 		Integer tipBANumber = 0;
@@ -134,28 +126,25 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 
 		}
 
-		for (BillingAccount billingAccount : billingRun
-				.getBillableBillingAccounts()) {
+		for (BillingAccount billingAccount : billingRun.getBillableBillingAccounts()) {
 			switch (billingAccount.getPaymentMethod()) {
 			case CHECK:
 				checkBillableBANumber++;
-				checkBillableBAAmountHT = checkBillableBAAmountHT
-						.add(billingAccount.getBrAmountWithoutTax());
+				checkBillableBAAmountHT = checkBillableBAAmountHT.add(billingAccount.getBrAmountWithoutTax());
 				break;
 			case DIRECTDEBIT:
 				directDebitBillableBANumber++;
-				directDebitBillableBAAmountHT = directDebitBillableBAAmountHT
-						.add(billingAccount.getBrAmountWithoutTax());
+				directDebitBillableBAAmountHT = directDebitBillableBAAmountHT.add(billingAccount
+						.getBrAmountWithoutTax());
 				break;
 			case TIP:
 				tipBillableBANumber++;
-				tipBillableBAAmountHT = tipBillableBAAmountHT
-						.add(billingAccount.getBrAmountWithoutTax());
+				tipBillableBAAmountHT = tipBillableBAAmountHT.add(billingAccount.getBrAmountWithoutTax());
 				break;
 			case WIRETRANSFER:
 				wiretransferBillableBANumber++;
-				wiretransferBillableBAAmountHT = wiretransferBillableBAAmountHT
-						.add(billingAccount.getBrAmountWithoutTax());
+				wiretransferBillableBAAmountHT = wiretransferBillableBAAmountHT.add(billingAccount
+						.getBrAmountWithoutTax());
 				break;
 
 			default:
@@ -165,31 +154,23 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 		}
 
 		preInvoicingReportsDTO.setCheckBANumber(checkBANumber);
-		preInvoicingReportsDTO.setCheckBillableBAAmountHT(round(
-				checkBillableBAAmountHT, 2));
+		preInvoicingReportsDTO.setCheckBillableBAAmountHT(round(checkBillableBAAmountHT, 2));
 		preInvoicingReportsDTO.setCheckBillableBANumber(checkBillableBANumber);
 		preInvoicingReportsDTO.setDirectDebitBANumber(directDebitBANumber);
-		preInvoicingReportsDTO.setDirectDebitBillableBAAmountHT(round(
-				directDebitBillableBAAmountHT, 2));
-		preInvoicingReportsDTO
-				.setDirectDebitBillableBANumber(directDebitBillableBANumber);
+		preInvoicingReportsDTO.setDirectDebitBillableBAAmountHT(round(directDebitBillableBAAmountHT, 2));
+		preInvoicingReportsDTO.setDirectDebitBillableBANumber(directDebitBillableBANumber);
 		preInvoicingReportsDTO.setTipBANumber(tipBANumber);
-		preInvoicingReportsDTO.setTipBillableBAAmountHT(round(
-				tipBillableBAAmountHT, 2));
+		preInvoicingReportsDTO.setTipBillableBAAmountHT(round(tipBillableBAAmountHT, 2));
 		preInvoicingReportsDTO.setTipBillableBANumber(tipBillableBANumber);
 		preInvoicingReportsDTO.setWiretransferBANumber(wiretransferBANumber);
-		preInvoicingReportsDTO.setWiretransferBillableBAAmountHT(round(
-				wiretransferBillableBAAmountHT, 2));
-		preInvoicingReportsDTO
-				.setWiretransferBillableBANumber(wiretransferBillableBANumber);
+		preInvoicingReportsDTO.setWiretransferBillableBAAmountHT(round(wiretransferBillableBAAmountHT, 2));
+		preInvoicingReportsDTO.setWiretransferBillableBANumber(wiretransferBillableBANumber);
 
 		return preInvoicingReportsDTO;
 	}
 
-	public PostInvoicingReportsDTO generatePostInvoicingReports(
-			BillingRun billingRun) throws BusinessException {
-		log.info("generatePostInvoicingReports billingRun="
-				+ billingRun.getId());
+	public PostInvoicingReportsDTO generatePostInvoicingReports(BillingRun billingRun) throws BusinessException {
+		log.info("generatePostInvoicingReports billingRun=" + billingRun.getId());
 		PostInvoicingReportsDTO postInvoicingReportsDTO = new PostInvoicingReportsDTO();
 
 		BigDecimal globalAmountHT = BigDecimal.ZERO;
@@ -225,34 +206,27 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 
 		for (Invoice invoice : billingRun.getInvoices()) {
 
-			if (invoice.getAmountWithoutTax() != null
-					&& invoice.getAmountWithTax() != null) {
+			if (invoice.getAmountWithoutTax() != null && invoice.getAmountWithTax() != null) {
 				switch (invoice.getPaymentMethod()) {
 				case CHECK:
 					checkInvoicesNumber++;
-					checkAmuontHT = checkAmuontHT.add(invoice
-							.getAmountWithoutTax());
+					checkAmuontHT = checkAmuontHT.add(invoice.getAmountWithoutTax());
 					checkAmuont = checkAmuont.add(invoice.getAmountWithTax());
 					break;
 				case DIRECTDEBIT:
 					directDebitInvoicesNumber++;
-					directDebitAmuontHT = directDebitAmuontHT.add(invoice
-							.getAmountWithoutTax());
-					directDebitAmuont = directDebitAmuont.add(invoice
-							.getAmountWithTax());
+					directDebitAmuontHT = directDebitAmuontHT.add(invoice.getAmountWithoutTax());
+					directDebitAmuont = directDebitAmuont.add(invoice.getAmountWithTax());
 					break;
 				case TIP:
 					tipInvoicesNumber++;
-					tipAmuontHT = tipAmuontHT
-							.add(invoice.getAmountWithoutTax());
+					tipAmuontHT = tipAmuontHT.add(invoice.getAmountWithoutTax());
 					tipAmuont = tipAmuont.add(invoice.getAmountWithTax());
 					break;
 				case WIRETRANSFER:
 					wiretransferInvoicesNumber++;
-					wiretransferAmuontHT = wiretransferAmuontHT.add(invoice
-							.getAmountWithoutTax());
-					wiretransferAmuont = wiretransferAmuont.add(invoice
-							.getAmountWithTax());
+					wiretransferAmuontHT = wiretransferAmuontHT.add(invoice.getAmountWithoutTax());
+					wiretransferAmuont = wiretransferAmuont.add(invoice.getAmountWithTax());
 					break;
 
 				default:
@@ -260,80 +234,58 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 				}
 			}
 
-			if (invoice.getAmountWithoutTax() != null
-					&& invoice.getAmountWithoutTax().compareTo(BigDecimal.ZERO) > 0) {
+			if (invoice.getAmountWithoutTax() != null && invoice.getAmountWithoutTax().compareTo(BigDecimal.ZERO) > 0) {
 				positiveInvoicesNumber++;
-				positiveInvoicesAmountHT = positiveInvoicesAmountHT.add(invoice
-						.getAmountWithoutTax());
-				positiveInvoicesTaxAmount = positiveInvoicesTaxAmount
-						.add(invoice.getAmountTax());
-				positiveInvoicesAmount = positiveInvoicesAmount.add(invoice
-						.getAmountWithTax());
+				positiveInvoicesAmountHT = positiveInvoicesAmountHT.add(invoice.getAmountWithoutTax());
+				positiveInvoicesTaxAmount = positiveInvoicesTaxAmount.add(invoice.getAmountTax());
+				positiveInvoicesAmount = positiveInvoicesAmount.add(invoice.getAmountWithTax());
 			} else if (invoice.getAmountWithoutTax() == null
 					|| invoice.getAmountWithoutTax().compareTo(BigDecimal.ZERO) == 0) {
 				emptyInvoicesNumber++;
 			} else {
 				negativeInvoicesNumber++;
-				negativeInvoicesAmountHT = negativeInvoicesAmountHT.add(invoice
-						.getAmountWithoutTax());
-				negativeInvoicesTaxAmount = negativeInvoicesTaxAmount
-						.add(invoice.getAmountTax());
-				negativeInvoicesAmount = negativeInvoicesAmount.add(invoice
-						.getAmountWithTax());
+				negativeInvoicesAmountHT = negativeInvoicesAmountHT.add(invoice.getAmountWithoutTax());
+				negativeInvoicesTaxAmount = negativeInvoicesTaxAmount.add(invoice.getAmountTax());
+				negativeInvoicesAmount = negativeInvoicesAmount.add(invoice.getAmountWithTax());
 			}
 
 			if (invoice.getBillingAccount().getElectronicBilling()) {
 				electronicInvoicesNumber++;
 			}
 
-			if (invoice.getAmountWithoutTax() != null
-					&& invoice.getAmountWithTax() != null) {
-				globalAmountHT = globalAmountHT.add(invoice
-						.getAmountWithoutTax());
-				globalAmountTTC = globalAmountTTC.add(invoice
-						.getAmountWithTax());
+			if (invoice.getAmountWithoutTax() != null && invoice.getAmountWithTax() != null) {
+				globalAmountHT = globalAmountHT.add(invoice.getAmountWithoutTax());
+				globalAmountTTC = globalAmountTTC.add(invoice.getAmountWithTax());
 			}
 
 		}
 
-		postInvoicingReportsDTO
-				.setInvoicesNumber(billingRun.getInvoiceNumber());
+		postInvoicingReportsDTO.setInvoicesNumber(billingRun.getInvoiceNumber());
 		postInvoicingReportsDTO.setCheckAmuont(checkAmuont);
 		postInvoicingReportsDTO.setCheckAmuontHT(checkAmuontHT);
 		postInvoicingReportsDTO.setCheckInvoicesNumber(checkInvoicesNumber);
 		postInvoicingReportsDTO.setDirectDebitAmuont(directDebitAmuont);
 		postInvoicingReportsDTO.setDirectDebitAmuontHT(directDebitAmuontHT);
-		postInvoicingReportsDTO
-				.setDirectDebitInvoicesNumber(directDebitInvoicesNumber);
-		postInvoicingReportsDTO
-				.setElectronicInvoicesNumber(electronicInvoicesNumber);
+		postInvoicingReportsDTO.setDirectDebitInvoicesNumber(directDebitInvoicesNumber);
+		postInvoicingReportsDTO.setElectronicInvoicesNumber(electronicInvoicesNumber);
 		postInvoicingReportsDTO.setEmptyInvoicesNumber(emptyInvoicesNumber);
 
-		postInvoicingReportsDTO
-				.setPositiveInvoicesAmountHT(positiveInvoicesAmountHT);
-		postInvoicingReportsDTO
-				.setPositiveInvoicesAmount(positiveInvoicesAmount);
-		postInvoicingReportsDTO
-				.setPositiveInvoicesTaxAmount(positiveInvoicesTaxAmount);
-		postInvoicingReportsDTO
-				.setPositiveInvoicesNumber(positiveInvoicesNumber);
+		postInvoicingReportsDTO.setPositiveInvoicesAmountHT(positiveInvoicesAmountHT);
+		postInvoicingReportsDTO.setPositiveInvoicesAmount(positiveInvoicesAmount);
+		postInvoicingReportsDTO.setPositiveInvoicesTaxAmount(positiveInvoicesTaxAmount);
+		postInvoicingReportsDTO.setPositiveInvoicesNumber(positiveInvoicesNumber);
 
-		postInvoicingReportsDTO
-				.setNegativeInvoicesAmountHT(negativeInvoicesAmountHT);
-		postInvoicingReportsDTO
-				.setNegativeInvoicesAmount(negativeInvoicesAmount);
-		postInvoicingReportsDTO
-				.setNegativeInvoicesTaxAmount(negativeInvoicesTaxAmount);
-		postInvoicingReportsDTO
-				.setNegativeInvoicesNumber(negativeInvoicesNumber);
+		postInvoicingReportsDTO.setNegativeInvoicesAmountHT(negativeInvoicesAmountHT);
+		postInvoicingReportsDTO.setNegativeInvoicesAmount(negativeInvoicesAmount);
+		postInvoicingReportsDTO.setNegativeInvoicesTaxAmount(negativeInvoicesTaxAmount);
+		postInvoicingReportsDTO.setNegativeInvoicesNumber(negativeInvoicesNumber);
 
 		postInvoicingReportsDTO.setTipAmuont(tipAmuont);
 		postInvoicingReportsDTO.setTipAmuontHT(tipAmuontHT);
 		postInvoicingReportsDTO.setTipInvoicesNumber(tipInvoicesNumber);
 		postInvoicingReportsDTO.setWiretransferAmuont(wiretransferAmuont);
 		postInvoicingReportsDTO.setWiretransferAmuontHT(wiretransferAmuontHT);
-		postInvoicingReportsDTO
-				.setWiretransferInvoicesNumber(wiretransferInvoicesNumber);
+		postInvoicingReportsDTO.setWiretransferInvoicesNumber(wiretransferInvoicesNumber);
 		postInvoicingReportsDTO.setGlobalAmount(globalAmountHT);
 
 		return postInvoicingReportsDTO;
@@ -359,20 +311,17 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 		queryTrans.executeUpdate();
 
 		Query queryAgregate = getEntityManager().createQuery(
-				"delete from " + InvoiceAgregate.class.getName()
-						+ " where billingRun=:billingRun");
+				"delete from " + InvoiceAgregate.class.getName() + " where billingRun=:billingRun");
 		queryAgregate.setParameter("billingRun", billingRun);
 		queryAgregate.executeUpdate();
 
 		Query queryInvoices = getEntityManager().createQuery(
-				"delete from " + Invoice.class.getName()
-						+ " where billingRun=:billingRun");
+				"delete from " + Invoice.class.getName() + " where billingRun=:billingRun");
 		queryInvoices.setParameter("billingRun", billingRun);
 		queryInvoices.executeUpdate();
 
 		Query queryBA = getEntityManager().createQuery(
-				"update " + BillingAccount.class.getName()
-						+ " set billingRun=null where billingRun=:billingRun");
+				"update " + BillingAccount.class.getName() + " set billingRun=null where billingRun=:billingRun");
 		queryBA.setParameter("billingRun", billingRun);
 		queryBA.executeUpdate();
 	}
@@ -387,14 +336,12 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 		queryTrans.executeUpdate();
 
 		Query queryAgregate = getEntityManager().createQuery(
-				"delete from " + InvoiceAgregate.class.getName()
-						+ " where invoice=:invoice");
+				"delete from " + InvoiceAgregate.class.getName() + " where invoice=:invoice");
 		queryAgregate.setParameter("invoice", invoice);
 		queryAgregate.executeUpdate();
 
 		Query queryInvoices = getEntityManager().createQuery(
-				"delete from " + Invoice.class.getName()
-						+ " where id=:invoiceId");
+				"delete from " + Invoice.class.getName() + " where id=:invoiceId");
 		queryInvoices.setParameter("invoiceId", invoice.getId());
 		queryInvoices.executeUpdate();
 		getEntityManager().flush();
@@ -410,17 +357,14 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 		qb.addCriterionEnum("c.status", BillingRunStatusEnum.WAITING);
 		qb.endOrClause();
 		qb.addCriterionEntity("c.provider", provider);
-		List<BillingRun> billingRuns = qb.getQuery(getEntityManager())
-				.getResultList();
+		List<BillingRun> billingRuns = qb.getQuery(getEntityManager()).getResultList();
 
 		return billingRuns != null && billingRuns.size() > 0 ? true : false;
 	}
 
 	public void retateBillingRunTransactions(BillingRun billingRun) {
-		for (RatedTransaction ratedTransaction : billingRun
-				.getRatedTransactions()) {
-			WalletOperation walletOperation = walletOperationService
-					.findById(ratedTransaction.getWalletOperationId());
+		for (RatedTransaction ratedTransaction : billingRun.getRatedTransactions()) {
+			WalletOperation walletOperation = walletOperationService.findById(ratedTransaction.getWalletOperationId());
 			walletOperation.setStatus(WalletOperationStatusEnum.TO_RERATE);
 			walletOperationService.update(walletOperation);
 		}
@@ -431,10 +375,8 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<BillingRun> getbillingRuns(EntityManager em, Provider provider,
-			String code) {
-		QueryBuilder qb = new QueryBuilder(BillingRun.class, "c", null,
-				provider);
+	public List<BillingRun> getbillingRuns(EntityManager em, Provider provider, String code) {
+		QueryBuilder qb = new QueryBuilder(BillingRun.class, "c", null, provider);
 
 		qb.startOrClause();
 		if (code != null) {
@@ -449,13 +391,10 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<BillingRun> getbillingRuns(Provider provider,
-			BillingRunStatusEnum... status) {
+	public List<BillingRun> getbillingRuns(Provider provider, BillingRunStatusEnum... status) {
 		BillingRunStatusEnum bRStatus;
-		log.debug("getbillingRuns for provider " + provider == null ? "null"
-				: provider.getCode());
-		QueryBuilder qb = new QueryBuilder(BillingRun.class, "c", null,
-				provider);
+		log.debug("getbillingRuns for provider " + provider == null ? "null" : provider.getCode());
+		QueryBuilder qb = new QueryBuilder(BillingRun.class, "c", null, provider);
 
 		qb.startOrClause();
 		if (status != null) {
@@ -466,13 +405,12 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 		}
 		qb.endOrClause();
 
-		List<BillingRun> billingRuns = qb.getQuery(getEntityManager())
-				.getResultList();
+		List<BillingRun> billingRuns = qb.getQuery(getEntityManager()).getResultList();
 
-		for(BillingRun br:billingRuns){
+		for (BillingRun br : billingRuns) {
 			getEntityManager().refresh(br);
 		}
-		
+
 		return billingRuns;
 	}
 
@@ -485,10 +423,8 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<BillingRun> getValidatedBillingRuns(EntityManager em,
-			Provider provider) {
-		QueryBuilder qb = new QueryBuilder(BillingRun.class, "c", null,
-				provider);
+	public List<BillingRun> getValidatedBillingRuns(EntityManager em, Provider provider) {
+		QueryBuilder qb = new QueryBuilder(BillingRun.class, "c", null, provider);
 		qb.addCriterionEnum("c.status", BillingRunStatusEnum.VALIDATED);
 		qb.addBooleanCriterion("c.xmlInvoiceGenerated", false);
 		List<BillingRun> billingRuns = qb.getQuery(em).getResultList();
@@ -501,8 +437,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 		return getBillingRunById(getEntityManager(), id, provider);
 	}
 
-	public BillingRun getBillingRunById(EntityManager em, long id,
-			Provider provider) {
+	public BillingRun getBillingRunById(EntityManager em, long id, Provider provider) {
 		QueryBuilder qb = new QueryBuilder(BillingRun.class, "b");
 		qb.addCriterionEntity("provider", provider);
 		qb.addCriterion("id", "=", id, true);
@@ -516,77 +451,68 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 
 	public List<BillingAccount> getBillingAccounts(BillingRun billingRun) {
 		List<BillingAccount> result = null;
-		//getEntityManager().merge(billingRun);
 		BillingCycle billingCycle = billingRun.getBillingCycle();
-		log.debug("getBillingAccounts for billingRun {}",billingRun.getId());
+
+		log.debug("getBillingAccounts for billingRun {}", billingRun.getId());
+
 		Object[] ratedTransactionsAmounts = null;
 		if (billingCycle != null) {
 			Date startDate = billingRun.getStartDate();
 			Date endDate = billingRun.getEndDate();
 			ratedTransactionsAmounts = (Object[]) getEntityManager()
 					.createNamedQuery("RatedTransaction.sumbillingRunByCycle")
-					.setParameter("status", RatedTransactionStatusEnum.OPEN)
-					.setParameter("billingCycle", billingCycle)
-					.setParameter("startDate", startDate)
-					.setParameter("endDate", endDate).getSingleResult();
-			result = billingAccountService.findBillingAccounts(billingCycle,
-					startDate, endDate);
+					.setParameter("status", RatedTransactionStatusEnum.OPEN).setParameter("billingCycle", billingCycle)
+					.setParameter("startDate", startDate).setParameter("endDate", endDate).getSingleResult();
+
+			result = billingAccountService.findBillingAccounts(billingCycle, startDate, endDate);
 		} else {
 			result = new ArrayList<BillingAccount>();
 			String[] baIds = billingRun.getSelectedBillingAccounts().split(",");
+
 			for (String id : Arrays.asList(baIds)) {
-				
 				Long baId = Long.valueOf(id);
 				result.add(billingAccountService.findById(baId));
 			}
+
 			ratedTransactionsAmounts = (Object[]) getEntityManager()
 					.createNamedQuery("RatedTransaction.sumbillingRunByList")
-					.setParameter("status", RatedTransactionStatusEnum.OPEN)
-					.setParameter("billingAccountList", result)
+					.setParameter("status", RatedTransactionStatusEnum.OPEN).setParameter("billingAccountList", result)
 					.getSingleResult();
 		}
-		for(BillingAccount ba:result){
-			ba.setBillingRun(billingRun);
-		}
+
 		if (ratedTransactionsAmounts != null) {
-			billingRun
-					.setPrAmountWithoutTax((BigDecimal) ratedTransactionsAmounts[0]);
-			billingRun
-					.setPrAmountWithTax((BigDecimal) ratedTransactionsAmounts[1]);
+			billingRun.setPrAmountWithoutTax((BigDecimal) ratedTransactionsAmounts[0]);
+			billingRun.setPrAmountWithTax((BigDecimal) ratedTransactionsAmounts[1]);
 			billingRun.setPrAmountTax((BigDecimal) ratedTransactionsAmounts[2]);
 		}
+
 		return result;
 	}
 
 	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
-	public void createAgregatesAndInvoice(Long billingRunId,
-			User currentUser) throws BusinessException, Exception {
-		//billingRun = findById(billingRun.getId(),true);
+	public void createAgregatesAndInvoice(Long billingRunId, User currentUser) throws BusinessException, Exception {
+		// billingRun = findById(billingRun.getId(),true);
 		List<BillingAccount> billingAccounts = getEntityManager()
-				.createNamedQuery("BillingAccount.listByBillingRunId",
-						BillingAccount.class)
+				.createNamedQuery("BillingAccount.listByBillingRunId", BillingAccount.class)
 				.setParameter("billingRunId", billingRunId).getResultList();
 
 		for (BillingAccount billingAccount : billingAccounts) {
 			try {
-				invoiceService.createAgregatesAndInvoice(billingAccount,
-						billingRunId, currentUser);
+				invoiceService.createAgregatesAndInvoice(billingAccount, billingRunId, currentUser);
 			} catch (Exception e) {
-				log.error("Error for BA=" + billingAccount.getCode() + " : "
-						+ e.getMessage());
+				log.error("Error for BA=" + billingAccount.getCode() + " : " + e.getMessage());
 			}
 		}
 	}
 
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public void validate(BillingRun billingRun, User user) {
-		billingRun=findById(billingRun.getId(),true);
-		user=getEntityManager().find(User.class, user.getId());
+		billingRun = findById(billingRun.getId(), true);
+		user = getEntityManager().find(User.class, user.getId());
 		for (Invoice invoice : billingRun.getInvoices()) {
 			invoiceService.setInvoiceNumber(invoice, user);
 			BillingAccount billingAccount = invoice.getBillingAccount();
-			Date nextCalendarDate = billingAccount.getBillingCycle()
-					.getNextCalendarDate();
+			Date nextCalendarDate = billingAccount.getBillingCycle().getNextCalendarDate();
 			billingAccount.setNextInvoiceDate(nextCalendarDate);
 			billingAccount.updateAudit(user);
 		}

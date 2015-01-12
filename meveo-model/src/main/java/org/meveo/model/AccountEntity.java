@@ -97,9 +97,10 @@ public abstract class AccountEntity extends BusinessEntity {
 	}
 
 	public Name getName() {
-		if(name!=null){
+		if (name != null) {
 			return name;
 		}
+
 		return new Name();
 	}
 
@@ -111,6 +112,7 @@ public abstract class AccountEntity extends BusinessEntity {
 		if (address != null) {
 			return address;
 		}
+
 		return new Address();
 	}
 
@@ -154,6 +156,7 @@ public abstract class AccountEntity extends BusinessEntity {
 
 	public CustomFieldInstance getCustomFieldInstance(String code) {
 		CustomFieldInstance cfi = null;
+
 		if (customFields.containsKey(code)) {
 			cfi = customFields.get(code);
 		} else {
@@ -161,6 +164,7 @@ public abstract class AccountEntity extends BusinessEntity {
 			cfi.setCode(code);
 			customFields.put(code, cfi);
 		}
+
 		return cfi;
 	}
 
@@ -169,6 +173,7 @@ public abstract class AccountEntity extends BusinessEntity {
 		if (customFields.containsKey(code)) {
 			result = customFields.get(code).getStringValue();
 		}
+
 		return result;
 	}
 
@@ -181,6 +186,7 @@ public abstract class AccountEntity extends BusinessEntity {
 		if (customFields.containsKey(code)) {
 			result = customFields.get(code).getDateValue();
 		}
+
 		return result;
 	}
 
@@ -202,9 +208,11 @@ public abstract class AccountEntity extends BusinessEntity {
 
 	public Double getDoubleCustomValue(String code) {
 		Double result = null;
+
 		if (customFields.containsKey(code)) {
 			result = customFields.get(code).getDoubleValue();
 		}
+
 		return result;
 	}
 
@@ -215,10 +223,12 @@ public abstract class AccountEntity extends BusinessEntity {
 	public String getCustomFieldsAsJson() {
 		String result = "";
 		String sep = "";
+
 		for (Entry<String, CustomFieldInstance> cf : customFields.entrySet()) {
 			result += sep + cf.getValue().toJson();
 			sep = ";";
 		}
+
 		return result;
 	}
 }

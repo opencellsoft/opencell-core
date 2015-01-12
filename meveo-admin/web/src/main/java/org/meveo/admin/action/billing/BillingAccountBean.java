@@ -39,7 +39,7 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.DuplicateDefaultAccountException;
 import org.meveo.admin.util.ListItemsSelector;
 import org.meveo.commons.utils.ParamBean;
-import org.meveo.model.IEntity;
+import org.meveo.model.billing.BankCoordinates;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingProcessTypesEnum;
 import org.meveo.model.billing.BillingRun;
@@ -144,6 +144,10 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
 
 		if (entity.getName() == null) {
 			entity.setName(new Name());
+		}
+
+		if (entity.getBankCoordinates() == null) {
+			entity.setBankCoordinates(new BankCoordinates());
 		}
 
 		return entity;
