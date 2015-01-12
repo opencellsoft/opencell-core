@@ -10,6 +10,7 @@ import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.PaymentDto;
+import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.User;
@@ -181,12 +182,13 @@ public class PaymentApi extends BaseApi {
 		CustomerAccount customerAccount = customerAccountService.findByCode(
 				customerAccountCode, provider);
 
+		if (customerAccount == null) {
+			throw new EntityDoesNotExistsException(CustomerAccount.class,
+					customerAccountCode);
+		}
+
 		customerAccountService.getEntityManager().refresh(customerAccount);
 
-		if (customerAccount == null) {
-			throw new BusinessException("Customer with Code="
-					+ customerAccountCode + " does not exist.");
-		}
 		List<AccountOperation> ops = customerAccount.getAccountOperations();
 		for (AccountOperation op : ops) {
 			if (op instanceof Payment) {
