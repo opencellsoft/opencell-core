@@ -5,7 +5,7 @@
 	<groupId>org.manaty</groupId>
 	<artifactId>meveo</artifactId>
 	<packaging>pom</packaging>
-	<version>3.2.2</version>
+	<version>3.3</version>
 	<name>MEVEO Parent Project</name>
 	<url>http://libsmeveocore.manaty.net/sites/${project.artifactId}</url>
 
