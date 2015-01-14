@@ -160,9 +160,13 @@ public class InvoiceService extends PersistenceService<Invoice> {
 	public String getInvoiceNumber(Invoice invoice, User currentUser) {
 		Seller seller = invoice.getBillingAccount().getCustomerAccount().getCustomer().getSeller();
 		String prefix = seller.getInvoicePrefix();
+
 		if (prefix == null) {
 			prefix = seller.getProvider().getInvoicePrefix();
+		} else {
+			prefix = seller.getCode() + "_" + prefix;
 		}
+
 		if (prefix == null) {
 			prefix = "";
 		}
@@ -177,11 +181,13 @@ public class InvoiceService extends PersistenceService<Invoice> {
 		StringBuffer num1 = new StringBuffer("000000000");
 		num1.append(nextInvoiceNb + "");
 		String invoiceNumber = num1.substring(num1.length() - 9);
+
 		return (prefix + invoiceNumber);
 	}
 
 	public synchronized long getNextValue(Seller seller, User currentUser) {
 		long result = 0;
+
 		if (seller != null) {
 			if (seller.getCurrentInvoiceNb() != null) {
 				long currentInvoiceNbre = seller.getCurrentInvoiceNb();
@@ -191,21 +197,25 @@ public class InvoiceService extends PersistenceService<Invoice> {
 				result = getNextValue(seller.getProvider(), currentUser);
 			}
 		}
+
 		return result;
 	}
 
 	public synchronized long getNextValue(Provider provider, User currentUser) {
 		long result = 0;
+
 		if (provider != null) {
 			long currentInvoiceNbre = provider.getCurrentInvoiceNb() != null ? provider.getCurrentInvoiceNb() : 0;
 			result = 1 + currentInvoiceNbre;
 			provider.setCurrentInvoiceNb(result);
+
 			if (currentUser != null) {
 				provider.updateAudit(currentUser);
 			} else {
 				provider.updateAudit(provider.getAuditable().getCreator());
 			}
 		}
+
 		return result;
 	}
 
@@ -259,11 +269,13 @@ public class InvoiceService extends PersistenceService<Invoice> {
 			em.refresh(billingAccount);
 			currentUser = em.find(currentUser.getClass(), currentUser.getId());
 			em.refresh(currentUser);
+
 			Long startDate = System.currentTimeMillis();
 			BillingCycle billingCycle = billingRun.getBillingCycle();
 			if (billingCycle == null) {
 				billingCycle = billingAccount.getBillingCycle();
 			}
+
 			Invoice invoice = new Invoice();
 			invoice.setBillingAccount(billingAccount);
 			invoice.setBillingRun(billingRun);
@@ -288,6 +300,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 			ratedTransactionService.createInvoiceAndAgregates(billingAccount, invoice, currentUser);
 			log.debug("created aggregates tx status={}, em open={}", txReg.getTransactionStatus(), em.isOpen());
 			em.joinTransaction();
+
 			if (billingRun.getProvider().isDisplayFreeTransacInInvoice()) {
 				em.createNamedQuery("RatedTransaction.updateInvoicedDisplayFree")
 						.setParameter("billingAccount", billingAccount).setParameter("billingRun", billingRun)
@@ -302,18 +315,35 @@ public class InvoiceService extends PersistenceService<Invoice> {
 			num1.append(invoice.getId() + "");
 			String invoiceNumber = num1.substring(num1.length() - 9);
 			int key = 0;
+
 			for (int i = 0; i < invoiceNumber.length(); i++) {
 				key = key + Integer.parseInt(invoiceNumber.substring(i, i + 1));
 			}
+
 			invoice.setTemporaryInvoiceNumber(invoiceNumber + "-" + key % 10);
 			// getEntityManager().merge(invoice);
 			Long endDate = System.currentTimeMillis();
+
 			log.info("createAgregatesAndInvoice BR_ID=" + billingRun.getId() + ", BA_ID=" + billingAccount.getId()
 					+ ", Time en ms=" + (endDate - startDate));
 		} catch (Exception e) {
 			log.error("Error for BA=" + billingAccount.getCode() + " : " + e.getMessage());
+
 			RejectedBillingAccount rejectedBA = new RejectedBillingAccount(billingAccount, billingRun, e.getMessage());
 			rejectedBillingAccountService.create(rejectedBA, currentUser, currentUser.getProvider());
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	public List<Invoice> findByBillingRun(BillingRun billingRun) {
+		QueryBuilder qb = new QueryBuilder(Invoice.class, "i");
+		qb.addCriterionEntity("billingRun", billingRun);
+
+		try {
+			return (List<Invoice>) qb.getQuery(getEntityManager()).getResultList();
+		} catch (NoResultException e) {
+			log.warn(e.getMessage());
+			return null;
 		}
 	}
 
