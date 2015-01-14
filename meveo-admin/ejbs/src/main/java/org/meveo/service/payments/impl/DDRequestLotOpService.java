@@ -31,16 +31,15 @@ public class DDRequestLotOpService extends PersistenceService<DDRequestLotOp> {
 	@SuppressWarnings("unchecked")
 	public List<DDRequestLotOp> getDDRequestOps() {
 		List<DDRequestLotOp> ddrequestOps = new ArrayList<DDRequestLotOp>();
+
 		try {
 			ddrequestOps = (List<DDRequestLotOp>) getEntityManager()
-					.createQuery(
-							"from " + DDRequestLotOp.class.getSimpleName()
-									+ " where status=:status")
-					.setParameter("status", DDRequestOpStatusEnum.WAIT)
-					.getResultList();
+					.createQuery("from " + DDRequestLotOp.class.getSimpleName() + " where status=:status")
+					.setParameter("status", DDRequestOpStatusEnum.WAIT).getResultList();
 		} catch (Exception e) {
 			log.error(e.getMessage());
 		}
+
 		return ddrequestOps;
 	}
 
