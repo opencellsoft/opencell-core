@@ -104,11 +104,7 @@
 				<artifactId>seam-faces-api</artifactId>
 				<version>3.2.0.Final</version>
 			</dependency>
-			<dependency>
-				<groupId>org.manaty</groupId>
-				<artifactId>manaty-commons</artifactId>
-				<version>${project.version}</version>
-			</dependency>
+
 			<dependency>
 				<groupId>org.meveo</groupId>
 				<artifactId>meveo-api</artifactId>
@@ -117,6 +113,11 @@
 			<dependency>
 				<groupId>org.manaty</groupId>
 				<artifactId>meveo-admin-ejbs</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.manaty</groupId>
+				<artifactId>meveo-model</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 		</dependencies>
@@ -235,7 +236,7 @@
 				<dbtype>postgres</dbtype>
 			</properties>
 		</profile>
-		
+
 		<profile>
 			<id>integration</id>
 			<activation>
