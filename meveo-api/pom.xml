@@ -138,6 +138,13 @@
 	<profiles>
 		<profile>
 			<id>api</id>
+			<dependencies>
+				<dependency>
+					<groupId>org.manaty</groupId>
+					<artifactId>meveo-model</artifactId>
+				</dependency>
+			</dependencies>
+
 			<build>
 				<pluginManagement>
 					<plugins>
@@ -210,21 +217,7 @@
 							</execution>
 						</executions>
 					</plugin>
-				</plugins>
-			</build>
-		</profile>
 
-		<profile>
-			<id>wadl</id>
-			<dependencies>
-				<dependency>
-					<groupId>org.manaty</groupId>
-					<artifactId>meveo-model</artifactId>
-				</dependency>
-			</dependencies>
-
-			<build>
-				<plugins>
 					<plugin>
 						<groupId>com.sun.jersey.contribs</groupId>
 						<artifactId>maven-wadl-plugin</artifactId>
@@ -239,10 +232,9 @@
 							</execution>
 						</executions>
 						<configuration>
-							<wadlFile>${project.basedir}/src/main/resources/application-wadl.xml
-							</wadlFile>
+							<wadlFile>${project.build.directory}/docs/application.wadl</wadlFile>
 							<formatWadlFile>true</formatWadlFile>
-							<baseUri>http://api.meveo.info</baseUri>
+							<baseUri>http://i.meveo.info/meveo/api/rest</baseUri>
 							<packagesResourceConfig>
 								<param>org.meveo.api.rest</param>
 							</packagesResourceConfig>
