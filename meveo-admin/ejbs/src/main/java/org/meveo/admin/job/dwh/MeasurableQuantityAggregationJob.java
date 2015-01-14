@@ -39,8 +39,7 @@ import org.slf4j.LoggerFactory;
 @Singleton
 public class MeasurableQuantityAggregationJob implements Job {
 
-	protected Logger log = LoggerFactory
-			.getLogger(MeasurableQuantityAggregationJob.class);
+	protected Logger log = LoggerFactory.getLogger(MeasurableQuantityAggregationJob.class);
 
 	@Inject
 	private UserService userService;
@@ -63,8 +62,7 @@ public class MeasurableQuantityAggregationJob implements Job {
 	}
 
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public void aggregateMeasuredValues(JobExecutionResultImpl result,
-			String report, MeasurableQuantity mq) {
+	public void aggregateMeasuredValues(JobExecutionResultImpl result, String report, MeasurableQuantity mq) {
 		if (StringUtils.isBlank(report)) {
 			report = "Generate Measured Value for : " + mq.getCode();
 		} else {
@@ -83,23 +81,18 @@ public class MeasurableQuantityAggregationJob implements Job {
 				mvService.create(mv);
 			}
 		} catch (IllegalArgumentException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			log.error(e.getMessage());
 		} catch (SecurityException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			log.error(e.getMessage());
 		} catch (ParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			log.error(e.getMessage());
 		} catch (BusinessException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			log.error(e.getMessage());
 		}
 	}
 
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public void aggregateMeasuredValues(JobExecutionResultImpl result,
-			String report, List<MeasurableQuantity> mq) {
+	public void aggregateMeasuredValues(JobExecutionResultImpl result, String report, List<MeasurableQuantity> mq) {
 		for (MeasurableQuantity measurableQuantity : mq) {
 			aggregateMeasuredValues(result, report, measurableQuantity);
 		}
@@ -150,10 +143,8 @@ public class MeasurableQuantityAggregationJob implements Job {
 				if (info.isActive()) {
 					running = true;
 					User currentUser = userService.findById(info.getUserId());
-					JobExecutionResult result = execute(info.getParametres(),
-							currentUser);
-					jobExecutionService.persistResult(this, result, info,
-							currentUser);
+					JobExecutionResult result = execute(info.getParametres(), currentUser);
+					jobExecutionService.persistResult(this, result, info, currentUser);
 				}
 			} catch (Exception e) {
 				log.error("error in trigger", e);
@@ -164,21 +155,18 @@ public class MeasurableQuantityAggregationJob implements Job {
 	}
 
 	@Override
-	public Timer createTimer(ScheduleExpression scheduleExpression,
-			TimerInfo infos) {
+	public Timer createTimer(ScheduleExpression scheduleExpression, TimerInfo infos) {
 		TimerConfig timerConfig = new TimerConfig();
 		timerConfig.setInfo(infos);
 		timerConfig.setPersistent(false);
 
-		return timerService
-				.createCalendarTimer(scheduleExpression, timerConfig);
+		return timerService.createCalendarTimer(scheduleExpression, timerConfig);
 	}
 
 	@Override
 	public void cleanAllTimers() {
 		Collection<Timer> alltimers = timerService.getTimers();
-		log.info("Cancel " + alltimers.size() + " timers for"
-				+ this.getClass().getSimpleName());
+		log.info("Cancel " + alltimers.size() + " timers for" + this.getClass().getSimpleName());
 		for (Timer timer : alltimers) {
 			try {
 				timer.cancel();

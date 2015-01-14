@@ -40,8 +40,8 @@ import org.slf4j.LoggerFactory;
 public class ParamBean {
 
 	private static final Logger log = LoggerFactory.getLogger(ParamBean.class);
-	private static final char[] hexDigit = { '0', '1', '2', '3', '4', '5', '6',
-			'7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F' };
+	private static final char[] hexDigit = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E',
+			'F' };
 	private String _propertyFile;
 
 	/**
@@ -79,11 +79,9 @@ public class ParamBean {
 			// https://docs.jboss.org/author/display/AS7/Command+line+parameters
 			// http://www.jboss.org/jdf/migrations/war-stories/2012/07/18/jack_wang/
 			if (System.getProperty("jboss.server.config.dir") == null) {
-				_propertyFile = ResourceUtils
-						.getFileFromClasspathResource(name).getAbsolutePath();
+				_propertyFile = ResourceUtils.getFileFromClasspathResource(name).getAbsolutePath();
 			} else {
-				_propertyFile = System.getProperty("jboss.server.config.dir")
-						+ File.separator + name;
+				_propertyFile = System.getProperty("jboss.server.config.dir") + File.separator + name;
 			}
 		}
 		log.info("Created Parambean for file:" + _propertyFile);
@@ -166,7 +164,6 @@ public class ParamBean {
 			}
 		} catch (IOException e1) {
 			log.error("Impossible to create :" + _propertyFile);
-			e1.printStackTrace();
 		} finally {
 			if (propertyFile != null) {
 				try {
@@ -264,8 +261,7 @@ public class ParamBean {
 				Collections.sort(keys);
 				for (String key : keys) {
 					key = saveConvert(key, true, true);
-					String val = saveConvert((String) properties.get(key),
-							true, true);
+					String val = saveConvert((String) properties.get(key), true, true);
 					if (categories.containsKey(key)) {
 						if (!lastCategory.equals(categories.get(key))) {
 							lastCategory = categories.get(key);
@@ -320,8 +316,7 @@ public class ParamBean {
 		setInstance(new ParamBean(propertiesName));
 	}
 
-	private String saveConvert(String theString, boolean escapeSpace,
-			boolean escapeUnicode) {
+	private String saveConvert(String theString, boolean escapeSpace, boolean escapeUnicode) {
 		int len = theString.length();
 		int bufLen = len * 2;
 		if (bufLen < 0) {

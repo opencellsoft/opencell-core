@@ -52,11 +52,10 @@ import org.meveo.util.MeveoJpaForJobs;
  * Generic implementation that provides the default implementation for
  * persistence methods declared in the {@link IPersistenceService} interface.
  */
-public abstract class PersistenceService<E extends IEntity> extends BaseService
-		implements IPersistenceService<E> {
+public abstract class PersistenceService<E extends IEntity> extends BaseService implements IPersistenceService<E> {
 	protected final Class<E> entityClass;
 
-    public static String SEARCH_SKIP_PROVIDER_CONSTRAINT = "skipProviderConstraint";
+	public static String SEARCH_SKIP_PROVIDER_CONSTRAINT = "skipProviderConstraint";
 
 	@Inject
 	@MeveoJpa
@@ -83,8 +82,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService
 		while (!(clazz.getGenericSuperclass() instanceof ParameterizedType)) {
 			clazz = clazz.getSuperclass();
 		}
-		Object o = ((ParameterizedType) clazz.getGenericSuperclass())
-				.getActualTypeArguments()[0];
+		Object o = ((ParameterizedType) clazz.getGenericSuperclass()).getActualTypeArguments()[0];
 
 		if (o instanceof TypeVariable) {
 			this.entityClass = (Class<E>) ((TypeVariable) o).getBounds()[0];
@@ -114,11 +112,10 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService
 		update(e, getCurrentUser());
 	}
 
-
 	public void updateNoCheck(E e) {
 		getEntityManager().merge(e);
 	}
-	
+
 	/**
 	 * @see org.meveo.service.base.local.IPersistenceService#findById(java.lang.Long)
 	 */
@@ -147,16 +144,14 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService
 	 *      boolean)
 	 */
 	public E findById(EntityManager em, Long id, boolean refresh) {
-		log.debug("start of find {} by id (id={}) ..", getEntityClass()
-				.getSimpleName(), id);
+		log.debug("start of find {} by id (id={}) ..", getEntityClass().getSimpleName(), id);
 		final Class<? extends E> productClass = getEntityClass();
 		E e = em.find(productClass, id);
 		if (refresh) {
 			log.debug("refreshing loaded entity");
 			em.refresh(e);
 		}
-		log.debug("end of find {} by id (id={}). Result found={}.",
-				getEntityClass().getSimpleName(), id, e != null);
+		log.debug("end of find {} by id (id={}). Result found={}.", getEntityClass().getSimpleName(), id, e != null);
 		return e;
 	}
 
@@ -166,11 +161,9 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService
 	 */
 	@SuppressWarnings("unchecked")
 	public E findById(Long id, List<String> fetchFields, boolean refresh) {
-		log.debug("start of find {} by id (id={}) ..", getEntityClass()
-				.getSimpleName(), id);
+		log.debug("start of find {} by id (id={}) ..", getEntityClass().getSimpleName(), id);
 		final Class<? extends E> productClass = getEntityClass();
-		StringBuilder queryString = new StringBuilder("from "
-				+ productClass.getName() + " a");
+		StringBuilder queryString = new StringBuilder("from " + productClass.getName() + " a");
 		if (fetchFields != null && !fetchFields.isEmpty()) {
 			for (String fetchField : fetchFields) {
 				queryString.append(" left join fetch a." + fetchField);
@@ -186,8 +179,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService
 			log.debug("refreshing loaded entity");
 			getEntityManager().refresh(e);
 		}
-		log.debug("end of find {} by id (id={}). Result found={}.",
-				getEntityClass().getSimpleName(), id, e != null);
+		log.debug("end of find {} by id (id={}). Result found={}.", getEntityClass().getSimpleName(), id, e != null);
 		return e;
 	}
 
@@ -221,13 +213,11 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService
 	 */
 	public void remove(EntityManager em, E e) {
 		checkProvider(e);
-		log.debug("start of remove {} entity (id={}) ..", getEntityClass()
-				.getSimpleName(), e.getId());
+		log.debug("start of remove {} entity (id={}) ..", getEntityClass().getSimpleName(), e.getId());
 		checkProvider(e);
 		em.remove(e);
 		em.flush();
-		log.debug("end of remove {} entity (id={}).", getEntityClass()
-				.getSimpleName(), e.getId());
+		log.debug("end of remove {} entity (id={}).", getEntityClass().getSimpleName(), e.getId());
 	}
 
 	/**
@@ -235,12 +225,9 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService
 	 */
 	public void remove(Set<Long> ids) {
 		Query query = getEntityManager().createQuery(
-				"delete from " + getEntityClass().getName()
-						+ " where id in (:ids) and provider.id = :providerId");
+				"delete from " + getEntityClass().getName() + " where id in (:ids) and provider.id = :providerId");
 		query.setParameter("ids", ids);
-		query.setParameter("providerId",
-				getCurrentProvider() != null ? getCurrentProvider().getId()
-						: null);
+		query.setParameter("providerId", getCurrentProvider() != null ? getCurrentProvider().getId() : null);
 		query.executeUpdate();
 	}
 
@@ -249,8 +236,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService
 	 *      org.manaty.model.user.User)
 	 */
 	public void update(E e, User updater) {
-		log.debug("start of update {} entity (id={}) ..", e.getClass()
-				.getSimpleName(), e.getId());
+		log.debug("start of update {} entity (id={}) ..", e.getClass().getSimpleName(), e.getId());
 
 		if (e instanceof AuditableEntity) {
 			if (updater != null) {
@@ -262,8 +248,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService
 		checkProvider(e);
 		getEntityManager().merge(e);
 
-		log.debug("end of update {} entity (id={}).", e.getClass()
-				.getSimpleName(), e.getId());
+		log.debug("end of update {} entity (id={}).", e.getClass().getSimpleName(), e.getId());
 	}
 
 	/**
@@ -291,8 +276,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService
 
 		getEntityManager().persist(e);
 
-		log.debug("end of create {}. entity id={}.", e.getClass()
-				.getSimpleName(), e.getId());
+		log.debug("end of create {}. entity id={}.", e.getClass().getSimpleName(), e.getId());
 
 	}
 
@@ -302,8 +286,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService
 	@SuppressWarnings("unchecked")
 	public List<E> list() {
 		final Class<? extends E> entityClass = getEntityClass();
-		QueryBuilder queryBuilder = new QueryBuilder(entityClass, "a", null,
-				getCurrentProvider());
+		QueryBuilder queryBuilder = new QueryBuilder(entityClass, "a", null, getCurrentProvider());
 		Query query = queryBuilder.getQuery(getEntityManager());
 		return query.getResultList();
 	}
@@ -338,8 +321,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService
 
 	public long count() {
 		final Class<? extends E> entityClass = getEntityClass();
-		QueryBuilder queryBuilder = new QueryBuilder(entityClass, "a", null,
-				null);
+		QueryBuilder queryBuilder = new QueryBuilder(entityClass, "a", null, null);
 		return queryBuilder.count(getEntityManager());
 	}
 
@@ -384,60 +366,50 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService
 
 		final Class<? extends E> entityClass = getEntityClass();
 
-	    Map<String, Object> filters = config.getFilters();
-	    
-	    // Ignore current provider constraint if "skipProviderConstraint" parameter was passed to search
-        Provider provider = getCurrentProvider();
-        if (filters.containsKey(SEARCH_SKIP_PROVIDER_CONSTRAINT)) {
-            provider = null;
-        }
+		Map<String, Object> filters = config.getFilters();
 
-        QueryBuilder queryBuilder = new QueryBuilder(entityClass, "a", config.getFetchFields(), provider);
+		// Ignore current provider constraint if "skipProviderConstraint"
+		// parameter was passed to search
+		Provider provider = getCurrentProvider();
+		if (filters.containsKey(SEARCH_SKIP_PROVIDER_CONSTRAINT)) {
+			provider = null;
+		}
+
+		QueryBuilder queryBuilder = new QueryBuilder(entityClass, "a", config.getFetchFields(), provider);
 
 		if (filters != null) {
 			if (!filters.isEmpty()) {
 				for (String key : filters.keySet()) {
-                    if (SEARCH_SKIP_PROVIDER_CONSTRAINT.equals(key)) {
-                        continue;
-                    }
+					if (SEARCH_SKIP_PROVIDER_CONSTRAINT.equals(key)) {
+						continue;
+					}
 					Object filter = filters.get(key);
 					if (filter != null) {
 						// if ranged search (from - to fields)
 						if (key.contains("fromRange-")) {
 							String parsedKey = key.substring(10);
 							if (filter instanceof Double) {
-								BigDecimal rationalNumber = new BigDecimal(
-										(Double) filter);
-								queryBuilder.addCriterion("a." + parsedKey,
-										" >= ", rationalNumber, true);
+								BigDecimal rationalNumber = new BigDecimal((Double) filter);
+								queryBuilder.addCriterion("a." + parsedKey, " >= ", rationalNumber, true);
 							} else if (filter instanceof Number) {
-								queryBuilder.addCriterion("a." + parsedKey,
-										" >= ", filter, true);
+								queryBuilder.addCriterion("a." + parsedKey, " >= ", filter, true);
 							} else if (filter instanceof Date) {
-								queryBuilder
-										.addCriterionDateRangeFromTruncatedToDay(
-												"a." + parsedKey, (Date) filter);
+								queryBuilder.addCriterionDateRangeFromTruncatedToDay("a." + parsedKey, (Date) filter);
 							}
 						} else if (key.contains("toRange-")) {
 							String parsedKey = key.substring(8);
 							if (filter instanceof Double) {
-								BigDecimal rationalNumber = new BigDecimal(
-										(Double) filter);
-								queryBuilder.addCriterion("a." + parsedKey,
-										" <= ", rationalNumber, true);
+								BigDecimal rationalNumber = new BigDecimal((Double) filter);
+								queryBuilder.addCriterion("a." + parsedKey, " <= ", rationalNumber, true);
 							} else if (filter instanceof Number) {
-								queryBuilder.addCriterion("a." + parsedKey,
-										" <= ", filter, true);
+								queryBuilder.addCriterion("a." + parsedKey, " <= ", filter, true);
 							} else if (filter instanceof Date) {
-								queryBuilder
-										.addCriterionDateRangeToTruncatedToDay(
-												"a." + parsedKey, (Date) filter);
+								queryBuilder.addCriterionDateRangeToTruncatedToDay("a." + parsedKey, (Date) filter);
 							}
 						} else if (key.contains("list-")) {
 							// if searching elements from list
 							String parsedKey = key.substring(5);
-							queryBuilder.addSqlCriterion(":" + parsedKey
-									+ " in elements(a." + parsedKey + ")",
+							queryBuilder.addSqlCriterion(":" + parsedKey + " in elements(a." + parsedKey + ")",
 									parsedKey, filter);
 						}
 						// if not ranged search
@@ -445,38 +417,25 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService
 							if (filter instanceof String) {
 								// if contains dot, that means join is needed
 								String filterString = (String) filter;
-								queryBuilder.addCriterionWildcard("a." + key,
-										filterString, true);
+								queryBuilder.addCriterionWildcard("a." + key, filterString, true);
 							} else if (filter instanceof Date) {
-								queryBuilder.addCriterionDateTruncatedToDay(
-										"a." + key, (Date) filter);
+								queryBuilder.addCriterionDateTruncatedToDay("a." + key, (Date) filter);
 							} else if (filter instanceof Number) {
-								queryBuilder.addCriterion("a." + key, " = ",
-										filter, true);
+								queryBuilder.addCriterion("a." + key, " = ", filter, true);
 							} else if (filter instanceof Boolean) {
-								queryBuilder.addCriterion("a." + key, " is ",
-										filter, true);
+								queryBuilder.addCriterion("a." + key, " is ", filter, true);
 							} else if (filter instanceof Enum) {
 								if (filter instanceof IdentifiableEnum) {
-									String enumIdKey = new StringBuilder(key)
-											.append("Id").toString();
-									queryBuilder
-											.addCriterion("a." + enumIdKey,
-													" = ",
-													((IdentifiableEnum) filter)
-															.getId(), true);
+									String enumIdKey = new StringBuilder(key).append("Id").toString();
+									queryBuilder.addCriterion("a." + enumIdKey, " = ",
+											((IdentifiableEnum) filter).getId(), true);
 								} else {
-									queryBuilder.addCriterionEnum("a." + key,
-											(Enum) filter);
+									queryBuilder.addCriterionEnum("a." + key, (Enum) filter);
 								}
-							} else if (BaseEntity.class.isAssignableFrom(filter
-									.getClass())) {
-								queryBuilder.addCriterionEntity("a." + key,
-										filter);
-							} else if (filter instanceof UniqueEntity
-									|| filter instanceof IEntity) {
-								queryBuilder.addCriterionEntity("a." + key,
-										filter);
+							} else if (BaseEntity.class.isAssignableFrom(filter.getClass())) {
+								queryBuilder.addCriterionEntity("a." + key, filter);
+							} else if (filter instanceof UniqueEntity || filter instanceof IEntity) {
+								queryBuilder.addCriterionEntity("a." + key, filter);
 							}
 						}
 					}
@@ -493,34 +452,35 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService
 	 * exception is thrown since different provider should not be allowed to
 	 * modify (update or delete) entity.
 	 */
-    protected void checkProvider(E e) {
-        if (getCurrentProvider() != null) {
-            if (e instanceof BaseEntity) {
-                boolean notSameProvider = !((BaseEntity) e).doesProviderMatch(getCurrentProvider());
-                if (notSameProvider) {
-                    log.debug("CheckProvider getCurrentProvider() id={}, entityProvider id={}",
-                        new Object[] { getCurrentProvider().getId(), ((BaseEntity) e).getProvider().getId() });
-                    throw new ProviderNotAllowedException();
-                }
-            }
-        }
-    }
+	protected void checkProvider(E e) {
+		if (getCurrentProvider() != null) {
+			if (e instanceof BaseEntity) {
+				boolean notSameProvider = !((BaseEntity) e).doesProviderMatch(getCurrentProvider());
+				if (notSameProvider) {
+					log.debug("CheckProvider getCurrentProvider() id={}, entityProvider id={}", new Object[] {
+							getCurrentProvider().getId(), ((BaseEntity) e).getProvider().getId() });
+					throw new ProviderNotAllowedException();
+				}
+			}
+		}
+	}
 
-    public Provider getCurrentProvider() {
-        Provider result = provider;
-        try{
-	        if (result == null && identity.isLoggedIn() && identity.getUser() != null) {
-	            result = ((MeveoUser) identity.getUser()).getCurrentProvider();
-	        }
-        } catch(Exception e){
-        	e.printStackTrace();
-        }
-        if (result == null && getCurrentUser() != null) {
-            result = getCurrentUser().getProvider();
-        }
+	public Provider getCurrentProvider() {
+		Provider result = provider;
+		try {
+			if (result == null && identity.isLoggedIn() && identity.getUser() != null) {
+				result = ((MeveoUser) identity.getUser()).getCurrentProvider();
+			}
+		} catch (Exception e) {
+			log.error(e.getMessage());
+		}
 
-        return result;
-    }
+		if (result == null && getCurrentUser() != null) {
+			result = getCurrentUser().getProvider();
+		}
+
+		return result;
+	}
 
 	public Provider getProvider() {
 		return provider;

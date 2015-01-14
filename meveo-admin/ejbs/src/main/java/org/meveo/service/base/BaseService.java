@@ -49,9 +49,8 @@ public abstract class BaseService {
 		try {
 			return ((MeveoUser) identity.getUser()).getUser();
 		} catch (Exception e) {
-		//	e.printStackTrace();
-		//	log.warn("getCurrentUser cannot retrieve current user from session identity and currentUser has not been set programmatically");
-			return null;//userService.getSystemUser();
+			// log.warn("getCurrentUser cannot retrieve current user from session identity and currentUser has not been set programmatically");
+			return null;
 		}
 	}
 
@@ -61,8 +60,7 @@ public abstract class BaseService {
 
 	@SuppressWarnings("unchecked")
 	protected <E> E getManagedBeanInstance(Class<E> beanClazz) {
-		Bean<E> bean = (Bean<E>) beanManager.getBeans(beanClazz).iterator()
-				.next();
+		Bean<E> bean = (Bean<E>) beanManager.getBeans(beanClazz).iterator().next();
 		CreationalContext<E> ctx = beanManager.createCreationalContext(bean);
 		return (E) beanManager.getReference(bean, beanClazz, ctx);
 	}
