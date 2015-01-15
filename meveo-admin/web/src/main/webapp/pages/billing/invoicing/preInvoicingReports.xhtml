@@ -20,18 +20,22 @@
 					field="preInvoicingReports" childField="billingCycleCode"
 					popup="false" />
 
-				<hf:formEntityField label="#{messages['preInvoicingReport.noOfAccounts']} "
+				<hf:formEntityField
+					label="#{messages['preInvoicingReport.noOfAccounts']} "
 					field="preInvoicingReports" childField="billingAccountNumber"
 					popup="false" />
 			</hftl:panelGroup>
 
 			<hftl:panelGroup columns="2">
-				<hf:formEntityField label="#{messages['preInvoicingReport.noOfAccountNoCharged']}"
+				<hf:formEntityField
+					label="#{messages['preInvoicingReport.noOfAccountNoCharged']}"
 					field="preInvoicingReports"
 					childField="billableBillingAccountNumber" popup="false" />
 
-				<hf:formEntityField label="Montant HT" field="preInvoicingReports"
-					childField="amoutWitountTax" popup="false" />
+				<hf:formEntityField
+					label="#{messages['preInvoicingReport.amountHT']}"
+					field="preInvoicingReports" childField="amoutWitountTax"
+					popup="false" />
 			</hftl:panelGroup>
 
 
