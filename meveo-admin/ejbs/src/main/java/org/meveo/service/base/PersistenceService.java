@@ -113,6 +113,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 	}
 
 	public void updateNoCheck(E e) {
+		log.debug("start of update {} entity (id={}) ..", e.getClass().getSimpleName(), e.getId());
 		getEntityManager().merge(e);
 	}
 

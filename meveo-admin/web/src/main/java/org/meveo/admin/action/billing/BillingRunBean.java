@@ -101,24 +101,25 @@ public class BillingRunBean extends StatelessBaseBean<BillingRun> {
 	 */
 	public BillingRun initEntity() {
 		BillingRun billingRun = super.initEntity();
+		getPersistenceService().refresh(billingRun);
+
 		try {
 			log.info("postReport.get()=" + postReport.get());
 			if (billingRun.getId() == null) {
 				billingRun.setProcessType(BillingProcessTypesEnum.MANUAL);
 			}
-			if (billingRun != null && billingRun.getId() != null
-					&& preReport.get() != null && preReport.get()) {
+
+			if (billingRun != null && billingRun.getId() != null && preReport.get() != null && preReport.get()) {
 				PreInvoicingReportsDTO preInvoicingReportsDTO = billingRunService
 						.generatePreInvoicingReports(billingRun);
 				billingRun.setPreInvoicingReports(preInvoicingReportsDTO);
-			} else if (billingRun != null && billingRun.getId() != null
-					&& postReport.get() != null && postReport.get()) {
+			} else if (billingRun != null && billingRun.getId() != null && postReport.get() != null && postReport.get()) {
 				PostInvoicingReportsDTO postInvoicingReportsDTO = billingRunService
 						.generatePostInvoicingReports(billingRun);
 				billingRun.setPostInvoicingReports(postInvoicingReportsDTO);
 			}
-			invoicesModel = new ListDataModel<Invoice>(billingRun.getInvoices());
 
+			invoicesModel = new ListDataModel<Invoice>(billingRun.getInvoices());
 		} catch (BusinessException e) {
 			log.error("Failed to initialize an object", e);
 		}
@@ -145,19 +146,15 @@ public class BillingRunBean extends StatelessBaseBean<BillingRun> {
 	}
 
 	public String launchRecurringInvoicing() {
-		log.info("launchInvoicing billingRun BillingCycle={}", entity
-				.getBillingCycle().getCode());
+		log.info("launchInvoicing billingRun BillingCycle={}", entity.getBillingCycle().getCode());
 		try {
 			ParamBean param = ParamBean.getInstance();
-			String allowManyInvoicing = param.getProperty(
-					"billingRun.allowManyInvoicing", "true");
+			String allowManyInvoicing = param.getProperty("billingRun.allowManyInvoicing", "true");
 			boolean isAllowed = Boolean.parseBoolean(allowManyInvoicing);
-			log.info("launchInvoicing allowManyInvoicing=#", isAllowed);
-			if (billingRunService
-					.isActiveBillingRunsExist(getCurrentProvider())
-					&& !isAllowed) {
-				messages.error(new BundleKey("messages",
-						"error.invoicing.alreadyLunched"));
+			log.info("launchInvoicing allowManyInvoicing={}", isAllowed);
+
+			if (billingRunService.isActiveBillingRunsExist(getCurrentProvider()) && !isAllowed) {
+				messages.error(new BundleKey("messages", "error.invoicing.alreadyLunched"));
 				return null;
 			}
 
@@ -200,22 +197,16 @@ public class BillingRunBean extends StatelessBaseBean<BillingRun> {
 				String selectedBillingAccounts = "";
 				String sep = "";
 				boolean isBillable = false;
-				for (RejectedBillingAccount ba : entity
-						.getRejectedBillingAccounts()) {
-					selectedBillingAccounts = selectedBillingAccounts + sep
-							+ ba.getId();
+				for (RejectedBillingAccount ba : entity.getRejectedBillingAccounts()) {
+					selectedBillingAccounts = selectedBillingAccounts + sep + ba.getId();
 					sep = ",";
-					if (!isBillable
-							&& ratedTransactionService
-									.isBillingAccountBillable(ba
-											.getBillingAccount())) {
+					if (!isBillable && ratedTransactionService.isBillingAccountBillable(ba.getBillingAccount())) {
 						isBillable = true;
 						break;
 					}
 				}
 				if (!isBillable) {
-					messages.error(new BundleKey("messages",
-							"error.invoicing.noTransactions"));
+					messages.error(new BundleKey("messages", "error.invoicing.noTransactions"));
 					return null;
 				}
 				log.info("selectedBillingAccounts=" + selectedBillingAccounts);
@@ -284,8 +275,7 @@ public class BillingRunBean extends StatelessBaseBean<BillingRun> {
 
 	public String preInvoicingRepport(long id) {
 		try {
-			return "/pages/billing/invoicing/preInvoicingReports.xhtml?edit=false&preReport=true&objectId="
-					+ id;
+			return "/pages/billing/invoicing/preInvoicingReports.xhtml?edit=false&preReport=true&objectId=" + id;
 
 		} catch (Exception e) {
 			log.error(e.getMessage());
@@ -296,8 +286,7 @@ public class BillingRunBean extends StatelessBaseBean<BillingRun> {
 
 	public String postInvoicingRepport(long id) {
 		try {
-			return "/pages/billing/invoicing/postInvoicingReports.xhtml?edit=false&postReport=true&objectId="
-					+ id;
+			return "/pages/billing/invoicing/postInvoicingReports.xhtml?edit=false&postReport=true&objectId=" + id;
 
 		} catch (Exception e) {
 			log.error(e.getMessage());
@@ -308,13 +297,11 @@ public class BillingRunBean extends StatelessBaseBean<BillingRun> {
 
 	public String excludeBillingAccounts() {
 		try {
-			log.debug("excludeBillingAccounts itemSelector.size()=#0",
-					itemSelector.getSize());
+			log.debug("excludeBillingAccounts itemSelector.size()=#0", itemSelector.getSize());
 			for (Invoice invoice : itemSelector.getList()) {
 				billingRunService.deleteInvoice(invoice);
 			}
-			messages.info(new BundleKey("messages",
-					"info.invoicing.billingAccountExcluded"));
+			messages.info(new BundleKey("messages", "info.invoicing.billingAccountExcluded"));
 
 		} catch (Exception e) {
 			log.error("unexpected exception when excluding BillingAccounts!", e);
@@ -357,8 +344,7 @@ public class BillingRunBean extends StatelessBaseBean<BillingRun> {
 		if (entity != null) {
 			itemSelector.check(entity);
 		}
-		log.debug("selectChanged itemSelector.size()=#0",
-				itemSelector.getSize());
+		log.debug("selectChanged itemSelector.size()=#0", itemSelector.getSize());
 	}
 
 	/**

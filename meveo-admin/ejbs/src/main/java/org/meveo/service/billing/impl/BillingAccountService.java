@@ -245,11 +245,13 @@ public class BillingAccountService extends AccountService<BillingAccount> {
 	}
 
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public Object[] updateBillingAccountTotalAmounts(BillingAccount billingAccount, BillingRun billingRun,
+	public boolean updateBillingAccountTotalAmounts(BillingAccount billingAccount, BillingRun billingRun,
 			User currentUser) {
 		boolean result = false;
 
 		log.debug("updateBillingAccountTotalAmounts  billingAccount:" + billingAccount.getCode());
+
+		billingAccount = findById(billingAccount.getId(), true);
 
 		result = ratedTransactionService.isBillingAccountBillable(billingAccount);
 
@@ -267,22 +269,19 @@ public class BillingAccountService extends AccountService<BillingAccount> {
 			List<Object[]> queryResults = q.getResultList();
 			Object[] queryResult = queryResults.size() > 0 ? queryResults.get(0) : null;
 
-			return queryResult;
+			if (queryResult != null) {
+				billingAccount.setBrAmountWithoutTax((BigDecimal) queryResult[0]);
+				billingAccount.setBrAmountWithTax((BigDecimal) queryResult[1]);
+				log.debug("set brAmount {} in BA {}", queryResult[0], billingAccount.getId());
+			}
 
-			// if (queryResult != null) {
-			// billingAccount.setBrAmountWithoutTax((BigDecimal)
-			// queryResult[0]);
-			// billingAccount.setBrAmountWithTax((BigDecimal) queryResult[1]);
-			// log.debug("set brAmount {} in BA {}", queryResult[0],
-			// billingAccount.getId());
-			// }
-			//
-			// billingAccount.setBillingRun(billingRun);
-			// billingAccount.updateAudit(currentUser);
-			// updateNoCheck(billingAccount);
+			billingAccount.setBillingRun(billingRun);
+			billingAccount.updateAudit(currentUser);
+			updateNoCheck(billingAccount);
+			result = true;
 		}
 
-		return null;
+		return result;
 	}
 
 	@SuppressWarnings("unchecked")

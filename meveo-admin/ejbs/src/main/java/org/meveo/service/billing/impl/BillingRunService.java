@@ -64,6 +64,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 
 	public PreInvoicingReportsDTO generatePreInvoicingReports(BillingRun billingRun) throws BusinessException {
 		log.debug("start generatePreInvoicingReports.......");
+
 		PreInvoicingReportsDTO preInvoicingReportsDTO = new PreInvoicingReportsDTO();
 
 		preInvoicingReportsDTO.setBillingCycleCode(billingRun.getBillingCycle() != null ? billingRun.getBillingCycle()
@@ -78,6 +79,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 		Date endDate = billingRun.getEndDate();
 		endDate = endDate != null ? endDate : new Date();
 		List<BillingAccount> billingAccounts = new ArrayList<BillingAccount>();
+
 		if (billingCycle != null) {
 			billingAccounts = billingAccountService.findBillingAccounts(billingCycle, startDate, endDate);
 		} else {
@@ -150,7 +152,6 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 			default:
 				break;
 			}
-
 		}
 
 		preInvoicingReportsDTO.setCheckBANumber(checkBANumber);
@@ -486,12 +487,13 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 			billingRun.setPrAmountTax((BigDecimal) ratedTransactionsAmounts[2]);
 		}
 
+		updateNoCheck(billingRun);
+
 		return result;
 	}
 
 	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
 	public void createAgregatesAndInvoice(Long billingRunId, User currentUser) throws BusinessException, Exception {
-		// billingRun = findById(billingRun.getId(),true);
 		List<BillingAccount> billingAccounts = getEntityManager()
 				.createNamedQuery("BillingAccount.listByBillingRunId", BillingAccount.class)
 				.setParameter("billingRunId", billingRunId).getResultList();
