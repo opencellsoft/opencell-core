@@ -459,11 +459,20 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 		Object[] ratedTransactionsAmounts = null;
 		if (billingCycle != null) {
 			Date startDate = billingRun.getStartDate();
-			Date endDate = billingRun.getEndDate();
-			ratedTransactionsAmounts = (Object[]) getEntityManager()
-					.createNamedQuery("RatedTransaction.sumbillingRunByCycle")
-					.setParameter("status", RatedTransactionStatusEnum.OPEN).setParameter("billingCycle", billingCycle)
-					.setParameter("startDate", startDate).setParameter("endDate", endDate).getSingleResult();
+			Date endDate = billingRun.getEndDate() != null ? billingRun.getEndDate() : new Date();
+
+			if (startDate != null) {
+				ratedTransactionsAmounts = (Object[]) getEntityManager()
+						.createNamedQuery("RatedTransaction.sumbillingRunByCycle")
+						.setParameter("status", RatedTransactionStatusEnum.OPEN)
+						.setParameter("billingCycle", billingCycle).setParameter("startDate", startDate)
+						.setParameter("endDate", endDate).getSingleResult();
+			} else {
+				ratedTransactionsAmounts = (Object[]) getEntityManager()
+						.createNamedQuery("RatedTransaction.sumbillingRunByCycleNoDate")
+						.setParameter("status", RatedTransactionStatusEnum.OPEN)
+						.setParameter("billingCycle", billingCycle).getSingleResult();
+			}
 
 			result = billingAccountService.findBillingAccounts(billingCycle, startDate, endDate);
 		} else {
