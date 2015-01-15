@@ -8,8 +8,11 @@ import java.util.HashMap;
 import java.util.List;
 
 import javax.ejb.Stateless;
+import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
+import org.meveo.event.qualifier.CDR;
+import org.meveo.event.qualifier.Rejected;
 import org.meveo.model.mediation.Access;
 import org.meveo.model.rating.EDR;
 import org.meveo.model.rating.EDRStatusEnum;
@@ -26,6 +29,10 @@ public class CDRParsingService {
 
 	@Inject
 	AccessService accessService;
+
+	@Inject
+	@Rejected @CDR
+	Event<Serializable> rejectededCdrEventProducer;
 
 	public void init(File CDRFile) {
 		cdrParser.init(CDRFile);
@@ -122,6 +129,7 @@ public class CDRParsingService {
 		} else {
 			accesses = accessService.findByUserID(userId);
 			if (accesses.size() == 0) {
+				rejectededCdrEventProducer.fire(cdr);
 				throw new InvalidAccessException(cdr);
 			}
 			

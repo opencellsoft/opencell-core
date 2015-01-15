@@ -988,7 +988,30 @@
 			<redirect />
 		</navigation-case>
 		
+		<navigation-case>
+			<from-outcome>webHookDetail</from-outcome>
+			<to-view-id>/pages/notification/webHookDetail.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+
+		<navigation-case>
+			<from-outcome>webHooks</from-outcome>
+			<to-view-id>/pages/notification/webHooks.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
 		
+		
+		<navigation-case>
+			<from-outcome>emailNotificationDetail</from-outcome>
+			<to-view-id>/pages/notification/emailNotificationDetail.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+
+		<navigation-case>
+			<from-outcome>emailNotifications</from-outcome>
+			<to-view-id>/pages/notification/emailNotifications.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
 
 		<navigation-case>
 			<from-outcome>chartDetail</from-outcome>

@@ -26,6 +26,7 @@ import java.util.Set;
 
 import javax.annotation.Resource;
 import javax.enterprise.context.Conversation;
+import javax.enterprise.event.Event;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
@@ -35,6 +36,10 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ProviderNotAllowedException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.commons.utils.QueryBuilder;
+import org.meveo.event.qualifier.Created;
+import org.meveo.event.qualifier.Disabled;
+import org.meveo.event.qualifier.Removed;
+import org.meveo.event.qualifier.Updated;
 import org.meveo.model.AuditableEntity;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.EnableEntity;
@@ -70,6 +75,18 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 
 	@Resource
 	protected TransactionSynchronizationRegistry txReg;
+
+	@Inject @Created
+	protected Event<E> entityCreatedEventProducer;
+
+	@Inject @Updated
+	protected Event<E> entityUpdatedEventProducer;
+	
+	@Inject @Disabled
+	protected Event<E> entityDisabledEventProducer;
+	
+	@Inject @Removed
+	protected Event<E> entityRemovedEventProducer;
 
 	private Provider provider;
 
@@ -191,6 +208,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 		if (e instanceof EnableEntity) {
 			((EnableEntity) e).setDisabled(true);
 			update(e);
+			entityDisabledEventProducer.fire(e);
 		}
 	}
 
@@ -216,6 +234,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 		log.debug("start of remove {} entity (id={}) ..", getEntityClass().getSimpleName(), e.getId());
 		checkProvider(e);
 		em.remove(e);
+		entityRemovedEventProducer.fire(e);
 		em.flush();
 		log.debug("end of remove {} entity (id={}).", getEntityClass().getSimpleName(), e.getId());
 	}
@@ -247,7 +266,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 		}
 		checkProvider(e);
 		getEntityManager().merge(e);
-
+		entityUpdatedEventProducer.fire(e);
 		log.debug("end of update {} entity (id={}).", e.getClass().getSimpleName(), e.getId());
 	}
 
@@ -275,7 +294,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 		}
 
 		getEntityManager().persist(e);
-
+		entityCreatedEventProducer.fire(e);
 		log.debug("end of create {}. entity id={}.", e.getClass().getSimpleName(), e.getId());
 
 	}
