@@ -27,8 +27,7 @@ import javax.persistence.UniqueConstraint;
 import org.meveo.model.BaseEntity;
 
 @Entity
-@Table(name = "CAT_DAY_IN_YEAR", uniqueConstraints = @UniqueConstraint(columnNames = { "DAY",
-		"MONTH", "PROVIDER_ID" }))
+@Table(name = "CAT_DAY_IN_YEAR", uniqueConstraints = @UniqueConstraint(columnNames = { "DAY", "MONTH" }))
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "CAT_DAY_IN_YEAR_SEQ")
 public class DayInYear extends BaseEntity {
 

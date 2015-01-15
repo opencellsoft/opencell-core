@@ -14,5 +14,6 @@ RatedTransaction
 BillingRun
 InvoicingJob
 
+AccountOperations
 XMLInvoiceGeneration
 PdfInvoiceGeneration
