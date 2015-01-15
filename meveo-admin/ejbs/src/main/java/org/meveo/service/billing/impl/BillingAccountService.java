@@ -278,6 +278,7 @@ public class BillingAccountService extends AccountService<BillingAccount> {
 			billingAccount.setBillingRun(billingRun);
 			billingAccount.updateAudit(currentUser);
 			updateNoCheck(billingAccount);
+			getEntityManager().flush();
 			result = true;
 		}
 
