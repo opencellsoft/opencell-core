@@ -162,10 +162,8 @@ public class AccountOperationsGenerationJobBean {
 					recordedInvoice.setPaymentInfo5(billingAccount.getBankCoordinates().getBankName());
 					recordedInvoice.setPaymentInfo6(billingAccount.getBankCoordinates().getBic());
 					recordedInvoice.setBillingAccountName(billingAccount.getBankCoordinates().getAccountOwner());
-				} else {
-					log.warn("bankCoordinates is null");
 				}
-				
+
 				recordedInvoice.setMatchingStatus(MatchingStatusEnum.O);
 				recordedInvoiceService.create(recordedInvoice);
 
