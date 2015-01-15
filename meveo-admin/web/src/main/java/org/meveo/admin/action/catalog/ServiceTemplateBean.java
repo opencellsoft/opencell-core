@@ -85,63 +85,57 @@ public class ServiceTemplateBean extends StatelessBaseBean<ServiceTemplate> {
 
 	public DualListModel<OneShotChargeTemplate> getTerminationChargesModel() {
 		if (terminationCharges == null) {
-			List<OneShotChargeTemplate> source = oneShotChargeTemplateService
-					.getTerminationChargeTemplates();
+			List<OneShotChargeTemplate> source = oneShotChargeTemplateService.getTerminationChargeTemplates();
 			List<OneShotChargeTemplate> target = new ArrayList<OneShotChargeTemplate>();
 			if (getEntity().getTerminationCharges() != null) {
 				target.addAll(getEntity().getTerminationCharges());
 			}
 			source.removeAll(target);
-			terminationCharges = new DualListModel<OneShotChargeTemplate>(
-					source, target);
+			terminationCharges = new DualListModel<OneShotChargeTemplate>(source, target);
 		}
 		return terminationCharges;
 	}
 
-	public void setTerminationChargesModel(
-			DualListModel<OneShotChargeTemplate> temp) {
+	public void setTerminationChargesModel(DualListModel<OneShotChargeTemplate> temp) {
 		getEntity().setTerminationCharges(temp.getTarget());
 	}
 
 	public DualListModel<OneShotChargeTemplate> getSubscriptionChargesModel() {
-		System.out.println("getSubscriptionChargesModel " + this + " entity="
-				+ getEntity());
+		log.debug("getSubscriptionChargesModel entity={}", getEntity());
+
 		if (subscriptionCharges == null) {
-			List<OneShotChargeTemplate> source = oneShotChargeTemplateService
-					.getSubscriptionChargeTemplates();
+			List<OneShotChargeTemplate> source = oneShotChargeTemplateService.getSubscriptionChargeTemplates();
 			List<OneShotChargeTemplate> target = new ArrayList<OneShotChargeTemplate>();
+
 			if (getEntity().getSubscriptionCharges() != null) {
 				target.addAll(getEntity().getSubscriptionCharges());
 			}
+
 			source.removeAll(target);
-			subscriptionCharges = new DualListModel<OneShotChargeTemplate>(
-					source, target);
+			subscriptionCharges = new DualListModel<OneShotChargeTemplate>(source, target);
 		}
+
 		return subscriptionCharges;
 	}
 
-	public void setSubscriptionChargesModel(
-			DualListModel<OneShotChargeTemplate> temp) {
+	public void setSubscriptionChargesModel(DualListModel<OneShotChargeTemplate> temp) {
 		getEntity().setSubscriptionCharges(temp.getTarget());
 	}
 
 	public DualListModel<RecurringChargeTemplate> getRecurringChargesModel() {
 		if (recurringCharges == null) {
-			List<RecurringChargeTemplate> source = recurringChargeTemplateService
-					.list();
+			List<RecurringChargeTemplate> source = recurringChargeTemplateService.list();
 			List<RecurringChargeTemplate> target = new ArrayList<RecurringChargeTemplate>();
 			if (getEntity().getRecurringCharges() != null) {
 				target.addAll(getEntity().getRecurringCharges());
 			}
 			source.removeAll(target);
-			recurringCharges = new DualListModel<RecurringChargeTemplate>(
-					source, target);
+			recurringCharges = new DualListModel<RecurringChargeTemplate>(source, target);
 		}
 		return recurringCharges;
 	}
 
-	public void setRecurringChargesModel(
-			DualListModel<RecurringChargeTemplate> temp) {
+	public void setRecurringChargesModel(DualListModel<RecurringChargeTemplate> temp) {
 		getEntity().setRecurringCharges(temp.getTarget());
 	}
 
@@ -168,11 +162,9 @@ public class ServiceTemplateBean extends StatelessBaseBean<ServiceTemplate> {
 	 * @see org.meveo.admin.action.BaseBean#saveOrUpdate(boolean)
 	 */
 	@Override
-	public String saveOrUpdate(boolean killConversation)
-			throws BusinessException {
+	public String saveOrUpdate(boolean killConversation) throws BusinessException {
 
-		List<RecurringChargeTemplate> recurringCharges = entity
-				.getRecurringCharges();
+		List<RecurringChargeTemplate> recurringCharges = entity.getRecurringCharges();
 		for (RecurringChargeTemplate recurringCharge : recurringCharges) {
 			if (!recurringCharge.getApplyInAdvance()) {
 				break;
@@ -187,46 +179,31 @@ public class ServiceTemplateBean extends StatelessBaseBean<ServiceTemplate> {
 
 		try {
 			if (serviceUsageChargeTemplate != null) {
-				for (ServiceUsageChargeTemplate inc : entity
-						.getServiceUsageCharges()) {
-					if (inc.getChargeTemplate()
-							.getCode()
-							.equalsIgnoreCase(
-									serviceUsageChargeTemplate
-											.getChargeTemplate().getCode())
-							&& inc.getCounterTemplate()
-									.getCode()
-									.equalsIgnoreCase(
-											serviceUsageChargeTemplate
-													.getCounterTemplate()
-													.getCode())
-							&& !inc.getId().equals(
-									serviceUsageChargeTemplate.getId())) {
+				for (ServiceUsageChargeTemplate inc : entity.getServiceUsageCharges()) {
+					if (inc.getChargeTemplate().getCode()
+							.equalsIgnoreCase(serviceUsageChargeTemplate.getChargeTemplate().getCode())
+							&& inc.getCounterTemplate().getCode()
+									.equalsIgnoreCase(serviceUsageChargeTemplate.getCounterTemplate().getCode())
+							&& !inc.getId().equals(serviceUsageChargeTemplate.getId())) {
 						throw new Exception();
 					}
 				}
 
 				if (serviceUsageChargeTemplate.getId() != null) {
-					serviceUsageChargeTemplateService
-							.update(serviceUsageChargeTemplate);
+					serviceUsageChargeTemplateService.update(serviceUsageChargeTemplate);
 					messages.info(new BundleKey("messages", "update.successful"));
 				} else {
 					serviceUsageChargeTemplate.setServiceTemplate(entity);
-					serviceUsageChargeTemplateService
-							.create(serviceUsageChargeTemplate);
-					entity.getServiceUsageCharges().add(
-							serviceUsageChargeTemplate);
+					serviceUsageChargeTemplateService.create(serviceUsageChargeTemplate);
+					entity.getServiceUsageCharges().add(serviceUsageChargeTemplate);
 					messages.info(new BundleKey("messages", "save.successful"));
 				}
 
 				return getListViewName();
 			}
 		} catch (Exception e) {
-			log.error(
-					"exception when applying one serviceUsageChargeTemplate !",
-					e);
-			messages.error(new BundleKey("messages",
-					"serviceTemplate.uniqueUsageCounterFlied"));
+			log.error("exception when applying one serviceUsageChargeTemplate !", e);
+			messages.error(new BundleKey("messages", "serviceTemplate.uniqueUsageCounterFlied"));
 		}
 
 		serviceUsageChargeTemplate = new ServiceUsageChargeTemplate();
@@ -234,14 +211,12 @@ public class ServiceTemplateBean extends StatelessBaseBean<ServiceTemplate> {
 		return null;
 	}
 
-	public void deleteServiceUsageChargeTemplate(
-			ServiceUsageChargeTemplate serviceUsageChargeTemplate) {
+	public void deleteServiceUsageChargeTemplate(ServiceUsageChargeTemplate serviceUsageChargeTemplate) {
 		serviceUsageChargeTemplateService.remove(serviceUsageChargeTemplate);
 		entity.getServiceUsageCharges().remove(serviceUsageChargeTemplate);
 	}
 
-	public void editServiceUsageChargeTemplate(
-			ServiceUsageChargeTemplate serviceUsageChargeTemplate) {
+	public void editServiceUsageChargeTemplate(ServiceUsageChargeTemplate serviceUsageChargeTemplate) {
 		this.serviceUsageChargeTemplate = serviceUsageChargeTemplate;
 	}
 
@@ -257,8 +232,7 @@ public class ServiceTemplateBean extends StatelessBaseBean<ServiceTemplate> {
 		return recurringCharges;
 	}
 
-	public void setRecurringCharges(
-			DualListModel<RecurringChargeTemplate> recurringCharges) {
+	public void setRecurringCharges(DualListModel<RecurringChargeTemplate> recurringCharges) {
 		this.recurringCharges = recurringCharges;
 	}
 
@@ -266,8 +240,7 @@ public class ServiceTemplateBean extends StatelessBaseBean<ServiceTemplate> {
 		return subscriptionCharges;
 	}
 
-	public void setSubscriptionCharges(
-			DualListModel<OneShotChargeTemplate> subscriptionCharges) {
+	public void setSubscriptionCharges(DualListModel<OneShotChargeTemplate> subscriptionCharges) {
 		this.subscriptionCharges = subscriptionCharges;
 	}
 
@@ -275,8 +248,7 @@ public class ServiceTemplateBean extends StatelessBaseBean<ServiceTemplate> {
 		return terminationCharges;
 	}
 
-	public void setTerminationCharges(
-			DualListModel<OneShotChargeTemplate> terminationCharges) {
+	public void setTerminationCharges(DualListModel<OneShotChargeTemplate> terminationCharges) {
 		this.terminationCharges = terminationCharges;
 	}
 
@@ -294,8 +266,7 @@ public class ServiceTemplateBean extends StatelessBaseBean<ServiceTemplate> {
 		return serviceUsageChargeTemplate;
 	}
 
-	public void setServiceUsageChargeTemplate(
-			ServiceUsageChargeTemplate serviceUsageChargeTemplate) {
+	public void setServiceUsageChargeTemplate(ServiceUsageChargeTemplate serviceUsageChargeTemplate) {
 		this.serviceUsageChargeTemplate = serviceUsageChargeTemplate;
 	}
 
