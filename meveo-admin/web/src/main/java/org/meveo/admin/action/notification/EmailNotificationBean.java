@@ -22,6 +22,11 @@ public class EmailNotificationBean extends BaseBean<EmailNotification>{
 	@Inject
 	EmailNotificationService emailNotificationService;
 	
+
+	public EmailNotificationBean(){
+		super(EmailNotification.class);
+	}
+	
 	@Override
 	protected IPersistenceService<EmailNotification> getPersistenceService() {
 		return emailNotificationService;

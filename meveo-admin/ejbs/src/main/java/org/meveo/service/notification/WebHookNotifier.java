@@ -7,6 +7,7 @@ import java.util.Map;
 import javax.ejb.Asynchronous;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.persistence.EntityManager;
 
 import org.jsoup.Connection;
 import org.jsoup.helper.HttpConnection;
@@ -17,10 +18,15 @@ import org.meveo.model.notification.NotificationHistoryStatusEnum;
 import org.meveo.model.notification.WebHook;
 import org.meveo.model.notification.WebHookMethodEnum;
 import org.meveo.service.billing.impl.RatingService;
+import org.meveo.util.MeveoJpaForJobs;
 import org.slf4j.Logger;
 
 @Stateless
 public class WebHookNotifier {
+
+	@Inject
+	@MeveoJpaForJobs
+	private EntityManager em;
 	
 	@Inject
 	Logger log;
@@ -46,6 +52,8 @@ public class WebHookNotifier {
 	
 	@Asynchronous
 	public void sendRequest(WebHook webHook, IEntity e){
+		log.debug("webhook sendRequest");
+		em.refresh(webHook);
 		String result="";
 		try {
 			String url  = webHook.getHost().startsWith("http")?webHook.getHost():"http://"+webHook.getHost();
@@ -55,6 +63,8 @@ public class WebHookNotifier {
 			if(!StringUtils.isBlank(webHook.getPage())){
 				url+="/"+evaluate(webHook.getPage(),e);
 			}
+
+			log.debug("webhook url: {}",url);
 			Connection connection=HttpConnection.connect(url);
 			connection.data(evaluateMap(webHook.getParams(),e));
 			Map<String,String> headers=evaluateMap(webHook.getHeaders(),e);
@@ -71,14 +81,18 @@ public class WebHookNotifier {
 			log.debug("webhook answer : "+result);
 		} catch (BusinessException e1) {
 			try {
+				log.debug("webhook business error : "+e1.getMessage());
 				notificationHistoryService.create(webHook, e, e1.getMessage(),NotificationHistoryStatusEnum.FAILED);
 			} catch (BusinessException e2) {
+				log.debug("webhook history error : "+e2.getMessage());
 				e2.printStackTrace();
 			}
 		} catch (IOException e1) {
 			try {
+				log.debug("webhook io error : "+e1.getMessage());
 				notificationHistoryService.create(webHook, e, e1.getMessage(),NotificationHistoryStatusEnum.TO_RETRY);
 			} catch (BusinessException e2) {
+				log.debug("webhook history error : "+e2.getMessage());
 				e2.printStackTrace();
 			}
 		}

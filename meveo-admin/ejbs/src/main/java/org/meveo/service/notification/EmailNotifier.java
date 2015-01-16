@@ -1,8 +1,9 @@
 package org.meveo.service.notification;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Set;
+import java.util.List;
 
 import javax.annotation.Resource;
 import javax.ejb.Asynchronous;
@@ -49,24 +50,27 @@ public class EmailNotifier {
 				String body=(String)RatingService.evaluateExpression(notification.getBody(), userMap, String.class);
 				msg.setContent(body, "text/plain");
 			}
-			Set<String> toAddresses=notification.getEmails();
-			if(!StringUtils.isBlank(notification.getEmailToEl())){
-				String htmlBody=(String)RatingService.evaluateExpression(notification.getEmailToEl(), userMap, String.class);
-				msg.setContent(htmlBody, "text/html");
-			}
+			List<InternetAddress> addressTo = new ArrayList<InternetAddress>();
 			
-			InternetAddress[] addressTo = new InternetAddress[toAddresses.size()];
-			int i=0;
-			for (String address:toAddresses) {
-				addressTo[i++] = new InternetAddress(address);
+			if(!StringUtils.isBlank(notification.getEmailToEl())){
+				addressTo.add(new InternetAddress((String)RatingService.evaluateExpression(notification.getEmailToEl(), userMap, String.class)));
 			}
-
-			msg.setRecipients(RecipientType.TO, addressTo);
+			for (String address:notification.getEmails()) {
+				addressTo.add(new InternetAddress(address));
+			}
+			msg.setRecipients(RecipientType.TO,addressTo.toArray(new InternetAddress[addressTo.size()]));
 
 			InternetAddress[] replytoAddress = { new InternetAddress(
 					notification.getEmailFrom()) };
 			msg.setReplyTo(replytoAddress);
-
+			if(!StringUtils.isBlank(notification.getBody())){
+				String htmlBody=(String)RatingService.evaluateExpression(notification.getBody(), userMap, String.class);
+				msg.setContent(htmlBody, "text/plain");
+			}
+			if(!StringUtils.isBlank(notification.getHtmlBody())){
+				String htmlBody=(String)RatingService.evaluateExpression(notification.getHtmlBody(), userMap, String.class);
+				msg.setContent(htmlBody, "text/html");
+			}
 			Transport.send(msg);
 			notificationHistoryService.create(notification, e, "", NotificationHistoryStatusEnum.SENT);
 

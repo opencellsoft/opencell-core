@@ -20,33 +20,33 @@ public class EmailNotification extends Notification {
 
 	@Column(name="EMAIL_FROM",length=1000)
 	@Size(max=1000)
-	String emailFrom;
+	private String emailFrom;
 	
 	@Column(name="EMAIL_TO_EL",length=1000)
 	@Size(max=1000)
-	String emailToEl;
+	private String emailToEl;
 	
-	@ElementCollection(fetch=FetchType.LAZY)
+	@ElementCollection(fetch=FetchType.EAGER)
 	@CollectionTable(name="ADM_NOTIF_EMAIL_LIST")
-	Set<String> emails;
+	private Set<String> emails;
 	
-	@ElementCollection(fetch=FetchType.LAZY)
+	@ElementCollection(fetch=FetchType.EAGER)
 	@CollectionTable(name="ADM_NOTIF_EMAIL_USER")
-	Set<User> users;
+	private Set<User> users;
 	
 	@Column(name="EMAIL_SUBJECT",length=500,nullable=false)
 	@Size(max=500)
-	String subject;
+	private String subject;
 
 	@Column(name="EMAIL_BODY",length=2000)
-	String body;
+	private String body;
 
 	@Column(name="EMAIL_HTML_BODY",length=2000)
-	String htmlBody;
+	private String htmlBody;
 
-	@ElementCollection(fetch=FetchType.LAZY)
+	@ElementCollection(fetch=FetchType.EAGER)
 	@CollectionTable(name="ADM_NOTIF_EMAIL_ATTACH")
-	Set<String> attachmentExpressions;
+	private Set<String> attachmentExpressions;
 
 
 	public String getEmailFrom() {

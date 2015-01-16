@@ -116,7 +116,7 @@ public class DefaultObserver {
 	private void fireNotification(Notification notif, IEntity e) {
 		log.debug("Fire Notification for notif {} and  enity {}",notif, e);
 		try {
-			if(!StringUtils.isBlank(notif.getElAction()) && matchExpression(notif.getElFilter(),e)){
+			if(matchExpression(notif.getElFilter(),e)){
 				if(notif instanceof EmailNotification){
 					emailNotifier.sendEmail((EmailNotification) notif, e);
 				} else if(notif instanceof WebHook){

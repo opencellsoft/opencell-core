@@ -51,11 +51,11 @@ public class WebHook extends Notification{
 	@Size(max=255)
 	private String password;
 
-	@ElementCollection(fetch=FetchType.LAZY)
+	@ElementCollection(fetch=FetchType.EAGER)
 	@CollectionTable(name="ADM_NOTIF_WEBHOOK_HEADER")
 	private Map<String,String> headers=new HashMap<String,String>();
 
-	@ElementCollection(fetch=FetchType.LAZY)
+	@ElementCollection(fetch=FetchType.EAGER)
 	@CollectionTable(name="ADM_NOTIF_WEBHOOK_PARAM")
 	private Map<String,String> params=new HashMap<String,String>();
 

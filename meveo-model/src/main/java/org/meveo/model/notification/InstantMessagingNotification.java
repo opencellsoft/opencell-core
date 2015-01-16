@@ -27,11 +27,11 @@ public class InstantMessagingNotification extends Notification{
 		@Size(max=1000)
 		String idEl;
 		
-		@ElementCollection(fetch=FetchType.LAZY)
+		@ElementCollection(fetch=FetchType.EAGER)
 		@CollectionTable(name="ADM_NOTIF_IM_LIST")
 		Set<String> ids;
 		
-		@ElementCollection(fetch=FetchType.LAZY)
+		@ElementCollection(fetch=FetchType.EAGER)
 		@CollectionTable(name="ADM_NOTIF_IM_USER")
 		Set<User> users;
 		

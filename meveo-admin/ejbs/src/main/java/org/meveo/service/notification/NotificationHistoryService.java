@@ -25,8 +25,7 @@ public class NotificationHistoryService extends PersistenceService<NotificationH
 		history.setAuditable(auditable);
 		history.setNotification(notification);
 		history.setEntityClassName(e.getClass().getName());
-		JsonBuilder jsonBuilder = new JsonBuilder(e);
-		history.setSerializedEntity(jsonBuilder.toString());
+		history.setSerializedEntity(e.getId().toString());
 		history.setResult(result);
 		history.setStatus(status);
 		history.setProvider(notification.getProvider());
