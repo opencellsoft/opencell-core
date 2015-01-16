@@ -281,7 +281,8 @@
 			<p:menuitem id="counterTemplates" outcome="counterTemplates"
 				value="#{messages['menu.counterTemplates']}" />
 
-			<p:menuitem id="triggeredEdrTemplates" outcome="triggeredEdrTemplates"
+			<p:menuitem id="triggeredEdrTemplates"
+				outcome="triggeredEdrTemplates"
 				value="#{messages['menu.triggeredEdrTemplates']}" />
 
 			<!-- <p:menuitem id="serviceParameterTemplates"
@@ -443,11 +444,10 @@
 			<p:menuitem id="pricePlanMatrixes" outcome="pricePlanMatrixes"
 				value="#{messages['menu.pricePlanMatrixes']}" />
 
-			<p:menuitem id="discountPlanMatrixes" outcome="discountPlanMatrixes"
+			<p:menuitem id="discountPlans" outcome="discountPlans"
 				value="#{messages['menu.discountPlanMatrixes']}" />
 
-			<p:menuitem id="edr" outcome="edr"
-				value="#{messages['menu.edr']}" />
+			<p:menuitem id="edr" outcome="edr" value="#{messages['menu.edr']}" />
 		</p:submenu>
 
 		<p:submenu id="invoicing" label="#{messages['menu.invoicing']}"
@@ -596,9 +596,10 @@
 				outcome="measurableQuantities" />
 
 			<p:menuitem id="measuredValues"
-				value="#{messages['menu.measuredValues']}" outcome="measuredValueDetail" />
-				
-				
+				value="#{messages['menu.measuredValues']}"
+				outcome="measuredValueDetail" />
+
+
 			<!-- <p:menuitem id="charts"
 				value="#{messages['menu.charts']}" outcome="charts" /> -->
 

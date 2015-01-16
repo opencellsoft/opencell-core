@@ -39,6 +39,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import org.meveo.model.AccountEntity;
+import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.payments.PaymentTermEnum;
@@ -147,6 +148,10 @@ public class BillingAccount extends AccountEntity {
 
 	@OneToMany(mappedBy = "billingAccount", fetch = FetchType.LAZY)
 	private List<RatedTransaction> ratedTransactions;
+
+	@ManyToOne
+	@JoinColumn(name = "DISCOUNT_PLAN_ID")
+	private DiscountPlan discountPlan;
 
 	public List<UserAccount> getUsersAccounts() {
 		return usersAccounts;
@@ -327,8 +332,7 @@ public class BillingAccount extends AccountEntity {
 		return terminationReason;
 	}
 
-	public void setTerminationReason(
-			SubscriptionTerminationReason terminationReason) {
+	public void setTerminationReason(SubscriptionTerminationReason terminationReason) {
 		this.terminationReason = terminationReason;
 	}
 
@@ -354,6 +358,22 @@ public class BillingAccount extends AccountEntity {
 
 	public void setPaymentTerm(PaymentTermEnum paymentTerm) {
 		this.paymentTerm = paymentTerm;
+	}
+
+	public List<RatedTransaction> getRatedTransactions() {
+		return ratedTransactions;
+	}
+
+	public void setRatedTransactions(List<RatedTransaction> ratedTransactions) {
+		this.ratedTransactions = ratedTransactions;
+	}
+
+	public DiscountPlan getDiscountPlan() {
+		return discountPlan;
+	}
+
+	public void setDiscountPlan(DiscountPlan discountPlan) {
+		this.discountPlan = discountPlan;
 	}
 
 }
