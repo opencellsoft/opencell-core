@@ -459,7 +459,11 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 		Object[] ratedTransactionsAmounts = null;
 		if (billingCycle != null) {
 			Date startDate = billingRun.getStartDate();
-			Date endDate = billingRun.getEndDate() != null ? billingRun.getEndDate() : new Date();
+			Date endDate = billingRun.getEndDate();
+
+			if (startDate != null && endDate == null) {
+				endDate = new Date();
+			}
 
 			if (startDate != null) {
 				ratedTransactionsAmounts = (Object[]) getEntityManager()
