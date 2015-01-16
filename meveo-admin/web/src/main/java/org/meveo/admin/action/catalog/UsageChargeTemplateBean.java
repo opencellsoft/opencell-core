@@ -20,12 +20,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.ejb.Stateful;
 import javax.enterprise.context.ConversationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.jboss.seam.international.status.builder.BundleKey;
+import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.action.StatefulBaseBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.billing.CatMessages;
@@ -77,11 +77,9 @@ public class UsageChargeTemplateBean extends StatefulBaseBean<UsageChargeTemplat
 	public UsageChargeTemplate initEntity() {
 		UsageChargeTemplate usageChargeTemplate = super.initEntity();
 		if (usageChargeTemplate.getId() != null) {
-			for (CatMessages msg : catMessagesService
-					.getCatMessagesList(ChargeTemplate.class.getSimpleName()
-							+ "_" + usageChargeTemplate.getId())) {
-				languageMessagesMap.put(msg.getLanguageCode(),
-						msg.getDescription());
+			for (CatMessages msg : catMessagesService.getCatMessagesList(ChargeTemplate.class.getSimpleName() + "_"
+					+ usageChargeTemplate.getId())) {
+				languageMessagesMap.put(msg.getLanguageCode(), msg.getDescription());
 			}
 		}
 
@@ -110,15 +108,12 @@ public class UsageChargeTemplateBean extends StatefulBaseBean<UsageChargeTemplat
 	 * 
 	 * @see org.meveo.admin.action.BaseBean#saveOrUpdate(org.meveo.model.IEntity)
 	 */
-	public String saveOrUpdate(boolean killConversation)
-			throws BusinessException {
+	public String saveOrUpdate(boolean killConversation) throws BusinessException {
 		String back = null;
 
 		// check for unicity
-		if (oneShotChargeTemplateService.findByCode(entity.getCode(),
-				entity.getProvider()) != null
-				|| recurringChargeTemplateService.findByCode(entity.getCode(),
-						entity.getProvider()) != null) {
+		if (oneShotChargeTemplateService.findByCode(entity.getCode(), entity.getProvider()) != null
+				|| recurringChargeTemplateService.findByCode(entity.getCode(), entity.getProvider()) != null) {
 			messages.error(new BundleKey("messages", "commons.uniqueField.code"));
 			return null;
 		}
@@ -126,16 +121,14 @@ public class UsageChargeTemplateBean extends StatefulBaseBean<UsageChargeTemplat
 		if (entity.getId() != null) {
 			for (String msgKey : languageMessagesMap.keySet()) {
 				String description = languageMessagesMap.get(msgKey);
-				CatMessages catMsg = catMessagesService.getCatMessages(
-						ChargeTemplate.class.getSimpleName() + "_"
-								+ entity.getId(), msgKey);
+				CatMessages catMsg = catMessagesService.getCatMessages(ChargeTemplate.class.getSimpleName() + "_"
+						+ entity.getId(), msgKey);
 				if (catMsg != null) {
 					catMsg.setDescription(description);
 					catMessagesService.update(catMsg);
 				} else {
-					CatMessages catMessages = new CatMessages(
-							ChargeTemplate.class.getSimpleName() + "_"
-									+ entity.getId(), msgKey, description);
+					CatMessages catMessages = new CatMessages(ChargeTemplate.class.getSimpleName() + "_"
+							+ entity.getId(), msgKey, description);
 					catMessagesService.create(catMessages);
 				}
 			}
@@ -145,9 +138,8 @@ public class UsageChargeTemplateBean extends StatefulBaseBean<UsageChargeTemplat
 			back = super.saveOrUpdate(killConversation);
 			for (String msgKey : languageMessagesMap.keySet()) {
 				String description = languageMessagesMap.get(msgKey);
-				CatMessages catMessages = new CatMessages(
-						ChargeTemplate.class.getSimpleName() + "_"
-								+ entity.getId(), msgKey, description);
+				CatMessages catMessages = new CatMessages(ChargeTemplate.class.getSimpleName() + "_" + entity.getId(),
+						msgKey, description);
 				catMessagesService.create(catMessages);
 			}
 		}
@@ -177,15 +169,13 @@ public class UsageChargeTemplateBean extends StatefulBaseBean<UsageChargeTemplat
 
 	public DualListModel<TriggeredEDRTemplate> getEdrTemplatesModel() {
 		if (edrTemplates == null) {
-			List<TriggeredEDRTemplate> source = triggeredEDRTemplateService
-					.list();
+			List<TriggeredEDRTemplate> source = triggeredEDRTemplateService.list();
 			List<TriggeredEDRTemplate> target = new ArrayList<TriggeredEDRTemplate>();
 			if (getEntity().getEdrTemplates() != null) {
 				target.addAll(getEntity().getEdrTemplates());
 			}
 			source.removeAll(target);
-			edrTemplates = new DualListModel<TriggeredEDRTemplate>(source,
-					target);
+			edrTemplates = new DualListModel<TriggeredEDRTemplate>(source, target);
 		}
 		return edrTemplates;
 	}
