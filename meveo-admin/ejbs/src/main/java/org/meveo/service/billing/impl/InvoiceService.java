@@ -175,7 +175,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 			seller.updateAudit(seller.getAuditable().getCreator());
 		}
 
-		String nextInvoiceNb = getNextValue(seller, currentUser);
+		long nextInvoiceNb = getNextValue(seller, currentUser);
 		StringBuffer num1 = new StringBuffer("000000000");
 		num1.append(nextInvoiceNb + "");
 		String invoiceNumber = num1.substring(num1.length() - 9);
@@ -183,17 +183,16 @@ public class InvoiceService extends PersistenceService<Invoice> {
 		return (prefix + invoiceNumber);
 	}
 
-	public synchronized String getNextValue(Seller seller, User currentUser) {
-		String result = "0";
+	public synchronized long getNextValue(Seller seller, User currentUser) {
+		long result = 0;
 
 		if (seller != null) {
 			if (seller.getCurrentInvoiceNb() != null) {
 				long currentInvoiceNbre = seller.getCurrentInvoiceNb();
-				long nextInvoiceNo = 1 + currentInvoiceNbre;
-				seller.setCurrentInvoiceNb(nextInvoiceNo);
-				result = String.valueOf(nextInvoiceNo);
+				result = 1 + currentInvoiceNbre;
+				seller.setCurrentInvoiceNb(result);
 			} else {
-				result = String.valueOf(getNextValue(seller.getProvider(), currentUser));
+				result = getNextValue(seller.getProvider(), currentUser);
 			}
 		}
 
