@@ -71,9 +71,7 @@
 
 				<p:tabView id="sellerTab">
 					<p:tab title="#{messages['billingAccount.tab.account']}">
-						<div class="alert-box alert-box-notice">#{of:format2(messages['message.info.seller.invoicePrefixRequiredWhenInvoiceNoSet'],
-							messages['seller.invoicePrefix'],
-							messages['seller.currentInvoiceNb'])}</div>
+						<div class="alert-box alert-box-notice">#{messages['message.info.seller.invoicePrefixRequiredWhenInvoiceNoSet']}</div>
 						<hftl:panelGroup>
 							<hf:formField label="#{messages['businessEntity.code']}"
 								field="code" maxlength="35" required="true" />

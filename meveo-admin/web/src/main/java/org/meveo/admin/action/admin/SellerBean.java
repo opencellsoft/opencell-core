@@ -110,4 +110,15 @@ public class SellerBean extends StatelessBaseBean<Seller> {
 		}
 	}
 
+	@Override
+	public String saveOrUpdate(boolean killConversation) throws BusinessException {
+		// prefix must be set
+		if (entity.getCurrentInvoiceNb() != null && StringUtils.isBlank(entity.getInvoicePrefix())) {
+			messages.error(new BundleKey("messages", "message.error.seller.invoicePrefix.required"));
+			return null;
+		} else {
+			return super.saveOrUpdate(killConversation);
+		}
+	}
+
 }
