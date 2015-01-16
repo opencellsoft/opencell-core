@@ -23,8 +23,11 @@ import javax.enterprise.context.ConversationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.action.StatelessBaseBean;
+import org.meveo.admin.exception.BusinessException;
+import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.Seller;
 import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.base.PersistenceService;
@@ -94,6 +97,28 @@ public class SellerBean extends StatelessBaseBean<Seller> {
 	@Override
 	protected List<String> getFormFieldsToFetch() {
 		return Arrays.asList("provider");
+	}
+
+	@Override
+	public String saveOrUpdate(boolean killConversation, String objectName, Long objectId) throws BusinessException {
+		// prefix must be set
+		if (entity.getCurrentInvoiceNb() != null && StringUtils.isBlank(entity.getInvoicePrefix())) {
+			messages.error(new BundleKey("messages", "message.error.seller.invoicePrefix.required"));
+			return null;
+		} else {
+			return super.saveOrUpdate(killConversation, objectName, objectId);
+		}
+	}
+
+	@Override
+	public String saveOrUpdate(boolean killConversation) throws BusinessException {
+		// prefix must be set
+		if (entity.getCurrentInvoiceNb() != null && StringUtils.isBlank(entity.getInvoicePrefix())) {
+			messages.error(new BundleKey("messages", "message.error.seller.invoicePrefix.required"));
+			return null;
+		} else {
+			return super.saveOrUpdate(killConversation);
+		}
 	}
 
 }

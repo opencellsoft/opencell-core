@@ -163,8 +163,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
 		if (prefix == null) {
 			prefix = seller.getProvider().getInvoicePrefix();
-		} else {
-			prefix = seller.getCode() + "_" + prefix;
 		}
 
 		if (prefix == null) {

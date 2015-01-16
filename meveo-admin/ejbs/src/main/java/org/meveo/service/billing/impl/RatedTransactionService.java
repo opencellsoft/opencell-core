@@ -298,6 +298,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 				// start agregate T
 				TaxInvoiceAgregate invoiceAgregateT = null;
 				Long taxId = tax.getId();
+
 				if (taxInvoiceAgregateMap.containsKey(taxId)) {
 					invoiceAgregateT = taxInvoiceAgregateMap.get(taxId);
 				} else {
@@ -311,11 +312,13 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 
 					taxInvoiceAgregateMap.put(taxId, invoiceAgregateT);
 				}
+
 				if (tax.getPercent().compareTo(BigDecimal.ZERO) == 0) {
 					invoiceAgregateT.addAmountWithoutTax(invoiceAgregateF.getAmountWithoutTax());
 					invoiceAgregateT.addAmountWithTax(invoiceAgregateF.getAmountWithTax());
 					invoiceAgregateT.addAmountTax(invoiceAgregateF.getAmountTax());
 				}
+
 				fillAgregates(invoiceAgregateT, wallet);
 				if (invoiceAgregateF.getSubCategoryTax().getPercent().compareTo(BigDecimal.ZERO) != 0) {
 					invoiceAgregateT.setTaxPercent(invoiceAgregateF.getSubCategoryTax().getPercent());
@@ -453,7 +456,6 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 				invoice.setNetToPay(netToPay);
 			}
 		}
-
 	}
 
 	private void fillAgregates(InvoiceAgregate invoiceAgregate, WalletInstance wallet) {

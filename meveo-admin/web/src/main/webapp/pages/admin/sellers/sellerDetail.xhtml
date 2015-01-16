@@ -6,6 +6,7 @@
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:a="http://richfaces.org/a4j" xmlns:hftl="http://hftl.org"
 	xmlns:hf="http://java.sun.com/jsf/composite/tags"
+	xmlns:of="http://omnifaces.org/functions"
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
 
@@ -70,6 +71,7 @@
 
 				<p:tabView id="sellerTab">
 					<p:tab title="#{messages['billingAccount.tab.account']}">
+						<div class="alert-box alert-box-notice">#{messages['message.info.seller.invoicePrefixRequiredWhenInvoiceNoSet']}</div>
 						<hftl:panelGroup>
 							<hf:formField label="#{messages['businessEntity.code']}"
 								field="code" maxlength="35" required="true" />
@@ -79,10 +81,10 @@
 
 							<hf:formField label="#{messages['seller.invoicePrefix']}"
 								field="invoicePrefix" id="invoicePrefix" maxlength="50" />
-								
+
 							<hf:formField label="#{messages['seller.currentInvoiceNb']}"
-								field="currentInvoiceNb" id="currentInvoiceNb"/>
-							
+								field="currentInvoiceNb" id="currentInvoiceNb" />
+
 							<hf:formEntityField id="trCurrencySelectId"
 								label="#{messages['currency.codeCurrency']}"
 								field="tradingCurrency" childField="currencyCode" popup="true"

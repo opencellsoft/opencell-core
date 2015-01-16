@@ -78,7 +78,7 @@ public class AccountOperationsGenerationJobBean {
 						providerForHistory = customerAccount.getProvider();
 					}
 				} catch (Exception e) {
-					log.error(e.getMessage());
+					log.error("customerAccount={}", e.getMessage());
 					throw new ImportInvoiceException("Cannot found customerAccount");
 				}
 
@@ -87,7 +87,7 @@ public class AccountOperationsGenerationJobBean {
 							"accountOperationsGenerationJob.occCode", "FA_FACT"), customerAccount.getProvider()
 							.getCode());
 				} catch (Exception e) {
-					log.error(e.getMessage());
+					log.error("occTemplate={}", e.getMessage());
 					throw new ImportInvoiceException("Cannot found OCC Template for invoice");
 				}
 
@@ -103,21 +103,21 @@ public class AccountOperationsGenerationJobBean {
 					recordedInvoice.setUnMatchingAmount(invoice.getAmountWithTax());
 					recordedInvoice.setMatchingAmount(BigDecimal.ZERO);
 				} catch (Exception e) {
-					log.error(e.getMessage());
+					log.error("amountWithTax={}", e.getMessage());
 					throw new ImportInvoiceException("Error on amountWithTax");
 				}
 
 				try {
 					recordedInvoice.setAmountWithoutTax(invoice.getAmountWithoutTax());
 				} catch (Exception e) {
-					log.error(e.getMessage());
+					log.error("amountWithoutTax={}", e.getMessage());
 					throw new ImportInvoiceException("Error on amountWithoutTax");
 				}
 
 				try {
 					recordedInvoice.setNetToPay(invoice.getNetToPay());
 				} catch (Exception e) {
-					log.error(e.getMessage());
+					log.error("netToPay={}", e.getMessage());
 					throw new ImportInvoiceException("Error on netToPay");
 				}
 
@@ -125,7 +125,7 @@ public class AccountOperationsGenerationJobBean {
 					recordedInvoice.setDueDate(DateUtils.parseDateWithPattern(invoice.getDueDate(),
 							paramBean.getProperty("accountOperationsGenerationJob.dateFormat", "dd/MM/yyyy")));
 				} catch (Exception e) {
-					log.error(e.getMessage());
+					log.error("dueDate={}", e.getMessage());
 					throw new ImportInvoiceException("Error on DueDate");
 				}
 
@@ -135,32 +135,35 @@ public class AccountOperationsGenerationJobBean {
 					recordedInvoice.setTransactionDate(DateUtils.parseDateWithPattern(invoice.getInvoiceDate(),
 							paramBean.getProperty("accountOperationsGenerationJob.dateFormat", "dd/MM/yyyy")));
 				} catch (Exception e) {
-					log.error(e.getMessage());
+					log.error("invoiceDate={}", e.getMessage());
 					throw new ImportInvoiceException("Error on invoiceDate");
 				}
 
 				try {
 					recordedInvoice.setPaymentMethod(billingAccount.getPaymentMethod());
 				} catch (Exception e) {
-					log.error(e.getMessage());
+					log.error("paymentMethod={}", e.getMessage());
 					throw new ImportInvoiceException("Error on paymentMethod");
 				}
 
 				try {
 					recordedInvoice.setTaxAmount(invoice.getAmountTax());
 				} catch (Exception e) {
-					log.error(e.getMessage());
+					log.error("totalTax={}", e.getMessage());
 					throw new ImportInvoiceException("Error on total tax");
 				}
 
-				recordedInvoice.setPaymentInfo(billingAccount.getBankCoordinates().getIban());
-				recordedInvoice.setPaymentInfo1(billingAccount.getBankCoordinates().getBankCode());
-				recordedInvoice.setPaymentInfo2(billingAccount.getBankCoordinates().getBranchCode());
-				recordedInvoice.setPaymentInfo3(billingAccount.getBankCoordinates().getAccountNumber());
-				recordedInvoice.setPaymentInfo4(billingAccount.getBankCoordinates().getKey());
-				recordedInvoice.setPaymentInfo5(billingAccount.getBankCoordinates().getBankName());
-				recordedInvoice.setPaymentInfo6(billingAccount.getBankCoordinates().getBic());
-				recordedInvoice.setBillingAccountName(billingAccount.getBankCoordinates().getAccountOwner());
+				if (billingAccount.getBankCoordinates() != null) {
+					recordedInvoice.setPaymentInfo(billingAccount.getBankCoordinates().getIban());
+					recordedInvoice.setPaymentInfo1(billingAccount.getBankCoordinates().getBankCode());
+					recordedInvoice.setPaymentInfo2(billingAccount.getBankCoordinates().getBranchCode());
+					recordedInvoice.setPaymentInfo3(billingAccount.getBankCoordinates().getAccountNumber());
+					recordedInvoice.setPaymentInfo4(billingAccount.getBankCoordinates().getKey());
+					recordedInvoice.setPaymentInfo5(billingAccount.getBankCoordinates().getBankName());
+					recordedInvoice.setPaymentInfo6(billingAccount.getBankCoordinates().getBic());
+					recordedInvoice.setBillingAccountName(billingAccount.getBankCoordinates().getAccountOwner());
+				}
+
 				recordedInvoice.setMatchingStatus(MatchingStatusEnum.O);
 				recordedInvoiceService.create(recordedInvoice);
 

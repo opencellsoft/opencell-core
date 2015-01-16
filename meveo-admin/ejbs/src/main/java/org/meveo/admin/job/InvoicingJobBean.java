@@ -1,6 +1,5 @@
 package org.meveo.admin.job;
 
-import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
@@ -57,17 +56,7 @@ public class InvoicingJobBean {
 									int billableBA = 0;
 
 									for (BillingAccount billingAccount : billingAccounts) {
-										Object[] queryResult = billingAccountService.updateBillingAccountTotalAmounts(
-												billingAccount, billingRun, currentUser);
-										if (queryResult != null) {
-											billingAccount.setBrAmountWithoutTax((BigDecimal) queryResult[0]);
-											billingAccount.setBrAmountWithTax((BigDecimal) queryResult[1]);
-											log.debug("set brAmount {} in BA {}", queryResult[0],
-													billingAccount.getId());
-											billingAccount.setBillingRun(billingRun);
-											billingAccount.updateAudit(currentUser);
-											billingAccountService.updateNoCheck(billingAccount);
-
+										if (billingAccountService.updateBillingAccountTotalAmounts(billingAccount,billingRun,currentUser)) {
 											billableBA++;
 										}
 									}

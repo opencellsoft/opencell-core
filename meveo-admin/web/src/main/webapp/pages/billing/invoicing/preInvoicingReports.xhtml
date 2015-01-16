@@ -12,30 +12,34 @@
 
 	<ui:define name="body">
 		<hf:formPanel formId="form3" edit="false"
-			label="Rapport de pre-facturation" backingBean="#{billingRunBean}"
-			showFormButtons="false">
+			label="#{messages['preInvoicingReport.title']}"
+			backingBean="#{billingRunBean}" showFormButtons="false">
 			<hftl:panelGroup columns="2">
 				<hf:formEntityField
 					label="#{messages['billingAccount.billingCycle']}"
 					field="preInvoicingReports" childField="billingCycleCode"
 					popup="false" />
 
-				<hf:formEntityField label="Nbre de comptes "
+				<hf:formEntityField
+					label="#{messages['preInvoicingReport.noOfAccounts']} "
 					field="preInvoicingReports" childField="billingAccountNumber"
 					popup="false" />
 			</hftl:panelGroup>
 
 			<hftl:panelGroup columns="2">
-				<hf:formEntityField label="Nbre de comptes a facturer"
+				<hf:formEntityField
+					label="#{messages['preInvoicingReport.noOfAccountNoCharged']}"
 					field="preInvoicingReports"
 					childField="billableBillingAccountNumber" popup="false" />
 
-				<hf:formEntityField label="Montant HT" field="preInvoicingReports"
-					childField="amoutWitountTax" popup="false" />
+				<hf:formEntityField
+					label="#{messages['preInvoicingReport.amountHT']}"
+					field="preInvoicingReports" childField="amoutWitountTax"
+					popup="false" />
 			</hftl:panelGroup>
 
 
-			<b>Number of billing account in billing cycle per payment mode :</b>
+			<b>#{messages['preInvoicingReport.noOfBillingAccountInBillingCyclePerPaymentMode']}</b>
 			<hftl:panelGroup columns="1">
 				<hf:formEntityField label="#{messages['paymentMethod.check']}"
 					field="preInvoicingReports" childField="checkBANumber"
@@ -56,7 +60,7 @@
 					field="preInvoicingReports" childField="wiretransferBANumber"
 					popup="false" />
 			</hftl:panelGroup>
-			<b>Number of billing account to invoice per payment mode :</b>
+			<b>#{messages['preInvoicingReport.noOfBillingAccountToInvoicePerPaymentMode']}</b>
 
 			<hftl:panelGroup columns="1">
 				<hf:formEntityField label="#{messages['paymentMethod.check']}"
@@ -80,7 +84,7 @@
 					childField="wiretransferBillableBANumber" popup="false" />
 			</hftl:panelGroup>
 
-			<b>Total amount without tax by payment method :</b>
+			<b>#{messages['preInvoicingReport.totalAmountWithoutTaxByPaymentMethod']}</b>
 			<hftl:panelGroup columns="1">
 				<hf:formEntityField label="#{messages['paymentMethod.check']}"
 					field="preInvoicingReports" childField="checkBillableBAAmountHT"
