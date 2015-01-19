@@ -24,7 +24,7 @@ import javax.validation.constraints.Size;
 
 @Embeddable
 public class Address implements Serializable, Cloneable {
-	
+
 	private static final long serialVersionUID = 1L;
 
 	@Column(name = "ADDRESS_1", length = 50)
@@ -59,12 +59,12 @@ public class Address implements Serializable, Cloneable {
 	}
 
 	public Address(Address address) {
-		this(address.address1, address.address2, address.address3, address.zipCode, address.city,
-				address.country, address.state);
+		this(address.address1, address.address2, address.address3, address.zipCode, address.city, address.country,
+				address.state);
 	}
 
-	public Address(String address1, String address2, String address3, String zipCode, String city,
-			String country, String state) {
+	public Address(String address1, String address2, String address3, String zipCode, String city, String country,
+			String state) {
 		super();
 		this.address1 = address1;
 		this.address2 = address2;

@@ -10,23 +10,24 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement(name = "CustomField")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CustomFieldDto {
-	@XmlAttribute(required=true)
-    protected String code;
-    
-    @XmlAttribute
-    protected String description;
 
-    @XmlAttribute
-    protected String stringValue;
+	@XmlAttribute(required = true)
+	protected String code;
 
-    @XmlAttribute
-    protected Date dateValue;
+	@XmlAttribute
+	protected String description;
 
-    @XmlAttribute
-    protected Long longValue;
+	@XmlAttribute
+	protected String stringValue;
 
-    @XmlAttribute
-    protected Double doubleValue;
+	@XmlAttribute
+	protected Date dateValue;
+
+	@XmlAttribute
+	protected Long longValue;
+
+	@XmlAttribute
+	protected Double doubleValue;
 
 	public String getCode() {
 		return code;

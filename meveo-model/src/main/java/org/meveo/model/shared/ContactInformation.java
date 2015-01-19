@@ -24,7 +24,7 @@ import javax.validation.constraints.Size;
 
 @Embeddable
 public class ContactInformation implements Serializable, Cloneable {
-	
+
 	private static final long serialVersionUID = 1L;
 
 	@Column(name = "EMAIL", length = 100)
@@ -48,8 +48,7 @@ public class ContactInformation implements Serializable, Cloneable {
 	}
 
 	public ContactInformation(ContactInformation contactInformation) {
-		this(contactInformation.email, contactInformation.phone, contactInformation.mobile,
-				contactInformation.fax);
+		this(contactInformation.email, contactInformation.phone, contactInformation.mobile, contactInformation.fax);
 	}
 
 	public ContactInformation(String email, String phone, String mobile, String fax) {

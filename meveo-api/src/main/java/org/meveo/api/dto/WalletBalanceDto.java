@@ -11,7 +11,10 @@ import javax.xml.bind.annotation.XmlRootElement;
  **/
 @XmlRootElement(name = "WalletBalance")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class WalletBalanceDto {
+public class WalletBalanceDto extends BaseDto {
+
+	private static final long serialVersionUID = 2275297081429778741L;
+
 	private String sellerCode;
 	private String userAccountCode;
 	private Date startDate;

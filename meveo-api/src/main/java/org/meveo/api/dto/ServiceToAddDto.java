@@ -1,5 +1,6 @@
 package org.meveo.api.dto;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -12,7 +13,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  **/
 @XmlRootElement(name = "ServiceToAdd")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ServiceToAddDto extends BaseDto {
+public class ServiceToAddDto implements Serializable {
 
 	private static final long serialVersionUID = 3267838736094614395L;
 

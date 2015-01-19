@@ -31,7 +31,7 @@
 
 		<version.jboss.bom>1.0.7.Final</version.jboss.bom>
 		<version.shrinkwrap.resolvers>2.1.1</version.shrinkwrap.resolvers>
-		<version.resteasy>3.0.1.Final</version.resteasy>
+		<version.resteasy>3.0.10.Final</version.resteasy>
 	</properties>
 
 	<scm>

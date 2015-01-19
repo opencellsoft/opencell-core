@@ -1,7 +1,5 @@
 package org.meveo.api.dto;
 
-import java.io.Serializable;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -16,7 +14,7 @@ import org.meveo.model.billing.TradingCountry;
  **/
 @XmlRootElement(name = "Country")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class CountryDto implements Serializable {
+public class CountryDto extends BaseDto {
 
 	private static final long serialVersionUID = -4175660113940481232L;
 

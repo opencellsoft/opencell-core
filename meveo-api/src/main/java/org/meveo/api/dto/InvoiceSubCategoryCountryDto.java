@@ -1,7 +1,5 @@
 package org.meveo.api.dto;
 
-import java.io.Serializable;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -14,7 +12,7 @@ import org.meveo.model.billing.InvoiceSubcategoryCountry;
  **/
 @XmlRootElement(name = "InvoiceSubCategoryCountry")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class InvoiceSubCategoryCountryDto implements Serializable {
+public class InvoiceSubCategoryCountryDto extends BaseDto {
 
 	private static final long serialVersionUID = 7702371660532457108L;
 
@@ -33,12 +31,9 @@ public class InvoiceSubCategoryCountryDto implements Serializable {
 
 	}
 
-	public InvoiceSubCategoryCountryDto(
-			InvoiceSubcategoryCountry invoiceSubcategoryCountry) {
-		invoiceSubCategory = invoiceSubcategoryCountry.getInvoiceSubCategory()
-				.getCode();
-		country = invoiceSubcategoryCountry.getTradingCountry()
-				.getCountryCode();
+	public InvoiceSubCategoryCountryDto(InvoiceSubcategoryCountry invoiceSubcategoryCountry) {
+		invoiceSubCategory = invoiceSubcategoryCountry.getInvoiceSubCategory().getCode();
+		country = invoiceSubcategoryCountry.getTradingCountry().getCountryCode();
 		tax = invoiceSubcategoryCountry.getTax().getCode();
 	}
 
@@ -76,9 +71,8 @@ public class InvoiceSubCategoryCountryDto implements Serializable {
 
 	@Override
 	public String toString() {
-		return "InvoiceSubCategoryCountryDto [invoiceSubCategory="
-				+ invoiceSubCategory + ", country=" + country + ", tax=" + tax
-				+ ", discountCode=" + discountCode + "]";
+		return "InvoiceSubCategoryCountryDto [invoiceSubCategory=" + invoiceSubCategory + ", country=" + country
+				+ ", tax=" + tax + ", discountCode=" + discountCode + "]";
 	}
 
 }

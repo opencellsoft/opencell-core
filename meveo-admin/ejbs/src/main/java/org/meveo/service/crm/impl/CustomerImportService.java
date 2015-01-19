@@ -60,10 +60,8 @@ public class CustomerImportService {
 	private CustomerAccountService customerAccountService;
 
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public Customer createCustomer(User currentUser,
-			org.meveo.model.admin.Seller seller,
-			org.meveo.model.jaxb.customer.Seller sell,
-			org.meveo.model.jaxb.customer.Customer cust) {
+	public Customer createCustomer(User currentUser, org.meveo.model.admin.Seller seller,
+			org.meveo.model.jaxb.customer.Seller sell, org.meveo.model.jaxb.customer.Customer cust) {
 		Provider provider = currentUser.getProvider();
 		Customer customer = null;
 
@@ -71,15 +69,12 @@ public class CustomerImportService {
 			seller = new org.meveo.model.admin.Seller();
 			seller.setCode(sell.getCode());
 			seller.setDescription(sell.getDescription());
-			seller.setTradingCountry(tradingCountryService
-					.findByTradingCountryCode(sell.getTradingCountryCode(),
-							provider));
-			seller.setTradingCurrency(tradingCurrencyService
-					.findByTradingCurrencyCode(sell.getTradingCurrencyCode(),
-							provider));
-			seller.setTradingLanguage(tradingLanguageService
-					.findByTradingLanguageCode(sell.getTradingLanguageCode(),
-							provider));
+			seller.setTradingCountry(tradingCountryService.findByTradingCountryCode(sell.getTradingCountryCode(),
+					provider));
+			seller.setTradingCurrency(tradingCurrencyService.findByTradingCurrencyCode(sell.getTradingCurrencyCode(),
+					provider));
+			seller.setTradingLanguage(tradingLanguageService.findByTradingLanguageCode(sell.getTradingLanguageCode(),
+					provider));
 			seller.setProvider(provider);
 			sellerService.create(seller, currentUser, provider);
 		}
@@ -88,16 +83,15 @@ public class CustomerImportService {
 			customer = new Customer();
 			customer.setCode(cust.getCode());
 			customer.setDescription(cust.getDesCustomer());
-			customer.setCustomerBrand(customerBrandService.findByCode(
-					cust.getCustomerBrand(), provider));
-			customer.setCustomerCategory(customerCategoryService.findByCode(
-					cust.getCustomerCategory(), provider));
+			customer.setCustomerBrand(customerBrandService.findByCode(cust.getCustomerBrand(), provider));
+			customer.setCustomerCategory(customerCategoryService.findByCode(cust.getCustomerCategory(), provider));
 			customer.setSeller(seller);
 			customer.setProvider(provider);
-			if(cust.getCustomFields()!=null && cust.getCustomFields().getCustomField()!=null
-					&& cust.getCustomFields().getCustomField().size()>0){
-				for(CustomField customField:cust.getCustomFields().getCustomField()){
-					CustomFieldInstance cfi =  new CustomFieldInstance();
+			
+			if (cust.getCustomFields() != null && cust.getCustomFields().getCustomField() != null
+					&& cust.getCustomFields().getCustomField().size() > 0) {
+				for (CustomField customField : cust.getCustomFields().getCustomField()) {
+					CustomFieldInstance cfi = new CustomFieldInstance();
 					cfi.setAccount(customer);
 					cfi.setActive(true);
 					cfi.setCode(customField.getCode());
@@ -121,10 +115,8 @@ public class CustomerImportService {
 	}
 
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public void createCustomerAccount(User currentUser, Customer customer,
-			org.meveo.model.admin.Seller seller,
-			org.meveo.model.jaxb.customer.CustomerAccount custAcc,
-			org.meveo.model.jaxb.customer.Customer cust,
+	public void createCustomerAccount(User currentUser, Customer customer, org.meveo.model.admin.Seller seller,
+			org.meveo.model.jaxb.customer.CustomerAccount custAcc, org.meveo.model.jaxb.customer.Customer cust,
 			org.meveo.model.jaxb.customer.Seller sell) {
 
 		Provider provider = currentUser.getProvider();
@@ -153,27 +145,24 @@ public class CustomerImportService {
 		contactInformation.setPhone(custAcc.getTel1());
 		contactInformation.setMobile(custAcc.getTel2());
 		customerAccount.setContactInformation(contactInformation);
-		customerAccount.setCreditCategory(CreditCategoryEnum.valueOf(custAcc
-				.getCreditCategory()));
+		customerAccount.setCreditCategory(CreditCategoryEnum.valueOf(custAcc.getCreditCategory()));
 		customerAccount.setExternalRef1(custAcc.getExternalRef1());
 		customerAccount.setExternalRef2(custAcc.getExternalRef2());
-		customerAccount.setPaymentMethod(PaymentMethodEnum.valueOf(custAcc
-				.getPaymentMethod()));
+		customerAccount.setPaymentMethod(PaymentMethodEnum.valueOf(custAcc.getPaymentMethod()));
 		org.meveo.model.shared.Name name = new org.meveo.model.shared.Name();
 
 		if (custAcc.getName() != null) {
 			name.setFirstName(custAcc.getName().getFirstname());
 			name.setLastName(custAcc.getName().getName());
-			Title title = titleService.findByCode(provider, custAcc.getName()
-					.getTitle().trim());
+			Title title = titleService.findByCode(provider, custAcc.getName().getTitle().trim());
 			name.setTitle(title);
 			customerAccount.setName(name);
 		}
 
-		if(custAcc.getCustomFields()!=null && custAcc.getCustomFields().getCustomField()!=null
-				&& custAcc.getCustomFields().getCustomField().size()>0){
-			for(CustomField customField:custAcc.getCustomFields().getCustomField()){
-				CustomFieldInstance cfi =  new CustomFieldInstance();
+		if (custAcc.getCustomFields() != null && custAcc.getCustomFields().getCustomField() != null
+				&& custAcc.getCustomFields().getCustomField().size() > 0) {
+			for (CustomField customField : custAcc.getCustomFields().getCustomField()) {
+				CustomFieldInstance cfi = new CustomFieldInstance();
 				cfi.setAccount(customerAccount);
 				cfi.setActive(true);
 				cfi.setCode(customField.getCode());
@@ -190,11 +179,9 @@ public class CustomerImportService {
 				customerAccount.getCustomFields().put(cfi.getCode(), cfi);
 			}
 		}
-			
-		
-		customerAccount.setTradingCurrency(tradingCurrencyService
-				.findByTradingCurrencyCode(custAcc.getTradingCurrencyCode(),
-						provider));
+
+		customerAccount.setTradingCurrency(tradingCurrencyService.findByTradingCurrencyCode(
+				custAcc.getTradingCurrencyCode(), provider));
 		customerAccount.setProvider(provider);
 		customerAccount.setCustomer(customer);
 		customerAccountService.create(customerAccount, currentUser, provider);

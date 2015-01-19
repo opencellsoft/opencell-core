@@ -8,8 +8,6 @@ import java.util.List;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.BaseApi;
@@ -79,52 +77,38 @@ public class OneShotChargeTemplateApi extends BaseApi {
 	@Inject
 	private CatMessagesService catMessagesService;
 
-
-	public void create(OneShotChargeTemplateDto postData, User currentUser)
-			throws MeveoApiException {
-		if (!StringUtils.isBlank(postData.getCode())
-				&& !StringUtils.isBlank(postData.getDescription())
+	public void create(OneShotChargeTemplateDto postData, User currentUser) throws MeveoApiException {
+		if (!StringUtils.isBlank(postData.getCode()) && !StringUtils.isBlank(postData.getDescription())
 				&& !StringUtils.isBlank(postData.getInvoiceSubCategory())
-				&& !StringUtils
-						.isBlank(postData.getOneShotChargeTemplateType())) {
+				&& !StringUtils.isBlank(postData.getOneShotChargeTemplateType())) {
 			Provider provider = currentUser.getProvider();
 
 			// check if code already exists
-			if (oneShotChargeTemplateService.findByCode(postData.getCode(),
-					provider) != null) {
-				throw new EntityAlreadyExistsException(
-						OneShotChargeTemplate.class, postData.getCode());
+			if (oneShotChargeTemplateService.findByCode(postData.getCode(), provider) != null) {
+				throw new EntityAlreadyExistsException(OneShotChargeTemplate.class, postData.getCode());
 			}
 
-			InvoiceSubCategory invoiceSubCategory = invoiceSubCategoryService
-					.findByCode(postData.getInvoiceSubCategory(), provider);
+			InvoiceSubCategory invoiceSubCategory = invoiceSubCategoryService.findByCode(
+					postData.getInvoiceSubCategory(), provider);
 			if (invoiceSubCategory == null) {
-				throw new EntityDoesNotExistsException(
-						InvoiceSubCategory.class,
-						postData.getInvoiceSubCategory());
+				throw new EntityDoesNotExistsException(InvoiceSubCategory.class, postData.getInvoiceSubCategory());
 			}
 
 			if (provider.getTradingLanguages() != null) {
 				if (postData.getLanguageDescriptions() != null) {
-					for (LanguageDescriptionDto ld : postData
-							.getLanguageDescriptions()) {
+					for (LanguageDescriptionDto ld : postData.getLanguageDescriptions()) {
 						boolean match = false;
 
-						for (TradingLanguage tl : provider
-								.getTradingLanguages()) {
-							if (tl.getLanguageCode().equals(
-									ld.getLanguageCode())) {
+						for (TradingLanguage tl : provider.getTradingLanguages()) {
+							if (tl.getLanguageCode().equals(ld.getLanguageCode())) {
 								match = true;
 								break;
 							}
 						}
 
 						if (!match) {
-							throw new MeveoApiException(
-									MeveoApiErrorCode.GENERIC_API_EXCEPTION,
-									"Language "
-											+ ld.getLanguageCode()
-											+ " is not supported by the provider.");
+							throw new MeveoApiException(MeveoApiErrorCode.GENERIC_API_EXCEPTION, "Language "
+									+ ld.getLanguageCode() + " is not supported by the provider.");
 						}
 					}
 				}
@@ -135,23 +119,17 @@ public class OneShotChargeTemplateApi extends BaseApi {
 			chargeTemplate.setDescription(postData.getDescription());
 			chargeTemplate.setDisabled(postData.isDisabled());
 			chargeTemplate.setAmountEditable(postData.getAmountEditable());
-			chargeTemplate
-					.setOneShotChargeTemplateType(OneShotChargeTemplateTypeEnum
-							.getValue(postData.getOneShotChargeTemplateType()));
+			chargeTemplate.setOneShotChargeTemplateType(OneShotChargeTemplateTypeEnum.getValue(postData
+					.getOneShotChargeTemplateType()));
 			chargeTemplate.setInvoiceSubCategory(invoiceSubCategory);
-			chargeTemplate.setImmediateInvoicing(postData
-					.getImmediateInvoicing());
-			oneShotChargeTemplateService.create(chargeTemplate, currentUser,
-					provider);
+			chargeTemplate.setImmediateInvoicing(postData.getImmediateInvoicing());
+			oneShotChargeTemplateService.create(chargeTemplate, currentUser, provider);
 
 			// create cat messages
 			if (postData.getLanguageDescriptions() != null) {
-				for (LanguageDescriptionDto ld : postData
-						.getLanguageDescriptions()) {
-					CatMessages catMsg = new CatMessages(
-							ChargeTemplate.class.getSimpleName() + "_"
-									+ chargeTemplate.getId(),
-							ld.getLanguageCode(), ld.getDescription());
+				for (LanguageDescriptionDto ld : postData.getLanguageDescriptions()) {
+					CatMessages catMsg = new CatMessages(ChargeTemplate.class.getSimpleName() + "_"
+							+ chargeTemplate.getId(), ld.getLanguageCode(), ld.getDescription());
 
 					catMessagesService.create(catMsg, currentUser, provider);
 				}
@@ -170,78 +148,59 @@ public class OneShotChargeTemplateApi extends BaseApi {
 				missingParameters.add("oneShotChargeTemplateType");
 			}
 
-			throw new MissingParameterException(
-					getMissingParametersExceptionMessage());
+			throw new MissingParameterException(getMissingParametersExceptionMessage());
 		}
 	}
 
-	public void update(OneShotChargeTemplateDto postData, User currentUser)
-			throws MeveoApiException {
-		if (!StringUtils.isBlank(postData.getCode())
-				&& !StringUtils.isBlank(postData.getDescription())
+	public void update(OneShotChargeTemplateDto postData, User currentUser) throws MeveoApiException {
+		if (!StringUtils.isBlank(postData.getCode()) && !StringUtils.isBlank(postData.getDescription())
 				&& !StringUtils.isBlank(postData.getInvoiceSubCategory())
-				&& !StringUtils
-						.isBlank(postData.getOneShotChargeTemplateType())) {
+				&& !StringUtils.isBlank(postData.getOneShotChargeTemplateType())) {
 			Provider provider = currentUser.getProvider();
 
 			// check if code already exists
 			OneShotChargeTemplate chargeTemplate = oneShotChargeTemplateService
 					.findByCode(postData.getCode(), provider);
 			if (chargeTemplate == null) {
-				throw new EntityDoesNotExistsException(
-						OneShotChargeTemplate.class, postData.getCode());
+				throw new EntityDoesNotExistsException(OneShotChargeTemplate.class, postData.getCode());
 			}
 
-			InvoiceSubCategory invoiceSubCategory = invoiceSubCategoryService
-					.findByCode(postData.getInvoiceSubCategory(), provider);
+			InvoiceSubCategory invoiceSubCategory = invoiceSubCategoryService.findByCode(
+					postData.getInvoiceSubCategory(), provider);
 			if (invoiceSubCategory == null) {
-				throw new EntityDoesNotExistsException(
-						InvoiceSubCategory.class,
-						postData.getInvoiceSubCategory());
+				throw new EntityDoesNotExistsException(InvoiceSubCategory.class, postData.getInvoiceSubCategory());
 			}
 
 			if (provider.getTradingLanguages() != null) {
 				if (postData.getLanguageDescriptions() != null) {
-					for (LanguageDescriptionDto ld : postData
-							.getLanguageDescriptions()) {
+					for (LanguageDescriptionDto ld : postData.getLanguageDescriptions()) {
 						boolean match = false;
 
-						for (TradingLanguage tl : provider
-								.getTradingLanguages()) {
-							if (tl.getLanguageCode().equals(
-									ld.getLanguageCode())) {
+						for (TradingLanguage tl : provider.getTradingLanguages()) {
+							if (tl.getLanguageCode().equals(ld.getLanguageCode())) {
 								match = true;
 								break;
 							}
 						}
 
 						if (!match) {
-							throw new MeveoApiException(
-									MeveoApiErrorCode.GENERIC_API_EXCEPTION,
-									"Language "
-											+ ld.getLanguageCode()
-											+ " is not supported by the provider.");
+							throw new MeveoApiException(MeveoApiErrorCode.GENERIC_API_EXCEPTION, "Language "
+									+ ld.getLanguageCode() + " is not supported by the provider.");
 						}
 					}
 
 					// create cat messages
-					for (LanguageDescriptionDto ld : postData
-							.getLanguageDescriptions()) {
-						CatMessages catMsg = catMessagesService.getCatMessages(
-								ChargeTemplate.class.getSimpleName() + "_"
-										+ chargeTemplate.getId(),
-								ld.getLanguageCode());
+					for (LanguageDescriptionDto ld : postData.getLanguageDescriptions()) {
+						CatMessages catMsg = catMessagesService.getCatMessages(ChargeTemplate.class.getSimpleName()
+								+ "_" + chargeTemplate.getId(), ld.getLanguageCode());
 
 						if (catMsg != null) {
 							catMsg.setDescription(ld.getDescription());
 							catMessagesService.update(catMsg, currentUser);
 						} else {
-							CatMessages catMessages = new CatMessages(
-									ChargeTemplate.class.getSimpleName() + "_"
-											+ chargeTemplate.getId(),
-									ld.getLanguageCode(), ld.getDescription());
-							catMessagesService.create(catMessages, currentUser,
-									provider);
+							CatMessages catMessages = new CatMessages(ChargeTemplate.class.getSimpleName() + "_"
+									+ chargeTemplate.getId(), ld.getLanguageCode(), ld.getDescription());
+							catMessagesService.create(catMessages, currentUser, provider);
 						}
 					}
 				}
@@ -250,12 +209,10 @@ public class OneShotChargeTemplateApi extends BaseApi {
 			chargeTemplate.setDescription(postData.getDescription());
 			chargeTemplate.setDisabled(postData.isDisabled());
 			chargeTemplate.setAmountEditable(postData.getAmountEditable());
-			chargeTemplate
-					.setOneShotChargeTemplateType(OneShotChargeTemplateTypeEnum
-							.getValue(postData.getOneShotChargeTemplateType()));
+			chargeTemplate.setOneShotChargeTemplateType(OneShotChargeTemplateTypeEnum.getValue(postData
+					.getOneShotChargeTemplateType()));
 			chargeTemplate.setInvoiceSubCategory(invoiceSubCategory);
-			chargeTemplate.setImmediateInvoicing(postData
-					.getImmediateInvoicing());
+			chargeTemplate.setImmediateInvoicing(postData.getImmediateInvoicing());
 			oneShotChargeTemplateService.update(chargeTemplate, currentUser);
 		} else {
 			if (StringUtils.isBlank(postData.getCode())) {
@@ -271,33 +228,27 @@ public class OneShotChargeTemplateApi extends BaseApi {
 				missingParameters.add("oneShotChargeTemplateType");
 			}
 
-			throw new MissingParameterException(
-					getMissingParametersExceptionMessage());
+			throw new MissingParameterException(getMissingParametersExceptionMessage());
 		}
 	}
 
-	public OneShotChargeTemplateDto find(String code, Provider provider)
-			throws MeveoApiException {
+	public OneShotChargeTemplateDto find(String code, Provider provider) throws MeveoApiException {
 		OneShotChargeTemplateDto result = new OneShotChargeTemplateDto();
 
 		if (!StringUtils.isBlank(code)) {
 			// check if code already exists
-			OneShotChargeTemplate chargeTemplate = oneShotChargeTemplateService
-					.findByCode(code, provider,
-							Arrays.asList("invoiceSubCategory"));
+			OneShotChargeTemplate chargeTemplate = oneShotChargeTemplateService.findByCode(code, provider,
+					Arrays.asList("invoiceSubCategory"));
 			if (chargeTemplate == null) {
-				throw new EntityDoesNotExistsException(
-						OneShotChargeTemplate.class, code);
+				throw new EntityDoesNotExistsException(OneShotChargeTemplate.class, code);
 			}
 
 			result = new OneShotChargeTemplateDto(chargeTemplate);
 
 			List<LanguageDescriptionDto> languageDescriptions = new ArrayList<LanguageDescriptionDto>();
-			for (CatMessages msg : catMessagesService
-					.getCatMessagesList(ChargeTemplate.class.getSimpleName()
-							+ "_" + chargeTemplate.getId())) {
-				languageDescriptions.add(new LanguageDescriptionDto(msg
-						.getLanguageCode(), msg.getDescription()));
+			for (CatMessages msg : catMessagesService.getCatMessagesList(ChargeTemplate.class.getSimpleName() + "_"
+					+ chargeTemplate.getId())) {
+				languageDescriptions.add(new LanguageDescriptionDto(msg.getLanguageCode(), msg.getDescription()));
 			}
 
 			result.setLanguageDescriptions(languageDescriptions);
@@ -306,8 +257,7 @@ public class OneShotChargeTemplateApi extends BaseApi {
 				missingParameters.add("oneShotChargeTemplateCode");
 			}
 
-			throw new MissingParameterException(
-					getMissingParametersExceptionMessage());
+			throw new MissingParameterException(getMissingParametersExceptionMessage());
 		}
 
 		return result;
@@ -316,17 +266,14 @@ public class OneShotChargeTemplateApi extends BaseApi {
 	public void remove(String code, Provider provider) throws MeveoApiException {
 		if (!StringUtils.isBlank(code)) {
 			// check if code already exists
-			OneShotChargeTemplate chargeTemplate = oneShotChargeTemplateService
-					.findByCode(code, provider);
+			OneShotChargeTemplate chargeTemplate = oneShotChargeTemplateService.findByCode(code, provider);
 			if (chargeTemplate == null) {
-				throw new EntityDoesNotExistsException(
-						OneShotChargeTemplate.class, code);
+				throw new EntityDoesNotExistsException(OneShotChargeTemplate.class, code);
 			}
 
 			// remove cat messages
-			catMessagesService.batchRemove(
-					OneShotChargeTemplate.class.getSimpleName(),
-					chargeTemplate.getId(),provider);
+			catMessagesService.batchRemove(OneShotChargeTemplate.class.getSimpleName(), chargeTemplate.getId(),
+					provider);
 
 			oneShotChargeTemplateService.remove(chargeTemplate);
 		} else {
@@ -334,20 +281,16 @@ public class OneShotChargeTemplateApi extends BaseApi {
 				missingParameters.add("oneShotChargeTemplateCode");
 			}
 
-			throw new MissingParameterException(
-					getMissingParametersExceptionMessage());
+			throw new MissingParameterException(getMissingParametersExceptionMessage());
 		}
 	}
 
-	public OneShotChargeTemplateWithPriceListDto listWithPrice(
-			String languageCode, String countryCode, String currencyCode,
-			String sellerCode, Date date, User currentUser) {
+	public OneShotChargeTemplateWithPriceListDto listWithPrice(String languageCode, String countryCode,
+			String currencyCode, String sellerCode, Date date, User currentUser) {
 		Provider provider = currentUser.getProvider();
 		Seller seller = sellerService.findByCode(sellerCode, provider);
-		TradingCurrency currency = tradingCurrencyService
-				.findByTradingCurrencyCode(currencyCode, provider);
-		TradingCountry country = tradingCountryService
-				.findByTradingCountryCode(countryCode, provider);
+		TradingCurrency currency = tradingCurrencyService.findByTradingCurrencyCode(currencyCode, provider);
+		TradingCountry country = tradingCountryService.findByTradingCountryCode(countryCode, provider);
 
 		List<OneShotChargeTemplate> oneShotChargeTemplates = oneShotChargeTemplateService
 				.getSubscriptionChargeTemplates(provider);
@@ -356,44 +299,32 @@ public class OneShotChargeTemplateApi extends BaseApi {
 		for (OneShotChargeTemplate oneShotChargeTemplate : oneShotChargeTemplates) {
 			OneShotChargeTemplateWithPriceDto oneShotChargeDto = new OneShotChargeTemplateWithPriceDto();
 			oneShotChargeDto.setChargeCode(oneShotChargeTemplate.getCode());
-			oneShotChargeDto.setDescription(oneShotChargeTemplate
-					.getDescription());
-			InvoiceSubCategory invoiceSubCategory = oneShotChargeTemplate
-					.getInvoiceSubCategory();
+			oneShotChargeDto.setDescription(oneShotChargeTemplate.getDescription());
+			InvoiceSubCategory invoiceSubCategory = oneShotChargeTemplate.getInvoiceSubCategory();
 
 			if (country == null) {
 				log.warn("country with code={} does not exists", countryCode);
 			} else {
 				InvoiceSubcategoryCountry invoiceSubcategoryCountry = invoiceSubCategoryCountryService
-						.findInvoiceSubCategoryCountry(
-								invoiceSubCategory.getId(), country.getId(),
-								provider);
-				if (invoiceSubcategoryCountry != null
-						&& invoiceSubcategoryCountry.getTax() != null) {
+						.findInvoiceSubCategoryCountry(invoiceSubCategory.getId(), country.getId(), provider);
+				if (invoiceSubcategoryCountry != null && invoiceSubcategoryCountry.getTax() != null) {
 					Tax tax = invoiceSubcategoryCountry.getTax();
 					oneShotChargeDto.setTaxCode(tax.getCode());
 					oneShotChargeDto.setTaxDescription(tax.getDescription());
-					oneShotChargeDto
-							.setTaxPercent(tax.getPercent() == null ? 0.0 : tax
-									.getPercent().doubleValue());
+					oneShotChargeDto.setTaxPercent(tax.getPercent() == null ? 0.0 : tax.getPercent().doubleValue());
 				}
 				try {
-					BigDecimal unitPrice = realtimeChargingService
-							.getApplicationPrice( provider, seller,
-									currency, country, oneShotChargeTemplate,
-									date, null, BigDecimal.ONE, null, null,
-									null, true);
+					BigDecimal unitPrice = realtimeChargingService.getApplicationPrice(provider, seller, currency,
+							country, oneShotChargeTemplate, date, null, BigDecimal.ONE, null, null, null, true);
 					if (unitPrice != null) {
-						oneShotChargeDto.setUnitPriceWithoutTax(unitPrice
-								.doubleValue());
+						oneShotChargeDto.setUnitPriceWithoutTax(unitPrice.doubleValue());
 					}
 				} catch (BusinessException e) {
 					log.warn(e.getMessage());
 				}
 			}
 
-			oneShotChargeTemplateListDto.getOneShotChargeTemplateDtos().add(
-					oneShotChargeDto);
+			oneShotChargeTemplateListDto.getOneShotChargeTemplateDtos().add(oneShotChargeDto);
 		}
 
 		return oneShotChargeTemplateListDto;

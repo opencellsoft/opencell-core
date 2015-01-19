@@ -1,7 +1,5 @@
 package org.meveo.api.dto;
 
-import java.io.Serializable;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -14,7 +12,7 @@ import org.meveo.model.admin.Seller;
  **/
 @XmlRootElement(name = "Seller")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class SellerDto implements Serializable {
+public class SellerDto extends BaseDto {
 
 	private static final long serialVersionUID = 4763606402719751014L;
 
@@ -111,11 +109,9 @@ public class SellerDto implements Serializable {
 
 	@Override
 	public String toString() {
-		return "SellerDto [code=" + code + ", description=" + description
-				+ ", invoicePrefix=" + invoicePrefix + ", currencyCode="
-				+ currencyCode + ", countryCode=" + countryCode
-				+ ", languageCode=" + languageCode + ", parentSeller="
-				+ parentSeller + "]";
+		return "SellerDto [code=" + code + ", description=" + description + ", invoicePrefix=" + invoicePrefix
+				+ ", currencyCode=" + currencyCode + ", countryCode=" + countryCode + ", languageCode=" + languageCode
+				+ ", parentSeller=" + parentSeller + "]";
 	}
 
 }

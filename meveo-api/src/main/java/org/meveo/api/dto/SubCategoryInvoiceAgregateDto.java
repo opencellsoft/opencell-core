@@ -16,6 +16,7 @@
  */
 package org.meveo.api.dto;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -30,7 +31,9 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 @XmlRootElement(name = "SubCategoryInvoiceAgregate")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class SubCategoryInvoiceAgregateDto {
+public class SubCategoryInvoiceAgregateDto implements Serializable {
+
+	private static final long serialVersionUID = 6165612614574594919L;
 
 	private String type;
 	private Integer itemNumber;
