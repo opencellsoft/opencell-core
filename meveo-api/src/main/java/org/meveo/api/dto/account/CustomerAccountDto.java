@@ -10,20 +10,19 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.AccountOperationDto;
-import org.meveo.api.dto.BaseDto;
-import org.meveo.api.dto.CustomFieldDto;
 
 @XmlRootElement(name = "CustomerAccount")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class CustomerAccountDto extends BaseDto {
+public class CustomerAccountDto extends AccountDto {
 
 	private static final long serialVersionUID = -137632696663739285L;
 
+	private String customerCode;
+	private String currency;
 	private String status;
 	private String paymentMethod;
 	private String creditCategory;
 	private List<AccountOperationDto> accountOperations = new ArrayList<AccountOperationDto>();
-	private List<CustomFieldDto> customFields= new ArrayList<CustomFieldDto>();
 	private Date dateStatus;
 	private Date dateDunningLevel;
 
@@ -32,11 +31,14 @@ public class CustomerAccountDto extends BaseDto {
 	private String mobile;
 	private String fax;
 
-	private String customerCode;
 	private String dunningLevel;
 	private String mandateIdentification = "";
 	private Date mandateDate;
 	private BigDecimal balance = BigDecimal.ZERO;
+
+	public CustomerAccountDto() {
+		super();
+	}
 
 	public String getStatus() {
 		return status;
@@ -60,14 +62,6 @@ public class CustomerAccountDto extends BaseDto {
 
 	public void setAccountOperations(List<AccountOperationDto> accountOperations) {
 		this.accountOperations = accountOperations;
-	}
-
-	public List<CustomFieldDto> getCustomFields() {
-		return customFields;
-	}
-
-	public void setCustomFields(List<CustomFieldDto> customFields) {
-		this.customFields = customFields;
 	}
 
 	public Date getDateStatus() {
@@ -171,6 +165,24 @@ public class CustomerAccountDto extends BaseDto {
 			accountOperations = new ArrayList<AccountOperationDto>();
 		}
 		this.accountOperations.add(accountOperation);
+	}
+
+	public String getCurrency() {
+		return currency;
+	}
+
+	public void setCurrency(String currency) {
+		this.currency = currency;
+	}
+
+	@Override
+	public String toString() {
+		return "CustomerAccountDto [customerCode=" + customerCode + ", currency=" + currency + ", status=" + status
+				+ ", paymentMethod=" + paymentMethod + ", creditCategory=" + creditCategory + ", accountOperations="
+				+ accountOperations + ", dateStatus=" + dateStatus + ", dateDunningLevel=" + dateDunningLevel
+				+ ", email=" + email + ", phone=" + phone + ", mobile=" + mobile + ", fax=" + fax + ", dunningLevel="
+				+ dunningLevel + ", mandateIdentification=" + mandateIdentification + ", mandateDate=" + mandateDate
+				+ ", balance=" + balance + ", toString()=" + super.toString() + "]";
 	}
 
 }

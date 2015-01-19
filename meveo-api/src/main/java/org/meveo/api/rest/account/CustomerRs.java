@@ -39,7 +39,7 @@ public interface CustomerRs extends IBaseRs {
 	GetCustomerResponse find(@QueryParam("customerCode") String customerCode);
 
 	@DELETE
-	@Path("/{code}")
+	@Path("/{customerCode}")
 	ActionStatus remove(@PathParam("customerCode") String customerCode);
 
 }

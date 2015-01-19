@@ -12,7 +12,7 @@ import org.meveo.model.crm.Customer;
  **/
 @XmlRootElement(name = "Customer")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class CustomerDto extends BaseAccountDto {
+public class CustomerDto extends AccountDto {
 
 	private static final long serialVersionUID = 3243716253817571391L;
 
@@ -62,6 +62,12 @@ public class CustomerDto extends BaseAccountDto {
 
 	public void setCustomerBrand(String customerBrand) {
 		this.customerBrand = customerBrand;
+	}
+
+	@Override
+	public String toString() {
+		return "CustomerDto [customerCategory=" + customerCategory + ", customerBrand=" + customerBrand + ", seller="
+				+ seller + ", toString()=" + super.toString() + "]";
 	}
 
 }

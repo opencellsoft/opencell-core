@@ -3,22 +3,19 @@ package org.meveo.api.account;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
-import org.meveo.api.BaseApi;
 import org.meveo.api.dto.account.CustomerDto;
+import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.admin.User;
-import org.meveo.model.billing.TradingCountry;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.crm.CustomerBrand;
 import org.meveo.model.crm.CustomerCategory;
 import org.meveo.model.crm.Provider;
-import org.meveo.model.shared.Address;
 import org.meveo.service.admin.impl.SellerService;
-import org.meveo.service.billing.impl.TradingCountryService;
 import org.meveo.service.crm.impl.CustomerBrandService;
 import org.meveo.service.crm.impl.CustomerCategoryService;
 import org.meveo.service.crm.impl.CustomerService;
@@ -27,7 +24,7 @@ import org.meveo.service.crm.impl.CustomerService;
  * @author Edward P. Legaspi
  **/
 @Stateless
-public class CustomerApi extends BaseApi {
+public class CustomerApi extends AccountApi {
 
 	@Inject
 	private CustomerService customerService;
@@ -41,13 +38,15 @@ public class CustomerApi extends BaseApi {
 	@Inject
 	private SellerService sellerService;
 
-	@Inject
-	private TradingCountryService tradingCountryService;
-
 	public void create(CustomerDto postData, User currentUser) throws MeveoApiException {
 		if (!StringUtils.isBlank(postData.getCode()) && !StringUtils.isBlank(postData.getDescription())
 				&& !StringUtils.isBlank(postData.getCustomerCategory())
 				&& !StringUtils.isBlank(postData.getCustomerBrand()) && !StringUtils.isBlank(postData.getSeller())) {
+			// check if customer already exists
+			if (customerService.findByCode(postData.getCode(), currentUser.getProvider()) != null) {
+				throw new EntityAlreadyExistsException(Customer.class, postData.getCode());
+			}
+
 			CustomerCategory customerCategory = customerCategoryService.findByCode(postData.getCustomerCategory(),
 					currentUser.getProvider());
 			if (customerCategory == null) {
@@ -65,24 +64,12 @@ public class CustomerApi extends BaseApi {
 				throw new EntityDoesNotExistsException(Seller.class, postData.getSeller());
 			}
 
-			Address address = new Address();
-			if (postData.getAddress() != null) {
-				// check country
-				if (tradingCountryService.findByTradingCountryCode(postData.getAddress().getCountry(),
-						currentUser.getProvider()) == null) {
-					throw new EntityDoesNotExistsException(TradingCountry.class, postData.getAddress().getCountry());
-				}
-
-				address = postData.getAddress();
-			}
-
 			Customer customer = new Customer();
-			customer.setCode(postData.getCode());
-			customer.setDescription(postData.getDescription());
+			populate(postData, customer, currentUser);
+
 			customer.setCustomerCategory(customerCategory);
 			customer.setCustomerBrand(customerBrand);
 			customer.setSeller(seller);
-			customer.setAddress(address);
 
 			customerService.create(customer, currentUser, currentUser.getProvider());
 		} else {
@@ -108,6 +95,11 @@ public class CustomerApi extends BaseApi {
 
 	public void update(CustomerDto postData, User currentUser) throws MeveoApiException {
 		if (!StringUtils.isBlank(postData.getCode()) && !StringUtils.isBlank(postData.getDescription())) {
+			// check if customer exists
+			if (customerService.findByCode(postData.getCode(), currentUser.getProvider()) == null) {
+				throw new EntityDoesNotExistsException(Customer.class, postData.getCode());
+			}
+
 			CustomerCategory customerCategory = customerCategoryService.findByCode(postData.getCustomerCategory(),
 					currentUser.getProvider());
 			if (customerCategory == null) {
@@ -130,16 +122,10 @@ public class CustomerApi extends BaseApi {
 				throw new EntityDoesNotExistsException(Customer.class, postData.getCode());
 			}
 
-			Address address = new Address();
-			if (postData.getAddress() != null) {
-				address = postData.getAddress();
-			}
-
-			customer.setDescription(postData.getDescription());
+			updateAccount(customer, postData, currentUser);
 			customer.setCustomerCategory(customerCategory);
 			customer.setCustomerBrand(customerBrand);
 			customer.setSeller(seller);
-			customer.setAddress(address);
 
 			customerService.updateAudit(customer, currentUser);
 		} else {
