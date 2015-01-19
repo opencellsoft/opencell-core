@@ -1,10 +1,11 @@
-package org.meveo.api.dto.response;
+package org.meveo.api.dto.response.account;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.account.CustomerAccountDto;
+import org.meveo.api.dto.response.BaseResponse;
 
 /**
  * @author R.AITYAAZZA

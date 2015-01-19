@@ -9,8 +9,8 @@ import org.meveo.api.account.CustomerAccountApi;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.account.AccountHierarchyDto;
-import org.meveo.api.dto.response.CustomerAccountResponse;
 import org.meveo.api.dto.response.CustomerListResponse;
+import org.meveo.api.dto.response.account.CustomerAccountResponse;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.ws.AccountWs;
 

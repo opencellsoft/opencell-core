@@ -7,7 +7,7 @@ import javax.ws.rs.QueryParam;
 
 import org.meveo.api.account.CustomerAccountApi;
 import org.meveo.api.dto.ActionStatusEnum;
-import org.meveo.api.dto.response.CustomerAccountResponse;
+import org.meveo.api.dto.response.account.CustomerAccountResponse;
 import org.meveo.api.logging.LoggingInterceptor;
 import org.meveo.api.rest.account.CustomerAccountRs;
 import org.meveo.api.rest.impl.BaseRs;

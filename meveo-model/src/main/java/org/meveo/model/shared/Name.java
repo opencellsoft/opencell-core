@@ -23,7 +23,12 @@ import javax.persistence.Embeddable;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.validation.constraints.Size;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlRootElement;
 
+@XmlRootElement(name = "Name")
+@XmlAccessorType(XmlAccessType.FIELD)
 @Embeddable
 public class Name implements Serializable, Cloneable {
 
@@ -77,9 +82,7 @@ public class Name implements Serializable, Cloneable {
 	@Override
 	public String toString() {
 		return (title != null ? (title.getCode() + " " + (firstName != null ? firstName : "") + (lastName != null ? " "
-				+ lastName
-				: ""))
-				: "");
+				+ lastName : "")) : "");
 	}
 
 	@Override

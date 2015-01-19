@@ -1,5 +1,6 @@
 package org.meveo.api.dto;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 
@@ -13,7 +14,9 @@ import javax.xml.bind.annotation.XmlRootElement;
  **/
 @XmlRootElement(name = "UsageCharge")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class UsageChargeDto {
+public class UsageChargeDto implements Serializable {
+
+	private static final long serialVersionUID = -2546246507412182368L;
 
 	private Integer min;
 	private Integer max;

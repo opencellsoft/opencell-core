@@ -1,6 +1,5 @@
 package org.meveo.api.dto;
 
-import java.io.Serializable;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -15,7 +14,7 @@ import org.meveo.model.billing.InvoiceCategory;
  **/
 @XmlRootElement(name = "InvoiceCategory")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class InvoiceCategoryDto implements Serializable {
+public class InvoiceCategoryDto extends BaseDto {
 
 	private static final long serialVersionUID = 5166093858617578774L;
 
@@ -56,15 +55,13 @@ public class InvoiceCategoryDto implements Serializable {
 		return languageDescriptions;
 	}
 
-	public void setLanguageDescriptions(
-			List<LanguageDescriptionDto> languageDescriptions) {
+	public void setLanguageDescriptions(List<LanguageDescriptionDto> languageDescriptions) {
 		this.languageDescriptions = languageDescriptions;
 	}
 
 	@Override
 	public String toString() {
-		return "InvoiceCategoryDto [code=" + code + ", description="
-				+ description + ", languageDescriptions="
+		return "InvoiceCategoryDto [code=" + code + ", description=" + description + ", languageDescriptions="
 				+ languageDescriptions + "]";
 	}
 

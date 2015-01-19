@@ -5,8 +5,8 @@ import javax.jws.WebService;
 
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.account.AccountHierarchyDto;
-import org.meveo.api.dto.response.CustomerAccountResponse;
 import org.meveo.api.dto.response.CustomerListResponse;
+import org.meveo.api.dto.response.account.CustomerAccountResponse;
 
 /**
  * @author Edward P. Legaspi

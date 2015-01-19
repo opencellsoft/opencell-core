@@ -1,5 +1,6 @@
 package org.meveo.api.dto;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 
@@ -13,7 +14,9 @@ import javax.xml.bind.annotation.XmlRootElement;
  **/
 @XmlRootElement(name = "TerminationFee")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class TerminationFeeDto {
+public class TerminationFeeDto implements Serializable {
+
+	private static final long serialVersionUID = -30747849216793313L;
 
 	private String currencyCode;
 	private Date startDate;

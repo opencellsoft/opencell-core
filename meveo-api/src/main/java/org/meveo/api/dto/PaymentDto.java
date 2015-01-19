@@ -137,8 +137,7 @@ public class PaymentDto extends BaseDto {
 		return listOCCReferenceforMatching;
 	}
 
-	public void setListOCCReferenceforMatching(
-			List<String> listOCCReferenceforMatching) {
+	public void setListOCCReferenceforMatching(List<String> listOCCReferenceforMatching) {
 		this.listOCCReferenceforMatching = listOCCReferenceforMatching;
 	}
 
@@ -160,16 +159,11 @@ public class PaymentDto extends BaseDto {
 
 	@Override
 	public String toString() {
-		return "PaymentDto [paymentMethod=" + paymentMethod
-				+ ", occTemplateCode=" + occTemplateCode + ", amount=" + amount
-				+ ", customerAccountCode=" + customerAccountCode
-				+ ", reference=" + reference + ", bankLot=" + bankLot
-				+ ", depositDate=" + depositDate + ", bankCollectionDate="
-				+ bankCollectionDate + ", dueDate=" + dueDate
-				+ ", transactionDate=" + transactionDate
-				+ ", listOCCReferenceforMatching="
-				+ listOCCReferenceforMatching + ", isToMatching="
-				+ isToMatching + "]";
+		return "PaymentDto [paymentMethod=" + paymentMethod + ", occTemplateCode=" + occTemplateCode + ", amount="
+				+ amount + ", customerAccountCode=" + customerAccountCode + ", reference=" + reference + ", bankLot="
+				+ bankLot + ", depositDate=" + depositDate + ", bankCollectionDate=" + bankCollectionDate
+				+ ", dueDate=" + dueDate + ", transactionDate=" + transactionDate + ", listOCCReferenceforMatching="
+				+ listOCCReferenceforMatching + ", isToMatching=" + isToMatching + "]";
 	}
 
 }

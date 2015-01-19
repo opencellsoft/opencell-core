@@ -12,7 +12,10 @@ import javax.xml.bind.annotation.XmlRootElement;
  **/
 @XmlRootElement(name = "WalletReservation")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class WalletReservationDto {
+public class WalletReservationDto extends BaseDto {
+
+	private static final long serialVersionUID = -6900140578404875714L;
+
 	private Long reservationId;
 	private String providerCode;
 	private String sellerCode;
