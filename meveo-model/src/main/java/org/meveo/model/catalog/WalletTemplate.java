@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-package org.meveo.model.billing;
+package org.meveo.model.catalog;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -24,24 +24,50 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import org.meveo.model.BusinessEntity;
+import org.meveo.model.billing.BillingWalletTypeEnum;
 
 @Entity
-@Table(name = "BILLING_WALLET_TEMPLATE")
-@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_WALLET_TEMPLATE_SEQ")
+@Table(name = "CAT_WALLET_TEMPLATE")
+@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "CAT_WALLET_TEMPLATE_SEQ")
 public class WalletTemplate extends BusinessEntity {
 
 	private static final long serialVersionUID = 1L;
 
+	public static final String PRINCIPAL="PRINCIPAL";
+	
+	
 	@Column(name = "WALLET_TYPE")
 	@Enumerated(EnumType.STRING)
 	private BillingWalletTypeEnum walletType;
 
+	@Column(name = "CONSUMPTION_ALERT_SET")	
+	private boolean consumptionAlertSet;
+	
+	@Column(name = "FAST_RATING_LEVEL")
+	private int fastRatingLevel;
+	
 	public BillingWalletTypeEnum getWalletType() {
 		return walletType;
 	}
 
 	public void setWalletType(BillingWalletTypeEnum walletType) {
 		this.walletType = walletType;
+	}
+
+	public boolean isConsumptionAlertSet() {
+		return consumptionAlertSet;
+	}
+
+	public void setConsumptionAlertSet(boolean consumptionAlertSet) {
+		this.consumptionAlertSet = consumptionAlertSet;
+	}
+
+	public int getFastRatingLevel() {
+		return fastRatingLevel;
+	}
+
+	public void setFastRatingLevel(int fastRatingLevel) {
+		this.fastRatingLevel = fastRatingLevel;
 	}
 
 }

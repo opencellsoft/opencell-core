@@ -16,31 +16,39 @@
  */
 package org.meveo.admin.action.catalog;
 
+import java.sql.BatchUpdateException;
+
 import javax.enterprise.context.ConversationScoped;
+import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.meveo.admin.action.StatelessBaseBean;
-import org.meveo.model.catalog.ServiceUsageChargeTemplate;
+import org.meveo.admin.action.BaseBean;
+import org.meveo.model.catalog.WalletTemplate;
+import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
-import org.meveo.service.catalog.impl.ServiceUsageChargeTemplateService;
+import org.meveo.service.billing.impl.WalletTemplateService;
 
 @Named
 @ConversationScoped
-public class ServiceUsageChargeTemplateBean extends
-		StatelessBaseBean<ServiceUsageChargeTemplate> {
+public class WalletTemplateBean extends BaseBean<WalletTemplate> {
 
 	private static final long serialVersionUID = 1L;
 
+	/**
+	 * Injected @{link TradingCountry} service. Extends
+	 * {@link PersistenceService}.
+	 */
 	@Inject
-	private ServiceUsageChargeTemplateService serviceUsageChargeTemplateService;
+	private WalletTemplateService walletTemplateService;
 
 	/**
 	 * Constructor. Invokes super constructor and provides class type of this
 	 * bean for {@link BaseBean}.
 	 */
-	public ServiceUsageChargeTemplateBean() {
-		super(ServiceUsageChargeTemplate.class);
+	public WalletTemplateBean() {
+		super(WalletTemplate.class);
+
 	}
 
 	/**
@@ -50,10 +58,13 @@ public class ServiceUsageChargeTemplateBean extends
 	 * @throws IllegalAccessException
 	 * @throws InstantiationException
 	 */
-
-	public ServiceUsageChargeTemplate initEntity() {
-		return super.initEntity();
+	@Produces
+	@Named("walletTemplate")
+	public WalletTemplate init() {
+		initEntity();
+		return entity;
 	}
+
 
 	/**
 	 * Override default list view name. (By default its class name starting
@@ -62,20 +73,18 @@ public class ServiceUsageChargeTemplateBean extends
 	 * @see org.meveo.admin.action.BaseBean#getDefaultViewName()
 	 */
 	protected String getDefaultViewName() {
-		return "serviceUsageChargeTemplates";
+		return "walletTemplates";
 	}
 
 	/**
 	 * @see org.meveo.admin.action.BaseBean#getPersistenceService()
 	 */
 	@Override
-	protected IPersistenceService<ServiceUsageChargeTemplate> getPersistenceService() {
-		return serviceUsageChargeTemplateService;
+	protected IPersistenceService<WalletTemplate> getPersistenceService() {
+		return walletTemplateService;
 	}
 
-	@Override
-	protected String getListViewName() {
-		return "serviceUsageChargeTemplates";
+	public void test() throws BatchUpdateException {
+		throw new BatchUpdateException();
 	}
-
 }

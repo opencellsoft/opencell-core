@@ -48,7 +48,7 @@ import org.meveo.model.billing.TradingCountry;
 import org.meveo.model.billing.TradingCurrency;
 import org.meveo.model.billing.TradingLanguage;
 import org.meveo.model.billing.UserAccount;
-import org.meveo.model.billing.WalletTemplate;
+import org.meveo.model.catalog.WalletTemplate;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.shared.InterBankTitle;

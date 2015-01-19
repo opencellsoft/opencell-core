@@ -11,8 +11,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.RecurringChargeTemplate;
+import org.meveo.model.catalog.ServiceChargeTemplateUsage;
 import org.meveo.model.catalog.ServiceTemplate;
-import org.meveo.model.catalog.ServiceUsageChargeTemplate;
 
 /**
  * @author Edward P. Legaspi
@@ -63,7 +63,7 @@ public class ServiceTemplateDto implements Serializable {
 		}
 		if (e.getServiceUsageCharges().size() > 0) {
 			serviceUsageCharges = new ArrayList<ServiceUsageChargeTemplateDto>();
-			for (ServiceUsageChargeTemplate ot : e.getServiceUsageCharges()) {
+			for (ServiceChargeTemplateUsage ot : e.getServiceUsageCharges()) {
 				ServiceUsageChargeTemplateDto serviceUsageChargeTemplateDto = new ServiceUsageChargeTemplateDto();
 				serviceUsageChargeTemplateDto.setUsageChargeTemplate(ot
 						.getChargeTemplate().getCode());

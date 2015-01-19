@@ -17,8 +17,10 @@
 package org.meveo.model.billing;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.AttributeOverride;
@@ -32,8 +34,11 @@ import javax.persistence.FetchType;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderColumn;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -100,7 +105,7 @@ public class ChargeInstance extends BusinessEntity {
 
 	@Column(name = "PR_DESCRIPTION", length = 100)
 	protected String prDescription;
-	
+
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "TRADING_CURRENCY")
 	private TradingCurrency currency;
@@ -108,7 +113,12 @@ public class ChargeInstance extends BusinessEntity {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "TRADING_COUNTRY")
 	TradingCountry country;
-	
+
+	@ManyToMany(fetch = FetchType.LAZY)
+	@JoinTable(name = "BILLING_CHRGINST_WALLET", joinColumns = @JoinColumn(name = "CHRG_INSTANCE_ID"), inverseJoinColumns = @JoinColumn(name = "WALLET_INSTANCE_ID"))
+	@OrderColumn(name = "INDX")
+	private List<WalletInstance> walletInstances = new ArrayList<WalletInstance>();
+
 	public String getCriteria1() {
 		return criteria1;
 	}
@@ -215,7 +225,7 @@ public class ChargeInstance extends BusinessEntity {
 	public void setSeller(Seller seller) {
 		this.seller = seller;
 	}
-	
+
 	public Subscription getSubscription() {
 		return subscription;
 	}
@@ -223,7 +233,7 @@ public class ChargeInstance extends BusinessEntity {
 	public void setSubscription(Subscription subscription) {
 		this.subscription = subscription;
 	}
-	
+
 	public TradingCurrency getCurrency() {
 		return currency;
 	}
@@ -238,6 +248,14 @@ public class ChargeInstance extends BusinessEntity {
 
 	public void setCountry(TradingCountry country) {
 		this.country = country;
+	}
+
+	public List<WalletInstance> getWalletInstances() {
+		return walletInstances;
+	}
+
+	public void setWalletInstances(List<WalletInstance> walletInstances) {
+		this.walletInstances = walletInstances;
 	}
 
 }

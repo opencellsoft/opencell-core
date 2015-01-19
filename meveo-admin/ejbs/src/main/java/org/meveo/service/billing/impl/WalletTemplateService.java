@@ -6,7 +6,7 @@ import javax.ejb.Stateless;
 import javax.persistence.NoResultException;
 
 import org.meveo.commons.utils.QueryBuilder;
-import org.meveo.model.billing.WalletTemplate;
+import org.meveo.model.catalog.WalletTemplate;
 import org.meveo.model.crm.Provider;
 import org.meveo.service.base.PersistenceService;
 
