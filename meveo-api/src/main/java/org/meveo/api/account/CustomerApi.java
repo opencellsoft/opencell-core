@@ -163,31 +163,31 @@ public class CustomerApi extends BaseApi {
 		}
 	}
 
-	public CustomerDto find(String code, Provider provider) throws MeveoApiException {
-		if (!StringUtils.isBlank(code)) {
-			Customer customer = customerService.findByCode(code, provider);
+	public CustomerDto find(String customerCode, Provider provider) throws MeveoApiException {
+		if (!StringUtils.isBlank(customerCode)) {
+			Customer customer = customerService.findByCode(customerCode, provider);
 			if (customer == null) {
-				throw new EntityDoesNotExistsException(Customer.class, code);
+				throw new EntityDoesNotExistsException(Customer.class, customerCode);
 			}
 
 			return new CustomerDto(customer);
 		} else {
-			missingParameters.add("code");
+			missingParameters.add("customerCode");
 
 			throw new MissingParameterException(getMissingParametersExceptionMessage());
 		}
 	}
 
-	public void remove(String code, Provider provider) throws MeveoApiException {
-		if (!StringUtils.isBlank(code)) {
-			Customer customer = customerService.findByCode(code, provider);
+	public void remove(String customerCode, Provider provider) throws MeveoApiException {
+		if (!StringUtils.isBlank(customerCode)) {
+			Customer customer = customerService.findByCode(customerCode, provider);
 			if (customer == null) {
-				throw new EntityDoesNotExistsException(Customer.class, code);
+				throw new EntityDoesNotExistsException(Customer.class, customerCode);
 			}
 
 			customerService.remove(customer);
 		} else {
-			missingParameters.add("code");
+			missingParameters.add("customerCode");
 
 			throw new MissingParameterException(getMissingParametersExceptionMessage());
 		}

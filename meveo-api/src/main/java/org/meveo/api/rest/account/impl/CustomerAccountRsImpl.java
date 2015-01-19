@@ -24,15 +24,13 @@ public class CustomerAccountRsImpl extends BaseRs implements CustomerAccountRs {
 	private CustomerAccountApi customerAccountapi;
 
 	@Override
-	public CustomerAccountResponse getCustomerAccount(
-			@QueryParam("customerAccountCode") String customerAccountCode) {
+	public CustomerAccountResponse getCustomerAccount(@QueryParam("customerAccountCode") String customerAccountCode) {
 
 		CustomerAccountResponse result = new CustomerAccountResponse();
 		result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
 
 		try {
-			result.setCustomerAccountDto(customerAccountapi.getCustomerAccount(
-					customerAccountCode, getCurrentUser()));
+			result.setCustomerAccountDto(customerAccountapi.getCustomerAccount(customerAccountCode, getCurrentUser()));
 		} catch (Exception e) {
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
 			result.getActionStatus().setMessage(e.getMessage());

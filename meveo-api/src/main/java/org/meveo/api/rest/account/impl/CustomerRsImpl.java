@@ -64,11 +64,11 @@ public class CustomerRsImpl extends BaseRs implements CustomerRs {
 	}
 
 	@Override
-	public GetCustomerResponse find(String code) {
+	public GetCustomerResponse find(String customerCode) {
 		GetCustomerResponse result = new GetCustomerResponse();
 
 		try {
-			result.setCustomer(customerApi.find(code, getCurrentUser().getProvider()));
+			result.setCustomer(customerApi.find(customerCode, getCurrentUser().getProvider()));
 		} catch (MeveoApiException e) {
 			result.getActionStatus().setErrorCode(e.getErrorCode());
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
@@ -83,11 +83,11 @@ public class CustomerRsImpl extends BaseRs implements CustomerRs {
 	}
 
 	@Override
-	public ActionStatus remove(String code) {
+	public ActionStatus remove(String customerCode) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 		try {
-			customerApi.remove(code, getCurrentUser().getProvider());
+			customerApi.remove(customerCode, getCurrentUser().getProvider());
 		} catch (MeveoApiException e) {
 			result.setErrorCode(e.getErrorCode());
 			result.setStatus(ActionStatusEnum.FAIL);
