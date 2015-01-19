@@ -5,7 +5,7 @@
 		<artifactId>meveo</artifactId>
 		<groupId>org.manaty</groupId>
 		<relativePath>../pom.xml</relativePath>
-		<version>4.0</version>
+		<version>3.3</version>
 	</parent>
 	<artifactId>meveo-admin</artifactId>
 	<packaging>pom</packaging>
