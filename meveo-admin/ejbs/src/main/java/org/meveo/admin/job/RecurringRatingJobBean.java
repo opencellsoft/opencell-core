@@ -7,11 +7,12 @@ import java.util.List;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
+import javax.enterprise.event.Event;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 
-import org.meveo.admin.exception.IncorrectChargeTemplateException;
 import org.meveo.admin.job.logging.JobLoggingInterceptor;
+import org.meveo.event.qualifier.Rejected;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.InstanceStatusEnum;
 import org.meveo.model.billing.RecurringChargeInstance;
@@ -39,6 +40,11 @@ public class RecurringRatingJobBean implements Serializable {
 	@Inject
 	protected Logger log;
 
+	@Inject
+	@Rejected
+	Event<Serializable> rejectededChargeProducer;
+
+
 	@Interceptors({ JobLoggingInterceptor.class })
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public void execute(JobExecutionResultImpl result, User currentUser) {
@@ -56,9 +62,12 @@ public class RecurringRatingJobBean implements Serializable {
 							.getRecurringChargeTemplate();
 					if (recurringChargeTemplate.getCalendar() == null) {
 						// FIXME : should not stop the method execution
-						throw new IncorrectChargeTemplateException(
-								"Recurring charge template has no calendar: code="
-										+ recurringChargeTemplate.getCode());
+						rejectededChargeProducer.fire(recurringChargeTemplate);
+						log.error("Recurring charge template has no calendar: code="
+								+ recurringChargeTemplate.getCode());
+						result.registerError("Recurring charge template has no calendar: code="
+								+ recurringChargeTemplate.getCode());
+						continue;
 					}
 
 					Date applicationDate = null;
@@ -92,6 +101,7 @@ public class RecurringRatingJobBean implements Serializable {
 						log.info("applicationDate={} is posterior to maxdate={} 2nd level cache is probably in cause",applicationDate,maxDate);
 					}
 				} catch (Exception e) {
+					rejectededChargeProducer.fire(activeRecurringChargeInstance);
 					log.error(e.getMessage());
 					result.registerError(e.getMessage());
 				}
