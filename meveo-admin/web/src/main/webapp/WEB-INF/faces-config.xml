@@ -1161,6 +1161,19 @@
 			<to-view-id>/pages/notification/emailNotifications.xhtml</to-view-id>
 			<redirect />
 		</navigation-case>
+		
+		
+		<navigation-case>
+			<from-outcome>instantMessagingNotificationDetail</from-outcome>
+			<to-view-id>/pages/notification/instantMessagingNotificationDetail.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+
+		<navigation-case>
+			<from-outcome>instantMessagingNotifications</from-outcome>
+			<to-view-id>/pages/notification/instantMessagingNotifications.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
 
 	</navigation-rule>
 	<navigation-rule>

@@ -39,10 +39,10 @@ public class EmailNotifier {
 		MimeMessage msg = new MimeMessage(mailSession);
 		try {
 			msg.setFrom(new InternetAddress(notification.getEmailFrom()));
-			msg.setSubject(notification.getSubject());
 			msg.setSentDate(new Date());
 			HashMap<Object,Object> userMap = new HashMap<Object, Object>();
 			userMap.put("event", e);
+			msg.setSubject((String)RatingService.evaluateExpression(notification.getSubject(), userMap, String.class));
 			if(!StringUtils.isBlank(notification.getHtmlBody())){
 				String htmlBody=(String)RatingService.evaluateExpression(notification.getHtmlBody(), userMap, String.class);
 				msg.setContent(htmlBody, "text/html");
@@ -55,8 +55,10 @@ public class EmailNotifier {
 			if(!StringUtils.isBlank(notification.getEmailToEl())){
 				addressTo.add(new InternetAddress((String)RatingService.evaluateExpression(notification.getEmailToEl(), userMap, String.class)));
 			}
-			for (String address:notification.getEmails()) {
-				addressTo.add(new InternetAddress(address));
+			if(notification.getEmails()!=null){
+				for (String address:notification.getEmails()) {
+					addressTo.add(new InternetAddress(address));
+				}
 			}
 			msg.setRecipients(RecipientType.TO,addressTo.toArray(new InternetAddress[addressTo.size()]));
 

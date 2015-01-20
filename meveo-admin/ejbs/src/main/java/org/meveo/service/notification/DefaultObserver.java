@@ -24,6 +24,7 @@ import org.meveo.event.qualifier.Terminated;
 import org.meveo.event.qualifier.Updated;
 import org.meveo.model.IEntity;
 import org.meveo.model.notification.EmailNotification;
+import org.meveo.model.notification.InstantMessagingNotification;
 import org.meveo.model.notification.Notification;
 import org.meveo.model.notification.NotificationEventTypeEnum;
 import org.meveo.model.notification.WebHook;
@@ -42,9 +43,12 @@ public class DefaultObserver {
 	
 	@Inject
 	EmailNotifier emailNotifier;
-	
+
 	@Inject
 	WebHookNotifier webHookNotifier;
+	
+	@Inject
+	InstantMessagingNotifier imNotifier;
 	
 	@SuppressWarnings("rawtypes")
 	HashMap<NotificationEventTypeEnum,HashMap<Class,List<Notification>>> classNotificationMap=new HashMap<>();
@@ -121,6 +125,8 @@ public class DefaultObserver {
 					emailNotifier.sendEmail((EmailNotification) notif, e);
 				} else if(notif instanceof WebHook){
 					webHookNotifier.sendRequest((WebHook) notif, e);
+				} else if(notif instanceof InstantMessagingNotification){
+					imNotifier.sendInstantMessage((InstantMessagingNotification) notif, e);
 				} else {
 					executeAction(notif.getElAction(),e);
 				}

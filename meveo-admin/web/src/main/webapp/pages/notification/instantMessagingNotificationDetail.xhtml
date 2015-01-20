@@ -12,9 +12,9 @@
 	<ui:define name="metadata">
 		<f:metadata>
 			<f:event type="preRenderView"
-				listener="#{webHookBean.preRenderView}" />
+				listener="#{instantMessagingNotificationBean.preRenderView}" />
 			<f:viewParam name="objectId"
-				value="#{webHookBean.objectId}" />
+				value="#{instantMessagingNotificationBean.objectId}" />
 
 		</f:metadata>
 	</ui:define>
@@ -25,16 +25,17 @@
 
 	<ui:define name="body">
 
-		<hf:formPanel id="webHookForm" label="#{messages['menu.webHook']}"
-			backingBean="#{webHookBean}" columns="4">
+		<hf:formPanel id="instantMessagingNotificationForm" label="#{messages['menu.instantMessagingNotification']}"
+			backingBean="#{instantMessagingNotificationBean}" columns="2">
 			<hf:formField label="#{messages['entity.code']}"
-				field="code" required="true" maxLength="60" />
+				field="code"  required="true" maxLength="60"/>
+			<p:separator></p:separator>
 			<hf:formField
 				label="#{messages['entity.notification.classNameFilter']}"
 				field="classNameFilter" required="true" size="100" maxlength="255"/>
 			<hf:formField
 				label="#{messages['entity.notification.eventTypeFilter']}"
-				field="eventTypeFilter" required="true" />
+				field="eventTypeFilter" required="true"/>
 			<hf:formField
 				label="#{messages['entity.notification.elFilter']}"
 				field="elFilter" textArea="true" maxlength="1000" />
@@ -42,29 +43,20 @@
 				label="#{messages['entity.notification.elAction']}"
 				field="elAction" textArea="true" maxlength="2000" />
 			<hf:formField
-				label="#{messages['entity.webHook.host']}"
-				field="host" required="true" size="100" maxlength="255"/>
+				label="#{messages['entity.instantMessagingNotification.imProvider']}"
+				field="imProvider"/>
 			<hf:formField
-				label="#{messages['entity.webHook.port']}"
-				field="port" />
+				label="#{messages['entity.instantMessagingNotification.idEL']}"
+				field="idEl" size="30" maxlength="1000" />
 			<hf:formField
-				label="#{messages['entity.webHook.page']}"
-				field="page" size="100" maxlength="255"/>
+				label="#{messages['entity.instantMessagingNotification.ids']}"
+				field="ids" />
 			<hf:formField
-				label="#{messages['entity.webHook.httpMethod']}"
-				field="httpMethod" />
+				label="#{messages['entity.instantMessagingNotification.users']}"
+				field="users" />
 			<hf:formField
-				label="#{messages['entity.webHook.username']}"
-				field="username" size="50" maxlength="255" />
-			<hf:formField
-				label="#{messages['entity.webHook.password']}"
-				field="password" size="50" maxlength="255"/>
-			<hf:formField
-				label="#{messages['entity.webHook.headers']}"
-				field="headers" />
-			<hf:formField
-				label="#{messages['entity.webHook.params']}"
-				field="params" />
+				label="#{messages['entity.instantMessagingNotification.message']}"
+				field="message" textArea="true" maxlength="2000" required="true"/>
 		</hf:formPanel>
 
 	</ui:define>
