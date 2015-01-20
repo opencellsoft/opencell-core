@@ -24,15 +24,15 @@ import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
 import org.meveo.commons.utils.QueryBuilder;
+import org.meveo.model.catalog.ServiceChargeTemplateUsage;
 import org.meveo.model.catalog.ServiceTemplate;
-import org.meveo.model.catalog.ServiceUsageChargeTemplate;
 import org.meveo.model.catalog.UsageChargeTemplate;
 import org.meveo.model.crm.Provider;
 import org.meveo.service.base.PersistenceService;
 
 @Stateless
-public class ServiceUsageChargeTemplateService extends
-		PersistenceService<ServiceUsageChargeTemplate> {
+public class ServiceChargeTemplateUsageService extends
+		PersistenceService<ServiceChargeTemplateUsage> {
 
 	public void removeByPrefix(EntityManager em, String prefix,
 			Provider provider) {
@@ -53,35 +53,35 @@ public class ServiceUsageChargeTemplateService extends
 		query.executeUpdate();
 	}
 
-	public List<ServiceUsageChargeTemplate> findByUsageChargeTemplate(
+	public List<ServiceChargeTemplateUsage> findByUsageChargeTemplate(
 			UsageChargeTemplate usageChargeTemplate, Provider provider) {
 		return findByUsageChargeTemplate(getEntityManager(),
 				usageChargeTemplate, provider);
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<ServiceUsageChargeTemplate> findByUsageChargeTemplate(
+	public List<ServiceChargeTemplateUsage> findByUsageChargeTemplate(
 			EntityManager em, UsageChargeTemplate usageChargeTemplate,
 			Provider provider) {
-		QueryBuilder qb = new QueryBuilder(ServiceUsageChargeTemplate.class,
+		QueryBuilder qb = new QueryBuilder(ServiceChargeTemplateUsage.class,
 				"a");
 		qb.addCriterionEntity("chargeTemplate", usageChargeTemplate);
 		qb.addCriterionEntity("provider", provider);
 
-		return (List<ServiceUsageChargeTemplate>) qb.getQuery(em)
+		return (List<ServiceChargeTemplateUsage>) qb.getQuery(em)
 				.getResultList();
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<ServiceUsageChargeTemplate> findByServiceTemplate(
+	public List<ServiceChargeTemplateUsage> findByServiceTemplate(
 			ServiceTemplate serviceTemplate, Provider provider) {
-		QueryBuilder qb = new QueryBuilder(ServiceUsageChargeTemplate.class,
+		QueryBuilder qb = new QueryBuilder(ServiceChargeTemplateUsage.class,
 				"s");
 		qb.addCriterionEntity("s.serviceTemplate", serviceTemplate);
 		qb.addCriterionEntity("s.provider", provider);
 
 		try {
-			return (List<ServiceUsageChargeTemplate>) qb.getQuery(
+			return (List<ServiceChargeTemplateUsage>) qb.getQuery(
 					getEntityManager()).getResultList();
 		} catch (NoResultException e) {
 			log.warn(e.getMessage());

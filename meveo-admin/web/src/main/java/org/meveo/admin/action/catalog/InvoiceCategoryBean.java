@@ -32,12 +32,6 @@ import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.catalog.impl.CatMessagesService;
 import org.meveo.service.catalog.impl.InvoiceCategoryService;
 
-/**
- * Standard backing bean for {@link InvoiceCategory} (extends {@link BaseBean}
- * that provides almost all common methods to handle entities filtering/sorting
- * in datatable, their create, edit, view, delete operations). It works with
- * Manaty custom JSF components.
- */
 @Named
 @ConversationScoped
 public class InvoiceCategoryBean extends StatelessBaseBean<InvoiceCategory> {

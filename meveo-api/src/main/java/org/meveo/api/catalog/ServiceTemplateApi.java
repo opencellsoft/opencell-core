@@ -19,15 +19,15 @@ import org.meveo.model.admin.User;
 import org.meveo.model.catalog.CounterTemplate;
 import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.RecurringChargeTemplate;
+import org.meveo.model.catalog.ServiceChargeTemplateUsage;
 import org.meveo.model.catalog.ServiceTemplate;
-import org.meveo.model.catalog.ServiceUsageChargeTemplate;
 import org.meveo.model.catalog.UsageChargeTemplate;
 import org.meveo.model.crm.Provider;
 import org.meveo.service.catalog.impl.CounterTemplateService;
 import org.meveo.service.catalog.impl.OneShotChargeTemplateService;
 import org.meveo.service.catalog.impl.RecurringChargeTemplateService;
+import org.meveo.service.catalog.impl.ServiceChargeTemplateUsageService;
 import org.meveo.service.catalog.impl.ServiceTemplateService;
-import org.meveo.service.catalog.impl.ServiceUsageChargeTemplateService;
 import org.meveo.service.catalog.impl.UsageChargeTemplateService;
 
 /**
@@ -49,7 +49,7 @@ public class ServiceTemplateApi extends BaseApi {
 	private UsageChargeTemplateService usageChargeTemplateService;
 
 	@Inject
-	private ServiceUsageChargeTemplateService serviceUsageChargeTemplateService;
+	private ServiceChargeTemplateUsageService serviceUsageChargeTemplateService;
 
 	@SuppressWarnings("rawtypes")
 	@Inject
@@ -116,7 +116,7 @@ public class ServiceTemplateApi extends BaseApi {
 			}
 
 			// check for usage charges
-			List<ServiceUsageChargeTemplate> serviceUsageChargeTemplates = new ArrayList<ServiceUsageChargeTemplate>();
+			List<ServiceChargeTemplateUsage> serviceUsageChargeTemplates = new ArrayList<ServiceChargeTemplateUsage>();
 			if (postData.getServiceUsageCharges() != null
 					&& postData.getServiceUsageCharges().size() > 0) {
 				for (ServiceUsageChargeTemplateDto serviceUsageChargeTemplateDto : postData
@@ -143,7 +143,7 @@ public class ServiceTemplateApi extends BaseApi {
 										.getCounterTemplate());
 					}
 
-					ServiceUsageChargeTemplate serviceUsageChargeTemplate = new ServiceUsageChargeTemplate();
+					ServiceChargeTemplateUsage serviceUsageChargeTemplate = new ServiceChargeTemplateUsage();
 					serviceUsageChargeTemplate
 							.setChargeTemplate(usageChargeTemplate);
 					serviceUsageChargeTemplate
@@ -157,7 +157,7 @@ public class ServiceTemplateApi extends BaseApi {
 			serviceTemplateService.create(serviceTemplate, currentUser,
 					provider);
 
-			for (ServiceUsageChargeTemplate serviceUsageChargeTemplate : serviceUsageChargeTemplates) {
+			for (ServiceChargeTemplateUsage serviceUsageChargeTemplate : serviceUsageChargeTemplates) {
 				serviceUsageChargeTemplate.setServiceTemplate(serviceTemplate);
 				serviceUsageChargeTemplateService.create(
 						serviceUsageChargeTemplate, currentUser, provider);
@@ -258,7 +258,7 @@ public class ServiceTemplateApi extends BaseApi {
 
 			if (postData.getServiceUsageCharges() != null
 					&& postData.getServiceUsageCharges().size() > 0) {
-				List<ServiceUsageChargeTemplate> updatedCharges = new ArrayList<ServiceUsageChargeTemplate>();
+				List<ServiceChargeTemplateUsage> updatedCharges = new ArrayList<ServiceChargeTemplateUsage>();
 
 				for (ServiceUsageChargeTemplateDto serviceUsageChargeTemplateDto : postData
 						.getServiceUsageCharges()) {
@@ -273,7 +273,7 @@ public class ServiceTemplateApi extends BaseApi {
 										.getUsageChargeTemplate());
 					}
 
-					ServiceUsageChargeTemplate serviceUsageChargeTemplate = new ServiceUsageChargeTemplate();
+					ServiceChargeTemplateUsage serviceUsageChargeTemplate = new ServiceChargeTemplateUsage();
 					serviceUsageChargeTemplate.setProvider(provider);
 					serviceUsageChargeTemplate
 							.setServiceTemplate(serviceTemplate);
@@ -302,28 +302,28 @@ public class ServiceTemplateApi extends BaseApi {
 				if (serviceTemplate.getServiceUsageCharges() == null
 						|| serviceTemplate.getServiceUsageCharges().size() == 0) {
 					// add
-					for (ServiceUsageChargeTemplate serviceUsageChargeTemplate : updatedCharges) {
+					for (ServiceChargeTemplateUsage serviceUsageChargeTemplate : updatedCharges) {
 						serviceUsageChargeTemplateService.create(
 								serviceUsageChargeTemplate, currentUser,
 								provider);
 					}
 				} else {
 					// update
-					List<ServiceUsageChargeTemplate> oldCharges = new ArrayList<ServiceUsageChargeTemplate>();
+					List<ServiceChargeTemplateUsage> oldCharges = new ArrayList<ServiceChargeTemplateUsage>();
 					oldCharges.addAll(serviceTemplate.getServiceUsageCharges());
 
-					List<ServiceUsageChargeTemplate> newCharges = new ArrayList<ServiceUsageChargeTemplate>();
+					List<ServiceChargeTemplateUsage> newCharges = new ArrayList<ServiceChargeTemplateUsage>();
 					newCharges.addAll(updatedCharges);
 
 					// remove old charges
-					Iterator<ServiceUsageChargeTemplate> a = oldCharges
+					Iterator<ServiceChargeTemplateUsage> a = oldCharges
 							.iterator();
 					while (a.hasNext()) {
-						ServiceUsageChargeTemplate a1 = a.next();
-						Iterator<ServiceUsageChargeTemplate> b = newCharges
+						ServiceChargeTemplateUsage a1 = a.next();
+						Iterator<ServiceChargeTemplateUsage> b = newCharges
 								.iterator();
 						while (b.hasNext()) {
-							ServiceUsageChargeTemplate b1 = b.next();
+							ServiceChargeTemplateUsage b1 = b.next();
 							if (a1.getChargeTemplate().getCode()
 									.equals(b1.getChargeTemplate().getCode())) {
 								a.remove();
@@ -331,26 +331,26 @@ public class ServiceTemplateApi extends BaseApi {
 						}
 					}
 
-					for (ServiceUsageChargeTemplate serviceUsageChargeTemplate : oldCharges) {
+					for (ServiceChargeTemplateUsage serviceUsageChargeTemplate : oldCharges) {
 						serviceUsageChargeTemplateService
 								.remove(serviceUsageChargeTemplate);
 					}
 
-					oldCharges = new ArrayList<ServiceUsageChargeTemplate>();
+					oldCharges = new ArrayList<ServiceChargeTemplateUsage>();
 					oldCharges.addAll(serviceTemplate.getServiceUsageCharges());
 
-					newCharges = new ArrayList<ServiceUsageChargeTemplate>();
+					newCharges = new ArrayList<ServiceChargeTemplateUsage>();
 					newCharges.addAll(updatedCharges);
 
 					// add new charges
-					Iterator<ServiceUsageChargeTemplate> x = newCharges
+					Iterator<ServiceChargeTemplateUsage> x = newCharges
 							.iterator();
 					while (x.hasNext()) {
-						ServiceUsageChargeTemplate x1 = x.next();
-						Iterator<ServiceUsageChargeTemplate> y = oldCharges
+						ServiceChargeTemplateUsage x1 = x.next();
+						Iterator<ServiceChargeTemplateUsage> y = oldCharges
 								.iterator();
 						while (y.hasNext()) {
-							ServiceUsageChargeTemplate y1 = y.next();
+							ServiceChargeTemplateUsage y1 = y.next();
 							if (x1.getChargeTemplate().getCode()
 									.equals(y1.getChargeTemplate().getCode())) {
 								x.remove();
@@ -358,16 +358,16 @@ public class ServiceTemplateApi extends BaseApi {
 						}
 					}
 
-					for (ServiceUsageChargeTemplate serviceUsageChargeTemplate : newCharges) {
+					for (ServiceChargeTemplateUsage serviceUsageChargeTemplate : newCharges) {
 						serviceUsageChargeTemplateService.create(
 								serviceUsageChargeTemplate, currentUser,
 								provider);
 					}
 
 					// update the match
-					for (ServiceUsageChargeTemplate oldCharge : serviceTemplate
+					for (ServiceChargeTemplateUsage oldCharge : serviceTemplate
 							.getServiceUsageCharges()) {
-						for (ServiceUsageChargeTemplate newCharge : updatedCharges) {
+						for (ServiceChargeTemplateUsage newCharge : updatedCharges) {
 							if (oldCharge
 									.getChargeTemplate()
 									.getCode()

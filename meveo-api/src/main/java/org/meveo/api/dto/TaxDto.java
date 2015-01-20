@@ -1,6 +1,5 @@
 package org.meveo.api.dto;
 
-import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.List;
 
@@ -17,7 +16,7 @@ import org.meveo.model.billing.Tax;
  **/
 @XmlRootElement(name = "Tax")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class TaxDto implements Serializable {
+public class TaxDto extends BaseDto {
 
 	private static final long serialVersionUID = 5184602572648722134L;
 

@@ -29,12 +29,7 @@ import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.catalog.impl.CountryComService;
 
-/**
- * Standard backing bean for {@link TradingCountry} (extends {@link BaseBean}
- * that provides almost all common methods to handle entities filtering/sorting
- * in datatable, their create, edit, view, delete operations). It works with
- * Manaty custom JSF components.
- */
+
 @Named
 @ConversationScoped
 public class CountryComBean extends StatelessBaseBean<TradingCountry> {

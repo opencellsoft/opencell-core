@@ -39,7 +39,7 @@ import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.TradingLanguage;
-import org.meveo.model.billing.WalletTemplate;
+import org.meveo.model.catalog.WalletTemplate;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.security.Role;
 import org.meveo.model.shared.Title;

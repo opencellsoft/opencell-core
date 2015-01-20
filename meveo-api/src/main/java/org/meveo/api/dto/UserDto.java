@@ -1,6 +1,5 @@
 package org.meveo.api.dto;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,7 +18,7 @@ import org.meveo.model.security.Role;
  **/
 @XmlRootElement(name = "User")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class UserDto implements Serializable {
+public class UserDto extends BaseDto {
 
 	private static final long serialVersionUID = -6633504145323452803L;
 
@@ -128,10 +127,9 @@ public class UserDto implements Serializable {
 
 	@Override
 	public String toString() {
-		return "UserDto [username=" + username + ", password=" + password
-				+ ", email=" + email + ", role=" + role + ", provider="
-				+ provider + ", firstName=" + firstName + ", lastName="
-				+ lastName + ", roles=" + roles + "]";
+		return "UserDto [username=" + username + ", password=" + password + ", email=" + email + ", role=" + role
+				+ ", provider=" + provider + ", firstName=" + firstName + ", lastName=" + lastName + ", roles=" + roles
+				+ "]";
 	}
 
 }

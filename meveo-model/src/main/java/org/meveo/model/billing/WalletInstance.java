@@ -16,11 +16,13 @@
  */
 package org.meveo.model.billing;
 
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
@@ -28,8 +30,11 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 import org.meveo.model.BusinessEntity;
+import org.meveo.model.catalog.WalletTemplate;
 
 @Entity
 @Table(name = "BILLING_WALLET")
@@ -45,6 +50,10 @@ public class WalletInstance extends BusinessEntity {
 	@ManyToOne
 	@JoinColumn(name = "USER_ACCOUNT_ID")
 	private UserAccount userAccount;
+	
+	@Column(name="EXPIRY_DATE")
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date creditExpiryDate;
 
 	@OneToMany(mappedBy = "wallet", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	private List<WalletOperation> operations;
@@ -103,4 +112,15 @@ public class WalletInstance extends BusinessEntity {
 		return invoiceSubCategories;
 	}
 
+	public Date getCreditExpiryDate() {
+		return creditExpiryDate;
+	}
+
+	public void setCreditExpiryDate(Date creditExpiryDate) {
+		this.creditExpiryDate = creditExpiryDate;
+	}
+
+	public boolean equals(WalletInstance w){
+		return (w==null)||(w.getCode().equals(this.code));
+	}
 }

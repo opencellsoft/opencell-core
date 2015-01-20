@@ -38,6 +38,19 @@ public class ServiceTemplate extends BusinessEntity {
 
 	private static final long serialVersionUID = 1L;
 
+	@OneToMany(mappedBy = "serviceTemplate",fetch = FetchType.LAZY)
+	private List<ServiceChargeTemplateRecurring> serviceRecurringCharges = new ArrayList<ServiceChargeTemplateRecurring>();
+
+	@OneToMany(mappedBy = "serviceTemplate",fetch = FetchType.LAZY)
+	private List<ServiceChargeTemplateSubscription> serviceSubscriptionCharges = new ArrayList<ServiceChargeTemplateSubscription>();
+
+	@OneToMany(mappedBy = "serviceTemplate",fetch = FetchType.LAZY)
+	private List<ServiceChargeTemplateTermination> serviceTerminationCharges = new ArrayList<ServiceChargeTemplateTermination>();
+
+	@OneToMany(mappedBy = "serviceTemplate", fetch = FetchType.LAZY)
+	private List<ServiceChargeTemplateUsage> serviceUsageCharges = new ArrayList<ServiceChargeTemplateUsage>();
+	
+	
 	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(name = "CAT_SERV_RECCHARGE_TEMPLATES", joinColumns = @JoinColumn(name = "SERVICE_TEMPLATE_ID"), inverseJoinColumns = @JoinColumn(name = "CHARGE_TEMPLATE_ID"))
 	private List<RecurringChargeTemplate> recurringCharges = new ArrayList<RecurringChargeTemplate>();
@@ -49,12 +62,12 @@ public class ServiceTemplate extends BusinessEntity {
 	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(name = "CAT_SERV_ONECHARGE_T_TEMPLATES", joinColumns = @JoinColumn(name = "SERVICE_TEMPLATE_ID"), inverseJoinColumns = @JoinColumn(name = "CHARGE_TEMPLATE_ID"))
 	private List<OneShotChargeTemplate> terminationCharges = new ArrayList<OneShotChargeTemplate>();
-
-	@OneToMany(mappedBy = "serviceTemplate", fetch = FetchType.LAZY)
-	private List<ServiceUsageChargeTemplate> serviceUsageCharges = new ArrayList<ServiceUsageChargeTemplate>();
+ 
 
 	@OneToMany(mappedBy = "serviceTemplate", fetch = FetchType.LAZY)
 	private List<ServiceInstance> serviceInstances = new ArrayList<ServiceInstance>();
+
+	
 
 	public List<RecurringChargeTemplate> getRecurringCharges() {
 		return recurringCharges;
@@ -91,12 +104,43 @@ public class ServiceTemplate extends BusinessEntity {
 		this.serviceInstances = serviceInstances;
 	}
 
-	public List<ServiceUsageChargeTemplate> getServiceUsageCharges() {
+ 
+	
+	
+
+	public List<ServiceChargeTemplateUsage> getServiceUsageCharges() {
 		return serviceUsageCharges;
 	}
 
+	public List<ServiceChargeTemplateRecurring> getServiceRecurringCharges() {
+		return serviceRecurringCharges;
+	}
+
+	public void setServiceRecurringCharges(
+			List<ServiceChargeTemplateRecurring> serviceRecurringCharges) {
+		this.serviceRecurringCharges = serviceRecurringCharges;
+	}
+
+	public List<ServiceChargeTemplateSubscription> getServiceSubscriptionCharges() {
+		return serviceSubscriptionCharges;
+	}
+
+	public void setServiceSubscriptionCharges(
+			List<ServiceChargeTemplateSubscription> serviceSubscriptionCharges) {
+		this.serviceSubscriptionCharges = serviceSubscriptionCharges;
+	}
+
+	public List<ServiceChargeTemplateTermination> getServiceTerminationCharges() {
+		return serviceTerminationCharges;
+	}
+
+	public void setServiceTerminationCharges(
+			List<ServiceChargeTemplateTermination> serviceTerminationCharges) {
+		this.serviceTerminationCharges = serviceTerminationCharges;
+	}
+
 	public void setServiceUsageCharges(
-			List<ServiceUsageChargeTemplate> serviceUsageCharges) {
+			List<ServiceChargeTemplateUsage> serviceUsageCharges) {
 		this.serviceUsageCharges = serviceUsageCharges;
 	}
 

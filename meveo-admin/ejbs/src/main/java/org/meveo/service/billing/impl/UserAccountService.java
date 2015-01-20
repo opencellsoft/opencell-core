@@ -38,7 +38,7 @@ import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.SubscriptionTerminationReason;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.billing.WalletInstance;
-import org.meveo.model.billing.WalletTemplate;
+import org.meveo.model.catalog.WalletTemplate;
 import org.meveo.service.base.AccountService;
 
 @Stateless

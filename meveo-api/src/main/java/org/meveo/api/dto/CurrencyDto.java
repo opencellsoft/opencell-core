@@ -1,7 +1,5 @@
 package org.meveo.api.dto;
 
-import java.io.Serializable;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -14,13 +12,13 @@ import org.meveo.model.billing.TradingCurrency;
  **/
 @XmlRootElement(name = "Currency")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class CurrencyDto implements Serializable {
+public class CurrencyDto extends BaseDto {
 
 	private static final long serialVersionUID = 9143645109603442839L;
 
 	@XmlAttribute(required = true)
 	private String code;
-	
+
 	private String description;
 
 	public CurrencyDto() {
@@ -50,8 +48,7 @@ public class CurrencyDto implements Serializable {
 
 	@Override
 	public String toString() {
-		return "CurrencyDto [code=" + code + ", description=" + description
-				+ "]";
+		return "CurrencyDto [code=" + code + ", description=" + description + "]";
 	}
 
 }

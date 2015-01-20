@@ -48,7 +48,7 @@ import org.meveo.model.billing.WalletInstance;
 import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.RecurringChargeTemplate;
 import org.meveo.model.catalog.ServiceTemplate;
-import org.meveo.model.catalog.ServiceUsageChargeTemplate;
+import org.meveo.model.catalog.ServiceChargeTemplateUsage;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.shared.DateUtils;
@@ -181,7 +181,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 					null, 1, seller, creator);
 		}
 
-		for (ServiceUsageChargeTemplate serviceUsageChargeTemplate : serviceTemplate
+		for (ServiceChargeTemplateUsage serviceUsageChargeTemplate : serviceTemplate
 				.getServiceUsageCharges()) {
 			usageChargeInstanceService.usageChargeInstanciation(
 					serviceInstance.getSubscription(), serviceInstance,

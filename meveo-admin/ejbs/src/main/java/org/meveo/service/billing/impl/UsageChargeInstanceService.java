@@ -33,7 +33,7 @@ import org.meveo.model.billing.InstanceStatusEnum;
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.UsageChargeInstance;
-import org.meveo.model.catalog.ServiceUsageChargeTemplate;
+import org.meveo.model.catalog.ServiceChargeTemplateUsage;
 import org.meveo.service.base.BusinessService;
 
 @Stateless
@@ -48,7 +48,7 @@ public class UsageChargeInstanceService extends
 
 	public UsageChargeInstance usageChargeInstanciation(
 			Subscription subscription, ServiceInstance serviceInstance,
-			ServiceUsageChargeTemplate serviceUsageChargeTemplate,
+			ServiceChargeTemplateUsage serviceUsageChargeTemplate,
 			Date startDate, Seller seller, User creator)
 			throws BusinessException {
 		return usageChargeInstanciation(getEntityManager(), subscription,
@@ -58,7 +58,7 @@ public class UsageChargeInstanceService extends
 
 	public UsageChargeInstance usageChargeInstanciation(EntityManager em,
 			Subscription subscription, ServiceInstance serviceInstance,
-			ServiceUsageChargeTemplate serviceUsageChargeTemplate,
+			ServiceChargeTemplateUsage serviceUsageChargeTemplate,
 			Date startDate, Seller seller, User creator)
 			throws BusinessException {
 

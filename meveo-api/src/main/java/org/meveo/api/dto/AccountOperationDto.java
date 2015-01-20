@@ -11,8 +11,10 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement(name = "AccountOperation")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class AccountOperationDto {
+public class AccountOperationDto extends BaseDto {
 
+	private static final long serialVersionUID = 4329241417200680028L;
+	
 	private Date dueDate;
 	private String type;
 	private Date transactionDate;

@@ -16,64 +16,35 @@
  */
 package org.meveo.model.catalog;
 
+import java.util.List;
+
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OrderColumn;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
-import org.meveo.model.BaseEntity;
 
 @Entity
 @Table(name = "CAT_SERV_USAGE_CHARGE_TEMPLATE")
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "CAT_SERV_USAGECHRG_TEMPLT_SEQ")
-public class ServiceUsageChargeTemplate extends BaseEntity {
+public class ServiceChargeTemplateUsage extends ServiceChargeTemplate<UsageChargeTemplate> {
 
 	private static final long serialVersionUID = -6881449392209666474L;
-
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "SERVICE_TEMPLATE_ID")
-	private ServiceTemplate serviceTemplate;
-
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "CHARGE_TEMPLATE_ID")
-	private UsageChargeTemplate chargeTemplate;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "COUNTER_TEMPLATE_ID")
 	private CounterTemplate counterTemplate;
 
-	// TODO do we need that ?
-	/*
-	 * @ManyToOne(fetch = FetchType.LAZY)
-	 * 
-	 * @JoinColumn(name = "WALLET_TEMPLATE_ID") private WalletTemplate
-	 * walletTemplate;
-	 * 
-	 * @Enumerated(EnumType.STRING)
-	 * 
-	 * @Column(name = "CREDIT_DEBIT_FLAG") private OperationTypeEnum type;
-	 * 
-	 * @Column(name = "UNITY_COUNTER_MULTIPLICATOR") private BigDecimal
-	 * unityCounterMultiplicator = BigDecimal.ONE;
-	 */
-
-	public ServiceTemplate getServiceTemplate() {
-		return serviceTemplate;
-	}
-
-	public void setServiceTemplate(ServiceTemplate serviceTemplate) {
-		this.serviceTemplate = serviceTemplate;
-	}
-
-	public UsageChargeTemplate getChargeTemplate() {
-		return chargeTemplate;
-	}
-
-	public void setChargeTemplate(UsageChargeTemplate chargeTemplate) {
-		this.chargeTemplate = chargeTemplate;
-	}
+	@ManyToMany(fetch = FetchType.LAZY)
+	@JoinTable(name = "CAT_SERV_USAGE_WALLET_TEMPLATE", joinColumns = @JoinColumn(name = "SERVICE_USAGE_TEMPLT_ID"), inverseJoinColumns = @JoinColumn(name = "WALLET_TEMPLATE_ID"))
+	@OrderColumn(name="INDX")
+	private List<WalletTemplate> walletTemplates;
+	
 
 	public CounterTemplate getCounterTemplate() {
 		return counterTemplate;
@@ -82,7 +53,14 @@ public class ServiceUsageChargeTemplate extends BaseEntity {
 	public void setCounterTemplate(CounterTemplate counterTemplate) {
 		this.counterTemplate = counterTemplate;
 	}
+	public List<WalletTemplate> getWalletTemplates() {
+		return walletTemplates;
+	}
 
+	public void setWalletTemplates(List<WalletTemplate> walletTemplates) {
+		this.walletTemplates = walletTemplates;
+	}
+	
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -95,9 +73,11 @@ public class ServiceUsageChargeTemplate extends BaseEntity {
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;
+		if (!super.equals(obj))
+			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		ServiceUsageChargeTemplate other = (ServiceUsageChargeTemplate) obj;
+		ServiceChargeTemplateUsage other = (ServiceChargeTemplateUsage) obj;
 		if (getId() == null) {
 			if (other.getId() != null)
 				return false;
