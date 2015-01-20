@@ -139,10 +139,10 @@ public class BillingAccountDto extends AccountDto {
 	@Override
 	public String toString() {
 		return "BillingAccountDto [customerAccount=" + customerAccount + ", billingCycle=" + billingCycle
-				+ ", country=" + country + ", language=" + language + ", nextInvoiceDate=" + nextInvoiceDate
-				+ ", subscriptionDate=" + subscriptionDate + ", terminationDate=" + terminationDate
-				+ ", paymentMethod=" + paymentMethod + ", paymentTerms=" + paymentTerms + ", electronicBilling="
-				+ electronicBilling + "]";
+				+ ", country=" + country + ", language=" + language + ", paymentMethod=" + paymentMethod
+				+ ", nextInvoiceDate=" + nextInvoiceDate + ", subscriptionDate=" + subscriptionDate
+				+ ", terminationDate=" + terminationDate + ", paymentTerms=" + paymentTerms + ", electronicBilling="
+				+ electronicBilling + ", toString()=" + super.toString() + "]";
 	}
 
 	public Date getSubscriptionDate() {

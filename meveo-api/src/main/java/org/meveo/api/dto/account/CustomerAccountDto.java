@@ -187,7 +187,7 @@ public class CustomerAccountDto extends AccountDto {
 				+ accountOperations + ", dateStatus=" + dateStatus + ", dateDunningLevel=" + dateDunningLevel
 				+ ", email=" + email + ", phone=" + phone + ", mobile=" + mobile + ", fax=" + fax + ", dunningLevel="
 				+ dunningLevel + ", mandateIdentification=" + mandateIdentification + ", mandateDate=" + mandateDate
-				+ ", balance=" + balance + "]";
+				+ ", balance=" + balance + ", toString()=" + super.toString() + "]";
 	}
 
 }
