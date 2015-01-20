@@ -51,7 +51,7 @@ public class CustomerAccountApi extends AccountApi {
 
 	public void create(CustomerAccountDto postData, User currentUser) throws MeveoApiException {
 		if (!StringUtils.isBlank(postData.getCode()) && !StringUtils.isBlank(postData.getDescription())
-				&& !StringUtils.isBlank(postData.getCustomerCode()) && !StringUtils.isBlank(postData.getCurrency())
+				&& !StringUtils.isBlank(postData.getCustomer()) && !StringUtils.isBlank(postData.getCurrency())
 				&& !StringUtils.isBlank(postData.getName()) && !StringUtils.isBlank(postData.getName().getLastName())) {
 			Provider provider = currentUser.getProvider();
 			// check if already exists
@@ -59,9 +59,9 @@ public class CustomerAccountApi extends AccountApi {
 				throw new EntityAlreadyExistsException(CustomerAccount.class, postData.getCode());
 			}
 
-			Customer customer = customerService.findByCode(postData.getCustomerCode(), provider);
+			Customer customer = customerService.findByCode(postData.getCustomer(), provider);
 			if (customer == null) {
-				throw new EntityDoesNotExistsException(Customer.class, postData.getCustomerCode());
+				throw new EntityDoesNotExistsException(Customer.class, postData.getCustomer());
 			}
 
 			TradingCurrency tradingCurrency = tradingCurrencyService.findByTradingCurrencyCode(postData.getCurrency(),
@@ -103,8 +103,8 @@ public class CustomerAccountApi extends AccountApi {
 			if (StringUtils.isBlank(postData.getDescription())) {
 				missingParameters.add("description");
 			}
-			if (StringUtils.isBlank(postData.getCustomerCode())) {
-				missingParameters.add("customerCode");
+			if (StringUtils.isBlank(postData.getCustomer())) {
+				missingParameters.add("customer");
 			}
 			if (StringUtils.isBlank(postData.getCurrency())) {
 				missingParameters.add("currency");
@@ -123,7 +123,7 @@ public class CustomerAccountApi extends AccountApi {
 
 	public void update(CustomerAccountDto postData, User currentUser) throws MeveoApiException {
 		if (!StringUtils.isBlank(postData.getCode()) && !StringUtils.isBlank(postData.getDescription())
-				&& !StringUtils.isBlank(postData.getCustomerCode()) && !StringUtils.isBlank(postData.getCurrency())
+				&& !StringUtils.isBlank(postData.getCustomer()) && !StringUtils.isBlank(postData.getCurrency())
 				&& !StringUtils.isBlank(postData.getName()) && !StringUtils.isBlank(postData.getName().getLastName())) {
 			Provider provider = currentUser.getProvider();
 			// check if already exists
@@ -133,9 +133,9 @@ public class CustomerAccountApi extends AccountApi {
 				throw new EntityDoesNotExistsException(CustomerAccount.class, postData.getCode());
 			}
 
-			Customer customer = customerService.findByCode(postData.getCustomerCode(), provider);
+			Customer customer = customerService.findByCode(postData.getCustomer(), provider);
 			if (customer == null) {
-				throw new EntityDoesNotExistsException(Customer.class, postData.getCustomerCode());
+				throw new EntityDoesNotExistsException(Customer.class, postData.getCustomer());
 			}
 
 			TradingCurrency tradingCurrency = tradingCurrencyService.findByTradingCurrencyCode(postData.getCurrency(),
@@ -157,7 +157,8 @@ public class CustomerAccountApi extends AccountApi {
 				contactInformation.setFax(postData.getFax());
 				customerAccount.setContactInformation(contactInformation);
 			}
-			populate(postData, customerAccount, currentUser);
+
+			updateAccount(customerAccount, postData, currentUser);
 
 			customerAccount.setCustomer(customer);
 			customerAccount.setTradingCurrency(tradingCurrency);
@@ -182,8 +183,8 @@ public class CustomerAccountApi extends AccountApi {
 			if (StringUtils.isBlank(postData.getDescription())) {
 				missingParameters.add("description");
 			}
-			if (StringUtils.isBlank(postData.getCustomerCode())) {
-				missingParameters.add("customerCode");
+			if (StringUtils.isBlank(postData.getCustomer())) {
+				missingParameters.add("customer");
 			}
 			if (StringUtils.isBlank(postData.getCurrency())) {
 				missingParameters.add("currency");
@@ -241,7 +242,7 @@ public class CustomerAccountApi extends AccountApi {
 			}
 
 			if (customerAccount.getCustomer() != null) {
-				customerAccountDto.setCustomerCode(customerAccount.getCustomer().getCode());
+				customerAccountDto.setCustomer(customerAccount.getCustomer().getCode());
 			}
 
 			if (customerAccount.getCustomFields() != null && customerAccount.getCustomFields().size() > 0) {

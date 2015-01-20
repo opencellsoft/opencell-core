@@ -12,29 +12,27 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 import org.meveo.api.dto.ActionStatus;
-import org.meveo.api.dto.account.CustomerAccountDto;
-import org.meveo.api.dto.response.account.GetCustomerAccountResponse;
+import org.meveo.api.dto.account.BillingAccountDto;
+import org.meveo.api.dto.response.account.GetBillingAccountResponse;
 import org.meveo.api.rest.IBaseRs;
 import org.meveo.api.rest.security.RSSecured;
 
 /**
- * Web service for managing customer account.
- * 
- * @author R.AITYAAZZA
- */
-@Path("/account/customerAccount")
+ * @author Edward P. Legaspi
+ **/
+@Path("/account/billingAccount")
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @RSSecured
-public interface CustomerAccountRs extends IBaseRs {
+public interface BillingAccountRs extends IBaseRs {
 
 	@POST
 	@Path("/")
-	ActionStatus create(CustomerAccountDto postData);
+	ActionStatus create(BillingAccountDto postData);
 
 	@PUT
 	@Path("/")
-	ActionStatus update(CustomerAccountDto postData);
+	ActionStatus update(BillingAccountDto postData);
 
 	/**
 	 * Search for a customer account with a given code.
@@ -44,10 +42,10 @@ public interface CustomerAccountRs extends IBaseRs {
 	 */
 	@GET
 	@Path("/")
-	GetCustomerAccountResponse find(@QueryParam("customerAccountCode") String customerAccountCode);
+	GetBillingAccountResponse find(@QueryParam("billingAccountCode") String billingAccountCode);
 
 	@DELETE
-	@Path("/{customerAccountCode}")
-	ActionStatus remove(@PathParam("customerAccountCode") String customerAccountCode);
+	@Path("/{billingAccountCode}")
+	ActionStatus remove(@PathParam("billingAccountCode") String billingAccountCode);
 
 }

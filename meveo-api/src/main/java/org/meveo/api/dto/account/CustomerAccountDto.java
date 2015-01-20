@@ -7,6 +7,7 @@ import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.AccountOperationDto;
@@ -17,8 +18,12 @@ public class CustomerAccountDto extends AccountDto {
 
 	private static final long serialVersionUID = -137632696663739285L;
 
-	private String customerCode;
+	@XmlAttribute(required = true)
+	private String customer;
+
+	@XmlAttribute(required = true)
 	private String currency;
+
 	private String status;
 	private String paymentMethod;
 	private String creditCategory;
@@ -112,12 +117,12 @@ public class CustomerAccountDto extends AccountDto {
 		this.fax = fax;
 	}
 
-	public String getCustomerCode() {
-		return customerCode;
+	public String getCustomer() {
+		return customer;
 	}
 
-	public void setCustomerCode(String customerCode) {
-		this.customerCode = customerCode;
+	public void setCustomer(String customer) {
+		this.customer = customer;
 	}
 
 	public String getPaymentMethod() {
@@ -177,12 +182,12 @@ public class CustomerAccountDto extends AccountDto {
 
 	@Override
 	public String toString() {
-		return "CustomerAccountDto [customerCode=" + customerCode + ", currency=" + currency + ", status=" + status
+		return "CustomerAccountDto [customer=" + customer + ", currency=" + currency + ", status=" + status
 				+ ", paymentMethod=" + paymentMethod + ", creditCategory=" + creditCategory + ", accountOperations="
 				+ accountOperations + ", dateStatus=" + dateStatus + ", dateDunningLevel=" + dateDunningLevel
 				+ ", email=" + email + ", phone=" + phone + ", mobile=" + mobile + ", fax=" + fax + ", dunningLevel="
 				+ dunningLevel + ", mandateIdentification=" + mandateIdentification + ", mandateDate=" + mandateDate
-				+ ", balance=" + balance + ", toString()=" + super.toString() + "]";
+				+ ", balance=" + balance + "]";
 	}
 
 }

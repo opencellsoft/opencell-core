@@ -84,21 +84,16 @@ public class BillingAccountService extends AccountService<BillingAccount> {
 		if (billingAccount.getSubscriptionDate() == null) {
 			billingAccount.setSubscriptionDate(new Date());
 		}
+
 		if (billingAccount.getNextInvoiceDate() == null) {
 			billingAccount.setNextInvoiceDate(new Date());
 		}
+
 		if (billingAccount.getCustomerAccount() != null) {
 			billingAccount.setProvider(billingAccount.getCustomerAccount().getProvider());
 		}
+
 		create(billingAccount, creator, provider);
-	}
-
-	public void updateBillingAccount(BillingAccount billingAccount, User updater) {
-		update(billingAccount, updater);
-	}
-
-	public void updateBillingAccount(EntityManager em, BillingAccount billingAccount, User updater) {
-		update(billingAccount, updater);
 	}
 
 	public void updateElectronicBilling(BillingAccount billingAccount, Boolean electronicBilling, User updater,

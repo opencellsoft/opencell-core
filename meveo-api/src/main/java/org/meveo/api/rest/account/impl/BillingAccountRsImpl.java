@@ -3,36 +3,34 @@ package org.meveo.api.rest.account.impl;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
-import javax.ws.rs.QueryParam;
 
 import org.meveo.api.MeveoApiErrorCode;
-import org.meveo.api.account.CustomerAccountApi;
+import org.meveo.api.account.BillingAccountApi;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
-import org.meveo.api.dto.account.CustomerAccountDto;
-import org.meveo.api.dto.response.account.GetCustomerAccountResponse;
+import org.meveo.api.dto.account.BillingAccountDto;
+import org.meveo.api.dto.response.account.GetBillingAccountResponse;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.LoggingInterceptor;
-import org.meveo.api.rest.account.CustomerAccountRs;
+import org.meveo.api.rest.account.BillingAccountRs;
 import org.meveo.api.rest.impl.BaseRs;
 
 /**
- * @author R.AITYAAZZA
- * 
- */
+ * @author Edward P. Legaspi
+ **/
 @RequestScoped
 @Interceptors({ LoggingInterceptor.class })
-public class CustomerAccountRsImpl extends BaseRs implements CustomerAccountRs {
+public class BillingAccountRsImpl extends BaseRs implements BillingAccountRs {
 
 	@Inject
-	private CustomerAccountApi customerAccountApi;
+	private BillingAccountApi billingAccountApi;
 
 	@Override
-	public ActionStatus create(CustomerAccountDto postData) {
+	public ActionStatus create(BillingAccountDto postData) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 		try {
-			customerAccountApi.create(postData, getCurrentUser());
+			billingAccountApi.create(postData, getCurrentUser());
 		} catch (MeveoApiException e) {
 			result.setErrorCode(e.getErrorCode());
 			result.setStatus(ActionStatusEnum.FAIL);
@@ -47,11 +45,11 @@ public class CustomerAccountRsImpl extends BaseRs implements CustomerAccountRs {
 	}
 
 	@Override
-	public ActionStatus update(CustomerAccountDto postData) {
+	public ActionStatus update(BillingAccountDto postData) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 		try {
-			customerAccountApi.update(postData, getCurrentUser());
+			billingAccountApi.update(postData, getCurrentUser());
 		} catch (MeveoApiException e) {
 			result.setErrorCode(e.getErrorCode());
 			result.setStatus(ActionStatusEnum.FAIL);
@@ -66,11 +64,11 @@ public class CustomerAccountRsImpl extends BaseRs implements CustomerAccountRs {
 	}
 
 	@Override
-	public GetCustomerAccountResponse find(@QueryParam("customerAccountCode") String customerAccountCode) {
-		GetCustomerAccountResponse result = new GetCustomerAccountResponse();
+	public GetBillingAccountResponse find(String billingAccountCode) {
+		GetBillingAccountResponse result = new GetBillingAccountResponse();
 
 		try {
-			result.setCustomerAccount(customerAccountApi.find(customerAccountCode, getCurrentUser()));
+			result.setBillingAccount(billingAccountApi.find(billingAccountCode, getCurrentUser().getProvider()));
 		} catch (MeveoApiException e) {
 			result.getActionStatus().setErrorCode(e.getErrorCode());
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
@@ -85,11 +83,11 @@ public class CustomerAccountRsImpl extends BaseRs implements CustomerAccountRs {
 	}
 
 	@Override
-	public ActionStatus remove(String customerAccountCode) {
+	public ActionStatus remove(String billingAccountCode) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 		try {
-			customerAccountApi.remove(customerAccountCode, getCurrentUser().getProvider());
+			billingAccountApi.remove(billingAccountCode, getCurrentUser().getProvider());
 		} catch (MeveoApiException e) {
 			result.setErrorCode(e.getErrorCode());
 			result.setStatus(ActionStatusEnum.FAIL);
