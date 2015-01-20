@@ -21,7 +21,65 @@
 					<p:chartSeries label="#{messages['dashboard.customerAccounts']}" value="#{customerAccounts.amount}" />
 				</p:columnChart >
                -->
+
+
 			</h:panelGrid>
+			<p:dataGrid id="barChartList" var="bar"
+				value="#{barChartBean.chartModelList}" columns="3"
+				style="border:none;" rowIndexVar="i">
+				<p:barChart value="#{bar.model}" fill="#{bar.barChart.filled}"
+					legendPosition="#{bar.barChart.legendPosition}"
+					barPadding="#{bar.barChart.barPadding}"
+					barMargin="#{bar.barChart.barMargin}"
+					stacked="#{bar.barChart.stacked}" min="#{bar.barChart.min}"
+					max="#{bar.barChart.max}" breakOnNull="#{bar.barChart.breakOnNull}"
+					xaxisLabel="#{bar.barChart.xaxisLabel}"
+					yaxisLabel="#{bar.barChart.yaxisLabel}"
+					xaxisAngle="#{bar.barChart.xaxisAngle}"
+					yaxisAngle="#{bar.barChart.yaxisAngle}"
+					legendCols="#{bar.barChart.legendCols}"
+					legendRows="#{bar.barChart.legendRows}" zoom="#{bar.barChart.zoom}"
+					animate="#{bar.barChart.animate}"
+					showDatatip="#{bar.barChart.showDataTip}"
+					datatipFormat="#{bar.barChart.datatipFormat}" />
+
+			</p:dataGrid>
+			<p:dataGrid id="lineChartList" var="line"
+				value="#{lineChartBean.chartModelList}" columns="3"
+				style="border:none;" rowIndexVar="i">
+				<p:lineChart value="#{line.model}" fill="#{line.lineChart.filled}"
+					legendPosition="#{line.lineChart.legendPosition}"
+					barPadding="#{line.lineChart.barPadding}"
+					barMargin="#{line.lineChart.barMargin}"
+					stacked="#{line.lineChart.stacked}" min="#{line.lineChart.min}"
+					max="#{line.lineChart.max}"
+					breakOnNull="#{line.lineChart.breakOnNull}"
+					xaxisLabel="#{line.lineChart.xaxisLabel}"
+					yaxisLabel="#{line.lineChart.yaxisLabel}"
+					xaxisAngle="#{line.lineChart.xaxisAngle}"
+					yaxisAngle="#{line.lineChart.yaxisAngle}"
+					legendCols="#{line.lineChart.legendCols}"
+					legendRows="#{line.lineChart.legendRows}"
+					zoom="#{line.lineChart.zoom}" animate="#{line.lineChart.animate}"
+					showDatatip="#{line.lineChart.showDataTip}"
+					datatipFormat="#{line.lineChart.datatipFormat}" />
+			</p:dataGrid>
+			<p:dataGrid id="pieChartList" var="pie"
+				value="#{pieChartBean.chartModelList}" columns="3"
+				style="border:none;" rowIndexVar="i">
+				<p:pieChart value="#{pie.model}"
+					legendPosition="#{pie.pieChart.legendPosition}"
+					fill="#{pie.pieChart.filled}"
+					seriesColors="#{pie.pieChart.seriesColors}"
+					diameter="#{pie.pieChart.diameter}"
+					sliceMargin="#{pie.pieChart.sliceMargin}"
+					shadow="#{pie.pieChart.shadow}"
+					showDataLabels="#{pie.pieChart.showDataLabels}"
+					legendCols="#{pie.pieChart.legendCols}"
+					legendRows="#{pie.pieChart.legendRows}" />
+			</p:dataGrid>
+
+
 		</p:panel>
 
 	</ui:define>

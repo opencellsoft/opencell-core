@@ -1,0 +1,97 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a="http://richfaces.org/a4j" xmlns:hftl="http://hftl.org"
+	xmlns:hf="http://java.sun.com/jsf/composite/tags"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
+
+	<ui:define name="navigation">
+		<ui:include src="/layout/navigation.xhtml" />
+	</ui:define>
+
+	<ui:define name="body">
+
+
+		<hftl:entityPopup id="searchMeasurableQuantity"
+			header="#{messages['measurableQuantity.popup.header']}"
+			updateField=":chartFormPanel:formChat:measurableQuantityId:measurableQuantityId"
+			selection="#{pieChartBean.entity.measurableQuantity}"
+			backingBean="#{measurableQuantityBean}"
+			searchField1Label="#{messages['businessEntity.code']}"
+			searchField1="code" column1Label="#{messages['businessEntity.code']}"
+			column1="code"
+			column2Label="#{messages['businessEntity.description']}"
+			column2="description" />
+
+		<hftl:entityPopup id="searchRole"
+			header="#{messages['role.userRolePanel']}"
+			updateField=":chartFormPanel:formChat:roleId:roleId"
+			selection="#{pieChartBean.entity.role}" backingBean="#{userRoleBean}"
+			searchField1Label="#{messages['commons.name']}" searchField1="name"
+			column1Label="#{messages['commons.name']}" column1="name"
+			column2Label="#{messages['businessEntity.description']}"
+			column2="description" />
+
+		<hf:formPanel id="chartFormPanel" formId="formChat"
+			label="#{messages['chart.panel']}" backingBean="#{pieChartBean}"
+			columns="2">
+
+			<hf:formField label="#{messages['businessEntity.code']}" field="code" />
+
+			<hf:formEntityField id="measurableQuantityId"
+				label="#{messages['chart.measurableQuantity']}"
+				field="measurableQuantity" childField="code" required="true"
+				popup="true" popupId="searchMeasurableQuantity" />
+
+			<hf:formEntityField id="roleId" label="#{messages['chart.role']}"
+				field="role" childField="name" required="false" popup="true"
+				popupId="searchRole" />
+
+			<hf:formField label="#{messages['chart.style']}" field="style" />
+			<hf:formField label="#{messages['chart.styleClass']}"
+				field="styleClass" />
+			<hf:formField label="#{messages['chart.extender']}" field="extender" />
+			<hf:formField label="#{messages['pieChart.filled']}" field="filled" />
+			<hf:formField label="#{messages['pieChart.legendposition']}"
+				field="legendPosition" />
+			<hf:formField label="#{messages['pieChart.seriesColors']}"
+				field="seriesColors" />
+			<hf:formField label="#{messages['pieChart.diameter']}"
+				field="diameter" />
+			<hf:formField label="#{messages['pieChart.sliceMargin']}"
+				field="sliceMargin" />
+			<hf:formField label="#{messages['pieChart.shadow']}" field="shadow" />
+			<hf:formField label="#{messages['pieChart.showDataLabels']}"
+				field="showDataLabels" />
+			<hf:formField label="#{messages['pieChart.legendCols']}"
+				field="legendCols" />
+			<hf:formField label="#{messages['pieChart.legendRows']}"
+				field="legendRows" />
+				
+			<p:commandButton id="showPreview"
+				action="#{pieChartBean.getChartEntityModel()}"
+				value="#{messages['page.chart.preview']}" update="@all"></p:commandButton>
+
+			<p:outputPanel id="chartPreview"
+				rendered="#{pieChartBean.chartEntityModel.model != null}">
+				<p:pieChart value="#{pieChartBean.chartEntityModel.model}"
+					legendPosition="#{pieChartBean.chartEntityModel.pieChart.legendPosition}"
+					fill="#{pieChartBean.chartEntityModel.pieChart.filled}"
+					seriesColors="#{pieChartBean.chartEntityModel.pieChart.seriesColors}"
+					diameter="#{pieChartBean.chartEntityModel.pieChart.diameter}"
+					sliceMargin="#{pieChartBean.chartEntityModel.pieChart.sliceMargin}"
+					shadow="#{pieChartBean.chartEntityModel.pieChart.shadow}"
+					showDataLabels="#{pieChartBean.chartEntityModel.pieChart.showDataLabels}"
+					legendCols="#{pieChartBean.chartEntityModel.pieChart.legendCols}"
+					legendRows="#{pieChartBean.chartEntityModel.pieChart.legendRows}" />
+			</p:outputPanel>
+		</hf:formPanel>
+
+
+	</ui:define>
+
+</ui:composition>

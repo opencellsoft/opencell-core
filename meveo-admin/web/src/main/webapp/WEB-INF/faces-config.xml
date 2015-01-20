@@ -1124,7 +1124,25 @@
 			</to-view-id>
 			<redirect />
 		</navigation-case>
-		
+
+		<navigation-case>
+			<from-outcome>barChartDetail</from-outcome>
+			<to-view-id>/pages/reporting/dwh/barChartDetail.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+
+		<navigation-case>
+			<from-outcome>pieChartDetail</from-outcome>
+			<to-view-id>/pages/reporting/dwh/pieChartDetail.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+
+		<navigation-case>
+			<from-outcome>lineChartDetail</from-outcome>
+			<to-view-id>/pages/reporting/dwh/lineChartDetail.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+
 		<navigation-case>
 			<from-outcome>chartDetail</from-outcome>
 			<to-view-id>/pages/reporting/dwh/chartDetail.xhtml</to-view-id>
@@ -1148,11 +1166,12 @@
 			<to-view-id>/pages/notification/webHooks.xhtml</to-view-id>
 			<redirect />
 		</navigation-case>
-		
-		
+
+
 		<navigation-case>
 			<from-outcome>emailNotificationDetail</from-outcome>
-			<to-view-id>/pages/notification/emailNotificationDetail.xhtml</to-view-id>
+			<to-view-id>/pages/notification/emailNotificationDetail.xhtml
+			</to-view-id>
 			<redirect />
 		</navigation-case>
 
