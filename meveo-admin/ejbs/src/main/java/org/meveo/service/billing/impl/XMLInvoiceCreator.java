@@ -768,11 +768,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 							Element lineAmountWithTax = doc
 									.createElement("amountWithTax");
 							Text lineAmountWithTaxTxt = doc
-									.createTextNode(round(
-											entreprise ? ratedTransaction
-													.getAmountWithTax()
-													: ratedTransaction
-															.getAmountWithoutTax(),
+									.createTextNode(round(ratedTransaction.getAmountWithTax(),
 											invoice.getProvider().getRounding()));
 							lineAmountWithTax.appendChild(lineAmountWithTaxTxt);
 							line.appendChild(lineAmountWithTax);

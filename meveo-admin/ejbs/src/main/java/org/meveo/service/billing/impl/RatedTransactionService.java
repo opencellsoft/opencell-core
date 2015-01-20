@@ -421,7 +421,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 				invoice.addAmountWithoutTax(taxInvoiceAgregate.getAmountWithoutTax().setScale(2, RoundingMode.HALF_UP));
 				invoice.addAmountWithTax(taxInvoiceAgregate.getAmountWithTax().setScale(2, RoundingMode.HALF_UP));
 			}
-
+			BigDecimal balance=BigDecimal.ZERO;
 			if (!entreprise && biggestSubCat != null) {
 				// TODO log those steps
 				BigDecimal delta = nonEnterprisePriceWithTax.subtract(invoice.getAmountWithTax());
@@ -441,20 +441,20 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 
 				invoice.setAmountWithoutTax(invoice.getAmountWithoutTax().add(delta).setScale(2, RoundingMode.HALF_UP));
 				invoice.setAmountWithTax(nonEnterprisePriceWithTax.setScale(2, RoundingMode.HALF_UP));
-				BigDecimal balance = customerAccountService.customerAccountBalanceDue(null, invoice.getBillingAccount()
+				balance = customerAccountService.customerAccountBalanceDue(null, invoice.getBillingAccount()
 						.getCustomerAccount().getCode(), invoice.getDueDate());
 
 				if (balance == null) {
 					throw new BusinessException("account balance calculation failed");
 				}
-				BigDecimal netToPay = BigDecimal.ZERO;
-				if (entreprise) {
-					netToPay = invoice.getAmountWithTax();
-				} else {
-					netToPay = invoice.getAmountWithTax().add(balance);
-				}
-				invoice.setNetToPay(netToPay);
 			}
+			BigDecimal netToPay = BigDecimal.ZERO;
+			if (entreprise) {
+				netToPay = invoice.getAmountWithTax();
+			} else {
+				netToPay = invoice.getAmountWithTax().add(balance);
+			}
+			invoice.setNetToPay(netToPay);
 		}
 	}
 
