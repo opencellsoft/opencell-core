@@ -7,6 +7,7 @@ import org.meveo.api.BaseApi;
 import org.meveo.api.dto.CustomFieldDto;
 import org.meveo.api.dto.account.AccountDto;
 import org.meveo.api.exception.EntityDoesNotExistsException;
+import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.AccountEntity;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.TradingCountry;
@@ -56,7 +57,7 @@ public class AccountApi extends BaseApi {
 		if (postData.getName() != null) {
 			name.setFirstName(postData.getName().getFirstName());
 			name.setLastName(postData.getName().getLastName());
-			if (postData.getName().getTitle() != null) {
+			if (!StringUtils.isBlank(postData.getName().getTitle())) {
 				Title title = titleService.findByCode(currentUser.getProvider(), postData.getName().getTitle());
 				if (title == null) {
 					throw new EntityDoesNotExistsException(Title.class, postData.getName().getTitle());
@@ -115,7 +116,7 @@ public class AccountApi extends BaseApi {
 		if (postData.getName() != null) {
 			name.setFirstName(postData.getName().getFirstName());
 			name.setLastName(postData.getName().getLastName());
-			if (postData.getName().getTitle() != null) {
+			if (!StringUtils.isBlank(postData.getName().getTitle())) {
 				Title title = titleService.findByCode(currentUser.getProvider(), postData.getName().getTitle());
 				if (title == null) {
 					throw new EntityDoesNotExistsException(Title.class, postData.getName().getTitle());

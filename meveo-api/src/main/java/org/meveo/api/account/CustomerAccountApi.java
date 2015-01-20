@@ -32,9 +32,13 @@ import org.meveo.model.shared.ContactInformation;
 import org.meveo.service.admin.impl.TradingCurrencyService;
 import org.meveo.service.crm.impl.CustomerService;
 import org.meveo.service.payments.impl.CustomerAccountService;
+import org.slf4j.Logger;
 
 @Stateless
 public class CustomerAccountApi extends AccountApi {
+
+	@Inject
+	private Logger log;
 
 	@Inject
 	private CustomerAccountService customerAccountService;
@@ -77,11 +81,21 @@ public class CustomerAccountApi extends AccountApi {
 
 			customerAccount.setCustomer(customer);
 			customerAccount.setTradingCurrency(tradingCurrency);
-			customerAccount.setPaymentMethod(PaymentMethodEnum.valueOf(postData.getPaymentMethod()));
-			customerAccount.setCreditCategory(CreditCategoryEnum.valueOf(postData.getCreditCategory()));
+			try {
+				customerAccount.setPaymentMethod(PaymentMethodEnum.valueOf(postData.getPaymentMethod()));
+			} catch (IllegalArgumentException e) {
+				log.warn(e.getMessage());
+			}
+			try {
+				customerAccount.setCreditCategory(CreditCategoryEnum.valueOf(postData.getCreditCategory()));
+			} catch (IllegalArgumentException e) {
+				log.warn(e.getMessage());
+			}
 			customerAccount.setContactInformation(contactInformation);
 			customerAccount.setMandateDate(postData.getMandateDate());
 			customerAccount.setMandateIdentification(postData.getMandateIdentification());
+
+			customerAccountService.create(customerAccount, currentUser, currentUser.getProvider());
 		} else {
 			if (StringUtils.isBlank(postData.getCode())) {
 				missingParameters.add("code");
@@ -107,11 +121,60 @@ public class CustomerAccountApi extends AccountApi {
 
 	}
 
-	public void update(CustomerAccountDto postData, User currentUser) throws MissingParameterException {
+	public void update(CustomerAccountDto postData, User currentUser) throws MeveoApiException {
 		if (!StringUtils.isBlank(postData.getCode()) && !StringUtils.isBlank(postData.getDescription())
 				&& !StringUtils.isBlank(postData.getCustomerCode()) && !StringUtils.isBlank(postData.getCurrency())
 				&& !StringUtils.isBlank(postData.getName()) && !StringUtils.isBlank(postData.getName().getLastName())) {
+			Provider provider = currentUser.getProvider();
+			// check if already exists
+			CustomerAccount customerAccount = customerAccountService.findByCode(postData.getCode(),
+					currentUser.getProvider());
+			if (customerAccount == null) {
+				throw new EntityDoesNotExistsException(CustomerAccount.class, postData.getCode());
+			}
 
+			Customer customer = customerService.findByCode(postData.getCustomerCode(), provider);
+			if (customer == null) {
+				throw new EntityDoesNotExistsException(Customer.class, postData.getCustomerCode());
+			}
+
+			TradingCurrency tradingCurrency = tradingCurrencyService.findByTradingCurrencyCode(postData.getCurrency(),
+					provider);
+			if (tradingCurrency == null) {
+				throw new EntityDoesNotExistsException(TradingCurrency.class, postData.getCurrency());
+			}
+
+			if (customerAccount.getContactInformation() != null) {
+				customerAccount.getContactInformation().setEmail(postData.getEmail());
+				customerAccount.getContactInformation().setPhone(postData.getPhone());
+				customerAccount.getContactInformation().setMobile(postData.getMobile());
+				customerAccount.getContactInformation().setFax(postData.getFax());
+			} else {
+				ContactInformation contactInformation = new ContactInformation();
+				contactInformation.setEmail(postData.getEmail());
+				contactInformation.setPhone(postData.getPhone());
+				contactInformation.setMobile(postData.getMobile());
+				contactInformation.setFax(postData.getFax());
+				customerAccount.setContactInformation(contactInformation);
+			}
+			populate(postData, customerAccount, currentUser);
+
+			customerAccount.setCustomer(customer);
+			customerAccount.setTradingCurrency(tradingCurrency);
+			try {
+				customerAccount.setPaymentMethod(PaymentMethodEnum.valueOf(postData.getPaymentMethod()));
+			} catch (IllegalArgumentException e) {
+				log.warn(e.getMessage());
+			}
+			try {
+				customerAccount.setCreditCategory(CreditCategoryEnum.valueOf(postData.getCreditCategory()));
+			} catch (IllegalArgumentException e) {
+				log.warn(e.getMessage());
+			}
+			customerAccount.setMandateDate(postData.getMandateDate());
+			customerAccount.setMandateIdentification(postData.getMandateIdentification());
+
+			customerAccountService.update(customerAccount, currentUser);
 		} else {
 			if (StringUtils.isBlank(postData.getCode())) {
 				missingParameters.add("code");
@@ -137,8 +200,8 @@ public class CustomerAccountApi extends AccountApi {
 	}
 
 	public CustomerAccountDto find(String customerAccountCode, User currentUser) throws Exception {
-
 		CustomerAccountDto customerAccountDto = new CustomerAccountDto();
+
 		if (!StringUtils.isBlank(customerAccountCode)) {
 			Provider provider = currentUser.getProvider();
 			CustomerAccount customerAccount = customerAccountService.findByCode(customerAccountCode, provider);
@@ -232,9 +295,11 @@ public class CustomerAccountApi extends AccountApi {
 			}
 			BigDecimal balance = customerAccountService.customerAccountBalanceDue(null, customerAccount.getCode(),
 					new Date());
+
 			if (balance == null) {
 				throw new BusinessException("account balance calculation failed");
 			}
+
 			customerAccountDto.setBalance(balance);
 		} else {
 			if (StringUtils.isBlank(customerAccountCode)) {
