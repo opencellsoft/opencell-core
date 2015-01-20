@@ -1,14 +1,17 @@
 package org.meveo.admin.job;
 
+import java.io.Serializable;
 import java.util.List;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
+import javax.enterprise.event.Event;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 
 import org.meveo.admin.job.logging.JobLoggingInterceptor;
+import org.meveo.event.qualifier.Rejected;
 import org.meveo.model.admin.User;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.rating.EDR;
@@ -28,6 +31,11 @@ public class UsageRatingJobBean {
 
 	@Inject
 	private UsageRatingService usageRatingService;
+	
+
+	@Inject
+	@Rejected
+	Event<Serializable> rejectededEdrProducer;
 
 	@Interceptors({ JobLoggingInterceptor.class })
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
@@ -49,10 +57,12 @@ public class UsageRatingJobBean {
 					if (edr.getStatus() == EDRStatusEnum.RATED) {
 						result.registerSucces();
 					} else {
+						rejectededEdrProducer.fire(edr);
 						result.registerError(edr.getRejectReason());
 					}
 				} catch (Exception e) {
 					log.error(e.getMessage());
+					rejectededEdrProducer.fire(edr);
 					result.registerError(e.getMessage());
 				}
 			}

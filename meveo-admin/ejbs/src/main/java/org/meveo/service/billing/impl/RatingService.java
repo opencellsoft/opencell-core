@@ -1030,7 +1030,8 @@ public class RatingService {
 		if (StringUtils.isBlank(expression)) {
 			return null;
 		}
-		if (!expression.startsWith("#")) {
+		if(expression.indexOf("#{")<0){
+			log.debug("the expression '{}' doesnt contain any EL",expression);
 			if (resultClass.equals(String.class)) {
 				return expression;
 			} else if (resultClass.equals(Double.class)) {
