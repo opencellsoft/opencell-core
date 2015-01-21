@@ -25,6 +25,7 @@
 	<p:tooltip for="oneShotChargeTemplates">#{help['menu.oneShotChargeTemplates']}</p:tooltip>
 	<p:tooltip for="usageChargeTemplates">#{help['menu.usageChargeTemplates']}</p:tooltip>
 	<p:tooltip for="pricePlanMatrixes">#{help['menu.pricePlanMatrixes']}</p:tooltip>
+	<p:tooltip for="walletTemplates">#{help['menu.wallets']}</p:tooltip>
 	<p:tooltip for="counterTemplates">#{help['menu.counterTemplates']}</p:tooltip>
 	<p:tooltip for="customerSearch">#{help['menu.customerSearch']}</p:tooltip>
 	<p:tooltip for="customers">#{help['menu.customers']}</p:tooltip>
@@ -275,7 +276,10 @@
 
 
 			</p:submenu>
-
+            
+            <p:menuitem id="walletTemplates" outcome="walletTemplates"
+				value="#{messages['menu.wallets']}" />
+				
 			<p:menuitem id="counterTemplates" outcome="counterTemplates"
 				value="#{messages['menu.counterTemplates']}" />
 

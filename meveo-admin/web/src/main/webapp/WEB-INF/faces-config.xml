@@ -687,7 +687,16 @@
 			</to-view-id>
 			<redirect />
 		</navigation-case>
-
+		<navigation-case>
+			<from-outcome>walletTemplates</from-outcome>
+			<to-view-id>/pages/catalog/walletTemplates/walletTemplates.xhtml</to-view-id>
+			<redirect/>  
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>walletTemplateDetail</from-outcome>
+			<to-view-id>/pages/catalog/walletTemplates/walletTemplateDetail.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
 		<navigation-case>
 			<from-outcome>counterTemplates</from-outcome>
 			<to-view-id>/pages/catalog/counterTemplates/counterTemplates.xhtml
