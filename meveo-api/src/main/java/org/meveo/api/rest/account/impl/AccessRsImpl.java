@@ -5,14 +5,14 @@ import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 
 import org.meveo.api.MeveoApiErrorCode;
-import org.meveo.api.account.UserAccountApi;
+import org.meveo.api.account.AccessApi;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
-import org.meveo.api.dto.account.UserAccountDto;
-import org.meveo.api.dto.response.account.GetUserAccountResponse;
+import org.meveo.api.dto.account.AccessDto;
+import org.meveo.api.dto.response.account.GetAccessResponse;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.LoggingInterceptor;
-import org.meveo.api.rest.account.UserAccountRs;
+import org.meveo.api.rest.account.AccessRs;
 import org.meveo.api.rest.impl.BaseRs;
 
 /**
@@ -20,17 +20,17 @@ import org.meveo.api.rest.impl.BaseRs;
  **/
 @RequestScoped
 @Interceptors({ LoggingInterceptor.class })
-public class UserAccountRsImpl extends BaseRs implements UserAccountRs {
+public class AccessRsImpl extends BaseRs implements AccessRs {
 
 	@Inject
-	private UserAccountApi userAccountApi;
+	private AccessApi accessApi;
 
 	@Override
-	public ActionStatus create(UserAccountDto postData) {
+	public ActionStatus create(AccessDto postData) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 		try {
-			userAccountApi.create(postData, getCurrentUser());
+			accessApi.create(postData, getCurrentUser());
 		} catch (MeveoApiException e) {
 			result.setErrorCode(e.getErrorCode());
 			result.setStatus(ActionStatusEnum.FAIL);
@@ -45,11 +45,11 @@ public class UserAccountRsImpl extends BaseRs implements UserAccountRs {
 	}
 
 	@Override
-	public ActionStatus update(UserAccountDto postData) {
+	public ActionStatus update(AccessDto postData) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 		try {
-			userAccountApi.update(postData, getCurrentUser());
+			accessApi.update(postData, getCurrentUser());
 		} catch (MeveoApiException e) {
 			result.setErrorCode(e.getErrorCode());
 			result.setStatus(ActionStatusEnum.FAIL);
@@ -64,11 +64,11 @@ public class UserAccountRsImpl extends BaseRs implements UserAccountRs {
 	}
 
 	@Override
-	public GetUserAccountResponse find(String userAccountCode) {
-		GetUserAccountResponse result = new GetUserAccountResponse();
+	public GetAccessResponse find(Long accessId) {
+		GetAccessResponse result = new GetAccessResponse();
 
 		try {
-			result.setUserAccount(userAccountApi.find(userAccountCode, getCurrentUser().getProvider()));
+			result.setAccess(accessApi.find(accessId, getCurrentUser().getProvider()));
 		} catch (MeveoApiException e) {
 			result.getActionStatus().setErrorCode(e.getErrorCode());
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
@@ -83,11 +83,11 @@ public class UserAccountRsImpl extends BaseRs implements UserAccountRs {
 	}
 
 	@Override
-	public ActionStatus remove(String userAccountCode) {
+	public ActionStatus remove(Long accessId) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 		try {
-			userAccountApi.remove(userAccountCode, getCurrentUser().getProvider());
+			accessApi.remove(accessId, getCurrentUser().getProvider());
 		} catch (MeveoApiException e) {
 			result.setErrorCode(e.getErrorCode());
 			result.setStatus(ActionStatusEnum.FAIL);
