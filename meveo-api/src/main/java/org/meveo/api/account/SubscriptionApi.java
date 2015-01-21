@@ -1,9 +1,19 @@
 package org.meveo.api.account;
 
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
+import org.jboss.seam.international.status.builder.BundleKey;
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.BaseApi;
+import org.meveo.api.dto.account.ActivateServicesDto;
 import org.meveo.api.dto.account.SubscriptionDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
@@ -11,19 +21,28 @@ import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.User;
+import org.meveo.model.billing.InstanceStatusEnum;
+import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.catalog.OfferTemplate;
+import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.crm.Provider;
+import org.meveo.service.billing.impl.ServiceInstanceService;
 import org.meveo.service.billing.impl.SubscriptionService;
 import org.meveo.service.billing.impl.UserAccountService;
 import org.meveo.service.catalog.impl.OfferTemplateService;
+import org.meveo.service.catalog.impl.ServiceTemplateService;
+import org.slf4j.Logger;
 
 /**
  * @author Edward P. Legaspi
  **/
 @Stateless
 public class SubscriptionApi extends BaseApi {
+
+	@Inject
+	private Logger log;
 
 	@Inject
 	private SubscriptionService subscriptionService;
@@ -33,6 +52,12 @@ public class SubscriptionApi extends BaseApi {
 
 	@Inject
 	private UserAccountService userAccountService;
+
+	@Inject
+	private ServiceTemplateService serviceTemplateService;
+
+	@Inject
+	private ServiceInstanceService serviceInstanceService;
 
 	public void create(SubscriptionDto postData, User currentUser) throws MeveoApiException {
 		if (!StringUtils.isBlank(postData.getUserAccount()) && !StringUtils.isBlank(postData.getOfferTemplate())
@@ -111,6 +136,85 @@ public class SubscriptionApi extends BaseApi {
 			}
 			if (StringUtils.isBlank(postData.getCode())) {
 				missingParameters.add("code");
+			}
+
+			throw new MissingParameterException(getMissingParametersExceptionMessage());
+		}
+	}
+
+	public void activateServices(ActivateServicesDto postData, User currentUser) throws MeveoApiException {
+		if (!StringUtils.isBlank(postData.getSubscription()) && postData.getServices() != null
+				&& postData.getServices().size() > 0) {
+			Provider provider = currentUser.getProvider();
+
+			Subscription subscription = subscriptionService.findByCode(postData.getSubscription(), provider);
+			if (subscription == null) {
+				throw new EntityDoesNotExistsException(Subscription.class, postData.getSubscription());
+			}
+
+			// check if exists
+			Map<ServiceTemplate, Integer> serviceTemplates = new HashMap<ServiceTemplate, Integer>();
+			for (String serviceTemplateCode : postData.getServices().keySet()) {
+				ServiceTemplate serviceTemplate = serviceTemplateService.findByCode(serviceTemplateCode, provider);
+				if (serviceTemplate == null) {
+					throw new EntityDoesNotExistsException(ServiceTemplate.class, serviceTemplateCode);
+				}
+
+				serviceTemplates.put(serviceTemplate, postData.getServices().get(serviceTemplateCode));
+			}
+
+			// instantiate
+			List<ServiceInstance> serviceInstances = new ArrayList<ServiceInstance>();
+			for (ServiceTemplate serviceTemplate : serviceTemplates.keySet()) {
+				log.debug("instanciateService id={} checked, quantity={}", serviceTemplate.getId(), 1);
+
+				ServiceInstance serviceInstance = new ServiceInstance();
+				serviceInstance.setProvider(serviceTemplate.getProvider());
+				serviceInstance.setCode(serviceTemplate.getCode());
+				serviceInstance.setDescription(serviceTemplate.getDescription());
+				serviceInstance.setServiceTemplate(serviceTemplate);
+				serviceInstance.setSubscription(subscription);
+				Calendar calendar = Calendar.getInstance();
+				calendar.setTime(new Date());
+				calendar.set(Calendar.HOUR_OF_DAY, 0);
+				calendar.set(Calendar.MINUTE, 0);
+				calendar.set(Calendar.SECOND, 0);
+				calendar.set(Calendar.MILLISECOND, 0);
+
+				serviceInstance.setSubscriptionDate(calendar.getTime());
+				Integer quantity = serviceTemplates.get(serviceTemplate);
+				serviceInstance.setQuantity(quantity == null ? 0 : quantity);
+				try {
+					serviceInstanceService.serviceInstanciation(serviceInstance, currentUser);
+					serviceInstances.add(serviceInstance);
+				} catch (BusinessException e) {
+					throw new MeveoApiException(e.getMessage());
+				}
+			}
+
+			// activate services
+			for (ServiceInstance serviceInstance : serviceInstances) {
+				if (serviceInstance.getStatus() == InstanceStatusEnum.TERMINATED) {
+					throw new MeveoApiException(
+							new BundleKey("messages", "error.activation.terminatedService").getBundle());
+				}
+
+				if (serviceInstance.getStatus() == InstanceStatusEnum.ACTIVE) {
+					throw new MeveoApiException(new BundleKey("messages", "error.activation.activeService").getBundle());
+				}
+
+				try {
+					serviceInstanceService.serviceActivation(serviceInstance, null, null, currentUser);
+				} catch (BusinessException e) {
+					throw new MeveoApiException(e.getMessage());
+				}
+			}
+		} else {
+			if (StringUtils.isBlank(postData.getSubscription())) {
+				missingParameters.add("subscription");
+			}
+			if (postData.getServices() == null || postData.getServices().size() == 0) {
+				missingParameters.add("services");
 			}
 
 			throw new MissingParameterException(getMissingParametersExceptionMessage());
