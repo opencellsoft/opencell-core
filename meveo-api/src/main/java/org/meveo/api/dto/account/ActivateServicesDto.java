@@ -1,10 +1,11 @@
 package org.meveo.api.dto.account;
 
-import java.util.Map;
+import java.util.HashMap;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.BaseDto;
@@ -21,8 +22,8 @@ public class ActivateServicesDto extends BaseDto {
 	@XmlAttribute(required = true)
 	private String subscription;
 
-	@XmlAttribute(required = true)
-	private Map<String, Integer> services;
+	@XmlElement(required = true)
+	private HashMap<String, Integer> services;
 
 	public String getSubscription() {
 		return subscription;
@@ -32,11 +33,11 @@ public class ActivateServicesDto extends BaseDto {
 		this.subscription = subscription;
 	}
 
-	public Map<String, Integer> getServices() {
+	public HashMap<String, Integer> getServices() {
 		return services;
 	}
 
-	public void setServices(Map<String, Integer> services) {
+	public void setServices(HashMap<String, Integer> services) {
 		this.services = services;
 	}
 
