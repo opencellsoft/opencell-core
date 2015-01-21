@@ -3,6 +3,7 @@ package org.meveo.api.ws.impl;
 import java.util.Date;
 
 import javax.inject.Inject;
+import javax.interceptor.Interceptors;
 import javax.jws.WebService;
 
 import org.meveo.api.MeveoApiErrorCode;
@@ -34,6 +35,7 @@ import org.meveo.api.dto.response.catalog.GetRecurringChargeTemplateResponse;
 import org.meveo.api.dto.response.catalog.GetServiceTemplateResponse;
 import org.meveo.api.dto.response.catalog.GetUsageChargeTemplateResponse;
 import org.meveo.api.exception.MeveoApiException;
+import org.meveo.api.logging.LoggingInterceptor;
 import org.meveo.api.ws.CatalogWs;
 import org.meveo.model.shared.DateUtils;
 import org.slf4j.Logger;
@@ -42,6 +44,7 @@ import org.slf4j.Logger;
  * @author Edward P. Legaspi
  **/
 @WebService(serviceName = "CatalogWs", endpointInterface = "org.meveo.api.ws.CatalogWs")
+@Interceptors({ LoggingInterceptor.class })
 public class CatalogWsImpl extends BaseWs implements CatalogWs {
 
 	@Inject
@@ -110,20 +113,17 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 	}
 
 	@Override
-	public GetCounterTemplateResponse findCounterTemplate(
-			String counterTemplateCode) {
+	public GetCounterTemplateResponse findCounterTemplate(String counterTemplateCode) {
 		GetCounterTemplateResponse result = new GetCounterTemplateResponse();
 
 		try {
-			result.setCounterTemplate(counterTemplateApi.find(
-					counterTemplateCode, getCurrentUser().getProvider()));
+			result.setCounterTemplate(counterTemplateApi.find(counterTemplateCode, getCurrentUser().getProvider()));
 		} catch (MeveoApiException e) {
 			result.getActionStatus().setErrorCode(e.getErrorCode());
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
 			result.getActionStatus().setMessage(e.getMessage());
 		} catch (Exception e) {
-			result.getActionStatus().setErrorCode(
-					MeveoApiErrorCode.GENERIC_API_EXCEPTION);
+			result.getActionStatus().setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
 			result.getActionStatus().setMessage(e.getMessage());
 		}
@@ -136,8 +136,7 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 		try {
-			counterTemplateApi.remove(counterTemplateCode, getCurrentUser()
-					.getProvider());
+			counterTemplateApi.remove(counterTemplateCode, getCurrentUser().getProvider());
 		} catch (MeveoApiException e) {
 			result.setErrorCode(e.getErrorCode());
 			result.setStatus(ActionStatusEnum.FAIL);
@@ -156,8 +155,7 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 		try {
-			result.setMessage(String.valueOf(discountPlanApi.create(postData,
-					getCurrentUser())));
+			result.setMessage(String.valueOf(discountPlanApi.create(postData, getCurrentUser())));
 		} catch (MeveoApiException e) {
 			result.setErrorCode(e.getErrorCode());
 			result.setStatus(ActionStatusEnum.FAIL);
@@ -201,8 +199,7 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
 			result.getActionStatus().setMessage(e.getMessage());
 		} catch (Exception e) {
-			result.getActionStatus().setErrorCode(
-					MeveoApiErrorCode.GENERIC_API_EXCEPTION);
+			result.getActionStatus().setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
 			result.getActionStatus().setMessage(e.getMessage());
 		}
@@ -272,15 +269,13 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 		GetOfferTemplateResponse result = new GetOfferTemplateResponse();
 
 		try {
-			result.setOfferTemplate(offerTemplateApi.find(offerTemplateCode,
-					getCurrentUser().getProvider()));
+			result.setOfferTemplate(offerTemplateApi.find(offerTemplateCode, getCurrentUser().getProvider()));
 		} catch (MeveoApiException e) {
 			result.getActionStatus().setErrorCode(e.getErrorCode());
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
 			result.getActionStatus().setMessage(e.getMessage());
 		} catch (Exception e) {
-			result.getActionStatus().setErrorCode(
-					MeveoApiErrorCode.GENERIC_API_EXCEPTION);
+			result.getActionStatus().setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
 			result.getActionStatus().setMessage(e.getMessage());
 		}
@@ -293,8 +288,7 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 		try {
-			offerTemplateApi.remove(offerTemplateCode, getCurrentUser()
-					.getProvider());
+			offerTemplateApi.remove(offerTemplateCode, getCurrentUser().getProvider());
 		} catch (MeveoApiException e) {
 			result.setErrorCode(e.getErrorCode());
 			result.setStatus(ActionStatusEnum.FAIL);
@@ -309,8 +303,7 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 	}
 
 	@Override
-	public ActionStatus createOneShotChargeTemplate(
-			OneShotChargeTemplateDto postData) {
+	public ActionStatus createOneShotChargeTemplate(OneShotChargeTemplateDto postData) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 		try {
@@ -329,8 +322,7 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 	}
 
 	@Override
-	public ActionStatus updateOneShotChargeTemplate(
-			OneShotChargeTemplateDto postData) {
+	public ActionStatus updateOneShotChargeTemplate(OneShotChargeTemplateDto postData) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 		try {
@@ -349,20 +341,18 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 	}
 
 	@Override
-	public GetOneShotChargeTemplateResponse findOneShotChargeTemplate(
-			String oneShotChargeTemplateCode) {
+	public GetOneShotChargeTemplateResponse findOneShotChargeTemplate(String oneShotChargeTemplateCode) {
 		GetOneShotChargeTemplateResponse result = new GetOneShotChargeTemplateResponse();
 
 		try {
-			result.setOneShotChargeTemplate(oneShotChargeTemplateApi.find(
-					oneShotChargeTemplateCode, getCurrentUser().getProvider()));
+			result.setOneShotChargeTemplate(oneShotChargeTemplateApi.find(oneShotChargeTemplateCode, getCurrentUser()
+					.getProvider()));
 		} catch (MeveoApiException e) {
 			result.getActionStatus().setErrorCode(e.getErrorCode());
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
 			result.getActionStatus().setMessage(e.getMessage());
 		} catch (Exception e) {
-			result.getActionStatus().setErrorCode(
-					MeveoApiErrorCode.GENERIC_API_EXCEPTION);
+			result.getActionStatus().setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
 			result.getActionStatus().setMessage(e.getMessage());
 		}
@@ -371,16 +361,13 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 	}
 
 	@Override
-	public OneShotChargeTemplateWithPriceListDto listOneShotChargeTemplate(
-			String languageCode, String countryCode, String currencyCode,
-			String sellerCode, String date) {
-		Date subscriptionDate = DateUtils.parseDateWithPattern(date,
-				"yyyy-MM-dd");
+	public OneShotChargeTemplateWithPriceListDto listOneShotChargeTemplate(String languageCode, String countryCode,
+			String currencyCode, String sellerCode, String date) {
+		Date subscriptionDate = DateUtils.parseDateWithPattern(date, "yyyy-MM-dd");
 
 		try {
-			return oneShotChargeTemplateApi.listWithPrice(languageCode,
-					countryCode, currencyCode, sellerCode, subscriptionDate,
-					getCurrentUser());
+			return oneShotChargeTemplateApi.listWithPrice(languageCode, countryCode, currencyCode, sellerCode,
+					subscriptionDate, getCurrentUser());
 		} catch (Exception e) {
 			log.error(e.getMessage());
 			return null;
@@ -388,13 +375,11 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 	}
 
 	@Override
-	public ActionStatus removeOneShotChargeTemplate(
-			String oneShotChargeTemplateCode) {
+	public ActionStatus removeOneShotChargeTemplate(String oneShotChargeTemplateCode) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 		try {
-			oneShotChargeTemplateApi.remove(oneShotChargeTemplateCode,
-					getCurrentUser().getProvider());
+			oneShotChargeTemplateApi.remove(oneShotChargeTemplateCode, getCurrentUser().getProvider());
 		} catch (MeveoApiException e) {
 			result.setErrorCode(e.getErrorCode());
 			result.setStatus(ActionStatusEnum.FAIL);
@@ -413,8 +398,7 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 		try {
-			result.setMessage(String.valueOf(pricePlanApi.create(postData,
-					getCurrentUser())));
+			result.setMessage(String.valueOf(pricePlanApi.create(postData, getCurrentUser())));
 		} catch (MeveoApiException e) {
 			result.setErrorCode(e.getErrorCode());
 			result.setStatus(ActionStatusEnum.FAIL);
@@ -458,8 +442,7 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
 			result.getActionStatus().setMessage(e.getMessage());
 		} catch (Exception e) {
-			result.getActionStatus().setErrorCode(
-					MeveoApiErrorCode.GENERIC_API_EXCEPTION);
+			result.getActionStatus().setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
 			result.getActionStatus().setMessage(e.getMessage());
 		}
@@ -487,8 +470,7 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 	}
 
 	@Override
-	public ActionStatus createRecurringChargeTemplate(
-			RecurringChargeTemplateDto postData) {
+	public ActionStatus createRecurringChargeTemplate(RecurringChargeTemplateDto postData) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 		try {
@@ -507,21 +489,18 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 	}
 
 	@Override
-	public GetRecurringChargeTemplateResponse findRecurringChargeTemplate(
-			String recurringChargeTemplateCode) {
+	public GetRecurringChargeTemplateResponse findRecurringChargeTemplate(String recurringChargeTemplateCode) {
 		GetRecurringChargeTemplateResponse result = new GetRecurringChargeTemplateResponse();
 
 		try {
-			result.setRecurringChargeTemplate(recurringChargeTemplateApi
-					.find(recurringChargeTemplateCode, getCurrentUser()
-							.getProvider()));
+			result.setRecurringChargeTemplate(recurringChargeTemplateApi.find(recurringChargeTemplateCode,
+					getCurrentUser().getProvider()));
 		} catch (MeveoApiException e) {
 			result.getActionStatus().setErrorCode(e.getErrorCode());
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
 			result.getActionStatus().setMessage(e.getMessage());
 		} catch (Exception e) {
-			result.getActionStatus().setErrorCode(
-					MeveoApiErrorCode.GENERIC_API_EXCEPTION);
+			result.getActionStatus().setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
 			result.getActionStatus().setMessage(e.getMessage());
 		}
@@ -530,8 +509,7 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 	}
 
 	@Override
-	public ActionStatus updateRecurringChargeTemplate(
-			RecurringChargeTemplateDto postData) {
+	public ActionStatus updateRecurringChargeTemplate(RecurringChargeTemplateDto postData) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 		try {
@@ -550,13 +528,11 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 	}
 
 	@Override
-	public ActionStatus removeRecurringChargeTemplate(
-			String recurringChargeTemplateCode) {
+	public ActionStatus removeRecurringChargeTemplate(String recurringChargeTemplateCode) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 		try {
-			recurringChargeTemplateApi.remove(recurringChargeTemplateCode,
-					getCurrentUser().getProvider());
+			recurringChargeTemplateApi.remove(recurringChargeTemplateCode, getCurrentUser().getProvider());
 		} catch (MeveoApiException e) {
 			result.setErrorCode(e.getErrorCode());
 			result.setStatus(ActionStatusEnum.FAIL);
@@ -609,20 +585,17 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 	}
 
 	@Override
-	public GetServiceTemplateResponse findServiceTemplate(
-			String serviceTemplateCode) {
+	public GetServiceTemplateResponse findServiceTemplate(String serviceTemplateCode) {
 		GetServiceTemplateResponse result = new GetServiceTemplateResponse();
 
 		try {
-			result.setServiceTemplate(serviceTemplateApi.find(
-					serviceTemplateCode, getCurrentUser().getProvider()));
+			result.setServiceTemplate(serviceTemplateApi.find(serviceTemplateCode, getCurrentUser().getProvider()));
 		} catch (MeveoApiException e) {
 			result.getActionStatus().setErrorCode(e.getErrorCode());
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
 			result.getActionStatus().setMessage(e.getMessage());
 		} catch (Exception e) {
-			result.getActionStatus().setErrorCode(
-					MeveoApiErrorCode.GENERIC_API_EXCEPTION);
+			result.getActionStatus().setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
 			result.getActionStatus().setMessage(e.getMessage());
 		}
@@ -635,8 +608,7 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 		try {
-			serviceTemplateApi.remove(serviceTemplateCode, getCurrentUser()
-					.getProvider());
+			serviceTemplateApi.remove(serviceTemplateCode, getCurrentUser().getProvider());
 		} catch (MeveoApiException e) {
 			result.setErrorCode(e.getErrorCode());
 			result.setStatus(ActionStatusEnum.FAIL);
@@ -651,8 +623,7 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 	}
 
 	@Override
-	public ActionStatus createUsageChargeTemplate(
-			UsageChargeTemplateDto postData) {
+	public ActionStatus createUsageChargeTemplate(UsageChargeTemplateDto postData) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 		try {
@@ -671,8 +642,7 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 	}
 
 	@Override
-	public ActionStatus updateUsageChargeTemplate(
-			UsageChargeTemplateDto postData) {
+	public ActionStatus updateUsageChargeTemplate(UsageChargeTemplateDto postData) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 		try {
@@ -691,20 +661,18 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 	}
 
 	@Override
-	public GetUsageChargeTemplateResponse findUsageChargeTemplate(
-			String usageChargeTemplateCode) {
+	public GetUsageChargeTemplateResponse findUsageChargeTemplate(String usageChargeTemplateCode) {
 		GetUsageChargeTemplateResponse result = new GetUsageChargeTemplateResponse();
 
 		try {
-			result.setUsageChargeTemplate(usageChargeTemplateApi.find(
-					usageChargeTemplateCode, getCurrentUser().getProvider()));
+			result.setUsageChargeTemplate(usageChargeTemplateApi.find(usageChargeTemplateCode, getCurrentUser()
+					.getProvider()));
 		} catch (MeveoApiException e) {
 			result.getActionStatus().setErrorCode(e.getErrorCode());
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
 			result.getActionStatus().setMessage(e.getMessage());
 		} catch (Exception e) {
-			result.getActionStatus().setErrorCode(
-					MeveoApiErrorCode.GENERIC_API_EXCEPTION);
+			result.getActionStatus().setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
 			result.getActionStatus().setMessage(e.getMessage());
 		}
@@ -717,8 +685,7 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 		try {
-			usageChargeTemplateApi.remove(usageChargeTemplateCode,
-					getCurrentUser().getProvider());
+			usageChargeTemplateApi.remove(usageChargeTemplateCode, getCurrentUser().getProvider());
 		} catch (MeveoApiException e) {
 			result.setErrorCode(e.getErrorCode());
 			result.setStatus(ActionStatusEnum.FAIL);

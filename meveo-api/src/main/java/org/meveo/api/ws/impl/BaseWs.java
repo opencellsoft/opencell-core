@@ -13,6 +13,7 @@ import org.meveo.admin.exception.LoginException;
 import org.meveo.api.MeveoApiErrorCode;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
+import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.User;
 import org.meveo.service.admin.impl.UserService;
 
@@ -29,8 +30,7 @@ public abstract class BaseWs {
 
 	@WebMethod
 	public ActionStatus index() {
-		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS,
-				"MEVEO API Rest Web Service V1.0");
+		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "MEVEO API Rest Web Service V1.0");
 		try {
 			getCurrentUser();
 		} catch (Exception e) {
@@ -45,8 +45,7 @@ public abstract class BaseWs {
 		MessageContext messageContext = webServiceContext.getMessageContext();
 
 		// get request headers
-		Map<?, ?> requestHeaders = (Map<?, ?>) messageContext
-				.get(MessageContext.HTTP_REQUEST_HEADERS);
+		Map<?, ?> requestHeaders = (Map<?, ?>) messageContext.get(MessageContext.HTTP_REQUEST_HEADERS);
 		List<?> usernameList = (List<?>) requestHeaders.get("username");
 		List<?> passwordList = (List<?>) requestHeaders.get("password");
 
@@ -59,6 +58,10 @@ public abstract class BaseWs {
 
 		if (passwordList != null) {
 			password = passwordList.get(0).toString();
+		}
+
+		if (StringUtils.isBlank(username) | StringUtils.isBlank(password)) {
+			throw new LoginException("Username and password are required.");
 		}
 
 		User user = userService.loginChecks(username, password);
