@@ -9943,4 +9943,1471 @@
          </arg0>
       </ws:updateUsageChargeTemplate>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/CatalogWs/updateUsageChargeTemplate"/><con:wsrmConfig version="1.2"/></con:call></con:operation></con:interface><con:properties/><con:wssContainer/><con:oAuth2ProfileContainer/><con:sensitiveInformation/></con:soapui-project>
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/CatalogWs/updateUsageChargeTemplate"/><con:wsrmConfig version="1.2"/></con:call></con:operation></con:interface><con:interface xsi:type="con:WsdlInterface" wsaVersion="NONE" name="AccountWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}AccountWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="http://localhost:8080/meveo/AccountWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache type="TEXT" rootPart="http://localhost:8080/meveo/AccountWs?wsdl"><con:part><con:url>http://localhost:8080/meveo/AccountWs?wsdl</con:url><con:content><![CDATA[<wsdl:definitions name="AccountWs" targetNamespace="http://impl.ws.api.meveo.org/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://impl.ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns2="http://schemas.xmlsoap.org/soap/http" xmlns:ns1="http://ws.api.meveo.org/">
+  <wsdl:import location="http://localhost:8080/meveo/AccountWs?wsdl=AccountWs.wsdl" namespace="http://ws.api.meveo.org/"></wsdl:import>
+  <wsdl:binding name="AccountWsSoapBinding" type="ns1:AccountWs">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <wsdl:operation name="removeBillingAccount">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="removeBillingAccount">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="removeBillingAccountResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="updateAccess">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="updateAccess">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="updateAccessResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="findUserAccount">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="findUserAccount">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="findUserAccountResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="findCustomerAccount">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="findCustomerAccount">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="findCustomerAccountResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="updateBillingAccount">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="updateBillingAccount">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="updateBillingAccountResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="createCustomer">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="createCustomer">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="createCustomerResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="removeUserAccount">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="removeUserAccount">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="removeUserAccountResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="createUserAccount">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="createUserAccount">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="createUserAccountResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="findAccess">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="findAccess">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="findAccessResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="findBillingAccount">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="findBillingAccount">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="findBillingAccountResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="removeCustomer">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="removeCustomer">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="removeCustomerResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="removeCustomerAccount">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="removeCustomerAccount">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="removeCustomerAccountResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="createAccess">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="createAccess">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="createAccessResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="index">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="index">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="indexResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="createCustomerAccount">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="createCustomerAccount">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="createCustomerAccountResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="removeAccess">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="removeAccess">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="removeAccessResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="updateCustomer">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="updateCustomer">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="updateCustomerResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="updateCustomerAccount">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="updateCustomerAccount">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="updateCustomerAccountResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="updateUserAccount">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="updateUserAccount">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="updateUserAccountResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="createBillingAccount">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="createBillingAccount">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="createBillingAccountResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="findCustomer">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="findCustomer">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="findCustomerResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="AccountWs">
+    <wsdl:port binding="tns:AccountWsSoapBinding" name="AccountWsImplPort">
+      <soap:address location="http://localhost:8080/meveo/AccountWs"/>
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>]]></con:content><con:type>http://schemas.xmlsoap.org/wsdl/</con:type></con:part><con:part><con:url>http://localhost:8080/meveo/AccountWs?wsdl=AccountWs.wsdl</con:url><con:content><![CDATA[<wsdl:definitions name="AccountWs" targetNamespace="http://ws.api.meveo.org/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ns1="http://ws.api.meveo.org/">
+  <wsdl:types>
+    <xs:schema elementFormDefault="unqualified" targetNamespace="http://ws.api.meveo.org/" version="1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://ws.api.meveo.org/">
+      <xs:element name="Access" type="tns:accessDto"/>
+      <xs:element name="Account" type="tns:accountDto"/>
+      <xs:element name="AccountOperation" type="tns:accountOperationDto"/>
+      <xs:element name="ActionStatus" type="tns:actionStatus"/>
+      <xs:element name="Address" type="tns:addressDto"/>
+      <xs:element name="BillingAccount" type="tns:billingAccountDto"/>
+      <xs:element name="CustomField" type="tns:customFieldDto"/>
+      <xs:element name="Customer" type="tns:customerDto"/>
+      <xs:element name="CustomerAccount" type="tns:customerAccountDto"/>
+      <xs:element name="GetAccessResponse" type="tns:getAccessResponse"/>
+      <xs:element name="GetCustomerAccountResponse" nillable="true" type="xs:anyType"/>
+      <xs:element name="GetCustomerResponse" type="tns:getCustomerResponse"/>
+      <xs:element name="GetUserAccountResponse" type="tns:getUserAccountResponse"/>
+      <xs:element name="MatchingAmount" type="tns:matchingAmountDto"/>
+      <xs:element name="Name" type="tns:nameDto"/>
+      <xs:element name="UserAccount" type="tns:userAccountDto"/>
+      <xs:element name="createAccess" type="tns:createAccess"/>
+      <xs:element name="createAccessResponse" type="tns:createAccessResponse"/>
+      <xs:element name="createBillingAccount" type="tns:createBillingAccount"/>
+      <xs:element name="createBillingAccountResponse" type="tns:createBillingAccountResponse"/>
+      <xs:element name="createCustomer" type="tns:createCustomer"/>
+      <xs:element name="createCustomerAccount" type="tns:createCustomerAccount"/>
+      <xs:element name="createCustomerAccountResponse" type="tns:createCustomerAccountResponse"/>
+      <xs:element name="createCustomerResponse" type="tns:createCustomerResponse"/>
+      <xs:element name="createUserAccount" type="tns:createUserAccount"/>
+      <xs:element name="createUserAccountResponse" type="tns:createUserAccountResponse"/>
+      <xs:element name="findAccess" type="tns:findAccess"/>
+      <xs:element name="findAccessResponse" type="tns:findAccessResponse"/>
+      <xs:element name="findBillingAccount" type="tns:findBillingAccount"/>
+      <xs:element name="findBillingAccountResponse" type="tns:findBillingAccountResponse"/>
+      <xs:element name="findCustomer" type="tns:findCustomer"/>
+      <xs:element name="findCustomerAccount" type="tns:findCustomerAccount"/>
+      <xs:element name="findCustomerAccountResponse" type="tns:findCustomerAccountResponse"/>
+      <xs:element name="findCustomerResponse" type="tns:findCustomerResponse"/>
+      <xs:element name="findUserAccount" type="tns:findUserAccount"/>
+      <xs:element name="findUserAccountResponse" type="tns:findUserAccountResponse"/>
+      <xs:element name="index" type="tns:index"/>
+      <xs:element name="indexResponse" type="tns:indexResponse"/>
+      <xs:element name="removeAccess" type="tns:removeAccess"/>
+      <xs:element name="removeAccessResponse" type="tns:removeAccessResponse"/>
+      <xs:element name="removeBillingAccount" type="tns:removeBillingAccount"/>
+      <xs:element name="removeBillingAccountResponse" type="tns:removeBillingAccountResponse"/>
+      <xs:element name="removeCustomer" type="tns:removeCustomer"/>
+      <xs:element name="removeCustomerAccount" type="tns:removeCustomerAccount"/>
+      <xs:element name="removeCustomerAccountResponse" type="tns:removeCustomerAccountResponse"/>
+      <xs:element name="removeCustomerResponse" type="tns:removeCustomerResponse"/>
+      <xs:element name="removeUserAccount" type="tns:removeUserAccount"/>
+      <xs:element name="removeUserAccountResponse" type="tns:removeUserAccountResponse"/>
+      <xs:element name="updateAccess" type="tns:updateAccess"/>
+      <xs:element name="updateAccessResponse" type="tns:updateAccessResponse"/>
+      <xs:element name="updateBillingAccount" type="tns:updateBillingAccount"/>
+      <xs:element name="updateBillingAccountResponse" type="tns:updateBillingAccountResponse"/>
+      <xs:element name="updateCustomer" type="tns:updateCustomer"/>
+      <xs:element name="updateCustomerAccount" type="tns:updateCustomerAccount"/>
+      <xs:element name="updateCustomerAccountResponse" type="tns:updateCustomerAccountResponse"/>
+      <xs:element name="updateCustomerResponse" type="tns:updateCustomerResponse"/>
+      <xs:element name="updateUserAccount" type="tns:updateUserAccount"/>
+      <xs:element name="updateUserAccountResponse" type="tns:updateUserAccountResponse"/>
+      <xs:complexType name="updateAccess">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="arg0" type="tns:accessDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="accessDto">
+        <xs:complexContent>
+          <xs:extension base="tns:baseDto">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="startDate" type="xs:dateTime"/>
+              <xs:element minOccurs="0" name="endDate" type="xs:dateTime"/>
+            </xs:sequence>
+            <xs:attribute name="accessId" type="xs:long"/>
+            <xs:attribute name="userAccount" type="xs:string" use="required"/>
+            <xs:attribute name="subscription" type="xs:string" use="required"/>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType abstract="true" name="baseDto">
+        <xs:sequence/>
+      </xs:complexType>
+      <xs:complexType name="updateAccessResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="actionStatus">
+        <xs:sequence>
+          <xs:element name="status" type="tns:actionStatusEnum"/>
+          <xs:element name="errorCode" type="xs:int"/>
+          <xs:element name="message" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="removeBillingAccount">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="arg0" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="removeBillingAccountResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="findUserAccount">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="arg0" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="findUserAccountResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:getUserAccountResponse"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="getUserAccountResponse">
+        <xs:complexContent>
+          <xs:extension base="tns:baseResponse">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="userAccount" type="tns:userAccountDto"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType abstract="true" name="baseResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="actionStatus" type="tns:actionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="userAccountDto">
+        <xs:complexContent>
+          <xs:extension base="tns:accountDto">
+            <xs:sequence/>
+            <xs:attribute name="billingAccount" type="xs:string" use="required"/>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType abstract="true" name="accountDto">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="externalRef1" type="xs:string"/>
+          <xs:element minOccurs="0" name="externalRef2" type="xs:string"/>
+          <xs:element minOccurs="0" name="name" type="tns:nameDto"/>
+          <xs:element minOccurs="0" name="address" type="tns:addressDto"/>
+          <xs:element maxOccurs="unbounded" minOccurs="0" name="customFields" nillable="true" type="tns:customFieldDto"/>
+        </xs:sequence>
+        <xs:attribute name="code" type="xs:string" use="required"/>
+        <xs:attribute name="description" type="xs:string" use="required"/>
+      </xs:complexType>
+      <xs:complexType name="nameDto">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="title" type="xs:string"/>
+          <xs:element minOccurs="0" name="firstName" type="xs:string"/>
+        </xs:sequence>
+        <xs:attribute name="lastName" type="xs:string" use="required"/>
+      </xs:complexType>
+      <xs:complexType name="addressDto">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="address1" type="xs:string"/>
+          <xs:element minOccurs="0" name="address2" type="xs:string"/>
+          <xs:element minOccurs="0" name="address3" type="xs:string"/>
+          <xs:element minOccurs="0" name="zipCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="city" type="xs:string"/>
+          <xs:element minOccurs="0" name="country" type="xs:string"/>
+          <xs:element minOccurs="0" name="state" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="customFieldDto">
+        <xs:sequence/>
+        <xs:attribute name="code" type="xs:string" use="required"/>
+        <xs:attribute name="description" type="xs:string"/>
+        <xs:attribute name="stringValue" type="xs:string"/>
+        <xs:attribute name="dateValue" type="xs:dateTime"/>
+        <xs:attribute name="longValue" type="xs:long"/>
+        <xs:attribute name="doubleValue" type="xs:double"/>
+      </xs:complexType>
+      <xs:complexType name="updateBillingAccount">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="arg0" type="tns:billingAccountDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="billingAccountDto">
+        <xs:complexContent>
+          <xs:extension base="tns:accountDto">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="nextInvoiceDate" type="xs:dateTime"/>
+              <xs:element minOccurs="0" name="subscriptionDate" type="xs:dateTime"/>
+              <xs:element minOccurs="0" name="terminationDate" type="xs:dateTime"/>
+              <xs:element minOccurs="0" name="paymentTerms" type="xs:string"/>
+              <xs:element minOccurs="0" name="electronicBilling" type="xs:boolean"/>
+            </xs:sequence>
+            <xs:attribute name="customerAccount" type="xs:string" use="required"/>
+            <xs:attribute name="billingCycle" type="xs:string" use="required"/>
+            <xs:attribute name="country" type="xs:string" use="required"/>
+            <xs:attribute name="language" type="xs:string" use="required"/>
+            <xs:attribute name="paymentMethod" type="xs:string" use="required"/>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="updateBillingAccountResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="findCustomerAccount">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="arg0" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="findCustomerAccountResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:getCustomerAccountResponse"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="getCustomerAccountResponse">
+        <xs:complexContent>
+          <xs:extension base="tns:baseResponse">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="customerAccount" type="tns:customerAccountDto"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="customerAccountDto">
+        <xs:complexContent>
+          <xs:extension base="tns:accountDto">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="status" type="xs:string"/>
+              <xs:element minOccurs="0" name="paymentMethod" type="xs:string"/>
+              <xs:element minOccurs="0" name="creditCategory" type="xs:string"/>
+              <xs:element maxOccurs="unbounded" minOccurs="0" name="accountOperations" nillable="true" type="tns:accountOperationDto"/>
+              <xs:element minOccurs="0" name="dateStatus" type="xs:dateTime"/>
+              <xs:element minOccurs="0" name="dateDunningLevel" type="xs:dateTime"/>
+              <xs:element minOccurs="0" name="email" type="xs:string"/>
+              <xs:element minOccurs="0" name="phone" type="xs:string"/>
+              <xs:element minOccurs="0" name="mobile" type="xs:string"/>
+              <xs:element minOccurs="0" name="fax" type="xs:string"/>
+              <xs:element minOccurs="0" name="dunningLevel" type="xs:string"/>
+              <xs:element minOccurs="0" name="mandateIdentification" type="xs:string"/>
+              <xs:element minOccurs="0" name="mandateDate" type="xs:dateTime"/>
+              <xs:element minOccurs="0" name="balance" type="xs:decimal"/>
+            </xs:sequence>
+            <xs:attribute name="customer" type="xs:string" use="required"/>
+            <xs:attribute name="currency" type="xs:string" use="required"/>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="accountOperationDto">
+        <xs:complexContent>
+          <xs:extension base="tns:baseDto">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="dueDate" type="xs:dateTime"/>
+              <xs:element minOccurs="0" name="type" type="xs:string"/>
+              <xs:element minOccurs="0" name="transactionDate" type="xs:dateTime"/>
+              <xs:element minOccurs="0" name="transactionCategory" type="xs:string"/>
+              <xs:element minOccurs="0" name="reference" type="xs:string"/>
+              <xs:element minOccurs="0" name="accountCode" type="xs:string"/>
+              <xs:element minOccurs="0" name="accountCodeClientSide" type="xs:string"/>
+              <xs:element minOccurs="0" name="amount" type="xs:decimal"/>
+              <xs:element minOccurs="0" name="matchingAmount" type="xs:decimal"/>
+              <xs:element minOccurs="0" name="unMatchingAmount" type="xs:decimal"/>
+              <xs:element minOccurs="0" name="matchingStatus" type="xs:string"/>
+              <xs:element maxOccurs="unbounded" minOccurs="0" name="matchingAmounts" nillable="true" type="tns:matchingAmountDto"/>
+              <xs:element minOccurs="0" name="occCode" type="xs:string"/>
+              <xs:element minOccurs="0" name="occDescription" type="xs:string"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="matchingAmountDto">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="matchingCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="matchingAmount" type="xs:decimal"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="createCustomer">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="arg0" type="tns:customerDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="customerDto">
+        <xs:complexContent>
+          <xs:extension base="tns:accountDto">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="customerCategory" type="xs:string"/>
+              <xs:element minOccurs="0" name="customerBrand" type="xs:string"/>
+              <xs:element minOccurs="0" name="seller" type="xs:string"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="createCustomerResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="removeUserAccount">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="arg0" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="removeUserAccountResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="createUserAccount">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="arg0" type="tns:userAccountDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="createUserAccountResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="findBillingAccount">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="arg0" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="findBillingAccountResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:getBillingAccountResponse"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="getBillingAccountResponse">
+        <xs:complexContent>
+          <xs:extension base="tns:baseResponse">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="billingAccount" type="tns:billingAccountDto"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="findAccess">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="arg0" type="xs:long"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="findAccessResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:getAccessResponse"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="getAccessResponse">
+        <xs:complexContent>
+          <xs:extension base="tns:baseResponse">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="access" type="tns:accessDto"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="removeCustomerAccount">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="arg0" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="removeCustomerAccountResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="removeCustomer">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="arg0" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="removeCustomerResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="createAccess">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="arg0" type="tns:accessDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="createAccessResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="index">
+        <xs:sequence/>
+      </xs:complexType>
+      <xs:complexType name="indexResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="removeAccess">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="arg0" type="xs:long"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="removeAccessResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="createCustomerAccount">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="arg0" type="tns:customerAccountDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="createCustomerAccountResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="updateCustomer">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="arg0" type="tns:customerDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="updateCustomerResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="updateUserAccount">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="arg0" type="tns:userAccountDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="updateUserAccountResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="updateCustomerAccount">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="arg0" type="tns:customerAccountDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="updateCustomerAccountResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="createBillingAccount">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="arg0" type="tns:billingAccountDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="createBillingAccountResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="findCustomer">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="arg0" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="findCustomerResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:getCustomerResponse"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="getCustomerResponse">
+        <xs:complexContent>
+          <xs:extension base="tns:baseResponse">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="customer" type="tns:customerDto"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:simpleType name="actionStatusEnum">
+        <xs:restriction base="xs:string">
+          <xs:enumeration value="SUCCESS"/>
+          <xs:enumeration value="FAIL"/>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:schema>
+  </wsdl:types>
+  <wsdl:message name="findBillingAccount">
+    <wsdl:part element="ns1:findBillingAccount" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="createAccessResponse">
+    <wsdl:part element="ns1:createAccessResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="createUserAccountResponse">
+    <wsdl:part element="ns1:createUserAccountResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="updateCustomerResponse">
+    <wsdl:part element="ns1:updateCustomerResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="updateCustomerAccountResponse">
+    <wsdl:part element="ns1:updateCustomerAccountResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="createCustomer">
+    <wsdl:part element="ns1:createCustomer" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="createAccess">
+    <wsdl:part element="ns1:createAccess" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="updateBillingAccountResponse">
+    <wsdl:part element="ns1:updateBillingAccountResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="removeBillingAccountResponse">
+    <wsdl:part element="ns1:removeBillingAccountResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="removeAccess">
+    <wsdl:part element="ns1:removeAccess" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="createUserAccount">
+    <wsdl:part element="ns1:createUserAccount" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="removeUserAccountResponse">
+    <wsdl:part element="ns1:removeUserAccountResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="updateAccess">
+    <wsdl:part element="ns1:updateAccess" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="findCustomer">
+    <wsdl:part element="ns1:findCustomer" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="createCustomerAccount">
+    <wsdl:part element="ns1:createCustomerAccount" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="updateAccessResponse">
+    <wsdl:part element="ns1:updateAccessResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="removeCustomer">
+    <wsdl:part element="ns1:removeCustomer" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="removeCustomerResponse">
+    <wsdl:part element="ns1:removeCustomerResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="findUserAccount">
+    <wsdl:part element="ns1:findUserAccount" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="createBillingAccountResponse">
+    <wsdl:part element="ns1:createBillingAccountResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="findCustomerAccountResponse">
+    <wsdl:part element="ns1:findCustomerAccountResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="updateUserAccountResponse">
+    <wsdl:part element="ns1:updateUserAccountResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="findBillingAccountResponse">
+    <wsdl:part element="ns1:findBillingAccountResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="removeCustomerAccount">
+    <wsdl:part element="ns1:removeCustomerAccount" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="updateCustomerAccount">
+    <wsdl:part element="ns1:updateCustomerAccount" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="indexResponse">
+    <wsdl:part element="ns1:indexResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="index">
+    <wsdl:part element="ns1:index" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="findAccess">
+    <wsdl:part element="ns1:findAccess" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="findCustomerResponse">
+    <wsdl:part element="ns1:findCustomerResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="removeAccessResponse">
+    <wsdl:part element="ns1:removeAccessResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="findUserAccountResponse">
+    <wsdl:part element="ns1:findUserAccountResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="createBillingAccount">
+    <wsdl:part element="ns1:createBillingAccount" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="updateUserAccount">
+    <wsdl:part element="ns1:updateUserAccount" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="updateCustomer">
+    <wsdl:part element="ns1:updateCustomer" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="updateBillingAccount">
+    <wsdl:part element="ns1:updateBillingAccount" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="findCustomerAccount">
+    <wsdl:part element="ns1:findCustomerAccount" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="createCustomerAccountResponse">
+    <wsdl:part element="ns1:createCustomerAccountResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="removeBillingAccount">
+    <wsdl:part element="ns1:removeBillingAccount" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="createCustomerResponse">
+    <wsdl:part element="ns1:createCustomerResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="findAccessResponse">
+    <wsdl:part element="ns1:findAccessResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="removeUserAccount">
+    <wsdl:part element="ns1:removeUserAccount" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="removeCustomerAccountResponse">
+    <wsdl:part element="ns1:removeCustomerAccountResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:portType name="AccountWs">
+    <wsdl:operation name="updateAccess">
+      <wsdl:input message="ns1:updateAccess" name="updateAccess"></wsdl:input>
+      <wsdl:output message="ns1:updateAccessResponse" name="updateAccessResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="removeBillingAccount">
+      <wsdl:input message="ns1:removeBillingAccount" name="removeBillingAccount"></wsdl:input>
+      <wsdl:output message="ns1:removeBillingAccountResponse" name="removeBillingAccountResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="findUserAccount">
+      <wsdl:input message="ns1:findUserAccount" name="findUserAccount"></wsdl:input>
+      <wsdl:output message="ns1:findUserAccountResponse" name="findUserAccountResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="updateBillingAccount">
+      <wsdl:input message="ns1:updateBillingAccount" name="updateBillingAccount"></wsdl:input>
+      <wsdl:output message="ns1:updateBillingAccountResponse" name="updateBillingAccountResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="findCustomerAccount">
+      <wsdl:input message="ns1:findCustomerAccount" name="findCustomerAccount"></wsdl:input>
+      <wsdl:output message="ns1:findCustomerAccountResponse" name="findCustomerAccountResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="createCustomer">
+      <wsdl:input message="ns1:createCustomer" name="createCustomer"></wsdl:input>
+      <wsdl:output message="ns1:createCustomerResponse" name="createCustomerResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="removeUserAccount">
+      <wsdl:input message="ns1:removeUserAccount" name="removeUserAccount"></wsdl:input>
+      <wsdl:output message="ns1:removeUserAccountResponse" name="removeUserAccountResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="createUserAccount">
+      <wsdl:input message="ns1:createUserAccount" name="createUserAccount"></wsdl:input>
+      <wsdl:output message="ns1:createUserAccountResponse" name="createUserAccountResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="findBillingAccount">
+      <wsdl:input message="ns1:findBillingAccount" name="findBillingAccount"></wsdl:input>
+      <wsdl:output message="ns1:findBillingAccountResponse" name="findBillingAccountResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="findAccess">
+      <wsdl:input message="ns1:findAccess" name="findAccess"></wsdl:input>
+      <wsdl:output message="ns1:findAccessResponse" name="findAccessResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="removeCustomerAccount">
+      <wsdl:input message="ns1:removeCustomerAccount" name="removeCustomerAccount"></wsdl:input>
+      <wsdl:output message="ns1:removeCustomerAccountResponse" name="removeCustomerAccountResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="removeCustomer">
+      <wsdl:input message="ns1:removeCustomer" name="removeCustomer"></wsdl:input>
+      <wsdl:output message="ns1:removeCustomerResponse" name="removeCustomerResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="createAccess">
+      <wsdl:input message="ns1:createAccess" name="createAccess"></wsdl:input>
+      <wsdl:output message="ns1:createAccessResponse" name="createAccessResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="index">
+      <wsdl:input message="ns1:index" name="index"></wsdl:input>
+      <wsdl:output message="ns1:indexResponse" name="indexResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="removeAccess">
+      <wsdl:input message="ns1:removeAccess" name="removeAccess"></wsdl:input>
+      <wsdl:output message="ns1:removeAccessResponse" name="removeAccessResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="createCustomerAccount">
+      <wsdl:input message="ns1:createCustomerAccount" name="createCustomerAccount"></wsdl:input>
+      <wsdl:output message="ns1:createCustomerAccountResponse" name="createCustomerAccountResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="updateCustomer">
+      <wsdl:input message="ns1:updateCustomer" name="updateCustomer"></wsdl:input>
+      <wsdl:output message="ns1:updateCustomerResponse" name="updateCustomerResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="updateUserAccount">
+      <wsdl:input message="ns1:updateUserAccount" name="updateUserAccount"></wsdl:input>
+      <wsdl:output message="ns1:updateUserAccountResponse" name="updateUserAccountResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="updateCustomerAccount">
+      <wsdl:input message="ns1:updateCustomerAccount" name="updateCustomerAccount"></wsdl:input>
+      <wsdl:output message="ns1:updateCustomerAccountResponse" name="updateCustomerAccountResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="createBillingAccount">
+      <wsdl:input message="ns1:createBillingAccount" name="createBillingAccount"></wsdl:input>
+      <wsdl:output message="ns1:createBillingAccountResponse" name="createBillingAccountResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="findCustomer">
+      <wsdl:input message="ns1:findCustomer" name="findCustomer"></wsdl:input>
+      <wsdl:output message="ns1:findCustomerResponse" name="findCustomerResponse"></wsdl:output>
+    </wsdl:operation>
+  </wsdl:portType>
+</wsdl:definitions>]]></con:content><con:type>http://schemas.xmlsoap.org/wsdl/</con:type></con:part></con:definitionCache><con:endpoints><con:endpoint>http://localhost:8080/meveo/AccountWs</con:endpoint></con:endpoints><con:operation isOneWay="false" action="" name="createAccess" bindingOperationName="createAccess" type="Request-Response" outputName="createAccessResponse" inputName="createAccess" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createAccess>
+         <!--Optional:-->
+         <arg0 accessId="?" userAccount="?" subscription="?">
+            <!--Optional:-->
+            <startDate>?</startDate>
+            <!--Optional:-->
+            <endDate>?</endDate>
+         </arg0>
+      </ws:createAccess>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/createAccess"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation isOneWay="false" action="" name="createBillingAccount" bindingOperationName="createBillingAccount" type="Request-Response" outputName="createBillingAccountResponse" inputName="createBillingAccount" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createBillingAccount>
+         <!--Optional:-->
+         <arg0 code="?" description="?" customerAccount="?" billingCycle="?" country="?" language="?" paymentMethod="?">
+            <!--Optional:-->
+            <externalRef1>?</externalRef1>
+            <!--Optional:-->
+            <externalRef2>?</externalRef2>
+            <!--Optional:-->
+            <name lastName="?">
+               <!--Optional:-->
+               <title>?</title>
+               <!--Optional:-->
+               <firstName>?</firstName>
+            </name>
+            <!--Optional:-->
+            <address>
+               <!--Optional:-->
+               <address1>?</address1>
+               <!--Optional:-->
+               <address2>?</address2>
+               <!--Optional:-->
+               <address3>?</address3>
+               <!--Optional:-->
+               <zipCode>?</zipCode>
+               <!--Optional:-->
+               <city>?</city>
+               <!--Optional:-->
+               <country>?</country>
+               <!--Optional:-->
+               <state>?</state>
+            </address>
+            <!--Zero or more repetitions:-->
+            <customFields code="?" description="?" stringValue="?" dateValue="?" longValue="?" doubleValue="?"/>
+            <!--Optional:-->
+            <nextInvoiceDate>?</nextInvoiceDate>
+            <!--Optional:-->
+            <subscriptionDate>?</subscriptionDate>
+            <!--Optional:-->
+            <terminationDate>?</terminationDate>
+            <!--Optional:-->
+            <paymentTerms>?</paymentTerms>
+            <!--Optional:-->
+            <electronicBilling>?</electronicBilling>
+         </arg0>
+      </ws:createBillingAccount>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/createBillingAccount"/></con:call></con:operation><con:operation isOneWay="false" action="" name="createCustomer" bindingOperationName="createCustomer" type="Request-Response" outputName="createCustomerResponse" inputName="createCustomer" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createCustomer>
+         <!--Optional:-->
+         <arg0 code="?" description="?">
+            <!--Optional:-->
+            <externalRef1>?</externalRef1>
+            <!--Optional:-->
+            <externalRef2>?</externalRef2>
+            <!--Optional:-->
+            <name lastName="?">
+               <!--Optional:-->
+               <title>?</title>
+               <!--Optional:-->
+               <firstName>?</firstName>
+            </name>
+            <!--Optional:-->
+            <address>
+               <!--Optional:-->
+               <address1>?</address1>
+               <!--Optional:-->
+               <address2>?</address2>
+               <!--Optional:-->
+               <address3>?</address3>
+               <!--Optional:-->
+               <zipCode>?</zipCode>
+               <!--Optional:-->
+               <city>?</city>
+               <!--Optional:-->
+               <country>?</country>
+               <!--Optional:-->
+               <state>?</state>
+            </address>
+            <!--Zero or more repetitions:-->
+            <customFields code="?" description="?" stringValue="?" dateValue="?" longValue="?" doubleValue="?"/>
+            <!--Optional:-->
+            <customerCategory>?</customerCategory>
+            <!--Optional:-->
+            <customerBrand>?</customerBrand>
+            <!--Optional:-->
+            <seller>?</seller>
+         </arg0>
+      </ws:createCustomer>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/createCustomer"/></con:call></con:operation><con:operation isOneWay="false" action="" name="createCustomerAccount" bindingOperationName="createCustomerAccount" type="Request-Response" outputName="createCustomerAccountResponse" inputName="createCustomerAccount" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createCustomerAccount>
+         <!--Optional:-->
+         <arg0 code="?" description="?" customer="?" currency="?">
+            <!--Optional:-->
+            <externalRef1>?</externalRef1>
+            <!--Optional:-->
+            <externalRef2>?</externalRef2>
+            <!--Optional:-->
+            <name lastName="?">
+               <!--Optional:-->
+               <title>?</title>
+               <!--Optional:-->
+               <firstName>?</firstName>
+            </name>
+            <!--Optional:-->
+            <address>
+               <!--Optional:-->
+               <address1>?</address1>
+               <!--Optional:-->
+               <address2>?</address2>
+               <!--Optional:-->
+               <address3>?</address3>
+               <!--Optional:-->
+               <zipCode>?</zipCode>
+               <!--Optional:-->
+               <city>?</city>
+               <!--Optional:-->
+               <country>?</country>
+               <!--Optional:-->
+               <state>?</state>
+            </address>
+            <!--Zero or more repetitions:-->
+            <customFields code="?" description="?" stringValue="?" dateValue="?" longValue="?" doubleValue="?"/>
+            <!--Optional:-->
+            <status>?</status>
+            <!--Optional:-->
+            <paymentMethod>?</paymentMethod>
+            <!--Optional:-->
+            <creditCategory>?</creditCategory>
+            <!--Zero or more repetitions:-->
+            <accountOperations>
+               <!--Optional:-->
+               <dueDate>?</dueDate>
+               <!--Optional:-->
+               <type>?</type>
+               <!--Optional:-->
+               <transactionDate>?</transactionDate>
+               <!--Optional:-->
+               <transactionCategory>?</transactionCategory>
+               <!--Optional:-->
+               <reference>?</reference>
+               <!--Optional:-->
+               <accountCode>?</accountCode>
+               <!--Optional:-->
+               <accountCodeClientSide>?</accountCodeClientSide>
+               <!--Optional:-->
+               <amount>?</amount>
+               <!--Optional:-->
+               <matchingAmount>?</matchingAmount>
+               <!--Optional:-->
+               <unMatchingAmount>?</unMatchingAmount>
+               <!--Optional:-->
+               <matchingStatus>?</matchingStatus>
+               <!--Zero or more repetitions:-->
+               <matchingAmounts>
+                  <!--Optional:-->
+                  <matchingCode>?</matchingCode>
+                  <!--Optional:-->
+                  <matchingAmount>?</matchingAmount>
+               </matchingAmounts>
+               <!--Optional:-->
+               <occCode>?</occCode>
+               <!--Optional:-->
+               <occDescription>?</occDescription>
+            </accountOperations>
+            <!--Optional:-->
+            <dateStatus>?</dateStatus>
+            <!--Optional:-->
+            <dateDunningLevel>?</dateDunningLevel>
+            <!--Optional:-->
+            <email>?</email>
+            <!--Optional:-->
+            <phone>?</phone>
+            <!--Optional:-->
+            <mobile>?</mobile>
+            <!--Optional:-->
+            <fax>?</fax>
+            <!--Optional:-->
+            <dunningLevel>?</dunningLevel>
+            <!--Optional:-->
+            <mandateIdentification>?</mandateIdentification>
+            <!--Optional:-->
+            <mandateDate>?</mandateDate>
+            <!--Optional:-->
+            <balance>?</balance>
+         </arg0>
+      </ws:createCustomerAccount>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/createCustomerAccount"/></con:call></con:operation><con:operation isOneWay="false" action="" name="createUserAccount" bindingOperationName="createUserAccount" type="Request-Response" outputName="createUserAccountResponse" inputName="createUserAccount" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createUserAccount>
+         <!--Optional:-->
+         <arg0 code="?" description="?" billingAccount="?">
+            <!--Optional:-->
+            <externalRef1>?</externalRef1>
+            <!--Optional:-->
+            <externalRef2>?</externalRef2>
+            <!--Optional:-->
+            <name lastName="?">
+               <!--Optional:-->
+               <title>?</title>
+               <!--Optional:-->
+               <firstName>?</firstName>
+            </name>
+            <!--Optional:-->
+            <address>
+               <!--Optional:-->
+               <address1>?</address1>
+               <!--Optional:-->
+               <address2>?</address2>
+               <!--Optional:-->
+               <address3>?</address3>
+               <!--Optional:-->
+               <zipCode>?</zipCode>
+               <!--Optional:-->
+               <city>?</city>
+               <!--Optional:-->
+               <country>?</country>
+               <!--Optional:-->
+               <state>?</state>
+            </address>
+            <!--Zero or more repetitions:-->
+            <customFields code="?" description="?" stringValue="?" dateValue="?" longValue="?" doubleValue="?"/>
+         </arg0>
+      </ws:createUserAccount>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/createUserAccount"/></con:call></con:operation><con:operation isOneWay="false" action="" name="findAccess" bindingOperationName="findAccess" type="Request-Response" outputName="findAccessResponse" inputName="findAccess" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:findAccess>
+         <!--Optional:-->
+         <arg0>?</arg0>
+      </ws:findAccess>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/findAccess"/></con:call></con:operation><con:operation isOneWay="false" action="" name="findBillingAccount" bindingOperationName="findBillingAccount" type="Request-Response" outputName="findBillingAccountResponse" inputName="findBillingAccount" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:findBillingAccount>
+         <!--Optional:-->
+         <arg0>?</arg0>
+      </ws:findBillingAccount>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/findBillingAccount"/></con:call></con:operation><con:operation isOneWay="false" action="" name="findCustomer" bindingOperationName="findCustomer" type="Request-Response" outputName="findCustomerResponse" inputName="findCustomer" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:findCustomer>
+         <!--Optional:-->
+         <arg0>?</arg0>
+      </ws:findCustomer>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/findCustomer"/></con:call></con:operation><con:operation isOneWay="false" action="" name="findCustomerAccount" bindingOperationName="findCustomerAccount" type="Request-Response" outputName="findCustomerAccountResponse" inputName="findCustomerAccount" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:findCustomerAccount>
+         <!--Optional:-->
+         <arg0>?</arg0>
+      </ws:findCustomerAccount>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/findCustomerAccount"/></con:call></con:operation><con:operation isOneWay="false" action="" name="findUserAccount" bindingOperationName="findUserAccount" type="Request-Response" outputName="findUserAccountResponse" inputName="findUserAccount" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:findUserAccount>
+         <!--Optional:-->
+         <arg0>?</arg0>
+      </ws:findUserAccount>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/findUserAccount"/></con:call></con:operation><con:operation isOneWay="false" action="" name="index" bindingOperationName="index" type="Request-Response" outputName="indexResponse" inputName="index" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:index/>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/index"/></con:call></con:operation><con:operation isOneWay="false" action="" name="removeAccess" bindingOperationName="removeAccess" type="Request-Response" outputName="removeAccessResponse" inputName="removeAccess" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:removeAccess>
+         <!--Optional:-->
+         <arg0>?</arg0>
+      </ws:removeAccess>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/removeAccess"/></con:call></con:operation><con:operation isOneWay="false" action="" name="removeBillingAccount" bindingOperationName="removeBillingAccount" type="Request-Response" outputName="removeBillingAccountResponse" inputName="removeBillingAccount" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:removeBillingAccount>
+         <!--Optional:-->
+         <arg0>?</arg0>
+      </ws:removeBillingAccount>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/removeBillingAccount"/></con:call></con:operation><con:operation isOneWay="false" action="" name="removeCustomer" bindingOperationName="removeCustomer" type="Request-Response" outputName="removeCustomerResponse" inputName="removeCustomer" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:removeCustomer>
+         <!--Optional:-->
+         <arg0>?</arg0>
+      </ws:removeCustomer>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/removeCustomer"/></con:call></con:operation><con:operation isOneWay="false" action="" name="removeCustomerAccount" bindingOperationName="removeCustomerAccount" type="Request-Response" outputName="removeCustomerAccountResponse" inputName="removeCustomerAccount" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:removeCustomerAccount>
+         <!--Optional:-->
+         <arg0>?</arg0>
+      </ws:removeCustomerAccount>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/removeCustomerAccount"/></con:call></con:operation><con:operation isOneWay="false" action="" name="removeUserAccount" bindingOperationName="removeUserAccount" type="Request-Response" outputName="removeUserAccountResponse" inputName="removeUserAccount" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:removeUserAccount>
+         <!--Optional:-->
+         <arg0>?</arg0>
+      </ws:removeUserAccount>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/removeUserAccount"/></con:call></con:operation><con:operation isOneWay="false" action="" name="updateAccess" bindingOperationName="updateAccess" type="Request-Response" outputName="updateAccessResponse" inputName="updateAccess" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:updateAccess>
+         <!--Optional:-->
+         <arg0 accessId="?" userAccount="?" subscription="?">
+            <!--Optional:-->
+            <startDate>?</startDate>
+            <!--Optional:-->
+            <endDate>?</endDate>
+         </arg0>
+      </ws:updateAccess>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/updateAccess"/></con:call></con:operation><con:operation isOneWay="false" action="" name="updateBillingAccount" bindingOperationName="updateBillingAccount" type="Request-Response" outputName="updateBillingAccountResponse" inputName="updateBillingAccount" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:updateBillingAccount>
+         <!--Optional:-->
+         <arg0 code="?" description="?" customerAccount="?" billingCycle="?" country="?" language="?" paymentMethod="?">
+            <!--Optional:-->
+            <externalRef1>?</externalRef1>
+            <!--Optional:-->
+            <externalRef2>?</externalRef2>
+            <!--Optional:-->
+            <name lastName="?">
+               <!--Optional:-->
+               <title>?</title>
+               <!--Optional:-->
+               <firstName>?</firstName>
+            </name>
+            <!--Optional:-->
+            <address>
+               <!--Optional:-->
+               <address1>?</address1>
+               <!--Optional:-->
+               <address2>?</address2>
+               <!--Optional:-->
+               <address3>?</address3>
+               <!--Optional:-->
+               <zipCode>?</zipCode>
+               <!--Optional:-->
+               <city>?</city>
+               <!--Optional:-->
+               <country>?</country>
+               <!--Optional:-->
+               <state>?</state>
+            </address>
+            <!--Zero or more repetitions:-->
+            <customFields code="?" description="?" stringValue="?" dateValue="?" longValue="?" doubleValue="?"/>
+            <!--Optional:-->
+            <nextInvoiceDate>?</nextInvoiceDate>
+            <!--Optional:-->
+            <subscriptionDate>?</subscriptionDate>
+            <!--Optional:-->
+            <terminationDate>?</terminationDate>
+            <!--Optional:-->
+            <paymentTerms>?</paymentTerms>
+            <!--Optional:-->
+            <electronicBilling>?</electronicBilling>
+         </arg0>
+      </ws:updateBillingAccount>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/updateBillingAccount"/></con:call></con:operation><con:operation isOneWay="false" action="" name="updateCustomer" bindingOperationName="updateCustomer" type="Request-Response" outputName="updateCustomerResponse" inputName="updateCustomer" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:updateCustomer>
+         <!--Optional:-->
+         <arg0 code="?" description="?">
+            <!--Optional:-->
+            <externalRef1>?</externalRef1>
+            <!--Optional:-->
+            <externalRef2>?</externalRef2>
+            <!--Optional:-->
+            <name lastName="?">
+               <!--Optional:-->
+               <title>?</title>
+               <!--Optional:-->
+               <firstName>?</firstName>
+            </name>
+            <!--Optional:-->
+            <address>
+               <!--Optional:-->
+               <address1>?</address1>
+               <!--Optional:-->
+               <address2>?</address2>
+               <!--Optional:-->
+               <address3>?</address3>
+               <!--Optional:-->
+               <zipCode>?</zipCode>
+               <!--Optional:-->
+               <city>?</city>
+               <!--Optional:-->
+               <country>?</country>
+               <!--Optional:-->
+               <state>?</state>
+            </address>
+            <!--Zero or more repetitions:-->
+            <customFields code="?" description="?" stringValue="?" dateValue="?" longValue="?" doubleValue="?"/>
+            <!--Optional:-->
+            <customerCategory>?</customerCategory>
+            <!--Optional:-->
+            <customerBrand>?</customerBrand>
+            <!--Optional:-->
+            <seller>?</seller>
+         </arg0>
+      </ws:updateCustomer>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/updateCustomer"/></con:call></con:operation><con:operation isOneWay="false" action="" name="updateCustomerAccount" bindingOperationName="updateCustomerAccount" type="Request-Response" outputName="updateCustomerAccountResponse" inputName="updateCustomerAccount" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:updateCustomerAccount>
+         <!--Optional:-->
+         <arg0 code="?" description="?" customer="?" currency="?">
+            <!--Optional:-->
+            <externalRef1>?</externalRef1>
+            <!--Optional:-->
+            <externalRef2>?</externalRef2>
+            <!--Optional:-->
+            <name lastName="?">
+               <!--Optional:-->
+               <title>?</title>
+               <!--Optional:-->
+               <firstName>?</firstName>
+            </name>
+            <!--Optional:-->
+            <address>
+               <!--Optional:-->
+               <address1>?</address1>
+               <!--Optional:-->
+               <address2>?</address2>
+               <!--Optional:-->
+               <address3>?</address3>
+               <!--Optional:-->
+               <zipCode>?</zipCode>
+               <!--Optional:-->
+               <city>?</city>
+               <!--Optional:-->
+               <country>?</country>
+               <!--Optional:-->
+               <state>?</state>
+            </address>
+            <!--Zero or more repetitions:-->
+            <customFields code="?" description="?" stringValue="?" dateValue="?" longValue="?" doubleValue="?"/>
+            <!--Optional:-->
+            <status>?</status>
+            <!--Optional:-->
+            <paymentMethod>?</paymentMethod>
+            <!--Optional:-->
+            <creditCategory>?</creditCategory>
+            <!--Zero or more repetitions:-->
+            <accountOperations>
+               <!--Optional:-->
+               <dueDate>?</dueDate>
+               <!--Optional:-->
+               <type>?</type>
+               <!--Optional:-->
+               <transactionDate>?</transactionDate>
+               <!--Optional:-->
+               <transactionCategory>?</transactionCategory>
+               <!--Optional:-->
+               <reference>?</reference>
+               <!--Optional:-->
+               <accountCode>?</accountCode>
+               <!--Optional:-->
+               <accountCodeClientSide>?</accountCodeClientSide>
+               <!--Optional:-->
+               <amount>?</amount>
+               <!--Optional:-->
+               <matchingAmount>?</matchingAmount>
+               <!--Optional:-->
+               <unMatchingAmount>?</unMatchingAmount>
+               <!--Optional:-->
+               <matchingStatus>?</matchingStatus>
+               <!--Zero or more repetitions:-->
+               <matchingAmounts>
+                  <!--Optional:-->
+                  <matchingCode>?</matchingCode>
+                  <!--Optional:-->
+                  <matchingAmount>?</matchingAmount>
+               </matchingAmounts>
+               <!--Optional:-->
+               <occCode>?</occCode>
+               <!--Optional:-->
+               <occDescription>?</occDescription>
+            </accountOperations>
+            <!--Optional:-->
+            <dateStatus>?</dateStatus>
+            <!--Optional:-->
+            <dateDunningLevel>?</dateDunningLevel>
+            <!--Optional:-->
+            <email>?</email>
+            <!--Optional:-->
+            <phone>?</phone>
+            <!--Optional:-->
+            <mobile>?</mobile>
+            <!--Optional:-->
+            <fax>?</fax>
+            <!--Optional:-->
+            <dunningLevel>?</dunningLevel>
+            <!--Optional:-->
+            <mandateIdentification>?</mandateIdentification>
+            <!--Optional:-->
+            <mandateDate>?</mandateDate>
+            <!--Optional:-->
+            <balance>?</balance>
+         </arg0>
+      </ws:updateCustomerAccount>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/updateCustomerAccount"/></con:call></con:operation><con:operation isOneWay="false" action="" name="updateUserAccount" bindingOperationName="updateUserAccount" type="Request-Response" outputName="updateUserAccountResponse" inputName="updateUserAccount" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:updateUserAccount>
+         <!--Optional:-->
+         <arg0 code="?" description="?" billingAccount="?">
+            <!--Optional:-->
+            <externalRef1>?</externalRef1>
+            <!--Optional:-->
+            <externalRef2>?</externalRef2>
+            <!--Optional:-->
+            <name lastName="?">
+               <!--Optional:-->
+               <title>?</title>
+               <!--Optional:-->
+               <firstName>?</firstName>
+            </name>
+            <!--Optional:-->
+            <address>
+               <!--Optional:-->
+               <address1>?</address1>
+               <!--Optional:-->
+               <address2>?</address2>
+               <!--Optional:-->
+               <address3>?</address3>
+               <!--Optional:-->
+               <zipCode>?</zipCode>
+               <!--Optional:-->
+               <city>?</city>
+               <!--Optional:-->
+               <country>?</country>
+               <!--Optional:-->
+               <state>?</state>
+            </address>
+            <!--Zero or more repetitions:-->
+            <customFields code="?" description="?" stringValue="?" dateValue="?" longValue="?" doubleValue="?"/>
+         </arg0>
+      </ws:updateUserAccount>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/updateUserAccount"/></con:call></con:operation></con:interface><con:properties/><con:wssContainer/><con:oAuth2ProfileContainer/><con:sensitiveInformation/></con:soapui-project>

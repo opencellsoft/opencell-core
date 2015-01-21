@@ -21,13 +21,13 @@ public class AccessDto extends BaseDto {
 
 	@XmlAttribute(required = false)
 	private Long accessId;
-	
+
 	private Date startDate;
 	private Date endDate;
 
 	@XmlAttribute(required = true)
-	private String user;
-	
+	private String userAccount;
+
 	@XmlAttribute(required = true)
 	private String subscription;
 
@@ -39,7 +39,7 @@ public class AccessDto extends BaseDto {
 		accessId = e.getId();
 		startDate = e.getStartDate();
 		endDate = e.getEndDate();
-		user = e.getAccessUserId();
+		userAccount = e.getAccessUserId();
 		if (e.getSubscription() != null) {
 			subscription = e.getSubscription().getCode();
 		}
@@ -61,18 +61,10 @@ public class AccessDto extends BaseDto {
 		this.endDate = endDate;
 	}
 
-	public String getUser() {
-		return user;
-	}
-
-	public void setUser(String user) {
-		this.user = user;
-	}
-
 	@Override
 	public String toString() {
-		return "AccessDto [accessId=" + accessId + ", startDate=" + startDate + ", endDate=" + endDate + ", user="
-				+ user + ", subscription=" + subscription + "]";
+		return "AccessDto [accessId=" + accessId + ", startDate=" + startDate + ", endDate=" + endDate
+				+ ", userAccount=" + userAccount + ", subscription=" + subscription + "]";
 	}
 
 	public Long getAccessId() {
@@ -89,6 +81,14 @@ public class AccessDto extends BaseDto {
 
 	public void setSubscription(String subscription) {
 		this.subscription = subscription;
+	}
+
+	public String getUserAccount() {
+		return userAccount;
+	}
+
+	public void setUserAccount(String userAccount) {
+		this.userAccount = userAccount;
 	}
 
 }

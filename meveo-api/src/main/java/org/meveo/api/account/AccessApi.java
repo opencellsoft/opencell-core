@@ -30,7 +30,7 @@ public class AccessApi extends BaseApi {
 	private SubscriptionService subscriptionService;
 
 	public void create(AccessDto postData, User currentUser) throws MeveoApiException {
-		if (!StringUtils.isBlank(postData.getUser()) && !StringUtils.isBlank(postData.getSubscription())) {
+		if (!StringUtils.isBlank(postData.getUserAccount()) && !StringUtils.isBlank(postData.getSubscription())) {
 			Provider provider = currentUser.getProvider();
 
 			Subscription subscription = subscriptionService.findByCode(postData.getSubscription(), provider);
@@ -38,20 +38,20 @@ public class AccessApi extends BaseApi {
 				throw new EntityDoesNotExistsException(Subscription.class, postData.getSubscription());
 			}
 
-			if (accessService.findByUserIdAndSubscription(postData.getUser(), subscription) != null) {
-				throw new EntityAlreadyExistsException(Access.class, "user.code=" + postData.getUser()
+			if (accessService.findByUserIdAndSubscription(postData.getUserAccount(), subscription) != null) {
+				throw new EntityAlreadyExistsException(Access.class, "user.code=" + postData.getUserAccount()
 						+ ";subscription.code=" + postData.getSubscription());
 			}
 
 			Access access = new Access();
 			access.setStartDate(postData.getStartDate());
 			access.setEndDate(postData.getEndDate());
-			access.setAccessUserId(postData.getUser());
+			access.setAccessUserId(postData.getUserAccount());
 			access.setSubscription(subscription);
 
 			accessService.create(access, currentUser, provider);
 		} else {
-			if (StringUtils.isBlank(postData.getUser())) {
+			if (StringUtils.isBlank(postData.getUserAccount())) {
 				missingParameters.add("user");
 			}
 			if (postData.getSubscription() == null) {
@@ -63,7 +63,7 @@ public class AccessApi extends BaseApi {
 	}
 
 	public void update(AccessDto postData, User currentUser) throws MeveoApiException {
-		if (postData.getAccessId() != null && !StringUtils.isBlank(postData.getUser())
+		if (postData.getAccessId() != null && !StringUtils.isBlank(postData.getUserAccount())
 				&& !StringUtils.isBlank(postData.getSubscription())) {
 			Provider provider = currentUser.getProvider();
 
@@ -79,7 +79,7 @@ public class AccessApi extends BaseApi {
 
 			access.setStartDate(postData.getStartDate());
 			access.setEndDate(postData.getEndDate());
-			access.setAccessUserId(postData.getUser());
+			access.setAccessUserId(postData.getUserAccount());
 			access.setSubscription(subscription);
 
 			accessService.update(access, currentUser);
@@ -87,7 +87,7 @@ public class AccessApi extends BaseApi {
 			if (postData.getAccessId() == null) {
 				missingParameters.add("accessId");
 			}
-			if (StringUtils.isBlank(postData.getUser())) {
+			if (StringUtils.isBlank(postData.getUserAccount())) {
 				missingParameters.add("user");
 			}
 			if (postData.getSubscription() == null) {
