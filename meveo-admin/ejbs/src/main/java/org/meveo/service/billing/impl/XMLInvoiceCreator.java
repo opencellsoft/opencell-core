@@ -1051,13 +1051,16 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 					provider.getRounding()));
 			amountWithoutTax.appendChild(amountWithoutTaxTxt);
 			category.appendChild(amountWithoutTax);
-
-			Element amountWithTax = doc.createElement("amountWithTax");
-			Text amountWithTaxTxt = doc.createTextNode(round(
-					xmlInvoiceHeaderCategoryDTO.getAmountWithTax(),
-					provider.getRounding()));
-			amountWithTax.appendChild(amountWithTaxTxt);
-			category.appendChild(amountWithTax);
+			
+			if(!entreprise){
+				Element amountWithTax = doc.createElement("amountWithTax");
+				Text amountWithTaxTxt = doc.createTextNode(round(
+						xmlInvoiceHeaderCategoryDTO.getAmountWithTax(),
+						provider.getRounding()));
+				amountWithTax.appendChild(amountWithTaxTxt);
+				category.appendChild(amountWithTax);	
+			}
+			
 			if (entreprise) {
 				for (RatedTransaction headerTransaction : xmlInvoiceHeaderCategoryDTO
 						.getRatedtransactions().values()) {

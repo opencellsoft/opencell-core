@@ -378,6 +378,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 				}
 				invoiceAgregateF.getCategoryInvoiceAgregate().addAmountWithoutTax(
 						invoiceAgregateF.getAmountWithoutTax());
+				invoiceAgregateF.getCategoryInvoiceAgregate().addAmountWithTax(invoiceAgregateF.getAmountWithTax());
 				log.info("  cat " + invoiceAgregateF.getCategoryInvoiceAgregate().getId() + " ht ->"
 						+ invoiceAgregateF.getCategoryInvoiceAgregate().getAmountWithoutTax());
 				if (invoiceAgregateF.getAmountWithoutTax().compareTo(biggestAmount) > 0) {
