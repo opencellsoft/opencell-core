@@ -11410,4 +11410,317 @@
          </arg0>
       </ws:updateUserAccount>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/updateUserAccount"/></con:call></con:operation></con:interface><con:properties/><con:wssContainer/><con:oAuth2ProfileContainer/><con:sensitiveInformation/></con:soapui-project>
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/updateUserAccount"/></con:call></con:operation></con:interface><con:interface xsi:type="con:WsdlInterface" wsaVersion="NONE" name="SubscriptionWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}SubscriptionWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="http://localhost:8080/meveo/SubscriptionWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache type="TEXT" rootPart="http://localhost:8080/meveo/SubscriptionWs?wsdl"><con:part><con:url>http://localhost:8080/meveo/SubscriptionWs?wsdl</con:url><con:content><![CDATA[<wsdl:definitions name="SubscriptionWs" targetNamespace="http://impl.ws.api.meveo.org/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://impl.ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns2="http://schemas.xmlsoap.org/soap/http" xmlns:ns1="http://ws.api.meveo.org/">
+  <wsdl:import location="http://localhost:8080/meveo/SubscriptionWs?wsdl=SubscriptionWs.wsdl" namespace="http://ws.api.meveo.org/"></wsdl:import>
+  <wsdl:binding name="SubscriptionWsSoapBinding" type="ns1:SubscriptionWs">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <wsdl:operation name="applyOneShotChargeInstance">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="applyOneShotChargeInstance">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="applyOneShotChargeInstanceResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="update">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="update">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="updateResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="index">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="index">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="indexResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="activateServices">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="activateServices">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="activateServicesResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="create">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="create">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="createResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="SubscriptionWs">
+    <wsdl:port binding="tns:SubscriptionWsSoapBinding" name="SubscriptionWsImplPort">
+      <soap:address location="http://localhost:8080/meveo/SubscriptionWs"/>
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>]]></con:content><con:type>http://schemas.xmlsoap.org/wsdl/</con:type></con:part><con:part><con:url>http://localhost:8080/meveo/SubscriptionWs?wsdl=SubscriptionWs.wsdl</con:url><con:content><![CDATA[<wsdl:definitions name="SubscriptionWs" targetNamespace="http://ws.api.meveo.org/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ns1="http://ws.api.meveo.org/">
+  <wsdl:types>
+    <xs:schema elementFormDefault="unqualified" targetNamespace="http://ws.api.meveo.org/" version="1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://ws.api.meveo.org/">
+      <xs:element name="ActionStatus" type="tns:actionStatus"/>
+      <xs:element name="ApplyOneShotChargeInstance" type="tns:applyOneShotChargeInstanceDto"/>
+      <xs:element name="Customer" type="tns:activateServicesDto"/>
+      <xs:element name="Subscription" type="tns:subscriptionDto"/>
+      <xs:element name="activateServices" type="tns:activateServices"/>
+      <xs:element name="activateServicesResponse" type="tns:activateServicesResponse"/>
+      <xs:element name="applyOneShotChargeInstance" type="tns:applyOneShotChargeInstance"/>
+      <xs:element name="applyOneShotChargeInstanceResponse" type="tns:applyOneShotChargeInstanceResponse"/>
+      <xs:element name="create" type="tns:create"/>
+      <xs:element name="createResponse" type="tns:createResponse"/>
+      <xs:element name="index" type="tns:index"/>
+      <xs:element name="indexResponse" type="tns:indexResponse"/>
+      <xs:element name="update" type="tns:update"/>
+      <xs:element name="updateResponse" type="tns:updateResponse"/>
+      <xs:complexType name="update">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="arg0" type="tns:subscriptionDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="subscriptionDto">
+        <xs:complexContent>
+          <xs:extension base="tns:baseDto">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="subscriptionDate" type="xs:dateTime"/>
+              <xs:element minOccurs="0" name="terminationDate" type="xs:dateTime"/>
+            </xs:sequence>
+            <xs:attribute name="code" type="xs:string" use="required"/>
+            <xs:attribute name="userAccount" type="xs:string" use="required"/>
+            <xs:attribute name="offerTemplate" type="xs:string" use="required"/>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType abstract="true" name="baseDto">
+        <xs:sequence/>
+      </xs:complexType>
+      <xs:complexType name="updateResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="actionStatus">
+        <xs:sequence>
+          <xs:element name="status" type="tns:actionStatusEnum"/>
+          <xs:element name="errorCode" type="xs:int"/>
+          <xs:element name="message" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="applyOneShotChargeInstance">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="arg0" type="tns:applyOneShotChargeInstanceDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="applyOneShotChargeInstanceDto">
+        <xs:complexContent>
+          <xs:extension base="tns:baseDto">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="description" type="xs:string"/>
+              <xs:element minOccurs="0" name="amountWithoutTax" type="xs:decimal"/>
+              <xs:element minOccurs="0" name="amountWithTax" type="xs:decimal"/>
+              <xs:element minOccurs="0" name="criteria1" type="xs:string"/>
+              <xs:element minOccurs="0" name="criteria2" type="xs:string"/>
+              <xs:element minOccurs="0" name="criteria3" type="xs:string"/>
+            </xs:sequence>
+            <xs:attribute name="oneShotChargeInstance" type="xs:string" use="required"/>
+            <xs:attribute name="subscription" type="xs:string" use="required"/>
+            <xs:attribute name="operationDate" type="xs:dateTime" use="required"/>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="applyOneShotChargeInstanceResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="index">
+        <xs:sequence/>
+      </xs:complexType>
+      <xs:complexType name="indexResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="create">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="arg0" type="tns:subscriptionDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="createResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="activateServices">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="arg0" type="tns:activateServicesDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="activateServicesDto">
+        <xs:complexContent>
+          <xs:extension base="tns:baseDto">
+            <xs:sequence>
+              <xs:element name="services">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element maxOccurs="unbounded" minOccurs="0" name="entry">
+                      <xs:complexType>
+                        <xs:sequence>
+                          <xs:element minOccurs="0" name="key" type="xs:string"/>
+                          <xs:element minOccurs="0" name="value" type="xs:int"/>
+                        </xs:sequence>
+                      </xs:complexType>
+                    </xs:element>
+                  </xs:sequence>
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+            <xs:attribute name="subscription" type="xs:string" use="required"/>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="activateServicesResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:simpleType name="actionStatusEnum">
+        <xs:restriction base="xs:string">
+          <xs:enumeration value="SUCCESS"/>
+          <xs:enumeration value="FAIL"/>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:schema>
+  </wsdl:types>
+  <wsdl:message name="index">
+    <wsdl:part element="ns1:index" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="update">
+    <wsdl:part element="ns1:update" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="updateResponse">
+    <wsdl:part element="ns1:updateResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="activateServices">
+    <wsdl:part element="ns1:activateServices" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="applyOneShotChargeInstance">
+    <wsdl:part element="ns1:applyOneShotChargeInstance" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="activateServicesResponse">
+    <wsdl:part element="ns1:activateServicesResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="createResponse">
+    <wsdl:part element="ns1:createResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="applyOneShotChargeInstanceResponse">
+    <wsdl:part element="ns1:applyOneShotChargeInstanceResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="create">
+    <wsdl:part element="ns1:create" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="indexResponse">
+    <wsdl:part element="ns1:indexResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:portType name="SubscriptionWs">
+    <wsdl:operation name="update">
+      <wsdl:input message="ns1:update" name="update"></wsdl:input>
+      <wsdl:output message="ns1:updateResponse" name="updateResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="applyOneShotChargeInstance">
+      <wsdl:input message="ns1:applyOneShotChargeInstance" name="applyOneShotChargeInstance"></wsdl:input>
+      <wsdl:output message="ns1:applyOneShotChargeInstanceResponse" name="applyOneShotChargeInstanceResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="index">
+      <wsdl:input message="ns1:index" name="index"></wsdl:input>
+      <wsdl:output message="ns1:indexResponse" name="indexResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="create">
+      <wsdl:input message="ns1:create" name="create"></wsdl:input>
+      <wsdl:output message="ns1:createResponse" name="createResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="activateServices">
+      <wsdl:input message="ns1:activateServices" name="activateServices"></wsdl:input>
+      <wsdl:output message="ns1:activateServicesResponse" name="activateServicesResponse"></wsdl:output>
+    </wsdl:operation>
+  </wsdl:portType>
+</wsdl:definitions>]]></con:content><con:type>http://schemas.xmlsoap.org/wsdl/</con:type></con:part></con:definitionCache><con:endpoints><con:endpoint>http://localhost:8080/meveo/SubscriptionWs</con:endpoint></con:endpoints><con:operation isOneWay="false" action="" name="activateServices" bindingOperationName="activateServices" type="Request-Response" outputName="activateServicesResponse" inputName="activateServices" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/SubscriptionWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:activateServices>
+         <!--Optional:-->
+         <arg0 subscription="?">
+            <services>
+               <!--Zero or more repetitions:-->
+               <entry>
+                  <!--Optional:-->
+                  <key>?</key>
+                  <!--Optional:-->
+                  <value>?</value>
+               </entry>
+            </services>
+         </arg0>
+      </ws:activateServices>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SubscriptionWs/activateServices"/></con:call></con:operation><con:operation isOneWay="false" action="" name="applyOneShotChargeInstance" bindingOperationName="applyOneShotChargeInstance" type="Request-Response" outputName="applyOneShotChargeInstanceResponse" inputName="applyOneShotChargeInstance" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/SubscriptionWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:applyOneShotChargeInstance>
+         <!--Optional:-->
+         <arg0 oneShotChargeInstance="?" subscription="?" operationDate="?">
+            <!--Optional:-->
+            <description>?</description>
+            <!--Optional:-->
+            <amountWithoutTax>?</amountWithoutTax>
+            <!--Optional:-->
+            <amountWithTax>?</amountWithTax>
+            <!--Optional:-->
+            <criteria1>?</criteria1>
+            <!--Optional:-->
+            <criteria2>?</criteria2>
+            <!--Optional:-->
+            <criteria3>?</criteria3>
+         </arg0>
+      </ws:applyOneShotChargeInstance>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SubscriptionWs/applyOneShotChargeInstance"/></con:call></con:operation><con:operation isOneWay="false" action="" name="create" bindingOperationName="create" type="Request-Response" outputName="createResponse" inputName="create" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/SubscriptionWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:create>
+         <!--Optional:-->
+         <arg0 code="?" userAccount="?" offerTemplate="?">
+            <!--Optional:-->
+            <subscriptionDate>?</subscriptionDate>
+            <!--Optional:-->
+            <terminationDate>?</terminationDate>
+         </arg0>
+      </ws:create>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SubscriptionWs/create"/></con:call></con:operation><con:operation isOneWay="false" action="" name="index" bindingOperationName="index" type="Request-Response" outputName="indexResponse" inputName="index" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/SubscriptionWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:index/>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SubscriptionWs/index"/></con:call></con:operation><con:operation isOneWay="false" action="" name="update" bindingOperationName="update" type="Request-Response" outputName="updateResponse" inputName="update" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/SubscriptionWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:update>
+         <!--Optional:-->
+         <arg0 code="?" userAccount="?" offerTemplate="?">
+            <!--Optional:-->
+            <subscriptionDate>?</subscriptionDate>
+            <!--Optional:-->
+            <terminationDate>?</terminationDate>
+         </arg0>
+      </ws:update>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SubscriptionWs/update"/></con:call></con:operation></con:interface><con:properties/><con:wssContainer/><con:oAuth2ProfileContainer/><con:sensitiveInformation/></con:soapui-project>
