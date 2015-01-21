@@ -664,14 +664,15 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 							.getProvider().getRounding()));
 			amountWithoutTax.appendChild(amountWithoutTaxTxt);
 			category.appendChild(amountWithoutTax);
-
+             
+			if(!entreprise){
 			Element amountWithTax = doc.createElement("amountWithTax");
 			Text amountWithTaxTxt = doc.createTextNode(round(
 					categoryInvoiceAgregate.getAmountWithTax(), invoice
 							.getProvider().getRounding()));
 			amountWithTax.appendChild(amountWithTaxTxt);
 			category.appendChild(amountWithTax);
-
+			}
 			if (generateSubCat) {
 				Element subCategories = doc.createElement("subCategories");
 				category.appendChild(subCategories);
