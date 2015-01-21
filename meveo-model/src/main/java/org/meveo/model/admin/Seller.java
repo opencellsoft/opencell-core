@@ -24,6 +24,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.billing.TradingCountry;
@@ -32,7 +33,7 @@ import org.meveo.model.billing.TradingLanguage;
 import org.meveo.model.shared.Address;
 
 @Entity
-@Table(name = "CRM_SELLER")
+@Table(name = "CRM_SELLER", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE", "PROVIDER_ID" }))
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "CRM_SELLER_SEQ")
 public class Seller extends BusinessEntity {
 
@@ -49,8 +50,8 @@ public class Seller extends BusinessEntity {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "TRADING_LANGUAGE_ID")
 	private TradingLanguage tradingLanguage;
-	
-	@Column(name = "INVOICE_PREFIX",length=50)
+
+	@Column(name = "INVOICE_PREFIX", length = 50)
 	private String invoicePrefix;
 
 	@Column(name = "CURRENT_INVOICE_NB")

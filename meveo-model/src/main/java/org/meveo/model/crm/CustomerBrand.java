@@ -19,11 +19,12 @@ package org.meveo.model.crm;
 import javax.persistence.Entity;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 
 import org.meveo.model.BusinessEntity;
 
 @Entity
-@Table(name = "CRM_CUSTOMER_BRAND")
+@Table(name = "CRM_CUSTOMER_BRAND", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE", "PROVIDER_ID" }))
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "CRM_CUSTOMER_BRAND_SEQ")
 public class CustomerBrand extends BusinessEntity {
 

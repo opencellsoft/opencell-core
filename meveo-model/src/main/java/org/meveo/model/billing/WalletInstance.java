@@ -32,12 +32,13 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.UniqueConstraint;
 
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.catalog.WalletTemplate;
 
 @Entity
-@Table(name = "BILLING_WALLET")
+@Table(name = "BILLING_WALLET", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE", "PROVIDER_ID" }))
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_WALLET_SEQ")
 public class WalletInstance extends BusinessEntity {
 
@@ -50,8 +51,8 @@ public class WalletInstance extends BusinessEntity {
 	@ManyToOne
 	@JoinColumn(name = "USER_ACCOUNT_ID")
 	private UserAccount userAccount;
-	
-	@Column(name="EXPIRY_DATE")
+
+	@Column(name = "EXPIRY_DATE")
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date creditExpiryDate;
 
@@ -120,7 +121,7 @@ public class WalletInstance extends BusinessEntity {
 		this.creditExpiryDate = creditExpiryDate;
 	}
 
-	public boolean equals(WalletInstance w){
-		return (w==null)||(w.getCode().equals(this.code));
+	public boolean equals(WalletInstance w) {
+		return (w == null) || (w.getCode().equals(this.code));
 	}
 }

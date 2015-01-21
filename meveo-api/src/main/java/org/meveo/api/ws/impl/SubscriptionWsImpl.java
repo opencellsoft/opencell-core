@@ -1,36 +1,36 @@
-package org.meveo.api.rest.account.impl;
+package org.meveo.api.ws.impl;
 
-import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
+import javax.jws.WebService;
 
 import org.meveo.api.MeveoApiErrorCode;
-import org.meveo.api.account.UserAccountApi;
+import org.meveo.api.account.SubscriptionApi;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
-import org.meveo.api.dto.account.UserAccountDto;
-import org.meveo.api.dto.response.account.GetUserAccountResponse;
+import org.meveo.api.dto.account.ActivateServicesDto;
+import org.meveo.api.dto.account.ApplyOneShotChargeInstanceDto;
+import org.meveo.api.dto.account.SubscriptionDto;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.LoggingInterceptor;
-import org.meveo.api.rest.account.UserAccountRs;
-import org.meveo.api.rest.impl.BaseRs;
+import org.meveo.api.ws.SubscriptionWs;
 
 /**
  * @author Edward P. Legaspi
  **/
-@RequestScoped
+@WebService(serviceName = "SubscriptionWs", endpointInterface = "org.meveo.api.ws.SubscriptionWs")
 @Interceptors({ LoggingInterceptor.class })
-public class UserAccountRsImpl extends BaseRs implements UserAccountRs {
+public class SubscriptionWsImpl extends BaseWs implements SubscriptionWs {
 
 	@Inject
-	private UserAccountApi userAccountApi;
+	private SubscriptionApi subscriptionApi;
 
 	@Override
-	public ActionStatus create(UserAccountDto postData) {
+	public ActionStatus create(SubscriptionDto postData) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 		try {
-			userAccountApi.create(postData, getCurrentUser());
+			subscriptionApi.create(postData, getCurrentUser());
 		} catch (MeveoApiException e) {
 			result.setErrorCode(e.getErrorCode());
 			result.setStatus(ActionStatusEnum.FAIL);
@@ -45,11 +45,11 @@ public class UserAccountRsImpl extends BaseRs implements UserAccountRs {
 	}
 
 	@Override
-	public ActionStatus update(UserAccountDto postData) {
+	public ActionStatus update(SubscriptionDto postData) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 		try {
-			userAccountApi.update(postData, getCurrentUser());
+			subscriptionApi.update(postData, getCurrentUser());
 		} catch (MeveoApiException e) {
 			result.setErrorCode(e.getErrorCode());
 			result.setStatus(ActionStatusEnum.FAIL);
@@ -64,30 +64,30 @@ public class UserAccountRsImpl extends BaseRs implements UserAccountRs {
 	}
 
 	@Override
-	public GetUserAccountResponse find(String userAccountCode) {
-		GetUserAccountResponse result = new GetUserAccountResponse();
+	public ActionStatus activateServices(ActivateServicesDto postData) {
+		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 		try {
-			result.setUserAccount(userAccountApi.find(userAccountCode, getCurrentUser().getProvider()));
+			subscriptionApi.activateServices(postData, getCurrentUser());
 		} catch (MeveoApiException e) {
-			result.getActionStatus().setErrorCode(e.getErrorCode());
-			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
-			result.getActionStatus().setMessage(e.getMessage());
+			result.setErrorCode(e.getErrorCode());
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
 		} catch (Exception e) {
-			result.getActionStatus().setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
-			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
-			result.getActionStatus().setMessage(e.getMessage());
+			result.setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
 		}
 
 		return result;
 	}
 
 	@Override
-	public ActionStatus remove(String userAccountCode) {
+	public ActionStatus applyOneShotChargeInstance(ApplyOneShotChargeInstanceDto postData) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 		try {
-			userAccountApi.remove(userAccountCode, getCurrentUser().getProvider());
+			subscriptionApi.applyOneShotChargeInstance(postData, getCurrentUser());
 		} catch (MeveoApiException e) {
 			result.setErrorCode(e.getErrorCode());
 			result.setStatus(ActionStatusEnum.FAIL);

@@ -150,15 +150,15 @@
 			<redirect />
 		</navigation-case>
 		<navigation-case>
-			<from-outcome>userRoles</from-outcome>
+			<from-outcome>roles</from-outcome>
 			<to-view-id>/pages/admin/userRoles/userRoles.xhtml</to-view-id>
 			<redirect />
 		</navigation-case>
 		<navigation-case>
-			<from-outcome>userRoleDetail</from-outcome>
+			<from-outcome>roleDetail</from-outcome>
 			<to-view-id>/pages/admin/userRoles/userRoleDetail.xhtml</to-view-id>
 			<redirect />
-		</navigation-case>
+		</navigation-case>		
 		<navigation-case>
 			<from-outcome>medinaInputs</from-outcome>
 			<to-view-id>/pages/admin/medina/medinaInputs/medinaInputs.xhtml

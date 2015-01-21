@@ -24,11 +24,12 @@ import javax.persistence.FetchType;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 
 import org.meveo.model.BusinessEntity;
 
 @Entity
-@Table(name = "BILLING_INVOICE_CAT")
+@Table(name = "BILLING_INVOICE_CAT", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE", "PROVIDER_ID" }))
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_INVOICE_CAT_SEQ")
 public class InvoiceCategory extends BusinessEntity {
 

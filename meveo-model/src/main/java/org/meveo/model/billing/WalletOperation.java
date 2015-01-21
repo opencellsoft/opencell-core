@@ -35,6 +35,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.Size;
 
 import org.meveo.model.BusinessEntity;
@@ -42,7 +43,7 @@ import org.meveo.model.admin.Currency;
 import org.meveo.model.admin.Seller;
 
 @Entity
-@Table(name = "BILLING_WALLET_OPERATION")
+@Table(name = "BILLING_WALLET_OPERATION", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE", "PROVIDER_ID" }))
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_WALLET_OPERATION_SEQ")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "OPERATION_TYPE", discriminatorType = DiscriminatorType.STRING)
@@ -72,7 +73,7 @@ public class WalletOperation extends BusinessEntity {
 
 	@Column(name = "UNITY_DESCRIPTION", length = 20)
 	private String unityDescription;
-	
+
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "CURRENCY_ID")
 	private Currency currency;
@@ -108,7 +109,7 @@ public class WalletOperation extends BusinessEntity {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "AGGREGATE_SERV_ID")
 	private ServiceInstance aggregatedServiceInstance;
-	
+
 	// @ManyToOne(fetch = FetchType.LAZY)
 	// @JoinColumn(name = "EDR_ID")
 	// private EDR usageEdr;
@@ -133,7 +134,7 @@ public class WalletOperation extends BusinessEntity {
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "SUBSCRIPTION_DATE")
 	private Date subscriptionDate;
-	
+
 	@Column(name = "OFFER_CODE", length = 35)
 	@Size(max = 35, min = 1)
 	protected String offerCode;
@@ -154,10 +155,10 @@ public class WalletOperation extends BusinessEntity {
 		this.wallet = wallet;
 	}
 
-	public void setDescription(String d){
+	public void setDescription(String d) {
 		super.setDescription(d);
 	}
-	
+
 	public Date getOperationDate() {
 		return operationDate;
 	}
@@ -274,12 +275,10 @@ public class WalletOperation extends BusinessEntity {
 		return aggregatedServiceInstance;
 	}
 
-	public void setAggregatedServiceInstance(
-			ServiceInstance aggregatedServiceInstance) {
+	public void setAggregatedServiceInstance(ServiceInstance aggregatedServiceInstance) {
 		this.aggregatedServiceInstance = aggregatedServiceInstance;
 	}
-	
-	
+
 	/*
 	 * public EDR getUsageEdr() { return usageEdr; }
 	 * 
@@ -358,14 +357,10 @@ public class WalletOperation extends BusinessEntity {
 	}
 
 	public String toString() {
-		return wallet + "," + operationDate + "," + type + "," + chargeInstance
-				+ "," + currency + "," + taxPercent + ","
-				+ unitAmountWithoutTax + "," + unitAmountWithTax + ","
-				+ unitAmountTax + "," + counter + "," + parameter1 + ","
-				+ parameter2 + "," + parameter3 + "," + startDate + ","
-				+ endDate + "," + subscriptionDate + "," + offerCode + "," + status + ","
-				+ seller;
+		return wallet + "," + operationDate + "," + type + "," + chargeInstance + "," + currency + "," + taxPercent
+				+ "," + unitAmountWithoutTax + "," + unitAmountWithTax + "," + unitAmountTax + "," + counter + ","
+				+ parameter1 + "," + parameter2 + "," + parameter3 + "," + startDate + "," + endDate + ","
+				+ subscriptionDate + "," + offerCode + "," + status + "," + seller;
 	}
-
 
 }

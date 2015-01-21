@@ -1,6 +1,6 @@
 /*
-* (C) Copyright 2009-2014 Manaty SARL (http://manaty.net/) and contributors.
-*
+ * (C) Copyright 2009-2014 Manaty SARL (http://manaty.net/) and contributors.
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
  * published by the Free Software Foundation, either version 3 of the
@@ -13,7 +13,7 @@
  *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 package org.meveo.model.catalog;
 
 import javax.persistence.Column;
@@ -22,30 +22,30 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.billing.BillingWalletTypeEnum;
 
 @Entity
-@Table(name = "CAT_WALLET_TEMPLATE")
+@Table(name = "CAT_WALLET_TEMPLATE", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE", "PROVIDER_ID" }))
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "CAT_WALLET_TEMPLATE_SEQ")
 public class WalletTemplate extends BusinessEntity {
 
 	private static final long serialVersionUID = 1L;
 
-	public static final String PRINCIPAL="PRINCIPAL";
-	
-	
+	public static final String PRINCIPAL = "PRINCIPAL";
+
 	@Column(name = "WALLET_TYPE")
 	@Enumerated(EnumType.STRING)
 	private BillingWalletTypeEnum walletType;
 
-	@Column(name = "CONSUMPTION_ALERT_SET")	
+	@Column(name = "CONSUMPTION_ALERT_SET")
 	private boolean consumptionAlertSet;
-	
+
 	@Column(name = "FAST_RATING_LEVEL")
 	private int fastRatingLevel;
-	
+
 	public BillingWalletTypeEnum getWalletType() {
 		return walletType;
 	}

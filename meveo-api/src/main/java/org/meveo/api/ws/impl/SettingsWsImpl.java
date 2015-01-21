@@ -1,6 +1,7 @@
 package org.meveo.api.ws.impl;
 
 import javax.inject.Inject;
+import javax.interceptor.Interceptors;
 import javax.jws.WebService;
 
 import org.meveo.api.CountryApi;
@@ -37,12 +38,14 @@ import org.meveo.api.dto.response.GetSellerResponse;
 import org.meveo.api.dto.response.GetTaxResponse;
 import org.meveo.api.dto.response.GetUserResponse;
 import org.meveo.api.exception.MeveoApiException;
+import org.meveo.api.logging.LoggingInterceptor;
 import org.meveo.api.ws.SettingsWs;
 
 /**
  * @author Edward P. Legaspi
  **/
 @WebService(serviceName = "SettingsWs", endpointInterface = "org.meveo.api.ws.SettingsWs")
+@Interceptors({ LoggingInterceptor.class })
 public class SettingsWsImpl extends BaseWs implements SettingsWs {
 
 	@Inject
@@ -100,15 +103,13 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
 		result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
 
 		try {
-			result.setCountry(countryApi.find(countryCode, getCurrentUser()
-					.getProvider()));
+			result.setCountry(countryApi.find(countryCode, getCurrentUser().getProvider()));
 		} catch (MeveoApiException e) {
 			result.getActionStatus().setErrorCode(e.getErrorCode());
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
 			result.getActionStatus().setMessage(e.getMessage());
 		} catch (Exception e) {
-			result.getActionStatus().setErrorCode(
-					MeveoApiErrorCode.GENERIC_API_EXCEPTION);
+			result.getActionStatus().setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
 			result.getActionStatus().setMessage(e.getMessage());
 		}
@@ -121,8 +122,7 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 		try {
-			countryApi.remove(countryCode, currencyCode, getCurrentUser()
-					.getProvider());
+			countryApi.remove(countryCode, currencyCode, getCurrentUser().getProvider());
 		} catch (MeveoApiException e) {
 			result.setErrorCode(e.getErrorCode());
 			result.setStatus(ActionStatusEnum.FAIL);
@@ -179,15 +179,13 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
 		GetCurrencyResponse result = new GetCurrencyResponse();
 
 		try {
-			result.setCurrency(currencyApi.find(currencyCode, getCurrentUser()
-					.getProvider()));
+			result.setCurrency(currencyApi.find(currencyCode, getCurrentUser().getProvider()));
 		} catch (MeveoApiException e) {
 			result.getActionStatus().setErrorCode(e.getErrorCode());
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
 			result.getActionStatus().setMessage(e.getMessage());
 		} catch (Exception e) {
-			result.getActionStatus().setErrorCode(
-					MeveoApiErrorCode.GENERIC_API_EXCEPTION);
+			result.getActionStatus().setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
 			result.getActionStatus().setMessage(e.getMessage());
 		}
@@ -272,20 +270,17 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
 	}
 
 	@Override
-	public GetInvoiceCategoryResponse findInvoiceCategory(
-			String invoiceCategoryCode) {
+	public GetInvoiceCategoryResponse findInvoiceCategory(String invoiceCategoryCode) {
 		GetInvoiceCategoryResponse result = new GetInvoiceCategoryResponse();
 
 		try {
-			result.setInvoiceCategory(invoiceCategoryApi.find(
-					invoiceCategoryCode, getCurrentUser().getProvider()));
+			result.setInvoiceCategory(invoiceCategoryApi.find(invoiceCategoryCode, getCurrentUser().getProvider()));
 		} catch (MeveoApiException e) {
 			result.getActionStatus().setErrorCode(e.getErrorCode());
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
 			result.getActionStatus().setMessage(e.getMessage());
 		} catch (Exception e) {
-			result.getActionStatus().setErrorCode(
-					MeveoApiErrorCode.GENERIC_API_EXCEPTION);
+			result.getActionStatus().setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
 			result.getActionStatus().setMessage(e.getMessage());
 		}
@@ -298,8 +293,7 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 		try {
-			invoiceCategoryApi.remove(invoiceCategoryCode, getCurrentUser()
-					.getProvider());
+			invoiceCategoryApi.remove(invoiceCategoryCode, getCurrentUser().getProvider());
 		} catch (MeveoApiException e) {
 			result.setErrorCode(e.getErrorCode());
 			result.setStatus(ActionStatusEnum.FAIL);
@@ -314,8 +308,7 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
 	}
 
 	@Override
-	public ActionStatus createInvoiceSubCategoryCountry(
-			InvoiceSubCategoryCountryDto postData) {
+	public ActionStatus createInvoiceSubCategoryCountry(InvoiceSubCategoryCountryDto postData) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 		try {
@@ -334,8 +327,7 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
 	}
 
 	@Override
-	public ActionStatus updateInvoiceSubCategoryCountry(
-			InvoiceSubCategoryCountryDto postData) {
+	public ActionStatus updateInvoiceSubCategoryCountry(InvoiceSubCategoryCountryDto postData) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 		try {
@@ -354,21 +346,19 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
 	}
 
 	@Override
-	public GetInvoiceSubCategoryCountryResponse findInvoiceSubCategoryCountry(
-			String invoiceSubCategoryCode, String country) {
+	public GetInvoiceSubCategoryCountryResponse findInvoiceSubCategoryCountry(String invoiceSubCategoryCode,
+			String country) {
 		GetInvoiceSubCategoryCountryResponse result = new GetInvoiceSubCategoryCountryResponse();
 
 		try {
-			result.setInvoiceSubCategoryCountryDto(invoiceSubCategoryCountryApi
-					.find(invoiceSubCategoryCode, country, getCurrentUser()
-							.getProvider()));
+			result.setInvoiceSubCategoryCountryDto(invoiceSubCategoryCountryApi.find(invoiceSubCategoryCode, country,
+					getCurrentUser().getProvider()));
 		} catch (MeveoApiException e) {
 			result.getActionStatus().setErrorCode(e.getErrorCode());
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
 			result.getActionStatus().setMessage(e.getMessage());
 		} catch (Exception e) {
-			result.getActionStatus().setErrorCode(
-					MeveoApiErrorCode.GENERIC_API_EXCEPTION);
+			result.getActionStatus().setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
 			result.getActionStatus().setMessage(e.getMessage());
 		}
@@ -377,13 +367,11 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
 	}
 
 	@Override
-	public ActionStatus removeInvoiceSubCategoryCountry(
-			String invoiceSubCategoryCode, String country) {
+	public ActionStatus removeInvoiceSubCategoryCountry(String invoiceSubCategoryCode, String country) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 		try {
-			invoiceSubCategoryCountryApi.remove(invoiceSubCategoryCode,
-					country, getCurrentUser().getProvider());
+			invoiceSubCategoryCountryApi.remove(invoiceSubCategoryCode, country, getCurrentUser().getProvider());
 		} catch (MeveoApiException e) {
 			result.setErrorCode(e.getErrorCode());
 			result.setStatus(ActionStatusEnum.FAIL);
@@ -436,20 +424,18 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
 	}
 
 	@Override
-	public GetInvoiceSubCategoryResponse findInvoiceSubCategory(
-			String invoiceSubCategoryCode) {
+	public GetInvoiceSubCategoryResponse findInvoiceSubCategory(String invoiceSubCategoryCode) {
 		GetInvoiceSubCategoryResponse result = new GetInvoiceSubCategoryResponse();
 
 		try {
-			result.setInvoiceSubCategory(invoiceSubCategoryApi.find(
-					invoiceSubCategoryCode, getCurrentUser().getProvider()));
+			result.setInvoiceSubCategory(invoiceSubCategoryApi.find(invoiceSubCategoryCode, getCurrentUser()
+					.getProvider()));
 		} catch (MeveoApiException e) {
 			result.getActionStatus().setErrorCode(e.getErrorCode());
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
 			result.getActionStatus().setMessage(e.getMessage());
 		} catch (Exception e) {
-			result.getActionStatus().setErrorCode(
-					MeveoApiErrorCode.GENERIC_API_EXCEPTION);
+			result.getActionStatus().setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
 			result.getActionStatus().setMessage(e.getMessage());
 		}
@@ -462,8 +448,7 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 		try {
-			invoiceSubCategoryApi.remove(invoiceSubCategoryCode,
-					getCurrentUser().getProvider());
+			invoiceSubCategoryApi.remove(invoiceSubCategoryCode, getCurrentUser().getProvider());
 		} catch (MeveoApiException e) {
 			result.setErrorCode(e.getErrorCode());
 			result.setStatus(ActionStatusEnum.FAIL);
@@ -501,15 +486,13 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
 		GetLanguageResponse result = new GetLanguageResponse();
 
 		try {
-			result.setLanguage(languageApi.find(languageCode, getCurrentUser()
-					.getProvider()));
+			result.setLanguage(languageApi.find(languageCode, getCurrentUser().getProvider()));
 		} catch (MeveoApiException e) {
 			result.getActionStatus().setErrorCode(e.getErrorCode());
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
 			result.getActionStatus().setMessage(e.getMessage());
 		} catch (Exception e) {
-			result.getActionStatus().setErrorCode(
-					MeveoApiErrorCode.GENERIC_API_EXCEPTION);
+			result.getActionStatus().setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
 			result.getActionStatus().setMessage(e.getMessage());
 		}
@@ -585,8 +568,7 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
 			result.getActionStatus().setMessage(e.getMessage());
 		} catch (Exception e) {
-			result.getActionStatus().setErrorCode(
-					MeveoApiErrorCode.GENERIC_API_EXCEPTION);
+			result.getActionStatus().setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
 			result.getActionStatus().setMessage(e.getMessage());
 		}
@@ -656,15 +638,13 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
 		GetSellerResponse result = new GetSellerResponse();
 
 		try {
-			result.setSeller(sellerApi.find(sellerCode, getCurrentUser()
-					.getProvider()));
+			result.setSeller(sellerApi.find(sellerCode, getCurrentUser().getProvider()));
 		} catch (MeveoApiException e) {
 			result.getActionStatus().setErrorCode(e.getErrorCode());
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
 			result.getActionStatus().setMessage(e.getMessage());
 		} catch (Exception e) {
-			result.getActionStatus().setErrorCode(
-					MeveoApiErrorCode.GENERIC_API_EXCEPTION);
+			result.getActionStatus().setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
 			result.getActionStatus().setMessage(e.getMessage());
 		}
@@ -740,8 +720,7 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
 			result.getActionStatus().setMessage(e.getMessage());
 		} catch (Exception e) {
-			result.getActionStatus().setErrorCode(
-					MeveoApiErrorCode.GENERIC_API_EXCEPTION);
+			result.getActionStatus().setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
 			result.getActionStatus().setMessage(e.getMessage());
 		}
@@ -836,8 +815,7 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
 			result.getActionStatus().setMessage(e.getMessage());
 		} catch (Exception e) {
-			result.getActionStatus().setErrorCode(
-					MeveoApiErrorCode.GENERIC_API_EXCEPTION);
+			result.getActionStatus().setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
 			result.getActionStatus().setMessage(e.getMessage());
 		}

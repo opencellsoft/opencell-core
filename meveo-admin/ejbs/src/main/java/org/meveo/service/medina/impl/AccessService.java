@@ -37,8 +37,7 @@ public class AccessService extends PersistenceService<Access> {
 		log.info("findByUserID '" + userId + "'");
 		List<Access> result = new ArrayList<Access>();
 		if (userId != null && userId.length() > 0) {
-			Query query = getEntityManager().createQuery(
-					"from Access a where a.accessUserId=:accessUserId")
+			Query query = getEntityManager().createQuery("from Access a where a.accessUserId=:accessUserId")
 					.setParameter("accessUserId", userId);
 			result = query.getResultList();
 		}
@@ -46,8 +45,7 @@ public class AccessService extends PersistenceService<Access> {
 	}
 
 	public boolean isDuplicate(Access access) {
-		String stringQuery = "SELECT COUNT(*) FROM "
-				+ Access.class.getName()
+		String stringQuery = "SELECT COUNT(*) FROM " + Access.class.getName()
 				+ " a WHERE a.accessUserId=:accessUserId AND a.subscription.id=:subscriptionId";
 		Query query = getEntityManager().createQuery(stringQuery);
 		query.setParameter("accessUserId", access.getAccessUserId());
@@ -56,8 +54,11 @@ public class AccessService extends PersistenceService<Access> {
 		return ((Long) query.getSingleResult()).intValue() != 0;
 	}
 
-	public Access findByUserIdAndSubscription(EntityManager em,
-			String accessUserId, Subscription subscription) {
+	public Access findByUserIdAndSubscription(String accessUserId, Subscription subscription) {
+		return findByUserIdAndSubscription(getEntityManager(), accessUserId, subscription);
+	}
+
+	public Access findByUserIdAndSubscription(EntityManager em, String accessUserId, Subscription subscription) {
 		try {
 			QueryBuilder qb = new QueryBuilder(Access.class, "a");
 			qb.addCriterion("accessUserId", "=", accessUserId, false);
@@ -75,8 +76,7 @@ public class AccessService extends PersistenceService<Access> {
 		qb.addCriterionEntity("subscription", subscription);
 
 		try {
-			return (List<Access>) qb.getQuery(getEntityManager())
-					.getResultList();
+			return (List<Access>) qb.getQuery(getEntityManager()).getResultList();
 		} catch (NoResultException e) {
 			log.warn(e.getMessage());
 			return null;

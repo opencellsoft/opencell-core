@@ -32,8 +32,8 @@ import javax.persistence.UniqueConstraint;
 import org.meveo.model.BusinessEntity;
 
 @Entity
-@Table(name = "AR_DUNNING_PLAN", uniqueConstraints = @UniqueConstraint(columnNames = {
-		"CREDIT_CATEGORY", "PAYMENT_METHOD", "PROVIDER_ID" }))
+@Table(name = "AR_DUNNING_PLAN", uniqueConstraints = @UniqueConstraint(columnNames = { "CREDIT_CATEGORY",
+		"PAYMENT_METHOD", "PROVIDER_ID", "CODE" }))
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "AR_DUNNING_PLAN_SEQ")
 public class DunningPlan extends BusinessEntity {
 
@@ -47,7 +47,7 @@ public class DunningPlan extends BusinessEntity {
 	@Column(name = "PAYMENT_METHOD")
 	private PaymentMethodEnum paymentMethod;
 
-	@OneToMany(mappedBy = "dunningPlan",fetch = FetchType.LAZY)
+	@OneToMany(mappedBy = "dunningPlan", fetch = FetchType.LAZY)
 	private List<DunningPlanTransition> transitions = new ArrayList<DunningPlanTransition>();
 
 	@OneToMany(mappedBy = "dunningPlan", fetch = FetchType.LAZY)

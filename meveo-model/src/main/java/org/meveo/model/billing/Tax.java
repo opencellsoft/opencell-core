@@ -22,11 +22,12 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 
 import org.meveo.model.BusinessEntity;
 
 @Entity
-@Table(name = "BILLING_TAX")
+@Table(name = "BILLING_TAX", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE", "PROVIDER_ID" }))
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_TAX_SEQ")
 public class Tax extends BusinessEntity {
 	private static final long serialVersionUID = 1L;

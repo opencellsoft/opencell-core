@@ -5,6 +5,7 @@
 	xmlns:p="http://primefaces.org/ui">
 
 	<p:tooltip for="users">#{help['menu.users']}</p:tooltip>
+    <p:tooltip for="userRoles">#{help['menu.userRoles']}</p:tooltip>
 	<p:tooltip for="tradingLanguages">#{help['menu.tradingLanguages']}</p:tooltip>
 	<p:tooltip for="tradingCurrencies">#{help['menu.tradingCurrencies']}</p:tooltip>
 	<p:tooltip for="tradingCountries">#{help['menu.tradingCountries']}</p:tooltip>
@@ -53,13 +54,10 @@
 
 			</p:submenu>
 
-			<!--
-			<rich:menuItem id="userRoles" rendered="#{identity.hasPermission('administration','roleManagement')}">
-				<h:link outcome="userRoles">
-					<h:outputText value="#{messages['menu.userRoles']}" />
-				</h:link>
-			</rich:menuItem>
-			-->
+			<p:menuitem id="userRoles" value="#{messages['menu.userRoles']}"
+				outcome="roles"
+				rendered="#{identity.hasPermission('administration','administrationVisualization')}" />
+			
 
 			<p:submenu id="categories" label="#{messages['menu.invoicing']}"
 				rendered="#{identity.hasPermission('administration','administrationVisualization') or identity.hasPermission('catalog','catalogVisualization')}">

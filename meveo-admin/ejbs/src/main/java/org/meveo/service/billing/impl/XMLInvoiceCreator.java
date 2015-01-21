@@ -664,14 +664,15 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 							.getProvider().getRounding()));
 			amountWithoutTax.appendChild(amountWithoutTaxTxt);
 			category.appendChild(amountWithoutTax);
-
+             
+			if(!entreprise){
 			Element amountWithTax = doc.createElement("amountWithTax");
 			Text amountWithTaxTxt = doc.createTextNode(round(
 					categoryInvoiceAgregate.getAmountWithTax(), invoice
 							.getProvider().getRounding()));
 			amountWithTax.appendChild(amountWithTaxTxt);
 			category.appendChild(amountWithTax);
-
+			}
 			if (generateSubCat) {
 				Element subCategories = doc.createElement("subCategories");
 				category.appendChild(subCategories);
@@ -768,11 +769,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 							Element lineAmountWithTax = doc
 									.createElement("amountWithTax");
 							Text lineAmountWithTaxTxt = doc
-									.createTextNode(round(
-											entreprise ? ratedTransaction
-													.getAmountWithTax()
-													: ratedTransaction
-															.getAmountWithoutTax(),
+									.createTextNode(round(ratedTransaction.getAmountWithTax(),
 											invoice.getProvider().getRounding()));
 							lineAmountWithTax.appendChild(lineAmountWithTaxTxt);
 							line.appendChild(lineAmountWithTax);
@@ -1055,13 +1052,16 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 					provider.getRounding()));
 			amountWithoutTax.appendChild(amountWithoutTaxTxt);
 			category.appendChild(amountWithoutTax);
-
-			Element amountWithTax = doc.createElement("amountWithTax");
-			Text amountWithTaxTxt = doc.createTextNode(round(
-					xmlInvoiceHeaderCategoryDTO.getAmountWithTax(),
-					provider.getRounding()));
-			amountWithTax.appendChild(amountWithTaxTxt);
-			category.appendChild(amountWithTax);
+			
+			if(!entreprise){
+				Element amountWithTax = doc.createElement("amountWithTax");
+				Text amountWithTaxTxt = doc.createTextNode(round(
+						xmlInvoiceHeaderCategoryDTO.getAmountWithTax(),
+						provider.getRounding()));
+				amountWithTax.appendChild(amountWithTaxTxt);
+				category.appendChild(amountWithTax);	
+			}
+			
 			if (entreprise) {
 				for (RatedTransaction headerTransaction : xmlInvoiceHeaderCategoryDTO
 						.getRatedtransactions().values()) {

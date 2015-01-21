@@ -1,6 +1,7 @@
 package org.meveo.api.ws.impl;
 
 import javax.inject.Inject;
+import javax.interceptor.Interceptors;
 import javax.jws.WebService;
 
 import org.meveo.api.MeveoApiErrorCode;
@@ -10,12 +11,14 @@ import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.account.AccountHierarchyDto;
 import org.meveo.api.dto.response.CustomerListResponse;
 import org.meveo.api.exception.MeveoApiException;
+import org.meveo.api.logging.LoggingInterceptor;
 import org.meveo.api.ws.AccountHierarchyWs;
 
 /**
  * @author Edward P. Legaspi
  **/
 @WebService(serviceName = "AccountHierarchyWs", endpointInterface = "org.meveo.api.ws.AccountHierarchyWs")
+@Interceptors({ LoggingInterceptor.class })
 public class AccountHierarchyWsImpl extends BaseWs implements AccountHierarchyWs {
 
 	@Inject

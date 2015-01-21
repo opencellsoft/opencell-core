@@ -20,11 +20,12 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 
 import org.meveo.model.BusinessEntity;
 
 @Entity
-@Table(name = "RM_SERVICE_PARAM_TEMPLATE")
+@Table(name = "RM_SERVICE_PARAM_TEMPLATE", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE", "PROVIDER_ID" }))
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "RM_SERVICE_PARAM_TEMPLATE_SEQ")
 public class ServiceParameterTemplate extends BusinessEntity {
 

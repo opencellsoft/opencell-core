@@ -9,12 +9,13 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 
 import org.meveo.model.AccountEntity;
 import org.meveo.model.BusinessEntity;
 
 @Entity
-@Table(name = "CRM_CUSTOM_FIELD_INST")
+@Table(name = "CRM_CUSTOM_FIELD_INST", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE", "PROVIDER_ID" }))
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "CRM_CUSTOM_FIELD_INST_SEQ")
 public class CustomFieldInstance extends BusinessEntity {
 
@@ -78,7 +79,7 @@ public class CustomFieldInstance extends BusinessEntity {
 
 	public String toJson() {
 		String result = code + ":";
-		
+
 		if (stringValue != null) {
 			result += "'" + stringValue + "'";
 		} else if (dateValue != null) {
@@ -90,7 +91,7 @@ public class CustomFieldInstance extends BusinessEntity {
 		} else {
 			result = "";
 		}
-		
+
 		return result;
 	}
 

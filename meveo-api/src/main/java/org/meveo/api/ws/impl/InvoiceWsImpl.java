@@ -1,6 +1,7 @@
 package org.meveo.api.ws.impl;
 
 import javax.inject.Inject;
+import javax.interceptor.Interceptors;
 import javax.jws.WebService;
 
 import org.meveo.api.InvoiceApi;
@@ -10,9 +11,11 @@ import org.meveo.api.dto.InvoiceDto;
 import org.meveo.api.dto.response.CustomerInvoicesResponse;
 import org.meveo.api.dto.response.InvoiceCreationResponse;
 import org.meveo.api.exception.MeveoApiException;
+import org.meveo.api.logging.LoggingInterceptor;
 import org.meveo.api.ws.InvoiceWs;
 
 @WebService(serviceName = "InvoiceWs", endpointInterface = "org.meveo.api.ws.InvoiceWs")
+@Interceptors({ LoggingInterceptor.class })
 public class InvoiceWsImpl extends BaseWs implements InvoiceWs {
 
 	@Inject
@@ -23,15 +26,14 @@ public class InvoiceWsImpl extends BaseWs implements InvoiceWs {
 		InvoiceCreationResponse result = new InvoiceCreationResponse();
 
 		try {
-			String invoiceNumber=invoiceApi.create(invoiceDto, getCurrentUser());
+			String invoiceNumber = invoiceApi.create(invoiceDto, getCurrentUser());
 			result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
 			result.setInvoiceNumber(invoiceNumber);
 		} catch (MeveoApiException e) {
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
 			result.getActionStatus().setMessage(e.getMessage());
 		} catch (Exception e) {
-			result.getActionStatus().setErrorCode(
-					MeveoApiErrorCode.GENERIC_API_EXCEPTION);
+			result.getActionStatus().setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
 			result.getActionStatus().setMessage(e.getMessage());
 		}
@@ -44,14 +46,12 @@ public class InvoiceWsImpl extends BaseWs implements InvoiceWs {
 		CustomerInvoicesResponse result = new CustomerInvoicesResponse();
 
 		try {
-			result.setCustomerInvoiceDtoList(invoiceApi.list(
-					customerAccountCode, getCurrentUser().getProvider()));
+			result.setCustomerInvoiceDtoList(invoiceApi.list(customerAccountCode, getCurrentUser().getProvider()));
 		} catch (MeveoApiException e) {
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
 			result.getActionStatus().setMessage(e.getMessage());
 		} catch (Exception e) {
-			result.getActionStatus().setErrorCode(
-					MeveoApiErrorCode.GENERIC_API_EXCEPTION);
+			result.getActionStatus().setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
 			result.getActionStatus().setMessage(e.getMessage());
 		}

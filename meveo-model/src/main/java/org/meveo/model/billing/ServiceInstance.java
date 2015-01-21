@@ -35,12 +35,13 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.UniqueConstraint;
 
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.catalog.ServiceTemplate;
 
 @Entity
-@Table(name = "BILLING_SERVICE_INSTANCE")
+@Table(name = "BILLING_SERVICE_INSTANCE", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE", "PROVIDER_ID" }))
 @AttributeOverrides({ @AttributeOverride(name = "code", column = @Column(name = "code", unique = false)) })
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_SERVICE_INSTANCE_SEQ")
 public class ServiceInstance extends BusinessEntity {
@@ -171,8 +172,7 @@ public class ServiceInstance extends BusinessEntity {
 		return subscriptionChargeInstances;
 	}
 
-	public void setSubscriptionChargeInstances(
-			List<OneShotChargeInstance> subscriptionChargeInstances) {
+	public void setSubscriptionChargeInstances(List<OneShotChargeInstance> subscriptionChargeInstances) {
 		this.subscriptionChargeInstances = subscriptionChargeInstances;
 	}
 
@@ -204,8 +204,7 @@ public class ServiceInstance extends BusinessEntity {
 		return subscriptionTerminationReason;
 	}
 
-	public void setSubscriptionTerminationReason(
-			SubscriptionTerminationReason subscriptionTerminationReason) {
+	public void setSubscriptionTerminationReason(SubscriptionTerminationReason subscriptionTerminationReason) {
 		this.subscriptionTerminationReason = subscriptionTerminationReason;
 	}
 

@@ -9,13 +9,14 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.admin.User;
 import org.meveo.model.security.Role;
 
 @Entity
-@Table(name = "DWH_CHART") 
+@Table(name = "DWH_CHART", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE", "PROVIDER_ID" }))
 @Inheritance(strategy = InheritanceType.JOINED)
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_BILLING_RUN_SEQ")
 public class Chart extends BusinessEntity {
@@ -28,22 +29,22 @@ public class Chart extends BusinessEntity {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "USER_ID")
 	User user;
-	
+
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "ROLE_ID")
 	Role role;
-	
+
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "MSR_QTY_ID")
 	MeasurableQuantity measurableQuantity;
-	
-	@Column(name="CSS_STYLE",length=1000)
+
+	@Column(name = "CSS_STYLE", length = 1000)
 	String style;
 
-	@Column(name="CSS_STYLE_CLASS")
+	@Column(name = "CSS_STYLE_CLASS")
 	String styleClass;
-	
-	@Column(name="EXTENDER")
+
+	@Column(name = "EXTENDER")
 	String extender;
 
 	public User getUser() {
@@ -93,5 +94,5 @@ public class Chart extends BusinessEntity {
 	public void setExtender(String extender) {
 		this.extender = extender;
 	}
-	
+
 }

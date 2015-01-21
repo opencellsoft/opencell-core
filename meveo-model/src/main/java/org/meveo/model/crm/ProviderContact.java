@@ -21,13 +21,14 @@ import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.Size;
 
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.shared.Address;
 
 @Entity
-@Table(name = "CRM_PROVIDER_CONTACT")
+@Table(name = "CRM_PROVIDER_CONTACT", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE", "PROVIDER_ID" }))
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "CRM_PROVIDER_CONTACT_SEQ")
 public class ProviderContact extends BusinessEntity {
 

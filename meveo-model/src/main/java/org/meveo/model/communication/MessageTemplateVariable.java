@@ -22,11 +22,12 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 
 import org.meveo.model.BusinessEntity;
 
 @Entity
-@Table(name = "COM_MSG_TMPL_VARIABLE")
+@Table(name = "COM_MSG_TMPL_VARIABLE", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE", "PROVIDER_ID" }))
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "COM_MSG_TMPL_VAR_SEQ")
 public class MessageTemplateVariable extends BusinessEntity {
 
