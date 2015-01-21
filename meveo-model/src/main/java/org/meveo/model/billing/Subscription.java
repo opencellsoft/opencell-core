@@ -32,6 +32,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 
 import org.meveo.model.BusinessEntity;
@@ -42,7 +43,7 @@ import org.meveo.model.mediation.Access;
  * Subscription
  */
 @Entity
-@Table(name = "BILLING_SUBSCRIPTION")
+@Table(name = "BILLING_SUBSCRIPTION", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE", "PROVIDER_ID" }))
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_SUBSCRIPTION_SEQ")
 public class Subscription extends BusinessEntity {
 
@@ -161,11 +162,9 @@ public class Subscription extends BusinessEntity {
 		return subscriptionTerminationReason;
 	}
 
-	public void setSubscriptionTerminationReason(
-			SubscriptionTerminationReason subscriptionTerminationReason) {
+	public void setSubscriptionTerminationReason(SubscriptionTerminationReason subscriptionTerminationReason) {
 		this.subscriptionTerminationReason = subscriptionTerminationReason;
 	}
-
 
 	public List<Access> getAccessPoints() {
 		return accessPoints;

@@ -14,13 +14,14 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.Digits;
 
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.catalog.CounterTypeEnum;
 
 @Entity
-@Table(name = "BILLING_COUNTER_PERIOD")
+@Table(name = "BILLING_COUNTER_PERIOD", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE", "PROVIDER_ID" }))
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_COUNTER_PERIOD_SEQ")
 public class CounterPeriod extends BusinessEntity {
 	private static final long serialVersionUID = -4924601467998738157L;

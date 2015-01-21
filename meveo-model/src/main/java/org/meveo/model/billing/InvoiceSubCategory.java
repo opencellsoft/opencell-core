@@ -28,11 +28,12 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 
 import org.meveo.model.BusinessEntity;
 
 @Entity
-@Table(name = "BILLING_INVOICE_SUB_CAT")
+@Table(name = "BILLING_INVOICE_SUB_CAT", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE", "PROVIDER_ID" }))
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_INVOICE_SUB_CAT_SEQ")
 public class InvoiceSubCategory extends BusinessEntity {
 
@@ -55,8 +56,7 @@ public class InvoiceSubCategory extends BusinessEntity {
 		return invoiceSubcategoryCountries;
 	}
 
-	public void setInvoiceSubcategoryCountries(
-			List<InvoiceSubcategoryCountry> invoiceSubcategoryCountries) {
+	public void setInvoiceSubcategoryCountries(List<InvoiceSubcategoryCountry> invoiceSubcategoryCountries) {
 		this.invoiceSubcategoryCountries = invoiceSubcategoryCountries;
 	}
 

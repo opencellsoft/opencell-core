@@ -34,6 +34,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
@@ -55,7 +56,7 @@ import org.meveo.model.shared.InterBankTitle;
 import org.meveo.model.shared.Title;
 
 @Entity
-@Table(name = "CRM_PROVIDER")
+@Table(name = "CRM_PROVIDER", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE", "PROVIDER_ID" }))
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "CRM_PROVIDER_SEQ")
 public class Provider extends BusinessEntity {
 
@@ -125,7 +126,7 @@ public class Provider extends BusinessEntity {
 	@Basic(fetch = FetchType.LAZY)
 	private Blob logo;
 
-	@Column(name = "INVOICE_PREFIX",length=50)
+	@Column(name = "INVOICE_PREFIX", length = 50)
 	private String invoicePrefix;
 
 	@Column(name = "CURRENT_INVOICE_NB")
@@ -162,10 +163,9 @@ public class Provider extends BusinessEntity {
 
 	@OneToMany(mappedBy = "provider", fetch = FetchType.LAZY)
 	private List<TradingCurrency> tradingCurrencies;
-	
+
 	@Column(name = "DISPLAY_FREE_TX_IN_INVOICE")
 	private boolean displayFreeTransacInInvoice = false;
-	
 
 	public String getSerializedPaymentMethods() {
 		return serializedPaymentMethods;
@@ -447,7 +447,5 @@ public class Provider extends BusinessEntity {
 	public void setDisplayFreeTransacInInvoice(boolean displayFreeTransacInInvoice) {
 		this.displayFreeTransacInInvoice = displayFreeTransacInInvoice;
 	}
-	
-	
 
 }

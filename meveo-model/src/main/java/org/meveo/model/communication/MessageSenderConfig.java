@@ -26,11 +26,12 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 
 import org.meveo.model.BusinessEntity;
 
 @Entity
-@Table(name = "COM_SENDER_CONFIG")
+@Table(name = "COM_SENDER_CONFIG", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE", "PROVIDER_ID" }))
 @DiscriminatorColumn(name = "MEDIA")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "COM_SNDR_CONF_SEQ")

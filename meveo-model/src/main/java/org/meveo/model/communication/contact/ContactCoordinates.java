@@ -25,12 +25,13 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.communication.MediaEnum;
 
 @Entity
-@Table(name = "COM_CONTACT_COORDS")
+@Table(name = "COM_CONTACT_COORDS", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE", "PROVIDER_ID" }))
 @DiscriminatorColumn(name = "MEDIA")
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "COM_CONTACT_COORDS_SEQ")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)

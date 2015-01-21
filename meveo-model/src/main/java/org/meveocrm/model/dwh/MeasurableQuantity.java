@@ -6,13 +6,14 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 
 import org.meveo.model.BusinessEntity;
 
 @Entity
-@Table(name = "DWH_MEASURABLE_QUANT")
+@Table(name = "DWH_MEASURABLE_QUANT", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE", "PROVIDER_ID" }))
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "DWH_MEASURABLE_QUANT_SEQ")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class MeasurableQuantity extends BusinessEntity {
@@ -38,13 +39,12 @@ public class MeasurableQuantity extends BusinessEntity {
 	private boolean editable;
 
 	/**
-	 * expect to return a list of (Date measureDate, Long value)
-	 * that will be used to create measuredValue.
-	 * be careful that super admin MUST validate those queries as they could break separation of data between providers
+	 * expect to return a list of (Date measureDate, Long value) that will be
+	 * used to create measuredValue. be careful that super admin MUST validate
+	 * those queries as they could break separation of data between providers
 	 */
 	@Column(name = "SQL_QUERY", length = 2000)
 	private String sqlQuery;
-	
 
 	@Enumerated(EnumType.STRING)
 	@Column(name = "MEASUREMENT_PERIOD")

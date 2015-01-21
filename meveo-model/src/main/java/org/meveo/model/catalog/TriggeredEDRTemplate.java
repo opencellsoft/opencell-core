@@ -4,24 +4,25 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.Size;
 
 import org.meveo.model.BusinessEntity;
 
 @Entity
-@Table(name = "CAT_TRIGGERED_EDR")
+@Table(name = "CAT_TRIGGERED_EDR", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE", "PROVIDER_ID" }))
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "CAT_TRIGGERED_EDR_SEQ")
-public class TriggeredEDRTemplate  extends BusinessEntity {
+public class TriggeredEDRTemplate extends BusinessEntity {
 	private static final long serialVersionUID = 1L;
-	
+
 	@Column(name = "SUBSCRIPTION_EL", length = 1000)
 	@Size(max = 1000)
 	private String subscriptionEl;
-	
+
 	@Column(name = "CONDITION_EL", length = 1000)
 	@Size(max = 1000)
 	private String conditionEl;
-	
+
 	@Column(name = "QUANTITY_EL", length = 1000)
 	@Size(max = 1000)
 	private String quantityEl;
@@ -41,7 +42,7 @@ public class TriggeredEDRTemplate  extends BusinessEntity {
 	@Column(name = "PARAM_4_EL", length = 1000)
 	@Size(max = 1000)
 	private String param4El;
-	
+
 	public String getSubscriptionEl() {
 		return subscriptionEl;
 	}
@@ -97,7 +98,5 @@ public class TriggeredEDRTemplate  extends BusinessEntity {
 	public void setParam4El(String param4El) {
 		this.param4El = param4El;
 	}
-
-	
 
 }

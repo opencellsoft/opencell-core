@@ -26,12 +26,13 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.catalog.CounterTemplate;
 
 @Entity
-@Table(name = "BILLING_COUNTER")
+@Table(name = "BILLING_COUNTER", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE", "PROVIDER_ID" }))
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_COUNTER_INSTANCE_SEQ")
 public class CounterInstance extends BusinessEntity {
 	private static final long serialVersionUID = -4924601467998738157L;
