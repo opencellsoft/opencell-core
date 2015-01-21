@@ -7,90 +7,90 @@ public class RestrictionResolver {
     @Secures
     @AccountManagement
     public boolean isAccountManagement(Identity identity) {
-        return identity.hasPermission("account", "manage");
+        return identity.hasPermission("account", "accountManagement");
     }
 
     @Secures
     @AccountVisualization
     public boolean isAccountVisualization(Identity identity) {
-        return identity.hasPermission("account", "visualization");
+        return identity.hasPermission("account", "accountVisualization");
     }
 
     @Secures
     @AdministrationManagement
     public boolean isAdministrationManagement(Identity identity) {
-        return identity.hasPermission("administration", "manage");
+        return identity.hasPermission("administration", "administrationManagement");
     }
 
     @Secures
     @AdministrationVisualization
     public boolean isAdministrationVisualization(Identity identity) {
-        return identity.hasPermission("administration", "visualization");
+        return identity.hasPermission("administration", "administrationVisualization");
     }
 
     @Secures
     @BillingManagement
     public boolean isBillingManagement(Identity identity) {
-        return identity.hasPermission("billing", "manage");
+        return identity.hasPermission("billing", "billingManagement");
     }
 
     @Secures
     @BillingVisualization
     public boolean isBillingVisualization(Identity identity) {
-        return identity.hasPermission("billing", "visualization");
+        return identity.hasPermission("billing", "billingVisualization");
     }
 
     @Secures
     @CatalogManagement
     public boolean isCatalogManagement(Identity identity) {
-        return identity.hasPermission("catalog", "manage");
+        return identity.hasPermission("catalog", "catalogManagement");
     }
 
     @Secures
     @CatalogVisualization
     public boolean isCatalogVisualization(Identity identity) {
-        return identity.hasPermission("catalog", "visualization");
+        return identity.hasPermission("catalog", "catalogVisualization");
     }
 
     @Secures
     @CustomerSummaryVisualization
     public boolean isCustomerSummaryVisualization(Identity identity) {
-        return identity.hasPermission("customerSummary", "visualization");
+        return identity.hasPermission("customerSummary", "customerSummaryVisualization");
     }
 
     @Secures
     @ReportingManagement
     public boolean isReportingManagement(Identity identity) {
-        return identity.hasPermission("reporting", "manage");
+        return identity.hasPermission("reporting", "reportingManagement");
     }
 
     @Secures
     @ReportingVisualization
     public boolean isReportingVisualization(Identity identity) {
-        return identity.hasPermission("reporting", "visualization");
+        return identity.hasPermission("reporting", "reportingVisualization");
     }
 
     @Secures
     @UserCreate
     public boolean isUserCreate(Identity identity) {
-        return identity.hasPermission("user", "create");
+        return identity.hasPermission("administration", "administrationManagement");
     }
 
     @Secures
     @UserDelete
     public boolean isUserDelete(Identity identity) {
-        return identity.hasPermission("user", "delete");
+        return identity.hasPermission("administration", "administrationManagement");
     }
 
     @Secures
     @UserUpdate
     public boolean isUserUpdate(Identity identity) {
-        return identity.hasPermission("user", "update");
+        return identity.hasPermission("administration", "administrationManagement");
     }
 
     @Secures
     @UserView
     public boolean isUserView(Identity identity) {
-        return identity.hasPermission("user", "view");
+        return identity.hasPermission("administration", "administrationVisualization");
     }
 }

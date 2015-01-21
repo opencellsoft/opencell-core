@@ -32,30 +32,29 @@ import org.meveo.service.base.PersistenceService;
 @Stateless
 public class RoleService extends PersistenceService<Role> {
 
-	/**
-	 * @see org.meveo.service.base.local.IPersistenceService#list()
-	 */
-	@SuppressWarnings("unchecked")
-	@Override
-	public List<Role> list() {
-		QueryBuilder queryBuilder = new QueryBuilder(entityClass, "a", null,
-				null);
-		Query query = queryBuilder.getQuery(getEntityManager());
-		return query.getResultList();
-	}
+    @SuppressWarnings("unchecked")
+    public List<Role> getAllRoles() {
+        QueryBuilder queryBuilder = new QueryBuilder(entityClass, "a", null, null);
+        Query query = queryBuilder.getQuery(getEntityManager());
+        return query.getResultList();
+    }
 
-	public List<Role> getAllRoles() {
-		return list();
-	}
+    public Role findByName(String role) {
+        QueryBuilder qb = new QueryBuilder(Role.class, "r");
 
-	public Role findByName(String role) {
-		QueryBuilder qb = new QueryBuilder(Role.class, "r");
+        try {
+            qb.addCriterion("name", "=", role, true);
+            return (Role) qb.getQuery(getEntityManager()).getSingleResult();
+        } catch (NoResultException e) {
+            return null;
+        }
+    }
 
-		try {
-			qb.addCriterion("name", "=", role, true);
-			return (Role) qb.getQuery(getEntityManager()).getSingleResult();
-		} catch (NoResultException e) {
-			return null;
-		}
-	}
+    /**
+     * Roles are not provider related
+     */
+    @Override
+    protected void checkProvider(Role entity) {
+        return;
+    }
 }

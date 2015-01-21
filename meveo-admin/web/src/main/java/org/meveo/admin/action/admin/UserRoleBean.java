@@ -17,15 +17,16 @@
 package org.meveo.admin.action.admin;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 import javax.enterprise.context.ConversationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.meveo.admin.action.BaseBean;
-import org.meveo.admin.action.StatelessBaseBean;
+import org.meveo.admin.action.StatefulBaseBean;
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.security.Permission;
 import org.meveo.model.security.Role;
 import org.meveo.service.admin.impl.PermissionService;
@@ -35,95 +36,90 @@ import org.meveo.service.base.local.IPersistenceService;
 import org.primefaces.model.DualListModel;
 
 /**
- * Standard backing bean for {@link Role} (extends {@link BaseBean} that
- * provides almost all common methods to handle entities filtering/sorting in
- * datatable, their create, edit, view, delete operations). It works with Manaty
- * custom JSF components.
+ * Standard backing bean for {@link Role} (extends {@link BaseBean} that provides almost all common methods to handle entities filtering/sorting in datatable, their create, edit,
+ * view, delete operations). It works with Manaty custom JSF components.
  */
 @Named
 @ConversationScoped
-public class UserRoleBean extends StatelessBaseBean<Role> {
+public class UserRoleBean extends StatefulBaseBean<Role> {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	/** Injected @{link Role} service. Extends {@link PersistenceService}. */
-	@Inject
-	private RoleService userRoleService;
+    /** Injected @{link Role} service. Extends {@link PersistenceService}. */
+    @Inject
+    private RoleService userRoleService;
 
-	@Inject
-	private PermissionService permissionService;
+    @Inject
+    private PermissionService permissionService;
 
-	private DualListModel<Permission> perks;
+    private DualListModel<Permission> perks;
 
-	/**
-	 * Constructor. Invokes super constructor and provides class type of this
-	 * bean for {@link BaseBean}.
-	 */
-	public UserRoleBean() {
-		super(Role.class);
-	}
+    /**
+     * Constructor. Invokes super constructor and provides class type of this bean for {@link BaseBean}.
+     */
+    public UserRoleBean() {
+        super(Role.class);
+    }
 
-	/**
-	 * Factory method for entity to edit. If objectId param set load that entity
-	 * from database, otherwise create new.
-	 * 
-	 * @throws IllegalAccessException
-	 * @throws InstantiationException
-	 */
-	@Override
-	public Role initEntity() {
-		return super.initEntity();
-	}
+    /**
+     * Factory method for entity to edit. If objectId param set load that entity from database, otherwise create new.
+     * 
+     * @throws IllegalAccessException
+     * @throws InstantiationException
+     */
+    @Override
+    public Role initEntity() {
+        return super.initEntity();
+    }
 
-	/**
-	 * Standard method for custom component with listType="pickList".
-	 */
-	public DualListModel<Permission> getDualListModel() {
-		if (perks == null) {
-			List<Permission> perksSource = permissionService.list();
-			List<Permission> perksTarget = new ArrayList<Permission>();
-			if (getEntity().getPermissions() != null) {
-				perksTarget.addAll(getEntity().getPermissions());
-			}
-			perksSource.removeAll(perksTarget);
-			perks = new DualListModel<Permission>(perksSource, perksTarget);
-		}
-		return perks;
-	}
+    /**
+     * Standard method for custom component with listType="pickList".
+     */
+    public DualListModel<Permission> getDualListModel() {
+        if (perks == null) {
+            List<Permission> perksSource = permissionService.list();
+            List<Permission> perksTarget = new ArrayList<Permission>();
+            if (getEntity().getPermissions() != null) {
+                perksTarget.addAll(getEntity().getPermissions());
+            }
+            perksSource.removeAll(perksTarget);
+            perks = new DualListModel<Permission>(perksSource, perksTarget);
+        }
+        return perks;
+    }
 
-	public void setDualListModel(DualListModel<Permission> perks) {
-		getEntity().setPermissions(perks.getTarget());
-	}
+    public void setDualListModel(DualListModel<Permission> perks) {
+        getEntity().setPermissions(perks.getTarget());
+    }
 
-	@Override
-	public String getNewViewName() {
-		return "userRoleDetail";
-	}
+    /**
+     * @see org.meveo.admin.action.BaseBean#getPersistenceService()
+     */
+    @Override
+    protected IPersistenceService<Role> getPersistenceService() {
+        return userRoleService;
+    }
 
-	@Override
-	protected String getListViewName() {
-		return "userRoles";
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.meveo.admin.action.BaseBean#saveOrUpdate(boolean)
+     */
+    @Override
+    public String saveOrUpdate(boolean killConversation) throws BusinessException {
 
-	/**
-	 * @see org.meveo.admin.action.BaseBean#getPersistenceService()
-	 */
-	@Override
-	protected IPersistenceService<Role> getPersistenceService() {
-		return userRoleService;
-	}
+        return super.saveOrUpdate(killConversation);
+    }
 
-	/**
-	 * @see org.meveo.admin.action.BaseBean#getFormFieldsToFetch()
-	 */
-	protected List<String> getFormFieldsToFetch() {
-		return Arrays.asList("users");
-	}
+    /**
+     * Add additional criteria for searching by provider
+     */
+    @Override
+    protected Map<String, Object> supplementSearchCriteria(Map<String, Object> searchCriteria) {
 
-	/**
-	 * @see org.meveo.admin.action.BaseBean#getListFieldsToFetch()
-	 */
-	protected List<String> getListFieldsToFetch() {
-		return Arrays.asList("users");
-	}
+        // Do not user a check against user.provider as it contains only one value, while user can be linked to various providers
+        searchCriteria.put(PersistenceService.SEARCH_SKIP_PROVIDER_CONSTRAINT, true);
+
+        return searchCriteria;
+    }
 }

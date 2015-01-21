@@ -511,8 +511,8 @@ CREATE SEQUENCE ADM_USER_SEQ start with 3 increment by 1;
 
 /*------INSERTS OF TABLE ADM_ROLE----*/
 
-INSERT INTO ADM_ROLE (ID, ROLE_NAME, ROLE_DESCRIPTION) VALUES (1, 'administrateur', 'Administrateur');
-INSERT INTO ADM_ROLE (ID, ROLE_NAME, ROLE_DESCRIPTION) VALUES (2, 'superAdministrateur', 'Super Administrateur');
+INSERT INTO ADM_ROLE (ID, VERSION, ROLE_NAME, ROLE_DESCRIPTION) VALUES (1, 0, 'administrateur', 'Administrateur');
+INSERT INTO ADM_ROLE (ID, VERSION, ROLE_NAME, ROLE_DESCRIPTION) VALUES (2, 0, 'superAdministrateur', 'Super Administrateur');
   
 DROP SEQUENCE IF EXISTS ADM_ROLE_SEQ;
 CREATE SEQUENCE ADM_ROLE_SEQ start with 3 increment by 1;
@@ -527,18 +527,18 @@ INSERT INTO ADM_USER_PROVIDER (PROVIDER_ID, USER_ID) VALUES (1, 2);
 
 /*------INSERTS OF TABLE ADM_PERMISSION----*/
 
-INSERT INTO ADM_PERMISSION (ID,NAME,RESSOURCE,PERMISSION) VALUES (1,'administrationVisualization','administration','administrationVisualization');
-INSERT INTO ADM_PERMISSION (ID,NAME,RESSOURCE,PERMISSION) VALUES (2,'administrationManagement','administration','administrationManagement');
-INSERT INTO ADM_PERMISSION (ID,NAME,RESSOURCE,PERMISSION) VALUES (3,'catalogVisualization','catalog','catalogVisualization');
-INSERT INTO ADM_PERMISSION (ID,NAME,RESSOURCE,PERMISSION) VALUES (4,'catalogManagement','catalog','catalogManagement');
-INSERT INTO ADM_PERMISSION (ID,NAME,RESSOURCE,PERMISSION) VALUES (5,'accountVisualization','account','accountVisualization');
-INSERT INTO ADM_PERMISSION (ID,NAME,RESSOURCE,PERMISSION) VALUES (6,'accountManagement','account','accountManagement');
-INSERT INTO ADM_PERMISSION (ID,NAME,RESSOURCE,PERMISSION) VALUES (7,'reportingVisualization','reporting','reportingVisualization');
-INSERT INTO ADM_PERMISSION (ID,NAME,RESSOURCE,PERMISSION) VALUES (8,'reportingManagement','reporting','reportingManagement');
-INSERT INTO ADM_PERMISSION (ID,NAME,RESSOURCE,PERMISSION) VALUES (9,'customerSummaryVisualization','customerSummary','customerSummaryVisualization');
-INSERT INTO ADM_PERMISSION (ID,NAME,RESSOURCE,PERMISSION) VALUES (10,'adv','billing','billingVisualization');
-INSERT INTO ADM_PERMISSION (ID,NAME,RESSOURCE,PERMISSION) VALUES (11,'adv','billing','billingManagement');
-INSERT INTO ADM_PERMISSION (ID,NAME,RESSOURCE,PERMISSION) VALUES (12,'superAdminManagement','superAdmin','superAdminManagement');
+INSERT INTO ADM_PERMISSION (ID,NAME,RESSOURCE,PERMISSION) VALUES (1,'Administration visualization','administration','administrationVisualization');
+INSERT INTO ADM_PERMISSION (ID,NAME,RESSOURCE,PERMISSION) VALUES (2,'Administration management','administration','administrationManagement');
+INSERT INTO ADM_PERMISSION (ID,NAME,RESSOURCE,PERMISSION) VALUES (3,'Catalog visualization','catalog','catalogVisualization');
+INSERT INTO ADM_PERMISSION (ID,NAME,RESSOURCE,PERMISSION) VALUES (4,'Catalog management','catalog','catalogManagement');
+INSERT INTO ADM_PERMISSION (ID,NAME,RESSOURCE,PERMISSION) VALUES (5,'Account visualization','account','accountVisualization');
+INSERT INTO ADM_PERMISSION (ID,NAME,RESSOURCE,PERMISSION) VALUES (6,'Account management','account','accountManagement');
+INSERT INTO ADM_PERMISSION (ID,NAME,RESSOURCE,PERMISSION) VALUES (7,'Reporting visualization','reporting','reportingVisualization');
+INSERT INTO ADM_PERMISSION (ID,NAME,RESSOURCE,PERMISSION) VALUES (8,'Reporting management','reporting','reportingManagement');
+INSERT INTO ADM_PERMISSION (ID,NAME,RESSOURCE,PERMISSION) VALUES (9,'Customer summary visualization','customerSummary','customerSummaryVisualization');
+INSERT INTO ADM_PERMISSION (ID,NAME,RESSOURCE,PERMISSION) VALUES (10,'Billing visualization','billing','billingVisualization');
+INSERT INTO ADM_PERMISSION (ID,NAME,RESSOURCE,PERMISSION) VALUES (11,'Billing management','billing','billingManagement');
+INSERT INTO ADM_PERMISSION (ID,NAME,RESSOURCE,PERMISSION) VALUES (12,'SuperAdmin management','superAdmin','superAdminManagement');
   
 DROP SEQUENCE IF EXISTS ADM_PERMISSION_SEQ;
 CREATE SEQUENCE ADM_PERMISSION_SEQ start with 13 increment by 1;

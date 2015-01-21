@@ -1,45 +1,33 @@
-<ui:composition xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:s="http://jboss.com/products/seam/taglib"
-	xmlns:ui="http://java.sun.com/jsf/facelets"
-	xmlns:f="http://java.sun.com/jsf/core"
-	xmlns:h="http://java.sun.com/jsf/html"
-	xmlns:rich="http://richfaces.org/rich"
-	xmlns:a="http://richfaces.org/a4j" xmlns:hftl="http://hftl.org"
-	xmlns:hf="http://java.sun.com/jsf/composite/tags"
-	template="/layout/template.xhtml">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:s="http://jboss.com/products/seam/taglib" xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html" xmlns:hftl="http://hftl.org"
+    xmlns:hf="http://java.sun.com/jsf/composite/tags" template="/layout/template.xhtml">
 
-	<ui:define name="metadata">
-		<f:metadata>
-			<f:event type="preRenderView"
-				listener="#{userRoleBean.preRenderView}" />
-		</f:metadata>
-	</ui:define>
+    <ui:define name="metadata">
+        <f:metadata>
+            <f:event type="preRenderView" listener="#{userRoleBean.preRenderView}" />
+        </f:metadata>
+    </ui:define>
 
-	<ui:define name="navigation">
-		<ui:include src="/layout/navigation.xhtml" />
-	</ui:define>
+    <ui:define name="navigation">
+        <ui:include src="/layout/navigation.xhtml" />
+    </ui:define>
 
-	<ui:define name="body">
+    <ui:define name="body">
 
-		<hf:searchPanel id="searchPanel" label="#{messages['role.search']}"
-			backingBean="#{userRoleBean}">
-			<hf:searchField label="#{messages['role.name']}" field="name" />
-			<hf:searchField label="#{messages['role.description']}"
-				field="description" />
-		</hf:searchPanel>
+        <hf:searchPanel id="searchPanel" label="#{messages['role.search']}" backingBean="#{userRoleBean}">
+            <hf:searchField label="#{messages['role.name']}" field="name" />
+            <hf:searchField label="#{messages['role.description']}" field="description" />
+        </hf:searchPanel>
 
-		<hftl:dataList label="#{messages['role.title']}"
-			backingBean="#{userRoleBean}">
-			<hftl:column label="#{messages['role.name']}" field="name" />
-			<hftl:column label="#{messages['role.description']}"
-				field="description" />
-			<hftl:column label="#{messages['role.permissions']}" field="permissions"
-				childField="permission" isList="true" />
+        <hftl:dataList label="#{messages['role.title']}" backingBean="#{userRoleBean}">
+            <hftl:column label="#{messages['role.name']}" field="name" />
+            <hftl:column label="#{messages['role.description']}" field="description" />
+            <hftl:column label="#{messages['role.permissions']}" field="permissions" childField="name" isList="true" />
 
-			<hftl:actionsColumn
-				permission="#{identity.hasPermission('administration','administrationManagement')}" />
-		</hftl:dataList>
+            <hftl:actionsColumn permission="#{identity.hasPermission('administration','administrationManagement')}" />
 
-	</ui:define>
+        </hftl:dataList>
+
+    </ui:define>
 
 </ui:composition>
