@@ -1,8 +1,8 @@
-package org.meveo.api.rest.account.impl;
+package org.meveo.api.ws.impl;
 
-import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
+import javax.jws.WebService;
 
 import org.meveo.api.MeveoApiErrorCode;
 import org.meveo.api.account.SubscriptionApi;
@@ -13,15 +13,14 @@ import org.meveo.api.dto.account.ApplyOneShotChargeInstanceDto;
 import org.meveo.api.dto.account.SubscriptionDto;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.LoggingInterceptor;
-import org.meveo.api.rest.account.SubscriptionRs;
-import org.meveo.api.rest.impl.BaseRs;
+import org.meveo.api.ws.SubscriptionWs;
 
 /**
  * @author Edward P. Legaspi
  **/
-@RequestScoped
+@WebService(serviceName = "SubscriptionWs", endpointInterface = "org.meveo.api.ws.SubscriptionWs")
 @Interceptors({ LoggingInterceptor.class })
-public class SubscriptionRsImpl extends BaseRs implements SubscriptionRs {
+public class SubscriptionWsImpl extends BaseWs implements SubscriptionWs {
 
 	@Inject
 	private SubscriptionApi subscriptionApi;

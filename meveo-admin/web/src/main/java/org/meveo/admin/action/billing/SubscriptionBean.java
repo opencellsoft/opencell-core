@@ -419,7 +419,8 @@ public class SubscriptionBean extends StatefulBaseBean<Subscription> {
 
 			for (ServiceTemplate serviceTemplate : serviceTemplates.getSelectedItemsAsList()) {
 				isChecked = true;
-				log.debug("instanciateManyServices id=#0 checked, quantity=#1", serviceTemplate.getId(), quantity);
+				log.debug("instanciateManyServices id={} checked, quantity={}", serviceTemplate.getId(), quantity);
+				
 				ServiceInstance serviceInstance = new ServiceInstance();
 				serviceInstance.setProvider(serviceTemplate.getProvider());
 				serviceInstance.setCode(serviceTemplate.getCode());

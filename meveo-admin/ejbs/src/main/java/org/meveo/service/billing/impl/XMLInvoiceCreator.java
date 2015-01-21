@@ -664,13 +664,14 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 					categoryInvoiceAgregate.getAmountWithoutTax(), rounding));
 			amountWithoutTax.appendChild(amountWithoutTaxTxt);
 			category.appendChild(amountWithoutTax);
-
+             
+			if(!entreprise){
 			Element amountWithTax = doc.createElement("amountWithTax");
 			Text amountWithTaxTxt = doc.createTextNode(round(
 					categoryInvoiceAgregate.getAmountWithTax(), rounding));
 			amountWithTax.appendChild(amountWithTaxTxt);
 			category.appendChild(amountWithTax);
-
+			}
 			if (generateSubCat) {
 				Element subCategories = doc.createElement("subCategories");
 				category.appendChild(subCategories);
@@ -1047,12 +1048,14 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 					xmlInvoiceHeaderCategoryDTO.getAmountWithoutTax(),rounding));
 			amountWithoutTax.appendChild(amountWithoutTaxTxt);
 			category.appendChild(amountWithoutTax);
-
-			Element amountWithTax = doc.createElement("amountWithTax");
-			Text amountWithTaxTxt = doc.createTextNode(round(
-					xmlInvoiceHeaderCategoryDTO.getAmountWithTax(),rounding));
-			amountWithTax.appendChild(amountWithTaxTxt);
-			category.appendChild(amountWithTax);
+			if(!entreprise){
+				Element amountWithTax = doc.createElement("amountWithTax");
+				Text amountWithTaxTxt = doc.createTextNode(round(
+						xmlInvoiceHeaderCategoryDTO.getAmountWithTax(),rounding));
+				amountWithTax.appendChild(amountWithTaxTxt);
+				category.appendChild(amountWithTax);	
+			}
+			
 			if (entreprise) {
 				for (RatedTransaction headerTransaction : xmlInvoiceHeaderCategoryDTO
 						.getRatedtransactions().values()) {
