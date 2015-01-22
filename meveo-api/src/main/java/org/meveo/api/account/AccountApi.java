@@ -39,13 +39,14 @@ public class AccountApi extends BaseApi {
 		Address address = new Address();
 		if (postData.getAddress() != null) {
 			// check country
-			if (countryService.findByCode(postData.getAddress().getCountry()) == null) {
+			if (!StringUtils.isBlank(postData.getAddress().getCountry())
+					&& countryService.findByCode(postData.getAddress().getCountry()) == null) {
 				throw new EntityDoesNotExistsException(Country.class, postData.getAddress().getCountry());
 			}
 
 			address.setAddress1(postData.getAddress().getAddress1());
 			address.setAddress2(postData.getAddress().getAddress2());
-			address.setAddress2(postData.getAddress().getAddress3());
+			address.setAddress3(postData.getAddress().getAddress3());
 			address.setZipCode(postData.getAddress().getZipCode());
 			address.setCity(postData.getAddress().getCity());
 			address.setCountry(postData.getAddress().getCountry());
@@ -97,13 +98,14 @@ public class AccountApi extends BaseApi {
 		Address address = accountEntity.getAddress() == null ? new Address() : accountEntity.getAddress();
 		if (postData.getAddress() != null) {
 			// check country
-			if (countryService.findByCode(postData.getAddress().getCountry()) == null) {
+			if (!StringUtils.isBlank(postData.getAddress().getCountry())
+					&& countryService.findByCode(postData.getAddress().getCountry()) == null) {
 				throw new EntityDoesNotExistsException(Country.class, postData.getAddress().getCountry());
 			}
 
 			address.setAddress1(postData.getAddress().getAddress1());
 			address.setAddress2(postData.getAddress().getAddress2());
-			address.setAddress2(postData.getAddress().getAddress3());
+			address.setAddress3(postData.getAddress().getAddress3());
 			address.setZipCode(postData.getAddress().getZipCode());
 			address.setCity(postData.getAddress().getCity());
 			address.setCountry(postData.getAddress().getCountry());

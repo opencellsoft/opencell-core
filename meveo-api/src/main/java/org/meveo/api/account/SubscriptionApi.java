@@ -91,6 +91,7 @@ public class SubscriptionApi extends BaseApi {
 
 			Subscription subscription = new Subscription();
 			subscription.setCode(postData.getCode());
+			subscription.setDescription(postData.getDescription());
 			subscription.setUserAccount(userAccount);
 			subscription.setOffer(offerTemplate);
 			subscription.setSubscriptionDate(postData.getSubscriptionDate());
@@ -134,6 +135,7 @@ public class SubscriptionApi extends BaseApi {
 
 			subscription.setUserAccount(userAccount);
 			subscription.setOffer(offerTemplate);
+			subscription.setDescription(postData.getDescription());
 			subscription.setSubscriptionDate(postData.getSubscriptionDate());
 			subscription.setTerminationDate(postData.getTerminationDate());
 
@@ -249,34 +251,51 @@ public class SubscriptionApi extends BaseApi {
 				throw new EntityDoesNotExistsException(Subscription.class, postData.getSubscription());
 			}
 
-			OneShotChargeInstance oneShotChargeInstance = new OneShotChargeInstance();
-			oneShotChargeInstance.setChargeTemplate(oneShotChargeTemplate);
+			OneShotChargeInstance oneShotChargeInstance = oneShotChargeInstanceService.findByCode(
+					postData.getOneShotChargeInstance(), provider);
+			if (oneShotChargeInstance == null) {
+				oneShotChargeInstance = new OneShotChargeInstance();
+				oneShotChargeInstance.setChargeTemplate(oneShotChargeTemplate);
+				Long id;
+				try {
+					id = oneShotChargeInstanceService.oneShotChargeApplication(subscription,
+							(OneShotChargeTemplate) oneShotChargeInstance.getChargeTemplate(),
+							oneShotChargeInstance.getChargeDate(), oneShotChargeInstance.getAmountWithoutTax(),
+							oneShotChargeInstance.getAmountWithTax(), 1, oneShotChargeInstance.getCriteria1(),
+							oneShotChargeInstance.getCriteria2(), oneShotChargeInstance.getCriteria3(),
+							oneShotChargeInstance.getSeller(), currentUser);
+				} catch (BusinessException e) {
+					throw new MeveoApiException(e.getMessage());
+				}
 
-			Long id;
-			try {
-				id = oneShotChargeInstanceService.oneShotChargeApplication(subscription,
-						(OneShotChargeTemplate) oneShotChargeInstance.getChargeTemplate(),
-						oneShotChargeInstance.getChargeDate(), oneShotChargeInstance.getAmountWithoutTax(),
-						oneShotChargeInstance.getAmountWithTax(), 1, oneShotChargeInstance.getCriteria1(),
-						oneShotChargeInstance.getCriteria2(), oneShotChargeInstance.getCriteria3(),
-						oneShotChargeInstance.getSeller(), currentUser);
-			} catch (BusinessException e) {
-				throw new MeveoApiException(e.getMessage());
+				oneShotChargeInstance.setId(id);
+				oneShotChargeInstance.setChargeDate(postData.getOperationDate());
+				oneShotChargeInstance.setSubscription(subscription);
+				oneShotChargeInstance.setSeller(subscription.getUserAccount().getBillingAccount().getCustomerAccount()
+						.getCustomer().getSeller());
+				oneShotChargeInstance.setCurrency(subscription.getUserAccount().getBillingAccount()
+						.getCustomerAccount().getTradingCurrency());
+				oneShotChargeInstance.setCountry(subscription.getUserAccount().getBillingAccount().getTradingCountry());
+				oneShotChargeInstance.setProvider(oneShotChargeInstance.getChargeTemplate().getProvider());
+
+				oneShotChargeInstance.setDescription(postData.getDescription());
+				oneShotChargeInstance.setAmountWithoutTax(postData.getAmountWithoutTax());
+				oneShotChargeInstance.setAmountWithTax(postData.getAmountWithTax());
+				oneShotChargeInstance.setCriteria1(postData.getCriteria1());
+				oneShotChargeInstance.setCriteria2(postData.getCriteria2());
+				oneShotChargeInstance.setCriteria3(postData.getCriteria3());
+			} else {
+				oneShotChargeInstance.setChargeDate(postData.getOperationDate());
 			}
 
-			oneShotChargeInstance.setId(id);
-			oneShotChargeInstance.setChargeDate(postData.getOperationDate());
-			oneShotChargeInstance.setSubscription(subscription);
-			oneShotChargeInstance.setSeller(subscription.getUserAccount().getBillingAccount().getCustomerAccount()
-					.getCustomer().getSeller());
-			oneShotChargeInstance.setCurrency(subscription.getUserAccount().getBillingAccount().getCustomerAccount()
-					.getTradingCurrency());
-			oneShotChargeInstance.setCountry(subscription.getUserAccount().getBillingAccount().getTradingCountry());
-			oneShotChargeInstance.setProvider(oneShotChargeInstance.getChargeTemplate().getProvider());
+			oneShotChargeInstance.setDescription(postData.getDescription());
+			oneShotChargeInstance.setAmountWithoutTax(postData.getAmountWithoutTax());
+			oneShotChargeInstance.setAmountWithTax(postData.getAmountWithTax());
+			oneShotChargeInstance.setCriteria1(postData.getCriteria1());
+			oneShotChargeInstance.setCriteria2(postData.getCriteria2());
+			oneShotChargeInstance.setCriteria3(postData.getCriteria3());
 
-			if (!oneShotChargeInstance.isTransient()) {
-				oneShotChargeInstanceService.update(oneShotChargeInstance, currentUser);
-			}
+			oneShotChargeInstanceService.update(oneShotChargeInstance, currentUser);
 		} else {
 			if (StringUtils.isBlank(postData.getOneShotChargeInstance())) {
 				missingParameters.add("oneShotChargeInstance");

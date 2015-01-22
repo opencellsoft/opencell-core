@@ -20,6 +20,8 @@ public class SubscriptionDto extends BaseDto {
 
 	@XmlAttribute(required = true)
 	private String code;
+	
+	private String description;
 
 	@XmlAttribute(required = true)
 	private String userAccount;
@@ -72,8 +74,17 @@ public class SubscriptionDto extends BaseDto {
 
 	@Override
 	public String toString() {
-		return "SubscriptionDto [code=" + code + ", userAccount=" + userAccount + ", offerTemplate=" + offerTemplate
-				+ ", subscriptionDate=" + subscriptionDate + ", terminationDate=" + terminationDate + "]";
+		return "SubscriptionDto [code=" + code + ", description=" + description + ", userAccount=" + userAccount
+				+ ", offerTemplate=" + offerTemplate + ", subscriptionDate=" + subscriptionDate + ", terminationDate="
+				+ terminationDate + "]";
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
 	}
 
 }

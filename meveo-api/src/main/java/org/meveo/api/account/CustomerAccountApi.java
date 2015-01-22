@@ -83,12 +83,12 @@ public class CustomerAccountApi extends AccountApi {
 			customerAccount.setTradingCurrency(tradingCurrency);
 			try {
 				customerAccount.setPaymentMethod(PaymentMethodEnum.valueOf(postData.getPaymentMethod()));
-			} catch (IllegalArgumentException e) {
+			} catch (IllegalArgumentException | NullPointerException e) {
 				log.warn(e.getMessage());
 			}
 			try {
 				customerAccount.setCreditCategory(CreditCategoryEnum.valueOf(postData.getCreditCategory()));
-			} catch (IllegalArgumentException e) {
+			} catch (IllegalArgumentException | NullPointerException e) {
 				log.warn(e.getMessage());
 			}
 			customerAccount.setContactInformation(contactInformation);
