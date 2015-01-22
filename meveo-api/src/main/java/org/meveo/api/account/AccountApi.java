@@ -10,12 +10,12 @@ import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.AccountEntity;
 import org.meveo.model.admin.User;
-import org.meveo.model.billing.TradingCountry;
+import org.meveo.model.billing.Country;
 import org.meveo.model.crm.CustomFieldInstance;
 import org.meveo.model.shared.Address;
 import org.meveo.model.shared.Name;
 import org.meveo.model.shared.Title;
-import org.meveo.service.billing.impl.TradingCountryService;
+import org.meveo.service.admin.impl.CountryService;
 import org.meveo.service.catalog.impl.TitleService;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
 
@@ -26,7 +26,7 @@ import org.meveo.service.crm.impl.CustomFieldInstanceService;
 public class AccountApi extends BaseApi {
 
 	@Inject
-	private TradingCountryService tradingCountryService;
+	private CountryService countryService;
 
 	@Inject
 	private TitleService titleService;
@@ -39,9 +39,8 @@ public class AccountApi extends BaseApi {
 		Address address = new Address();
 		if (postData.getAddress() != null) {
 			// check country
-			if (tradingCountryService.findByTradingCountryCode(postData.getAddress().getCountry(),
-					currentUser.getProvider()) == null) {
-				throw new EntityDoesNotExistsException(TradingCountry.class, postData.getAddress().getCountry());
+			if (countryService.findByCode(postData.getAddress().getCountry()) == null) {
+				throw new EntityDoesNotExistsException(Country.class, postData.getAddress().getCountry());
 			}
 
 			address.setAddress1(postData.getAddress().getAddress1());
@@ -98,9 +97,8 @@ public class AccountApi extends BaseApi {
 		Address address = accountEntity.getAddress() == null ? new Address() : accountEntity.getAddress();
 		if (postData.getAddress() != null) {
 			// check country
-			if (tradingCountryService.findByTradingCountryCode(postData.getAddress().getCountry(),
-					currentUser.getProvider()) == null) {
-				throw new EntityDoesNotExistsException(TradingCountry.class, postData.getAddress().getCountry());
+			if (countryService.findByCode(postData.getAddress().getCountry()) == null) {
+				throw new EntityDoesNotExistsException(Country.class, postData.getAddress().getCountry());
 			}
 
 			address.setAddress1(postData.getAddress().getAddress1());
