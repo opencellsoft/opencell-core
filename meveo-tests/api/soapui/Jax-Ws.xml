@@ -10844,241 +10844,210 @@
          </arg0>
       </ws:createAccess>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/createAccess"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation isOneWay="false" action="" name="createBillingAccount" bindingOperationName="createBillingAccount" type="Request-Response" outputName="createBillingAccountResponse" inputName="createBillingAccount" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/createAccess"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation isOneWay="false" action="" name="createBillingAccount" bindingOperationName="createBillingAccount" type="Request-Response" outputName="createBillingAccountResponse" inputName="createBillingAccount" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment xmlns:con="http://eviware.com/soapui/config">
+  &lt;con:entry key="username" value="meveo.admin"/>
+  &lt;con:entry key="password" value="meveo.admin"/>
+&lt;/xml-fragment></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createBillingAccount>
          <!--Optional:-->
-         <arg0 code="?" description="?" customerAccount="?" billingCycle="?" country="?" language="?" paymentMethod="?">
+         <arg0 code="BA2" description="BA2" customerAccount="CA2" billingCycle="CYC_INV_MT_1" country="US" language="ENG" paymentMethod="CHECK">
             <!--Optional:-->
-            <externalRef1>?</externalRef1>
+            <externalRef1></externalRef1>
             <!--Optional:-->
-            <externalRef2>?</externalRef2>
+            <externalRef2></externalRef2>
             <!--Optional:-->
-            <name lastName="?">
+            <name lastName="DEMO">
                <!--Optional:-->
-               <title>?</title>
+               <title>MM</title>
                <!--Optional:-->
-               <firstName>?</firstName>
+               <firstName>DEMO</firstName>
             </name>
             <!--Optional:-->
             <address>
                <!--Optional:-->
-               <address1>?</address1>
+               <address1>Address1</address1>
                <!--Optional:-->
-               <address2>?</address2>
+               <address2></address2>
                <!--Optional:-->
-               <address3>?</address3>
+               <address3></address3>
                <!--Optional:-->
-               <zipCode>?</zipCode>
+               <zipCode></zipCode>
                <!--Optional:-->
-               <city>?</city>
+               <city></city>
                <!--Optional:-->
-               <country>?</country>
+               <country></country>
                <!--Optional:-->
-               <state>?</state>
+               <state></state>
             </address>
-            <!--Zero or more repetitions:-->
-            <customFields code="?" description="?" stringValue="?" dateValue="?" longValue="?" doubleValue="?"/>
             <!--Optional:-->
-            <nextInvoiceDate>?</nextInvoiceDate>
+            <subscriptionDate>2015-01-22T13:42:57.219+08:00</subscriptionDate>         
             <!--Optional:-->
-            <subscriptionDate>?</subscriptionDate>
+            <paymentTerms>CASH</paymentTerms>
             <!--Optional:-->
-            <terminationDate>?</terminationDate>
-            <!--Optional:-->
-            <paymentTerms>?</paymentTerms>
-            <!--Optional:-->
-            <electronicBilling>?</electronicBilling>
+            <electronicBilling>false</electronicBilling>
          </arg0>
       </ws:createBillingAccount>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/createBillingAccount"/></con:call></con:operation><con:operation isOneWay="false" action="" name="createCustomer" bindingOperationName="createCustomer" type="Request-Response" outputName="createCustomerResponse" inputName="createCustomer" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/createBillingAccount"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation isOneWay="false" action="" name="createCustomer" bindingOperationName="createCustomer" type="Request-Response" outputName="createCustomerResponse" inputName="createCustomer" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment xmlns:con="http://eviware.com/soapui/config">
+  &lt;con:entry key="username" value="meveo.admin"/>
+  &lt;con:entry key="password" value="meveo.admin"/>
+&lt;/xml-fragment></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createCustomer>
          <!--Optional:-->
-         <arg0 code="?" description="?">
+         <arg0 code="CUST2" description="CUST2">
             <!--Optional:-->
-            <externalRef1>?</externalRef1>
+            <externalRef1></externalRef1>
             <!--Optional:-->
-            <externalRef2>?</externalRef2>
+            <externalRef2></externalRef2>
             <!--Optional:-->
-            <name lastName="?">
+            <name lastName="CUST2">
                <!--Optional:-->
-               <title>?</title>
+               <title></title>
                <!--Optional:-->
-               <firstName>?</firstName>
+               <firstName></firstName>
             </name>
             <!--Optional:-->
             <address>
                <!--Optional:-->
-               <address1>?</address1>
+               <address1></address1>
                <!--Optional:-->
-               <address2>?</address2>
+               <address2></address2>
                <!--Optional:-->
-               <address3>?</address3>
+               <address3></address3>
                <!--Optional:-->
-               <zipCode>?</zipCode>
+               <zipCode></zipCode>
                <!--Optional:-->
-               <city>?</city>
+               <city></city>
                <!--Optional:-->
-               <country>?</country>
+               <country></country>
                <!--Optional:-->
-               <state>?</state>
+               <state></state>
             </address>
             <!--Zero or more repetitions:-->
-            <customFields code="?" description="?" stringValue="?" dateValue="?" longValue="?" doubleValue="?"/>
+          
             <!--Optional:-->
-            <customerCategory>?</customerCategory>
+            <customerCategory>CLIENT</customerCategory>
             <!--Optional:-->
-            <customerBrand>?</customerBrand>
+            <customerBrand>DEFAULT</customerBrand>
             <!--Optional:-->
-            <seller>?</seller>
+            <seller>MAIN_SELLER</seller>
          </arg0>
       </ws:createCustomer>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/createCustomer"/></con:call></con:operation><con:operation isOneWay="false" action="" name="createCustomerAccount" bindingOperationName="createCustomerAccount" type="Request-Response" outputName="createCustomerAccountResponse" inputName="createCustomerAccount" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/createCustomer"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation isOneWay="false" action="" name="createCustomerAccount" bindingOperationName="createCustomerAccount" type="Request-Response" outputName="createCustomerAccountResponse" inputName="createCustomerAccount" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment xmlns:con="http://eviware.com/soapui/config">
+  &lt;con:entry key="username" value="meveo.admin"/>
+  &lt;con:entry key="password" value="meveo.admin"/>
+&lt;/xml-fragment></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createCustomerAccount>
          <!--Optional:-->
-         <arg0 code="?" description="?" customer="?" currency="?">
+         <arg0 code="CA2" description="CA2" customer="CUST2" currency="USD">
             <!--Optional:-->
-            <externalRef1>?</externalRef1>
+            <externalRef1></externalRef1>
             <!--Optional:-->
-            <externalRef2>?</externalRef2>
+            <externalRef2></externalRef2>
             <!--Optional:-->
-            <name lastName="?">
+            <name lastName="DEMO">
                <!--Optional:-->
-               <title>?</title>
+               <title></title>
                <!--Optional:-->
-               <firstName>?</firstName>
+               <firstName>DEMO</firstName>
             </name>
             <!--Optional:-->
             <address>
                <!--Optional:-->
-               <address1>?</address1>
+               <address1>Address1</address1>
                <!--Optional:-->
-               <address2>?</address2>
+               <address2></address2>
                <!--Optional:-->
-               <address3>?</address3>
+               <address3></address3>
                <!--Optional:-->
-               <zipCode>?</zipCode>
+               <zipCode></zipCode>
                <!--Optional:-->
-               <city>?</city>
+               <city></city>
                <!--Optional:-->
-               <country>?</country>
+               <country></country>
                <!--Optional:-->
-               <state>?</state>
+               <state></state>
             </address>
             <!--Zero or more repetitions:-->
-            <customFields code="?" description="?" stringValue="?" dateValue="?" longValue="?" doubleValue="?"/>
+            <customFields code="CA2_CF1" description="CA2_CF1" stringValue="1" />
             <!--Optional:-->
-            <status>?</status>
+            <status>ACTIVE</status>
             <!--Optional:-->
-            <paymentMethod>?</paymentMethod>
+            <paymentMethod>CHECK</paymentMethod>
             <!--Optional:-->
-            <creditCategory>?</creditCategory>
+            <creditCategory></creditCategory>
             <!--Zero or more repetitions:-->
-            <accountOperations>
-               <!--Optional:-->
-               <dueDate>?</dueDate>
-               <!--Optional:-->
-               <type>?</type>
-               <!--Optional:-->
-               <transactionDate>?</transactionDate>
-               <!--Optional:-->
-               <transactionCategory>?</transactionCategory>
-               <!--Optional:-->
-               <reference>?</reference>
-               <!--Optional:-->
-               <accountCode>?</accountCode>
-               <!--Optional:-->
-               <accountCodeClientSide>?</accountCodeClientSide>
-               <!--Optional:-->
-               <amount>?</amount>
-               <!--Optional:-->
-               <matchingAmount>?</matchingAmount>
-               <!--Optional:-->
-               <unMatchingAmount>?</unMatchingAmount>
-               <!--Optional:-->
-               <matchingStatus>?</matchingStatus>
-               <!--Zero or more repetitions:-->
-               <matchingAmounts>
-                  <!--Optional:-->
-                  <matchingCode>?</matchingCode>
-                  <!--Optional:-->
-                  <matchingAmount>?</matchingAmount>
-               </matchingAmounts>
-               <!--Optional:-->
-               <occCode>?</occCode>
-               <!--Optional:-->
-               <occDescription>?</occDescription>
-            </accountOperations>
+    		  <!--Optional:-->
+            <!--<dateStatus></dateStatus>-->
             <!--Optional:-->
-            <dateStatus>?</dateStatus>
+            <dateDunningLevel>2015-01-22T13:42:57.219+08:00</dateDunningLevel>
             <!--Optional:-->
-            <dateDunningLevel>?</dateDunningLevel>
+            <email></email>
             <!--Optional:-->
-            <email>?</email>
+            <phone></phone>
             <!--Optional:-->
-            <phone>?</phone>
+            <mobile></mobile>
             <!--Optional:-->
-            <mobile>?</mobile>
+            <fax></fax>
             <!--Optional:-->
-            <fax>?</fax>
+            <dunningLevel></dunningLevel>
             <!--Optional:-->
-            <dunningLevel>?</dunningLevel>
+            <mandateIdentification>1234</mandateIdentification>
             <!--Optional:-->
-            <mandateIdentification>?</mandateIdentification>
-            <!--Optional:-->
-            <mandateDate>?</mandateDate>
-            <!--Optional:-->
-            <balance>?</balance>
+            <mandateDate>2015-01-22T13:42:57.219+08:00</mandateDate>
          </arg0>
       </ws:createCustomerAccount>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/createCustomerAccount"/></con:call></con:operation><con:operation isOneWay="false" action="" name="createUserAccount" bindingOperationName="createUserAccount" type="Request-Response" outputName="createUserAccountResponse" inputName="createUserAccount" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/createCustomerAccount"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation isOneWay="false" action="" name="createUserAccount" bindingOperationName="createUserAccount" type="Request-Response" outputName="createUserAccountResponse" inputName="createUserAccount" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment xmlns:con="http://eviware.com/soapui/config">
+  &lt;con:entry key="username" value="meveo.admin"/>
+  &lt;con:entry key="password" value="meveo.admin"/>
+&lt;/xml-fragment></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createUserAccount>
          <!--Optional:-->
-         <arg0 code="?" description="?" billingAccount="?">
+         <arg0 code="UA2" description="UA2" billingAccount="BA2">
             <!--Optional:-->
-            <externalRef1>?</externalRef1>
+            <externalRef1></externalRef1>
             <!--Optional:-->
-            <externalRef2>?</externalRef2>
+            <externalRef2></externalRef2>
             <!--Optional:-->
-            <name lastName="?">
+            <name lastName="DEMO">
                <!--Optional:-->
-               <title>?</title>
+               <title>MM</title>
                <!--Optional:-->
-               <firstName>?</firstName>
+               <firstName>DEMO</firstName>
             </name>
             <!--Optional:-->
             <address>
                <!--Optional:-->
-               <address1>?</address1>
+               <address1>Address1</address1>
                <!--Optional:-->
-               <address2>?</address2>
+               <address2></address2>
                <!--Optional:-->
-               <address3>?</address3>
+               <address3></address3>
                <!--Optional:-->
-               <zipCode>?</zipCode>
+               <zipCode></zipCode>
                <!--Optional:-->
-               <city>?</city>
+               <city></city>
                <!--Optional:-->
-               <country>?</country>
+               <country>US</country>
                <!--Optional:-->
-               <state>?</state>
+               <state></state>
             </address>
             <!--Zero or more repetitions:-->
-            <customFields code="?" description="?" stringValue="?" dateValue="?" longValue="?" doubleValue="?"/>
+            <customFields code="UA2_CF1" description="UA2_CF1" stringValue="1" />
          </arg0>
       </ws:createUserAccount>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/createUserAccount"/></con:call></con:operation><con:operation isOneWay="false" action="" name="findAccess" bindingOperationName="findAccess" type="Request-Response" outputName="findAccessResponse" inputName="findAccess" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/createUserAccount"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation isOneWay="false" action="" name="findAccess" bindingOperationName="findAccess" type="Request-Response" outputName="findAccessResponse" inputName="findAccess" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
       <ws:findAccess>
@@ -11086,39 +11055,51 @@
          <arg0>?</arg0>
       </ws:findAccess>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/findAccess"/></con:call></con:operation><con:operation isOneWay="false" action="" name="findBillingAccount" bindingOperationName="findBillingAccount" type="Request-Response" outputName="findBillingAccountResponse" inputName="findBillingAccount" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/findAccess"/></con:call></con:operation><con:operation isOneWay="false" action="" name="findBillingAccount" bindingOperationName="findBillingAccount" type="Request-Response" outputName="findBillingAccountResponse" inputName="findBillingAccount" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment xmlns:con="http://eviware.com/soapui/config">
+  &lt;con:entry key="username" value="meveo.admin"/>
+  &lt;con:entry key="password" value="meveo.admin"/>
+&lt;/xml-fragment></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
       <ws:findBillingAccount>
          <!--Optional:-->
-         <arg0>?</arg0>
+         <arg0>BA2</arg0>
       </ws:findBillingAccount>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/findBillingAccount"/></con:call></con:operation><con:operation isOneWay="false" action="" name="findCustomer" bindingOperationName="findCustomer" type="Request-Response" outputName="findCustomerResponse" inputName="findCustomer" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/findBillingAccount"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation isOneWay="false" action="" name="findCustomer" bindingOperationName="findCustomer" type="Request-Response" outputName="findCustomerResponse" inputName="findCustomer" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment xmlns:con="http://eviware.com/soapui/config">
+  &lt;con:entry key="username" value="meveo.admin"/>
+  &lt;con:entry key="password" value="meveo.admin"/>
+&lt;/xml-fragment></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
       <ws:findCustomer>
          <!--Optional:-->
-         <arg0>?</arg0>
+         <arg0>CUST2</arg0>
       </ws:findCustomer>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/findCustomer"/></con:call></con:operation><con:operation isOneWay="false" action="" name="findCustomerAccount" bindingOperationName="findCustomerAccount" type="Request-Response" outputName="findCustomerAccountResponse" inputName="findCustomerAccount" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/findCustomer"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation isOneWay="false" action="" name="findCustomerAccount" bindingOperationName="findCustomerAccount" type="Request-Response" outputName="findCustomerAccountResponse" inputName="findCustomerAccount" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment xmlns:con="http://eviware.com/soapui/config">
+  &lt;con:entry key="username" value="meveo.admin"/>
+  &lt;con:entry key="password" value="meveo.admin"/>
+&lt;/xml-fragment></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
       <ws:findCustomerAccount>
          <!--Optional:-->
-         <arg0>?</arg0>
+         <arg0>CA2</arg0>
       </ws:findCustomerAccount>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/findCustomerAccount"/></con:call></con:operation><con:operation isOneWay="false" action="" name="findUserAccount" bindingOperationName="findUserAccount" type="Request-Response" outputName="findUserAccountResponse" inputName="findUserAccount" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/findCustomerAccount"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation isOneWay="false" action="" name="findUserAccount" bindingOperationName="findUserAccount" type="Request-Response" outputName="findUserAccountResponse" inputName="findUserAccount" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment xmlns:con="http://eviware.com/soapui/config">
+  &lt;con:entry key="username" value="meveo.admin"/>
+  &lt;con:entry key="password" value="meveo.admin"/>
+&lt;/xml-fragment></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
       <ws:findUserAccount>
          <!--Optional:-->
-         <arg0>?</arg0>
+         <arg0>UA2</arg0>
       </ws:findUserAccount>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/findUserAccount"/></con:call></con:operation><con:operation isOneWay="false" action="" name="index" bindingOperationName="index" type="Request-Response" outputName="indexResponse" inputName="index" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/findUserAccount"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation isOneWay="false" action="" name="index" bindingOperationName="index" type="Request-Response" outputName="indexResponse" inputName="index" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
       <ws:index/>
@@ -11131,39 +11112,51 @@
          <arg0>?</arg0>
       </ws:removeAccess>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/removeAccess"/></con:call></con:operation><con:operation isOneWay="false" action="" name="removeBillingAccount" bindingOperationName="removeBillingAccount" type="Request-Response" outputName="removeBillingAccountResponse" inputName="removeBillingAccount" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/removeAccess"/></con:call></con:operation><con:operation isOneWay="false" action="" name="removeBillingAccount" bindingOperationName="removeBillingAccount" type="Request-Response" outputName="removeBillingAccountResponse" inputName="removeBillingAccount" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment xmlns:con="http://eviware.com/soapui/config">
+  &lt;con:entry key="username" value="meveo.admin"/>
+  &lt;con:entry key="password" value="meveo.admin"/>
+&lt;/xml-fragment></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
       <ws:removeBillingAccount>
          <!--Optional:-->
-         <arg0>?</arg0>
+         <arg0>BA2</arg0>
       </ws:removeBillingAccount>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/removeBillingAccount"/></con:call></con:operation><con:operation isOneWay="false" action="" name="removeCustomer" bindingOperationName="removeCustomer" type="Request-Response" outputName="removeCustomerResponse" inputName="removeCustomer" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/removeBillingAccount"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation isOneWay="false" action="" name="removeCustomer" bindingOperationName="removeCustomer" type="Request-Response" outputName="removeCustomerResponse" inputName="removeCustomer" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment xmlns:con="http://eviware.com/soapui/config">
+  &lt;con:entry key="username" value="meveo.admin"/>
+  &lt;con:entry key="password" value="meveo.admin"/>
+&lt;/xml-fragment></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
       <ws:removeCustomer>
          <!--Optional:-->
-         <arg0>?</arg0>
+         <arg0>CUST2</arg0>
       </ws:removeCustomer>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/removeCustomer"/></con:call></con:operation><con:operation isOneWay="false" action="" name="removeCustomerAccount" bindingOperationName="removeCustomerAccount" type="Request-Response" outputName="removeCustomerAccountResponse" inputName="removeCustomerAccount" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/removeCustomer"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation isOneWay="false" action="" name="removeCustomerAccount" bindingOperationName="removeCustomerAccount" type="Request-Response" outputName="removeCustomerAccountResponse" inputName="removeCustomerAccount" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment xmlns:con="http://eviware.com/soapui/config">
+  &lt;con:entry key="username" value="meveo.admin"/>
+  &lt;con:entry key="password" value="meveo.admin"/>
+&lt;/xml-fragment></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
       <ws:removeCustomerAccount>
          <!--Optional:-->
-         <arg0>?</arg0>
+         <arg0>CA2</arg0>
       </ws:removeCustomerAccount>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/removeCustomerAccount"/></con:call></con:operation><con:operation isOneWay="false" action="" name="removeUserAccount" bindingOperationName="removeUserAccount" type="Request-Response" outputName="removeUserAccountResponse" inputName="removeUserAccount" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/removeCustomerAccount"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation isOneWay="false" action="" name="removeUserAccount" bindingOperationName="removeUserAccount" type="Request-Response" outputName="removeUserAccountResponse" inputName="removeUserAccount" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment xmlns:con="http://eviware.com/soapui/config">
+  &lt;con:entry key="username" value="meveo.admin"/>
+  &lt;con:entry key="password" value="meveo.admin"/>
+&lt;/xml-fragment></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
       <ws:removeUserAccount>
          <!--Optional:-->
-         <arg0>?</arg0>
+         <arg0>UA2</arg0>
       </ws:removeUserAccount>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/removeUserAccount"/></con:call></con:operation><con:operation isOneWay="false" action="" name="updateAccess" bindingOperationName="updateAccess" type="Request-Response" outputName="updateAccessResponse" inputName="updateAccess" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/removeUserAccount"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation isOneWay="false" action="" name="updateAccess" bindingOperationName="updateAccess" type="Request-Response" outputName="updateAccessResponse" inputName="updateAccess" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
       <ws:updateAccess>
@@ -11176,241 +11169,214 @@
          </arg0>
       </ws:updateAccess>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/updateAccess"/></con:call></con:operation><con:operation isOneWay="false" action="" name="updateBillingAccount" bindingOperationName="updateBillingAccount" type="Request-Response" outputName="updateBillingAccountResponse" inputName="updateBillingAccount" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/updateAccess"/></con:call></con:operation><con:operation isOneWay="false" action="" name="updateBillingAccount" bindingOperationName="updateBillingAccount" type="Request-Response" outputName="updateBillingAccountResponse" inputName="updateBillingAccount" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment xmlns:con="http://eviware.com/soapui/config">
+  &lt;con:entry key="username" value="meveo.admin"/>
+  &lt;con:entry key="password" value="meveo.admin"/>
+&lt;/xml-fragment></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
       <ws:updateBillingAccount>
          <!--Optional:-->
-         <arg0 code="?" description="?" customerAccount="?" billingCycle="?" country="?" language="?" paymentMethod="?">
+         <arg0 code="BA2" description="BA2" customerAccount="CA2" billingCycle="CYC_INV_MT_1" country="US" language="ENG" paymentMethod="CHECK">
             <!--Optional:-->
-            <externalRef1>?</externalRef1>
+            <externalRef1></externalRef1>
             <!--Optional:-->
-            <externalRef2>?</externalRef2>
+            <externalRef2></externalRef2>
             <!--Optional:-->
-            <name lastName="?">
+            <name lastName="DEMO2">
                <!--Optional:-->
-               <title>?</title>
+               <title>MM</title>
                <!--Optional:-->
-               <firstName>?</firstName>
+               <firstName>DEMO2</firstName>
             </name>
             <!--Optional:-->
             <address>
                <!--Optional:-->
-               <address1>?</address1>
+               <address1>Address1</address1>
                <!--Optional:-->
-               <address2>?</address2>
+               <address2>Address2</address2>
                <!--Optional:-->
-               <address3>?</address3>
+               <address3></address3>
                <!--Optional:-->
-               <zipCode>?</zipCode>
+               <zipCode>1234</zipCode>
                <!--Optional:-->
-               <city>?</city>
+               <city>City</city>
                <!--Optional:-->
-               <country>?</country>
+               <country>US</country>
                <!--Optional:-->
-               <state>?</state>
+               <state></state>
             </address>
-            <!--Zero or more repetitions:-->
-            <customFields code="?" description="?" stringValue="?" dateValue="?" longValue="?" doubleValue="?"/>
             <!--Optional:-->
-            <nextInvoiceDate>?</nextInvoiceDate>
+            <subscriptionDate>2015-01-22T13:42:57.219+08:00</subscriptionDate>         
+             <nextInvoiceDate>2015-02-22T13:42:57.219+08:00</nextInvoiceDate>
+             <terminationDate>2016-01-22T13:42:57.219+08:00</terminationDate>
             <!--Optional:-->
-            <subscriptionDate>?</subscriptionDate>
+            <paymentTerms>CASH</paymentTerms>
             <!--Optional:-->
-            <terminationDate>?</terminationDate>
-            <!--Optional:-->
-            <paymentTerms>?</paymentTerms>
-            <!--Optional:-->
-            <electronicBilling>?</electronicBilling>
+            <electronicBilling>false</electronicBilling>
          </arg0>
       </ws:updateBillingAccount>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/updateBillingAccount"/></con:call></con:operation><con:operation isOneWay="false" action="" name="updateCustomer" bindingOperationName="updateCustomer" type="Request-Response" outputName="updateCustomerResponse" inputName="updateCustomer" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/updateBillingAccount"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation isOneWay="false" action="" name="updateCustomer" bindingOperationName="updateCustomer" type="Request-Response" outputName="updateCustomerResponse" inputName="updateCustomer" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment xmlns:con="http://eviware.com/soapui/config">
+  &lt;con:entry key="username" value="meveo.admin"/>
+  &lt;con:entry key="password" value="meveo.admin"/>
+&lt;/xml-fragment></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
       <ws:updateCustomer>
          <!--Optional:-->
-         <arg0 code="?" description="?">
+         <arg0 code="CUST2" description="CUST2">
             <!--Optional:-->
-            <externalRef1>?</externalRef1>
+            <externalRef1></externalRef1>
             <!--Optional:-->
-            <externalRef2>?</externalRef2>
+            <externalRef2></externalRef2>
             <!--Optional:-->
-            <name lastName="?">
+            <name lastName="CUST2">
                <!--Optional:-->
-               <title>?</title>
+               <title></title>
                <!--Optional:-->
-               <firstName>?</firstName>
+               <firstName></firstName>
             </name>
             <!--Optional:-->
             <address>
                <!--Optional:-->
-               <address1>?</address1>
+               <address1>Address1</address1>
                <!--Optional:-->
-               <address2>?</address2>
+               <address2></address2>
                <!--Optional:-->
-               <address3>?</address3>
+               <address3></address3>
                <!--Optional:-->
-               <zipCode>?</zipCode>
+               <zipCode></zipCode>
                <!--Optional:-->
-               <city>?</city>
+               <city></city>
                <!--Optional:-->
-               <country>?</country>
+               <country></country>
                <!--Optional:-->
-               <state>?</state>
+               <state></state>
             </address>
             <!--Zero or more repetitions:-->
-            <customFields code="?" description="?" stringValue="?" dateValue="?" longValue="?" doubleValue="?"/>
+            <customFields code="CUST2_CF2" stringValue="2"/>
+            <customFields code="CUST2_CF1" stringValue="1"/>
             <!--Optional:-->
-            <customerCategory>?</customerCategory>
+            <customerCategory>CLIENT</customerCategory>
             <!--Optional:-->
-            <customerBrand>?</customerBrand>
+            <customerBrand>DEFAULT</customerBrand>
             <!--Optional:-->
-            <seller>?</seller>
+            <seller>MAIN_SELLER</seller>
          </arg0>
       </ws:updateCustomer>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/updateCustomer"/></con:call></con:operation><con:operation isOneWay="false" action="" name="updateCustomerAccount" bindingOperationName="updateCustomerAccount" type="Request-Response" outputName="updateCustomerAccountResponse" inputName="updateCustomerAccount" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/updateCustomer"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation isOneWay="false" action="" name="updateCustomerAccount" bindingOperationName="updateCustomerAccount" type="Request-Response" outputName="updateCustomerAccountResponse" inputName="updateCustomerAccount" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment xmlns:con="http://eviware.com/soapui/config">
+  &lt;con:entry key="username" value="meveo.admin"/>
+  &lt;con:entry key="password" value="meveo.admin"/>
+&lt;/xml-fragment></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
       <ws:updateCustomerAccount>
          <!--Optional:-->
-         <arg0 code="?" description="?" customer="?" currency="?">
+         <arg0 code="CA2" description="CA2" customer="CUST2" currency="USD">
             <!--Optional:-->
-            <externalRef1>?</externalRef1>
+            <externalRef1></externalRef1>
             <!--Optional:-->
-            <externalRef2>?</externalRef2>
+            <externalRef2></externalRef2>
             <!--Optional:-->
-            <name lastName="?">
+            <name lastName="DEMO">
                <!--Optional:-->
-               <title>?</title>
+               <title>MM</title>
                <!--Optional:-->
-               <firstName>?</firstName>
+               <firstName>DEMO</firstName>
             </name>
             <!--Optional:-->
             <address>
                <!--Optional:-->
-               <address1>?</address1>
+               <address1>Address1</address1>
                <!--Optional:-->
-               <address2>?</address2>
+               <address2>Address2</address2>
                <!--Optional:-->
-               <address3>?</address3>
+               <address3></address3>
                <!--Optional:-->
-               <zipCode>?</zipCode>
+               <zipCode></zipCode>
                <!--Optional:-->
-               <city>?</city>
+               <city></city>
                <!--Optional:-->
-               <country>?</country>
+               <country></country>
                <!--Optional:-->
-               <state>?</state>
+               <state></state>
             </address>
             <!--Zero or more repetitions:-->
-            <customFields code="?" description="?" stringValue="?" dateValue="?" longValue="?" doubleValue="?"/>
+            <customFields code="CA2_CF1" description="CA2_CF1" stringValue="1" />
+            <customFields code="CA2_CF2" description="CA2_CF2" dateValue="2015-01-22T13:42:57.219+08:00" />
             <!--Optional:-->
-            <status>?</status>
+            <status>ACTIVE</status>
             <!--Optional:-->
-            <paymentMethod>?</paymentMethod>
+            <paymentMethod>CHECK</paymentMethod>
             <!--Optional:-->
-            <creditCategory>?</creditCategory>
+            <creditCategory></creditCategory>
             <!--Zero or more repetitions:-->
-            <accountOperations>
-               <!--Optional:-->
-               <dueDate>?</dueDate>
-               <!--Optional:-->
-               <type>?</type>
-               <!--Optional:-->
-               <transactionDate>?</transactionDate>
-               <!--Optional:-->
-               <transactionCategory>?</transactionCategory>
-               <!--Optional:-->
-               <reference>?</reference>
-               <!--Optional:-->
-               <accountCode>?</accountCode>
-               <!--Optional:-->
-               <accountCodeClientSide>?</accountCodeClientSide>
-               <!--Optional:-->
-               <amount>?</amount>
-               <!--Optional:-->
-               <matchingAmount>?</matchingAmount>
-               <!--Optional:-->
-               <unMatchingAmount>?</unMatchingAmount>
-               <!--Optional:-->
-               <matchingStatus>?</matchingStatus>
-               <!--Zero or more repetitions:-->
-               <matchingAmounts>
-                  <!--Optional:-->
-                  <matchingCode>?</matchingCode>
-                  <!--Optional:-->
-                  <matchingAmount>?</matchingAmount>
-               </matchingAmounts>
-               <!--Optional:-->
-               <occCode>?</occCode>
-               <!--Optional:-->
-               <occDescription>?</occDescription>
-            </accountOperations>
+    		  <!--Optional:-->
+            <!--<dateStatus></dateStatus>-->
             <!--Optional:-->
-            <dateStatus>?</dateStatus>
+            <dateDunningLevel>2015-01-22T13:42:57.219+08:00</dateDunningLevel>
             <!--Optional:-->
-            <dateDunningLevel>?</dateDunningLevel>
+            <email></email>
             <!--Optional:-->
-            <email>?</email>
+            <phone></phone>
             <!--Optional:-->
-            <phone>?</phone>
+            <mobile></mobile>
             <!--Optional:-->
-            <mobile>?</mobile>
+            <fax></fax>
             <!--Optional:-->
-            <fax>?</fax>
+            <dunningLevel></dunningLevel>
             <!--Optional:-->
-            <dunningLevel>?</dunningLevel>
+            <mandateIdentification>1234</mandateIdentification>
             <!--Optional:-->
-            <mandateIdentification>?</mandateIdentification>
-            <!--Optional:-->
-            <mandateDate>?</mandateDate>
-            <!--Optional:-->
-            <balance>?</balance>
+            <mandateDate>2015-01-22T13:42:57.219+08:00</mandateDate>
          </arg0>
       </ws:updateCustomerAccount>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/updateCustomerAccount"/></con:call></con:operation><con:operation isOneWay="false" action="" name="updateUserAccount" bindingOperationName="updateUserAccount" type="Request-Response" outputName="updateUserAccountResponse" inputName="updateUserAccount" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/updateCustomerAccount"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation isOneWay="false" action="" name="updateUserAccount" bindingOperationName="updateUserAccount" type="Request-Response" outputName="updateUserAccountResponse" inputName="updateUserAccount" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment xmlns:con="http://eviware.com/soapui/config">
+  &lt;con:entry key="username" value="meveo.admin"/>
+  &lt;con:entry key="password" value="meveo.admin"/>
+&lt;/xml-fragment></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
       <ws:updateUserAccount>
          <!--Optional:-->
-         <arg0 code="?" description="?" billingAccount="?">
+         <arg0 code="UA2" description="UA2" billingAccount="BA2">
             <!--Optional:-->
-            <externalRef1>?</externalRef1>
+            <externalRef1></externalRef1>
             <!--Optional:-->
-            <externalRef2>?</externalRef2>
+            <externalRef2></externalRef2>
             <!--Optional:-->
-            <name lastName="?">
+            <name lastName="DEMO">
                <!--Optional:-->
-               <title>?</title>
+               <title>MM</title>
                <!--Optional:-->
-               <firstName>?</firstName>
+               <firstName>DEMO</firstName>
             </name>
             <!--Optional:-->
             <address>
                <!--Optional:-->
-               <address1>?</address1>
+               <address1>Address1</address1>
                <!--Optional:-->
-               <address2>?</address2>
+               <address2>Address2</address2>
                <!--Optional:-->
-               <address3>?</address3>
+               <address3></address3>
                <!--Optional:-->
-               <zipCode>?</zipCode>
+               <zipCode></zipCode>
                <!--Optional:-->
-               <city>?</city>
+               <city></city>
                <!--Optional:-->
-               <country>?</country>
+               <country>US</country>
                <!--Optional:-->
-               <state>?</state>
+               <state></state>
             </address>
             <!--Zero or more repetitions:-->
-            <customFields code="?" description="?" stringValue="?" dateValue="?" longValue="?" doubleValue="?"/>
+            <customFields code="UA2_CF1" description="UA2_CF1" stringValue="1" />
          </arg0>
       </ws:updateUserAccount>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/updateUserAccount"/></con:call></con:operation></con:interface><con:interface xsi:type="con:WsdlInterface" wsaVersion="NONE" name="SubscriptionWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}SubscriptionWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="http://localhost:8080/meveo/SubscriptionWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache type="TEXT" rootPart="http://localhost:8080/meveo/SubscriptionWs?wsdl"><con:part><con:url>http://localhost:8080/meveo/SubscriptionWs?wsdl</con:url><con:content><![CDATA[<wsdl:definitions name="SubscriptionWs" targetNamespace="http://impl.ws.api.meveo.org/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://impl.ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns2="http://schemas.xmlsoap.org/soap/http" xmlns:ns1="http://ws.api.meveo.org/">
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/updateUserAccount"/><con:wsrmConfig version="1.2"/></con:call></con:operation></con:interface><con:interface xsi:type="con:WsdlInterface" wsaVersion="NONE" name="SubscriptionWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}SubscriptionWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="http://localhost:8080/meveo/SubscriptionWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache type="TEXT" rootPart="http://localhost:8080/meveo/SubscriptionWs?wsdl"><con:part><con:url>http://localhost:8080/meveo/SubscriptionWs?wsdl</con:url><con:content><![CDATA[<wsdl:definitions name="SubscriptionWs" targetNamespace="http://impl.ws.api.meveo.org/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://impl.ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns2="http://schemas.xmlsoap.org/soap/http" xmlns:ns1="http://ws.api.meveo.org/">
   <wsdl:import location="http://localhost:8080/meveo/SubscriptionWs?wsdl=SubscriptionWs.wsdl" namespace="http://ws.api.meveo.org/"></wsdl:import>
   <wsdl:binding name="SubscriptionWsSoapBinding" type="ns1:SubscriptionWs">
     <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
@@ -11491,6 +11457,7 @@
         <xs:complexContent>
           <xs:extension base="tns:baseDto">
             <xs:sequence>
+              <xs:element minOccurs="0" name="description" type="xs:string"/>
               <xs:element minOccurs="0" name="subscriptionDate" type="xs:dateTime"/>
               <xs:element minOccurs="0" name="terminationDate" type="xs:dateTime"/>
             </xs:sequence>
@@ -11653,74 +11620,142 @@
       <wsdl:output message="ns1:activateServicesResponse" name="activateServicesResponse"></wsdl:output>
     </wsdl:operation>
   </wsdl:portType>
-</wsdl:definitions>]]></con:content><con:type>http://schemas.xmlsoap.org/wsdl/</con:type></con:part></con:definitionCache><con:endpoints><con:endpoint>http://localhost:8080/meveo/SubscriptionWs</con:endpoint></con:endpoints><con:operation isOneWay="false" action="" name="activateServices" bindingOperationName="activateServices" type="Request-Response" outputName="activateServicesResponse" inputName="activateServices" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/SubscriptionWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+</wsdl:definitions>]]></con:content><con:type>http://schemas.xmlsoap.org/wsdl/</con:type></con:part></con:definitionCache><con:endpoints><con:endpoint>http://localhost:8080/meveo/SubscriptionWs</con:endpoint></con:endpoints><con:operation isOneWay="false" action="" name="activateServices" bindingOperationName="activateServices" type="Request-Response" outputName="activateServicesResponse" inputName="activateServices" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment xmlns:con="http://eviware.com/soapui/config">
+  &lt;con:entry key="username" value="meveo.admin"/>
+  &lt;con:entry key="password" value="meveo.admin"/>
+&lt;/xml-fragment></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/SubscriptionWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
       <ws:activateServices>
          <!--Optional:-->
-         <arg0 subscription="?">
+         <arg0 subscription="UA1_SUB1">
             <services>
                <!--Zero or more repetitions:-->
                <entry>
                   <!--Optional:-->
-                  <key>?</key>
+                  <key>SERV1</key>
                   <!--Optional:-->
-                  <value>?</value>
+                  <value>1</value>
                </entry>
             </services>
          </arg0>
       </ws:activateServices>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SubscriptionWs/activateServices"/></con:call></con:operation><con:operation isOneWay="false" action="" name="applyOneShotChargeInstance" bindingOperationName="applyOneShotChargeInstance" type="Request-Response" outputName="applyOneShotChargeInstanceResponse" inputName="applyOneShotChargeInstance" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/SubscriptionWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SubscriptionWs/activateServices"/><con:wsrmConfig version="1.2"/></con:call><con:call name="Request 2"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment xmlns:con="http://eviware.com/soapui/config">
+  &lt;con:entry key="username" value="meveo.admin"/>
+  &lt;con:entry key="password" value="meveo.admin"/>
+&lt;/xml-fragment></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/SubscriptionWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:activateServices>
+         <!--Optional:-->
+         <arg0 subscription="UA1_SUB2">
+            <services>
+               <!--Zero or more repetitions:-->
+               <entry>
+                  <!--Optional:-->
+                  <key>SERV1</key>
+                  <!--Optional:-->
+                  <value>1</value>
+               </entry>
+            </services>
+         </arg0>
+      </ws:activateServices>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SubscriptionWs/activateServices"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation isOneWay="false" action="" name="applyOneShotChargeInstance" bindingOperationName="applyOneShotChargeInstance" type="Request-Response" outputName="applyOneShotChargeInstanceResponse" inputName="applyOneShotChargeInstance" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment xmlns:con="http://eviware.com/soapui/config">
+  &lt;con:entry key="username" value="meveo.admin"/>
+  &lt;con:entry key="password" value="meveo.admin"/>
+&lt;/xml-fragment></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/SubscriptionWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
       <ws:applyOneShotChargeInstance>
          <!--Optional:-->
-         <arg0 oneShotChargeInstance="?" subscription="?" operationDate="?">
+         <arg0 oneShotChargeInstance="SUB1" subscription="UA1_SUB1" operationDate="2015-01-22T13:42:57.219+08:00">
             <!--Optional:-->
-            <description>?</description>
+            <description>special</description>
             <!--Optional:-->
-            <amountWithoutTax>?</amountWithoutTax>
+            <amountWithoutTax>10</amountWithoutTax>
             <!--Optional:-->
-            <amountWithTax>?</amountWithTax>
+            <amountWithTax>12</amountWithTax>
             <!--Optional:-->
-            <criteria1>?</criteria1>
+            <criteria1>1</criteria1>
             <!--Optional:-->
-            <criteria2>?</criteria2>
+            <criteria2>2</criteria2>
             <!--Optional:-->
-            <criteria3>?</criteria3>
+            <criteria3>3</criteria3>
          </arg0>
       </ws:applyOneShotChargeInstance>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SubscriptionWs/applyOneShotChargeInstance"/></con:call></con:operation><con:operation isOneWay="false" action="" name="create" bindingOperationName="create" type="Request-Response" outputName="createResponse" inputName="create" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/SubscriptionWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SubscriptionWs/applyOneShotChargeInstance"/><con:wsrmConfig version="1.2"/></con:call><con:call name="Request 2"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment xmlns:con="http://eviware.com/soapui/config">
+  &lt;con:entry key="username" value="meveo.admin"/>
+  &lt;con:entry key="password" value="meveo.admin"/>
+&lt;/xml-fragment></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/SubscriptionWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:applyOneShotChargeInstance>
+         <!--Optional:-->
+         <arg0 oneShotChargeInstance="SUB2" subscription="UA1_SUB2" operationDate="2015-01-22T13:42:57.219+08:00">
+            <!--Optional:-->
+            <description>special</description>
+            <!--Optional:-->
+            <amountWithoutTax>10</amountWithoutTax>
+            <!--Optional:-->
+            <amountWithTax>12</amountWithTax>
+            <!--Optional:-->
+            <criteria1>1</criteria1>
+            <!--Optional:-->
+            <criteria2>2</criteria2>
+            <!--Optional:-->
+            <criteria3>3</criteria3>
+         </arg0>
+      </ws:applyOneShotChargeInstance>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SubscriptionWs/applyOneShotChargeInstance"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation isOneWay="false" action="" name="create" bindingOperationName="create" type="Request-Response" outputName="createResponse" inputName="create" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment xmlns:con="http://eviware.com/soapui/config">
+  &lt;con:entry key="username" value="meveo.admin"/>
+  &lt;con:entry key="password" value="meveo.admin"/>
+&lt;/xml-fragment></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/SubscriptionWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
       <ws:create>
          <!--Optional:-->
-         <arg0 code="?" userAccount="?" offerTemplate="?">
+         <arg0 code="UA1_SUB1" userAccount="UA1" offerTemplate="OFF1">
             <!--Optional:-->
-            <subscriptionDate>?</subscriptionDate>
-            <!--Optional:-->
-            <terminationDate>?</terminationDate>
+            <subscriptionDate>2015-01-22T13:42:57.219+08:00</subscriptionDate>
          </arg0>
       </ws:create>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SubscriptionWs/create"/></con:call></con:operation><con:operation isOneWay="false" action="" name="index" bindingOperationName="index" type="Request-Response" outputName="indexResponse" inputName="index" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/SubscriptionWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SubscriptionWs/create"/><con:wsrmConfig version="1.2"/></con:call><con:call name="Request 2"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment xmlns:con="http://eviware.com/soapui/config">
+  &lt;con:entry key="username" value="meveo.admin"/>
+  &lt;con:entry key="password" value="meveo.admin"/>
+&lt;/xml-fragment></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/SubscriptionWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:create>
+         <!--Optional:-->
+         <arg0 code="UA1_SUB2" userAccount="UA1" offerTemplate="OFF1">
+            <!--Optional:-->
+            <subscriptionDate>2015-01-22T13:42:57.219+08:00</subscriptionDate>
+         </arg0>
+      </ws:create>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SubscriptionWs/create"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation isOneWay="false" action="" name="index" bindingOperationName="index" type="Request-Response" outputName="indexResponse" inputName="index" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/SubscriptionWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
       <ws:index/>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SubscriptionWs/index"/></con:call></con:operation><con:operation isOneWay="false" action="" name="update" bindingOperationName="update" type="Request-Response" outputName="updateResponse" inputName="update" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/SubscriptionWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SubscriptionWs/index"/></con:call></con:operation><con:operation isOneWay="false" action="" name="update" bindingOperationName="update" type="Request-Response" outputName="updateResponse" inputName="update" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment xmlns:con="http://eviware.com/soapui/config">
+  &lt;con:entry key="username" value="meveo.admin"/>
+  &lt;con:entry key="password" value="meveo.admin"/>
+&lt;/xml-fragment></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/SubscriptionWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
       <ws:update>
          <!--Optional:-->
-         <arg0 code="?" userAccount="?" offerTemplate="?">
+         <arg0 code="UA1_SUB1" userAccount="UA1" offerTemplate="OFF1">
+         	  <description>UA1_SUB1-Updated</description>
             <!--Optional:-->
-            <subscriptionDate>?</subscriptionDate>
-            <!--Optional:-->
-            <terminationDate>?</terminationDate>
+            <subscriptionDate>2015-01-12T13:42:57.219+08:00</subscriptionDate>
          </arg0>
       </ws:update>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SubscriptionWs/update"/></con:call></con:operation></con:interface><con:properties/><con:wssContainer/><con:oAuth2ProfileContainer/><con:sensitiveInformation/></con:soapui-project>
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SubscriptionWs/update"/><con:wsrmConfig version="1.2"/></con:call></con:operation></con:interface><con:properties/><con:wssContainer/><con:oAuth2ProfileContainer/><con:sensitiveInformation/></con:soapui-project>
