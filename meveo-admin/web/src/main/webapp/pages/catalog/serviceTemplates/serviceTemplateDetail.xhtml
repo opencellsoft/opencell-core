@@ -106,7 +106,7 @@
 					<br />
 
 					<p:outputPanel id="serviceUsageChargeTempalte_panel">
-						<hftl:dataList backingBean="#{serviceUsageChargeTemplateBean}"
+						<hftl:dataList backingBean="#{serviceChargeTemplateUsageBean}"
 							dataModel="#{serviceTemplateBean.entity.serviceUsageCharges}"
 							resultsId="serviceUsageCharges_results" checkMany="false">
 							<hftl:column label="#{messages['usageChargeTemplate.title']}"
@@ -123,13 +123,13 @@
 									hideEffect="slide" />
 								<p:commandButton id="editUsageChargeTemplateLink"
 									update=":tabView:formPanelUsageCharge:formUsageCharge"
-									action="#{serviceTemplateBean.editServiceUsageChargeTemplate(entity)}"
+									action="#{serviceTemplateBean.editServiceChargeTemplateUsage(entity)}"
 									icon="ui-icon-document" />
 								<p:tooltip for="editServiceUsageChargedeletelink"
 									value="#{messages['commons.delete']}" showEffect="slide"
 									hideEffect="slide" />
 								<p:commandButton id="editServiceUsageChargedeletelink"
-									action="#{serviceTemplateBean.deleteServiceUsageChargeTemplate(entity)}"
+									action="#{serviceTemplateBean.deleteServiceChargeTemplateUsage(entity)}"
 									icon="ui-icon-trash" ajax="true"
 									update=":tabView:serviceUsageChargeTempalte_panel,:tabView:formPanelUsageCharge:formUsageCharge" />
 							</p:column>
@@ -148,7 +148,7 @@
 									edit="#{serviceTemplateBean.edit}"
 									label="#{messages['serviceUsageChargeTemplate.title']}"
 									backingBean="#{serviceTemplateBean}"
-									entity="#{serviceTemplateBean.serviceUsageChargeTemplate}"
+									entity="#{serviceTemplateBean.serviceChargeTemplateUsage}"
 									showFormButtons="false" ajaxSubmit="true">
 
 									<hf:formEntityField id="chargeTemplateSelectedId"
@@ -165,18 +165,18 @@
 
 										<p:commandButton
 											rendered="#{serviceUsageChargeTemplate.id==null}"
-											action="#{serviceTemplateBean.saveServiceUsageChargeTemplate}"
+											action="#{serviceTemplateBean.saveServiceChargeTemplateUsage}"
 											value="#{messages['serviceUsageChargeTemplate.saveUsageCharge']}"
 											update=":tabView:serviceUsageChargeTempalte_panel,:tabView:formPanelUsageCharge:formUsageCharge ,:tabView:serviceUsageChargediv" />
 
 										<p:commandButton
 											rendered="#{serviceUsageChargeTemplate.id!=null}"
-											action="#{serviceTemplateBean.saveServiceUsageChargeTemplate}"
+											action="#{serviceTemplateBean.saveServiceChargeTemplateUsage}"
 											value="#{messages['serviceUsageChargeTemplate.modifyServiceUsageCharge']}"
 											update=":tabView:serviceUsageChargeTempalte_panel,:tabView:formPanelUsageCharge:formUsageCharge ,:tabView:serviceUsageChargediv" />
 
 										<p:commandButton value="#{messages['action.cancel']}"
-											action="#{serviceTemplateBean.newServiceUsageChargeTemplate}"
+											action="#{serviceTemplateBean.newServiceChargeTemplateUsage}"
 											update=":tabView:serviceUsageChargediv" />
 
 										<p:button id="buttonBack" value="#{messages['action.back']}"
