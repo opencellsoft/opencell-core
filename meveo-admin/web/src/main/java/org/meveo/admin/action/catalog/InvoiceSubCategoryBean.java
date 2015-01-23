@@ -131,9 +131,9 @@ public class InvoiceSubCategoryBean extends
 			log.error(
 					"exception when applying one invoiceSubCategoryCountry !",
 					e);
-			/*messages.error(new BundleKey("messages",
+			messages.error(new BundleKey("messages",
 					"invoiceSubCategory.uniqueTaxFlied"));
-*/
+
 			return getListViewName();
 		}
 
