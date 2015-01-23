@@ -54,11 +54,16 @@ public class BigDecimalConverter implements Converter {
 		 * throw new ConverterException(resourceMessages.getString(
 		 * "javax.faces.converter.BigDecimalConverter.DECIMAL_detail")); }
 		 */
-		str = str.replace(" ", "");
-		str = str.replace("\u00a0", "");
-		str = str.replace(",", ".");
+        str = str.replace(" ", "");
+        str = str.replace("\u00a0", "");
+        // Get rid of comma when value was entered in 2,500.89 format and replace comma with period when entered in 21,89 format
+        if (str.indexOf(",") > 0 && str.indexOf(".") > 0) {
+            str = str.replace(",", "");
+        } else {
+            str = str.replace(",", ".");
+        }
 
-		return new BigDecimal(str);
+        return new BigDecimal(str);
 	}
 
 	protected DecimalFormat getDecimalFormat() {
