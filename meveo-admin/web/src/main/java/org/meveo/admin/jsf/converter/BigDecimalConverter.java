@@ -56,9 +56,18 @@ public class BigDecimalConverter implements Converter {
 		 */
         str = str.replace(" ", "");
         str = str.replace("\u00a0", "");
-        // Get rid of comma when value was entered in 2,500.89 format and replace comma with period when entered in 21,89 format
-        if (str.indexOf(",") > 0 && str.indexOf(".") > 0) {
-            str = str.replace(",", "");
+        int commaPos = str.indexOf(",");
+        int dotPos = str.indexOf(".");
+        if (commaPos > 0 && dotPos > 0) {
+            // Get rid of comma when value was entered in 2,500.89 format (EN locale)
+            if (commaPos < dotPos) {
+                str = str.replace(",", "");
+                // Handle when value was entered in 2,500.89 format (FR locale)
+            } else {
+                str = str.replace(".", "");
+                str = str.replace(",", ".");
+            }
+            // Replace comma with period when entered in 21,89 format
         } else {
             str = str.replace(",", ".");
         }
