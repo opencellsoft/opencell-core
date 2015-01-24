@@ -24,12 +24,12 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
-import org.meveo.model.BaseEntity;
+import org.meveo.model.ProviderlessEntity;
 
 @Entity
 @Table(name = "CAT_DAY_IN_YEAR", uniqueConstraints = @UniqueConstraint(columnNames = { "DAY", "MONTH" }))
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "CAT_DAY_IN_YEAR_SEQ")
-public class DayInYear extends BaseEntity {
+public class DayInYear extends ProviderlessEntity {
 
 	private static final long serialVersionUID = 1L;
 

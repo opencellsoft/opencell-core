@@ -35,13 +35,12 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import javax.persistence.UniqueConstraint;
 
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.catalog.ServiceTemplate;
 
 @Entity
-@Table(name = "BILLING_SERVICE_INSTANCE", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE", "PROVIDER_ID" }))
+@Table(name = "BILLING_SERVICE_INSTANCE")
 @AttributeOverrides({ @AttributeOverride(name = "code", column = @Column(name = "code", unique = false)) })
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_SERVICE_INSTANCE_SEQ")
 public class ServiceInstance extends BusinessEntity {

@@ -83,12 +83,12 @@ public class CustomerAccountApi extends AccountApi {
 			customerAccount.setTradingCurrency(tradingCurrency);
 			try {
 				customerAccount.setPaymentMethod(PaymentMethodEnum.valueOf(postData.getPaymentMethod()));
-			} catch (IllegalArgumentException e) {
+			} catch (IllegalArgumentException | NullPointerException e) {
 				log.warn(e.getMessage());
 			}
 			try {
 				customerAccount.setCreditCategory(CreditCategoryEnum.valueOf(postData.getCreditCategory()));
-			} catch (IllegalArgumentException e) {
+			} catch (IllegalArgumentException | NullPointerException e) {
 				log.warn(e.getMessage());
 			}
 			customerAccount.setContactInformation(contactInformation);
@@ -210,8 +210,10 @@ public class CustomerAccountApi extends AccountApi {
 				throw new BusinessException("Cannot find customer account with code=" + customerAccountCode);
 			}
 
-			customerAccountDto.setStatus(customerAccount.getStatus().toString() != null ? customerAccount.getStatus()
-					.toString() : null);
+			if (customerAccount.getStatus() != null) {
+				customerAccountDto.setStatus(customerAccount.getStatus().toString() != null ? customerAccount
+						.getStatus().toString() : null);
+			}
 			if (customerAccount.getPaymentMethod() != null) {
 				customerAccountDto
 						.setPaymentMethod(customerAccount.getPaymentMethod().toString() != null ? customerAccount
@@ -258,8 +260,11 @@ public class CustomerAccountApi extends AccountApi {
 				}
 			}
 
-			customerAccountDto.setDunningLevel(customerAccount.getDunningLevel().toString() != null ? customerAccount
-					.getDunningLevel().toString() : null);
+			if (customerAccount.getDunningLevel() != null) {
+				customerAccountDto
+						.setDunningLevel(customerAccount.getDunningLevel().toString() != null ? customerAccount
+								.getDunningLevel().toString() : null);
+			}
 			customerAccountDto.setMandateIdentification(customerAccount.getMandateIdentification());
 			customerAccountDto.setMandateDate(customerAccount.getMandateDate());
 

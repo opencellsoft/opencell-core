@@ -33,7 +33,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -46,7 +45,6 @@ import org.meveo.model.payments.PaymentTermEnum;
 
 @Entity
 @Table(name = "BILLING_BILLING_ACCOUNT")
-@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_BILLING_ACCOUNT_SEQ")
 @NamedQueries({ @NamedQuery(name = "BillingAccount.listByBillingRunId", query = "SELECT b FROM BillingAccount b where b.billingRun.id=:billingRunId") })
 public class BillingAccount extends AccountEntity {
 
