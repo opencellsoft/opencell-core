@@ -47,8 +47,10 @@ import org.meveo.model.billing.UserAccount;
 import org.meveo.model.billing.WalletInstance;
 import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.RecurringChargeTemplate;
+import org.meveo.model.catalog.ServiceChargeTemplate;
 import org.meveo.model.catalog.ServiceChargeTemplateUsage;
 import org.meveo.model.catalog.ServiceTemplate;
+import org.meveo.model.catalog.WalletTemplate;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.shared.DateUtils;
@@ -81,6 +83,9 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 
 	@Inject
 	private RatedTransactionService ratedTransactionService;
+	
+	@EJB
+	private WalletService walletService;
 
 	public ServiceInstance findByCodeAndSubscription(String code, Subscription subscription) {
 		return findByCodeAndSubscription(getEntityManager(), code, subscription);
@@ -103,6 +108,23 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 		}
 
 		return chargeInstance;
+	}
+	
+	public WalletInstance getWalletInstance(UserAccount userAccount, String walletCode,WalletTemplate walletTemplate,  User creator ,Provider provider){
+		if(!WalletTemplate.PRINCIPAL.equals(walletCode)){
+			if(!userAccount.getPrepaidWallets().containsKey(walletCode)){
+				WalletInstance wallet = new WalletInstance();
+				wallet.setCode(walletCode);
+				wallet.setWalletTemplate(walletTemplate);
+				wallet.setUserAccount(userAccount);
+				walletService.create( wallet, creator, provider);
+				userAccount.getPrepaidWallets().put(walletCode,wallet);
+			}
+			return userAccount.getPrepaidWallets().get(walletCode);
+		} 
+		else {
+			return userAccount.getWallet();
+		}
 	}
 
 	public void serviceInstanciation(ServiceInstance serviceInstance, User creator)
@@ -129,8 +151,12 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 					+ " and subscription code=" + subscription.getCode() + " is already created.");
 		}
 
-		Seller seller = subscription.getUserAccount().getBillingAccount().getCustomerAccount().getCustomer()
-				.getSeller();
+		 
+		
+		UserAccount userAccount = subscription.getUserAccount();
+
+		Seller seller = userAccount.getBillingAccount()
+				.getCustomerAccount().getCustomer().getSeller();
 
 		if (serviceInstance.getSubscriptionDate() == null) {
 			serviceInstance.setSubscriptionDate(new Date());
@@ -142,28 +168,72 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 		create(serviceInstance, creator, subscription.getProvider());
 
 		ServiceTemplate serviceTemplate = serviceInstance.getServiceTemplate();
-
-		for (RecurringChargeTemplate recurringChargeTemplate : serviceTemplate.getRecurringCharges()) {
-			chargeInstanceService.recurringChargeInstanciation(serviceInstance, recurringChargeTemplate.getCode(),
+ 
+		
+		
+		for (ServiceChargeTemplate<RecurringChargeTemplate> serviceChargeTemplate : serviceTemplate
+				.getServiceRecurringCharges()) {
+			RecurringChargeInstance chargeInstance=chargeInstanceService.recurringChargeInstanciation(
+					serviceInstance, serviceChargeTemplate.getChargeTemplate(),
 					serviceInstance.getSubscriptionDate(), seller, creator);
+			serviceInstance.getRecurringChargeInstances().add(chargeInstance);
+			if(serviceChargeTemplate.getWalletTemplates().size()!=0){
+				for(WalletTemplate walletTemplate:serviceChargeTemplate.getWalletTemplates()){
+					WalletInstance walletInstance=getWalletInstance(userAccount,walletTemplate.getCode(),walletTemplate,creator,subscription.getProvider());
+					chargeInstance.getWalletInstances().add(walletInstance);
+				}
+			}
+		}
+		
+		for (ServiceChargeTemplate<OneShotChargeTemplate> serviceChargeTemplate : serviceTemplate
+				.getServiceSubscriptionCharges()) {
+			OneShotChargeInstance chargeInstance=oneShotChargeInstanceService.oneShotChargeInstanciation(
+					serviceInstance.getSubscription(), serviceInstance,
+					serviceChargeTemplate.getChargeTemplate(),
+					serviceInstance.getSubscriptionDate(), subscriptionAmount,
+					null, 1, seller, creator);
+			serviceInstance.getSubscriptionChargeInstances().add(chargeInstance);
+			if(serviceChargeTemplate.getWalletTemplates().size()!=0){
+				for(WalletTemplate walletTemplate:serviceChargeTemplate.getWalletTemplates()){
+					WalletInstance walletInstance=getWalletInstance(userAccount,walletTemplate.getCode(),walletTemplate,creator,subscription.getProvider());
+					chargeInstance.getWalletInstances().add(walletInstance);
+				}
+			}
 		}
 
-		for (OneShotChargeTemplate subscriptionChargeTemplate : serviceTemplate.getSubscriptionCharges()) {
-			oneShotChargeInstanceService.oneShotChargeInstanciation(serviceInstance.getSubscription(), serviceInstance,
-					subscriptionChargeTemplate, serviceInstance.getSubscriptionDate(), subscriptionAmount, null, 1,
-					seller, creator);
+		for (ServiceChargeTemplate<OneShotChargeTemplate> serviceChargeTemplate : serviceTemplate
+				.getServiceTerminationCharges()) {
+			
+			OneShotChargeInstance chargeInstance=oneShotChargeInstanceService.oneShotChargeInstanciation(
+					serviceInstance.getSubscription(), serviceInstance,
+					serviceChargeTemplate.getChargeTemplate(),
+					serviceInstance.getSubscriptionDate(), terminationAmount,
+					null, 1, seller, creator);
+			serviceInstance.getTerminationChargeInstances().add(chargeInstance);
+			if(serviceChargeTemplate.getWalletTemplates().size()!=0){
+				for(WalletTemplate walletTemplate:serviceChargeTemplate.getWalletTemplates()){
+					WalletInstance walletInstance=getWalletInstance(userAccount,walletTemplate.getCode(),walletTemplate,creator,subscription.getProvider());
+					chargeInstance.getWalletInstances().add(walletInstance);
+				}
+			}
 		}
-
-		for (OneShotChargeTemplate terminationChargeTemplate : serviceTemplate.getTerminationCharges()) {
-			oneShotChargeInstanceService.oneShotChargeInstanciation(serviceInstance.getSubscription(), serviceInstance,
-					terminationChargeTemplate, serviceInstance.getSubscriptionDate(), terminationAmount, null, 1,
-					seller, creator);
+		
+ 
+		for (ServiceChargeTemplateUsage serviceUsageChargeTemplate : serviceTemplate
+				.getServiceUsageCharges()) {
+			UsageChargeInstance chargeInstance=usageChargeInstanceService.usageChargeInstanciation(
+					serviceInstance.getSubscription(), serviceInstance,
+					serviceUsageChargeTemplate,
+					serviceInstance.getSubscriptionDate(), seller, creator);
+			serviceInstance.getUsageChargeInstances().add(chargeInstance);
+			if(serviceUsageChargeTemplate.getWalletTemplates().size()!=0){
+				for(WalletTemplate walletTemplate:serviceUsageChargeTemplate.getWalletTemplates()){
+					WalletInstance walletInstance=getWalletInstance(userAccount,walletTemplate.getCode(),walletTemplate,creator,subscription.getProvider());
+					chargeInstance.getWalletInstances().add(walletInstance);
+				}
+			}
 		}
-
-		for (ServiceChargeTemplateUsage serviceUsageChargeTemplate : serviceTemplate.getServiceUsageCharges()) {
-			usageChargeInstanceService.usageChargeInstanciation(serviceInstance.getSubscription(), serviceInstance,
-					serviceUsageChargeTemplate, serviceInstance.getSubscriptionDate(), seller, creator);
-		}
+		
 	}
 
 	/**

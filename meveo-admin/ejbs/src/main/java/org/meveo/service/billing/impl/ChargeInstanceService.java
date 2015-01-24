@@ -74,13 +74,54 @@ public class ChargeInstanceService<P extends ChargeInstance> extends
 		}
 		return chargeInstance;
 	}
+	
+	public RecurringChargeInstance recurringChargeInstanciation(
+			ServiceInstance serviceInst, RecurringChargeTemplate recurringChargeTemplate,
+			Date subscriptionDate, Seller seller, User creator)
+			throws BusinessException {
 
-	public void recurringChargeInstanciation(ServiceInstance serviceInst,
-			String chargeCode, Date subscriptionDate, Seller seller,
-			User creator) throws BusinessException {
-		recurringChargeInstanciation(getEntityManager(), serviceInst,
-				chargeCode, subscriptionDate, seller, creator);
+		if (serviceInst == null) {
+			throw new BusinessException("service instance does not exist.");
+		}
+
+		if (serviceInst.getStatus() == InstanceStatusEnum.CANCELED
+				|| serviceInst.getStatus() == InstanceStatusEnum.TERMINATED
+				|| serviceInst.getStatus() == InstanceStatusEnum.SUSPENDED) {
+			throw new BusinessException("service instance is "
+					+ serviceInst.getStatus() + ". code="
+					+ serviceInst.getCode());
+		}
+		String chargeCode = recurringChargeTemplate.getCode();
+		RecurringChargeInstance chargeInst = (RecurringChargeInstance) recurringChargeInstanceService
+				.findByCodeAndService(chargeCode, serviceInst.getId());
+
+		if (chargeInst != null) {
+			throw new BusinessException(
+					"charge instance code already exists. code=" + chargeCode);
+		}
+
+		RecurringChargeInstance chargeInstance = new RecurringChargeInstance();
+		chargeInstance.setCode(chargeCode);
+		chargeInstance.setDescription(recurringChargeTemplate.getDescription());
+		chargeInstance.setStatus(InstanceStatusEnum.INACTIVE);
+		chargeInstance.setChargeDate(subscriptionDate);
+		chargeInstance.setSubscriptionDate(subscriptionDate);
+		chargeInstance.setSubscription(serviceInst.getSubscription());
+		chargeInstance.setChargeTemplate(recurringChargeTemplate);
+		chargeInstance.setRecurringChargeTemplate(recurringChargeTemplate);
+		chargeInstance.setServiceInstance(serviceInst);
+		chargeInstance.setSeller(seller);
+		chargeInstance.setCountry(serviceInst.getSubscription()
+				.getUserAccount().getBillingAccount().getTradingCountry());
+		chargeInstance.setCurrency(serviceInst.getSubscription()
+				.getUserAccount().getBillingAccount().getCustomerAccount()
+				.getTradingCurrency());
+
+		recurringChargeInstanceService.create(chargeInstance, creator,
+				recurringChargeTemplate.getProvider());
+		return chargeInstance;
 	}
+
 
 	public void recurringChargeInstanciation(EntityManager em,
 			ServiceInstance serviceInst, String chargeCode,

@@ -43,7 +43,7 @@ public class ServiceTemplateDto implements Serializable {
 		code = e.getCode();
 		description = e.getDescription();
 
-		if (e.getRecurringCharges().size() > 0) {
+		/*if (e.getRecurringCharges().size() > 0) {
 			recurringCharges = new ArrayList<String>();
 			for (RecurringChargeTemplate rt : e.getRecurringCharges()) {
 				recurringCharges.add(rt.getCode());
@@ -60,7 +60,7 @@ public class ServiceTemplateDto implements Serializable {
 			for (OneShotChargeTemplate ot : e.getTerminationCharges()) {
 				terminationCharges.add(ot.getCode());
 			}
-		}
+		}*/
 		if (e.getServiceUsageCharges().size() > 0) {
 			serviceUsageCharges = new ArrayList<ServiceUsageChargeTemplateDto>();
 			for (ServiceChargeTemplateUsage ot : e.getServiceUsageCharges()) {
