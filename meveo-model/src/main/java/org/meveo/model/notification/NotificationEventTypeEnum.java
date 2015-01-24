@@ -8,7 +8,8 @@ TERMINATED(4,"enum.notificationEventTypeEnum.TERMINATED"),
 DISABLED(5,"enum.notificationEventTypeEnum.DISABLED"),
 PROCESSED(6,"enum.notificationEventTypeEnum.PROCESSED"),
 REJECTED(7,"enum.notificationEventTypeEnum.REJECTED"),
-REJECTED_CDR(8,"enum.notificationEventTypeEnum.REJECTED_CDR");
+REJECTED_CDR(8,"enum.notificationEventTypeEnum.REJECTED_CDR"),
+LOGGED_IN(9,"enum.notificationEventTypeEnum.LOGGED_IN");
 
 private Integer id;
 private String label;

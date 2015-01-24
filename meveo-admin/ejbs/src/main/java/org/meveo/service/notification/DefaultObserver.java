@@ -17,12 +17,14 @@ import org.meveo.commons.utils.StringUtils;
 import org.meveo.event.qualifier.CDR;
 import org.meveo.event.qualifier.Created;
 import org.meveo.event.qualifier.Disabled;
+import org.meveo.event.qualifier.LoggedIn;
 import org.meveo.event.qualifier.Processed;
 import org.meveo.event.qualifier.Rejected;
 import org.meveo.event.qualifier.Removed;
 import org.meveo.event.qualifier.Terminated;
 import org.meveo.event.qualifier.Updated;
 import org.meveo.model.IEntity;
+import org.meveo.model.admin.User;
 import org.meveo.model.notification.EmailNotification;
 import org.meveo.model.notification.InstantMessagingNotification;
 import org.meveo.model.notification.Notification;
@@ -221,5 +223,9 @@ public class DefaultObserver {
 		}
 	}
 
+	public void loggined(@Observes @LoggedIn User e){
+		log.debug("Defaut observer : logged in class={} ",e.getClass().getName());
+		checkEvent(NotificationEventTypeEnum.LOGGED_IN, e);
+	}
 
 }

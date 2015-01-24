@@ -64,7 +64,7 @@ public class UserAccountService extends AccountService<UserAccount> {
 		userAccount.setBillingAccount(billingAccount);
 		create(userAccount, creator, billingAccount.getProvider());
 		WalletInstance wallet = new WalletInstance();
-		wallet.setCode("PRINCIPAL");
+		wallet.setCode(WalletTemplate.PRINCIPAL);
 		wallet.setUserAccount(userAccount);
 		walletService.create(wallet, creator, billingAccount.getProvider());
 

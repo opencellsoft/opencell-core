@@ -82,7 +82,7 @@ public class ServiceTemplateApi extends BaseApi {
 								RecurringChargeTemplate.class, chargeCode);
 					}
 
-					serviceTemplate.getRecurringCharges().add(chargeTemplate);
+					//serviceTemplate.getRecurringCharges().add(chargeTemplate);
 				}
 			}
 			// check for subscription charges
@@ -96,8 +96,7 @@ public class ServiceTemplateApi extends BaseApi {
 								OneShotChargeTemplate.class, chargeCode);
 					}
 
-					serviceTemplate.getSubscriptionCharges()
-							.add(chargeTemplate);
+					//serviceTemplate.getSubscriptionCharges().add(chargeTemplate);
 				}
 			}
 			// check for termination charges
@@ -111,7 +110,7 @@ public class ServiceTemplateApi extends BaseApi {
 								OneShotChargeTemplate.class, chargeCode);
 					}
 
-					serviceTemplate.getTerminationCharges().add(chargeTemplate);
+					//serviceTemplate.getTerminationCharges().add(chargeTemplate);
 				}
 			}
 
@@ -205,12 +204,12 @@ public class ServiceTemplateApi extends BaseApi {
 
 					updatedCharges.add(chargeTemplate);
 				}
-
-				serviceTemplate.getRecurringCharges().clear();
+			}
+				/*serviceTemplate.getRecurringCharges().clear();
 				serviceTemplate.setRecurringCharges(updatedCharges);
 			} else {
 				serviceTemplate.getRecurringCharges().clear();
-			}
+			}*/
 
 			// check for subscription charges
 			if (postData.getSubscriptionCharges() != null
@@ -227,12 +226,12 @@ public class ServiceTemplateApi extends BaseApi {
 
 					updatedCharges.add(chargeTemplate);
 				}
-
-				serviceTemplate.getSubscriptionCharges().clear();
+			}
+				/*serviceTemplate.getSubscriptionCharges().clear();
 				serviceTemplate.setSubscriptionCharges(updatedCharges);
 			} else {
 				serviceTemplate.getSubscriptionCharges().clear();
-			}
+			}*/
 
 			// check for termination charges
 			if (postData.getTerminationCharges() != null
@@ -249,12 +248,12 @@ public class ServiceTemplateApi extends BaseApi {
 
 					updatedCharges.add(chargeTemplate);
 				}
-
-				serviceTemplate.getTerminationCharges().clear();
+			}
+				/*serviceTemplate.getTerminationCharges().clear();
 				serviceTemplate.setTerminationCharges(updatedCharges);
 			} else {
 				serviceTemplate.getTerminationCharges().clear();
-			}
+			}*/
 
 			if (postData.getServiceUsageCharges() != null
 					&& postData.getServiceUsageCharges().size() > 0) {
