@@ -10,6 +10,7 @@ import javax.annotation.PostConstruct;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
 import javax.enterprise.event.Observes;
+import javax.enterprise.inject.spi.BeanManager;
 import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
@@ -17,6 +18,7 @@ import org.meveo.commons.utils.StringUtils;
 import org.meveo.event.qualifier.CDR;
 import org.meveo.event.qualifier.Created;
 import org.meveo.event.qualifier.Disabled;
+import org.meveo.event.qualifier.InboundRequestReceived;
 import org.meveo.event.qualifier.LoggedIn;
 import org.meveo.event.qualifier.Processed;
 import org.meveo.event.qualifier.Rejected;
@@ -26,9 +28,11 @@ import org.meveo.event.qualifier.Updated;
 import org.meveo.model.IEntity;
 import org.meveo.model.admin.User;
 import org.meveo.model.notification.EmailNotification;
+import org.meveo.model.notification.InboundRequest;
 import org.meveo.model.notification.InstantMessagingNotification;
 import org.meveo.model.notification.Notification;
 import org.meveo.model.notification.NotificationEventTypeEnum;
+import org.meveo.model.notification.NotificationHistoryStatusEnum;
 import org.meveo.model.notification.WebHook;
 import org.meveo.service.billing.impl.RatingService;
 import org.slf4j.Logger;
@@ -40,8 +44,14 @@ public class DefaultObserver {
 	@Inject
 	Logger log;
 	
+	@Inject 
+	BeanManager manager;
+	
 	@Inject
 	NotificationService notificationService;
+
+	@Inject 
+	NotificationHistoryService notificationHistoryService;
 	
 	@Inject
 	EmailNotifier emailNotifier;
@@ -115,27 +125,43 @@ public class DefaultObserver {
 		return result;
 	}
 	
-	private void executeAction(String expression,Object o){
+	private String executeAction(String expression,Object o) throws BusinessException{
 		log.debug("execute notification action:{}",expression);
+		if (StringUtils.isBlank(expression)) {
+			return "";
+		}
+		Map<Object, Object> userMap = new HashMap<Object, Object>();
+		userMap.put("event", o);
+		userMap.put("manager", manager);
+		return (String)RatingService.evaluateExpression(expression, userMap, String.class);	
 	}
 
 	private void fireNotification(Notification notif, IEntity e) {
 		log.debug("Fire Notification for notif {} and  enity {}",notif, e);
 		try {
 			if(matchExpression(notif.getElFilter(),e)){
+				
+				//we first perform the EL actions 
+				executeAction(notif.getElAction(),e);
+				
+				//then the notification itself
 				if(notif instanceof EmailNotification){
 					emailNotifier.sendEmail((EmailNotification) notif, e);
 				} else if(notif instanceof WebHook){
 					webHookNotifier.sendRequest((WebHook) notif, e);
 				} else if(notif instanceof InstantMessagingNotification){
 					imNotifier.sendInstantMessage((InstantMessagingNotification) notif, e);
-				} else {
-					executeAction(notif.getElAction(),e);
 				}
 			}
 		} catch (BusinessException e1) {
 			log.error("Error while firing notification {} for provider {}: {} "
 					,notif.getCode(),notif.getProvider().getCode(),e1.getMessage());
+			try {
+				notificationHistoryService.create(notif, e, e1.getMessage(), NotificationHistoryStatusEnum.FAILED);
+			} catch (BusinessException e2) {
+				e2.printStackTrace();
+			}
+			
 		}
 	}
 
@@ -223,9 +249,15 @@ public class DefaultObserver {
 		}
 	}
 
-	public void loggined(@Observes @LoggedIn User e){
+	public void loggedIn(@Observes @LoggedIn User e){
 		log.debug("Defaut observer : logged in class={} ",e.getClass().getName());
 		checkEvent(NotificationEventTypeEnum.LOGGED_IN, e);
 	}
 
+
+	public void inboundRequest(@Observes @InboundRequestReceived InboundRequest e){
+		log.debug("Defaut observer : inbound request {} ",e.getCode());
+		checkEvent(NotificationEventTypeEnum.INBOUND_REQ, e);	
+	}
+	
 }

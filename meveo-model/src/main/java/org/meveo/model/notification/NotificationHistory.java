@@ -25,14 +25,20 @@ public class NotificationHistory extends AuditableEntity {
 	private static final long serialVersionUID = -6882236977852466160L;
 
 	@ManyToOne(fetch=FetchType.LAZY)
+	@JoinColumn(name="INBOUND_REQUEST_ID")
+	private InboundRequest inboundRequest;
+	
+	@ManyToOne(fetch=FetchType.LAZY)
 	@NotNull
 	@JoinColumn(name="NOTIFICATION_ID")
 	private Notification notification;
 	
-	@Column(name="ENTITY_CLASSNAME",length=255)
-	@Size(max=255)
+	@Column(name="ENTITY_CLASSNAME",length=255, nullable = false)
+	@NotNull
 	private String entityClassName;
 	
+	@Column(name="ENTITY_CODE",length=35)
+	private String entityCode;
 
 	@Column(name="SERIALIZED_ENTITY")
 	@Lob @Basic(fetch=FetchType.LAZY) 
@@ -50,6 +56,17 @@ public class NotificationHistory extends AuditableEntity {
 	@Enumerated(EnumType.STRING)
 	private NotificationHistoryStatusEnum status;
 
+	public InboundRequest getInboundRequest() {
+		return inboundRequest;
+	}
+
+	public void setInboundRequest(InboundRequest inboundRequest) {
+		this.inboundRequest = inboundRequest;
+		if(!inboundRequest.getNotificationHistories().contains(this)){
+			inboundRequest.getNotificationHistories().add(this);
+		}
+	}
+
 	public Notification getNotification() {
 		return notification;
 	}
@@ -64,6 +81,14 @@ public class NotificationHistory extends AuditableEntity {
 
 	public void setEntityClassName(String entityClassName) {
 		this.entityClassName = entityClassName;
+	}
+
+	public String getEntityCode() {
+		return entityCode;
+	}
+
+	public void setEntityCode(String entityCode) {
+		this.entityCode = entityCode;
 	}
 
 	public String getSerializedEntity() {

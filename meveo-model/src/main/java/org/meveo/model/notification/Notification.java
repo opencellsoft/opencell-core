@@ -10,8 +10,8 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
-import org.hibernate.validator.constraints.Length;
 import org.meveo.model.BusinessEntity;
 import org.meveo.validation.constraint.ClassName;
 
@@ -25,7 +25,7 @@ public class Notification extends BusinessEntity {
 
 	@Column(name = "CLASS_NAME_FILTER", length = 255, nullable = false)
 	@NotNull
-	@Length(max = 255)
+	@Size(max = 255)
 	@ClassName
 	String classNameFilter;
 
@@ -35,11 +35,11 @@ public class Notification extends BusinessEntity {
 	NotificationEventTypeEnum eventTypeFilter;
 
 	@Column(name = "EVENT_EXPRESSION_FILTER", length = 1000)
-	@Length(max = 1000)
+	@Size(max = 1000)
 	String elFilter;
 
 	@Column(name = "ACTION_EXPRESSION", length = 2000)
-	@Length(max = 2000)
+	@Size(max = 2000)
 	String elAction;
 
 	public String getClassNameFilter() {
