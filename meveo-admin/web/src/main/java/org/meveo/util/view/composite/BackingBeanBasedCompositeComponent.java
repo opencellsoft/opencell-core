@@ -6,7 +6,9 @@ import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.faces.component.UIComponent;
@@ -282,6 +284,14 @@ public class BackingBeanBasedCompositeComponent extends UINamingContainer {
 		Class<?> type = field.getType();
 		return type == List.class || type == Set.class;
 	}
+	
+    public boolean isMap(String fieldName, boolean determineFromEntityClass) throws SecurityException, NoSuchFieldException, IllegalArgumentException, IllegalAccessException,
+            InvocationTargetException, NoSuchMethodException {
+        
+        Field field = getBeanFieldThrowException(determineFromEntityClass ? getEntityClass() : getEntityFromBackingBeanOrAttribute().getClass(), fieldName);
+        Class<?> type = field.getType();
+        return type == Map.class || type == HashMap.class;
+    }
 
 	public Object[] getEnumConstants(String fieldName)
 			throws SecurityException, NoSuchFieldException {
