@@ -1,0 +1,80 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"    
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:hftl="http://hftl.org" 
+    xmlns:hf="http://java.sun.com/jsf/composite/tags"
+	xmlns:p="http://primefaces.org/ui"
+    template="/layout/template.xhtml">
+
+
+    <ui:define name="navigation">
+   		<ui:include src="/layout/navigation.xhtml" />
+   	</ui:define>
+   	
+	<ui:define name="metadata">
+		<f:metadata>
+			<f:event type="preRenderView"
+				listener="#{notificationBean.preRenderView}" />
+		</f:metadata>
+	</ui:define>
+	<ui:define name="body">
+   		
+			<!-- ===================================== SEARCH CRITERIA ZONE ================================= -->
+
+			<hf:searchPanel label="#{messages['menu.notifications']}" columns="3" backingBean="#{notificationBean}">
+				<hf:searchField label="#{messages['entity.code']}" field="code" />
+				<hf:searchField label="#{messages['entity.notification.classNameFilter']}" field="classNameFilter" />
+				<hf:searchField label="#{messages['entity.notification.eventTypeFilter']}" field="eventTypeFilter" />
+			</hf:searchPanel>
+
+			<!-- ===================================== SEARCH USERS RESULTS ================================= -->
+
+			<hftl:dataList backingBean="#{notificationBean}">
+			    <hftl:column label="#{messages['entity.code']}"
+					field="code" />
+				<hftl:column
+					label="#{messages['entity.notification.classNameFilter']}"
+					field="classNameFilter" />
+				<hftl:column
+					label="#{messages['entity.notification.eventTypeFilter']}"
+					field="eventTypeFilter" />
+				<p:column style="width: 100px;" exportable="false">
+					<f:facet name="header">
+						<h:outputText value="#{messages['commons.actions']}" />
+					</f:facet>
+
+					<p:button id="#{resultsId}viewlink" outcome="#{entity.class.simpleName.subString(0,1).toLowerCase()+entity.class.simpleName.subString(1)}Detail"
+						icon="ui-icon-search">
+						<f:param name="#{objectIdParamName}" value="#{entity.id}" />
+						<f:param name="edit" value="false" />
+					</p:button>
+			
+					<p:button id="#{resultsId}editlink" outcome="#{entity.class.simpleName.subString(0,1).toLowerCase()+entity.class.simpleName.subString(1)}Detail"
+						icon="ui-icon-document">
+						<f:param name="#{objectIdParamName}" value="#{entity.id}" />
+						<f:param name="edit" value="true" />
+					</p:button>
+			
+					<p:commandButton id="#{resultsId}deletelink" icon="ui-icon-trash"
+						oncomplete="confirmDeleteWidget.show()">
+						<f:setPropertyActionListener target="#{backingBean.entity}"
+							value="#{entity}"></f:setPropertyActionListener>
+					</p:commandButton>
+			
+					<p:confirmDialog id="confirmDialog" styleClass="confirm-dialog"
+						message="#{messages['commons.confirmDelete']}" header=""
+						severity="alert" widgetVar="confirmDeleteWidget">
+						<p:panel styleClass="confirm-dialog-content">
+							<p:commandButton id="deleteOk" value="#{messages['commons.yes']}"
+								oncomplete="confirmDeleteWidget.hide()"
+								action="#{backingBean.delete()}" update="@all" />
+							<p:commandButton id="deleteKo" value="#{messages['commons.no']}"
+								onclick="confirmDeleteWidget.hide()" type="button" />
+						</p:panel>
+					</p:confirmDialog>
+			
+				</p:column>
+			</hftl:dataList>
+	</ui:define>
+</ui:composition>

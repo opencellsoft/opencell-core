@@ -25,6 +25,7 @@ import org.meveo.event.qualifier.Rejected;
 import org.meveo.event.qualifier.Removed;
 import org.meveo.event.qualifier.Terminated;
 import org.meveo.event.qualifier.Updated;
+import org.meveo.model.BusinessEntity;
 import org.meveo.model.IEntity;
 import org.meveo.model.admin.User;
 import org.meveo.model.notification.EmailNotification;
@@ -32,6 +33,7 @@ import org.meveo.model.notification.InboundRequest;
 import org.meveo.model.notification.InstantMessagingNotification;
 import org.meveo.model.notification.Notification;
 import org.meveo.model.notification.NotificationEventTypeEnum;
+import org.meveo.model.notification.NotificationHistory;
 import org.meveo.model.notification.NotificationHistoryStatusEnum;
 import org.meveo.model.notification.WebHook;
 import org.meveo.service.billing.impl.RatingService;
@@ -62,14 +64,13 @@ public class DefaultObserver {
 	@Inject
 	InstantMessagingNotifier imNotifier;
 	
-	@SuppressWarnings("rawtypes")
-	HashMap<NotificationEventTypeEnum,HashMap<Class,List<Notification>>> classNotificationMap=new HashMap<>();
+	HashMap<NotificationEventTypeEnum,HashMap<Class<BusinessEntity>,List<Notification>>> classNotificationMap=new HashMap<>();
 	
 	
 	@PostConstruct
 	private void init(){
 		for(NotificationEventTypeEnum type:NotificationEventTypeEnum.values()){
-			classNotificationMap.put(type,new HashMap<Class,List<Notification>>());
+			classNotificationMap.put(type,new HashMap<Class<BusinessEntity>,List<Notification>>());
 		}
 		List<Notification> allNotif = notificationService.listAll();
 		log.debug("Found {} notifications to map",allNotif.size());
@@ -80,8 +81,8 @@ public class DefaultObserver {
 	
 	private void addNotificationToCache(Notification notif){
 		try {
-			@SuppressWarnings("rawtypes")
-			Class c = Class.forName(notif.getClassNameFilter());
+			@SuppressWarnings("unchecked")
+			Class<BusinessEntity> c = (Class<BusinessEntity>) Class.forName(notif.getClassNameFilter());
 			if(!classNotificationMap.get(notif.getEventTypeFilter()).containsKey(c)){
 				classNotificationMap.get(notif.getEventTypeFilter()).put(c, new ArrayList<Notification>());
 			}
@@ -93,8 +94,8 @@ public class DefaultObserver {
 	}
 	
 	private void removeNotificationFromCache(Notification notif){
-		for(NotificationEventTypeEnum type:NotificationEventTypeEnum.values()){
-			for(Class c:classNotificationMap.get(notif.getEventTypeFilter()).keySet()){
+		for(@SuppressWarnings("unused") NotificationEventTypeEnum type:NotificationEventTypeEnum.values()){
+			for(Class<BusinessEntity> c:classNotificationMap.get(notif.getEventTypeFilter()).keySet()){
 				if(classNotificationMap.get(notif.getEventTypeFilter()).get(c).contains(notif)){
 					classNotificationMap.get(notif.getEventTypeFilter()).get(c).remove(notif);
 					log.debug("remove notification {} from class map {}",notif,c);
@@ -157,7 +158,10 @@ public class DefaultObserver {
 			log.error("Error while firing notification {} for provider {}: {} "
 					,notif.getCode(),notif.getProvider().getCode(),e1.getMessage());
 			try {
-				notificationHistoryService.create(notif, e, e1.getMessage(), NotificationHistoryStatusEnum.FAILED);
+				NotificationHistory notificationHistory = notificationHistoryService.create(notif, e, e1.getMessage(), NotificationHistoryStatusEnum.FAILED);
+				if(e instanceof InboundRequest){
+					((InboundRequest)e).add(notificationHistory);
+				}
 			} catch (BusinessException e2) {
 				e2.printStackTrace();
 			}
@@ -179,7 +183,7 @@ public class DefaultObserver {
 	}
 	
 	private void checkEvent(NotificationEventTypeEnum type,IEntity e){
-		for(Class c:classNotificationMap.get(type).keySet()){
+		for(Class<BusinessEntity> c:classNotificationMap.get(type).keySet()){
 			log.debug("try class {} ",c);
 			if( c.isAssignableFrom(e.getClass()) ){
 				log.debug("{} is assignable from {}",c,e.getClass());
@@ -238,7 +242,7 @@ public class DefaultObserver {
 	
 	public void cdrRejected(@Observes @Rejected @CDR Serializable cdr){
 		log.debug("Defaut observer : cdr {} rejected",cdr);
-		for(Class c:classNotificationMap.get(NotificationEventTypeEnum.REJECTED_CDR).keySet()){
+		for(Class<BusinessEntity> c:classNotificationMap.get(NotificationEventTypeEnum.REJECTED_CDR).keySet()){
 			log.debug("try class {} ",c);
 			if( c.isAssignableFrom(cdr.getClass()) ){
 				log.debug("{} is assignable from {}",c,cdr.getClass());

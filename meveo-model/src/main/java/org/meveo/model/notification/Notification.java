@@ -29,7 +29,7 @@ public class Notification extends BusinessEntity {
 	@ClassName
 	String classNameFilter;
 
-	@Column(name = "EVENT_TYPE_FILTER", length = 10, nullable = false)
+	@Column(name = "EVENT_TYPE_FILTER", length = 20, nullable = false)
 	@NotNull
 	@Enumerated(EnumType.STRING)
 	NotificationEventTypeEnum eventTypeFilter;

@@ -75,7 +75,7 @@ public class InboundRequest extends BusinessEntity {
 	
 	//response
 
-	@OneToMany(mappedBy="inboundResponse")
+	@OneToMany(mappedBy="inboundRequest")
 	private List<NotificationHistory> notificationHistories = new ArrayList<NotificationHistory>();
 
 	@Column(name="RESP_CONTENT_TYPE",length=255)
