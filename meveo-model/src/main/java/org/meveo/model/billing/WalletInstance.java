@@ -44,7 +44,7 @@ public class WalletInstance extends BusinessEntity {
 	private static final long serialVersionUID = 1L;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "BILLING_WALLET_TEMPLATE_ID")
+	@JoinColumn(name = "CAT_WALLET_TEMPLATE_ID")
 	private WalletTemplate walletTemplate;
 
 	@ManyToOne

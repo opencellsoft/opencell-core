@@ -47,6 +47,12 @@
 				<hftl:column
 					label="#{messages['entity.webHook.httpMethod']}"
 					field="httpMethod"  />
+                <hftl:column
+                    label="#{messages['entity.webHook.headers']}"
+                    field="headers" isMap="true"  />
+                <hftl:column
+                    label="#{messages['entity.webHook.params']}"
+                    field="params" isMap="true"  />
 				<hftl:actionsColumn editView="/pages/notification/webHookDetail.xhtml" permission="#{persistentPermissionResolver.hasPermission('reporting','reportingManagement')}"  />
 			</hftl:dataList>
 	</ui:define>

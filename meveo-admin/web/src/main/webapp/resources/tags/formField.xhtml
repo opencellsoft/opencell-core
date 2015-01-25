@@ -172,7 +172,34 @@
 			</p:panelGrid>
 		</ui:fragment>
 
-		<!--  If the value binding is a number, display an input number spinner. -->
+        <p:panelGrid columns="2" rendered="#{cc.isMap(cc.attrs.field,false)}">
+        
+            
+            <p:outputLabel value="#{cc.attrs.label}" />
+
+
+            <p:dataTable id="mapValueList" value="#{cc.backingBeanFromParentOrCurrent.mapTypeFieldValues[cc.attrs.field]}" var="mapValues" >
+                <p:column headerText="#{messages['commons.name']}">
+                    <p:inputText value="#{mapValues['key']}" size="50" maxlength="100" rendered="#{cc.attrs.edit}" />
+                    <h:outputText value="#{mapValues['key']}" styleClass="field-value" rendered="#{not cc.attrs.edit}" />
+                </p:column>
+                <p:column headerText="#{messages['commons.value']}">
+                    <p:inputText value="#{mapValues['value']}" size="50" maxlength="100" rendered="#{cc.attrs.edit}" />
+                    <h:outputText value="#{mapValues['value']}" styleClass="field-value" rendered="#{not cc.attrs.edit}" />
+                </p:column>
+                <p:column rendered="#{cc.attrs.edit}" headerText="#{messages['commons.actions']}">
+                    <p:commandButton icon="ui-icon-minus" partialSubmit="true" process="@this mapValueList" update="mapValueList"
+                        actionListener="#{cc.backingBeanFromParentOrCurrent.removeMapTypeFieldValue(cc.attrs.field, mapValues)}" />
+                </p:column>
+                <f:facet name="footer" >
+                    <p:commandButton value="#{messages['commons.addNew']}" partialSubmit="true" process="@this mapValueList"
+                        update="mapValueList"
+                        actionListener="#{cc.backingBeanFromParentOrCurrent.addMapTypeFieldValue(cc.attrs.field)}" rendered="#{cc.attrs.edit}" />
+                </f:facet>
+            </p:dataTable>
+        </p:panelGrid>
+
+        <!--  If the value binding is a number, display an input number spinner. -->
 		<p:panelGrid columns="2"
 			rendered="#{cc.isInteger(cc.attrs.field,false)}">
 			<p:outputLabel for="#{cc.attrs.id}_int" value="#{cc.attrs.label}" />

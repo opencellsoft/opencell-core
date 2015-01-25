@@ -27,6 +27,8 @@ import javax.persistence.OrderColumn;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import org.meveo.model.BusinessEntity;
+
 @Entity
 @Table(name = "CAT_SERV_TRM_CHARGE_TEMPLATE")
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "CAT_SERV_TRMCHRG_TEMPLT_SEQ")
@@ -50,4 +52,32 @@ public class ServiceChargeTemplateTermination extends ServiceChargeTemplate<OneS
 	public void setWalletTemplates(List<WalletTemplate> walletTemplates) {
 		this.walletTemplates = walletTemplates;
 	}
+	 
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime * result + ((getId() == null) ? 0 : getId().hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (!super.equals(obj))
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		ServiceChargeTemplateTermination other = (ServiceChargeTemplateTermination) obj;
+		if (getId() == null) {
+			if (other.getId() != null)
+				return false;
+		} else if (!getId().equals(other.getId()))
+			return false;
+		return true;
+	}
+ 
+	
+	
 }

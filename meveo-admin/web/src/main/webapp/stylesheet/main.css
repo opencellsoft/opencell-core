@@ -251,7 +251,7 @@ div.body > table > thead,
 .form-panel > tbody > tr,
 .form-panel > tbody > tr > td,
 .form-panel-fields,
-.form-panel-fields tbody,
+.form-panel-fields>tbody,
 .form-panel-fields>tbody>tr.ui-widget-content,
 .form-panel-fields>tbody>tr.ui-widget-content>td {  width: 100%; display: inline-block; }
 .form-panel-actions td { width : auto !important; float: left; display : inline-block; }

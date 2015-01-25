@@ -37,7 +37,7 @@ public class ServiceChargeTemplateUsageService extends
 	public void removeByPrefix(EntityManager em, String prefix,
 			Provider provider) {
 		Query query = em
-				.createQuery("DELETE ServiceUsageChargeTemplate t WHERE t.chargeTemplate.code LIKE '"
+				.createQuery("DELETE ServiceChargeTemplateUsage t WHERE t.chargeTemplate.code LIKE '"
 						+ prefix + "%' AND t.provider=:provider");
 		query.setParameter("provider", provider);
 		query.executeUpdate();
@@ -47,7 +47,7 @@ public class ServiceChargeTemplateUsageService extends
 			Provider provider) {
 		Query query = getEntityManager()
 				.createQuery(
-						"DELETE ServiceUsageChargeTemplate t WHERE t.serviceTemplate=:serviceTemplate AND t.provider=:provider");
+						"DELETE ServiceChargeTemplateUsage t WHERE t.serviceTemplate=:serviceTemplate AND t.provider=:provider");
 		query.setParameter("serviceTemplate", serviceTemplate);
 		query.setParameter("provider", provider);
 		query.executeUpdate();

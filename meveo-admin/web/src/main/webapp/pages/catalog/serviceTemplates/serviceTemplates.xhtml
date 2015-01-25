@@ -1,41 +1,67 @@
-<ui:composition xmlns="http://www.w3.org/1999/xhtml"    
-    xmlns:ui="http://java.sun.com/jsf/facelets"
-    xmlns:f="http://java.sun.com/jsf/core"
-    xmlns:h="http://java.sun.com/jsf/html"
-    xmlns:hftl="http://hftl.org" xmlns:hf="http://java.sun.com/jsf/composite/tags"
-    template="/layout/template.xhtml">
-    
-    <ui:define name="metadata">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html" xmlns:hftl="http://hftl.org"
+	xmlns:hf="http://java.sun.com/jsf/composite/tags"
+	template="/layout/template.xhtml">
+
+	<ui:define name="metadata">
 		<f:metadata>
-			<f:event type="preRenderView" listener="#{serviceTemplateBean.preRenderView}" />
+			<f:event type="preRenderView"
+				listener="#{serviceTemplateBean.preRenderView}" />
 		</f:metadata>
 	</ui:define>
-    
-    <ui:define name="navigation">
-   		<ui:include src="/layout/navigation.xhtml" />
-   	</ui:define>
+
+	<ui:define name="navigation">
+		<ui:include src="/layout/navigation.xhtml" />
+	</ui:define>
 
 	<ui:define name="body">
 
-		<hf:searchPanel label="#{messages['serviceTemplate.search']}" backingBean="#{serviceTemplateBean}">
-			<hf:searchField label="#{messages['serviceTemplate.code']}" field="code" />
-			<hf:searchField label="#{messages['serviceTemplate.description']}" id="description" field="description" />
-			<hf:searchField label="#{messages['enableEntity.disabled']}" field="disabled" />
+		<hf:searchPanel label="#{messages['serviceTemplate.search']}"
+			backingBean="#{serviceTemplateBean}">
+			<hf:searchField label="#{messages['serviceTemplate.code']}"
+				field="code" />
+			<hf:searchField label="#{messages['serviceTemplate.description']}"
+				id="description" field="description" />
+			<hf:searchField label="#{messages['enableEntity.disabled']}"
+				field="disabled" />
 
 		</hf:searchPanel>
 
-		<hftl:dataList label="#{messages['serviceTemplate.title']}" checkMany="false" noClose="false" backingBean="#{serviceTemplateBean}">
+		<hftl:dataList label="#{messages['serviceTemplate.title']}"
+			checkMany="false" noClose="false"
+			backingBean="#{serviceTemplateBean}">
 			<hftl:column label="#{messages['serviceTemplate.code']}" field="code" />
-			<hftl:column label="#{messages['serviceTemplate.description']}" field="description" />
-			<hftl:column label="#{messages['serviceTemplate.recurringCharges']}" field="recurringCharges" isList="true" childField="code" childFieldId="id"
-				view="/pages/catalog/recurringChargeTemplates/recurringChargeTemplateDetail.xhtml" backView="serviceTemplates" />
-			<hftl:column label="#{messages['serviceTemplate.subscriptionCharges']}" field="subscriptionCharges" isList="true" childField="code"
-				childFieldId="id" view="/pages/catalog/oneShotChargeTemplates/oneShotChargeTemplateDetail.xhtml" backView="serviceTemplates" />
-			<hftl:column label="#{messages['serviceTemplate.terminationCharges']}" field="terminationCharges" isList="true" childField="code" childFieldId="id"
-				view="/pages/catalog/oneShotChargeTemplates/oneShotChargeTemplateDetail.xhtml" backView="serviceTemplates" />
-			<hftl:column label="#{messages['enableEntity.active']}" field="active" isMessage="true" />
-			
-			<hftl:actionsColumn permission="#{identity.hasPermission('catalog','catalogManagement')}" />
+			<hftl:column label="#{messages['serviceTemplate.description']}"
+				field="description" />
+			<hftl:column label="#{messages['serviceTemplate.recurringCharges']}"
+				field="serviceRecurringCharges" isList="true"
+				childField="chargeTemplate" childFieldId="id"
+				view="/pages/catalog/recurringChargeTemplates/recurringChargeTemplateDetail.xhtml"
+				backView="serviceTemplates" />
+			<hftl:column
+				label="#{messages['serviceTemplate.subscriptionCharges']}"
+				field="serviceSubscriptionCharges" isList="true"
+				childField="chargeTemplate" childFieldId="id"
+				view="/pages/catalog/oneShotChargeTemplates/oneShotChargeTemplateDetail.xhtml"
+				backView="serviceTemplates" />
+			<hftl:column
+				label="#{messages['serviceTemplate.terminationCharges']}"
+				field="serviceTerminationCharges" isList="true"
+				childField="chargeTemplate" childFieldId="id"
+				view="/pages/catalog/oneShotChargeTemplates/oneShotChargeTemplateDetail.xhtml"
+				backView="serviceTemplates" />
+			<hftl:column label="#{messages['serviceTemplate.usageCharges']}"
+				field="serviceUsageCharges" isList="true"
+				childField="chargeTemplate" childFieldId="id"
+				view="/pages/catalog/usageChargeTemplates/usageChargeTemplateDetail.xhtml"
+				backView="serviceTemplates" />
+			<hftl:column label="#{messages['enableEntity.active']}"
+				field="active" isMessage="true" />
+
+			<hftl:actionsColumn
+				permission="#{identity.hasPermission('catalog','catalogManagement')}" />
 		</hftl:dataList>
 
 	</ui:define>
