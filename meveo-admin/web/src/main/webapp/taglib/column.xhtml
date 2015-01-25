@@ -48,6 +48,10 @@
 	<c:if test="${empty isList}">
 		<c:set var="isList" value="false" />
 	</c:if>
+    
+    <c:if test="${empty isMap}">
+        <c:set var="isMap" value="false" />
+    </c:if>
 
 	<c:if test="${empty sort}">
 		<c:set var="sort" value="true" />
@@ -95,7 +99,7 @@
 					rendered="#{entity[field] != null and entity[field].toString() != 'true' and entity[field].toString() != 'false'}"
 					value="#{messages[entity[field]]}" />
 			</c:if>
-			<c:if test="#{not isMessage}">
+			<c:if test="#{not isMessage and not isMap}">
 				<!-- If there is date field, show date in specified pattern 
 		    	 If isDate is not set then it basically means it is not a date. Also if time is not set it basically means that time=true
 		    	 -->
@@ -106,8 +110,17 @@
 				<h:outputText value="#{entity[field]}" rendered="#{isDate}">
 					<f:convertDateTime pattern="#{datePattern}" />
 				</h:outputText>
-
 			</c:if>
+            
+            <!-- If its map then run through it and show results. -->
+            <c:if test="#{isMap}">
+                <c:set var="map" value="#{entity[field]}" />
+                <h:outputText value="#{map.keySet().toArray()[0]}"></h:outputText>
+                <ui:repeat value="#{map.keySet().toArray()}" var="key">
+                    <h:outputText value="#{key}" /> = <h:outputText value="#{map[key]}" /> 
+                    <br />
+                </ui:repeat>
+            </c:if>
 		</c:if>
 
 		<!-- If childField parameter is provided that means fieldValue is entity, enum or list. -->
