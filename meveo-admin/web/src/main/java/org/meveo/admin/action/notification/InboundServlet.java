@@ -102,12 +102,6 @@ public class InboundServlet extends HttpServlet {
 		inReq.setPathInfo(req.getPathInfo());
 		inReq.setRequestURI(req.getRequestURI());
 		
-		try {
-			inboundRequestService.create(inReq);
-		} catch (BusinessException e1) {
-			e1.printStackTrace();
-		}
-		
 		//process the notifications
 		eventProducer.fire(inReq);
 
@@ -124,17 +118,24 @@ public class InboundServlet extends HttpServlet {
 			for(String headerName:inReq.getResponseHeaders().keySet()){
 				res.addHeader(headerName, inReq.getResponseHeaders().get(headerName));
 			}
-			
-			try (ByteArrayOutputStream bout = new ByteArrayOutputStream(8192);
-				PrintWriter pw = new PrintWriter(new OutputStreamWriter(bout, res.getCharacterEncoding()))){	
-				pw.write(inReq.getResponseBody());
-				res.setContentLength(bout.size());
-				bout.writeTo(res.getOutputStream());
-			} catch (IOException e) {
-				e.printStackTrace();
-				res.setStatus(500);
+			if(inReq.getResponseBody()!=null){
+				try (ByteArrayOutputStream bout = new ByteArrayOutputStream(8192);
+					PrintWriter pw = new PrintWriter(new OutputStreamWriter(bout, res.getCharacterEncoding()))){	
+					pw.write(inReq.getResponseBody());
+					res.setContentLength(bout.size());
+					bout.writeTo(res.getOutputStream());
+				} catch (IOException e) {
+					e.printStackTrace();
+					res.setStatus(500);
+				}
 			}
 			res.setStatus(200);
+		}
+
+		try {
+			inboundRequestService.create(inReq);
+		} catch (BusinessException e1) {
+			e1.printStackTrace();
 		}
 		log.debug("exit with status {}",res.getStatus());
 	}
