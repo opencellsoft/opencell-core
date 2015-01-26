@@ -80,4 +80,6 @@ public interface CSVCDRParser {
 	 */
 	String getCDRLine(Serializable cdr, String reason);
 
+	void initByApi(String username, String ip);
+
 }

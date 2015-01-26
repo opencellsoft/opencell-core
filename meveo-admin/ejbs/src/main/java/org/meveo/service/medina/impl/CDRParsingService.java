@@ -11,6 +11,8 @@ import javax.ejb.Stateless;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
+import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.parse.csv.CdrParserProducer;
 import org.meveo.event.qualifier.CDR;
 import org.meveo.event.qualifier.Rejected;
 import org.meveo.model.mediation.Access;
@@ -21,21 +23,30 @@ import org.meveo.service.billing.impl.EdrService;
 @Stateless
 public class CDRParsingService {
 
-	@Inject
-	CSVCDRParser cdrParser;
+	private CSVCDRParser cdrParser;
 
 	@Inject
-	EdrService edrService;
+	private EdrService edrService;
 
 	@Inject
-	AccessService accessService;
+	private AccessService accessService;
 
 	@Inject
-	@Rejected @CDR
-	Event<Serializable> rejectededCdrEventProducer;
+	@Rejected
+	@CDR
+	private Event<Serializable> rejectededCdrEventProducer;
 
-	public void init(File CDRFile) {
+	@Inject
+	private CdrParserProducer cdrParserProducer;
+
+	public void init(File CDRFile) throws BusinessException {
+		cdrParser = cdrParserProducer.getParser();
 		cdrParser.init(CDRFile);
+	}
+
+	public void initByApi(String username, String ip) throws BusinessException {
+		cdrParser = cdrParserProducer.getParser();
+		cdrParser.initByApi(username, ip);
 	}
 
 	static HashMap<String, List<Access>> accessCache = new HashMap<String, List<Access>>();
@@ -50,12 +61,10 @@ public class CDRParsingService {
 			accesses = accessCache.get(access.getAccessUserId());
 			boolean found = false;
 			for (Access cachedAccess : accesses) {
-				if ((access.getSubscription().getId() != null && access
-						.getSubscription().getId()
+				if ((access.getSubscription().getId() != null && access.getSubscription().getId()
 						.equals(cachedAccess.getSubscription().getId()))
-						|| (cachedAccess.getSubscription().getCode() != null && cachedAccess
-								.getSubscription().getCode()
-								.equals(access.getSubscription().getCode()))) {
+						|| (cachedAccess.getSubscription().getCode() != null && cachedAccess.getSubscription()
+								.getCode().equals(access.getSubscription().getCode()))) {
 					cachedAccess.setStartDate(access.getStartDate());
 					cachedAccess.setEndDate(access.getEndDate());
 					found = true;
@@ -80,11 +89,9 @@ public class CDRParsingService {
 		boolean foundMatchingAccess = false;
 		for (Access accessPoint : accessPoints) {
 			EDRDAO edrDAO = cdrParser.getEDR(cdr);
-			if ((accessPoint.getStartDate() == null || accessPoint
-					.getStartDate().getTime() <= edrDAO.getEventDate()
+			if ((accessPoint.getStartDate() == null || accessPoint.getStartDate().getTime() <= edrDAO.getEventDate()
 					.getTime())
-					&& (accessPoint.getEndDate() == null || accessPoint
-							.getEndDate().getTime() > edrDAO.getEventDate()
+					&& (accessPoint.getEndDate() == null || accessPoint.getEndDate().getTime() > edrDAO.getEventDate()
 							.getTime())) {
 				foundMatchingAccess = true;
 				EDR edr = new EDR();
@@ -103,27 +110,24 @@ public class CDRParsingService {
 				result.add(edr);
 			}
 		}
-		
+
 		if (!foundMatchingAccess) {
 			throw new InvalidAccessException(cdr);
 		}
-		
+
 		return result;
 	}
 
 	private void deduplicate(Serializable cdr) throws DuplicateException {
-		if (edrService.duplicateFound(cdrParser.getOriginBatch(),
-				cdrParser.getOriginRecord(cdr))) {
+		if (edrService.duplicateFound(cdrParser.getOriginBatch(), cdrParser.getOriginRecord(cdr))) {
 			throw new DuplicateException(cdr);
 		}
 	}
 
-	private List<Access> accessPointLookup(Serializable cdr)
-			throws InvalidAccessException {
+	private List<Access> accessPointLookup(Serializable cdr) throws InvalidAccessException {
 		String userId = cdrParser.getAccessUserId(cdr);
 		List<Access> accesses = null;
-		
-		
+
 		if (accessCache.containsKey(userId)) {
 			accesses = accessCache.get(userId);
 		} else {
@@ -132,15 +136,19 @@ public class CDRParsingService {
 				rejectededCdrEventProducer.fire(cdr);
 				throw new InvalidAccessException(cdr);
 			}
-			
+
 			accessCache.put(userId, accesses);
 		}
-		
+
 		return accesses;
 	}
 
 	public String getCDRLine(Serializable cdr, String reason) {
 		return cdrParser.getCDRLine(cdr, reason);
+	}
+
+	public CSVCDRParser getCdrParser() {
+		return cdrParser;
 	}
 
 }
