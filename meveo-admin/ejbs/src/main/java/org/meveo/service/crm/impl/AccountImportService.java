@@ -64,30 +64,26 @@ public class AccountImportService {
 
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public org.meveo.model.billing.BillingAccount importBillingAccount(
-
-	org.meveo.model.jaxb.account.BillingAccount billAccount, Provider provider,
-			User userJob) throws BusinessException, ImportWarningException {
-		log.debug("billingAccount found code:" + billAccount.getCode());
+			org.meveo.model.jaxb.account.BillingAccount billAccount, Provider provider, User userJob)
+			throws BusinessException, ImportWarningException {
+		log.debug("create billingAccount found code:" + billAccount.getCode());
 
 		org.meveo.model.billing.BillingAccount billingAccount = null;
 		CustomerAccount customerAccount = null;
 		BillingCycle billingCycle = null;
 
 		try {
-			billingCycle = billingCycleService.findByBillingCycleCode(
-					billAccount.getBillingCycle(), provider);
+			billingCycle = billingCycleService.findByBillingCycleCode(billAccount.getBillingCycle(), provider);
 		} catch (Exception e) {
 			log.warn(e.getMessage());
 		}
 
 		if (billingCycle == null) {
-			throw new BusinessException("billingCycle not found "
-					+ billAccount.getBillingCycle());
+			throw new BusinessException("billingCycle not found " + billAccount.getBillingCycle());
 		}
 
 		try {
-			customerAccount = customerAccountService.findByCode(
-					billAccount.getCustomerAccountId(), provider);
+			customerAccount = customerAccountService.findByCode(billAccount.getCustomerAccountId(), provider);
 		} catch (Exception e) {
 			log.warn(e.getMessage());
 		}
@@ -105,38 +101,29 @@ public class AccountImportService {
 		billingAccount.setBillingCycle(billingCycle);
 		billingAccount.setCustomerAccount(customerAccount);
 		billingAccount.setCode(billAccount.getCode());
-		billingAccount.setSubscriptionDate(DateUtils.parseDateWithPattern(
-				billAccount.getSubscriptionDate(),
+		billingAccount.setSubscriptionDate(DateUtils.parseDateWithPattern(billAccount.getSubscriptionDate(),
 				param.getProperty("connectorCRM.dateFormat", "yyyy-MM-dd")));
 		billingAccount.setStatus(AccountStatusEnum.ACTIVE);
 		billingAccount.setStatusDate(new Date());
 		billingAccount.setDescription(billAccount.getDescription());
-		billingAccount.setPaymentMethod(PaymentMethodEnum.valueOf(billAccount
-				.getPaymentMethod()));
+		billingAccount.setPaymentMethod(PaymentMethodEnum.valueOf(billAccount.getPaymentMethod()));
 
 		if (billAccount.getBankCoordinates() != null
-				&& ("DIRECTDEBIT".equalsIgnoreCase(billAccount
-						.getPaymentMethod()) || "TIP"
+				&& ("DIRECTDEBIT".equalsIgnoreCase(billAccount.getPaymentMethod()) || "TIP"
 						.equalsIgnoreCase(billAccount.getPaymentMethod()))) {
 			BankCoordinates bankCoordinates = new BankCoordinates();
-			bankCoordinates.setAccountNumber(billAccount.getBankCoordinates()
-					.getAccountNumber() == null ? "" : billAccount
-					.getBankCoordinates().getAccountNumber());
-			bankCoordinates.setAccountOwner(billAccount.getBankCoordinates()
-					.getAccountName() == null ? "" : billAccount
-					.getBankCoordinates().getAccountName());
-			bankCoordinates.setBankCode(billAccount.getBankCoordinates()
-					.getBankCode() == null ? "" : billAccount
+			bankCoordinates.setAccountNumber(billAccount.getBankCoordinates().getAccountNumber() == null ? ""
+					: billAccount.getBankCoordinates().getAccountNumber());
+			bankCoordinates.setAccountOwner(billAccount.getBankCoordinates().getAccountName() == null ? ""
+					: billAccount.getBankCoordinates().getAccountName());
+			bankCoordinates.setBankCode(billAccount.getBankCoordinates().getBankCode() == null ? "" : billAccount
 					.getBankCoordinates().getBankCode());
-			bankCoordinates.setBranchCode(billAccount.getBankCoordinates()
-					.getBranchCode() == null ? "" : billAccount
+			bankCoordinates.setBranchCode(billAccount.getBankCoordinates().getBranchCode() == null ? "" : billAccount
 					.getBankCoordinates().getBranchCode());
-			bankCoordinates
-					.setIban(billAccount.getBankCoordinates().getIBAN() == null ? ""
-							: billAccount.getBankCoordinates().getIBAN());
-			bankCoordinates
-					.setKey(billAccount.getBankCoordinates().getKey() == null ? ""
-							: billAccount.getBankCoordinates().getKey());
+			bankCoordinates.setIban(billAccount.getBankCoordinates().getIBAN() == null ? "" : billAccount
+					.getBankCoordinates().getIBAN());
+			bankCoordinates.setKey(billAccount.getBankCoordinates().getKey() == null ? "" : billAccount
+					.getBankCoordinates().getKey());
 			billingAccount.setBankCoordinates(bankCoordinates);
 		}
 
@@ -152,8 +139,7 @@ public class AccountImportService {
 		}
 
 		billingAccount.setAddress(address);
-		billingAccount.setElectronicBilling("1".equalsIgnoreCase(billAccount
-				.getElectronicBilling()));
+		billingAccount.setElectronicBilling("1".equalsIgnoreCase(billAccount.getElectronicBilling()));
 		billingAccount.setEmail(billAccount.getEmail());
 		billingAccount.setExternalRef1(billAccount.getExternalRef1());
 		billingAccount.setExternalRef2(billAccount.getExternalRef2());
@@ -162,14 +148,14 @@ public class AccountImportService {
 		if (billAccount.getName() != null) {
 			name.setFirstName(billAccount.getName().getFirstname());
 			name.setLastName(billAccount.getName().getName());
-			name.setTitle(titleService.findByCode(provider, billAccount
-					.getName().getTitle().trim()));
+			name.setTitle(titleService.findByCode(provider, billAccount.getName().getTitle().trim()));
 			billingAccount.setName(name);
 		}
-		if(billAccount.getCustomFields()!=null && billAccount.getCustomFields().getCustomField()!=null
-				&& billAccount.getCustomFields().getCustomField().size()>0){
-			for(CustomField customField:billAccount.getCustomFields().getCustomField()){
-				CustomFieldInstance cfi =  new CustomFieldInstance();
+
+		if (billAccount.getCustomFields() != null && billAccount.getCustomFields().getCustomField() != null
+				&& billAccount.getCustomFields().getCustomField().size() > 0) {
+			for (CustomField customField : billAccount.getCustomFields().getCustomField()) {
+				CustomFieldInstance cfi = new CustomFieldInstance();
 				cfi.setAccount(billingAccount);
 				cfi.setActive(true);
 				cfi.setCode(customField.getCode());
@@ -186,12 +172,11 @@ public class AccountImportService {
 				billingAccount.getCustomFields().put(cfi.getCode(), cfi);
 			}
 		}
-		billingAccount.setTradingCountry(tradingCountryService
-				.findByTradingCountryCode(billAccount.getTradingCountryCode(),
-						provider));
-		billingAccount.setTradingLanguage(tradingLanguageService
-				.findByTradingLanguageCode(
-						billAccount.getTradingLanguageCode(), provider));
+
+		billingAccount.setTradingCountry(tradingCountryService.findByTradingCountryCode(
+				billAccount.getTradingCountryCode(), provider));
+		billingAccount.setTradingLanguage(tradingLanguageService.findByTradingLanguageCode(
+				billAccount.getTradingLanguageCode(), provider));
 
 		billingAccount.setProvider(provider);
 
@@ -201,12 +186,135 @@ public class AccountImportService {
 	}
 
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public void importUserAccount(
-			org.meveo.model.billing.BillingAccount billingAccount,
-			org.meveo.model.jaxb.account.BillingAccount billAccount,
-			org.meveo.model.jaxb.account.UserAccount uAccount,
-			Provider provider, User userJob) throws BusinessException,
-			ImportWarningException {
+	public org.meveo.model.billing.BillingAccount updateBillingAccount(
+			org.meveo.model.jaxb.account.BillingAccount billingAccountDto, Provider provider, User userJob)
+			throws BusinessException, ImportWarningException {
+		log.debug("update billingAccount found code:" + billingAccountDto.getCode());
+
+		CustomerAccount customerAccount = null;
+		BillingCycle billingCycle = null;
+
+		try {
+			billingCycle = billingCycleService.findByBillingCycleCode(billingAccountDto.getBillingCycle(), provider);
+		} catch (Exception e) {
+			log.warn(e.getMessage());
+		}
+
+		if (billingCycle == null) {
+			throw new BusinessException("Cannot find billingCycle with code=" + billingAccountDto.getBillingCycle());
+		}
+
+		try {
+			customerAccount = customerAccountService.findByCode(billingAccountDto.getCustomerAccountId(), provider);
+		} catch (Exception e) {
+			log.warn(e.getMessage());
+		}
+
+		if (customerAccount == null) {
+			throw new BusinessException("Cannot find customerAccount with code="
+					+ billingAccountDto.getCustomerAccountId());
+		}
+
+		billingAccountCheckError(billingAccountDto);
+
+		billingAccountCheckWarning(billingAccountDto);
+
+		org.meveo.model.billing.BillingAccount billingAccount = billingAccountService.findByCode(
+				billingAccountDto.getCode(), provider);
+		if (billingAccount == null) {
+			throw new BusinessException("Cannot find billingAccount with code=" + billingAccountDto.getCode());
+		}
+
+		billingAccount.setNextInvoiceDate(new Date());
+		billingAccount.setBillingCycle(billingCycle);
+		billingAccount.setCustomerAccount(customerAccount);
+		billingAccount.setSubscriptionDate(DateUtils.parseDateWithPattern(billingAccountDto.getSubscriptionDate(),
+				param.getProperty("connectorCRM.dateFormat", "yyyy-MM-dd")));
+		// billingAccount.setStatus(AccountStatusEnum.ACTIVE);
+		billingAccount.setStatusDate(new Date());
+		billingAccount.setDescription(billingAccountDto.getDescription());
+		billingAccount.setPaymentMethod(PaymentMethodEnum.valueOf(billingAccountDto.getPaymentMethod()));
+
+		if (billingAccountDto.getBankCoordinates() != null
+				&& ("DIRECTDEBIT".equalsIgnoreCase(billingAccountDto.getPaymentMethod()) || "TIP"
+						.equalsIgnoreCase(billingAccountDto.getPaymentMethod()))) {
+			BankCoordinates bankCoordinates = new BankCoordinates();
+			bankCoordinates.setAccountNumber(billingAccountDto.getBankCoordinates().getAccountNumber() == null ? ""
+					: billingAccountDto.getBankCoordinates().getAccountNumber());
+			bankCoordinates.setAccountOwner(billingAccountDto.getBankCoordinates().getAccountName() == null ? ""
+					: billingAccountDto.getBankCoordinates().getAccountName());
+			bankCoordinates.setBankCode(billingAccountDto.getBankCoordinates().getBankCode() == null ? ""
+					: billingAccountDto.getBankCoordinates().getBankCode());
+			bankCoordinates.setBranchCode(billingAccountDto.getBankCoordinates().getBranchCode() == null ? ""
+					: billingAccountDto.getBankCoordinates().getBranchCode());
+			bankCoordinates.setIban(billingAccountDto.getBankCoordinates().getIBAN() == null ? "" : billingAccountDto
+					.getBankCoordinates().getIBAN());
+			bankCoordinates.setKey(billingAccountDto.getBankCoordinates().getKey() == null ? "" : billingAccountDto
+					.getBankCoordinates().getKey());
+			billingAccount.setBankCoordinates(bankCoordinates);
+		}
+
+		Address address = new Address();
+		if (billingAccountDto.getAddress() != null) {
+			address.setAddress1(billingAccountDto.getAddress().getAddress1());
+			address.setAddress2(billingAccountDto.getAddress().getAddress2());
+			address.setAddress3(billingAccountDto.getAddress().getAddress3());
+			address.setCity(billingAccountDto.getAddress().getCity());
+			address.setCountry(billingAccountDto.getAddress().getCountry());
+			address.setZipCode("" + billingAccountDto.getAddress().getZipCode());
+			address.setState(billingAccountDto.getAddress().getState());
+		}
+
+		billingAccount.setAddress(address);
+		billingAccount.setElectronicBilling("1".equalsIgnoreCase(billingAccountDto.getElectronicBilling()));
+		billingAccount.setEmail(billingAccountDto.getEmail());
+		billingAccount.setExternalRef1(billingAccountDto.getExternalRef1());
+		billingAccount.setExternalRef2(billingAccountDto.getExternalRef2());
+		org.meveo.model.shared.Name name = new org.meveo.model.shared.Name();
+
+		if (billingAccountDto.getName() != null) {
+			name.setFirstName(billingAccountDto.getName().getFirstname());
+			name.setLastName(billingAccountDto.getName().getName());
+			name.setTitle(titleService.findByCode(provider, billingAccountDto.getName().getTitle().trim()));
+			billingAccount.setName(name);
+		}
+
+		if (billingAccountDto.getCustomFields() != null && billingAccountDto.getCustomFields().getCustomField() != null
+				&& billingAccountDto.getCustomFields().getCustomField().size() > 0) {
+			for (CustomField customField : billingAccountDto.getCustomFields().getCustomField()) {
+				CustomFieldInstance cfi = new CustomFieldInstance();
+				cfi.setAccount(billingAccount);
+				cfi.setActive(true);
+				cfi.setCode(customField.getCode());
+				cfi.setDateValue(customField.getDateValue());
+				cfi.setDescription(customField.getDescription());
+				cfi.setDoubleValue(customField.getDoubleValue());
+				cfi.setLongValue(customField.getLongValue());
+				cfi.setProvider(provider);
+				cfi.setStringValue(customField.getStringValue());
+				Auditable auditable = new Auditable();
+				auditable.setCreated(new Date());
+				auditable.setCreator(userJob);
+				cfi.setAuditable(auditable);
+				billingAccount.getCustomFields().put(cfi.getCode(), cfi);
+			}
+		}
+
+		billingAccount.setTradingCountry(tradingCountryService.findByTradingCountryCode(
+				billingAccountDto.getTradingCountryCode(), provider));
+		billingAccount.setTradingLanguage(tradingLanguageService.findByTradingLanguageCode(
+				billingAccountDto.getTradingLanguageCode(), provider));
+		billingAccount.updateAudit(userJob);
+
+		billingAccountService.updateNoCheck(billingAccount);
+
+		return billingAccount;
+	}
+
+	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+	public void importUserAccount(org.meveo.model.billing.BillingAccount billingAccount,
+			org.meveo.model.jaxb.account.BillingAccount billAccount, org.meveo.model.jaxb.account.UserAccount uAccount,
+			Provider provider, User userJob) throws BusinessException, ImportWarningException {
 		userAccountCheckError(billAccount, uAccount);
 		userAccountCheckWarning(billAccount, uAccount);
 		UserAccount userAccount = new UserAccount();
@@ -233,14 +341,14 @@ public class AccountImportService {
 		if (uAccount.getName() != null) {
 			nameUA.setFirstName(uAccount.getName().getFirstname());
 			nameUA.setLastName(uAccount.getName().getName());
-			nameUA.setTitle(titleService.findByCode(provider, uAccount
-					.getName().getTitle().trim()));
+			nameUA.setTitle(titleService.findByCode(provider, uAccount.getName().getTitle().trim()));
 			userAccount.setName(nameUA);
 		}
-		if(uAccount.getCustomFields()!=null && uAccount.getCustomFields().getCustomField()!=null
-				&& uAccount.getCustomFields().getCustomField().size()>0){
-			for(CustomField customField:uAccount.getCustomFields().getCustomField()){
-				CustomFieldInstance cfi =  new CustomFieldInstance();
+
+		if (uAccount.getCustomFields() != null && uAccount.getCustomFields().getCustomField() != null
+				&& uAccount.getCustomFields().getCustomField().size() > 0) {
+			for (CustomField customField : uAccount.getCustomFields().getCustomField()) {
+				CustomFieldInstance cfi = new CustomFieldInstance();
 				cfi.setAccount(userAccount);
 				cfi.setActive(true);
 				cfi.setCode(customField.getCode());
@@ -260,12 +368,78 @@ public class AccountImportService {
 		userAccount.setStatus(AccountStatusEnum.ACTIVE);
 		userAccount.setStatusDate(new Date());
 		userAccount.setProvider(provider);
-		userAccountService.createUserAccount(billingAccount, userAccount,
-				userJob);
+
+		userAccountService.createUserAccount(billingAccount, userAccount, userJob);
 	}
 
-	private boolean billingAccountCheckError(
-			org.meveo.model.jaxb.account.BillingAccount billAccount)
+	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+	public void updateUserAccount(org.meveo.model.billing.BillingAccount billingAccount,
+			org.meveo.model.jaxb.account.BillingAccount billAccount,
+			org.meveo.model.jaxb.account.UserAccount userAccountDto, Provider provider, User userJob)
+			throws BusinessException, ImportWarningException {
+		userAccountCheckError(billAccount, userAccountDto);
+		userAccountCheckWarning(billAccount, userAccountDto);
+
+		UserAccount userAccount = userAccountService.findByCode(userAccountDto.getCode(), provider);
+		if (userAccount == null) {
+			throw new BusinessException("Cannot find userAccount with code=" + userAccountDto.getCode());
+		}
+
+		userAccount.setBillingAccount(billingAccount);
+		Address addressUA = new Address();
+
+		if (userAccountDto.getAddress() != null) {
+			addressUA.setAddress1(userAccountDto.getAddress().getAddress1());
+			addressUA.setAddress2(userAccountDto.getAddress().getAddress2());
+			addressUA.setAddress3(userAccountDto.getAddress().getAddress3());
+			addressUA.setCity(userAccountDto.getAddress().getCity());
+			addressUA.setCountry(userAccountDto.getAddress().getCountry());
+			addressUA.setState(userAccountDto.getAddress().getState());
+			addressUA.setZipCode("" + userAccountDto.getAddress().getZipCode());
+		}
+
+		userAccount.setAddress(addressUA);
+		userAccount.setDescription(userAccountDto.getDescription());
+		userAccount.setExternalRef1(userAccountDto.getExternalRef1());
+		userAccount.setExternalRef2(userAccountDto.getExternalRef2());
+		org.meveo.model.shared.Name nameUA = new org.meveo.model.shared.Name();
+
+		if (userAccountDto.getName() != null) {
+			nameUA.setFirstName(userAccountDto.getName().getFirstname());
+			nameUA.setLastName(userAccountDto.getName().getName());
+			nameUA.setTitle(titleService.findByCode(provider, userAccountDto.getName().getTitle().trim()));
+			userAccount.setName(nameUA);
+		}
+
+		if (userAccountDto.getCustomFields() != null && userAccountDto.getCustomFields().getCustomField() != null
+				&& userAccountDto.getCustomFields().getCustomField().size() > 0) {
+			for (CustomField customField : userAccountDto.getCustomFields().getCustomField()) {
+				CustomFieldInstance cfi = new CustomFieldInstance();
+				cfi.setAccount(userAccount);
+				cfi.setActive(true);
+				cfi.setCode(customField.getCode());
+				cfi.setDateValue(customField.getDateValue());
+				cfi.setDescription(customField.getDescription());
+				cfi.setDoubleValue(customField.getDoubleValue());
+				cfi.setLongValue(customField.getLongValue());
+				cfi.setProvider(provider);
+				cfi.setStringValue(customField.getStringValue());
+				Auditable auditable = new Auditable();
+				auditable.setCreated(new Date());
+				auditable.setCreator(userJob);
+				cfi.setAuditable(auditable);
+				userAccount.getCustomFields().put(cfi.getCode(), cfi);
+			}
+		}
+
+		// userAccount.setStatus(AccountStatusEnum.ACTIVE);
+		userAccount.setStatusDate(new Date());
+		userAccount.updateAudit(userJob);
+
+		userAccountService.updateNoCheck(userAccount);
+	}
+
+	private boolean billingAccountCheckError(org.meveo.model.jaxb.account.BillingAccount billAccount)
 			throws BusinessException {
 		/*
 		 * if (StringUtils.isBlank(billAccount.getExternalRef1())) {
@@ -289,27 +463,20 @@ public class AccountImportService {
 				throw new BusinessException("BankCoordinates is null.");
 			}
 
-			if (StringUtils.isBlank(billAccount.getBankCoordinates()
-					.getAccountName())) {
-				throw new BusinessException(
-						"BankCoordinates.AccountName is null.");
+			if (StringUtils.isBlank(billAccount.getBankCoordinates().getAccountName())) {
+				throw new BusinessException("BankCoordinates.AccountName is null.");
 			}
 
-			if (StringUtils.isBlank(billAccount.getBankCoordinates()
-					.getAccountNumber())) {
-				throw new BusinessException(
-						"BankCoordinates.AccountNumber is null.");
+			if (StringUtils.isBlank(billAccount.getBankCoordinates().getAccountNumber())) {
+				throw new BusinessException("BankCoordinates.AccountNumber is null.");
 			}
 
-			if (StringUtils.isBlank(billAccount.getBankCoordinates()
-					.getBankCode())) {
+			if (StringUtils.isBlank(billAccount.getBankCoordinates().getBankCode())) {
 				throw new BusinessException("BankCoordinates.BankCode is null.");
 			}
 
-			if (StringUtils.isBlank(billAccount.getBankCoordinates()
-					.getBranchCode())) {
-				throw new BusinessException(
-						"BankCoordinates.BranchCode is null.");
+			if (StringUtils.isBlank(billAccount.getBankCoordinates().getBranchCode())) {
+				throw new BusinessException("BankCoordinates.BranchCode is null.");
 			}
 		}
 		/*
@@ -327,8 +494,7 @@ public class AccountImportService {
 		return false;
 	}
 
-	private boolean userAccountCheckError(
-			org.meveo.model.jaxb.account.BillingAccount billAccount,
+	private boolean userAccountCheckError(org.meveo.model.jaxb.account.BillingAccount billAccount,
 			org.meveo.model.jaxb.account.UserAccount uAccount) {
 		/*
 		 * if (StringUtils.isBlank(uAccount.getExternalRef1())) {
@@ -353,8 +519,7 @@ public class AccountImportService {
 		return false;
 	}
 
-	private void billingAccountCheckWarning(
-			org.meveo.model.jaxb.account.BillingAccount billAccount)
+	private void billingAccountCheckWarning(org.meveo.model.jaxb.account.BillingAccount billAccount)
 			throws ImportWarningException {
 		// if ("PRO".equals(customer.getCustomerCategory()) &&
 		// StringUtils.isBlank(billAccount.getCompany())) {
@@ -368,8 +533,7 @@ public class AccountImportService {
 		// isWarning = true;
 		// }
 
-		if ("TRUE".equalsIgnoreCase(billAccount.getElectronicBilling())
-				&& StringUtils.isBlank(billAccount.getEmail())) {
+		if ("TRUE".equalsIgnoreCase(billAccount.getElectronicBilling()) && StringUtils.isBlank(billAccount.getEmail())) {
 			throw new ImportWarningException("Email is null");
 		}
 
@@ -380,37 +544,30 @@ public class AccountImportService {
 
 		if (("DIRECTDEBIT".equalsIgnoreCase(billAccount.getPaymentMethod()))
 				&& billAccount.getBankCoordinates() != null
-				&& StringUtils.isBlank(billAccount.getBankCoordinates()
-						.getBranchCode())) {
-			throw new ImportWarningException(
-					"BankCoordinates.BranchCode is null");
+				&& StringUtils.isBlank(billAccount.getBankCoordinates().getBranchCode())) {
+			throw new ImportWarningException("BankCoordinates.BranchCode is null");
 		}
 
 		if (("DIRECTDEBIT".equalsIgnoreCase(billAccount.getPaymentMethod()))
 				&& billAccount.getBankCoordinates() != null
-				&& StringUtils.isBlank(billAccount.getBankCoordinates()
-						.getAccountNumber())) {
-			throw new ImportWarningException(
-					"BankCoordinates.AccountNumber is null");
+				&& StringUtils.isBlank(billAccount.getBankCoordinates().getAccountNumber())) {
+			throw new ImportWarningException("BankCoordinates.AccountNumber is null");
 		}
 
 		if (("DIRECTDEBIT".equalsIgnoreCase(billAccount.getPaymentMethod()))
 				&& billAccount.getBankCoordinates() != null
-				&& StringUtils.isBlank(billAccount.getBankCoordinates()
-						.getBankCode())) {
+				&& StringUtils.isBlank(billAccount.getBankCoordinates().getBankCode())) {
 			throw new ImportWarningException("BankCoordinates.BankCode is null");
 		}
 
 		if (("DIRECTDEBIT".equalsIgnoreCase(billAccount.getPaymentMethod()))
 				&& billAccount.getBankCoordinates() != null
-				&& StringUtils.isBlank(billAccount.getBankCoordinates()
-						.getKey())) {
+				&& StringUtils.isBlank(billAccount.getBankCoordinates().getKey())) {
 			throw new ImportWarningException("BankCoordinates.Key is null");
 		}
 	}
 
-	private boolean userAccountCheckWarning(
-			org.meveo.model.jaxb.account.BillingAccount billAccount,
+	private boolean userAccountCheckWarning(org.meveo.model.jaxb.account.BillingAccount billAccount,
 			org.meveo.model.jaxb.account.UserAccount uAccount) {
 		boolean isWarning = false;
 		// if ("PRO".equals(customer.getCustomerCategory()) &&
