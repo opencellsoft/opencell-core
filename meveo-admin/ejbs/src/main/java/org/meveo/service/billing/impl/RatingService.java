@@ -11,6 +11,7 @@ import java.util.Map;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.el.ArrayELResolver;
 import javax.el.BeanELResolver;
@@ -75,7 +76,7 @@ public class RatingService {
 	@Inject
 	private EdrService edrService;
 
-	@Inject
+	@EJB
 	private SubscriptionService subscriptionService;
 	
 
@@ -111,12 +112,12 @@ public class RatingService {
 		isDiscountPlanDirty = true;
 	}
 
-	public int getSharedQuantity(LevelEnum level, Provider provider,
+	/*public int getSharedQuantity(LevelEnum level, Provider provider,
 			String chargeCode, Date chargeDate,
 			RecurringChargeInstance recChargeInstance) {
 		return getSharedQuantity(entityManager, level, provider, chargeCode,
 				chargeDate, recChargeInstance);
-	}
+	}*/
 
 	public int getSharedQuantity(EntityManager em, LevelEnum level,
 			Provider provider, String chargeCode, Date chargeDate,
@@ -194,7 +195,7 @@ public class RatingService {
 		return result;
 	}
 
-	public WalletOperation prerateChargeApplication(String code,
+	/*public WalletOperation prerateChargeApplication(String code,
 			Date subscriptionDate, String offerCode,
 			ChargeInstance chargeInstance, ApplicationTypeEnum applicationType,
 			Date applicationDate, BigDecimal amountWithoutTax,
@@ -210,7 +211,7 @@ public class RatingService {
 				countryId, taxPercent, discountPercent, nextApplicationDate,
 				invoiceSubCategory, criteria1, criteria2, criteria3, startdate,
 				endDate, mode);
-	}
+	}*/
 
 	// used to prerate a oneshot or recurring charge
 	public WalletOperation prerateChargeApplication(EntityManager em,
@@ -493,7 +494,7 @@ public class RatingService {
 			if (recChargeTemplate.getShareLevel() != null) {
 				RecurringChargeInstance recChargeInstance = (RecurringChargeInstance) bareWalletOperation
 						.getChargeInstance();
-				int sharedQuantity = getSharedQuantity(
+				int sharedQuantity = getSharedQuantity(em,
 						recChargeTemplate.getShareLevel(), provider,
 						recChargeInstance.getCode(),
 						bareWalletOperation.getOperationDate(),

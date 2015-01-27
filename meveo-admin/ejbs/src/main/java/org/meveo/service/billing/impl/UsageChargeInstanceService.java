@@ -42,12 +42,12 @@ import org.meveo.service.base.BusinessService;
 public class UsageChargeInstanceService extends
 		BusinessService<UsageChargeInstance> {
 
-	@Inject
+	@EJB
 	UsageRatingService usageRatingService;
 	
 	
 	@Inject
-	private UserAccountService userAccountService;
+	private WalletService walletService;
 
 
 	@Inject
@@ -85,11 +85,11 @@ public class UsageChargeInstanceService extends
 				.getBillingAccount().getTradingCountry());
 		usageChargeInstance.setCurrency(subscription.getUserAccount()
 				.getBillingAccount().getCustomerAccount().getTradingCurrency());
-		ServiceChargeTemplateRecurring recChTmplServ = serviceInstance.getServiceTemplate().getServiceRecurringChargeByChargeCode(serviceUsageChargeTemplate.getChargeTemplate().getCode());
-		List<WalletTemplate> walletTemplates = recChTmplServ.getWalletTemplates();
+		ServiceChargeTemplateUsage usaChTmplServ = serviceInstance.getServiceTemplate().getServiceChargeTemplateUsageByChargeCode(serviceUsageChargeTemplate.getChargeTemplate().getCode());
+		List<WalletTemplate> walletTemplates = usaChTmplServ.getWalletTemplates();
 		if(walletTemplates!=null && walletTemplates.size()>0){
 			for(WalletTemplate walletTemplate:walletTemplates){
-				usageChargeInstance.getWalletInstances().add(userAccountService.getWalletInstance(serviceInstance.getSubscription()
+				usageChargeInstance.getWalletInstances().add(walletService.getWalletInstance(serviceInstance.getSubscription()
 						.getUserAccount(),walletTemplate,serviceInstance.getAuditable().getCreator(),serviceInstance.getProvider()));
 			}
 		} else {

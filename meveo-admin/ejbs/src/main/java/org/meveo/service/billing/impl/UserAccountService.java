@@ -18,7 +18,6 @@ package org.meveo.service.billing.impl;
 
 import java.math.BigDecimal;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 
 import javax.ejb.Stateless;
@@ -39,7 +38,6 @@ import org.meveo.model.billing.SubscriptionTerminationReason;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.billing.WalletInstance;
 import org.meveo.model.catalog.WalletTemplate;
-import org.meveo.model.crm.Provider;
 import org.meveo.service.base.AccountService;
 
 @Stateless
@@ -47,9 +45,6 @@ public class UserAccountService extends AccountService<UserAccount> {
 
 	@Inject
 	private WalletService walletService;
-
-	@Inject
-	private WalletTemplateService walletTemplateService;
 
 	public void createUserAccount(BillingAccount billingAccount, UserAccount userAccount, User creator)
 			throws AccountAlreadyExistsException {
@@ -70,23 +65,6 @@ public class UserAccountService extends AccountService<UserAccount> {
 		walletService.create(wallet, creator, billingAccount.getProvider());
 
 		userAccount.setWallet(wallet);
-
-		List<WalletTemplate> prepaidWalletTemplates = walletTemplateService
-				.listByProvider(billingAccount.getProvider());
-		if (prepaidWalletTemplates != null && prepaidWalletTemplates.size() > 0) {
-			HashMap<String, WalletInstance> prepaidWallets = new HashMap<String, WalletInstance>(
-					prepaidWalletTemplates.size());
-
-			for (WalletTemplate prepaidWalletTemplate : prepaidWalletTemplates) {
-				WalletInstance prepaidWallet = new WalletInstance();
-				wallet.setUserAccount(userAccount);
-				wallet.setWalletTemplate(prepaidWalletTemplate);
-				walletService.create(wallet, creator, billingAccount.getProvider());
-				prepaidWallets.put(prepaidWalletTemplate.getCode(), prepaidWallet);
-			}
-
-			userAccount.setPrepaidWallets(prepaidWallets);
-		}
 	}
 
 	public void userAccountTermination(UserAccount userAccount, Date terminationDate,
@@ -198,24 +176,6 @@ public class UserAccountService extends AccountService<UserAccount> {
 		} catch (NoResultException e) {
 			log.warn(e.getMessage());
 			return null;
-		}
-	}
-	
-	public WalletInstance getWalletInstance(UserAccount userAccount,WalletTemplate walletTemplate,  User creator ,Provider provider){
-		String walletCode = walletTemplate.getCode();
-		if(!WalletTemplate.PRINCIPAL.equals(walletCode)){
-			if(!userAccount.getPrepaidWallets().containsKey(walletCode)){
-				WalletInstance wallet = new WalletInstance();
-				wallet.setCode(walletCode);
-				wallet.setWalletTemplate(walletTemplate);
-				wallet.setUserAccount(userAccount);
-				walletService.create( wallet, creator, provider);
-				userAccount.getPrepaidWallets().put(walletCode,wallet);
-			}
-			return userAccount.getPrepaidWallets().get(walletCode);
-		} 
-		else {
-			return userAccount.getWallet();
 		}
 	}
 
