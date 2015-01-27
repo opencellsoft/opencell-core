@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.model.catalog.DayInYear;
@@ -17,7 +18,10 @@ public class DayInYearDto implements Serializable {
 
 	private static final long serialVersionUID = 7771829024178269036L;
 
+	@XmlAttribute(required = true)
 	private Integer day;
+
+	@XmlAttribute(required = true)
 	private String month;
 
 	public DayInYearDto() {
@@ -26,7 +30,7 @@ public class DayInYearDto implements Serializable {
 
 	public DayInYearDto(DayInYear d) {
 		day = d.getDay();
-		
+
 		if (d.getMonth() != null) {
 			month = d.getMonth().name();
 		}
