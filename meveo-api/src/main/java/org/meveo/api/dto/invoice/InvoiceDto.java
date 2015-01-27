@@ -1,4 +1,4 @@
-package org.meveo.api.dto;
+package org.meveo.api.dto.invoice;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -8,6 +8,9 @@ import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
+
+import org.meveo.api.dto.BaseDto;
+import org.meveo.api.dto.SubCategoryInvoiceAgregateDto;
 
 /**
  * @author R.AITYAAZZA

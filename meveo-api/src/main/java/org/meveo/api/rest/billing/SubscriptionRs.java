@@ -1,4 +1,4 @@
-package org.meveo.api.rest.account;
+package org.meveo.api.rest.billing;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
@@ -10,7 +10,7 @@ import javax.ws.rs.core.MediaType;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.account.ActivateServicesDto;
 import org.meveo.api.dto.account.ApplyOneShotChargeInstanceDto;
-import org.meveo.api.dto.account.SubscriptionDto;
+import org.meveo.api.dto.billing.SubscriptionDto;
 import org.meveo.api.rest.IBaseRs;
 import org.meveo.api.rest.security.RSSecured;
 

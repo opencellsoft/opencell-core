@@ -6,7 +6,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.meveo.api.dto.InvoiceDto;
+import org.meveo.api.dto.invoice.InvoiceDto;
 
 @XmlRootElement(name = "CustomerInvoicesResponse")
 @XmlAccessorType(XmlAccessType.FIELD)

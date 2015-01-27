@@ -6,7 +6,7 @@ import javax.jws.WebService;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.account.ActivateServicesDto;
 import org.meveo.api.dto.account.ApplyOneShotChargeInstanceDto;
-import org.meveo.api.dto.account.SubscriptionDto;
+import org.meveo.api.dto.billing.SubscriptionDto;
 
 /**
  * @author Edward P. Legaspi

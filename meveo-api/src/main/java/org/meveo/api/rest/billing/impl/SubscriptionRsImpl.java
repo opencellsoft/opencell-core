@@ -1,4 +1,4 @@
-package org.meveo.api.rest.account.impl;
+package org.meveo.api.rest.billing.impl;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
@@ -10,10 +10,10 @@ import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.account.ActivateServicesDto;
 import org.meveo.api.dto.account.ApplyOneShotChargeInstanceDto;
-import org.meveo.api.dto.account.SubscriptionDto;
+import org.meveo.api.dto.billing.SubscriptionDto;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.LoggingInterceptor;
-import org.meveo.api.rest.account.SubscriptionRs;
+import org.meveo.api.rest.billing.SubscriptionRs;
 import org.meveo.api.rest.impl.BaseRs;
 
 /**

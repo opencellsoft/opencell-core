@@ -7,7 +7,7 @@ import javax.jws.WebService;
 import org.meveo.api.InvoiceApi;
 import org.meveo.api.MeveoApiErrorCode;
 import org.meveo.api.dto.ActionStatusEnum;
-import org.meveo.api.dto.InvoiceDto;
+import org.meveo.api.dto.invoice.InvoiceDto;
 import org.meveo.api.dto.response.CustomerInvoicesResponse;
 import org.meveo.api.dto.response.InvoiceCreationResponse;
 import org.meveo.api.exception.MeveoApiException;

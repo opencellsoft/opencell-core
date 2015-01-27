@@ -1,4 +1,4 @@
-package org.meveo.api.rest;
+package org.meveo.api.rest.invoice;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -8,9 +8,10 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
-import org.meveo.api.dto.InvoiceDto;
+import org.meveo.api.dto.invoice.InvoiceDto;
 import org.meveo.api.dto.response.CustomerInvoicesResponse;
 import org.meveo.api.dto.response.InvoiceCreationResponse;
+import org.meveo.api.rest.IBaseRs;
 import org.meveo.api.rest.security.RSSecured;
 
 /**

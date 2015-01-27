@@ -3,7 +3,7 @@ package org.meveo.api.ws;
 import javax.jws.WebMethod;
 import javax.jws.WebService;
 
-import org.meveo.api.dto.InvoiceDto;
+import org.meveo.api.dto.invoice.InvoiceDto;
 import org.meveo.api.dto.response.CustomerInvoicesResponse;
 import org.meveo.api.dto.response.InvoiceCreationResponse;
 

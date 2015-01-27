@@ -5,10 +5,12 @@ import javax.jws.WebService;
 
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.account.AccessDto;
+import org.meveo.api.dto.account.AccountHierarchyDto;
 import org.meveo.api.dto.account.BillingAccountDto;
 import org.meveo.api.dto.account.CustomerAccountDto;
 import org.meveo.api.dto.account.CustomerDto;
 import org.meveo.api.dto.account.UserAccountDto;
+import org.meveo.api.dto.response.CustomerListResponse;
 import org.meveo.api.dto.response.account.GetAccessResponse;
 import org.meveo.api.dto.response.account.GetBillingAccountResponse;
 import org.meveo.api.dto.response.account.GetCustomerAccountResponse;
@@ -80,5 +82,14 @@ public interface AccountWs extends IBaseWs {
 
 	@WebMethod
 	ActionStatus removeAccess(Long accessId);
+
+	@WebMethod
+	public CustomerListResponse findAccountHierarchy(AccountHierarchyDto accountHierarchyDto);
+
+	@WebMethod
+	public ActionStatus createAccountHierarchy(AccountHierarchyDto accountHierarchyDto);
+
+	@WebMethod
+	public ActionStatus updateAccountHierarchy(AccountHierarchyDto accountHierarchyDto);
 
 }

@@ -6,6 +6,7 @@ import javax.jws.WebService;
 
 import org.meveo.api.MeveoApiErrorCode;
 import org.meveo.api.account.AccessApi;
+import org.meveo.api.account.AccountHierarchyApi;
 import org.meveo.api.account.BillingAccountApi;
 import org.meveo.api.account.CustomerAccountApi;
 import org.meveo.api.account.CustomerApi;
@@ -13,10 +14,12 @@ import org.meveo.api.account.UserAccountApi;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.account.AccessDto;
+import org.meveo.api.dto.account.AccountHierarchyDto;
 import org.meveo.api.dto.account.BillingAccountDto;
 import org.meveo.api.dto.account.CustomerAccountDto;
 import org.meveo.api.dto.account.CustomerDto;
 import org.meveo.api.dto.account.UserAccountDto;
+import org.meveo.api.dto.response.CustomerListResponse;
 import org.meveo.api.dto.response.account.GetAccessResponse;
 import org.meveo.api.dto.response.account.GetBillingAccountResponse;
 import org.meveo.api.dto.response.account.GetCustomerAccountResponse;
@@ -32,6 +35,9 @@ import org.meveo.api.ws.AccountWs;
 @WebService(serviceName = "AccountWs", endpointInterface = "org.meveo.api.ws.AccountWs")
 @Interceptors({ LoggingInterceptor.class })
 public class AccountWsImpl extends BaseWs implements AccountWs {
+
+	@Inject
+	private AccountHierarchyApi accountHierarchyApi;
 
 	@Inject
 	private CustomerApi customerApi;
@@ -415,6 +421,63 @@ public class AccountWsImpl extends BaseWs implements AccountWs {
 
 		try {
 			accessApi.remove(accessId, getCurrentUser().getProvider());
+		} catch (MeveoApiException e) {
+			result.setErrorCode(e.getErrorCode());
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
+		} catch (Exception e) {
+			result.setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
+		}
+
+		return result;
+	}
+
+	@Override
+	public CustomerListResponse findAccountHierarchy(AccountHierarchyDto postData) {
+		CustomerListResponse result = new CustomerListResponse();
+
+		try {
+			result.setCustomerDtoList(accountHierarchyApi.find(postData, getCurrentUser()));
+		} catch (MeveoApiException e) {
+			result.getActionStatus().setErrorCode(e.getErrorCode());
+			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
+			result.getActionStatus().setMessage(e.getMessage());
+		} catch (Exception e) {
+			result.getActionStatus().setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
+			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
+			result.getActionStatus().setMessage(e.getMessage());
+		}
+
+		return result;
+	}
+
+	@Override
+	public ActionStatus createAccountHierarchy(AccountHierarchyDto postData) {
+		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+
+		try {
+			accountHierarchyApi.create(postData, getCurrentUser());
+		} catch (MeveoApiException e) {
+			result.setErrorCode(e.getErrorCode());
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
+		} catch (Exception e) {
+			result.setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
+		}
+
+		return result;
+	}
+
+	@Override
+	public ActionStatus updateAccountHierarchy(AccountHierarchyDto postData) {
+		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+
+		try {
+			accountHierarchyApi.update(postData, getCurrentUser());
 		} catch (MeveoApiException e) {
 			result.setErrorCode(e.getErrorCode());
 			result.setStatus(ActionStatusEnum.FAIL);
