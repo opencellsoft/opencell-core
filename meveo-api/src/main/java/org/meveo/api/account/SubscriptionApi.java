@@ -311,4 +311,22 @@ public class SubscriptionApi extends BaseApi {
 		}
 	}
 
+	public void terminateSubscription(String subscriptionCode, User currentUser) throws MeveoApiException {
+		if (!StringUtils.isBlank(subscriptionCode)) {
+			Subscription subscription = subscriptionService.findByCode(subscriptionCode, currentUser.getProvider());
+			if (subscription == null) {
+				throw new EntityDoesNotExistsException(Subscription.class, subscriptionCode);
+			}
+
+			try {
+				subscriptionService.terminateSubscription(subscription, new Date(), true, true, true, currentUser);
+			} catch (BusinessException e) {
+				throw new MeveoApiException(e.getMessage());
+			}
+		} else {
+			missingParameters.add("subscriptionCode");
+
+			throw new MissingParameterException(getMissingParametersExceptionMessage());
+		}
+	}
 }

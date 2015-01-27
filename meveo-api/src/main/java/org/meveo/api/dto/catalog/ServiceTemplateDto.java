@@ -9,8 +9,6 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.meveo.model.catalog.OneShotChargeTemplate;
-import org.meveo.model.catalog.RecurringChargeTemplate;
 import org.meveo.model.catalog.ServiceChargeTemplateUsage;
 import org.meveo.model.catalog.ServiceTemplate;
 
@@ -43,33 +41,25 @@ public class ServiceTemplateDto implements Serializable {
 		code = e.getCode();
 		description = e.getDescription();
 
-		/*if (e.getRecurringCharges().size() > 0) {
-			recurringCharges = new ArrayList<String>();
-			for (RecurringChargeTemplate rt : e.getRecurringCharges()) {
-				recurringCharges.add(rt.getCode());
-			}
-		}
-		if (e.getSubscriptionCharges().size() > 0) {
-			subscriptionCharges = new ArrayList<String>();
-			for (OneShotChargeTemplate ot : e.getSubscriptionCharges()) {
-				subscriptionCharges.add(ot.getCode());
-			}
-		}
-		if (e.getTerminationCharges().size() > 0) {
-			terminationCharges = new ArrayList<String>();
-			for (OneShotChargeTemplate ot : e.getTerminationCharges()) {
-				terminationCharges.add(ot.getCode());
-			}
-		}*/
+		/*
+		 * if (e.getRecurringCharges().size() > 0) { recurringCharges = new
+		 * ArrayList<String>(); for (RecurringChargeTemplate rt :
+		 * e.getRecurringCharges()) { recurringCharges.add(rt.getCode()); } } if
+		 * (e.getSubscriptionCharges().size() > 0) { subscriptionCharges = new
+		 * ArrayList<String>(); for (OneShotChargeTemplate ot :
+		 * e.getSubscriptionCharges()) { subscriptionCharges.add(ot.getCode());
+		 * } } if (e.getTerminationCharges().size() > 0) { terminationCharges =
+		 * new ArrayList<String>(); for (OneShotChargeTemplate ot :
+		 * e.getTerminationCharges()) { terminationCharges.add(ot.getCode()); }
+		 * }
+		 */
 		if (e.getServiceUsageCharges().size() > 0) {
 			serviceUsageCharges = new ArrayList<ServiceUsageChargeTemplateDto>();
 			for (ServiceChargeTemplateUsage ot : e.getServiceUsageCharges()) {
 				ServiceUsageChargeTemplateDto serviceUsageChargeTemplateDto = new ServiceUsageChargeTemplateDto();
-				serviceUsageChargeTemplateDto.setUsageChargeTemplate(ot
-						.getChargeTemplate().getCode());
+				serviceUsageChargeTemplateDto.setUsageChargeTemplate(ot.getChargeTemplate().getCode());
 				if (ot.getCounterTemplate() != null) {
-					serviceUsageChargeTemplateDto.setCounterTemplate(ot
-							.getCounterTemplate().getCode());
+					serviceUsageChargeTemplateDto.setCounterTemplate(ot.getCounterTemplate().getCode());
 				}
 				serviceUsageCharges.add(serviceUsageChargeTemplateDto);
 			}
@@ -120,18 +110,15 @@ public class ServiceTemplateDto implements Serializable {
 		return serviceUsageCharges;
 	}
 
-	public void setServiceUsageCharges(
-			List<ServiceUsageChargeTemplateDto> serviceUsageCharges) {
+	public void setServiceUsageCharges(List<ServiceUsageChargeTemplateDto> serviceUsageCharges) {
 		this.serviceUsageCharges = serviceUsageCharges;
 	}
 
 	@Override
 	public String toString() {
-		return "ServiceTemplateDto [code=" + code + ", description="
-				+ description + ", recurringCharges=" + recurringCharges
-				+ ", subscriptionCharges=" + subscriptionCharges
-				+ ", terminationCharges=" + terminationCharges
-				+ ", serviceUsageCharges=" + serviceUsageCharges + "]";
+		return "ServiceTemplateDto [code=" + code + ", description=" + description + ", recurringCharges="
+				+ recurringCharges + ", subscriptionCharges=" + subscriptionCharges + ", terminationCharges="
+				+ terminationCharges + ", serviceUsageCharges=" + serviceUsageCharges + "]";
 	}
 
 }

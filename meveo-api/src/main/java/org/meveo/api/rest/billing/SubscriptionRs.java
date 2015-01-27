@@ -34,9 +34,13 @@ public interface SubscriptionRs extends IBaseRs {
 	@POST
 	@Path("/activateServices")
 	ActionStatus activateServices(ActivateServicesDto postData);
-	
+
 	@POST
 	@Path("/applyOneShotChargeInstance")
 	ActionStatus applyOneShotChargeInstance(ApplyOneShotChargeInstanceDto postData);
+
+	@POST
+	@Path("/terminate")
+	ActionStatus terminateSubscription(String subscriptionCode);
 
 }

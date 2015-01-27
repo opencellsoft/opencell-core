@@ -25,5 +25,8 @@ public interface SubscriptionWs extends IBaseWs {
 
 	@WebMethod
 	ActionStatus applyOneShotChargeInstance(ApplyOneShotChargeInstanceDto postData);
+	
+	@WebMethod
+	ActionStatus terminateSubscription(String subscriptionCode);
 
 }

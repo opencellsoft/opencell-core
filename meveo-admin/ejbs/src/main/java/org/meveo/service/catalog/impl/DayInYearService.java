@@ -17,11 +17,26 @@
 package org.meveo.service.catalog.impl;
 
 import javax.ejb.Stateless;
+import javax.persistence.NoResultException;
 
+import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.catalog.DayInYear;
+import org.meveo.model.catalog.MonthEnum;
 import org.meveo.service.base.PersistenceService;
 
 @Stateless
 public class DayInYearService extends PersistenceService<DayInYear> {
+
+	public DayInYear findByMonthAndDay(MonthEnum month, Integer day) {
+		QueryBuilder qb = new QueryBuilder(DayInYear.class, "d");
+		qb.addCriterion("day", "=", day, true);
+		qb.addCriterionEnum("month", month);
+
+		try {
+			return (DayInYear) qb.getQuery(getEntityManager()).getSingleResult();
+		} catch (NoResultException e) {
+			return null;
+		}
+	}
 
 }

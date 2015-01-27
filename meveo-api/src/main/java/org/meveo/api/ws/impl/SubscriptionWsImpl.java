@@ -101,4 +101,23 @@ public class SubscriptionWsImpl extends BaseWs implements SubscriptionWs {
 		return result;
 	}
 
+	@Override
+	public ActionStatus terminateSubscription(String subscriptionCode) {
+		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+
+		try {
+			subscriptionApi.terminateSubscription(subscriptionCode, getCurrentUser());
+		} catch (MeveoApiException e) {
+			result.setErrorCode(e.getErrorCode());
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
+		} catch (Exception e) {
+			result.setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
+		}
+
+		return result;
+	}
+
 }

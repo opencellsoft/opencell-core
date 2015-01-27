@@ -2,8 +2,17 @@ package org.meveo.api.ws;
 
 import javax.jws.WebMethod;
 import javax.jws.WebService;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.QueryParam;
 
 import org.meveo.api.dto.ActionStatus;
+import org.meveo.api.dto.BillingCycleDto;
+import org.meveo.api.dto.CalendarDto;
 import org.meveo.api.dto.CountryDto;
 import org.meveo.api.dto.CurrencyDto;
 import org.meveo.api.dto.InvoiceCategoryDto;
@@ -14,6 +23,8 @@ import org.meveo.api.dto.ProviderDto;
 import org.meveo.api.dto.SellerDto;
 import org.meveo.api.dto.TaxDto;
 import org.meveo.api.dto.UserDto;
+import org.meveo.api.dto.response.GetBillingCycleResponse;
+import org.meveo.api.dto.response.GetCalendarResponse;
 import org.meveo.api.dto.response.GetCountryResponse;
 import org.meveo.api.dto.response.GetCurrencyResponse;
 import org.meveo.api.dto.response.GetInvoiceCategoryResponse;
@@ -62,27 +73,23 @@ public interface SettingsWs extends IBaseWs {
 	public ActionStatus updateInvoiceCategory(InvoiceCategoryDto postData);
 
 	@WebMethod
-	public GetInvoiceCategoryResponse findInvoiceCategory(
-			String invoiceCategoryCode);
+	public GetInvoiceCategoryResponse findInvoiceCategory(String invoiceCategoryCode);
 
 	@WebMethod
 	public ActionStatus removeInvoiceCategory(String invoiceCategoryCode);
 
 	@WebMethod
-	public ActionStatus createInvoiceSubCategoryCountry(
-			InvoiceSubCategoryCountryDto postData);
+	public ActionStatus createInvoiceSubCategoryCountry(InvoiceSubCategoryCountryDto postData);
 
 	@WebMethod
-	public ActionStatus updateInvoiceSubCategoryCountry(
-			InvoiceSubCategoryCountryDto postData);
+	public ActionStatus updateInvoiceSubCategoryCountry(InvoiceSubCategoryCountryDto postData);
 
 	@WebMethod
-	public GetInvoiceSubCategoryCountryResponse findInvoiceSubCategoryCountry(
-			String invoiceSubCategoryCode, String country);
+	public GetInvoiceSubCategoryCountryResponse findInvoiceSubCategoryCountry(String invoiceSubCategoryCode,
+			String country);
 
 	@WebMethod
-	public ActionStatus removeInvoiceSubCategoryCountry(
-			String invoiceSubCategoryCode, String country);
+	public ActionStatus removeInvoiceSubCategoryCountry(String invoiceSubCategoryCode, String country);
 
 	@WebMethod
 	public ActionStatus createInvoiceSubCategory(InvoiceSubCategoryDto postData);
@@ -91,8 +98,7 @@ public interface SettingsWs extends IBaseWs {
 	public ActionStatus updateInvoiceSubCategory(InvoiceSubCategoryDto postData);
 
 	@WebMethod
-	public GetInvoiceSubCategoryResponse findInvoiceSubCategory(
-			String invoiceSubCategoryCode);
+	public GetInvoiceSubCategoryResponse findInvoiceSubCategory(String invoiceSubCategoryCode);
 
 	@WebMethod
 	public ActionStatus removeInvoiceSubCategory(String invoiceSubCategoryCode);
@@ -153,5 +159,29 @@ public interface SettingsWs extends IBaseWs {
 
 	@WebMethod
 	public GetUserResponse findUser(String username);
+
+	@WebMethod
+	public ActionStatus createBillingCycle(BillingCycleDto postData);
+
+	@WebMethod
+	public ActionStatus updateBillingCycle(BillingCycleDto postData);
+
+	@WebMethod
+	public GetBillingCycleResponse findBillingCycle(String billingCycleCode);
+
+	@WebMethod
+	public ActionStatus removeBillingCycle(String billingCycleCode);
+	
+	@WebMethod
+	public ActionStatus createCalendar(CalendarDto postData);
+
+	@WebMethod
+	public ActionStatus updateCalendar(CalendarDto postData);
+
+	@WebMethod
+	public GetCalendarResponse findCalendar(String calendarCode);
+
+	@WebMethod
+	public ActionStatus removeCalendar(String calendarCode);
 
 }

@@ -5,6 +5,8 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.meveo.model.billing.BillingCycle;
+
 /**
  * @author Edward P. Legaspi
  **/
@@ -30,6 +32,22 @@ public class BillingCycleDto extends BaseDto {
 
 	@XmlAttribute(required = true)
 	private String calendar;
+
+	public BillingCycleDto() {
+
+	}
+
+	public BillingCycleDto(BillingCycle e) {
+		code = e.getCode();
+		description = e.getDescription();
+		billingTemplateName = e.getBillingTemplateName();
+		invoiceDateDelay = e.getInvoiceDateDelay();
+		dueDateDelay = e.getDueDateDelay();
+
+		if (e.getCalendar() != null) {
+			calendar = e.getCalendar().getName();
+		}
+	}
 
 	public String getCode() {
 		return code;
