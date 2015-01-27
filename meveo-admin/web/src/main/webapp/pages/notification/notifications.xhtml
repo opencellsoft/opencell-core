@@ -44,15 +44,16 @@
 						<h:outputText value="#{messages['commons.actions']}" />
 					</f:facet>
 
-					<p:button id="#{resultsId}viewlink" outcome="#{entity.class.simpleName.subString(0,1).toLowerCase()+entity.class.simpleName.subString(1)}Detail"
+					<p:button id="#{resultsId}viewlink" outcome="#{entity.class.simpleName.substring(0,1).toLowerCase()}#{entity.class.simpleName.substring(1)}Detail"
 						icon="ui-icon-search">
-						<f:param name="#{objectIdParamName}" value="#{entity.id}" />
+						 <f:param name="objectId" value="#{entity.id}" />
 						<f:param name="edit" value="false" />
+						
 					</p:button>
 			
-					<p:button id="#{resultsId}editlink" outcome="#{entity.class.simpleName.subString(0,1).toLowerCase()+entity.class.simpleName.subString(1)}Detail"
+					<p:button id="#{resultsId}editlink" outcome="notificationDetail"
 						icon="ui-icon-document">
-						<f:param name="#{objectIdParamName}" value="#{entity.id}" />
+						<f:param name="objectId" value="#{entity.id}" />
 						<f:param name="edit" value="true" />
 					</p:button>
 			
@@ -72,7 +73,7 @@
 							<p:commandButton id="deleteKo" value="#{messages['commons.no']}"
 								onclick="confirmDeleteWidget.hide()" type="button" />
 						</p:panel>
-					</p:confirmDialog>
+					</p:confirmDialog> 
 			
 				</p:column>
 			</hftl:dataList>

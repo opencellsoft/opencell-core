@@ -1165,6 +1165,19 @@
 		</navigation-case>
 
 		<navigation-case>
+			<from-outcome>notificationDetail</from-outcome>
+			<to-view-id>/pages/notification/notificationDetail.xhtml
+			</to-view-id>
+			<redirect />
+		</navigation-case>
+
+		<navigation-case>
+			<from-outcome>notifications</from-outcome>
+			<to-view-id>/pages/notification/notifications.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+		
+		<navigation-case>
 			<from-outcome>webHookDetail</from-outcome>
 			<to-view-id>/pages/notification/webHookDetail.xhtml</to-view-id>
 			<redirect />

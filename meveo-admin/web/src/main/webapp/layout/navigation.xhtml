@@ -604,22 +604,23 @@
 
 			<p:menuitem id="charts" value="#{messages['menu.charts']}"
 				outcome="charts" />
-
-
-			<p:menuitem id="webHooks" value="#{messages['menu.webHooks']}"
-				outcome="webHooks" />
-
-			<p:menuitem id="emailNotifications"
-				value="#{messages['menu.emailNotifications']}"
-				outcome="emailNotifications" />
-
-
-			<p:menuitem id="imNotifications"
-				value="#{messages['menu.instantMessagingNotifications']}"
-				outcome="instantMessagingNotifications" />
-
-
-
+			<p:submenu id="notifications" label="#{messages['menu.notifications']}"
+						outcome="notifications">
+					<p:menuitem id="internalNotifications"
+						value="#{messages['menu.notifications']}"
+						outcome="notifications" />
+		
+					<p:menuitem id="webHooks" value="#{messages['menu.webHooks']}"
+						outcome="webHooks" />
+		
+					<p:menuitem id="emailNotifications"
+						value="#{messages['menu.emailNotifications']}"
+						outcome="emailNotifications" />
+		
+					<p:menuitem id="imNotifications"
+						value="#{messages['menu.instantMessagingNotifications']}"
+						outcome="instantMessagingNotifications" />
+			</p:submenu>
 		</p:submenu>
 
 		<!-- 

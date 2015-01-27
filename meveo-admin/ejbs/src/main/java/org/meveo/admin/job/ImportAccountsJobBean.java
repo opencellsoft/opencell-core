@@ -65,11 +65,13 @@ public class ImportAccountsJobBean {
 	int nbBillingAccountsWarning;
 	int nbBillingAccountsIgnored;
 	int nbBillingAccountsCreated;
+	int nbBillingAccountsUpdated;
 
 	int nbUserAccounts;
 	int nbUserAccountsError;
 	int nbUserAccountsWarning;
 	int nbUserAccountsIgnored;
+	int nbUserAccountsUpdated;
 	int nbUserAccountsCreated;
 	AccountImportHisto accountImportHisto;
 
@@ -150,11 +152,13 @@ public class ImportAccountsJobBean {
 		nbBillingAccountsWarning = 0;
 		nbBillingAccountsIgnored = 0;
 		nbBillingAccountsCreated = 0;
+		nbBillingAccountsUpdated = 0;
 
 		nbUserAccounts = 0;
 		nbUserAccountsError = 0;
 		nbUserAccountsWarning = 0;
 		nbUserAccountsIgnored = 0;
+		nbUserAccountsUpdated = 0;
 		nbUserAccountsCreated = 0;
 		accountImportHisto = new AccountImportHisto();
 
@@ -180,44 +184,47 @@ public class ImportAccountsJobBean {
 			nbUserAccounts += billAccount.getUserAccounts().getUserAccount().size();
 		}
 
-		for (org.meveo.model.jaxb.account.BillingAccount billAccount : billingAccounts.getBillingAccount()) {
+		for (org.meveo.model.jaxb.account.BillingAccount billingAccountDto : billingAccounts.getBillingAccount()) {
 			i++;
 			int j = -1;
 			org.meveo.model.billing.BillingAccount billingAccount = null;
 			try {
 				try {
-					billingAccount = billingAccountService.findByCode(billAccount.getCode(), provider);
+					billingAccount = billingAccountService.findByCode(billingAccountDto.getCode(), provider);
 					if (billingAccount == null) {
-						billingAccount = accountImportService.importBillingAccount(billAccount, provider, currentUser);
+						billingAccount = accountImportService.importBillingAccount(billingAccountDto, provider,
+								currentUser);
 						log.info("file6:" + fileName + ", typeEntity:BillingAccount, index:" + i + ", code:"
-								+ billAccount.getCode() + ", status:Created");
+								+ billingAccountDto.getCode() + ", status:Created");
 						nbBillingAccountsCreated++;
 					} else {
 						log.info("file1:" + fileName + ", typeEntity:BillingAccount, index:" + i + ", code:"
-								+ billAccount.getCode() + ", status:Ignored");
-						nbBillingAccountsIgnored++;
+								+ billingAccountDto.getCode() + ", status:Updated");
+						billingAccount = accountImportService.updateBillingAccount(billingAccountDto, provider,
+								currentUser);
+						nbBillingAccountsUpdated++;
 					}
 				} catch (ImportWarningException w) {
-					createBillingAccountWarning(billAccount, w.getMessage());
+					createBillingAccountWarning(billingAccountDto, w.getMessage());
 					nbBillingAccountsWarning++;
 					log.info("file5:" + fileName + ", typeEntity:BillingAccount,  index:" + i + " code:"
-							+ billAccount.getCode() + ", status:Warning");
-
+							+ billingAccountDto.getCode() + ", status:Warning");
 				} catch (BusinessException e) {
-					createBillingAccountError(billAccount, e.getMessage());
+					createBillingAccountError(billingAccountDto, e.getMessage());
 					nbBillingAccountsError++;
 					log.info("file2:" + fileName + ", typeEntity:BillingAccount, index:" + i + ", code:"
-							+ billAccount.getCode() + ", status:Error");
+							+ billingAccountDto.getCode() + ", status:Error");
 				}
 			} catch (Exception e) {
-				createBillingAccountError(billAccount, ExceptionUtils.getRootCause(e).getMessage());
+				createBillingAccountError(billingAccountDto, ExceptionUtils.getRootCause(e).getMessage());
 				nbBillingAccountsError++;
 				log.info("file7:" + fileName + ", typeEntity:BillingAccount, index:" + i + ", code:"
-						+ billAccount.getCode() + ", status:Error");
+						+ billingAccountDto.getCode() + ", status:Error");
 				log.error(e.getMessage());
 			}
 
-			for (org.meveo.model.jaxb.account.UserAccount uAccount : billAccount.getUserAccounts().getUserAccount()) {
+			for (org.meveo.model.jaxb.account.UserAccount uAccount : billingAccountDto.getUserAccounts()
+					.getUserAccount()) {
 				j++;
 				UserAccount userAccount = null;
 				log.debug("userAccount found code:" + uAccount.getCode());
@@ -229,24 +236,26 @@ public class ImportAccountsJobBean {
 				}
 
 				if (userAccount != null) {
-					nbUserAccountsIgnored++;
+					nbUserAccountsUpdated++;
 					log.info("file:" + fileName + ", typeEntity:UserAccount,  indexBillingAccount:" + i + ", index:"
-							+ j + " code:" + uAccount.getCode() + ", status:Ignored");
+							+ j + " code:" + uAccount.getCode() + ", status:Updated");
+					accountImportService.updateUserAccount(billingAccount, billingAccountDto, uAccount, provider,
+							currentUser);
 				} else {
 					try {
-						accountImportService.importUserAccount(billingAccount, billAccount, uAccount, provider,
+						accountImportService.importUserAccount(billingAccount, billingAccountDto, uAccount, provider,
 								currentUser);
 						log.info("file:" + fileName + ", typeEntity:UserAccount,  indexBillingAccount:" + i
 								+ ", index:" + j + " code:" + uAccount.getCode() + ", status:Created");
 						nbUserAccountsCreated++;
 					} catch (ImportWarningException w) {
-						createUserAccountWarning(billAccount, uAccount, w.getMessage());
+						createUserAccountWarning(billingAccountDto, uAccount, w.getMessage());
 						nbUserAccountsWarning++;
 						log.info("file:" + fileName + ", typeEntity:UserAccount,  indexBillingAccount:" + i
 								+ ", index:" + j + " code:" + uAccount.getCode() + ", status:Warning");
 
 					} catch (BusinessException e) {
-						createUserAccountError(billAccount, uAccount, e.getMessage());
+						createUserAccountError(billingAccountDto, uAccount, e.getMessage());
 						nbUserAccountsError++;
 						log.info("file:" + fileName + ", typeEntity:UserAccount,  indexBillingAccount:" + i
 								+ ", index:" + j + " code:" + uAccount.getCode() + ", status:Error");
@@ -254,8 +263,10 @@ public class ImportAccountsJobBean {
 				}
 			}
 		}
+
 		generateReport(fileName, provider);
 		createHistory(provider, currentUser);
+
 		log.info("end import file ");
 	}
 

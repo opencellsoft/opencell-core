@@ -1,4 +1,4 @@
-package org.meveo.admin.job;
+package org.meveo.admin.parse.csv;
 
 import java.io.File;
 import java.io.Serializable;
@@ -12,6 +12,7 @@ import java.util.Date;
 
 import javax.inject.Named;
 
+import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.BaseEntity;
 import org.meveo.service.medina.impl.CSVCDRParser;
 import org.meveo.service.medina.impl.EDRDAO;
@@ -20,15 +21,18 @@ import org.meveo.service.medina.impl.InvalidFormatException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * @author Edward P. Legaspi To test CdrParserProducer uncomment @CdrParser
+ *         annotation.
+ **/
 @Named
-public class MEVEOCdrParser implements CSVCDRParser {
+// @CdrParser
+public class CustomCdrParser implements CSVCDRParser {
 
 	private static Logger log = LoggerFactory.getLogger(MEVEOCdrParser.class);
 
-	static SimpleDateFormat sdf1 = new SimpleDateFormat(
-			"yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-	static SimpleDateFormat sdf2 = new SimpleDateFormat(
-			"yyyy-MM-dd'T'HH:mm:ss'Z'");
+	static SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+	static SimpleDateFormat sdf2 = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
 
 	static MessageDigest messageDigest = null;
 	static {
@@ -50,25 +54,34 @@ public class MEVEOCdrParser implements CSVCDRParser {
 		public String param4;
 
 		public String toString() {
-			return sdf1.format(new Date(timestamp)) + ";" + quantity + ";"
-					+ access_id + ";" + param1 + ";" + param2 + ";" + param3
-					+ ";" + param4;
+			return sdf1.format(new Date(timestamp)) + ";" + quantity + ";" + access_id + ";" + param1 + ";" + param2
+					+ ";" + param3 + ";" + param4;
 
 		}
 	}
 
-	String batchName;
-	long fileDate;
+	private String batchName;
+	private String originBatch;
+	private String username;
 
 	@Override
 	public void init(File CDRFile) {
 		batchName = "CDR_" + CDRFile.getName();
-		fileDate = CDRFile.lastModified();
+	}
+
+	@Override
+	public void initByApi(String username, String ip) {
+		originBatch = "API_" + ip;
+		this.username = username;
 	}
 
 	@Override
 	public String getOriginBatch() {
-		return batchName == null ? "CDR_CONS_CSV" : batchName;
+		if (StringUtils.isBlank(originBatch)) {
+			return batchName == null ? "CDR_CONS_CSV" : batchName;
+		} else {
+			return originBatch;
+		}
 	}
 
 	@Override
@@ -79,8 +92,7 @@ public class MEVEOCdrParser implements CSVCDRParser {
 			if (fields.length == 0) {
 				throw new InvalidFormatException(line, "record empty");
 			} else if (fields.length < 4) {
-				throw new InvalidFormatException(line, "only " + fields.length
-						+ " in the record");
+				throw new InvalidFormatException(line, "only " + fields.length + " in the record");
 			} else {
 				try {
 					cdr.timestamp = sdf1.parse(fields[0]).getTime();
@@ -118,27 +130,32 @@ public class MEVEOCdrParser implements CSVCDRParser {
 
 	@Override
 	public String getOriginRecord(Serializable object) {
-		CDR cdr = (CDR) object;
-		String result = cdr.toString();
-		if (messageDigest != null) {
-			synchronized (messageDigest) {
-				messageDigest.reset();
-				messageDigest.update(result.getBytes(Charset.forName("UTF8")));
-				final byte[] resultByte = messageDigest.digest();
-				StringBuffer sb = new StringBuffer();
-				for (int i = 0; i < resultByte.length; ++i) {
-					sb.append(Integer.toHexString(
-							(resultByte[i] & 0xFF) | 0x100).substring(1, 3));
+		String result = null;
+		if (StringUtils.isBlank(username)) {
+			CDR cdr = (CDR) object;
+			result = cdr.toString();
+
+			if (messageDigest != null) {
+				synchronized (messageDigest) {
+					messageDigest.reset();
+					messageDigest.update(result.getBytes(Charset.forName("UTF8")));
+					final byte[] resultByte = messageDigest.digest();
+					StringBuffer sb = new StringBuffer();
+					for (int i = 0; i < resultByte.length; ++i) {
+						sb.append(Integer.toHexString((resultByte[i] & 0xFF) | 0x100).substring(1, 3));
+					}
+					result = sb.toString();
 				}
-				result = sb.toString();
 			}
+		} else {
+			return username + "_" + new Date().getTime();
 		}
+
 		return result;
 	}
 
 	@Override
-	public String getAccessUserId(Serializable cdr)
-			throws InvalidAccessException {
+	public String getAccessUserId(Serializable cdr) throws InvalidAccessException {
 		String result = ((CDR) cdr).access_id;
 		if (result == null || result.trim().length() == 0) {
 			throw new InvalidAccessException(cdr);
@@ -157,8 +174,7 @@ public class MEVEOCdrParser implements CSVCDRParser {
 		result.setEventDate(new Date(cdr.timestamp));
 		result.setOriginBatch(getOriginBatch());
 		result.setOriginRecord(getOriginRecord(object));
-		result.setQuantity(cdr.quantity.setScale(BaseEntity.NB_DECIMALS,
-				RoundingMode.HALF_UP));
+		result.setQuantity(cdr.quantity.setScale(BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP));
 		result.setParameter1(cdr.param1);
 		result.setParameter2(cdr.param2);
 		result.setParameter3(cdr.param3);

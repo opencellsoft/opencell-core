@@ -152,6 +152,9 @@ public class DefaultObserver {
 					webHookNotifier.sendRequest((WebHook) notif, e);
 				} else if(notif instanceof InstantMessagingNotification){
 					imNotifier.sendInstantMessage((InstantMessagingNotification) notif, e);
+				}  if(notif.getEventTypeFilter()==NotificationEventTypeEnum.INBOUND_REQ){
+					NotificationHistory histo=notificationHistoryService.create(notif, e, "", NotificationHistoryStatusEnum.SENT);
+					((InboundRequest)e).add(histo);
 				}
 			}
 		} catch (BusinessException e1) {

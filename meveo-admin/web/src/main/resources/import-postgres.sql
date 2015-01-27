@@ -1088,12 +1088,14 @@ DROP SEQUENCE IF EXISTS BILLING_SUB_TERM_REASON_SEQ;
 CREATE SEQUENCE BILLING_SUB_TERM_REASON_SEQ start with 4 increment by 1;
 
 --Wallet templates
-INSERT INTO cat_wallet_template(id, version, disabled, created, updated, code, description, consumption_alert_set, fast_rating_level, wallet_type, provider_id, creator_id, updater_id)  VALUES (1, 0, false, now(), null, 'PRINCIPAL', 'principal postpaid wallet', false, 0,  'POSTPAID', 1, 1, null);
+INSERT INTO cat_wallet_template(id, version, disabled, created, updated, code, description, consumption_alert_set, fast_rating_level, wallet_type, provider_id, creator_id, updater_id)  VALUES (1, 0, false, now(), null, 'PRINCIPAL', 'principal postpaid wallet', false, 0,  'POSTPAID', 1, 1, null); 
 DROP SEQUENCE IF EXISTS cat_wallet_template_SEQ;
 CREATE SEQUENCE cat_wallet_template_SEQ start with 3 increment by 1;
 
 DROP SEQUENCE IF EXISTS cat_service_template_SEQ;
 CREATE SEQUENCE cat_service_template_SEQ start with 2 increment by 1;
+INSERT INTO cat_offer_template (id, version, disabled, created, code, description, provider_id, creator_id) VALUES (1, 0, false, now(), 'OF_DEF', 'Default Offer', 1, 1);
+
 
 INSERT INTO CAT_OFFER_SERV_TEMPLATES (offer_template_id, service_template_id) values (1, 1);
 
@@ -1131,8 +1133,7 @@ INSERT INTO CAT_SERV_USAGE_WALLET_TEMPLATE (service_usage_templt_id, wallet_temp
 INSERT INTO CAT_SERV_USAGE_WALLET_TEMPLATE (service_usage_templt_id, wallet_template_id, indx)  VALUES (1, 1, 1);
 
 --Billing Wallet instance
-insert into BILLING_WALLET_INSTANCE (id, version, disabled, created, code, provider_id, creator_id, user_account_id,CAT_WALLET_TEMPLATE_ID) values (1, 0, false, now(), 'PRINCIPAL', 1, 1, 4,1);
-insert into BILLING_WALLET_INSTANCE (id, version, disabled, created, code, provider_id, creator_id, user_account_id,CAT_WALLET_TEMPLATE_ID) values (2, 0, false, now(), 'PREPAID', 1, 1, 4,2);
+insert into BILLING_WALLET_INSTANCE (id, version, disabled, created, code, provider_id, creator_id, user_account_id,CAT_WALLET_TEMPLATE_ID) values (1, 0, false, now(), 'PRINCIPAL', 1, 1, 4,1); 
 
 DROP SEQUENCE IF EXISTS billing_wallet_instance_SEQ;
 CREATE SEQUENCE billing_wallet_instance_SEQ start with 3 increment by 1;
