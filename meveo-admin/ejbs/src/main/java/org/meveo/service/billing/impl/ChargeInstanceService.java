@@ -17,8 +17,8 @@
 package org.meveo.service.billing.impl;
 
 import java.util.Date;
+import java.util.List;
 
-import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
@@ -35,14 +35,19 @@ import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.SubscriptionStatusEnum;
 import org.meveo.model.catalog.RecurringChargeTemplate;
+import org.meveo.model.catalog.ServiceChargeTemplateRecurring;
+import org.meveo.model.catalog.WalletTemplate;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.catalog.impl.RecurringChargeTemplateService;
 
 @Stateless
 public class ChargeInstanceService<P extends ChargeInstance> extends
 		BusinessService<P> {
+	
+	@Inject
+	private UserAccountService userAccountService;
 
-	@EJB
+	@Inject
 	private RecurringChargeInstanceService recurringChargeInstanceService;
 
 	@Inject
@@ -92,6 +97,7 @@ public class ChargeInstanceService<P extends ChargeInstance> extends
 					+ serviceInst.getCode());
 		}
 		String chargeCode = recurringChargeTemplate.getCode();
+				
 		RecurringChargeInstance chargeInst = (RecurringChargeInstance) recurringChargeInstanceService
 				.findByCodeAndService(chargeCode, serviceInst.getId());
 
@@ -116,6 +122,18 @@ public class ChargeInstanceService<P extends ChargeInstance> extends
 		chargeInstance.setCurrency(serviceInst.getSubscription()
 				.getUserAccount().getBillingAccount().getCustomerAccount()
 				.getTradingCurrency());
+		
+		ServiceChargeTemplateRecurring recChTmplServ = serviceInst.getServiceTemplate().getServiceRecurringChargeByChargeCode(chargeCode);
+		List<WalletTemplate> walletTemplates = recChTmplServ.getWalletTemplates();
+		if(walletTemplates!=null && walletTemplates.size()>0){
+			for(WalletTemplate walletTemplate:walletTemplates){
+				chargeInstance.getWalletInstances().add(userAccountService.getWalletInstance(serviceInst.getSubscription()
+						.getUserAccount(),walletTemplate,serviceInst.getAuditable().getCreator(),serviceInst.getProvider()));
+			}
+		} else {
+			chargeInstance.getWalletInstances().add(serviceInst.getSubscription()
+				.getUserAccount().getWallet());
+		}
 
 		recurringChargeInstanceService.create(chargeInstance, creator,
 				recurringChargeTemplate.getProvider());
@@ -166,7 +184,17 @@ public class ChargeInstanceService<P extends ChargeInstance> extends
 		chargeInstance.setCurrency(serviceInst.getSubscription()
 				.getUserAccount().getBillingAccount().getCustomerAccount()
 				.getTradingCurrency());
-
+		ServiceChargeTemplateRecurring recChTmplServ = serviceInst.getServiceTemplate().getServiceRecurringChargeByChargeCode(chargeCode);
+		List<WalletTemplate> walletTemplates = recChTmplServ.getWalletTemplates();
+		if(walletTemplates!=null && walletTemplates.size()>0){
+			for(WalletTemplate walletTemplate:walletTemplates){
+				chargeInstance.getWalletInstances().add(userAccountService.getWalletInstance(serviceInst.getSubscription()
+						.getUserAccount(),walletTemplate,serviceInst.getAuditable().getCreator(),serviceInst.getProvider()));
+			}
+		} else {
+			chargeInstance.getWalletInstances().add(serviceInst.getSubscription()
+				.getUserAccount().getWallet());
+		}
 		recurringChargeInstanceService.create(chargeInstance, creator,
 				recurringChargeTemplate.getProvider());
 	}

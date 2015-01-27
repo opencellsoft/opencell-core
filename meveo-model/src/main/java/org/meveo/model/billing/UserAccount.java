@@ -192,4 +192,12 @@ public class UserAccount extends AccountEntity {
 		this.terminationReason = terminationReason;
 	}
 
+	public WalletInstance getWalletInstance(String walletCode) {
+		WalletInstance result=wallet;
+		if(!"PRINCIPAL".equals(walletCode) && prepaidWallets.containsKey(walletCode)){
+			result=prepaidWallets.get(walletCode);
+		}
+		return result;
+	}
+
 }

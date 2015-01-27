@@ -138,6 +138,7 @@ public class ReservationService extends PersistenceService<Reservation> {
 							+ seller.getCode());
 		}
 
+		//TODO: implement prepaid wallets
 		WalletInstance wallet = walletService
 				.findByUserAccount(em, userAccount);
 

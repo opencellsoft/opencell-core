@@ -21,16 +21,12 @@ import java.util.List;
 
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
 import org.meveo.model.BusinessEntity;
-import org.meveo.model.billing.ServiceInstance;
 
 @Entity
 @Table(name = "CAT_SERVICE_TEMPLATE", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE", "PROVIDER_ID" }))
@@ -51,6 +47,17 @@ public class ServiceTemplate extends BusinessEntity {
 	@OneToMany(mappedBy = "serviceTemplate", fetch = FetchType.LAZY)
 	private List<ServiceChargeTemplateUsage> serviceUsageCharges = new ArrayList<ServiceChargeTemplateUsage>();
 
+	
+	public ServiceChargeTemplateRecurring getServiceRecurringChargeByChargeCode(String chargeCode){
+		ServiceChargeTemplateRecurring result=null;
+		for(ServiceChargeTemplateRecurring sctr:serviceRecurringCharges){
+			if(sctr.getChargeTemplate().getCode().equals(chargeCode)){
+				result = sctr;
+				break;
+			}
+		}
+		return result;
+	}
 	 
 	public List<ServiceChargeTemplateRecurring> getServiceRecurringCharges() {
 		return serviceRecurringCharges;
@@ -61,6 +68,17 @@ public class ServiceTemplate extends BusinessEntity {
 		this.serviceRecurringCharges = serviceRecurringCharges;
 	}
 
+	public ServiceChargeTemplateSubscription getServiceChargeTemplateSubscriptionByChargeCode(String chargeCode){
+		ServiceChargeTemplateSubscription result=null;
+		for(ServiceChargeTemplateSubscription sctr:serviceSubscriptionCharges){
+			if(sctr.getChargeTemplate().getCode().equals(chargeCode)){
+				result = sctr;
+				break;
+			}
+		}
+		return result;
+	}
+	
 	public List<ServiceChargeTemplateSubscription> getServiceSubscriptionCharges() {
 		return serviceSubscriptionCharges;
 	}
@@ -71,6 +89,17 @@ public class ServiceTemplate extends BusinessEntity {
 		this.serviceSubscriptionCharges = serviceSubscriptionCharges;
 	}
 
+	public ServiceChargeTemplateTermination getServiceChargeTemplateTerminationByChargeCode(String chargeCode){
+		ServiceChargeTemplateTermination result=null;
+		for(ServiceChargeTemplateTermination sctr:serviceTerminationCharges){
+			if(sctr.getChargeTemplate().getCode().equals(chargeCode)){
+				result = sctr;
+				break;
+			}
+		}
+		return result;
+	}
+	
 	public List<ServiceChargeTemplateTermination> getServiceTerminationCharges() {
 		return serviceTerminationCharges;
 	}
@@ -81,6 +110,18 @@ public class ServiceTemplate extends BusinessEntity {
 		this.serviceTerminationCharges = serviceTerminationCharges;
 	}
 
+
+	public ServiceChargeTemplateUsage getServiceChargeTemplateUsageByChargeCode(String chargeCode){
+		ServiceChargeTemplateUsage result=null;
+		for(ServiceChargeTemplateUsage sctr:serviceUsageCharges){
+			if(sctr.getChargeTemplate().getCode().equals(chargeCode)){
+				result = sctr;
+				break;
+			}
+		}
+		return result;
+	}
+	
 	public List<ServiceChargeTemplateUsage> getServiceUsageCharges() {
 		return serviceUsageCharges;
 	}

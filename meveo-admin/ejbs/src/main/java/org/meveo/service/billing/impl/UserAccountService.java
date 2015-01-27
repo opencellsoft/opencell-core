@@ -39,6 +39,7 @@ import org.meveo.model.billing.SubscriptionTerminationReason;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.billing.WalletInstance;
 import org.meveo.model.catalog.WalletTemplate;
+import org.meveo.model.crm.Provider;
 import org.meveo.service.base.AccountService;
 
 @Stateless
@@ -197,6 +198,24 @@ public class UserAccountService extends AccountService<UserAccount> {
 		} catch (NoResultException e) {
 			log.warn(e.getMessage());
 			return null;
+		}
+	}
+	
+	public WalletInstance getWalletInstance(UserAccount userAccount,WalletTemplate walletTemplate,  User creator ,Provider provider){
+		String walletCode = walletTemplate.getCode();
+		if(!WalletTemplate.PRINCIPAL.equals(walletCode)){
+			if(!userAccount.getPrepaidWallets().containsKey(walletCode)){
+				WalletInstance wallet = new WalletInstance();
+				wallet.setCode(walletCode);
+				wallet.setWalletTemplate(walletTemplate);
+				wallet.setUserAccount(userAccount);
+				walletService.create( wallet, creator, provider);
+				userAccount.getPrepaidWallets().put(walletCode,wallet);
+			}
+			return userAccount.getPrepaidWallets().get(walletCode);
+		} 
+		else {
+			return userAccount.getWallet();
 		}
 	}
 

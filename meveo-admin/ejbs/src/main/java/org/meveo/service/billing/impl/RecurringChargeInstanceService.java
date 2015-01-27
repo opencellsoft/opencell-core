@@ -32,6 +32,8 @@ import org.meveo.model.billing.InstanceStatusEnum;
 import org.meveo.model.billing.RecurringChargeInstance;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.catalog.RecurringChargeTemplate;
+import org.meveo.model.catalog.ServiceChargeTemplateRecurring;
+import org.meveo.model.catalog.WalletTemplate;
 
 @Stateless
 public class RecurringChargeInstanceService extends
@@ -92,7 +94,10 @@ public class RecurringChargeInstanceService extends
 				.getBillingAccount().getTradingCountry());
 		recurringChargeInstance.setCurrency(subscription.getUserAccount()
 				.getBillingAccount().getCustomerAccount().getTradingCurrency());
-
+		//TODO : should choose wallet from GUI
+		recurringChargeInstance.getWalletInstances().add(subscription
+				.getUserAccount().getWallet());
+		
 		create(recurringChargeInstance, creator, chargetemplate.getProvider());
 
 		chargeApplicationService.recurringWalletOperation(subscription,

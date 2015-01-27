@@ -60,13 +60,16 @@ import org.meveo.service.payments.impl.CustomerAccountService;
 @Stateless
 public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 
-	@EJB
+	@Inject
+	private UserAccountService userAccountService;
+	
+	@Inject
 	private SubscriptionService subscriptionService;
 
-	@EJB
+	@Inject
 	private RecurringChargeInstanceService recurringChargeInstanceService;
 
-	@EJB
+	@Inject
 	private ChargeInstanceService<ChargeInstance> chargeInstanceService;
 
 	@Inject
@@ -109,23 +112,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 
 		return chargeInstance;
 	}
-	
-	public WalletInstance getWalletInstance(UserAccount userAccount, String walletCode,WalletTemplate walletTemplate,  User creator ,Provider provider){
-		if(!WalletTemplate.PRINCIPAL.equals(walletCode)){
-			if(!userAccount.getPrepaidWallets().containsKey(walletCode)){
-				WalletInstance wallet = new WalletInstance();
-				wallet.setCode(walletCode);
-				wallet.setWalletTemplate(walletTemplate);
-				wallet.setUserAccount(userAccount);
-				walletService.create( wallet, creator, provider);
-				userAccount.getPrepaidWallets().put(walletCode,wallet);
-			}
-			return userAccount.getPrepaidWallets().get(walletCode);
-		} 
-		else {
-			return userAccount.getWallet();
-		}
-	}
+
 
 	public void serviceInstanciation(ServiceInstance serviceInstance, User creator)
 			throws IncorrectSusbcriptionException, IncorrectServiceInstanceException, BusinessException {
@@ -179,7 +166,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 			serviceInstance.getRecurringChargeInstances().add(chargeInstance);
 			if(serviceChargeTemplate.getWalletTemplates().size()!=0){
 				for(WalletTemplate walletTemplate:serviceChargeTemplate.getWalletTemplates()){
-					WalletInstance walletInstance=getWalletInstance(userAccount,walletTemplate.getCode(),walletTemplate,creator,subscription.getProvider());
+					WalletInstance walletInstance=userAccountService.getWalletInstance(userAccount,walletTemplate,creator,subscription.getProvider());
 					chargeInstance.getWalletInstances().add(walletInstance);
 				}
 			}
@@ -195,7 +182,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 			serviceInstance.getSubscriptionChargeInstances().add(chargeInstance);
 			if(serviceChargeTemplate.getWalletTemplates().size()!=0){
 				for(WalletTemplate walletTemplate:serviceChargeTemplate.getWalletTemplates()){
-					WalletInstance walletInstance=getWalletInstance(userAccount,walletTemplate.getCode(),walletTemplate,creator,subscription.getProvider());
+					WalletInstance walletInstance=userAccountService.getWalletInstance(userAccount,walletTemplate,creator,subscription.getProvider());
 					chargeInstance.getWalletInstances().add(walletInstance);
 				}
 			}
@@ -212,7 +199,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 			serviceInstance.getTerminationChargeInstances().add(chargeInstance);
 			if(serviceChargeTemplate.getWalletTemplates().size()!=0){
 				for(WalletTemplate walletTemplate:serviceChargeTemplate.getWalletTemplates()){
-					WalletInstance walletInstance=getWalletInstance(userAccount,walletTemplate.getCode(),walletTemplate,creator,subscription.getProvider());
+					WalletInstance walletInstance=userAccountService.getWalletInstance(userAccount,walletTemplate,creator,subscription.getProvider());
 					chargeInstance.getWalletInstances().add(walletInstance);
 				}
 			}
@@ -228,7 +215,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 			serviceInstance.getUsageChargeInstances().add(chargeInstance);
 			if(serviceUsageChargeTemplate.getWalletTemplates().size()!=0){
 				for(WalletTemplate walletTemplate:serviceUsageChargeTemplate.getWalletTemplates()){
-					WalletInstance walletInstance=getWalletInstance(userAccount,walletTemplate.getCode(),walletTemplate,creator,subscription.getProvider());
+					WalletInstance walletInstance=userAccountService.getWalletInstance(userAccount,walletTemplate,creator,subscription.getProvider());
 					chargeInstance.getWalletInstances().add(walletInstance);
 				}
 			}
