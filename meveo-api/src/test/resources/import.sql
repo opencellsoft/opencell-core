@@ -1168,3 +1168,16 @@ insert into crm_customer (id, CUSTOMER_CATEGORY_ID, CUSTOMER_BRAND_ID, SELLER_ID
 insert into AR_CUSTOMER_ACCOUNT (id, CUSTOMER_ID, TRADING_CURRENCY_ID, STATUS) values (2, 1, 1, 'ACTIVE');
 insert into BILLING_BILLING_ACCOUNT (id, CUSTOMER_ACCOUNT_ID, BILLING_CYCLE, TRADING_COUNTRY_ID, TRADING_language_ID) values (3, 2, 1, 1, 1);
 insert into BILLING_USER_ACCOUNT (id, BILLING_ACCOUNT_ID) values (4, 3);
+
+insert into cat_wallet_template (id, version, disabled, created, code, description, FAST_RATING_LEVEL, wallet_type, provider_id) values (1, 0, false, now(), 'POSTPAID_WALLET', 'Post Paid Wallet', 1, 'POSTPAID', 1, CONSUMPTION_ALERT_SET, true);
+insert into cat_wallet_template (id, version, disabled, created, code, description, FAST_RATING_LEVEL, wallet_type, provider_id) values (2, 0, false, now(), 'PREPAID_WALLET', 'Prepaid Wallet', 1, 'PREPAID', 1, CONSUMPTION_ALERT_SET, true);
+
+DROP SEQUENCE IF EXISTS CAT_WALLET_TEMPLATE_SEQ;
+CREATE SEQUENCE CAT_WALLET_TEMPLATE_SEQ start with 3 increment by 1;
+
+insert into CAT_SERV_REC_CHARGE_TEMPLATE (id, version, provider_id, charge_template_id, service_template_id) values (1, 0, 1, 1, 1);
+insert into CAT_SERV_SUB_CHARGE_TEMPLATE (id, version, provider_id, charge_template_id, service_template_id) values (1, 0, 1, 2, 1);
+insert into CAT_SERV_USAGE_CHARGE_TEMPLATE (id, version, provider_id, charge_template_id, service_template_id) values (1, 0, 1, 3, 1);
+
+DROP SEQUENCE IF EXISTS CAT_CHARGE_TEMPLATE_SEQ;
+CREATE SEQUENCE CAT_CHARGE_TEMPLATE_SEQ start with 4 increment by 1;

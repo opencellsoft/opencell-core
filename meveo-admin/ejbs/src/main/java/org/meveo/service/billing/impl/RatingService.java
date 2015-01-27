@@ -9,6 +9,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.PostConstruct;
+import javax.annotation.Resource;
 import javax.ejb.Stateless;
 import javax.el.ArrayELResolver;
 import javax.el.BeanELResolver;
@@ -26,6 +28,8 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
+import org.infinispan.api.BasicCache;
+import org.infinispan.manager.CacheContainer;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.NumberUtils;
 import org.meveo.commons.utils.StringUtils;
@@ -75,11 +79,25 @@ public class RatingService {
 	private SubscriptionService subscriptionService;
 
 	private static boolean isPricePlanDirty;
-	private static HashMap<String, HashMap<String, List<PricePlanMatrix>>> allPricePlan;
 	private static boolean isDiscountPlanDirty;
-	private static HashMap<String, HashMap<String, List<DiscountPlanMatrix>>> allDiscountPlan;
 
 	private static final BigDecimal HUNDRED = new BigDecimal("100");
+
+	@Resource(name = "java:jboss/infinispan/container/meveo")
+	private CacheContainer meveoContainer;
+
+	private static BasicCache<String, HashMap<String, List<PricePlanMatrix>>> allPricePlan;
+	private static BasicCache<String, HashMap<String, List<DiscountPlanMatrix>>> allDiscountPlan;
+
+	@PostConstruct
+	private void init() {
+		if (allPricePlan == null) {
+			allPricePlan = meveoContainer.getCache("meveo");
+		}
+		if (allDiscountPlan == null) {
+			allDiscountPlan = meveoContainer.getCache("meveo");
+		}
+	}
 
 	public static void setPricePlanDirty() {
 		isPricePlanDirty = true;
@@ -336,7 +354,7 @@ public class RatingService {
 		String providerCode = provider.getCode();
 
 		if (unitPriceWithoutTax == null) {
-			if (allPricePlan == null) {
+			if (allPricePlan.isEmpty()) {
 				loadPricePlan(em);
 			} else if (isPricePlanDirty) {
 				reloadPricePlan();
@@ -361,7 +379,7 @@ public class RatingService {
 				unitPriceWithTax = ratePrice.getAmountWithTax();
 			}
 
-			if (allDiscountPlan == null) {
+			if (allDiscountPlan.isEmpty()) {
 				loadDiscountPlan(em);
 			} else if (isDiscountPlanDirty) {
 				reloadDiscountPlan();
@@ -678,15 +696,14 @@ public class RatingService {
 	// a button to reload the priceplan)
 	@SuppressWarnings("unchecked")
 	protected void loadPricePlan(EntityManager em) {
-		HashMap<String, HashMap<String, List<PricePlanMatrix>>> result = new HashMap<String, HashMap<String, List<PricePlanMatrix>>>();
 		List<PricePlanMatrix> allPricePlans = (List<PricePlanMatrix>) em.createQuery(
 				"from PricePlanMatrix where disabled=false order by priority ASC").getResultList();
 		if (allPricePlans != null & allPricePlans.size() > 0) {
 			for (PricePlanMatrix pricePlan : allPricePlans) {
-				if (!result.containsKey(pricePlan.getProvider().getCode())) {
-					result.put(pricePlan.getProvider().getCode(), new HashMap<String, List<PricePlanMatrix>>());
+				if (!allPricePlan.containsKey(pricePlan.getProvider().getCode())) {
+					allPricePlan.put(pricePlan.getProvider().getCode(), new HashMap<String, List<PricePlanMatrix>>());
 				}
-				HashMap<String, List<PricePlanMatrix>> providerPricePlans = result.get(pricePlan.getProvider()
+				HashMap<String, List<PricePlanMatrix>> providerPricePlans = allPricePlan.get(pricePlan.getProvider()
 						.getCode());
 				if (!providerPricePlans.containsKey(pricePlan.getEventCode())) {
 					providerPricePlans.put(pricePlan.getEventCode(), new ArrayList<PricePlanMatrix>());
@@ -712,7 +729,8 @@ public class RatingService {
 				Collections.sort(chargePriceList);
 			}
 		}
-		allPricePlan = result;
+
+		log.info("loadPricePlan allPricePlan.size()=" + allPricePlan != null ? allPricePlan.size() + "" : null);
 	}
 
 	// synchronized to avoid different threads to reload the discountplan
@@ -734,16 +752,16 @@ public class RatingService {
 	// a button to reload the priceplan)
 	@SuppressWarnings("unchecked")
 	protected void loadDiscountPlan(EntityManager em) {
-		HashMap<String, HashMap<String, List<DiscountPlanMatrix>>> result = new HashMap<String, HashMap<String, List<DiscountPlanMatrix>>>();
 		List<DiscountPlanMatrix> allDiscountPlans = (List<DiscountPlanMatrix>) em.createQuery(
 				"from DiscountPlanMatrix where disabled=false").getResultList();
 		if (allDiscountPlans != null & allDiscountPlans.size() > 0) {
 			for (DiscountPlanMatrix discountPlan : allDiscountPlans) {
-				if (!result.containsKey(discountPlan.getProvider().getCode())) {
-					result.put(discountPlan.getProvider().getCode(), new HashMap<String, List<DiscountPlanMatrix>>());
+				if (!allDiscountPlan.containsKey(discountPlan.getProvider().getCode())) {
+					allDiscountPlan.put(discountPlan.getProvider().getCode(),
+							new HashMap<String, List<DiscountPlanMatrix>>());
 				}
-				HashMap<String, List<DiscountPlanMatrix>> providerDiscountPlans = result.get(discountPlan.getProvider()
-						.getCode());
+				HashMap<String, List<DiscountPlanMatrix>> providerDiscountPlans = allDiscountPlan.get(discountPlan
+						.getProvider().getCode());
 				if (!providerDiscountPlans.containsKey(discountPlan.getEventCode())) {
 					providerDiscountPlans.put(discountPlan.getEventCode(), new ArrayList<DiscountPlanMatrix>());
 				}
@@ -752,7 +770,6 @@ public class RatingService {
 				providerDiscountPlans.get(discountPlan.getEventCode()).add(discountPlan);
 			}
 		}
-		allDiscountPlan = result;
 	}
 
 	private boolean matchExpression(String expression, WalletOperation bareOperation, UserAccount ua)
@@ -906,4 +923,5 @@ public class RatingService {
 		}
 		return result;
 	}
+
 }
