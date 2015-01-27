@@ -1137,9 +1137,9 @@ insert into CAT_SERVICE_TEMPLATE (id, version, disabled, created, code, descript
 DROP SEQUENCE IF EXISTS CAT_SERVICE_TEMPLATE_SEQ;
 CREATE SEQUENCE CAT_SERVICE_TEMPLATE_SEQ start with 2 increment by 1;
 
-insert into CAT_SERV_RECCHARGE_TEMPLATES (service_template_id, charge_template_id) values (1, 1);
+/*insert into CAT_SERV_RECCHARGE_TEMPLATES (service_template_id, charge_template_id) values (1, 1);
 insert into CAT_SERV_ONECHARGE_S_TEMPLATES (service_template_id, charge_template_id) values (1, 2);
-insert into CAT_SERV_ONECHARGE_S_TEMPLATES (service_template_id, charge_template_id) values (1, 4);
+insert into CAT_SERV_ONECHARGE_S_TEMPLATES (service_template_id, charge_template_id) values (1, 4);*/
 
 insert into CAT_offer_TEMPLATE (id, version, disabled, created, code, description, provider_id) values (1, 0, false, now(), 'OFF1', 'OFF1', 1);
 
@@ -1169,8 +1169,8 @@ insert into AR_CUSTOMER_ACCOUNT (id, CUSTOMER_ID, TRADING_CURRENCY_ID, STATUS) v
 insert into BILLING_BILLING_ACCOUNT (id, CUSTOMER_ACCOUNT_ID, BILLING_CYCLE, TRADING_COUNTRY_ID, TRADING_language_ID) values (3, 2, 1, 1, 1);
 insert into BILLING_USER_ACCOUNT (id, BILLING_ACCOUNT_ID) values (4, 3);
 
-insert into cat_wallet_template (id, version, disabled, created, code, description, FAST_RATING_LEVEL, wallet_type, provider_id) values (1, 0, false, now(), 'POSTPAID_WALLET', 'Post Paid Wallet', 1, 'POSTPAID', 1, CONSUMPTION_ALERT_SET, true);
-insert into cat_wallet_template (id, version, disabled, created, code, description, FAST_RATING_LEVEL, wallet_type, provider_id) values (2, 0, false, now(), 'PREPAID_WALLET', 'Prepaid Wallet', 1, 'PREPAID', 1, CONSUMPTION_ALERT_SET, true);
+insert into cat_wallet_template (id, version, disabled, created, code, description, FAST_RATING_LEVEL, wallet_type, provider_id, CONSUMPTION_ALERT_SET) values (1, 0, false, now(), 'POSTPAID_WALLET', 'Post Paid Wallet', 1, 'POSTPAID', 1, true);
+insert into cat_wallet_template (id, version, disabled, created, code, description, FAST_RATING_LEVEL, wallet_type, provider_id, CONSUMPTION_ALERT_SET) values (2, 0, false, now(), 'PREPAID_WALLET', 'Prepaid Wallet', 1, 'PREPAID', 1, true);
 
 DROP SEQUENCE IF EXISTS CAT_WALLET_TEMPLATE_SEQ;
 CREATE SEQUENCE CAT_WALLET_TEMPLATE_SEQ start with 3 increment by 1;
@@ -1181,3 +1181,16 @@ insert into CAT_SERV_USAGE_CHARGE_TEMPLATE (id, version, provider_id, charge_tem
 
 DROP SEQUENCE IF EXISTS CAT_CHARGE_TEMPLATE_SEQ;
 CREATE SEQUENCE CAT_CHARGE_TEMPLATE_SEQ start with 4 increment by 1;
+
+insert into CAT_SERV_REC_WALLET_TEMPLATE (service_rec_templt_id, wallet_template_id, indx) values (1, 1, 1);
+insert into CAT_SERV_SUB_WALLET_TEMPLATE (service_sub_templt_id, wallet_template_id, indx) values (1, 1, 2);
+insert into CAT_SERV_USAGE_WALLET_TEMPLATE (service_usage_templt_id, wallet_template_id, indx) values (1, 1, 2);
+
+DROP SEQUENCE IF EXISTS CAT_SERV_RECCHRG_TEMPLT_SEQ;
+CREATE SEQUENCE CAT_SERV_RECCHRG_TEMPLT_SEQ start with 2 increment by 1;
+
+DROP SEQUENCE IF EXISTS CAT_SERV_SUBCHRG_TEMPLT_SEQ;
+CREATE SEQUENCE CAT_SERV_SUBCHRG_TEMPLT_SEQ start with 2 increment by 1;
+
+DROP SEQUENCE IF EXISTS CAT_SERV_USAGECHRG_TEMPLT_SEQ;
+CREATE SEQUENCE CAT_SERV_USAGECHRG_TEMPLT_SEQ start with 2 increment by 1;
