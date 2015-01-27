@@ -20,7 +20,6 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
-import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
@@ -33,7 +32,6 @@ import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.BillingAccount;
-import org.meveo.model.billing.ChargeInstance;
 import org.meveo.model.billing.InstanceStatusEnum;
 import org.meveo.model.billing.OneShotChargeInstance;
 import org.meveo.model.billing.RatedTransaction;
@@ -60,14 +58,14 @@ import org.meveo.service.payments.impl.CustomerAccountService;
 @Stateless
 public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 
-	@EJB
-	private SubscriptionService subscriptionService;
+	@Inject
+	private WalletService walletService;
+	
+	//@Inject
+	//private SubscriptionService subscriptionService;
 
-	@EJB
+	@Inject
 	private RecurringChargeInstanceService recurringChargeInstanceService;
-
-	@EJB
-	private ChargeInstanceService<ChargeInstance> chargeInstanceService;
 
 	@Inject
 	private OneShotChargeInstanceService oneShotChargeInstanceService;
@@ -84,8 +82,6 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 	@Inject
 	private RatedTransactionService ratedTransactionService;
 	
-	@EJB
-	private WalletService walletService;
 
 	public ServiceInstance findByCodeAndSubscription(String code, Subscription subscription) {
 		return findByCodeAndSubscription(getEntityManager(), code, subscription);
@@ -109,23 +105,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 
 		return chargeInstance;
 	}
-	
-	public WalletInstance getWalletInstance(UserAccount userAccount, String walletCode,WalletTemplate walletTemplate,  User creator ,Provider provider){
-		if(!WalletTemplate.PRINCIPAL.equals(walletCode)){
-			if(!userAccount.getPrepaidWallets().containsKey(walletCode)){
-				WalletInstance wallet = new WalletInstance();
-				wallet.setCode(walletCode);
-				wallet.setWalletTemplate(walletTemplate);
-				wallet.setUserAccount(userAccount);
-				walletService.create( wallet, creator, provider);
-				userAccount.getPrepaidWallets().put(walletCode,wallet);
-			}
-			return userAccount.getPrepaidWallets().get(walletCode);
-		} 
-		else {
-			return userAccount.getWallet();
-		}
-	}
+
 
 	public void serviceInstanciation(ServiceInstance serviceInstance, User creator)
 			throws IncorrectSusbcriptionException, IncorrectServiceInstanceException, BusinessException {
@@ -173,13 +153,13 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 		
 		for (ServiceChargeTemplate<RecurringChargeTemplate> serviceChargeTemplate : serviceTemplate
 				.getServiceRecurringCharges()) {
-			RecurringChargeInstance chargeInstance=chargeInstanceService.recurringChargeInstanciation(
+			RecurringChargeInstance chargeInstance=recurringChargeInstanceService.recurringChargeInstanciation(
 					serviceInstance, serviceChargeTemplate.getChargeTemplate(),
 					serviceInstance.getSubscriptionDate(), seller, creator);
 			serviceInstance.getRecurringChargeInstances().add(chargeInstance);
 			if(serviceChargeTemplate.getWalletTemplates().size()!=0){
 				for(WalletTemplate walletTemplate:serviceChargeTemplate.getWalletTemplates()){
-					WalletInstance walletInstance=getWalletInstance(userAccount,walletTemplate.getCode(),walletTemplate,creator,subscription.getProvider());
+					WalletInstance walletInstance=walletService.getWalletInstance(userAccount,walletTemplate,creator,subscription.getProvider());
 					chargeInstance.getWalletInstances().add(walletInstance);
 				}
 			}
@@ -191,11 +171,11 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 					serviceInstance.getSubscription(), serviceInstance,
 					serviceChargeTemplate.getChargeTemplate(),
 					serviceInstance.getSubscriptionDate(), subscriptionAmount,
-					null, 1, seller, creator);
+					null, 1, seller, creator,true);
 			serviceInstance.getSubscriptionChargeInstances().add(chargeInstance);
 			if(serviceChargeTemplate.getWalletTemplates().size()!=0){
 				for(WalletTemplate walletTemplate:serviceChargeTemplate.getWalletTemplates()){
-					WalletInstance walletInstance=getWalletInstance(userAccount,walletTemplate.getCode(),walletTemplate,creator,subscription.getProvider());
+					WalletInstance walletInstance=walletService.getWalletInstance(userAccount,walletTemplate,creator,subscription.getProvider());
 					chargeInstance.getWalletInstances().add(walletInstance);
 				}
 			}
@@ -208,11 +188,11 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 					serviceInstance.getSubscription(), serviceInstance,
 					serviceChargeTemplate.getChargeTemplate(),
 					serviceInstance.getSubscriptionDate(), terminationAmount,
-					null, 1, seller, creator);
+					null, 1, seller, creator,false);
 			serviceInstance.getTerminationChargeInstances().add(chargeInstance);
 			if(serviceChargeTemplate.getWalletTemplates().size()!=0){
 				for(WalletTemplate walletTemplate:serviceChargeTemplate.getWalletTemplates()){
-					WalletInstance walletInstance=getWalletInstance(userAccount,walletTemplate.getCode(),walletTemplate,creator,subscription.getProvider());
+					WalletInstance walletInstance=walletService.getWalletInstance(userAccount,walletTemplate,creator,subscription.getProvider());
 					chargeInstance.getWalletInstances().add(walletInstance);
 				}
 			}
@@ -228,7 +208,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 			serviceInstance.getUsageChargeInstances().add(chargeInstance);
 			if(serviceUsageChargeTemplate.getWalletTemplates().size()!=0){
 				for(WalletTemplate walletTemplate:serviceUsageChargeTemplate.getWalletTemplates()){
-					WalletInstance walletInstance=getWalletInstance(userAccount,walletTemplate.getCode(),walletTemplate,creator,subscription.getProvider());
+					WalletInstance walletInstance=walletService.getWalletInstance(userAccount,walletTemplate,creator,subscription.getProvider());
 					chargeInstance.getWalletInstances().add(walletInstance);
 				}
 			}
@@ -420,7 +400,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 			recurringChargeInstance.setNextChargeDate(storedNextChargeDate);
 			recurringChargeInstance.setStatus(InstanceStatusEnum.TERMINATED);
 			recurringChargeInstance.setStatusDate(new Date());
-			chargeInstanceService.update(recurringChargeInstance);
+			recurringChargeInstanceService.update(recurringChargeInstance);
 		}
 
 		if (applyTerminationCharges) {
@@ -449,7 +429,8 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 			subscription.setStatus(SubscriptionStatusEnum.RESILIATED);
 			subscription.setStatusDate(new Date());
 			subscription.setTerminationDate(new Date());
-			subscriptionService.update(subscription);
+			//FIXME
+			//subscriptionService.update(subscription);
 		}
 
 		CustomerAccount customerAccount = serviceInstance.getSubscription().getUserAccount().getBillingAccount()
@@ -532,7 +513,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 
 		for (RecurringChargeInstance recurringChargeInstance : serviceInstance.getRecurringChargeInstances()) {
 			if (recurringChargeInstance.getStatus() == InstanceStatusEnum.ACTIVE) {
-				chargeInstanceService.recurringChargeDeactivation(recurringChargeInstance.getId(), suspensionDate,
+				recurringChargeInstanceService.recurringChargeDeactivation(recurringChargeInstance.getId(), suspensionDate,
 						updater);
 			}
 
@@ -573,7 +554,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 
 		for (RecurringChargeInstance recurringChargeInstance : serviceInstance.getRecurringChargeInstances()) {
 			if (recurringChargeInstance.getStatus() != InstanceStatusEnum.ACTIVE) {
-				chargeInstanceService.recurringChargeReactivation(serviceInstance, subscription, subscriptionDate,
+				recurringChargeInstanceService.recurringChargeReactivation(serviceInstance, subscription, subscriptionDate,
 						updater);
 			}
 		}
@@ -639,7 +620,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 
 		for (RecurringChargeInstance recurringChargeInstance : serviceInstance.getRecurringChargeInstances()) {
 			if (recurringChargeInstance.getStatus() == InstanceStatusEnum.ACTIVE) {
-				chargeInstanceService.recurringChargeDeactivation(recurringChargeInstance.getId(), terminationDate,
+				recurringChargeInstanceService.recurringChargeDeactivation(recurringChargeInstance.getId(), terminationDate,
 						updater);
 			}
 			recurringChargeInstance.setTerminationDate(terminationDate);

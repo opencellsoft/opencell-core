@@ -47,12 +47,34 @@ public class ServiceTemplate extends BusinessEntity {
 	@OneToMany(mappedBy = "serviceTemplate", fetch = FetchType.LAZY)
 	private List<ServiceChargeTemplateUsage> serviceUsageCharges = new ArrayList<ServiceChargeTemplateUsage>();
 
+	public ServiceChargeTemplateRecurring getServiceRecurringChargeByChargeCode(String chargeCode) {
+		ServiceChargeTemplateRecurring result = null;
+		for (ServiceChargeTemplateRecurring sctr : serviceRecurringCharges) {
+			if (sctr.getChargeTemplate().getCode().equals(chargeCode)) {
+				result = sctr;
+				break;
+			}
+		}
+		return result;
+	}
+
 	public List<ServiceChargeTemplateRecurring> getServiceRecurringCharges() {
 		return serviceRecurringCharges;
 	}
 
 	public void setServiceRecurringCharges(List<ServiceChargeTemplateRecurring> serviceRecurringCharges) {
 		this.serviceRecurringCharges = serviceRecurringCharges;
+	}
+
+	public ServiceChargeTemplateSubscription getServiceChargeTemplateSubscriptionByChargeCode(String chargeCode) {
+		ServiceChargeTemplateSubscription result = null;
+		for (ServiceChargeTemplateSubscription sctr : serviceSubscriptionCharges) {
+			if (sctr.getChargeTemplate().getCode().equals(chargeCode)) {
+				result = sctr;
+				break;
+			}
+		}
+		return result;
 	}
 
 	public List<ServiceChargeTemplateSubscription> getServiceSubscriptionCharges() {
@@ -63,12 +85,34 @@ public class ServiceTemplate extends BusinessEntity {
 		this.serviceSubscriptionCharges = serviceSubscriptionCharges;
 	}
 
+	public ServiceChargeTemplateTermination getServiceChargeTemplateTerminationByChargeCode(String chargeCode) {
+		ServiceChargeTemplateTermination result = null;
+		for (ServiceChargeTemplateTermination sctr : serviceTerminationCharges) {
+			if (sctr.getChargeTemplate().getCode().equals(chargeCode)) {
+				result = sctr;
+				break;
+			}
+		}
+		return result;
+	}
+
 	public List<ServiceChargeTemplateTermination> getServiceTerminationCharges() {
 		return serviceTerminationCharges;
 	}
 
 	public void setServiceTerminationCharges(List<ServiceChargeTemplateTermination> serviceTerminationCharges) {
 		this.serviceTerminationCharges = serviceTerminationCharges;
+	}
+
+	public ServiceChargeTemplateUsage getServiceChargeTemplateUsageByChargeCode(String chargeCode) {
+		ServiceChargeTemplateUsage result = null;
+		for (ServiceChargeTemplateUsage sctr : serviceUsageCharges) {
+			if (sctr.getChargeTemplate().getCode().equals(chargeCode)) {
+				result = sctr;
+				break;
+			}
+		}
+		return result;
 	}
 
 	public List<ServiceChargeTemplateUsage> getServiceUsageCharges() {

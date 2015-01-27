@@ -18,7 +18,6 @@ package org.meveo.service.billing.impl;
 
 import java.math.BigDecimal;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 
 import javax.ejb.Stateless;
@@ -47,9 +46,6 @@ public class UserAccountService extends AccountService<UserAccount> {
 	@Inject
 	private WalletService walletService;
 
-	@Inject
-	private WalletTemplateService walletTemplateService;
-
 	public void createUserAccount(BillingAccount billingAccount, UserAccount userAccount, User creator)
 			throws AccountAlreadyExistsException {
 
@@ -69,23 +65,6 @@ public class UserAccountService extends AccountService<UserAccount> {
 		walletService.create(wallet, creator, billingAccount.getProvider());
 
 		userAccount.setWallet(wallet);
-
-		List<WalletTemplate> prepaidWalletTemplates = walletTemplateService
-				.listByProvider(billingAccount.getProvider());
-		if (prepaidWalletTemplates != null && prepaidWalletTemplates.size() > 0) {
-			HashMap<String, WalletInstance> prepaidWallets = new HashMap<String, WalletInstance>(
-					prepaidWalletTemplates.size());
-
-			for (WalletTemplate prepaidWalletTemplate : prepaidWalletTemplates) {
-				WalletInstance prepaidWallet = new WalletInstance();
-				wallet.setUserAccount(userAccount);
-				wallet.setWalletTemplate(prepaidWalletTemplate);
-				walletService.create(wallet, creator, billingAccount.getProvider());
-				prepaidWallets.put(prepaidWalletTemplate.getCode(), prepaidWallet);
-			}
-
-			userAccount.setPrepaidWallets(prepaidWallets);
-		}
 	}
 
 	public void userAccountTermination(UserAccount userAccount, Date terminationDate,

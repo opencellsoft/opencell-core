@@ -11,6 +11,7 @@ import java.util.Map;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.el.ArrayELResolver;
 import javax.el.BeanELResolver;
@@ -75,7 +76,7 @@ public class RatingService {
 	@Inject
 	private EdrService edrService;
 
-	@Inject
+	@EJB
 	private SubscriptionService subscriptionService;
 
 	private static boolean isPricePlanDirty;
@@ -107,10 +108,12 @@ public class RatingService {
 		isDiscountPlanDirty = true;
 	}
 
-	public int getSharedQuantity(LevelEnum level, Provider provider, String chargeCode, Date chargeDate,
-			RecurringChargeInstance recChargeInstance) {
-		return getSharedQuantity(entityManager, level, provider, chargeCode, chargeDate, recChargeInstance);
-	}
+	/*
+	 * public int getSharedQuantity(LevelEnum level, Provider provider, String
+	 * chargeCode, Date chargeDate, RecurringChargeInstance recChargeInstance) {
+	 * return getSharedQuantity(entityManager, level, provider, chargeCode,
+	 * chargeDate, recChargeInstance); }
+	 */
 
 	public int getSharedQuantity(EntityManager em, LevelEnum level, Provider provider, String chargeCode,
 			Date chargeDate, RecurringChargeInstance recChargeInstance) {
@@ -183,17 +186,22 @@ public class RatingService {
 		return result;
 	}
 
-	public WalletOperation prerateChargeApplication(String code, Date subscriptionDate, String offerCode,
-			ChargeInstance chargeInstance, ApplicationTypeEnum applicationType, Date applicationDate,
-			BigDecimal amountWithoutTax, BigDecimal amountWithTax, BigDecimal quantity, TradingCurrency tCurrency,
-			Long countryId, BigDecimal taxPercent, BigDecimal discountPercent, Date nextApplicationDate,
-			InvoiceSubCategory invoiceSubCategory, String criteria1, String criteria2, String criteria3,
-			Date startdate, Date endDate, ChargeApplicationModeEnum mode) throws BusinessException {
-		return prerateChargeApplication(entityManager, code, subscriptionDate, offerCode, chargeInstance,
-				applicationType, applicationDate, amountWithoutTax, amountWithTax, quantity, tCurrency, countryId,
-				taxPercent, discountPercent, nextApplicationDate, invoiceSubCategory, criteria1, criteria2, criteria3,
-				startdate, endDate, mode);
-	}
+	/*
+	 * public WalletOperation prerateChargeApplication(String code, Date
+	 * subscriptionDate, String offerCode, ChargeInstance chargeInstance,
+	 * ApplicationTypeEnum applicationType, Date applicationDate, BigDecimal
+	 * amountWithoutTax, BigDecimal amountWithTax, BigDecimal quantity,
+	 * TradingCurrency tCurrency, Long countryId, BigDecimal taxPercent,
+	 * BigDecimal discountPercent, Date nextApplicationDate, InvoiceSubCategory
+	 * invoiceSubCategory, String criteria1, String criteria2, String criteria3,
+	 * Date startdate, Date endDate, ChargeApplicationModeEnum mode) throws
+	 * BusinessException { return prerateChargeApplication(entityManager, code,
+	 * subscriptionDate, offerCode, chargeInstance, applicationType,
+	 * applicationDate, amountWithoutTax, amountWithTax, quantity, tCurrency,
+	 * countryId, taxPercent, discountPercent, nextApplicationDate,
+	 * invoiceSubCategory, criteria1, criteria2, criteria3, startdate, endDate,
+	 * mode); }
+	 */
 
 	// used to prerate a oneshot or recurring charge
 	public WalletOperation prerateChargeApplication(EntityManager em, String code, Date subscriptionDate,
@@ -228,7 +236,12 @@ public class RatingService {
 		result.setOfferCode(offerCode);
 		result.setStatus(WalletOperationStatusEnum.OPEN);
 		result.setSeller(chargeInstance.getSeller());
-		result.setWallet(chargeInstance.getSubscription().getUserAccount().getWallet());
+		// we prerate using the first wallet
+		if (chargeInstance.getWalletInstances().size() > 0) {
+			result.setWallet(chargeInstance.getWalletInstances().get(0));
+		} else {
+			result.setWallet(chargeInstance.getSubscription().getUserAccount().getWallet());
+		}
 
 		BigDecimal unitPriceWithoutTax = amountWithoutTax;
 		BigDecimal unitPriceWithTax = null;
@@ -409,7 +422,7 @@ public class RatingService {
 			if (recChargeTemplate.getShareLevel() != null) {
 				RecurringChargeInstance recChargeInstance = (RecurringChargeInstance) bareWalletOperation
 						.getChargeInstance();
-				int sharedQuantity = getSharedQuantity(recChargeTemplate.getShareLevel(), provider,
+				int sharedQuantity = getSharedQuantity(em, recChargeTemplate.getShareLevel(), provider,
 						recChargeInstance.getCode(), bareWalletOperation.getOperationDate(), recChargeInstance);
 				if (sharedQuantity > 0) {
 					unitPriceWithoutTax = unitPriceWithoutTax.divide(new BigDecimal(sharedQuantity),
@@ -923,5 +936,4 @@ public class RatingService {
 		}
 		return result;
 	}
-
 }

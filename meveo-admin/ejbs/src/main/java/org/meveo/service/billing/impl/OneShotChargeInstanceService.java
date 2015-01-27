@@ -35,12 +35,19 @@ import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.OneShotChargeTemplateTypeEnum;
+import org.meveo.model.catalog.ServiceChargeTemplateRecurring;
+import org.meveo.model.catalog.ServiceChargeTemplateSubscription;
+import org.meveo.model.catalog.ServiceChargeTemplateTermination;
+import org.meveo.model.catalog.WalletTemplate;
 import org.meveo.service.base.BusinessService;
 
 @Stateless
 public class OneShotChargeInstanceService extends
 		BusinessService<OneShotChargeInstance> {
 
+	@Inject
+	private WalletService walletService;
+	
 	@Inject
 	private WalletOperationService chargeApplicationService;
 
@@ -73,18 +80,18 @@ public class OneShotChargeInstanceService extends
 			Subscription subscription, ServiceInstance serviceInstance,
 			OneShotChargeTemplate chargeTemplate, Date effetDate,
 			BigDecimal amoutWithoutTax, BigDecimal amoutWithoutTx2,
-			Integer quantity, Seller seller, User creator)
+			Integer quantity, Seller seller, User creator,boolean isSubscriptionCharge)
 			throws BusinessException {
 		return oneShotChargeInstanciation(getEntityManager(), subscription,
 				serviceInstance, chargeTemplate, effetDate, amoutWithoutTax,
-				amoutWithoutTx2, quantity, seller, creator);
+				amoutWithoutTx2, quantity, seller, creator, isSubscriptionCharge);
 	}
 
 	public OneShotChargeInstance oneShotChargeInstanciation(EntityManager em,
 			Subscription subscription, ServiceInstance serviceInstance,
 			OneShotChargeTemplate chargeTemplate, Date effetDate,
 			BigDecimal amoutWithoutTax, BigDecimal amoutWithoutTx2,
-			Integer quantity, Seller seller, User creator)
+			Integer quantity, Seller seller, User creator,boolean isSubscriptionCharge)
 			throws BusinessException {
 
 		if (quantity == null) {
@@ -107,14 +114,45 @@ public class OneShotChargeInstanceService extends
 
 		oneShotChargeInstance.setChargeDate(serviceInstance
 				.getSubscriptionDate());
-
+		List<WalletTemplate> walletTemplates =null;
+		if(isSubscriptionCharge){
+			ServiceChargeTemplateSubscription recChTmplServ = serviceInstance.getServiceTemplate().getServiceChargeTemplateSubscriptionByChargeCode(chargeTemplate.getCode());
+			walletTemplates = recChTmplServ.getWalletTemplates();
+		} else {
+			ServiceChargeTemplateTermination recChTmplServ = serviceInstance.getServiceTemplate().getServiceChargeTemplateTerminationByChargeCode(chargeTemplate.getCode());
+			walletTemplates = recChTmplServ.getWalletTemplates();
+		}
+		if(walletTemplates!=null && walletTemplates.size()>0){
+			for(WalletTemplate walletTemplate:walletTemplates){
+				oneShotChargeInstance.getWalletInstances().add(walletService.getWalletInstance(serviceInstance.getSubscription()
+						.getUserAccount(),walletTemplate,serviceInstance.getAuditable().getCreator(),serviceInstance.getProvider()));
+			}
+		} else {
+			oneShotChargeInstance.getWalletInstances().add(serviceInstance.getSubscription()
+				.getUserAccount().getWallet());
+		}
 		create(oneShotChargeInstance, creator, chargeTemplate.getProvider());
 
 		return oneShotChargeInstance;
 	}
 
+
+	//apply a oneShotCharge on the postpaid wallet
 	public Long oneShotChargeApplication(Subscription subscription,
 			OneShotChargeTemplate chargetemplate, Date effetDate,
+			BigDecimal amoutWithoutTax, BigDecimal amoutWithoutTx2,
+			Integer quantity, String criteria1, String criteria2,
+			String criteria3, Seller seller, User creator)
+			throws BusinessException {
+		return oneShotChargeApplication( subscription,
+				 chargetemplate, null,  effetDate,
+				 amoutWithoutTax,  amoutWithoutTx2,
+				 quantity,  criteria1,  criteria2,
+				 criteria3,  seller,  creator);
+	}
+
+	public Long oneShotChargeApplication(Subscription subscription,
+			OneShotChargeTemplate chargetemplate,String walletCode, Date effetDate,
 			BigDecimal amoutWithoutTax, BigDecimal amoutWithoutTx2,
 			Integer quantity, String criteria1, String criteria2,
 			String criteria3, Seller seller, User creator)
@@ -140,7 +178,14 @@ public class OneShotChargeInstanceService extends
 		oneShotChargeInstance.setCriteria1(criteria1);
 		oneShotChargeInstance.setCriteria2(criteria2);
 		oneShotChargeInstance.setCriteria3(criteria3);
+		if(walletCode==null){
+			oneShotChargeInstance.getWalletInstances().add(subscription
+					.getUserAccount().getWallet());
+		} else {
+			oneShotChargeInstance.getWalletInstances().add(subscription.getUserAccount().getWalletInstance(walletCode));
 
+		}
+	
 		create(oneShotChargeInstance, creator, chargetemplate.getProvider());
 
 		chargeApplicationService.oneShotWalletOperation(subscription,

@@ -33,7 +33,9 @@ import org.meveo.model.billing.InstanceStatusEnum;
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.UsageChargeInstance;
+import org.meveo.model.catalog.ServiceChargeTemplateRecurring;
 import org.meveo.model.catalog.ServiceChargeTemplateUsage;
+import org.meveo.model.catalog.WalletTemplate;
 import org.meveo.service.base.BusinessService;
 
 @Stateless
@@ -42,6 +44,11 @@ public class UsageChargeInstanceService extends
 
 	@EJB
 	UsageRatingService usageRatingService;
+	
+	
+	@Inject
+	private WalletService walletService;
+
 
 	@Inject
 	private CounterInstanceService counterInstanceService;
@@ -78,7 +85,17 @@ public class UsageChargeInstanceService extends
 				.getBillingAccount().getTradingCountry());
 		usageChargeInstance.setCurrency(subscription.getUserAccount()
 				.getBillingAccount().getCustomerAccount().getTradingCurrency());
-
+		ServiceChargeTemplateUsage usaChTmplServ = serviceInstance.getServiceTemplate().getServiceChargeTemplateUsageByChargeCode(serviceUsageChargeTemplate.getChargeTemplate().getCode());
+		List<WalletTemplate> walletTemplates = usaChTmplServ.getWalletTemplates();
+		if(walletTemplates!=null && walletTemplates.size()>0){
+			for(WalletTemplate walletTemplate:walletTemplates){
+				usageChargeInstance.getWalletInstances().add(walletService.getWalletInstance(serviceInstance.getSubscription()
+						.getUserAccount(),walletTemplate,serviceInstance.getAuditable().getCreator(),serviceInstance.getProvider()));
+			}
+		} else {
+			usageChargeInstance.getWalletInstances().add(serviceInstance.getSubscription()
+				.getUserAccount().getWallet());
+		}
 		create(usageChargeInstance, creator, serviceInstance.getProvider());
 
 		if (serviceUsageChargeTemplate.getCounterTemplate() != null) {
