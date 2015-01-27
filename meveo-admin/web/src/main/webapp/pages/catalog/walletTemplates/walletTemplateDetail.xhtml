@@ -1,0 +1,37 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a="http://richfaces.org/a4j" xmlns:hftl="http://hftl.org"
+	xmlns:hf="http://java.sun.com/jsf/composite/tags"
+	xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
+
+	<ui:define name="navigation">
+		<ui:include src="/layout/navigation.xhtml" />
+	</ui:define>
+
+	<ui:define name="body">
+
+
+		<hf:formPanel id="formPanel" formId="walletTemplatId"
+			label="#{messages['menu.wallets']}"
+			backingBean="#{walletTemplateBean}">
+
+
+			<hf:formField label="#{messages['businessEntity.code']}" field="code"
+				required="true" validateUnique="true" />
+			<hf:formField label="#{messages['businessEntity.description']}"
+				field="description" id="description" required="true"
+				validateUnique="true" />
+			<hf:formField
+				label="#{messages['walletTemplate.consumptionAlertSet']}"
+				field="consumptionAlertSet" required="true"  />
+			<hf:formField label="#{messages['wallet.walletType']}"
+				field="walletType" childField="label" isMessage="true" required="true"  />
+			<hf:formField label="#{messages['walletTemplate.fastRatingLevel']}"
+				field="fastRatingLevel" required="true" />  
+		    </hf:formPanel>
+
+	</ui:define>
+</ui:composition>
