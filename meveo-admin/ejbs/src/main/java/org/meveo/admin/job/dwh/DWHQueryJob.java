@@ -19,9 +19,9 @@ import org.meveo.model.jobs.JobExecutionResult;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.TimerInfo;
 import org.meveo.service.admin.impl.UserService;
-import org.meveo.services.job.Job;
-import org.meveo.services.job.JobExecutionService;
-import org.meveo.services.job.TimerEntityService;
+import org.meveo.service.job.Job;
+import org.meveo.service.job.JobExecutionService;
+import org.meveo.service.job.TimerEntityService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

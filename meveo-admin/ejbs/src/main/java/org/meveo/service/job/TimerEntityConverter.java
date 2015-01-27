@@ -1,4 +1,4 @@
-package org.meveo.services.job;
+package org.meveo.service.job;
 
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
