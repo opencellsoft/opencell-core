@@ -824,4 +824,103 @@
 		"2014-02-22T00:15:11.000Z;5;IMSI1;DATA",
 		"2014-02-22T00:15:11.000Z;5;IMSI1;DATA"
 	]
-}</con:request><con:originalUri>http://localhost/meveo/api/rest/billing/mediation</con:originalUri><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:preemptive>true</con:preemptive><con:authType>Preemptive</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters/></con:request></con:method></con:resource></con:interface><con:properties/><con:wssContainer/><con:oAuth2ProfileContainer/><con:sensitiveInformation/></con:soapui-project>
+}</con:request><con:originalUri>http://localhost/meveo/api/rest/billing/mediation</con:originalUri><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:preemptive>true</con:preemptive><con:authType>Preemptive</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters/></con:request></con:method></con:resource><con:resource name="wallet" path="/meveo/api/rest/billing/wallet"><con:settings/><con:parameters/><con:resource name="balance" path="balance"><con:settings/><con:parameters/><con:resource name="current" path="current"><con:settings/><con:parameters/><con:method name="Method 1" method="POST"><con:settings/><con:parameters/><con:representation type="RESPONSE"><con:mediaType>application/json</con:mediaType><con:status>200</con:status><con:params/><con:element xmlns:cur="http://localhost/meveo/api/rest/billing/wallet/balance/current">cur:Response</con:element></con:representation><con:representation type="REQUEST"><con:mediaType>application/json</con:mediaType><con:params/></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:request name="AmountWithTax" mediaType="application/json" postQueryString="false"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:endpoint>http://localhost:8080</con:endpoint><con:request>{
+	"sellerCode" : "MAIN_SELLER",
+	"userAccountCode" : "UA1",
+	"startDate" : "2015-01-01",
+	"endDate" : "2015-06-01",
+	"amountWithTax" : true
+}</con:request><con:originalUri>http://localhost/meveo/api/rest/billing/wallet/balance/current</con:originalUri><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:preemptive>true</con:preemptive><con:authType>Preemptive</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters/></con:request><con:request name="AmountWithoutTax" mediaType="application/json" postQueryString="false"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:endpoint>http://localhost:8080</con:endpoint><con:request>{
+	"sellerCode" : "MAIN_SELLER",
+	"userAccountCode" : "UA1",
+	"startDate" : "2015-01-01",
+	"endDate" : "2015-06-01",
+	"amountWithTax" : false
+}</con:request><con:originalUri>http://i.meveo.info/meveo/api/rest/billing/wallet/balance/current</con:originalUri><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:preemptive>true</con:preemptive><con:authType>Preemptive</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters/></con:request></con:method></con:resource><con:resource name="reserved" path="reserved"><con:settings/><con:parameters/><con:method name="Method 1" method="POST"><con:settings/><con:parameters/><con:representation type="REQUEST"><con:mediaType>application/json</con:mediaType><con:params/></con:representation><con:representation type="FAULT"><con:mediaType>application/json</con:mediaType><con:status>401</con:status><con:params/></con:representation><con:representation type="RESPONSE"><con:mediaType>application/json</con:mediaType><con:status>200</con:status><con:params/><con:element xmlns:res="http://localhost/meveo/api/rest/billing/wallet/balance/reserved">res:Response</con:element></con:representation><con:request name="AmountWithTax" mediaType="application/json" postQueryString="false"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:endpoint>http://localhost:8080/</con:endpoint><con:request>{
+	"sellerCode" : "MAIN_SELLER",
+	"userAccountCode" : "UA1",
+	"startDate" : "2015-01-01",
+	"endDate" : "2015-06-01",
+	"amountWithTax" : true
+}</con:request><con:originalUri>http://localhost/meveo/api/rest/billing/wallet/balance/reserved</con:originalUri><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:preemptive>true</con:preemptive><con:authType>Preemptive</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters/></con:request><con:request name="AmountWithoutTax" mediaType="application/json" postQueryString="false"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:endpoint>http://localhost:8080/</con:endpoint><con:request>{
+	"sellerCode" : "MAIN_SELLER",
+	"userAccountCode" : "UA1",
+	"startDate" : "2015-01-01",
+	"endDate" : "2015-06-01",
+	"amountWithTax" : true
+}</con:request><con:originalUri>http://localhost/meveo/api/rest/billing/wallet/balance/reserved</con:originalUri><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:preemptive>true</con:preemptive><con:authType>Preemptive</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters/></con:request></con:method></con:resource><con:resource name="open" path="open"><con:settings/><con:parameters/><con:method name="Method 1" method="POST"><con:settings/><con:parameters/><con:representation type="RESPONSE"><con:mediaType>application/json</con:mediaType><con:status>200</con:status><con:params/><con:element xmlns:open="http://localhost/meveo/api/rest/billing/wallet/balance/open">open:Response</con:element></con:representation><con:representation type="REQUEST"><con:mediaType>application/json</con:mediaType><con:params/></con:representation><con:request name="AmountWithTax" mediaType="application/json" postQueryString="false"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:endpoint>http://localhost:8080/</con:endpoint><con:request>{
+	"sellerCode" : "MAIN_SELLER",
+	"userAccountCode" : "UA1",
+	"startDate" : "2015-01-01",
+	"endDate" : "2015-06-01",
+	"amountWithTax" : true
+}</con:request><con:originalUri>http://localhost/meveo/api/rest/billing/wallet/balance/open</con:originalUri><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:preemptive>true</con:preemptive><con:authType>Preemptive</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters/></con:request><con:request name="AmountWithoutTax" mediaType="application/json" postQueryString="false"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:endpoint>http://localhost:8080/</con:endpoint><con:request>{
+	"sellerCode" : "MAIN_SELLER",
+	"userAccountCode" : "UA1",
+	"startDate" : "2015-01-01",
+	"endDate" : "2015-06-01",
+	"amountWithTax" : true
+}</con:request><con:originalUri>http://localhost/meveo/api/rest/billing/wallet/balance/open</con:originalUri><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:preemptive>true</con:preemptive><con:authType>Preemptive</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters/></con:request></con:method></con:resource></con:resource><con:resource name="reservation" path="reservation"><con:settings/><con:parameters/><con:method name="Method 1" method="POST"><con:settings/><con:parameters/><con:request name="Request 1" mediaType="application/json" postQueryString="false"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:endpoint>http://localhost:8080</con:endpoint><con:request/><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters/></con:request></con:method></con:resource><con:resource name="operation" path="operation"><con:settings/><con:parameters/><con:method name="POST" method="POST"><con:settings/><con:parameters/><con:representation type="REQUEST"><con:mediaType>application/json</con:mediaType><con:params/></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="FAULT"><con:mediaType>application/json</con:mediaType><con:status>401</con:status><con:params/></con:representation><con:representation type="RESPONSE"><con:mediaType>application/json</con:mediaType><con:status>200</con:status><con:params/><con:element xmlns:oper="http://localhost/meveo/api/rest/wallet/operation">oper:Response</con:element></con:representation><con:request name="Request 1" mediaType="application/json" postQueryString="false"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:endpoint>http://localhost:8080</con:endpoint><con:request>{
+	"code" : "wo_1",
+	"userAccount" : "UA1",
+	"subscription" : "UA1_SUB1",
+	"offerTemplate" : "OFF1",
+	"seller" : "MAIN_SELLER",
+	"currency" : "EUR",
+	"type" : "CREDIT",
+	"status" : "OPEN",
+	"unityDescription" : "quantity",
+	"taxPercent" : ".12",
+	"unitAmountWithoutTax" : "10",
+	"unitAmountWithTax" : "11.2",
+	"unitAmountTax" : ".12",
+	"quantity" : "",
+	"amountWithoutTax" : "10",
+	"amountWithTax" : "11.2",
+	"amountTax" : ".12",
+	"parameter1" : "1",
+	"parameter2" : "2",
+	"parameter3" : "3",
+	"startDate" : null,
+	"endDate" : null,
+	"operationDate" : null,
+	"subscriptionDate" : "2015-01-26"
+}</con:request><con:originalUri>http://localhost/meveo/api/rest/wallet/operation</con:originalUri><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:preemptive>true</con:preemptive><con:authType>Preemptive</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters/></con:request></con:method></con:resource><con:resource name="reservation" path="reservation"><con:settings/><con:parameters/><con:resource name="confirm" path="confirm"><con:settings/><con:parameters/><con:method name="Method 1" method="POST"><con:settings/><con:parameters/><con:representation type="REQUEST"><con:mediaType>application/json</con:mediaType><con:params/></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType>application/json</con:mediaType><con:status>200</con:status><con:params/><con:element xmlns:con1="http://localhost/meveo/api/rest/billing/wallet/reservation/confirm">con1:Response</con:element></con:representation><con:request name="Request 1" mediaType="application/json" postQueryString="false"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:endpoint>http://localhost:8080/</con:endpoint><con:request>{
+	"reservationId" : 1,
+	"sellerCode" : "MAIN_SELLER",
+	"offerCode" : "OFF1",
+	"userAccountCode" : "UA1",
+	"subscriptionDate" : "2015-01-01",
+	"expirationDate" : "",
+	"terminationDate" : "",
+	"creditLimit" : 1000,
+	"param1" : "",
+	"param2" : "",
+	"param3" : "",
+	"amountWithTax" : true
+}</con:request><con:originalUri>http://localhost/meveo/api/rest/billing/wallet/reservation/confirm</con:originalUri><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:preemptive>true</con:preemptive><con:authType>Preemptive</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters/></con:request></con:method></con:resource><con:method name="POST" method="POST"><con:settings/><con:parameters/><con:representation type="REQUEST"><con:mediaType>application/json</con:mediaType><con:params/></con:representation><con:representation type="FAULT"><con:mediaType>application/json</con:mediaType><con:status>401</con:status><con:params/></con:representation><con:representation type="RESPONSE"><con:mediaType>application/json</con:mediaType><con:status>200</con:status><con:params/><con:element xmlns:res="http://localhost/meveo/api/rest/billing/wallet/reservation">res:Response</con:element></con:representation><con:request name="Request 1" mediaType="application/json" postQueryString="false"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:endpoint>http://localhost:8080/</con:endpoint><con:request>{
+	"sellerCode" : "MAIN_SELLER",
+	"offerCode" : "OFF1",
+	"userAccountCode" : "UA1",
+	"subscriptionDate" : "2015-01-01",
+	"expirationDate" : "",
+	"terminationDate" : "",
+	"creditLimit" : 1000,
+	"param1" : "",
+	"param2" : "",
+	"param3" : "",
+	"amountWithTax" : true
+}</con:request><con:originalUri>http://localhost/meveo/api/rest/billing/wallet/reservation</con:originalUri><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:preemptive>true</con:preemptive><con:authType>Preemptive</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters/></con:request></con:method><con:method name="UPDATE" method="PUT"><con:settings/><con:parameters/><con:representation type="FAULT"><con:mediaType>application/json</con:mediaType><con:status>401</con:status><con:params/></con:representation><con:representation type="REQUEST"><con:mediaType>application/json</con:mediaType><con:params/></con:representation><con:representation type="RESPONSE"><con:mediaType>application/json</con:mediaType><con:status>200</con:status><con:params/><con:element xmlns:res="http://localhost/meveo/api/rest/billing/wallet/reservation">res:Response</con:element></con:representation><con:request name="Request 1" mediaType="application/json" postQueryString="false"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:endpoint>http://localhost:8080/</con:endpoint><con:request>{
+	"reservationId" : 1,
+	"sellerCode" : "MAIN_SELLER",
+	"offerCode" : "OFF1",
+	"userAccountCode" : "UA1",
+	"subscriptionDate" : "2015-01-01",
+	"expirationDate" : "2015-06-01",
+	"terminationDate" : "",
+	"creditLimit" : 1000,
+	"param1" : "",
+	"param2" : "",
+	"param3" : "",
+	"amountWithTax" : true
+}</con:request><con:originalUri>http://localhost/meveo/api/rest/billing/wallet/reservation</con:originalUri><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:preemptive>true</con:preemptive><con:authType>Preemptive</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters/></con:request></con:method></con:resource></con:resource></con:interface><con:properties/><con:wssContainer/><con:oAuth2ProfileContainer/><con:sensitiveInformation/></con:soapui-project>

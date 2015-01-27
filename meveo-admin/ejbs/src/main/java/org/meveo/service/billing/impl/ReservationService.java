@@ -65,54 +65,35 @@ public class ReservationService extends PersistenceService<Reservation> {
 	@Inject
 	private WalletService walletService;
 
-	public Long createReservation(Provider provider, String sellerCode,
-			String offerCode, String userAccountCode, Date subscriptionDate,
-			Date expiryDate, BigDecimal creditLimit, String param1,
-			String param2, String param3, boolean amountWithTax)
-			throws BusinessException {
-		return createReservation(getEntityManager(), provider, sellerCode,
-				offerCode, userAccountCode, subscriptionDate, expiryDate,
-				creditLimit, param1, param2, param3, amountWithTax);
-	}
-
-	public Long createReservation(EntityManager em, Provider provider,
-			String sellerCode, String offerCode, String userAccountCode,
-			Date subscriptionDate, Date expiryDate, BigDecimal creditLimit,
-			String param1, String param2, String param3, boolean amountWithTax)
-			throws BusinessException {
+	public Long createReservation(Provider provider, String sellerCode, String offerCode, String userAccountCode,
+			Date subscriptionDate, Date expiryDate, BigDecimal creditLimit, String param1, String param2,
+			String param3, boolean amountWithTax) throws BusinessException {
 
 		// #1 Check the credit limit (servicesSum + getCurrentAmount) & return
 		// error if KO.
-		OfferTemplate offerTemplate = offerTemplateService.findByCode(em,
-				offerCode, provider);
+		OfferTemplate offerTemplate = offerTemplateService.findByCode(offerCode, provider);
 
-		UserAccount userAccount = userAccountService.findByCode(
-				userAccountCode, provider);
+		UserAccount userAccount = userAccountService.findByCode(userAccountCode, provider);
 		if (userAccount == null) {
-			throw new BusinessException("UserAccount with code="
-					+ userAccountCode + " does not exists.");
+			throw new BusinessException("UserAccount with code=" + userAccountCode + " does not exists.");
 		}
 
 		Seller seller = sellerService.findByCode(sellerCode, provider);
 		if (seller == null) {
-			throw new BusinessException("Seller with code=" + sellerCode
-					+ " does not exists.");
+			throw new BusinessException("Seller with code=" + sellerCode + " does not exists.");
 		}
 
 		if (userAccount.getBillingAccount() == null) {
-			throw new BusinessException("UserAccount with code="
-					+ userAccountCode + " does not have a billingAccount set.");
+			throw new BusinessException("UserAccount with code=" + userAccountCode
+					+ " does not have a billingAccount set.");
 		}
 
 		if (offerTemplate == null) {
-			throw new BusinessException("OfferTemplate with code=" + offerCode
-					+ " does not exists.");
+			throw new BusinessException("OfferTemplate with code=" + offerCode + " does not exists.");
 		}
 
-		if (offerTemplate.getServiceTemplates() == null
-				|| offerTemplate.getServiceTemplates().size() < 1) {
-			throw new BusinessException(
-					"OfferTemplate doesn't have linked serviceTemplate.");
+		if (offerTemplate.getServiceTemplates() == null || offerTemplate.getServiceTemplates().size() < 1) {
+			throw new BusinessException("OfferTemplate doesn't have linked serviceTemplate.");
 		}
 
 		if (expiryDate == null) {
@@ -121,25 +102,20 @@ public class ReservationService extends PersistenceService<Reservation> {
 			expiryDate = cal.getTime();
 		}
 
-		BigDecimal servicesSum = walletReservationService.computeServicesSum(
-				em, offerTemplate, userAccount, subscriptionDate, param1,
-				param2, param3, new BigDecimal(1));
+		BigDecimal servicesSum = walletReservationService.computeServicesSum(offerTemplate, userAccount,
+				subscriptionDate, param1, param2, param3, new BigDecimal(1));
 
-		BigDecimal ratedAmount = walletReservationService.computeRatedAmount(
-				em, provider, seller, userAccount, subscriptionDate);
+		BigDecimal ratedAmount = walletReservationService.computeRatedAmount(provider, seller, userAccount,
+				subscriptionDate);
 
 		BigDecimal spentCredit = servicesSum.add(ratedAmount);
 
 		if (spentCredit.compareTo(creditLimit) > 0) {
-			log.debug("Credit limit exceeded for seller code={}",
-					seller.getCode());
-			throw new BusinessException(
-					"Credit limit exception for seller with code="
-							+ seller.getCode());
+			log.debug("Credit limit exceeded for seller code={}", seller.getCode());
+			throw new BusinessException("Credit limit exception for seller with code=" + seller.getCode());
 		}
 
-		WalletInstance wallet = walletService
-				.findByUserAccount(em, userAccount);
+		WalletInstance wallet = walletService.findByUserAccount(userAccount);
 
 		// #2 Create a reservation (store UA), status=OPEN.
 		Auditable auditable = new Auditable();
@@ -160,11 +136,9 @@ public class ReservationService extends PersistenceService<Reservation> {
 
 		// #3 Create the reserved wallet operation. Not associated to charge,
 		// status=RESERVED, associated to the reservation, amount=servicesSum.
-		TradingCurrency currency = userAccount.getBillingAccount()
-				.getCustomerAccount().getTradingCurrency();
+		TradingCurrency currency = userAccount.getBillingAccount().getCustomerAccount().getTradingCurrency();
 		WalletReservation walletReservation = new WalletReservation();
-		walletReservation.setCode(sellerCode + "_" + userAccountCode + "_"
-				+ offerCode);
+		walletReservation.setCode(sellerCode + "_" + userAccountCode + "_" + offerCode);
 		walletReservation.setReservation(reservation);
 		walletReservation.setStatus(WalletOperationStatusEnum.RESERVED);
 		walletReservation.setSubscriptionDate(null);
@@ -173,8 +147,7 @@ public class ReservationService extends PersistenceService<Reservation> {
 		walletReservation.setParameter2(param2);
 		walletReservation.setParameter3(param3);
 		walletReservation.setChargeInstance(null);
-		walletReservation.setSeller(userAccount.getBillingAccount()
-				.getCustomerAccount().getCustomer().getSeller());
+		walletReservation.setSeller(userAccount.getBillingAccount().getCustomerAccount().getCustomer().getSeller());
 		walletReservation.setWallet(wallet);
 		walletReservation.setQuantity(new BigDecimal(1));
 		walletReservation.setStartDate(null);
@@ -193,54 +166,42 @@ public class ReservationService extends PersistenceService<Reservation> {
 		return reservation.getId();
 	}
 
-	public void updateReservation(Long reservationId, Provider provider,
-			String sellerCode, String offerCode, String userAccountCode,
-			Date subscriptionDate, Date expiryDate, BigDecimal creditLimit,
-			String param1, String param2, String param3, boolean amountWithTax)
-			throws BusinessException {
-		updateReservation(getEntityManager(), reservationId, provider,
-				sellerCode, offerCode, userAccountCode, subscriptionDate,
-				expiryDate, creditLimit, param1, param2, param3, amountWithTax);
+	public void updateReservation(Long reservationId, Provider provider, String sellerCode, String offerCode,
+			String userAccountCode, Date subscriptionDate, Date expiryDate, BigDecimal creditLimit, String param1,
+			String param2, String param3, boolean amountWithTax) throws BusinessException {
+		updateReservation(getEntityManager(), reservationId, provider, sellerCode, offerCode, userAccountCode,
+				subscriptionDate, expiryDate, creditLimit, param1, param2, param3, amountWithTax);
 	}
 
-	public void updateReservation(EntityManager em, Long reservationId,
-			Provider provider, String sellerCode, String offerCode,
-			String userAccountCode, Date subscriptionDate, Date expiryDate,
-			BigDecimal creditLimit, String param1, String param2,
-			String param3, boolean amountWithTax) throws BusinessException {
+	public void updateReservation(EntityManager em, Long reservationId, Provider provider, String sellerCode,
+			String offerCode, String userAccountCode, Date subscriptionDate, Date expiryDate, BigDecimal creditLimit,
+			String param1, String param2, String param3, boolean amountWithTax) throws BusinessException {
 
 		// #1 Check the credit limit (servicesSum + getCurrentAmount) & return
 		// error if KO.
-		OfferTemplate offerTemplate = offerTemplateService.findByCode(em,
-				offerCode, provider);
+		OfferTemplate offerTemplate = offerTemplateService.findByCode(offerCode, provider);
 
-		UserAccount userAccount = userAccountService.findByCode(
-				userAccountCode, provider);
+		UserAccount userAccount = userAccountService.findByCode(userAccountCode, provider);
 		if (userAccount == null) {
-			throw new BusinessException("UserAccount with code="
-					+ userAccountCode + " does not exists.");
+			throw new BusinessException("UserAccount with code=" + userAccountCode + " does not exists.");
 		}
 
 		Seller seller = sellerService.findByCode(sellerCode, provider);
 		if (seller == null) {
-			throw new BusinessException("Seller with code=" + sellerCode
-					+ " does not exists.");
+			throw new BusinessException("Seller with code=" + sellerCode + " does not exists.");
 		}
 
 		if (userAccount.getBillingAccount() == null) {
-			throw new BusinessException("UserAccount with code="
-					+ userAccountCode + " does not have a billingAccount set.");
+			throw new BusinessException("UserAccount with code=" + userAccountCode
+					+ " does not have a billingAccount set.");
 		}
 
 		if (offerTemplate == null) {
-			throw new BusinessException("OfferTemplate with code=" + offerCode
-					+ " does not exists.");
+			throw new BusinessException("OfferTemplate with code=" + offerCode + " does not exists.");
 		}
 
-		if (offerTemplate.getServiceTemplates() == null
-				|| offerTemplate.getServiceTemplates().size() < 1) {
-			throw new BusinessException(
-					"OfferTemplate doesn't have linked serviceTemplate.");
+		if (offerTemplate.getServiceTemplates() == null || offerTemplate.getServiceTemplates().size() < 1) {
+			throw new BusinessException("OfferTemplate doesn't have linked serviceTemplate.");
 		}
 
 		if (expiryDate == null) {
@@ -249,33 +210,27 @@ public class ReservationService extends PersistenceService<Reservation> {
 			expiryDate = cal.getTime();
 		}
 
-		BigDecimal servicesSum = walletReservationService.computeServicesSum(
-				em, offerTemplate, userAccount, subscriptionDate, param1,
-				param2, param3, new BigDecimal(1));
+		BigDecimal servicesSum = walletReservationService.computeServicesSum(offerTemplate, userAccount,
+				subscriptionDate, param1, param2, param3, new BigDecimal(1));
 
-		BigDecimal ratedAmount = walletReservationService.computeRatedAmount(
-				em, provider, seller, userAccount, subscriptionDate);
+		BigDecimal ratedAmount = walletReservationService.computeRatedAmount(provider, seller, userAccount,
+				subscriptionDate);
 
 		BigDecimal spentCredit = servicesSum.add(ratedAmount);
 
 		if (spentCredit.compareTo(creditLimit) > 0) {
-			log.debug("Credit limit exceeded for seller code={}",
-					seller.getCode());
-			throw new BusinessException(
-					"Credit limit exception for seller with code="
-							+ seller.getCode());
+			log.debug("Credit limit exceeded for seller code={}", seller.getCode());
+			throw new BusinessException("Credit limit exception for seller with code=" + seller.getCode());
 		}
 
 		// #2 Create a reservation (store UA), status=OPEN.
-		Reservation reservation = findById(em, reservationId);
+		Reservation reservation = findById(reservationId);
 		if (reservation == null) {
 			log.error("Reservation with id={} does not exists.", reservationId);
-			throw new BusinessException("Reservation with id=" + reservationId
-					+ " does not exists.");
+			throw new BusinessException("Reservation with id=" + reservationId + " does not exists.");
 		}
 
-		WalletInstance wallet = walletService
-				.findByUserAccount(em, userAccount);
+		WalletInstance wallet = walletService.findByUserAccount(userAccount);
 
 		reservation.getAuditable().setUpdated(new Date());
 		reservation.setStatus(ReservationStatus.OPEN);
@@ -285,92 +240,76 @@ public class ReservationService extends PersistenceService<Reservation> {
 		reservation.setWallet(wallet);
 		if (amountWithTax) {
 			reservation.setAmountWithTax(spentCredit);
-			walletReservationService.updateSpendCredit(em, reservationId,
-					servicesSum, true);
+			walletReservationService.updateSpendCredit(reservationId, servicesSum, true);
 		} else {
 			reservation.setAmountWithoutTax(spentCredit);
-			walletReservationService.updateSpendCredit(em, reservationId,
-					servicesSum, false);
+			walletReservationService.updateSpendCredit(reservationId, servicesSum, false);
 		}
 	}
 
-	public void cancelReservation(Reservation reservation)
-			throws BusinessException {
+	public void cancelReservation(Reservation reservation) throws BusinessException {
 		cancelReservation(getEntityManager(), reservation);
 	}
 
-	public void cancelReservation(EntityManager em, Reservation reservation)
-			throws BusinessException {
+	public void cancelReservation(EntityManager em, Reservation reservation) throws BusinessException {
 
 		// #1 Check that the reservation is OPEN, else KO.
 		if (reservation.getStatus() != ReservationStatus.OPEN) {
-			throw new BusinessException("Reservation with id="
-					+ reservation.getId() + " is not " + ReservationStatus.OPEN);
+			throw new BusinessException("Reservation with id=" + reservation.getId() + " is not "
+					+ ReservationStatus.OPEN);
 		}
 
 		// #2 Set to CANCELLED the status of all the walletOperations linked to
 		// reservation.
-		walletReservationService.updateReservationStatus(em,
-				reservation.getId(), WalletOperationStatusEnum.CANCELED);
+		walletReservationService.updateReservationStatus(reservation.getId(), WalletOperationStatusEnum.CANCELED);
 
 		// #3 Set to CANCELLED the status of reservation.
 		reservation.setStatus(ReservationStatus.CANCELLED);
 	}
 
-	public BigDecimal confirmReservation(Long reservationId, Provider provider,
-			String sellerCode, String offerCode, Date subscriptionDate,
-			Date terminationDate, String param1, String param2, String param3)
+	public BigDecimal confirmReservation(Long reservationId, Provider provider, String sellerCode, String offerCode,
+			Date subscriptionDate, Date terminationDate, String param1, String param2, String param3)
 			throws BusinessException {
-		return confirmReservation(getEntityManager(), reservationId, provider,
-				sellerCode, offerCode, subscriptionDate, terminationDate,
-				param1, param2, param3);
+		return confirmReservation(getEntityManager(), reservationId, provider, sellerCode, offerCode, subscriptionDate,
+				terminationDate, param1, param2, param3);
 	}
 
-	public BigDecimal confirmReservation(EntityManager em, Long reservationId,
-			Provider provider, String sellerCode, String offerCode,
-			Date subscriptionDate, Date terminationDate, String param1,
-			String param2, String param3) throws BusinessException {
-		Reservation reservation = findById(em, reservationId);
+	public BigDecimal confirmReservation(EntityManager em, Long reservationId, Provider provider, String sellerCode,
+			String offerCode, Date subscriptionDate, Date terminationDate, String param1, String param2, String param3)
+			throws BusinessException {
+		Reservation reservation = findById(reservationId);
 		if (reservation == null) {
-			throw new BusinessException("Reservation with id=" + reservationId
-					+ " does not exists.");
+			throw new BusinessException("Reservation with id=" + reservationId + " does not exists.");
 		}
 
-		OfferTemplate offerTemplate = offerTemplateService.findByCode(em,
-				offerCode, provider);
+		OfferTemplate offerTemplate = offerTemplateService.findByCode(offerCode, provider);
 		if (offerTemplate == null) {
-			throw new BusinessException("OfferTemplate with id=" + offerCode
-					+ " does not exists.");
+			throw new BusinessException("OfferTemplate with id=" + offerCode + " does not exists.");
 		}
 
 		// #1 Check that the reservation is OPEN, else KO.
 		if (reservation.getStatus() != ReservationStatus.OPEN) {
-			throw new BusinessException("Reservation with id=" + reservationId
-					+ " is not " + ReservationStatus.OPEN);
+			throw new BusinessException("Reservation with id=" + reservationId + " is not " + ReservationStatus.OPEN);
 		}
 
 		Seller seller = sellerService.findByCode(sellerCode, provider);
 		if (seller == null) {
-			throw new BusinessException("Seller with code=" + sellerCode
-					+ " does not exists.");
+			throw new BusinessException("Seller with code=" + sellerCode + " does not exists.");
 		}
 
 		if (reservation.getUserAccount() == null) {
-			throw new BusinessException("Reservation with id=" + reservationId
-					+ " doesn't have userAccount set.");
+			throw new BusinessException("Reservation with id=" + reservationId + " doesn't have userAccount set.");
 		}
 
 		// #2 Set to TREATED all the walletOperations linked to reservation.
-		walletReservationService.updateReservationStatus(em, reservationId,
-				WalletOperationStatusEnum.TREATED);
+		walletReservationService.updateReservationStatus(reservationId, WalletOperationStatusEnum.TREATED);
 
 		// #3 Set to CONFIRMED the reservation.
 		reservation.setStatus(ReservationStatus.CONFIRMED);
 
 		// #4 Create the subscription, set subscriptionId in reservation.
 		Subscription subscription = new Subscription();
-		subscription.setCode(sellerCode + "_"
-				+ reservation.getUserAccount().getCode() + "_" + offerCode);
+		subscription.setCode(sellerCode + "_" + reservation.getUserAccount().getCode() + "_" + offerCode);
 		subscription.setOffer(offerTemplate);
 		subscription.setUserAccount(reservation.getUserAccount());
 		subscription.setStatusDate(new Date());
@@ -383,13 +322,11 @@ public class ReservationService extends PersistenceService<Reservation> {
 		// #5 Return for info, servicesSum - reservedAmount. Basically the
 		// difference in amount when the credit is reserved and on the actual
 		// date of the subscription.
-		BigDecimal servicesSum = walletReservationService.computeServicesSum(
-				em, offerTemplate, reservation.getUserAccount(),
-				subscriptionDate, param1, param2, param3, new BigDecimal(1));
+		BigDecimal servicesSum = walletReservationService.computeServicesSum(offerTemplate,
+				reservation.getUserAccount(), subscriptionDate, param1, param2, param3, new BigDecimal(1));
 
-		BigDecimal ratedAmount = walletReservationService.computeRatedAmount(
-				em, provider, seller, reservation.getUserAccount(),
-				subscriptionDate);
+		BigDecimal ratedAmount = walletReservationService.computeRatedAmount(provider, seller,
+				reservation.getUserAccount(), subscriptionDate);
 
 		if (servicesSum != null && ratedAmount != null) {
 			return servicesSum.subtract(ratedAmount);
@@ -407,15 +344,14 @@ public class ReservationService extends PersistenceService<Reservation> {
 	public int updateExpiredReservation(Provider provider) {
 		StringBuilder sb = new StringBuilder();
 
-		sb.append("UPDATE "
-				+ Reservation.class.getName()
+		sb.append("UPDATE " + Reservation.class.getName()
 				+ " r SET r.status=:expiredStatus WHERE r.status=:openStatus AND r.expiryDate<:expiryDate");
 
 		try {
 			return getEntityManager().createQuery(sb.toString())
 					.setParameter("expiredStatus", ReservationStatus.EXPIRED)
-					.setParameter("openStatus", ReservationStatus.OPEN)
-					.setParameter("expiryDate", new Date()).executeUpdate();
+					.setParameter("openStatus", ReservationStatus.OPEN).setParameter("expiryDate", new Date())
+					.executeUpdate();
 		} catch (Exception e) {
 			log.error(e.getMessage());
 			return 0;

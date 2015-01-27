@@ -21,43 +21,37 @@ import java.util.List;
 
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
 import org.meveo.model.BusinessEntity;
-import org.meveo.model.billing.ServiceInstance;
 
 @Entity
 @Table(name = "CAT_SERVICE_TEMPLATE", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE", "PROVIDER_ID" }))
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "CAT_SERVICE_TEMPLATE_SEQ")
 public class ServiceTemplate extends BusinessEntity {
-	
+
 	private static final long serialVersionUID = 1L;
 
-	@OneToMany(mappedBy = "serviceTemplate",fetch = FetchType.LAZY)
+	@OneToMany(mappedBy = "serviceTemplate", fetch = FetchType.LAZY)
 	private List<ServiceChargeTemplateRecurring> serviceRecurringCharges = new ArrayList<ServiceChargeTemplateRecurring>();
 
-	@OneToMany(mappedBy = "serviceTemplate",fetch = FetchType.LAZY)
+	@OneToMany(mappedBy = "serviceTemplate", fetch = FetchType.LAZY)
 	private List<ServiceChargeTemplateSubscription> serviceSubscriptionCharges = new ArrayList<ServiceChargeTemplateSubscription>();
 
-	@OneToMany(mappedBy = "serviceTemplate",fetch = FetchType.LAZY)
+	@OneToMany(mappedBy = "serviceTemplate", fetch = FetchType.LAZY)
 	private List<ServiceChargeTemplateTermination> serviceTerminationCharges = new ArrayList<ServiceChargeTemplateTermination>();
 
 	@OneToMany(mappedBy = "serviceTemplate", fetch = FetchType.LAZY)
 	private List<ServiceChargeTemplateUsage> serviceUsageCharges = new ArrayList<ServiceChargeTemplateUsage>();
 
-	 
 	public List<ServiceChargeTemplateRecurring> getServiceRecurringCharges() {
 		return serviceRecurringCharges;
 	}
 
-	public void setServiceRecurringCharges(
-			List<ServiceChargeTemplateRecurring> serviceRecurringCharges) {
+	public void setServiceRecurringCharges(List<ServiceChargeTemplateRecurring> serviceRecurringCharges) {
 		this.serviceRecurringCharges = serviceRecurringCharges;
 	}
 
@@ -65,9 +59,7 @@ public class ServiceTemplate extends BusinessEntity {
 		return serviceSubscriptionCharges;
 	}
 
-
-	public void setServiceSubscriptionCharges(
-			List<ServiceChargeTemplateSubscription> serviceSubscriptionCharges) {
+	public void setServiceSubscriptionCharges(List<ServiceChargeTemplateSubscription> serviceSubscriptionCharges) {
 		this.serviceSubscriptionCharges = serviceSubscriptionCharges;
 	}
 
@@ -75,9 +67,7 @@ public class ServiceTemplate extends BusinessEntity {
 		return serviceTerminationCharges;
 	}
 
-
-	public void setServiceTerminationCharges(
-			List<ServiceChargeTemplateTermination> serviceTerminationCharges) {
+	public void setServiceTerminationCharges(List<ServiceChargeTemplateTermination> serviceTerminationCharges) {
 		this.serviceTerminationCharges = serviceTerminationCharges;
 	}
 
@@ -85,12 +75,10 @@ public class ServiceTemplate extends BusinessEntity {
 		return serviceUsageCharges;
 	}
 
-	public void setServiceUsageCharges(
-			List<ServiceChargeTemplateUsage> serviceUsageCharges) {
+	public void setServiceUsageCharges(List<ServiceChargeTemplateUsage> serviceUsageCharges) {
 		this.serviceUsageCharges = serviceUsageCharges;
 	}
 
- 
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)

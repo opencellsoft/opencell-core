@@ -4,7 +4,7 @@ import javax.jws.WebMethod;
 import javax.jws.WebService;
 
 import org.meveo.api.dto.ActionStatus;
-import org.meveo.api.dto.rating.EdrDto;
+import org.meveo.api.dto.billing.EdrDto;
 
 /**
  * @author Edward P. Legaspi

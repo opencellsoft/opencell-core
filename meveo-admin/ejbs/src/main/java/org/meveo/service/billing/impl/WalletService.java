@@ -32,8 +32,11 @@ import org.meveo.service.base.PersistenceService;
 @Stateless
 public class WalletService extends PersistenceService<WalletInstance> {
 
-	public WalletInstance findByUserAccount(EntityManager em,
-			UserAccount userAccount) {
+	public WalletInstance findByUserAccount(UserAccount userAccount) {
+		return findByUserAccount(getEntityManager(), userAccount);
+	}
+
+	public WalletInstance findByUserAccount(EntityManager em, UserAccount userAccount) {
 		QueryBuilder qb = new QueryBuilder(WalletInstance.class, "w");
 		try {
 			qb.addCriterionEntity("userAccount", userAccount);

@@ -1,10 +1,12 @@
-package org.meveo.api.dto;
+package org.meveo.api.dto.billing;
 
 import java.util.Date;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
+
+import org.meveo.api.dto.BaseDto;
 
 /**
  * @author Edward P. Legaspi

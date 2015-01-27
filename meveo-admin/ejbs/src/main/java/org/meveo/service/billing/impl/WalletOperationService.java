@@ -212,7 +212,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 	 *            open (OPEN)
 	 * @return
 	 */
-	public BigDecimal getBalanceAmount(EntityManager em, Provider provider, Seller seller, Customer customer,
+	public BigDecimal getBalanceAmount(Provider provider, Seller seller, Customer customer,
 			CustomerAccount customerAccount, BillingAccount billingAccount, UserAccount userAccount, Date startDate,
 			Date endDate, boolean amountWithTax, int mode) {
 
@@ -274,7 +274,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 				break;
 			}
 
-			Query query = em.createQuery(strQuery.toString());
+			Query query = getEntityManager().createQuery(strQuery.toString());
 
 			if (mode == 1) {
 				query.setParameter("open", WalletOperationStatusEnum.OPEN);
@@ -1192,4 +1192,17 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 		}
 	}
 
+	public WalletOperation findByUserAccountAndCode(String code, UserAccount userAccount, Provider provider) {
+		QueryBuilder qb = new QueryBuilder(WalletOperation.class, "w");
+		qb.addCriterionEntity("wallet.userAccount", userAccount);
+		qb.addCriterionEntity("provider", provider);
+		qb.addCriterion("code", "=", code, true);
+
+		try {
+			return (WalletOperation) qb.getQuery(getEntityManager()).getSingleResult();
+		} catch (NoResultException e) {
+			log.warn(e.getMessage());
+			return null;
+		}
+	}
 }
