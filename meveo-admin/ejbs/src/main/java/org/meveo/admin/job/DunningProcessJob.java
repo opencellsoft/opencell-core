@@ -33,13 +33,13 @@ import org.meveo.model.payments.DunningPlan;
 import org.meveo.model.payments.OtherCreditAndCharge;
 import org.meveo.service.admin.impl.BayadDunningInputHistoryService;
 import org.meveo.service.admin.impl.UserService;
+import org.meveo.service.job.Job;
+import org.meveo.service.job.JobExecutionService;
+import org.meveo.service.job.TimerEntityService;
 import org.meveo.service.payments.impl.CustomerAccountService;
 import org.meveo.service.payments.impl.DunningHistoryService;
 import org.meveo.service.payments.impl.DunningLOTService;
 import org.meveo.service.payments.impl.DunningPlanService;
-import org.meveo.services.job.Job;
-import org.meveo.services.job.JobExecutionService;
-import org.meveo.services.job.TimerEntityService;
 import org.slf4j.Logger;
 
 @Startup

@@ -1,4 +1,4 @@
-package org.meveo.services.job;
+package org.meveo.service.job;
 
 import javax.ejb.ScheduleExpression;
 import javax.ejb.Timer;

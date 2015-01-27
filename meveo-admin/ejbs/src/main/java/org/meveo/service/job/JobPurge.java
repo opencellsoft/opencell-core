@@ -1,4 +1,4 @@
-package org.meveo.services.job;
+package org.meveo.service.job;
 
 import java.util.Collection;
 import java.util.Date;

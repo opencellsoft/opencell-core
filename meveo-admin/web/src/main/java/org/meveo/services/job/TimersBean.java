@@ -20,6 +20,7 @@ import org.meveo.admin.util.pagination.PaginationDataModel;
 import org.meveo.model.jobs.TimerEntity;
 import org.meveo.model.jobs.TimerInfo;
 import org.meveo.service.base.local.IPersistenceService;
+import org.meveo.service.job.TimerEntityService;
 
 @Named
 @ConversationScoped
