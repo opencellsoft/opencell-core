@@ -6446,7 +6446,7 @@
       <xs:element name="updateUserResponse" type="tns:updateUserResponse"/>
       <xs:complexType name="removeInvoiceSubCategory">
         <xs:sequence>
-          <xs:element minOccurs="0" name="arg0" type="xs:string"/>
+          <xs:element minOccurs="0" name="invoiceSubCategoryCode" type="xs:string"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="removeInvoiceSubCategoryResponse">
@@ -6463,7 +6463,7 @@
       </xs:complexType>
       <xs:complexType name="updateSeller">
         <xs:sequence>
-          <xs:element minOccurs="0" name="arg0" type="tns:sellerDto"/>
+          <xs:element minOccurs="0" name="seller" type="tns:sellerDto"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="sellerDto">
@@ -6491,7 +6491,7 @@
       </xs:complexType>
       <xs:complexType name="createProvider">
         <xs:sequence>
-          <xs:element minOccurs="0" name="arg0" type="tns:providerDto"/>
+          <xs:element minOccurs="0" name="provider" type="tns:providerDto"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="providerDto">
@@ -6518,7 +6518,7 @@
       </xs:complexType>
       <xs:complexType name="createCountry">
         <xs:sequence>
-          <xs:element minOccurs="0" name="arg0" type="tns:countryDto"/>
+          <xs:element minOccurs="0" name="country" type="tns:countryDto"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="countryDto">
@@ -6540,7 +6540,7 @@
       </xs:complexType>
       <xs:complexType name="createInvoiceCategory">
         <xs:sequence>
-          <xs:element minOccurs="0" name="arg0" type="tns:invoiceCategoryDto"/>
+          <xs:element minOccurs="0" name="invoiceCategory" type="tns:invoiceCategoryDto"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="invoiceCategoryDto">
@@ -6567,7 +6567,7 @@
       </xs:complexType>
       <xs:complexType name="removeTax">
         <xs:sequence>
-          <xs:element minOccurs="0" name="arg0" type="xs:string"/>
+          <xs:element minOccurs="0" name="taxCode" type="xs:string"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="removeTaxResponse">
@@ -6577,7 +6577,7 @@
       </xs:complexType>
       <xs:complexType name="findLanguage">
         <xs:sequence>
-          <xs:element minOccurs="0" name="arg0" type="xs:string"/>
+          <xs:element minOccurs="0" name="languageCode" type="xs:string"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="findLanguageResponse">
@@ -6611,7 +6611,7 @@
       </xs:complexType>
       <xs:complexType name="findCalendar">
         <xs:sequence>
-          <xs:element minOccurs="0" name="arg0" type="xs:string"/>
+          <xs:element minOccurs="0" name="calendarCode" type="xs:string"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="findCalendarResponse">
@@ -6641,14 +6641,13 @@
         </xs:complexContent>
       </xs:complexType>
       <xs:complexType name="dayInYearDto">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="day" type="xs:int"/>
-          <xs:element minOccurs="0" name="month" type="xs:string"/>
-        </xs:sequence>
+        <xs:sequence/>
+        <xs:attribute name="day" type="xs:int" use="required"/>
+        <xs:attribute name="month" type="xs:string" use="required"/>
       </xs:complexType>
       <xs:complexType name="updateLanguage">
         <xs:sequence>
-          <xs:element minOccurs="0" name="arg0" type="tns:languageDto"/>
+          <xs:element minOccurs="0" name="language" type="tns:languageDto"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="updateLanguageResponse">
@@ -6658,7 +6657,7 @@
       </xs:complexType>
       <xs:complexType name="updateBillingCycle">
         <xs:sequence>
-          <xs:element minOccurs="0" name="arg0" type="tns:billingCycleDto"/>
+          <xs:element minOccurs="0" name="billingCycle" type="tns:billingCycleDto"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="billingCycleDto">
@@ -6682,8 +6681,8 @@
       </xs:complexType>
       <xs:complexType name="findInvoiceSubCategoryCountry">
         <xs:sequence>
-          <xs:element minOccurs="0" name="arg0" type="xs:string"/>
-          <xs:element minOccurs="0" name="arg1" type="xs:string"/>
+          <xs:element minOccurs="0" name="invoiceSubCategoryCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="country" type="xs:string"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="findInvoiceSubCategoryCountryResponse">
@@ -6714,7 +6713,7 @@
       </xs:complexType>
       <xs:complexType name="createCalendar">
         <xs:sequence>
-          <xs:element minOccurs="0" name="arg0" type="tns:calendarDto"/>
+          <xs:element minOccurs="0" name="calendar" type="tns:calendarDto"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="createCalendarResponse">
@@ -6724,8 +6723,8 @@
       </xs:complexType>
       <xs:complexType name="removeCountry">
         <xs:sequence>
-          <xs:element minOccurs="0" name="arg0" type="xs:string"/>
-          <xs:element minOccurs="0" name="arg1" type="xs:string"/>
+          <xs:element minOccurs="0" name="countryCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="currencyCode" type="xs:string"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="removeCountryResponse">
@@ -6735,7 +6734,7 @@
       </xs:complexType>
       <xs:complexType name="createTax">
         <xs:sequence>
-          <xs:element minOccurs="0" name="arg0" type="tns:taxDto"/>
+          <xs:element minOccurs="0" name="tax" type="tns:taxDto"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="taxDto">
@@ -6758,7 +6757,7 @@
       </xs:complexType>
       <xs:complexType name="findInvoiceSubCategory">
         <xs:sequence>
-          <xs:element minOccurs="0" name="arg0" type="xs:string"/>
+          <xs:element minOccurs="0" name="invoiceSubCategoryCode" type="xs:string"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="findInvoiceSubCategoryResponse">
@@ -6789,7 +6788,7 @@
       </xs:complexType>
       <xs:complexType name="updateCountry">
         <xs:sequence>
-          <xs:element minOccurs="0" name="arg0" type="tns:countryDto"/>
+          <xs:element minOccurs="0" name="country" type="tns:countryDto"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="updateCountryResponse">
@@ -6799,7 +6798,7 @@
       </xs:complexType>
       <xs:complexType name="removeCurrency">
         <xs:sequence>
-          <xs:element minOccurs="0" name="arg0" type="xs:string"/>
+          <xs:element minOccurs="0" name="currencyCode" type="xs:string"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="removeCurrencyResponse">
@@ -6809,7 +6808,7 @@
       </xs:complexType>
       <xs:complexType name="createBillingCycle">
         <xs:sequence>
-          <xs:element minOccurs="0" name="arg0" type="tns:billingCycleDto"/>
+          <xs:element minOccurs="0" name="billingCycle" type="tns:billingCycleDto"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="createBillingCycleResponse">
@@ -6819,7 +6818,7 @@
       </xs:complexType>
       <xs:complexType name="removeSeller">
         <xs:sequence>
-          <xs:element minOccurs="0" name="arg0" type="xs:string"/>
+          <xs:element minOccurs="0" name="sellerCode" type="xs:string"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="removeSellerResponse">
@@ -6829,7 +6828,7 @@
       </xs:complexType>
       <xs:complexType name="removeBillingCycle">
         <xs:sequence>
-          <xs:element minOccurs="0" name="arg0" type="xs:string"/>
+          <xs:element minOccurs="0" name="billingCycleCode" type="xs:string"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="removeBillingCycleResponse">
@@ -6839,8 +6838,8 @@
       </xs:complexType>
       <xs:complexType name="removeInvoiceSubCategoryCountry">
         <xs:sequence>
-          <xs:element minOccurs="0" name="arg0" type="xs:string"/>
-          <xs:element minOccurs="0" name="arg1" type="xs:string"/>
+          <xs:element minOccurs="0" name="invoiceSubCategoryCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="country" type="xs:string"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="removeInvoiceSubCategoryCountryResponse">
@@ -6850,7 +6849,7 @@
       </xs:complexType>
       <xs:complexType name="createUser">
         <xs:sequence>
-          <xs:element minOccurs="0" name="arg0" type="tns:userDto"/>
+          <xs:element minOccurs="0" name="user" type="tns:userDto"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="userDto">
@@ -6875,7 +6874,7 @@
       </xs:complexType>
       <xs:complexType name="findUser">
         <xs:sequence>
-          <xs:element minOccurs="0" name="arg0" type="xs:string"/>
+          <xs:element minOccurs="0" name="username" type="xs:string"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="findUserResponse">
@@ -6894,7 +6893,7 @@
       </xs:complexType>
       <xs:complexType name="updateTax">
         <xs:sequence>
-          <xs:element minOccurs="0" name="arg0" type="tns:taxDto"/>
+          <xs:element minOccurs="0" name="tax" type="tns:taxDto"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="updateTaxResponse">
@@ -6912,7 +6911,7 @@
       </xs:complexType>
       <xs:complexType name="updateInvoiceCategory">
         <xs:sequence>
-          <xs:element minOccurs="0" name="arg0" type="tns:invoiceCategoryDto"/>
+          <xs:element minOccurs="0" name="invoiceCategory" type="tns:invoiceCategoryDto"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="updateInvoiceCategoryResponse">
@@ -6922,7 +6921,7 @@
       </xs:complexType>
       <xs:complexType name="findSeller">
         <xs:sequence>
-          <xs:element minOccurs="0" name="arg0" type="xs:string"/>
+          <xs:element minOccurs="0" name="sellerCode" type="xs:string"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="findSellerResponse">
@@ -6941,7 +6940,7 @@
       </xs:complexType>
       <xs:complexType name="removeLanguage">
         <xs:sequence>
-          <xs:element minOccurs="0" name="arg0" type="xs:string"/>
+          <xs:element minOccurs="0" name="languageCode" type="xs:string"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="removeLanguageResponse">
@@ -6951,7 +6950,7 @@
       </xs:complexType>
       <xs:complexType name="updateInvoiceSubCategory">
         <xs:sequence>
-          <xs:element minOccurs="0" name="arg0" type="tns:invoiceSubCategoryDto"/>
+          <xs:element minOccurs="0" name="invoiceSubCategory" type="tns:invoiceSubCategoryDto"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="updateInvoiceSubCategoryResponse">
@@ -6961,7 +6960,7 @@
       </xs:complexType>
       <xs:complexType name="findCountry">
         <xs:sequence>
-          <xs:element minOccurs="0" name="arg0" type="xs:string"/>
+          <xs:element minOccurs="0" name="countryCode" type="xs:string"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="findCountryResponse">
@@ -6980,7 +6979,7 @@
       </xs:complexType>
       <xs:complexType name="createLanguage">
         <xs:sequence>
-          <xs:element minOccurs="0" name="arg0" type="tns:languageDto"/>
+          <xs:element minOccurs="0" name="language" type="tns:languageDto"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="createLanguageResponse">
@@ -6990,7 +6989,7 @@
       </xs:complexType>
       <xs:complexType name="updateProvider">
         <xs:sequence>
-          <xs:element minOccurs="0" name="arg0" type="tns:providerDto"/>
+          <xs:element minOccurs="0" name="provider" type="tns:providerDto"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="updateProviderResponse">
@@ -7000,7 +6999,7 @@
       </xs:complexType>
       <xs:complexType name="removeUser">
         <xs:sequence>
-          <xs:element minOccurs="0" name="arg0" type="xs:string"/>
+          <xs:element minOccurs="0" name="username" type="xs:string"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="removeUserResponse">
@@ -7010,7 +7009,7 @@
       </xs:complexType>
       <xs:complexType name="findTax">
         <xs:sequence>
-          <xs:element minOccurs="0" name="arg0" type="xs:string"/>
+          <xs:element minOccurs="0" name="taxCode" type="xs:string"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="findTaxResponse">
@@ -7029,7 +7028,7 @@
       </xs:complexType>
       <xs:complexType name="createCurrency">
         <xs:sequence>
-          <xs:element minOccurs="0" name="arg0" type="tns:currencyDto"/>
+          <xs:element minOccurs="0" name="currency" type="tns:currencyDto"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="currencyDto">
@@ -7049,7 +7048,7 @@
       </xs:complexType>
       <xs:complexType name="removeCalendar">
         <xs:sequence>
-          <xs:element minOccurs="0" name="arg0" type="xs:string"/>
+          <xs:element minOccurs="0" name="calendarCode" type="xs:string"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="removeCalendarResponse">
@@ -7059,7 +7058,7 @@
       </xs:complexType>
       <xs:complexType name="findInvoiceCategory">
         <xs:sequence>
-          <xs:element minOccurs="0" name="arg0" type="xs:string"/>
+          <xs:element minOccurs="0" name="invoiceCategoryCode" type="xs:string"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="findInvoiceCategoryResponse">
@@ -7078,7 +7077,7 @@
       </xs:complexType>
       <xs:complexType name="createSeller">
         <xs:sequence>
-          <xs:element minOccurs="0" name="arg0" type="tns:sellerDto"/>
+          <xs:element minOccurs="0" name="seller" type="tns:sellerDto"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="createSellerResponse">
@@ -7088,7 +7087,7 @@
       </xs:complexType>
       <xs:complexType name="createInvoiceSubCategoryCountry">
         <xs:sequence>
-          <xs:element minOccurs="0" name="arg0" type="tns:invoiceSubCategoryCountryDto"/>
+          <xs:element minOccurs="0" name="invoiceSubCategoryCountry" type="tns:invoiceSubCategoryCountryDto"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="createInvoiceSubCategoryCountryResponse">
@@ -7098,7 +7097,7 @@
       </xs:complexType>
       <xs:complexType name="findBillingCycle">
         <xs:sequence>
-          <xs:element minOccurs="0" name="arg0" type="xs:string"/>
+          <xs:element minOccurs="0" name="billingCycleCode" type="xs:string"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="findBillingCycleResponse">
@@ -7117,7 +7116,7 @@
       </xs:complexType>
       <xs:complexType name="findCurrency">
         <xs:sequence>
-          <xs:element minOccurs="0" name="arg0" type="xs:string"/>
+          <xs:element minOccurs="0" name="currencyCode" type="xs:string"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="findCurrencyResponse">
@@ -7136,7 +7135,7 @@
       </xs:complexType>
       <xs:complexType name="createInvoiceSubCategory">
         <xs:sequence>
-          <xs:element minOccurs="0" name="arg0" type="tns:invoiceSubCategoryDto"/>
+          <xs:element minOccurs="0" name="invoiceSubCategory" type="tns:invoiceSubCategoryDto"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="createInvoiceSubCategoryResponse">
@@ -7146,7 +7145,7 @@
       </xs:complexType>
       <xs:complexType name="removeInvoiceCategory">
         <xs:sequence>
-          <xs:element minOccurs="0" name="arg0" type="xs:string"/>
+          <xs:element minOccurs="0" name="invoiceCategoryCode" type="xs:string"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="removeInvoiceCategoryResponse">
@@ -7156,7 +7155,7 @@
       </xs:complexType>
       <xs:complexType name="updateCalendar">
         <xs:sequence>
-          <xs:element minOccurs="0" name="arg0" type="tns:calendarDto"/>
+          <xs:element minOccurs="0" name="calendar" type="tns:calendarDto"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="updateCalendarResponse">
@@ -7166,7 +7165,7 @@
       </xs:complexType>
       <xs:complexType name="updateInvoiceSubCategoryCountry">
         <xs:sequence>
-          <xs:element minOccurs="0" name="arg0" type="tns:invoiceSubCategoryCountryDto"/>
+          <xs:element minOccurs="0" name="invoiceSubCategoryCountry" type="tns:invoiceSubCategoryCountryDto"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="updateInvoiceSubCategoryCountryResponse">
@@ -7176,7 +7175,7 @@
       </xs:complexType>
       <xs:complexType name="findProvider">
         <xs:sequence>
-          <xs:element minOccurs="0" name="arg0" type="xs:string"/>
+          <xs:element minOccurs="0" name="providerCode" type="xs:string"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="findProviderResponse">
@@ -7195,7 +7194,7 @@
       </xs:complexType>
       <xs:complexType name="updateUser">
         <xs:sequence>
-          <xs:element minOccurs="0" name="arg0" type="tns:userDto"/>
+          <xs:element minOccurs="0" name="user" type="tns:userDto"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="updateUserResponse">
@@ -7205,7 +7204,7 @@
       </xs:complexType>
       <xs:complexType name="updateCurrency">
         <xs:sequence>
-          <xs:element minOccurs="0" name="arg0" type="tns:currencyDto"/>
+          <xs:element minOccurs="0" name="currency" type="tns:currencyDto"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="updateCurrencyResponse">
@@ -7711,13 +7710,13 @@
    <soapenv:Body>
       <ws:createCountry>
          <!--Optional:-->
-         <arg0>
+         <country>
             <countryCode>PH</countryCode>
             <name>Philippines</name>
             <currencyCode>PHP</currencyCode>
             <!--Optional:-->
             <languageCode>ENG</languageCode>
-         </arg0>
+         </country>
       </ws:createCountry>
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/createCountry"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation isOneWay="false" action="" name="createCurrency" bindingOperationName="createCurrency" type="Request-Response" outputName="createCurrencyResponse" inputName="createCurrency" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment xmlns:con="http://eviware.com/soapui/config">
@@ -7728,10 +7727,10 @@
    <soapenv:Body>
       <ws:createCurrency>
          <!--Optional:-->
-         <arg0 code="PHP">
+         <currency code="PHP">
             <!--Optional:-->
             <description>Philippine Peso</description>
-         </arg0>
+         </currency>
       </ws:createCurrency>
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/createCurrency"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation isOneWay="false" action="" name="createInvoiceCategory" bindingOperationName="createInvoiceCategory" type="Request-Response" outputName="createInvoiceCategoryResponse" inputName="createInvoiceCategory" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment xmlns:con="http://eviware.com/soapui/config">
@@ -7742,7 +7741,7 @@
    <soapenv:Body>
       <ws:createInvoiceCategory>
          <!--Optional:-->
-         <arg0 code="TEST" description="test">
+         <invoiceCategory code="TEST" description="test">
             <!--Zero or more repetitions:-->
             <languageDescriptions>
                <!--Optional:-->
@@ -7750,7 +7749,7 @@
                <!--Optional:-->
                <description>test</description>
             </languageDescriptions>
-         </arg0>
+         </invoiceCategory>
       </ws:createInvoiceCategory>
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/createInvoiceCategory"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation isOneWay="false" action="" name="createInvoiceSubCategory" bindingOperationName="createInvoiceSubCategory" type="Request-Response" outputName="createInvoiceSubCategoryResponse" inputName="createInvoiceSubCategory" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment xmlns:con="http://eviware.com/soapui/config">
@@ -7761,7 +7760,7 @@
    <soapenv:Body>
       <ws:createInvoiceSubCategory>
          <!--Optional:-->
-         <arg0 code="TEST" description="test" invoiceCategory="TEST">
+         <invoiceSubCategory code="TEST" description="test" invoiceCategory="TEST">
             <!--Zero or more repetitions:-->
             <languageDescriptions>
                <!--Optional:-->
@@ -7769,7 +7768,7 @@
                <!--Optional:-->
                <description>test</description>
             </languageDescriptions>
-         </arg0>
+         </invoiceSubCategory>
       </ws:createInvoiceSubCategory>
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/createInvoiceSubCategory"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation isOneWay="false" action="" name="createInvoiceSubCategoryCountry" bindingOperationName="createInvoiceSubCategoryCountry" type="Request-Response" outputName="createInvoiceSubCategoryCountryResponse" inputName="createInvoiceSubCategoryCountry" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment xmlns:con="http://eviware.com/soapui/config">
@@ -7780,10 +7779,10 @@
    <soapenv:Body>
       <ws:createInvoiceSubCategoryCountry>
          <!--Optional:-->
-         <arg0 invoiceSubCategory="TEST" country="US" tax="TAX_00">
+         <invoiceSubCategoryCountry invoiceSubCategory="TEST" country="US" tax="TAX_00">
             <!--Optional:-->
-            <discountCode></discountCode>
-         </arg0>
+            <discountCode>2</discountCode>
+         </invoiceSubCategoryCountry>
       </ws:createInvoiceSubCategoryCountry>
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/createInvoiceSubCategoryCountry"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation isOneWay="false" action="" name="createLanguage" bindingOperationName="createLanguage" type="Request-Response" outputName="createLanguageResponse" inputName="createLanguage" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment xmlns:con="http://eviware.com/soapui/config">
@@ -7794,10 +7793,10 @@
    <soapenv:Body>
       <ws:createLanguage>
          <!--Optional:-->
-         <arg0 code="TEST">
+         <language code="PH">
             <!--Optional:-->
-            <description>TEST</description>
-         </arg0>
+            <description>Tagalog</description>
+         </language>
       </ws:createLanguage>
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/createLanguage"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation isOneWay="false" action="" name="createProvider" bindingOperationName="createProvider" type="Request-Response" outputName="createProviderResponse" inputName="createProvider" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment xmlns:con="http://eviware.com/soapui/config">
@@ -7808,21 +7807,21 @@
    <soapenv:Body>
       <ws:createProvider>
          <!--Optional:-->
-         <arg0 code="?">
+         <provider code="TEST">
             <!--Optional:-->
-            <description>?</description>
+            <description>TEST</description>
             <!--Optional:-->
-            <currency>?</currency>
+            <currency>PHP</currency>
             <!--Optional:-->
-            <country>?</country>
+            <country>PH</country>
             <!--Optional:-->
-            <language>?</language>
-            <multiCurrency>?</multiCurrency>
-            <multiCountry>?</multiCountry>
-            <multiLanguage>?</multiLanguage>
+            <language>PH</language>
+            <multiCurrency>false</multiCurrency>
+            <multiCountry>false</multiCountry>
+            <multiLanguage>false</multiLanguage>
             <!--Optional:-->
-            <userAccount>?</userAccount>
-         </arg0>
+            <userAccount></userAccount>
+         </provider>
       </ws:createProvider>
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/createProvider"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation isOneWay="false" action="" name="createSeller" bindingOperationName="createSeller" type="Request-Response" outputName="createSellerResponse" inputName="createSeller" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment xmlns:con="http://eviware.com/soapui/config">
@@ -7833,20 +7832,20 @@
    <soapenv:Body>
       <ws:createSeller>
          <!--Optional:-->
-         <arg0 code="?">
+         <seller code="TEST">
             <!--Optional:-->
-            <description>?</description>
+            <description>TEST</description>
             <!--Optional:-->
-            <invoicePrefix>?</invoicePrefix>
+            <invoicePrefix>TEST</invoicePrefix>
             <!--Optional:-->
-            <currencyCode>?</currencyCode>
+            <currencyCode>USD</currencyCode>
             <!--Optional:-->
-            <countryCode>?</countryCode>
+            <countryCode>US</countryCode>
             <!--Optional:-->
-            <languageCode>?</languageCode>
+            <languageCode>PH</languageCode>
             <!--Optional:-->
-            <parentSeller>?</parentSeller>
-         </arg0>
+            <parentSeller></parentSeller>
+         </seller>
       </ws:createSeller>
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/createSeller"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation isOneWay="false" action="" name="createTax" bindingOperationName="createTax" type="Request-Response" outputName="createTaxResponse" inputName="createTax" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment xmlns:con="http://eviware.com/soapui/config">
@@ -7857,17 +7856,17 @@
    <soapenv:Body>
       <ws:createTax>
          <!--Optional:-->
-         <arg0 code="?" description="?" percent="?">
+         <tax code="TEST" description="TEST" percent=".12">
             <!--Optional:-->
-            <accountingCode>?</accountingCode>
+            <accountingCode></accountingCode>
             <!--Zero or more repetitions:-->
             <languageDescriptions>
                <!--Optional:-->
-               <languageCode>?</languageCode>
+               <languageCode>ENG</languageCode>
                <!--Optional:-->
-               <description>?</description>
+               <description>ENG</description>
             </languageDescriptions>
-         </arg0>
+         </tax>
       </ws:createTax>
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/createTax"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation isOneWay="false" action="" name="createUser" bindingOperationName="createUser" type="Request-Response" outputName="createUserResponse" inputName="createUser" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment xmlns:con="http://eviware.com/soapui/config">
@@ -7878,15 +7877,28 @@
    <soapenv:Body>
       <ws:createUser>
          <!--Optional:-->
-         <arg0 username="?" password="?" email="?" role="?" provider="?">
+         <user username="TEST" password="TEST" email="TEST@GMAIL.COM" role="administrateur" provider="TEST">
+            <!--Optional:-->
+            <firstName>Edward</firstName>
+            <!--Optional:-->
+            <lastName>Legaspi</lastName>
+         </user>
+      </ws:createUser>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/createUser"/><con:wsrmConfig version="1.2"/></con:call><con:call name="Request 2"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createUser>
+         <!--Optional:-->
+         <user username="?" password="?" email="?" role="?" provider="?">
             <!--Optional:-->
             <firstName>?</firstName>
             <!--Optional:-->
             <lastName>?</lastName>
-         </arg0>
+         </user>
       </ws:createUser>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/createUser"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation isOneWay="false" action="" name="findCountry" bindingOperationName="findCountry" type="Request-Response" outputName="findCountryResponse" inputName="findCountry" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment xmlns:con="http://eviware.com/soapui/config">
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/createUser"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation isOneWay="false" action="" name="findCountry" bindingOperationName="findCountry" type="Request-Response" outputName="findCountryResponse" inputName="findCountry" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 2"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment xmlns:con="http://eviware.com/soapui/config">
   &lt;con:entry key="username" value="meveo.admin"/>
   &lt;con:entry key="password" value="meveo.admin"/>
 &lt;/xml-fragment></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
@@ -7894,7 +7906,7 @@
    <soapenv:Body>
       <ws:findCountry>
          <!--Optional:-->
-         <arg0>PH</arg0>
+         <countryCode>PH</countryCode>
       </ws:findCountry>
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/findCountry"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation isOneWay="false" action="" name="findCurrency" bindingOperationName="findCurrency" type="Request-Response" outputName="findCurrencyResponse" inputName="findCurrency" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment xmlns:con="http://eviware.com/soapui/config">
@@ -7916,7 +7928,15 @@
    <soapenv:Body>
       <ws:findInvoiceCategory>
          <!--Optional:-->
-         <arg0>?</arg0>
+         <invoiceCategoryCode>TEST</invoiceCategoryCode>
+      </ws:findInvoiceCategory>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/findInvoiceCategory"/><con:wsrmConfig version="1.2"/></con:call><con:call name="Request 2"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:findInvoiceCategory>
+         <!--Optional:-->
+         <invoiceCategoryCode>?</invoiceCategoryCode>
       </ws:findInvoiceCategory>
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/findInvoiceCategory"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation isOneWay="false" action="" name="findInvoiceSubCategory" bindingOperationName="findInvoiceSubCategory" type="Request-Response" outputName="findInvoiceSubCategoryResponse" inputName="findInvoiceSubCategory" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment xmlns:con="http://eviware.com/soapui/config">
@@ -7927,7 +7947,7 @@
    <soapenv:Body>
       <ws:findInvoiceSubCategory>
          <!--Optional:-->
-         <arg0>?</arg0>
+         <invoiceSubCategoryCode>TEST</invoiceSubCategoryCode>
       </ws:findInvoiceSubCategory>
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/findInvoiceSubCategory"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation isOneWay="false" action="" name="findInvoiceSubCategoryCountry" bindingOperationName="findInvoiceSubCategoryCountry" type="Request-Response" outputName="findInvoiceSubCategoryCountryResponse" inputName="findInvoiceSubCategoryCountry" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment xmlns:con="http://eviware.com/soapui/config">
@@ -7938,9 +7958,9 @@
    <soapenv:Body>
       <ws:findInvoiceSubCategoryCountry>
          <!--Optional:-->
-         <arg0>?</arg0>
+         <invoiceSubCategoryCode>TEST</invoiceSubCategoryCode>
          <!--Optional:-->
-         <arg1>?</arg1>
+         <country>US</country>
       </ws:findInvoiceSubCategoryCountry>
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/findInvoiceSubCategoryCountry"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation isOneWay="false" action="" name="findLanguage" bindingOperationName="findLanguage" type="Request-Response" outputName="findLanguageResponse" inputName="findLanguage" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment xmlns:con="http://eviware.com/soapui/config">
@@ -7951,7 +7971,7 @@
    <soapenv:Body>
       <ws:findLanguage>
          <!--Optional:-->
-         <arg0>?</arg0>
+         <languageCode>PH</languageCode>
       </ws:findLanguage>
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/findLanguage"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation isOneWay="false" action="" name="findProvider" bindingOperationName="findProvider" type="Request-Response" outputName="findProviderResponse" inputName="findProvider" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment xmlns:con="http://eviware.com/soapui/config">
@@ -7962,7 +7982,7 @@
    <soapenv:Body>
       <ws:findProvider>
          <!--Optional:-->
-         <arg0>?</arg0>
+         <providerCode>TEST</providerCode>
       </ws:findProvider>
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/findProvider"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation isOneWay="false" action="" name="findSeller" bindingOperationName="findSeller" type="Request-Response" outputName="findSellerResponse" inputName="findSeller" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment xmlns:con="http://eviware.com/soapui/config">
@@ -7973,7 +7993,7 @@
    <soapenv:Body>
       <ws:findSeller>
          <!--Optional:-->
-         <arg0>?</arg0>
+         <sellerCode>TEST</sellerCode>
       </ws:findSeller>
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/findSeller"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation isOneWay="false" action="" name="findTax" bindingOperationName="findTax" type="Request-Response" outputName="findTaxResponse" inputName="findTax" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment xmlns:con="http://eviware.com/soapui/config">
@@ -7984,7 +8004,7 @@
    <soapenv:Body>
       <ws:findTax>
          <!--Optional:-->
-         <arg0>?</arg0>
+         <taxCode>TEST</taxCode>
       </ws:findTax>
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/findTax"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation isOneWay="false" action="" name="findUser" bindingOperationName="findUser" type="Request-Response" outputName="findUserResponse" inputName="findUser" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment xmlns:con="http://eviware.com/soapui/config">
@@ -7995,7 +8015,7 @@
    <soapenv:Body>
       <ws:findUser>
          <!--Optional:-->
-         <arg0>?</arg0>
+         <username>TEST</username>
       </ws:findUser>
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/findUser"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation isOneWay="false" action="" name="index" bindingOperationName="index" type="Request-Response" outputName="indexResponse" inputName="index" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment xmlns:con="http://eviware.com/soapui/config">
@@ -8014,9 +8034,9 @@
    <soapenv:Body>
       <ws:removeCountry>
          <!--Optional:-->
-         <arg0>PH</arg0>
+         <countryCode>PH</countryCode>
          <!--Optional:-->
-         <arg1>PHP</arg1>
+         <currencyCode>PHP</currencyCode>
       </ws:removeCountry>
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/removeCountry"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation isOneWay="false" action="" name="removeCurrency" bindingOperationName="removeCurrency" type="Request-Response" outputName="removeCurrencyResponse" inputName="removeCurrency" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment xmlns:con="http://eviware.com/soapui/config">
@@ -8027,7 +8047,7 @@
    <soapenv:Body>
       <ws:removeCurrency>
          <!--Optional:-->
-         <arg0>?</arg0>
+         <currencyCode>PHP</currencyCode>
       </ws:removeCurrency>
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/removeCurrency"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation isOneWay="false" action="" name="removeInvoiceCategory" bindingOperationName="removeInvoiceCategory" type="Request-Response" outputName="removeInvoiceCategoryResponse" inputName="removeInvoiceCategory" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment xmlns:con="http://eviware.com/soapui/config">
@@ -8038,7 +8058,7 @@
    <soapenv:Body>
       <ws:removeInvoiceCategory>
          <!--Optional:-->
-         <arg0>?</arg0>
+         <invoiceCategoryCode>TEST</invoiceCategoryCode>
       </ws:removeInvoiceCategory>
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/removeInvoiceCategory"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation isOneWay="false" action="" name="removeInvoiceSubCategory" bindingOperationName="removeInvoiceSubCategory" type="Request-Response" outputName="removeInvoiceSubCategoryResponse" inputName="removeInvoiceSubCategory" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment xmlns:con="http://eviware.com/soapui/config">
@@ -8049,7 +8069,7 @@
    <soapenv:Body>
       <ws:removeInvoiceSubCategory>
          <!--Optional:-->
-         <arg0>?</arg0>
+         <invoiceSubCategoryCode>TEST</invoiceSubCategoryCode>
       </ws:removeInvoiceSubCategory>
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/removeInvoiceSubCategory"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation isOneWay="false" action="" name="removeInvoiceSubCategoryCountry" bindingOperationName="removeInvoiceSubCategoryCountry" type="Request-Response" outputName="removeInvoiceSubCategoryCountryResponse" inputName="removeInvoiceSubCategoryCountry" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment xmlns:con="http://eviware.com/soapui/config">
@@ -8060,9 +8080,9 @@
    <soapenv:Body>
       <ws:removeInvoiceSubCategoryCountry>
          <!--Optional:-->
-         <arg0>?</arg0>
+         <invoiceSubCategoryCode>TEST</invoiceSubCategoryCode>
          <!--Optional:-->
-         <arg1>?</arg1>
+         <country>US</country>
       </ws:removeInvoiceSubCategoryCountry>
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/removeInvoiceSubCategoryCountry"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation isOneWay="false" action="" name="removeLanguage" bindingOperationName="removeLanguage" type="Request-Response" outputName="removeLanguageResponse" inputName="removeLanguage" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment xmlns:con="http://eviware.com/soapui/config">
@@ -8073,7 +8093,7 @@
    <soapenv:Body>
       <ws:removeLanguage>
          <!--Optional:-->
-         <arg0>?</arg0>
+         <languageCode>PH</languageCode>
       </ws:removeLanguage>
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/removeLanguage"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation isOneWay="false" action="" name="removeSeller" bindingOperationName="removeSeller" type="Request-Response" outputName="removeSellerResponse" inputName="removeSeller" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment xmlns:con="http://eviware.com/soapui/config">
@@ -8084,7 +8104,7 @@
    <soapenv:Body>
       <ws:removeSeller>
          <!--Optional:-->
-         <arg0>?</arg0>
+         <sellerCode>TEST</sellerCode>
       </ws:removeSeller>
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/removeSeller"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation isOneWay="false" action="" name="removeTax" bindingOperationName="removeTax" type="Request-Response" outputName="removeTaxResponse" inputName="removeTax" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment xmlns:con="http://eviware.com/soapui/config">
@@ -8095,7 +8115,7 @@
    <soapenv:Body>
       <ws:removeTax>
          <!--Optional:-->
-         <arg0>?</arg0>
+         <taxCode>TEST</taxCode>
       </ws:removeTax>
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/removeTax"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation isOneWay="false" action="" name="removeUser" bindingOperationName="removeUser" type="Request-Response" outputName="removeUserResponse" inputName="removeUser" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment xmlns:con="http://eviware.com/soapui/config">
@@ -8106,7 +8126,7 @@
    <soapenv:Body>
       <ws:removeUser>
          <!--Optional:-->
-         <arg0>?</arg0>
+         <username>TEST</username>
       </ws:removeUser>
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/removeUser"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation isOneWay="false" action="" name="updateCountry" bindingOperationName="updateCountry" type="Request-Response" outputName="updateCountryResponse" inputName="updateCountry" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment xmlns:con="http://eviware.com/soapui/config">
@@ -8117,13 +8137,13 @@
    <soapenv:Body>
       <ws:updateCountry>
          <!--Optional:-->
-         <arg0>
+         <country>
             <countryCode>PH</countryCode>
             <name>Philippines Updated</name>
             <currencyCode>PHP</currencyCode>
             <!--Optional:-->
             <languageCode>ENG</languageCode>
-         </arg0>
+         </country>
       </ws:updateCountry>
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/updateCountry"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation isOneWay="false" action="" name="updateCurrency" bindingOperationName="updateCurrency" type="Request-Response" outputName="updateCurrencyResponse" inputName="updateCurrency" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment xmlns:con="http://eviware.com/soapui/config">
@@ -8134,10 +8154,10 @@
    <soapenv:Body>
       <ws:updateCurrency>
          <!--Optional:-->
-         <arg0 code="?">
+         <currency code="PHP">
             <!--Optional:-->
-            <description>?</description>
-         </arg0>
+            <description>Philippines-Updated</description>
+         </currency>
       </ws:updateCurrency>
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/updateCurrency"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation isOneWay="false" action="" name="updateInvoiceCategory" bindingOperationName="updateInvoiceCategory" type="Request-Response" outputName="updateInvoiceCategoryResponse" inputName="updateInvoiceCategory" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment xmlns:con="http://eviware.com/soapui/config">
@@ -8148,15 +8168,15 @@
    <soapenv:Body>
       <ws:updateInvoiceCategory>
          <!--Optional:-->
-         <arg0 code="?" description="?">
+         <invoiceCategory code="TEST" description="TEST">
             <!--Zero or more repetitions:-->
             <languageDescriptions>
+            	 <!--Optional:-->
+               <languageCode>ENG</languageCode>
                <!--Optional:-->
-               <languageCode>?</languageCode>
-               <!--Optional:-->
-               <description>?</description>
+               <description>test</description>
             </languageDescriptions>
-         </arg0>
+         </invoiceCategory>
       </ws:updateInvoiceCategory>
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/updateInvoiceCategory"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation isOneWay="false" action="" name="updateInvoiceSubCategory" bindingOperationName="updateInvoiceSubCategory" type="Request-Response" outputName="updateInvoiceSubCategoryResponse" inputName="updateInvoiceSubCategory" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment xmlns:con="http://eviware.com/soapui/config">
@@ -8167,15 +8187,15 @@
    <soapenv:Body>
       <ws:updateInvoiceSubCategory>
          <!--Optional:-->
-         <arg0 code="?" description="?" invoiceCategory="?">
+         <invoiceSubCategory code="TEST" description="test" invoiceCategory="TEST">
             <!--Zero or more repetitions:-->
             <languageDescriptions>
                <!--Optional:-->
-               <languageCode>?</languageCode>
+               <languageCode>ENG</languageCode>
                <!--Optional:-->
-               <description>?</description>
+               <description>test2</description>
             </languageDescriptions>
-         </arg0>
+         </invoiceSubCategory>
       </ws:updateInvoiceSubCategory>
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/updateInvoiceSubCategory"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation isOneWay="false" action="" name="updateInvoiceSubCategoryCountry" bindingOperationName="updateInvoiceSubCategoryCountry" type="Request-Response" outputName="updateInvoiceSubCategoryCountryResponse" inputName="updateInvoiceSubCategoryCountry" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment xmlns:con="http://eviware.com/soapui/config">
@@ -8185,11 +8205,11 @@
    <soapenv:Header/>
    <soapenv:Body>
       <ws:updateInvoiceSubCategoryCountry>
-         <!--Optional:-->
-         <arg0 invoiceSubCategory="?" country="?" tax="?">
+          <!--Optional:-->
+         <invoiceSubCategoryCountry invoiceSubCategory="TEST" country="US" tax="TAX_00">
             <!--Optional:-->
-            <discountCode>?</discountCode>
-         </arg0>
+            <discountCode>12</discountCode>
+         </invoiceSubCategoryCountry>
       </ws:updateInvoiceSubCategoryCountry>
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/updateInvoiceSubCategoryCountry"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation isOneWay="false" action="" name="updateLanguage" bindingOperationName="updateLanguage" type="Request-Response" outputName="updateLanguageResponse" inputName="updateLanguage" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment xmlns:con="http://eviware.com/soapui/config">
@@ -8199,11 +8219,11 @@
    <soapenv:Header/>
    <soapenv:Body>
       <ws:updateLanguage>
-         <!--Optional:-->
-         <arg0 code="?">
+          <!--Optional:-->
+         <language code="PH">
             <!--Optional:-->
-            <description>?</description>
-         </arg0>
+            <description>Tagalog / Filipino</description>
+         </language>
       </ws:updateLanguage>
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/updateLanguage"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation isOneWay="false" action="" name="updateProvider" bindingOperationName="updateProvider" type="Request-Response" outputName="updateProviderResponse" inputName="updateProvider" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment xmlns:con="http://eviware.com/soapui/config">
@@ -8214,21 +8234,21 @@
    <soapenv:Body>
       <ws:updateProvider>
          <!--Optional:-->
-         <arg0 code="?">
+         <provider code="TEST">
             <!--Optional:-->
-            <description>?</description>
+            <description>TEST</description>
             <!--Optional:-->
-            <currency>?</currency>
+            <currency>PHP</currency>
             <!--Optional:-->
-            <country>?</country>
+            <country>PH</country>
             <!--Optional:-->
-            <language>?</language>
-            <multiCurrency>?</multiCurrency>
-            <multiCountry>?</multiCountry>
-            <multiLanguage>?</multiLanguage>
+            <language>PH</language>
+            <multiCurrency>true</multiCurrency>
+            <multiCountry>false</multiCountry>
+            <multiLanguage>false</multiLanguage>
             <!--Optional:-->
-            <userAccount>?</userAccount>
-         </arg0>
+            <userAccount></userAccount>
+         </provider>
       </ws:updateProvider>
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/updateProvider"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation isOneWay="false" action="" name="updateSeller" bindingOperationName="updateSeller" type="Request-Response" outputName="updateSellerResponse" inputName="updateSeller" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment xmlns:con="http://eviware.com/soapui/config">
@@ -8239,20 +8259,20 @@
    <soapenv:Body>
       <ws:updateSeller>
          <!--Optional:-->
-         <arg0 code="?">
+         <seller code="TEST">
             <!--Optional:-->
-            <description>?</description>
+            <description>TEST</description>
             <!--Optional:-->
-            <invoicePrefix>?</invoicePrefix>
+            <invoicePrefix>TEST</invoicePrefix>
             <!--Optional:-->
-            <currencyCode>?</currencyCode>
+            <currencyCode>EUR</currencyCode>
             <!--Optional:-->
-            <countryCode>?</countryCode>
+            <countryCode>US</countryCode>
             <!--Optional:-->
-            <languageCode>?</languageCode>
+            <languageCode>PH</languageCode>
             <!--Optional:-->
-            <parentSeller>?</parentSeller>
-         </arg0>
+            <parentSeller></parentSeller>
+         </seller>
       </ws:updateSeller>
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/updateSeller"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation isOneWay="false" action="" name="updateTax" bindingOperationName="updateTax" type="Request-Response" outputName="updateTaxResponse" inputName="updateTax" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment xmlns:con="http://eviware.com/soapui/config">
@@ -8263,17 +8283,17 @@
    <soapenv:Body>
       <ws:updateTax>
          <!--Optional:-->
-         <arg0 code="?" description="?" percent="?">
+         <tax code="TEST" description="TEST" percent=".12">
             <!--Optional:-->
-            <accountingCode>?</accountingCode>
+            <accountingCode>TEST</accountingCode>
             <!--Zero or more repetitions:-->
             <languageDescriptions>
                <!--Optional:-->
-               <languageCode>?</languageCode>
+               <languageCode>ENG</languageCode>
                <!--Optional:-->
-               <description>?</description>
+               <description>ENG</description>
             </languageDescriptions>
-         </arg0>
+         </tax>
       </ws:updateTax>
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/updateTax"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation isOneWay="false" action="" name="updateUser" bindingOperationName="updateUser" type="Request-Response" outputName="updateUserResponse" inputName="updateUser" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment xmlns:con="http://eviware.com/soapui/config">
@@ -8283,13 +8303,13 @@
    <soapenv:Header/>
    <soapenv:Body>
       <ws:updateUser>
-         <!--Optional:-->
-         <arg0 username="?" password="?" email="?" role="?" provider="?">
             <!--Optional:-->
-            <firstName>?</firstName>
+         <user username="TEST" password="TEST" email="TEST@GMAIL.COM" role="administrateur" provider="TEST">
             <!--Optional:-->
-            <lastName>?</lastName>
-         </arg0>
+            <firstName>Edward</firstName>
+            <!--Optional:-->
+            <lastName>Legaspi</lastName>
+         </user>
       </ws:updateUser>
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/updateUser"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation isOneWay="false" action="" name="findCalendar" bindingOperationName="findCalendar" type="Request-Response" outputName="findCalendarResponse" inputName="findCalendar" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment xmlns:con="http://eviware.com/soapui/config">
@@ -8300,7 +8320,18 @@
    <soapenv:Body>
       <ws:findCalendar>
          <!--Optional:-->
-         <arg0>C1</arg0>
+         <calendarCode>C1</calendarCode>
+      </ws:findCalendar>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/findCalendar"/><con:wsrmConfig version="1.2"/></con:call><con:call name="Request 2"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment xmlns:con="http://eviware.com/soapui/config">
+  &lt;con:entry key="username" value="meveo.admin"/>
+  &lt;con:entry key="password" value="meveo.admin"/>
+&lt;/xml-fragment></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:findCalendar>
+         <!--Optional:-->
+         <calendarCode>MONTHLY</calendarCode>
       </ws:findCalendar>
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/findCalendar"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation isOneWay="false" action="" name="updateBillingCycle" bindingOperationName="updateBillingCycle" type="Request-Response" outputName="updateBillingCycleResponse" inputName="updateBillingCycle" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment xmlns:con="http://eviware.com/soapui/config">
@@ -8311,10 +8342,10 @@
    <soapenv:Body>
       <ws:updateBillingCycle>
          <!--Optional:-->
-         <arg0 code="BCC1" description="BCC1-u" invoiceDateDelay="2" dueDateDelay="2" calendar="MONTHLY">
+         <billingCycle code="BCC1" description="BCC1" invoiceDateDelay="1" dueDateDelay="1" calendar="MONTHLY">
             <!--Optional:-->
-            <billingTemplateName>1</billingTemplateName>
-         </arg0>
+            <billingTemplateName>12</billingTemplateName>
+         </billingCycle>
       </ws:updateBillingCycle>
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/updateBillingCycle"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation isOneWay="false" action="" name="createCalendar" bindingOperationName="createCalendar" type="Request-Response" outputName="createCalendarResponse" inputName="createCalendar" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment xmlns:con="http://eviware.com/soapui/config">
@@ -8325,17 +8356,24 @@
    <soapenv:Body>
       <ws:createCalendar>
          <!--Optional:-->
-         <arg0 name="C1" type="BILLING">
+         <calendar name="C1" type="BILLING">
             <!--Optional:-->
             <description>BILLING</description>
             <!--Zero or more repetitions:-->
-            <days>
-               <!--Optional:-->
-               <day>1</day>
-               <!--Optional:-->
-               <month>JANUARY</month>
-            </days>
-         </arg0>
+             <days day="1" month="JANUARY"/>
+               <days day="1" month="FEBRUARY"/>
+               <days day="1" month="MARCH"/>
+               <days day="1" month="APRIL"/>
+               <days day="1" month="MAY"/>
+               <days day="1" month="JUNE"/>
+               <days day="1" month="JULY"/>
+               <days day="1" month="AUGUST"/>
+               <days day="1" month="SEPTEMBER"/>
+               <days day="1" month="OCTOBER"/>
+               <days day="1" month="NOVEMBER"/>
+               <days day="1" month="DECEMBER"/>
+
+         </calendar>
       </ws:createCalendar>
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/createCalendar"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation isOneWay="false" action="" name="createBillingCycle" bindingOperationName="createBillingCycle" type="Request-Response" outputName="createBillingCycleResponse" inputName="createBillingCycle" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment xmlns:con="http://eviware.com/soapui/config">
@@ -8346,10 +8384,10 @@
    <soapenv:Body>
       <ws:createBillingCycle>
          <!--Optional:-->
-         <arg0 code="BCC1" description="BCC1" invoiceDateDelay="1" dueDateDelay="1" calendar="MONTHLY">
+         <billingCycle code="BCC1" description="BCC1" invoiceDateDelay="1" dueDateDelay="1" calendar="MONTHLY">
             <!--Optional:-->
             <billingTemplateName>1</billingTemplateName>
-         </arg0>
+         </billingCycle>
       </ws:createBillingCycle>
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/createBillingCycle"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation isOneWay="false" action="" name="removeBillingCycle" bindingOperationName="removeBillingCycle" type="Request-Response" outputName="removeBillingCycleResponse" inputName="removeBillingCycle" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment xmlns:con="http://eviware.com/soapui/config">
@@ -8360,7 +8398,7 @@
    <soapenv:Body>
       <ws:removeBillingCycle>
          <!--Optional:-->
-         <arg0>BCC1</arg0>
+         <billingCycleCode>BCC1</billingCycleCode>
       </ws:removeBillingCycle>
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/removeBillingCycle"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation isOneWay="false" action="" name="removeCalendar" bindingOperationName="removeCalendar" type="Request-Response" outputName="removeCalendarResponse" inputName="removeCalendar" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment xmlns:con="http://eviware.com/soapui/config">
@@ -8371,7 +8409,7 @@
    <soapenv:Body>
       <ws:removeCalendar>
          <!--Optional:-->
-         <arg0>C1</arg0>
+         <calendarCode>C1</calendarCode>
       </ws:removeCalendar>
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/removeCalendar"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation isOneWay="false" action="" name="findBillingCycle" bindingOperationName="findBillingCycle" type="Request-Response" outputName="findBillingCycleResponse" inputName="findBillingCycle" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment xmlns:con="http://eviware.com/soapui/config">
@@ -8382,7 +8420,7 @@
    <soapenv:Body>
       <ws:findBillingCycle>
          <!--Optional:-->
-         <arg0>BCC1</arg0>
+         <billingCycleCode>BCC1</billingCycleCode>
       </ws:findBillingCycle>
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/findBillingCycle"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation isOneWay="false" action="" name="updateCalendar" bindingOperationName="updateCalendar" type="Request-Response" outputName="updateCalendarResponse" inputName="updateCalendar" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment xmlns:con="http://eviware.com/soapui/config">
@@ -8393,23 +8431,17 @@
    <soapenv:Body>
       <ws:updateCalendar>
            <!--Optional:-->
-         <arg0 name="C1" type="BILLING">
+         <calendar name="C1" type="BILLING">
             <!--Optional:-->
             <description>BILLING</description>
             <!--Zero or more repetitions:-->
-            <days>
-               <!--Optional:-->
-               <day>1</day>
-               <!--Optional:-->
-               <month>JANUARY</month>
-            </days>
-            <days>
-               <!--Optional:-->
-               <day>2</day>
-               <!--Optional:-->
-               <month>FEBRUARY</month>
-            </days>
-         </arg0>
+             <days day="1" month="JANUARY"/>
+               <days day="1" month="FEBRUARY"/>
+               <days day="1" month="MARCH"/>
+               <days day="1" month="APRIL"/>
+               <days day="1" month="MAY"/>
+               <days day="1" month="JUNE"/>
+         </calendar>
       </ws:updateCalendar>
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/updateCalendar"/><con:wsrmConfig version="1.2"/></con:call></con:operation></con:interface><con:interface xsi:type="con:WsdlInterface" wsaVersion="NONE" name="CatalogWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}CatalogWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="http://localhost:8080/meveo/CatalogWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache type="TEXT" rootPart="http://localhost:8080/meveo/CatalogWs?wsdl"><con:part><con:url>http://localhost:8080/meveo/CatalogWs?wsdl</con:url><con:content><![CDATA[<wsdl:definitions name="CatalogWs" targetNamespace="http://impl.ws.api.meveo.org/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://impl.ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns2="http://schemas.xmlsoap.org/soap/http" xmlns:ns1="http://ws.api.meveo.org/">
