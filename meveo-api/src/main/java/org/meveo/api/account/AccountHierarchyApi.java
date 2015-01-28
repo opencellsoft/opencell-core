@@ -585,7 +585,8 @@ public class AccountHierarchyApi extends BaseApi {
 
 			customerService.update(customer, currentUser);
 
-			CustomerAccount customerAccount = customerAccountService.findByCode(postData.getCustomerId(), provider);
+			CustomerAccount customerAccount = customerAccountService.findByCode(
+					CUSTOMER_ACCOUNT_PREFIX + postData.getCustomerId(), provider);
 			if (customerAccount == null) {
 				customerAccount = new CustomerAccount();
 				customerAccount.setCode(CUSTOMER_ACCOUNT_PREFIX + enleverAccent(postData.getCustomerId()));
@@ -642,7 +643,8 @@ public class AccountHierarchyApi extends BaseApi {
 				}
 			}
 
-			BillingAccount billingAccount = billingAccountService.findByCode(postData.getCustomerId(), provider);
+			BillingAccount billingAccount = billingAccountService.findByCode(
+					BILLING_ACCOUNT_PREFIX + postData.getCustomerId(), provider);
 
 			if (billingAccount == null) {
 				billingAccount = new BillingAccount();
@@ -666,7 +668,8 @@ public class AccountHierarchyApi extends BaseApi {
 				billingAccountService.update(billingAccount, currentUser);
 			}
 
-			UserAccount userAccount = userAccountService.findByCode(postData.getCustomerId(), provider);
+			UserAccount userAccount = userAccountService.findByCode(USER_ACCOUNT_PREFIX + postData.getCustomerId(),
+					provider);
 			if (userAccount == null) {
 				userAccount = new UserAccount();
 			}
