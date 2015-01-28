@@ -121,11 +121,11 @@
 					field="startRatingDate" />
 				<hf:formField
 					label="#{messages['pricePlanMatrix.amountWithoutTax']}"
-					field="amountWithoutTax" converter="bigDecimal4DigitsConverter" />
+					field="amountWithoutTax" converter="bigDecimal4DigitsConverter" required="true" />
 				<hf:formField label="#{messages['pricePlanMatrix.endRatingDate']}"
 					field="endRatingDate" />
 				<hf:formField label="#{messages['pricePlanMatrix.amountWithTax']}"
-					field="amountWithTax" converter="bigDecimal4DigitsConverter" />
+					field="amountWithTax" converter="bigDecimal4DigitsConverter" rendered="#{!pricePlanMatrixBean.entity.provider.isEntreprise}" required="true" />
 				<hf:formField
 					label="#{messages['pricePlanMatrix.minSubscriptionAgeInMonth']}"
 					field="minSubscriptionAgeInMonth" maxValue="9999" maxlength="4" />
