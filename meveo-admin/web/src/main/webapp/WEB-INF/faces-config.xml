@@ -1216,6 +1216,12 @@
 			<redirect />
 		</navigation-case>
 
+		<navigation-case>
+			<from-outcome>notificationHistories</from-outcome>
+			<to-view-id>/pages/notification/notificationHistories.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+		
 	</navigation-rule>
 	<navigation-rule>
 		<!-- Reporting -->

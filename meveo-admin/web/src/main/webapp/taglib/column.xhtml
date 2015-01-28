@@ -23,6 +23,10 @@
 		<c:set var="isMessage" value="false" />
 	</c:if>
 
+    <c:if test="${!empty messagePrefix}">
+        <c:set var="messagePrefix" value="${messagePrefix.concat('.')}" />
+    </c:if>
+        
 	<c:if test="${empty show}">
 		<c:set var="show" value="true" />
 	</c:if>
@@ -97,7 +101,7 @@
 					value="#{messages['commons.no']}" />
 				<h:outputText
 					rendered="#{entity[field] != null and entity[field].toString() != 'true' and entity[field].toString() != 'false'}"
-					value="#{messages[entity[field]]}" />
+					value="#{messages[''.concat(messagePrefix).concat(entity[field])]}" />
 			</c:if>
 			<c:if test="#{not isMessage and not isMap}">
 				<!-- If there is date field, show date in specified pattern 
@@ -115,7 +119,6 @@
             <!-- If its map then run through it and show results. -->
             <c:if test="#{isMap}">
                 <c:set var="map" value="#{entity[field]}" />
-                <h:outputText value="#{map.keySet().toArray()[0]}"></h:outputText>
                 <ui:repeat value="#{map.keySet().toArray()}" var="key">
                     <h:outputText value="#{key}" /> = <h:outputText value="#{map[key]}" /> 
                     <br />
@@ -150,8 +153,12 @@
 							rendered="#{entity[field][childField] != null and entity[field][childField].toString() != 'true' and entity[field][childField].toString() != 'false'}"
 							value="#{messages[entity[field][childField]]}" />
 					</c:if>
-					<h:outputText rendered="#{!isMessage}"
-						value="#{entity[field][childField]}" />
+                    <c:if test="#{!isMessage}">
+    					<h:outputText value="#{entity[field][childField]}" rendered="#{!isDate}"/>
+                        <h:outputText value="#{entity[field][childField]}" rendered="#{isDate}">
+                            <f:convertDateTime pattern="#{datePattern}" />
+                        </h:outputText>
+                    </c:if>
 				</c:if>
 				<!-- If entityView provided then show link to childField entity page. -->
 				<c:if test="#{not empty entityView and not exportable}">

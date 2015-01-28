@@ -14,6 +14,7 @@ import java.util.Set;
 import javax.faces.component.UIComponent;
 import javax.faces.component.UINamingContainer;
 
+import org.apache.commons.lang3.StringUtils;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.IEntity;
@@ -137,6 +138,19 @@ public class BackingBeanBasedCompositeComponent extends UINamingContainer {
 		return field.getType() == String.class;
 	}
 
+    public boolean isText(String fieldName, String childFieldName, boolean determineFromEntityClass) throws SecurityException, NoSuchFieldException, IllegalArgumentException,
+            IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+
+        if (StringUtils.isEmpty(childFieldName)) {
+            return isText(fieldName, determineFromEntityClass);
+        }
+        
+        Field entityField = getBeanFieldThrowException(determineFromEntityClass ? getEntityClass() : getEntityFromBackingBeanOrAttribute().getClass(), fieldName);
+        Field field = getBeanFieldThrowException(entityField.getType(), childFieldName);
+        
+        return field.getType() == String.class;
+    }
+    
 	public boolean isBoolean(String fieldName, boolean determineFromEntityClass)
 			throws SecurityException, NoSuchFieldException,
 			IllegalArgumentException, IllegalAccessException,
@@ -161,6 +175,19 @@ public class BackingBeanBasedCompositeComponent extends UINamingContainer {
 		return field.getType() == Date.class;
 	}
 
+    public boolean isDate(String fieldName, String childFieldName, boolean determineFromEntityClass) throws SecurityException, NoSuchFieldException, IllegalArgumentException,
+            IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+        
+        if (StringUtils.isEmpty(childFieldName)) {
+            return isDate(fieldName, determineFromEntityClass);
+        }
+        
+        Field entityField = getBeanFieldThrowException(determineFromEntityClass ? getEntityClass() : getEntityFromBackingBeanOrAttribute().getClass(), fieldName);
+        Field field = getBeanFieldThrowException(entityField.getType(), childFieldName);
+        
+        return field.getType() == Date.class;
+    }
+    
 	public boolean isEnum(String fieldName, boolean determineFromEntityClass)
 			throws SecurityException, NoSuchFieldException,
 			IllegalArgumentException, IllegalAccessException,
