@@ -1180,7 +1180,7 @@ insert into CAT_SERV_SUB_CHARGE_TEMPLATE (id, version, provider_id, charge_templ
 insert into CAT_SERV_USAGE_CHARGE_TEMPLATE (id, version, provider_id, charge_template_id, service_template_id) values (1, 0, 1, 3, 1);
 
 DROP SEQUENCE IF EXISTS CAT_CHARGE_TEMPLATE_SEQ;
-CREATE SEQUENCE CAT_CHARGE_TEMPLATE_SEQ start with 4 increment by 1;
+CREATE SEQUENCE CAT_CHARGE_TEMPLATE_SEQ start with 5 increment by 1;
 
 insert into CAT_SERV_REC_WALLET_TEMPLATE (service_rec_templt_id, wallet_template_id, indx) values (1, 1, 1);
 insert into CAT_SERV_SUB_WALLET_TEMPLATE (service_sub_templt_id, wallet_template_id, indx) values (1, 1, 2);
