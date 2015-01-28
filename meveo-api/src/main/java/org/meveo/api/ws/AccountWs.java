@@ -1,6 +1,7 @@
 package org.meveo.api.ws;
 
 import javax.jws.WebMethod;
+import javax.jws.WebParam;
 import javax.jws.WebService;
 
 import org.meveo.api.dto.ActionStatus;
@@ -24,72 +25,75 @@ import org.meveo.api.dto.response.account.GetUserAccountResponse;
 public interface AccountWs extends IBaseWs {
 
 	@WebMethod
-	ActionStatus createCustomer(CustomerDto postData);
+	ActionStatus createCustomer(@WebParam(name = "customer") CustomerDto postData);
 
 	@WebMethod
-	ActionStatus updateCustomer(CustomerDto postData);
+	ActionStatus updateCustomer(@WebParam(name = "customer") CustomerDto postData);
 
 	@WebMethod
-	GetCustomerResponse findCustomer(String customerCode);
+	GetCustomerResponse findCustomer(@WebParam(name = "customerCode") String customerCode);
 
 	@WebMethod
-	ActionStatus removeCustomer(String customerCode);
+	ActionStatus removeCustomer(@WebParam(name = "customerCode") String customerCode);
 
 	@WebMethod
-	ActionStatus createCustomerAccount(CustomerAccountDto postData);
+	ActionStatus createCustomerAccount(@WebParam(name = "customerAccount") CustomerAccountDto postData);
 
 	@WebMethod
-	ActionStatus updateCustomerAccount(CustomerAccountDto postData);
+	ActionStatus updateCustomerAccount(@WebParam(name = "customerAccount") CustomerAccountDto postData);
 
 	@WebMethod
-	GetCustomerAccountResponse findCustomerAccount(String customerAccountCode);
+	GetCustomerAccountResponse findCustomerAccount(@WebParam(name = "customerAccountCode") String customerAccountCode);
 
 	@WebMethod
-	ActionStatus removeCustomerAccount(String customerAccountCode);
+	ActionStatus removeCustomerAccount(@WebParam(name = "customerAccountCode") String customerAccountCode);
 
 	@WebMethod
-	ActionStatus createBillingAccount(BillingAccountDto postData);
+	ActionStatus createBillingAccount(@WebParam(name = "billingAccount") BillingAccountDto postData);
 
 	@WebMethod
-	ActionStatus updateBillingAccount(BillingAccountDto postData);
+	ActionStatus updateBillingAccount(@WebParam(name = "billingAccount") BillingAccountDto postData);
 
 	@WebMethod
-	GetBillingAccountResponse findBillingAccount(String billingAccountCode);
+	GetBillingAccountResponse findBillingAccount(@WebParam(name = "billingAccountCode") String billingAccountCode);
 
 	@WebMethod
-	ActionStatus removeBillingAccount(String billingAccountCode);
+	ActionStatus removeBillingAccount(@WebParam(name = "billingAccountCode") String billingAccountCode);
 
 	@WebMethod
-	ActionStatus createUserAccount(UserAccountDto postData);
+	ActionStatus createUserAccount(@WebParam(name = "userAccount") UserAccountDto postData);
 
 	@WebMethod
-	ActionStatus updateUserAccount(UserAccountDto postData);
+	ActionStatus updateUserAccount(@WebParam(name = "userAccount") UserAccountDto postData);
 
 	@WebMethod
-	GetUserAccountResponse findUserAccount(String userAccountCode);
+	GetUserAccountResponse findUserAccount(@WebParam(name = "userAccountCode") String userAccountCode);
 
 	@WebMethod
-	ActionStatus removeUserAccount(String userAccountCode);
+	ActionStatus removeUserAccount(@WebParam(name = "userAccountCode") String userAccountCode);
 
 	@WebMethod
-	ActionStatus createAccess(AccessDto postData);
+	ActionStatus createAccess(@WebParam(name = "access") AccessDto postData);
 
 	@WebMethod
-	ActionStatus updateAccess(AccessDto postData);
+	ActionStatus updateAccess(@WebParam(name = "access") AccessDto postData);
 
 	@WebMethod
-	GetAccessResponse findAccess(Long accessId);
+	GetAccessResponse findAccess(@WebParam(name = "accessId") Long accessId);
 
 	@WebMethod
-	ActionStatus removeAccess(Long accessId);
+	ActionStatus removeAccess(@WebParam(name = "accessId") Long accessId);
 
 	@WebMethod
-	public CustomerListResponse findAccountHierarchy(AccountHierarchyDto accountHierarchyDto);
+	public CustomerListResponse findAccountHierarchy(
+			@WebParam(name = "accountHierarchy") AccountHierarchyDto accountHierarchyDto);
 
 	@WebMethod
-	public ActionStatus createAccountHierarchy(AccountHierarchyDto accountHierarchyDto);
+	public ActionStatus createAccountHierarchy(
+			@WebParam(name = "accountHierarchy") AccountHierarchyDto accountHierarchyDto);
 
 	@WebMethod
-	public ActionStatus updateAccountHierarchy(AccountHierarchyDto accountHierarchyDto);
+	public ActionStatus updateAccountHierarchy(
+			@WebParam(name = "accountHierarchy") AccountHierarchyDto accountHierarchyDto);
 
 }

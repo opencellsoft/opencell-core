@@ -1,6 +1,7 @@
 package org.meveo.api.ws;
 
 import javax.jws.WebMethod;
+import javax.jws.WebParam;
 import javax.jws.WebService;
 
 import org.meveo.api.dto.invoice.InvoiceDto;
@@ -14,9 +15,9 @@ import org.meveo.api.dto.response.InvoiceCreationResponse;
 public interface InvoiceWs extends IBaseWs {
 
 	@WebMethod
-	public InvoiceCreationResponse create(InvoiceDto invoiceDto);
+	public InvoiceCreationResponse create(@WebParam(name = "invoice") InvoiceDto invoiceDto);
 
 	@WebMethod
-	public CustomerInvoicesResponse find(String customerAccountCode);
+	public CustomerInvoicesResponse find(@WebParam(name = "customerAccountCode") String customerAccountCode);
 
 }
