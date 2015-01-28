@@ -420,7 +420,7 @@ public class SubscriptionBean extends StatefulBaseBean<Subscription> {
 			for (ServiceTemplate serviceTemplate : serviceTemplates.getSelectedItemsAsList()) {
 				isChecked = true;
 				log.debug("instanciateManyServices id={} checked, quantity={}", serviceTemplate.getId(), quantity);
-				
+
 				ServiceInstance serviceInstance = new ServiceInstance();
 				serviceInstance.setProvider(serviceTemplate.getProvider());
 				serviceInstance.setCode(serviceTemplate.getCode());
@@ -618,8 +618,7 @@ public class SubscriptionBean extends StatefulBaseBean<Subscription> {
 
 	@Override
 	protected List<String> getFormFieldsToFetch() {
-		return Arrays.asList("provider", "userAccount", "offer", "userAccount.billingAccount",
-				"userAccount.billingAccount.customerAccount", "userAccount.billingAccount.customerAccount.customer");
+		return Arrays.asList("provider");
 	}
 
 	@Override

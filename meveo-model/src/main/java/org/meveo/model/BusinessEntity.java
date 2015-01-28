@@ -98,7 +98,6 @@ public class BusinessEntity extends AuditableEntity {
 
 	@Override
 	public String toString() {
-
-		return super.toString() + ", code " + code;
+		return super.toString() + ", code=" + code;
 	}
 }

@@ -93,10 +93,10 @@ public class RatingService {
 	@PostConstruct
 	private void init() {
 		if (allPricePlan == null) {
-			allPricePlan = meveoContainer.getCache("meveo");
+			allPricePlan = meveoContainer.getCache("meveo-price-plan");
 		}
 		if (allDiscountPlan == null) {
-			allDiscountPlan = meveoContainer.getCache("meveo");
+			allDiscountPlan = meveoContainer.getCache("meveo-discounts");
 		}
 	}
 

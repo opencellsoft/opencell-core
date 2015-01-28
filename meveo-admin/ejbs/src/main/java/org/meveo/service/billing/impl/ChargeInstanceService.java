@@ -65,7 +65,7 @@ public class ChargeInstanceService<P extends ChargeInstance> extends BusinessSer
 					chargeInstance != null });
 
 		} catch (NoResultException nre) {
-			log.debug("findByCodeAndService : aucune charge n'a ete trouvee");
+			log.warn("findByCodeAndService : no charges have been found");
 		} catch (Exception e) {
 			log.error("findByCodeAndService error={} ", e.getMessage());
 		}

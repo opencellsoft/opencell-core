@@ -50,22 +50,23 @@ public class WalletService extends PersistenceService<WalletInstance> {
 			return null;
 		}
 	}
-	
-	public WalletInstance getWalletInstance(UserAccount userAccount,WalletTemplate walletTemplate,  User creator ,Provider provider){
+
+	public WalletInstance getWalletInstance(UserAccount userAccount, WalletTemplate walletTemplate, User creator,
+			Provider provider) {
 		String walletCode = walletTemplate.getCode();
-		if(!WalletTemplate.PRINCIPAL.equals(walletCode)){
-			if(!userAccount.getPrepaidWallets().containsKey(walletCode)){
+		if (!WalletTemplate.PRINCIPAL.equals(walletCode)) {
+			if (!userAccount.getPrepaidWallets().containsKey(walletCode)) {
 				WalletInstance wallet = new WalletInstance();
 				wallet.setCode(walletCode);
 				wallet.setWalletTemplate(walletTemplate);
 				wallet.setUserAccount(userAccount);
-				create( wallet, creator, provider);
-				userAccount.getPrepaidWallets().put(walletCode,wallet);
+				create(wallet, creator, provider);
+				userAccount.getPrepaidWallets().put(walletCode, wallet);
 				getEntityManager().merge(userAccount);
 			}
+			
 			return userAccount.getPrepaidWallets().get(walletCode);
-		} 
-		else {
+		} else {
 			return userAccount.getWallet();
 		}
 	}

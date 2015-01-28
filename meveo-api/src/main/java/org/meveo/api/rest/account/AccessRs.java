@@ -14,6 +14,7 @@ import javax.ws.rs.core.MediaType;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.account.AccessDto;
 import org.meveo.api.dto.response.account.GetAccessResponse;
+import org.meveo.api.dto.response.account.GetListAccessResponse;
 import org.meveo.api.rest.IBaseRs;
 import org.meveo.api.rest.security.RSSecured;
 
@@ -47,5 +48,15 @@ public interface AccessRs extends IBaseRs {
 	@DELETE
 	@Path("/{accessId}")
 	ActionStatus remove(@PathParam("accessId") Long accessId);
+
+	/**
+	 * List accesses given a subscription code.
+	 * 
+	 * @param subscriptionCode
+	 * @return
+	 */
+	@GET
+	@Path("/list")
+	GetListAccessResponse list(@QueryParam("subscriptionCode") String subscriptionCode);
 
 }

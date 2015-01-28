@@ -37,10 +37,10 @@ import org.meveo.model.crm.Provider;
 public abstract class BaseEntity implements Serializable, IEntity {
 	private static final long serialVersionUID = 1L;
 
-	public static final int NB_PRECISION=23;
-	public static final int NB_DECIMALS=12;
+	public static final int NB_PRECISION = 23;
+	public static final int NB_DECIMALS = 12;
 	public static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-	
+
 	@Id
 	@GeneratedValue(generator = "ID_GENERATOR")
 	@Column(name = "ID")
@@ -101,22 +101,24 @@ public abstract class BaseEntity implements Serializable, IEntity {
 
 	@Override
 	public String toString() {
-		return "id " + (id == null ? "" : id.toString());
+		return "id=" + (id == null ? "" : id.toString());
 	}
-	
+
 	/**
 	 * Check whether [current] provider matches the provider field of an entity
-	 * @param providerToMatch [Current] provider value to match
+	 * 
+	 * @param providerToMatch
+	 *            [Current] provider value to match
 	 * @return
 	 */
-	public boolean doesProviderMatch(Provider providerToMatch){
-	    
-	    if (providerToMatch== null && provider == null){
-	        return true;
-	    } else if (providerToMatch!=null && provider!=null){
-	        return providerToMatch.getId().longValue() == provider.getId().longValue(); 
-	    }	    
-	    
-	    return false;
+	public boolean doesProviderMatch(Provider providerToMatch) {
+
+		if (providerToMatch == null && provider == null) {
+			return true;
+		} else if (providerToMatch != null && provider != null) {
+			return providerToMatch.getId().longValue() == provider.getId().longValue();
+		}
+
+		return false;
 	}
 }

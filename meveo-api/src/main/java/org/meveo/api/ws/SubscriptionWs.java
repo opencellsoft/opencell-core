@@ -1,6 +1,7 @@
 package org.meveo.api.ws;
 
 import javax.jws.WebMethod;
+import javax.jws.WebParam;
 import javax.jws.WebService;
 
 import org.meveo.api.dto.ActionStatus;
@@ -15,18 +16,19 @@ import org.meveo.api.dto.billing.SubscriptionDto;
 public interface SubscriptionWs extends IBaseWs {
 
 	@WebMethod
-	ActionStatus create(SubscriptionDto postData);
+	ActionStatus create(@WebParam(name = "subscription") SubscriptionDto postData);
 
 	@WebMethod
-	ActionStatus update(SubscriptionDto postData);
+	ActionStatus update(@WebParam(name = "subscription") SubscriptionDto postData);
 
 	@WebMethod
-	ActionStatus activateServices(ActivateServicesDto postData);
+	ActionStatus activateServices(@WebParam(name = "activateServices") ActivateServicesDto postData);
 
 	@WebMethod
-	ActionStatus applyOneShotChargeInstance(ApplyOneShotChargeInstanceDto postData);
-	
+	ActionStatus applyOneShotChargeInstance(
+			@WebParam(name = "applyOneShotChargeInstance") ApplyOneShotChargeInstanceDto postData);
+
 	@WebMethod
-	ActionStatus terminateSubscription(String subscriptionCode);
+	ActionStatus terminateSubscription(@WebParam(name = "subscriptionCode") String subscriptionCode);
 
 }
