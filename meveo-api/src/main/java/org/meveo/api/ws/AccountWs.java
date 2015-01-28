@@ -17,6 +17,7 @@ import org.meveo.api.dto.response.account.GetBillingAccountResponse;
 import org.meveo.api.dto.response.account.GetCustomerAccountResponse;
 import org.meveo.api.dto.response.account.GetCustomerResponse;
 import org.meveo.api.dto.response.account.GetUserAccountResponse;
+import org.meveo.api.dto.response.account.GetListAccessResponse;
 
 /**
  * @author Edward P. Legaspi
@@ -95,5 +96,8 @@ public interface AccountWs extends IBaseWs {
 	@WebMethod
 	public ActionStatus updateAccountHierarchy(
 			@WebParam(name = "accountHierarchy") AccountHierarchyDto accountHierarchyDto);
+
+	@WebMethod
+	GetListAccessResponse listAccess(@WebParam(name = "subscriptionCode") String subscriptionCode);
 
 }

@@ -5050,6 +5050,15 @@
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
+    <wsdl:operation name="listAccess">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="listAccess">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="listAccessResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
     <wsdl:operation name="createBillingAccount">
       <soap:operation soapAction="" style="document"/>
       <wsdl:input name="createBillingAccount">
@@ -5100,6 +5109,7 @@
       <xs:element name="GetAccessResponse" type="tns:getAccessResponse"/>
       <xs:element name="GetCustomerAccountResponse" nillable="true" type="xs:anyType"/>
       <xs:element name="GetCustomerResponse" type="tns:getCustomerResponse"/>
+      <xs:element name="GetListAccessResponse" type="tns:getListAccessResponse"/>
       <xs:element name="GetUserAccountResponse" type="tns:getUserAccountResponse"/>
       <xs:element name="MatchingAmount" type="tns:matchingAmountDto"/>
       <xs:element name="Name" type="tns:nameDto"/>
@@ -5130,6 +5140,8 @@
       <xs:element name="findUserAccountResponse" type="tns:findUserAccountResponse"/>
       <xs:element name="index" type="tns:index"/>
       <xs:element name="indexResponse" type="tns:indexResponse"/>
+      <xs:element name="listAccess" type="tns:listAccess"/>
+      <xs:element name="listAccessResponse" type="tns:listAccessResponse"/>
       <xs:element name="removeAccess" type="tns:removeAccess"/>
       <xs:element name="removeAccessResponse" type="tns:removeAccessResponse"/>
       <xs:element name="removeBillingAccount" type="tns:removeBillingAccount"/>
@@ -5583,6 +5595,25 @@
           <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
         </xs:sequence>
       </xs:complexType>
+      <xs:complexType name="listAccess">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="subscriptionCode" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="listAccessResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:getListAccessResponse"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="getListAccessResponse">
+        <xs:complexContent>
+          <xs:extension base="tns:baseResponse">
+            <xs:sequence>
+              <xs:element maxOccurs="unbounded" minOccurs="0" name="accesses" nillable="true" type="tns:accessDto"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
       <xs:complexType name="createBillingAccount">
         <xs:sequence>
           <xs:element minOccurs="0" name="billingAccount" type="tns:billingAccountDto"/>
@@ -5669,6 +5700,9 @@
   <wsdl:message name="createUserAccount">
     <wsdl:part element="ns1:createUserAccount" name="parameters"></wsdl:part>
   </wsdl:message>
+  <wsdl:message name="listAccessResponse">
+    <wsdl:part element="ns1:listAccessResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
   <wsdl:message name="removeUserAccountResponse">
     <wsdl:part element="ns1:removeUserAccountResponse" name="parameters"></wsdl:part>
   </wsdl:message>
@@ -5695,6 +5729,9 @@
   </wsdl:message>
   <wsdl:message name="updateAccountHierarchy">
     <wsdl:part element="ns1:updateAccountHierarchy" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="listAccess">
+    <wsdl:part element="ns1:listAccess" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="findUserAccount">
     <wsdl:part element="ns1:findUserAccount" name="parameters"></wsdl:part>
@@ -5858,6 +5895,10 @@
     <wsdl:operation name="updateCustomerAccount">
       <wsdl:input message="ns1:updateCustomerAccount" name="updateCustomerAccount"></wsdl:input>
       <wsdl:output message="ns1:updateCustomerAccountResponse" name="updateCustomerAccountResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="listAccess">
+      <wsdl:input message="ns1:listAccess" name="listAccess"></wsdl:input>
+      <wsdl:output message="ns1:listAccessResponse" name="listAccessResponse"></wsdl:output>
     </wsdl:operation>
     <wsdl:operation name="createBillingAccount">
       <wsdl:input message="ns1:createBillingAccount" name="createBillingAccount"></wsdl:input>
@@ -6583,7 +6624,26 @@
          </accountHierarchy>
       </ws:createAccountHierarchy>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/createAccountHierarchy"/><con:wsrmConfig version="1.2"/></con:call></con:operation></con:interface><con:interface xsi:type="con:WsdlInterface" wsaVersion="NONE" name="SubscriptionWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}SubscriptionWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="http://localhost:8080/meveo/SubscriptionWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache type="TEXT" rootPart="http://localhost:8080/meveo/SubscriptionWs?wsdl"><con:part><con:url>http://localhost:8080/meveo/SubscriptionWs?wsdl</con:url><con:content><![CDATA[<wsdl:definitions name="SubscriptionWs" targetNamespace="http://impl.ws.api.meveo.org/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://impl.ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns2="http://schemas.xmlsoap.org/soap/http" xmlns:ns1="http://ws.api.meveo.org/">
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/createAccountHierarchy"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation isOneWay="false" action="" name="listAccess" bindingOperationName="listAccess" type="Request-Response" outputName="listAccessResponse" inputName="listAccess" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment xmlns:con="http://eviware.com/soapui/config">
+  &lt;con:entry key="username" value="meveo.admin"/>
+  &lt;con:entry key="password" value="meveo.admin"/>
+&lt;/xml-fragment></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:listAccess>
+         <!--Optional:-->
+         <subscriptionCode>SUB2</subscriptionCode>
+      </ws:listAccess>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/listAccess"/><con:wsrmConfig version="1.2"/></con:call><con:call name="Request 2"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:listAccess>
+         <!--Optional:-->
+         <subscriptionCode>?</subscriptionCode>
+      </ws:listAccess>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/listAccess"/><con:wsrmConfig version="1.2"/></con:call></con:operation></con:interface><con:interface xsi:type="con:WsdlInterface" wsaVersion="NONE" name="SubscriptionWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}SubscriptionWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="http://localhost:8080/meveo/SubscriptionWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache type="TEXT" rootPart="http://localhost:8080/meveo/SubscriptionWs?wsdl"><con:part><con:url>http://localhost:8080/meveo/SubscriptionWs?wsdl</con:url><con:content><![CDATA[<wsdl:definitions name="SubscriptionWs" targetNamespace="http://impl.ws.api.meveo.org/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://impl.ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns2="http://schemas.xmlsoap.org/soap/http" xmlns:ns1="http://ws.api.meveo.org/">
   <wsdl:import location="http://localhost:8080/meveo/SubscriptionWs?wsdl=SubscriptionWs.wsdl" namespace="http://ws.api.meveo.org/"></wsdl:import>
   <wsdl:binding name="SubscriptionWsSoapBinding" type="ns1:SubscriptionWs">
     <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>

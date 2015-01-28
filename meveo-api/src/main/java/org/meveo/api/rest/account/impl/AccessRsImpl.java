@@ -10,6 +10,7 @@ import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.account.AccessDto;
 import org.meveo.api.dto.response.account.GetAccessResponse;
+import org.meveo.api.dto.response.account.GetListAccessResponse;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.LoggingInterceptor;
 import org.meveo.api.rest.account.AccessRs;
@@ -96,6 +97,25 @@ public class AccessRsImpl extends BaseRs implements AccessRs {
 			result.setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
+		}
+
+		return result;
+	}
+
+	@Override
+	public GetListAccessResponse list(String subscriptionCode) {
+		GetListAccessResponse result = new GetListAccessResponse();
+
+		try {
+			result.setAccesses(accessApi.list(subscriptionCode, getCurrentUser().getProvider()));
+		} catch (MeveoApiException e) {
+			result.getActionStatus().setErrorCode(e.getErrorCode());
+			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
+			result.getActionStatus().setMessage(e.getMessage());
+		} catch (Exception e) {
+			result.getActionStatus().setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
+			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
+			result.getActionStatus().setMessage(e.getMessage());
 		}
 
 		return result;
