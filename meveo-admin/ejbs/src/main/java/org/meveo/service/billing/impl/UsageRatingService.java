@@ -441,6 +441,7 @@ public class UsageRatingService {
 		walletOperation.setWallet(edr.getSubscription().getUserAccount()
 				.getWallet());
 		walletOperation.setCode(chargeInstance.getCode());
+		walletOperation.setDescription(chargeInstance.getDescription());
 
 		if (deducedQuantity != null) {
 			walletOperation.setQuantity(deducedQuantity);
