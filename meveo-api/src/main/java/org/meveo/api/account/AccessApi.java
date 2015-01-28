@@ -1,5 +1,8 @@
 package org.meveo.api.account;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
@@ -123,6 +126,31 @@ public class AccessApi extends BaseApi {
 			accessService.remove(access);
 		} else {
 			missingParameters.add("accessId");
+
+			throw new MissingParameterException(getMissingParametersExceptionMessage());
+		}
+	}
+
+	public List<AccessDto> list(String subscriptionCode, Provider provider) throws MeveoApiException {
+		if (!StringUtils.isBlank(subscriptionCode)) {
+			Subscription subscription = subscriptionService.findByCode(subscriptionCode, provider);
+			if (subscription == null) {
+				throw new EntityDoesNotExistsException(Subscription.class, subscriptionCode);
+			}
+
+			List<Access> accesses = accessService.listBySubscription(subscription);
+			if (accesses != null && accesses.size() > 0) {
+				List<AccessDto> accessDtos = new ArrayList<AccessDto>();
+				for (Access access : accesses) {
+					accessDtos.add(new AccessDto(access));
+				}
+
+				return accessDtos;
+			}
+
+			return null;
+		} else {
+			missingParameters.add("subscriptionCode");
 
 			throw new MissingParameterException(getMissingParametersExceptionMessage());
 		}
