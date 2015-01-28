@@ -33,76 +33,65 @@ import org.meveo.model.billing.InstanceStatusEnum;
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.UsageChargeInstance;
-import org.meveo.model.catalog.ServiceChargeTemplateRecurring;
 import org.meveo.model.catalog.ServiceChargeTemplateUsage;
 import org.meveo.model.catalog.WalletTemplate;
 import org.meveo.service.base.BusinessService;
 
 @Stateless
-public class UsageChargeInstanceService extends
-		BusinessService<UsageChargeInstance> {
+public class UsageChargeInstanceService extends BusinessService<UsageChargeInstance> {
 
 	@EJB
 	UsageRatingService usageRatingService;
-	
-	
+
 	@Inject
 	private WalletService walletService;
-
 
 	@Inject
 	private CounterInstanceService counterInstanceService;
 
-	public UsageChargeInstance usageChargeInstanciation(
-			Subscription subscription, ServiceInstance serviceInstance,
-			ServiceChargeTemplateUsage serviceUsageChargeTemplate,
-			Date startDate, Seller seller, User creator)
+	public UsageChargeInstance usageChargeInstanciation(Subscription subscription, ServiceInstance serviceInstance,
+			ServiceChargeTemplateUsage serviceUsageChargeTemplate, Date startDate, Seller seller, User creator)
 			throws BusinessException {
-		return usageChargeInstanciation(getEntityManager(), subscription,
-				serviceInstance, serviceUsageChargeTemplate, startDate, seller,
-				creator);
+		return usageChargeInstanciation(getEntityManager(), subscription, serviceInstance, serviceUsageChargeTemplate,
+				startDate, seller, creator);
 	}
 
-	public UsageChargeInstance usageChargeInstanciation(EntityManager em,
-			Subscription subscription, ServiceInstance serviceInstance,
-			ServiceChargeTemplateUsage serviceUsageChargeTemplate,
-			Date startDate, Seller seller, User creator)
-			throws BusinessException {
+	public UsageChargeInstance usageChargeInstanciation(EntityManager em, Subscription subscription,
+			ServiceInstance serviceInstance, ServiceChargeTemplateUsage serviceUsageChargeTemplate, Date startDate,
+			Seller seller, User creator) throws BusinessException {
 
 		UsageChargeInstance usageChargeInstance = new UsageChargeInstance();
 		usageChargeInstance.setSubscription(subscription);
-		usageChargeInstance.setChargeTemplate(serviceUsageChargeTemplate
-				.getChargeTemplate());
+		usageChargeInstance.setChargeTemplate(serviceUsageChargeTemplate.getChargeTemplate());
 		usageChargeInstance.setChargeDate(startDate);
 		usageChargeInstance.setAmountWithoutTax(null);
 		usageChargeInstance.setAmountWithTax(null);
 		usageChargeInstance.setStatus(InstanceStatusEnum.INACTIVE);
 		usageChargeInstance.setServiceInstance(serviceInstance);
-		usageChargeInstance.setUnityDescription(serviceUsageChargeTemplate
-				.getChargeTemplate().getUnityDescription());
+		usageChargeInstance.setUnityDescription(serviceUsageChargeTemplate.getChargeTemplate().getUnityDescription());
 		usageChargeInstance.setSeller(seller);
-		usageChargeInstance.setCountry(subscription.getUserAccount()
-				.getBillingAccount().getTradingCountry());
-		usageChargeInstance.setCurrency(subscription.getUserAccount()
-				.getBillingAccount().getCustomerAccount().getTradingCurrency());
-		ServiceChargeTemplateUsage usaChTmplServ = serviceInstance.getServiceTemplate().getServiceChargeTemplateUsageByChargeCode(serviceUsageChargeTemplate.getChargeTemplate().getCode());
+		usageChargeInstance.setCountry(subscription.getUserAccount().getBillingAccount().getTradingCountry());
+		usageChargeInstance.setCurrency(subscription.getUserAccount().getBillingAccount().getCustomerAccount()
+				.getTradingCurrency());
+		ServiceChargeTemplateUsage usaChTmplServ = serviceInstance.getServiceTemplate()
+				.getServiceChargeTemplateUsageByChargeCode(serviceUsageChargeTemplate.getChargeTemplate().getCode());
 		List<WalletTemplate> walletTemplates = usaChTmplServ.getWalletTemplates();
-		if(walletTemplates!=null && walletTemplates.size()>0){
-			for(WalletTemplate walletTemplate:walletTemplates){
-				usageChargeInstance.getWalletInstances().add(walletService.getWalletInstance(serviceInstance.getSubscription()
-						.getUserAccount(),walletTemplate,serviceInstance.getAuditable().getCreator(),serviceInstance.getProvider()));
+		if (walletTemplates != null && walletTemplates.size() > 0) {
+			for (WalletTemplate walletTemplate : walletTemplates) {
+				usageChargeInstance.getWalletInstances().add(
+						walletService.getWalletInstance(serviceInstance.getSubscription().getUserAccount(),
+								walletTemplate, serviceInstance.getAuditable().getCreator(),
+								serviceInstance.getProvider()));
 			}
 		} else {
-			usageChargeInstance.getWalletInstances().add(serviceInstance.getSubscription()
-				.getUserAccount().getWallet());
+			usageChargeInstance.getWalletInstances()
+					.add(serviceInstance.getSubscription().getUserAccount().getWallet());
 		}
 		create(usageChargeInstance, creator, serviceInstance.getProvider());
 
 		if (serviceUsageChargeTemplate.getCounterTemplate() != null) {
-			CounterInstance counterInstance = counterInstanceService
-					.counterInstanciation(serviceInstance.getSubscription()
-							.getUserAccount(), serviceUsageChargeTemplate
-							.getCounterTemplate(), creator);
+			CounterInstance counterInstance = counterInstanceService.counterInstanciation(serviceInstance
+					.getSubscription().getUserAccount(), serviceUsageChargeTemplate.getCounterTemplate(), creator);
 			usageChargeInstance.setCounter(counterInstance);
 			setProvider(creator.getProvider());
 			update(usageChargeInstance, creator);
@@ -111,52 +100,42 @@ public class UsageChargeInstanceService extends
 		return usageChargeInstance;
 	}
 
-	public void activateUsageChargeInstance(
-			UsageChargeInstance usageChargeInstance, User currentUser) {
-		activateUsageChargeInstance(getEntityManager(), usageChargeInstance,
-				currentUser);
+	public void activateUsageChargeInstance(UsageChargeInstance usageChargeInstance, User currentUser) {
+		activateUsageChargeInstance(getEntityManager(), usageChargeInstance, currentUser);
 	}
 
-	public void activateUsageChargeInstance(EntityManager em,
-			UsageChargeInstance usageChargeInstance, User currentUser) {
+	public void activateUsageChargeInstance(EntityManager em, UsageChargeInstance usageChargeInstance, User currentUser) {
 		usageChargeInstance.setStatus(InstanceStatusEnum.ACTIVE);
 		setProvider(currentUser.getProvider());
 		update(usageChargeInstance, currentUser);
 		usageRatingService.updateCache(usageChargeInstance);
 	}
 
-	public void terminateUsageChargeInstance(
-			UsageChargeInstance usageChargeInstance, Date terminationDate) {
-		terminateUsageChargeInstance(usageChargeInstance, terminationDate,
-				getCurrentUser());
+	public void terminateUsageChargeInstance(UsageChargeInstance usageChargeInstance, Date terminationDate) {
+		terminateUsageChargeInstance(usageChargeInstance, terminationDate, getCurrentUser());
 	}
 
-	public void terminateUsageChargeInstance(
-			UsageChargeInstance usageChargeInstance, Date terminationDate,
+	public void terminateUsageChargeInstance(UsageChargeInstance usageChargeInstance, Date terminationDate,
 			User currentUser) {
-		terminateUsageChargeInstance(getEntityManager(), usageChargeInstance,
-				terminationDate, currentUser);
+		terminateUsageChargeInstance(getEntityManager(), usageChargeInstance, terminationDate, currentUser);
 	}
 
-	public void terminateUsageChargeInstance(EntityManager em,
-			UsageChargeInstance usageChargeInstance, Date terminationDate,
-			User currentUser) {
+	public void terminateUsageChargeInstance(EntityManager em, UsageChargeInstance usageChargeInstance,
+			Date terminationDate, User currentUser) {
 		usageChargeInstance.setTerminationDate(terminationDate);
 		usageChargeInstance.setStatus(InstanceStatusEnum.TERMINATED);
 		usageRatingService.updateCache(usageChargeInstance);
 		update(usageChargeInstance, currentUser);
 	}
 
-	public void suspendUsageChargeInstance(
-			UsageChargeInstance usageChargeInstance, Date suspensionDate) {
+	public void suspendUsageChargeInstance(UsageChargeInstance usageChargeInstance, Date suspensionDate) {
 		usageChargeInstance.setTerminationDate(suspensionDate);
 		usageChargeInstance.setStatus(InstanceStatusEnum.SUSPENDED);
 		usageRatingService.updateCache(usageChargeInstance);
 		update(usageChargeInstance);
 	}
 
-	public void reactivateUsageChargeInstance(
-			UsageChargeInstance usageChargeInstance, Date reactivationDate) {
+	public void reactivateUsageChargeInstance(UsageChargeInstance usageChargeInstance, Date reactivationDate) {
 		usageChargeInstance.setChargeDate(reactivationDate);
 		usageChargeInstance.setTerminationDate(null);
 		usageChargeInstance.setStatus(InstanceStatusEnum.ACTIVE);
@@ -165,8 +144,7 @@ public class UsageChargeInstanceService extends
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<UsageChargeInstance> findUsageChargeInstanceBySubscriptionId(
-			Long subscriptionId) {
+	public List<UsageChargeInstance> findUsageChargeInstanceBySubscriptionId(Long subscriptionId) {
 		QueryBuilder qb = new QueryBuilder(UsageChargeInstance.class, "c");
 		qb.addCriterion("c.subscription.id", "=", subscriptionId, true);
 		return qb.getQuery(getEntityManager()).getResultList();

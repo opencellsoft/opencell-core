@@ -35,39 +35,31 @@ import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.OneShotChargeTemplateTypeEnum;
-import org.meveo.model.catalog.ServiceChargeTemplateRecurring;
 import org.meveo.model.catalog.ServiceChargeTemplateSubscription;
 import org.meveo.model.catalog.ServiceChargeTemplateTermination;
 import org.meveo.model.catalog.WalletTemplate;
 import org.meveo.service.base.BusinessService;
 
 @Stateless
-public class OneShotChargeInstanceService extends
-		BusinessService<OneShotChargeInstance> {
+public class OneShotChargeInstanceService extends BusinessService<OneShotChargeInstance> {
 
 	@Inject
 	private WalletService walletService;
-	
+
 	@Inject
 	private WalletOperationService chargeApplicationService;
 
-	public OneShotChargeInstance findByCodeAndSubsription(String code,
-			Long subscriptionId) {
+	public OneShotChargeInstance findByCodeAndSubsription(String code, Long subscriptionId) {
 		OneShotChargeInstance oneShotChargeInstance = null;
 		try {
-			log.debug(
-					"start of find {} by code (code={}, subscriptionId={}) ..",
-					new Object[] { "OneShotChargeInstance", code,
-							subscriptionId });
+			log.debug("start of find {} by code (code={}, subscriptionId={}) ..", new Object[] {
+					"OneShotChargeInstance", code, subscriptionId });
 			QueryBuilder qb = new QueryBuilder(OneShotChargeInstance.class, "c");
 			qb.addCriterion("c.code", "=", code, true);
 			qb.addCriterion("c.subscription.id", "=", subscriptionId, true);
-			oneShotChargeInstance = (OneShotChargeInstance) qb.getQuery(
-					getEntityManager()).getSingleResult();
-			log.debug(
-					"end of find {} by code (code={}, subscriptionId={}). Result found={}.",
-					new Object[] { "OneShotChargeInstance", code,
-							subscriptionId, oneShotChargeInstance != null });
+			oneShotChargeInstance = (OneShotChargeInstance) qb.getQuery(getEntityManager()).getSingleResult();
+			log.debug("end of find {} by code (code={}, subscriptionId={}). Result found={}.", new Object[] {
+					"OneShotChargeInstance", code, subscriptionId, oneShotChargeInstance != null });
 		} catch (NoResultException nre) {
 			log.debug("findByCodeAndSubsription : aucune charge ponctuelle n'a ete trouvee");
 		} catch (Exception e) {
@@ -76,86 +68,72 @@ public class OneShotChargeInstanceService extends
 		return oneShotChargeInstance;
 	}
 
-	public OneShotChargeInstance oneShotChargeInstanciation(
-			Subscription subscription, ServiceInstance serviceInstance,
-			OneShotChargeTemplate chargeTemplate, Date effetDate,
-			BigDecimal amoutWithoutTax, BigDecimal amoutWithoutTx2,
-			Integer quantity, Seller seller, User creator,boolean isSubscriptionCharge)
+	public OneShotChargeInstance oneShotChargeInstanciation(Subscription subscription, ServiceInstance serviceInstance,
+			OneShotChargeTemplate chargeTemplate, Date effetDate, BigDecimal amoutWithoutTax,
+			BigDecimal amoutWithoutTx2, Integer quantity, Seller seller, User creator, boolean isSubscriptionCharge)
 			throws BusinessException {
-		return oneShotChargeInstanciation(getEntityManager(), subscription,
-				serviceInstance, chargeTemplate, effetDate, amoutWithoutTax,
-				amoutWithoutTx2, quantity, seller, creator, isSubscriptionCharge);
+		return oneShotChargeInstanciation(getEntityManager(), subscription, serviceInstance, chargeTemplate, effetDate,
+				amoutWithoutTax, amoutWithoutTx2, quantity, seller, creator, isSubscriptionCharge);
 	}
 
-	public OneShotChargeInstance oneShotChargeInstanciation(EntityManager em,
-			Subscription subscription, ServiceInstance serviceInstance,
-			OneShotChargeTemplate chargeTemplate, Date effetDate,
-			BigDecimal amoutWithoutTax, BigDecimal amoutWithoutTx2,
-			Integer quantity, Seller seller, User creator,boolean isSubscriptionCharge)
-			throws BusinessException {
+	public OneShotChargeInstance oneShotChargeInstanciation(EntityManager em, Subscription subscription,
+			ServiceInstance serviceInstance, OneShotChargeTemplate chargeTemplate, Date effetDate,
+			BigDecimal amoutWithoutTax, BigDecimal amoutWithoutTx2, Integer quantity, Seller seller, User creator,
+			boolean isSubscriptionCharge) throws BusinessException {
 
 		if (quantity == null) {
 			quantity = 1;
 		}
 
-		OneShotChargeInstance oneShotChargeInstance = new OneShotChargeInstance(
-				chargeTemplate.getCode(), chargeTemplate.getDescription(),
-				effetDate, amoutWithoutTax, amoutWithoutTx2, subscription,
+		OneShotChargeInstance oneShotChargeInstance = new OneShotChargeInstance(chargeTemplate.getCode(),
+				chargeTemplate.getDescription(), effetDate, amoutWithoutTax, amoutWithoutTx2, subscription,
 				chargeTemplate, seller);
 		oneShotChargeInstance.setStatus(InstanceStatusEnum.INACTIVE);
 
 		if (chargeTemplate.getOneShotChargeTemplateType() == OneShotChargeTemplateTypeEnum.TERMINATION) {
-			oneShotChargeInstance
-					.setTerminationServiceInstance(serviceInstance);
+			oneShotChargeInstance.setTerminationServiceInstance(serviceInstance);
 		} else {
-			oneShotChargeInstance
-					.setSubscriptionServiceInstance(serviceInstance);
+			oneShotChargeInstance.setSubscriptionServiceInstance(serviceInstance);
 		}
 
-		oneShotChargeInstance.setChargeDate(serviceInstance
-				.getSubscriptionDate());
-		List<WalletTemplate> walletTemplates =null;
-		if(isSubscriptionCharge){
-			ServiceChargeTemplateSubscription recChTmplServ = serviceInstance.getServiceTemplate().getServiceChargeTemplateSubscriptionByChargeCode(chargeTemplate.getCode());
+		oneShotChargeInstance.setChargeDate(serviceInstance.getSubscriptionDate());
+		List<WalletTemplate> walletTemplates = null;
+		if (isSubscriptionCharge) {
+			ServiceChargeTemplateSubscription recChTmplServ = serviceInstance.getServiceTemplate()
+					.getServiceChargeTemplateSubscriptionByChargeCode(chargeTemplate.getCode());
 			walletTemplates = recChTmplServ.getWalletTemplates();
 		} else {
-			ServiceChargeTemplateTermination recChTmplServ = serviceInstance.getServiceTemplate().getServiceChargeTemplateTerminationByChargeCode(chargeTemplate.getCode());
+			ServiceChargeTemplateTermination recChTmplServ = serviceInstance.getServiceTemplate()
+					.getServiceChargeTemplateTerminationByChargeCode(chargeTemplate.getCode());
 			walletTemplates = recChTmplServ.getWalletTemplates();
 		}
-		if(walletTemplates!=null && walletTemplates.size()>0){
-			for(WalletTemplate walletTemplate:walletTemplates){
-				oneShotChargeInstance.getWalletInstances().add(walletService.getWalletInstance(serviceInstance.getSubscription()
-						.getUserAccount(),walletTemplate,serviceInstance.getAuditable().getCreator(),serviceInstance.getProvider()));
+		if (walletTemplates != null && walletTemplates.size() > 0) {
+			for (WalletTemplate walletTemplate : walletTemplates) {
+				oneShotChargeInstance.getWalletInstances().add(
+						walletService.getWalletInstance(serviceInstance.getSubscription().getUserAccount(),
+								walletTemplate, serviceInstance.getAuditable().getCreator(),
+								serviceInstance.getProvider()));
 			}
 		} else {
-			oneShotChargeInstance.getWalletInstances().add(serviceInstance.getSubscription()
-				.getUserAccount().getWallet());
+			oneShotChargeInstance.getWalletInstances().add(
+					serviceInstance.getSubscription().getUserAccount().getWallet());
 		}
 		create(oneShotChargeInstance, creator, chargeTemplate.getProvider());
 
 		return oneShotChargeInstance;
 	}
 
-
-	//apply a oneShotCharge on the postpaid wallet
-	public Long oneShotChargeApplication(Subscription subscription,
-			OneShotChargeTemplate chargetemplate, Date effetDate,
-			BigDecimal amoutWithoutTax, BigDecimal amoutWithoutTx2,
-			Integer quantity, String criteria1, String criteria2,
-			String criteria3, Seller seller, User creator)
-			throws BusinessException {
-		return oneShotChargeApplication( subscription,
-				 chargetemplate, null,  effetDate,
-				 amoutWithoutTax,  amoutWithoutTx2,
-				 quantity,  criteria1,  criteria2,
-				 criteria3,  seller,  creator);
+	// apply a oneShotCharge on the postpaid wallet
+	public Long oneShotChargeApplication(Subscription subscription, OneShotChargeTemplate chargetemplate,
+			Date effetDate, BigDecimal amoutWithoutTax, BigDecimal amoutWithoutTx2, Integer quantity, String criteria1,
+			String criteria2, String criteria3, Seller seller, User creator) throws BusinessException {
+		return oneShotChargeApplication(subscription, chargetemplate, null, effetDate, amoutWithoutTax,
+				amoutWithoutTx2, quantity, criteria1, criteria2, criteria3, seller, creator);
 	}
 
-	public Long oneShotChargeApplication(Subscription subscription,
-			OneShotChargeTemplate chargetemplate,String walletCode, Date effetDate,
-			BigDecimal amoutWithoutTax, BigDecimal amoutWithoutTx2,
-			Integer quantity, String criteria1, String criteria2,
-			String criteria3, Seller seller, User creator)
+	public Long oneShotChargeApplication(Subscription subscription, OneShotChargeTemplate chargetemplate,
+			String walletCode, Date effetDate, BigDecimal amoutWithoutTax, BigDecimal amoutWithoutTx2,
+			Integer quantity, String criteria1, String criteria2, String criteria3, Seller seller, User creator)
 			throws BusinessException {
 
 		if (quantity == null) {
@@ -171,47 +149,41 @@ public class OneShotChargeInstanceService extends
 		 * oneShotChargeTemplateService.findByCode(chargeCode);
 		 */
 
-		OneShotChargeInstance oneShotChargeInstance = new OneShotChargeInstance(
-				chargetemplate.getCode(), chargetemplate.getDescription(),
-				effetDate, amoutWithoutTax, amoutWithoutTx2, subscription,
+		OneShotChargeInstance oneShotChargeInstance = new OneShotChargeInstance(chargetemplate.getCode(),
+				chargetemplate.getDescription(), effetDate, amoutWithoutTax, amoutWithoutTx2, subscription,
 				chargetemplate, seller);
 		oneShotChargeInstance.setCriteria1(criteria1);
 		oneShotChargeInstance.setCriteria2(criteria2);
 		oneShotChargeInstance.setCriteria3(criteria3);
-		if(walletCode==null){
-			oneShotChargeInstance.getWalletInstances().add(subscription
-					.getUserAccount().getWallet());
+		if (walletCode == null) {
+			oneShotChargeInstance.getWalletInstances().add(subscription.getUserAccount().getWallet());
 		} else {
 			oneShotChargeInstance.getWalletInstances().add(subscription.getUserAccount().getWalletInstance(walletCode));
 
 		}
-	
+
 		create(oneShotChargeInstance, creator, chargetemplate.getProvider());
 
-		chargeApplicationService.oneShotWalletOperation(subscription,
-				oneShotChargeInstance, quantity, effetDate, creator);
+		chargeApplicationService.oneShotWalletOperation(subscription, oneShotChargeInstance, quantity, effetDate,
+				creator);
 
 		return oneShotChargeInstance.getId();
 	}
 
-	public void oneShotChargeApplication(Subscription subscription,
-			OneShotChargeInstance oneShotChargeInstance, Date effetDate,
-			Integer quantity, User creator) throws BusinessException {
-		oneShotChargeApplication(getEntityManager(), subscription,
-				oneShotChargeInstance, effetDate, quantity, creator);
+	public void oneShotChargeApplication(Subscription subscription, OneShotChargeInstance oneShotChargeInstance,
+			Date effetDate, Integer quantity, User creator) throws BusinessException {
+		oneShotChargeApplication(getEntityManager(), subscription, oneShotChargeInstance, effetDate, quantity, creator);
 	}
 
-	public void oneShotChargeApplication(EntityManager em,
-			Subscription subscription,
-			OneShotChargeInstance oneShotChargeInstance, Date effetDate,
-			Integer quantity, User creator) throws BusinessException {
-		chargeApplicationService.oneShotWalletOperation(em, subscription,
-				oneShotChargeInstance, quantity, effetDate, creator);
+	public void oneShotChargeApplication(EntityManager em, Subscription subscription,
+			OneShotChargeInstance oneShotChargeInstance, Date effetDate, Integer quantity, User creator)
+			throws BusinessException {
+		chargeApplicationService.oneShotWalletOperation(em, subscription, oneShotChargeInstance, quantity, effetDate,
+				creator);
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<OneShotChargeInstance> findOneShotChargeInstancesBySubscriptionId(
-			Long subscriptionId) {
+	public List<OneShotChargeInstance> findOneShotChargeInstancesBySubscriptionId(Long subscriptionId) {
 		QueryBuilder qb = new QueryBuilder(OneShotChargeInstance.class, "c");
 		qb.addCriterion("c.subscription.id", "=", subscriptionId, true);
 		return qb.getQuery(getEntityManager()).getResultList();

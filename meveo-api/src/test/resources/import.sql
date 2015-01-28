@@ -1182,9 +1182,9 @@ insert into CAT_SERV_USAGE_CHARGE_TEMPLATE (id, version, provider_id, charge_tem
 DROP SEQUENCE IF EXISTS CAT_CHARGE_TEMPLATE_SEQ;
 CREATE SEQUENCE CAT_CHARGE_TEMPLATE_SEQ start with 5 increment by 1;
 
-insert into CAT_SERV_REC_WALLET_TEMPLATE (service_rec_templt_id, wallet_template_id, indx) values (1, 1, 1);
-insert into CAT_SERV_SUB_WALLET_TEMPLATE (service_sub_templt_id, wallet_template_id, indx) values (1, 1, 2);
-insert into CAT_SERV_USAGE_WALLET_TEMPLATE (service_usage_templt_id, wallet_template_id, indx) values (1, 1, 2);
+insert into CAT_SERV_REC_WALLET_TEMPLATE (service_rec_templt_id, wallet_template_id, indx) values (1, 1, 0);
+insert into CAT_SERV_SUB_WALLET_TEMPLATE (service_sub_templt_id, wallet_template_id, indx) values (1, 1, 0);
+insert into CAT_SERV_USAGE_WALLET_TEMPLATE (service_usage_templt_id, wallet_template_id, indx) values (1, 1, 0);
 
 DROP SEQUENCE IF EXISTS CAT_SERV_RECCHRG_TEMPLT_SEQ;
 CREATE SEQUENCE CAT_SERV_RECCHRG_TEMPLT_SEQ start with 2 increment by 1;
