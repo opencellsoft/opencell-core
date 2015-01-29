@@ -24,8 +24,8 @@ import org.meveo.api.dto.response.account.GetAccessResponse;
 import org.meveo.api.dto.response.account.GetBillingAccountResponse;
 import org.meveo.api.dto.response.account.GetCustomerAccountResponse;
 import org.meveo.api.dto.response.account.GetCustomerResponse;
-import org.meveo.api.dto.response.account.GetUserAccountResponse;
 import org.meveo.api.dto.response.account.GetListAccessResponse;
+import org.meveo.api.dto.response.account.GetUserAccountResponse;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.LoggingInterceptor;
 import org.meveo.api.ws.AccountWs;
@@ -398,11 +398,11 @@ public class AccountWsImpl extends BaseWs implements AccountWs {
 	}
 
 	@Override
-	public GetAccessResponse findAccess(Long accessId) {
+	public GetAccessResponse findAccess(String accessCode, String subscriptionCode) {
 		GetAccessResponse result = new GetAccessResponse();
 
 		try {
-			result.setAccess(accessApi.find(accessId, getCurrentUser().getProvider()));
+			result.setAccess(accessApi.find(accessCode, subscriptionCode, getCurrentUser().getProvider()));
 		} catch (MeveoApiException e) {
 			result.getActionStatus().setErrorCode(e.getErrorCode());
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
@@ -417,11 +417,11 @@ public class AccountWsImpl extends BaseWs implements AccountWs {
 	}
 
 	@Override
-	public ActionStatus removeAccess(Long accessId) {
+	public ActionStatus removeAccess(String accessCode, String subscriptionCode) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 		try {
-			accessApi.remove(accessId, getCurrentUser().getProvider());
+			accessApi.remove(accessCode, subscriptionCode, getCurrentUser().getProvider());
 		} catch (MeveoApiException e) {
 			result.setErrorCode(e.getErrorCode());
 			result.setStatus(ActionStatusEnum.FAIL);

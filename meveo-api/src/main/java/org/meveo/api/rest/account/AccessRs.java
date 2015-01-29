@@ -43,11 +43,13 @@ public interface AccessRs extends IBaseRs {
 	 */
 	@GET
 	@Path("/")
-	GetAccessResponse find(@QueryParam("accessId") Long accessId);
+	GetAccessResponse find(@QueryParam("accessCode") String accessCode,
+			@QueryParam("subscriptionCode") String subscriptionCode);
 
 	@DELETE
-	@Path("/{accessId}")
-	ActionStatus remove(@PathParam("accessId") Long accessId);
+	@Path("/{accessCode}/{subscriptionCode}")
+	ActionStatus remove(@PathParam("accessCode") String accessCode,
+			@PathParam("subscriptionCode") String subscriptionCode);
 
 	/**
 	 * List accesses given a subscription code.

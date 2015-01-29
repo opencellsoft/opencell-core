@@ -65,11 +65,11 @@ public class AccessRsImpl extends BaseRs implements AccessRs {
 	}
 
 	@Override
-	public GetAccessResponse find(Long accessId) {
+	public GetAccessResponse find(String accessCode, String subscriptionCode) {
 		GetAccessResponse result = new GetAccessResponse();
 
 		try {
-			result.setAccess(accessApi.find(accessId, getCurrentUser().getProvider()));
+			result.setAccess(accessApi.find(accessCode, subscriptionCode, getCurrentUser().getProvider()));
 		} catch (MeveoApiException e) {
 			result.getActionStatus().setErrorCode(e.getErrorCode());
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
@@ -84,11 +84,11 @@ public class AccessRsImpl extends BaseRs implements AccessRs {
 	}
 
 	@Override
-	public ActionStatus remove(Long accessId) {
+	public ActionStatus remove(String accessCode, String subscriptionCode) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 		try {
-			accessApi.remove(accessId, getCurrentUser().getProvider());
+			accessApi.remove(accessCode, subscriptionCode, getCurrentUser().getProvider());
 		} catch (MeveoApiException e) {
 			result.setErrorCode(e.getErrorCode());
 			result.setStatus(ActionStatusEnum.FAIL);
