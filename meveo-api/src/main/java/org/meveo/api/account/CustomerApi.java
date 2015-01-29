@@ -11,6 +11,7 @@ import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.admin.User;
+import org.meveo.model.crm.AccountLevelEnum;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.crm.CustomerBrand;
 import org.meveo.model.crm.CustomerCategory;
@@ -65,7 +66,7 @@ public class CustomerApi extends AccountApi {
 			}
 
 			Customer customer = new Customer();
-			populate(postData, customer, currentUser);
+			populate(postData, customer, currentUser, AccountLevelEnum.CUST);
 
 			customer.setCustomerCategory(customerCategory);
 			customer.setCustomerBrand(customerBrand);
@@ -122,7 +123,7 @@ public class CustomerApi extends AccountApi {
 				throw new EntityDoesNotExistsException(Customer.class, postData.getCode());
 			}
 
-			updateAccount(customer, postData, currentUser);
+			updateAccount(customer, postData, currentUser, AccountLevelEnum.CUST);
 			customer.setCustomerCategory(customerCategory);
 			customer.setCustomerBrand(customerBrand);
 			customer.setSeller(seller);

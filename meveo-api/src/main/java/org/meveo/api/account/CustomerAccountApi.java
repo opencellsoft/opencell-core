@@ -20,6 +20,7 @@ import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.TradingCurrency;
+import org.meveo.model.crm.AccountLevelEnum;
 import org.meveo.model.crm.CustomFieldInstance;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.crm.Provider;
@@ -77,7 +78,7 @@ public class CustomerAccountApi extends AccountApi {
 			contactInformation.setFax(postData.getFax());
 
 			CustomerAccount customerAccount = new CustomerAccount();
-			populate(postData, customerAccount, currentUser);
+			populate(postData, customerAccount, currentUser, AccountLevelEnum.CA);
 
 			customerAccount.setCustomer(customer);
 			customerAccount.setTradingCurrency(tradingCurrency);
@@ -158,7 +159,7 @@ public class CustomerAccountApi extends AccountApi {
 				customerAccount.setContactInformation(contactInformation);
 			}
 
-			updateAccount(customerAccount, postData, currentUser);
+			updateAccount(customerAccount, postData, currentUser, AccountLevelEnum.CA);
 
 			customerAccount.setCustomer(customer);
 			customerAccount.setTradingCurrency(tradingCurrency);
