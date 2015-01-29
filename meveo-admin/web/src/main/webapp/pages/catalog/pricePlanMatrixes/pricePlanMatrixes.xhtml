@@ -107,7 +107,7 @@
 			<hftl:column label="#{messages['pricePlanMatrix.amountWithoutTax']}"
 				field="amountWithoutTax" converterParam="4digits" wrapHeader="true" />
 			<hftl:column label="#{messages['pricePlanMatrix.amountWithTax']}"
-				field="amountWithTax" converterParam="4digits" wrapHeader="true" rendered="#{!pricePlanMatrixBean.entity.provider.isEntreprise}" />
+				field="amountWithTax" converterParam="4digits" wrapHeader="true"/>
 			<hftl:actionsColumn
 				permission="#{identity.hasPermission('catalog','catalogManagement')}" />
 		</hftl:dataList>
