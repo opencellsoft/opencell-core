@@ -666,33 +666,20 @@ public class UsageRatingService {
 										triggeredEDRCache.getQuantityEL(), edr,
 										walletOperation)));
 						newEdr.setStatus(EDRStatusEnum.OPEN);
-						Subscription sub = null;
-
-						if (StringUtils.isBlank(triggeredEDRCache
-								.getSubscriptionEL())) {
-							newEdr.setSubscription(edr.getSubscription());
-						} else {
-							String subCode = evaluateStringExpression(
-									triggeredEDRCache.getSubscriptionEL(), edr,
+						Subscription sub = edr.getSubscription();
+						if (!StringUtils.isBlank(triggeredEDRCache.getSubscriptionEL())) {
+							String subCode = evaluateStringExpression(triggeredEDRCache.getSubscriptionEL(), edr,
 									walletOperation);
-							sub = subscriptionService.findByCode(subCode,
-									provider);
-
+							sub = subscriptionService.findByCode(subCode, provider);
 							if (sub == null) {
-								log.info("could not find subscription for code ="
-										+ subCode
-										+ " (EL="
-										+ triggeredEDRCache.getSubscriptionEL()
-										+ ") in triggered EDR with code "
+								throw new BusinessException("could not find subscription for code =" + subCode + " (EL="
+										+ triggeredEDRCache.getSubscriptionEL() + ") in triggered EDR with code "
 										+ triggeredEDRCache.getCode());
 							}
 						}
-
-						if (sub != null) {
-							log.info("trigger EDR from code "
-									+ triggeredEDRCache.getCode());
-							edrService.create(newEdr, currentUser, provider);
-						}
+						newEdr.setSubscription(sub);
+						log.info("trigger EDR from code " + triggeredEDRCache.getCode());
+						edrService.create(newEdr, currentUser, provider);
 					}
 				}
 			}
@@ -811,6 +798,9 @@ public class UsageRatingService {
 		Map<Object, Object> userMap = new HashMap<Object, Object>();
 		userMap.put("edr", edr);
 		userMap.put("op", walletOperation);
+		if(expression.indexOf("ua")>=0){
+			userMap.put("ua", walletOperation.getWallet().getUserAccount());
+		}
 
 		Object res = RatingService.evaluateExpression(expression, userMap, Boolean.class);
 		try{
@@ -827,6 +817,9 @@ public class UsageRatingService {
 		Map<Object, Object> userMap = new HashMap<Object, Object>();
 		userMap.put("edr", edr);
 		userMap.put("op", walletOperation);
+		if(expression.indexOf("ua")>=0){
+			userMap.put("ua", walletOperation.getWallet().getUserAccount());
+		}
 		Object res = RatingService.evaluateExpression(expression, userMap, String.class);
 		try{
 			result=(String) res;
@@ -842,6 +835,9 @@ public class UsageRatingService {
 		Map<Object, Object> userMap = new HashMap<Object, Object>();
 		userMap.put("edr", edr);
 		userMap.put("op", walletOperation);
+		if(expression.indexOf("ua")>=0){
+			userMap.put("ua", walletOperation.getWallet().getUserAccount());
+		}
 		Object res = RatingService.evaluateExpression(expression, userMap, Double.class);
 		try{
 			result=(Double) res;
