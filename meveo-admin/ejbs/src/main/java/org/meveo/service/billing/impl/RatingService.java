@@ -733,6 +733,10 @@ public class RatingService {
 				if (pricePlan.getCriteriaEL() != null && pricePlan.getCriteriaEL().length() == 0) {
 					pricePlan.setCriteriaEL(null);
 				}
+				
+				// Lazy loading workaround
+				pricePlan.getOfferTemplate().getCode();
+				
 				log.info("Add pricePlan for provider=" + pricePlan.getProvider().getCode() + "; chargeCode="
 						+ pricePlan.getEventCode() + "; priceplan=" + pricePlan + "; criteria1="
 						+ pricePlan.getCriteria1Value() + "; criteria2=" + pricePlan.getCriteria2Value()
