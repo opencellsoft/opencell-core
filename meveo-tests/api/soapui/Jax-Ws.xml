@@ -5176,8 +5176,7 @@
               <xs:element minOccurs="0" name="startDate" type="xs:dateTime"/>
               <xs:element minOccurs="0" name="endDate" type="xs:dateTime"/>
             </xs:sequence>
-            <xs:attribute name="accessId" type="xs:long"/>
-            <xs:attribute name="userAccount" type="xs:string" use="required"/>
+            <xs:attribute name="code" type="xs:string"/>
             <xs:attribute name="subscription" type="xs:string" use="required"/>
           </xs:extension>
         </xs:complexContent>
@@ -5490,7 +5489,8 @@
       </xs:complexType>
       <xs:complexType name="findAccess">
         <xs:sequence>
-          <xs:element minOccurs="0" name="accessId" type="xs:long"/>
+          <xs:element minOccurs="0" name="accessCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="subscriptionCode" type="xs:string"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="findAccessResponse">
@@ -5547,7 +5547,8 @@
       </xs:complexType>
       <xs:complexType name="removeAccess">
         <xs:sequence>
-          <xs:element minOccurs="0" name="accessId" type="xs:long"/>
+          <xs:element minOccurs="0" name="accessCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="subscriptionCode" type="xs:string"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="removeAccessResponse">
@@ -5921,7 +5922,7 @@
    <soapenv:Body>
       <ws:createAccess>
          <!--Optional:-->
-         <access accessId="1" userAccount="UA1" subscription="SUB2">
+          <access code="ACCESS1" subscription="SUB1">
             <!--Optional:-->
             <startDate>2015-01-01</startDate>
             <!--Optional:-->
@@ -6184,8 +6185,10 @@
    <soapenv:Header/>
    <soapenv:Body>
       <ws:findAccess>
+          <!--Optional:-->
+         <accessCode>ACCESS1</accessCode>
          <!--Optional:-->
-         <accessId>1</accessId>
+         <subscriptionCode>SUB1</subscriptionCode>
       </ws:findAccess>
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/findAccess"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation isOneWay="false" action="" name="findBillingAccount" bindingOperationName="findBillingAccount" type="Request-Response" outputName="findBillingAccountResponse" inputName="findBillingAccount" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment xmlns:con="http://eviware.com/soapui/config">
@@ -6245,15 +6248,20 @@
    <soapenv:Body>
       <ws:index/>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/index"/></con:call></con:operation><con:operation isOneWay="false" action="" name="removeAccess" bindingOperationName="removeAccess" type="Request-Response" outputName="removeAccessResponse" inputName="removeAccess" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/index"/></con:call></con:operation><con:operation isOneWay="false" action="" name="removeAccess" bindingOperationName="removeAccess" type="Request-Response" outputName="removeAccessResponse" inputName="removeAccess" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment xmlns:con="http://eviware.com/soapui/config">
+  &lt;con:entry key="username" value="meveo.admin"/>
+  &lt;con:entry key="password" value="meveo.admin"/>
+&lt;/xml-fragment></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
       <ws:removeAccess>
+          <!--Optional:-->
+         <accessCode>ACCESS1</accessCode>
          <!--Optional:-->
-         <accessId>1</accessId>
+         <subscriptionCode>SUB1</subscriptionCode>
       </ws:removeAccess>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/removeAccess"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation isOneWay="false" action="" name="removeBillingAccount" bindingOperationName="removeBillingAccount" type="Request-Response" outputName="removeBillingAccountResponse" inputName="removeBillingAccount" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment xmlns:con="http://eviware.com/soapui/config">
+</soapenv:Envelope>]]></con:request><con:credentials><con:selectedAuthProfile>No Authorization</con:selectedAuthProfile><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/removeAccess"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation isOneWay="false" action="" name="removeBillingAccount" bindingOperationName="removeBillingAccount" type="Request-Response" outputName="removeBillingAccountResponse" inputName="removeBillingAccount" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment xmlns:con="http://eviware.com/soapui/config">
   &lt;con:entry key="username" value="meveo.admin"/>
   &lt;con:entry key="password" value="meveo.admin"/>
 &lt;/xml-fragment></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
@@ -6305,7 +6313,7 @@
    <soapenv:Body>
       <ws:updateAccess>
           <!--Optional:-->
-         <access accessId="1" userAccount="UA1" subscription="SUB2">
+          <access code="ACCESS1" subscription="SUB1">
             <!--Optional:-->
             <startDate>2015-01-01</startDate>
             <!--Optional:-->
