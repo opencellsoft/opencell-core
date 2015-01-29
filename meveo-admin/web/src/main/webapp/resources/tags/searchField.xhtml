@@ -17,16 +17,29 @@
 	<cc:attribute name="childField" required="false" />
 	<cc:attribute name="listBean" required="false" />
 	<cc:attribute name="popup" default="false" />
-	<cc:attribute name="popupId" default="popup" />
+	<cc:attribute name="popupId" default="popup" />    
+    <cc:attribute name="listValues" />
 </cc:interface>
 
 <cc:implementation>
-	<ui:fragment rendered="#{cc.isText(cc.attrs.field,true)}">
-		<p:panelGrid columns="2">
+	<ui:fragment rendered="#{cc.isText(cc.attrs.field, true)}">
+		<p:panelGrid columns="2" rendered="#{cc.attrs.listValues == null}">
 			<p:outputLabel for="#{cc.attrs.field}_text" value="#{cc.attrs.label}" />
-			<p:inputText id="#{cc.attrs.field}_text" value="#{cc.filters[cc.attrs.field]}" size="#{cc.attrs.size}" disabled="#{cc.attrs.disabled}" />
+			<p:inputText id="#{cc.attrs.field}_text" value="#{cc.filters[cc.attrs.field]}" size="#{cc.attrs.size}" disabled="#{cc.attrs.disabled}" rendered="#{cc.attrs.childField == null}"/>
+            <p:inputText id="#{cc.attrs.field}_#{cc.attrs.childField}_text" value="#{cc.filters[cc.attrs.field][cc.attrs.childField]}" size="#{cc.attrs.size}" disabled="#{cc.attrs.disabled}" rendered="#{cc.attrs.childField != null}"/>
 		</p:panelGrid>
-	</ui:fragment>
+        
+        <p:panelGrid columns="2"  rendered="#{cc.attrs.listValues != null}">
+            <p:outputLabel for="#{cc.attrs.field}_pick" value="#{cc.attrs.label}" />
+            <p:selectOneMenu id="#{cc.attrs.field}_pick" value="#{cc.filters[cc.attrs.field]}" disabled="#{cc.attrs.disabled}">
+                <f:selectItem itemValue="#{null}" itemLabel="" />
+                <h:outputText value="#{cc.attrs.listValues.keySet().toArray()[0]}"></h:outputText>
+                <c:forEach items="#{cc.attrs.listValues.keySet().toArray()}" var="key">
+                    <f:selectItem itemValue="#{key}" itemLabel="#{cc.attrs.listValues[key]}" /> 
+                </c:forEach>
+            </p:selectOneMenu>        
+        </p:panelGrid>
+    </ui:fragment>
 
 	<!--  If the value binding is a boolean, display a drop down with yes/no choices. -->
 	<ui:fragment rendered="#{cc.isBoolean(cc.attrs.field,true)}">
@@ -42,24 +55,29 @@
 	</ui:fragment>
 
 	<!--  If the value binding is a date, display a p:calendar field. -->
-	<ui:fragment rendered="#{cc.isDate(cc.attrs.field,true)}">
+	<ui:fragment rendered="#{cc.isDate(cc.attrs.field,cc.attrs.childField,true)}">
 		<ui:fragment rendered="#{not cc.attrs.rangeSearch}">
 			<p:panelGrid columns="2">
-				<p:outputLabel for="#{cc.attrs.field}_date" value="#{cc.attrs.label}" />
-				<p:calendar id="#{cc.attrs.field}_date" value="#{cc.filters[cc.attrs.field]}" pattern="#{cc.datePattern}" disabled="#{cc.attrs.disabled}" />
+				<p:outputLabel for="#{cc.attrs.field}#{cc.attrs.childField!=null?'_'.concat(cc.attrs.childField):''}_date" value="#{cc.attrs.label}" />
+				<p:calendar id="#{cc.attrs.field}_date" value="#{cc.filters[cc.attrs.field]}" pattern="#{cc.datePattern}" disabled="#{cc.attrs.disabled}" rendered="#{cc.attrs.childField == null}"/>
+                <p:calendar id="#{cc.attrs.field}_#{cc.attrs.childField}_date" value="#{cc.filters[cc.attrs.field.concat('.').concat(cc.attrs.childField)]}" pattern="#{cc.datePattern}" disabled="#{cc.attrs.disabled}"  rendered="#{cc.attrs.childField != null}"/>
 			</p:panelGrid>
 		</ui:fragment>
 		<ui:fragment rendered="#{cc.attrs.rangeSearch}">
 			<p:panelGrid columns="2">
-				<p:outputLabel for="fromRange_#{cc.attrs.field}_date" value="#{cc.attrs.label}" />
+				<p:outputLabel for="fromRange_#{cc.attrs.field}#{cc.attrs.childField!=null?'_'.concat(cc.attrs.childField):''}_date" value="#{cc.attrs.label}" />
 				<p:panelGrid columns="4">
 					<h:outputText value="#{messages['commons.dateFrom']}" style="padding-right:5px" />
 					<p:calendar id="fromRange_#{cc.attrs.field}_date" value="#{cc.filters[cc.fromRangeSearchFilterName]}" pattern="#{cc.datePattern}"
-						disabled="#{cc.attrs.disabled}" />
+						disabled="#{cc.attrs.disabled}"  rendered="#{cc.attrs.childField == null}"/>
+                    <p:calendar id="fromRange_#{cc.attrs.field}_#{cc.attrs.childField}_date" value="#{cc.filters[cc.fromRangeSearchFilterName.concat('.').concat(cc.attrs.childField)]}" pattern="#{cc.datePattern}"
+                        disabled="#{cc.attrs.disabled}"  rendered="#{cc.attrs.childField != null}"/>
 
 					<h:outputText value="#{messages['commons.dateTill']}" style="padding:5px" />
 					<p:calendar id="toRange_#{cc.attrs.field}_date" value="#{cc.filters[cc.toRangeSearchFilterName]}" pattern="#{cc.datePattern}"
-						disabled="#{cc.attrs.disabled}" />
+						disabled="#{cc.attrs.disabled}" rendered="#{cc.attrs.childField == null}"/>
+                    <p:calendar id="toRange_#{cc.attrs.field}_#{cc.attrs.childField}_date" value="#{cc.filters[cc.toRangeSearchFilterName.concat('.').concat(cc.attrs.childField)]}" pattern="#{cc.datePattern}"
+                        disabled="#{cc.attrs.disabled}" rendered="#{cc.attrs.childField != null}"/>
 				</p:panelGrid>
 			</p:panelGrid>
 		</ui:fragment>
