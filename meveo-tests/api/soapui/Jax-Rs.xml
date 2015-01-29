@@ -641,7 +641,7 @@
 			"doubleValue" : 1
 		}
 	]
-}</con:request><con:originalUri>http://localhost/meveo/api/rest/account/customer</con:originalUri><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:preemptive>true</con:preemptive><con:authType>Preemptive</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters/></con:request></con:method></con:resource><con:resource name="billingAccount" path="/meveo/api/rest/account/billingAccount"><con:settings/><con:parameters/><con:resource name="" path="{billingAccountCode}"><con:settings/><con:parameters><con:parameter><con:name>billingAccountCode</con:name><con:value/><con:style>TEMPLATE</con:style><con:default/><con:description xsi:nil="true"/></con:parameter></con:parameters><con:method name="Method 1" method="DELETE"><con:settings/><con:parameters/><con:representation type="FAULT"><con:mediaType>application/json</con:mediaType><con:status>401</con:status><con:params/></con:representation><con:representation type="RESPONSE"><con:mediaType>application/json</con:mediaType><con:status>200</con:status><con:params/><con:element xmlns:ba1="http://localhost/meveo/api/rest/account/billingAccount/BA1">ba1:Response</con:element></con:representation><con:request name="Request 1" mediaType="application/json"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:endpoint>http://localhost:8080</con:endpoint><con:request/><con:originalUri>http://localhost/meveo/api/rest/account/billingAccount/BA1</con:originalUri><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:preemptive>true</con:preemptive><con:authType>Preemptive</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters><entry key="billingAccountCode" value="BA1" xmlns="http://eviware.com/soapui/config"/></con:parameters><con:parameterOrder><con:entry>billingAccountCode</con:entry></con:parameterOrder></con:request></con:method></con:resource><con:method name="GET" method="GET"><con:settings/><con:parameters><con:parameter><con:name>billingAccountCode</con:name><con:value>SERVICEID1</con:value><con:style>QUERY</con:style><con:default>SERVICEID1</con:default><con:description xsi:nil="true"/></con:parameter></con:parameters><con:representation type="FAULT"><con:mediaType>text/html;charset=utf-8</con:mediaType><con:status>404</con:status><con:params/><con:element>html</con:element></con:representation><con:representation type="FAULT"><con:mediaType>application/json</con:mediaType><con:status>401</con:status><con:params/></con:representation><con:representation type="RESPONSE"><con:mediaType>application/json</con:mediaType><con:status>200</con:status><con:params/><con:element xmlns:bil="http://localhost/billingAccount">bil:Response</con:element></con:representation><con:request name="Request 1" mediaType="application/json"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:endpoint>http://localhost:8080</con:endpoint><con:request/><con:originalUri>http://localhost/billingAccount</con:originalUri><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:preemptive>true</con:preemptive><con:authType>Preemptive</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters><entry key="billingAccountCode" value="BA1" xmlns="http://eviware.com/soapui/config"/></con:parameters><con:parameterOrder><con:entry>billingAccountCode</con:entry></con:parameterOrder></con:request></con:method><con:method name="POST" method="POST"><con:settings/><con:parameters/><con:representation type="REQUEST"><con:mediaType>application/json</con:mediaType><con:params/></con:representation><con:representation type="FAULT"><con:mediaType>application/json</con:mediaType><con:status>401</con:status><con:params/></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType>application/json</con:mediaType><con:status>200</con:status><con:params/><con:element xmlns:bil="http://localhost/meveo/api/rest/account/billingAccount">bil:Response</con:element></con:representation><con:request name="Request 1" mediaType="application/json" postQueryString="false"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:endpoint>http://localhost:8080</con:endpoint><con:request>{
+}</con:request><con:originalUri>http://localhost/meveo/api/rest/account/customer</con:originalUri><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:preemptive>true</con:preemptive><con:authType>Preemptive</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters/></con:request></con:method></con:resource><con:resource name="billingAccount" path="/meveo/api/rest/account/billingAccount"><con:settings/><con:parameters/><con:resource name="" path="{billingAccountCode}"><con:settings/><con:parameters><con:parameter><con:name>billingAccountCode</con:name><con:value/><con:style>TEMPLATE</con:style><con:default/><con:description xsi:nil="true"/></con:parameter></con:parameters><con:method name="Method 1" method="DELETE"><con:settings/><con:parameters/><con:representation type="FAULT"><con:mediaType>application/json</con:mediaType><con:status>401</con:status><con:params/></con:representation><con:representation type="RESPONSE"><con:mediaType>application/json</con:mediaType><con:status>200</con:status><con:params/><con:element xmlns:ba1="http://localhost/meveo/api/rest/account/billingAccount/BA1">ba1:Response</con:element></con:representation><con:request name="Request 1" mediaType="application/json"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:endpoint>http://localhost:8080</con:endpoint><con:request/><con:originalUri>http://localhost/meveo/api/rest/account/billingAccount/BA1</con:originalUri><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:preemptive>true</con:preemptive><con:authType>Preemptive</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters><entry key="billingAccountCode" value="BA1" xmlns="http://eviware.com/soapui/config"/></con:parameters><con:parameterOrder><con:entry>billingAccountCode</con:entry></con:parameterOrder></con:request><con:request name="Request 2" mediaType="application/json"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:endpoint>http://localhost:8080</con:endpoint><con:request/><con:originalUri>http://localhost/meveo/api/rest/account/billingAccount/BA1A</con:originalUri><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:preemptive>true</con:preemptive><con:authType>Preemptive</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters><entry key="billingAccountCode" value="BA1A" xmlns="http://eviware.com/soapui/config"/></con:parameters></con:request></con:method></con:resource><con:method name="GET" method="GET"><con:settings/><con:parameters><con:parameter><con:name>billingAccountCode</con:name><con:value>SERVICEID1</con:value><con:style>QUERY</con:style><con:default>SERVICEID1</con:default><con:description xsi:nil="true"/></con:parameter></con:parameters><con:representation type="FAULT"><con:mediaType>text/html;charset=utf-8</con:mediaType><con:status>404</con:status><con:params/><con:element>html</con:element></con:representation><con:representation type="FAULT"><con:mediaType>application/json</con:mediaType><con:status>401</con:status><con:params/></con:representation><con:representation type="RESPONSE"><con:mediaType>application/json</con:mediaType><con:status>200</con:status><con:params/><con:element xmlns:bil="http://localhost/billingAccount">bil:Response</con:element></con:representation><con:request name="Request 1" mediaType="application/json"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:endpoint>http://localhost:8080</con:endpoint><con:request/><con:originalUri>http://localhost/billingAccount</con:originalUri><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:preemptive>true</con:preemptive><con:authType>Preemptive</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters><entry key="billingAccountCode" value="BA1" xmlns="http://eviware.com/soapui/config"/></con:parameters><con:parameterOrder><con:entry>billingAccountCode</con:entry></con:parameterOrder></con:request><con:request name="Request 2" mediaType="application/json"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:endpoint>http://localhost:8080</con:endpoint><con:request/><con:originalUri>http://localhost/meveo/api/rest/account/billingAccount</con:originalUri><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:preemptive>true</con:preemptive><con:authType>Preemptive</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters><entry key="billingAccountCode" value="BA1A" xmlns="http://eviware.com/soapui/config"/></con:parameters></con:request></con:method><con:method name="POST" method="POST"><con:settings/><con:parameters/><con:representation type="REQUEST"><con:mediaType>application/json</con:mediaType><con:params/></con:representation><con:representation type="FAULT"><con:mediaType>application/json</con:mediaType><con:status>401</con:status><con:params/></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType>application/json</con:mediaType><con:status>200</con:status><con:params/><con:element xmlns:bil="http://localhost/meveo/api/rest/account/billingAccount">bil:Response</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>0</con:status><con:params/><con:element>data</con:element></con:representation><con:request name="Request 1" mediaType="application/json" postQueryString="false"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:endpoint>http://localhost:8080</con:endpoint><con:request>{
 	"customerAccount" : "CA1",
 	"code" : "BA1",
 	"description" : "BA1",
@@ -669,7 +669,54 @@
 	"terminationDate" : null,
 	"paymentMethod" : "CHECK",
 	"paymentTerms" : "CASH",
-	"electronicBilling" : false
+	"electronicBilling" : false,
+	"customFields" : [
+		{
+			"code" : "test",
+			"description" : "test",
+			"stringValue" : "test",
+			"longValue" : 1,
+			"doubleValue" : 1
+		}	
+	]
+}</con:request><con:originalUri>http://localhost/meveo/api/rest/account/billingAccount</con:originalUri><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:preemptive>true</con:preemptive><con:authType>Preemptive</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters/></con:request><con:request name="Request 2" mediaType="application/json" postQueryString="false"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:endpoint>http://localhost:8080</con:endpoint><con:request>{
+	"customerAccount" : "CA1",
+	"code" : "BA1A",
+	"description" : "BA1A",
+	"externalRef1" : "",
+	"externalRef2" : "",
+	"address" : {
+		"address1" : "",
+		"address2" : "",
+		"address3" : "",
+		"zipCode" : "",
+		"city" : "",
+		"country" : "FR",
+		"state" : ""
+	},
+	"name" : {
+		"title" : "",
+		"firstName" : "Edward",
+		"lastName" : "Legaspi"
+	},
+	"billingCycle" : "CYC_INV_MT_1",
+	"country" : "FR",
+	"language" : "FRA",
+	"nextInvoiceDate" : "2015-02-20",
+	"subscriptionDate" : "2015-01-20",
+	"terminationDate" : null,
+	"paymentMethod" : "CHECK",
+	"paymentTerms" : "CASH",
+	"electronicBilling" : false,
+	"customFields" : [
+		{
+			"code" : "test",
+			"description" : "test",
+			"stringValue" : "test",
+			"longValue" : 1,
+			"doubleValue" : 1
+		}	
+	]
 }</con:request><con:originalUri>http://localhost/meveo/api/rest/account/billingAccount</con:originalUri><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:preemptive>true</con:preemptive><con:authType>Preemptive</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters/></con:request></con:method><con:method name="PUT" method="PUT"><con:settings/><con:parameters/><con:representation type="FAULT"><con:mediaType>application/json</con:mediaType><con:status>401</con:status><con:params/></con:representation><con:representation type="REQUEST"><con:mediaType>application/json</con:mediaType><con:params/></con:representation><con:representation type="RESPONSE"><con:mediaType>application/json</con:mediaType><con:status>200</con:status><con:params/><con:element xmlns:bil="http://localhost/meveo/api/rest/account/billingAccount">bil:Response</con:element></con:representation><con:request name="Request 1" mediaType="application/json" postQueryString="false"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:endpoint>http://localhost:8080</con:endpoint><con:request>{
 	"customerAccount" : "CA1",
 	"code" : "BA1",
@@ -711,6 +758,58 @@
 			"code" : "test2",
 			"description" : "test2",
 			"stringValue" : "test2",
+			"longValue" : 1,
+			"doubleValue" : 1
+		}
+	]
+}</con:request><con:originalUri>http://localhost/meveo/api/rest/account/billingAccount</con:originalUri><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:preemptive>true</con:preemptive><con:authType>Preemptive</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters/></con:request><con:request name="Request 2" mediaType="application/json" postQueryString="false"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:endpoint>http://localhost:8080</con:endpoint><con:request>{
+	"customerAccount" : "CA1",
+	"code" : "BA1A",
+	"description" : "BA1A",
+	"externalRef1" : "",
+	"externalRef2" : "",
+	"address" : {
+		"address1" : "",
+		"address2" : "",
+		"address3" : "",
+		"zipCode" : "",
+		"city" : "",
+		"country" : "FR",
+		"state" : ""
+	},
+	"name" : {
+		"title" : "",
+		"firstName" : "Edward",
+		"lastName" : "Legaspi"
+	},
+	"billingCycle" : "CYC_INV_MT_1",
+	"country" : "FR",
+	"language" : "FRA",
+	"nextInvoiceDate" : "2015-02-20",
+	"subscriptionDate" : "2015-01-20",
+	"terminationDate" : null,
+	"paymentMethod" : "CHECK",
+	"paymentTerms" : "CASH",
+	"electronicBilling" : false,
+	"customFields" : [
+		{
+			"code" : "test",
+			"description" : "test",
+			"stringValue" : "test2",
+			"longValue" : 1,
+			"doubleValue" : 1
+		},
+		{
+			"code" : "test1",
+			"description" : "test1",
+			"stringValue" : "test1",
+			"longValue" : 1,
+			"doubleValue" : 1
+		},
+		{
+			"code" : "test-missing",
+			"description" : "test1",
+			"stringValue" : "test1",
 			"longValue" : 1,
 			"doubleValue" : 1
 		}
