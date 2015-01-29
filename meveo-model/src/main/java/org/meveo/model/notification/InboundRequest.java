@@ -261,6 +261,6 @@ public class InboundRequest extends BusinessEntity {
 	}
 
 	public void setResponseEncoding(String responseEncoding) {
-		this.responseEncoding = responseEncoding;
-	}
+        this.responseEncoding = responseEncoding;
+    }
 }

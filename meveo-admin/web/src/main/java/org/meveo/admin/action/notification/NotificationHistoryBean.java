@@ -41,15 +41,6 @@ public class NotificationHistoryBean extends BaseBean<NotificationHistory> {
         return "notifications";
     }
 
-    // @Override
-    // protected List<String> getFormFieldsToFetch() {
-    // return Arrays.asList("provider");
-    // }
-    //
-    // @Override
-    // protected List<String> getListFieldsToFetch() {
-    // return Arrays.asList("provider");
-    // }
 
     public Map<String, String> getNotificationTypes() {
         Map<String, String> types = new HashMap<String, String>();

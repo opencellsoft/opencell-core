@@ -1222,6 +1222,18 @@
 			<redirect />
 		</navigation-case>
 		
+		<navigation-case>
+			<from-outcome>inboundRequestDetail</from-outcome>
+			<to-view-id>/pages/notification/inboundRequestDetail.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+
+		<navigation-case>
+			<from-outcome>inboundRequests</from-outcome>
+			<to-view-id>/pages/notification/inboundRequests.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+				
 	</navigation-rule>
 	<navigation-rule>
 		<!-- Reporting -->
