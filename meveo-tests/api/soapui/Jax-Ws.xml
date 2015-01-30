@@ -6682,12 +6682,12 @@
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
-    <wsdl:operation name="activateServices">
+    <wsdl:operation name="terminateServices">
       <soap:operation soapAction="" style="document"/>
-      <wsdl:input name="activateServices">
+      <wsdl:input name="terminateServices">
         <soap:body use="literal"/>
       </wsdl:input>
-      <wsdl:output name="activateServicesResponse">
+      <wsdl:output name="terminateServicesResponse">
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
@@ -6709,6 +6709,15 @@
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
+    <wsdl:operation name="activateServices">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="activateServices">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="activateServicesResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
   </wsdl:binding>
   <wsdl:service name="SubscriptionWs">
     <wsdl:port binding="tns:SubscriptionWsSoapBinding" name="SubscriptionWsImplPort">
@@ -6722,6 +6731,8 @@
       <xs:element name="ApplyOneShotChargeInstance" type="tns:applyOneShotChargeInstanceDto"/>
       <xs:element name="Customer" type="tns:activateServicesDto"/>
       <xs:element name="Subscription" type="tns:subscriptionDto"/>
+      <xs:element name="TerminateSubscription" type="tns:terminateSubscriptionDto"/>
+      <xs:element name="TerminateSubscriptionServices" type="tns:terminateSubscriptionServicesDto"/>
       <xs:element name="activateServices" type="tns:activateServices"/>
       <xs:element name="activateServicesResponse" type="tns:activateServicesResponse"/>
       <xs:element name="applyOneShotChargeInstance" type="tns:applyOneShotChargeInstance"/>
@@ -6730,6 +6741,8 @@
       <xs:element name="createResponse" type="tns:createResponse"/>
       <xs:element name="index" type="tns:index"/>
       <xs:element name="indexResponse" type="tns:indexResponse"/>
+      <xs:element name="terminateServices" type="tns:terminateServices"/>
+      <xs:element name="terminateServicesResponse" type="tns:terminateServicesResponse"/>
       <xs:element name="terminateSubscription" type="tns:terminateSubscription"/>
       <xs:element name="terminateSubscriptionResponse" type="tns:terminateSubscriptionResponse"/>
       <xs:element name="update" type="tns:update"/>
@@ -6803,12 +6816,54 @@
           <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
         </xs:sequence>
       </xs:complexType>
+      <xs:complexType name="terminateServices">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="terminateSubscriptionServices" type="tns:terminateSubscriptionServicesDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="terminateSubscriptionServicesDto">
+        <xs:complexContent>
+          <xs:extension base="tns:baseDto">
+            <xs:sequence>
+              <xs:element maxOccurs="unbounded" name="services" type="xs:string"/>
+            </xs:sequence>
+            <xs:attribute name="subscriptionCode" type="xs:string" use="required"/>
+            <xs:attribute name="terminationReason" type="xs:string" use="required"/>
+            <xs:attribute name="terminationDate" type="xs:dateTime" use="required"/>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="terminateServicesResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
       <xs:complexType name="create">
         <xs:sequence>
           <xs:element minOccurs="0" name="subscription" type="tns:subscriptionDto"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="createResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="terminateSubscription">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="terminateSubscription" type="tns:terminateSubscriptionDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="terminateSubscriptionDto">
+        <xs:complexContent>
+          <xs:extension base="tns:baseDto">
+            <xs:sequence/>
+            <xs:attribute name="subscriptionCode" type="xs:string" use="required"/>
+            <xs:attribute name="terminationReason" type="xs:string" use="required"/>
+            <xs:attribute name="terminationDate" type="xs:dateTime" use="required"/>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="terminateSubscriptionResponse">
         <xs:sequence>
           <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
         </xs:sequence>
@@ -6846,16 +6901,6 @@
           <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
         </xs:sequence>
       </xs:complexType>
-      <xs:complexType name="terminateSubscription">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="subscriptionCode" type="xs:string"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="terminateSubscriptionResponse">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
-        </xs:sequence>
-      </xs:complexType>
       <xs:simpleType name="actionStatusEnum">
         <xs:restriction base="xs:string">
           <xs:enumeration value="SUCCESS"/>
@@ -6875,6 +6920,12 @@
   </wsdl:message>
   <wsdl:message name="update">
     <wsdl:part element="ns1:update" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="terminateServices">
+    <wsdl:part element="ns1:terminateServices" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="terminateServicesResponse">
+    <wsdl:part element="ns1:terminateServicesResponse" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="updateResponse">
     <wsdl:part element="ns1:updateResponse" name="parameters"></wsdl:part>
@@ -6913,17 +6964,21 @@
       <wsdl:input message="ns1:index" name="index"></wsdl:input>
       <wsdl:output message="ns1:indexResponse" name="indexResponse"></wsdl:output>
     </wsdl:operation>
+    <wsdl:operation name="terminateServices">
+      <wsdl:input message="ns1:terminateServices" name="terminateServices"></wsdl:input>
+      <wsdl:output message="ns1:terminateServicesResponse" name="terminateServicesResponse"></wsdl:output>
+    </wsdl:operation>
     <wsdl:operation name="create">
       <wsdl:input message="ns1:create" name="create"></wsdl:input>
       <wsdl:output message="ns1:createResponse" name="createResponse"></wsdl:output>
     </wsdl:operation>
-    <wsdl:operation name="activateServices">
-      <wsdl:input message="ns1:activateServices" name="activateServices"></wsdl:input>
-      <wsdl:output message="ns1:activateServicesResponse" name="activateServicesResponse"></wsdl:output>
-    </wsdl:operation>
     <wsdl:operation name="terminateSubscription">
       <wsdl:input message="ns1:terminateSubscription" name="terminateSubscription"></wsdl:input>
       <wsdl:output message="ns1:terminateSubscriptionResponse" name="terminateSubscriptionResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="activateServices">
+      <wsdl:input message="ns1:activateServices" name="activateServices"></wsdl:input>
+      <wsdl:output message="ns1:activateServicesResponse" name="activateServicesResponse"></wsdl:output>
     </wsdl:operation>
   </wsdl:portType>
 </wsdl:definitions>]]></con:content><con:type>http://schemas.xmlsoap.org/wsdl/</con:type></con:part></con:definitionCache><con:endpoints><con:endpoint>http://localhost:8080/meveo/SubscriptionWs</con:endpoint></con:endpoints><con:operation isOneWay="false" action="" name="activateServices" bindingOperationName="activateServices" type="Request-Response" outputName="activateServicesResponse" inputName="activateServices" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment xmlns:con="http://eviware.com/soapui/config">
@@ -6934,12 +6989,12 @@
    <soapenv:Body>
       <ws:activateServices>
          <!--Optional:-->
-         <activateServices subscription="UA1_SUB1">
+         <activateServices subscription="SUBS1">
             <services>
                <!--Zero or more repetitions:-->
                <entry>
                   <!--Optional:-->
-                  <key>SERVX</key>
+                  <key>SERV1</key>
                   <!--Optional:-->
                   <value>1</value>
                </entry>
@@ -6955,7 +7010,7 @@
    <soapenv:Body>
       <ws:activateServices>
          <!--Optional:-->
-         <activateServices subscription="UA1_SUB2">
+         <activateServices subscription="SUBS2">
             <services>
                <!--Zero or more repetitions:-->
                <entry>
@@ -6976,7 +7031,7 @@
    <soapenv:Body>
       <ws:applyOneShotChargeInstance>
          <!--Optional:-->
-         <applyOneShotChargeInstance oneShotChargeInstance="SUB1" subscription="UA1_SUB1" operationDate="2015-01-22T13:42:57.219+08:00">
+         <applyOneShotChargeInstance oneShotChargeInstance="SUB1" subscription="SUBS1" operationDate="2015-01-22T13:42:57.219+08:00">
             <!--Optional:-->
             <description>special</description>
             <!--Optional:-->
@@ -7000,7 +7055,7 @@
    <soapenv:Body>
       <ws:applyOneShotChargeInstance>
          <!--Optional:-->
-         <applyOneShotChargeInstance oneShotChargeInstance="SUB2" subscription="UA1_SUB2" operationDate="2015-01-22T13:42:57.219+08:00">
+         <applyOneShotChargeInstance oneShotChargeInstance="SUB1" subscription="SUBS2" operationDate="2015-01-22T13:42:57.219+08:00">
             <!--Optional:-->
             <description>special</description>
             <!--Optional:-->
@@ -7024,7 +7079,7 @@
    <soapenv:Body>
       <ws:create>
          <!--Optional:-->
-         <subscription code="UA1_SUB1" userAccount="UA1" offerTemplate="OFF1">
+         <subscription code="SUBS1" userAccount="UA1" offerTemplate="OFF1">
             <!--Optional:-->
             <subscriptionDate>2015-01-22T13:42:57.219+08:00</subscriptionDate>
          </subscription>
@@ -7038,7 +7093,7 @@
    <soapenv:Body>
       <ws:create>
          <!--Optional:-->
-         <subscription code="UA1_SUB2" userAccount="UA1" offerTemplate="OFF1">
+         <subscription code="SUBS2" userAccount="UA1" offerTemplate="OFF1">
             <!--Optional:-->
             <subscriptionDate>2015-01-22T13:42:57.219+08:00</subscriptionDate>
          </subscription>
@@ -7057,8 +7112,23 @@
    <soapenv:Body>
       <ws:update>
          <!--Optional:-->
-         <subscription code="UA1_SUB1" userAccount="UA1" offerTemplate="OFF1">
-         	  <description>UA1_SUB1-Updated</description>
+         <subscription code="SUBS1" userAccount="UA1" offerTemplate="OFF1">
+         	  <description>SUBS1-Updated</description>
+            <!--Optional:-->
+            <subscriptionDate>2015-01-12T13:42:57.219+08:00</subscriptionDate>
+         </subscription>
+      </ws:update>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SubscriptionWs/update"/><con:wsrmConfig version="1.2"/></con:call><con:call name="Request 2"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment xmlns:con="http://eviware.com/soapui/config">
+  &lt;con:entry key="username" value="meveo.admin"/>
+  &lt;con:entry key="password" value="meveo.admin"/>
+&lt;/xml-fragment></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/SubscriptionWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:update>
+         <!--Optional:-->
+         <subscription code="SUBS2" userAccount="UA1" offerTemplate="OFF1">
+         	  <description>SUB2-Updated</description>
             <!--Optional:-->
             <subscriptionDate>2015-01-12T13:42:57.219+08:00</subscriptionDate>
          </subscription>
@@ -7072,10 +7142,26 @@
    <soapenv:Body>
       <ws:terminateSubscription>
          <!--Optional:-->
-         <subscriptionCode>UA1_SUB1</subscriptionCode>
+         <terminateSubscription subscriptionCode="SUBS1" terminationReason="TERM_REASON_1" terminationDate="2015-01-22T13:42:57.219+08:00"/>
+      </ws:terminateSubscription>
+
       </ws:terminateSubscription>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SubscriptionWs/terminateSubscription"/><con:wsrmConfig version="1.2"/></con:call></con:operation></con:interface><con:interface xsi:type="con:WsdlInterface" wsaVersion="NONE" name="MediationWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}MediationWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="http://localhost:8080/meveo/MediationWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache type="TEXT" rootPart="http://localhost:8080/meveo/MediationWs?wsdl"><con:part><con:url>http://localhost:8080/meveo/MediationWs?wsdl</con:url><con:content><![CDATA[<wsdl:definitions name="MediationWs" targetNamespace="http://impl.ws.api.meveo.org/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://impl.ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns2="http://schemas.xmlsoap.org/soap/http" xmlns:ns1="http://ws.api.meveo.org/">
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SubscriptionWs/terminateSubscription"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation isOneWay="false" action="" name="terminateServices" bindingOperationName="terminateServices" type="Request-Response" outputName="terminateServicesResponse" inputName="terminateServices" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment xmlns:con="http://eviware.com/soapui/config">
+  &lt;con:entry key="username" value="meveo.admin"/>
+  &lt;con:entry key="password" value="meveo.admin"/>
+&lt;/xml-fragment></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/SubscriptionWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:terminateServices>
+         <!--Optional:-->
+         <terminateSubscriptionServices subscriptionCode="SUBS2" terminationReason="TERM_REASON_1" terminationDate="2015-01-22T13:42:57.219+08:00">
+            <!--Zero or more repetitions:-->
+            <services>SERV1</services>
+         </terminateSubscriptionServices>
+      </ws:terminateServices>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SubscriptionWs/terminateServices"/><con:wsrmConfig version="1.2"/></con:call></con:operation></con:interface><con:interface xsi:type="con:WsdlInterface" wsaVersion="NONE" name="MediationWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}MediationWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="http://localhost:8080/meveo/MediationWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache type="TEXT" rootPart="http://localhost:8080/meveo/MediationWs?wsdl"><con:part><con:url>http://localhost:8080/meveo/MediationWs?wsdl</con:url><con:content><![CDATA[<wsdl:definitions name="MediationWs" targetNamespace="http://impl.ws.api.meveo.org/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://impl.ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns2="http://schemas.xmlsoap.org/soap/http" xmlns:ns1="http://ws.api.meveo.org/">
   <wsdl:import location="http://localhost:8080/meveo/MediationWs?wsdl=MediationWs.wsdl" namespace="http://ws.api.meveo.org/"></wsdl:import>
   <wsdl:binding name="MediationWsSoapBinding" type="ns1:MediationWs">
     <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
