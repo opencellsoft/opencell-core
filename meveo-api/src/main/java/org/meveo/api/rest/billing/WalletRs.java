@@ -27,23 +27,23 @@ public interface WalletRs extends IBaseRs {
 
 	@POST
 	@Path("/balance/current")
-	ActionStatus currentBalance(WalletBalanceDto walletBalance);
+	ActionStatus currentBalance(WalletBalanceDto postData);
 
 	@POST
 	@Path("/balance/reserved")
-	ActionStatus reservedBalance(WalletBalanceDto walletBalance);
+	ActionStatus reservedBalance(WalletBalanceDto postData);
 
 	@POST
 	@Path("/balance/open")
-	ActionStatus openBalance(WalletBalanceDto walletBalance);
+	ActionStatus openBalance(WalletBalanceDto postData);
 
 	@POST
 	@Path("/reservation")
-	ActionStatus createReservation(WalletReservationDto walletReservation);
+	ActionStatus createReservation(WalletReservationDto postData);
 
 	@PUT
 	@Path("/reservation")
-	ActionStatus updateReservation(WalletReservationDto walletReservation);
+	ActionStatus updateReservation(WalletReservationDto postData);
 
 	@DELETE
 	@Path("/reservation/{reservationId:[0-9]+}")
@@ -51,7 +51,7 @@ public interface WalletRs extends IBaseRs {
 
 	@POST
 	@Path("/reservation/confirm")
-	ActionStatus confirmReservation(WalletReservationDto walletReservation);
+	ActionStatus confirmReservation(WalletReservationDto postData);
 
 	@POST
 	@Path("/operation")

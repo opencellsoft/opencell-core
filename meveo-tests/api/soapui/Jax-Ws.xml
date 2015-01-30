@@ -7284,4 +7284,624 @@
    <soapenv:Body>
       <ws:index/>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/MediationWs/index"/></con:call></con:operation></con:interface><con:properties/><con:wssContainer/><con:oAuth2ProfileContainer/><con:sensitiveInformation/></con:soapui-project>
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/MediationWs/index"/></con:call></con:operation></con:interface><con:interface xsi:type="con:WsdlInterface" wsaVersion="NONE" name="WalletWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}WalletWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="http://localhost:8080/meveo/WalletWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache type="TEXT" rootPart="http://localhost:8080/meveo/WalletWs?wsdl"><con:part><con:url>http://localhost:8080/meveo/WalletWs?wsdl</con:url><con:content><![CDATA[<wsdl:definitions name="WalletWs" targetNamespace="http://impl.ws.api.meveo.org/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://impl.ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns2="http://schemas.xmlsoap.org/soap/http" xmlns:ns1="http://ws.api.meveo.org/">
+  <wsdl:import location="http://localhost:8080/meveo/WalletWs?wsdl=WalletWs.wsdl" namespace="http://ws.api.meveo.org/"></wsdl:import>
+  <wsdl:binding name="WalletWsSoapBinding" type="ns1:WalletWs">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <wsdl:operation name="reservedBalance">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="reservedBalance">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="reservedBalanceResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="createReservation">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="createReservation">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="createReservationResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="createOperation">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="createOperation">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="createOperationResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="currentBalance">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="currentBalance">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="currentBalanceResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="index">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="index">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="indexResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="openBalance">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="openBalance">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="openBalanceResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="cancelReservation">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="cancelReservation">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="cancelReservationResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="confirmReservation">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="confirmReservation">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="confirmReservationResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="updateReservation">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="updateReservation">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="updateReservationResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="WalletWs">
+    <wsdl:port binding="tns:WalletWsSoapBinding" name="WalletWsImplPort">
+      <soap:address location="http://localhost:8080/meveo/WalletWs"/>
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>]]></con:content><con:type>http://schemas.xmlsoap.org/wsdl/</con:type></con:part><con:part><con:url>http://localhost:8080/meveo/WalletWs?wsdl=WalletWs.wsdl</con:url><con:content><![CDATA[<wsdl:definitions name="WalletWs" targetNamespace="http://ws.api.meveo.org/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ns1="http://ws.api.meveo.org/">
+  <wsdl:types>
+    <xs:schema elementFormDefault="unqualified" targetNamespace="http://ws.api.meveo.org/" version="1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://ws.api.meveo.org/">
+      <xs:element name="ActionStatus" type="tns:actionStatus"/>
+      <xs:element name="WalletBalance" type="tns:walletBalanceDto"/>
+      <xs:element name="WalletOperation" type="tns:walletOperationDto"/>
+      <xs:element name="WalletReservation" type="tns:walletReservationDto"/>
+      <xs:element name="cancelReservation" type="tns:cancelReservation"/>
+      <xs:element name="cancelReservationResponse" type="tns:cancelReservationResponse"/>
+      <xs:element name="confirmReservation" type="tns:confirmReservation"/>
+      <xs:element name="confirmReservationResponse" type="tns:confirmReservationResponse"/>
+      <xs:element name="createOperation" type="tns:createOperation"/>
+      <xs:element name="createOperationResponse" type="tns:createOperationResponse"/>
+      <xs:element name="createReservation" type="tns:createReservation"/>
+      <xs:element name="createReservationResponse" type="tns:createReservationResponse"/>
+      <xs:element name="currentBalance" type="tns:currentBalance"/>
+      <xs:element name="currentBalanceResponse" type="tns:currentBalanceResponse"/>
+      <xs:element name="index" type="tns:index"/>
+      <xs:element name="indexResponse" type="tns:indexResponse"/>
+      <xs:element name="openBalance" type="tns:openBalance"/>
+      <xs:element name="openBalanceResponse" type="tns:openBalanceResponse"/>
+      <xs:element name="reservedBalance" type="tns:reservedBalance"/>
+      <xs:element name="reservedBalanceResponse" type="tns:reservedBalanceResponse"/>
+      <xs:element name="updateReservation" type="tns:updateReservation"/>
+      <xs:element name="updateReservationResponse" type="tns:updateReservationResponse"/>
+      <xs:complexType name="reservedBalance">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="walletBalance" type="tns:walletBalanceDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="walletBalanceDto">
+        <xs:complexContent>
+          <xs:extension base="tns:baseDto">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="sellerCode" type="xs:string"/>
+              <xs:element minOccurs="0" name="userAccountCode" type="xs:string"/>
+              <xs:element minOccurs="0" name="startDate" type="xs:dateTime"/>
+              <xs:element minOccurs="0" name="endDate" type="xs:dateTime"/>
+              <xs:element name="amountWithTax" type="xs:boolean"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType abstract="true" name="baseDto">
+        <xs:sequence/>
+      </xs:complexType>
+      <xs:complexType name="reservedBalanceResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="actionStatus">
+        <xs:sequence>
+          <xs:element name="status" type="tns:actionStatusEnum"/>
+          <xs:element name="errorCode" type="xs:int"/>
+          <xs:element name="message" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="createReservation">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="walletReservation" type="tns:walletReservationDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="walletReservationDto">
+        <xs:complexContent>
+          <xs:extension base="tns:baseDto">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="reservationId" type="xs:long"/>
+              <xs:element minOccurs="0" name="providerCode" type="xs:string"/>
+              <xs:element minOccurs="0" name="sellerCode" type="xs:string"/>
+              <xs:element minOccurs="0" name="offerCode" type="xs:string"/>
+              <xs:element minOccurs="0" name="userAccountCode" type="xs:string"/>
+              <xs:element minOccurs="0" name="subscriptionDate" type="xs:dateTime"/>
+              <xs:element minOccurs="0" name="expirationDate" type="xs:dateTime"/>
+              <xs:element minOccurs="0" name="terminationDate" type="xs:dateTime"/>
+              <xs:element minOccurs="0" name="creditLimit" type="xs:decimal"/>
+              <xs:element minOccurs="0" name="param1" type="xs:string"/>
+              <xs:element minOccurs="0" name="param2" type="xs:string"/>
+              <xs:element minOccurs="0" name="param3" type="xs:string"/>
+              <xs:element name="amountWithTax" type="xs:boolean"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="createReservationResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="createOperation">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="walletOperation" type="tns:walletOperationDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="walletOperationDto">
+        <xs:complexContent>
+          <xs:extension base="tns:baseDto">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="currency" type="xs:string"/>
+              <xs:element minOccurs="0" name="type" type="xs:string"/>
+              <xs:element minOccurs="0" name="status" type="xs:string"/>
+              <xs:element minOccurs="0" name="unityDescription" type="xs:string"/>
+              <xs:element minOccurs="0" name="taxPercent" type="xs:decimal"/>
+              <xs:element minOccurs="0" name="unitAmountWithoutTax" type="xs:decimal"/>
+              <xs:element minOccurs="0" name="unitAmountWithTax" type="xs:decimal"/>
+              <xs:element minOccurs="0" name="unitAmountTax" type="xs:decimal"/>
+              <xs:element minOccurs="0" name="quantity" type="xs:decimal"/>
+              <xs:element minOccurs="0" name="amountWithoutTax" type="xs:decimal"/>
+              <xs:element minOccurs="0" name="amountWithTax" type="xs:decimal"/>
+              <xs:element minOccurs="0" name="amountTax" type="xs:decimal"/>
+              <xs:element minOccurs="0" name="parameter1" type="xs:string"/>
+              <xs:element minOccurs="0" name="parameter2" type="xs:string"/>
+              <xs:element minOccurs="0" name="parameter3" type="xs:string"/>
+              <xs:element minOccurs="0" name="startDate" type="xs:dateTime"/>
+              <xs:element minOccurs="0" name="endDate" type="xs:dateTime"/>
+              <xs:element minOccurs="0" name="operationDate" type="xs:dateTime"/>
+              <xs:element minOccurs="0" name="subscriptionDate" type="xs:dateTime"/>
+            </xs:sequence>
+            <xs:attribute name="code" type="xs:string" use="required"/>
+            <xs:attribute name="userAccount" type="xs:string" use="required"/>
+            <xs:attribute name="subscription" type="xs:string" use="required"/>
+            <xs:attribute name="offerTemplate" type="xs:string" use="required"/>
+            <xs:attribute name="seller" type="xs:string" use="required"/>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="createOperationResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="index">
+        <xs:sequence/>
+      </xs:complexType>
+      <xs:complexType name="indexResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="currentBalance">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="walletBalance" type="tns:walletBalanceDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="currentBalanceResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="openBalance">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="walletBalance" type="tns:walletBalanceDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="openBalanceResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="cancelReservation">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="reservationId" type="xs:long"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="cancelReservationResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="updateReservation">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="walletReservation" type="tns:walletReservationDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="updateReservationResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="confirmReservation">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="walletReservation" type="tns:walletReservationDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="confirmReservationResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:simpleType name="actionStatusEnum">
+        <xs:restriction base="xs:string">
+          <xs:enumeration value="SUCCESS"/>
+          <xs:enumeration value="FAIL"/>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:schema>
+  </wsdl:types>
+  <wsdl:message name="reservedBalance">
+    <wsdl:part element="ns1:reservedBalance" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="openBalance">
+    <wsdl:part element="ns1:openBalance" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="updateReservationResponse">
+    <wsdl:part element="ns1:updateReservationResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="openBalanceResponse">
+    <wsdl:part element="ns1:openBalanceResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="confirmReservation">
+    <wsdl:part element="ns1:confirmReservation" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="createOperationResponse">
+    <wsdl:part element="ns1:createOperationResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="indexResponse">
+    <wsdl:part element="ns1:indexResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="confirmReservationResponse">
+    <wsdl:part element="ns1:confirmReservationResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="index">
+    <wsdl:part element="ns1:index" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="createReservationResponse">
+    <wsdl:part element="ns1:createReservationResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="cancelReservationResponse">
+    <wsdl:part element="ns1:cancelReservationResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="createReservation">
+    <wsdl:part element="ns1:createReservation" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="createOperation">
+    <wsdl:part element="ns1:createOperation" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="currentBalance">
+    <wsdl:part element="ns1:currentBalance" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="updateReservation">
+    <wsdl:part element="ns1:updateReservation" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="currentBalanceResponse">
+    <wsdl:part element="ns1:currentBalanceResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="cancelReservation">
+    <wsdl:part element="ns1:cancelReservation" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="reservedBalanceResponse">
+    <wsdl:part element="ns1:reservedBalanceResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:portType name="WalletWs">
+    <wsdl:operation name="reservedBalance">
+      <wsdl:input message="ns1:reservedBalance" name="reservedBalance"></wsdl:input>
+      <wsdl:output message="ns1:reservedBalanceResponse" name="reservedBalanceResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="createReservation">
+      <wsdl:input message="ns1:createReservation" name="createReservation"></wsdl:input>
+      <wsdl:output message="ns1:createReservationResponse" name="createReservationResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="createOperation">
+      <wsdl:input message="ns1:createOperation" name="createOperation"></wsdl:input>
+      <wsdl:output message="ns1:createOperationResponse" name="createOperationResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="index">
+      <wsdl:input message="ns1:index" name="index"></wsdl:input>
+      <wsdl:output message="ns1:indexResponse" name="indexResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="currentBalance">
+      <wsdl:input message="ns1:currentBalance" name="currentBalance"></wsdl:input>
+      <wsdl:output message="ns1:currentBalanceResponse" name="currentBalanceResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="openBalance">
+      <wsdl:input message="ns1:openBalance" name="openBalance"></wsdl:input>
+      <wsdl:output message="ns1:openBalanceResponse" name="openBalanceResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="cancelReservation">
+      <wsdl:input message="ns1:cancelReservation" name="cancelReservation"></wsdl:input>
+      <wsdl:output message="ns1:cancelReservationResponse" name="cancelReservationResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="updateReservation">
+      <wsdl:input message="ns1:updateReservation" name="updateReservation"></wsdl:input>
+      <wsdl:output message="ns1:updateReservationResponse" name="updateReservationResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="confirmReservation">
+      <wsdl:input message="ns1:confirmReservation" name="confirmReservation"></wsdl:input>
+      <wsdl:output message="ns1:confirmReservationResponse" name="confirmReservationResponse"></wsdl:output>
+    </wsdl:operation>
+  </wsdl:portType>
+</wsdl:definitions>]]></con:content><con:type>http://schemas.xmlsoap.org/wsdl/</con:type></con:part></con:definitionCache><con:endpoints><con:endpoint>http://localhost:8080/meveo/WalletWs</con:endpoint></con:endpoints><con:operation isOneWay="false" action="" name="cancelReservation" bindingOperationName="cancelReservation" type="Request-Response" outputName="cancelReservationResponse" inputName="cancelReservation" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment xmlns:con="http://eviware.com/soapui/config">
+  &lt;con:entry key="username" value="meveo.admin"/>
+  &lt;con:entry key="password" value="meveo.admin"/>
+&lt;/xml-fragment></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/WalletWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:cancelReservation>
+         <!--Optional:-->
+         <reservationId>?</reservationId>
+      </ws:cancelReservation>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/WalletWs/cancelReservation"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation isOneWay="false" action="" name="confirmReservation" bindingOperationName="confirmReservation" type="Request-Response" outputName="confirmReservationResponse" inputName="confirmReservation" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment xmlns:con="http://eviware.com/soapui/config">
+  &lt;con:entry key="username" value="meveo.admin"/>
+  &lt;con:entry key="password" value="meveo.admin"/>
+&lt;/xml-fragment></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/WalletWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:confirmReservation>
+         <!--Optional:-->
+         <walletReservation>
+            <!--Optional:-->
+            <reservationId>?</reservationId>
+            <!--Optional:-->
+            <providerCode>?</providerCode>
+            <!--Optional:-->
+            <sellerCode>?</sellerCode>
+            <!--Optional:-->
+            <offerCode>?</offerCode>
+            <!--Optional:-->
+            <userAccountCode>?</userAccountCode>
+            <!--Optional:-->
+            <subscriptionDate>?</subscriptionDate>
+            <!--Optional:-->
+            <expirationDate>?</expirationDate>
+            <!--Optional:-->
+            <terminationDate>?</terminationDate>
+            <!--Optional:-->
+            <creditLimit>?</creditLimit>
+            <!--Optional:-->
+            <param1>?</param1>
+            <!--Optional:-->
+            <param2>?</param2>
+            <!--Optional:-->
+            <param3>?</param3>
+            <amountWithTax>?</amountWithTax>
+         </walletReservation>
+      </ws:confirmReservation>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/WalletWs/confirmReservation"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation isOneWay="false" action="" name="createOperation" bindingOperationName="createOperation" type="Request-Response" outputName="createOperationResponse" inputName="createOperation" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment xmlns:con="http://eviware.com/soapui/config">
+  &lt;con:entry key="username" value="meveo.admin"/>
+  &lt;con:entry key="password" value="meveo.admin"/>
+&lt;/xml-fragment></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/WalletWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createOperation>
+         <!--Optional:-->
+         <walletOperation code="?" userAccount="?" subscription="?" offerTemplate="?" seller="?">
+            <!--Optional:-->
+            <currency>?</currency>
+            <!--Optional:-->
+            <type>?</type>
+            <!--Optional:-->
+            <status>?</status>
+            <!--Optional:-->
+            <unityDescription>?</unityDescription>
+            <!--Optional:-->
+            <taxPercent>?</taxPercent>
+            <!--Optional:-->
+            <unitAmountWithoutTax>?</unitAmountWithoutTax>
+            <!--Optional:-->
+            <unitAmountWithTax>?</unitAmountWithTax>
+            <!--Optional:-->
+            <unitAmountTax>?</unitAmountTax>
+            <!--Optional:-->
+            <quantity>?</quantity>
+            <!--Optional:-->
+            <amountWithoutTax>?</amountWithoutTax>
+            <!--Optional:-->
+            <amountWithTax>?</amountWithTax>
+            <!--Optional:-->
+            <amountTax>?</amountTax>
+            <!--Optional:-->
+            <parameter1>?</parameter1>
+            <!--Optional:-->
+            <parameter2>?</parameter2>
+            <!--Optional:-->
+            <parameter3>?</parameter3>
+            <!--Optional:-->
+            <startDate>?</startDate>
+            <!--Optional:-->
+            <endDate>?</endDate>
+            <!--Optional:-->
+            <operationDate>?</operationDate>
+            <!--Optional:-->
+            <subscriptionDate>?</subscriptionDate>
+         </walletOperation>
+      </ws:createOperation>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/WalletWs/createOperation"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation isOneWay="false" action="" name="createReservation" bindingOperationName="createReservation" type="Request-Response" outputName="createReservationResponse" inputName="createReservation" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment xmlns:con="http://eviware.com/soapui/config">
+  &lt;con:entry key="username" value="meveo.admin"/>
+  &lt;con:entry key="password" value="meveo.admin"/>
+&lt;/xml-fragment></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/WalletWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createReservation>
+         <!--Optional:-->
+         <walletReservation>
+            <!--Optional:-->
+            <reservationId>?</reservationId>
+            <!--Optional:-->
+            <providerCode>?</providerCode>
+            <!--Optional:-->
+            <sellerCode>?</sellerCode>
+            <!--Optional:-->
+            <offerCode>?</offerCode>
+            <!--Optional:-->
+            <userAccountCode>?</userAccountCode>
+            <!--Optional:-->
+            <subscriptionDate>?</subscriptionDate>
+            <!--Optional:-->
+            <expirationDate>?</expirationDate>
+            <!--Optional:-->
+            <terminationDate>?</terminationDate>
+            <!--Optional:-->
+            <creditLimit>?</creditLimit>
+            <!--Optional:-->
+            <param1>?</param1>
+            <!--Optional:-->
+            <param2>?</param2>
+            <!--Optional:-->
+            <param3>?</param3>
+            <amountWithTax>?</amountWithTax>
+         </walletReservation>
+      </ws:createReservation>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/WalletWs/createReservation"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation isOneWay="false" action="" name="currentBalance" bindingOperationName="currentBalance" type="Request-Response" outputName="currentBalanceResponse" inputName="currentBalance" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment xmlns:con="http://eviware.com/soapui/config">
+  &lt;con:entry key="username" value="meveo.admin"/>
+  &lt;con:entry key="password" value="meveo.admin"/>
+&lt;/xml-fragment></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/WalletWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:currentBalance>
+         <!--Optional:-->
+         <walletBalance>
+            <!--Optional:-->
+            <sellerCode>?</sellerCode>
+            <!--Optional:-->
+            <userAccountCode>?</userAccountCode>
+            <!--Optional:-->
+            <startDate>?</startDate>
+            <!--Optional:-->
+            <endDate>?</endDate>
+            <amountWithTax>?</amountWithTax>
+         </walletBalance>
+      </ws:currentBalance>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/WalletWs/currentBalance"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation isOneWay="false" action="" name="index" bindingOperationName="index" type="Request-Response" outputName="indexResponse" inputName="index" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/WalletWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:index/>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/WalletWs/index"/></con:call></con:operation><con:operation isOneWay="false" action="" name="openBalance" bindingOperationName="openBalance" type="Request-Response" outputName="openBalanceResponse" inputName="openBalance" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment xmlns:con="http://eviware.com/soapui/config">
+  &lt;con:entry key="username" value="meveo.admin"/>
+  &lt;con:entry key="password" value="meveo.admin"/>
+&lt;/xml-fragment></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/WalletWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:openBalance>
+         <!--Optional:-->
+         <walletBalance>
+            <!--Optional:-->
+            <sellerCode>?</sellerCode>
+            <!--Optional:-->
+            <userAccountCode>?</userAccountCode>
+            <!--Optional:-->
+            <startDate>?</startDate>
+            <!--Optional:-->
+            <endDate>?</endDate>
+            <amountWithTax>?</amountWithTax>
+         </walletBalance>
+      </ws:openBalance>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/WalletWs/openBalance"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation isOneWay="false" action="" name="reservedBalance" bindingOperationName="reservedBalance" type="Request-Response" outputName="reservedBalanceResponse" inputName="reservedBalance" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment xmlns:con="http://eviware.com/soapui/config">
+  &lt;con:entry key="username" value="meveo.admin"/>
+  &lt;con:entry key="password" value="meveo.admin"/>
+&lt;/xml-fragment></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/WalletWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:reservedBalance>
+         <!--Optional:-->
+         <walletBalance>
+            <!--Optional:-->
+            <sellerCode>?</sellerCode>
+            <!--Optional:-->
+            <userAccountCode>?</userAccountCode>
+            <!--Optional:-->
+            <startDate>?</startDate>
+            <!--Optional:-->
+            <endDate>?</endDate>
+            <amountWithTax>?</amountWithTax>
+         </walletBalance>
+      </ws:reservedBalance>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/WalletWs/reservedBalance"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation isOneWay="false" action="" name="updateReservation" bindingOperationName="updateReservation" type="Request-Response" outputName="updateReservationResponse" inputName="updateReservation" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment xmlns:con="http://eviware.com/soapui/config">
+  &lt;con:entry key="username" value="meveo.admin"/>
+  &lt;con:entry key="password" value="meveo.admin"/>
+&lt;/xml-fragment></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/WalletWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:updateReservation>
+         <!--Optional:-->
+         <walletReservation>
+            <!--Optional:-->
+            <reservationId>?</reservationId>
+            <!--Optional:-->
+            <providerCode>?</providerCode>
+            <!--Optional:-->
+            <sellerCode>?</sellerCode>
+            <!--Optional:-->
+            <offerCode>?</offerCode>
+            <!--Optional:-->
+            <userAccountCode>?</userAccountCode>
+            <!--Optional:-->
+            <subscriptionDate>?</subscriptionDate>
+            <!--Optional:-->
+            <expirationDate>?</expirationDate>
+            <!--Optional:-->
+            <terminationDate>?</terminationDate>
+            <!--Optional:-->
+            <creditLimit>?</creditLimit>
+            <!--Optional:-->
+            <param1>?</param1>
+            <!--Optional:-->
+            <param2>?</param2>
+            <!--Optional:-->
+            <param3>?</param3>
+            <amountWithTax>?</amountWithTax>
+         </walletReservation>
+      </ws:updateReservation>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/WalletWs/updateReservation"/><con:wsrmConfig version="1.2"/></con:call></con:operation></con:interface><con:properties/><con:wssContainer/><con:oAuth2ProfileContainer/><con:sensitiveInformation/></con:soapui-project>
