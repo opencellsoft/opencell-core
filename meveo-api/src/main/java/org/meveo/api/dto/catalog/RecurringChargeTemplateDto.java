@@ -53,7 +53,7 @@ public class RecurringChargeTemplateDto extends ChargeTemplateDto {
 	}
 
 	public Boolean getSubscriptionProrata() {
-		return subscriptionProrata;
+		return subscriptionProrata == null ? false : subscriptionProrata;
 	}
 
 	public void setSubscriptionProrata(Boolean subscriptionProrata) {
@@ -61,7 +61,7 @@ public class RecurringChargeTemplateDto extends ChargeTemplateDto {
 	}
 
 	public Boolean getTerminationProrata() {
-		return terminationProrata;
+		return terminationProrata == null ? false : terminationProrata;
 	}
 
 	public void setTerminationProrata(Boolean terminationProrata) {
@@ -94,19 +94,13 @@ public class RecurringChargeTemplateDto extends ChargeTemplateDto {
 
 	@Override
 	public String toString() {
-		return "RecurringChargeTemplateDto [calendar=" + calendar
-				+ ", durationTermInMonth=" + durationTermInMonth
-				+ ", subscriptionProrata=" + subscriptionProrata
-				+ ", terminationProrata=" + terminationProrata
-				+ ", applyInAdvance=" + applyInAdvance + ", shareLevel="
-				+ shareLevel + ", getCode()=" + getCode()
-				+ ", getDescription()=" + getDescription()
-				+ ", getLanguageDescriptions()=" + getLanguageDescriptions()
-				+ ", toString()=" + super.toString() + ", getAmountEditable()="
-				+ getAmountEditable() + ", getInvoiceSubCategory()="
-				+ getInvoiceSubCategory() + ", isDisabled()=" + isDisabled()
-				+ ", getClass()=" + getClass() + ", hashCode()=" + hashCode()
-				+ "]";
+		return "RecurringChargeTemplateDto [calendar=" + calendar + ", durationTermInMonth=" + durationTermInMonth
+				+ ", subscriptionProrata=" + subscriptionProrata + ", terminationProrata=" + terminationProrata
+				+ ", applyInAdvance=" + applyInAdvance + ", shareLevel=" + shareLevel + ", getCode()=" + getCode()
+				+ ", getDescription()=" + getDescription() + ", getLanguageDescriptions()=" + getLanguageDescriptions()
+				+ ", toString()=" + super.toString() + ", getAmountEditable()=" + getAmountEditable()
+				+ ", getInvoiceSubCategory()=" + getInvoiceSubCategory() + ", isDisabled()=" + isDisabled()
+				+ ", getClass()=" + getClass() + ", hashCode()=" + hashCode() + "]";
 	}
 
 }

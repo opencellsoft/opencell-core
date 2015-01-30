@@ -11,6 +11,7 @@ import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.account.ActivateServicesDto;
 import org.meveo.api.dto.account.ApplyOneShotChargeInstanceDto;
 import org.meveo.api.dto.billing.SubscriptionDto;
+import org.meveo.api.dto.billing.TerminateSubscriptionDto;
 import org.meveo.api.rest.IBaseRs;
 import org.meveo.api.rest.security.RSSecured;
 
@@ -41,6 +42,6 @@ public interface SubscriptionRs extends IBaseRs {
 
 	@POST
 	@Path("/terminate")
-	ActionStatus terminateSubscription(String subscriptionCode);
+	ActionStatus terminateSubscription(TerminateSubscriptionDto terminateSubscription);
 
 }

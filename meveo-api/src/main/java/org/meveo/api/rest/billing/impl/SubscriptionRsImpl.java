@@ -11,6 +11,7 @@ import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.account.ActivateServicesDto;
 import org.meveo.api.dto.account.ApplyOneShotChargeInstanceDto;
 import org.meveo.api.dto.billing.SubscriptionDto;
+import org.meveo.api.dto.billing.TerminateSubscriptionDto;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.LoggingInterceptor;
 import org.meveo.api.rest.billing.SubscriptionRs;
@@ -103,11 +104,11 @@ public class SubscriptionRsImpl extends BaseRs implements SubscriptionRs {
 	}
 
 	@Override
-	public ActionStatus terminateSubscription(String subscriptionCode) {
+	public ActionStatus terminateSubscription(TerminateSubscriptionDto postData) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 		try {
-			subscriptionApi.terminateSubscription(subscriptionCode, getCurrentUser());
+			subscriptionApi.terminateSubscription(postData, getCurrentUser());
 		} catch (MeveoApiException e) {
 			result.setErrorCode(e.getErrorCode());
 			result.setStatus(ActionStatusEnum.FAIL);
