@@ -2,6 +2,7 @@ package org.meveo.api.dto.catalog;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -9,8 +10,12 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.meveo.model.catalog.ServiceChargeTemplateRecurring;
+import org.meveo.model.catalog.ServiceChargeTemplateSubscription;
+import org.meveo.model.catalog.ServiceChargeTemplateTermination;
 import org.meveo.model.catalog.ServiceChargeTemplateUsage;
 import org.meveo.model.catalog.ServiceTemplate;
+import org.meveo.model.catalog.WalletTemplate;
 
 /**
  * @author Edward P. Legaspi
@@ -28,42 +33,124 @@ public class ServiceTemplateDto implements Serializable {
 	@XmlAttribute(required = true)
 	private String description;
 
-	private List<String> recurringCharges;
-	private List<String> subscriptionCharges;
-	private List<String> terminationCharges;
-	private List<ServiceUsageChargeTemplateDto> serviceUsageCharges;
+	private List<HashMap<String, List<String>>> serviceChargeTemplateRecurrings;
+	private List<HashMap<String, List<String>>> serviceChargeTemplateSubscriptions;
+	private List<HashMap<String, List<String>>> serviceChargeTemplateTerminations;
+	private List<ServiceUsageChargeTemplateDto> serviceChargeTemplateUsages;
 
 	public ServiceTemplateDto() {
+	}
+
+	public ServiceTemplateDto(ServiceTemplate serviceTemplate) {
+		code = serviceTemplate.getCode();
+		description = serviceTemplate.getDescription();
+
+		// set serviceChargeTemplateRecurrings
+		if (serviceTemplate.getServiceRecurringCharges().size() > 0) {
+			List<String> walletsRecu = null;
+			serviceChargeTemplateRecurrings = new ArrayList<HashMap<String, List<String>>>();
+			HashMap<String, List<String>> recurringList = new HashMap<String, List<String>>();
+			for (ServiceChargeTemplateRecurring recurring : serviceTemplate
+					.getServiceRecurringCharges()) {
+				walletsRecu = new ArrayList<String>();
+				for (WalletTemplate wallet : recurring.getWalletTemplates()) {
+					walletsRecu.add(wallet.getCode());
+				}
+				recurringList.put(recurring.getChargeTemplate().getCode(),
+						walletsRecu);
+			}
+			serviceChargeTemplateRecurrings.add(recurringList);
+		}
+
+		// set serviceChargeTemplateSubscriptions
+		if (serviceTemplate.getServiceSubscriptionCharges().size() > 0) {
+			List<String> walletsSub = null;
+			HashMap<String, List<String>> servSubsList = new HashMap<String, List<String>>();
+			serviceChargeTemplateSubscriptions = new ArrayList<HashMap<String, List<String>>>();
+			for (ServiceChargeTemplateSubscription subs : serviceTemplate
+					.getServiceSubscriptionCharges()) {
+				walletsSub = new ArrayList<String>();
+				for (WalletTemplate wallet : subs.getWalletTemplates()) {
+					walletsSub.add(wallet.getCode());
+				}
+				servSubsList
+						.put(subs.getChargeTemplate().getCode(), walletsSub);
+			}
+			serviceChargeTemplateSubscriptions.add(servSubsList);
+		}
+
+		// set serviceChargeTemplateTerminations
+		if (serviceTemplate.getServiceTerminationCharges().size() > 0) {
+			serviceChargeTemplateTerminations = new ArrayList<HashMap<String, List<String>>>();
+			List<String> walletsTerms = null;
+			HashMap<String, List<String>> servTermList = new HashMap<String, List<String>>();
+			for (ServiceChargeTemplateTermination servTerms : serviceTemplate
+					.getServiceTerminationCharges()) {
+				walletsTerms = new ArrayList<String>();
+				for (WalletTemplate wallet : servTerms.getWalletTemplates()) {
+					walletsTerms.add(wallet.getCode());
+				}
+				servTermList.put(servTerms.getChargeTemplate().getCode(),
+						walletsTerms);
+			}
+			serviceChargeTemplateTerminations.add(servTermList);
+		}
+
+		// add serviceChargeTemplateUsages
+
+		if (serviceTemplate.getServiceUsageCharges().size() > 0) {
+			List<String> walletsUsage = null;
+			serviceChargeTemplateUsages = new ArrayList<ServiceUsageChargeTemplateDto>();
+			ServiceUsageChargeTemplateDto usageDto = null;
+			for (ServiceChargeTemplateUsage usageSerTemp : serviceTemplate
+					.getServiceUsageCharges()) {
+				usageDto = new ServiceUsageChargeTemplateDto();
+				usageDto.setUsageChargeTemplate(usageSerTemp
+						.getChargeTemplate().getCode());
+				if (usageSerTemp.getCounterTemplate() != null) {
+					usageDto.setCounterTemplate(usageSerTemp
+							.getCounterTemplate().getCode());
+				}
+				walletsUsage = new ArrayList<String>();
+				for (WalletTemplate wallet : usageSerTemp.getWalletTemplates()) {
+					walletsUsage.add(wallet.getCode());
+				}
+				usageDto.setWalletTemplates(walletsUsage);
+				serviceChargeTemplateUsages.add(usageDto);
+			}
+		}
 
 	}
 
-	public ServiceTemplateDto(ServiceTemplate e) {
-		code = e.getCode();
-		description = e.getDescription();
+	public List<HashMap<String, List<String>>> getServiceChargeTemplateSubscriptions() {
+		return serviceChargeTemplateSubscriptions;
+	}
 
-		/*
-		 * if (e.getRecurringCharges().size() > 0) { recurringCharges = new
-		 * ArrayList<String>(); for (RecurringChargeTemplate rt :
-		 * e.getRecurringCharges()) { recurringCharges.add(rt.getCode()); } } if
-		 * (e.getSubscriptionCharges().size() > 0) { subscriptionCharges = new
-		 * ArrayList<String>(); for (OneShotChargeTemplate ot :
-		 * e.getSubscriptionCharges()) { subscriptionCharges.add(ot.getCode());
-		 * } } if (e.getTerminationCharges().size() > 0) { terminationCharges =
-		 * new ArrayList<String>(); for (OneShotChargeTemplate ot :
-		 * e.getTerminationCharges()) { terminationCharges.add(ot.getCode()); }
-		 * }
-		 */
-		if (e.getServiceUsageCharges().size() > 0) {
-			serviceUsageCharges = new ArrayList<ServiceUsageChargeTemplateDto>();
-			for (ServiceChargeTemplateUsage ot : e.getServiceUsageCharges()) {
-				ServiceUsageChargeTemplateDto serviceUsageChargeTemplateDto = new ServiceUsageChargeTemplateDto();
-				serviceUsageChargeTemplateDto.setUsageChargeTemplate(ot.getChargeTemplate().getCode());
-				if (ot.getCounterTemplate() != null) {
-					serviceUsageChargeTemplateDto.setCounterTemplate(ot.getCounterTemplate().getCode());
-				}
-				serviceUsageCharges.add(serviceUsageChargeTemplateDto);
-			}
-		}
+	public void setServiceChargeTemplateSubscriptions(
+			List<HashMap<String, List<String>>> serviceChargeTemplateSubscriptions) {
+		this.serviceChargeTemplateSubscriptions = serviceChargeTemplateSubscriptions;
+	}
+
+	public List<HashMap<String, List<String>>> getServiceChargeTemplateTerminations() {
+		return serviceChargeTemplateTerminations;
+	}
+
+	public void setServiceChargeTemplateTerminations(
+			List<HashMap<String, List<String>>> serviceChargeTemplateTerminations) {
+		this.serviceChargeTemplateTerminations = serviceChargeTemplateTerminations;
+	}
+
+	@Override
+	public String toString() {
+		return "ServiceTemplateDto [code=" + code + ", description="
+				+ description + ", serviceChargeTemplateRecurrings="
+				+ serviceChargeTemplateRecurrings
+				+ ", serviceChargeTemplateSubscriptions="
+				+ serviceChargeTemplateSubscriptions
+				+ ", serviceChargeTemplateTerminations="
+				+ serviceChargeTemplateTerminations
+				+ ", serviceChargeTemplateUsages="
+				+ serviceChargeTemplateUsages + "]";
 	}
 
 	public String getCode() {
@@ -82,43 +169,22 @@ public class ServiceTemplateDto implements Serializable {
 		this.description = description;
 	}
 
-	public List<String> getRecurringCharges() {
-		return recurringCharges;
+	public List<HashMap<String, List<String>>> getServiceChargeTemplateRecurrings() {
+		return serviceChargeTemplateRecurrings;
 	}
 
-	public void setRecurringCharges(List<String> recurringCharges) {
-		this.recurringCharges = recurringCharges;
+	public void setServiceChargeTemplateRecurrings(
+			List<HashMap<String, List<String>>> serviceChargeTemplateRecurrings) {
+		this.serviceChargeTemplateRecurrings = serviceChargeTemplateRecurrings;
 	}
 
-	public List<String> getSubscriptionCharges() {
-		return subscriptionCharges;
+	public List<ServiceUsageChargeTemplateDto> getServiceChargeTemplateUsages() {
+		return serviceChargeTemplateUsages;
 	}
 
-	public void setSubscriptionCharges(List<String> subscriptionCharges) {
-		this.subscriptionCharges = subscriptionCharges;
-	}
-
-	public List<String> getTerminationCharges() {
-		return terminationCharges;
-	}
-
-	public void setTerminationCharges(List<String> terminationCharges) {
-		this.terminationCharges = terminationCharges;
-	}
-
-	public List<ServiceUsageChargeTemplateDto> getServiceUsageCharges() {
-		return serviceUsageCharges;
-	}
-
-	public void setServiceUsageCharges(List<ServiceUsageChargeTemplateDto> serviceUsageCharges) {
-		this.serviceUsageCharges = serviceUsageCharges;
-	}
-
-	@Override
-	public String toString() {
-		return "ServiceTemplateDto [code=" + code + ", description=" + description + ", recurringCharges="
-				+ recurringCharges + ", subscriptionCharges=" + subscriptionCharges + ", terminationCharges="
-				+ terminationCharges + ", serviceUsageCharges=" + serviceUsageCharges + "]";
+	public void setServiceChargeTemplateUsages(
+			List<ServiceUsageChargeTemplateDto> serviceChargeTemplateUsages) {
+		this.serviceChargeTemplateUsages = serviceChargeTemplateUsages;
 	}
 
 }
