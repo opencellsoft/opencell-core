@@ -26,6 +26,7 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -41,8 +42,7 @@ import org.slf4j.LoggerFactory;
  */
 public final class FileUtils {
 
-	private static final Logger logger = LoggerFactory
-			.getLogger(FileUtils.class);
+	private static final Logger logger = LoggerFactory.getLogger(FileUtils.class);
 
 	/**
 	 * No need to create instance.
@@ -88,8 +88,7 @@ public final class FileUtils {
 		String newFileName = file.getName() + extension;
 		int indexOfExtension = file.getName().lastIndexOf(".");
 		if (indexOfExtension >= 1) {
-			newFileName = file.getName().substring(0, indexOfExtension)
-					+ extension;
+			newFileName = file.getName().substring(0, indexOfExtension) + extension;
 		}
 		return renameFile(file, newFileName);
 	}
@@ -122,8 +121,7 @@ public final class FileUtils {
 	 *            New filename for moved file.
 	 * @return true if operation was successful, false otherwise.
 	 */
-	public static boolean moveFile(String destination, File file,
-			String newFilename) {
+	public static boolean moveFile(String destination, File file, String newFilename) {
 		File destinationDir = new File(destination);
 
 		if (!destinationDir.exists()) {
@@ -131,8 +129,7 @@ public final class FileUtils {
 		}
 
 		if (destinationDir.isDirectory()) {
-			return file.renameTo(new File(destination,
-					newFilename != null ? newFilename : file.getName()));
+			return file.renameTo(new File(destination, newFilename != null ? newFilename : file.getName()));
 		}
 
 		return false;
@@ -149,29 +146,23 @@ public final class FileUtils {
 	 *            File(dir) name where to copy.
 	 * @throws IOException
 	 */
-	public static void copy(String fromFileName, String toFileName)
-			throws IOException {
+	public static void copy(String fromFileName, String toFileName) throws IOException {
 		File fromFile = new File(fromFileName);
 		File toFile = new File(toFileName);
 
 		if (!fromFile.exists())
-			throw new IOException("FileCopy: no such source file: "
-					+ fromFileName);
+			throw new IOException("FileCopy: no such source file: " + fromFileName);
 		if (!fromFile.isFile())
-			throw new IOException("FileCopy: can't copy directory: "
-					+ fromFileName);
+			throw new IOException("FileCopy: can't copy directory: " + fromFileName);
 		if (!fromFile.canRead())
-			throw new IOException("FileCopy: source file is unreadable: "
-					+ fromFileName);
+			throw new IOException("FileCopy: source file is unreadable: " + fromFileName);
 
 		if (toFile.isDirectory())
 			toFile = new File(toFile, fromFile.getName());
 
 		if (toFile.exists()) {
 			if (!toFile.canWrite()) {
-				throw new IOException(
-						"FileCopy: destination file is unwriteable: "
-								+ toFileName);
+				throw new IOException("FileCopy: destination file is unwriteable: " + toFileName);
 			}
 		} else {
 			String parent = toFile.getParent();
@@ -179,16 +170,11 @@ public final class FileUtils {
 				parent = System.getProperty("user.dir");
 			File dir = new File(parent);
 			if (!dir.exists())
-				throw new IOException(
-						"FileCopy: destination directory doesn't exist: "
-								+ parent);
+				throw new IOException("FileCopy: destination directory doesn't exist: " + parent);
 			if (dir.isFile())
-				throw new IOException(
-						"FileCopy: destination is not a directory: " + parent);
+				throw new IOException("FileCopy: destination is not a directory: " + parent);
 			if (!dir.canWrite())
-				throw new IOException(
-						"FileCopy: destination directory is unwriteable: "
-								+ parent);
+				throw new IOException("FileCopy: destination directory is unwriteable: " + parent);
 		}
 
 		FileInputStream from = null;
@@ -226,8 +212,7 @@ public final class FileUtils {
 	 *            New extension.
 	 * @return New Filename.
 	 */
-	public static String replaceFilenameExtension(String filename,
-			String extension) {
+	public static String replaceFilenameExtension(String filename, String extension) {
 
 		if (!extension.startsWith(".")) {
 			extension = "." + extension;
@@ -266,12 +251,10 @@ public final class FileUtils {
 	 *            Directory to search inside.
 	 * @return File object.
 	 */
-	public static File getFileForParsing(String sourceDirectory,
-			final List<String> extensions) {
+	public static File getFileForParsing(String sourceDirectory, final List<String> extensions) {
 		File sourceDir = new File(sourceDirectory);
 		if (!sourceDir.exists() || !sourceDir.isDirectory()) {
-			logger.info(String.format("Wrong source directory: %s",
-					sourceDir.getAbsolutePath()));
+			logger.info(String.format("Wrong source directory: %s", sourceDir.getAbsolutePath()));
 			return null;
 		}
 		File[] files = sourceDir.listFiles(new FilenameFilter() {
@@ -289,15 +272,65 @@ public final class FileUtils {
 			}
 
 		});
+
 		if (files == null || files.length == 0) {
 			return null;
 		}
+
 		for (File file : files) {
 			if (file.isFile()) {
 				return file;
 			}
 		}
+
 		return null;
+	}
+
+	public static File[] getFilesForParsing(String sourceDirectory, final List<String> extensions) {
+		File sourceDir = new File(sourceDirectory);
+		if (!sourceDir.exists() || !sourceDir.isDirectory()) {
+			logger.info(String.format("Wrong source directory: %s", sourceDir.getAbsolutePath()));
+			return null;
+		}
+		File[] files = sourceDir.listFiles(new FilenameFilter() {
+
+			public boolean accept(File dir, String name) {
+				if (extensions == null) {
+					return true;
+				}
+				for (String extension : extensions) {
+					if (name.endsWith(extension)) {
+						return true;
+					}
+				}
+				return false;
+			}
+
+		});
+
+		if (files == null || files.length == 0) {
+			return null;
+		}
+
+		return files;
+	}
+
+	public static List<File> getFilesToProcess(File dir, String prefix, String ext) {
+		List<File> files = new ArrayList<File>();
+		ImportFileFiltre filtre = new ImportFileFiltre(prefix, ext);
+		File[] listFile = dir.listFiles(filtre);
+
+		if (listFile == null) {
+			return files;
+		}
+
+		for (File file : listFile) {
+			if (file.isFile()) {
+				files.add(file);
+			}
+		}
+
+		return files;
 	}
 
 	/**
@@ -317,14 +350,12 @@ public final class FileUtils {
 	 * @param zipFilename
 	 * @param filesToAdd
 	 */
-	public static void createZipArchive(String zipFilename,
-			String... filesToAdd) {
+	public static void createZipArchive(String zipFilename, String... filesToAdd) {
 		int BUFFER = 2048;
 		try {
 			BufferedInputStream origin = null;
 			FileOutputStream dest = new FileOutputStream(zipFilename);
-			ZipOutputStream out = new ZipOutputStream(new BufferedOutputStream(
-					dest));
+			ZipOutputStream out = new ZipOutputStream(new BufferedOutputStream(dest));
 			byte data[] = new byte[BUFFER];
 			for (int i = 0; i < filesToAdd.length; i++) {
 				FileInputStream fi = new FileInputStream(filesToAdd[i]);
