@@ -12,13 +12,14 @@ import org.meveo.api.dto.account.ActivateServicesDto;
 import org.meveo.api.dto.account.ApplyOneShotChargeInstanceDto;
 import org.meveo.api.dto.billing.SubscriptionDto;
 import org.meveo.api.dto.billing.TerminateSubscriptionDto;
+import org.meveo.api.dto.billing.TerminateSubscriptionServicesDto;
 import org.meveo.api.rest.IBaseRs;
 import org.meveo.api.rest.security.RSSecured;
 
 /**
  * @author Edward P. Legaspi
  **/
-@Path("/account/subscription")
+@Path("/billing/subscription")
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @RSSecured
@@ -42,6 +43,10 @@ public interface SubscriptionRs extends IBaseRs {
 
 	@POST
 	@Path("/terminate")
-	ActionStatus terminateSubscription(TerminateSubscriptionDto terminateSubscription);
+	ActionStatus terminateSubscription(TerminateSubscriptionDto postData);
+
+	@POST
+	@Path("/terminateServices")
+	ActionStatus terminateServices(TerminateSubscriptionServicesDto postData);
 
 }

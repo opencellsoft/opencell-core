@@ -9,6 +9,7 @@ import org.meveo.api.dto.account.ActivateServicesDto;
 import org.meveo.api.dto.account.ApplyOneShotChargeInstanceDto;
 import org.meveo.api.dto.billing.SubscriptionDto;
 import org.meveo.api.dto.billing.TerminateSubscriptionDto;
+import org.meveo.api.dto.billing.TerminateSubscriptionServicesDto;
 
 /**
  * @author Edward P. Legaspi
@@ -31,5 +32,9 @@ public interface SubscriptionWs extends IBaseWs {
 
 	@WebMethod
 	ActionStatus terminateSubscription(@WebParam(name = "terminateSubscription") TerminateSubscriptionDto postData);
+
+	@WebMethod
+	ActionStatus terminateServices(
+			@WebParam(name = "terminateSubscriptionServices") TerminateSubscriptionServicesDto postData);
 
 }

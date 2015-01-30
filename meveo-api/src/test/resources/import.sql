@@ -1196,7 +1196,7 @@ DROP SEQUENCE IF EXISTS CAT_SERV_USAGECHRG_TEMPLT_SEQ;
 CREATE SEQUENCE CAT_SERV_USAGECHRG_TEMPLT_SEQ start with 2 increment by 1;
 
 /* Add wallet to userAccount=1 */
-insert into BILLING_WALLET (id, version, disabled, created, code, description, provider_id, user_account_id) values (1, 0, false, now(), 'PRINCIPAL', 'Principal', 1, 4)
+insert into BILLING_WALLET (id, version, disabled, created, code, description, provider_id, user_account_id) values (1, 0, false, now(), 'PRINCIPAL', 'Principal', 1, 4);
 DROP SEQUENCE IF EXISTS BILLING_WALLET_SEQ;
 CREATE SEQUENCE BILLING_WALLET_SEQ start with 2 increment by 1;
 
