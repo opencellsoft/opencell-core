@@ -7750,9 +7750,11 @@
             <!--Optional:-->
             <parameter3>3</parameter3>
             <!--Optional:-->
-            <!--<startDate></startDate>-->
+            <!--<startDate></startDate>
+-->
             <!--Optional:-->
-            <!--<endDate>?</endDate>-->
+            <!--<endDate>?</endDate>
+-->
             <!--Optional:-->
             <operationDate>2015-01-26</operationDate>
             <!--Optional:-->
@@ -7778,9 +7780,11 @@
             <!--Optional:-->
             <subscriptionDate>2015-01-01</subscriptionDate>
             <!--Optional:-->
-            <!--<expirationDate></expirationDate>-->
+            <!--<expirationDate></expirationDate>
+-->
             <!--Optional:-->
-            <!--<terminationDate>?</terminationDate>-->
+            <!--<terminationDate>?</terminationDate>
+-->
             <!--Optional:-->
             <creditLimit>1000</creditLimit>
             <!--Optional:-->
@@ -7810,7 +7814,11 @@
             <startDate>2015-01-01</startDate>
             <!--Optional:-->
             <endDate>2015-12-30</endDate>
+<<<<<<< HEAD
             <amountWithTax>true</amountWithTax>
+=======
+            <amountWithTax>?</amountWithTax>
+>>>>>>> branch 'master' of git@git.assembla.com:meveo.git
          </walletBalance>
       </ws:currentBalance>
    </soapenv:Body>
