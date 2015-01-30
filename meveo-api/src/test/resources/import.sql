@@ -1127,7 +1127,7 @@ insert into CAT_CHARGE_TEMPLATE (id, version, provider_id, disabled, created, co
 DROP SEQUENCE IF EXISTS CAT_CHARGE_TEMPLATE_SEQ;
 CREATE SEQUENCE CAT_CHARGE_TEMPLATE_SEQ start with 5 increment by 1;
 
-insert into CAT_RECURRING_CHARGE_TEMPL (id, CALENDAR_ID, APPLY_IN_ADVANCE) values (1, 3, false);
+insert into CAT_RECURRING_CHARGE_TEMPL (id, CALENDAR_ID, APPLY_IN_ADVANCE, subscription_prorata, termination_prorata) values (1, 3, false, false, false);
 insert into CAT_ONE_SHOT_CHARGE_TEMPL (id, type, immediate_invoicing) values (2, 'SUBSCRIPTION', false);
 insert into CAT_USAGE_CHARGE_TEMPLATE (id, UNITY_NB_DECIMAL) values (3, 2);
 insert into CAT_ONE_SHOT_CHARGE_TEMPL (id, type, immediate_invoicing) values (4, 'SUBSCRIPTION', false);
@@ -1194,3 +1194,10 @@ CREATE SEQUENCE CAT_SERV_SUBCHRG_TEMPLT_SEQ start with 2 increment by 1;
 
 DROP SEQUENCE IF EXISTS CAT_SERV_USAGECHRG_TEMPLT_SEQ;
 CREATE SEQUENCE CAT_SERV_USAGECHRG_TEMPLT_SEQ start with 2 increment by 1;
+
+/* Add wallet to userAccount=1 */
+insert into BILLING_WALLET (id, version, disabled, created, code, description, provider_id, user_account_id) values (1, 0, false, now(), 'PRINCIPAL', 'Principal', 1, 4)
+DROP SEQUENCE IF EXISTS BILLING_WALLET_SEQ;
+CREATE SEQUENCE BILLING_WALLET_SEQ start with 2 increment by 1;
+
+update BILLING_USER_ACCOUNT set wallet_id=1 where id=4;
