@@ -7809,13 +7809,13 @@
          <!--Optional:-->
          <walletBalance>
             <!--Optional:-->
-            <sellerCode>?</sellerCode>
+            <sellerCode>MAIN_SELLER</sellerCode>
             <!--Optional:-->
-            <userAccountCode>?</userAccountCode>
+            <userAccountCode>UA1</userAccountCode>
             <!--Optional:-->
-            <startDate>?</startDate>
+            <startDate>2015-01-01</startDate>
             <!--Optional:-->
-            <endDate>?</endDate>
+            <endDate>2015-12-30</endDate>
             <amountWithTax>?</amountWithTax>
          </walletBalance>
       </ws:currentBalance>
