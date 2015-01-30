@@ -30,11 +30,12 @@ public class WalletTemplateService extends PersistenceService<WalletTemplate> {
 		}
 	}
 	
-	public Tax findByCode(EntityManager em, String code) {
+	
+	public WalletTemplate findByCode(String code) {
 		try {
-			QueryBuilder qb = new QueryBuilder(WalletTemplate.class, "t");
+			QueryBuilder qb = new QueryBuilder(WalletTemplate.class, "w");
 			qb.addCriterion("code", "=", code, false);
-			return (Tax) qb.getQuery(em).getSingleResult();
+			return (WalletTemplate) qb.getQuery(getEntityManager()).getSingleResult();
 		} catch (NoResultException ne) {
 			return null;
 		}
