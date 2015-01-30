@@ -7685,30 +7685,28 @@
          <!--Optional:-->
          <walletReservation>
             <!--Optional:-->
-            <reservationId>?</reservationId>
+            <reservationId>1</reservationId>
+             <!--Optional:-->
+            <sellerCode>MAIN_SELLER</sellerCode>
             <!--Optional:-->
-            <providerCode>?</providerCode>
+            <offerCode>OFF1</offerCode>
             <!--Optional:-->
-            <sellerCode>?</sellerCode>
+            <userAccountCode>UA1</userAccountCode>
             <!--Optional:-->
-            <offerCode>?</offerCode>
+            <subscriptionDate>2015-01-01</subscriptionDate>
             <!--Optional:-->
-            <userAccountCode>?</userAccountCode>
+            <!--<expirationDate></expirationDate>-->
             <!--Optional:-->
-            <subscriptionDate>?</subscriptionDate>
+            <!--<terminationDate>?</terminationDate>-->
             <!--Optional:-->
-            <expirationDate>?</expirationDate>
+            <creditLimit>1000</creditLimit>
             <!--Optional:-->
-            <terminationDate>?</terminationDate>
+            <param1></param1>
             <!--Optional:-->
-            <creditLimit>?</creditLimit>
+            <param2></param2>
             <!--Optional:-->
-            <param1>?</param1>
-            <!--Optional:-->
-            <param2>?</param2>
-            <!--Optional:-->
-            <param3>?</param3>
-            <amountWithTax>?</amountWithTax>
+            <param3></param3>
+            <amountWithTax>10</amountWithTax>
          </walletReservation>
       </ws:confirmReservation>
    </soapenv:Body>
@@ -7722,43 +7720,43 @@
          <!--Optional:-->
          <walletOperation code="?" userAccount="?" subscription="?" offerTemplate="?" seller="?">
             <!--Optional:-->
-            <currency>?</currency>
+            <currency>EUR</currency>
             <!--Optional:-->
-            <type>?</type>
+            <type>CREDIT</type>
             <!--Optional:-->
-            <status>?</status>
+            <status>OPEN</status>
             <!--Optional:-->
-            <unityDescription>?</unityDescription>
+            <unityDescription>quantity</unityDescription>
             <!--Optional:-->
-            <taxPercent>?</taxPercent>
+            <taxPercent>.12</taxPercent>
             <!--Optional:-->
-            <unitAmountWithoutTax>?</unitAmountWithoutTax>
+            <unitAmountWithoutTax>10</unitAmountWithoutTax>
             <!--Optional:-->
-            <unitAmountWithTax>?</unitAmountWithTax>
+            <unitAmountWithTax>12</unitAmountWithTax>
             <!--Optional:-->
-            <unitAmountTax>?</unitAmountTax>
+            <unitAmountTax>10</unitAmountTax>
             <!--Optional:-->
-            <quantity>?</quantity>
+            <quantity>1</quantity>
             <!--Optional:-->
-            <amountWithoutTax>?</amountWithoutTax>
+            <amountWithoutTax>10</amountWithoutTax>
             <!--Optional:-->
-            <amountWithTax>?</amountWithTax>
+            <amountWithTax>12</amountWithTax>
             <!--Optional:-->
-            <amountTax>?</amountTax>
+            <amountTax>10</amountTax>
             <!--Optional:-->
-            <parameter1>?</parameter1>
+            <parameter1>1</parameter1>
             <!--Optional:-->
-            <parameter2>?</parameter2>
+            <parameter2>2</parameter2>
             <!--Optional:-->
-            <parameter3>?</parameter3>
+            <parameter3>3</parameter3>
             <!--Optional:-->
-            <startDate>?</startDate>
+            <!--<startDate></startDate>-->
             <!--Optional:-->
-            <endDate>?</endDate>
+            <!--<endDate>?</endDate>-->
             <!--Optional:-->
-            <operationDate>?</operationDate>
+            <operationDate>2015-01-26</operationDate>
             <!--Optional:-->
-            <subscriptionDate>?</subscriptionDate>
+            <subscriptionDate>2015-01-26</subscriptionDate>
          </walletOperation>
       </ws:createOperation>
    </soapenv:Body>
@@ -7772,30 +7770,26 @@
          <!--Optional:-->
          <walletReservation>
             <!--Optional:-->
-            <reservationId>?</reservationId>
+            <sellerCode>MAIN_SELLER</sellerCode>
             <!--Optional:-->
-            <providerCode>?</providerCode>
+            <offerCode>OFF1</offerCode>
             <!--Optional:-->
-            <sellerCode>?</sellerCode>
+            <userAccountCode>UA1</userAccountCode>
             <!--Optional:-->
-            <offerCode>?</offerCode>
+            <subscriptionDate>2015-01-01</subscriptionDate>
             <!--Optional:-->
-            <userAccountCode>?</userAccountCode>
+            <!--<expirationDate></expirationDate>-->
             <!--Optional:-->
-            <subscriptionDate>?</subscriptionDate>
+            <!--<terminationDate>?</terminationDate>-->
             <!--Optional:-->
-            <expirationDate>?</expirationDate>
+            <creditLimit>1000</creditLimit>
             <!--Optional:-->
-            <terminationDate>?</terminationDate>
+            <param1></param1>
             <!--Optional:-->
-            <creditLimit>?</creditLimit>
+            <param2></param2>
             <!--Optional:-->
-            <param1>?</param1>
-            <!--Optional:-->
-            <param2>?</param2>
-            <!--Optional:-->
-            <param3>?</param3>
-            <amountWithTax>?</amountWithTax>
+            <param3></param3>
+            <amountWithTax>10</amountWithTax>
          </walletReservation>
       </ws:createReservation>
    </soapenv:Body>
@@ -7809,14 +7803,14 @@
          <!--Optional:-->
          <walletBalance>
             <!--Optional:-->
-            <sellerCode>?</sellerCode>
+            <sellerCode>MAIN_SELLER</sellerCode>
             <!--Optional:-->
-            <userAccountCode>?</userAccountCode>
+            <userAccountCode>UA1</userAccountCode>
             <!--Optional:-->
-            <startDate>?</startDate>
+            <startDate>2015-01-01</startDate>
             <!--Optional:-->
-            <endDate>?</endDate>
-            <amountWithTax>?</amountWithTax>
+            <endDate>2015-12-30</endDate>
+            <amountWithTax>true</amountWithTax>
          </walletBalance>
       </ws:currentBalance>
    </soapenv:Body>
@@ -7835,14 +7829,14 @@
          <!--Optional:-->
          <walletBalance>
             <!--Optional:-->
-            <sellerCode>?</sellerCode>
+            <sellerCode>MAIN_SELLER</sellerCode>
             <!--Optional:-->
-            <userAccountCode>?</userAccountCode>
+            <userAccountCode>UA1</userAccountCode>
             <!--Optional:-->
-            <startDate>?</startDate>
+            <startDate>2015-01-01</startDate>
             <!--Optional:-->
-            <endDate>?</endDate>
-            <amountWithTax>?</amountWithTax>
+            <endDate>2015-12-30</endDate>
+            <amountWithTax>true</amountWithTax>
          </walletBalance>
       </ws:openBalance>
    </soapenv:Body>
@@ -7856,14 +7850,14 @@
          <!--Optional:-->
          <walletBalance>
             <!--Optional:-->
-            <sellerCode>?</sellerCode>
+            <sellerCode>MAIN_SELLER</sellerCode>
             <!--Optional:-->
-            <userAccountCode>?</userAccountCode>
+            <userAccountCode>UA1</userAccountCode>
             <!--Optional:-->
-            <startDate>?</startDate>
+             <startDate>2015-01-01</startDate>
             <!--Optional:-->
-            <endDate>?</endDate>
-            <amountWithTax>?</amountWithTax>
+            <endDate>2015-12-30</endDate>
+            <amountWithTax>true</amountWithTax>
          </walletBalance>
       </ws:reservedBalance>
    </soapenv:Body>
@@ -7877,30 +7871,28 @@
          <!--Optional:-->
          <walletReservation>
             <!--Optional:-->
-            <reservationId>?</reservationId>
+            <reservationId>1</reservationId>
+             <!--Optional:-->
+            <sellerCode>MAIN_SELLER</sellerCode>
             <!--Optional:-->
-            <providerCode>?</providerCode>
+            <offerCode>OFF1</offerCode>
             <!--Optional:-->
-            <sellerCode>?</sellerCode>
+            <userAccountCode>UA1</userAccountCode>
             <!--Optional:-->
-            <offerCode>?</offerCode>
+            <subscriptionDate>2015-01-01</subscriptionDate>
             <!--Optional:-->
-            <userAccountCode>?</userAccountCode>
+            <!--<expirationDate></expirationDate>-->
             <!--Optional:-->
-            <subscriptionDate>?</subscriptionDate>
+            <!--<terminationDate>?</terminationDate>-->
             <!--Optional:-->
-            <expirationDate>?</expirationDate>
+            <creditLimit>1000</creditLimit>
             <!--Optional:-->
-            <terminationDate>?</terminationDate>
+            <param1></param1>
             <!--Optional:-->
-            <creditLimit>?</creditLimit>
+            <param2></param2>
             <!--Optional:-->
-            <param1>?</param1>
-            <!--Optional:-->
-            <param2>?</param2>
-            <!--Optional:-->
-            <param3>?</param3>
-            <amountWithTax>?</amountWithTax>
+            <param3></param3>
+            <amountWithTax>10</amountWithTax>
          </walletReservation>
       </ws:updateReservation>
    </soapenv:Body>
