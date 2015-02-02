@@ -16,8 +16,8 @@ import org.meveo.api.dto.response.account.GetAccessResponse;
 import org.meveo.api.dto.response.account.GetBillingAccountResponse;
 import org.meveo.api.dto.response.account.GetCustomerAccountResponse;
 import org.meveo.api.dto.response.account.GetCustomerResponse;
-import org.meveo.api.dto.response.account.GetUserAccountResponse;
 import org.meveo.api.dto.response.account.GetListAccessResponse;
+import org.meveo.api.dto.response.account.GetUserAccountResponse;
 
 /**
  * @author Edward P. Legaspi
@@ -80,10 +80,12 @@ public interface AccountWs extends IBaseWs {
 	ActionStatus updateAccess(@WebParam(name = "access") AccessDto postData);
 
 	@WebMethod
-	GetAccessResponse findAccess(@WebParam(name = "accessId") Long accessId);
+	GetAccessResponse findAccess(@WebParam(name = "accessCode") String accessCode,
+			@WebParam(name = "subscriptionCode") String subscriptionCode);
 
 	@WebMethod
-	ActionStatus removeAccess(@WebParam(name = "accessId") Long accessId);
+	ActionStatus removeAccess(@WebParam(name = "accessCode") String accessCode,
+			@WebParam(name = "subscriptionCode") String subscriptionCode);
 
 	@WebMethod
 	public CustomerListResponse findAccountHierarchy(

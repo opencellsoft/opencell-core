@@ -26,7 +26,8 @@
 			</h:panelGrid>
 			<p:dataGrid id="barChartList" var="bar"
 				value="#{barChartBean.chartModelList}" columns="3"
-				style="border:none;" rowIndexVar="i">
+				style="border:none;" rowIndexVar="i"
+				rendered="#{barChartBean.chartModelList.size() > 0}">
 				<p:barChart value="#{bar.model}" fill="#{bar.barChart.filled}"
 					legendPosition="#{bar.barChart.legendPosition}"
 					barPadding="#{bar.barChart.barPadding}"
@@ -46,7 +47,8 @@
 			</p:dataGrid>
 			<p:dataGrid id="lineChartList" var="line"
 				value="#{lineChartBean.chartModelList}" columns="3"
-				style="border:none;" rowIndexVar="i">
+				style="border:none;" rowIndexVar="i"
+				rendered="#{lineChartBean.chartModelList.size() > 0}">
 				<p:lineChart value="#{line.model}" fill="#{line.lineChart.filled}"
 					legendPosition="#{line.lineChart.legendPosition}"
 					barPadding="#{line.lineChart.barPadding}"
@@ -66,7 +68,8 @@
 			</p:dataGrid>
 			<p:dataGrid id="pieChartList" var="pie"
 				value="#{pieChartBean.chartModelList}" columns="3"
-				style="border:none;" rowIndexVar="i">
+				style="border:none;" rowIndexVar="i"
+				rendered="#{pieChartBean.chartModelList.size() > 0}">
 				<p:pieChart value="#{pie.model}"
 					legendPosition="#{pie.pieChart.legendPosition}"
 					fill="#{pie.pieChart.filled}"

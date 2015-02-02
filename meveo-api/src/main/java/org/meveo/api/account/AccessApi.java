@@ -8,7 +8,6 @@ import javax.inject.Inject;
 
 import org.meveo.api.BaseApi;
 import org.meveo.api.dto.account.AccessDto;
-import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
@@ -33,7 +32,7 @@ public class AccessApi extends BaseApi {
 	private SubscriptionService subscriptionService;
 
 	public void create(AccessDto postData, User currentUser) throws MeveoApiException {
-		if (!StringUtils.isBlank(postData.getUserAccount()) && !StringUtils.isBlank(postData.getSubscription())) {
+		if (!StringUtils.isBlank(postData.getCode()) && !StringUtils.isBlank(postData.getSubscription())) {
 			Provider provider = currentUser.getProvider();
 
 			Subscription subscription = subscriptionService.findByCode(postData.getSubscription(), provider);
@@ -41,21 +40,16 @@ public class AccessApi extends BaseApi {
 				throw new EntityDoesNotExistsException(Subscription.class, postData.getSubscription());
 			}
 
-			if (accessService.findByUserIdAndSubscription(postData.getUserAccount(), subscription) != null) {
-				throw new EntityAlreadyExistsException(Access.class, "user.code=" + postData.getUserAccount()
-						+ ";subscription.code=" + postData.getSubscription());
-			}
-
 			Access access = new Access();
 			access.setStartDate(postData.getStartDate());
 			access.setEndDate(postData.getEndDate());
-			access.setAccessUserId(postData.getUserAccount());
+			access.setAccessUserId(postData.getCode());
 			access.setSubscription(subscription);
 
 			accessService.create(access, currentUser, provider);
 		} else {
-			if (StringUtils.isBlank(postData.getUserAccount())) {
-				missingParameters.add("user");
+			if (StringUtils.isBlank(postData.getCode())) {
+				missingParameters.add("code");
 			}
 			if (postData.getSubscription() == null) {
 				missingParameters.add("subscription");
@@ -66,8 +60,7 @@ public class AccessApi extends BaseApi {
 	}
 
 	public void update(AccessDto postData, User currentUser) throws MeveoApiException {
-		if (postData.getAccessId() != null && !StringUtils.isBlank(postData.getUserAccount())
-				&& !StringUtils.isBlank(postData.getSubscription())) {
+		if (postData.getCode() != null && !StringUtils.isBlank(postData.getSubscription())) {
 			Provider provider = currentUser.getProvider();
 
 			Subscription subscription = subscriptionService.findByCode(postData.getSubscription(), provider);
@@ -75,23 +68,18 @@ public class AccessApi extends BaseApi {
 				throw new EntityDoesNotExistsException(Subscription.class, postData.getSubscription());
 			}
 
-			Access access = accessService.findById(postData.getAccessId());
+			Access access = accessService.findByUserIdAndSubscription(postData.getCode(), subscription);
 			if (access == null) {
-				throw new EntityDoesNotExistsException(Access.class, postData.getAccessId());
+				throw new EntityDoesNotExistsException(Access.class, postData.getCode());
 			}
 
 			access.setStartDate(postData.getStartDate());
 			access.setEndDate(postData.getEndDate());
-			access.setAccessUserId(postData.getUserAccount());
-			access.setSubscription(subscription);
 
 			accessService.update(access, currentUser);
 		} else {
-			if (postData.getAccessId() == null) {
-				missingParameters.add("accessId");
-			}
-			if (StringUtils.isBlank(postData.getUserAccount())) {
-				missingParameters.add("user");
+			if (postData.getCode() == null) {
+				missingParameters.add("code");
 			}
 			if (postData.getSubscription() == null) {
 				missingParameters.add("subscription");
@@ -101,31 +89,51 @@ public class AccessApi extends BaseApi {
 		}
 	}
 
-	public AccessDto find(Long accessId, Provider provider) throws MeveoApiException {
-		if (accessId != null) {
-			Access access = accessService.findById(accessId);
+	public AccessDto find(String accessCode, String subscriptionCode, Provider provider) throws MeveoApiException {
+		if (!StringUtils.isBlank(accessCode) && !StringUtils.isBlank(subscriptionCode)) {
+			Subscription subscription = subscriptionService.findByCode(subscriptionCode, provider);
+			if (subscription == null) {
+				throw new EntityDoesNotExistsException(Subscription.class, subscriptionCode);
+			}
+
+			Access access = accessService.findByUserIdAndSubscription(accessCode, subscription);
 			if (access == null) {
-				throw new EntityDoesNotExistsException(Access.class, accessId);
+				throw new EntityDoesNotExistsException(Access.class, accessCode);
 			}
 
 			return new AccessDto(access);
 		} else {
-			missingParameters.add("accessId");
+			if (StringUtils.isBlank(accessCode)) {
+				missingParameters.add("accessCode");
+			}
+			if (StringUtils.isBlank(subscriptionCode)) {
+				missingParameters.add("subscriptionCode");
+			}
 
 			throw new MissingParameterException(getMissingParametersExceptionMessage());
 		}
 	}
 
-	public void remove(Long accessId, Provider provider) throws MeveoApiException {
-		if (accessId != null) {
-			Access access = accessService.findById(accessId);
+	public void remove(String accessCode, String subscriptionCode, Provider provider) throws MeveoApiException {
+		if (!StringUtils.isBlank(accessCode) && !StringUtils.isBlank(subscriptionCode)) {
+			Subscription subscription = subscriptionService.findByCode(subscriptionCode, provider);
+			if (subscription == null) {
+				throw new EntityDoesNotExistsException(Subscription.class, subscriptionCode);
+			}
+
+			Access access = accessService.findByUserIdAndSubscription(accessCode, subscription);
 			if (access == null) {
-				throw new EntityDoesNotExistsException(Access.class, accessId);
+				throw new EntityDoesNotExistsException(Access.class, accessCode);
 			}
 
 			accessService.remove(access);
 		} else {
-			missingParameters.add("accessId");
+			if (StringUtils.isBlank(accessCode)) {
+				missingParameters.add("accessCode");
+			}
+			if (StringUtils.isBlank(subscriptionCode)) {
+				missingParameters.add("subscriptionCode");
+			}
 
 			throw new MissingParameterException(getMissingParametersExceptionMessage());
 		}

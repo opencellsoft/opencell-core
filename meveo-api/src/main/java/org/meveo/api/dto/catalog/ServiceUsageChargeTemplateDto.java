@@ -1,6 +1,7 @@
 package org.meveo.api.dto.catalog;
 
 import java.io.Serializable;
+import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -17,6 +18,7 @@ public class ServiceUsageChargeTemplateDto implements Serializable {
 
 	private String usageChargeTemplate;
 	private String counterTemplate;
+	private List<String> walletTemplates;
 	
 	public ServiceUsageChargeTemplateDto() {
 		
@@ -50,5 +52,16 @@ public class ServiceUsageChargeTemplateDto implements Serializable {
 				+ usageChargeTemplate + ", counterTemplate=" + counterTemplate
 				+ "]";
 	}
+
+	public List<String> getWalletTemplates() {
+		return walletTemplates;
+	}
+
+	public void setWalletTemplates(List<String> walletTemplates) {
+		this.walletTemplates = walletTemplates;
+	}
+
+	
+	
 
 }

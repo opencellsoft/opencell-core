@@ -13,6 +13,7 @@ import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.UserAccount;
+import org.meveo.model.crm.AccountLevelEnum;
 import org.meveo.model.crm.Provider;
 import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.billing.impl.UserAccountService;
@@ -40,7 +41,7 @@ public class UserAccountApi extends AccountApi {
 			}
 
 			UserAccount userAccount = new UserAccount();
-			populate(postData, userAccount, currentUser);
+			populate(postData, userAccount, currentUser, AccountLevelEnum.UA);
 
 			userAccount.setBillingAccount(billingAccount);
 			userAccount.setProvider(currentUser.getProvider());
@@ -78,7 +79,7 @@ public class UserAccountApi extends AccountApi {
 				throw new EntityDoesNotExistsException(BillingAccount.class, postData.getBillingAccount());
 			}
 
-			updateAccount(userAccount, postData, currentUser);
+			updateAccount(userAccount, postData, currentUser, AccountLevelEnum.UA);
 
 			userAccount.setBillingAccount(billingAccount);
 

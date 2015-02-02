@@ -16,6 +16,8 @@ import org.meveo.api.BaseApi;
 import org.meveo.api.dto.account.ActivateServicesDto;
 import org.meveo.api.dto.account.ApplyOneShotChargeInstanceDto;
 import org.meveo.api.dto.billing.SubscriptionDto;
+import org.meveo.api.dto.billing.TerminateSubscriptionDto;
+import org.meveo.api.dto.billing.TerminateSubscriptionServicesDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
@@ -26,6 +28,8 @@ import org.meveo.model.billing.InstanceStatusEnum;
 import org.meveo.model.billing.OneShotChargeInstance;
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.Subscription;
+import org.meveo.model.billing.SubscriptionStatusEnum;
+import org.meveo.model.billing.SubscriptionTerminationReason;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.OneShotChargeTemplate;
@@ -34,6 +38,7 @@ import org.meveo.model.crm.Provider;
 import org.meveo.service.billing.impl.OneShotChargeInstanceService;
 import org.meveo.service.billing.impl.ServiceInstanceService;
 import org.meveo.service.billing.impl.SubscriptionService;
+import org.meveo.service.billing.impl.TerminationReasonService;
 import org.meveo.service.billing.impl.UserAccountService;
 import org.meveo.service.catalog.impl.OfferTemplateService;
 import org.meveo.service.catalog.impl.OneShotChargeTemplateService;
@@ -69,6 +74,9 @@ public class SubscriptionApi extends BaseApi {
 
 	@Inject
 	private OneShotChargeInstanceService oneShotChargeInstanceService;
+
+	@Inject
+	private TerminationReasonService terminationReasonService;
 
 	public void create(SubscriptionDto postData, User currentUser) throws MeveoApiException {
 		if (!StringUtils.isBlank(postData.getUserAccount()) && !StringUtils.isBlank(postData.getOfferTemplate())
@@ -123,6 +131,10 @@ public class SubscriptionApi extends BaseApi {
 				throw new EntityDoesNotExistsException(Subscription.class, postData.getCode());
 			}
 
+			if (subscription.getStatus() == SubscriptionStatusEnum.RESILIATED) {
+				throw new MeveoApiException("Subscription is already RESILIATED.");
+			}
+
 			UserAccount userAccount = userAccountService.findByCode(postData.getUserAccount(), provider);
 			if (userAccount == null) {
 				throw new EntityDoesNotExistsException(UserAccount.class, postData.getUserAccount());
@@ -163,6 +175,10 @@ public class SubscriptionApi extends BaseApi {
 			Subscription subscription = subscriptionService.findByCode(postData.getSubscription(), provider);
 			if (subscription == null) {
 				throw new EntityDoesNotExistsException(Subscription.class, postData.getSubscription());
+			}
+
+			if (subscription.getStatus() == SubscriptionStatusEnum.RESILIATED) {
+				throw new MeveoApiException("Subscription is already RESILIATED.");
 			}
 
 			// check if exists
@@ -251,6 +267,10 @@ public class SubscriptionApi extends BaseApi {
 				throw new EntityDoesNotExistsException(Subscription.class, postData.getSubscription());
 			}
 
+			if (subscription.getStatus() == SubscriptionStatusEnum.RESILIATED) {
+				throw new MeveoApiException("Subscription is already RESILIATED.");
+			}
+
 			OneShotChargeInstance oneShotChargeInstance = oneShotChargeInstanceService.findByCode(
 					postData.getOneShotChargeInstance(), provider);
 			if (oneShotChargeInstance == null) {
@@ -311,22 +331,105 @@ public class SubscriptionApi extends BaseApi {
 		}
 	}
 
-	public void terminateSubscription(String subscriptionCode, User currentUser) throws MeveoApiException {
-		if (!StringUtils.isBlank(subscriptionCode)) {
-			Subscription subscription = subscriptionService.findByCode(subscriptionCode, currentUser.getProvider());
+	public void terminateSubscription(TerminateSubscriptionDto postData, User currentUser) throws MeveoApiException {
+		if (!StringUtils.isBlank(postData.getSubscriptionCode())
+				&& !StringUtils.isBlank(postData.getTerminationReason()) && postData.getTerminationDate() != null) {
+			Provider provider = currentUser.getProvider();
+
+			Subscription subscription = subscriptionService.findByCode(postData.getSubscriptionCode(),
+					currentUser.getProvider());
 			if (subscription == null) {
-				throw new EntityDoesNotExistsException(Subscription.class, subscriptionCode);
+				throw new EntityDoesNotExistsException(Subscription.class, postData.getSubscriptionCode());
+			}
+
+			if (subscription.getStatus() == SubscriptionStatusEnum.RESILIATED) {
+				throw new MeveoApiException("Subscription is already RESILIATED.");
+			}
+
+			SubscriptionTerminationReason subscriptionTerminationReason = terminationReasonService.findByCode(
+					postData.getTerminationReason(), provider);
+			if (subscriptionTerminationReason == null) {
+				throw new EntityDoesNotExistsException(SubscriptionTerminationReason.class,
+						postData.getTerminationReason());
 			}
 
 			try {
-				subscriptionService.terminateSubscription(subscription, new Date(), true, true, true, currentUser);
+				subscriptionService.terminateSubscription(subscription, postData.getTerminationDate(),
+						subscriptionTerminationReason, currentUser);
 			} catch (BusinessException e) {
+				log.error("subscription termination={}", e.getMessage());
 				throw new MeveoApiException(e.getMessage());
 			}
 		} else {
-			missingParameters.add("subscriptionCode");
+			if (StringUtils.isBlank(postData.getSubscriptionCode())) {
+				missingParameters.add("subscriptionCode");
+			}
+			if (StringUtils.isBlank(postData.getTerminationReason())) {
+				missingParameters.add("terminationReason");
+			}
+			if (postData.getTerminationDate() == null) {
+				missingParameters.add("terminationDate");
+			}
 
 			throw new MissingParameterException(getMissingParametersExceptionMessage());
 		}
 	}
+
+	public void terminateServices(TerminateSubscriptionServicesDto postData, User currentUser) throws MeveoApiException {
+		if (!StringUtils.isBlank(postData.getSubscriptionCode())
+				&& (postData.getServices() != null || postData.getServices().size() != 0)
+				&& !StringUtils.isBlank(postData.getTerminationReason()) && postData.getTerminationDate() != null) {
+			Provider provider = currentUser.getProvider();
+
+			Subscription subscription = subscriptionService.findByCode(postData.getSubscriptionCode(),
+					currentUser.getProvider());
+			if (subscription == null) {
+				throw new EntityDoesNotExistsException(Subscription.class, postData.getSubscriptionCode());
+			}
+
+			SubscriptionTerminationReason serviceTerminationReason = terminationReasonService.findByCode(
+					postData.getTerminationReason(), provider);
+			if (serviceTerminationReason == null) {
+				throw new EntityDoesNotExistsException(SubscriptionTerminationReason.class,
+						postData.getTerminationReason());
+			}
+
+			for (String serviceInstanceCode : postData.getServices()) {
+				ServiceInstance serviceInstance = serviceInstanceService.findByCodeAndSubscription(serviceInstanceCode,
+						subscription);
+				if (serviceInstance == null) {
+					throw new EntityDoesNotExistsException(ServiceInstance.class, serviceInstanceCode);
+				}
+
+				if (serviceInstance.getStatus() == InstanceStatusEnum.TERMINATED) {
+					log.info("serviceInstance with code={} is already TERMINATED", serviceInstance.getCode());
+					continue;
+				}
+
+				try {
+					serviceInstanceService.terminateService(serviceInstance, postData.getTerminationDate(),
+							serviceTerminationReason, currentUser);
+				} catch (BusinessException e) {
+					log.error("service termination={}", e.getMessage());
+					throw new MeveoApiException(e.getMessage());
+				}
+			}
+		} else {
+			if (StringUtils.isBlank(postData.getSubscriptionCode())) {
+				missingParameters.add("subscriptionCode");
+			}
+			if (postData.getServices() == null || postData.getServices().size() == 0) {
+				missingParameters.add("subscriptionCode");
+			}
+			if (StringUtils.isBlank(postData.getTerminationReason())) {
+				missingParameters.add("terminationReason");
+			}
+			if (postData.getTerminationDate() == null) {
+				missingParameters.add("terminationDate");
+			}
+
+			throw new MissingParameterException(getMissingParametersExceptionMessage());
+		}
+	}
+
 }

@@ -1142,43 +1142,6 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 		return walletOperations;
 	}
 
-	public void updatePriceForSameServiceAndType(WalletOperation walletOperation, ServiceInstance serviceInstance,
-			Date startDate, Date endDate) {
-		if (walletOperation.getChargeInstance() != null
-				&& walletOperation.getChargeInstance() instanceof UsageChargeInstance
-				&& !walletOperation.getQuantity().equals(BigDecimal.ZERO) && walletOperation.getWallet() != null) {
-			BigDecimal unitPriceWithoutTax = walletOperation.getUnitAmountWithoutTax();
-			BigDecimal unitTax = walletOperation.getUnitAmountTax();
-			BigDecimal unitPriceWithTax = walletOperation.getUnitAmountWithTax();
-			String strQuery = "UPDATE " + WalletOperation.class.getSimpleName()
-					+ " as w SET  w.amountWithoutTax = w.quantity * " + unitPriceWithoutTax + ","
-					+ " w.amountTax = w.quantity * " + unitTax + "," + " w.unitAmountWithoutTax = "
-					+ unitPriceWithoutTax + "," + " w.unitAmountTax = " + unitTax;
-
-			if (unitPriceWithTax != null) {
-				strQuery += "," + " w.amountWithTax = w.quantity * " + unitPriceWithTax + ","
-						+ " w.unitAmountWithTax = " + unitPriceWithTax;
-			}
-
-			strQuery += ", w.auditable.updated = CURRENT_TIMESTAMP" + " WHERE  w.operationDate>=:startDate "
-					+ " AND w.operationDate<:endDate " + " AND w.status=:status "
-					+ " AND w.aggregatedServiceInstance=:serviceInstance ";
-			log.debug("strQuery=" + strQuery);
-			Query query = getEntityManager().createQuery(strQuery);
-			query.setParameter("startDate", startDate);
-			query.setParameter("endDate", endDate);
-			query.setParameter("status", WalletOperationStatusEnum.OPEN);
-			query.setParameter("serviceInstance", serviceInstance);
-
-			if (walletOperation.getChargeInstance().getChargeTemplate() instanceof UsageChargeTemplate) {
-				query.setParameter("serviceType", ((UsageChargeTemplate) walletOperation.getChargeInstance()
-						.getChargeTemplate()).getFilterParam1());
-			}
-
-			query.executeUpdate();
-		}
-	}
-
 	@SuppressWarnings("unchecked")
 	public List<WalletOperation> listByChargeInstance(ChargeInstance chargeInstance) {
 		QueryBuilder qb = new QueryBuilder(WalletOperation.class, "c");

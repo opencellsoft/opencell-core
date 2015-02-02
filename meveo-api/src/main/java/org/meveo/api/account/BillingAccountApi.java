@@ -14,6 +14,7 @@ import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingCycle;
 import org.meveo.model.billing.TradingCountry;
 import org.meveo.model.billing.TradingLanguage;
+import org.meveo.model.crm.AccountLevelEnum;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.PaymentMethodEnum;
@@ -92,7 +93,7 @@ public class BillingAccountApi extends AccountApi {
 			}
 
 			BillingAccount billingAccount = new BillingAccount();
-			populate(postData, billingAccount, currentUser);
+			populate(postData, billingAccount, currentUser, AccountLevelEnum.BA);
 
 			billingAccount.setCustomerAccount(customerAccount);
 			billingAccount.setBillingCycle(billingCycle);
@@ -178,7 +179,7 @@ public class BillingAccountApi extends AccountApi {
 				log.error(e.getMessage());
 			}
 
-			updateAccount(billingAccount, postData, currentUser);
+			updateAccount(billingAccount, postData, currentUser, AccountLevelEnum.BA);
 
 			billingAccount.setCustomerAccount(customerAccount);
 			billingAccount.setBillingCycle(billingCycle);

@@ -68,7 +68,7 @@ public class CustomerBean extends AccountBean<Customer> {
 	public Customer initEntity() {
 		Customer customer = super.initEntity();
 
-		initCustomFields(AccountLevelEnum.CUSTOMER);
+		initCustomFields(AccountLevelEnum.CUST);
 
 		return customer;
 	}

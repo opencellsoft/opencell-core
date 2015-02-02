@@ -55,27 +55,17 @@ public class MediationJobBean {
 
 	@Interceptors({ JobLoggingInterceptor.class })
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public void execute(JobExecutionResultImpl result, String parameter,
-			User currentUser) {
+	public void execute(JobExecutionResultImpl result, String parameter, User currentUser) {
 		Provider provider = currentUser.getProvider();
 
-		BufferedReader cdrReader = null;
 		try {
 
 			ParamBean parambean = ParamBean.getInstance();
-			String meteringDir = parambean.getProperty("providers.rootDir",
-					"/tmp/meveo/")
-					+ File.separator
-					+ provider.getCode()
-					+ File.separator
-					+ "imports"
-					+ File.separator
-					+ "metering"
-					+ File.separator;
+			String meteringDir = parambean.getProperty("providers.rootDir", "/tmp/meveo/") + File.separator
+					+ provider.getCode() + File.separator + "imports" + File.separator + "metering" + File.separator;
 
 			inputDir = meteringDir + "input";
-			String cdrExtension = parambean.getProperty("mediation.extensions",
-					"csv");
+			String cdrExtension = parambean.getProperty("mediation.extensions", "csv");
 			ArrayList<String> cdrExtensions = new ArrayList<String>();
 			cdrExtensions.add(cdrExtension);
 			outputDir = meteringDir + "output";
@@ -96,108 +86,117 @@ public class MediationJobBean {
 			report = "";
 			CDRParsingService.resetAccessPointCache();
 			cdrFile = FileUtils.getFileForParsing(inputDir, cdrExtensions);
-			if (cdrFile != null) {
-				cdrFileName = cdrFile.getName();
-				cdrParser.init(cdrFile);
-				report = "parse " + cdrFileName;
-				cdrFile = FileUtils.addExtension(cdrFile, ".processing");
-				cdrReader = new BufferedReader(new InputStreamReader(
-						new FileInputStream(cdrFile)));
-				String line = null;
-				int processed = 0;
 
-				while ((line = cdrReader.readLine()) != null) {
-					processed++;
+			File[] files = FileUtils.getFilesForParsing(inputDir, cdrExtensions);
+
+			if (files != null) {
+				result.setNbItemsToProcess(files.length);
+
+				for (File file : files) {
+					log.debug("\r\n\r\n===========================================================");
+					log.info("InputFiles job {} in progress...", file.getName());
+
+					cdrFileName = file.getName();
+					File currentFile = FileUtils.addExtension(file, ".processing");
+					BufferedReader cdrReader = new BufferedReader(new InputStreamReader(
+							new FileInputStream(currentFile)));
 					try {
-						List<EDR> edrs = cdrParser.getEDRList(line);
-						if (edrs != null && edrs.size() > 0) {
-							for (EDR edr : edrs) {
-								createEdr(edr, currentUser);
+						cdrParser.init(file);
+						String line = null;
+						int processed = 0;
+
+						while ((line = cdrReader.readLine()) != null) {
+							processed++;
+							try {
+								List<EDR> edrs = cdrParser.getEDRList(line);
+								if (edrs != null && edrs.size() > 0) {
+									for (EDR edr : edrs) {
+										createEdr(edr, currentUser);
+									}
+								}
+								outputCDR(line);
+								result.registerSucces();
+							} catch (CDRParsingException e) {
+								log.warn(e.getMessage());
+								result.registerError("file=" + file.getName() + ", line=" + processed + ": "
+										+ e.getRejectionCause().name());
+								rejectCDR(e.getCdr(), e.getRejectionCause());
+							} catch (Exception e) {
+								log.error(e.getMessage());
+								result.registerError("file=" + file.getName() + ", line=" + processed + ": "
+										+ e.getMessage());
+								rejectCDR(line, CDRRejectionCauseEnum.TECH_ERR);
 							}
 						}
-						outputCDR(line);
+
+						if (processed == 0) {
+							report += "\r\n file is empty ";
+						}
+
+						try {
+							if (cdrReader != null) {
+								cdrReader.close();
+							}
+						} catch (Exception e) {
+							log.error(e.getMessage());
+						}
+
+						log.info("InputFiles job {} done.", file.getName());
 						result.registerSucces();
-					} catch (CDRParsingException e) {
-						log.warn(e.getMessage());
-						result.registerError("line " + processed + " :"
-								+ e.getRejectionCause().name());
-						rejectCDR(e.getCdr(), e.getRejectionCause());
 					} catch (Exception e) {
 						log.error(e.getMessage());
-						result.registerError("line " + processed + " :"
-								+ e.getMessage());
-						rejectCDR(line, CDRRejectionCauseEnum.TECH_ERR);
-					}
-				}
-
-				result.setNbItemsToProcess(processed);
-
-				if (FileUtils.getFileForParsing(inputDir, cdrExtensions) != null) {
-					result.setDone(false);
-				}
-
-				if (processed == 0) {
-					FileUtils.replaceFileExtension(cdrFile, ".csv.processed");
-					report += "\r\n file is empty ";
-					try {
-						if (cdrReader != null) {
-							cdrReader.close();
+						result.registerError(e.getMessage());
+						log.info("InputFiles job {} failed.", file.getName());
+						FileUtils.moveFile(rejectDir, currentFile, file.getName());
+					} finally {
+						try {
+							if (currentFile != null)
+								currentFile.delete();
+						} catch (Exception e) {
+							report += "\r\n cannot delete " + cdrFile.getAbsolutePath();
 						}
-					} catch (Exception e) {
-						log.error(e.getMessage());
-					}
-				} else {
-					try {
-						if (cdrReader != null) {
-							cdrReader.close();
+
+						try {
+							if (cdrReader != null) {
+								cdrReader.close();
+							}
+						} catch (Exception e) {
+							log.error(e.getMessage());
 						}
-					} catch (Exception e) {
-						log.error(e.getMessage());
-					}
-					if (!cdrFile.delete()) {
-						report += "\r\n cannot delete "
-								+ cdrFile.getAbsolutePath();
+
+						try {
+							if (rejectFileWriter != null) {
+								rejectFileWriter.close();
+								rejectFileWriter = null;
+							}
+						} catch (Exception e) {
+							log.error(e.getMessage());
+						}
+
+						try {
+							if (outputFileWriter != null) {
+								outputFileWriter.close();
+								outputFileWriter = null;
+							}
+						} catch (Exception e) {
+							log.error(e.getMessage());
+						}
 					}
 				}
 
 				result.setReport(report);
 			} else {
-				log.info("No CDR to process.");
+				log.info("no file to process");
 			}
 		} catch (Exception e) {
 			log.error(e.getMessage());
-		} finally {
-			try {
-				if (cdrReader != null) {
-					cdrReader.close();
-				}
-			} catch (Exception e) {
-				log.error(e.getMessage());
-			}
-			try {
-				if (rejectFileWriter != null) {
-					rejectFileWriter.close();
-					rejectFileWriter = null;
-				}
-			} catch (Exception e) {
-				log.error(e.getMessage());
-			}
-			try {
-				if (outputFileWriter != null) {
-					outputFileWriter.close();
-					outputFileWriter = null;
-				}
-			} catch (Exception e) {
-				log.error(e.getMessage());
-			}
 		}
 	}
 
 	private void outputCDR(String line) {
 		try {
 			if (outputFileWriter == null) {
-				File outputFile = new File(outputDir + File.separator
-						+ cdrFileName + ".processed");
+				File outputFile = new File(outputDir + File.separator + cdrFileName + ".processed");
 				outputFileWriter = new PrintWriter(outputFile);
 			}
 			outputFileWriter.println(line);
@@ -209,15 +208,13 @@ public class MediationJobBean {
 	private void rejectCDR(Serializable cdr, CDRRejectionCauseEnum reason) {
 		try {
 			if (rejectFileWriter == null) {
-				File rejectFile = new File(rejectDir + File.separator
-						+ cdrFileName + ".rejected");
+				File rejectFile = new File(rejectDir + File.separator + cdrFileName + ".rejected");
 				rejectFileWriter = new PrintWriter(rejectFile);
 			}
 			if (cdr instanceof String) {
 				rejectFileWriter.println(cdr + "\t" + reason.name());
 			} else {
-				rejectFileWriter.println(cdrParser.getCDRLine(cdr,
-						reason.name()));
+				rejectFileWriter.println(cdrParser.getCDRLine(cdr, reason.name()));
 			}
 		} catch (Exception e) {
 			log.error(e.getMessage());

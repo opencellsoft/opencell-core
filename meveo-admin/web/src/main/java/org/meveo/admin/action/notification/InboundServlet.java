@@ -57,6 +57,7 @@ public class InboundServlet extends HttpServlet {
 
 		inReq.setContentLength(req.getContentLength());
 		inReq.setContentType(req.getContentType());
+		
 		if(req.getParameterNames()!=null){
 			Enumeration<String> parameterNames = req.getParameterNames();
 			while(parameterNames.hasMoreElements()){

@@ -20,26 +20,23 @@ public class AccessDto extends BaseDto {
 	private static final long serialVersionUID = 6495211234062070223L;
 
 	@XmlAttribute(required = false)
-	private Long accessId;
-
-	private Date startDate;
-	private Date endDate;
-
-	@XmlAttribute(required = true)
-	private String userAccount;
+	private String code;
 
 	@XmlAttribute(required = true)
 	private String subscription;
+
+	private Date startDate;
+	private Date endDate;
 
 	public AccessDto() {
 
 	}
 
 	public AccessDto(Access e) {
-		accessId = e.getId();
+		code = e.getAccessUserId();
 		startDate = e.getStartDate();
 		endDate = e.getEndDate();
-		userAccount = e.getAccessUserId();
+		
 		if (e.getSubscription() != null) {
 			subscription = e.getSubscription().getCode();
 		}
@@ -61,20 +58,6 @@ public class AccessDto extends BaseDto {
 		this.endDate = endDate;
 	}
 
-	@Override
-	public String toString() {
-		return "AccessDto [accessId=" + accessId + ", startDate=" + startDate + ", endDate=" + endDate
-				+ ", userAccount=" + userAccount + ", subscription=" + subscription + "]";
-	}
-
-	public Long getAccessId() {
-		return accessId;
-	}
-
-	public void setAccessId(Long accessId) {
-		this.accessId = accessId;
-	}
-
 	public String getSubscription() {
 		return subscription;
 	}
@@ -83,12 +66,18 @@ public class AccessDto extends BaseDto {
 		this.subscription = subscription;
 	}
 
-	public String getUserAccount() {
-		return userAccount;
+	@Override
+	public String toString() {
+		return "AccessDto [code=" + code + ", subscription=" + subscription + ", startDate=" + startDate + ", endDate="
+				+ endDate + "]";
 	}
 
-	public void setUserAccount(String userAccount) {
-		this.userAccount = userAccount;
+	public String getCode() {
+		return code;
+	}
+
+	public void setCode(String code) {
+		this.code = code;
 	}
 
 }

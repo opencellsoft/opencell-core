@@ -176,9 +176,13 @@ public class InvoiceService extends PersistenceService<Invoice> {
 		}
 
 		long nextInvoiceNb = getNextValue(seller, currentUser);
+
 		StringBuffer num1 = new StringBuffer("000000000");
 		num1.append(nextInvoiceNb + "");
+
 		String invoiceNumber = num1.substring(num1.length() - 9);
+		// request to store invoiceNo in alias field
+		invoice.setAlias(invoiceNumber);
 
 		return (prefix + invoiceNumber);
 	}

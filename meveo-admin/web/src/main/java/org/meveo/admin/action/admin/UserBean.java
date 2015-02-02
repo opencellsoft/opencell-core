@@ -169,7 +169,6 @@ public class UserBean extends StatefulBaseBean<User> {
                 entity.getProviders().add(currentProvider);
             }
 
-            log.error("AKK saving new user");
             // Set provider to the first provider from a user related provider list
             entity.setProvider(entity.getProviders().iterator().next());
 

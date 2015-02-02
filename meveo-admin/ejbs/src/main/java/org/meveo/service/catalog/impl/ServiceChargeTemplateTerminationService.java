@@ -26,6 +26,7 @@ import javax.persistence.Query;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.ServiceChargeTemplateTermination;
+import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.crm.Provider;
 import org.meveo.service.base.PersistenceService;
 
@@ -55,5 +56,17 @@ public class ServiceChargeTemplateTerminationService extends
 		return (List<ServiceChargeTemplateTermination>) qb.getQuery(em)
 				.getResultList();
 	}
+	
+	public void removeByServiceTemplate(ServiceTemplate serviceTemplate,
+			Provider provider) {
+		Query query = getEntityManager()
+				.createQuery(
+						"DELETE ServiceChargeTemplateTermination t WHERE t.serviceTemplate=:serviceTemplate AND t.provider=:provider");
+		query.setParameter("serviceTemplate", serviceTemplate);
+		query.setParameter("provider", provider);
+		query.executeUpdate();
+	}
+	
+	
 
 }

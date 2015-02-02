@@ -466,39 +466,7 @@ public class UsageRatingService {
 		ratingService.rateBareWalletOperation(walletOperation, null, null,
 				countryId, currency, provider);
 
-		// for AGGREGATED counter we update the price of the previous wallet
-		// Operation to the current price
-		// FIXME: just need to do that if its the first event deduced on the
-		// counter, if not its useless
-		if (chargeInstance.getCounter() != null
-				&& (chargeInstance.getCounter().getCounterTemplate() != null)
-				&& CounterTypeEnum.AGGREGATED == chargeInstance.getCounter()
-						.getCounterTemplate().getCounterType()) {
-			CounterInstanceCache counterInstanceCache = counterCache
-					.get(chargeCache.getCounter().getKey());
-			if (counterInstanceCache.getCounterPeriods() != null) {
-				for (CounterPeriodCache itemPeriodCache : counterInstanceCache
-						.getCounterPeriods()) {
-					if ((itemPeriodCache.getStartDate().before(
-							edr.getEventDate()) || itemPeriodCache
-							.getStartDate().equals(edr.getEventDate()))
-							&& itemPeriodCache.getEndDate().after(
-									edr.getEventDate())) {
-						walletOperation
-								.setAggregatedServiceInstance(chargeInstance
-										.getServiceInstance());
-						walletOperationService
-								.updatePriceForSameServiceAndType(
-										walletOperation,
-										chargeInstance.getServiceInstance(),
-										itemPeriodCache.getStartDate(),
-										itemPeriodCache.getEndDate());
-						break;
-					}
-				}
-			}
-		}
-
+		
 		return walletOperation;
 	}
 

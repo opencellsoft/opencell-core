@@ -17,12 +17,32 @@
 package org.meveo.service.billing.impl;
 
 import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.persistence.NoResultException;
 
+import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.billing.SubscriptionTerminationReason;
+import org.meveo.model.crm.Provider;
 import org.meveo.service.base.PersistenceService;
+import org.slf4j.Logger;
 
 @Stateless
-public class TerminationReasonService extends
-		PersistenceService<SubscriptionTerminationReason> {
+public class TerminationReasonService extends PersistenceService<SubscriptionTerminationReason> {
+
+	@Inject
+	private Logger log;
+
+	public SubscriptionTerminationReason findByCode(String terminationReasonCode, Provider provider) {
+		QueryBuilder qb = new QueryBuilder(SubscriptionTerminationReason.class, "s");
+		qb.addCriterion("code", "=", terminationReasonCode, true);
+		qb.addCriterionEntity("provider", provider);
+
+		try {
+			return (SubscriptionTerminationReason) qb.getQuery(getEntityManager()).getSingleResult();
+		} catch (NoResultException e) {
+			log.warn(e.getMessage());
+			return null;
+		}
+	}
 
 }

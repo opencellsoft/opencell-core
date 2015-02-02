@@ -1127,7 +1127,7 @@ insert into CAT_CHARGE_TEMPLATE (id, version, provider_id, disabled, created, co
 DROP SEQUENCE IF EXISTS CAT_CHARGE_TEMPLATE_SEQ;
 CREATE SEQUENCE CAT_CHARGE_TEMPLATE_SEQ start with 5 increment by 1;
 
-insert into CAT_RECURRING_CHARGE_TEMPL (id, CALENDAR_ID, APPLY_IN_ADVANCE) values (1, 3, false);
+insert into CAT_RECURRING_CHARGE_TEMPL (id, CALENDAR_ID, APPLY_IN_ADVANCE, subscription_prorata, termination_prorata) values (1, 3, false, false, false);
 insert into CAT_ONE_SHOT_CHARGE_TEMPL (id, type, immediate_invoicing) values (2, 'SUBSCRIPTION', false);
 insert into CAT_USAGE_CHARGE_TEMPLATE (id, UNITY_NB_DECIMAL) values (3, 2);
 insert into CAT_ONE_SHOT_CHARGE_TEMPL (id, type, immediate_invoicing) values (4, 'SUBSCRIPTION', false);
@@ -1166,7 +1166,7 @@ CREATE SEQUENCE ACCOUNT_ENTITY_SEQ start with 5 increment by 1;
 
 insert into crm_customer (id, CUSTOMER_CATEGORY_ID, CUSTOMER_BRAND_ID, SELLER_ID) values (1, 2, 1, 1);
 insert into AR_CUSTOMER_ACCOUNT (id, CUSTOMER_ID, TRADING_CURRENCY_ID, STATUS) values (2, 1, 1, 'ACTIVE');
-insert into BILLING_BILLING_ACCOUNT (id, CUSTOMER_ACCOUNT_ID, BILLING_CYCLE, TRADING_COUNTRY_ID, TRADING_language_ID) values (3, 2, 1, 1, 1);
+insert into BILLING_BILLING_ACCOUNT (id, CUSTOMER_ACCOUNT_ID, BILLING_CYCLE, TRADING_COUNTRY_ID, TRADING_language_ID, PAYMENT_METHOD, ELECTRONIC_BILLING) values (3, 2, 1, 1, 1, 'CHECK', false);
 insert into BILLING_USER_ACCOUNT (id, BILLING_ACCOUNT_ID) values (4, 3);
 
 insert into cat_wallet_template (id, version, disabled, created, code, description, FAST_RATING_LEVEL, wallet_type, provider_id, CONSUMPTION_ALERT_SET) values (1, 0, false, now(), 'POSTPAID_WALLET', 'Post Paid Wallet', 1, 'POSTPAID', 1, true);
@@ -1194,3 +1194,10 @@ CREATE SEQUENCE CAT_SERV_SUBCHRG_TEMPLT_SEQ start with 2 increment by 1;
 
 DROP SEQUENCE IF EXISTS CAT_SERV_USAGECHRG_TEMPLT_SEQ;
 CREATE SEQUENCE CAT_SERV_USAGECHRG_TEMPLT_SEQ start with 2 increment by 1;
+
+/* Add wallet to userAccount=1 */
+insert into BILLING_WALLET (id, version, disabled, created, code, description, provider_id, user_account_id) values (1, 0, false, now(), 'PRINCIPAL', 'Principal', 1, 4);
+DROP SEQUENCE IF EXISTS BILLING_WALLET_SEQ;
+CREATE SEQUENCE BILLING_WALLET_SEQ start with 2 increment by 1;
+
+update BILLING_USER_ACCOUNT set wallet_id=1 where id=4;

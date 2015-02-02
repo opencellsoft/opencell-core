@@ -1,8 +1,8 @@
-package org.meveo.api.rest.billing.impl;
+package org.meveo.api.ws.impl;
 
-import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
+import javax.jws.WebService;
 
 import org.meveo.api.MeveoApiErrorCode;
 import org.meveo.api.billing.WalletApi;
@@ -13,15 +13,14 @@ import org.meveo.api.dto.billing.WalletOperationDto;
 import org.meveo.api.dto.billing.WalletReservationDto;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.LoggingInterceptor;
-import org.meveo.api.rest.billing.WalletRs;
-import org.meveo.api.rest.impl.BaseRs;
+import org.meveo.api.ws.WalletWs;
 
 /**
  * @author Edward P. Legaspi
  **/
-@RequestScoped
+@WebService(serviceName = "WalletWs", endpointInterface = "org.meveo.api.ws.WalletWs")
 @Interceptors({ LoggingInterceptor.class })
-public class WalletRsImpl extends BaseRs implements WalletRs {
+public class WalletWsImpl extends BaseWs implements WalletWs {
 
 	@Inject
 	private WalletApi walletApi;

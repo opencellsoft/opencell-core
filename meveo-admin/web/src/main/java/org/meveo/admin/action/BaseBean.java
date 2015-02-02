@@ -755,7 +755,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 	}
 
 	protected String getDefaultSort() {
-		return "";
+		return "id";
 	}
 
 	protected SortOrder getDefaultSortOrder() {
