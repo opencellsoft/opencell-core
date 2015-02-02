@@ -1,10 +1,12 @@
 package org.meveo.api.rest.billing;
 
 import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 import org.meveo.api.dto.ActionStatus;
@@ -13,6 +15,7 @@ import org.meveo.api.dto.account.ApplyOneShotChargeInstanceDto;
 import org.meveo.api.dto.billing.SubscriptionDto;
 import org.meveo.api.dto.billing.TerminateSubscriptionDto;
 import org.meveo.api.dto.billing.TerminateSubscriptionServicesDto;
+import org.meveo.api.dto.response.billing.ListSubscriptionResponse;
 import org.meveo.api.rest.IBaseRs;
 import org.meveo.api.rest.security.RSSecured;
 
@@ -48,5 +51,15 @@ public interface SubscriptionRs extends IBaseRs {
 	@POST
 	@Path("/terminateServices")
 	ActionStatus terminateServices(TerminateSubscriptionServicesDto postData);
+
+	/**
+	 * List Subscription filter by userAccountCode.
+	 * 
+	 * @param userAccountCode
+	 * @return
+	 */
+	@GET
+	@Path("/list")
+	ListSubscriptionResponse listByUserAccount(@QueryParam("userAccountCode") String userAccountCode);
 
 }

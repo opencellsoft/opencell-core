@@ -1,5 +1,8 @@
 package org.meveo.api.account;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
@@ -247,6 +250,30 @@ public class BillingAccountApi extends AccountApi {
 			billingAccountService.remove(billingAccount);
 		} else {
 			missingParameters.add("billingAccountCode");
+
+			throw new MissingParameterException(getMissingParametersExceptionMessage());
+		}
+	}
+
+	public List<BillingAccountDto> listByCustomerAccount(String customerAccountCode, Provider provider)
+			throws MeveoApiException {
+		if (!StringUtils.isBlank(customerAccountCode)) {
+			CustomerAccount customerAccount = customerAccountService.findByCode(customerAccountCode, provider);
+			if (customerAccount == null) {
+				throw new EntityDoesNotExistsException(CustomerAccount.class, customerAccountCode);
+			}
+
+			List<BillingAccountDto> result = new ArrayList<BillingAccountDto>();
+			List<BillingAccount> billingAccounts = billingAccountService.listByCustomerAccount(customerAccount);
+			if (billingAccounts != null) {
+				for (BillingAccount ba : billingAccounts) {
+					result.add(new BillingAccountDto(ba));
+				}
+			}
+
+			return result;
+		} else {
+			missingParameters.add("customerAccountCode");
 
 			throw new MissingParameterException(getMissingParametersExceptionMessage());
 		}

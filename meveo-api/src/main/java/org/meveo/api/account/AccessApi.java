@@ -139,24 +139,22 @@ public class AccessApi extends BaseApi {
 		}
 	}
 
-	public List<AccessDto> list(String subscriptionCode, Provider provider) throws MeveoApiException {
+	public List<AccessDto> listBySubscription(String subscriptionCode, Provider provider) throws MeveoApiException {
 		if (!StringUtils.isBlank(subscriptionCode)) {
 			Subscription subscription = subscriptionService.findByCode(subscriptionCode, provider);
 			if (subscription == null) {
 				throw new EntityDoesNotExistsException(Subscription.class, subscriptionCode);
 			}
 
+			List<AccessDto> result = new ArrayList<AccessDto>();
 			List<Access> accesses = accessService.listBySubscription(subscription);
-			if (accesses != null && accesses.size() > 0) {
-				List<AccessDto> accessDtos = new ArrayList<AccessDto>();
-				for (Access access : accesses) {
-					accessDtos.add(new AccessDto(access));
+			if (accesses != null) {
+				for (Access ac : accesses) {
+					result.add(new AccessDto(ac));
 				}
-
-				return accessDtos;
 			}
 
-			return null;
+			return result;
 		} else {
 			missingParameters.add("subscriptionCode");
 

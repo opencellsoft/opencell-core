@@ -432,4 +432,27 @@ public class SubscriptionApi extends BaseApi {
 		}
 	}
 
+	public List<SubscriptionDto> listByUserAccount(String userAccountCode, Provider provider) throws MeveoApiException {
+		if (!StringUtils.isBlank(userAccountCode)) {
+			UserAccount userAccount = userAccountService.findByCode(userAccountCode, provider);
+			if (userAccount == null) {
+				throw new EntityDoesNotExistsException(UserAccount.class, userAccountCode);
+			}
+
+			List<SubscriptionDto> result = new ArrayList<SubscriptionDto>();
+			List<Subscription> subscriptions = subscriptionService.listByUserAccount(userAccount);
+			if (subscriptions != null) {
+				for (Subscription s : subscriptions) {
+					result.add(new SubscriptionDto(s));
+				}
+			}
+
+			return result;
+		} else {
+			missingParameters.add("userAccountCode");
+
+			throw new MissingParameterException(getMissingParametersExceptionMessage());
+		}
+	}
+
 }

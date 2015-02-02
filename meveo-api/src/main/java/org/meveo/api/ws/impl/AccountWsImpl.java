@@ -497,7 +497,7 @@ public class AccountWsImpl extends BaseWs implements AccountWs {
 		GetListAccessResponse result = new GetListAccessResponse();
 
 		try {
-			result.setAccesses(accessApi.list(subscriptionCode, getCurrentUser().getProvider()));
+			result.setAccesses(accessApi.listBySubscription(subscriptionCode, getCurrentUser().getProvider()));
 		} catch (MeveoApiException e) {
 			result.getActionStatus().setErrorCode(e.getErrorCode());
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);

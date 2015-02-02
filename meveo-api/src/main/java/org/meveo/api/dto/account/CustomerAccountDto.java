@@ -11,6 +11,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.AccountOperationDto;
+import org.meveo.model.payments.CustomerAccount;
 
 @XmlRootElement(name = "CustomerAccount")
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -43,6 +44,47 @@ public class CustomerAccountDto extends AccountDto {
 
 	public CustomerAccountDto() {
 		super();
+	}
+
+	public CustomerAccountDto(CustomerAccount e) {
+		super();
+
+		if (e.getCustomer() != null) {
+			customer = e.getCustomer().getCode();
+		}
+
+		if (e.getTradingCurrency() != null) {
+			currency = e.getTradingCurrency().getCurrencyCode();
+		}
+
+		try {
+			status = e.getStatus().name();
+		} catch (NullPointerException ex) {
+		}
+		try {
+			paymentMethod = e.getPaymentMethod().name();
+		} catch (NullPointerException ex) {
+		}
+		try {
+			creditCategory = e.getCreditCategory().name();
+		} catch (NullPointerException ex) {
+		}
+		try {
+			dunningLevel = e.getDunningLevel().name();
+		} catch (NullPointerException ex) {
+		}
+
+		dateStatus = e.getDateStatus();
+		dateDunningLevel = e.getDateDunningLevel();
+		if (e.getContactInformation() != null) {
+			email = e.getContactInformation().getEmail();
+			mobile = e.getContactInformation().getMobile();
+			fax = e.getContactInformation().getFax();
+			phone = e.getContactInformation().getPhone();
+		}
+
+		mandateIdentification = e.getMandateIdentification();
+		mandateDate = e.getMandateDate();
 	}
 
 	public String getStatus() {
