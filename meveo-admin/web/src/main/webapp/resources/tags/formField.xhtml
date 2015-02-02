@@ -110,7 +110,7 @@
 				rendered="#{cc.isText(cc.attrs.field,false)}">
 				<p:outputLabel for="#{cc.attrs.id}_text2" value="#{cc.attrs.label}" />
 				<p:inputText id="#{cc.attrs.id}_text2"
-					rendered="#{not cc.attrs.isHtml and not cc.attrs.textArea and cc.attrs.edit}"
+					rendered="#{not cc.attrs.isHtml and not cc.attrs.textArea and cc.attrs.listValues == null and cc.attrs.edit}"
 					value="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}"
 					disabled="#{cc.attrs.disabled}" required="#{cc.attrs.required}"
 					size="#{cc.attrs.size}" maxlength="#{cc.attrs.maxlength}">
@@ -165,7 +165,16 @@
 					id="#{cc.attrs.id}_editor" disabled="#{cc.attrs.disabled}"
 					value="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}"
 					required="#{cc.attrs.required}"></p:editor>
-				<h:outputText rendered="#{not cc.attrs.edit}"
+
+                <p:selectOneMenu id="#{cc.attrs.id}_pick" value="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}"
+                    required="#{cc.attrs.required}" disabled="#{cc.attrs.disabled}" rendered="#{cc.attrs.listValues != null and cc.attrs.edit}">
+                    <f:selectItem itemValue="#{null}" itemLabel="" />
+                    <c:forEach items="#{cc.attrs.listValues.keySet().toArray()}" var="key">
+                        <f:selectItem itemValue="#{key}" itemLabel="#{cc.attrs.listValues[key]}" />
+                    </c:forEach>
+                </p:selectOneMenu>
+
+                <h:outputText rendered="#{not cc.attrs.edit}"
 					value="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}"
 					styleClass="field-value" />
 				<cc:insertChildren />
@@ -471,8 +480,10 @@
 				<p:panelGrid columns="2">
 					<p:outputLabel for="#{cc.attrs.id}_picklist"
 						value="#{cc.attrs.label}" />
-					<c:set var="elements"
-						value="#{cc.backingBeanFromParentOrCurrent.dualListModel}" />
+                    <c:if test="#{empty cc.attrs.dualListModel}">
+    					<c:set var="elements"
+    						value="#{cc.backingBeanFromParentOrCurrent.dualListModel}" />
+                    </c:if>
 					<c:if test="#{!empty cc.attrs.dualListModel}">
 						<c:set var="elements" value="#{cc.attrs.dualListModel}" />
 					</c:if>

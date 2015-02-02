@@ -966,7 +966,7 @@ DROP SEQUENCE IF EXISTS billing_trading_country_SEQ;
 CREATE SEQUENCE billing_trading_country_SEQ start with 3 increment by 1;
 
 --Counter Calendar
-insert into cat_calendar (cal_type,id, version, disabled, created, provider_id, creator_id, name, description, calendar_type) values ('YEARLY',1, 0, false, now(), 1, 1, 'CAL_COUNTER', 'Counter Calendar', 'COUNTER');
+insert into cat_calendar (cal_type,id, version, disabled, created, provider_id, creator_id, name, description) values ('YEARLY',1, 0, false, now(), 1, 1, 'CAL_COUNTER', 'Counter Calendar', 'COUNTER');
 insert into cat_calendar_days (calendar_id, day_id) values (1, 1);
 insert into cat_calendar_days (calendar_id, day_id) values (1, 101);
 insert into cat_calendar_days (calendar_id, day_id) values (1, 201);
@@ -981,7 +981,7 @@ insert into cat_calendar_days (calendar_id, day_id) values (1, 1001);
 insert into cat_calendar_days (calendar_id, day_id) values (1, 1101);
 
 --Billing Calendar
-insert into cat_calendar (cal_type,id, version, disabled, created, provider_id, creator_id, name, description, calendar_type) values ('YEARLY',2, 0, false, now(), 1, 1, 'CAL_INV_MONTHLY', 'Billing Calendar', 'BILLING');
+insert into cat_calendar (cal_type,id, version, disabled, created, provider_id, creator_id, name, description) values ('YEARLY',2, 0, false, now(), 1, 1, 'CAL_INV_MONTHLY', 'Billing Calendar');
 insert into cat_calendar_days (calendar_id, day_id) values (2, 1);
 insert into cat_calendar_days (calendar_id, day_id) values (2, 101);
 insert into cat_calendar_days (calendar_id, day_id) values (2, 201);
@@ -996,7 +996,7 @@ insert into cat_calendar_days (calendar_id, day_id) values (2, 1001);
 insert into cat_calendar_days (calendar_id, day_id) values (2, 1101);
 
 --Charge Imputation
-insert into cat_calendar (cal_type,id, version, disabled, created, provider_id, creator_id, name, description, calendar_type) values ('YEARLY',3, 0, false, now(), 1, 1, 'CAL_VAL_MONTHLY', 'Charge Imputation Calendar', 'CHARGE_IMPUTATION');
+insert into cat_calendar (cal_type,id, version, disabled, created, provider_id, creator_id, name, description) values ('YEARLY',3, 0, false, now(), 1, 1, 'CAL_VAL_MONTHLY', 'Charge Imputation Calendar');
 insert into cat_calendar_days (calendar_id, day_id) values (3, 1);
 insert into cat_calendar_days (calendar_id, day_id) values (3, 101);
 insert into cat_calendar_days (calendar_id, day_id) values (3, 201);
@@ -1011,7 +1011,7 @@ insert into cat_calendar_days (calendar_id, day_id) values (3, 1001);
 insert into cat_calendar_days (calendar_id, day_id) values (3, 1101);
 
 --Monthly Counter Calendar
-insert into cat_calendar (cal_type,id, version, disabled, created, provider_id, creator_id, name, description, calendar_type) values ('YEARLY',4, 0, false, now(), 1, 1, 'MONTHLY', 'Monthly Calendar', 'COUNTER');
+insert into cat_calendar (cal_type,id, version, disabled, created, provider_id, creator_id, name, description) values ('YEARLY',4, 0, false, now(), 1, 1, 'MONTHLY', 'Monthly Calendar');
 insert into cat_calendar_days (calendar_id, day_id) values (4, 1);
 insert into cat_calendar_days (calendar_id, day_id) values (4, 101);
 insert into cat_calendar_days (calendar_id, day_id) values (4, 201);
@@ -1025,8 +1025,11 @@ insert into cat_calendar_days (calendar_id, day_id) values (4, 901);
 insert into cat_calendar_days (calendar_id, day_id) values (4, 1001);
 insert into cat_calendar_days (calendar_id, day_id) values (4, 1101);
 
+insert into cat_calendar (cal_type,id, version, disabled, created, provider_id, creator_id, name, description,PERIOD_LENGTH, NB_PERIODS) values ('PERIOD',5, 0, false, now(), 1, 1, 'One period', 'One period Calendar',7,1);
+insert into cat_calendar (cal_type,id, version, disabled, created, provider_id, creator_id, name, description,PERIOD_LENGTH, NB_PERIODS) values ('PERIOD',6, 0, false, now(), 1, 1, 'Multi period', 'Multi period Calendar',7,6);
+
 DROP SEQUENCE IF EXISTS cat_calendar_SEQ;
-CREATE SEQUENCE cat_calendar_SEQ start with 5 increment by 1;
+CREATE SEQUENCE cat_calendar_SEQ start with 7 increment by 1;
 
 --Tax
 insert into billing_tax (id, version, disabled, created, provider_id, creator_id, code, description, tax_percentage) values (1, 0, false, now(), 1, 1, 'TAX_00', '0 Percent Tax', 0);

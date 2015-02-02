@@ -17,11 +17,24 @@
 package org.meveo.service.catalog.impl;
 
 import javax.ejb.Stateless;
+import javax.persistence.NoResultException;
 
+import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.catalog.HourInDay;
 import org.meveo.service.base.PersistenceService;
 
 @Stateless
 public class HourInDayService extends PersistenceService<HourInDay> {
 
+    public HourInDay findByHourAndMin(Integer hour, Integer min) {
+        QueryBuilder qb = new QueryBuilder(HourInDay.class, "d");
+        qb.addCriterion("hour", "=", hour, true);
+        qb.addCriterion("min", "=", min, true);
+
+        try {
+            return (HourInDay) qb.getQuery(getEntityManager()).getSingleResult();
+        } catch (NoResultException e) {
+            return null;
+        }
+    }
 }

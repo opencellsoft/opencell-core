@@ -144,7 +144,8 @@ public class CalendarDaily extends Calendar {
 		return result;
 	}
 
-	public boolean truncDateTime() {
-		return false;
-	}
+    @Override
+    public boolean truncDateTime() {
+        return false;
+    }
 }

@@ -122,10 +122,4 @@ public class CalendarYearly extends Calendar {
 		}
 		return result;
 	}
-
-	public boolean truncDateTime() {
-		return true;
-	}
-
-
 }

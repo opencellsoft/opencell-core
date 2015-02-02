@@ -18,18 +18,25 @@ package org.meveo.admin.action.catalog;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.enterprise.context.ConversationScoped;
 import javax.enterprise.inject.Instance;
+import javax.faces.component.EditableValueHolder;
+import javax.faces.event.AjaxBehaviorEvent;
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.persistence.DiscriminatorValue;
 
 import org.jboss.solder.servlet.http.RequestParam;
+import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.action.StatelessBaseBean;
-import org.meveo.model.BaseEntity;
+import org.meveo.admin.util.ResourceBundle;
 import org.meveo.model.catalog.Calendar;
 import org.meveo.model.catalog.CalendarDaily;
+import org.meveo.model.catalog.CalendarPeriod;
 import org.meveo.model.catalog.CalendarYearly;
 import org.meveo.model.catalog.DayInYear;
 import org.meveo.model.catalog.HourInDay;
@@ -44,125 +51,130 @@ import org.primefaces.model.DualListModel;
 @ConversationScoped
 public class CalendarBean extends StatelessBaseBean<Calendar> {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	/** Injected @{link Calendar} service. Extends {@link PersistenceService}. */
-	@Inject
-	private CalendarService calendarService;
+    /** Injected @{link Calendar} service. Extends {@link PersistenceService}. */
+    @Inject
+    private CalendarService calendarService;
 
-	@Inject
-	private DayInYearService dayInYearService;
+    @Inject
+    private DayInYearService dayInYearService;
 
-	private DualListModel<DayInYear> dayInYearListModel;
+    private DualListModel<DayInYear> dayInYearListModel;
 
-	@Inject
-	private HourInDayService hourInDayService;
+    @Inject
+    private HourInDayService hourInDayService;
 
-	private DualListModel<HourInDay> hourInDayListModel;
+    private DualListModel<HourInDay> hourInDayListModel;
 
-	@Inject
-	@RequestParam()
-	private Instance<String> classType;
+    @Inject
+    @RequestParam()
+    private Instance<String> classType;
 
-	/**
-	 * Constructor. Invokes super constructor and provides class type of this
-	 * bean for {@link BaseBean}.
-	 */
-	public CalendarBean() {
-		super(Calendar.class);
-	}
+    @Inject
+    private ResourceBundle resourceMessages;
 
-	public Calendar getInstance() throws InstantiationException,
-			IllegalAccessException {
-		// TODO: should take classType into account
-		return CalendarYearly.class.newInstance();
-	}
+    /**
+     * Constructor. Invokes super constructor and provides class type of this bean for {@link BaseBean}.
+     */
+    public CalendarBean() {
+        super(Calendar.class);
+    }
 
-	public Calendar initEntity() {
+    public Calendar getInstance() throws InstantiationException, IllegalAccessException {
 
-		log.debug("instantiating calendar of type " + this.getClass());
-		if (getObjectId() != null) {
-			if (getFormFieldsToFetch() == null) {
-				entity = (Calendar) getPersistenceService().findById(
-						getObjectId());
-			} else {
-				entity = (Calendar) getPersistenceService().findById(
-						getObjectId(), getFormFieldsToFetch());
-			}
-			// getPersistenceService().detach(entity);
-		} else {
-			try {
-				entity = getInstance();
-				if (entity instanceof BaseEntity) {
-					((BaseEntity) entity).setProvider(getCurrentProvider());
-				}
-			} catch (InstantiationException e) {
-				log.error("Unexpected error!", e);
-				throw new IllegalStateException(
-						"could not instantiate a class, abstract class");
-			} catch (IllegalAccessException e) {
-				log.error("Unexpected error!", e);
-				throw new IllegalStateException(
-						"could not instantiate a class, constructor not accessible");
-			}
-		}
+//        Calendar calendar = CalendarYearly.class.newInstance();
+//        calendar.setCalendarType(CalendarYearly.class.getAnnotation(DiscriminatorValue.class).value());
 
-		return entity;
-	}
+        Calendar calendar = CalendarDaily.class.newInstance();
+        calendar.setCalendarType(CalendarDaily.class.getAnnotation(DiscriminatorValue.class).value());
 
-	/**
-	 * @see org.meveo.admin.action.BaseBean#getPersistenceService()
-	 */
-	@Override
-	protected IPersistenceService<Calendar> getPersistenceService() {
-		return calendarService;
-	}
+        return calendar;
+    }
 
-	public DualListModel<DayInYear> getDayInYearModel() {
-		if (dayInYearListModel == null) {
-			List<DayInYear> perksSource = dayInYearService.list();
-			List<DayInYear> perksTarget = new ArrayList<DayInYear>();
-			if (((CalendarYearly) getEntity()).getDays() != null) {
-				perksTarget.addAll(((CalendarYearly) getEntity()).getDays());
-			}
-			perksSource.removeAll(perksTarget);
-			dayInYearListModel = new DualListModel<DayInYear>(perksSource,
-					perksTarget);
-		}
-		return dayInYearListModel;
-	}
+    /**
+     * @see org.meveo.admin.action.BaseBean#getPersistenceService()
+     */
+    @Override
+    protected IPersistenceService<Calendar> getPersistenceService() {
+        return calendarService;
+    }
 
-	public void setDayInYearModel(DualListModel<DayInYear> perks) {
-		((CalendarYearly) getEntity()).setDays((List<DayInYear>) perks
-				.getTarget());
-	}
+    public DualListModel<DayInYear> getDayInYearModel() {
 
-	public DualListModel<HourInDay> getHourInDayModel() {
-		if (hourInDayListModel == null) {
-			List<HourInDay> perksSource = hourInDayService.list();
-			List<HourInDay> perksTarget = new ArrayList<HourInDay>();
-			if (((CalendarDaily) getEntity()).getHours() != null) {
-				perksTarget.addAll(((CalendarDaily) getEntity()).getHours());
-			}
-			perksSource.removeAll(perksTarget);
-			hourInDayListModel = new DualListModel<HourInDay>(perksSource,
-					perksTarget);
-		}
-		return hourInDayListModel;
-	}
+        if (dayInYearListModel == null && getEntity() instanceof CalendarYearly) {
+            List<DayInYear> perksSource = dayInYearService.list();
+            List<DayInYear> perksTarget = new ArrayList<DayInYear>();
+            if (((CalendarYearly) getEntity()).getDays() != null) {
+                perksTarget.addAll(((CalendarYearly) getEntity()).getDays());
+            }
+            perksSource.removeAll(perksTarget);
+            dayInYearListModel = new DualListModel<DayInYear>(perksSource, perksTarget);
+        }
+        return dayInYearListModel;
+    }
 
-	public void setHourInDayModel(DualListModel<HourInDay> perks) {
-		((CalendarDaily) getEntity()).setHours((List<HourInDay>) perks
-				.getTarget());
-	}
+    public void setDayInYearModel(DualListModel<DayInYear> perks) {
+        ((CalendarYearly) getEntity()).setDays((List<DayInYear>) perks.getTarget());
+    }
 
-	@Override
-	protected String getDefaultSort() {
-		return "name";
-	}
+    public DualListModel<HourInDay> getHourInDayModel() {
+        if (hourInDayListModel == null && getEntity() instanceof CalendarDaily) {
+            List<HourInDay> perksSource = hourInDayService.list();
+            List<HourInDay> perksTarget = new ArrayList<HourInDay>();
+            if (((CalendarDaily) getEntity()).getHours() != null) {
+                perksTarget.addAll(((CalendarDaily) getEntity()).getHours());
+            }
+            perksSource.removeAll(perksTarget);
+            hourInDayListModel = new DualListModel<HourInDay>(perksSource, perksTarget);
+        }
+        return hourInDayListModel;
+    }
 
-	@Override
-	protected List<String> getFormFieldsToFetch() {
-		return Arrays.asList("provider");
-	}
+    public void setHourInDayModel(DualListModel<HourInDay> perks) {
+        ((CalendarDaily) getEntity()).setHours((List<HourInDay>) perks.getTarget());
+    }
+
+    @Override
+    protected String getDefaultSort() {
+        return "name";
+    }
+
+    @Override
+    protected List<String> getFormFieldsToFetch() {
+        return Arrays.asList("provider");
+    }
+
+    public Map<String, String> getCalendarTypes() {
+        Map<String, String> values = new HashMap<String, String>();
+
+        values.put("DAILY", resourceMessages.getString("calendar.calendarType.DAILY"));
+        values.put("YEARLY", resourceMessages.getString("calendar.calendarType.YEARLY"));
+        values.put("PERIOD", resourceMessages.getString("calendar.calendarType.PERIOD"));
+
+        return values;
+    }
+
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+    public void changeCalendarType(AjaxBehaviorEvent event) {
+
+        String newType = (String) ((EditableValueHolder) event.getComponent()).getValue();
+
+        Class[] classes = { CalendarYearly.class, CalendarDaily.class, CalendarPeriod.class };
+        for (Class clazz : classes) {
+
+            if (newType.equalsIgnoreCase(((DiscriminatorValue) clazz.getAnnotation(DiscriminatorValue.class)).value())) {
+
+                try {
+                    Calendar calendar = (Calendar) clazz.newInstance();
+
+                    calendar.setCalendarType(((DiscriminatorValue) clazz.getAnnotation(DiscriminatorValue.class)).value());
+                    setEntity(calendar);
+                } catch (InstantiationException | IllegalAccessException e) {
+                    log.error("Failed to instantiate a calendar", e);
+                }
+                return;
+            }
+        }
+    }
 }
