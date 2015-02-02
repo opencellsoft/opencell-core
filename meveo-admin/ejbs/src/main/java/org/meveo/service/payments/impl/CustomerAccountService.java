@@ -604,7 +604,7 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
 	}
 
 	public boolean isAllServiceInstancesTerminated(CustomerAccount customerAccount) {
-
+		//FIXME : just count inside the query
 		Query billingQuery = getEntityManager()
 				.createQuery(
 						"select si from ServiceInstance si join si.subscription s join s.userAccount ua join ua.billingAccount ba join ba.customerAccount ca where ca.id = :customerAccountId");

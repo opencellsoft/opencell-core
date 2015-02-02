@@ -31,10 +31,10 @@ import org.meveo.admin.exception.IncorrectSusbcriptionException;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.admin.User;
-import org.meveo.model.billing.BillingAccount;
+//import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.InstanceStatusEnum;
 import org.meveo.model.billing.OneShotChargeInstance;
-import org.meveo.model.billing.RatedTransaction;
+//import org.meveo.model.billing.RatedTransaction;
 import org.meveo.model.billing.RecurringChargeInstance;
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.Subscription;
@@ -50,7 +50,7 @@ import org.meveo.model.catalog.ServiceChargeTemplateUsage;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.catalog.WalletTemplate;
 import org.meveo.model.crm.Provider;
-import org.meveo.model.payments.CustomerAccount;
+//import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.payments.impl.CustomerAccountService;
@@ -409,7 +409,9 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 		serviceInstance.setStatusDate(new Date());
 		update(serviceInstance, user);
 
-		boolean termineSubscription = true;
+		/*
+		 * SMI: we should not have this kind of rule 
+		 * 
 		for (ServiceInstance srv : subscription.getServiceInstances()) {
 			if (srv.getStatus() != InstanceStatusEnum.TERMINATED) {
 				termineSubscription = false;
@@ -422,8 +424,11 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 			// FIXME
 			// subscriptionService.update(subscription);
 		}
+		 */
 
-		CustomerAccount customerAccount = serviceInstance.getSubscription().getUserAccount().getBillingAccount()
+		/*
+		 * SMI : should not do that in general, it has bad impact on performances
+		 * CustomerAccount customerAccount = serviceInstance.getSubscription().getUserAccount().getBillingAccount()
 				.getCustomerAccount();
 		if (customerAccountService.isAllServiceInstancesTerminated(customerAccount)) {
 			for (BillingAccount ba : customerAccount.getBillingAccounts()) {
@@ -435,7 +440,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 					}
 				}
 			}
-		}
+		}*/
 
 	}
 
@@ -531,8 +536,8 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 					+ serviceInstance.getCode());
 		}
 		ServiceTemplate serviceTemplate = serviceInstance.getServiceTemplate();
-		if (serviceInstance.getStatus() == InstanceStatusEnum.ACTIVE) {
-			throw new IncorrectServiceInstanceException("service instance is already active. service Code="
+		if (serviceInstance.getStatus() != InstanceStatusEnum.SUSPENDED) {
+			throw new IncorrectServiceInstanceException("service instance is not suspended. service Code="
 					+ serviceCode + ",subscription Code" + subscription.getCode());
 		}
 
@@ -543,14 +548,16 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 		serviceInstance.setTerminationDate(null);
 
 		for (RecurringChargeInstance recurringChargeInstance : serviceInstance.getRecurringChargeInstances()) {
-			if (recurringChargeInstance.getStatus() != InstanceStatusEnum.ACTIVE) {
+			if (recurringChargeInstance.getStatus() == InstanceStatusEnum.SUSPENDED) {
 				recurringChargeInstanceService.recurringChargeReactivation(serviceInstance, subscription,
 						subscriptionDate, updater);
 			}
 		}
 
 		for (UsageChargeInstance usageChargeInstance : serviceInstance.getUsageChargeInstances()) {
-			usageChargeInstanceService.reactivateUsageChargeInstance(usageChargeInstance, subscriptionDate);
+			if(usageChargeInstance.getStatus() == InstanceStatusEnum.SUSPENDED){
+				usageChargeInstanceService.reactivateUsageChargeInstance(usageChargeInstance, subscriptionDate);
+			}
 		}
 		update(serviceInstance, updater);
 	}
@@ -594,6 +601,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 	 * updater); }
 	 */
 
+	/*
 	public void serviceTermination(ServiceInstance serviceInstance, Date terminationDate, User updater)
 			throws IncorrectSusbcriptionException, IncorrectServiceInstanceException, BusinessException {
 
@@ -634,7 +642,8 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 		serviceInstance.setStatusDate(new Date());
 		update(serviceInstance, updater);
 	}
-
+   */
+	
 	/*
 	 * public void serviceCancellation(ServiceInstance serviceInstance, Date
 	 * terminationDate, User updater) throws IncorrectSusbcriptionException,
