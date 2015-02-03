@@ -28,6 +28,7 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.admin.User;
+import org.meveo.model.billing.BillingWalletTypeEnum;
 import org.meveo.model.billing.CounterInstance;
 import org.meveo.model.billing.InstanceStatusEnum;
 import org.meveo.model.billing.ServiceInstance;
@@ -78,12 +79,18 @@ public class UsageChargeInstanceService extends BusinessService<UsageChargeInsta
 		List<WalletTemplate> walletTemplates = usaChTmplServ.getWalletTemplates();
 		if (walletTemplates != null && walletTemplates.size() > 0) {
 			for (WalletTemplate walletTemplate : walletTemplates) {
+				if(walletTemplate.getWalletType()==BillingWalletTypeEnum.PREPAID){
+					usageChargeInstance.setPrepaid(true);
+				}
+				log.debug("add walletInstance for template {}",walletTemplate.getCode());
 				usageChargeInstance.getWalletInstances().add(
 						walletService.getWalletInstance(serviceInstance.getSubscription().getUserAccount(),
 								walletTemplate, serviceInstance.getAuditable().getCreator(),
 								serviceInstance.getProvider()));
 			}
 		} else {
+			usageChargeInstance.setPrepaid(false);
+			log.debug("add postpaid walletInstance");
 			usageChargeInstance.getWalletInstances()
 					.add(serviceInstance.getSubscription().getUserAccount().getWallet());
 		}

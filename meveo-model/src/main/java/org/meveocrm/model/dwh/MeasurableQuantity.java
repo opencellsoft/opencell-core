@@ -1,11 +1,15 @@
 package org.meveocrm.model.dwh;
 
+import java.util.Date;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.persistence.UniqueConstraint;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -49,6 +53,10 @@ public class MeasurableQuantity extends BusinessEntity {
 	@Enumerated(EnumType.STRING)
 	@Column(name = "MEASUREMENT_PERIOD")
 	private MeasurementPeriodEnum measurementPeriod;
+	
+	@Column(name = "LAST_MEASURE_DATE")
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date lastMeasureDate;
 
 	public String getTheme() {
 		return theme;
@@ -113,4 +121,13 @@ public class MeasurableQuantity extends BusinessEntity {
 	public void setMeasurementPeriod(MeasurementPeriodEnum measurementPeriod) {
 		this.measurementPeriod = measurementPeriod;
 	}
+
+	public Date getLastMeasureDate() {
+		return lastMeasureDate;
+	}
+
+	public void setLastMeasureDate(Date lastMeasureDate) {
+		this.lastMeasureDate = lastMeasureDate;
+	}
+	
 }

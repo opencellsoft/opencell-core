@@ -8,6 +8,7 @@ import javax.inject.Inject;
 
 import org.meveo.api.dto.CalendarDto;
 import org.meveo.api.dto.DayInYearDto;
+import org.meveo.api.dto.HourInDayDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
@@ -15,13 +16,16 @@ import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.User;
 import org.meveo.model.catalog.Calendar;
-import org.meveo.model.catalog.CalendarTypeEnum;
+import org.meveo.model.catalog.CalendarDaily;
+import org.meveo.model.catalog.CalendarPeriod;
 import org.meveo.model.catalog.CalendarYearly;
 import org.meveo.model.catalog.DayInYear;
+import org.meveo.model.catalog.HourInDay;
 import org.meveo.model.catalog.MonthEnum;
 import org.meveo.model.crm.Provider;
 import org.meveo.service.catalog.impl.CalendarService;
 import org.meveo.service.catalog.impl.DayInYearService;
+import org.meveo.service.catalog.impl.HourInDayService;
 import org.slf4j.Logger;
 
 /**
@@ -30,140 +34,185 @@ import org.slf4j.Logger;
 @Stateless
 public class CalendarApi extends BaseApi {
 
-	@Inject
-	private Logger log;
+    @Inject
+    private Logger log;
 
-	@Inject
-	private CalendarService calendarService;
+    @Inject
+    private CalendarService calendarService;
 
-	@Inject
-	private DayInYearService dayInYearService;
+    @Inject
+    private DayInYearService dayInYearService;
 
-	public void create(CalendarDto postData, User currentUser) throws MeveoApiException {
-		if (!StringUtils.isBlank(postData.getName()) && !StringUtils.isBlank(postData.getType())) {
-			Provider provider = currentUser.getProvider();
+    @Inject
+    private HourInDayService hourInDayService;
 
-			if (calendarService.findByName(postData.getName(), provider) != null) {
-				throw new EntityAlreadyExistsException(CalendarYearly.class, postData.getName());
-			}
+    public void create(CalendarDto postData, User currentUser) throws MeveoApiException {
+        if (!StringUtils.isBlank(postData.getName()) && !StringUtils.isBlank(postData.getCalendarType())) {
+            Provider provider = currentUser.getProvider();
 
-			CalendarYearly calendar = new CalendarYearly();
-			calendar.setName(postData.getName());
-			calendar.setDescription(postData.getDescription());
-			try {
-				calendar.setType(CalendarTypeEnum.valueOf(postData.getType()));
-			} catch (IllegalArgumentException e) {
-				log.error("type{}", e.getMessage());
-			}
-			if (postData.getDays() != null && postData.getDays().size() > 0) {
-				List<DayInYear> days = new ArrayList<DayInYear>();
-				for (DayInYearDto d : postData.getDays()) {
-					try {
-						DayInYear dayInYear = dayInYearService.findByMonthAndDay(MonthEnum.valueOf(d.getMonth()),
-								d.getDay());
-						if (dayInYear != null) {
-							days.add(dayInYear);
-						}
-					} catch (IllegalArgumentException e) {
-						log.warn("month={}", e.getMessage());
-					}
-				}
+            if (calendarService.findByName(postData.getName(), provider) != null) {
+                throw new EntityAlreadyExistsException(Calendar.class, postData.getName());
+            }
 
-				calendar.setDays(days);
-			}
+            if ("YEARLY".equalsIgnoreCase(postData.getCalendarType())) {
 
-			calendarService.create(calendar, currentUser, provider);
-		} else {
-			if (StringUtils.isBlank(postData.getName())) {
-				missingParameters.add("name");
-			}
-			if (StringUtils.isBlank(postData.getType())) {
-				missingParameters.add("type");
-			}
-		}
-	}
+                CalendarYearly calendar = new CalendarYearly();
+                calendar.setName(postData.getName());
+                calendar.setDescription(postData.getDescription());
+                if (postData.getDays() != null && postData.getDays().size() > 0) {
+                    List<DayInYear> days = new ArrayList<DayInYear>();
+                    for (DayInYearDto d : postData.getDays()) {
+                        try {
+                            DayInYear dayInYear = dayInYearService.findByMonthAndDay(MonthEnum.valueOf(d.getMonth()), d.getDay());
+                            if (dayInYear != null) {
+                                days.add(dayInYear);
+                            }
+                        } catch (IllegalArgumentException e) {
+                            log.warn("month={}", e.getMessage());
+                        }
+                    }
 
-	public void update(CalendarDto postData, User currentUser) throws MeveoApiException {
-		if (!StringUtils.isBlank(postData.getName()) && !StringUtils.isBlank(postData.getType())) {
-			Provider provider = currentUser.getProvider();
+                    calendar.setDays(days);
+                }
 
-			Calendar calendar = calendarService.findByName(postData.getName(), provider);
-			if (calendar == null) {
-				throw new EntityDoesNotExistsException(CalendarYearly.class, postData.getName());
-			}
+                calendarService.create(calendar, currentUser, provider);
 
-			calendar.setDescription(postData.getDescription());
-			try {
-				calendar.setType(CalendarTypeEnum.valueOf(postData.getType()));
-			} catch (IllegalArgumentException e) {
-				log.error("type{}", e.getMessage());
-			}
-			if (calendar instanceof CalendarYearly) {
-				if (postData.getDays() != null && postData.getDays().size() > 0) {
-					List<DayInYear> days = new ArrayList<DayInYear>();
-					for (DayInYearDto d : postData.getDays()) {
-						try {
-							DayInYear dayInYear = dayInYearService.findByMonthAndDay(MonthEnum.valueOf(d.getMonth()),
-									d.getDay());
-							if (dayInYear != null) {
-								days.add(dayInYear);
-							}
-						} catch (IllegalArgumentException e) {
-							log.warn("month={}", e.getMessage());
-						}
-					}
+            } else if ("DAILY".equalsIgnoreCase(postData.getCalendarType())) {
 
-					((CalendarYearly) calendar).setDays(days);
-				}
-			}
+                CalendarDaily calendar = new CalendarDaily();
+                calendar.setName(postData.getName());
+                calendar.setDescription(postData.getDescription());
 
-			calendarService.create(calendar, currentUser, provider);
-		} else {
-			if (StringUtils.isBlank(postData.getName())) {
-				missingParameters.add("name");
-			}
-			if (StringUtils.isBlank(postData.getType())) {
-				missingParameters.add("type");
-			}
-		}
-	}
+                if (postData.getHours() != null && postData.getHours().size() > 0) {
+                    List<HourInDay> hours = new ArrayList<HourInDay>();
+                    for (HourInDayDto d : postData.getHours()) {
+                        HourInDay hourInDay = hourInDayService.findByHourAndMin(d.getHour(), d.getMin());
+                        if (hourInDay != null) {
+                            hours.add(hourInDay);
+                        }
+                    }
 
-	public CalendarDto find(String calendarCode, Provider provider) throws MeveoApiException {
-		CalendarDto result = new CalendarDto();
+                    calendar.setHours(hours);
+                }
 
-		if (!StringUtils.isBlank(calendarCode)) {
-			Calendar calendar = calendarService.findByName(calendarCode, provider);
-			if (calendar == null) {
-				throw new EntityDoesNotExistsException(Calendar.class, calendarCode);
-			}
+                calendarService.create(calendar, currentUser, provider);
 
-			result = new CalendarDto(calendar);
-		} else {
-			if (StringUtils.isBlank(calendarCode)) {
-				missingParameters.add("calendarCode");
-			}
+            } else if ("PERIOD".equalsIgnoreCase(postData.getCalendarType())) {
 
-			throw new MissingParameterException(getMissingParametersExceptionMessage());
-		}
+                CalendarPeriod calendar = new CalendarPeriod();
+                calendar.setName(postData.getName());
+                calendar.setDescription(postData.getDescription());
+                calendar.setPeriodLength(postData.getPeriodLength());
+                calendar.setNbPeriods(postData.getNbPeriods());
 
-		return result;
-	}
+                calendarService.create(calendar, currentUser, provider);
+            }
 
-	public void remove(String calendarCode, Provider provider) throws MeveoApiException {
-		if (!StringUtils.isBlank(calendarCode)) {
-			Calendar calendar = calendarService.findByName(calendarCode, provider);
-			if (calendar == null) {
-				throw new EntityDoesNotExistsException(Calendar.class, calendarCode);
-			}
+        } else {
+            if (StringUtils.isBlank(postData.getName())) {
+                missingParameters.add("name");
+            }
+            if (StringUtils.isBlank(postData.getCalendarType())) {
+                missingParameters.add("calendarType");
+            }
+        }
+    }
 
-			calendarService.remove(calendar);
-		} else {
-			if (StringUtils.isBlank(calendarCode)) {
-				missingParameters.add("calendarCode");
-			}
+    public void update(CalendarDto postData, User currentUser) throws MeveoApiException {
+        if (!StringUtils.isBlank(postData.getName()) && !StringUtils.isBlank(postData.getCalendarType())) {
+            Provider provider = currentUser.getProvider();
 
-			throw new MissingParameterException(getMissingParametersExceptionMessage());
-		}
-	}
+            Calendar calendar = calendarService.findByName(postData.getName(), provider);
+            if (calendar == null) {
+                throw new EntityDoesNotExistsException(Calendar.class, postData.getName());
+            }
+
+            calendar.setDescription(postData.getDescription());
+
+            if (calendar instanceof CalendarYearly) {
+                if (postData.getDays() != null && postData.getDays().size() > 0) {
+                    List<DayInYear> days = new ArrayList<DayInYear>();
+                    for (DayInYearDto d : postData.getDays()) {
+                        try {
+                            DayInYear dayInYear = dayInYearService.findByMonthAndDay(MonthEnum.valueOf(d.getMonth()), d.getDay());
+                            if (dayInYear != null) {
+                                days.add(dayInYear);
+                            }
+                        } catch (IllegalArgumentException e) {
+                            log.warn("month={}", e.getMessage());
+                        }
+                    }
+
+                    ((CalendarYearly) calendar).setDays(days);
+                }
+
+            } else if (calendar instanceof CalendarYearly) {
+                if (postData.getHours() != null && postData.getHours().size() > 0) {
+                    List<HourInDay> hours = new ArrayList<HourInDay>();
+                    for (HourInDayDto d : postData.getHours()) {
+                        HourInDay hourInDay = hourInDayService.findByHourAndMin(d.getHour(), d.getMin());
+                        if (hourInDay != null) {
+                            hours.add(hourInDay);
+                        }
+                    }
+
+                    ((CalendarDaily) calendar).setHours(hours);
+                }
+
+            } else if (calendar instanceof CalendarPeriod) {
+
+                ((CalendarPeriod) calendar).setPeriodLength(postData.getPeriodLength());
+                ((CalendarPeriod) calendar).setNbPeriods(postData.getNbPeriods());
+            }
+
+            calendarService.create(calendar, currentUser, provider);
+
+        } else {
+            if (StringUtils.isBlank(postData.getName())) {
+                missingParameters.add("name");
+            }
+            if (StringUtils.isBlank(postData.getCalendarType())) {
+                missingParameters.add("calendarType");
+            }
+        }
+    }
+
+    public CalendarDto find(String calendarCode, Provider provider) throws MeveoApiException {
+        CalendarDto result = new CalendarDto();
+
+        if (!StringUtils.isBlank(calendarCode)) {
+            Calendar calendar = calendarService.findByName(calendarCode, provider);
+            if (calendar == null) {
+                throw new EntityDoesNotExistsException(Calendar.class, calendarCode);
+            }
+
+            result = new CalendarDto(calendar);
+        } else {
+            if (StringUtils.isBlank(calendarCode)) {
+                missingParameters.add("calendarCode");
+            }
+
+            throw new MissingParameterException(getMissingParametersExceptionMessage());
+        }
+
+        return result;
+    }
+
+    public void remove(String calendarCode, Provider provider) throws MeveoApiException {
+        if (!StringUtils.isBlank(calendarCode)) {
+            Calendar calendar = calendarService.findByName(calendarCode, provider);
+            if (calendar == null) {
+                throw new EntityDoesNotExistsException(Calendar.class, calendarCode);
+            }
+
+            calendarService.remove(calendar);
+        } else {
+            if (StringUtils.isBlank(calendarCode)) {
+                missingParameters.add("calendarCode");
+            }
+
+            throw new MissingParameterException(getMissingParametersExceptionMessage());
+        }
+    }
 
 }

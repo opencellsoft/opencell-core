@@ -30,6 +30,7 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.admin.User;
+import org.meveo.model.billing.BillingWalletTypeEnum;
 import org.meveo.model.billing.ChargeInstance;
 import org.meveo.model.billing.InstanceStatusEnum;
 import org.meveo.model.billing.RecurringChargeInstance;
@@ -113,6 +114,7 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
 		recurringChargeInstance.setCurrency(subscription.getUserAccount().getBillingAccount().getCustomerAccount()
 				.getTradingCurrency());
 		// TODO : should choose wallet from GUI
+		recurringChargeInstance.setPrepaid(false);
 		recurringChargeInstance.getWalletInstances().add(subscription.getUserAccount().getWallet());
 
 		create(recurringChargeInstance, creator, chargetemplate.getProvider());
@@ -185,11 +187,15 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
 			for (WalletTemplate walletTemplate : walletTemplates) {
 				if (walletTemplate == null)
 					continue;
+				if(walletTemplate.getWalletType()==BillingWalletTypeEnum.PREPAID){
+					chargeInstance.setPrepaid(true);
+				}
 				chargeInstance.getWalletInstances().add(
 						walletService.getWalletInstance(serviceInst.getSubscription().getUserAccount(), walletTemplate,
 								serviceInst.getAuditable().getCreator(), serviceInst.getProvider()));
 			}
 		} else {
+			chargeInstance.setPrepaid(false);
 			chargeInstance.getWalletInstances().add(serviceInst.getSubscription().getUserAccount().getWallet());
 		}
 
@@ -240,11 +246,15 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
 		List<WalletTemplate> walletTemplates = recChTmplServ.getWalletTemplates();
 		if (walletTemplates != null && walletTemplates.size() > 0) {
 			for (WalletTemplate walletTemplate : walletTemplates) {
+				if(walletTemplate.getWalletType()==BillingWalletTypeEnum.PREPAID){
+					chargeInstance.setPrepaid(true);
+				}
 				chargeInstance.getWalletInstances().add(
 						walletService.getWalletInstance(serviceInst.getSubscription().getUserAccount(), walletTemplate,
 								serviceInst.getAuditable().getCreator(), serviceInst.getProvider()));
 			}
 		} else {
+			chargeInstance.setPrepaid(false);
 			chargeInstance.getWalletInstances().add(serviceInst.getSubscription().getUserAccount().getWallet());
 		}
 		create(chargeInstance, creator, recurringChargeTemplate.getProvider());

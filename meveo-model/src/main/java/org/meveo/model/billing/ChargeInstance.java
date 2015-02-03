@@ -118,6 +118,10 @@ public class ChargeInstance extends BusinessEntity {
 	@JoinTable(name = "BILLING_CHRGINST_WALLET", joinColumns = @JoinColumn(name = "CHRG_INSTANCE_ID"), inverseJoinColumns = @JoinColumn(name = "WALLET_INSTANCE_ID"))
 	@OrderColumn(name = "INDX")
 	private List<WalletInstance> walletInstances = new ArrayList<WalletInstance>();
+	
+
+	@Column(name = "IS_PREPAID", length = 1)
+	protected boolean prepaid;
 
 	public String getCriteria1() {
 		return criteria1;
@@ -256,6 +260,14 @@ public class ChargeInstance extends BusinessEntity {
 
 	public void setWalletInstances(List<WalletInstance> walletInstances) {
 		this.walletInstances = walletInstances;
+	}
+
+	public boolean isPrepaid() {
+		return prepaid;
+	}
+
+	public void setPrepaid(boolean prepaid) {
+		this.prepaid = prepaid;
 	}
 
 }

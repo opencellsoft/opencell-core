@@ -65,6 +65,7 @@ public class ReservationService extends PersistenceService<Reservation> {
 	@Inject
 	private WalletService walletService;
 
+	//FIXME: rethink this service in term of prepaid wallets
 	public Long createReservation(Provider provider, String sellerCode, String offerCode, String userAccountCode,
 			Date subscriptionDate, Date expiryDate, BigDecimal creditLimit, String param1, String param2,
 			String param3, boolean amountWithTax) throws BusinessException {

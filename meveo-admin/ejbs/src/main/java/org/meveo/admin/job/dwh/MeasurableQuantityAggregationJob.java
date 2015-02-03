@@ -104,6 +104,7 @@ public class MeasurableQuantityAggregationJob implements Job {
 		log.info("executing MeasurableQuantityAggregation");
 		JobExecutionResultImpl result = new JobExecutionResultImpl();
 		result.setProvider(currentUser.getProvider());
+		mqService.setProvider(currentUser.getProvider());
 
 		String report = "";
 		if (parameter != null) {

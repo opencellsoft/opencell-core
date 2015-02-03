@@ -236,12 +236,7 @@ public class RatingService {
 		result.setOfferCode(offerCode);
 		result.setStatus(WalletOperationStatusEnum.OPEN);
 		result.setSeller(chargeInstance.getSeller());
-		// we prerate using the first wallet
-		if (chargeInstance.getWalletInstances().size() > 0) {
-			result.setWallet(chargeInstance.getWalletInstances().get(0));
-		} else {
-			result.setWallet(chargeInstance.getSubscription().getUserAccount().getWallet());
-		}
+		result.setWallet(chargeInstance.getSubscription().getUserAccount().getWallet());
 
 		BigDecimal unitPriceWithoutTax = amountWithoutTax;
 		BigDecimal unitPriceWithTax = null;

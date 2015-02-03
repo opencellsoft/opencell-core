@@ -21,8 +21,6 @@ import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.SequenceGenerator;
@@ -33,96 +31,91 @@ import javax.validation.constraints.Size;
 import org.meveo.model.AuditableEntity;
 
 @Entity
-@Table(name = "CAT_CALENDAR", uniqueConstraints = @UniqueConstraint(columnNames = { "NAME",
-		"PROVIDER_ID" }))
-@Inheritance(strategy=InheritanceType.SINGLE_TABLE)
-@DiscriminatorColumn(name="CAL_TYPE")
+@Table(name = "CAT_CALENDAR", uniqueConstraints = @UniqueConstraint(columnNames = { "NAME", "PROVIDER_ID" }))
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name = "CAL_TYPE")
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "CAT_CALENDAR_SEQ")
 public abstract class Calendar extends AuditableEntity {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	@Column(name = "NAME", length = 20)
-	@Size(max = 20)
-	private String name;
+    @Column(name = "NAME", length = 20)
+    @Size(max = 20)
+    private String name;
 
-	@Column(name = "DESCRIPTION")
-	private String description;
+    @Column(name = "DESCRIPTION")
+    private String description;
 
-	@Enumerated(EnumType.STRING)
-	@Column(name = "CALENDAR_TYPE", length = 20)
-	private CalendarTypeEnum type;
+    @Column(name = "CAL_TYPE", insertable = false, updatable = false)
+    private String calendarType;
 
-	public String getName() {
-		return name;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	public CalendarTypeEnum getType() {
-		return type;
-	}
+    /**
+     * @param date Current date.
+     * @return Next calendar date.
+     */
+    public abstract Date nextCalendarDate(Date date);
 
-	public void setType(CalendarTypeEnum type) {
-		this.type = type;
-	}
+    /**
+     * @param date Current date.
+     * @return Next calendar date.
+     */
+    public abstract Date previousCalendarDate(Date date);
 
-	/**
-	 * @param date
-	 *            Current date.
-	 * @return Next calendar date.
-	 */
-	public abstract Date nextCalendarDate(Date date);
-	
-	/**
-	 * @param date
-	 *            Current date.
-	 * @return Next calendar date.
-	 */
-	public abstract Date previousCalendarDate(Date date);
+    /**
+     * 
+     * @return true if the dates used in meveo should have time set to 00:00:00 with this calendar
+     */
+    public boolean truncDateTime() {
+        return true;
+    }
 
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = super.hashCode();
+        result = prime * result + ((name == null) ? 0 : name.hashCode());
+        return result;
+    }
 
-	/**
-	 * 
-	 * @return true if the dates used in meveo should have time set to 00:00:00 with this calendar
-	 */
-	public abstract boolean truncDateTime();
-	
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = super.hashCode();
-		result = prime * result + ((name == null) ? 0 : name.hashCode());
-		return result;
-	}
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null)
+            return false;
+        if (this == obj)
+            return true;
 
-	@Override
-	public boolean equals(Object obj) {
-		if (obj == null)
-			return false;
-		if (this == obj)
-			return true;
+        Calendar other = (Calendar) obj;
+        if (other.getId() == getId())
+            return true;
+        if (name == null) {
+            if (other.name != null)
+                return false;
+        } else if (!name.equals(other.name))
+            return false;
+        return true;
+    }
 
-		Calendar other = (Calendar) obj;
-		if (other.getId() == getId())
-			return true;
-		if (name == null) {
-			if (other.name != null)
-				return false;
-		} else if (!name.equals(other.name))
-			return false;
-		return true;
-	}
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
-	public void setDescription(String description) {
-		this.description = description;
-	}
+    public String getDescription() {
+        return description;
+    }
 
-	public String getDescription() {
-		return description;
-	}
+    public void setCalendarType(String calendarType) {
+        this.calendarType = calendarType;
+    }
 
-
+    public String getCalendarType() {
+        return calendarType;
+    }
 }
