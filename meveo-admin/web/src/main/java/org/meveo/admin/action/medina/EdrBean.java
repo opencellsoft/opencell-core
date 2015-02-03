@@ -1,8 +1,10 @@
 package org.meveo.admin.action.medina;
 
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.enterprise.context.ConversationScoped;
 import javax.inject.Inject;
@@ -10,7 +12,6 @@ import javax.inject.Named;
 
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.StatelessBaseBean;
-import org.meveo.model.billing.Subscription;
 import org.meveo.model.rating.EDR;
 import org.meveo.model.rating.EDRStatusEnum;
 import org.meveo.service.base.local.IPersistenceService;
@@ -50,15 +51,18 @@ public class EdrBean extends StatelessBaseBean<EDR> {
 	}
 
 	public void massUpdate() {
-		Subscription subscriptionFilter = null;
-		if (filters.containsKey("subscription")) {
-			subscriptionFilter = (Subscription) filters.get("subscription");
+		if (getSelectedEntities() != null) {
+			log.debug("updating {} edrs", getSelectedEntities().size());
+
+			Set<Long> selectedIds = new HashSet<Long>();
+			for (EDR edr : getSelectedEntities()) {
+				selectedIds.add(edr.getId());
+			}
+
+			edrService.massUpdate(EDRStatusEnum.OPEN, selectedIds, currentProvider);
+
+			messages.info(new BundleKey("messages", "update.successful"));
 		}
-
-		edrService.massUpdate(EDRStatusEnum.OPEN, subscriptionFilter,
-				getCurrentProvider());
-
-		messages.info(new BundleKey("messages", "update.successful"));
 	}
 
 	@Override

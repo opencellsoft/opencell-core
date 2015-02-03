@@ -44,7 +44,7 @@
 				popupId="searchEdrPopup" />
 		</hf:searchPanel>
 
-		<hftl:dataList checkMany="false" noClose="false"
+		<hftl:dataList checkMany="true" noClose="false"
 			backingBean="#{edrBean}">
 
 			<hftl:column label="#{messages['BusinessEntity.code']}"
@@ -84,9 +84,9 @@
 		</p:panel>
 
 		<p:confirmDialog global="true" showEffect="fade" hideEffect="explode">
-			<p:commandButton value="Yes" type="button"
+			<p:commandButton value="#{messages['commons.yes']}" type="button"
 				styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
-			<p:commandButton value="No" type="button"
+			<p:commandButton value="#{messages['commons.no']}" type="button"
 				styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
 		</p:confirmDialog>
 
