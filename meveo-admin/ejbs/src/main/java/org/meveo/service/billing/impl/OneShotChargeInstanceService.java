@@ -29,10 +29,12 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.admin.User;
+import org.meveo.model.billing.BillingWalletTypeEnum;
 import org.meveo.model.billing.InstanceStatusEnum;
 import org.meveo.model.billing.OneShotChargeInstance;
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.Subscription;
+import org.meveo.model.billing.WalletInstance;
 import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.OneShotChargeTemplateTypeEnum;
 import org.meveo.model.catalog.ServiceChargeTemplateSubscription;
@@ -109,12 +111,16 @@ public class OneShotChargeInstanceService extends BusinessService<OneShotChargeI
 		}
 		if (walletTemplates != null && walletTemplates.size() > 0) {
 			for (WalletTemplate walletTemplate : walletTemplates) {
+				if(walletTemplate.getWalletType()==BillingWalletTypeEnum.PREPAID){
+					oneShotChargeInstance.setPrepaid(true);
+				}
 				oneShotChargeInstance.getWalletInstances().add(
 						walletService.getWalletInstance(serviceInstance.getSubscription().getUserAccount(),
 								walletTemplate, serviceInstance.getAuditable().getCreator(),
 								serviceInstance.getProvider()));
 			}
 		} else {
+			oneShotChargeInstance.setPrepaid(false);
 			oneShotChargeInstance.getWalletInstances().add(
 					serviceInstance.getSubscription().getUserAccount().getWallet());
 		}
@@ -156,10 +162,14 @@ public class OneShotChargeInstanceService extends BusinessService<OneShotChargeI
 		oneShotChargeInstance.setCriteria2(criteria2);
 		oneShotChargeInstance.setCriteria3(criteria3);
 		if (walletCode == null) {
+			oneShotChargeInstance.setPrepaid(false);
 			oneShotChargeInstance.getWalletInstances().add(subscription.getUserAccount().getWallet());
 		} else {
-			oneShotChargeInstance.getWalletInstances().add(subscription.getUserAccount().getWalletInstance(walletCode));
-
+			WalletInstance wallet = subscription.getUserAccount().getWalletInstance(walletCode);
+			oneShotChargeInstance.getWalletInstances().add(wallet);
+			if(wallet.getWalletTemplate().getWalletType()==BillingWalletTypeEnum.PREPAID){
+				oneShotChargeInstance.setPrepaid(true);
+			}
 		}
 
 		create(oneShotChargeInstance, creator, chargetemplate.getProvider());

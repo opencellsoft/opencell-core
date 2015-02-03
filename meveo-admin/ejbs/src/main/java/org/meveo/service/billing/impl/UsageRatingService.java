@@ -41,7 +41,6 @@ import org.meveo.model.cache.TriggeredEDRCache;
 import org.meveo.model.cache.UsageChargeInstanceCache;
 import org.meveo.model.cache.UsageChargeTemplateCache;
 import org.meveo.model.catalog.ChargeTemplate;
-import org.meveo.model.catalog.CounterTypeEnum;
 import org.meveo.model.catalog.TriggeredEDRTemplate;
 import org.meveo.model.catalog.UsageChargeTemplate;
 import org.meveo.model.crm.Provider;
@@ -437,7 +436,7 @@ public class UsageRatingService {
 		walletOperation.setSeller(edr.getSubscription().getUserAccount()
 				.getBillingAccount().getCustomerAccount().getCustomer()
 				.getSeller());
-		// FIXME: get the wallet from the ServiceUsageChargeTemplate
+		//we set here the wallet to the pricipal wallet but it will later be overriden by charging algo
 		walletOperation.setWallet(edr.getSubscription().getUserAccount()
 				.getWallet());
 		walletOperation.setCode(chargeInstance.getCode());
@@ -599,8 +598,8 @@ public class UsageRatingService {
 				walletOperation.setQuantity(deducedQuantity);
 			}
 
-			walletOperationService.create(walletOperation, currentUser,
-					provider);
+			walletOperationService.chargeWalletOpertation(walletOperation, currentUser, provider);
+			//walletOperationService.create(walletOperation, currentUser, provider);
 
 			// handle associated edr creation
 			if (charge.getTemplateCache().getEdrTemplates().size() > 0) {

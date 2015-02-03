@@ -32,6 +32,7 @@ import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.BillingAccount;
+import org.meveo.model.billing.BillingWalletTypeEnum;
 import org.meveo.model.billing.InstanceStatusEnum;
 import org.meveo.model.billing.OneShotChargeInstance;
 import org.meveo.model.billing.RatedTransaction;
@@ -150,13 +151,6 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 					serviceInstance, serviceChargeTemplate.getChargeTemplate(), serviceInstance.getSubscriptionDate(),
 					seller, creator);
 			serviceInstance.getRecurringChargeInstances().add(chargeInstance);
-			if (serviceChargeTemplate.getWalletTemplates().size() != 0) {
-				for (WalletTemplate walletTemplate : serviceChargeTemplate.getWalletTemplates()) {
-					WalletInstance walletInstance = walletService.getWalletInstance(userAccount, walletTemplate,
-							creator, subscription.getProvider());
-					chargeInstance.getWalletInstances().add(walletInstance);
-				}
-			}
 		}
 
 		for (ServiceChargeTemplate<OneShotChargeTemplate> serviceChargeTemplate : serviceTemplate
@@ -165,29 +159,14 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 					serviceInstance.getSubscription(), serviceInstance, serviceChargeTemplate.getChargeTemplate(),
 					serviceInstance.getSubscriptionDate(), subscriptionAmount, null, 1, seller, creator, true);
 			serviceInstance.getSubscriptionChargeInstances().add(chargeInstance);
-			if (serviceChargeTemplate.getWalletTemplates().size() != 0) {
-				for (WalletTemplate walletTemplate : serviceChargeTemplate.getWalletTemplates()) {
-					WalletInstance walletInstance = walletService.getWalletInstance(userAccount, walletTemplate,
-							creator, subscription.getProvider());
-					chargeInstance.getWalletInstances().add(walletInstance);
-				}
-			}
 		}
 
 		for (ServiceChargeTemplate<OneShotChargeTemplate> serviceChargeTemplate : serviceTemplate
 				.getServiceTerminationCharges()) {
-
 			OneShotChargeInstance chargeInstance = oneShotChargeInstanceService.oneShotChargeInstanciation(
 					serviceInstance.getSubscription(), serviceInstance, serviceChargeTemplate.getChargeTemplate(),
 					serviceInstance.getSubscriptionDate(), terminationAmount, null, 1, seller, creator, false);
 			serviceInstance.getTerminationChargeInstances().add(chargeInstance);
-			if (serviceChargeTemplate.getWalletTemplates().size() != 0) {
-				for (WalletTemplate walletTemplate : serviceChargeTemplate.getWalletTemplates()) {
-					WalletInstance walletInstance = walletService.getWalletInstance(userAccount, walletTemplate,
-							creator, subscription.getProvider());
-					chargeInstance.getWalletInstances().add(walletInstance);
-				}
-			}
 		}
 
 		for (ServiceChargeTemplateUsage serviceUsageChargeTemplate : serviceTemplate.getServiceUsageCharges()) {
@@ -195,13 +174,6 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 					serviceInstance.getSubscription(), serviceInstance, serviceUsageChargeTemplate,
 					serviceInstance.getSubscriptionDate(), seller, creator);
 			serviceInstance.getUsageChargeInstances().add(chargeInstance);
-			if (serviceUsageChargeTemplate.getWalletTemplates().size() != 0) {
-				for (WalletTemplate walletTemplate : serviceUsageChargeTemplate.getWalletTemplates()) {
-					WalletInstance walletInstance = walletService.getWalletInstance(userAccount, walletTemplate,
-							creator, subscription.getProvider());
-					chargeInstance.getWalletInstances().add(walletInstance);
-				}
-			}
 		}
 
 	}

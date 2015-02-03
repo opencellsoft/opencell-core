@@ -31,10 +31,13 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 import javax.validation.constraints.Size;
 
 import org.meveo.model.BusinessEntity;
@@ -47,6 +50,15 @@ import org.meveo.model.admin.Seller;
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "OPERATION_TYPE", discriminatorType = DiscriminatorType.STRING)
 @DiscriminatorValue("W")
+@NamedQueries({
+	@NamedQuery(name = "WalletOperation.getBalance", 
+			query = "SELECT sum(o.amountWithTax)*-1 FROM WalletOperation o WHERE o.wallet.id=:walletId and "
+					+ "o.status=org.meveo.model.billing.WalletOperationStatusEnum.OPEN"),
+	@NamedQuery(name = "WalletOperation.getReservedBalance", 
+			query = "SELECT sum(o.amountWithTax)*-1 FROM WalletOperation o WHERE o.wallet.id=:walletId and "
+					+ "(o.status=org.meveo.model.billing.WalletOperationStatusEnum.OPEN or "
+					+ "o.status=org.meveo.model.billing.WalletOperationStatusEnum.RESERVED) ")
+})
 public class WalletOperation extends BusinessEntity {
 
 	private static final long serialVersionUID = 1L;
@@ -360,6 +372,38 @@ public class WalletOperation extends BusinessEntity {
 				+ "," + unitAmountWithoutTax + "," + unitAmountWithTax + "," + unitAmountTax + "," + counter + ","
 				+ parameter1 + "," + parameter2 + "," + parameter3 + "," + startDate + "," + endDate + ","
 				+ subscriptionDate + "," + offerCode + "," + status + "," + seller;
+	}
+
+	@Transient
+	public WalletOperation getUnratedClone() {
+		WalletOperation result = new WalletOperation();
+		result.setActive(true);
+		result.setAggregatedServiceInstance(aggregatedServiceInstance);
+		result.setAuditable(getAuditable());
+		result.setChargeInstance(chargeInstance);
+		result.setCode(code);
+		result.setCounter(counter);
+		result.setCurrency(currency);
+		result.setDescription(description);
+		result.setDisabled(false);
+		result.setEndDate(endDate);
+		result.setOfferCode(offerCode);
+		result.setOperationDate(operationDate);
+		result.setParameter1(parameter1);
+		result.setParameter2(parameter2);
+		result.setParameter3(parameter3);
+		result.setProvider(getProvider());
+		result.setSeller(seller);
+		result.setStartDate(startDate);
+		result.setStatus(WalletOperationStatusEnum.OPEN);
+		result.setSubscriptionDate(subscriptionDate);
+		result.setTaxPercent(taxPercent);
+		result.setType(type);
+		result.setUnitAmountTax(unitAmountTax);
+		result.setUnitAmountWithoutTax(unitAmountWithoutTax);
+		result.setUnitAmountWithTax(unitAmountWithTax);
+		result.setUnityDescription(unityDescription);
+		return result;
 	}
 
 }

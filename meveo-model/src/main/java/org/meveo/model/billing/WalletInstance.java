@@ -27,6 +27,8 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
@@ -39,6 +41,11 @@ import org.meveo.model.catalog.WalletTemplate;
 @Entity
 @Table(name = "BILLING_WALLET")
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_WALLET_SEQ")
+@NamedQueries({
+	@NamedQuery(name = "WalletInstance.listPrepaidActiiveWalletIds", 
+			query = "SELECT c.id FROM WalletInstance c where c.walletTemplate.walletType=org.meveo.model.billing.BillingWalletTypeEnum.PREPAID and "
+					+ "c.userAccount.status=org.meveo.model.billing.AccountStatusEnum.ACTIVE"),
+})
 public class WalletInstance extends BusinessEntity {
 
 	private static final long serialVersionUID = 1L;
