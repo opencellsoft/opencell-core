@@ -164,7 +164,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 	}
 
 	public void updateBalanceCache(@Observes @Created WalletInstance wallet) {
-		if (wallet.getWalletTemplate().getWalletType() == BillingWalletTypeEnum.PREPAID) {
+		if (wallet.getWalletTemplate()!=null && wallet.getWalletTemplate().getWalletType() == BillingWalletTypeEnum.PREPAID) {
 			fillBalanceCaches(wallet.getId());
 		}
 	}
