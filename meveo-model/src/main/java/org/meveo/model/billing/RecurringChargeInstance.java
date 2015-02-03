@@ -88,9 +88,9 @@ public class RecurringChargeInstance extends ChargeInstance {
 
 	public void setServiceInstance(ServiceInstance serviceInstance) {
 		this.serviceInstance = serviceInstance;
-		if (serviceInstance != null) {
-			serviceInstance.getRecurringChargeInstances().add(this);
-		}
+		//if (serviceInstance != null && !serviceInstance.getRecurringChargeInstances().contains(this)) {
+		//	serviceInstance.getRecurringChargeInstances().add(this);
+		//}
 	}
 
 	public Date getSubscriptionDate() {

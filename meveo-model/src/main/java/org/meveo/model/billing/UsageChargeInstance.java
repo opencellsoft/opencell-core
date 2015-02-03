@@ -63,9 +63,9 @@ public class UsageChargeInstance extends ChargeInstance {
 
 	public void setServiceInstance(ServiceInstance serviceInstance) {
 		this.serviceInstance = serviceInstance;
-		if (serviceInstance != null) {
-			serviceInstance.getUsageChargeInstances().add(this);
-		}
+		//if (serviceInstance != null) {
+		//	serviceInstance.getUsageChargeInstances().add(this);
+		//}
 	}
 
 	public CounterInstance getCounter() {

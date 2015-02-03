@@ -70,9 +70,9 @@ public class OneShotChargeInstance extends ChargeInstance {
 
 	public void setSubscriptionServiceInstance(ServiceInstance subscriptionServiceInstance) {
 		this.subscriptionServiceInstance = subscriptionServiceInstance;
-		if (subscriptionServiceInstance != null) {
-			subscriptionServiceInstance.getSubscriptionChargeInstances().add(this);
-		}
+		//if (subscriptionServiceInstance != null) {
+		//	subscriptionServiceInstance.getSubscriptionChargeInstances().add(this);
+		//}
 	}
 
 	public ServiceInstance getTerminationServiceInstance() {
@@ -81,9 +81,9 @@ public class OneShotChargeInstance extends ChargeInstance {
 
 	public void setTerminationServiceInstance(ServiceInstance terminationServiceInstance) {
 		this.terminationServiceInstance = terminationServiceInstance;
-		if (terminationServiceInstance != null) {
-			terminationServiceInstance.getTerminationChargeInstances().add(this);
-		}
+		//if (terminationServiceInstance != null) {
+		//	terminationServiceInstance.getTerminationChargeInstances().add(this);
+		//}
 	}
 
 }
