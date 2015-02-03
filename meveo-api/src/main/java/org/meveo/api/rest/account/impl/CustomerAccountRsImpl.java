@@ -11,13 +11,14 @@ import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.account.CustomerAccountDto;
 import org.meveo.api.dto.response.account.GetCustomerAccountResponse;
+import org.meveo.api.dto.response.account.ListCustomerAccountResponse;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.LoggingInterceptor;
 import org.meveo.api.rest.account.CustomerAccountRs;
 import org.meveo.api.rest.impl.BaseRs;
 
 /**
- * @author R.AITYAAZZA
+ * @author Edward P. Legaspi
  * 
  */
 @RequestScoped
@@ -98,6 +99,25 @@ public class CustomerAccountRsImpl extends BaseRs implements CustomerAccountRs {
 			result.setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
+		}
+
+		return result;
+	}
+
+	@Override
+	public ListCustomerAccountResponse listByCustomer(String customerCode) {
+		ListCustomerAccountResponse result = new ListCustomerAccountResponse();
+
+		try {
+			result.setCustomerAccounts(customerAccountApi.listByCustomer(customerCode, getCurrentUser().getProvider()));
+		} catch (MeveoApiException e) {
+			result.getActionStatus().setErrorCode(e.getErrorCode());
+			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
+			result.getActionStatus().setMessage(e.getMessage());
+		} catch (Exception e) {
+			result.getActionStatus().setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
+			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
+			result.getActionStatus().setMessage(e.getMessage());
 		}
 
 		return result;

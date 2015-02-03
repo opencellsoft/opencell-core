@@ -27,7 +27,10 @@ import javax.persistence.Query;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.admin.Seller;
 import org.meveo.model.crm.Customer;
+import org.meveo.model.crm.CustomerBrand;
+import org.meveo.model.crm.CustomerCategory;
 import org.meveo.model.crm.Provider;
 import org.meveo.service.base.PersistenceService;
 
@@ -39,9 +42,7 @@ public class CustomerService extends PersistenceService<Customer> {
 
 	public Customer findByCode(String code, Provider provider) {
 		Query query = getEntityManager()
-				.createQuery(
-						"from " + Customer.class.getSimpleName()
-								+ " where code=:code and provider=:provider")
+				.createQuery("from " + Customer.class.getSimpleName() + " where code=:code and provider=:provider")
 				.setParameter("code", code).setParameter("provider", provider);
 		if (query.getResultList().size() == 0) {
 			return null;
@@ -62,14 +63,12 @@ public class CustomerService extends PersistenceService<Customer> {
 		}
 	}
 
-	public List<Customer> findByValues(Customer c,
-			PaginationConfiguration paginationConfiguration) {
+	public List<Customer> findByValues(Customer c, PaginationConfiguration paginationConfiguration) {
 		return findByValues(getEntityManager(), c, paginationConfiguration);
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<Customer> findByValues(EntityManager em, Customer c,
-			PaginationConfiguration paginationConfiguration) {
+	public List<Customer> findByValues(EntityManager em, Customer c, PaginationConfiguration paginationConfiguration) {
 		// TODO: edward move this method in PersistenceService, use reflection
 		// to determine the filters with fields that are set
 		List<Customer> result = new ArrayList<Customer>();
@@ -77,32 +76,25 @@ public class CustomerService extends PersistenceService<Customer> {
 
 		if (c.getAddress() != null) {
 			if (!StringUtils.isBlank(c.getAddress().getAddress1())) {
-				qb.addCriterion("c.address.address1", "=", c.getAddress()
-						.getAddress1(), true);
+				qb.addCriterion("c.address.address1", "=", c.getAddress().getAddress1(), true);
 			}
 			if (!StringUtils.isBlank(c.getAddress().getAddress2())) {
-				qb.addCriterion("c.address.address2", "=", c.getAddress()
-						.getAddress2(), true);
+				qb.addCriterion("c.address.address2", "=", c.getAddress().getAddress2(), true);
 			}
 			if (!StringUtils.isBlank(c.getAddress().getAddress3())) {
-				qb.addCriterion("c.address.address3", "=", c.getAddress()
-						.getAddress3(), true);
+				qb.addCriterion("c.address.address3", "=", c.getAddress().getAddress3(), true);
 			}
 			if (!StringUtils.isBlank(c.getAddress().getCity())) {
-				qb.addCriterion("c.address.city", "=",
-						c.getAddress().getCity(), true);
+				qb.addCriterion("c.address.city", "=", c.getAddress().getCity(), true);
 			}
 			if (!StringUtils.isBlank(c.getAddress().getCountry())) {
-				qb.addCriterion("c.address.country", "=", c.getAddress()
-						.getCountry(), true);
+				qb.addCriterion("c.address.country", "=", c.getAddress().getCountry(), true);
 			}
 			if (!StringUtils.isBlank(c.getAddress().getState())) {
-				qb.addCriterion("c.address.state", "=", c.getAddress()
-						.getState(), true);
+				qb.addCriterion("c.address.state", "=", c.getAddress().getState(), true);
 			}
 			if (!StringUtils.isBlank(c.getAddress().getZipCode())) {
-				qb.addCriterion("c.address.zipCode", "=", c.getAddress()
-						.getZipCode(), true);
+				qb.addCriterion("c.address.zipCode", "=", c.getAddress().getZipCode(), true);
 			}
 		}
 
@@ -110,10 +102,8 @@ public class CustomerService extends PersistenceService<Customer> {
 			qb.addCriterionEntity("c.seller", c.getSeller());
 		}
 
-		if (c.getCustomerCategory() != null
-				&& !StringUtils.isBlank(c.getCustomerCategory().getCode())) {
-			qb.addCriterion("c.customerCategory.code", "=", c
-					.getCustomerCategory().getCode(), false);
+		if (c.getCustomerCategory() != null && !StringUtils.isBlank(c.getCustomerCategory().getCode())) {
+			qb.addCriterion("c.customerCategory.code", "=", c.getCustomerCategory().getCode(), false);
 		}
 		// if (!StringUtils.isBlank(c.getContactInformation().getEmail())) {
 		// qb.addCriterion("c.email", "=", c.getContactInformation()
@@ -124,12 +114,10 @@ public class CustomerService extends PersistenceService<Customer> {
 		}
 		if (c.getName() != null) {
 			if (!StringUtils.isBlank(c.getName().getFirstName())) {
-				qb.addCriterion("c.name.firstName", "=", c.getName()
-						.getFirstName(), true);
+				qb.addCriterion("c.name.firstName", "=", c.getName().getFirstName(), true);
 			}
 			if (!StringUtils.isBlank(c.getName().getLastName())) {
-				qb.addCriterion("c.name.lastName", "=", c.getName()
-						.getLastName(), true);
+				qb.addCriterion("c.name.lastName", "=", c.getName().getLastName(), true);
 			}
 		}
 
@@ -138,6 +126,32 @@ public class CustomerService extends PersistenceService<Customer> {
 		result = qb.getQuery(em).getResultList();
 
 		return result;
+	}
+
+	@SuppressWarnings("unchecked")
+	public List<Customer> filter(String customerCode, CustomerCategory customerCategory, Seller seller,
+			CustomerBrand brand, Provider provider) {
+		QueryBuilder qb = new QueryBuilder(Customer.class, "c");
+		qb.addCriterion("code", "=", customerCode, true);
+		qb.addCriterionEntity("provider", provider);
+
+		if (customerCategory != null) {
+			qb.addCriterionEntity("customerCategory", customerCategory);
+		}
+
+		if (seller != null) {
+			qb.addCriterionEntity("seller", seller);
+		}
+
+		if (brand != null) {
+			qb.addCriterionEntity("customerBrand", brand);
+		}
+
+		try {
+			return (List<Customer>) qb.getQuery(getEntityManager()).getResultList();
+		} catch (NoResultException e) {
+			return null;
+		}
 	}
 
 }

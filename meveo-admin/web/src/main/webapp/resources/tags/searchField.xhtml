@@ -33,7 +33,6 @@
             <p:outputLabel for="#{cc.attrs.field}_pick" value="#{cc.attrs.label}" />
             <p:selectOneMenu id="#{cc.attrs.field}_pick" value="#{cc.filters[cc.attrs.field]}" disabled="#{cc.attrs.disabled}">
                 <f:selectItem itemValue="#{null}" itemLabel="" />
-                <h:outputText value="#{cc.attrs.listValues.keySet().toArray()[0]}"></h:outputText>
                 <c:forEach items="#{cc.attrs.listValues.keySet().toArray()}" var="key">
                     <f:selectItem itemValue="#{key}" itemLabel="#{cc.attrs.listValues[key]}" /> 
                 </c:forEach>

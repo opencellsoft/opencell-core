@@ -20,12 +20,14 @@ import java.util.Date;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.Resource;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
-import org.meveo.commons.utils.BoundedHashMap;
+import org.infinispan.api.BasicCache;
+import org.infinispan.manager.CacheContainer;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.admin.User;
@@ -42,7 +44,11 @@ public class EdrService extends PersistenceService<EDR> {
 
 	static boolean useInMemoryDeduplication = true;
 	static int maxDuplicateRecords = 100000;
-	static BoundedHashMap<String, Integer> duplicateCache;
+	
+	@Resource(name = "java:jboss/infinispan/container/meveo")
+	private CacheContainer meveoContainer;
+
+	private static BasicCache<String, Integer> duplicateCache;
 
 	private void loadCacheFromDB() {
 		synchronized (duplicateCache) {
@@ -59,12 +65,11 @@ public class EdrService extends PersistenceService<EDR> {
 					.getProperty("mediation.deduplicateCacheSize", "100000"));
 			if (newMaxDuplicateRecords != maxDuplicateRecords
 					&& duplicateCache != null) {
-				duplicateCache.setMaxSize(newMaxDuplicateRecords);
+				//duplicateCache.setMaxSize(newMaxDuplicateRecords); //never used
 			}
 			maxDuplicateRecords = newMaxDuplicateRecords;
 			if (duplicateCache == null) {
-				duplicateCache = new BoundedHashMap<String, Integer>(
-						newMaxDuplicateRecords);
+				duplicateCache = meveoContainer.getCache("meveo-edr-cache");
 				loadCacheFromDB();
 			}
 		}

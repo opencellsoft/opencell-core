@@ -1,6 +1,7 @@
 package org.meveo.api.account;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -323,12 +324,35 @@ public class CustomerAccountApi extends AccountApi {
 		if (!StringUtils.isBlank(customerAccountCode)) {
 			CustomerAccount customerAccount = customerAccountService.findByCode(customerAccountCode, provider);
 			if (customerAccount == null) {
-				throw new EntityDoesNotExistsException(Customer.class, customerAccountCode);
+				throw new EntityDoesNotExistsException(CustomerAccount.class, customerAccountCode);
 			}
 
 			customerAccountService.remove(customerAccount);
 		} else {
 			missingParameters.add("customerAccountCode");
+
+			throw new MissingParameterException(getMissingParametersExceptionMessage());
+		}
+	}
+
+	public List<CustomerAccountDto> listByCustomer(String customerCode, Provider provider) throws MeveoApiException {
+		if (!StringUtils.isBlank(customerCode)) {
+			Customer customer = customerService.findByCode(customerCode, provider);
+			if (customer == null) {
+				throw new EntityDoesNotExistsException(Customer.class, customerCode);
+			}
+
+			List<CustomerAccountDto> result = new ArrayList<CustomerAccountDto>();
+			List<CustomerAccount> customerAccounts = customerAccountService.listByCustomer(customer);
+			if (customerAccounts != null) {
+				for (CustomerAccount ca : customerAccounts) {
+					result.add(new CustomerAccountDto(ca));
+				}
+			}
+
+			return result;
+		} else {
+			missingParameters.add("customerCode");
 
 			throw new MissingParameterException(getMissingParametersExceptionMessage());
 		}

@@ -10,7 +10,7 @@ import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.account.AccessDto;
 import org.meveo.api.dto.response.account.GetAccessResponse;
-import org.meveo.api.dto.response.account.GetListAccessResponse;
+import org.meveo.api.dto.response.account.ListAccessResponse;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.LoggingInterceptor;
 import org.meveo.api.rest.account.AccessRs;
@@ -103,11 +103,11 @@ public class AccessRsImpl extends BaseRs implements AccessRs {
 	}
 
 	@Override
-	public GetListAccessResponse list(String subscriptionCode) {
-		GetListAccessResponse result = new GetListAccessResponse();
+	public ListAccessResponse listBySubscription(String subscriptionCode) {
+		ListAccessResponse result = new ListAccessResponse();
 
 		try {
-			result.setAccesses(accessApi.list(subscriptionCode, getCurrentUser().getProvider()));
+			result.setAccesses(accessApi.listBySubscription(subscriptionCode, getCurrentUser().getProvider()));
 		} catch (MeveoApiException e) {
 			result.getActionStatus().setErrorCode(e.getErrorCode());
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);

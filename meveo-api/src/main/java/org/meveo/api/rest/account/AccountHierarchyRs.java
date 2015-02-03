@@ -56,4 +56,8 @@ public interface AccountHierarchyRs extends IBaseRs {
 	@Path("/")
 	public ActionStatus update(AccountHierarchyDto accountHierarchyDto);
 
+//	@POST
+//	@Path("/customerHierarchyUpdate")
+//	public ActionStatus customerHierarchyUpdate();
+
 }

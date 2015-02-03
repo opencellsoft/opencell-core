@@ -1,16 +1,18 @@
 package org.meveo.service.rating;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.Future;
 
+import javax.annotation.Resource;
 import javax.ejb.AsyncResult;
 import javax.ejb.Asynchronous;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 
+import org.infinispan.api.BasicCache;
+import org.infinispan.manager.CacheContainer;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.RatedTransaction;
@@ -26,18 +28,23 @@ import org.slf4j.Logger;
 @Stateless
 public class RatedCDRImportService extends PersistenceService<RatedTransaction> {
 
-	static HashMap<String, UsageChargeTemplate> chargeCache;
-	static HashMap<String, List<Access>> accessCache = new HashMap<String, List<Access>>();
+	
 
 	@Inject
 	private AccessService accessService;
 
 	@Inject
 	private Logger log;
+	
+	@Resource(name = "java:jboss/infinispan/container/meveo")
+	private CacheContainer meveoContainer;
+	
+	private static BasicCache<String, UsageChargeTemplate> chargeCache;
+	private static BasicCache<String, List<Access>> accessCache;
 
 	public void init() {
 		EntityManager em = getEntityManager();
-		chargeCache = new HashMap<String, UsageChargeTemplate>();
+		chargeCache = meveoContainer.getCache("meveo-usage-charge-template-cache");
 
 		@SuppressWarnings("unchecked")
 		List<UsageChargeTemplate> chargeTemplates = em.createQuery(
@@ -49,7 +56,7 @@ public class RatedCDRImportService extends PersistenceService<RatedTransaction> 
 		log.info("loaded " + chargeTemplates.size()
 				+ " usage charge template in cache.");
 
-		accessCache = new HashMap<String, List<Access>>();
+		accessCache = meveoContainer.getCache("meveo-access-cache");
 
 		System.gc();
 

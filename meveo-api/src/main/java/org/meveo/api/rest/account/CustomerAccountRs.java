@@ -14,6 +14,7 @@ import javax.ws.rs.core.MediaType;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.account.CustomerAccountDto;
 import org.meveo.api.dto.response.account.GetCustomerAccountResponse;
+import org.meveo.api.dto.response.account.ListCustomerAccountResponse;
 import org.meveo.api.rest.IBaseRs;
 import org.meveo.api.rest.security.RSSecured;
 
@@ -49,5 +50,15 @@ public interface CustomerAccountRs extends IBaseRs {
 	@DELETE
 	@Path("/{customerAccountCode}")
 	ActionStatus remove(@PathParam("customerAccountCode") String customerAccountCode);
+
+	/**
+	 * List CustomerAccount filter by customerCode.
+	 * 
+	 * @param customerCode
+	 * @return
+	 */
+	@GET
+	@Path("/list")
+	ListCustomerAccountResponse listByCustomer(@QueryParam("customerCode") String customerCode);
 
 }
