@@ -163,10 +163,7 @@ public class SubscriptionService extends BusinessService<Subscription> {
 		List<ServiceInstance> serviceInstances = subscription
 				.getServiceInstances();
 		for (ServiceInstance serviceInstance : serviceInstances) {
-			if (InstanceStatusEnum.CANCELED.equals(serviceInstance.getStatus())
-					|| InstanceStatusEnum.TERMINATED.equals(serviceInstance
-							.getStatus())
-					|| InstanceStatusEnum.SUSPENDED.equals(serviceInstance
+			if (InstanceStatusEnum.SUSPENDED.equals(serviceInstance
 							.getStatus())) {
 				serviceInstanceService.serviceReactivation(serviceInstance,
 						updater);
@@ -224,7 +221,8 @@ public class SubscriptionService extends BusinessService<Subscription> {
 		List<ServiceInstance> serviceInstances = subscription
 				.getServiceInstances();
 		for (ServiceInstance serviceInstance : serviceInstances) {
-			if (InstanceStatusEnum.ACTIVE.equals(serviceInstance.getStatus())) {
+			if (InstanceStatusEnum.ACTIVE.equals(serviceInstance.getStatus()) 
+					|| InstanceStatusEnum.SUSPENDED.equals(serviceInstance.getStatus())) {
 				if (terminationReason != null) {
 					serviceInstanceService.terminateService(serviceInstance,
 							terminationDate, terminationReason, user);
