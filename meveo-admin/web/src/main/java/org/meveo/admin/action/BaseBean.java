@@ -116,9 +116,9 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 
 	/** Helper field to enter language related field values. */
 	protected Map<String, String> languageMessagesMap = new HashMap<String, String>();
-	
-    /** Helper field to enter values for HashMap<String,String> type fields */
-    protected Map<String, List<HashMap<String, String>>> mapTypeFieldValues = new HashMap<String, List<HashMap<String, String>>>();
+
+	/** Helper field to enter values for HashMap<String,String> type fields */
+	protected Map<String, List<HashMap<String, String>>> mapTypeFieldValues = new HashMap<String, List<HashMap<String, String>>>();
 
 	/**
 	 * Datamodel for lazy dataloading in datatable.
@@ -133,7 +133,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 	/**
 	 * Selected Entities in multiselect datatable.
 	 */
-	private T[] selectedEntities;
+	private List<T> selectedEntities;
 
 	/**
 	 * Constructor
@@ -191,8 +191,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 			if (getFormFieldsToFetch() == null) {
 				entity = (T) getPersistenceService().findById(getObjectId());
 			} else {
-				entity = (T) getPersistenceService().findById(getObjectId(),
-						getFormFieldsToFetch());
+				entity = (T) getPersistenceService().findById(getObjectId(), getFormFieldsToFetch());
 			}
 			// getPersistenceService().detach(entity);
 		} else {
@@ -205,12 +204,10 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 				// creation time
 			} catch (InstantiationException e) {
 				log.error("Unexpected error!", e);
-				throw new IllegalStateException(
-						"could not instantiate a class, abstract class");
+				throw new IllegalStateException("could not instantiate a class, abstract class");
 			} catch (IllegalAccessException e) {
 				log.error("Unexpected error!", e);
-				throw new IllegalStateException(
-						"could not instantiate a class, constructor not accessible");
+				throw new IllegalStateException("could not instantiate a class, constructor not accessible");
 			}
 		}
 
@@ -245,8 +242,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 	// entities.forceRefresh();
 	// }
 
-	public String saveOrUpdate(boolean killConversation, String objectName,
-			Long objectId) throws BusinessException {
+	public String saveOrUpdate(boolean killConversation, String objectName, Long objectId) throws BusinessException {
 		String outcome = saveOrUpdate(killConversation);
 
 		if (killConversation) {
@@ -258,8 +254,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 		return outcome;
 	}
 
-	public String saveOrUpdate(boolean killConversation)
-			throws BusinessException {
+	public String saveOrUpdate(boolean killConversation) throws BusinessException {
 		String outcome = saveOrUpdate(entity);
 
 		if (killConversation) {
@@ -389,22 +384,17 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 	 */
 	public void delete(Long id) {
 		try {
-			log.info(String.format("Deleting entity %s with id = %s",
-					clazz.getName(), id));
+			log.info(String.format("Deleting entity %s with id = %s", clazz.getName(), id));
 			getPersistenceService().remove(id);
 			messages.info(new BundleKey("messages", "delete.successful"));
 		} catch (Throwable t) {
 			if (t.getCause() instanceof EntityExistsException) {
-				log.info(
-						"delete was unsuccessful because entity is used in the system",
-						t);
-				messages.error(new BundleKey("messages",
-						"error.delete.entityUsed"));
+				log.info("delete was unsuccessful because entity is used in the system", t);
+				messages.error(new BundleKey("messages", "error.delete.entityUsed"));
 
 			} else {
 				log.info("unexpected exception when deleting!", t);
-				messages.error(new BundleKey("messages",
-						"error.delete.unexpected"));
+				messages.error(new BundleKey("messages", "error.delete.unexpected"));
 			}
 		}
 
@@ -413,22 +403,17 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 
 	public void delete() {
 		try {
-			log.info(String.format("Deleting entity %s with id = %s",
-					clazz.getName(), getEntity().getId()));
+			log.info(String.format("Deleting entity %s with id = %s", clazz.getName(), getEntity().getId()));
 			getPersistenceService().remove((Long) getEntity().getId());
 			messages.info(new BundleKey("messages", "delete.successful"));
 		} catch (Throwable t) {
 			if (t.getCause() instanceof EntityExistsException) {
-				log.info(
-						"delete was unsuccessful because entity is used in the system",
-						t);
-				messages.error(new BundleKey("messages",
-						"error.delete.entityUsed"));
+				log.info("delete was unsuccessful because entity is used in the system", t);
+				messages.error(new BundleKey("messages", "error.delete.entityUsed"));
 
 			} else {
 				log.info("unexpected exception when deleting!", t);
-				messages.error(new BundleKey("messages",
-						"error.delete.unexpected"));
+				messages.error(new BundleKey("messages", "error.delete.unexpected"));
 			}
 		}
 
@@ -441,36 +426,29 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 	 */
 	public void deleteMany() {
 		try {
-			if (selectedEntities != null && selectedEntities.length > 0) {
+			if (selectedEntities != null && selectedEntities.size() > 0) {
 				Set<Long> idsToDelete = new HashSet<Long>();
 				StringBuilder idsString = new StringBuilder();
 				for (IEntity entity : selectedEntities) {
 					idsToDelete.add((Long) entity.getId());
 					idsString.append(entity.getId()).append(" ");
 				}
-				log.info(String.format(
-						"Deleting multiple entities %s with ids = %s",
-						clazz.getName(), idsString.toString()));
+				log.info(String.format("Deleting multiple entities %s with ids = %s", clazz.getName(),
+						idsString.toString()));
 
 				getPersistenceService().remove(idsToDelete);
-				messages.info(new BundleKey("messages",
-						"delete.entitities.successful"));
+				messages.info(new BundleKey("messages", "delete.entitities.successful"));
 			} else {
-				messages.info(new BundleKey("messages",
-						"delete.entitities.noSelection"));
+				messages.info(new BundleKey("messages", "delete.entitities.noSelection"));
 			}
 		} catch (Throwable t) {
 			if (t.getCause() instanceof EntityExistsException) {
-				log.info(
-						"delete was unsuccessful because entity is used in the system",
-						t);
-				messages.error(new BundleKey("messages",
-						"error.delete.entityUsed"));
+				log.info("delete was unsuccessful because entity is used in the system", t);
+				messages.error(new BundleKey("messages", "error.delete.entityUsed"));
 
 			} else {
 				log.info("unexpected exception when deleting!", t);
-				messages.error(new BundleKey("messages",
-						"error.delete.unexpected"));
+				messages.error(new BundleKey("messages", "error.delete.unexpected"));
 			}
 		}
 
@@ -512,8 +490,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 	 * @throws IllegalAccessException
 	 * @throws InstantiationException
 	 */
-	public T getInstance() throws InstantiationException,
-			IllegalAccessException {
+	public T getInstance() throws InstantiationException, IllegalAccessException {
 		return clazz.newInstance();
 	}
 
@@ -560,22 +537,17 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 	 */
 	public void disable(Long id) {
 		try {
-			log.info(String.format("Disabling entity %s with id = %s",
-					clazz.getName(), id));
+			log.info(String.format("Disabling entity %s with id = %s", clazz.getName(), id));
 			getPersistenceService().disable(id);
 			messages.info(new BundleKey("messages", "disabled.successful"));
 
 		} catch (Throwable t) {
 			if (t.getCause() instanceof EntityExistsException) {
-				log.info(
-						"delete was unsuccessful because entity is used in the system",
-						t);
-				messages.error(new BundleKey("messages",
-						"error.delete.entityUsed"));
+				log.info("delete was unsuccessful because entity is used in the system", t);
+				messages.error(new BundleKey("messages", "error.delete.entityUsed"));
 			} else {
 				log.info("unexpected exception when deleting!", t);
-				messages.error(new BundleKey("messages",
-						"error.delete.unexpected"));
+				messages.error(new BundleKey("messages", "error.delete.unexpected"));
 			}
 		}
 	}
@@ -589,8 +561,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 		return getLazyDataModel(filters, false);
 	}
 
-	public LazyDataModel<T> getLazyDataModel(Map<String, Object> inputFilters,
-			boolean forceReload) {
+	public LazyDataModel<T> getLazyDataModel(Map<String, Object> inputFilters, boolean forceReload) {
 		if (dataModel == null || forceReload) {
 
 			final Map<String, Object> filters = inputFilters;
@@ -610,19 +581,16 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 					// Omit empty or null values
 					Map<String, Object> cleanFilters = new HashMap<String, Object>();
 
-					for (Map.Entry<String, Object> filterEntry : filters
-							.entrySet()) {
+					for (Map.Entry<String, Object> filterEntry : filters.entrySet()) {
 						if (filterEntry.getValue() == null) {
 							continue;
 						}
 						if (filterEntry.getValue() instanceof String) {
-							if (StringUtils.isBlank((String) filterEntry
-									.getValue())) {
+							if (StringUtils.isBlank((String) filterEntry.getValue())) {
 								continue;
 							}
 						}
-						cleanFilters.put(filterEntry.getKey(),
-								filterEntry.getValue());
+						cleanFilters.put(filterEntry.getKey(), filterEntry.getValue());
 					}
 
 					return BaseBean.this.supplementSearchCriteria(cleanFilters);
@@ -648,14 +616,14 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 	}
 
 	public Map<String, List<HashMap<String, String>>> getMapTypeFieldValues() {
-        return mapTypeFieldValues;
-    }
+		return mapTypeFieldValues;
+	}
 
-    public void setMapTypeFieldValues(Map<String, List<HashMap<String, String>>> mapTypeFieldValues) {
-        this.mapTypeFieldValues = mapTypeFieldValues;
-    }
+	public void setMapTypeFieldValues(Map<String, List<HashMap<String, String>>> mapTypeFieldValues) {
+		this.mapTypeFieldValues = mapTypeFieldValues;
+	}
 
-    /**
+	/**
 	 * Allows to overwrite, or add additional search criteria for filtering a
 	 * list. Search criteria is a map with filter criteria name as a key and
 	 * value as a value. <br/>
@@ -667,8 +635,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 	 *            Search criteria - should be same as filters attribute
 	 * @return HashMap with filter criteria name as a key and value as a value
 	 */
-	protected Map<String, Object> supplementSearchCriteria(
-			Map<String, Object> searchCriteria) {
+	protected Map<String, Object> supplementSearchCriteria(Map<String, Object> searchCriteria) {
 		return searchCriteria;
 	}
 
@@ -685,11 +652,11 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 		this.dataTable = dataTable;
 	}
 
-	public T[] getSelectedEntities() {
+	public List<T> getSelectedEntities() {
 		return selectedEntities;
 	}
 
-	public void setSelectedEntities(T[] selectedEntities) {
+	public void setSelectedEntities(List<T> selectedEntities) {
 		this.selectedEntities = selectedEntities;
 	}
 
@@ -706,8 +673,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 	}
 
 	public boolean isEdit() {
-		if (edit != null && edit.get() != null
-				&& !edit.get().equals("" + editSaved)) {
+		if (edit != null && edit.get() != null && !edit.get().equals("" + editSaved)) {
 			editSaved = Boolean.valueOf(edit.get());
 		}
 		return editSaved;
@@ -727,16 +693,14 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 	}
 
 	public List<TradingLanguage> getProviderLanguages() {
-		Provider provider = providerService.findById(currentProvider.getId(),
-				true);
+		Provider provider = providerService.findById(currentProvider.getId(), true);
 		return provider.getTradingLanguages();
 	}
 
 	public String getProviderLanguageCode() {
 		if (getCurrentProvider() != null) {
 
-			Provider provider = providerService.findById(
-					currentProvider.getId(), true);
+			Provider provider = providerService.findById(currentProvider.getId(), true);
 			return provider.getLanguage().getLanguageCode();
 		}
 		return "";
@@ -750,7 +714,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 		this.languageMessagesMap = languageMessagesMap;
 	}
 
-    protected Provider getCurrentProvider() {
+	protected Provider getCurrentProvider() {
 		return currentProvider;
 	}
 
@@ -766,65 +730,76 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 		return backView.get();
 	}
 
-    /**
-     * Remove a value from a map type field attribute used to gather field values in GUI
-     * 
-     * @param fieldName Field name
-     * @param valueInfo Value to remove
-     */
-    public void removeMapTypeFieldValue(String fieldName, Map<String, String> valueInfo) {
-        mapTypeFieldValues.get(fieldName).remove(valueInfo);
-    }
+	/**
+	 * Remove a value from a map type field attribute used to gather field
+	 * values in GUI
+	 * 
+	 * @param fieldName
+	 *            Field name
+	 * @param valueInfo
+	 *            Value to remove
+	 */
+	public void removeMapTypeFieldValue(String fieldName, Map<String, String> valueInfo) {
+		mapTypeFieldValues.get(fieldName).remove(valueInfo);
+	}
 
-    /**
-     * Add a value to a map type field attribute used to gather field values in GUI
-     * 
-     * @param fieldName Field name
-     */
-    public void addMapTypeFieldValue(String fieldName) {
-        if (!mapTypeFieldValues.containsKey(fieldName)) {
-            mapTypeFieldValues.put(fieldName, new ArrayList<HashMap<String, String>>());
-        }
-        mapTypeFieldValues.get(fieldName).add(new HashMap<String, String>());
-    }
+	/**
+	 * Add a value to a map type field attribute used to gather field values in
+	 * GUI
+	 * 
+	 * @param fieldName
+	 *            Field name
+	 */
+	public void addMapTypeFieldValue(String fieldName) {
+		if (!mapTypeFieldValues.containsKey(fieldName)) {
+			mapTypeFieldValues.put(fieldName, new ArrayList<HashMap<String, String>>());
+		}
+		mapTypeFieldValues.get(fieldName).add(new HashMap<String, String>());
+	}
 
-    /**
-     * Extract values from a Map type field in an entity to mapTypeFieldValues attribute used to gather field values in GUI
-     * 
-     * @param entityField Entity field
-     * @param fieldName Field name
-     */
-    public void extractMapTypeFieldFromEntity(Map<String, String> entityField, String fieldName) {
+	/**
+	 * Extract values from a Map type field in an entity to mapTypeFieldValues
+	 * attribute used to gather field values in GUI
+	 * 
+	 * @param entityField
+	 *            Entity field
+	 * @param fieldName
+	 *            Field name
+	 */
+	public void extractMapTypeFieldFromEntity(Map<String, String> entityField, String fieldName) {
 
-        mapTypeFieldValues.remove(fieldName);
+		mapTypeFieldValues.remove(fieldName);
 
-        if (entityField != null) {
-            List<HashMap<String, String>> fieldValues = new ArrayList<HashMap<String, String>>();
-            mapTypeFieldValues.put(fieldName, fieldValues);
-            for (Entry<String, String> setInfo : entityField.entrySet()) {
-                HashMap<String, String> value = new HashMap<String, String>();
-                value.put("key", setInfo.getKey());
-                value.put("value", setInfo.getValue());
-                fieldValues.add(value);
-            }
-        }
-    }
+		if (entityField != null) {
+			List<HashMap<String, String>> fieldValues = new ArrayList<HashMap<String, String>>();
+			mapTypeFieldValues.put(fieldName, fieldValues);
+			for (Entry<String, String> setInfo : entityField.entrySet()) {
+				HashMap<String, String> value = new HashMap<String, String>();
+				value.put("key", setInfo.getKey());
+				value.put("value", setInfo.getValue());
+				fieldValues.add(value);
+			}
+		}
+	}
 
-    /**
-     * Update Map type field in an entity from mapTypeFieldValues attribute used to gather field values in GUI
-     * 
-     * @param entityField Entity field
-     * @param fieldName Field name
-     */
-    public void updateMapTypeFieldInEntity(Map<String, String> entityField, String fieldName) {
-        entityField.clear();
+	/**
+	 * Update Map type field in an entity from mapTypeFieldValues attribute used
+	 * to gather field values in GUI
+	 * 
+	 * @param entityField
+	 *            Entity field
+	 * @param fieldName
+	 *            Field name
+	 */
+	public void updateMapTypeFieldInEntity(Map<String, String> entityField, String fieldName) {
+		entityField.clear();
 
-        if (mapTypeFieldValues.get(fieldName) != null) {
-            for (HashMap<String, String> valueInfo : mapTypeFieldValues.get(fieldName)) {
-                if (valueInfo.get("key") != null && !valueInfo.get("key").isEmpty()) {
-                    entityField.put(valueInfo.get("key"), valueInfo.get("value") == null ? "" : valueInfo.get("value"));
-                }
-            }
-        }
-    }
+		if (mapTypeFieldValues.get(fieldName) != null) {
+			for (HashMap<String, String> valueInfo : mapTypeFieldValues.get(fieldName)) {
+				if (valueInfo.get("key") != null && !valueInfo.get("key").isEmpty()) {
+					entityField.put(valueInfo.get("key"), valueInfo.get("value") == null ? "" : valueInfo.get("value"));
+				}
+			}
+		}
+	}
 }

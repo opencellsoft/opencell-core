@@ -18,10 +18,12 @@ package org.meveo.service.billing.impl;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.ejb.Stateless;
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
@@ -36,15 +38,19 @@ import org.meveo.model.crm.Provider;
 import org.meveo.model.rating.EDR;
 import org.meveo.model.rating.EDRStatusEnum;
 import org.meveo.service.base.PersistenceService;
+import org.slf4j.Logger;
 
 @Stateless
 public class EdrService extends PersistenceService<EDR> {
 
 	ParamBean paramBean = ParamBean.getInstance();
 
+	@Inject
+	private Logger log;
+
 	static boolean useInMemoryDeduplication = true;
 	static int maxDuplicateRecords = 100000;
-	
+
 	@Resource(name = "java:jboss/infinispan/container/meveo")
 	private CacheContainer meveoContainer;
 
@@ -58,14 +64,13 @@ public class EdrService extends PersistenceService<EDR> {
 
 	@PostConstruct
 	private void init() {
-		useInMemoryDeduplication = paramBean.getProperty(
-				"mediation.deduplicateInMemory", "true").equals("true");
+		useInMemoryDeduplication = paramBean.getProperty("mediation.deduplicateInMemory", "true").equals("true");
 		if (useInMemoryDeduplication) {
-			int newMaxDuplicateRecords = Integer.parseInt(paramBean
-					.getProperty("mediation.deduplicateCacheSize", "100000"));
-			if (newMaxDuplicateRecords != maxDuplicateRecords
-					&& duplicateCache != null) {
-				//duplicateCache.setMaxSize(newMaxDuplicateRecords); //never used
+			int newMaxDuplicateRecords = Integer.parseInt(paramBean.getProperty("mediation.deduplicateCacheSize",
+					"100000"));
+			if (newMaxDuplicateRecords != maxDuplicateRecords && duplicateCache != null) {
+				// duplicateCache.setMaxSize(newMaxDuplicateRecords); //never
+				// used
 			}
 			maxDuplicateRecords = newMaxDuplicateRecords;
 			if (duplicateCache == null) {
@@ -92,10 +97,8 @@ public class EdrService extends PersistenceService<EDR> {
 		EDR result = null;
 		try {
 			Query query = getEntityManager()
-					.createQuery(
-							"from EDR e where e.originBatch=:originBatch and e.originRecord=:originRecord")
-					.setParameter("originBatch", originBatch)
-					.setParameter("originRecord", originRecord);
+					.createQuery("from EDR e where e.originBatch=:originBatch and e.originRecord=:originRecord")
+					.setParameter("originBatch", originBatch).setParameter("originRecord", originRecord);
 			result = (EDR) query.getSingleResult();
 		} catch (Exception e) {
 		}
@@ -107,8 +110,7 @@ public class EdrService extends PersistenceService<EDR> {
 		Query query = getEntityManager()
 				.createQuery(
 						"select CONCAT(e.originBatch,e.originRecord) from EDR e where e.status=:status ORDER BY e.eventDate DESC")
-				.setParameter("status", EDRStatusEnum.OPEN)
-				.setMaxResults(maxDuplicateRecords);
+				.setParameter("status", EDRStatusEnum.OPEN).setMaxResults(maxDuplicateRecords);
 		@SuppressWarnings("unchecked")
 		List<String> results = query.getResultList();
 		for (String edrHash : results) {
@@ -135,8 +137,7 @@ public class EdrService extends PersistenceService<EDR> {
 		}
 	}
 
-	public void massUpdate(EDRStatusEnum status, Subscription subscription,
-			Provider provider) {
+	public void massUpdate(EDRStatusEnum status, Subscription subscription, Provider provider) {
 		StringBuilder sb = new StringBuilder();
 
 		sb.append("UPDATE "
@@ -144,12 +145,27 @@ public class EdrService extends PersistenceService<EDR> {
 				+ " e SET e.status=:newStatus, e.lastUpdate=:lastUpdate WHERE e.status=:oldStatus AND e.subscription=:subscription AND e.provider=:provider");
 
 		try {
-			getEntityManager().createQuery(sb.toString())
-					.setParameter("newStatus", status)
-					.setParameter("subscription", subscription)
-					.setParameter("oldStatus", EDRStatusEnum.REJECTED)
-					.setParameter("provider", provider)
-					.setParameter("lastUpdate", new Date()).executeUpdate();
+			getEntityManager().createQuery(sb.toString()).setParameter("newStatus", status)
+					.setParameter("subscription", subscription).setParameter("oldStatus", EDRStatusEnum.REJECTED)
+					.setParameter("provider", provider).setParameter("lastUpdate", new Date()).executeUpdate();
+		} catch (Exception e) {
+			log.error(e.getMessage());
+		}
+	}
+
+	public void massUpdate(EDRStatusEnum status, Set<Long> selectedIds, Provider provider) {
+		StringBuilder sb = new StringBuilder();
+
+		sb.append("UPDATE "
+				+ EDR.class.getSimpleName()
+				+ " e SET e.status=:newStatus, e.lastUpdate=:lastUpdate WHERE e.status=:oldStatus AND e.id IN :selectedIds AND e.provider=:provider");
+
+		try {
+			log.debug(
+					"{} rows updated",
+					getEntityManager().createQuery(sb.toString()).setParameter("newStatus", status)
+							.setParameter("selectedIds", selectedIds).setParameter("oldStatus", EDRStatusEnum.REJECTED)
+							.setParameter("provider", provider).setParameter("lastUpdate", new Date()).executeUpdate());
 		} catch (Exception e) {
 			log.error(e.getMessage());
 		}
