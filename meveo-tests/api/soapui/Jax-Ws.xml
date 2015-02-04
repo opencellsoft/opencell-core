@@ -5059,6 +5059,15 @@
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
+    <wsdl:operation name="customerHierarchyUpdate">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="customerHierarchyUpdate">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="customerHierarchyUpdateResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
     <wsdl:operation name="createBillingAccount">
       <soap:operation soapAction="" style="document"/>
       <wsdl:input name="createBillingAccount">
@@ -5105,6 +5114,7 @@
       <xs:element name="CustomField" type="tns:customFieldDto"/>
       <xs:element name="Customer" type="tns:customerDto"/>
       <xs:element name="CustomerAccount" type="tns:customerAccountDto"/>
+      <xs:element name="CustomerHierarchy" type="tns:customerHierarchyDto"/>
       <xs:element name="CustomerListResponse" type="tns:customerListResponse"/>
       <xs:element name="GetAccessResponse" type="tns:getAccessResponse"/>
       <xs:element name="GetCustomerAccountResponse" nillable="true" type="xs:anyType"/>
@@ -5113,6 +5123,8 @@
       <xs:element name="GetUserAccountResponse" type="tns:getUserAccountResponse"/>
       <xs:element name="MatchingAmount" type="tns:matchingAmountDto"/>
       <xs:element name="Name" type="tns:nameDto"/>
+      <xs:element name="Seller" type="tns:sellerDto"/>
+      <xs:element name="Subscription" nillable="true" type="xs:anyType"/>
       <xs:element name="UserAccount" type="tns:userAccountDto"/>
       <xs:element name="createAccess" type="tns:createAccess"/>
       <xs:element name="createAccessResponse" type="tns:createAccessResponse"/>
@@ -5126,6 +5138,8 @@
       <xs:element name="createCustomerResponse" type="tns:createCustomerResponse"/>
       <xs:element name="createUserAccount" type="tns:createUserAccount"/>
       <xs:element name="createUserAccountResponse" type="tns:createUserAccountResponse"/>
+      <xs:element name="customerHierarchyUpdate" type="tns:customerHierarchyUpdate"/>
+      <xs:element name="customerHierarchyUpdateResponse" type="tns:customerHierarchyUpdateResponse"/>
       <xs:element name="findAccess" type="tns:findAccess"/>
       <xs:element name="findAccessResponse" type="tns:findAccessResponse"/>
       <xs:element name="findAccountHierarchy" type="tns:findAccountHierarchy"/>
@@ -5266,7 +5280,12 @@
       <xs:complexType name="userAccountDto">
         <xs:complexContent>
           <xs:extension base="tns:accountDto">
-            <xs:sequence/>
+            <xs:sequence>
+              <xs:element minOccurs="0" name="subscriptionDate" type="xs:dateTime"/>
+              <xs:element minOccurs="0" name="terminationDate" type="xs:dateTime"/>
+              <xs:element minOccurs="0" name="status" type="xs:string"/>
+              <xs:element maxOccurs="unbounded" minOccurs="0" name="subscriptions" nillable="true" type="tns:subscriptionDto"/>
+            </xs:sequence>
             <xs:attribute name="billingAccount" type="xs:string" use="required"/>
           </xs:extension>
         </xs:complexContent>
@@ -5281,6 +5300,36 @@
         </xs:sequence>
         <xs:attribute name="code" type="xs:string" use="required"/>
         <xs:attribute name="description" type="xs:string" use="required"/>
+      </xs:complexType>
+      <xs:complexType name="subscriptionDto">
+        <xs:complexContent>
+          <xs:extension base="tns:baseDto">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="description" type="xs:string"/>
+              <xs:element minOccurs="0" name="subscriptionDate" type="xs:dateTime"/>
+              <xs:element minOccurs="0" name="terminationDate" type="xs:dateTime"/>
+              <xs:element maxOccurs="unbounded" minOccurs="0" name="accesses" nillable="true" type="tns:accessDto"/>
+              <xs:element maxOccurs="unbounded" minOccurs="0" name="services" nillable="true" type="tns:serviceInstanceDto"/>
+            </xs:sequence>
+            <xs:attribute name="code" type="xs:string" use="required"/>
+            <xs:attribute name="userAccount" type="xs:string" use="required"/>
+            <xs:attribute name="offerTemplate" type="xs:string" use="required"/>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="serviceInstanceDto">
+        <xs:complexContent>
+          <xs:extension base="tns:baseDto">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="status" type="xs:string"/>
+              <xs:element minOccurs="0" name="subscriptionDate" type="xs:dateTime"/>
+              <xs:element minOccurs="0" name="terminationDate" type="xs:dateTime"/>
+              <xs:element name="quantity" type="xs:int"/>
+              <xs:element minOccurs="0" name="terminationReason" type="xs:string"/>
+            </xs:sequence>
+            <xs:attribute name="code" type="xs:string" use="required"/>
+          </xs:extension>
+        </xs:complexContent>
       </xs:complexType>
       <xs:complexType name="nameDto">
         <xs:sequence>
@@ -5323,6 +5372,7 @@
               <xs:element minOccurs="0" name="terminationDate" type="xs:dateTime"/>
               <xs:element minOccurs="0" name="paymentTerms" type="xs:string"/>
               <xs:element minOccurs="0" name="electronicBilling" type="xs:boolean"/>
+              <xs:element maxOccurs="unbounded" minOccurs="0" name="userAccounts" nillable="true" type="tns:userAccountDto"/>
             </xs:sequence>
             <xs:attribute name="customerAccount" type="xs:string" use="required"/>
             <xs:attribute name="billingCycle" type="xs:string" use="required"/>
@@ -5374,6 +5424,7 @@
               <xs:element minOccurs="0" name="mandateIdentification" type="xs:string"/>
               <xs:element minOccurs="0" name="mandateDate" type="xs:dateTime"/>
               <xs:element minOccurs="0" name="balance" type="xs:decimal"/>
+              <xs:element maxOccurs="unbounded" minOccurs="0" name="billingAccounts" nillable="true" type="tns:billingAccountDto"/>
             </xs:sequence>
             <xs:attribute name="customer" type="xs:string" use="required"/>
             <xs:attribute name="currency" type="xs:string" use="required"/>
@@ -5420,6 +5471,7 @@
               <xs:element minOccurs="0" name="customerCategory" type="xs:string"/>
               <xs:element minOccurs="0" name="customerBrand" type="xs:string"/>
               <xs:element minOccurs="0" name="seller" type="xs:string"/>
+              <xs:element maxOccurs="unbounded" minOccurs="0" name="customerAccounts" nillable="true" type="tns:customerAccountDto"/>
             </xs:sequence>
           </xs:extension>
         </xs:complexContent>
@@ -5615,6 +5667,42 @@
           </xs:extension>
         </xs:complexContent>
       </xs:complexType>
+      <xs:complexType name="customerHierarchyUpdate">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="arg0" type="tns:customerHierarchyDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="customerHierarchyDto">
+        <xs:complexContent>
+          <xs:extension base="tns:baseDto">
+            <xs:sequence>
+              <xs:element maxOccurs="unbounded" minOccurs="0" name="sellers" nillable="true" type="tns:sellerDto"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="sellerDto">
+        <xs:complexContent>
+          <xs:extension base="tns:baseDto">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="description" type="xs:string"/>
+              <xs:element minOccurs="0" name="invoicePrefix" type="xs:string"/>
+              <xs:element minOccurs="0" name="currencyCode" type="xs:string"/>
+              <xs:element minOccurs="0" name="countryCode" type="xs:string"/>
+              <xs:element minOccurs="0" name="languageCode" type="xs:string"/>
+              <xs:element minOccurs="0" name="parentSeller" type="xs:string"/>
+              <xs:element minOccurs="0" name="provider" type="xs:string"/>
+              <xs:element maxOccurs="unbounded" minOccurs="0" name="customers" nillable="true" type="tns:customerDto"/>
+            </xs:sequence>
+            <xs:attribute name="code" type="xs:string" use="required"/>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="customerHierarchyUpdateResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
       <xs:complexType name="createBillingAccount">
         <xs:sequence>
           <xs:element minOccurs="0" name="billingAccount" type="tns:billingAccountDto"/>
@@ -5682,6 +5770,12 @@
   </wsdl:message>
   <wsdl:message name="createAccountHierarchyResponse">
     <wsdl:part element="ns1:createAccountHierarchyResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="customerHierarchyUpdate">
+    <wsdl:part element="ns1:customerHierarchyUpdate" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="customerHierarchyUpdateResponse">
+    <wsdl:part element="ns1:customerHierarchyUpdateResponse" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="createAccess">
     <wsdl:part element="ns1:createAccess" name="parameters"></wsdl:part>
@@ -5900,6 +5994,10 @@
     <wsdl:operation name="listAccess">
       <wsdl:input message="ns1:listAccess" name="listAccess"></wsdl:input>
       <wsdl:output message="ns1:listAccessResponse" name="listAccessResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="customerHierarchyUpdate">
+      <wsdl:input message="ns1:customerHierarchyUpdate" name="customerHierarchyUpdate"></wsdl:input>
+      <wsdl:output message="ns1:customerHierarchyUpdateResponse" name="customerHierarchyUpdateResponse"></wsdl:output>
     </wsdl:operation>
     <wsdl:operation name="createBillingAccount">
       <wsdl:input message="ns1:createBillingAccount" name="createBillingAccount"></wsdl:input>
@@ -6651,7 +6749,238 @@
          <subscriptionCode>?</subscriptionCode>
       </ws:listAccess>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/listAccess"/><con:wsrmConfig version="1.2"/></con:call></con:operation></con:interface><con:interface xsi:type="con:WsdlInterface" wsaVersion="NONE" name="SubscriptionWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}SubscriptionWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="http://localhost:8080/meveo/SubscriptionWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache type="TEXT" rootPart="http://localhost:8080/meveo/SubscriptionWs?wsdl"><con:part><con:url>http://localhost:8080/meveo/SubscriptionWs?wsdl</con:url><con:content><![CDATA[<wsdl:definitions name="SubscriptionWs" targetNamespace="http://impl.ws.api.meveo.org/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://impl.ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns2="http://schemas.xmlsoap.org/soap/http" xmlns:ns1="http://ws.api.meveo.org/">
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/listAccess"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation isOneWay="false" action="" name="customerHierarchyUpdate" bindingOperationName="customerHierarchyUpdate" type="Request-Response" outputName="customerHierarchyUpdateResponse" inputName="customerHierarchyUpdate" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment xmlns:con="http://eviware.com/soapui/config">
+  &lt;con:entry key="username" value="meveo.admin"/>
+  &lt;con:entry key="password" value="meveo.admin"/>
+&lt;/xml-fragment></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
+	xmlns:ws="http://ws.api.meveo.org/">
+	<soapenv:Header />
+	<soapenv:Body>
+		<ws:customerHierarchyUpdate>
+			<!--Optional: -->
+			<arg0>
+				<!--Zero or more repetitions: -->
+				<sellers code="SELLERS2">
+					<!--Optional: -->
+					<description>SELLERS2</description>
+					<!--Optional: -->
+					<invoicePrefix>SELLERS2</invoicePrefix>
+					<!--Optional: -->
+					<currencyCode>USD</currencyCode>
+					<!--Optional: -->
+					<countryCode>US</countryCode>
+					<!--Optional: -->
+					<languageCode>ENG</languageCode>
+					<!--Optional: -->
+					<parentSeller></parentSeller>
+					<!--Zero or more repetitions: -->
+					<customers code="CUSTS2" description="CUSTS2">
+						<!--Optional: -->
+						<externalRef1></externalRef1>
+						<!--Optional: -->
+						<externalRef2></externalRef2>
+						<!--Optional: -->
+						<name lastName="Legaspi">
+							<!--Optional: -->
+							<title></title>
+							<!--Optional: -->
+							<firstName></firstName>
+						</name>
+						<!--Optional: -->
+						<address>
+							<!--Optional: -->
+							<address1>Address1</address1>
+							<!--Optional: -->
+							<address2></address2>
+							<!--Optional: -->
+							<address3></address3>
+							<!--Optional: -->
+							<zipCode></zipCode>
+							<!--Optional: -->
+							<city></city>
+							<!--Optional: -->
+							<country></country>
+							<!--Optional: -->
+							<state></state>
+						</address>
+						<!--Zero or more repetitions: -->
+						<customFields code="CF1" description="CF1" stringValue="x" />
+						<!--Optional: -->
+						<customerCategory>CLIENT</customerCategory>
+						<!--Optional: -->
+						<customerBrand>OCB</customerBrand>
+						<!--Zero or more repetitions: -->
+						<customerAccounts code="CAS2" description="CAS2" currency="USD">
+							<!--Optional: -->
+							<externalRef1></externalRef1>
+							<!--Optional: -->
+							<externalRef2></externalRef2>
+							<!--Optional: -->
+							<name lastName="Legaspi">
+								<!--Optional: -->
+								<title></title>
+								<!--Optional: -->
+								<firstName></firstName>
+							</name>
+							<!--Optional: -->
+							<address>
+								<!--Optional: -->
+								<address1>Address1</address1>
+								<!--Optional: -->
+								<address2></address2>
+								<!--Optional: -->
+								<address3></address3>
+								<!--Optional: -->
+								<zipCode></zipCode>
+								<!--Optional: -->
+								<city></city>
+								<!--Optional: -->
+								<country></country>
+								<!--Optional: -->
+								<state></state>
+							</address>
+							<!--Zero or more repetitions: -->
+							<customFields code="CF1" description="CF1" stringValue="x" />
+							<!--Optional: -->
+							<status></status>
+							<!--Optional: -->
+							<paymentMethod>CHECK</paymentMethod>
+							<!--Optional: -->
+							<creditCategory>CASH</creditCategory>							
+							<!--Optional: -->
+							<dateStatus>2015-02-20</dateStatus>
+							<!--Optional: -->
+							<dateDunningLevel>2015-02-20</dateDunningLevel>
+							<!--Optional: -->
+							<email>edward.legaspi@manaty.net</email>
+							<!--Optional: -->
+							<phone></phone>
+							<!--Optional: -->
+							<mobile>12345</mobile>
+							<!--Optional: -->
+							<fax></fax>
+							<!--Optional: -->
+							<dunningLevel></dunningLevel>
+							<!--Optional: -->
+							<mandateIdentification></mandateIdentification>
+							<!--Optional: -->
+							<mandateDate>2015-02-20</mandateDate>
+							<!--Zero or more repetitions: -->
+							<billingAccounts code="BAS2" description="BAS2"
+								 billingCycle="CYC_INV_MT_1" country="US" language="ENG"
+								paymentMethod="CHECK">
+								<!--Optional: -->
+								<externalRef1></externalRef1>
+								<!--Optional: -->
+								<externalRef2></externalRef2>
+								<!--Optional: -->
+								<name lastName="Legaspi">
+									<!--Optional: -->
+									<title></title>
+									<!--Optional: -->
+									<firstName></firstName>
+								</name>
+								<!--Optional: -->
+								<address>
+									<!--Optional: -->
+									<address1>Address1</address1>
+									<!--Optional: -->
+									<address2></address2>
+									<!--Optional: -->
+									<address3></address3>
+									<!--Optional: -->
+									<zipCode></zipCode>
+									<!--Optional: -->
+									<city></city>
+									<!--Optional: -->
+									<country></country>
+									<!--Optional: -->
+									<state></state>
+								</address>
+								<!--Zero or more repetitions: -->
+								<customFields code="CF1" description="CF1" stringValue="x" />
+								<!--Optional: -->
+								<nextInvoiceDate>2015-02-20</nextInvoiceDate>
+								<!--Optional: -->
+								<subscriptionDate>2015-02-20</subscriptionDate>
+								<!--Optional: -->
+								<paymentTerms>CASH</paymentTerms>
+								<!--Optional: -->
+								<electronicBilling>true</electronicBilling>
+								<!--Zero or more repetitions: -->
+								<userAccounts code="UAS2" description="UAS2">
+									<!--Optional: -->
+									<externalRef1></externalRef1>
+									<!--Optional: -->
+									<externalRef2></externalRef2>
+									<!--Optional: -->
+									<name lastName="Legaspi">
+										<!--Optional: -->
+										<title></title>
+										<!--Optional: -->
+										<firstName></firstName>
+									</name>
+									<!--Optional: -->
+									<address>
+										<!--Optional: -->
+										<address1>Address1</address1>
+										<!--Optional: -->
+										<address2></address2>
+										<!--Optional: -->
+										<address3></address3>
+										<!--Optional: -->
+										<zipCode></zipCode>
+										<!--Optional: -->
+										<city></city>
+										<!--Optional: -->
+										<country></country>
+										<!--Optional: -->
+										<state></state>
+									</address>
+									<!--Zero or more repetitions: -->
+									<customFields code="CF1" description="CF1" stringValue="x" />
+									<!--Optional: -->
+									<subscriptionDate>2015-02-04</subscriptionDate>
+									<!--Optional: -->
+									<status></status>
+									<!--Zero or more repetitions: -->
+									<subscriptions code="SUBW2"
+										offerTemplate="OFF1">
+										<!--Optional: -->
+										<description>SUBW2</description>
+										<!--Optional: -->
+										<subscriptionDate>2015-02-04</subscriptionDate>
+										<!--Optional: -->
+										<!--<terminationDate></terminationDate>-->
+										<!--Zero or more repetitions: -->
+										<accesses code="ACCESSW2">
+											<!--Optional: -->
+											<startDate>2015-02-04</startDate>
+											<!--Optional: -->
+											<endDate>2015-06-30</endDate>
+										</accesses>
+										<!--Zero or more repetitions: -->
+										<services code="SERV1">
+											<!--Optional: -->
+											<status></status>
+											<!--Optional: -->
+											<subscriptionDate>2015-02-04</subscriptionDate>
+											<!--Optional: -->
+											<!--<terminationDate></terminationDate>-->
+											<quantity>1</quantity>
+											<!--Optional: -->
+											<!--<terminationReason></terminationReason>-->
+										</services>
+									</subscriptions>
+								</userAccounts>
+							</billingAccounts>
+						</customerAccounts>
+					</customers>
+				</sellers>
+			</arg0>
+		</ws:customerHierarchyUpdate>
+	</soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/customerHierarchyUpdate"/><con:wsrmConfig version="1.2"/></con:call></con:operation></con:interface><con:interface xsi:type="con:WsdlInterface" wsaVersion="NONE" name="SubscriptionWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}SubscriptionWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="http://localhost:8080/meveo/SubscriptionWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache type="TEXT" rootPart="http://localhost:8080/meveo/SubscriptionWs?wsdl"><con:part><con:url>http://localhost:8080/meveo/SubscriptionWs?wsdl</con:url><con:content><![CDATA[<wsdl:definitions name="SubscriptionWs" targetNamespace="http://impl.ws.api.meveo.org/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://impl.ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns2="http://schemas.xmlsoap.org/soap/http" xmlns:ns1="http://ws.api.meveo.org/">
   <wsdl:import location="http://localhost:8080/meveo/SubscriptionWs?wsdl=SubscriptionWs.wsdl" namespace="http://ws.api.meveo.org/"></wsdl:import>
   <wsdl:binding name="SubscriptionWsSoapBinding" type="ns1:SubscriptionWs">
     <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>

@@ -10,6 +10,7 @@ import org.meveo.api.dto.account.AccountHierarchyDto;
 import org.meveo.api.dto.account.BillingAccountDto;
 import org.meveo.api.dto.account.CustomerAccountDto;
 import org.meveo.api.dto.account.CustomerDto;
+import org.meveo.api.dto.account.CustomerHierarchyDto;
 import org.meveo.api.dto.account.UserAccountDto;
 import org.meveo.api.dto.response.CustomerListResponse;
 import org.meveo.api.dto.response.account.GetAccessResponse;
@@ -88,16 +89,17 @@ public interface AccountWs extends IBaseWs {
 			@WebParam(name = "subscriptionCode") String subscriptionCode);
 
 	@WebMethod
-	public CustomerListResponse findAccountHierarchy(
+	CustomerListResponse findAccountHierarchy(
 			@WebParam(name = "accountHierarchy") AccountHierarchyDto accountHierarchyDto);
 
 	@WebMethod
-	public ActionStatus createAccountHierarchy(
-			@WebParam(name = "accountHierarchy") AccountHierarchyDto accountHierarchyDto);
+	ActionStatus createAccountHierarchy(@WebParam(name = "accountHierarchy") AccountHierarchyDto accountHierarchyDto);
 
 	@WebMethod
-	public ActionStatus updateAccountHierarchy(
-			@WebParam(name = "accountHierarchy") AccountHierarchyDto accountHierarchyDto);
+	ActionStatus updateAccountHierarchy(@WebParam(name = "accountHierarchy") AccountHierarchyDto accountHierarchyDto);
+
+	@WebMethod
+	ActionStatus customerHierarchyUpdate(CustomerHierarchyDto postData);
 
 	@WebMethod
 	GetListAccessResponse listAccess(@WebParam(name = "subscriptionCode") String subscriptionCode);
