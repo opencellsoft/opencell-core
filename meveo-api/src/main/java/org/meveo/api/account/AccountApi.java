@@ -157,7 +157,6 @@ public class AccountApi extends BaseApi {
 		accountEntity.setName(name);
 
 		// populate customFields
-		// populate customFields
 		if (postData.getCustomFields() != null) {
 			for (CustomFieldDto cf : postData.getCustomFields()) {
 				// check if custom field exists has a template

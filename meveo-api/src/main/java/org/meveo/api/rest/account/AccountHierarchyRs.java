@@ -9,6 +9,7 @@ import javax.ws.rs.core.MediaType;
 
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.account.AccountHierarchyDto;
+import org.meveo.api.dto.account.CustomerHierarchyDto;
 import org.meveo.api.dto.response.CustomerListResponse;
 import org.meveo.api.rest.IBaseRs;
 import org.meveo.api.rest.security.RSSecured;
@@ -34,7 +35,7 @@ public interface AccountHierarchyRs extends IBaseRs {
 	 */
 	@POST
 	@Path("/find")
-	public CustomerListResponse find(AccountHierarchyDto customerDto);
+	CustomerListResponse find(AccountHierarchyDto customerDto);
 
 	/**
 	 * Create account hierarchy.
@@ -44,7 +45,7 @@ public interface AccountHierarchyRs extends IBaseRs {
 	 */
 	@POST
 	@Path("/")
-	public ActionStatus create(AccountHierarchyDto accountHierarchyDto);
+	ActionStatus create(AccountHierarchyDto accountHierarchyDto);
 
 	/**
 	 * Update account hierarchy.
@@ -54,10 +55,10 @@ public interface AccountHierarchyRs extends IBaseRs {
 	 */
 	@PUT
 	@Path("/")
-	public ActionStatus update(AccountHierarchyDto accountHierarchyDto);
+	ActionStatus update(AccountHierarchyDto accountHierarchyDto);
 
-//	@POST
-//	@Path("/customerHierarchyUpdate")
-//	public ActionStatus customerHierarchyUpdate();
+	@POST
+	@Path("/customerHierarchyUpdate")
+	ActionStatus customerHierarchyUpdate(CustomerHierarchyDto postData);
 
 }

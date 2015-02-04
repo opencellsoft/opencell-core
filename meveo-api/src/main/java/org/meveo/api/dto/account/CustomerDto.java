@@ -1,5 +1,7 @@
 package org.meveo.api.dto.account;
 
+import java.util.List;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -19,6 +21,8 @@ public class CustomerDto extends AccountDto {
 	private String customerCategory;
 	private String customerBrand;
 	private String seller;
+
+	private List<CustomerAccountDto> customerAccounts;
 
 	public CustomerDto() {
 		super();
@@ -67,7 +71,15 @@ public class CustomerDto extends AccountDto {
 	@Override
 	public String toString() {
 		return "CustomerDto [customerCategory=" + customerCategory + ", customerBrand=" + customerBrand + ", seller="
-				+ seller + ", toString()=" + super.toString() + "]";
+				+ seller + ", customerAccounts=" + customerAccounts + "]";
+	}
+
+	public List<CustomerAccountDto> getCustomerAccounts() {
+		return customerAccounts;
+	}
+
+	public void setCustomerAccounts(List<CustomerAccountDto> customerAccounts) {
+		this.customerAccounts = customerAccounts;
 	}
 
 }

@@ -8,6 +8,7 @@ import org.meveo.api.account.AccountHierarchyApi;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.account.AccountHierarchyDto;
+import org.meveo.api.dto.account.CustomerHierarchyDto;
 import org.meveo.api.dto.response.CustomerListResponse;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.LoggingInterceptor;
@@ -79,11 +80,27 @@ public class AccountHierarchyRsImpl extends BaseRs implements
 	}
 
 	@Override
-	public ActionStatus update(AccountHierarchyDto customerHeirarchyDto) {
+	public ActionStatus update(AccountHierarchyDto postData) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 		try {
-			accountHierarchyApi.update(customerHeirarchyDto,
+			accountHierarchyApi.update(postData,
+					getCurrentUser());
+		} catch (MeveoApiException e) {
+			result.setErrorCode(e.getErrorCode());
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
+		}
+
+		return result;
+	}
+
+	@Override
+	public ActionStatus customerHierarchyUpdate(CustomerHierarchyDto postData) {
+		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+
+		try {
+			accountHierarchyApi.customerHierarchyUpdate(postData,
 					getCurrentUser());
 		} catch (MeveoApiException e) {
 			result.setErrorCode(e.getErrorCode());

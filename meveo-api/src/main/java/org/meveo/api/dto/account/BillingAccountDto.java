@@ -1,6 +1,7 @@
 package org.meveo.api.dto.account;
 
 import java.util.Date;
+import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -39,6 +40,8 @@ public class BillingAccountDto extends AccountDto {
 	private Date terminationDate;
 	private String paymentTerms;
 	private Boolean electronicBilling;
+
+	private List<UserAccountDto> userAccounts;
 
 	public BillingAccountDto() {
 
@@ -142,7 +145,7 @@ public class BillingAccountDto extends AccountDto {
 				+ ", country=" + country + ", language=" + language + ", paymentMethod=" + paymentMethod
 				+ ", nextInvoiceDate=" + nextInvoiceDate + ", subscriptionDate=" + subscriptionDate
 				+ ", terminationDate=" + terminationDate + ", paymentTerms=" + paymentTerms + ", electronicBilling="
-				+ electronicBilling + ", toString()=" + super.toString() + "]";
+				+ electronicBilling + ", userAccounts=" + userAccounts + "]";
 	}
 
 	public Date getSubscriptionDate() {
@@ -159,6 +162,14 @@ public class BillingAccountDto extends AccountDto {
 
 	public void setTerminationDate(Date terminationDate) {
 		this.terminationDate = terminationDate;
+	}
+
+	public List<UserAccountDto> getUserAccounts() {
+		return userAccounts;
+	}
+
+	public void setUserAccounts(List<UserAccountDto> userAccounts) {
+		this.userAccounts = userAccounts;
 	}
 
 }

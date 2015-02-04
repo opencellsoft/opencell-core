@@ -39,6 +39,8 @@ public class SubscriptionDto extends BaseDto {
 
 	private List<AccessDto> accesses;
 
+	private List<ServiceInstanceDto> services;
+
 	public SubscriptionDto() {
 
 	}
@@ -110,7 +112,7 @@ public class SubscriptionDto extends BaseDto {
 	public String toString() {
 		return "SubscriptionDto [code=" + code + ", description=" + description + ", userAccount=" + userAccount
 				+ ", offerTemplate=" + offerTemplate + ", subscriptionDate=" + subscriptionDate + ", terminationDate="
-				+ terminationDate + ", accesses=" + accesses + "]";
+				+ terminationDate + ", accesses=" + accesses + ", services=" + services + "]";
 	}
 
 	public String getDescription() {
@@ -127,6 +129,14 @@ public class SubscriptionDto extends BaseDto {
 
 	public void setAccesses(List<AccessDto> accesses) {
 		this.accesses = accesses;
+	}
+
+	public List<ServiceInstanceDto> getServices() {
+		return services;
+	}
+
+	public void setServices(List<ServiceInstanceDto> services) {
+		this.services = services;
 	}
 
 }
