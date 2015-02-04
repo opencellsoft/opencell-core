@@ -5,8 +5,9 @@
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:c="http://java.sun.com/jsp/jstl/core"
 	xmlns:rich="http://richfaces.org/rich"
-	xmlns:o="http://omnifaces.org/ui" xmlns:a="http://richfaces.org/a4j"
-	xmlns:hftl="http://hftl.org"
+	xmlns:o="http://omnifaces.org/ui"
+	xmlns:of="http://omnifaces.org/functions"
+	xmlns:a="http://richfaces.org/a4j" xmlns:hftl="http://hftl.org"
 	xmlns:hf="http://java.sun.com/jsf/composite/tags"
 	template="/layout/template.xhtml" xmlns:p="http://primefaces.org/ui">
 
@@ -79,38 +80,50 @@
 			column6="amountWithTax">
 		</hftl:entityPopup>
 
-
-
 		<p:dialog id="reloadPopup"
-			header="#{messages['reloadPopup.title']}"
+			header="#{messages['dialog.reloadPopup.title']}"
 			widgetVar="dlg_reloadPopup" dynamic="false" width="400">
 			<p:outputPanel id="reloadPanel">
 				<hf:formPanel edit="true"
-					label="#{messages['reloadPopup.title']}"
+					label="#{messages['dialog.reloadPopup.title']}"
 					backingBean="#{userAccountBean}"
-					entity="#{userAccountBean.reloadOperation}"
-					styleClass="formPanel" formId="reloadFrm"
-					showFormButtons="false" killConversationOnSave="false"
-					killConversationOnBack="false" useCustomIdParam="true">
-					<p:panelGrid columns="1">
-						<hf:formField
-							label="#{messages['walletOperation.operationDate']}"
-							field="operationDate" required="true" edit="true" />
-						<hf:formField label="#{messages['walletOperation.amountWithoutTax']}"
-							field="amountWithoutTax" size="7" edit="false" required="true"/>
-						<hf:formField label="#{messages['walletOperation.amountWithTax']}"
-							field="amountWithTax" size="7" edit="false" required="true"/>
-
-						<p:panel>
-							<p:commandButton action="#{userAccountBean.reload()}"
-								value="#{messages['button.terminateButton']}"
-								onclick="dlg_reloadPopup.hide()"
-								update=":#{p:component('panelWallet'+userAccountBean.selectedWalletCode)}" />
-							<p:commandButton immediate="true"
-								onclick="dlg_reloadPopup.hide()"
-								value="#{messages['management.close']}" />
-						</p:panel>
+					entity="#{userAccountBean.reloadOperation}" styleClass="formPanel"
+					formId="reloadFrm" showFormButtons="false"
+					killConversationOnSave="false" killConversationOnBack="false"
+					useCustomIdParam="true" columns="1">
+					<p:panelGrid columns="2">
+						<p:outputLabel for="operationDate"
+							value="#{messages['walletOperation.operationDate']}"></p:outputLabel>
+						<p:inputText id="operationDate" rendered="#{userAccountBean.edit}"
+							value="#{userAccountBean.reloadOperation.operationDate}"></p:inputText>
+						<h:outputText rendered="#{!userAccountBean.edit}"
+							value="#{userAccountBean.reloadOperation.operationDate}" />
 					</p:panelGrid>
+					<p:panelGrid columns="2">
+						<p:outputLabel for="amountWithoutTax"
+							value="#{messages['walletOperation.amountWithoutTax']}"></p:outputLabel>
+						<p:inputText id="amountWithoutTax"
+							rendered="#{userAccountBean.edit}"
+							value="#{userAccountBean.reloadOperation.amountWithoutTax}"></p:inputText>
+						<h:outputText rendered="#{!userAccountBean.edit}"
+							value="#{userAccountBean.reloadOperation.amountWithoutTax}" />
+					</p:panelGrid>
+					<p:panelGrid columns="2">
+						<p:outputLabel for="amountWithTax"
+							value="#{messages['walletOperation.amountWithTax']}"></p:outputLabel>
+						<p:inputText id="amountWithTax" rendered="#{userAccountBean.edit}"
+							value="#{userAccountBean.reloadOperation.amountWithTax}"></p:inputText>
+						<h:outputText rendered="#{!userAccountBean.edit}"
+							value="#{userAccountBean.reloadOperation.amountWithTax}" />
+					</p:panelGrid>
+					<p:panel styleClass="form-panel-actions">
+						<p:commandButton action="#{userAccountBean.reload()}"
+							value="#{messages['button.terminateButton']}"
+							onclick="dlg_reloadPopup.hide()"
+							update=":#{p:component('userAccountFormPanel')}" />
+						<p:commandButton immediate="true" onclick="dlg_reloadPopup.hide()"
+							value="#{messages['management.close']}" />
+					</p:panel>
 				</hf:formPanel>
 			</p:outputPanel>
 		</p:dialog>
@@ -230,72 +243,98 @@
 							<p:tab title="#{messages['customFieldTemplate.panel']}">
 								<hf:customFields />
 							</p:tab>
-							
-							
-							
-							<c:forEach items="#{userAccountBean.entity.prepaidWallets}" var="wallet">
-								<p:tab title="Wallet #{wallet.key}" id="panelWallet#{wallet.key}">
-									<p:panelGrid columns="4">
-										   <p:outputLabel value="#{messages['chargeInstance.code']}"/><h:outputText value="#{wallet.value.code}"/>
-										   <p:outputLabel value="description"/><h:outputText value="#{wallet.value.description}"/>
-										   <p:outputLabel value="type"/><h:outputText value="#{wallet.value.walletTemplate.walletType}"/>
-									</p:panelGrid>
-									<p:dataTable id="wallet#{wallet.key}datatable" var="e" paginator="true"
-										value="#{userAccountBean.getWalletOperations(wallet.key)}"
-										 rows="10" rowKey="#{e.id}">
-										 <p:column>
-											<f:facet name="header">
-												<h:outputText value="#{messages['walletOperation.operationDate']}" />
-											</f:facet>
-											<c:set var="converter1" value="#{getConverter.forType(e[operationDate], 'date')}"></c:set>
-											<h:outputText value="#{e.operationDate}" converter="#{converter1}" />
-										</p:column>
-										<p:column>
-											<f:facet name="header">
-												<h:outputText value="#{messages['walletOperation.endDate']}" />
-											</f:facet>
-											<c:set var="converter2" value="#{getConverter.forType(e[endDate], 'date')}"></c:set>
-											<h:outputText value="#{e.endDate}" converter="#{converter2}" />
-										</p:column>
-										<p:column>
-											<f:facet name="header">
-												<h:outputText value="#{messages['chargeInstance.code']}" />
-											</f:facet>
-											<h:outputText value="#{e.chargeInstance.code}" />
-										</p:column>
-										<p:column>
-											<f:facet name="header">
-												<h:outputText value="#{messages['walletOperation.quantity']}" />
-											</f:facet>
-											<c:set var="converter4" value="#{getConverter.forType(e[quantity], '4digits')}"></c:set>
-											<h:outputText value="#{e.quantity}" converter="#{converter4}" />
-										</p:column>
-										
-										<p:column>
-											<f:facet name="header">
-												<h:outputText value="#{messages['walletOperation.amountWithoutTax']}" />
-											</f:facet>
-											<c:set var="converter5" value="#{getConverter.forType(e[amountWithoutTax], '4digits')}"></c:set>
-											<h:outputText value="#{e.amountWithoutTax}" converter="#{converter5}" />
-										</p:column>
-										
-										<p:column>
-											<f:facet name="header">
-												<h:outputText value="#{messages['walletOperation.amountWithTax']}" />
-											</f:facet>
-											<c:set var="converter6" value="#{getConverter.forType(e[amountWithTax], '4digits')}"></c:set>
-											<h:outputText value="#{e.amountWithTax}" converter="#{converter6}" />
-										</p:column>
-										<p:column>
-											<f:facet name="header">
-												<h:outputText value="#{messages['walletOperation.status']}" />
-											</f:facet>
-											<h:outputText value="#{messages[e.status.label]}" />
-										</p:column>
-									</p:dataTable>
-									<p:commandButton rendered="#{wallet.key!='PRINCIPAL'}" value="#{messages['button.reload']}"
+
+							<c:forEach items="#{userAccountBean.entity.prepaidWallets}"
+								var="wallet">
+								<p:tab title="Wallet #{wallet.key}"
+									id="tab_panelWallet_#{wallet.key}">
+									<p:panel id="panelWallet_#{wallet.key}">
+										<p:panelGrid columns="1" styleClass="form-panel-fields">
+											<p:panelGrid columns="2">
+												<p:outputLabel value="#{messages['chargeInstance.code']}" />
+												<h:outputText value="#{wallet.value.code}" />
+												<p:outputLabel
+													value="#{messages['BusinessEntity.description']}" />
+												<h:outputText value="#{wallet.value.description}" />
+												<p:outputLabel value="#{messages['chargeTemplate.type']}" />
+												<h:outputText
+													value="#{wallet.value.walletTemplate.walletType}" />
+											</p:panelGrid>
+										</p:panelGrid>
+										<p:dataTable id="wallet#{wallet.key}datatable" var="e"
+											paginator="true"
+											value="#{userAccountBean.getWalletOperations(wallet.key)}"
+											rows="10" rowKey="#{e.id}">
+											<p:column>
+												<f:facet name="header">
+													<h:outputText
+														value="#{messages['walletOperation.operationDate']}" />
+												</f:facet>
+												<c:set var="converter1"
+													value="#{getConverter.forType(e[operationDate], 'date')}"></c:set>
+												<h:outputText value="#{e.operationDate}"
+													converter="#{converter1}" />
+											</p:column>
+											<p:column>
+												<f:facet name="header">
+													<h:outputText
+														value="#{messages['walletOperation.endDate']}" />
+												</f:facet>
+												<c:set var="converter2"
+													value="#{getConverter.forType(e[endDate], 'date')}"></c:set>
+												<h:outputText value="#{e.endDate}" converter="#{converter2}" />
+											</p:column>
+											<p:column>
+												<f:facet name="header">
+													<h:outputText value="#{messages['chargeInstance.code']}" />
+												</f:facet>
+												<h:outputText value="#{e.chargeInstance.code}" />
+											</p:column>
+											<p:column>
+												<f:facet name="header">
+													<h:outputText
+														value="#{messages['walletOperation.quantity']}" />
+												</f:facet>
+												<c:set var="converter4"
+													value="#{getConverter.forType(e[quantity], '4digits')}"></c:set>
+												<h:outputText value="#{e.quantity}"
+													converter="#{converter4}" />
+											</p:column>
+
+											<p:column>
+												<f:facet name="header">
+													<h:outputText
+														value="#{messages['walletOperation.amountWithoutTax']}" />
+												</f:facet>
+												<c:set var="converter5"
+													value="#{getConverter.forType(e[amountWithoutTax], '4digits')}"></c:set>
+												<h:outputText value="#{e.amountWithoutTax}"
+													converter="#{converter5}" />
+											</p:column>
+
+											<p:column>
+												<f:facet name="header">
+													<h:outputText
+														value="#{messages['walletOperation.amountWithTax']}" />
+												</f:facet>
+												<c:set var="converter6"
+													value="#{getConverter.forType(e[amountWithTax], '4digits')}"></c:set>
+												<h:outputText value="#{e.amountWithTax}"
+													converter="#{converter6}" />
+											</p:column>
+											<p:column>
+												<f:facet name="header">
+													<h:outputText value="#{messages['walletOperation.status']}" />
+												</f:facet>
+												<h:outputText value="#{messages[e.status.label]}" />
+											</p:column>
+										</p:dataTable>
+										<p:commandButton rendered="#{wallet.key!='PRINCIPAL'}"
+											value="#{messages['action.reload']}"
 											update=":#{p:component('reloadPopup')}"
-											actionListener="#{userAccount.setSelectedWalletCode(wallet.key)}" oncomplete="dlg_reloadPopup.show()"/>
+											actionListener="#{userAccountBean.setSelectedWalletCode(wallet.key)}"
+											oncomplete="dlg_reloadPopup.show()" />
+									</p:panel>
 								</p:tab>
 							</c:forEach>
 
