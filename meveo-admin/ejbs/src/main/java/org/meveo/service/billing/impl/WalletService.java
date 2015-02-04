@@ -61,6 +61,7 @@ public class WalletService extends PersistenceService<WalletInstance> {
 				wallet.setWalletTemplate(walletTemplate);
 				wallet.setUserAccount(userAccount);
 				create(wallet, creator, provider);
+				log.debug("add wallet {} to useraccount {}",walletCode,userAccount.getCode());
 				userAccount.getPrepaidWallets().put(walletCode, wallet);
 				getEntityManager().merge(userAccount);
 			}
