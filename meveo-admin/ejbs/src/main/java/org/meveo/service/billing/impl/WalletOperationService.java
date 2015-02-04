@@ -164,7 +164,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 	}
 
 	public void updateBalanceCache(@Observes @Created WalletInstance wallet) {
-		if (wallet.getWalletTemplate().getWalletType() == BillingWalletTypeEnum.PREPAID) {
+		if (wallet.getWalletTemplate()!=null && wallet.getWalletTemplate().getWalletType() == BillingWalletTypeEnum.PREPAID) {
 			fillBalanceCaches(wallet.getId());
 		}
 	}
@@ -1283,6 +1283,19 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
+	public List<WalletOperation> findByUserAccountAndWalletCode(String walletCode, UserAccount userAccount, Provider provider) {
+		QueryBuilder qb = new QueryBuilder(WalletOperation.class, "w");
+		qb.addCriterionEntity("wallet.userAccount", userAccount);
+		qb.addCriterionEntity("provider", provider);
+		qb.addCriterion("wallet.code", "=", walletCode, true);
+		try {
+			return (List<WalletOperation>)  qb.getQuery(getEntityManager()).getResultList();
+		} catch (NoResultException e) {
+			log.warn(e.getMessage());
+			return null;
+		}
+	}
 	// charging
 	public List<WalletOperation> chargeOnWalletIds(List<Long> walletIds, WalletOperation op, User creator,
 			Provider provider) throws BusinessException {

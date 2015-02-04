@@ -16,6 +16,7 @@
  */
 package org.meveo.admin.action.billing;
 
+import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
@@ -32,6 +33,7 @@ import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.DuplicateDefaultAccountException;
 import org.meveo.model.billing.BillingAccount;
+import org.meveo.model.billing.OperationTypeEnum;
 import org.meveo.model.billing.RatedTransaction;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.billing.WalletOperation;
@@ -42,6 +44,7 @@ import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.billing.impl.RatedTransactionService;
 import org.meveo.service.billing.impl.UserAccountService;
+import org.meveo.service.billing.impl.WalletOperationService;
 import org.primefaces.model.LazyDataModel;
 
 /**
@@ -65,6 +68,9 @@ public class UserAccountBean extends AccountBean<UserAccount> {
 	@Inject
 	private WalletOperationBean walletOperationBean;
 
+	@Inject 
+	WalletOperationService walletOperationService;
+	
 	@Inject
 	private UserAccountService userAccountService;
 
@@ -75,6 +81,9 @@ public class UserAccountBean extends AccountBean<UserAccount> {
 
 	@Inject
 	private BillingAccountService billingAccountService;
+	
+	private WalletOperation reloadOperation;
+	private String selectedWalletCode;
 
 	/**
 	 * Constructor. Invokes super constructor and provides class type of this
@@ -261,7 +270,15 @@ public class UserAccountBean extends AccountBean<UserAccount> {
 		}
 		return result;
 	}
-
+	
+	public List<WalletOperation> getWalletOperations(String walletCode) {
+		log.debug("getWalletOperations {}",walletCode);
+		if(entity!=null && entity.getProvider()!=null){
+			return walletOperationService.findByUserAccountAndWalletCode(walletCode,entity,entity.getProvider());
+		}
+		return null;
+	}
+	
 	@Produces
 	@Named("getRatedTransactionsInvoiced")
 	public List<RatedTransaction> getRatedTransactionsInvoiced() {
@@ -307,4 +324,35 @@ public class UserAccountBean extends AccountBean<UserAccount> {
 		return Arrays.asList("provider", "billingAccount");
 	}
 
+	public WalletOperation getReloadOperation() {
+		return reloadOperation;
+	}
+
+	public void setReloadOperation(WalletOperation reloadOperation) {
+		this.reloadOperation = reloadOperation;
+	}
+
+	public String getSelectedWalletCode() {
+		return selectedWalletCode;
+	}
+
+	public void setSelectedWalletCode(String selectedWalletCode) {
+		this.selectedWalletCode = selectedWalletCode;
+		this.reloadOperation = new WalletOperation();
+		reloadOperation.setCode("RELOAD");
+		reloadOperation.setOperationDate(new Date());
+		reloadOperation.setQuantity(BigDecimal.ONE);
+		reloadOperation.setCurrency(entity.getBillingAccount().getCustomerAccount().getTradingCurrency().getCurrency());
+		reloadOperation.setWallet(entity.getWalletInstance(selectedWalletCode));
+		reloadOperation.setDescription("reload");
+		reloadOperation.setProvider(entity.getProvider());
+		reloadOperation.setSeller(entity.getBillingAccount().getCustomerAccount().getCustomer().getSeller());
+		reloadOperation.setStatus(WalletOperationStatusEnum.TREATED);
+		reloadOperation.setType(OperationTypeEnum.CREDIT);
+	}
+
+	public void reload(){
+		walletOperationService.create(reloadOperation, getCurrentUser());
+		reloadOperation=null;
+	}
 }

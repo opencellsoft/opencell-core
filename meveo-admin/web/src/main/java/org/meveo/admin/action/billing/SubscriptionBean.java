@@ -148,7 +148,7 @@ public class SubscriptionBean extends StatefulBaseBean<Subscription> {
 				entity.setDefaultLevel(true);
 			}
 		}
-
+		log.debug("SubscriptionBean initEntity id={}",entity.getId());
 		if (entity.getId() == null) {
 			Calendar calendar = Calendar.getInstance();
 			calendar.setTime(entity.getSubscriptionDate());
@@ -210,10 +210,12 @@ public class SubscriptionBean extends StatefulBaseBean<Subscription> {
 	@Override
 	protected String saveOrUpdate(Subscription entity) throws BusinessException {
 		if (entity.isTransient()) {
+			log.debug("SubscriptionBean save, # of service templates:{}",entity.getOffer().getServiceTemplates().size());
 			subscriptionService.create(entity);
 			serviceTemplates.addAll(entity.getOffer().getServiceTemplates());
 			messages.info(new BundleKey("messages", "save.successful"));
 		} else {
+			log.debug("SubscriptionBean update");
 			subscriptionService.update(entity);
 			messages.info(new BundleKey("messages", "update.successful"));
 		}
@@ -458,7 +460,7 @@ public class SubscriptionBean extends StatefulBaseBean<Subscription> {
 		try {
 			log.debug("activateService id={} checked", selectedServiceInstance.getId());
 			if (selectedServiceInstance != null) {
-				log.debug("activateService:serviceInstance.getRecurrringChargeInstances.size=#0",
+				log.debug("activateService:serviceInstance.getRecurrringChargeInstances.size={}",
 						selectedServiceInstance.getRecurringChargeInstances().size());
 
 				if (selectedServiceInstance.getStatus() == InstanceStatusEnum.TERMINATED) {
