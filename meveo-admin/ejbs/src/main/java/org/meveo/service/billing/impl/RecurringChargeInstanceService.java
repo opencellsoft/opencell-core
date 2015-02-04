@@ -179,6 +179,7 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
 				.getTradingCountry());
 		chargeInstance.setCurrency(serviceInst.getSubscription().getUserAccount().getBillingAccount()
 				.getCustomerAccount().getTradingCurrency());
+		chargeInstance.updateAudit(getCurrentUser());
 
 		ServiceChargeTemplateRecurring recChTmplServ = serviceInst.getServiceTemplate()
 				.getServiceRecurringChargeByChargeCode(chargeCode);
@@ -187,7 +188,7 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
 			for (WalletTemplate walletTemplate : walletTemplates) {
 				if (walletTemplate == null)
 					continue;
-				if(walletTemplate.getWalletType()==BillingWalletTypeEnum.PREPAID){
+				if (walletTemplate.getWalletType() == BillingWalletTypeEnum.PREPAID) {
 					chargeInstance.setPrepaid(true);
 				}
 				chargeInstance.getWalletInstances().add(
@@ -246,7 +247,7 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
 		List<WalletTemplate> walletTemplates = recChTmplServ.getWalletTemplates();
 		if (walletTemplates != null && walletTemplates.size() > 0) {
 			for (WalletTemplate walletTemplate : walletTemplates) {
-				if(walletTemplate.getWalletType()==BillingWalletTypeEnum.PREPAID){
+				if (walletTemplate.getWalletType() == BillingWalletTypeEnum.PREPAID) {
 					chargeInstance.setPrepaid(true);
 				}
 				chargeInstance.getWalletInstances().add(
