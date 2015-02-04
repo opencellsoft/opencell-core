@@ -54,7 +54,7 @@
 				<h:outputText value="#{messages['invoiceSubCategory.panel']}" />
 			</f:facet>
 
-			<p:tabView id="tabView">
+			<p:tabView id="tabView" binding="#{invoiceSubCategoryBean.tabView}">
 				<p:tab title="#{messages['invoiceSubCategory.tab1']}">
 
 					<hf:formPanel id="formPanel" label=""
@@ -183,10 +183,16 @@
 											action="#{invoiceSubCategoryBean.newInvoiceSubcategoryCountryInstance}"
 											update=":tabView:subCategoryCountrydiv" />
 
-										<p:button id="buttonBack" value="#{messages['action.back']}"
+
+										<!-- <p:button id="buttonBack" value="#{messages['action.back']}"
 											outcome="#{invoiceSubCategoryBean.back()}"
 											includeViewParams="true">
-										</p:button>
+											</p:button> -->
+										<p:commandButton id="buttonBack"
+											value="#{messages['action.back']}"
+											action="#{invoiceSubCategoryBean.setIndex()}"
+											update=":tabView" immediate="true"></p:commandButton>
+
 									</p:panelGrid>
 
 								</hf:formPanel>
