@@ -127,8 +127,8 @@ public class InvoiceSubCategoryBean extends
 					messages.info(new BundleKey("messages", "save.successful"));
 				}
 
-				endConversation();
-				return getListViewName();
+				invoiceSubcategoryCountry = new InvoiceSubcategoryCountry();
+				return null;
 			}
 		} catch (Exception e) {
 			log.error(
@@ -212,7 +212,7 @@ public class InvoiceSubCategoryBean extends
 	@Override
 	public String saveOrUpdate(boolean killConversation)
 			throws BusinessException {
-		String back = null;
+
 		if (entity.getId() != null) {
 			for (String msgKey : languageMessagesMap.keySet()) {
 				String description = languageMessagesMap.get(msgKey);
@@ -244,10 +244,10 @@ public class InvoiceSubCategoryBean extends
 						description);
 				catMessagesService.create(catMessages);
 			}
-
+			return null;
 		}
 
-		return back;
+		return getListViewName();
 	}
 
 	@Override
