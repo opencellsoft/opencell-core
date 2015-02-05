@@ -18,8 +18,11 @@ package org.meveo.model.billing;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -27,6 +30,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.MapKeyColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
@@ -37,6 +41,7 @@ import javax.validation.constraints.NotNull;
 
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.catalog.OfferTemplate;
+import org.meveo.model.crm.CustomFieldInstance;
 import org.meveo.model.mediation.Access;
 
 /**
@@ -93,6 +98,10 @@ public class Subscription extends BusinessEntity {
 	@Column(name = "DEFAULT_LEVEL")
 	private Boolean defaultLevel = true;
 
+	@OneToMany(mappedBy = "subscription", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@MapKeyColumn(name = "code")
+	private Map<String, CustomFieldInstance> customFields = new HashMap<String, CustomFieldInstance>();
+	
 	public Date getEndAgrementDate() {
 		return endAgrementDate;
 	}
@@ -180,6 +189,14 @@ public class Subscription extends BusinessEntity {
 
 	public void setDefaultLevel(Boolean defaultLevel) {
 		this.defaultLevel = defaultLevel;
+	}
+
+	public Map<String, CustomFieldInstance> getCustomFields() {
+		return customFields;
+	}
+
+	public void setCustomFields(Map<String, CustomFieldInstance> customFields) {
+		this.customFields = customFields;
 	}
 
 }

@@ -5,6 +5,8 @@ import javax.persistence.NoResultException;
 
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.AccountEntity;
+import org.meveo.model.IEntity;
+import org.meveo.model.billing.Subscription;
 import org.meveo.model.crm.CustomFieldInstance;
 import org.meveo.service.base.BusinessService;
 
@@ -13,11 +15,14 @@ public class CustomFieldInstanceService extends
 		BusinessService<CustomFieldInstance> {
 
 	public CustomFieldInstance findByCodeAndAccount(String code,
-			AccountEntity account) {
+			IEntity t) {
 		QueryBuilder qb = new QueryBuilder(CustomFieldInstance.class, "c");
 		qb.addCriterion("code", "=", code, true);
-		qb.addCriterionEntity("account", account);
-
+		if(t instanceof AccountEntity){
+			qb.addCriterionEntity("account", t);
+		} else if(t instanceof Subscription){
+			qb.addCriterionEntity("subscription", t);	
+		}
 		try {
 			return (CustomFieldInstance) qb.getQuery(getEntityManager())
 					.getSingleResult();

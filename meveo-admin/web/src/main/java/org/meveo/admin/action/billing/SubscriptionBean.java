@@ -46,6 +46,7 @@ import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.RecurringChargeTemplate;
 import org.meveo.model.catalog.ServiceTemplate;
+import org.meveo.model.crm.AccountLevelEnum;
 import org.meveo.model.mediation.Access;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
@@ -181,6 +182,8 @@ public class SubscriptionBean extends StatefulBaseBean<Subscription> {
 
 		}
 
+		initCustomFields(AccountLevelEnum.SUB);
+
 		log.debug("serviceInstances=" + serviceInstances.getSize());
 		log.debug("servicetemplates=" + serviceTemplates.getSize());
 
@@ -205,6 +208,8 @@ public class SubscriptionBean extends StatefulBaseBean<Subscription> {
 
 		super.saveOrUpdate(killConversation);
 
+		saveCustomFields();
+		
 		return "/pages/billing/subscriptions/subscriptionDetail?edit=false&subscriptionId=" + entity.getId()
 				+ "&faces-redirect=true&includeViewParams=true";
 	}
@@ -221,6 +226,8 @@ public class SubscriptionBean extends StatefulBaseBean<Subscription> {
 			subscriptionService.update(entity);
 			messages.info(new BundleKey("messages", "update.successful"));
 		}
+
+		saveCustomFields();
 
 		return back();
 	}

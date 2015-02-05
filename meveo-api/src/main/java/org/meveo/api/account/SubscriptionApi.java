@@ -14,6 +14,7 @@ import javax.inject.Inject;
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.BaseApi;
+import org.meveo.api.dto.CustomFieldDto;
 import org.meveo.api.dto.account.ActivateServicesDto;
 import org.meveo.api.dto.account.ApplyOneShotChargeInstanceDto;
 import org.meveo.api.dto.billing.SubscriptionDto;
@@ -35,6 +36,9 @@ import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.catalog.WalletTemplate;
+import org.meveo.model.crm.AccountLevelEnum;
+import org.meveo.model.crm.CustomFieldInstance;
+import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.Provider;
 import org.meveo.service.billing.impl.OneShotChargeInstanceService;
 import org.meveo.service.billing.impl.ServiceInstanceService;
@@ -45,11 +49,10 @@ import org.meveo.service.billing.impl.WalletTemplateService;
 import org.meveo.service.catalog.impl.OfferTemplateService;
 import org.meveo.service.catalog.impl.OneShotChargeTemplateService;
 import org.meveo.service.catalog.impl.ServiceTemplateService;
+import org.meveo.service.crm.impl.CustomFieldInstanceService;
+import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.slf4j.Logger;
 
-/**
- * @author Edward P. Legaspi
- **/
 @Stateless
 public class SubscriptionApi extends BaseApi {
 
@@ -83,6 +86,12 @@ public class SubscriptionApi extends BaseApi {
 	@Inject
 	private WalletTemplateService walletTemplateService;
 
+	@Inject
+	private CustomFieldInstanceService customFieldInstanceService;
+
+	@Inject
+	private CustomFieldTemplateService customFieldTemplateService;
+
 	public void create(SubscriptionDto postData, User currentUser) throws MeveoApiException {
 		if (!StringUtils.isBlank(postData.getUserAccount()) && !StringUtils.isBlank(postData.getOfferTemplate())
 				&& !StringUtils.isBlank(postData.getCode())) {
@@ -107,6 +116,37 @@ public class SubscriptionApi extends BaseApi {
 			subscription.setDescription(postData.getDescription());
 			subscription.setUserAccount(userAccount);
 			subscription.setOffer(offerTemplate);
+
+			// populate customFields
+			if (postData.getCustomFields() != null) {
+				for (CustomFieldDto cf : postData.getCustomFields()) {
+					// check if custom field exists has a template
+					List<CustomFieldTemplate> customFieldTemplates = customFieldTemplateService
+					.findByAccountLevel(AccountLevelEnum.SUB);
+					if (customFieldTemplates != null && customFieldTemplates.size() > 0) {
+						for (CustomFieldTemplate cft : customFieldTemplates) {
+							if (cf.getCode().equals(cft.getCode())) {
+								// create
+								CustomFieldInstance cfiNew = new CustomFieldInstance();
+								cfiNew.setSubscription(subscription);
+								cfiNew.setActive(true);
+								cfiNew.setCode(cf.getCode());
+								cfiNew.setDateValue(cf.getDateValue());
+								cfiNew.setDescription(cf.getDescription());
+								cfiNew.setDoubleValue(cf.getDoubleValue());
+								cfiNew.setLongValue(cf.getLongValue());
+								cfiNew.setProvider(currentUser.getProvider());
+								cfiNew.setStringValue(cf.getStringValue());
+								cfiNew.updateAudit(currentUser);
+								subscription.getCustomFields().put(cfiNew.getCode(), cfiNew);
+							}
+						}
+					} else {
+						log.warn("No custom field template defined.");
+					}
+				}
+			}
+		
 			subscription.setSubscriptionDate(postData.getSubscriptionDate());
 			subscription.setTerminationDate(postData.getTerminationDate());
 
@@ -155,7 +195,54 @@ public class SubscriptionApi extends BaseApi {
 			subscription.setDescription(postData.getDescription());
 			subscription.setSubscriptionDate(postData.getSubscriptionDate());
 			subscription.setTerminationDate(postData.getTerminationDate());
+			// populate customFields
+			if (postData.getCustomFields() != null) {
+				for (CustomFieldDto cf : postData.getCustomFields()) {
+					// check if custom field exists has a template
+					List<CustomFieldTemplate> customFieldTemplates = customFieldTemplateService
+							.findByAccountLevel(AccountLevelEnum.SUB);
+					boolean found = false;
+					if (customFieldTemplates != null && customFieldTemplates.size() > 0) {
+						for (CustomFieldTemplate cft : customFieldTemplates) {
+							if (cf.getCode().equals(cft.getCode())) {
+								found = true;
+								CustomFieldInstance cfi = customFieldInstanceService.findByCodeAndAccount(cf.getCode(),
+										subscription);
+								if (cfi != null) {
+									// update
+									cfi.setActive(true);
+									cfi.setDateValue(cf.getDateValue());
+									cfi.setDescription(cf.getDescription());
+									cfi.setDoubleValue(cf.getDoubleValue());
+									cfi.setLongValue(cf.getLongValue());
+									cfi.setStringValue(cf.getStringValue());
+									cfi.updateAudit(currentUser);
+								} else {
+									// create
+									CustomFieldInstance cfiNew = new CustomFieldInstance();
+									cfiNew.setSubscription(subscription);
+									cfiNew.setActive(true);
+									cfiNew.setCode(cf.getCode());
+									cfiNew.setDateValue(cf.getDateValue());
+									cfiNew.setDescription(cf.getDescription());
+									cfiNew.setDoubleValue(cf.getDoubleValue());
+									cfiNew.setLongValue(cf.getLongValue());
+									cfiNew.setProvider(currentUser.getProvider());
+									cfiNew.setStringValue(cf.getStringValue());
+									cfiNew.updateAudit(currentUser);
+									subscription.getCustomFields().put(cfiNew.getCode(), cfiNew);
+								}
+							}
+						}
+					} else {
+						log.warn("No custom field template defined.");
+					}
 
+					if (!found) {
+						log.warn("No custom field template with code={}", cf.getCode());
+					}
+				}
+			}
 			subscriptionService.update(subscription, currentUser);
 		} else {
 			if (StringUtils.isBlank(postData.getUserAccount())) {

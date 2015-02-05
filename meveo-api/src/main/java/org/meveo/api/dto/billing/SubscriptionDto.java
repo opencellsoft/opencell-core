@@ -10,6 +10,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.BaseDto;
+import org.meveo.api.dto.CustomFieldDto;
 import org.meveo.api.dto.account.AccessDto;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.mediation.Access;
@@ -40,6 +41,8 @@ public class SubscriptionDto extends BaseDto {
 	private List<AccessDto> accesses;
 
 	private List<ServiceInstanceDto> services;
+
+	private List<CustomFieldDto> customFields = new ArrayList<CustomFieldDto>();
 
 	public SubscriptionDto() {
 
@@ -139,4 +142,11 @@ public class SubscriptionDto extends BaseDto {
 		this.services = services;
 	}
 
+	public List<CustomFieldDto> getCustomFields() {
+		return customFields;
+	}
+
+	public void setCustomFields(List<CustomFieldDto> customFields) {
+		this.customFields = customFields;
+	}
 }
