@@ -313,6 +313,7 @@ public class UsageRatingService {
 				return;
 			}
 
+			cachedValue.setSubscriptionDate(usageChargeInstance.getServiceInstance().getSubscriptionDate());
 			cachedValue.setChargeDate(usageChargeInstance.getChargeDate());
 			cachedValue.setChargeInstanceId(usageChargeInstance.getId());
 			usageChargeInstance.getProvider().getCode();
@@ -513,14 +514,17 @@ public class UsageRatingService {
 			counterInstance = counterInstanceService
 					.findById(counterInstanceCache.getKey());
 			CounterPeriod counterPeriod = counterInstanceService.createPeriod(
-					counterInstance, edr.getEventDate(), currentUser);
-			periodCache = CounterPeriodCache.getInstance(counterPeriod,
-					counterInstance.getCounterTemplate());
-			counterInstanceCache.getCounterPeriods().add(periodCache);
-
-			log.info("created counter period in cache:" + periodCache);
+					counterInstance, edr.getEventDate(),charge.getSubscriptionDate(), currentUser);
+			if(counterPeriod!=null){
+				periodCache = CounterPeriodCache.getInstance(counterPeriod,
+						counterInstance.getCounterTemplate());
+				counterInstanceCache.getCounterPeriods().add(periodCache);
+	
+				log.debug("created counter period in cache:{}", periodCache);
+			}
 		}
 
+		if(periodCache!=null){
 		synchronized (periodCache) {
 			BigDecimal countedValue = edr.getQuantity().multiply(
 					charge.getUnityMultiplicator());
@@ -556,7 +560,7 @@ public class UsageRatingService {
 			deducedQuantity = deducedQuantity.divide(charge
 					.getUnityMultiplicator());
 		}
-
+		}
 		return deducedQuantity;
 	}
 

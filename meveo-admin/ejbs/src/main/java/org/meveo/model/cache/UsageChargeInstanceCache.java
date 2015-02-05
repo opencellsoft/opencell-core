@@ -15,6 +15,7 @@ public class UsageChargeInstanceCache implements Comparable<UsageChargeInstanceC
 	private int unityNbDecimal = 2;
 	private CounterInstanceCache counter;
 	private Date chargeDate;
+	private Date subscriptionDate;
 	private Date terminationDate;
 	private UsageChargeTemplateCache templateCache;
 	
@@ -60,6 +61,12 @@ public class UsageChargeInstanceCache implements Comparable<UsageChargeInstanceC
 	}
 	public void setChargeDate(Date chargeDate) {
 		this.chargeDate = chargeDate;
+	}
+	public Date getSubscriptionDate() {
+		return subscriptionDate;
+	}
+	public void setSubscriptionDate(Date subscriptionDate) {
+		this.subscriptionDate = subscriptionDate;
 	}
 	public Date getTerminationDate() {
 		return terminationDate;

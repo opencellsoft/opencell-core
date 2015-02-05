@@ -25,6 +25,7 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.Size;
 
@@ -49,6 +50,9 @@ public abstract class Calendar extends AuditableEntity {
     @Column(name = "CAL_TYPE", insertable = false, updatable = false)
     private String calendarType;
 
+    @Transient
+    private Date startDate;
+    
     public String getName() {
         return name;
     }
@@ -117,5 +121,13 @@ public abstract class Calendar extends AuditableEntity {
 
     public String getCalendarType() {
         return calendarType;
+    }
+
+    public Date getStartDate() {
+        return startDate;
+    }
+
+    public void setStartDate(Date startDate) {
+        this.startDate = startDate;
     }
 }

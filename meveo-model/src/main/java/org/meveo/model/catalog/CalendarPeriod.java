@@ -41,8 +41,6 @@ public class CalendarPeriod extends Calendar {
     @Column(name = "NB_PERIODS")
     private Integer nbPeriods = 1;
 
-    @Transient
-    private Date startDate;
 
     public Integer getPeriodLength() {
         return periodLength;
@@ -60,13 +58,6 @@ public class CalendarPeriod extends Calendar {
         this.nbPeriods = nbPeriods;
     }
 
-    public Date getStartDate() {
-        return startDate;
-    }
-
-    public void setStartDate(Date startDate) {
-        this.startDate = startDate;
-    }
 
     /**
      * Checks for next calendar date by adding number of days in a period to a starting date. Date being checked must fall within a period timeframe or null is returned
@@ -77,11 +68,11 @@ public class CalendarPeriod extends Calendar {
     @Override
     public Date nextCalendarDate(Date date) {
 
-        if (nbPeriods == null || periodLength == null || startDate == null) {
+        if (nbPeriods == null || periodLength == null || getStartDate() == null) {
             return null;
         }
 
-        Date cleanDate = DateUtils.truncate(startDate, java.util.Calendar.DAY_OF_MONTH);
+        Date cleanDate = DateUtils.truncate(getStartDate(), java.util.Calendar.DAY_OF_MONTH);
         GregorianCalendar calendar = new GregorianCalendar();
         calendar.setTime(cleanDate);
 
@@ -106,11 +97,11 @@ public class CalendarPeriod extends Calendar {
     @Override
     public Date previousCalendarDate(Date date) {
 
-        if (nbPeriods == null || periodLength == null || startDate == null) {
+        if (nbPeriods == null || periodLength == null || getStartDate() == null) {
             return null;
         }
 
-        Date cleanDate = DateUtils.truncate(startDate, java.util.Calendar.DAY_OF_MONTH);
+        Date cleanDate = DateUtils.truncate(getStartDate(), java.util.Calendar.DAY_OF_MONTH);
         GregorianCalendar calendar = new GregorianCalendar();
         calendar.setTime(cleanDate);
 

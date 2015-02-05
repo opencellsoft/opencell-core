@@ -32,6 +32,7 @@ import org.meveo.model.admin.User;
 import org.meveo.model.billing.CounterInstance;
 import org.meveo.model.billing.CounterPeriod;
 import org.meveo.model.billing.UserAccount;
+import org.meveo.model.catalog.Calendar;
 import org.meveo.model.catalog.CounterTemplate;
 import org.meveo.model.notification.Notification;
 import org.meveo.service.base.PersistenceService;
@@ -123,14 +124,20 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
         return counterInstance;
     }
 
-    public CounterPeriod createPeriod(CounterInstance counterInstance, Date chargeDate, User currentUser) {
+    public CounterPeriod createPeriod(CounterInstance counterInstance, Date chargeDate,Date initDate, User currentUser) {
         refresh(counterInstance);
         counterInstance = (CounterInstance) attach(counterInstance);
         CounterPeriod counterPeriod = new CounterPeriod();
         counterPeriod.setCounterInstance(counterInstance);
-        Date startDate = counterInstance.getCounterTemplate().getCalendar().previousCalendarDate(chargeDate);
-        Date endDate = counterInstance.getCounterTemplate().getCalendar().nextCalendarDate(startDate);
-        log.info("create counter period from " + startDate + " to " + endDate);
+        Calendar cal=counterInstance.getCounterTemplate().getCalendar();
+        cal.setStartDate(initDate);
+        Date startDate = cal.previousCalendarDate(chargeDate);
+        if(startDate==null){
+            log.info("cannot create counter for the date {} (not in calendar)" ,chargeDate);
+        	return null;
+        }
+        Date endDate = cal.nextCalendarDate(startDate);
+        log.info("create counter period from {} to {}",startDate,endDate);
 
         counterPeriod.setPeriodStartDate(startDate);
         counterPeriod.setPeriodEndDate(endDate);
@@ -160,7 +167,7 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
      * @param currentUser User performing operation
      * @return Found or created counter period
      */
-    public CounterPeriod getCounterPeriod(CounterInstance counterInstance, Date date, User currentUser) {
+    public CounterPeriod getCounterPeriod(CounterInstance counterInstance, Date date,Date initDate, User currentUser) {
 
         Query query = getEntityManager().createQuery(
             "select cp from CounterPeriod cp where cp.counterInstance=:counterInstance and cp.periodStartDate<=:date and cp.periodEndDate>:date ");
@@ -172,7 +179,7 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
             return counterPeriod;
             
         } catch (NoResultException e) {
-            return createPeriod(counterInstance, date, currentUser);
+            return createPeriod(counterInstance, date,initDate, currentUser);
         }
     }
 
@@ -205,11 +212,11 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
      * @return
      * @throws CounterValueInsufficientException
      */
-    public BigDecimal deduceCounterValue(CounterInstance counterInstance, Date date, BigDecimal value, User currentUser) throws CounterValueInsufficientException {
+    public BigDecimal deduceCounterValue(CounterInstance counterInstance, Date date,Date initDate, BigDecimal value, User currentUser) throws CounterValueInsufficientException {
 
-        CounterPeriod counterPeriod = getCounterPeriod(counterInstance, date, currentUser);
+        CounterPeriod counterPeriod = getCounterPeriod(counterInstance, date, initDate, currentUser);
 
-        if (counterPeriod.getValue().compareTo(value) < 0) {
+        if (counterPeriod==null || counterPeriod.getValue().compareTo(value) < 0) {
             throw new CounterValueInsufficientException();
 
         } else {

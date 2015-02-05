@@ -158,7 +158,7 @@ public class DefaultObserver {
             // Check if the counter associated to notification was not exhausted yet
             if (notif.getCounterInstance() != null) {
                 try {
-                    counterInstanceService.deduceCounterValue(notif.getCounterInstance(), new Date(), new BigDecimal(1), notif.getAuditable().getCreator());
+                    counterInstanceService.deduceCounterValue(notif.getCounterInstance(), new Date(),notif.getAuditable().getCreated(), new BigDecimal(1), notif.getAuditable().getCreator());
                 } catch (CounterValueInsufficientException ex) {
                     sendNotify = false;
                 }

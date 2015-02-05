@@ -643,6 +643,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 		RecurringChargeTemplate recurringChargeTemplate = chargeInstance.getRecurringChargeTemplate();
 
 		Calendar cal = recurringChargeTemplate.getCalendar();
+		cal.setStartDate(subscriptionDate);
 		Date previousapplicationDate = cal.previousCalendarDate(applicationDate);
 		if (cal.truncDateTime()) {
 			previousapplicationDate = DateUtils.parseDateWithPattern(previousapplicationDate, "dd/MM/yyyy");
