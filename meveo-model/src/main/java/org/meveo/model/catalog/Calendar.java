@@ -51,7 +51,7 @@ public abstract class Calendar extends AuditableEntity {
     private String calendarType;
 
     @Transient
-    private Date startDate;
+    private Date initDate;
     
     public String getName() {
         return name;
@@ -123,11 +123,11 @@ public abstract class Calendar extends AuditableEntity {
         return calendarType;
     }
 
-    public Date getStartDate() {
-        return startDate;
+    public Date getInitDate() {
+        return initDate;
     }
 
-    public void setStartDate(Date startDate) {
-        this.startDate = startDate;
+    public void setInitDate(Date startDate) {
+        this.initDate = startDate;
     }
 }

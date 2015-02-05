@@ -70,7 +70,7 @@ public class CalendarTest {
         CalendarPeriod calendar = new CalendarPeriod();
         calendar.setNbPeriods(1);
         calendar.setPeriodLength(20);
-        calendar.setStartDate(DateUtils.newDate(2015, java.util.Calendar.FEBRUARY, 2, 0, 0, 0));
+        calendar.setInitDate(DateUtils.newDate(2015, java.util.Calendar.FEBRUARY, 2, 0, 0, 0));
 
         Date prevDate = calendar.previousCalendarDate(DateUtils.newDate(2015, java.util.Calendar.FEBRUARY, 1, 0, 0, 0));
         Assert.assertNull(prevDate);
@@ -110,7 +110,7 @@ public class CalendarTest {
         CalendarPeriod calendar = new CalendarPeriod();
         calendar.setNbPeriods(5);
         calendar.setPeriodLength(7);
-        calendar.setStartDate(DateUtils.newDate(2015, java.util.Calendar.FEBRUARY, 2, 0, 0, 0));
+        calendar.setInitDate(DateUtils.newDate(2015, java.util.Calendar.FEBRUARY, 2, 0, 0, 0));
 
         Date prevDate = calendar.previousCalendarDate(DateUtils.newDate(2015, java.util.Calendar.FEBRUARY, 1, 0, 0, 0));
         Assert.assertNull(prevDate);

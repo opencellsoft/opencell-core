@@ -643,7 +643,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 		RecurringChargeTemplate recurringChargeTemplate = chargeInstance.getRecurringChargeTemplate();
 
 		Calendar cal = recurringChargeTemplate.getCalendar();
-		cal.setStartDate(subscriptionDate);
+		cal.setInitDate(subscriptionDate);
 		Date previousapplicationDate = cal.previousCalendarDate(applicationDate);
 		if (cal.truncDateTime()) {
 			previousapplicationDate = DateUtils.parseDateWithPattern(previousapplicationDate, "dd/MM/yyyy");
@@ -790,6 +790,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 					+ recurringChargeTemplate.getCode());
 		}
 		Calendar cal = recurringChargeTemplate.getCalendar();
+		cal.setInitDate(chargeInstance.getServiceInstance().getSubscriptionDate());
 		if (cal.truncDateTime()) {
 			applicationDate = DateUtils.parseDateWithPattern(applicationDate, "dd/MM/yyyy");
 		}
@@ -1009,10 +1010,13 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 			throws BusinessException {
 
 		Date applicationDate = chargeInstance.getChargeDate();
+		Calendar cal =recurringChargeTemplate.getCalendar();
+		if(chargeInstance.getServiceInstance()!=null){
+			cal.setInitDate(chargeInstance.getServiceInstance().getSubscriptionDate());
+		}
 
 		if (reimbursement) {
-			applicationDate = recurringChargeTemplate.getCalendar().nextCalendarDate(
-					chargeInstance.getTerminationDate());
+			applicationDate = cal.nextCalendarDate(chargeInstance.getTerminationDate());
 		}
 
 		if (applicationDate == null) {
@@ -1056,12 +1060,12 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 		}
 
 		while (applicationDate.getTime() < nextChargeDate.getTime()) {
-			Date nextapplicationDate = recurringChargeTemplate.getCalendar().nextCalendarDate(applicationDate);
+			Date nextapplicationDate = cal.nextCalendarDate(applicationDate);
 			log.debug(
 					"ApplyNotAppliedinAdvanceReccuringCharge next step for {}, applicationDate={}, nextApplicationDate={},nextApplicationDate={}",
 					chargeInstance.getId(), applicationDate, nextapplicationDate, nextChargeDate);
 
-			Date previousapplicationDate = recurringChargeTemplate.getCalendar().previousCalendarDate(applicationDate);
+			Date previousapplicationDate = cal.previousCalendarDate(applicationDate);
 			previousapplicationDate = DateUtils.parseDateWithPattern(previousapplicationDate, "dd/MM/yyyy");
 			log.debug(
 					"ApplyNotAppliedinAdvanceReccuringCharge applicationDate={}, nextapplicationDate={},previousapplicationDate={}",

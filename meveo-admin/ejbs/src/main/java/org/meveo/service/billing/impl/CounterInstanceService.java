@@ -130,7 +130,7 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
         CounterPeriod counterPeriod = new CounterPeriod();
         counterPeriod.setCounterInstance(counterInstance);
         Calendar cal=counterInstance.getCounterTemplate().getCalendar();
-        cal.setStartDate(initDate);
+        cal.setInitDate(initDate);
         Date startDate = cal.previousCalendarDate(chargeDate);
         if(startDate==null){
             log.info("cannot create counter for the date {} (not in calendar)" ,chargeDate);

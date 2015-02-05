@@ -68,11 +68,11 @@ public class CalendarPeriod extends Calendar {
     @Override
     public Date nextCalendarDate(Date date) {
 
-        if (nbPeriods == null || periodLength == null || getStartDate() == null) {
+        if (nbPeriods == null || periodLength == null || getInitDate() == null) {
             return null;
         }
 
-        Date cleanDate = DateUtils.truncate(getStartDate(), java.util.Calendar.DAY_OF_MONTH);
+        Date cleanDate = DateUtils.truncate(getInitDate(), java.util.Calendar.DAY_OF_MONTH);
         GregorianCalendar calendar = new GregorianCalendar();
         calendar.setTime(cleanDate);
 
@@ -97,11 +97,11 @@ public class CalendarPeriod extends Calendar {
     @Override
     public Date previousCalendarDate(Date date) {
 
-        if (nbPeriods == null || periodLength == null || getStartDate() == null) {
+        if (nbPeriods == null || periodLength == null || getInitDate() == null) {
             return null;
         }
 
-        Date cleanDate = DateUtils.truncate(getStartDate(), java.util.Calendar.DAY_OF_MONTH);
+        Date cleanDate = DateUtils.truncate(getInitDate(), java.util.Calendar.DAY_OF_MONTH);
         GregorianCalendar calendar = new GregorianCalendar();
         calendar.setTime(cleanDate);
 
