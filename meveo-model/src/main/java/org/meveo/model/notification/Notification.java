@@ -4,8 +4,11 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
@@ -13,6 +16,8 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.meveo.model.BusinessEntity;
+import org.meveo.model.billing.CounterInstance;
+import org.meveo.model.catalog.CounterTemplate;
 import org.meveo.validation.constraint.ClassName;
 
 @Entity
@@ -21,57 +26,81 @@ import org.meveo.validation.constraint.ClassName;
 @Inheritance(strategy = InheritanceType.JOINED)
 public class Notification extends BusinessEntity {
 
-	private static final long serialVersionUID = 2634877161620665288L;
+    private static final long serialVersionUID = 2634877161620665288L;
 
-	@Column(name = "CLASS_NAME_FILTER", length = 255, nullable = false)
-	@NotNull
-	@Size(max = 255)
-	@ClassName
-	String classNameFilter;
+    @Column(name = "CLASS_NAME_FILTER", length = 255, nullable = false)
+    @NotNull
+    @Size(max = 255)
+    @ClassName
+    private String classNameFilter;
 
-	@Column(name = "EVENT_TYPE_FILTER", length = 20, nullable = false)
-	@NotNull
-	@Enumerated(EnumType.STRING)
-	NotificationEventTypeEnum eventTypeFilter;
+    @Column(name = "EVENT_TYPE_FILTER", length = 20, nullable = false)
+    @NotNull
+    @Enumerated(EnumType.STRING)
+    private NotificationEventTypeEnum eventTypeFilter;
 
-	@Column(name = "EVENT_EXPRESSION_FILTER", length = 1000)
-	@Size(max = 1000)
-	String elFilter;
+    @Column(name = "EVENT_EXPRESSION_FILTER", length = 1000)
+    @Size(max = 1000)
+    private String elFilter;
 
-	@Column(name = "ACTION_EXPRESSION", length = 2000)
-	@Size(max = 2000)
-	String elAction;
+    @Column(name = "ACTION_EXPRESSION", length = 2000)
+    @Size(max = 2000)
+    private String elAction;
 
-	public String getClassNameFilter() {
-		return classNameFilter;
-	}
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "COUNTER_TEMPLATE_ID")
+    private CounterTemplate counterTemplate;
 
-	public void setClassNameFilter(String classNameFilter) {
-		this.classNameFilter = classNameFilter;
-	}
+    @OneToOne()
+    @JoinColumn(name = "COUNTER_INSTANCE_ID")
+    private CounterInstance counterInstance;
 
-	public NotificationEventTypeEnum getEventTypeFilter() {
-		return eventTypeFilter;
-	}
+    public String getClassNameFilter() {
+        return classNameFilter;
+    }
 
-	public void setEventTypeFilter(NotificationEventTypeEnum eventTypeFilter) {
-		this.eventTypeFilter = eventTypeFilter;
-	}
+    public void setClassNameFilter(String classNameFilter) {
+        this.classNameFilter = classNameFilter;
+    }
 
-	public String getElFilter() {
-		return elFilter;
-	}
+    public NotificationEventTypeEnum getEventTypeFilter() {
+        return eventTypeFilter;
+    }
 
-	public void setElFilter(String elFilter) {
-		this.elFilter = elFilter;
-	}
+    public void setEventTypeFilter(NotificationEventTypeEnum eventTypeFilter) {
+        this.eventTypeFilter = eventTypeFilter;
+    }
 
-	public String getElAction() {
-		return elAction;
-	}
+    public String getElFilter() {
+        return elFilter;
+    }
 
-	public void setElAction(String elAction) {
-		this.elAction = elAction;
-	}
+    public void setElFilter(String elFilter) {
+        this.elFilter = elFilter;
+    }
+
+    public String getElAction() {
+        return elAction;
+    }
+
+    public void setElAction(String elAction) {
+        this.elAction = elAction;
+    }
+
+    public CounterTemplate getCounterTemplate() {
+        return counterTemplate;
+    }
+
+    public void setCounterTemplate(CounterTemplate counterTemplate) {
+        this.counterTemplate = counterTemplate;
+    }
+
+    public CounterInstance getCounterInstance() {
+        return counterInstance;
+    }
+
+    public void setCounterInstance(CounterInstance counterInstance) {
+        this.counterInstance = counterInstance;
+    }
 
 }

@@ -25,9 +25,11 @@ import javax.inject.Named;
 
 import org.meveo.admin.action.StatelessBaseBean;
 import org.meveo.model.catalog.CounterTemplate;
+import org.meveo.model.catalog.CounterTypeEnum;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.catalog.impl.CounterTemplateService;
+import org.primefaces.model.LazyDataModel;
 
 @Named
 @ConversationScoped
@@ -97,4 +99,13 @@ public class CounterTemplateBean extends StatelessBaseBean<CounterTemplate> {
 		return Arrays.asList("provider");
 	}
 
+	   /**
+     * DataModel for primefaces lazy loading datatable component.
+     * 
+     * @return LazyDataModel implementation.
+     */
+    public LazyDataModel<CounterTemplate> getLazyDataModel(CounterTypeEnum counterType) {
+        filters.put("counterType", counterType);
+        return getLazyDataModel(filters, false);
+    }	
 }

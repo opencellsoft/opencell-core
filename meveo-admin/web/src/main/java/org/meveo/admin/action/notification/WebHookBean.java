@@ -1,8 +1,5 @@
 package org.meveo.admin.action.notification;
 
-import java.util.Arrays;
-import java.util.List;
-
 import javax.enterprise.context.ConversationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -31,29 +28,10 @@ public class WebHookBean extends BaseBean<WebHook> {
         return webHookService;
     }
 
-    protected String getDefaultViewName() {
-        return "webHooks";
-    }
-
-    @Override
-    protected String getListViewName() {
-        return "webHooks";
-    }
-
-    @Override
-    protected List<String> getFormFieldsToFetch() {
-        return Arrays.asList("provider");
-    }
-
-    @Override
-    protected List<String> getListFieldsToFetch() {
-        return Arrays.asList("provider");
-    }
-
     @Override
     public WebHook initEntity() {
         WebHook webhook = super.initEntity();
-        
+
         extractMapTypeFieldFromEntity(webhook.getHeaders(), "headers");
         extractMapTypeFieldFromEntity(webhook.getParams(), "params");
 

@@ -1,7 +1,9 @@
 package org.meveo.service.notification;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -36,6 +38,8 @@ import org.meveo.model.notification.NotificationEventTypeEnum;
 import org.meveo.model.notification.NotificationHistory;
 import org.meveo.model.notification.NotificationHistoryStatusEnum;
 import org.meveo.model.notification.WebHook;
+import org.meveo.service.billing.impl.CounterInstanceService;
+import org.meveo.service.billing.impl.CounterValueInsufficientException;
 import org.meveo.service.billing.impl.RatingService;
 import org.slf4j.Logger;
 
@@ -64,6 +68,9 @@ public class DefaultObserver {
 	@Inject
 	InstantMessagingNotifier imNotifier;
 
+	@Inject
+	CounterInstanceService counterInstanceService;
+	
 	HashMap<NotificationEventTypeEnum, HashMap<Class<BusinessEntity>, List<Notification>>> classNotificationMap = new HashMap<>();
 
 	@PostConstruct
@@ -137,28 +144,42 @@ public class DefaultObserver {
 		return (String) RatingService.evaluateExpression(expression, userMap, String.class);
 	}
 
-	private void fireNotification(Notification notif, IEntity e) {
+    private void fireNotification(Notification notif, IEntity e) {
 		log.debug("Fire Notification for notif {} and  enity {}", notif, e);
 		try {
-			if (matchExpression(notif.getElFilter(), e)) {
-
-				// we first perform the EL actions
-				executeAction(notif.getElAction(), e);
-
-				// then the notification itself
-				if (notif instanceof EmailNotification) {
-					emailNotifier.sendEmail((EmailNotification) notif, e);
-				} else if (notif instanceof WebHook) {
-					webHookNotifier.sendRequest((WebHook) notif, e);
-				} else if (notif instanceof InstantMessagingNotification) {
-					imNotifier.sendInstantMessage((InstantMessagingNotification) notif, e);
-				}
-				if (notif.getEventTypeFilter() == NotificationEventTypeEnum.INBOUND_REQ) {
-					NotificationHistory histo = notificationHistoryService.create(notif, e, "",
-							NotificationHistoryStatusEnum.SENT);
-					((InboundRequest) e).add(histo);
-				}
+			if (!matchExpression(notif.getElFilter(), e)) {
+			    return;
 			}
+
+            // we first perform the EL actions
+            executeAction(notif.getElAction(), e);
+
+            boolean sendNotify = true;
+            // Check if the counter associated to notification was not exhausted yet
+            if (notif.getCounterInstance() != null) {
+                try {
+                    counterInstanceService.deduceCounterValue(notif.getCounterInstance(), new Date(), new BigDecimal(1), notif.getAuditable().getCreator());
+                } catch (CounterValueInsufficientException ex) {
+                    sendNotify = false;
+                }
+            }
+            
+            if (!sendNotify){
+                return;
+            }
+            // then the notification itself
+            if (notif instanceof EmailNotification) {
+                emailNotifier.sendEmail((EmailNotification) notif, e);
+            } else if (notif instanceof WebHook) {
+                webHookNotifier.sendRequest((WebHook) notif, e);
+            } else if (notif instanceof InstantMessagingNotification) {
+                imNotifier.sendInstantMessage((InstantMessagingNotification) notif, e);
+            }
+            if (notif.getEventTypeFilter() == NotificationEventTypeEnum.INBOUND_REQ) {
+                NotificationHistory histo = notificationHistoryService.create(notif, e, "", NotificationHistoryStatusEnum.SENT);
+                ((InboundRequest) e).add(histo);
+            }
+            
 		} catch (BusinessException e1) {
 			log.error("Error while firing notification {} for provider {}: {} ", notif.getCode(), notif.getProvider()
 					.getCode(), e1.getMessage());
@@ -171,7 +192,6 @@ public class DefaultObserver {
 			} catch (BusinessException e2) {
 				e2.printStackTrace();
 			}
-
 		}
 	}
 

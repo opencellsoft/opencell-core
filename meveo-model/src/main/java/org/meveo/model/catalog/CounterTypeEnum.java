@@ -2,11 +2,8 @@ package org.meveo.model.catalog;
 
 public enum CounterTypeEnum {
 
-    MONETARY(1, "counterTypeEnum.monetary"),
-    DATA(2, "counterTypeEnum.data"),
-    DURATION(3, "counterTypeEnum.duration"),
-    QUANTITY(4, "counterTypeEnum.quantity"),
-    AGGREGATED(5,"counterTypeEnum.aggregated");
+    USAGE(1, "counterTypeEnum.usage"),
+    NOTIFICATION(2, "counterTypeEnum.notification");
 
     private Integer id;
     private String label;

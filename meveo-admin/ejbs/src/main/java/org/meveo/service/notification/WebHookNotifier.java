@@ -53,7 +53,6 @@ public class WebHookNotifier {
 	@Asynchronous
 	public void sendRequest(WebHook webHook, IEntity e){
 		log.debug("webhook sendRequest");
-		em.refresh(webHook);
 		String result="";
 		try {
 			String url  = webHook.getHost().startsWith("http")?webHook.getHost():"http://"+webHook.getHost();

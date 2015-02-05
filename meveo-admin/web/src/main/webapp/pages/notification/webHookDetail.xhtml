@@ -17,6 +17,13 @@
 
     <ui:define name="body">
 
+        <hftl:entityPopup id="searchCounterTemplatePopup" header="#{messages['counterTemplate.title']}"
+            updateField=":webHookForm:formId:counterTemplateSelectedId:counterTemplateSelectedId" selection="#{webHookBean.entity.counterTemplate}"
+            backingBean="#{counterTemplateBean}" searchField1Label="#{messages['businessEntity.code']}" searchField1="code"
+            column1Label="#{messages['businessEntity.code']}" column1="code" column2Label="#{messages['businessEntity.description']}"
+            column2="description" dataModel="#{counterTemplateBean.getLazyDataModel('NOTIFICATION')}">
+        </hftl:entityPopup>
+
         <hf:formPanel id="webHookForm" label="#{messages['menu.webHook']}" backingBean="#{webHookBean}" columns="4">
 
             <hf:formField label="#{messages['entity.code']}" field="code" required="true" maxLength="60" />
@@ -34,6 +41,9 @@
 
             <hf:formField label="#{messages['entity.webHook.headers']}" field="headers" />
             <hf:formField label="#{messages['entity.webHook.params']}" field="params" />
+
+            <hf:formEntityField id="counterTemplateSelectedId" label="#{messages['counterTemplate.title']}" field="counterTemplate" childField="code"
+                popup="true" popupId="searchCounterTemplatePopup" clearButton="true" required="false" />
         </hf:formPanel>
     </ui:define>
 
