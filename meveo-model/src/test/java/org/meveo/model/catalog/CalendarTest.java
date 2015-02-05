@@ -72,32 +72,22 @@ public class CalendarTest {
         calendar.setPeriodLength(20);
         calendar.setStartDate(DateUtils.newDate(2015, java.util.Calendar.FEBRUARY, 2, 0, 0, 0));
 
-        try {
-            calendar.previousCalendarDate(DateUtils.newDate(2015, java.util.Calendar.FEBRUARY, 1, 0, 0, 0));
-            Assert.fail();
-        } catch (IllegalStateException e) {
-        }
-        try {
-            calendar.nextCalendarDate(DateUtils.newDate(2015, java.util.Calendar.FEBRUARY, 1, 0, 0, 0));
-            Assert.fail();
-        } catch (IllegalStateException e) {
-        }
-
-        try {
-            calendar.previousCalendarDate(DateUtils.newDate(2015, java.util.Calendar.FEBRUARY, 22, 0, 0, 0));
-            Assert.fail();
-        } catch (IllegalStateException e) {
-        }
-        try {
-            calendar.nextCalendarDate(DateUtils.newDate(2015, java.util.Calendar.FEBRUARY, 22, 0, 0, 0));
-            Assert.fail();
-        } catch (IllegalStateException e) {
-        }
-
-        Date prevDate = calendar.previousCalendarDate(DateUtils.newDate(2015, java.util.Calendar.FEBRUARY, 5, 0, 0, 0));
+        Date prevDate = calendar.previousCalendarDate(DateUtils.newDate(2015, java.util.Calendar.FEBRUARY, 1, 0, 0, 0));
+        Assert.assertNull(prevDate);
+        
+        Date nextDate = calendar.nextCalendarDate(DateUtils.newDate(2015, java.util.Calendar.FEBRUARY, 1, 0, 0, 0));
+        Assert.assertNull(nextDate);
+        
+        prevDate = calendar.previousCalendarDate(DateUtils.newDate(2015, java.util.Calendar.FEBRUARY, 22, 0, 0, 0));
+        Assert.assertNull(prevDate);
+        
+        nextDate = calendar.nextCalendarDate(DateUtils.newDate(2015, java.util.Calendar.FEBRUARY, 22, 0, 0, 0));
+        Assert.assertNull(nextDate);
+        
+        prevDate = calendar.previousCalendarDate(DateUtils.newDate(2015, java.util.Calendar.FEBRUARY, 5, 0, 0, 0));
         Assert.assertEquals(DateUtils.newDate(2015, java.util.Calendar.FEBRUARY, 2, 0, 0, 0), prevDate);
 
-        Date nextDate = calendar.nextCalendarDate(DateUtils.newDate(2015, java.util.Calendar.FEBRUARY, 5, 0, 0, 0));
+        nextDate = calendar.nextCalendarDate(DateUtils.newDate(2015, java.util.Calendar.FEBRUARY, 5, 0, 0, 0));
         Assert.assertEquals(DateUtils.newDate(2015, java.util.Calendar.FEBRUARY, 21, 0, 0, 0), nextDate);
 
         prevDate = calendar.previousCalendarDate(DateUtils.newDate(2015, java.util.Calendar.FEBRUARY, 2, 0, 0, 0));
@@ -122,32 +112,22 @@ public class CalendarTest {
         calendar.setPeriodLength(7);
         calendar.setStartDate(DateUtils.newDate(2015, java.util.Calendar.FEBRUARY, 2, 0, 0, 0));
 
-        try {
-            calendar.previousCalendarDate(DateUtils.newDate(2015, java.util.Calendar.FEBRUARY, 1, 0, 0, 0));
-            Assert.fail();
-        } catch (IllegalStateException e) {
-        }
-        try {
-            calendar.nextCalendarDate(DateUtils.newDate(2015, java.util.Calendar.FEBRUARY, 1, 0, 0, 0));
-            Assert.fail();
-        } catch (IllegalStateException e) {
-        }
+        Date prevDate = calendar.previousCalendarDate(DateUtils.newDate(2015, java.util.Calendar.FEBRUARY, 1, 0, 0, 0));
+        Assert.assertNull(prevDate);
+        
+        Date nextDate = calendar.nextCalendarDate(DateUtils.newDate(2015, java.util.Calendar.FEBRUARY, 1, 0, 0, 0));
+        Assert.assertNull(nextDate);
+        
+        prevDate = calendar.previousCalendarDate(DateUtils.newDate(2015, java.util.Calendar.MARCH, 9, 0, 0, 0));
+        Assert.assertNull(prevDate);
+        
+        nextDate = calendar.nextCalendarDate(DateUtils.newDate(2015, java.util.Calendar.MARCH, 9, 0, 0, 0));
+        Assert.assertNull(nextDate);
 
-        try {
-            calendar.previousCalendarDate(DateUtils.newDate(2015, java.util.Calendar.MARCH, 9, 0, 0, 0));
-            Assert.fail();
-        } catch (IllegalStateException e) {
-        }
-        try {
-            calendar.nextCalendarDate(DateUtils.newDate(2015, java.util.Calendar.MARCH, 9, 0, 0, 0));
-            Assert.fail();
-        } catch (IllegalStateException e) {
-        }
-
-        Date prevDate = calendar.previousCalendarDate(DateUtils.newDate(2015, java.util.Calendar.FEBRUARY, 5, 0, 0, 0));
+        prevDate = calendar.previousCalendarDate(DateUtils.newDate(2015, java.util.Calendar.FEBRUARY, 5, 0, 0, 0));
         Assert.assertEquals(DateUtils.newDate(2015, java.util.Calendar.FEBRUARY, 2, 0, 0, 0), prevDate);
 
-        Date nextDate = calendar.nextCalendarDate(DateUtils.newDate(2015, java.util.Calendar.FEBRUARY, 5, 0, 0, 0));
+        nextDate = calendar.nextCalendarDate(DateUtils.newDate(2015, java.util.Calendar.FEBRUARY, 5, 0, 0, 0));
         Assert.assertEquals(DateUtils.newDate(2015, java.util.Calendar.FEBRUARY, 8, 0, 0, 0), nextDate);
 
         prevDate = calendar.previousCalendarDate(DateUtils.newDate(2015, java.util.Calendar.FEBRUARY, 2, 0, 0, 0));
