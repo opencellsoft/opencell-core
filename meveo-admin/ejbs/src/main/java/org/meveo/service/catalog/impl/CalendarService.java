@@ -16,17 +16,13 @@
  */
 package org.meveo.service.catalog.impl;
 
-import java.util.List;
-
 import javax.ejb.Stateless;
 import javax.inject.Named;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
-import javax.persistence.Query;
 
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.catalog.Calendar;
-import org.meveo.model.catalog.CalendarTypeEnum;
 import org.meveo.model.crm.Provider;
 import org.meveo.service.base.PersistenceService;
 
@@ -65,36 +61,4 @@ public class CalendarService extends PersistenceService<Calendar> {
 			return null;
 		}
 	}
-
-	/**
-	 * @see org.meveo.service.catalog.local.CalendarServiceLocal#listChargeApplicationCalendars()
-	 */
-	@SuppressWarnings("unchecked")
-	public List<Calendar> listChargeApplicationCalendars() {
-		Query query = new QueryBuilder(Calendar.class, "c", null,
-				getCurrentProvider()).addCriterionEnum("type",
-				CalendarTypeEnum.CHARGE_IMPUTATION)
-				.getQuery(getEntityManager());
-		return query.getResultList();
-	}
-
-	/**
-	 * @see org.meveo.service.catalog.local.CalendarServiceLocal#listBillingCalendars()
-	 */
-	@SuppressWarnings("unchecked")
-	public List<Calendar> listBillingCalendars() {
-		Query query = new QueryBuilder(Calendar.class, "c", null,
-				getCurrentProvider()).addCriterionEnum("type",
-				CalendarTypeEnum.BILLING).getQuery(getEntityManager());
-		return query.getResultList();
-	}
-
-	@SuppressWarnings("unchecked")
-	public List<Calendar> listCounterCalendars() {
-		Query query = new QueryBuilder(Calendar.class, "c", null,
-				getCurrentProvider()).addCriterionEnum("type",
-				CalendarTypeEnum.COUNTER).getQuery(getEntityManager());
-		return query.getResultList();
-	}
-
 }

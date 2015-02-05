@@ -66,7 +66,7 @@
 				popup="true" popupId="searchInvoiceSubCategoryPopup" />
 			<hftl:panelGroup columns="2">	
 					<hf:formEntityField label="#{messages['recurringChargeTemplate.calendar']}" field="calendar" childField="name" required="true" popup="false"
-										listElements="#{calendarService.listChargeApplicationCalendars()}" />
+										listElements="#{calendarService.list()}" />
 				</hftl:panelGroup>
 
 		</hf:formPanel>

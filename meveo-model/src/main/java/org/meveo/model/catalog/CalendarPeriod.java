@@ -69,8 +69,7 @@ public class CalendarPeriod extends Calendar {
     }
 
     /**
-     * Checks for next calendar date by adding number of days in a period to a starting date. Date being checked must fall within a period timeframe or IllegalStateException is
-     * throw
+     * Checks for next calendar date by adding number of days in a period to a starting date. Date being checked must fall within a period timeframe or null is returned
      * 
      * @param date Date being checked
      * @return Next calendar date.
@@ -95,12 +94,11 @@ public class CalendarPeriod extends Calendar {
             }
         }
 
-        throw new IllegalStateException("Next calendar date could not be found!");
+        return null;
     }
 
     /**
-     * Checks for previous calendar date by adding number of days in a period to a starting date. Date being checked must fall within a period timeframe or IllegalStateException is
-     * throw
+     * Checks for previous calendar date by adding number of days in a period to a starting date. Date being checked must fall within a period timeframe or null is returned
      * 
      * @param date Current date.
      * @return Previous calendar date.
@@ -124,6 +122,6 @@ public class CalendarPeriod extends Calendar {
             }
         }
 
-        throw new IllegalStateException("Previous calendar date could not be found!");
+        return null;
     }
 }
