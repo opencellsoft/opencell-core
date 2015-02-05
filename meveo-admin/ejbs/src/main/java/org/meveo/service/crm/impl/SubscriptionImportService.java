@@ -175,11 +175,11 @@ public class SubscriptionImportService {
 								serviceInst.getSubscriptionDate(), paramBean
 										.getProperty("connectorCRM.dateFormat",
 												"dd/MM/yyyy")));
-				int quantity = 1;
+				BigDecimal quantity = BigDecimal.ONE;
 
 				if (serviceInst.getQuantity() != null
 						&& serviceInst.getQuantity().trim().length() != 0) {
-					quantity = Integer.parseInt(serviceInst.getQuantity()
+					quantity = new BigDecimal(serviceInst.getQuantity()
 							.trim());
 				}
 

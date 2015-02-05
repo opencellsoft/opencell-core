@@ -17,8 +17,8 @@
 package org.meveo.admin.action.crm;
 
 import java.io.IOException;
-import java.math.BigDecimal;
-import java.util.List;
+//import java.math.BigDecimal;
+//import java.util.List;
 
 import javax.enterprise.context.ConversationScoped;
 import javax.inject.Inject;
@@ -29,8 +29,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.meveo.admin.action.StatelessBaseBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.billing.BillingAccount;
-import org.meveo.model.billing.Invoice;
-import org.meveo.model.payments.CustomerAccount;
+//import org.meveo.model.billing.Invoice;
+//import org.meveo.model.payments.CustomerAccount;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.selfcare.local.SelfcareServiceLocal;
@@ -49,7 +49,7 @@ public class SyntheseClientBean extends StatelessBaseBean<BillingAccount> {
 
 	// @Named TODO migration
 	// @Produces
-	private CustomerAccount synCustomerAccount;
+	//private CustomerAccount synCustomerAccount;
 
 	// @Named TODO migration
 	// @Produces
@@ -57,11 +57,11 @@ public class SyntheseClientBean extends StatelessBaseBean<BillingAccount> {
 
 	// @Named TODO migration
 	// @Produces
-	private List<Invoice> synInvoices;
+	//private List<Invoice> synInvoices;
 
 	// @Named TODO migration
 	// @Produces
-	private BigDecimal customerAccountBalance;
+	//private BigDecimal customerAccountBalance;
 
 	public SyntheseClientBean() {
 		super(BillingAccount.class);
@@ -74,17 +74,17 @@ public class SyntheseClientBean extends StatelessBaseBean<BillingAccount> {
 		if (synBillingAccount.getId() == null) {
 			return;
 		}
-		synCustomerAccount = synBillingAccount.getCustomerAccount();
-		try {
-			customerAccountBalance = selfcareService
-					.getAccountBalance(synCustomerAccount.getCode());
-			synInvoices = selfcareService
-					.getBillingAccountValidatedInvoices(synBillingAccount
-							.getCode());
-		} catch (BusinessException e) {
-			log.error("Error:#0 when try to retrieve accountBalance with #1",
-					e.getMessage(), synCustomerAccount.getCode());
-		}
+		//synCustomerAccount = synBillingAccount.getCustomerAccount();
+		//try {
+			//customerAccountBalance = selfcareService
+			//		.getAccountBalance(synCustomerAccount.getCode());
+			//synInvoices = selfcareService
+			//		.getBillingAccountValidatedInvoices(synBillingAccount
+			///				.getCode());
+		//} catch (BusinessException e) {
+		//	log.error("Error:#0 when try to retrieve accountBalance with #1",
+		//			e.getMessage(), synCustomerAccount.getCode());
+		//}
 	}
 
 	@Override

@@ -1,5 +1,6 @@
 package org.meveo.api.dto.billing;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -23,7 +24,7 @@ public class ServiceInstanceDto extends BaseDto {
 	private String status;
 	private Date subscriptionDate;
 	private Date terminationDate;
-	private int quantity;	
+	private BigDecimal quantity;	
 	private String terminationReason;
 
 	public String getCode() {
@@ -58,11 +59,11 @@ public class ServiceInstanceDto extends BaseDto {
 		this.terminationDate = terminationDate;
 	}
 
-	public int getQuantity() {
+	public BigDecimal getQuantity() {
 		return quantity;
 	}
 
-	public void setQuantity(int quantity) {
+	public void setQuantity(BigDecimal quantity) {
 		this.quantity = quantity;
 	}
 

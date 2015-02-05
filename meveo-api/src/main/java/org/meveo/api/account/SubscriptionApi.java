@@ -1,5 +1,6 @@
 package org.meveo.api.account;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -25,7 +26,6 @@ import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.InstanceStatusEnum;
-import org.meveo.model.billing.OneShotChargeInstance;
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.SubscriptionStatusEnum;
@@ -34,12 +34,14 @@ import org.meveo.model.billing.UserAccount;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.ServiceTemplate;
+import org.meveo.model.catalog.WalletTemplate;
 import org.meveo.model.crm.Provider;
 import org.meveo.service.billing.impl.OneShotChargeInstanceService;
 import org.meveo.service.billing.impl.ServiceInstanceService;
 import org.meveo.service.billing.impl.SubscriptionService;
 import org.meveo.service.billing.impl.TerminationReasonService;
 import org.meveo.service.billing.impl.UserAccountService;
+import org.meveo.service.billing.impl.WalletTemplateService;
 import org.meveo.service.catalog.impl.OfferTemplateService;
 import org.meveo.service.catalog.impl.OneShotChargeTemplateService;
 import org.meveo.service.catalog.impl.ServiceTemplateService;
@@ -77,6 +79,9 @@ public class SubscriptionApi extends BaseApi {
 
 	@Inject
 	private TerminationReasonService terminationReasonService;
+	
+	@Inject
+	private WalletTemplateService walletTemplateService;
 
 	public void create(SubscriptionDto postData, User currentUser) throws MeveoApiException {
 		if (!StringUtils.isBlank(postData.getUserAccount()) && !StringUtils.isBlank(postData.getOfferTemplate())
@@ -182,7 +187,7 @@ public class SubscriptionApi extends BaseApi {
 			}
 
 			// check if exists
-			Map<ServiceTemplate, Integer> serviceTemplates = new HashMap<ServiceTemplate, Integer>();
+			Map<ServiceTemplate, BigDecimal> serviceTemplates = new HashMap<ServiceTemplate, BigDecimal>();
 			for (String serviceTemplateCode : postData.getServices().keySet()) {
 				ServiceTemplate serviceTemplate = serviceTemplateService.findByCode(serviceTemplateCode, provider);
 				if (serviceTemplate == null) {
@@ -211,8 +216,8 @@ public class SubscriptionApi extends BaseApi {
 				calendar.set(Calendar.MILLISECOND, 0);
 
 				serviceInstance.setSubscriptionDate(calendar.getTime());
-				Integer quantity = serviceTemplates.get(serviceTemplate);
-				serviceInstance.setQuantity(quantity == null ? 0 : quantity);
+				BigDecimal quantity = serviceTemplates.get(serviceTemplate);
+				serviceInstance.setQuantity(quantity);
 				try {
 					serviceInstanceService.serviceInstanciation(serviceInstance, currentUser);
 					serviceInstances.add(serviceInstance);
@@ -252,16 +257,16 @@ public class SubscriptionApi extends BaseApi {
 
 	public void applyOneShotChargeInstance(ApplyOneShotChargeInstanceDto postData, User currentUser)
 			throws MeveoApiException {
-		if (!StringUtils.isBlank(postData.getOneShotChargeInstance())
+		if (!StringUtils.isBlank(postData.getOneShotCharge())
 				&& !StringUtils.isBlank(postData.getSubscription()) && postData.getOperationDate() != null) {
 			Provider provider = currentUser.getProvider();
 
 			OneShotChargeTemplate oneShotChargeTemplate = oneShotChargeTemplateService.findByCode(
-					postData.getOneShotChargeInstance(), provider);
+					postData.getOneShotCharge(), provider);
 			if (oneShotChargeTemplate == null) {
-				throw new EntityDoesNotExistsException(OneShotChargeTemplate.class, postData.getOneShotChargeInstance());
+				throw new EntityDoesNotExistsException(OneShotChargeTemplate.class, postData.getOneShotCharge());
 			}
-
+			
 			Subscription subscription = subscriptionService.findByCode(postData.getSubscription(), provider);
 			if (subscription == null) {
 				throw new EntityDoesNotExistsException(Subscription.class, postData.getSubscription());
@@ -270,55 +275,35 @@ public class SubscriptionApi extends BaseApi {
 			if (subscription.getStatus() == SubscriptionStatusEnum.RESILIATED) {
 				throw new MeveoApiException("Subscription is already RESILIATED.");
 			}
+			if(postData.getWallet()!=null){
+				WalletTemplate walletTemplate = walletTemplateService.findByCode(postData.getWallet(),provider);
+				if (walletTemplate == null) {
+					throw new EntityDoesNotExistsException(WalletTemplate.class, postData.getWallet());
+				}
+				
+				if((!postData.getWallet().equals("PRINCIPAL")) && !subscription.getUserAccount().getPrepaidWallets().containsKey(postData.getWallet())){
+					if(postData.getCreateWallet()!=null && postData.getCreateWallet()){
+						subscription.getUserAccount().getWalletInstance(postData.getWallet());
+					} else {
+						throw new MeveoApiException("Subscription is already RESILIATED.");
+					}
+				}
+			}
+			
 
-			OneShotChargeInstance oneShotChargeInstance = oneShotChargeInstanceService.findByCode(
-					postData.getOneShotChargeInstance(), provider);
-			if (oneShotChargeInstance == null) {
-				oneShotChargeInstance = new OneShotChargeInstance();
-				oneShotChargeInstance.setChargeTemplate(oneShotChargeTemplate);
-				Long id;
-				try {
-					id = oneShotChargeInstanceService.oneShotChargeApplication(subscription,
-							(OneShotChargeTemplate) oneShotChargeInstance.getChargeTemplate(),
-							oneShotChargeInstance.getChargeDate(), oneShotChargeInstance.getAmountWithoutTax(),
-							oneShotChargeInstance.getAmountWithTax(), 1, oneShotChargeInstance.getCriteria1(),
-							oneShotChargeInstance.getCriteria2(), oneShotChargeInstance.getCriteria3(),
-							oneShotChargeInstance.getSeller(), currentUser);
+			try {
+				oneShotChargeInstanceService.oneShotChargeApplication(subscription,
+						(OneShotChargeTemplate) oneShotChargeTemplate,postData.getWallet(),
+						postData.getOperationDate(), postData.getAmountWithoutTax(),
+						postData.getAmountWithTax(), postData.getQuantity(), postData.getCriteria1(),
+						postData.getCriteria2(), postData.getCriteria3(), currentUser);
 				} catch (BusinessException e) {
 					throw new MeveoApiException(e.getMessage());
 				}
 
-				oneShotChargeInstance.setId(id);
-				oneShotChargeInstance.setChargeDate(postData.getOperationDate());
-				oneShotChargeInstance.setSubscription(subscription);
-				oneShotChargeInstance.setSeller(subscription.getUserAccount().getBillingAccount().getCustomerAccount()
-						.getCustomer().getSeller());
-				oneShotChargeInstance.setCurrency(subscription.getUserAccount().getBillingAccount()
-						.getCustomerAccount().getTradingCurrency());
-				oneShotChargeInstance.setCountry(subscription.getUserAccount().getBillingAccount().getTradingCountry());
-				oneShotChargeInstance.setProvider(oneShotChargeInstance.getChargeTemplate().getProvider());
-
-				oneShotChargeInstance.setDescription(postData.getDescription());
-				oneShotChargeInstance.setAmountWithoutTax(postData.getAmountWithoutTax());
-				oneShotChargeInstance.setAmountWithTax(postData.getAmountWithTax());
-				oneShotChargeInstance.setCriteria1(postData.getCriteria1());
-				oneShotChargeInstance.setCriteria2(postData.getCriteria2());
-				oneShotChargeInstance.setCriteria3(postData.getCriteria3());
-			} else {
-				oneShotChargeInstance.setChargeDate(postData.getOperationDate());
-			}
-
-			oneShotChargeInstance.setDescription(postData.getDescription());
-			oneShotChargeInstance.setAmountWithoutTax(postData.getAmountWithoutTax());
-			oneShotChargeInstance.setAmountWithTax(postData.getAmountWithTax());
-			oneShotChargeInstance.setCriteria1(postData.getCriteria1());
-			oneShotChargeInstance.setCriteria2(postData.getCriteria2());
-			oneShotChargeInstance.setCriteria3(postData.getCriteria3());
-
-			oneShotChargeInstanceService.update(oneShotChargeInstance, currentUser);
 		} else {
-			if (StringUtils.isBlank(postData.getOneShotChargeInstance())) {
-				missingParameters.add("oneShotChargeInstance");
+			if (StringUtils.isBlank(postData.getOneShotCharge())) {
+				missingParameters.add("oneShotCharge");
 			}
 			if (StringUtils.isBlank(StringUtils.isBlank(postData.getSubscription()))) {
 				missingParameters.add("subscription");

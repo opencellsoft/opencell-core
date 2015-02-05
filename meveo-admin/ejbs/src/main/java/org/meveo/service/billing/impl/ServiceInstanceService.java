@@ -140,7 +140,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 				.getServiceSubscriptionCharges()) {
 			OneShotChargeInstance chargeInstance = oneShotChargeInstanceService.oneShotChargeInstanciation(
 					serviceInstance.getSubscription(), serviceInstance, serviceChargeTemplate.getChargeTemplate(),
-					serviceInstance.getSubscriptionDate(), subscriptionAmount, null, 1, seller, creator, true);
+					serviceInstance.getSubscriptionDate(), subscriptionAmount, null, 1, creator, true);
 			serviceInstance.getSubscriptionChargeInstances().add(chargeInstance);
 		}
 
@@ -148,7 +148,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 				.getServiceTerminationCharges()) {
 			OneShotChargeInstance chargeInstance = oneShotChargeInstanceService.oneShotChargeInstanciation(
 					serviceInstance.getSubscription(), serviceInstance, serviceChargeTemplate.getChargeTemplate(),
-					serviceInstance.getSubscriptionDate(), terminationAmount, null, 1, seller, creator, false);
+					serviceInstance.getSubscriptionDate(), terminationAmount, null, 1, creator, false);
 			serviceInstance.getTerminationChargeInstances().add(chargeInstance);
 		}
 

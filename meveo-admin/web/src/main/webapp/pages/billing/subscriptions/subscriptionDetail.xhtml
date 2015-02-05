@@ -470,10 +470,10 @@
 														field="criteria3" edit="true" />
 
 													<h:panelGrid columns="2">
-														<p:outputLabel for="amountWithoutTax"
+														<p:outputLabel for="quantity"
 															value="#{messages['serviceInstance.quantity']}" />
 														<h:inputText rendered="#{subscriptionBean.edit}"
-															id="amountWithoutTax"
+															id="quantity"
 															value="#{subscriptionBean.oneShotChargeInstanceQuantity}"
 															size="5" maxlength="3">
 														</h:inputText>
@@ -635,7 +635,7 @@
 
 													<h:panelGrid columns="2">
 														<h:commandButton
-															action="#{subscriptionBean.saveOneShotChargeIns()}"
+															action="#{subscriptionBean.saveOneShotChargeIns}"
 															value="#{messages['action.save']}"
 															rendered="#{currentProvider.amountValidation}">
 															<a:ajax event="click" render="OS_oneShot_results_form"
@@ -934,12 +934,6 @@
 							label="#{messages['recurringChargeInstance.criteria3']}"
 							field="criteria3" edit="true"
 							disabled="#{!subscriptionBean.recurringChargeInstance.chargeTemplate.amountEditable}" />
-						<p:panelGrid columns="2">
-							<p:outputLabel for="quantityRecCH"
-								value="#{messages['serviceInstance.quantity']}" />
-							<p:spinner required="true" id="quantityRecCH" min="1"
-								value="#{subscriptionBean.recurringChargeServiceInstanceQuantity}" />
-						</p:panelGrid>
 						<h:outputLabel value="" />
 						<hf:formField
 							label="#{messages['oneShotChargeInstance.chargeDate']}"

@@ -1,5 +1,6 @@
 package org.meveo.api.dto.account;
 
+import java.math.BigDecimal;
 import java.util.HashMap;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -23,7 +24,7 @@ public class ActivateServicesDto extends BaseDto {
 	private String subscription;
 
 	@XmlElement(required = true)
-	private HashMap<String, Integer> services;
+	private HashMap<String, BigDecimal> services;
 
 	public String getSubscription() {
 		return subscription;
@@ -33,11 +34,11 @@ public class ActivateServicesDto extends BaseDto {
 		this.subscription = subscription;
 	}
 
-	public HashMap<String, Integer> getServices() {
+	public HashMap<String, BigDecimal> getServices() {
 		return services;
 	}
 
-	public void setServices(HashMap<String, Integer> services) {
+	public void setServices(HashMap<String, BigDecimal> services) {
 		this.services = services;
 	}
 

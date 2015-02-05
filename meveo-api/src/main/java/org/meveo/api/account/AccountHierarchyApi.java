@@ -1,5 +1,6 @@
 package org.meveo.api.account;
 
+import java.math.BigDecimal;
 import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.Date;
@@ -1260,7 +1261,7 @@ public class AccountHierarchyApi extends BaseApi {
 																							.getSubscriptionDate());
 																			serviceInstance
 																					.setQuantity(serviceInstanceDto
-																							.getQuantity() == 0 ? 1
+																							.getQuantity() == null ? BigDecimal.ONE
 																							: serviceInstanceDto
 																									.getQuantity());
 																		} else {
@@ -1295,7 +1296,7 @@ public class AccountHierarchyApi extends BaseApi {
 																							.getSubscriptionDate());
 																			serviceInstance
 																					.setQuantity(serviceInstanceDto
-																							.getQuantity() == 0 ? 1
+																							.getQuantity() == null ? BigDecimal.ONE
 																							: serviceInstanceDto
 																									.getQuantity());
 																			try {
