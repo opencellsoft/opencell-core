@@ -17,7 +17,7 @@ import org.meveo.model.billing.Subscription;
 
 @Entity
 @Table(name = "CRM_CUSTOM_FIELD_INST", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE", "SUBSCRIPTION_ID",
-		"PROVIDER_ID" }))
+		"ACCOUNT_ID", "PROVIDER_ID" }))
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "CRM_CUSTOM_FIELD_INST_SEQ")
 public class CustomFieldInstance extends BusinessEntity {
 
