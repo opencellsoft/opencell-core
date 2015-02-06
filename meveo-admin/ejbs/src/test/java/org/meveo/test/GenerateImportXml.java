@@ -1,4 +1,4 @@
-package org.meveo.test;
+rpackage org.meveo.test;
 
 import java.io.File;
 import java.util.Date;
@@ -41,15 +41,15 @@ public class GenerateImportXml {
 	private static int BC_NUMBER = 2;
 	private static String billingCyclePrefix = "CYC_INV_MT";
 
-	private static String customersFile = "/tmp/CUSTOMER_ORANGE.xml";
-	private static String accountsFile = "/tmp/ACCOUNT_ORANGE.xml";
-	private static String subscriptionsFile = "/tmp/SUB_ORANGE.xml";
-	private static String providerCode = "ORANGE";
-	private static String customerBrand = "ORANGE";
-	private static String customerCategory = "Business";
-	private static String serviceCode = "ORANGE_SRV";
+	private static String customersFile = "/tmp/CUSTOMER.xml";
+	private static String accountsFile = "/tmp/ACCOUNT.xml";
+	private static String subscriptionsFile = "/tmp/SUB.xml";
+	private static String providerCode = "DEMO";
+	private static String customerBrand = "OBS";
+	private static String customerCategory = "CLIENT";
+	private static String serviceCode = "FCAV1_ORGA";
 	private static String creditCategory = "VIP";
-	private static String offerCode = "ORANGE_OFF";
+	private static String offerCode = "FCA_V1";
 
 	/***********************************************************************/
 
@@ -60,7 +60,7 @@ public class GenerateImportXml {
 			Sellers sellers = new Sellers();
 			sellers.setProviderCode(providerCode);
 			Seller seller = new Seller();
-			seller.setCode("SELLER_FR");
+			seller.setCode("OBS");
 			seller.setDescription("french seller");
 			seller.setTradingCountryCode("FR");
 			seller.setTradingCurrencyCode("EUR");
