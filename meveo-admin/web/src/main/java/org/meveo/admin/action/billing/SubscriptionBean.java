@@ -106,9 +106,8 @@ public class SubscriptionBean extends StatefulBaseBean<Subscription> {
 	private RecurringChargeInstance recurringChargeInstance;
 
 	private BigDecimal oneShotChargeInstanceQuantity = BigDecimal.ONE;
-	
-	private String oneShotChargeInstanceWalletCode = null;
 
+	private String oneShotChargeInstanceWalletCode = null;
 
 	/**
 	 * User Account Id passed as a parameter. Used when creating new
@@ -151,7 +150,7 @@ public class SubscriptionBean extends StatefulBaseBean<Subscription> {
 				entity.setDefaultLevel(true);
 			}
 		}
-		log.debug("SubscriptionBean initEntity id={}",entity.getId());
+		log.debug("SubscriptionBean initEntity id={}", entity.getId());
 		if (entity.getId() == null) {
 			Calendar calendar = Calendar.getInstance();
 			calendar.setTime(entity.getSubscriptionDate());
@@ -166,10 +165,13 @@ public class SubscriptionBean extends StatefulBaseBean<Subscription> {
 					boolean alreadyInstanciated = false;
 
 					for (ServiceInstance serviceInstance : serviceInstances) {
-						if (serviceTemplate.getCode().equals(serviceInstance.getCode())) {
-							alreadyInstanciated = true;
-							break;
-						}
+						if (serviceInstance.getStatus() != InstanceStatusEnum.CANCELED
+								&& serviceInstance.getStatus() != InstanceStatusEnum.TERMINATED
+								&& serviceInstance.getStatus() != InstanceStatusEnum.CLOSED)
+							if (serviceTemplate.getCode().equals(serviceInstance.getCode())) {
+								alreadyInstanciated = true;
+								break;
+							}
 					}
 
 					if (!alreadyInstanciated) {
@@ -209,7 +211,7 @@ public class SubscriptionBean extends StatefulBaseBean<Subscription> {
 		super.saveOrUpdate(killConversation);
 
 		saveCustomFields();
-		
+
 		return "/pages/billing/subscriptions/subscriptionDetail?edit=false&subscriptionId=" + entity.getId()
 				+ "&faces-redirect=true&includeViewParams=true";
 	}
@@ -217,7 +219,8 @@ public class SubscriptionBean extends StatefulBaseBean<Subscription> {
 	@Override
 	protected String saveOrUpdate(Subscription entity) throws BusinessException {
 		if (entity.isTransient()) {
-			log.debug("SubscriptionBean save, # of service templates:{}",entity.getOffer().getServiceTemplates().size());
+			log.debug("SubscriptionBean save, # of service templates:{}", entity.getOffer().getServiceTemplates()
+					.size());
 			subscriptionService.create(entity);
 			serviceTemplates.addAll(entity.getOffer().getServiceTemplates());
 			messages.info(new BundleKey("messages", "save.successful"));
@@ -262,15 +265,15 @@ public class SubscriptionBean extends StatefulBaseBean<Subscription> {
 				oneShotChargeInstance.setCurrency(entity.getUserAccount().getBillingAccount().getCustomerAccount()
 						.getTradingCurrency());
 				oneShotChargeInstance.setCountry(entity.getUserAccount().getBillingAccount().getTradingCountry());
-				//Long id = 
-				oneShotChargeInstance=oneShotChargeInstanceService.oneShotChargeApplication(entity,
-						(OneShotChargeTemplate) oneShotChargeInstance.getChargeTemplate(),oneShotChargeInstanceWalletCode,
-						oneShotChargeInstance.getChargeDate(), oneShotChargeInstance.getAmountWithoutTax(),
-						oneShotChargeInstance.getAmountWithTax(), oneShotChargeInstanceQuantity,
-						oneShotChargeInstance.getCriteria1(), oneShotChargeInstance.getCriteria2(),
-						oneShotChargeInstance.getCriteria3(), getCurrentUser());
-				//oneShotChargeInstance.setId(id);
-				//oneShotChargeInstance.setProvider(oneShotChargeInstance.getChargeTemplate().getProvider());
+				// Long id =
+				oneShotChargeInstance = oneShotChargeInstanceService.oneShotChargeApplication(entity,
+						(OneShotChargeTemplate) oneShotChargeInstance.getChargeTemplate(),
+						oneShotChargeInstanceWalletCode, oneShotChargeInstance.getChargeDate(),
+						oneShotChargeInstance.getAmountWithoutTax(), oneShotChargeInstance.getAmountWithTax(),
+						oneShotChargeInstanceQuantity, oneShotChargeInstance.getCriteria1(),
+						oneShotChargeInstance.getCriteria2(), oneShotChargeInstance.getCriteria3(), getCurrentUser());
+				// oneShotChargeInstance.setId(id);
+				// oneShotChargeInstance.setProvider(oneShotChargeInstance.getChargeTemplate().getProvider());
 			}
 			messages.info(new BundleKey("messages", "save.successful"));
 
@@ -418,7 +421,7 @@ public class SubscriptionBean extends StatefulBaseBean<Subscription> {
 	public void instanciateManyServices() {
 		log.debug("instanciateManyServices");
 		try {
-			if (quantity== null || quantity.compareTo(BigDecimal.ZERO) <= 0) {
+			if (quantity == null || quantity.compareTo(BigDecimal.ZERO) <= 0) {
 				log.warn("instanciateManyServices quantity is negative! set it to 1");
 				quantity = BigDecimal.ONE;
 			}
@@ -580,8 +583,7 @@ public class SubscriptionBean extends StatefulBaseBean<Subscription> {
 		return oneShotChargeInstanceWalletCode;
 	}
 
-	public void setOneShotChargeInstanceWalletCode(
-			String oneShotChargeInstanceWalletCode) {
+	public void setOneShotChargeInstanceWalletCode(String oneShotChargeInstanceWalletCode) {
 		this.oneShotChargeInstanceWalletCode = oneShotChargeInstanceWalletCode;
 	}
 

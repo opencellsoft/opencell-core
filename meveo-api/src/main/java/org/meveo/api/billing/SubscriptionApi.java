@@ -1,4 +1,4 @@
-package org.meveo.api.account;
+package org.meveo.api.billing;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -82,7 +82,7 @@ public class SubscriptionApi extends BaseApi {
 
 	@Inject
 	private TerminationReasonService terminationReasonService;
-	
+
 	@Inject
 	private WalletTemplateService walletTemplateService;
 
@@ -122,7 +122,7 @@ public class SubscriptionApi extends BaseApi {
 				for (CustomFieldDto cf : postData.getCustomFields()) {
 					// check if custom field exists has a template
 					List<CustomFieldTemplate> customFieldTemplates = customFieldTemplateService
-					.findByAccountLevel(AccountLevelEnum.SUB);
+							.findByAccountLevel(AccountLevelEnum.SUB);
 					if (customFieldTemplates != null && customFieldTemplates.size() > 0) {
 						for (CustomFieldTemplate cft : customFieldTemplates) {
 							if (cf.getCode().equals(cft.getCode())) {
@@ -146,7 +146,7 @@ public class SubscriptionApi extends BaseApi {
 					}
 				}
 			}
-		
+
 			subscription.setSubscriptionDate(postData.getSubscriptionDate());
 			subscription.setTerminationDate(postData.getTerminationDate());
 
@@ -269,8 +269,9 @@ public class SubscriptionApi extends BaseApi {
 				throw new EntityDoesNotExistsException(Subscription.class, postData.getSubscription());
 			}
 
-			if (subscription.getStatus() == SubscriptionStatusEnum.RESILIATED) {
-				throw new MeveoApiException("Subscription is already RESILIATED.");
+			if (subscription.getStatus() == SubscriptionStatusEnum.RESILIATED
+					|| subscription.getStatus() == SubscriptionStatusEnum.CANCELED) {
+				throw new MeveoApiException("Subscription is already RESILIATED or CANCELLED.");
 			}
 
 			// check if exists
@@ -344,8 +345,8 @@ public class SubscriptionApi extends BaseApi {
 
 	public void applyOneShotChargeInstance(ApplyOneShotChargeInstanceDto postData, User currentUser)
 			throws MeveoApiException {
-		if (!StringUtils.isBlank(postData.getOneShotCharge())
-				&& !StringUtils.isBlank(postData.getSubscription()) && postData.getOperationDate() != null) {
+		if (!StringUtils.isBlank(postData.getOneShotCharge()) && !StringUtils.isBlank(postData.getSubscription())
+				&& postData.getOperationDate() != null) {
 			Provider provider = currentUser.getProvider();
 
 			OneShotChargeTemplate oneShotChargeTemplate = oneShotChargeTemplateService.findByCode(
@@ -353,40 +354,41 @@ public class SubscriptionApi extends BaseApi {
 			if (oneShotChargeTemplate == null) {
 				throw new EntityDoesNotExistsException(OneShotChargeTemplate.class, postData.getOneShotCharge());
 			}
-			
+
 			Subscription subscription = subscriptionService.findByCode(postData.getSubscription(), provider);
 			if (subscription == null) {
 				throw new EntityDoesNotExistsException(Subscription.class, postData.getSubscription());
 			}
 
-			if (subscription.getStatus() == SubscriptionStatusEnum.RESILIATED) {
-				throw new MeveoApiException("Subscription is already RESILIATED.");
+			if (subscription.getStatus() == SubscriptionStatusEnum.RESILIATED
+					|| subscription.getStatus() == SubscriptionStatusEnum.CANCELED) {
+				throw new MeveoApiException("Subscription is already RESILIATED or CANCELLED.");
 			}
-			if(postData.getWallet()!=null){
-				WalletTemplate walletTemplate = walletTemplateService.findByCode(postData.getWallet(),provider);
+			if (postData.getWallet() != null) {
+				WalletTemplate walletTemplate = walletTemplateService.findByCode(postData.getWallet(), provider);
 				if (walletTemplate == null) {
 					throw new EntityDoesNotExistsException(WalletTemplate.class, postData.getWallet());
 				}
-				
-				if((!postData.getWallet().equals("PRINCIPAL")) && !subscription.getUserAccount().getPrepaidWallets().containsKey(postData.getWallet())){
-					if(postData.getCreateWallet()!=null && postData.getCreateWallet()){
+
+				if ((!postData.getWallet().equals("PRINCIPAL"))
+						&& !subscription.getUserAccount().getPrepaidWallets().containsKey(postData.getWallet())) {
+					if (postData.getCreateWallet() != null && postData.getCreateWallet()) {
 						subscription.getUserAccount().getWalletInstance(postData.getWallet());
 					} else {
 						throw new MeveoApiException("Subscription is already RESILIATED.");
 					}
 				}
 			}
-			
 
 			try {
 				oneShotChargeInstanceService.oneShotChargeApplication(subscription,
-						(OneShotChargeTemplate) oneShotChargeTemplate,postData.getWallet(),
-						postData.getOperationDate(), postData.getAmountWithoutTax(),
-						postData.getAmountWithTax(), postData.getQuantity(), postData.getCriteria1(),
-						postData.getCriteria2(), postData.getCriteria3(), currentUser);
-				} catch (BusinessException e) {
-					throw new MeveoApiException(e.getMessage());
-				}
+						(OneShotChargeTemplate) oneShotChargeTemplate, postData.getWallet(),
+						postData.getOperationDate(), postData.getAmountWithoutTax(), postData.getAmountWithTax(),
+						postData.getQuantity(), postData.getCriteria1(), postData.getCriteria2(),
+						postData.getCriteria3(), currentUser);
+			} catch (BusinessException e) {
+				throw new MeveoApiException(e.getMessage());
+			}
 
 		} else {
 			if (StringUtils.isBlank(postData.getOneShotCharge())) {
