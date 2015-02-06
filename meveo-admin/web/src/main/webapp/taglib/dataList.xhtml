@@ -45,7 +45,7 @@
 		<h:form id="#{formId}" prependId="false">
 
 			<p:dataTable id="datatable_#{resultsId}" var="entity"
-				value="#{dataModel}" paginator="true" rows="2"
+				value="#{dataModel}" paginator="true" rows="10"
 				selection="#{backingBean.selectedEntities}"
 				paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
 				rowsPerPageTemplate="5,10,15" lazy="true"
