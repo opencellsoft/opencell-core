@@ -27,6 +27,10 @@
 	<c:if test="${empty exportButton}">
 		<c:set var="exportButton" value="true" />
 	</c:if>
+	
+	<c:if test="${empty exportToCsv}">
+		<c:set var="exportToCsv" value="false" />
+	</c:if>
 
 	<c:if test="${empty resultsId}">
 		<c:set var="resultsId" value="results" />
@@ -70,7 +74,9 @@
 				<p:dataExporter type="xls" target="datatable_#{resultsId}"
 					fileName="data" pageOnly="false" />
 			</p:commandButton>
-
+			
+			<p:commandButton value="Export to CSV" action="#{backingBean.exportToFile()}" rendered="#{exportToCsv}" ajax="false"/>
+			
 			<p:panel styleClass="buttons-set-data-table">
 				<ui:insert name="add-on-buttons" />
 			</p:panel>
