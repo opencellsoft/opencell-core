@@ -1,5 +1,6 @@
 package org.meveocrm.model.dwh;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -39,9 +40,9 @@ public class MeasuredValue extends BaseEntity {
 	@XmlTransient
 	private Date date;
 
-	@Column(name = "VALUE")
+	@Column(name = "VALUE", precision = NB_PRECISION, scale = NB_DECIMALS)
 	@XmlTransient
-	private Long value;
+	private BigDecimal value;
 
 	public MeasurableQuantity getMeasurableQuantity() {
 		return measurableQuantity;
@@ -67,11 +68,11 @@ public class MeasuredValue extends BaseEntity {
 		this.date = date;
 	}
 
-	public Long getValue() {
+	public BigDecimal getValue() {
 		return value;
 	}
 
-	public void setValue(Long value) {
+	public void setValue(BigDecimal value) {
 		this.value = value;
 	}
 

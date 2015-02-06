@@ -60,23 +60,14 @@ public class DWHQueryJob implements Job {
 		
 		JobExecutionResultImpl result = new JobExecutionResultImpl();
 		result.setProvider(currentUser.getProvider());
-
-		String report = "";
-		int nbMeasureCreated = 0;
-		if (parameter != null && !parameter.isEmpty()) {
-			try {
-				nbMeasureCreated = queryBean.executeQuery(parameter,
-						currentUser.getProvider());
-			} catch (BusinessException e) {
-				report = "ERROR: " + e.getMessage();
-			}
-			
-			report = "Created " + nbMeasureCreated + " for " + parameter;
-		} else {
-			report = "Invalid parameter: it must be the code of some MeasurableQuantity.";
+		
+		try {
+			queryBean.executeQuery(result,parameter,currentUser.getProvider());
+		} catch (BusinessException e) {
+			result.setReport("error:"+e.getMessage());
+			e.printStackTrace();
 		}
 		result.setDone(true);
-		result.setReport(report);
 		return result;
 	}
 

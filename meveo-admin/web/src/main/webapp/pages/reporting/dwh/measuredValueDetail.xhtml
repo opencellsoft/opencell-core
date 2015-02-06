@@ -37,6 +37,7 @@
 							<p:selectOneMenu id="measurableQuantityCode" required="true"
 								value="#{measurementBean.measurableQuantityCode}"
 								converter="omnifaces.SelectItemsConverter" style="width: 150px">
+								<f:selectItem itemLabel="" itemValue="" />
 								<f:selectItems
 									value="#{measurementBean.getMeasurableQuantityCodes()}"
 									var="obj" itemValue="#{obj}" itemLabel="#{obj}"></f:selectItems>
