@@ -17,74 +17,85 @@ import org.meveo.model.BusinessEntity;
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "CRM_CUSTOM_FLD_TMP_SEQ")
 public class CustomFieldTemplate extends BusinessEntity {
 
-	private static final long serialVersionUID = -1403961759495272885L;
+    private static final long serialVersionUID = -1403961759495272885L;
 
-	@Column(name = "FIELD_TYPE")
-	@Enumerated
-	private CustomFieldTypeEnum fieldType;
+    @Column(name = "FIELD_TYPE")
+    @Enumerated
+    private CustomFieldTypeEnum fieldType;
 
-	@Column(name = "ACCOUNT_TYPE")
-	@Enumerated
-	private AccountLevelEnum accountLevel;
+    @Column(name = "ACCOUNT_TYPE")
+    @Enumerated
+    private AccountLevelEnum accountLevel;
 
-	@Transient
-	private String stringValue;
+    @Column(name = "VALUE_REQUIRED")
+    private boolean valueRequired;
 
-	@Transient
-	private Double doubleValue;
+    @Transient
+    private String stringValue;
 
-	@Transient
-	private Long longValue;
+    @Transient
+    private Double doubleValue;
 
-	@Transient
-	private Date dateValue;
+    @Transient
+    private Long longValue;
 
-	public CustomFieldTypeEnum getFieldType() {
-		return fieldType;
-	}
+    @Transient
+    private Date dateValue;
 
-	public void setFieldType(CustomFieldTypeEnum fieldType) {
-		this.fieldType = fieldType;
-	}
+    public CustomFieldTypeEnum getFieldType() {
+        return fieldType;
+    }
 
-	public AccountLevelEnum getAccountLevel() {
-		return accountLevel;
-	}
+    public void setFieldType(CustomFieldTypeEnum fieldType) {
+        this.fieldType = fieldType;
+    }
 
-	public void setAccountLevel(AccountLevelEnum accountLevel) {
-		this.accountLevel = accountLevel;
-	}
+    public AccountLevelEnum getAccountLevel() {
+        return accountLevel;
+    }
 
-	public String getStringValue() {
-		return stringValue;
-	}
+    public void setAccountLevel(AccountLevelEnum accountLevel) {
+        this.accountLevel = accountLevel;
+    }
 
-	public void setStringValue(String stringValue) {
-		this.stringValue = stringValue;
-	}
+    public boolean isValueRequired() {
+        return valueRequired;
+    }
 
-	public Double getDoubleValue() {
-		return doubleValue;
-	}
+    public void setValueRequired(boolean valueRequired) {
+        this.valueRequired = valueRequired;
+    }
 
-	public void setDoubleValue(Double doubleValue) {
-		this.doubleValue = doubleValue;
-	}
+    public String getStringValue() {
+        return stringValue;
+    }
 
-	public Long getLongValue() {
-		return longValue;
-	}
+    public void setStringValue(String stringValue) {
+        this.stringValue = stringValue;
+    }
 
-	public void setLongValue(Long longValue) {
-		this.longValue = longValue;
-	}
+    public Double getDoubleValue() {
+        return doubleValue;
+    }
 
-	public Date getDateValue() {
-		return dateValue;
-	}
+    public void setDoubleValue(Double doubleValue) {
+        this.doubleValue = doubleValue;
+    }
 
-	public void setDateValue(Date dateValue) {
-		this.dateValue = dateValue;
-	}
+    public Long getLongValue() {
+        return longValue;
+    }
+
+    public void setLongValue(Long longValue) {
+        this.longValue = longValue;
+    }
+
+    public Date getDateValue() {
+        return dateValue;
+    }
+
+    public void setDateValue(Date dateValue) {
+        this.dateValue = dateValue;
+    }
 
 }

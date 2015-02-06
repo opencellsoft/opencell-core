@@ -1,48 +1,34 @@
-<ui:composition xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:ui="http://java.sun.com/jsf/facelets"
-	xmlns:f="http://java.sun.com/jsf/core"
-	xmlns:h="http://java.sun.com/jsf/html" xmlns:hftl="http://hftl.org"
-	xmlns:hf="http://java.sun.com/jsf/composite/tags"
-	template="/layout/template.xhtml">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html" xmlns:hftl="http://hftl.org" xmlns:hf="http://java.sun.com/jsf/composite/tags"
+    template="/layout/template.xhtml">
 
-	<ui:define name="metadata">
-		<f:metadata>
-			<f:event type="preRenderView"
-				listener="#{customFieldTemplateBean.preRenderView}" />
-		</f:metadata>
-	</ui:define>
-	<ui:define name="navigation">
-		<ui:include src="/layout/navigation.xhtml" />
-	</ui:define>
+    <ui:define name="metadata">
+        <f:metadata>
+            <f:event type="preRenderView" listener="#{customFieldTemplateBean.preRenderView}" />
+        </f:metadata>
+    </ui:define>
+    <ui:define name="navigation">
+        <ui:include src="/layout/navigation.xhtml" />
+    </ui:define>
 
-	<ui:define name="body">
+    <ui:define name="body">
 
-		<hf:searchPanel label="#{messages['customFieldTemplate.search']}"
-			backingBean="#{customFieldTemplateBean}" columns="3">
-			<hf:searchField label="#{messages['BusinessEntity.code']}"
-				field="code" />
-			<hf:searchField label="#{messages['customFieldTemplate.fieldType']}"
-				id="fieldType" field="fieldType" />
-			<hf:searchField
-				label="#{messages['customFieldTemplate.accountType']}"
-				id="accountLevel" field="accountLevel" />
-		</hf:searchPanel>
+        <hf:searchPanel label="#{messages['customFieldTemplate.search']}" backingBean="#{customFieldTemplateBean}" columns="3">
+            <hf:searchField label="#{messages['BusinessEntity.code']}" field="code" />
+            <hf:searchField label="#{messages['customFieldTemplate.fieldType']}" id="fieldType" field="fieldType" />
+            <hf:searchField label="#{messages['customFieldTemplate.accountType']}" id="accountLevel" field="accountLevel" />
+        </hf:searchPanel>
 
-		<hftl:dataList checkMany="false" noClose="false"
-			backingBean="#{customFieldTemplateBean}">
-			<hftl:column label="#{messages['BusinessEntity.code']}" field="code" />
-			<hftl:column label="#{messages['BusinessEntity.description']}"
-				field="description" />
-			<hftl:column label="#{messages['customFieldTemplate.fieldType']}"
-				field="fieldType" />
-			<hftl:column label="#{messages['customFieldTemplate.accountType']}"
-				field="accountLevel" />
-			<hftl:column label="#{messages['enableEntity.active']}"
-				field="active" isMessage="true" />
-			<hftl:actionsColumn
-				permission="#{identity.hasPermission('administration','administrationManagement')}" />
-		</hftl:dataList>
+        <hftl:dataList checkMany="false" noClose="false" backingBean="#{customFieldTemplateBean}">
+            <hftl:column label="#{messages['BusinessEntity.code']}" field="code" />
+            <hftl:column label="#{messages['customFieldTemplate.fieldLabel']}" field="description" />
+            <hftl:column label="#{messages['customFieldTemplate.fieldType']}" field="fieldType" childField="label" isMessage="true" />
+            <hftl:column label="#{messages['customFieldTemplate.accountType']}" field="accountLevel" childField="label" isMessage="true" />
+            <hftl:column label="#{messages['customFieldTemplate.fieldRequired']}" field="valueRequired" isMessage="true" />
+            <hftl:column label="#{messages['enableEntity.active']}" field="active" isMessage="true" />
+            <hftl:actionsColumn permission="#{identity.hasPermission('administration','administrationManagement')}" />
+        </hftl:dataList>
 
-	</ui:define>
+    </ui:define>
 
 </ui:composition>
