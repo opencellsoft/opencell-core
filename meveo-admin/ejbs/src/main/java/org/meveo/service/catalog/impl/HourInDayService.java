@@ -26,10 +26,10 @@ import org.meveo.service.base.PersistenceService;
 @Stateless
 public class HourInDayService extends PersistenceService<HourInDay> {
 
-    public HourInDay findByHourAndMin(Integer hour, Integer min) {
+    public HourInDay findByHourAndMin(Integer hour, Integer minute) {
         QueryBuilder qb = new QueryBuilder(HourInDay.class, "d");
         qb.addCriterion("hour", "=", hour, true);
-        qb.addCriterion("min", "=", min, true);
+        qb.addCriterion("minute", "=", minute, true);
 
         try {
             return (HourInDay) qb.getQuery(getEntityManager()).getSingleResult();

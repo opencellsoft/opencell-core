@@ -9,7 +9,7 @@
 
     <ui:define name="body">
 
-        <hf:formPanel label="#{messages['calendar.panel']}" backingBean="#{calendarBean}">
+        <hf:formPanel id="calendarPanel" label="#{messages['calendar.panel']}" backingBean="#{calendarBean}">
 
             <p:panelGrid columns="2" rendered="#{calendarBean.entity.id==null}">
                 <p:outputLabel value="#{messages['calendar.type']}" />
@@ -18,18 +18,40 @@
                     <f:selectItem itemValue="YEARLY" itemLabel="#{messages['calendar.calendarType.YEARLY']}" />
                     <f:selectItem itemValue="DAILY" itemLabel="#{messages['calendar.calendarType.DAILY']}" />
                     <f:selectItem itemValue="PERIOD" itemLabel="#{messages['calendar.calendarType.PERIOD']}" />
-                    <p:ajax event="change" listener="#{calendarBean.changeCalendarType}" partialSubmit="true" process="@this" oncomplete="location.reload();" />
+                    <p:ajax event="change" listener="#{calendarBean.changeCalendarType}" partialSubmit="true" process="@this"
+                        oncomplete="location.reload();" />
                 </p:selectOneMenu>
             </p:panelGrid>
             <hf:formField label="#{messages['calendar.name']}" field="name" required="true" validateUnique="true" useConverter="false" />
             <hf:formField label="#{messages['calendar.description']}" field="description" useConverter="false" id="description" />
             <hf:formField label="#{messages['calendar.days']}" field="days" listType="pickUpList" childField="day" childField2="month"
                 dualListModel="#{calendarBean.dayInYearModel}" rendered="#{calendarBean.entity.calendarType=='YEARLY'}" />
-            <hf:formField label="#{messages['calendar.hours']}" field="hours" listType="pickUpList" childField="hour" childField2="day"
-                dualListModel="#{calendarBean.hourInDayModel}" rendered="#{calendarBean.entity.calendarType=='DAILY'}" />
-            <hf:formField label="#{messages['calendar.periodLength']}" field="periodLength" rendered="#{calendarBean.entity.calendarType=='PERIOD'}" />
-            <hf:formField label="#{messages['calendar.nbPeriods']}" field="nbPeriods" rendered="#{calendarBean.entity.calendarType=='PERIOD'}" />
 
+            <p:panelGrid columns="2" rendered="#{calendarBean.entity.calendarType=='DAILY'}">
+                <p:outputLabel value="#{messages['calendar.hours']}" />
+                <p:panelGrid id="calendarHourMin" columns="3">
+                    <p:inputMask id="date" value="#{calendarBean.timeToAdd}" mask="99:99" rendered="#{calendarBean.edit}" />
+                    <p:commandButton icon="ui-icon-plus" action="#{calendarBean.addTime()}" partialSubmit="true"
+                        process=":calendarPanel:formId:date, @this" update=":calendarPanel:formId:date, :calendarPanel:formId:calendarHours"
+                        rendered="#{calendarBean.edit}" />
+
+                    <p:dataList id="calendarHours" value="#{calendarBean.entity.hours}" var="hourMin" paginator="false" styleClass="paginated">
+                        <f:facet name="header">#{messages['calendar.time']}</f:facet>
+                        <h:outputText value="#{hourMin.hourAsString}" style="display:inline-block" />
+                        <p:commandLink styleClass="ui-icon ui-icon-trash" style="float:right;margin-right:10px"
+                            action="#{calendarBean.removeTime(hourMin)}" partialSubmit="true" process="@this"
+                            update=":calendarPanel:formId:calendarHours" rendered="#{calendarBean.edit}">
+                        </p:commandLink>
+                    </p:dataList>
+                </p:panelGrid>
+            </p:panelGrid>
+
+            <hf:formField label="#{messages['calendar.periodLength']}" field="periodLength" rendered="#{calendarBean.entity.calendarType=='PERIOD'}" />
+            <hf:formField label="#{messages['calendar.periodUnit']}" field="periodUnit" listValues="#{calendarBean.periodTypes}"
+                rendered="#{calendarBean.entity.calendarType=='PERIOD' and calendarBean.edit}" />
+            <hf:formField label="#{messages['calendar.periodUnit']}" field="periodUnit" isMessage="true" messagePrefix="calendar.periodUnit"
+                rendered="#{calendarBean.entity.calendarType=='PERIOD' and not calendarBean.edit}" />
+            <hf:formField label="#{messages['calendar.nbPeriods']}" field="nbPeriods" rendered="#{calendarBean.entity.calendarType=='PERIOD'}" />
         </hf:formPanel>
     </ui:define>
 

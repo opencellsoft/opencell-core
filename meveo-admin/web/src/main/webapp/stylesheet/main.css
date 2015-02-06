@@ -400,3 +400,8 @@ input[type="submit"],
 .main-error-box { }
 
 .ui-state-default .ui-icon-xls { background-image: url(../img/excel.gif); }
+
+.ui-datalist .ui-datalist-data {
+	list-style-type: none;
+	padding-left: 5px;
+}

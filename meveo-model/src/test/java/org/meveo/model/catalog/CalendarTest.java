@@ -21,7 +21,6 @@ import java.util.Date;
 import javax.persistence.EntityManager;
 
 import org.junit.Assert;
-
 import org.junit.Test;
 import org.meveo.model.BeforeDBTest;
 import org.meveo.model.shared.DateUtils;
@@ -74,16 +73,16 @@ public class CalendarTest {
 
         Date prevDate = calendar.previousCalendarDate(DateUtils.newDate(2015, java.util.Calendar.FEBRUARY, 1, 0, 0, 0));
         Assert.assertNull(prevDate);
-        
+
         Date nextDate = calendar.nextCalendarDate(DateUtils.newDate(2015, java.util.Calendar.FEBRUARY, 1, 0, 0, 0));
         Assert.assertNull(nextDate);
-        
+
         prevDate = calendar.previousCalendarDate(DateUtils.newDate(2015, java.util.Calendar.FEBRUARY, 22, 0, 0, 0));
         Assert.assertNull(prevDate);
-        
+
         nextDate = calendar.nextCalendarDate(DateUtils.newDate(2015, java.util.Calendar.FEBRUARY, 22, 0, 0, 0));
         Assert.assertNull(nextDate);
-        
+
         prevDate = calendar.previousCalendarDate(DateUtils.newDate(2015, java.util.Calendar.FEBRUARY, 5, 0, 0, 0));
         Assert.assertEquals(DateUtils.newDate(2015, java.util.Calendar.FEBRUARY, 2, 0, 0, 0), prevDate);
 
@@ -114,15 +113,79 @@ public class CalendarTest {
 
         Date prevDate = calendar.previousCalendarDate(DateUtils.newDate(2015, java.util.Calendar.FEBRUARY, 1, 0, 0, 0));
         Assert.assertNull(prevDate);
-        
+
         Date nextDate = calendar.nextCalendarDate(DateUtils.newDate(2015, java.util.Calendar.FEBRUARY, 1, 0, 0, 0));
         Assert.assertNull(nextDate);
-        
+
         prevDate = calendar.previousCalendarDate(DateUtils.newDate(2015, java.util.Calendar.MARCH, 9, 0, 0, 0));
         Assert.assertNull(prevDate);
-        
+
         nextDate = calendar.nextCalendarDate(DateUtils.newDate(2015, java.util.Calendar.MARCH, 9, 0, 0, 0));
         Assert.assertNull(nextDate);
+
+        prevDate = calendar.previousCalendarDate(DateUtils.newDate(2015, java.util.Calendar.FEBRUARY, 5, 0, 0, 0));
+        Assert.assertEquals(DateUtils.newDate(2015, java.util.Calendar.FEBRUARY, 2, 0, 0, 0), prevDate);
+
+        nextDate = calendar.nextCalendarDate(DateUtils.newDate(2015, java.util.Calendar.FEBRUARY, 5, 0, 0, 0));
+        Assert.assertEquals(DateUtils.newDate(2015, java.util.Calendar.FEBRUARY, 8, 0, 0, 0), nextDate);
+
+        prevDate = calendar.previousCalendarDate(DateUtils.newDate(2015, java.util.Calendar.FEBRUARY, 2, 0, 0, 0));
+        Assert.assertEquals(DateUtils.newDate(2015, java.util.Calendar.FEBRUARY, 2, 0, 0, 0), prevDate);
+
+        nextDate = calendar.nextCalendarDate(DateUtils.newDate(2015, java.util.Calendar.FEBRUARY, 2, 0, 0, 0));
+        Assert.assertEquals(DateUtils.newDate(2015, java.util.Calendar.FEBRUARY, 8, 0, 0, 0), nextDate);
+
+        prevDate = calendar.previousCalendarDate(DateUtils.newDate(2015, java.util.Calendar.FEBRUARY, 8, 0, 0, 0));
+        Assert.assertEquals(DateUtils.newDate(2015, java.util.Calendar.FEBRUARY, 2, 0, 0, 0), prevDate);
+
+        nextDate = calendar.nextCalendarDate(DateUtils.newDate(2015, java.util.Calendar.FEBRUARY, 8, 0, 0, 0));
+        Assert.assertEquals(DateUtils.newDate(2015, java.util.Calendar.FEBRUARY, 8, 0, 0, 0), nextDate);
+
+        prevDate = calendar.previousCalendarDate(DateUtils.newDate(2015, java.util.Calendar.FEBRUARY, 12, 0, 0, 0));
+        Assert.assertEquals(DateUtils.newDate(2015, java.util.Calendar.FEBRUARY, 9, 0, 0, 0), prevDate);
+
+        nextDate = calendar.nextCalendarDate(DateUtils.newDate(2015, java.util.Calendar.FEBRUARY, 12, 0, 0, 0));
+        Assert.assertEquals(DateUtils.newDate(2015, java.util.Calendar.FEBRUARY, 15, 0, 0, 0), nextDate);
+
+        prevDate = calendar.previousCalendarDate(DateUtils.newDate(2015, java.util.Calendar.FEBRUARY, 19, 0, 0, 0));
+        Assert.assertEquals(DateUtils.newDate(2015, java.util.Calendar.FEBRUARY, 16, 0, 0, 0), prevDate);
+
+        nextDate = calendar.nextCalendarDate(DateUtils.newDate(2015, java.util.Calendar.FEBRUARY, 19, 0, 0, 0));
+        Assert.assertEquals(DateUtils.newDate(2015, java.util.Calendar.FEBRUARY, 22, 0, 0, 0), nextDate);
+
+        prevDate = calendar.previousCalendarDate(DateUtils.newDate(2015, java.util.Calendar.FEBRUARY, 26, 0, 0, 0));
+        Assert.assertEquals(DateUtils.newDate(2015, java.util.Calendar.FEBRUARY, 23, 0, 0, 0), prevDate);
+
+        nextDate = calendar.nextCalendarDate(DateUtils.newDate(2015, java.util.Calendar.FEBRUARY, 26, 0, 0, 0));
+        Assert.assertEquals(DateUtils.newDate(2015, java.util.Calendar.MARCH, 1, 0, 0, 0), nextDate);
+
+        prevDate = calendar.previousCalendarDate(DateUtils.newDate(2015, java.util.Calendar.MARCH, 5, 0, 0, 0));
+        Assert.assertEquals(DateUtils.newDate(2015, java.util.Calendar.MARCH, 2, 0, 0, 0), prevDate);
+
+        nextDate = calendar.nextCalendarDate(DateUtils.newDate(2015, java.util.Calendar.MARCH, 5, 0, 0, 0));
+        Assert.assertEquals(DateUtils.newDate(2015, java.util.Calendar.MARCH, 8, 0, 0, 0), nextDate);
+
+    }
+
+    @Test()
+    public void testZeroPeriodCalendar() {
+
+        CalendarPeriod calendar = new CalendarPeriod();
+        calendar.setNbPeriods(0);
+        calendar.setPeriodLength(7);
+        calendar.setInitDate(DateUtils.newDate(2015, java.util.Calendar.FEBRUARY, 2, 0, 0, 0));
+
+        Date prevDate = calendar.previousCalendarDate(DateUtils.newDate(2015, java.util.Calendar.FEBRUARY, 1, 0, 0, 0));
+        Assert.assertNull(prevDate);
+
+        Date nextDate = calendar.nextCalendarDate(DateUtils.newDate(2015, java.util.Calendar.FEBRUARY, 1, 0, 0, 0));
+        Assert.assertNull(nextDate);
+
+        prevDate = calendar.previousCalendarDate(DateUtils.newDate(2015, java.util.Calendar.MARCH, 9, 0, 0, 0));
+        Assert.assertEquals(DateUtils.newDate(2015, java.util.Calendar.MARCH, 9, 0, 0, 0), prevDate);
+
+        nextDate = calendar.nextCalendarDate(DateUtils.newDate(2015, java.util.Calendar.MARCH, 9, 0, 0, 0));
+        Assert.assertEquals(DateUtils.newDate(2015, java.util.Calendar.MARCH, 15, 0, 0, 0), nextDate);
 
         prevDate = calendar.previousCalendarDate(DateUtils.newDate(2015, java.util.Calendar.FEBRUARY, 5, 0, 0, 0));
         Assert.assertEquals(DateUtils.newDate(2015, java.util.Calendar.FEBRUARY, 2, 0, 0, 0), prevDate);
