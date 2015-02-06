@@ -52,7 +52,11 @@
 				binding="#{backingBean.dataTable}" styleClass="custom-grid"
 				rowKey="#{entity.id}">
 				<p:ajax event="page" />
+				<p:ajax event="toggleSelect" update="@this" process="@this" />
 				<p:ajax event="rowSelectCheckbox" />
+				<p:ajax event="rowUnselectCheckbox" />
+				<p:ajax event="rowSelect" />
+				<p:ajax event="rowUnselect" />
 				<p:column selectionMode="multiple" style="width:2%"
 					rendered="#{checkMany}" exportable="false" />
 				<ui:insert />
