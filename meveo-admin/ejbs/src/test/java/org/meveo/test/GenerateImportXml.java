@@ -1,4 +1,4 @@
-rpackage org.meveo.test;
+package org.meveo.test;
 
 import java.io.File;
 import java.util.Date;
