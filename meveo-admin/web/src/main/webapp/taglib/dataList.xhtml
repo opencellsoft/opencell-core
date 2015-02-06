@@ -45,14 +45,18 @@
 		<h:form id="#{formId}" prependId="false">
 
 			<p:dataTable id="datatable_#{resultsId}" var="entity"
-				value="#{dataModel}" paginator="true" rows="10"
+				value="#{dataModel}" paginator="true" rows="2"
 				selection="#{backingBean.selectedEntities}"
 				paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
 				rowsPerPageTemplate="5,10,15" lazy="true"
 				binding="#{backingBean.dataTable}" styleClass="custom-grid"
-				rowKey="#{entity.id}">
-				<p:ajax event="page" />
+				rowKey="#{entity.id}" first="#{backingBean.dataTableFirstAttribute}">
+				<p:ajax event="page" listener="#{backingBean.onPageChange}" />
+				<p:ajax event="toggleSelect" update="@this" process="@this" />
 				<p:ajax event="rowSelectCheckbox" />
+				<p:ajax event="rowUnselectCheckbox" />
+				<p:ajax event="rowSelect" />
+				<p:ajax event="rowUnselect" />
 				<p:column selectionMode="multiple" style="width:2%"
 					rendered="#{checkMany}" exportable="false" />
 				<ui:insert />

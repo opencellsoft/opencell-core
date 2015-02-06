@@ -31,10 +31,11 @@ public class WalletTemplateService extends PersistenceService<WalletTemplate> {
 	}
 	
 	
-	public WalletTemplate findByCode(String code) {
+	public WalletTemplate findByCode(String code,Provider provider) {
 		try {
 			QueryBuilder qb = new QueryBuilder(WalletTemplate.class, "w");
 			qb.addCriterion("code", "=", code, false);
+			qb.addCriterionEntity("provider", provider);
 			return (WalletTemplate) qb.getQuery(getEntityManager()).getSingleResult();
 		} catch (NoResultException ne) {
 			return null;

@@ -16,6 +16,7 @@
  */
 package org.meveo.model.billing;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -99,8 +100,8 @@ public class ServiceInstance extends BusinessEntity {
 	@JoinColumn(name = "SUB_TERMIN_REASON_ID", nullable = true)
 	private SubscriptionTerminationReason subscriptionTerminationReason;
 
-	@Column(name = "QUANTITY")
-	protected Integer quantity = 1;
+	@Column(name = "QUANTITY", precision = NB_PRECISION, scale = NB_DECIMALS)
+	protected BigDecimal quantity = BigDecimal.ONE;
 
 	public Date getEndAgrementDate() {
 		return endAgrementDate;
@@ -191,11 +192,11 @@ public class ServiceInstance extends BusinessEntity {
 		this.usageChargeInstances = usageChargeInstances;
 	}
 
-	public Integer getQuantity() {
+	public BigDecimal getQuantity() {
 		return quantity;
 	}
 
-	public void setQuantity(Integer quantity) {
+	public void setQuantity(BigDecimal quantity) {
 		this.quantity = quantity;
 	}
 

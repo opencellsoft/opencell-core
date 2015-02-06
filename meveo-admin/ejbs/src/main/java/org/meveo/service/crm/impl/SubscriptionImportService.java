@@ -2,6 +2,7 @@ package org.meveo.service.crm.impl;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.Date;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
@@ -11,6 +12,7 @@ import javax.persistence.EntityManager;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.ParamBean;
+import org.meveo.model.Auditable;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.ChargeInstance;
@@ -22,7 +24,9 @@ import org.meveo.model.billing.SubscriptionTerminationReason;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.ServiceTemplate;
+import org.meveo.model.crm.CustomFieldInstance;
 import org.meveo.model.crm.Provider;
+import org.meveo.model.jaxb.customer.CustomField;
 import org.meveo.model.jaxb.subscription.Access;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.billing.impl.ServiceInstanceService;
@@ -138,6 +142,26 @@ public class SubscriptionImportService {
 		subscription.setOffer(checkSubscription.offerTemplate);
 		subscription.setCode(jaxbSubscription.getCode());
 		subscription.setDescription(jaxbSubscription.getDescription());
+		if (jaxbSubscription.getCustomFields() != null && jaxbSubscription.getCustomFields().getCustomField() != null
+				&& jaxbSubscription.getCustomFields().getCustomField().size() > 0) {
+			for (CustomField customField : jaxbSubscription.getCustomFields().getCustomField()) {
+				CustomFieldInstance cfi = new CustomFieldInstance();
+				cfi.setSubscription(subscription);
+				cfi.setActive(true);
+				cfi.setCode(customField.getCode());
+				cfi.setDateValue(customField.getDateValue());
+				cfi.setDescription(customField.getDescription());
+				cfi.setDoubleValue(customField.getDoubleValue());
+				cfi.setLongValue(customField.getLongValue());
+				cfi.setProvider(provider);
+				cfi.setStringValue(customField.getStringValue());
+				Auditable auditable = new Auditable();
+				auditable.setCreated(new Date());
+				auditable.setCreator(currentUser);
+				cfi.setAuditable(auditable);
+				subscription.getCustomFields().put(cfi.getCode(), cfi);
+			}
+		}
 		subscription
 				.setSubscriptionDate(DateUtils.parseDateWithPattern(
 						jaxbSubscription.getSubscriptionDate(), paramBean
@@ -175,11 +199,11 @@ public class SubscriptionImportService {
 								serviceInst.getSubscriptionDate(), paramBean
 										.getProperty("connectorCRM.dateFormat",
 												"dd/MM/yyyy")));
-				int quantity = 1;
+				BigDecimal quantity = BigDecimal.ONE;
 
 				if (serviceInst.getQuantity() != null
 						&& serviceInst.getQuantity().trim().length() != 0) {
-					quantity = Integer.parseInt(serviceInst.getQuantity()
+					quantity = new BigDecimal(serviceInst.getQuantity()
 							.trim());
 				}
 

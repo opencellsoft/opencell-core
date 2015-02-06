@@ -16,6 +16,7 @@
  */
 package org.meveo.admin.action.billing;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -45,6 +46,7 @@ import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.RecurringChargeTemplate;
 import org.meveo.model.catalog.ServiceTemplate;
+import org.meveo.model.crm.AccountLevelEnum;
 import org.meveo.model.mediation.Access;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
@@ -97,15 +99,15 @@ public class SubscriptionBean extends StatefulBaseBean<Subscription> {
 
 	private ServiceInstance selectedServiceInstance;
 
-	private Integer quantity = 1;
+	private BigDecimal quantity = BigDecimal.ONE;
 
 	private OneShotChargeInstance oneShotChargeInstance = new OneShotChargeInstance();
 
 	private RecurringChargeInstance recurringChargeInstance;
 
-	private Integer oneShotChargeInstanceQuantity = 1;
+	private BigDecimal oneShotChargeInstanceQuantity = BigDecimal.ONE;
 
-	private Integer recurringChargeServiceInstanceQuantity = 1;
+	private String oneShotChargeInstanceWalletCode = null;
 
 	/**
 	 * User Account Id passed as a parameter. Used when creating new
@@ -148,7 +150,7 @@ public class SubscriptionBean extends StatefulBaseBean<Subscription> {
 				entity.setDefaultLevel(true);
 			}
 		}
-		log.debug("SubscriptionBean initEntity id={}",entity.getId());
+		log.debug("SubscriptionBean initEntity id={}", entity.getId());
 		if (entity.getId() == null) {
 			Calendar calendar = Calendar.getInstance();
 			calendar.setTime(entity.getSubscriptionDate());
@@ -163,10 +165,13 @@ public class SubscriptionBean extends StatefulBaseBean<Subscription> {
 					boolean alreadyInstanciated = false;
 
 					for (ServiceInstance serviceInstance : serviceInstances) {
-						if (serviceTemplate.getCode().equals(serviceInstance.getCode())) {
-							alreadyInstanciated = true;
-							break;
-						}
+						if (serviceInstance.getStatus() != InstanceStatusEnum.CANCELED
+								&& serviceInstance.getStatus() != InstanceStatusEnum.TERMINATED
+								&& serviceInstance.getStatus() != InstanceStatusEnum.CLOSED)
+							if (serviceTemplate.getCode().equals(serviceInstance.getCode())) {
+								alreadyInstanciated = true;
+								break;
+							}
 					}
 
 					if (!alreadyInstanciated) {
@@ -178,6 +183,8 @@ public class SubscriptionBean extends StatefulBaseBean<Subscription> {
 			serviceInstances.addAll(entity.getServiceInstances());
 
 		}
+
+		initCustomFields(AccountLevelEnum.SUB);
 
 		log.debug("serviceInstances=" + serviceInstances.getSize());
 		log.debug("servicetemplates=" + serviceTemplates.getSize());
@@ -203,6 +210,8 @@ public class SubscriptionBean extends StatefulBaseBean<Subscription> {
 
 		super.saveOrUpdate(killConversation);
 
+		saveCustomFields();
+
 		return "/pages/billing/subscriptions/subscriptionDetail?edit=false&subscriptionId=" + entity.getId()
 				+ "&faces-redirect=true&includeViewParams=true";
 	}
@@ -210,7 +219,8 @@ public class SubscriptionBean extends StatefulBaseBean<Subscription> {
 	@Override
 	protected String saveOrUpdate(Subscription entity) throws BusinessException {
 		if (entity.isTransient()) {
-			log.debug("SubscriptionBean save, # of service templates:{}",entity.getOffer().getServiceTemplates().size());
+			log.debug("SubscriptionBean save, # of service templates:{}", entity.getOffer().getServiceTemplates()
+					.size());
 			subscriptionService.create(entity);
 			serviceTemplates.addAll(entity.getOffer().getServiceTemplates());
 			messages.info(new BundleKey("messages", "save.successful"));
@@ -219,6 +229,8 @@ public class SubscriptionBean extends StatefulBaseBean<Subscription> {
 			subscriptionService.update(entity);
 			messages.info(new BundleKey("messages", "update.successful"));
 		}
+
+		saveCustomFields();
 
 		return back();
 	}
@@ -253,14 +265,15 @@ public class SubscriptionBean extends StatefulBaseBean<Subscription> {
 				oneShotChargeInstance.setCurrency(entity.getUserAccount().getBillingAccount().getCustomerAccount()
 						.getTradingCurrency());
 				oneShotChargeInstance.setCountry(entity.getUserAccount().getBillingAccount().getTradingCountry());
-				Long id = oneShotChargeInstanceService.oneShotChargeApplication(entity,
+				// Long id =
+				oneShotChargeInstance = oneShotChargeInstanceService.oneShotChargeApplication(entity,
 						(OneShotChargeTemplate) oneShotChargeInstance.getChargeTemplate(),
-						oneShotChargeInstance.getChargeDate(), oneShotChargeInstance.getAmountWithoutTax(),
-						oneShotChargeInstance.getAmountWithTax(), oneShotChargeInstanceQuantity,
-						oneShotChargeInstance.getCriteria1(), oneShotChargeInstance.getCriteria2(),
-						oneShotChargeInstance.getCriteria3(), oneShotChargeInstance.getSeller(), getCurrentUser());
-				oneShotChargeInstance.setId(id);
-				oneShotChargeInstance.setProvider(oneShotChargeInstance.getChargeTemplate().getProvider());
+						oneShotChargeInstanceWalletCode, oneShotChargeInstance.getChargeDate(),
+						oneShotChargeInstance.getAmountWithoutTax(), oneShotChargeInstance.getAmountWithTax(),
+						oneShotChargeInstanceQuantity, oneShotChargeInstance.getCriteria1(),
+						oneShotChargeInstance.getCriteria2(), oneShotChargeInstance.getCriteria3(), getCurrentUser());
+				// oneShotChargeInstance.setId(id);
+				// oneShotChargeInstance.setProvider(oneShotChargeInstance.getChargeTemplate().getProvider());
 			}
 			messages.info(new BundleKey("messages", "save.successful"));
 
@@ -277,7 +290,6 @@ public class SubscriptionBean extends StatefulBaseBean<Subscription> {
 
 	public void editRecurringChargeIns(RecurringChargeInstance recurringChargeIns) {
 		this.recurringChargeInstance = recurringChargeIns;
-		recurringChargeServiceInstanceQuantity = recurringChargeIns.getServiceInstance().getQuantity();
 		log.debug("setting recurringChargeIns " + recurringChargeIns);
 	}
 
@@ -288,7 +300,6 @@ public class SubscriptionBean extends StatefulBaseBean<Subscription> {
 				if (recurringChargeInstance.getId() != null) {
 					log.debug("update RecurringChargeIns #0, id:#1", recurringChargeInstance,
 							recurringChargeInstance.getId());
-					recurringChargeInstance.getServiceInstance().setQuantity(recurringChargeServiceInstanceQuantity);
 					recurringChargeInstanceService.update(recurringChargeInstance);
 				} else {
 					log.debug("save RecurringChargeIns #0", recurringChargeInstance);
@@ -410,9 +421,9 @@ public class SubscriptionBean extends StatefulBaseBean<Subscription> {
 	public void instanciateManyServices() {
 		log.debug("instanciateManyServices");
 		try {
-			if (quantity <= 0) {
+			if (quantity == null || quantity.compareTo(BigDecimal.ZERO) <= 0) {
 				log.warn("instanciateManyServices quantity is negative! set it to 1");
-				quantity = 1;
+				quantity = BigDecimal.ONE;
 			}
 			boolean isChecked = false;
 			log.debug("serviceTemplates is " + serviceTemplates.getSize());
@@ -552,20 +563,28 @@ public class SubscriptionBean extends StatefulBaseBean<Subscription> {
 		}
 	}
 
-	public Integer getQuantity() {
+	public BigDecimal getQuantity() {
 		return quantity;
 	}
 
-	public void setQuantity(Integer quantity) {
+	public void setQuantity(BigDecimal quantity) {
 		this.quantity = quantity;
 	}
 
-	public Integer getOneShotChargeInstanceQuantity() {
+	public BigDecimal getOneShotChargeInstanceQuantity() {
 		return oneShotChargeInstanceQuantity;
 	}
 
-	public void setOneShotChargeInstanceQuantity(Integer oneShotChargeInstanceQuantity) {
+	public void setOneShotChargeInstanceQuantity(BigDecimal oneShotChargeInstanceQuantity) {
 		this.oneShotChargeInstanceQuantity = oneShotChargeInstanceQuantity;
+	}
+
+	public String getOneShotChargeInstanceWalletCode() {
+		return oneShotChargeInstanceWalletCode;
+	}
+
+	public void setOneShotChargeInstanceWalletCode(String oneShotChargeInstanceWalletCode) {
+		this.oneShotChargeInstanceWalletCode = oneShotChargeInstanceWalletCode;
 	}
 
 	public ServiceInstance getSelectedServiceInstance() {
@@ -587,14 +606,6 @@ public class SubscriptionBean extends StatefulBaseBean<Subscription> {
 			entity.setCode(userAccount.getCode());
 			entity.setDescription(userAccount.getDescription());
 		}
-	}
-
-	public Integer getRecurringChargeServiceInstanceQuantity() {
-		return recurringChargeServiceInstanceQuantity;
-	}
-
-	public void setRecurringChargeServiceInstanceQuantity(Integer recurringChargeServiceInstanceQuantity) {
-		this.recurringChargeServiceInstanceQuantity = recurringChargeServiceInstanceQuantity;
 	}
 
 	private Long getUserAccountId() {

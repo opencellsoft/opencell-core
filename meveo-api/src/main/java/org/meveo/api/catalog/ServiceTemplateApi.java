@@ -101,7 +101,7 @@ public class ServiceTemplateApi extends BaseApi {
 
 					for (String walletCode : wallettemplateCodes) {
 						WalletTemplate walletTemplate = walletTemplateService
-								.findByCode(walletCode);
+								.findByCode(walletCode,provider);
 						if (walletTemplate == null) {
 							throw new EntityDoesNotExistsException(
 									WalletTemplate.class, walletCode);
@@ -147,7 +147,7 @@ public class ServiceTemplateApi extends BaseApi {
 
 					for (String walletCode : wallettemplateCodes) {
 						WalletTemplate walletTemplate = walletTemplateService
-								.findByCode(walletCode);
+								.findByCode(walletCode,provider);
 						if (walletTemplate == null) {
 							throw new EntityDoesNotExistsException(
 									WalletTemplate.class, walletCode);
@@ -200,7 +200,7 @@ public class ServiceTemplateApi extends BaseApi {
 
 					for (String walletCode : wallettemplateCodes) {
 						WalletTemplate walletTemplate = walletTemplateService
-								.findByCode(walletCode);
+								.findByCode(walletCode,provider);
 						if (walletTemplate == null) {
 							throw new EntityDoesNotExistsException(
 									WalletTemplate.class, walletCode);
@@ -255,7 +255,7 @@ public class ServiceTemplateApi extends BaseApi {
 				for (String walletCode : serviceUsageChargeTemplateDto
 						.getWalletTemplates()) {
 					WalletTemplate walletTemplate = walletTemplateService
-							.findByCode(walletCode);
+							.findByCode(walletCode,provider);
 					if (walletTemplate == null) {
 						throw new EntityDoesNotExistsException(
 								WalletTemplate.class, walletCode);
@@ -342,7 +342,7 @@ public class ServiceTemplateApi extends BaseApi {
 							.get(chargeCode);
 					for (String walletCode : wallettemplateCodes) {
 						WalletTemplate walletTemplate = walletTemplateService
-								.findByCode(walletCode);
+								.findByCode(walletCode,provider);
 						if (walletTemplate == null) {
 							throw new EntityDoesNotExistsException(
 									WalletTemplate.class, walletCode);
@@ -386,7 +386,7 @@ public class ServiceTemplateApi extends BaseApi {
 
 					for (String walletCode : wallettemplateCodes) {
 						WalletTemplate walletTemplate = walletTemplateService
-								.findByCode(walletCode);
+								.findByCode(walletCode,provider);
 						if (walletTemplate == null) {
 							throw new EntityDoesNotExistsException(
 									WalletTemplate.class, walletCode);
@@ -431,7 +431,7 @@ public class ServiceTemplateApi extends BaseApi {
 
 					for (String walletCode : wallettemplateCodes) {
 						WalletTemplate walletTemplate = walletTemplateService
-								.findByCode(walletCode);
+								.findByCode(walletCode,provider);
 						if (walletTemplate == null) {
 							throw new EntityDoesNotExistsException(
 									WalletTemplate.class, walletCode);
@@ -485,7 +485,7 @@ public class ServiceTemplateApi extends BaseApi {
 				for (String walletCode : serviceUsageChargeTemplateDto
 						.getWalletTemplates()) {
 					WalletTemplate walletTemplate = walletTemplateService
-							.findByCode(walletCode);
+							.findByCode(walletCode,provider);
 					if (walletTemplate == null) {
 						throw new EntityDoesNotExistsException(
 								WalletTemplate.class, walletCode);

@@ -20,13 +20,19 @@ public class ApplyOneShotChargeInstanceDto extends BaseDto {
 	private static final long serialVersionUID = 3910185882621015476L;
 
 	@XmlAttribute(required = true)
-	private String oneShotChargeInstance;
+	private String oneShotCharge;
 
 	@XmlAttribute(required = true)
 	private String subscription;
+	
+	private String wallet;
+	
+	private Boolean createWallet;
 
 	@XmlAttribute(required = true)
 	private Date operationDate;
+	
+	private BigDecimal quantity;
 
 	private String description;
 	private BigDecimal amountWithoutTax;
@@ -35,12 +41,36 @@ public class ApplyOneShotChargeInstanceDto extends BaseDto {
 	private String criteria2;
 	private String criteria3;
 
-	public String getOneShotChargeInstance() {
-		return oneShotChargeInstance;
+	public String getOneShotCharge() {
+		return oneShotCharge;
 	}
 
-	public void setOneShotChargeInstance(String oneShotChargeInstance) {
-		this.oneShotChargeInstance = oneShotChargeInstance;
+	public void setOneShotCharge(String oneShotCharge) {
+		this.oneShotCharge = oneShotCharge;
+	}
+
+	public String getWallet() {
+		return wallet;
+	}
+
+	public void setWallet(String wallet) {
+		this.wallet = wallet;
+	}
+
+	public Boolean getCreateWallet() {
+		return createWallet;
+	}
+
+	public void setCreateWallet(Boolean createWallet) {
+		this.createWallet = createWallet;
+	}
+
+	public BigDecimal getQuantity() {
+		return quantity;
+	}
+
+	public void setQuantity(BigDecimal quantity) {
+		this.quantity = quantity;
 	}
 
 	public Date getOperationDate() {
@@ -101,8 +131,8 @@ public class ApplyOneShotChargeInstanceDto extends BaseDto {
 
 	@Override
 	public String toString() {
-		return "ApplyOneShotChargeInstanceDto [oneShotChargeInstance=" + oneShotChargeInstance + ", subscription="
-				+ subscription + ", operationDate=" + operationDate + ", description=" + description
+		return "ApplyOneShotChargeInstanceDto [oneShotCharge=" + oneShotCharge + ", subscription="
+				+ subscription + ", wallet="+wallet+", operationDate=" + operationDate + ", description=" + description
 				+ ", amountWithoutTax=" + amountWithoutTax + ", amountWithTax=" + amountWithTax + ", criteria1="
 				+ criteria1 + ", criteria2=" + criteria2 + ", criteria3=" + criteria3 + "]";
 	}

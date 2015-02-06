@@ -5,7 +5,7 @@ import javax.interceptor.Interceptors;
 import javax.jws.WebService;
 
 import org.meveo.api.MeveoApiErrorCode;
-import org.meveo.api.account.SubscriptionApi;
+import org.meveo.api.billing.SubscriptionApi;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.account.ActivateServicesDto;

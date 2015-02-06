@@ -439,7 +439,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 	 */
 
 	public WalletOperation rateOneShotApplication(EntityManager em, Subscription subscription,
-			OneShotChargeInstance chargeInstance, Integer quantity, Date applicationDate, User creator)
+			OneShotChargeInstance chargeInstance, BigDecimal quantity, Date applicationDate, User creator)
 			throws BusinessException {
 
 		ChargeTemplate chargeTemplate = chargeInstance.getChargeTemplate();
@@ -484,20 +484,19 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 
 		WalletOperation chargeApplication = chargeApplicationRatingService.rateChargeApplication(em, chargeTemplate
 				.getCode(), subscription, chargeInstance, ApplicationTypeEnum.PUNCTUAL, applicationDate, chargeInstance
-				.getAmountWithoutTax(), chargeInstance.getAmountWithTax(), quantity == null ? null : new BigDecimal(
-				quantity), currency, countryId, tax.getPercent(), null, null, invoiceSubCategory, chargeInstance
+				.getAmountWithoutTax(), chargeInstance.getAmountWithTax(), quantity , currency, countryId, tax.getPercent(), null, null, invoiceSubCategory, chargeInstance
 				.getCriteria1(), chargeInstance.getCriteria2(), chargeInstance.getCriteria3(), null, null, null);
 
 		return chargeApplication;
 	}
 
 	public void oneShotWalletOperation(Subscription subscription, OneShotChargeInstance chargeInstance,
-			Integer quantity, Date applicationDate, User creator) throws BusinessException {
+			BigDecimal quantity, Date applicationDate, User creator) throws BusinessException {
 		oneShotWalletOperation(getEntityManager(), subscription, chargeInstance, quantity, applicationDate, creator);
 	}
 
 	public void oneShotWalletOperation(EntityManager em, Subscription subscription,
-			OneShotChargeInstance chargeInstance, Integer quantity, Date applicationDate, User creator)
+			OneShotChargeInstance chargeInstance, BigDecimal quantity, Date applicationDate, User creator)
 			throws BusinessException {
 
 		if (chargeInstance == null) {
@@ -651,9 +650,8 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 		log.debug("rateSubscription applicationDate={}, nextapplicationDate={},previousapplicationDate={}",
 				applicationDate, nextapplicationDate, previousapplicationDate);
 
-		BigDecimal quantity = (chargeInstance.getServiceInstance() == null || chargeInstance.getServiceInstance()
-				.getQuantity() == null) ? BigDecimal.ONE : new BigDecimal(chargeInstance.getServiceInstance()
-				.getQuantity());
+		BigDecimal quantity = chargeInstance.getServiceInstance() == null?null:chargeInstance.getServiceInstance()
+				.getQuantity();
 		if (Boolean.TRUE.equals(recurringChargeTemplate.getSubscriptionProrata())) {
 			Date periodStart = applicationDate;
 			double prorataRatio = 1.0;
@@ -795,8 +793,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 			applicationDate = DateUtils.parseDateWithPattern(applicationDate, "dd/MM/yyyy");
 		}
 
-		BigDecimal quantity = chargeInstance.getServiceInstance().getQuantity() == null ? BigDecimal.ONE
-				: new BigDecimal(chargeInstance.getServiceInstance().getQuantity());
+		BigDecimal quantity = chargeInstance.getServiceInstance().getQuantity();
 
 		Date nextapplicationDate = cal.nextCalendarDate(applicationDate);
 		if (cal.truncDateTime()) {
@@ -972,8 +969,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 
 			String param2 = (reimbursement ? str_tooPerceived + " " : " ") + sdf.format(applicationDate)
 					+ (reimbursement ? " / " : " au ") + sdf.format(DateUtils.addDaysToDate(nextapplicationDate, -1));
-			BigDecimal quantity = chargeInstance.getServiceInstance().getQuantity() == null ? BigDecimal.ONE
-					: new BigDecimal(chargeInstance.getServiceInstance().getQuantity());
+			BigDecimal quantity = chargeInstance.getServiceInstance().getQuantity();
 			if (reimbursement) {
 				quantity = quantity.negate();
 			}
@@ -1071,8 +1067,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 					"ApplyNotAppliedinAdvanceReccuringCharge applicationDate={}, nextapplicationDate={},previousapplicationDate={}",
 					applicationDate, nextapplicationDate, previousapplicationDate);
 
-			BigDecimal quantity = chargeInstance.getServiceInstance().getQuantity() == null ? BigDecimal.ONE
-					: new BigDecimal(chargeInstance.getServiceInstance().getQuantity());
+			BigDecimal quantity = chargeInstance.getServiceInstance().getQuantity();
 			ApplicationTypeEnum applicationTypeEnum = ApplicationTypeEnum.RECURRENT;
 			Date periodStart = applicationDate;
 			// n'appliquer le prorata que dans le cas de la 1ere application de
@@ -1201,8 +1196,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 			Double prorataRatio = null;
 			ApplicationTypeEnum type = ApplicationTypeEnum.RECURRENT;
 			Date endDate = DateUtils.addDaysToDate(nextapplicationDate, -1);
-			BigDecimal quantity = chargeInstance.getServiceInstance().getQuantity() == null ? BigDecimal.ONE
-					: new BigDecimal(chargeInstance.getServiceInstance().getQuantity());
+			BigDecimal quantity = chargeInstance.getServiceInstance().getQuantity();
 			if (nextapplicationDate.getTime() > endAgreementDate.getTime()
 					&& applicationDate.getTime() < endAgreementDate.getTime()) {
 				Date endAgreementDateModified = DateUtils.addDaysToDate(endAgreementDate, 1);

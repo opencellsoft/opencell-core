@@ -1,6 +1,7 @@
 package org.meveocrm.model.dwh;
 
 import java.util.Date;
+import java.util.GregorianCalendar;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -41,6 +42,10 @@ public class MeasurableQuantity extends BusinessEntity {
 
 	@Column(name = "EDITABLE", length = 255)
 	private boolean editable;
+	
+	@Column(name = "LAST_EXECUTION")
+	@Temporal(TemporalType.DATE)
+	private Date lastExecutionDate;
 
 	/**
 	 * expect to return a list of (Date measureDate, Long value) that will be
@@ -128,6 +133,38 @@ public class MeasurableQuantity extends BusinessEntity {
 
 	public void setLastMeasureDate(Date lastMeasureDate) {
 		this.lastMeasureDate = lastMeasureDate;
+	}
+
+	public Date getLastExecutionDate() {
+		return lastExecutionDate;
+	}
+
+	public void setLastExecutionDate(Date lastExecutionDate) {
+		this.lastExecutionDate = lastExecutionDate;
+	}
+	
+	public Date getNextExcutionDate(){
+        GregorianCalendar calendar = new GregorianCalendar();
+        calendar.setTime(lastExecutionDate);
+        switch(measurementPeriod){
+        case DAILY:
+        	calendar.add(java.util.Calendar.DAY_OF_MONTH, 1);
+        	break;
+        case WEEKLY:
+        	calendar.add(java.util.Calendar.WEEK_OF_YEAR, 1);
+        	break;
+        case MONTHLY:
+        	calendar.add(java.util.Calendar.MONTH, 1);
+        	break;
+        case YEARLY:
+        	calendar.add(java.util.Calendar.YEAR, 1);
+        	break;
+        }
+        return calendar.getTime();
+	}
+	
+	public void increaseExecutionDate(){
+		
 	}
 	
 }

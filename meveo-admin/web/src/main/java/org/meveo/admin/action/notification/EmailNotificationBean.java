@@ -14,19 +14,17 @@ import org.meveo.service.notification.EmailNotificationService;
 
 @Named
 @ConversationScoped
-public class EmailNotificationBean extends BaseBean<EmailNotification>{
-
+public class EmailNotificationBean extends BaseBean<EmailNotification> {
 
 	private static final long serialVersionUID = 6473465285480945644L;
 
 	@Inject
-	EmailNotificationService emailNotificationService;
-	
+	private EmailNotificationService emailNotificationService;
 
-	public EmailNotificationBean(){
+	public EmailNotificationBean() {
 		super(EmailNotification.class);
 	}
-	
+
 	@Override
 	protected IPersistenceService<EmailNotification> getPersistenceService() {
 		return emailNotificationService;
@@ -50,4 +48,5 @@ public class EmailNotificationBean extends BaseBean<EmailNotification>{
 	protected List<String> getListFieldsToFetch() {
 		return Arrays.asList("provider");
 	}
+
 }

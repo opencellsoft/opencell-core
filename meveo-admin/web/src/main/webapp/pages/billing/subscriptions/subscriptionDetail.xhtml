@@ -4,6 +4,7 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:rich="http://richfaces.org/rich"
+	xmlns:o="http://omnifaces.org/ui"
 	xmlns:p="http://primefaces.org/ui" xmlns:a="http://richfaces.org/a4j"
 	xmlns:hftl="http://hftl.org"
 	xmlns:hf="http://java.sun.com/jsf/composite/tags"
@@ -26,6 +27,7 @@
 				value="#{customerAccountBean.objectId}" />
 			<f:viewParam name="customerId" value="#{customerBean.objectId}" />
 		</f:metadata>
+		<o:importConstants type="org.meveo.model.crm.CustomFieldTypeEnum" />
 	</ui:define>
 
 	<ui:define name="navigation">
@@ -316,6 +318,14 @@
 									</hftl:panelGroup>
 								</hf:formPanel>
 							</p:tab>
+							<p:tab title="#{messages['customFieldTemplate.panel']}">
+								<hf:formPanel id="subscriptionCustomFormPanel"
+									backingBean="#{subscriptionBean}"
+									killConversationOnSave="false" killConversationOnBack="false"
+									useCustomIdParam="true">
+									<hf:customFields />
+								</hf:formPanel>
+							</p:tab>
 							<p:tab id="oneShotChgTab"
 								title="#{messages['subscription.tab.oneShotChg']}"
 								rendered="#{!subscriptionBean.edit}">
@@ -470,10 +480,10 @@
 														field="criteria3" edit="true" />
 
 													<h:panelGrid columns="2">
-														<p:outputLabel for="amountWithoutTax"
+														<p:outputLabel for="quantity"
 															value="#{messages['serviceInstance.quantity']}" />
 														<h:inputText rendered="#{subscriptionBean.edit}"
-															id="amountWithoutTax"
+															id="quantity"
 															value="#{subscriptionBean.oneShotChargeInstanceQuantity}"
 															size="5" maxlength="3">
 														</h:inputText>
@@ -635,7 +645,7 @@
 
 													<h:panelGrid columns="2">
 														<h:commandButton
-															action="#{subscriptionBean.saveOneShotChargeIns()}"
+															action="#{subscriptionBean.saveOneShotChargeIns}"
 															value="#{messages['action.save']}"
 															rendered="#{currentProvider.amountValidation}">
 															<a:ajax event="click" render="OS_oneShot_results_form"
@@ -934,12 +944,6 @@
 							label="#{messages['recurringChargeInstance.criteria3']}"
 							field="criteria3" edit="true"
 							disabled="#{!subscriptionBean.recurringChargeInstance.chargeTemplate.amountEditable}" />
-						<p:panelGrid columns="2">
-							<p:outputLabel for="quantityRecCH"
-								value="#{messages['serviceInstance.quantity']}" />
-							<p:spinner required="true" id="quantityRecCH" min="1"
-								value="#{subscriptionBean.recurringChargeServiceInstanceQuantity}" />
-						</p:panelGrid>
 						<h:outputLabel value="" />
 						<hf:formField
 							label="#{messages['oneShotChargeInstance.chargeDate']}"

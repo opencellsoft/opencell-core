@@ -27,71 +27,78 @@ public class WebHookNotifier {
 	@Inject
 	@MeveoJpaForJobs
 	private EntityManager em;
-	
+
 	@Inject
 	Logger log;
-	
-	@Inject 
+
+	@Inject
 	NotificationHistoryService notificationHistoryService;
 
-	private String evaluate(String expression,IEntity e) throws BusinessException{
-		HashMap<Object,Object> userMap = new HashMap<Object, Object>();
+	private String evaluate(String expression, IEntity e) throws BusinessException {
+		HashMap<Object, Object> userMap = new HashMap<Object, Object>();
 		userMap.put("event", e);
-		return (String)RatingService.evaluateExpression(expression, userMap, String.class);
+
+		return (String) RatingService.evaluateExpression(expression, userMap, String.class);
 	}
-	
-	private Map<String,String> evaluateMap(Map<String,String> map,IEntity e) throws BusinessException{
-		Map<String,String> result = new HashMap<String,String>();
-		HashMap<Object,Object> userMap = new HashMap<Object, Object>();
+
+	private Map<String, String> evaluateMap(Map<String, String> map, IEntity e) throws BusinessException {
+		Map<String, String> result = new HashMap<String, String>();
+		HashMap<Object, Object> userMap = new HashMap<Object, Object>();
 		userMap.put("event", e);
-		for(String key:map.keySet()){
-			result.put(key,(String)RatingService.evaluateExpression(map.get(key), userMap, String.class));
+
+		for (String key : map.keySet()) {
+			result.put(key, (String) RatingService.evaluateExpression(map.get(key), userMap, String.class));
 		}
+
 		return result;
 	}
-	
+
 	@Asynchronous
-	public void sendRequest(WebHook webHook, IEntity e){
+	public void sendRequest(WebHook webHook, IEntity e) {
 		log.debug("webhook sendRequest");
-		String result="";
+		String result = "";
+
 		try {
-			String url  = webHook.getHost().startsWith("http")?webHook.getHost():"http://"+webHook.getHost();
-			if(webHook.getPort()>0){
-				url+=":"+webHook.getPort();
-			}
-			if(!StringUtils.isBlank(webHook.getPage())){
-				url+="/"+evaluate(webHook.getPage(),e);
+			String url = webHook.getHost().startsWith("http") ? webHook.getHost() : "http://" + webHook.getHost();
+
+			if (webHook.getPort() > 0) {
+				url += ":" + webHook.getPort();
 			}
 
-			log.debug("webhook url: {}",url);
-			Connection connection=HttpConnection.connect(url);
-			connection.data(evaluateMap(webHook.getParams(),e));
-			Map<String,String> headers=evaluateMap(webHook.getHeaders(),e);
-			for(String key:headers.keySet()){
+			if (!StringUtils.isBlank(webHook.getPage())) {
+				url += "/" + evaluate(webHook.getPage(), e);
+			}
+
+			log.debug("webhook url: {}", url);
+			Connection connection = HttpConnection.connect(url);
+			connection.data(evaluateMap(webHook.getParams(), e));
+			Map<String, String> headers = evaluateMap(webHook.getHeaders(), e);
+			for (String key : headers.keySet()) {
 				connection.header(key, webHook.getHeaders().get(key));
 			}
-			if(WebHookMethodEnum.HTTP_GET==webHook.getHttpMethod()){
-				result=connection.get().toString();
+
+			if (WebHookMethodEnum.HTTP_GET == webHook.getHttpMethod()) {
+				result = connection.get().toString();
 			} else {
 				result = connection.post().toString();
 			}
-			//TODO: handle correctly non temporary errors like 404...
-			notificationHistoryService.create(webHook, e, result,NotificationHistoryStatusEnum.SENT);
-			log.debug("webhook answer : "+result);
+			// TODO: handle correctly non temporary errors like 404...
+			notificationHistoryService.create(webHook, e, result, NotificationHistoryStatusEnum.SENT);
+			log.debug("webhook answer : " + result);
 		} catch (BusinessException e1) {
 			try {
-				log.debug("webhook business error : "+e1.getMessage());
-				notificationHistoryService.create(webHook, e, e1.getMessage(),NotificationHistoryStatusEnum.FAILED);
+				log.debug("webhook business error : " + e1.getMessage());
+				notificationHistoryService.create(webHook, e, e1.getMessage(), NotificationHistoryStatusEnum.FAILED);
 			} catch (BusinessException e2) {
-				log.debug("webhook history error : "+e2.getMessage());
+				log.debug("webhook history error : " + e2.getMessage());
 				e2.printStackTrace();
 			}
 		} catch (IOException e1) {
 			try {
-				log.debug("webhook io error : "+e1.getMessage());
-				notificationHistoryService.create(webHook, e, e1.getMessage(),NotificationHistoryStatusEnum.TO_RETRY);
+				log.debug("webhook io error : " + e1.getMessage());
+				notificationHistoryService.create(webHook, e, e1.getMessage(), NotificationHistoryStatusEnum.TO_RETRY);
 			} catch (BusinessException e2) {
-				log.debug("webhook history error : "+e2.getMessage());
+				log.debug("webhook history error : " + e2.getMessage());
 				e2.printStackTrace();
 			}
 		}

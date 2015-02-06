@@ -31,6 +31,8 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
+import org.meveo.model.jaxb.customer.CustomFields;
+
 
 /**
  * <p>Java class for anonymous complex type.
@@ -64,6 +66,7 @@ import javax.xml.bind.annotation.XmlType;
     "endAgreementDate",
     "status",
     "description",
+    "customFields",
     "services",
     "accesses"
 })
@@ -75,6 +78,7 @@ public class Subscription {
     @XmlElement(required = true)
     protected Status status;
     protected String description;
+    protected CustomFields customFields;
     protected Services services;
     @XmlAttribute(name = "code")
     protected String code;
@@ -282,6 +286,14 @@ public class Subscription {
 
 	public void setAccesses(Accesses value){
 		this.accesses=value;
+	}
+
+	public CustomFields getCustomFields() {
+		return customFields;
+	}
+
+	public void setCustomFields(CustomFields customFields) {
+		this.customFields = customFields;
 	}
     
 }
