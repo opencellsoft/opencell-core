@@ -3,6 +3,7 @@ package org.meveo.api.dto.billing;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -13,6 +14,7 @@ import org.meveo.api.dto.BaseDto;
 import org.meveo.api.dto.CustomFieldDto;
 import org.meveo.api.dto.account.AccessDto;
 import org.meveo.model.billing.Subscription;
+import org.meveo.model.crm.CustomFieldInstance;
 import org.meveo.model.mediation.Access;
 
 /**
@@ -67,6 +69,19 @@ public class SubscriptionDto extends BaseDto {
 			accesses = new ArrayList<AccessDto>();
 			for (Access ac : e.getAccessPoints()) {
 				accesses.add(new AccessDto(ac));
+			}
+		}
+
+		if (e.getCustomFields() != null) {
+			for (Map.Entry<String, CustomFieldInstance> entry : e.getCustomFields().entrySet()) {
+				CustomFieldDto cfDto = new CustomFieldDto();
+				cfDto.setCode(entry.getValue().getCode());
+				cfDto.setDateValue(entry.getValue().getDateValue());
+				cfDto.setDescription(entry.getValue().getDescription());
+				cfDto.setDoubleValue(entry.getValue().getDoubleValue());
+				cfDto.setLongValue(entry.getValue().getLongValue());
+				cfDto.setStringValue(entry.getValue().getStringValue());
+				customFields.add(cfDto);
 			}
 		}
 	}

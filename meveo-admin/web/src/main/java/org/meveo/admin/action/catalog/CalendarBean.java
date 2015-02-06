@@ -18,6 +18,7 @@ package org.meveo.admin.action.catalog;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -33,6 +34,7 @@ import javax.persistence.DiscriminatorValue;
 import org.jboss.solder.servlet.http.RequestParam;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.action.StatelessBaseBean;
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.ResourceBundle;
 import org.meveo.model.catalog.Calendar;
 import org.meveo.model.catalog.CalendarDaily;
@@ -74,6 +76,8 @@ public class CalendarBean extends StatelessBaseBean<Calendar> {
     @Inject
     private ResourceBundle resourceMessages;
 
+    private String timeToAdd;
+
     /**
      * Constructor. Invokes super constructor and provides class type of this bean for {@link BaseBean}.
      */
@@ -83,11 +87,8 @@ public class CalendarBean extends StatelessBaseBean<Calendar> {
 
     public Calendar getInstance() throws InstantiationException, IllegalAccessException {
 
-//        Calendar calendar = CalendarYearly.class.newInstance();
-//        calendar.setCalendarType(CalendarYearly.class.getAnnotation(DiscriminatorValue.class).value());
-
-        Calendar calendar = CalendarDaily.class.newInstance();
-        calendar.setCalendarType(CalendarDaily.class.getAnnotation(DiscriminatorValue.class).value());
+        Calendar calendar = CalendarYearly.class.newInstance();
+        calendar.setCalendarType(CalendarYearly.class.getAnnotation(DiscriminatorValue.class).value());
 
         return calendar;
     }
@@ -114,25 +115,16 @@ public class CalendarBean extends StatelessBaseBean<Calendar> {
         return dayInYearListModel;
     }
 
+    public String getTimeToAdd() {
+        return timeToAdd;
+    }
+
+    public void setTimeToAdd(String timeToAdd) {
+        this.timeToAdd = timeToAdd;
+    }
+
     public void setDayInYearModel(DualListModel<DayInYear> perks) {
         ((CalendarYearly) getEntity()).setDays((List<DayInYear>) perks.getTarget());
-    }
-
-    public DualListModel<HourInDay> getHourInDayModel() {
-        if (hourInDayListModel == null && getEntity() instanceof CalendarDaily) {
-            List<HourInDay> perksSource = hourInDayService.list();
-            List<HourInDay> perksTarget = new ArrayList<HourInDay>();
-            if (((CalendarDaily) getEntity()).getHours() != null) {
-                perksTarget.addAll(((CalendarDaily) getEntity()).getHours());
-            }
-            perksSource.removeAll(perksTarget);
-            hourInDayListModel = new DualListModel<HourInDay>(perksSource, perksTarget);
-        }
-        return hourInDayListModel;
-    }
-
-    public void setHourInDayModel(DualListModel<HourInDay> perks) {
-        ((CalendarDaily) getEntity()).setHours((List<HourInDay>) perks.getTarget());
     }
 
     @Override
@@ -151,6 +143,15 @@ public class CalendarBean extends StatelessBaseBean<Calendar> {
         values.put("DAILY", resourceMessages.getString("calendar.calendarType.DAILY"));
         values.put("YEARLY", resourceMessages.getString("calendar.calendarType.YEARLY"));
         values.put("PERIOD", resourceMessages.getString("calendar.calendarType.PERIOD"));
+
+        return values;
+    }
+
+    public Map<String, String> getPeriodTypes() {
+        Map<String, String> values = new HashMap<String, String>();
+
+        values.put(Integer.toString(java.util.Calendar.DAY_OF_MONTH), resourceMessages.getString("calendar.periodUnit.5"));
+        values.put(Integer.toString(java.util.Calendar.MONTH), resourceMessages.getString("calendar.periodUnit.2"));
 
         return values;
     }
@@ -176,5 +177,38 @@ public class CalendarBean extends StatelessBaseBean<Calendar> {
                 return;
             }
         }
+    }
+
+    public void addTime() throws BusinessException {
+
+        if (timeToAdd == null || timeToAdd.compareTo("23:59") > 0) {
+            return;
+        }
+
+        String[] hourMin = timeToAdd.split(":");
+        int hour = Integer.parseInt(hourMin[0]);
+        int minute = Integer.parseInt(hourMin[1]);
+
+        HourInDay hourInDay = hourInDayService.findByHourAndMin(hour, minute);
+        if (hourInDay == null) {
+            hourInDay = new HourInDay(hour, minute);
+            // hourInDayService.create(hourInDay);
+        }
+
+        timeToAdd = null;
+        if (((CalendarDaily) entity).getHours() != null && ((CalendarDaily) entity).getHours().contains(hourInDay)) {
+            return;
+        }
+
+        if (((CalendarDaily) entity).getHours() == null) {
+            ((CalendarDaily) entity).setHours(new ArrayList<HourInDay>());
+        }
+        ((CalendarDaily) entity).getHours().add(hourInDay);
+        Collections.sort(((CalendarDaily) entity).getHours());
+
+    }
+
+    public void removeTime(HourInDay hourInDay) {
+        ((CalendarDaily) entity).getHours().remove(hourInDay);
     }
 }

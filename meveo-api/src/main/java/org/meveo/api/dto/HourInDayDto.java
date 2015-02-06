@@ -30,7 +30,7 @@ public class HourInDayDto implements Serializable {
 
     public HourInDayDto(HourInDay d) {
         hour = d.getHour();
-        min = d.getMin();
+        min = d.getMinute();
     }
 
     public Integer getHour() {

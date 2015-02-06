@@ -26,7 +26,6 @@ import javax.inject.Named;
 
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.action.StatefulBaseBean;
-import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.security.Permission;
 import org.meveo.model.security.Role;
 import org.meveo.service.admin.impl.PermissionService;
@@ -98,17 +97,6 @@ public class UserRoleBean extends StatefulBaseBean<Role> {
     @Override
     protected IPersistenceService<Role> getPersistenceService() {
         return userRoleService;
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.meveo.admin.action.BaseBean#saveOrUpdate(boolean)
-     */
-    @Override
-    public String saveOrUpdate(boolean killConversation) throws BusinessException {
-
-        return super.saveOrUpdate(killConversation);
     }
 
     /**

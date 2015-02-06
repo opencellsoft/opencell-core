@@ -13,9 +13,10 @@ import org.meveo.model.notification.NotificationHistoryStatusEnum;
 import org.meveo.service.base.PersistenceService;
 
 @Stateless
-public class NotificationHistoryService extends PersistenceService<NotificationHistory>{
+public class NotificationHistoryService extends PersistenceService<NotificationHistory> {
 
-	public NotificationHistory create(Notification notification,IEntity e,String result, NotificationHistoryStatusEnum status) throws BusinessException{
+	public NotificationHistory create(Notification notification, IEntity e, String result,
+			NotificationHistoryStatusEnum status) throws BusinessException {
 		NotificationHistory history = new NotificationHistory();
 		Auditable auditable = new Auditable();
 		auditable.setCreated(new Date());
@@ -23,11 +24,13 @@ public class NotificationHistoryService extends PersistenceService<NotificationH
 		history.setAuditable(auditable);
 		history.setNotification(notification);
 		history.setEntityClassName(e.getClass().getName());
-		history.setSerializedEntity(e.getId()==null?e.toString():e.getId().toString());
+		history.setSerializedEntity(e.getId() == null ? e.toString() : e.getId().toString());
 		history.setResult(result);
 		history.setStatus(status);
 		history.setProvider(notification.getProvider());
 		super.create(history);
+		
 		return history;
 	}
+	
 }
