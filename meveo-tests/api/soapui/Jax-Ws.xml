@@ -6065,6 +6065,7 @@
                <!--Optional:-->
                <state></state>
             </address>
+            <customFields code="UA2_CF1" description="UA2_CF1" stringValue="1" />
             <!--Optional:-->
             <subscriptionDate>2015-01-22T13:42:57.219+08:00</subscriptionDate>         
             <!--Optional:-->
@@ -6112,7 +6113,7 @@
                <state></state>
             </address>
             <!--Zero or more repetitions:-->
-          
+            <customFields code="UA2_CF1" description="UA2_CF1" stringValue="1" />
             <!--Optional:-->
             <customerCategory>CLIENT</customerCategory>
             <!--Optional:-->

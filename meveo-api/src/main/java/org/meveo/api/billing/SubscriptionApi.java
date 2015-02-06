@@ -195,6 +195,7 @@ public class SubscriptionApi extends BaseApi {
 			subscription.setDescription(postData.getDescription());
 			subscription.setSubscriptionDate(postData.getSubscriptionDate());
 			subscription.setTerminationDate(postData.getTerminationDate());
+
 			// populate customFields
 			if (postData.getCustomFields() != null) {
 				for (CustomFieldDto cf : postData.getCustomFields()) {
