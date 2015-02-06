@@ -55,6 +55,7 @@ import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.meveo.service.crm.impl.ProviderService;
 import org.primefaces.component.datatable.DataTable;
 import org.primefaces.event.SelectEvent;
+import org.primefaces.event.data.PageEvent;
 import org.primefaces.model.LazyDataModel;
 import org.primefaces.model.SortOrder;
 
@@ -100,7 +101,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 
 	/** Class of backing bean. */
 	private Class<T> clazz;
-	
+
 	protected List<CustomFieldTemplate> customFieldTemplates = new ArrayList<CustomFieldTemplate>();
 
 	/**
@@ -111,6 +112,8 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 	private Instance<String> edit;
 
 	private boolean editSaved;
+
+	protected int dataTableFirstAttribute;
 
 	/**
 	 * Request parameter. A custom back view page instead of a regular list page
@@ -818,15 +821,12 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 			}
 		}
 	}
-	
+
 	protected void initCustomFields(AccountLevelEnum accountLevel) {
-		customFieldTemplates = customFieldTemplateService
-				.findByAccountLevel(accountLevel);
-		if (customFieldTemplates != null && customFieldTemplates.size() > 0
-				&& !getEntity().isTransient()) {
+		customFieldTemplates = customFieldTemplateService.findByAccountLevel(accountLevel);
+		if (customFieldTemplates != null && customFieldTemplates.size() > 0 && !getEntity().isTransient()) {
 			for (CustomFieldTemplate cf : customFieldTemplates) {
-				CustomFieldInstance cfi = customFieldInstanceService
-						.findByCodeAndAccount(cf.getCode(), getEntity());
+				CustomFieldInstance cfi = customFieldInstanceService.findByCodeAndAccount(cf.getCode(), getEntity());
 				if (cfi != null) {
 					if (cf.getFieldType() == CustomFieldTypeEnum.DATE) {
 						cf.setDateValue(cfi.getDateValue());
@@ -841,12 +841,11 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 			}
 		}
 	}
-	
+
 	protected void saveCustomFields() {
 		if (customFieldTemplates != null && customFieldTemplates.size() > 0) {
 			for (CustomFieldTemplate cf : customFieldTemplates) {
-				CustomFieldInstance cfi = customFieldInstanceService
-						.findByCodeAndAccount(cf.getCode(), getEntity());
+				CustomFieldInstance cfi = customFieldInstanceService.findByCodeAndAccount(cf.getCode(), getEntity());
 				if (cfi != null) {
 					if (cf.getFieldType() == CustomFieldTypeEnum.DATE) {
 						cfi.setDateValue(cf.getDateValue());
@@ -861,11 +860,11 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 					// create
 					cfi = new CustomFieldInstance();
 					cfi.setCode(cf.getCode());
-					IEntity entity=getEntity();
-					if(entity instanceof AccountEntity){
-						cfi.setAccount((AccountEntity)getEntity());
-					} else if(entity instanceof Subscription){
-						cfi.setSubscription((Subscription)entity);
+					IEntity entity = getEntity();
+					if (entity instanceof AccountEntity) {
+						cfi.setAccount((AccountEntity) getEntity());
+					} else if (entity instanceof Subscription) {
+						cfi.setSubscription((Subscription) entity);
 					}
 
 					if (cf.getFieldType() == CustomFieldTypeEnum.DATE) {
@@ -878,8 +877,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 						cfi.setStringValue(cf.getStringValue());
 					}
 
-					customFieldInstanceService.create(cfi, getCurrentUser(),
-							getCurrentProvider());
+					customFieldInstanceService.create(cfi, getCurrentUser(), getCurrentProvider());
 				}
 			}
 		}
@@ -889,9 +887,20 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 		return customFieldTemplates;
 	}
 
-	public void setCustomFieldTemplates(
-			List<CustomFieldTemplate> customFieldTemplates) {
+	public void setCustomFieldTemplates(List<CustomFieldTemplate> customFieldTemplates) {
 		this.customFieldTemplates = customFieldTemplates;
+	}
+
+	public int getDataTableFirstAttribute() {
+		return dataTableFirstAttribute;
+	}
+
+	public void setDataTableFirstAttribute(int dataTableFirstAttribute) {
+		this.dataTableFirstAttribute = dataTableFirstAttribute;
+	}
+
+	public void onPageChange(PageEvent event) {
+		this.setDataTableFirstAttribute(((DataTable) event.getSource()).getFirst());
 	}
 
 }
