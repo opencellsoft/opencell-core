@@ -494,7 +494,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 			qb.addCriterion("c.amountWithoutTax", "<>", BigDecimal.ZERO, false);
 		}
 
-		qb.addOrderCriterion("c.walletOperationId", true);
+		qb.addOrderCriterion("c.usageDate", true);
 
 		@SuppressWarnings("unchecked")
 		List<RatedTransaction> ratedTransactions = qb.getQuery(getEntityManager()).getResultList();
