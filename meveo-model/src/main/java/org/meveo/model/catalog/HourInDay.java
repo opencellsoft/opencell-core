@@ -22,65 +22,93 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
-import org.meveo.model.BaseEntity;
+import org.meveo.model.BaseProviderlessEntity;
 
 @Entity
-@Table(name = "CAT_HOUR_IN_DAY", uniqueConstraints = @UniqueConstraint(columnNames = { "HOUR",
-		"MIN", "PROVIDER_ID" }))
+@Table(name = "CAT_HOUR_IN_DAY", uniqueConstraints = @UniqueConstraint(columnNames = { "HOUR", "MIN" }))
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "CAT_HOUR_IN_DAY_SEQ")
-public class HourInDay extends BaseEntity {
+public class HourInDay extends BaseProviderlessEntity implements Comparable<HourInDay> {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	@Column(name = "HOUR")
-	private Integer hour;
+    public HourInDay() {
+        super();
+    }
 
-	@Column(name = "MIN")
-	private Integer min;
-	
-	public Integer getHour() {
-		return hour;
-	}
+    public HourInDay(Integer hour, Integer minute) {
+        super();
+        this.hour = hour;
+        this.minute = minute;
+    }
 
-	public void setHour(Integer hour) {
-		this.hour = hour;
-	}
+    @Column(name = "HOUR")
+    private Integer hour = 0;
 
-	public Integer getMin() {
-		return min;
-	}
+    @Column(name = "MIN")
+    private Integer minute = 0;
 
-	public void setMin(Integer min) {
-		this.min = min;
-	}
+    public Integer getHour() {
+        return hour;
+    }
 
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = super.hashCode();
-		result = prime * result + ((hour == null) ? 0 : hour.hashCode());
-		result = prime * result + ((min == null) ? 0 : min.hashCode());
-		return result;
-	}
+    public void setHour(Integer hour) {
+        this.hour = hour;
+    }
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (getClass() != obj.getClass())
-			return false;
-		HourInDay other = (HourInDay) obj;
-		if (hour == null) {
-			if (other.hour != null)
-				return false;
-		} else if (!hour.equals(other.hour))
-			return false;
-		if (min == null) {
-			if (other.min != null)
-				return false;
-		} else if (!min.equals(other.min))
-			return false;
-		return true;
-	}
+    public Integer getMinute() {
+        return minute;
+    }
 
+    public void setMinute(Integer minute) {
+        this.minute = minute;
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = super.hashCode();
+        result = prime * result + ((hour == null) ? 0 : hour.hashCode());
+        result = prime * result + ((minute == null) ? 0 : minute.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        HourInDay other = (HourInDay) obj;
+        if (hour == null) {
+            if (other.hour != null) {
+                return false;
+            }
+        } else if (!hour.equals(other.hour)) {
+            return false;
+        }
+        if (minute == null) {
+            if (other.minute != null) {
+                return false;
+            }
+        } else if (!minute.equals(other.minute)) {
+            return false;
+        }
+        return true;
+    }
+
+    public String getHourAsString() {
+        return (hour < 10 ? "0" : "") + hour + ":" + (minute < 10 ? "0" : "") + minute;
+    }
+
+    @Override
+    public String toString() {
+        return getHourAsString();
+    }
+
+    @Override
+    public int compareTo(HourInDay other) {
+        return getHourAsString().compareTo(other.getHourAsString());
+    }
 }

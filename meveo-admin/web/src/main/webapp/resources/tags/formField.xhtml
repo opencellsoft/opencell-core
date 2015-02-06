@@ -33,7 +33,9 @@
 	<cc:attribute name="childField" required="false" />
 	<cc:attribute name="childField2" required="false" />
 	<cc:attribute name="isMessage" required="false" />
-	<cc:attribute name="showOnlyOnNew" default="false" />
+    <cc:attribute name="messagePrefix" required="false" />
+    <cc:attribute name="messagePrefixWithDot" default="#{cc.attrs.messagePrefix==null?'':cc.attrs.messagePrefix.concat('.')}" />
+    <cc:attribute name="showOnlyOnNew" default="false" />
 	<cc:attribute name="showOnlyOnConsult" default="false" />
 	<cc:attribute name="dualListModel" />
 	<cc:attribute name="isHtml" default="false" />
@@ -209,30 +211,38 @@
         </p:panelGrid>
 
         <!--  If the value binding is a number, display an input number spinner. -->
-		<p:panelGrid columns="2"
-			rendered="#{cc.isInteger(cc.attrs.field,false)}">
-			<p:outputLabel for="#{cc.attrs.id}_int" value="#{cc.attrs.label}" />
-			<c:if test="#{not empty(cc.attrs.maxValue)}">
-				<p:spinner rendered="#{cc.attrs.edit}" id="#{cc.attrs.id}_int"
-					disabled="#{cc.attrs.disabled}"
-					value="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}"
-					required="#{cc.attrs.required}" min="#{cc.attrs.minValue}"
-					max="#{cc.attrs.maxValue}" maxlength="#{cc.attrs.maxlength}" />
-			</c:if>
-			<c:if test="#{empty(cc.attrs.maxValue)}">
-				<p:spinner rendered="#{cc.attrs.edit}" id="#{cc.attrs.id}_int"
-					disabled="#{cc.attrs.disabled}"
-					value="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}"
-					required="#{cc.attrs.required}" min="#{cc.attrs.minValue}"
-					maxlength="#{cc.attrs.maxlength}" />
-			</c:if>
-			<h:outputText rendered="#{not cc.attrs.edit}"
-				value="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}"
-				styleClass="field-value" />
-			<cc:insertChildren />
-		</p:panelGrid>
+        <p:panelGrid columns="2" rendered="#{cc.isInteger(cc.attrs.field,false)}">
+            <h:panelGroup rendered="#{cc.attrs.listValues == null}">
+                <p:outputLabel for="#{cc.attrs.id}_int" value="#{cc.attrs.label}" />
+                <c:if test="#{not empty(cc.attrs.maxValue)}">
+                    <p:spinner rendered="#{cc.attrs.edit}" id="#{cc.attrs.id}_int" disabled="#{cc.attrs.disabled}"
+                        value="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}" required="#{cc.attrs.required}" min="#{cc.attrs.minValue}"
+                        max="#{cc.attrs.maxValue}" maxlength="#{cc.attrs.maxlength}" />
+                </c:if>
+                <c:if test="#{empty(cc.attrs.maxValue)}">
+                    <p:spinner rendered="#{cc.attrs.edit}" id="#{cc.attrs.id}_int" disabled="#{cc.attrs.disabled}"
+                        value="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}" required="#{cc.attrs.required}" min="#{cc.attrs.minValue}"
+                        maxlength="#{cc.attrs.maxlength}" />
+                </c:if>
+                <h:outputText rendered="#{not cc.attrs.edit and not cc.attrs.isMessage}" value="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}" styleClass="field-value" />
+                <h:outputText rendered="#{not cc.attrs.edit and cc.attrs.isMessage}" value="#{messages[cc.attrs.messagePrefixWithDot.concat(cc.entityFromBackingBeanOrAttribute[cc.attrs.field])]}" styleClass="field-value" />
+            </h:panelGroup>
 
-		<p:panelGrid columns="2" rendered="#{cc.isByte(cc.attrs.field,false)}">
+            <h:panelGroup rendered="#{cc.attrs.listValues != null}">
+                <p:outputLabel for="#{cc.attrs.id}_int_pick" value="#{cc.attrs.label}" />
+                <p:selectOneMenu id="#{cc.attrs.id}_int_pick" value="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}"
+                    required="#{cc.attrs.required}" disabled="#{cc.attrs.disabled or not cc.attrs.edit}">
+                    <c:forEach items="#{cc.attrs.listValues.keySet().toArray()}" var="key">
+                        <f:selectItem itemValue="#{key}" itemLabel="#{cc.attrs.listValues[key]}" />
+                    </c:forEach>
+                </p:selectOneMenu>                
+            </h:panelGroup>
+            
+            <cc:insertChildren />
+
+        </p:panelGrid>
+
+        <p:panelGrid columns="2" rendered="#{cc.isByte(cc.attrs.field,false)}">
 			<p:outputLabel for="#{cc.attrs.id}_byte" value="#{cc.attrs.label}" />
 			<c:if test="#{not empty(cc.attrs.maxValue)}">
 				<p:spinner rendered="#{cc.attrs.edit}" id="#{cc.attrs.id}_byte"
@@ -370,6 +380,7 @@
 			<ui:fragment rendered="#{not cc.attrs.edit and cc.attrs.isMessage}">
 				<c:set var="fieldValue"
 					value="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}" />
+                
 				<h:outputText
 					rendered="#{fieldValue != null and fieldValue.toString() == 'true' and not cc.attrs.edit}"
 					value="#{messages['commons.yes']}" styleClass="field-value" />

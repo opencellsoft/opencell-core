@@ -22,7 +22,6 @@ import java.util.GregorianCalendar;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
-import javax.persistence.Transient;
 
 import org.apache.commons.lang.time.DateUtils;
 
@@ -35,12 +34,11 @@ public class CalendarPeriod extends Calendar {
     @Column(name = "PERIOD_LENGTH")
     private Integer periodLength = 30;
 
-    @Transient
-    private int periodUnit = java.util.Calendar.DAY_OF_MONTH;
+    @Column(name = "PERIOD_UNIT")
+    private Integer periodUnit = java.util.Calendar.DAY_OF_MONTH;
 
     @Column(name = "NB_PERIODS")
-    private Integer nbPeriods = 1;
-
+    private Integer nbPeriods = 0;
 
     public Integer getPeriodLength() {
         return periodLength;
@@ -48,6 +46,14 @@ public class CalendarPeriod extends Calendar {
 
     public void setPeriodLength(Integer periodLength) {
         this.periodLength = periodLength;
+    }
+
+    public Integer getPeriodUnit() {
+        return periodUnit;
+    }
+
+    public void setPeriodUnit(Integer periodUnit) {
+        this.periodUnit = periodUnit;
     }
 
     public Integer getNbPeriods() {
@@ -58,7 +64,6 @@ public class CalendarPeriod extends Calendar {
         this.nbPeriods = nbPeriods;
     }
 
-
     /**
      * Checks for next calendar date by adding number of days in a period to a starting date. Date being checked must fall within a period timeframe or null is returned
      * 
@@ -68,20 +73,29 @@ public class CalendarPeriod extends Calendar {
     @Override
     public Date nextCalendarDate(Date date) {
 
-        if (nbPeriods == null || periodLength == null || getInitDate() == null) {
+        if (periodLength == null || periodUnit == null || getInitDate() == null) {
             return null;
+        }
+        if (nbPeriods == null) {
+            nbPeriods = 0;
         }
 
         Date cleanDate = DateUtils.truncate(getInitDate(), java.util.Calendar.DAY_OF_MONTH);
         GregorianCalendar calendar = new GregorianCalendar();
         calendar.setTime(cleanDate);
 
-        for (int i = 1; i <= nbPeriods; i++) {
+        int i = 1;
+        while (date.compareTo(calendar.getTime()) >= 0) {
             Date oldDate = calendar.getTime();
             calendar.add(periodUnit, periodLength);
             if (date.compareTo(oldDate) >= 0 && date.compareTo(calendar.getTime()) < 0) {
                 calendar.add(java.util.Calendar.DAY_OF_MONTH, -1);
                 return calendar.getTime();
+            }
+
+            i++;
+            if (nbPeriods > 0 && i > nbPeriods) {
+                break;
             }
         }
 
@@ -97,19 +111,28 @@ public class CalendarPeriod extends Calendar {
     @Override
     public Date previousCalendarDate(Date date) {
 
-        if (nbPeriods == null || periodLength == null || getInitDate() == null) {
+        if (periodLength == null || periodUnit == null || getInitDate() == null) {
             return null;
+        }
+        if (nbPeriods == null) {
+            nbPeriods = 0;
         }
 
         Date cleanDate = DateUtils.truncate(getInitDate(), java.util.Calendar.DAY_OF_MONTH);
         GregorianCalendar calendar = new GregorianCalendar();
         calendar.setTime(cleanDate);
 
-        for (int i = 1; i <= nbPeriods; i++) {
+        int i = 1;
+        while (date.compareTo(calendar.getTime()) >= 0) {
             Date oldDate = calendar.getTime();
             calendar.add(periodUnit, periodLength);
             if (date.compareTo(oldDate) >= 0 && date.compareTo(calendar.getTime()) < 0) {
                 return oldDate;
+            }
+
+            i++;
+            if (nbPeriods > 0 && i > nbPeriods) {
+                break;
             }
         }
 
