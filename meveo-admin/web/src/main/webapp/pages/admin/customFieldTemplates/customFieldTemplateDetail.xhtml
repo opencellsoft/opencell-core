@@ -1,5 +1,5 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:hf="http://java.sun.com/jsf/composite/tags"
-    template="/layout/template.xhtml">
+    xmlns:h="http://java.sun.com/jsf/html" template="/layout/template.xhtml">
 
     <ui:define name="navigation">
         <ui:include src="/layout/navigation.xhtml" />
@@ -11,9 +11,14 @@
             <hf:formField label="#{messages['BusinessEntity.code']}" field="code" required="true" validateUnique="true" />
             <hf:formField label="#{messages['customFieldTemplate.fieldLabel']}" field="description" required="true" useConverter="false"
                 id="description" maxlength="50" />
-            <hf:formField label="#{messages['customFieldTemplate.fieldType']}" field="fieldType" required="true" />
+            <hf:formField label="#{messages['customFieldTemplate.fieldType']}" field="fieldType" required="true" listenerUpdate=":formPanel:formId:listValuesField" />
             <hf:formField label="#{messages['customFieldTemplate.fieldRequired']}" field="valueRequired" isMessage="true" />
             <hf:formField label="#{messages['customFieldTemplate.accountType']}" field="accountLevel" required="true" />
+
+            <h:panelGroup id="listValuesField">
+                <hf:formField label="#{messages['customFieldTemplate.listValues']}" field="listValues"
+                    rendered="#{customFieldTemplateBean.entity.fieldType == 'LIST'}" mapKeyLabel="#{messages['commons.value']}" mapValueLabel="#{messages['commons.label']}"/>
+            </h:panelGroup>
             <hf:formField label="#{messages['enableEntity.disabled']}" field="disabled" isMessage="true" />
         </hf:formPanel>
 

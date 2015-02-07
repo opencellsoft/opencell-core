@@ -1,10 +1,15 @@
 package org.meveo.model.crm;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
@@ -29,6 +34,10 @@ public class CustomFieldTemplate extends BusinessEntity {
 
     @Column(name = "VALUE_REQUIRED")
     private boolean valueRequired;
+
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "CRM_CUSTOM_FIELD_TMPL_VAL")
+    private Map<String, String> listValues = new HashMap<String, String>();
 
     @Transient
     private String stringValue;
@@ -64,6 +73,14 @@ public class CustomFieldTemplate extends BusinessEntity {
 
     public void setValueRequired(boolean valueRequired) {
         this.valueRequired = valueRequired;
+    }
+
+    public Map<String, String> getListValues() {
+        return listValues;
+    }
+
+    public void setListValues(Map<String, String> listValues) {
+        this.listValues = listValues;
     }
 
     public String getStringValue() {

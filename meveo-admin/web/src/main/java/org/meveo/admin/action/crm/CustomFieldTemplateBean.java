@@ -8,6 +8,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.meveo.admin.action.StatelessBaseBean;
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
@@ -16,38 +17,55 @@ import org.meveo.service.crm.impl.CustomFieldTemplateService;
 @ConversationScoped
 public class CustomFieldTemplateBean extends StatelessBaseBean<CustomFieldTemplate> {
 
-	private static final long serialVersionUID = 9099292371182275568L;
+    private static final long serialVersionUID = 9099292371182275568L;
 
-	@Inject
-	private CustomFieldTemplateService cftService;
+    @Inject
+    private CustomFieldTemplateService cftService;
 
-	public CustomFieldTemplateBean() {
-		super(CustomFieldTemplate.class);
-	}
+    public CustomFieldTemplateBean() {
+        super(CustomFieldTemplate.class);
+    }
 
-	@Override
-	protected IPersistenceService<CustomFieldTemplate> getPersistenceService() {
-		return cftService;
-	}
+    @Override
+    public CustomFieldTemplate initEntity() {
+        CustomFieldTemplate customFieldTemplate = super.initEntity();
 
-	@Override
-	protected String getListViewName() {
-		return "customFieldTemplates";
-	}
+        extractMapTypeFieldFromEntity(customFieldTemplate.getListValues(), "listValues");
 
-	@Override
-	public String getNewViewName() {
-		return "customFieldTemplateDetail";
-	}
+        return customFieldTemplate;
+    }
 
-	@Override
-	protected String getDefaultSort() {
-		return "code";
-	}
+    @Override
+    public String saveOrUpdate(boolean killConversation) throws BusinessException {
 
-	@Override
-	protected List<String> getFormFieldsToFetch() {
-		return Arrays.asList("provider");
-	}
+        updateMapTypeFieldInEntity(entity.getListValues(), "listValues");
+
+        return super.saveOrUpdate(killConversation);
+    }
+
+    @Override
+    protected IPersistenceService<CustomFieldTemplate> getPersistenceService() {
+        return cftService;
+    }
+
+    @Override
+    protected String getListViewName() {
+        return "customFieldTemplates";
+    }
+
+    @Override
+    public String getNewViewName() {
+        return "customFieldTemplateDetail";
+    }
+
+    @Override
+    protected String getDefaultSort() {
+        return "code";
+    }
+
+    @Override
+    protected List<String> getFormFieldsToFetch() {
+        return Arrays.asList("provider");
+    }
 
 }

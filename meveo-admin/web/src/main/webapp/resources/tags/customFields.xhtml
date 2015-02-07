@@ -2,7 +2,8 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:h="http://java.sun.com/jsf/html"
-    xmlns:f="http://java.sun.com/jsf/core" xmlns:cc="http://java.sun.com/jsf/composite" xmlns:p="http://primefaces.org/ui">
+    xmlns:f="http://java.sun.com/jsf/core" xmlns:cc="http://java.sun.com/jsf/composite" xmlns:p="http://primefaces.org/ui"
+    xmlns:c="http://java.sun.com/jsp/jstl/core">
 
 <cc:interface componentType="formField">
 </cc:interface>
@@ -46,6 +47,16 @@
                         value="#{cf.dateValue}" style="font-weight:bold;">
                         <f:convertDateTime type="date" pattern="#{paramBean.getProperty('meveo.dateFormat', '')}" />
                     </h:outputText>
+
+                    <p:outputLabel value="#{cf.description}" for="cfField_list" rendered="#{cf.fieldType eq CustomFieldTypeEnum.LIST}" />
+                    <p:selectOneMenu id="cfField_list" value="#{cf.stringValue}" required="#{cf.valueRequired}"
+                        rendered="#{cc.backingBeanFromParentOrCurrent.edit and cf.fieldType eq CustomFieldTypeEnum.LIST}">
+                        <f:selectItem itemValue="#{null}" itemLabel="" />
+                        <f:selectItems value="#{cf.listValues.entrySet()}" var="listVal" itemValue="#{listVal.key}" itemLabel="#{listVal.value}" />
+                    </p:selectOneMenu>
+                    <h:outputText
+                        rendered="#{!cc.backingBeanFromParentOrCurrent.edit and cf.fieldType eq CustomFieldTypeEnum.LIST and cf.stringValue!=null}"
+                        value="#{cf.listValues[cf.stringValue]}" style="font-weight:bold;" />
 
                 </h:column>
             </h:dataTable>
