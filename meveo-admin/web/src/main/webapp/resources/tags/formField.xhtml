@@ -319,7 +319,7 @@
 			<p:inputText rendered="#{cc.attrs.edit}"
 				id="#{cc.attrs.id}_bigDecimal" disabled="#{cc.attrs.disabled}"
 				value="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}"
-				required="#{cc.attrs.required}" size="5"
+				required="#{cc.attrs.required}" size="20"
 				maxlength="#{cc.attrs.maxlength}">
 				<c:if test="#{not empty cc.attrs.converter}">
 					<f:converter converterId="#{cc.attrs.converter}" />

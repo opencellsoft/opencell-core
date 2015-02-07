@@ -208,7 +208,6 @@ public class ServiceTemplateBean extends StatelessBaseBean<ServiceTemplate> {
 	 */
 	@Override
 	public String saveOrUpdate(boolean killConversation) throws BusinessException {
-
 		List<ServiceChargeTemplateRecurring> recurringCharges = entity
 				.getServiceRecurringCharges();
 		for (ServiceChargeTemplateRecurring recurringCharge : recurringCharges) {
@@ -216,8 +215,9 @@ public class ServiceTemplateBean extends StatelessBaseBean<ServiceTemplate> {
 				break;
 			}
 		}
-
-		return super.saveOrUpdate(killConversation);
+		boolean newEntity = (entity.getId()==null);
+		String back=super.saveOrUpdate(killConversation);
+		return newEntity?null:back;
 	}
 
 	public void saveServiceChargeTemplateSubscription() {
