@@ -550,7 +550,7 @@ public class MeasurementBean extends StatelessBaseBean<MeasuredValue> {
 			} else {
 				if (subMV.getValue() != null
 						&& subMV.getMeasurementPeriod() == period) {
-					cell.setCellValue(subMV.getValue());
+					cell.setCellValue(subMV.getValue()==null?0:subMV.getValue().doubleValue());
 				}
 			}
 

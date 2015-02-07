@@ -1,5 +1,6 @@
 package org.meveo.admin.job.dwh;
 
+import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Collection;
@@ -77,7 +78,7 @@ public class MeasurableQuantityAggregationJob implements Job {
 				mv.setMeasurableQuantity(mq);
 				mv.setMeasurementPeriod(mq.getMeasurementPeriod());
 				mv.setDate(sdf.parse(mvObject[0] + ""));
-				mv.setValue(Long.parseLong(mvObject[1] + ""));
+				mv.setValue(new BigDecimal(mvObject[1] + ""));
 				mvService.create(mv);
 			}
 		} catch (IllegalArgumentException e) {
@@ -126,10 +127,10 @@ public class MeasurableQuantityAggregationJob implements Job {
 		return result;
 	}
 
-	public Long getMeasuredValueListValueSum(List<MeasuredValue> mvList) {
-		long mvTotal = 0;
+	public BigDecimal getMeasuredValueListValueSum(List<MeasuredValue> mvList) {
+		BigDecimal mvTotal = BigDecimal.ZERO;
 		for (MeasuredValue mv : mvList) {
-			mvTotal += mv.getValue();
+			mvTotal=mvTotal.add(mv.getValue());
 		}
 		return mvTotal;
 	}

@@ -1,22 +1,31 @@
 package org.meveo.admin.job.dwh;
 
+import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
+import org.apache.commons.lang.time.DateUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.crm.Provider;
+import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveocrm.model.dwh.MeasurableQuantity;
 import org.meveocrm.model.dwh.MeasuredValue;
 import org.meveocrm.model.dwh.MeasurementPeriodEnum;
 import org.meveocrm.services.dwh.MeasurableQuantityService;
 import org.meveocrm.services.dwh.MeasuredValueService;
+import org.slf4j.Logger;
 
 @Stateless
 public class DWHQueryBean {
@@ -30,56 +39,101 @@ public class DWHQueryBean {
 	@PersistenceContext
 	private EntityManager em;
 
-	public int executeQuery(String measurableQuantityCode, Provider provider)
+	@Inject
+	private Logger log;
+
+	//iso 8601 date and datetime format
+	SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+	SimpleDateFormat tf = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:hh");  
+	
+	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+	public void executeQuery(JobExecutionResultImpl result,String parameter,Provider provider)
 			throws BusinessException {
+		String measurableQuantityCode=null;
+		Date toDate=new Date();
+		
+		if(!StringUtils.isBlank(parameter)){
+			if(parameter.indexOf("to=")>0){
+				String s = parameter.substring(parameter.indexOf("to=")+3);
+				if(s.indexOf(";")>0){
+					Date parsedDate = org.meveo.model.shared.DateUtils.guessDate(s.substring(0, s.indexOf(";")),"yyyy-MM-dd");
+					if(parsedDate!=null){
+						toDate=parsedDate;
+					}
+				}
+			}
+		}
+		
 		// first we check that there is a measurable quantity for the given
 		// provider
-		int result = 0;
-		MeasurableQuantity mq = mqService.findByCode(em,
-				measurableQuantityCode, provider);
-		if (mq == null) {
-			throw new BusinessException("No measurable quantity with code "
-					+ measurableQuantityCode + " for provider "
-					+ provider.getCode());
-		}
-
-		if (StringUtils.isBlank(mq.getSqlQuery())) {
-			throw new BusinessException("Measurable quantity with code "
-					+ measurableQuantityCode + " has no SQL query set.");
-		}
-
-		try {
-			Query query = em.createNativeQuery(mq.getSqlQuery());
-			@SuppressWarnings("unchecked")
-			List<Object[]> results = query.getResultList();
-			for (Object[] res : results) {
-				MeasurementPeriodEnum mve = (mq.getMeasurementPeriod() != null) ? mq
-						.getMeasurementPeriod() : MeasurementPeriodEnum.DAILY;
-				MeasuredValue mv = mvService.getByDate(em, (Date) res[0], mve,
-						mq);
-				if (mv == null) {
-					mv = new MeasuredValue();
-				}
-				mv.setProvider(provider);
-				mv.setMeasurableQuantity(mq);
-				mv.setDate((Date) res[0]);
-				mv.setMeasurementPeriod(mve);
-				mv.setValue(Long.parseLong("" + res[1]));
-
-				if (mv.getId() != null) {
-					mvService.update(mv);
-				} else {
-					mvService.create(mv, null, provider);
-				}
-
-				result++;
+		List<MeasurableQuantity> mqList = new ArrayList<>();
+		if(StringUtils.isBlank(measurableQuantityCode)){
+			mqList = mqService.listToBeExecuted(new Date());
+		} else {
+			MeasurableQuantity mq = mqService.findByCode(em,
+					measurableQuantityCode, provider);
+			if (mq == null) {
+				throw new BusinessException("No measurable quantity with code "
+						+ measurableQuantityCode + " for provider "
+						+ provider.getCode());
 			}
-		} catch (Exception e) {
-			throw new BusinessException("Measurable quantity with code "
-					+ measurableQuantityCode + " contain invalid SQL query: "
-					+ e.getMessage());
+			mqList.add(mq);
 		}
+		result.setNbItemsToProcess(mqList.size());
+		for(MeasurableQuantity mq:mqList){
+			if (StringUtils.isBlank(mq.getSqlQuery())) {
+				log.info("Measurable quantity with code {} has no SQL query set." ,measurableQuantityCode);
+				continue;
+			}
 
-		return result;
+			try {
+				while(mq.getLastMeasureDate()==null || mq.getNextMeasureDate().before(toDate)){
+					String queryStr = mq.getSqlQuery().replaceAll("#\\{date\\}", df.format(mq.getNextMeasureDate()));
+					queryStr = queryStr.replaceAll("#\\{dateTime\\}", tf.format(mq.getNextMeasureDate())); 
+					queryStr = queryStr.replaceAll("#\\{nextDate\\}", df.format(mq.getLastMeasureDate()));
+					queryStr = queryStr.replaceAll("#\\{nextDateTime\\}", tf.format(mq.getLastMeasureDate()));
+					log.debug("execute query:{}",queryStr);
+					Query query = em.createNativeQuery(queryStr);
+					@SuppressWarnings("unchecked")
+					List<Object> results = query.getResultList();
+					for (Object res : results) {
+						MeasurementPeriodEnum mve = (mq.getMeasurementPeriod() != null) ? mq
+								.getMeasurementPeriod() : MeasurementPeriodEnum.DAILY;
+					    BigDecimal value=BigDecimal.ZERO;
+					    Date date= mq.getNextMeasureDate();
+						if(res instanceof Object[]){
+							Object[] resTab = (Object[])res;
+							value = new BigDecimal("" + resTab[0]);
+							if(resTab.length>1){
+								date=(Date) resTab[1];
+							}
+						} else {
+							value=new BigDecimal("" + res);
+						}
+						date=DateUtils.truncate(date,Calendar.DAY_OF_MONTH);
+						MeasuredValue mv = mvService.getByDate(em, date, mve,mq);
+						if (mv == null) {
+							mv = new MeasuredValue();
+						}
+						mv.setProvider(provider);
+						mv.setMeasurableQuantity(mq);
+						mv.setMeasurementPeriod(mve);
+						mv.setValue(value);
+						mv.setDate(date);
+						if (mv.getId() == null) {
+							mvService.create(mv, null, provider);
+						}
+					}
+					mq.increaseMeasureDate();
+					result.registerSucces();
+				}
+			} catch (Exception e) {
+					result.registerError("Measurable quantity with code "
+							+ measurableQuantityCode + " contain invalid SQL query: "+e.getMessage());
+					log.info("Measurable quantity with code "
+							+ measurableQuantityCode + " contain invalid SQL query: "
+							+ e.getMessage());
+			}
+		}
 	}
 }

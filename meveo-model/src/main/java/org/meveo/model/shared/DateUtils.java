@@ -16,10 +16,13 @@
  */
 package org.meveo.model.shared;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
@@ -444,5 +447,54 @@ public class DateUtils {
 		gCalendar.setTime(date);
 		return DatatypeFactory.newInstance().newXMLGregorianCalendar(gCalendar);
 
+	}
+
+
+	final static Pattern fourDigitsPattern= Pattern.compile("(?<!\\d)\\d{4}(?!\\d)");
+	final static Pattern monthPattern= Pattern.compile("(?<!\\d)[0-1][0-9](?!\\d)");
+	final static Pattern dayPattern= Pattern.compile("(?<!\\d)\\d{2}(?!\\d)");
+	final static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+	
+	public static Date guessDate(String stringDate,String... hints) {
+		Date result=null;
+		stringDate=stringDate.trim();
+		for(String hint:hints){
+			SimpleDateFormat sdf=new SimpleDateFormat(hint);
+			try{
+				result=sdf.parse(stringDate);
+			} catch(ParseException e){}
+			if(result!=null){
+				return result;
+			}
+		}
+		//test if the string contains a sequence of 4 digits
+		final Matcher fourDigitsMatcher = fourDigitsPattern.matcher(stringDate);
+	    if(fourDigitsMatcher.find()){
+	    	String year = fourDigitsMatcher.group();
+	    	//test if we have something that match a month
+	    	String dayMonth=stringDate.substring(4);
+	    	if(stringDate.indexOf(year)>0){
+		    	dayMonth=stringDate.substring(0,stringDate.length()-4);
+	    	}
+	    	final Matcher monthMatcher = monthPattern.matcher(dayMonth);
+    		if(monthMatcher.find()){
+    			String month = monthMatcher.group();
+    			//if some other 2 digit also match month we cannot guess for sure
+    			if(!monthMatcher.find()){
+    				String dayString = dayMonth.replaceFirst(month, "");
+    		    	final Matcher dayMatcher = dayPattern.matcher(dayString);
+    				if(dayMatcher.find()){
+    					//we are done
+    					String day = dayMatcher.group();
+    					try {
+							result =sdf.parse(year+"-"+month+"-"+day);
+						} catch (ParseException e) {
+							e.printStackTrace();
+						}
+    				}
+    			}
+    		}
+	    }
+		return result;
 	}
 }

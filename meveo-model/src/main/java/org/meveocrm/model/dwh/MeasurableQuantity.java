@@ -42,10 +42,6 @@ public class MeasurableQuantity extends BusinessEntity {
 
 	@Column(name = "EDITABLE", length = 255)
 	private boolean editable;
-	
-	@Column(name = "LAST_EXECUTION")
-	@Temporal(TemporalType.DATE)
-	private Date lastExecutionDate;
 
 	/**
 	 * expect to return a list of (Date measureDate, Long value) that will be
@@ -135,17 +131,10 @@ public class MeasurableQuantity extends BusinessEntity {
 		this.lastMeasureDate = lastMeasureDate;
 	}
 
-	public Date getLastExecutionDate() {
-		return lastExecutionDate;
-	}
-
-	public void setLastExecutionDate(Date lastExecutionDate) {
-		this.lastExecutionDate = lastExecutionDate;
-	}
 	
-	public Date getNextExcutionDate(){
+	public Date getNextMeasureDate(){
         GregorianCalendar calendar = new GregorianCalendar();
-        calendar.setTime(lastExecutionDate);
+        calendar.setTime(lastMeasureDate);
         switch(measurementPeriod){
         case DAILY:
         	calendar.add(java.util.Calendar.DAY_OF_MONTH, 1);
@@ -163,8 +152,12 @@ public class MeasurableQuantity extends BusinessEntity {
         return calendar.getTime();
 	}
 	
-	public void increaseExecutionDate(){
-		
+	public void increaseMeasureDate(){
+		if(lastMeasureDate==null){
+			lastMeasureDate= new Date();
+		} else {
+			lastMeasureDate = getNextMeasureDate();
+		}
 	}
 	
 }
