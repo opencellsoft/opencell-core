@@ -24,10 +24,19 @@
 
 
 			</h:panelGrid>
+			<style type="text/css">
+.ui-datagrid-no-border>.ui-datagrid-content {
+	border: none;
+}
+
+.ui-datagrid {
+	min-width: 30%;
+}
+</style>
 			<p:dataGrid id="barChartList" var="bar"
-				value="#{barChartBean.chartModelList}" columns="3"
-				style="border:none;" rowIndexVar="i"
-				rendered="#{barChartBean.chartModelList.size() > 0}">
+				value="#{barChartBean.chartModelList}" style="border:none;"
+				rowIndexVar="i" rendered="#{barChartBean.chartModelList.size() > 0}"
+				layout="grid" styleClass="ui-datagrid-no-border ui-datagrid">
 				<p:barChart value="#{bar.model}" fill="#{bar.barChart.filled}"
 					legendPosition="#{bar.barChart.legendPosition}"
 					barPadding="#{bar.barChart.barPadding}"
@@ -42,13 +51,16 @@
 					legendRows="#{bar.barChart.legendRows}" zoom="#{bar.barChart.zoom}"
 					animate="#{bar.barChart.animate}"
 					showDatatip="#{bar.barChart.showDataTip}"
-					datatipFormat="#{bar.barChart.datatipFormat}" />
+					datatipFormat="#{bar.barChart.datatipFormat}"
+					style="#{bar.barChart.style}"
+					styleClass="#{bar.barChart.styleClass}" />
 
 			</p:dataGrid>
 			<p:dataGrid id="lineChartList" var="line"
-				value="#{lineChartBean.chartModelList}" columns="3"
-				style="border:none;" rowIndexVar="i"
-				rendered="#{lineChartBean.chartModelList.size() > 0}">
+				value="#{lineChartBean.chartModelList}" style="border:none;"
+				rowIndexVar="i"
+				rendered="#{lineChartBean.chartModelList.size() > 0}" layout="grid"
+				styleClass="ui-datagrid-no-border ui-datagrid">
 				<p:lineChart value="#{line.model}" fill="#{line.lineChart.filled}"
 					legendPosition="#{line.lineChart.legendPosition}"
 					barPadding="#{line.lineChart.barPadding}"
@@ -64,12 +76,14 @@
 					legendRows="#{line.lineChart.legendRows}"
 					zoom="#{line.lineChart.zoom}" animate="#{line.lineChart.animate}"
 					showDatatip="#{line.lineChart.showDataTip}"
-					datatipFormat="#{line.lineChart.datatipFormat}" />
+					datatipFormat="#{line.lineChart.datatipFormat}"
+					style="#{line.lineChart.style}"
+					styleClass="#{line.lineChart.styleClass}" />
 			</p:dataGrid>
 			<p:dataGrid id="pieChartList" var="pie"
-				value="#{pieChartBean.chartModelList}" columns="3"
-				style="border:none;" rowIndexVar="i"
-				rendered="#{pieChartBean.chartModelList.size() > 0}">
+				value="#{pieChartBean.chartModelList}" style="border:none;"
+				rowIndexVar="i" rendered="#{pieChartBean.chartModelList.size() > 0}"
+				layout="grid" styleClass="ui-datagrid-no-border ui-datagrid">
 				<p:pieChart value="#{pie.model}"
 					legendPosition="#{pie.pieChart.legendPosition}"
 					fill="#{pie.pieChart.filled}"
@@ -79,9 +93,10 @@
 					shadow="#{pie.pieChart.shadow}"
 					showDataLabels="#{pie.pieChart.showDataLabels}"
 					legendCols="#{pie.pieChart.legendCols}"
-					legendRows="#{pie.pieChart.legendRows}" />
+					legendRows="#{pie.pieChart.legendRows}"
+					style="#{pie.pieChart.style}"
+					styleClass="#{pie.pieChart.styleClass}" />
 			</p:dataGrid>
-
 
 		</p:panel>
 

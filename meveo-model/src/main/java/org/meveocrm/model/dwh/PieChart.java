@@ -25,7 +25,7 @@ public class PieChart extends Chart {
 	LegendPositionEnum legendPosition;
 
 	@Column(name = "SERIES_COLORS", length = 1000)
-	String seriesColors;
+	String seriesColors = "1b788f";
 
 	@Column(name = "DIAMETER")
 	Integer diameter;
