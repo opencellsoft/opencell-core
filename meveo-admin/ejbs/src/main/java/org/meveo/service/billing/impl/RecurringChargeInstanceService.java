@@ -183,6 +183,7 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
 
 		ServiceChargeTemplateRecurring recChTmplServ = serviceInst.getServiceTemplate()
 				.getServiceRecurringChargeByChargeCode(chargeCode);
+		getEntityManager().merge(recChTmplServ);
 		List<WalletTemplate> walletTemplates = recChTmplServ.getWalletTemplates();
 		if (walletTemplates != null && walletTemplates.size() > 0) {
 			for (WalletTemplate walletTemplate : walletTemplates) {

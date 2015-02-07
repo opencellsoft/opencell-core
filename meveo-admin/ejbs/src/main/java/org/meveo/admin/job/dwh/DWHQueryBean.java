@@ -49,21 +49,29 @@ public class DWHQueryBean {
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public void executeQuery(JobExecutionResultImpl result,String parameter,Provider provider)
 			throws BusinessException {
-		String measurableQuantityCode=null;
+		String measurableQuantityCode=parameter;
 		Date toDate=new Date();
 		
 		if(!StringUtils.isBlank(parameter)){
 			if(parameter.indexOf("to=")>0){
 				String s = parameter.substring(parameter.indexOf("to=")+3);
 				if(s.indexOf(";")>0){
+					measurableQuantityCode=parameter.substring(parameter.indexOf(";")+1);
 					Date parsedDate = org.meveo.model.shared.DateUtils.guessDate(s.substring(0, s.indexOf(";")),"yyyy-MM-dd");
 					if(parsedDate!=null){
 						toDate=parsedDate;
 					}
+				} else {
+					if(parameter.indexOf(";")>0){
+						measurableQuantityCode=parameter.substring(0,parameter.indexOf(";"));
+					} else {
+						measurableQuantityCode=null;
+					}
 				}
+				
 			}
 		}
-		
+		log.debug("measurableQuantityCode={}, toDate={}",measurableQuantityCode,toDate);
 		// first we check that there is a measurable quantity for the given
 		// provider
 		List<MeasurableQuantity> mqList = new ArrayList<>();
@@ -73,17 +81,23 @@ public class DWHQueryBean {
 			MeasurableQuantity mq = mqService.findByCode(em,
 					measurableQuantityCode, provider);
 			if (mq == null) {
-				throw new BusinessException("No measurable quantity with code "
-						+ measurableQuantityCode + " for provider "
-						+ provider.getCode());
+				result.registerError("Cannot find measurable quantity with code "
+						+ measurableQuantityCode);
+				result.setReport("Cannot find measurable quantity with code "
+						+ measurableQuantityCode);
+				return;
 			}
 			mqList.add(mq);
 		}
 		result.setNbItemsToProcess(mqList.size());
 		for(MeasurableQuantity mq:mqList){
 			if (StringUtils.isBlank(mq.getSqlQuery())) {
+				result.registerError("Measurable quantity with code "+measurableQuantityCode+" has no SQL query set.");
 				log.info("Measurable quantity with code {} has no SQL query set." ,measurableQuantityCode);
 				continue;
+			} else if (mq.getSqlQuery().indexOf("#{provider}")<0){
+				result.registerError("Measurable quantity with code "+measurableQuantityCode+" must filter result by provider using the #{provider} variable.");
+				log.info("Measurable quantity with code "+measurableQuantityCode+" must filter result by provider using the #{provider} variable.");
 			}
 
 			try {
@@ -92,6 +106,7 @@ public class DWHQueryBean {
 					queryStr = queryStr.replaceAll("#\\{dateTime\\}", tf.format(mq.getNextMeasureDate())); 
 					queryStr = queryStr.replaceAll("#\\{nextDate\\}", df.format(mq.getLastMeasureDate()));
 					queryStr = queryStr.replaceAll("#\\{nextDateTime\\}", tf.format(mq.getLastMeasureDate()));
+					queryStr = queryStr.replaceAll("#\\{provider\\}", ""+provider.getId());
 					log.debug("execute query:{}",queryStr);
 					Query query = em.createNativeQuery(queryStr);
 					@SuppressWarnings("unchecked")
