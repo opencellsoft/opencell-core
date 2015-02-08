@@ -834,7 +834,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 						cf.setDoubleValue(cfi.getDoubleValue());
 					} else if (cf.getFieldType() == CustomFieldTypeEnum.LONG) {
 						cf.setLongValue(cfi.getLongValue());
-					} else if (cf.getFieldType() == CustomFieldTypeEnum.STRING) {
+					} else if (cf.getFieldType() == CustomFieldTypeEnum.STRING || cf.getFieldType() == CustomFieldTypeEnum.LIST) {
 						cf.setStringValue(cfi.getStringValue());
 					}
 				}
@@ -853,7 +853,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 						cfi.setDoubleValue(cf.getDoubleValue());
 					} else if (cf.getFieldType() == CustomFieldTypeEnum.LONG) {
 						cfi.setLongValue(cf.getLongValue());
-					} else if (cf.getFieldType() == CustomFieldTypeEnum.STRING) {
+					} else if (cf.getFieldType() == CustomFieldTypeEnum.STRING || cf.getFieldType() == CustomFieldTypeEnum.LIST) {
 						cfi.setStringValue(cf.getStringValue());
 					}
 				} else {
@@ -873,7 +873,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 						cfi.setDoubleValue(cf.getDoubleValue());
 					} else if (cf.getFieldType() == CustomFieldTypeEnum.LONG) {
 						cfi.setLongValue(cf.getLongValue());
-					} else if (cf.getFieldType() == CustomFieldTypeEnum.STRING) {
+					} else if (cf.getFieldType() == CustomFieldTypeEnum.STRING || cf.getFieldType() == CustomFieldTypeEnum.LIST) {
 						cfi.setStringValue(cf.getStringValue());
 					}
 
