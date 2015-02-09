@@ -30,7 +30,7 @@
 
 			<!-- ===================================== SEARCH USERS RESULTS ================================= -->
 
-			<hftl:dataList backingBean="#{notificationBean}">
+			<hftl:dataList backingBean="#{notificationBean}" exportButton="false" exportToCsv="true">
 			    <hftl:column label="#{messages['entity.code']}"
 					field="code" />
 				<hftl:column
@@ -39,6 +39,7 @@
 				<hftl:column
 					label="#{messages['entity.notification.eventTypeFilter']}"
 					field="eventTypeFilter" />
+				<hftl:column label="#{messages['enableEntity.active']}" field="active" isMessage="true" />
 				<p:column style="width: 100px;" exportable="false">
 					<f:facet name="header">
 						<h:outputText value="#{messages['commons.actions']}" />

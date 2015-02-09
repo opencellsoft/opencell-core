@@ -1,36 +1,27 @@
-<ui:composition xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:s="http://jboss.com/products/seam/taglib"
-	xmlns:ui="http://java.sun.com/jsf/facelets"
-	xmlns:f="http://java.sun.com/jsf/core"
-	xmlns:h="http://java.sun.com/jsf/html"
-	xmlns:rich="http://richfaces.org/rich"
-	xmlns:a="http://richfaces.org/a4j" xmlns:hftl="http://hftl.org"
-	xmlns:hf="http://java.sun.com/jsf/composite/tags"
-	xmlns:c="http://java.sun.com/jstl/core"
-	template="/layout/template.xhtml">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:hf="http://java.sun.com/jsf/composite/tags"
+    xmlns:h="http://java.sun.com/jsf/html" template="/layout/template.xhtml">
 
-	<ui:define name="navigation">
-		<ui:include src="/layout/navigation.xhtml" />
-	</ui:define>
+    <ui:define name="navigation">
+        <ui:include src="/layout/navigation.xhtml" />
+    </ui:define>
 
-	<ui:define name="body">
+    <ui:define name="body">
 
-		<hf:formPanel id="formPanel"
-			label="#{messages['customFieldTemplate.panel']}"
-			backingBean="#{customFieldTemplateBean}">
-			<hf:formField label="#{messages['BusinessEntity.code']}" field="code"
-				required="true" validateUnique="true" />
-			<hf:formField label="#{messages['BusinessEntity.description']}"
-				field="description" required="true" useConverter="false"
-				id="description" maxlength="50" />
-			<hf:formField label="#{messages['enableEntity.disabled']}"
-				field="disabled" isMessage="true" />
-			<hf:formField label="#{messages['customFieldTemplate.fieldType']}"
-				field="fieldType" required="true" />
-			<hf:formField label="#{messages['customFieldTemplate.accountType']}"
-				field="accountLevel" required="true" />
-		</hf:formPanel>
+        <hf:formPanel id="formPanel" label="#{messages['customFieldTemplate.panel']}" backingBean="#{customFieldTemplateBean}">
+            <hf:formField label="#{messages['BusinessEntity.code']}" field="code" required="true" validateUnique="true" />
+            <hf:formField label="#{messages['customFieldTemplate.fieldLabel']}" field="description" required="true" useConverter="false"
+                id="description" maxlength="50" />
+            <hf:formField label="#{messages['customFieldTemplate.fieldType']}" field="fieldType" required="true" listenerUpdate=":formPanel:formId:listValuesField" />
+            <hf:formField label="#{messages['customFieldTemplate.fieldRequired']}" field="valueRequired" isMessage="true" />
+            <hf:formField label="#{messages['customFieldTemplate.accountType']}" field="accountLevel" required="true" />
 
-	</ui:define>
+            <h:panelGroup id="listValuesField">
+                <hf:formField label="#{messages['customFieldTemplate.listValues']}" field="listValues"
+                    rendered="#{customFieldTemplateBean.entity.fieldType == 'LIST'}" mapKeyLabel="#{messages['commons.value']}" mapValueLabel="#{messages['commons.label']}"/>
+            </h:panelGroup>
+            <hf:formField label="#{messages['enableEntity.disabled']}" field="disabled" isMessage="true" />
+        </hf:formPanel>
+
+    </ui:define>
 
 </ui:composition>

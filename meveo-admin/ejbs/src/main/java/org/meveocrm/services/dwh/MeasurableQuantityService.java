@@ -1,5 +1,6 @@
 package org.meveocrm.services.dwh;
 
+import java.util.Date;
 import java.util.List;
 
 import javax.ejb.Stateless;
@@ -20,6 +21,15 @@ public class MeasurableQuantityService extends
 		Object[] mvObject = (Object[]) q.getSingleResult();
 
 		return mvObject;
+	}
+
+	@SuppressWarnings("unchecked")
+	public List<MeasurableQuantity> listToBeExecuted(Date date) {
+		QueryBuilder queryBuilder = new QueryBuilder(MeasurableQuantity.class,
+				"a", null, getCurrentProvider());
+		queryBuilder.addCriterionDateRangeToTruncatedToDay("last_measure_date",date);
+		Query query = queryBuilder.getQuery(getEntityManager());
+		return query.getResultList();
 	}
 
 	@SuppressWarnings("unchecked")

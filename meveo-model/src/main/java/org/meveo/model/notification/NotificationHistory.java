@@ -112,7 +112,11 @@ public class NotificationHistory extends AuditableEntity {
 	}
 
 	public void setResult(String result) {
-		this.result = result;
+		if(result!=null && result.length()>1000){
+			this.result = result.substring(0,997)+"...";
+		} else {
+			this.result = result;
+		}
 	}
 
 	public NotificationHistoryStatusEnum getStatus() {

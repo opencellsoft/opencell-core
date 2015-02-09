@@ -449,6 +449,21 @@
 													<hf:formField
 														label="#{messages['oneShotChargeInstance.chargeDate']}"
 														required="true" field="chargeDate" edit="true" />
+													<p:panelGrid columns="2" id="chargeWalletSelectId">
+														<p:outputLabel for="chargeWalletSelectId_text"
+															value="#{messages['menu.wallet']}" />
+														<p:panelGrid styleClass="inner-table" columns="3">
+															<p:inputText id="chargeWalletSelectId_text"
+																required="true"
+																value="#{subscriptionBean.oneShotChargeInstanceWalletCode}"
+																 />
+															<!-- <p:commandButton id="chargeWalletSelectId_selectLink"
+																onclick="PF('dlg_oneShotChargeWallPopup').show()"
+																icon="ui-icon-search" type="button" /> -->
+														</p:panelGrid>
+														<p:tooltip for="chargeTemplateSelectId_selectLink"
+															value="#{messages['commons.search']}" />
+													</p:panelGrid>
 													<h:panelGrid columns="2">
 														<p:outputLabel for="amountWithoutTax2"
 															value="#{messages['oneShotChargeInstance.amountWithoutTax']}" />

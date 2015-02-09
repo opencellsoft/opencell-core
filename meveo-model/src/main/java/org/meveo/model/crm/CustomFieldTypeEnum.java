@@ -5,7 +5,8 @@ public enum CustomFieldTypeEnum {
   STRING(1, "customFieldTypeEnum.string"),
   DATE(2, "customFieldTypeEnum.date"),
   LONG(3, "customFieldTypeEnum.long"),
-  DOUBLE(4, "customFieldTypeEnum.double");
+  DOUBLE(4, "customFieldTypeEnum.double"),
+  LIST(5, "customFieldTypeEnum.list");
   
 
   private Integer id;

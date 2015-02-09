@@ -86,16 +86,18 @@ public class DefaultObserver {
 	}
 
 	private void addNotificationToCache(Notification notif) {
-		try {
-			@SuppressWarnings("unchecked")
-			Class<BusinessEntity> c = (Class<BusinessEntity>) Class.forName(notif.getClassNameFilter());
-			if (!classNotificationMap.get(notif.getEventTypeFilter()).containsKey(c)) {
-				classNotificationMap.get(notif.getEventTypeFilter()).put(c, new ArrayList<Notification>());
+		if(!notif.isDisabled()){
+			try {
+				@SuppressWarnings("unchecked")
+				Class<BusinessEntity> c = (Class<BusinessEntity>) Class.forName(notif.getClassNameFilter());
+				if (!classNotificationMap.get(notif.getEventTypeFilter()).containsKey(c)) {
+					classNotificationMap.get(notif.getEventTypeFilter()).put(c, new ArrayList<Notification>());
+				}
+				log.debug("Add notification {} to class map {}", notif, c);
+				classNotificationMap.get(notif.getEventTypeFilter()).get(c).add(notif);
+			} catch (ClassNotFoundException e) {
+				e.printStackTrace();
 			}
-			log.debug("Add notification {} to class map {}", notif, c);
-			classNotificationMap.get(notif.getEventTypeFilter()).get(c).add(notif);
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
 		}
 	}
 

@@ -1,10 +1,15 @@
 package org.meveo.model.crm;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
@@ -17,74 +22,97 @@ import org.meveo.model.BusinessEntity;
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "CRM_CUSTOM_FLD_TMP_SEQ")
 public class CustomFieldTemplate extends BusinessEntity {
 
-	private static final long serialVersionUID = -1403961759495272885L;
+    private static final long serialVersionUID = -1403961759495272885L;
 
-	@Column(name = "FIELD_TYPE")
-	@Enumerated
-	private CustomFieldTypeEnum fieldType;
+    @Column(name = "FIELD_TYPE")
+    @Enumerated
+    private CustomFieldTypeEnum fieldType;
 
-	@Column(name = "ACCOUNT_TYPE")
-	@Enumerated
-	private AccountLevelEnum accountLevel;
+    @Column(name = "ACCOUNT_TYPE")
+    @Enumerated
+    private AccountLevelEnum accountLevel;
 
-	@Transient
-	private String stringValue;
+    @Column(name = "VALUE_REQUIRED")
+    private boolean valueRequired;
 
-	@Transient
-	private Double doubleValue;
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "CRM_CUSTOM_FIELD_TMPL_VAL")
+    private Map<String, String> listValues = new HashMap<String, String>();
 
-	@Transient
-	private Long longValue;
+    @Transient
+    private String stringValue;
 
-	@Transient
-	private Date dateValue;
+    @Transient
+    private Double doubleValue;
 
-	public CustomFieldTypeEnum getFieldType() {
-		return fieldType;
-	}
+    @Transient
+    private Long longValue;
 
-	public void setFieldType(CustomFieldTypeEnum fieldType) {
-		this.fieldType = fieldType;
-	}
+    @Transient
+    private Date dateValue;
 
-	public AccountLevelEnum getAccountLevel() {
-		return accountLevel;
-	}
+    public CustomFieldTypeEnum getFieldType() {
+        return fieldType;
+    }
 
-	public void setAccountLevel(AccountLevelEnum accountLevel) {
-		this.accountLevel = accountLevel;
-	}
+    public void setFieldType(CustomFieldTypeEnum fieldType) {
+        this.fieldType = fieldType;
+    }
 
-	public String getStringValue() {
-		return stringValue;
-	}
+    public AccountLevelEnum getAccountLevel() {
+        return accountLevel;
+    }
 
-	public void setStringValue(String stringValue) {
-		this.stringValue = stringValue;
-	}
+    public void setAccountLevel(AccountLevelEnum accountLevel) {
+        this.accountLevel = accountLevel;
+    }
 
-	public Double getDoubleValue() {
-		return doubleValue;
-	}
+    public boolean isValueRequired() {
+        return valueRequired;
+    }
 
-	public void setDoubleValue(Double doubleValue) {
-		this.doubleValue = doubleValue;
-	}
+    public void setValueRequired(boolean valueRequired) {
+        this.valueRequired = valueRequired;
+    }
 
-	public Long getLongValue() {
-		return longValue;
-	}
+    public Map<String, String> getListValues() {
+        return listValues;
+    }
 
-	public void setLongValue(Long longValue) {
-		this.longValue = longValue;
-	}
+    public void setListValues(Map<String, String> listValues) {
+        this.listValues = listValues;
+    }
 
-	public Date getDateValue() {
-		return dateValue;
-	}
+    public String getStringValue() {
+        return stringValue;
+    }
 
-	public void setDateValue(Date dateValue) {
-		this.dateValue = dateValue;
-	}
+    public void setStringValue(String stringValue) {
+        this.stringValue = stringValue;
+    }
+
+    public Double getDoubleValue() {
+        return doubleValue;
+    }
+
+    public void setDoubleValue(Double doubleValue) {
+        this.doubleValue = doubleValue;
+    }
+
+    public Long getLongValue() {
+        return longValue;
+    }
+
+    public void setLongValue(Long longValue) {
+        this.longValue = longValue;
+    }
+
+    public Date getDateValue() {
+        return dateValue;
+    }
+
+    public void setDateValue(Date dateValue) {
+        this.dateValue = dateValue;
+    }
 
 }

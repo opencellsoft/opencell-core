@@ -48,6 +48,7 @@
 				<hftl:column
 					label="#{messages['entity.emailNotification.emailToEl']}"
 					field="emailToEl"  />
+				<hftl:column label="#{messages['enableEntity.active']}" field="active" isMessage="true" />
 				<hftl:actionsColumn editView="/pages/notification/emailNotificationDetail.xhtml" permission="#{persistentPermissionResolver.hasPermission('reporting','reportingManagement')}"  />
 			</hftl:dataList>
 	</ui:define>

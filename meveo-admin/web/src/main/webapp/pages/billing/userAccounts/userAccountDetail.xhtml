@@ -94,27 +94,23 @@
 					<p:panelGrid columns="2">
 						<p:outputLabel for="operationDate"
 							value="#{messages['walletOperation.operationDate']}"></p:outputLabel>
-						<p:inputText id="operationDate" rendered="#{userAccountBean.edit}"
-							value="#{userAccountBean.reloadOperation.operationDate}"></p:inputText>
-						<h:outputText rendered="#{!userAccountBean.edit}"
-							value="#{userAccountBean.reloadOperation.operationDate}" />
+						<p:inputText id="operationDate"
+							value=""></p:inputText>
+						<p:calendar 
+							value="#{userAccountBean.reloadOperation.operationDate}"
+							pattern="dd/MM/yyyy HH:mm" required="true" />
 					</p:panelGrid>
 					<p:panelGrid columns="2">
 						<p:outputLabel for="amountWithoutTax"
 							value="#{messages['walletOperation.amountWithoutTax']}"></p:outputLabel>
 						<p:inputText id="amountWithoutTax"
-							rendered="#{userAccountBean.edit}"
 							value="#{userAccountBean.reloadOperation.amountWithoutTax}"></p:inputText>
-						<h:outputText rendered="#{!userAccountBean.edit}"
-							value="#{userAccountBean.reloadOperation.amountWithoutTax}" />
 					</p:panelGrid>
 					<p:panelGrid columns="2">
 						<p:outputLabel for="amountWithTax"
 							value="#{messages['walletOperation.amountWithTax']}"></p:outputLabel>
-						<p:inputText id="amountWithTax" rendered="#{userAccountBean.edit}"
+						<p:inputText id="amountWithTax"
 							value="#{userAccountBean.reloadOperation.amountWithTax}"></p:inputText>
-						<h:outputText rendered="#{!userAccountBean.edit}"
-							value="#{userAccountBean.reloadOperation.amountWithTax}" />
 					</p:panelGrid>
 					<p:panel styleClass="form-panel-actions">
 						<p:commandButton action="#{userAccountBean.reload()}"
