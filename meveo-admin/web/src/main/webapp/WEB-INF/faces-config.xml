@@ -646,6 +646,12 @@
 			<redirect />
 		</navigation-case>
 		<navigation-case>
+			<from-outcome>discountPlanItems</from-outcome>
+			<to-view-id>/pages/catalog/discountPlans/discountPlanItems.xhtml
+			</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
 			<from-outcome>discountPlanDetail</from-outcome>
 			<to-view-id>/pages/catalog/discountPlans/discountPlanDetail.xhtml
 			</to-view-id>
