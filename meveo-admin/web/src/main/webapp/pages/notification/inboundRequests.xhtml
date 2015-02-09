@@ -23,7 +23,7 @@
 
         <!-- ===================================== SEARCH RESULTS ======================================= -->
 
-        <hftl:dataList backingBean="#{inboundRequestBean}">
+        <hftl:dataList backingBean="#{inboundRequestBean}" exportButton="false" exportToCsv="true">
             <hftl:column label="#{messages['commons.date']}" field="auditable" childField="created" isDate="true" time="true" />            
             <hftl:column label="#{messages['inboundRequest.remoteAddress']}" field="remoteAddr" />
             <hftl:column label="#{messages['inboundRequest.remotePort']}" field="remotePort" />
