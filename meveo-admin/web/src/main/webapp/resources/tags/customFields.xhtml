@@ -52,11 +52,11 @@
                     <p:selectOneMenu id="cfField_list" value="#{cf.stringValue}" required="#{cf.valueRequired}"
                         rendered="#{cc.backingBeanFromParentOrCurrent.edit and cf.fieldType eq CustomFieldTypeEnum.LIST}">
                         <f:selectItem itemValue="#{null}" itemLabel="" />
-                        <f:selectItems value="#{cf.listValues.entrySet()}" var="listVal" itemValue="#{listVal.key}" itemLabel="#{listVal.value}" />
+                        <f:selectItems value="#{cf.listValues.entrySet()}" var="listVal" itemValue="#{listVal.key}" itemLabel="#{listVal.value} (#{listVal.key})" />
                     </p:selectOneMenu>
                     <h:outputText
                         rendered="#{!cc.backingBeanFromParentOrCurrent.edit and cf.fieldType eq CustomFieldTypeEnum.LIST and cf.stringValue!=null}"
-                        value="#{cf.listValues[cf.stringValue]}" style="font-weight:bold;" />
+                        value="#{cf.listValues[cf.stringValue]} (#{cf.stringValue})" style="font-weight:bold;" />
 
                 </h:column>
             </h:dataTable>
