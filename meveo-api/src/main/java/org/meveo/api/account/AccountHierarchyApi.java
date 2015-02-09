@@ -430,6 +430,7 @@ public class AccountHierarchyApi extends BaseApi {
 				billingAccount.setTradingCountry(tradingCountry);
 				billingAccount.setTradingLanguage(tradingLanguage);
 				billingAccount.setBillingCycle(billingCycle);
+				billingAccount.setProvider(provider);
 				billingAccountService.createBillingAccount(billingAccount, currentUser, provider);
 
 				String userAccountCode = USER_ACCOUNT_PREFIX + enleverAccent(postData.getCustomerId());
