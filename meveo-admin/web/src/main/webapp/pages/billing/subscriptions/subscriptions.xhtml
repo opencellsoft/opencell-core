@@ -9,9 +9,10 @@
 	template="/layout/template.xhtml">
 
 	<f:metadata>
-		<f:event type="preRenderView" listener="#{subscriptionListBean.preRenderView}" />
+		<f:event type="preRenderView"
+			listener="#{subscriptionListBean.preRenderView}" />
 	</f:metadata>
-	
+
 	<ui:define name="navigation">
 		<ui:include src="/layout/navigation.xhtml" />
 	</ui:define>
@@ -28,21 +29,23 @@
 		</hf:searchPanel>
 
 		<hftl:dataList label="#{messages['subscription.title']}"
-			backingBean="#{subscriptionListBean}"  checkMany="false">
+			backingBean="#{subscriptionListBean}" checkMany="false">
 			<hftl:column label="#{messages['businessEntity.code']}" field="code" />
 			<hftl:column label="#{messages['businessEntity.description']}"
 				field="description" />
 			<hftl:column label="#{messages['subscription.status']}"
-				field="status" childField="label" isMessage="true" sortByField="true"/>
+				field="status" childField="label" isMessage="true"
+				sortByField="true" />
 			<hftl:column label="#{messages['subscription.userAccount']}"
-				field="userAccount" childField="code"/>
+				field="userAccount" childField="code" />
 			<hftl:column label="#{messages['subscription.serviceInstances']}"
-				field="serviceInstances" isList="true" childField="description"
-				childFieldId="id"  sort="false"
+				field="serviceInstances" isList="true" childField="descriptionAndStatus"
+				childFieldId="id" sort="false"
 				view="/pages/resource/serviceInstances/serviceInstanceDetail.xhtml"
 				backView="subscriptions" />
 
-			<hftl:actionsColumn useCustomIdParam="true" renderDeleteLink="false" propagateConversation="false"
+			<hftl:actionsColumn useCustomIdParam="true" renderDeleteLink="false"
+				propagateConversation="false"
 				permission="#{identity.hasPermission('billing','billingManagement')}" />
 		</hftl:dataList>
 

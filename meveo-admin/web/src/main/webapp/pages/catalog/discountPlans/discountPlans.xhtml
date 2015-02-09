@@ -15,64 +15,26 @@
 	</ui:define>
 
 	<ui:define name="body">
-		<!-- 		<hftl:entityPopup id="offerPopup" -->
-		<!-- 			header="#{messages['offer.popup.header']}" -->
-		<!-- 			backingBean="#{offerTemplateBean}" -->
-		<!-- 			searchField1Label="#{messages['offerTemplate.code']}" -->
-		<!-- 			searchField1="code" -->
-		<!-- 			searchField2Label="#{messages['offerTemplate.description']}" -->
-		<!-- 			searchField2="description" -->
-		<!-- 			column1Label="#{messages['offerTemplate.code']}" column1="code" -->
-		<!-- 			column2Label="#{messages['offerTemplate.description']}" -->
-		<!-- 			column2="description" -->
-		<!-- 			selection="#{discountPlanMatrixBean.filters['offerTemplate']}" -->
-		<!-- 			lazy="false" dataModel="#{offerTemplateBean.listActive}" -->
-		<!-- 			updateField=":searchPanel:searchForm:offer:offer_child"> -->
-		<!-- 		</hftl:entityPopup> -->
-
-		<!-- 		<hftl:entityPopup id="searchSellerPopup" -->
-		<!-- 			header="#{messages['customer.popup.header']}" -->
-		<!-- 			backingBean="#{sellerBean}" -->
-		<!-- 			searchField1Label="#{messages['customer.code']}" searchField1="code" -->
-		<!-- 			column1Label="#{messages['customer.code']}" column1="code" -->
-		<!-- 			column2Label="#{messages['BusinessEntity.description']}" -->
-		<!-- 			column2="description" -->
-		<!-- 			selection="#{discountPlanMatrixBean.filters['seller']}" -->
-		<!-- 			updateField=":searchPanel:searchForm:seller:seller_child"> -->
-		<!-- 		</hftl:entityPopup> -->
 
 		<hf:searchPanel id="searchPanel" label="#{messages['action.search']}"
 			backingBean="#{discountPlanBean}">
-			<hf:searchField label="#{messages['discountPlan.eventCode']}"
-				field="eventCode" />
-			<!-- 			<hf:searchField id="offer" -->
-			<!-- 				label="#{messages['pricePlanMatrix.offerCode']}" -->
-			<!-- 				field="offerTemplate" childField="description" popup="true" -->
-			<!-- 				popupId="searchOfferPopup" clearButton="true" /> -->
-			<!-- 			<hf:searchField -->
-			<!-- 				label="#{messages['discountPlanMatrix.startSubscriptionDate']}" -->
-			<!-- 				field="startSubscriptionDate" /> -->
-			<!-- 			<hf:searchField -->
-			<!-- 				label="#{messages['discountPlanMatrix.endSubscriptionDate']}" -->
-			<!-- 				field="endSubscriptionDate" /> -->
-			<!-- 			<hf:searchField label="#{messages['discountPlanMatrix.nbPeriod']}" -->
-			<!-- 				field="nbPeriod" /> -->
-			<!-- 			<hf:searchField label="#{messages['discountPlanMatrix.percent']}" -->
-			<!-- 				field="percent" /> -->
-			<!-- 			<hf:searchField id="seller" label="#{messages['seller.title']}" -->
-			<!-- 				field="seller" childField="description" popup="true" -->
-			<!-- 				popupId="searchSellerPopup" clearButton="true" /> -->
+			<hf:searchField label="#{messages['BusinessEntity.code']}"
+				field="code" />
 		</hf:searchPanel>
 
 		<hftl:dataList label="#{messages['discountPlan.title']}"
 			backingBean="#{discountPlanBean}">
-			<hftl:column label="#{messages['discountPlan.eventCode']}"
-				field="eventCode" />
+			<hftl:column label="#{messages['BusinessEntity.code']}"
+				field="code" />
 			<hftl:column label="#{messages['BusinessEntity.description']}"
 				field="description" />
 			<hftl:column label="#{messages['commons.status']}"
 				field="discountPlanStatusEnum" />
-
+			<hftl:column label="#{messages['discountPlanMatrix.planItems']}"
+				field="discountPlanItems" childField="code" isList="true"
+				childFieldId="id"
+				entityView="/pages/catalog/discountPlans/discountPlanDetail.xhtml"
+				backView="discountPlans" showPopup="true" popupFields="code" />
 
 			<hftl:actionsColumn
 				permission="#{identity.hasPermission('catalog','catalogManagement')}" />

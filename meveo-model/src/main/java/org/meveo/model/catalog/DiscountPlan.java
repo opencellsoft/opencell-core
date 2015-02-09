@@ -18,15 +18,15 @@ import org.meveo.model.AuditableEntity;
  * @author Edward P. Legaspi
  **/
 @Entity
-@Table(name = "CAT_DISCOUNT_PLAN", uniqueConstraints = { @UniqueConstraint(columnNames = { "EVENT_CODE", "PROVIDER_ID" }) })
+@Table(name = "CAT_DISCOUNT_PLAN", uniqueConstraints = { @UniqueConstraint(columnNames = { "CODE", "PROVIDER_ID" }) })
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "CAT_DISCOUNT_PLAN_SEQ")
 public class DiscountPlan extends AuditableEntity {
 
 	private static final long serialVersionUID = -2762453947446654646L;
 
-	@Column(name = "EVENT_CODE", length = 60, nullable = false)
+	@Column(name = "CODE", length = 60, nullable = false)
 	@Size(max = 60, min = 1)
-	private String eventCode;
+	private String code;
 
 	@Column(name = "DESCRIPTION", nullable = true, length = 100)
 	@Size(max = 100)
@@ -44,14 +44,6 @@ public class DiscountPlan extends AuditableEntity {
 
 	@OneToMany(mappedBy = "discountPlan")
 	private List<DiscountPlanItem> discountPlanItems;
-
-	public String getEventCode() {
-		return eventCode;
-	}
-
-	public void setEventCode(String eventCode) {
-		this.eventCode = eventCode;
-	}
 
 	public String getDescription() {
 		return description;
@@ -91,6 +83,21 @@ public class DiscountPlan extends AuditableEntity {
 
 	public void setDiscountPlanItems(List<DiscountPlanItem> discountPlanItems) {
 		this.discountPlanItems = discountPlanItems;
+	}
+
+	public String getCode() {
+		return code;
+	}
+
+	public void setCode(String code) {
+		this.code = code;
+	}
+
+	@Override
+	public String toString() {
+		return "DiscountPlan [code=" + code + ", description=" + description + ", discountPlanStatusEnum="
+				+ discountPlanStatusEnum + ", minDuration=" + minDuration + ", maxDuration=" + maxDuration
+				+ ", discountPlanItems=" + discountPlanItems + "]";
 	}
 
 }
