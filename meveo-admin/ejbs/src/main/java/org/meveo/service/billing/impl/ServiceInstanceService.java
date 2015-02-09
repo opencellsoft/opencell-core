@@ -52,7 +52,6 @@ import org.meveo.service.base.BusinessService;
 @Stateless
 public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 
-
 	@Inject
 	private RecurringChargeInstanceService recurringChargeInstanceService;
 
@@ -64,7 +63,6 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 
 	@Inject
 	private WalletOperationService chargeApplicationService;
-
 
 	public ServiceInstance findByCodeAndSubscription(String code, Subscription subscription) {
 		return findByCodeAndSubscription(getEntityManager(), code, subscription);
@@ -89,6 +87,35 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 		return chargeInstance;
 	}
 
+	@SuppressWarnings("unchecked")
+	public List<ServiceInstance> findByCodeSubscriptionAndStatus(String code, Subscription subscription,
+			InstanceStatusEnum... statuses) {
+		List<ServiceInstance> chargeInstances = null;
+		try {
+			log.debug("start of find {} by code (code={}) ..", "ServiceInstance", code);
+			QueryBuilder qb = new QueryBuilder(ServiceInstance.class, "c");
+			qb.addCriterion("c.code", "=", code, true);
+			qb.addCriterion("c.subscription", "=", subscription, true);
+			qb.startOrClause();
+			if (statuses != null && statuses.length > 0) {
+				for (InstanceStatusEnum status : statuses) {
+					qb.addCriterionEnum("c.status", status);
+				}
+			}
+			qb.endOrClause();
+
+			chargeInstances = (List<ServiceInstance>) qb.getQuery(getEntityManager()).getResultList();
+			log.debug("end of find {} by code (code={}). Result found={}.", new Object[] { "ServiceInstance", code,
+					chargeInstances != null });
+		} catch (NoResultException nre) {
+			log.debug("findByCodeAndSubscription : no service has been found");
+		} catch (Exception e) {
+			log.error("findByCodeAndSubscription error={} ", e.getMessage());
+		}
+
+		return chargeInstances;
+	}
+
 	public void serviceInstanciation(ServiceInstance serviceInstance, User creator)
 			throws IncorrectSusbcriptionException, IncorrectServiceInstanceException, BusinessException {
 		serviceInstanciation(serviceInstance, creator, null, null);
@@ -107,10 +134,12 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 			throw new IncorrectSusbcriptionException("subscription is not active");
 		}
 
-		ServiceInstance serviceInst = findByCodeAndSubscription(serviceCode, subscription);
-		if (serviceInst != null) {
+		List<ServiceInstance> serviceInstances = findByCodeSubscriptionAndStatus(serviceCode, subscription,
+				InstanceStatusEnum.ACTIVE, InstanceStatusEnum.INACTIVE, InstanceStatusEnum.SUSPENDED);
+		if (serviceInstances != null && serviceInstances.size() > 0) {
 			throw new IncorrectServiceInstanceException("Service instance with code=" + serviceInstance.getCode()
-					+ " and subscription code=" + subscription.getCode() + " is already created.");
+					+ ", subscription code=" + subscription.getCode()
+					+ " and status is [ACTIVE or INACTIVE or SUSPENDED] is already created.");
 		}
 
 		UserAccount userAccount = subscription.getUserAccount();
@@ -195,9 +224,8 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 			throw new IncorrectServiceInstanceException("Subscription is " + subscription.getStatus());
 		}
 
-		if (serviceInstance.getStatus() == InstanceStatusEnum.ACTIVE
-				|| serviceInstance.getStatus() == InstanceStatusEnum.TERMINATED) {
-			throw new IncorrectServiceInstanceException("ServiceInstance is " + subscription.getStatus());
+		if (serviceInstance.getStatus() == InstanceStatusEnum.ACTIVE) {
+			throw new IncorrectServiceInstanceException("ServiceInstance is " + serviceInstance.getStatus());
 		}
 
 		if (serviceInstance.getSubscriptionDate() == null) {
@@ -460,7 +488,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 		}
 
 		for (UsageChargeInstance usageChargeInstance : serviceInstance.getUsageChargeInstances()) {
-			if(usageChargeInstance.getStatus() == InstanceStatusEnum.SUSPENDED){
+			if (usageChargeInstance.getStatus() == InstanceStatusEnum.SUSPENDED) {
 				usageChargeInstanceService.reactivateUsageChargeInstance(usageChargeInstance, subscriptionDate);
 			}
 		}

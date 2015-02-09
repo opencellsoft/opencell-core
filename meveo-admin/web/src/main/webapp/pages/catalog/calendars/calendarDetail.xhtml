@@ -46,12 +46,12 @@
                 </p:panelGrid>
             </p:panelGrid>
 
-            <hf:formField label="#{messages['calendar.periodLength']}" field="periodLength" rendered="#{calendarBean.entity.calendarType=='PERIOD'}" />
-            <hf:formField label="#{messages['calendar.periodUnit']}" field="periodUnit" listValues="#{calendarBean.periodTypes}"
+            <hf:formField label="#{messages['calendar.periodLength']}" field="periodLength" required="true" rendered="#{calendarBean.entity.calendarType=='PERIOD'}" />
+            <hf:formField label="#{messages['calendar.periodUnit']}" field="periodUnit" required="true" listValues="#{calendarBean.periodTypes}"
                 rendered="#{calendarBean.entity.calendarType=='PERIOD' and calendarBean.edit}" />
             <hf:formField label="#{messages['calendar.periodUnit']}" field="periodUnit" isMessage="true" messagePrefix="calendar.periodUnit"
                 rendered="#{calendarBean.entity.calendarType=='PERIOD' and not calendarBean.edit}" />
-            <hf:formField label="#{messages['calendar.nbPeriods']}" field="nbPeriods" rendered="#{calendarBean.entity.calendarType=='PERIOD'}" />
+            <hf:formField label="#{messages['calendar.nbPeriods']}" field="nbPeriods" required="true" rendered="#{calendarBean.entity.calendarType=='PERIOD'}" />
         </hf:formPanel>
     </ui:define>
 

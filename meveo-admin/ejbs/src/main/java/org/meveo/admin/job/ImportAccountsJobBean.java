@@ -223,6 +223,10 @@ public class ImportAccountsJobBean {
 				log.error(e.getMessage());
 			}
 
+			if (billingAccount == null) {
+				continue;
+			}
+
 			for (org.meveo.model.jaxb.account.UserAccount uAccount : billingAccountDto.getUserAccounts()
 					.getUserAccount()) {
 				j++;

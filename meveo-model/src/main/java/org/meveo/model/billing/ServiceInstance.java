@@ -37,6 +37,7 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.apache.commons.lang.StringUtils;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.catalog.ServiceTemplate;
 
@@ -206,6 +207,13 @@ public class ServiceInstance extends BusinessEntity {
 
 	public void setSubscriptionTerminationReason(SubscriptionTerminationReason subscriptionTerminationReason) {
 		this.subscriptionTerminationReason = subscriptionTerminationReason;
+	}
+
+	public String getDescriptionAndStatus() {
+		if (!StringUtils.isBlank(description))
+			return description + ", " + status;
+		else
+			return status.name();
 	}
 
 }
