@@ -221,9 +221,7 @@ public class AccountHierarchyApi extends BaseApi {
 					&& !StringUtils.isEmpty(postData.getSellerCode())
 					&& !StringUtils.isEmpty(postData.getCurrencyCode())
 					&& !StringUtils.isEmpty(postData.getCountryCode()) && !StringUtils.isEmpty(postData.getLastName())
-					&& !StringUtils.isEmpty(postData.getLanguageCode())
-					&& !StringUtils.isEmpty(postData.getBillingCycleCode())
-					&& !StringUtils.isEmpty(postData.getEmail())) {
+					&& !StringUtils.isEmpty(postData.getLanguageCode()) && !StringUtils.isEmpty(postData.getEmail())) {
 
 				Seller seller = sellerService.findByCode(postData.getSellerCode(), provider);
 
@@ -346,7 +344,13 @@ public class AccountHierarchyApi extends BaseApi {
 
 				Title title = titleService.findByCode(provider, enleverAccent(postData.getTitleCode()));
 
-				Customer customer = new Customer();
+				String customerCode = CUSTOMER_PREFIX + enleverAccent(postData.getCustomerId());
+				Customer customer = customerService.findByCode(customerCode, provider);
+				if (customer != null) {
+					throw new EntityAlreadyExistsException(Customer.class, customerCode);
+				}
+
+				customer = new Customer();
 				customer.getName().setLastName(postData.getLastName());
 				customer.getName().setFirstName(postData.getFirstName());
 				customer.getName().setTitle(title);
@@ -372,13 +376,21 @@ public class AccountHierarchyApi extends BaseApi {
 				customerAccount.setTradingCurrency(tradingCurrency);
 				customerAccountService.create(customerAccount, currentUser, provider);
 
-				BillingCycle billingCycle = billingCycleService.findByBillingCycleCode(
-						enleverAccent(postData.getBillingCycleCode()), currentUser, provider);
-
-				if (billingCycle == null) {
+				BillingCycle billingCycle = null;
+				if (!StringUtils.isBlank(postData.getBillingCycleCode())) {
+					String billingCycleCode = enleverAccent(postData.getBillingCycleCode());
+					billingCycle = billingCycleService.findByBillingCycleCode(billingCycleCode, currentUser, provider);
+					if (billingCycle == null) {
+						throw new EntityDoesNotExistsException(BillingCycle.class, billingCycleCode);
+					}
+				} else {
+					log.warn("billingCycleCode is not set searching for default={}",
+							paramBean.getProperty("api.default.billingCycle.code", "DEFAULT"));
 					billingCycle = billingCycleService.findByBillingCycleCode(
 							paramBean.getProperty("api.default.billingCycle.code", "DEFAULT"), provider);
 					if (billingCycle == null) {
+						log.warn("{} billingCycle is not in database creating default values.",
+								paramBean.getProperty("api.default.billingCycle.code", "DEFAULT"));
 						String imputationCalendarCode = paramBean.getProperty("api.default.imputationCalendar.name",
 								"DEF_IMP_CAL");
 						Calendar imputationCalendar = calendarService.findByName(imputationCalendarCode, provider);
@@ -456,9 +468,6 @@ public class AccountHierarchyApi extends BaseApi {
 				if (StringUtils.isEmpty(postData.getLanguageCode())) {
 					missingParameters.add("languageCode");
 				}
-				if (StringUtils.isEmpty(postData.getBillingCycleCode())) {
-					missingParameters.add("billingCycleCode");
-				}
 				if (StringUtils.isEmpty(postData.getEmail())) {
 					missingParameters.add("email");
 				}
@@ -475,15 +484,14 @@ public class AccountHierarchyApi extends BaseApi {
 		Customer customer = customerService.findByCode(postData.getCustomerId(), provider);
 
 		if (customer == null) {
-			throw new EntityAlreadyExistsException(Customer.class, postData.getCustomerId());
+			throw new EntityDoesNotExistsException(Customer.class, postData.getCustomerId());
 		}
 
 		if (!StringUtils.isEmpty(postData.getCustomerId()) && !StringUtils.isEmpty(postData.getCustomerBrandCode())
 				&& !StringUtils.isEmpty(postData.getCustomerCategoryCode())
 				&& !StringUtils.isEmpty(postData.getSellerCode()) && !StringUtils.isEmpty(postData.getCurrencyCode())
 				&& !StringUtils.isEmpty(postData.getCountryCode()) && !StringUtils.isEmpty(postData.getLastName())
-				&& !StringUtils.isEmpty(postData.getLanguageCode())
-				&& !StringUtils.isEmpty(postData.getBillingCycleCode()) && !StringUtils.isEmpty(postData.getEmail())) {
+				&& !StringUtils.isEmpty(postData.getLanguageCode()) && !StringUtils.isEmpty(postData.getEmail())) {
 
 			Seller seller = sellerService.findByCode(postData.getSellerCode(), provider);
 
@@ -673,13 +681,21 @@ public class AccountHierarchyApi extends BaseApi {
 				customerAccountService.update(customerAccount, currentUser);
 			}
 
-			BillingCycle billingCycle = billingCycleService.findByBillingCycleCode(postData.getBillingCycleCode(),
-					currentUser, provider);
-
-			if (billingCycle == null) {
+			BillingCycle billingCycle = null;
+			if (!StringUtils.isBlank(postData.getBillingCycleCode())) {
+				String billingCycleCode = enleverAccent(postData.getBillingCycleCode());
+				billingCycle = billingCycleService.findByBillingCycleCode(billingCycleCode, currentUser, provider);
+				if (billingCycle == null) {
+					throw new EntityDoesNotExistsException(BillingCycle.class, billingCycleCode);
+				}
+			} else {
+				log.warn("billingCycleCode is not set searching for default={}",
+						paramBean.getProperty("api.default.billingCycle.code", "DEFAULT"));
 				billingCycle = billingCycleService.findByBillingCycleCode(
 						paramBean.getProperty("api.default.billingCycle.code", "DEFAULT"), provider);
 				if (billingCycle == null) {
+					log.warn("{} billingCycle is not in database creating default values.",
+							paramBean.getProperty("api.default.billingCycle.code", "DEFAULT"));
 					String imputationCalendarCode = paramBean.getProperty("api.default.imputationCalendar.name",
 							"DEF_IMP_CAL");
 					Calendar imputationCalendar = calendarService.findByName(imputationCalendarCode, provider);
@@ -775,9 +791,6 @@ public class AccountHierarchyApi extends BaseApi {
 			}
 			if (StringUtils.isEmpty(postData.getLanguageCode())) {
 				missingParameters.add("languageCode");
-			}
-			if (StringUtils.isEmpty(postData.getBillingCycleCode())) {
-				missingParameters.add("billingCycleCode");
 			}
 			if (StringUtils.isEmpty(postData.getEmail())) {
 				missingParameters.add("email");
