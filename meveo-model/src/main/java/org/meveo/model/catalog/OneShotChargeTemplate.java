@@ -33,7 +33,7 @@ public class OneShotChargeTemplate extends ChargeTemplate {
     private OneShotChargeTemplateTypeEnum oneShotChargeTemplateType;
     
     @Column(name = "IMMEDIATE_INVOICING")
-    private Boolean immediateInvoicing = true;
+    private Boolean immediateInvoicing = false;
 
     public OneShotChargeTemplateTypeEnum getOneShotChargeTemplateType() {
         return oneShotChargeTemplateType;

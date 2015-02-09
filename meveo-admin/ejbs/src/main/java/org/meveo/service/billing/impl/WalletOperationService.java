@@ -1315,7 +1315,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 		for (Long walletId : walletIds) {
 			BigDecimal balance = reservedBalanceCache.get(walletId);
 			log.debug("chargeOnWalletIds walletId={}, balance={}", walletId, balance);
-			if (balance.compareTo(BigDecimal.ZERO) > 0) {
+			if (balance.compareTo(BigDecimal.ZERO) > 0 || remainingAmountToCharge.compareTo(BigDecimal.ZERO) < 0) {
 				if (balance.compareTo(op.getAmountWithTax()) >= 0) {
 					op.setWallet(getEntityManager().find(WalletInstance.class, walletId));
 					create(op, creator, provider);

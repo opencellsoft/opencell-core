@@ -159,29 +159,9 @@ public class SubscriptionBean extends StatefulBaseBean<Subscription> {
 			entity.setSubscriptionDate(calendar.getTime());
 		} else {
 			log.debug("entity.getOffer()=" + entity.getOffer().getCode());
-			if (entity.getOffer() != null) {
-				List<ServiceInstance> serviceInstances = entity.getServiceInstances();
-				for (ServiceTemplate serviceTemplate : entity.getOffer().getServiceTemplates()) {
-					boolean alreadyInstanciated = false;
-
-					for (ServiceInstance serviceInstance : serviceInstances) {
-						if (serviceInstance.getStatus() != InstanceStatusEnum.CANCELED
-								&& serviceInstance.getStatus() != InstanceStatusEnum.TERMINATED
-								&& serviceInstance.getStatus() != InstanceStatusEnum.CLOSED)
-							if (serviceTemplate.getCode().equals(serviceInstance.getCode())) {
-								alreadyInstanciated = true;
-								break;
-							}
-					}
-
-					if (!alreadyInstanciated) {
-						serviceTemplates.add(serviceTemplate);
-					}
-				}
-			}
+			initServiceTemplates();
 
 			serviceInstances.addAll(entity.getServiceInstances());
-
 		}
 
 		initCustomFields(AccountLevelEnum.SUB);
@@ -190,6 +170,29 @@ public class SubscriptionBean extends StatefulBaseBean<Subscription> {
 		log.debug("servicetemplates=" + serviceTemplates.getSize());
 
 		return entity;
+	}
+
+	private void initServiceTemplates() {
+		if (entity.getOffer() != null) {
+			List<ServiceInstance> serviceInstances = entity.getServiceInstances();
+			for (ServiceTemplate serviceTemplate : entity.getOffer().getServiceTemplates()) {
+				boolean alreadyInstanciated = false;
+
+				for (ServiceInstance serviceInstance : serviceInstances) {
+					if (serviceInstance.getStatus() != InstanceStatusEnum.CANCELED
+							&& serviceInstance.getStatus() != InstanceStatusEnum.TERMINATED
+							&& serviceInstance.getStatus() != InstanceStatusEnum.CLOSED)
+						if (serviceTemplate.getCode().equals(serviceInstance.getCode())) {
+							alreadyInstanciated = true;
+							break;
+						}
+				}
+
+				if (!alreadyInstanciated) {
+					serviceTemplates.add(serviceTemplate);
+				}
+			}
+		}
 	}
 
 	/*
@@ -519,6 +522,10 @@ public class SubscriptionBean extends StatefulBaseBean<Subscription> {
 			}
 
 			selectedServiceInstance = null;
+
+			initServiceTemplates();
+			serviceTemplates.setSelectedItems(null);
+
 			messages.info(new BundleKey("messages", "resiliation.resiliateSuccessful"));
 
 		} catch (BusinessException e1) {

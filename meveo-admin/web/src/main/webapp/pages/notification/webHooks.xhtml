@@ -53,6 +53,7 @@
                 <hftl:column
                     label="#{messages['entity.webHook.params']}"
                     field="params" isMap="true"  />
+				<hftl:column label="#{messages['enableEntity.active']}" field="active" isMessage="true" />
 				<hftl:actionsColumn editView="/pages/notification/webHookDetail.xhtml" permission="#{persistentPermissionResolver.hasPermission('reporting','reportingManagement')}"  />
 			</hftl:dataList>
 	</ui:define>

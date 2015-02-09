@@ -4,9 +4,8 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:rich="http://richfaces.org/rich"
-	xmlns:o="http://omnifaces.org/ui"
-	xmlns:p="http://primefaces.org/ui" xmlns:a="http://richfaces.org/a4j"
-	xmlns:hftl="http://hftl.org"
+	xmlns:o="http://omnifaces.org/ui" xmlns:p="http://primefaces.org/ui"
+	xmlns:a="http://richfaces.org/a4j" xmlns:hftl="http://hftl.org"
 	xmlns:hf="http://java.sun.com/jsf/composite/tags"
 	template="/layout/template.xhtml">
 
@@ -132,7 +131,7 @@
 							<p:commandButton action="#{subscriptionBean.terminateService()}"
 								value="#{messages['button.terminateButton']}"
 								onclick="dlg_serviceTerminationPopup.hide()"
-								update=":subscriptionTab:headerInfo1Form:headerInfo1 :subscriptionTab:ST_results2_form:instantiatePanelActions :#{p:component('srvInstansFrm')} :#{p:component('operationFrm')} :subscriptionTab:headerInfo1Form:headerInfo1:messages" />
+								update=":subscriptionTab:headerInfo1Form:headerInfo1 :subscriptionTab:ST_results2_form:instantiatePanelActions :#{p:component('srvInstansFrm')} :#{p:component('operationFrm')} :subscriptionTab:headerInfo1Form:headerInfo1:messages :subscriptionTab:ST_results2_form" />
 							<p:commandButton immediate="true"
 								onclick="dlg_serviceTerminationPopup.hide()"
 								value="#{messages['management.close']}" />
@@ -228,15 +227,6 @@
 												oncomplete="dlg_serviceTerminationPopup.show()"
 												disabled="#{subscriptionBean.selectedServiceInstance==null || subscriptionBean.selectedServiceInstance.status=='INACTIVE' || subscriptionBean.selectedServiceInstance.status=='TERMINATED'}" />
 										</p:panel>
-										<!-- 										<p:commandButton ajax="false" action="#{subscriptionBean.cancelService}" -->
-										<!-- 											value="#{messages['button.cancelButton']}" -->
-										<!-- 											onclick="if(confirm('#{messages['confirmationMessage.confirmCancellation']}')){return true;}else{return false;}" -->
-										<!-- 											disabled="#{subscriptionBean.selectedServiceInstance==null || subscriptionBean.selectedServiceInstance.status=='INACTIVE' || subscriptionBean.selectedServiceInstance.status=='TERMINATED'}" /> -->
-										<!-- 										<p:commandButton ajax="true" action="#{subscriptionBean.suspendService}" -->
-										<!-- 											value="#{messages['button.suspendButton']}" -->
-										<!-- 											onclick="if(confirm('#{messages['confirmationMessage.confirmSuspension']}')){return true;}else{return false;}" -->
-										<!-- 											update=":#{p:component('srvInstansFrm')} :#{p:component('operationFrm')} :subscriptionTab:headerInfo1Form:headerInfo1:messages" -->
-										<!-- 											disabled="#{subscriptionBean.selectedServiceInstance==null || subscriptionBean.selectedServiceInstance.status=='INACTIVE' || subscriptionBean.selectedServiceInstance.status=='TERMINATED' || subscriptionBean.selectedServiceInstance.status=='SUSPENDED'}" /> -->
 									</h:form>
 								</p:outputPanel>
 
@@ -449,6 +439,20 @@
 													<hf:formField
 														label="#{messages['oneShotChargeInstance.chargeDate']}"
 														required="true" field="chargeDate" edit="true" />
+													<p:panelGrid columns="2" id="chargeWalletSelectId">
+														<p:outputLabel for="chargeWalletSelectId_text"
+															value="#{messages['menu.wallet']}" />
+														<p:panelGrid styleClass="inner-table" columns="3">
+															<p:inputText id="chargeWalletSelectId_text"
+																required="true"
+																value="#{subscriptionBean.oneShotChargeInstanceWalletCode}" />
+															<!-- <p:commandButton id="chargeWalletSelectId_selectLink"
+																onclick="PF('dlg_oneShotChargeWallPopup').show()"
+																icon="ui-icon-search" type="button" /> -->
+														</p:panelGrid>
+														<p:tooltip for="chargeTemplateSelectId_selectLink"
+															value="#{messages['commons.search']}" />
+													</p:panelGrid>
 													<h:panelGrid columns="2">
 														<p:outputLabel for="amountWithoutTax2"
 															value="#{messages['oneShotChargeInstance.amountWithoutTax']}" />

@@ -45,7 +45,7 @@
 				</p:column>
 				<p:column styleClass="col2 tab-view-container">
 					<hf:formPanel id="formCustomerPanel" formId="formCustomer"
-						label="#{messages['customer.customerPanel']}"
+						label="#{messages['customer.customerPanel']}"  showFormButtons="false"
 						backingBean="#{customerBean}" useCustomIdParam="true"
 						killConversationOnSave="false" killConversationOnBack="false">
 						<p:tabView id="tabView">
@@ -126,16 +126,18 @@
 							</p:tab>
 						</p:tabView>
 
-					</hf:formPanel>
-					<h:form id="operationsForm" rendered="#{!customerBean.edit}">
-						<div class="actionButtons">
-							<p:button outcome="addCustomerAccount"
+						<hf:formButtons columns="5"
+							backingBean="#{customerBean}"
+							edit="#{customerBean.edit}" ajaxSubmit="false"
+							killConversationOnSave="false" killConversationOnBack="false"
+							useCustomIdParam="true">
+							<p:button outcome="addCustomerAccount" rendered="#{!customerBean.edit}"
 								value="#{messages['customer.buttonAddCustomerAccount']}">
 								<f:param name="cid"
 									value="#{javax.enterprise.context.conversation.id}" />
 							</p:button>
-						</div>
-					</h:form>
+						</hf:formButtons>
+					</hf:formPanel>
 				</p:column>
 			</p:row>
 		</p:panelGrid>

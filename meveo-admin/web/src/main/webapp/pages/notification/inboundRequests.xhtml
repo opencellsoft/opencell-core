@@ -26,6 +26,9 @@
         <hftl:dataList backingBean="#{inboundRequestBean}">
             <hftl:column label="#{messages['commons.date']}" field="auditable" childField="created" isDate="true" time="true" />            
             <hftl:column label="#{messages['inboundRequest.remoteAddress']}" field="remoteAddr" />
+            <hftl:column label="#{messages['inboundRequest.remotePort']}" field="remotePort" />
+            <hftl:column label="#{messages['inboundRequest.protocol']}" field="protocol" />
+            <hftl:column label="#{messages['inboundRequest.pathInfo']}" field="pathInfo" />
             <hftl:actionsColumn renderEditLink="false" permission="#{persistentPermissionResolver.hasPermission('reporting','reportingManagement')}" />
         </hftl:dataList>
     </ui:define>

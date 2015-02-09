@@ -189,7 +189,7 @@
             <p:outputLabel value="#{cc.attrs.label}" />
 
 
-            <p:dataTable id="mapValueList" value="#{cc.backingBeanFromParentOrCurrent.mapTypeFieldValues[cc.attrs.field]}" var="mapValues" >
+            <p:dataTable id="mapValueList" value="#{cc.backingBeanFromParentOrCurrent.mapTypeFieldValues[cc.attrs.field]}" var="mapValues" paginator="false" styleClass="custom-grid">
                 <p:column headerText="#{cc.attrs.mapKeyLabel}">
                     <p:inputText value="#{mapValues['key']}" size="50" maxlength="100" rendered="#{cc.attrs.edit}" />
                     <h:outputText value="#{mapValues['key']}" styleClass="field-value" rendered="#{not cc.attrs.edit}" />
@@ -318,7 +318,7 @@
 			<p:inputText rendered="#{cc.attrs.edit}"
 				id="#{cc.attrs.id}_bigDecimal" disabled="#{cc.attrs.disabled}"
 				value="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}"
-				required="#{cc.attrs.required}" size="5"
+				required="#{cc.attrs.required}" size="20"
 				maxlength="#{cc.attrs.maxlength}">
 				<c:if test="#{not empty cc.attrs.converter}">
 					<f:converter converterId="#{cc.attrs.converter}" />
