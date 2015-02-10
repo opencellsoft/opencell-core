@@ -766,29 +766,44 @@
 									</hftl:panelGroup>
 								</hf:formPanel>
 								<br />
-								<p:outputPanel id="usageChargeDataPanel" autoUpdate="true">
-									<h:form id="OS_usage_results_form" prependId="false">
-										<p:dataTable value="#{subscriptionBean.usageChargeInstances}"
-											var="entity">
-											<hftl:column label="#{messages['chargeInstance.code']}"
-												field="code" />
-											<hftl:column
-												label="#{messages['chargeInstance.description']}"
-												field="description" isMessage="false" />
-											<hftl:column
-												label="#{messages['oneShotChargeInstance.criteria1']}"
-												field="criteria1" isMessage="true" />
-											<hftl:column
-												label="#{messages['oneShotChargeInstance.criteria2']}"
-												field="criteria2" isMessage="true" />
-											<hftl:column
-												label="#{messages['oneShotChargeInstance.criteria3']}"
-												field="criteria3" isMessage="true" />
-											<hftl:column label="#{messages['counterTemplate.title']}"
-												field="counter" childField="description" />
-										</p:dataTable>
-									</h:form>
-								</p:outputPanel>
+								<h:form id="OS_usage_results_form" prependId="false">
+									<p:dataTable value="#{subscriptionBean.usageChargeInstances}"
+										var="entity">
+										<hftl:column label="#{messages['chargeInstance.code']}"
+											field="code" />
+										<hftl:column label="#{messages['BusinessEntity.description']}"
+											field="description" isMessage="false" />
+										<hftl:column
+											label="#{messages['pricePlanMatrix.amountWithoutTax']}"
+											field="amountWithoutTax" isMessage="false" />
+										<hftl:column label="#{messages['chargeInstance.description']}"
+											field="amountWithTax" isMessage="false" />
+										<hftl:column
+											label="#{messages['oneShotChargeInstance.criteria1']}"
+											field="criteria1" isMessage="false" />
+										<hftl:column
+											label="#{messages['oneShotChargeInstance.criteria2']}"
+											field="criteria2" isMessage="false" />
+										<hftl:column
+											label="#{messages['oneShotChargeInstance.criteria3']}"
+											field="criteria3" isMessage="false" />
+										<hftl:column label="#{messages['counterTemplate.title']}"
+											field="counter" childField="description" />
+										<p:column styleClass="actions-column">
+											<f:facet name="header">
+												<h:outputText value="#{messages['commons.actions']}" />
+											</f:facet>
+											<p:commandButton id="editUsageChgInsLink"
+												action="#{subscriptionBean.editUsageChargeIns(entity)}"
+												oncomplete="dlg_usageChgPopup.show()"
+												update=":#{p:component('usageChgPopup')}"
+												icon="ui-icon-document">
+											</p:commandButton>
+											<p:tooltip for="editUsageChgInsLink"
+												value="#{messages['commons.edit']}" />
+										</p:column>
+									</p:dataTable>
+								</h:form>
 							</p:tab>
 							<!-- Access -->
 							<p:tab id="medinaAccessTab"
@@ -895,6 +910,52 @@
 		    }
 		</script>
 
+		<p:dialog id="usageChgPopup"
+			header="#{messages['subscription.usage']}"
+			widgetVar="dlg_usageChgPopup" dynamic="false" width="900">
+			<p:outputPanel id="usageChgPanel"
+				rendered="#{subscriptionBean.usageChargeInstance!=null}">
+				<hf:formPanel id="usageChgForm1Panel" edit="true"
+					label="#{messages['subscription.usage']}"
+					backingBean="#{subscriptionBean}" columns="1"
+					entity="#{subscriptionBean.usageChargeInstance}"
+					formId="usageChgForm1" showFormButtons="false" ajaxSubmit="true">
+					<p:panelGrid columns="2">
+						<hf:formEntityField label="#{messages['businessEntity.code']}"
+							field="chargeTemplate" childField="code" disabled="true" />
+						<hf:formField label="#{messages['businessEntity.description']}"
+							field="description" disabled="true" />
+						<hf:formField
+							label="#{messages['oneShotChargeInstance.amountWithTax']}"
+							field="amountWithTax" edit="true" />
+						<hf:formField
+							label="#{messages['oneShotChargeInstance.amountWithoutTax']}"
+							field="amountWithoutTax" edit="true" />
+						<hf:formField
+							label="#{messages['oneShotChargeInstance.criteria1']}"
+							field="criteria1" edit="true" isMessage="false" />
+						<hf:formField
+							label="#{messages['oneShotChargeInstance.criteria2']}"
+							field="criteria2" edit="true" isMessage="false" />
+						<hf:formField
+							label="#{messages['oneShotChargeInstance.criteria3']}"
+							field="criteria3" edit="true" isMessage="false" />
+						<hf:formEntityField label="#{messages['counterTemplate.title']}"
+							field="counter" childField="description" edit="false" />
+					</p:panelGrid>
+					<p:panelGrid columns="2">
+						<p:commandButton
+							action="#{subscriptionBean.saveRecurringChargeIns}"
+							value="#{messages['action.save']}"
+							update=":#{p:component('OS_usage_results_form')}"
+							oncomplete="dlg_usageChgPopup.hide()" />
+						<p:button value="#{messages['action.cancel']}"
+							onclick="dlg_usageChgPopup.hide();" />
+					</p:panelGrid>
+				</hf:formPanel>
+			</p:outputPanel>
+		</p:dialog>
+
 		<p:dialog id="recurringChgPopup"
 			header="#{messages['subscription.tab.recurringShotChg']}"
 			widgetVar="dlg_recurringChgPopup" dynamic="false" width="900">
@@ -915,7 +976,7 @@
 							field="description" size="50" maxlength="50" disabled="true" />
 						<hf:formField
 							label="#{messages['recurringChargeInstance.subscriptionDate']}"
-							field="subscriptionDate" edit="true" />
+							field="subscriptionDate" edit="false" />
 						<p:panelGrid columns="2">
 							<p:outputLabel for="RCamountWithoutTax"
 								value="#{messages['recurringChargeInstance.amountWithoutTax']}" />

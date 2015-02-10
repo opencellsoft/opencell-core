@@ -19,7 +19,12 @@ package org.meveo.commons.utils;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.poi.util.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -97,8 +102,40 @@ public class CsvBuilder {
 			}
 		}
 	}
+	 public void download(InputStream inputStream, String fileName) {
+			log.info("start to download...");
+			if(inputStream!=null){
+				try {
+					
+					javax.faces.context.FacesContext context = javax.faces.context.FacesContext
+							.getCurrentInstance();
+					HttpServletResponse res = (HttpServletResponse) context.getExternalContext()
+							.getResponse();
+					res.setContentType("application/force-download");
+					res.addHeader("Content-disposition", "attachment;filename=\"" + fileName
+							+ "\""); 
+					
+					OutputStream out = res.getOutputStream();
+
+					IOUtils.copy(inputStream, out);
+		            out.flush();
+					out.close();
+					context.responseComplete();
+					log.info("download over!");
+				} catch (Exception e) {
+					log.error("Error:"+e.getMessage()+", when dowload file: "+fileName);
+				}
+				log.info("downloaded successfully!");
+			}
+
+		}
+	
 
 	public boolean isEmpty() {
 		return sb.length() == 0;
 	}
+	
+	
+	
+	
 }
