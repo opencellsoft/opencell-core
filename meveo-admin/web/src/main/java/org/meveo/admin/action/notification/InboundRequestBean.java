@@ -1,23 +1,34 @@
 package org.meveo.admin.action.notification;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.enterprise.context.ConversationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.CsvBuilder;
+import org.meveo.commons.utils.CsvReader;
+import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.notification.InboundRequest;
 import org.meveo.model.notification.NotificationHistory;
+import org.meveo.model.notification.WebHook;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.notification.InboundRequestService;
+import org.primefaces.event.FileUploadEvent;
+import org.primefaces.model.UploadedFile;
 
 @Named
 @ConversationScoped
@@ -31,6 +42,29 @@ public class InboundRequestBean extends BaseBean<InboundRequest> {
     public InboundRequestBean() {
         super(InboundRequest.class);
     }
+    
+    
+    CsvReader csvReader = null;
+    private UploadedFile file; 
+    
+    private static final int FROM_IP= 0;
+    private static final int PORT= 1;
+    private static final int PORTOCOL= 2; 
+    private static final int PATH_INFO= 3;
+    private static final int CODE= 4; 
+    private static final int ACTIVE= 5;
+    private static final int SCHEME= 6;
+    private static final int CONTENT_TYPE= 7;
+    private static final int CONTENT_LENGHT= 8;
+    private static final int METHOD= 9;
+    private static final int AUTHENTIFICATION_TYPE= 10;
+    private static final int REQUEST_URI= 11;  
+    private static final int RESPONSE_CONTENT_TYPE= 15;
+    private static final int ENCODING= 16;  
+    
+    
+    
+
 
     @Override
     protected IPersistenceService<InboundRequest> getPersistenceService() {
@@ -116,10 +150,61 @@ public class InboundRequestBean extends BaseBean<InboundRequest> {
         	 csv.startNewLine();
         }
         InputStream inputStream=new ByteArrayInputStream(csv.toString().getBytes());
-        csv.download(inputStream, "NotificationHistory.csv");
+        csv.download(inputStream, "InboundRequests.csv");
     }
     
-    
+
+    public void handleFileUpload(FileUploadEvent event) throws Exception {
+    	try {
+    		file = event.getFile();
+    	    log.info("handleFileUpload " + file);
+    	    upload();
+    	} catch (BusinessException e) {
+    		log.error(e.getMessage(),e);
+    		messages.error(e.getMessage());
+    	} catch (IOException e) {
+    		log.error(e.getMessage(),e);
+    		messages.error(e.getMessage());
+    	}
+        
+    }
+
+	private void upload() throws IOException, BusinessException {
+		if (file != null) {
+
+			csvReader = new CsvReader(file.getInputstream(), ';',
+					Charset.forName("ISO-8859-1"));
+			csvReader.readHeaders();
+
+			InboundRequest inboundRequest = null;
+			while (csvReader.readRecord()) {
+				String[] values = csvReader.getValues();
+				inboundRequest = new InboundRequest();
+				inboundRequest.setRemoteAddr(values[FROM_IP]);
+				inboundRequest
+						.setRemotePort(!StringUtils.isBlank(values[PORT]) ? Integer
+								.parseInt(values[PORT]) : null);
+				inboundRequest.setProtocol(values[PORTOCOL]);
+				inboundRequest.setPathInfo(values[PATH_INFO]);
+				inboundRequest.setCode(values[CODE]);
+				inboundRequest
+						.setDisabled(Boolean.parseBoolean(values[ACTIVE]));
+				inboundRequest.setScheme(values[SCHEME]);
+				inboundRequest.setContentType(values[CONTENT_TYPE]);
+				inboundRequest.setContentLength(Integer
+						.parseInt(values[CONTENT_LENGHT]));
+				inboundRequest.setMethod(values[METHOD]);
+				inboundRequest.setAuthType(values[AUTHENTIFICATION_TYPE]);
+				inboundRequest.setRequestURI(values[REQUEST_URI]);
+				inboundRequest
+						.setResponseContentType(values[RESPONSE_CONTENT_TYPE]);
+				inboundRequest.setResponseEncoding(values[ENCODING]);
+				inboundRequestService.create(inboundRequest);
+				messages.info(new BundleKey("messages", "commons.csv"));
+			}
+
+		}
+	}
     
     
 }

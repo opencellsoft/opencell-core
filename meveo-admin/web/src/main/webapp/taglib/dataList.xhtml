@@ -31,6 +31,10 @@
 	<c:if test="${empty exportToCsv}">
 		<c:set var="exportToCsv" value="false" />
 	</c:if>
+	
+	<c:if test="${empty importCsv}">
+		<c:set var="importCsv" value="false" />
+	</c:if>
 
 	<c:if test="${empty resultsId}">
 		<c:set var="resultsId" value="results" />
@@ -78,9 +82,11 @@
 				<p:dataExporter type="xls" target="datatable_#{resultsId}"
 					fileName="data" pageOnly="false" />
 			</p:commandButton>
-			
-			<p:commandButton value="Export to CSV" action="#{backingBean.exportToFile()}" rendered="#{exportToCsv}" ajax="false"/>
-			
+			<p:panelGrid columns="4">
+			<p:commandButton style="margin-left:4px;" value="Export to CSV" action="#{backingBean.exportToFile()}" rendered="#{exportToCsv}" ajax="false"/>
+			<p:fileUpload mode="advanced" style="margin-left:0px;margin-top:25px"  label="Import CSV" rendered="#{importCsv}" 
+					update="@all" ajax="false"  fileUploadListener="#{backingBean.handleFileUpload}"  multiple="true" auto="true"/>
+			</p:panelGrid>
 			<p:panel styleClass="buttons-set-data-table">
 				<ui:insert name="add-on-buttons" />
 			</p:panel>
