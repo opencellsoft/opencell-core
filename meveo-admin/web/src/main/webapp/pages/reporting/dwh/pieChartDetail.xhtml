@@ -58,8 +58,14 @@
 			<hf:formField label="#{messages['pieChart.filled']}" field="filled" />
 			<hf:formField label="#{messages['pieChart.legendposition']}"
 				field="legendPosition" />
-			<hf:formField label="#{messages['pieChart.seriesColors']}"
-				field="seriesColors" />
+			<!-- <hf:formField label="#{messages['pieChart.seriesColors']}"
+				field="seriesColors" /> -->
+
+			<p:panelGrid columns="2">
+				<p:outputLabel value="#{messages['pieChart.seriesColors']}" />
+				<p:colorPicker value="#{pieChartBean.entity.seriesColors}" />
+			</p:panelGrid>
+
 			<hf:formField label="#{messages['pieChart.diameter']}"
 				field="diameter" />
 			<hf:formField label="#{messages['pieChart.sliceMargin']}"
@@ -71,7 +77,9 @@
 				field="legendCols" />
 			<hf:formField label="#{messages['pieChart.legendRows']}"
 				field="legendRows" />
-				
+
+
+
 			<p:commandButton id="showPreview"
 				action="#{pieChartBean.getChartEntityModel()}"
 				value="#{messages['page.chart.preview']}" update="@all"></p:commandButton>
@@ -87,7 +95,8 @@
 					shadow="#{pieChartBean.chartEntityModel.pieChart.shadow}"
 					showDataLabels="#{pieChartBean.chartEntityModel.pieChart.showDataLabels}"
 					legendCols="#{pieChartBean.chartEntityModel.pieChart.legendCols}"
-					legendRows="#{pieChartBean.chartEntityModel.pieChart.legendRows}" />
+					legendRows="#{pieChartBean.chartEntityModel.pieChart.legendRows}"
+					style="#{pie.pieChart.style}" styleClass="#{pie.pieChart.style}" />
 			</p:outputPanel>
 		</hf:formPanel>
 

@@ -10,81 +10,80 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "DWH_CHART_LINE")
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "DWH_CHART_LINE_SEQ")
-public class LineChart extends Chart{
+public class LineChart extends Chart {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1563273820297215070L;
 
-	@Column(name="FILLED")
+	@Column(name = "FILLED")
 	boolean filled;
-	
+
 	@Enumerated(EnumType.STRING)
-	@Column(name="LEGEND_POSITION")
+	@Column(name = "LEGEND_POSITION")
 	LegendPositionEnum legendPosition;
 
-	@Column(name="SERIES_COLORS",length=1000)
-	String seriesColors;
+	@Column(name = "SERIES_COLORS", length = 1000)
+	String seriesColors = "1b788f";
 
-	@Column(name="SHADOW")
-	boolean shadow=true;
-	
+	@Column(name = "SHADOW")
+	boolean shadow = true;
 
-	@Column(name="MIN_X")
+	@Column(name = "MIN_X")
 	int minX;
 
-	@Column(name="MAX_X")
+	@Column(name = "MAX_X")
 	int maxX;
 
-	@Column(name="MIN_Y")
+	@Column(name = "MIN_Y")
 	int minY;
 
-	@Column(name="MAX_Y")
+	@Column(name = "MAX_Y")
 	int maxY;
-	
-	//Whether line segments should be broken at null
-	//value, fall will join point on either side of line.
-	@Column(name="BREAK_ON_NULL")
+
+	// Whether line segments should be broken at null
+	// value, fall will join point on either side of line.
+	@Column(name = "BREAK_ON_NULL")
 	boolean breakOnNull;
 
-	@Column(name="X_AXIS_LABEL")
+	@Column(name = "X_AXIS_LABEL")
 	String xaxisLabel;
 
-	@Column(name="Y_AXIS_LABEL")
+	@Column(name = "Y_AXIS_LABEL")
 	String yaxisLabel;
-	
-	//Angle of the x-axis ticks
-	@Column(name="X_AXIS_ANGLE")
+
+	// Angle of the x-axis ticks
+	@Column(name = "X_AXIS_ANGLE")
 	Integer xaxisAngle;
 
-	@Column(name="Y_AXIS_ANGLE")
+	@Column(name = "Y_AXIS_ANGLE")
 	Integer yaxisAngle;
-	
-	//Whether to stack series
-	@Column(name="STACKED")
+
+	// Whether to stack series
+	@Column(name = "STACKED")
 	boolean stacked;
-	
-	//Enables plot zooming.
-	@Column(name="ZOOM")
+
+	// Enables plot zooming.
+	@Column(name = "ZOOM")
 	boolean zoom;
-	
-	//Enables animation on plot rendering
-	@Column(name="ANIMATE")
+
+	// Enables animation on plot rendering
+	@Column(name = "ANIMATE")
 	boolean animate;
-	
-	//Defines visibility of datatip.
-	@Column(name="SHOW_DATA_TIP")
-	boolean showDataTip=true;
-	
-	//Template string for datatips.
-	@Column(name="DATA_TIP_FORMAT")
+
+	// Defines visibility of datatip.
+	@Column(name = "SHOW_DATA_TIP")
+	boolean showDataTip = true;
+
+	// Template string for datatips.
+	@Column(name = "DATA_TIP_FORMAT")
 	String datatipFormat;
 
-	@Column(name="LEGEND_COLS")
+	@Column(name = "LEGEND_COLS")
 	int legendCols;
 
-	@Column(name="LEGEND_ROWS")
+	@Column(name = "LEGEND_ROWS")
 	int legendRows;
 
 	public boolean isFilled() {
@@ -245,8 +244,6 @@ public class LineChart extends Chart{
 
 	public void setLegendRows(int legendRows) {
 		this.legendRows = legendRows;
-	}	
-	
-	
+	}
 
 }

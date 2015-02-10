@@ -59,8 +59,10 @@
 			<hf:formField label="#{messages['lineChart.filled']}" field="filled" />
 			<hf:formField label="#{messages['lineChart.legendposition']}"
 				field="legendPosition" />
-			<hf:formField label="#{messages['lineChart.seriesColors']}"
-				field="seriesColors" />
+			<p:panelGrid columns="2">
+				<p:outputLabel value="#{messages['pieChart.seriesColors']}" />
+				<p:colorPicker value="#{lineChartBean.entity.seriesColors}" />
+			</p:panelGrid>
 			<hf:formField label="#{messages['lineChart.shadow']}" field="shadow" />
 			<hf:formField label="#{messages['lineChart.minX']}" field="minX" />
 			<hf:formField label="#{messages['lineChart.minY']}" field="minY" />
@@ -96,25 +98,29 @@
 
 			<p:outputPanel id="chartPreview"
 				rendered="#{lineChartBean.chartEntityModel.model != null}">
-				<p:barChart value="#{lineChartBean.chartEntityModel.model}"
-					fill="#{lineChartBean.chartEntityModel.barChart.filled}"
-					legendPosition="#{lineChartBean.chartEntityModel.barChart.legendPosition}"
-					barPadding="#{lineChartBean.chartEntityModel.barChart.barPadding}"
-					barMargin="#{lineChartBean.chartEntityModel.barChart.barMargin}"
-					stacked="#{lineChartBean.chartEntityModel.barChart.stacked}"
-					min="#{lineChartBean.chartEntityModel.barChart.min}"
-					max="#{lineChartBean.chartEntityModel.barChart.max}"
-					breakOnNull="#{lineChartBean.chartEntityModel.barChart.breakOnNull}"
-					xaxisLabel="#{lineChartBean.chartEntityModel.barChart.xaxisLabel}"
-					yaxisLabel="#{lineChartBean.chartEntityModel.barChart.yaxisLabel}"
-					xaxisAngle="#{lineChartBean.chartEntityModel.barChart.xaxisAngle}"
-					yaxisAngle="#{lineChartBean.chartEntityModel.barChart.yaxisAngle}"
-					legendCols="#{lineChartBean.chartEntityModel.barChart.legendCols}"
-					legendRows="#{lineChartBean.chartEntityModel.barChart.legendRows}"
-					zoom="#{lineChartBean.chartEntityModel.barChart.zoom}"
-					animate="#{lineChartBean.chartEntityModel.barChart.animate}"
-					showDatatip="#{lineChartBean.chartEntityModel.barChart.showDataTip}"
-					datatipFormat="#{lineChartBean.chartEntityModel.barChart.datatipFormat}" />
+				<p:lineChart value="#{lineChartBean.chartEntityModel.model}"
+					fill="#{lineChartBean.chartEntityModel.lineChart.filled}"
+					legendPosition="#{lineChartBean.chartEntityModel.lineChart.legendPosition}"
+					stacked="#{lineChartBean.chartEntityModel.lineChart.stacked}"
+					minX="#{lineChartBean.chartEntityModel.lineChart.minX}"
+					minY="#{lineChartBean.chartEntityModel.lineChart.minY}"
+					maxX="#{lineChartBean.chartEntityModel.lineChart.maxX}"
+					maxY="#{lineChartBean.chartEntityModel.lineChart.maxY}"
+					breakOnNull="#{lineChartBean.chartEntityModel.lineChart.breakOnNull}"
+					xaxisLabel="#{lineChartBean.chartEntityModel.lineChart.xaxisLabel}"
+					yaxisLabel="#{lineChartBean.chartEntityModel.lineChart.yaxisLabel}"
+					xaxisAngle="#{lineChartBean.chartEntityModel.lineChart.xaxisAngle}"
+					yaxisAngle="#{lineChartBean.chartEntityModel.lineChart.yaxisAngle}"
+					legendCols="#{lineChartBean.chartEntityModel.lineChart.legendCols}"
+					legendRows="#{lineChartBean.chartEntityModel.lineChart.legendRows}"
+					zoom="#{lineChartBean.chartEntityModel.lineChart.zoom}"
+					animate="#{lineChartBean.chartEntityModel.lineChart.animate}"
+					showDatatip="#{lineChartBean.chartEntityModel.lineChart.showDataTip}"
+					datatipFormat="#{lineChartBean.chartEntityModel.lineChart.datatipFormat}"
+					seriesColors="#{lineChartBean.chartEntityModel.lineChart.seriesColors}"
+					shadow="#{lineChartBean.chartEntityModel.lineChart.shadow}"
+					style="#{line.lineChart.style}"
+					styleClass="#{line.lineChart.style}" />
 			</p:outputPanel>
 
 		</hf:formPanel>
