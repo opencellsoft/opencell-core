@@ -1,6 +1,7 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:p="http://primefaces.org/ui"
 	xmlns:custom="http://manaty.net/custom"
@@ -24,80 +25,74 @@
 
 
 			</h:panelGrid>
-			<style type="text/css">
-.ui-datagrid-no-border>.ui-datagrid-content {
-	border: none;
-}
+			<h:panelGrid columns="3">
 
-.ui-datagrid {
-	min-width: 30%;
-}
-</style>
-			<p:dataGrid id="barChartList" var="bar"
-				value="#{barChartBean.chartModelList}" style="border:none;"
-				rowIndexVar="i" rendered="#{barChartBean.chartModelList.size() > 0}"
-				layout="grid" styleClass="ui-datagrid-no-border ui-datagrid">
-				<p:barChart value="#{bar.model}" fill="#{bar.barChart.filled}"
-					legendPosition="#{bar.barChart.legendPosition}"
-					barPadding="#{bar.barChart.barPadding}"
-					barMargin="#{bar.barChart.barMargin}"
-					stacked="#{bar.barChart.stacked}" min="#{bar.barChart.min}"
-					max="#{bar.barChart.max}" breakOnNull="#{bar.barChart.breakOnNull}"
-					xaxisLabel="#{bar.barChart.xaxisLabel}"
-					yaxisLabel="#{bar.barChart.yaxisLabel}"
-					xaxisAngle="#{bar.barChart.xaxisAngle}"
-					yaxisAngle="#{bar.barChart.yaxisAngle}"
-					legendCols="#{bar.barChart.legendCols}"
-					legendRows="#{bar.barChart.legendRows}" zoom="#{bar.barChart.zoom}"
-					animate="#{bar.barChart.animate}"
-					showDatatip="#{bar.barChart.showDataTip}"
-					datatipFormat="#{bar.barChart.datatipFormat}"
-					style="#{bar.barChart.style}"
-					styleClass="#{bar.barChart.styleClass}" />
+				<ui:repeat var="bar" value="#{barChartBean.chartModelList}">
 
-			</p:dataGrid>
-			<p:dataGrid id="lineChartList" var="line"
-				value="#{lineChartBean.chartModelList}" style="border:none;"
-				rowIndexVar="i"
-				rendered="#{lineChartBean.chartModelList.size() > 0}" layout="grid"
-				styleClass="ui-datagrid-no-border ui-datagrid">
-				<p:lineChart value="#{line.model}" fill="#{line.lineChart.filled}"
-					legendPosition="#{line.lineChart.legendPosition}"
-					barPadding="#{line.lineChart.barPadding}"
-					barMargin="#{line.lineChart.barMargin}"
-					stacked="#{line.lineChart.stacked}" min="#{line.lineChart.min}"
-					max="#{line.lineChart.max}"
-					breakOnNull="#{line.lineChart.breakOnNull}"
-					xaxisLabel="#{line.lineChart.xaxisLabel}"
-					yaxisLabel="#{line.lineChart.yaxisLabel}"
-					xaxisAngle="#{line.lineChart.xaxisAngle}"
-					yaxisAngle="#{line.lineChart.yaxisAngle}"
-					legendCols="#{line.lineChart.legendCols}"
-					legendRows="#{line.lineChart.legendRows}"
-					zoom="#{line.lineChart.zoom}" animate="#{line.lineChart.animate}"
-					showDatatip="#{line.lineChart.showDataTip}"
-					datatipFormat="#{line.lineChart.datatipFormat}"
-					style="#{line.lineChart.style}"
-					styleClass="#{line.lineChart.styleClass}" />
-			</p:dataGrid>
-			<p:dataGrid id="pieChartList" var="pie"
-				value="#{pieChartBean.chartModelList}" style="border:none;"
-				rowIndexVar="i" rendered="#{pieChartBean.chartModelList.size() > 0}"
-				layout="grid" styleClass="ui-datagrid-no-border ui-datagrid">
-				<p:pieChart value="#{pie.model}"
-					legendPosition="#{pie.pieChart.legendPosition}"
-					fill="#{pie.pieChart.filled}"
-					seriesColors="#{pie.pieChart.seriesColors}"
-					diameter="#{pie.pieChart.diameter}"
-					sliceMargin="#{pie.pieChart.sliceMargin}"
-					shadow="#{pie.pieChart.shadow}"
-					showDataLabels="#{pie.pieChart.showDataLabels}"
-					legendCols="#{pie.pieChart.legendCols}"
-					legendRows="#{pie.pieChart.legendRows}"
-					style="#{pie.pieChart.style}"
-					styleClass="#{pie.pieChart.styleClass}" />
-			</p:dataGrid>
+					<p:panel style="width:500px;">
+						<p:barChart value="#{bar.model}" fill="#{bar.barChart.filled}"
+							legendPosition="#{bar.barChart.legendPosition}"
+							barPadding="#{bar.barChart.barPadding}"
+							barMargin="#{bar.barChart.barMargin}"
+							stacked="#{bar.barChart.stacked}" min="#{bar.barChart.min}"
+							max="#{bar.barChart.max}"
+							breakOnNull="#{bar.barChart.breakOnNull}"
+							xaxisLabel="#{bar.barChart.xaxisLabel}"
+							yaxisLabel="#{bar.barChart.yaxisLabel}"
+							xaxisAngle="#{bar.barChart.xaxisAngle}"
+							yaxisAngle="#{bar.barChart.yaxisAngle}"
+							legendCols="#{bar.barChart.legendCols}"
+							legendRows="#{bar.barChart.legendRows}"
+							zoom="#{bar.barChart.zoom}" animate="#{bar.barChart.animate}"
+							showDatatip="#{bar.barChart.showDataTip}"
+							datatipFormat="#{bar.barChart.datatipFormat}"
+							style="#{bar.barChart.style}"
+							styleClass="#{bar.barChart.styleClass}" />
+					</p:panel>
+				</ui:repeat>
 
+				<ui:repeat var="line" value="#{lineChartBean.chartModelList}">
+					<p:panel style="width:500px;">
+						<p:lineChart value="#{line.model}" fill="#{line.lineChart.filled}"
+							legendPosition="#{line.lineChart.legendPosition}"
+							barPadding="#{line.lineChart.barPadding}"
+							barMargin="#{line.lineChart.barMargin}"
+							stacked="#{line.lineChart.stacked}" min="#{line.lineChart.min}"
+							max="#{line.lineChart.max}"
+							breakOnNull="#{line.lineChart.breakOnNull}"
+							xaxisLabel="#{line.lineChart.xaxisLabel}"
+							yaxisLabel="#{line.lineChart.yaxisLabel}"
+							xaxisAngle="#{line.lineChart.xaxisAngle}"
+							yaxisAngle="#{line.lineChart.yaxisAngle}"
+							legendCols="#{line.lineChart.legendCols}"
+							legendRows="#{line.lineChart.legendRows}"
+							zoom="#{line.lineChart.zoom}" animate="#{line.lineChart.animate}"
+							showDatatip="#{line.lineChart.showDataTip}"
+							datatipFormat="#{line.lineChart.datatipFormat}"
+							style="#{line.lineChart.style}"
+							styleClass="#{line.lineChart.styleClass}" />
+					</p:panel>
+				</ui:repeat>
+
+
+				<ui:repeat var="pie" value="#{pieChartBean.chartModelList}">
+					<p:panel style="width:500px;">
+						<p:pieChart value="#{pie.model}"
+							legendPosition="#{pie.pieChart.legendPosition}"
+							fill="#{pie.pieChart.filled}"
+							seriesColors="#{pie.pieChart.seriesColors}"
+							diameter="#{pie.pieChart.diameter}"
+							sliceMargin="#{pie.pieChart.sliceMargin}"
+							shadow="#{pie.pieChart.shadow}"
+							showDataLabels="#{pie.pieChart.showDataLabels}"
+							legendCols="#{pie.pieChart.legendCols}"
+							legendRows="#{pie.pieChart.legendRows}"
+							style="#{pie.pieChart.style}"
+							styleClass="#{pie.pieChart.styleClass}" />
+					</p:panel>
+				</ui:repeat>
+
+			</h:panelGrid>
 		</p:panel>
 
 	</ui:define>
