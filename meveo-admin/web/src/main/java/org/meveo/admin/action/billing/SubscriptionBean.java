@@ -105,6 +105,8 @@ public class SubscriptionBean extends StatefulBaseBean<Subscription> {
 
 	private RecurringChargeInstance recurringChargeInstance;
 
+	private UsageChargeInstance usageChargeInstance;
+
 	private BigDecimal oneShotChargeInstanceQuantity = BigDecimal.ONE;
 
 	private String oneShotChargeInstanceWalletCode = null;
@@ -297,15 +299,15 @@ public class SubscriptionBean extends StatefulBaseBean<Subscription> {
 	}
 
 	public void saveRecurringChargeIns() {
-		log.debug("saveRecurringChargeIns getObjectId=#0", getObjectId());
+		log.debug("saveRecurringChargeIns getObjectId={}", getObjectId());
 		try {
 			if (recurringChargeInstance != null) {
 				if (recurringChargeInstance.getId() != null) {
-					log.debug("update RecurringChargeIns #0, id:#1", recurringChargeInstance,
+					log.debug("update RecurringChargeIns {}, id={}", recurringChargeInstance,
 							recurringChargeInstance.getId());
 					recurringChargeInstanceService.update(recurringChargeInstance);
 				} else {
-					log.debug("save RecurringChargeIns #0", recurringChargeInstance);
+					log.debug("save RecurringChargeIns {}", recurringChargeInstance);
 
 					recurringChargeInstance.setSubscription(entity);
 					Long id = recurringChargeInstanceService.recurringChargeApplication(entity,
@@ -644,6 +646,34 @@ public class SubscriptionBean extends StatefulBaseBean<Subscription> {
 	@Override
 	protected List<String> getListFieldsToFetch() {
 		return Arrays.asList("provider");
+	}
+
+	public UsageChargeInstance getUsageChargeInstance() {
+		return usageChargeInstance;
+	}
+
+	public void setUsageChargeInstance(UsageChargeInstance usageChargeInstance) {
+		this.usageChargeInstance = usageChargeInstance;
+	}
+
+	public void editUsageChargeIns(UsageChargeInstance chargeInstance) {
+		this.usageChargeInstance = chargeInstance;
+		log.debug("setting usageChargeIns " + chargeInstance);
+	}
+
+	public void saveUsageChargeIns() {
+		log.debug("saveUsageChargeIns getObjectId={}", getObjectId());
+		try {
+			if (usageChargeInstance != null) {
+				if (usageChargeInstance.getId() != null) {
+					log.debug("update usageChargeIns {}, id={}", usageChargeInstance, usageChargeInstance.getId());
+					usageChargeInstanceService.update(usageChargeInstance);
+				}
+			}
+		} catch (Exception e) {
+			log.error("Failed saving usage charge!", e.getMessage());
+			messages.error(e.getMessage());
+		}
 	}
 
 }
