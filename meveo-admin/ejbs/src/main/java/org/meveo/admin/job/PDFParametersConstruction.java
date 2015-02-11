@@ -26,6 +26,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import javax.ejb.Stateless;
+import javax.inject.Inject;
 
 import net.sf.jasperreports.engine.JRParameter;
 
@@ -37,6 +38,7 @@ import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.TIP;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.payments.CustomerAccount;
+import org.meveo.service.catalog.impl.CatMessagesService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,7 +47,9 @@ public class PDFParametersConstruction {
 
 	private Logger log = LoggerFactory
 			.getLogger(PDFParametersConstruction.class);
-
+    @Inject
+    private CatMessagesService catMessagesService;
+    
 	private static final String TIP_PAYMENT_METHOD = "TIP";
 	private static final String PDF_DIR_NAME = "pdf";
 	private static NumberFormat currencyFormat = NumberFormat
@@ -158,12 +162,17 @@ public class PDFParametersConstruction {
 	}
 
 	public String getCustomerAddress(Invoice invoice) {
+
+	    String billingAccountLanguage = invoice.getBillingAccount().getTradingLanguage().getLanguage().getLanguageCode();
 		CustomerAccount customerAccount = invoice.getBillingAccount()
 				.getCustomerAccount();
 		String name = "";
 		if (customerAccount.getName() != null) {
-			name = customerAccount.getName().getTitle() == null ? ""
-					: (customerAccount.getName().getTitle().getCode() + " ");
+		    name="";
+		    if (customerAccount.getName().getTitle() != null){
+		        name=catMessagesService.getMessageDescription(customerAccount.getName().getTitle(), billingAccountLanguage, customerAccount.getName().getTitle().getDescription())+" ";
+		    }
+		    
 			name += customerAccount.getName().getFirstName() == null ? ""
 					: (customerAccount.getName().getFirstName() + " ");
 			name += customerAccount.getName().getLastName() == null ? ""

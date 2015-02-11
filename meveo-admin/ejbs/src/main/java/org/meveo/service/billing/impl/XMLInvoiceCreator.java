@@ -97,6 +97,8 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 		log.debug("creating xml invoice");
 
 		try {
+		    String billingAccountLanguage = invoice.getBillingAccount().getTradingLanguage().getLanguage().getLanguageCode();
+		    
 			boolean entreprise = invoice.getProvider().isEntreprise();
 			int rounding = invoice.getProvider().getRounding() == null ? 2 : invoice.getProvider().getRounding();
 
@@ -147,7 +149,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 				customerTag.setAttribute("customFields", customer.getCustomFieldsAsJson());
 			}
 			header.appendChild(customerTag);
-			addNameAndAdress(customer, doc, customerTag);
+			addNameAndAdress(customer, doc, customerTag, billingAccountLanguage);
 
 			log.debug("creating ca");
 			CustomerAccount customerAccount = invoice.getBillingAccount().getCustomerAccount();
@@ -186,7 +188,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 					customerAccount.getStatus().equals(CustomerAccountStatusEnum.CLOSE) + "");
 
 			header.appendChild(customerAccountTag);
-			addNameAndAdress(customerAccount, doc, customerAccountTag);
+			addNameAndAdress(customerAccount, doc, customerAccountTag, billingAccountLanguage);
 			addproviderContact(customerAccount, doc, customerAccountTag);
 
 			log.debug("creating ba");
@@ -223,7 +225,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 			email.appendChild(emailTxt);
 			billingAccountTag.appendChild(email);
 
-			addNameAndAdress(billingAccount, doc, billingAccountTag);
+			addNameAndAdress(billingAccount, doc, billingAccountTag, billingAccountLanguage);
 
 			addPaymentInfo(billingAccount, doc, billingAccountTag);
 
@@ -317,6 +319,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 		Element userAccounts = doc.createElement("userAccounts");
 		parent.appendChild(userAccounts);
 		BillingAccount billingAccount = invoice.getBillingAccount();
+		String billingAccountLanguage = billingAccount.getTradingLanguage().getLanguage().getLanguageCode();
 
 		for (UserAccount userAccount : billingAccount.getUsersAccounts()) {
 			Element userAccountTag = doc.createElement("userAccount");
@@ -329,13 +332,13 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 				userAccountTag.setAttribute("customFields", userAccount.getCustomFieldsAsJson());
 			}
 			userAccounts.appendChild(userAccountTag);
-			addNameAndAdress(userAccount, doc, userAccountTag);
+			addNameAndAdress(userAccount, doc, userAccountTag, billingAccountLanguage);
 			addCategories(userAccount, invoice, doc, userAccountTag, true, enterprise);
 		}
 
 	}
 
-	public static void addNameAndAdress(AccountEntity account, Document doc, Element parent) {
+	public void addNameAndAdress(AccountEntity account, Document doc, Element parent, String languageCode) {
 		log.debug("add name and address");
 
 		if (!(account instanceof Customer)) {
@@ -344,7 +347,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 
 			Element quality = doc.createElement("quality");
 			if (account.getName().getTitle() != null) {
-				Text qualityTxt = doc.createTextNode(account.getName().getTitle().getCode());
+                Text qualityTxt = doc.createTextNode(catMessagesService.getMessageDescription(account.getName().getTitle(), languageCode, account.getName().getTitle().getDescription()));
 				quality.appendChild(qualityTxt);
 			}
 			nameTag.appendChild(quality);
