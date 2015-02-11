@@ -17,9 +17,6 @@
 package org.meveo.admin.dunning;
 
 import java.io.File;
-import java.util.ResourceBundle;
-
-import javax.inject.Inject;
 
 import org.meveo.commons.utils.CsvBuilder;
 import org.meveo.commons.utils.NumberUtils;
@@ -44,11 +41,7 @@ public class DunningLotBuilder {
 	private static final String DECIMAL_FORMAT = "bayad.decimalFormat";
 	
 	private static final String DUNNING_LOT_OUTPUT_DIR = "bayad.dunning.lotOutputDir";
-	
-
-    @Inject
-    private ResourceBundle resource;
-    
+	            
 	ParamBean paramBean=ParamBean.getInstance();
 	
     private DunningLOT dunningLOT;
@@ -94,7 +87,10 @@ public class DunningLotBuilder {
             
             if (actionDunning.getCustomerAccount().getName() != null) {
                 if (actionDunning.getCustomerAccount().getName().getTitle() != null) {
-                    descTitle = resource.getString(actionDunning.getCustomerAccount().getName().getTitle().getDescriptionKey());
+//                    Title title = actionDunning.getCustomerAccount().getName().getTitle();
+//                    String languageCode = actionDunning.getCustomerAccount().getProvider().getLanguage().getLanguageCode();
+//                    descTitle = catMessagesService.getMessageDescription(title, languageCode, title.getDescription());
+                    descTitle = actionDunning.getCustomerAccount().getName().getTitle().getDescription();
                 }      
                 firstName = actionDunning.getCustomerAccount().getName().getFirstName();
                 lastName =  actionDunning.getCustomerAccount().getName().getLastName();

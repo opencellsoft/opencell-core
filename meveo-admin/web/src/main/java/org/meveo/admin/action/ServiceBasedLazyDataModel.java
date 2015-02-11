@@ -45,9 +45,9 @@ public abstract class ServiceBasedLazyDataModel<T extends IEntity> extends
 			sortField = getDefaultSortImpl();
 		}
 
-		if (getDefaultSortOrderImpl() != null) {
-			sortOrder = getDefaultSortOrderImpl();
-		}
+        if ((sortOrder == null || sortOrder == SortOrder.UNSORTED) && getDefaultSortOrderImpl() != null) {
+            sortOrder = getDefaultSortOrderImpl();
+        }
 
 		PaginationConfiguration paginationConfig = new PaginationConfiguration(
 				first, pageSize, getSearchCriteria(),

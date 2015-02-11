@@ -31,13 +31,11 @@ import org.jboss.solder.servlet.http.RequestParam;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.action.StatelessBaseBean;
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.model.billing.CatMessages;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.InvoiceSubcategoryCountry;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.InvoiceSubCategoryCountryService;
-import org.meveo.service.catalog.impl.CatMessagesService;
 import org.meveo.service.catalog.impl.InvoiceCategoryService;
 import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
 import org.primefaces.component.tabview.TabView;
@@ -60,9 +58,6 @@ public class InvoiceSubCategoryBean extends
 	 */
 	@Inject
 	private InvoiceSubCategoryService invoiceSubCategoryService;
-
-	@Inject
-	private CatMessagesService catMessagesService;
 
 	@Inject
 	private InvoiceSubCategoryCountryService invoiceSubCategoryCountryService;
@@ -177,15 +172,7 @@ public class InvoiceSubCategoryBean extends
 	@Override
 	public InvoiceSubCategory initEntity() {
 		InvoiceSubCategory invoiceCatSub = super.initEntity();
-		languageMessagesMap.clear();
-		if (invoiceCatSub.getId() != null) {
-			for (CatMessages msg : catMessagesService
-					.getCatMessagesList(InvoiceSubCategory.class
-							.getSimpleName() + "_" + invoiceCatSub.getId())) {
-				languageMessagesMap.put(msg.getLanguageCode(),
-						msg.getDescription());
-			}
-		}
+
 		if (invoiceCategoryId.get() != null) {
 			entity.setInvoiceCategory(invoiceCategoryService
 					.findById(invoiceCategoryId.get()));
@@ -214,40 +201,17 @@ public class InvoiceSubCategoryBean extends
 			throws BusinessException {
 
 		if (entity.getId() != null) {
-			for (String msgKey : languageMessagesMap.keySet()) {
-				String description = languageMessagesMap.get(msgKey);
-				CatMessages catMsg = catMessagesService.getCatMessages(entity
-						.getClass().getSimpleName() + "_" + entity.getId(),
-						msgKey);
-				if (catMsg != null) {
-					catMsg.setDescription(description);
-					catMessagesService.update(catMsg);
-				} else {
-					CatMessages catMessages = new CatMessages(entity.getClass()
-							.getSimpleName() + "_" + entity.getId(), msgKey,
-							description);
-					catMessagesService.create(catMessages);
-				}
-			}
 			super.saveOrUpdate(killConversation);
+	        return getListViewName();
 
 		} else {
-			getPersistenceService().create(entity);
+		    super.saveOrUpdate(killConversation);
 			messages.info(new BundleKey("messages", "invoiceSubCaterogy.AddTax"));
 			if (killConversation) {
 				endConversation();
 			}
-			for (String msgKey : languageMessagesMap.keySet()) {
-				String description = languageMessagesMap.get(msgKey);
-				CatMessages catMessages = new CatMessages(entity.getClass()
-						.getSimpleName() + "_" + entity.getId(), msgKey,
-						description);
-				catMessagesService.create(catMessages);
-			}
 			return null;
 		}
-
-		return getListViewName();
 	}
 
 	@Override

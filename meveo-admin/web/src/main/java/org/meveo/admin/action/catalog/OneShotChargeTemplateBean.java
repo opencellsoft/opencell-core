@@ -25,15 +25,13 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.jboss.seam.international.status.builder.BundleKey;
+import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.action.StatelessBaseBean;
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.model.billing.CatMessages;
-import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.TriggeredEDRTemplate;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
-import org.meveo.service.catalog.impl.CatMessagesService;
 import org.meveo.service.catalog.impl.OneShotChargeTemplateService;
 import org.meveo.service.catalog.impl.RecurringChargeTemplateService;
 import org.meveo.service.catalog.impl.TriggeredEDRTemplateService;
@@ -60,9 +58,6 @@ public class OneShotChargeTemplateBean extends StatelessBaseBean<OneShotChargeTe
 	private OneShotChargeTemplateService oneShotChargeTemplateService;
 
 	@Inject
-	private CatMessagesService catMessagesService;
-
-	@Inject
 	private RecurringChargeTemplateService recurringChargeTemplateService;
 
 	@Inject
@@ -80,27 +75,6 @@ public class OneShotChargeTemplateBean extends StatelessBaseBean<OneShotChargeTe
 	 */
 	public OneShotChargeTemplateBean() {
 		super(OneShotChargeTemplate.class);
-	}
-
-	/**
-	 * Factory method for entity to edit. If objectId param set load that entity
-	 * from database, otherwise create new.
-	 * 
-	 * @throws IllegalAccessException
-	 * @throws InstantiationException
-	 */
-	@Override
-	public OneShotChargeTemplate initEntity() {
-		OneShotChargeTemplate oneShotChargeTemplate = super.initEntity();
-		if (oneShotChargeTemplate.getId() != null) {
-			for (CatMessages msg : catMessagesService
-					.getCatMessagesList(ChargeTemplate.class.getSimpleName()
-							+ "_" + oneShotChargeTemplate.getId())) {
-				languageMessagesMap.put(msg.getLanguageCode(),
-						msg.getDescription());
-			}
-		}
-		return oneShotChargeTemplate;
 	}
 
 	@Override
@@ -154,7 +128,6 @@ public class OneShotChargeTemplateBean extends StatelessBaseBean<OneShotChargeTe
 	@Override
 	public String saveOrUpdate(boolean killConversation)
 			throws BusinessException {
-		String back = null;
 
 		// check for unicity
 		if (recurringChargeTemplateService.findByCode(entity.getCode(),
@@ -165,35 +138,8 @@ public class OneShotChargeTemplateBean extends StatelessBaseBean<OneShotChargeTe
 			return null;
 		}
 
-		if (entity.getId() != null) {
-			for (String msgKey : languageMessagesMap.keySet()) {
-				String description = languageMessagesMap.get(msgKey);
-				CatMessages catMsg = catMessagesService.getCatMessages(
-						ChargeTemplate.class.getSimpleName() + "_"
-								+ entity.getId(), msgKey);
-				if (catMsg != null) {
-					catMsg.setDescription(description);
-					catMessagesService.update(catMsg);
-				} else {
-					CatMessages catMessages = new CatMessages(
-							ChargeTemplate.class.getSimpleName() + "_"
-									+ entity.getId(), msgKey, description);
-					catMessagesService.create(catMessages);
-				}
-			}
-			back = super.saveOrUpdate(killConversation);
 
-		} else {
-			back = super.saveOrUpdate(killConversation);
-			for (String msgKey : languageMessagesMap.keySet()) {
-				String description = languageMessagesMap.get(msgKey);
-				CatMessages catMessages = new CatMessages(
-						ChargeTemplate.class.getSimpleName() + "_"
-								+ entity.getId(), msgKey, description);
-				catMessagesService.create(catMessages);
-			}
-		}
-		return back;
+		return super.saveOrUpdate(killConversation);
 	}
 
 	/**

@@ -76,7 +76,7 @@ public class Name implements Serializable, Cloneable {
 
 	@Override
 	public String toString() {
-		return (title != null ? (title.getCode() + " " + (firstName != null ? firstName : "") + (lastName != null ? " "
+		return (title != null ? (title.getDescription() + " " + (firstName != null ? firstName : "") + (lastName != null ? " "
 				+ lastName : "")) : "");
 	}
 

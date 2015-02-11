@@ -211,17 +211,17 @@
 
 														<p:selectOneMenu id="title_select"
 															value="#{billingAccountBean.entity.name.title}"
-															rendered="#{billingAccountBean.edit}">
+															rendered="#{billingAccountBean.edit}" >
 															<f:selectItem itemLabel="" itemValue="" />
 															<f:selectItems value="#{titleBean.listAll()}" var="t"
-																itemLabel="#{messages['Title.'.concat(t.code)]}" />
+																itemLabel="#{t.description}" />
 															<s:objectConverter />
 															<p:ajax event="valueChange" immediate="false"
 																update=":parentTab:formBillingAccountPanel:formId:childTab:invoicePrefixPanel :parentTab:formBillingAccountPanel:formId:childTab:invoicePrefixBoxPanel :parentTab:formBillingAccountPanel:formId:childTab:bankCoordinatePanel :parentTab:formBillingAccountPanel:formId:childTab:userNamePanel :parentTab:formBillingAccountPanel:formId:childTab:countryPanel" />
 														</p:selectOneMenu>
 														<h:outputText
 															rendered="#{!billingAccountBean.edit and billingAccountBean.entity.name.title != null}"
-															value="#{messages['Title.'.concat(billingAccountBean.entity.name.title.code)]}"
+															value="#{billingAccountBean.entity.name.title.description}"
 															style="font-weight:bold;" />
 													</h:panelGrid>
 

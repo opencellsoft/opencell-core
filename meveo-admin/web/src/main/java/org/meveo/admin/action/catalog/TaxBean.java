@@ -24,14 +24,12 @@ import javax.enterprise.context.ConversationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.action.StatelessBaseBean;
-import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.ParamBean;
-import org.meveo.model.billing.CatMessages;
 import org.meveo.model.billing.Tax;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
-import org.meveo.service.catalog.impl.CatMessagesService;
 import org.meveo.service.catalog.impl.TaxService;
 
 /**
@@ -49,9 +47,6 @@ public class TaxBean extends StatelessBaseBean<Tax> {
 	 */
 	@Inject
 	private TaxService taxService;
-
-	@Inject
-	private CatMessagesService catMessagesService;
 
 	private String descriptionFr;
 	private String[] accountingCodeFields = new String[7];
@@ -80,58 +75,8 @@ public class TaxBean extends StatelessBaseBean<Tax> {
 		log.debug("start conversation id: {}", conversation.getId());
 		Tax tax = super.initEntity();
 
-		languageMessagesMap.clear();
-		if (tax.getId() != null) {
-			for (CatMessages msg : catMessagesService
-					.getCatMessagesList(Tax.class.getSimpleName() + "_"
-							+ tax.getId())) {
-				languageMessagesMap.put(msg.getLanguageCode(),
-						msg.getDescription());
-			}
-		}
 		parseAccountingCode();
 		return tax;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.meveo.admin.action.BaseBean#saveOrUpdate(boolean)
-	 */
-	@Override
-	public String saveOrUpdate(boolean killConversation)
-			throws BusinessException {
-		log.debug("end conversation id: {}", conversation.getId());
-		String back = null;
-		if (entity.getId() != null) {
-			for (String msgKey : languageMessagesMap.keySet()) {
-				String description = languageMessagesMap.get(msgKey);
-				CatMessages catMsg = catMessagesService.getCatMessages(entity
-						.getClass().getSimpleName() + "_" + entity.getId(),
-						msgKey);
-				if (catMsg != null) {
-					catMsg.setDescription(description);
-					catMessagesService.update(catMsg);
-				} else {
-					CatMessages catMessages = new CatMessages(entity.getClass()
-							.getSimpleName() + "_" + entity.getId(), msgKey,
-							description);
-					catMessagesService.create(catMessages);
-				}
-			}
-			back = super.saveOrUpdate(killConversation);
-		} else {
-			back = super.saveOrUpdate(killConversation);
-			for (String msgKey : languageMessagesMap.keySet()) {
-				String description = languageMessagesMap.get(msgKey);
-				CatMessages catMessages = new CatMessages(entity.getClass()
-						.getSimpleName() + "_" + entity.getId(), msgKey,
-						description);
-				catMessagesService.create(catMessages);
-			}
-		}
-
-		return back;
 	}
 
 	/**

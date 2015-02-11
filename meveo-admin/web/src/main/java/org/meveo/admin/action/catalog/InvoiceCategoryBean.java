@@ -23,13 +23,11 @@ import javax.enterprise.context.ConversationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.action.StatelessBaseBean;
-import org.meveo.admin.exception.BusinessException;
-import org.meveo.model.billing.CatMessages;
 import org.meveo.model.billing.InvoiceCategory;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
-import org.meveo.service.catalog.impl.CatMessagesService;
 import org.meveo.service.catalog.impl.InvoiceCategoryService;
 
 @Named
@@ -37,9 +35,6 @@ import org.meveo.service.catalog.impl.InvoiceCategoryService;
 public class InvoiceCategoryBean extends StatelessBaseBean<InvoiceCategory> {
 
 	private static final long serialVersionUID = 1L;
-
-	@Inject
-	private CatMessagesService catMessagesService;
 
 	/**
 	 * Injected @{link InvoiceCategory} service. Extends
@@ -54,71 +49,6 @@ public class InvoiceCategoryBean extends StatelessBaseBean<InvoiceCategory> {
 	 */
 	public InvoiceCategoryBean() {
 		super(InvoiceCategory.class);
-	}
-
-	/**
-	 * Factory method for entity to edit. If objectId param set load that entity
-	 * from database, otherwise create new.
-	 * 
-	 * @throws IllegalAccessException
-	 * @throws InstantiationException
-	 */
-	@Override
-	public InvoiceCategory initEntity() {
-		InvoiceCategory invoicecat = super.initEntity();
-		languageMessagesMap.clear();
-		if (invoicecat.getId() != null) {
-			for (CatMessages msg : catMessagesService
-					.getCatMessagesList(InvoiceCategory.class.getSimpleName()
-							+ "_" + invoicecat.getId())) {
-				languageMessagesMap.put(msg.getLanguageCode(),
-						msg.getDescription());
-			}
-		}
-
-		return invoicecat;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.meveo.admin.action.BaseBean#saveOrUpdate(boolean)
-	 */
-	@Override
-	public String saveOrUpdate(boolean killConversation)
-			throws BusinessException {
-		String back = null;
-		if (entity.getId() != null) {
-			for (String msgKey : languageMessagesMap.keySet()) {
-				String description = languageMessagesMap.get(msgKey);
-				CatMessages catMsg = catMessagesService.getCatMessages(entity
-						.getClass().getSimpleName() + "_" + entity.getId(),
-						msgKey);
-				if (catMsg != null) {
-					catMsg.setDescription(description);
-					catMessagesService.update(catMsg);
-				} else {
-					CatMessages catMessages = new CatMessages(entity.getClass()
-							.getSimpleName() + "_" + entity.getId(), msgKey,
-							description);
-					catMessagesService.create(catMessages);
-				}
-			}
-			back = super.saveOrUpdate(killConversation);
-
-		} else {
-			back = super.saveOrUpdate(killConversation);
-			for (String msgKey : languageMessagesMap.keySet()) {
-				String description = languageMessagesMap.get(msgKey);
-				CatMessages catMessages = new CatMessages(entity.getClass()
-						.getSimpleName() + "_" + entity.getId(), msgKey,
-						description);
-				catMessagesService.create(catMessages);
-			}
-
-		}
-
-		return back;
 	}
 
 	/**

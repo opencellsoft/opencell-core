@@ -33,7 +33,7 @@
 					<h:outputText value="#{messages['name.title']}" />
 				</f:facet>
 				<e:cell>
-					<h:outputText rendered="#{entity.name.title != null}" value="#{messages[stringUtil.merge('Title.',entity.name.title.code)]}" />
+					<h:outputText rendered="#{entity.name.title != null}" value="#{entity.name.title.description}" />
 				</e:cell>
 			</p:column>
 			<hftl:column label="#{messages['billingAccount.name']}" field="name" />

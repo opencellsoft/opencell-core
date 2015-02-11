@@ -171,14 +171,14 @@
 												rendered="#{userAccountBean.edit}">
 												<f:selectItem itemLabel="" itemValue="" />
 												<f:selectItems value="#{titleBean.listAll()}" var="t"
-													itemLabel="#{messages['Title.'.concat(t.code)]}" />
+													itemLabel="#{t.description}" />
 												<s:objectConverter />
 												<p:ajax event="valueChange"
 													update=":userAccountFormPanel:formId:userAccountTab:userNamePanel :userAccountFormPanel:formId:userAccountTab:countryPanel" />
 											</p:selectOneMenu>
 											<h:outputText
 												rendered="#{!userAccountBean.edit and userAccountBean.entity.name.title != null}"
-												value="#{messages['Title.'.concat(userAccountBean.entity.name.title.code)]}"
+												value="#{userAccountBean.entity.name.title.description}"
 												style="font-weight:bold;" />
 										</p:panelGrid>
 									</hftl:panelGroup>

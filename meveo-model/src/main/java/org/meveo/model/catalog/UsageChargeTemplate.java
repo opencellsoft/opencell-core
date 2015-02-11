@@ -25,7 +25,10 @@ import javax.persistence.Enumerated;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import org.meveo.model.MultilanguageEntity;
+
 @Entity
+@MultilanguageEntity
 @Table(name = "CAT_USAGE_CHARGE_TEMPLATE")
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "CAT_USAGE_CHARGE_TEMPLATE_SEQ")
 public class UsageChargeTemplate extends ChargeTemplate {

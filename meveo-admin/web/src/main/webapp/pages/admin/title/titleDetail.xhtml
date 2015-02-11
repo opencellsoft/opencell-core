@@ -1,35 +1,16 @@
-<ui:composition xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:s="http://jboss.com/products/seam/taglib"
-	xmlns:ui="http://java.sun.com/jsf/facelets"
-	xmlns:f="http://java.sun.com/jsf/core"
-	xmlns:h="http://java.sun.com/jsf/html"
-	xmlns:rich="http://richfaces.org/rich"
-	xmlns:a="http://richfaces.org/a4j" xmlns:hftl="http://hftl.org"
-	xmlns:hf="http://java.sun.com/jsf/composite/tags"
-	xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:hf="http://java.sun.com/jsf/composite/tags"
+    template="/layout/template.xhtml">
 
-	<ui:define name="navigation">
-		<ui:include src="/layout/navigation.xhtml" />
-	</ui:define>
+    <ui:define name="navigation">
+        <ui:include src="/layout/navigation.xhtml" />
+    </ui:define>
 
-	<ui:define name="body">
+    <ui:define name="body">
 
-		<hf:formPanel label="#{messages['title.panel']}"
-			backingBean="#{titleBean}">
-			<hf:formField label="#{messages['title.code']}" field="code"
-				required="true" validateUnique="true" />
-			<hf:formField label="#{messages['title.isCompany']}"
-				field="isCompany" />
-			<s:decorate template="/layout/edit.xhtml">
-				<ui:define name="label">
-					<h:outputText value="#{messages['title.description']}"
-						rendered="#{!titleBean.edit}" />
-				</ui:define>
-				<h:outputText rendered="#{!titleBean.edit}"
-					value="#{messages[title.descriptionKey]}" style="font-weight:bold;" />
-			</s:decorate>
-		</hf:formPanel>
-
-	</ui:define>
-
+        <hf:formPanel label="#{messages['title.panel']}" backingBean="#{titleBean}">
+            <hf:formField label="#{messages['title.code']}" field="code" required="true" validateUnique="true" />
+            <hf:formField label="#{messages['title.isCompany']}" field="isCompany" />
+            <hf:languageFields />
+        </hf:formPanel>
+    </ui:define>
 </ui:composition>

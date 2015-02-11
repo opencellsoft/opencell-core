@@ -24,6 +24,7 @@ import javax.persistence.EntityManager;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.QueryBuilder;
+import org.meveo.commons.utils.QueryBuilder.QueryLikeStyleEnum;
 import org.meveo.model.admin.User;
 import org.meveo.model.catalog.UsageChargeTemplate;
 import org.meveo.model.crm.Provider;
@@ -69,7 +70,7 @@ public class UsageChargeTemplateService extends
 	public List<UsageChargeTemplate> findByPrefix(EntityManager em,
 			String usageChargePrefix, Provider provider) {
 		QueryBuilder qb = new QueryBuilder(UsageChargeTemplate.class, "a");
-		qb.like("code", usageChargePrefix, 1, true);
+		qb.like("code", usageChargePrefix, QueryLikeStyleEnum.MATCH_BEGINNING, true);
 
 		return (List<UsageChargeTemplate>) qb.getQuery(em).getResultList();
 	}

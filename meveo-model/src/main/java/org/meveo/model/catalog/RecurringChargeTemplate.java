@@ -25,7 +25,10 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import org.meveo.model.MultilanguageEntity;
+
 @Entity
+@MultilanguageEntity
 @Table(name = "CAT_RECURRING_CHARGE_TEMPL")
 public class RecurringChargeTemplate extends ChargeTemplate {
 
