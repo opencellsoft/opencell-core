@@ -45,6 +45,7 @@ public class RatedTransactionDto extends BaseDto {
 	private String code;
 	private String description;
 	private String unityDescription;
+	private String priceplanCode;
 	private boolean doNotTriggerInvoicing = false;
 
 	public Date getUsageDate() {
@@ -141,6 +142,14 @@ public class RatedTransactionDto extends BaseDto {
 
 	public void setUnityDescription(String unityDescription) {
 		this.unityDescription = unityDescription;
+	}
+
+	public String getPriceplanCode() {
+		return priceplanCode;
+	}
+
+	public void setPriceplanCode(String priceplanCode) {
+		this.priceplanCode = priceplanCode;
 	}
 
 }

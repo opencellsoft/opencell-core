@@ -69,7 +69,8 @@ public class RatedTransactionsJobBean {
 							walletOperation.getParameter1(),
 							walletOperation.getParameter2(),
 							walletOperation.getParameter3(),
-							walletOperation.getUnityDescription());
+							walletOperation.getUnityDescription(),
+							walletOperation.getPriceplan());
 					ratedTransactionService.create(ratedTransaction,
 							currentUser, currentUser.getProvider());
 
