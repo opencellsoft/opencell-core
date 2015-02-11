@@ -24,8 +24,7 @@
 
 		<hftl:dataList label="#{messages['discountPlan.title']}"
 			backingBean="#{discountPlanBean}">
-			<hftl:column label="#{messages['BusinessEntity.code']}"
-				field="code" />
+			<hftl:column label="#{messages['BusinessEntity.code']}" field="code" />
 			<hftl:column label="#{messages['BusinessEntity.description']}"
 				field="description" />
 			<hftl:column label="#{messages['commons.status']}"
@@ -33,7 +32,7 @@
 			<hftl:column label="#{messages['discountPlanMatrix.planItems']}"
 				field="discountPlanItems" childField="code" isList="true"
 				childFieldId="id"
-				entityView="/pages/catalog/discountPlans/discountPlanDetail.xhtml"
+				entityView="/pages/catalog/discountPlanItems/discountPlanItemDetail.xhtml"
 				backView="discountPlans" showPopup="true" popupFields="code" />
 
 			<hftl:actionsColumn
