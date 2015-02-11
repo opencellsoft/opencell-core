@@ -17,9 +17,12 @@
 	<ui:define name="body">
 
 		<hf:searchPanel id="searchPanel" label="#{messages['action.search']}"
-			backingBean="#{discountPlanBean}">
+			backingBean="#{discountPlanBean}" columns="3">
 			<hf:searchField label="#{messages['BusinessEntity.code']}"
 				field="code" />
+			<hf:searchField label="#{messages['BusinessEntity.description']}"
+				field="description" />
+			<hf:searchField label="#{messages['commons.status']}" field="discountPlanStatusEnum" />
 		</hf:searchPanel>
 
 		<hftl:dataList label="#{messages['discountPlan.title']}"
@@ -29,6 +32,10 @@
 				field="description" />
 			<hftl:column label="#{messages['commons.status']}"
 				field="discountPlanStatusEnum" />
+			<hftl:column label="#{messages['discountPlanMatrix.minDuration']}"
+				field="minDuration" />
+			<hftl:column label="#{messages['discountPlanMatrix.maxDuration']}"
+				field="maxDuration" />
 			<hftl:column label="#{messages['discountPlanMatrix.planItems']}"
 				field="discountPlanItems" childField="code" isList="true"
 				childFieldId="id"
