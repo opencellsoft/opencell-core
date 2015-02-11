@@ -347,7 +347,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 
 			Element quality = doc.createElement("quality");
 			if (account.getName().getTitle() != null) {
-                Text qualityTxt = doc.createTextNode(catMessagesService.getMessageDescription(account.getName().getTitle(), languageCode, account.getName().getTitle().getDescription()));
+                Text qualityTxt = doc.createTextNode(catMessagesService.getMessageDescription(account.getName().getTitle(), languageCode));
 				quality.appendChild(qualityTxt);
 			}
 			nameTag.appendChild(quality);
@@ -564,7 +564,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 			InvoiceCategory invoiceCategory = categoryInvoiceAgregate.getInvoiceCategory();
 
 			String invoiceCategoryLabel = invoiceCategory != null ? catMessagesService.getMessageDescription(
-					invoiceCategory, languageCode, invoiceCategory.getDescription()) : "";
+					invoiceCategory, languageCode) : "";
 			Element category = doc.createElement("category");
 			category.setAttribute("label", (invoiceCategoryLabel != null) ? invoiceCategoryLabel : "");
 			category.setAttribute("code",
@@ -595,7 +595,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 							subCatInvoiceAgregate.getInvoiceSubCategory());
 
 					String invoiceSubCategoryLabel = invoiceSubCat != null ? catMessagesService.getMessageDescription(
-							invoiceSubCat, languageCode, invoiceSubCat.getDescription()) : "";
+							invoiceSubCat, languageCode) : "";
 					Element subCategory = doc.createElement("subCategory");
 					subCategories.appendChild(subCategory);
 					subCategory.setAttribute("label", (invoiceSubCategoryLabel != null) ? invoiceSubCategoryLabel : "");
@@ -737,8 +737,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 				throw new BusinessException("Billing account must have a trading language.");
 			}
 
-			String taxDescription = catMessagesService.getMessageDescription(taxInvoiceAgregate.getTax(), languageCode,
-					taxInvoiceAgregate.getTax().getDescription());
+			String taxDescription = catMessagesService.getMessageDescription(taxInvoiceAgregate.getTax(), languageCode);
 			Element taxName = doc.createElement("name");
 			Text taxNameTxt = doc.createTextNode(taxDescription != null ? taxDescription : "");
 			taxName.appendChild(taxNameTxt);

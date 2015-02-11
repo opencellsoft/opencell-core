@@ -285,8 +285,7 @@ public class RatingService {
 		UserAccount ua = subscription.getUserAccount();
 		try {
 			String languageCode = ua.getBillingAccount().getTradingLanguage().getLanguage().getLanguageCode();
-			chargeInstnceLabel = catMessagesService.getMessageDescription(chargeInstance, languageCode,
-					chargeInstance.getDescription());
+			chargeInstnceLabel = catMessagesService.getMessageDescription(chargeInstance, languageCode);
 		} catch (Exception e) {
 			log.error(e.getMessage());
 		}
