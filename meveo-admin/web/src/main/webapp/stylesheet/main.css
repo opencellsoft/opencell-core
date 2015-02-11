@@ -405,3 +405,10 @@ input[type="submit"],
 	list-style-type: none;
 	padding-left: 5px;
 }
+
+.ui-fileupload-buttonbar{
+	border:none;
+}
+.ui-fileupload-content{
+	border:none;
+}

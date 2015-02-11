@@ -1,5 +1,7 @@
 package org.meveo.admin.action.notification;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -9,11 +11,13 @@ import javax.inject.Named;
 
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.util.ResourceBundle;
+import org.meveo.commons.utils.CsvBuilder;
 import org.meveo.model.notification.EmailNotification;
 import org.meveo.model.notification.InstantMessagingNotification;
 import org.meveo.model.notification.Notification;
 import org.meveo.model.notification.NotificationHistory;
 import org.meveo.model.notification.WebHook;
+import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.notification.NotificationHistoryService;
 import org.meveo.service.notification.NotificationService;
@@ -33,6 +37,8 @@ public class NotificationHistoryBean extends BaseBean<NotificationHistory> {
 
 	@Inject
 	private NotificationService notificationService;
+	
+
 
 	public NotificationHistoryBean() {
 		super(NotificationHistory.class);
@@ -73,5 +79,41 @@ public class NotificationHistoryBean extends BaseBean<NotificationHistory> {
 
 		return getLazyDataModel(filters, false);
 	}
+	
+	public void exportToFile() throws Exception {
+
+		CsvBuilder csv = new CsvBuilder();
+		csv.appendValue("Update date");
+		csv.appendValue("NotificationType");
+		csv.appendValue("Notification");
+		csv.appendValue("Retry");
+		csv.appendValue("Status");
+		csv.appendValue("Result");
+		csv.appendValue("Entity code");
+		csv.appendValue("Serialized entity");
+		csv.startNewLine();
+		for (NotificationHistory notificationHistory : notificationHistoryService
+				.list()) {
+			csv.appendValue(DateUtils.formatDateWithPattern(notificationHistory
+					.getAuditable().getUpdated(), "dd/MM/yyyy"));
+			csv.appendValue(notificationHistory.getInboundRequest() != null ? notificationHistory
+					.getInboundRequest().getCode() : notificationHistory
+					.getEntityClassName());
+			csv.appendValue(notificationHistory.getNotification().getCode());
+			csv.appendValue(notificationHistory.getNbRetry() + "");
+			csv.appendValue(notificationHistory.getStatus() + "");
+			csv.appendValue(notificationHistory.getResult());
+			csv.appendValue(notificationHistory.getEntityCode());
+			csv.appendValue(notificationHistory.getSerializedEntity());
+			csv.startNewLine();
+		}
+		InputStream inputStream = new ByteArrayInputStream(csv.toString()
+				.getBytes());
+		csv.download(inputStream, "NotificationHistories.csv");
+	}
+
+
+
+
 
 }

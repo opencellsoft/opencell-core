@@ -70,7 +70,8 @@
 			<hf:formField label="#{messages['serviceInstance.statusDate']}"
 				field="statusDate" show="#{!serviceInstanceBean.edit}" />
 			<hf:formField label="#{messages['serviceInstance.subscriptionDate']}"
-				field="subscriptionDate" />
+				field="subscriptionDate"
+				edit="#{serviceInstanceBean.entity.status eq 'INACTIVE'}" />
 			<hf:formField label="#{messages['serviceInstance.endAgrementDate']}"
 				field="endAgrementDate" />
 			<hf:formField

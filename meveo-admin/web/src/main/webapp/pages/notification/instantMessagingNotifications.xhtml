@@ -30,7 +30,7 @@
 
 			<!-- ===================================== SEARCH USERS RESULTS ================================= -->
 
-			<hftl:dataList backingBean="#{instantMessagingNotificationBean}">
+			<hftl:dataList backingBean="#{instantMessagingNotificationBean}" exportButton="false" exportToCsv="true" importCsv="true">
 			    <hftl:column label="#{messages['entity.code']}"
 					field="code" />
 				<hftl:column
