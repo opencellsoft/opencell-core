@@ -24,6 +24,9 @@ import javax.persistence.Table;
 
 import org.meveo.model.Auditable;
 import org.meveo.model.AuditableEntity;
+import org.meveo.model.IEntity;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Entity
 @Cacheable
@@ -49,6 +52,19 @@ public class CatMessages extends AuditableEntity {
 		super(auditable);
 	}
 
+    public CatMessages(IEntity businessEntity, String languageCode, String description) {
+        super();
+
+        String className = businessEntity.getClass().getSimpleName();
+        // supress javassist proxy suffix
+        if (className.indexOf("_") >= 0) {
+            className = className.substring(0, className.indexOf("_"));
+        }
+        this.messageCode = className + "_" + businessEntity.getId();
+        this.languageCode = languageCode;
+        this.description = description;
+    }
+	   
 	public CatMessages(String messageCode, String languageCode, String description) {
 		super();
 		this.messageCode = messageCode;
@@ -86,4 +102,18 @@ public class CatMessages extends AuditableEntity {
 		this.description = description;
 	}
 
+    /**
+     * Parse entity ID from a message code that is in a format "classname_id"
+     * 
+     * @return Entity identifier
+     */
+    public long getEntityId() {
+        
+        Logger log = LoggerFactory.getLogger(this.getClass());
+        try {
+            return Long.parseLong(messageCode.substring(messageCode.lastIndexOf('_') + 1));
+        } catch (NumberFormatException e) {
+            return -1;
+        }
+    }
 }

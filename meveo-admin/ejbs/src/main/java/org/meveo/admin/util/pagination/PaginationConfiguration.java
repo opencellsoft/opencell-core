@@ -26,7 +26,8 @@ public class PaginationConfiguration implements Serializable {
 
     private static final long serialVersionUID = -2750287256630146681L;
 
-    private int firstRow, numberOfRows;
+    private Integer firstRow;
+    private Integer numberOfRows;
 
     /** Search filters (key = field name, value = search pattern or value). */
     private Map<String, Object> filters;
@@ -41,50 +42,59 @@ public class PaginationConfiguration implements Serializable {
     private SortOrder ordering;
 
     /**
-     * @param firstRow
-     * @param numberOfRows
-     * @param filters
-     * @param fetchFields
-     * @param sortField
-     * @param sortOrder
+     * 
+     * @param sortField Field to sort by
+     * @param sortOrder Sort order
      */
-    public PaginationConfiguration(int firstRow, int numberOfRows, Map<String, Object> filters, List<String> fetchFields, String sortField, SortOrder sortOrder) {
+    public PaginationConfiguration(String sortField, SortOrder sortOrder) {
+        this(null, null, null, null, sortField, sortOrder, null);
+    }
+
+    /**
+     * @param firstRow Number of the first row to retrieve
+     * @param numberOfRows Number of rows to retrieve
+     * @param filters Search criteria to apply
+     * @param fetchFields Lazy loaded fields to fetch
+     * @param sortField Field to sort by
+     * @param sortOrder Sort order
+     */
+    public PaginationConfiguration(Integer firstRow, Integer numberOfRows, Map<String, Object> filters, List<String> fetchFields, String sortField, SortOrder sortOrder) {
         this(firstRow, numberOfRows, filters, fetchFields, sortField, sortOrder, null);
     }
 
     /**
-     * @param firstRow First row to retrieve
-     * @param numberOfRows Number of rows per page
+     * @param firstRow Number of the first row to retrieve
+     * @param numberOfRows Number of rows to retrieve
      * @param filters Search criteria
-     * @param fetchFields Extra fields to fetch
-     * @param sortField
-     * @param ordering
+     * @param fetchFields Lazy loaded fields to fetch
+     * @param sortField Field to sort by
+     * @param sortOrder Sort order
      * @param sortOrdering
      * @param filterByProvider Should filtering by provider be applied
      */
-    public PaginationConfiguration(int firstRow, int numberOfRows, Map<String, Object> filters, List<String> fetchFields, String sortField, SortOrder ordering,
+    public PaginationConfiguration(Integer firstRow, Integer numberOfRows, Map<String, Object> filters, List<String> fetchFields, String sortField, SortOrder sortOrder,
             Map<String, String> sortOrdering) {
         this.firstRow = firstRow;
         this.numberOfRows = numberOfRows;
         this.filters = filters;
         this.fetchFields = fetchFields;
         this.sortField = sortField;
-        this.ordering = ordering;
+        this.ordering = sortOrder;
         this.sortOrdering = sortOrdering;
     }
 
     /**
-     * @param filters
+     * @param filters Search criteria
      */
     public PaginationConfiguration(Map<String, Object> filters) {
         this.filters = filters;
     }
 
-    public int getFirstRow() {
+    public Integer getFirstRow() {
         return firstRow;
     }
 
-    public int getNumberOfRows() {
+    public Integer getNumberOfRows() {
         return numberOfRows;
     }
 

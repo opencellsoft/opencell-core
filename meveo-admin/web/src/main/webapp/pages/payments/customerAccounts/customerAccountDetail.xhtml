@@ -146,13 +146,13 @@
 														required="false" rendered="#{customerAccountBean.edit}">
 														<f:selectItem itemLabel="" itemValue="" />
 														<f:selectItems value="#{titleBean.listAll()}" var="t"
-															itemLabel="#{messages['Title.'.concat(t.code)]}" />
+															itemLabel="#{t.description}" />
 														<s:objectConverter />
 														<p:ajax event="valueChange"
 															update=":parentTab:formCustomerAccountPanel:formCustomerAccount:childTab:countryPanel :parentTab:formCustomerAccountPanel:formCustomerAccount:childTab:userNamePanel" />
 													</p:selectOneMenu>
 													<h:outputText rendered="#{!customerAccountBean.edit}"
-														value="#{messages['Title.'.concat(customerAccountBean.entity.name.title.code)]}"
+														value="#{customerAccountBean.entity.name.title.description}"
 														style="font-weight:bold;" />
 												</p:panelGrid>
 

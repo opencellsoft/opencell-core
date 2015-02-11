@@ -22,7 +22,10 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.Table;
 
+import org.meveo.model.MultilanguageEntity;
+
 @Entity
+@MultilanguageEntity
 @Table(name = "CAT_ONE_SHOT_CHARGE_TEMPL")
 public class OneShotChargeTemplate extends ChargeTemplate {
 

@@ -57,6 +57,10 @@ public class QueryBuilder {
 
 	private PaginationConfiguration paginationConfiguration;
 	private String paginationSortAlias;
+	
+    public enum QueryLikeStyleEnum {
+        MATCH_EQUAL, MATCH_BEGINNING, MATCH_ANYWHERE
+    }
 
 	/**
 	 * Constructor.
@@ -263,19 +267,19 @@ public class QueryBuilder {
 	 * @param caseInsensitive
 	 * @return
 	 */
-	public QueryBuilder like(String field, String value, int style,
+	public QueryBuilder like(String field, String value, QueryLikeStyleEnum style,
 			boolean caseInsensitive) {
 		if (StringUtils.isBlank(value))
 			return this;
 
 		String v = value;
 
-		if (style != 0) {
-			if (style == 1 || style == 2)
-				v = v + "%";
-			if (style == 2)
-				v = "%" + v;
-		}
+        if (style == QueryLikeStyleEnum.MATCH_BEGINNING || style == QueryLikeStyleEnum.MATCH_ANYWHERE) {
+            v = v + "%";
+        }
+        if (style == QueryLikeStyleEnum.MATCH_ANYWHERE) {
+            v = "%" + v;
+        }
 
 		return addCriterion(field, " like ", v, caseInsensitive);
 	}
@@ -293,7 +297,7 @@ public class QueryBuilder {
 		boolean wildcard = (value.indexOf("*") != -1);
 
 		if (wildcard)
-			return like(field, value.replace("*", "%"), 0, caseInsensitive);
+			return like(field, value.replace("*", "%"), QueryLikeStyleEnum.MATCH_EQUAL, caseInsensitive);
 		else
 			return addCriterion(field, "=", value, caseInsensitive);
 	}
@@ -541,11 +545,16 @@ public class QueryBuilder {
 	 * @param query
 	 */
 	private void applyPagination(Query query) {
-		if (paginationConfiguration == null)
+		if (paginationConfiguration == null) {
 			return;
+		}
 
-		query.setFirstResult(paginationConfiguration.getFirstRow());
-		query.setMaxResults(paginationConfiguration.getNumberOfRows());
+        if (paginationConfiguration.getFirstRow() != null) {
+            query.setFirstResult(paginationConfiguration.getFirstRow());
+        }
+        if (paginationConfiguration.getNumberOfRows() != null) {
+            query.setMaxResults(paginationConfiguration.getNumberOfRows());
+        }
 	}
 
 	/* DEBUG */

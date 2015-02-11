@@ -51,7 +51,7 @@
 				</f:facet>
 				<e:cell>
 					<h:outputText rendered="#{entity.name.title != null}"
-						value="#{messages['Title.'.concat(entity.name.title.code)]}" />
+						value="#{entity.name.title.description}" />
 				</e:cell>
 			</p:column>
 			<hftl:column label="#{messages['billingAccount.name']}" field="name" />

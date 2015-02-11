@@ -158,7 +158,7 @@
 				<e:cell>
 					<h:outputText
 						rendered="#{entity.billingAccount.name.title != null}"
-						value="#{messages[stringUtil.merge('Title.',entity.billingAccount.name.title.code)]}" />
+						value="#{entity.billingAccount.name.title.description}" />
 				</e:cell>
 			</rich:column>
 
@@ -193,7 +193,7 @@
 				<e:cell>
 					<h:outputText
 						rendered="#{entity.billingAccount.name.title != null}"
-						value="#{messages[stringUtil.merge('Title.',entity.billingAccount.name.title.code)]}" />
+						value="#{entity.billingAccount.name.title.description}" />
 				</e:cell>
 			</rich:column>
 

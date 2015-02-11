@@ -1322,7 +1322,8 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 					result.add(op);
 					break;
 				} else {
-					BigDecimal newOverOldCoeff = balance.divide(op.getAmountWithTax());
+					BigDecimal newOverOldCoeff = balance.divide(op.getAmountWithTax(),
+							BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP);
 					remainingAmountToCharge = remainingAmountToCharge.subtract(balance);
 					BigDecimal newOpAmountWithTax = balance;
 					BigDecimal newOpAmountTax = op.getAmountTax().multiply(newOverOldCoeff);

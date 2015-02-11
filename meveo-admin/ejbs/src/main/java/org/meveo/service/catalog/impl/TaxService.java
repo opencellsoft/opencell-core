@@ -24,6 +24,7 @@ import javax.persistence.NoResultException;
 import javax.persistence.NonUniqueResultException;
 
 import org.meveo.commons.utils.QueryBuilder;
+import org.meveo.commons.utils.QueryBuilder.QueryLikeStyleEnum;
 import org.meveo.model.billing.Tax;
 import org.meveo.model.crm.Provider;
 import org.meveo.service.base.PersistenceService;
@@ -57,7 +58,7 @@ public class TaxService extends PersistenceService<Tax> {
 			Provider provider) {
 		try {
 			QueryBuilder qb = new QueryBuilder(Tax.class, "t");
-			qb.like("t.code", taxId, 1, false);
+			qb.like("t.code", taxId, QueryLikeStyleEnum.MATCH_BEGINNING, false);
 			qb.addCriterionEntity("t.provider", provider);
 			return (List<Tax>) qb.getQuery(em).getResultList();
 		} catch (NoResultException ne) {

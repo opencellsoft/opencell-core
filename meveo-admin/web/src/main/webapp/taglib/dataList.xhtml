@@ -47,6 +47,14 @@
 	<c:if test="${dataModel==null}">
 		<c:set var="dataModel" value="#{backingBean.lazyDataModel}" />
 	</c:if>
+    
+    <c:if test="${sortBy==null}">
+        <c:set var="sortBy" value="#{null}" />
+    </c:if>
+    
+    <c:if test="${sortOrder==null}">
+        <c:set var="sortOrder" value="ASCENDING" />
+    </c:if>
 
 	<p:panel id="#{resultsId}_panel" width="100">
 
@@ -54,7 +62,7 @@
 
 			<p:dataTable id="datatable_#{resultsId}" var="entity"
 				value="#{dataModel}" paginator="true" rows="10"
-				selection="#{backingBean.selectedEntities}"
+				selection="#{backingBean.selectedEntities}" sortBy="#{sortBy}" sortOrder="#{sortOrder}"
 				paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
 				rowsPerPageTemplate="5,10,15" lazy="true"
 				binding="#{backingBean.dataTable}" styleClass="custom-grid"

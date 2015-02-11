@@ -408,7 +408,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 					// compute the percent
 					if (taxCat.getAmountTax() != null && taxCat.getAmount() != null
 							&& taxCat.getAmount().compareTo(BigDecimal.ZERO) != 0) {
-						taxCat.setTaxPercent(taxCat.getAmountTax().divide(taxCat.getAmount())
+						taxCat.setTaxPercent(taxCat.getAmountTax().divide(taxCat.getAmount(),rounding+2, RoundingMode.HALF_UP)
 								.multiply(new BigDecimal("100")).setScale(rounding, RoundingMode.HALF_UP));
 					} else {
 						taxCat.setTaxPercent(BigDecimal.ZERO);

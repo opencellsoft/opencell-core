@@ -33,53 +33,30 @@ import org.meveo.service.catalog.impl.TitleService;
 @ConversationScoped
 public class TitleBean extends StatelessBaseBean<Title> {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = -2634473401390003093L;
 
-	/**
-	 * Injected @{link Title} service. Extends {@link PersistenceService}.
-	 */
-	@Inject
-	private TitleService titleService;
+    /**
+     * Injected @{link Title} service. Extends {@link PersistenceService}.
+     */
+    @Inject
+    private TitleService titleService;
 
-	/**
-	 * Constructor. Invokes super constructor and provides class type of this
-	 * bean for {@link BaseBean}.
-	 */
-	public TitleBean() {
-		super(Title.class);
-	}
+    /**
+     * Constructor. Invokes super constructor and provides class type of this bean for {@link BaseBean}.
+     */
+    public TitleBean() {
+        super(Title.class);
+    }
 
-	/**
-	 * Factory method for entity to edit. If objectId param set load that entity
-	 * from database, otherwise create new.
-	 * 
-	 * @throws IllegalAccessException
-	 * @throws InstantiationException
-	 */
-	@Override
-	public Title initEntity() {
-		return super.initEntity();
-	}
+    /**
+     * @see org.meveo.admin.action.BaseBean#getPersistenceService()
+     */
+    @Override
+    protected IPersistenceService<Title> getPersistenceService() {
+        return titleService;
+    }
 
-	/**
-	 * Override default list view name. (By default its class name starting
-	 * lower case + 's').
-	 * 
-	 * @see org.meveo.admin.action.BaseBean#getDefaultViewName()
-	 */
-	protected String getDefaultViewName() {
-		return "titles";
-	}
-
-	/**
-	 * @see org.meveo.admin.action.BaseBean#getPersistenceService()
-	 */
-	@Override
-	protected IPersistenceService<Title> getPersistenceService() {
-		return titleService;
-	}
-
-	public void test() throws BatchUpdateException {
-		throw new BatchUpdateException();
-	}
+    public void test() throws BatchUpdateException {
+        throw new BatchUpdateException();
+    }
 }

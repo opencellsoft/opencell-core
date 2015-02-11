@@ -24,8 +24,9 @@ import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 
 import org.meveo.commons.utils.QueryBuilder;
+import org.meveo.commons.utils.QueryBuilder.QueryLikeStyleEnum;
 import org.meveo.commons.utils.StringUtils;
-import org.meveo.model.BusinessEntity;
+import org.meveo.model.IEntity;
 import org.meveo.model.billing.CatMessages;
 import org.meveo.model.crm.Provider;
 import org.meveo.service.base.PersistenceService;
@@ -41,15 +42,10 @@ public class CatMessagesService extends PersistenceService<CatMessages> {
 
 	}
 
-	public String getMessageDescription(BusinessEntity businessEntity,
+	public String getMessageDescription(IEntity businessEntity,
 			String languageCode, String defaultDescription) {
-		String className = businessEntity.getClass().getSimpleName();
-		// supress javassist proxy suffix
-		if (className.indexOf("_") >= 0) {
-			className = className.substring(0, className.indexOf("_"));
-		}
-		return getMessageDescription(className + "_" + businessEntity.getId(),
-				languageCode, defaultDescription);
+
+        return getMessageDescription(getMessageCode(businessEntity), languageCode, defaultDescription);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -74,6 +70,11 @@ public class CatMessagesService extends PersistenceService<CatMessages> {
 		return description;
 	}
 
+    public CatMessages getCatMessages(IEntity businessEntity, String languageCode) {
+
+        return getCatMessages(getMessageCode(businessEntity), languageCode);
+    }
+    
 	public CatMessages getCatMessages(String messageCode, String languageCode) {
 		return getCatMessages(getEntityManager(), messageCode, languageCode);
 	}
@@ -102,6 +103,22 @@ public class CatMessagesService extends PersistenceService<CatMessages> {
 		return cats;
 	}
 
+    /**
+     * Get all messages of a given class in a given language
+     * 
+     * @param clazz Class to get messages for
+     * @param languageCode Language to get messages in
+     * @return A list of messages
+     */
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+    public List<CatMessages> getCatMessagesList(Class clazz, String languageCode) {
+        QueryBuilder qb = new QueryBuilder(CatMessages.class, "c");
+        qb.like("c.messageCode", getMessageCodePrefix(clazz), QueryLikeStyleEnum.MATCH_BEGINNING, false);
+        qb.addCriterionWildcard("c.languageCode", languageCode, true);
+        List<CatMessages> cats = (List<CatMessages>) qb.getQuery(getEntityManager()).getResultList();
+        return cats;
+    }
+
 	public void batchRemove(String entityName, Long id, Provider provider) {
 		String strQuery = "DELETE FROM "
 				+ CatMessages.class.getSimpleName()
@@ -116,4 +133,34 @@ public class CatMessagesService extends PersistenceService<CatMessages> {
 		}
 	}
 
+    /**
+     * Get a message code prefix for a given entity
+     * 
+     * @param entity Entity
+     * @return A message code in a format "className_id"
+     */
+    public String getMessageCode(IEntity entity) {
+        String className = entity.getClass().getSimpleName();
+        // Suppress javassist proxy suffix
+        if (className.indexOf("_") >= 0) {
+            className = className.substring(0, className.indexOf("_"));
+        }
+        return className + "_" + entity.getId();
+    }
+    
+    /**
+     * Get a message code prefix for a given class
+     * 
+     * @param clazz Class
+     * @return A message code in a format "className_"
+     */
+    @SuppressWarnings("rawtypes")
+    public String getMessageCodePrefix(Class clazz) {
+        String className = clazz.getSimpleName();
+        // Suppress javassist proxy suffix
+        if (className.indexOf("_") >= 0) {
+            className = className.substring(0, className.indexOf("_"));
+        }
+        return className + "_";
+    }
 }

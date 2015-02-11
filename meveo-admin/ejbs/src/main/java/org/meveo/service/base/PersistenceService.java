@@ -391,7 +391,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 		// Ignore current provider constraint if "skipProviderConstraint"
 		// parameter was passed to search
 		Provider provider = getCurrentProvider();
-		if (filters.containsKey(SEARCH_SKIP_PROVIDER_CONSTRAINT)) {
+		if (filters!=null && filters.containsKey(SEARCH_SKIP_PROVIDER_CONSTRAINT)) {
 			provider = null;
 		}
 

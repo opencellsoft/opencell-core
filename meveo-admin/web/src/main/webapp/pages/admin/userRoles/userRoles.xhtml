@@ -19,7 +19,7 @@
             <hf:searchField label="#{messages['role.description']}" field="description" />
         </hf:searchPanel>
 
-        <hftl:dataList label="#{messages['role.title']}" backingBean="#{userRoleBean}">
+        <hftl:dataList label="#{messages['role.title']}" backingBean="#{userRoleBean}" sortBy="name">
             <hftl:column label="#{messages['role.name']}" field="name" />
             <hftl:column label="#{messages['role.description']}" field="description" />
             <hftl:column label="#{messages['role.permissions']}" field="permissions" childField="name" isList="true" />

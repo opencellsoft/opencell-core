@@ -7,8 +7,8 @@ import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 
 import org.meveo.commons.utils.QueryBuilder;
+import org.meveo.commons.utils.QueryBuilder.QueryLikeStyleEnum;
 import org.meveo.model.billing.BillingWalletTypeEnum;
-import org.meveo.model.billing.Tax;
 import org.meveo.model.catalog.WalletTemplate;
 import org.meveo.model.crm.Provider;
 import org.meveo.service.base.PersistenceService;
@@ -46,7 +46,7 @@ public class WalletTemplateService extends PersistenceService<WalletTemplate> {
 	public List<WalletTemplate> findStartsWithCode(EntityManager em, String walletId,BillingWalletTypeEnum walletType) {
 		try {
 			QueryBuilder qb = new QueryBuilder(WalletTemplate.class, "t");
-			qb.like("code", walletId, 1, false);
+			qb.like("code", walletId, QueryLikeStyleEnum.MATCH_BEGINNING, false);
 			if(walletType!=null){
 				qb.addCriterionEnum("walletType", walletType);
 			}
