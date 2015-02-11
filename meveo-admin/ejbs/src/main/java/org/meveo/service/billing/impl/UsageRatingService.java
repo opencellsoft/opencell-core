@@ -467,7 +467,7 @@ public class UsageRatingService {
 		walletOperation.setStatus(WalletOperationStatusEnum.OPEN);
 
 		// log.info("provider code:" + provider.getCode());
-		ratingService.rateBareWalletOperation(walletOperation, null, null,
+		ratingService.rateBareWalletOperation(walletOperation, chargeInstance.getAmountWithoutTax(), chargeInstance.getAmountWithTax(),
 				countryId, currency, provider);
 
 		
@@ -558,7 +558,7 @@ public class UsageRatingService {
 
 			// put back the deduced quantity in charge unit
 			deducedQuantity = deducedQuantity.divide(charge
-					.getUnityMultiplicator());
+					.getUnityMultiplicator(),BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP);
 		}
 		}
 		return deducedQuantity;
@@ -673,7 +673,7 @@ public class UsageRatingService {
 	// TODO: this is only for postpaid wallets, for prepaid we dont need to
 	// check counters
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public void ratePostpaidUsage(EDR edr, User currentUser) {
+	public void ratePostpaidUsage(EDR edr, User currentUser) throws BusinessException {
 		BigDecimal originalQuantity = edr.getQuantity();
 
 		log.info("Rating EDR={}", edr);
@@ -747,7 +747,8 @@ public class UsageRatingService {
 			} catch (Exception e) {
 				edr.setStatus(EDRStatusEnum.REJECTED);
 				edr.setRejectReason(e.getMessage());
-				log.error(e.getMessage());
+				e.printStackTrace();
+				throw new BusinessException(e);
 			}
 		}
 
@@ -788,6 +789,9 @@ public class UsageRatingService {
 
 	private String evaluateStringExpression(String expression, EDR edr,
 			WalletOperation walletOperation) throws BusinessException {
+		if(expression==null){
+			return null;
+		}
 		String result=null;
 		Map<Object, Object> userMap = new HashMap<Object, Object>();
 		userMap.put("edr", edr);
