@@ -1,0 +1,75 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html" xmlns:hftl="http://hftl.org"
+	xmlns:hf="http://java.sun.com/jsf/composite/tags"
+	template="/layout/template.xhtml">
+
+	<f:metadata>
+		<f:event type="preRenderView"
+			listener="#{discountPlanItemBean.preRenderView}" />
+	</f:metadata>
+
+	<ui:define name="navigation">
+		<ui:include src="/layout/navigation.xhtml" />
+	</ui:define>
+
+	<ui:define name="body">
+
+		<hftl:entityPopup id="popupDiscountPlans"
+			header="#{messages['commons.search']}"
+			selection="#{discountPlanItemBean.filters['discountPlan']}"
+			backingBean="#{discountPlanBean}"
+			searchField1Label="#{messages['BusinessEntity.code']}"
+			searchField1="code" column1Label="#{messages['BusinessEntity.code']}"
+			column1="code"
+			column2Label="#{messages['BusinessEntity.description']}"
+			column2="description"
+			updateField=":#{p:component('discountPlan_child')}">
+		</hftl:entityPopup>
+		
+		<hftl:entityPopup id="popupOfferTemplates"
+			header="#{messages['commons.search']}"
+			selection="#{discountPlanItemBean.filters['offerTemplate']}"
+			backingBean="#{offerTemplateBean}"
+			searchField1Label="#{messages['BusinessEntity.code']}"
+			searchField1="code" column1Label="#{messages['BusinessEntity.code']}"
+			column1="code"
+			column2Label="#{messages['BusinessEntity.description']}"
+			column2="description"
+			updateField=":#{p:component('offerTemplate_child')}">
+		</hftl:entityPopup>
+
+		<hf:searchPanel id="searchPanel" label="#{messages['action.search']}"
+			backingBean="#{discountPlanItemBean}">
+			<hf:searchField label="#{messages['discountPlan.title']}"
+				field="discountPlan" childField="code" popup="true"
+				popupId="popupDiscountPlans" clearButton="true" />
+			<hf:searchField label="#{messages['discountPlanItem.offerTemplate']}"
+				field="offerTemplate" childField="code" popup="true"
+				popupId="popupOfferTemplates" clearButton="true" />
+		</hf:searchPanel>
+
+		<hftl:dataList label="#{messages['discountPlan.title']}"
+			backingBean="#{discountPlanItemBean}">
+			<hftl:column label="#{messages['discountPlan.title']}"
+				field="discountPlan" childField="code" />
+			<hftl:column label="#{messages['discountPlanItem.offerTemplate']}"
+				field="offerTemplate" childField="code" />
+			<hftl:column label="#{messages['discountPlanItem.invoiceCategory']}"
+				field="invoiceCategory" childField="code" />
+			<hftl:column
+				label="#{messages['discountPlanItem.invoiceSubCategory']}"
+				field="invoiceSubCategory" childField="code" />
+			<hftl:column label="#{messages['discountPlanItem.chargeTemplate']}"
+				field="chargeTemplate" childField="code" />
+			<hftl:column label="#{messages['discountPlanItem.percent']}"
+				field="percent" />
+
+			<hftl:actionsColumn
+				permission="#{identity.hasPermission('catalog','catalogManagement')}" />
+		</hftl:dataList>
+
+	</ui:define>
+
+</ui:composition>

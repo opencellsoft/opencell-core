@@ -678,6 +678,7 @@ public class RatingService {
 					|| pricePlan.getMinQuantity().compareTo(bareOperation.getQuantity()) <= 0;
 			if (quantityMinOk) {
 				log.debug("quantityMinOkInPricePlan");
+				bareOperation.setPriceplan(pricePlan);
 				return pricePlan;
 			} else {
 				log.debug("the quantity " + bareOperation.getQuantity() + " is less than " + pricePlan.getMinQuantity());

@@ -190,7 +190,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 		List<Long> walletIds = new ArrayList<>();
 		log.debug("updateCache usageChargeInstanceWallet. wallets:{}", wallets == null ? "null" : wallets.size());
 		for (WalletInstance wallet : wallets) {
-			if (!walletIds.contains(wallet.getId())) {
+			if (!walletIds.contains(wallet.getId()) && wallet.getWalletTemplate().getWalletType()==BillingWalletTypeEnum.PREPAID) {
 				walletIds.add(wallet.getId());
 				log.debug("updateCache walletId:{}", wallet.getId());
 				if (!balanceCache.containsKey(wallet.getId())) {
@@ -1322,7 +1322,8 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 					result.add(op);
 					break;
 				} else {
-					BigDecimal newOverOldCoeff = balance.divide(op.getAmountWithTax());
+					BigDecimal newOverOldCoeff = balance.divide(op.getAmountWithTax(),
+							BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP);
 					remainingAmountToCharge = remainingAmountToCharge.subtract(balance);
 					BigDecimal newOpAmountWithTax = balance;
 					BigDecimal newOpAmountTax = op.getAmountTax().multiply(newOverOldCoeff);

@@ -21,6 +21,10 @@ public class DiscountPlanItemBean extends StatelessBaseBean<DiscountPlanItem> {
 	@Inject
 	private DiscountPlanItemService discountPlanItemService;
 
+	public DiscountPlanItemBean() {
+		super(DiscountPlanItem.class);
+	}
+
 	@Override
 	protected IPersistenceService<DiscountPlanItem> getPersistenceService() {
 		return discountPlanItemService;
