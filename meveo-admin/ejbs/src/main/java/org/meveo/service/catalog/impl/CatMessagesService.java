@@ -26,6 +26,7 @@ import javax.persistence.EntityManager;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.QueryBuilder.QueryLikeStyleEnum;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.BusinessEntity;
 import org.meveo.model.IEntity;
 import org.meveo.model.billing.CatMessages;
 import org.meveo.model.crm.Provider;
@@ -42,10 +43,13 @@ public class CatMessagesService extends PersistenceService<CatMessages> {
 
 	}
 
-	public String getMessageDescription(IEntity businessEntity,
-			String languageCode, String defaultDescription) {
-
-        return getMessageDescription(getMessageCode(businessEntity), languageCode, defaultDescription);
+	public String getMessageDescription(BusinessEntity businessEntity,
+			String languageCode) {
+		String result = getMessageDescription(getMessageCode(businessEntity), languageCode,businessEntity.getDescription());
+		if(StringUtils.isBlank(result)){
+			result=businessEntity.getCode();
+		}
+        return result;
 	}
 
 	@SuppressWarnings("unchecked")

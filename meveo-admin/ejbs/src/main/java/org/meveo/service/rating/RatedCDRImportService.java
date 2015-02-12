@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Future;
 
+import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.ejb.AsyncResult;
 import javax.ejb.Asynchronous;
@@ -42,6 +43,7 @@ public class RatedCDRImportService extends PersistenceService<RatedTransaction> 
 	private static BasicCache<String, UsageChargeTemplate> chargeCache;
 	private static BasicCache<String, List<Access>> accessCache;
 
+	@PostConstruct
 	public void init() {
 		EntityManager em = getEntityManager();
 		chargeCache = meveoContainer.getCache("meveo-usage-charge-template-cache");

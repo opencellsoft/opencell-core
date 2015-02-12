@@ -10,7 +10,7 @@ import org.meveo.api.MeveoApiErrorCode;
 import org.meveo.api.billing.MediationApi;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
-import org.meveo.api.dto.billing.EdrDto;
+import org.meveo.api.dto.billing.CdrListDto;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.LoggingInterceptor;
 import org.meveo.api.rest.billing.MediationRs;
@@ -30,7 +30,7 @@ public class MediationRsImpl extends BaseRs implements MediationRs {
 	private HttpServletRequest httpServletRequest;
 
 	@Override
-	public ActionStatus create(EdrDto postData) {
+	public ActionStatus registerUsage(CdrListDto postData) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 		try {

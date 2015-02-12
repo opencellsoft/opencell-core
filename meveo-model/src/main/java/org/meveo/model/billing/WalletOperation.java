@@ -43,6 +43,7 @@ import javax.validation.constraints.Size;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.admin.Currency;
 import org.meveo.model.admin.Seller;
+import org.meveo.model.catalog.PricePlanMatrix;
 
 @Entity
 @Table(name = "BILLING_WALLET_OPERATION")
@@ -157,6 +158,10 @@ public class WalletOperation extends BusinessEntity {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "SELLER_ID")
 	private Seller seller;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "PRICEPLAN_ID")
+	private PricePlanMatrix priceplan;
 
 	public WalletInstance getWallet() {
 		return wallet;
@@ -367,11 +372,19 @@ public class WalletOperation extends BusinessEntity {
 		this.offerCode = offerCode;
 	}
 
+	public PricePlanMatrix getPriceplan() {
+		return priceplan;
+	}
+
+	public void setPriceplan(PricePlanMatrix priceplan) {
+		this.priceplan = priceplan;
+	}
+
 	public String toString() {
 		return wallet + "," + operationDate + "," + type + "," + chargeInstance + "," + currency + "," + taxPercent
 				+ "," + unitAmountWithoutTax + "," + unitAmountWithTax + "," + unitAmountTax + "," + counter + ","
 				+ parameter1 + "," + parameter2 + "," + parameter3 + "," + startDate + "," + endDate + ","
-				+ subscriptionDate + "," + offerCode + "," + status + "," + seller;
+				+ subscriptionDate + "," + offerCode + "," + status + "," + seller+","+priceplan;
 	}
 
 	@Transient
@@ -392,6 +405,7 @@ public class WalletOperation extends BusinessEntity {
 		result.setParameter1(parameter1);
 		result.setParameter2(parameter2);
 		result.setParameter3(parameter3);
+		result.setPriceplan(priceplan);
 		result.setProvider(getProvider());
 		result.setSeller(seller);
 		result.setStartDate(startDate);

@@ -35,6 +35,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import org.meveo.model.BaseEntity;
+import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.model.crm.Provider;
 
 @Entity
@@ -168,6 +169,10 @@ public class RatedTransaction extends BaseEntity {
 	@Column(name = "PARAMETER_3", length = 50)
 	private String parameter3;
 
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "PRICEPLAN_ID")
+	private PricePlanMatrix priceplan;
+	
 	public RatedTransaction() {
 		super();
 	}
@@ -176,7 +181,7 @@ public class RatedTransaction extends BaseEntity {
 			BigDecimal unitAmountWithTax, BigDecimal unitAmountTax, BigDecimal quantity, BigDecimal amountWithoutTax,
 			BigDecimal amountWithTax, BigDecimal amountTax, RatedTransactionStatusEnum status, Provider provider,
 			WalletInstance wallet, BillingAccount billingAccount, InvoiceSubCategory invoiceSubCategory,
-			String parameter1, String parameter2, String parameter3, String unityDescription) {
+			String parameter1, String parameter2, String parameter3, String unityDescription,PricePlanMatrix priceplan) {
 		super();
 		this.walletOperationId = walletOperationId;
 		this.usageDate = usageDate;
@@ -194,6 +199,7 @@ public class RatedTransaction extends BaseEntity {
 		this.parameter1 = parameter1;
 		this.parameter2 = parameter2;
 		this.parameter3 = parameter3;
+		this.priceplan = priceplan;
 		this.unityDescription = unityDescription;
 		setProvider(provider);
 	}
@@ -396,6 +402,14 @@ public class RatedTransaction extends BaseEntity {
 
 	public void setParameter3(String parameter3) {
 		this.parameter3 = parameter3;
+	}
+
+	public PricePlanMatrix getPriceplan() {
+		return priceplan;
+	}
+
+	public void setPriceplan(PricePlanMatrix priceplan) {
+		this.priceplan = priceplan;
 	}
 
 }

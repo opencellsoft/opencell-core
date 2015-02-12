@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
@@ -12,24 +13,17 @@ import org.meveo.api.dto.BaseDto;
 /**
  * @author Edward P. Legaspi
  **/
-@XmlRootElement(name = "Edr")
+@XmlRootElement(name = "CdrList")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class EdrDto extends BaseDto {
+public class CdrListDto extends BaseDto {
 
 	private static final long serialVersionUID = 8776429565161215766L;
 
-	private List<String> edrs;
+	@XmlElement
+	private List<String> cdr;
 
 	@XmlTransient
 	private String ipAddress;
-
-	public List<String> getEdrs() {
-		return edrs;
-	}
-
-	public void setEdrs(List<String> edrs) {
-		this.edrs = edrs;
-	}
 
 	public String getIpAddress() {
 		return ipAddress;
@@ -37,6 +31,14 @@ public class EdrDto extends BaseDto {
 
 	public void setIpAddress(String ipAddress) {
 		this.ipAddress = ipAddress;
+	}
+
+	public List<String> getCdr() {
+		return cdr;
+	}
+
+	public void setCdr(List<String> cdr) {
+		this.cdr = cdr;
 	}
 
 }

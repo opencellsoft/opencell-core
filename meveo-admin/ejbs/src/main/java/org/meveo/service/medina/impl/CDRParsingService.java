@@ -4,13 +4,16 @@ import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 
+import javax.annotation.PostConstruct;
+import javax.annotation.Resource;
 import javax.ejb.Stateless;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
+import org.infinispan.api.BasicCache;
+import org.infinispan.manager.CacheContainer;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.parse.csv.CdrParserProducer;
 import org.meveo.event.qualifier.CDR;
@@ -38,6 +41,9 @@ public class CDRParsingService {
 
 	@Inject
 	private CdrParserProducer cdrParserProducer;
+	
+	@Resource(name = "java:jboss/infinispan/container/meveo")
+	private CacheContainer meveoContainer;
 
 	public void init(File CDRFile) throws BusinessException {
 		cdrParser = cdrParserProducer.getParser();
@@ -49,10 +55,15 @@ public class CDRParsingService {
 		cdrParser.initByApi(username, ip);
 	}
 
-	static HashMap<String, List<Access>> accessCache = new HashMap<String, List<Access>>();
+	private static BasicCache<String, List<Access>> accessCache;
+	
+	@PostConstruct
+	private void init() {
+		accessCache = meveoContainer.getCache("meveo-access-cache");
+	}
 
 	public static void resetAccessPointCache() {
-		accessCache = new HashMap<String, List<Access>>();
+		accessCache.clear();
 	}
 
 	public static void resetAccessPointCache(Access access) {

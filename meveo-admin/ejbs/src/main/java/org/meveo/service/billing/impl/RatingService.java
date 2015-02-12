@@ -285,8 +285,7 @@ public class RatingService {
 		UserAccount ua = subscription.getUserAccount();
 		try {
 			String languageCode = ua.getBillingAccount().getTradingLanguage().getLanguage().getLanguageCode();
-			chargeInstnceLabel = catMessagesService.getMessageDescription(chargeInstance, languageCode,
-					chargeInstance.getDescription());
+			chargeInstnceLabel = catMessagesService.getMessageDescription(chargeInstance, languageCode);
 		} catch (Exception e) {
 			log.error(e.getMessage());
 		}
@@ -678,6 +677,7 @@ public class RatingService {
 					|| pricePlan.getMinQuantity().compareTo(bareOperation.getQuantity()) <= 0;
 			if (quantityMinOk) {
 				log.debug("quantityMinOkInPricePlan");
+				bareOperation.setPriceplan(pricePlan);
 				return pricePlan;
 			} else {
 				log.debug("the quantity " + bareOperation.getQuantity() + " is less than " + pricePlan.getMinQuantity());
