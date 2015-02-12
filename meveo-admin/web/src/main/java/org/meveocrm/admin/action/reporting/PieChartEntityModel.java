@@ -3,10 +3,14 @@ package org.meveocrm.admin.action.reporting;
 import org.meveocrm.model.dwh.PieChart;
 import org.primefaces.model.chart.PieChartModel;
 
-public class PieChartEntityModel {
+public class PieChartEntityModel extends ChartEntityModel {
 
 	private PieChart pieChart;
 	private PieChartModel model;
+
+	public PieChartEntityModel() {
+		super();
+	}
 
 	public PieChartModel getModel() {
 		return model;

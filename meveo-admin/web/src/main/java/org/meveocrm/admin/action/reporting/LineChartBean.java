@@ -137,4 +137,34 @@ public class LineChartBean extends ChartEntityBean<LineChart> {
 		}
 		return chartEntityModel;
 	}
+
+	public LineChartEntityModel getModel(LineChartEntityModel line) {
+
+		MeasurableQuantity mq = line.getLineChart().getMeasurableQuantity();
+		List<MeasuredValue> mvs = mvService.getByDateAndPeriod(null,
+				line.getMinDate(), line.getMaxDate(), null, mq);
+
+		CartesianChartModel chartModel = new CartesianChartModel();
+
+		SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-YYYY");
+		ChartSeries mvSeries = new ChartSeries();
+
+		mvSeries.setLabel(sdf.format(line.getMinDate()));
+
+		if (mvs.size() > 0) {
+			for (MeasuredValue measuredValue : mvs) {
+				mvSeries.set(sdf.format(measuredValue.getDate()),
+						measuredValue.getValue());
+			}
+			chartModel.addSeries(mvSeries);
+		} else {
+			log.info("No measured values found for : " + mq.getCode());
+		}
+
+		LineChartEntityModel result = new LineChartEntityModel();
+		result.setLineChart(line.getLineChart());
+		result.setModel(chartModel);
+
+		return result;
+	}
 }

@@ -5,6 +5,7 @@
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:p="http://primefaces.org/ui"
 	xmlns:custom="http://manaty.net/custom"
+	xmlns:hf="http://java.sun.com/jsf/composite/tags"
 	template="layout/template.xhtml">
 
 	<ui:define name="navigation">
@@ -28,31 +29,45 @@
 			<h:panelGrid columns="3">
 
 				<ui:repeat var="bar" value="#{barChartBean.chartModelList}">
+					<hf:barChartComponent barChartEntityModel="#{bar}"
+						chartBackingBean="#{barChartBean}" />
+					<!--<p:panel style="width:500px;"> <p:barChart value="#{barChartBean.getModel(bar).model}"
+									fill="#{bar.barChart.filled}"
+									legendPosition="#{bar.barChart.legendPosition}"
+									barPadding="#{bar.barChart.barPadding}"
+									barMargin="#{bar.barChart.barMargin}"
+									stacked="#{bar.barChart.stacked}" min="#{bar.barChart.min}"
+									max="#{bar.barChart.max}"
+									breakOnNull="#{bar.barChart.breakOnNull}"
+									xaxisLabel="#{bar.barChart.xaxisLabel}"
+									yaxisLabel="#{bar.barChart.yaxisLabel}"
+									xaxisAngle="#{bar.barChart.xaxisAngle}"
+									yaxisAngle="#{bar.barChart.yaxisAngle}"
+									legendCols="#{bar.barChart.legendCols}"
+									legendRows="#{bar.barChart.legendRows}"
+									zoom="#{bar.barChart.zoom}" animate="#{bar.barChart.animate}"
+									showDatatip="#{bar.barChart.showDataTip}"
+									datatipFormat="#{bar.barChart.datatipFormat}"
+									style="#{bar.barChart.style}"
+									styleClass="#{bar.barChart.styleClass}" />
+							</p:panel>
+							<p:panelGrid columns="2">
+								<p:calendar value="#{bar.minDate}">
+									<p:ajax event="dateSelect"
+										listener="#{barChartBean.getModel(bar)}" update="@form" />
+								</p:calendar>
+								<p:calendar value="#{bar.maxDate}">
+									<p:ajax event="dateSelect"
+										listener="#{barChartBean.getModel(bar)}" update="@form" />
+								</p:calendar>
+							</p:panelGrid> -->
 
-					<p:panel style="width:500px;">
-						<p:barChart value="#{bar.model}" fill="#{bar.barChart.filled}"
-							legendPosition="#{bar.barChart.legendPosition}"
-							barPadding="#{bar.barChart.barPadding}"
-							barMargin="#{bar.barChart.barMargin}"
-							stacked="#{bar.barChart.stacked}" min="#{bar.barChart.min}"
-							max="#{bar.barChart.max}"
-							breakOnNull="#{bar.barChart.breakOnNull}"
-							xaxisLabel="#{bar.barChart.xaxisLabel}"
-							yaxisLabel="#{bar.barChart.yaxisLabel}"
-							xaxisAngle="#{bar.barChart.xaxisAngle}"
-							yaxisAngle="#{bar.barChart.yaxisAngle}"
-							legendCols="#{bar.barChart.legendCols}"
-							legendRows="#{bar.barChart.legendRows}"
-							zoom="#{bar.barChart.zoom}" animate="#{bar.barChart.animate}"
-							showDatatip="#{bar.barChart.showDataTip}"
-							datatipFormat="#{bar.barChart.datatipFormat}"
-							style="#{bar.barChart.style}"
-							styleClass="#{bar.barChart.styleClass}" />
-					</p:panel>
 				</ui:repeat>
 
 				<ui:repeat var="line" value="#{lineChartBean.chartModelList}">
-					<p:panel style="width:500px;">
+					<hf:lineChartComponent lineChartEntityModel="#{line}"
+						chartBackingBean="#{lineChartBean}"></hf:lineChartComponent>
+					<!-- <p:panel style="width:500px;">
 						<p:lineChart value="#{line.model}" fill="#{line.lineChart.filled}"
 							legendPosition="#{line.lineChart.legendPosition}"
 							barPadding="#{line.lineChart.barPadding}"
@@ -71,12 +86,14 @@
 							datatipFormat="#{line.lineChart.datatipFormat}"
 							style="#{line.lineChart.style}"
 							styleClass="#{line.lineChart.styleClass}" />
-					</p:panel>
+					</p:panel> -->
 				</ui:repeat>
 
 
 				<ui:repeat var="pie" value="#{pieChartBean.chartModelList}">
-					<p:panel style="width:500px;">
+					<hf:pieChartComponent pieChartEntityModel="#{pie}"
+						chartBackingBean="#{pieChartBean}"></hf:pieChartComponent>
+					<!-- <p:panel style="width:500px;">
 						<p:pieChart value="#{pie.model}"
 							legendPosition="#{pie.pieChart.legendPosition}"
 							fill="#{pie.pieChart.filled}"
@@ -90,6 +107,7 @@
 							style="#{pie.pieChart.style}"
 							styleClass="#{pie.pieChart.styleClass}" />
 					</p:panel>
+ -->
 				</ui:repeat>
 
 			</h:panelGrid>
