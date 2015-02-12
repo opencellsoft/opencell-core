@@ -51,7 +51,6 @@ import org.meveo.model.billing.TradingCountry;
 import org.meveo.model.billing.TradingCurrency;
 import org.meveo.model.billing.TradingLanguage;
 import org.meveo.model.billing.UserAccount;
-import org.meveo.model.catalog.Calendar;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.crm.AccountLevelEnum;
@@ -84,7 +83,6 @@ import org.meveo.service.billing.impl.TerminationReasonService;
 import org.meveo.service.billing.impl.TradingCountryService;
 import org.meveo.service.billing.impl.TradingLanguageService;
 import org.meveo.service.billing.impl.UserAccountService;
-import org.meveo.service.catalog.impl.CalendarService;
 import org.meveo.service.catalog.impl.OfferTemplateService;
 import org.meveo.service.catalog.impl.ServiceTemplateService;
 import org.meveo.service.catalog.impl.TitleService;
@@ -156,9 +154,6 @@ public class AccountHierarchyApi extends BaseApi {
 	private CustomerService customerService;
 
 	@Inject
-	private CalendarService calendarService;
-
-	@Inject
 	private TitleService titleService;
 
 	@Inject
@@ -220,6 +215,7 @@ public class AccountHierarchyApi extends BaseApi {
 					&& !StringUtils.isEmpty(postData.getCustomerCategoryCode())
 					&& !StringUtils.isEmpty(postData.getSellerCode())
 					&& !StringUtils.isEmpty(postData.getCurrencyCode())
+					&& !StringUtils.isEmpty(postData.getBillingCycleCode())
 					&& !StringUtils.isEmpty(postData.getCountryCode()) && !StringUtils.isEmpty(postData.getLastName())
 					&& !StringUtils.isEmpty(postData.getLanguageCode()) && !StringUtils.isEmpty(postData.getEmail())) {
 
@@ -376,46 +372,11 @@ public class AccountHierarchyApi extends BaseApi {
 				customerAccount.setTradingCurrency(tradingCurrency);
 				customerAccountService.create(customerAccount, currentUser, provider);
 
-				BillingCycle billingCycle = null;
-				if (!StringUtils.isBlank(postData.getBillingCycleCode())) {
-					String billingCycleCode = enleverAccent(postData.getBillingCycleCode());
-					billingCycle = billingCycleService.findByBillingCycleCode(billingCycleCode, currentUser, provider);
-					if (billingCycle == null) {
-						throw new EntityDoesNotExistsException(BillingCycle.class, billingCycleCode);
-					}
-				} else {
-					log.warn("billingCycleCode is not set searching for default={}",
-							paramBean.getProperty("api.default.billingCycle.code", "DEFAULT"));
-					billingCycle = billingCycleService.findByBillingCycleCode(
-							paramBean.getProperty("api.default.billingCycle.code", "DEFAULT"), provider);
-					if (billingCycle == null) {
-						log.warn("{} billingCycle is not in database creating default values.",
-								paramBean.getProperty("api.default.billingCycle.code", "DEFAULT"));
-						String imputationCalendarCode = paramBean.getProperty("api.default.imputationCalendar.name",
-								"DEF_IMP_CAL");
-						Calendar imputationCalendar = calendarService.findByName(imputationCalendarCode, provider);
-
-						String cycleCalendarCode = paramBean.getProperty("api.default.cycleCalendar.name",
-								"DEF_CYC_CAL");
-						Calendar cycleCalendar = calendarService.findByName(cycleCalendarCode, provider);
-
-						if (imputationCalendar == null) {
-							throw new EntityDoesNotExistsException(Calendar.class, imputationCalendarCode);
-						}
-						if (cycleCalendar == null) {
-							throw new EntityDoesNotExistsException(Calendar.class, cycleCalendarCode);
-						}
-
-						billingCycle = new BillingCycle();
-						billingCycle.setCode(paramBean.getProperty("api.default.billingCycle.code", "DEFAULT"));
-						billingCycle.setActive(true);
-						billingCycle.setBillingTemplateName(paramBean.getProperty("api.default.billingTemplate.name",
-								"DEFAULT"));
-						billingCycle.setInvoiceDateDelay(0);
-						billingCycle.setCalendar(cycleCalendar);
-
-						billingCycleService.create(billingCycle, currentUser, provider);
-					}
+				String billingCycleCode = enleverAccent(postData.getBillingCycleCode());
+				BillingCycle billingCycle = billingCycleService.findByBillingCycleCode(billingCycleCode, currentUser,
+						provider);
+				if (billingCycle == null) {
+					throw new EntityDoesNotExistsException(BillingCycle.class, billingCycleCode);
 				}
 
 				BillingAccount billingAccount = new BillingAccount();
@@ -466,6 +427,9 @@ public class AccountHierarchyApi extends BaseApi {
 				if (StringUtils.isEmpty(postData.getLastName())) {
 					missingParameters.add("lastName");
 				}
+				if (StringUtils.isEmpty(postData.getBillingCycleCode())) {
+					missingParameters.add("billingCycleCode");
+				}
 				if (StringUtils.isEmpty(postData.getLanguageCode())) {
 					missingParameters.add("languageCode");
 				}
@@ -491,6 +455,7 @@ public class AccountHierarchyApi extends BaseApi {
 		if (!StringUtils.isEmpty(postData.getCustomerId()) && !StringUtils.isEmpty(postData.getCustomerBrandCode())
 				&& !StringUtils.isEmpty(postData.getCustomerCategoryCode())
 				&& !StringUtils.isEmpty(postData.getSellerCode()) && !StringUtils.isEmpty(postData.getCurrencyCode())
+				&& !StringUtils.isEmpty(postData.getBillingCycleCode())
 				&& !StringUtils.isEmpty(postData.getCountryCode()) && !StringUtils.isEmpty(postData.getLastName())
 				&& !StringUtils.isEmpty(postData.getLanguageCode()) && !StringUtils.isEmpty(postData.getEmail())) {
 
@@ -682,45 +647,11 @@ public class AccountHierarchyApi extends BaseApi {
 				customerAccountService.update(customerAccount, currentUser);
 			}
 
-			BillingCycle billingCycle = null;
-			if (!StringUtils.isBlank(postData.getBillingCycleCode())) {
-				String billingCycleCode = enleverAccent(postData.getBillingCycleCode());
-				billingCycle = billingCycleService.findByBillingCycleCode(billingCycleCode, currentUser, provider);
-				if (billingCycle == null) {
-					throw new EntityDoesNotExistsException(BillingCycle.class, billingCycleCode);
-				}
-			} else {
-				log.warn("billingCycleCode is not set searching for default={}",
-						paramBean.getProperty("api.default.billingCycle.code", "DEFAULT"));
-				billingCycle = billingCycleService.findByBillingCycleCode(
-						paramBean.getProperty("api.default.billingCycle.code", "DEFAULT"), provider);
-				if (billingCycle == null) {
-					log.warn("{} billingCycle is not in database creating default values.",
-							paramBean.getProperty("api.default.billingCycle.code", "DEFAULT"));
-					String imputationCalendarCode = paramBean.getProperty("api.default.imputationCalendar.name",
-							"DEF_IMP_CAL");
-					Calendar imputationCalendar = calendarService.findByName(imputationCalendarCode, provider);
-
-					String cycleCalendarCode = paramBean.getProperty("api.default.cycleCalendar.name", "DEF_CYC_CAL");
-					Calendar cycleCalendar = calendarService.findByName(cycleCalendarCode, provider);
-
-					if (imputationCalendar == null) {
-						throw new EntityDoesNotExistsException(Calendar.class, imputationCalendarCode);
-					}
-					if (cycleCalendar == null) {
-						throw new EntityDoesNotExistsException(Calendar.class, cycleCalendarCode);
-					}
-
-					billingCycle = new BillingCycle();
-					billingCycle.setCode(paramBean.getProperty("api.default.billingCycle.code", "DEFAULT"));
-					billingCycle.setActive(true);
-					billingCycle.setBillingTemplateName(paramBean.getProperty("api.default.billingTemplate.name",
-							"DEFAULT"));
-					billingCycle.setInvoiceDateDelay(0);
-					billingCycle.setCalendar(cycleCalendar);
-
-					billingCycleService.create(billingCycle, currentUser, provider);
-				}
+			String billingCycleCode = enleverAccent(postData.getBillingCycleCode());
+			BillingCycle billingCycle = billingCycleService.findByBillingCycleCode(billingCycleCode, currentUser,
+					provider);
+			if (billingCycle == null) {
+				throw new EntityDoesNotExistsException(BillingCycle.class, billingCycleCode);
 			}
 
 			BillingAccount billingAccount = billingAccountService.findByCode(
@@ -789,6 +720,9 @@ public class AccountHierarchyApi extends BaseApi {
 			}
 			if (StringUtils.isEmpty(postData.getLastName())) {
 				missingParameters.add("lastName");
+			}
+			if (StringUtils.isEmpty(postData.getBillingCycleCode())) {
+				missingParameters.add("billingCycleCode");
 			}
 			if (StringUtils.isEmpty(postData.getLanguageCode())) {
 				missingParameters.add("languageCode");
