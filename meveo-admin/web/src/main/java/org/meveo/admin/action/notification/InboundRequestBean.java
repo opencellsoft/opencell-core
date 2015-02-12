@@ -127,7 +127,6 @@ public class InboundRequestBean extends BaseBean<InboundRequest> {
         csv.appendValue("Headers"); 
         csv.startNewLine();
         for(InboundRequest  inboundRequest:inboundRequestService.list()){ 
-        	 csv.appendValue(DateUtils.formatDateWithPattern(inboundRequest.getAuditable().getUpdated(), "dd/MM/yyyy"));
         	 csv.appendValue(inboundRequest.getRemoteAddr());
         	 csv.appendValue(inboundRequest.getRemotePort()+"");
         	 csv.appendValue(inboundRequest.getProtocol());
@@ -147,6 +146,7 @@ public class InboundRequestBean extends BaseBean<InboundRequest> {
         	 csv.appendValue(inboundRequest.getResponseEncoding()+"");
         	 csv.appendValue(inboundRequest.getResponseCoockies()+"");
         	 csv.appendValue(inboundRequest.getResponseHeaders()+"");
+        	 csv.appendValue(DateUtils.formatDateWithPattern(inboundRequest.getAuditable().getUpdated(), "dd/MM/yyyy"));
         	 csv.startNewLine();
         }
         InputStream inputStream=new ByteArrayInputStream(csv.toString().getBytes());

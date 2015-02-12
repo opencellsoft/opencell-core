@@ -5,22 +5,22 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
 
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
 import javax.enterprise.context.ConversationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.apache.commons.lang3.StringUtils;
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.CsvBuilder;
 import org.meveo.commons.utils.CsvReader;
-import org.meveo.model.notification.Notification;
+import org.meveo.model.catalog.CounterTemplate;
 import org.meveo.model.notification.NotificationEventTypeEnum;
 import org.meveo.model.notification.WebHook;
 import org.meveo.model.notification.WebHookMethodEnum;
 import org.meveo.service.base.local.IPersistenceService;
+import org.meveo.service.catalog.impl.CounterTemplateService;
 import org.meveo.service.notification.WebHookService;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.UploadedFile;
@@ -33,6 +33,9 @@ public class WebHookBean extends BaseBean<WebHook> {
 
     @Inject
     WebHookService webHookService;
+    
+    @Inject
+    CounterTemplateService counterTemplateService;
 
     CsvReader csvReader = null;
     private UploadedFile file; 
@@ -49,6 +52,7 @@ public class WebHookBean extends BaseBean<WebHook> {
     private static final int HTTP_METHOD= 9; 
     private static final int USERNAME= 10; 
     private static final int PASSWORD= 11;
+    private static final int COUNTER_TEMPLATE= 11;
     
     
     
@@ -100,6 +104,7 @@ public class WebHookBean extends BaseBean<WebHook> {
 		csv.appendValue("Password");
 		csv.appendValue("Headers");
 		csv.appendValue("Parameters");
+		csv.appendValue("Counter template");
 		csv.startNewLine();
 		for (WebHook webHook : webHookService.list()) {
 			csv.appendValue(webHook.getCode());
@@ -116,6 +121,7 @@ public class WebHookBean extends BaseBean<WebHook> {
 			csv.appendValue(webHook.getPassword());
 			csv.appendValue(webHook.getHeaders() + "");
 			csv.appendValue(webHook.getParams() + "");
+			csv.appendValue(webHook.getCounterTemplate()!=null?  webHook.getCounterTemplate().getCode(): null);
 			csv.startNewLine();
 		}
 		InputStream inputStream = new ByteArrayInputStream(csv.toString()
@@ -164,6 +170,11 @@ public void handleFileUpload(FileUploadEvent event) throws Exception {
 						.valueOf(values[HTTP_METHOD]));
 				webHook.setUsername(values[USERNAME]);
 				webHook.setPassword(values[PASSWORD]);
+				if(!StringUtils.isBlank(values[COUNTER_TEMPLATE])){
+					CounterTemplate counterTemplate=counterTemplateService.findByCode(values[COUNTER_TEMPLATE], getCurrentProvider());
+						webHook.setCounterTemplate(counterTemplate!=null ?counterTemplate: null);
+				}
+				
 				webHookService.create(webHook);
 				messages.info(new BundleKey("messages", "commons.csv"));
 			}
