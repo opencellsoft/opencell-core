@@ -7495,21 +7495,21 @@
   <wsdl:import location="http://localhost:8080/meveo/MediationWs?wsdl=MediationWs.wsdl" namespace="http://ws.api.meveo.org/"></wsdl:import>
   <wsdl:binding name="MediationWsSoapBinding" type="ns1:MediationWs">
     <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <wsdl:operation name="registerUsage">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="registerUsage">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="registerUsageResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
     <wsdl:operation name="index">
       <soap:operation soapAction="" style="document"/>
       <wsdl:input name="index">
         <soap:body use="literal"/>
       </wsdl:input>
       <wsdl:output name="indexResponse">
-        <soap:body use="literal"/>
-      </wsdl:output>
-    </wsdl:operation>
-    <wsdl:operation name="create">
-      <soap:operation soapAction="" style="document"/>
-      <wsdl:input name="create">
-        <soap:body use="literal"/>
-      </wsdl:input>
-      <wsdl:output name="createResponse">
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
@@ -7523,15 +7523,29 @@
   <wsdl:types>
     <xs:schema elementFormDefault="unqualified" targetNamespace="http://ws.api.meveo.org/" version="1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://ws.api.meveo.org/">
       <xs:element name="ActionStatus" type="tns:actionStatus"/>
-      <xs:element name="Edr" type="tns:edrDto"/>
-      <xs:element name="create" type="tns:create"/>
-      <xs:element name="createResponse" type="tns:createResponse"/>
+      <xs:element name="CdrList" type="tns:cdrListDto"/>
       <xs:element name="index" type="tns:index"/>
       <xs:element name="indexResponse" type="tns:indexResponse"/>
-      <xs:complexType name="index">
+      <xs:element name="registerUsage" type="tns:registerUsage"/>
+      <xs:element name="registerUsageResponse" type="tns:registerUsageResponse"/>
+      <xs:complexType name="registerUsage">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="cdrList" type="tns:cdrListDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="cdrListDto">
+        <xs:complexContent>
+          <xs:extension base="tns:baseDto">
+            <xs:sequence>
+              <xs:element maxOccurs="unbounded" minOccurs="0" name="cdr" type="xs:string"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType abstract="true" name="baseDto">
         <xs:sequence/>
       </xs:complexType>
-      <xs:complexType name="indexResponse">
+      <xs:complexType name="registerUsageResponse">
         <xs:sequence>
           <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
         </xs:sequence>
@@ -7543,24 +7557,10 @@
           <xs:element name="message" type="xs:string"/>
         </xs:sequence>
       </xs:complexType>
-      <xs:complexType name="create">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="edr" type="tns:edrDto"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="edrDto">
-        <xs:complexContent>
-          <xs:extension base="tns:baseDto">
-            <xs:sequence>
-              <xs:element maxOccurs="unbounded" minOccurs="0" name="edrs" nillable="true" type="xs:string"/>
-            </xs:sequence>
-          </xs:extension>
-        </xs:complexContent>
-      </xs:complexType>
-      <xs:complexType abstract="true" name="baseDto">
+      <xs:complexType name="index">
         <xs:sequence/>
       </xs:complexType>
-      <xs:complexType name="createResponse">
+      <xs:complexType name="indexResponse">
         <xs:sequence>
           <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
         </xs:sequence>
@@ -7576,45 +7576,46 @@
   <wsdl:message name="index">
     <wsdl:part element="ns1:index" name="parameters"></wsdl:part>
   </wsdl:message>
-  <wsdl:message name="createResponse">
-    <wsdl:part element="ns1:createResponse" name="parameters"></wsdl:part>
+  <wsdl:message name="registerUsageResponse">
+    <wsdl:part element="ns1:registerUsageResponse" name="parameters"></wsdl:part>
   </wsdl:message>
-  <wsdl:message name="create">
-    <wsdl:part element="ns1:create" name="parameters"></wsdl:part>
+  <wsdl:message name="registerUsage">
+    <wsdl:part element="ns1:registerUsage" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="indexResponse">
     <wsdl:part element="ns1:indexResponse" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:portType name="MediationWs">
+    <wsdl:operation name="registerUsage">
+      <wsdl:input message="ns1:registerUsage" name="registerUsage"></wsdl:input>
+      <wsdl:output message="ns1:registerUsageResponse" name="registerUsageResponse"></wsdl:output>
+    </wsdl:operation>
     <wsdl:operation name="index">
       <wsdl:input message="ns1:index" name="index"></wsdl:input>
       <wsdl:output message="ns1:indexResponse" name="indexResponse"></wsdl:output>
     </wsdl:operation>
-    <wsdl:operation name="create">
-      <wsdl:input message="ns1:create" name="create"></wsdl:input>
-      <wsdl:output message="ns1:createResponse" name="createResponse"></wsdl:output>
-    </wsdl:operation>
   </wsdl:portType>
-</wsdl:definitions>]]></con:content><con:type>http://schemas.xmlsoap.org/wsdl/</con:type></con:part></con:definitionCache><con:endpoints><con:endpoint>http://localhost:8080/meveo/MediationWs</con:endpoint></con:endpoints><con:operation isOneWay="false" action="" name="create" bindingOperationName="create" type="Request-Response" outputName="createResponse" inputName="create" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment xmlns:con="http://eviware.com/soapui/config">
+</wsdl:definitions>]]></con:content><con:type>http://schemas.xmlsoap.org/wsdl/</con:type></con:part></con:definitionCache><con:endpoints><con:endpoint>http://localhost:8080/meveo/MediationWs</con:endpoint></con:endpoints><con:operation isOneWay="false" action="" name="index" bindingOperationName="index" type="Request-Response" outputName="indexResponse" inputName="index" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/MediationWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:index/>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/MediationWs/index"/></con:call></con:operation><con:operation isOneWay="false" action="" name="registerUsage" bindingOperationName="registerUsage" type="Request-Response" outputName="registerUsageResponse" inputName="registerUsage" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment xmlns:con="http://eviware.com/soapui/config">
   &lt;con:entry key="username" value="meveo.admin"/>
   &lt;con:entry key="password" value="meveo.admin"/>
 &lt;/xml-fragment></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/MediationWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
-      <ws:create>
+      <ws:registerUsage>
          <!--Optional:-->
-         <edr>
+         <cdrList>
             <!--Zero or more repetitions:-->
-            <edrs>2015-02-05T00:15:11.000Z;5;MSISDN2;VOICE</edrs>
-         </edr>
-      </ws:create>
+            <cdr>2015-02-13T00:15:11.000Z;5;IMSI1;DATA</cdr>
+            <cdr>2015-02-13T00:15:11.000Z;5;IMSI1;DATA</cdr>
+         </cdrList>
+      </ws:registerUsage>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:authType>Global HTTP Settings</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/MediationWs/create"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation isOneWay="false" action="" name="index" bindingOperationName="index" type="Request-Response" outputName="indexResponse" inputName="index" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/MediationWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
-   <soapenv:Header/>
-   <soapenv:Body>
-      <ws:index/>
-   </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/MediationWs/index"/></con:call></con:operation></con:interface><con:interface xsi:type="con:WsdlInterface" wsaVersion="NONE" name="WalletWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}WalletWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="http://localhost:8080/meveo/WalletWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache type="TEXT" rootPart="http://localhost:8080/meveo/WalletWs?wsdl"><con:part><con:url>http://localhost:8080/meveo/WalletWs?wsdl</con:url><con:content><![CDATA[<wsdl:definitions name="WalletWs" targetNamespace="http://impl.ws.api.meveo.org/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://impl.ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns2="http://schemas.xmlsoap.org/soap/http" xmlns:ns1="http://ws.api.meveo.org/">
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/MediationWs/registerUsage"/><con:wsrmConfig version="1.2"/></con:call></con:operation></con:interface><con:interface xsi:type="con:WsdlInterface" wsaVersion="NONE" name="WalletWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}WalletWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="http://localhost:8080/meveo/WalletWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache type="TEXT" rootPart="http://localhost:8080/meveo/WalletWs?wsdl"><con:part><con:url>http://localhost:8080/meveo/WalletWs?wsdl</con:url><con:content><![CDATA[<wsdl:definitions name="WalletWs" targetNamespace="http://impl.ws.api.meveo.org/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://impl.ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns2="http://schemas.xmlsoap.org/soap/http" xmlns:ns1="http://ws.api.meveo.org/">
   <wsdl:import location="http://localhost:8080/meveo/WalletWs?wsdl=WalletWs.wsdl" namespace="http://ws.api.meveo.org/"></wsdl:import>
   <wsdl:binding name="WalletWsSoapBinding" type="ns1:WalletWs">
     <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>

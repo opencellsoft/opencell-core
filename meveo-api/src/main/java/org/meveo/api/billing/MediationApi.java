@@ -7,7 +7,7 @@ import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.BaseApi;
-import org.meveo.api.dto.billing.EdrDto;
+import org.meveo.api.dto.billing.CdrListDto;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.model.admin.User;
@@ -32,8 +32,8 @@ public class MediationApi extends BaseApi {
 	@Inject
 	private EdrService edrService;
 
-	public void create(EdrDto postData, User currentUser) throws MeveoApiException {
-		if (postData.getEdrs() != null && postData.getEdrs().size() > 0) {
+	public void create(CdrListDto postData, User currentUser) throws MeveoApiException {
+		if (postData.getCdr() != null && postData.getCdr().size() > 0) {
 			try {
 				cdrParsingService.initByApi(currentUser.getUserName(), postData.getIpAddress());
 			} catch (BusinessException e1) {
@@ -42,7 +42,7 @@ public class MediationApi extends BaseApi {
 			}
 
 			try {
-				for (String line : postData.getEdrs()) {
+				for (String line : postData.getCdr()) {
 					List<EDR> edrs = cdrParsingService.getEDRList(line);
 					for (EDR edr : edrs) {
 						log.debug("edr={}", edr);
@@ -54,12 +54,12 @@ public class MediationApi extends BaseApi {
 				throw new MeveoApiException(e.getMessage());
 			}
 		} else {
-			if (postData.getEdrs() == null || postData.getEdrs().size() == 0) {
+			if (postData.getCdr() == null || postData.getCdr().size() == 0) {
 				missingParameters.add("edrs");
 			}
 
 			throw new MissingParameterException(getMissingParametersExceptionMessage());
 		}
 	}
-	
+
 }
