@@ -45,9 +45,10 @@
 				</p:column>
 				<p:column styleClass="col2 tab-view-container">
 					<hf:formPanel id="formCustomerPanel" formId="formCustomer"
-						label="#{messages['customer.customerPanel']}"  showFormButtons="false"
-						backingBean="#{customerBean}" useCustomIdParam="true"
-						killConversationOnSave="false" killConversationOnBack="false">
+						label="#{messages['customer.customerPanel']}"
+						showFormButtons="false" backingBean="#{customerBean}"
+						useCustomIdParam="true" killConversationOnSave="false"
+						killConversationOnBack="false">
 						<p:tabView id="tabView">
 							<p:tab title="#{messages['customer.tab.account']}">
 								<hftl:panelGroup columns="2">
@@ -55,7 +56,7 @@
 										field="code" validateUnique="true" required="true" />
 									<hf:formField label="#{messages['businessEntity.description']}"
 										field="description" useConverter="false" id="description"
-										maxlength="50" />
+										maxlength="50" required="true" />
 									<hf:formField label="#{messages['customer.externalRef1']}"
 										field="externalRef1" validateUnique="false" />
 									<hf:formField label="#{messages['customer.externalRef2']}"
@@ -126,12 +127,12 @@
 							</p:tab>
 						</p:tabView>
 
-						<hf:formButtons columns="5"
-							backingBean="#{customerBean}"
+						<hf:formButtons columns="5" backingBean="#{customerBean}"
 							edit="#{customerBean.edit}" ajaxSubmit="false"
 							killConversationOnSave="false" killConversationOnBack="false"
 							useCustomIdParam="true">
-							<p:button outcome="addCustomerAccount" rendered="#{!customerBean.edit}"
+							<p:button outcome="addCustomerAccount"
+								rendered="#{!customerBean.edit}"
 								value="#{messages['customer.buttonAddCustomerAccount']}">
 								<f:param name="cid"
 									value="#{javax.enterprise.context.conversation.id}" />
