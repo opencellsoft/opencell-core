@@ -9,12 +9,15 @@ import java.util.List;
 import java.util.Map;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.Resource;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
 import javax.enterprise.event.Observes;
 import javax.enterprise.inject.spi.BeanManager;
 import javax.inject.Inject;
 
+import org.infinispan.api.BasicCache;
+import org.infinispan.manager.CacheContainer;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.event.qualifier.CDR;
@@ -30,6 +33,13 @@ import org.meveo.event.qualifier.Updated;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.IEntity;
 import org.meveo.model.admin.User;
+import org.meveo.model.billing.UsageChargeInstance;
+import org.meveo.model.cache.CounterInstanceCache;
+import org.meveo.model.cache.UsageChargeInstanceCache;
+import org.meveo.model.cache.UsageChargeTemplateCache;
+import org.meveo.model.catalog.DiscountPlanMatrix;
+import org.meveo.model.catalog.PricePlanMatrix;
+import org.meveo.model.catalog.UsageChargeTemplate;
 import org.meveo.model.notification.EmailNotification;
 import org.meveo.model.notification.InboundRequest;
 import org.meveo.model.notification.InstantMessagingNotification;
@@ -42,6 +52,8 @@ import org.meveo.service.billing.impl.CounterInstanceService;
 import org.meveo.service.billing.impl.CounterValueInsufficientException;
 import org.meveo.service.billing.impl.RatingService;
 import org.slf4j.Logger;
+
+import com.lowagie.text.pdf.parser.Matrix;
 
 @Singleton
 @Startup
@@ -72,6 +84,17 @@ public class DefaultObserver {
 	CounterInstanceService counterInstanceService;
 	
 	HashMap<NotificationEventTypeEnum, HashMap<Class<BusinessEntity>, List<Notification>>> classNotificationMap = new HashMap<>();
+	
+	@Resource(name = "java:jboss/infinispan/container/meveo")
+	private CacheContainer meveoContainer;
+
+	private static BasicCache<String, HashMap<String, List<PricePlanMatrix>>> allPricePlan;
+	private static BasicCache<String, HashMap<String, List<DiscountPlanMatrix>>> allDiscountPlan;
+	private static BasicCache<String, UsageChargeTemplateCache> chargeTemplateCache;
+	private static BasicCache<Long, List<UsageChargeInstanceCache>> chargeCache;
+	private static BasicCache<Long,CounterInstanceCache> counterCache;
+
+	
 
 	@PostConstruct
 	private void init() {
@@ -83,6 +106,14 @@ public class DefaultObserver {
 		for (Notification notif : allNotif) {
 			addNotificationToCache(notif);
 		}
+		
+		allPricePlan = meveoContainer.getCache("meveo-price-plan");
+		allDiscountPlan = meveoContainer.getCache("meveo-discounts");
+		chargeTemplateCache = meveoContainer.getCache("meveo-usage-charge-template-cache-cache");
+		
+		chargeCache = meveoContainer.getCache("meveo-charge-instance-cache");
+	
+		counterCache = meveoContainer.getCache("meveo-counter-cache");
 	}
 
 	private void addNotificationToCache(Notification notif) {
@@ -236,7 +267,9 @@ public class DefaultObserver {
 		if (Notification.class.isAssignableFrom(e.getClass())) {
 			updateNotificationInCache((Notification) e);
 		}
+		
 	}
+	
 
 	public void entityRemoved(@Observes @Removed IEntity e) {
 		log.debug("Defaut observer : Entity {} with id {} removed", e.getClass().getName(), e.getId());
@@ -287,6 +320,74 @@ public class DefaultObserver {
 	public void inboundRequest(@Observes @InboundRequestReceived InboundRequest e) {
 		log.debug("Defaut observer : inbound request {} ", e.getCode());
 		checkEvent(NotificationEventTypeEnum.INBOUND_REQ, e);
+	}
+	
+	public void updateCache(IEntity e,boolean removeAction){
+		if(e instanceof PricePlanMatrix){
+			if (allPricePlan.containsKey(((PricePlanMatrix) e).getProvider())) {
+				
+				if (allPricePlan.get(((PricePlanMatrix) e).getProvider()).containsKey(((PricePlanMatrix) e).getEventCode())) {
+					List<PricePlanMatrix> listPricePlan=allPricePlan.get(((PricePlanMatrix) e).getProvider()).get(((PricePlanMatrix) e).getEventCode());
+					Integer pricePlanIndex=null;
+					for (PricePlanMatrix pricePlan : listPricePlan) {
+						if(pricePlan.getId().equals(e.getId())){
+							pricePlanIndex=listPricePlan.indexOf(pricePlan);
+							break;
+						}
+					}
+					if(pricePlanIndex!=null){
+						if(!removeAction){
+							listPricePlan.set(pricePlanIndex, (PricePlanMatrix) e);
+						}else{
+							listPricePlan.remove(pricePlanIndex);
+						}
+						
+					}
+					
+				}
+			}
+			
+		}else if(e instanceof DiscountPlanMatrix){
+			if (allDiscountPlan.containsKey(((DiscountPlanMatrix) e).getProvider())) {
+				if (allDiscountPlan.get(((DiscountPlanMatrix) e).getProvider()).containsKey(((DiscountPlanMatrix) e).getEventCode())) {
+					List<DiscountPlanMatrix> discountPlans=allDiscountPlan.get(((DiscountPlanMatrix) e).getProvider()).get(((DiscountPlanMatrix) e).getEventCode());
+					Integer discountPlanIndex=null;
+					for (DiscountPlanMatrix discountPlan : discountPlans) {
+						if(discountPlan.getId().equals(e.getId())){
+							discountPlanIndex=discountPlans.indexOf(discountPlan);
+							break;
+						}
+					}
+					if(discountPlanIndex!=null){
+						if(!removeAction){
+							discountPlans.set(discountPlanIndex, (DiscountPlanMatrix) e);
+						}else{
+							discountPlans.remove(discountPlanIndex);
+						}
+						
+					}
+				}
+			}
+		}else if(e instanceof UsageChargeTemplate){
+			UsageChargeTemplate usageChargeTemplate=(UsageChargeTemplate)e;
+			if (chargeTemplateCache.containsKey(usageChargeTemplate.getCode())) {
+				chargeTemplateCache.remove(usageChargeTemplate.getCode()); //if update action  the UsageChargeTemplateCache will be reconstructed
+			}
+		}else if(e instanceof UsageChargeInstance){
+			UsageChargeInstance usageChargeInstance=(UsageChargeInstance)e;
+			if (chargeCache.containsKey(usageChargeInstance.getServiceInstance().getSubscription().getId())) {
+				List<UsageChargeInstanceCache> usageChargeInstanceCaches=chargeCache.get(usageChargeInstance.getServiceInstance().getSubscription().getId());
+				Integer usageChargeInstanceCacheIndex=null;
+				for(UsageChargeInstanceCache usageChargeInstanceCache:usageChargeInstanceCaches){
+					
+					if(usageChargeInstanceCache.getChargeInstanceId().equals(usageChargeInstance.getId())){
+						usageChargeInstanceCacheIndex=usageChargeInstanceCaches.indexOf(usageChargeInstanceCache);
+						break;
+					}
+				}
+				usageChargeInstanceCaches.remove(usageChargeInstanceCacheIndex); //if update action the UsageChargeInstanceCache will be reconstructed
+			}
+		}
 	}
 
 }
