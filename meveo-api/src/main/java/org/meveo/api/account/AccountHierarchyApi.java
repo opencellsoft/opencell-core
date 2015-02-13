@@ -859,9 +859,24 @@ public class AccountHierarchyApi extends BaseApi {
 										customerAccount = new CustomerAccount();
 										customerAccount.setCode(customerAccountDto.getCode());
 									} else {
-										if (customerAccountDto.getTerminationDate() != null) {
-											// TODO [delete or update status?]
-											// no action
+										if (!StringUtils.isBlank(customerAccountDto.getStatus())) {
+											try {
+												CustomerAccountStatusEnum customerAccountStatusEnum = CustomerAccountStatusEnum
+														.valueOf(customerAccountDto.getStatus());
+												if (customerAccountStatusEnum == CustomerAccountStatusEnum.CLOSE) {
+													try {
+														customerAccountService.closeCustomerAccount(customerAccount,
+																currentUser);
+													} catch (Exception e) {
+														throw new MeveoApiException(
+																"Failed closing customerAccount with code="
+																		+ customerAccountDto.getCode() + ". "
+																		+ e.getMessage());
+													}
+												}
+											} catch (IllegalStateException e) {
+												log.warn("customerAccountStatus={}", e.getMessage());
+											}
 										}
 									}
 
