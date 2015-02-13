@@ -857,6 +857,10 @@ public class AccountHierarchyApi extends BaseApi {
 									if (customerAccount == null) {
 										customerAccount = new CustomerAccount();
 										customerAccount.setCode(customerAccountDto.getCode());
+									} else {
+										if (customerAccountDto.getTerminationDate() != null) {
+											// TODO [delete or update status?]
+										}
 									}
 
 									populateNameAndAddress(customerAccount, customerAccountDto, AccountLevelEnum.CA,
@@ -935,6 +939,11 @@ public class AccountHierarchyApi extends BaseApi {
 											if (billingAccount == null) {
 												billingAccount = new BillingAccount();
 												billingAccount.setCode(billingAccountDto.getCode());
+											} else {
+												if (billingAccountDto.getTerminationDate() != null) {
+													// TODO [delete or update
+													// status?]
+												}
 											}
 
 											populateNameAndAddress(billingAccount, billingAccountDto,
@@ -1020,6 +1029,12 @@ public class AccountHierarchyApi extends BaseApi {
 													if (userAccount == null) {
 														userAccount = new UserAccount();
 														userAccount.setCode(userAccountDto.getCode());
+													} else {
+														if (userAccountDto.getTerminationDate() != null) {
+															// TODO [delete or
+															// update
+															// status?]
+														}
 													}
 
 													populateNameAndAddress(userAccount, userAccountDto,
@@ -1059,6 +1074,14 @@ public class AccountHierarchyApi extends BaseApi {
 															if (subscription == null) {
 																subscription = new Subscription();
 																subscription.setCode(subscriptionDto.getCode());
+															} else {
+																if (subscriptionDto.getTerminationDate() != null) {
+																	// TODO
+																	// [delete
+																	// or
+																	// update
+																	// status?]
+																}
 															}
 
 															if (!StringUtils

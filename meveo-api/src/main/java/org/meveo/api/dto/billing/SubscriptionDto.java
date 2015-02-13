@@ -39,6 +39,7 @@ public class SubscriptionDto extends BaseDto {
 
 	private Date subscriptionDate;
 	private Date terminationDate;
+	private String status;
 
 	private List<AccessDto> accesses;
 
@@ -130,7 +131,8 @@ public class SubscriptionDto extends BaseDto {
 	public String toString() {
 		return "SubscriptionDto [code=" + code + ", description=" + description + ", userAccount=" + userAccount
 				+ ", offerTemplate=" + offerTemplate + ", subscriptionDate=" + subscriptionDate + ", terminationDate="
-				+ terminationDate + ", accesses=" + accesses + ", services=" + services + "]";
+				+ terminationDate + ", status=" + status + ", accesses=" + accesses + ", services=" + services
+				+ ", customFields=" + customFields + "]";
 	}
 
 	public String getDescription() {
@@ -163,5 +165,13 @@ public class SubscriptionDto extends BaseDto {
 
 	public void setCustomFields(List<CustomFieldDto> customFields) {
 		this.customFields = customFields;
+	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
 	}
 }

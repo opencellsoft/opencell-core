@@ -40,6 +40,7 @@ public class BillingAccountDto extends AccountDto {
 	private Date terminationDate;
 	private String paymentTerms;
 	private Boolean electronicBilling;
+	private String status;
 
 	private List<UserAccountDto> userAccounts;
 
@@ -145,7 +146,7 @@ public class BillingAccountDto extends AccountDto {
 				+ ", country=" + country + ", language=" + language + ", paymentMethod=" + paymentMethod
 				+ ", nextInvoiceDate=" + nextInvoiceDate + ", subscriptionDate=" + subscriptionDate
 				+ ", terminationDate=" + terminationDate + ", paymentTerms=" + paymentTerms + ", electronicBilling="
-				+ electronicBilling + ", userAccounts=" + userAccounts + "]";
+				+ electronicBilling + ", status=" + status + ", userAccounts=" + userAccounts + "]";
 	}
 
 	public Date getSubscriptionDate() {
@@ -170,6 +171,14 @@ public class BillingAccountDto extends AccountDto {
 
 	public void setUserAccounts(List<UserAccountDto> userAccounts) {
 		this.userAccounts = userAccounts;
+	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
 	}
 
 }

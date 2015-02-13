@@ -41,6 +41,7 @@ public class CustomerAccountDto extends AccountDto {
 	private String mandateIdentification = "";
 	private Date mandateDate;
 	private BigDecimal balance = BigDecimal.ZERO;
+	private Date terminationDate;
 
 	private List<BillingAccountDto> billingAccounts;
 
@@ -231,7 +232,8 @@ public class CustomerAccountDto extends AccountDto {
 				+ accountOperations + ", dateStatus=" + dateStatus + ", dateDunningLevel=" + dateDunningLevel
 				+ ", email=" + email + ", phone=" + phone + ", mobile=" + mobile + ", fax=" + fax + ", dunningLevel="
 				+ dunningLevel + ", mandateIdentification=" + mandateIdentification + ", mandateDate=" + mandateDate
-				+ ", balance=" + balance + ", billingAccounts=" + billingAccounts + "]";
+				+ ", balance=" + balance + ", terminationDate=" + terminationDate + ", billingAccounts="
+				+ billingAccounts + "]";
 	}
 
 	public List<BillingAccountDto> getBillingAccounts() {
@@ -240,6 +242,14 @@ public class CustomerAccountDto extends AccountDto {
 
 	public void setBillingAccounts(List<BillingAccountDto> billingAccounts) {
 		this.billingAccounts = billingAccounts;
+	}
+
+	public Date getTerminationDate() {
+		return terminationDate;
+	}
+
+	public void setTerminationDate(Date terminationDate) {
+		this.terminationDate = terminationDate;
 	}
 
 }
