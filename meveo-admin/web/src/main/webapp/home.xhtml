@@ -14,17 +14,7 @@
 
 	<ui:define name="body">
 		<p:panel>
-			<h:panelGrid columns="2" style="width:100%;text-align:center;">
-				<h:graphicImage value="/img/home.png" style="border:0px;" />
-				<!-- REMOVED FOR NOW -->
-				<!--
-				<p:columnChart value="#{dashboard.customerAccount}" var="customerAccounts" xfield="#{customerAccounts.month}">
-					<p:chartSeries label="#{messages['dashboard.customerAccounts']}" value="#{customerAccounts.amount}" />
-				</p:columnChart >
-               -->
-
-
-			</h:panelGrid>
+			
 			<h:panelGrid columns="3">
 
 				<ui:repeat var="bar" value="#{barChartBean.chartModelList}">
@@ -73,8 +63,7 @@
 							styleClass="#{line.lineChart.styleClass}" />
 					</p:panel>
 				</ui:repeat>
-
-
+				
 				<ui:repeat var="pie" value="#{pieChartBean.chartModelList}">
 					<p:panel style="width:500px;">
 						<p:pieChart value="#{pie.model}"
@@ -91,6 +80,18 @@
 							styleClass="#{pie.pieChart.styleClass}" />
 					</p:panel>
 				</ui:repeat>
+
+			</h:panelGrid>
+			
+			<h:panelGrid columns="2" style="width:100%;text-align:center;">
+				<h:graphicImage value="/img/home.png" style="border:0px;" />
+				<!-- REMOVED FOR NOW -->
+				<!--
+				<p:columnChart value="#{dashboard.customerAccount}" var="customerAccounts" xfield="#{customerAccounts.month}">
+					<p:chartSeries label="#{messages['dashboard.customerAccounts']}" value="#{customerAccounts.amount}" />
+				</p:columnChart >
+               -->
+
 
 			</h:panelGrid>
 		</p:panel>
