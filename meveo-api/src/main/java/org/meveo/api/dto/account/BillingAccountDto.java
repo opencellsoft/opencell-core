@@ -5,7 +5,7 @@ import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.model.AccountEntity;
@@ -20,19 +20,19 @@ public class BillingAccountDto extends AccountDto {
 
 	private static final long serialVersionUID = 8701417481481359155L;
 
-	@XmlAttribute(required = true)
+	@XmlElement(required = true)
 	private String customerAccount;
 
-	@XmlAttribute(required = true)
+	@XmlElement(required = true)
 	private String billingCycle;
 
-	@XmlAttribute(required = true)
+	@XmlElement(required = true)
 	private String country;
 
-	@XmlAttribute(required = true)
+	@XmlElement(required = true)
 	private String language;
 
-	@XmlAttribute(required = true)
+	@XmlElement(required = true)
 	private String paymentMethod;
 
 	private Date nextInvoiceDate;

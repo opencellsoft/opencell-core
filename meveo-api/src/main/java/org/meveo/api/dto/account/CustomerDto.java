@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.model.AccountEntity;
@@ -18,8 +19,13 @@ public class CustomerDto extends AccountDto {
 
 	private static final long serialVersionUID = 3243716253817571391L;
 
+	@XmlElement(required = true)
 	private String customerCategory;
+
+	@XmlElement(required = true)
 	private String customerBrand;
+
+	@XmlElement(required = true)
 	private String seller;
 
 	private List<CustomerAccountDto> customerAccounts;

@@ -5,7 +5,6 @@ import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -23,13 +22,13 @@ public class TerminateSubscriptionServicesDto extends BaseDto {
 	@XmlElement(required = true)
 	private List<String> services;
 
-	@XmlAttribute(required = true)
+	@XmlElement(required = true)
 	private String subscriptionCode;
 
-	@XmlAttribute(required = true)
+	@XmlElement(required = true)
 	private String terminationReason;
 
-	@XmlAttribute(required = true)
+	@XmlElement(required = true)
 	private Date terminationDate;
 
 	public List<String> getServices() {

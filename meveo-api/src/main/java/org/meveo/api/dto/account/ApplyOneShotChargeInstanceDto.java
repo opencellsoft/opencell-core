@@ -5,7 +5,7 @@ import java.util.Date;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.BaseDto;
@@ -19,19 +19,19 @@ public class ApplyOneShotChargeInstanceDto extends BaseDto {
 
 	private static final long serialVersionUID = 3910185882621015476L;
 
-	@XmlAttribute(required = true)
+	@XmlElement(required = true)
 	private String oneShotCharge;
 
-	@XmlAttribute(required = true)
+	@XmlElement(required = true)
 	private String subscription;
-	
+
 	private String wallet;
-	
+
 	private Boolean createWallet;
 
-	@XmlAttribute(required = true)
+	@XmlElement(required = true)
 	private Date operationDate;
-	
+
 	private BigDecimal quantity;
 
 	private String description;
@@ -131,8 +131,8 @@ public class ApplyOneShotChargeInstanceDto extends BaseDto {
 
 	@Override
 	public String toString() {
-		return "ApplyOneShotChargeInstanceDto [oneShotCharge=" + oneShotCharge + ", subscription="
-				+ subscription + ", wallet="+wallet+", operationDate=" + operationDate + ", description=" + description
+		return "ApplyOneShotChargeInstanceDto [oneShotCharge=" + oneShotCharge + ", subscription=" + subscription
+				+ ", wallet=" + wallet + ", operationDate=" + operationDate + ", description=" + description
 				+ ", amountWithoutTax=" + amountWithoutTax + ", amountWithTax=" + amountWithTax + ", criteria1="
 				+ criteria1 + ", criteria2=" + criteria2 + ", criteria3=" + criteria3 + "]";
 	}
