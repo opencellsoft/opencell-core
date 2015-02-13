@@ -96,8 +96,8 @@
 			<p:commandButton value="Import CSV"  rendered="#{importCsv}" type="button" onclick="PF('csvDialog').show();" update="@all" ajax="false" />
 		    <p:dialog header="Import CSV" widgetVar="csvDialog" rendered="#{importCsv}">	
             <p:panelGrid columns="2" >
-		    <p:outputLabel for="strategy" style="width:180px;margin-left:-70px;" value="#{messages['notification.strategyImportType']}" />
-            <p:selectOneMenu id="strategy" value="#{backingBean.strategyImportType}" >
+		    <p:outputLabel for="#{formId}strategy" style="width:180px;margin-left:-70px;" value="#{messages['notification.strategyImportType']}" />
+            <p:selectOneMenu id="#{formId}strategy" value="#{backingBean.strategyImportType}" >
             <f:selectItem itemLabel="#{messages['commons.select']}" />
             <f:selectItem itemLabel="#{messages['enum.strategyImportTypeEnum.UPDATED']}"  itemValue="UPDATED" /> 
 			<f:selectItem itemLabel="#{messages['enum.strategyImportTypeEnum.REJECTE_IMPORT']}"  itemValue="REJECTE_IMPORT" /> 
