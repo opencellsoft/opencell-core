@@ -19,11 +19,13 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.CsvBuilder;
 import org.meveo.commons.utils.CsvReader;
 import org.meveo.model.admin.User;
+import org.meveo.model.catalog.CounterTemplate;
 import org.meveo.model.notification.InstantMessagingNotification;
 import org.meveo.model.notification.InstantMessagingProviderEnum;
 import org.meveo.model.notification.NotificationEventTypeEnum;
 import org.meveo.service.admin.impl.UserService;
 import org.meveo.service.base.local.IPersistenceService;
+import org.meveo.service.catalog.impl.CounterTemplateService;
 import org.meveo.service.notification.InstantMessagingNotificationService;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.UploadedFile;
@@ -40,7 +42,10 @@ public class InstantMessagingNotificationBean extends BaseBean<InstantMessagingN
 	
 	@Inject
 	UserService userService;
-	
+
+    @Inject
+    CounterTemplateService counterTemplateService;
+    
 	CsvReader csvReader = null;
     private UploadedFile file; 
     
@@ -55,6 +60,7 @@ public class InstantMessagingNotificationBean extends BaseBean<InstantMessagingN
     private static final int IM_IDENTIFIER_LIST= 8;
     private static final int USERS_LIST= 9;
     private static final int MESSAGE= 10;
+    private static final int COUNTER_TEMPLATE= 11;
 
 
 	
@@ -101,6 +107,7 @@ public class InstantMessagingNotificationBean extends BaseBean<InstantMessagingN
 		csv.appendValue("IM identifiers list");
 		csv.appendValue("Users list");
 		csv.appendValue("Message");
+		csv.appendValue("Counter template");
 		csv.startNewLine();
 		for (InstantMessagingNotification imNotification : imNotificationService
 				.list()) {
@@ -130,11 +137,12 @@ public class InstantMessagingNotificationBean extends BaseBean<InstantMessagingN
 			}
 			csv.appendValue(users.toString());
 			csv.appendValue(imNotification.getMessage());
+			csv.appendValue(imNotification.getCounterTemplate()!=null?  imNotification.getCounterTemplate().getCode(): null);
 			csv.startNewLine();
 		}
 		InputStream inputStream = new ByteArrayInputStream(csv.toString()
 				.getBytes());
-		csv.download(inputStream, "InstancemNotifications.csv");
+		csv.download(inputStream, "InstantMessagingNotification.csv");
 	}
 public void handleFileUpload(FileUploadEvent event) throws Exception {
 	try {
@@ -206,6 +214,10 @@ public void handleFileUpload(FileUploadEvent event) throws Exception {
 					}
 				}
 				inMessagingNotification.setMessage(values[MESSAGE]);
+				if(!StringUtils.isBlank(values[COUNTER_TEMPLATE])){
+					CounterTemplate counterTemplate=counterTemplateService.findByCode(values[COUNTER_TEMPLATE], getCurrentProvider());
+					inMessagingNotification.setCounterTemplate(counterTemplate!=null ?counterTemplate: null);
+				}
 				imNotificationService.create(inMessagingNotification);
 				messages.info(new BundleKey("messages", "commons.csv"));
 			}
