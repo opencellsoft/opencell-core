@@ -602,7 +602,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 					subCategory.setAttribute("code", invoiceSubCat.getCode());
 					subCategory.setAttribute("taxCode", subCatInvoiceAgregate.getSubCategoryTax().getCode());
 					subCategory.setAttribute("taxPercent", subCatInvoiceAgregate.getSubCategoryTax().getPercent()
-							.toString());
+							.toPlainString());
 
 					for (RatedTransaction ratedTransaction : transactions) {
 						BigDecimal transactionAmount = entreprise ? ratedTransaction.getAmountWithTax()
@@ -669,7 +669,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 
 						Element quantity = doc.createElement("quantity");
 						Text quantityTxt = doc.createTextNode(ratedTransaction.getQuantity() != null ? ratedTransaction
-								.getQuantity() + "" : "");
+								.getQuantity().toPlainString() : "");
 						quantity.appendChild(quantityTxt);
 						line.appendChild(quantity);
 
@@ -925,13 +925,12 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 							+ headerTransaction.getAmountWithoutTax());
 					Element lineUnitAmountWithoutTax = doc.createElement("unitAmountWithoutTax");
 					Text lineUnitAmountWithoutTaxTxt = doc.createTextNode(round(
-							headerTransaction.getUnitAmountWithoutTax(), rounding)
-							+ "");
+							headerTransaction.getUnitAmountWithoutTax(), rounding));
 					lineUnitAmountWithoutTax.appendChild(lineUnitAmountWithoutTaxTxt);
 					line.appendChild(lineUnitAmountWithoutTax);
 					Element lineAmountWithoutTax = doc.createElement("amountWithoutTax");
 					Text lineAmountWithoutTaxTxt = doc.createTextNode(round(headerTransaction.getAmountWithoutTax(),
-							rounding) + "");
+							rounding));
 					lineAmountWithoutTax.appendChild(lineAmountWithoutTaxTxt);
 					line.appendChild(lineAmountWithoutTax);
 
@@ -950,7 +949,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 			scale = 2;
 		}
 		amount = amount.setScale(scale, RoundingMode.HALF_UP);
-		return amount.toString();
+		return amount.toPlainString();
 	}
 
 	@SuppressWarnings("unused")
