@@ -13,6 +13,7 @@ import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.User;
 import org.meveo.model.rating.EDR;
+import org.meveo.model.rating.EDRStatusEnum;
 import org.meveo.service.billing.impl.EdrService;
 import org.meveo.service.billing.impl.UsageRatingService;
 import org.meveo.service.medina.impl.CDRParsingException;
@@ -78,8 +79,18 @@ public class MediationApi extends BaseApi {
 					log.debug("edr={}", edr);
 					edrService.create(edr, user, user.getProvider());
 					try {
-						usageRatingService.ratePostpaidUsage(edr, user);
+						usageRatingService.ratePostpaidUsageWithinTransaction(edr, user);
+						if(edr.getStatus()==EDRStatusEnum.REJECTED){
+							try{
+								edrService.remove(edr);
+							} catch(Exception e1){}
+							log.error("edr rejected={}", edr.getRejectReason());
+							throw new MeveoApiException(edr.getRejectReason());
+						}
 					} catch (BusinessException e) {
+						try{
+							edrService.remove(edr);
+						} catch(Exception e1){}
 						log.error("Exception rating edr={}", e.getMessage());
 						throw new MeveoApiException(e.getMessage());
 					}
@@ -110,7 +121,7 @@ public class MediationApi extends BaseApi {
 						log.debug("edr={}", edr);
 						edrService.create(edr, currentUser, currentUser.getProvider());
 						try {
-							usageRatingService.ratePostpaidUsage(edr, currentUser);
+							usageRatingService.ratePostpaidUsageWithinTransaction(edr, currentUser);
 						} catch (BusinessException e) {
 							log.error("Exception rating edr={}", e.getMessage());
 							throw new MeveoApiException(e.getMessage());
