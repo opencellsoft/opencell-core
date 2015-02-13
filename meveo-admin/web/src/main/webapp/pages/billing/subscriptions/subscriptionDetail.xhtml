@@ -291,7 +291,7 @@
 									<hftl:panelGroup columns="2">
 										<hf:formField
 											label="#{messages['billingAccount.subscriptionDate']}"
-											field="subscriptionDate" />
+											field="subscriptionDate" required="true" />
 										<hf:formField
 											label="#{messages[subscriptionBean.entity.status=='SUSPENDED'?'billingAccount.suspensionDate': 'billingAccount.terminationDate']}"
 											field="terminationDate" show="#{!subscriptionBean.edit}" />

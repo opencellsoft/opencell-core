@@ -286,83 +286,6 @@
          </invoice>
       </ws:create>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/InvoiceWs/create"/><con:wsrmConfig version="1.2"/></con:call><con:call name="Request 2"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/InvoiceWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
-   <soapenv:Header/>
-   <soapenv:Body>
-      <ws:create>
-         <!--Optional:-->
-         <invoice>
-            <billingAccountCode>?</billingAccountCode>
-            <dueDate>?</dueDate>
-            <!--Optional:-->
-            <invoiceNumber>?</invoiceNumber>
-            <!--Optional:-->
-            <invoiceDate>?</invoiceDate>
-            <!--Optional:-->
-            <discount>?</discount>
-            <!--Optional:-->
-            <amountWithoutTax>?</amountWithoutTax>
-            <!--Optional:-->
-            <amountTax>?</amountTax>
-            <!--Optional:-->
-            <amountWithTax>?</amountWithTax>
-            <!--Optional:-->
-            <paymentMathod>?</paymentMathod>
-            <PDFpresent>?</PDFpresent>
-            <!--Zero or more repetitions:-->
-            <subCategoryInvoiceAgregates>
-               <!--Optional:-->
-               <type>?</type>
-               <!--Optional:-->
-               <itemNumber>?</itemNumber>
-               <!--Optional:-->
-               <accountingCode>?</accountingCode>
-               <!--Optional:-->
-               <description>?</description>
-               <!--Optional:-->
-               <taxPercent>?</taxPercent>
-               <!--Optional:-->
-               <quantity>?</quantity>
-               <!--Optional:-->
-               <discount>?</discount>
-               <!--Optional:-->
-               <amountWithoutTax>?</amountWithoutTax>
-               <!--Optional:-->
-               <amountTax>?</amountTax>
-               <!--Optional:-->
-               <amountWithTax>?</amountWithTax>
-               <!--Zero or more repetitions:-->
-               <ratedTransactions>
-                  <!--Optional:-->
-                  <usageDate>?</usageDate>
-                  <!--Optional:-->
-                  <unitAmountWithoutTax>?</unitAmountWithoutTax>
-                  <!--Optional:-->
-                  <unitAmountWithTax>?</unitAmountWithTax>
-                  <!--Optional:-->
-                  <unitAmountTax>?</unitAmountTax>
-                  <!--Optional:-->
-                  <quantity>?</quantity>
-                  <!--Optional:-->
-                  <amountWithoutTax>?</amountWithoutTax>
-                  <!--Optional:-->
-                  <amountWithTax>?</amountWithTax>
-                  <!--Optional:-->
-                  <amountTax>?</amountTax>
-                  <!--Optional:-->
-                  <code>?</code>
-                  <!--Optional:-->
-                  <description>?</description>
-                  <!--Optional:-->
-                  <unityDescription>?</unityDescription>
-                  <!--Optional:-->
-                  <priceplanCode>?</priceplanCode>
-                  <doNotTriggerInvoicing>?</doNotTriggerInvoicing>
-               </ratedTransactions>
-            </subCategoryInvoiceAgregates>
-         </invoice>
-      </ws:create>
-   </soapenv:Body>
 </soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/InvoiceWs/create"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation isOneWay="false" action="" name="find" bindingOperationName="find" type="Request-Response" outputName="findResponse" inputName="find" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment xmlns:con="http://eviware.com/soapui/config">
   &lt;con:entry key="username" value="meveo.admin"/>
   &lt;con:entry key="password" value="meveo.admin"/>
@@ -5472,16 +5395,13 @@
 </wsdl:definitions>]]></con:content><con:type>http://schemas.xmlsoap.org/wsdl/</con:type></con:part><con:part><con:url>http://localhost:8080/meveo/AccountWs?wsdl=AccountWs.wsdl</con:url><con:content><![CDATA[<wsdl:definitions name="AccountWs" targetNamespace="http://ws.api.meveo.org/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ns1="http://ws.api.meveo.org/">
   <wsdl:types>
     <xs:schema elementFormDefault="unqualified" targetNamespace="http://ws.api.meveo.org/" version="1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://ws.api.meveo.org/">
-      <xs:element name="Access" type="tns:accessDto"/>
       <xs:element name="Account" type="tns:accountDto"/>
       <xs:element name="AccountHierarchy" type="tns:accountHierarchyDto"/>
       <xs:element name="AccountOperation" type="tns:accountOperationDto"/>
       <xs:element name="ActionStatus" type="tns:actionStatus"/>
       <xs:element name="Address" type="tns:addressDto"/>
-      <xs:element name="BillingAccount" type="tns:billingAccountDto"/>
       <xs:element name="CustomField" type="tns:customFieldDto"/>
-      <xs:element name="Customer" type="tns:customerDto"/>
-      <xs:element name="CustomerAccount" type="tns:customerAccountDto"/>
+      <xs:element name="CustomFields" type="tns:customFieldsDto"/>
       <xs:element name="CustomerHierarchy" type="tns:customerHierarchyDto"/>
       <xs:element name="CustomerListResponse" type="tns:customerListResponse"/>
       <xs:element name="GetAccessResponse" type="tns:getAccessResponse"/>
@@ -5491,9 +5411,6 @@
       <xs:element name="GetUserAccountResponse" type="tns:getUserAccountResponse"/>
       <xs:element name="MatchingAmount" type="tns:matchingAmountDto"/>
       <xs:element name="Name" type="tns:nameDto"/>
-      <xs:element name="Seller" type="tns:sellerDto"/>
-      <xs:element name="Subscription" nillable="true" type="xs:anyType"/>
-      <xs:element name="UserAccount" type="tns:userAccountDto"/>
       <xs:element name="createAccess" type="tns:createAccess"/>
       <xs:element name="createAccessResponse" type="tns:createAccessResponse"/>
       <xs:element name="createAccountHierarchy" type="tns:createAccountHierarchy"/>
@@ -5548,10 +5465,10 @@
       <xs:element name="updateUserAccountResponse" type="tns:updateUserAccountResponse"/>
       <xs:complexType name="updateAccess">
         <xs:sequence>
-          <xs:element minOccurs="0" name="access" type="tns:accessDto"/>
+          <xs:element minOccurs="0" name="access" type="tns:Access"/>
         </xs:sequence>
       </xs:complexType>
-      <xs:complexType name="accessDto">
+      <xs:complexType name="Access">
         <xs:complexContent>
           <xs:extension base="tns:baseDto">
             <xs:sequence>
@@ -5635,7 +5552,7 @@
         <xs:complexContent>
           <xs:extension base="tns:baseResponse">
             <xs:sequence>
-              <xs:element minOccurs="0" name="userAccount" type="tns:userAccountDto"/>
+              <xs:element minOccurs="0" name="userAccount" type="tns:UserAccount"/>
             </xs:sequence>
           </xs:extension>
         </xs:complexContent>
@@ -5645,7 +5562,7 @@
           <xs:element minOccurs="0" name="actionStatus" type="tns:actionStatus"/>
         </xs:sequence>
       </xs:complexType>
-      <xs:complexType name="userAccountDto">
+      <xs:complexType name="UserAccount">
         <xs:complexContent>
           <xs:extension base="tns:accountDto">
             <xs:sequence>
@@ -5653,7 +5570,8 @@
               <xs:element minOccurs="0" name="subscriptionDate" type="xs:dateTime"/>
               <xs:element minOccurs="0" name="terminationDate" type="xs:dateTime"/>
               <xs:element minOccurs="0" name="status" type="xs:string"/>
-              <xs:element maxOccurs="unbounded" minOccurs="0" name="subscriptions" nillable="true" type="tns:subscriptionDto"/>
+              <xs:element minOccurs="0" name="terminationReason" type="xs:string"/>
+              <xs:element minOccurs="0" name="subscriptions" type="tns:Subscriptions"/>
             </xs:sequence>
           </xs:extension>
         </xs:complexContent>
@@ -5669,25 +5587,40 @@
         <xs:attribute name="code" type="xs:string" use="required"/>
         <xs:attribute name="description" type="xs:string" use="required"/>
       </xs:complexType>
-      <xs:complexType name="subscriptionDto">
+      <xs:complexType name="Subscriptions">
+        <xs:sequence>
+          <xs:element maxOccurs="unbounded" minOccurs="0" name="subscription" nillable="true" type="tns:Subscription"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="Subscription">
         <xs:complexContent>
           <xs:extension base="tns:baseDto">
             <xs:sequence>
               <xs:element name="userAccount" type="xs:string"/>
               <xs:element name="offerTemplate" type="xs:string"/>
-              <xs:element minOccurs="0" name="subscriptionDate" type="xs:dateTime"/>
+              <xs:element name="subscriptionDate" type="xs:dateTime"/>
               <xs:element minOccurs="0" name="terminationDate" type="xs:dateTime"/>
               <xs:element minOccurs="0" name="status" type="xs:string"/>
-              <xs:element maxOccurs="unbounded" minOccurs="0" name="accesses" nillable="true" type="tns:accessDto"/>
-              <xs:element maxOccurs="unbounded" minOccurs="0" name="services" nillable="true" type="tns:serviceInstanceDto"/>
-              <xs:element maxOccurs="unbounded" minOccurs="0" name="customFields" nillable="true" type="tns:customFieldDto"/>
+              <xs:element minOccurs="0" name="accesses" type="tns:Accesses"/>
+              <xs:element minOccurs="0" name="services" type="tns:ServiceInstances"/>
+              <xs:element minOccurs="0" name="customFields" type="tns:customFieldsDto"/>
             </xs:sequence>
             <xs:attribute name="code" type="xs:string" use="required"/>
             <xs:attribute name="description" type="xs:string" use="required"/>
           </xs:extension>
         </xs:complexContent>
       </xs:complexType>
-      <xs:complexType name="serviceInstanceDto">
+      <xs:complexType name="Accesses">
+        <xs:sequence>
+          <xs:element maxOccurs="unbounded" minOccurs="0" name="access" nillable="true" type="tns:Access"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="ServiceInstances">
+        <xs:sequence>
+          <xs:element maxOccurs="unbounded" minOccurs="0" name="serviceInstance" nillable="true" type="tns:ServiceInstance"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="ServiceInstance">
         <xs:complexContent>
           <xs:extension base="tns:baseDto">
             <xs:sequence>
@@ -5700,6 +5633,11 @@
             <xs:attribute name="code" type="xs:string" use="required"/>
           </xs:extension>
         </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="customFieldsDto">
+        <xs:sequence>
+          <xs:element maxOccurs="unbounded" minOccurs="0" name="customField" nillable="true" type="tns:customFieldDto"/>
+        </xs:sequence>
       </xs:complexType>
       <xs:complexType name="customFieldDto">
         <xs:sequence>
@@ -5731,10 +5669,10 @@
       </xs:complexType>
       <xs:complexType name="updateBillingAccount">
         <xs:sequence>
-          <xs:element minOccurs="0" name="billingAccount" type="tns:billingAccountDto"/>
+          <xs:element minOccurs="0" name="billingAccount" type="tns:BillingAccount"/>
         </xs:sequence>
       </xs:complexType>
-      <xs:complexType name="billingAccountDto">
+      <xs:complexType name="BillingAccount">
         <xs:complexContent>
           <xs:extension base="tns:accountDto">
             <xs:sequence>
@@ -5749,10 +5687,16 @@
               <xs:element minOccurs="0" name="paymentTerms" type="xs:string"/>
               <xs:element minOccurs="0" name="electronicBilling" type="xs:boolean"/>
               <xs:element minOccurs="0" name="status" type="xs:string"/>
-              <xs:element maxOccurs="unbounded" minOccurs="0" name="userAccounts" nillable="true" type="tns:userAccountDto"/>
+              <xs:element minOccurs="0" name="terminationReason" type="xs:string"/>
+              <xs:element minOccurs="0" name="userAccounts" type="tns:UserAccounts"/>
             </xs:sequence>
           </xs:extension>
         </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="UserAccounts">
+        <xs:sequence>
+          <xs:element maxOccurs="unbounded" minOccurs="0" name="userAccount" nillable="true" type="tns:UserAccount"/>
+        </xs:sequence>
       </xs:complexType>
       <xs:complexType name="updateBillingAccountResponse">
         <xs:sequence>
@@ -5773,12 +5717,12 @@
         <xs:complexContent>
           <xs:extension base="tns:baseResponse">
             <xs:sequence>
-              <xs:element minOccurs="0" name="customerAccount" type="tns:customerAccountDto"/>
+              <xs:element minOccurs="0" name="customerAccount" type="tns:CustomerAccount"/>
             </xs:sequence>
           </xs:extension>
         </xs:complexContent>
       </xs:complexType>
-      <xs:complexType name="customerAccountDto">
+      <xs:complexType name="CustomerAccount">
         <xs:complexContent>
           <xs:extension base="tns:accountDto">
             <xs:sequence>
@@ -5799,7 +5743,7 @@
               <xs:element minOccurs="0" name="mandateDate" type="xs:dateTime"/>
               <xs:element minOccurs="0" name="balance" type="xs:decimal"/>
               <xs:element minOccurs="0" name="terminationDate" type="xs:dateTime"/>
-              <xs:element maxOccurs="unbounded" minOccurs="0" name="billingAccounts" nillable="true" type="tns:billingAccountDto"/>
+              <xs:element minOccurs="0" name="billingAccounts" type="tns:BillingAccounts"/>
             </xs:sequence>
           </xs:extension>
         </xs:complexContent>
@@ -5832,22 +5776,32 @@
           <xs:element minOccurs="0" name="matchingAmount" type="xs:decimal"/>
         </xs:sequence>
       </xs:complexType>
-      <xs:complexType name="createCustomer">
+      <xs:complexType name="BillingAccounts">
         <xs:sequence>
-          <xs:element minOccurs="0" name="customer" type="tns:customerDto"/>
+          <xs:element maxOccurs="unbounded" minOccurs="0" name="billingAccount" nillable="true" type="tns:BillingAccount"/>
         </xs:sequence>
       </xs:complexType>
-      <xs:complexType name="customerDto">
+      <xs:complexType name="createCustomer">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="customer" type="tns:Customer"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="Customer">
         <xs:complexContent>
           <xs:extension base="tns:accountDto">
             <xs:sequence>
               <xs:element name="customerCategory" type="xs:string"/>
               <xs:element name="customerBrand" type="xs:string"/>
               <xs:element name="seller" type="xs:string"/>
-              <xs:element maxOccurs="unbounded" minOccurs="0" name="customerAccounts" nillable="true" type="tns:customerAccountDto"/>
+              <xs:element minOccurs="0" name="customerAccounts" type="tns:CustomerAccounts"/>
             </xs:sequence>
           </xs:extension>
         </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="CustomerAccounts">
+        <xs:sequence>
+          <xs:element maxOccurs="unbounded" minOccurs="0" name="customerAccount" nillable="true" type="tns:CustomerAccount"/>
+        </xs:sequence>
       </xs:complexType>
       <xs:complexType name="createCustomerResponse">
         <xs:sequence>
@@ -5885,7 +5839,7 @@
       </xs:complexType>
       <xs:complexType name="createUserAccount">
         <xs:sequence>
-          <xs:element minOccurs="0" name="userAccount" type="tns:userAccountDto"/>
+          <xs:element minOccurs="0" name="userAccount" type="tns:UserAccount"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="createUserAccountResponse">
@@ -5907,7 +5861,7 @@
         <xs:complexContent>
           <xs:extension base="tns:baseResponse">
             <xs:sequence>
-              <xs:element minOccurs="0" name="billingAccount" type="tns:billingAccountDto"/>
+              <xs:element minOccurs="0" name="billingAccount" type="tns:BillingAccount"/>
             </xs:sequence>
           </xs:extension>
         </xs:complexContent>
@@ -5927,7 +5881,7 @@
         <xs:complexContent>
           <xs:extension base="tns:baseResponse">
             <xs:sequence>
-              <xs:element minOccurs="0" name="access" type="tns:accessDto"/>
+              <xs:element minOccurs="0" name="access" type="tns:Access"/>
             </xs:sequence>
           </xs:extension>
         </xs:complexContent>
@@ -5954,7 +5908,7 @@
       </xs:complexType>
       <xs:complexType name="createAccess">
         <xs:sequence>
-          <xs:element minOccurs="0" name="access" type="tns:accessDto"/>
+          <xs:element minOccurs="0" name="access" type="tns:Access"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="createAccessResponse">
@@ -5983,7 +5937,7 @@
       </xs:complexType>
       <xs:complexType name="createCustomerAccount">
         <xs:sequence>
-          <xs:element minOccurs="0" name="customerAccount" type="tns:customerAccountDto"/>
+          <xs:element minOccurs="0" name="customerAccount" type="tns:CustomerAccount"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="createCustomerAccountResponse">
@@ -5993,7 +5947,7 @@
       </xs:complexType>
       <xs:complexType name="updateCustomer">
         <xs:sequence>
-          <xs:element minOccurs="0" name="customer" type="tns:customerDto"/>
+          <xs:element minOccurs="0" name="customer" type="tns:Customer"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="updateCustomerResponse">
@@ -6003,7 +5957,7 @@
       </xs:complexType>
       <xs:complexType name="updateUserAccount">
         <xs:sequence>
-          <xs:element minOccurs="0" name="userAccount" type="tns:userAccountDto"/>
+          <xs:element minOccurs="0" name="userAccount" type="tns:UserAccount"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="updateUserAccountResponse">
@@ -6013,7 +5967,7 @@
       </xs:complexType>
       <xs:complexType name="updateCustomerAccount">
         <xs:sequence>
-          <xs:element minOccurs="0" name="customerAccount" type="tns:customerAccountDto"/>
+          <xs:element minOccurs="0" name="customerAccount" type="tns:CustomerAccount"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="updateCustomerAccountResponse">
@@ -6035,26 +5989,31 @@
         <xs:complexContent>
           <xs:extension base="tns:baseResponse">
             <xs:sequence>
-              <xs:element maxOccurs="unbounded" minOccurs="0" name="accesses" nillable="true" type="tns:accessDto"/>
+              <xs:element maxOccurs="unbounded" minOccurs="0" name="accesses" nillable="true" type="tns:Access"/>
             </xs:sequence>
           </xs:extension>
         </xs:complexContent>
       </xs:complexType>
       <xs:complexType name="customerHierarchyUpdate">
         <xs:sequence>
-          <xs:element minOccurs="0" name="arg0" type="tns:customerHierarchyDto"/>
+          <xs:element minOccurs="0" name="customerHierarchy" type="tns:customerHierarchyDto"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="customerHierarchyDto">
         <xs:complexContent>
           <xs:extension base="tns:baseDto">
             <xs:sequence>
-              <xs:element maxOccurs="unbounded" minOccurs="0" name="sellers" nillable="true" type="tns:sellerDto"/>
+              <xs:element name="sellers" type="tns:Sellers"/>
             </xs:sequence>
           </xs:extension>
         </xs:complexContent>
       </xs:complexType>
-      <xs:complexType name="sellerDto">
+      <xs:complexType name="Sellers">
+        <xs:sequence>
+          <xs:element maxOccurs="unbounded" minOccurs="0" name="seller" nillable="true" type="tns:Seller"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="Seller">
         <xs:complexContent>
           <xs:extension base="tns:baseDto">
             <xs:sequence>
@@ -6064,12 +6023,17 @@
               <xs:element minOccurs="0" name="languageCode" type="xs:string"/>
               <xs:element minOccurs="0" name="parentSeller" type="xs:string"/>
               <xs:element minOccurs="0" name="provider" type="xs:string"/>
-              <xs:element maxOccurs="unbounded" minOccurs="0" name="customers" nillable="true" type="tns:customerDto"/>
+              <xs:element minOccurs="0" name="customers" type="tns:Customers"/>
             </xs:sequence>
             <xs:attribute name="code" type="xs:string" use="required"/>
             <xs:attribute name="description" type="xs:string" use="required"/>
           </xs:extension>
         </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="Customers">
+        <xs:sequence>
+          <xs:element maxOccurs="unbounded" minOccurs="0" name="customer" nillable="true" type="tns:Customer"/>
+        </xs:sequence>
       </xs:complexType>
       <xs:complexType name="customerHierarchyUpdateResponse">
         <xs:sequence>
@@ -6078,7 +6042,7 @@
       </xs:complexType>
       <xs:complexType name="createBillingAccount">
         <xs:sequence>
-          <xs:element minOccurs="0" name="billingAccount" type="tns:billingAccountDto"/>
+          <xs:element minOccurs="0" name="billingAccount" type="tns:BillingAccount"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="createBillingAccountResponse">
@@ -6100,7 +6064,7 @@
         <xs:complexContent>
           <xs:extension base="tns:baseResponse">
             <xs:sequence>
-              <xs:element minOccurs="0" name="customer" type="tns:customerDto"/>
+              <xs:element minOccurs="0" name="customer" type="tns:Customer"/>
             </xs:sequence>
           </xs:extension>
         </xs:complexContent>
@@ -6454,12 +6418,14 @@
                <!--Optional:-->
                <state></state>
             </address>
-            <customFields code="UA2_CF1" description="UA2_CF1">
+            <customFields>
+            <customField code="UA2_CF1" description="UA2_CF1">
             <!--Optional:-->
                <stringValue>1</stringValue>
                <longValue>1</longValue>
                <doubleValue>1</doubleValue>
                <dateValue>2015-01-01</dateValue>
+               </customField>
             </customFields>
             <!--Optional:-->
             <subscriptionDate>2015-01-22T13:42:57.219+08:00</subscriptionDate>         
@@ -6509,12 +6475,14 @@
                <state></state>
             </address>
             <!--Zero or more repetitions:-->
-            <customFields code="UA2_CF1" description="UA2_CF1">
+            <customFields>
+            <customField code="UA2_CF1" description="UA2_CF1">
             	<!--Optional:-->
                <stringValue>1</stringValue>
                <longValue>1</longValue>
                <doubleValue>1</doubleValue>
                <dateValue>2015-01-01</dateValue>
+              </customField>
             </customFields>
             
             <!--Optional:-->
@@ -6567,12 +6535,14 @@
                <state></state>
             </address>
             <!--Zero or more repetitions:-->
-            <customFields code="CA2_CF1" description="CA2_CF1">
+            <customFields>
+            <customField code="CA2_CF1" description="CA2_CF1">
                <!--Optional:-->
                <stringValue>1</stringValue>
                <longValue>1</longValue>
                <doubleValue>1</doubleValue>
                <dateValue>2015-01-01</dateValue>
+               </customField>
             </customFields>
             <!--Optional:-->
             <status>ACTIVE</status>
@@ -6641,12 +6611,14 @@
                <state></state>
             </address>
             <!--Zero or more repetitions:-->
-            <customFields code="UA2_CF1" description="UA2_CF1">
+            <customFields>
+            <customField code="UA2_CF1" description="UA2_CF1">
             	<!--Optional:-->
                <stringValue>1</stringValue>
                <longValue>1</longValue>
                <doubleValue>1</doubleValue>
                <dateValue>2015-01-01</dateValue>
+               </customField>
              </customFields>
          </userAccount>
       </ws:createUserAccount>
@@ -6834,12 +6806,14 @@
                <state></state>
             </address>
              <!--Zero or more repetitions:-->
-            <customFields code="UA2_CF1" description="UA2_CF1">
-            	<!--Optional:-->
+            <customFields>
+            <customField code="UA2_CF1" description="UA2_CF1">
+            <!--Optional:-->
                <stringValue>1</stringValue>
                <longValue>1</longValue>
                <doubleValue>1</doubleValue>
                <dateValue>2015-01-01</dateValue>
+               </customField>
             </customFields>
             <!--Optional:-->
             <subscriptionDate>2015-01-22T13:42:57.219+08:00</subscriptionDate>         
@@ -6890,12 +6864,14 @@
             </address>
             <!--Zero or more repetitions:-->
           <!--Zero or more repetitions:-->
-            <customFields code="UA2_CF1" description="UA2_CF1">
+             <customFields>
+            <customField code="UA2_CF1" description="UA2_CF1">
             	<!--Optional:-->
                <stringValue>1</stringValue>
                <longValue>1</longValue>
                <doubleValue>1</doubleValue>
                <dateValue>2015-01-01</dateValue>
+              </customField>
             </customFields>
             <!--Optional:-->
             <customerCategory>CLIENT</customerCategory>
@@ -6947,12 +6923,14 @@
                <state></state>
             </address>
             <!--Zero or more repetitions:-->
-            <customFields code="CA2_CF1" description="CA2_CF1">
-            <!--Optional:-->
+            <customFields>
+            <customField code="CA2_CF1" description="CA2_CF1">
+               <!--Optional:-->
                <stringValue>1</stringValue>
                <longValue>1</longValue>
                <doubleValue>1</doubleValue>
                <dateValue>2015-01-01</dateValue>
+               </customField>
             </customFields>
             <!--Optional:-->
             <status>ACTIVE</status>
@@ -7021,12 +6999,15 @@
                <state></state>
             </address>
             <!--Zero or more repetitions:-->
-            <customFields code="UA2_CF1" description="UA2_CF1">
-            	<stringValue>1</stringValue>
+             <customFields>
+            <customField code="UA2_CF1" description="UA2_CF1">
+            	<!--Optional:-->
+               <stringValue>1</stringValue>
                <longValue>1</longValue>
                <doubleValue>1</doubleValue>
                <dateValue>2015-01-01</dateValue>
-            </customFields>
+               </customField>
+             </customFields>
          </userAccount>
       </ws:updateUserAccount>
    </soapenv:Body>
@@ -7171,131 +7152,23 @@
 	<soapenv:Body>
 		<ws:customerHierarchyUpdate>
 			<!--Optional: -->
-			<arg0>
-				<!--Zero or more repetitions: -->
-				<sellers code="SELLERS2" description="SELLERS2">
-					<!--Optional: -->
-					<invoicePrefix>SELLERS2</invoicePrefix>
-					<!--Optional: -->
-					<currencyCode>USD</currencyCode>
-					<!--Optional: -->
-					<countryCode>US</countryCode>
-					<!--Optional: -->
-					<languageCode>ENG</languageCode>
-					<!--Optional: -->
-					<parentSeller></parentSeller>
+			<customerHierarchy>
+				<sellers>
 					<!--Zero or more repetitions: -->
-					<customers code="CUSTS2" description="CUSTS2">
+					<seller code="SELLERS2" description="SELLERS2">
 						<!--Optional: -->
-						<externalRef1></externalRef1>
+						<invoicePrefix>SELLERS2</invoicePrefix>
 						<!--Optional: -->
-						<externalRef2></externalRef2>
+						<currencyCode>USD</currencyCode>
 						<!--Optional: -->
-						<name>
-							<lastName>Legaspi</lastName>
-							<!--Optional: -->
-							<title></title>
-							<!--Optional: -->
-							<firstName></firstName>
-						</name>
+						<countryCode>US</countryCode>
 						<!--Optional: -->
-						<address>
-							<!--Optional: -->
-							<address1>Address1</address1>
-							<!--Optional: -->
-							<address2></address2>
-							<!--Optional: -->
-							<address3></address3>
-							<!--Optional: -->
-							<zipCode></zipCode>
-							<!--Optional: -->
-							<city></city>
-							<!--Optional: -->
-							<country></country>
-							<!--Optional: -->
-							<state></state>
-						</address>
+						<languageCode>ENG</languageCode>
+						<!--Optional: -->
+						<parentSeller></parentSeller>
 						<!--Zero or more repetitions: -->
-						<customFields code="CF1" description="CF1">
-						 <stringValue>1</stringValue>
-				               <longValue>1</longValue>
-				               <doubleValue>1</doubleValue>
-				               <dateValue>2015-01-01</dateValue>
-				               </customFields>
-						<!--Optional: -->
-						<customerCategory>CLIENT</customerCategory>
-						<!--Optional: -->
-						<customerBrand>OCB</customerBrand>
-						<!--Zero or more repetitions: -->
-						<customerAccounts code="CAS2" description="CAS2">
-							<currency>USD</currency>
-							<!--Optional: -->
-							<externalRef1></externalRef1>
-							<!--Optional: -->
-							<externalRef2></externalRef2>
-							<!--Optional: -->
-							<name>
-								<lastName>Legaspi</lastName>
-								<!--Optional: -->
-								<title></title>
-								<!--Optional: -->
-								<firstName></firstName>
-							</name>
-							<!--Optional: -->
-							<address>
-								<!--Optional: -->
-								<address1>Address1</address1>
-								<!--Optional: -->
-								<address2></address2>
-								<!--Optional: -->
-								<address3></address3>
-								<!--Optional: -->
-								<zipCode></zipCode>
-								<!--Optional: -->
-								<city></city>
-								<!--Optional: -->
-								<country></country>
-								<!--Optional: -->
-								<state></state>
-							</address>
-							<!--Zero or more repetitions: -->
-							<customFields code="CF1" description="CF1">					
-				            	<!--Optional:-->
-				               <stringValue>1</stringValue>
-				               <longValue>1</longValue>
-				               <doubleValue>1</doubleValue>
-				               <dateValue>2015-01-01</dateValue>
-				            </customFields>
-							<!--Optional: -->
-							<status></status>
-							<!--Optional: -->
-							<paymentMethod>CHECK</paymentMethod>
-							<!--Optional: -->
-							<creditCategory>CASH</creditCategory>							
-							<!--Optional: -->
-							<dateStatus>2015-02-20</dateStatus>
-							<!--Optional: -->
-							<dateDunningLevel>2015-02-20</dateDunningLevel>
-							<!--Optional: -->
-							<email>edward.legaspi@manaty.net</email>
-							<!--Optional: -->
-							<phone></phone>
-							<!--Optional: -->
-							<mobile>12345</mobile>
-							<!--Optional: -->
-							<fax></fax>
-							<!--Optional: -->
-							<dunningLevel></dunningLevel>
-							<!--Optional: -->
-							<mandateIdentification></mandateIdentification>
-							<!--Optional: -->
-							<mandateDate>2015-02-20</mandateDate>
-							<!--Zero or more repetitions: -->
-							<billingAccounts code="BAS2" description="BAS2">
-								<billingCycle>CYC_INV_MT_1</billingCycle>
-								<country>US</country>
-								<language>ENG</language>
-								<paymentMethod>CHECK</paymentMethod>
+						<customers>
+							<customer code="CUSTS2" description="CUSTS2">
 								<!--Optional: -->
 								<externalRef1></externalRef1>
 								<!--Optional: -->
@@ -7326,429 +7199,229 @@
 									<state></state>
 								</address>
 								<!--Zero or more repetitions: -->
-								<customFields code="CF1" description="CF1">
-								 <stringValue>1</stringValue>
-				               <longValue>1</longValue>
-				               <doubleValue>1</doubleValue>
-				               <dateValue>2015-01-01</dateValue>
+								<customFields>
+									<customField code="CF1" description="CF1">
+										<stringValue>1</stringValue>
+										<longValue>1</longValue>
+										<doubleValue>1</doubleValue>
+										<dateValue>2015-01-01</dateValue>
+									</customField>
 								</customFields>
 								<!--Optional: -->
-								<nextInvoiceDate>2015-02-20</nextInvoiceDate>
+								<customerCategory>CLIENT</customerCategory>
 								<!--Optional: -->
-								<subscriptionDate>2015-02-20</subscriptionDate>
-								<!--Optional: -->
-								<paymentTerms>CASH</paymentTerms>
-								<!--Optional: -->
-								<electronicBilling>true</electronicBilling>
+								<customerBrand>OCB</customerBrand>
 								<!--Zero or more repetitions: -->
-								<userAccounts code="UAS2" description="UAS2">
-									<!--Optional: -->
-									<externalRef1></externalRef1>
-									<!--Optional: -->
-									<externalRef2></externalRef2>
-									<!--Optional: -->
-									<name>
-										<lastName>Legaspi</lastName>
+								<customerAccounts>
+									<customerAccount code="CAS2" description="CAS2">
+										<currency>USD</currency>
 										<!--Optional: -->
-										<title></title>
+										<externalRef1></externalRef1>
 										<!--Optional: -->
-										<firstName></firstName>
-									</name>
-									<!--Optional: -->
-									<address>
+										<externalRef2></externalRef2>
 										<!--Optional: -->
-										<address1>Address1</address1>
+										<name>
+											<lastName>Legaspi</lastName>
+											<!--Optional: -->
+											<title></title>
+											<!--Optional: -->
+											<firstName></firstName>
+										</name>
 										<!--Optional: -->
-										<address2></address2>
-										<!--Optional: -->
-										<address3></address3>
-										<!--Optional: -->
-										<zipCode></zipCode>
-										<!--Optional: -->
-										<city></city>
-										<!--Optional: -->
-										<country></country>
-										<!--Optional: -->
-										<state></state>
-									</address>
-									<!--Zero or more repetitions: -->
-									<customFields code="CF1" description="CF1">
-									 <stringValue>1</stringValue>
-				               <longValue>1</longValue>
-				               <doubleValue>1</doubleValue>
-				               <dateValue>2015-01-01</dateValue>
-									</customFields>
-									<!--Optional: -->
-									<subscriptionDate>2015-02-04</subscriptionDate>
-									<!--Optional: -->
-									<status></status>
-									<!--Zero or more repetitions: -->
-									<subscriptions code="SUBW2" description="SUBW2">
-										<offerTemplate>OFF1</offerTemplate>
-										<!--Optional: -->
-										<subscriptionDate>2015-02-04</subscriptionDate>
-										<!--Optional: -->
-										<!--<terminationDate></terminationDate>-->
+										<address>
+											<!--Optional: -->
+											<address1>Address1</address1>
+											<!--Optional: -->
+											<address2></address2>
+											<!--Optional: -->
+											<address3></address3>
+											<!--Optional: -->
+											<zipCode></zipCode>
+											<!--Optional: -->
+											<city></city>
+											<!--Optional: -->
+											<country></country>
+											<!--Optional: -->
+											<state></state>
+										</address>
 										<!--Zero or more repetitions: -->
-										<accesses code="ACCESSW2">
-											<!--Optional: -->
-											<startDate>2015-02-04</startDate>
-											<!--Optional: -->
-											<endDate>2015-06-30</endDate>
-										</accesses>
+										<customFields>
+											<customField code="CF1" description="CF1">
+												<!--Optional: -->
+												<stringValue>1</stringValue>
+												<longValue>1</longValue>
+												<doubleValue>1</doubleValue>
+												<dateValue>2015-01-01</dateValue>
+											</customField>
+										</customFields>
+										<!--Optional: -->
+										<status></status>
+										<!--Optional: -->
+										<paymentMethod>CHECK</paymentMethod>
+										<!--Optional: -->
+										<creditCategory>CASH</creditCategory>
+										<!--Optional: -->
+										<dateStatus>2015-02-20</dateStatus>
+										<!--Optional: -->
+										<dateDunningLevel>2015-02-20</dateDunningLevel>
+										<!--Optional: -->
+										<email>edward.legaspi@manaty.net</email>
+										<!--Optional: -->
+										<phone></phone>
+										<!--Optional: -->
+										<mobile>12345</mobile>
+										<!--Optional: -->
+										<fax></fax>
+										<!--Optional: -->
+										<dunningLevel></dunningLevel>
+										<!--Optional: -->
+										<mandateIdentification></mandateIdentification>
+										<!--Optional: -->
+										<mandateDate>2015-02-20</mandateDate>
 										<!--Zero or more repetitions: -->
-										<services code="SERV1">
-											<!--Optional: -->
-											<status></status>
-											<!--Optional: -->
-											<subscriptionDate>2015-02-04</subscriptionDate>
-											<!--Optional: -->
-											<!--<terminationDate></terminationDate>-->
-											<quantity>1</quantity>
-											<!--Optional: -->
-											<!--<terminationReason></terminationReason>-->
-										</services>
-									</subscriptions>
-								</userAccounts>
-							</billingAccounts>
-						</customerAccounts>
-					</customers>
+										<billingAccounts>
+											<billingAccount code="BAS2" description="BAS2">
+												<billingCycle>CYC_INV_MT_1</billingCycle>
+												<country>US</country>
+												<language>ENG</language>
+												<paymentMethod>CHECK</paymentMethod>
+												<!--Optional: -->
+												<externalRef1></externalRef1>
+												<!--Optional: -->
+												<externalRef2></externalRef2>
+												<!--Optional: -->
+												<name>
+													<lastName>Legaspi</lastName>
+													<!--Optional: -->
+													<title></title>
+													<!--Optional: -->
+													<firstName></firstName>
+												</name>
+												<!--Optional: -->
+												<address>
+													<!--Optional: -->
+													<address1>Address1</address1>
+													<!--Optional: -->
+													<address2></address2>
+													<!--Optional: -->
+													<address3></address3>
+													<!--Optional: -->
+													<zipCode></zipCode>
+													<!--Optional: -->
+													<city></city>
+													<!--Optional: -->
+													<country></country>
+													<!--Optional: -->
+													<state></state>
+												</address>
+												<!--Zero or more repetitions: -->
+												<customFields>
+													<customField code="CF1" description="CF1">
+														<stringValue>1</stringValue>
+														<longValue>1</longValue>
+														<doubleValue>1</doubleValue>
+														<dateValue>2015-01-01</dateValue>
+													</customField>
+												</customFields>
+												<!--Optional: -->
+												<nextInvoiceDate>2015-02-20</nextInvoiceDate>
+												<!--Optional: -->
+												<subscriptionDate>2015-02-20</subscriptionDate>
+												<!--Optional: -->
+												<paymentTerms>CASH</paymentTerms>
+												<!--Optional: -->
+												<electronicBilling>true</electronicBilling>
+												<!--Zero or more repetitions: -->
+												<userAccounts>
+													<userAccount code="UAS2" description="UAS2">
+														<!--Optional: -->
+														<externalRef1></externalRef1>
+														<!--Optional: -->
+														<externalRef2></externalRef2>
+														<!--Optional: -->
+														<name>
+															<lastName>Legaspi</lastName>
+															<!--Optional: -->
+															<title></title>
+															<!--Optional: -->
+															<firstName></firstName>
+														</name>
+														<!--Optional: -->
+														<address>
+															<!--Optional: -->
+															<address1>Address1</address1>
+															<!--Optional: -->
+															<address2></address2>
+															<!--Optional: -->
+															<address3></address3>
+															<!--Optional: -->
+															<zipCode></zipCode>
+															<!--Optional: -->
+															<city></city>
+															<!--Optional: -->
+															<country></country>
+															<!--Optional: -->
+															<state></state>
+														</address>
+														<!--Zero or more repetitions: -->
+														<customFields>
+															<customField code="CF1" description="CF1">
+																<stringValue>1</stringValue>
+																<longValue>1</longValue>
+																<doubleValue>1</doubleValue>
+																<dateValue>2015-01-01</dateValue>
+															</customField>
+														</customFields>
+														<!--Optional: -->
+														<subscriptionDate>2015-02-04</subscriptionDate>
+														<!--Optional: -->
+														<status></status>
+														<!--Zero or more repetitions: -->
+														<subscriptions>
+															<subscription code="SUBW2" description="SUBW2">
+																<offerTemplate>OFF1</offerTemplate>
+																<!--Optional: -->
+																<subscriptionDate>2015-02-04</subscriptionDate>
+																<!--Optional: -->
+																<!--<terminationDate></terminationDate> -->
+																<!--Zero or more repetitions: -->
+																<accesses>
+																	<access code="ACCESSW2">
+																		<!--Optional: -->
+																		<startDate>2015-02-04</startDate>
+																		<!--Optional: -->
+																		<endDate>2015-06-30</endDate>
+																	</access>
+																</accesses>
+																<!--Zero or more repetitions: -->
+																<services>
+																	<serviceInstance code="SERV1">
+																		<!--Optional: -->
+																		<status></status>
+																		<!--Optional: -->
+																		<subscriptionDate>2015-02-04</subscriptionDate>
+																		<!--Optional: -->
+																		<!--<terminationDate></terminationDate> -->
+																		<quantity>1</quantity>
+																		<!--Optional: -->
+																		<!--<terminationReason></terminationReason> -->
+																	</serviceInstance>
+																</services>
+															</subscription>
+														</subscriptions>
+													</userAccount>
+												</userAccounts>
+											</billingAccount>
+										</billingAccounts>
+									</customerAccount>
+								</customerAccounts>
+							</customer>
+						</customers>
+					</seller>
 				</sellers>
-			</arg0>
+			</customerHierarchy>
 		</ws:customerHierarchyUpdate>
 	</soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/customerHierarchyUpdate"/><con:wsrmConfig version="1.2"/></con:call><con:call name="Request 2"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
-   <soapenv:Header/>
-   <soapenv:Body>
-      <ws:customerHierarchyUpdate>
-         <!--Optional:-->
-         <arg0>
-            <!--Zero or more repetitions:-->
-            <sellers code="?" description="?">
-               <!--Optional:-->
-               <invoicePrefix>?</invoicePrefix>
-               <!--Optional:-->
-               <currencyCode>?</currencyCode>
-               <!--Optional:-->
-               <countryCode>?</countryCode>
-               <!--Optional:-->
-               <languageCode>?</languageCode>
-               <!--Optional:-->
-               <parentSeller>?</parentSeller>
-               <!--Optional:-->
-               <provider>?</provider>
-               <!--Zero or more repetitions:-->
-               <customers code="?" description="?">
-                  <!--Optional:-->
-                  <externalRef1>?</externalRef1>
-                  <!--Optional:-->
-                  <externalRef2>?</externalRef2>
-                  <!--Optional:-->
-                  <name>
-                     <!--Optional:-->
-                     <title>?</title>
-                     <!--Optional:-->
-                     <firstName>?</firstName>
-                     <lastName>?</lastName>
-                  </name>
-                  <!--Optional:-->
-                  <address>
-                     <!--Optional:-->
-                     <address1>?</address1>
-                     <!--Optional:-->
-                     <address2>?</address2>
-                     <!--Optional:-->
-                     <address3>?</address3>
-                     <!--Optional:-->
-                     <zipCode>?</zipCode>
-                     <!--Optional:-->
-                     <city>?</city>
-                     <!--Optional:-->
-                     <country>?</country>
-                     <!--Optional:-->
-                     <state>?</state>
-                  </address>
-                  <!--Zero or more repetitions:-->
-                  <customFields code="?" description="?">
-                     <!--Optional:-->
-                     <stringValue>?</stringValue>
-                     <!--Optional:-->
-                     <dateValue>?</dateValue>
-                     <!--Optional:-->
-                     <longValue>?</longValue>
-                     <!--Optional:-->
-                     <doubleValue>?</doubleValue>
-                  </customFields>
-                  <customerCategory>?</customerCategory>
-                  <customerBrand>?</customerBrand>
-                  <seller>?</seller>
-                  <!--Zero or more repetitions:-->
-                  <customerAccounts code="?" description="?">
-                     <!--Optional:-->
-                     <externalRef1>?</externalRef1>
-                     <!--Optional:-->
-                     <externalRef2>?</externalRef2>
-                     <!--Optional:-->
-                     <name>
-                        <!--Optional:-->
-                        <title>?</title>
-                        <!--Optional:-->
-                        <firstName>?</firstName>
-                        <lastName>?</lastName>
-                     </name>
-                     <!--Optional:-->
-                     <address>
-                        <!--Optional:-->
-                        <address1>?</address1>
-                        <!--Optional:-->
-                        <address2>?</address2>
-                        <!--Optional:-->
-                        <address3>?</address3>
-                        <!--Optional:-->
-                        <zipCode>?</zipCode>
-                        <!--Optional:-->
-                        <city>?</city>
-                        <!--Optional:-->
-                        <country>?</country>
-                        <!--Optional:-->
-                        <state>?</state>
-                     </address>
-                     <!--Zero or more repetitions:-->
-                     <customFields code="?" description="?">
-                        <!--Optional:-->
-                        <stringValue>?</stringValue>
-                        <!--Optional:-->
-                        <dateValue>?</dateValue>
-                        <!--Optional:-->
-                        <longValue>?</longValue>
-                        <!--Optional:-->
-                        <doubleValue>?</doubleValue>
-                     </customFields>
-                     <customer>?</customer>
-                     <currency>?</currency>
-                     <!--Optional:-->
-                     <status>?</status>
-                     <!--Optional:-->
-                     <paymentMethod>?</paymentMethod>
-                     <!--Optional:-->
-                     <creditCategory>?</creditCategory>
-                     <!--Zero or more repetitions:-->
-                     <accountOperations>
-                        <!--Optional:-->
-                        <dueDate>?</dueDate>
-                        <!--Optional:-->
-                        <type>?</type>
-                        <!--Optional:-->
-                        <transactionDate>?</transactionDate>
-                        <!--Optional:-->
-                        <transactionCategory>?</transactionCategory>
-                        <!--Optional:-->
-                        <reference>?</reference>
-                        <!--Optional:-->
-                        <accountCode>?</accountCode>
-                        <!--Optional:-->
-                        <accountCodeClientSide>?</accountCodeClientSide>
-                        <!--Optional:-->
-                        <amount>?</amount>
-                        <!--Optional:-->
-                        <matchingAmount>?</matchingAmount>
-                        <!--Optional:-->
-                        <unMatchingAmount>?</unMatchingAmount>
-                        <!--Optional:-->
-                        <matchingStatus>?</matchingStatus>
-                        <!--Zero or more repetitions:-->
-                        <matchingAmounts>
-                           <!--Optional:-->
-                           <matchingCode>?</matchingCode>
-                           <!--Optional:-->
-                           <matchingAmount>?</matchingAmount>
-                        </matchingAmounts>
-                        <!--Optional:-->
-                        <occCode>?</occCode>
-                        <!--Optional:-->
-                        <occDescription>?</occDescription>
-                     </accountOperations>
-                     <!--Optional:-->
-                     <dateStatus>?</dateStatus>
-                     <!--Optional:-->
-                     <dateDunningLevel>?</dateDunningLevel>
-                     <!--Optional:-->
-                     <email>?</email>
-                     <!--Optional:-->
-                     <phone>?</phone>
-                     <!--Optional:-->
-                     <mobile>?</mobile>
-                     <!--Optional:-->
-                     <fax>?</fax>
-                     <!--Optional:-->
-                     <dunningLevel>?</dunningLevel>
-                     <!--Optional:-->
-                     <mandateIdentification>?</mandateIdentification>
-                     <!--Optional:-->
-                     <mandateDate>?</mandateDate>
-                     <!--Optional:-->
-                     <balance>?</balance>
-                     <!--Optional:-->
-                     <terminationDate>?</terminationDate>
-                     <!--Zero or more repetitions:-->
-                     <billingAccounts code="?" description="?">
-                        <!--Optional:-->
-                        <externalRef1>?</externalRef1>
-                        <!--Optional:-->
-                        <externalRef2>?</externalRef2>
-                        <!--Optional:-->
-                        <name>
-                           <!--Optional:-->
-                           <title>?</title>
-                           <!--Optional:-->
-                           <firstName>?</firstName>
-                           <lastName>?</lastName>
-                        </name>
-                        <!--Optional:-->
-                        <address>
-                           <!--Optional:-->
-                           <address1>?</address1>
-                           <!--Optional:-->
-                           <address2>?</address2>
-                           <!--Optional:-->
-                           <address3>?</address3>
-                           <!--Optional:-->
-                           <zipCode>?</zipCode>
-                           <!--Optional:-->
-                           <city>?</city>
-                           <!--Optional:-->
-                           <country>?</country>
-                           <!--Optional:-->
-                           <state>?</state>
-                        </address>
-                        <!--Zero or more repetitions:-->
-                        <customFields code="?" description="?">
-                           <!--Optional:-->
-                           <stringValue>?</stringValue>
-                           <!--Optional:-->
-                           <dateValue>?</dateValue>
-                           <!--Optional:-->
-                           <longValue>?</longValue>
-                           <!--Optional:-->
-                           <doubleValue>?</doubleValue>
-                        </customFields>
-                        <customerAccount>?</customerAccount>
-                        <billingCycle>?</billingCycle>
-                        <country>?</country>
-                        <language>?</language>
-                        <paymentMethod>?</paymentMethod>
-                        <!--Optional:-->
-                        <nextInvoiceDate>?</nextInvoiceDate>
-                        <!--Optional:-->
-                        <subscriptionDate>?</subscriptionDate>
-                        <!--Optional:-->
-                        <terminationDate>?</terminationDate>
-                        <!--Optional:-->
-                        <paymentTerms>?</paymentTerms>
-                        <!--Optional:-->
-                        <electronicBilling>?</electronicBilling>
-                        <!--Optional:-->
-                        <status>?</status>
-                        <!--Zero or more repetitions:-->
-                        <userAccounts code="?" description="?">
-                           <!--Optional:-->
-                           <externalRef1>?</externalRef1>
-                           <!--Optional:-->
-                           <externalRef2>?</externalRef2>
-                           <!--Optional:-->
-                           <name>
-                              <!--Optional:-->
-                              <title>?</title>
-                              <!--Optional:-->
-                              <firstName>?</firstName>
-                              <lastName>?</lastName>
-                           </name>
-                           <!--Optional:-->
-                           <address>
-                              <!--Optional:-->
-                              <address1>?</address1>
-                              <!--Optional:-->
-                              <address2>?</address2>
-                              <!--Optional:-->
-                              <address3>?</address3>
-                              <!--Optional:-->
-                              <zipCode>?</zipCode>
-                              <!--Optional:-->
-                              <city>?</city>
-                              <!--Optional:-->
-                              <country>?</country>
-                              <!--Optional:-->
-                              <state>?</state>
-                           </address>
-                           <!--Zero or more repetitions:-->
-                           <customFields code="?" description="?">
-                              <!--Optional:-->
-                              <stringValue>?</stringValue>
-                              <!--Optional:-->
-                              <dateValue>?</dateValue>
-                              <!--Optional:-->
-                              <longValue>?</longValue>
-                              <!--Optional:-->
-                              <doubleValue>?</doubleValue>
-                           </customFields>
-                           <billingAccount>?</billingAccount>
-                           <!--Optional:-->
-                           <subscriptionDate>?</subscriptionDate>
-                           <!--Optional:-->
-                           <terminationDate>?</terminationDate>
-                           <!--Optional:-->
-                           <status>?</status>
-                           <!--Zero or more repetitions:-->
-                           <subscriptions code="?" description="?">
-                              <userAccount>?</userAccount>
-                              <offerTemplate>?</offerTemplate>
-                              <!--Optional:-->
-                              <subscriptionDate>?</subscriptionDate>
-                              <!--Optional:-->
-                              <terminationDate>?</terminationDate>
-                              <!--Optional:-->
-                              <status>?</status>
-                              <!--Zero or more repetitions:-->
-                              <accesses code="?">
-                                 <subscription>?</subscription>
-                                 <!--Optional:-->
-                                 <startDate>?</startDate>
-                                 <!--Optional:-->
-                                 <endDate>?</endDate>
-                              </accesses>
-                              <!--Zero or more repetitions:-->
-                              <services code="?">
-                                 <!--Optional:-->
-                                 <status>?</status>
-                                 <!--Optional:-->
-                                 <subscriptionDate>?</subscriptionDate>
-                                 <!--Optional:-->
-                                 <terminationDate>?</terminationDate>
-                                 <!--Optional:-->
-                                 <quantity>?</quantity>
-                                 <!--Optional:-->
-                                 <terminationReason>?</terminationReason>
-                              </services>
-                              <!--Zero or more repetitions:-->
-                              <customFields code="?" description="?">
-                                 <!--Optional:-->
-                                 <stringValue>?</stringValue>
-                                 <!--Optional:-->
-                                 <dateValue>?</dateValue>
-                                 <!--Optional:-->
-                                 <longValue>?</longValue>
-                                 <!--Optional:-->
-                                 <doubleValue>?</doubleValue>
-                              </customFields>
-                           </subscriptions>
-                        </userAccounts>
-                     </billingAccounts>
-                  </customerAccounts>
-               </customers>
-            </sellers>
-         </arg0>
-      </ws:customerHierarchyUpdate>
-   </soapenv:Body>
 </soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/customerHierarchyUpdate"/><con:wsrmConfig version="1.2"/></con:call></con:operation></con:interface><con:interface xsi:type="con:WsdlInterface" wsaVersion="NONE" name="SubscriptionWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}SubscriptionWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="http://localhost:8080/meveo/SubscriptionWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache type="TEXT" rootPart="http://localhost:8080/meveo/SubscriptionWs?wsdl"><con:part><con:url>http://localhost:8080/meveo/SubscriptionWs?wsdl</con:url><con:content><![CDATA[<wsdl:definitions name="SubscriptionWs" targetNamespace="http://impl.ws.api.meveo.org/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://impl.ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns2="http://schemas.xmlsoap.org/soap/http" xmlns:ns1="http://ws.api.meveo.org/">
   <wsdl:import location="http://localhost:8080/meveo/SubscriptionWs?wsdl=SubscriptionWs.wsdl" namespace="http://ws.api.meveo.org/"></wsdl:import>
   <wsdl:binding name="SubscriptionWsSoapBinding" type="ns1:SubscriptionWs">
@@ -7825,12 +7498,11 @@
 </wsdl:definitions>]]></con:content><con:type>http://schemas.xmlsoap.org/wsdl/</con:type></con:part><con:part><con:url>http://localhost:8080/meveo/SubscriptionWs?wsdl=SubscriptionWs.wsdl</con:url><con:content><![CDATA[<wsdl:definitions name="SubscriptionWs" targetNamespace="http://ws.api.meveo.org/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ns1="http://ws.api.meveo.org/">
   <wsdl:types>
     <xs:schema elementFormDefault="unqualified" targetNamespace="http://ws.api.meveo.org/" version="1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://ws.api.meveo.org/">
-      <xs:element name="Access" type="tns:accessDto"/>
       <xs:element name="ActionStatus" type="tns:actionStatus"/>
       <xs:element name="ApplyOneShotChargeInstance" type="tns:applyOneShotChargeInstanceDto"/>
       <xs:element name="CustomField" type="tns:customFieldDto"/>
+      <xs:element name="CustomFields" type="tns:customFieldsDto"/>
       <xs:element name="Customer" type="tns:activateServicesDto"/>
-      <xs:element name="Subscription" nillable="true" type="xs:anyType"/>
       <xs:element name="TerminateSubscription" type="tns:terminateSubscriptionDto"/>
       <xs:element name="TerminateSubscriptionServices" type="tns:terminateSubscriptionServicesDto"/>
       <xs:element name="activateServices" type="tns:activateServices"/>
@@ -7849,21 +7521,21 @@
       <xs:element name="updateResponse" type="tns:updateResponse"/>
       <xs:complexType name="update">
         <xs:sequence>
-          <xs:element minOccurs="0" name="subscription" type="tns:subscriptionDto"/>
+          <xs:element minOccurs="0" name="subscription" type="tns:Subscription"/>
         </xs:sequence>
       </xs:complexType>
-      <xs:complexType name="subscriptionDto">
+      <xs:complexType name="Subscription">
         <xs:complexContent>
           <xs:extension base="tns:baseDto">
             <xs:sequence>
               <xs:element name="userAccount" type="xs:string"/>
               <xs:element name="offerTemplate" type="xs:string"/>
-              <xs:element minOccurs="0" name="subscriptionDate" type="xs:dateTime"/>
+              <xs:element name="subscriptionDate" type="xs:dateTime"/>
               <xs:element minOccurs="0" name="terminationDate" type="xs:dateTime"/>
               <xs:element minOccurs="0" name="status" type="xs:string"/>
-              <xs:element maxOccurs="unbounded" minOccurs="0" name="accesses" nillable="true" type="tns:accessDto"/>
-              <xs:element maxOccurs="unbounded" minOccurs="0" name="services" nillable="true" type="tns:serviceInstanceDto"/>
-              <xs:element maxOccurs="unbounded" minOccurs="0" name="customFields" nillable="true" type="tns:customFieldDto"/>
+              <xs:element minOccurs="0" name="accesses" type="tns:Accesses"/>
+              <xs:element minOccurs="0" name="services" type="tns:ServiceInstances"/>
+              <xs:element minOccurs="0" name="customFields" type="tns:customFieldsDto"/>
             </xs:sequence>
             <xs:attribute name="code" type="xs:string" use="required"/>
             <xs:attribute name="description" type="xs:string" use="required"/>
@@ -7873,7 +7545,12 @@
       <xs:complexType abstract="true" name="baseDto">
         <xs:sequence/>
       </xs:complexType>
-      <xs:complexType name="accessDto">
+      <xs:complexType name="Accesses">
+        <xs:sequence>
+          <xs:element maxOccurs="unbounded" minOccurs="0" name="access" nillable="true" type="tns:Access"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="Access">
         <xs:complexContent>
           <xs:extension base="tns:baseDto">
             <xs:sequence>
@@ -7885,7 +7562,12 @@
           </xs:extension>
         </xs:complexContent>
       </xs:complexType>
-      <xs:complexType name="serviceInstanceDto">
+      <xs:complexType name="ServiceInstances">
+        <xs:sequence>
+          <xs:element maxOccurs="unbounded" minOccurs="0" name="serviceInstance" nillable="true" type="tns:ServiceInstance"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="ServiceInstance">
         <xs:complexContent>
           <xs:extension base="tns:baseDto">
             <xs:sequence>
@@ -7898,6 +7580,11 @@
             <xs:attribute name="code" type="xs:string" use="required"/>
           </xs:extension>
         </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="customFieldsDto">
+        <xs:sequence>
+          <xs:element maxOccurs="unbounded" minOccurs="0" name="customField" nillable="true" type="tns:customFieldDto"/>
+        </xs:sequence>
       </xs:complexType>
       <xs:complexType name="customFieldDto">
         <xs:sequence>
@@ -7983,7 +7670,7 @@
       </xs:complexType>
       <xs:complexType name="create">
         <xs:sequence>
-          <xs:element minOccurs="0" name="subscription" type="tns:subscriptionDto"/>
+          <xs:element minOccurs="0" name="subscription" type="tns:Subscription"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="createResponse">
@@ -8236,8 +7923,17 @@
          <subscription code="SUBS1" description="SUBS1">
          	<userAccount>UA1</userAccount>
          	<offerTemplate>OFF1</offerTemplate>
+         	  <subscriptionDate>2015-02-13</subscriptionDate>
             <!--Optional:-->
-            <subscriptionDate>2015-01-22T13:42:57.219+08:00</subscriptionDate>
+            <customFields>
+               <customField code="SUBS1_CF1" description="SUBS1_CF1">
+            	<!--Optional:-->
+               <stringValue>1</stringValue>
+               <longValue>1</longValue>
+               <doubleValue>1</doubleValue>
+               <dateValue>2015-01-01</dateValue>
+               </customField>
+             </customFields>
          </subscription>
       </ws:create>
    </soapenv:Body>
@@ -8254,6 +7950,15 @@
          	<offerTemplate>OFF1</offerTemplate>
             <!--Optional:-->
             <subscriptionDate>2015-01-22T13:42:57.219+08:00</subscriptionDate>
+             <customFields>
+               <customField code="SUBS1_CF1" description="SUBS1_CF1">
+            	<!--Optional:-->
+               <stringValue>1</stringValue>
+               <longValue>1</longValue>
+               <doubleValue>1</doubleValue>
+               <dateValue>2015-01-01</dateValue>
+               </customField>
+             </customFields>
          </subscription>
       </ws:create>
    </soapenv:Body>
@@ -8275,6 +7980,15 @@
          	<offerTemplate>OFF1</offerTemplate>
             <!--Optional:-->
             <subscriptionDate>2015-01-12T13:42:57.219+08:00</subscriptionDate>
+             <customFields>
+               <customField code="SUBS1_CF1" description="SUBS1_CF1">
+            	<!--Optional:-->
+               <stringValue>1</stringValue>
+               <longValue>1</longValue>
+               <doubleValue>1</doubleValue>
+               <dateValue>2015-01-01</dateValue>
+               </customField>
+             </customFields>
          </subscription>
       </ws:update>
    </soapenv:Body>
@@ -8291,6 +8005,15 @@
          	<offerTemplate>OFF1</offerTemplate>
             <!--Optional:-->
             <subscriptionDate>2015-01-12T13:42:57.219+08:00</subscriptionDate>
+             <customFields>
+               <customField code="SUBS1_CF1" description="SUBS1_CF1">
+            	<!--Optional:-->
+               <stringValue>1</stringValue>
+               <longValue>1</longValue>
+               <doubleValue>1</doubleValue>
+               <dateValue>2015-01-01</dateValue>
+               </customField>
+             </customFields>
          </subscription>
       </ws:update>
    </soapenv:Body>
@@ -8321,7 +8044,7 @@
       <ws:terminateServices>
          <!--Optional:-->
          <terminateSubscriptionServices>
-            <subscriptionCode>SUBS2</subscriptionCode>
+            <subscriptionCode>SUBS1</subscriptionCode>
             <terminationReason>TERM_REASON_1</terminationReason>
             <terminationDate>2015-01-22T13:42:57.219+08:00</terminationDate>
 

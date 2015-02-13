@@ -94,7 +94,8 @@ public class SubscriptionApi extends BaseApi {
 
 	public void create(SubscriptionDto postData, User currentUser) throws MeveoApiException {
 		if (!StringUtils.isBlank(postData.getUserAccount()) && !StringUtils.isBlank(postData.getOfferTemplate())
-				&& !StringUtils.isBlank(postData.getCode()) && !StringUtils.isBlank(postData.getDescription())) {
+				&& !StringUtils.isBlank(postData.getCode()) && !StringUtils.isBlank(postData.getDescription())
+				&& !StringUtils.isBlank(postData.getSubscriptionDate())) {
 			Provider provider = currentUser.getProvider();
 
 			if (subscriptionService.findByCode(postData.getCode(), provider) != null) {
@@ -119,7 +120,7 @@ public class SubscriptionApi extends BaseApi {
 
 			// populate customFields
 			if (postData.getCustomFields() != null) {
-				for (CustomFieldDto cf : postData.getCustomFields()) {
+				for (CustomFieldDto cf : postData.getCustomFields().getCustomField()) {
 					// check if custom field exists has a template
 					List<CustomFieldTemplate> customFieldTemplates = customFieldTemplateService
 							.findByAccountLevel(AccountLevelEnum.SUB);
@@ -164,6 +165,9 @@ public class SubscriptionApi extends BaseApi {
 			if (StringUtils.isBlank(postData.getDescription())) {
 				missingParameters.add("description");
 			}
+			if (StringUtils.isBlank(postData.getSubscriptionDate())) {
+				missingParameters.add("subscriptionDate");
+			}
 
 			throw new MissingParameterException(getMissingParametersExceptionMessage());
 		}
@@ -171,7 +175,8 @@ public class SubscriptionApi extends BaseApi {
 
 	public void update(SubscriptionDto postData, User currentUser) throws MeveoApiException {
 		if (!StringUtils.isBlank(postData.getUserAccount()) && !StringUtils.isBlank(postData.getOfferTemplate())
-				&& !StringUtils.isBlank(postData.getCode()) && !StringUtils.isBlank(postData.getDescription())) {
+				&& !StringUtils.isBlank(postData.getCode()) && !StringUtils.isBlank(postData.getDescription())
+				&& !StringUtils.isBlank(postData.getSubscriptionDate())) {
 			Provider provider = currentUser.getProvider();
 
 			Subscription subscription = subscriptionService.findByCode(postData.getCode(), provider);
@@ -201,7 +206,7 @@ public class SubscriptionApi extends BaseApi {
 
 			// populate customFields
 			if (postData.getCustomFields() != null) {
-				for (CustomFieldDto cf : postData.getCustomFields()) {
+				for (CustomFieldDto cf : postData.getCustomFields().getCustomField()) {
 					// check if custom field exists has a template
 					List<CustomFieldTemplate> customFieldTemplates = customFieldTemplateService
 							.findByAccountLevel(AccountLevelEnum.SUB);
@@ -260,6 +265,9 @@ public class SubscriptionApi extends BaseApi {
 			}
 			if (StringUtils.isBlank(postData.getDescription())) {
 				missingParameters.add("description");
+			}
+			if (StringUtils.isBlank(postData.getSubscriptionDate())) {
+				missingParameters.add("subscriptionDate");
 			}
 
 			throw new MissingParameterException(getMissingParametersExceptionMessage());

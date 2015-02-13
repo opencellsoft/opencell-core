@@ -8,12 +8,12 @@ import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
 
 import org.meveo.api.dto.AccountOperationDto;
 import org.meveo.model.payments.CustomerAccount;
 
-@XmlRootElement(name = "CustomerAccount")
+@XmlType(name = "CustomerAccount")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CustomerAccountDto extends AccountDto {
 
@@ -41,9 +41,10 @@ public class CustomerAccountDto extends AccountDto {
 	private String mandateIdentification = "";
 	private Date mandateDate;
 	private BigDecimal balance = BigDecimal.ZERO;
+	// currently not use
 	private Date terminationDate;
 
-	private List<BillingAccountDto> billingAccounts;
+	private BillingAccountsDto billingAccounts;
 
 	public CustomerAccountDto() {
 		super();
@@ -236,20 +237,20 @@ public class CustomerAccountDto extends AccountDto {
 				+ billingAccounts + "]";
 	}
 
-	public List<BillingAccountDto> getBillingAccounts() {
-		return billingAccounts;
-	}
-
-	public void setBillingAccounts(List<BillingAccountDto> billingAccounts) {
-		this.billingAccounts = billingAccounts;
-	}
-
 	public Date getTerminationDate() {
 		return terminationDate;
 	}
 
 	public void setTerminationDate(Date terminationDate) {
 		this.terminationDate = terminationDate;
+	}
+
+	public BillingAccountsDto getBillingAccounts() {
+		return billingAccounts;
+	}
+
+	public void setBillingAccounts(BillingAccountsDto billingAccounts) {
+		this.billingAccounts = billingAccounts;
 	}
 
 }

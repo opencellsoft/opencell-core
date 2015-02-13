@@ -753,8 +753,8 @@ public class AccountHierarchyApi extends BaseApi {
 	}
 
 	public void customerHierarchyUpdate(CustomerHierarchyDto postData, User currentUser) throws MeveoApiException {
-		if (postData.getSellers() != null && postData.getSellers().size() > 0) {
-			for (SellerDto sellerDto : postData.getSellers()) {
+		if (postData.getSellers() != null && postData.getSellers().getSeller().size() > 0) {
+			for (SellerDto sellerDto : postData.getSellers().getSeller()) {
 				if (!StringUtils.isBlank(sellerDto.getCode())) {
 					Provider provider = currentUser.getProvider();
 
@@ -799,7 +799,7 @@ public class AccountHierarchyApi extends BaseApi {
 
 					// customers
 					if (sellerDto.getCustomers() != null) {
-						for (CustomerDto customerDto : sellerDto.getCustomers()) {
+						for (CustomerDto customerDto : sellerDto.getCustomers().getCustomer()) {
 							if (StringUtils.isBlank(customerDto.getCode())) {
 								log.warn("code is null={}", customerDto);
 								continue;
@@ -846,7 +846,8 @@ public class AccountHierarchyApi extends BaseApi {
 
 							// customerAccounts
 							if (customerDto.getCustomerAccounts() != null) {
-								for (CustomerAccountDto customerAccountDto : customerDto.getCustomerAccounts()) {
+								for (CustomerAccountDto customerAccountDto : customerDto.getCustomerAccounts()
+										.getCustomerAccount()) {
 									if (StringUtils.isBlank(customerAccountDto.getCode())) {
 										log.warn("code is null={}", customerAccountDto);
 										continue;
@@ -860,6 +861,7 @@ public class AccountHierarchyApi extends BaseApi {
 									} else {
 										if (customerAccountDto.getTerminationDate() != null) {
 											// TODO [delete or update status?]
+											// no action
 										}
 									}
 
@@ -928,7 +930,7 @@ public class AccountHierarchyApi extends BaseApi {
 									// billing accounts
 									if (customerAccountDto.getBillingAccounts() != null) {
 										for (BillingAccountDto billingAccountDto : customerAccountDto
-												.getBillingAccounts()) {
+												.getBillingAccounts().getBillingAccount()) {
 											if (StringUtils.isBlank(billingAccountDto.getCode())) {
 												log.warn("code is null={}", billingAccountDto);
 												continue;
@@ -941,8 +943,30 @@ public class AccountHierarchyApi extends BaseApi {
 												billingAccount.setCode(billingAccountDto.getCode());
 											} else {
 												if (billingAccountDto.getTerminationDate() != null) {
-													// TODO [delete or update
-													// status?]
+													if (!StringUtils.isBlank(billingAccountDto.getTerminationReason())) {
+														missingParameters.add("billingAccount.terminationReason");
+														throw new MissingParameterException(
+																getMissingParametersExceptionMessage());
+													}
+
+													SubscriptionTerminationReason terminationReason = terminationReasonService
+															.findByCode(billingAccountDto.getTerminationReason(),
+																	provider);
+													if (terminationReason == null) {
+														throw new EntityDoesNotExistsException(
+																SubscriptionTerminationReason.class,
+																billingAccountDto.getTerminationReason());
+													}
+
+													try {
+														billingAccountService.billingAccountTermination(billingAccount,
+																billingAccountDto.getTerminationDate(),
+																terminationReason, currentUser);
+														continue;
+													} catch (BusinessException e) {
+														throw new MeveoApiException(
+																"Failed terminating billingAccount. " + e.getMessage());
+													}
 												}
 											}
 
@@ -1018,7 +1042,7 @@ public class AccountHierarchyApi extends BaseApi {
 											// user accounts
 											if (billingAccountDto.getUserAccounts() != null) {
 												for (UserAccountDto userAccountDto : billingAccountDto
-														.getUserAccounts()) {
+														.getUserAccounts().getUserAccount()) {
 													if (StringUtils.isBlank(userAccountDto.getCode())) {
 														log.warn("code is null={}", userAccountDto);
 														continue;
@@ -1031,9 +1055,32 @@ public class AccountHierarchyApi extends BaseApi {
 														userAccount.setCode(userAccountDto.getCode());
 													} else {
 														if (userAccountDto.getTerminationDate() != null) {
-															// TODO [delete or
-															// update
-															// status?]
+															if (!StringUtils.isBlank(userAccountDto
+																	.getTerminationReason())) {
+																missingParameters.add("userAccount.terminationReason");
+																throw new MissingParameterException(
+																		getMissingParametersExceptionMessage());
+															}
+
+															SubscriptionTerminationReason terminationReason = terminationReasonService
+																	.findByCode(userAccountDto.getTerminationReason(),
+																			provider);
+															if (terminationReason == null) {
+																throw new EntityDoesNotExistsException(
+																		SubscriptionTerminationReason.class,
+																		userAccountDto.getTerminationReason());
+															}
+
+															try {
+																userAccountService.userAccountTermination(userAccount,
+																		userAccountDto.getTerminationDate(),
+																		terminationReason, currentUser);
+																continue;
+															} catch (BusinessException e) {
+																throw new MeveoApiException(
+																		"Failed terminating billingAccount. "
+																				+ e.getMessage());
+															}
 														}
 													}
 
@@ -1063,7 +1110,7 @@ public class AccountHierarchyApi extends BaseApi {
 													// subscriptions
 													if (userAccountDto.getSubscriptions() != null) {
 														for (SubscriptionDto subscriptionDto : userAccountDto
-																.getSubscriptions()) {
+																.getSubscriptions().getSubscription()) {
 															if (StringUtils.isBlank(subscriptionDto.getCode())) {
 																log.warn("code is null={}", subscriptionDto);
 																continue;
@@ -1120,7 +1167,7 @@ public class AccountHierarchyApi extends BaseApi {
 															// accesses
 															if (subscriptionDto.getAccesses() != null) {
 																for (AccessDto accessDto : subscriptionDto
-																		.getAccesses()) {
+																		.getAccesses().getAccess()) {
 																	if (StringUtils.isBlank(accessDto.getCode())) {
 																		log.warn("code is null={}", accessDto);
 																		continue;
@@ -1151,7 +1198,7 @@ public class AccountHierarchyApi extends BaseApi {
 															// service instances
 															if (subscriptionDto.getServices() != null) {
 																for (ServiceInstanceDto serviceInstanceDto : subscriptionDto
-																		.getServices()) {
+																		.getServices().getServiceInstance()) {
 																	if (StringUtils.isBlank(serviceInstanceDto
 																			.getCode())) {
 																		log.warn("code is null={}", serviceInstanceDto);
@@ -1341,7 +1388,7 @@ public class AccountHierarchyApi extends BaseApi {
 		}
 
 		if (accountDto.getCustomFields() != null) {
-			for (CustomFieldDto cf : accountDto.getCustomFields()) {
+			for (CustomFieldDto cf : accountDto.getCustomFields().getCustomField()) {
 				// check if custom field exists has a template
 				List<CustomFieldTemplate> customFieldTemplates = customFieldTemplateService
 						.findByAccountLevel(accountLevel);
