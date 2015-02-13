@@ -7,7 +7,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import org.meveo.api.dto.ActionStatus;
-import org.meveo.api.dto.billing.EdrDto;
+import org.meveo.api.dto.billing.CdrListDto;
 import org.meveo.api.rest.IBaseRs;
 import org.meveo.api.rest.security.RSSecured;
 
@@ -21,7 +21,12 @@ import org.meveo.api.rest.security.RSSecured;
 public interface MediationRs extends IBaseRs {
 
 	@POST
-	@Path("/")
-	ActionStatus create(EdrDto postData);
+	@Path("/registerCdrList")
+	ActionStatus registerCdrList(CdrListDto postData);
+	
+
+	@POST
+	@Path("/chargeCdr")
+	ActionStatus chargeCdr(String cdr);
 
 }
