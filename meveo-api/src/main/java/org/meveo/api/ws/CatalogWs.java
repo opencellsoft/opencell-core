@@ -6,7 +6,6 @@ import javax.jws.WebService;
 
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.catalog.CounterTemplateDto;
-import org.meveo.api.dto.catalog.DiscountPlanDto;
 import org.meveo.api.dto.catalog.OfferTemplateDto;
 import org.meveo.api.dto.catalog.OneShotChargeTemplateDto;
 import org.meveo.api.dto.catalog.OneShotChargeTemplateWithPriceListDto;
@@ -15,7 +14,6 @@ import org.meveo.api.dto.catalog.RecurringChargeTemplateDto;
 import org.meveo.api.dto.catalog.ServiceTemplateDto;
 import org.meveo.api.dto.catalog.UsageChargeTemplateDto;
 import org.meveo.api.dto.response.catalog.GetCounterTemplateResponse;
-import org.meveo.api.dto.response.catalog.GetDiscountPlanResponse;
 import org.meveo.api.dto.response.catalog.GetOfferTemplateResponse;
 import org.meveo.api.dto.response.catalog.GetOneShotChargeTemplateResponse;
 import org.meveo.api.dto.response.catalog.GetPricePlanResponse;
@@ -40,18 +38,6 @@ public interface CatalogWs extends IBaseWs {
 
 	@WebMethod
 	ActionStatus removeCounterTemplate(@WebParam(name = "counterTemplateCode") String counterTemplateCode);
-
-	@WebMethod
-	ActionStatus createDiscountPlan(@WebParam(name = "discountPlan") DiscountPlanDto postData);
-
-	@WebMethod
-	ActionStatus updateDiscountPlan(@WebParam(name = "discountPlan") DiscountPlanDto postData);
-
-	@WebMethod
-	GetDiscountPlanResponse findDiscountPlan(@WebParam(name = "id") Long id);
-
-	@WebMethod
-	ActionStatus removeDiscountPlan(@WebParam(name = "id") Long id);
 
 	@WebMethod
 	ActionStatus createOfferTemplate(@WebParam(name = "offerTemplate") OfferTemplateDto postData);

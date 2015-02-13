@@ -27,7 +27,6 @@ import javax.persistence.NoResultException;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.QueryBuilder;
-import org.meveo.model.admin.Seller;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.BillingWalletTypeEnum;
 import org.meveo.model.billing.InstanceStatusEnum;

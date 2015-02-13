@@ -8711,11 +8711,7 @@
             <startDate>2015-01-01</startDate>
             <!--Optional:-->
             <endDate>2015-12-30</endDate>
-<<<<<<< HEAD
-            <amountWithTax>true</amountWithTax>
-=======
             <amountWithTax>?</amountWithTax>
->>>>>>> branch 'master' of git@git.assembla.com:meveo.git
          </walletBalance>
       </ws:currentBalance>
    </soapenv:Body>

@@ -49,6 +49,8 @@
 			backingBean="#{accessBean}">
 			<hftl:column label="#{messages['access.accessUserId']}"
 				field="accessUserId" />
+			<hftl:column label="#{messages['access.subscription']}" field="subscription"
+				childField="code" />
 			<hftl:column label="#{messages['access.startDate']}"
 				field="startDate" isDate="true" />
 			<hftl:column label="#{messages['access.endDate']}" field="endDate"

@@ -33,6 +33,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.validation.constraints.Size;
 
 import org.meveo.model.BaseEntity;
 import org.meveo.model.catalog.PricePlanMatrix;
@@ -172,6 +173,10 @@ public class RatedTransaction extends BaseEntity {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "PRICEPLAN_ID")
 	private PricePlanMatrix priceplan;
+
+	@Column(name = "OFFER_CODE", length = 35)
+	@Size(max = 35, min = 1)
+	protected String offerCode;
 	
 	public RatedTransaction() {
 		super();
@@ -181,7 +186,7 @@ public class RatedTransaction extends BaseEntity {
 			BigDecimal unitAmountWithTax, BigDecimal unitAmountTax, BigDecimal quantity, BigDecimal amountWithoutTax,
 			BigDecimal amountWithTax, BigDecimal amountTax, RatedTransactionStatusEnum status, Provider provider,
 			WalletInstance wallet, BillingAccount billingAccount, InvoiceSubCategory invoiceSubCategory,
-			String parameter1, String parameter2, String parameter3, String unityDescription,PricePlanMatrix priceplan) {
+			String parameter1, String parameter2, String parameter3, String unityDescription,PricePlanMatrix priceplan,String offerCode) {
 		super();
 		this.walletOperationId = walletOperationId;
 		this.usageDate = usageDate;
@@ -200,6 +205,7 @@ public class RatedTransaction extends BaseEntity {
 		this.parameter2 = parameter2;
 		this.parameter3 = parameter3;
 		this.priceplan = priceplan;
+		this.offerCode=offerCode;
 		this.unityDescription = unityDescription;
 		setProvider(provider);
 	}
@@ -411,5 +417,15 @@ public class RatedTransaction extends BaseEntity {
 	public void setPriceplan(PricePlanMatrix priceplan) {
 		this.priceplan = priceplan;
 	}
+
+	public String getOfferCode() {
+		return offerCode;
+	}
+
+	public void setOfferCode(String offerCode) {
+		this.offerCode = offerCode;
+	}
+
+	
 
 }

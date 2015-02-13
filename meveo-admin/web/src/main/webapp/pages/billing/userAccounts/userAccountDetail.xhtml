@@ -325,11 +325,11 @@
 												<h:outputText value="#{messages[e.status.label]}" />
 											</p:column>
 										</p:dataTable>
-										<p:commandButton rendered="#{wallet.key!='PRINCIPAL'}"
+										<!-- <p:commandButton rendered="#{wallet.key!='PRINCIPAL'}"
 											value="#{messages['action.reload']}"
 											update=":#{p:component('reloadPopup')}"
 											actionListener="#{userAccountBean.setSelectedWalletCode(wallet.key)}"
-											oncomplete="dlg_reloadPopup.show()" />
+											oncomplete="dlg_reloadPopup.show()" /> -->
 									</p:panel>
 								</p:tab>
 							</c:forEach>

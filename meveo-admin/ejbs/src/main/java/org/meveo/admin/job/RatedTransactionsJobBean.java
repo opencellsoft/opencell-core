@@ -36,7 +36,8 @@ public class RatedTransactionsJobBean {
 	@Interceptors({ JobLoggingInterceptor.class })
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public JobExecutionResult execute(JobExecutionResultImpl result,
-			User currentUser) {
+			User currentUser)
+{
 		Provider provider = currentUser.getProvider();
 
 		try {
@@ -61,16 +62,20 @@ public class RatedTransactionsJobBean {
 							walletOperation.getAmountTax(),
 							RatedTransactionStatusEnum.OPEN,
 							walletOperation.getProvider(),
-							walletOperation.getWallet(), walletOperation
+							walletOperation.getWallet(), 
+							walletOperation
 									.getWallet().getUserAccount()
-									.getBillingAccount(), walletOperation
+									.getBillingAccount(), 
+							walletOperation
 									.getChargeInstance().getChargeTemplate()
 									.getInvoiceSubCategory(),
 							walletOperation.getParameter1(),
 							walletOperation.getParameter2(),
 							walletOperation.getParameter3(),
 							walletOperation.getUnityDescription(),
-							walletOperation.getPriceplan());
+							walletOperation.getPriceplan(),
+							walletOperation.getOfferCode()
+							);
 					ratedTransactionService.create(ratedTransaction,
 							currentUser, currentUser.getProvider());
 

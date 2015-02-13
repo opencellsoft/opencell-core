@@ -250,7 +250,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 				cq.where(pStatus, pWallet, pdoNotTriggerInvoicing, pInvoice);
 			}
 
-			List<InvoiceAgregate> invoiceAgregateFList = new ArrayList<InvoiceAgregate>();
+			List<InvoiceAgregate> invoiceAgregateSubcatList = new ArrayList<InvoiceAgregate>();
 			List<Object[]> invoiceSubCats = getEntityManager().createQuery(cq).getResultList();
 
 			Map<Long, CategoryInvoiceAgregate> catInvoiceAgregateMap = new HashMap<Long, CategoryInvoiceAgregate>();
@@ -272,24 +272,24 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 					}
 				}
 
-				SubCategoryInvoiceAgregate invoiceAgregateF = new SubCategoryInvoiceAgregate();
-				invoiceAgregateF.setAuditable(billingAccount.getAuditable());
-				invoiceAgregateF.setProvider(billingAccount.getProvider());
-				invoiceAgregateF.setInvoice(invoice);
-				invoiceAgregateF.setBillingRun(billingAccount.getBillingRun());
-				invoiceAgregateF.setWallet(wallet);
-				invoiceAgregateF.setAccountingCode(invoiceSubCategory.getAccountingCode());
-				invoiceAgregateF.setSubCategoryTax(tax);
-				fillAgregates(invoiceAgregateF, wallet);
-				int itemNumber = invoiceAgregateF.getItemNumber() != null ? invoiceAgregateF.getItemNumber() + 1 : 1;
-				invoiceAgregateF.setItemNumber(itemNumber);
+				SubCategoryInvoiceAgregate invoiceAgregateSubcat = new SubCategoryInvoiceAgregate();
+				invoiceAgregateSubcat.setAuditable(billingAccount.getAuditable());
+				invoiceAgregateSubcat.setProvider(billingAccount.getProvider());
+				invoiceAgregateSubcat.setInvoice(invoice);
+				invoiceAgregateSubcat.setBillingRun(billingAccount.getBillingRun());
+				invoiceAgregateSubcat.setWallet(wallet);
+				invoiceAgregateSubcat.setAccountingCode(invoiceSubCategory.getAccountingCode());
+				invoiceAgregateSubcat.setSubCategoryTax(tax);
+				fillAgregates(invoiceAgregateSubcat, wallet);
+				int itemNumber = invoiceAgregateSubcat.getItemNumber() != null ? invoiceAgregateSubcat.getItemNumber() + 1 : 1;
+				invoiceAgregateSubcat.setItemNumber(itemNumber);
 
-				invoiceAgregateF.setAmountWithoutTax((BigDecimal) object[1]);
-				invoiceAgregateF.setAmountWithTax((BigDecimal) object[2]);
-				invoiceAgregateF.setAmountTax((BigDecimal) object[3]);
-				invoiceAgregateF.setQuantity((BigDecimal) object[4]);
-				invoiceAgregateF.setProvider(billingAccount.getProvider());
-				invoiceAgregateFList.add(invoiceAgregateF);
+				invoiceAgregateSubcat.setAmountWithoutTax((BigDecimal) object[1]);
+				invoiceAgregateSubcat.setAmountWithTax((BigDecimal) object[2]);
+				invoiceAgregateSubcat.setAmountTax((BigDecimal) object[3]);
+				invoiceAgregateSubcat.setQuantity((BigDecimal) object[4]);
+				invoiceAgregateSubcat.setProvider(billingAccount.getProvider());
+				invoiceAgregateSubcatList.add(invoiceAgregateSubcat);
 				// end agregate F
 
 				if (!entreprise) {
@@ -297,66 +297,66 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 				}
 
 				// start agregate T
-				TaxInvoiceAgregate invoiceAgregateT = null;
+				TaxInvoiceAgregate invoiceAgregateTax = null;
 				Long taxId = tax.getId();
 
 				if (taxInvoiceAgregateMap.containsKey(taxId)) {
-					invoiceAgregateT = taxInvoiceAgregateMap.get(taxId);
+					invoiceAgregateTax = taxInvoiceAgregateMap.get(taxId);
 				} else {
-					invoiceAgregateT = new TaxInvoiceAgregate();
-					invoiceAgregateT.setAuditable(billingAccount.getAuditable());
-					invoiceAgregateT.setProvider(billingAccount.getProvider());
-					invoiceAgregateT.setInvoice(invoice);
-					invoiceAgregateT.setBillingRun(billingAccount.getBillingRun());
-					invoiceAgregateT.setTax(tax);
-					invoiceAgregateT.setAccountingCode(tax.getAccountingCode());
+					invoiceAgregateTax = new TaxInvoiceAgregate();
+					invoiceAgregateTax.setAuditable(billingAccount.getAuditable());
+					invoiceAgregateTax.setProvider(billingAccount.getProvider());
+					invoiceAgregateTax.setInvoice(invoice);
+					invoiceAgregateTax.setBillingRun(billingAccount.getBillingRun());
+					invoiceAgregateTax.setTax(tax);
+					invoiceAgregateTax.setAccountingCode(tax.getAccountingCode());
 
-					taxInvoiceAgregateMap.put(taxId, invoiceAgregateT);
+					taxInvoiceAgregateMap.put(taxId, invoiceAgregateTax);
 				}
 
 				if (tax.getPercent().compareTo(BigDecimal.ZERO) == 0) {
-					invoiceAgregateT.addAmountWithoutTax(invoiceAgregateF.getAmountWithoutTax());
-					invoiceAgregateT.addAmountWithTax(invoiceAgregateF.getAmountWithTax());
-					invoiceAgregateT.addAmountTax(invoiceAgregateF.getAmountTax());
+					invoiceAgregateTax.addAmountWithoutTax(invoiceAgregateSubcat.getAmountWithoutTax());
+					invoiceAgregateTax.addAmountWithTax(invoiceAgregateSubcat.getAmountWithTax());
+					invoiceAgregateTax.addAmountTax(invoiceAgregateSubcat.getAmountTax());
 				}
 
-				fillAgregates(invoiceAgregateT, wallet);
-				if (invoiceAgregateF.getSubCategoryTax().getPercent().compareTo(BigDecimal.ZERO) != 0) {
-					invoiceAgregateT.setTaxPercent(invoiceAgregateF.getSubCategoryTax().getPercent());
+				fillAgregates(invoiceAgregateTax, wallet);
+				if (invoiceAgregateSubcat.getSubCategoryTax().getPercent().compareTo(BigDecimal.ZERO) != 0) {
+					invoiceAgregateTax.setTaxPercent(invoiceAgregateSubcat.getSubCategoryTax().getPercent());
 				}
-				invoiceAgregateT.setProvider(billingAccount.getProvider());
+				invoiceAgregateTax.setProvider(billingAccount.getProvider());
 
-				if (invoiceAgregateT.getId() == null) {
-					invoiceAgregateService.create(invoiceAgregateT, currentUser, currentUser.getProvider());
+				if (invoiceAgregateTax.getId() == null) {
+					invoiceAgregateService.create(invoiceAgregateTax, currentUser, currentUser.getProvider());
 				}
 
-				invoiceAgregateF.setSubCategoryTax(tax);
-				invoiceAgregateF.setInvoiceSubCategory(invoiceSubCategory);
+				invoiceAgregateSubcat.setSubCategoryTax(tax);
+				invoiceAgregateSubcat.setInvoiceSubCategory(invoiceSubCategory);
 
 				// start agregate R
-				CategoryInvoiceAgregate invoiceAgregateR = null;
+				CategoryInvoiceAgregate invoiceAgregateCat = null;
 				Long invoiceCategoryId = invoiceSubCategory.getInvoiceCategory().getId();
 				if (catInvoiceAgregateMap.containsKey(invoiceCategoryId)) {
-					invoiceAgregateR = catInvoiceAgregateMap.get(invoiceCategoryId);
+					invoiceAgregateCat = catInvoiceAgregateMap.get(invoiceCategoryId);
 				} else {
-					invoiceAgregateR = new CategoryInvoiceAgregate();
-					invoiceAgregateR.setAuditable(billingAccount.getAuditable());
-					invoiceAgregateR.setProvider(billingAccount.getProvider());
+					invoiceAgregateCat = new CategoryInvoiceAgregate();
+					invoiceAgregateCat.setAuditable(billingAccount.getAuditable());
+					invoiceAgregateCat.setProvider(billingAccount.getProvider());
 
-					invoiceAgregateR.setInvoice(invoice);
-					invoiceAgregateR.setBillingRun(billingAccount.getBillingRun());
-					catInvoiceAgregateMap.put(invoiceCategoryId, invoiceAgregateR);
+					invoiceAgregateCat.setInvoice(invoice);
+					invoiceAgregateCat.setBillingRun(billingAccount.getBillingRun());
+					catInvoiceAgregateMap.put(invoiceCategoryId, invoiceAgregateCat);
 				}
 
-				fillAgregates(invoiceAgregateR, wallet);
-				if (invoiceAgregateR.getId() == null) {
-					invoiceAgregateService.create(invoiceAgregateR, currentUser, currentUser.getProvider());
+				fillAgregates(invoiceAgregateCat, wallet);
+				if (invoiceAgregateCat.getId() == null) {
+					invoiceAgregateService.create(invoiceAgregateCat, currentUser, currentUser.getProvider());
 				}
 
-				invoiceAgregateR.setInvoiceCategory(invoiceSubCategory.getInvoiceCategory());
-				invoiceAgregateR.setProvider(billingAccount.getProvider());
-				invoiceAgregateF.setCategoryInvoiceAgregate(invoiceAgregateR);
-				invoiceAgregateF.setTaxInvoiceAgregate(invoiceAgregateT);
+				invoiceAgregateCat.setInvoiceCategory(invoiceSubCategory.getInvoiceCategory());
+				invoiceAgregateCat.setProvider(billingAccount.getProvider());
+				invoiceAgregateSubcat.setCategoryInvoiceAgregate(invoiceAgregateCat);
+				invoiceAgregateSubcat.setTaxInvoiceAgregate(invoiceAgregateTax);
 				// end agregate R
 
 				// round the amount without Tax
@@ -364,30 +364,30 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 
 				// first we round the amount without tax
 
-				log.debug("subcat " + invoiceAgregateF.getAccountingCode() + " ht="
-						+ invoiceAgregateF.getAmountWithoutTax() + " ->"
-						+ invoiceAgregateF.getAmountWithoutTax().setScale(rounding, RoundingMode.HALF_UP));
-				invoiceAgregateF.setAmountWithoutTax(invoiceAgregateF.getAmountWithoutTax().setScale(rounding,
+				log.debug("subcat " + invoiceAgregateSubcat.getAccountingCode() + " ht="
+						+ invoiceAgregateSubcat.getAmountWithoutTax() + " ->"
+						+ invoiceAgregateSubcat.getAmountWithoutTax().setScale(rounding, RoundingMode.HALF_UP));
+				invoiceAgregateSubcat.setAmountWithoutTax(invoiceAgregateSubcat.getAmountWithoutTax().setScale(rounding,
 						RoundingMode.HALF_UP));
 				// add it to taxAggregate and CategoryAggregate
-				if (invoiceAgregateF.getSubCategoryTax().getPercent().compareTo(BigDecimal.ZERO) != 0) {
-					TaxInvoiceAgregate taxInvoiceAgregate = taxInvoiceAgregateMap.get(invoiceAgregateF
+				if (invoiceAgregateSubcat.getSubCategoryTax().getPercent().compareTo(BigDecimal.ZERO) != 0) {
+					TaxInvoiceAgregate taxInvoiceAgregate = taxInvoiceAgregateMap.get(invoiceAgregateSubcat
 							.getSubCategoryTax().getId());
-					taxInvoiceAgregate.addAmountWithoutTax(invoiceAgregateF.getAmountWithoutTax());
-					log.info("  tax " + invoiceAgregateF.getTaxInvoiceAgregate().getTaxPercent() + " ht ->"
+					taxInvoiceAgregate.addAmountWithoutTax(invoiceAgregateSubcat.getAmountWithoutTax());
+					log.info("  tax " + invoiceAgregateSubcat.getTaxInvoiceAgregate().getTaxPercent() + " ht ->"
 							+ taxInvoiceAgregate.getAmountWithoutTax());
 				}
-				invoiceAgregateF.getCategoryInvoiceAgregate().addAmountWithoutTax(
-						invoiceAgregateF.getAmountWithoutTax());
-				log.debug("  cat " + invoiceAgregateF.getCategoryInvoiceAgregate().getId() + " ht ->"
+				invoiceAgregateSubcat.getCategoryInvoiceAgregate().addAmountWithoutTax(
+						invoiceAgregateSubcat.getAmountWithoutTax());
+				log.debug("  cat " + invoiceAgregateSubcat.getCategoryInvoiceAgregate().getId() + " ht ->"
 
-						+ invoiceAgregateF.getCategoryInvoiceAgregate().getAmountWithoutTax());
-				if (invoiceAgregateF.getAmountWithoutTax().compareTo(biggestAmount) > 0) {
-					biggestAmount = invoiceAgregateF.getAmountWithoutTax();
-					biggestSubCat = invoiceAgregateF;
+						+ invoiceAgregateSubcat.getCategoryInvoiceAgregate().getAmountWithoutTax());
+				if (invoiceAgregateSubcat.getAmountWithoutTax().compareTo(biggestAmount) > 0) {
+					biggestAmount = invoiceAgregateSubcat.getAmountWithoutTax();
+					biggestSubCat = invoiceAgregateSubcat;
 				}
 
-				invoiceAgregateService.create(invoiceAgregateF, currentUser, currentUser.getProvider());
+				invoiceAgregateService.create(invoiceAgregateSubcat, currentUser, currentUser.getProvider());
 			}
 
 			// compute the tax

@@ -16,9 +16,6 @@ import org.meveo.api.logging.LoggingInterceptor;
 import org.meveo.api.rest.billing.MediationRs;
 import org.meveo.api.rest.impl.BaseRs;
 
-/**
- * @author Edward P. Legaspi
- **/
 @RequestScoped
 @Interceptors({ LoggingInterceptor.class })
 public class MediationRsImpl extends BaseRs implements MediationRs {
@@ -30,12 +27,12 @@ public class MediationRsImpl extends BaseRs implements MediationRs {
 	private HttpServletRequest httpServletRequest;
 
 	@Override
-	public ActionStatus registerUsage(CdrListDto postData) {
+	public ActionStatus registerCdrList(CdrListDto postData) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 		try {
 			postData.setIpAddress(httpServletRequest.getRemoteAddr());
-			mediationApi.create(postData, getCurrentUser());
+			mediationApi.registerCdrList(postData, getCurrentUser());
 		} catch (MeveoApiException e) {
 			result.setErrorCode(e.getErrorCode());
 			result.setStatus(ActionStatusEnum.FAIL);
@@ -49,4 +46,42 @@ public class MediationRsImpl extends BaseRs implements MediationRs {
 		return result;
 	}
 
+	@Override
+	public ActionStatus chargeCdr(String cdr) {
+		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+
+		try {
+			mediationApi.chargeCdr(cdr, getCurrentUser(),httpServletRequest.getRemoteAddr());
+		} catch (MeveoApiException e) {
+			result.setErrorCode(e.getErrorCode());
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
+		} catch (Exception e) {
+			result.setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
+		}
+
+		return result;
+	}
+	
+	@Override
+	public ActionStatus chargeCdrList(CdrListDto postData) {
+		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+
+		try {
+			postData.setIpAddress(httpServletRequest.getRemoteAddr());
+			mediationApi.chargeCdrList(postData, getCurrentUser());
+		} catch (MeveoApiException e) {
+			result.setErrorCode(e.getErrorCode());
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
+		} catch (Exception e) {
+			result.setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
+		}
+
+		return result;
+	}
 }

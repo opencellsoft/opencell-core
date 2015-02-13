@@ -16,12 +16,15 @@ import org.apache.commons.lang3.StringUtils;
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.exception.RejectedImportException;
 import org.meveo.commons.utils.CsvBuilder;
 import org.meveo.commons.utils.CsvReader;
 import org.meveo.model.admin.User;
 import org.meveo.model.catalog.CounterTemplate;
 import org.meveo.model.notification.EmailNotification;
+import org.meveo.model.notification.Notification;
 import org.meveo.model.notification.NotificationEventTypeEnum;
+import org.meveo.model.notification.StrategyImportTypeEnum;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.catalog.impl.CounterTemplateService;
 import org.meveo.service.notification.EmailNotificationService;
@@ -43,6 +46,8 @@ public class EmailNotificationBean extends BaseBean<EmailNotification> {
 	
 	CsvReader csvReader = null;
     private UploadedFile file; 
+    
+    private StrategyImportTypeEnum strategyImportType;
     
     private static final int CODE= 0;
     private static final int CLASS_NAME_FILTER= 1;
@@ -151,49 +156,107 @@ public class EmailNotificationBean extends BaseBean<EmailNotification> {
 	
 	public void upload() throws IOException, BusinessException {
 		if (file != null) {
-
 			csvReader = new CsvReader(file.getInputstream(), ';',
 					Charset.forName("ISO-8859-1"));
 			csvReader.readHeaders();
-			EmailNotification emailNotification = null;
-			while (csvReader.readRecord()) {
-				String[] values = csvReader.getValues();
-				emailNotification = new EmailNotification();
-				emailNotification.setCode(values[CODE]);
-				emailNotification.setClassNameFilter(values[CLASS_NAME_FILTER]);
-				emailNotification.setEventTypeFilter(NotificationEventTypeEnum
-						.valueOf(values[EVENT_TYPE_FILTER]));
-				emailNotification.setElFilter(values[EL_FILTER]);
-				emailNotification.setDisabled(Boolean
-						.parseBoolean(values[ACTIVE]));
-				emailNotification.setElAction(values[EL_ACTION]);
-				emailNotification.setEmailFrom(values[SENT_FROM]);
-				emailNotification.setEmailToEl(values[SEND_TO_EL]);
-				String emails = values[SEND_TO_MAILING_LIST];
-				if (!StringUtils.isBlank(emails)) {
-					String[] emailList = emails.split(",");
-					List<String> listMail = Arrays.asList(emailList);
-					for (String email : listMail) {
-						if (emailNotification.getEmails() == null) {
-							emailNotification
-									.setEmails(new HashSet<String>());
-						}
-						emailNotification.getEmails().add(email);
-					}
-				}
-				emailNotification.setSubject(values[SUBJECT]);
-				emailNotification.setBody(values[TEXT_BODY]);
-				emailNotification.setElAction(values[HTML_BODY]);
-				if(!StringUtils.isBlank(values[COUNTER_TEMPLATE])){
-					CounterTemplate counterTemplate=counterTemplateService.findByCode(values[COUNTER_TEMPLATE], getCurrentProvider());
-					emailNotification.setCounterTemplate(counterTemplate!=null ?counterTemplate: null);
-				}
-				
-				emailNotificationService.create(emailNotification);
+			try {
+				while (csvReader.readRecord()) {
+					String[] values = csvReader.getValues();
+					EmailNotification existingEntity=emailNotificationService.findByCode(values[CODE], getCurrentProvider());
+						if(existingEntity!=null){
+							checkSelectedStrategy(values,existingEntity);
+						}else{
+							EmailNotification emailNotif=new EmailNotification();
+							emailNotif.setCode(values[CODE]);
+							emailNotif.setClassNameFilter(values[CLASS_NAME_FILTER]);
+							emailNotif.setEventTypeFilter(NotificationEventTypeEnum
+									.valueOf(values[EVENT_TYPE_FILTER]));
+							emailNotif.setElFilter(values[EL_FILTER]);
+							emailNotif.setDisabled(Boolean
+									.parseBoolean(values[ACTIVE]));
+							emailNotif.setElAction(values[EL_ACTION]);
+							emailNotif.setEmailFrom(values[SENT_FROM]);
+							emailNotif.setEmailToEl(values[SEND_TO_EL]);
+							String emails = values[SEND_TO_MAILING_LIST];
+							if (!StringUtils.isBlank(emails)) {
+								String[] emailList = emails.split(",");
+								List<String> listMail = Arrays.asList(emailList);
+								for (String email : listMail) {
+									if (emailNotif.getEmails() == null) {
+										emailNotif
+												.setEmails(new HashSet<String>());
+									}
+									emailNotif.getEmails().add(email);
+								}
+							}
+							emailNotif.setSubject(values[SUBJECT]);
+							emailNotif.setBody(values[TEXT_BODY]);
+							emailNotif.setElAction(values[HTML_BODY]);
+							if(!StringUtils.isBlank(values[COUNTER_TEMPLATE])){
+								CounterTemplate counterTemplate=counterTemplateService.findByCode(values[COUNTER_TEMPLATE], getCurrentProvider());
+								emailNotif.setCounterTemplate(counterTemplate!=null ?counterTemplate: null);
+							}
+						
+							emailNotificationService.create(emailNotif);
+						}}
 				messages.info(new BundleKey("messages", "commons.csv"));
+			} catch (RejectedImportException e) {
+				messages.error(new BundleKey("messages", e.getMessage()));
 			}
 		}
+       }
+	
+	public void checkSelectedStrategy(String[] values,EmailNotification existingEntity) throws RejectedImportException{
+		if(strategyImportType.equals(StrategyImportTypeEnum.UPDATED)){
+			existingEntity.setClassNameFilter(values[CLASS_NAME_FILTER]);
+			existingEntity.setEventTypeFilter(NotificationEventTypeEnum
+					.valueOf(values[EVENT_TYPE_FILTER]));
+			existingEntity.setElFilter(values[EL_FILTER]);
+			existingEntity.setDisabled(Boolean
+					.parseBoolean(values[ACTIVE]));
+			existingEntity.setElAction(values[EL_ACTION]);
+			existingEntity.setEmailFrom(values[SENT_FROM]);
+			existingEntity.setEmailToEl(values[SEND_TO_EL]);
+			String emails = values[SEND_TO_MAILING_LIST];
+			if (!StringUtils.isBlank(emails)) {
+				String[] emailList = emails.split(",");
+				List<String> listMail = Arrays.asList(emailList);
+				for (String email : listMail) {
+					if (existingEntity.getEmails() == null) {
+						existingEntity
+								.setEmails(new HashSet<String>());
+					}
+					existingEntity.getEmails().add(email);
+				}
+			}
+			existingEntity.setSubject(values[SUBJECT]);
+			existingEntity.setBody(values[TEXT_BODY]);
+			existingEntity.setElAction(values[HTML_BODY]);
+			if(!StringUtils.isBlank(values[COUNTER_TEMPLATE])){
+				CounterTemplate counterTemplate=counterTemplateService.findByCode(values[COUNTER_TEMPLATE], getCurrentProvider());
+				existingEntity.setCounterTemplate(counterTemplate!=null ?counterTemplate: null);
+			}
+			emailNotificationService.update(existingEntity);
+		          }
+		else if(strategyImportType.equals(StrategyImportTypeEnum.REJECT_EXISTING_RECORDS)){	
+						      //add to a new csv
+		}else if(strategyImportType.equals(StrategyImportTypeEnum.REJECTE_IMPORT)){
+		  throw new RejectedImportException("notification.rejectImport");
+		}
 	}
+	
+ 
+
+	public StrategyImportTypeEnum getStrategyImportType() {
+		return strategyImportType;
+	}
+
+	public void setStrategyImportType(StrategyImportTypeEnum strategyImportType) {
+		this.strategyImportType = strategyImportType;
+	}
+	
+	
+
 }
 
 
