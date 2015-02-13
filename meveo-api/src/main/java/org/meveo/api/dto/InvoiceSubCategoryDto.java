@@ -5,6 +5,7 @@ import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.model.billing.InvoiceSubCategory;
@@ -24,7 +25,7 @@ public class InvoiceSubCategoryDto extends BaseDto {
 	@XmlAttribute(required = true)
 	private String description;
 
-	@XmlAttribute(required = true)
+	@XmlElement(required = true)
 	private String invoiceCategory;
 
 	private List<LanguageDescriptionDto> languageDescriptions;

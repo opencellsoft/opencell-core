@@ -6,7 +6,7 @@ import java.util.Date;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.model.catalog.PricePlanMatrix;
@@ -21,10 +21,10 @@ public class PricePlanDto implements Serializable {
 	private static final long serialVersionUID = -9089693491690592072L;
 
 	private Long id;
-	
-	@XmlAttribute(required = true)
+
+	@XmlElement(required = true)
 	private String eventCode;
-	
+
 	private String seller;
 	private String country;
 	private String currency;
@@ -230,18 +230,13 @@ public class PricePlanDto implements Serializable {
 
 	@Override
 	public String toString() {
-		return "PricePlanDto [id=" + id + ", eventCode=" + eventCode
-				+ ", seller=" + seller + ", country=" + country + ", currency="
-				+ currency + ", minQuantity=" + minQuantity + ", maxQuantity="
-				+ maxQuantity + ", offerTemplate=" + offerTemplate
-				+ ", startSubscriptionDate=" + startSubscriptionDate
-				+ ", endSubscriptionDate=" + endSubscriptionDate
-				+ ", startRatingDate=" + startRatingDate + ", endRatingDate="
-				+ endRatingDate + ", minSubscriptionAgeInMonth="
-				+ minSubscriptionAgeInMonth + ", maxSubscriptionAgeInMonth="
-				+ maxSubscriptionAgeInMonth + ", amountWithoutTax="
-				+ amountWithoutTax + ", amountWithTax=" + amountWithTax
-				+ ", priority=" + priority + ", criteria1=" + criteria1
+		return "PricePlanDto [id=" + id + ", eventCode=" + eventCode + ", seller=" + seller + ", country=" + country
+				+ ", currency=" + currency + ", minQuantity=" + minQuantity + ", maxQuantity=" + maxQuantity
+				+ ", offerTemplate=" + offerTemplate + ", startSubscriptionDate=" + startSubscriptionDate
+				+ ", endSubscriptionDate=" + endSubscriptionDate + ", startRatingDate=" + startRatingDate
+				+ ", endRatingDate=" + endRatingDate + ", minSubscriptionAgeInMonth=" + minSubscriptionAgeInMonth
+				+ ", maxSubscriptionAgeInMonth=" + maxSubscriptionAgeInMonth + ", amountWithoutTax=" + amountWithoutTax
+				+ ", amountWithTax=" + amountWithTax + ", priority=" + priority + ", criteria1=" + criteria1
 				+ ", criteria2=" + criteria2 + ", criteria3=" + criteria3 + "]";
 	}
 

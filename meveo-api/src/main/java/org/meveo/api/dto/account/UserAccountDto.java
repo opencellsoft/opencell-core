@@ -5,7 +5,7 @@ import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.billing.SubscriptionDto;
@@ -21,7 +21,7 @@ public class UserAccountDto extends AccountDto {
 
 	private static final long serialVersionUID = -13552444627686818L;
 
-	@XmlAttribute(required = true)
+	@XmlElement(required = true)
 	private String billingAccount;
 
 	private Date subscriptionDate;

@@ -175,7 +175,12 @@ public class SubscriptionBean extends StatefulBaseBean<Subscription> {
 	}
 
 	private void initServiceTemplates() {
-		if (entity.getOffer() != null) {
+	    
+	    // Clear existing list value
+        serviceTemplates = new EntityListDataModelPF<ServiceTemplate>(new ArrayList<ServiceTemplate>());
+        serviceTemplates.setSelectedItems(null);
+        
+        if (entity.getOffer() != null) {
 			List<ServiceInstance> serviceInstances = entity.getServiceInstances();
 			for (ServiceTemplate serviceTemplate : entity.getOffer().getServiceTemplates()) {
 				boolean alreadyInstanciated = false;
@@ -525,8 +530,7 @@ public class SubscriptionBean extends StatefulBaseBean<Subscription> {
 
 			selectedServiceInstance = null;
 
-			initServiceTemplates();
-			serviceTemplates.setSelectedItems(null);
+			initServiceTemplates();			
 
 			messages.info(new BundleKey("messages", "resiliation.resiliateSuccessful"));
 

@@ -5,7 +5,7 @@ import java.util.Date;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
@@ -17,10 +17,10 @@ public class AccountHierarchyDto implements Serializable {
 
 	private static final long serialVersionUID = -8469973066490541924L;
 
-	@XmlAttribute(required = true)
+	@XmlElement(required = true)
 	private String email;
 
-	@XmlAttribute(required = true)
+	@XmlElement(required = true)
 	private int paymentMethod = 1;
 
 	private String customerId;
@@ -228,18 +228,13 @@ public class AccountHierarchyDto implements Serializable {
 
 	@Override
 	public String toString() {
-		return "AccountHierarchyDto [email=" + email + ", paymentMethod="
-				+ paymentMethod + ", customerId=" + customerId
-				+ ", sellerCode=" + sellerCode + ", customerBrandCode="
-				+ customerBrandCode + ", customerCategoryCode="
-				+ customerCategoryCode + ", currencyCode=" + currencyCode
-				+ ", countryCode=" + countryCode + ", languageCode="
-				+ languageCode + ", titleCode=" + titleCode + ", firstName="
-				+ firstName + ", lastName=" + lastName + ", birthDate="
-				+ birthDate + ", phoneNumber=" + phoneNumber
-				+ ", billingCycleCode=" + billingCycleCode + ", address1="
-				+ address1 + ", address2=" + address2 + ", zipCode=" + zipCode
-				+ ", city=" + city + ", limit=" + limit + ", sortField="
+		return "AccountHierarchyDto [email=" + email + ", paymentMethod=" + paymentMethod + ", customerId="
+				+ customerId + ", sellerCode=" + sellerCode + ", customerBrandCode=" + customerBrandCode
+				+ ", customerCategoryCode=" + customerCategoryCode + ", currencyCode=" + currencyCode
+				+ ", countryCode=" + countryCode + ", languageCode=" + languageCode + ", titleCode=" + titleCode
+				+ ", firstName=" + firstName + ", lastName=" + lastName + ", birthDate=" + birthDate + ", phoneNumber="
+				+ phoneNumber + ", billingCycleCode=" + billingCycleCode + ", address1=" + address1 + ", address2="
+				+ address2 + ", zipCode=" + zipCode + ", city=" + city + ", limit=" + limit + ", sortField="
 				+ sortField + ", index=" + index + "]";
 	}
 

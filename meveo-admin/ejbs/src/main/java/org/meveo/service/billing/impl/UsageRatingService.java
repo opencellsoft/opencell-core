@@ -70,7 +70,7 @@ public class UsageRatingService {
 
 	
 
-	private static boolean cacheLoaded = false;
+	
 
 	@Inject
 	private EdrService edrService;
@@ -95,7 +95,7 @@ public class UsageRatingService {
 
 	@PostConstruct
 	public synchronized void updateCacheFromDB() {
-		if (!cacheLoaded) {
+		
 				chargeTemplateCache = meveoContainer.getCache("meveo-usage-charge-template-cache-cache");
 			
 				chargeCache = meveoContainer.getCache("meveo-charge-instance-cache");
@@ -111,8 +111,7 @@ public class UsageRatingService {
 					updateCache(usageChargeInstance);
 				}
 			}
-			cacheLoaded = true;
-		}
+		
 	}
 
 	public UsageChargeTemplateCache updateTemplateCache(

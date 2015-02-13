@@ -94,7 +94,7 @@ public class SubscriptionApi extends BaseApi {
 
 	public void create(SubscriptionDto postData, User currentUser) throws MeveoApiException {
 		if (!StringUtils.isBlank(postData.getUserAccount()) && !StringUtils.isBlank(postData.getOfferTemplate())
-				&& !StringUtils.isBlank(postData.getCode())) {
+				&& !StringUtils.isBlank(postData.getCode()) && !StringUtils.isBlank(postData.getDescription())) {
 			Provider provider = currentUser.getProvider();
 
 			if (subscriptionService.findByCode(postData.getCode(), provider) != null) {
@@ -161,6 +161,9 @@ public class SubscriptionApi extends BaseApi {
 			if (StringUtils.isBlank(postData.getCode())) {
 				missingParameters.add("code");
 			}
+			if (StringUtils.isBlank(postData.getDescription())) {
+				missingParameters.add("description");
+			}
 
 			throw new MissingParameterException(getMissingParametersExceptionMessage());
 		}
@@ -168,7 +171,7 @@ public class SubscriptionApi extends BaseApi {
 
 	public void update(SubscriptionDto postData, User currentUser) throws MeveoApiException {
 		if (!StringUtils.isBlank(postData.getUserAccount()) && !StringUtils.isBlank(postData.getOfferTemplate())
-				&& !StringUtils.isBlank(postData.getCode())) {
+				&& !StringUtils.isBlank(postData.getCode()) && !StringUtils.isBlank(postData.getDescription())) {
 			Provider provider = currentUser.getProvider();
 
 			Subscription subscription = subscriptionService.findByCode(postData.getCode(), provider);
@@ -254,6 +257,9 @@ public class SubscriptionApi extends BaseApi {
 			}
 			if (StringUtils.isBlank(postData.getCode())) {
 				missingParameters.add("code");
+			}
+			if (StringUtils.isBlank(postData.getDescription())) {
+				missingParameters.add("description");
 			}
 
 			throw new MissingParameterException(getMissingParametersExceptionMessage());

@@ -35,6 +35,7 @@ public class MediationApi extends BaseApi {
 	@Inject UsageRatingService usageRatingService;
 
 	public void registerCdrList(CdrListDto postData, User currentUser) throws MeveoApiException {
+
 		if (postData.getCdr() != null && postData.getCdr().size() > 0) {
 			try {
 				cdrParsingService.initByApi(currentUser.getUserName(), postData.getIpAddress());
@@ -63,6 +64,7 @@ public class MediationApi extends BaseApi {
 			throw new MissingParameterException(getMissingParametersExceptionMessage());
 		}
 	}
+
 	
 	public void chargeCdr(String  cdr, User user, String ip) throws MeveoApiException {
 		if(!StringUtils.isBlank(cdr)){

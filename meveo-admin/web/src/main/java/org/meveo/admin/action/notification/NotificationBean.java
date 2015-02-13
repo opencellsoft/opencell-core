@@ -7,8 +7,6 @@ import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
 import javax.enterprise.context.ConversationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -16,10 +14,12 @@ import javax.inject.Named;
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.exception.RejectedImportException;
 import org.meveo.commons.utils.CsvBuilder;
 import org.meveo.commons.utils.CsvReader;
 import org.meveo.model.notification.Notification;
 import org.meveo.model.notification.NotificationEventTypeEnum;
+import org.meveo.model.notification.StrategyImportTypeEnum;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.notification.NotificationService;
 import org.primefaces.event.FileUploadEvent;
@@ -45,7 +45,9 @@ public class NotificationBean extends BaseBean<Notification>{
     private static final int EL_ACTION= 4; 
     private static final int EVENT_TYPE_FILTER= 5;
     
-
+    private StrategyImportTypeEnum strategyImportType;
+    
+    
 	public NotificationBean(){
 		super(Notification.class);
 	}
@@ -114,30 +116,65 @@ public void handleFileUpload(FileUploadEvent event) throws Exception {
 	}
     
 }
-	
 
-	private void upload() throws IOException, BusinessException {
+	public void upload() throws IOException, BusinessException {
 		if (file != null) {
-
 			csvReader = new CsvReader(file.getInputstream(), ';',
 					Charset.forName("ISO-8859-1"));
 			csvReader.readHeaders();
-
-			Notification notification = null;
-			while (csvReader.readRecord()) {
-				String[] values = csvReader.getValues();
-				notification = new Notification();
-				notification.setCode(values[CODE]);
-				notification.setClassNameFilter(values[CLASS_NAME_FILTER]);
-				notification.setElFilter(values[EL_FILTER]);
-				notification.setDisabled(Boolean.parseBoolean(values[ACTIVE]));
-				notification.setElAction(values[EL_ACTION]);
-				notification.setEventTypeFilter(NotificationEventTypeEnum
-						.valueOf(values[EVENT_TYPE_FILTER]));
-				notificationService.create(notification);
+			try {
+				while (csvReader.readRecord()) {
+					String[] values = csvReader.getValues();
+					Notification existingEntity = notificationService
+							.findByCode(values[CODE], getCurrentProvider());
+					if (existingEntity != null) {
+						checkSelectedStrategy(values, existingEntity);
+					} else {
+						Notification notif = new Notification();
+						notif.setClassNameFilter(values[CLASS_NAME_FILTER]);
+						notif.setElFilter(values[EL_FILTER]);
+						notif.setDisabled(Boolean.parseBoolean(values[ACTIVE]));
+						notif.setElAction(values[EL_ACTION]);
+						notif.setEventTypeFilter(NotificationEventTypeEnum
+								.valueOf(values[EVENT_TYPE_FILTER]));
+						notificationService.create(notif);
+					}
+				}
 				messages.info(new BundleKey("messages", "commons.csv"));
-			}
+			} catch (RejectedImportException e) {
+				messages.error(new BundleKey("messages", e.getMessage()));
+			}}}
 
+	public void checkSelectedStrategy(String[] values,
+			Notification existingEntity) throws RejectedImportException {
+		if (strategyImportType.equals(StrategyImportTypeEnum.UPDATED)) {
+			existingEntity.setClassNameFilter(values[CLASS_NAME_FILTER]);
+			existingEntity.setElFilter(values[EL_FILTER]);
+			existingEntity.setDisabled(Boolean.parseBoolean(values[ACTIVE]));
+			existingEntity.setElAction(values[EL_ACTION]);
+			existingEntity.setEventTypeFilter(NotificationEventTypeEnum
+					.valueOf(values[EVENT_TYPE_FILTER]));
+			notificationService.update(existingEntity);
+		} else if (strategyImportType
+				.equals(StrategyImportTypeEnum.REJECT_EXISTING_RECORDS)) {
+			// add to a new csv
+		} else if (strategyImportType
+				.equals(StrategyImportTypeEnum.REJECTE_IMPORT)) {
+			throw new RejectedImportException("notification.rejectImport");
 		}
 	}
+	public StrategyImportTypeEnum getStrategyImportType() {
+		return strategyImportType;
+	}
+
+	public void setStrategyImportType(StrategyImportTypeEnum strategyImportType) {
+		this.strategyImportType = strategyImportType;
+	}
+
+
+
+
+	
+	
+	
 }
