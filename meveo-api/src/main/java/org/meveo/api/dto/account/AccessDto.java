@@ -5,6 +5,7 @@ import java.util.Date;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.BaseDto;
@@ -22,7 +23,7 @@ public class AccessDto extends BaseDto {
 	@XmlAttribute(required = false)
 	private String code;
 
-	@XmlAttribute(required = true)
+	@XmlElement(required = true)
 	private String subscription;
 
 	private Date startDate;

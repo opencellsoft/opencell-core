@@ -22,7 +22,9 @@ public class SellerDto extends BaseDto {
 	@XmlAttribute(required = true)
 	private String code;
 
+	@XmlAttribute(required = true)
 	private String description;
+	
 	private String invoicePrefix;
 	private String currencyCode;
 	private String countryCode;

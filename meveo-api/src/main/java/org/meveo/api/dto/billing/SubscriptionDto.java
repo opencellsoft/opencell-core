@@ -8,6 +8,7 @@ import java.util.Map;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.BaseDto;
@@ -29,12 +30,13 @@ public class SubscriptionDto extends BaseDto {
 	@XmlAttribute(required = true)
 	private String code;
 
+	@XmlAttribute(required = true)
 	private String description;
 
-	@XmlAttribute(required = true)
+	@XmlElement(required = true)
 	private String userAccount;
 
-	@XmlAttribute(required = true)
+	@XmlElement(required = true)
 	private String offerTemplate;
 
 	private Date subscriptionDate;

@@ -7,7 +7,7 @@ import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.BaseDto;
@@ -23,10 +23,10 @@ public class InvoiceDto extends BaseDto {
 
 	private static final long serialVersionUID = 1072382628068718580L;
 
-	@XmlAttribute(required = true)
+	@XmlElement(required = true)
 	private String billingAccountCode;
 
-	@XmlAttribute(required = true)
+	@XmlElement(required = true)
 	private Date dueDate;
 
 	private String invoiceNumber;

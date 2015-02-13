@@ -94,6 +94,8 @@
         <xs:complexContent>
           <xs:extension base="tns:baseDto">
             <xs:sequence>
+              <xs:element name="billingAccountCode" type="xs:string"/>
+              <xs:element name="dueDate" type="xs:dateTime"/>
               <xs:element minOccurs="0" name="invoiceNumber" type="xs:string"/>
               <xs:element minOccurs="0" name="invoiceDate" type="xs:dateTime"/>
               <xs:element minOccurs="0" name="discount" type="xs:decimal"/>
@@ -104,8 +106,6 @@
               <xs:element name="PDFpresent" type="xs:boolean"/>
               <xs:element maxOccurs="unbounded" minOccurs="0" name="subCategoryInvoiceAgregates" nillable="true" type="tns:subCategoryInvoiceAgregateDto"/>
             </xs:sequence>
-            <xs:attribute name="billingAccountCode" type="xs:string" use="required"/>
-            <xs:attribute name="dueDate" type="xs:dateTime" use="required"/>
           </xs:extension>
         </xs:complexContent>
       </xs:complexType>
@@ -142,6 +142,7 @@
               <xs:element minOccurs="0" name="code" type="xs:string"/>
               <xs:element minOccurs="0" name="description" type="xs:string"/>
               <xs:element minOccurs="0" name="unityDescription" type="xs:string"/>
+              <xs:element minOccurs="0" name="priceplanCode" type="xs:string"/>
               <xs:element name="doNotTriggerInvoicing" type="xs:boolean"/>
             </xs:sequence>
           </xs:extension>
@@ -214,7 +215,9 @@
    <soapenv:Body>
       <ws:create>
          <!--Optional:-->
-         <invoice billingAccountCode="BA1" dueDate="2015-01-22T13:42:57.219+08:00">
+         <invoice >
+         	<billingAccountCode>BA1</billingAccountCode> 
+         	<dueDate>2015-01-22T13:42:57.219+08:00</dueDate>
             <!--Optional:-->
             <invoiceNumber>1</invoiceNumber>
             <!--Optional:-->
@@ -278,6 +281,83 @@
                   <description></description>
                   <unityDescription>x</unityDescription>
                   <doNotTriggerInvoicing>true</doNotTriggerInvoicing>
+               </ratedTransactions>
+            </subCategoryInvoiceAgregates>
+         </invoice>
+      </ws:create>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/InvoiceWs/create"/><con:wsrmConfig version="1.2"/></con:call><con:call name="Request 2"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/InvoiceWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:create>
+         <!--Optional:-->
+         <invoice>
+            <billingAccountCode>?</billingAccountCode>
+            <dueDate>?</dueDate>
+            <!--Optional:-->
+            <invoiceNumber>?</invoiceNumber>
+            <!--Optional:-->
+            <invoiceDate>?</invoiceDate>
+            <!--Optional:-->
+            <discount>?</discount>
+            <!--Optional:-->
+            <amountWithoutTax>?</amountWithoutTax>
+            <!--Optional:-->
+            <amountTax>?</amountTax>
+            <!--Optional:-->
+            <amountWithTax>?</amountWithTax>
+            <!--Optional:-->
+            <paymentMathod>?</paymentMathod>
+            <PDFpresent>?</PDFpresent>
+            <!--Zero or more repetitions:-->
+            <subCategoryInvoiceAgregates>
+               <!--Optional:-->
+               <type>?</type>
+               <!--Optional:-->
+               <itemNumber>?</itemNumber>
+               <!--Optional:-->
+               <accountingCode>?</accountingCode>
+               <!--Optional:-->
+               <description>?</description>
+               <!--Optional:-->
+               <taxPercent>?</taxPercent>
+               <!--Optional:-->
+               <quantity>?</quantity>
+               <!--Optional:-->
+               <discount>?</discount>
+               <!--Optional:-->
+               <amountWithoutTax>?</amountWithoutTax>
+               <!--Optional:-->
+               <amountTax>?</amountTax>
+               <!--Optional:-->
+               <amountWithTax>?</amountWithTax>
+               <!--Zero or more repetitions:-->
+               <ratedTransactions>
+                  <!--Optional:-->
+                  <usageDate>?</usageDate>
+                  <!--Optional:-->
+                  <unitAmountWithoutTax>?</unitAmountWithoutTax>
+                  <!--Optional:-->
+                  <unitAmountWithTax>?</unitAmountWithTax>
+                  <!--Optional:-->
+                  <unitAmountTax>?</unitAmountTax>
+                  <!--Optional:-->
+                  <quantity>?</quantity>
+                  <!--Optional:-->
+                  <amountWithoutTax>?</amountWithoutTax>
+                  <!--Optional:-->
+                  <amountWithTax>?</amountWithTax>
+                  <!--Optional:-->
+                  <amountTax>?</amountTax>
+                  <!--Optional:-->
+                  <code>?</code>
+                  <!--Optional:-->
+                  <description>?</description>
+                  <!--Optional:-->
+                  <unityDescription>?</unityDescription>
+                  <!--Optional:-->
+                  <priceplanCode>?</priceplanCode>
+                  <doNotTriggerInvoicing>?</doNotTriggerInvoicing>
                </ratedTransactions>
             </subCategoryInvoiceAgregates>
          </invoice>
@@ -747,11 +827,19 @@
 </wsdl:definitions>]]></con:content><con:type>http://schemas.xmlsoap.org/wsdl/</con:type></con:part><con:part><con:url>http://localhost:8080/meveo/SettingsWs?wsdl=SettingsWs.wsdl</con:url><con:content><![CDATA[<wsdl:definitions name="SettingsWs" targetNamespace="http://ws.api.meveo.org/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ns1="http://ws.api.meveo.org/">
   <wsdl:types>
     <xs:schema elementFormDefault="unqualified" targetNamespace="http://ws.api.meveo.org/" version="1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://ws.api.meveo.org/">
+      <xs:element name="Access" type="tns:accessDto"/>
+      <xs:element name="Account" type="tns:accountDto"/>
+      <xs:element name="AccountOperation" type="tns:accountOperationDto"/>
       <xs:element name="ActionStatus" type="tns:actionStatus"/>
+      <xs:element name="Address" type="tns:addressDto"/>
+      <xs:element name="BillingAccount" type="tns:billingAccountDto"/>
       <xs:element name="BillingCycle" type="tns:billingCycleDto"/>
       <xs:element name="Calendar" type="tns:calendarDto"/>
       <xs:element name="Country" type="tns:countryDto"/>
       <xs:element name="Currency" type="tns:currencyDto"/>
+      <xs:element name="CustomField" type="tns:customFieldDto"/>
+      <xs:element name="Customer" type="tns:customerDto"/>
+      <xs:element name="CustomerAccount" type="tns:customerAccountDto"/>
       <xs:element name="DayInYear" type="tns:dayInYearDto"/>
       <xs:element name="GetBillingCycleResponse" type="tns:getBillingCycleResponse"/>
       <xs:element name="GetCalendarResponse" type="tns:getCalendarResponse"/>
@@ -765,15 +853,20 @@
       <xs:element name="GetSellerResponse" type="tns:getSellerResponse"/>
       <xs:element name="GetTaxResponse" type="tns:getTaxResponse"/>
       <xs:element name="GetUserResponse" type="tns:getUserResponse"/>
+      <xs:element name="HourInDay" type="tns:hourInDayDto"/>
       <xs:element name="InvoiceCategory" type="tns:invoiceCategoryDto"/>
       <xs:element name="InvoiceSubCategory" type="tns:invoiceSubCategoryDto"/>
       <xs:element name="InvoiceSubCategoryCountry" type="tns:invoiceSubCategoryCountryDto"/>
       <xs:element name="Language" type="tns:languageDto"/>
       <xs:element name="LanguageDescription" type="tns:languageDescriptionDto"/>
+      <xs:element name="MatchingAmount" type="tns:matchingAmountDto"/>
+      <xs:element name="Name" type="tns:nameDto"/>
       <xs:element name="Provider" type="tns:providerDto"/>
       <xs:element name="Seller" type="tns:sellerDto"/>
+      <xs:element name="Subscription" nillable="true" type="xs:anyType"/>
       <xs:element name="Tax" type="tns:taxDto"/>
       <xs:element name="User" type="tns:userDto"/>
+      <xs:element name="UserAccount" type="tns:userAccountDto"/>
       <xs:element name="createBillingCycle" type="tns:createBillingCycle"/>
       <xs:element name="createBillingCycleResponse" type="tns:createBillingCycleResponse"/>
       <xs:element name="createCalendar" type="tns:createCalendar"/>
@@ -896,19 +989,203 @@
         <xs:complexContent>
           <xs:extension base="tns:baseDto">
             <xs:sequence>
-              <xs:element minOccurs="0" name="description" type="xs:string"/>
               <xs:element minOccurs="0" name="invoicePrefix" type="xs:string"/>
               <xs:element minOccurs="0" name="currencyCode" type="xs:string"/>
               <xs:element minOccurs="0" name="countryCode" type="xs:string"/>
               <xs:element minOccurs="0" name="languageCode" type="xs:string"/>
               <xs:element minOccurs="0" name="parentSeller" type="xs:string"/>
+              <xs:element minOccurs="0" name="provider" type="xs:string"/>
+              <xs:element maxOccurs="unbounded" minOccurs="0" name="customers" nillable="true" type="tns:customerDto"/>
             </xs:sequence>
             <xs:attribute name="code" type="xs:string" use="required"/>
+            <xs:attribute name="description" type="xs:string" use="required"/>
           </xs:extension>
         </xs:complexContent>
       </xs:complexType>
       <xs:complexType abstract="true" name="baseDto">
         <xs:sequence/>
+      </xs:complexType>
+      <xs:complexType name="customerDto">
+        <xs:complexContent>
+          <xs:extension base="tns:accountDto">
+            <xs:sequence>
+              <xs:element name="customerCategory" type="xs:string"/>
+              <xs:element name="customerBrand" type="xs:string"/>
+              <xs:element name="seller" type="xs:string"/>
+              <xs:element maxOccurs="unbounded" minOccurs="0" name="customerAccounts" nillable="true" type="tns:customerAccountDto"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType abstract="true" name="accountDto">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="externalRef1" type="xs:string"/>
+          <xs:element minOccurs="0" name="externalRef2" type="xs:string"/>
+          <xs:element minOccurs="0" name="name" type="tns:nameDto"/>
+          <xs:element minOccurs="0" name="address" type="tns:addressDto"/>
+          <xs:element maxOccurs="unbounded" minOccurs="0" name="customFields" nillable="true" type="tns:customFieldDto"/>
+        </xs:sequence>
+        <xs:attribute name="code" type="xs:string" use="required"/>
+        <xs:attribute name="description" type="xs:string" use="required"/>
+      </xs:complexType>
+      <xs:complexType name="customerAccountDto">
+        <xs:complexContent>
+          <xs:extension base="tns:accountDto">
+            <xs:sequence>
+              <xs:element name="customer" type="xs:string"/>
+              <xs:element name="currency" type="xs:string"/>
+              <xs:element minOccurs="0" name="status" type="xs:string"/>
+              <xs:element minOccurs="0" name="paymentMethod" type="xs:string"/>
+              <xs:element minOccurs="0" name="creditCategory" type="xs:string"/>
+              <xs:element maxOccurs="unbounded" minOccurs="0" name="accountOperations" nillable="true" type="tns:accountOperationDto"/>
+              <xs:element minOccurs="0" name="dateStatus" type="xs:dateTime"/>
+              <xs:element minOccurs="0" name="dateDunningLevel" type="xs:dateTime"/>
+              <xs:element minOccurs="0" name="email" type="xs:string"/>
+              <xs:element minOccurs="0" name="phone" type="xs:string"/>
+              <xs:element minOccurs="0" name="mobile" type="xs:string"/>
+              <xs:element minOccurs="0" name="fax" type="xs:string"/>
+              <xs:element minOccurs="0" name="dunningLevel" type="xs:string"/>
+              <xs:element minOccurs="0" name="mandateIdentification" type="xs:string"/>
+              <xs:element minOccurs="0" name="mandateDate" type="xs:dateTime"/>
+              <xs:element minOccurs="0" name="balance" type="xs:decimal"/>
+              <xs:element minOccurs="0" name="terminationDate" type="xs:dateTime"/>
+              <xs:element maxOccurs="unbounded" minOccurs="0" name="billingAccounts" nillable="true" type="tns:billingAccountDto"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="accountOperationDto">
+        <xs:complexContent>
+          <xs:extension base="tns:baseDto">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="dueDate" type="xs:dateTime"/>
+              <xs:element minOccurs="0" name="type" type="xs:string"/>
+              <xs:element minOccurs="0" name="transactionDate" type="xs:dateTime"/>
+              <xs:element minOccurs="0" name="transactionCategory" type="xs:string"/>
+              <xs:element minOccurs="0" name="reference" type="xs:string"/>
+              <xs:element minOccurs="0" name="accountCode" type="xs:string"/>
+              <xs:element minOccurs="0" name="accountCodeClientSide" type="xs:string"/>
+              <xs:element minOccurs="0" name="amount" type="xs:decimal"/>
+              <xs:element minOccurs="0" name="matchingAmount" type="xs:decimal"/>
+              <xs:element minOccurs="0" name="unMatchingAmount" type="xs:decimal"/>
+              <xs:element minOccurs="0" name="matchingStatus" type="xs:string"/>
+              <xs:element maxOccurs="unbounded" minOccurs="0" name="matchingAmounts" nillable="true" type="tns:matchingAmountDto"/>
+              <xs:element minOccurs="0" name="occCode" type="xs:string"/>
+              <xs:element minOccurs="0" name="occDescription" type="xs:string"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="matchingAmountDto">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="matchingCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="matchingAmount" type="xs:decimal"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="billingAccountDto">
+        <xs:complexContent>
+          <xs:extension base="tns:accountDto">
+            <xs:sequence>
+              <xs:element name="customerAccount" type="xs:string"/>
+              <xs:element name="billingCycle" type="xs:string"/>
+              <xs:element name="country" type="xs:string"/>
+              <xs:element name="language" type="xs:string"/>
+              <xs:element name="paymentMethod" type="xs:string"/>
+              <xs:element minOccurs="0" name="nextInvoiceDate" type="xs:dateTime"/>
+              <xs:element minOccurs="0" name="subscriptionDate" type="xs:dateTime"/>
+              <xs:element minOccurs="0" name="terminationDate" type="xs:dateTime"/>
+              <xs:element minOccurs="0" name="paymentTerms" type="xs:string"/>
+              <xs:element minOccurs="0" name="electronicBilling" type="xs:boolean"/>
+              <xs:element minOccurs="0" name="status" type="xs:string"/>
+              <xs:element maxOccurs="unbounded" minOccurs="0" name="userAccounts" nillable="true" type="tns:userAccountDto"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="userAccountDto">
+        <xs:complexContent>
+          <xs:extension base="tns:accountDto">
+            <xs:sequence>
+              <xs:element name="billingAccount" type="xs:string"/>
+              <xs:element minOccurs="0" name="subscriptionDate" type="xs:dateTime"/>
+              <xs:element minOccurs="0" name="terminationDate" type="xs:dateTime"/>
+              <xs:element minOccurs="0" name="status" type="xs:string"/>
+              <xs:element maxOccurs="unbounded" minOccurs="0" name="subscriptions" nillable="true" type="tns:subscriptionDto"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="subscriptionDto">
+        <xs:complexContent>
+          <xs:extension base="tns:baseDto">
+            <xs:sequence>
+              <xs:element name="userAccount" type="xs:string"/>
+              <xs:element name="offerTemplate" type="xs:string"/>
+              <xs:element minOccurs="0" name="subscriptionDate" type="xs:dateTime"/>
+              <xs:element minOccurs="0" name="terminationDate" type="xs:dateTime"/>
+              <xs:element minOccurs="0" name="status" type="xs:string"/>
+              <xs:element maxOccurs="unbounded" minOccurs="0" name="accesses" nillable="true" type="tns:accessDto"/>
+              <xs:element maxOccurs="unbounded" minOccurs="0" name="services" nillable="true" type="tns:serviceInstanceDto"/>
+              <xs:element maxOccurs="unbounded" minOccurs="0" name="customFields" nillable="true" type="tns:customFieldDto"/>
+            </xs:sequence>
+            <xs:attribute name="code" type="xs:string" use="required"/>
+            <xs:attribute name="description" type="xs:string" use="required"/>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="accessDto">
+        <xs:complexContent>
+          <xs:extension base="tns:baseDto">
+            <xs:sequence>
+              <xs:element name="subscription" type="xs:string"/>
+              <xs:element minOccurs="0" name="startDate" type="xs:dateTime"/>
+              <xs:element minOccurs="0" name="endDate" type="xs:dateTime"/>
+            </xs:sequence>
+            <xs:attribute name="code" type="xs:string"/>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="serviceInstanceDto">
+        <xs:complexContent>
+          <xs:extension base="tns:baseDto">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="status" type="xs:string"/>
+              <xs:element minOccurs="0" name="subscriptionDate" type="xs:dateTime"/>
+              <xs:element minOccurs="0" name="terminationDate" type="xs:dateTime"/>
+              <xs:element minOccurs="0" name="quantity" type="xs:decimal"/>
+              <xs:element minOccurs="0" name="terminationReason" type="xs:string"/>
+            </xs:sequence>
+            <xs:attribute name="code" type="xs:string" use="required"/>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="customFieldDto">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="stringValue" type="xs:string"/>
+          <xs:element minOccurs="0" name="dateValue" type="xs:dateTime"/>
+          <xs:element minOccurs="0" name="longValue" type="xs:long"/>
+          <xs:element minOccurs="0" name="doubleValue" type="xs:double"/>
+        </xs:sequence>
+        <xs:attribute name="code" type="xs:string" use="required"/>
+        <xs:attribute name="description" type="xs:string"/>
+      </xs:complexType>
+      <xs:complexType name="nameDto">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="title" type="xs:string"/>
+          <xs:element minOccurs="0" name="firstName" type="xs:string"/>
+          <xs:element name="lastName" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="addressDto">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="address1" type="xs:string"/>
+          <xs:element minOccurs="0" name="address2" type="xs:string"/>
+          <xs:element minOccurs="0" name="address3" type="xs:string"/>
+          <xs:element minOccurs="0" name="zipCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="city" type="xs:string"/>
+          <xs:element minOccurs="0" name="country" type="xs:string"/>
+          <xs:element minOccurs="0" name="state" type="xs:string"/>
+        </xs:sequence>
       </xs:complexType>
       <xs:complexType name="updateSellerResponse">
         <xs:sequence>
@@ -951,11 +1228,11 @@
         <xs:complexContent>
           <xs:extension base="tns:baseDto">
             <xs:sequence>
-              <xs:element name="countryCode" type="xs:string"/>
-              <xs:element name="name" type="xs:string"/>
               <xs:element name="currencyCode" type="xs:string"/>
               <xs:element minOccurs="0" name="languageCode" type="xs:string"/>
             </xs:sequence>
+            <xs:attribute name="countryCode" type="xs:string" use="required"/>
+            <xs:attribute name="name" type="xs:string" use="required"/>
           </xs:extension>
         </xs:complexContent>
       </xs:complexType>
@@ -1059,10 +1336,14 @@
           <xs:extension base="tns:baseDto">
             <xs:sequence>
               <xs:element minOccurs="0" name="description" type="xs:string"/>
+              <xs:element name="calendarType" type="xs:string"/>
               <xs:element maxOccurs="unbounded" minOccurs="0" name="days" nillable="true" type="tns:dayInYearDto"/>
+              <xs:element maxOccurs="unbounded" minOccurs="0" name="hours" nillable="true" type="tns:hourInDayDto"/>
+              <xs:element minOccurs="0" name="periodLength" type="xs:int"/>
+              <xs:element minOccurs="0" name="periodUnit" type="xs:string"/>
+              <xs:element minOccurs="0" name="nbPeriods" type="xs:int"/>
             </xs:sequence>
             <xs:attribute name="name" type="xs:string" use="required"/>
-            <xs:attribute name="type" type="xs:string" use="required"/>
           </xs:extension>
         </xs:complexContent>
       </xs:complexType>
@@ -1070,6 +1351,11 @@
         <xs:sequence/>
         <xs:attribute name="day" type="xs:int" use="required"/>
         <xs:attribute name="month" type="xs:string" use="required"/>
+      </xs:complexType>
+      <xs:complexType name="hourInDayDto">
+        <xs:sequence/>
+        <xs:attribute name="hour" type="xs:int" use="required"/>
+        <xs:attribute name="min" type="xs:int" use="required"/>
       </xs:complexType>
       <xs:complexType name="updateLanguage">
         <xs:sequence>
@@ -1091,12 +1377,12 @@
           <xs:extension base="tns:baseDto">
             <xs:sequence>
               <xs:element minOccurs="0" name="billingTemplateName" type="xs:string"/>
+              <xs:element name="invoiceDateDelay" type="xs:int"/>
+              <xs:element name="dueDateDelay" type="xs:int"/>
+              <xs:element name="calendar" type="xs:string"/>
             </xs:sequence>
             <xs:attribute name="code" type="xs:string" use="required"/>
             <xs:attribute name="description" type="xs:string" use="required"/>
-            <xs:attribute name="invoiceDateDelay" type="xs:int" use="required"/>
-            <xs:attribute name="dueDateDelay" type="xs:int" use="required"/>
-            <xs:attribute name="calendar" type="xs:string" use="required"/>
           </xs:extension>
         </xs:complexContent>
       </xs:complexType>
@@ -1129,11 +1415,11 @@
         <xs:complexContent>
           <xs:extension base="tns:baseDto">
             <xs:sequence>
+              <xs:element name="invoiceSubCategory" type="xs:string"/>
+              <xs:element name="country" type="xs:string"/>
+              <xs:element name="tax" type="xs:string"/>
               <xs:element minOccurs="0" name="discountCode" type="xs:string"/>
             </xs:sequence>
-            <xs:attribute name="invoiceSubCategory" type="xs:string" use="required"/>
-            <xs:attribute name="country" type="xs:string" use="required"/>
-            <xs:attribute name="tax" type="xs:string" use="required"/>
           </xs:extension>
         </xs:complexContent>
       </xs:complexType>
@@ -1167,12 +1453,12 @@
         <xs:complexContent>
           <xs:extension base="tns:baseDto">
             <xs:sequence>
+              <xs:element name="percent" type="xs:decimal"/>
               <xs:element minOccurs="0" name="accountingCode" type="xs:string"/>
               <xs:element maxOccurs="unbounded" minOccurs="0" name="languageDescriptions" nillable="true" type="tns:languageDescriptionDto"/>
             </xs:sequence>
             <xs:attribute name="code" type="xs:string" use="required"/>
             <xs:attribute name="description" type="xs:string" use="required"/>
-            <xs:attribute name="percent" type="xs:decimal" use="required"/>
           </xs:extension>
         </xs:complexContent>
       </xs:complexType>
@@ -1204,11 +1490,11 @@
         <xs:complexContent>
           <xs:extension base="tns:baseDto">
             <xs:sequence>
+              <xs:element name="invoiceCategory" type="xs:string"/>
               <xs:element maxOccurs="unbounded" minOccurs="0" name="languageDescriptions" nillable="true" type="tns:languageDescriptionDto"/>
             </xs:sequence>
             <xs:attribute name="code" type="xs:string" use="required"/>
             <xs:attribute name="description" type="xs:string" use="required"/>
-            <xs:attribute name="invoiceCategory" type="xs:string" use="required"/>
           </xs:extension>
         </xs:complexContent>
       </xs:complexType>
@@ -1282,14 +1568,14 @@
         <xs:complexContent>
           <xs:extension base="tns:baseDto">
             <xs:sequence>
+              <xs:element name="username" type="xs:string"/>
+              <xs:element name="password" type="xs:string"/>
+              <xs:element name="email" type="xs:string"/>
+              <xs:element name="role" type="xs:string"/>
+              <xs:element name="provider" type="xs:string"/>
               <xs:element minOccurs="0" name="firstName" type="xs:string"/>
               <xs:element minOccurs="0" name="lastName" type="xs:string"/>
             </xs:sequence>
-            <xs:attribute name="username" type="xs:string" use="required"/>
-            <xs:attribute name="password" type="xs:string" use="required"/>
-            <xs:attribute name="email" type="xs:string" use="required"/>
-            <xs:attribute name="role" type="xs:string" use="required"/>
-            <xs:attribute name="provider" type="xs:string" use="required"/>
           </xs:extension>
         </xs:complexContent>
       </xs:complexType>
@@ -2136,9 +2422,7 @@
    <soapenv:Body>
       <ws:createCountry>
          <!--Optional:-->
-         <country>
-            <countryCode>PH</countryCode>
-            <name>Philippines</name>
+           <country countryCode="PH" name="Philippines">
             <currencyCode>PHP</currencyCode>
             <!--Optional:-->
             <languageCode>ENG</languageCode>
@@ -2186,13 +2470,31 @@
    <soapenv:Body>
       <ws:createInvoiceSubCategory>
          <!--Optional:-->
-         <invoiceSubCategory code="TEST" description="test" invoiceCategory="TEST">
+         <invoiceSubCategory code="TEST" description="test">
+          <invoiceCategory>TEST</invoiceCategory>
             <!--Zero or more repetitions:-->
             <languageDescriptions>
                <!--Optional:-->
                <languageCode>ENG</languageCode>
                <!--Optional:-->
                <description>test</description>
+            </languageDescriptions>
+         </invoiceSubCategory>
+      </ws:createInvoiceSubCategory>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/createInvoiceSubCategory"/><con:wsrmConfig version="1.2"/></con:call><con:call name="Request 2"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createInvoiceSubCategory>
+         <!--Optional:-->
+         <invoiceSubCategory code="?" description="?">
+            <invoiceCategory>?</invoiceCategory>
+            <!--Zero or more repetitions:-->
+            <languageDescriptions>
+               <!--Optional:-->
+               <languageCode>?</languageCode>
+               <!--Optional:-->
+               <description>?</description>
             </languageDescriptions>
          </invoiceSubCategory>
       </ws:createInvoiceSubCategory>
@@ -2205,9 +2507,26 @@
    <soapenv:Body>
       <ws:createInvoiceSubCategoryCountry>
          <!--Optional:-->
-         <invoiceSubCategoryCountry invoiceSubCategory="TEST" country="US" tax="TAX_00">
+         <invoiceSubCategoryCountry>
+            <invoiceSubCategory>TEST</invoiceSubCategory>
+            <country>US</country>
+            <tax>TAX_00</tax>
             <!--Optional:-->
             <discountCode>2</discountCode>
+         </invoiceSubCategoryCountry>
+      </ws:createInvoiceSubCategoryCountry>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/createInvoiceSubCategoryCountry"/><con:wsrmConfig version="1.2"/></con:call><con:call name="Request 2"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createInvoiceSubCategoryCountry>
+         <!--Optional:-->
+         <invoiceSubCategoryCountry>
+            <invoiceSubCategory>?</invoiceSubCategory>
+            <country>?</country>
+            <tax>?</tax>
+            <!--Optional:-->
+            <discountCode>?</discountCode>
          </invoiceSubCategoryCountry>
       </ws:createInvoiceSubCategoryCountry>
    </soapenv:Body>
@@ -2258,9 +2577,7 @@
    <soapenv:Body>
       <ws:createSeller>
          <!--Optional:-->
-         <seller code="TEST">
-            <!--Optional:-->
-            <description>TEST</description>
+         <seller code="TEST" description="test">
             <!--Optional:-->
             <invoicePrefix>TEST</invoicePrefix>
             <!--Optional:-->
@@ -2282,7 +2599,8 @@
    <soapenv:Body>
       <ws:createTax>
          <!--Optional:-->
-         <tax code="TEST" description="TEST" percent=".12">
+         <tax code="TEST" description="TEST">
+            <percent>.12</percent>
             <!--Optional:-->
             <accountingCode></accountingCode>
             <!--Zero or more repetitions:-->
@@ -2303,7 +2621,12 @@
    <soapenv:Body>
       <ws:createUser>
          <!--Optional:-->
-         <user username="TEST" password="TEST" email="TEST@GMAIL.COM" role="administrateur" provider="TEST">
+         <user>
+         	  <username>TEST</username>
+            <password>TEST</password>
+            <email>TEST@GMAIL.COM</email>
+            <role>administrateur</role>
+            <provider>DEMO</provider>
             <!--Optional:-->
             <firstName>Edward</firstName>
             <!--Optional:-->
@@ -2311,12 +2634,17 @@
          </user>
       </ws:createUser>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/createUser"/><con:wsrmConfig version="1.2"/></con:call><con:call name="Request 2"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/createUser"/><con:wsrmConfig version="1.2"/></con:call><con:call name="Request 3"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createUser>
          <!--Optional:-->
-         <user username="?" password="?" email="?" role="?" provider="?">
+         <user>
+            <username>?</username>
+            <password>?</password>
+            <email>?</email>
+            <role>?</role>
+            <provider>?</provider>
             <!--Optional:-->
             <firstName>?</firstName>
             <!--Optional:-->
@@ -2563,9 +2891,7 @@
    <soapenv:Body>
       <ws:updateCountry>
          <!--Optional:-->
-         <country>
-            <countryCode>PH</countryCode>
-            <name>Philippines Updated</name>
+         <country countryCode="PH" name="Philippines">
             <currencyCode>PHP</currencyCode>
             <!--Optional:-->
             <languageCode>ENG</languageCode>
@@ -2613,7 +2939,8 @@
    <soapenv:Body>
       <ws:updateInvoiceSubCategory>
          <!--Optional:-->
-         <invoiceSubCategory code="TEST" description="test" invoiceCategory="TEST">
+         <invoiceSubCategory code="TEST" description="test">
+          <invoiceCategory>TEST</invoiceCategory>
             <!--Zero or more repetitions:-->
             <languageDescriptions>
                <!--Optional:-->
@@ -2632,7 +2959,10 @@
    <soapenv:Body>
       <ws:updateInvoiceSubCategoryCountry>
           <!--Optional:-->
-         <invoiceSubCategoryCountry invoiceSubCategory="TEST" country="US" tax="TAX_00">
+         <invoiceSubCategoryCountry>
+            <invoiceSubCategory>TEST</invoiceSubCategory>
+            <country>US</country>
+            <tax>TAX_00</tax>
             <!--Optional:-->
             <discountCode>12</discountCode>
          </invoiceSubCategoryCountry>
@@ -2685,9 +3015,7 @@
    <soapenv:Body>
       <ws:updateSeller>
          <!--Optional:-->
-         <seller code="TEST">
-            <!--Optional:-->
-            <description>TEST</description>
+         <seller code="TEST" description="test">
             <!--Optional:-->
             <invoicePrefix>TEST</invoicePrefix>
             <!--Optional:-->
@@ -2709,7 +3037,8 @@
    <soapenv:Body>
       <ws:updateTax>
          <!--Optional:-->
-         <tax code="TEST" description="TEST" percent=".12">
+         <tax code="TEST" description="TEST">
+         	  <percent>.12</percent>
             <!--Optional:-->
             <accountingCode>TEST</accountingCode>
             <!--Zero or more repetitions:-->
@@ -2730,7 +3059,12 @@
    <soapenv:Body>
       <ws:updateUser>
             <!--Optional:-->
-         <user username="TEST" password="TEST" email="TEST@GMAIL.COM" role="administrateur" provider="TEST">
+         <user>
+         	  <username>TEST</username>
+            <password>TEST</password>
+            <email>TEST@GMAIL.COM</email>
+            <role>administrateur</role>
+            <provider>DEMO</provider>
             <!--Optional:-->
             <firstName>Edward</firstName>
             <!--Optional:-->
@@ -2768,8 +3102,10 @@
    <soapenv:Body>
       <ws:updateBillingCycle>
          <!--Optional:-->
-         <billingCycle code="BCC1" description="BCC1" invoiceDateDelay="1" dueDateDelay="1" calendar="MONTHLY">
-            <!--Optional:-->
+         <billingCycle code="BCC1" description="BCC1">
+           <dueDateDelay>1</dueDateDelay>
+            <calendar>MONTHLY</calendar>
+            <invoiceDateDelay>1</invoiceDateDelay>
             <billingTemplateName>12</billingTemplateName>
          </billingCycle>
       </ws:updateBillingCycle>
@@ -2782,9 +3118,10 @@
    <soapenv:Body>
       <ws:createCalendar>
          <!--Optional:-->
-         <calendar name="C1" type="BILLING">
+         <calendar name="C1">
             <!--Optional:-->
             <description>BILLING</description>
+            <calendarType>BILLING</calendarType>
             <!--Zero or more repetitions:-->
              <days day="1" month="JANUARY"/>
                <days day="1" month="FEBRUARY"/>
@@ -2810,8 +3147,11 @@
    <soapenv:Body>
       <ws:createBillingCycle>
          <!--Optional:-->
-         <billingCycle code="BCC1" description="BCC1" invoiceDateDelay="1" dueDateDelay="1" calendar="MONTHLY">
+         <billingCycle code="BCC1" description="BCC1">
             <!--Optional:-->
+            <dueDateDelay>1</dueDateDelay>
+            <calendar>MONTHLY</calendar>
+            <invoiceDateDelay>1</invoiceDateDelay>
             <billingTemplateName>1</billingTemplateName>
          </billingCycle>
       </ws:createBillingCycle>
@@ -2857,9 +3197,10 @@
    <soapenv:Body>
       <ws:updateCalendar>
            <!--Optional:-->
-         <calendar name="C1" type="BILLING">
+         <calendar name="C1">
             <!--Optional:-->
             <description>BILLING</description>
+            <calendarType>BILLING</calendarType>
             <!--Zero or more repetitions:-->
              <days day="1" month="JANUARY"/>
                <days day="1" month="FEBRUARY"/>
@@ -3324,21 +3665,21 @@
         <xs:complexContent>
           <xs:extension base="tns:chargeTemplateDto">
             <xs:sequence>
+              <xs:element name="oneShotChargeTemplateType" type="xs:int"/>
               <xs:element minOccurs="0" name="immediateInvoicing" type="xs:boolean"/>
             </xs:sequence>
-            <xs:attribute name="oneShotChargeTemplateType" type="xs:int" use="required"/>
           </xs:extension>
         </xs:complexContent>
       </xs:complexType>
       <xs:complexType abstract="true" name="chargeTemplateDto">
         <xs:sequence>
+          <xs:element name="description" type="xs:string"/>
+          <xs:element name="invoiceSubCategory" type="xs:string"/>
+          <xs:element name="disabled" type="xs:boolean"/>
           <xs:element minOccurs="0" name="amountEditable" type="xs:boolean"/>
           <xs:element maxOccurs="unbounded" minOccurs="0" name="languageDescriptions" nillable="true" type="tns:languageDescriptionDto"/>
         </xs:sequence>
         <xs:attribute name="code" type="xs:string" use="required"/>
-        <xs:attribute name="description" type="xs:string" use="required"/>
-        <xs:attribute name="invoiceSubCategory" type="xs:string" use="required"/>
-        <xs:attribute name="disabled" type="xs:boolean" use="required"/>
       </xs:complexType>
       <xs:complexType name="languageDescriptionDto">
         <xs:sequence>
@@ -3376,6 +3717,7 @@
       </xs:complexType>
       <xs:complexType name="discountPlanDto">
         <xs:sequence>
+          <xs:element name="eventCode" type="xs:string"/>
           <xs:element minOccurs="0" name="id" type="xs:long"/>
           <xs:element minOccurs="0" name="offerTemplate" type="xs:string"/>
           <xs:element minOccurs="0" name="startSubscriptionDate" type="xs:dateTime"/>
@@ -3384,7 +3726,6 @@
           <xs:element minOccurs="0" name="nbPeriod" type="xs:int"/>
           <xs:element minOccurs="0" name="percent" type="xs:decimal"/>
         </xs:sequence>
-        <xs:attribute name="eventCode" type="xs:string" use="required"/>
       </xs:complexType>
       <xs:complexType name="updateDiscountPlanResponse">
         <xs:sequence>
@@ -3399,6 +3740,7 @@
       <xs:complexType name="pricePlanDto">
         <xs:sequence>
           <xs:element minOccurs="0" name="id" type="xs:long"/>
+          <xs:element name="eventCode" type="xs:string"/>
           <xs:element minOccurs="0" name="seller" type="xs:string"/>
           <xs:element minOccurs="0" name="country" type="xs:string"/>
           <xs:element minOccurs="0" name="currency" type="xs:string"/>
@@ -3418,7 +3760,6 @@
           <xs:element minOccurs="0" name="criteria2" type="xs:string"/>
           <xs:element minOccurs="0" name="criteria3" type="xs:string"/>
         </xs:sequence>
-        <xs:attribute name="eventCode" type="xs:string" use="required"/>
       </xs:complexType>
       <xs:complexType name="updatePricePlanResponse">
         <xs:sequence>
@@ -3451,18 +3792,29 @@
       </xs:complexType>
       <xs:complexType name="serviceTemplateDto">
         <xs:sequence>
-          <xs:element maxOccurs="unbounded" minOccurs="0" name="recurringCharges" nillable="true" type="xs:string"/>
-          <xs:element maxOccurs="unbounded" minOccurs="0" name="subscriptionCharges" nillable="true" type="xs:string"/>
-          <xs:element maxOccurs="unbounded" minOccurs="0" name="terminationCharges" nillable="true" type="xs:string"/>
-          <xs:element maxOccurs="unbounded" minOccurs="0" name="serviceUsageCharges" nillable="true" type="tns:serviceUsageChargeTemplateDto"/>
+          <xs:element maxOccurs="unbounded" minOccurs="0" name="serviceChargeTemplateRecurrings" nillable="true" type="tns:hashMap"/>
+          <xs:element maxOccurs="unbounded" minOccurs="0" name="serviceChargeTemplateSubscriptions" nillable="true" type="tns:hashMap"/>
+          <xs:element maxOccurs="unbounded" minOccurs="0" name="serviceChargeTemplateTerminations" nillable="true" type="tns:hashMap"/>
+          <xs:element maxOccurs="unbounded" minOccurs="0" name="serviceChargeTemplateUsages" nillable="true" type="tns:serviceUsageChargeTemplateDto"/>
         </xs:sequence>
         <xs:attribute name="code" type="xs:string" use="required"/>
         <xs:attribute name="description" type="xs:string" use="required"/>
+      </xs:complexType>
+      <xs:complexType name="hashMap">
+        <xs:complexContent>
+          <xs:extension base="tns:abstractMap">
+            <xs:sequence/>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType abstract="true" name="abstractMap">
+        <xs:sequence/>
       </xs:complexType>
       <xs:complexType name="serviceUsageChargeTemplateDto">
         <xs:sequence>
           <xs:element minOccurs="0" name="usageChargeTemplate" type="xs:string"/>
           <xs:element minOccurs="0" name="counterTemplate" type="xs:string"/>
+          <xs:element maxOccurs="unbounded" minOccurs="0" name="walletTemplates" nillable="true" type="xs:string"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="createServiceTemplate">
@@ -3508,13 +3860,13 @@
         <xs:complexContent>
           <xs:extension base="tns:chargeTemplateDto">
             <xs:sequence>
+              <xs:element name="calendar" type="xs:string"/>
               <xs:element minOccurs="0" name="durationTermInMonth" type="xs:int"/>
               <xs:element minOccurs="0" name="subscriptionProrata" type="xs:boolean"/>
               <xs:element minOccurs="0" name="terminationProrata" type="xs:boolean"/>
               <xs:element minOccurs="0" name="applyInAdvance" type="xs:boolean"/>
               <xs:element minOccurs="0" name="shareLevel" type="xs:int"/>
             </xs:sequence>
-            <xs:attribute name="calendar" type="xs:string" use="required"/>
           </xs:extension>
         </xs:complexContent>
       </xs:complexType>
@@ -4267,7 +4619,10 @@
    <soapenv:Body>
       <ws:createOneShotChargeTemplate>
          <!--Optional:-->
-         <oneShotChargeTemplate code="OS_SUBX" description="OS_SUBX" invoiceSubCategory="TEST" disabled="false" oneShotChargeTemplateType="1">
+         <oneShotChargeTemplate code="OS_SUBX" description="OS_SUBX">
+         	<invoiceSubCategory>TEST</invoiceSubCategory>
+         	<disabled>false</disabled>
+         	<oneShotChargeTemplateType>1</oneShotChargeTemplateType>
             <!--Optional:-->
             <amountEditable>false</amountEditable>
             <!--Zero or more repetitions:-->
@@ -4339,7 +4694,10 @@
    <soapenv:Body>
       <ws:createRecurringChargeTemplate>
          <!--Optional:-->
-         <recurringChargeTemplate code="RECX" description="RECX" invoiceSubCategory="TEST" disabled="false" calendar="MONTHLY">
+         <recurringChargeTemplate code="RECX" description="RECX">
+         <invoiceSubCategory>TEST</invoiceSubCategory>
+         <disabled>false</disabled> 
+         <calendar>MONTHLY</calendar>
             <!--Optional:-->
             <amountEditable>FALSE</amountEditable>
             <!--Zero or more repetitions:-->
@@ -4395,7 +4753,9 @@
    <soapenv:Body>
       <ws:createUsageChargeTemplate>
          <!--Optional:-->
-         <usageChargeTemplate code="UCX" description="UCX" invoiceSubCategory="TEST" disabled="false">
+         <usageChargeTemplate code="UCX" description="UCX">
+         <invoiceSubCategory>TEST</invoiceSubCategory>
+         <disabled>false</disabled>
             <!--Optional:-->
             <amountEditable>false</amountEditable>
             <!--Zero or more repetitions:-->
@@ -4698,7 +5058,10 @@
    <soapenv:Body>
       <ws:updateOneShotChargeTemplate>
          <!--Optional:-->
-         <oneShotChargeTemplate code="OS_SUBX" description="OS_SUBX" invoiceSubCategory="TEST" disabled="false" oneShotChargeTemplateType="1">
+         <oneShotChargeTemplate code="OS_SUBX" description="OS_SUBX">
+         <invoiceSubCategory>TEST</invoiceSubCategory>
+         	<disabled>false</disabled>
+         	<oneShotChargeTemplateType>1</oneShotChargeTemplateType>
             <!--Optional:-->
             <amountEditable>false</amountEditable>
             <!--Zero or more repetitions:-->
@@ -4770,7 +5133,10 @@
    <soapenv:Body>
       <ws:updateRecurringChargeTemplate>
          <!--Optional:-->
-         <recurringChargeTemplate code="RECX" description="RECX" invoiceSubCategory="TEST" disabled="false" calendar="MONTHLY">
+         <recurringChargeTemplate code="RECX" description="RECX">
+         <invoiceSubCategory>TEST</invoiceSubCategory>
+         <disabled>false</disabled> 
+         <calendar>MONTHLY</calendar>
             <!--Optional:-->
             <amountEditable>FALSE</amountEditable>
             <!--Zero or more repetitions:-->
@@ -4826,7 +5192,9 @@
    <soapenv:Body>
       <ws:updateUsageChargeTemplate>
          <!--Optional:-->
-         <usageChargeTemplate code="UCX" description="UCX" invoiceSubCategory="TEST" disabled="false">
+         <usageChargeTemplate code="UCX" description="UCX">
+         <invoiceSubCategory>TEST</invoiceSubCategory>
+         <disabled>false</disabled>
             <!--Optional:-->
             <amountEditable>false</amountEditable>
             <!--Zero or more repetitions:-->
@@ -5187,11 +5555,11 @@
         <xs:complexContent>
           <xs:extension base="tns:baseDto">
             <xs:sequence>
+              <xs:element name="subscription" type="xs:string"/>
               <xs:element minOccurs="0" name="startDate" type="xs:dateTime"/>
               <xs:element minOccurs="0" name="endDate" type="xs:dateTime"/>
             </xs:sequence>
             <xs:attribute name="code" type="xs:string"/>
-            <xs:attribute name="subscription" type="xs:string" use="required"/>
           </xs:extension>
         </xs:complexContent>
       </xs:complexType>
@@ -5227,6 +5595,8 @@
       </xs:complexType>
       <xs:complexType name="accountHierarchyDto">
         <xs:sequence>
+          <xs:element name="email" type="xs:string"/>
+          <xs:element name="paymentMethod" type="xs:int"/>
           <xs:element minOccurs="0" name="customerId" type="xs:string"/>
           <xs:element minOccurs="0" name="sellerCode" type="xs:string"/>
           <xs:element minOccurs="0" name="customerBrandCode" type="xs:string"/>
@@ -5245,8 +5615,6 @@
           <xs:element minOccurs="0" name="zipCode" type="xs:string"/>
           <xs:element minOccurs="0" name="city" type="xs:string"/>
         </xs:sequence>
-        <xs:attribute name="email" type="xs:string" use="required"/>
-        <xs:attribute name="paymentMethod" type="xs:int" use="required"/>
       </xs:complexType>
       <xs:complexType name="updateAccountHierarchyResponse">
         <xs:sequence>
@@ -5281,12 +5649,12 @@
         <xs:complexContent>
           <xs:extension base="tns:accountDto">
             <xs:sequence>
+              <xs:element name="billingAccount" type="xs:string"/>
               <xs:element minOccurs="0" name="subscriptionDate" type="xs:dateTime"/>
               <xs:element minOccurs="0" name="terminationDate" type="xs:dateTime"/>
               <xs:element minOccurs="0" name="status" type="xs:string"/>
               <xs:element maxOccurs="unbounded" minOccurs="0" name="subscriptions" nillable="true" type="tns:subscriptionDto"/>
             </xs:sequence>
-            <xs:attribute name="billingAccount" type="xs:string" use="required"/>
           </xs:extension>
         </xs:complexContent>
       </xs:complexType>
@@ -5305,15 +5673,17 @@
         <xs:complexContent>
           <xs:extension base="tns:baseDto">
             <xs:sequence>
-              <xs:element minOccurs="0" name="description" type="xs:string"/>
+              <xs:element name="userAccount" type="xs:string"/>
+              <xs:element name="offerTemplate" type="xs:string"/>
               <xs:element minOccurs="0" name="subscriptionDate" type="xs:dateTime"/>
               <xs:element minOccurs="0" name="terminationDate" type="xs:dateTime"/>
+              <xs:element minOccurs="0" name="status" type="xs:string"/>
               <xs:element maxOccurs="unbounded" minOccurs="0" name="accesses" nillable="true" type="tns:accessDto"/>
               <xs:element maxOccurs="unbounded" minOccurs="0" name="services" nillable="true" type="tns:serviceInstanceDto"/>
+              <xs:element maxOccurs="unbounded" minOccurs="0" name="customFields" nillable="true" type="tns:customFieldDto"/>
             </xs:sequence>
             <xs:attribute name="code" type="xs:string" use="required"/>
-            <xs:attribute name="userAccount" type="xs:string" use="required"/>
-            <xs:attribute name="offerTemplate" type="xs:string" use="required"/>
+            <xs:attribute name="description" type="xs:string" use="required"/>
           </xs:extension>
         </xs:complexContent>
       </xs:complexType>
@@ -5324,19 +5694,29 @@
               <xs:element minOccurs="0" name="status" type="xs:string"/>
               <xs:element minOccurs="0" name="subscriptionDate" type="xs:dateTime"/>
               <xs:element minOccurs="0" name="terminationDate" type="xs:dateTime"/>
-              <xs:element name="quantity" type="xs:int"/>
+              <xs:element minOccurs="0" name="quantity" type="xs:decimal"/>
               <xs:element minOccurs="0" name="terminationReason" type="xs:string"/>
             </xs:sequence>
             <xs:attribute name="code" type="xs:string" use="required"/>
           </xs:extension>
         </xs:complexContent>
       </xs:complexType>
+      <xs:complexType name="customFieldDto">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="stringValue" type="xs:string"/>
+          <xs:element minOccurs="0" name="dateValue" type="xs:dateTime"/>
+          <xs:element minOccurs="0" name="longValue" type="xs:long"/>
+          <xs:element minOccurs="0" name="doubleValue" type="xs:double"/>
+        </xs:sequence>
+        <xs:attribute name="code" type="xs:string" use="required"/>
+        <xs:attribute name="description" type="xs:string"/>
+      </xs:complexType>
       <xs:complexType name="nameDto">
         <xs:sequence>
           <xs:element minOccurs="0" name="title" type="xs:string"/>
           <xs:element minOccurs="0" name="firstName" type="xs:string"/>
+          <xs:element name="lastName" type="xs:string"/>
         </xs:sequence>
-        <xs:attribute name="lastName" type="xs:string" use="required"/>
       </xs:complexType>
       <xs:complexType name="addressDto">
         <xs:sequence>
@@ -5349,15 +5729,6 @@
           <xs:element minOccurs="0" name="state" type="xs:string"/>
         </xs:sequence>
       </xs:complexType>
-      <xs:complexType name="customFieldDto">
-        <xs:sequence/>
-        <xs:attribute name="code" type="xs:string" use="required"/>
-        <xs:attribute name="description" type="xs:string"/>
-        <xs:attribute name="stringValue" type="xs:string"/>
-        <xs:attribute name="dateValue" type="xs:dateTime"/>
-        <xs:attribute name="longValue" type="xs:long"/>
-        <xs:attribute name="doubleValue" type="xs:double"/>
-      </xs:complexType>
       <xs:complexType name="updateBillingAccount">
         <xs:sequence>
           <xs:element minOccurs="0" name="billingAccount" type="tns:billingAccountDto"/>
@@ -5367,18 +5738,19 @@
         <xs:complexContent>
           <xs:extension base="tns:accountDto">
             <xs:sequence>
+              <xs:element name="customerAccount" type="xs:string"/>
+              <xs:element name="billingCycle" type="xs:string"/>
+              <xs:element name="country" type="xs:string"/>
+              <xs:element name="language" type="xs:string"/>
+              <xs:element name="paymentMethod" type="xs:string"/>
               <xs:element minOccurs="0" name="nextInvoiceDate" type="xs:dateTime"/>
               <xs:element minOccurs="0" name="subscriptionDate" type="xs:dateTime"/>
               <xs:element minOccurs="0" name="terminationDate" type="xs:dateTime"/>
               <xs:element minOccurs="0" name="paymentTerms" type="xs:string"/>
               <xs:element minOccurs="0" name="electronicBilling" type="xs:boolean"/>
+              <xs:element minOccurs="0" name="status" type="xs:string"/>
               <xs:element maxOccurs="unbounded" minOccurs="0" name="userAccounts" nillable="true" type="tns:userAccountDto"/>
             </xs:sequence>
-            <xs:attribute name="customerAccount" type="xs:string" use="required"/>
-            <xs:attribute name="billingCycle" type="xs:string" use="required"/>
-            <xs:attribute name="country" type="xs:string" use="required"/>
-            <xs:attribute name="language" type="xs:string" use="required"/>
-            <xs:attribute name="paymentMethod" type="xs:string" use="required"/>
           </xs:extension>
         </xs:complexContent>
       </xs:complexType>
@@ -5410,6 +5782,8 @@
         <xs:complexContent>
           <xs:extension base="tns:accountDto">
             <xs:sequence>
+              <xs:element name="customer" type="xs:string"/>
+              <xs:element name="currency" type="xs:string"/>
               <xs:element minOccurs="0" name="status" type="xs:string"/>
               <xs:element minOccurs="0" name="paymentMethod" type="xs:string"/>
               <xs:element minOccurs="0" name="creditCategory" type="xs:string"/>
@@ -5424,10 +5798,9 @@
               <xs:element minOccurs="0" name="mandateIdentification" type="xs:string"/>
               <xs:element minOccurs="0" name="mandateDate" type="xs:dateTime"/>
               <xs:element minOccurs="0" name="balance" type="xs:decimal"/>
+              <xs:element minOccurs="0" name="terminationDate" type="xs:dateTime"/>
               <xs:element maxOccurs="unbounded" minOccurs="0" name="billingAccounts" nillable="true" type="tns:billingAccountDto"/>
             </xs:sequence>
-            <xs:attribute name="customer" type="xs:string" use="required"/>
-            <xs:attribute name="currency" type="xs:string" use="required"/>
           </xs:extension>
         </xs:complexContent>
       </xs:complexType>
@@ -5468,9 +5841,9 @@
         <xs:complexContent>
           <xs:extension base="tns:accountDto">
             <xs:sequence>
-              <xs:element minOccurs="0" name="customerCategory" type="xs:string"/>
-              <xs:element minOccurs="0" name="customerBrand" type="xs:string"/>
-              <xs:element minOccurs="0" name="seller" type="xs:string"/>
+              <xs:element name="customerCategory" type="xs:string"/>
+              <xs:element name="customerBrand" type="xs:string"/>
+              <xs:element name="seller" type="xs:string"/>
               <xs:element maxOccurs="unbounded" minOccurs="0" name="customerAccounts" nillable="true" type="tns:customerAccountDto"/>
             </xs:sequence>
           </xs:extension>
@@ -5685,7 +6058,6 @@
         <xs:complexContent>
           <xs:extension base="tns:baseDto">
             <xs:sequence>
-              <xs:element minOccurs="0" name="description" type="xs:string"/>
               <xs:element minOccurs="0" name="invoicePrefix" type="xs:string"/>
               <xs:element minOccurs="0" name="currencyCode" type="xs:string"/>
               <xs:element minOccurs="0" name="countryCode" type="xs:string"/>
@@ -5695,6 +6067,7 @@
               <xs:element maxOccurs="unbounded" minOccurs="0" name="customers" nillable="true" type="tns:customerDto"/>
             </xs:sequence>
             <xs:attribute name="code" type="xs:string" use="required"/>
+            <xs:attribute name="description" type="xs:string" use="required"/>
           </xs:extension>
         </xs:complexContent>
       </xs:complexType>
@@ -6020,11 +6393,26 @@
    <soapenv:Body>
       <ws:createAccess>
          <!--Optional:-->
-          <access code="ACCESS1" subscription="SUB1">
+          <access code="ACCESS1">
+            <subscription>SUB1</subscription>
             <!--Optional:-->
             <startDate>2015-01-01</startDate>
             <!--Optional:-->
             <endDate>2015-01-31</endDate>
+         </access>
+      </ws:createAccess>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/createAccess"/><con:wsrmConfig version="1.2"/></con:call><con:call name="Request 2"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createAccess>
+         <!--Optional:-->
+         <access code="?">
+            <subscription>?</subscription>
+            <!--Optional:-->
+            <startDate>?</startDate>
+            <!--Optional:-->
+            <endDate>?</endDate>
          </access>
       </ws:createAccess>
    </soapenv:Body>
@@ -6042,11 +6430,12 @@
             <!--Optional:-->
             <externalRef2></externalRef2>
             <!--Optional:-->
-            <name lastName="DEMO">
+            <name>
                <!--Optional:-->
                <title>MM</title>
                <!--Optional:-->
                <firstName>DEMO</firstName>
+               <lastName>DEMO</lastName>
             </name>
             <!--Optional:-->
             <address>
@@ -6065,7 +6454,13 @@
                <!--Optional:-->
                <state></state>
             </address>
-            <customFields code="UA2_CF1" description="UA2_CF1" stringValue="1" />
+            <customFields code="UA2_CF1" description="UA2_CF1">
+            <!--Optional:-->
+               <stringValue>1</stringValue>
+               <longValue>1</longValue>
+               <doubleValue>1</doubleValue>
+               <dateValue>2015-01-01</dateValue>
+            </customFields>
             <!--Optional:-->
             <subscriptionDate>2015-01-22T13:42:57.219+08:00</subscriptionDate>         
             <!--Optional:-->
@@ -6089,11 +6484,12 @@
             <!--Optional:-->
             <externalRef2></externalRef2>
             <!--Optional:-->
-            <name lastName="CUST2">
+            <name>
                <!--Optional:-->
                <title></title>
                <!--Optional:-->
                <firstName></firstName>
+               <lastName>DEMO</lastName>
             </name>
             <!--Optional:-->
             <address>
@@ -6113,58 +6509,20 @@
                <state></state>
             </address>
             <!--Zero or more repetitions:-->
-            <customFields code="UA2_CF1" description="UA2_CF1" stringValue="1" />
+            <customFields code="UA2_CF1" description="UA2_CF1">
+            	<!--Optional:-->
+               <stringValue>1</stringValue>
+               <longValue>1</longValue>
+               <doubleValue>1</doubleValue>
+               <dateValue>2015-01-01</dateValue>
+            </customFields>
+            
             <!--Optional:-->
             <customerCategory>CLIENT</customerCategory>
             <!--Optional:-->
             <customerBrand>DEFAULT</customerBrand>
             <!--Optional:-->
             <seller>MAIN_SELLER</seller>
-         </customer>
-      </ws:createCustomer>
-   </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/createCustomer"/><con:wsrmConfig version="1.2"/></con:call><con:call name="Request 2"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
-   <soapenv:Header/>
-   <soapenv:Body>
-      <ws:createCustomer>
-         <!--Optional:-->
-         <customer code="?" description="?">
-            <!--Optional:-->
-            <externalRef1>?</externalRef1>
-            <!--Optional:-->
-            <externalRef2>?</externalRef2>
-            <!--Optional:-->
-            <name lastName="?">
-               <!--Optional:-->
-               <title>?</title>
-               <!--Optional:-->
-               <firstName>?</firstName>
-            </name>
-            <!--Optional:-->
-            <address>
-               <!--Optional:-->
-               <address1>?</address1>
-               <!--Optional:-->
-               <address2>?</address2>
-               <!--Optional:-->
-               <address3>?</address3>
-               <!--Optional:-->
-               <zipCode>?</zipCode>
-               <!--Optional:-->
-               <city>?</city>
-               <!--Optional:-->
-               <country>?</country>
-               <!--Optional:-->
-               <state>?</state>
-            </address>
-            <!--Zero or more repetitions:-->
-            <customFields code="?" description="?" stringValue="?" dateValue="?" longValue="?" doubleValue="?"/>
-            <!--Optional:-->
-            <customerCategory>?</customerCategory>
-            <!--Optional:-->
-            <customerBrand>?</customerBrand>
-            <!--Optional:-->
-            <seller>?</seller>
          </customer>
       </ws:createCustomer>
    </soapenv:Body>
@@ -6176,17 +6534,20 @@
    <soapenv:Body>
       <ws:createCustomerAccount>
          <!--Optional:-->
-         <customerAccount code="CAX" description="CAX" customer="CUSTX" currency="USD">
+         <customerAccount code="CAX" description="CAX">
+         	  <customer>CUSTX</customer>
+            <currency>USD</currency>
             <!--Optional:-->
             <externalRef1></externalRef1>
             <!--Optional:-->
             <externalRef2></externalRef2>
             <!--Optional:-->
-            <name lastName="DEMO">
+            <name>
                <!--Optional:-->
                <title></title>
                <!--Optional:-->
                <firstName>DEMO</firstName>
+               <lastName>DEMO</lastName>
             </name>
             <!--Optional:-->
             <address>
@@ -6206,7 +6567,13 @@
                <state></state>
             </address>
             <!--Zero or more repetitions:-->
-            <customFields code="CA2_CF1" description="CA2_CF1" stringValue="1" />
+            <customFields code="CA2_CF1" description="CA2_CF1">
+               <!--Optional:-->
+               <stringValue>1</stringValue>
+               <longValue>1</longValue>
+               <doubleValue>1</doubleValue>
+               <dateValue>2015-01-01</dateValue>
+            </customFields>
             <!--Optional:-->
             <status>ACTIVE</status>
             <!--Optional:-->
@@ -6249,11 +6616,12 @@
             <!--Optional:-->
             <externalRef2></externalRef2>
             <!--Optional:-->
-            <name lastName="DEMO">
+            <name>
                <!--Optional:-->
                <title>MM</title>
                <!--Optional:-->
                <firstName>DEMO</firstName>
+               <lastName>DEMO</lastName>
             </name>
             <!--Optional:-->
             <address>
@@ -6273,7 +6641,13 @@
                <state></state>
             </address>
             <!--Zero or more repetitions:-->
-            <customFields code="UA2_CF1" description="UA2_CF1" stringValue="1" />
+            <customFields code="UA2_CF1" description="UA2_CF1">
+            	<!--Optional:-->
+               <stringValue>1</stringValue>
+               <longValue>1</longValue>
+               <doubleValue>1</doubleValue>
+               <dateValue>2015-01-01</dateValue>
+             </customFields>
          </userAccount>
       </ws:createUserAccount>
    </soapenv:Body>
@@ -6412,7 +6786,8 @@
    <soapenv:Body>
       <ws:updateAccess>
           <!--Optional:-->
-          <access code="ACCESS1" subscription="SUB1">
+          <access code="ACCESS1">
+            <subscription>SUB1</subscription>
             <!--Optional:-->
             <startDate>2015-01-01</startDate>
             <!--Optional:-->
@@ -6434,11 +6809,12 @@
             <!--Optional:-->
             <externalRef2></externalRef2>
             <!--Optional:-->
-            <name lastName="DEMO">
+            <name>
                <!--Optional:-->
                <title>MM</title>
                <!--Optional:-->
                <firstName>DEMO</firstName>
+                <lastName>DEMO</lastName>
             </name>
             <!--Optional:-->
             <address>
@@ -6457,6 +6833,14 @@
                <!--Optional:-->
                <state></state>
             </address>
+             <!--Zero or more repetitions:-->
+            <customFields code="UA2_CF1" description="UA2_CF1">
+            	<!--Optional:-->
+               <stringValue>1</stringValue>
+               <longValue>1</longValue>
+               <doubleValue>1</doubleValue>
+               <dateValue>2015-01-01</dateValue>
+            </customFields>
             <!--Optional:-->
             <subscriptionDate>2015-01-22T13:42:57.219+08:00</subscriptionDate>         
             <!--Optional:-->
@@ -6480,11 +6864,12 @@
             <!--Optional:-->
             <externalRef2></externalRef2>
             <!--Optional:-->
-            <name lastName="CUST2">
+            <name>
                <!--Optional:-->
                <title></title>
                <!--Optional:-->
                <firstName></firstName>
+                <lastName>DEMO</lastName>
             </name>
             <!--Optional:-->
             <address>
@@ -6504,7 +6889,14 @@
                <state></state>
             </address>
             <!--Zero or more repetitions:-->
-          
+          <!--Zero or more repetitions:-->
+            <customFields code="UA2_CF1" description="UA2_CF1">
+            	<!--Optional:-->
+               <stringValue>1</stringValue>
+               <longValue>1</longValue>
+               <doubleValue>1</doubleValue>
+               <dateValue>2015-01-01</dateValue>
+            </customFields>
             <!--Optional:-->
             <customerCategory>CLIENT</customerCategory>
             <!--Optional:-->
@@ -6522,17 +6914,20 @@
    <soapenv:Body>
       <ws:updateCustomerAccount>
          <!--Optional:-->
-         <customerAccount code="CAX" description="CAX" customer="CUSTX" currency="USD">
-            <!--Optional:-->
+         <customerAccount code="CAX" description="CAX">
+          <customer>CUSTX</customer>
+            <currency>USD</currency>
+            <!--Optional:-->            
             <externalRef1></externalRef1>
             <!--Optional:-->
             <externalRef2></externalRef2>
             <!--Optional:-->
-            <name lastName="DEMO">
+            <name>
                <!--Optional:-->
                <title></title>
                <!--Optional:-->
                <firstName>DEMO</firstName>
+                <lastName>DEMO</lastName>
             </name>
             <!--Optional:-->
             <address>
@@ -6552,7 +6947,13 @@
                <state></state>
             </address>
             <!--Zero or more repetitions:-->
-            <customFields code="CA2_CF1" description="CA2_CF1" stringValue="1" />
+            <customFields code="CA2_CF1" description="CA2_CF1">
+            <!--Optional:-->
+               <stringValue>1</stringValue>
+               <longValue>1</longValue>
+               <doubleValue>1</doubleValue>
+               <dateValue>2015-01-01</dateValue>
+            </customFields>
             <!--Optional:-->
             <status>ACTIVE</status>
             <!--Optional:-->
@@ -6595,11 +6996,12 @@
             <!--Optional:-->
             <externalRef2></externalRef2>
             <!--Optional:-->
-            <name lastName="DEMO">
+            <name>
                <!--Optional:-->
                <title>MM</title>
                <!--Optional:-->
                <firstName>DEMO</firstName>
+                <lastName>DEMO</lastName>
             </name>
             <!--Optional:-->
             <address>
@@ -6619,7 +7021,12 @@
                <state></state>
             </address>
             <!--Zero or more repetitions:-->
-            <customFields code="UA2_CF1" description="UA2_CF1" stringValue="1" />
+            <customFields code="UA2_CF1" description="UA2_CF1">
+            	<stringValue>1</stringValue>
+               <longValue>1</longValue>
+               <doubleValue>1</doubleValue>
+               <dateValue>2015-01-01</dateValue>
+            </customFields>
          </userAccount>
       </ws:updateUserAccount>
    </soapenv:Body>
@@ -6631,7 +7038,9 @@
    <soapenv:Body>
       <ws:updateAccountHierarchy>
          <!--Optional:-->
-         <accountHierarchy email="test@manaty.net" paymentMethod="1">
+         <accountHierarchy>
+            <email>test@manaty.net</email>
+            <paymentMethod>1</paymentMethod>
             <!--Optional:-->
             <customerId>CUST_CUSTY</customerId>
             <!--Optional:-->
@@ -6693,7 +7102,10 @@
    <soapenv:Body>
       <ws:createAccountHierarchy>
           <!--Optional:-->
-         <accountHierarchy email="test@manaty.net" paymentMethod="1">
+         <accountHierarchy>
+         	  <email>test@manaty.net</email>
+            <paymentMethod>1</paymentMethod>
+
             <!--Optional:-->
             <customerId>CUSTY</customerId>
             <!--Optional:-->
@@ -6761,9 +7173,7 @@
 			<!--Optional: -->
 			<arg0>
 				<!--Zero or more repetitions: -->
-				<sellers code="SELLERS2">
-					<!--Optional: -->
-					<description>SELLERS2</description>
+				<sellers code="SELLERS2" description="SELLERS2">
 					<!--Optional: -->
 					<invoicePrefix>SELLERS2</invoicePrefix>
 					<!--Optional: -->
@@ -6781,7 +7191,8 @@
 						<!--Optional: -->
 						<externalRef2></externalRef2>
 						<!--Optional: -->
-						<name lastName="Legaspi">
+						<name>
+							<lastName>Legaspi</lastName>
 							<!--Optional: -->
 							<title></title>
 							<!--Optional: -->
@@ -6805,19 +7216,26 @@
 							<state></state>
 						</address>
 						<!--Zero or more repetitions: -->
-						<customFields code="CF1" description="CF1" stringValue="x" />
+						<customFields code="CF1" description="CF1">
+						 <stringValue>1</stringValue>
+				               <longValue>1</longValue>
+				               <doubleValue>1</doubleValue>
+				               <dateValue>2015-01-01</dateValue>
+				               </customFields>
 						<!--Optional: -->
 						<customerCategory>CLIENT</customerCategory>
 						<!--Optional: -->
 						<customerBrand>OCB</customerBrand>
 						<!--Zero or more repetitions: -->
-						<customerAccounts code="CAS2" description="CAS2" currency="USD">
+						<customerAccounts code="CAS2" description="CAS2">
+							<currency>USD</currency>
 							<!--Optional: -->
 							<externalRef1></externalRef1>
 							<!--Optional: -->
 							<externalRef2></externalRef2>
 							<!--Optional: -->
-							<name lastName="Legaspi">
+							<name>
+								<lastName>Legaspi</lastName>
 								<!--Optional: -->
 								<title></title>
 								<!--Optional: -->
@@ -6841,7 +7259,13 @@
 								<state></state>
 							</address>
 							<!--Zero or more repetitions: -->
-							<customFields code="CF1" description="CF1" stringValue="x" />
+							<customFields code="CF1" description="CF1">					
+				            	<!--Optional:-->
+				               <stringValue>1</stringValue>
+				               <longValue>1</longValue>
+				               <doubleValue>1</doubleValue>
+				               <dateValue>2015-01-01</dateValue>
+				            </customFields>
 							<!--Optional: -->
 							<status></status>
 							<!--Optional: -->
@@ -6867,15 +7291,18 @@
 							<!--Optional: -->
 							<mandateDate>2015-02-20</mandateDate>
 							<!--Zero or more repetitions: -->
-							<billingAccounts code="BAS2" description="BAS2"
-								 billingCycle="CYC_INV_MT_1" country="US" language="ENG"
-								paymentMethod="CHECK">
+							<billingAccounts code="BAS2" description="BAS2">
+								<billingCycle>CYC_INV_MT_1</billingCycle>
+								<country>US</country>
+								<language>ENG</language>
+								<paymentMethod>CHECK</paymentMethod>
 								<!--Optional: -->
 								<externalRef1></externalRef1>
 								<!--Optional: -->
 								<externalRef2></externalRef2>
 								<!--Optional: -->
-								<name lastName="Legaspi">
+								<name>
+									<lastName>Legaspi</lastName>
 									<!--Optional: -->
 									<title></title>
 									<!--Optional: -->
@@ -6899,7 +7326,12 @@
 									<state></state>
 								</address>
 								<!--Zero or more repetitions: -->
-								<customFields code="CF1" description="CF1" stringValue="x" />
+								<customFields code="CF1" description="CF1">
+								 <stringValue>1</stringValue>
+				               <longValue>1</longValue>
+				               <doubleValue>1</doubleValue>
+				               <dateValue>2015-01-01</dateValue>
+								</customFields>
 								<!--Optional: -->
 								<nextInvoiceDate>2015-02-20</nextInvoiceDate>
 								<!--Optional: -->
@@ -6915,7 +7347,8 @@
 									<!--Optional: -->
 									<externalRef2></externalRef2>
 									<!--Optional: -->
-									<name lastName="Legaspi">
+									<name>
+										<lastName>Legaspi</lastName>
 										<!--Optional: -->
 										<title></title>
 										<!--Optional: -->
@@ -6939,16 +7372,19 @@
 										<state></state>
 									</address>
 									<!--Zero or more repetitions: -->
-									<customFields code="CF1" description="CF1" stringValue="x" />
+									<customFields code="CF1" description="CF1">
+									 <stringValue>1</stringValue>
+				               <longValue>1</longValue>
+				               <doubleValue>1</doubleValue>
+				               <dateValue>2015-01-01</dateValue>
+									</customFields>
 									<!--Optional: -->
 									<subscriptionDate>2015-02-04</subscriptionDate>
 									<!--Optional: -->
 									<status></status>
 									<!--Zero or more repetitions: -->
-									<subscriptions code="SUBW2"
-										offerTemplate="OFF1">
-										<!--Optional: -->
-										<description>SUBW2</description>
+									<subscriptions code="SUBW2" description="SUBW2">
+										<offerTemplate>OFF1</offerTemplate>
 										<!--Optional: -->
 										<subscriptionDate>2015-02-04</subscriptionDate>
 										<!--Optional: -->
@@ -6981,6 +7417,338 @@
 			</arg0>
 		</ws:customerHierarchyUpdate>
 	</soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/customerHierarchyUpdate"/><con:wsrmConfig version="1.2"/></con:call><con:call name="Request 2"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:customerHierarchyUpdate>
+         <!--Optional:-->
+         <arg0>
+            <!--Zero or more repetitions:-->
+            <sellers code="?" description="?">
+               <!--Optional:-->
+               <invoicePrefix>?</invoicePrefix>
+               <!--Optional:-->
+               <currencyCode>?</currencyCode>
+               <!--Optional:-->
+               <countryCode>?</countryCode>
+               <!--Optional:-->
+               <languageCode>?</languageCode>
+               <!--Optional:-->
+               <parentSeller>?</parentSeller>
+               <!--Optional:-->
+               <provider>?</provider>
+               <!--Zero or more repetitions:-->
+               <customers code="?" description="?">
+                  <!--Optional:-->
+                  <externalRef1>?</externalRef1>
+                  <!--Optional:-->
+                  <externalRef2>?</externalRef2>
+                  <!--Optional:-->
+                  <name>
+                     <!--Optional:-->
+                     <title>?</title>
+                     <!--Optional:-->
+                     <firstName>?</firstName>
+                     <lastName>?</lastName>
+                  </name>
+                  <!--Optional:-->
+                  <address>
+                     <!--Optional:-->
+                     <address1>?</address1>
+                     <!--Optional:-->
+                     <address2>?</address2>
+                     <!--Optional:-->
+                     <address3>?</address3>
+                     <!--Optional:-->
+                     <zipCode>?</zipCode>
+                     <!--Optional:-->
+                     <city>?</city>
+                     <!--Optional:-->
+                     <country>?</country>
+                     <!--Optional:-->
+                     <state>?</state>
+                  </address>
+                  <!--Zero or more repetitions:-->
+                  <customFields code="?" description="?">
+                     <!--Optional:-->
+                     <stringValue>?</stringValue>
+                     <!--Optional:-->
+                     <dateValue>?</dateValue>
+                     <!--Optional:-->
+                     <longValue>?</longValue>
+                     <!--Optional:-->
+                     <doubleValue>?</doubleValue>
+                  </customFields>
+                  <customerCategory>?</customerCategory>
+                  <customerBrand>?</customerBrand>
+                  <seller>?</seller>
+                  <!--Zero or more repetitions:-->
+                  <customerAccounts code="?" description="?">
+                     <!--Optional:-->
+                     <externalRef1>?</externalRef1>
+                     <!--Optional:-->
+                     <externalRef2>?</externalRef2>
+                     <!--Optional:-->
+                     <name>
+                        <!--Optional:-->
+                        <title>?</title>
+                        <!--Optional:-->
+                        <firstName>?</firstName>
+                        <lastName>?</lastName>
+                     </name>
+                     <!--Optional:-->
+                     <address>
+                        <!--Optional:-->
+                        <address1>?</address1>
+                        <!--Optional:-->
+                        <address2>?</address2>
+                        <!--Optional:-->
+                        <address3>?</address3>
+                        <!--Optional:-->
+                        <zipCode>?</zipCode>
+                        <!--Optional:-->
+                        <city>?</city>
+                        <!--Optional:-->
+                        <country>?</country>
+                        <!--Optional:-->
+                        <state>?</state>
+                     </address>
+                     <!--Zero or more repetitions:-->
+                     <customFields code="?" description="?">
+                        <!--Optional:-->
+                        <stringValue>?</stringValue>
+                        <!--Optional:-->
+                        <dateValue>?</dateValue>
+                        <!--Optional:-->
+                        <longValue>?</longValue>
+                        <!--Optional:-->
+                        <doubleValue>?</doubleValue>
+                     </customFields>
+                     <customer>?</customer>
+                     <currency>?</currency>
+                     <!--Optional:-->
+                     <status>?</status>
+                     <!--Optional:-->
+                     <paymentMethod>?</paymentMethod>
+                     <!--Optional:-->
+                     <creditCategory>?</creditCategory>
+                     <!--Zero or more repetitions:-->
+                     <accountOperations>
+                        <!--Optional:-->
+                        <dueDate>?</dueDate>
+                        <!--Optional:-->
+                        <type>?</type>
+                        <!--Optional:-->
+                        <transactionDate>?</transactionDate>
+                        <!--Optional:-->
+                        <transactionCategory>?</transactionCategory>
+                        <!--Optional:-->
+                        <reference>?</reference>
+                        <!--Optional:-->
+                        <accountCode>?</accountCode>
+                        <!--Optional:-->
+                        <accountCodeClientSide>?</accountCodeClientSide>
+                        <!--Optional:-->
+                        <amount>?</amount>
+                        <!--Optional:-->
+                        <matchingAmount>?</matchingAmount>
+                        <!--Optional:-->
+                        <unMatchingAmount>?</unMatchingAmount>
+                        <!--Optional:-->
+                        <matchingStatus>?</matchingStatus>
+                        <!--Zero or more repetitions:-->
+                        <matchingAmounts>
+                           <!--Optional:-->
+                           <matchingCode>?</matchingCode>
+                           <!--Optional:-->
+                           <matchingAmount>?</matchingAmount>
+                        </matchingAmounts>
+                        <!--Optional:-->
+                        <occCode>?</occCode>
+                        <!--Optional:-->
+                        <occDescription>?</occDescription>
+                     </accountOperations>
+                     <!--Optional:-->
+                     <dateStatus>?</dateStatus>
+                     <!--Optional:-->
+                     <dateDunningLevel>?</dateDunningLevel>
+                     <!--Optional:-->
+                     <email>?</email>
+                     <!--Optional:-->
+                     <phone>?</phone>
+                     <!--Optional:-->
+                     <mobile>?</mobile>
+                     <!--Optional:-->
+                     <fax>?</fax>
+                     <!--Optional:-->
+                     <dunningLevel>?</dunningLevel>
+                     <!--Optional:-->
+                     <mandateIdentification>?</mandateIdentification>
+                     <!--Optional:-->
+                     <mandateDate>?</mandateDate>
+                     <!--Optional:-->
+                     <balance>?</balance>
+                     <!--Optional:-->
+                     <terminationDate>?</terminationDate>
+                     <!--Zero or more repetitions:-->
+                     <billingAccounts code="?" description="?">
+                        <!--Optional:-->
+                        <externalRef1>?</externalRef1>
+                        <!--Optional:-->
+                        <externalRef2>?</externalRef2>
+                        <!--Optional:-->
+                        <name>
+                           <!--Optional:-->
+                           <title>?</title>
+                           <!--Optional:-->
+                           <firstName>?</firstName>
+                           <lastName>?</lastName>
+                        </name>
+                        <!--Optional:-->
+                        <address>
+                           <!--Optional:-->
+                           <address1>?</address1>
+                           <!--Optional:-->
+                           <address2>?</address2>
+                           <!--Optional:-->
+                           <address3>?</address3>
+                           <!--Optional:-->
+                           <zipCode>?</zipCode>
+                           <!--Optional:-->
+                           <city>?</city>
+                           <!--Optional:-->
+                           <country>?</country>
+                           <!--Optional:-->
+                           <state>?</state>
+                        </address>
+                        <!--Zero or more repetitions:-->
+                        <customFields code="?" description="?">
+                           <!--Optional:-->
+                           <stringValue>?</stringValue>
+                           <!--Optional:-->
+                           <dateValue>?</dateValue>
+                           <!--Optional:-->
+                           <longValue>?</longValue>
+                           <!--Optional:-->
+                           <doubleValue>?</doubleValue>
+                        </customFields>
+                        <customerAccount>?</customerAccount>
+                        <billingCycle>?</billingCycle>
+                        <country>?</country>
+                        <language>?</language>
+                        <paymentMethod>?</paymentMethod>
+                        <!--Optional:-->
+                        <nextInvoiceDate>?</nextInvoiceDate>
+                        <!--Optional:-->
+                        <subscriptionDate>?</subscriptionDate>
+                        <!--Optional:-->
+                        <terminationDate>?</terminationDate>
+                        <!--Optional:-->
+                        <paymentTerms>?</paymentTerms>
+                        <!--Optional:-->
+                        <electronicBilling>?</electronicBilling>
+                        <!--Optional:-->
+                        <status>?</status>
+                        <!--Zero or more repetitions:-->
+                        <userAccounts code="?" description="?">
+                           <!--Optional:-->
+                           <externalRef1>?</externalRef1>
+                           <!--Optional:-->
+                           <externalRef2>?</externalRef2>
+                           <!--Optional:-->
+                           <name>
+                              <!--Optional:-->
+                              <title>?</title>
+                              <!--Optional:-->
+                              <firstName>?</firstName>
+                              <lastName>?</lastName>
+                           </name>
+                           <!--Optional:-->
+                           <address>
+                              <!--Optional:-->
+                              <address1>?</address1>
+                              <!--Optional:-->
+                              <address2>?</address2>
+                              <!--Optional:-->
+                              <address3>?</address3>
+                              <!--Optional:-->
+                              <zipCode>?</zipCode>
+                              <!--Optional:-->
+                              <city>?</city>
+                              <!--Optional:-->
+                              <country>?</country>
+                              <!--Optional:-->
+                              <state>?</state>
+                           </address>
+                           <!--Zero or more repetitions:-->
+                           <customFields code="?" description="?">
+                              <!--Optional:-->
+                              <stringValue>?</stringValue>
+                              <!--Optional:-->
+                              <dateValue>?</dateValue>
+                              <!--Optional:-->
+                              <longValue>?</longValue>
+                              <!--Optional:-->
+                              <doubleValue>?</doubleValue>
+                           </customFields>
+                           <billingAccount>?</billingAccount>
+                           <!--Optional:-->
+                           <subscriptionDate>?</subscriptionDate>
+                           <!--Optional:-->
+                           <terminationDate>?</terminationDate>
+                           <!--Optional:-->
+                           <status>?</status>
+                           <!--Zero or more repetitions:-->
+                           <subscriptions code="?" description="?">
+                              <userAccount>?</userAccount>
+                              <offerTemplate>?</offerTemplate>
+                              <!--Optional:-->
+                              <subscriptionDate>?</subscriptionDate>
+                              <!--Optional:-->
+                              <terminationDate>?</terminationDate>
+                              <!--Optional:-->
+                              <status>?</status>
+                              <!--Zero or more repetitions:-->
+                              <accesses code="?">
+                                 <subscription>?</subscription>
+                                 <!--Optional:-->
+                                 <startDate>?</startDate>
+                                 <!--Optional:-->
+                                 <endDate>?</endDate>
+                              </accesses>
+                              <!--Zero or more repetitions:-->
+                              <services code="?">
+                                 <!--Optional:-->
+                                 <status>?</status>
+                                 <!--Optional:-->
+                                 <subscriptionDate>?</subscriptionDate>
+                                 <!--Optional:-->
+                                 <terminationDate>?</terminationDate>
+                                 <!--Optional:-->
+                                 <quantity>?</quantity>
+                                 <!--Optional:-->
+                                 <terminationReason>?</terminationReason>
+                              </services>
+                              <!--Zero or more repetitions:-->
+                              <customFields code="?" description="?">
+                                 <!--Optional:-->
+                                 <stringValue>?</stringValue>
+                                 <!--Optional:-->
+                                 <dateValue>?</dateValue>
+                                 <!--Optional:-->
+                                 <longValue>?</longValue>
+                                 <!--Optional:-->
+                                 <doubleValue>?</doubleValue>
+                              </customFields>
+                           </subscriptions>
+                        </userAccounts>
+                     </billingAccounts>
+                  </customerAccounts>
+               </customers>
+            </sellers>
+         </arg0>
+      </ws:customerHierarchyUpdate>
+   </soapenv:Body>
 </soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/customerHierarchyUpdate"/><con:wsrmConfig version="1.2"/></con:call></con:operation></con:interface><con:interface xsi:type="con:WsdlInterface" wsaVersion="NONE" name="SubscriptionWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}SubscriptionWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="http://localhost:8080/meveo/SubscriptionWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache type="TEXT" rootPart="http://localhost:8080/meveo/SubscriptionWs?wsdl"><con:part><con:url>http://localhost:8080/meveo/SubscriptionWs?wsdl</con:url><con:content><![CDATA[<wsdl:definitions name="SubscriptionWs" targetNamespace="http://impl.ws.api.meveo.org/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://impl.ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns2="http://schemas.xmlsoap.org/soap/http" xmlns:ns1="http://ws.api.meveo.org/">
   <wsdl:import location="http://localhost:8080/meveo/SubscriptionWs?wsdl=SubscriptionWs.wsdl" namespace="http://ws.api.meveo.org/"></wsdl:import>
   <wsdl:binding name="SubscriptionWsSoapBinding" type="ns1:SubscriptionWs">
@@ -7057,10 +7825,12 @@
 </wsdl:definitions>]]></con:content><con:type>http://schemas.xmlsoap.org/wsdl/</con:type></con:part><con:part><con:url>http://localhost:8080/meveo/SubscriptionWs?wsdl=SubscriptionWs.wsdl</con:url><con:content><![CDATA[<wsdl:definitions name="SubscriptionWs" targetNamespace="http://ws.api.meveo.org/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ns1="http://ws.api.meveo.org/">
   <wsdl:types>
     <xs:schema elementFormDefault="unqualified" targetNamespace="http://ws.api.meveo.org/" version="1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://ws.api.meveo.org/">
+      <xs:element name="Access" type="tns:accessDto"/>
       <xs:element name="ActionStatus" type="tns:actionStatus"/>
       <xs:element name="ApplyOneShotChargeInstance" type="tns:applyOneShotChargeInstanceDto"/>
+      <xs:element name="CustomField" type="tns:customFieldDto"/>
       <xs:element name="Customer" type="tns:activateServicesDto"/>
-      <xs:element name="Subscription" type="tns:subscriptionDto"/>
+      <xs:element name="Subscription" nillable="true" type="xs:anyType"/>
       <xs:element name="TerminateSubscription" type="tns:terminateSubscriptionDto"/>
       <xs:element name="TerminateSubscriptionServices" type="tns:terminateSubscriptionServicesDto"/>
       <xs:element name="activateServices" type="tns:activateServices"/>
@@ -7086,18 +7856,58 @@
         <xs:complexContent>
           <xs:extension base="tns:baseDto">
             <xs:sequence>
-              <xs:element minOccurs="0" name="description" type="xs:string"/>
+              <xs:element name="userAccount" type="xs:string"/>
+              <xs:element name="offerTemplate" type="xs:string"/>
               <xs:element minOccurs="0" name="subscriptionDate" type="xs:dateTime"/>
               <xs:element minOccurs="0" name="terminationDate" type="xs:dateTime"/>
+              <xs:element minOccurs="0" name="status" type="xs:string"/>
+              <xs:element maxOccurs="unbounded" minOccurs="0" name="accesses" nillable="true" type="tns:accessDto"/>
+              <xs:element maxOccurs="unbounded" minOccurs="0" name="services" nillable="true" type="tns:serviceInstanceDto"/>
+              <xs:element maxOccurs="unbounded" minOccurs="0" name="customFields" nillable="true" type="tns:customFieldDto"/>
             </xs:sequence>
             <xs:attribute name="code" type="xs:string" use="required"/>
-            <xs:attribute name="userAccount" type="xs:string" use="required"/>
-            <xs:attribute name="offerTemplate" type="xs:string" use="required"/>
+            <xs:attribute name="description" type="xs:string" use="required"/>
           </xs:extension>
         </xs:complexContent>
       </xs:complexType>
       <xs:complexType abstract="true" name="baseDto">
         <xs:sequence/>
+      </xs:complexType>
+      <xs:complexType name="accessDto">
+        <xs:complexContent>
+          <xs:extension base="tns:baseDto">
+            <xs:sequence>
+              <xs:element name="subscription" type="xs:string"/>
+              <xs:element minOccurs="0" name="startDate" type="xs:dateTime"/>
+              <xs:element minOccurs="0" name="endDate" type="xs:dateTime"/>
+            </xs:sequence>
+            <xs:attribute name="code" type="xs:string"/>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="serviceInstanceDto">
+        <xs:complexContent>
+          <xs:extension base="tns:baseDto">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="status" type="xs:string"/>
+              <xs:element minOccurs="0" name="subscriptionDate" type="xs:dateTime"/>
+              <xs:element minOccurs="0" name="terminationDate" type="xs:dateTime"/>
+              <xs:element minOccurs="0" name="quantity" type="xs:decimal"/>
+              <xs:element minOccurs="0" name="terminationReason" type="xs:string"/>
+            </xs:sequence>
+            <xs:attribute name="code" type="xs:string" use="required"/>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="customFieldDto">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="stringValue" type="xs:string"/>
+          <xs:element minOccurs="0" name="dateValue" type="xs:dateTime"/>
+          <xs:element minOccurs="0" name="longValue" type="xs:long"/>
+          <xs:element minOccurs="0" name="doubleValue" type="xs:double"/>
+        </xs:sequence>
+        <xs:attribute name="code" type="xs:string" use="required"/>
+        <xs:attribute name="description" type="xs:string"/>
       </xs:complexType>
       <xs:complexType name="updateResponse">
         <xs:sequence>
@@ -7120,6 +7930,12 @@
         <xs:complexContent>
           <xs:extension base="tns:baseDto">
             <xs:sequence>
+              <xs:element name="oneShotCharge" type="xs:string"/>
+              <xs:element name="subscription" type="xs:string"/>
+              <xs:element minOccurs="0" name="wallet" type="xs:string"/>
+              <xs:element minOccurs="0" name="createWallet" type="xs:boolean"/>
+              <xs:element name="operationDate" type="xs:dateTime"/>
+              <xs:element minOccurs="0" name="quantity" type="xs:decimal"/>
               <xs:element minOccurs="0" name="description" type="xs:string"/>
               <xs:element minOccurs="0" name="amountWithoutTax" type="xs:decimal"/>
               <xs:element minOccurs="0" name="amountWithTax" type="xs:decimal"/>
@@ -7127,9 +7943,6 @@
               <xs:element minOccurs="0" name="criteria2" type="xs:string"/>
               <xs:element minOccurs="0" name="criteria3" type="xs:string"/>
             </xs:sequence>
-            <xs:attribute name="oneShotChargeInstance" type="xs:string" use="required"/>
-            <xs:attribute name="subscription" type="xs:string" use="required"/>
-            <xs:attribute name="operationDate" type="xs:dateTime" use="required"/>
           </xs:extension>
         </xs:complexContent>
       </xs:complexType>
@@ -7156,10 +7969,10 @@
           <xs:extension base="tns:baseDto">
             <xs:sequence>
               <xs:element maxOccurs="unbounded" name="services" type="xs:string"/>
+              <xs:element name="subscriptionCode" type="xs:string"/>
+              <xs:element name="terminationReason" type="xs:string"/>
+              <xs:element name="terminationDate" type="xs:dateTime"/>
             </xs:sequence>
-            <xs:attribute name="subscriptionCode" type="xs:string" use="required"/>
-            <xs:attribute name="terminationReason" type="xs:string" use="required"/>
-            <xs:attribute name="terminationDate" type="xs:dateTime" use="required"/>
           </xs:extension>
         </xs:complexContent>
       </xs:complexType>
@@ -7186,10 +7999,11 @@
       <xs:complexType name="terminateSubscriptionDto">
         <xs:complexContent>
           <xs:extension base="tns:baseDto">
-            <xs:sequence/>
-            <xs:attribute name="subscriptionCode" type="xs:string" use="required"/>
-            <xs:attribute name="terminationReason" type="xs:string" use="required"/>
-            <xs:attribute name="terminationDate" type="xs:dateTime" use="required"/>
+            <xs:sequence>
+              <xs:element name="subscriptionCode" type="xs:string"/>
+              <xs:element name="terminationReason" type="xs:string"/>
+              <xs:element name="terminationDate" type="xs:dateTime"/>
+            </xs:sequence>
           </xs:extension>
         </xs:complexContent>
       </xs:complexType>
@@ -7207,6 +8021,7 @@
         <xs:complexContent>
           <xs:extension base="tns:baseDto">
             <xs:sequence>
+              <xs:element name="subscription" type="xs:string"/>
               <xs:element name="services">
                 <xs:complexType>
                   <xs:sequence>
@@ -7214,7 +8029,7 @@
                       <xs:complexType>
                         <xs:sequence>
                           <xs:element minOccurs="0" name="key" type="xs:string"/>
-                          <xs:element minOccurs="0" name="value" type="xs:int"/>
+                          <xs:element minOccurs="0" name="value" type="xs:decimal"/>
                         </xs:sequence>
                       </xs:complexType>
                     </xs:element>
@@ -7222,7 +8037,6 @@
                 </xs:complexType>
               </xs:element>
             </xs:sequence>
-            <xs:attribute name="subscription" type="xs:string" use="required"/>
           </xs:extension>
         </xs:complexContent>
       </xs:complexType>
@@ -7319,7 +8133,8 @@
    <soapenv:Body>
       <ws:activateServices>
          <!--Optional:-->
-         <activateServices subscription="SUBS1">
+         <activateServices>
+         	  <subscription>SUBS1</subscription>
             <services>
                <!--Zero or more repetitions:-->
                <entry>
@@ -7340,7 +8155,8 @@
    <soapenv:Body>
       <ws:activateServices>
          <!--Optional:-->
-         <activateServices subscription="SUBS2">
+         <activateServices>
+         	  <subscription>SUBS2</subscription>
             <services>
                <!--Zero or more repetitions:-->
                <entry>
@@ -7361,7 +8177,11 @@
    <soapenv:Body>
       <ws:applyOneShotChargeInstance>
          <!--Optional:-->
-         <applyOneShotChargeInstance oneShotChargeInstance="SUB1" subscription="SUBS1" operationDate="2015-01-22T13:42:57.219+08:00">
+         <applyOneShotChargeInstance>
+            <oneShotCharge>SUB1</oneShotCharge>
+            <subscription>SUBS1</subscription>
+		  <operationDate>2015-01-22T13:42:57.219+08:00</operationDate>
+
             <!--Optional:-->
             <description>special</description>
             <!--Optional:-->
@@ -7386,6 +8206,10 @@
       <ws:applyOneShotChargeInstance>
          <!--Optional:-->
          <applyOneShotChargeInstance oneShotChargeInstance="SUB1" subscription="SUBS2" operationDate="2015-01-22T13:42:57.219+08:00">
+            <oneShotCharge>SUB1</oneShotCharge>
+            <subscription>SUBS2</subscription>
+		  <operationDate>2015-01-22T13:42:57.219+08:00</operationDate>
+		  
             <!--Optional:-->
             <description>special</description>
             <!--Optional:-->
@@ -7409,7 +8233,9 @@
    <soapenv:Body>
       <ws:create>
          <!--Optional:-->
-         <subscription code="SUBS1" userAccount="UA1" offerTemplate="OFF1">
+         <subscription code="SUBS1" description="SUBS1">
+         	<userAccount>UA1</userAccount>
+         	<offerTemplate>OFF1</offerTemplate>
             <!--Optional:-->
             <subscriptionDate>2015-01-22T13:42:57.219+08:00</subscriptionDate>
          </subscription>
@@ -7423,7 +8249,9 @@
    <soapenv:Body>
       <ws:create>
          <!--Optional:-->
-         <subscription code="SUBS2" userAccount="UA1" offerTemplate="OFF1">
+         <subscription code="SUBS2" description="SUBS2">
+         	<userAccount>UA1</userAccount>
+         	<offerTemplate>OFF1</offerTemplate>
             <!--Optional:-->
             <subscriptionDate>2015-01-22T13:42:57.219+08:00</subscriptionDate>
          </subscription>
@@ -7442,8 +8270,9 @@
    <soapenv:Body>
       <ws:update>
          <!--Optional:-->
-         <subscription code="SUBS1" userAccount="UA1" offerTemplate="OFF1">
-         	  <description>SUBS1-Updated</description>
+             <subscription code="SUBS1" description="SUBS11">
+         	<userAccount>UA1</userAccount>
+         	<offerTemplate>OFF1</offerTemplate>
             <!--Optional:-->
             <subscriptionDate>2015-01-12T13:42:57.219+08:00</subscriptionDate>
          </subscription>
@@ -7457,8 +8286,9 @@
    <soapenv:Body>
       <ws:update>
          <!--Optional:-->
-         <subscription code="SUBS2" userAccount="UA1" offerTemplate="OFF1">
-         	  <description>SUB2-Updated</description>
+       <subscription code="SUBS2" description="SUBS21">
+         	<userAccount>UA1</userAccount>
+         	<offerTemplate>OFF1</offerTemplate>
             <!--Optional:-->
             <subscriptionDate>2015-01-12T13:42:57.219+08:00</subscriptionDate>
          </subscription>
@@ -7472,7 +8302,12 @@
    <soapenv:Body>
       <ws:terminateSubscription>
          <!--Optional:-->
-         <terminateSubscription subscriptionCode="SUBS1" terminationReason="TERM_REASON_1" terminationDate="2015-01-22T13:42:57.219+08:00"/>
+         <terminateSubscription>
+         	<subscriptionCode>SUBS1</subscriptionCode>
+            <terminationReason>TERM_REASON_1</terminationReason>
+            <terminationDate>2015-01-22T13:42:57.219+08:00</terminationDate>
+
+         </terminateSubscription>
       </ws:terminateSubscription>
 
       </ws:terminateSubscription>
@@ -7485,7 +8320,11 @@
    <soapenv:Body>
       <ws:terminateServices>
          <!--Optional:-->
-         <terminateSubscriptionServices subscriptionCode="SUBS2" terminationReason="TERM_REASON_1" terminationDate="2015-01-22T13:42:57.219+08:00">
+         <terminateSubscriptionServices>
+            <subscriptionCode>SUBS2</subscriptionCode>
+            <terminationReason>TERM_REASON_1</terminationReason>
+            <terminationDate>2015-01-22T13:42:57.219+08:00</terminationDate>
+
             <!--Zero or more repetitions:-->
             <services>SERV1</services>
          </terminateSubscriptionServices>
@@ -7804,6 +8643,10 @@
         <xs:complexContent>
           <xs:extension base="tns:baseDto">
             <xs:sequence>
+              <xs:element name="userAccount" type="xs:string"/>
+              <xs:element name="subscription" type="xs:string"/>
+              <xs:element name="offerTemplate" type="xs:string"/>
+              <xs:element name="seller" type="xs:string"/>
               <xs:element minOccurs="0" name="currency" type="xs:string"/>
               <xs:element minOccurs="0" name="type" type="xs:string"/>
               <xs:element minOccurs="0" name="status" type="xs:string"/>
@@ -7825,10 +8668,6 @@
               <xs:element minOccurs="0" name="subscriptionDate" type="xs:dateTime"/>
             </xs:sequence>
             <xs:attribute name="code" type="xs:string" use="required"/>
-            <xs:attribute name="userAccount" type="xs:string" use="required"/>
-            <xs:attribute name="subscription" type="xs:string" use="required"/>
-            <xs:attribute name="offerTemplate" type="xs:string" use="required"/>
-            <xs:attribute name="seller" type="xs:string" use="required"/>
           </xs:extension>
         </xs:complexContent>
       </xs:complexType>
@@ -8049,7 +8888,11 @@
    <soapenv:Body>
       <ws:createOperation>
          <!--Optional:-->
-         <walletOperation code="?" userAccount="?" subscription="?" offerTemplate="?" seller="?">
+         <walletOperation code="WO1">
+         	<userAccount>UA1</userAccount>
+         	<subscription>SUB1</subscription>
+		<offerTemplate>OFF1</offerTemplate>
+		<seller>MAIN_SELLER</seller>
             <!--Optional:-->
             <currency>EUR</currency>
             <!--Optional:-->

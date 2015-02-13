@@ -40,14 +40,12 @@ public class SellerApi extends BaseApi {
 	@Inject
 	private TradingLanguageService tradingLanguageService;
 
-	public void create(SellerDto postData, User currentUser)
-			throws MeveoApiException {
-		if (!StringUtils.isBlank(postData.getCode())) {
+	public void create(SellerDto postData, User currentUser) throws MeveoApiException {
+		if (!StringUtils.isBlank(postData.getCode()) && !StringUtils.isBlank(postData.getDescription())) {
 			Provider provider = currentUser.getProvider();
 
 			if (sellerService.findByCode(postData.getCode(), provider) != null) {
-				throw new EntityAlreadyExistsException(Seller.class,
-						postData.getCode());
+				throw new EntityAlreadyExistsException(Seller.class, postData.getCode());
 			}
 
 			Seller seller = new Seller();
@@ -58,36 +56,30 @@ public class SellerApi extends BaseApi {
 
 			// check trading entities
 			if (!StringUtils.isBlank(postData.getCurrencyCode())) {
-				TradingCurrency tradingCurrency = tradingCurrencyService
-						.findByTradingCurrencyCode(postData.getCurrencyCode(),
-								provider);
+				TradingCurrency tradingCurrency = tradingCurrencyService.findByTradingCurrencyCode(
+						postData.getCurrencyCode(), provider);
 				if (tradingCurrency == null) {
-					throw new EntityDoesNotExistsException(
-							TradingCurrency.class, postData.getCurrencyCode());
+					throw new EntityDoesNotExistsException(TradingCurrency.class, postData.getCurrencyCode());
 				}
 
 				seller.setTradingCurrency(tradingCurrency);
 			}
 
 			if (!StringUtils.isBlank(postData.getCountryCode())) {
-				TradingCountry tradingCountry = tradingCountryService
-						.findByTradingCountryCode(postData.getCountryCode(),
-								provider);
+				TradingCountry tradingCountry = tradingCountryService.findByTradingCountryCode(
+						postData.getCountryCode(), provider);
 				if (tradingCountry == null) {
-					throw new EntityDoesNotExistsException(
-							TradingCountry.class, postData.getCountryCode());
+					throw new EntityDoesNotExistsException(TradingCountry.class, postData.getCountryCode());
 				}
 
 				seller.setTradingCountry(tradingCountry);
 			}
 
 			if (!StringUtils.isBlank(postData.getLanguageCode())) {
-				TradingLanguage tradingLanguage = tradingLanguageService
-						.findByTradingLanguageCode(postData.getLanguageCode(),
-								provider);
+				TradingLanguage tradingLanguage = tradingLanguageService.findByTradingLanguageCode(
+						postData.getLanguageCode(), provider);
 				if (tradingLanguage == null) {
-					throw new EntityDoesNotExistsException(
-							TradingLanguage.class, postData.getLanguageCode());
+					throw new EntityDoesNotExistsException(TradingLanguage.class, postData.getLanguageCode());
 				}
 
 				seller.setTradingLanguage(tradingLanguage);
@@ -95,11 +87,9 @@ public class SellerApi extends BaseApi {
 
 			// check parent seller
 			if (!StringUtils.isBlank(postData.getParentSeller())) {
-				Seller parentSeller = sellerService.findByCode(
-						postData.getParentSeller(), provider);
+				Seller parentSeller = sellerService.findByCode(postData.getParentSeller(), provider);
 				if (parentSeller == null) {
-					throw new EntityDoesNotExistsException(Seller.class,
-							postData.getParentSeller());
+					throw new EntityDoesNotExistsException(Seller.class, postData.getParentSeller());
 				}
 
 				seller.setSeller(parentSeller);
@@ -110,22 +100,21 @@ public class SellerApi extends BaseApi {
 			if (StringUtils.isBlank(postData.getCode())) {
 				missingParameters.add("code");
 			}
+			if (StringUtils.isBlank(postData.getDescription())) {
+				missingParameters.add("description");
+			}
 
-			throw new MissingParameterException(
-					getMissingParametersExceptionMessage());
+			throw new MissingParameterException(getMissingParametersExceptionMessage());
 		}
 	}
 
-	public void update(SellerDto postData, User currentUser)
-			throws MeveoApiException {
-		if (!StringUtils.isBlank(postData.getCode())) {
+	public void update(SellerDto postData, User currentUser) throws MeveoApiException {
+		if (!StringUtils.isBlank(postData.getCode()) && !StringUtils.isBlank(postData.getDescription())) {
 			Provider provider = currentUser.getProvider();
 
-			Seller seller = sellerService.findByCode(postData.getCode(),
-					provider);
+			Seller seller = sellerService.findByCode(postData.getCode(), provider);
 			if (seller == null) {
-				throw new EntityDoesNotExistsException(Seller.class,
-						postData.getCode());
+				throw new EntityDoesNotExistsException(Seller.class, postData.getCode());
 			}
 
 			seller.setDescription(postData.getDescription());
@@ -133,36 +122,30 @@ public class SellerApi extends BaseApi {
 
 			// check trading entities
 			if (!StringUtils.isBlank(postData.getCurrencyCode())) {
-				TradingCurrency tradingCurrency = tradingCurrencyService
-						.findByTradingCurrencyCode(postData.getCurrencyCode(),
-								provider);
+				TradingCurrency tradingCurrency = tradingCurrencyService.findByTradingCurrencyCode(
+						postData.getCurrencyCode(), provider);
 				if (tradingCurrency == null) {
-					throw new EntityDoesNotExistsException(
-							TradingCurrency.class, postData.getCurrencyCode());
+					throw new EntityDoesNotExistsException(TradingCurrency.class, postData.getCurrencyCode());
 				}
 
 				seller.setTradingCurrency(tradingCurrency);
 			}
 
 			if (!StringUtils.isBlank(postData.getCountryCode())) {
-				TradingCountry tradingCountry = tradingCountryService
-						.findByTradingCountryCode(postData.getCountryCode(),
-								provider);
+				TradingCountry tradingCountry = tradingCountryService.findByTradingCountryCode(
+						postData.getCountryCode(), provider);
 				if (tradingCountry == null) {
-					throw new EntityDoesNotExistsException(
-							TradingCountry.class, postData.getCountryCode());
+					throw new EntityDoesNotExistsException(TradingCountry.class, postData.getCountryCode());
 				}
 
 				seller.setTradingCountry(tradingCountry);
 			}
 
 			if (!StringUtils.isBlank(postData.getLanguageCode())) {
-				TradingLanguage tradingLanguage = tradingLanguageService
-						.findByTradingLanguageCode(postData.getLanguageCode(),
-								provider);
+				TradingLanguage tradingLanguage = tradingLanguageService.findByTradingLanguageCode(
+						postData.getLanguageCode(), provider);
 				if (tradingLanguage == null) {
-					throw new EntityDoesNotExistsException(
-							TradingLanguage.class, postData.getLanguageCode());
+					throw new EntityDoesNotExistsException(TradingLanguage.class, postData.getLanguageCode());
 				}
 
 				seller.setTradingLanguage(tradingLanguage);
@@ -170,11 +153,9 @@ public class SellerApi extends BaseApi {
 
 			// check parent seller
 			if (!StringUtils.isBlank(postData.getParentSeller())) {
-				Seller parentSeller = sellerService.findByCode(
-						postData.getParentSeller(), provider);
+				Seller parentSeller = sellerService.findByCode(postData.getParentSeller(), provider);
 				if (parentSeller == null) {
-					throw new EntityDoesNotExistsException(Seller.class,
-							postData.getParentSeller());
+					throw new EntityDoesNotExistsException(Seller.class, postData.getParentSeller());
 				}
 
 				seller.setSeller(parentSeller);
@@ -185,20 +166,20 @@ public class SellerApi extends BaseApi {
 			if (StringUtils.isBlank(postData.getCode())) {
 				missingParameters.add("code");
 			}
+			if (StringUtils.isBlank(postData.getDescription())) {
+				missingParameters.add("description");
+			}
 
-			throw new MissingParameterException(
-					getMissingParametersExceptionMessage());
+			throw new MissingParameterException(getMissingParametersExceptionMessage());
 		}
 	}
 
-	public SellerDto find(String sellerCode, Provider provider)
-			throws MeveoApiException {
+	public SellerDto find(String sellerCode, Provider provider) throws MeveoApiException {
 		SellerDto result = new SellerDto();
 
 		if (!StringUtils.isBlank(sellerCode)) {
 			Seller seller = sellerService.findByCode(sellerCode, provider,
-					Arrays.asList("tradingCountry", "tradingCurrency",
-							"tradingLanguage"));
+					Arrays.asList("tradingCountry", "tradingCurrency", "tradingLanguage"));
 			if (seller == null) {
 				throw new EntityDoesNotExistsException(Seller.class, sellerCode);
 			}
@@ -209,15 +190,13 @@ public class SellerApi extends BaseApi {
 				missingParameters.add("sellerCode");
 			}
 
-			throw new MissingParameterException(
-					getMissingParametersExceptionMessage());
+			throw new MissingParameterException(getMissingParametersExceptionMessage());
 		}
 
 		return result;
 	}
 
-	public void remove(String sellerCode, Provider provider)
-			throws MeveoApiException {
+	public void remove(String sellerCode, Provider provider) throws MeveoApiException {
 		if (!StringUtils.isBlank(sellerCode)) {
 			Seller seller = sellerService.findByCode(sellerCode, provider);
 			if (seller == null) {
@@ -230,8 +209,7 @@ public class SellerApi extends BaseApi {
 				missingParameters.add("sellerCode");
 			}
 
-			throw new MissingParameterException(
-					getMissingParametersExceptionMessage());
+			throw new MissingParameterException(getMissingParametersExceptionMessage());
 		}
 	}
 
