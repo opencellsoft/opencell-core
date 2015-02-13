@@ -32,7 +32,7 @@ public class MediationRsImpl extends BaseRs implements MediationRs {
 
 		try {
 			postData.setIpAddress(httpServletRequest.getRemoteAddr());
-			mediationApi.create(postData, getCurrentUser());
+			mediationApi.registerCdrList(postData, getCurrentUser());
 		} catch (MeveoApiException e) {
 			result.setErrorCode(e.getErrorCode());
 			result.setStatus(ActionStatusEnum.FAIL);
@@ -64,5 +64,24 @@ public class MediationRsImpl extends BaseRs implements MediationRs {
 
 		return result;
 	}
+	
+	@Override
+	public ActionStatus chargeCdrList(CdrListDto postData) {
+		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
+		try {
+			postData.setIpAddress(httpServletRequest.getRemoteAddr());
+			mediationApi.chargeCdrList(postData, getCurrentUser());
+		} catch (MeveoApiException e) {
+			result.setErrorCode(e.getErrorCode());
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
+		} catch (Exception e) {
+			result.setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
+		}
+
+		return result;
+	}
 }

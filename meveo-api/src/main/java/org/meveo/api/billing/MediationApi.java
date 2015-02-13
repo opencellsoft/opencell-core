@@ -33,7 +33,7 @@ public class MediationApi extends BaseApi {
 	
 	@Inject UsageRatingService usageRatingService;
 
-	public void create(CdrListDto postData, User currentUser) throws MeveoApiException {
+	public void registerCdrList(CdrListDto postData, User currentUser) throws MeveoApiException {
 		if (postData.getCdr() != null && postData.getCdr().size() > 0) {
 			try {
 				cdrParsingService.initByApi(currentUser.getUserName(), postData.getIpAddress());
@@ -93,5 +93,40 @@ public class MediationApi extends BaseApi {
 			throw new MissingParameterException(getMissingParametersExceptionMessage());
 		}
 	}
-	
+
+	public void chargeCdrList(CdrListDto postData, User currentUser) throws MeveoApiException {
+		if (postData.getCdr() != null && postData.getCdr().size() > 0) {
+			try {
+				cdrParsingService.initByApi(currentUser.getUserName(), postData.getIpAddress());
+			} catch (BusinessException e1) {
+				log.error(e1.getMessage());
+				throw new MeveoApiException(e1.getMessage());
+			}
+
+			try {
+				for (String line : postData.getCdr()) {
+					List<EDR> edrs = cdrParsingService.getEDRList(line);
+					for (EDR edr : edrs) {
+						log.debug("edr={}", edr);
+						edrService.create(edr, currentUser, currentUser.getProvider());
+						try {
+							usageRatingService.ratePostpaidUsage(edr, currentUser);
+						} catch (BusinessException e) {
+							log.error("Exception rating edr={}", e.getMessage());
+							throw new MeveoApiException(e.getMessage());
+						}
+					}
+				}
+			} catch (CDRParsingException e) {
+				log.error("Error parsing cdr={}", e.getMessage());
+				throw new MeveoApiException(e.getMessage());
+			}
+		} else {
+			if (postData.getCdr() == null || postData.getCdr().size() == 0) {
+				missingParameters.add("cdr");
+			}
+
+			throw new MissingParameterException(getMissingParametersExceptionMessage());
+		}
+	}
 }

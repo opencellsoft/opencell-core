@@ -39,7 +39,7 @@ public class MediationWsImpl extends BaseWs implements MediationWs {
 			HttpServletRequest req = (HttpServletRequest) mc.get(MessageContext.SERVLET_REQUEST);
 
 			postData.setIpAddress(req.getRemoteAddr());
-			mediationApi.create(postData, getCurrentUser());
+			mediationApi.registerCdrList(postData, getCurrentUser());
 		} catch (MeveoApiException e) {
 			result.setErrorCode(e.getErrorCode());
 			result.setStatus(ActionStatusEnum.FAIL);
@@ -74,4 +74,29 @@ public class MediationWsImpl extends BaseWs implements MediationWs {
 
 		return result;
 	}
+	
+
+	@Override
+	public ActionStatus chargeCdrList(CdrListDto postData) {
+		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+
+		try {
+			MessageContext mc = wsContext.getMessageContext();
+			HttpServletRequest req = (HttpServletRequest) mc.get(MessageContext.SERVLET_REQUEST);
+
+			postData.setIpAddress(req.getRemoteAddr());
+			mediationApi.chargeCdrList(postData, getCurrentUser());
+		} catch (MeveoApiException e) {
+			result.setErrorCode(e.getErrorCode());
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
+		} catch (Exception e) {
+			result.setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
+		}
+
+		return result;
+	}
+	
 }
