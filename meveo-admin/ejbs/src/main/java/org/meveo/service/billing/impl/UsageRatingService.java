@@ -63,7 +63,7 @@ public class UsageRatingService {
 	@Resource(name = "java:jboss/infinispan/container/meveo")
 	private CacheContainer meveoContainer;
 
-	private static BasicCache<String, UsageChargeTemplateCache> chargeTemplateCache;
+	private static BasicCache<Long, UsageChargeTemplateCache> chargeTemplateCache;
 	private static BasicCache<Long, List<UsageChargeInstanceCache>> chargeCache;
 	private static BasicCache<Long,CounterInstanceCache> counterCache;
 
@@ -119,14 +119,15 @@ public class UsageRatingService {
 		UsageChargeTemplateCache cachedValue = null;
 		if (usageChargeTemplate != null) {
 			log.info("updateTemplateCache " + usageChargeTemplate.getCode());
-			if (chargeTemplateCache.containsKey(usageChargeTemplate.getCode())) {
+			if (chargeTemplateCache.containsKey(usageChargeTemplate.getId())) {
 				log.info("cache already contains the code");
 				cachedValue = chargeTemplateCache.get(usageChargeTemplate
-						.getCode());
+						.getId());
 				cachedValue.setEdrTemplates(new HashSet<TriggeredEDRCache>());
 			} else {
 				log.info("cache does not contain the code");
 				cachedValue = new UsageChargeTemplateCache();
+				chargeTemplateCache.put(usageChargeTemplate.getId(), cachedValue);
 			}
 
 			if (usageChargeTemplate.getFilterExpression() == null
