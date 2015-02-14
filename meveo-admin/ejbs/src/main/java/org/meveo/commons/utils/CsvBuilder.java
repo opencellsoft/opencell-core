@@ -17,6 +17,7 @@
 package org.meveo.commons.utils;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
@@ -102,6 +103,21 @@ public class CsvBuilder {
 			}
 		}
 	}
+	
+	
+	public void writeFile(byte[] content, String filename) throws IOException { 
+		File file = new File(filename);
+		if (!file.exists()) {
+			file.createNewFile();
+		}
+		FileOutputStream fop = new FileOutputStream(file,true);
+		fop.write(content);
+		fop.flush();
+		fop.close();
+ 
+	}
+	
+	
 	 public void download(InputStream inputStream, String fileName) {
 			log.info("start to download...");
 			if(inputStream!=null){

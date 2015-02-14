@@ -1,10 +1,13 @@
 package org.meveo.admin.action.notification;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 
@@ -19,6 +22,7 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.RejectedImportException;
 import org.meveo.commons.utils.CsvBuilder;
 import org.meveo.commons.utils.CsvReader;
+import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.admin.User;
 import org.meveo.model.catalog.CounterTemplate;
 import org.meveo.model.notification.InstantMessagingNotification;
@@ -26,6 +30,7 @@ import org.meveo.model.notification.InstantMessagingProviderEnum;
 import org.meveo.model.notification.Notification;
 import org.meveo.model.notification.NotificationEventTypeEnum;
 import org.meveo.model.notification.StrategyImportTypeEnum;
+import org.meveo.model.shared.DateUtils;
 import org.meveo.service.admin.impl.UserService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.catalog.impl.CounterTemplateService;
@@ -50,6 +55,11 @@ public class InstantMessagingNotificationBean extends BaseBean<InstantMessagingN
 
     @Inject
     CounterTemplateService counterTemplateService;
+    
+    ParamBean paramBean=ParamBean.getInstance();
+    CsvBuilder csv = null;
+	private String providerDir=paramBean.getProperty("providers.rootDir","/tmp/meveo_integr");
+	private String existingEntitiesCsvFile=null;
     
 	CsvReader csvReader = null;
     private UploadedFile file; 
@@ -97,10 +107,9 @@ public class InstantMessagingNotificationBean extends BaseBean<InstantMessagingN
 	protected List<String> getListFieldsToFetch() {
 		return Arrays.asList("provider");
 	}
-		
-	public void exportToFile() throws Exception {
+	
 
-		CsvBuilder csv = new CsvBuilder();
+	public void exportToFile() throws Exception {
 		csv.appendValue("Code");
 		csv.appendValue("Classename filter");
 		csv.appendValue("Event type filter");
@@ -114,8 +123,7 @@ public class InstantMessagingNotificationBean extends BaseBean<InstantMessagingN
 		csv.appendValue("Message");
 		csv.appendValue("Counter template");
 		csv.startNewLine();
-		for (InstantMessagingNotification imNotification : imNotificationService
-				.list()) {
+		for (InstantMessagingNotification imNotification : imNotificationService.list()) {
 			csv.appendValue(imNotification.getCode());
 			csv.appendValue(imNotification.getClassNameFilter());
 			csv.appendValue(imNotification.getEventTypeFilter() + "");
@@ -145,6 +153,7 @@ public class InstantMessagingNotificationBean extends BaseBean<InstantMessagingN
 			csv.appendValue(imNotification.getCounterTemplate()!=null?  imNotification.getCounterTemplate().getCode(): null);
 			csv.startNewLine();
 		}
+		
 		InputStream inputStream = new ByteArrayInputStream(csv.toString()
 				.getBytes());
 		csv.download(inputStream, "InstantMessagingNotification.csv");
@@ -170,12 +179,19 @@ public void handleFileUpload(FileUploadEvent event) throws Exception {
 					Charset.forName("ISO-8859-1"));
 			csvReader.readHeaders();
 			try {
+				String existingEntitiesCSV=paramBean.getProperty("existingEntities.csv.dir", "existingEntitiesCSV");
+				File dir=new File(providerDir+File.separator+getCurrentProvider().getCode()+File.separator+existingEntitiesCSV);
+				dir.mkdirs();
+				existingEntitiesCsvFile= dir.getAbsolutePath()+File.separator+"InstantMessagingNotifications_"+new SimpleDateFormat("ddMMyyyyHHmmSS").format(new Date())+".csv";
+				csv = new CsvBuilder();
+				boolean isEntityAlreadyExist=false;
 				while (csvReader.readRecord()) {
 					String[] values = csvReader.getValues();
 					InstantMessagingNotification existingEntity = imNotificationService
 							.findByCode(values[CODE], getCurrentProvider());
 					if (existingEntity != null) {
-						checkSelectedStrategy(values, existingEntity);
+						checkSelectedStrategy(values, existingEntity,isEntityAlreadyExist);
+						isEntityAlreadyExist=true;
 					} else {
 						InstantMessagingNotification instMessNotif = new InstantMessagingNotification();
 						instMessNotif.setCode(values[CODE]);
@@ -228,9 +244,11 @@ public void handleFileUpload(FileUploadEvent event) throws Exception {
 											: null);
 						}
 						imNotificationService.create(instMessNotif);
-					}
+					}}
+				if(isEntityAlreadyExist && strategyImportType.equals(StrategyImportTypeEnum.REJECT_EXISTING_RECORDS)){
+					csv.writeFile(csv.toString().getBytes(), existingEntitiesCsvFile);
 				}
-				messages.info(new BundleKey("messages", "commons.csv"));
+				messages.info(new BundleKey("messages", "import.csv.successful"));
 			} catch (RejectedImportException e) {
 				messages.error(new BundleKey("messages", e.getMessage()));
 			}
@@ -238,7 +256,7 @@ public void handleFileUpload(FileUploadEvent event) throws Exception {
 	}
 	
 	public void checkSelectedStrategy(String[] values,
-			InstantMessagingNotification existingEntity)
+			InstantMessagingNotification existingEntity,boolean isEntityAlreadyExist)
 			throws RejectedImportException {
 		if (strategyImportType.equals(StrategyImportTypeEnum.UPDATED)) {
 			existingEntity.setClassNameFilter(values[CLASS_NAME_FILTER]);
@@ -273,9 +291,7 @@ public void handleFileUpload(FileUploadEvent event) throws Exception {
 							existingEntity.setUsers(new HashSet<User>());
 						}
 						existingEntity.getUsers().add(user);
-					}
-				}
-			}
+					}}}
 			existingEntity.setMessage(values[MESSAGE]);
 			if (!StringUtils.isBlank(values[COUNTER_TEMPLATE])) {
 				CounterTemplate counterTemplate = counterTemplateService
@@ -286,16 +302,54 @@ public void handleFileUpload(FileUploadEvent event) throws Exception {
 								: null);
 			}
 			imNotificationService.update(existingEntity);
-		} else if (strategyImportType
-				.equals(StrategyImportTypeEnum.REJECT_EXISTING_RECORDS)) {
-			// add to a new csv
-		} else if (strategyImportType
+		}
+		else if (strategyImportType
 				.equals(StrategyImportTypeEnum.REJECTE_IMPORT)) {
 			throw new RejectedImportException("notification.rejectImport");
+			}
+		else if (strategyImportType.equals(StrategyImportTypeEnum.REJECT_EXISTING_RECORDS)) {
+			if(!isEntityAlreadyExist){		
+				csv.appendValue("Code");
+				csv.appendValue("Classename filter");
+				csv.appendValue("Event type filter");
+				csv.appendValue("El filter");
+				csv.appendValue("El action");
+				csv.appendValue("Active");
+				csv.appendValue("IM provider");
+				csv.appendValue("IM identifier EL");
+				csv.appendValue("IM identifiers list");
+				csv.appendValue("Users list");
+				csv.appendValue("Message");
+				csv.appendValue("Counter template");	
+			}
+			csv.startNewLine();
+		    csv.appendValue(values[CODE]);
+		    csv.appendValue(values[CLASS_NAME_FILTER]);
+		    csv.appendValue(values[EVENT_TYPE_FILTER]);
+		    csv.appendValue(values[EL_FILTER]);
+		    csv.appendValue(values[EL_ACTION]);
+		    csv.appendValue(values[ACTIVE]);
+		    csv.appendValue(values[IM_PROVIDER]);
+		    csv.appendValue(values[IM_IDENTIFIER_EL]);
+		    csv.appendValue(values[IM_IDENTIFIER_LIST]);
+		    csv.appendValue(values[USERS_LIST]);
+		    csv.appendValue(values[MESSAGE]);
+		    csv.appendValue(values[COUNTER_TEMPLATE]);
 		}
-	}
+
+}
+public StrategyImportTypeEnum getStrategyImportType() {
+return strategyImportType;
+}
+
+public void setStrategyImportType(StrategyImportTypeEnum strategyImportType) {
+this.strategyImportType = strategyImportType;
 }
 
 
 
 
+
+
+
+}
