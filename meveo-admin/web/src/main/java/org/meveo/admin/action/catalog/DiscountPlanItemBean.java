@@ -4,7 +4,9 @@ import javax.enterprise.context.ConversationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.StatelessBaseBean;
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.catalog.DiscountPlanItem;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.catalog.impl.DiscountPlanItemService;
@@ -28,6 +30,18 @@ public class DiscountPlanItemBean extends StatelessBaseBean<DiscountPlanItem> {
 	@Override
 	protected IPersistenceService<DiscountPlanItem> getPersistenceService() {
 		return discountPlanItemService;
+	}
+
+	@Override
+	public String saveOrUpdate(boolean killConversation) throws BusinessException {
+		// check for required fields
+		if (getEntity().getOfferTemplate() == null && getEntity().getInvoiceCategory() == null
+				&& getEntity().getInvoiceSubCategory() == null && getEntity().getChargeTemplate() == null) {
+			messages.error(new BundleKey("messages", "message.discountPlanItem.error.requiredFields"));
+			return null;
+		}
+
+		return super.saveOrUpdate(killConversation);
 	}
 
 }

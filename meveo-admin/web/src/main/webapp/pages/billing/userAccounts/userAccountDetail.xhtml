@@ -160,7 +160,7 @@
 										<hf:formField
 											label="#{messages['businessEntity.description']}"
 											field="description" id="description" showOnlyOnNew="true"
-											useConverter="false" size="70" maxlength="100" />
+											useConverter="false" size="70" maxlength="100" required="true" />
 									</hftl:panelGroup>
 									<hftl:panelGroup columns="1">
 										<p:panelGrid columns="2">
@@ -325,11 +325,11 @@
 												<h:outputText value="#{messages[e.status.label]}" />
 											</p:column>
 										</p:dataTable>
-										<p:commandButton rendered="#{wallet.key!='PRINCIPAL'}"
+										<!-- <p:commandButton rendered="#{wallet.key!='PRINCIPAL'}"
 											value="#{messages['action.reload']}"
 											update=":#{p:component('reloadPopup')}"
 											actionListener="#{userAccountBean.setSelectedWalletCode(wallet.key)}"
-											oncomplete="dlg_reloadPopup.show()" />
+											oncomplete="dlg_reloadPopup.show()" /> -->
 									</p:panel>
 								</p:tab>
 							</c:forEach>

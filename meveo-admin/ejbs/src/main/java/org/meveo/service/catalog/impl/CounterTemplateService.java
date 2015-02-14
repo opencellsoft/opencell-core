@@ -40,5 +40,11 @@ public class CounterTemplateService<P extends CounterTemplate> extends
 		query.setParameter("provider", provider);
 		query.executeUpdate();
 	}
+	
+ 
+	
+	public P findByCode(String code, Provider provider) {
+		return findByCode(getEntityManager(), code, provider);
+	}
 
 }

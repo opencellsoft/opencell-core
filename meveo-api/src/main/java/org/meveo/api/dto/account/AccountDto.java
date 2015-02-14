@@ -1,8 +1,6 @@
 package org.meveo.api.dto.account;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -11,6 +9,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.CustomFieldDto;
+import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.model.AccountEntity;
 import org.meveo.model.crm.CustomFieldInstance;
 
@@ -33,7 +32,7 @@ public abstract class AccountDto implements Serializable {
 	private String externalRef2;
 	private NameDto name = new NameDto();
 	private AddressDto address = new AddressDto();
-	private List<CustomFieldDto> customFields = new ArrayList<CustomFieldDto>();
+	private CustomFieldsDto customFields = new CustomFieldsDto();
 
 	public AccountDto() {
 		super();
@@ -56,7 +55,7 @@ public abstract class AccountDto implements Serializable {
 				cfDto.setDoubleValue(entry.getValue().getDoubleValue());
 				cfDto.setLongValue(entry.getValue().getLongValue());
 				cfDto.setStringValue(entry.getValue().getStringValue());
-				customFields.add(cfDto);
+				customFields.getCustomField().add(cfDto);
 			}
 		}
 	}
@@ -109,19 +108,19 @@ public abstract class AccountDto implements Serializable {
 		this.address = address;
 	}
 
-	public List<CustomFieldDto> getCustomFields() {
-		return customFields;
-	}
-
-	public void setCustomFields(List<CustomFieldDto> customFields) {
-		this.customFields = customFields;
-	}
-
 	@Override
 	public String toString() {
 		return "BaseAccountDto [code=" + code + ", description=" + description + ", externalRef1=" + externalRef1
 				+ ", externalRef2=" + externalRef2 + ", name=" + name + ", address=" + address + ", customFields="
 				+ customFields + "]";
+	}
+
+	public CustomFieldsDto getCustomFields() {
+		return customFields;
+	}
+
+	public void setCustomFields(CustomFieldsDto customFields) {
+		this.customFields = customFields;
 	}
 
 }

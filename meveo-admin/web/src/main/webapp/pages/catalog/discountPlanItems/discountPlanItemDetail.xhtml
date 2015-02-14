@@ -55,6 +55,10 @@
 			label="#{messages['discountPlanItem.title']}"
 			backingBean="#{discountPlanItemBean}">
 
+			<div class="alert-box alert-box-notice">
+				#{messages['message.discountPlanItem.info.requiredFields']}
+			</div>
+
 			<hf:formField label="#{messages['BusinessEntity.code']}" field="code"
 				required="true" />
 
@@ -65,22 +69,22 @@
 
 			<hf:formEntityField id="offerTemplate"
 				label="#{messages['discountPlanItem.offerTemplate']}"
-				field="offerTemplate" childField="code" required="true" popup="true"
-				popupId="popupOfferTemplates" />
+				field="offerTemplate" childField="code" required="false"
+				popup="true" popupId="popupOfferTemplates" />
 
 			<hf:formEntityField id="invoiceCategory"
 				label="#{messages['discountPlanItem.invoiceCategory']}"
-				field="invoiceCategory" childField="code" required="true"
+				field="invoiceCategory" childField="code" required="false"
 				listBean="#{invoiceCategoryBean}" labelField="description" />
 
 			<hf:formEntityField id="invoiceSubCategory"
 				label="#{messages['discountPlanItem.invoiceSubCategory']}"
-				field="invoiceSubCategory" childField="code" required="true"
+				field="invoiceSubCategory" childField="code" required="false"
 				listBean="#{invoiceSubCategoryBean}" />
 
 			<hf:formEntityField id="chargeTemplate"
 				label="#{messages['discountPlanItem.chargeTemplate']}"
-				field="chargeTemplate" childField="code" required="true"
+				field="chargeTemplate" childField="code" required="false"
 				popup="true" popupId="popupChargeTemplates" />
 
 			<hf:formField label="#{messages['discountPlanItem.percent']}"

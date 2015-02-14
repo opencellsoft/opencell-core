@@ -4,7 +4,7 @@ import java.util.Date;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.BaseDto;
@@ -18,13 +18,13 @@ public class TerminateSubscriptionDto extends BaseDto {
 
 	private static final long serialVersionUID = -4477259461644796968L;
 
-	@XmlAttribute(required = true)
+	@XmlElement(required = true)
 	private String subscriptionCode;
 
-	@XmlAttribute(required = true)
+	@XmlElement(required = true)
 	private String terminationReason;
 
-	@XmlAttribute(required = true)
+	@XmlElement(required = true)
 	private Date terminationDate;
 
 	public String getSubscriptionCode() {

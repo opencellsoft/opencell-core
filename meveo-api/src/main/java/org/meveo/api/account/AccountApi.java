@@ -88,7 +88,7 @@ public class AccountApi extends BaseApi {
 
 		// populate customFields
 		if (postData.getCustomFields() != null) {
-			for (CustomFieldDto cf : postData.getCustomFields()) {
+			for (CustomFieldDto cf : postData.getCustomFields().getCustomField()) {
 				// check if custom field exists has a template
 				List<CustomFieldTemplate> customFieldTemplates = customFieldTemplateService
 						.findByAccountLevel(accountLevel);
@@ -158,7 +158,7 @@ public class AccountApi extends BaseApi {
 
 		// populate customFields
 		if (postData.getCustomFields() != null) {
-			for (CustomFieldDto cf : postData.getCustomFields()) {
+			for (CustomFieldDto cf : postData.getCustomFields().getCustomField()) {
 				// check if custom field exists has a template
 				List<CustomFieldTemplate> customFieldTemplates = customFieldTemplateService
 						.findByAccountLevel(accountLevel);

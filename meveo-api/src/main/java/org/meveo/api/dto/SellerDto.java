@@ -1,19 +1,17 @@
 package org.meveo.api.dto;
 
-import java.util.List;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
 
-import org.meveo.api.dto.account.CustomerDto;
+import org.meveo.api.dto.account.CustomersDto;
 import org.meveo.model.admin.Seller;
 
 /**
  * @author Edward P. Legaspi
  **/
-@XmlRootElement(name = "Seller")
+@XmlType(name = "Seller")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class SellerDto extends BaseDto {
 
@@ -22,7 +20,9 @@ public class SellerDto extends BaseDto {
 	@XmlAttribute(required = true)
 	private String code;
 
+	@XmlAttribute(required = true)
 	private String description;
+
 	private String invoicePrefix;
 	private String currencyCode;
 	private String countryCode;
@@ -30,7 +30,7 @@ public class SellerDto extends BaseDto {
 	private String parentSeller;
 	private String provider;
 
-	private List<CustomerDto> customers;
+	private CustomersDto customers;
 
 	public SellerDto() {
 	}
@@ -124,20 +124,20 @@ public class SellerDto extends BaseDto {
 				+ ", parentSeller=" + parentSeller + ", provider=" + provider + ", customers=" + customers + "]";
 	}
 
-	public List<CustomerDto> getCustomers() {
-		return customers;
-	}
-
-	public void setCustomers(List<CustomerDto> customers) {
-		this.customers = customers;
-	}
-
 	public String getProvider() {
 		return provider;
 	}
 
 	public void setProvider(String provider) {
 		this.provider = provider;
+	}
+
+	public CustomersDto getCustomers() {
+		return customers;
+	}
+
+	public void setCustomers(CustomersDto customers) {
+		this.customers = customers;
 	}
 
 }

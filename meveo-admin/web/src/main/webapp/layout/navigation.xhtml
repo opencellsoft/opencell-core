@@ -42,19 +42,6 @@
 				outcome="users"
 				rendered="#{identity.hasPermission('administration','administrationVisualization')}" />
 
-			<p:submenu id="trading" label="#{messages['menu.trading']}"
-				rendered="#{identity.hasPermission('administration','administrationVisualization')}">
-				<p:menuitem id="tradingLanguages" outcome="tradingLanguages"
-					value="#{messages['menu.comLanguages']}" />
-
-				<p:menuitem id="tradingCurrencies" outcome="tradingCurrencies"
-					value="#{messages['menu.tradingCurrencies']}" />
-
-				<p:menuitem id="tradingCountries" outcome="tradingCountries"
-					value="#{messages['menu.tradingCountries']}" />
-
-			</p:submenu>
-
 			<p:menuitem id="userRoles" value="#{messages['menu.userRoles']}"
 				outcome="roles"
 				rendered="#{identity.hasPermission('administration','administrationVisualization')}" />
@@ -123,7 +110,17 @@
 				<p:menuitem id="titles" 
 					rendered="#{identity.hasPermission('administration','administrationVisualization')}"
 					outcome="titles" value="#{messages['menu.titles']}" />
-					
+				<p:submenu id="trading" label="#{messages['menu.trading']}"
+					rendered="#{identity.hasPermission('administration','administrationVisualization')}">
+					<p:menuitem id="tradingLanguages" outcome="tradingLanguages"
+						value="#{messages['menu.comLanguages']}" />
+	
+					<p:menuitem id="tradingCurrencies" outcome="tradingCurrencies"
+						value="#{messages['menu.tradingCurrencies']}" />
+	
+					<p:menuitem id="tradingCountries" outcome="tradingCountries"
+						value="#{messages['menu.tradingCountries']}" />
+				</p:submenu>
 				<p:menuitem id="emailTemplates"
 					rendered="#{identity.hasPermission('administration','administrationVisualization')}"
 					outcome="emailTemplates" value="#{messages['menu.emailTemplates']}" />

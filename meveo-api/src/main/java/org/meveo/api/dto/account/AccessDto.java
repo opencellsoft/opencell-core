@@ -5,7 +5,8 @@ import java.util.Date;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlType;
 
 import org.meveo.api.dto.BaseDto;
 import org.meveo.model.mediation.Access;
@@ -13,7 +14,7 @@ import org.meveo.model.mediation.Access;
 /**
  * @author Edward P. Legaspi
  **/
-@XmlRootElement(name = "Access")
+@XmlType(name = "Access")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class AccessDto extends BaseDto {
 
@@ -22,7 +23,7 @@ public class AccessDto extends BaseDto {
 	@XmlAttribute(required = false)
 	private String code;
 
-	@XmlAttribute(required = true)
+	@XmlElement(required = true)
 	private String subscription;
 
 	private Date startDate;
@@ -36,7 +37,7 @@ public class AccessDto extends BaseDto {
 		code = e.getAccessUserId();
 		startDate = e.getStartDate();
 		endDate = e.getEndDate();
-		
+
 		if (e.getSubscription() != null) {
 			subscription = e.getSubscription().getCode();
 		}

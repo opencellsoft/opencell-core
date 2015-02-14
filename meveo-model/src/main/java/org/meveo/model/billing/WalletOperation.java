@@ -80,7 +80,7 @@ public class WalletOperation extends BusinessEntity {
 	private OperationTypeEnum type;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "CHARGE_INSTANCE_ID")
+	@JoinColumn(name = "CHARGE_INSTANCE_ID",nullable=false)
 	private ChargeInstance chargeInstance;
 
 	@Column(name = "UNITY_DESCRIPTION", length = 20)

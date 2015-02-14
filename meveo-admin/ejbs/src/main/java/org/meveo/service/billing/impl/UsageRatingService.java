@@ -670,10 +670,12 @@ public class UsageRatingService {
 	 * 
 	 * @param edr
 	 */
-	// TODO: this is only for postpaid wallets, for prepaid we dont need to
-	// check counters
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public void ratePostpaidUsage(EDR edr, User currentUser) throws BusinessException {
+		ratePostpaidUsageWithinTransaction(edr,currentUser);
+	}
+	
+	public void ratePostpaidUsageWithinTransaction(EDR edr, User currentUser) throws BusinessException {
 		BigDecimal originalQuantity = edr.getQuantity();
 
 		log.info("Rating EDR={}", edr);

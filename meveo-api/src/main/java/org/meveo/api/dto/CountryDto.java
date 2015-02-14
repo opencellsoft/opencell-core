@@ -2,6 +2,7 @@ package org.meveo.api.dto;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -18,10 +19,10 @@ public class CountryDto extends BaseDto {
 
 	private static final long serialVersionUID = -4175660113940481232L;
 
-	@XmlElement(required = true)
+	@XmlAttribute(required = true)
 	private String countryCode;
 
-	@XmlElement(required = true)
+	@XmlAttribute(required = true)
 	private String name;
 
 	@XmlElement(required = true)
@@ -88,9 +89,8 @@ public class CountryDto extends BaseDto {
 
 	@Override
 	public String toString() {
-		return "CountryDto [countryCode=" + countryCode + ", name=" + name
-				+ ", currencyCode=" + currencyCode + ", languageCode="
-				+ languageCode + "]";
+		return "CountryDto [countryCode=" + countryCode + ", name=" + name + ", currencyCode=" + currencyCode
+				+ ", languageCode=" + languageCode + "]";
 	}
 
 }
