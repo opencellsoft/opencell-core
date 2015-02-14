@@ -1,18 +1,19 @@
 package org.meveo.api.dto.billing;
 
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 import java.util.Map;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlType;
 
 import org.meveo.api.dto.BaseDto;
 import org.meveo.api.dto.CustomFieldDto;
+import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.account.AccessDto;
+import org.meveo.api.dto.account.AccessesDto;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.crm.CustomFieldInstance;
 import org.meveo.model.mediation.Access;
@@ -20,7 +21,7 @@ import org.meveo.model.mediation.Access;
 /**
  * @author Edward P. Legaspi
  **/
-@XmlRootElement(name = "Subscription")
+@XmlType(name = "Subscription")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class SubscriptionDto extends BaseDto {
 
@@ -29,22 +30,29 @@ public class SubscriptionDto extends BaseDto {
 	@XmlAttribute(required = true)
 	private String code;
 
+	@XmlAttribute(required = true)
 	private String description;
 
-	@XmlAttribute(required = true)
+	@XmlElement(required = true)
 	private String userAccount;
 
-	@XmlAttribute(required = true)
+	@XmlElement(required = true)
 	private String offerTemplate;
 
+	@XmlElement(required = true)
 	private Date subscriptionDate;
+
 	private Date terminationDate;
+	private String status;
+	
+	@XmlElement(required = false)
+	private CustomFieldsDto customFields = new CustomFieldsDto();
 
-	private List<AccessDto> accesses;
+	@XmlElement(required = false)
+	private AccessesDto accesses = new AccessesDto();
 
-	private List<ServiceInstanceDto> services;
-
-	private List<CustomFieldDto> customFields = new ArrayList<CustomFieldDto>();
+	@XmlElement(required = false)
+	private ServiceInstancesDto services = new ServiceInstancesDto();	
 
 	public SubscriptionDto() {
 
@@ -66,9 +74,8 @@ public class SubscriptionDto extends BaseDto {
 		terminationDate = e.getTerminationDate();
 
 		if (e.getAccessPoints() != null) {
-			accesses = new ArrayList<AccessDto>();
 			for (Access ac : e.getAccessPoints()) {
-				accesses.add(new AccessDto(ac));
+				accesses.getAccess().add(new AccessDto(ac));
 			}
 		}
 
@@ -81,7 +88,7 @@ public class SubscriptionDto extends BaseDto {
 				cfDto.setDoubleValue(entry.getValue().getDoubleValue());
 				cfDto.setLongValue(entry.getValue().getLongValue());
 				cfDto.setStringValue(entry.getValue().getStringValue());
-				customFields.add(cfDto);
+				customFields.getCustomField().add(cfDto);
 			}
 		}
 	}
@@ -130,7 +137,8 @@ public class SubscriptionDto extends BaseDto {
 	public String toString() {
 		return "SubscriptionDto [code=" + code + ", description=" + description + ", userAccount=" + userAccount
 				+ ", offerTemplate=" + offerTemplate + ", subscriptionDate=" + subscriptionDate + ", terminationDate="
-				+ terminationDate + ", accesses=" + accesses + ", services=" + services + "]";
+				+ terminationDate + ", status=" + status + ", accesses=" + accesses + ", services=" + services
+				+ ", customFields=" + customFields + "]";
 	}
 
 	public String getDescription() {
@@ -141,27 +149,36 @@ public class SubscriptionDto extends BaseDto {
 		this.description = description;
 	}
 
-	public List<AccessDto> getAccesses() {
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
+	}
+
+	public AccessesDto getAccesses() {
 		return accesses;
 	}
 
-	public void setAccesses(List<AccessDto> accesses) {
+	public void setAccesses(AccessesDto accesses) {
 		this.accesses = accesses;
 	}
 
-	public List<ServiceInstanceDto> getServices() {
+	public ServiceInstancesDto getServices() {
 		return services;
 	}
 
-	public void setServices(List<ServiceInstanceDto> services) {
+	public void setServices(ServiceInstancesDto services) {
 		this.services = services;
 	}
 
-	public List<CustomFieldDto> getCustomFields() {
+	public CustomFieldsDto getCustomFields() {
 		return customFields;
 	}
 
-	public void setCustomFields(List<CustomFieldDto> customFields) {
+	public void setCustomFields(CustomFieldsDto customFields) {
 		this.customFields = customFields;
 	}
+
 }

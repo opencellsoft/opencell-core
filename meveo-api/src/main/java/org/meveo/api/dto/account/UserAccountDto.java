@@ -1,34 +1,34 @@
 package org.meveo.api.dto.account;
 
 import java.util.Date;
-import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlType;
 
-import org.meveo.api.dto.billing.SubscriptionDto;
+import org.meveo.api.dto.billing.SubscriptionsDto;
 import org.meveo.model.AccountEntity;
 import org.meveo.model.billing.UserAccount;
 
 /**
  * @author Edward P. Legaspi
  **/
-@XmlRootElement(name = "UserAccount")
+@XmlType(name = "UserAccount")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class UserAccountDto extends AccountDto {
 
 	private static final long serialVersionUID = -13552444627686818L;
 
-	@XmlAttribute(required = true)
+	@XmlElement(required = true)
 	private String billingAccount;
 
 	private Date subscriptionDate;
 	private Date terminationDate;
 	private String status;
+	private String terminationReason;
 
-	private List<SubscriptionDto> subscriptions;
+	private SubscriptionsDto subscriptions;
 
 	public UserAccountDto() {
 		super();
@@ -88,11 +88,19 @@ public class UserAccountDto extends AccountDto {
 		this.status = status;
 	}
 
-	public List<SubscriptionDto> getSubscriptions() {
+	public String getTerminationReason() {
+		return terminationReason;
+	}
+
+	public void setTerminationReason(String terminationReason) {
+		this.terminationReason = terminationReason;
+	}
+
+	public SubscriptionsDto getSubscriptions() {
 		return subscriptions;
 	}
 
-	public void setSubscriptions(List<SubscriptionDto> subscriptions) {
+	public void setSubscriptions(SubscriptionsDto subscriptions) {
 		this.subscriptions = subscriptions;
 	}
 

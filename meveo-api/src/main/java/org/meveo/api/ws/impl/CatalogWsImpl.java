@@ -8,7 +8,6 @@ import javax.jws.WebService;
 
 import org.meveo.api.MeveoApiErrorCode;
 import org.meveo.api.catalog.CounterTemplateApi;
-import org.meveo.api.catalog.DiscountPlanApi;
 import org.meveo.api.catalog.OfferTemplateApi;
 import org.meveo.api.catalog.OneShotChargeTemplateApi;
 import org.meveo.api.catalog.PricePlanApi;
@@ -18,7 +17,6 @@ import org.meveo.api.catalog.UsageChargeTemplateApi;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.catalog.CounterTemplateDto;
-import org.meveo.api.dto.catalog.DiscountPlanDto;
 import org.meveo.api.dto.catalog.OfferTemplateDto;
 import org.meveo.api.dto.catalog.OneShotChargeTemplateDto;
 import org.meveo.api.dto.catalog.OneShotChargeTemplateWithPriceListDto;
@@ -27,7 +25,6 @@ import org.meveo.api.dto.catalog.RecurringChargeTemplateDto;
 import org.meveo.api.dto.catalog.ServiceTemplateDto;
 import org.meveo.api.dto.catalog.UsageChargeTemplateDto;
 import org.meveo.api.dto.response.catalog.GetCounterTemplateResponse;
-import org.meveo.api.dto.response.catalog.GetDiscountPlanResponse;
 import org.meveo.api.dto.response.catalog.GetOfferTemplateResponse;
 import org.meveo.api.dto.response.catalog.GetOneShotChargeTemplateResponse;
 import org.meveo.api.dto.response.catalog.GetPricePlanResponse;
@@ -52,9 +49,6 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 
 	@Inject
 	private CounterTemplateApi counterTemplateApi;
-
-	@Inject
-	private DiscountPlanApi discountPlanApi;
 
 	@Inject
 	private OfferTemplateApi offerTemplateApi;
@@ -150,81 +144,6 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 		return result;
 	}
 
-	@Override
-	public ActionStatus createDiscountPlan(DiscountPlanDto postData) {
-		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
-
-		try {
-			result.setMessage(String.valueOf(discountPlanApi.create(postData, getCurrentUser())));
-		} catch (MeveoApiException e) {
-			result.setErrorCode(e.getErrorCode());
-			result.setStatus(ActionStatusEnum.FAIL);
-			result.setMessage(e.getMessage());
-		} catch (Exception e) {
-			result.setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
-			result.setStatus(ActionStatusEnum.FAIL);
-			result.setMessage(e.getMessage());
-		}
-
-		return result;
-	}
-
-	@Override
-	public ActionStatus updateDiscountPlan(DiscountPlanDto postData) {
-		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
-
-		try {
-			discountPlanApi.update(postData, getCurrentUser());
-		} catch (MeveoApiException e) {
-			result.setErrorCode(e.getErrorCode());
-			result.setStatus(ActionStatusEnum.FAIL);
-			result.setMessage(e.getMessage());
-		} catch (Exception e) {
-			result.setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
-			result.setStatus(ActionStatusEnum.FAIL);
-			result.setMessage(e.getMessage());
-		}
-
-		return result;
-	}
-
-	@Override
-	public GetDiscountPlanResponse findDiscountPlan(Long id) {
-		GetDiscountPlanResponse result = new GetDiscountPlanResponse();
-
-		try {
-			result.setDiscountPlan(discountPlanApi.find(id));
-		} catch (MeveoApiException e) {
-			result.getActionStatus().setErrorCode(e.getErrorCode());
-			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
-			result.getActionStatus().setMessage(e.getMessage());
-		} catch (Exception e) {
-			result.getActionStatus().setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
-			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
-			result.getActionStatus().setMessage(e.getMessage());
-		}
-
-		return result;
-	}
-
-	@Override
-	public ActionStatus removeDiscountPlan(Long id) {
-		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
-
-		try {
-			discountPlanApi.remove(id);
-		} catch (MeveoApiException e) {
-			result.setErrorCode(e.getErrorCode());
-			result.setStatus(ActionStatusEnum.FAIL);
-			result.setMessage(e.getMessage());
-		} catch (Exception e) {
-			result.setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
-			result.setStatus(ActionStatusEnum.FAIL);
-			result.setMessage(e.getMessage());
-		}
-
-		return result;
-	}
 
 	@Override
 	public ActionStatus createOfferTemplate(OfferTemplateDto postData) {

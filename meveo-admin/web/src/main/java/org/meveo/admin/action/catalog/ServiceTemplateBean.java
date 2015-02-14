@@ -314,7 +314,7 @@ public class ServiceTemplateBean extends StatelessBaseBean<ServiceTemplate> {
 			messages.error(new BundleKey("messages",
 					"serviceTemplate.uniqueUsageCounterFlied"));
 		}
-		serviceChargeTemplateUsage = new ServiceChargeTemplateUsage();
+		serviceChargeTemplateTermination = new ServiceChargeTemplateTermination();
 	}
 
 	public void deleteServiceTerminationChargeTemplate(
@@ -369,7 +369,7 @@ public class ServiceTemplateBean extends StatelessBaseBean<ServiceTemplate> {
 			messages.error(new BundleKey("messages",
 					"serviceTemplate.uniqueUsageCounterFlied"));
 		}
-		serviceChargeTemplateUsage = new ServiceChargeTemplateUsage();
+		serviceChargeTemplateRecurring = new ServiceChargeTemplateRecurring();
 	}
 
 	public void deleteServiceRecurringChargeTemplate(

@@ -1,12 +1,11 @@
 package org.meveo.api.dto.account;
 
 import java.util.Date;
-import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlType;
 
 import org.meveo.model.AccountEntity;
 import org.meveo.model.billing.BillingAccount;
@@ -14,25 +13,25 @@ import org.meveo.model.billing.BillingAccount;
 /**
  * @author Edward P. Legaspi
  **/
-@XmlRootElement(name = "BillingAccount")
+@XmlType(name = "BillingAccount")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class BillingAccountDto extends AccountDto {
 
 	private static final long serialVersionUID = 8701417481481359155L;
 
-	@XmlAttribute(required = true)
+	@XmlElement(required = true)
 	private String customerAccount;
 
-	@XmlAttribute(required = true)
+	@XmlElement(required = true)
 	private String billingCycle;
 
-	@XmlAttribute(required = true)
+	@XmlElement(required = true)
 	private String country;
 
-	@XmlAttribute(required = true)
+	@XmlElement(required = true)
 	private String language;
 
-	@XmlAttribute(required = true)
+	@XmlElement(required = true)
 	private String paymentMethod;
 
 	private Date nextInvoiceDate;
@@ -40,8 +39,10 @@ public class BillingAccountDto extends AccountDto {
 	private Date terminationDate;
 	private String paymentTerms;
 	private Boolean electronicBilling;
+	private String status;
+	private String terminationReason;
 
-	private List<UserAccountDto> userAccounts;
+	private UserAccountsDto userAccounts;
 
 	public BillingAccountDto() {
 
@@ -145,7 +146,7 @@ public class BillingAccountDto extends AccountDto {
 				+ ", country=" + country + ", language=" + language + ", paymentMethod=" + paymentMethod
 				+ ", nextInvoiceDate=" + nextInvoiceDate + ", subscriptionDate=" + subscriptionDate
 				+ ", terminationDate=" + terminationDate + ", paymentTerms=" + paymentTerms + ", electronicBilling="
-				+ electronicBilling + ", userAccounts=" + userAccounts + "]";
+				+ electronicBilling + ", status=" + status + ", userAccounts=" + userAccounts + "]";
 	}
 
 	public Date getSubscriptionDate() {
@@ -164,11 +165,27 @@ public class BillingAccountDto extends AccountDto {
 		this.terminationDate = terminationDate;
 	}
 
-	public List<UserAccountDto> getUserAccounts() {
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
+	}
+
+	public String getTerminationReason() {
+		return terminationReason;
+	}
+
+	public void setTerminationReason(String terminationReason) {
+		this.terminationReason = terminationReason;
+	}
+
+	public UserAccountsDto getUserAccounts() {
 		return userAccounts;
 	}
 
-	public void setUserAccounts(List<UserAccountDto> userAccounts) {
+	public void setUserAccounts(UserAccountsDto userAccounts) {
 		this.userAccounts = userAccounts;
 	}
 

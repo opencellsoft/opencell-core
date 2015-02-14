@@ -99,7 +99,7 @@ public interface AccountWs extends IBaseWs {
 	ActionStatus updateAccountHierarchy(@WebParam(name = "accountHierarchy") AccountHierarchyDto accountHierarchyDto);
 
 	@WebMethod
-	ActionStatus customerHierarchyUpdate(CustomerHierarchyDto postData);
+	ActionStatus customerHierarchyUpdate(@WebParam(name = "customerHierarchy") CustomerHierarchyDto postData);
 
 	@WebMethod
 	GetListAccessResponse listAccess(@WebParam(name = "subscriptionCode") String subscriptionCode);

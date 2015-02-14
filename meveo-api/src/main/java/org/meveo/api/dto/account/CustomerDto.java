@@ -1,10 +1,9 @@
 package org.meveo.api.dto.account;
 
-import java.util.List;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlType;
 
 import org.meveo.model.AccountEntity;
 import org.meveo.model.crm.Customer;
@@ -12,17 +11,22 @@ import org.meveo.model.crm.Customer;
 /**
  * @author Edward P. Legaspi
  **/
-@XmlRootElement(name = "Customer")
+@XmlType(name = "Customer")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CustomerDto extends AccountDto {
 
 	private static final long serialVersionUID = 3243716253817571391L;
 
+	@XmlElement(required = true)
 	private String customerCategory;
+
+	@XmlElement(required = true)
 	private String customerBrand;
+
+	@XmlElement(required = true)
 	private String seller;
 
-	private List<CustomerAccountDto> customerAccounts;
+	private CustomerAccountsDto customerAccounts;
 
 	public CustomerDto() {
 		super();
@@ -74,11 +78,11 @@ public class CustomerDto extends AccountDto {
 				+ seller + ", customerAccounts=" + customerAccounts + "]";
 	}
 
-	public List<CustomerAccountDto> getCustomerAccounts() {
+	public CustomerAccountsDto getCustomerAccounts() {
 		return customerAccounts;
 	}
 
-	public void setCustomerAccounts(List<CustomerAccountDto> customerAccounts) {
+	public void setCustomerAccounts(CustomerAccountsDto customerAccounts) {
 		this.customerAccounts = customerAccounts;
 	}
 

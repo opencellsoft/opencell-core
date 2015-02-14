@@ -5,6 +5,7 @@ import java.util.Date;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement(name = "CustomField")
@@ -17,16 +18,16 @@ public class CustomFieldDto {
 	@XmlAttribute
 	protected String description;
 
-	@XmlAttribute
+	@XmlElement
 	protected String stringValue;
 
-	@XmlAttribute
+	@XmlElement
 	protected Date dateValue;
 
-	@XmlAttribute
+	@XmlElement
 	protected Long longValue;
 
-	@XmlAttribute
+	@XmlElement
 	protected Double doubleValue;
 
 	public String getCode() {

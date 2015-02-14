@@ -6,14 +6,14 @@ import java.util.Date;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
 
 import org.meveo.api.dto.BaseDto;
 
 /**
  * @author Edward P. Legaspi
  **/
-@XmlRootElement(name = "Subscription")
+@XmlType(name = "ServiceInstance")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ServiceInstanceDto extends BaseDto {
 
@@ -24,7 +24,7 @@ public class ServiceInstanceDto extends BaseDto {
 	private String status;
 	private Date subscriptionDate;
 	private Date terminationDate;
-	private BigDecimal quantity;	
+	private BigDecimal quantity;
 	private String terminationReason;
 
 	public String getCode() {

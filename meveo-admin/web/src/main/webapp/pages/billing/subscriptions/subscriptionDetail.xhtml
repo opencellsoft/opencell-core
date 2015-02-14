@@ -286,12 +286,12 @@
 											maxlength="35" />
 										<hf:formField
 											label="#{messages['businessEntity.description']}"
-											field="description" size="80" maxlength="100" />
+											field="description" size="80" maxlength="100" required="true" />
 									</hftl:panelGroup>
 									<hftl:panelGroup columns="2">
 										<hf:formField
 											label="#{messages['billingAccount.subscriptionDate']}"
-											field="subscriptionDate" />
+											field="subscriptionDate" required="true" />
 										<hf:formField
 											label="#{messages[subscriptionBean.entity.status=='SUSPENDED'?'billingAccount.suspensionDate': 'billingAccount.terminationDate']}"
 											field="terminationDate" show="#{!subscriptionBean.edit}" />

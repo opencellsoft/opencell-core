@@ -1,14 +1,15 @@
 package org.meveo.admin.action.notification;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
 import javax.enterprise.context.ConversationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -16,10 +17,14 @@ import javax.inject.Named;
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.exception.RejectedImportException;
 import org.meveo.commons.utils.CsvBuilder;
 import org.meveo.commons.utils.CsvReader;
+import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.notification.Notification;
 import org.meveo.model.notification.NotificationEventTypeEnum;
+import org.meveo.model.notification.StrategyImportTypeEnum;
+import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.notification.NotificationService;
 import org.primefaces.event.FileUploadEvent;
@@ -35,6 +40,8 @@ public class NotificationBean extends BaseBean<Notification>{
 	@Inject
 	NotificationService notificationService;
 	
+	ParamBean paramBean = ParamBean.getInstance();
+	
 	CsvReader csvReader = null;
     private UploadedFile file; 
     
@@ -45,7 +52,12 @@ public class NotificationBean extends BaseBean<Notification>{
     private static final int EL_ACTION= 4; 
     private static final int EVENT_TYPE_FILTER= 5;
     
-
+    private StrategyImportTypeEnum strategyImportType;
+    
+    CsvBuilder csv = null;
+	private String providerDir=paramBean.getProperty("providers.rootDir","/tmp/meveo_integr");
+	private String existingEntitiesCsvFile=null;
+    
 	public NotificationBean(){
 		super(Notification.class);
 	}
@@ -77,7 +89,6 @@ public class NotificationBean extends BaseBean<Notification>{
 	
 	public void exportToFile() throws Exception {
 
-		CsvBuilder csv = new CsvBuilder();
 		csv.appendValue("Code");
 		csv.appendValue("Classename filter");
 		csv.appendValue("El filter");
@@ -98,7 +109,7 @@ public class NotificationBean extends BaseBean<Notification>{
 				.getBytes());
 		csv.download(inputStream, "Notifications.csv");
 	}
- 
+
 
 public void handleFileUpload(FileUploadEvent event) throws Exception {
 	try {
@@ -114,30 +125,92 @@ public void handleFileUpload(FileUploadEvent event) throws Exception {
 	}
     
 }
-	
 
-	private void upload() throws IOException, BusinessException {
+	public void upload() throws Exception {
 		if (file != null) {
-
 			csvReader = new CsvReader(file.getInputstream(), ';',
 					Charset.forName("ISO-8859-1"));
 			csvReader.readHeaders();
+			try {
+				String existingEntitiesCSV=paramBean.getProperty("existingEntities.csv.dir", "existingEntitiesCSV");
+				File dir=new File(providerDir+File.separator+getCurrentProvider().getCode()+File.separator+existingEntitiesCSV);
+				dir.mkdirs();
+				existingEntitiesCsvFile= dir.getAbsolutePath()+File.separator+"Notifications_"+new SimpleDateFormat("ddMMyyyyHHmmSS").format(new Date())+".csv";
+				csv = new CsvBuilder();
+				boolean isEntityAlreadyExist=false;
+				while (csvReader.readRecord()) {
+					String[] values = csvReader.getValues();
+					Notification existingEntity = notificationService
+							.findByCode(values[CODE], getCurrentProvider());
+					if (existingEntity != null) {
+						checkSelectedStrategy(values, existingEntity,isEntityAlreadyExist);
+						isEntityAlreadyExist=true;
+					} else {
+						Notification notif = new Notification();
+						notif.setCode(values[CODE]);
+						notif.setClassNameFilter(values[CLASS_NAME_FILTER]);
+						notif.setElFilter(values[EL_FILTER]);
+						notif.setDisabled(Boolean.parseBoolean(values[ACTIVE]));
+						notif.setElAction(values[EL_ACTION]);
+						notif.setEventTypeFilter(NotificationEventTypeEnum
+								.valueOf(values[EVENT_TYPE_FILTER]));
+						notificationService.create(notif);
+					}
+				}
+				if(isEntityAlreadyExist && strategyImportType.equals(StrategyImportTypeEnum.REJECT_EXISTING_RECORDS)){
+					csv.writeFile(csv.toString().getBytes(), existingEntitiesCsvFile);
+				}
+				
+				messages.info(new BundleKey("messages", "import.csv.successful"));
+			} catch (RejectedImportException e) {
+				messages.error(new BundleKey("messages", e.getMessage()));
+			}}}
 
-			Notification notification = null;
-			while (csvReader.readRecord()) {
-				String[] values = csvReader.getValues();
-				notification = new Notification();
-				notification.setCode(values[CODE]);
-				notification.setClassNameFilter(values[CLASS_NAME_FILTER]);
-				notification.setElFilter(values[EL_FILTER]);
-				notification.setDisabled(Boolean.parseBoolean(values[ACTIVE]));
-				notification.setElAction(values[EL_ACTION]);
-				notification.setEventTypeFilter(NotificationEventTypeEnum
-						.valueOf(values[EVENT_TYPE_FILTER]));
-				notificationService.create(notification);
-				messages.info(new BundleKey("messages", "commons.csv"));
-			}
-
+	public void checkSelectedStrategy(String[] values,
+			Notification existingEntity,boolean isEntityAlreadyExist) throws Exception {
+		if (strategyImportType.equals(StrategyImportTypeEnum.UPDATED)) {
+			existingEntity.setClassNameFilter(values[CLASS_NAME_FILTER]);
+			existingEntity.setElFilter(values[EL_FILTER]);
+			existingEntity.setDisabled(Boolean.parseBoolean(values[ACTIVE]));
+			existingEntity.setElAction(values[EL_ACTION]);
+			existingEntity.setEventTypeFilter(NotificationEventTypeEnum
+					.valueOf(values[EVENT_TYPE_FILTER]));
+			notificationService.update(existingEntity);
+		} else if (strategyImportType
+				.equals(StrategyImportTypeEnum.REJECTE_IMPORT)) {
+			throw new RejectedImportException("notification.rejectImport");
 		}
+		else if (strategyImportType.equals(StrategyImportTypeEnum.REJECT_EXISTING_RECORDS)) {
+					if(!isEntityAlreadyExist){		
+					csv.appendValue("Code");
+					csv.appendValue("Classename filter");
+					csv.appendValue("El filter");
+					csv.appendValue("Active");
+					csv.appendValue("El action");
+					csv.appendValue("Event type filter");
+					}
+					csv.startNewLine();
+					csv.appendValue(values[CODE]);
+					csv.appendValue(values[CLASS_NAME_FILTER]);
+					csv.appendValue(values[EL_FILTER]);
+					csv.appendValue(values[ACTIVE]);
+					csv.appendValue(values[EL_ACTION]);
+					csv.appendValue(values[EVENT_TYPE_FILTER]);
+					}
+		
 	}
+	public StrategyImportTypeEnum getStrategyImportType() {
+		return strategyImportType;
+	}
+
+	public void setStrategyImportType(StrategyImportTypeEnum strategyImportType) {
+		this.strategyImportType = strategyImportType;
+	}
+
+
+
+
+	
+	
+	
 }

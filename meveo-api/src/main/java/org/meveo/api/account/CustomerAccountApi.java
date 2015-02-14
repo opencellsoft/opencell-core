@@ -258,7 +258,7 @@ public class CustomerAccountApi extends AccountApi {
 					cfDto.setDoubleValue(entry.getValue().getDoubleValue());
 					cfDto.setLongValue(entry.getValue().getLongValue());
 					cfDto.setStringValue(entry.getValue().getStringValue());
-					customerAccountDto.getCustomFields().add(cfDto);
+					customerAccountDto.getCustomFields().getCustomField().add(cfDto);
 				}
 			}
 
