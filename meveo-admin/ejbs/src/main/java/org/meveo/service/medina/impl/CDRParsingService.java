@@ -6,14 +6,10 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.Resource;
 import javax.ejb.Stateless;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
-import org.infinispan.api.BasicCache;
-import org.infinispan.manager.CacheContainer;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.parse.csv.CdrParserProducer;
 import org.meveo.event.qualifier.CDR;
@@ -23,6 +19,7 @@ import org.meveo.model.rating.EDR;
 import org.meveo.model.rating.EDRStatusEnum;
 import org.meveo.service.billing.impl.EdrService;
 import org.slf4j.Logger;
+import org.meveo.util.MeveoCacheContainerProvider;
 
 @Stateless
 public class CDRParsingService {
@@ -37,6 +34,9 @@ public class CDRParsingService {
 
 	@Inject
 	private AccessService accessService;
+	
+	@Inject
+	private static MeveoCacheContainerProvider meveoCacheContainerProvider;
 
 	@Inject
 	@Rejected
@@ -45,9 +45,6 @@ public class CDRParsingService {
 
 	@Inject
 	private CdrParserProducer cdrParserProducer;
-	
-	@Resource(name = "java:jboss/infinispan/container/meveo")
-	private CacheContainer meveoContainer;
 
 	public void init(File CDRFile) throws BusinessException {
 		cdrParser = cdrParserProducer.getParser();
@@ -59,21 +56,14 @@ public class CDRParsingService {
 		cdrParser.initByApi(username, ip);
 	}
 
-	private static BasicCache<String, List<Access>> accessCache;
-	
-	@PostConstruct
-	private void init() {
-			accessCache = meveoContainer.getCache("meveo-access-cache");
-	}
-
 	public static void resetAccessPointCache() {
-		accessCache.clear();
+		meveoCacheContainerProvider.getAccessCache().clear();
 	}
 
 	public void resetAccessPointCache(Access access) {
 		List<Access> accesses = null;
-		if (accessCache.containsKey(access.getAccessUserId())) {
-			accesses = accessCache.get(access.getAccessUserId());
+		if (meveoCacheContainerProvider.getAccessCache().containsKey(access.getAccessUserId())) {
+			accesses = meveoCacheContainerProvider.getAccessCache().get(access.getAccessUserId());
 			boolean found = false;
 			for (Access cachedAccess : accesses) {
 				if ((access.getSubscription().getId() != null && access.getSubscription().getId()
@@ -92,7 +82,7 @@ public class CDRParsingService {
 		} else {
 			accesses = new ArrayList<Access>();
 			accesses.add(access);
-			accessCache.put(access.getAccessUserId(), accesses);
+			meveoCacheContainerProvider.getAccessCache().put(access.getAccessUserId(), accesses);
 		}
 	}
 
@@ -142,16 +132,16 @@ public class CDRParsingService {
 	private List<Access> accessPointLookup(Serializable cdr) throws InvalidAccessException {
 		String userId = cdrParser.getAccessUserId(cdr);
 		List<Access> accesses = null;
-		if (accessCache.containsKey(userId)) {
-			accesses = accessCache.get(userId);
+		if (meveoCacheContainerProvider.getAccessCache().containsKey(userId)) {
+			accesses = meveoCacheContainerProvider.getAccessCache().get(userId);
 		} else {
 			accesses = accessService.findByUserID(userId);
 			if (accesses.size() == 0) {
 				rejectededCdrEventProducer.fire(cdr);
 				throw new InvalidAccessException(cdr);
 			}
-			log.debug("add {} accesses for userId {}",accesses.size(),userId);
-			accessCache.put(userId, accesses);
+
+			meveoCacheContainerProvider.getAccessCache().put(userId, accesses);
 		}
 
 		return accesses;

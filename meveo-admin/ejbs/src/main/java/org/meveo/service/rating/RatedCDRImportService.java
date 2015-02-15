@@ -1,19 +1,18 @@
 package org.meveo.service.rating;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.Future;
 
 import javax.annotation.PostConstruct;
-import javax.annotation.Resource;
 import javax.ejb.AsyncResult;
 import javax.ejb.Asynchronous;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 
-import org.infinispan.api.BasicCache;
-import org.infinispan.manager.CacheContainer;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.RatedTransaction;
@@ -24,6 +23,7 @@ import org.meveo.model.mediation.Access;
 import org.meveo.model.rating.RatedCDR;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.medina.impl.AccessService;
+import org.meveo.util.MeveoCacheContainerProvider;
 import org.slf4j.Logger;
 
 @Stateless
@@ -37,28 +37,37 @@ public class RatedCDRImportService extends PersistenceService<RatedTransaction> 
 	@Inject
 	private Logger log;
 	
-	@Resource(name = "java:jboss/infinispan/container/meveo")
-	private CacheContainer meveoContainer;
+	@Inject
+	MeveoCacheContainerProvider meveoCacheContainerProvider;
 	
-	private static BasicCache<String, UsageChargeTemplate> chargeCache;
-	private static BasicCache<String, List<Access>> accessCache;
 
+	@SuppressWarnings("unchecked")
 	@PostConstruct
 	public void init() {
 		EntityManager em = getEntityManager();
-		chargeCache = meveoContainer.getCache("meveo-usage-charge-template-cache");
 
-		@SuppressWarnings("unchecked")
-		List<UsageChargeTemplate> chargeTemplates = em.createQuery(
-				"From " + UsageChargeTemplate.class.getSimpleName())
-				.getResultList();
-		for (UsageChargeTemplate chargeTemplate : chargeTemplates) {
-			chargeCache.put(chargeTemplate.getCode(), chargeTemplate);
+		if(meveoCacheContainerProvider.getUsageChargeTemplateCache().isEmpty()){
+			List<UsageChargeTemplate> chargeTemplates = em.createQuery(
+					"From " + UsageChargeTemplate.class.getSimpleName())
+					.getResultList();
+			if (chargeTemplates != null & chargeTemplates.size() > 0) {
+				for (UsageChargeTemplate chargeTemplate : chargeTemplates) {
+					if (!meveoCacheContainerProvider.getUsageChargeTemplateCache().containsKey(chargeTemplate.getProvider().getCode())) {
+						meveoCacheContainerProvider.getUsageChargeTemplateCache().put(chargeTemplate.getProvider().getCode(), new HashMap<String, UsageChargeTemplate>());
+					}
+					Map<String, UsageChargeTemplate> chargeTemplatesMap = meveoCacheContainerProvider.getUsageChargeTemplateCache().get(chargeTemplate.getProvider()
+							.getCode());
+					
+					if(!chargeTemplatesMap.containsKey(chargeTemplate.getCode())){
+						chargeTemplatesMap.put(chargeTemplate.getCode(), chargeTemplate);
+					}
+				}	
+			}
+			log.info("loaded " + chargeTemplates.size()
+					+ " usage charge template in cache.");
+
 		}
-		log.info("loaded " + chargeTemplates.size()
-				+ " usage charge template in cache.");
-
-		accessCache = meveoContainer.getCache("meveo-access-cache");
+		
 
 		System.gc();
 
@@ -90,27 +99,32 @@ public class RatedCDRImportService extends PersistenceService<RatedTransaction> 
 	public RatedCDR createRatedTransaction(RatedCDR cdr)
 			throws BusinessException {
 		RatedCDR result = cdr;
-		UsageChargeTemplate chargeTemplate;
-
-		if (chargeCache.containsKey(cdr.getServiceCode())) {
-			chargeTemplate = chargeCache.get(cdr.getServiceCode());
-		} else {
-			result.setError("Charge template not found");
+		UsageChargeTemplate chargeTemplate=null;
+		if(meveoCacheContainerProvider.getUsageChargeTemplateCache().containsKey(cdr.getProvider().getCode())){
+			Map<String, UsageChargeTemplate> usageChargeTemplates=meveoCacheContainerProvider.getUsageChargeTemplateCache().get(cdr.getProvider().getCode());
+			if(usageChargeTemplates!=null && usageChargeTemplates.containsKey(cdr.getServiceCode())){
+				chargeTemplate = usageChargeTemplates.get(cdr.getServiceCode());
+			}else{
+				result.setError("Charge template not found");
+				return result;
+			}
+		}else{
+			result.setError("Charge template provider not found");
 			return result;
 		}
 
 		String userId = cdr.getUserCode();
 		List<Access> accesses = null;
 
-		if (accessCache.containsKey(userId)) {
-			accesses = accessCache.get(userId);
+		if (meveoCacheContainerProvider.getAccessCache().containsKey(userId)) {
+			accesses = meveoCacheContainerProvider.getAccessCache().get(userId);
 		} else {
 			accesses = accessService.findByUserID(userId);
 			if (accesses.size() == 0) {
 				result.setError("no acces found for the userCode");
 				return result;
 			}
-			accessCache.put(userId, accesses);
+			meveoCacheContainerProvider.getAccessCache().put(userId, accesses);
 		}
 
 		for (Access accessPoint : accesses) {

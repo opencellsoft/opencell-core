@@ -1,10 +1,13 @@
 package org.meveo.admin.action.notification;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 
@@ -19,12 +22,14 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.RejectedImportException;
 import org.meveo.commons.utils.CsvBuilder;
 import org.meveo.commons.utils.CsvReader;
+import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.admin.User;
 import org.meveo.model.catalog.CounterTemplate;
 import org.meveo.model.notification.EmailNotification;
 import org.meveo.model.notification.Notification;
 import org.meveo.model.notification.NotificationEventTypeEnum;
 import org.meveo.model.notification.StrategyImportTypeEnum;
+import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.catalog.impl.CounterTemplateService;
 import org.meveo.service.notification.EmailNotificationService;
@@ -40,9 +45,14 @@ public class EmailNotificationBean extends BaseBean<EmailNotification> {
 	@Inject
 	private EmailNotificationService emailNotificationService;
 	
-
+	ParamBean paramBean = ParamBean.getInstance();
     @Inject
     CounterTemplateService counterTemplateService;
+    
+    CsvBuilder csv = null;
+   	private String providerDir=paramBean.getProperty("providers.rootDir","/tmp/meveo_integr");
+   	private String existingEntitiesCsvFile=null;
+   	
 	
 	CsvReader csvReader = null;
     private UploadedFile file; 
@@ -61,7 +71,7 @@ public class EmailNotificationBean extends BaseBean<EmailNotification> {
     private static final int SUBJECT= 9;
     private static final int TEXT_BODY= 10;
     private static final int HTML_BODY= 11;
-    private static final int COUNTER_TEMPLATE= 11;
+    private static final int COUNTER_TEMPLATE= 13;
 
 	public EmailNotificationBean() {
 		super(EmailNotification.class);
@@ -107,7 +117,6 @@ public class EmailNotificationBean extends BaseBean<EmailNotification> {
 	}
 	
 	public void exportToFile() throws Exception {
-		
 		CsvBuilder csv = new CsvBuilder();
 		csv.appendValue("Code");
 		csv.appendValue("Classename filter");
@@ -160,11 +169,18 @@ public class EmailNotificationBean extends BaseBean<EmailNotification> {
 					Charset.forName("ISO-8859-1"));
 			csvReader.readHeaders();
 			try {
+				String existingEntitiesCSV=paramBean.getProperty("existingEntities.csv.dir", "existingEntitiesCSV");
+				File dir=new File(providerDir+File.separator+getCurrentProvider().getCode()+File.separator+existingEntitiesCSV);
+				dir.mkdirs();
+				existingEntitiesCsvFile= dir.getAbsolutePath()+File.separator+"EmailNotifications_"+new SimpleDateFormat("ddMMyyyyHHmmSS").format(new Date())+".csv";
+				csv = new CsvBuilder();
+				boolean isEntityAlreadyExist=false;
 				while (csvReader.readRecord()) {
 					String[] values = csvReader.getValues();
 					EmailNotification existingEntity=emailNotificationService.findByCode(values[CODE], getCurrentProvider());
 						if(existingEntity!=null){
-							checkSelectedStrategy(values,existingEntity);
+							checkSelectedStrategy(values,existingEntity,isEntityAlreadyExist);
+							isEntityAlreadyExist=true;
 						}else{
 							EmailNotification emailNotif=new EmailNotification();
 							emailNotif.setCode(values[CODE]);
@@ -199,14 +215,17 @@ public class EmailNotificationBean extends BaseBean<EmailNotification> {
 						
 							emailNotificationService.create(emailNotif);
 						}}
-				messages.info(new BundleKey("messages", "commons.csv"));
+				if(isEntityAlreadyExist && strategyImportType.equals(StrategyImportTypeEnum.REJECT_EXISTING_RECORDS)){
+					csv.writeFile(csv.toString().getBytes(), existingEntitiesCsvFile);
+				}
+				messages.info(new BundleKey("messages", "import.csv.successful"));
 			} catch (RejectedImportException e) {
 				messages.error(new BundleKey("messages", e.getMessage()));
 			}
 		}
        }
 	
-	public void checkSelectedStrategy(String[] values,EmailNotification existingEntity) throws RejectedImportException{
+	public void checkSelectedStrategy(String[] values,EmailNotification existingEntity,boolean isEntityAlreadyExist) throws RejectedImportException, IOException{
 		if(strategyImportType.equals(StrategyImportTypeEnum.UPDATED)){
 			existingEntity.setClassNameFilter(values[CLASS_NAME_FILTER]);
 			existingEntity.setEventTypeFilter(NotificationEventTypeEnum
@@ -238,12 +257,41 @@ public class EmailNotificationBean extends BaseBean<EmailNotification> {
 			}
 			emailNotificationService.update(existingEntity);
 		          }
-		else if(strategyImportType.equals(StrategyImportTypeEnum.REJECT_EXISTING_RECORDS)){	
-						      //add to a new csv
-		}else if(strategyImportType.equals(StrategyImportTypeEnum.REJECTE_IMPORT)){
-		  throw new RejectedImportException("notification.rejectImport");
-		}
-	}
+		else if(strategyImportType.equals(StrategyImportTypeEnum.REJECTE_IMPORT)){
+			  throw new RejectedImportException("notification.rejectImport");
+			}
+		else if (strategyImportType.equals(StrategyImportTypeEnum.REJECT_EXISTING_RECORDS)) {
+			if(!isEntityAlreadyExist){		
+				csv.appendValue("Code");
+				csv.appendValue("Classename filter");
+				csv.appendValue("Event type filter");
+				csv.appendValue("El filter");
+				csv.appendValue("Active");
+				csv.appendValue("El action");
+				csv.appendValue("Sent from");
+				csv.appendValue("Send to EL");
+				csv.appendValue("Send to mailing list");
+				csv.appendValue("Subject");
+				csv.appendValue("Text body");
+				csv.appendValue("HTML body");
+				csv.appendValue("Attachments EL");
+				csv.appendValue("Counter template");
+			}
+			csv.startNewLine();
+			csv.appendValue(values[CODE]);
+			csv.appendValue(values[CLASS_NAME_FILTER]);
+			csv.appendValue(values[EVENT_TYPE_FILTER]);
+			csv.appendValue(values[EL_FILTER]);
+			csv.appendValue(values[ACTIVE]);
+			csv.appendValue(values[EL_ACTION]);
+			csv.appendValue(values[SENT_FROM]);
+			csv.appendValue(values[SEND_TO_EL]);
+			csv.appendValue(values[SEND_TO_MAILING_LIST]);
+			csv.appendValue(values[SUBJECT]);
+			csv.appendValue(values[TEXT_BODY]);
+			csv.appendValue(values[HTML_BODY]);
+			csv.appendValue(values[COUNTER_TEMPLATE]);
+		}}
 	
  
 
