@@ -88,7 +88,7 @@ public class NotificationBean extends BaseBean<Notification>{
 	
 	
 	public void exportToFile() throws Exception {
-
+		CsvBuilder csv = new CsvBuilder();
 		csv.appendValue("Code");
 		csv.appendValue("Classename filter");
 		csv.appendValue("El filter");

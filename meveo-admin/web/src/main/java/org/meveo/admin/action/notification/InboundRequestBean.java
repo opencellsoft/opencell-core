@@ -131,7 +131,7 @@ public class InboundRequestBean extends BaseBean<InboundRequest> {
         csv.appendValue("Cookies");
         csv.appendValue("Headers");
         csv.appendValue("Parameters");
-        csv.appendValue("ContentType");
+        csv.appendValue("Response content type");
         csv.appendValue("Encoding");
         csv.appendValue("Cookies");
         csv.appendValue("Headers");
@@ -275,7 +275,7 @@ public class InboundRequestBean extends BaseBean<InboundRequest> {
 			        csv.appendValue("Cookies");
 			        csv.appendValue("Headers");
 			        csv.appendValue("Parameters");
-			        csv.appendValue("ContentType");
+			        csv.appendValue("Response content type");
 			        csv.appendValue("Encoding");
 			        csv.appendValue("Cookies");
 			        csv.appendValue("Headers");

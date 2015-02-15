@@ -98,6 +98,7 @@ public class WebHookBean extends BaseBean<WebHook> {
     }
     
 	public void exportToFile() throws Exception {
+		CsvBuilder csv = new CsvBuilder();
 		csv.appendValue("Code");
 		csv.appendValue("Classename filter");
 		csv.appendValue("Event type filter");
