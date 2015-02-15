@@ -19,6 +19,7 @@ package org.meveo.admin.action.medina;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.ejb.EJB;
 import javax.enterprise.context.ConversationScoped;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
@@ -51,6 +52,9 @@ public class AccessBean extends StatelessBaseBean<Access> {
 	@Inject
 	private SubscriptionService subscriptionService;
 
+	@EJB
+	private CDRParsingService cdrParsingService;
+	
 	@Inject
 	@RequestParam
 	private Instance<Long> subscriptionId;
@@ -132,7 +136,7 @@ public class AccessBean extends StatelessBaseBean<Access> {
 		}
 
 		result = super.saveOrUpdate(killConversation);
-		CDRParsingService.resetAccessPointCache(entity);
+		cdrParsingService.resetAccessPointCache(entity);
 
 		return result;
 	}
