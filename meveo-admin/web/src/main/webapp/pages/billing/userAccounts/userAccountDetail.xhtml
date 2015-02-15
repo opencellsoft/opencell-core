@@ -255,6 +255,14 @@
 												<p:outputLabel value="#{messages['chargeTemplate.type']}" />
 												<h:outputText
 													value="#{wallet.value.walletTemplate.walletType}" />
+												<p:outputLabel rendered="#{wallet.key!='PRINCIPAL'}"
+													value="#{messages['userAccount.cachedBalance']}" />
+												<h:outputText
+													value="#{userAccountBean.getBalance(wallet.value)}" />
+												<p:outputLabel rendered="#{wallet.key!='PRINCIPAL'}"
+													value="#{messages['userAccount.cachedReservedBalance']}" />
+												<h:outputText
+													value="#{userAccountBean.getReservedBalance(wallet.value)}" />
 											</p:panelGrid>
 										</p:panelGrid>
 										<p:dataTable id="wallet#{wallet.key}datatable" var="e"

@@ -3,6 +3,8 @@ package org.meveo.api.billing;
 import java.util.List;
 
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
@@ -65,7 +67,7 @@ public class MediationApi extends BaseApi {
 		}
 	}
 
-	
+	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public void chargeCdr(String  cdr, User user, String ip) throws MeveoApiException {
 		if(!StringUtils.isBlank(cdr)){
 			try {
@@ -94,12 +96,17 @@ public class MediationApi extends BaseApi {
 							edrService.remove(edr);
 						} catch(Exception e1){}
 						log.error("Exception rating edr={}", e.getMessage());
-						throw new MeveoApiException(e.getMessage());
+						if("INSUFFICIENT_BALANCE".equals(e.getMessage())){
+							throw new MeveoApiException(e.getMessage());
+						} else {
+							throw new MeveoApiException(e.getMessage());
+						}
+						
 					}
 				}
 			} catch (CDRParsingException e) {
-				log.error("Error parsing cdr={}", e.getMessage());
-				throw new MeveoApiException(e.getMessage());
+				log.error("Error parsing cdr={}", e.getRejectionCause());
+				throw new MeveoApiException(e.getRejectionCause().toString());
 			}
 		} else {
 			missingParameters.add("cdr");

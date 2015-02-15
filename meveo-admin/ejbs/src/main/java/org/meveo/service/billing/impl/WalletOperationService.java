@@ -137,7 +137,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 			updateCache(charge);
 		}
 		List<Long> walletIds = (List<Long>) getEntityManager().createNamedQuery(
-				"WalletInstance.listPrepaidActiiveWalletIds", Long.class).getResultList();
+				"WalletInstance.listPrepaidActiveWalletIds", Long.class).getResultList();
 		for (Long walletId : walletIds) {
 			if (!balanceCache.containsKey(walletId)) {
 				fillBalanceCaches(walletId);
@@ -145,7 +145,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 		}
 	}
 
-	public void fillBalanceCaches(Long walletId) {
+	public BigDecimal fillBalanceCaches(Long walletId) {
 		BigDecimal balance = (BigDecimal) getEntityManager()
 				.createNamedQuery("WalletOperation.getBalance", BigDecimal.class).setParameter("walletId", walletId)
 				.getSingleResult();
@@ -161,6 +161,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 		}
 		reservedBalanceCache.put(walletId, reservedBalance);
 		log.debug("fillBalanceCaches walletId:{} balance:{} reservedBalance:{}", walletId, balance, reservedBalance);
+		return balance;
 	}
 
 	public void updateBalanceCache(@Observes @Created WalletInstance wallet) {
@@ -171,16 +172,19 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 
 	public void updateBalanceCache(@Observes @Created WalletOperation op) {
 		// FIXME: handle reservation
-		if (reservedBalanceCache.containsKey(op.getChargeInstance().getId())) {
-			BigDecimal oldValue = reservedBalanceCache.get(op.getChargeInstance().getId());
+		log.debug("enter updateBalanceCache for WalletOperation {}",op);
+		if (reservedBalanceCache.containsKey(op.getWallet().getId())) {
+			BigDecimal oldValue = reservedBalanceCache.get(op.getWallet().getId());
 			BigDecimal newValue = oldValue.subtract(op.getAmountWithTax());
 			log.debug("update reservedBalance Cache {}->{}", oldValue, newValue);
-			reservedBalanceCache.put(op.getChargeInstance().getId(), newValue);
-			oldValue = balanceCache.get(op.getChargeInstance().getId());
+			reservedBalanceCache.put(op.getWallet().getId(), newValue);
+			oldValue = balanceCache.get(op.getWallet().getId());
 			newValue = oldValue.subtract(op.getAmountWithTax());
 			log.debug("update balance Cache {}->{}", oldValue, newValue);
-			balanceCache.put(op.getChargeInstance().getId(), newValue);
+			balanceCache.put(op.getWallet().getId(), newValue);
 			// FIXME: handle low balance notifications
+		} else if(op.getChargeInstance() instanceof UsageChargeInstance){
+			updateCache((UsageChargeInstance)op.getChargeInstance());
 		}
 	}
 
@@ -198,7 +202,25 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 				}
 			}
 		}
-		usageChargeInstanceWallet.put(charge.getId(), walletIds);
+		if(walletIds.size()>0){
+			usageChargeInstanceWallet.put(charge.getId(), walletIds);
+		}
+	}
+
+	public BigDecimal getCacheBalance(Long walletId){
+		BigDecimal result = null;
+		if(balanceCache.containsKey(walletId)){
+			result=balanceCache.get(walletId);
+		}
+		return result;
+	}
+
+	public BigDecimal getReservedCacheBalance(Long walletId){
+		BigDecimal result = null;
+		if(reservedBalanceCache.containsKey(walletId)){
+			result=reservedBalanceCache.get(walletId);
+		}
+		return result;
 	}
 
 	public BigDecimal getRatedAmount(Provider provider, Seller seller, Customer customer,
@@ -425,11 +447,6 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 		return result;
 	}
 
-	public void usageWalletOperation(Subscription subscription, Date usageDate, BigDecimal quantity, String param1,
-			String param2, String param3) {
-
-	}
-
 	/*
 	 * public WalletOperation rateOneShotApplication(Subscription subscription,
 	 * OneShotChargeInstance chargeInstance, Integer quantity, Date
@@ -495,7 +512,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 		oneShotWalletOperation(getEntityManager(), subscription, chargeInstance, quantity, applicationDate, creator);
 	}
 
-	public void oneShotWalletOperation(EntityManager em, Subscription subscription,
+	public WalletOperation oneShotWalletOperation(EntityManager em, Subscription subscription,
 			OneShotChargeInstance chargeInstance, BigDecimal quantity, Date applicationDate, User creator)
 			throws BusinessException {
 
@@ -511,11 +528,11 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 				"WalletOperationService.oneShotWalletOperation subscriptionCode={}, quantity={}, applicationDate={}, chargeInstance.getId={}",
 				new Object[] { subscription.getId(), quantity, applicationDate, chargeInstance.getId() });
 
-		WalletOperation chargeApplication = rateOneShotApplication(em, subscription, chargeInstance, quantity,
+		WalletOperation walletOperation = rateOneShotApplication(em, subscription, chargeInstance, quantity,
 				applicationDate, creator);
 		ChargeTemplate chargeTemplate = chargeInstance.getChargeTemplate();
 
-		chargeWalletOpertation(chargeApplication, creator, chargeInstance.getProvider());
+		chargeWalletOpertation(walletOperation, creator, chargeInstance.getProvider());
 		// create(chargeApplication, creator, chargeInstance.getProvider());
 		OneShotChargeTemplate oneShotChargeTemplate = null;
 
@@ -541,6 +558,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 				billingAccountService.update(billingAccount, creator);
 			}
 		}
+		return walletOperation;
 	}
 
 	public void recurringWalletOperation(Subscription subscription, RecurringChargeInstance chargeInstance,
@@ -1386,4 +1404,5 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 		}
 		return result;
 	}
+	
 }

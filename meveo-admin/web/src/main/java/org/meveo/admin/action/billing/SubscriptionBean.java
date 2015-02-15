@@ -281,7 +281,7 @@ public class SubscriptionBean extends StatefulBaseBean<Subscription> {
 						oneShotChargeInstanceWalletCode, oneShotChargeInstance.getChargeDate(),
 						oneShotChargeInstance.getAmountWithoutTax(), oneShotChargeInstance.getAmountWithTax(),
 						oneShotChargeInstanceQuantity, oneShotChargeInstance.getCriteria1(),
-						oneShotChargeInstance.getCriteria2(), oneShotChargeInstance.getCriteria3(), getCurrentUser());
+						oneShotChargeInstance.getCriteria2(), oneShotChargeInstance.getCriteria3(), getCurrentUser(),true);
 				// oneShotChargeInstance.setId(id);
 				// oneShotChargeInstance.setProvider(oneShotChargeInstance.getChargeTemplate().getProvider());
 			}

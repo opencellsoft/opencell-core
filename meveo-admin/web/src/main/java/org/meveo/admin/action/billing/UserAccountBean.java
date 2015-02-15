@@ -36,6 +36,7 @@ import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.OperationTypeEnum;
 import org.meveo.model.billing.RatedTransaction;
 import org.meveo.model.billing.UserAccount;
+import org.meveo.model.billing.WalletInstance;
 import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.billing.WalletOperationStatusEnum;
 import org.meveo.model.crm.AccountLevelEnum;
@@ -355,4 +356,23 @@ public class UserAccountBean extends AccountBean<UserAccount> {
 		walletOperationService.create(reloadOperation, getCurrentUser());
 		reloadOperation=null;
 	}
+	
+	public String getBalance(WalletInstance wallet){
+		String result ="-";
+		BigDecimal balance = walletOperationService.getCacheBalance(wallet.getId());
+		if(balance!=null){
+			result=balance.toPlainString();
+		}
+		return result;
+	}
+	
+	public String getReservedBalance(WalletInstance wallet){
+		String result ="-";
+		BigDecimal balance = walletOperationService.getReservedCacheBalance(wallet.getId());
+		if(balance!=null){
+			result=balance.toPlainString();
+		}
+		return result;
+	}
+	
 }

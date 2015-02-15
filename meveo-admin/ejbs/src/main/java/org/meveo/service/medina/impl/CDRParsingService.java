@@ -14,6 +14,7 @@ import javax.inject.Inject;
 
 import org.infinispan.api.BasicCache;
 import org.infinispan.manager.CacheContainer;
+import org.jfree.util.Log;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.parse.csv.CdrParserProducer;
 import org.meveo.event.qualifier.CDR;
@@ -22,9 +23,13 @@ import org.meveo.model.mediation.Access;
 import org.meveo.model.rating.EDR;
 import org.meveo.model.rating.EDRStatusEnum;
 import org.meveo.service.billing.impl.EdrService;
+import org.slf4j.Logger;
 
 @Stateless
 public class CDRParsingService {
+
+	@Inject
+	private Logger log;
 
 	private CSVCDRParser cdrParser;
 
@@ -138,7 +143,6 @@ public class CDRParsingService {
 	private List<Access> accessPointLookup(Serializable cdr) throws InvalidAccessException {
 		String userId = cdrParser.getAccessUserId(cdr);
 		List<Access> accesses = null;
-
 		if (accessCache.containsKey(userId)) {
 			accesses = accessCache.get(userId);
 		} else {
@@ -147,7 +151,7 @@ public class CDRParsingService {
 				rejectededCdrEventProducer.fire(cdr);
 				throw new InvalidAccessException(cdr);
 			}
-
+			log.debug("add {} accesses for userId {}",accesses.size(),userId);
 			accessCache.put(userId, accesses);
 		}
 

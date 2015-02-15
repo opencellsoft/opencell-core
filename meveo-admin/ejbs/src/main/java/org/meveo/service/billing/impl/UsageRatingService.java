@@ -674,6 +674,7 @@ public class UsageRatingService {
 		ratePostpaidUsageWithinTransaction(edr,currentUser);
 	}
 	
+	@TransactionAttribute(TransactionAttributeType.MANDATORY)
 	public void ratePostpaidUsageWithinTransaction(EDR edr, User currentUser) throws BusinessException {
 		BigDecimal originalQuantity = edr.getQuantity();
 
@@ -748,8 +749,8 @@ public class UsageRatingService {
 			} catch (Exception e) {
 				edr.setStatus(EDRStatusEnum.REJECTED);
 				edr.setRejectReason(e.getMessage());
-				e.printStackTrace();
-				throw new BusinessException(e);
+				//e.printStackTrace();
+				throw new BusinessException(e.getMessage());
 			}
 		}
 

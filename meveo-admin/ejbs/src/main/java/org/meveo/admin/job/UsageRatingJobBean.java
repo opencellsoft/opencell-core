@@ -43,10 +43,10 @@ public class UsageRatingJobBean {
 		try {
 			List<EDR> edrs = edrService.getEDRToRate(currentUser.getProvider());
 
-			log.info("edr to rate:" + edrs.size());
+			log.debug("edr to rate:" + edrs.size());
 
 			for (EDR edr : edrs) {
-				log.info("rate edr={}", edr.getId());
+				log.debug("rate edr={}", edr.getId());
 
 				try {
 					usageRatingService.ratePostpaidUsage(edr, currentUser);

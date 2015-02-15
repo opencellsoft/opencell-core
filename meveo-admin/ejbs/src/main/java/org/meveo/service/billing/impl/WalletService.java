@@ -16,6 +16,9 @@
  */
 package org.meveo.service.billing.impl;
 
+import java.util.Date;
+import java.util.List;
+
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
@@ -70,6 +73,11 @@ public class WalletService extends PersistenceService<WalletInstance> {
 		} else {
 			return userAccount.getWallet();
 		}
+	}
+
+	public List<WalletInstance> getWalletsToMatch(Date date){
+		return getEntityManager().createNamedQuery(
+				"WalletInstance.listPrepaidWalletsToMatch", WalletInstance.class).setParameter("matchingDate", date).getResultList();
 	}
 
 }
