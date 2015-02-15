@@ -62,12 +62,10 @@ public class PricePlanMatrixService extends PersistenceService<PricePlanMatrix> 
 
 	public void update(PricePlanMatrix e) {
 		super.update(e);
-		RatingService.setPricePlanDirty();
 	}
 
 	public void remove(Long id) {
 		super.remove(id);
-		RatingService.setPricePlanDirty();
 	}
 
 	public void disable(Long id) {
@@ -77,17 +75,14 @@ public class PricePlanMatrixService extends PersistenceService<PricePlanMatrix> 
 
 	public void remove(PricePlanMatrix e) {
 		super.remove(e);
-		RatingService.setPricePlanDirty();
 	}
 
 	public void remove(Set<Long> ids) {
 		super.remove(ids);
-		RatingService.setPricePlanDirty();
 	}
 
 	public void update(PricePlanMatrix e, User updater) {
 		super.update(e, updater);
-		RatingService.setPricePlanDirty();
 	}
 
 	public void create(PricePlanMatrix e, User creator) {
