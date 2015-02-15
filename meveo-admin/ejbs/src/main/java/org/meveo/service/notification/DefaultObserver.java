@@ -9,15 +9,12 @@ import java.util.List;
 import java.util.Map;
 
 import javax.annotation.PostConstruct;
-import javax.annotation.Resource;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
 import javax.enterprise.event.Observes;
 import javax.enterprise.inject.spi.BeanManager;
 import javax.inject.Inject;
 
-import org.infinispan.api.BasicCache;
-import org.infinispan.manager.CacheContainer;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.event.qualifier.CDR;
@@ -33,13 +30,12 @@ import org.meveo.event.qualifier.Updated;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.IEntity;
 import org.meveo.model.admin.User;
+import org.meveo.model.billing.CounterInstance;
 import org.meveo.model.billing.UsageChargeInstance;
-import org.meveo.model.cache.CounterInstanceCache;
 import org.meveo.model.cache.UsageChargeInstanceCache;
-import org.meveo.model.cache.UsageChargeTemplateCache;
-import org.meveo.model.catalog.DiscountPlanMatrix;
 import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.model.catalog.UsageChargeTemplate;
+import org.meveo.model.mediation.Access;
 import org.meveo.model.notification.EmailNotification;
 import org.meveo.model.notification.InboundRequest;
 import org.meveo.model.notification.InstantMessagingNotification;
@@ -51,9 +47,8 @@ import org.meveo.model.notification.WebHook;
 import org.meveo.service.billing.impl.CounterInstanceService;
 import org.meveo.service.billing.impl.CounterValueInsufficientException;
 import org.meveo.service.billing.impl.RatingService;
+import org.meveo.util.MeveoCacheContainerProvider;
 import org.slf4j.Logger;
-
-import com.lowagie.text.pdf.parser.Matrix;
 
 @Singleton
 @Startup
@@ -85,14 +80,10 @@ public class DefaultObserver {
 	
 	HashMap<NotificationEventTypeEnum, HashMap<Class<BusinessEntity>, List<Notification>>> classNotificationMap = new HashMap<>();
 	
-	@Resource(name = "java:jboss/infinispan/container/meveo")
-	private CacheContainer meveoContainer;
+	@Inject
+	MeveoCacheContainerProvider meveoCacheContainerProvider;
 
-	private static BasicCache<String, HashMap<String, List<PricePlanMatrix>>> allPricePlan;
-	private static BasicCache<String, HashMap<String, List<DiscountPlanMatrix>>> allDiscountPlan;
-	private static BasicCache<String, UsageChargeTemplateCache> chargeTemplateCache;
-	private static BasicCache<Long, List<UsageChargeInstanceCache>> chargeCache;
-	private static BasicCache<Long,CounterInstanceCache> counterCache;
+	
 
 	
 
@@ -106,14 +97,6 @@ public class DefaultObserver {
 		for (Notification notif : allNotif) {
 			addNotificationToCache(notif);
 		}
-		
-		allPricePlan = meveoContainer.getCache("meveo-price-plan");
-		allDiscountPlan = meveoContainer.getCache("meveo-discounts");
-		chargeTemplateCache = meveoContainer.getCache("meveo-usage-charge-template-cache-cache");
-		
-		chargeCache = meveoContainer.getCache("meveo-charge-instance-cache");
-	
-		counterCache = meveoContainer.getCache("meveo-counter-cache");
 	}
 
 	private void addNotificationToCache(Notification notif) {
@@ -267,7 +250,7 @@ public class DefaultObserver {
 		if (Notification.class.isAssignableFrom(e.getClass())) {
 			updateNotificationInCache((Notification) e);
 		}
-		
+		updateCache(e, false);
 	}
 	
 
@@ -277,11 +260,13 @@ public class DefaultObserver {
 		if (Notification.class.isAssignableFrom(e.getClass())) {
 			removeNotificationFromCache((Notification) e);
 		}
+		updateCache(e, true);
 	}
 
 	public void entityDisabled(@Observes @Disabled IEntity e) {
 		log.debug("Defaut observer : Entity {} with id {} disabled", e.getClass().getName(), e.getId());
 		checkEvent(NotificationEventTypeEnum.DISABLED, e);
+		updateCache(e, true);
 	}
 
 	public void entityTerminated(@Observes @Terminated IEntity e) {
@@ -324,10 +309,10 @@ public class DefaultObserver {
 	
 	public void updateCache(IEntity e,boolean removeAction){
 		if(e instanceof PricePlanMatrix){
-			if (allPricePlan.containsKey(((PricePlanMatrix) e).getProvider())) {
+			if (meveoCacheContainerProvider.getAllPricePlan().containsKey(((PricePlanMatrix) e).getProvider().getCode())) {
 				
-				if (allPricePlan.get(((PricePlanMatrix) e).getProvider()).containsKey(((PricePlanMatrix) e).getEventCode())) {
-					List<PricePlanMatrix> listPricePlan=allPricePlan.get(((PricePlanMatrix) e).getProvider()).get(((PricePlanMatrix) e).getEventCode());
+				if (meveoCacheContainerProvider.getAllPricePlan().get(((PricePlanMatrix) e).getProvider().getCode()).containsKey(((PricePlanMatrix) e).getEventCode())) {
+					List<PricePlanMatrix> listPricePlan=meveoCacheContainerProvider.getAllPricePlan().get(((PricePlanMatrix) e).getProvider().getCode()).get(((PricePlanMatrix) e).getEventCode());
 					Integer pricePlanIndex=null;
 					for (PricePlanMatrix pricePlan : listPricePlan) {
 						if(pricePlan.getId().equals(e.getId())){
@@ -339,7 +324,7 @@ public class DefaultObserver {
 						if(!removeAction){
 							listPricePlan.set(pricePlanIndex, (PricePlanMatrix) e);
 						}else{
-							listPricePlan.remove(pricePlanIndex);
+							listPricePlan.remove(pricePlanIndex.intValue());
 						}
 						
 					}
@@ -347,36 +332,48 @@ public class DefaultObserver {
 				}
 			}
 			
-		}else if(e instanceof DiscountPlanMatrix){
-			if (allDiscountPlan.containsKey(((DiscountPlanMatrix) e).getProvider())) {
-				if (allDiscountPlan.get(((DiscountPlanMatrix) e).getProvider()).containsKey(((DiscountPlanMatrix) e).getEventCode())) {
-					List<DiscountPlanMatrix> discountPlans=allDiscountPlan.get(((DiscountPlanMatrix) e).getProvider()).get(((DiscountPlanMatrix) e).getEventCode());
-					Integer discountPlanIndex=null;
-					for (DiscountPlanMatrix discountPlan : discountPlans) {
-						if(discountPlan.getId().equals(e.getId())){
-							discountPlanIndex=discountPlans.indexOf(discountPlan);
-							break;
-						}
-					}
-					if(discountPlanIndex!=null){
-						if(!removeAction){
-							discountPlans.set(discountPlanIndex, (DiscountPlanMatrix) e);
-						}else{
-							discountPlans.remove(discountPlanIndex);
-						}
-						
-					}
-				}
-			}
 		}else if(e instanceof UsageChargeTemplate){
 			UsageChargeTemplate usageChargeTemplate=(UsageChargeTemplate)e;
-			if (chargeTemplateCache.containsKey(usageChargeTemplate.getCode())) {
-				chargeTemplateCache.remove(usageChargeTemplate.getCode()); //if update action  the UsageChargeTemplateCache will be reconstructed
+			if (meveoCacheContainerProvider.getUsageChargeTemplateCacheCache().containsKey(usageChargeTemplate.getId())) {
+				meveoCacheContainerProvider.getUsageChargeTemplateCacheCache().remove(usageChargeTemplate.getCode()); //if update action  the UsageChargeTemplateCache will be reconstructed
+			}
+			if (meveoCacheContainerProvider.getUsageChargeTemplateCache().containsKey(usageChargeTemplate.getProvider().getCode())) {
+				Map<String, UsageChargeTemplate> chargeTemplatesMap = meveoCacheContainerProvider.getUsageChargeTemplateCache().get(usageChargeTemplate.getProvider()
+						.getCode());
+				if (chargeTemplatesMap.containsKey(((UsageChargeTemplate) e).getCode())) {
+					if(!removeAction){
+					chargeTemplatesMap.put(((UsageChargeTemplate) e).getCode(), usageChargeTemplate);
+					}else{
+						chargeTemplatesMap.remove(((UsageChargeTemplate) e).getCode());
+					}
+				}
+				
+			}
+		}else if(e instanceof Access){
+			Access access=(Access)e;
+			if (meveoCacheContainerProvider.getAccessCache().containsKey(access.getAccessUserId())) {
+				List<Access> accesses = meveoCacheContainerProvider.getAccessCache().get(access.getAccessUserId());
+				Integer accessIndex=null;
+				for (Access cachedAccess : accesses) {
+					if(cachedAccess.getId().equals(access.getId())){
+						accessIndex=accesses.indexOf(cachedAccess);
+						break;
+					}
+				}
+				if(accessIndex!=null){
+					if(!removeAction){
+						accesses.set(accessIndex, access);
+					}else{
+						accesses.remove(accessIndex.intValue());
+					}
+					
+				}
+				
 			}
 		}else if(e instanceof UsageChargeInstance){
 			UsageChargeInstance usageChargeInstance=(UsageChargeInstance)e;
-			if (chargeCache.containsKey(usageChargeInstance.getServiceInstance().getSubscription().getId())) {
-				List<UsageChargeInstanceCache> usageChargeInstanceCaches=chargeCache.get(usageChargeInstance.getServiceInstance().getSubscription().getId());
+			if (meveoCacheContainerProvider.getUsageChargeInstanceCache().containsKey(usageChargeInstance.getServiceInstance().getSubscription().getId())) {
+				List<UsageChargeInstanceCache> usageChargeInstanceCaches=meveoCacheContainerProvider.getUsageChargeInstanceCache().get(usageChargeInstance.getServiceInstance().getSubscription().getId());
 				Integer usageChargeInstanceCacheIndex=null;
 				for(UsageChargeInstanceCache usageChargeInstanceCache:usageChargeInstanceCaches){
 					
@@ -386,6 +383,14 @@ public class DefaultObserver {
 					}
 				}
 				usageChargeInstanceCaches.remove(usageChargeInstanceCacheIndex); //if update action the UsageChargeInstanceCache will be reconstructed
+			}
+		}else if(e instanceof CounterInstance){
+			CounterInstance counterInstance=(CounterInstance)e;
+			if (meveoCacheContainerProvider.getCounterCache().containsKey(counterInstance.getId())) {
+				if(meveoCacheContainerProvider.getCounterCache().containsKey(counterInstance.getId())){
+					meveoCacheContainerProvider.getCounterCache().remove(counterInstance.getId());//if update action the CounterInstanceCache will be reconstructed
+					
+				}
 			}
 		}
 	}

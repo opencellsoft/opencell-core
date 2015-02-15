@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.Map;
 
 import javax.annotation.PostConstruct;
-import javax.annotation.Resource;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.el.ArrayELResolver;
@@ -29,8 +28,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
-import org.infinispan.api.BasicCache;
-import org.infinispan.manager.CacheContainer;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.NumberUtils;
 import org.meveo.commons.utils.StringUtils;
@@ -58,6 +55,7 @@ import org.meveo.service.base.SimpleELResolver;
 import org.meveo.service.base.SimpleFunctionMapper;
 import org.meveo.service.base.SimpleVariableMapper;
 import org.meveo.service.catalog.impl.CatMessagesService;
+import org.meveo.util.MeveoCacheContainerProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -77,22 +75,15 @@ public class RatingService {
 
 	@EJB
 	private SubscriptionService subscriptionService;
+	
+	@Inject
+	MeveoCacheContainerProvider meveoCacheContainerProvider;
 
 	private static boolean isPricePlanDirty;
 
 	private static final BigDecimal HUNDRED = new BigDecimal("100");
 
-	@Resource(name = "java:jboss/infinispan/container/meveo")
-	private CacheContainer meveoContainer;
-
-	private static BasicCache<String, HashMap<String, List<PricePlanMatrix>>> allPricePlan;
-
-	@PostConstruct
-	private void init() {
-		if (allPricePlan == null) {
-			allPricePlan = meveoContainer.getCache("meveo-price-plan");
-		}
-	}
+	
 
 	public static void setPricePlanDirty() {
 		isPricePlanDirty = true;
@@ -350,19 +341,19 @@ public class RatingService {
 		String providerCode = provider.getCode();
 
 		if (unitPriceWithoutTax == null) {
-			if (allPricePlan.isEmpty()) {
+			if (meveoCacheContainerProvider.getAllPricePlan().isEmpty()) {
 				loadPricePlan(em);
 			} else if (isPricePlanDirty) {
 				reloadPricePlan();
 			}
-			if (!allPricePlan.containsKey(providerCode)) {
+			if (!meveoCacheContainerProvider.getAllPricePlan().containsKey(providerCode)) {
 				throw new RuntimeException("No price plan for provider " + providerCode);
 			}
-			if (!allPricePlan.get(providerCode).containsKey(bareWalletOperation.getCode())) {
+			if (!meveoCacheContainerProvider.getAllPricePlan().get(providerCode).containsKey(bareWalletOperation.getCode())) {
 				throw new RuntimeException("No price plan for provider " + providerCode + " and charge code "
 						+ bareWalletOperation.getCode());
 			}
-			ratePrice = ratePrice(allPricePlan.get(providerCode).get(bareWalletOperation.getCode()),
+			ratePrice = ratePrice(meveoCacheContainerProvider.getAllPricePlan().get(providerCode).get(bareWalletOperation.getCode()),
 					bareWalletOperation, countryId, tcurrency,
 					bareWalletOperation.getSeller() != null ? bareWalletOperation.getSeller().getId() : null);
 			if (ratePrice == null || ratePrice.getAmountWithoutTax() == null) {
@@ -611,10 +602,10 @@ public class RatingService {
 				"from PricePlanMatrix where disabled=false order by priority ASC").getResultList();
 		if (allPricePlans != null & allPricePlans.size() > 0) {
 			for (PricePlanMatrix pricePlan : allPricePlans) {
-				if (!allPricePlan.containsKey(pricePlan.getProvider().getCode())) {
-					allPricePlan.put(pricePlan.getProvider().getCode(), new HashMap<String, List<PricePlanMatrix>>());
+				if (!meveoCacheContainerProvider.getAllPricePlan().containsKey(pricePlan.getProvider().getCode())) {
+					meveoCacheContainerProvider.getAllPricePlan().put(pricePlan.getProvider().getCode(), new HashMap<String, List<PricePlanMatrix>>());
 				}
-				HashMap<String, List<PricePlanMatrix>> providerPricePlans = allPricePlan.get(pricePlan.getProvider()
+				HashMap<String, List<PricePlanMatrix>> providerPricePlans = meveoCacheContainerProvider.getAllPricePlan().get(pricePlan.getProvider()
 						.getCode());
 				if (!providerPricePlans.containsKey(pricePlan.getEventCode())) {
 					providerPricePlans.put(pricePlan.getEventCode(), new ArrayList<PricePlanMatrix>());
@@ -647,7 +638,7 @@ public class RatingService {
 			}
 		}
 
-		log.info("loadPricePlan allPricePlan.size()=" + allPricePlan != null ? allPricePlan.size() + "" : null);
+		log.info("loadPricePlan allPricePlan.size()=" + meveoCacheContainerProvider.getAllPricePlan() != null ? meveoCacheContainerProvider.getAllPricePlan().size() + "" : null);
 	}
 
 	private boolean matchExpression(String expression, WalletOperation bareOperation, UserAccount ua)
