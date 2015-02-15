@@ -28,7 +28,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
-import org.infinispan.api.BasicCache;
 import org.infinispan.manager.CacheContainer;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.QueryBuilder;
@@ -38,6 +37,7 @@ import org.meveo.model.crm.Provider;
 import org.meveo.model.rating.EDR;
 import org.meveo.model.rating.EDRStatusEnum;
 import org.meveo.service.base.PersistenceService;
+import org.meveo.util.MeveoCacheContainerProvider;
 import org.slf4j.Logger;
 
 @Stateless
@@ -47,17 +47,19 @@ public class EdrService extends PersistenceService<EDR> {
 
 	@Inject
 	private Logger log;
+	
+	@Inject
+	MeveoCacheContainerProvider meveoCacheContainerProvider;
 
 	static boolean useInMemoryDeduplication = true;
 	static int maxDuplicateRecords = 100000;
 
-	@Resource(name = "java:jboss/infinispan/container/meveo")
-	private CacheContainer meveoContainer;
+	
+	
 
-	private static BasicCache<String, Integer> duplicateCache;
 
 	private void loadCacheFromDB() {
-		synchronized (duplicateCache) {
+		synchronized (meveoCacheContainerProvider.getEdrCache()) {
 			loadDeduplicationInfo(maxDuplicateRecords);
 		}
 	}
@@ -68,13 +70,9 @@ public class EdrService extends PersistenceService<EDR> {
 		if (useInMemoryDeduplication) {
 			int newMaxDuplicateRecords = Integer.parseInt(paramBean.getProperty("mediation.deduplicateCacheSize",
 					"100000"));
-			if (newMaxDuplicateRecords != maxDuplicateRecords && duplicateCache != null) {
-				// duplicateCache.setMaxSize(newMaxDuplicateRecords); //never
-				// used
-			}
+			
 			maxDuplicateRecords = newMaxDuplicateRecords;
-			if (duplicateCache == null) {
-				duplicateCache = meveoContainer.getCache("meveo-edr-cache");
+			if (meveoCacheContainerProvider.getEdrCache().isEmpty()) {
 				loadCacheFromDB();
 			}
 		}
@@ -106,7 +104,7 @@ public class EdrService extends PersistenceService<EDR> {
 	}
 
 	public void loadDeduplicationInfo(int maxDuplicateRecords) {
-		duplicateCache.clear();
+		meveoCacheContainerProvider.getEdrCache().clear();
 		Query query = getEntityManager()
 				.createQuery(
 						"select CONCAT(e.originBatch,e.originRecord) from EDR e where e.status=:status ORDER BY e.eventDate DESC")
@@ -114,14 +112,14 @@ public class EdrService extends PersistenceService<EDR> {
 		@SuppressWarnings("unchecked")
 		List<String> results = query.getResultList();
 		for (String edrHash : results) {
-			duplicateCache.put(edrHash, 0);
+			meveoCacheContainerProvider.getEdrCache().put(edrHash, 0);
 		}
 	}
 
 	public boolean duplicateFound(String originBatch, String originRecord) {
 		boolean result = false;
 		if (useInMemoryDeduplication) {
-			result = duplicateCache.containsKey(originBatch + originRecord);
+			result = meveoCacheContainerProvider.getEdrCache().containsKey(originBatch + originRecord);
 		} else {
 			result = findByBatchAndRecordId(originBatch, originRecord) != null;
 		}
@@ -131,8 +129,8 @@ public class EdrService extends PersistenceService<EDR> {
 	public void create(EntityManager em, EDR e, User user, Provider provider) {
 		super.create(e, user, provider);
 		if (useInMemoryDeduplication) {
-			synchronized (duplicateCache) {
-				duplicateCache.put(e.getOriginBatch() + e.getOriginRecord(), 0);
+			synchronized (meveoCacheContainerProvider.getEdrCache()) {
+				meveoCacheContainerProvider.getEdrCache().put(e.getOriginBatch() + e.getOriginRecord(), 0);
 			}
 		}
 	}
@@ -148,6 +146,7 @@ public class EdrService extends PersistenceService<EDR> {
 			getEntityManager().createQuery(sb.toString()).setParameter("newStatus", status)
 					.setParameter("subscription", subscription).setParameter("oldStatus", EDRStatusEnum.REJECTED)
 					.setParameter("provider", provider).setParameter("lastUpdate", new Date()).executeUpdate();
+			
 		} catch (Exception e) {
 			log.error(e.getMessage());
 		}
