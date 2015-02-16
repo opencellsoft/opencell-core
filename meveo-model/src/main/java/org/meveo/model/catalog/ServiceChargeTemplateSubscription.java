@@ -32,16 +32,12 @@ import javax.persistence.Table;
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "CAT_SERV_SUBCHRG_TEMPLT_SEQ")
 public class ServiceChargeTemplateSubscription extends ServiceChargeTemplate<OneShotChargeTemplate> {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 7811269692204342428L;
 
 	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(name = "CAT_SERV_SUB_WALLET_TEMPLATE", joinColumns = @JoinColumn(name = "SERVICE_SUB_TEMPLT_ID"), inverseJoinColumns = @JoinColumn(name = "WALLET_TEMPLATE_ID"))
-	@OrderColumn(name="INDX")
+	@OrderColumn(name = "INDX")
 	private List<WalletTemplate> walletTemplates;
-	
 
 	public List<WalletTemplate> getWalletTemplates() {
 		return walletTemplates;
@@ -50,7 +46,7 @@ public class ServiceChargeTemplateSubscription extends ServiceChargeTemplate<One
 	public void setWalletTemplates(List<WalletTemplate> walletTemplates) {
 		this.walletTemplates = walletTemplates;
 	}
-	
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -63,8 +59,6 @@ public class ServiceChargeTemplateSubscription extends ServiceChargeTemplate<One
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;
-		if (!super.equals(obj))
-			return false;
 		if (getClass() != obj.getClass())
 			return false;
 		ServiceChargeTemplateSubscription other = (ServiceChargeTemplateSubscription) obj;
@@ -75,6 +69,5 @@ public class ServiceChargeTemplateSubscription extends ServiceChargeTemplate<One
 			return false;
 		return true;
 	}
-
 
 }

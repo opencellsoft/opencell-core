@@ -28,7 +28,6 @@ import javax.persistence.OrderColumn;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
-
 @Entity
 @Table(name = "CAT_SERV_USAGE_CHARGE_TEMPLATE")
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "CAT_SERV_USAGECHRG_TEMPLT_SEQ")
@@ -42,9 +41,8 @@ public class ServiceChargeTemplateUsage extends ServiceChargeTemplate<UsageCharg
 
 	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(name = "CAT_SERV_USAGE_WALLET_TEMPLATE", joinColumns = @JoinColumn(name = "SERVICE_USAGE_TEMPLT_ID"), inverseJoinColumns = @JoinColumn(name = "WALLET_TEMPLATE_ID"))
-	@OrderColumn(name="INDX")
+	@OrderColumn(name = "INDX")
 	private List<WalletTemplate> walletTemplates;
-	
 
 	public CounterTemplate getCounterTemplate() {
 		return counterTemplate;
@@ -53,6 +51,7 @@ public class ServiceChargeTemplateUsage extends ServiceChargeTemplate<UsageCharg
 	public void setCounterTemplate(CounterTemplate counterTemplate) {
 		this.counterTemplate = counterTemplate;
 	}
+
 	public List<WalletTemplate> getWalletTemplates() {
 		return walletTemplates;
 	}
@@ -60,7 +59,7 @@ public class ServiceChargeTemplateUsage extends ServiceChargeTemplate<UsageCharg
 	public void setWalletTemplates(List<WalletTemplate> walletTemplates) {
 		this.walletTemplates = walletTemplates;
 	}
-	
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -73,8 +72,6 @@ public class ServiceChargeTemplateUsage extends ServiceChargeTemplate<UsageCharg
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;
-		if (!super.equals(obj))
-			return false;
 		if (getClass() != obj.getClass())
 			return false;
 		ServiceChargeTemplateUsage other = (ServiceChargeTemplateUsage) obj;
