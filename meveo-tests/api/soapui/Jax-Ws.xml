@@ -7422,6 +7422,200 @@
 			</customerHierarchy>
 		</ws:customerHierarchyUpdate>
 	</soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/customerHierarchyUpdate"/><con:wsrmConfig version="1.2"/></con:call><con:call name="Request 2"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment xmlns:con="http://eviware.com/soapui/config">
+  &lt;con:entry key="username" value="meveo.admin"/>
+  &lt;con:entry key="password" value="meveo.admin"/>
+&lt;/xml-fragment></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
+	xmlns:ws="http://ws.api.meveo.org/">
+	<soapenv:Header />
+	<soapenv:Body>
+		<ws:customerHierarchyUpdate>
+			<!--Optional: -->
+			<customerHierarchy>
+				<sellers>
+					<!--Zero or more repetitions: -->
+					<seller code="MAIN_SELLER" description="MAIN_SELLER">
+						<!--Optional: -->
+						<invoicePrefix>INV_</invoicePrefix>
+						<!--Optional: -->
+						<currencyCode>EUR</currencyCode>
+						<!--Optional: -->
+						<countryCode>FR</countryCode>
+						<!--Optional: -->
+						<languageCode>FRA</languageCode>
+						<!--Optional: -->
+						<parentSeller></parentSeller>
+						<!--Zero or more repetitions: -->
+						<customers>
+							<customer code="CUST_HIERARCHY" description="CUST_HIERARCHY">
+								<!--Optional: -->
+								<externalRef1></externalRef1>
+								<!--Optional: -->
+								<externalRef2></externalRef2>
+								<!--Optional: -->
+								<name>
+									<lastName>lastName</lastName>
+									<!--Optional: -->
+									<title></title>
+									<!--Optional: -->
+									<firstName>firstName</firstName>
+								</name>
+								<!--Optional: -->
+								<address>
+									<!--Optional: -->
+									<address1>Address1</address1>
+									<!--Optional: -->
+									<address2></address2>
+									<!--Optional: -->
+									<address3></address3>
+									<!--Optional: -->
+									<zipCode></zipCode>
+									<!--Optional: -->
+									<city></city>
+									<!--Optional: -->
+									<country></country>
+									<!--Optional: -->
+									<state></state>
+								</address>
+								<!--Zero or more repetitions: -->
+								<customFields>
+									<customField code="CUST" description="CUST">
+										<stringValue>azerty</stringValue>
+									</customField>
+								</customFields>
+								<!--Optional: -->
+								<customerCategory>CLIENT</customerCategory>
+								<!--Optional: -->
+								<customerBrand>OCB</customerBrand>
+								<!--Zero or more repetitions: -->
+								<customerAccounts>
+									<customerAccount code="CA_HIERARCHY" description="CA_HIERARCHY">
+										<currency>EUR</currency>
+										<!--Optional: -->
+										<externalRef1></externalRef1>
+										<!--Optional: -->
+										<externalRef2></externalRef2>
+										<!--Optional: -->
+										<name>
+											<lastName>lastName</lastName>
+											<!--Optional: -->
+											<title></title>
+											<!--Optional: -->
+											<firstName>firstName</firstName>
+										</name>
+										<!--Optional: -->
+										<address>
+											<!--Optional: -->
+											<address1>Address1</address1>
+											<!--Optional: -->
+											<address2></address2>
+											<!--Optional: -->
+											<address3></address3>
+											<!--Optional: -->
+											<zipCode></zipCode>
+											<!--Optional: -->
+											<city></city>
+											<!--Optional: -->
+											<country></country>
+											<!--Optional: -->
+											<state></state>
+										</address>
+										<!--Zero or more repetitions: -->
+										<customFields>
+											<customField code="CA" description="CA">
+												<!--Optional: -->
+												<stringValue>azertyca</stringValue>
+											</customField>
+										</customFields>
+										<!--Optional: -->
+										<status></status>
+										<!--Optional: -->
+										<paymentMethod>CHECK</paymentMethod>
+										<!--Optional: -->
+										<creditCategory>CASH</creditCategory>
+										<!--Optional: -->
+										<dateStatus>2015-02-20</dateStatus>
+										<!--Optional: -->
+										<dateDunningLevel>2015-02-20</dateDunningLevel>
+										<!--Optional: -->
+										<email>edward.legaspi@manaty.net</email>
+										<!--Optional: -->
+										<phone></phone>
+										<!--Optional: -->
+										<mobile>12345</mobile>
+										<!--Optional: -->
+										<fax></fax>
+										<!--Optional: -->
+										<dunningLevel></dunningLevel>
+										<!--Optional: -->
+										<mandateIdentification></mandateIdentification>
+										<!--Optional: -->
+										<mandateDate>2015-02-20</mandateDate>
+										<!--Zero or more repetitions: -->
+										<billingAccounts>
+											<billingAccount code="BA_HIERARCHY" description="BA_HIERARCHY">
+												<billingCycle>CYC_INV_MT_1</billingCycle>
+												<country>FR</country>
+												<language>FRA</language>
+												<paymentMethod>CHECK</paymentMethod>
+												<!--Optional: -->
+												<externalRef1></externalRef1>
+												<!--Optional: -->
+												<externalRef2></externalRef2>
+												<!--Optional: -->
+												<name>
+													<lastName>lastName</lastName>
+													<!--Optional: -->
+													<title></title>
+													<!--Optional: -->
+													<firstName>firstName</firstName>
+												</name>
+												<!--Optional: -->
+												<address>
+													<!--Optional: -->
+													<address1>Address1</address1>
+													<!--Optional: -->
+													<address2></address2>
+													<!--Optional: -->
+													<address3></address3>
+													<!--Optional: -->
+													<zipCode></zipCode>
+													<!--Optional: -->
+													<city></city>
+													<!--Optional: -->
+													<country></country>
+													<!--Optional: -->
+													<state></state>
+												</address>
+												<!--Zero or more repetitions: -->
+												<customFields>
+													<customField code="BA" description="BA">
+
+														<doubleValue>11122222</doubleValue>
+														
+													</customField>
+												</customFields>
+												<!--Optional: -->
+												<nextInvoiceDate>2015-02-20</nextInvoiceDate>
+												<!--Optional: -->
+												<subscriptionDate>2015-02-20</subscriptionDate>
+												<!--Optional: -->
+												<paymentTerms>CASH</paymentTerms>
+												<!--Optional: -->
+												<electronicBilling>true</electronicBilling>
+												<!--Zero or more repetitions: -->
+												
+											</billingAccount>
+										</billingAccounts>
+									</customerAccount>
+								</customerAccounts>
+							</customer>
+						</customers>
+					</seller>
+				</sellers>
+			</customerHierarchy>
+		</ws:customerHierarchyUpdate>
+	</soapenv:Body>
 </soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/customerHierarchyUpdate"/><con:wsrmConfig version="1.2"/></con:call></con:operation></con:interface><con:interface xsi:type="con:WsdlInterface" wsaVersion="NONE" name="SubscriptionWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}SubscriptionWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="http://localhost:8080/meveo/SubscriptionWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache type="TEXT" rootPart="http://localhost:8080/meveo/SubscriptionWs?wsdl"><con:part><con:url>http://localhost:8080/meveo/SubscriptionWs?wsdl</con:url><con:content><![CDATA[<wsdl:definitions name="SubscriptionWs" targetNamespace="http://impl.ws.api.meveo.org/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://impl.ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns2="http://schemas.xmlsoap.org/soap/http" xmlns:ns1="http://ws.api.meveo.org/">
   <wsdl:import location="http://localhost:8080/meveo/SubscriptionWs?wsdl=SubscriptionWs.wsdl" namespace="http://ws.api.meveo.org/"></wsdl:import>
   <wsdl:binding name="SubscriptionWsSoapBinding" type="ns1:SubscriptionWs">

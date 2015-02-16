@@ -815,7 +815,6 @@ public class AccountHierarchyApi extends BaseApi {
 								customer.setCode(customerDto.getCode());
 							}
 
-							populateNameAndAddress(customer, customerDto, AccountLevelEnum.CUST, currentUser);
 							customer.setSeller(seller);
 							customer.setDescription(customerDto.getDescription());
 
@@ -847,6 +846,8 @@ public class AccountHierarchyApi extends BaseApi {
 							} else {
 								customerService.update(customer, currentUser);
 							}
+
+							populateNameAndAddress(customer, customerDto, AccountLevelEnum.CUST, currentUser);
 
 							// customerAccounts
 							if (customerDto.getCustomerAccounts() != null) {
@@ -888,8 +889,6 @@ public class AccountHierarchyApi extends BaseApi {
 										}
 									}
 
-									populateNameAndAddress(customerAccount, customerAccountDto, AccountLevelEnum.CA,
-											currentUser);
 									customerAccount.setCustomer(customer);
 									customerAccount.setDescription(customerAccount.getDescription());
 
@@ -950,6 +949,9 @@ public class AccountHierarchyApi extends BaseApi {
 										customerAccountService.update(customerAccount, currentUser);
 									}
 
+									populateNameAndAddress(customerAccount, customerAccountDto, AccountLevelEnum.CA,
+											currentUser);
+
 									// billing accounts
 									if (customerAccountDto.getBillingAccounts() != null) {
 										for (BillingAccountDto billingAccountDto : customerAccountDto
@@ -998,8 +1000,6 @@ public class AccountHierarchyApi extends BaseApi {
 												}
 											}
 
-											populateNameAndAddress(billingAccount, billingAccountDto,
-													AccountLevelEnum.BA, currentUser);
 											billingAccount.setCustomerAccount(customerAccount);
 											billingAccount.setDescription(customerAccount.getDescription());
 
@@ -1067,6 +1067,9 @@ public class AccountHierarchyApi extends BaseApi {
 												billingAccountService.update(billingAccount, currentUser);
 											}
 
+											populateNameAndAddress(billingAccount, billingAccountDto,
+													AccountLevelEnum.BA, currentUser);
+
 											// user accounts
 											if (billingAccountDto.getUserAccounts() != null) {
 												for (UserAccountDto userAccountDto : billingAccountDto
@@ -1117,8 +1120,6 @@ public class AccountHierarchyApi extends BaseApi {
 														}
 													}
 
-													populateNameAndAddress(userAccount, userAccountDto,
-															AccountLevelEnum.UA, currentUser);
 													userAccount.setBillingAccount(billingAccount);
 													userAccount.setDescription(userAccountDto.getDescription());
 
@@ -1139,6 +1140,9 @@ public class AccountHierarchyApi extends BaseApi {
 													} else {
 														userAccountService.update(userAccount, currentUser);
 													}
+
+													populateNameAndAddress(userAccount, userAccountDto,
+															AccountLevelEnum.UA, currentUser);
 
 													// subscriptions
 													if (userAccountDto.getSubscriptions() != null) {
@@ -1184,7 +1188,7 @@ public class AccountHierarchyApi extends BaseApi {
 																				"Error terminating subscription with code="
 																						+ subscriptionDto.getCode());
 																	}
-																	
+
 																	continue;
 																}
 															}
