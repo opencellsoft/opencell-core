@@ -188,12 +188,13 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 		}
 	}
 
-	public void updateCache(@Observes @Created UsageChargeInstance charge) {
+	public void updateCache(UsageChargeInstance charge) {
 		// TODO:: make sure ordering is correct
 		List<WalletInstance> wallets = charge.getWalletInstances();
 		List<Long> walletIds = new ArrayList<>();
 		log.debug("updateCache usageChargeInstanceWallet. wallets:{}", wallets == null ? "null" : wallets.size());
 		for (WalletInstance wallet : wallets) {
+			log.debug("wallet {}", wallet);
 			if (!walletIds.contains(wallet.getId()) && wallet.getWalletTemplate()!=null && wallet.getWalletTemplate().getWalletType()==BillingWalletTypeEnum.PREPAID) {
 				walletIds.add(wallet.getId());
 				log.debug("updateCache walletId:{}", wallet.getId());
