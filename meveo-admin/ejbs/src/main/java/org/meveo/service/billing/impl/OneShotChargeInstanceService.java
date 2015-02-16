@@ -220,6 +220,9 @@ public class OneShotChargeInstanceService extends BusinessService<OneShotChargeI
 		BigDecimal balanceWithTax = getEntityManager().createNamedQuery("WalletOperation.getBalanceWithTaxUntilId",BigDecimal.class)
 				.setParameter("wallet", wallet).setParameter("maxId", maxWalletId).getSingleResult();
 		Subscription subscription=null;
+		if(balanceNoTax==null){
+			return;
+		}
 		for(Subscription sub : wallet.getUserAccount().getSubscriptions()){
 			if(sub.isActive()){
 				subscription=sub;
