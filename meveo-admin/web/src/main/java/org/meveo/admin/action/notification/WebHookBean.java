@@ -268,6 +268,28 @@ public void handleFileUpload(FileUploadEvent event) throws Exception {
 					.valueOf(values[HTTP_METHOD]));
 			existingEntity.setUsername(values[USERNAME]);
 			existingEntity.setPassword(values[PASSWORD]);
+			if(values[HEADERS]!=null && values[HEADERS].length()>0){
+				String[] mapElements=values[HEADERS].split("\\|");
+				if(mapElements!=null && mapElements.length>0){
+					Map<String,String> headers = new HashMap<String, String>();
+					for(String element:mapElements){
+						String[] param=element.split(":");
+						headers.put(param[0], param[1]);
+					}
+					existingEntity.setHeaders(headers);
+				  }
+				}
+				if(values[PARAMS]!=null && values[PARAMS].length()>0){
+					String[] mapElements=values[PARAMS].split("\\|");
+					if(mapElements!=null && mapElements.length>0){
+						Map<String,String> params = new HashMap<String, String>();
+						for(String element:mapElements){
+							String[] param=element.split(":");
+							params.put(param[0], param[1]);
+						}
+						existingEntity.setParams(params);
+					  }
+					}
 			if (!StringUtils.isBlank(values[COUNTER_TEMPLATE])) {
 				CounterTemplate counterTemplate = counterTemplateService
 						.findByCode(values[COUNTER_TEMPLATE],

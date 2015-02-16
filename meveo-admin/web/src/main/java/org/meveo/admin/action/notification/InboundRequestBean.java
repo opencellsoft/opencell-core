@@ -359,6 +359,69 @@ public class InboundRequestBean extends BaseBean<InboundRequest> {
 			existingEntity.setMethod(values[METHOD]);
 			existingEntity.setAuthType(values[AUTHENTIFICATION_TYPE]);
 			existingEntity.setRequestURI(values[REQUEST_URI]);
+			
+			if(values[PARAMETERS]!=null && values[PARAMETERS].length()>0){
+				String[] mapElements=values[PARAMETERS].split("\\|");
+				if(mapElements!=null && mapElements.length>0){
+					Map<String,String> params = new HashMap<String, String>();
+					for(String element:mapElements){
+						String[] param=element.split(":");
+						params.put(param[0], param[1]);
+					}
+					existingEntity.setParameters(params);
+				  }
+				}
+			if(values[COOCKIES]!=null && values[COOCKIES].length()>0){
+				String[] mapElements=values[COOCKIES].split("\\|");
+				if(mapElements!=null && mapElements.length>0){
+					Map<String,String> coockies = new HashMap<String, String>();
+					for(String element:mapElements){
+						String[] param=element.split(":");
+						coockies.put(param[0], param[1]);
+					}
+					existingEntity.setCoockies(coockies);
+				  }
+				}
+			if(values[HEADERS]!=null && values[HEADERS].length()>0){
+				String[] mapElements=values[HEADERS].split("\\|");
+				if(mapElements!=null && mapElements.length>0){
+					Map<String,String> headers = new HashMap<String, String>();
+					for(String element:mapElements){
+						String[] param=element.split(":");
+						headers.put(param[0], param[1]);
+					}
+					existingEntity.setHeaders(headers);
+				  }
+				}
+			existingEntity
+					.setResponseContentType(values[RESPONSE_CONTENT_TYPE]);
+			existingEntity.setResponseEncoding(values[ENCODING]);
+			
+			if(values[RESPONSE_COOCKIES]!=null && values[RESPONSE_COOCKIES].length()>0){
+				String[] mapElements=values[RESPONSE_COOCKIES].split("\\|");
+				if(mapElements!=null && mapElements.length>0){
+					Map<String,String> responseCoockies = new HashMap<String, String>();
+					for(String element:mapElements){
+						String[] param=element.split(":");
+						responseCoockies.put(param[0], param[1]);
+					}
+					existingEntity.setResponseCoockies(responseCoockies);
+				  }
+				}
+			if(values[RESPONSE_HEADERS]!=null && values[RESPONSE_HEADERS].length()>0){
+				String[] mapElements=values[RESPONSE_HEADERS].split("\\|");
+				if(mapElements!=null && mapElements.length>0){
+					Map<String,String> responseHeaders = new HashMap<String, String>();
+					for(String element:mapElements){
+						String[] param=element.split(":");
+						responseHeaders.put(param[0], param[1]);
+					}
+					existingEntity.setResponseHeaders(responseHeaders);
+				  }
+				}
+			
+			
+			
 			existingEntity
 					.setResponseContentType(values[RESPONSE_CONTENT_TYPE]);
 			existingEntity.setResponseEncoding(values[ENCODING]);
