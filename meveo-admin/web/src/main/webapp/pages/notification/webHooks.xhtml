@@ -30,6 +30,7 @@
 			<!-- ===================================== SEARCH USERS RESULTS ================================= -->
 
 			<hftl:dataList backingBean="#{webHookBean}" exportButton="false" exportToCsv="true" importCsv="true">
+				<hftl:actionsColumn editView="/pages/notification/webHookDetail.xhtml" permission="#{persistentPermissionResolver.hasPermission('reporting','reportingManagement')}"  />
 			    <hftl:column label="#{messages['entity.code']}"
 					field="code" />
 				<hftl:column
@@ -54,7 +55,6 @@
                     label="#{messages['entity.webHook.params']}"
                     field="params" isMap="true"  />
 				<hftl:column label="#{messages['enableEntity.active']}" field="active" isMessage="true" />
-				<hftl:actionsColumn editView="/pages/notification/webHookDetail.xhtml" permission="#{persistentPermissionResolver.hasPermission('reporting','reportingManagement')}"  />
 			</hftl:dataList>
 	</ui:define>
 </ui:composition>
