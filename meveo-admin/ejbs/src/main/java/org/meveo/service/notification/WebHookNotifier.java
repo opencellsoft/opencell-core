@@ -1,6 +1,14 @@
 package org.meveo.service.notification;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -9,8 +17,6 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 
-import org.jsoup.Connection;
-import org.jsoup.helper.HttpConnection;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.IEntity;
@@ -60,7 +66,9 @@ public class WebHookNotifier {
 
 		try {
 			String url = webHook.getHost().startsWith("http") ? webHook.getHost() : "http://" + webHook.getHost();
-
+			if(!StringUtils.isBlank(webHook.getUsername())){
+				url = "http://" +webHook.getUsername()+":"+webHook.getPassword()+"@"+url.substring(7);
+			}
 			if (webHook.getPort() > 0) {
 				url += ":" + webHook.getPort();
 			}
@@ -68,23 +76,73 @@ public class WebHookNotifier {
 			if (!StringUtils.isBlank(webHook.getPage())) {
 				url += "/" + evaluate(webHook.getPage(), e);
 			}
-
+			Map<String,String> params = evaluateMap(webHook.getParams(), e);
+            String paramQuery="";
+            String sep="";
+            for(String paramKey:params.keySet()){
+            	paramQuery+=sep+URLEncoder.encode(paramKey, "UTF-8")+"="+URLEncoder.encode(params.get(paramKey), "UTF-8");
+            	sep="&";
+            }
+            if(WebHookMethodEnum.HTTP_GET == webHook.getHttpMethod()){
+            	url+="?"+paramQuery;
+            } else {
+            	log.debug("paramQuery={}",paramQuery);
+            }
 			log.debug("webhook url: {}", url);
-			Connection connection = HttpConnection.connect(url);
-			connection.data(evaluateMap(webHook.getParams(), e));
-			Map<String, String> headers = evaluateMap(webHook.getHeaders(), e);
-			for (String key : headers.keySet()) {
-				connection.header(key, webHook.getHeaders().get(key));
-			}
+			URL obj = new URL(url);
 
-			if (WebHookMethodEnum.HTTP_GET == webHook.getHttpMethod()) {
-				result = connection.get().toString();
-			} else {
-				result = connection.post().toString();
+            HttpURLConnection conn = (HttpURLConnection) obj.openConnection();
+
+            Map<String, String> headers = evaluateMap(webHook.getHeaders(), e);
+			for (String key : headers.keySet()) {
+		        conn.setRequestProperty(key, headers.get(key));
 			}
-			// TODO: handle correctly non temporary errors like 404...
-			notificationHistoryService.create(webHook, e, result, NotificationHistoryStatusEnum.SENT);
-			log.debug("webhook answer : " + result);
+			
+			if (WebHookMethodEnum.HTTP_GET == webHook.getHttpMethod()) {
+				conn.setRequestMethod("GET");
+			} else if (WebHookMethodEnum.HTTP_POST == webHook.getHttpMethod()) {
+				conn.setRequestMethod("POST");
+			} else if (WebHookMethodEnum.HTTP_PUT == webHook.getHttpMethod()) {
+				conn.setRequestMethod("PUT");
+			} else if (WebHookMethodEnum.HTTP_DELETE == webHook.getHttpMethod()) {
+				conn.setRequestMethod("DELETE");
+			}
+			conn.setUseCaches(false);
+			
+            if(WebHookMethodEnum.HTTP_GET != webHook.getHttpMethod()){
+            	conn.setDoOutput(true);
+	            OutputStream os = conn.getOutputStream();
+	            BufferedWriter writer = new BufferedWriter(
+	                    new OutputStreamWriter(os, "UTF-8"));
+	            writer.write(paramQuery);
+	            writer.flush();
+	            writer.close();
+	            os.close();
+            }
+			int responseCode = conn.getResponseCode();
+			BufferedReader in = new BufferedReader(
+			        new InputStreamReader(conn.getInputStream()));
+			String inputLine;
+			StringBuffer response = new StringBuffer();
+	 
+			while ((inputLine = in.readLine()) != null) {
+				response.append(inputLine);
+			}
+			in.close();
+			result = response.toString();
+			if(responseCode!=200){
+				try {
+					log.debug("webhook httpStatus error : " + responseCode + " response="+result);
+					notificationHistoryService.create(webHook, e,"http error status="+responseCode +" response="+result,
+							NotificationHistoryStatusEnum.FAILED);
+				} catch (BusinessException e2) {
+					log.debug("webhook history error : " + e2.getMessage());
+					e2.printStackTrace();
+				}
+			} else {
+				notificationHistoryService.create(webHook, e, result, NotificationHistoryStatusEnum.SENT);
+				log.debug("webhook answer : " + result);
+			}
 		} catch (BusinessException e1) {
 			try {
 				log.debug("webhook business error : " + e1.getMessage());
@@ -95,6 +153,7 @@ public class WebHookNotifier {
 			}
 		} catch (IOException e1) {
 			try {
+				e1.printStackTrace();
 				log.debug("webhook io error : " + e1.getMessage());
 				notificationHistoryService.create(webHook, e, e1.getMessage(), NotificationHistoryStatusEnum.TO_RETRY);
 			} catch (BusinessException e2) {

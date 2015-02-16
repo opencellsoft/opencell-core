@@ -31,7 +31,8 @@
 			<!-- ===================================== SEARCH USERS RESULTS ================================= -->
 
 			<hftl:dataList backingBean="#{emailNotificationBean}" exportButton="false" exportToCsv="true" importCsv="true">
-			    <hftl:column label="#{messages['entity.code']}"
+			   	<hftl:actionsColumn editView="/pages/notification/emailNotificationDetail.xhtml" permission="#{persistentPermissionResolver.hasPermission('reporting','reportingManagement')}"  />
+				<hftl:column label="#{messages['entity.code']}"
 					field="code" />
 				<hftl:column
 					label="#{messages['entity.notification.classNameFilter']}"
@@ -49,7 +50,6 @@
 					label="#{messages['entity.emailNotification.emailToEl']}"
 					field="emailToEl"  />
 				<hftl:column label="#{messages['enableEntity.active']}" field="active" isMessage="true" />
-				<hftl:actionsColumn editView="/pages/notification/emailNotificationDetail.xhtml" permission="#{persistentPermissionResolver.hasPermission('reporting','reportingManagement')}"  />
 			</hftl:dataList>
 	</ui:define>
 </ui:composition>

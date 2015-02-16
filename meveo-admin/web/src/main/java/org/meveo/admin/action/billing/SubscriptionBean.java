@@ -701,6 +701,7 @@ public class SubscriptionBean extends StatefulBaseBean<Subscription> {
 				if (serviceChargeTemplateSubscription.getWalletTemplates() != null) {
 					for (WalletTemplate walletTemplate : serviceChargeTemplateSubscription.getWalletTemplates()) {
 						if (!result.contains(walletTemplate)) {
+							log.debug("adding wallet={}", walletTemplate);
 							result.add(walletTemplate);
 						}
 					}
@@ -709,6 +710,7 @@ public class SubscriptionBean extends StatefulBaseBean<Subscription> {
 		} else {
 			// get principal
 			if (entity.getUserAccount() != null) {
+				log.debug("adding postpaid wallet={}", entity.getUserAccount().getWallet().getWalletTemplate());
 				result.add(entity.getUserAccount().getWallet().getWalletTemplate());
 			}
 		}
