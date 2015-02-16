@@ -26,6 +26,8 @@ public class CustomerDto extends AccountDto {
 	@XmlElement(required = true)
 	private String seller;
 
+	private ContactInformationDto contactInformation = new ContactInformationDto();
+
 	private CustomerAccountsDto customerAccounts;
 
 	public CustomerDto() {
@@ -45,6 +47,10 @@ public class CustomerDto extends AccountDto {
 
 		if (e.getSeller() != null) {
 			seller = e.getSeller().getCode();
+		}
+
+		if (e.getContactInformation() != null) {
+			contactInformation = new ContactInformationDto(e.getContactInformation());
 		}
 	}
 
@@ -75,7 +81,8 @@ public class CustomerDto extends AccountDto {
 	@Override
 	public String toString() {
 		return "CustomerDto [customerCategory=" + customerCategory + ", customerBrand=" + customerBrand + ", seller="
-				+ seller + ", customerAccounts=" + customerAccounts + "]";
+				+ seller + ", contactInformation=" + contactInformation + ", customerAccounts=" + customerAccounts
+				+ "]";
 	}
 
 	public CustomerAccountsDto getCustomerAccounts() {
@@ -84,6 +91,14 @@ public class CustomerDto extends AccountDto {
 
 	public void setCustomerAccounts(CustomerAccountsDto customerAccounts) {
 		this.customerAccounts = customerAccounts;
+	}
+
+	public ContactInformationDto getContactInformation() {
+		return contactInformation;
+	}
+
+	public void setContactInformation(ContactInformationDto contactInformation) {
+		this.contactInformation = contactInformation;
 	}
 
 }

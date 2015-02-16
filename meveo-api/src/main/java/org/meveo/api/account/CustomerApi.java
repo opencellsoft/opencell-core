@@ -75,6 +75,13 @@ public class CustomerApi extends AccountApi {
 			customer.setCustomerBrand(customerBrand);
 			customer.setSeller(seller);
 
+			if (postData.getContactInformation() != null) {
+				customer.getContactInformation().setEmail(postData.getContactInformation().getEmail());
+				customer.getContactInformation().setPhone(postData.getContactInformation().getPhone());
+				customer.getContactInformation().setMobile(postData.getContactInformation().getMobile());
+				customer.getContactInformation().setFax(postData.getContactInformation().getFax());
+			}
+
 			customerService.create(customer, currentUser, currentUser.getProvider());
 		} else {
 			if (StringUtils.isBlank(postData.getCode())) {
@@ -130,6 +137,13 @@ public class CustomerApi extends AccountApi {
 			customer.setCustomerCategory(customerCategory);
 			customer.setCustomerBrand(customerBrand);
 			customer.setSeller(seller);
+
+			if (postData.getContactInformation() != null) {
+				customer.getContactInformation().setEmail(postData.getContactInformation().getEmail());
+				customer.getContactInformation().setPhone(postData.getContactInformation().getPhone());
+				customer.getContactInformation().setMobile(postData.getContactInformation().getMobile());
+				customer.getContactInformation().setFax(postData.getContactInformation().getFax());
+			}
 
 			customerService.updateAudit(customer, currentUser);
 		} else {
