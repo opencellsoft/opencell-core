@@ -804,6 +804,10 @@ public class AccountHierarchyApi extends BaseApi {
 								log.warn("code is null={}", customerDto);
 								continue;
 							}
+							if (StringUtils.isBlank(customerDto.getDescription())) {
+								missingParameters.add("customer.description");
+								throw new MissingParameterException(getMissingParametersExceptionMessage());
+							}
 
 							Customer customer = customerService.findByCode(customerDto.getCode(), provider);
 							if (customer == null) {
@@ -851,6 +855,10 @@ public class AccountHierarchyApi extends BaseApi {
 									if (StringUtils.isBlank(customerAccountDto.getCode())) {
 										log.warn("code is null={}", customerAccountDto);
 										continue;
+									}
+									if (StringUtils.isBlank(customerAccountDto.getDescription())) {
+										missingParameters.add("customerAccountDto.description");
+										throw new MissingParameterException(getMissingParametersExceptionMessage());
 									}
 
 									CustomerAccount customerAccount = customerAccountService.findByCode(
@@ -949,6 +957,11 @@ public class AccountHierarchyApi extends BaseApi {
 											if (StringUtils.isBlank(billingAccountDto.getCode())) {
 												log.warn("code is null={}", billingAccountDto);
 												continue;
+											}
+											if (StringUtils.isBlank(billingAccountDto.getDescription())) {
+												missingParameters.add("billingAccountDto.description");
+												throw new MissingParameterException(
+														getMissingParametersExceptionMessage());
 											}
 
 											BillingAccount billingAccount = billingAccountService.findByCode(
@@ -1062,6 +1075,11 @@ public class AccountHierarchyApi extends BaseApi {
 														log.warn("code is null={}", userAccountDto);
 														continue;
 													}
+													if (StringUtils.isBlank(userAccountDto.getDescription())) {
+														missingParameters.add("userAccountDto.description");
+														throw new MissingParameterException(
+																getMissingParametersExceptionMessage());
+													}
 
 													UserAccount userAccount = userAccountService.findByCode(
 															userAccountDto.getCode(), provider);
@@ -1130,6 +1148,11 @@ public class AccountHierarchyApi extends BaseApi {
 																log.warn("code is null={}", subscriptionDto);
 																continue;
 															}
+															if (StringUtils.isBlank(subscriptionDto.getDescription())) {
+																missingParameters.add("subscriptionDto.description");
+																throw new MissingParameterException(
+																		getMissingParametersExceptionMessage());
+															}
 
 															Subscription subscription = subscriptionService.findByCode(
 																	subscriptionDto.getCode(), provider);
@@ -1138,11 +1161,31 @@ public class AccountHierarchyApi extends BaseApi {
 																subscription.setCode(subscriptionDto.getCode());
 															} else {
 																if (subscriptionDto.getTerminationDate() != null) {
-																	// TODO
-																	// [delete
-																	// or
-																	// update
-																	// status?]
+																	SubscriptionTerminationReason subscriptionTerminationReason = terminationReasonService
+																			.findByCode(subscriptionDto
+																					.getTerminationReason(), provider);
+
+																	if (subscriptionTerminationReason == null) {
+																		throw new EntityDoesNotExistsException(
+																				SubscriptionTerminationReason.class,
+																				subscriptionDto.getTerminationReason());
+																	}
+
+																	try {
+																		subscriptionService.terminateSubscription(
+																				subscription,
+																				subscriptionDto.getTerminationDate(),
+																				subscriptionTerminationReason,
+																				currentUser);
+																	} catch (BusinessException e) {
+																		log.error("Error terminating subscription with code="
+																				+ subscriptionDto.getCode());
+																		throw new MeveoApiException(
+																				"Error terminating subscription with code="
+																						+ subscriptionDto.getCode());
+																	}
+																	
+																	continue;
 																}
 															}
 

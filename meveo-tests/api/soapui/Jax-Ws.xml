@@ -5580,7 +5580,7 @@
           <xs:element minOccurs="0" name="externalRef2" type="xs:string"/>
           <xs:element minOccurs="0" name="name" type="tns:nameDto"/>
           <xs:element minOccurs="0" name="address" type="tns:addressDto"/>
-          <xs:element maxOccurs="unbounded" minOccurs="0" name="customFields" nillable="true" type="tns:customFieldDto"/>
+          <xs:element minOccurs="0" name="customFields" type="tns:customFieldsDto"/>
         </xs:sequence>
         <xs:attribute name="code" type="xs:string" use="required"/>
         <xs:attribute name="description" type="xs:string" use="required"/>
@@ -5599,14 +5599,30 @@
               <xs:element name="subscriptionDate" type="xs:dateTime"/>
               <xs:element minOccurs="0" name="terminationDate" type="xs:dateTime"/>
               <xs:element minOccurs="0" name="status" type="xs:string"/>
+              <xs:element minOccurs="0" name="customFields" type="tns:customFieldsDto"/>
               <xs:element minOccurs="0" name="accesses" type="tns:Accesses"/>
               <xs:element minOccurs="0" name="services" type="tns:ServiceInstances"/>
-              <xs:element minOccurs="0" name="customFields" type="tns:customFieldsDto"/>
+              <xs:element minOccurs="0" name="terminationReason" type="xs:string"/>
             </xs:sequence>
             <xs:attribute name="code" type="xs:string" use="required"/>
             <xs:attribute name="description" type="xs:string" use="required"/>
           </xs:extension>
         </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="customFieldsDto">
+        <xs:sequence>
+          <xs:element maxOccurs="unbounded" minOccurs="0" name="customField" nillable="true" type="tns:customFieldDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="customFieldDto">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="stringValue" type="xs:string"/>
+          <xs:element minOccurs="0" name="dateValue" type="xs:dateTime"/>
+          <xs:element minOccurs="0" name="longValue" type="xs:long"/>
+          <xs:element minOccurs="0" name="doubleValue" type="xs:double"/>
+        </xs:sequence>
+        <xs:attribute name="code" type="xs:string" use="required"/>
+        <xs:attribute name="description" type="xs:string"/>
       </xs:complexType>
       <xs:complexType name="Accesses">
         <xs:sequence>
@@ -5631,21 +5647,6 @@
             <xs:attribute name="code" type="xs:string" use="required"/>
           </xs:extension>
         </xs:complexContent>
-      </xs:complexType>
-      <xs:complexType name="customFieldsDto">
-        <xs:sequence>
-          <xs:element maxOccurs="unbounded" minOccurs="0" name="customField" nillable="true" type="tns:customFieldDto"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="customFieldDto">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="stringValue" type="xs:string"/>
-          <xs:element minOccurs="0" name="dateValue" type="xs:dateTime"/>
-          <xs:element minOccurs="0" name="longValue" type="xs:long"/>
-          <xs:element minOccurs="0" name="doubleValue" type="xs:double"/>
-        </xs:sequence>
-        <xs:attribute name="code" type="xs:string" use="required"/>
-        <xs:attribute name="description" type="xs:string"/>
       </xs:complexType>
       <xs:complexType name="nameDto">
         <xs:sequence>
@@ -7380,6 +7381,7 @@
 																<offerTemplate>OFF1</offerTemplate>
 																<!--Optional: -->
 																<subscriptionDate>2015-02-04</subscriptionDate>
+																<!--<terminationReason>?</terminationReason>-->
 																<!--Optional: -->
 																<!--<terminationDate></terminationDate> -->
 																<!--Zero or more repetitions: -->
