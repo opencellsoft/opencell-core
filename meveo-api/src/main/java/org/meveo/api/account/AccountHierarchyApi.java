@@ -981,7 +981,7 @@ public class AccountHierarchyApi extends BaseApi {
 												billingAccount.setCode(billingAccountDto.getCode());
 											} else {
 												if (billingAccountDto.getTerminationDate() != null) {
-													if (!StringUtils.isBlank(billingAccountDto.getTerminationReason())) {
+													if (StringUtils.isBlank(billingAccountDto.getTerminationReason())) {
 														missingParameters.add("billingAccount.terminationReason");
 														throw new MissingParameterException(
 																getMissingParametersExceptionMessage());
@@ -1100,7 +1100,7 @@ public class AccountHierarchyApi extends BaseApi {
 														userAccount.setCode(userAccountDto.getCode());
 													} else {
 														if (userAccountDto.getTerminationDate() != null) {
-															if (!StringUtils.isBlank(userAccountDto
+															if (StringUtils.isBlank(userAccountDto
 																	.getTerminationReason())) {
 																missingParameters.add("userAccount.terminationReason");
 																throw new MissingParameterException(
@@ -1174,6 +1174,14 @@ public class AccountHierarchyApi extends BaseApi {
 																subscription.setCode(subscriptionDto.getCode());
 															} else {
 																if (subscriptionDto.getTerminationDate() != null) {
+																	if (StringUtils.isBlank(subscriptionDto
+																			.getTerminationReason())) {
+																		missingParameters
+																				.add("subscription.terminationReason");
+																		throw new MissingParameterException(
+																				getMissingParametersExceptionMessage());
+																	}
+
 																	SubscriptionTerminationReason subscriptionTerminationReason = terminationReasonService
 																			.findByCode(subscriptionDto
 																					.getTerminationReason(), provider);
@@ -1323,8 +1331,10 @@ public class AccountHierarchyApi extends BaseApi {
 																						e.getMessage());
 																			}
 																		} else {
-																			throw new MeveoApiException(
-																					"TerminationReason is required when terminating a subscription.");
+																			missingParameters
+																					.add("serviceInstance.terminationReason");
+																			throw new MissingParameterException(
+																					getMissingParametersExceptionMessage());
 																		}
 																	} else {
 																		if (subscription.getStatus() == SubscriptionStatusEnum.RESILIATED) {
