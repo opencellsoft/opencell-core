@@ -37,8 +37,6 @@ public class RatedCDRImportService extends PersistenceService<RatedTransaction> 
 	@Inject
 	private Logger log;
 	
-	@Inject
-	MeveoCacheContainerProvider meveoCacheContainerProvider;
 	
 
 	@SuppressWarnings("unchecked")
@@ -46,16 +44,16 @@ public class RatedCDRImportService extends PersistenceService<RatedTransaction> 
 	public void init() {
 		EntityManager em = getEntityManager();
 
-		if(meveoCacheContainerProvider.getUsageChargeTemplateCache().isEmpty()){
+		if(MeveoCacheContainerProvider.getUsageChargeTemplateCache().isEmpty()){
 			List<UsageChargeTemplate> chargeTemplates = em.createQuery(
 					"From " + UsageChargeTemplate.class.getSimpleName())
 					.getResultList();
 			if (chargeTemplates != null & chargeTemplates.size() > 0) {
 				for (UsageChargeTemplate chargeTemplate : chargeTemplates) {
-					if (!meveoCacheContainerProvider.getUsageChargeTemplateCache().containsKey(chargeTemplate.getProvider().getCode())) {
-						meveoCacheContainerProvider.getUsageChargeTemplateCache().put(chargeTemplate.getProvider().getCode(), new HashMap<String, UsageChargeTemplate>());
+					if (!MeveoCacheContainerProvider.getUsageChargeTemplateCache().containsKey(chargeTemplate.getProvider().getCode())) {
+						MeveoCacheContainerProvider.getUsageChargeTemplateCache().put(chargeTemplate.getProvider().getCode(), new HashMap<String, UsageChargeTemplate>());
 					}
-					Map<String, UsageChargeTemplate> chargeTemplatesMap = meveoCacheContainerProvider.getUsageChargeTemplateCache().get(chargeTemplate.getProvider()
+					Map<String, UsageChargeTemplate> chargeTemplatesMap = MeveoCacheContainerProvider.getUsageChargeTemplateCache().get(chargeTemplate.getProvider()
 							.getCode());
 					
 					if(!chargeTemplatesMap.containsKey(chargeTemplate.getCode())){
@@ -100,8 +98,8 @@ public class RatedCDRImportService extends PersistenceService<RatedTransaction> 
 			throws BusinessException {
 		RatedCDR result = cdr;
 		UsageChargeTemplate chargeTemplate=null;
-		if(meveoCacheContainerProvider.getUsageChargeTemplateCache().containsKey(cdr.getProvider().getCode())){
-			Map<String, UsageChargeTemplate> usageChargeTemplates=meveoCacheContainerProvider.getUsageChargeTemplateCache().get(cdr.getProvider().getCode());
+		if(MeveoCacheContainerProvider.getUsageChargeTemplateCache().containsKey(cdr.getProvider().getCode())){
+			Map<String, UsageChargeTemplate> usageChargeTemplates=MeveoCacheContainerProvider.getUsageChargeTemplateCache().get(cdr.getProvider().getCode());
 			if(usageChargeTemplates!=null && usageChargeTemplates.containsKey(cdr.getServiceCode())){
 				chargeTemplate = usageChargeTemplates.get(cdr.getServiceCode());
 			}else{
@@ -116,15 +114,15 @@ public class RatedCDRImportService extends PersistenceService<RatedTransaction> 
 		String userId = cdr.getUserCode();
 		List<Access> accesses = null;
 
-		if (meveoCacheContainerProvider.getAccessCache().containsKey(userId)) {
-			accesses = meveoCacheContainerProvider.getAccessCache().get(userId);
+		if (MeveoCacheContainerProvider.getAccessCache().containsKey(userId)) {
+			accesses = MeveoCacheContainerProvider.getAccessCache().get(userId);
 		} else {
 			accesses = accessService.findByUserID(userId);
 			if (accesses.size() == 0) {
 				result.setError("no acces found for the userCode");
 				return result;
 			}
-			meveoCacheContainerProvider.getAccessCache().put(userId, accesses);
+			MeveoCacheContainerProvider.getAccessCache().put(userId, accesses);
 		}
 
 		for (Access accessPoint : accesses) {

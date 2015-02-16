@@ -18,8 +18,8 @@ import org.meveo.model.mediation.Access;
 import org.meveo.model.rating.EDR;
 import org.meveo.model.rating.EDRStatusEnum;
 import org.meveo.service.billing.impl.EdrService;
-import org.slf4j.Logger;
 import org.meveo.util.MeveoCacheContainerProvider;
+import org.slf4j.Logger;
 
 @Stateless
 public class CDRParsingService {
@@ -35,8 +35,6 @@ public class CDRParsingService {
 	@Inject
 	private AccessService accessService;
 	
-	@Inject
-	private static MeveoCacheContainerProvider meveoCacheContainerProvider;
 
 	@Inject
 	@Rejected
@@ -57,13 +55,13 @@ public class CDRParsingService {
 	}
 
 	public static void resetAccessPointCache() {
-		meveoCacheContainerProvider.getAccessCache().clear();
+		MeveoCacheContainerProvider.getAccessCache().clear();
 	}
 
 	public void resetAccessPointCache(Access access) {
 		List<Access> accesses = null;
-		if (meveoCacheContainerProvider.getAccessCache().containsKey(access.getAccessUserId())) {
-			accesses = meveoCacheContainerProvider.getAccessCache().get(access.getAccessUserId());
+		if (MeveoCacheContainerProvider.getAccessCache().containsKey(access.getAccessUserId())) {
+			accesses = MeveoCacheContainerProvider.getAccessCache().get(access.getAccessUserId());
 			boolean found = false;
 			for (Access cachedAccess : accesses) {
 				if ((access.getSubscription().getId() != null && access.getSubscription().getId()
@@ -82,7 +80,7 @@ public class CDRParsingService {
 		} else {
 			accesses = new ArrayList<Access>();
 			accesses.add(access);
-			meveoCacheContainerProvider.getAccessCache().put(access.getAccessUserId(), accesses);
+			MeveoCacheContainerProvider.getAccessCache().put(access.getAccessUserId(), accesses);
 		}
 	}
 
@@ -132,8 +130,8 @@ public class CDRParsingService {
 	private List<Access> accessPointLookup(Serializable cdr) throws InvalidAccessException {
 		String userId = cdrParser.getAccessUserId(cdr);
 		List<Access> accesses = null;
-		if (meveoCacheContainerProvider.getAccessCache().containsKey(userId)) {
-			accesses = meveoCacheContainerProvider.getAccessCache().get(userId);
+		if (MeveoCacheContainerProvider.getAccessCache().containsKey(userId)) {
+			accesses = MeveoCacheContainerProvider.getAccessCache().get(userId);
 		} else {
 			accesses = accessService.findByUserID(userId);
 			if (accesses.size() == 0) {
@@ -141,7 +139,7 @@ public class CDRParsingService {
 				throw new InvalidAccessException(cdr);
 			}
 
-			meveoCacheContainerProvider.getAccessCache().put(userId, accesses);
+			MeveoCacheContainerProvider.getAccessCache().put(userId, accesses);
 		}
 
 		return accesses;
