@@ -214,11 +214,11 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 			}
 			header.appendChild(billingAccountTag);
 
-			if (billingAccount.getName() != null && billingAccount.getName().getTitle() != null) {
+			/*if (billingAccount.getName() != null && billingAccount.getName().getTitle() != null) {
 				// Element company = doc.createElement("company");
 				Text companyTxt = doc.createTextNode(billingAccount.getName().getTitle().getIsCompany() + "");
 				billingAccountTag.appendChild(companyTxt);
-			}
+			}*/
 
 			Element email = doc.createElement("email");
 			Text emailTxt = doc.createTextNode(billingAccount.getEmail() != null ? billingAccount.getEmail() : "");
