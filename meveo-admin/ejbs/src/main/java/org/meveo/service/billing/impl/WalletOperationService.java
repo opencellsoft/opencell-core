@@ -774,7 +774,8 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 
 		if (recurringChargeTemplate.getApplyInAdvance() != null && recurringChargeTemplate.getApplyInAdvance()) {
 			WalletOperation chargeApplication = rateSubscription(em, chargeInstance, nextapplicationDate);
-			create(chargeApplication, creator, chargeInstance.getProvider());
+			//create(chargeApplication, creator, chargeInstance.getProvider());
+			chargeWalletOpertation(chargeApplication, creator, chargeInstance.getProvider());
 			chargeInstance.setNextChargeDate(nextapplicationDate);
 		} else {
 			chargeInstance.setNextChargeDate(nextapplicationDate);

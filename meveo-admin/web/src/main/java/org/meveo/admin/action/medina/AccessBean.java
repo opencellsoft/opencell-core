@@ -135,10 +135,7 @@ public class AccessBean extends StatelessBaseBean<Access> {
 			}
 		}
 
-		result = super.saveOrUpdate(killConversation);
-		cdrParsingService.resetAccessPointCache(entity);
-
-		return result;
+		return super.saveOrUpdate(killConversation);
 	}
 
 	public void resetEntity() {

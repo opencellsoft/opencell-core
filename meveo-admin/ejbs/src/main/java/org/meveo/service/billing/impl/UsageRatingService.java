@@ -81,14 +81,13 @@ public class UsageRatingService {
 
 	@PostConstruct
 	public synchronized void updateCacheFromDB() {
-		
-			
-			
 			log.info("loading usage charge cache");
 			@SuppressWarnings("unchecked")
 			List<UsageChargeInstance> usageChargeInstances = em.createQuery(
-					"From UsageChargeInstance u").getResultList();
+					"From UsageChargeInstance u "
+					+ "where u.status=org.meveo.model.billing.InstanceStatusEnum.ACTIVE").getResultList();
 			if (usageChargeInstances != null) {
+				log.debug("loading cache for {} usage charges",usageChargeInstances.size());
 				for (UsageChargeInstance usageChargeInstance : usageChargeInstances) {
 					updateCache(usageChargeInstance);
 				}
@@ -244,7 +243,7 @@ public class UsageRatingService {
 	private void reorderChargeCache(Long id) {
 		List<UsageChargeInstanceCache> charges = MeveoCacheContainerProvider.getUsageChargeInstanceCache().get(id);
 		Collections.sort(charges);
-		log.info("sorted " + charges.size() + " charges");
+		log.info("sorted " + charges.size() + " usage charges");
 	}
 
 	public void updateCache(UsageChargeInstance usageChargeInstance) {

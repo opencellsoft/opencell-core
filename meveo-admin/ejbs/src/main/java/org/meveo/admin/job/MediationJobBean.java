@@ -84,7 +84,6 @@ public class MediationJobBean {
 				f.mkdirs();
 			}
 			report = "";
-			CDRParsingService.resetAccessPointCache();
 			cdrFile = FileUtils.getFileForParsing(inputDir, cdrExtensions);
 
 			File[] files = FileUtils.getFilesForParsing(inputDir, cdrExtensions);
@@ -108,7 +107,7 @@ public class MediationJobBean {
 						while ((line = cdrReader.readLine()) != null) {
 							processed++;
 							try {
-								List<EDR> edrs = cdrParser.getEDRList(line);
+								List<EDR> edrs = cdrParser.getEDRList(line,provider);
 								if (edrs != null && edrs.size() > 0) {
 									for (EDR edr : edrs) {
 										createEdr(edr, currentUser);

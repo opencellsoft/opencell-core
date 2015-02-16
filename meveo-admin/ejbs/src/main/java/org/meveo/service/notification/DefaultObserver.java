@@ -351,48 +351,8 @@ public class DefaultObserver {
 			}
 		}else if(e instanceof Access){
 			Access access=(Access)e;
-			if (MeveoCacheContainerProvider.getAccessCache().containsKey(access.getAccessUserId())) {
-				List<Access> accesses = MeveoCacheContainerProvider.getAccessCache().get(access.getAccessUserId());
-				Integer accessIndex=null;
-				Integer index=0;
-				for (Access cachedAccess : accesses) {
-					if(cachedAccess.getId().equals(access.getId())){
-						accessIndex=index;
-						break;
-					}
-					index++;
-				}
-				if(accessIndex!=null){
-					if(!removeAction){
-						accesses.set(accessIndex, access);
-					}else{
-						accesses.remove(accessIndex.intValue());
-					}
-					
-				}
-				
-			}
-		}else if(e instanceof UsageChargeInstance){
-			UsageChargeInstance usageChargeInstance=(UsageChargeInstance)e;
-			if (MeveoCacheContainerProvider.getUsageChargeInstanceCache().containsKey(usageChargeInstance.getServiceInstance().getSubscription().getId())) {
-				List<UsageChargeInstanceCache> usageChargeInstanceCaches=MeveoCacheContainerProvider.getUsageChargeInstanceCache().get(usageChargeInstance.getServiceInstance().getSubscription().getId());
-				Integer usageChargeInstanceCacheIndex=null;
-				for(UsageChargeInstanceCache usageChargeInstanceCache:usageChargeInstanceCaches){
-					
-					if(usageChargeInstanceCache.getChargeInstanceId().equals(usageChargeInstance.getId())){
-						usageChargeInstanceCacheIndex=usageChargeInstanceCaches.indexOf(usageChargeInstanceCache);
-						break;
-					}
-				}
-				usageChargeInstanceCaches.remove(usageChargeInstanceCacheIndex); //if update action the UsageChargeInstanceCache will be reconstructed
-			}
-		}else if(e instanceof CounterInstance){
-			CounterInstance counterInstance=(CounterInstance)e;
-			if (MeveoCacheContainerProvider.getCounterCache().containsKey(counterInstance.getId())) {
-				if(MeveoCacheContainerProvider.getCounterCache().containsKey(counterInstance.getId())){
-					MeveoCacheContainerProvider.getCounterCache().remove(counterInstance.getId());//if update action the CounterInstanceCache will be reconstructed
-					
-				}
+			if (MeveoCacheContainerProvider.getAccessCache().containsKey(access.getCacheKey())) {
+				MeveoCacheContainerProvider.getAccessCache().remove(access.getCacheKey());
 			}
 		}
 	}
