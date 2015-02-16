@@ -24,6 +24,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.meveo.admin.action.BaseBean;
+import org.meveo.model.billing.BillingWalletTypeEnum;
 import org.meveo.model.catalog.WalletTemplate;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
@@ -62,9 +63,11 @@ public class WalletTemplateBean extends BaseBean<WalletTemplate> {
 	@Named("walletTemplate")
 	public WalletTemplate init() {
 		initEntity();
+
+		entity.setWalletType(BillingWalletTypeEnum.PREPAID);
+
 		return entity;
 	}
-
 
 	/**
 	 * Override default list view name. (By default its class name starting
