@@ -587,7 +587,7 @@ public class UsageRatingService {
 				walletOperation.setQuantity(deducedQuantity);
 			}
 
-			walletOperationService.chargeWalletOpertation(walletOperation, currentUser, provider);
+			walletOperationService.chargeWalletOperation(walletOperation, currentUser, provider);
 			//walletOperationService.create(walletOperation, currentUser, provider);
 
 			// handle associated edr creation
