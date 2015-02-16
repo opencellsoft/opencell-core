@@ -5733,10 +5733,7 @@
               <xs:element maxOccurs="unbounded" minOccurs="0" name="accountOperations" nillable="true" type="tns:accountOperationDto"/>
               <xs:element minOccurs="0" name="dateStatus" type="xs:dateTime"/>
               <xs:element minOccurs="0" name="dateDunningLevel" type="xs:dateTime"/>
-              <xs:element minOccurs="0" name="email" type="xs:string"/>
-              <xs:element minOccurs="0" name="phone" type="xs:string"/>
-              <xs:element minOccurs="0" name="mobile" type="xs:string"/>
-              <xs:element minOccurs="0" name="fax" type="xs:string"/>
+              <xs:element minOccurs="0" name="contactInformation" type="tns:ContactInformation"/>
               <xs:element minOccurs="0" name="dunningLevel" type="xs:string"/>
               <xs:element minOccurs="0" name="mandateIdentification" type="xs:string"/>
               <xs:element minOccurs="0" name="mandateDate" type="xs:dateTime"/>
@@ -5775,6 +5772,14 @@
           <xs:element minOccurs="0" name="matchingAmount" type="xs:decimal"/>
         </xs:sequence>
       </xs:complexType>
+      <xs:complexType name="ContactInformation">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="email" type="xs:string"/>
+          <xs:element minOccurs="0" name="phone" type="xs:string"/>
+          <xs:element minOccurs="0" name="mobile" type="xs:string"/>
+          <xs:element minOccurs="0" name="fax" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
       <xs:complexType name="BillingAccounts">
         <xs:sequence>
           <xs:element maxOccurs="unbounded" minOccurs="0" name="billingAccount" nillable="true" type="tns:BillingAccount"/>
@@ -5792,6 +5797,7 @@
               <xs:element name="customerCategory" type="xs:string"/>
               <xs:element name="customerBrand" type="xs:string"/>
               <xs:element name="seller" type="xs:string"/>
+              <xs:element minOccurs="0" name="contactInformation" type="tns:ContactInformation"/>
               <xs:element minOccurs="0" name="customerAccounts" type="tns:CustomerAccounts"/>
             </xs:sequence>
           </xs:extension>
@@ -6356,26 +6362,12 @@
    <soapenv:Body>
       <ws:createAccess>
          <!--Optional:-->
-          <access code="ACCESS1">
-            <subscription>SUB1</subscription>
+          <access code="SOAP_ACCESS1">
+            <subscription>SOAP_SUB1</subscription>
             <!--Optional:-->
             <startDate>2015-01-01</startDate>
             <!--Optional:-->
             <endDate>2015-01-31</endDate>
-         </access>
-      </ws:createAccess>
-   </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/createAccess"/><con:wsrmConfig version="1.2"/></con:call><con:call name="Request 2"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
-   <soapenv:Header/>
-   <soapenv:Body>
-      <ws:createAccess>
-         <!--Optional:-->
-         <access code="?">
-            <subscription>?</subscription>
-            <!--Optional:-->
-            <startDate>?</startDate>
-            <!--Optional:-->
-            <endDate>?</endDate>
          </access>
       </ws:createAccess>
    </soapenv:Body>
@@ -6387,7 +6379,12 @@
    <soapenv:Body>
       <ws:createBillingAccount>
          <!--Optional:-->
-         <billingAccount code="BAX" description="BAX" customerAccount="CAX" billingCycle="CYC_INV_MT_1" country="US" language="ENG" paymentMethod="CHECK">
+         <billingAccount code="SOAP_BA1" description="BA1">
+         	  <customerAccount>SOAP_CA1</customerAccount>
+         	  <billingCycle>CYC_INV_MT_1</billingCycle>
+         	  <country>US</country>
+         	  <language>ENG</language>
+         	  <paymentMethod>CHECK</paymentMethod>
             <!--Optional:-->
             <externalRef1></externalRef1>
             <!--Optional:-->
@@ -6443,7 +6440,7 @@
    <soapenv:Body>
       <ws:createCustomer>
          <!--Optional:-->
-         <customer code="CUSTX" description="CUSTX">
+         <customer code="SOAP_CUST1" description="CUST1">
             <!--Optional:-->
             <externalRef1></externalRef1>
             <!--Optional:-->
@@ -6490,87 +6487,304 @@
             <customerBrand>DEFAULT</customerBrand>
             <!--Optional:-->
             <seller>MAIN_SELLER</seller>
+              <!--Optional:-->
+            <contactInformation>
+               <!--Optional:-->
+               <email>edward.legaspi@manaty.net</email>
+               <!--Optional:-->
+               <phone></phone>
+               <!--Optional:-->
+               <mobile></mobile>
+               <!--Optional:-->
+               <fax></fax>
+            </contactInformation>
          </customer>
       </ws:createCustomer>
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/createCustomer"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation isOneWay="false" action="" name="createCustomerAccount" bindingOperationName="createCustomerAccount" type="Request-Response" outputName="createCustomerAccountResponse" inputName="createCustomerAccount" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment xmlns:con="http://eviware.com/soapui/config">
   &lt;con:entry key="username" value="meveo.admin"/>
   &lt;con:entry key="password" value="meveo.admin"/>
-&lt;/xml-fragment></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
-   <soapenv:Header/>
-   <soapenv:Body>
-      <ws:createCustomerAccount>
-         <!--Optional:-->
-         <customerAccount code="CAX" description="CAX">
-         	  <customer>CUSTX</customer>
-            <currency>USD</currency>
-            <!--Optional:-->
-            <externalRef1></externalRef1>
-            <!--Optional:-->
-            <externalRef2></externalRef2>
-            <!--Optional:-->
-            <name>
-               <!--Optional:-->
-               <title></title>
-               <!--Optional:-->
-               <firstName>DEMO</firstName>
-               <lastName>DEMO</lastName>
-            </name>
-            <!--Optional:-->
-            <address>
-               <!--Optional:-->
-               <address1>Address1</address1>
-               <!--Optional:-->
-               <address2></address2>
-               <!--Optional:-->
-               <address3></address3>
-               <!--Optional:-->
-               <zipCode></zipCode>
-               <!--Optional:-->
-               <city></city>
-               <!--Optional:-->
-               <country></country>
-               <!--Optional:-->
-               <state></state>
-            </address>
-            <!--Zero or more repetitions:-->
-            <customFields>
-            <customField code="CA2_CF1" description="CA2_CF1">
-               <!--Optional:-->
-               <stringValue>1</stringValue>
-               <longValue>1</longValue>
-               <doubleValue>1</doubleValue>
-               <dateValue>2015-01-01</dateValue>
-               </customField>
-            </customFields>
-            <!--Optional:-->
-            <status>ACTIVE</status>
-            <!--Optional:-->
-            <paymentMethod>CHECK</paymentMethod>
-            <!--Optional:-->
-            <creditCategory></creditCategory>
-            <!--Zero or more repetitions:-->
-    		  <!--Optional:-->
-            <!--<dateStatus></dateStatus>-->
-            <!--Optional:-->
-            <dateDunningLevel>2015-01-22T13:42:57.219+08:00</dateDunningLevel>
-            <!--Optional:-->
-            <email></email>
-            <!--Optional:-->
-            <phone></phone>
-            <!--Optional:-->
-            <mobile></mobile>
-            <!--Optional:-->
-            <fax></fax>
-            <!--Optional:-->
-            <dunningLevel></dunningLevel>
-            <!--Optional:-->
-            <mandateIdentification>1234</mandateIdentification>
-            <!--Optional:-->
-            <mandateDate>2015-01-22T13:42:57.219+08:00</mandateDate>
-         </customerAccount>
-      </ws:createCustomerAccount>
-   </soapenv:Body>
+&lt;/xml-fragment></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
+	xmlns:ws="http://ws.api.meveo.org/">
+	<soapenv:Header />
+	<soapenv:Body>
+		<ws:customerHierarchyUpdate>
+			<!--Optional: -->
+			<customerHierarchy>
+				<sellers>
+					<!--Zero or more repetitions: -->
+					<seller code="SOAP_SELLER2" description="SELLERS2">
+						<!--Optional: -->
+						<invoicePrefix>SELLERS2</invoicePrefix>
+						<!--Optional: -->
+						<currencyCode>USD</currencyCode>
+						<!--Optional: -->
+						<countryCode>US</countryCode>
+						<!--Optional: -->
+						<languageCode>ENG</languageCode>
+						<!--Optional: -->
+						<parentSeller></parentSeller>
+						<!--Zero or more repetitions: -->
+						<customers>
+							<customer code="SOAP_CUST2" description="CUSTS2">
+								<!--Optional: -->
+								<externalRef1></externalRef1>
+								<!--Optional: -->
+								<externalRef2></externalRef2>
+								<!--Optional: -->
+								<name>
+									<lastName>Legaspi</lastName>
+									<!--Optional: -->
+									<title></title>
+									<!--Optional: -->
+									<firstName></firstName>
+								</name>
+								<!--Optional: -->
+								<address>
+									<!--Optional: -->
+									<address1>Address1</address1>
+									<!--Optional: -->
+									<address2></address2>
+									<!--Optional: -->
+									<address3></address3>
+									<!--Optional: -->
+									<zipCode></zipCode>
+									<!--Optional: -->
+									<city></city>
+									<!--Optional: -->
+									<country></country>
+									<!--Optional: -->
+									<state></state>
+								</address>
+								<!--Zero or more repetitions: -->
+								<customFields>
+									<customField code="CF1" description="CF1">
+										<stringValue>1</stringValue>
+										<longValue>1</longValue>
+										<doubleValue>1</doubleValue>
+										<dateValue>2015-01-01</dateValue>
+									</customField>
+								</customFields>
+								<!--Optional: -->
+								<customerCategory>CLIENT</customerCategory>
+								<!--Optional: -->
+								<customerBrand>OCB</customerBrand>
+								<contactInformation>
+									<email>edward.legaspi@manaty.net</email>
+									<phone>1234</phone>
+									<mobile>1234</mobile>
+									<fax>1234</fax>
+								</contactInformation>
+								<!--Zero or more repetitions: -->
+								<customerAccounts>
+									<customerAccount code="SOAP_CA2" description="CAS2">
+										<currency>USD</currency>
+										<!--Optional: -->
+										<externalRef1></externalRef1>
+										<!--Optional: -->
+										<externalRef2></externalRef2>
+										<!--Optional: -->
+										<name>
+											<lastName>Legaspi</lastName>
+											<!--Optional: -->
+											<title></title>
+											<!--Optional: -->
+											<firstName></firstName>
+										</name>
+										<!--Optional: -->
+										<address>
+											<!--Optional: -->
+											<address1>Address1</address1>
+											<!--Optional: -->
+											<address2></address2>
+											<!--Optional: -->
+											<address3></address3>
+											<!--Optional: -->
+											<zipCode></zipCode>
+											<!--Optional: -->
+											<city></city>
+											<!--Optional: -->
+											<country></country>
+											<!--Optional: -->
+											<state></state>
+										</address>
+										<!--Zero or more repetitions: -->
+										<customFields>
+											<customField code="CF1" description="CF1">
+												<!--Optional: -->
+												<stringValue>1</stringValue>
+												<longValue>1</longValue>
+												<doubleValue>1</doubleValue>
+												<dateValue>2015-01-01</dateValue>
+											</customField>
+										</customFields>
+										<!--Optional: -->
+										<status></status>
+										<!--Optional: -->
+										<paymentMethod>CHECK</paymentMethod>
+										<!--Optional: -->
+										<creditCategory>CASH</creditCategory>
+										<!--Optional: -->
+										<dateStatus>2015-02-20</dateStatus>
+										<!--Optional: -->
+										<dateDunningLevel>2015-02-20</dateDunningLevel>
+										<contactInformation>
+											<email>edward.legaspi@manaty.net</email>
+											<phone>1234</phone>
+											<mobile>1234</mobile>
+											<fax>1234</fax>
+										</contactInformation>
+										<!--Optional: -->
+										<dunningLevel></dunningLevel>
+										<!--Optional: -->
+										<mandateIdentification></mandateIdentification>
+										<!--Optional: -->
+										<mandateDate>2015-02-20</mandateDate>
+										<!--Zero or more repetitions: -->
+										<billingAccounts>
+											<billingAccount code="SOAP_BA2" description="BAS2">
+												<billingCycle>CYC_INV_MT_1</billingCycle>
+												<country>US</country>
+												<language>ENG</language>
+												<paymentMethod>CHECK</paymentMethod>
+												<!--Optional: -->
+												<externalRef1></externalRef1>
+												<!--Optional: -->
+												<externalRef2></externalRef2>
+												<!--Optional: -->
+												<name>
+													<lastName>Legaspi</lastName>
+													<!--Optional: -->
+													<title></title>
+													<!--Optional: -->
+													<firstName></firstName>
+												</name>
+												<!--Optional: -->
+												<address>
+													<!--Optional: -->
+													<address1>Address1</address1>
+													<!--Optional: -->
+													<address2></address2>
+													<!--Optional: -->
+													<address3></address3>
+													<!--Optional: -->
+													<zipCode></zipCode>
+													<!--Optional: -->
+													<city></city>
+													<!--Optional: -->
+													<country></country>
+													<!--Optional: -->
+													<state></state>
+												</address>
+												<!--Zero or more repetitions: -->
+												<customFields>
+													<customField code="CF1" description="CF1">
+														<stringValue>1</stringValue>
+														<longValue>1</longValue>
+														<doubleValue>1</doubleValue>
+														<dateValue>2015-01-01</dateValue>
+													</customField>
+												</customFields>
+												<!--Optional: -->
+												<nextInvoiceDate>2015-02-20</nextInvoiceDate>
+												<!--Optional: -->
+												<subscriptionDate>2015-02-20</subscriptionDate>
+												<!--Optional: -->
+												<paymentTerms>CASH</paymentTerms>
+												<!--Optional: -->
+												<electronicBilling>true</electronicBilling>
+												<!--Zero or more repetitions: -->
+												<userAccounts>
+													<userAccount code="SOAP_UA2" description="UAS2">
+														<!--Optional: -->
+														<externalRef1></externalRef1>
+														<!--Optional: -->
+														<externalRef2></externalRef2>
+														<!--Optional: -->
+														<name>
+															<lastName>Legaspi</lastName>
+															<!--Optional: -->
+															<title></title>
+															<!--Optional: -->
+															<firstName></firstName>
+														</name>
+														<!--Optional: -->
+														<address>
+															<!--Optional: -->
+															<address1>Address1</address1>
+															<!--Optional: -->
+															<address2></address2>
+															<!--Optional: -->
+															<address3></address3>
+															<!--Optional: -->
+															<zipCode></zipCode>
+															<!--Optional: -->
+															<city></city>
+															<!--Optional: -->
+															<country></country>
+															<!--Optional: -->
+															<state></state>
+														</address>
+														<!--Zero or more repetitions: -->
+														<customFields>
+															<customField code="CF1" description="CF1">
+																<stringValue>1</stringValue>
+																<longValue>1</longValue>
+																<doubleValue>1</doubleValue>
+																<dateValue>2015-01-01</dateValue>
+															</customField>
+														</customFields>
+														<!--Optional: -->
+														<subscriptionDate>2015-02-04</subscriptionDate>
+														<!--Optional: -->
+														<status></status>
+														<!--Zero or more repetitions: -->
+														<subscriptions>
+															<subscription code="SOAP_SUB2" description="SUBW2">
+																<offerTemplate>OFF1</offerTemplate>
+																<!--Optional: -->
+																<subscriptionDate>2015-02-04</subscriptionDate>
+																<!--<terminationReason>?</terminationReason> -->
+																<!--Optional: -->
+																<!--<terminationDate></terminationDate> -->
+																<!--Zero or more repetitions: -->
+																<accesses>
+																	<access code="SOAP_ACCESS2">
+																		<!--Optional: -->
+																		<startDate>2015-02-04</startDate>
+																		<!--Optional: -->
+																		<endDate>2015-06-30</endDate>
+																	</access>
+																</accesses>
+																<!--Zero or more repetitions: -->
+																<services>
+																	<serviceInstance code="SERV1">
+																		<!--Optional: -->
+																		<status></status>
+																		<!--Optional: -->
+																		<subscriptionDate>2015-02-04</subscriptionDate>
+																		<!--Optional: -->
+																		<!--<terminationDate></terminationDate> -->
+																		<quantity>1</quantity>
+																		<!--Optional: -->
+																		<!--<terminationReason></terminationReason> -->
+																	</serviceInstance>
+																</services>
+															</subscription>
+														</subscriptions>
+													</userAccount>
+												</userAccounts>
+											</billingAccount>
+										</billingAccounts>
+									</customerAccount>
+								</customerAccounts>
+							</customer>
+						</customers>
+					</seller>
+				</sellers>
+			</customerHierarchy>
+		</ws:customerHierarchyUpdate>
+	</soapenv:Body>
 </soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/createCustomerAccount"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation isOneWay="false" action="" name="createUserAccount" bindingOperationName="createUserAccount" type="Request-Response" outputName="createUserAccountResponse" inputName="createUserAccount" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment xmlns:con="http://eviware.com/soapui/config">
   &lt;con:entry key="username" value="meveo.admin"/>
   &lt;con:entry key="password" value="meveo.admin"/>
@@ -6579,7 +6793,8 @@
    <soapenv:Body>
       <ws:createUserAccount>
          <!--Optional:-->
-         <userAccount code="UAX" description="UAX" billingAccount="BAX">
+         <userAccount code="SOAP_UA1" description="UAX">
+         <billingAccount>SOAP_BA1</billingAccount>
             <!--Optional:-->
             <externalRef1></externalRef1>
             <!--Optional:-->
@@ -6630,9 +6845,9 @@
    <soapenv:Body>
       <ws:findAccess>
           <!--Optional:-->
-         <accessCode>ACCESS1</accessCode>
+         <accessCode>SOAP_ACCESS1</accessCode>
          <!--Optional:-->
-         <subscriptionCode>SUB1</subscriptionCode>
+         <subscriptionCode>SOAP_SUB1</subscriptionCode>
       </ws:findAccess>
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/findAccess"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation isOneWay="false" action="" name="findBillingAccount" bindingOperationName="findBillingAccount" type="Request-Response" outputName="findBillingAccountResponse" inputName="findBillingAccount" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment xmlns:con="http://eviware.com/soapui/config">
@@ -6643,7 +6858,7 @@
    <soapenv:Body>
       <ws:findBillingAccount>
          <!--Optional:-->
-         <billingAccountCode>BAX</billingAccountCode>
+         <billingAccountCode>SOAP_BA1</billingAccountCode>
       </ws:findBillingAccount>
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/findBillingAccount"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation isOneWay="false" action="" name="findCustomer" bindingOperationName="findCustomer" type="Request-Response" outputName="findCustomerResponse" inputName="findCustomer" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment xmlns:con="http://eviware.com/soapui/config">
@@ -6654,15 +6869,7 @@
    <soapenv:Body>
       <ws:findCustomer>
          <!--Optional:-->
-         <customerCode>CUSTX</customerCode>
-      </ws:findCustomer>
-   </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/findCustomer"/><con:wsrmConfig version="1.2"/></con:call><con:call name="Request 2"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
-   <soapenv:Header/>
-   <soapenv:Body>
-      <ws:findCustomer>
-         <!--Optional:-->
-         <customerCode>?</customerCode>
+         <customerCode>SOAP_CUST1</customerCode>
       </ws:findCustomer>
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/findCustomer"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation isOneWay="false" action="" name="findCustomerAccount" bindingOperationName="findCustomerAccount" type="Request-Response" outputName="findCustomerAccountResponse" inputName="findCustomerAccount" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment xmlns:con="http://eviware.com/soapui/config">
@@ -6673,7 +6880,7 @@
    <soapenv:Body>
       <ws:findCustomerAccount>
          <!--Optional:-->
-         <customerAccountCode>CAX</customerAccountCode>
+         <customerAccountCode>SOAP_CA1</customerAccountCode>
       </ws:findCustomerAccount>
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/findCustomerAccount"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation isOneWay="false" action="" name="findUserAccount" bindingOperationName="findUserAccount" type="Request-Response" outputName="findUserAccountResponse" inputName="findUserAccount" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment xmlns:con="http://eviware.com/soapui/config">
@@ -6684,7 +6891,7 @@
    <soapenv:Body>
       <ws:findUserAccount>
          <!--Optional:-->
-         <userAccountCode>UAX</userAccountCode>
+         <userAccountCode>SOAP_UA1</userAccountCode>
       </ws:findUserAccount>
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/findUserAccount"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation isOneWay="false" action="" name="index" bindingOperationName="index" type="Request-Response" outputName="indexResponse" inputName="index" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
@@ -6700,9 +6907,9 @@
    <soapenv:Body>
       <ws:removeAccess>
           <!--Optional:-->
-         <accessCode>ACCESS1</accessCode>
+         <accessCode>SOAP_ACCESS1</accessCode>
          <!--Optional:-->
-         <subscriptionCode>SUB1</subscriptionCode>
+         <subscriptionCode>SOAP_SUB1</subscriptionCode>
       </ws:removeAccess>
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request><con:credentials><con:selectedAuthProfile>No Authorization</con:selectedAuthProfile><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/removeAccess"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation isOneWay="false" action="" name="removeBillingAccount" bindingOperationName="removeBillingAccount" type="Request-Response" outputName="removeBillingAccountResponse" inputName="removeBillingAccount" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment xmlns:con="http://eviware.com/soapui/config">
@@ -6713,7 +6920,7 @@
    <soapenv:Body>
       <ws:removeBillingAccount>
          <!--Optional:-->
-         <billingAccountCode>BAX</billingAccountCode>
+         <billingAccountCode>SOAP_BA1</billingAccountCode>
       </ws:removeBillingAccount>
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/removeBillingAccount"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation isOneWay="false" action="" name="removeCustomer" bindingOperationName="removeCustomer" type="Request-Response" outputName="removeCustomerResponse" inputName="removeCustomer" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment xmlns:con="http://eviware.com/soapui/config">
@@ -6724,7 +6931,7 @@
    <soapenv:Body>
       <ws:removeCustomer>
          <!--Optional:-->
-         <customerCode>CUSTX</customerCode>
+         <customerCode>SOAP_CUST1</customerCode>
       </ws:removeCustomer>
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/removeCustomer"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation isOneWay="false" action="" name="removeCustomerAccount" bindingOperationName="removeCustomerAccount" type="Request-Response" outputName="removeCustomerAccountResponse" inputName="removeCustomerAccount" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment xmlns:con="http://eviware.com/soapui/config">
@@ -6735,7 +6942,7 @@
    <soapenv:Body>
       <ws:removeCustomerAccount>
          <!--Optional:-->
-         <customerAccountCodeg0>CAX</customerAccountCode>
+         <customerAccountCode>SOAP_CA1</customerAccountCode>
       </ws:removeCustomerAccount>
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/removeCustomerAccount"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation isOneWay="false" action="" name="removeUserAccount" bindingOperationName="removeUserAccount" type="Request-Response" outputName="removeUserAccountResponse" inputName="removeUserAccount" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment xmlns:con="http://eviware.com/soapui/config">
@@ -6746,7 +6953,7 @@
    <soapenv:Body>
       <ws:removeUserAccount>
          <!--Optional:-->
-         <userAccountCode>UAX</userAccountCode>
+         <userAccountCode>SOAP_UA1</userAccountCode>
       </ws:removeUserAccount>
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/removeUserAccount"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation isOneWay="false" action="" name="updateAccess" bindingOperationName="updateAccess" type="Request-Response" outputName="updateAccessResponse" inputName="updateAccess" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment xmlns:con="http://eviware.com/soapui/config">
@@ -6757,8 +6964,8 @@
    <soapenv:Body>
       <ws:updateAccess>
           <!--Optional:-->
-          <access code="ACCESS1">
-            <subscription>SUB1</subscription>
+          <access code="SOAP_ACCESS1">
+            <subscription>SOAP_SUB1</subscription>
             <!--Optional:-->
             <startDate>2015-01-01</startDate>
             <!--Optional:-->
@@ -6774,7 +6981,12 @@
    <soapenv:Body>
       <ws:updateBillingAccount>
          <!--Optional:-->
-         <billingAccount code="BAX" description="BAX" customerAccount="CAX" billingCycle="CYC_INV_MT_1" country="US" language="ENG" paymentMethod="CHECK">
+           <billingAccount code="SOAP_BA1" description="BA1">
+         	  <customerAccount>SOAP_CA1</customerAccount>
+         	  <billingCycle>CYC_INV_MT_1</billingCycle>
+         	  <country>US</country>
+         	  <language>ENG</language>
+         	  <paymentMethod>CHECK</paymentMethod>
             <!--Optional:-->
             <externalRef1></externalRef1>
             <!--Optional:-->
@@ -6831,7 +7043,7 @@
    <soapenv:Body>
       <ws:updateCustomer>
          <!--Optional:-->
-         <customer code="CUSTX" description="CUSTX">
+         <customer code="SOAP_CUST1" description="CUST1">
             <!--Optional:-->
             <externalRef1></externalRef1>
             <!--Optional:-->
@@ -6878,87 +7090,96 @@
             <customerBrand>DEFAULT</customerBrand>
             <!--Optional:-->
             <seller>MAIN_SELLER</seller>
+              <contactInformation>
+               <!--Optional:-->
+               <email>edward.legaspi@manaty.net</email>
+               <!--Optional:-->
+               <phone>1234</phone>
+               <!--Optional:-->
+               <mobile>1234</mobile>
+               <!--Optional:-->
+               <fax>1234</fax>
+            </contactInformation>
          </customer>
       </ws:updateCustomer>
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/updateCustomer"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation isOneWay="false" action="" name="updateCustomerAccount" bindingOperationName="updateCustomerAccount" type="Request-Response" outputName="updateCustomerAccountResponse" inputName="updateCustomerAccount" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment xmlns:con="http://eviware.com/soapui/config">
   &lt;con:entry key="username" value="meveo.admin"/>
   &lt;con:entry key="password" value="meveo.admin"/>
-&lt;/xml-fragment></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
-   <soapenv:Header/>
-   <soapenv:Body>
-      <ws:updateCustomerAccount>
-         <!--Optional:-->
-         <customerAccount code="CAX" description="CAX">
-          <customer>CUSTX</customer>
-            <currency>USD</currency>
-            <!--Optional:-->            
-            <externalRef1></externalRef1>
-            <!--Optional:-->
-            <externalRef2></externalRef2>
-            <!--Optional:-->
-            <name>
-               <!--Optional:-->
-               <title></title>
-               <!--Optional:-->
-               <firstName>DEMO</firstName>
-                <lastName>DEMO</lastName>
-            </name>
-            <!--Optional:-->
-            <address>
-               <!--Optional:-->
-               <address1>Address1</address1>
-               <!--Optional:-->
-               <address2></address2>
-               <!--Optional:-->
-               <address3></address3>
-               <!--Optional:-->
-               <zipCode></zipCode>
-               <!--Optional:-->
-               <city></city>
-               <!--Optional:-->
-               <country></country>
-               <!--Optional:-->
-               <state></state>
-            </address>
-            <!--Zero or more repetitions:-->
-            <customFields>
-            <customField code="CA2_CF1" description="CA2_CF1">
-               <!--Optional:-->
-               <stringValue>1</stringValue>
-               <longValue>1</longValue>
-               <doubleValue>1</doubleValue>
-               <dateValue>2015-01-01</dateValue>
-               </customField>
-            </customFields>
-            <!--Optional:-->
-            <status>ACTIVE</status>
-            <!--Optional:-->
-            <paymentMethod>CHECK</paymentMethod>
-            <!--Optional:-->
-            <creditCategory></creditCategory>
-            <!--Zero or more repetitions:-->
-    		  <!--Optional:-->
-            <!--<dateStatus></dateStatus>-->
-            <!--Optional:-->
-            <dateDunningLevel>2015-01-22T13:42:57.219+08:00</dateDunningLevel>
-            <!--Optional:-->
-            <email></email>
-            <!--Optional:-->
-            <phone></phone>
-            <!--Optional:-->
-            <mobile>1234</mobile>
-            <!--Optional:-->
-            <fax></fax>
-            <!--Optional:-->
-            <dunningLevel></dunningLevel>
-            <!--Optional:-->
-            <mandateIdentification>1234</mandateIdentification>
-            <!--Optional:-->
-            <mandateDate>2015-01-22T13:42:57.219+08:00</mandateDate>
-         </customerAccount>
-      </ws:updateCustomerAccount>
-   </soapenv:Body>
+&lt;/xml-fragment></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
+	xmlns:ws="http://ws.api.meveo.org/">
+	<soapenv:Header />
+	<soapenv:Body>
+		<ws:updateCustomerAccount>
+			<!--Optional: -->
+			<customerAccount code="SOAP_CA1" description="CA1">
+				<customer>SOAP_CUST1</customer>
+				<currency>USD</currency>
+				<!--Optional: -->
+				<externalRef1></externalRef1>
+				<!--Optional: -->
+				<externalRef2></externalRef2>
+				<!--Optional: -->
+				<name>
+					<!--Optional: -->
+					<title></title>
+					<!--Optional: -->
+					<firstName>DEMO</firstName>
+					<lastName>DEMO</lastName>
+				</name>
+				<!--Optional: -->
+				<address>
+					<!--Optional: -->
+					<address1>Address1</address1>
+					<!--Optional: -->
+					<address2></address2>
+					<!--Optional: -->
+					<address3></address3>
+					<!--Optional: -->
+					<zipCode></zipCode>
+					<!--Optional: -->
+					<city></city>
+					<!--Optional: -->
+					<country></country>
+					<!--Optional: -->
+					<state></state>
+				</address>
+				<!--Zero or more repetitions: -->
+				<customFields>
+					<customField code="CA2_CF1" description="CA2_CF1">
+						<!--Optional: -->
+						<stringValue>1</stringValue>
+						<longValue>1</longValue>
+						<doubleValue>1</doubleValue>
+						<dateValue>2015-01-01</dateValue>
+					</customField>
+				</customFields>
+				<!--Optional: -->
+				<status>ACTIVE</status>
+				<!--Optional: -->
+				<paymentMethod>CHECK</paymentMethod>
+				<!--Optional: -->
+				<creditCategory></creditCategory>
+				<!--Zero or more repetitions: -->
+				<!--Optional: -->
+				<!--<dateStatus></dateStatus> -->
+				<!--Optional: -->
+				<dateDunningLevel>2015-01-22T13:42:57.219+08:00</dateDunningLevel>
+				<contactInformation>
+					<email>edward.legaspi@manaty.net</email>
+					<phone>1234</phone>
+					<mobile>1234</mobile>
+					<fax>1234</fax>
+				</contactInformation>
+				<!--Optional: -->
+				<dunningLevel></dunningLevel>
+				<!--Optional: -->
+				<mandateIdentification>1234</mandateIdentification>
+				<!--Optional: -->
+				<mandateDate>2015-01-22T13:42:57.219+08:00</mandateDate>
+			</customerAccount>
+		</ws:updateCustomerAccount>
+	</soapenv:Body>
 </soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/updateCustomerAccount"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation isOneWay="false" action="" name="updateUserAccount" bindingOperationName="updateUserAccount" type="Request-Response" outputName="updateUserAccountResponse" inputName="updateUserAccount" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment xmlns:con="http://eviware.com/soapui/config">
   &lt;con:entry key="username" value="meveo.admin"/>
   &lt;con:entry key="password" value="meveo.admin"/>
@@ -6967,7 +7188,8 @@
    <soapenv:Body>
       <ws:updateUserAccount>
          <!--Optional:-->
-         <userAccount code="UAX" description="UAX" billingAccount="BAX">
+         <userAccount code="SOAP_UA1" description="UA1">
+         <billingAccount>SOAP_BA1</billingAccount>
             <!--Optional:-->
             <externalRef1></externalRef1>
             <!--Optional:-->
@@ -7022,7 +7244,7 @@
             <email>test@manaty.net</email>
             <paymentMethod>1</paymentMethod>
             <!--Optional:-->
-            <customerId>CUST_CUSTY</customerId>
+            <customerId>CUST_SOAP_CUST3</customerId>
             <!--Optional:-->
             <sellerCode>MAIN_SELLER</sellerCode>
             <!--Optional:-->
@@ -7068,7 +7290,7 @@
          <!--Optional:-->
          <accountHierarchy>
            <!--Optional:-->
-            <customerId>CUST1</customerId>
+            <customerId>SOAP_CUST3</customerId>
             <!--Optional:-->
             <sellerCode>MAIN_SELLER</sellerCode>
          </accountHierarchy>
@@ -7087,7 +7309,7 @@
             <paymentMethod>1</paymentMethod>
 
             <!--Optional:-->
-            <customerId>CUSTY</customerId>
+            <customerId>SOAP_CUST3</customerId>
             <!--Optional:-->
             <sellerCode>MAIN_SELLER</sellerCode>
             <!--Optional:-->
@@ -7131,15 +7353,7 @@
    <soapenv:Body>
       <ws:listAccess>
          <!--Optional:-->
-         <subscriptionCode>SUB2</subscriptionCode>
-      </ws:listAccess>
-   </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/listAccess"/><con:wsrmConfig version="1.2"/></con:call><con:call name="Request 2"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
-   <soapenv:Header/>
-   <soapenv:Body>
-      <ws:listAccess>
-         <!--Optional:-->
-         <subscriptionCode>?</subscriptionCode>
+         <subscriptionCode>SOAP_SUB1</subscriptionCode>
       </ws:listAccess>
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/listAccess"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation isOneWay="false" action="" name="customerHierarchyUpdate" bindingOperationName="customerHierarchyUpdate" type="Request-Response" outputName="customerHierarchyUpdateResponse" inputName="customerHierarchyUpdate" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment xmlns:con="http://eviware.com/soapui/config">
@@ -7154,7 +7368,7 @@
 			<customerHierarchy>
 				<sellers>
 					<!--Zero or more repetitions: -->
-					<seller code="SELLERS2" description="SELLERS2">
+					<seller code="SOAP_SELLER2" description="SELLERS2">
 						<!--Optional: -->
 						<invoicePrefix>SELLERS2</invoicePrefix>
 						<!--Optional: -->
@@ -7167,7 +7381,7 @@
 						<parentSeller></parentSeller>
 						<!--Zero or more repetitions: -->
 						<customers>
-							<customer code="CUSTS2" description="CUSTS2">
+							<customer code="SOAP_CUST2" description="CUSTS2">
 								<!--Optional: -->
 								<externalRef1></externalRef1>
 								<!--Optional: -->
@@ -7210,9 +7424,15 @@
 								<customerCategory>CLIENT</customerCategory>
 								<!--Optional: -->
 								<customerBrand>OCB</customerBrand>
+								<contactInformation>
+									<email>edward.legaspi@manaty.net</email>
+									<phone>1234</phone>
+									<mobile>1234</mobile>
+									<fax>1234</fax>
+								</contactInformation>
 								<!--Zero or more repetitions: -->
 								<customerAccounts>
-									<customerAccount code="CAS2" description="CAS2">
+									<customerAccount code="SOAP_CA2" description="CAS2">
 										<currency>USD</currency>
 										<!--Optional: -->
 										<externalRef1></externalRef1>
@@ -7263,14 +7483,12 @@
 										<dateStatus>2015-02-20</dateStatus>
 										<!--Optional: -->
 										<dateDunningLevel>2015-02-20</dateDunningLevel>
-										<!--Optional: -->
-										<email>edward.legaspi@manaty.net</email>
-										<!--Optional: -->
-										<phone></phone>
-										<!--Optional: -->
-										<mobile>12345</mobile>
-										<!--Optional: -->
-										<fax></fax>
+										<contactInformation>
+											<email>edward.legaspi@manaty.net</email>
+											<phone>1234</phone>
+											<mobile>1234</mobile>
+											<fax>1234</fax>
+										</contactInformation>
 										<!--Optional: -->
 										<dunningLevel></dunningLevel>
 										<!--Optional: -->
@@ -7279,7 +7497,7 @@
 										<mandateDate>2015-02-20</mandateDate>
 										<!--Zero or more repetitions: -->
 										<billingAccounts>
-											<billingAccount code="BAS2" description="BAS2">
+											<billingAccount code="SOAP_BA2" description="BAS2">
 												<billingCycle>CYC_INV_MT_1</billingCycle>
 												<country>US</country>
 												<language>ENG</language>
@@ -7332,7 +7550,7 @@
 												<electronicBilling>true</electronicBilling>
 												<!--Zero or more repetitions: -->
 												<userAccounts>
-													<userAccount code="UAS2" description="UAS2">
+													<userAccount code="SOAP_UA2" description="UAS2">
 														<!--Optional: -->
 														<externalRef1></externalRef1>
 														<!--Optional: -->
@@ -7377,16 +7595,16 @@
 														<status></status>
 														<!--Zero or more repetitions: -->
 														<subscriptions>
-															<subscription code="SUBW2" description="SUBW2">
+															<subscription code="SOAP_SUB2" description="SUBW2">
 																<offerTemplate>OFF1</offerTemplate>
 																<!--Optional: -->
 																<subscriptionDate>2015-02-04</subscriptionDate>
-																<!--<terminationReason>?</terminationReason>-->
+																<!--<terminationReason>?</terminationReason> -->
 																<!--Optional: -->
 																<!--<terminationDate></terminationDate> -->
 																<!--Zero or more repetitions: -->
 																<accesses>
-																	<access code="ACCESSW2">
+																	<access code="SOAP_ACCESS2">
 																		<!--Optional: -->
 																		<startDate>2015-02-04</startDate>
 																		<!--Optional: -->
@@ -10052,4 +10270,1285 @@
          </cdrList>
       </ws:registerUsage>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/MediationWs/registerUsage"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:properties/></con:testSuite><con:endpointStrategy xsi:type="con:DefaultEndpointStrategy" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:endpoint mode="COMPLEMENT" username="meveo.admin" password="meveo.admin">http://localhost:8080/meveo/SettingsWs</con:endpoint><con:endpoint mode="OVERRIDE">http://localhost:8080/meveo/AccountWs</con:endpoint></con:endpointStrategy><con:properties><con:property><con:name>username</con:name><con:value>meveo.admin</con:value></con:property><con:property><con:name>password</con:name><con:value>meveo.admin</con:value></con:property></con:properties><con:wssContainer><con:incoming><con:name>meveo.admin</con:name><con:decryptPassword>meveo.admin</con:decryptPassword></con:incoming><con:outgoing><con:name>username</con:name><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password></con:outgoing></con:wssContainer><con:oAuth2ProfileContainer/><con:sensitiveInformation/></con:soapui-project>
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/MediationWs/registerUsage"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:properties/></con:testSuite><con:testSuite name="AccountWsSoapBinding TestSuite"><con:settings/><con:runType>SEQUENTIAL</con:runType><con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="createCustomer TestCase" searchProperties="true"><con:settings/><con:testStep type="request" name="createCustomer"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>createCustomer</con:operation><con:request name="createCustomer" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType=""><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment xmlns:con="http://eviware.com/soapui/config">
+  &lt;con:entry key="username" value="meveo.admin"/>
+  &lt;con:entry key="password" value="meveo.admin"/>
+&lt;/xml-fragment></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createCustomer>
+         <!--Optional:-->
+         <customer code="SOAP_CUST1" description="CUST1">
+            <!--Optional:-->
+            <externalRef1></externalRef1>
+            <!--Optional:-->
+            <externalRef2></externalRef2>
+            <!--Optional:-->
+            <name>
+               <!--Optional:-->
+               <title></title>
+               <!--Optional:-->
+               <firstName></firstName>
+               <lastName>DEMO</lastName>
+            </name>
+            <!--Optional:-->
+            <address>
+               <!--Optional:-->
+               <address1></address1>
+               <!--Optional:-->
+               <address2></address2>
+               <!--Optional:-->
+               <address3></address3>
+               <!--Optional:-->
+               <zipCode></zipCode>
+               <!--Optional:-->
+               <city></city>
+               <!--Optional:-->
+               <country></country>
+               <!--Optional:-->
+               <state></state>
+            </address>
+            <!--Zero or more repetitions:-->
+            <customFields>
+            <customField code="UA2_CF1" description="UA2_CF1">
+            	<!--Optional:-->
+               <stringValue>1</stringValue>
+               <longValue>1</longValue>
+               <doubleValue>1</doubleValue>
+               <dateValue>2015-01-01</dateValue>
+              </customField>
+            </customFields>
+            
+            <!--Optional:-->
+            <customerCategory>CLIENT</customerCategory>
+            <!--Optional:-->
+            <customerBrand>DEFAULT</customerBrand>
+            <!--Optional:-->
+            <seller>MAIN_SELLER</seller>
+              <!--Optional:-->
+            <contactInformation>
+               <!--Optional:-->
+               <email>edward.legaspi@manaty.net</email>
+               <!--Optional:-->
+               <phone></phone>
+               <!--Optional:-->
+               <mobile></mobile>
+               <!--Optional:-->
+               <fax></fax>
+            </contactInformation>
+         </customer>
+      </ws:createCustomer>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/createCustomer"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="createCustomerAccount TestCase" searchProperties="true"><con:settings/><con:testStep type="request" name="createCustomerAccount"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>createCustomerAccount</con:operation><con:request name="createCustomerAccount" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType=""><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment xmlns:con="http://eviware.com/soapui/config">
+  &lt;con:entry key="username" value="meveo.admin"/>
+  &lt;con:entry key="password" value="meveo.admin"/>
+&lt;/xml-fragment></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
+	xmlns:ws="http://ws.api.meveo.org/">
+	<soapenv:Header />
+	<soapenv:Body>
+		<ws:customerHierarchyUpdate>
+			<!--Optional: -->
+			<customerHierarchy>
+				<sellers>
+					<!--Zero or more repetitions: -->
+					<seller code="SOAP_SELLER2" description="SELLERS2">
+						<!--Optional: -->
+						<invoicePrefix>SELLERS2</invoicePrefix>
+						<!--Optional: -->
+						<currencyCode>USD</currencyCode>
+						<!--Optional: -->
+						<countryCode>US</countryCode>
+						<!--Optional: -->
+						<languageCode>ENG</languageCode>
+						<!--Optional: -->
+						<parentSeller></parentSeller>
+						<!--Zero or more repetitions: -->
+						<customers>
+							<customer code="SOAP_CUST2" description="CUSTS2">
+								<!--Optional: -->
+								<externalRef1></externalRef1>
+								<!--Optional: -->
+								<externalRef2></externalRef2>
+								<!--Optional: -->
+								<name>
+									<lastName>Legaspi</lastName>
+									<!--Optional: -->
+									<title></title>
+									<!--Optional: -->
+									<firstName></firstName>
+								</name>
+								<!--Optional: -->
+								<address>
+									<!--Optional: -->
+									<address1>Address1</address1>
+									<!--Optional: -->
+									<address2></address2>
+									<!--Optional: -->
+									<address3></address3>
+									<!--Optional: -->
+									<zipCode></zipCode>
+									<!--Optional: -->
+									<city></city>
+									<!--Optional: -->
+									<country></country>
+									<!--Optional: -->
+									<state></state>
+								</address>
+								<!--Zero or more repetitions: -->
+								<customFields>
+									<customField code="CF1" description="CF1">
+										<stringValue>1</stringValue>
+										<longValue>1</longValue>
+										<doubleValue>1</doubleValue>
+										<dateValue>2015-01-01</dateValue>
+									</customField>
+								</customFields>
+								<!--Optional: -->
+								<customerCategory>CLIENT</customerCategory>
+								<!--Optional: -->
+								<customerBrand>OCB</customerBrand>
+								<contactInformation>
+									<email>edward.legaspi@manaty.net</email>
+									<phone>1234</phone>
+									<mobile>1234</mobile>
+									<fax>1234</fax>
+								</contactInformation>
+								<!--Zero or more repetitions: -->
+								<customerAccounts>
+									<customerAccount code="SOAP_CA2" description="CAS2">
+										<currency>USD</currency>
+										<!--Optional: -->
+										<externalRef1></externalRef1>
+										<!--Optional: -->
+										<externalRef2></externalRef2>
+										<!--Optional: -->
+										<name>
+											<lastName>Legaspi</lastName>
+											<!--Optional: -->
+											<title></title>
+											<!--Optional: -->
+											<firstName></firstName>
+										</name>
+										<!--Optional: -->
+										<address>
+											<!--Optional: -->
+											<address1>Address1</address1>
+											<!--Optional: -->
+											<address2></address2>
+											<!--Optional: -->
+											<address3></address3>
+											<!--Optional: -->
+											<zipCode></zipCode>
+											<!--Optional: -->
+											<city></city>
+											<!--Optional: -->
+											<country></country>
+											<!--Optional: -->
+											<state></state>
+										</address>
+										<!--Zero or more repetitions: -->
+										<customFields>
+											<customField code="CF1" description="CF1">
+												<!--Optional: -->
+												<stringValue>1</stringValue>
+												<longValue>1</longValue>
+												<doubleValue>1</doubleValue>
+												<dateValue>2015-01-01</dateValue>
+											</customField>
+										</customFields>
+										<!--Optional: -->
+										<status></status>
+										<!--Optional: -->
+										<paymentMethod>CHECK</paymentMethod>
+										<!--Optional: -->
+										<creditCategory>CASH</creditCategory>
+										<!--Optional: -->
+										<dateStatus>2015-02-20</dateStatus>
+										<!--Optional: -->
+										<dateDunningLevel>2015-02-20</dateDunningLevel>
+										<contactInformation>
+											<email>edward.legaspi@manaty.net</email>
+											<phone>1234</phone>
+											<mobile>1234</mobile>
+											<fax>1234</fax>
+										</contactInformation>
+										<!--Optional: -->
+										<dunningLevel></dunningLevel>
+										<!--Optional: -->
+										<mandateIdentification></mandateIdentification>
+										<!--Optional: -->
+										<mandateDate>2015-02-20</mandateDate>
+										<!--Zero or more repetitions: -->
+										<billingAccounts>
+											<billingAccount code="SOAP_BA2" description="BAS2">
+												<billingCycle>CYC_INV_MT_1</billingCycle>
+												<country>US</country>
+												<language>ENG</language>
+												<paymentMethod>CHECK</paymentMethod>
+												<!--Optional: -->
+												<externalRef1></externalRef1>
+												<!--Optional: -->
+												<externalRef2></externalRef2>
+												<!--Optional: -->
+												<name>
+													<lastName>Legaspi</lastName>
+													<!--Optional: -->
+													<title></title>
+													<!--Optional: -->
+													<firstName></firstName>
+												</name>
+												<!--Optional: -->
+												<address>
+													<!--Optional: -->
+													<address1>Address1</address1>
+													<!--Optional: -->
+													<address2></address2>
+													<!--Optional: -->
+													<address3></address3>
+													<!--Optional: -->
+													<zipCode></zipCode>
+													<!--Optional: -->
+													<city></city>
+													<!--Optional: -->
+													<country></country>
+													<!--Optional: -->
+													<state></state>
+												</address>
+												<!--Zero or more repetitions: -->
+												<customFields>
+													<customField code="CF1" description="CF1">
+														<stringValue>1</stringValue>
+														<longValue>1</longValue>
+														<doubleValue>1</doubleValue>
+														<dateValue>2015-01-01</dateValue>
+													</customField>
+												</customFields>
+												<!--Optional: -->
+												<nextInvoiceDate>2015-02-20</nextInvoiceDate>
+												<!--Optional: -->
+												<subscriptionDate>2015-02-20</subscriptionDate>
+												<!--Optional: -->
+												<paymentTerms>CASH</paymentTerms>
+												<!--Optional: -->
+												<electronicBilling>true</electronicBilling>
+												<!--Zero or more repetitions: -->
+												<userAccounts>
+													<userAccount code="SOAP_UA2" description="UAS2">
+														<!--Optional: -->
+														<externalRef1></externalRef1>
+														<!--Optional: -->
+														<externalRef2></externalRef2>
+														<!--Optional: -->
+														<name>
+															<lastName>Legaspi</lastName>
+															<!--Optional: -->
+															<title></title>
+															<!--Optional: -->
+															<firstName></firstName>
+														</name>
+														<!--Optional: -->
+														<address>
+															<!--Optional: -->
+															<address1>Address1</address1>
+															<!--Optional: -->
+															<address2></address2>
+															<!--Optional: -->
+															<address3></address3>
+															<!--Optional: -->
+															<zipCode></zipCode>
+															<!--Optional: -->
+															<city></city>
+															<!--Optional: -->
+															<country></country>
+															<!--Optional: -->
+															<state></state>
+														</address>
+														<!--Zero or more repetitions: -->
+														<customFields>
+															<customField code="CF1" description="CF1">
+																<stringValue>1</stringValue>
+																<longValue>1</longValue>
+																<doubleValue>1</doubleValue>
+																<dateValue>2015-01-01</dateValue>
+															</customField>
+														</customFields>
+														<!--Optional: -->
+														<subscriptionDate>2015-02-04</subscriptionDate>
+														<!--Optional: -->
+														<status></status>
+														<!--Zero or more repetitions: -->
+														<subscriptions>
+															<subscription code="SOAP_SUB2" description="SUBW2">
+																<offerTemplate>OFF1</offerTemplate>
+																<!--Optional: -->
+																<subscriptionDate>2015-02-04</subscriptionDate>
+																<!--<terminationReason>?</terminationReason> -->
+																<!--Optional: -->
+																<!--<terminationDate></terminationDate> -->
+																<!--Zero or more repetitions: -->
+																<accesses>
+																	<access code="SOAP_ACCESS2">
+																		<!--Optional: -->
+																		<startDate>2015-02-04</startDate>
+																		<!--Optional: -->
+																		<endDate>2015-06-30</endDate>
+																	</access>
+																</accesses>
+																<!--Zero or more repetitions: -->
+																<services>
+																	<serviceInstance code="SERV1">
+																		<!--Optional: -->
+																		<status></status>
+																		<!--Optional: -->
+																		<subscriptionDate>2015-02-04</subscriptionDate>
+																		<!--Optional: -->
+																		<!--<terminationDate></terminationDate> -->
+																		<quantity>1</quantity>
+																		<!--Optional: -->
+																		<!--<terminationReason></terminationReason> -->
+																	</serviceInstance>
+																</services>
+															</subscription>
+														</subscriptions>
+													</userAccount>
+												</userAccounts>
+											</billingAccount>
+										</billingAccounts>
+									</customerAccount>
+								</customerAccounts>
+							</customer>
+						</customers>
+					</seller>
+				</sellers>
+			</customerHierarchy>
+		</ws:customerHierarchyUpdate>
+	</soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/createCustomerAccount"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="createBillingAccount TestCase" searchProperties="true"><con:settings/><con:testStep type="request" name="createBillingAccount"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>createBillingAccount</con:operation><con:request name="createBillingAccount" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType=""><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment xmlns:con="http://eviware.com/soapui/config">
+  &lt;con:entry key="username" value="meveo.admin"/>
+  &lt;con:entry key="password" value="meveo.admin"/>
+&lt;/xml-fragment></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createBillingAccount>
+         <!--Optional:-->
+         <billingAccount code="SOAP_BA1" description="BA1">
+         	  <customerAccount>SOAP_CA1</customerAccount>
+         	  <billingCycle>CYC_INV_MT_1</billingCycle>
+         	  <country>US</country>
+         	  <language>ENG</language>
+         	  <paymentMethod>CHECK</paymentMethod>
+            <!--Optional:-->
+            <externalRef1></externalRef1>
+            <!--Optional:-->
+            <externalRef2></externalRef2>
+            <!--Optional:-->
+            <name>
+               <!--Optional:-->
+               <title>MM</title>
+               <!--Optional:-->
+               <firstName>DEMO</firstName>
+               <lastName>DEMO</lastName>
+            </name>
+            <!--Optional:-->
+            <address>
+               <!--Optional:-->
+               <address1>Address1</address1>
+               <!--Optional:-->
+               <address2></address2>
+               <!--Optional:-->
+               <address3></address3>
+               <!--Optional:-->
+               <zipCode></zipCode>
+               <!--Optional:-->
+               <city></city>
+               <!--Optional:-->
+               <country></country>
+               <!--Optional:-->
+               <state></state>
+            </address>
+            <customFields>
+            <customField code="UA2_CF1" description="UA2_CF1">
+            <!--Optional:-->
+               <stringValue>1</stringValue>
+               <longValue>1</longValue>
+               <doubleValue>1</doubleValue>
+               <dateValue>2015-01-01</dateValue>
+               </customField>
+            </customFields>
+            <!--Optional:-->
+            <subscriptionDate>2015-01-22T13:42:57.219+08:00</subscriptionDate>         
+            <!--Optional:-->
+            <paymentTerms>CASH</paymentTerms>
+            <!--Optional:-->
+            <electronicBilling>false</electronicBilling>
+         </billingAccount>
+      </ws:createBillingAccount>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/createBillingAccount"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="createUserAccount TestCase" searchProperties="true"><con:settings/><con:testStep type="request" name="createUserAccount"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>createUserAccount</con:operation><con:request name="createUserAccount" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType=""><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment xmlns:con="http://eviware.com/soapui/config">
+  &lt;con:entry key="username" value="meveo.admin"/>
+  &lt;con:entry key="password" value="meveo.admin"/>
+&lt;/xml-fragment></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createUserAccount>
+         <!--Optional:-->
+         <userAccount code="SOAP_UA1" description="UAX">
+         <billingAccount>SOAP_BA1</billingAccount>
+            <!--Optional:-->
+            <externalRef1></externalRef1>
+            <!--Optional:-->
+            <externalRef2></externalRef2>
+            <!--Optional:-->
+            <name>
+               <!--Optional:-->
+               <title>MM</title>
+               <!--Optional:-->
+               <firstName>DEMO</firstName>
+               <lastName>DEMO</lastName>
+            </name>
+            <!--Optional:-->
+            <address>
+               <!--Optional:-->
+               <address1>Address1</address1>
+               <!--Optional:-->
+               <address2></address2>
+               <!--Optional:-->
+               <address3></address3>
+               <!--Optional:-->
+               <zipCode></zipCode>
+               <!--Optional:-->
+               <city></city>
+               <!--Optional:-->
+               <country>US</country>
+               <!--Optional:-->
+               <state></state>
+            </address>
+            <!--Zero or more repetitions:-->
+            <customFields>
+            <customField code="UA2_CF1" description="UA2_CF1">
+            	<!--Optional:-->
+               <stringValue>1</stringValue>
+               <longValue>1</longValue>
+               <doubleValue>1</doubleValue>
+               <dateValue>2015-01-01</dateValue>
+               </customField>
+             </customFields>
+         </userAccount>
+      </ws:createUserAccount>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/createUserAccount"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="createAccess TestCase" searchProperties="true"><con:settings/><con:testStep type="request" name="createAccess"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>createAccess</con:operation><con:request name="createAccess" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType=""><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment xmlns:con="http://eviware.com/soapui/config">
+  &lt;con:entry key="username" value="meveo.admin"/>
+  &lt;con:entry key="password" value="meveo.admin"/>
+&lt;/xml-fragment></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createAccess>
+         <!--Optional:-->
+          <access code="SOAP_ACCESS1">
+            <subscription>SOAP_SUB1</subscription>
+            <!--Optional:-->
+            <startDate>2015-01-01</startDate>
+            <!--Optional:-->
+            <endDate>2015-01-31</endDate>
+         </access>
+      </ws:createAccess>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/createAccess"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="findCustomer TestCase" searchProperties="true"><con:settings/><con:testStep type="request" name="findCustomer"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>findCustomer</con:operation><con:request name="findCustomer" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType=""><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment xmlns:con="http://eviware.com/soapui/config">
+  &lt;con:entry key="username" value="meveo.admin"/>
+  &lt;con:entry key="password" value="meveo.admin"/>
+&lt;/xml-fragment></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:findCustomer>
+         <!--Optional:-->
+         <customerCode>SOAP_CUST1</customerCode>
+      </ws:findCustomer>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/findCustomer"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="findCustomerAccount TestCase" searchProperties="true"><con:settings/><con:testStep type="request" name="findCustomerAccount"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>findCustomerAccount</con:operation><con:request name="findCustomerAccount" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType=""><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment xmlns:con="http://eviware.com/soapui/config">
+  &lt;con:entry key="username" value="meveo.admin"/>
+  &lt;con:entry key="password" value="meveo.admin"/>
+&lt;/xml-fragment></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:findCustomerAccount>
+         <!--Optional:-->
+         <customerAccountCode>SOAP_CA1</customerAccountCode>
+      </ws:findCustomerAccount>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/findCustomerAccount"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="findBillingAccount TestCase" searchProperties="true"><con:settings/><con:testStep type="request" name="findBillingAccount"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>findBillingAccount</con:operation><con:request name="findBillingAccount" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType=""><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment xmlns:con="http://eviware.com/soapui/config">
+  &lt;con:entry key="username" value="meveo.admin"/>
+  &lt;con:entry key="password" value="meveo.admin"/>
+&lt;/xml-fragment></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:findBillingAccount>
+         <!--Optional:-->
+         <billingAccountCode>SOAP_BA1</billingAccountCode>
+      </ws:findBillingAccount>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/findBillingAccount"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="findUserAccount TestCase" searchProperties="true"><con:settings/><con:testStep type="request" name="findUserAccount"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>findUserAccount</con:operation><con:request name="findUserAccount" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType=""><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment xmlns:con="http://eviware.com/soapui/config">
+  &lt;con:entry key="username" value="meveo.admin"/>
+  &lt;con:entry key="password" value="meveo.admin"/>
+&lt;/xml-fragment></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:findUserAccount>
+         <!--Optional:-->
+         <userAccountCode>SOAP_UA1</userAccountCode>
+      </ws:findUserAccount>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/findUserAccount"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="findAccess TestCase" searchProperties="true"><con:settings/><con:testStep type="request" name="findAccess"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>findAccess</con:operation><con:request name="findAccess" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType=""><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment xmlns:con="http://eviware.com/soapui/config">
+  &lt;con:entry key="username" value="meveo.admin"/>
+  &lt;con:entry key="password" value="meveo.admin"/>
+&lt;/xml-fragment></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:findAccess>
+          <!--Optional:-->
+         <accessCode>SOAP_ACCESS1</accessCode>
+         <!--Optional:-->
+         <subscriptionCode>SOAP_SUB1</subscriptionCode>
+      </ws:findAccess>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/findAccess"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="updateCustomer TestCase" searchProperties="true"><con:settings/><con:testStep type="request" name="updateCustomer"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>updateCustomer</con:operation><con:request name="updateCustomer" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType=""><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment xmlns:con="http://eviware.com/soapui/config">
+  &lt;con:entry key="username" value="meveo.admin"/>
+  &lt;con:entry key="password" value="meveo.admin"/>
+&lt;/xml-fragment></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:updateCustomer>
+         <!--Optional:-->
+         <customer code="SOAP_CUST1" description="CUST1">
+            <!--Optional:-->
+            <externalRef1></externalRef1>
+            <!--Optional:-->
+            <externalRef2></externalRef2>
+            <!--Optional:-->
+            <name>
+               <!--Optional:-->
+               <title></title>
+               <!--Optional:-->
+               <firstName></firstName>
+                <lastName>DEMO</lastName>
+            </name>
+            <!--Optional:-->
+            <address>
+               <!--Optional:-->
+               <address1></address1>
+               <!--Optional:-->
+               <address2></address2>
+               <!--Optional:-->
+               <address3></address3>
+               <!--Optional:-->
+               <zipCode>1234</zipCode>
+               <!--Optional:-->
+               <city></city>
+               <!--Optional:-->
+               <country></country>
+               <!--Optional:-->
+               <state></state>
+            </address>
+            <!--Zero or more repetitions:-->
+          <!--Zero or more repetitions:-->
+             <customFields>
+            <customField code="UA2_CF1" description="UA2_CF1">
+            	<!--Optional:-->
+               <stringValue>1</stringValue>
+               <longValue>1</longValue>
+               <doubleValue>1</doubleValue>
+               <dateValue>2015-01-01</dateValue>
+              </customField>
+            </customFields>
+            <!--Optional:-->
+            <customerCategory>CLIENT</customerCategory>
+            <!--Optional:-->
+            <customerBrand>DEFAULT</customerBrand>
+            <!--Optional:-->
+            <seller>MAIN_SELLER</seller>
+              <contactInformation>
+               <!--Optional:-->
+               <email>edward.legaspi@manaty.net</email>
+               <!--Optional:-->
+               <phone>1234</phone>
+               <!--Optional:-->
+               <mobile>1234</mobile>
+               <!--Optional:-->
+               <fax>1234</fax>
+            </contactInformation>
+         </customer>
+      </ws:updateCustomer>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/updateCustomer"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="updateCustomerAccount TestCase" searchProperties="true"><con:settings/><con:testStep type="request" name="updateCustomerAccount"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>updateCustomerAccount</con:operation><con:request name="updateCustomerAccount" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType=""><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment xmlns:con="http://eviware.com/soapui/config">
+  &lt;con:entry key="username" value="meveo.admin"/>
+  &lt;con:entry key="password" value="meveo.admin"/>
+&lt;/xml-fragment></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
+	xmlns:ws="http://ws.api.meveo.org/">
+	<soapenv:Header />
+	<soapenv:Body>
+		<ws:updateCustomerAccount>
+			<!--Optional: -->
+			<customerAccount code="SOAP_CA1" description="CA1">
+				<customer>SOAP_CUST1</customer>
+				<currency>USD</currency>
+				<!--Optional: -->
+				<externalRef1></externalRef1>
+				<!--Optional: -->
+				<externalRef2></externalRef2>
+				<!--Optional: -->
+				<name>
+					<!--Optional: -->
+					<title></title>
+					<!--Optional: -->
+					<firstName>DEMO</firstName>
+					<lastName>DEMO</lastName>
+				</name>
+				<!--Optional: -->
+				<address>
+					<!--Optional: -->
+					<address1>Address1</address1>
+					<!--Optional: -->
+					<address2></address2>
+					<!--Optional: -->
+					<address3></address3>
+					<!--Optional: -->
+					<zipCode></zipCode>
+					<!--Optional: -->
+					<city></city>
+					<!--Optional: -->
+					<country></country>
+					<!--Optional: -->
+					<state></state>
+				</address>
+				<!--Zero or more repetitions: -->
+				<customFields>
+					<customField code="CA2_CF1" description="CA2_CF1">
+						<!--Optional: -->
+						<stringValue>1</stringValue>
+						<longValue>1</longValue>
+						<doubleValue>1</doubleValue>
+						<dateValue>2015-01-01</dateValue>
+					</customField>
+				</customFields>
+				<!--Optional: -->
+				<status>ACTIVE</status>
+				<!--Optional: -->
+				<paymentMethod>CHECK</paymentMethod>
+				<!--Optional: -->
+				<creditCategory></creditCategory>
+				<!--Zero or more repetitions: -->
+				<!--Optional: -->
+				<!--<dateStatus></dateStatus> -->
+				<!--Optional: -->
+				<dateDunningLevel>2015-01-22T13:42:57.219+08:00</dateDunningLevel>
+				<contactInformation>
+					<email>edward.legaspi@manaty.net</email>
+					<phone>1234</phone>
+					<mobile>1234</mobile>
+					<fax>1234</fax>
+				</contactInformation>
+				<!--Optional: -->
+				<dunningLevel></dunningLevel>
+				<!--Optional: -->
+				<mandateIdentification>1234</mandateIdentification>
+				<!--Optional: -->
+				<mandateDate>2015-01-22T13:42:57.219+08:00</mandateDate>
+			</customerAccount>
+		</ws:updateCustomerAccount>
+	</soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/updateCustomerAccount"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="updateBillingAccount TestCase" searchProperties="true"><con:settings/><con:testStep type="request" name="updateBillingAccount"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>updateBillingAccount</con:operation><con:request name="updateBillingAccount" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType=""><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment xmlns:con="http://eviware.com/soapui/config">
+  &lt;con:entry key="username" value="meveo.admin"/>
+  &lt;con:entry key="password" value="meveo.admin"/>
+&lt;/xml-fragment></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:updateBillingAccount>
+         <!--Optional:-->
+           <billingAccount code="SOAP_BA1" description="BA1">
+         	  <customerAccount>SOAP_CA1</customerAccount>
+         	  <billingCycle>CYC_INV_MT_1</billingCycle>
+         	  <country>US</country>
+         	  <language>ENG</language>
+         	  <paymentMethod>CHECK</paymentMethod>
+            <!--Optional:-->
+            <externalRef1></externalRef1>
+            <!--Optional:-->
+            <externalRef2></externalRef2>
+            <!--Optional:-->
+            <name>
+               <!--Optional:-->
+               <title>MM</title>
+               <!--Optional:-->
+               <firstName>DEMO</firstName>
+                <lastName>DEMO</lastName>
+            </name>
+            <!--Optional:-->
+            <address>
+               <!--Optional:-->
+               <address1>Address1</address1>
+               <!--Optional:-->
+               <address2></address2>
+               <!--Optional:-->
+               <address3></address3>
+               <!--Optional:-->
+               <zipCode>1234</zipCode>
+               <!--Optional:-->
+               <city></city>
+               <!--Optional:-->
+               <country></country>
+               <!--Optional:-->
+               <state></state>
+            </address>
+             <!--Zero or more repetitions:-->
+            <customFields>
+            <customField code="UA2_CF1" description="UA2_CF1">
+            <!--Optional:-->
+               <stringValue>1</stringValue>
+               <longValue>1</longValue>
+               <doubleValue>1</doubleValue>
+               <dateValue>2015-01-01</dateValue>
+               </customField>
+            </customFields>
+            <!--Optional:-->
+            <subscriptionDate>2015-01-22T13:42:57.219+08:00</subscriptionDate>         
+            <!--Optional:-->
+            <paymentTerms>CASH</paymentTerms>
+            <!--Optional:-->
+            <electronicBilling>false</electronicBilling>
+         </billingAccount>
+      </ws:updateBillingAccount>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/updateBillingAccount"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="updateUserAccount TestCase" searchProperties="true"><con:settings/><con:testStep type="request" name="updateUserAccount"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>updateUserAccount</con:operation><con:request name="updateUserAccount" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType=""><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment xmlns:con="http://eviware.com/soapui/config">
+  &lt;con:entry key="username" value="meveo.admin"/>
+  &lt;con:entry key="password" value="meveo.admin"/>
+&lt;/xml-fragment></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:updateUserAccount>
+         <!--Optional:-->
+         <userAccount code="SOAP_UA1" description="UA1">
+         <billingAccount>SOAP_BA1</billingAccount>
+            <!--Optional:-->
+            <externalRef1></externalRef1>
+            <!--Optional:-->
+            <externalRef2></externalRef2>
+            <!--Optional:-->
+            <name>
+               <!--Optional:-->
+               <title>MM</title>
+               <!--Optional:-->
+               <firstName>DEMO</firstName>
+                <lastName>DEMO</lastName>
+            </name>
+            <!--Optional:-->
+            <address>
+               <!--Optional:-->
+               <address1>Address1</address1>
+               <!--Optional:-->
+               <address2></address2>
+               <!--Optional:-->
+               <address3></address3>
+               <!--Optional:-->
+               <zipCode>1234</zipCode>
+               <!--Optional:-->
+               <city></city>
+               <!--Optional:-->
+               <country>US</country>
+               <!--Optional:-->
+               <state></state>
+            </address>
+            <!--Zero or more repetitions:-->
+             <customFields>
+            <customField code="UA2_CF1" description="UA2_CF1">
+            	<!--Optional:-->
+               <stringValue>1</stringValue>
+               <longValue>1</longValue>
+               <doubleValue>1</doubleValue>
+               <dateValue>2015-01-01</dateValue>
+               </customField>
+             </customFields>
+         </userAccount>
+      </ws:updateUserAccount>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/updateUserAccount"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="updateAccess TestCase" searchProperties="true"><con:settings/><con:testStep type="request" name="updateAccess"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>updateAccess</con:operation><con:request name="updateAccess" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType=""><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment xmlns:con="http://eviware.com/soapui/config">
+  &lt;con:entry key="username" value="meveo.admin"/>
+  &lt;con:entry key="password" value="meveo.admin"/>
+&lt;/xml-fragment></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:updateAccess>
+          <!--Optional:-->
+          <access code="SOAP_ACCESS1">
+            <subscription>SOAP_SUB1</subscription>
+            <!--Optional:-->
+            <startDate>2015-01-01</startDate>
+            <!--Optional:-->
+            <endDate>2015-01-31</endDate>
+         </access>
+      </ws:updateAccess>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/updateAccess"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="removeAccess TestCase" searchProperties="true"><con:settings/><con:testStep type="request" name="removeAccess"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>removeAccess</con:operation><con:request name="removeAccess" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType=""><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment xmlns:con="http://eviware.com/soapui/config">
+  &lt;con:entry key="username" value="meveo.admin"/>
+  &lt;con:entry key="password" value="meveo.admin"/>
+&lt;/xml-fragment></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:removeAccess>
+          <!--Optional:-->
+         <accessCode>SOAP_ACCESS1</accessCode>
+         <!--Optional:-->
+         <subscriptionCode>SOAP_SUB1</subscriptionCode>
+      </ws:removeAccess>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:credentials><con:selectedAuthProfile>No Authorization</con:selectedAuthProfile><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/removeAccess"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="removeUserAccount TestCase" searchProperties="true"><con:settings/><con:testStep type="request" name="removeUserAccount"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>removeUserAccount</con:operation><con:request name="removeUserAccount" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType=""><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment xmlns:con="http://eviware.com/soapui/config">
+  &lt;con:entry key="username" value="meveo.admin"/>
+  &lt;con:entry key="password" value=""/>
+&lt;/xml-fragment></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:removeUserAccount>
+         <!--Optional:-->
+         <userAccountCode>SOAP_UA1</userAccountCode>
+      </ws:removeUserAccount>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/removeUserAccount"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="removeBillingAccount TestCase" searchProperties="true"><con:settings/><con:testStep type="request" name="removeBillingAccount"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>removeBillingAccount</con:operation><con:request name="removeBillingAccount" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType=""><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment xmlns:con="http://eviware.com/soapui/config">
+  &lt;con:entry key="username" value="meveo.admin"/>
+  &lt;con:entry key="password" value="meveo.admin"/>
+&lt;/xml-fragment></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:removeBillingAccount>
+         <!--Optional:-->
+         <billingAccountCode>SOAP_BA1</billingAccountCode>
+      </ws:removeBillingAccount>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/removeBillingAccount"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="removeCustomerAccount TestCase" searchProperties="true"><con:settings/><con:testStep type="request" name="removeCustomerAccount"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>removeCustomerAccount</con:operation><con:request name="removeCustomerAccount" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType=""><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment xmlns:con="http://eviware.com/soapui/config">
+  &lt;con:entry key="username" value="meveo.admin"/>
+  &lt;con:entry key="password" value="meveo.admin"/>
+&lt;/xml-fragment></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:removeCustomerAccount>
+         <!--Optional:-->
+         <customerAccountCode>SOAP_CA1</customerAccountCode>
+      </ws:removeCustomerAccount>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/removeCustomerAccount"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="removeCustomer TestCase" searchProperties="true"><con:settings/><con:testStep type="request" name="removeCustomer"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>removeCustomer</con:operation><con:request name="removeCustomer" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType=""><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment xmlns:con="http://eviware.com/soapui/config">
+  &lt;con:entry key="username" value="meveo.admin"/>
+  &lt;con:entry key="password" value="meveo.admin"/>
+&lt;/xml-fragment></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:removeCustomer>
+         <!--Optional:-->
+         <customerCode>SOAP_CUST1</customerCode>
+      </ws:removeCustomer>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/removeCustomer"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="createAccountHierarchy TestCase" searchProperties="true"><con:settings/><con:testStep type="request" name="createAccountHierarchy"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>createAccountHierarchy</con:operation><con:request name="createAccountHierarchy" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType=""><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment xmlns:con="http://eviware.com/soapui/config">
+  &lt;con:entry key="username" value="meveo.admin"/>
+  &lt;con:entry key="password" value="meveo.admin"/>
+&lt;/xml-fragment></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createAccountHierarchy>
+          <!--Optional:-->
+         <accountHierarchy>
+         	  <email>test@manaty.net</email>
+            <paymentMethod>1</paymentMethod>
+
+            <!--Optional:-->
+            <customerId>SOAP_CUST3</customerId>
+            <!--Optional:-->
+            <sellerCode>MAIN_SELLER</sellerCode>
+            <!--Optional:-->
+            <customerBrandCode>DEFAULTY</customerBrandCode>
+            <!--Optional:-->
+            <customerCategoryCode>CLIENTY</customerCategoryCode>
+            <!--Optional:-->
+            <currencyCode>USD</currencyCode>
+            <!--Optional:-->
+            <countryCode>US</countryCode>
+            <!--Optional:-->
+            <languageCode>ENG</languageCode>
+            <!--Optional:-->
+            <titleCode></titleCode>
+            <!--Optional:-->
+            <firstName>Edward</firstName>
+            <!--Optional:-->
+            <lastName>Legaspi</lastName>
+            <!--Optional:-->
+            <!--<birthDate>?</birthDate>-->
+            <!--Optional:-->
+            <phoneNumber>1234</phoneNumber>
+            <!--Optional:-->
+            <billingCycleCode>CYC_INV_MT_1</billingCycleCode>
+            <!--Optional:-->
+            <address1></address1>
+            <!--Optional:-->
+            <address2></address2>
+            <!--Optional:-->
+            <zipCode>4030</zipCode>
+            <!--Optional:-->
+            <city>Laguna</city>
+         </accountHierarchy>
+      </ws:createAccountHierarchy>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/createAccountHierarchy"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="updateAccountHierarchy TestCase" searchProperties="true"><con:settings/><con:testStep type="request" name="updateAccountHierarchy"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>updateAccountHierarchy</con:operation><con:request name="updateAccountHierarchy" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType=""><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment xmlns:con="http://eviware.com/soapui/config">
+  &lt;con:entry key="username" value="meveo.admin"/>
+  &lt;con:entry key="password" value="meveo.admin"/>
+&lt;/xml-fragment></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:updateAccountHierarchy>
+         <!--Optional:-->
+         <accountHierarchy>
+            <email>test@manaty.net</email>
+            <paymentMethod>1</paymentMethod>
+            <!--Optional:-->
+            <customerId>CUST_SOAP_CUST3</customerId>
+            <!--Optional:-->
+            <sellerCode>MAIN_SELLER</sellerCode>
+            <!--Optional:-->
+            <customerBrandCode>DEFAULTY</customerBrandCode>
+            <!--Optional:-->
+            <customerCategoryCode>CLIENTY</customerCategoryCode>
+            <!--Optional:-->
+            <currencyCode>USD</currencyCode>
+            <!--Optional:-->
+            <countryCode>US</countryCode>
+            <!--Optional:-->
+            <languageCode>ENG</languageCode>
+            <!--Optional:-->
+            <titleCode></titleCode>
+            <!--Optional:-->
+            <firstName>Edward1</firstName>
+            <!--Optional:-->
+            <lastName>Legaspi</lastName>
+            <!--Optional:-->
+            <!--<birthDate>?</birthDate>-->
+            <!--Optional:-->
+            <phoneNumber>1234</phoneNumber>
+            <!--Optional:-->
+            <billingCycleCode>CYC_INV_MT_1</billingCycleCode>
+            <!--Optional:-->
+            <address1></address1>
+            <!--Optional:-->
+            <address2></address2>
+            <!--Optional:-->
+            <zipCode>4030</zipCode>
+            <!--Optional:-->
+            <city>Laguna</city>
+         </accountHierarchy>
+      </ws:updateAccountHierarchy>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/updateAccountHierarchy"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="findAccountHierarchy TestCase" searchProperties="true"><con:settings/><con:testStep type="request" name="findAccountHierarchy"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>findAccountHierarchy</con:operation><con:request name="findAccountHierarchy" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType=""><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment xmlns:con="http://eviware.com/soapui/config">
+  &lt;con:entry key="username" value="meveo.admin"/>
+  &lt;con:entry key="password" value="meveo.admin"/>
+&lt;/xml-fragment></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:findAccountHierarchy>
+         <!--Optional:-->
+         <accountHierarchy>
+           <!--Optional:-->
+            <customerId>SOAP_CUST3</customerId>
+            <!--Optional:-->
+            <sellerCode>MAIN_SELLER</sellerCode>
+         </accountHierarchy>
+      </ws:findAccountHierarchy>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/findAccountHierarchy"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="customerHierarchyUpdate TestCase" searchProperties="true"><con:settings/><con:testStep type="request" name="customerHierarchyUpdate"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>customerHierarchyUpdate</con:operation><con:request name="customerHierarchyUpdate" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType=""><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment xmlns:con="http://eviware.com/soapui/config">
+  &lt;con:entry key="username" value="meveo.admin"/>
+  &lt;con:entry key="password" value="meveo.admin"/>
+&lt;/xml-fragment></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
+	xmlns:ws="http://ws.api.meveo.org/">
+	<soapenv:Header />
+	<soapenv:Body>
+		<ws:customerHierarchyUpdate>
+			<!--Optional: -->
+			<customerHierarchy>
+				<sellers>
+					<!--Zero or more repetitions: -->
+					<seller code="SOAP_SELLER2" description="SELLERS2">
+						<!--Optional: -->
+						<invoicePrefix>SELLERS2</invoicePrefix>
+						<!--Optional: -->
+						<currencyCode>USD</currencyCode>
+						<!--Optional: -->
+						<countryCode>US</countryCode>
+						<!--Optional: -->
+						<languageCode>ENG</languageCode>
+						<!--Optional: -->
+						<parentSeller></parentSeller>
+						<!--Zero or more repetitions: -->
+						<customers>
+							<customer code="SOAP_CUST2" description="CUSTS2">
+								<!--Optional: -->
+								<externalRef1></externalRef1>
+								<!--Optional: -->
+								<externalRef2></externalRef2>
+								<!--Optional: -->
+								<name>
+									<lastName>Legaspi</lastName>
+									<!--Optional: -->
+									<title></title>
+									<!--Optional: -->
+									<firstName></firstName>
+								</name>
+								<!--Optional: -->
+								<address>
+									<!--Optional: -->
+									<address1>Address1</address1>
+									<!--Optional: -->
+									<address2></address2>
+									<!--Optional: -->
+									<address3></address3>
+									<!--Optional: -->
+									<zipCode></zipCode>
+									<!--Optional: -->
+									<city></city>
+									<!--Optional: -->
+									<country></country>
+									<!--Optional: -->
+									<state></state>
+								</address>
+								<!--Zero or more repetitions: -->
+								<customFields>
+									<customField code="CF1" description="CF1">
+										<stringValue>1</stringValue>
+										<longValue>1</longValue>
+										<doubleValue>1</doubleValue>
+										<dateValue>2015-01-01</dateValue>
+									</customField>
+								</customFields>
+								<!--Optional: -->
+								<customerCategory>CLIENT</customerCategory>
+								<!--Optional: -->
+								<customerBrand>OCB</customerBrand>
+								<contactInformation>
+									<email>edward.legaspi@manaty.net</email>
+									<phone>1234</phone>
+									<mobile>1234</mobile>
+									<fax>1234</fax>
+								</contactInformation>
+								<!--Zero or more repetitions: -->
+								<customerAccounts>
+									<customerAccount code="SOAP_CA2" description="CAS2">
+										<currency>USD</currency>
+										<!--Optional: -->
+										<externalRef1></externalRef1>
+										<!--Optional: -->
+										<externalRef2></externalRef2>
+										<!--Optional: -->
+										<name>
+											<lastName>Legaspi</lastName>
+											<!--Optional: -->
+											<title></title>
+											<!--Optional: -->
+											<firstName></firstName>
+										</name>
+										<!--Optional: -->
+										<address>
+											<!--Optional: -->
+											<address1>Address1</address1>
+											<!--Optional: -->
+											<address2></address2>
+											<!--Optional: -->
+											<address3></address3>
+											<!--Optional: -->
+											<zipCode></zipCode>
+											<!--Optional: -->
+											<city></city>
+											<!--Optional: -->
+											<country></country>
+											<!--Optional: -->
+											<state></state>
+										</address>
+										<!--Zero or more repetitions: -->
+										<customFields>
+											<customField code="CF1" description="CF1">
+												<!--Optional: -->
+												<stringValue>1</stringValue>
+												<longValue>1</longValue>
+												<doubleValue>1</doubleValue>
+												<dateValue>2015-01-01</dateValue>
+											</customField>
+										</customFields>
+										<!--Optional: -->
+										<status></status>
+										<!--Optional: -->
+										<paymentMethod>CHECK</paymentMethod>
+										<!--Optional: -->
+										<creditCategory>CASH</creditCategory>
+										<!--Optional: -->
+										<dateStatus>2015-02-20</dateStatus>
+										<!--Optional: -->
+										<dateDunningLevel>2015-02-20</dateDunningLevel>
+										<contactInformation>
+											<email>edward.legaspi@manaty.net</email>
+											<phone>1234</phone>
+											<mobile>1234</mobile>
+											<fax>1234</fax>
+										</contactInformation>
+										<!--Optional: -->
+										<dunningLevel></dunningLevel>
+										<!--Optional: -->
+										<mandateIdentification></mandateIdentification>
+										<!--Optional: -->
+										<mandateDate>2015-02-20</mandateDate>
+										<!--Zero or more repetitions: -->
+										<billingAccounts>
+											<billingAccount code="SOAP_BA2" description="BAS2">
+												<billingCycle>CYC_INV_MT_1</billingCycle>
+												<country>US</country>
+												<language>ENG</language>
+												<paymentMethod>CHECK</paymentMethod>
+												<!--Optional: -->
+												<externalRef1></externalRef1>
+												<!--Optional: -->
+												<externalRef2></externalRef2>
+												<!--Optional: -->
+												<name>
+													<lastName>Legaspi</lastName>
+													<!--Optional: -->
+													<title></title>
+													<!--Optional: -->
+													<firstName></firstName>
+												</name>
+												<!--Optional: -->
+												<address>
+													<!--Optional: -->
+													<address1>Address1</address1>
+													<!--Optional: -->
+													<address2></address2>
+													<!--Optional: -->
+													<address3></address3>
+													<!--Optional: -->
+													<zipCode></zipCode>
+													<!--Optional: -->
+													<city></city>
+													<!--Optional: -->
+													<country></country>
+													<!--Optional: -->
+													<state></state>
+												</address>
+												<!--Zero or more repetitions: -->
+												<customFields>
+													<customField code="CF1" description="CF1">
+														<stringValue>1</stringValue>
+														<longValue>1</longValue>
+														<doubleValue>1</doubleValue>
+														<dateValue>2015-01-01</dateValue>
+													</customField>
+												</customFields>
+												<!--Optional: -->
+												<nextInvoiceDate>2015-02-20</nextInvoiceDate>
+												<!--Optional: -->
+												<subscriptionDate>2015-02-20</subscriptionDate>
+												<!--Optional: -->
+												<paymentTerms>CASH</paymentTerms>
+												<!--Optional: -->
+												<electronicBilling>true</electronicBilling>
+												<!--Zero or more repetitions: -->
+												<userAccounts>
+													<userAccount code="SOAP_UA2" description="UAS2">
+														<!--Optional: -->
+														<externalRef1></externalRef1>
+														<!--Optional: -->
+														<externalRef2></externalRef2>
+														<!--Optional: -->
+														<name>
+															<lastName>Legaspi</lastName>
+															<!--Optional: -->
+															<title></title>
+															<!--Optional: -->
+															<firstName></firstName>
+														</name>
+														<!--Optional: -->
+														<address>
+															<!--Optional: -->
+															<address1>Address1</address1>
+															<!--Optional: -->
+															<address2></address2>
+															<!--Optional: -->
+															<address3></address3>
+															<!--Optional: -->
+															<zipCode></zipCode>
+															<!--Optional: -->
+															<city></city>
+															<!--Optional: -->
+															<country></country>
+															<!--Optional: -->
+															<state></state>
+														</address>
+														<!--Zero or more repetitions: -->
+														<customFields>
+															<customField code="CF1" description="CF1">
+																<stringValue>1</stringValue>
+																<longValue>1</longValue>
+																<doubleValue>1</doubleValue>
+																<dateValue>2015-01-01</dateValue>
+															</customField>
+														</customFields>
+														<!--Optional: -->
+														<subscriptionDate>2015-02-04</subscriptionDate>
+														<!--Optional: -->
+														<status></status>
+														<!--Zero or more repetitions: -->
+														<subscriptions>
+															<subscription code="SOAP_SUB2" description="SUBW2">
+																<offerTemplate>OFF1</offerTemplate>
+																<!--Optional: -->
+																<subscriptionDate>2015-02-04</subscriptionDate>
+																<!--<terminationReason>?</terminationReason> -->
+																<!--Optional: -->
+																<!--<terminationDate></terminationDate> -->
+																<!--Zero or more repetitions: -->
+																<accesses>
+																	<access code="SOAP_ACCESS2">
+																		<!--Optional: -->
+																		<startDate>2015-02-04</startDate>
+																		<!--Optional: -->
+																		<endDate>2015-06-30</endDate>
+																	</access>
+																</accesses>
+																<!--Zero or more repetitions: -->
+																<services>
+																	<serviceInstance code="SERV1">
+																		<!--Optional: -->
+																		<status></status>
+																		<!--Optional: -->
+																		<subscriptionDate>2015-02-04</subscriptionDate>
+																		<!--Optional: -->
+																		<!--<terminationDate></terminationDate> -->
+																		<quantity>1</quantity>
+																		<!--Optional: -->
+																		<!--<terminationReason></terminationReason> -->
+																	</serviceInstance>
+																</services>
+															</subscription>
+														</subscriptions>
+													</userAccount>
+												</userAccounts>
+											</billingAccount>
+										</billingAccounts>
+									</customerAccount>
+								</customerAccounts>
+							</customer>
+						</customers>
+					</seller>
+				</sellers>
+			</customerHierarchy>
+		</ws:customerHierarchyUpdate>
+	</soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/customerHierarchyUpdate"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="listAccess TestCase" searchProperties="true"><con:settings/><con:testStep type="request" name="listAccess"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>listAccess</con:operation><con:request name="listAccess" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType=""><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment xmlns:con="http://eviware.com/soapui/config">
+  &lt;con:entry key="username" value="meveo.admin"/>
+  &lt;con:entry key="password" value=""/>
+&lt;/xml-fragment></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:listAccess>
+         <!--Optional:-->
+         <subscriptionCode>SOAP_SUB1</subscriptionCode>
+      </ws:listAccess>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/listAccess"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:properties/></con:testSuite><con:endpointStrategy xsi:type="con:DefaultEndpointStrategy" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:endpoint mode="COMPLEMENT" username="meveo.admin" password="meveo.admin">http://localhost:8080/meveo/SettingsWs</con:endpoint><con:endpoint mode="OVERRIDE">http://localhost:8080/meveo/AccountWs</con:endpoint></con:endpointStrategy><con:properties><con:property><con:name>username</con:name><con:value>meveo.admin</con:value></con:property><con:property><con:name>password</con:name><con:value>meveo.admin</con:value></con:property></con:properties><con:wssContainer><con:incoming><con:name>meveo.admin</con:name><con:decryptPassword>meveo.admin</con:decryptPassword></con:incoming><con:outgoing><con:name>username</con:name><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password></con:outgoing></con:wssContainer><con:oAuth2ProfileContainer/><con:sensitiveInformation/></con:soapui-project>

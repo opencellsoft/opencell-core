@@ -30,7 +30,6 @@ import org.meveo.model.payments.CreditCategoryEnum;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.MatchingAmount;
 import org.meveo.model.payments.PaymentMethodEnum;
-import org.meveo.model.shared.ContactInformation;
 import org.meveo.service.admin.impl.TradingCurrencyService;
 import org.meveo.service.crm.impl.CustomerService;
 import org.meveo.service.payments.impl.CustomerAccountService;
@@ -72,12 +71,6 @@ public class CustomerAccountApi extends AccountApi {
 				throw new EntityDoesNotExistsException(TradingCurrency.class, postData.getCurrency());
 			}
 
-			ContactInformation contactInformation = new ContactInformation();
-			contactInformation.setEmail(postData.getEmail());
-			contactInformation.setPhone(postData.getPhone());
-			contactInformation.setMobile(postData.getMobile());
-			contactInformation.setFax(postData.getFax());
-
 			CustomerAccount customerAccount = new CustomerAccount();
 			populate(postData, customerAccount, currentUser, AccountLevelEnum.CA);
 
@@ -93,9 +86,15 @@ public class CustomerAccountApi extends AccountApi {
 			} catch (IllegalArgumentException | NullPointerException e) {
 				log.warn(e.getMessage());
 			}
-			customerAccount.setContactInformation(contactInformation);
 			customerAccount.setMandateDate(postData.getMandateDate());
 			customerAccount.setMandateIdentification(postData.getMandateIdentification());
+
+			if (postData.getContactInformation() != null) {
+				customerAccount.getContactInformation().setEmail(postData.getContactInformation().getEmail());
+				customerAccount.getContactInformation().setPhone(postData.getContactInformation().getPhone());
+				customerAccount.getContactInformation().setMobile(postData.getContactInformation().getMobile());
+				customerAccount.getContactInformation().setFax(postData.getContactInformation().getFax());
+			}
 
 			customerAccountService.create(customerAccount, currentUser, currentUser.getProvider());
 		} else {
@@ -146,18 +145,11 @@ public class CustomerAccountApi extends AccountApi {
 				throw new EntityDoesNotExistsException(TradingCurrency.class, postData.getCurrency());
 			}
 
-			if (customerAccount.getContactInformation() != null) {
-				customerAccount.getContactInformation().setEmail(postData.getEmail());
-				customerAccount.getContactInformation().setPhone(postData.getPhone());
-				customerAccount.getContactInformation().setMobile(postData.getMobile());
-				customerAccount.getContactInformation().setFax(postData.getFax());
-			} else {
-				ContactInformation contactInformation = new ContactInformation();
-				contactInformation.setEmail(postData.getEmail());
-				contactInformation.setPhone(postData.getPhone());
-				contactInformation.setMobile(postData.getMobile());
-				contactInformation.setFax(postData.getFax());
-				customerAccount.setContactInformation(contactInformation);
+			if (postData.getContactInformation() != null) {
+				customerAccount.getContactInformation().setEmail(postData.getContactInformation().getEmail());
+				customerAccount.getContactInformation().setPhone(postData.getContactInformation().getPhone());
+				customerAccount.getContactInformation().setMobile(postData.getContactInformation().getMobile());
+				customerAccount.getContactInformation().setFax(postData.getContactInformation().getFax());
 			}
 
 			updateAccount(customerAccount, postData, currentUser, AccountLevelEnum.CA);
@@ -232,17 +224,18 @@ public class CustomerAccountApi extends AccountApi {
 			customerAccountDto.setDateDunningLevel(customerAccount.getDateDunningLevel());
 
 			if (customerAccount.getContactInformation() != null) {
-				customerAccountDto
-						.setEmail(customerAccount.getContactInformation().getEmail() != null ? customerAccount
+				customerAccountDto.getContactInformation().setEmail(
+						customerAccount.getContactInformation().getEmail() != null ? customerAccount
 								.getContactInformation().getEmail() : null);
-				customerAccountDto
-						.setPhone(customerAccount.getContactInformation().getPhone() != null ? customerAccount
+				customerAccountDto.getContactInformation().setPhone(
+						customerAccount.getContactInformation().getPhone() != null ? customerAccount
 								.getContactInformation().getPhone() : null);
-				customerAccountDto
-						.setMobile(customerAccount.getContactInformation().getMobile() != null ? customerAccount
+				customerAccountDto.getContactInformation().setMobile(
+						customerAccount.getContactInformation().getMobile() != null ? customerAccount
 								.getContactInformation().getMobile() : null);
-				customerAccountDto.setFax(customerAccount.getContactInformation().getFax() != null ? customerAccount
-						.getContactInformation().getFax() : null);
+				customerAccountDto.getContactInformation().setFax(
+						customerAccount.getContactInformation().getFax() != null ? customerAccount
+								.getContactInformation().getFax() : null);
 			}
 
 			if (customerAccount.getCustomer() != null) {

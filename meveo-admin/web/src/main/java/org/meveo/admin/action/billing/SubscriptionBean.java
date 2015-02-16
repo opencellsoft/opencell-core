@@ -690,29 +690,32 @@ public class SubscriptionBean extends StatefulBaseBean<Subscription> {
 	}
 
 	public List<WalletTemplate> findBySubscriptionChargeTemplate() {
-		if (oneShotChargeInstance.getChargeTemplate() == null)
-			return null;
+		List<WalletTemplate> result = new ArrayList<WalletTemplate>();
 
 		List<ServiceChargeTemplateSubscription> serviceChargeTemplateSubscriptions = serviceChargeTemplateSubscriptionService
 				.findBySubscriptionChargeTemplate((OneShotChargeTemplate) oneShotChargeInstance.getChargeTemplate(),
 						getCurrentProvider());
 
-		List<WalletTemplate> result = new ArrayList<WalletTemplate>();
 		if (serviceChargeTemplateSubscriptions != null) {
 			for (ServiceChargeTemplateSubscription serviceChargeTemplateSubscription : serviceChargeTemplateSubscriptions) {
 				if (serviceChargeTemplateSubscription.getWalletTemplates() != null) {
 					for (WalletTemplate walletTemplate : serviceChargeTemplateSubscription.getWalletTemplates()) {
 						if (!result.contains(walletTemplate)) {
+							log.debug("adding wallet={}", walletTemplate);
 							result.add(walletTemplate);
 						}
 					}
 				}
 			}
-
-			return result;
+		} else {
+			// get principal
+			if (entity.getUserAccount() != null) {
+				log.debug("adding postpaid wallet={}", entity.getUserAccount().getWallet().getWalletTemplate());
+				result.add(entity.getUserAccount().getWallet().getWalletTemplate());
+			}
 		}
 
-		return null;
+		return result;
 	}
 
 	public WalletTemplate getSelectedWalletTemplate() {
