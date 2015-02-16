@@ -526,9 +526,17 @@ public class UsageRatingService {
 				if (periodCache.getValue().compareTo(countedValue) < 0) {
 					deducedQuantity = periodCache.getValue();
 					periodCache.setValue(BigDecimal.ZERO);
+					int rounding = BaseEntity.NB_DECIMALS;
+					if (charge.getUnityNbDecimal() < BaseEntity.NB_DECIMALS) {
+						rounding = (int)Math.round(charge.getUnityNbDecimal()+Math.floor(Math.log10(charge.getUnityMultiplicator().doubleValue())));
+						if(rounding>BaseEntity.NB_DECIMALS){
+							rounding = BaseEntity.NB_DECIMALS;
+						}
+					}
 					deducedQuantityInEDRUnit = deducedQuantity.divide(charge
-							.getUnityMultiplicator(),BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP);
-					log.debug("we deduced {} and set the counter period value to 0",deducedQuantity);
+							.getUnityMultiplicator(),rounding, RoundingMode.HALF_UP);
+					
+					log.debug("we deduced {} and set the counter period value to 0, rounding used for EDR units :{}",deducedQuantity,rounding);
 				} else {
 					deducedQuantity = countedValue;
 					periodCache.setValue(periodCache.getValue().subtract(
