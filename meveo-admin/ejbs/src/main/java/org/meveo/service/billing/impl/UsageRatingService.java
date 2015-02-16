@@ -469,6 +469,7 @@ public class UsageRatingService {
 		log.info("Deduce counter for key " + charge.getCounter().getKey());
 
 		BigDecimal deducedQuantity = BigDecimal.ZERO;
+		BigDecimal deducedQuantityInEDRUnit = BigDecimal.ZERO;
 		CounterInstanceCache counterInstanceCache = MeveoCacheContainerProvider.getCounterCache().get(charge
 				.getCounter().getKey());
 		CounterPeriodCache periodCache = null;
@@ -509,13 +510,14 @@ public class UsageRatingService {
 		synchronized (periodCache) {
 			BigDecimal countedValue = edr.getQuantity().multiply(
 					charge.getUnityMultiplicator());
-			log.info("value to deduce " + edr.getQuantity() + "*"
-					+ charge.getUnityMultiplicator() + "=" + countedValue);
+			log.debug("value to deduce {} * {} = {} from current value {}",edr.getQuantity()
+					,charge.getUnityMultiplicator() , countedValue,periodCache.getValue());
 			if (charge.getUnityNbDecimal() > 0) {
 				int rounding = (charge.getUnityNbDecimal() > BaseEntity.NB_DECIMALS) ? BaseEntity.NB_DECIMALS
 						: charge.getUnityNbDecimal();
 				countedValue = countedValue.setScale(rounding,
 						RoundingMode.HALF_UP);
+				log.debug("after rounding we would deduce {}",countedValue);
 			}
 
 			if (periodCache.getLevel() == null) {
@@ -524,10 +526,15 @@ public class UsageRatingService {
 				if (periodCache.getValue().compareTo(countedValue) < 0) {
 					deducedQuantity = periodCache.getValue();
 					periodCache.setValue(BigDecimal.ZERO);
+					deducedQuantityInEDRUnit = deducedQuantity.divide(charge
+							.getUnityMultiplicator(),BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP);
+					log.debug("we deduced {} and set the counter period value to 0",deducedQuantity);
 				} else {
 					deducedQuantity = countedValue;
 					periodCache.setValue(periodCache.getValue().subtract(
 							countedValue));
+					log.debug("we deduced {} and set the counter period value to {}",deducedQuantity,periodCache.getValue());
+					deducedQuantityInEDRUnit = edr.getQuantity();
 				}
 				// set the cache element to dirty so it is saved to DB when
 				// shutdown the server
@@ -538,11 +545,11 @@ public class UsageRatingService {
 			}
 
 			// put back the deduced quantity in charge unit
-			deducedQuantity = deducedQuantity.divide(charge
-					.getUnityMultiplicator(),BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP);
+			
+			log.debug("in original EDR units, we deduced {}",deducedQuantityInEDRUnit);
 		}
 		}
-		return deducedQuantity;
+		return deducedQuantityInEDRUnit;
 	}
 
 	/**
