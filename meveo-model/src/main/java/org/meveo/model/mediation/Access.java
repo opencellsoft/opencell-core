@@ -91,4 +91,7 @@ public class Access extends EnableEntity {
 		this.subscription = subscription;
 	}
 
+	public String getCacheKey(){
+		return getProvider().getCode()+"_"+accessUserId;
+	}
 }

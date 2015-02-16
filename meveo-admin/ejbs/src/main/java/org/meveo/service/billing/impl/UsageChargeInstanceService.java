@@ -34,6 +34,7 @@ import org.meveo.model.billing.InstanceStatusEnum;
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.UsageChargeInstance;
+import org.meveo.model.billing.WalletInstance;
 import org.meveo.model.catalog.ServiceChargeTemplateUsage;
 import org.meveo.model.catalog.WalletTemplate;
 import org.meveo.service.base.BusinessService;
@@ -60,7 +61,8 @@ public class UsageChargeInstanceService extends BusinessService<UsageChargeInsta
 	public UsageChargeInstance usageChargeInstanciation(EntityManager em, Subscription subscription,
 			ServiceInstance serviceInstance, ServiceChargeTemplateUsage serviceUsageChargeTemplate, Date startDate,
 			Seller seller, User creator) throws BusinessException {
-
+		log.debug("instanciate usageCharge for code {} and subscription {}",
+				serviceUsageChargeTemplate.getChargeTemplate().getCode(),subscription.getCode());
 		UsageChargeInstance usageChargeInstance = new UsageChargeInstance();
 		usageChargeInstance.setSubscription(subscription);
 		usageChargeInstance.setChargeTemplate(serviceUsageChargeTemplate.getChargeTemplate());
@@ -74,23 +76,26 @@ public class UsageChargeInstanceService extends BusinessService<UsageChargeInsta
 		usageChargeInstance.setCountry(subscription.getUserAccount().getBillingAccount().getTradingCountry());
 		usageChargeInstance.setCurrency(subscription.getUserAccount().getBillingAccount().getCustomerAccount()
 				.getTradingCurrency());
-		ServiceChargeTemplateUsage usaChTmplServ = serviceInstance.getServiceTemplate()
-				.getServiceChargeTemplateUsageByChargeCode(serviceUsageChargeTemplate.getChargeTemplate().getCode());
-		List<WalletTemplate> walletTemplates = usaChTmplServ.getWalletTemplates();
+		List<WalletTemplate> walletTemplates = serviceUsageChargeTemplate.getWalletTemplates();
+		log.debug("usage charge wallet templates {}, by default we set it to postpaid",walletTemplates);
+		usageChargeInstance.setPrepaid(false);
 		if (walletTemplates != null && walletTemplates.size() > 0) {
+			log.debug("usage charge has {} wallet templates",walletTemplates.size());
 			for (WalletTemplate walletTemplate : walletTemplates) {
+				log.debug("wallet template {}",walletTemplate.getCode());
 				if(walletTemplate.getWalletType()==BillingWalletTypeEnum.PREPAID){
+					log.debug("it is a prepaid wallet so we set the charge itself has being prepaid");
 					usageChargeInstance.setPrepaid(true);
 				}
-				log.debug("add walletInstance for template {}",walletTemplate.getCode());
-				usageChargeInstance.getWalletInstances().add(
-						walletService.getWalletInstance(serviceInstance.getSubscription().getUserAccount(),
-								walletTemplate, serviceInstance.getAuditable().getCreator(),
-								serviceInstance.getProvider()));
+				WalletInstance walletInstance =walletService.getWalletInstance(serviceInstance.getSubscription().getUserAccount(),
+						walletTemplate, serviceInstance.getAuditable().getCreator(),
+						serviceInstance.getProvider());
+				log.debug("we add the waleltInstance {} to the charge instance {}",walletInstance.getId(),
+						usageChargeInstance.getId());
+				usageChargeInstance.getWalletInstances().add(walletInstance);
 			}
 		} else {
-			usageChargeInstance.setPrepaid(false);
-			log.debug("add postpaid walletInstance");
+			log.debug("add postpaid walletInstance {}",serviceInstance.getSubscription().getUserAccount().getWallet());
 			usageChargeInstance.getWalletInstances()
 					.add(serviceInstance.getSubscription().getUserAccount().getWallet());
 		}

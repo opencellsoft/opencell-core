@@ -94,14 +94,17 @@ public class OneShotChargeInstanceService extends BusinessService<OneShotChargeI
 			quantity = 1;
 		}
 
+		log.debug("instanciate a oneshot for code {} on subscription {}",chargeTemplate.getCode(),subscription.getCode());
 		OneShotChargeInstance oneShotChargeInstance = new OneShotChargeInstance(chargeTemplate.getCode(),
 				chargeTemplate.getDescription(), effetDate, amoutWithoutTax, amoutWithoutTx2, subscription,
 				chargeTemplate);
 		oneShotChargeInstance.setStatus(InstanceStatusEnum.INACTIVE);
 
 		if (chargeTemplate.getOneShotChargeTemplateType() == OneShotChargeTemplateTypeEnum.TERMINATION) {
+			log.debug("set the termination service instance to {}",serviceInstance.getId());
 			oneShotChargeInstance.setTerminationServiceInstance(serviceInstance);
 		} else {
+			log.debug("set the subscription service instance to {}",serviceInstance.getId());
 			oneShotChargeInstance.setSubscriptionServiceInstance(serviceInstance);
 		}
 
@@ -111,23 +114,32 @@ public class OneShotChargeInstanceService extends BusinessService<OneShotChargeI
 			ServiceChargeTemplateSubscription recChTmplServ = serviceInstance.getServiceTemplate()
 					.getServiceChargeTemplateSubscriptionByChargeCode(chargeTemplate.getCode());
 			walletTemplates = recChTmplServ.getWalletTemplates();
+			log.debug("retrieve wallet templates from subscription service charge templates : {}",walletTemplates);
 		} else {
 			ServiceChargeTemplateTermination recChTmplServ = serviceInstance.getServiceTemplate()
 					.getServiceChargeTemplateTerminationByChargeCode(chargeTemplate.getCode());
 			walletTemplates = recChTmplServ.getWalletTemplates();
+			log.debug("retrieve wallet templates from termination service charge templates : {}",walletTemplates);
 		}
+		log.debug("by default we set the charge instance as being postpaid");
+		oneShotChargeInstance.setPrepaid(false);
 		if (walletTemplates != null && walletTemplates.size() > 0) {
+			log.debug("found {} wallets",walletTemplates.size());
 			for (WalletTemplate walletTemplate : walletTemplates) {
+				log.debug("walletTemplate {}",walletTemplate.getCode());
 				if(walletTemplate.getWalletType()==BillingWalletTypeEnum.PREPAID){
+					log.debug("this wallet is prepaid, we set the charge instance itself as being prepaid");
 					oneShotChargeInstance.setPrepaid(true);
+
 				}
-				oneShotChargeInstance.getWalletInstances().add(
-						walletService.getWalletInstance(serviceInstance.getSubscription().getUserAccount(),
-								walletTemplate, serviceInstance.getAuditable().getCreator(),
-								serviceInstance.getProvider()));
+				WalletInstance walletInstance=walletService.getWalletInstance(serviceInstance.getSubscription().getUserAccount(),
+						walletTemplate, serviceInstance.getAuditable().getCreator(),
+						serviceInstance.getProvider());
+				log.debug("add the wallet instance {} to the chargeInstance {}",walletInstance.getId(),oneShotChargeInstance.getId());
+				oneShotChargeInstance.getWalletInstances().add(walletInstance);
 			}
 		} else {
-			oneShotChargeInstance.setPrepaid(false);
+			log.debug("as the charge is postpaid, we add the principal wallet");
 			oneShotChargeInstance.getWalletInstances().add(
 					serviceInstance.getSubscription().getUserAccount().getWallet());
 		}
@@ -208,6 +220,9 @@ public class OneShotChargeInstanceService extends BusinessService<OneShotChargeI
 		BigDecimal balanceWithTax = getEntityManager().createNamedQuery("WalletOperation.getBalanceWithTaxUntilId",BigDecimal.class)
 				.setParameter("wallet", wallet).setParameter("maxId", maxWalletId).getSingleResult();
 		Subscription subscription=null;
+		if(balanceNoTax==null){
+			return;
+		}
 		for(Subscription sub : wallet.getUserAccount().getSubscriptions()){
 			if(sub.isActive()){
 				subscription=sub;
@@ -222,6 +237,7 @@ public class OneShotChargeInstanceService extends BusinessService<OneShotChargeI
 		if (oneShotChargeTemplate == null) {
 			throw new BusinessException("Charge template "+matchingChargeCode+" not found for provider"+wallet.getProvider());
 		}
+		log.debug("create matching charge instance with amountWithoutTax {}, amountWithTax {}",balanceNoTax, balanceWithTax);
 		OneShotChargeInstance matchingCharge=oneShotChargeApplication(subscription,
 					(OneShotChargeTemplate) oneShotChargeTemplate,
 					wallet.getCode(), new Date(), balanceNoTax, balanceWithTax,
@@ -246,8 +262,11 @@ public class OneShotChargeInstanceService extends BusinessService<OneShotChargeI
 		int updatedOps =getEntityManager().createNamedQuery("WalletOperation.setTreatedStatusUntilId")
 				.setParameter("wallet", wallet).setParameter("maxId", maxWalletId).executeUpdate();
 		log.debug("set to TREATED {} wallet ops on wallet {}",updatedOps,wallet.getId());
+		walletOperationService.oneShotWalletOperation(getEntityManager(),subscription, compensationCharge, BigDecimal.ONE, new Date(),
+				currentUser);
 		//we check that balance is unchanged
-		BigDecimal cacheBalance=walletOperationService.fillBalanceCaches(wallet.getId());
+		//
+		BigDecimal cacheBalance=walletOperationService.getCacheBalance(wallet.getId());
 		if(cacheBalance.compareTo(balanceWithTax)!=0){
 			log.error("balances in prepaid matching process do not match cache={}, compensated={}"
 					,cacheBalance,balanceWithTax);

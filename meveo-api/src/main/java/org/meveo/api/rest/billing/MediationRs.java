@@ -25,10 +25,5 @@ public interface MediationRs extends IBaseRs {
 	@POST
 	@Path("/chargeCdr")
 	ActionStatus chargeCdr(String cdr);
-	
-
-	@POST
-	@Path("/chargeCdrList")
-	ActionStatus chargeCdrList(CdrListDto postData);
 
 }

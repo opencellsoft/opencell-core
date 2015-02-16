@@ -26,6 +26,7 @@ import javax.persistence.Query;
 
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.billing.Subscription;
+import org.meveo.model.crm.Provider;
 import org.meveo.model.mediation.Access;
 import org.meveo.service.base.PersistenceService;
 
@@ -33,12 +34,14 @@ import org.meveo.service.base.PersistenceService;
 public class AccessService extends PersistenceService<Access> {
 
 	@SuppressWarnings("unchecked")
-	public List<Access> findByUserID(String userId) {
+	public List<Access> findByUserID(String userId,Provider provider) {
 		log.info("findByUserID '" + userId + "'");
 		List<Access> result = new ArrayList<Access>();
 		if (userId != null && userId.length() > 0) {
-			Query query = getEntityManager().createQuery("from Access a where a.accessUserId=:accessUserId")
-					.setParameter("accessUserId", userId);
+			Query query = getEntityManager().createQuery("from Access a where a.accessUserId=:accessUserId "
+					+ "and a.provider=:provider and a.disabled=false")
+					.setParameter("accessUserId", userId)
+					.setParameter("provider", provider);
 			result = query.getResultList();
 		}
 		return result;

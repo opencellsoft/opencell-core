@@ -14,19 +14,16 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.parse.csv.CdrParserProducer;
 import org.meveo.event.qualifier.CDR;
 import org.meveo.event.qualifier.Rejected;
+import org.meveo.model.crm.Provider;
 import org.meveo.model.mediation.Access;
 import org.meveo.model.rating.EDR;
 import org.meveo.model.rating.EDRStatusEnum;
 import org.meveo.service.billing.impl.EdrService;
-import org.slf4j.Logger;
 import org.meveo.util.MeveoCacheContainerProvider;
 
 @Stateless
 public class CDRParsingService {
-
-	@Inject
-	private Logger log;
-
+	
 	private CSVCDRParser cdrParser;
 
 	@Inject
@@ -35,8 +32,6 @@ public class CDRParsingService {
 	@Inject
 	private AccessService accessService;
 	
-	@Inject
-	private static MeveoCacheContainerProvider meveoCacheContainerProvider;
 
 	@Inject
 	@Rejected
@@ -56,14 +51,10 @@ public class CDRParsingService {
 		cdrParser.initByApi(username, ip);
 	}
 
-	public static void resetAccessPointCache() {
-		meveoCacheContainerProvider.getAccessCache().clear();
-	}
-
-	public void resetAccessPointCache(Access access) {
+	/*public void resetAccessPointCache(Access access) {
 		List<Access> accesses = null;
-		if (meveoCacheContainerProvider.getAccessCache().containsKey(access.getAccessUserId())) {
-			accesses = meveoCacheContainerProvider.getAccessCache().get(access.getAccessUserId());
+		if (MeveoCacheContainerProvider.getAccessCache().containsKey(access.getAccessUserId())) {
+			accesses = MeveoCacheContainerProvider.getAccessCache().get(access.getAccessUserId());
 			boolean found = false;
 			for (Access cachedAccess : accesses) {
 				if ((access.getSubscription().getId() != null && access.getSubscription().getId()
@@ -82,15 +73,15 @@ public class CDRParsingService {
 		} else {
 			accesses = new ArrayList<Access>();
 			accesses.add(access);
-			meveoCacheContainerProvider.getAccessCache().put(access.getAccessUserId(), accesses);
+			MeveoCacheContainerProvider.getAccessCache().put(access.getAccessUserId(), accesses);
 		}
-	}
+	}*/
 
-	public List<EDR> getEDRList(String line) throws CDRParsingException {
+	public List<EDR> getEDRList(String line,Provider provider) throws CDRParsingException {
 		List<EDR> result = new ArrayList<EDR>();
 		Serializable cdr = cdrParser.getCDR(line);
 		deduplicate(cdr);
-		List<Access> accessPoints = accessPointLookup(cdr);
+		List<Access> accessPoints = accessPointLookup(cdr,provider);
 		boolean foundMatchingAccess = false;
 		for (Access accessPoint : accessPoints) {
 			EDRDAO edrDAO = cdrParser.getEDR(cdr);
@@ -129,21 +120,20 @@ public class CDRParsingService {
 		}
 	}
 
-	private List<Access> accessPointLookup(Serializable cdr) throws InvalidAccessException {
+	private List<Access> accessPointLookup(Serializable cdr,Provider provider) throws InvalidAccessException {
 		String userId = cdrParser.getAccessUserId(cdr);
+		String cacheKey = provider.getCode()+"_"+userId;
 		List<Access> accesses = null;
-		if (meveoCacheContainerProvider.getAccessCache().containsKey(userId)) {
-			accesses = meveoCacheContainerProvider.getAccessCache().get(userId);
+		if (MeveoCacheContainerProvider.getAccessCache().containsKey(cacheKey)) {
+			accesses = MeveoCacheContainerProvider.getAccessCache().get(cacheKey);
 		} else {
-			accesses = accessService.findByUserID(userId);
+			accesses = accessService.findByUserID(userId,provider);
 			if (accesses.size() == 0) {
 				rejectededCdrEventProducer.fire(cdr);
 				throw new InvalidAccessException(cdr);
 			}
-
-			meveoCacheContainerProvider.getAccessCache().put(userId, accesses);
+			MeveoCacheContainerProvider.getAccessCache().put(cacheKey, accesses);
 		}
-
 		return accesses;
 	}
 
