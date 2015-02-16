@@ -82,11 +82,10 @@ public class UserAccountBean extends AccountBean<UserAccount> {
 	@Inject
 	private RatedTransactionService ratedTransactionService;
 
-	private Long billingAccountId;
-
 	@Inject
 	private BillingAccountService billingAccountService;
 
+	private Long billingAccountId;
 	private WalletOperation reloadOperation;
 	private String selectedWalletCode;
 

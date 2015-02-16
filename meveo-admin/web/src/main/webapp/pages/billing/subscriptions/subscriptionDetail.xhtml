@@ -408,7 +408,23 @@
 													column2Label="#{messages['chargeTemplate.description']}"
 													column2="description"
 													selection="#{subscriptionBean.oneShotChargeInstance.chargeTemplate}"
-													updateField=":subscriptionTab:oneShotChargeFormPanel:oneShotChgForm1:chargeTemplateSelectId_text :subscriptionTab:oneShotChargeFormPanel:oneShotChgForm1">
+													updateField=":#{p:component('chargeTemplateSelectId_text')} :subscriptionTab:oneShotChargeFormPanel:oneShotChgForm1 :#{p:component('chargeWalletSelectId_selectLink')}">
+												</hftl:entityPopup>
+
+												<hftl:entityPopup id="popupWalletTemplates"
+													header="#{messages['oneShotChargeTmp.popup.header']}"
+													backingBean="#{subscriptionBean}"
+													dataModel="#{subscriptionBean.findBySubscriptionChargeTemplate()}"
+													searchField1Label="#{messages['BusinessEntity.code']}"
+													searchField1="code"
+													searchField2Label="#{messages['BusinessEntity.description']}"
+													searchField2="description"
+													column1Label="#{messages['BusinessEntity.code']}"
+													column1="code"
+													column2Label="#{messages['BusinessEntity.description']}"
+													column2="description"
+													selection="#{subscriptionBean.selectedWalletTemplate}"
+													updateField=":#{p:component('chargeWalletSelectId_text')}">
 												</hftl:entityPopup>
 
 												<hf:formPanel id="oneShotChargeFormPanel" edit="true"
@@ -446,11 +462,12 @@
 															value="#{messages['menu.wallet']}" />
 														<p:panelGrid styleClass="inner-table" columns="3">
 															<p:inputText id="chargeWalletSelectId_text"
-																required="true"
-																value="#{subscriptionBean.oneShotChargeInstanceWalletCode}" />
-															<!-- <p:commandButton id="chargeWalletSelectId_selectLink"
-																onclick="PF('dlg_oneShotChargeWallPopup').show()"
-																icon="ui-icon-search" type="button" /> -->
+																required="true" disabled="true"
+																value="#{subscriptionBean.selectedWalletTemplate.code}" />
+															<p:commandButton id="chargeWalletSelectId_selectLink"
+																disabled="#{subscriptionBean.oneShotChargeInstance.code eq null}"
+																onclick="PF('dlg_popupWalletTemplates').show()"
+																icon="ui-icon-search" type="button" />
 														</p:panelGrid>
 														<p:tooltip for="chargeTemplateSelectId_selectLink"
 															value="#{messages['commons.search']}" />
@@ -782,7 +799,8 @@
 										<hftl:column
 											label="#{messages['pricePlanMatrix.amountWithoutTax']}"
 											field="amountWithoutTax" isMessage="false" />
-										<hftl:column label="#{messages['pricePlanMatrix.amountWithTax']}"
+										<hftl:column
+											label="#{messages['pricePlanMatrix.amountWithTax']}"
 											field="amountWithTax" isMessage="false" />
 										<hftl:column
 											label="#{messages['oneShotChargeInstance.criteria1']}"
