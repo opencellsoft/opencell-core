@@ -866,6 +866,7 @@ public class AccountHierarchyApi extends BaseApi {
 											customerAccountDto.getCode(), provider);
 									if (customerAccount == null) {
 										customerAccount = new CustomerAccount();
+										customerAccount.setStatus(CustomerAccountStatusEnum.ACTIVE);
 										customerAccount.setCode(customerAccountDto.getCode());
 									} else {
 										if (!StringUtils.isBlank(customerAccountDto.getStatus())) {
@@ -976,6 +977,7 @@ public class AccountHierarchyApi extends BaseApi {
 													billingAccountDto.getCode(), provider);
 											if (billingAccount == null) {
 												billingAccount = new BillingAccount();
+												billingAccount.setStatus(AccountStatusEnum.ACTIVE);
 												billingAccount.setCode(billingAccountDto.getCode());
 											} else {
 												if (billingAccountDto.getTerminationDate() != null) {
@@ -1094,6 +1096,7 @@ public class AccountHierarchyApi extends BaseApi {
 															userAccountDto.getCode(), provider);
 													if (userAccount == null) {
 														userAccount = new UserAccount();
+														userAccount.setStatus(AccountStatusEnum.ACTIVE);
 														userAccount.setCode(userAccountDto.getCode());
 													} else {
 														if (userAccountDto.getTerminationDate() != null) {
