@@ -8,6 +8,7 @@ import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -72,9 +73,14 @@ public class InboundRequestBean extends BaseBean<InboundRequest> {
     private static final int CONTENT_LENGHT= 8;
     private static final int METHOD= 9;
     private static final int AUTHENTIFICATION_TYPE= 10;
-    private static final int REQUEST_URI= 11;  
+    private static final int REQUEST_URI= 11;
+    private static final int PARAMETERS= 12;
+    private static final int COOCKIES= 13;
+    private static final int HEADERS= 14;
     private static final int RESPONSE_CONTENT_TYPE= 15;
-    private static final int ENCODING= 16;  
+    private static final int ENCODING= 16;
+    private static final int RESPONSE_COOCKIES= 17;
+    private static final int RESPONSE_HEADERS= 18;
     private static final int UPDATE_DATE= 19;
     
     @Override
@@ -128,14 +134,15 @@ public class InboundRequestBean extends BaseBean<InboundRequest> {
         csv.appendValue("Method");
         csv.appendValue("Authentication type");
         csv.appendValue("Request URI");
+        csv.appendValue("Parametres");
         csv.appendValue("Cookies");
         csv.appendValue("Headers");
-        csv.appendValue("Parameters");
         csv.appendValue("Response content type");
         csv.appendValue("Encoding");
-        csv.appendValue("Cookies");
-        csv.appendValue("Headers");
-        csv.appendValue("Update date"); 
+        csv.appendValue("Response_Coockies");
+        csv.appendValue("Response_Headers");
+        csv.appendValue("Update date");
+        
         csv.startNewLine();
         for(InboundRequest  inboundRequest:inboundRequestService.list()){ 
         	 csv.appendValue(inboundRequest.getRemoteAddr());
@@ -150,13 +157,58 @@ public class InboundRequestBean extends BaseBean<InboundRequest> {
         	 csv.appendValue(inboundRequest.getMethod());
         	 csv.appendValue(inboundRequest.getAuthType());
         	 csv.appendValue(inboundRequest.getRequestURI());
-        	 csv.appendValue(inboundRequest.getCoockies()+"");
-        	 csv.appendValue(inboundRequest.getHeaders()+"");
-        	 csv.appendValue(inboundRequest.getParameters()+"");
+        	 
+        	 StringBuffer params=new StringBuffer(); 
+  			if(inboundRequest.getParameters()!=null){
+  	        	 String sep="";
+  				for(String key:inboundRequest.getParameters().keySet()){
+  					params.append(sep).append(key).append(":").append(inboundRequest.getParameters().get(key));
+  					sep="|";
+  					}
+  	        	 csv.appendValue(params.toString());
+  			   }
+        	 StringBuffer coockies=new StringBuffer();
+ 			
+ 			if(inboundRequest.getCoockies()!=null){
+ 	        	 String sep="";
+ 				for(String key:inboundRequest.getCoockies().keySet()){
+ 					coockies.append(sep).append(key).append(":").append(inboundRequest.getCoockies().get(key));
+ 					sep="|";
+ 					}
+ 				csv.appendValue(coockies.toString());	
+ 			}
+ 			
+ 			StringBuffer headers=new StringBuffer(); 
+ 			if(inboundRequest.getHeaders()!=null){
+ 	        	 String sep="";
+ 				for(String key:inboundRequest.getHeaders().keySet()){
+ 					headers.append(sep).append(key).append(":").append(inboundRequest.getHeaders().get(key));
+ 					sep="|";
+ 			}
+ 				csv.appendValue(headers.toString());
+ 			}
+ 			 
         	 csv.appendValue(inboundRequest.getResponseContentType()+"");
         	 csv.appendValue(inboundRequest.getResponseEncoding()+"");
-        	 csv.appendValue(inboundRequest.getResponseCoockies()+"");
-        	 csv.appendValue(inboundRequest.getResponseHeaders()+"");
+        	 
+        	 StringBuffer responseCoockies=new StringBuffer(); 
+  			if(inboundRequest.getResponseCoockies()!=null){
+  	        	 String sep="";
+  				for(String key:inboundRequest.getResponseCoockies().keySet()){
+  					responseCoockies.append(sep).append(key).append(":").append(inboundRequest.getResponseCoockies().get(key));
+  					sep="|";
+  					}
+  	        	 csv.appendValue(responseCoockies.toString());
+  			   }
+        	 StringBuffer responseHeaders=new StringBuffer(); 
+   			if(inboundRequest.getResponseHeaders()!=null){
+           	 String sep="";
+   				for(String key:inboundRequest.getResponseHeaders().keySet()){
+   					responseHeaders.append(sep).append(key).append(":").append(inboundRequest.getResponseHeaders().get(key));
+   					sep="|";
+   					}
+   	        	 csv.appendValue(responseHeaders.toString());
+   			   }
         	 csv.appendValue(DateUtils.parseDateWithPattern(inboundRequest.getAuditable().getUpdated(), "dd/MM/yyyy")+"");
         	 csv.startNewLine();
         }
@@ -218,9 +270,66 @@ public class InboundRequestBean extends BaseBean<InboundRequest> {
 						inboundRequest
 								.setAuthType(values[AUTHENTIFICATION_TYPE]);
 						inboundRequest.setRequestURI(values[REQUEST_URI]);
+						
+						if(values[PARAMETERS]!=null && values[PARAMETERS].length()>0){
+							String[] mapElements=values[PARAMETERS].split("\\|");
+							if(mapElements!=null && mapElements.length>0){
+								Map<String,String> params = new HashMap<String, String>();
+								for(String element:mapElements){
+									String[] param=element.split(":");
+									params.put(param[0], param[1]);
+								}
+								inboundRequest.setParameters(params);
+							  }
+							}
+						if(values[COOCKIES]!=null && values[COOCKIES].length()>0){
+							String[] mapElements=values[COOCKIES].split("\\|");
+							if(mapElements!=null && mapElements.length>0){
+								Map<String,String> coockies = new HashMap<String, String>();
+								for(String element:mapElements){
+									String[] param=element.split(":");
+									coockies.put(param[0], param[1]);
+								}
+								inboundRequest.setCoockies(coockies);
+							  }
+							}
+						if(values[HEADERS]!=null && values[HEADERS].length()>0){
+							String[] mapElements=values[HEADERS].split("\\|");
+							if(mapElements!=null && mapElements.length>0){
+								Map<String,String> headers = new HashMap<String, String>();
+								for(String element:mapElements){
+									String[] param=element.split(":");
+									headers.put(param[0], param[1]);
+								}
+								inboundRequest.setHeaders(headers);
+							  }
+							}
 						inboundRequest
 								.setResponseContentType(values[RESPONSE_CONTENT_TYPE]);
 						inboundRequest.setResponseEncoding(values[ENCODING]);
+						
+						if(values[RESPONSE_COOCKIES]!=null && values[RESPONSE_COOCKIES].length()>0){
+							String[] mapElements=values[RESPONSE_COOCKIES].split("\\|");
+							if(mapElements!=null && mapElements.length>0){
+								Map<String,String> responseCoockies = new HashMap<String, String>();
+								for(String element:mapElements){
+									String[] param=element.split(":");
+									responseCoockies.put(param[0], param[1]);
+								}
+								inboundRequest.setResponseCoockies(responseCoockies);
+							  }
+							}
+						if(values[RESPONSE_HEADERS]!=null && values[RESPONSE_HEADERS].length()>0){
+							String[] mapElements=values[RESPONSE_HEADERS].split("\\|");
+							if(mapElements!=null && mapElements.length>0){
+								Map<String,String> responseHeaders = new HashMap<String, String>();
+								for(String element:mapElements){
+									String[] param=element.split(":");
+									responseHeaders.put(param[0], param[1]);
+								}
+								inboundRequest.setResponseHeaders(responseHeaders);
+							  }
+							}
 						inboundRequestService.create(inboundRequest);
 					}}
 				if(isEntityAlreadyExist && strategyImportType.equals(StrategyImportTypeEnum.REJECT_EXISTING_RECORDS)){
