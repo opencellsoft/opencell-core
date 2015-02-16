@@ -690,14 +690,12 @@ public class SubscriptionBean extends StatefulBaseBean<Subscription> {
 	}
 
 	public List<WalletTemplate> findBySubscriptionChargeTemplate() {
-		if (oneShotChargeInstance.getChargeTemplate() == null)
-			return null;
+		List<WalletTemplate> result = new ArrayList<WalletTemplate>();
 
 		List<ServiceChargeTemplateSubscription> serviceChargeTemplateSubscriptions = serviceChargeTemplateSubscriptionService
 				.findBySubscriptionChargeTemplate((OneShotChargeTemplate) oneShotChargeInstance.getChargeTemplate(),
 						getCurrentProvider());
 
-		List<WalletTemplate> result = new ArrayList<WalletTemplate>();
 		if (serviceChargeTemplateSubscriptions != null) {
 			for (ServiceChargeTemplateSubscription serviceChargeTemplateSubscription : serviceChargeTemplateSubscriptions) {
 				if (serviceChargeTemplateSubscription.getWalletTemplates() != null) {
@@ -708,11 +706,14 @@ public class SubscriptionBean extends StatefulBaseBean<Subscription> {
 					}
 				}
 			}
-
-			return result;
+		} else {
+			// get principal
+			if (entity.getUserAccount() != null) {
+				result.add(entity.getUserAccount().getWallet().getWalletTemplate());
+			}
 		}
 
-		return null;
+		return result;
 	}
 
 	public WalletTemplate getSelectedWalletTemplate() {

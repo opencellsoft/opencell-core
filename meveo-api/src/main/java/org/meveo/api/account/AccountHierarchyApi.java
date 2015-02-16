@@ -933,10 +933,16 @@ public class AccountHierarchyApi extends BaseApi {
 
 									customerAccount.setDateStatus(customerAccountDto.getDateStatus());
 									customerAccount.setDateDunningLevel(customerAccount.getDateDunningLevel());
-									customerAccount.getContactInformation().setEmail(customerAccountDto.getEmail());
-									customerAccount.getContactInformation().setPhone(customerAccountDto.getPhone());
-									customerAccount.getContactInformation().setMobile(customerAccountDto.getMobile());
-									customerAccount.getContactInformation().setFax(customerAccountDto.getFax());
+									if (customerAccountDto.getContactInformation() != null) {
+										customerAccount.getContactInformation().setEmail(
+												customerAccountDto.getContactInformation().getEmail());
+										customerAccount.getContactInformation().setPhone(
+												customerAccountDto.getContactInformation().getPhone());
+										customerAccount.getContactInformation().setMobile(
+												customerAccountDto.getContactInformation().getMobile());
+										customerAccount.getContactInformation().setFax(
+												customerAccountDto.getContactInformation().getFax());
+									}
 
 									customerAccount.setMandateDate(customerAccountDto.getMandateDate());
 									customerAccount.setMandateIdentification(customerAccountDto

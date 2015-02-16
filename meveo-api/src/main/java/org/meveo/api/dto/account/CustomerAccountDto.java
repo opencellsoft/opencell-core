@@ -32,10 +32,7 @@ public class CustomerAccountDto extends AccountDto {
 	private Date dateStatus;
 	private Date dateDunningLevel;
 
-	private String email;
-	private String phone;
-	private String mobile;
-	private String fax;
+	private ContactInformationDto contactInformation = new ContactInformationDto();
 
 	private String dunningLevel;
 	private String mandateIdentification = "";
@@ -81,10 +78,7 @@ public class CustomerAccountDto extends AccountDto {
 		dateStatus = e.getDateStatus();
 		dateDunningLevel = e.getDateDunningLevel();
 		if (e.getContactInformation() != null) {
-			email = e.getContactInformation().getEmail();
-			mobile = e.getContactInformation().getMobile();
-			fax = e.getContactInformation().getFax();
-			phone = e.getContactInformation().getPhone();
+			contactInformation = new ContactInformationDto(e.getContactInformation());
 		}
 
 		mandateIdentification = e.getMandateIdentification();
@@ -129,38 +123,6 @@ public class CustomerAccountDto extends AccountDto {
 
 	public void setDateDunningLevel(Date dateDunningLevel) {
 		this.dateDunningLevel = dateDunningLevel;
-	}
-
-	public String getEmail() {
-		return email;
-	}
-
-	public void setEmail(String email) {
-		this.email = email;
-	}
-
-	public String getPhone() {
-		return phone;
-	}
-
-	public void setPhone(String phone) {
-		this.phone = phone;
-	}
-
-	public String getMobile() {
-		return mobile;
-	}
-
-	public void setMobile(String mobile) {
-		this.mobile = mobile;
-	}
-
-	public String getFax() {
-		return fax;
-	}
-
-	public void setFax(String fax) {
-		this.fax = fax;
 	}
 
 	public String getCustomer() {
@@ -231,10 +193,9 @@ public class CustomerAccountDto extends AccountDto {
 		return "CustomerAccountDto [customer=" + customer + ", currency=" + currency + ", status=" + status
 				+ ", paymentMethod=" + paymentMethod + ", creditCategory=" + creditCategory + ", accountOperations="
 				+ accountOperations + ", dateStatus=" + dateStatus + ", dateDunningLevel=" + dateDunningLevel
-				+ ", email=" + email + ", phone=" + phone + ", mobile=" + mobile + ", fax=" + fax + ", dunningLevel="
-				+ dunningLevel + ", mandateIdentification=" + mandateIdentification + ", mandateDate=" + mandateDate
-				+ ", balance=" + balance + ", terminationDate=" + terminationDate + ", billingAccounts="
-				+ billingAccounts + "]";
+				+ ", contactInformation=" + contactInformation + ", dunningLevel=" + dunningLevel
+				+ ", mandateIdentification=" + mandateIdentification + ", mandateDate=" + mandateDate + ", balance="
+				+ balance + ", terminationDate=" + terminationDate + ", billingAccounts=" + billingAccounts + "]";
 	}
 
 	public Date getTerminationDate() {
@@ -251,6 +212,14 @@ public class CustomerAccountDto extends AccountDto {
 
 	public void setBillingAccounts(BillingAccountsDto billingAccounts) {
 		this.billingAccounts = billingAccounts;
+	}
+
+	public ContactInformationDto getContactInformation() {
+		return contactInformation;
+	}
+
+	public void setContactInformation(ContactInformationDto contactInformation) {
+		this.contactInformation = contactInformation;
 	}
 
 }
