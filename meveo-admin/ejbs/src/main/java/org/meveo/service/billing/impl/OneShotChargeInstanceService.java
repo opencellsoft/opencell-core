@@ -234,6 +234,7 @@ public class OneShotChargeInstanceService extends BusinessService<OneShotChargeI
 		if (oneShotChargeTemplate == null) {
 			throw new BusinessException("Charge template "+matchingChargeCode+" not found for provider"+wallet.getProvider());
 		}
+		log.debug("create matching charge instance with amountWithoutTax {}, amountWithTax {}",balanceNoTax, balanceWithTax);
 		OneShotChargeInstance matchingCharge=oneShotChargeApplication(subscription,
 					(OneShotChargeTemplate) oneShotChargeTemplate,
 					wallet.getCode(), new Date(), balanceNoTax, balanceWithTax,
@@ -258,8 +259,11 @@ public class OneShotChargeInstanceService extends BusinessService<OneShotChargeI
 		int updatedOps =getEntityManager().createNamedQuery("WalletOperation.setTreatedStatusUntilId")
 				.setParameter("wallet", wallet).setParameter("maxId", maxWalletId).executeUpdate();
 		log.debug("set to TREATED {} wallet ops on wallet {}",updatedOps,wallet.getId());
+		walletOperationService.oneShotWalletOperation(getEntityManager(),subscription, compensationCharge, BigDecimal.ONE, new Date(),
+				currentUser);
 		//we check that balance is unchanged
-		BigDecimal cacheBalance=walletOperationService.fillBalanceCaches(wallet.getId());
+		//
+		BigDecimal cacheBalance=walletOperationService.getCacheBalance(wallet.getId());
 		if(cacheBalance.compareTo(balanceWithTax)!=0){
 			log.error("balances in prepaid matching process do not match cache={}, compensated={}"
 					,cacheBalance,balanceWithTax);
