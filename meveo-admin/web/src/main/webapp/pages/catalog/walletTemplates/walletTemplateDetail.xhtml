@@ -13,11 +13,9 @@
 
 	<ui:define name="body">
 
-
 		<hf:formPanel id="formPanel" formId="walletTemplatId"
 			label="#{messages['menu.wallets']}"
 			backingBean="#{walletTemplateBean}">
-
 
 			<hf:formField label="#{messages['businessEntity.code']}" field="code"
 				required="true" validateUnique="true" />
@@ -27,8 +25,8 @@
 			<hf:formField
 				label="#{messages['walletTemplate.consumptionAlertSet']}"
 				field="consumptionAlertSet" required="true"  />
-			<hf:formField label="#{messages['wallet.walletType']}"
-				field="walletType" childField="label" isMessage="true" required="true"  />
+			<!-- 			<hf:formField label="#{messages['wallet.walletType']}" -->
+			<!-- 				field="walletType" childField="label" isMessage="true" required="true"  /> -->
 			<hf:formField label="#{messages['walletTemplate.fastRatingLevel']}"
 				field="fastRatingLevel" required="true" />  
 		    </hf:formPanel>
