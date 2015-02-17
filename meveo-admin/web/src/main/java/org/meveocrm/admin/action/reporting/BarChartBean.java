@@ -140,4 +140,41 @@ public class BarChartBean extends ChartEntityBean<BarChart> {
 		this.chartEntityModel = chartEntityModel;
 	}
 
+	public BarChartEntityModel getModel(BarChartEntityModel bar) {
+
+		MeasurableQuantity mq = bar.getBarChart().getMeasurableQuantity();
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(bar.getMaxDate());
+		cal.add(Calendar.DATE, 1);
+
+		List<MeasuredValue> mvs = mvService.getByDateAndPeriod(null,
+				bar.getMinDate(), cal.getTime(), null, mq);
+
+		CartesianChartModel chartModel = new CartesianChartModel();
+
+		SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-YYYY");
+		ChartSeries mvSeries = new ChartSeries();
+
+		mvSeries.setLabel(sdf.format(bar.getMinDate()));
+
+		log.info("Max Date : " + sdf.format(cal.getTime()) + "MQ: "
+				+ mq.getCode());
+
+		if (mvs.size() > 0) {
+			for (MeasuredValue measuredValue : mvs) {
+				mvSeries.set(sdf.format(measuredValue.getDate()),
+						measuredValue.getValue());
+			}
+			chartModel.addSeries(mvSeries);
+		} else {
+			log.info("No measured values found for : " + mq.getCode());
+		}
+
+		BarChartEntityModel result = new BarChartEntityModel();
+		result.setBarChart(bar.getBarChart());
+		result.setModel(chartModel);
+
+		return result;
+	}
+
 }

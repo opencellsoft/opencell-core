@@ -135,4 +135,36 @@ public class PieChartBean extends ChartEntityBean<PieChart> {
 		}
 		return chartEntityModel;
 	}
+
+	public PieChartEntityModel getModel(PieChartEntityModel pie) {
+
+		MeasurableQuantity mq = pie.getPieChart().getMeasurableQuantity();
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(pie.getMaxDate());
+		cal.add(Calendar.DATE, 1);
+		List<MeasuredValue> mvs = mvService.getByDateAndPeriod(null,
+				pie.getMinDate(), cal.getTime(), null, mq);
+
+		PieChartModel chartModel = new PieChartModel();
+
+		SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-YYYY");
+		ChartSeries mvSeries = new ChartSeries();
+
+		mvSeries.setLabel(sdf.format(pie.getMinDate()));
+
+		if (mvs.size() > 0) {
+			for (MeasuredValue measuredValue : mvs) {
+				chartModel.set(sdf.format(measuredValue.getDate()),
+						measuredValue.getValue());
+			}
+		} else {
+			log.info("No measured values found for : " + mq.getCode());
+		}
+
+		PieChartEntityModel result = new PieChartEntityModel();
+		result.setPieChart(pie.getPieChart());
+		result.setModel(chartModel);
+
+		return result;
+	}
 }

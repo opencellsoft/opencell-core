@@ -5,6 +5,7 @@
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:p="http://primefaces.org/ui"
 	xmlns:custom="http://manaty.net/custom"
+	xmlns:hf="http://java.sun.com/jsf/composite/tags"
 	template="layout/template.xhtml">
 
 	<ui:define name="navigation">
@@ -14,75 +15,9 @@
 
 	<ui:define name="body">
 		<p:panel>
-			
-			<h:panelGrid columns="3">
 
-				<ui:repeat var="bar" value="#{barChartBean.chartModelList}">
 
-					<p:panel style="width:500px;">
-						<p:barChart value="#{bar.model}" fill="#{bar.barChart.filled}"
-							legendPosition="#{bar.barChart.legendPosition}"
-							barPadding="#{bar.barChart.barPadding}"
-							barMargin="#{bar.barChart.barMargin}"
-							stacked="#{bar.barChart.stacked}" min="#{bar.barChart.min}"
-							max="#{bar.barChart.max}"
-							breakOnNull="#{bar.barChart.breakOnNull}"
-							xaxisLabel="#{bar.barChart.xaxisLabel}"
-							yaxisLabel="#{bar.barChart.yaxisLabel}"
-							xaxisAngle="#{bar.barChart.xaxisAngle}"
-							yaxisAngle="#{bar.barChart.yaxisAngle}"
-							legendCols="#{bar.barChart.legendCols}"
-							legendRows="#{bar.barChart.legendRows}"
-							zoom="#{bar.barChart.zoom}" animate="#{bar.barChart.animate}"
-							showDatatip="#{bar.barChart.showDataTip}"
-							datatipFormat="#{bar.barChart.datatipFormat}"
-							style="#{bar.barChart.style}"
-							styleClass="#{bar.barChart.styleClass}" />
-					</p:panel>
-				</ui:repeat>
 
-				<ui:repeat var="line" value="#{lineChartBean.chartModelList}">
-					<p:panel style="width:500px;">
-						<p:lineChart value="#{line.model}" fill="#{line.lineChart.filled}"
-							legendPosition="#{line.lineChart.legendPosition}"
-							barPadding="#{line.lineChart.barPadding}"
-							barMargin="#{line.lineChart.barMargin}"
-							stacked="#{line.lineChart.stacked}" min="#{line.lineChart.min}"
-							max="#{line.lineChart.max}"
-							breakOnNull="#{line.lineChart.breakOnNull}"
-							xaxisLabel="#{line.lineChart.xaxisLabel}"
-							yaxisLabel="#{line.lineChart.yaxisLabel}"
-							xaxisAngle="#{line.lineChart.xaxisAngle}"
-							yaxisAngle="#{line.lineChart.yaxisAngle}"
-							legendCols="#{line.lineChart.legendCols}"
-							legendRows="#{line.lineChart.legendRows}"
-							zoom="#{line.lineChart.zoom}" animate="#{line.lineChart.animate}"
-							showDatatip="#{line.lineChart.showDataTip}"
-							datatipFormat="#{line.lineChart.datatipFormat}"
-							style="#{line.lineChart.style}"
-							styleClass="#{line.lineChart.styleClass}" />
-					</p:panel>
-				</ui:repeat>
-				
-				<ui:repeat var="pie" value="#{pieChartBean.chartModelList}">
-					<p:panel style="width:500px;">
-						<p:pieChart value="#{pie.model}"
-							legendPosition="#{pie.pieChart.legendPosition}"
-							fill="#{pie.pieChart.filled}"
-							seriesColors="#{pie.pieChart.seriesColors}"
-							diameter="#{pie.pieChart.diameter}"
-							sliceMargin="#{pie.pieChart.sliceMargin}"
-							shadow="#{pie.pieChart.shadow}"
-							showDataLabels="#{pie.pieChart.showDataLabels}"
-							legendCols="#{pie.pieChart.legendCols}"
-							legendRows="#{pie.pieChart.legendRows}"
-							style="#{pie.pieChart.style}"
-							styleClass="#{pie.pieChart.styleClass}" />
-					</p:panel>
-				</ui:repeat>
-
-			</h:panelGrid>
-			
 			<h:panelGrid columns="2" style="width:100%;text-align:center;">
 				<h:graphicImage value="/img/home.png" style="border:0px;" />
 				<!-- REMOVED FOR NOW -->
@@ -94,6 +29,28 @@
 
 
 			</h:panelGrid>
+
+			<!-- <h:panelGrid columns="3">
+
+				<ui:repeat var="bar" value="#{barChartBean.chartModelList}">
+					<hf:barChartComponent barChartEntityModel="#{bar}"
+						chartBackingBean="#{barChartBean}" />
+					
+				</ui:repeat>
+
+				<ui:repeat var="line" value="#{lineChartBean.chartModelList}">
+					<hf:lineChartComponent lineChartEntityModel="#{line}"
+						chartBackingBean="#{lineChartBean}"></hf:lineChartComponent>
+					
+				</ui:repeat>
+
+				<ui:repeat var="pie" value="#{pieChartBean.chartModelList}">
+					<hf:pieChartComponent pieChartEntityModel="#{pie}"
+						chartBackingBean="#{pieChartBean}"></hf:pieChartComponent>
+					
+				</ui:repeat>
+
+			</h:panelGrid> -->
 		</p:panel>
 
 	</ui:define>
