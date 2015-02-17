@@ -61,7 +61,9 @@ public class PricePlanDto implements Serializable {
 		currency = e.getTradingCurrency().getCurrencyCode();
 		minQuantity = e.getMinQuantity();
 		maxQuantity = e.getMaxQuantity();
-		offerTemplate = e.getOfferTemplate().getCode();
+		if (e.getOfferTemplate() != null) {
+			offerTemplate = e.getOfferTemplate().getCode();
+		}
 		startSubscriptionDate = e.getStartRatingDate();
 		endSubscriptionDate = e.getEndSubscriptionDate();
 		startRatingDate = e.getStartRatingDate();

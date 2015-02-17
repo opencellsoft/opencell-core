@@ -74,9 +74,13 @@ import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.catalog.impl.OneShotChargeTemplateService;
+import org.slf4j.Logger;
 
 @Stateless
 public class WalletOperationService extends BusinessService<WalletOperation> {
+
+	@Inject
+	private Logger log;
 
 	@Inject
 	private InvoiceSubCategoryCountryService invoiceSubCategoryCountryService;
@@ -205,7 +209,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 				}
 			}
 		}
-		
+
 		if (walletIds.size() > 0) {
 			usageChargeInstanceWallet.put(charge.getId(), walletIds);
 		}

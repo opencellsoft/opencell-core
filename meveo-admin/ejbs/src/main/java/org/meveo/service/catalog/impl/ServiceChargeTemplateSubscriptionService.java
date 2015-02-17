@@ -18,7 +18,6 @@ package org.meveo.service.catalog.impl;
 
 import java.util.List;
 
-import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
@@ -31,7 +30,6 @@ import org.meveo.model.crm.Provider;
 import org.meveo.service.base.PersistenceService;
 
 @Stateless
-@LocalBean
 public class ServiceChargeTemplateSubscriptionService extends PersistenceService<ServiceChargeTemplateSubscription> {
 
 	public void removeByPrefix(EntityManager em, String prefix, Provider provider) {

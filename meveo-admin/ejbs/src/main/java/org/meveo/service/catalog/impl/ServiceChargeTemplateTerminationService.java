@@ -18,7 +18,6 @@ package org.meveo.service.catalog.impl;
 
 import java.util.List;
 
-import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
@@ -31,34 +30,26 @@ import org.meveo.model.crm.Provider;
 import org.meveo.service.base.PersistenceService;
 
 @Stateless
-@LocalBean
-public class ServiceChargeTemplateTerminationService extends
-		PersistenceService<ServiceChargeTemplateTermination> {
+public class ServiceChargeTemplateTerminationService extends PersistenceService<ServiceChargeTemplateTermination> {
 
-	public void removeByPrefix(EntityManager em, String prefix,
-			Provider provider) {
-		Query query = em
-				.createQuery("DELETE ServiceChargeTemplateTermination t WHERE t.chargeTemplate.code LIKE '"
-						+ prefix + "%' AND t.provider=:provider");
+	public void removeByPrefix(EntityManager em, String prefix, Provider provider) {
+		Query query = em.createQuery("DELETE ServiceChargeTemplateTermination t WHERE t.chargeTemplate.code LIKE '"
+				+ prefix + "%' AND t.provider=:provider");
 		query.setParameter("provider", provider);
 		query.executeUpdate();
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<ServiceChargeTemplateTermination> findByTerminationChargeTemplate(
-			EntityManager em, OneShotChargeTemplate chargeTemplate,
-			Provider provider) {
-		QueryBuilder qb = new QueryBuilder(ServiceChargeTemplateTermination.class,
-				"a");
+	public List<ServiceChargeTemplateTermination> findByTerminationChargeTemplate(EntityManager em,
+			OneShotChargeTemplate chargeTemplate, Provider provider) {
+		QueryBuilder qb = new QueryBuilder(ServiceChargeTemplateTermination.class, "a");
 		qb.addCriterionEntity("chargeTemplate", chargeTemplate);
 		qb.addCriterionEntity("provider", provider);
 
-		return (List<ServiceChargeTemplateTermination>) qb.getQuery(em)
-				.getResultList();
+		return (List<ServiceChargeTemplateTermination>) qb.getQuery(em).getResultList();
 	}
-	
-	public void removeByServiceTemplate(ServiceTemplate serviceTemplate,
-			Provider provider) {
+
+	public void removeByServiceTemplate(ServiceTemplate serviceTemplate, Provider provider) {
 		Query query = getEntityManager()
 				.createQuery(
 						"DELETE ServiceChargeTemplateTermination t WHERE t.serviceTemplate=:serviceTemplate AND t.provider=:provider");
@@ -66,7 +57,5 @@ public class ServiceChargeTemplateTerminationService extends
 		query.setParameter("provider", provider);
 		query.executeUpdate();
 	}
-	
-	
 
 }

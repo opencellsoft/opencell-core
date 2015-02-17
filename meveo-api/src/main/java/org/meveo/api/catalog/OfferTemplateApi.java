@@ -8,6 +8,7 @@ import javax.inject.Inject;
 
 import org.meveo.api.BaseApi;
 import org.meveo.api.dto.catalog.OfferTemplateDto;
+import org.meveo.api.dto.catalog.ServiceTemplateDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
@@ -32,15 +33,12 @@ public class OfferTemplateApi extends BaseApi {
 	@Inject
 	private ServiceTemplateService serviceTemplateService;
 
-	public void create(OfferTemplateDto postData, User currentUser)
-			throws MeveoApiException {
-		if (!StringUtils.isBlank(postData.getCode())
-				&& !StringUtils.isBlank(postData.getDescription())) {
+	public void create(OfferTemplateDto postData, User currentUser) throws MeveoApiException {
+		if (!StringUtils.isBlank(postData.getCode()) && !StringUtils.isBlank(postData.getDescription())) {
 			Provider provider = currentUser.getProvider();
 
 			if (offerTemplateService.findByCode(postData.getCode(), provider) != null) {
-				throw new EntityAlreadyExistsException(OfferTemplate.class,
-						postData.getCode());
+				throw new EntityAlreadyExistsException(OfferTemplate.class, postData.getCode());
 			}
 
 			OfferTemplate offerTemplate = new OfferTemplate();
@@ -51,14 +49,13 @@ public class OfferTemplateApi extends BaseApi {
 
 			// check service templates
 			if (postData.getServiceTemplates() != null
-					&& postData.getServiceTemplates().size() > 0) {
+					&& postData.getServiceTemplates().getServiceTemplate().size() > 0) {
 				List<ServiceTemplate> serviceTemplates = new ArrayList<ServiceTemplate>();
-				for (String stCode : postData.getServiceTemplates()) {
-					ServiceTemplate serviceTemplate = serviceTemplateService
-							.findByCode(stCode, provider);
+				for (ServiceTemplateDto serviceTemplateDto : postData.getServiceTemplates().getServiceTemplate()) {
+					ServiceTemplate serviceTemplate = serviceTemplateService.findByCode(serviceTemplateDto.getCode(),
+							provider);
 					if (serviceTemplate == null) {
-						throw new EntityDoesNotExistsException(
-								ServiceTemplate.class, stCode);
+						throw new EntityDoesNotExistsException(ServiceTemplate.class, serviceTemplateDto.getCode());
 					}
 
 					serviceTemplates.add(serviceTemplate);
@@ -76,22 +73,17 @@ public class OfferTemplateApi extends BaseApi {
 				missingParameters.add("description");
 			}
 
-			throw new MissingParameterException(
-					getMissingParametersExceptionMessage());
+			throw new MissingParameterException(getMissingParametersExceptionMessage());
 		}
 	}
 
-	public void update(OfferTemplateDto postData, User currentUser)
-			throws MeveoApiException {
-		if (!StringUtils.isBlank(postData.getCode())
-				&& !StringUtils.isBlank(postData.getDescription())) {
+	public void update(OfferTemplateDto postData, User currentUser) throws MeveoApiException {
+		if (!StringUtils.isBlank(postData.getCode()) && !StringUtils.isBlank(postData.getDescription())) {
 			Provider provider = currentUser.getProvider();
 
-			OfferTemplate offerTemplate = offerTemplateService.findByCode(
-					postData.getCode(), provider);
+			OfferTemplate offerTemplate = offerTemplateService.findByCode(postData.getCode(), provider);
 			if (offerTemplate == null) {
-				throw new EntityDoesNotExistsException(OfferTemplate.class,
-						postData.getCode());
+				throw new EntityDoesNotExistsException(OfferTemplate.class, postData.getCode());
 			}
 
 			offerTemplate.setDescription(postData.getDescription());
@@ -99,14 +91,13 @@ public class OfferTemplateApi extends BaseApi {
 
 			// check service templates
 			if (postData.getServiceTemplates() != null
-					&& postData.getServiceTemplates().size() > 0) {
+					&& postData.getServiceTemplates().getServiceTemplate().size() > 0) {
 				List<ServiceTemplate> serviceTemplates = new ArrayList<ServiceTemplate>();
-				for (String stCode : postData.getServiceTemplates()) {
-					ServiceTemplate serviceTemplate = serviceTemplateService
-							.findByCode(stCode, provider);
+				for (ServiceTemplateDto serviceTemplateDto : postData.getServiceTemplates().getServiceTemplate()) {
+					ServiceTemplate serviceTemplate = serviceTemplateService.findByCode(serviceTemplateDto.getCode(),
+							provider);
 					if (serviceTemplate == null) {
-						throw new EntityDoesNotExistsException(
-								ServiceTemplate.class, stCode);
+						throw new EntityDoesNotExistsException(ServiceTemplate.class, serviceTemplateDto.getCode());
 					}
 
 					serviceTemplates.add(serviceTemplate);
@@ -123,45 +114,37 @@ public class OfferTemplateApi extends BaseApi {
 				missingParameters.add("description");
 			}
 
-			throw new MissingParameterException(
-					getMissingParametersExceptionMessage());
+			throw new MissingParameterException(getMissingParametersExceptionMessage());
 		}
 	}
 
-	public OfferTemplateDto find(String code, Provider provider)
-			throws MeveoApiException {
+	public OfferTemplateDto find(String code, Provider provider) throws MeveoApiException {
 		if (!StringUtils.isBlank(code)) {
-			OfferTemplate offerTemplate = offerTemplateService.findByCode(code,
-					provider);
+			OfferTemplate offerTemplate = offerTemplateService.findByCode(code, provider);
 			if (offerTemplate == null) {
-				throw new EntityDoesNotExistsException(OfferTemplate.class,
-						code);
+				throw new EntityDoesNotExistsException(OfferTemplate.class, code);
 			}
 
 			return new OfferTemplateDto(offerTemplate);
 		} else {
 			missingParameters.add("offerTemplateCode");
 
-			throw new MissingParameterException(
-					getMissingParametersExceptionMessage());
+			throw new MissingParameterException(getMissingParametersExceptionMessage());
 		}
 	}
 
 	public void remove(String code, Provider provider) throws MeveoApiException {
 		if (!StringUtils.isBlank(code)) {
-			OfferTemplate offerTemplate = offerTemplateService.findByCode(code,
-					provider);
+			OfferTemplate offerTemplate = offerTemplateService.findByCode(code, provider);
 			if (offerTemplate == null) {
-				throw new EntityDoesNotExistsException(OfferTemplate.class,
-						code);
+				throw new EntityDoesNotExistsException(OfferTemplate.class, code);
 			}
 
 			offerTemplateService.remove(offerTemplate);
 		} else {
 			missingParameters.add("offerTemplateCode");
 
-			throw new MissingParameterException(
-					getMissingParametersExceptionMessage());
+			throw new MissingParameterException(getMissingParametersExceptionMessage());
 		}
 	}
 
