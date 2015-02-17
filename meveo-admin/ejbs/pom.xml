@@ -5,7 +5,7 @@
 	<parent>
 		<artifactId>meveo-admin</artifactId>
 		<groupId>org.manaty</groupId>
-		<version>4.0</version>
+		<version>4.1</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 	<artifactId>meveo-admin-ejbs</artifactId>
@@ -108,13 +108,6 @@
 		<dependency>
 			<groupId>org.manaty</groupId>
 			<artifactId>meveo-model</artifactId>
-		</dependency>
-
-
-		<dependency>
-			<groupId>org.jsoup</groupId>
-			<artifactId>jsoup</artifactId>
-			<version>1.8.1</version>
 		</dependency>
 		
 		<dependency>

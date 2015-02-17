@@ -37,11 +37,11 @@ import org.meveo.model.billing.RecurringChargeInstance;
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.SubscriptionStatusEnum;
+import org.meveo.model.billing.WalletInstance;
 import org.meveo.model.catalog.RecurringChargeTemplate;
 import org.meveo.model.catalog.ServiceChargeTemplateRecurring;
 import org.meveo.model.catalog.WalletTemplate;
 import org.meveo.service.base.BusinessService;
-import org.meveo.service.catalog.impl.RecurringChargeTemplateService;
 
 @Stateless
 public class RecurringChargeInstanceService extends BusinessService<RecurringChargeInstance> {
@@ -51,9 +51,6 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
 
 	@Inject
 	private WalletOperationService chargeApplicationService;
-
-	@Inject
-	private RecurringChargeTemplateService recurringChargeTemplateService;
 
 	// @Inject
 	// private RecurringChargeTemplateServiceLocal
@@ -163,7 +160,7 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
 		if (chargeInst != null) {
 			throw new BusinessException("charge instance code already exists. code=" + chargeCode);
 		}
-
+		log.debug("create chargeInstance for charge {}",chargeCode);
 		RecurringChargeInstance chargeInstance = new RecurringChargeInstance();
 		chargeInstance.setCode(chargeCode);
 		chargeInstance.setDescription(recurringChargeTemplate.getDescription());
@@ -185,81 +182,32 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
 				.getServiceRecurringChargeByChargeCode(chargeCode);
 		getEntityManager().merge(recChTmplServ);
 		List<WalletTemplate> walletTemplates = recChTmplServ.getWalletTemplates();
+
 		if (walletTemplates != null && walletTemplates.size() > 0) {
+			log.debug("associate {} walletsInstance",walletTemplates.size());
 			for (WalletTemplate walletTemplate : walletTemplates) {
-				if (walletTemplate == null)
+				if (walletTemplate == null){
+					log.debug("walletTemplate is null, we continue");
 					continue;
+				}
 				if (walletTemplate.getWalletType() == BillingWalletTypeEnum.PREPAID) {
+					log.debug("one walletTemplate is prepaid, we set the chargeInstance as being prepaid");
 					chargeInstance.setPrepaid(true);
 				}
-				chargeInstance.getWalletInstances().add(
-						walletService.getWalletInstance(serviceInst.getSubscription().getUserAccount(), walletTemplate,
-								serviceInst.getAuditable().getCreator(), serviceInst.getProvider()));
+				
+				WalletInstance walletInstance = walletService.getWalletInstance(serviceInst.getSubscription().getUserAccount(), walletTemplate,
+						serviceInst.getAuditable().getCreator(), serviceInst.getProvider());
+				log.debug("add the wallet instance {} to the chargeInstance {}",walletInstance.getId(),chargeInstance.getId());
+				chargeInstance.getWalletInstances().add(walletInstance);
 			}
 		} else {
+			log.debug("we set the chargeInstance as being postpaid and associate it to the principal wallet");
 			chargeInstance.setPrepaid(false);
 			chargeInstance.getWalletInstances().add(serviceInst.getSubscription().getUserAccount().getWallet());
 		}
 
 		create(chargeInstance, creator, recurringChargeTemplate.getProvider());
 		return chargeInstance;
-	}
-
-	public void recurringChargeInstanciation(EntityManager em, ServiceInstance serviceInst, String chargeCode,
-			Date subscriptionDate, Seller seller, User creator) throws BusinessException {
-
-		if (serviceInst == null) {
-			throw new BusinessException("service instance does not exist.");
-		}
-
-		if (serviceInst.getStatus() == InstanceStatusEnum.CANCELED
-				|| serviceInst.getStatus() == InstanceStatusEnum.TERMINATED
-				|| serviceInst.getStatus() == InstanceStatusEnum.SUSPENDED) {
-			throw new BusinessException("service instance is " + serviceInst.getStatus() + ". code="
-					+ serviceInst.getCode());
-		}
-
-		RecurringChargeInstance chargeInst = (RecurringChargeInstance) findByCodeAndService(chargeCode,
-				serviceInst.getId());
-
-		if (chargeInst != null) {
-			throw new BusinessException("charge instance code already exists. code=" + chargeCode);
-		}
-
-		RecurringChargeTemplate recurringChargeTemplate = recurringChargeTemplateService.findByCode(chargeCode,
-				serviceInst.getProvider());
-		RecurringChargeInstance chargeInstance = new RecurringChargeInstance();
-		chargeInstance.setCode(chargeCode);
-		chargeInstance.setDescription(recurringChargeTemplate.getDescription());
-		chargeInstance.setStatus(InstanceStatusEnum.INACTIVE);
-		chargeInstance.setChargeDate(subscriptionDate);
-		chargeInstance.setSubscriptionDate(subscriptionDate);
-		chargeInstance.setSubscription(serviceInst.getSubscription());
-		chargeInstance.setChargeTemplate(recurringChargeTemplate);
-		chargeInstance.setRecurringChargeTemplate(recurringChargeTemplate);
-		chargeInstance.setServiceInstance(serviceInst);
-		chargeInstance.setSeller(seller);
-		chargeInstance.setCountry(serviceInst.getSubscription().getUserAccount().getBillingAccount()
-				.getTradingCountry());
-		chargeInstance.setCurrency(serviceInst.getSubscription().getUserAccount().getBillingAccount()
-				.getCustomerAccount().getTradingCurrency());
-		ServiceChargeTemplateRecurring recChTmplServ = serviceInst.getServiceTemplate()
-				.getServiceRecurringChargeByChargeCode(chargeCode);
-		List<WalletTemplate> walletTemplates = recChTmplServ.getWalletTemplates();
-		if (walletTemplates != null && walletTemplates.size() > 0) {
-			for (WalletTemplate walletTemplate : walletTemplates) {
-				if (walletTemplate.getWalletType() == BillingWalletTypeEnum.PREPAID) {
-					chargeInstance.setPrepaid(true);
-				}
-				chargeInstance.getWalletInstances().add(
-						walletService.getWalletInstance(serviceInst.getSubscription().getUserAccount(), walletTemplate,
-								serviceInst.getAuditable().getCreator(), serviceInst.getProvider()));
-			}
-		} else {
-			chargeInstance.setPrepaid(false);
-			chargeInstance.getWalletInstances().add(serviceInst.getSubscription().getUserAccount().getWallet());
-		}
-		create(chargeInstance, creator, recurringChargeTemplate.getProvider());
 	}
 
 	public void recurringChargeDeactivation(long recurringChargeInstanId, Date terminationDate, User updater)

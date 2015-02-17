@@ -1025,8 +1025,23 @@ insert into cat_calendar_days (calendar_id, day_id) values (4, 901);
 insert into cat_calendar_days (calendar_id, day_id) values (4, 1001);
 insert into cat_calendar_days (calendar_id, day_id) values (4, 1101);
 
+--Billing Calendar
+insert into cat_calendar (cal_type,id, version, disabled, created, provider_id, creator_id, name, description) values ('YEARLY',5, 0, false, now(), 1, 1, 'BILLING', 'Billing Calendar');
+insert into cat_calendar_days (calendar_id, day_id) values (5, 1);
+insert into cat_calendar_days (calendar_id, day_id) values (5, 101);
+insert into cat_calendar_days (calendar_id, day_id) values (5, 201);
+insert into cat_calendar_days (calendar_id, day_id) values (5, 301);
+insert into cat_calendar_days (calendar_id, day_id) values (5, 401);
+insert into cat_calendar_days (calendar_id, day_id) values (5, 501);
+insert into cat_calendar_days (calendar_id, day_id) values (5, 601);
+insert into cat_calendar_days (calendar_id, day_id) values (5, 701);
+insert into cat_calendar_days (calendar_id, day_id) values (5, 801);
+insert into cat_calendar_days (calendar_id, day_id) values (5, 901);
+insert into cat_calendar_days (calendar_id, day_id) values (5, 1001);
+insert into cat_calendar_days (calendar_id, day_id) values (5, 1101);
+
 DROP SEQUENCE IF EXISTS cat_calendar_SEQ;
-CREATE SEQUENCE cat_calendar_SEQ start with 5 increment by 1;
+CREATE SEQUENCE cat_calendar_SEQ start with 6 increment by 1;
 
 --Tax
 insert into billing_tax (id, version, disabled, created, provider_id, creator_id, code, description, tax_percentage) values (1, 0, false, now(), 1, 1, 'TAX_00', '0 Percent Tax', 0);
@@ -1156,10 +1171,10 @@ insert into CAT_PRICE_PLAN_MATRIX (id, version, disabled, created, provider_id, 
 DROP SEQUENCE IF EXISTS CAT_PRICE_PLAN_MATRIX_SEQ;
 CREATE SEQUENCE CAT_PRICE_PLAN_MATRIX_SEQ start with 5 increment by 1;
 
-insert into account_entity (id, version, disabled, created, provider_id, code, description, lastname) values (1, 0, false, now(), 1, 'CUST1', 'CUST1', 'DEMO');
-insert into account_entity (id, version, disabled, created, provider_id, code, description, lastname) values (2, 0, false, now(), 1, 'CA1', 'CA1', 'DEMO');
-insert into account_entity (id, version, disabled, created, provider_id, code, description, lastname) values (3, 0, false, now(), 1, 'BA1', 'BA1', 'DEMO');
-insert into account_entity (id, version, disabled, created, provider_id, code, description, lastname) values (4, 0, false, now(), 1, 'UA1', 'UA1', 'DEMO');
+insert into account_entity (id, version, disabled, created, provider_id, code, description, lastname, DEFAULT_LEVEL) values (1, 0, false, now(), 1, 'CUST1', 'CUST1', 'DEMO', TRUE);
+insert into account_entity (id, version, disabled, created, provider_id, code, description, lastname, DEFAULT_LEVEL) values (2, 0, false, now(), 1, 'CA1', 'CA1', 'DEMO', TRUE);
+insert into account_entity (id, version, disabled, created, provider_id, code, description, lastname, DEFAULT_LEVEL) values (3, 0, false, now(), 1, 'BA1', 'BA1', 'DEMO', TRUE);
+insert into account_entity (id, version, disabled, created, provider_id, code, description, lastname, DEFAULT_LEVEL) values (4, 0, false, now(), 1, 'UA1', 'UA1', 'DEMO', TRUE);
 
 DROP SEQUENCE IF EXISTS ACCOUNT_ENTITY_SEQ;
 CREATE SEQUENCE ACCOUNT_ENTITY_SEQ start with 5 increment by 1;

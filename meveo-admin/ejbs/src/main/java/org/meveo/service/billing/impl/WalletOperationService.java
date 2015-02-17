@@ -74,9 +74,13 @@ import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.catalog.impl.OneShotChargeTemplateService;
+import org.slf4j.Logger;
 
 @Stateless
 public class WalletOperationService extends BusinessService<WalletOperation> {
+
+	@Inject
+	private Logger log;
 
 	@Inject
 	private InvoiceSubCategoryCountryService invoiceSubCategoryCountryService;
@@ -137,7 +141,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 			updateCache(charge);
 		}
 		List<Long> walletIds = (List<Long>) getEntityManager().createNamedQuery(
-				"WalletInstance.listPrepaidActiiveWalletIds", Long.class).getResultList();
+				"WalletInstance.listPrepaidActiveWalletIds", Long.class).getResultList();
 		for (Long walletId : walletIds) {
 			if (!balanceCache.containsKey(walletId)) {
 				fillBalanceCaches(walletId);
@@ -145,7 +149,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 		}
 	}
 
-	public void fillBalanceCaches(Long walletId) {
+	public BigDecimal fillBalanceCaches(Long walletId) {
 		BigDecimal balance = (BigDecimal) getEntityManager()
 				.createNamedQuery("WalletOperation.getBalance", BigDecimal.class).setParameter("walletId", walletId)
 				.getSingleResult();
@@ -161,36 +165,43 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 		}
 		reservedBalanceCache.put(walletId, reservedBalance);
 		log.debug("fillBalanceCaches walletId:{} balance:{} reservedBalance:{}", walletId, balance, reservedBalance);
+		return balance;
 	}
 
 	public void updateBalanceCache(@Observes @Created WalletInstance wallet) {
-		if (wallet.getWalletTemplate()!=null && wallet.getWalletTemplate().getWalletType() == BillingWalletTypeEnum.PREPAID) {
+		if (wallet.getWalletTemplate() != null
+				&& wallet.getWalletTemplate().getWalletType() == BillingWalletTypeEnum.PREPAID) {
 			fillBalanceCaches(wallet.getId());
 		}
 	}
 
-	public void updateBalanceCache(@Observes @Created WalletOperation op) {
+	public void updateBalanceCache(WalletOperation op) {
 		// FIXME: handle reservation
-		if (reservedBalanceCache.containsKey(op.getChargeInstance().getId())) {
-			BigDecimal oldValue = reservedBalanceCache.get(op.getChargeInstance().getId());
+		log.debug("enter updateBalanceCache for WalletOperation {}", op);
+		if (reservedBalanceCache.containsKey(op.getWallet().getId())) {
+			BigDecimal oldValue = reservedBalanceCache.get(op.getWallet().getId());
 			BigDecimal newValue = oldValue.subtract(op.getAmountWithTax());
 			log.debug("update reservedBalance Cache {}->{}", oldValue, newValue);
-			reservedBalanceCache.put(op.getChargeInstance().getId(), newValue);
-			oldValue = balanceCache.get(op.getChargeInstance().getId());
+			reservedBalanceCache.put(op.getWallet().getId(), newValue);
+			oldValue = balanceCache.get(op.getWallet().getId());
 			newValue = oldValue.subtract(op.getAmountWithTax());
 			log.debug("update balance Cache {}->{}", oldValue, newValue);
-			balanceCache.put(op.getChargeInstance().getId(), newValue);
+			balanceCache.put(op.getWallet().getId(), newValue);
 			// FIXME: handle low balance notifications
+		} else if (op.getChargeInstance() instanceof UsageChargeInstance) {
+			updateCache((UsageChargeInstance) op.getChargeInstance());
 		}
 	}
 
-	public void updateCache(@Observes @Created UsageChargeInstance charge) {
+	public void updateCache(UsageChargeInstance charge) {
 		// TODO:: make sure ordering is correct
 		List<WalletInstance> wallets = charge.getWalletInstances();
 		List<Long> walletIds = new ArrayList<>();
 		log.debug("updateCache usageChargeInstanceWallet. wallets:{}", wallets == null ? "null" : wallets.size());
 		for (WalletInstance wallet : wallets) {
-			if (!walletIds.contains(wallet.getId()) && wallet.getWalletTemplate()!=null && wallet.getWalletTemplate().getWalletType()==BillingWalletTypeEnum.PREPAID) {
+			log.debug("wallet {}", wallet);
+			if (!walletIds.contains(wallet.getId()) && wallet.getWalletTemplate() != null
+					&& wallet.getWalletTemplate().getWalletType() == BillingWalletTypeEnum.PREPAID) {
 				walletIds.add(wallet.getId());
 				log.debug("updateCache walletId:{}", wallet.getId());
 				if (!balanceCache.containsKey(wallet.getId())) {
@@ -198,7 +209,26 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 				}
 			}
 		}
-		usageChargeInstanceWallet.put(charge.getId(), walletIds);
+
+		if (walletIds.size() > 0) {
+			usageChargeInstanceWallet.put(charge.getId(), walletIds);
+		}
+	}
+
+	public BigDecimal getCacheBalance(Long walletId) {
+		BigDecimal result = null;
+		if (balanceCache.containsKey(walletId)) {
+			result = balanceCache.get(walletId);
+		}
+		return result;
+	}
+
+	public BigDecimal getReservedCacheBalance(Long walletId) {
+		BigDecimal result = null;
+		if (reservedBalanceCache.containsKey(walletId)) {
+			result = reservedBalanceCache.get(walletId);
+		}
+		return result;
 	}
 
 	public BigDecimal getRatedAmount(Provider provider, Seller seller, Customer customer,
@@ -425,11 +455,6 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 		return result;
 	}
 
-	public void usageWalletOperation(Subscription subscription, Date usageDate, BigDecimal quantity, String param1,
-			String param2, String param3) {
-
-	}
-
 	/*
 	 * public WalletOperation rateOneShotApplication(Subscription subscription,
 	 * OneShotChargeInstance chargeInstance, Integer quantity, Date
@@ -482,10 +507,11 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 					+ invoiceSubcategoryCountry.getId());
 		}
 
-		WalletOperation chargeApplication = chargeApplicationRatingService.rateChargeApplication(em, chargeTemplate
-				.getCode(), subscription, chargeInstance, ApplicationTypeEnum.PUNCTUAL, applicationDate, chargeInstance
-				.getAmountWithoutTax(), chargeInstance.getAmountWithTax(), quantity , currency, countryId, tax.getPercent(), null, null, invoiceSubCategory, chargeInstance
-				.getCriteria1(), chargeInstance.getCriteria2(), chargeInstance.getCriteria3(), null, null, null);
+		WalletOperation chargeApplication = chargeApplicationRatingService.rateChargeApplication(em,
+				chargeTemplate.getCode(), subscription, chargeInstance, ApplicationTypeEnum.PUNCTUAL, applicationDate,
+				chargeInstance.getAmountWithoutTax(), chargeInstance.getAmountWithTax(), quantity, currency, countryId,
+				tax.getPercent(), null, null, invoiceSubCategory, chargeInstance.getCriteria1(),
+				chargeInstance.getCriteria2(), chargeInstance.getCriteria3(), null, null, null);
 
 		return chargeApplication;
 	}
@@ -495,7 +521,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 		oneShotWalletOperation(getEntityManager(), subscription, chargeInstance, quantity, applicationDate, creator);
 	}
 
-	public void oneShotWalletOperation(EntityManager em, Subscription subscription,
+	public WalletOperation oneShotWalletOperation(EntityManager em, Subscription subscription,
 			OneShotChargeInstance chargeInstance, BigDecimal quantity, Date applicationDate, User creator)
 			throws BusinessException {
 
@@ -511,12 +537,11 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 				"WalletOperationService.oneShotWalletOperation subscriptionCode={}, quantity={}, applicationDate={}, chargeInstance.getId={}",
 				new Object[] { subscription.getId(), quantity, applicationDate, chargeInstance.getId() });
 
-		WalletOperation chargeApplication = rateOneShotApplication(em, subscription, chargeInstance, quantity,
+		WalletOperation walletOperation = rateOneShotApplication(em, subscription, chargeInstance, quantity,
 				applicationDate, creator);
 		ChargeTemplate chargeTemplate = chargeInstance.getChargeTemplate();
 
-		chargeWalletOpertation(chargeApplication, creator, chargeInstance.getProvider());
-		// create(chargeApplication, creator, chargeInstance.getProvider());
+		chargeWalletOperation(walletOperation, creator, chargeInstance.getProvider());
 		OneShotChargeTemplate oneShotChargeTemplate = null;
 
 		if (chargeTemplate instanceof OneShotChargeTemplate) {
@@ -541,6 +566,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 				billingAccountService.update(billingAccount, creator);
 			}
 		}
+		return walletOperation;
 	}
 
 	public void recurringWalletOperation(Subscription subscription, RecurringChargeInstance chargeInstance,
@@ -595,7 +621,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 				quantity), currency, countryId, tax.getPercent(), null, null, invoiceSubCategory, chargeInstance
 				.getCriteria1(), chargeInstance.getCriteria2(), chargeInstance.getCriteria3(), null, null, null);
 
-		chargeWalletOpertation(chargeApplication, creator, chargeInstance.getProvider());
+		chargeWalletOperation(chargeApplication, creator, chargeInstance.getProvider());
 		// create(chargeApplication, creator, chargeInstance.getProvider());
 	}
 
@@ -650,7 +676,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 		log.debug("rateSubscription applicationDate={}, nextapplicationDate={},previousapplicationDate={}",
 				applicationDate, nextapplicationDate, previousapplicationDate);
 
-		BigDecimal quantity = chargeInstance.getServiceInstance() == null?null:chargeInstance.getServiceInstance()
+		BigDecimal quantity = chargeInstance.getServiceInstance() == null ? null : chargeInstance.getServiceInstance()
 				.getQuantity();
 		if (Boolean.TRUE.equals(recurringChargeTemplate.getSubscriptionProrata())) {
 			Date periodStart = applicationDate;
@@ -755,7 +781,8 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 
 		if (recurringChargeTemplate.getApplyInAdvance() != null && recurringChargeTemplate.getApplyInAdvance()) {
 			WalletOperation chargeApplication = rateSubscription(em, chargeInstance, nextapplicationDate);
-			create(chargeApplication, creator, chargeInstance.getProvider());
+			// create(chargeApplication, creator, chargeInstance.getProvider());
+			chargeWalletOperation(chargeApplication, creator, chargeInstance.getProvider());
 			chargeInstance.setNextChargeDate(nextapplicationDate);
 		} else {
 			chargeInstance.setNextChargeDate(nextapplicationDate);
@@ -871,7 +898,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 					chargeInstance.getCriteria2(), chargeInstance.getCriteria3(), periodStart,
 					DateUtils.addDaysToDate(nextapplicationDate, -1), ChargeApplicationModeEnum.REIMBURSMENT);
 
-			chargeWalletOpertation(chargeApplication, creator, chargeInstance.getProvider());
+			chargeWalletOperation(chargeApplication, creator, chargeInstance.getProvider());
 			// create(chargeApplication, creator, chargeInstance.getProvider());
 		}
 
@@ -986,7 +1013,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 					reimbursement ? ChargeApplicationModeEnum.REIMBURSMENT : ChargeApplicationModeEnum.SUBSCRIPTION);
 			chargeApplication.setSubscriptionDate(chargeInstance.getServiceInstance().getSubscriptionDate());
 
-			chargeWalletOpertation(chargeApplication, creator, chargeInstance.getProvider());
+			chargeWalletOperation(chargeApplication, creator, chargeInstance.getProvider());
 			// create(chargeApplication, creator, chargeInstance.getProvider());
 			chargeInstance.setChargeDate(applicationDate);
 			applicationDate = nextapplicationDate;
@@ -1006,8 +1033,8 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 			throws BusinessException {
 
 		Date applicationDate = chargeInstance.getChargeDate();
-		Calendar cal =recurringChargeTemplate.getCalendar();
-		if(chargeInstance.getServiceInstance()!=null){
+		Calendar cal = recurringChargeTemplate.getCalendar();
+		if (chargeInstance.getServiceInstance() != null) {
 			cal.setInitDate(chargeInstance.getServiceInstance().getSubscriptionDate());
 		}
 
@@ -1114,7 +1141,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 					reimbursement ? ChargeApplicationModeEnum.REIMBURSMENT : ChargeApplicationModeEnum.SUBSCRIPTION);
 			walletOperation.setSubscriptionDate(chargeInstance.getServiceInstance().getSubscriptionDate());
 
-			List<WalletOperation> oprations = chargeWalletOpertation(walletOperation, creator,
+			List<WalletOperation> oprations = chargeWalletOperation(walletOperation, creator,
 					chargeInstance.getProvider());
 			// create(walletOperation, creator, chargeInstance.getProvider());
 			// em.flush();
@@ -1225,7 +1252,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 					chargeInstance.getCriteria1(), chargeInstance.getCriteria2(), chargeInstance.getCriteria3(),
 					applicationDate, endDate, ChargeApplicationModeEnum.AGREEMENT);
 
-			chargeWalletOpertation(chargeApplication, creator, chargeInstance.getProvider());
+			chargeWalletOperation(chargeApplication, creator, chargeInstance.getProvider());
 			// create(chargeApplication, creator, chargeInstance.getProvider());
 			chargeInstance.setChargeDate(applicationDate);
 			applicationDate = nextapplicationDate;
@@ -1283,18 +1310,24 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<WalletOperation> findByUserAccountAndWalletCode(String walletCode, UserAccount userAccount, Provider provider) {
+	public List<WalletOperation> findByUserAccountAndWalletCode(String walletCode, UserAccount userAccount,
+			Provider provider, Boolean orderAscending) {
 		QueryBuilder qb = new QueryBuilder(WalletOperation.class, "w");
 		qb.addCriterionEntity("wallet.userAccount", userAccount);
 		qb.addCriterionEntity("provider", provider);
 		qb.addCriterion("wallet.code", "=", walletCode, true);
+		if (orderAscending != null) {
+			qb.addOrderCriterion("operationDate", orderAscending);
+		}
+
 		try {
-			return (List<WalletOperation>)  qb.getQuery(getEntityManager()).getResultList();
+			return (List<WalletOperation>) qb.getQuery(getEntityManager()).getResultList();
 		} catch (NoResultException e) {
 			log.warn(e.getMessage());
 			return null;
 		}
 	}
+
 	// charging
 	public List<WalletOperation> chargeOnWalletIds(List<Long> walletIds, WalletOperation op, User creator,
 			Provider provider) throws BusinessException {
@@ -1318,12 +1351,14 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 			if (balance.compareTo(BigDecimal.ZERO) > 0 || remainingAmountToCharge.compareTo(BigDecimal.ZERO) < 0) {
 				if (balance.compareTo(op.getAmountWithTax()) >= 0) {
 					op.setWallet(getEntityManager().find(WalletInstance.class, walletId));
+					log.debug("prepaid walletoperation fit in walletInstance {}", op.getWallet());
 					create(op, creator, provider);
 					result.add(op);
+					updateBalanceCache(op);
 					break;
 				} else {
-					BigDecimal newOverOldCoeff = balance.divide(op.getAmountWithTax(),
-							BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP);
+					BigDecimal newOverOldCoeff = balance.divide(op.getAmountWithTax(), BaseEntity.NB_DECIMALS,
+							RoundingMode.HALF_UP);
 					remainingAmountToCharge = remainingAmountToCharge.subtract(balance);
 					BigDecimal newOpAmountWithTax = balance;
 					BigDecimal newOpAmountTax = op.getAmountTax().multiply(newOverOldCoeff);
@@ -1341,8 +1376,11 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 					newOp.setAmountTax(newOpAmountTax);
 					newOp.setAmountWithoutTax(newOpAmountWithoutTax);
 					newOp.setQuantity(newOpQuantity);
+					log.debug("prepaid walletoperation partially fit in walletInstance {}, we charge {} and remains ",
+							newOp.getWallet(), newOpAmountTax, opAmountTax);
 					create(newOp, creator, provider);
 					result.add(newOp);
+					updateBalanceCache(newOp);
 
 					op.setAmountWithTax(opAmountWithTax);
 					op.setAmountTax(opAmountTax);
@@ -1354,18 +1392,13 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 		return result;
 	}
 
-	public List<WalletOperation> chargeWalletOpertation(WalletOperation op, User creator, Provider provider)
+	public List<WalletOperation> chargeWalletOperation(WalletOperation op, User creator, Provider provider)
 			throws BusinessException {
 		List<WalletOperation> result = new ArrayList<>();
-		if (op.getWallet() == null) {
-			log.debug("we dont charge operations not associated to wallet");
-			return result;
-		}
-		log.debug("chargeWalletOpertation on chargeInstanceId:{}", op.getChargeInstance().getId());
+		log.debug("chargeWalletOperation on chargeInstanceId:{}", op.getChargeInstance().getId());
 		if (usageChargeInstanceWallet.containsKey(op.getChargeInstance().getId())) {
 			List<Long> walletIds = usageChargeInstanceWallet.get(op.getChargeInstance().getId());
-			log.debug("chargeWalletOpertation chargeInstanceId found in usageCache with {} wallet ids",
-					walletIds.size());
+			log.debug("chargeWalletOperation chargeInstanceId found in usageCache with {} wallet ids", walletIds.size());
 			result = chargeOnWalletIds(walletIds, op, creator, provider);
 		} else if (op.getChargeInstance().isPrepaid()
 				&& (op.getChargeInstance() instanceof RecurringChargeInstance || op.getChargeInstance() instanceof OneShotChargeInstance)) {
@@ -1373,17 +1406,20 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 			for (WalletInstance wallet : op.getChargeInstance().getWalletInstances()) {
 				walletIds.add(wallet.getId());
 			}
-			log.debug("chargeWalletOpertation is recurring or oneshot, and associated to {} wallet ids",
+			log.debug("chargeWalletOperation is recurring or oneshot, and associated to {} wallet ids",
 					walletIds.size());
 			result = chargeOnWalletIds(walletIds, op, creator, provider);
 		} else if (!op.getChargeInstance().isPrepaid()) {
-			log.debug("chargeWalletOpertation is postpaid");
+			op.setWallet(op.getChargeInstance().getSubscription().getUserAccount().getWallet());
+			log.debug("chargeWalletOperation is postpaid, set wallet to {}", op.getWallet());
 			result.add(op);
 			create(op, creator, provider);
+			updateBalanceCache(op);
 		} else {
-			log.error("chargeWalletOpertation wallet not found for chargeInstance {} ", op.getChargeInstance().getId());
+			log.error("chargeWalletOperation wallet not found for chargeInstance {} ", op.getChargeInstance().getId());
 			throw new BusinessException("WALLET_NOT_FOUND");
 		}
 		return result;
 	}
+
 }

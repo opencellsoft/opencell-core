@@ -47,9 +47,6 @@ public class EdrService extends PersistenceService<EDR> {
 
 	@Inject
 	private Logger log;
-	
-	@Inject
-	MeveoCacheContainerProvider meveoCacheContainerProvider;
 
 	static boolean useInMemoryDeduplication = true;
 	static int maxDuplicateRecords = 100000;
@@ -59,7 +56,7 @@ public class EdrService extends PersistenceService<EDR> {
 
 
 	private void loadCacheFromDB() {
-		synchronized (meveoCacheContainerProvider.getEdrCache()) {
+		synchronized (MeveoCacheContainerProvider.getEdrCache()) {
 			loadDeduplicationInfo(maxDuplicateRecords);
 		}
 	}
@@ -72,7 +69,7 @@ public class EdrService extends PersistenceService<EDR> {
 					"100000"));
 			
 			maxDuplicateRecords = newMaxDuplicateRecords;
-			if (meveoCacheContainerProvider.getEdrCache().isEmpty()) {
+			if (MeveoCacheContainerProvider.getEdrCache().isEmpty()) {
 				loadCacheFromDB();
 			}
 		}
@@ -104,7 +101,7 @@ public class EdrService extends PersistenceService<EDR> {
 	}
 
 	public void loadDeduplicationInfo(int maxDuplicateRecords) {
-		meveoCacheContainerProvider.getEdrCache().clear();
+		MeveoCacheContainerProvider.getEdrCache().clear();
 		Query query = getEntityManager()
 				.createQuery(
 						"select CONCAT(e.originBatch,e.originRecord) from EDR e where e.status=:status ORDER BY e.eventDate DESC")
@@ -112,14 +109,14 @@ public class EdrService extends PersistenceService<EDR> {
 		@SuppressWarnings("unchecked")
 		List<String> results = query.getResultList();
 		for (String edrHash : results) {
-			meveoCacheContainerProvider.getEdrCache().put(edrHash, 0);
+			MeveoCacheContainerProvider.getEdrCache().put(edrHash, 0);
 		}
 	}
 
 	public boolean duplicateFound(String originBatch, String originRecord) {
 		boolean result = false;
 		if (useInMemoryDeduplication) {
-			result = meveoCacheContainerProvider.getEdrCache().containsKey(originBatch + originRecord);
+			result = MeveoCacheContainerProvider.getEdrCache().containsKey(originBatch + originRecord);
 		} else {
 			result = findByBatchAndRecordId(originBatch, originRecord) != null;
 		}
@@ -129,8 +126,8 @@ public class EdrService extends PersistenceService<EDR> {
 	public void create(EntityManager em, EDR e, User user, Provider provider) {
 		super.create(e, user, provider);
 		if (useInMemoryDeduplication) {
-			synchronized (meveoCacheContainerProvider.getEdrCache()) {
-				meveoCacheContainerProvider.getEdrCache().put(e.getOriginBatch() + e.getOriginRecord(), 0);
+			synchronized (MeveoCacheContainerProvider.getEdrCache()) {
+				MeveoCacheContainerProvider.getEdrCache().put(e.getOriginBatch() + e.getOriginRecord(), 0);
 			}
 		}
 	}

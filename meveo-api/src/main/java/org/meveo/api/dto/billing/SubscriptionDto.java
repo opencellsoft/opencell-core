@@ -52,7 +52,9 @@ public class SubscriptionDto extends BaseDto {
 	private AccessesDto accesses = new AccessesDto();
 
 	@XmlElement(required = false)
-	private ServiceInstancesDto services = new ServiceInstancesDto();	
+	private ServiceInstancesDto services = new ServiceInstancesDto();
+	
+	private String terminationReason;
 
 	public SubscriptionDto() {
 
@@ -137,8 +139,8 @@ public class SubscriptionDto extends BaseDto {
 	public String toString() {
 		return "SubscriptionDto [code=" + code + ", description=" + description + ", userAccount=" + userAccount
 				+ ", offerTemplate=" + offerTemplate + ", subscriptionDate=" + subscriptionDate + ", terminationDate="
-				+ terminationDate + ", status=" + status + ", accesses=" + accesses + ", services=" + services
-				+ ", customFields=" + customFields + "]";
+				+ terminationDate + ", status=" + status + ", customFields=" + customFields + ", accesses=" + accesses
+				+ ", services=" + services + ", terminationReason=" + terminationReason + "]";
 	}
 
 	public String getDescription() {
@@ -179,6 +181,14 @@ public class SubscriptionDto extends BaseDto {
 
 	public void setCustomFields(CustomFieldsDto customFields) {
 		this.customFields = customFields;
+	}
+
+	public String getTerminationReason() {
+		return terminationReason;
+	}
+
+	public void setTerminationReason(String terminationReason) {
+		this.terminationReason = terminationReason;
 	}
 
 }

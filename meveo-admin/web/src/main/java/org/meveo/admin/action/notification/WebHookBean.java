@@ -7,6 +7,8 @@ import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.enterprise.context.ConversationScoped;
 import javax.inject.Inject;
@@ -25,7 +27,6 @@ import org.meveo.model.notification.NotificationEventTypeEnum;
 import org.meveo.model.notification.StrategyImportTypeEnum;
 import org.meveo.model.notification.WebHook;
 import org.meveo.model.notification.WebHookMethodEnum;
-import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.catalog.impl.CounterTemplateService;
 import org.meveo.service.notification.WebHookService;
@@ -66,6 +67,8 @@ public class WebHookBean extends BaseBean<WebHook> {
     private static final int HTTP_METHOD= 9; 
     private static final int USERNAME= 10; 
     private static final int PASSWORD= 11;
+    private static final int HEADERS= 12;
+    private static final int PARAMS= 13;
     private static final int COUNTER_TEMPLATE= 14;
     
 
@@ -98,6 +101,7 @@ public class WebHookBean extends BaseBean<WebHook> {
     }
     
 	public void exportToFile() throws Exception {
+		CsvBuilder csv = new CsvBuilder();
 		csv.appendValue("Code");
 		csv.appendValue("Classename filter");
 		csv.appendValue("Event type filter");
@@ -127,11 +131,28 @@ public class WebHookBean extends BaseBean<WebHook> {
 			csv.appendValue(webHook.getHttpMethod() + "");
 			csv.appendValue(webHook.getUsername());
 			csv.appendValue(webHook.getPassword());
-			csv.appendValue(webHook.getHeaders() + "");
-			csv.appendValue(webHook.getParams() + "");
-			csv.appendValue(webHook.getCounterTemplate()!=null?  webHook.getCounterTemplate().getCode(): null);
-			csv.startNewLine();
-		}
+			
+			StringBuffer headers=new StringBuffer();
+			if(webHook.getHeaders()!=null){
+				String sep="";
+				for(String key:webHook.getHeaders().keySet()){
+					headers.append(sep).append(key).append(":").append(webHook.getHeaders().get(key));
+					sep="|";
+					}
+				csv.appendValue(headers.toString());	
+			}
+			StringBuffer params=new StringBuffer(); 
+			if(webHook.getParams()!=null){
+				String sep="";
+				for(String key:webHook.getParams().keySet()){
+					params.append(sep).append(key).append(":").append(webHook.getParams().get(key));
+					sep="|";
+					}
+				csv.appendValue(params.toString());
+			    }
+				csv.appendValue(webHook.getCounterTemplate()!=null?  webHook.getCounterTemplate().getCode(): null);
+				csv.startNewLine();
+			}
 		InputStream inputStream = new ByteArrayInputStream(csv.toString()
 				.getBytes());
 		csv.download(inputStream, "WebHooks.csv");
@@ -188,6 +209,29 @@ public void handleFileUpload(FileUploadEvent event) throws Exception {
 								.valueOf(values[HTTP_METHOD]));
 						webHook.setUsername(values[USERNAME]);
 						webHook.setPassword(values[PASSWORD]);
+						
+						if(values[HEADERS]!=null && values[HEADERS].length()>0){
+						String[] mapElements=values[HEADERS].split("\\|");
+						if(mapElements!=null && mapElements.length>0){
+							Map<String,String> headers = new HashMap<String, String>();
+							for(String element:mapElements){
+								String[] param=element.split(":");
+								headers.put(param[0], param[1]);
+							}
+							webHook.setHeaders(headers);
+						  }
+						}
+						if(values[PARAMS]!=null && values[PARAMS].length()>0){
+							String[] mapElements=values[PARAMS].split("\\|");
+							if(mapElements!=null && mapElements.length>0){
+								Map<String,String> params = new HashMap<String, String>();
+								for(String element:mapElements){
+									String[] param=element.split(":");
+									params.put(param[0], param[1]);
+								}
+								webHook.setParams(params);
+							  }
+							}
 						if (!StringUtils.isBlank(values[COUNTER_TEMPLATE])) {
 							CounterTemplate counterTemplate = counterTemplateService
 									.findByCode(values[COUNTER_TEMPLATE],
@@ -224,6 +268,28 @@ public void handleFileUpload(FileUploadEvent event) throws Exception {
 					.valueOf(values[HTTP_METHOD]));
 			existingEntity.setUsername(values[USERNAME]);
 			existingEntity.setPassword(values[PASSWORD]);
+			if(values[HEADERS]!=null && values[HEADERS].length()>0){
+				String[] mapElements=values[HEADERS].split("\\|");
+				if(mapElements!=null && mapElements.length>0){
+					Map<String,String> headers = new HashMap<String, String>();
+					for(String element:mapElements){
+						String[] param=element.split(":");
+						headers.put(param[0], param[1]);
+					}
+					existingEntity.setHeaders(headers);
+				  }
+				}
+				if(values[PARAMS]!=null && values[PARAMS].length()>0){
+					String[] mapElements=values[PARAMS].split("\\|");
+					if(mapElements!=null && mapElements.length>0){
+						Map<String,String> params = new HashMap<String, String>();
+						for(String element:mapElements){
+							String[] param=element.split(":");
+							params.put(param[0], param[1]);
+						}
+						existingEntity.setParams(params);
+					  }
+					}
 			if (!StringUtils.isBlank(values[COUNTER_TEMPLATE])) {
 				CounterTemplate counterTemplate = counterTemplateService
 						.findByCode(values[COUNTER_TEMPLATE],

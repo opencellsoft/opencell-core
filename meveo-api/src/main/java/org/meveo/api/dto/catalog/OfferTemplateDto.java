@@ -1,8 +1,6 @@
 package org.meveo.api.dto.catalog;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -28,7 +26,7 @@ public class OfferTemplateDto implements Serializable {
 	private String description;
 
 	private boolean disabled;
-	private List<String> serviceTemplates;
+	private ServiceTemplatesDto serviceTemplates = new ServiceTemplatesDto();
 
 	public OfferTemplateDto() {
 
@@ -39,12 +37,9 @@ public class OfferTemplateDto implements Serializable {
 		description = e.getDescription();
 		disabled = e.isDisabled();
 
-		if (e.getServiceTemplates() != null
-				&& e.getServiceTemplates().size() > 0) {
-			serviceTemplates = new ArrayList<String>();
-
+		if (e.getServiceTemplates() != null && e.getServiceTemplates().size() > 0) {
 			for (ServiceTemplate st : e.getServiceTemplates()) {
-				serviceTemplates.add(st.getCode());
+				serviceTemplates.getServiceTemplate().add(new ServiceTemplateDto(st.getCode()));
 			}
 		}
 	}
@@ -73,19 +68,18 @@ public class OfferTemplateDto implements Serializable {
 		this.disabled = disabled;
 	}
 
-	public List<String> getServiceTemplates() {
+	@Override
+	public String toString() {
+		return "OfferTemplateDto [code=" + code + ", description=" + description + ", disabled=" + disabled
+				+ ", serviceTemplates=" + serviceTemplates + "]";
+	}
+
+	public ServiceTemplatesDto getServiceTemplates() {
 		return serviceTemplates;
 	}
 
-	public void setServiceTemplates(List<String> serviceTemplates) {
+	public void setServiceTemplates(ServiceTemplatesDto serviceTemplates) {
 		this.serviceTemplates = serviceTemplates;
-	}
-
-	@Override
-	public String toString() {
-		return "OfferTemplateDto [code=" + code + ", description="
-				+ description + ", disabled=" + disabled
-				+ ", serviceTemplates=" + serviceTemplates + "]";
 	}
 
 }

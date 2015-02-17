@@ -15,7 +15,4 @@ public interface MediationWs extends IBaseWs {
 	
 	@WebMethod
 	ActionStatus chargeCdr(@WebParam(name = "cdr") String cdr);
-
-	@WebMethod
-	ActionStatus chargeCdrList(@WebParam(name = "chargeCdrList") CdrListDto postData);
 }

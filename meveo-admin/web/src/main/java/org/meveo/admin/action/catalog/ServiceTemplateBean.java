@@ -116,89 +116,77 @@ public class ServiceTemplateBean extends StatelessBaseBean<ServiceTemplate> {
 		super(ServiceTemplate.class);
 	}
 
-	public DualListModel<WalletTemplate> getUsageDualListModel() { 
-			List<WalletTemplate> perksSource = walletTemplateService.list();
-			List<WalletTemplate> perksTarget = new ArrayList<WalletTemplate>();
-			if (getEntity().getServiceUsageCharges().size()>0) { 
-				List<WalletTemplate> walletTemplates = serviceChargeTemplateUsage
-						.getWalletTemplates();
-				if (walletTemplates != null) {
-					perksTarget.addAll(walletTemplates);
-				}
+	public DualListModel<WalletTemplate> getUsageDualListModel() {
+		List<WalletTemplate> perksSource = walletTemplateService.list();
+		List<WalletTemplate> perksTarget = new ArrayList<WalletTemplate>();
+		if (getEntity().getServiceUsageCharges().size() > 0) {
+			List<WalletTemplate> walletTemplates = serviceChargeTemplateUsage.getWalletTemplates();
+			if (walletTemplates != null) {
+				perksTarget.addAll(walletTemplates);
 			}
-			perksSource.removeAll(perksTarget);
-			usageWallets = new DualListModel<WalletTemplate>(perksSource,
-					perksTarget);
-		
+		}
+		perksSource.removeAll(perksTarget);
+		usageWallets = new DualListModel<WalletTemplate>(perksSource, perksTarget);
+
 		return usageWallets;
 	}
-	 
+
 	public void setUsageDualListModel(DualListModel<WalletTemplate> perks) {
-		serviceChargeTemplateUsage
-				.setWalletTemplates((List<WalletTemplate>) perks.getTarget());
+		serviceChargeTemplateUsage.setWalletTemplates((List<WalletTemplate>) perks.getTarget());
 	}
- 
+
 	public DualListModel<WalletTemplate> getSubscriptionDualListModel() {
-			List<WalletTemplate> perksSource = walletTemplateService.list();
-			List<WalletTemplate> perksTarget = new ArrayList<WalletTemplate>();
-			if (getEntity().getServiceSubscriptionCharges().size()>0) {
-				List<WalletTemplate> walletTemplates = serviceChargeTemplateSubscription
-						.getWalletTemplates();
-				if (walletTemplates != null) {
-					perksTarget.addAll(walletTemplates);
-				}
+		List<WalletTemplate> perksSource = walletTemplateService.list();
+		List<WalletTemplate> perksTarget = new ArrayList<WalletTemplate>();
+		if (getEntity().getServiceSubscriptionCharges().size() > 0) {
+			List<WalletTemplate> walletTemplates = serviceChargeTemplateSubscription.getWalletTemplates();
+			if (walletTemplates != null) {
+				perksTarget.addAll(walletTemplates);
 			}
-			perksSource.removeAll(perksTarget);
-			subscriptionWallets = new DualListModel<WalletTemplate>(
-					perksSource, perksTarget);
+		}
+		perksSource.removeAll(perksTarget);
+		subscriptionWallets = new DualListModel<WalletTemplate>(perksSource, perksTarget);
 		return subscriptionWallets;
 	}
 
 	public void setSubscriptionDualListModel(DualListModel<WalletTemplate> perks) {
-		serviceChargeTemplateSubscription
-				.setWalletTemplates((List<WalletTemplate>) perks.getTarget());
+		serviceChargeTemplateSubscription.setWalletTemplates((List<WalletTemplate>) perks.getTarget());
 	}
 
 	public DualListModel<WalletTemplate> getTerminationDualListModel() {
-			List<WalletTemplate> perksSource = walletTemplateService.list();
-			List<WalletTemplate> perksTarget = new ArrayList<WalletTemplate>();
-			if (getEntity().getServiceTerminationCharges().size() >0) {
-				List<WalletTemplate> walletTemplates = serviceChargeTemplateTermination
-						.getWalletTemplates();
-				if (walletTemplates != null) {
-					perksTarget.addAll(walletTemplates);
-				}
+		List<WalletTemplate> perksSource = walletTemplateService.list();
+		List<WalletTemplate> perksTarget = new ArrayList<WalletTemplate>();
+		if (getEntity().getServiceTerminationCharges().size() > 0) {
+			List<WalletTemplate> walletTemplates = serviceChargeTemplateTermination.getWalletTemplates();
+			if (walletTemplates != null) {
+				perksTarget.addAll(walletTemplates);
 			}
-			perksSource.removeAll(perksTarget);
-			terminationWallets = new DualListModel<WalletTemplate>(perksSource,
-					perksTarget);
+		}
+		perksSource.removeAll(perksTarget);
+		terminationWallets = new DualListModel<WalletTemplate>(perksSource, perksTarget);
 		return terminationWallets;
 	}
 
 	public void setTerminationDualListModel(DualListModel<WalletTemplate> perks) {
-		serviceChargeTemplateTermination
-				.setWalletTemplates((List<WalletTemplate>) perks.getTarget());
+		serviceChargeTemplateTermination.setWalletTemplates((List<WalletTemplate>) perks.getTarget());
 	}
 
 	public DualListModel<WalletTemplate> getRecurringDualListModel() {
-			List<WalletTemplate> perksSource = walletTemplateService.list();
-			List<WalletTemplate> perksTarget = new ArrayList<WalletTemplate>();
-			if (getEntity().getServiceRecurringCharges().size()>0) {
-				List<WalletTemplate> walletTemplates = serviceChargeTemplateRecurring
-						.getWalletTemplates();
-				if (walletTemplates != null) {
-					perksTarget.addAll(walletTemplates);
-				}
+		List<WalletTemplate> perksSource = walletTemplateService.list();
+		List<WalletTemplate> perksTarget = new ArrayList<WalletTemplate>();
+		if (getEntity().getServiceRecurringCharges().size() > 0) {
+			List<WalletTemplate> walletTemplates = serviceChargeTemplateRecurring.getWalletTemplates();
+			if (walletTemplates != null) {
+				perksTarget.addAll(walletTemplates);
 			}
-			perksSource.removeAll(perksTarget);
-			recurringWallets = new DualListModel<WalletTemplate>(perksSource,
-					perksTarget);
+		}
+		perksSource.removeAll(perksTarget);
+		recurringWallets = new DualListModel<WalletTemplate>(perksSource, perksTarget);
 		return recurringWallets;
 	}
 
 	public void setRecurringDualListModel(DualListModel<WalletTemplate> perks) {
-		serviceChargeTemplateRecurring
-				.setWalletTemplates((List<WalletTemplate>) perks.getTarget());
+		serviceChargeTemplateRecurring.setWalletTemplates((List<WalletTemplate>) perks.getTarget());
 	}
 
 	/*
@@ -208,66 +196,50 @@ public class ServiceTemplateBean extends StatelessBaseBean<ServiceTemplate> {
 	 */
 	@Override
 	public String saveOrUpdate(boolean killConversation) throws BusinessException {
-		List<ServiceChargeTemplateRecurring> recurringCharges = entity
-				.getServiceRecurringCharges();
+		List<ServiceChargeTemplateRecurring> recurringCharges = entity.getServiceRecurringCharges();
 		for (ServiceChargeTemplateRecurring recurringCharge : recurringCharges) {
 			if (!recurringCharge.getChargeTemplate().getApplyInAdvance()) {
 				break;
 			}
 		}
-		boolean newEntity = (entity.getId()==null);
-		String back=super.saveOrUpdate(killConversation);
-		return newEntity?null:back;
+		boolean newEntity = (entity.getId() == null);
+		String back = super.saveOrUpdate(killConversation);
+		return newEntity ? null : back;
 	}
 
 	public void saveServiceChargeTemplateSubscription() {
-		log.info("saveServiceChargeTemplateSubscription getObjectId=#0",
-				getObjectId());
+		log.info("saveServiceChargeTemplateSubscription getObjectId=#0", getObjectId());
 
 		try {
 			if (serviceChargeTemplateSubscription != null) {
-				for (ServiceChargeTemplateSubscription inc : entity
-						.getServiceSubscriptionCharges()) {
-					if (inc.getChargeTemplate()
-							.getCode()
-							.equalsIgnoreCase(
-									serviceChargeTemplateSubscription
-											.getChargeTemplate().getCode())
-							&& !inc.getId().equals(
-									serviceChargeTemplateSubscription.getId())) {
+				for (ServiceChargeTemplateSubscription inc : entity.getServiceSubscriptionCharges()) {
+					if (inc.getChargeTemplate().getCode()
+							.equalsIgnoreCase(serviceChargeTemplateSubscription.getChargeTemplate().getCode())
+							&& !inc.getId().equals(serviceChargeTemplateSubscription.getId())) {
 						throw new Exception();
 					}
 				}
 				if (serviceChargeTemplateSubscription.getId() != null) {
-					serviceChargeTemplateSubscriptionService
-							.update(serviceChargeTemplateSubscription);
+					serviceChargeTemplateSubscriptionService.update(serviceChargeTemplateSubscription);
 					messages.info(new BundleKey("messages", "update.successful"));
 				} else {
-					serviceChargeTemplateSubscription
-							.setServiceTemplate(entity);
-					serviceChargeTemplateSubscriptionService
-							.create(serviceChargeTemplateSubscription);
-					entity.getServiceSubscriptionCharges().add(
-							serviceChargeTemplateSubscription);
+					serviceChargeTemplateSubscription.setServiceTemplate(entity);
+					serviceChargeTemplateSubscriptionService.create(serviceChargeTemplateSubscription);
+					entity.getServiceSubscriptionCharges().add(serviceChargeTemplateSubscription);
 					messages.info(new BundleKey("messages", "save.successful"));
 				}
 			}
 		} catch (Exception e) {
-			log.error(
-					"exception when applying one serviceUsageChargeTemplate !",
-					e);
-			messages.error(new BundleKey("messages",
-					"serviceTemplate.uniqueUsageCounterFlied"));
+			log.error("exception when applying one serviceUsageChargeTemplate !", e);
+			messages.error(new BundleKey("messages", "serviceTemplate.uniqueUsageCounterFlied"));
 		}
 		serviceChargeTemplateSubscription = new ServiceChargeTemplateSubscription();
 	}
 
 	public void deleteServiceSubscriptionChargeTemplate(
 			ServiceChargeTemplateSubscription serviceSubscriptionChargeTemplate) {
-		serviceChargeTemplateSubscriptionService
-				.remove(serviceSubscriptionChargeTemplate);
-		entity.getServiceSubscriptionCharges().remove(
-				serviceSubscriptionChargeTemplate);
+		serviceChargeTemplateSubscriptionService.remove(serviceSubscriptionChargeTemplate);
+		entity.getServiceSubscriptionCharges().remove(serviceSubscriptionChargeTemplate);
 		messages.info(new BundleKey("messages", "delete.successful"));
 	}
 
@@ -277,112 +249,80 @@ public class ServiceTemplateBean extends StatelessBaseBean<ServiceTemplate> {
 	}
 
 	public void saveServiceChargeTemplateTermination() {
-		log.info("saveServiceChargeTemplateTermination getObjectId=#0",
-				getObjectId());
+		log.info("saveServiceChargeTemplateTermination getObjectId=#0", getObjectId());
 
 		try {
 			if (serviceChargeTemplateTermination != null) {
-				for (ServiceChargeTemplateTermination inc : entity
-						.getServiceTerminationCharges()) {
-					if (inc.getChargeTemplate()
-							.getCode()
-							.equalsIgnoreCase(
-									serviceChargeTemplateTermination
-											.getChargeTemplate().getCode())
-							&& !inc.getId().equals(
-									serviceChargeTemplateTermination.getId())) {
+				for (ServiceChargeTemplateTermination inc : entity.getServiceTerminationCharges()) {
+					if (inc.getChargeTemplate().getCode()
+							.equalsIgnoreCase(serviceChargeTemplateTermination.getChargeTemplate().getCode())
+							&& !inc.getId().equals(serviceChargeTemplateTermination.getId())) {
 						throw new Exception();
 					}
 				}
 				if (serviceChargeTemplateTermination.getId() != null) {
-					serviceChargeTemplateTerminationService
-							.update(serviceChargeTemplateTermination);
+					serviceChargeTemplateTerminationService.update(serviceChargeTemplateTermination);
 					messages.info(new BundleKey("messages", "update.successful"));
 				} else {
 					serviceChargeTemplateTermination.setServiceTemplate(entity);
-					serviceChargeTemplateTerminationService
-							.create(serviceChargeTemplateTermination);
-					entity.getServiceTerminationCharges().add(
-							serviceChargeTemplateTermination);
+					serviceChargeTemplateTerminationService.create(serviceChargeTemplateTermination);
+					entity.getServiceTerminationCharges().add(serviceChargeTemplateTermination);
 					messages.info(new BundleKey("messages", "save.successful"));
 				}
 			}
 		} catch (Exception e) {
-			log.error(
-					"exception when applying one serviceUsageChargeTemplate !",
-					e);
-			messages.error(new BundleKey("messages",
-					"serviceTemplate.uniqueUsageCounterFlied"));
+			log.error("exception when applying one serviceUsageChargeTemplate !", e);
+			messages.error(new BundleKey("messages", "serviceTemplate.uniqueUsageCounterFlied"));
 		}
 		serviceChargeTemplateTermination = new ServiceChargeTemplateTermination();
 	}
 
-	public void deleteServiceTerminationChargeTemplate(
-			ServiceChargeTemplateTermination serviceTerminationChargeTemplate) {
-		serviceChargeTemplateTerminationService
-				.remove(serviceTerminationChargeTemplate);
-		entity.getServiceTerminationCharges().remove(
-				serviceTerminationChargeTemplate);
+	public void deleteServiceTerminationChargeTemplate(ServiceChargeTemplateTermination serviceTerminationChargeTemplate) {
+		serviceChargeTemplateTerminationService.remove(serviceTerminationChargeTemplate);
+		entity.getServiceTerminationCharges().remove(serviceTerminationChargeTemplate);
 		messages.info(new BundleKey("messages", "delete.successful"));
 	}
 
-	public void editServiceTerminationChargeTemplate(
-			ServiceChargeTemplateTermination serviceTerminationChargeTemplate) {
+	public void editServiceTerminationChargeTemplate(ServiceChargeTemplateTermination serviceTerminationChargeTemplate) {
 		this.serviceChargeTemplateTermination = serviceTerminationChargeTemplate;
 	}
 
 	public void saveServiceChargeTemplateRecurring() {
-		log.info("saveServiceChargeTemplateRecurring getObjectId=#0",
-				getObjectId());
+		log.info("saveServiceChargeTemplateRecurring getObjectId=#0", getObjectId());
 
 		try {
 			if (serviceChargeTemplateRecurring != null) {
-				for (ServiceChargeTemplateRecurring inc : entity
-						.getServiceRecurringCharges()) {
-					if (inc.getChargeTemplate()
-							.getCode()
-							.equalsIgnoreCase(
-									serviceChargeTemplateRecurring
-											.getChargeTemplate().getCode())
-							&& !inc.getId().equals(
-									serviceChargeTemplateRecurring.getId())) {
+				for (ServiceChargeTemplateRecurring inc : entity.getServiceRecurringCharges()) {
+					if (inc.getChargeTemplate().getCode()
+							.equalsIgnoreCase(serviceChargeTemplateRecurring.getChargeTemplate().getCode())
+							&& !inc.getId().equals(serviceChargeTemplateRecurring.getId())) {
 						throw new Exception();
 					}
 				}
 				if (serviceChargeTemplateRecurring.getId() != null) {
-					serviceChargeTemplateRecurringService
-							.update(serviceChargeTemplateRecurring);
+					serviceChargeTemplateRecurringService.update(serviceChargeTemplateRecurring);
 					messages.info(new BundleKey("messages", "update.successful"));
 				} else {
 					serviceChargeTemplateRecurring.setServiceTemplate(entity);
-					serviceChargeTemplateRecurringService
-							.create(serviceChargeTemplateRecurring);
-					entity.getServiceRecurringCharges().add(
-							serviceChargeTemplateRecurring);
+					serviceChargeTemplateRecurringService.create(serviceChargeTemplateRecurring);
+					entity.getServiceRecurringCharges().add(serviceChargeTemplateRecurring);
 					messages.info(new BundleKey("messages", "save.successful"));
 				}
 			}
 		} catch (Exception e) {
-			log.error(
-					"exception when applying one serviceUsageChargeTemplate !",
-					e);
-			messages.error(new BundleKey("messages",
-					"serviceTemplate.uniqueUsageCounterFlied"));
+			log.error("exception when applying one serviceUsageChargeTemplate !", e);
+			messages.error(new BundleKey("messages", "serviceTemplate.uniqueUsageCounterFlied"));
 		}
 		serviceChargeTemplateRecurring = new ServiceChargeTemplateRecurring();
 	}
 
-	public void deleteServiceRecurringChargeTemplate(
-			ServiceChargeTemplateRecurring serviceRecurringChargeTemplate) {
-		serviceChargeTemplateRecurringService
-				.remove(serviceRecurringChargeTemplate);
-		entity.getServiceRecurringCharges().remove(
-				serviceRecurringChargeTemplate);
+	public void deleteServiceRecurringChargeTemplate(ServiceChargeTemplateRecurring serviceRecurringChargeTemplate) {
+		serviceChargeTemplateRecurringService.remove(serviceRecurringChargeTemplate);
+		entity.getServiceRecurringCharges().remove(serviceRecurringChargeTemplate);
 		messages.info(new BundleKey("messages", "delete.successful"));
 	}
 
-	public void editServiceRecurringChargeTemplate(
-			ServiceChargeTemplateRecurring serviceRecurringChargeTemplate) {
+	public void editServiceRecurringChargeTemplate(ServiceChargeTemplateRecurring serviceRecurringChargeTemplate) {
 		this.serviceChargeTemplateRecurring = serviceRecurringChargeTemplate;
 	}
 
@@ -391,75 +331,55 @@ public class ServiceTemplateBean extends StatelessBaseBean<ServiceTemplate> {
 
 		try {
 			if (serviceChargeTemplateUsage != null) {
-				for (ServiceChargeTemplateUsage inc : entity
-						.getServiceUsageCharges()) {
-					if (inc.getChargeTemplate()
-							.getCode()
-							.equalsIgnoreCase(
-									serviceChargeTemplateUsage
-											.getChargeTemplate().getCode())
-							&& inc.getCounterTemplate()
-									.getCode()
-									.equalsIgnoreCase(
-											serviceChargeTemplateUsage
-													.getCounterTemplate()
-													.getCode())
-							&& !inc.getId().equals(
-									serviceChargeTemplateUsage.getId())) {
-						throw new Exception();
+				for (ServiceChargeTemplateUsage inc : entity.getServiceUsageCharges()) {
+					if (inc.getChargeTemplate().getCode()
+							.equalsIgnoreCase(serviceChargeTemplateUsage.getChargeTemplate().getCode())
+							&& !inc.getId().equals(serviceChargeTemplateUsage.getId())
+							&& ((inc.getCounterTemplate() == null && serviceChargeTemplateUsage.getCounterTemplate() == null) || inc
+									.getCounterTemplate().getCode()
+									.equalsIgnoreCase(serviceChargeTemplateUsage.getCounterTemplate().getCode()))) {
+						log.error("exception when applying one serviceUsageChargeTemplate !");
+						messages.error(new BundleKey("messages", "serviceTemplate.uniqueUsageCounterFlied"));
+						return;
 					}
 				}
 				if (serviceChargeTemplateUsage.getId() != null) {
-					serviceChargeTemplateUsageService
-							.update(serviceChargeTemplateUsage);
+					serviceChargeTemplateUsageService.update(serviceChargeTemplateUsage);
 					messages.info(new BundleKey("messages", "update.successful"));
 				} else {
 					serviceChargeTemplateUsage.setServiceTemplate(entity);
-					serviceChargeTemplateUsageService
-							.create(serviceChargeTemplateUsage);
-					entity.getServiceUsageCharges().add(
-							serviceChargeTemplateUsage);
+					serviceChargeTemplateUsageService.create(serviceChargeTemplateUsage);
+					entity.getServiceUsageCharges().add(serviceChargeTemplateUsage);
 					messages.info(new BundleKey("messages", "save.successful"));
 				}
 			}
 		} catch (Exception e) {
-			log.error(
-					"exception when applying one serviceUsageChargeTemplate !",
-					e);
-			messages.error(new BundleKey("messages",
-					"serviceTemplate.uniqueUsageCounterFlied"));
+			log.error("exception when applying one serviceUsageChargeTemplate !", e);
+			messages.error(new BundleKey("messages", "serviceTemplate.uniqueUsageCounterFlied"));
 		}
 		serviceChargeTemplateUsage = new ServiceChargeTemplateUsage();
 	}
-
- 
 
 	/**
 	 * Constructor. Invokes super constructor and provides class type of this
 	 * bean for {@link BaseBean}.
 	 */
- 
-	 
-	
-	public void deleteServiceUsageChargeTemplate(
-			ServiceChargeTemplateUsage serviceUsageChargeTemplate) {
+
+	public void deleteServiceUsageChargeTemplate(ServiceChargeTemplateUsage serviceUsageChargeTemplate) {
 		serviceChargeTemplateUsageService.remove(serviceUsageChargeTemplate);
 		entity.getServiceUsageCharges().remove(serviceUsageChargeTemplate);
 		messages.info(new BundleKey("messages", "delete.successful"));
 	}
 
-	public void editServiceUsageChargeTemplate(
-			ServiceChargeTemplateUsage serviceUsageChargeTemplate) {
-		this.serviceChargeTemplateUsage = serviceUsageChargeTemplate; 
+	public void editServiceUsageChargeTemplate(ServiceChargeTemplateUsage serviceUsageChargeTemplate) {
+		this.serviceChargeTemplateUsage = serviceUsageChargeTemplate;
 	}
-	
 
 	public ServiceChargeTemplateUsage getServiceChargeTemplateUsage() {
 		return serviceChargeTemplateUsage;
 	}
 
-	public void setServiceChargeTemplateUsage(
-			ServiceChargeTemplateUsage serviceChargeTemplateUsage) {
+	public void setServiceChargeTemplateUsage(ServiceChargeTemplateUsage serviceChargeTemplateUsage) {
 		this.serviceChargeTemplateUsage = serviceChargeTemplateUsage;
 	}
 
@@ -475,7 +395,5 @@ public class ServiceTemplateBean extends StatelessBaseBean<ServiceTemplate> {
 	protected String getDefaultSort() {
 		return "code";
 	}
-	
-	 
 
 }

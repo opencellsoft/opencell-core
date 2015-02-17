@@ -42,9 +42,13 @@ import org.meveo.model.catalog.WalletTemplate;
 @Table(name = "BILLING_WALLET")
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_WALLET_SEQ")
 @NamedQueries({
-	@NamedQuery(name = "WalletInstance.listPrepaidActiiveWalletIds", 
+	@NamedQuery(name = "WalletInstance.listPrepaidActiveWalletIds", 
 			query = "SELECT c.id FROM WalletInstance c where c.walletTemplate.walletType=org.meveo.model.billing.BillingWalletTypeEnum.PREPAID and "
 					+ "c.userAccount.status=org.meveo.model.billing.AccountStatusEnum.ACTIVE"),
+	@NamedQuery(name = "WalletInstance.listPrepaidWalletsToMatch", 
+			query = "SELECT c FROM WalletInstance c where c.walletTemplate.walletType=org.meveo.model.billing.BillingWalletTypeEnum.PREPAID and "
+							+ "c.userAccount.status=org.meveo.model.billing.AccountStatusEnum.ACTIVE "
+							+ " AND (c.nextMatchingDate IS NULL OR nextMatchingDate <= :matchingDate)"),
 })
 public class WalletInstance extends BusinessEntity {
 
@@ -62,6 +66,11 @@ public class WalletInstance extends BusinessEntity {
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date creditExpiryDate;
 
+	@Column(name = "NEXT_MATCHING_DATE")
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date nextMatchingDate;
+	
+	
 	@OneToMany(mappedBy = "wallet", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	private List<WalletOperation> operations;
 
@@ -125,6 +134,14 @@ public class WalletInstance extends BusinessEntity {
 
 	public void setCreditExpiryDate(Date creditExpiryDate) {
 		this.creditExpiryDate = creditExpiryDate;
+	}
+
+	public Date getNextMatchingDate() {
+		return nextMatchingDate;
+	}
+
+	public void setNextMatchingDate(Date nextMatchingDate) {
+		this.nextMatchingDate = nextMatchingDate;
 	}
 
 	public boolean equals(WalletInstance w) {

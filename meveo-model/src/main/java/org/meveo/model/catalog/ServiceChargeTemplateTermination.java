@@ -27,8 +27,6 @@ import javax.persistence.OrderColumn;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
-import org.meveo.model.BusinessEntity;
-
 @Entity
 @Table(name = "CAT_SERV_TRM_CHARGE_TEMPLATE")
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "CAT_SERV_TRMCHRG_TEMPLT_SEQ")
@@ -41,9 +39,8 @@ public class ServiceChargeTemplateTermination extends ServiceChargeTemplate<OneS
 
 	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(name = "CAT_SERV_TRM_WALLET_TEMPLATE", joinColumns = @JoinColumn(name = "SERVICE_TRM_TEMPLT_ID"), inverseJoinColumns = @JoinColumn(name = "WALLET_TEMPLATE_ID"))
-	@OrderColumn(name="INDX")
+	@OrderColumn(name = "INDX")
 	private List<WalletTemplate> walletTemplates;
-	
 
 	public List<WalletTemplate> getWalletTemplates() {
 		return walletTemplates;
@@ -52,7 +49,7 @@ public class ServiceChargeTemplateTermination extends ServiceChargeTemplate<OneS
 	public void setWalletTemplates(List<WalletTemplate> walletTemplates) {
 		this.walletTemplates = walletTemplates;
 	}
-	 
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -65,8 +62,6 @@ public class ServiceChargeTemplateTermination extends ServiceChargeTemplate<OneS
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;
-		if (!super.equals(obj))
-			return false;
 		if (getClass() != obj.getClass())
 			return false;
 		ServiceChargeTemplateTermination other = (ServiceChargeTemplateTermination) obj;
@@ -77,7 +72,5 @@ public class ServiceChargeTemplateTermination extends ServiceChargeTemplate<OneS
 			return false;
 		return true;
 	}
- 
-	
-	
+
 }

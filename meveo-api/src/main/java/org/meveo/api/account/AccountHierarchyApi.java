@@ -804,6 +804,10 @@ public class AccountHierarchyApi extends BaseApi {
 								log.warn("code is null={}", customerDto);
 								continue;
 							}
+							if (StringUtils.isBlank(customerDto.getDescription())) {
+								missingParameters.add("customer.description");
+								throw new MissingParameterException(getMissingParametersExceptionMessage());
+							}
 
 							Customer customer = customerService.findByCode(customerDto.getCode(), provider);
 							if (customer == null) {
@@ -811,7 +815,6 @@ public class AccountHierarchyApi extends BaseApi {
 								customer.setCode(customerDto.getCode());
 							}
 
-							populateNameAndAddress(customer, customerDto, AccountLevelEnum.CUST, currentUser);
 							customer.setSeller(seller);
 							customer.setDescription(customerDto.getDescription());
 
@@ -844,6 +847,8 @@ public class AccountHierarchyApi extends BaseApi {
 								customerService.update(customer, currentUser);
 							}
 
+							populateNameAndAddress(customer, customerDto, AccountLevelEnum.CUST, currentUser);
+
 							// customerAccounts
 							if (customerDto.getCustomerAccounts() != null) {
 								for (CustomerAccountDto customerAccountDto : customerDto.getCustomerAccounts()
@@ -852,11 +857,16 @@ public class AccountHierarchyApi extends BaseApi {
 										log.warn("code is null={}", customerAccountDto);
 										continue;
 									}
+									if (StringUtils.isBlank(customerAccountDto.getDescription())) {
+										missingParameters.add("customerAccountDto.description");
+										throw new MissingParameterException(getMissingParametersExceptionMessage());
+									}
 
 									CustomerAccount customerAccount = customerAccountService.findByCode(
 											customerAccountDto.getCode(), provider);
 									if (customerAccount == null) {
 										customerAccount = new CustomerAccount();
+										customerAccount.setStatus(CustomerAccountStatusEnum.ACTIVE);
 										customerAccount.setCode(customerAccountDto.getCode());
 									} else {
 										if (!StringUtils.isBlank(customerAccountDto.getStatus())) {
@@ -880,8 +890,6 @@ public class AccountHierarchyApi extends BaseApi {
 										}
 									}
 
-									populateNameAndAddress(customerAccount, customerAccountDto, AccountLevelEnum.CA,
-											currentUser);
 									customerAccount.setCustomer(customer);
 									customerAccount.setDescription(customerAccount.getDescription());
 
@@ -926,10 +934,16 @@ public class AccountHierarchyApi extends BaseApi {
 
 									customerAccount.setDateStatus(customerAccountDto.getDateStatus());
 									customerAccount.setDateDunningLevel(customerAccount.getDateDunningLevel());
-									customerAccount.getContactInformation().setEmail(customerAccountDto.getEmail());
-									customerAccount.getContactInformation().setPhone(customerAccountDto.getPhone());
-									customerAccount.getContactInformation().setMobile(customerAccountDto.getMobile());
-									customerAccount.getContactInformation().setFax(customerAccountDto.getFax());
+									if (customerAccountDto.getContactInformation() != null) {
+										customerAccount.getContactInformation().setEmail(
+												customerAccountDto.getContactInformation().getEmail());
+										customerAccount.getContactInformation().setPhone(
+												customerAccountDto.getContactInformation().getPhone());
+										customerAccount.getContactInformation().setMobile(
+												customerAccountDto.getContactInformation().getMobile());
+										customerAccount.getContactInformation().setFax(
+												customerAccountDto.getContactInformation().getFax());
+									}
 
 									customerAccount.setMandateDate(customerAccountDto.getMandateDate());
 									customerAccount.setMandateIdentification(customerAccountDto
@@ -942,6 +956,9 @@ public class AccountHierarchyApi extends BaseApi {
 										customerAccountService.update(customerAccount, currentUser);
 									}
 
+									populateNameAndAddress(customerAccount, customerAccountDto, AccountLevelEnum.CA,
+											currentUser);
+
 									// billing accounts
 									if (customerAccountDto.getBillingAccounts() != null) {
 										for (BillingAccountDto billingAccountDto : customerAccountDto
@@ -950,15 +967,21 @@ public class AccountHierarchyApi extends BaseApi {
 												log.warn("code is null={}", billingAccountDto);
 												continue;
 											}
+											if (StringUtils.isBlank(billingAccountDto.getDescription())) {
+												missingParameters.add("billingAccountDto.description");
+												throw new MissingParameterException(
+														getMissingParametersExceptionMessage());
+											}
 
 											BillingAccount billingAccount = billingAccountService.findByCode(
 													billingAccountDto.getCode(), provider);
 											if (billingAccount == null) {
 												billingAccount = new BillingAccount();
+												billingAccount.setStatus(AccountStatusEnum.ACTIVE);
 												billingAccount.setCode(billingAccountDto.getCode());
 											} else {
 												if (billingAccountDto.getTerminationDate() != null) {
-													if (!StringUtils.isBlank(billingAccountDto.getTerminationReason())) {
+													if (StringUtils.isBlank(billingAccountDto.getTerminationReason())) {
 														missingParameters.add("billingAccount.terminationReason");
 														throw new MissingParameterException(
 																getMissingParametersExceptionMessage());
@@ -985,8 +1008,6 @@ public class AccountHierarchyApi extends BaseApi {
 												}
 											}
 
-											populateNameAndAddress(billingAccount, billingAccountDto,
-													AccountLevelEnum.BA, currentUser);
 											billingAccount.setCustomerAccount(customerAccount);
 											billingAccount.setDescription(customerAccount.getDescription());
 
@@ -1054,6 +1075,9 @@ public class AccountHierarchyApi extends BaseApi {
 												billingAccountService.update(billingAccount, currentUser);
 											}
 
+											populateNameAndAddress(billingAccount, billingAccountDto,
+													AccountLevelEnum.BA, currentUser);
+
 											// user accounts
 											if (billingAccountDto.getUserAccounts() != null) {
 												for (UserAccountDto userAccountDto : billingAccountDto
@@ -1062,15 +1086,21 @@ public class AccountHierarchyApi extends BaseApi {
 														log.warn("code is null={}", userAccountDto);
 														continue;
 													}
+													if (StringUtils.isBlank(userAccountDto.getDescription())) {
+														missingParameters.add("userAccountDto.description");
+														throw new MissingParameterException(
+																getMissingParametersExceptionMessage());
+													}
 
 													UserAccount userAccount = userAccountService.findByCode(
 															userAccountDto.getCode(), provider);
 													if (userAccount == null) {
 														userAccount = new UserAccount();
+														userAccount.setStatus(AccountStatusEnum.ACTIVE);
 														userAccount.setCode(userAccountDto.getCode());
 													} else {
 														if (userAccountDto.getTerminationDate() != null) {
-															if (!StringUtils.isBlank(userAccountDto
+															if (StringUtils.isBlank(userAccountDto
 																	.getTerminationReason())) {
 																missingParameters.add("userAccount.terminationReason");
 																throw new MissingParameterException(
@@ -1099,8 +1129,6 @@ public class AccountHierarchyApi extends BaseApi {
 														}
 													}
 
-													populateNameAndAddress(userAccount, userAccountDto,
-															AccountLevelEnum.UA, currentUser);
 													userAccount.setBillingAccount(billingAccount);
 													userAccount.setDescription(userAccountDto.getDescription());
 
@@ -1122,6 +1150,9 @@ public class AccountHierarchyApi extends BaseApi {
 														userAccountService.update(userAccount, currentUser);
 													}
 
+													populateNameAndAddress(userAccount, userAccountDto,
+															AccountLevelEnum.UA, currentUser);
+
 													// subscriptions
 													if (userAccountDto.getSubscriptions() != null) {
 														for (SubscriptionDto subscriptionDto : userAccountDto
@@ -1129,6 +1160,11 @@ public class AccountHierarchyApi extends BaseApi {
 															if (StringUtils.isBlank(subscriptionDto.getCode())) {
 																log.warn("code is null={}", subscriptionDto);
 																continue;
+															}
+															if (StringUtils.isBlank(subscriptionDto.getDescription())) {
+																missingParameters.add("subscriptionDto.description");
+																throw new MissingParameterException(
+																		getMissingParametersExceptionMessage());
 															}
 
 															Subscription subscription = subscriptionService.findByCode(
@@ -1138,11 +1174,39 @@ public class AccountHierarchyApi extends BaseApi {
 																subscription.setCode(subscriptionDto.getCode());
 															} else {
 																if (subscriptionDto.getTerminationDate() != null) {
-																	// TODO
-																	// [delete
-																	// or
-																	// update
-																	// status?]
+																	if (StringUtils.isBlank(subscriptionDto
+																			.getTerminationReason())) {
+																		missingParameters
+																				.add("subscription.terminationReason");
+																		throw new MissingParameterException(
+																				getMissingParametersExceptionMessage());
+																	}
+
+																	SubscriptionTerminationReason subscriptionTerminationReason = terminationReasonService
+																			.findByCode(subscriptionDto
+																					.getTerminationReason(), provider);
+
+																	if (subscriptionTerminationReason == null) {
+																		throw new EntityDoesNotExistsException(
+																				SubscriptionTerminationReason.class,
+																				subscriptionDto.getTerminationReason());
+																	}
+
+																	try {
+																		subscriptionService.terminateSubscription(
+																				subscription,
+																				subscriptionDto.getTerminationDate(),
+																				subscriptionTerminationReason,
+																				currentUser);
+																	} catch (BusinessException e) {
+																		log.error("Error terminating subscription with code="
+																				+ subscriptionDto.getCode());
+																		throw new MeveoApiException(
+																				"Error terminating subscription with code="
+																						+ subscriptionDto.getCode());
+																	}
+
+																	continue;
 																}
 															}
 
@@ -1267,8 +1331,10 @@ public class AccountHierarchyApi extends BaseApi {
 																						e.getMessage());
 																			}
 																		} else {
-																			throw new MeveoApiException(
-																					"TerminationReason is required when terminating a subscription.");
+																			missingParameters
+																					.add("serviceInstance.terminationReason");
+																			throw new MissingParameterException(
+																					getMissingParametersExceptionMessage());
 																		}
 																	} else {
 																		if (subscription.getStatus() == SubscriptionStatusEnum.RESILIATED) {

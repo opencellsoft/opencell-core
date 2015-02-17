@@ -378,8 +378,15 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 
 		if (applyTerminationCharges) {
 			for (OneShotChargeInstance oneShotChargeInstance : serviceInstance.getTerminationChargeInstances()) {
-				oneShotChargeInstanceService.oneShotChargeApplication(em, subscription, oneShotChargeInstance,
-						terminationDate, serviceInstance.getQuantity(), user);
+				if(oneShotChargeInstance.getStatus()==InstanceStatusEnum.INACTIVE){
+					log.debug("applying the termination charge {}",oneShotChargeInstance.getCode());
+					oneShotChargeInstanceService.oneShotChargeApplication(em, subscription, oneShotChargeInstance,
+							terminationDate, serviceInstance.getQuantity(), user);
+					oneShotChargeInstance.setStatus(InstanceStatusEnum.CLOSED);
+				} else {
+					log.debug("we do not apply the termination charge because of its status {}",oneShotChargeInstance.getCode()
+							,oneShotChargeInstance.getStatus());
+				}
 			}
 		}
 

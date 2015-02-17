@@ -76,8 +76,6 @@ public class RatingService {
 	@EJB
 	private SubscriptionService subscriptionService;
 	
-	@Inject
-	MeveoCacheContainerProvider meveoCacheContainerProvider;
 
 	private static boolean isPricePlanDirty;
 
@@ -217,6 +215,7 @@ public class RatingService {
 		result.setOfferCode(offerCode);
 		result.setStatus(WalletOperationStatusEnum.OPEN);
 		result.setSeller(chargeInstance.getSeller());
+		//TODO:check that setting the principal wallet at this stage is correct
 		result.setWallet(chargeInstance.getSubscription().getUserAccount().getWallet());
 
 		BigDecimal unitPriceWithoutTax = amountWithoutTax;
@@ -341,19 +340,19 @@ public class RatingService {
 		String providerCode = provider.getCode();
 
 		if (unitPriceWithoutTax == null) {
-			if (meveoCacheContainerProvider.getAllPricePlan().isEmpty()) {
+			if (MeveoCacheContainerProvider.getAllPricePlan().isEmpty()) {
 				loadPricePlan(em);
 			} else if (isPricePlanDirty) {
 				reloadPricePlan();
 			}
-			if (!meveoCacheContainerProvider.getAllPricePlan().containsKey(providerCode)) {
+			if (!MeveoCacheContainerProvider.getAllPricePlan().containsKey(providerCode)) {
 				throw new RuntimeException("No price plan for provider " + providerCode);
 			}
-			if (!meveoCacheContainerProvider.getAllPricePlan().get(providerCode).containsKey(bareWalletOperation.getCode())) {
+			if (!MeveoCacheContainerProvider.getAllPricePlan().get(providerCode).containsKey(bareWalletOperation.getCode())) {
 				throw new RuntimeException("No price plan for provider " + providerCode + " and charge code "
 						+ bareWalletOperation.getCode());
 			}
-			ratePrice = ratePrice(meveoCacheContainerProvider.getAllPricePlan().get(providerCode).get(bareWalletOperation.getCode()),
+			ratePrice = ratePrice(MeveoCacheContainerProvider.getAllPricePlan().get(providerCode).get(bareWalletOperation.getCode()),
 					bareWalletOperation, countryId, tcurrency,
 					bareWalletOperation.getSeller() != null ? bareWalletOperation.getSeller().getId() : null);
 			if (ratePrice == null || ratePrice.getAmountWithoutTax() == null) {
@@ -602,10 +601,10 @@ public class RatingService {
 				"from PricePlanMatrix where disabled=false order by priority ASC").getResultList();
 		if (allPricePlans != null & allPricePlans.size() > 0) {
 			for (PricePlanMatrix pricePlan : allPricePlans) {
-				if (!meveoCacheContainerProvider.getAllPricePlan().containsKey(pricePlan.getProvider().getCode())) {
-					meveoCacheContainerProvider.getAllPricePlan().put(pricePlan.getProvider().getCode(), new HashMap<String, List<PricePlanMatrix>>());
+				if (!MeveoCacheContainerProvider.getAllPricePlan().containsKey(pricePlan.getProvider().getCode())) {
+					MeveoCacheContainerProvider.getAllPricePlan().put(pricePlan.getProvider().getCode(), new HashMap<String, List<PricePlanMatrix>>());
 				}
-				HashMap<String, List<PricePlanMatrix>> providerPricePlans = meveoCacheContainerProvider.getAllPricePlan().get(pricePlan.getProvider()
+				HashMap<String, List<PricePlanMatrix>> providerPricePlans = MeveoCacheContainerProvider.getAllPricePlan().get(pricePlan.getProvider()
 						.getCode());
 				if (!providerPricePlans.containsKey(pricePlan.getEventCode())) {
 					providerPricePlans.put(pricePlan.getEventCode(), new ArrayList<PricePlanMatrix>());
@@ -638,7 +637,7 @@ public class RatingService {
 			}
 		}
 
-		log.info("loadPricePlan allPricePlan.size()=" + meveoCacheContainerProvider.getAllPricePlan() != null ? meveoCacheContainerProvider.getAllPricePlan().size() + "" : null);
+		log.info("loadPricePlan allPricePlan.size()=" + MeveoCacheContainerProvider.getAllPricePlan() != null ? MeveoCacheContainerProvider.getAllPricePlan().size() + "" : null);
 	}
 
 	private boolean matchExpression(String expression, WalletOperation bareOperation, UserAccount ua)

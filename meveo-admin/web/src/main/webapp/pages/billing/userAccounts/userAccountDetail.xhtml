@@ -27,6 +27,8 @@
 		</f:metadata>
 
 		<o:importConstants type="org.meveo.model.crm.CustomFieldTypeEnum" />
+		<o:importConstants
+			type="org.meveo.model.billing.WalletOperationStatusEnum" />
 	</ui:define>
 
 	<ui:define name="navigation">
@@ -94,9 +96,8 @@
 					<p:panelGrid columns="2">
 						<p:outputLabel for="operationDate"
 							value="#{messages['walletOperation.operationDate']}"></p:outputLabel>
-						<p:inputText id="operationDate"
-							value=""></p:inputText>
-						<p:calendar 
+						<p:inputText id="operationDate" value=""></p:inputText>
+						<p:calendar
 							value="#{userAccountBean.reloadOperation.operationDate}"
 							pattern="dd/MM/yyyy HH:mm" required="true" />
 					</p:panelGrid>
@@ -160,7 +161,8 @@
 										<hf:formField
 											label="#{messages['businessEntity.description']}"
 											field="description" id="description" showOnlyOnNew="true"
-											useConverter="false" size="70" maxlength="100" required="true" />
+											useConverter="false" size="70" maxlength="100"
+											required="true" />
 									</hftl:panelGroup>
 									<hftl:panelGroup columns="1">
 										<p:panelGrid columns="2">
@@ -255,12 +257,20 @@
 												<p:outputLabel value="#{messages['chargeTemplate.type']}" />
 												<h:outputText
 													value="#{wallet.value.walletTemplate.walletType}" />
+												<p:outputLabel rendered="#{wallet.key!='PRINCIPAL'}"
+													value="#{messages['userAccount.cachedBalance']}" />
+												<h:outputText
+													value="#{userAccountBean.getBalance(wallet.value)}" />
+												<p:outputLabel rendered="#{wallet.key!='PRINCIPAL'}"
+													value="#{messages['userAccount.cachedReservedBalance']}" />
+												<h:outputText
+													value="#{userAccountBean.getReservedBalance(wallet.value)}" />
 											</p:panelGrid>
 										</p:panelGrid>
 										<p:dataTable id="wallet#{wallet.key}datatable" var="e"
 											paginator="true"
 											value="#{userAccountBean.getWalletOperations(wallet.key)}"
-											rows="10" rowKey="#{e.id}">
+											rows="10" rowKey="#{e.id}" widget="walletOperationsTable">
 											<p:column>
 												<f:facet name="header">
 													<h:outputText
@@ -280,7 +290,8 @@
 													value="#{getConverter.forType(e[endDate], 'date')}"></c:set>
 												<h:outputText value="#{e.endDate}" converter="#{converter2}" />
 											</p:column>
-											<p:column>
+											<p:column filterBy="#{e.chargeInstance.code}"
+												footerText="contains" filterMatchMode="contains">
 												<f:facet name="header">
 													<h:outputText value="#{messages['chargeInstance.code']}" />
 												</f:facet>
@@ -318,10 +329,10 @@
 												<h:outputText value="#{e.amountWithTax}"
 													converter="#{converter6}" />
 											</p:column>
-											<p:column>
-												<f:facet name="header">
-													<h:outputText value="#{messages['walletOperation.status']}" />
-												</f:facet>
+											<p:column filterBy="#{e.status}"
+												headerText="#{messages['walletOperation.status']}"
+												footerText="exact" filterMatchMode="exact"
+												filterOptions="#{userAccountBean.walletOperationStatusList}">
 												<h:outputText value="#{messages[e.status.label]}" />
 											</p:column>
 										</p:dataTable>
@@ -333,7 +344,6 @@
 									</p:panel>
 								</p:tab>
 							</c:forEach>
-
 						</p:tabView>
 
 					</hf:formPanel>
@@ -357,10 +367,10 @@
 								value="#{messages['button.reactivateButton']}"
 								onclick="if(confirm('#{messages['confirmationMessage.confirmReactivation']}')){return true;}else{return false;}"
 								disabled="#{userAccountBean.entity.status.toString() != 'TERMINATED' or userAccountBean.entity.status.toString()!='ACTIVE'}" />
-							<p:commandButton type="button"
+							<!--<p:commandButton type="button"
 								value="#{messages['walletOperationPopup.button']}"
 								onclick="dlg_walletOperationPopup.show();" />
-							<!-- <p:commandButton type="button"
+							 <p:commandButton type="button"
 							value="#{messages['ratedTransactionInvoiced.button']}"
 							onclick="dlg_ratedTransactionsInvoicedPopup.show();" /> -->
 							<!-- 							</custom:listPanel> -->

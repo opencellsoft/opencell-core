@@ -45,7 +45,9 @@ import org.meveo.model.billing.UserAccount;
 import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.RecurringChargeTemplate;
+import org.meveo.model.catalog.ServiceChargeTemplateSubscription;
 import org.meveo.model.catalog.ServiceTemplate;
+import org.meveo.model.catalog.WalletTemplate;
 import org.meveo.model.crm.AccountLevelEnum;
 import org.meveo.model.mediation.Access;
 import org.meveo.service.base.PersistenceService;
@@ -57,13 +59,21 @@ import org.meveo.service.billing.impl.SubscriptionService;
 import org.meveo.service.billing.impl.UsageChargeInstanceService;
 import org.meveo.service.billing.impl.UserAccountService;
 import org.meveo.service.billing.impl.WalletOperationService;
+import org.meveo.service.catalog.impl.ServiceChargeTemplateSubscriptionService;
 import org.meveo.service.medina.impl.AccessService;
+import org.slf4j.Logger;
 
 @Named
 @ConversationScoped
 public class SubscriptionBean extends StatefulBaseBean<Subscription> {
 
 	private static final long serialVersionUID = 1L;
+
+	@Inject
+	private Logger log;
+
+	@Inject
+	private ServiceChargeTemplateSubscriptionService serviceChargeTemplateSubscriptionService;
 
 	/**
 	 * Injected
@@ -109,7 +119,7 @@ public class SubscriptionBean extends StatefulBaseBean<Subscription> {
 
 	private BigDecimal oneShotChargeInstanceQuantity = BigDecimal.ONE;
 
-	private String oneShotChargeInstanceWalletCode = null;
+	private WalletTemplate selectedWalletTemplate;
 
 	/**
 	 * User Account Id passed as a parameter. Used when creating new
@@ -175,12 +185,12 @@ public class SubscriptionBean extends StatefulBaseBean<Subscription> {
 	}
 
 	private void initServiceTemplates() {
-	    
-	    // Clear existing list value
-        serviceTemplates = new EntityListDataModelPF<ServiceTemplate>(new ArrayList<ServiceTemplate>());
-        serviceTemplates.setSelectedItems(null);
-        
-        if (entity.getOffer() != null) {
+
+		// Clear existing list value
+		serviceTemplates = new EntityListDataModelPF<ServiceTemplate>(new ArrayList<ServiceTemplate>());
+		serviceTemplates.setSelectedItems(null);
+
+		if (entity.getOffer() != null) {
 			List<ServiceInstance> serviceInstances = entity.getServiceInstances();
 			for (ServiceTemplate serviceTemplate : entity.getOffer().getServiceTemplates()) {
 				boolean alreadyInstanciated = false;
@@ -248,6 +258,7 @@ public class SubscriptionBean extends StatefulBaseBean<Subscription> {
 	public void newOneShotChargeInstance() {
 		log.debug("newOneShotChargeInstance ");
 		this.oneShotChargeInstance = new OneShotChargeInstance();
+		selectedWalletTemplate = new WalletTemplate();
 	}
 
 	public void editOneShotChargeIns(OneShotChargeInstance oneShotChargeIns) {
@@ -256,6 +267,11 @@ public class SubscriptionBean extends StatefulBaseBean<Subscription> {
 
 	public void saveOneShotChargeIns() {
 		log.debug("saveOneShotChargeIns getObjectId=" + getObjectId());
+
+		if (selectedWalletTemplate == null) {
+			messages.error(new BundleKey("messages", "message.subscription.oneshot.wallet.required"));
+			return;
+		}
 
 		try {
 			if (oneShotChargeInstance != null && oneShotChargeInstance.getId() != null) {
@@ -278,10 +294,11 @@ public class SubscriptionBean extends StatefulBaseBean<Subscription> {
 				// Long id =
 				oneShotChargeInstance = oneShotChargeInstanceService.oneShotChargeApplication(entity,
 						(OneShotChargeTemplate) oneShotChargeInstance.getChargeTemplate(),
-						oneShotChargeInstanceWalletCode, oneShotChargeInstance.getChargeDate(),
+						selectedWalletTemplate.getCode(), oneShotChargeInstance.getChargeDate(),
 						oneShotChargeInstance.getAmountWithoutTax(), oneShotChargeInstance.getAmountWithTax(),
 						oneShotChargeInstanceQuantity, oneShotChargeInstance.getCriteria1(),
-						oneShotChargeInstance.getCriteria2(), oneShotChargeInstance.getCriteria3(), getCurrentUser());
+						oneShotChargeInstance.getCriteria2(), oneShotChargeInstance.getCriteria3(), getCurrentUser(),
+						true);
 				// oneShotChargeInstance.setId(id);
 				// oneShotChargeInstance.setProvider(oneShotChargeInstance.getChargeTemplate().getProvider());
 			}
@@ -530,7 +547,7 @@ public class SubscriptionBean extends StatefulBaseBean<Subscription> {
 
 			selectedServiceInstance = null;
 
-			initServiceTemplates();			
+			initServiceTemplates();
 
 			messages.info(new BundleKey("messages", "resiliation.resiliateSuccessful"));
 
@@ -590,14 +607,6 @@ public class SubscriptionBean extends StatefulBaseBean<Subscription> {
 
 	public void setOneShotChargeInstanceQuantity(BigDecimal oneShotChargeInstanceQuantity) {
 		this.oneShotChargeInstanceQuantity = oneShotChargeInstanceQuantity;
-	}
-
-	public String getOneShotChargeInstanceWalletCode() {
-		return oneShotChargeInstanceWalletCode;
-	}
-
-	public void setOneShotChargeInstanceWalletCode(String oneShotChargeInstanceWalletCode) {
-		this.oneShotChargeInstanceWalletCode = oneShotChargeInstanceWalletCode;
 	}
 
 	public ServiceInstance getSelectedServiceInstance() {
@@ -678,6 +687,43 @@ public class SubscriptionBean extends StatefulBaseBean<Subscription> {
 			log.error("Failed saving usage charge!", e.getMessage());
 			messages.error(e.getMessage());
 		}
+	}
+
+	public List<WalletTemplate> findBySubscriptionChargeTemplate() {
+		List<WalletTemplate> result = new ArrayList<WalletTemplate>();
+
+		List<ServiceChargeTemplateSubscription> serviceChargeTemplateSubscriptions = serviceChargeTemplateSubscriptionService
+				.findBySubscriptionChargeTemplate((OneShotChargeTemplate) oneShotChargeInstance.getChargeTemplate(),
+						getCurrentProvider());
+
+		if (serviceChargeTemplateSubscriptions != null) {
+			for (ServiceChargeTemplateSubscription serviceChargeTemplateSubscription : serviceChargeTemplateSubscriptions) {
+				if (serviceChargeTemplateSubscription.getWalletTemplates() != null) {
+					for (WalletTemplate walletTemplate : serviceChargeTemplateSubscription.getWalletTemplates()) {
+						if (!result.contains(walletTemplate)) {
+							log.debug("adding wallet={}", walletTemplate);
+							result.add(walletTemplate);
+						}
+					}
+				}
+			}
+		} else {
+			// get principal
+			if (entity.getUserAccount() != null) {
+				log.debug("adding postpaid wallet={}", entity.getUserAccount().getWallet().getWalletTemplate());
+				result.add(entity.getUserAccount().getWallet().getWalletTemplate());
+			}
+		}
+
+		return result;
+	}
+
+	public WalletTemplate getSelectedWalletTemplate() {
+		return selectedWalletTemplate;
+	}
+
+	public void setSelectedWalletTemplate(WalletTemplate selectedWalletTemplate) {
+		this.selectedWalletTemplate = selectedWalletTemplate;
 	}
 
 }

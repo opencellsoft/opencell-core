@@ -18,7 +18,6 @@ package org.meveo.service.catalog.impl;
 
 import java.util.List;
 
-import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
@@ -31,36 +30,26 @@ import org.meveo.model.crm.Provider;
 import org.meveo.service.base.PersistenceService;
 
 @Stateless
-@LocalBean
-public class ServiceChargeTemplateRecurringService extends
-		PersistenceService<ServiceChargeTemplateRecurring> {
+public class ServiceChargeTemplateRecurringService extends PersistenceService<ServiceChargeTemplateRecurring> {
 
-	public void removeByPrefix(EntityManager em, String prefix,
-			Provider provider) {
-		Query query = em
-				.createQuery("DELETE ServiceChargeTemplateRecurring t WHERE t.chargeTemplate.code LIKE '"
-						+ prefix + "%' AND t.provider=:provider");
+	public void removeByPrefix(EntityManager em, String prefix, Provider provider) {
+		Query query = em.createQuery("DELETE ServiceChargeTemplateRecurring t WHERE t.chargeTemplate.code LIKE '"
+				+ prefix + "%' AND t.provider=:provider");
 		query.setParameter("provider", provider);
 		query.executeUpdate();
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<ServiceChargeTemplateRecurring> findByRecurringChargeTemplate(
-			EntityManager em, RecurringChargeTemplate chargeTemplate,
-			Provider provider) {
-		QueryBuilder qb = new QueryBuilder(ServiceChargeTemplateRecurring.class,
-				"a");
+	public List<ServiceChargeTemplateRecurring> findByRecurringChargeTemplate(EntityManager em,
+			RecurringChargeTemplate chargeTemplate, Provider provider) {
+		QueryBuilder qb = new QueryBuilder(ServiceChargeTemplateRecurring.class, "a");
 		qb.addCriterionEntity("chargeTemplate", chargeTemplate);
 		qb.addCriterionEntity("provider", provider);
 
-		return (List<ServiceChargeTemplateRecurring>) qb.getQuery(em)
-				.getResultList();
+		return (List<ServiceChargeTemplateRecurring>) qb.getQuery(em).getResultList();
 	}
-	
 
-	
-	public void removeByServiceTemplate(ServiceTemplate serviceTemplate,
-			Provider provider) {
+	public void removeByServiceTemplate(ServiceTemplate serviceTemplate, Provider provider) {
 		Query query = getEntityManager()
 				.createQuery(
 						"DELETE ServiceChargeTemplateRecurring t WHERE t.serviceTemplate=:serviceTemplate AND t.provider=:provider");
@@ -68,6 +57,5 @@ public class ServiceChargeTemplateRecurringService extends
 		query.setParameter("provider", provider);
 		query.executeUpdate();
 	}
- 
 
 }

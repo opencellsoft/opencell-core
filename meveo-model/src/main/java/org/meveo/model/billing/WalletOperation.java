@@ -55,6 +55,22 @@ import org.meveo.model.catalog.PricePlanMatrix;
 	@NamedQuery(name = "WalletOperation.getBalance", 
 			query = "SELECT sum(o.amountWithTax)*-1 FROM WalletOperation o WHERE o.wallet.id=:walletId and "
 					+ "o.status=org.meveo.model.billing.WalletOperationStatusEnum.OPEN"),
+	@NamedQuery(name = "WalletOperation.getMaxOpenId", 
+			query = "SELECT max(o.id) FROM WalletOperation o WHERE o.wallet=:wallet and "
+					+ "o.status=org.meveo.model.billing.WalletOperationStatusEnum.OPEN"),
+	@NamedQuery(name = "WalletOperation.getBalanceNoTaxUntilId", 
+			query = "SELECT sum(o.amountWithoutTax)*-1 FROM WalletOperation o WHERE o.wallet=:wallet and "
+					+ "o.status=org.meveo.model.billing.WalletOperationStatusEnum.OPEN"
+					+ " AND o.id<=:maxId"),
+	@NamedQuery(name = "WalletOperation.getBalanceWithTaxUntilId", 
+					query = "SELECT sum(o.amountWithTax)*-1 FROM WalletOperation o WHERE o.wallet=:wallet and "
+							+ "o.status=org.meveo.model.billing.WalletOperationStatusEnum.OPEN"
+							+ " AND o.id<=:maxId"),
+	@NamedQuery(name = "WalletOperation.setTreatedStatusUntilId", 
+					query = "UPDATE WalletOperation o SET o.status= org.meveo.model.billing.WalletOperationStatusEnum.TREATED "
+							+ " WHERE o.wallet=:wallet and "
+							+ "o.status=org.meveo.model.billing.WalletOperationStatusEnum.OPEN"
+							+ " AND o.id<=:maxId"),
 	@NamedQuery(name = "WalletOperation.getReservedBalance", 
 			query = "SELECT sum(o.amountWithTax)*-1 FROM WalletOperation o WHERE o.wallet.id=:walletId and "
 					+ "(o.status=org.meveo.model.billing.WalletOperationStatusEnum.OPEN or "
