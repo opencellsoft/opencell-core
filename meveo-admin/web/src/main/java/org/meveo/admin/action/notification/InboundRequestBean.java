@@ -12,12 +12,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
 import javax.enterprise.context.ConversationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
-
+import org.apache.commons.codec.binary.Base64;
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.exception.BusinessException;
@@ -27,11 +25,7 @@ import org.meveo.commons.utils.CsvReader;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.notification.InboundRequest;
-import org.meveo.model.notification.Notification;
-import org.meveo.model.notification.NotificationEventTypeEnum;
-import org.meveo.model.notification.NotificationHistory;
 import org.meveo.model.notification.StrategyImportTypeEnum;
-import org.meveo.model.notification.WebHook;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
@@ -162,7 +156,8 @@ public class InboundRequestBean extends BaseBean<InboundRequest> {
   			if(inboundRequest.getParameters()!=null){
   	        	 String sep="";
   				for(String key:inboundRequest.getParameters().keySet()){
-  					params.append(sep).append(key).append(":").append(inboundRequest.getParameters().get(key));
+  					String valueParams=inboundRequest.getParameters().get(key);
+  					params.append(sep).append(key).append(":").append(Base64.encodeBase64String(valueParams.getBytes()));
   					sep="|";
   					}
   	        	 csv.appendValue(params.toString());
@@ -172,7 +167,8 @@ public class InboundRequestBean extends BaseBean<InboundRequest> {
  			if(inboundRequest.getCoockies()!=null){
  	        	 String sep="";
  				for(String key:inboundRequest.getCoockies().keySet()){
- 					coockies.append(sep).append(key).append(":").append(inboundRequest.getCoockies().get(key));
+ 					String valueCookies=inboundRequest.getCoockies().get(key);
+ 					coockies.append(sep).append(key).append(":").append(Base64.encodeBase64String(valueCookies.getBytes()));
  					sep="|";
  					}
  				csv.appendValue(coockies.toString());	
@@ -182,7 +178,8 @@ public class InboundRequestBean extends BaseBean<InboundRequest> {
  			if(inboundRequest.getHeaders()!=null){
  	        	 String sep="";
  				for(String key:inboundRequest.getHeaders().keySet()){
- 					headers.append(sep).append(key).append(":").append(inboundRequest.getHeaders().get(key));
+ 					String valueHeaders=inboundRequest.getHeaders().get(key);
+ 					headers.append(sep).append(key).append(":").append(Base64.encodeBase64String(valueHeaders.getBytes()));
  					sep="|";
  			}
  				csv.appendValue(headers.toString());
@@ -195,7 +192,8 @@ public class InboundRequestBean extends BaseBean<InboundRequest> {
   			if(inboundRequest.getResponseCoockies()!=null){
   	        	 String sep="";
   				for(String key:inboundRequest.getResponseCoockies().keySet()){
-  					responseCoockies.append(sep).append(key).append(":").append(inboundRequest.getResponseCoockies().get(key));
+  					String valueRespCookies=inboundRequest.getResponseCoockies().get(key);
+  					responseCoockies.append(sep).append(key).append(":").append(Base64.encodeBase64String(valueRespCookies.getBytes()));
   					sep="|";
   					}
   	        	 csv.appendValue(responseCoockies.toString());
@@ -204,7 +202,8 @@ public class InboundRequestBean extends BaseBean<InboundRequest> {
    			if(inboundRequest.getResponseHeaders()!=null){
            	 String sep="";
    				for(String key:inboundRequest.getResponseHeaders().keySet()){
-   					responseHeaders.append(sep).append(key).append(":").append(inboundRequest.getResponseHeaders().get(key));
+   					String valueRespHeaders=inboundRequest.getResponseHeaders().get(key);
+   					responseHeaders.append(sep).append(key).append(":").append(Base64.encodeBase64String(valueRespHeaders.getBytes()));
    					sep="|";
    					}
    	        	 csv.appendValue(responseHeaders.toString());
@@ -277,7 +276,8 @@ public class InboundRequestBean extends BaseBean<InboundRequest> {
 								Map<String,String> params = new HashMap<String, String>();
 								for(String element:mapElements){
 									String[] param=element.split(":");
-									params.put(param[0], param[1]);
+									String value=new String(Base64.decodeBase64(param[1]));
+									params.put(param[0], value);
 								}
 								inboundRequest.setParameters(params);
 							  }
@@ -288,7 +288,8 @@ public class InboundRequestBean extends BaseBean<InboundRequest> {
 								Map<String,String> coockies = new HashMap<String, String>();
 								for(String element:mapElements){
 									String[] param=element.split(":");
-									coockies.put(param[0], param[1]);
+									String value=new String(Base64.decodeBase64(param[1]));
+									coockies.put(param[0], value);
 								}
 								inboundRequest.setCoockies(coockies);
 							  }
@@ -299,7 +300,8 @@ public class InboundRequestBean extends BaseBean<InboundRequest> {
 								Map<String,String> headers = new HashMap<String, String>();
 								for(String element:mapElements){
 									String[] param=element.split(":");
-									headers.put(param[0], param[1]);
+									String value=new String(Base64.decodeBase64(param[1]));
+									headers.put(param[0], value);
 								}
 								inboundRequest.setHeaders(headers);
 							  }
@@ -314,7 +316,8 @@ public class InboundRequestBean extends BaseBean<InboundRequest> {
 								Map<String,String> responseCoockies = new HashMap<String, String>();
 								for(String element:mapElements){
 									String[] param=element.split(":");
-									responseCoockies.put(param[0], param[1]);
+									String value=new String(Base64.decodeBase64(param[1]));
+									responseCoockies.put(param[0], value);
 								}
 								inboundRequest.setResponseCoockies(responseCoockies);
 							  }
@@ -325,7 +328,8 @@ public class InboundRequestBean extends BaseBean<InboundRequest> {
 								Map<String,String> responseHeaders = new HashMap<String, String>();
 								for(String element:mapElements){
 									String[] param=element.split(":");
-									responseHeaders.put(param[0], param[1]);
+									String value=new String(Base64.decodeBase64(param[1]));
+									responseHeaders.put(param[0],value);
 								}
 								inboundRequest.setResponseHeaders(responseHeaders);
 							  }
@@ -366,7 +370,8 @@ public class InboundRequestBean extends BaseBean<InboundRequest> {
 					Map<String,String> params = new HashMap<String, String>();
 					for(String element:mapElements){
 						String[] param=element.split(":");
-						params.put(param[0], param[1]);
+						String value=new String(Base64.decodeBase64(param[1]));
+						params.put(param[0],value);
 					}
 					existingEntity.setParameters(params);
 				  }
@@ -377,7 +382,8 @@ public class InboundRequestBean extends BaseBean<InboundRequest> {
 					Map<String,String> coockies = new HashMap<String, String>();
 					for(String element:mapElements){
 						String[] param=element.split(":");
-						coockies.put(param[0], param[1]);
+						String value=new String(Base64.decodeBase64(param[1]));
+						coockies.put(param[0], value);
 					}
 					existingEntity.setCoockies(coockies);
 				  }
@@ -388,7 +394,8 @@ public class InboundRequestBean extends BaseBean<InboundRequest> {
 					Map<String,String> headers = new HashMap<String, String>();
 					for(String element:mapElements){
 						String[] param=element.split(":");
-						headers.put(param[0], param[1]);
+						String value=new String(Base64.decodeBase64(param[1]));
+						headers.put(param[0],value);
 					}
 					existingEntity.setHeaders(headers);
 				  }
@@ -403,7 +410,8 @@ public class InboundRequestBean extends BaseBean<InboundRequest> {
 					Map<String,String> responseCoockies = new HashMap<String, String>();
 					for(String element:mapElements){
 						String[] param=element.split(":");
-						responseCoockies.put(param[0], param[1]);
+						String value=new String(Base64.decodeBase64(param[1]));
+						responseCoockies.put(param[0],value);
 					}
 					existingEntity.setResponseCoockies(responseCoockies);
 				  }
@@ -414,17 +422,12 @@ public class InboundRequestBean extends BaseBean<InboundRequest> {
 					Map<String,String> responseHeaders = new HashMap<String, String>();
 					for(String element:mapElements){
 						String[] param=element.split(":");
-						responseHeaders.put(param[0], param[1]);
+						String value=new String(Base64.decodeBase64(param[1]));
+						responseHeaders.put(param[0],value);
 					}
 					existingEntity.setResponseHeaders(responseHeaders);
 				  }
 				}
-			
-			
-			
-			existingEntity
-					.setResponseContentType(values[RESPONSE_CONTENT_TYPE]);
-			existingEntity.setResponseEncoding(values[ENCODING]);
 			inboundRequestService.update(existingEntity);
 		}else if (strategyImportType
 				.equals(StrategyImportTypeEnum.REJECTE_IMPORT)) {

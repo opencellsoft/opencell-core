@@ -14,6 +14,7 @@ import javax.enterprise.context.ConversationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.StringUtils;
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
@@ -136,7 +137,8 @@ public class WebHookBean extends BaseBean<WebHook> {
 			if(webHook.getHeaders()!=null){
 				String sep="";
 				for(String key:webHook.getHeaders().keySet()){
-					headers.append(sep).append(key).append(":").append(webHook.getHeaders().get(key));
+					String valueHeaders=webHook.getHeaders().get(key);
+					headers.append(sep).append(key).append(":").append(Base64.encodeBase64String(valueHeaders.getBytes()));
 					sep="|";
 					}
 				csv.appendValue(headers.toString());	
@@ -145,7 +147,8 @@ public class WebHookBean extends BaseBean<WebHook> {
 			if(webHook.getParams()!=null){
 				String sep="";
 				for(String key:webHook.getParams().keySet()){
-					params.append(sep).append(key).append(":").append(webHook.getParams().get(key));
+					String valueParams=webHook.getParams().get(key);
+					params.append(sep).append(key).append(":").append(Base64.encodeBase64String(valueParams.getBytes()));
 					sep="|";
 					}
 				csv.appendValue(params.toString());
@@ -216,7 +219,8 @@ public void handleFileUpload(FileUploadEvent event) throws Exception {
 							Map<String,String> headers = new HashMap<String, String>();
 							for(String element:mapElements){
 								String[] param=element.split(":");
-								headers.put(param[0], param[1]);
+								String value=new String(Base64.decodeBase64(param[1]));
+								headers.put(param[0], value);
 							}
 							webHook.setHeaders(headers);
 						  }
@@ -227,7 +231,8 @@ public void handleFileUpload(FileUploadEvent event) throws Exception {
 								Map<String,String> params = new HashMap<String, String>();
 								for(String element:mapElements){
 									String[] param=element.split(":");
-									params.put(param[0], param[1]);
+									String value=new String(Base64.decodeBase64(param[1]));
+									params.put(param[0], value);
 								}
 								webHook.setParams(params);
 							  }
@@ -249,6 +254,7 @@ public void handleFileUpload(FileUploadEvent event) throws Exception {
 			} catch (RejectedImportException e) {
 				messages.error(new BundleKey("messages", e.getMessage()));
 			}
+		
 		}
 	}
 
@@ -274,7 +280,9 @@ public void handleFileUpload(FileUploadEvent event) throws Exception {
 					Map<String,String> headers = new HashMap<String, String>();
 					for(String element:mapElements){
 						String[] param=element.split(":");
-						headers.put(param[0], param[1]);
+						String value=new String(Base64.decodeBase64(param[1]));
+						headers.put(param[0],value);
+						
 					}
 					existingEntity.setHeaders(headers);
 				  }
@@ -285,7 +293,8 @@ public void handleFileUpload(FileUploadEvent event) throws Exception {
 						Map<String,String> params = new HashMap<String, String>();
 						for(String element:mapElements){
 							String[] param=element.split(":");
-							params.put(param[0], param[1]);
+							String value=new String(Base64.decodeBase64(param[1]));
+							params.put(param[0],value);
 						}
 						existingEntity.setParams(params);
 					  }
