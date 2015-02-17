@@ -15,6 +15,7 @@ public class ChartEntityModel {
 		minDate = cal.getTime();
 
 		cal.add(Calendar.MONTH, 1);
+		cal.add(Calendar.DATE, -1);
 		maxDate = cal.getTime();
 	}
 

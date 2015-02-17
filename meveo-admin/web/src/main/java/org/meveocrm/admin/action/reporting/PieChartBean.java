@@ -139,8 +139,11 @@ public class PieChartBean extends ChartEntityBean<PieChart> {
 	public PieChartEntityModel getModel(PieChartEntityModel pie) {
 
 		MeasurableQuantity mq = pie.getPieChart().getMeasurableQuantity();
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(pie.getMaxDate());
+		cal.add(Calendar.DATE, 1);
 		List<MeasuredValue> mvs = mvService.getByDateAndPeriod(null,
-				pie.getMinDate(), pie.getMaxDate(), null, mq);
+				pie.getMinDate(), cal.getTime(), null, mq);
 
 		PieChartModel chartModel = new PieChartModel();
 

@@ -143,8 +143,12 @@ public class BarChartBean extends ChartEntityBean<BarChart> {
 	public BarChartEntityModel getModel(BarChartEntityModel bar) {
 
 		MeasurableQuantity mq = bar.getBarChart().getMeasurableQuantity();
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(bar.getMaxDate());
+		cal.add(Calendar.DATE, 1);
+
 		List<MeasuredValue> mvs = mvService.getByDateAndPeriod(null,
-				bar.getMinDate(), bar.getMaxDate(), null, mq);
+				bar.getMinDate(), cal.getTime(), null, mq);
 
 		CartesianChartModel chartModel = new CartesianChartModel();
 
@@ -152,6 +156,9 @@ public class BarChartBean extends ChartEntityBean<BarChart> {
 		ChartSeries mvSeries = new ChartSeries();
 
 		mvSeries.setLabel(sdf.format(bar.getMinDate()));
+
+		log.info("Max Date : " + sdf.format(cal.getTime()) + "MQ: "
+				+ mq.getCode());
 
 		if (mvs.size() > 0) {
 			for (MeasuredValue measuredValue : mvs) {

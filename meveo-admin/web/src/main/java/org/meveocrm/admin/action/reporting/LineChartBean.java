@@ -141,8 +141,11 @@ public class LineChartBean extends ChartEntityBean<LineChart> {
 	public LineChartEntityModel getModel(LineChartEntityModel line) {
 
 		MeasurableQuantity mq = line.getLineChart().getMeasurableQuantity();
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(line.getMaxDate());
+		cal.add(Calendar.DATE, 1);
 		List<MeasuredValue> mvs = mvService.getByDateAndPeriod(null,
-				line.getMinDate(), line.getMaxDate(), null, mq);
+				line.getMinDate(), cal.getTime(), null, mq);
 
 		CartesianChartModel chartModel = new CartesianChartModel();
 
