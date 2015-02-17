@@ -122,6 +122,12 @@
 			<groupId>org.jboss.spec.javax.servlet</groupId>
 			<artifactId>jboss-servlet-api_3.0_spec</artifactId>
 		</dependency>
+		
+		    <dependency>
+			<groupId>commons-codec</groupId>
+			<artifactId>commons-codec</artifactId>
+			<version>1.10</version>
+			</dependency>
 
 		<!-- Import the CDI API, we use provided scope as the API is included in 
 			JBoss AS 7 -->
