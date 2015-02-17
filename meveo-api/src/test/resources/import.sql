@@ -1171,10 +1171,10 @@ insert into CAT_PRICE_PLAN_MATRIX (id, version, disabled, created, provider_id, 
 DROP SEQUENCE IF EXISTS CAT_PRICE_PLAN_MATRIX_SEQ;
 CREATE SEQUENCE CAT_PRICE_PLAN_MATRIX_SEQ start with 5 increment by 1;
 
-insert into account_entity (id, version, disabled, created, provider_id, code, description, lastname) values (1, 0, false, now(), 1, 'CUST1', 'CUST1', 'DEMO');
-insert into account_entity (id, version, disabled, created, provider_id, code, description, lastname) values (2, 0, false, now(), 1, 'CA1', 'CA1', 'DEMO');
-insert into account_entity (id, version, disabled, created, provider_id, code, description, lastname) values (3, 0, false, now(), 1, 'BA1', 'BA1', 'DEMO');
-insert into account_entity (id, version, disabled, created, provider_id, code, description, lastname) values (4, 0, false, now(), 1, 'UA1', 'UA1', 'DEMO');
+insert into account_entity (id, version, disabled, created, provider_id, code, description, lastname, DEFAULT_LEVEL) values (1, 0, false, now(), 1, 'CUST1', 'CUST1', 'DEMO', TRUE);
+insert into account_entity (id, version, disabled, created, provider_id, code, description, lastname, DEFAULT_LEVEL) values (2, 0, false, now(), 1, 'CA1', 'CA1', 'DEMO', TRUE);
+insert into account_entity (id, version, disabled, created, provider_id, code, description, lastname, DEFAULT_LEVEL) values (3, 0, false, now(), 1, 'BA1', 'BA1', 'DEMO', TRUE);
+insert into account_entity (id, version, disabled, created, provider_id, code, description, lastname, DEFAULT_LEVEL) values (4, 0, false, now(), 1, 'UA1', 'UA1', 'DEMO', TRUE);
 
 DROP SEQUENCE IF EXISTS ACCOUNT_ENTITY_SEQ;
 CREATE SEQUENCE ACCOUNT_ENTITY_SEQ start with 5 increment by 1;
