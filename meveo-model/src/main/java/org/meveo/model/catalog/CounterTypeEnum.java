@@ -3,8 +3,7 @@ package org.meveo.model.catalog;
 public enum CounterTypeEnum {
 
     USAGE(1, "counterTypeEnum.usage"),
-    NOTIFICATION(2, "counterTypeEnum.notification"),
-    DATA(3,"counterTypeEnum.data");
+    NOTIFICATION(2, "counterTypeEnum.notification");
 
     private Integer id;
     private String label;
