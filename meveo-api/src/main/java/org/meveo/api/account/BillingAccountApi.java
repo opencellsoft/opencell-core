@@ -112,6 +112,7 @@ public class BillingAccountApi extends AccountApi {
 			billingAccount.setSubscriptionDate(postData.getSubscriptionDate());
 			billingAccount.setTerminationDate(postData.getTerminationDate());
 			billingAccount.setElectronicBilling(postData.getElectronicBilling());
+			billingAccount.setEmail(postData.getEmail());
 
 			billingAccountService.createBillingAccount(billingAccount, currentUser, provider);
 		} else {
@@ -198,6 +199,7 @@ public class BillingAccountApi extends AccountApi {
 			billingAccount.setSubscriptionDate(postData.getSubscriptionDate());
 			billingAccount.setTerminationDate(postData.getTerminationDate());
 			billingAccount.setElectronicBilling(postData.getElectronicBilling());
+			billingAccount.setEmail(postData.getEmail());
 
 			billingAccountService.update(billingAccount, currentUser);
 		} else {
