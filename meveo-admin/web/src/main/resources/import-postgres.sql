@@ -966,7 +966,7 @@ DROP SEQUENCE IF EXISTS billing_trading_country_SEQ;
 CREATE SEQUENCE billing_trading_country_SEQ start with 3 increment by 1;
 
 --Counter Calendar
-insert into cat_calendar (cal_type,id, version, disabled, created, provider_id, creator_id, name, description) values ('YEARLY',1, 0, false, now(), 1, 1, 'CAL_COUNTER', 'Counter Calendar', 'COUNTER');
+insert into cat_calendar (cal_type,id, version, disabled, created, provider_id, creator_id, name, description) values ('YEARLY',1, 0, false, now(), 1, 1, 'CAL_COUNTER', 'Counter Calendar');
 insert into cat_calendar_days (calendar_id, day_id) values (1, 1);
 insert into cat_calendar_days (calendar_id, day_id) values (1, 101);
 insert into cat_calendar_days (calendar_id, day_id) values (1, 201);
