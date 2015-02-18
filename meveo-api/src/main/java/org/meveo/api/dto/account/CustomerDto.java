@@ -1,5 +1,7 @@
 package org.meveo.api.dto.account;
 
+import java.util.Date;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -26,8 +28,10 @@ public class CustomerDto extends AccountDto {
 	@XmlElement(required = true)
 	private String seller;
 
-	private ContactInformationDto contactInformation = new ContactInformationDto();
+	private String mandateIdentification = "";
+	private Date mandateDate;
 
+	private ContactInformationDto contactInformation = new ContactInformationDto();
 	private CustomerAccountsDto customerAccounts;
 
 	public CustomerDto() {
@@ -81,8 +85,8 @@ public class CustomerDto extends AccountDto {
 	@Override
 	public String toString() {
 		return "CustomerDto [customerCategory=" + customerCategory + ", customerBrand=" + customerBrand + ", seller="
-				+ seller + ", contactInformation=" + contactInformation + ", customerAccounts=" + customerAccounts
-				+ "]";
+				+ seller + ", mandateIdentification=" + mandateIdentification + ", mandateDate=" + mandateDate
+				+ ", contactInformation=" + contactInformation + ", customerAccounts=" + customerAccounts + "]";
 	}
 
 	public CustomerAccountsDto getCustomerAccounts() {
@@ -99,6 +103,22 @@ public class CustomerDto extends AccountDto {
 
 	public void setContactInformation(ContactInformationDto contactInformation) {
 		this.contactInformation = contactInformation;
+	}
+
+	public String getMandateIdentification() {
+		return mandateIdentification;
+	}
+
+	public void setMandateIdentification(String mandateIdentification) {
+		this.mandateIdentification = mandateIdentification;
+	}
+
+	public Date getMandateDate() {
+		return mandateDate;
+	}
+
+	public void setMandateDate(Date mandateDate) {
+		this.mandateDate = mandateDate;
 	}
 
 }
