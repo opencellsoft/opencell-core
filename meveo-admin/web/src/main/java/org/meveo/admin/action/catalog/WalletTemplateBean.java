@@ -19,7 +19,6 @@ package org.meveo.admin.action.catalog;
 import java.sql.BatchUpdateException;
 
 import javax.enterprise.context.ConversationScoped;
-import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -59,10 +58,9 @@ public class WalletTemplateBean extends BaseBean<WalletTemplate> {
 	 * @throws IllegalAccessException
 	 * @throws InstantiationException
 	 */
-	@Produces
-	@Named("walletTemplate")
-	public WalletTemplate init() {
-		initEntity();
+	@Override
+	public WalletTemplate initEntity() {
+		super.initEntity();
 
 		entity.setWalletType(BillingWalletTypeEnum.PREPAID);
 
