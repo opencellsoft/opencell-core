@@ -452,13 +452,15 @@ public class Provider extends BusinessEntity {
 		this.displayFreeTransacInInvoice = displayFreeTransacInInvoice;
 	}
 
-	public long getPrepaidReservationExpirationDelayinMillisec() {
+	public Long getPrepaidReservationExpirationDelayinMillisec() {
 		return prepaidReservationExpirationDelayinMillisec;
 	}
 
 	public void setPrepaidReservationExpirationDelayinMillisec(
-			long prepaidReservationExpirationDelayinMillisec) {
+			Long prepaidReservationExpirationDelayinMillisec) {
 		this.prepaidReservationExpirationDelayinMillisec = prepaidReservationExpirationDelayinMillisec;
 	}
+
+	
 
 }
