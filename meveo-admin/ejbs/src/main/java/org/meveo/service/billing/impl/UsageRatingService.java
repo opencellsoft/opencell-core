@@ -21,6 +21,7 @@ import javax.persistence.PersistenceContext;
 
 import org.apache.commons.lang.StringUtils;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.model.Auditable;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.CounterInstance;
@@ -28,6 +29,8 @@ import org.meveo.model.billing.CounterPeriod;
 import org.meveo.model.billing.InstanceStatusEnum;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.InvoiceSubcategoryCountry;
+import org.meveo.model.billing.Reservation;
+import org.meveo.model.billing.ReservationStatus;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.Tax;
 import org.meveo.model.billing.TradingCountry;
@@ -35,6 +38,7 @@ import org.meveo.model.billing.TradingCurrency;
 import org.meveo.model.billing.UsageChargeInstance;
 import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.billing.WalletOperationStatusEnum;
+import org.meveo.model.billing.WalletReservation;
 import org.meveo.model.cache.CounterInstanceCache;
 import org.meveo.model.cache.CounterPeriodCache;
 import org.meveo.model.cache.TriggeredEDRCache;
@@ -47,12 +51,14 @@ import org.meveo.model.crm.Provider;
 import org.meveo.model.rating.EDR;
 import org.meveo.model.rating.EDRStatusEnum;
 import org.meveo.util.MeveoCacheContainerProvider;
+import org.meveo.util.MeveoJpa;
 import org.slf4j.Logger;
 
 @Stateless
 public class UsageRatingService {
 
 	@PersistenceContext
+	@MeveoJpa
 	protected EntityManager em;
 
 	@Inject
@@ -65,6 +71,9 @@ public class UsageRatingService {
 
 	@Inject
 	private CounterInstanceService counterInstanceService;
+	
+	@Inject
+	private CounterPeriodService counterPeriodService;
 
 	@Inject
 	private RatingService ratingService;
@@ -346,7 +355,7 @@ public class UsageRatingService {
 
 	// @PreDestroy
 	// accessing Entity manager in predestroy is bugged in jboss7.1.3
-	void saveCounters() {
+	/*void saveCounters() {
 		for (Long key : MeveoCacheContainerProvider.getCounterCache().keySet()) {
 			CounterInstanceCache counterInstanceCache = MeveoCacheContainerProvider.getCounterCache().get(key);
 			if (counterInstanceCache.getCounterPeriods() != null) {
@@ -368,7 +377,7 @@ public class UsageRatingService {
 				}
 			}
 		}
-	}
+	}*/
 
 	/**
 	 * This method use the price plan to rate an EDR knowing what charge must be
@@ -384,9 +393,14 @@ public class UsageRatingService {
 	 */
 	public WalletOperation rateEDRwithMatchingCharge(EDR edr,
 			BigDecimal deducedQuantity, UsageChargeInstanceCache chargeCache,
-			UsageChargeInstance chargeInstance, Provider provider)
+			UsageChargeInstance chargeInstance, Provider provider,boolean isReservation)
 			throws BusinessException {
-		WalletOperation walletOperation = new WalletOperation();
+		WalletOperation walletOperation =null;
+		if(isReservation){
+			walletOperation = new WalletReservation();
+		} else {
+			walletOperation = new WalletOperation();
+		}
 		walletOperation.setSubscriptionDate(null);
 		walletOperation.setOperationDate(edr.getEventDate());
 		walletOperation.setParameter1(edr.getParameter1());
@@ -464,7 +478,7 @@ public class UsageRatingService {
 	 *         remaining quantity
 	 * @throws BusinessException
 	 */
-	BigDecimal deduceCounter(EDR edr, UsageChargeInstanceCache charge,
+	BigDecimal deduceCounter(EDR edr, UsageChargeInstanceCache charge,Reservation reservation,
 			User currentUser) throws BusinessException {
 		log.info("Deduce counter for key " + charge.getCounter().getKey());
 
@@ -544,6 +558,9 @@ public class UsageRatingService {
 					log.debug("we deduced {} and set the counter period value to {}",deducedQuantity,periodCache.getValue());
 					deducedQuantityInEDRUnit = edr.getQuantity();
 				}
+				if(reservation!=null && deducedQuantity.compareTo(BigDecimal.ZERO)>0){
+					reservation.getCounterPeriodValues().put(periodCache.getCounterPeriodId(), deducedQuantity);
+				}
 				// set the cache element to dirty so it is saved to DB when
 				// shutdown the server
 				// periodCache.setDbDirty(true);
@@ -558,6 +575,26 @@ public class UsageRatingService {
 		}
 		}
 		return deducedQuantityInEDRUnit;
+	}
+	
+	public void restoreCounters(Map<Long,BigDecimal> counterPeriodValues) throws BusinessException{
+		for(Long cId:counterPeriodValues.keySet())  {
+			CounterPeriod counterPeriod = counterPeriodService.findById(cId);
+			BigDecimal value=counterPeriodValues.get(cId);
+			Long counterKey = CounterInstanceCache.getKey(counterPeriod.getCounterInstance());
+			if (MeveoCacheContainerProvider.getCounterCache().containsKey(counterKey)) {
+				CounterInstanceCache counterCacheValue = MeveoCacheContainerProvider.getCounterCache().get(counterKey);
+				for(CounterPeriodCache cpc:counterCacheValue.getCounterPeriods()){
+					if(cpc.getCounterPeriodId()==cId){
+						cpc.getValue().add(value);
+						log.debug("added {} to cache (new value {})",value,cpc.getValue());
+						break;
+					}
+				}
+			}
+			counterPeriod.setValue(counterPeriod.getValue().add(value));
+			log.debug("added {}  (new value {}) to counterPeriod {}, counter {}",value,counterPeriod.getValue(),counterPeriod.getId(),counterKey);
+		}
 	}
 
 	/**
@@ -581,7 +618,7 @@ public class UsageRatingService {
 			// then we rate the charge if not we simply try the next charge
 			// if the counter has been decremented by the full quantity we stop
 			// the rating
-			deducedQuantity = deduceCounter(edr, charge, currentUser);
+			deducedQuantity = deduceCounter(edr, charge,null, currentUser);
 			if (edr.getQuantity().compareTo(deducedQuantity) == 0) {
 				stopEDRRating = true;
 			}
@@ -595,7 +632,7 @@ public class UsageRatingService {
 			UsageChargeInstance chargeInstance = usageChargeInstanceService
 					.findById(charge.getChargeInstanceId());
 			WalletOperation walletOperation = rateEDRwithMatchingCharge(edr,
-					deducedQuantity, charge, chargeInstance, provider);
+					deducedQuantity, charge, chargeInstance, provider,false);
 
 			if (deducedQuantity != null) {
 				edr.setQuantity(edr.getQuantity().subtract(deducedQuantity));
@@ -660,6 +697,42 @@ public class UsageRatingService {
 
 		return stopEDRRating;
 	}
+	
+	public boolean reserveEDRonChargeAndCounters(Reservation reservation,EDR edr, UsageChargeInstanceCache charge, User currentUser)
+			throws BusinessException {
+		boolean stopEDRRating = false;
+		BigDecimal deducedQuantity = null;
+		if (charge.getCounter() != null) {
+			deducedQuantity = deduceCounter(edr, charge,reservation, currentUser);
+			if (edr.getQuantity().compareTo(deducedQuantity) == 0) {
+				stopEDRRating = true;
+			}
+		} else {
+			stopEDRRating = true;
+		}
+
+		if (deducedQuantity == null
+				|| deducedQuantity.compareTo(BigDecimal.ZERO) > 0) {
+			Provider provider = charge.getProvider();
+			UsageChargeInstance chargeInstance = usageChargeInstanceService
+					.findById(charge.getChargeInstanceId());
+			WalletReservation walletOperation = (WalletReservation)rateEDRwithMatchingCharge(edr,
+					deducedQuantity, charge, chargeInstance, provider,true);
+			walletOperation.setReservation(reservation);
+			walletOperation.setStatus(WalletOperationStatusEnum.RESERVED);
+			reservation.setAmountWithoutTax(reservation.getAmountWithoutTax().add(walletOperation.getAmountWithoutTax()));
+			reservation.setAmountWithTax(reservation.getAmountWithoutTax().add(walletOperation.getAmountWithTax()));
+			if (deducedQuantity != null) {
+				edr.setQuantity(edr.getQuantity().subtract(deducedQuantity));
+				walletOperation.setQuantity(deducedQuantity);
+			}
+
+			walletOperationService.chargeWalletOperation(walletOperation, currentUser, provider);
+		} else {
+			log.warn("deduceQuantity is null");
+		}
+		return stopEDRRating;
+	}
 
 	/**
 	 * Rate an EDR using counters if they apply
@@ -668,11 +741,11 @@ public class UsageRatingService {
 	 */
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public void ratePostpaidUsage(EDR edr, User currentUser) throws BusinessException {
-		ratePostpaidUsageWithinTransaction(edr,currentUser);
+		rateUsageWithinTransaction(edr,currentUser);
 	}
 	
 	@TransactionAttribute(TransactionAttributeType.MANDATORY)
-	public void ratePostpaidUsageWithinTransaction(EDR edr, User currentUser) throws BusinessException {
+	public void rateUsageWithinTransaction(EDR edr, User currentUser) throws BusinessException {
 		BigDecimal originalQuantity = edr.getQuantity();
 
 		log.info("Rating EDR={}", edr);
@@ -756,6 +829,109 @@ public class UsageRatingService {
 		edr.setQuantity(originalQuantity);
 		edr.setLastUpdate(new Date());
 	}
+	
+	@TransactionAttribute(TransactionAttributeType.MANDATORY)
+	public Reservation reserveUsageWithinTransaction(EDR edr, User currentUser) throws BusinessException {
+
+		Reservation reservation = null;
+		BigDecimal originalQuantity = edr.getQuantity();
+
+		long time = System.currentTimeMillis();
+		log.debug("Reserving EDR={}, we override the event date with the current date", edr);
+		edr.setEventDate(new Date(time));
+
+		if (edr.getSubscription() == null) {
+			edr.setStatus(EDRStatusEnum.REJECTED);
+			edr.setRejectReason("Subscription is null");
+		} else {
+			boolean edrIsRated = false;
+
+			try {
+				if (MeveoCacheContainerProvider.getUsageChargeInstanceCache().containsKey(edr.getSubscription().getId())) {
+					// TODO:order charges by priority and id
+					List<UsageChargeInstanceCache> charges = MeveoCacheContainerProvider.getUsageChargeInstanceCache()
+							.get(edr.getSubscription().getId());
+					reservation=new Reservation();
+					reservation.setProvider(currentUser.getProvider());
+					reservation.setReservationDate(edr.getEventDate());
+					reservation.setExpiryDate(new Date(time+currentUser.getProvider().getPrepaidReservationExpirationDelayinMillisec()));;
+					reservation.setStatus(ReservationStatus.OPEN);
+					Auditable audit = new Auditable();
+					audit.setCreated(new Date());
+					audit.setCreator(currentUser);
+					reservation.setAuditable(audit);
+					//it would be nice to have a persistence context bound to the JTA transaction
+					em.persist(reservation);
+
+					for (UsageChargeInstanceCache charge : charges) {
+						UsageChargeTemplateCache templateCache = charge
+								.getTemplateCache();
+						log.info("try templateCache="
+								+ templateCache.toString());
+						if (templateCache.getFilter1() == null
+								|| templateCache.getFilter1().equals(
+										edr.getParameter1())) {
+							log.info("filter1 ok");
+							if (templateCache.getFilter2() == null
+									|| templateCache.getFilter2().equals(
+											edr.getParameter2())) {
+								log.info("filter2 ok");
+								if (templateCache.getFilter3() == null
+										|| templateCache.getFilter3().equals(
+												edr.getParameter3())) {
+									log.info("filter3 ok");
+									if (templateCache.getFilter4() == null
+											|| templateCache
+													.getFilter4()
+													.equals(edr.getParameter4())) {
+										log.info("filter4 ok");
+										if (templateCache.getFilterExpression() == null
+												|| matchExpression(
+														templateCache
+																.getFilterExpression(),
+														edr)) {
+											log.info("filterExpression ok");
+											// we found matching charge, if we
+											// rate
+											// it we exit the look
+											log.debug("found matchig charge inst : id="
+													+ charge.getChargeInstanceId());
+											edrIsRated = reserveEDRonChargeAndCounters(
+													reservation,edr, charge, currentUser);
+											if (edrIsRated) {
+												edr.setStatus(EDRStatusEnum.RATED);
+												break;
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+
+					if (!edrIsRated) {
+						edr.setStatus(EDRStatusEnum.REJECTED);
+						edr.setRejectReason("no matching charge");
+					}
+				} else {
+					edr.setStatus(EDRStatusEnum.REJECTED);
+					edr.setRejectReason("subscription has no usage charge");
+				}
+			} catch (Exception e) {
+				edr.setStatus(EDRStatusEnum.REJECTED);
+				edr.setRejectReason(e.getMessage());
+				//e.printStackTrace();
+				throw new BusinessException(e.getMessage());
+			}
+		}
+
+		// put back the original quantity in edr (could have been decrease by
+		// counters)
+		edr.setQuantity(originalQuantity);
+		edr.setLastUpdate(new Date());
+		return reservation;
+	}
+	
 
 	private boolean matchExpression(String expression, EDR edr) throws BusinessException {
 		Map<Object, Object> userMap = new HashMap<Object, Object>();
@@ -825,5 +1001,6 @@ public class UsageRatingService {
 		
 		return result;
 	}
+
 
 }

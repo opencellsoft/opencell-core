@@ -10,9 +10,6 @@ import javax.xml.bind.annotation.XmlType;
 
 import org.meveo.api.dto.BaseDto;
 
-/**
- * @author Edward P. Legaspi
- **/
 @XmlType(name = "ServiceInstance")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ServiceInstanceDto extends BaseDto {

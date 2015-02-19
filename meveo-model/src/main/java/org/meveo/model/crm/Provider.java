@@ -166,6 +166,10 @@ public class Provider extends BusinessEntity {
 
 	@Column(name = "DISPLAY_FREE_TX_IN_INVOICE")
 	private boolean displayFreeTransacInInvoice = false;
+	
+
+	@Column(name = "PREPAID_RESRV_DELAY_MS")
+	private long prepaidReservationExpirationDelayinMillisec = 60000;
 
 	public String getSerializedPaymentMethods() {
 		return serializedPaymentMethods;
@@ -446,6 +450,15 @@ public class Provider extends BusinessEntity {
 
 	public void setDisplayFreeTransacInInvoice(boolean displayFreeTransacInInvoice) {
 		this.displayFreeTransacInInvoice = displayFreeTransacInInvoice;
+	}
+
+	public long getPrepaidReservationExpirationDelayinMillisec() {
+		return prepaidReservationExpirationDelayinMillisec;
+	}
+
+	public void setPrepaidReservationExpirationDelayinMillisec(
+			long prepaidReservationExpirationDelayinMillisec) {
+		this.prepaidReservationExpirationDelayinMillisec = prepaidReservationExpirationDelayinMillisec;
 	}
 
 }
