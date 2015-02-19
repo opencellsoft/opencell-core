@@ -76,16 +76,20 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 	@Resource
 	protected TransactionSynchronizationRegistry txReg;
 
-	@Inject @Created
+	@Inject
+	@Created
 	protected Event<E> entityCreatedEventProducer;
 
-	@Inject @Updated
+	@Inject
+	@Updated
 	protected Event<E> entityUpdatedEventProducer;
-	
-	@Inject @Disabled
+
+	@Inject
+	@Disabled
 	protected Event<E> entityDisabledEventProducer;
-	
-	@Inject @Removed
+
+	@Inject
+	@Removed
 	protected Event<E> entityRemovedEventProducer;
 
 	private Provider provider;
@@ -302,10 +306,14 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 	/**
 	 * @see org.meveo.service.base.local.IPersistenceService#list()
 	 */
-	@SuppressWarnings("unchecked")
 	public List<E> list() {
+		return list(getCurrentProvider());
+	}
+
+	@SuppressWarnings("unchecked")
+	public List<E> list(Provider provider) {
 		final Class<? extends E> entityClass = getEntityClass();
-		QueryBuilder queryBuilder = new QueryBuilder(entityClass, "a", null, getCurrentProvider());
+		QueryBuilder queryBuilder = new QueryBuilder(entityClass, "a", null, provider);
 		Query query = queryBuilder.getQuery(getEntityManager());
 		return query.getResultList();
 	}
@@ -390,7 +398,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 		// Ignore current provider constraint if "skipProviderConstraint"
 		// parameter was passed to search
 		Provider provider = getCurrentProvider();
-		if (filters!=null && filters.containsKey(SEARCH_SKIP_PROVIDER_CONSTRAINT)) {
+		if (filters != null && filters.containsKey(SEARCH_SKIP_PROVIDER_CONSTRAINT)) {
 			provider = null;
 		}
 

@@ -14,7 +14,7 @@ import org.meveo.api.dto.response.BaseResponse;
  **/
 @XmlRootElement(name = "ListAccessResponse")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ListAccessResponse extends BaseResponse {
+public class ListAccessResponseDto extends BaseResponse {
 
 	private static final long serialVersionUID = -2223795184710609153L;
 

@@ -25,8 +25,8 @@ import org.meveo.api.dto.response.account.GetAccessResponse;
 import org.meveo.api.dto.response.account.GetBillingAccountResponse;
 import org.meveo.api.dto.response.account.GetCustomerAccountResponse;
 import org.meveo.api.dto.response.account.GetCustomerResponse;
-import org.meveo.api.dto.response.account.GetListAccessResponse;
 import org.meveo.api.dto.response.account.GetUserAccountResponse;
+import org.meveo.api.dto.response.account.ListAccessResponseDto;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.LoggingInterceptor;
 import org.meveo.api.ws.AccountWs;
@@ -494,8 +494,8 @@ public class AccountWsImpl extends BaseWs implements AccountWs {
 	}
 
 	@Override
-	public GetListAccessResponse listAccess(String subscriptionCode) {
-		GetListAccessResponse result = new GetListAccessResponse();
+	public ListAccessResponseDto listAccess(String subscriptionCode) {
+		ListAccessResponseDto result = new ListAccessResponseDto();
 
 		try {
 			result.setAccesses(accessApi.listBySubscription(subscriptionCode, getCurrentUser().getProvider()));

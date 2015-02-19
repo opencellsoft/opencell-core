@@ -43,6 +43,7 @@ import org.meveo.api.dto.response.GetProviderResponse;
 import org.meveo.api.dto.response.GetSellerResponse;
 import org.meveo.api.dto.response.GetTaxResponse;
 import org.meveo.api.dto.response.GetUserResponse;
+import org.meveo.api.dto.response.ListSellerResponseDto;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.LoggingInterceptor;
 import org.meveo.api.ws.SettingsWs;
@@ -984,6 +985,21 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
 			result.setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
+		}
+
+		return result;
+	}
+
+	@Override
+	public ListSellerResponseDto listSeller() {
+		ListSellerResponseDto result = new ListSellerResponseDto();
+
+		try {
+			result.setSellers(sellerApi.list(getCurrentUser().getProvider()));
+		} catch (Exception e) {
+			result.getActionStatus().setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
+			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
+			result.getActionStatus().setMessage(e.getMessage());
 		}
 
 		return result;

@@ -1,6 +1,8 @@
 package org.meveo.api;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -211,6 +213,19 @@ public class SellerApi extends BaseApi {
 
 			throw new MissingParameterException(getMissingParametersExceptionMessage());
 		}
+	}
+
+	public List<SellerDto> list(Provider provider) {
+		List<SellerDto> result = new ArrayList<SellerDto>();
+
+		List<Seller> sellers = sellerService.list(provider);
+		if (sellers != null) {
+			for (Seller seller : sellers) {
+				result.add(new SellerDto(seller));
+			}
+		}
+
+		return result;
 	}
 
 }
