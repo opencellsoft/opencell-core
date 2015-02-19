@@ -169,7 +169,7 @@ public class Provider extends BusinessEntity {
 	
 
 	@Column(name = "PREPAID_RESRV_DELAY_MS")
-	private long prepaidReservationExpirationDelayinMillisec = 60000;
+	private Long prepaidReservationExpirationDelayinMillisec =Long.valueOf(60000);
 
 	public String getSerializedPaymentMethods() {
 		return serializedPaymentMethods;
@@ -452,13 +452,15 @@ public class Provider extends BusinessEntity {
 		this.displayFreeTransacInInvoice = displayFreeTransacInInvoice;
 	}
 
-	public long getPrepaidReservationExpirationDelayinMillisec() {
+	public Long getPrepaidReservationExpirationDelayinMillisec() {
 		return prepaidReservationExpirationDelayinMillisec;
 	}
 
 	public void setPrepaidReservationExpirationDelayinMillisec(
-			long prepaidReservationExpirationDelayinMillisec) {
+			Long prepaidReservationExpirationDelayinMillisec) {
 		this.prepaidReservationExpirationDelayinMillisec = prepaidReservationExpirationDelayinMillisec;
 	}
+
+	
 
 }
