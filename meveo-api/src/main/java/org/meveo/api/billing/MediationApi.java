@@ -2,7 +2,12 @@ package org.meveo.api.billing;
 
 import java.util.List;
 
+import javax.annotation.Resource;
 import javax.ejb.Stateless;
+import javax.ejb.Timeout;
+import javax.ejb.Timer;
+import javax.ejb.TimerConfig;
+import javax.ejb.TimerService;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
@@ -11,13 +16,17 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.BaseApi;
 import org.meveo.api.MeveoApiErrorCode;
 import org.meveo.api.dto.billing.CdrListDto;
+import org.meveo.api.dto.billing.PrepaidReservationDto;
+import org.meveo.api.dto.response.CdrReservationResponse;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.User;
+import org.meveo.model.billing.Reservation;
 import org.meveo.model.rating.EDR;
 import org.meveo.model.rating.EDRStatusEnum;
 import org.meveo.service.billing.impl.EdrService;
+import org.meveo.service.billing.impl.ReservationService;
 import org.meveo.service.billing.impl.UsageRatingService;
 import org.meveo.service.medina.impl.CDRParsingException;
 import org.meveo.service.medina.impl.CDRParsingService;
@@ -28,14 +37,21 @@ public class MediationApi extends BaseApi {
 
 	@Inject
 	private Logger log;
-
+	
+	@Resource
+	private TimerService timerService;
+	
 	@Inject
 	private CDRParsingService cdrParsingService;
 
 	@Inject
 	private EdrService edrService;
 	
-	@Inject UsageRatingService usageRatingService;
+	@Inject 
+	private UsageRatingService usageRatingService;
+	
+	@Inject 
+	private ReservationService reservationService;
 
 	public void registerCdrList(CdrListDto postData, User currentUser) throws MeveoApiException {
 
@@ -84,7 +100,7 @@ public class MediationApi extends BaseApi {
 					log.debug("edr={}", edr);
 					edrService.create(edr, user, user.getProvider());
 					try {
-						usageRatingService.ratePostpaidUsageWithinTransaction(edr, user);
+						usageRatingService.rateUsageWithinTransaction(edr, user);
 						if(edr.getStatus()==EDRStatusEnum.REJECTED){
 							try{
 								edrService.remove(edr);
@@ -114,4 +130,100 @@ public class MediationApi extends BaseApi {
 			throw new MissingParameterException(getMissingParametersExceptionMessage());
 		}
 	}
+	
+	@Timeout
+	private void reservationExpired(Timer timer){
+		Object[] objs = (Object[]) timer.getInfo();
+		try {
+			reservationService.cancelPrepaidReservationInNewTransaction((Long)objs[0],(User)objs[1]);
+		} catch (BusinessException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	//if the reservation succeed then returns -1, else returns the available quantity for this cdr
+	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+	public CdrReservationResponse reserveCdr(String  cdr, User user, String ip) throws MeveoApiException {
+		CdrReservationResponse result = new CdrReservationResponse();
+		//TODO: if insufficient balance retry with lower quantity
+		result.setAvailableQuantity(-1);
+		if(!StringUtils.isBlank(cdr)){
+			try {
+				cdrParsingService.initByApi(user.getUserName(), ip);
+			} catch (BusinessException e1) {
+				log.error(e1.getMessage());
+				throw new MeveoApiException(e1.getMessage());
+			}
+			List<EDR> edrs;
+			try {
+				edrs = cdrParsingService.getEDRList(cdr,user.getProvider());
+				for (EDR edr : edrs) {
+					log.debug("edr={}", edr);
+					edrService.create(edr, user, user.getProvider());
+					try {
+						Reservation reservation=usageRatingService.reserveUsageWithinTransaction(edr, user);
+						if(edr.getStatus()==EDRStatusEnum.REJECTED){
+							log.error("edr rejected={}", edr.getRejectReason());
+							throw new MeveoApiException(edr.getRejectReason());
+						}
+						result.setReservationId(reservation.getId());
+						//schedule cancellation at expiry
+						TimerConfig timerConfig = new TimerConfig();
+						Object[] objs = {reservation.getId(),user};
+						timerConfig.setInfo(objs);
+						timerService.createSingleActionTimer(
+								user.getProvider().getPrepaidReservationExpirationDelayinMillisec(),timerConfig);
+					} catch (BusinessException e) {
+						log.error("Exception rating edr={}", e.getMessage());
+						if("INSUFFICIENT_BALANCE".equals(e.getMessage())){
+							throw new MeveoApiException(MeveoApiErrorCode.INSUFFICIENT_BALANCE,e.getMessage());
+						} else {
+							throw new MeveoApiException(MeveoApiErrorCode.BUSINESS_API_EXCEPTION,e.getMessage());
+						}
+						
+					}
+				}
+			} catch (CDRParsingException e) {
+				log.error("Error parsing cdr={}", e.getRejectionCause());
+				throw new MeveoApiException(e.getRejectionCause().toString());
+			}
+		} else {
+			missingParameters.add("cdr");
+			throw new MissingParameterException(getMissingParametersExceptionMessage());
+		}
+		return result;
+	}
+	
+	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+	public void confirmReservation(PrepaidReservationDto  reservationDto, User user, String ip) throws MeveoApiException {
+		if (reservationDto.getReservationId() > 0) {
+			try {
+				reservationService.confirmPrepaidReservation(reservationDto.getReservationId(),reservationDto.getConsumedQuantity(),user);
+			} catch (BusinessException e) {
+				e.printStackTrace();
+				throw new MeveoApiException(e.getMessage());
+			}
+		} else {
+			missingParameters.add("reservation");
+			throw new MissingParameterException(getMissingParametersExceptionMessage());
+		}
+	}
+	
+
+	
+	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+	public void cancelReservation(PrepaidReservationDto  reservationDto, User user, String ip) throws MeveoApiException {
+		if (reservationDto.getReservationId() > 0) {
+			try {
+				reservationService.cancelPrepaidReservation(reservationDto.getReservationId(),user);
+			} catch (BusinessException e) {
+				e.printStackTrace();
+				throw new MeveoApiException(e.getMessage());
+			}
+		} else {
+			missingParameters.add("reservation");
+			throw new MissingParameterException(getMissingParametersExceptionMessage());
+		}
+	}
+
 }
