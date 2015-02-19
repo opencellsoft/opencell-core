@@ -816,11 +816,10 @@ public class AccountHierarchyApi extends BaseApi {
 							}
 
 							customer.setSeller(seller);
-							customer.setDescription(customerDto.getDescription());
 
 							if (!StringUtils.isBlank(customerDto.getCustomerBrand())) {
-								CustomerBrand customerBrand = customerBrandService.findByCode(customerDto
-										.getCustomerBrand());
+								CustomerBrand customerBrand = customerBrandService.findByCode(
+										customerDto.getCustomerBrand(), provider);
 								if (customerBrand != null) {
 									customer.setCustomerBrand(customerBrand);
 								}
@@ -830,8 +829,8 @@ public class AccountHierarchyApi extends BaseApi {
 							}
 
 							if (!StringUtils.isBlank(customerDto.getCustomerCategory())) {
-								CustomerCategory customerCategory = customerCategoryService.findByCode(customerDto
-										.getCustomerCategory());
+								CustomerCategory customerCategory = customerCategoryService.findByCode(
+										customerDto.getCustomerCategory(), provider);
 								if (customerCategory != null) {
 									customer.setCustomerCategory(customerCategory);
 								}
@@ -839,6 +838,19 @@ public class AccountHierarchyApi extends BaseApi {
 								missingParameters.add("customer.customerCategory");
 								throw new MissingParameterException(getMissingParametersExceptionMessage());
 							}
+
+							if (customerDto.getContactInformation() != null) {
+								customer.getContactInformation().setEmail(
+										customerDto.getContactInformation().getEmail());
+								customer.getContactInformation().setPhone(
+										customerDto.getContactInformation().getPhone());
+								customer.getContactInformation().setMobile(
+										customerDto.getContactInformation().getMobile());
+								customer.getContactInformation().setFax(customerDto.getContactInformation().getFax());
+							}
+
+							customer.setMandateDate(customerDto.getMandateDate());
+							customer.setMandateIdentification(customerDto.getMandateIdentification());
 
 							customer.setProvider(provider);
 							if (customer.isTransient()) {
@@ -891,7 +903,6 @@ public class AccountHierarchyApi extends BaseApi {
 									}
 
 									customerAccount.setCustomer(customer);
-									customerAccount.setDescription(customerAccount.getDescription());
 
 									if (!StringUtils.isBlank(customerAccountDto.getCurrency())) {
 										TradingCurrency tradingCurrency = tradingCurrencyService
@@ -948,6 +959,17 @@ public class AccountHierarchyApi extends BaseApi {
 									customerAccount.setMandateDate(customerAccountDto.getMandateDate());
 									customerAccount.setMandateIdentification(customerAccountDto
 											.getMandateIdentification());
+
+									if (customerAccount.getContactInformation() != null) {
+										customer.getContactInformation().setEmail(
+												customerAccount.getContactInformation().getEmail());
+										customer.getContactInformation().setPhone(
+												customerAccount.getContactInformation().getPhone());
+										customer.getContactInformation().setMobile(
+												customerAccount.getContactInformation().getMobile());
+										customer.getContactInformation().setFax(
+												customerAccount.getContactInformation().getFax());
+									}
 
 									customerAccount.setProvider(provider);
 									if (customerAccount.isTransient()) {
@@ -1009,7 +1031,6 @@ public class AccountHierarchyApi extends BaseApi {
 											}
 
 											billingAccount.setCustomerAccount(customerAccount);
-											billingAccount.setDescription(customerAccount.getDescription());
 
 											if (!StringUtils.isBlank(billingAccountDto.getBillingCycle())) {
 												BillingCycle billingCycle = billingCycleService.findByBillingCycleCode(
@@ -1067,6 +1088,7 @@ public class AccountHierarchyApi extends BaseApi {
 											billingAccount.setTerminationDate(billingAccount.getTerminationDate());
 											billingAccount.setElectronicBilling(billingAccountDto
 													.getElectronicBilling());
+											billingAccount.setEmail(billingAccountDto.getEmail());
 
 											billingAccount.setProvider(provider);
 											if (billingAccount.isTransient()) {
@@ -1130,7 +1152,6 @@ public class AccountHierarchyApi extends BaseApi {
 													}
 
 													userAccount.setBillingAccount(billingAccount);
-													userAccount.setDescription(userAccountDto.getDescription());
 
 													try {
 														userAccount.setStatus(AccountStatusEnum.valueOf(userAccountDto
@@ -1447,6 +1468,11 @@ public class AccountHierarchyApi extends BaseApi {
 
 	private void populateNameAndAddress(AccountEntity accountEntity, AccountDto accountDto,
 			AccountLevelEnum accountLevel, User currentUser) {
+
+		accountEntity.setDescription(accountDto.getDescription());
+		accountEntity.setExternalRef1(accountDto.getExternalRef1());
+		accountEntity.setExternalRef2(accountDto.getExternalRef2());
+
 		if (accountDto.getName() != null) {
 			accountEntity.getName().setFirstName(accountDto.getName().getFirstName());
 			accountEntity.getName().setLastName(accountDto.getName().getLastName());

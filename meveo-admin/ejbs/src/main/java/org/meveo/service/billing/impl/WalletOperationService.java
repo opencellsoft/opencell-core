@@ -1414,7 +1414,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 			List<Long> walletIds = usageChargeInstanceWallet.get(op.getChargeInstance().getId());
 			log.debug("chargeWalletOperation chargeInstanceId found in usageCache with {} wallet ids", walletIds.size());
 			result = chargeOnWalletIds(walletIds, op, creator, provider);
-		} else if (op.getChargeInstance().isPrepaid()
+		} else if (op.getChargeInstance().getPrepaid()
 				&& (op.getChargeInstance() instanceof RecurringChargeInstance || op.getChargeInstance() instanceof OneShotChargeInstance)) {
 			List<Long> walletIds = new ArrayList<>();
 			for (WalletInstance wallet : op.getChargeInstance().getWalletInstances()) {
@@ -1423,7 +1423,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 			log.debug("chargeWalletOperation is recurring or oneshot, and associated to {} wallet ids",
 					walletIds.size());
 			result = chargeOnWalletIds(walletIds, op, creator, provider);
-		} else if (!op.getChargeInstance().isPrepaid()) {
+		} else if (!op.getChargeInstance().getPrepaid()) {
 			op.setWallet(op.getChargeInstance().getSubscription().getUserAccount().getWallet());
 			log.debug("chargeWalletOperation is postpaid, set wallet to {}", op.getWallet());
 			result.add(op);

@@ -74,6 +74,8 @@ public class CustomerApi extends AccountApi {
 			customer.setCustomerCategory(customerCategory);
 			customer.setCustomerBrand(customerBrand);
 			customer.setSeller(seller);
+			customer.setMandateDate(postData.getMandateDate());
+			customer.setMandateIdentification(postData.getMandateIdentification());
 
 			if (postData.getContactInformation() != null) {
 				customer.getContactInformation().setEmail(postData.getContactInformation().getEmail());
@@ -137,6 +139,8 @@ public class CustomerApi extends AccountApi {
 			customer.setCustomerCategory(customerCategory);
 			customer.setCustomerBrand(customerBrand);
 			customer.setSeller(seller);
+			customer.setMandateDate(postData.getMandateDate());
+			customer.setMandateIdentification(postData.getMandateIdentification());
 
 			if (postData.getContactInformation() != null) {
 				customer.getContactInformation().setEmail(postData.getContactInformation().getEmail());
