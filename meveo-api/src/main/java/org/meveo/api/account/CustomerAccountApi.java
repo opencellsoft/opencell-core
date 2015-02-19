@@ -1,7 +1,6 @@
 package org.meveo.api.account;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -14,6 +13,7 @@ import org.meveo.api.dto.AccountOperationDto;
 import org.meveo.api.dto.CustomFieldDto;
 import org.meveo.api.dto.MatchingAmountDto;
 import org.meveo.api.dto.account.CustomerAccountDto;
+import org.meveo.api.dto.account.CustomerAccountsDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
@@ -328,18 +328,18 @@ public class CustomerAccountApi extends AccountApi {
 		}
 	}
 
-	public List<CustomerAccountDto> listByCustomer(String customerCode, Provider provider) throws MeveoApiException {
+	public CustomerAccountsDto listByCustomer(String customerCode, Provider provider) throws MeveoApiException {
 		if (!StringUtils.isBlank(customerCode)) {
 			Customer customer = customerService.findByCode(customerCode, provider);
 			if (customer == null) {
 				throw new EntityDoesNotExistsException(Customer.class, customerCode);
 			}
 
-			List<CustomerAccountDto> result = new ArrayList<CustomerAccountDto>();
+			CustomerAccountsDto result = new CustomerAccountsDto();
 			List<CustomerAccount> customerAccounts = customerAccountService.listByCustomer(customer);
 			if (customerAccounts != null) {
 				for (CustomerAccount ca : customerAccounts) {
-					result.add(new CustomerAccountDto(ca));
+					result.getCustomerAccount().add(new CustomerAccountDto(ca));
 				}
 			}
 

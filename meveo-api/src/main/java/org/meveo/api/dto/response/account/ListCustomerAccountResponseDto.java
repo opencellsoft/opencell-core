@@ -1,12 +1,10 @@
 package org.meveo.api.dto.response.account;
 
-import java.util.List;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.meveo.api.dto.account.CustomerAccountDto;
+import org.meveo.api.dto.account.CustomerAccountsDto;
 import org.meveo.api.dto.response.BaseResponse;
 
 /**
@@ -14,17 +12,17 @@ import org.meveo.api.dto.response.BaseResponse;
  **/
 @XmlRootElement(name = "ListCustomerAccountResponse")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ListCustomerAccountResponse extends BaseResponse {
+public class ListCustomerAccountResponseDto extends BaseResponse {
 
 	private static final long serialVersionUID = 7705676034964165327L;
 
-	private List<CustomerAccountDto> customerAccounts;
+	private CustomerAccountsDto customerAccounts = new CustomerAccountsDto();
 
-	public List<CustomerAccountDto> getCustomerAccounts() {
+	public CustomerAccountsDto getCustomerAccounts() {
 		return customerAccounts;
 	}
 
-	public void setCustomerAccounts(List<CustomerAccountDto> customerAccounts) {
+	public void setCustomerAccounts(CustomerAccountsDto customerAccounts) {
 		this.customerAccounts = customerAccounts;
 	}
 

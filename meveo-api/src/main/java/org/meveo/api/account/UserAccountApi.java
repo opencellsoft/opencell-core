@@ -1,6 +1,5 @@
 package org.meveo.api.account;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.ejb.Stateless;
@@ -8,6 +7,7 @@ import javax.inject.Inject;
 
 import org.meveo.admin.exception.AccountAlreadyExistsException;
 import org.meveo.api.dto.account.UserAccountDto;
+import org.meveo.api.dto.account.UserAccountsDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
@@ -130,19 +130,18 @@ public class UserAccountApi extends AccountApi {
 		}
 	}
 
-	public List<UserAccountDto> listByBillingAccount(String billingAccountCode, Provider provider)
-			throws MeveoApiException {
+	public UserAccountsDto listByBillingAccount(String billingAccountCode, Provider provider) throws MeveoApiException {
 		if (!StringUtils.isBlank(billingAccountCode)) {
 			BillingAccount billingAccount = billingAccountService.findByCode(billingAccountCode, provider);
 			if (billingAccount == null) {
 				throw new EntityDoesNotExistsException(BillingAccount.class, billingAccountCode);
 			}
 
-			List<UserAccountDto> result = new ArrayList<UserAccountDto>();
+			UserAccountsDto result = new UserAccountsDto();
 			List<UserAccount> userAccounts = userAccountService.listByBillingAccount(billingAccount);
 			if (userAccounts != null) {
 				for (UserAccount ua : userAccounts) {
-					result.add(new UserAccountDto(ua));
+					result.getUserAccount().add(new UserAccountDto(ua));
 				}
 			}
 

@@ -19,6 +19,10 @@ import org.meveo.api.dto.response.account.GetCustomerAccountResponse;
 import org.meveo.api.dto.response.account.GetCustomerResponse;
 import org.meveo.api.dto.response.account.GetUserAccountResponse;
 import org.meveo.api.dto.response.account.ListAccessResponseDto;
+import org.meveo.api.dto.response.account.ListBillingAccountResponseDto;
+import org.meveo.api.dto.response.account.ListCustomerAccountResponseDto;
+import org.meveo.api.dto.response.account.ListCustomerResponseDto;
+import org.meveo.api.dto.response.account.ListUserAccountResponseDto;
 
 /**
  * @author Edward P. Legaspi
@@ -103,5 +107,18 @@ public interface AccountWs extends IBaseWs {
 
 	@WebMethod
 	ListAccessResponseDto listAccess(@WebParam(name = "subscriptionCode") String subscriptionCode);
+
+	@WebMethod
+	ListCustomerResponseDto listCustomerWithFilter(@WebParam(name = "customer") CustomerDto postData);
+
+	@WebMethod
+	ListCustomerAccountResponseDto listByCustomer(@WebParam(name = "customerCode") String customerCode);
+
+	@WebMethod
+	ListBillingAccountResponseDto listByCustomerAccount(
+			@WebParam(name = "customerAccountCode") String customerAccountCode);
+
+	@WebMethod
+	ListUserAccountResponseDto listByBillingAccount(@WebParam(name = "billingAccountCode") String billingAccountCode);
 
 }

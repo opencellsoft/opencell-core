@@ -14,7 +14,7 @@ import javax.ws.rs.core.MediaType;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.account.BillingAccountDto;
 import org.meveo.api.dto.response.account.GetBillingAccountResponse;
-import org.meveo.api.dto.response.account.ListBillingAccountResponse;
+import org.meveo.api.dto.response.account.ListBillingAccountResponseDto;
 import org.meveo.api.rest.IBaseRs;
 import org.meveo.api.rest.security.RSSecured;
 
@@ -57,6 +57,6 @@ public interface BillingAccountRs extends IBaseRs {
 	 */
 	@GET
 	@Path("/list")
-	ListBillingAccountResponse listByCustomerAccount(@QueryParam("customerAccountCode") String customerAccountCode);
+	ListBillingAccountResponseDto listByCustomerAccount(@QueryParam("customerAccountCode") String customerAccountCode);
 
 }
