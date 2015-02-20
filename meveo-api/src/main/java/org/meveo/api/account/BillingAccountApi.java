@@ -1,12 +1,12 @@
 package org.meveo.api.account;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
 import org.meveo.api.dto.account.BillingAccountDto;
+import org.meveo.api.dto.account.BillingAccountsDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
@@ -112,6 +112,7 @@ public class BillingAccountApi extends AccountApi {
 			billingAccount.setSubscriptionDate(postData.getSubscriptionDate());
 			billingAccount.setTerminationDate(postData.getTerminationDate());
 			billingAccount.setElectronicBilling(postData.getElectronicBilling());
+			billingAccount.setEmail(postData.getEmail());
 
 			billingAccountService.createBillingAccount(billingAccount, currentUser, provider);
 		} else {
@@ -198,6 +199,7 @@ public class BillingAccountApi extends AccountApi {
 			billingAccount.setSubscriptionDate(postData.getSubscriptionDate());
 			billingAccount.setTerminationDate(postData.getTerminationDate());
 			billingAccount.setElectronicBilling(postData.getElectronicBilling());
+			billingAccount.setEmail(postData.getEmail());
 
 			billingAccountService.update(billingAccount, currentUser);
 		} else {
@@ -255,7 +257,7 @@ public class BillingAccountApi extends AccountApi {
 		}
 	}
 
-	public List<BillingAccountDto> listByCustomerAccount(String customerAccountCode, Provider provider)
+	public BillingAccountsDto listByCustomerAccount(String customerAccountCode, Provider provider)
 			throws MeveoApiException {
 		if (!StringUtils.isBlank(customerAccountCode)) {
 			CustomerAccount customerAccount = customerAccountService.findByCode(customerAccountCode, provider);
@@ -263,11 +265,11 @@ public class BillingAccountApi extends AccountApi {
 				throw new EntityDoesNotExistsException(CustomerAccount.class, customerAccountCode);
 			}
 
-			List<BillingAccountDto> result = new ArrayList<BillingAccountDto>();
+			BillingAccountsDto result = new BillingAccountsDto();
 			List<BillingAccount> billingAccounts = billingAccountService.listByCustomerAccount(customerAccount);
 			if (billingAccounts != null) {
 				for (BillingAccount ba : billingAccounts) {
-					result.add(new BillingAccountDto(ba));
+					result.getBillingAccount().add(new BillingAccountDto(ba));
 				}
 			}
 

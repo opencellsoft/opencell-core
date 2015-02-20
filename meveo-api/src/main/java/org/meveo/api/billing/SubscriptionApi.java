@@ -18,6 +18,7 @@ import org.meveo.api.dto.CustomFieldDto;
 import org.meveo.api.dto.account.ActivateServicesDto;
 import org.meveo.api.dto.account.ApplyOneShotChargeInstanceDto;
 import org.meveo.api.dto.billing.SubscriptionDto;
+import org.meveo.api.dto.billing.SubscriptionsDto;
 import org.meveo.api.dto.billing.TerminateSubscriptionDto;
 import org.meveo.api.dto.billing.TerminateSubscriptionServicesDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
@@ -400,7 +401,7 @@ public class SubscriptionApi extends BaseApi {
 						(OneShotChargeTemplate) oneShotChargeTemplate, postData.getWallet(),
 						postData.getOperationDate(), postData.getAmountWithoutTax(), postData.getAmountWithTax(),
 						postData.getQuantity(), postData.getCriteria1(), postData.getCriteria2(),
-						postData.getCriteria3(), currentUser,true);
+						postData.getCriteria3(), currentUser, true);
 			} catch (BusinessException e) {
 				throw new MeveoApiException(e.getMessage());
 			}
@@ -521,18 +522,18 @@ public class SubscriptionApi extends BaseApi {
 		}
 	}
 
-	public List<SubscriptionDto> listByUserAccount(String userAccountCode, Provider provider) throws MeveoApiException {
+	public SubscriptionsDto listByUserAccount(String userAccountCode, Provider provider) throws MeveoApiException {
 		if (!StringUtils.isBlank(userAccountCode)) {
 			UserAccount userAccount = userAccountService.findByCode(userAccountCode, provider);
 			if (userAccount == null) {
 				throw new EntityDoesNotExistsException(UserAccount.class, userAccountCode);
 			}
 
-			List<SubscriptionDto> result = new ArrayList<SubscriptionDto>();
+			SubscriptionsDto result = new SubscriptionsDto();
 			List<Subscription> subscriptions = subscriptionService.listByUserAccount(userAccount);
 			if (subscriptions != null) {
 				for (Subscription s : subscriptions) {
-					result.add(new SubscriptionDto(s));
+					result.getSubscription().add(new SubscriptionDto(s));
 				}
 			}
 

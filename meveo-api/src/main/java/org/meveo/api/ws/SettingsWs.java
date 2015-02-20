@@ -29,6 +29,7 @@ import org.meveo.api.dto.response.GetProviderResponse;
 import org.meveo.api.dto.response.GetSellerResponse;
 import org.meveo.api.dto.response.GetTaxResponse;
 import org.meveo.api.dto.response.GetUserResponse;
+import org.meveo.api.dto.response.ListSellerResponseDto;
 
 /**
  * @author Edward P. Legaspi
@@ -138,6 +139,9 @@ public interface SettingsWs extends IBaseWs {
 
 	@WebMethod
 	public ActionStatus removeSeller(@WebParam(name = "sellerCode") String sellerCode);
+
+	@WebMethod
+	public ListSellerResponseDto listSeller();
 
 	@WebMethod
 	public ActionStatus createTax(@WebParam(name = "tax") TaxDto postData);

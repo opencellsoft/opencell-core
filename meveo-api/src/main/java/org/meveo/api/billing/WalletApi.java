@@ -20,22 +20,26 @@ import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.Currency;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.admin.User;
+import org.meveo.model.billing.ChargeInstance;
 import org.meveo.model.billing.OperationTypeEnum;
 import org.meveo.model.billing.Reservation;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.UserAccount;
+import org.meveo.model.billing.WalletInstance;
 import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.billing.WalletOperationStatusEnum;
-import org.meveo.model.catalog.OfferTemplate;
+import org.meveo.model.catalog.WalletTemplate;
 import org.meveo.model.crm.Provider;
 import org.meveo.service.admin.impl.CurrencyService;
 import org.meveo.service.admin.impl.SellerService;
+import org.meveo.service.billing.impl.ChargeInstanceService;
 import org.meveo.service.billing.impl.ReservationService;
 import org.meveo.service.billing.impl.SubscriptionService;
 import org.meveo.service.billing.impl.UserAccountService;
 import org.meveo.service.billing.impl.WalletOperationService;
 import org.meveo.service.billing.impl.WalletReservationService;
-import org.meveo.service.catalog.impl.OfferTemplateService;
+import org.meveo.service.billing.impl.WalletService;
+import org.meveo.service.billing.impl.WalletTemplateService;
 import org.slf4j.Logger;
 
 /**
@@ -46,6 +50,16 @@ public class WalletApi extends BaseApi {
 
 	@Inject
 	private Logger log;
+
+	@SuppressWarnings("rawtypes")
+	@Inject
+	private ChargeInstanceService chargeInstanceService;
+
+	@Inject
+	private WalletTemplateService walletTemplateService;
+
+	@Inject
+	private WalletService walletService;
 
 	@Inject
 	private WalletReservationService walletReservationService;
@@ -58,9 +72,6 @@ public class WalletApi extends BaseApi {
 
 	@Inject
 	private SubscriptionService subscriptionService;
-
-	@Inject
-	private OfferTemplateService offerTemplateService;
 
 	@Inject
 	private UserAccountService userAccountService;
@@ -344,8 +355,9 @@ public class WalletApi extends BaseApi {
 
 	public void createOperation(WalletOperationDto postData, User currentUser) throws MeveoApiException {
 		if (!StringUtils.isBlank(postData.getCode()) && !StringUtils.isBlank(postData.getUserAccount())
-				&& !StringUtils.isBlank(postData.getSubscription())
-				&& !StringUtils.isBlank(postData.getOfferTemplate()) && !StringUtils.isBlank(postData.getSeller())) {
+				&& !StringUtils.isBlank(postData.getWalletTemplate())
+				&& !StringUtils.isBlank(postData.getChargeInstance())
+				&& !StringUtils.isBlank(postData.getSubscription()) && !StringUtils.isBlank(postData.getSeller())) {
 			Provider provider = currentUser.getProvider();
 
 			UserAccount userAccount = userAccountService.findByCode(postData.getUserAccount(), provider);
@@ -362,8 +374,15 @@ public class WalletApi extends BaseApi {
 				throw new EntityDoesNotExistsException(Subscription.class, postData.getSubscription());
 			}
 
-			if (offerTemplateService.findByCode(postData.getOfferTemplate(), provider) == null) {
-				throw new EntityDoesNotExistsException(OfferTemplate.class, postData.getOfferTemplate());
+			WalletTemplate walletTemplate = walletTemplateService.findByCode(postData.getWalletTemplate(), provider);
+			if (walletTemplate == null) {
+				throw new EntityDoesNotExistsException(WalletTemplate.class, postData.getWalletTemplate());
+			}
+
+			WalletInstance walletInstance = walletService.getWalletInstance(userAccount, walletTemplate, currentUser,
+					provider);
+			if (walletInstance == null) {
+				throw new EntityDoesNotExistsException(WalletInstance.class, walletTemplate.getCode());
 			}
 
 			Seller seller = sellerService.findByCode(postData.getSeller(), provider);
@@ -376,12 +395,21 @@ public class WalletApi extends BaseApi {
 				throw new EntityDoesNotExistsException(Currency.class, postData.getCurrency());
 			}
 
+			ChargeInstance chargeInstance = chargeInstanceService.findByCodeAndSubscription(
+					postData.getChargeInstance(), subscription, provider);
+			if (chargeInstance == null) {
+				throw new EntityDoesNotExistsException(ChargeInstance.class, postData.getChargeInstance());
+			}
+
 			WalletOperation walletOperation = new WalletOperation();
 			walletOperation.setProvider(provider);
 			walletOperation.setCode(postData.getCode());
-			walletOperation.setOfferCode(postData.getOfferTemplate());
+			walletOperation.setOfferCode(subscription.getOffer().getCode());
 			walletOperation.setSeller(seller);
 			walletOperation.setCurrency(currency);
+			walletOperation.setWallet(walletInstance);
+			walletOperation.setChargeInstance(chargeInstance);
+
 			try {
 				walletOperation.setType(OperationTypeEnum.valueOf(postData.getType()));
 			} catch (IllegalArgumentException e) {
@@ -393,7 +421,6 @@ public class WalletApi extends BaseApi {
 				log.warn("error in status={}", e.getMessage());
 			}
 			walletOperation.setCounter(null);
-			walletOperation.setChargeInstance(null);
 			walletOperation.setUnityDescription(postData.getUnityDescription());
 			walletOperation.setTaxPercent(postData.getTaxPercent());
 			walletOperation.setUnitAmountTax(postData.getUnitAmountTax());
@@ -420,11 +447,14 @@ public class WalletApi extends BaseApi {
 			if (StringUtils.isBlank(postData.getUserAccount())) {
 				missingParameters.add("userAccount");
 			}
+			if (StringUtils.isBlank(postData.getWalletTemplate())) {
+				missingParameters.add("walletTemplate");
+			}
 			if (StringUtils.isBlank(postData.getSubscription())) {
 				missingParameters.add("subscription");
 			}
-			if (StringUtils.isBlank(postData.getOfferTemplate())) {
-				missingParameters.add("offerTemplate");
+			if (StringUtils.isBlank(postData.getChargeInstance())) {
+				missingParameters.add("chargeInstance");
 			}
 			if (StringUtils.isBlank(postData.getSeller())) {
 				missingParameters.add("seller");

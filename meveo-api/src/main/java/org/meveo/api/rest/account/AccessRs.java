@@ -14,7 +14,7 @@ import javax.ws.rs.core.MediaType;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.account.AccessDto;
 import org.meveo.api.dto.response.account.GetAccessResponse;
-import org.meveo.api.dto.response.account.ListAccessResponse;
+import org.meveo.api.dto.response.account.ListAccessResponseDto;
 import org.meveo.api.rest.IBaseRs;
 import org.meveo.api.rest.security.RSSecured;
 
@@ -59,6 +59,6 @@ public interface AccessRs extends IBaseRs {
 	 */
 	@GET
 	@Path("/list")
-	ListAccessResponse listBySubscription(@QueryParam("subscriptionCode") String subscriptionCode);
+	ListAccessResponseDto listBySubscription(@QueryParam("subscriptionCode") String subscriptionCode);
 
 }

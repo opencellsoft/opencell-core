@@ -11,7 +11,7 @@ import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.account.CustomerAccountDto;
 import org.meveo.api.dto.response.account.GetCustomerAccountResponse;
-import org.meveo.api.dto.response.account.ListCustomerAccountResponse;
+import org.meveo.api.dto.response.account.ListCustomerAccountResponseDto;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.LoggingInterceptor;
 import org.meveo.api.rest.account.CustomerAccountRs;
@@ -105,8 +105,8 @@ public class CustomerAccountRsImpl extends BaseRs implements CustomerAccountRs {
 	}
 
 	@Override
-	public ListCustomerAccountResponse listByCustomer(String customerCode) {
-		ListCustomerAccountResponse result = new ListCustomerAccountResponse();
+	public ListCustomerAccountResponseDto listByCustomer(String customerCode) {
+		ListCustomerAccountResponseDto result = new ListCustomerAccountResponseDto();
 
 		try {
 			result.setCustomerAccounts(customerAccountApi.listByCustomer(customerCode, getCurrentUser().getProvider()));

@@ -25,8 +25,12 @@ import org.meveo.api.dto.response.account.GetAccessResponse;
 import org.meveo.api.dto.response.account.GetBillingAccountResponse;
 import org.meveo.api.dto.response.account.GetCustomerAccountResponse;
 import org.meveo.api.dto.response.account.GetCustomerResponse;
-import org.meveo.api.dto.response.account.GetListAccessResponse;
 import org.meveo.api.dto.response.account.GetUserAccountResponse;
+import org.meveo.api.dto.response.account.ListAccessResponseDto;
+import org.meveo.api.dto.response.account.ListBillingAccountResponseDto;
+import org.meveo.api.dto.response.account.ListCustomerAccountResponseDto;
+import org.meveo.api.dto.response.account.ListCustomerResponseDto;
+import org.meveo.api.dto.response.account.ListUserAccountResponseDto;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.LoggingInterceptor;
 import org.meveo.api.ws.AccountWs;
@@ -494,8 +498,8 @@ public class AccountWsImpl extends BaseWs implements AccountWs {
 	}
 
 	@Override
-	public GetListAccessResponse listAccess(String subscriptionCode) {
-		GetListAccessResponse result = new GetListAccessResponse();
+	public ListAccessResponseDto listAccess(String subscriptionCode) {
+		ListAccessResponseDto result = new ListAccessResponseDto();
 
 		try {
 			result.setAccesses(accessApi.listBySubscription(subscriptionCode, getCurrentUser().getProvider()));
@@ -526,6 +530,84 @@ public class AccountWsImpl extends BaseWs implements AccountWs {
 			result.setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
+		}
+
+		return result;
+	}
+
+	@Override
+	public ListCustomerResponseDto listCustomerWithFilter(CustomerDto postData) {
+		ListCustomerResponseDto result = new ListCustomerResponseDto();
+
+		try {
+			result.setCustomers(customerApi.filterCustomer(postData, getCurrentUser().getProvider()));
+		} catch (MeveoApiException e) {
+			result.getActionStatus().setErrorCode(e.getErrorCode());
+			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
+			result.getActionStatus().setMessage(e.getMessage());
+		} catch (Exception e) {
+			result.getActionStatus().setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
+			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
+			result.getActionStatus().setMessage(e.getMessage());
+		}
+
+		return result;
+	}
+
+	@Override
+	public ListCustomerAccountResponseDto listByCustomer(String customerCode) {
+		ListCustomerAccountResponseDto result = new ListCustomerAccountResponseDto();
+
+		try {
+			result.setCustomerAccounts(customerAccountApi.listByCustomer(customerCode, getCurrentUser().getProvider()));
+		} catch (MeveoApiException e) {
+			result.getActionStatus().setErrorCode(e.getErrorCode());
+			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
+			result.getActionStatus().setMessage(e.getMessage());
+		} catch (Exception e) {
+			result.getActionStatus().setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
+			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
+			result.getActionStatus().setMessage(e.getMessage());
+		}
+
+		return result;
+	}
+
+	@Override
+	public ListBillingAccountResponseDto listByCustomerAccount(String customerAccountCode) {
+		ListBillingAccountResponseDto result = new ListBillingAccountResponseDto();
+
+		try {
+			result.setBillingAccounts(billingAccountApi.listByCustomerAccount(customerAccountCode, getCurrentUser()
+					.getProvider()));
+		} catch (MeveoApiException e) {
+			result.getActionStatus().setErrorCode(e.getErrorCode());
+			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
+			result.getActionStatus().setMessage(e.getMessage());
+		} catch (Exception e) {
+			result.getActionStatus().setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
+			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
+			result.getActionStatus().setMessage(e.getMessage());
+		}
+
+		return result;
+	}
+
+	@Override
+	public ListUserAccountResponseDto listByBillingAccount(String billingAccountCode) {
+		ListUserAccountResponseDto result = new ListUserAccountResponseDto();
+
+		try {
+			result.setUserAccounts(userAccountApi.listByBillingAccount(billingAccountCode, getCurrentUser()
+					.getProvider()));
+		} catch (MeveoApiException e) {
+			result.getActionStatus().setErrorCode(e.getErrorCode());
+			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
+			result.getActionStatus().setMessage(e.getMessage());
+		} catch (Exception e) {
+			result.getActionStatus().setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
+			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
+			result.getActionStatus().setMessage(e.getMessage());
 		}
 
 		return result;

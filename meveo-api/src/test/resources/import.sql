@@ -454,7 +454,7 @@ CREATE SEQUENCE ADM_COUNTRY_SEQ start with 238 increment by 1;
 
 /*------INSERTS OF TABLE CRM PROVIDER----*/
 
-INSERT INTO CRM_PROVIDER (id, version, disabled, created, updated, code, description, multicountry_flag, multicurrency_flag, multilanguage_flag, payment_methods, logo, invoice_prefix, current_invoice_nb, rating_rounding, bank_code, branch_code, account_number, hash_key, iban, bic, account_owner, bank_name, bank_id, issuer_number, issuer_name, entreprise, automatic_invoicing, display_free_tx_in_invoice, nne, address_1, address_2, address_3, address_zipcode, address_city, address_country, address_state, amount_validation, level_duplication, email, country_id, provider_id, currency_id, updater_id,creator_id,language_id) VALUES (1, 1, false, now(), NULL, 'DEMO', NULL, true, true, true, NULL, NULL, NULL, NULL, NULL, 'SGMB', '12345', '33333333333', '11', '11', '11', 'owner', 'SGMB', '11', '1111', 'DEMO', false, false, true, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, false, false, NULL, 1, NULL, 1, NULL,NULL, 1);
+INSERT INTO CRM_PROVIDER (id, version, disabled, created, updated, code, description, multicountry_flag, multicurrency_flag, multilanguage_flag, payment_methods, logo, invoice_prefix, current_invoice_nb, rating_rounding, bank_code, branch_code, account_number, hash_key, iban, bic, account_owner, bank_name, bank_id, issuer_number, issuer_name, entreprise, automatic_invoicing, display_free_tx_in_invoice, nne, address_1, address_2, address_3, address_zipcode, address_city, address_country, address_state, amount_validation, level_duplication, email, country_id, provider_id, currency_id, updater_id,creator_id,language_id, PREPAID_RESRV_DELAY_MS) VALUES (1, 1, false, now(), NULL, 'DEMO', NULL, true, true, true, NULL, NULL, NULL, NULL, NULL, 'SGMB', '12345', '33333333333', '11', '11', '11', 'owner', 'SGMB', '11', '1111', 'DEMO', false, false, true, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, false, false, NULL, 1, NULL, 1, NULL,NULL, 1, 60000);
 
 DROP SEQUENCE IF EXISTS CRM_PROVIDER_SEQ;
 CREATE SEQUENCE CRM_PROVIDER_SEQ start with 2 increment by 1;
@@ -1186,9 +1186,11 @@ insert into BILLING_USER_ACCOUNT (id, BILLING_ACCOUNT_ID) values (4, 3);
 
 insert into cat_wallet_template (id, version, disabled, created, code, description, FAST_RATING_LEVEL, wallet_type, provider_id, CONSUMPTION_ALERT_SET) values (1, 0, false, now(), 'POSTPAID_WALLET', 'Post Paid Wallet', 1, 'POSTPAID', 1, true);
 insert into cat_wallet_template (id, version, disabled, created, code, description, FAST_RATING_LEVEL, wallet_type, provider_id, CONSUMPTION_ALERT_SET) values (2, 0, false, now(), 'PREPAID_WALLET', 'Prepaid Wallet', 1, 'PREPAID', 1, true);
+insert into CAT_WALLET_TEMPLATE (id, version, disabled, created, code, description, consumption_alert_set, fast_rating_level, wallet_type, provider_id, creator_id) values (3, 0, false, now(), 'SOAP_WALLET10', 'SOAP_WALLET10', true, 1, 'PREPAID', 1, 1);
+insert into CAT_WALLET_TEMPLATE (id, version, disabled, created, code, description, consumption_alert_set, fast_rating_level, wallet_type, provider_id, creator_id) values (4, 0, false, now(), 'SOAP_WALLET20', 'SOAP_WALLET20', true, 1, 'PREPAID', 1, 1);
 
 DROP SEQUENCE IF EXISTS CAT_WALLET_TEMPLATE_SEQ;
-CREATE SEQUENCE CAT_WALLET_TEMPLATE_SEQ start with 3 increment by 1;
+CREATE SEQUENCE CAT_WALLET_TEMPLATE_SEQ start with 5 increment by 1;
 
 insert into CAT_SERV_REC_CHARGE_TEMPLATE (id, version, provider_id, charge_template_id, service_template_id) values (1, 0, 1, 1, 1);
 insert into CAT_SERV_SUB_CHARGE_TEMPLATE (id, version, provider_id, charge_template_id, service_template_id) values (1, 0, 1, 2, 1);
@@ -1216,3 +1218,13 @@ DROP SEQUENCE IF EXISTS BILLING_WALLET_SEQ;
 CREATE SEQUENCE BILLING_WALLET_SEQ start with 2 increment by 1;
 
 update BILLING_USER_ACCOUNT set wallet_id=1 where id=4;
+
+/* Custom Fields */
+insert into CRM_CUSTOM_FIELD_TMPL (id, version, disabled, created, code, description, account_type, field_type, value_required, provider_id, creator_id) values (1, 0, false, now(), 'SOAP_CUST10', 'SOAP_CUST10', 0, 0, false, 1, 1);
+insert into CRM_CUSTOM_FIELD_TMPL (id, version, disabled, created, code, description, account_type, field_type, value_required, provider_id, creator_id) values (2, 0, false, now(), 'SOAP_CA10', 'SOAP_CA10', 1, 2, false, 1, 1);
+insert into CRM_CUSTOM_FIELD_TMPL (id, version, disabled, created, code, description, account_type, field_type, value_required, provider_id, creator_id) values (3, 0, false, now(), 'SOAP_BA10', 'SOAP_BA10', 2, 3, false, 1, 1);
+insert into CRM_CUSTOM_FIELD_TMPL (id, version, disabled, created, code, description, account_type, field_type, value_required, provider_id, creator_id) values (4, 0, false, now(), 'SOAP_UA10', 'SOAP_UA10', 3, 1, false, 1, 1);
+insert into CRM_CUSTOM_FIELD_TMPL (id, version, disabled, created, code, description, account_type, field_type, value_required, provider_id, creator_id) values (5, 0, false, now(), 'SOAP_SUB10', 'SOAP_SUB10', 4, 0, false, 1, 1);
+
+DROP SEQUENCE IF EXISTS CRM_CUSTOM_FLD_TMP_SEQ;
+CREATE SEQUENCE CRM_CUSTOM_FLD_TMP_SEQ start with 6 increment by 1;

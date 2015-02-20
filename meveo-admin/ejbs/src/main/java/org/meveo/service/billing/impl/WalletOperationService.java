@@ -63,6 +63,7 @@ import org.meveo.model.billing.UserAccount;
 import org.meveo.model.billing.WalletInstance;
 import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.billing.WalletOperationStatusEnum;
+import org.meveo.model.billing.WalletReservation;
 import org.meveo.model.catalog.Calendar;
 import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.LevelEnum;
@@ -178,15 +179,28 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 	public void updateBalanceCache(WalletOperation op) {
 		// FIXME: handle reservation
 		log.debug("enter updateBalanceCache for WalletOperation {}", op);
-		if (reservedBalanceCache.containsKey(op.getWallet().getId())) {
-			BigDecimal oldValue = reservedBalanceCache.get(op.getWallet().getId());
-			BigDecimal newValue = oldValue.subtract(op.getAmountWithTax());
+		BigDecimal oldValue = null;
+		BigDecimal newValue = null;
+		if (reservedBalanceCache.containsKey(op.getWallet().getId()) 
+				&& (!(op instanceof WalletReservation) 
+				|| (op.getStatus()==WalletOperationStatusEnum.RESERVED)
+				|| (op.getStatus()==WalletOperationStatusEnum.CANCELED))) {
+			oldValue =reservedBalanceCache.get(op.getWallet().getId());
+			if(op.getStatus()==WalletOperationStatusEnum.CANCELED){
+				newValue =oldValue.add(op.getAmountWithTax());
+			} else {
+				newValue =oldValue.subtract(op.getAmountWithTax());
+			}
 			log.debug("update reservedBalance Cache {}->{}", oldValue, newValue);
 			reservedBalanceCache.put(op.getWallet().getId(), newValue);
-			oldValue = balanceCache.get(op.getWallet().getId());
-			newValue = oldValue.subtract(op.getAmountWithTax());
-			log.debug("update balance Cache {}->{}", oldValue, newValue);
-			balanceCache.put(op.getWallet().getId(), newValue);
+		}
+		if (balanceCache.containsKey(op.getWallet().getId()) 
+				&& (!(op instanceof WalletReservation) 
+				|| (op.getStatus()==WalletOperationStatusEnum.OPEN))) {
+				oldValue = balanceCache.get(op.getWallet().getId());
+				newValue = oldValue.subtract(op.getAmountWithTax());
+				log.debug("update balance Cache {}->{}", oldValue, newValue);
+				balanceCache.put(op.getWallet().getId(), newValue);
 			// FIXME: handle low balance notifications
 		} else if (op.getChargeInstance() instanceof UsageChargeInstance) {
 			updateCache((UsageChargeInstance) op.getChargeInstance());
@@ -1400,7 +1414,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 			List<Long> walletIds = usageChargeInstanceWallet.get(op.getChargeInstance().getId());
 			log.debug("chargeWalletOperation chargeInstanceId found in usageCache with {} wallet ids", walletIds.size());
 			result = chargeOnWalletIds(walletIds, op, creator, provider);
-		} else if (op.getChargeInstance().isPrepaid()
+		} else if (op.getChargeInstance().getPrepaid()
 				&& (op.getChargeInstance() instanceof RecurringChargeInstance || op.getChargeInstance() instanceof OneShotChargeInstance)) {
 			List<Long> walletIds = new ArrayList<>();
 			for (WalletInstance wallet : op.getChargeInstance().getWalletInstances()) {
@@ -1409,7 +1423,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 			log.debug("chargeWalletOperation is recurring or oneshot, and associated to {} wallet ids",
 					walletIds.size());
 			result = chargeOnWalletIds(walletIds, op, creator, provider);
-		} else if (!op.getChargeInstance().isPrepaid()) {
+		} else if (!op.getChargeInstance().getPrepaid()) {
 			op.setWallet(op.getChargeInstance().getSubscription().getUserAccount().getWallet());
 			log.debug("chargeWalletOperation is postpaid, set wallet to {}", op.getWallet());
 			result.add(op);

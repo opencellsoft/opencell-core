@@ -30,10 +30,13 @@ public class WalletOperationDto extends BaseDto {
 	private String subscription;
 
 	@XmlElement(required = true)
-	protected String offerTemplate;
+	private String walletTemplate;
 
 	@XmlElement(required = true)
 	private String seller;
+
+	@XmlElement(required = true)
+	private String chargeInstance;
 
 	private String currency;
 	private String type;
@@ -70,14 +73,6 @@ public class WalletOperationDto extends BaseDto {
 
 	public void setUserAccount(String userAccount) {
 		this.userAccount = userAccount;
-	}
-
-	public String getSubscription() {
-		return subscription;
-	}
-
-	public void setSubscription(String subscription) {
-		this.subscription = subscription;
 	}
 
 	public String getCurrency() {
@@ -243,22 +238,38 @@ public class WalletOperationDto extends BaseDto {
 	@Override
 	public String toString() {
 		return "WalletOperationDto [code=" + code + ", userAccount=" + userAccount + ", subscription=" + subscription
-				+ ", offerTemplate=" + offerTemplate + ", seller=" + seller + ", currency=" + currency + ", type="
-				+ type + ", status=" + status + ", unityDescription=" + unityDescription + ", taxPercent=" + taxPercent
-				+ ", unitAmountWithoutTax=" + unitAmountWithoutTax + ", unitAmountWithTax=" + unitAmountWithTax
-				+ ", unitAmountTax=" + unitAmountTax + ", quantity=" + quantity + ", amountWithoutTax="
-				+ amountWithoutTax + ", amountWithTax=" + amountWithTax + ", amountTax=" + amountTax + ", parameter1="
-				+ parameter1 + ", parameter2=" + parameter2 + ", parameter3=" + parameter3 + ", startDate=" + startDate
-				+ ", endDate=" + endDate + ", operationDate=" + operationDate + ", subscriptionDate="
-				+ subscriptionDate + "]";
+				+ ", walletTemplate=" + walletTemplate + ", seller=" + seller + ", chargeInstance=" + chargeInstance
+				+ ", currency=" + currency + ", type=" + type + ", status=" + status + ", unityDescription="
+				+ unityDescription + ", taxPercent=" + taxPercent + ", unitAmountWithoutTax=" + unitAmountWithoutTax
+				+ ", unitAmountWithTax=" + unitAmountWithTax + ", unitAmountTax=" + unitAmountTax + ", quantity="
+				+ quantity + ", amountWithoutTax=" + amountWithoutTax + ", amountWithTax=" + amountWithTax
+				+ ", amountTax=" + amountTax + ", parameter1=" + parameter1 + ", parameter2=" + parameter2
+				+ ", parameter3=" + parameter3 + ", startDate=" + startDate + ", endDate=" + endDate
+				+ ", operationDate=" + operationDate + ", subscriptionDate=" + subscriptionDate + "]";
 	}
 
-	public String getOfferTemplate() {
-		return offerTemplate;
+	public String getWalletTemplate() {
+		return walletTemplate;
 	}
 
-	public void setOfferTemplate(String offerTemplate) {
-		this.offerTemplate = offerTemplate;
+	public void setWalletTemplate(String walletTemplate) {
+		this.walletTemplate = walletTemplate;
+	}
+
+	public String getChargeInstance() {
+		return chargeInstance;
+	}
+
+	public void setChargeInstance(String chargeInstance) {
+		this.chargeInstance = chargeInstance;
+	}
+
+	public String getSubscription() {
+		return subscription;
+	}
+
+	public void setSubscription(String subscription) {
+		this.subscription = subscription;
 	}
 
 }

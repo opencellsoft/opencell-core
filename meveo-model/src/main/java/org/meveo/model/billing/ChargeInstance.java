@@ -121,7 +121,7 @@ public class ChargeInstance extends BusinessEntity {
 	
 
 	@Column(name = "IS_PREPAID", length = 1)
-	protected boolean prepaid;
+	protected Boolean prepaid=Boolean.FALSE;
 
 	public String getCriteria1() {
 		return criteria1;
@@ -262,12 +262,18 @@ public class ChargeInstance extends BusinessEntity {
 		this.walletInstances = walletInstances;
 	}
 
-	public boolean isPrepaid() {
+	public Boolean getPrepaid() {
 		return prepaid;
 	}
 
-	public void setPrepaid(boolean prepaid) {
+	public void setPrepaid(Boolean prepaid) {
 		this.prepaid = prepaid;
 	}
+
+
+
+
+
+	
 
 }

@@ -244,9 +244,9 @@
 								var="wallet">
 								<p:tab title="Wallet #{wallet.key}"
 									id="tab_panelWallet_#{wallet.key}">
-									<p:panel id="panelWallet_#{wallet.key}">
-										<p:panelGrid columns="1" styleClass="form-panel-fields">
-											<p:panelGrid columns="2">
+									<p:panel id="panelWallet_#{wallet.key}" styleClass="form-panel-fields">
+										<p:panelGrid columns="1" >
+											<p:panelGrid columns="6">
 												<p:outputLabel value="#{messages['chargeInstance.code']}" />
 												<h:outputText value="#{wallet.value.code}" />
 												<p:outputLabel
@@ -255,15 +255,70 @@
 												<p:outputLabel value="#{messages['chargeTemplate.type']}" />
 												<h:outputText
 													value="#{wallet.value.walletTemplate.walletType}" />
-												<p:outputLabel rendered="#{wallet.key!='PRINCIPAL'}"
+												</p:panelGrid>
+												
+												<p:panelGrid columns="5"> 
+												<p:panelGrid columns="2" > 
+                                                <f:facet name="header" >
+													<h:outputText style="font-size:13px"
+														value="#{messages['walletOperationStatus.open']}" />
+												</f:facet>	
+												<h:outputText rendered="#{wallet.key!='PREPAID'}" style="font-weight:bold; !important"
+													value="#{messages['pricePlanMatrix.amountWithTax']} :" />	
+												<h:outputText rendered="#{wallet.key!='PREPAID'}" 
+													value="#{walletReservationService.getOpenBalanceWithTax(entity.getProviderCurrent(), entity.billingAccount.customerAccount.customer.seller.code
+													,entity.code,null,null)}" />
+												<h:outputText rendered="#{wallet.key!='PREPAID'}" style="font-weight:bold; !important"
+													value="#{messages['pricePlanMatrix.amountWithoutTax']} :" />	
+												<h:outputText rendered="#{wallet.key!='PREPAID'}" 
+													value="#{walletReservationService.getOpenBalanceWithoutTax(entity.getProviderCurrent(), entity.billingAccount.customerAccount.customer.seller.code
+													,entity.code,null,null)}" />
+												</p:panelGrid>
+                                             <p:spacer width="40" />											
+												<p:panelGrid columns="2"> 
+                                                <f:facet name="header">
+													<h:outputText style="font-size:13px"
+														value="#{messages['walletOperationStatus.reserved']}" />
+												</f:facet>													
+												<h:outputText rendered="#{wallet.key!='PREPAID'}" style="font-weight:bold; !important"
+													value="#{messages['pricePlanMatrix.amountWithTax']} :" />	
+												<h:outputText rendered="#{wallet.key!='PREPAID'}" 
+													value="#{walletReservationService.getReservedBalanceWithTax(entity.getProviderCurrent(), entity.billingAccount.customerAccount.customer.seller.code
+													,entity.code,null,null)}" />
+												<h:outputText rendered="#{wallet.key!='PREPAID'}" style="font-weight:bold; !important"
+													value="#{messages['pricePlanMatrix.amountWithoutTax']} :" />	
+												<h:outputText rendered="#{wallet.key!='PREPAID'}"
+													value="#{walletReservationService.getReservedBalanceWithoutTax(entity.getProviderCurrent(), entity.billingAccount.customerAccount.customer.seller.code
+													,entity.code,null,null)}" />
+												</p:panelGrid>
+												<p:spacer width="40" />
+												<p:panelGrid columns="2"> 
+                                                <f:facet name="header">
+													<h:outputText style="font-size:13px"
+														value="#{messages['walletOperationStatus.current']}" />
+												</f:facet>													
+												<h:outputText rendered="#{wallet.key!='PREPAID'}" style="font-weight:bold; !important"
+													value="#{messages['pricePlanMatrix.amountWithTax']} :" />	
+												<h:outputText rendered="#{wallet.key!='PREPAID'}"
+													value="#{walletReservationService.getCurrentBalanceWithoutTax(entity.getProviderCurrent(), entity.billingAccount.customerAccount.customer.seller.code
+													,entity.code,null,null)}" />
+													
+												<h:outputText rendered="#{wallet.key!='PREPAID'}" style="font-weight:bold; !important"
+													value="#{messages['pricePlanMatrix.amountWithoutTax']} :" />	
+												<h:outputText rendered="#{wallet.key!='PREPAID'}"
+													value="#{walletReservationService.getCurrentBalanceWithTax(entity.getProviderCurrent(), entity.billingAccount.customerAccount.customer.seller.code
+													,entity.code,null,null)}" />
+												</p:panelGrid>
+												
+											</p:panelGrid>	
+												<p:outputLabel  rendered="#{wallet.key!='PRINCIPAL'}"
 													value="#{messages['userAccount.cachedBalance']}" />
 												<h:outputText
 													value="#{userAccountBean.getBalance(wallet.value)}" />
-												<p:outputLabel rendered="#{wallet.key!='PRINCIPAL'}"
+												<p:outputLabel  rendered="#{wallet.key!='PRINCIPAL'}"
 													value="#{messages['userAccount.cachedReservedBalance']}" />
 												<h:outputText
-													value="#{userAccountBean.getReservedBalance(wallet.value)}" />
-											</p:panelGrid>
+													value="#{userAccountBean.getReservedBalance(wallet.value)}" /> 
 										</p:panelGrid>
 										<p:dataTable id="wallet#{wallet.key}datatable" var="e"
 											paginator="true"

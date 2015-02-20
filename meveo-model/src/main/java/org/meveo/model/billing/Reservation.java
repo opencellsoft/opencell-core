@@ -2,11 +2,16 @@ package org.meveo.model.billing;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
@@ -52,10 +57,14 @@ public class Reservation extends AuditableEntity {
 	private WalletInstance wallet;
 	
 	@Column(name = "AMOUNT_WITHOUT_TAX", precision = NB_PRECISION, scale = NB_DECIMALS)
-	private BigDecimal amountWithoutTax;
+	private BigDecimal amountWithoutTax = BigDecimal.ZERO;
 
 	@Column(name = "AMOUNT_WITH_TAX", precision = NB_PRECISION, scale = NB_DECIMALS)
-	private BigDecimal amountWithTax;
+	private BigDecimal amountWithTax = BigDecimal.ZERO;
+
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "BILLING_RESRV_COUNTID")
+	private Map<Long,BigDecimal> counterPeriodValues = new HashMap<Long, BigDecimal>(); 
 
 	public String getInputMessage() {
 		return inputMessage;
@@ -127,6 +136,14 @@ public class Reservation extends AuditableEntity {
 
 	public void setReservationDate(Date reservationDate) {
 		this.reservationDate = reservationDate;
+	}
+
+	public Map<Long, BigDecimal> getCounterPeriodValues() {
+		return counterPeriodValues;
+	}
+
+	public void setCounterPeriodValues(Map<Long, BigDecimal> counterPeriodValues) {
+		this.counterPeriodValues = counterPeriodValues;
 	}
 
 }

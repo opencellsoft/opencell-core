@@ -1,12 +1,12 @@
 package org.meveo.api.account;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
 import org.meveo.api.dto.account.CustomerDto;
+import org.meveo.api.dto.account.CustomersDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
@@ -74,6 +74,8 @@ public class CustomerApi extends AccountApi {
 			customer.setCustomerCategory(customerCategory);
 			customer.setCustomerBrand(customerBrand);
 			customer.setSeller(seller);
+			customer.setMandateDate(postData.getMandateDate());
+			customer.setMandateIdentification(postData.getMandateIdentification());
 
 			if (postData.getContactInformation() != null) {
 				customer.getContactInformation().setEmail(postData.getContactInformation().getEmail());
@@ -137,6 +139,8 @@ public class CustomerApi extends AccountApi {
 			customer.setCustomerCategory(customerCategory);
 			customer.setCustomerBrand(customerBrand);
 			customer.setSeller(seller);
+			customer.setMandateDate(postData.getMandateDate());
+			customer.setMandateIdentification(postData.getMandateIdentification());
 
 			if (postData.getContactInformation() != null) {
 				customer.getContactInformation().setEmail(postData.getContactInformation().getEmail());
@@ -197,49 +201,41 @@ public class CustomerApi extends AccountApi {
 		}
 	}
 
-	public List<CustomerDto> filterCustomer(CustomerDto postData, Provider provider) throws MeveoApiException {
-		if (!StringUtils.isBlank(postData.getCode())) {
-			CustomerCategory customerCategory = null;
-			if (!StringUtils.isBlank(postData.getCustomerCategory())) {
-				customerCategory = customerCategoryService.findByCode(postData.getCustomerCategory(), provider);
-				if (customerCategory == null) {
-					throw new EntityDoesNotExistsException(CustomerCategory.class, postData.getCustomerCategory());
-				}
+	public CustomersDto filterCustomer(CustomerDto postData, Provider provider) throws MeveoApiException {
+		CustomerCategory customerCategory = null;
+		if (!StringUtils.isBlank(postData.getCustomerCategory())) {
+			customerCategory = customerCategoryService.findByCode(postData.getCustomerCategory(), provider);
+			if (customerCategory == null) {
+				throw new EntityDoesNotExistsException(CustomerCategory.class, postData.getCustomerCategory());
 			}
-
-			Seller seller = null;
-			if (!StringUtils.isBlank(postData.getSeller())) {
-				seller = sellerService.findByCode(postData.getSeller(), provider);
-				if (seller == null) {
-					throw new EntityDoesNotExistsException(Seller.class, postData.getSeller());
-				}
-			}
-
-			CustomerBrand customerBrand = null;
-			if (!StringUtils.isBlank(postData.getCustomerBrand())) {
-				customerBrand = customerBrandService.findByCode(postData.getCustomerBrand(), provider);
-				if (customerBrand == null) {
-					throw new EntityDoesNotExistsException(CustomerBrand.class, postData.getCustomerBrand());
-				}
-			}
-
-			List<CustomerDto> result = new ArrayList<CustomerDto>();
-			List<Customer> customers = customerService.filter(postData.getCode(), customerCategory, seller,
-					customerBrand, provider);
-			if (customers != null) {
-				for (Customer c : customers) {
-					result.add(new CustomerDto(c));
-				}
-			}
-
-			return result;
-		} else {
-			if (StringUtils.isBlank(postData.getCode())) {
-				missingParameters.add("code");
-			}
-
-			throw new MissingParameterException(getMissingParametersExceptionMessage());
 		}
+
+		Seller seller = null;
+		if (!StringUtils.isBlank(postData.getSeller())) {
+			seller = sellerService.findByCode(postData.getSeller(), provider);
+			if (seller == null) {
+				throw new EntityDoesNotExistsException(Seller.class, postData.getSeller());
+			}
+		}
+
+		CustomerBrand customerBrand = null;
+		if (!StringUtils.isBlank(postData.getCustomerBrand())) {
+			customerBrand = customerBrandService.findByCode(postData.getCustomerBrand(), provider);
+			if (customerBrand == null) {
+				throw new EntityDoesNotExistsException(CustomerBrand.class, postData.getCustomerBrand());
+			}
+		}
+
+		CustomersDto result = new CustomersDto();
+		List<Customer> customers = customerService.filter(postData.getCode(), customerCategory, seller, customerBrand,
+				provider);
+		if (customers != null) {
+			for (Customer c : customers) {
+				result.getCustomer().add(new CustomerDto(c));
+			}
+		}
+
+		return result;
 	}
 
 }
