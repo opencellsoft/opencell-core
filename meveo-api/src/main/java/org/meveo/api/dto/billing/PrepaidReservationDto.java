@@ -2,19 +2,42 @@ package org.meveo.api.dto.billing;
 
 import java.math.BigDecimal;
 
-/**
- * @author Edward P. Legaspi
- **/
-public class PrepaidReservationDto {
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlType;
 
-	public int getReservationId() {
-		// TODO Auto-generated method stub
-		return 0;
+import org.meveo.api.dto.BaseDto;
+
+@XmlType(name = "ServiceInstance")
+@XmlAccessorType(XmlAccessType.FIELD)
+public class PrepaidReservationDto  extends BaseDto {
+	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -1511340678838442101L;
+
+	@XmlAttribute(required = true)	
+	public long reservationId;
+
+	public BigDecimal consumedQuantity;
+
+	public long getReservationId() {
+		return reservationId;
+	}
+
+	public void setReservationId(long reservationId) {
+		this.reservationId = reservationId;
 	}
 
 	public BigDecimal getConsumedQuantity() {
-		// TODO Auto-generated method stub
-		return null;
+		return consumedQuantity;
 	}
 
+	public void setConsumedQuantity(BigDecimal consumedQuantity) {
+		this.consumedQuantity = consumedQuantity;
+	}
+	
+	
 }

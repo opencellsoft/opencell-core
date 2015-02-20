@@ -12,7 +12,7 @@ import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.billing.CdrListDto;
 import org.meveo.api.dto.billing.PrepaidReservationDto;
-import org.meveo.api.dto.response.CdrReservationResponse;
+import org.meveo.api.dto.response.billing.CdrReservationResponseDto;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.LoggingInterceptor;
 import org.meveo.api.rest.billing.MediationRs;
@@ -68,7 +68,7 @@ public class MediationRsImpl extends BaseRs implements MediationRs {
 	}
 
 	@Override
-	public CdrReservationResponse reserveCdr(String cdr) {
+	public CdrReservationResponseDto reserveCdr(String cdr) {
 		// TODO Auto-generated method stub
 		return null;
 	}

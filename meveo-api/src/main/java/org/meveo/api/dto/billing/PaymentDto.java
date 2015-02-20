@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.meveo.api.dto;
+package org.meveo.api.dto.billing;
 
 import java.math.BigDecimal;
 import java.util.Date;
@@ -23,6 +23,8 @@ import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
+
+import org.meveo.api.dto.BaseDto;
 
 @XmlRootElement(name = "Payment")
 @XmlAccessorType(XmlAccessType.FIELD)

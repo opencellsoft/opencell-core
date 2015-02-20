@@ -1,4 +1,4 @@
-package org.meveo.api;
+package org.meveo.api.invoice;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -7,6 +7,7 @@ import java.util.List;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
+import org.meveo.api.BaseApi;
 import org.meveo.api.dto.RatedTransactionDto;
 import org.meveo.api.dto.SubCategoryInvoiceAgregateDto;
 import org.meveo.api.dto.invoice.InvoiceDto;
