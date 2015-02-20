@@ -17,6 +17,7 @@
 package org.meveo.admin.action.billing;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -43,12 +44,14 @@ import org.meveo.model.billing.WalletInstance;
 import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.billing.WalletOperationStatusEnum;
 import org.meveo.model.crm.AccountLevelEnum;
+import org.meveo.model.crm.Provider;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.billing.impl.RatedTransactionService;
 import org.meveo.service.billing.impl.UserAccountService;
 import org.meveo.service.billing.impl.WalletOperationService;
+import org.meveo.service.billing.impl.WalletReservationService;
 import org.omnifaces.util.Faces;
 import org.primefaces.model.LazyDataModel;
 
@@ -76,6 +79,9 @@ public class UserAccountBean extends AccountBean<UserAccount> {
 	@Inject
 	WalletOperationService walletOperationService;
 
+	@Inject
+	WalletReservationService walletReservationService;
+	
 	@Inject
 	private UserAccountService userAccountService;
 
@@ -366,6 +372,61 @@ public class UserAccountBean extends AccountBean<UserAccount> {
 		}
 		return result;
 	}
+	
+	public String getOpenBalanceWithoutTax(Provider provider, String sellerCode, String userAccountCode,Date startDate, Date endDate) throws BusinessException {
+		String result = "-";
+		BigDecimal balance=walletReservationService.getOpenBalanceWithoutTax(provider, sellerCode, userAccountCode, startDate, endDate);
+		if(balance!=null){
+			   result=balance.setScale(2, RoundingMode.HALF_UP).toPlainString();
+			  }
+		return result;
+	}
+	
+	public String getOpenBalanceWithTax(Provider provider, String sellerCode, String userAccountCode,Date startDate, Date endDate) throws BusinessException {
+		String result = "-";
+		BigDecimal balance=walletReservationService.getOpenBalanceWithTax(provider, sellerCode, userAccountCode, startDate, endDate);
+		if(balance!=null){
+			   result=balance.setScale(2, RoundingMode.HALF_UP).toPlainString();
+			  }
+		return result;
+	}
+	
+	public String getReservedBalanceWithoutTax(Provider provider, String sellerCode, String userAccountCode,Date startDate, Date endDate) throws BusinessException {
+		String result = "-";
+		BigDecimal balance=walletReservationService.getReservedBalanceWithoutTax(provider, sellerCode, userAccountCode, startDate, endDate);
+		if(balance!=null){
+			   result=balance.setScale(2, RoundingMode.HALF_UP).toPlainString();
+			  }
+		return result;
+	}
+	
+	public String getReservedBalanceWithTax(Provider provider, String sellerCode, String userAccountCode,Date startDate, Date endDate) throws BusinessException {
+		String result = "-";
+		BigDecimal balance=walletReservationService.getReservedBalanceWithTax(provider, sellerCode, userAccountCode, startDate, endDate);
+		if(balance!=null){
+			   result=balance.setScale(2, RoundingMode.HALF_UP).toPlainString();
+			  }
+		return result;
+	}
+	
+	public String getCurrentBalanceWithoutTax(Provider provider, String sellerCode, String userAccountCode,Date startDate, Date endDate) throws BusinessException {
+		String result = "-";
+		BigDecimal balance=walletReservationService.getCurrentBalanceWithoutTax(provider, sellerCode, userAccountCode, startDate, endDate);
+		if(balance!=null){
+			   result=balance.setScale(2, RoundingMode.HALF_UP).toPlainString();
+			  }
+		return result;
+	}
+	
+	public String getCurrentBalanceWithTax(Provider provider, String sellerCode, String userAccountCode,Date startDate, Date endDate) throws BusinessException {
+		String result = "-";
+		BigDecimal balance=walletReservationService.getCurrentBalanceWithTax(provider, sellerCode, userAccountCode, startDate, endDate);
+		if(balance!=null){
+			   result=balance.setScale(2, RoundingMode.HALF_UP).toPlainString();
+			  }
+		return result;
+	}
+	 
 
 	public List<SelectItem> getWalletOperationStatusList() {
 		ResourceBundle resourceBundle = ResourceBundle.getBundle("messages", Faces.getLocale());

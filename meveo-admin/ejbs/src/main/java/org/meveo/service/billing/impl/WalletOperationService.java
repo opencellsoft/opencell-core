@@ -362,7 +362,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 	 */
 	public BigDecimal getBalanceAmount(Provider provider, Seller seller, Customer customer,
 			CustomerAccount customerAccount, BillingAccount billingAccount, UserAccount userAccount, Date startDate,
-			Date endDate, boolean amountWithTax, int mode) {
+			Date endDate, boolean amountWithTax, int mode) { 
 
 		BigDecimal result = BigDecimal.ZERO;
 		LevelEnum level = LevelEnum.PROVIDER;
@@ -388,8 +388,14 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 			StringBuilder strQuery = new StringBuilder();
 			strQuery.append("select SUM(r." + (amountWithTax ? "amountWithTax" : "amountWithoutTax") + ") from "
 					+ WalletOperation.class.getSimpleName() + " r "
-					+ "WHERE r.operationDate>=:startDate AND r.operationDate<:endDate ");
-
+					+ "WHERE r.provider=:provider ");
+	
+			if(startDate!=null){
+				strQuery.append("AND r.operationDate>=:startDate ");
+			}
+			if(endDate!=null){
+				strQuery.append("AND r.operationDate<:endDate ");
+			}
 			if (mode == 1) {
 				strQuery.append("AND (r.status=:open OR r.status=:reserved) ");
 			} else if (mode == 2) {
@@ -432,9 +438,12 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 			} else if (mode == 3) {
 				query.setParameter("open", WalletOperationStatusEnum.OPEN);
 			}
-
-			query.setParameter("startDate", startDate);
-			query.setParameter("endDate", endDate);
+			if(startDate!=null){
+				query.setParameter("startDate", startDate);	
+			}
+			if(endDate!=null){
+				query.setParameter("endDate", endDate);	
+			}
 			query.setParameter("provider", provider);
 
 			switch (level) {

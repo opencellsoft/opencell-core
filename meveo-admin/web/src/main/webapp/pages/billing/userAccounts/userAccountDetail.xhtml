@@ -268,13 +268,12 @@
 												<h:outputText rendered="#{wallet.key!='PREPAID'}" style="font-weight:bold; !important"
 													value="#{messages['pricePlanMatrix.amountWithTax']} :" />	
 												<h:outputText rendered="#{wallet.key!='PREPAID'}" 
-													value="#{walletReservationService.getOpenBalanceWithTax(entity.getProviderCurrent(), entity.billingAccount.customerAccount.customer.seller.code
-													,entity.code,null,null)}" />
+													value="#{userAccountBean.getOpenBalanceWithTax(userAccountBean.getCurrentProvider(),userAccountBean.entity.billingAccount.customerAccount.customer.seller.code,userAccountBean.entity.code,null,null)}" />
 												<h:outputText rendered="#{wallet.key!='PREPAID'}" style="font-weight:bold; !important"
 													value="#{messages['pricePlanMatrix.amountWithoutTax']} :" />	
 												<h:outputText rendered="#{wallet.key!='PREPAID'}" 
-													value="#{walletReservationService.getOpenBalanceWithoutTax(entity.getProviderCurrent(), entity.billingAccount.customerAccount.customer.seller.code
-													,entity.code,null,null)}" />
+													value="#{userAccountBean.getOpenBalanceWithoutTax(userAccountBean.getCurrentProvider(),userAccountBean.entity.billingAccount.customerAccount.customer.seller.code
+													,userAccountBean.entity.code,null,null)}" />
 												</p:panelGrid>
                                              <p:spacer width="40" />											
 												<p:panelGrid columns="2"> 
@@ -285,13 +284,13 @@
 												<h:outputText rendered="#{wallet.key!='PREPAID'}" style="font-weight:bold; !important"
 													value="#{messages['pricePlanMatrix.amountWithTax']} :" />	
 												<h:outputText rendered="#{wallet.key!='PREPAID'}" 
-													value="#{walletReservationService.getReservedBalanceWithTax(entity.getProviderCurrent(), entity.billingAccount.customerAccount.customer.seller.code
-													,entity.code,null,null)}" />
+													value="#{userAccountBean.getReservedBalanceWithTax(userAccountBean.getCurrentProvider(),userAccountBean.entity.billingAccount.customerAccount.customer.seller.code
+													,userAccountBean.entity.code,null,null)}" />
 												<h:outputText rendered="#{wallet.key!='PREPAID'}" style="font-weight:bold; !important"
 													value="#{messages['pricePlanMatrix.amountWithoutTax']} :" />	
 												<h:outputText rendered="#{wallet.key!='PREPAID'}"
-													value="#{walletReservationService.getReservedBalanceWithoutTax(entity.getProviderCurrent(), entity.billingAccount.customerAccount.customer.seller.code
-													,entity.code,null,null)}" />
+													value="#{userAccountBean.getReservedBalanceWithoutTax(userAccountBean.getCurrentProvider(),userAccountBean.entity.billingAccount.customerAccount.customer.seller.code
+													,userAccountBean.entity.code,null,null)}" />
 												</p:panelGrid>
 												<p:spacer width="40" />
 												<p:panelGrid columns="2"> 
@@ -302,14 +301,14 @@
 												<h:outputText rendered="#{wallet.key!='PREPAID'}" style="font-weight:bold; !important"
 													value="#{messages['pricePlanMatrix.amountWithTax']} :" />	
 												<h:outputText rendered="#{wallet.key!='PREPAID'}"
-													value="#{walletReservationService.getCurrentBalanceWithoutTax(entity.getProviderCurrent(), entity.billingAccount.customerAccount.customer.seller.code
-													,entity.code,null,null)}" />
+													value="#{userAccountBean.getCurrentBalanceWithoutTax(userAccountBean.getCurrentProvider(),userAccountBean.entity.billingAccount.customerAccount.customer.seller.code
+													,userAccountBean.entity.code,null,null)}" />
 													
 												<h:outputText rendered="#{wallet.key!='PREPAID'}" style="font-weight:bold; !important"
 													value="#{messages['pricePlanMatrix.amountWithoutTax']} :" />	
 												<h:outputText rendered="#{wallet.key!='PREPAID'}"
-													value="#{walletReservationService.getCurrentBalanceWithTax(entity.getProviderCurrent(), entity.billingAccount.customerAccount.customer.seller.code
-													,entity.code,null,null)}" />
+													value="#{userAccountBean.getCurrentBalanceWithTax(userAccountBean.getCurrentProvider(),userAccountBean.entity.billingAccount.customerAccount.customer.seller.code
+													,userAccountBean.entity.code,null,null)}" />
 												</p:panelGrid>
 												
 											</p:panelGrid>	
