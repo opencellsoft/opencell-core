@@ -32,6 +32,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import org.meveo.model.BaseEntity;
+import org.meveo.model.BusinessEntity;
 import org.meveo.model.billing.Subscription;
 
 /**
@@ -209,6 +210,18 @@ public class EDR extends BaseEntity {
 				+ ", parameter3=" + parameter3 + ", parameter4=" + parameter4
 				+ ", status=" + status + ", rejectReason=" + rejectReason
 				+ ", created=" + created + ", lastUpdate=" + lastUpdate + "]";
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		EDR other = (EDR) obj;
+		return this.toString().equals(other.toString());
 	}
 
 }

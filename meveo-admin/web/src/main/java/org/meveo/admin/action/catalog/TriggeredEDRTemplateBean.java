@@ -24,9 +24,11 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.meveo.admin.action.StatelessBaseBean;
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.catalog.TriggeredEDRTemplate;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
+import org.meveo.service.billing.impl.UsageRatingService;
 import org.meveo.service.catalog.impl.TriggeredEDRTemplateService;
 
 @Named
@@ -42,6 +44,8 @@ public class TriggeredEDRTemplateBean extends StatelessBaseBean<TriggeredEDRTemp
 	@Inject
 	private TriggeredEDRTemplateService triggeredEdrService;
 
+	@Inject
+	private UsageRatingService usageRatingService;
 	/**
 	 * Constructor. Invokes super constructor and provides class type of this
 	 * bean for {@link BaseBean}.
@@ -87,5 +91,16 @@ public class TriggeredEDRTemplateBean extends StatelessBaseBean<TriggeredEDRTemp
 	protected List<String> getFormFieldsToFetch() {
 		return Arrays.asList("provider");
 	}
+	
+	@Override
+	public String saveOrUpdate(boolean killConversation) throws BusinessException{
+		usageRatingService.updateTemplateCache(entity);
+		return super.saveOrUpdate(killConversation);
+	}
 
+	@Override
+   protected String saveOrUpdate(TriggeredEDRTemplate entity) throws BusinessException {
+		usageRatingService.updateTemplateCache(entity);
+		return super.saveOrUpdate(entity);
+   }
 }

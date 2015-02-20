@@ -101,14 +101,24 @@ public class UsageRatingService {
 					updateCache(usageChargeInstance);
 				}
 			}
-		
 	}
 
+
+	public void updateTemplateCache(TriggeredEDRTemplate triggeredEDRTemplate) {
+		log.debug("updateTemplateCache for tigeredEDR {}",triggeredEDRTemplate.toString());
+		@SuppressWarnings("unchecked")
+		List<UsageChargeTemplate> charges = em.createNamedQuery("UsageChargeTemplate.getWithTemplateEDR")
+				.setParameter("edrTemplate", triggeredEDRTemplate).getResultList();
+		for(UsageChargeTemplate charge:charges){
+			updateTemplateCache(charge);
+		}
+	}
+	
 	public UsageChargeTemplateCache updateTemplateCache(
 			UsageChargeTemplate usageChargeTemplate) {
 		UsageChargeTemplateCache cachedValue = null;
 		if (usageChargeTemplate != null) {
-			log.info("updateTemplateCache " + usageChargeTemplate.getCode());
+			log.debug("updateTemplateCache for charge {}",usageChargeTemplate.getCode());
 			if (MeveoCacheContainerProvider.getUsageChargeTemplateCacheCache().containsKey(usageChargeTemplate.getId())) {
 				log.info("cache already contains the code");
 				cachedValue = MeveoCacheContainerProvider.getUsageChargeTemplateCacheCache().get(usageChargeTemplate
@@ -860,6 +870,8 @@ public class UsageRatingService {
 					audit.setCreated(new Date());
 					audit.setCreator(currentUser);
 					reservation.setAuditable(audit);
+					reservation.setOriginEdr(edr);
+					reservation.setQuantity(edr.getQuantity());
 					//it would be nice to have a persistence context bound to the JTA transaction
 					em.persist(reservation);
 

@@ -21,6 +21,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import org.meveo.model.AuditableEntity;
+import org.meveo.model.rating.EDR;
 
 @Entity
 @Table(name = "BILLING_RESERVATION")
@@ -56,6 +57,9 @@ public class Reservation extends AuditableEntity {
 	@JoinColumn(name = "WALLET_ID")
 	private WalletInstance wallet;
 	
+	@Column(name = "QUANTITY", precision = NB_PRECISION, scale = NB_DECIMALS)
+	private BigDecimal quantity;
+	
 	@Column(name = "AMOUNT_WITHOUT_TAX", precision = NB_PRECISION, scale = NB_DECIMALS)
 	private BigDecimal amountWithoutTax = BigDecimal.ZERO;
 
@@ -66,6 +70,9 @@ public class Reservation extends AuditableEntity {
     @CollectionTable(name = "BILLING_RESRV_COUNTID")
 	private Map<Long,BigDecimal> counterPeriodValues = new HashMap<Long, BigDecimal>(); 
 
+    @Column(name="ORIGIN_EDR")
+    private EDR originEdr;
+    
 	public String getInputMessage() {
 		return inputMessage;
 	}
@@ -114,6 +121,14 @@ public class Reservation extends AuditableEntity {
 		this.wallet = wallet;
 	}
 
+	public BigDecimal getQuantity() {
+		return quantity;
+	}
+
+	public void setQuantity(BigDecimal quantity) {
+		this.quantity = quantity;
+	}
+
 	public BigDecimal getAmountWithoutTax() {
 		return amountWithoutTax;
 	}
@@ -145,5 +160,14 @@ public class Reservation extends AuditableEntity {
 	public void setCounterPeriodValues(Map<Long, BigDecimal> counterPeriodValues) {
 		this.counterPeriodValues = counterPeriodValues;
 	}
+
+	public EDR getOriginEdr() {
+		return originEdr;
+	}
+
+	public void setOriginEdr(EDR originEdr) {
+		this.originEdr = originEdr;
+	}
+
 
 }

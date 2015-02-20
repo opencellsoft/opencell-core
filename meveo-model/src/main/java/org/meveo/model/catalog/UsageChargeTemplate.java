@@ -22,6 +22,8 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
@@ -31,6 +33,11 @@ import org.meveo.model.MultilanguageEntity;
 @MultilanguageEntity
 @Table(name = "CAT_USAGE_CHARGE_TEMPLATE")
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "CAT_USAGE_CHARGE_TEMPLATE_SEQ")
+@NamedQueries({
+	@NamedQuery(name = "UsageChargeTemplate.getWithTemplateEDR", 
+			query = "SELECT u FROM UsageChargeTemplate u WHERE :edrTemplate IN u.edrTemplates"
+					+ " and u.disabled=false")
+})
 public class UsageChargeTemplate extends ChargeTemplate {
 	static String WILCARD = "";
 

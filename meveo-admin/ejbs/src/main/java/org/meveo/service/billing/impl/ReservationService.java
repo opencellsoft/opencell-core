@@ -30,7 +30,6 @@ import javax.persistence.EntityManager;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.Auditable;
 import org.meveo.model.admin.Seller;
-import org.meveo.model.admin.User;
 import org.meveo.model.billing.Reservation;
 import org.meveo.model.billing.ReservationStatus;
 import org.meveo.model.billing.Subscription;
@@ -279,28 +278,15 @@ public class ReservationService extends PersistenceService<Reservation> {
 	}
 
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public void cancelPrepaidReservationInNewTransaction(long reservationId
-			, User currentUser) throws BusinessException {
-		cancelPrepaidReservation(reservationId, currentUser);
+	public void cancelPrepaidReservationInNewTransaction(Reservation reservation) throws BusinessException {
+		cancelPrepaidReservation(reservation);
 	}
 
-	public void cancelPrepaidReservation(long reservationId
-			, User currentUser) throws BusinessException {
-		Reservation reservation = findById(reservationId);
-		if(reservation==null){
-			throw new BusinessException("CANNOT_FIND_RESERVATION");
-		}
-		if(reservation.getProvider().getId() != currentUser.getProvider().getId()){
-			throw new BusinessException("NOT_YOUR_RESERVATION");
-		}
-		if (reservation.getStatus() != ReservationStatus.OPEN) {
-			throw new BusinessException("RESERVATION_NOT_OPEN");
-		}
-		
+	public void cancelPrepaidReservation(Reservation reservation) throws BusinessException {
 		//set to OPEN all reserved operation, this is different from postpaid reservation process
 		@SuppressWarnings("unchecked")
 		List<WalletReservation> ops = getEntityManager().createNamedQuery("WalletReservation.listByReservationId")
-		.setParameter("reservationId", reservationId).getResultList();
+		.setParameter("reservationId", reservation.getId()).getResultList();
 		for(WalletReservation op:ops){
 			op.getAuditable().setUpdated(new Date());
 			op.setStatus(WalletOperationStatusEnum.CANCELED);
@@ -315,34 +301,17 @@ public class ReservationService extends PersistenceService<Reservation> {
 		reservation.setStatus(ReservationStatus.CANCELLED);
 	}
 
-	public void confirmPrepaidReservation(long reservationId,
-			BigDecimal consumedQuantity, User currentUser) throws BusinessException {
-		Reservation reservation = findById(reservationId);
-		if(reservation==null){
-			throw new BusinessException("CANNOT_FIND_RESERVATION");
-		}
-		if(reservation.getProvider().getId() != currentUser.getProvider().getId()){
-			throw new BusinessException("NOT_YOUR_RESERVATION");
-		}
-		if (reservation.getStatus() != ReservationStatus.OPEN) {
-			throw new BusinessException("RESERVATION_NOT_OPEN");
-		}
-		if(reservation.getExpiryDate().before(new Date())){
-			cancelPrepaidReservationInNewTransaction(reservationId, currentUser);
-			throw new BusinessException("RESERVATION_EXPIRED");
-		}
-		
-		//set to OPEN all reserved operation, this is different from postpaid reservation process
-		@SuppressWarnings("unchecked")
-		List<WalletReservation> ops = getEntityManager().createNamedQuery("WalletReservation.listByReservationId")
-		.setParameter("reservationId", reservationId).getResultList();
-		for(WalletReservation op:ops){
-			op.getAuditable().setUpdated(new Date());
-			op.setStatus(WalletOperationStatusEnum.OPEN);
-			walletOperationService.updateBalanceCache(op);
-		}
-		
-		reservation.setStatus(ReservationStatus.CONFIRMED);
+	public void confirmPrepaidReservation(Reservation reservation) throws BusinessException {
+			//set to OPEN all reserved operation, this is different from postpaid reservation process
+			@SuppressWarnings("unchecked")
+			List<WalletReservation> ops = getEntityManager().createNamedQuery("WalletReservation.listByReservationId")
+			.setParameter("reservationId", reservation.getId()).getResultList();
+			for(WalletReservation op:ops){
+				op.getAuditable().setUpdated(new Date());
+				op.setStatus(WalletOperationStatusEnum.OPEN);
+				walletOperationService.updateBalanceCache(op);
+			}
+			reservation.setStatus(ReservationStatus.CONFIRMED);
 	}
 	
 	public BigDecimal confirmReservation(Long reservationId, Provider provider, String sellerCode, String offerCode,

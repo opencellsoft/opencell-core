@@ -96,6 +96,7 @@ public abstract class BaseEntity implements Serializable, IEntity {
 	 */
 	@Override
 	public boolean equals(Object obj) {
+		System.out.println("this .class"+this.getClass()+" this:"+this+" obj"+obj+" obj.class"+obj.getClass());
 		throw new IllegalStateException("Equals method was not overriden!");
 	}
 

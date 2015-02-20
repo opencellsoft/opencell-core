@@ -1,6 +1,8 @@
 package org.meveo.api.billing;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.ejb.Stateless;
@@ -23,6 +25,7 @@ import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.Reservation;
+import org.meveo.model.billing.ReservationStatus;
 import org.meveo.model.rating.EDR;
 import org.meveo.model.rating.EDRStatusEnum;
 import org.meveo.service.billing.impl.EdrService;
@@ -52,6 +55,8 @@ public class MediationApi extends BaseApi {
 	
 	@Inject 
 	private ReservationService reservationService;
+	
+	Map<Long,Timer> timers= new HashMap<Long,Timer>();
 
 	public void registerCdrList(CdrListDto postData, User currentUser) throws MeveoApiException {
 
@@ -102,16 +107,10 @@ public class MediationApi extends BaseApi {
 					try {
 						usageRatingService.rateUsageWithinTransaction(edr, user);
 						if(edr.getStatus()==EDRStatusEnum.REJECTED){
-							try{
-								edrService.remove(edr);
-							} catch(Exception e1){}
 							log.error("edr rejected={}", edr.getRejectReason());
 							throw new MeveoApiException(edr.getRejectReason());
 						}
 					} catch (BusinessException e) {
-						try{
-							edrService.remove(edr);
-						} catch(Exception e1){}
 						log.error("Exception rating edr={}", e.getMessage());
 						if("INSUFFICIENT_BALANCE".equals(e.getMessage())){
 							throw new MeveoApiException(MeveoApiErrorCode.INSUFFICIENT_BALANCE,e.getMessage());
@@ -135,7 +134,8 @@ public class MediationApi extends BaseApi {
 	private void reservationExpired(Timer timer){
 		Object[] objs = (Object[]) timer.getInfo();
 		try {
-			reservationService.cancelPrepaidReservationInNewTransaction((Long)objs[0],(User)objs[1]);
+			Reservation reservation = reservationService.findById((Long)objs[0]);
+			reservationService.cancelPrepaidReservationInNewTransaction(reservation);
 		} catch (BusinessException e) {
 			e.printStackTrace();
 		}
@@ -171,8 +171,9 @@ public class MediationApi extends BaseApi {
 						TimerConfig timerConfig = new TimerConfig();
 						Object[] objs = {reservation.getId(),user};
 						timerConfig.setInfo(objs);
-						timerService.createSingleActionTimer(
+						Timer timer=timerService.createSingleActionTimer(
 								user.getProvider().getPrepaidReservationExpirationDelayinMillisec(),timerConfig);
+						timers.put(reservation.getId(), timer);
 					} catch (BusinessException e) {
 						log.error("Exception rating edr={}", e.getMessage());
 						if("INSUFFICIENT_BALANCE".equals(e.getMessage())){
@@ -198,7 +199,49 @@ public class MediationApi extends BaseApi {
 	public void confirmReservation(PrepaidReservationDto  reservationDto, User user, String ip) throws MeveoApiException {
 		if (reservationDto.getReservationId() > 0) {
 			try {
-				reservationService.confirmPrepaidReservation(reservationDto.getReservationId(),reservationDto.getConsumedQuantity(),user);
+				Reservation reservation = reservationService.findById(reservationDto.getReservationId());
+				if(reservation==null){
+					throw new BusinessException("CANNOT_FIND_RESERVATION");
+				}
+				if(reservation.getProvider().getId() != user.getProvider().getId()){
+					throw new BusinessException("NOT_YOUR_RESERVATION");
+				}
+				if (reservation.getStatus() != ReservationStatus.OPEN) {
+					throw new BusinessException("RESERVATION_NOT_OPEN");
+				}
+				log.debug("compare dto qty {} and reserved qty {}",reservationDto.getConsumedQuantity().toPlainString(),reservation.getQuantity().toPlainString());
+				if(reservationDto.getConsumedQuantity().compareTo(reservation.getQuantity())==0){
+					reservationService.confirmPrepaidReservation(reservation);
+				} else if(reservationDto.getConsumedQuantity().compareTo(reservation.getQuantity())<0){
+					reservationService.cancelPrepaidReservation(reservation);
+					EDR edr =  reservation.getOriginEdr();
+					edr.setQuantity(reservationDto.getConsumedQuantity());
+					try {
+						usageRatingService.rateUsageWithinTransaction(edr, user);
+						if(edr.getStatus()==EDRStatusEnum.REJECTED){
+							log.error("edr rejected={}", edr.getRejectReason());
+							throw new MeveoApiException(edr.getRejectReason());
+						}
+					} catch (BusinessException e) {
+						log.error("Exception rating edr={}", e.getMessage());
+						if("INSUFFICIENT_BALANCE".equals(e.getMessage())){
+							throw new MeveoApiException(MeveoApiErrorCode.INSUFFICIENT_BALANCE,e.getMessage());
+						} else {
+							throw new MeveoApiException(MeveoApiErrorCode.BUSINESS_API_EXCEPTION,e.getMessage());
+						}
+						
+					}
+				} else {
+					throw new BusinessException("CONSUMPTION_OVER_QUANTITY_RESERVED");
+				}
+				try{
+					if(timers.containsKey(reservation.getId())){
+						Timer timer = timers.get(reservation.getId());
+						timer.cancel();
+						timers.remove(reservation.getId());
+						log.debug("Canceled expiry timer for reservation {}, remains {} active timers",reservation.getId(),timers.size());
+					}
+				} catch(Exception e1){}
 			} catch (BusinessException e) {
 				e.printStackTrace();
 				throw new MeveoApiException(e.getMessage());
@@ -215,7 +258,17 @@ public class MediationApi extends BaseApi {
 	public void cancelReservation(PrepaidReservationDto  reservationDto, User user, String ip) throws MeveoApiException {
 		if (reservationDto.getReservationId() > 0) {
 			try {
-				reservationService.cancelPrepaidReservation(reservationDto.getReservationId(),user);
+				Reservation reservation = reservationService.findById(reservationDto.getReservationId());
+				if(reservation==null){
+					throw new BusinessException("CANNOT_FIND_RESERVATION");
+				}
+				if(reservation.getProvider().getId() != user.getProvider().getId()){
+					throw new BusinessException("NOT_YOUR_RESERVATION");
+				}
+				if (reservation.getStatus() != ReservationStatus.OPEN) {
+					throw new BusinessException("RESERVATION_NOT_OPEN");
+				}	
+				reservationService.cancelPrepaidReservation(reservation);
 			} catch (BusinessException e) {
 				e.printStackTrace();
 				throw new MeveoApiException(e.getMessage());
