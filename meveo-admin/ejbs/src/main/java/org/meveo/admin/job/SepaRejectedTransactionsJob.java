@@ -20,6 +20,7 @@ import org.meveo.commons.utils.FileUtils;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.admin.User;
 import org.meveo.model.crm.Provider;
+import org.meveo.model.jobs.JobCategoryEnum;
 import org.meveo.model.jobs.JobExecutionResult;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.TimerInfo;
@@ -173,6 +174,11 @@ public class SepaRejectedTransactionsJob implements Job {
 				log.error(e.getMessage());
 			}
 		}
+	}
+	
+	@Override
+	public JobCategoryEnum getJobCategory() {
+		return JobCategoryEnum.ACCOUNT_RECEIVABLES;
 	}
 
 }

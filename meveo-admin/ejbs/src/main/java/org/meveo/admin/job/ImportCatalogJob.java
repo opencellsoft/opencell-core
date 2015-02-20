@@ -30,6 +30,7 @@ import javax.ejb.TimerService;
 import javax.inject.Inject;
 
 import org.meveo.model.admin.User;
+import org.meveo.model.jobs.JobCategoryEnum;
 import org.meveo.model.jobs.JobExecutionResult;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.TimerInfo;
@@ -120,6 +121,11 @@ public class ImportCatalogJob implements Job {
 				log.error("Error: {}", e.getMessage());
 			}
 		}
+	}
+	
+	@Override
+	public JobCategoryEnum getJobCategory() {
+		return JobCategoryEnum.IMPORT_HIERARCHY;
 	}
 
 }

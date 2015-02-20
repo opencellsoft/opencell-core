@@ -23,6 +23,7 @@ import org.meveo.model.admin.BayadDunningInputHistory;
 import org.meveo.model.admin.DunningHistory;
 import org.meveo.model.admin.User;
 import org.meveo.model.crm.Provider;
+import org.meveo.model.jobs.JobCategoryEnum;
 import org.meveo.model.jobs.JobExecutionResult;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.TimerInfo;
@@ -243,5 +244,10 @@ public class DunningProcessJob implements Job {
 				log.error(e.getMessage());
 			}
 		}
+	}
+	
+	@Override
+	public JobCategoryEnum getJobCategory() {
+		return JobCategoryEnum.ACCOUNT_RECEIVABLES;
 	}
 }
