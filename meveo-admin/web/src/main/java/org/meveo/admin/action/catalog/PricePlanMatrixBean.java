@@ -19,16 +19,16 @@ package org.meveo.admin.action.catalog;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.enterprise.context.ConversationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.meveo.admin.action.StatelessBaseBean;
+import org.meveo.admin.action.BaseBean;
 import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.catalog.impl.PricePlanMatrixService;
+import org.omnifaces.cdi.ViewScoped;
 import org.primefaces.event.SelectEvent;
 
 /**
@@ -38,8 +38,8 @@ import org.primefaces.event.SelectEvent;
  * Manaty custom JSF components.
  */
 @Named
-@ConversationScoped
-public class PricePlanMatrixBean extends StatelessBaseBean<PricePlanMatrix> {
+@ViewScoped
+public class PricePlanMatrixBean extends BaseBean<PricePlanMatrix> {
 
 	private static final long serialVersionUID = 1L;
 
@@ -72,16 +72,6 @@ public class PricePlanMatrixBean extends StatelessBaseBean<PricePlanMatrix> {
 		obj.setMaxSubscriptionAgeInMonth(9999L);
 
 		return obj;
-	}
-
-	/**
-	 * Override default list view name. (By default its class name starting
-	 * lower case + 's').
-	 * 
-	 * @see org.meveo.admin.action.BaseBean#getDefaultViewName()
-	 */
-	protected String getDefaultViewName() {
-		return "pricePlanMatrixes";
 	}
 
 	/**

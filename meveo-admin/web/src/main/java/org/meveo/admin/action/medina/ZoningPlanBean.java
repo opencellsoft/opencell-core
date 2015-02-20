@@ -16,19 +16,19 @@
  */
 package org.meveo.admin.action.medina;
 
-import javax.enterprise.context.ConversationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.meveo.admin.action.StatelessBaseBean;
+import org.meveo.admin.action.BaseBean;
 import org.meveo.model.mediation.ZonningPlan;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.medina.impl.ZoningPlanService;
+import org.omnifaces.cdi.ViewScoped;
 
 @Named
-@ConversationScoped
-public class ZoningPlanBean extends StatelessBaseBean<ZonningPlan> {
+@ViewScoped
+public class ZoningPlanBean extends BaseBean<ZonningPlan> {
 
 	private static final long serialVersionUID = 1L;
 

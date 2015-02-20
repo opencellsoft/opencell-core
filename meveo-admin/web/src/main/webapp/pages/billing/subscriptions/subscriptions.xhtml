@@ -28,7 +28,7 @@
 				field="description" />
 		</hf:searchPanel>
 
-		<hftl:dataList label="#{messages['subscription.title']}"
+		<hftl:dataList label="#{messages['subscription.title']}" sortBy="code"
 			backingBean="#{subscriptionListBean}" checkMany="false">
 			<hftl:column label="#{messages['businessEntity.code']}" field="code" />
 			<hftl:column label="#{messages['businessEntity.description']}"
@@ -45,7 +45,6 @@
 				backView="subscriptions" />
 
 			<hftl:actionsColumn useCustomIdParam="true" renderDeleteLink="false"
-				propagateConversation="false"
 				permission="#{identity.hasPermission('billing','billingManagement')}" />
 		</hftl:dataList>
 

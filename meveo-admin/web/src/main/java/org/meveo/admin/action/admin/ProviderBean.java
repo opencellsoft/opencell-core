@@ -16,20 +16,20 @@
  */
 package org.meveo.admin.action.admin;
 
-import javax.enterprise.context.ConversationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.meveo.admin.action.StatelessBaseBean;
+import org.meveo.admin.action.BaseBean;
 import org.meveo.model.billing.Language;
 import org.meveo.model.crm.Provider;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.crm.impl.ProviderService;
+import org.omnifaces.cdi.ViewScoped;
 import org.primefaces.event.SelectEvent;
 
 @Named
-@ConversationScoped
-public class ProviderBean extends StatelessBaseBean<Provider> {
+@ViewScoped
+public class ProviderBean extends BaseBean<Provider> {
 
 	private static final long serialVersionUID = 1L;
 
@@ -38,28 +38,6 @@ public class ProviderBean extends StatelessBaseBean<Provider> {
 
 	public ProviderBean() {
 		super(Provider.class);
-	}
-
-	/**
-	 * Factory method for entity to edit. If objectId param set load that entity
-	 * from database, otherwise create new.
-	 * 
-	 * @throws IllegalAccessException
-	 * @throws InstantiationException
-	 */
-
-	public Provider initEntity() {
-		return super.initEntity();
-	}
-
-	/**
-	 * Override default list view name. (By default its class name starting
-	 * lower case + 's').
-	 * 
-	 * @see org.meveo.admin.action.BaseBean#getDefaultViewName()
-	 */
-	protected String getDefaultViewName() {
-		return "sellers";
 	}
 
 	/**

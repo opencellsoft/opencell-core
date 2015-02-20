@@ -16,17 +16,17 @@
  */
 package org.meveo.admin.action.payments;
 
-import javax.enterprise.context.ConversationScoped;
 import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.meveo.admin.action.StatelessBaseBean;
+import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.payments.AutomatedPayment;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.payments.impl.AutomatedPaymentService;
+import org.omnifaces.cdi.ViewScoped;
 
 /**
  * Standard backing bean for {@link AutomatedPayment} (extends {@link BaseBean}
@@ -35,8 +35,8 @@ import org.meveo.service.payments.impl.AutomatedPaymentService;
  * Manaty custom JSF components.
  */
 @Named
-@ConversationScoped
-public class AutomatedPaymentBean extends StatelessBaseBean<AutomatedPayment> {
+@ViewScoped
+public class AutomatedPaymentBean extends BaseBean<AutomatedPayment> {
 
 	private static final long serialVersionUID = 1L;
 

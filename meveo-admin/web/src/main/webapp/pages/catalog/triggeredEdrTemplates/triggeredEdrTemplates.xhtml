@@ -8,7 +8,7 @@
 	<ui:define name="metadata">
 		<f:metadata>
 			<f:event type="preRenderView"
-				listener="#{triggeredEDRTemplateBean.preRenderView}" />
+				listener="#{triggeredEDRTemplateListBean.preRenderView}" />
 		</f:metadata>
 	</ui:define>
 
@@ -19,15 +19,15 @@
 	<ui:define name="body">
 
 		<hf:searchPanel label="#{messages['triggeredEdrTemplate.search']}"
-			backingBean="#{triggeredEDRTemplateBean}">
+			backingBean="#{triggeredEDRTemplateListBean}">
 			<hf:searchField label="#{messages['businessEntity.code']}"
 				field="code" />
 			<hf:searchField label="#{messages['businessEntity.description']}"
 				field="description" />
 		</hf:searchPanel>
 
-		<hftl:dataList label="#{messages['triggeredEdrTemplate.title']}"
-			checkMany="false" backingBean="#{triggeredEDRTemplateBean}">
+		<hftl:dataList label="#{messages['triggeredEdrTemplate.title']}" sortBy="code"
+			checkMany="false" backingBean="#{triggeredEDRTemplateListBean}">
 			<hftl:column label="#{messages['businessEntity.code']}" field="code" />
 			<hftl:column label="#{messages['businessEntity.description']}"
 				field="description" />

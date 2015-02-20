@@ -19,15 +19,15 @@ package org.meveo.admin.action.crm;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.enterprise.context.ConversationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.meveo.admin.action.StatelessBaseBean;
+import org.meveo.admin.action.BaseBean;
 import org.meveo.model.crm.Email;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.crm.impl.EmailService;
+import org.omnifaces.cdi.ViewScoped;
 
 /**
  * Standard backing bean for {@link Email} (extends {@link BaseBean} that
@@ -36,8 +36,8 @@ import org.meveo.service.crm.impl.EmailService;
  * custom JSF components.
  */
 @Named
-@ConversationScoped
-public class EmailBean extends StatelessBaseBean<Email> {
+@ViewScoped
+public class EmailBean extends BaseBean<Email> {
 
 	private static final long serialVersionUID = 1L;
 

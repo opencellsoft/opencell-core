@@ -16,17 +16,16 @@
  */
 package org.meveo.admin.action.billing;
 
-import javax.enterprise.context.ConversationScoped;
 import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.meveo.admin.action.BaseBean;
-import org.meveo.admin.action.StatelessBaseBean;
 import org.meveo.model.billing.RatedTransaction;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.RatedTransactionService;
+import org.omnifaces.cdi.ViewScoped;
 
 /**
  * Standard backing bean for {@link RatedTransaction} (extends {@link BaseBean}
@@ -35,8 +34,8 @@ import org.meveo.service.billing.impl.RatedTransactionService;
  * Manaty custom JSF components.
  */
 @Named
-@ConversationScoped
-public class RatedTransactionBean extends StatelessBaseBean<RatedTransaction> {
+@ViewScoped
+public class RatedTransactionBean extends BaseBean<RatedTransaction> {
 
 	private static final long serialVersionUID = 1L;
 

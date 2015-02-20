@@ -16,13 +16,12 @@
  */
 package org.meveo.admin.action.payments;
 
-import javax.enterprise.context.ConversationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.persistence.EntityExistsException;
 
 import org.jboss.seam.international.status.builder.BundleKey;
-import org.meveo.admin.action.StatelessBaseBean;
+import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.payments.ActionPlanItem;
 import org.meveo.model.payments.DunningPlan;
@@ -30,6 +29,7 @@ import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.payments.impl.ActionPlanItemService;
 import org.meveo.service.payments.impl.DunningPlanService;
+import org.omnifaces.cdi.ViewScoped;
 
 /**
  * Standard backing bean for {@link ActionPlanItem} (extends {@link BaseBean}
@@ -38,8 +38,8 @@ import org.meveo.service.payments.impl.DunningPlanService;
  * Manaty custom JSF components.
  */
 @Named
-@ConversationScoped
-public class ActionPlanItemBean extends StatelessBaseBean<ActionPlanItem> {
+@ViewScoped
+public class ActionPlanItemBean extends BaseBean<ActionPlanItem> {
 
 	private static final long serialVersionUID = 1L;
 

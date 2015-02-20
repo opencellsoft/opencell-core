@@ -25,12 +25,10 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Set;
 
-import javax.enterprise.context.ConversationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.meveo.admin.action.BaseBean;
-import org.meveo.admin.action.StatelessBaseBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.CategoryInvoiceAgregate;
@@ -46,6 +44,7 @@ import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.billing.impl.InvoiceService;
 import org.meveo.service.payments.impl.CustomerAccountService;
+import org.omnifaces.cdi.ViewScoped;
 import org.primefaces.model.LazyDataModel;
 
 /**
@@ -55,8 +54,8 @@ import org.primefaces.model.LazyDataModel;
  * custom JSF components.
  */
 @Named
-@ConversationScoped
-public class InvoiceBean extends StatelessBaseBean<Invoice> {
+@ViewScoped
+public class InvoiceBean extends BaseBean<Invoice> {
 
 	private static final long serialVersionUID = 1L;
 

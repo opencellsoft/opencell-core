@@ -8,7 +8,7 @@
 	<ui:define name="metadata">
 		<f:metadata>
 			<f:event type="preRenderView"
-				listener="#{recurringChargeTemplateBean.preRenderView}" />
+				listener="#{recurringChargeTemplateListBean.preRenderView}" />
 		</f:metadata>
 	</ui:define>
 
@@ -19,7 +19,7 @@
 	<ui:define name="body">
 
 		<hf:searchPanel label="#{messages['recurringChargeTemplate.search']}"
-			backingBean="#{recurringChargeTemplateBean}">
+			backingBean="#{recurringChargeTemplateListBean}">
 			<hf:searchField label="#{messages['chargeTemplate.code']}"
 				field="code" />
 			<hf:searchField label="#{messages['chargeTemplate.description']}"
@@ -36,7 +36,7 @@
 		</hf:searchPanel>
 
 		<hftl:dataList label="#{messages['recurringChargeTemplate.title']}"
-			checkMany="false" backingBean="#{recurringChargeTemplateBean}">
+			checkMany="false" backingBean="#{recurringChargeTemplateListBean}" sortBy="code">
 			<hftl:column label="#{messages['chargeTemplate.code']}" field="code" />
 			<hftl:column label="#{messages['chargeTemplate.description']}"
 				field="description" />

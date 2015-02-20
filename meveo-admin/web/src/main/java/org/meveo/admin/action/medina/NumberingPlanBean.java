@@ -16,19 +16,25 @@
  */
 package org.meveo.admin.action.medina;
 
-import javax.enterprise.context.ConversationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.meveo.admin.action.StatelessBaseBean;
+import org.meveo.admin.action.BaseBean;
 import org.meveo.model.mediation.NumberingPlan;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.medina.impl.NumberingPlanService;
+import org.omnifaces.cdi.ViewScoped;
 
+/**
+ * Standard backing bean for {@link NumberingPlan} (extends {@link BaseBean}
+ * that provides almost all common methods to handle entities filtering/sorting
+ * in datatable, their create, edit, view, delete operations). It works with
+ * Manaty custom JSF components.
+ */
 @Named
-@ConversationScoped
-public class NumberingPlanBean extends StatelessBaseBean<NumberingPlan> {
+@ViewScoped
+public class NumberingPlanBean extends BaseBean<NumberingPlan> {
 
 	private static final long serialVersionUID = 1L;
 
@@ -53,5 +59,4 @@ public class NumberingPlanBean extends StatelessBaseBean<NumberingPlan> {
 	protected IPersistenceService<NumberingPlan> getPersistenceService() {
 		return numberingPlanService;
 	}
-
 }

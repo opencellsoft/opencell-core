@@ -16,17 +16,17 @@
  */
 package org.meveo.admin.action.payments;
 
-import javax.enterprise.context.ConversationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.jboss.seam.international.status.builder.BundleKey;
-import org.meveo.admin.action.StatelessBaseBean;
+import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.payments.MatchingCode;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.payments.impl.MatchingCodeService;
+import org.omnifaces.cdi.ViewScoped;
 
 /**
  * Standard backing bean for {@link MatchingCode} (extends {@link BaseBean} that
@@ -35,8 +35,8 @@ import org.meveo.service.payments.impl.MatchingCodeService;
  * custom JSF components.
  */
 @Named
-@ConversationScoped
-public class MatchingCodeBean extends StatelessBaseBean<MatchingCode> {
+@ViewScoped
+public class MatchingCodeBean extends BaseBean<MatchingCode> {
 
 	private static final long serialVersionUID = 1L;
 

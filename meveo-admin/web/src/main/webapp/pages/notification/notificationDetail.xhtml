@@ -9,16 +9,6 @@
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
 
-	<ui:define name="metadata">
-		<f:metadata>
-			<f:event type="preRenderView"
-				listener="#{notificationBean.preRenderView}" />
-			<f:viewParam name="objectId"
-				value="#{notificationBean.objectId}" />
-
-		</f:metadata>
-	</ui:define>
-
 	<ui:define name="navigation">
 		<ui:include src="/layout/navigation.xhtml" />
 	</ui:define>

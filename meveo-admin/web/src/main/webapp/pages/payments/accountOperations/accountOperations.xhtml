@@ -8,6 +8,13 @@
     xmlns:hftl="http://hftl.org" xmlns:hf="http://java.sun.com/jsf/composite/tags"
     template="/layout/template.xhtml">
     
+    <ui:define name="metadata">
+        <f:metadata>
+            <f:event type="preRenderView"
+                listener="#{otherCreditAndChargeListBean.preRenderView}" />
+        </f:metadata>
+    </ui:define>
+    
     <ui:define name="navigation">
    		<ui:include src="/layout/navigation.xhtml" />
    	</ui:define>

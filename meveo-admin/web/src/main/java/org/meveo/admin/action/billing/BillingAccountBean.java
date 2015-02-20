@@ -23,7 +23,6 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
-import javax.enterprise.context.ConversationScoped;
 import javax.enterprise.inject.Produces;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ValueChangeEvent;
@@ -55,6 +54,7 @@ import org.meveo.service.billing.impl.BillingRunService;
 import org.meveo.service.billing.impl.InvoiceService;
 import org.meveo.service.billing.impl.RatedTransactionService;
 import org.meveo.service.payments.impl.CustomerAccountService;
+import org.omnifaces.cdi.ViewScoped;
 
 import com.lowagie.text.Document;
 import com.lowagie.text.DocumentException;
@@ -73,7 +73,7 @@ import com.lowagie.text.pdf.PdfStamper;
  * Manaty custom JSF components.
  */
 @Named
-@ConversationScoped
+@ViewScoped
 public class BillingAccountBean extends AccountBean<BillingAccount> {
 
 	private static final long serialVersionUID = 1L;

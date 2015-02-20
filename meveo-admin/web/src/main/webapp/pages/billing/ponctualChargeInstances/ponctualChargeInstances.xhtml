@@ -8,6 +8,14 @@
 	xmlns:hf="http://java.sun.com/jsf/composite/tags"
 	template="/layout/template.xhtml">
 
+
+    <ui:define name="metadata">
+        <f:metadata>
+            <f:event type="preRenderView"
+                listener="#{ponctualChargeInstanceListBean.preRenderView}" />
+        </f:metadata>
+    </ui:define>
+    
 	<ui:define name="navigation">
 		<ui:include src="/layout/navigation.xhtml" />
 	</ui:define>
@@ -15,14 +23,14 @@
 	<ui:define name="body">
 
 		<hf:searchPanel label="#{messages['ponctualChargeInstance.search']}"
-			backingBean="#{ponctualChargeInstanceBean}">
+			backingBean="#{ponctualChargeInstanceListBean}">
 			<hf:searchField
 				label="#{messages['ponctualChargeInstance.chargeDate']}"
 				field="chargeDate" />
 		</hf:searchPanel>
 
 		<hftl:dataList label="#{messages['ponctualChargeInstance.title']}"
-			backingBean="#{ponctualChargeInstanceBean}">
+			backingBean="#{ponctualChargeInstanceListBean}">
 			<hftl:column
 				label="#{messages['ponctualChargeInstance.chargeDate']}"
 				field="chargeDate" />

@@ -59,7 +59,7 @@
 
 		<hf:clearButton id="resetButton" label="#{messages['action.reset']}"
 			edit="#{cc.attrs.edit}"
-			resetAction="#{cc.attrs.backingBean.resetFormEntity()}" />
+			resetAction="#{cc.attrs.backingBean.resetFormEntity()}" includeViewParams="true"/>
 
 		<p:button id="backButton" value="#{messages['action.back']}"
 			rendered="#{cc.attrs.showBackButton}"

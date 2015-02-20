@@ -21,12 +21,10 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import javax.enterprise.context.ConversationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.meveo.admin.action.BaseBean;
-import org.meveo.admin.action.StatelessBaseBean;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.ServiceTemplate;
@@ -34,6 +32,7 @@ import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.catalog.impl.OfferTemplateService;
 import org.meveo.service.catalog.impl.ServiceTemplateService;
+import org.omnifaces.cdi.ViewScoped;
 import org.primefaces.model.DualListModel;
 
 /**
@@ -44,8 +43,8 @@ import org.primefaces.model.DualListModel;
  * 
  */
 @Named
-@ConversationScoped
-public class OfferTemplateBean extends StatelessBaseBean<OfferTemplate> {
+@ViewScoped
+public class OfferTemplateBean extends BaseBean<OfferTemplate> {
 
 	private static final long serialVersionUID = 1L;
 
@@ -81,17 +80,6 @@ public class OfferTemplateBean extends StatelessBaseBean<OfferTemplate> {
 
 	public OfferTemplateBean() {
 		super(OfferTemplate.class);
-	}
-
-	/**
-	 * Factory method for entity to edit. If objectId param set load that entity
-	 * from database, otherwise create new.
-	 * 
-	 * @throws IllegalAccessException
-	 * @throws InstantiationException
-	 */
-	public OfferTemplate initEntity() {
-		return super.initEntity();
 	}
 
 	/**

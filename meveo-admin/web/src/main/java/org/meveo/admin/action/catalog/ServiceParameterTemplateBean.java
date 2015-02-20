@@ -19,15 +19,15 @@ package org.meveo.admin.action.catalog;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.enterprise.context.ConversationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.meveo.admin.action.StatelessBaseBean;
+import org.meveo.admin.action.BaseBean;
 import org.meveo.model.catalog.ServiceParameterTemplate;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.catalog.impl.ServiceParameterTemplateService;
+import org.omnifaces.cdi.ViewScoped;
 
 /**
  * Standard backing bean for {@link ServiceParameterTemplate} (extends
@@ -36,10 +36,10 @@ import org.meveo.service.catalog.impl.ServiceParameterTemplateService;
  * It works with Manaty custom JSF components.
  */
 @Named
-@ConversationScoped
+@ViewScoped
 // TODO: @Restrict("#{s:hasRole('meveo.catalog')}")
 public class ServiceParameterTemplateBean extends
-		StatelessBaseBean<ServiceParameterTemplate> {
+		BaseBean<ServiceParameterTemplate> {
 
 	private static final long serialVersionUID = 1L;
 

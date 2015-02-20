@@ -21,7 +21,6 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.meveo.admin.action.BaseBean;
-import org.meveo.admin.action.StatelessBaseBean;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
@@ -35,7 +34,7 @@ import org.meveo.service.billing.impl.UserAccountService;
  */
 @Named
 @ConversationScoped
-public class UserAccountListBean extends StatelessBaseBean<UserAccount> {
+public class UserAccountListBean extends BaseBean<UserAccount> {
 
 	private static final long serialVersionUID = 1L;
 

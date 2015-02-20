@@ -16,21 +16,20 @@
  */
 package org.meveo.admin.action.billing;
 
-import javax.enterprise.context.ConversationScoped;
 import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.meveo.admin.action.BaseBean;
-import org.meveo.admin.action.StatelessBaseBean;
 import org.meveo.model.billing.WalletOperation;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.WalletOperationService;
+import org.omnifaces.cdi.ViewScoped;
 
 @Named
-@ConversationScoped
-public class WalletOperationBean extends StatelessBaseBean<WalletOperation> {
+@ViewScoped
+public class WalletOperationBean extends BaseBean<WalletOperation> {
 
 	private static final long serialVersionUID = 1L;
 

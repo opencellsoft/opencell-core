@@ -10,7 +10,7 @@
     
 	<f:metadata>
 			<f:event type="preRenderView"
-				listener="#{dunningPlanTransitionBean.preRenderView}" />
+				listener="#{dunningPlanTransitionListBean.preRenderView}" />
 		</f:metadata>
 	
     <ui:define name="navigation">
@@ -19,12 +19,12 @@
     
     <ui:define name="body">
 		    <hf:searchPanel id="searchPanel"
-			label="#{messages['dunningPlanTransition.search']}" backingBean="#{dunningPlanTransitionBean}">
+			label="#{messages['dunningPlanTransition.search']}" backingBean="#{dunningPlanTransitionListBean}">
 				<hf:searchField  label="#{messages['dunningPlanTransition.dunningLevelFrom']}" field="dunningLevelFrom" />
     			<hf:searchField  label="#{messages['dunningPlanTransition.dunningLevelTo']}" field="dunningLevelTo" />
 		    </hf:searchPanel>
 		 
-	    	<hftl:dataList label="#{messages['dunningPlanTransition.title']}" backingBean="#{dunningPlanTransitionBean}"   dataModel="#{dunningPlanTransitions}">
+	    	<hftl:dataList label="#{messages['dunningPlanTransition.title']}" backingBean="#{dunningPlanTransitionListBean}"   dataModel="#{dunningPlanTransitions}">
 	    		<hftl:column label="#{messages['dunningPlanTransition.dunningLevelFrom']}" field="dunningLevelFrom" />
 				<hftl:column label="#{messages['dunningPlanTransition.dunningLevelTo']}" field="dunningLevelTo" />
 				<hftl:column label="#{messages['dunningPlanTransition.delayBeforeProcess']}" field="delayBeforeProcess" />

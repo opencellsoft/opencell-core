@@ -20,14 +20,13 @@ import java.util.Arrays;
 import java.util.List;
 
 import javax.ejb.EJB;
-import javax.enterprise.context.ConversationScoped;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.jboss.solder.servlet.http.RequestParam;
-import org.meveo.admin.action.StatelessBaseBean;
+import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.mediation.Access;
@@ -36,10 +35,17 @@ import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.SubscriptionService;
 import org.meveo.service.medina.impl.AccessService;
 import org.meveo.service.medina.impl.CDRParsingService;
+import org.omnifaces.cdi.ViewScoped;
 
+/**
+ * Standard backing bean for {@link Access} (extends {@link BaseBean}
+ * that provides almost all common methods to handle entities filtering/sorting
+ * in datatable, their create, edit, view, delete operations). It works with
+ * Manaty custom JSF components.
+ */
 @Named
-@ConversationScoped
-public class AccessBean extends StatelessBaseBean<Access> {
+@ViewScoped
+public class AccessBean extends BaseBean<Access> {
 
 	private static final long serialVersionUID = 1L;
 
@@ -94,11 +100,6 @@ public class AccessBean extends StatelessBaseBean<Access> {
 	@Override
 	protected String getListViewName() {
 		return "access";
-	}
-
-	@Override
-	public String getEditViewName() {
-		return "accessDetail";
 	}
 
 	public Subscription getSelectedSubscription() {

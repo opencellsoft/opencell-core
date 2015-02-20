@@ -19,18 +19,17 @@ package org.meveo.admin.action.bi;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.enterprise.context.ConversationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.meveo.admin.action.BaseBean;
-import org.meveo.admin.action.StatelessBaseBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.report.ReportExecution;
 import org.meveo.model.bi.Report;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.bi.impl.ReportService;
+import org.omnifaces.cdi.ViewScoped;
 
 /**
  * Standard backing bean for {@link Report} (extends {@link BaseBean} that
@@ -39,8 +38,8 @@ import org.meveo.service.bi.impl.ReportService;
  * custom JSF components.
  */
 @Named
-@ConversationScoped
-public class ReportBean extends StatelessBaseBean<Report> {
+@ViewScoped
+public class ReportBean extends BaseBean<Report> {
 
 	private static final long serialVersionUID = 1L;
 

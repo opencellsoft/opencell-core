@@ -10,7 +10,6 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
-import javax.enterprise.context.ConversationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -24,14 +23,14 @@ import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.notification.Notification;
 import org.meveo.model.notification.NotificationEventTypeEnum;
 import org.meveo.model.notification.StrategyImportTypeEnum;
-import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.notification.NotificationService;
+import org.omnifaces.cdi.ViewScoped;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.UploadedFile;
 
 @Named
-@ConversationScoped
+@ViewScoped
 public class NotificationBean extends BaseBean<Notification>{
 
 
@@ -65,15 +64,6 @@ public class NotificationBean extends BaseBean<Notification>{
 	@Override
 	protected IPersistenceService<Notification> getPersistenceService() {
 		return notificationService;
-	}
-
-	protected String getDefaultViewName() {
-		return "notifications";
-	}
-
-	@Override
-	protected String getListViewName() {
-		return "notifications";
 	}
 
 	@Override

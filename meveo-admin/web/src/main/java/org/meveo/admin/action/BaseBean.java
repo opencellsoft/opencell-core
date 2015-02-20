@@ -814,6 +814,14 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     public String getBackView() {
         return backView.get();
     }
+    
+    public String getBackViewSave() {
+        return backViewSave;
+    }
+
+    public void setBackViewSave(String backViewSave) {
+        this.backViewSave = backViewSave;
+    }
 
     /**
 	 * Remove a value from a map type field attribute used to gather field

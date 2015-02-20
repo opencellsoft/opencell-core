@@ -19,13 +19,12 @@ package org.meveo.admin.action.payments;
 import java.util.Date;
 
 import javax.annotation.PostConstruct;
-import javax.enterprise.context.ConversationScoped;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.jboss.solder.servlet.http.RequestParam;
-import org.meveo.admin.action.StatelessBaseBean;
+import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.payments.CustomerAccount;
@@ -37,6 +36,7 @@ import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.payments.impl.CustomerAccountService;
 import org.meveo.service.payments.impl.OCCTemplateService;
 import org.meveo.service.payments.impl.OtherCreditAndChargeService;
+import org.omnifaces.cdi.ViewScoped;
 
 /**
  * Standard backing bean for {@link OtherCreditAndCharge} (extends
@@ -45,8 +45,8 @@ import org.meveo.service.payments.impl.OtherCreditAndChargeService;
  * It works with Manaty custom JSF components.
  */
 @Named
-@ConversationScoped
-public class OtherCreditAndChargeBean extends StatelessBaseBean<OtherCreditAndCharge> {
+@ViewScoped
+public class OtherCreditAndChargeBean extends BaseBean<OtherCreditAndCharge> {
 
 	private static final long serialVersionUID = 1L;
 

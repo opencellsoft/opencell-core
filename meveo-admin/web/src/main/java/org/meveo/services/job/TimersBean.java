@@ -14,7 +14,7 @@ import javax.inject.Named;
 
 import org.jboss.seam.international.status.Messages;
 import org.jboss.seam.international.status.builder.BundleKey;
-import org.meveo.admin.action.StatelessBaseBean;
+import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.admin.util.pagination.PaginationDataModel;
 import org.meveo.model.jobs.TimerEntity;
@@ -24,7 +24,7 @@ import org.meveo.service.job.TimerEntityService;
 
 @Named
 @ConversationScoped
-public class TimersBean extends StatelessBaseBean<TimerEntity> {
+public class TimersBean extends BaseBean<TimerEntity> {
 
 	private static final long serialVersionUID = 5578930292531038376L;
 

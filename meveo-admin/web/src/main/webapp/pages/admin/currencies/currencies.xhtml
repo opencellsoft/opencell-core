@@ -11,7 +11,7 @@
 	<ui:define name="metadata">
 		<f:metadata>
 			<f:event type="preRenderView"
-				listener="#{currencyBean.preRenderView}" />
+				listener="#{currencyListBean.preRenderView}" />
 		</f:metadata>
 	</ui:define>
 
@@ -22,7 +22,7 @@
 	<ui:define name="body">
 
 		<hf:searchPanel label="#{messages['currency.search']}" columns="3"
-			backingBean="#{currencyBean}">
+			backingBean="#{currencyListBean}">
 			<hf:searchField label="#{messages['currency.code']}"
 				field="currencyCode" />
 			<hf:searchField label="#{messages['currency.name']}"
@@ -30,7 +30,7 @@
 		</hf:searchPanel>
 
 		<hftl:dataList label="#{messages['currency.title']}"
-			backingBean="#{currencyBean}">
+			backingBean="#{currencyListBean}">
 			<hftl:column label="#{messages['currency.code']}"
 				field="currencyCode" />
 			<hftl:column label="#{messages['currency.name']}"

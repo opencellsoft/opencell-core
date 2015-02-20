@@ -23,7 +23,7 @@ import javax.faces.event.ValueChangeEvent;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.meveo.admin.action.StatelessBaseBean;
+import org.meveo.admin.action.BaseBean;
 import org.meveo.model.AccountEntity;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.UserAccount;
@@ -45,7 +45,7 @@ import org.meveo.service.crm.impl.AccountEntitySearchService;
  */
 @Named
 @ConversationScoped
-public class CustomerSearchBean extends StatelessBaseBean<AccountEntity> {
+public class CustomerSearchBean extends BaseBean<AccountEntity> {
 
 	private static final long serialVersionUID = 1L;
 

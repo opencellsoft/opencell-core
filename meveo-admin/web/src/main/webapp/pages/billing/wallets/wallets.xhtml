@@ -9,13 +9,20 @@
 	xmlns:c="http://java.sun.com/jstl/core"
 	template="/layout/template.xhtml">
 
+    <ui:define name="metadata">
+        <f:metadata>
+            <f:event type="preRenderView"
+                listener="#{walletListBean.preRenderView}" />
+        </f:metadata>
+    </ui:define>
+    
 	<ui:define name="navigation">
 		<ui:include src="/layout/navigation.xhtml" />
 	</ui:define>
 
 	<ui:define name="body">
 		<!-- Entity select popup. -->
-		<c:set var="filtersMap" value="#{walletBean.filters}" />
+		<c:set var="filtersMap" value="#{walletListBean.filters}" />
 		<c:set var="field" value="userAccount" />
 
 		<hftl:entityPopup id="searchUserAccountPopup"
@@ -36,7 +43,7 @@
 
 		</hftl:entityPopup>
 
-		<hf:searchPanel backingBean="#{walletBean}"
+		<hf:searchPanel backingBean="#{walletListBean}"
 			label="#{messages['wallet.search']}"
 			newButtonView="/pages/billing/wallets/walletDetail.xhtml">
 			<hf:searchField listBean="" label="#{messages['wallet.userAccount']}"
@@ -48,7 +55,7 @@
 		</hf:searchPanel>
 
 		<hftl:dataList label="#{messages['wallet.title']}"
-			backingBean="#{walletBean}" pdf="true">
+			backingBean="#{walletListBean}" pdf="true">
 			<hftl:column label="#{messages['wallet.userAccount']}"
 				field="userAccount" childField="code" />
 			<hftl:column label="#{messages['wallet.name']}" field="name" />

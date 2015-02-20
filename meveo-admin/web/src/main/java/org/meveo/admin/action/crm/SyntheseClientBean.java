@@ -20,13 +20,12 @@ import java.io.IOException;
 //import java.math.BigDecimal;
 //import java.util.List;
 
-import javax.enterprise.context.ConversationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
-import org.meveo.admin.action.StatelessBaseBean;
+import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.billing.BillingAccount;
 //import org.meveo.model.billing.Invoice;
@@ -34,10 +33,11 @@ import org.meveo.model.billing.BillingAccount;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.selfcare.local.SelfcareServiceLocal;
+import org.omnifaces.cdi.ViewScoped;
 
 @Named
-@ConversationScoped
-public class SyntheseClientBean extends StatelessBaseBean<BillingAccount> {
+@ViewScoped
+public class SyntheseClientBean extends BaseBean<BillingAccount> {
 
 	private static final long serialVersionUID = 1L;
 

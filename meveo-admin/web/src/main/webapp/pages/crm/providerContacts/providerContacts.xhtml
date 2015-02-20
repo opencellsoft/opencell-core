@@ -8,7 +8,7 @@
 	<ui:define name="metadata">
 		<f:metadata>
 			<f:event type="preRenderView"
-				listener="#{providerContactBean.preRenderView}" />
+				listener="#{providerContactListBean.preRenderView}" />
 		</f:metadata>
 	</ui:define>
 
@@ -19,14 +19,14 @@
 	<ui:define name="body">
 
 		<hf:searchPanel label="#{messages['providerContact.search']}"
-			backingBean="#{providerContactBean}">
+			backingBean="#{providerContactListBean}">
 			<hf:searchField label="#{messages['name.lastName']}" field="lastName" />
 			<hf:searchField label="#{messages['contactInformation.email']}"
 				field="email" />
 		</hf:searchPanel>
 
 		<hftl:dataList label="#{messages['providerContact.title']}"
-			backingBean="#{providerContactBean}">
+			backingBean="#{providerContactListBean}" sortBy="code">
 			<hftl:column label="#{messages['businessEntity.code']}" field="code" />
 			<hftl:column label="#{messages['businessEntity.description']}"
 				field="description" />

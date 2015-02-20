@@ -19,19 +19,19 @@ package org.meveo.admin.action.catalog;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.enterprise.context.ConversationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.meveo.admin.action.StatelessBaseBean;
+import org.meveo.admin.action.BaseBean;
 import org.meveo.model.catalog.TriggeredEDRTemplate;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.catalog.impl.TriggeredEDRTemplateService;
+import org.omnifaces.cdi.ViewScoped;
 
 @Named
-@ConversationScoped
-public class TriggeredEDRTemplateBean extends StatelessBaseBean<TriggeredEDRTemplate> {
+@ViewScoped
+public class TriggeredEDRTemplateBean extends BaseBean<TriggeredEDRTemplate> {
 
 	private static final long serialVersionUID = 1L;
 
@@ -48,16 +48,6 @@ public class TriggeredEDRTemplateBean extends StatelessBaseBean<TriggeredEDRTemp
 	 */
 	public TriggeredEDRTemplateBean() {
 		super(TriggeredEDRTemplate.class);
-	}
-
-	/**
-	 * Override default list view name. (By default its class name starting
-	 * lower case + 's').
-	 * 
-	 * @see org.meveo.admin.action.BaseBean#getDefaultViewName()
-	 */
-	protected String getDefaultViewName() {
-		return "triggeredEdrTemplates";
 	}
 
 	/**

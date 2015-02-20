@@ -22,11 +22,11 @@
 </cc:interface>
 
 <cc:implementation>
-	<ui:fragment rendered="#{cc.isText(cc.attrs.field, true)}">
+	<ui:fragment rendered="#{cc.isText(cc.attrs.field,cc.attrs.childField, true) and not cc.attrs.popup}">
 		<p:panelGrid columns="2" rendered="#{cc.attrs.listValues == null}">
 			<p:outputLabel for="#{cc.attrs.field}_text" value="#{cc.attrs.label}" />
 			<p:inputText id="#{cc.attrs.field}_text" value="#{cc.filters[cc.attrs.field]}" size="#{cc.attrs.size}" disabled="#{cc.attrs.disabled}" rendered="#{cc.attrs.childField == null}"/>
-            <p:inputText id="#{cc.attrs.field}_#{cc.attrs.childField}_text" value="#{cc.filters[cc.attrs.field][cc.attrs.childField]}" size="#{cc.attrs.size}" disabled="#{cc.attrs.disabled}" rendered="#{cc.attrs.childField != null}"/>
+            <p:inputText id="#{cc.attrs.field}_#{cc.attrs.childField}_text" value="#{cc.filters[cc.attrs.field.concat('.').concat(cc.attrs.childField)]}" size="#{cc.attrs.size}" disabled="#{cc.attrs.disabled}" rendered="#{cc.attrs.childField != null}"/>
 		</p:panelGrid>
         
         <p:panelGrid columns="2"  rendered="#{cc.attrs.listValues != null}">

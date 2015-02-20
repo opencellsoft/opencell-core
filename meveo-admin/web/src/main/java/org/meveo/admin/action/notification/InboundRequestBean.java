@@ -12,9 +12,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.enterprise.context.ConversationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
+
 import org.apache.commons.codec.binary.Base64;
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
@@ -30,11 +30,18 @@ import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.notification.InboundRequestService;
+import org.omnifaces.cdi.ViewScoped;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.UploadedFile;
 
+/**
+ * Standard backing bean for {@link InboundRequest} (extends {@link BaseBean}
+ * that provides almost all common methods to handle entities filtering/sorting
+ * in datatable, their create, edit, view, delete operations). It works with
+ * Manaty custom JSF components.
+ */
 @Named
-@ConversationScoped
+@ViewScoped
 public class InboundRequestBean extends BaseBean<InboundRequest> {
 
     private static final long serialVersionUID = -6762628879784107169L;
@@ -80,10 +87,6 @@ public class InboundRequestBean extends BaseBean<InboundRequest> {
     @Override
     protected IPersistenceService<InboundRequest> getPersistenceService() {
         return inboundRequestService;
-    }
-
-    protected String getDefaultViewName() {
-        return "inboundRequests";
     }
 
     @Override

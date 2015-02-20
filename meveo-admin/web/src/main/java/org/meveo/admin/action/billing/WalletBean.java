@@ -16,18 +16,17 @@
  */
 package org.meveo.admin.action.billing;
 
-import javax.enterprise.context.ConversationScoped;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.jboss.solder.servlet.http.RequestParam;
 import org.meveo.admin.action.BaseBean;
-import org.meveo.admin.action.StatelessBaseBean;
 import org.meveo.model.billing.WalletInstance;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.WalletService;
+import org.omnifaces.cdi.ViewScoped;
 
 /**
  * Standard backing bean for {@link WalletInstance} (extends {@link BaseBean}
@@ -36,8 +35,8 @@ import org.meveo.service.billing.impl.WalletService;
  * Manaty custom JSF components.
  */
 @Named
-@ConversationScoped
-public class WalletBean extends StatelessBaseBean<WalletInstance> {
+@ViewScoped
+public class WalletBean extends BaseBean<WalletInstance> {
 
 	private static final long serialVersionUID = 1L;
 

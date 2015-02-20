@@ -8,7 +8,7 @@
 	<ui:define name="metadata">
 		<f:metadata>
 			<f:event type="preRenderView"
-				listener="#{usageChargeTemplateBean.preRenderView}" />
+				listener="#{usageChargeTemplateListBean.preRenderView}" />
 		</f:metadata>
 	</ui:define>
 
@@ -19,7 +19,7 @@
 	<ui:define name="body">
 
 		<hf:searchPanel label="#{messages['usageChargeTemplate.title']}"
-			backingBean="#{usageChargeTemplateBean}">
+			backingBean="#{usageChargeTemplateListBean}">
 			<hf:searchField label="#{messages['chargeTemplate.code']}"
 				field="code" />
 			<hf:searchField label="#{messages['chargeTemplate.description']}"
@@ -30,8 +30,8 @@
 				field="disabled" />
 		</hf:searchPanel>
 
-		<hftl:dataList label="#{messages['usageChargeTemplate.title']}"
-			checkMany="false" backingBean="#{usageChargeTemplateBean}">
+		<hftl:dataList label="#{messages['usageChargeTemplate.title']}" sortBy="code"
+			checkMany="false" backingBean="#{usageChargeTemplateListBean}">
 			<hftl:column label="#{messages['chargeTemplate.code']}" field="code" />
 			<hftl:column label="#{messages['chargeTemplate.description']}"
 				field="description" />

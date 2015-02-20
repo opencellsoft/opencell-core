@@ -13,14 +13,14 @@
 	<ui:define name="metadata">
 		<f:metadata>
 			<f:event type="preRenderView"
-				listener="#{emailNotificationBean.preRenderView}" />
+				listener="#{emailNotificationListBean.preRenderView}" />
 		</f:metadata>
 	</ui:define>
 	<ui:define name="body">
    		
 			<!-- ===================================== SEARCH CRITERIA ZONE ================================= -->
 
-			<hf:searchPanel label="#{messages['menu.emailNotifications']}" columns="3" backingBean="#{emailNotificationBean}">
+			<hf:searchPanel label="#{messages['menu.emailNotifications']}" columns="3" backingBean="#{emailNotificationListBean}">
 				<hf:searchField label="#{messages['entity.code']}" field="code" />
 				<hf:searchField label="#{messages['entity.notification.classNameFilter']}" field="classNameFilter" />
 				<hf:searchField label="#{messages['entity.notification.eventTypeFilter']}" field="eventTypeFilter" />
@@ -30,7 +30,7 @@
 
 			<!-- ===================================== SEARCH USERS RESULTS ================================= -->
 
-			<hftl:dataList backingBean="#{emailNotificationBean}" exportButton="false" exportToCsv="true" importCsv="true">
+			<hftl:dataList backingBean="#{emailNotificationListBean}" exportButton="false" exportToCsv="true" importCsv="true" sortBy="code">
 			   	<hftl:actionsColumn editView="/pages/notification/emailNotificationDetail.xhtml" permission="#{persistentPermissionResolver.hasPermission('reporting','reportingManagement')}"  />
 				<hftl:column label="#{messages['entity.code']}"
 					field="code" />

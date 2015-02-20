@@ -10,7 +10,7 @@
 
 	<f:metadata>
 		<f:event type="preRenderView"
-			listener="#{ddRequestLOTBean.preRenderView}" />
+			listener="#{ddRequestLOTListBean.preRenderView}" />
 	</f:metadata>
 	<ui:define name="navigation">
 		<ui:include src="/layout/navigation.xhtml" />
@@ -20,7 +20,7 @@
 
 		<hf:searchPanel id="searchPanel"
 			label="#{messages['ddrequestLot.panel']}"
-			backingBean="#{ddRequestLOTBean}" renderNewButton="false">
+			backingBean="#{ddRequestLOTListBean}" renderNewButton="false">
 			<hf:searchField label="#{messages['ddrequestLot.fileName']}"
 				field="fileName" />
 			<hf:searchField label="#{messages['ddrequestLot.sendDate']}"
@@ -29,7 +29,7 @@
 				field="paymentCreated" />
 		</hf:searchPanel>
 
-		<hftl:dataList backingBean="#{ddRequestLOTBean}">
+		<hftl:dataList backingBean="#{ddRequestLOTListBean}">
 			<hftl:column label="#{messages['ddrequestLot.fileName']}"
 				field="fileName" />
 			<hftl:column label="#{messages['ddrequestLot.sendDate']}"

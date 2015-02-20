@@ -19,21 +19,21 @@ package org.meveocrm.admin.action.reporting;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.enterprise.context.ConversationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.meveo.admin.action.StatelessBaseBean;
+import org.meveo.admin.action.BaseBean;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveocrm.model.dwh.BarChart;
 import org.meveocrm.model.dwh.Chart;
 import org.meveocrm.model.dwh.LineChart;
 import org.meveocrm.model.dwh.PieChart;
 import org.meveocrm.services.dwh.ChartService;
+import org.omnifaces.cdi.ViewScoped;
 
 @Named
-@ConversationScoped
-public class ChartBean extends StatelessBaseBean<Chart> {
+@ViewScoped
+public class ChartBean extends BaseBean<Chart> {
 
 	private static final long serialVersionUID = 2585685452044860823L;
 
@@ -48,11 +48,7 @@ public class ChartBean extends StatelessBaseBean<Chart> {
 	protected IPersistenceService<Chart> getPersistenceService() {
 		return chartService;
 	}
-
-	protected String getDefaultViewName() {
-		return "charts";
-	}
-
+	
 	@Override
 	protected String getListViewName() {
 		return "charts";

@@ -32,7 +32,7 @@ import javax.inject.Named;
 import org.jboss.seam.international.status.Messages;
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.jboss.solder.servlet.http.RequestParam;
-import org.meveo.admin.action.StatelessBaseBean;
+import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.model.jobs.JobExecutionResult;
@@ -41,13 +41,14 @@ import org.meveo.model.jobs.TimerEntity;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.job.JobExecutionService;
 import org.meveo.service.job.TimerEntityService;
+import org.omnifaces.cdi.ViewScoped;
 import org.primefaces.model.LazyDataModel;
 import org.primefaces.model.SortOrder;
 import org.slf4j.Logger;
 
 @Named
-@ConversationScoped
-public class TimerBean extends StatelessBaseBean<JobExecutionResultImpl> {
+@ViewScoped
+public class TimerBean extends BaseBean<JobExecutionResultImpl> {
 
 	private static final long serialVersionUID = 5578930292531038376L;
 

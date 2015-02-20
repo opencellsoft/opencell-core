@@ -24,7 +24,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.ResourceBundle;
 
-import javax.enterprise.context.ConversationScoped;
 import javax.enterprise.inject.Produces;
 import javax.faces.model.SelectItem;
 import javax.inject.Inject;
@@ -49,6 +48,7 @@ import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.billing.impl.RatedTransactionService;
 import org.meveo.service.billing.impl.UserAccountService;
 import org.meveo.service.billing.impl.WalletOperationService;
+import org.omnifaces.cdi.ViewScoped;
 import org.omnifaces.util.Faces;
 import org.primefaces.model.LazyDataModel;
 
@@ -59,7 +59,7 @@ import org.primefaces.model.LazyDataModel;
  * custom JSF components.
  */
 @Named
-@ConversationScoped
+@ViewScoped
 public class UserAccountBean extends AccountBean<UserAccount> {
 
 	private static final long serialVersionUID = 1L;

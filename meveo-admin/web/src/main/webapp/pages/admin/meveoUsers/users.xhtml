@@ -8,7 +8,7 @@
 
 	<ui:define name="metadata">
 		<f:metadata>
-			<f:event type="preRenderView" listener="#{userBean.preRenderView}" />
+			<f:event type="preRenderView" listener="#{userListBean.preRenderView}" />
 		</f:metadata>
 	</ui:define>
 
@@ -18,13 +18,13 @@
 
 	<ui:define name="body">
 
-		<hf:searchPanel id="searchPanel" backingBean="#{userBean}"
+		<hf:searchPanel id="searchPanel" backingBean="#{userListBean}"
 			label="#{messages['user.search']}">
 			<hf:searchField label="#{messages['user.userName']}" field="userName" />
 		</hf:searchPanel>
 
 		<hftl:dataList label="#{messages['user.title']}"
-			backingBean="#{userBean}">
+			backingBean="#{userListBean}">
 			<!-- Simple fields like numbers, strings, dates etc only needs field name provided. -->
 			<hftl:column label="#{messages['user.userName']}" field="userName" />
 			<hftl:column label="#{messages['user.roles']}" field="roles"

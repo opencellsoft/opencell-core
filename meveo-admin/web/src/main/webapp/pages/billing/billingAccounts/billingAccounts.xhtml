@@ -42,7 +42,7 @@
 		</hf:searchPanel>
 
 		<hftl:dataList label="#{messages['billingAccount.title']}"
-			backingBean="#{billingAccountListBean}">
+			backingBean="#{billingAccountListBean}" sortBy="code">
 			<hftl:column label="#{messages['businessEntity.code']}" field="code" />
 			<hftl:column label="#{messages['businessEntity.description']}"
 				field="description" />
@@ -64,7 +64,6 @@
 				childField="address1" />
 
 			<hftl:actionsColumn useCustomIdParam="true"
-				propagateConversation="false"
 				permission="#{identity.hasPermission('billing','billingManagement')}" />
 		</hftl:dataList>
 

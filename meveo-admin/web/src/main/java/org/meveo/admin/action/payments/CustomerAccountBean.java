@@ -21,7 +21,6 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
-import javax.enterprise.context.ConversationScoped;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -41,6 +40,7 @@ import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.crm.impl.CustomerService;
 import org.meveo.service.payments.impl.CustomerAccountService;
+import org.omnifaces.cdi.ViewScoped;
 
 /**
  * Standard backing bean for {@link CustomerAccount} (extends {@link BaseBean}
@@ -49,7 +49,7 @@ import org.meveo.service.payments.impl.CustomerAccountService;
  * Manaty custom JSF components.
  */
 @Named
-@ConversationScoped
+@ViewScoped
 public class CustomerAccountBean extends AccountBean<CustomerAccount> {
 
 	private static final long serialVersionUID = 1L;

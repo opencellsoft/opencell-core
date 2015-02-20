@@ -8,21 +8,22 @@
     template="/layout/template.xhtml">
 
 
+    <ui:define name="metadata">
+        <f:metadata>
+            <f:event type="preRenderView"
+                listener="#{notificationListBean.preRenderView}" />
+        </f:metadata>
+    </ui:define>
+
     <ui:define name="navigation">
    		<ui:include src="/layout/navigation.xhtml" />
    	</ui:define>
    	
-	<ui:define name="metadata">
-		<f:metadata>
-			<f:event type="preRenderView"
-				listener="#{notificationBean.preRenderView}" />
-		</f:metadata>
-	</ui:define>
 	<ui:define name="body">
    		
 			<!-- ===================================== SEARCH CRITERIA ZONE ================================= -->
 
-			<hf:searchPanel label="#{messages['menu.notifications']}" columns="3" backingBean="#{notificationBean}">
+			<hf:searchPanel label="#{messages['menu.notifications']}" columns="3" backingBean="#{notificationListBean}">
 				<hf:searchField label="#{messages['entity.code']}" field="code" />
 				<hf:searchField label="#{messages['entity.notification.classNameFilter']}" field="classNameFilter" />
 				<hf:searchField label="#{messages['entity.notification.eventTypeFilter']}" field="eventTypeFilter" />
@@ -30,7 +31,7 @@
 
 			<!-- ===================================== SEARCH USERS RESULTS ================================= -->
 
-			<hftl:dataList backingBean="#{notificationBean}" exportButton="false" exportToCsv="true" importCsv="true">
+			<hftl:dataList backingBean="#{notificationListBean}" exportButton="false" exportToCsv="true" importCsv="true" sortBy="code">
 			    <hftl:column label="#{messages['entity.code']}"
 					field="code" />
 				<hftl:column
@@ -49,13 +50,14 @@
 						icon="ui-icon-search">
 						 <f:param name="objectId" value="#{entity.id}" />
 						<f:param name="edit" value="false" />
-						
+						<f:param name="cid" value="#{javax.enterprise.context.conversation.id}" />
 					</p:button>
 			
 					<p:button id="#{resultsId}editlink" outcome="notificationDetail"
 						icon="ui-icon-document">
 						<f:param name="objectId" value="#{entity.id}" />
 						<f:param name="edit" value="true" />
+                        <f:param name="cid" value="#{javax.enterprise.context.conversation.id}" />
 					</p:button>
 			
 					<p:commandButton id="#{resultsId}deletelink" icon="ui-icon-trash"

@@ -3,19 +3,19 @@ package org.meveo.admin.action.crm;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.enterprise.context.ConversationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.meveo.admin.action.StatelessBaseBean;
+import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
+import org.omnifaces.cdi.ViewScoped;
 
 @Named
-@ConversationScoped
-public class CustomFieldTemplateBean extends StatelessBaseBean<CustomFieldTemplate> {
+@ViewScoped
+public class CustomFieldTemplateBean extends BaseBean<CustomFieldTemplate> {
 
     private static final long serialVersionUID = 9099292371182275568L;
 
@@ -49,16 +49,6 @@ public class CustomFieldTemplateBean extends StatelessBaseBean<CustomFieldTempla
     }
 
     @Override
-    protected String getListViewName() {
-        return "customFieldTemplates";
-    }
-
-    @Override
-    public String getNewViewName() {
-        return "customFieldTemplateDetail";
-    }
-
-    @Override
     protected String getDefaultSort() {
         return "code";
     }
@@ -67,5 +57,4 @@ public class CustomFieldTemplateBean extends StatelessBaseBean<CustomFieldTempla
     protected List<String> getFormFieldsToFetch() {
         return Arrays.asList("provider");
     }
-
 }

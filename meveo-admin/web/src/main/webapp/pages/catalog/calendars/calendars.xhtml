@@ -6,7 +6,7 @@
     template="/layout/template.xhtml">
 
 	<f:metadata>
-		<f:event type="preRenderView" listener="#{calendarBean.preRenderView}" />
+		<f:event type="preRenderView" listener="#{calendarListBean.preRenderView}" />
 	</f:metadata>
 
 	<ui:define name="navigation">
@@ -15,14 +15,14 @@
 	
 	<ui:define name="body">
 
-		<hf:searchPanel label="#{messages['calendar.search']}" backingBean="#{calendarBean}" columns="1" >
+		<hf:searchPanel label="#{messages['calendar.search']}" backingBean="#{calendarListBean}" columns="1" >
 			<hf:searchField label="#{messages['calendar.name']}" field="name" />
-			<hf:searchField label="#{messages['calendar.type']}" field="calendarType" listValues="#{calendarBean.calendarTypes}"/>
+			<hf:searchField label="#{messages['calendar.type']}" field="calendarType" listValues="#{calendarListBean.calendarTypes}"/>
 			<hf:searchField label="#{messages['calendar.description']}" field="description" size="100" />
 
 		</hf:searchPanel>
 
-		<hftl:dataList label="#{messages['calendar.title']}" backingBean="#{calendarBean}">
+		<hftl:dataList label="#{messages['calendar.title']}" backingBean="#{calendarListBean}">
 			<hftl:column label="#{messages['calendar.name']}" field="name" />
 			<hftl:column label="#{messages['calendar.type']}" field="calendarType" isMessage="true" messagePrefix="calendar.calendarType"/>
 			<hftl:column label="#{messages['calendar.description']}" field="description" />

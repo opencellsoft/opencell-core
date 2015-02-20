@@ -8,7 +8,7 @@
 	<ui:define name="metadata">
 		<f:metadata>
 			<f:event type="preRenderView"
-				listener="#{serviceTemplateBean.preRenderView}" />
+				listener="#{serviceTemplateListBean.preRenderView}" />
 		</f:metadata>
 	</ui:define>
 
@@ -19,7 +19,7 @@
 	<ui:define name="body">
 
 		<hf:searchPanel label="#{messages['serviceTemplate.search']}"
-			backingBean="#{serviceTemplateBean}">
+			backingBean="#{serviceTemplateListBean}">
 			<hf:searchField label="#{messages['serviceTemplate.code']}"
 				field="code" />
 			<hf:searchField label="#{messages['serviceTemplate.description']}"
@@ -30,8 +30,8 @@
 		</hf:searchPanel>
 
 		<hftl:dataList label="#{messages['serviceTemplate.title']}"
-			checkMany="false" noClose="false"
-			backingBean="#{serviceTemplateBean}">
+			checkMany="false" noClose="false" sortBy="code"
+			backingBean="#{serviceTemplateListBean}">
 			<hftl:column label="#{messages['serviceTemplate.code']}" field="code" />
 			<hftl:column label="#{messages['serviceTemplate.description']}"
 				field="description" />

@@ -9,6 +9,13 @@
 	xmlns:c="http://java.sun.com/jstl/core"
 	template="/layout/template.xhtml">
 
+    <ui:define name="metadata">
+        <f:metadata>
+            <f:event type="preRenderView"
+                listener="#{invoiceListBean.preRenderView}" />
+        </f:metadata>
+    </ui:define>
+    
 	<ui:define name="navigation">
 		<ui:include src="/layout/navigation.xhtml" />
 	</ui:define>
@@ -16,7 +23,7 @@
 	<ui:define name="body">
 
 		<hf:searchPanel label="#{messages['invoice.search']}"
-			backingBean="#{invoiceBean}" columns="3">
+			backingBean="#{invoiceListBean}" columns="3">
 			<hf:searchField listBean=""
 				label="#{messages['invoice.billingAccount']}" field="billingAccount"
 				childField="code" popup="true" popupId="searchBillingAccountPopup"
@@ -45,7 +52,7 @@
 		</hf:searchPanel>
 
 		<hftl:dataList label="#{messages['invoices.title']}"
-			backingBean="#{invoiceBean}">
+			backingBean="#{invoiceListBean}">
 			<hftl:column label="#{messages['invoice.billingAccount']}"
 				field="billingAccount" childField="code" isMessage="true"
 				childFieldId="id"

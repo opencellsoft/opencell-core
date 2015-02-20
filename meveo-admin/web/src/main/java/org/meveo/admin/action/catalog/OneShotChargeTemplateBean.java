@@ -20,13 +20,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.enterprise.context.ConversationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
-import org.meveo.admin.action.StatelessBaseBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.TriggeredEDRTemplate;
@@ -36,6 +34,7 @@ import org.meveo.service.catalog.impl.OneShotChargeTemplateService;
 import org.meveo.service.catalog.impl.RecurringChargeTemplateService;
 import org.meveo.service.catalog.impl.TriggeredEDRTemplateService;
 import org.meveo.service.catalog.impl.UsageChargeTemplateService;
+import org.omnifaces.cdi.ViewScoped;
 import org.primefaces.component.datatable.DataTable;
 import org.primefaces.model.DualListModel;
 
@@ -46,8 +45,8 @@ import org.primefaces.model.DualListModel;
  * It works with Manaty custom JSF components.
  */
 @Named
-@ConversationScoped
-public class OneShotChargeTemplateBean extends StatelessBaseBean<OneShotChargeTemplate> {
+@ViewScoped
+public class OneShotChargeTemplateBean extends BaseBean<OneShotChargeTemplate> {
 	private static final long serialVersionUID = 1L;
 
 	/**
@@ -67,7 +66,6 @@ public class OneShotChargeTemplateBean extends StatelessBaseBean<OneShotChargeTe
 	private TriggeredEDRTemplateService triggeredEDRTemplateService;
 
 	private DualListModel<TriggeredEDRTemplate> edrTemplates;
-	private String descriptionFr;
 
 	/**
 	 * Constructor. Invokes super constructor and provides class type of this
@@ -148,14 +146,6 @@ public class OneShotChargeTemplateBean extends StatelessBaseBean<OneShotChargeTe
 	@Override
 	protected IPersistenceService<OneShotChargeTemplate> getPersistenceService() {
 		return oneShotChargeTemplateService;
-	}
-
-	public String getDescriptionFr() {
-		return descriptionFr;
-	}
-
-	public void setDescriptionFr(String descriptionFr) {
-		this.descriptionFr = descriptionFr;
 	}
 
 	@Override

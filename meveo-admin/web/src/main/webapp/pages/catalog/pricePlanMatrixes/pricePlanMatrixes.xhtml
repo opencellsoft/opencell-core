@@ -7,7 +7,7 @@
 
 	<f:metadata>
 		<f:event type="preRenderView"
-			listener="#{pricePlanMatrixBean.preRenderView}" />
+			listener="#{pricePlanMatrixListBean.preRenderView}" />
 	</f:metadata>
 	<ui:define name="navigation">
 		<ui:include src="/layout/navigation.xhtml" />
@@ -23,7 +23,7 @@
 			searchField2="description"
 			column1Label="#{messages['offerTemplate.code']}" column1="code"
 			column2Label="#{messages['offerTemplate.description']}"
-			column2="description" selection="#{pricePlanMatrixBean.filters['offerTemplate']}"
+			column2="description" selection="#{pricePlanMatrixListBean.filters['offerTemplate']}"
 			lazy="false" dataModel="#{offerTemplateBean.listActive}"
 			updateField=":searchPanel:searchForm:offer:offerTemplate_child">
 		</hftl:entityPopup>
@@ -34,13 +34,13 @@
 			column1="code"
 			column2Label="#{messages['BusinessEntity.description']}"
 			column2="description"
-			selection="#{pricePlanMatrixBean.filters['seller']}"
+			selection="#{pricePlanMatrixListBean.filters['seller']}"
 			updateField=":searchPanel:searchForm:seller:seller_child">
 		</hftl:entityPopup>
 
 		<hf:searchPanel id="searchPanel"
 			label="#{messages['pricePlanMatrix.search']}"
-			backingBean="#{pricePlanMatrixBean}">
+			backingBean="#{pricePlanMatrixListBean}">
 			<hf:searchField label="#{messages['pricePlanMatrix.eventCode']}"
 				field="eventCode" />
 			<hf:searchField id="offer" label="#{messages['pricePlanMatrix.offerCode']}"
@@ -64,7 +64,7 @@
 		</hf:searchPanel>
 
 		<hftl:dataList label="#{messages['pricePlanMatrix.title']}"
-			backingBean="#{pricePlanMatrixBean}">
+			backingBean="#{pricePlanMatrixListBean}" sortBy="eventCode">
 			<hftl:column label="#{messages['pricePlanMatrix.table.eventCode']}"
 				field="eventCode" />
 			<hftl:column label="#{messages['seller.title']}" field="seller"

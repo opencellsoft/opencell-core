@@ -8,7 +8,7 @@
 	<ui:define name="metadata">
 		<f:metadata>
 			<f:event type="preRenderView"
-				listener="#{walletTemplateBean.preRenderView}" />
+				listener="#{walletTemplateListBean.preRenderView}" />
 		</f:metadata>
 	</ui:define>
 	
@@ -18,12 +18,12 @@
     
     <ui:define name="body">
     	
-    		<hf:searchPanel label="#{messages['wallet.search']}" backingBean="#{walletTemplateBean}">
+    		<hf:searchPanel label="#{messages['wallet.search']}" backingBean="#{walletTemplateListBean}">
     			<hf:searchField label="#{messages['businessEntity.code']}" field="code" />
     			<hf:searchField label="#{messages['businessEntity.description']}" field="description"/>
     		</hf:searchPanel>	
     		
-    		<hftl:dataList label="#{messages['menu.wallets']}" checkMany="false" backingBean="#{walletTemplateBean}">
+    		<hftl:dataList label="#{messages['menu.wallets']}" checkMany="false" backingBean="#{walletTemplateListBean}" sortBy="code">
     			<hftl:column label="#{messages['businessEntity.code']}" field="code" />
     			<hftl:column label="#{messages['businessEntity.description']}" field="description" /> 
     			<hftl:column label="#{messages['wallet.walletType']}" field="walletType" childField="label" isMessage="true" /> 

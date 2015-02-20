@@ -9,21 +9,21 @@
 
     <ui:define name="metadata">
         <f:metadata>
-            <f:event type="preRenderView" listener="#{inboundRequestBean.preRenderView}" />
+            <f:event type="preRenderView" listener="#{inboundRequestListBean.preRenderView}" />
         </f:metadata>
     </ui:define>
     <ui:define name="body">
 
         <!-- ===================================== SEARCH CRITERIA ZONE ================================= -->
 
-        <hf:searchPanel label="#{messages['menu.inboundRequests']}" columns="2" backingBean="#{inboundRequestBean}" renderNewButton="false">
+        <hf:searchPanel label="#{messages['menu.inboundRequests']}" columns="2" backingBean="#{inboundRequestListBean}" renderNewButton="false">
             <hf:searchField label="#{messages['commons.date']}" field="auditable" childField="created" />
             <hf:searchField label="#{messages['inboundRequest.remoteAddress']}" field="remoteAddr" />
         </hf:searchPanel>
 
         <!-- ===================================== SEARCH RESULTS ======================================= -->
 
-        <hftl:dataList backingBean="#{inboundRequestBean}" exportButton="false" exportToCsv="true" importCsv="true">
+        <hftl:dataList backingBean="#{inboundRequestListBean}" exportButton="false" exportToCsv="true" importCsv="true" sortBy="auditable.created" sortOrder="DESCENDING">
             <hftl:column label="#{messages['commons.date']}" field="auditable" childField="created" isDate="true" time="true" />            
             <hftl:column label="#{messages['inboundRequest.remoteAddress']}" field="remoteAddr" />
             <hftl:column label="#{messages['inboundRequest.remotePort']}" field="remotePort" />

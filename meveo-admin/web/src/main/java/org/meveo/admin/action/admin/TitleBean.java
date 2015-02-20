@@ -18,20 +18,19 @@ package org.meveo.admin.action.admin;
 
 import java.sql.BatchUpdateException;
 
-import javax.enterprise.context.ConversationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.meveo.admin.action.BaseBean;
-import org.meveo.admin.action.StatelessBaseBean;
 import org.meveo.model.shared.Title;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.catalog.impl.TitleService;
+import org.omnifaces.cdi.ViewScoped;
 
 @Named
-@ConversationScoped
-public class TitleBean extends StatelessBaseBean<Title> {
+@ViewScoped
+public class TitleBean extends BaseBean<Title> {
 
     private static final long serialVersionUID = -2634473401390003093L;
 
@@ -46,6 +45,7 @@ public class TitleBean extends StatelessBaseBean<Title> {
      */
     public TitleBean() {
         super(Title.class);
+       
     }
 
     /**

@@ -16,7 +16,6 @@
  */
 package org.meveo.admin.action.catalog;
 
-import javax.enterprise.context.ConversationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -24,9 +23,10 @@ import org.meveo.admin.action.BaseBean;
 import org.meveo.model.catalog.ServiceChargeTemplateSubscription;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.catalog.impl.ServiceChargeTemplateSubscriptionService;
+import org.omnifaces.cdi.ViewScoped;
 
 @Named
-@ConversationScoped
+@ViewScoped
 public class ServiceChargeTemplateSubscriptionBean extends BaseBean<ServiceChargeTemplateSubscription> {
 
 	private static final long serialVersionUID = 1L;
@@ -41,29 +41,7 @@ public class ServiceChargeTemplateSubscriptionBean extends BaseBean<ServiceCharg
 	public ServiceChargeTemplateSubscriptionBean() {
 		super(ServiceChargeTemplateSubscription.class);
 	}
-
-	/**
-	 * Factory method for entity to edit. If objectId param set load that entity
-	 * from database, otherwise create new.
-	 * 
-	 * @throws IllegalAccessException
-	 * @throws InstantiationException
-	 */
-
-	public ServiceChargeTemplateSubscription initEntity() {
-		return super.initEntity();
-	}
-
-	/**
-	 * Override default list view name. (By default its class name starting
-	 * lower case + 's').
-	 * 
-	 * @see org.meveo.admin.action.BaseBean#getDefaultViewName()
-	 */
-	protected String getDefaultViewName() {
-		return "serviceChargeTemplatesRecurring";
-	}
-
+	
 	/**
 	 * @see org.meveo.admin.action.BaseBean#getPersistenceService()
 	 */
@@ -71,10 +49,4 @@ public class ServiceChargeTemplateSubscriptionBean extends BaseBean<ServiceCharg
 	protected IPersistenceService<ServiceChargeTemplateSubscription> getPersistenceService() {
 		return serviceChargeTemplateSubscriptionService;
 	}
-
-	@Override
-	protected String getListViewName() {
-		return "serviceChargeTemplatesRecurring";
-	}
-
 }

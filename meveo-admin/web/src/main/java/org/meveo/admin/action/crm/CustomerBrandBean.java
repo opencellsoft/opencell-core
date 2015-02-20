@@ -19,16 +19,16 @@ package org.meveo.admin.action.crm;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.enterprise.context.ConversationScoped;
 import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.meveo.admin.action.StatelessBaseBean;
+import org.meveo.admin.action.BaseBean;
 import org.meveo.model.crm.CustomerBrand;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.crm.impl.CustomerBrandService;
+import org.omnifaces.cdi.ViewScoped;
 
 /**
  * Standard backing bean for {@link CustomerBrand} (extends {@link BaseBean}
@@ -37,8 +37,8 @@ import org.meveo.service.crm.impl.CustomerBrandService;
  * Manaty custom JSF components.
  */
 @Named
-@ConversationScoped
-public class CustomerBrandBean extends StatelessBaseBean<CustomerBrand> {
+@ViewScoped
+public class CustomerBrandBean extends BaseBean<CustomerBrand> {
 
 	private static final long serialVersionUID = 1L;
 

@@ -91,7 +91,6 @@
 					backingBean="#{userAccountBean}"
 					entity="#{userAccountBean.reloadOperation}" styleClass="formPanel"
 					formId="reloadFrm" showFormButtons="false"
-					killConversationOnSave="false" killConversationOnBack="false"
 					useCustomIdParam="true" columns="1">
 					<p:panelGrid columns="2">
 						<p:outputLabel for="operationDate"
@@ -135,8 +134,7 @@
 				<p:column styleClass="col2 tab-view-container">
 					<hf:formPanel id="userAccountFormPanel"
 						label="#{messages['userAccount.userAccountPanel']}"
-						backingBean="#{userAccountBean}" killConversationOnSave="false"
-						killConversationOnBack="false" useCustomIdParam="true">
+						backingBean="#{userAccountBean}" useCustomIdParam="true">
 						<p:tabView id="userAccountTab">
 							<p:tab title="#{messages['billingAccount.tab.account']}">
 								<hftl:panelGroup columns="1">
@@ -387,7 +385,6 @@
 			width="400">
 			<hf:formPanel edit="true" backingBean="#{userAccountBean}"
 				styleClass="formPanel" formId="termFrm" showFormButtons="false"
-				killConversationOnSave="false" killConversationOnBack="false"
 				useCustomIdParam="true">
 				<p:panelGrid columns="1">
 					<hf:formField label="#{messages['serviceInstance.code']}"

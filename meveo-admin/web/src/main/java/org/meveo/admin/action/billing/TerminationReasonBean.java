@@ -19,19 +19,25 @@ package org.meveo.admin.action.billing;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.enterprise.context.ConversationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.meveo.admin.action.StatelessBaseBean;
+import org.meveo.admin.action.BaseBean;
 import org.meveo.model.billing.SubscriptionTerminationReason;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.TerminationReasonService;
+import org.omnifaces.cdi.ViewScoped;
 
+/**
+ * Standard backing bean for {@link SubscriptionTerminationReason} (extends {@link BaseBean}
+ * that provides almost all common methods to handle entities filtering/sorting
+ * in datatable, their create, edit, view, delete operations). It works with
+ * Manaty custom JSF components.
+ */
 @Named
-@ConversationScoped
+@ViewScoped
 public class TerminationReasonBean extends
-		StatelessBaseBean<SubscriptionTerminationReason> {
+		BaseBean<SubscriptionTerminationReason> {
 
 	private static final long serialVersionUID = 3745349578244346473L;
 

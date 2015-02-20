@@ -8,7 +8,7 @@
 	<ui:define name="metadata">
 		<f:metadata>
 			<f:event type="preRenderView"
-				listener="#{invoiceCategoryBean.preRenderView}" />
+				listener="#{invoiceCategoryListBean.preRenderView}" />
 		</f:metadata>
 	</ui:define>
 
@@ -19,7 +19,7 @@
 	<ui:define name="body">
 
 		<hf:searchPanel label="#{messages['invoiceCategory.search']}"
-			backingBean="#{invoiceCategoryBean}">
+			backingBean="#{invoiceCategoryListBean}">
 			<hf:searchField label="#{messages['invoiceCategory.code']}"
 				field="code" />
 			<hf:searchField label="#{messages['invoiceCategory.description']}"
@@ -28,7 +28,7 @@
 		</hf:searchPanel>
 
 		<hftl:dataList label="#{messages['invoiceCategory.title']}"
-			backingBean="#{invoiceCategoryBean}" checkMany="false">
+			backingBean="#{invoiceCategoryListBean}" checkMany="false" sortBy="code">
 			<hftl:column label="#{messages['invoiceCategory.code']}" field="code" />
 			<hftl:column label="#{messages['invoiceCategory.description']}"
 				field="description" />

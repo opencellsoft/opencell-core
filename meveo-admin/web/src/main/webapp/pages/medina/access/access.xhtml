@@ -11,7 +11,7 @@
 
 	<ui:define name="metadata">
 		<f:metadata>
-			<f:event type="preRenderView" listener="#{accessBean.preRenderView}" />
+			<f:event type="preRenderView" listener="#{accessListBean.preRenderView}" />
 		</f:metadata>
 	</ui:define>
 
@@ -24,7 +24,7 @@
 		<hftl:entityPopup id="searchSubscriptionPopup"
 			header="#{messages['access.subscription']}"
 			updateField=":searchPanel:searchForm:subscription:subscription_child"
-			selection="#{accessBean.filters['subscription']}"
+			selection="#{accessListBean.filters['subscription']}"
 			backingBean="#{subscriptionBean}"
 			searchField1Label="#{messages['subscription.code']}"
 			searchField1="code" column1Label="#{messages['subscription.code']}"
@@ -33,7 +33,7 @@
 		</hftl:entityPopup>
 
 		<hf:searchPanel id="searchPanel" columns="2"
-			label="#{messages['access.search']}" backingBean="#{accessBean}">
+			label="#{messages['access.search']}" backingBean="#{accessListBean}">
 
 			<hf:searchField label="#{messages['access.accessUserId']}"
 				field="accessUserId" />
@@ -46,7 +46,7 @@
 		</hf:searchPanel>
 
 		<hftl:dataList label="#{messages['access.title']}"
-			backingBean="#{accessBean}">
+			backingBean="#{accessListBean}" sortBy="accessUserId">
 			<hftl:column label="#{messages['access.accessUserId']}"
 				field="accessUserId" />
 			<hftl:column label="#{messages['access.subscription']}" field="subscription"
@@ -62,7 +62,7 @@
 				permission="#{identity.hasPermission('billing','billingManagement')}" />
 		</hftl:dataList>
 
-		<!-- <custom:listPanel label="#{messages['access.title']}" backingBean="#{accessBean}">
+		<!-- <custom:listPanel label="#{messages['access.title']}" backingBean="#{accessListBean}">
     	
     		<custom:searchPanel label="#{messages['access.search']}" newButtonView="/pages/medina/access/accessDetail.xhtml">
 			<custom:searchField label="#{messages['access.accessUserId']}" field="accessUserId"/>

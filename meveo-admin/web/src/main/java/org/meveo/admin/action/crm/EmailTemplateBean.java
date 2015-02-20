@@ -19,15 +19,15 @@ package org.meveo.admin.action.crm;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.enterprise.context.ConversationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.meveo.admin.action.StatelessBaseBean;
+import org.meveo.admin.action.BaseBean;
 import org.meveo.model.communication.email.EmailTemplate;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.communication.impl.EmailTemplateService;
+import org.omnifaces.cdi.ViewScoped;
 
 /**
  * Standard backing bean for {@link EmailTemplate} (extends {@link BaseBean}
@@ -36,8 +36,8 @@ import org.meveo.service.communication.impl.EmailTemplateService;
  * Manaty custom JSF components.
  */
 @Named
-@ConversationScoped
-public class EmailTemplateBean extends StatelessBaseBean<EmailTemplate> {
+@ViewScoped
+public class EmailTemplateBean extends BaseBean<EmailTemplate> {
 
 	private static final long serialVersionUID = 1L;
 
@@ -57,32 +57,11 @@ public class EmailTemplateBean extends StatelessBaseBean<EmailTemplate> {
 	}
 
 	/**
-	 * Factory method for entity to edit. If objectId param set load that entity
-	 * from database, otherwise create new.
-	 * 
-	 * @throws IllegalAccessException
-	 * @throws InstantiationException
-	 */
-	public EmailTemplate initEntity() {
-		return super.initEntity();
-	}
-
-	/**
 	 * @see org.meveo.admin.action.BaseBean#getPersistenceService()
 	 */
 	@Override
 	protected IPersistenceService<EmailTemplate> getPersistenceService() {
 		return emailTemplateService;
-	}
-
-	@Override
-	protected String getListViewName() {
-		return "emailTemplates";
-	}
-
-	@Override
-	public String getNewViewName() {
-		return "emailTemplateDetail";
 	}
 
 	@Override
@@ -94,5 +73,4 @@ public class EmailTemplateBean extends StatelessBaseBean<EmailTemplate> {
 	protected List<String> getFormFieldsToFetch() {
 		return Arrays.asList("provider");
 	}
-
 }

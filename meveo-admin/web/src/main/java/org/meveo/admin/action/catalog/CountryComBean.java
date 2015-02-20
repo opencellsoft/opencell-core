@@ -23,7 +23,7 @@ import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.meveo.admin.action.StatelessBaseBean;
+import org.meveo.admin.action.BaseBean;
 import org.meveo.model.billing.TradingCountry;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
@@ -32,7 +32,7 @@ import org.meveo.service.catalog.impl.CountryComService;
 
 @Named
 @ConversationScoped
-public class CountryComBean extends StatelessBaseBean<TradingCountry> {
+public class CountryComBean extends BaseBean<TradingCountry> {
 
 	private static final long serialVersionUID = 1L;
 
@@ -64,16 +64,6 @@ public class CountryComBean extends StatelessBaseBean<TradingCountry> {
 	public TradingCountry init() {
 		initEntity();
 		return entity;
-	}
-
-	/**
-	 * Override default list view name. (By default its class name starting
-	 * lower case + 's').
-	 * 
-	 * @see org.meveo.admin.action.BaseBean#getDefaultViewName()
-	 */
-	protected String getDefaultViewName() {
-		return "comCountries";
 	}
 
 	/**
