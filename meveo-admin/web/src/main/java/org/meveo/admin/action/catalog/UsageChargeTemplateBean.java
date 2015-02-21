@@ -20,13 +20,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.enterprise.context.ConversationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
-import org.meveo.admin.action.StatefulBaseBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.catalog.TriggeredEDRTemplate;
 import org.meveo.model.catalog.UsageChargeTemplate;
@@ -35,12 +33,13 @@ import org.meveo.service.catalog.impl.OneShotChargeTemplateService;
 import org.meveo.service.catalog.impl.RecurringChargeTemplateService;
 import org.meveo.service.catalog.impl.TriggeredEDRTemplateService;
 import org.meveo.service.catalog.impl.UsageChargeTemplateService;
+import org.omnifaces.cdi.ViewScoped;
 import org.primefaces.component.datatable.DataTable;
 import org.primefaces.model.DualListModel;
 
 @Named
-@ConversationScoped
-public class UsageChargeTemplateBean extends StatefulBaseBean<UsageChargeTemplate> {
+@ViewScoped
+public class UsageChargeTemplateBean extends BaseBean<UsageChargeTemplate> {
 	private static final long serialVersionUID = 1L;
 
 	@Inject
@@ -56,8 +55,6 @@ public class UsageChargeTemplateBean extends StatefulBaseBean<UsageChargeTemplat
 	private TriggeredEDRTemplateService triggeredEDRTemplateService;
 
 	private DualListModel<TriggeredEDRTemplate> edrTemplates;
-
-	private String descriptionFr;
 
 	/**
 	 * Constructor. Invokes super constructor and provides class type of this
@@ -107,14 +104,6 @@ public class UsageChargeTemplateBean extends StatefulBaseBean<UsageChargeTemplat
 	@Override
 	protected IPersistenceService<UsageChargeTemplate> getPersistenceService() {
 		return usageChargeTemplateService;
-	}
-
-	public String getDescriptionFr() {
-		return descriptionFr;
-	}
-
-	public void setDescriptionFr(String descriptionFr) {
-		this.descriptionFr = descriptionFr;
 	}
 
 	@Override

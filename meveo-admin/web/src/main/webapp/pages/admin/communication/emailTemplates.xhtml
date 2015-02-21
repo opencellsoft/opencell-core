@@ -11,7 +11,7 @@
 	<ui:define name="metadata">
 		<f:metadata>
 			<f:event type="preRenderView"
-				listener="#{emailTemplateBean.preRenderView}" />
+				listener="#{emailTemplateListBean.preRenderView}" />
 		</f:metadata>
 	</ui:define>
 
@@ -21,13 +21,13 @@
 
     <ui:define name="body">
 
-		<hf:searchPanel backingBean="#{emailTemplateBean}"
+		<hf:searchPanel backingBean="#{emailTemplateListBean}"
 			label="#{messages['emailTemplate.search']}">
 			<hf:searchField label="#{messages['emailTemplate.subject']}"
 				field="subject" size="80" />
 		</hf:searchPanel>    
 		           
-		<hftl:dataList backingBean="#{emailTemplateBean}">
+		<hftl:dataList backingBean="#{emailTemplateListBean}" sortBy="subject">
 			<hftl:column label="#{messages['emailTemplate.subject']}"
 				field="subject" />
 			<hftl:actionsColumn

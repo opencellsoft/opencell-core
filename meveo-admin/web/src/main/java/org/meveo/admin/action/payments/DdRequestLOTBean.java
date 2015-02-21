@@ -22,12 +22,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.enterprise.context.ConversationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.jboss.seam.international.status.builder.BundleKey;
-import org.meveo.admin.action.StatelessBaseBean;
+import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.util.pagination.PaginationDataModel;
 import org.meveo.model.payments.DDRequestLOT;
 import org.meveo.model.payments.DDRequestLotOp;
@@ -39,6 +38,7 @@ import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.payments.impl.DDRequestLOTService;
 import org.meveo.service.payments.impl.DDRequestLotOpService;
 import org.meveo.service.payments.impl.RecordedInvoiceService;
+import org.omnifaces.cdi.ViewScoped;
 
 /**
  * Standard backing bean for {@link DDRequestLOT} (extends {@link BaseBean} that
@@ -47,8 +47,8 @@ import org.meveo.service.payments.impl.RecordedInvoiceService;
  * custom JSF components.
  */
 @Named
-@ConversationScoped
-public class DdRequestLOTBean extends StatelessBaseBean<DDRequestLOT> {
+@ViewScoped
+public class DdRequestLOTBean extends BaseBean<DDRequestLOT> {
 
 	private static final long serialVersionUID = 1L;
 

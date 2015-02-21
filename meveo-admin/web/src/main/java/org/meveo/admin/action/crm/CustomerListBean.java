@@ -20,7 +20,7 @@ import javax.enterprise.context.ConversationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.meveo.admin.action.StatelessBaseBean;
+import org.meveo.admin.action.BaseBean;
 import org.meveo.model.crm.Customer;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
@@ -34,7 +34,7 @@ import org.meveo.service.crm.impl.CustomerService;
  */
 @Named
 @ConversationScoped
-public class CustomerListBean extends StatelessBaseBean<Customer> {
+public class CustomerListBean extends BaseBean<Customer> {
 
 	private static final long serialVersionUID = 1L;
 
@@ -48,17 +48,6 @@ public class CustomerListBean extends StatelessBaseBean<Customer> {
 	 */
 	public CustomerListBean() {
 		super(Customer.class);
-	}
-
-	/**
-	 * Factory method for entity to edit. If objectId param set load that entity
-	 * from database, otherwise create new.
-	 * 
-	 * @throws IllegalAccessException
-	 * @throws InstantiationException
-	 */
-	public Customer initEntity() {
-		return super.initEntity();
 	}
 
 	// TODO

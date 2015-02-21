@@ -114,8 +114,7 @@
 					backingBean="#{subscriptionBean}"
 					entity="#{subscriptionBean.selectedServiceInstance}"
 					styleClass="formPanel" formId="subscTermFrm"
-					showFormButtons="false" killConversationOnSave="false"
-					killConversationOnBack="false" useCustomIdParam="true">
+					showFormButtons="false" useCustomIdParam="true">
 					<p:panelGrid columns="1">
 						<hf:formField label="#{messages['serviceInstance.code']}"
 							field="code" size="50" edit="false" />
@@ -269,7 +268,6 @@
 
 								<hf:formPanel id="subscriptionFormPanel"
 									backingBean="#{subscriptionBean}"
-									killConversationOnSave="false" killConversationOnBack="false"
 									useCustomIdParam="true">
 									<!--Creation window fields-->
 									<hf:formEntityField id="userSelectId"
@@ -311,7 +309,6 @@
 							<p:tab title="#{messages['customFieldTemplate.panel']}">
 								<hf:formPanel id="subscriptionCustomFormPanel"
 									backingBean="#{subscriptionBean}"
-									killConversationOnSave="false" killConversationOnBack="false"
 									useCustomIdParam="true">
 									<hf:customFields />
 								</hf:formPanel>

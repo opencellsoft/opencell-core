@@ -19,21 +19,21 @@ package org.meveo.admin.action.catalog;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.enterprise.context.ConversationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.meveo.admin.action.StatelessBaseBean;
+import org.meveo.admin.action.BaseBean;
 import org.meveo.model.catalog.CounterTemplate;
 import org.meveo.model.catalog.CounterTypeEnum;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.catalog.impl.CounterTemplateService;
+import org.omnifaces.cdi.ViewScoped;
 import org.primefaces.model.LazyDataModel;
 
 @Named
-@ConversationScoped
-public class CounterTemplateBean extends StatelessBaseBean<CounterTemplate> {
+@ViewScoped
+public class CounterTemplateBean extends BaseBean<CounterTemplate> {
 
 	private static final long serialVersionUID = 1L;
 
@@ -54,28 +54,6 @@ public class CounterTemplateBean extends StatelessBaseBean<CounterTemplate> {
 	}
 
 	/**
-	 * Factory method for entity to edit. If objectId param set load that entity
-	 * from database, otherwise create new.
-	 * 
-	 * @throws IllegalAccessException
-	 * @throws InstantiationException
-	 */
-
-	public CounterTemplate initEntity() {
-		return super.initEntity();
-	}
-
-	/**
-	 * Override default list view name. (By default its class name starting
-	 * lower case + 's').
-	 * 
-	 * @see org.meveo.admin.action.BaseBean#getDefaultViewName()
-	 */
-	protected String getDefaultViewName() {
-		return "counterTemplates";
-	}
-
-	/**
 	 * @see org.meveo.admin.action.BaseBean#getPersistenceService()
 	 */
 	@SuppressWarnings("unchecked")
@@ -84,10 +62,6 @@ public class CounterTemplateBean extends StatelessBaseBean<CounterTemplate> {
 		return counterTemplateService;
 	}
 
-	@Override
-	protected String getListViewName() {
-		return "counterTemplates";
-	}
 
 	@Override
 	protected String getDefaultSort() {
@@ -99,7 +73,7 @@ public class CounterTemplateBean extends StatelessBaseBean<CounterTemplate> {
 		return Arrays.asList("provider");
 	}
 
-	   /**
+	/**
      * DataModel for primefaces lazy loading datatable component.
      * 
      * @return LazyDataModel implementation.

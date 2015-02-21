@@ -3,7 +3,7 @@
 
     <ui:define name="metadata">
         <f:metadata>
-            <f:event type="preRenderView" listener="#{titleBean.preRenderView}" />
+            <f:event type="preRenderView" listener="#{titleListBean.preRenderView}" />
         </f:metadata>
     </ui:define>
 
@@ -13,13 +13,13 @@
 
     <ui:define name="body">
 
-        <hf:searchPanel label="#{messages['title.search']}" backingBean="#{titleBean}" columns="3">
+        <hf:searchPanel label="#{messages['title.search']}" backingBean="#{titleListBean}" columns="3">
             <hf:searchField label="#{messages['title.code']}" field="code" />
             <hf:searchField label="#{messages['title.description']}" field="description" />
             <hf:searchField label="#{messages['title.isCompany']}" field="isCompany" />
         </hf:searchPanel>
 
-        <hftl:dataList label="#{messages['title.title']}" backingBean="#{titleBean}" sortBy="code">
+        <hftl:dataList label="#{messages['title.title']}" backingBean="#{titleListBean}" sortBy="code">
             <hftl:column label="#{messages['title.code']}" field="code" />
             <hftl:column label="#{messages['title.description']}" field="description" />
             <hftl:column label="#{messages['title.isCompany']}" field="isCompany" isMessage="true" />

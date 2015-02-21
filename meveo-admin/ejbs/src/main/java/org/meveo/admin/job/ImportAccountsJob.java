@@ -14,6 +14,7 @@ import javax.ejb.TimerService;
 import javax.inject.Inject;
 
 import org.meveo.model.admin.User;
+import org.meveo.model.jobs.JobCategoryEnum;
 import org.meveo.model.jobs.JobExecutionResult;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.TimerInfo;
@@ -77,7 +78,7 @@ public class ImportAccountsJob implements Job {
 				JobExecutionResult result = execute(info.getParametres(),
 						currentUser);
 				jobExecutionService.persistResult(this, result, info,
-						currentUser);
+						currentUser,getJobCategory());
 			} catch (Exception e) {
 				log.error(e.getMessage());
 			} finally {
@@ -104,5 +105,10 @@ public class ImportAccountsJob implements Job {
 				log.error(e.getMessage());
 			}
 		}
+	}
+
+	@Override
+	public JobCategoryEnum getJobCategory() {
+		return JobCategoryEnum.IMPORT_HIERARCHY;
 	}
 }

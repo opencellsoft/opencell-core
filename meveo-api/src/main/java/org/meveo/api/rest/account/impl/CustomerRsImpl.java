@@ -10,7 +10,7 @@ import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.account.CustomerDto;
 import org.meveo.api.dto.response.account.GetCustomerResponse;
-import org.meveo.api.dto.response.account.ListCustomerResponse;
+import org.meveo.api.dto.response.account.ListCustomerResponseDto;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.LoggingInterceptor;
 import org.meveo.api.rest.account.CustomerRs;
@@ -103,8 +103,8 @@ public class CustomerRsImpl extends BaseRs implements CustomerRs {
 	}
 
 	@Override
-	public ListCustomerResponse list(CustomerDto postData) {
-		ListCustomerResponse result = new ListCustomerResponse();
+	public ListCustomerResponseDto list(CustomerDto postData) {
+		ListCustomerResponseDto result = new ListCustomerResponseDto();
 
 		try {
 			result.setCustomers(customerApi.filterCustomer(postData, getCurrentUser().getProvider()));

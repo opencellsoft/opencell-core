@@ -9,7 +9,7 @@
 
 	<ui:define name="metadata">
 		<f:metadata>
-			<f:event type="preRenderView" listener="#{taxBean.preRenderView}" />
+			<f:event type="preRenderView" listener="#{taxListBean.preRenderView}" />
 		</f:metadata>
 	</ui:define>
 
@@ -20,7 +20,7 @@
 	<ui:define name="body">
 
 		<hf:searchPanel columns="3" label="#{messages['tax.search']}"
-			backingBean="#{taxBean}">
+			backingBean="#{taxListBean}">
 
 			<hf:searchField label="#{messages['tax.code']}" field="code" />
 			<hf:searchField label="#{messages['tax.description']}"
@@ -32,7 +32,7 @@
 		</hf:searchPanel>
 
 		<hftl:dataList label="#{messages['tax.title']}"
-			backingBean="#{taxBean}">
+			backingBean="#{taxListBean}" sortBy="code">
 			<hftl:column label="#{messages['tax.code']}" field="code" />
 			<hftl:column label="#{messages['tax.description']}"
 				field="description" />

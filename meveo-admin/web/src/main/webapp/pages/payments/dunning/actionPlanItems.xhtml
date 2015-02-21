@@ -10,7 +10,7 @@
     
 	<f:metadata>
 			<f:event type="preRenderView"
-				listener="#{actionPlanItemBean.preRenderView}" />
+				listener="#{actionPlanItemListBean.preRenderView}" />
 		</f:metadata>
 	
     <ui:define name="navigation">
@@ -21,12 +21,12 @@
 	
     	  
      
-			<hf:searchPanel id="searchPanel" label="#{messages['actionPlanItem.search']}" backingBean="#{actionPlanItemBean}">
+			<hf:searchPanel id="searchPanel" label="#{messages['actionPlanItem.search']}" backingBean="#{actionPlanItemListBean}">
                 <hf:searchField label="#{messages['actionPlanItem.dunningLevel']}" field="dunningLevel" />
     			<hf:searchField label="#{messages['actionPlanItem.actionType']}" field="actionType" />				
 		      </hf:searchPanel>
  
-			<hftl:dataList label="#{messages['actionPlanItem.title']}" backingBean="#{actionPlanItemBean}"   dataModel="#{actionPlanItems}">
+			<hftl:dataList label="#{messages['actionPlanItem.title']}" backingBean="#{actionPlanItemListBean}" dataModel="#{actionPlanItems}">
 	    		<hftl:column label="#{messages['actionPlanItem.dunningLevel']}" field="dunningLevel" />
 				<hftl:column label="#{messages['actionPlanItem.actionType']}" field="actionType" />
 				<hftl:column label="#{messages['actionPlanItem.order']}" field="itemOrder" />

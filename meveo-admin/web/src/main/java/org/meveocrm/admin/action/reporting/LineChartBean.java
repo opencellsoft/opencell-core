@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
-import javax.enterprise.context.ConversationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -15,6 +14,7 @@ import org.meveocrm.model.dwh.MeasurableQuantity;
 import org.meveocrm.model.dwh.MeasuredValue;
 import org.meveocrm.services.dwh.LineChartService;
 import org.meveocrm.services.dwh.MeasuredValueService;
+import org.omnifaces.cdi.ViewScoped;
 import org.primefaces.model.chart.CartesianChartModel;
 import org.primefaces.model.chart.ChartSeries;
 
@@ -24,7 +24,7 @@ import org.primefaces.model.chart.ChartSeries;
  * 
  */
 @Named
-@ConversationScoped
+@ViewScoped
 public class LineChartBean extends ChartEntityBean<LineChart> {
 
 	private static final long serialVersionUID = -5171375359771241684L;

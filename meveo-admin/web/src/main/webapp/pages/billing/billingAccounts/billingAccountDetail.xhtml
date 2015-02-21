@@ -101,7 +101,6 @@
 							<hf:formPanel id="formBillingAccountPanel"
 								label="#{messages['billingAccount.billingAccountPanel']}"
 								backingBean="#{billingAccountBean}"
-								killConversationOnSave="false" killConversationOnBack="false"
 								useCustomIdParam="true">
 								<p:panel>
 									<p:tabView id="childTab" styleClass="tab-child">
@@ -523,7 +522,6 @@
 			width="400">
 			<hf:formPanel edit="true" backingBean="#{billingAccountBean}"
 				styleClass="formPanel" formId="termFrm" showFormButtons="false"
-				killConversationOnSave="false" killConversationOnBack="false"
 				useCustomIdParam="true">
 				<p:panelGrid columns="1">
 					<hf:formField label="#{messages['serviceInstance.code']}"

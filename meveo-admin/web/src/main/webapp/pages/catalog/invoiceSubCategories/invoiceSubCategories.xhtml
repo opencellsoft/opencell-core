@@ -9,7 +9,7 @@
 	<ui:define name="metadata">
 		<f:metadata>
 			<f:event type="preRenderView"
-				listener="#{invoiceSubCategoryBean.preRenderView}" />
+				listener="#{invoiceSubCategoryListBean.preRenderView}" />
 		</f:metadata>
 	</ui:define>
 
@@ -23,7 +23,7 @@
 		<hftl:entityPopup id="searchInvoiceCategoryPopup"
 			header="#{messages['customer.popup.header']}"
 			updateField=":searchPanel:searchForm:invoiceCategoryField:invoiceCategory_child"
-			selection="#{invoiceSubCategoryBean.filters['invoiceCategory']}"
+			selection="#{invoiceSubCategoryListBean.filters['invoiceCategory']}"
 			backingBean="#{invoiceCategoryBean}"
 			searchField1Label="#{messages['invoiceCategory.code']}"
 			searchField1="code"
@@ -32,7 +32,7 @@
 
 		<hf:searchPanel id="searchPanel"
 			label="#{messages['invoiceSubCategory.search']}"
-			backingBean="#{invoiceSubCategoryBean}">
+			backingBean="#{invoiceSubCategoryListBean}">
 			<hf:searchField id="invoiceCategoryField"
 				label="#{messages['invoiceSubCategory.invoiceCategory']}"
 				field="invoiceCategory" childField="code" popup="true"
@@ -48,7 +48,7 @@
 		</hf:searchPanel>
 
 		<hftl:dataList label="#{messages['invoiceSubCategory.title']}"
-			backingBean="#{invoiceSubCategoryBean}">
+			backingBean="#{invoiceSubCategoryListBean}" sortBy="code">
 			<hftl:column label="#{messages['invoiceSubCategory.code']}"
 				field="code" />
 			<hftl:column

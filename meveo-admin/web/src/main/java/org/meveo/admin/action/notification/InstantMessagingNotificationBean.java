@@ -11,7 +11,6 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 
-import javax.enterprise.context.ConversationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -27,19 +26,24 @@ import org.meveo.model.admin.User;
 import org.meveo.model.catalog.CounterTemplate;
 import org.meveo.model.notification.InstantMessagingNotification;
 import org.meveo.model.notification.InstantMessagingProviderEnum;
-import org.meveo.model.notification.Notification;
 import org.meveo.model.notification.NotificationEventTypeEnum;
 import org.meveo.model.notification.StrategyImportTypeEnum;
-import org.meveo.model.shared.DateUtils;
 import org.meveo.service.admin.impl.UserService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.catalog.impl.CounterTemplateService;
 import org.meveo.service.notification.InstantMessagingNotificationService;
+import org.omnifaces.cdi.ViewScoped;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.UploadedFile;
 
+/**
+ * Standard backing bean for {@link InstantMessagingNotification} (extends {@link BaseBean}
+ * that provides almost all common methods to handle entities filtering/sorting
+ * in datatable, their create, edit, view, delete operations). It works with
+ * Manaty custom JSF components.
+ */
 @Named
-@ConversationScoped
+@ViewScoped
 public class InstantMessagingNotificationBean extends BaseBean<InstantMessagingNotification>{
 
 
@@ -87,15 +91,6 @@ public class InstantMessagingNotificationBean extends BaseBean<InstantMessagingN
 	@Override
 	protected IPersistenceService<InstantMessagingNotification> getPersistenceService() {
 		return imNotificationService;
-	}
-
-	protected String getDefaultViewName() {
-		return "instantMessagingNotifications";
-	}
-
-	@Override
-	protected String getListViewName() {
-		return "instantMessagingNotifications";
 	}
 
 	@Override

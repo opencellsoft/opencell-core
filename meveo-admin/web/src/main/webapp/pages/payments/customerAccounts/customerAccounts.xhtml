@@ -51,7 +51,7 @@
 				field="customer" />
 		</hf:searchPanel>
 
-		<hftl:dataList backingBean="#{customerAccountListBean}">
+		<hftl:dataList backingBean="#{customerAccountListBean}" sortBy="code">
 			<hftl:column label="#{messages['businessEntity.code']}" field="code" />
 			<hftl:column label="#{messages['businessEntity.description']}"
 				field="description" />
@@ -69,7 +69,6 @@
 				field="tradingCurrency" childField="currencyCode" />
 
 			<hftl:actionsColumn useCustomIdParam="true"
-				propagateConversation="false"
 				permission="#{persistentPermissionResolver.hasPermission('account','accountManagement')}" />
 		</hftl:dataList>
 

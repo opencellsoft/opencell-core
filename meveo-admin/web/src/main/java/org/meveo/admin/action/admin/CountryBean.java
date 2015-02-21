@@ -16,20 +16,18 @@
  */
 package org.meveo.admin.action.admin;
 
-import javax.enterprise.context.ConversationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.meveo.admin.action.BaseBean;
-import org.meveo.admin.action.StatelessBaseBean;
-import org.meveo.model.admin.Currency;
 import org.meveo.model.billing.Country;
 import org.meveo.service.admin.impl.CountryService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
+import org.omnifaces.cdi.ViewScoped;
 
 /**
- * Standard backing bean for {@link Currency} (extends {@link BaseBean} that
+ * Standard backing bean for {@link Country} (extends {@link BaseBean} that
  * provides almost all common methods to handle entities filtering/sorting in
  * datatable, their create, edit, view, delete operations). It works with Manaty
  * custom JSF components.
@@ -38,8 +36,8 @@ import org.meveo.service.base.local.IPersistenceService;
  * @created 2009.10.13
  */
 @Named
-@ConversationScoped
-public class CountryBean extends StatelessBaseBean<Country> {
+@ViewScoped
+public class CountryBean extends BaseBean<Country> {
 
 	private static final long serialVersionUID = 1L;
 
@@ -56,27 +54,6 @@ public class CountryBean extends StatelessBaseBean<Country> {
 	}
 
 	/**
-	 * Factory method for entity to edit. If objectId param set load that entity
-	 * from database, otherwise create new.
-	 * 
-	 * @throws IllegalAccessException
-	 * @throws InstantiationException
-	 */
-	public Country initEntity() {
-		return super.initEntity();
-	}
-
-	/**
-	 * Override default list view name. (By default view name is class name
-	 * starting lower case + ending 's').
-	 * 
-	 * @see org.meveo.admin.action.BaseBean#getDefaultViewName()
-	 */
-	protected String getDefaultViewName() {
-		return "countries";
-	}
-
-	/**
 	 * @see org.meveo.admin.action.BaseBean#getPersistenceService()
 	 */
 	@Override
@@ -88,5 +65,4 @@ public class CountryBean extends StatelessBaseBean<Country> {
 	protected String getDefaultSort() {
 		return "descriptionEn";
 	}
-
 }

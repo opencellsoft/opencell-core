@@ -13,7 +13,7 @@ import org.meveo.api.dto.account.ApplyOneShotChargeInstanceDto;
 import org.meveo.api.dto.billing.SubscriptionDto;
 import org.meveo.api.dto.billing.TerminateSubscriptionDto;
 import org.meveo.api.dto.billing.TerminateSubscriptionServicesDto;
-import org.meveo.api.dto.response.billing.ListSubscriptionResponse;
+import org.meveo.api.dto.response.billing.ListSubscriptionResponseDto;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.LoggingInterceptor;
 import org.meveo.api.rest.billing.SubscriptionRs;
@@ -144,8 +144,8 @@ public class SubscriptionRsImpl extends BaseRs implements SubscriptionRs {
 	}
 
 	@Override
-	public ListSubscriptionResponse listByUserAccount(String userAccountCode) {
-		ListSubscriptionResponse result = new ListSubscriptionResponse();
+	public ListSubscriptionResponseDto listByUserAccount(String userAccountCode) {
+		ListSubscriptionResponseDto result = new ListSubscriptionResponseDto();
 
 		try {
 			result.setSubscriptions(subscriptionApi

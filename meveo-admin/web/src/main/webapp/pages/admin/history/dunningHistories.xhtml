@@ -8,18 +8,25 @@
     xmlns:hftl="http://hftl.org" xmlns:hf="http://java.sun.com/jsf/composite/tags"
     template="/layout/template.xhtml">
     
+    <ui:define name="metadata">
+        <f:metadata>
+            <f:event type="preRenderView"
+                listener="#{dunningHistoryListBean.preRenderView}" />
+        </f:metadata>
+    </ui:define>
+    
     <ui:define name="navigation">
    		<ui:include src="/layout/navigation.xhtml" />
    	</ui:define>
     
     <ui:define name="body">
     	
-    	<custom:listPanel label="#{messages['dunningHistory.panel']}" backingBean="#{dunningHistoryBean}">
+    	<custom:listPanel label="#{messages['dunningHistory.panel']}" backingBean="#{dunningHistoryListBean}">
     	
     			<custom:searchPanel label="#{messages['dunningHistory.panel']}" new ="false">					
     		    	<custom:searchField label="#{messages['jobHistory.executionDate']}" field="executionDate"/>
     		</custom:searchPanel>
-    			<custom:dataList backingBean="#{dunningHistoryBean}" dataModel="#{dunningHistories}">    				
+    			<custom:dataList backingBean="#{dunningHistoryListBean}" dataModel="#{dunningHistories}">    				
     		    	<custom:column label="#{messages['jobHistory.executionDate']}" field="executionDate" isDate="true"/>
 		       		<custom:column label="#{messages['dunningHistory.loadedCustomerAccounts']}" field="linesRead"/>
 		       		<custom:column label="#{messages['dunningHistory.updatedCustomerAccounts']}" field="linesInserted" />

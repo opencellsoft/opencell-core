@@ -5,7 +5,6 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.enterprise.context.ConversationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -21,10 +20,17 @@ import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.notification.NotificationHistoryService;
 import org.meveo.service.notification.NotificationService;
+import org.omnifaces.cdi.ViewScoped;
 import org.primefaces.model.LazyDataModel;
 
+/**
+ * Standard backing bean for {@link NotificationHistory} (extends {@link BaseBean}
+ * that provides almost all common methods to handle entities filtering/sorting
+ * in datatable, their create, edit, view, delete operations). It works with
+ * Manaty custom JSF components.
+ */
 @Named
-@ConversationScoped
+@ViewScoped
 public class NotificationHistoryBean extends BaseBean<NotificationHistory> {
 
 	private static final long serialVersionUID = -6762628879784107169L;
@@ -47,10 +53,6 @@ public class NotificationHistoryBean extends BaseBean<NotificationHistory> {
 	@Override
 	protected IPersistenceService<NotificationHistory> getPersistenceService() {
 		return notificationHistoryService;
-	}
-
-	protected String getDefaultViewName() {
-		return "notifications";
 	}
 
 	public Map<String, String> getNotificationTypes() {

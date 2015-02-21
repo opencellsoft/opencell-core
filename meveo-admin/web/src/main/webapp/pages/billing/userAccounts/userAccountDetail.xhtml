@@ -91,7 +91,6 @@
 					backingBean="#{userAccountBean}"
 					entity="#{userAccountBean.reloadOperation}" styleClass="formPanel"
 					formId="reloadFrm" showFormButtons="false"
-					killConversationOnSave="false" killConversationOnBack="false"
 					useCustomIdParam="true" columns="1">
 					<p:panelGrid columns="2">
 						<p:outputLabel for="operationDate"
@@ -135,8 +134,7 @@
 				<p:column styleClass="col2 tab-view-container">
 					<hf:formPanel id="userAccountFormPanel"
 						label="#{messages['userAccount.userAccountPanel']}"
-						backingBean="#{userAccountBean}" killConversationOnSave="false"
-						killConversationOnBack="false" useCustomIdParam="true">
+						backingBean="#{userAccountBean}" useCustomIdParam="true">
 						<p:tabView id="userAccountTab">
 							<p:tab title="#{messages['billingAccount.tab.account']}">
 								<hftl:panelGroup columns="1">
@@ -246,9 +244,9 @@
 								var="wallet">
 								<p:tab title="Wallet #{wallet.key}"
 									id="tab_panelWallet_#{wallet.key}">
-									<p:panel id="panelWallet_#{wallet.key}">
-										<p:panelGrid columns="1" styleClass="form-panel-fields">
-											<p:panelGrid columns="2">
+									<p:panel id="panelWallet_#{wallet.key}" styleClass="form-panel-fields">
+										<p:panelGrid columns="1" >
+											<p:panelGrid columns="6">
 												<p:outputLabel value="#{messages['chargeInstance.code']}" />
 												<h:outputText value="#{wallet.value.code}" />
 												<p:outputLabel
@@ -257,15 +255,69 @@
 												<p:outputLabel value="#{messages['chargeTemplate.type']}" />
 												<h:outputText
 													value="#{wallet.value.walletTemplate.walletType}" />
-												<p:outputLabel rendered="#{wallet.key!='PRINCIPAL'}"
+												</p:panelGrid>
+												
+												<p:panelGrid columns="5"> 
+												<p:panelGrid columns="2" > 
+                                                <f:facet name="header" >
+													<h:outputText style="font-size:13px"
+														value="#{messages['walletOperationStatus.open']}" />
+												</f:facet>	
+												<h:outputText rendered="#{wallet.key!='PREPAID'}" style="font-weight:bold; !important"
+													value="#{messages['pricePlanMatrix.amountWithTax']} :" />	
+												<h:outputText rendered="#{wallet.key!='PREPAID'}" 
+													value="#{userAccountBean.getOpenBalanceWithTax(userAccountBean.getCurrentProvider(),userAccountBean.entity.billingAccount.customerAccount.customer.seller.code,userAccountBean.entity.code,null,null)}" />
+												<h:outputText rendered="#{wallet.key!='PREPAID'}" style="font-weight:bold; !important"
+													value="#{messages['pricePlanMatrix.amountWithoutTax']} :" />	
+												<h:outputText rendered="#{wallet.key!='PREPAID'}" 
+													value="#{userAccountBean.getOpenBalanceWithoutTax(userAccountBean.getCurrentProvider(),userAccountBean.entity.billingAccount.customerAccount.customer.seller.code
+													,userAccountBean.entity.code,null,null)}" />
+												</p:panelGrid>
+                                             <p:spacer width="40" />											
+												<p:panelGrid columns="2"> 
+                                                <f:facet name="header">
+													<h:outputText style="font-size:13px"
+														value="#{messages['walletOperationStatus.reserved']}" />
+												</f:facet>													
+												<h:outputText rendered="#{wallet.key!='PREPAID'}" style="font-weight:bold; !important"
+													value="#{messages['pricePlanMatrix.amountWithTax']} :" />	
+												<h:outputText rendered="#{wallet.key!='PREPAID'}" 
+													value="#{userAccountBean.getReservedBalanceWithTax(userAccountBean.getCurrentProvider(),userAccountBean.entity.billingAccount.customerAccount.customer.seller.code
+													,userAccountBean.entity.code,null,null)}" />
+												<h:outputText rendered="#{wallet.key!='PREPAID'}" style="font-weight:bold; !important"
+													value="#{messages['pricePlanMatrix.amountWithoutTax']} :" />	
+												<h:outputText rendered="#{wallet.key!='PREPAID'}"
+													value="#{userAccountBean.getReservedBalanceWithoutTax(userAccountBean.getCurrentProvider(),userAccountBean.entity.billingAccount.customerAccount.customer.seller.code
+													,userAccountBean.entity.code,null,null)}" />
+												</p:panelGrid>
+												<p:spacer width="40" />
+												<p:panelGrid columns="2"> 
+                                                <f:facet name="header">
+													<h:outputText style="font-size:13px"
+														value="#{messages['walletOperationStatus.current']}" />
+												</f:facet>													
+												<h:outputText rendered="#{wallet.key!='PREPAID'}" style="font-weight:bold; !important"
+													value="#{messages['pricePlanMatrix.amountWithTax']} :" />	
+												<h:outputText rendered="#{wallet.key!='PREPAID'}"
+													value="#{userAccountBean.getCurrentBalanceWithoutTax(userAccountBean.getCurrentProvider(),userAccountBean.entity.billingAccount.customerAccount.customer.seller.code
+													,userAccountBean.entity.code,null,null)}" />
+													
+												<h:outputText rendered="#{wallet.key!='PREPAID'}" style="font-weight:bold; !important"
+													value="#{messages['pricePlanMatrix.amountWithoutTax']} :" />	
+												<h:outputText rendered="#{wallet.key!='PREPAID'}"
+													value="#{userAccountBean.getCurrentBalanceWithTax(userAccountBean.getCurrentProvider(),userAccountBean.entity.billingAccount.customerAccount.customer.seller.code
+													,userAccountBean.entity.code,null,null)}" />
+												</p:panelGrid>
+												
+											</p:panelGrid>	
+												<p:outputLabel  rendered="#{wallet.key!='PRINCIPAL'}"
 													value="#{messages['userAccount.cachedBalance']}" />
 												<h:outputText
 													value="#{userAccountBean.getBalance(wallet.value)}" />
-												<p:outputLabel rendered="#{wallet.key!='PRINCIPAL'}"
+												<p:outputLabel  rendered="#{wallet.key!='PRINCIPAL'}"
 													value="#{messages['userAccount.cachedReservedBalance']}" />
 												<h:outputText
-													value="#{userAccountBean.getReservedBalance(wallet.value)}" />
-											</p:panelGrid>
+													value="#{userAccountBean.getReservedBalance(wallet.value)}" /> 
 										</p:panelGrid>
 										<p:dataTable id="wallet#{wallet.key}datatable" var="e"
 											paginator="true"
@@ -387,7 +439,6 @@
 			width="400">
 			<hf:formPanel edit="true" backingBean="#{userAccountBean}"
 				styleClass="formPanel" formId="termFrm" showFormButtons="false"
-				killConversationOnSave="false" killConversationOnBack="false"
 				useCustomIdParam="true">
 				<p:panelGrid columns="1">
 					<hf:formField label="#{messages['serviceInstance.code']}"

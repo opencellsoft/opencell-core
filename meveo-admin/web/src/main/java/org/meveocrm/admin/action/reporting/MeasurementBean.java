@@ -31,7 +31,6 @@ import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.TreeMap;
 
-import javax.enterprise.context.ConversationScoped;
 import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -45,7 +44,7 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.util.CellRangeAddress;
-import org.meveo.admin.action.StatelessBaseBean;
+import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.service.base.local.IPersistenceService;
@@ -54,12 +53,13 @@ import org.meveocrm.model.dwh.MeasuredValue;
 import org.meveocrm.model.dwh.MeasurementPeriodEnum;
 import org.meveocrm.services.dwh.MeasurableQuantityService;
 import org.meveocrm.services.dwh.MeasuredValueService;
+import org.omnifaces.cdi.ViewScoped;
 import org.omnifaces.util.Messages;
 import org.primefaces.event.CellEditEvent;
 
 @Named
-@ConversationScoped
-public class MeasurementBean extends StatelessBaseBean<MeasuredValue> {
+@ViewScoped
+public class MeasurementBean extends BaseBean<MeasuredValue> {
 
 	private static final long serialVersionUID = 883901110961710869L;
 
@@ -593,10 +593,6 @@ public class MeasurementBean extends StatelessBaseBean<MeasuredValue> {
 	@Override
 	protected IPersistenceService<MeasuredValue> getPersistenceService() {
 		return measuredValueService;
-	}
-
-	protected String getDefaultViewName() {
-		return "measuredValueDetail";
 	}
 
 	@Override

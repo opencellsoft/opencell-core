@@ -10,7 +10,7 @@
 
 	<f:metadata>
 		<f:event type="preRenderView"
-			listener="#{ddRequestLotOpBean.preRenderView}" />
+			listener="#{ddRequestLotOpListBean.preRenderView}" />
 	</f:metadata>
 
 	<ui:define name="navigation">
@@ -21,7 +21,7 @@
 
 		<hf:searchPanel id="searchPanel"
 			label="#{messages['menu.ddrequestLotOp']}"
-			backingBean="#{ddRequestLotOpBean}">
+			backingBean="#{ddRequestLotOpListBean}">
 			<hf:searchField label="#{messages['ddrequestLotOp.ddrequestOp']}"
 				field="ddrequestOp" />
 			<hf:searchField label="#{messages['ddrequestLotOp.status']}"
@@ -29,7 +29,7 @@
 		</hf:searchPanel>
 
 		<hftl:dataList label="#{messages['menu.ddrequestLotOp']}"
-			backingBean="#{ddRequestLotOpBean}">
+			backingBean="#{ddRequestLotOpListBean}">
 			<p:column>
 				<f:facet name="header">
 					<h:outputText value="#{messages['ddrequestLotOp.date']}" />

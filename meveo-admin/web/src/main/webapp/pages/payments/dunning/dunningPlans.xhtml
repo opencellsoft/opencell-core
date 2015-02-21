@@ -10,7 +10,7 @@
     	<ui:define name="metadata">
 		<f:metadata>
 			<f:event type="preRenderView"
-				listener="#{dunningPlanBean.preRenderView}" />
+				listener="#{dunningPlanListBean.preRenderView}" />
 		</f:metadata>
 	</ui:define>
     <ui:define name="navigation">
@@ -23,7 +23,7 @@
     
     <hf:searchPanel id="searchPanel"
 			label="#{messages['dunningPlan.panel']}"
-			backingBean="#{dunningPlanBean}">
+			backingBean="#{dunningPlanListBean}">
 			<hf:searchField
 				label="#{messages['businessEntity.code']}" field="code"/>
 			<hf:searchField label="#{messages['subscription.description']}"
@@ -32,7 +32,7 @@
     
     
     	
-    	<hftl:dataList  label="#{messages['dunningPlan.title']}" backingBean="#{dunningPlanBean}">
+    	<hftl:dataList  label="#{messages['dunningPlan.title']}" backingBean="#{dunningPlanListBean}" sortBy="code">
 	    		<hftl:column label="#{messages['businessEntity.code']}" field="code" />
 	    		<hftl:column label="#{messages['businessEntity.description']}" field="description" />
 			

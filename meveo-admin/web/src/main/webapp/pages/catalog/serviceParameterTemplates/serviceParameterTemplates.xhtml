@@ -3,7 +3,7 @@
 	template="/layout/template.xhtml">
 
 	<f:metadata>
-		<f:event type="preRenderView" listener="#{serviceParameterTemplateBean.preRenderView}" />
+		<f:event type="preRenderView" listener="#{serviceParameterTemplateListBean.preRenderView}" />
 	</f:metadata>
 
 	<ui:define name="navigation">
@@ -12,12 +12,12 @@
 
 	<ui:define name="body">
 
-		<hf:searchPanel label="#{messages['serviceParameterTemplate.search']}" backingBean="#{serviceParameterTemplateBean}">
+		<hf:searchPanel label="#{messages['serviceParameterTemplate.search']}" backingBean="#{serviceParameterTemplateListBean}">
 			<hf:searchField label="#{messages['serviceParameterTemplate.code']}" field="code" />
 			<hf:searchField label="#{messages['serviceParameterTemplate.name']}" field="name" />
 		</hf:searchPanel>
 
-		<hftl:dataList label="#{messages['serviceParameterTemplate.title']}" backingBean="#{serviceParameterTemplateBean}">
+		<hftl:dataList label="#{messages['serviceParameterTemplate.title']}" backingBean="#{serviceParameterTemplateListBean}" sortBy="code">
 			<hftl:column label="#{messages['serviceParameterTemplate.code']}" field="code" />
 			<hftl:column label="#{messages['serviceParameterTemplate.name']}" field="name" />
 			<hftl:column label="#{messages['serviceParameterTemplate.serviceTemplates']}" field="serviceTemplates" isList="true" childField="name"

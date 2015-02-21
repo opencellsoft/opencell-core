@@ -4,7 +4,7 @@
 
     <ui:define name="metadata">
         <f:metadata>
-            <f:event type="preRenderView" listener="#{customFieldTemplateBean.preRenderView}" />
+            <f:event type="preRenderView" listener="#{customFieldTemplateListBean.preRenderView}" />
         </f:metadata>
     </ui:define>
     <ui:define name="navigation">
@@ -13,13 +13,13 @@
 
     <ui:define name="body">
 
-        <hf:searchPanel label="#{messages['customFieldTemplate.search']}" backingBean="#{customFieldTemplateBean}" columns="3">
+        <hf:searchPanel label="#{messages['customFieldTemplate.search']}" backingBean="#{customFieldTemplateListBean}" columns="3">
             <hf:searchField label="#{messages['BusinessEntity.code']}" field="code" />
             <hf:searchField label="#{messages['customFieldTemplate.fieldType']}" id="fieldType" field="fieldType" />
             <hf:searchField label="#{messages['customFieldTemplate.accountType']}" id="accountLevel" field="accountLevel" />
         </hf:searchPanel>
 
-        <hftl:dataList checkMany="false" noClose="false" backingBean="#{customFieldTemplateBean}">
+        <hftl:dataList checkMany="false" noClose="false" backingBean="#{customFieldTemplateListBean}" sortBy="code">
             <hftl:column label="#{messages['BusinessEntity.code']}" field="code" />
             <hftl:column label="#{messages['customFieldTemplate.fieldLabel']}" field="description" />
             <hftl:column label="#{messages['customFieldTemplate.fieldType']}" field="fieldType" childField="label" isMessage="true" />

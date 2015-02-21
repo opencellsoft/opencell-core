@@ -16,17 +16,17 @@
  */
 package org.meveo.admin.action.catalog;
 
-import javax.enterprise.context.ConversationScoped;
 import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.meveo.admin.action.StatelessBaseBean;
+import org.meveo.admin.action.BaseBean;
 import org.meveo.model.billing.ChargeInstance;
 import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.catalog.impl.ChargeTemplateServiceAll;
+import org.omnifaces.cdi.ViewScoped;
 
 /**
  * Standard backing bean for {@link ChargeInstance} (extends {@link BaseBean}
@@ -35,8 +35,8 @@ import org.meveo.service.catalog.impl.ChargeTemplateServiceAll;
  * Manaty custom JSF components.
  */
 @Named
-@ConversationScoped
-public class ChargeTemplateBean extends StatelessBaseBean<ChargeTemplate> {
+@ViewScoped
+public class ChargeTemplateBean extends BaseBean<ChargeTemplate> {
 	private static final long serialVersionUID = 1L;
 
 	/**

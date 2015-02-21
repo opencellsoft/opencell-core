@@ -23,7 +23,7 @@
 			<hf:formField label="#{messages['ddrequestLot.paymentCreated']}" field="paymentCreated" isMessage="true"/>			
 		<h:panelGrid columns="3">
 			<p:commandButton rendered="#{!edit}" action="#{ddRequestLOTBean.generateFile()}" value="#{messages['ddrequestLot.buttonGenerateFile']}" />										
-     		<p:commandButton value="#{messages['action.back']}" action="#{ddRequestLOTBean.backAndEndConversation}" immediate="true" />
+     		<p:commandButton value="#{messages['action.back']}" action="#{ddRequestLOTBean.back}" immediate="true" />
    		</h:panelGrid>	
 		</hf:formPanel>					 
 			<hftl:dataList backingBean="#{recordedInvoiceBean}" dataModel="#{ddRequestLOTBean.entity.getInvoices()}" edit="#{false}" checkMany="#{false}">

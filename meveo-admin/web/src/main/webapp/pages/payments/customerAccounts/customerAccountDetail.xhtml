@@ -68,8 +68,7 @@
 								formId="formCustomerAccount"
 								label="#{messages['customerAccount.form']}"
 								backingBean="#{customerAccountBean}" showFormButtons="false"
-								useCustomIdParam="true" killConversationOnSave="false"
-								killConversationOnBack="false">
+								useCustomIdParam="true">
 								<p:panel>
 									<p:tabView id="childTab">
 										<p:tab id="accountTab"
@@ -272,7 +271,6 @@
 									<hf:formButtons columns="5"
 										backingBean="#{customerAccountBean}"
 										edit="#{customerAccountBean.edit}" ajaxSubmit="false"
-										killConversationOnSave="false" killConversationOnBack="false"
 										useCustomIdParam="true">
 										<p:commandButton
 											rendered="#{customerAccountBean.isActiveAccount() and !customerAccountBean.edit}"
@@ -421,7 +419,6 @@
 							<h:form>
 								<hf:formButtons columns="3" backingBean="#{customerAccountBean}"
 									edit="#{customerAccountBean.edit}" ajaxSubmit="false"
-									killConversationOnSave="false" killConversationOnBack="false"
 									useCustomIdParam="true">
 								</hf:formButtons>
 							</h:form>

@@ -16,15 +16,15 @@
  */
 package org.meveo.admin.action.payments;
 
-import javax.enterprise.context.ConversationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.meveo.admin.action.StatelessBaseBean;
+import org.meveo.admin.action.BaseBean;
 import org.meveo.model.payments.DunningLOT;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.payments.impl.DunningLOTService;
+import org.omnifaces.cdi.ViewScoped;
 
 /**
  * Standard backing bean for {@link DunningLOT} (extends {@link BaseBean} that
@@ -33,8 +33,8 @@ import org.meveo.service.payments.impl.DunningLOTService;
  * custom JSF components.
  */
 @Named
-@ConversationScoped
-public class DunningLOTBean extends StatelessBaseBean<DunningLOT> {
+@ViewScoped
+public class DunningLOTBean extends BaseBean<DunningLOT> {
 
 	private static final long serialVersionUID = 1L;
 

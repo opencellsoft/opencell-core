@@ -23,7 +23,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.jboss.solder.servlet.http.RequestParam;
-import org.meveo.admin.action.StatelessBaseBean;
+import org.meveo.admin.action.BaseBean;
 import org.meveo.model.AccountEntity;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.billing.BillingAccount;
@@ -49,7 +49,7 @@ import org.primefaces.model.TreeNode;
  * links used in tree.
  */
 @Named
-public class CustomerTreeBean extends StatelessBaseBean<AccountEntity> {
+public class CustomerTreeBean extends BaseBean<AccountEntity> {
 
 	private static final String SUBSCRIPTION_KEY = "subscription";
 	private static final String ACCESS_KEY = "access";

@@ -33,7 +33,6 @@ import org.jboss.seam.international.status.Messages;
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.jboss.solder.servlet.http.RequestParam;
 import org.meveo.admin.action.BaseBean;
-import org.meveo.admin.action.StatelessBaseBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.ListItemsSelector;
 import org.meveo.commons.utils.ParamBean;
@@ -48,11 +47,18 @@ import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.BillingRunService;
 import org.meveo.service.billing.impl.RatedTransactionService;
+import org.omnifaces.cdi.ViewScoped;
 import org.primefaces.model.SortOrder;
 
+/**
+ * Standard backing bean for {@link BillingRun} (extends {@link BaseBean} that
+ * provides almost all common methods to handle entities filtering/sorting in
+ * datatable, their create, edit, view, delete operations). It works with Manaty
+ * custom JSF components.
+ */
 @Named
-@ConversationScoped
-public class BillingRunBean extends StatelessBaseBean<BillingRun> {
+@ViewScoped
+public class BillingRunBean extends BaseBean<BillingRun> {
 
 	private static final long serialVersionUID = 1L;
 
@@ -162,7 +168,8 @@ public class BillingRunBean extends StatelessBaseBean<BillingRun> {
 			entity.setProcessDate(new Date());
 			entity.setProvider(entity.getBillingCycle().getProvider());
 			billingRunService.create(entity);
-			return "/pages/billing/invoicing/billingRuns.xhtml?edit=false";
+            return "billingRuns";
+            
 		} catch (Exception e) {
 			log.error(e.getMessage());
 			messages.error(e.getMessage());
@@ -175,7 +182,7 @@ public class BillingRunBean extends StatelessBaseBean<BillingRun> {
 			// statusMessages.add("facturation confirmee avec succes");
 			entity.setStatus(BillingRunStatusEnum.ON_GOING);
 			billingRunService.update(entity);
-			return "/pages/billing/invoicing/billingRuns.xhtml?edit=false";
+            return "billingRuns";
 
 		} catch (Exception e) {
 			log.error(e.getMessage());
@@ -213,8 +220,8 @@ public class BillingRunBean extends StatelessBaseBean<BillingRun> {
 				billingRun.setSelectedBillingAccounts(selectedBillingAccounts);
 				billingRunService.create(billingRun);
 			}
-			endConversation();
-			return "/pages/billing/invoicing/billingRuns.xhtml?faces-redirect=true&edit=false";
+            return "billingRuns";
+            
 		} catch (Exception e) {
 			log.error(e.getMessage());
 			messages.error(e.getMessage());
@@ -226,8 +233,7 @@ public class BillingRunBean extends StatelessBaseBean<BillingRun> {
 		try {
 			entity.setStatus(BillingRunStatusEnum.CANCELED);
 			billingRunService.update(entity);
-			endConversation();
-			return "/pages/billing/invoicing/billingRuns.xhtml?faces-redirect=true&edit=false";
+			return "billingRuns";
 		} catch (Exception e) {
 			log.error(e.getMessage());
 			messages.error(e.getMessage());
@@ -240,8 +246,8 @@ public class BillingRunBean extends StatelessBaseBean<BillingRun> {
 			entity.setStatus(BillingRunStatusEnum.CANCELED);
 			billingRunService.cleanBillingRun(entity);
 			billingRunService.update(entity);
-			endConversation();
-			return "/pages/billing/invoicing/billingRuns.xhtml?faces-redirect=true&edit=false";
+            return "billingRuns";
+            
 		} catch (Exception e) {
 			log.error(e.getMessage());
 			messages.error(e.getMessage());
@@ -252,8 +258,8 @@ public class BillingRunBean extends StatelessBaseBean<BillingRun> {
 	public String rerateConfirmedInvoicing() {
 		try {
 			billingRunService.retateBillingRunTransactions(entity);
-			cancelConfirmedInvoicing();
-			return "/pages/billing/invoicing/billingRuns.xhtml?edit=false";
+			return cancelConfirmedInvoicing();
+			
 		} catch (Exception e) {
 			log.error(e.getMessage());
 			messages.error(e.getMessage());
@@ -264,8 +270,8 @@ public class BillingRunBean extends StatelessBaseBean<BillingRun> {
 	public String rerateInvoicing() {
 		try {
 			billingRunService.retateBillingRunTransactions(entity);
-			cancelInvoicing();
-			return "/pages/billing/invoicing/billingRuns.xhtml?edit=false";
+			return cancelInvoicing();
+			
 		} catch (Exception e) {
 			log.error(e.getMessage());
 			messages.error(e.getMessage());

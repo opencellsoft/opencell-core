@@ -19,7 +19,6 @@ package org.meveo.admin.action.crm;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.enterprise.context.ConversationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -32,6 +31,7 @@ import org.meveo.model.crm.Customer;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.crm.impl.CustomerService;
+import org.omnifaces.cdi.ViewScoped;
 
 /**
  * Standard backing bean for {@link Customer} (extends {@link BaseBean} that
@@ -40,7 +40,7 @@ import org.meveo.service.crm.impl.CustomerService;
  * custom JSF components.
  */
 @Named
-@ConversationScoped
+@ViewScoped
 public class CustomerBean extends AccountBean<Customer> {
 
 	private static final long serialVersionUID = 1L;

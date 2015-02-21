@@ -19,13 +19,12 @@ package org.meveo.admin.action.payments;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.enterprise.context.ConversationScoped;
 import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.jboss.seam.international.status.builder.BundleKey;
-import org.meveo.admin.action.StatelessBaseBean;
+import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.exception.BusinessEntityException;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.payments.ActionPlanItem;
@@ -36,6 +35,7 @@ import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.payments.impl.ActionPlanItemService;
 import org.meveo.service.payments.impl.DunningPlanService;
 import org.meveo.service.payments.impl.DunningPlanTransitionService;
+import org.omnifaces.cdi.ViewScoped;
 
 /**
  * Standard backing bean for {@link DunningPlan} (extends {@link BaseBean} that
@@ -44,8 +44,8 @@ import org.meveo.service.payments.impl.DunningPlanTransitionService;
  * custom JSF components.
  */
 @Named
-@ConversationScoped
-public class DunningPlanBean extends StatelessBaseBean<DunningPlan> {
+@ViewScoped
+public class DunningPlanBean extends BaseBean<DunningPlan> {
 
 	private static final long serialVersionUID = 1L;
 
@@ -69,13 +69,30 @@ public class DunningPlanBean extends StatelessBaseBean<DunningPlan> {
 	// @Named
 	private transient ActionPlanItem actionPlanItem = new ActionPlanItem();
 
-	/**
+
+    /**
 	 * Constructor. Invokes super constructor and provides class type of this
 	 * bean for {@link BaseBean}.
 	 */
 	public DunningPlanBean() {
 		super(DunningPlan.class);
-	}
+	}	
+
+    public DunningPlanTransition getDunningPlanTransition() {
+        return dunningPlanTransition;
+    }
+
+    public void setDunningPlanTransition(DunningPlanTransition dunningPlanTransition) {
+        this.dunningPlanTransition = dunningPlanTransition;
+    }
+
+    public ActionPlanItem getActionPlanItem() {
+        return actionPlanItem;
+    }
+
+    public void setActionPlanItem(ActionPlanItem actionPlanItem) {
+        this.actionPlanItem = actionPlanItem;
+    }
 
 	public void newDunningPlanTransitionInstance() {
 		this.dunningPlanTransition = new DunningPlanTransition();

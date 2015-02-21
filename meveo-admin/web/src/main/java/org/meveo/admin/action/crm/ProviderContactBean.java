@@ -19,15 +19,15 @@ package org.meveo.admin.action.crm;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.enterprise.context.ConversationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.meveo.admin.action.StatelessBaseBean;
+import org.meveo.admin.action.BaseBean;
 import org.meveo.model.crm.ProviderContact;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.crm.impl.ProviderContactService;
+import org.omnifaces.cdi.ViewScoped;
 
 /**
  * Standard backing bean for {@link ProviderContact} (extends {@link BaseBean}
@@ -36,8 +36,8 @@ import org.meveo.service.crm.impl.ProviderContactService;
  * Manaty custom JSF components.
  */
 @Named
-@ConversationScoped
-public class ProviderContactBean extends StatelessBaseBean<ProviderContact> {
+@ViewScoped
+public class ProviderContactBean extends BaseBean<ProviderContact> {
 
 	private static final long serialVersionUID = 1L;
 
@@ -56,16 +56,6 @@ public class ProviderContactBean extends StatelessBaseBean<ProviderContact> {
 		super(ProviderContact.class);
 	}
 
-	/**
-	 * Factory method for entity to edit. If objectId param set load that entity
-	 * from database, otherwise create new.
-	 * 
-	 * @throws IllegalAccessException
-	 * @throws InstantiationException
-	 */
-	public ProviderContact initEntity() {
-		return super.initEntity();
-	}
 
 	/**
 	 * @see org.meveo.admin.action.BaseBean#getPersistenceService()

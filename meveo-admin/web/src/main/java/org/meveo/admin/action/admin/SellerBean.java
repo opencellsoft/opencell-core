@@ -19,23 +19,22 @@ package org.meveo.admin.action.admin;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.enterprise.context.ConversationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
-import org.meveo.admin.action.StatelessBaseBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.Seller;
 import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
+import org.omnifaces.cdi.ViewScoped;
 
 @Named
-@ConversationScoped
-public class SellerBean extends StatelessBaseBean<Seller> {
+@ViewScoped
+public class SellerBean extends BaseBean<Seller> {
 
 	private static final long serialVersionUID = 1L;
 
@@ -52,28 +51,6 @@ public class SellerBean extends StatelessBaseBean<Seller> {
 	 */
 	public SellerBean() {
 		super(Seller.class);
-	}
-
-	/**
-	 * Factory method for entity to edit. If objectId param set load that entity
-	 * from database, otherwise create new.
-	 * 
-	 * @throws IllegalAccessException
-	 * @throws InstantiationException
-	 */
-
-	public Seller initEntity() {
-		return super.initEntity();
-	}
-
-	/**
-	 * Override default list view name. (By default its class name starting
-	 * lower case + 's').
-	 * 
-	 * @see org.meveo.admin.action.BaseBean#getDefaultViewName()
-	 */
-	protected String getDefaultViewName() {
-		return "sellers";
 	}
 
 	/**

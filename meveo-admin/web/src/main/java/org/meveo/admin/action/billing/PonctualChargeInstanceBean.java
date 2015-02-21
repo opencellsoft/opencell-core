@@ -16,17 +16,16 @@
  */
 package org.meveo.admin.action.billing;
 
-import javax.enterprise.context.ConversationScoped;
 import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.meveo.admin.action.BaseBean;
-import org.meveo.admin.action.StatelessBaseBean;
 import org.meveo.model.billing.OneShotChargeInstance;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.OneShotChargeInstanceService;
+import org.omnifaces.cdi.ViewScoped;
 
 /**
  * Standard backing bean for {@link OneShotChargeInstance} (extends
@@ -35,9 +34,9 @@ import org.meveo.service.billing.impl.OneShotChargeInstanceService;
  * It works with Manaty custom JSF components.
  */
 @Named
-@ConversationScoped
+@ViewScoped
 public class PonctualChargeInstanceBean extends
-		StatelessBaseBean<OneShotChargeInstance> {
+		BaseBean<OneShotChargeInstance> {
 
 	private static final long serialVersionUID = 1L;
 

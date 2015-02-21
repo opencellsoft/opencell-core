@@ -9,11 +9,12 @@
 	template="/layout/template.xhtml" xmlns:p="http://primefaces.org/ui">
 
 	<ui:define name="metadata">
-		<f:metadata>
+		<f:metadata>            
 			<f:viewParam name="serviceInstanceId"
 				value="#{serviceInstanceBean.objectId}"></f:viewParam>
 			<f:viewParam name="subscriptionId"
 				value="#{subscriptionBean.objectId}" />
+            <f:viewParam name="backView"/>
 		</f:metadata>
 	</ui:define>
 
@@ -50,7 +51,7 @@
 		</hftl:entityPopup>
 
 		<hf:formPanel label="#{messages['serviceInstance.panel']}"
-			backingBean="#{serviceInstanceBean}" columns="2">
+			backingBean="#{serviceInstanceBean}" columns="2" objectIdParamName="serviceInstanceId" >
 
 			<hf:formEntityField id="serviceSelectedId"
 				label="#{messages['serviceInstance.code']}" field="serviceTemplate"

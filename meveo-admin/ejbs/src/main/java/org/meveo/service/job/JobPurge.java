@@ -15,6 +15,7 @@ import javax.ejb.TimerService;
 import javax.inject.Inject;
 
 import org.meveo.model.admin.User;
+import org.meveo.model.jobs.JobCategoryEnum;
 import org.meveo.model.jobs.JobExecutionResult;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.TimerInfo;
@@ -89,7 +90,7 @@ public class JobPurge implements Job {
 			User currentUser = userService.findById(info.getUserId());
 			JobExecutionResult result = execute(info.getParametres(),
 					currentUser);
-			jobExecutionService.persistResult(this, result, info, currentUser);
+			jobExecutionService.persistResult(this, result, info, currentUser,getJobCategory());
 		}
 	}
 
@@ -111,5 +112,10 @@ public class JobPurge implements Job {
 				log.error(e.getMessage());
 			}
 		}
+	}
+	
+	@Override
+	public JobCategoryEnum getJobCategory() {
+		return JobCategoryEnum.UTILS;
 	}
 }

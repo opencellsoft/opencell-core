@@ -13,14 +13,14 @@
 	<ui:define name="metadata">
 		<f:metadata>
 			<f:event type="preRenderView"
-				listener="#{instantMessagingNotificationBean.preRenderView}" />
+				listener="#{instantMessagingNotificationListBean.preRenderView}" />
 		</f:metadata>
 	</ui:define>
 	<ui:define name="body">
    		
 			<!-- ===================================== SEARCH CRITERIA ZONE ================================= -->
 
-			<hf:searchPanel label="#{messages['menu.instantMessagingNotifications']}" columns="3" backingBean="#{instantMessagingNotificationBean}">
+			<hf:searchPanel label="#{messages['menu.instantMessagingNotifications']}" columns="3" backingBean="#{instantMessagingNotificationListBean}">
 				<hf:searchField label="#{messages['entity.code']}" field="code" />
 				<hf:searchField label="#{messages['entity.notification.classNameFilter']}" field="classNameFilter" />
 				<hf:searchField label="#{messages['entity.notification.eventTypeFilter']}" field="eventTypeFilter" />
@@ -30,7 +30,7 @@
 
 			<!-- ===================================== SEARCH USERS RESULTS ================================= -->
 
-			<hftl:dataList backingBean="#{instantMessagingNotificationBean}" exportButton="false" exportToCsv="true" importCsv="true">
+			<hftl:dataList backingBean="#{instantMessagingNotificationListBean}" exportButton="false" exportToCsv="true" importCsv="true" sortBy="code">
 			    <hftl:column label="#{messages['entity.code']}"
 					field="code" />
 				<hftl:column

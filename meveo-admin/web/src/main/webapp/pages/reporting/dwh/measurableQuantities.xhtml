@@ -13,14 +13,14 @@
 	<ui:define name="metadata">
 		<f:metadata>
 			<f:event type="preRenderView"
-				listener="#{measurableQuantityBean.preRenderView}" />
+				listener="#{measurableQuantityListBean.preRenderView}" />
 		</f:metadata>
 	</ui:define>
 	<ui:define name="body">
    		
 			<!-- ===================================== SEARCH CRITERIA ZONE ================================= -->
 
-			<hf:searchPanel label="#{messages['menu.measurableQuantities']}" columns="3" backingBean="#{measurableQuantityBean}">
+			<hf:searchPanel label="#{messages['menu.measurableQuantities']}" columns="3" backingBean="#{measurableQuantityListBean}">
 				<hf:searchField label="#{messages['entity.measurablequantity.code']}" field="code" />
 				<hf:searchField label="#{messages['entity.measurablequantity.dimension1']}" field="dimension1" />
 				<hf:searchField label="#{messages['entity.measurablequantity.dimension2']}" field="dimension2" />
@@ -31,7 +31,7 @@
 
 			<!-- ===================================== SEARCH USERS RESULTS ================================= -->
 
-			<hftl:dataList backingBean="#{measurableQuantityBean}" exportButton="false" exportToCsv="true" importCsv="true">
+			<hftl:dataList backingBean="#{measurableQuantityListBean}" exportButton="false" exportToCsv="true" importCsv="true" sortBy="code">
 			    <hftl:column label="#{messages['entity.measurablequantity.code']}"
 					field="code" />
 				<hftl:column

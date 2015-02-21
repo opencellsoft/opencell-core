@@ -11,7 +11,6 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 
-import javax.enterprise.context.ConversationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -23,21 +22,25 @@ import org.meveo.admin.exception.RejectedImportException;
 import org.meveo.commons.utils.CsvBuilder;
 import org.meveo.commons.utils.CsvReader;
 import org.meveo.commons.utils.ParamBean;
-import org.meveo.model.admin.User;
 import org.meveo.model.catalog.CounterTemplate;
 import org.meveo.model.notification.EmailNotification;
-import org.meveo.model.notification.Notification;
 import org.meveo.model.notification.NotificationEventTypeEnum;
 import org.meveo.model.notification.StrategyImportTypeEnum;
-import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.catalog.impl.CounterTemplateService;
 import org.meveo.service.notification.EmailNotificationService;
+import org.omnifaces.cdi.ViewScoped;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.UploadedFile;
 
+/**
+ * Standard backing bean for {@link EmailNotification} (extends {@link BaseBean}
+ * that provides almost all common methods to handle entities filtering/sorting
+ * in datatable, their create, edit, view, delete operations). It works with
+ * Manaty custom JSF components.
+ */
 @Named
-@ConversationScoped
+@ViewScoped
 public class EmailNotificationBean extends BaseBean<EmailNotification> {
 
 	private static final long serialVersionUID = 6473465285480945644L;
@@ -80,15 +83,6 @@ public class EmailNotificationBean extends BaseBean<EmailNotification> {
 	@Override
 	protected IPersistenceService<EmailNotification> getPersistenceService() {
 		return emailNotificationService;
-	}
-
-	protected String getDefaultViewName() {
-		return "emailNotifications";
-	}
-
-	@Override
-	protected String getListViewName() {
-		return "emailNotifications";
 	}
 
 	@Override

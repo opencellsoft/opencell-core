@@ -22,7 +22,6 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.meveo.admin.action.BaseBean;
-import org.meveo.admin.action.StatelessBaseBean;
 import org.meveo.model.admin.DunningHistory;
 import org.meveo.model.bi.JobHistory;
 import org.meveo.service.base.PersistenceService;
@@ -37,7 +36,7 @@ import org.meveo.service.bi.impl.JobHistoryService;
  */
 @Named
 @ConversationScoped
-public class JobHistoryBean extends StatelessBaseBean<JobHistory> {
+public class JobHistoryBean extends BaseBean<JobHistory> {
 
 	private static final long serialVersionUID = 1L;
 

@@ -18,18 +18,18 @@ package org.meveo.admin.action.admin;
 
 import java.sql.BatchUpdateException;
 
-import javax.enterprise.context.ConversationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.meveo.admin.action.StatelessBaseBean;
+import org.meveo.admin.action.BaseBean;
 import org.meveo.model.billing.Language;
 import org.meveo.service.admin.impl.LanguageService;
 import org.meveo.service.base.local.IPersistenceService;
+import org.omnifaces.cdi.ViewScoped;
 
 @Named
-@ConversationScoped
-public class LanguageBean extends StatelessBaseBean<Language> {
+@ViewScoped
+public class LanguageBean extends BaseBean<Language> {
 
 	private static final long serialVersionUID = 1L;
 
@@ -38,20 +38,6 @@ public class LanguageBean extends StatelessBaseBean<Language> {
 
 	public LanguageBean() {
 		super(Language.class);
-	}
-
-	public Language initEntity() {
-		return super.initEntity();
-	}
-
-	/**
-	 * Override default list view name. (By default its class name starting
-	 * lower case + 's').
-	 * 
-	 * @see org.meveo.admin.action.BaseBean#getDefaultViewName()
-	 */
-	protected String getDefaultViewName() {
-		return "languages";
 	}
 
 	/**

@@ -7,7 +7,7 @@
 
 	<f:metadata>
 		<f:event type="preRenderView"
-			listener="#{discountPlanBean.preRenderView}" />
+			listener="#{discountPlanListBean.preRenderView}" />
 	</f:metadata>
 
 	<ui:define name="navigation">
@@ -17,7 +17,7 @@
 	<ui:define name="body">
 
 		<hf:searchPanel id="searchPanel" label="#{messages['action.search']}"
-			backingBean="#{discountPlanBean}" columns="3">
+			backingBean="#{discountPlanListBean}" columns="3">
 			<hf:searchField label="#{messages['BusinessEntity.code']}"
 				field="code" />
 			<hf:searchField label="#{messages['BusinessEntity.description']}"
@@ -26,7 +26,7 @@
 		</hf:searchPanel>
 
 		<hftl:dataList label="#{messages['discountPlan.title']}"
-			backingBean="#{discountPlanBean}">
+			backingBean="#{discountPlanListBean}" sortBy="code">
 			<hftl:column label="#{messages['BusinessEntity.code']}" field="code" />
 			<hftl:column label="#{messages['BusinessEntity.description']}"
 				field="description" />

@@ -17,6 +17,7 @@
 package org.meveo.service.job;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.ejb.Stateless;
@@ -28,6 +29,7 @@ import org.apache.commons.lang.StringUtils;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.admin.User;
+import org.meveo.model.jobs.JobCategoryEnum;
 import org.meveo.model.jobs.JobExecutionResult;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.TimerEntity;
@@ -42,12 +44,13 @@ public class JobExecutionService extends
 	private TimerEntityService timerEntityService;
 
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public void executeJob(String jobName, TimerInfo info, User currentUser) {
+	public void executeJob(String jobName, TimerInfo info, User currentUser,JobCategoryEnum jobCategory) {
 		try {
-			Job jobInstance = TimerEntityService.jobEntries.get(jobName);
+			HashMap<String, Job> jobs = TimerEntityService.jobEntries.get(jobCategory);
+			Job jobInstance = jobs.get(jobName);
 			JobExecutionResult result = jobInstance.execute(
 					info.getParametres(), currentUser);
-			persistResult(jobInstance, result, info, currentUser);
+			persistResult(jobInstance, result, info, currentUser,jobCategory);
 		} catch (Exception e) {
 			log.error(e.getMessage());
 		}
@@ -55,7 +58,7 @@ public class JobExecutionService extends
 
 	@TransactionAttribute(TransactionAttributeType.REQUIRED)
 	public void persistResult(Job job, JobExecutionResult result,
-			TimerInfo info, User currentUser) {
+			TimerInfo info, User currentUser,JobCategoryEnum jobCategory) {
 		try {
 			log.info("JobExecutionService persistResult...");
 
@@ -71,7 +74,7 @@ public class JobExecutionService extends
 
 				if (!entity.isDone()) {
 					executeJob(job.getClass().getSimpleName(), info,
-							currentUser);
+							currentUser,jobCategory);
 				} else if (info.getFollowingTimerId() != null
 						&& info.getFollowingTimerId() > 0) {
 					try {
@@ -79,7 +82,7 @@ public class JobExecutionService extends
 								.findById(info.getFollowingTimerId());
 						executeJob(timerEntity.getJobName(),
 								(TimerInfo) timerEntity.getTimerInfo(),
-								currentUser);
+								currentUser,jobCategory);
 					} catch (Exception e) {
 						log.warn("PersistResult cannot excute the following job.="
 								+ info.getFollowingTimerId());
@@ -95,7 +98,7 @@ public class JobExecutionService extends
 								.findById(info.getFollowingTimerId());
 						executeJob(timerEntity.getJobName(),
 								(TimerInfo) timerEntity.getTimerInfo(),
-								currentUser);
+								currentUser,jobCategory);
 					} catch (Exception e) {
 						log.warn("PersistResult cannot excute the following job.="
 								+ info.getFollowingTimerId());

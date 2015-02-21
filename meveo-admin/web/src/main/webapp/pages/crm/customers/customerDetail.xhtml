@@ -47,8 +47,7 @@
 					<hf:formPanel id="formCustomerPanel" formId="formCustomer"
 						label="#{messages['customer.customerPanel']}"
 						showFormButtons="false" backingBean="#{customerBean}"
-						useCustomIdParam="true" killConversationOnSave="false"
-						killConversationOnBack="false">
+						useCustomIdParam="true">
 						<p:tabView id="tabView">
 							<p:tab title="#{messages['customer.tab.account']}">
 								<hftl:panelGroup columns="2">
@@ -129,7 +128,6 @@
 
 						<hf:formButtons columns="5" backingBean="#{customerBean}"
 							edit="#{customerBean.edit}" ajaxSubmit="false"
-							killConversationOnSave="false" killConversationOnBack="false"
 							useCustomIdParam="true">
 							<p:button outcome="addCustomerAccount"
 								rendered="#{!customerBean.edit}"

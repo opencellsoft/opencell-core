@@ -11,7 +11,7 @@
 	<ui:define name="metadata">
 		<f:metadata>
 			<f:event type="preRenderView"
-				listener="#{billingCycleBean.preRenderView}" />
+				listener="#{billingCycleListBean.preRenderView}" />
 		</f:metadata>
 	</ui:define>
 	<ui:define name="navigation">
@@ -21,14 +21,14 @@
 	<ui:define name="body">
 
 		<hf:searchPanel label="#{messages['billingCycle.search']}"
-			backingBean="#{billingCycleBean}">
+			backingBean="#{billingCycleListBean}">
 			<hf:searchField label="#{messages['billingCycle.code']}" field="code" />
 			<hf:searchField label="#{messages['billingCycle.description']}"
 				field="description" />
 		</hf:searchPanel>
 
 		<hftl:dataList label="#{messages['billingCycles.title']}"
-			backingBean="#{billingCycleBean}">
+			backingBean="#{billingCycleListBean}">
 			<hftl:column label="#{messages['billingCycle.code']}" field="code" />
 			<hftl:column label="#{messages['billingCycle.description']}"
 				field="description" />

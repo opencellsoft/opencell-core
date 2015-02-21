@@ -19,7 +19,6 @@ package org.meveo.admin.action.catalog;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.enterprise.context.ConversationScoped;
 import javax.enterprise.inject.Instance;
 import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
@@ -29,7 +28,6 @@ import org.jboss.seam.international.status.Messages;
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.jboss.solder.servlet.http.RequestParam;
 import org.meveo.admin.action.BaseBean;
-import org.meveo.admin.action.StatelessBaseBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.InvoiceSubcategoryCountry;
@@ -38,6 +36,7 @@ import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.InvoiceSubCategoryCountryService;
 import org.meveo.service.catalog.impl.InvoiceCategoryService;
 import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
+import org.omnifaces.cdi.ViewScoped;
 import org.primefaces.component.tabview.TabView;
 
 /**
@@ -47,9 +46,9 @@ import org.primefaces.component.tabview.TabView;
  * It works with Manaty custom JSF components.
  */
 @Named
-@ConversationScoped
+@ViewScoped
 public class InvoiceSubCategoryBean extends
-		StatelessBaseBean<InvoiceSubCategory> {
+		BaseBean<InvoiceSubCategory> {
 	private static final long serialVersionUID = 1L;
 
 	/**
@@ -216,16 +215,6 @@ public class InvoiceSubCategoryBean extends
 
 	@Override
 	protected String getListViewName() {
-		return "invoiceSubCategories";
-	}
-
-	/**
-	 * Override default list view name. (By default its class name starting
-	 * lower case + 's').
-	 * 
-	 * @see org.meveo.admin.action.BaseBean#getDefaultViewName()
-	 */
-	protected String getDefaultViewName() {
 		return "invoiceSubCategories";
 	}
 

@@ -18,8 +18,7 @@
                     <f:selectItem itemValue="YEARLY" itemLabel="#{messages['calendar.calendarType.YEARLY']}" />
                     <f:selectItem itemValue="DAILY" itemLabel="#{messages['calendar.calendarType.DAILY']}" />
                     <f:selectItem itemValue="PERIOD" itemLabel="#{messages['calendar.calendarType.PERIOD']}" />
-                    <p:ajax event="change" listener="#{calendarBean.changeCalendarType}" partialSubmit="true" process="@this"
-                        oncomplete="location.reload();" />
+                    <p:ajax event="change" listener="#{calendarBean.changeCalendarType}" partialSubmit="true" process="@this" update="@form" />
                 </p:selectOneMenu>
             </p:panelGrid>
             <hf:formField label="#{messages['calendar.name']}" field="name" required="true" validateUnique="true" useConverter="false" />
@@ -46,12 +45,14 @@
                 </p:panelGrid>
             </p:panelGrid>
 
-            <hf:formField label="#{messages['calendar.periodLength']}" field="periodLength" required="true" rendered="#{calendarBean.entity.calendarType=='PERIOD'}" />
+            <hf:formField label="#{messages['calendar.periodLength']}" field="periodLength" required="true"
+                rendered="#{calendarBean.entity.calendarType=='PERIOD'}" />
             <hf:formField label="#{messages['calendar.periodUnit']}" field="periodUnit" required="true" listValues="#{calendarBean.periodTypes}"
                 rendered="#{calendarBean.entity.calendarType=='PERIOD' and calendarBean.edit}" />
             <hf:formField label="#{messages['calendar.periodUnit']}" field="periodUnit" isMessage="true" messagePrefix="calendar.periodUnit"
                 rendered="#{calendarBean.entity.calendarType=='PERIOD' and not calendarBean.edit}" />
-            <hf:formField label="#{messages['calendar.nbPeriods']}" field="nbPeriods" required="true" rendered="#{calendarBean.entity.calendarType=='PERIOD'}" />
+            <hf:formField label="#{messages['calendar.nbPeriods']}" field="nbPeriods" required="true"
+                rendered="#{calendarBean.entity.calendarType=='PERIOD'}" />
         </hf:formPanel>
     </ui:define>
 

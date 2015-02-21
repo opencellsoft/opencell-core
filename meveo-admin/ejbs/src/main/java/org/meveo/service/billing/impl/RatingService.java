@@ -439,9 +439,10 @@ public class RatingService {
 			boolean countryAreEqual = pricePlan.getTradingCountry() == null
 					|| pricePlan.getTradingCountry().getId().equals(countryId);
 			if (!countryAreEqual) {
-				log.debug("The country of the billing account " + countryId + " is not the same as pricePlan country"
-						+ pricePlan.getTradingCountry().getId() + " ("
-						+ pricePlan.getTradingCountry().getCountry().getCountryCode() + ")");
+				log.debug(
+						"The countryId={} of the billing account is not the same as pricePlan with countryId={} and code={}",
+						new Object[] { countryId, pricePlan.getTradingCountry().getId(),
+								pricePlan.getTradingCountry().getCountry().getCountryCode() });
 				continue;
 			}
 			boolean currencyAreEqual = pricePlan.getTradingCurrency() == null

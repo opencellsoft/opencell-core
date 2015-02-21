@@ -7,23 +7,23 @@ import javax.jws.WebService;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.billing.CdrListDto;
 import org.meveo.api.dto.billing.PrepaidReservationDto;
-import org.meveo.api.dto.response.CdrReservationResponse;
+import org.meveo.api.dto.response.billing.CdrReservationResponseDto;
 
 @WebService
 public interface MediationWs extends IBaseWs {
 
 	@WebMethod
 	ActionStatus registerCdrList(@WebParam(name = "cdrList") CdrListDto postData);
-	
+
 	@WebMethod
 	ActionStatus chargeCdr(@WebParam(name = "cdr") String cdr);
 
 	@WebMethod
-	CdrReservationResponse reserveCdr(@WebParam(name = "cdr") String  cdr);
-	
+	CdrReservationResponseDto reserveCdr(@WebParam(name = "cdr") String cdr);
+
 	@WebMethod
-	ActionStatus confirmReservation(@WebParam(name = "reservation") PrepaidReservationDto  reservation);
-	
+	ActionStatus confirmReservation(@WebParam(name = "reservation") PrepaidReservationDto reservation);
+
 	@WebMethod
-	ActionStatus cancelReservation(@WebParam(name = "reservation") PrepaidReservationDto  reservation);
+	ActionStatus cancelReservation(@WebParam(name = "reservation") PrepaidReservationDto reservation);
 }

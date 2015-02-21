@@ -5,6 +5,7 @@ import java.util.Date;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.inject.Named;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.ParamBean;
@@ -19,6 +20,7 @@ import org.meveo.model.crm.Provider;
 import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.catalog.impl.CalendarService;
+
 
 @Stateless
 public class WalletReservationService extends PersistenceService<WalletReservation> {

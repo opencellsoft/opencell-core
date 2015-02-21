@@ -1429,6 +1429,11 @@ public class AccountHierarchyApi extends BaseApi {
 																						e.getMessage());
 																			}
 
+																			// instantiate
+																			log.debug(
+																					"activateService id={} checked, quantity={}",
+																					serviceTemplate.getId(), 1);
+
 																			// activate
 																			try {
 																				serviceInstanceService

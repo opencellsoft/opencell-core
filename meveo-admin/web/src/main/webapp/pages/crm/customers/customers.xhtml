@@ -51,7 +51,7 @@
 				childField="description" listBean="#{customerBrandBean}" />
 		</hf:searchPanel>
 
-		<hftl:dataList label="#{messages['customer.search']}"
+		<hftl:dataList label="#{messages['customer.search']}" sortBy="code"
 			backingBean="#{customerListBean}">
 			<hftl:column label="#{messages['businessEntity.code']}" field="code" />
 			<hftl:column label="#{messages['customer.customerCategory']}"
@@ -63,7 +63,6 @@
 			<hftl:column label="#{messages['seller.title']}" field="seller"
 				childField="description" />
 			<hftl:actionsColumn useCustomIdParam="true"
-				propagateConversation="false"
 				permission="#{identity.hasPermission('account','accountManagement')}" />
 		</hftl:dataList>
 

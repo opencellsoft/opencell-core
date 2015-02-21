@@ -19,14 +19,12 @@ package org.meveo.admin.action.catalog;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.enterprise.context.ConversationScoped;
 import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
-import org.meveo.admin.action.StatelessBaseBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.catalog.ServiceChargeTemplateRecurring;
 import org.meveo.model.catalog.ServiceChargeTemplateSubscription;
@@ -42,11 +40,12 @@ import org.meveo.service.catalog.impl.ServiceChargeTemplateSubscriptionService;
 import org.meveo.service.catalog.impl.ServiceChargeTemplateTerminationService;
 import org.meveo.service.catalog.impl.ServiceChargeTemplateUsageService;
 import org.meveo.service.catalog.impl.ServiceTemplateService;
+import org.omnifaces.cdi.ViewScoped;
 import org.primefaces.model.DualListModel;
 
 @Named
-@ConversationScoped
-public class ServiceTemplateBean extends StatelessBaseBean<ServiceTemplate> {
+@ViewScoped
+public class ServiceTemplateBean extends BaseBean<ServiceTemplate> {
 
 	private static final long serialVersionUID = 1L;
 

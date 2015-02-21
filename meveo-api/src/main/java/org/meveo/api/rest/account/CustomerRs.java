@@ -14,7 +14,7 @@ import javax.ws.rs.core.MediaType;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.account.CustomerDto;
 import org.meveo.api.dto.response.account.GetCustomerResponse;
-import org.meveo.api.dto.response.account.ListCustomerResponse;
+import org.meveo.api.dto.response.account.ListCustomerResponseDto;
 import org.meveo.api.rest.IBaseRs;
 import org.meveo.api.rest.security.RSSecured;
 
@@ -51,6 +51,6 @@ public interface CustomerRs extends IBaseRs {
 	 */
 	@POST
 	@Path("/list")
-	ListCustomerResponse list(CustomerDto postData);
+	ListCustomerResponseDto list(CustomerDto postData);
 
 }

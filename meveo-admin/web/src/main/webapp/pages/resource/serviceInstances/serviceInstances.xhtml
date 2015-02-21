@@ -4,7 +4,7 @@
 
 	<ui:define name="metadata">
 		<f:metadata>
-			<f:event type="preRenderView" listener="#{serviceInstanceBean.preRenderView}" />
+			<f:event type="preRenderView" listener="#{serviceInstanceListBean.preRenderView}" />
 		</f:metadata>
 	</ui:define>
 
@@ -14,12 +14,12 @@
 
 	<ui:define name="body">
 
-		<hf:searchPanel label="#{messages['serviceInstance.search']}" backingBean="#{serviceInstanceBean}">
+		<hf:searchPanel label="#{messages['serviceInstance.search']}" backingBean="#{serviceInstanceListBean}">
 			<hf:searchField label="#{messages['serviceInstance.description']}" field="description" />
 			<hf:searchField label="#{messages['serviceInstance.code']}" field="code" />
 		</hf:searchPanel>
 
-		<hftl:dataList backingBean="#{serviceInstanceBean}" label="#{messages['serviceInstance.title']}">
+		<hftl:dataList backingBean="#{serviceInstanceListBean}" label="#{messages['serviceInstance.title']}">
 			<hftl:column label="#{messages['serviceInstance.description']}" field="description" />
 			<hftl:column label="#{messages['serviceInstance.code']}" field="code" />
 			<hftl:column label="#{messages['serviceInstance.status']}" field="status" showSortLinks="false" />

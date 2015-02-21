@@ -1,11 +1,13 @@
 package org.meveo.api;
 
 import java.util.Arrays;
+import java.util.List;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
 import org.meveo.api.dto.SellerDto;
+import org.meveo.api.dto.SellersDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
@@ -211,6 +213,19 @@ public class SellerApi extends BaseApi {
 
 			throw new MissingParameterException(getMissingParametersExceptionMessage());
 		}
+	}
+
+	public SellersDto list(Provider provider) {
+		SellersDto result = new SellersDto();
+
+		List<Seller> sellers = sellerService.list(provider);
+		if (sellers != null) {
+			for (Seller seller : sellers) {
+				result.getSeller().add(new SellerDto(seller));
+			}
+		}
+
+		return result;
 	}
 
 }

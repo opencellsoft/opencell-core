@@ -18,16 +18,16 @@ package org.meveo.admin.action.payments;
 
 import java.util.List;
 
-import javax.enterprise.context.ConversationScoped;
 import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.meveo.admin.action.StatelessBaseBean;
+import org.meveo.admin.action.BaseBean;
 import org.meveo.model.payments.OCCTemplate;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.payments.impl.OCCTemplateService;
+import org.omnifaces.cdi.ViewScoped;
 
 /**
  * Standard backing bean for {@link OCCTemplate} (extends {@link BaseBean} that
@@ -36,8 +36,8 @@ import org.meveo.service.payments.impl.OCCTemplateService;
  * custom JSF components.
  */
 @Named
-@ConversationScoped
-public class OCCTemplateBean extends StatelessBaseBean<OCCTemplate> {
+@ViewScoped
+public class OCCTemplateBean extends BaseBean<OCCTemplate> {
 
 	private static final long serialVersionUID = 1L;
 

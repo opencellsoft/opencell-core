@@ -25,13 +25,11 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
-import javax.enterprise.context.ConversationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
-import org.meveo.admin.action.StatefulBaseBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.EntityListDataModelPF;
 import org.meveo.model.billing.InstanceStatusEnum;
@@ -61,11 +59,18 @@ import org.meveo.service.billing.impl.UserAccountService;
 import org.meveo.service.billing.impl.WalletOperationService;
 import org.meveo.service.catalog.impl.ServiceChargeTemplateSubscriptionService;
 import org.meveo.service.medina.impl.AccessService;
+import org.omnifaces.cdi.ViewScoped;
 import org.slf4j.Logger;
 
+/**
+ * Standard backing bean for {@link Subscription} (extends {@link BaseBean}
+ * that provides almost all common methods to handle entities filtering/sorting
+ * in datatable, their create, edit, view, delete operations). It works with
+ * Manaty custom JSF components.
+ */
 @Named
-@ConversationScoped
-public class SubscriptionBean extends StatefulBaseBean<Subscription> {
+@ViewScoped
+public class SubscriptionBean extends BaseBean<Subscription> {
 
 	private static final long serialVersionUID = 1L;
 
@@ -480,9 +485,11 @@ public class SubscriptionBean extends StatefulBaseBean<Subscription> {
 				serviceInstances.add(serviceInstance);
 				serviceTemplates.remove(serviceTemplate);
 			}
+
 			if (!isChecked) {
 				messages.warn(new BundleKey("messages", "instanciation.selectService"));
 			} else {
+			    subscriptionService.refresh(entity);
 				messages.info(new BundleKey("messages", "instanciation.instanciateSuccessful"));
 			}
 		} catch (BusinessException e1) {

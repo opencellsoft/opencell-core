@@ -16,16 +16,15 @@
  */
 package org.meveo.admin.action.billing;
 
-import javax.enterprise.context.ConversationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.meveo.admin.action.BaseBean;
-import org.meveo.admin.action.StatelessBaseBean;
 import org.meveo.model.billing.ServiceParameterInstance;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.ServiceParameterInstanceService;
+import org.omnifaces.cdi.ViewScoped;
 
 /**
  * Standard backing bean for {@link ServiceParameterInstance} (extends
@@ -34,9 +33,9 @@ import org.meveo.service.billing.impl.ServiceParameterInstanceService;
  * It works with Manaty custom JSF components.
  */
 @Named
-@ConversationScoped
+@ViewScoped
 public class ServiceParameterInstanceBean extends
-		StatelessBaseBean<ServiceParameterInstance> {
+		BaseBean<ServiceParameterInstance> {
 
 	private static final long serialVersionUID = 1L;
 

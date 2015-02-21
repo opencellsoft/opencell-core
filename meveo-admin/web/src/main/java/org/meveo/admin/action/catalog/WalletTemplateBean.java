@@ -18,7 +18,6 @@ package org.meveo.admin.action.catalog;
 
 import java.sql.BatchUpdateException;
 
-import javax.enterprise.context.ConversationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -28,9 +27,10 @@ import org.meveo.model.catalog.WalletTemplate;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.WalletTemplateService;
+import org.omnifaces.cdi.ViewScoped;
 
 @Named
-@ConversationScoped
+@ViewScoped
 public class WalletTemplateBean extends BaseBean<WalletTemplate> {
 
 	private static final long serialVersionUID = 1L;
@@ -66,17 +66,7 @@ public class WalletTemplateBean extends BaseBean<WalletTemplate> {
 
 		return entity;
 	}
-
-	/**
-	 * Override default list view name. (By default its class name starting
-	 * lower case + 's').
-	 * 
-	 * @see org.meveo.admin.action.BaseBean#getDefaultViewName()
-	 */
-	protected String getDefaultViewName() {
-		return "walletTemplates";
-	}
-
+	
 	/**
 	 * @see org.meveo.admin.action.BaseBean#getPersistenceService()
 	 */

@@ -22,6 +22,8 @@ import javax.ejb.ScheduleExpression;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -83,6 +85,10 @@ public class TimerEntity extends BaseEntity {
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "SC_END", nullable = true)
 	private Date end;
+	
+	@Enumerated(EnumType.STRING)
+	@Column(name = "JOB_CATEGORY")
+	JobCategoryEnum jobCategoryEnum;
 
 	public String getName() {
 		return (name == null) ? (getId() == null ? null : jobName + "_"
@@ -239,5 +245,15 @@ public class TimerEntity extends BaseEntity {
 		}
 		return false;
 	}
+
+	public JobCategoryEnum getJobCategoryEnum() {
+		return jobCategoryEnum;
+	}
+
+	public void setJobCategoryEnum(JobCategoryEnum jobCategoryEnum) {
+		this.jobCategoryEnum = jobCategoryEnum;
+	}
+	
+	
 
 }

@@ -12,7 +12,7 @@
 	<ui:define name="metadata">
 		<f:metadata>
 			<f:event type="preRenderView"
-				listener="#{tradingCountryBean.preRenderView}" />
+				listener="#{tradingCountryListBean.preRenderView}" />
 		</f:metadata>
 	</ui:define>
 
@@ -21,31 +21,19 @@
 	</ui:define>
 
 	<ui:define name="body">
-		<c:set var="field" value="country" />
-		<hftl:entityPopup header="#{messages['customer.popup.header']}"
-			updateField=":searchPanel:searchForm:country:country_child"
-			selection="#{tradingCountryBean.filters['country']}"
-			backingBean="#{countryBean}"
-			searchField1Label="#{messages['country.countryCode']}"
-			searchField1="countryCode"
-			column1Label="#{messages['country.countryCode']}"
-			column1="countryCode"
-			column2Label="#{messages['tradingLanguage.prDescription']}"
-			column2="descriptionEn">
-		</hftl:entityPopup>
 
 		<hf:searchPanel id="searchPanel"
 			label="#{messages['tradingCountry.search']}"
-			backingBean="#{tradingCountryBean}">
+			backingBean="#{tradingCountryListBean}">
 
 			<hf:searchField id="country"
 				label="#{messages['tradingCountry.trCountryCode']}" field="country"
-				childField="countryCode" popup="true" clearButton="true" />
+				childField="countryCode"  />
 
 		</hf:searchPanel>
 
 		<hftl:dataList label="#{messages['tradingCountry.title']}"
-			backingBean="#{tradingCountryBean}">
+			backingBean="#{tradingCountryListBean}">
 			<hftl:column label="#{messages['tradingCountry.trCountryCode']}"
 				field="country" childField="countryCode" width="10%" />
 			<hftl:column label="#{messages['tradingCountry.prDescription']}"

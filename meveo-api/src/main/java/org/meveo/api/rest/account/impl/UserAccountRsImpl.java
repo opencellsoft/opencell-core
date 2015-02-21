@@ -10,7 +10,7 @@ import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.account.UserAccountDto;
 import org.meveo.api.dto.response.account.GetUserAccountResponse;
-import org.meveo.api.dto.response.account.ListUserAccountResponse;
+import org.meveo.api.dto.response.account.ListUserAccountResponseDto;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.LoggingInterceptor;
 import org.meveo.api.rest.account.UserAccountRs;
@@ -103,8 +103,8 @@ public class UserAccountRsImpl extends BaseRs implements UserAccountRs {
 	}
 
 	@Override
-	public ListUserAccountResponse listByBillingAccount(String billingAccountCode) {
-		ListUserAccountResponse result = new ListUserAccountResponse();
+	public ListUserAccountResponseDto listByBillingAccount(String billingAccountCode) {
+		ListUserAccountResponseDto result = new ListUserAccountResponseDto();
 
 		try {
 			result.setUserAccounts(userAccountApi.listByBillingAccount(billingAccountCode, getCurrentUser()

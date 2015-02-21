@@ -32,22 +32,25 @@ import javax.inject.Named;
 import org.jboss.seam.international.status.Messages;
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.jboss.solder.servlet.http.RequestParam;
-import org.meveo.admin.action.StatelessBaseBean;
+import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
+import org.meveo.model.jobs.JobCategoryEnum;
 import org.meveo.model.jobs.JobExecutionResult;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.TimerEntity;
 import org.meveo.service.base.local.IPersistenceService;
+import org.meveo.service.job.Job;
 import org.meveo.service.job.JobExecutionService;
 import org.meveo.service.job.TimerEntityService;
+import org.omnifaces.cdi.ViewScoped;
 import org.primefaces.model.LazyDataModel;
 import org.primefaces.model.SortOrder;
 import org.slf4j.Logger;
 
 @Named
-@ConversationScoped
-public class TimerBean extends StatelessBaseBean<JobExecutionResultImpl> {
+@ViewScoped
+public class TimerBean extends BaseBean<JobExecutionResultImpl> {
 
 	private static final long serialVersionUID = 5578930292531038376L;
 
@@ -97,7 +100,6 @@ public class TimerBean extends StatelessBaseBean<JobExecutionResultImpl> {
 
 	public String create() throws BusinessException {
 		log.debug("createTimer on job={}", timerEntity.getJobName());
-
 		if (timerEntity.getJobName() == null) {
 			messages.error("Veuillez selectionner un job");
 		} else if (!getJobNames().contains(timerEntity.getJobName())) {
@@ -171,13 +173,16 @@ public class TimerBean extends StatelessBaseBean<JobExecutionResultImpl> {
 	/*
 	 * to be used in picklist to select a job
 	 */
+	
 	public Set<String> getJobNames() {
-		return TimerEntityService.jobEntries.keySet();
+		HashMap<String, Job> jobs= new HashMap<String, Job> ();
+		if(timerEntity.getJobCategoryEnum()!=null){
+			jobs = TimerEntityService.jobEntries.get(timerEntity.getJobCategoryEnum());	
+			return jobs.keySet();	
+		}
+		return null;
 	}
 
-	public List<TimerEntity> getTimerEntityList() {
-		return timerEntityService.find(null);
-	}
 
 	@Override
 	protected IPersistenceService<JobExecutionResultImpl> getPersistenceService() {
@@ -187,6 +192,10 @@ public class TimerBean extends StatelessBaseBean<JobExecutionResultImpl> {
 	@Override
 	protected String getListViewName() {
 		return "timer";
+	}
+	
+	public List<TimerEntity> getTimerEntityList() {
+		return timerEntityService.find(null);
 	}
 
 	@Override
@@ -287,6 +296,11 @@ public class TimerBean extends StatelessBaseBean<JobExecutionResultImpl> {
 		}
 
 		return jobResultsDataModel;
+	}
+
+	
+	public List<JobCategoryEnum> getJobCategoryEnumValues(){
+		return Arrays.asList(JobCategoryEnum.values());
 	}
 
 }

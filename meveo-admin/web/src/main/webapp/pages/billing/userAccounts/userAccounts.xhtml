@@ -25,7 +25,7 @@
 			</h:panelGrid>
 		</hf:searchPanel>
 
-		<hftl:dataList label="#{messages['userAccount.title']}" backingBean="#{userAccountListBean}">
+		<hftl:dataList label="#{messages['userAccount.title']}" backingBean="#{userAccountListBean}" sortBy="code">
 			<hftl:column label="#{messages['businessEntity.code']}" field="code" />
 			<hftl:column label="#{messages['businessEntity.description']}" field="description" />
 			<hftl:column label="#{messages['userAccount.name']}" field="name" />
@@ -34,7 +34,7 @@
 			<hftl:column label="#{messages['billingAccount.terminationDate']}" field="terminationDate" />
 			<hftl:column label="#{messages['address.address1']}" field="address" childField="address1" />
 
-			<hftl:actionsColumn useCustomIdParam="true" propagateConversation="false" permission="#{identity.hasPermission('billing','billingManagement')}" />
+			<hftl:actionsColumn useCustomIdParam="true" permission="#{identity.hasPermission('billing','billingManagement')}" />
 		</hftl:dataList>
 
 	</ui:define>

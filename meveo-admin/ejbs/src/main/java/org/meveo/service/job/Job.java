@@ -6,6 +6,7 @@ import javax.interceptor.Interceptors;
 
 import org.meveo.admin.job.logging.JobLoggingInterceptor;
 import org.meveo.model.admin.User;
+import org.meveo.model.jobs.JobCategoryEnum;
 import org.meveo.model.jobs.JobExecutionResult;
 import org.meveo.model.jobs.TimerInfo;
 
@@ -46,6 +47,8 @@ public interface Job {
 	public void trigger(Timer timer);
 
 	public JobExecutionService getJobExecutionService();
+	
+	public JobCategoryEnum getJobCategory();
 
 	/*
 	 * those methods will be used later for asynchronous jobs

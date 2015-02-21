@@ -19,15 +19,15 @@ package org.meveo.admin.action.crm;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.enterprise.context.ConversationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.meveo.admin.action.StatelessBaseBean;
+import org.meveo.admin.action.BaseBean;
 import org.meveo.model.crm.CustomerCategory;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.crm.impl.CustomerCategoryService;
+import org.omnifaces.cdi.ViewScoped;
 
 /**
  * Standard backing bean for {@link CustomerCategory} (extends {@link BaseBean}
@@ -36,8 +36,8 @@ import org.meveo.service.crm.impl.CustomerCategoryService;
  * Manaty custom JSF components.
  */
 @Named
-@ConversationScoped
-public class CustomerCategoryBean extends StatelessBaseBean<CustomerCategory> {
+@ViewScoped
+public class CustomerCategoryBean extends BaseBean<CustomerCategory> {
 
 	private static final long serialVersionUID = 1L;
 
@@ -54,16 +54,6 @@ public class CustomerCategoryBean extends StatelessBaseBean<CustomerCategory> {
 	 */
 	public CustomerCategoryBean() {
 		super(CustomerCategory.class);
-	}
-
-	/**
-	 * Override default list view name. (By default view name is class name
-	 * starting lower case + ending 's').
-	 * 
-	 * @see org.meveo.admin.action.BaseBean#getDefaultViewName()
-	 */
-	protected String getDefaultViewName() {
-		return "customerCategories";
 	}
 
 	/**

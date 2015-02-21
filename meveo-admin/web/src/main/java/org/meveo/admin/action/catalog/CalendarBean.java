@@ -23,7 +23,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.enterprise.context.ConversationScoped;
 import javax.enterprise.inject.Instance;
 import javax.faces.component.EditableValueHolder;
 import javax.faces.event.AjaxBehaviorEvent;
@@ -33,7 +32,6 @@ import javax.persistence.DiscriminatorValue;
 
 import org.jboss.solder.servlet.http.RequestParam;
 import org.meveo.admin.action.BaseBean;
-import org.meveo.admin.action.StatelessBaseBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.ResourceBundle;
 import org.meveo.model.catalog.Calendar;
@@ -47,11 +45,12 @@ import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.catalog.impl.CalendarService;
 import org.meveo.service.catalog.impl.DayInYearService;
 import org.meveo.service.catalog.impl.HourInDayService;
+import org.omnifaces.cdi.ViewScoped;
 import org.primefaces.model.DualListModel;
 
 @Named
-@ConversationScoped
-public class CalendarBean extends StatelessBaseBean<Calendar> {
+@ViewScoped
+public class CalendarBean extends BaseBean<Calendar> {
 
     private static final long serialVersionUID = 1L;
 

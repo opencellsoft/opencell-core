@@ -16,13 +16,12 @@
  */
 package org.meveo.admin.action.payments;
 
-import javax.enterprise.context.ConversationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.persistence.EntityExistsException;
 
 import org.jboss.seam.international.status.builder.BundleKey;
-import org.meveo.admin.action.StatelessBaseBean;
+import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.payments.DunningPlan;
 import org.meveo.model.payments.DunningPlanTransition;
@@ -30,6 +29,7 @@ import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.payments.impl.DunningPlanService;
 import org.meveo.service.payments.impl.DunningPlanTransitionService;
+import org.omnifaces.cdi.ViewScoped;
 
 /**
  * Standard backing bean for {@link DunningPlanTransition} (extends
@@ -38,8 +38,8 @@ import org.meveo.service.payments.impl.DunningPlanTransitionService;
  * It works with Manaty custom JSF components.
  */
 @Named
-@ConversationScoped
-public class DunningPlanTransitionBean extends StatelessBaseBean<DunningPlanTransition> {
+@ViewScoped
+public class DunningPlanTransitionBean extends BaseBean<DunningPlanTransition> {
 
 	private static final long serialVersionUID = 1L;
 

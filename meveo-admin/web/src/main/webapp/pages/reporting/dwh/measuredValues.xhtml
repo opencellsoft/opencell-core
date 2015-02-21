@@ -17,7 +17,7 @@
 	<ui:define name="metadata">
 		<f:metadata>
 			<f:event type="preRenderView"
-				listener="#{measurementBean.preRenderView}" />
+				listener="#{measurementListBean.preRenderView}" />
 		</f:metadata>
 	</ui:define>
 
@@ -26,7 +26,7 @@
 
 		<!-- ===================================== SEARCH CRITERIA ZONE ================================= -->
 		<hf:searchPanel label="#{messages['menu.measuredValues']}" columns="3"
-			backingBean="#{measurementBean}">
+			backingBean="#{measurementListBean}">
 			<hf:searchField
 				label="#{messages['entity.measuredvalue.measurementPeriod']}"
 				field="measurementPeriod" />
@@ -37,7 +37,7 @@
 		</hf:searchPanel>
 		<!-- ===================================== SEARCH USERS RESULTS ================================= -->
 
-		<hftl:dataList backingBean="#{measurementBean}">
+		<hftl:dataList backingBean="#{measurementListBean}" sortBy="measurableQuantity.code">
 			<!-- <cftl:column label="#{messages['entity.measurement.code']}"
 					field="code" /> -->
 			<hftl:column

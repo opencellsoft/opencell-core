@@ -19,14 +19,12 @@ package org.meveo.admin.action.billing;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.enterprise.context.ConversationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.jboss.seam.international.status.Messages;
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
-import org.meveo.admin.action.StatelessBaseBean;
 import org.meveo.admin.exception.BusinessEntityException;
 import org.meveo.model.billing.Language;
 import org.meveo.model.billing.TradingLanguage;
@@ -35,6 +33,7 @@ import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.TradingLanguageService;
 import org.meveo.service.crm.impl.ProviderService;
+import org.omnifaces.cdi.ViewScoped;
 import org.primefaces.event.SelectEvent;
 
 /**
@@ -44,8 +43,8 @@ import org.primefaces.event.SelectEvent;
  * Manaty custom JSF components.
  */
 @Named
-@ConversationScoped
-public class TradingLanguageBean extends StatelessBaseBean<TradingLanguage> {
+@ViewScoped
+public class TradingLanguageBean extends BaseBean<TradingLanguage> {
 
 	private static final long serialVersionUID = 1L;
 
@@ -68,17 +67,6 @@ public class TradingLanguageBean extends StatelessBaseBean<TradingLanguage> {
 	 */
 	public TradingLanguageBean() {
 		super(TradingLanguage.class);
-	}
-
-	/**
-	 * Factory method for entity to edit. If objectId param set load that entity
-	 * from database, otherwise create new.
-	 * 
-	 * @throws IllegalAccessException
-	 * @throws InstantiationException
-	 */
-	public TradingLanguage initEntity() {
-		return super.initEntity();
 	}
 
 	/*

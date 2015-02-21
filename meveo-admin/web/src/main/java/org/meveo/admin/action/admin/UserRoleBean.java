@@ -20,18 +20,17 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import javax.enterprise.context.ConversationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.meveo.admin.action.BaseBean;
-import org.meveo.admin.action.StatefulBaseBean;
 import org.meveo.model.security.Permission;
 import org.meveo.model.security.Role;
 import org.meveo.service.admin.impl.PermissionService;
 import org.meveo.service.admin.impl.RoleService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
+import org.omnifaces.cdi.ViewScoped;
 import org.primefaces.model.DualListModel;
 
 /**
@@ -39,8 +38,8 @@ import org.primefaces.model.DualListModel;
  * view, delete operations). It works with Manaty custom JSF components.
  */
 @Named
-@ConversationScoped
-public class UserRoleBean extends StatefulBaseBean<Role> {
+@ViewScoped
+public class UserRoleBean extends BaseBean<Role> {
 
     private static final long serialVersionUID = 1L;
 
@@ -58,17 +57,6 @@ public class UserRoleBean extends StatefulBaseBean<Role> {
      */
     public UserRoleBean() {
         super(Role.class);
-    }
-
-    /**
-     * Factory method for entity to edit. If objectId param set load that entity from database, otherwise create new.
-     * 
-     * @throws IllegalAccessException
-     * @throws InstantiationException
-     */
-    @Override
-    public Role initEntity() {
-        return super.initEntity();
     }
 
     /**

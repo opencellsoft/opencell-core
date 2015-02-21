@@ -20,17 +20,16 @@ import java.sql.BatchUpdateException;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.enterprise.context.ConversationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.meveo.admin.action.BaseBean;
-import org.meveo.admin.action.StatelessBaseBean;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.billing.Tax;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.catalog.impl.TaxService;
+import org.omnifaces.cdi.ViewScoped;
 
 /**
  * Standard backing bean for {@link Tax} (extends {@link BaseBean} that provides
@@ -39,8 +38,8 @@ import org.meveo.service.catalog.impl.TaxService;
  * components.
  */
 @Named
-@ConversationScoped
-public class TaxBean extends StatelessBaseBean<Tax> {
+@ViewScoped
+public class TaxBean extends BaseBean<Tax> {
 	private static final long serialVersionUID = 1L;
 	/**
 	 * Injected @{link Tax} service. Extends {@link PersistenceService}.
@@ -48,7 +47,6 @@ public class TaxBean extends StatelessBaseBean<Tax> {
 	@Inject
 	private TaxService taxService;
 
-	private String descriptionFr;
 	private String[] accountingCodeFields = new String[7];
 	private String separator;
 
@@ -77,16 +75,6 @@ public class TaxBean extends StatelessBaseBean<Tax> {
 
 		parseAccountingCode();
 		return tax;
-	}
-
-	/**
-	 * Override default list view name. (By default its class name starting
-	 * lower case + 's').
-	 * 
-	 * @see org.meveo.admin.action.BaseBean#getDefaultViewName()
-	 */
-	protected String getDefaultViewName() {
-		return "taxes";
 	}
 
 	/**
@@ -186,28 +174,9 @@ public class TaxBean extends StatelessBaseBean<Tax> {
 		this.accountingCodeFields[6] = accountingCodeField7;
 	}
 
-	public String getDescriptionFr() {
-		return descriptionFr;
-	}
-
-	public void setDescriptionFr(String descriptionFr) {
-		this.descriptionFr = descriptionFr;
-	}
-
 	@Override
 	protected String getListViewName() {
 		return "taxes";
-	}
-
-	/**
-	 * Fetch customer field so no LazyInitialize exception is thrown when we
-	 * access it from account list view.
-	 * 
-	 * @see org.manaty.beans.base.BaseBean#getListFieldsToFetch()
-	 */
-	@Override
-	protected List<String> getListFieldsToFetch() {
-		return Arrays.asList();
 	}
 
 	/**

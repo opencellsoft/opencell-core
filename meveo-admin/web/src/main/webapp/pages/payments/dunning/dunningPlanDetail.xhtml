@@ -120,7 +120,7 @@
 									edit="#{dunningPlanBean.edit}"
 									label="#{messages['dunningPlan.transitions']}"
 									backingBean="#{dunningPlanTransitionBean}"
-									entity="#{dunningPlanTransition}" showFormButtons="false"
+									entity="#{dunningPlanBean.dunningPlanTransition}" showFormButtons="false"
 									ajaxSubmit="true">
 
 									<hf:formField
@@ -255,7 +255,7 @@
 							<hf:formPanel id="formPanelActionPlanItems"
 								formId="formActionPlanItems" edit="#{dunningPlanBean.edit}"
 								label="#{messages['dunningPlan.actions']}"
-								backingBean="#{actionPlanItemBean}" entity="#{actionPlanItem}"
+								backingBean="#{actionPlanItemBean}" entity="#{dunningPlanBean.actionPlanItem}"
 								showFormButtons="false" ajaxSubmit="true">
 
 								<hf:formField label="#{messages['actionPlanItem.dunningLevel']}"

@@ -7,7 +7,7 @@
 
 	<f:metadata>
 		<f:event type="preRenderView"
-			listener="#{discountPlanItemBean.preRenderView}" />
+			listener="#{discountPlanItemListBean.preRenderView}" />
 	</f:metadata>
 
 	<ui:define name="navigation">
@@ -18,7 +18,7 @@
 
 		<hftl:entityPopup id="popupDiscountPlans"
 			header="#{messages['commons.search']}"
-			selection="#{discountPlanItemBean.filters['discountPlan']}"
+			selection="#{discountPlanItemListBean.filters['discountPlan']}"
 			backingBean="#{discountPlanBean}"
 			searchField1Label="#{messages['BusinessEntity.code']}"
 			searchField1="code" column1Label="#{messages['BusinessEntity.code']}"
@@ -30,7 +30,7 @@
 		
 		<hftl:entityPopup id="popupOfferTemplates"
 			header="#{messages['commons.search']}"
-			selection="#{discountPlanItemBean.filters['offerTemplate']}"
+			selection="#{discountPlanItemListBean.filters['offerTemplate']}"
 			backingBean="#{offerTemplateBean}"
 			searchField1Label="#{messages['BusinessEntity.code']}"
 			searchField1="code" column1Label="#{messages['BusinessEntity.code']}"
@@ -41,7 +41,7 @@
 		</hftl:entityPopup>
 
 		<hf:searchPanel id="searchPanel" label="#{messages['action.search']}"
-			backingBean="#{discountPlanItemBean}">
+			backingBean="#{discountPlanItemListBean}">
 			<hf:searchField label="#{messages['discountPlan.title']}"
 				field="discountPlan" childField="code" popup="true"
 				popupId="popupDiscountPlans" clearButton="true" />
@@ -51,7 +51,7 @@
 		</hf:searchPanel>
 
 		<hftl:dataList label="#{messages['discountPlan.title']}"
-			backingBean="#{discountPlanItemBean}">
+			backingBean="#{discountPlanItemListBean}" sortBy="code">
 			<hftl:column label="#{messages['discountPlan.title']}"
 				field="discountPlan" childField="code" />
 			<hftl:column label="#{messages['discountPlanItem.offerTemplate']}"

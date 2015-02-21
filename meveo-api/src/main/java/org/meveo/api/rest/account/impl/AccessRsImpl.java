@@ -10,7 +10,7 @@ import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.account.AccessDto;
 import org.meveo.api.dto.response.account.GetAccessResponse;
-import org.meveo.api.dto.response.account.ListAccessResponse;
+import org.meveo.api.dto.response.account.ListAccessResponseDto;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.LoggingInterceptor;
 import org.meveo.api.rest.account.AccessRs;
@@ -103,8 +103,8 @@ public class AccessRsImpl extends BaseRs implements AccessRs {
 	}
 
 	@Override
-	public ListAccessResponse listBySubscription(String subscriptionCode) {
-		ListAccessResponse result = new ListAccessResponse();
+	public ListAccessResponseDto listBySubscription(String subscriptionCode) {
+		ListAccessResponseDto result = new ListAccessResponseDto();
 
 		try {
 			result.setAccesses(accessApi.listBySubscription(subscriptionCode, getCurrentUser().getProvider()));

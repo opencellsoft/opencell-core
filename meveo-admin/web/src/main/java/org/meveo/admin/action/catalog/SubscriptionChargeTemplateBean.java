@@ -16,7 +16,6 @@
  */
 package org.meveo.admin.action.catalog;
 
-import javax.enterprise.context.ConversationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -25,10 +24,11 @@ import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.OneShotChargeTemplateTypeEnum;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.catalog.impl.OneShotChargeTemplateService;
+import org.omnifaces.cdi.ViewScoped;
 import org.primefaces.component.datatable.DataTable;
 
 @Named
-@ConversationScoped
+@ViewScoped
 public class SubscriptionChargeTemplateBean extends BaseBean<OneShotChargeTemplate> {
 	private static final long serialVersionUID = 1L;
 

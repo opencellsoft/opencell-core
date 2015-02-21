@@ -13,7 +13,7 @@
 	<ui:define name="metadata">
 		<f:metadata>
 			<f:event type="preRenderView"
-				listener="#{billingRunBean.preRenderView}" />
+				listener="#{billingRunListBean.preRenderView}" />
 		</f:metadata>
 
 		<o:importConstants type="org.meveo.model.billing.BillingRunStatusEnum" />
@@ -25,7 +25,7 @@
 
 	<ui:define name="body">
 
-		<hf:searchPanel backingBean="#{billingRunBean}"
+		<hf:searchPanel backingBean="#{billingRunListBean}"
 			label="#{messages['billingRun.search']}" renderNewButton="false">
 			<hf:searchField label="#{messages['billingRun.status']}"
 				field="status" />
@@ -34,7 +34,7 @@
 		</hf:searchPanel>
 
 		<hftl:dataList label="#{messages['billingRuns.title']}"
-			backingBean="#{billingRunBean}" checkMany="false" sortOrder="descending">
+			backingBean="#{billingRunListBean}" checkMany="false" sortOrder="descending">
 			<hftl:column label="Id" field="id" />
 			<hftl:column label="#{messages['billingRun.status']}" field="status"
 				childField="label" isMessage="true" />

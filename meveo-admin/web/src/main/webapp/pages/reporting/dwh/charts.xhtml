@@ -12,7 +12,7 @@
 
 	<ui:define name="metadata">
 		<f:metadata>
-			<f:event type="preRenderView" listener="#{chartBean.preRenderView}" />
+			<f:event type="preRenderView" listener="#{chartListBean.preRenderView}" />
 		</f:metadata>
 	</ui:define>
 	<ui:define name="body">
@@ -20,7 +20,7 @@
 		<!-- ===================================== SEARCH CRITERIA ZONE ================================= -->
 
 		<hf:searchPanel label="#{messages['menu.charts']}" columns="3"
-			backingBean="#{chartBean}" renderNewButton="false">
+			backingBean="#{chartListBean}" renderNewButton="false">
 			<hf:searchField label="#{messages['BusinessEntity.code']}"
 				field="code" />
 			<hf:searchField label="#{messages['user.userPanel']}" field="user" />
@@ -55,7 +55,7 @@
 
 		<!-- ===================================== SEARCH USERS RESULTS ================================= -->
 
-		<hftl:dataList backingBean="#{chartBean}">
+		<hftl:dataList backingBean="#{chartListBean}">
 			<hftl:column label="#{messages['BusinessEntity.code']}" field="code" />
 			<hftl:column label="#{messages['user.userPanel']}" field="user"
 				childField="code" />
@@ -65,7 +65,7 @@
 				label="#{messages['entity.measuredvalue.measurableQuantity']}"
 				field="measurableQuantity" childField="code" />
 
-			<hftl:actionsColumn editView="#{chartBean.getEditView(entity)}"
+			<hftl:actionsColumn editView="#{chartListBean.getEditView(entity)}"
 				permission="#{persistentPermissionResolver.hasPermission('reporting','reportingManagement')}" />
 		</hftl:dataList>
 	</ui:define>

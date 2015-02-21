@@ -6,7 +6,7 @@
 	template="/layout/template.xhtml">
 
 	<f:metadata>
-		<f:event type="preRenderView" listener="#{providerBean.preRenderView}" />
+		<f:event type="preRenderView" listener="#{providerListBean.preRenderView}" />
 	</f:metadata>
 	
 	<ui:define name="navigation">
@@ -15,29 +15,16 @@
 
 	<ui:define name="body">
 
-		<hftl:entityPopup id="searchProviderPopup"
-			header="#{messages['provider.search']}"
-			selection="#{providerBean.filters['provider']}"
-			backingBean="#{providerBean}"
-			searchField1Label="#{messages['BusinessEntity.code']}"
-			searchField1="code" column1Label="#{messages['BusinessEntity.code']}"
-			column1="code"
-			column2Label="#{messages['BusinessEntity.description']}"
-			column2="description">
-		</hftl:entityPopup>
-
-		<hf:searchPanel id="searchPanel" backingBean="#{providerBean}"
+		<hf:searchPanel id="searchPanel" backingBean="#{providerListBean}"
 			label="#{messages['provider.search']}">
+            <hf:searchField 
+                label="#{messages['BusinessEntity.code']}" field="code" />
 			<hf:searchField label="#{messages['BusinessEntity.description']}"
 				field="description" />
-			<hf:searchField id="provider"
-				label="#{messages['BusinessEntity.code']}" field="provider"
-				childField="code" popup="true" popupId="searchProviderPopup"
-				clearButton="true" />
 		</hf:searchPanel>
 
 		<hftl:dataList label="#{messages['provider.title']}"
-			backingBean="#{providerBean}">
+			backingBean="#{providerListBean}">
 			<hftl:column label="#{messages['BusinessEntity.code']}" field="code" />
 			<hftl:column label="#{messages['BusinessEntity.description']}"
 				field="description" />

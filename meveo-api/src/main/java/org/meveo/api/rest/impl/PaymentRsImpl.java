@@ -6,10 +6,10 @@ import javax.interceptor.Interceptors;
 import javax.ws.rs.QueryParam;
 
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.api.PaymentApi;
+import org.meveo.api.billing.PaymentApi;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
-import org.meveo.api.dto.PaymentDto;
+import org.meveo.api.dto.billing.PaymentDto;
 import org.meveo.api.dto.response.CustomerPaymentsResponse;
 import org.meveo.api.logging.LoggingInterceptor;
 import org.meveo.api.rest.PaymentRs;

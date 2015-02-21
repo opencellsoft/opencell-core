@@ -26,12 +26,11 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
-import javax.enterprise.context.ConversationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.jboss.seam.international.status.builder.BundleKey;
-import org.meveo.admin.action.StatelessBaseBean;
+import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.RejectedImportException;
 import org.meveo.commons.utils.CsvBuilder;
@@ -43,12 +42,13 @@ import org.meveo.service.base.local.IPersistenceService;
 import org.meveocrm.model.dwh.MeasurableQuantity;
 import org.meveocrm.model.dwh.MeasurementPeriodEnum;
 import org.meveocrm.services.dwh.MeasurableQuantityService;
+import org.omnifaces.cdi.ViewScoped;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.UploadedFile;
 
 @Named
-@ConversationScoped
-public class MeasurableQuantityBean extends StatelessBaseBean<MeasurableQuantity> {
+@ViewScoped
+public class MeasurableQuantityBean extends BaseBean<MeasurableQuantity> {
 
 	private static final long serialVersionUID = -1644247310944456827L;
 	
@@ -82,10 +82,6 @@ public class MeasurableQuantityBean extends StatelessBaseBean<MeasurableQuantity
 	@Override
 	protected IPersistenceService<MeasurableQuantity> getPersistenceService() {
 		return measurableQuantityService;
-	}
-
-	protected String getDefaultViewName() {
-		return "measurableQuantities";
 	}
 
 	@Override
