@@ -95,7 +95,7 @@ public class InvoicingJob implements Job {
 				JobExecutionResult result = execute(info.getParametres(),
 						currentUser);
 				jobExecutionService.persistResult(this, result, info,
-						currentUser);
+						currentUser,getJobCategory());
 			} catch (Exception e) {
 				log.error("Error: {}", e.getMessage());
 			} finally {

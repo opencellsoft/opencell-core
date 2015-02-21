@@ -27,8 +27,7 @@
 				<h:outputText value="#{messages['job.page.title']}" />
 			</f:facet>
 
-			<h:form id="timerForm" styleClass="mainForm">
-				<hf:formPanel id="timerFormId" formId="timerBeanFormId"
+				<hf:formPanel  formId="timerBeanFormId"
 					backingBean="#{timerBean}" showFormButtons="false"
 					ajaxSubmit="true">
 
@@ -37,6 +36,16 @@
 						on format</a>
 
 					<p:panelGrid columns="2">
+					<p:outputLabel for="jobCategory" value="#{messages['timer.jobCategory']}"/>
+					<p:selectOneMenu id="jobCategory" value="#{timerBean.timerEntity.jobCategoryEnum}" required="true">
+					<f:selectItem itemLabel="#{messages['commons.select']}" />
+					<f:selectItems value="#{timerBean.jobCategoryEnumValues}" var="jobCat" itemLabel="#{messages[jobCat.label]}"/>					
+					<p:ajax event="valueChange" update="@form"></p:ajax>
+				   </p:selectOneMenu> 
+                   </p:panelGrid>
+				   
+				   
+					<p:panelGrid columns="2">
 						<p:outputLabel for="timerJobName"
 							value="#{messages['timer.jobName']}"></p:outputLabel>
 						<p:selectOneMenu id="timerJobName"
@@ -44,7 +53,7 @@
 							disabled="#{timerBean.timerEntity.id != null}" required="true">
 							<f:selectItem itemLabel="#{messages['commons.select']}" />
 							<f:selectItems value="#{timerBean.jobNames}" />
-							<p:ajax event="valueChange" update=":timerForm"></p:ajax>
+							<p:ajax event="valueChange" update="@form"></p:ajax>
 						</p:selectOneMenu>
 					</p:panelGrid>
 
@@ -151,7 +160,7 @@
 						</div>
 					</p:panelGrid>
 				</hf:formPanel>
-			</h:form>
+			
 
 			<!-- ===================================== JOB EXECUTION RESULTS ===================================== -->
 

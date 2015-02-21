@@ -87,7 +87,7 @@ public class TimerEntity extends BaseEntity {
 	private Date end;
 	
 	@Enumerated(EnumType.STRING)
-	@Column(name = "JOB_CATEGORY", insertable = false, updatable = false)
+	@Column(name = "JOB_CATEGORY")
 	JobCategoryEnum jobCategoryEnum;
 
 	public String getName() {

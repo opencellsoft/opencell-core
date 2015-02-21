@@ -90,7 +90,7 @@ public class JobPurge implements Job {
 			User currentUser = userService.findById(info.getUserId());
 			JobExecutionResult result = execute(info.getParametres(),
 					currentUser);
-			jobExecutionService.persistResult(this, result, info, currentUser);
+			jobExecutionService.persistResult(this, result, info, currentUser,getJobCategory());
 		}
 	}
 

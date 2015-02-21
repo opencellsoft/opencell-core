@@ -82,7 +82,7 @@ public class XMLInvoiceGenerationJob implements Job {
 				JobExecutionResult result = execute(info.getParametres(),
 						currentUser);
 				jobExecutionService.persistResult(this, result, info,
-						currentUser);
+						currentUser,getJobCategory());
 			} catch (Exception e) {
 				log.error(e.getMessage());
 			} finally {

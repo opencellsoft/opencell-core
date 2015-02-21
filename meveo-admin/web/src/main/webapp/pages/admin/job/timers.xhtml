@@ -1,72 +1,46 @@
-<ui:composition xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:ui="http://java.sun.com/jsf/facelets"
-	xmlns:f="http://java.sun.com/jsf/core"
-	xmlns:h="http://java.sun.com/jsf/html"
-	xmlns:rich="http://richfaces.org/rich"
-	xmlns:a="http://richfaces.org/a4j" xmlns:hftl="http://hftl.org"
-	xmlns:hf="http://java.sun.com/jsf/composite/tags"
-	xmlns:s="http://jboss.org/seam/faces"
-	xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml"
-	xmlns:e="http://primefaces.org/extension">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:s="http://jboss.com/products/seam/taglib" xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html" xmlns:rich="http://richfaces.org/rich"
+	xmlns:a="http://richfaces.org/a4j" xmlns:hftl="http://hftl.org" xmlns:hf="http://java.sun.com/jsf/composite/tags"
+	xmlns:e="http://jboss.com/products/seam/excel" xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
 
 	<f:metadata>
-		<s:viewAction action="#{conversation.begin}"
-			if="#{conversation.transient}" />
+		<f:event type="preRenderView" listener="#{timersBean.preRenderView}" />
 	</f:metadata>
 
 	<ui:define name="navigation">
 		<ui:include src="/layout/navigation.xhtml" />
 	</ui:define>
 
+
 	<ui:define name="body">
+		<hf:searchPanel label="#{messages['timers.page.title']}" backingBean="#{timersBean}" newButtonView="jobTimerDetail">
+			<h:panelGrid columns="2">
+			<p:outputLabel for="jobCategory" value="#{messages['timer.jobCategory']}"/>
+				<p:selectOneMenu id="jobCategory"
+				value="#{timersBean.filters['jobCategoryEnum']}">
+				<f:selectItem itemLabel="" />
+				<f:selectItems value="#{timerBean.jobCategoryEnumValues}" var="enumElement" itemValue="#{enumElement}"
+				itemLabel="#{messages[enumElement.label]}"/>
+				<f:converter converterId="enumConverter" />
+			   </p:selectOneMenu>
+			</h:panelGrid>
+		</hf:searchPanel>
 
-		<p:panel>
-			<f:facet name="header">
-				<h:outputText value="#{messages['timers.page.title']}" />
+		<hftl:dataList backingBean="#{timersBean}" resultsId="timersBean_results" checkMany="false">
+			<p:column>
+		    <f:facet name="header">
+			<h:outputText value="#{messages['timer.name']}" />
 			</f:facet>
-			<p:messages />
-			<!-- ===================================== SEARCH CRITERIA ZONE ================================= -->
-			<h:form id="searchCriteria" styleClass="mainForm">
+			<h:link outcome="jobTimerDetail" value="#{entity.name}">
+		    <f:param name="timerId" value="#{entity.id}" />
+			</h:link>
+			</p:column>
+			<hftl:column label="#{messages['timer.jobName']}" field="jobName" />
+			<hftl:column label="#{messages['job.category']}" field="jobCategoryEnum" />
+			<hftl:column label="#{messages['timer.schedule']}" field="timerSchedule" sort="false" />	
+			<hftl:column label="#{messages['timer.active']}" field="timerInfo" childField="active" sort="false" />
+		</hftl:dataList>
 
-			</h:form>
-
-			<!-- ===================================== SEARCH USERS RESULTS ===================================== -->
-			<p:outputPanel id="searchTimersResults"
-				rendered="#{timersDataModel!=null}">
-				<h:form id="resultTimerForm"
-					rendered="#{timersDataModel.rowCount!=0}">
-
-					<hftl:dataList backingBean="#{timersBean}"
-						resultsId="timersBean_results" checkMany="false">
-						<p:column>
-							<f:facet name="header">
-								<h:outputText value="#{messages['timer.name']}" />
-							</f:facet>
-							<h:link outcome="jobTimerDetail" value="#{entity.name}">
-								<f:param name="timerId" value="#{entity.id}" />
-							</h:link>
-						</p:column>
-						<p:column>
-							<f:facet name="header">
-								<h:outputText value="#{messages['timer.jobName']}" />
-							</f:facet>
-							<h:outputText value="#{entity.jobName}" />
-						</p:column>
-						
-						<hftl:column label="#{messages['timer.schedule']}"
-							field="timerSchedule" sort="false" />
-						
-						<hftl:column label="#{messages['timer.active']}"
-							field="timerInfo" childField="active" sort="false" />
-					</hftl:dataList>
-
-				</h:form>
-			</p:outputPanel>
-			
-			<div class="actionButtons">
-				<p:button value="#{messages['action.timers.newTimer']}"
-					outcome="jobTimerDetail" />
-			</div>
-		</p:panel>
 	</ui:define>
+
 </ui:composition>

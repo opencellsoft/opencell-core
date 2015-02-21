@@ -2,7 +2,10 @@ package org.meveo.services.job;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.ejb.Timer;
@@ -17,9 +20,11 @@ import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.admin.util.pagination.PaginationDataModel;
+import org.meveo.model.jobs.JobCategoryEnum;
 import org.meveo.model.jobs.TimerEntity;
 import org.meveo.model.jobs.TimerInfo;
 import org.meveo.service.base.local.IPersistenceService;
+import org.meveo.service.job.Job;
 import org.meveo.service.job.TimerEntityService;
 
 @Named
@@ -33,6 +38,7 @@ public class TimersBean extends BaseBean<TimerEntity> {
 
 	@Inject
 	private Messages messages;
+	
 
 	private int pageSize = 20;
 	private PaginationDataModel<TimerEntity> timersDataModel;
@@ -45,12 +51,7 @@ public class TimersBean extends BaseBean<TimerEntity> {
 		this.pageSize = pageSize;
 	}
 
-	/*
-	 * to be used in picklist to select a job
-	 */
-	public Set<String> getJobNames() {
-		return TimerEntityService.jobEntries.keySet();
-	}
+	
 
 	@Produces
 	@RequestScoped
@@ -74,6 +75,8 @@ public class TimersBean extends BaseBean<TimerEntity> {
 	public TimerInfo getTimerInfo(Timer timer) {
 		return (TimerInfo) timer.getInfo();
 	}
+	
+
 
 	public String getTimerSchedule(Timer timer) {
 		String result = "";
@@ -174,5 +177,8 @@ public class TimersBean extends BaseBean<TimerEntity> {
 		// TODO Auto-generated method stub
 		return timerEntityservice;
 	}
+
+
+	
 
 }

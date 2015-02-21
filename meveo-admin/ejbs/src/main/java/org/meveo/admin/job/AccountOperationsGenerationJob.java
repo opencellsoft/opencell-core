@@ -77,7 +77,7 @@ public class AccountOperationsGenerationJob implements Job {
 				running = true;
 				User currentUser = userService.findById(info.getUserId());
 				JobExecutionResult result = execute(info.getParametres(), currentUser);
-				jobExecutionService.persistResult(this, result, info, currentUser);
+				jobExecutionService.persistResult(this, result, info, currentUser,getJobCategory());
 			} catch (Exception e) {
 				log.error(e.getMessage());
 			} finally {

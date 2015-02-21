@@ -31,8 +31,10 @@ public enum JobCategoryEnum {
 
 	    private Integer id;
 	    private String label;
+	    
 
-	    private JobCategoryEnum(Integer id, String label) {
+
+		private JobCategoryEnum(Integer id, String label) {
 	        this.id = id;
 	        this.label = label;
 	    }

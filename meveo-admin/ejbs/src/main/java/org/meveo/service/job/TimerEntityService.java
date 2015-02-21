@@ -43,8 +43,8 @@ import org.meveo.service.base.PersistenceService;
 
 @Stateless
 public class TimerEntityService extends PersistenceService<TimerEntity> {
-	public static HashMap<JobCategoryEnum, HashMap<String, Job>> jobEntries = new HashMap<JobCategoryEnum, HashMap<String, Job>> ();
-	public static HashMap<Long, Timer> jobTimers = new HashMap<Long, Timer>();
+	public static Map<JobCategoryEnum, HashMap<String, Job>> jobEntries = new HashMap<JobCategoryEnum, HashMap<String, Job>> ();
+	public static Map<Long, Timer> jobTimers = new HashMap<Long, Timer>();
 
 	@Resource
 	private TimerService timerService;
@@ -75,12 +75,18 @@ public class TimerEntityService extends PersistenceService<TimerEntity> {
 	 */
 
 	public static void registerJob(Job job) {
-		if (!jobEntries.containsKey(job.getJobCategory())) {
-		HashMap<String, Job> jobs = new HashMap<String, Job>();
-		jobEntries.put(job.getJobCategory(), jobs);
+		if (jobEntries.containsKey(job.getJobCategory())) {
+			if (!jobEntries.containsKey(job.getClass().getSimpleName())) {
+				Map<String, Job> jobs = jobEntries.get(job.getJobCategory());
+				jobs.put(job.getClass().getSimpleName(), job);
+			}	
+		}else{
+			HashMap<String, Job> jobs = new HashMap<String, Job>();
+			jobs.put(job.getClass().getSimpleName(), job);
+			jobEntries.put(job.getJobCategory(), jobs);
 		}
 		job.getJobExecutionService().getTimerEntityService().startTimers(job);
-		}
+	}
 
 	public Collection<Timer> getTimers() {
 		return timerService.getTimers();
@@ -191,7 +197,7 @@ public class TimerEntityService extends PersistenceService<TimerEntity> {
 		}
 		if (jobEntries.containsKey(entity.getJobCategoryEnum())) {
 			HashMap<String, Job> jobs = jobEntries.get(entity.getJobCategoryEnum());
-			if (jobEntries.containsKey(entity.getJobName())) {
+			if (jobs.containsKey(entity.getJobName())) {
 				Job job = jobs.get(entity.getJobName());
 				result = job.execute(entity.getTimerInfo() != null ? entity
 						.getTimerInfo().getParametres() : null, getCurrentUser());
