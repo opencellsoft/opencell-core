@@ -162,7 +162,15 @@ public abstract class AccountEntity extends BusinessEntity {
 			cfi = customFields.get(code);
 		} else {
 			cfi = new CustomFieldInstance();
+			Auditable au=new Auditable();
+			au.setCreated(new Date());
+			if(this.getAuditable()!=null){
+				au.setCreator(this.getAuditable().getCreator());
+			}
+			cfi.setAuditable(au);
 			cfi.setCode(code);
+			cfi.setAccount(this);
+			cfi.setProvider(this.getProvider());
 			customFields.put(code, cfi);
 		}
 
