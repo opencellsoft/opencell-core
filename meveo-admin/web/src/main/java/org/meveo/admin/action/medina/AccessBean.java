@@ -29,6 +29,7 @@ import org.jboss.solder.servlet.http.RequestParam;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.billing.Subscription;
+import org.meveo.model.crm.AccountLevelEnum;
 import org.meveo.model.mediation.Access;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
@@ -77,8 +78,9 @@ public class AccessBean extends BaseBean<Access> {
 
 	@Override
 	public Access initEntity() {
-		Access access = super.initEntity();
+		super.initEntity();
 
+		log.debug("AccesBean initEntity id={}", entity.getId());
 		if (subscriptionId.get() != null) {
 			Subscription subscription = subscriptionService
 					.findById(subscriptionId.get());
@@ -86,7 +88,8 @@ public class AccessBean extends BaseBean<Access> {
 			entity.setSubscription(subscription);
 		}
 
-		return access;
+		initCustomFields(AccountLevelEnum.ACC);
+		return entity;
 	}
 
 	/**
@@ -119,6 +122,8 @@ public class AccessBean extends BaseBean<Access> {
 
 		saveOrUpdate(false);
 
+		saveCustomFields();
+		
 		return "";
 	}
 

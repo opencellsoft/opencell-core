@@ -28,14 +28,25 @@
 
 		<hf:formPanel id="formPanel" label="#{messages['access.accessPanel']}"
 			backingBean="#{accessBean}" columns="2">
-			<hf:formField label="#{messages['access.accessUserId']}"
-				field="accessUserId" required="true" />
-			<hf:formEntityField id="subscriptionId"
-				label="#{messages['access.subscription']}" field="subscription"
-				childField="code" popup="true" popupId="searchSubscriptionPopup" required="true" />
-			<hf:formField label="#{messages['access.startDate']}"
-				field="startDate" />
-			<hf:formField label="#{messages['access.endDate']}" field="endDate" />
+			<p:tabView id="tabView">
+
+				<p:tab title="#{messages['customer.tab.information']}">
+					<hf:formField label="#{messages['access.accessUserId']}"
+						field="accessUserId" required="true" />
+					<hf:formEntityField id="subscriptionId"
+						label="#{messages['access.subscription']}" field="subscription"
+						childField="code" popup="true" popupId="searchSubscriptionPopup"
+						required="true" />
+					<hf:formField label="#{messages['access.startDate']}"
+						field="startDate" />
+					<hf:formField label="#{messages['access.endDate']}" field="endDate" />
+
+				</p:tab>
+
+				<p:tab title="#{messages['customFieldTemplate.panel']}">
+					<hf:customFields />
+				</p:tab>
+			</p:tabView>
 		</hf:formPanel>
 
 	</ui:define>

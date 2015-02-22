@@ -14,6 +14,7 @@ import javax.persistence.UniqueConstraint;
 import org.meveo.model.AccountEntity;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.billing.Subscription;
+import org.meveo.model.mediation.Access;
 
 @Entity
 @Table(name = "CRM_CUSTOM_FIELD_INST", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE", "SUBSCRIPTION_ID",
@@ -30,6 +31,11 @@ public class CustomFieldInstance extends BusinessEntity {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "SUBSCRIPTION_ID")
 	private Subscription subscription;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "ACCESS_ID")
+	private Access access;
+
 
 	@Column(name = "STRING_VALUE")
 	private String stringValue;
@@ -89,6 +95,14 @@ public class CustomFieldInstance extends BusinessEntity {
 
 	public void setSubscription(Subscription subscription) {
 		this.subscription = subscription;
+	}
+
+	public Access getAccess() {
+		return access;
+	}
+
+	public void setAccess(Access access) {
+		this.access = access;
 	}
 
 	public String toJson() {

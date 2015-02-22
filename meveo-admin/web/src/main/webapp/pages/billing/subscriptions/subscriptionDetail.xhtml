@@ -901,13 +901,22 @@
 			<hf:formPanel id="formPanel"
 				label="#{messages['access.accessPanel']}"
 				backingBean="#{accessBean}" columns="2" showFormButtons="false">
-				<hf:formField label="#{messages['access.accessUserId']}"
-					required="true" field="accessUserId" edit="true" />
-				<hf:formField label="#{messages['access.startDate']}"
-					field="startDate" edit="true" />
-				<hf:formField label="#{messages['access.endDate']}" field="endDate"
-					edit="true" />
-
+				
+				<p:tabView id="accessTabView">
+	
+					<p:tab title="#{messages['customer.tab.information']}">
+						<hf:formField label="#{messages['access.accessUserId']}"
+							required="true" field="accessUserId" edit="true" />
+						<hf:formField label="#{messages['access.startDate']}"
+							field="startDate" edit="true" />
+						<hf:formField label="#{messages['access.endDate']}" field="endDate"
+							edit="true" />
+					</p:tab>
+	
+					<p:tab title="#{messages['customFieldTemplate.panel']}">
+						<hf:customFields />
+					</p:tab>
+				</p:tabView>
 				<p:panel>
 					<p:commandButton id="saveButton" value="#{messages['action.save']}"
 						update=":#{p:component('medinaAccessPanel')} :medinaAccessMessage"

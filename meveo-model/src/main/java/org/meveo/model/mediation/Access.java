@@ -17,20 +17,28 @@
 package org.meveo.model.mediation;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.MapKeyColumn;
+import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.UniqueConstraint;
 
+import org.meveo.model.Auditable;
 import org.meveo.model.EnableEntity;
 import org.meveo.model.billing.Subscription;
+import org.meveo.model.crm.CustomFieldInstance;
 
 /**
  * Access linked to Subscription and Zone.
@@ -59,6 +67,10 @@ public class Access extends EnableEntity {
 	@JoinColumn(name = "SUBSCRIPTION_ID")
 	private Subscription subscription;
 
+	@OneToMany(mappedBy = "access", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@MapKeyColumn(name = "code")
+	private Map<String, CustomFieldInstance> customFields = new HashMap<String, CustomFieldInstance>();
+	
 	public Date getStartDate() {
 		return startDate;
 	}
@@ -93,5 +105,99 @@ public class Access extends EnableEntity {
 
 	public String getCacheKey(){
 		return getProvider().getCode()+"_"+accessUserId;
+	}
+	
+	public Map<String, CustomFieldInstance> getCustomFields() {
+		return customFields;
+	}
+
+	public void setCustomFields(Map<String, CustomFieldInstance> customFields) {
+		this.customFields = customFields;
+	}
+
+	public CustomFieldInstance getCustomFieldInstance(String code) {
+		CustomFieldInstance cfi = null;
+
+		if (customFields.containsKey(code)) {
+			cfi = customFields.get(code);
+		} else {
+			cfi = new CustomFieldInstance();
+			Auditable au=new Auditable();
+			au.setCreated(new Date());
+			if(subscription!=null && subscription.getAuditable()!=null){
+				au.setCreator(subscription.getAuditable().getCreator());
+			}
+			cfi.setAuditable(au);
+			cfi.setCode(code);
+			cfi.setAccess(this);
+			cfi.setProvider(this.getProvider());
+			customFields.put(code, cfi);
+		}
+
+		return cfi;
+	}
+
+	public String getStringCustomValue(String code) {
+		String result = null;
+		if (customFields.containsKey(code)) {
+			result = customFields.get(code).getStringValue();
+		}
+
+		return result;
+	}
+
+	public void setStringCustomValue(String code, String value) {
+		getCustomFieldInstance(code).setStringValue(value);
+	}
+
+	public Date getDateCustomValue(String code) {
+		Date result = null;
+		if (customFields.containsKey(code)) {
+			result = customFields.get(code).getDateValue();
+		}
+
+		return result;
+	}
+
+	public void setDateCustomValue(String code, Date value) {
+		getCustomFieldInstance(code).setDateValue(value);
+	}
+
+	public Long getLongCustomValue(String code) {
+		Long result = null;
+		if (customFields.containsKey(code)) {
+			result = customFields.get(code).getLongValue();
+		}
+		return result;
+	}
+
+	public void setLongCustomValue(String code, Long value) {
+		getCustomFieldInstance(code).setLongValue(value);
+	}
+
+	public Double getDoubleCustomValue(String code) {
+		Double result = null;
+
+		if (customFields.containsKey(code)) {
+			result = customFields.get(code).getDoubleValue();
+		}
+
+		return result;
+	}
+
+	public void setDoubleCustomValue(String code, Double value) {
+		getCustomFieldInstance(code).setDoubleValue(value);
+	}
+
+	public String getCustomFieldsAsJson() {
+		String result = "";
+		String sep = "";
+
+		for (Entry<String, CustomFieldInstance> cf : customFields.entrySet()) {
+			result += sep + cf.getValue().toJson();
+			sep = ";";
+		}
+
+		return result;
 	}
 }
