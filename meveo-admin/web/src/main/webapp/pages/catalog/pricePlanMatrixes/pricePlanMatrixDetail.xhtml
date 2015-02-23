@@ -79,7 +79,9 @@
 			label="#{messages['pricePlanMatrix.panel']}"
 			backingBean="#{pricePlanMatrixBean}" formId="formPricePlan">
 			<p:panelGrid columns="2">
-				<hf:formField id="chargeSelectId" required="true"
+                <hf:formField label="#{messages['BusinessEntity.code']}" field="code" required="true" />
+                <hf:languageFields />
+                <hf:formField id="chargeSelectId" required="true"
 					label="#{messages['pricePlanMatrix.eventCode']}" field="eventCode"
 					popup="true" popupId="pricPlanMatChargePopup" disabled="true" />
 				<hf:formEntityField id="parentSelectId"

@@ -28,18 +28,21 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.Digits;
 import javax.validation.constraints.Size;
 
-import org.meveo.model.AuditableEntity;
+import org.meveo.model.BusinessEntity;
+import org.meveo.model.MultilanguageEntity;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.TradingCountry;
 import org.meveo.model.billing.TradingCurrency;
 
 @Entity
-@Table(name = "CAT_PRICE_PLAN_MATRIX")
+@MultilanguageEntity
+@Table(name = "CAT_PRICE_PLAN_MATRIX", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE", "PROVIDER_ID" }))
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "CAT_PRICE_PLAN_MATRIX_SEQ")
-public class PricePlanMatrix extends AuditableEntity implements Comparable<PricePlanMatrix> {
+public class PricePlanMatrix extends BusinessEntity implements Comparable<PricePlanMatrix> {
 	private static final long serialVersionUID = 1L;
 
 	@Column(name = "EVENT_CODE", length = 100, nullable = false)

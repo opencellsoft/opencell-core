@@ -41,7 +41,9 @@
 		<hf:searchPanel id="searchPanel"
 			label="#{messages['pricePlanMatrix.search']}"
 			backingBean="#{pricePlanMatrixListBean}">
-			<hf:searchField label="#{messages['pricePlanMatrix.eventCode']}"
+            <hf:searchField label="#{messages['BusinessEntity.code']}" field="code" />
+            <hf:searchField label="#{messages['BusinessEntity.description']}" id="description" field="description" />
+            <hf:searchField label="#{messages['pricePlanMatrix.eventCode']}"
 				field="eventCode" />
 			<hf:searchField id="offer" label="#{messages['pricePlanMatrix.offerCode']}"
 				field="offerTemplate"  childField="code" popup="true" 
@@ -64,7 +66,8 @@
 		</hf:searchPanel>
 
 		<hftl:dataList label="#{messages['pricePlanMatrix.title']}"
-			backingBean="#{pricePlanMatrixListBean}" sortBy="eventCode">
+			backingBean="#{pricePlanMatrixListBean}" sortBy="code">
+            <hftl:column label="#{messages['BusinessEntity.code']}" field="code" />
 			<hftl:column label="#{messages['pricePlanMatrix.table.eventCode']}"
 				field="eventCode" />
 			<hftl:column label="#{messages['seller.title']}" field="seller"

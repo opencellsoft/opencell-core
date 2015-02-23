@@ -635,6 +635,13 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 							line.setAttribute("param3", ratedTransaction.getParameter3());
 						}
 
+                        if (ratedTransaction.getPriceplan() != null) {
+                            Element pricePlan = doc.createElement("pricePlan");
+                            pricePlan.setAttribute("code", ratedTransaction.getPriceplan().getCode());
+                            pricePlan.setAttribute("description", catMessagesService.getMessageDescription(ratedTransaction.getPriceplan(), languageCode));
+                            line.appendChild(pricePlan);
+                        }						
+                        
 						Element lebel = doc.createElement("label");
 						Text lebelTxt = doc.createTextNode(description != null ? description : "");
 
