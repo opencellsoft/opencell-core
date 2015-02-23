@@ -7,7 +7,12 @@
 	xmlns:hf="http://java.sun.com/jsf/composite/tags"
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:e="http://primefaces.org/extension"
+	xmlns:o="http://omnifaces.org/ui"
 	template="/layout/template.xhtml">
+
+	<ui:define name="metadata">
+		<o:importConstants type="org.meveo.model.crm.CustomFieldTypeEnum" />
+	</ui:define>
 
 	<ui:define name="navigation">
 		<ui:include src="/layout/navigation.xhtml" />
@@ -26,28 +31,38 @@
 			column2="description">
 		</hftl:entityPopup>
 
-		<hf:formPanel id="formPanel" label="#{messages['access.accessPanel']}"
-			backingBean="#{accessBean}" columns="2">
+		<p:panelGrid styleClass="col1-set tab-view-container" columns="1">
+			<f:facet name="header">
+				<h:outputText value="#{messages['access.accessPanel']}" />
+			</f:facet>
+
 			<p:tabView id="tabView">
 
 				<p:tab title="#{messages['customer.tab.information']}">
-					<hf:formField label="#{messages['access.accessUserId']}"
-						field="accessUserId" required="true" />
-					<hf:formEntityField id="subscriptionId"
-						label="#{messages['access.subscription']}" field="subscription"
-						childField="code" popup="true" popupId="searchSubscriptionPopup"
-						required="true" />
-					<hf:formField label="#{messages['access.startDate']}"
-						field="startDate" />
-					<hf:formField label="#{messages['access.endDate']}" field="endDate" />
-
+					<hf:formPanel id="formPanel" backingBean="#{accessBean}"
+						columns="2">
+						<hf:formField label="#{messages['access.accessUserId']}"
+							field="accessUserId" required="true" />
+						<hf:formEntityField id="subscriptionId"
+							label="#{messages['access.subscription']}" field="subscription"
+							childField="code" popup="true" popupId="searchSubscriptionPopup"
+							required="true" />
+						<hf:formField label="#{messages['access.startDate']}"
+							field="startDate" />
+						<hf:formField label="#{messages['access.endDate']}"
+							field="endDate" />
+					</hf:formPanel>
 				</p:tab>
 
 				<p:tab title="#{messages['customFieldTemplate.panel']}">
-					<hf:customFields />
+					<hf:formPanel id="formPanelCF" backingBean="#{accessBean}"
+						columns="2">
+						<hf:customFields />
+					</hf:formPanel>
 				</p:tab>
 			</p:tabView>
-		</hf:formPanel>
+
+		</p:panelGrid>
 
 	</ui:define>
 

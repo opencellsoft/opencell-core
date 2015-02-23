@@ -1,67 +1,89 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:h="http://java.sun.com/jsf/html"
-    xmlns:f="http://java.sun.com/jsf/core" xmlns:cc="http://java.sun.com/jsf/composite" xmlns:p="http://primefaces.org/ui"
-    xmlns:c="http://java.sun.com/jsp/jstl/core">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:cc="http://java.sun.com/jsf/composite"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jsp/jstl/core">
 
 <cc:interface componentType="formField">
 </cc:interface>
 
 <cc:implementation>
 
-    <ui:fragment>
+	<ui:fragment>
 
-        <p:panelGrid columns="2" id="description">
-            <h:dataTable value="#{cc.backingBeanFromParentOrCurrent.customFieldTemplates}" var="cf">
-                <h:column>
-                    <p:outputLabel value="#{cf.description}" for="cfField_string" rendered="#{cf.fieldType eq CustomFieldTypeEnum.STRING}" />
-                    <p:inputText id="cfField_string"
-                        rendered="#{cc.backingBeanFromParentOrCurrent.edit and cf.fieldType eq CustomFieldTypeEnum.STRING}" value="#{cf.stringValue}"
-                        required="#{cf.valueRequired}" />
-                    <h:outputText rendered="#{!cc.backingBeanFromParentOrCurrent.edit and cf.fieldType eq CustomFieldTypeEnum.STRING}"
-                        value="#{cf.stringValue}" style="font-weight:bold;" />
+		<p:panelGrid columns="2" id="description">
+			<h:dataTable
+				value="#{cc.backingBeanFromParentOrCurrent.customFieldTemplates}"
+				var="cf">
+				<h:column>
+					<p:outputLabel value="#{cf.description}" for="cfField_string"
+						rendered="#{cf.fieldType eq CustomFieldTypeEnum.STRING}" />
+					<p:inputText id="cfField_string"
+						rendered="#{cc.backingBeanFromParentOrCurrent.edit and cf.fieldType eq CustomFieldTypeEnum.STRING}"
+						value="#{cf.stringValue}" required="#{cf.valueRequired}" />
+					<h:outputText
+						rendered="#{!cc.backingBeanFromParentOrCurrent.edit and cf.fieldType eq CustomFieldTypeEnum.STRING}"
+						value="#{cf.stringValue}" style="font-weight:bold;" />
 
-                    <p:outputLabel value="#{cf.description}" for="cfField_double" rendered="#{cf.fieldType eq CustomFieldTypeEnum.DOUBLE}" />
-                    <p:inputText id="cfField_double"
-                        rendered="#{cc.backingBeanFromParentOrCurrent.edit and cf.fieldType eq CustomFieldTypeEnum.DOUBLE}" value="#{cf.doubleValue}"
-                        required="#{cf.valueRequired}">
-                        <f:convertNumber minFractionDigits="2" />
-                    </p:inputText>
-                    <h:outputText rendered="#{!cc.backingBeanFromParentOrCurrent.edit and cf.fieldType eq CustomFieldTypeEnum.DOUBLE}"
-                        value="#{cf.doubleValue}" style="font-weight:bold;" />
+					<p:outputLabel value="#{cf.description}" for="cfField_double"
+						rendered="#{cf.fieldType eq CustomFieldTypeEnum.DOUBLE}" />
+					<p:inputText id="cfField_double"
+						rendered="#{cc.backingBeanFromParentOrCurrent.edit and cf.fieldType eq CustomFieldTypeEnum.DOUBLE}"
+						value="#{cf.doubleValue}" required="#{cf.valueRequired}">
+						<f:convertNumber minFractionDigits="2" />
+					</p:inputText>
+					<h:outputText
+						rendered="#{!cc.backingBeanFromParentOrCurrent.edit and cf.fieldType eq CustomFieldTypeEnum.DOUBLE}"
+						value="#{cf.doubleValue}" style="font-weight:bold;" />
 
-                    <p:outputLabel value="#{cf.description}" for="cfField_long" rendered="#{cf.fieldType eq CustomFieldTypeEnum.LONG}" />
-                    <p:inputText id="cfField_long" rendered="#{cc.backingBeanFromParentOrCurrent.edit and cf.fieldType eq CustomFieldTypeEnum.LONG}"
-                        value="#{cf.longValue}" required="#{cf.valueRequired}">
-                        <f:convertNumber integerOnly="true" />
-                    </p:inputText>
-                    <h:outputText rendered="#{!cc.backingBeanFromParentOrCurrent.edit and cf.fieldType eq CustomFieldTypeEnum.LONG}"
-                        value="#{cf.longValue}" style="font-weight:bold;" />
+					<p:outputLabel value="#{cf.description}" for="cfField_long"
+						rendered="#{cf.fieldType eq CustomFieldTypeEnum.LONG}" />
+					<p:inputText id="cfField_long"
+						rendered="#{cc.backingBeanFromParentOrCurrent.edit and cf.fieldType eq CustomFieldTypeEnum.LONG}"
+						value="#{cf.longValue}" required="#{cf.valueRequired}">
+						<f:convertNumber integerOnly="true" />
+					</p:inputText>
+					<h:outputText
+						rendered="#{!cc.backingBeanFromParentOrCurrent.edit and cf.fieldType eq CustomFieldTypeEnum.LONG}"
+						value="#{cf.longValue}" style="font-weight:bold;" />
 
-                    <p:outputLabel value="#{cf.description}" for="cfField_date" rendered="#{cf.fieldType eq CustomFieldTypeEnum.DATE}" />
-                    <p:calendar id="cfField_date" showButtonPanel="true"
-                        rendered="#{cc.backingBeanFromParentOrCurrent.edit and cf.fieldType eq CustomFieldTypeEnum.DATE}"
-                        pattern="#{paramBean.getProperty('meveo.dateFormat', '')}" value="#{cf.dateValue}" required="#{cf.valueRequired}" />
-                    <h:outputText rendered="#{!cc.backingBeanFromParentOrCurrent.edit and cf.fieldType eq CustomFieldTypeEnum.DATE}"
-                        value="#{cf.dateValue}" style="font-weight:bold;">
-                        <f:convertDateTime type="date" pattern="#{paramBean.getProperty('meveo.dateFormat', '')}" />
-                    </h:outputText>
+					<p:outputLabel value="#{cf.description}" for="cfField_date"
+						rendered="#{cf.fieldType eq CustomFieldTypeEnum.DATE}" />
+					<p:calendar id="cfField_date" showButtonPanel="true"
+						rendered="#{cc.backingBeanFromParentOrCurrent.edit and cf.fieldType eq CustomFieldTypeEnum.DATE}"
+						pattern="#{paramBean.getProperty('meveo.dateFormat', '')}"
+						value="#{cf.dateValue}" required="#{cf.valueRequired}" />
+					<h:outputText
+						rendered="#{!cc.backingBeanFromParentOrCurrent.edit and cf.fieldType eq CustomFieldTypeEnum.DATE}"
+						value="#{cf.dateValue}" style="font-weight:bold;">
+						<f:convertDateTime type="date"
+							pattern="#{paramBean.getProperty('meveo.dateFormat', '')}" />
+					</h:outputText>
 
-                    <p:outputLabel value="#{cf.description}" for="cfField_list" rendered="#{cf.fieldType eq CustomFieldTypeEnum.LIST}" />
-                    <p:selectOneMenu id="cfField_list" value="#{cf.stringValue}" required="#{cf.valueRequired}"
-                        rendered="#{cc.backingBeanFromParentOrCurrent.edit and cf.fieldType eq CustomFieldTypeEnum.LIST}">
-                        <f:selectItem itemValue="#{null}" itemLabel="" />
-                        <f:selectItems value="#{cf.listValues.entrySet()}" var="listVal" itemValue="#{listVal.key}" itemLabel="#{listVal.value} (#{listVal.key})" />
-                    </p:selectOneMenu>
-                    <h:outputText
-                        rendered="#{!cc.backingBeanFromParentOrCurrent.edit and cf.fieldType eq CustomFieldTypeEnum.LIST and cf.stringValue!=null}"
-                        value="#{cf.listValues[cf.stringValue]} (#{cf.stringValue})" style="font-weight:bold;" />
+					<p:outputLabel value="#{cf.description}" for="cfField_list"
+						rendered="#{cf.fieldType eq CustomFieldTypeEnum.LIST}" />
+					<p:selectOneMenu id="cfField_list" value="#{cf.stringValue}"
+						required="#{cf.valueRequired}"
+						rendered="#{cc.backingBeanFromParentOrCurrent.edit and cf.fieldType eq CustomFieldTypeEnum.LIST}">
+						<f:selectItem itemValue="#{null}" itemLabel="" />
+						<f:selectItems value="#{cf.listValues.entrySet()}" var="listVal"
+							itemValue="#{listVal.key}"
+							itemLabel="#{listVal.value} (#{listVal.key})" />
+					</p:selectOneMenu>
+					<h:outputText
+						rendered="#{!cc.backingBeanFromParentOrCurrent.edit and cf.fieldType eq CustomFieldTypeEnum.LIST and cf.stringValue!=null}"
+						value="#{cf.listValues[cf.stringValue]} (#{cf.stringValue})"
+						style="font-weight:bold;" />
 
-                </h:column>
-            </h:dataTable>
-        </p:panelGrid>
-    </ui:fragment>
+				</h:column>
+			</h:dataTable>
+		</p:panelGrid>
+	</ui:fragment>
 
 </cc:implementation>
 </html>

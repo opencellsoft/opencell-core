@@ -39,10 +39,10 @@ import org.meveo.service.medina.impl.CDRParsingService;
 import org.omnifaces.cdi.ViewScoped;
 
 /**
- * Standard backing bean for {@link Access} (extends {@link BaseBean}
- * that provides almost all common methods to handle entities filtering/sorting
- * in datatable, their create, edit, view, delete operations). It works with
- * Manaty custom JSF components.
+ * Standard backing bean for {@link Access} (extends {@link BaseBean} that
+ * provides almost all common methods to handle entities filtering/sorting in
+ * datatable, their create, edit, view, delete operations). It works with Manaty
+ * custom JSF components.
  */
 @Named
 @ViewScoped
@@ -61,7 +61,7 @@ public class AccessBean extends BaseBean<Access> {
 
 	@EJB
 	private CDRParsingService cdrParsingService;
-	
+
 	@Inject
 	@RequestParam
 	private Instance<Long> subscriptionId;
@@ -82,13 +82,13 @@ public class AccessBean extends BaseBean<Access> {
 
 		log.debug("AccesBean initEntity id={}", entity.getId());
 		if (subscriptionId.get() != null) {
-			Subscription subscription = subscriptionService
-					.findById(subscriptionId.get());
+			Subscription subscription = subscriptionService.findById(subscriptionId.get());
 			entity.setStartDate(subscription.getSubscriptionDate());
 			entity.setSubscription(subscription);
 		}
 
 		initCustomFields(AccountLevelEnum.ACC);
+
 		return entity;
 	}
 
@@ -115,23 +115,20 @@ public class AccessBean extends BaseBean<Access> {
 
 	public String saveOrUpdate() throws BusinessException {
 		if (subscriptionId.get() != null) {
-			Subscription subscription = subscriptionService
-					.findById(subscriptionId.get());
+			Subscription subscription = subscriptionService.findById(subscriptionId.get());
 			entity.setSubscription(subscription);
 		}
 
 		saveOrUpdate(false);
 
 		saveCustomFields();
-		
+
 		return "";
 	}
 
-	public String saveOrUpdate(boolean killConversation)
-			throws BusinessException {
+	public String saveOrUpdate(boolean killConversation) throws BusinessException {
 		String result = "";
-		Subscription subscription = subscriptionService.findById(entity
-				.getSubscription().getId());
+		Subscription subscription = subscriptionService.findById(entity.getSubscription().getId());
 		entity.setSubscription(subscription);
 
 		if (entity.isTransient()) {
@@ -148,8 +145,7 @@ public class AccessBean extends BaseBean<Access> {
 		entity = new Access();
 
 		if (subscriptionId.get() != null) {
-			Subscription subscription = subscriptionService
-					.findById(subscriptionId.get());
+			Subscription subscription = subscriptionService.findById(subscriptionId.get());
 			entity.setStartDate(subscription.getSubscriptionDate());
 			entity.setSubscription(subscription);
 		}
