@@ -126,4 +126,12 @@ public class CustomerBean extends AccountBean<Customer> {
 		return Arrays.asList("provider");
 	}
 
+	@Override
+	public void delete() {
+		// delete custom fields
+		deleteCustomFields();
+
+		super.delete();
+	}
+
 }

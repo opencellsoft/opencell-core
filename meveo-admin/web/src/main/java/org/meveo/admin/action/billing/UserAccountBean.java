@@ -459,4 +459,12 @@ public class UserAccountBean extends AccountBean<UserAccount> {
 		return filterLockedOptions;
 	}
 
+	@Override
+	public void delete() {
+		// delete custom fields
+		deleteCustomFields();
+
+		super.delete();
+	}
+
 }

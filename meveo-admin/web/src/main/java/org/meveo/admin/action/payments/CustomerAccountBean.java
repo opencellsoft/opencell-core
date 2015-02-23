@@ -359,5 +359,13 @@ public class CustomerAccountBean extends AccountBean<CustomerAccount> {
 	protected List<String> getListFieldsToFetch() {
 		return Arrays.asList("provider", "customer");
 	}
+	
+	@Override
+	public void delete() {
+		// delete custom fields
+		deleteCustomFields();
+
+		super.delete();
+	}
 
 }

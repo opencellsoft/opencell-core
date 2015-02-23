@@ -495,4 +495,12 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
 		return Arrays.asList("provider", "customerAccount", "customerAccount.billingAccounts", "billingCycle");
 	}
 
+	@Override
+	public void delete() {
+		// delete custom fields
+		deleteCustomFields();
+
+		super.delete();
+	}
+
 }
