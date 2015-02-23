@@ -33,6 +33,7 @@ import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.DuplicateDefaultAccountException;
 import org.meveo.model.crm.AccountLevelEnum;
+import org.meveo.model.crm.CustomFieldInstance;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.CustomerAccountStatusEnum;
@@ -141,19 +142,22 @@ public class CustomerAccountBean extends AccountBean<CustomerAccount> {
 				}
 			}
 
+			setCustomFields();
+			if (getCustomFieldInstances() != null) {
+				for (CustomFieldInstance cfi : getCustomFieldInstances()) {
+					cfi.updateAudit(getCurrentUser());
+					getEntity().getCustomFields().put(cfi.getCode(), cfi);
+				}
+			}
+
 			super.saveOrUpdate(killConversation);
 
-			log.debug("isAttached={}", getPersistenceService()
-					.getEntityManager().contains(entity));
-
-			setAndSaveCustomFields();
+			log.debug("isAttached={}", getPersistenceService().getEntityManager().contains(entity));
 
 			return "/pages/payments/customerAccounts/customerAccountDetail.xhtml?edit=false&customerAccountId="
-					+ entity.getId()
-					+ "&faces-redirect=true&includeViewParams=true";
+					+ entity.getId() + "&faces-redirect=true&includeViewParams=true";
 		} catch (DuplicateDefaultAccountException e1) {
-			messages.error(new BundleKey("messages",
-					"error.account.duplicateDefautlLevel"));
+			messages.error(new BundleKey("messages", "error.account.duplicateDefautlLevel"));
 		} catch (Exception e) {
 			log.error(e.getMessage());
 			messages.error(new BundleKey("messages", "javax.el.ELException"));
@@ -172,28 +176,25 @@ public class CustomerAccountBean extends AccountBean<CustomerAccount> {
 	 */
 	public String transferAccount() {
 		try {
-			customerAccountService.transferAccount(entity,
-					getCustomerAccountTransfer(), getAmountToTransfer(),
+			customerAccountService.transferAccount(entity, getCustomerAccountTransfer(), getAmountToTransfer(),
 					getCurrentUser());
-			messages.info(new BundleKey("messages",
-					"customerAccount.transfertOK"));
+			messages.info(new BundleKey("messages", "customerAccount.transfertOK"));
 			setCustomerAccountTransfer(null);
 			setAmountToTransfer(BigDecimal.ZERO);
 
 		} catch (Exception e) {
 			log.error(e.getMessage());
-			messages.error(new BundleKey("messages",
-					"customerAccount.transfertKO"));
+			messages.error(new BundleKey("messages", "customerAccount.transfertKO"));
 		}
 
-		return "/pages/payments/customerAccounts/customerAccountDetail.xhtml?objectId="
-				+ entity.getId() + "&edit=false&tab=ops&faces-redirect=true";
+		return "/pages/payments/customerAccounts/customerAccountDetail.xhtml?objectId=" + entity.getId()
+				+ "&edit=false&tab=ops&faces-redirect=true";
 	}
 
 	public String backCA() {
 
-		return "/pages/payments/customerAccounts/customerAccountDetail.xhtml?objectId="
-				+ entity.getId() + "&edit=false&tab=ops&faces-redirect=true";
+		return "/pages/payments/customerAccounts/customerAccountDetail.xhtml?objectId=" + entity.getId()
+				+ "&edit=false&tab=ops&faces-redirect=true";
 	}
 
 	/**
@@ -214,8 +215,7 @@ public class CustomerAccountBean extends AccountBean<CustomerAccount> {
 		if (entity.getId() == null) {
 			return new BigDecimal(0);
 		} else
-			return customerAccountService.customerAccountBalanceDue(entity,
-					new Date());
+			return customerAccountService.customerAccountBalanceDue(entity, new Date());
 	}
 
 	/**
@@ -224,14 +224,11 @@ public class CustomerAccountBean extends AccountBean<CustomerAccount> {
 	 * @return exigible balance without litigation
 	 * @throws BusinessException
 	 */
-	public BigDecimal getBalanceExigibleWithoutLitigation()
-			throws BusinessException {
+	public BigDecimal getBalanceExigibleWithoutLitigation() throws BusinessException {
 		if (entity.getId() == null) {
 			return new BigDecimal(0);
 		} else
-			return customerAccountService
-					.customerAccountBalanceExigibleWithoutLitigation(entity,
-							new Date());
+			return customerAccountService.customerAccountBalanceExigibleWithoutLitigation(entity, new Date());
 	}
 
 	/**
@@ -252,10 +249,8 @@ public class CustomerAccountBean extends AccountBean<CustomerAccount> {
 	public String closeCustomerAccount() {
 		log.info("closeAccount customerAccountId:" + entity.getId());
 		try {
-			customerAccountService.closeCustomerAccount(entity,
-					getCurrentUser());
-			messages.info(new BundleKey("messages",
-					"customerAccount.closeSuccessful"));
+			customerAccountService.closeCustomerAccount(entity, getCurrentUser());
+			messages.info(new BundleKey("messages", "customerAccount.closeSuccessful"));
 		} catch (BusinessException e) {
 			log.error(e.getMessage());
 			messages.error(e.getMessage());
@@ -270,8 +265,7 @@ public class CustomerAccountBean extends AccountBean<CustomerAccount> {
 	 * @param customerAccountTransfer
 	 *            the customerAccountTransfer to set
 	 */
-	public void setCustomerAccountTransfer(
-			CustomerAccount customerAccountTransfer) {
+	public void setCustomerAccountTransfer(CustomerAccount customerAccountTransfer) {
 		this.customerAccountTransfer = customerAccountTransfer;
 	}
 
@@ -319,8 +313,7 @@ public class CustomerAccountBean extends AccountBean<CustomerAccount> {
 		} else {
 			entity.setDefaultLevel(true);
 		}
-		if (customer != null && customer.getProvider() != null
-				&& customer.getProvider().isLevelDuplication()) {
+		if (customer != null && customer.getProvider() != null && customer.getProvider().isLevelDuplication()) {
 
 			entity.setCode(customer.getCode());
 			entity.setDescription(customer.getDescription());

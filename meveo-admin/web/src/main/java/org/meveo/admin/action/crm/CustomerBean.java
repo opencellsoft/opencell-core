@@ -26,6 +26,7 @@ import org.meveo.admin.action.AccountBean;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.crm.AccountLevelEnum;
+import org.meveo.model.crm.CustomFieldInstance;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.Customer;
 import org.meveo.service.base.PersistenceService;
@@ -79,14 +80,19 @@ public class CustomerBean extends AccountBean<Customer> {
 	 * @see org.meveo.admin.action.BaseBean#saveOrUpdate(boolean)
 	 */
 	@Override
-	public String saveOrUpdate(boolean killConversation)
-			throws BusinessException {
+	public String saveOrUpdate(boolean killConversation) throws BusinessException {
+		setCustomFields();
+		if (getCustomFieldInstances() != null) {
+			for (CustomFieldInstance cfi : getCustomFieldInstances()) {
+				cfi.updateAudit(getCurrentUser());
+				getEntity().getCustomFields().put(cfi.getCode(), cfi);
+			}
+		}
+
 		super.saveOrUpdate(killConversation);
 
-		setAndSaveCustomFields();
-
-		return "/pages/crm/customers/customerDetail.xhtml?edit=false&customerId="
-				+ entity.getId() + "&faces-redirect=true";
+		return "/pages/crm/customers/customerDetail.xhtml?edit=false&customerId=" + entity.getId()
+				+ "&faces-redirect=true";
 	}
 
 	/**
@@ -106,8 +112,7 @@ public class CustomerBean extends AccountBean<Customer> {
 		return customFieldTemplates;
 	}
 
-	public void setCustomFieldTemplates(
-			List<CustomFieldTemplate> customFieldTemplates) {
+	public void setCustomFieldTemplates(List<CustomFieldTemplate> customFieldTemplates) {
 		this.customFieldTemplates = customFieldTemplates;
 	}
 

@@ -143,7 +143,7 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
 			int balanceFlag = Integer.parseInt(param.getProperty("balance.multiplier", "1"));
 			balance = balance.multiply(new BigDecimal(balanceFlag));
 			log.info(
-					"successfully end customerAccountBalanceExligible with customerAccount code:#0 , balanceExigible:#1 ",
+					"successfully end customerAccountBalanceExligible with customerAccount code:{} , balanceExigible:{}",
 					customerAccount.getCode(), balance);
 		} catch (Exception e) {
 			throw new BusinessException("Internal error");
@@ -604,7 +604,7 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
 	}
 
 	public boolean isAllServiceInstancesTerminated(CustomerAccount customerAccount) {
-		//FIXME : just count inside the query
+		// FIXME : just count inside the query
 		Query billingQuery = getEntityManager()
 				.createQuery(
 						"select si from ServiceInstance si join si.subscription s join s.userAccount ua join ua.billingAccount ba join ba.customerAccount ca where ca.id = :customerAccountId");

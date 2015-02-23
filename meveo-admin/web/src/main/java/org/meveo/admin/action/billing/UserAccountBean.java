@@ -43,6 +43,7 @@ import org.meveo.model.billing.WalletInstance;
 import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.billing.WalletOperationStatusEnum;
 import org.meveo.model.crm.AccountLevelEnum;
+import org.meveo.model.crm.CustomFieldInstance;
 import org.meveo.model.crm.Provider;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
@@ -81,7 +82,7 @@ public class UserAccountBean extends AccountBean<UserAccount> {
 
 	@Inject
 	WalletReservationService walletReservationService;
-	
+
 	@Inject
 	private UserAccountService userAccountService;
 
@@ -154,9 +155,15 @@ public class UserAccountBean extends AccountBean<UserAccount> {
 				}
 			}
 
-			super.saveOrUpdate(killConversation);
+			setCustomFields();
+			if (getCustomFieldInstances() != null) {
+				for (CustomFieldInstance cfi : getCustomFieldInstances()) {
+					cfi.updateAudit(getCurrentUser());
+					getEntity().getCustomFields().put(cfi.getCode(), cfi);
+				}
+			}
 
-			setAndSaveCustomFields();
+			super.saveOrUpdate(killConversation);
 
 			return "/pages/billing/userAccounts/userAccountDetail.xhtml?edit=false&userAccountId=" + entity.getId()
 					+ "&faces-redirect=true&includeViewParams=true";
@@ -372,61 +379,72 @@ public class UserAccountBean extends AccountBean<UserAccount> {
 		}
 		return result;
 	}
-	
-	public String getOpenBalanceWithoutTax(Provider provider, String sellerCode, String userAccountCode,Date startDate, Date endDate) throws BusinessException {
+
+	public String getOpenBalanceWithoutTax(Provider provider, String sellerCode, String userAccountCode,
+			Date startDate, Date endDate) throws BusinessException {
 		String result = "-";
-		BigDecimal balance=walletReservationService.getOpenBalanceWithoutTax(provider, sellerCode, userAccountCode, startDate, endDate);
-		if(balance!=null){
-			   result=balance.setScale(2, RoundingMode.HALF_UP).toPlainString();
-			  }
+		BigDecimal balance = walletReservationService.getOpenBalanceWithoutTax(provider, sellerCode, userAccountCode,
+				startDate, endDate);
+		if (balance != null) {
+			result = balance.setScale(2, RoundingMode.HALF_UP).toPlainString();
+		}
 		return result;
 	}
-	
-	public String getOpenBalanceWithTax(Provider provider, String sellerCode, String userAccountCode,Date startDate, Date endDate) throws BusinessException {
+
+	public String getOpenBalanceWithTax(Provider provider, String sellerCode, String userAccountCode, Date startDate,
+			Date endDate) throws BusinessException {
 		String result = "-";
-		BigDecimal balance=walletReservationService.getOpenBalanceWithTax(provider, sellerCode, userAccountCode, startDate, endDate);
-		if(balance!=null){
-			   result=balance.setScale(2, RoundingMode.HALF_UP).toPlainString();
-			  }
+		BigDecimal balance = walletReservationService.getOpenBalanceWithTax(provider, sellerCode, userAccountCode,
+				startDate, endDate);
+		if (balance != null) {
+			result = balance.setScale(2, RoundingMode.HALF_UP).toPlainString();
+		}
 		return result;
 	}
-	
-	public String getReservedBalanceWithoutTax(Provider provider, String sellerCode, String userAccountCode,Date startDate, Date endDate) throws BusinessException {
+
+	public String getReservedBalanceWithoutTax(Provider provider, String sellerCode, String userAccountCode,
+			Date startDate, Date endDate) throws BusinessException {
 		String result = "-";
-		BigDecimal balance=walletReservationService.getReservedBalanceWithoutTax(provider, sellerCode, userAccountCode, startDate, endDate);
-		if(balance!=null){
-			   result=balance.setScale(2, RoundingMode.HALF_UP).toPlainString();
-			  }
+		BigDecimal balance = walletReservationService.getReservedBalanceWithoutTax(provider, sellerCode,
+				userAccountCode, startDate, endDate);
+		if (balance != null) {
+			result = balance.setScale(2, RoundingMode.HALF_UP).toPlainString();
+		}
 		return result;
 	}
-	
-	public String getReservedBalanceWithTax(Provider provider, String sellerCode, String userAccountCode,Date startDate, Date endDate) throws BusinessException {
+
+	public String getReservedBalanceWithTax(Provider provider, String sellerCode, String userAccountCode,
+			Date startDate, Date endDate) throws BusinessException {
 		String result = "-";
-		BigDecimal balance=walletReservationService.getReservedBalanceWithTax(provider, sellerCode, userAccountCode, startDate, endDate);
-		if(balance!=null){
-			   result=balance.setScale(2, RoundingMode.HALF_UP).toPlainString();
-			  }
+		BigDecimal balance = walletReservationService.getReservedBalanceWithTax(provider, sellerCode, userAccountCode,
+				startDate, endDate);
+		if (balance != null) {
+			result = balance.setScale(2, RoundingMode.HALF_UP).toPlainString();
+		}
 		return result;
 	}
-	
-	public String getCurrentBalanceWithoutTax(Provider provider, String sellerCode, String userAccountCode,Date startDate, Date endDate) throws BusinessException {
+
+	public String getCurrentBalanceWithoutTax(Provider provider, String sellerCode, String userAccountCode,
+			Date startDate, Date endDate) throws BusinessException {
 		String result = "-";
-		BigDecimal balance=walletReservationService.getCurrentBalanceWithoutTax(provider, sellerCode, userAccountCode, startDate, endDate);
-		if(balance!=null){
-			   result=balance.setScale(2, RoundingMode.HALF_UP).toPlainString();
-			  }
+		BigDecimal balance = walletReservationService.getCurrentBalanceWithoutTax(provider, sellerCode,
+				userAccountCode, startDate, endDate);
+		if (balance != null) {
+			result = balance.setScale(2, RoundingMode.HALF_UP).toPlainString();
+		}
 		return result;
 	}
-	
-	public String getCurrentBalanceWithTax(Provider provider, String sellerCode, String userAccountCode,Date startDate, Date endDate) throws BusinessException {
+
+	public String getCurrentBalanceWithTax(Provider provider, String sellerCode, String userAccountCode,
+			Date startDate, Date endDate) throws BusinessException {
 		String result = "-";
-		BigDecimal balance=walletReservationService.getCurrentBalanceWithTax(provider, sellerCode, userAccountCode, startDate, endDate);
-		if(balance!=null){
-			   result=balance.setScale(2, RoundingMode.HALF_UP).toPlainString();
-			  }
+		BigDecimal balance = walletReservationService.getCurrentBalanceWithTax(provider, sellerCode, userAccountCode,
+				startDate, endDate);
+		if (balance != null) {
+			result = balance.setScale(2, RoundingMode.HALF_UP).toPlainString();
+		}
 		return result;
 	}
-	 
 
 	public List<SelectItem> getWalletOperationStatusList() {
 		ResourceBundle resourceBundle = ResourceBundle.getBundle("messages", Faces.getLocale());

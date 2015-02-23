@@ -145,9 +145,7 @@ public class AccessBean extends BaseBean<Access> {
 			}
 		}
 
-		result = super.saveOrUpdate(killConversation);
-
-		return result;
+		return super.saveOrUpdate(killConversation);
 	}
 
 	public void resetEntity() {

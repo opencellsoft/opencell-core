@@ -47,6 +47,7 @@ import org.meveo.model.catalog.ServiceChargeTemplateSubscription;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.catalog.WalletTemplate;
 import org.meveo.model.crm.AccountLevelEnum;
+import org.meveo.model.crm.CustomFieldInstance;
 import org.meveo.model.mediation.Access;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
@@ -63,10 +64,10 @@ import org.omnifaces.cdi.ViewScoped;
 import org.slf4j.Logger;
 
 /**
- * Standard backing bean for {@link Subscription} (extends {@link BaseBean}
- * that provides almost all common methods to handle entities filtering/sorting
- * in datatable, their create, edit, view, delete operations). It works with
- * Manaty custom JSF components.
+ * Standard backing bean for {@link Subscription} (extends {@link BaseBean} that
+ * provides almost all common methods to handle entities filtering/sorting in
+ * datatable, their create, edit, view, delete operations). It works with Manaty
+ * custom JSF components.
  */
 @Named
 @ViewScoped
@@ -233,9 +234,15 @@ public class SubscriptionBean extends BaseBean<Subscription> {
 
 		}
 
-		super.saveOrUpdate(killConversation);
+		setCustomFields();
+		if (getCustomFieldInstances() != null) {
+			for (CustomFieldInstance cfi : getCustomFieldInstances()) {
+				cfi.updateAudit(getCurrentUser());
+				getEntity().getCustomFields().put(cfi.getCode(), cfi);
+			}
+		}
 
-		setAndSaveCustomFields();
+		super.saveOrUpdate(killConversation);
 
 		return "/pages/billing/subscriptions/subscriptionDetail?edit=false&subscriptionId=" + entity.getId()
 				+ "&faces-redirect=true&includeViewParams=true";
@@ -243,8 +250,16 @@ public class SubscriptionBean extends BaseBean<Subscription> {
 
 	@Override
 	protected String saveOrUpdate(Subscription entity) throws BusinessException {
+		setCustomFields();
+		if (getCustomFieldInstances() != null) {
+			for (CustomFieldInstance cfi : getCustomFieldInstances()) {
+				cfi.updateAudit(getCurrentUser());
+				getEntity().getCustomFields().put(cfi.getCode(), cfi);
+			}
+		}
+
 		if (entity.isTransient()) {
-			log.debug("SubscriptionBean save, # of service templates:{}", entity.getOffer().getServiceTemplates()
+			log.debug("SubscriptionBean save, # of service templates={}", entity.getOffer().getServiceTemplates()
 					.size());
 			subscriptionService.create(entity);
 			serviceTemplates.addAll(entity.getOffer().getServiceTemplates());
@@ -254,8 +269,6 @@ public class SubscriptionBean extends BaseBean<Subscription> {
 			subscriptionService.update(entity);
 			messages.info(new BundleKey("messages", "update.successful"));
 		}
-
-		setAndSaveCustomFields();
 
 		return back();
 	}
@@ -489,7 +502,7 @@ public class SubscriptionBean extends BaseBean<Subscription> {
 			if (!isChecked) {
 				messages.warn(new BundleKey("messages", "instanciation.selectService"));
 			} else {
-			    subscriptionService.refresh(entity);
+				subscriptionService.refresh(entity);
 				messages.info(new BundleKey("messages", "instanciation.instanciateSuccessful"));
 			}
 		} catch (BusinessException e1) {

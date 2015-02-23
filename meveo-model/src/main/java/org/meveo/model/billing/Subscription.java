@@ -101,7 +101,7 @@ public class Subscription extends BusinessEntity {
 	@OneToMany(mappedBy = "subscription", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@MapKeyColumn(name = "code")
 	private Map<String, CustomFieldInstance> customFields = new HashMap<String, CustomFieldInstance>();
-	
+
 	public Date getEndAgrementDate() {
 		return endAgrementDate;
 	}
@@ -197,6 +197,15 @@ public class Subscription extends BusinessEntity {
 
 	public void setCustomFields(Map<String, CustomFieldInstance> customFields) {
 		this.customFields = customFields;
+	}
+
+	public String getStringCustomValue(String code) {
+		String result = null;
+		if (customFields.containsKey(code)) {
+			result = customFields.get(code).getStringValue();
+		}
+
+		return result;
 	}
 
 }
