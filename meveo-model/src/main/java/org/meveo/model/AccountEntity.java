@@ -249,7 +249,7 @@ public abstract class AccountEntity extends BusinessEntity {
 	
 	public String getInheritedCustomStringValue(String code){
 		String result=null;
-		if (getCustomFields().containsKey(code)) {
+		if (getCustomFields().containsKey(code)&& getCustomFields().get(code).getLongValue()!=null) {
 			result=getCustomFields().get(code).getStringValue();
 		}else{
 			if(this instanceof CustomerAccount){
@@ -264,7 +264,7 @@ public abstract class AccountEntity extends BusinessEntity {
 	
 	public Long getInheritedCustomLongValue(String code){
 		Long result=null;
-		if (getCustomFields().containsKey(code)) {
+		if (getCustomFields().containsKey(code)&& getCustomFields().get(code).getLongValue()!=null) {
 			result=getCustomFields().get(code).getLongValue();
 		}else{
 			if(this instanceof CustomerAccount){
@@ -279,7 +279,7 @@ public abstract class AccountEntity extends BusinessEntity {
 	
 	public Date getInheritedCustomDateValue(String code){
 		Date result=null;
-		if (getCustomFields().containsKey(code)) {
+		if (getCustomFields().containsKey(code)&& getCustomFields().get(code).getDateValue()!=null) {
 			result=getCustomFields().get(code).getDateValue();
 		}else{
 			if(this instanceof CustomerAccount){
@@ -294,7 +294,7 @@ public abstract class AccountEntity extends BusinessEntity {
 	
 	public Double getInheritedCustomDoubleValue(String code){
 		Double result=null;
-		if (getCustomFields().containsKey(code)) {
+		if (getCustomFields().containsKey(code)&& getCustomFields().get(code).getDateValue()!=null) {
 			result=getCustomFields().get(code).getDoubleValue();
 		}else{
 			if(this instanceof CustomerAccount){

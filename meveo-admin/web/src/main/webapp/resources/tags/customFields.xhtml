@@ -30,7 +30,7 @@
 						value="#{cf.stringValue}" required="#{cf.valueRequired}" />
 					<h:outputText
 						rendered="#{!cc.attrs.edit and cf.fieldType eq CustomFieldTypeEnum.STRING}"
-						  value="#{entity.getICsvStringValue(cf.code)}" style="font-weight:bold;" />
+						  value="#{cc.entityFromBackingBeanOrAttribute.getICsvStringValue(cf.code)}" style="font-weight:bold;" />
 						     
 					<p:outputLabel value="#{cf.description}" for="cfField_double"
 						rendered="#{cf.fieldType eq CustomFieldTypeEnum.DOUBLE}" />
@@ -41,7 +41,7 @@
 					</p:inputText>
 					<h:outputText
 						rendered="#{!cc.attrs.edit and cf.fieldType eq CustomFieldTypeEnum.DOUBLE}"
-						value="#{entity.getICsvDoubleValue(cf.code)}" style="font-weight:bold;" />
+						value="#{cc.entityFromBackingBeanOrAttribute.getICsvDoubleValue(cf.code)}" style="font-weight:bold;" />
 						
 					<p:outputLabel value="#{cf.description}" for="cfField_long"
 						rendered="#{cf.fieldType eq CustomFieldTypeEnum.LONG}" />
@@ -52,7 +52,8 @@
 					</p:inputText>
 					<h:outputText
 						rendered="#{!cc.attrs.edit and cf.fieldType eq CustomFieldTypeEnum.LONG}"
-						value="#{entity.getICsvLongValue(cf.code)}" style="font-weight:bold;" />
+						value="#{cc.entityFromBackingBeanOrAttribute.getICsvLongValue(cf.code)}" style="font-weight:bold;" />
+						
 						
 					<p:outputLabel value="#{cf.description}" for="cfField_date"
 						rendered="#{cf.fieldType eq CustomFieldTypeEnum.DATE}" />
@@ -62,7 +63,7 @@
 						value="#{cf.dateValue}" required="#{cf.valueRequired}" />
 					<h:outputText
 						rendered="#{!cc.attrs.edit and cf.fieldType eq CustomFieldTypeEnum.DATE}"
-						value="#{entity.getICsvDateValue(cf.code)}" style="font-weight:bold;">
+						value="#{cc.entityFromBackingBeanOrAttribute.getICsvDateValue(cf.code)}" style="font-weight:bold;">
 						<f:convertDateTime type="date"
 							pattern="#{paramBean.getProperty('meveo.dateFormat', '')}" />
 					</h:outputText>

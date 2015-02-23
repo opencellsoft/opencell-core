@@ -210,7 +210,7 @@ public class Subscription extends BusinessEntity {
 	
 	public String getInheritedCustomStringValue(String code){
 	String result=null; 
-	if (getCustomFields().containsKey(code)) {
+	if (getCustomFields().containsKey(code)&& getCustomFields().get(code).getStringValue()!=null) {
 		result=getCustomFields().get(code).getStringValue();
 	}else{
 		result=userAccount.getInheritedCustomStringValue(code);
@@ -220,7 +220,7 @@ public class Subscription extends BusinessEntity {
 	
 	public Long getInheritedCustomLongValue(String code){
 		Long result=null; 
-		if (getCustomFields().containsKey(code)) {
+		if (getCustomFields().containsKey(code)&& getCustomFields().get(code).getLongValue()!=null) {
 			result=getCustomFields().get(code).getLongValue();
 		}else{
 			result=userAccount.getInheritedCustomLongValue(code);
@@ -230,7 +230,7 @@ public class Subscription extends BusinessEntity {
 	
 	public Date getInheritedCustomDateValue(String code){
 		Date result=null; 
-		if (getCustomFields().containsKey(code)) {
+		if (getCustomFields().containsKey(code)&& getCustomFields().get(code).getDateValue()!=null) {
 			result=getCustomFields().get(code).getDateValue();
 		}else{
 			result=userAccount.getInheritedCustomDateValue(code);
@@ -241,7 +241,7 @@ public class Subscription extends BusinessEntity {
 
 	public Double getInheritedCustomDoubleValue(String code){
 		Double result=null; 
-		if (getCustomFields().containsKey(code)) {
+		if (getCustomFields().containsKey(code)&& getCustomFields().get(code).getDoubleValue()!=null) {
 			result=getCustomFields().get(code).getDoubleValue();
 		}else{
 			result=userAccount.getInheritedCustomDoubleValue(code);

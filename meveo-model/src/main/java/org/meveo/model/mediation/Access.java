@@ -204,7 +204,7 @@ public class Access extends EnableEntity {
 	
 	public String getInheritedCustomStringValue(String code){
 		String stringValue=null;
-		if (getCustomFields().containsKey(code)) {
+		if (getCustomFields().containsKey(code)&& getCustomFields().get(code).getStringValue()!=null) {
 			stringValue=getCustomFields().get(code).getStringValue();
 		}else{
 			stringValue=subscription.getInheritedCustomStringValue(code);
@@ -214,7 +214,7 @@ public class Access extends EnableEntity {
 	
 	public Long getInheritedCustomLongValue(String code){
 		Long result=null; 
-		if (getCustomFields().containsKey(code)) {
+		if (getCustomFields().containsKey(code)&& getCustomFields().get(code).getLongValue()!=null) {
 			result=getCustomFields().get(code).getLongValue();
 		}else{
 			result=subscription.getInheritedCustomLongValue(code);
@@ -224,7 +224,7 @@ public class Access extends EnableEntity {
 	
 	public Date getInheritedCustomDateValue(String code){
 		Date result=null; 
-		if (getCustomFields().containsKey(code)) {
+		if (getCustomFields().containsKey(code)&& getCustomFields().get(code).getDateValue()!=null) {
 			result=getCustomFields().get(code).getDateValue();
 		}else{
 			result=subscription.getInheritedCustomDateValue(code);
@@ -235,7 +235,7 @@ public class Access extends EnableEntity {
 
 	public Double getInheritedCustomDoubleValue(String code){
 		Double result=null; 
-		if (getCustomFields().containsKey(code)) {
+		if (getCustomFields().containsKey(code)&& getCustomFields().get(code).getDoubleValue()!=null) {
 			result=getCustomFields().get(code).getDoubleValue();
 		}else{
 			result=subscription.getInheritedCustomDoubleValue(code);
