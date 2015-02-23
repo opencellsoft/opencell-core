@@ -30,9 +30,6 @@ import org.meveo.event.qualifier.Updated;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.IEntity;
 import org.meveo.model.admin.User;
-import org.meveo.model.billing.CounterInstance;
-import org.meveo.model.billing.UsageChargeInstance;
-import org.meveo.model.cache.UsageChargeInstanceCache;
 import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.model.catalog.UsageChargeTemplate;
 import org.meveo.model.mediation.Access;
@@ -77,13 +74,8 @@ public class DefaultObserver {
 
 	@Inject
 	CounterInstanceService counterInstanceService;
-	
+
 	HashMap<NotificationEventTypeEnum, HashMap<Class<BusinessEntity>, List<Notification>>> classNotificationMap = new HashMap<>();
-	
-
-	
-
-	
 
 	@PostConstruct
 	private void init() {
@@ -98,7 +90,7 @@ public class DefaultObserver {
 	}
 
 	private void addNotificationToCache(Notification notif) {
-		if(!notif.isDisabled()){
+		if (!notif.isDisabled()) {
 			try {
 				@SuppressWarnings("unchecked")
 				Class<BusinessEntity> c = (Class<BusinessEntity>) Class.forName(notif.getClassNameFilter());
@@ -158,42 +150,45 @@ public class DefaultObserver {
 		return (String) RatingService.evaluateExpression(expression, userMap, String.class);
 	}
 
-    private void fireNotification(Notification notif, IEntity e) {
-		log.debug("Fire Notification for notif {} and  enity {}", notif, e);
+	private void fireNotification(Notification notif, IEntity e) {
+		log.debug("Fire Notification for notif with {} and entity with id={}", notif, e.getId());
 		try {
 			if (!matchExpression(notif.getElFilter(), e)) {
-			    return;
+				return;
 			}
 
-            // we first perform the EL actions
-            executeAction(notif.getElAction(), e);
+			// we first perform the EL actions
+			executeAction(notif.getElAction(), e);
 
-            boolean sendNotify = true;
-            // Check if the counter associated to notification was not exhausted yet
-            if (notif.getCounterInstance() != null) {
-                try {
-                    counterInstanceService.deduceCounterValue(notif.getCounterInstance(), new Date(),notif.getAuditable().getCreated(), new BigDecimal(1), notif.getAuditable().getCreator());
-                } catch (CounterValueInsufficientException ex) {
-                    sendNotify = false;
-                }
-            }
-            
-            if (!sendNotify){
-                return;
-            }
-            // then the notification itself
-            if (notif instanceof EmailNotification) {
-                emailNotifier.sendEmail((EmailNotification) notif, e);
-            } else if (notif instanceof WebHook) {
-                webHookNotifier.sendRequest((WebHook) notif, e);
-            } else if (notif instanceof InstantMessagingNotification) {
-                imNotifier.sendInstantMessage((InstantMessagingNotification) notif, e);
-            }
-            if (notif.getEventTypeFilter() == NotificationEventTypeEnum.INBOUND_REQ) {
-                NotificationHistory histo = notificationHistoryService.create(notif, e, "", NotificationHistoryStatusEnum.SENT);
-                ((InboundRequest) e).add(histo);
-            }
-            
+			boolean sendNotify = true;
+			// Check if the counter associated to notification was not exhausted
+			// yet
+			if (notif.getCounterInstance() != null) {
+				try {
+					counterInstanceService.deduceCounterValue(notif.getCounterInstance(), new Date(), notif
+							.getAuditable().getCreated(), new BigDecimal(1), notif.getAuditable().getCreator());
+				} catch (CounterValueInsufficientException ex) {
+					sendNotify = false;
+				}
+			}
+
+			if (!sendNotify) {
+				return;
+			}
+			// then the notification itself
+			if (notif instanceof EmailNotification) {
+				emailNotifier.sendEmail((EmailNotification) notif, e);
+			} else if (notif instanceof WebHook) {
+				webHookNotifier.sendRequest((WebHook) notif, e);
+			} else if (notif instanceof InstantMessagingNotification) {
+				imNotifier.sendInstantMessage((InstantMessagingNotification) notif, e);
+			}
+			if (notif.getEventTypeFilter() == NotificationEventTypeEnum.INBOUND_REQ) {
+				NotificationHistory histo = notificationHistoryService.create(notif, e, "",
+						NotificationHistoryStatusEnum.SENT);
+				((InboundRequest) e).add(histo);
+			}
+
 		} catch (BusinessException e1) {
 			log.error("Error while firing notification {} for provider {}: {} ", notif.getCode(), notif.getProvider()
 					.getCode(), e1.getMessage());
@@ -250,7 +245,6 @@ public class DefaultObserver {
 		}
 		updateCache(e, false);
 	}
-	
 
 	public void entityRemoved(@Observes @Removed IEntity e) {
 		log.debug("Defaut observer : Entity {} with id {} removed", e.getClass().getName(), e.getId());
@@ -304,53 +298,65 @@ public class DefaultObserver {
 		log.debug("Defaut observer : inbound request {} ", e.getCode());
 		checkEvent(NotificationEventTypeEnum.INBOUND_REQ, e);
 	}
-	
-	public void updateCache(IEntity e,boolean removeAction){
-		if(e instanceof PricePlanMatrix){
-			if (MeveoCacheContainerProvider.getAllPricePlan().containsKey(((PricePlanMatrix) e).getProvider().getCode())) {
-				
-				if (MeveoCacheContainerProvider.getAllPricePlan().get(((PricePlanMatrix) e).getProvider().getCode()).containsKey(((PricePlanMatrix) e).getEventCode())) {
-					List<PricePlanMatrix> listPricePlan=MeveoCacheContainerProvider.getAllPricePlan().get(((PricePlanMatrix) e).getProvider().getCode()).get(((PricePlanMatrix) e).getEventCode());
-					Integer pricePlanIndex=null;
-					Integer index=0;
+
+	public void updateCache(IEntity e, boolean removeAction) {
+		if (e instanceof PricePlanMatrix) {
+			if (MeveoCacheContainerProvider.getAllPricePlan()
+					.containsKey(((PricePlanMatrix) e).getProvider().getCode())) {
+
+				if (MeveoCacheContainerProvider.getAllPricePlan().get(((PricePlanMatrix) e).getProvider().getCode())
+						.containsKey(((PricePlanMatrix) e).getEventCode())) {
+					List<PricePlanMatrix> listPricePlan = MeveoCacheContainerProvider.getAllPricePlan()
+							.get(((PricePlanMatrix) e).getProvider().getCode())
+							.get(((PricePlanMatrix) e).getEventCode());
+					Integer pricePlanIndex = null;
+					Integer index = 0;
 					for (PricePlanMatrix pricePlan : listPricePlan) {
-						if(pricePlan.getId().equals(e.getId())){
-							pricePlanIndex=index;
+						if (pricePlan.getId().equals(e.getId())) {
+							pricePlanIndex = index;
 							break;
 						}
 						index++;
 					}
-					if(pricePlanIndex!=null){
-						if(!removeAction){
+					if (pricePlanIndex != null) {
+						if (!removeAction) {
 							listPricePlan.set(pricePlanIndex, (PricePlanMatrix) e);
-						}else{
+						} else {
 							listPricePlan.remove(pricePlanIndex.intValue());
 						}
-						
+
 					}
-					
+
 				}
 			}
-			
-		}else if(e instanceof UsageChargeTemplate){
-			UsageChargeTemplate usageChargeTemplate=(UsageChargeTemplate)e;
+
+		} else if (e instanceof UsageChargeTemplate) {
+			UsageChargeTemplate usageChargeTemplate = (UsageChargeTemplate) e;
 			if (MeveoCacheContainerProvider.getUsageChargeTemplateCacheCache().containsKey(usageChargeTemplate.getId())) {
-				MeveoCacheContainerProvider.getUsageChargeTemplateCacheCache().remove(usageChargeTemplate.getCode()); //if update action  the UsageChargeTemplateCache will be reconstructed
+				MeveoCacheContainerProvider.getUsageChargeTemplateCacheCache().remove(usageChargeTemplate.getCode()); // if
+																														// update
+																														// action
+																														// the
+																														// UsageChargeTemplateCache
+																														// will
+																														// be
+																														// reconstructed
 			}
-			if (MeveoCacheContainerProvider.getUsageChargeTemplateCache().containsKey(usageChargeTemplate.getProvider().getCode())) {
-				Map<String, UsageChargeTemplate> chargeTemplatesMap = MeveoCacheContainerProvider.getUsageChargeTemplateCache().get(usageChargeTemplate.getProvider()
-						.getCode());
+			if (MeveoCacheContainerProvider.getUsageChargeTemplateCache().containsKey(
+					usageChargeTemplate.getProvider().getCode())) {
+				Map<String, UsageChargeTemplate> chargeTemplatesMap = MeveoCacheContainerProvider
+						.getUsageChargeTemplateCache().get(usageChargeTemplate.getProvider().getCode());
 				if (chargeTemplatesMap.containsKey(((UsageChargeTemplate) e).getCode())) {
-					if(!removeAction){
-					chargeTemplatesMap.put(((UsageChargeTemplate) e).getCode(), usageChargeTemplate);
-					}else{
+					if (!removeAction) {
+						chargeTemplatesMap.put(((UsageChargeTemplate) e).getCode(), usageChargeTemplate);
+					} else {
 						chargeTemplatesMap.remove(((UsageChargeTemplate) e).getCode());
 					}
 				}
-				
+
 			}
-		}else if(e instanceof Access){
-			Access access=(Access)e;
+		} else if (e instanceof Access) {
+			Access access = (Access) e;
 			if (MeveoCacheContainerProvider.getAccessCache().containsKey(access.getCacheKey())) {
 				MeveoCacheContainerProvider.getAccessCache().remove(access.getCacheKey());
 			}

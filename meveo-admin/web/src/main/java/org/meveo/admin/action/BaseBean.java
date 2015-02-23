@@ -946,8 +946,8 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 						cfi.setAccount((AccountEntity) getEntity());
 					} else if (entity instanceof Subscription) {
 						cfi.setSubscription((Subscription) entity);
-					} else if (entity instanceof Access){
-						cfi.setAccess((Access)entity);
+					} else if (entity instanceof Access) {
+						cfi.setAccess((Access) entity);
 					}
 
 					if (cf.getFieldType() == CustomFieldTypeEnum.DATE) {
@@ -962,6 +962,17 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 					}
 
 					customFieldInstanceService.create(cfi, getCurrentUser(), getCurrentProvider());
+				}
+			}
+		}
+	}
+
+	protected void deleteCustomFields() {
+		if (customFieldTemplates != null && customFieldTemplates.size() > 0) {
+			for (CustomFieldTemplate cf : customFieldTemplates) {
+				CustomFieldInstance cfi = customFieldInstanceService.findByCodeAndAccount(cf.getCode(), getEntity());
+				if (cfi != null) {
+					customFieldInstanceService.remove(cfi);
 				}
 			}
 		}

@@ -21,12 +21,12 @@
 	<cc:attribute name="showFormButtons" default="true" />
 	<cc:attribute name="formButtonsColumns" default="3" />
 	<cc:attribute name="ajaxSubmit" default="false" />
-	<cc:attribute name="killConversationOnSave" default="false" />
+	<cc:attribute name="killConversationOnSave" default="true" />
 	<cc:attribute name="killConversationOnBack" default="false" />
-    <cc:attribute name="showBackButton" default="true" />
-    <cc:attribute name="showEditButton" default="true" />
+	<cc:attribute name="showBackButton" default="true" />
+	<cc:attribute name="showEditButton" default="true" />
 	<cc:attribute name="useCustomIdParam" default="false" />
-    <cc:attribute name="objectIdParamName"/>
+	<cc:attribute name="objectIdParamName" />
 	<cc:attribute name="styleClass"
 		default="#{cc.attrs.edit ? 'form-panel-fields' : 'form-panel-fields form-panel-fields-view'}" />
 </cc:interface>
@@ -52,10 +52,10 @@
 				ajaxSubmit="#{cc.attrs.ajaxSubmit}"
 				killConversationOnSave="#{cc.attrs.killConversationOnSave}"
 				killConversationOnBack="#{cc.attrs.killConversationOnBack}"
-				useCustomIdParam="#{cc.attrs.useCustomIdParam}" 
-                objectIdParamName="#{cc.attrs.objectIdParamName}"
+				useCustomIdParam="#{cc.attrs.useCustomIdParam}"
+				objectIdParamName="#{cc.attrs.objectIdParamName}"
 				showBackButton="#{cc.attrs.showBackButton}"
-                showEditButton="#{cc.attrs.showEditButton}"/>
+				showEditButton="#{cc.attrs.showEditButton}" />
 
 		</p:panel>
 	</h:form>

@@ -165,4 +165,12 @@ public class AccessBean extends BaseBean<Access> {
 		return Arrays.asList("provider");
 	}
 
+	@Override
+	public void delete() {
+		// delete custom fields
+		deleteCustomFields();
+
+		super.delete();
+	}
+
 }
