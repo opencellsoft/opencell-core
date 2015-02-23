@@ -121,8 +121,6 @@ public class AccessBean extends BaseBean<Access> {
 
 		saveOrUpdate(false);
 
-		saveCustomFields();
-
 		return "";
 	}
 
@@ -138,7 +136,11 @@ public class AccessBean extends BaseBean<Access> {
 			}
 		}
 
-		return super.saveOrUpdate(killConversation);
+		result = super.saveOrUpdate(killConversation);
+
+		saveCustomFields();
+
+		return result;
 	}
 
 	public void resetEntity() {
@@ -149,6 +151,8 @@ public class AccessBean extends BaseBean<Access> {
 			entity.setStartDate(subscription.getSubscriptionDate());
 			entity.setSubscription(subscription);
 		}
+
+		initCustomFields(AccountLevelEnum.ACC);
 	}
 
 	@Override

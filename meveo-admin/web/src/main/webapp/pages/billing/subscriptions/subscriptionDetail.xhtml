@@ -267,8 +267,7 @@
 								title="#{messages['billingAccount.tab.information']}">
 
 								<hf:formPanel id="subscriptionFormPanel"
-									backingBean="#{subscriptionBean}"
-									useCustomIdParam="true">
+									backingBean="#{subscriptionBean}" useCustomIdParam="true">
 									<!--Creation window fields-->
 									<hf:formEntityField id="userSelectId"
 										label="#{messages['subscription.userAccount']}"
@@ -308,8 +307,7 @@
 							</p:tab>
 							<p:tab title="#{messages['customFieldTemplate.panel']}">
 								<hf:formPanel id="subscriptionCustomFormPanel"
-									backingBean="#{subscriptionBean}"
-									useCustomIdParam="true">
+									backingBean="#{subscriptionBean}" useCustomIdParam="true">
 									<hf:customFields />
 								</hf:formPanel>
 							</p:tab>
@@ -898,36 +896,45 @@
 		<p:dialog id="accessDialog" widgetVar="accessWidget" dynamic="true"
 			width="900">
 			<p:messages id="medinaAccessMessage"></p:messages>
-			<hf:formPanel id="formPanel"
-				label="#{messages['access.accessPanel']}"
-				backingBean="#{accessBean}" columns="2" showFormButtons="false">
-				
-				<p:tabView id="accessTabView">
-	
-					<p:tab title="#{messages['customer.tab.information']}">
-						<hf:formField label="#{messages['access.accessUserId']}"
-							required="true" field="accessUserId" edit="true" />
-						<hf:formField label="#{messages['access.startDate']}"
-							field="startDate" edit="true" />
-						<hf:formField label="#{messages['access.endDate']}" field="endDate"
-							edit="true" />
-					</p:tab>
-	
-					<p:tab title="#{messages['customFieldTemplate.panel']}">
-						<hf:customFields />
-					</p:tab>
-				</p:tabView>
-				<p:panel>
-					<p:commandButton id="saveButton" value="#{messages['action.save']}"
-						update=":#{p:component('medinaAccessPanel')} :medinaAccessMessage"
-						icon="ui-icon-check" ajax="true"
-						action="#{accessBean.saveOrUpdate()}"
-						oncomplete="handleDialogSubmit(xhr, status, args)">
-						<f:param name="subscriptionId"
-							value="#{subscriptionBean.entity.id}"></f:param>
-					</p:commandButton>
-				</p:panel>
-			</hf:formPanel>
+
+			<p:panelGrid styleClass="col1-set tab-view-container" columns="1">
+				<f:facet name="header">
+					<h:outputText value="#{messages['access.accessPanel']}" />
+				</f:facet>
+
+				<hf:formPanel id="formPanel" backingBean="#{accessBean}" columns="2"
+					showFormButtons="false">
+
+					<p:tabView id="accessTabView">
+						<p:tab title="#{messages['customer.tab.information']}">
+							<p:panelGrid styleClass="form-panel-fields" columns="2">
+								<hf:formField label="#{messages['access.accessUserId']}"
+									required="true" field="accessUserId" edit="true" />
+								<hf:formField label="#{messages['access.startDate']}"
+									field="startDate" edit="true" />
+								<hf:formField label="#{messages['access.endDate']}"
+									field="endDate" edit="true" />
+							</p:panelGrid>
+						</p:tab>
+
+						<p:tab title="#{messages['customFieldTemplate.panel']}">
+							<hf:customFields edit="true" />
+						</p:tab>
+					</p:tabView>
+					<p:panel>
+						<p:commandButton id="saveButton"
+							value="#{messages['action.save']}"
+							update=":#{p:component('medinaAccessPanel')} :medinaAccessMessage"
+							icon="ui-icon-check" ajax="true"
+							action="#{accessBean.saveOrUpdate()}"
+							oncomplete="handleDialogSubmit(xhr, status, args)">
+							<f:param name="subscriptionId"
+								value="#{subscriptionBean.entity.id}"></f:param>
+						</p:commandButton>
+					</p:panel>
+
+				</hf:formPanel>
+			</p:panelGrid>
 		</p:dialog>
 
 		<script type="text/javascript">
