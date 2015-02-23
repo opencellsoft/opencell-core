@@ -54,6 +54,7 @@ import org.meveo.model.crm.CustomFieldInstance;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.CustomFieldTypeEnum;
 import org.meveo.model.crm.Provider;
+import org.meveo.model.mediation.Access;
 import org.meveo.security.MeveoUser;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.catalog.impl.CatMessagesService;
@@ -945,6 +946,8 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 						cfi.setAccount((AccountEntity) getEntity());
 					} else if (entity instanceof Subscription) {
 						cfi.setSubscription((Subscription) entity);
+					} else if (entity instanceof Access){
+						cfi.setAccess((Access)entity);
 					}
 
 					if (cf.getFieldType() == CustomFieldTypeEnum.DATE) {

@@ -40,20 +40,14 @@
 					label="#{messages['entity.notification.eventTypeFilter']}"
 					field="eventTypeFilter" />
 				<hftl:column
+					label="#{messages['entity.webHook.httpMethod']}"
+					field="httpMethod"  />
+				<hftl:column
 					label="#{messages['entity.webHook.host']}"
 					field="host" />
 				<hftl:column
 					label="#{messages['entity.webHook.page']}"
 					field="page" />
-				<hftl:column
-					label="#{messages['entity.webHook.httpMethod']}"
-					field="httpMethod"  />
-                <hftl:column
-                    label="#{messages['entity.webHook.headers']}"
-                    field="headers" isMap="true"  />
-                <hftl:column
-                    label="#{messages['entity.webHook.params']}"
-                    field="params" isMap="true"  />
 				<hftl:column label="#{messages['enableEntity.active']}" field="active" isMessage="true" />
 			</hftl:dataList>
 	</ui:define>

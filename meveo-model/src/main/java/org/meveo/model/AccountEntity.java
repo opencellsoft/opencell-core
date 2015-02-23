@@ -182,12 +182,13 @@ public abstract class AccountEntity extends BusinessEntity {
 		if (customFields.containsKey(code)) {
 			result = customFields.get(code).getStringValue();
 		}
-
+		System.out.println("get cf "+code+"="+result+" on "+this);
 		return result;
 	}
 
 	public void setStringCustomValue(String code, String value) {
 		getCustomFieldInstance(code).setStringValue(value);
+		System.out.println("set cf "+code+"="+value+" on "+this);
 	}
 
 	public Date getDateCustomValue(String code) {

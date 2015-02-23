@@ -19,6 +19,7 @@ import javax.persistence.EntityManager;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
+import org.apache.commons.codec.binary.Base64;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.IEntity;
@@ -71,9 +72,6 @@ public class WebHookNotifier {
 
 		try {
 			String url = webHook.getHost().startsWith("http") ? webHook.getHost() : "http://" + webHook.getHost();
-			if(!StringUtils.isBlank(webHook.getUsername())){
-				url = "http://" +webHook.getUsername()+":"+webHook.getPassword()+"@"+url.substring(7);
-			}
 			if (webHook.getPort() > 0) {
 				url += ":" + webHook.getPort();
 			}
@@ -99,6 +97,11 @@ public class WebHookNotifier {
             HttpURLConnection conn = (HttpURLConnection) obj.openConnection();
 
             Map<String, String> headers = evaluateMap(webHook.getHeaders(), e);
+            if(!StringUtils.isBlank(webHook.getUsername()) && !headers.containsKey("Authorization")){
+     			byte[] bytes = Base64.encodeBase64((webHook.getUsername() + ":" + webHook.getPassword()).getBytes());
+     			headers.put("Authorization", "Basic "+new String(bytes));
+			}
+           
 			for (String key : headers.keySet()) {
 		        conn.setRequestProperty(key, headers.get(key));
 			}
@@ -148,7 +151,7 @@ public class WebHookNotifier {
 				HashMap<Object, Object> userMap = new HashMap<Object, Object>();
 				userMap.put("event", e);
 				userMap.put("response",result);
-				if(webHook.getElAction().indexOf("jsObj.")>=0){
+				if(webHook.getElAction()!=null && webHook.getElAction().indexOf("jsObj.")>=0){
 					JSONObject json;
 					try {
 						json = new JSONObject(result);
@@ -156,7 +159,7 @@ public class WebHookNotifier {
 					} catch (JSONException e1) {
 						e1.printStackTrace();
 					}
-				} else if(webHook.getElAction().indexOf("xmlDoc.")>=0){
+				} else if(webHook.getElAction()!=null && webHook.getElAction().indexOf("xmlDoc.")>=0){
 					try {
 						DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 						DocumentBuilder builder = dbf.newDocumentBuilder();
