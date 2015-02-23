@@ -30,8 +30,8 @@
 						value="#{cf.stringValue}" required="#{cf.valueRequired}" />
 					<h:outputText
 						rendered="#{!cc.attrs.edit and cf.fieldType eq CustomFieldTypeEnum.STRING}"
-						value="#{cf.stringValue}" style="font-weight:bold;" />
-
+						  value="#{entity.getICsvStringValue(cf.code)}" style="font-weight:bold;" />
+						     
 					<p:outputLabel value="#{cf.description}" for="cfField_double"
 						rendered="#{cf.fieldType eq CustomFieldTypeEnum.DOUBLE}" />
 					<p:inputText id="cfField_double"
@@ -41,8 +41,8 @@
 					</p:inputText>
 					<h:outputText
 						rendered="#{!cc.attrs.edit and cf.fieldType eq CustomFieldTypeEnum.DOUBLE}"
-						value="#{cf.doubleValue}" style="font-weight:bold;" />
-
+						value="#{entity.getICsvDoubleValue(cf.code)}" style="font-weight:bold;" />
+						
 					<p:outputLabel value="#{cf.description}" for="cfField_long"
 						rendered="#{cf.fieldType eq CustomFieldTypeEnum.LONG}" />
 					<p:inputText id="cfField_long"
@@ -52,8 +52,8 @@
 					</p:inputText>
 					<h:outputText
 						rendered="#{!cc.attrs.edit and cf.fieldType eq CustomFieldTypeEnum.LONG}"
-						value="#{cf.longValue}" style="font-weight:bold;" />
-
+						value="#{entity.getICsvLongValue(cf.code)}" style="font-weight:bold;" />
+						
 					<p:outputLabel value="#{cf.description}" for="cfField_date"
 						rendered="#{cf.fieldType eq CustomFieldTypeEnum.DATE}" />
 					<p:calendar id="cfField_date" showButtonPanel="true"
@@ -62,7 +62,7 @@
 						value="#{cf.dateValue}" required="#{cf.valueRequired}" />
 					<h:outputText
 						rendered="#{!cc.attrs.edit and cf.fieldType eq CustomFieldTypeEnum.DATE}"
-						value="#{cf.dateValue}" style="font-weight:bold;">
+						value="#{entity.getICsvDateValue(cf.code)}" style="font-weight:bold;">
 						<f:convertDateTime type="date"
 							pattern="#{paramBean.getProperty('meveo.dateFormat', '')}" />
 					</h:outputText>
@@ -81,7 +81,7 @@
 						rendered="#{!cc.attrs.edit and cf.fieldType eq CustomFieldTypeEnum.LIST and cf.stringValue!=null}"
 						value="#{cf.listValues[cf.stringValue]} (#{cf.stringValue})"
 						style="font-weight:bold;" />
-
+						
 				</h:column>
 			</h:dataTable>
 		</p:panelGrid>
