@@ -197,7 +197,7 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
 			log.debug("isAttached={}", getPersistenceService()
 					.getEntityManager().contains(entity));
 
-			saveCustomFields();
+			setAndSaveCustomFields();
 
 			return "/pages/billing/billingAccounts/billingAccountDetail.xhtml?edit=false&billingAccountId="
 					+ entity.getId()

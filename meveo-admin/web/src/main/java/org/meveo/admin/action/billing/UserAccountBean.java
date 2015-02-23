@@ -156,7 +156,7 @@ public class UserAccountBean extends AccountBean<UserAccount> {
 
 			super.saveOrUpdate(killConversation);
 
-			saveCustomFields();
+			setAndSaveCustomFields();
 
 			return "/pages/billing/userAccounts/userAccountDetail.xhtml?edit=false&userAccountId=" + entity.getId()
 					+ "&faces-redirect=true&includeViewParams=true";

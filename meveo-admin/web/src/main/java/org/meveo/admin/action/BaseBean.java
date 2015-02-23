@@ -114,6 +114,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 	private Class<T> clazz;
 
 	protected List<CustomFieldTemplate> customFieldTemplates = new ArrayList<CustomFieldTemplate>();
+	protected List<CustomFieldInstance> customFieldInstances = new ArrayList<CustomFieldInstance>();
 
 	/**
 	 * Request parameter. Should form be displayed in create/edit or view mode
@@ -922,7 +923,80 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 		}
 	}
 
-	protected void saveCustomFields() {
+	protected void setCustomFields() {
+		if (customFieldTemplates != null && customFieldTemplates.size() > 0) {
+			for (CustomFieldTemplate cf : customFieldTemplates) {
+				if (!getEntity().isTransient()) {
+					CustomFieldInstance cfi = customFieldInstanceService
+							.findByCodeAndAccount(cf.getCode(), getEntity());
+					if (cfi != null) {
+						if (cf.getFieldType() == CustomFieldTypeEnum.DATE) {
+							cfi.setDateValue(cf.getDateValue());
+						} else if (cf.getFieldType() == CustomFieldTypeEnum.DOUBLE) {
+							cfi.setDoubleValue(cf.getDoubleValue());
+						} else if (cf.getFieldType() == CustomFieldTypeEnum.LONG) {
+							cfi.setLongValue(cf.getLongValue());
+						} else if (cf.getFieldType() == CustomFieldTypeEnum.STRING
+								|| cf.getFieldType() == CustomFieldTypeEnum.LIST) {
+							cfi.setStringValue(cf.getStringValue());
+						}
+					} else {
+						// create
+						cfi = new CustomFieldInstance();
+						cfi.setCode(cf.getCode());
+						IEntity entity = getEntity();
+						if (entity instanceof AccountEntity) {
+							cfi.setAccount((AccountEntity) getEntity());
+						} else if (entity instanceof Subscription) {
+							cfi.setSubscription((Subscription) entity);
+						} else if (entity instanceof Access) {
+							cfi.setAccess((Access) entity);
+						}
+
+						if (cf.getFieldType() == CustomFieldTypeEnum.DATE) {
+							cfi.setDateValue(cf.getDateValue());
+						} else if (cf.getFieldType() == CustomFieldTypeEnum.DOUBLE) {
+							cfi.setDoubleValue(cf.getDoubleValue());
+						} else if (cf.getFieldType() == CustomFieldTypeEnum.LONG) {
+							cfi.setLongValue(cf.getLongValue());
+						} else if (cf.getFieldType() == CustomFieldTypeEnum.STRING
+								|| cf.getFieldType() == CustomFieldTypeEnum.LIST) {
+							cfi.setStringValue(cf.getStringValue());
+						}
+
+						customFieldInstances.add(cfi);
+					}
+				} else {
+					// create
+					CustomFieldInstance cfi = new CustomFieldInstance();
+					cfi.setCode(cf.getCode());
+					IEntity entity = getEntity();
+					if (entity instanceof AccountEntity) {
+						cfi.setAccount((AccountEntity) getEntity());
+					} else if (entity instanceof Subscription) {
+						cfi.setSubscription((Subscription) entity);
+					} else if (entity instanceof Access) {
+						cfi.setAccess((Access) entity);
+					}
+
+					if (cf.getFieldType() == CustomFieldTypeEnum.DATE) {
+						cfi.setDateValue(cf.getDateValue());
+					} else if (cf.getFieldType() == CustomFieldTypeEnum.DOUBLE) {
+						cfi.setDoubleValue(cf.getDoubleValue());
+					} else if (cf.getFieldType() == CustomFieldTypeEnum.LONG) {
+						cfi.setLongValue(cf.getLongValue());
+					} else if (cf.getFieldType() == CustomFieldTypeEnum.STRING
+							|| cf.getFieldType() == CustomFieldTypeEnum.LIST) {
+						cfi.setStringValue(cf.getStringValue());
+					}
+
+					customFieldInstances.add(cfi);
+				}
+			}
+		}
+	}
+
+	protected void setAndSaveCustomFields() {
 		if (customFieldTemplates != null && customFieldTemplates.size() > 0) {
 			for (CustomFieldTemplate cf : customFieldTemplates) {
 				CustomFieldInstance cfi = customFieldInstanceService.findByCodeAndAccount(cf.getCode(), getEntity());
@@ -963,6 +1037,14 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 
 					customFieldInstanceService.create(cfi, getCurrentUser(), getCurrentProvider());
 				}
+			}
+		}
+	}
+
+	protected void saveCustomFields() {
+		if (customFieldInstances != null && customFieldInstances.size() > 0) {
+			for (CustomFieldInstance cfi : customFieldInstances) {
+				customFieldInstanceService.create(cfi, getCurrentUser());
 			}
 		}
 	}
@@ -1009,5 +1091,13 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 	 */
 	protected Locale getCurrentLocale() {
 		return FacesContext.getCurrentInstance().getViewRoot().getLocale();
+	}
+
+	public List<CustomFieldInstance> getCustomFieldInstances() {
+		return customFieldInstances;
+	}
+
+	public void setCustomFieldInstances(List<CustomFieldInstance> customFieldInstances) {
+		this.customFieldInstances = customFieldInstances;
 	}
 }

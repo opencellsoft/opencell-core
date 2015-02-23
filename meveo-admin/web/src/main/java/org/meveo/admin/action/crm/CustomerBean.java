@@ -83,7 +83,7 @@ public class CustomerBean extends AccountBean<Customer> {
 			throws BusinessException {
 		super.saveOrUpdate(killConversation);
 
-		saveCustomFields();
+		setAndSaveCustomFields();
 
 		return "/pages/crm/customers/customerDetail.xhtml?edit=false&customerId="
 				+ entity.getId() + "&faces-redirect=true";

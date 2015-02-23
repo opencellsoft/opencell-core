@@ -283,7 +283,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 	}
 
 	public void create(E e, User creator, Provider provider) {
-		log.debug("start of create {} entity ..", e.getClass().getSimpleName());
+		log.debug("start of create {} entity={}", e.getClass().getSimpleName(), e);
 
 		if (e instanceof AuditableEntity) {
 			if (creator != null) {

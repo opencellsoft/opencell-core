@@ -235,7 +235,7 @@ public class SubscriptionBean extends BaseBean<Subscription> {
 
 		super.saveOrUpdate(killConversation);
 
-		saveCustomFields();
+		setAndSaveCustomFields();
 
 		return "/pages/billing/subscriptions/subscriptionDetail?edit=false&subscriptionId=" + entity.getId()
 				+ "&faces-redirect=true&includeViewParams=true";
@@ -255,7 +255,7 @@ public class SubscriptionBean extends BaseBean<Subscription> {
 			messages.info(new BundleKey("messages", "update.successful"));
 		}
 
-		saveCustomFields();
+		setAndSaveCustomFields();
 
 		return back();
 	}

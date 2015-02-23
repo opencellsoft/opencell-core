@@ -36,7 +36,6 @@ public class CustomFieldInstance extends BusinessEntity {
 	@JoinColumn(name = "ACCESS_ID")
 	private Access access;
 
-
 	@Column(name = "STRING_VALUE")
 	private String stringValue;
 
@@ -121,6 +120,13 @@ public class CustomFieldInstance extends BusinessEntity {
 		}
 
 		return result;
+	}
+
+	@Override
+	public String toString() {
+		return "CustomFieldInstance [account=" + account + ", subscription=" + subscription + ", access=" + access
+				+ ", stringValue=" + stringValue + ", dateValue=" + dateValue + ", longValue=" + longValue
+				+ ", doubleValue=" + doubleValue + "]";
 	}
 
 }

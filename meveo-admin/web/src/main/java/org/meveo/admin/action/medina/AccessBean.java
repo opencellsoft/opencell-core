@@ -30,6 +30,7 @@ import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.crm.AccountLevelEnum;
+import org.meveo.model.crm.CustomFieldInstance;
 import org.meveo.model.mediation.Access;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
@@ -136,9 +137,15 @@ public class AccessBean extends BaseBean<Access> {
 			}
 		}
 
-		result = super.saveOrUpdate(killConversation);
+		setCustomFields();
+		if (getCustomFieldInstances() != null) {
+			for (CustomFieldInstance cfi : getCustomFieldInstances()) {
+				cfi.updateAudit(getCurrentUser());
+				getEntity().getCustomFields().put(cfi.getCode(), cfi);
+			}
+		}
 
-		saveCustomFields();
+		result = super.saveOrUpdate(killConversation);
 
 		return result;
 	}

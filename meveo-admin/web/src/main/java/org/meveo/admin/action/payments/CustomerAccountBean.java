@@ -146,7 +146,7 @@ public class CustomerAccountBean extends AccountBean<CustomerAccount> {
 			log.debug("isAttached={}", getPersistenceService()
 					.getEntityManager().contains(entity));
 
-			saveCustomFields();
+			setAndSaveCustomFields();
 
 			return "/pages/payments/customerAccounts/customerAccountDetail.xhtml?edit=false&customerAccountId="
 					+ entity.getId()

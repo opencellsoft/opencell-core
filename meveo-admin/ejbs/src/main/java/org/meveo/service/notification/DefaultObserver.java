@@ -140,7 +140,7 @@ public class DefaultObserver {
 	}
 
 	private String executeAction(String expression, Object o) throws BusinessException {
-		log.debug("execute notification action:{}", expression);
+		log.debug("execute notification action: {}", expression);
 		if (StringUtils.isBlank(expression)) {
 			return "";
 		}
