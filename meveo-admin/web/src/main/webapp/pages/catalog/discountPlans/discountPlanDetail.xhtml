@@ -1,9 +1,9 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
-	xmlns:h="http://java.sun.com/jsf/html"
-	xmlns:rich="http://richfaces.org/rich"
-	xmlns:a="http://richfaces.org/a4j" xmlns:hftl="http://hftl.org"
+	xmlns:h="http://java.sun.com/jsf/html" xmlns:hftl="http://hftl.org"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
 	xmlns:hf="http://java.sun.com/jsf/composite/tags"
 	template="/layout/template.xhtml">
 
@@ -13,24 +13,138 @@
 
 	<ui:define name="body">
 
-		<hf:formPanel edit="#{edit}" id="discountFormPanel"
-			formId="formDiscountPlan"
-			label="#{messages['discountPlanMatrix.panel']}"
-			backingBean="#{discountPlanBean}">
-			<hf:formField id="chargeSelectId" required="true"
-				label="#{messages['discountPlanMatrix.eventCode']}" field="code" />
-			<hf:formField label="#{messages['BusinessEntity.description']}"
-				field="description" required="true" useConverter="false"
-				id="description" maxlength="50" />
-			<hf:formField label="#{messages['enableEntity.disabled']}"
-				field="disabled" isMessage="true" />
-			<hf:formField label="#{messages['commons.status']}"
-				field="discountPlanStatusEnum" />
-			<hf:formField label="#{messages['discountPlanMatrix.minDuration']}"
-				field="minDuration" />
-			<hf:formField label="#{messages['discountPlanMatrix.maxDuration']}"
-				field="minDuration" />
-		</hf:formPanel>
+		<p:panel styleClass="form-panel">
+
+			<p:tabView id="tabView">
+
+				<p:tab title="#{messages['commons.information']}">
+					<hf:formPanel edit="#{edit}" id="discountFormPanel"
+						formId="formDiscountPlan"
+						label="#{messages['discountPlanMatrix.panel']}"
+						backingBean="#{discountPlanBean}" columns="2">
+						<hf:formField id="chargeSelectId" required="true"
+							label="#{messages['discountPlanMatrix.eventCode']}" field="code" />
+						<hf:formField label="#{messages['BusinessEntity.description']}"
+							field="description" required="true" useConverter="false"
+							id="description" maxlength="50" />
+						<hf:formField label="#{messages['enableEntity.disabled']}"
+							field="disabled" isMessage="true" />
+						<hf:formField
+							label="#{messages['discountPlanMatrix.minDuration']}"
+							field="minDuration" />
+						<hf:formField
+							label="#{messages['discountPlanMatrix.maxDuration']}"
+							field="minDuration" />
+					</hf:formPanel>
+				</p:tab>
+
+				<p:tab title="#{messages['discountPlanItem.title']}"
+					rendered="#{!discountPlanBean.entity.transient}">
+
+					<p:panel id="discountPlanItemPanel">
+
+						<hftl:dataList id="discountPlanItemsList"
+							label="#{messages['discountPlan.title']}"
+							backingBean="#{discountPlanItemBean}" sortBy="code"
+							dataModel="#{discountPlanBean.entity.discountPlanItems}">
+							<hftl:column label="#{messages['discountPlan.title']}"
+								field="discountPlan" childField="code" />
+							<hftl:column
+								label="#{messages['discountPlanItem.invoiceCategory']}"
+								field="invoiceCategory" childField="code" />
+							<hftl:column
+								label="#{messages['discountPlanItem.invoiceSubCategory']}"
+								field="invoiceSubCategory" childField="code" />
+							<hftl:column label="#{messages['discountPlanItem.percent']}"
+								field="percent" />
+
+							<p:column styleClass="actions-column"
+								rendered="#{discountPlanBean.edit}">
+								<f:facet name="header">
+									<h:outputText value="#{messages['commons.actions']}" />
+								</f:facet>
+
+								<p:tooltip for="editDiscountPlanItemLink"
+									value="#{messages['commons.edit']}" showEffect="slide"
+									hideEffect="slide" />
+								<p:commandButton id="editDiscountPlanItemLink"
+									update=":#{p:component('discountPlanItemFormPanel')}"
+									action="#{discountPlanBean.setDiscountPlanItem(entity)}"
+									icon="ui-icon-document" />
+								<p:tooltip for="deleteDiscountPlanItemLink"
+									value="#{messages['commons.delete']}" showEffect="slide"
+									hideEffect="slide" />
+								<p:commandButton id="deleteDiscountPlanItemLink"
+									action="#{discountPlanBean.deleteDiscountPlan(entity)}"
+									icon="ui-icon-trash" ajax="true"
+									update=":#{p:component('discountPlanItemPanel')}" />
+							</p:column>
+						</hftl:dataList>
+
+						<hf:formPanel edit="#{edit}" id="discountPlanItemFormPanel"
+							formId="formDiscountPlanItem"
+							label="#{messages['discountPlanItem.title']}"
+							backingBean="#{discountPlanBean}" entity="#{discountPlanItem}"
+							showFormButtons="false">
+
+							<div class="alert-box alert-box-notice">
+								#{messages['message.discountPlanItem.info.requiredFields']}</div>
+
+							<hf:formField label="#{messages['BusinessEntity.code']}"
+								field="code" required="true" />
+
+							<hf:formEntityField id="invoiceCategory"
+								label="#{messages['discountPlanItem.invoiceCategory']}"
+								field="invoiceCategory" childField="code" required="false"
+								listBean="#{invoiceCategoryBean}" labelField="description" />
+
+							<hf:formEntityField id="invoiceSubCategory"
+								label="#{messages['discountPlanItem.invoiceSubCategory']}"
+								field="invoiceSubCategory" childField="code" required="false"
+								listBean="#{invoiceSubCategoryBean}" />
+
+							<hf:formField
+								label="#{messages['discountPlanItem.accountingCode']}"
+								field="accountingCode" />
+
+							<hf:formField label="#{messages['discountPlanItem.percent']}"
+								field="percent" required="true" minValue="-100" maxValue="100" />
+
+							<p:panelGrid columns="3">
+
+								<p:commandButton id="saveButton"
+									rendered="#{discountPlanBean.edit}"
+									value="#{messages['action.save']}"
+									action="#{discountPlanBean.saveOrUpdateDiscountPlan()}"
+									icon="ui-icon-check"
+									update=":#{p:component('discountPlanItemPanel')}">
+								</p:commandButton>
+
+								<hf:clearButton id="resetButton"
+									label="#{messages['action.reset']}"
+									edit="#{discountPlanBean.edit}"
+									resetAction="#{discountPlanBean.resetFormEntity()}"
+									includeViewParams="true" />
+
+								<p:button id="backButton" value="#{messages['action.back']}"
+									outcome="#{discountPlanBean.back()}" includeViewParams="true">
+									<c:if
+										test="#{conversation.id != null and not cc.attrs.killConversationOnBack}">
+										<f:param name="cid"
+											value="#{javax.enterprise.context.conversation.id}" />
+									</c:if>
+								</p:button>
+
+							</p:panelGrid>
+
+						</hf:formPanel>
+
+					</p:panel>
+				</p:tab>
+
+			</p:tabView>
+
+		</p:panel>
 
 	</ui:define>
 

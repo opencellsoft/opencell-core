@@ -35,8 +35,7 @@ public class DiscountPlanItemBean extends BaseBean<DiscountPlanItem> {
 	@Override
 	public String saveOrUpdate(boolean killConversation) throws BusinessException {
 		// check for required fields
-		if (getEntity().getOfferTemplate() == null && getEntity().getInvoiceCategory() == null
-				&& getEntity().getInvoiceSubCategory() == null && getEntity().getChargeTemplate() == null) {
+		if (getEntity().getInvoiceCategory() == null && getEntity().getInvoiceSubCategory() == null) {
 			messages.error(new BundleKey("messages", "message.discountPlanItem.error.requiredFields"));
 			return null;
 		}

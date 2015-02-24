@@ -22,7 +22,6 @@
 				field="code" />
 			<hf:searchField label="#{messages['BusinessEntity.description']}"
 				field="description" />
-			<hf:searchField label="#{messages['commons.status']}" field="discountPlanStatusEnum" />
 		</hf:searchPanel>
 
 		<hftl:dataList label="#{messages['discountPlan.title']}"
@@ -30,8 +29,8 @@
 			<hftl:column label="#{messages['BusinessEntity.code']}" field="code" />
 			<hftl:column label="#{messages['BusinessEntity.description']}"
 				field="description" />
-			<hftl:column label="#{messages['commons.status']}"
-				field="discountPlanStatusEnum" />
+			<hftl:column label="#{messages['commons.status']}" field="disabled"
+				isMessage="true" />
 			<hftl:column label="#{messages['discountPlanMatrix.minDuration']}"
 				field="minDuration" />
 			<hftl:column label="#{messages['discountPlanMatrix.maxDuration']}"
