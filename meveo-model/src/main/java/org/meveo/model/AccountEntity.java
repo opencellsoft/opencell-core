@@ -49,7 +49,7 @@ import org.meveo.model.shared.Name;
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "ACCOUNT_ENTITY_SEQ")
 @Inheritance(strategy = InheritanceType.JOINED)
 @EntityListeners({ AccountCodeGenerationListener.class })
-public abstract class AccountEntity extends BusinessEntity {
+public abstract class AccountEntity extends BusinessEntity implements ICustomFieldEntity {
 
 	private static final long serialVersionUID = 1L;
 
@@ -77,7 +77,7 @@ public abstract class AccountEntity extends BusinessEntity {
 	@JoinColumn(name = "PRIMARY_CONTACT")
 	private ProviderContact primaryContact;
 
-	@OneToMany(mappedBy = "account", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@OneToMany(mappedBy = "account", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
 	@MapKeyColumn(name = "code")
 	private Map<String, CustomFieldInstance> customFields = new HashMap<String, CustomFieldInstance>();
 
@@ -155,7 +155,7 @@ public abstract class AccountEntity extends BusinessEntity {
 		this.customFields = customFields;
 	}
 
-	public CustomFieldInstance getCustomFieldInstance(String code) {
+	private CustomFieldInstance getOrCreateCustomFieldInstance(String code) {
 		CustomFieldInstance cfi = null;
 
 		if (customFields.containsKey(code)) {
@@ -187,7 +187,7 @@ public abstract class AccountEntity extends BusinessEntity {
 	}
 
 	public void setStringCustomValue(String code, String value) {
-		getCustomFieldInstance(code).setStringValue(value);
+	    getOrCreateCustomFieldInstance(code).setStringValue(value);
 	}
 
 	public Date getDateCustomValue(String code) {
@@ -200,7 +200,7 @@ public abstract class AccountEntity extends BusinessEntity {
 	}
 
 	public void setDateCustomValue(String code, Date value) {
-		getCustomFieldInstance(code).setDateValue(value);
+	    getOrCreateCustomFieldInstance(code).setDateValue(value);
 	}
 
 	public Long getLongCustomValue(String code) {
@@ -212,7 +212,7 @@ public abstract class AccountEntity extends BusinessEntity {
 	}
 
 	public void setLongCustomValue(String code, Long value) {
-		getCustomFieldInstance(code).setLongValue(value);
+	    getOrCreateCustomFieldInstance(code).setLongValue(value);
 	}
 
 	public Double getDoubleCustomValue(String code) {
@@ -226,7 +226,7 @@ public abstract class AccountEntity extends BusinessEntity {
 	}
 
 	public void setDoubleCustomValue(String code, Double value) {
-		getCustomFieldInstance(code).setDoubleValue(value);
+	    getOrCreateCustomFieldInstance(code).setDoubleValue(value);
 	}
 
 	public String getCustomFieldsAsJson() {

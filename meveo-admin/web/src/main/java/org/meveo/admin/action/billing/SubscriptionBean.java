@@ -30,6 +30,7 @@ import javax.inject.Named;
 
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
+import org.meveo.admin.action.CustomFieldEnabledBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.EntityListDataModelPF;
 import org.meveo.model.billing.InstanceStatusEnum;
@@ -47,7 +48,6 @@ import org.meveo.model.catalog.ServiceChargeTemplateSubscription;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.catalog.WalletTemplate;
 import org.meveo.model.crm.AccountLevelEnum;
-import org.meveo.model.crm.CustomFieldInstance;
 import org.meveo.model.mediation.Access;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
@@ -71,6 +71,7 @@ import org.slf4j.Logger;
  */
 @Named
 @ViewScoped
+@CustomFieldEnabledBean(accountLevel=AccountLevelEnum.SUB)
 public class SubscriptionBean extends BaseBean<Subscription> {
 
 	private static final long serialVersionUID = 1L;
@@ -182,8 +183,6 @@ public class SubscriptionBean extends BaseBean<Subscription> {
 			serviceInstances.addAll(entity.getServiceInstances());
 		}
 
-		initCustomFields(AccountLevelEnum.SUB);
-
 		log.debug("serviceInstances=" + serviceInstances.getSize());
 		log.debug("servicetemplates=" + serviceTemplates.getSize());
 
@@ -231,15 +230,6 @@ public class SubscriptionBean extends BaseBean<Subscription> {
 
 				return null;
 			}
-
-		}
-
-		setCustomFields();
-		if (getCustomFieldInstances() != null) {
-			for (CustomFieldInstance cfi : getCustomFieldInstances()) {
-				cfi.updateAudit(getCurrentUser());
-				getEntity().getCustomFields().put(cfi.getCode(), cfi);
-			}
 		}
 
 		super.saveOrUpdate(killConversation);
@@ -250,13 +240,6 @@ public class SubscriptionBean extends BaseBean<Subscription> {
 
 	@Override
 	protected String saveOrUpdate(Subscription entity) throws BusinessException {
-		setCustomFields();
-		if (getCustomFieldInstances() != null) {
-			for (CustomFieldInstance cfi : getCustomFieldInstances()) {
-				cfi.updateAudit(getCurrentUser());
-				getEntity().getCustomFields().put(cfi.getCode(), cfi);
-			}
-		}
 
 		if (entity.isTransient()) {
 			log.debug("SubscriptionBean save, # of service templates={}", entity.getOffer().getServiceTemplates()

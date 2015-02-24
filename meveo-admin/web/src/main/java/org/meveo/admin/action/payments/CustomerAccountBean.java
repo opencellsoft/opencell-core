@@ -30,10 +30,10 @@ import org.jboss.seam.international.status.builder.BundleKey;
 import org.jboss.solder.servlet.http.RequestParam;
 import org.meveo.admin.action.AccountBean;
 import org.meveo.admin.action.BaseBean;
+import org.meveo.admin.action.CustomFieldEnabledBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.DuplicateDefaultAccountException;
 import org.meveo.model.crm.AccountLevelEnum;
-import org.meveo.model.crm.CustomFieldInstance;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.CustomerAccountStatusEnum;
@@ -51,6 +51,7 @@ import org.omnifaces.cdi.ViewScoped;
  */
 @Named
 @ViewScoped
+@CustomFieldEnabledBean(accountLevel=AccountLevelEnum.CA)
 public class CustomerAccountBean extends AccountBean<CustomerAccount> {
 
 	private static final long serialVersionUID = 1L;
@@ -119,8 +120,6 @@ public class CustomerAccountBean extends AccountBean<CustomerAccount> {
 			selectedTab = getTab();
 		}
 
-		initCustomFields(AccountLevelEnum.CA);
-
 		return entity;
 	}
 
@@ -139,14 +138,6 @@ public class CustomerAccountBean extends AccountBean<CustomerAccount> {
 				if (customerAccountService.isDuplicationExist(entity)) {
 					entity.setDefaultLevel(false);
 					throw new DuplicateDefaultAccountException();
-				}
-			}
-
-			setCustomFields();
-			if (getCustomFieldInstances() != null) {
-				for (CustomFieldInstance cfi : getCustomFieldInstances()) {
-					cfi.updateAudit(getCurrentUser());
-					getEntity().getCustomFields().put(cfi.getCode(), cfi);
 				}
 			}
 
@@ -359,13 +350,4 @@ public class CustomerAccountBean extends AccountBean<CustomerAccount> {
 	protected List<String> getListFieldsToFetch() {
 		return Arrays.asList("provider", "customer");
 	}
-	
-	@Override
-	public void delete() {
-		// delete custom fields
-		deleteCustomFields();
-
-		super.delete();
-	}
-
 }

@@ -34,6 +34,7 @@ import org.jboss.seam.international.status.Messages;
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.AccountBean;
 import org.meveo.admin.action.BaseBean;
+import org.meveo.admin.action.CustomFieldEnabledBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.DuplicateDefaultAccountException;
 import org.meveo.admin.util.ListItemsSelector;
@@ -45,7 +46,6 @@ import org.meveo.model.billing.BillingRun;
 import org.meveo.model.billing.BillingRunStatusEnum;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.crm.AccountLevelEnum;
-import org.meveo.model.crm.CustomFieldInstance;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.shared.Name;
 import org.meveo.service.base.PersistenceService;
@@ -75,6 +75,7 @@ import com.lowagie.text.pdf.PdfStamper;
  */
 @Named
 @ViewScoped
+@CustomFieldEnabledBean(accountLevel=AccountLevelEnum.BA)
 public class BillingAccountBean extends AccountBean<BillingAccount> {
 
 	private static final long serialVersionUID = 1L;
@@ -140,8 +141,6 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
 			}
 		}
 
-		initCustomFields(AccountLevelEnum.BA);
-
 		if (entity.getName() == null) {
 			entity.setName(new Name());
 		}
@@ -189,14 +188,6 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
 
 			if (entity.isTransient()) {
 				billingAccountService.initBillingAccount(entity);
-			}
-
-			setCustomFields();
-			if (getCustomFieldInstances() != null) {
-				for (CustomFieldInstance cfi : getCustomFieldInstances()) {
-					cfi.updateAudit(getCurrentUser());
-					getEntity().getCustomFields().put(cfi.getCode(), cfi);
-				}
 			}
 
 			super.saveOrUpdate(killConversation);
@@ -494,13 +485,4 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
 	protected List<String> getFormFieldsToFetch() {
 		return Arrays.asList("provider", "customerAccount", "customerAccount.billingAccounts", "billingCycle");
 	}
-
-	@Override
-	public void delete() {
-		// delete custom fields
-		deleteCustomFields();
-
-		super.delete();
-	}
-
 }
