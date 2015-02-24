@@ -36,6 +36,13 @@ public class DiscountPlanBean extends BaseBean<DiscountPlan> {
 	}
 
 	@Override
+	public DiscountPlan initEntity() {
+		discountPlanItem.setAccountingCode(getCurrentProvider().getDiscountAccountingCode());
+
+		return super.initEntity();
+	}
+
+	@Override
 	protected IPersistenceService<DiscountPlan> getPersistenceService() {
 		return discountPlanService;
 	}
@@ -81,6 +88,7 @@ public class DiscountPlanBean extends BaseBean<DiscountPlan> {
 		}
 
 		discountPlanItem = new DiscountPlanItem();
+		discountPlanItem.setAccountingCode(getCurrentProvider().getDiscountAccountingCode());
 	}
 
 	public void deleteDiscountPlan(DiscountPlanItem discountPlanItem) {
