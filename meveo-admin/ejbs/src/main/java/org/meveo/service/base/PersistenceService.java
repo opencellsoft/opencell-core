@@ -239,7 +239,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 		checkProvider(e);
 		em.remove(e);
 		entityRemovedEventProducer.fire(e);
-		em.flush();
+		//em.flush();
 		log.debug("end of remove {} entity (id={}).", getEntityClass().getSimpleName(), e.getId());
 	}
 

@@ -40,6 +40,7 @@ import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 
 import org.meveo.model.BusinessEntity;
+import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.crm.CustomFieldInstance;
 import org.meveo.model.mediation.Access;
@@ -50,7 +51,7 @@ import org.meveo.model.mediation.Access;
 @Entity
 @Table(name = "BILLING_SUBSCRIPTION", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE", "PROVIDER_ID" }))
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_SUBSCRIPTION_SEQ")
-public class Subscription extends BusinessEntity {
+public class Subscription extends BusinessEntity implements ICustomFieldEntity{
 
 	private static final long serialVersionUID = 1L;
 
@@ -98,7 +99,7 @@ public class Subscription extends BusinessEntity {
 	@Column(name = "DEFAULT_LEVEL")
 	private Boolean defaultLevel = true;
 
-	@OneToMany(mappedBy = "subscription", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@OneToMany(mappedBy = "subscription", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
 	@MapKeyColumn(name = "code")
 	private Map<String, CustomFieldInstance> customFields = new HashMap<String, CustomFieldInstance>();
 

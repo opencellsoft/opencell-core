@@ -8,6 +8,7 @@ import javax.persistence.CollectionTable;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.SequenceGenerator;
@@ -24,13 +25,13 @@ public class CustomFieldTemplate extends BusinessEntity {
 
 	private static final long serialVersionUID = -1403961759495272885L;
 
-	@Column(name = "FIELD_TYPE")
-	@Enumerated
-	private CustomFieldTypeEnum fieldType;
+    @Column(name = "FIELD_TYPE")
+    @Enumerated(EnumType.STRING)
+    private CustomFieldTypeEnum fieldType;
 
-	@Column(name = "ACCOUNT_TYPE")
-	@Enumerated
-	private AccountLevelEnum accountLevel;
+    @Column(name = "ACCOUNT_TYPE")
+    @Enumerated(EnumType.STRING)
+    private AccountLevelEnum accountLevel;
 
 	@Column(name = "VALUE_REQUIRED")
 	private boolean valueRequired;
@@ -111,8 +112,18 @@ public class CustomFieldTemplate extends BusinessEntity {
 		return dateValue;
 	}
 
-	public void setDateValue(Date dateValue) {
-		this.dateValue = dateValue;
-	}
-
+    public void setDateValue(Date dateValue) {
+        this.dateValue = dateValue;
+    }
+    
+    /**
+     * Check if value is set
+     * 
+     * @return True if no value is set
+     */
+    public boolean isValueEmpty() {
+        return (stringValue == null && (fieldType == CustomFieldTypeEnum.STRING || fieldType == CustomFieldTypeEnum.LIST))
+                || (dateValue == null && fieldType == CustomFieldTypeEnum.DATE) || (longValue == null && fieldType == CustomFieldTypeEnum.LONG)
+                || (doubleValue == null && fieldType == CustomFieldTypeEnum.DOUBLE);
+    }
 }

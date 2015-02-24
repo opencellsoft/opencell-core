@@ -27,10 +27,10 @@ import javax.inject.Named;
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.jboss.solder.servlet.http.RequestParam;
 import org.meveo.admin.action.BaseBean;
+import org.meveo.admin.action.CustomFieldEnabledBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.crm.AccountLevelEnum;
-import org.meveo.model.crm.CustomFieldInstance;
 import org.meveo.model.mediation.Access;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
@@ -47,6 +47,7 @@ import org.omnifaces.cdi.ViewScoped;
  */
 @Named
 @ViewScoped
+@CustomFieldEnabledBean(accountLevel=AccountLevelEnum.ACC)
 public class AccessBean extends BaseBean<Access> {
 
 	private static final long serialVersionUID = 1L;
@@ -87,8 +88,6 @@ public class AccessBean extends BaseBean<Access> {
 			entity.setStartDate(subscription.getSubscriptionDate());
 			entity.setSubscription(subscription);
 		}
-
-		initCustomFields(AccountLevelEnum.ACC);
 
 		return entity;
 	}
@@ -137,14 +136,6 @@ public class AccessBean extends BaseBean<Access> {
 			}
 		}
 
-		setCustomFields();
-		if (getCustomFieldInstances() != null) {
-			for (CustomFieldInstance cfi : getCustomFieldInstances()) {
-				cfi.updateAudit(getCurrentUser());
-				getEntity().getCustomFields().put(cfi.getCode(), cfi);
-			}
-		}
-
 		return super.saveOrUpdate(killConversation);
 	}
 
@@ -157,7 +148,7 @@ public class AccessBean extends BaseBean<Access> {
 			entity.setSubscription(subscription);
 		}
 
-		initCustomFields(AccountLevelEnum.ACC);
+		initCustomFields();
 	}
 
 	@Override
@@ -169,13 +160,4 @@ public class AccessBean extends BaseBean<Access> {
 	protected List<String> getFormFieldsToFetch() {
 		return Arrays.asList("provider");
 	}
-
-	@Override
-	public void delete() {
-		// delete custom fields
-		deleteCustomFields();
-
-		super.delete();
-	}
-
 }
