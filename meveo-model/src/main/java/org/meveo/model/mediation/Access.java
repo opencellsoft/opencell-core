@@ -200,4 +200,62 @@ public class Access extends EnableEntity {
 
 		return result;
 	}
+	
+	
+	public String getInheritedCustomStringValue(String code){
+		String stringValue=null;
+		if (getCustomFields().containsKey(code)&& getCustomFields().get(code).getStringValue()!=null) {
+			stringValue=getCustomFields().get(code).getStringValue();
+		}else{
+			stringValue=subscription.getInheritedCustomStringValue(code);
+		}
+		return stringValue;
+		}
+	
+	public Long getInheritedCustomLongValue(String code){
+		Long result=null; 
+		if (getCustomFields().containsKey(code)&& getCustomFields().get(code).getLongValue()!=null) {
+			result=getCustomFields().get(code).getLongValue();
+		}else{
+			result=subscription.getInheritedCustomLongValue(code);
+		}
+		return result;
+		}
+	
+	public Date getInheritedCustomDateValue(String code){
+		Date result=null; 
+		if (getCustomFields().containsKey(code)&& getCustomFields().get(code).getDateValue()!=null) {
+			result=getCustomFields().get(code).getDateValue();
+		}else{
+			result=subscription.getInheritedCustomDateValue(code);
+		}
+		return result;
+		}
+	
+
+	public Double getInheritedCustomDoubleValue(String code){
+		Double result=null; 
+		if (getCustomFields().containsKey(code)&& getCustomFields().get(code).getDoubleValue()!=null) {
+			result=getCustomFields().get(code).getDoubleValue();
+		}else{
+			result=subscription.getInheritedCustomDoubleValue(code);
+		}
+		return result;
+		}
+	
+	public String getICsvStringValue(String code){
+		return getInheritedCustomStringValue(code);
+	}
+	
+	public Long getICsvLongValue(String code){
+		return getInheritedCustomLongValue(code);
+	}
+	
+	public Date getICsvDateValue(String code){
+		return getInheritedCustomDateValue(code);
+	}
+	
+	public Double getICsvDoubleValue(String code){
+		return getInheritedCustomDoubleValue(code);
+	}
 }
