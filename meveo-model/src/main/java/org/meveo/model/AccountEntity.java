@@ -38,9 +38,15 @@ import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.Size;
 
+import org.meveo.model.billing.BillingAccount;
+import org.meveo.model.billing.Subscription;
+import org.meveo.model.billing.UserAccount;
 import org.meveo.model.crm.CustomFieldInstance;
+import org.meveo.model.crm.Customer;
 import org.meveo.model.crm.ProviderContact;
 import org.meveo.model.listeners.AccountCodeGenerationListener;
+import org.meveo.model.mediation.Access;
+import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.shared.Address;
 import org.meveo.model.shared.Name;
 
@@ -66,7 +72,7 @@ public abstract class AccountEntity extends BusinessEntity implements ICustomFie
 
 	@Embedded
 	private Address address = new Address();
-
+	
 	@Column(name = "DEFAULT_LEVEL")
 	private Boolean defaultLevel = true;
 
@@ -240,4 +246,86 @@ public abstract class AccountEntity extends BusinessEntity implements ICustomFie
 
 		return result;
 	}
+	
+	public String getInheritedCustomStringValue(String code){
+		String result=null;
+		if (getCustomFields().containsKey(code)&& getCustomFields().get(code).getLongValue()!=null) {
+			result=getCustomFields().get(code).getStringValue();
+		}else{
+			if(this instanceof CustomerAccount){
+				result= ((CustomerAccount)this).getCustomer().getInheritedCustomStringValue(code); 
+			}else  if(this instanceof BillingAccount){
+				result= ((BillingAccount)this).getCustomerAccount().getInheritedCustomStringValue(code); 
+			}else  if(this instanceof UserAccount){
+				result= ((UserAccount)this).getBillingAccount().getInheritedCustomStringValue(code); 
+			}}
+		return result;
+	  }
+	
+	public Long getInheritedCustomLongValue(String code){
+		Long result=null;
+		if (getCustomFields().containsKey(code)&& getCustomFields().get(code).getLongValue()!=null) {
+			result=getCustomFields().get(code).getLongValue();
+		}else{
+			if(this instanceof CustomerAccount){
+				result= ((CustomerAccount)this).getCustomer().getInheritedCustomLongValue(code); 
+			}else  if(this instanceof BillingAccount){
+				result= ((BillingAccount)this).getCustomerAccount().getInheritedCustomLongValue(code); 
+			}else  if(this instanceof UserAccount){
+				result= ((UserAccount)this).getBillingAccount().getInheritedCustomLongValue(code); 
+			}}
+		return result;
+	  }
+	
+	public Date getInheritedCustomDateValue(String code){
+		Date result=null;
+		if (getCustomFields().containsKey(code)&& getCustomFields().get(code).getDateValue()!=null) {
+			result=getCustomFields().get(code).getDateValue();
+		}else{
+			if(this instanceof CustomerAccount){
+				result= ((CustomerAccount)this).getCustomer().getInheritedCustomDateValue(code); 
+			}else  if(this instanceof BillingAccount){
+				result= ((BillingAccount)this).getCustomerAccount().getInheritedCustomDateValue(code); 
+			}else  if(this instanceof UserAccount){
+				result= ((UserAccount)this).getBillingAccount().getInheritedCustomDateValue(code); 
+			}}
+		return result;
+	  }
+	
+	public Double getInheritedCustomDoubleValue(String code){
+		Double result=null;
+		if (getCustomFields().containsKey(code)&& getCustomFields().get(code).getDateValue()!=null) {
+			result=getCustomFields().get(code).getDoubleValue();
+		}else{
+			if(this instanceof CustomerAccount){
+				result= ((CustomerAccount)this).getCustomer().getInheritedCustomDoubleValue(code); 
+			}else  if(this instanceof BillingAccount){
+				result= ((BillingAccount)this).getCustomerAccount().getInheritedCustomDoubleValue(code); 
+			}else  if(this instanceof UserAccount){
+				result= ((UserAccount)this).getBillingAccount().getInheritedCustomDoubleValue(code); 
+			}}
+		return result;
+	  }
+
+	
+	public String getICsvStringValue(String code){
+		return getInheritedCustomStringValue(code);
+	}
+	
+	public Long getICsvLongValue(String code){
+		return getInheritedCustomLongValue(code);
+	}
+	
+	public Date getICsvDateValue(String code){
+		return getInheritedCustomDateValue(code);
+	}
+	
+	public Double getICsvDoubleValue(String code){
+		return getInheritedCustomDoubleValue(code);
+	}
+	
+	
+	
 }
+	
+	
