@@ -336,6 +336,7 @@
 										<f:param name="cid"
 											value="#{javax.enterprise.context.conversation.id}" />
 									</p:button>
+									
 								</p:panelGrid>
 							</h:form>
 
@@ -396,14 +397,18 @@
 									field="unMatchingAmount" converterParam="4digits" />
 
 								<hftl:column
+									label="#{messages['accountOperation.excludedFromDunning']}"
+									field="excludedFromDunning" isMessage="true" />
+									
+								<hftl:column
 									label="#{messages['accountOperation.matchingStatus']}"
-									field="matchingStatus" childField="label" isMessage="true" />
+									field="matchingStatus" childField="label" isMessage="true" />	
 
 								<hftl:actionsColumn
 									editView="#{accountOperationBean.displayOperation(entity.getId())}" />
 
 								<ui:define name="add-on-buttons">
-									<p:panelGrid columns="2" styleClass="form-panel-actions">
+									<p:panelGrid columns="4" styleClass="form-panel-actions">
 										<p:commandButton
 											action="#{accountOperationBean.matching(customerAccountBean.entity.id)}"
 											value="#{messages['customerAccount.buttonLettrage']}"
@@ -412,6 +417,17 @@
 											action="#{accountOperationBean.consultMatching(customerAccountBean.entity.id)}"
 											value="#{messages['customerAccount.buttonConsultMatching']}"
 											rendered="#{customerAccountBean.isActiveAccount()}" />
+										
+										<p:commandButton
+											action="#{accountOperationBean.excludedFromDunning(customerAccountBean.entity.id,true)}"
+											value="#{messages['customerAccount.excludeFromDunning']}"
+											rendered="#{customerAccountBean.isActiveAccount()}" />
+											
+										<p:commandButton
+											action="#{accountOperationBean.excludedFromDunning(customerAccountBean.entity.id,false)}"
+											value="#{messages['customerAccount.includeToDunning']}"
+											rendered="#{customerAccountBean.isActiveAccount()}"/>	
+											
 									</p:panelGrid>
 								</ui:define>
 							</hftl:dataList>
