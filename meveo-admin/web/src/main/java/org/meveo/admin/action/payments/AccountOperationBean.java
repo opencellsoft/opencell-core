@@ -236,7 +236,7 @@ public class AccountOperationBean extends BaseBean<AccountOperation> {
 			boolean result=true;
 			for (IEntity operation : getSelectedEntities()) { 
 				AccountOperation accountOperation=(AccountOperation )operation;
-				if (accountOperation.getMatchingStatus()==MatchingStatusEnum.I) {
+				if ("I".equalsIgnoreCase(accountOperation.getType())) {
 					accountOperation.setExcludedFromDunning(exclude);
 					accountOperationService.update(accountOperation);
 				}else{
