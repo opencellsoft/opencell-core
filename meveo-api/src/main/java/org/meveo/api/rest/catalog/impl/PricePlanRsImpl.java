@@ -30,8 +30,7 @@ public class PricePlanRsImpl extends BaseRs implements PricePlanRs {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 		try {
-			result.setMessage(String.valueOf(pricePlanApi.create(postData,
-					getCurrentUser())));
+			pricePlanApi.create(postData, getCurrentUser());
 		} catch (MeveoApiException e) {
 			result.setErrorCode(e.getErrorCode());
 			result.setStatus(ActionStatusEnum.FAIL);
@@ -65,18 +64,17 @@ public class PricePlanRsImpl extends BaseRs implements PricePlanRs {
 	}
 
 	@Override
-	public GetPricePlanResponse find(Long id) {
+	public GetPricePlanResponse find(String pricePlanCode) {
 		GetPricePlanResponse result = new GetPricePlanResponse();
 
 		try {
-			result.setPricePlan(pricePlanApi.find(id));
+			result.setPricePlan(pricePlanApi.find(pricePlanCode, getCurrentUser().getProvider()));
 		} catch (MeveoApiException e) {
 			result.getActionStatus().setErrorCode(e.getErrorCode());
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
 			result.getActionStatus().setMessage(e.getMessage());
 		} catch (Exception e) {
-			result.getActionStatus().setErrorCode(
-					MeveoApiErrorCode.GENERIC_API_EXCEPTION);
+			result.getActionStatus().setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
 			result.getActionStatus().setMessage(e.getMessage());
 		}
@@ -85,11 +83,11 @@ public class PricePlanRsImpl extends BaseRs implements PricePlanRs {
 	}
 
 	@Override
-	public ActionStatus remove(Long id) {
+	public ActionStatus remove(String pricePlanCode) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 		try {
-			pricePlanApi.remove(id);
+			pricePlanApi.remove(pricePlanCode, getCurrentUser().getProvider());
 		} catch (MeveoApiException e) {
 			result.setErrorCode(e.getErrorCode());
 			result.setStatus(ActionStatusEnum.FAIL);

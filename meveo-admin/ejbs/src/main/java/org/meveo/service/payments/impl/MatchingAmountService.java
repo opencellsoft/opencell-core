@@ -20,9 +20,12 @@ import java.math.BigDecimal;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.persistence.NoResultException;
 
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.admin.User;
+import org.meveo.model.crm.Provider;
 import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.MatchingAmount;
 import org.meveo.model.payments.MatchingStatusEnum;
@@ -34,10 +37,8 @@ public class MatchingAmountService extends PersistenceService<MatchingAmount> {
 	@Inject
 	private AccountOperationService accountOperationService;
 
-	public void unmatching(Long idMatchingAmount, User user)
-			throws BusinessException {
-		log.info("start cancelMatchingAmount with id:#0,user:#1",
-				idMatchingAmount, user);
+	public void unmatching(Long idMatchingAmount, User user) throws BusinessException {
+		log.info("start cancelMatchingAmount with id:#0,user:#1", idMatchingAmount, user);
 		if (idMatchingAmount == null)
 			throw new BusinessException("Error when idMatchingAmount is null!");
 		if (user == null || user.getId() == null) {
@@ -52,13 +53,10 @@ public class MatchingAmountService extends PersistenceService<MatchingAmount> {
 		AccountOperation operation = matchingAmount.getAccountOperation();
 		if (operation.getMatchingStatus() != MatchingStatusEnum.P
 				&& operation.getMatchingStatus() != MatchingStatusEnum.L) {
-			throw new BusinessException(
-					"Error:matchingCode containt unMatching operation");
+			throw new BusinessException("Error:matchingCode containt unMatching operation");
 		}
-		operation.setUnMatchingAmount(operation.getUnMatchingAmount().add(
-				matchingAmount.getMatchingAmount()));
-		operation.setMatchingAmount(operation.getMatchingAmount().subtract(
-				matchingAmount.getMatchingAmount()));
+		operation.setUnMatchingAmount(operation.getUnMatchingAmount().add(matchingAmount.getMatchingAmount()));
+		operation.setMatchingAmount(operation.getMatchingAmount().subtract(matchingAmount.getMatchingAmount()));
 		if (BigDecimal.ZERO.compareTo(operation.getMatchingAmount()) == 0) {
 			operation.setMatchingStatus(MatchingStatusEnum.O);
 		} else {
@@ -69,6 +67,17 @@ public class MatchingAmountService extends PersistenceService<MatchingAmount> {
 		log.info("cancel one accountOperation!");
 
 		log.info("successfully end cancelMatching!");
+	}
+
+	public MatchingAmount findByCode(String matchingCode, Provider provider) {
+		QueryBuilder qb = new QueryBuilder(MatchingAmount.class, "m", null, provider);
+		qb.addCriterion("matchingCode", "=", matchingCode, true);
+
+		try {
+			return (MatchingAmount) qb.getQuery(getEntityManager()).getSingleResult();
+		} catch (NoResultException e) {
+			return null;
+		}
 	}
 
 }

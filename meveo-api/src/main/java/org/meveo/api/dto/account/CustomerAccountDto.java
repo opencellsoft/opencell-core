@@ -10,7 +10,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
-import org.meveo.api.dto.AccountOperationDto;
+import org.meveo.api.dto.payment.AccountOperationDto;
 import org.meveo.model.payments.CustomerAccount;
 
 @XmlType(name = "CustomerAccount")

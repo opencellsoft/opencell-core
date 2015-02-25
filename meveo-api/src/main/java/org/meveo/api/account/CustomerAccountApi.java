@@ -9,11 +9,11 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.api.dto.AccountOperationDto;
 import org.meveo.api.dto.CustomFieldDto;
-import org.meveo.api.dto.MatchingAmountDto;
 import org.meveo.api.dto.account.CustomerAccountDto;
 import org.meveo.api.dto.account.CustomerAccountsDto;
+import org.meveo.api.dto.payment.AccountOperationDto;
+import org.meveo.api.dto.payment.MatchingAmountDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;

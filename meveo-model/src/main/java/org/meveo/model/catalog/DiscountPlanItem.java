@@ -37,10 +37,6 @@ public class DiscountPlanItem extends AuditableEntity {
 	private DiscountPlan discountPlan;
 
 	@ManyToOne
-	@JoinColumn(name = "OFFER_TEMPLATE_ID")
-	private OfferTemplate offerTemplate;
-
-	@ManyToOne
 	@JoinColumn(name = "INVOICE_CATEGORY_ID")
 	private InvoiceCategory invoiceCategory;
 
@@ -48,15 +44,14 @@ public class DiscountPlanItem extends AuditableEntity {
 	@JoinColumn(name = "INVOICE_SUB_CATEGORY_ID")
 	private InvoiceSubCategory invoiceSubCategory;
 
-	@ManyToOne
-	@JoinColumn(name = "CHARGE_TEMPLATE_ID")
-	private ChargeTemplate chargeTemplate;
-
 	@Column(name = "DISCOUNT_PERCENT", precision = NB_PRECISION, scale = NB_DECIMALS)
 	@Digits(integer = NB_PRECISION, fraction = NB_DECIMALS)
 	@Min(0)
 	@Max(100)
 	private BigDecimal percent = new BigDecimal(0);
+
+	@Column(name = "ACCOUNTING_CODE", length = 255)
+	private String accountingCode;
 
 	public DiscountPlan getDiscountPlan() {
 		return discountPlan;
@@ -64,14 +59,6 @@ public class DiscountPlanItem extends AuditableEntity {
 
 	public void setDiscountPlan(DiscountPlan discountPlan) {
 		this.discountPlan = discountPlan;
-	}
-
-	public OfferTemplate getOfferTemplate() {
-		return offerTemplate;
-	}
-
-	public void setOfferTemplate(OfferTemplate offerTemplate) {
-		this.offerTemplate = offerTemplate;
 	}
 
 	public InvoiceCategory getInvoiceCategory() {
@@ -88,14 +75,6 @@ public class DiscountPlanItem extends AuditableEntity {
 
 	public void setInvoiceSubCategory(InvoiceSubCategory invoiceSubCategory) {
 		this.invoiceSubCategory = invoiceSubCategory;
-	}
-
-	public ChargeTemplate getChargeTemplate() {
-		return chargeTemplate;
-	}
-
-	public void setChargeTemplate(ChargeTemplate chargeTemplate) {
-		this.chargeTemplate = chargeTemplate;
 	}
 
 	public BigDecimal getPercent() {
@@ -137,6 +116,14 @@ public class DiscountPlanItem extends AuditableEntity {
 		} else if (!code.equals(other.code))
 			return false;
 		return true;
+	}
+
+	public String getAccountingCode() {
+		return accountingCode;
+	}
+
+	public void setAccountingCode(String accountingCode) {
+		this.accountingCode = accountingCode;
 	}
 
 }

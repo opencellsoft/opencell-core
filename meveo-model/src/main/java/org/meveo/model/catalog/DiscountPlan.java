@@ -4,8 +4,6 @@ import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
@@ -32,10 +30,6 @@ public class DiscountPlan extends AuditableEntity {
 	@Size(max = 100)
 	private String description;
 
-	@Enumerated(EnumType.STRING)
-	@Column(name = "STATUS")
-	private DiscountPlanStatusEnum discountPlanStatusEnum;
-
 	@Column(name = "MIN_DURATION")
 	private int minDuration = 0;
 
@@ -51,14 +45,6 @@ public class DiscountPlan extends AuditableEntity {
 
 	public void setDescription(String description) {
 		this.description = description;
-	}
-
-	public DiscountPlanStatusEnum getDiscountPlanStatusEnum() {
-		return discountPlanStatusEnum;
-	}
-
-	public void setDiscountPlanStatusEnum(DiscountPlanStatusEnum discountPlanStatusEnum) {
-		this.discountPlanStatusEnum = discountPlanStatusEnum;
 	}
 
 	public int getMinDuration() {
@@ -95,9 +81,8 @@ public class DiscountPlan extends AuditableEntity {
 
 	@Override
 	public String toString() {
-		return "DiscountPlan [code=" + code + ", description=" + description + ", discountPlanStatusEnum="
-				+ discountPlanStatusEnum + ", minDuration=" + minDuration + ", maxDuration=" + maxDuration
-				+ ", discountPlanItems=" + discountPlanItems + "]";
+		return "DiscountPlan [code=" + code + ", description=" + description + ", minDuration=" + minDuration
+				+ ", maxDuration=" + maxDuration + ", discountPlanItems=" + discountPlanItems + "]";
 	}
 
 	@Override

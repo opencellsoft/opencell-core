@@ -1,4 +1,4 @@
-package org.meveo.api.billing;
+package org.meveo.api.payment;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -10,7 +10,7 @@ import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.BaseApi;
-import org.meveo.api.dto.billing.PaymentDto;
+import org.meveo.api.dto.payment.PaymentDto;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;

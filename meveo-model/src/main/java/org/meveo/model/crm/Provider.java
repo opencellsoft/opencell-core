@@ -166,10 +166,12 @@ public class Provider extends BusinessEntity {
 
 	@Column(name = "DISPLAY_FREE_TX_IN_INVOICE")
 	private boolean displayFreeTransacInInvoice = false;
-	
+
+	@Column(name = "DISCOUNT_ACCOUNTING_CODE", length = 255)
+	private String discountAccountingCode;
 
 	@Column(name = "PREPAID_RESRV_DELAY_MS")
-	private Long prepaidReservationExpirationDelayinMillisec =Long.valueOf(60000);
+	private Long prepaidReservationExpirationDelayinMillisec = Long.valueOf(60000);
 
 	public String getSerializedPaymentMethods() {
 		return serializedPaymentMethods;
@@ -456,11 +458,16 @@ public class Provider extends BusinessEntity {
 		return prepaidReservationExpirationDelayinMillisec;
 	}
 
-	public void setPrepaidReservationExpirationDelayinMillisec(
-			Long prepaidReservationExpirationDelayinMillisec) {
+	public void setPrepaidReservationExpirationDelayinMillisec(Long prepaidReservationExpirationDelayinMillisec) {
 		this.prepaidReservationExpirationDelayinMillisec = prepaidReservationExpirationDelayinMillisec;
 	}
 
-	
+	public String getDiscountAccountingCode() {
+		return discountAccountingCode;
+	}
+
+	public void setDiscountAccountingCode(String discountAccountingCode) {
+		this.discountAccountingCode = discountAccountingCode;
+	}
 
 }
