@@ -37,6 +37,7 @@ import javax.persistence.UniqueConstraint;
 
 import org.meveo.model.Auditable;
 import org.meveo.model.EnableEntity;
+import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.crm.CustomFieldInstance;
 
@@ -47,7 +48,7 @@ import org.meveo.model.crm.CustomFieldInstance;
 @Table(name = "MEDINA_ACCESS", uniqueConstraints = { @UniqueConstraint(columnNames = {
 		"ACCES_USER_ID", "SUBSCRIPTION_ID" }) })
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "MEDINA_ACCESS_SEQ")
-public class Access extends EnableEntity {
+public class Access extends EnableEntity implements ICustomFieldEntity{
 
 	private static final long serialVersionUID = 1L;
 
@@ -67,7 +68,7 @@ public class Access extends EnableEntity {
 	@JoinColumn(name = "SUBSCRIPTION_ID")
 	private Subscription subscription;
 
-	@OneToMany(mappedBy = "access", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@OneToMany(mappedBy = "access", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
 	@MapKeyColumn(name = "code")
 	private Map<String, CustomFieldInstance> customFields = new HashMap<String, CustomFieldInstance>();
 	
@@ -115,8 +116,8 @@ public class Access extends EnableEntity {
 		this.customFields = customFields;
 	}
 
-	public CustomFieldInstance getCustomFieldInstance(String code) {
-		CustomFieldInstance cfi = null;
+    private CustomFieldInstance getOrCreateCustomFieldInstance(String code) {
+        CustomFieldInstance cfi = null;
 
 		if (customFields.containsKey(code)) {
 			cfi = customFields.get(code);
@@ -147,7 +148,7 @@ public class Access extends EnableEntity {
 	}
 
 	public void setStringCustomValue(String code, String value) {
-		getCustomFieldInstance(code).setStringValue(value);
+	    getOrCreateCustomFieldInstance(code).setStringValue(value);
 	}
 
 	public Date getDateCustomValue(String code) {
@@ -160,7 +161,7 @@ public class Access extends EnableEntity {
 	}
 
 	public void setDateCustomValue(String code, Date value) {
-		getCustomFieldInstance(code).setDateValue(value);
+	    getOrCreateCustomFieldInstance(code).setDateValue(value);
 	}
 
 	public Long getLongCustomValue(String code) {
@@ -172,7 +173,7 @@ public class Access extends EnableEntity {
 	}
 
 	public void setLongCustomValue(String code, Long value) {
-		getCustomFieldInstance(code).setLongValue(value);
+	    getOrCreateCustomFieldInstance(code).setLongValue(value);
 	}
 
 	public Double getDoubleCustomValue(String code) {
@@ -186,7 +187,7 @@ public class Access extends EnableEntity {
 	}
 
 	public void setDoubleCustomValue(String code, Double value) {
-		getCustomFieldInstance(code).setDoubleValue(value);
+	    getOrCreateCustomFieldInstance(code).setDoubleValue(value);
 	}
 
 	public String getCustomFieldsAsJson() {

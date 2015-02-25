@@ -227,6 +227,38 @@ public class AccountOperationBean extends BaseBean<AccountOperation> {
 	 *         operation
 	 */
 
+	public String excludedFromDunning(long customerAccountId,Boolean exclude ) {
+		
+		if(getSelectedEntities()==null || getSelectedEntities().isEmpty()){
+			messages.error(new BundleKey("messages","consultMatching.noOperationSelected"));
+		}else{
+			log.info(" excludedFromDunning operationIds " + getSelectedEntities().size());
+			boolean result=true;
+			for (IEntity operation : getSelectedEntities()) { 
+				AccountOperation accountOperation=(AccountOperation )operation;
+				if ("I".equalsIgnoreCase(accountOperation.getType())) {
+					accountOperation.setExcludedFromDunning(exclude);
+					accountOperationService.update(accountOperation);
+				}else{
+					result=false;
+					break;
+					}}
+			if(!result){
+				messages.error(new BundleKey("messages","excludedFromDunning.operationNotLitigation"));
+				}
+			if(exclude){
+			messages.info(new BundleKey("messages","accountOperation.excludFromDunning"));
+			}else{
+			messages.info(new BundleKey("messages","accountOperation.includFromDunning"));
+			}
+			}	
+		
+	      return "/pages/payments/customerAccounts/customerAccountDetail.xhtml?objectId="
+					+ customerAccountId
+					+ "&edit=false&tab=ops&faces-redirect=true"; 
+	      }
+	
+
 	public String consultMatching(long customerAccountId) {
 		List<Long> operationIds = new ArrayList<Long>();
 		log.debug("getChecked():" + getSelectedEntities());

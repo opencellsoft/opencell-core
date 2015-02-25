@@ -130,7 +130,7 @@ public class UpgradeDunningLevel {
 						new Date())) {
 					List<RecordedInvoice> recordedInvoices = recordedInvoiceService
 							.getRecordedInvoices(customerAccount,
-									MatchingStatusEnum.O);
+									MatchingStatusEnum.O,true);
 					if (recordedInvoices != null && !recordedInvoices.isEmpty()) {
 						RecordedInvoice recordedInvoice = recordedInvoices
 								.get(0);

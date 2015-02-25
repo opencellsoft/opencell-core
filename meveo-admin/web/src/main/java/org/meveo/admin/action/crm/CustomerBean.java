@@ -24,10 +24,9 @@ import javax.inject.Named;
 
 import org.meveo.admin.action.AccountBean;
 import org.meveo.admin.action.BaseBean;
+import org.meveo.admin.action.CustomFieldEnabledBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.crm.AccountLevelEnum;
-import org.meveo.model.crm.CustomFieldInstance;
-import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.Customer;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
@@ -42,6 +41,7 @@ import org.omnifaces.cdi.ViewScoped;
  */
 @Named
 @ViewScoped
+@CustomFieldEnabledBean(accountLevel=AccountLevelEnum.CUST)
 public class CustomerBean extends AccountBean<Customer> {
 
 	private static final long serialVersionUID = 1L;
@@ -58,22 +58,6 @@ public class CustomerBean extends AccountBean<Customer> {
 		super(Customer.class);
 	}
 
-	/**
-	 * Factory method for entity to edit. If objectId param set load that entity
-	 * from database, otherwise create new.
-	 * 
-	 * @throws IllegalAccessException
-	 * @throws InstantiationException
-	 */
-	@Override
-	public Customer initEntity() {
-		Customer customer = super.initEntity();
-
-		initCustomFields(AccountLevelEnum.CUST);
-
-		return customer;
-	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -81,13 +65,6 @@ public class CustomerBean extends AccountBean<Customer> {
 	 */
 	@Override
 	public String saveOrUpdate(boolean killConversation) throws BusinessException {
-		setCustomFields();
-		if (getCustomFieldInstances() != null) {
-			for (CustomFieldInstance cfi : getCustomFieldInstances()) {
-				cfi.updateAudit(getCurrentUser());
-				getEntity().getCustomFields().put(cfi.getCode(), cfi);
-			}
-		}
 
 		super.saveOrUpdate(killConversation);
 
@@ -108,14 +85,6 @@ public class CustomerBean extends AccountBean<Customer> {
 		return "code";
 	}
 
-	public List<CustomFieldTemplate> getCustomFieldTemplates() {
-		return customFieldTemplates;
-	}
-
-	public void setCustomFieldTemplates(List<CustomFieldTemplate> customFieldTemplates) {
-		this.customFieldTemplates = customFieldTemplates;
-	}
-
 	@Override
 	protected List<String> getFormFieldsToFetch() {
 		return Arrays.asList("provider");
@@ -125,13 +94,4 @@ public class CustomerBean extends AccountBean<Customer> {
 	protected List<String> getListFieldsToFetch() {
 		return Arrays.asList("provider");
 	}
-
-	@Override
-	public void delete() {
-		// delete custom fields
-		deleteCustomFields();
-
-		super.delete();
-	}
-
 }

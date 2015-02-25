@@ -128,16 +128,17 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
 
 	@SuppressWarnings("unchecked")
 	public List<RecordedInvoice> getRecordedInvoices(
-			CustomerAccount customerAccount, MatchingStatusEnum o) {
+			CustomerAccount customerAccount, MatchingStatusEnum o,boolean dunningExclusion) {
 		List<RecordedInvoice> invoices = new ArrayList<RecordedInvoice>();
 		try {
 			invoices = (List<RecordedInvoice>) getEntityManager()
 					.createQuery(
 							"from "
 									+ RecordedInvoice.class.getSimpleName()
-									+ " where customerAccount.id=:customerAccountId and matchingStatus=:matchingStatus order by dueDate")
+									+ " where customerAccount.id=:customerAccountId and matchingStatus=:matchingStatus and excludedFromDunning=:dunningExclusion order by dueDate")
 					.setParameter("customerAccountId", customerAccount.getId())
 					.setParameter("matchingStatus", MatchingStatusEnum.O)
+					.setParameter("excludedFromDunning",dunningExclusion)
 					.getResultList();
 		} catch (Exception e) {
 

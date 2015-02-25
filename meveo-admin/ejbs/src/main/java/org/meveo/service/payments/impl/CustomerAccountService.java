@@ -91,7 +91,7 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
 	}
 
 	private BigDecimal computeOccAmount(CustomerAccount customerAccount, OperationCategoryEnum operationCategoryEnum,
-			boolean isDue, Date to, MatchingStatusEnum... status) throws Exception {
+			boolean isDue, Date to, boolean dunningExclusion,MatchingStatusEnum... status) throws Exception {
 
 		BigDecimal balance = null;
 		QueryBuilder queryBuilder = new QueryBuilder("select sum(unMatchingAmount) from AccountOperation");
@@ -100,6 +100,9 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
 			queryBuilder.addCriterion("dueDate", "<=", to, false);
 		} else {
 			queryBuilder.addCriterion("transactionDate", "<=", to, false);
+		}
+		if(dunningExclusion){
+			queryBuilder.addBooleanCriterion("excludedFromDunning", false);
 		}
 		queryBuilder.addCriterionEntity("customerAccount", customerAccount);
 		if (status.length == 1) {
@@ -116,7 +119,7 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
 		return balance;
 	}
 
-	private BigDecimal computeBalance(CustomerAccount customerAccount, Date to, boolean isDue,
+	private BigDecimal computeBalance(CustomerAccount customerAccount, Date to, boolean isDue,boolean dunningExclusion,
 			MatchingStatusEnum... status) throws BusinessException {
 		log.info("computeBalance  customerAccount:" + (customerAccount == null ? "null" : customerAccount.getCode())
 				+ " toDate:" + to);
@@ -130,8 +133,8 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
 		}
 		BigDecimal balance = null, balanceDebit = null, balanceCredit = null;
 		try {
-			balanceDebit = computeOccAmount(customerAccount, OperationCategoryEnum.DEBIT, isDue, to, status);
-			balanceCredit = computeOccAmount(customerAccount, OperationCategoryEnum.CREDIT, isDue, to, status);
+			balanceDebit = computeOccAmount(customerAccount, OperationCategoryEnum.DEBIT, isDue, to,dunningExclusion, status);
+			balanceCredit = computeOccAmount(customerAccount, OperationCategoryEnum.CREDIT, isDue, to,dunningExclusion, status);
 			if (balanceDebit == null) {
 				balanceDebit = BigDecimal.ZERO;
 			}
@@ -155,7 +158,7 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
 	public BigDecimal customerAccountBalanceExigible(CustomerAccount customerAccount, Date to) throws BusinessException {
 		log.info("customerAccountBalanceExigible  customerAccount:"
 				+ (customerAccount == null ? "null" : customerAccount.getCode()) + " toDate:" + to);
-		return computeBalance(customerAccount, to, true, MatchingStatusEnum.O, MatchingStatusEnum.P,
+		return computeBalance(customerAccount, to, true,false, MatchingStatusEnum.O, MatchingStatusEnum.P,
 				MatchingStatusEnum.I);
 
 	}
@@ -172,13 +175,13 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
 			throws BusinessException {
 		log.info("customerAccountBalanceExigibleWithoutLitigation  customerAccount:"
 				+ (customerAccount == null ? "null" : customerAccount.getCode()) + " toDate:" + to);
-		return computeBalance(customerAccount, to, true, MatchingStatusEnum.O, MatchingStatusEnum.P);
+		return computeBalance(customerAccount, to, true,true, MatchingStatusEnum.O, MatchingStatusEnum.P);
 	}
 
 	public BigDecimal customerAccountBalanceDue(CustomerAccount customerAccount, Date to) throws BusinessException {
 		log.info("customerAccountBalanceDue  customerAccount:"
 				+ (customerAccount == null ? "null" : customerAccount.getCode()) + " toDate:" + to);
-		return computeBalance(customerAccount, to, false, MatchingStatusEnum.O, MatchingStatusEnum.P,
+		return computeBalance(customerAccount, to, false,false, MatchingStatusEnum.O, MatchingStatusEnum.P,
 				MatchingStatusEnum.I);
 	}
 
@@ -194,7 +197,7 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
 			throws BusinessException {
 		log.info("customerAccountBalanceDueWithoutLitigation  customerAccount:"
 				+ (customerAccount == null ? "null" : customerAccount.getCode()) + " toDate:" + to);
-		return computeBalance(customerAccount, to, false, MatchingStatusEnum.O, MatchingStatusEnum.P);
+		return computeBalance(customerAccount, to, false,false, MatchingStatusEnum.O, MatchingStatusEnum.P);
 	}
 
 	/**
