@@ -1,4 +1,4 @@
-package org.meveo.api.dto;
+package org.meveo.api.dto.payment;
 
 import java.math.BigDecimal;
 
@@ -12,14 +12,7 @@ public class MatchingAmountDto {
 
 	private String matchingCode;
 	private BigDecimal matchingAmount;
-
-	public String getMatchingCode() {
-		return matchingCode;
-	}
-
-	public void setMatchingCode(String matchingCode) {
-		this.matchingCode = matchingCode;
-	}
+	private MatchingCodesDto matchingCodes;
 
 	public BigDecimal getMatchingAmount() {
 		return matchingAmount;
@@ -27,6 +20,22 @@ public class MatchingAmountDto {
 
 	public void setMatchingAmount(BigDecimal matchingAmount) {
 		this.matchingAmount = matchingAmount;
+	}
+
+	public MatchingCodesDto getMatchingCodes() {
+		return matchingCodes;
+	}
+
+	public void setMatchingCodes(MatchingCodesDto matchingCodes) {
+		this.matchingCodes = matchingCodes;
+	}
+
+	public String getMatchingCode() {
+		return matchingCode;
+	}
+
+	public void setMatchingCode(String matchingCode) {
+		this.matchingCode = matchingCode;
 	}
 
 }

@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.meveo.api.dto.billing;
+package org.meveo.api.dto.payment;
 
 import java.math.BigDecimal;
 import java.util.Date;

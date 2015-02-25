@@ -1,4 +1,4 @@
-package org.meveo.api.rest.impl;
+package org.meveo.api.rest.payment.impl;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
@@ -6,13 +6,14 @@ import javax.interceptor.Interceptors;
 import javax.ws.rs.QueryParam;
 
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.api.billing.PaymentApi;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
-import org.meveo.api.dto.billing.PaymentDto;
+import org.meveo.api.dto.payment.PaymentDto;
 import org.meveo.api.dto.response.CustomerPaymentsResponse;
 import org.meveo.api.logging.LoggingInterceptor;
-import org.meveo.api.rest.PaymentRs;
+import org.meveo.api.payment.PaymentApi;
+import org.meveo.api.rest.impl.BaseRs;
+import org.meveo.api.rest.payment.PaymentRs;
 import org.slf4j.Logger;
 
 /**
@@ -30,11 +31,11 @@ public class PaymentRsImpl extends BaseRs implements PaymentRs {
 	private Logger log;
 
 	@Override
-	public ActionStatus create(PaymentDto paymentDto) {
+	public ActionStatus create(PaymentDto postData) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 		try {
-			paymentApi.createPayment(paymentDto, getCurrentUser());
+			paymentApi.createPayment(postData, getCurrentUser());
 		} catch (BusinessException e) {
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
