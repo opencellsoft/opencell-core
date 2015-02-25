@@ -27,6 +27,7 @@ import javax.inject.Named;
 
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
+import org.meveo.admin.exception.BusinessEntityException;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.NoAllOperationUnmatchedException;
 import org.meveo.model.IEntity;
@@ -227,36 +228,34 @@ public class AccountOperationBean extends BaseBean<AccountOperation> {
 	 *         operation
 	 */
 
-	public String excludedFromDunning(long customerAccountId,Boolean exclude ) {
-		
-		if(getSelectedEntities()==null || getSelectedEntities().isEmpty()){
-			messages.error(new BundleKey("messages","consultMatching.noOperationSelected"));
-		}else{
-			log.info(" excludedFromDunning operationIds " + getSelectedEntities().size());
-			boolean result=true;
-			for (IEntity operation : getSelectedEntities()) { 
-				AccountOperation accountOperation=(AccountOperation )operation;
-				if ("I".equalsIgnoreCase(accountOperation.getType())) {
-					accountOperation.setExcludedFromDunning(exclude);
-					accountOperationService.update(accountOperation);
-				}else{
-					result=false;
-					break;
+	public String dunningInclusionExclusion(long customerAccountId, Boolean exclude) {
+		try {
+			if (getSelectedEntities() == null
+					|| getSelectedEntities().isEmpty()) {
+				throw new BusinessEntityException("consultMatching.noOperationSelected");
+			} else {
+				log.info(" excludedFromDunning operationIds "
+						+ getSelectedEntities().size());
+				for (IEntity operation : getSelectedEntities()) {
+					AccountOperation accountOperation = (AccountOperation) operation;
+					if (accountOperation instanceof RecordedInvoice) {
+						accountOperation.setExcludedFromDunning(exclude);
+						accountOperationService.update(accountOperation);
+					} else {
+						throw new BusinessEntityException(
+						"excludedFromDunning.selectOperations.notInvoice");
 					}}
-			if(!result){
-				messages.error(new BundleKey("messages","excludedFromDunning.operationNotLitigation"));
-				}
-			if(exclude){
-			messages.info(new BundleKey("messages","accountOperation.excludFromDunning"));
-			}else{
-			messages.info(new BundleKey("messages","accountOperation.includFromDunning"));
-			}
-			}	
-		
-	      return "/pages/payments/customerAccounts/customerAccountDetail.xhtml?objectId="
-					+ customerAccountId
-					+ "&edit=false&tab=ops&faces-redirect=true"; 
-	      }
+			    }
+			messages.info(new BundleKey("messages",
+					exclude ? "accountOperation.excludFromDunning"
+							: "accountOperation.includFromDunning"));
+		} catch (BusinessEntityException e) {
+			messages.error(new BundleKey("messages", e.getMessage()));
+		}
+
+		return "/pages/payments/customerAccounts/customerAccountDetail.xhtml?objectId="
+				+ customerAccountId + "&edit=false&tab=ops&faces-redirect=true";
+	}
 	
 
 	public String consultMatching(long customerAccountId) {

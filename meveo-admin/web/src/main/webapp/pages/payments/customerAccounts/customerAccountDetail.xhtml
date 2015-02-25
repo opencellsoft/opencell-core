@@ -395,14 +395,14 @@
 								<hftl:column
 									label="#{messages['accountOperation.unMatchingAmount']}"
 									field="unMatchingAmount" converterParam="4digits" />
-
-								<hftl:column
-									label="#{messages['accountOperation.excludedFromDunning']}"
-									field="excludedFromDunning" isMessage="true" />
-									
+	
 								<hftl:column
 									label="#{messages['accountOperation.matchingStatus']}"
 									field="matchingStatus" childField="label" isMessage="true" />	
+									
+									<hftl:column
+									label="#{messages['accountOperation.excludedFromDunning']}"
+									field="excludedFromDunning" isMessage="true" />
 
 								<hftl:actionsColumn
 									editView="#{accountOperationBean.displayOperation(entity.getId())}" />
@@ -419,12 +419,12 @@
 											rendered="#{customerAccountBean.isActiveAccount()}" />
 										
 										<p:commandButton
-											action="#{accountOperationBean.excludedFromDunning(customerAccountBean.entity.id,true)}"
+											action="#{accountOperationBean.dunningInclusionExclusion(customerAccountBean.entity.id,true)}"
 											value="#{messages['customerAccount.excludeFromDunning']}"
 											rendered="#{customerAccountBean.isActiveAccount()}" />
 											
 										<p:commandButton
-											action="#{accountOperationBean.excludedFromDunning(customerAccountBean.entity.id,false)}"
+											action="#{accountOperationBean.dunningInclusionExclusion(customerAccountBean.entity.id,false)}"
 											value="#{messages['customerAccount.includeToDunning']}"
 											rendered="#{customerAccountBean.isActiveAccount()}"/>	
 											
