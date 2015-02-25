@@ -37,6 +37,7 @@ import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.AutomatedPayment;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.MatchingAmount;
+import org.meveo.model.payments.MatchingCode;
 import org.meveo.model.payments.MatchingStatusEnum;
 import org.meveo.model.payments.OtherCreditAndCharge;
 import org.meveo.model.payments.RecordedInvoice;
@@ -228,24 +229,37 @@ public class AccountOperationBean extends BaseBean<AccountOperation> {
 	 *         operation
 	 */
 
+	private void dunningInclusionExclusionPartial(AccountOperation accountOperation,Boolean exclude){
+		for(MatchingAmount  matchingAmount : accountOperation.getMatchingAmounts()){
+			   MatchingCode matchingCode = matchingAmount.getMatchingCode();
+				   for(MatchingAmount  ma : matchingCode.getMatchingAmounts()){
+			           AccountOperation accountop=ma.getAccountOperation();
+			           accountop.setExcludedFromDunning(exclude);
+			           accountOperationService.update(accountop); }   
+			   }
+	}
 	public String dunningInclusionExclusion(long customerAccountId, Boolean exclude) {
 		try {
 			if (getSelectedEntities() == null
 					|| getSelectedEntities().isEmpty()) {
 				throw new BusinessEntityException("consultMatching.noOperationSelected");
-			} else {
+			} 
+			else{
 				log.info(" excludedFromDunning operationIds "
 						+ getSelectedEntities().size());
 				for (IEntity operation : getSelectedEntities()) {
-					AccountOperation accountOperation = (AccountOperation) operation;
-					if (accountOperation instanceof RecordedInvoice) {
-						accountOperation.setExcludedFromDunning(exclude);
-						accountOperationService.update(accountOperation);
-					} else {
-						throw new BusinessEntityException(
-						"excludedFromDunning.selectOperations.notInvoice");
-					}}
-			    }
+					   AccountOperation accountOperation = (AccountOperation) operation;
+					   if (accountOperation instanceof RecordedInvoice) { 
+						 accountOperation.setExcludedFromDunning(exclude);
+					    accountOperationService.update(accountOperation);
+					      }
+					   else {
+						throw new BusinessEntityException("excludedFromDunning.selectOperations.notInvoice");
+						}
+					   if(accountOperation.getMatchingStatus()==MatchingStatusEnum.P){
+						     dunningInclusionExclusionPartial(accountOperation,exclude) ;
+						     }}
+			         }  
 			messages.info(new BundleKey("messages",
 					exclude ? "accountOperation.excludFromDunning"
 							: "accountOperation.includFromDunning"));

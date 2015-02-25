@@ -21,8 +21,11 @@ import java.util.Date;
 import java.util.List;
 
 import javax.ejb.Stateless;
+import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
+import org.meveo.commons.utils.QueryBuilder;
+import org.meveo.model.catalog.WalletTemplate;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.CustomerAccount;
@@ -67,6 +70,18 @@ public class AccountOperationService extends
 		List<AccountOperation> accountOperations = query.getResultList();
 
 		return accountOperations.size() > 0 ? accountOperations.get(0) : null;
+	}
+	
+	
+	public AccountOperation findByReference(String reference,Provider provider) {
+		try {
+			QueryBuilder qb = new QueryBuilder(AccountOperation.class, "a");
+			qb.addCriterion("reference", "=", reference, false);
+			qb.addCriterionEntity("provider", provider);
+			return (AccountOperation) qb.getQuery(getEntityManager()).getSingleResult();
+		} catch (NoResultException ne) {
+			return null;
+		}
 	}
 
 }

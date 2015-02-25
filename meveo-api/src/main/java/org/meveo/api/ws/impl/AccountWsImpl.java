@@ -21,6 +21,7 @@ import org.meveo.api.dto.account.CustomerDto;
 import org.meveo.api.dto.account.CustomerHierarchyDto;
 import org.meveo.api.dto.account.UserAccountDto;
 import org.meveo.api.dto.payment.AccountOperationDto;
+import org.meveo.api.dto.payment.DunningInclusionExclusionDto;
 import org.meveo.api.dto.response.CustomerListResponse;
 import org.meveo.api.dto.response.account.GetAccessResponse;
 import org.meveo.api.dto.response.account.GetBillingAccountResponse;
@@ -632,6 +633,21 @@ public class AccountWsImpl extends BaseWs implements AccountWs {
 			result.setMessage(e.getMessage());
 		}
 
+		return result;
+	}
+	
+	@Override
+	public ActionStatus dunningInclusionExclusion (DunningInclusionExclusionDto dunningDto){
+		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+		try {
+			customerAccountApi.dunningExclusionInclusion(dunningDto,getCurrentUser().getProvider());
+		} catch (MeveoApiException e) {
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
+		} catch (Exception e) {
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
+		}
 		return result;
 	}
 

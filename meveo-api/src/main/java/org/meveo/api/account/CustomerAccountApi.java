@@ -8,11 +8,13 @@ import java.util.Map;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
+import org.meveo.admin.exception.BusinessEntityException;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.CustomFieldDto;
 import org.meveo.api.dto.account.CustomerAccountDto;
 import org.meveo.api.dto.account.CustomerAccountsDto;
 import org.meveo.api.dto.payment.AccountOperationDto;
+import org.meveo.api.dto.payment.DunningInclusionExclusionDto;
 import org.meveo.api.dto.payment.MatchingAmountDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
@@ -29,9 +31,13 @@ import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.CreditCategoryEnum;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.MatchingAmount;
+import org.meveo.model.payments.MatchingCode;
+import org.meveo.model.payments.MatchingStatusEnum;
 import org.meveo.model.payments.PaymentMethodEnum;
+import org.meveo.model.payments.RecordedInvoice;
 import org.meveo.service.admin.impl.TradingCurrencyService;
 import org.meveo.service.crm.impl.CustomerService;
+import org.meveo.service.payments.impl.AccountOperationService;
 import org.meveo.service.payments.impl.CustomerAccountService;
 import org.slf4j.Logger;
 
@@ -46,6 +52,9 @@ public class CustomerAccountApi extends AccountApi {
 
 	@Inject
 	private CustomerService customerService;
+	
+	@Inject
+	private AccountOperationService accountOperationService;
 
 	@Inject
 	private TradingCurrencyService tradingCurrencyService;
@@ -350,5 +359,44 @@ public class CustomerAccountApi extends AccountApi {
 			throw new MissingParameterException(getMissingParametersExceptionMessage());
 		}
 	}
+ 
+	public void dunningExclusionInclusion(
+			DunningInclusionExclusionDto dunningDto,Provider provider) throws MeveoApiException {
+		try {
+			for (String ref : dunningDto.getInvoiceReferences()) {
+				AccountOperation accountOp = accountOperationService
+						.findByReference(ref, provider);
+				if (accountOp == null) {
+					throw new EntityDoesNotExistsException(
+							AccountOperation.class,"no account operation with this reference "+ref);
+				}
+				if (accountOp instanceof RecordedInvoice) {
+					accountOp.setExcludedFromDunning(dunningDto.getExclude());
+					accountOperationService.update(accountOp);
+				} else {
+					throw new BusinessEntityException(accountOp.getReference()
+							+ " is not an invoice account operation");
+				 }
+				if (accountOp.getMatchingStatus() == MatchingStatusEnum.P) {
+					for (MatchingAmount matchingAmount : accountOp
+							.getMatchingAmounts()) {
+						MatchingCode matchingCode = matchingAmount
+								.getMatchingCode();
+						for (MatchingAmount ma : matchingCode
+								.getMatchingAmounts()) {
+							AccountOperation accountoperation = ma
+									.getAccountOperation();
+							accountoperation.setExcludedFromDunning(dunningDto
+									.getExclude());
+							accountOperationService.update(accountoperation);
+						}
+					}
+				}
+			}
+		} catch (EntityDoesNotExistsException | BusinessEntityException e) {
+			throw new MeveoApiException(e.getMessage());
+		}
+	}
+
 
 }

@@ -13,6 +13,7 @@ import javax.ws.rs.core.MediaType;
 
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.account.CustomerAccountDto;
+import org.meveo.api.dto.payment.DunningInclusionExclusionDto;
 import org.meveo.api.dto.response.account.GetCustomerAccountResponse;
 import org.meveo.api.dto.response.account.ListCustomerAccountResponseDto;
 import org.meveo.api.rest.IBaseRs;
@@ -60,5 +61,10 @@ public interface CustomerAccountRs extends IBaseRs {
 	@GET
 	@Path("/list")
 	ListCustomerAccountResponseDto listByCustomer(@QueryParam("customerCode") String customerCode);
+	
+
+	@PUT
+	@Path("/dunningInclusionExclusion")
+	ActionStatus dunningInclusionExclusion(DunningInclusionExclusionDto DunningInclusionExclusionDto);
 
 }

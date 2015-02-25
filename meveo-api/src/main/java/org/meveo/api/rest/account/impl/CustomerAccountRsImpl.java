@@ -10,6 +10,7 @@ import org.meveo.api.account.CustomerAccountApi;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.account.CustomerAccountDto;
+import org.meveo.api.dto.payment.DunningInclusionExclusionDto;
 import org.meveo.api.dto.response.account.GetCustomerAccountResponse;
 import org.meveo.api.dto.response.account.ListCustomerAccountResponseDto;
 import org.meveo.api.exception.MeveoApiException;
@@ -122,5 +123,25 @@ public class CustomerAccountRsImpl extends BaseRs implements CustomerAccountRs {
 
 		return result;
 	}
+
+	@Override
+	public ActionStatus dunningInclusionExclusion(
+			DunningInclusionExclusionDto dunningDto) {
+		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+		try {
+			customerAccountApi.dunningExclusionInclusion(dunningDto, getCurrentUser().getProvider());
+		} catch (MeveoApiException e) {
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
+		} catch (Exception e) {
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
+		}
+		return result;
+	}
+	
+ 
+
+	
 
 }
