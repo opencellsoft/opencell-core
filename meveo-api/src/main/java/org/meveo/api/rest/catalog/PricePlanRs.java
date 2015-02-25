@@ -56,7 +56,7 @@ public interface PricePlanRs extends IBaseRs {
 	 */
 	@Path("/")
 	@GET
-	GetPricePlanResponse find(@QueryParam("id") Long id);
+	GetPricePlanResponse find(@QueryParam("pricePlanCode") String pricePlanCode);
 
 	/**
 	 * Remove price plan with a given id.
@@ -64,8 +64,8 @@ public interface PricePlanRs extends IBaseRs {
 	 * @param id
 	 * @return
 	 */
-	@Path("/{id}")
+	@Path("/{pricePlanCode}")
 	@DELETE
-	ActionStatus remove(@PathParam("id") Long id);
+	ActionStatus remove(@PathParam("pricePlanCode") String pricePlanCode);
 
 }
