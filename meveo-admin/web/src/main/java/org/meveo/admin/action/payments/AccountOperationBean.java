@@ -249,6 +249,7 @@ public class AccountOperationBean extends BaseBean<AccountOperation> {
 						+ getSelectedEntities().size());
 				for (IEntity operation : getSelectedEntities()) {
 					   AccountOperation accountOperation = (AccountOperation) operation;
+					   if(!accountOperation.getExcludedFromDunning().equals(exclude)){
 					   if (accountOperation instanceof RecordedInvoice) { 
 						 accountOperation.setExcludedFromDunning(exclude);
 					    accountOperationService.update(accountOperation);
@@ -259,7 +260,8 @@ public class AccountOperationBean extends BaseBean<AccountOperation> {
 					   if(accountOperation.getMatchingStatus()==MatchingStatusEnum.P){
 						     dunningInclusionExclusionPartial(accountOperation,exclude) ;
 						     }}
-			         }  
+			         }
+			}
 			messages.info(new BundleKey("messages",
 					exclude ? "accountOperation.excludFromDunning"
 							: "accountOperation.includFromDunning"));
@@ -270,6 +272,30 @@ public class AccountOperationBean extends BaseBean<AccountOperation> {
 		return "/pages/payments/customerAccounts/customerAccountDetail.xhtml?objectId="
 				+ customerAccountId + "&edit=false&tab=ops&faces-redirect=true";
 	}
+	
+	public boolean isSelectedOperationIncluded(){
+		boolean included=true;
+		if(getSelectedEntities()!=null){
+			for (IEntity operation : getSelectedEntities()) {
+		     AccountOperation accountOperation = (AccountOperation) operation;
+		     if(accountOperation.getExcludedFromDunning()){
+		    	 included=false;
+		    	 break;
+		    	 }}}
+		return included;
+	  }
+	
+	public boolean isSelectedOperationExcluded(){
+		boolean excluded=true;
+		if(getSelectedEntities()!=null){
+			for (IEntity operation : getSelectedEntities()) {
+		     AccountOperation accountOperation = (AccountOperation) operation;
+		     if(!accountOperation.getExcludedFromDunning()){
+		    	 excluded=false;
+		    	 break;
+		     }}}
+		return excluded;
+	  }
 	
 
 	public String consultMatching(long customerAccountId) {
