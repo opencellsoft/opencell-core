@@ -38,4 +38,10 @@ public class CustomerPaymentsResponse extends BaseResponse {
 		this.balance = balance;
 	}
 
+	@Override
+	public String toString() {
+		return "CustomerPaymentsResponse [customerPaymentDtoList=" + customerPaymentDtoList + ", balance=" + balance
+				+ "]";
+	}
+
 }

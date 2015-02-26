@@ -31,4 +31,9 @@ public class SellersDto implements Serializable {
 		this.seller = seller;
 	}
 
+	@Override
+	public String toString() {
+		return "SellersDto [seller=" + seller + "]";
+	}
+
 }

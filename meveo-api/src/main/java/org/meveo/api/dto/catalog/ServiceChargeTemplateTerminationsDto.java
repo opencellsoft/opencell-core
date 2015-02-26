@@ -30,4 +30,10 @@ public class ServiceChargeTemplateTerminationsDto implements Serializable {
 		this.serviceChargeTemplateTermination = serviceChargeTemplateTermination;
 	}
 
+	@Override
+	public String toString() {
+		return "ServiceChargeTemplateTerminationsDto [serviceChargeTemplateTermination="
+				+ serviceChargeTemplateTermination + "]";
+	}
+
 }

@@ -16,7 +16,7 @@ public abstract class BaseResponse implements Serializable {
 	/**
 	 * The status response of the web service response.
 	 */
-	private ActionStatus actionStatus=new ActionStatus();
+	private ActionStatus actionStatus = new ActionStatus();
 
 	public BaseResponse() {
 		actionStatus = new ActionStatus();
@@ -28,6 +28,11 @@ public abstract class BaseResponse implements Serializable {
 
 	public void setActionStatus(ActionStatus actionStatus) {
 		this.actionStatus = actionStatus;
+	}
+
+	@Override
+	public String toString() {
+		return "BaseResponse [actionStatus=" + actionStatus + "]";
 	}
 
 }

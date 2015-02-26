@@ -28,10 +28,7 @@ public class GetCounterTemplateResponse extends BaseResponse {
 
 	@Override
 	public String toString() {
-		return "GetCounterTemplateResponse [counterTemplate=" + counterTemplate
-				+ ", getActionStatus()=" + getActionStatus() + ", getClass()="
-				+ getClass() + ", hashCode()=" + hashCode() + ", toString()="
-				+ super.toString() + "]";
+		return "GetCounterTemplateResponse [counterTemplate=" + counterTemplate + "]";
 	}
 
 }

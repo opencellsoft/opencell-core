@@ -87,9 +87,8 @@ public class TaxDto extends BaseDto {
 
 	@Override
 	public String toString() {
-		return "TaxDto [code=" + code + ", description=" + description
-				+ ", percent=" + percent + ", accountingCode=" + accountingCode
-				+ ", languageDescriptions=" + languageDescriptions + "]";
+		return "TaxDto [code=" + code + ", description=" + description + ", percent=" + percent + ", accountingCode="
+				+ accountingCode + ", languageDescriptions=" + languageDescriptions + "]";
 	}
 
 }

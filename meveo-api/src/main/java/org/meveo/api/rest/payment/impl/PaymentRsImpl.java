@@ -46,25 +46,24 @@ public class PaymentRsImpl extends BaseRs implements PaymentRs {
 			log.error(e.getMessage());
 		}
 
+		log.debug("RESPONSE={}", result);
 		return result;
 	}
 
 	@Override
-	public CustomerPaymentsResponse list(
-			@QueryParam("customerAccountCode") String customerAccountCode) {
+	public CustomerPaymentsResponse list(@QueryParam("customerAccountCode") String customerAccountCode) {
 		CustomerPaymentsResponse result = new CustomerPaymentsResponse();
 		result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
 
 		try {
-			result.setCustomerPaymentDtoList(paymentApi.getPaymentList(
-					customerAccountCode, getCurrentUser()));
-			result.setBalance(paymentApi.getBalance(customerAccountCode,
-					getCurrentUser()));
+			result.setCustomerPaymentDtoList(paymentApi.getPaymentList(customerAccountCode, getCurrentUser()));
+			result.setBalance(paymentApi.getBalance(customerAccountCode, getCurrentUser()));
 		} catch (Exception e) {
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
 			result.getActionStatus().setMessage(e.getMessage());
 		}
 
+		log.debug("RESPONSE={}", result);
 		return result;
 	}
 

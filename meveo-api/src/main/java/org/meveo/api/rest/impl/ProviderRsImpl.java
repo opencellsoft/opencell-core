@@ -14,6 +14,7 @@ import org.meveo.api.dto.response.GetProviderResponse;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.LoggingInterceptor;
 import org.meveo.api.rest.ProviderRs;
+import org.slf4j.Logger;
 
 /**
  * @author Edward P. Legaspi
@@ -21,6 +22,9 @@ import org.meveo.api.rest.ProviderRs;
 @RequestScoped
 @Interceptors({ LoggingInterceptor.class })
 public class ProviderRsImpl extends BaseRs implements ProviderRs {
+
+	@Inject
+	private Logger log;
 
 	@Inject
 	private ProviderApi providerApi;
@@ -41,12 +45,12 @@ public class ProviderRsImpl extends BaseRs implements ProviderRs {
 			result.setMessage(e.getMessage());
 		}
 
+		log.debug("RESPONSE={}", result);
 		return result;
 	}
 
 	@Override
-	public GetProviderResponse find(
-			@QueryParam("providerCode") String providerCode) {
+	public GetProviderResponse find(@QueryParam("providerCode") String providerCode) {
 		GetProviderResponse result = new GetProviderResponse();
 
 		try {
@@ -56,12 +60,12 @@ public class ProviderRsImpl extends BaseRs implements ProviderRs {
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
 			result.getActionStatus().setMessage(e.getMessage());
 		} catch (Exception e) {
-			result.getActionStatus().setErrorCode(
-					MeveoApiErrorCode.GENERIC_API_EXCEPTION);
+			result.getActionStatus().setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
 			result.getActionStatus().setMessage(e.getMessage());
 		}
 
+		log.debug("RESPONSE={}", result);
 		return result;
 	}
 
@@ -81,6 +85,7 @@ public class ProviderRsImpl extends BaseRs implements ProviderRs {
 			result.setMessage(e.getMessage());
 		}
 
+		log.debug("RESPONSE={}", result);
 		return result;
 	}
 

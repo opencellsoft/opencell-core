@@ -43,6 +43,7 @@ public class AccountOperationRsImpl extends BaseRs implements AccountOperationRs
 			log.error(e.getMessage());
 		}
 
+		log.debug("RESPONSE={}", result);
 		return result;
 	}
 

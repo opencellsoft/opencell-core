@@ -13,6 +13,7 @@ import org.meveo.api.dto.response.GetCalendarResponse;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.LoggingInterceptor;
 import org.meveo.api.rest.CalendarRs;
+import org.slf4j.Logger;
 
 /**
  * @author Edward P. Legaspi
@@ -20,6 +21,9 @@ import org.meveo.api.rest.CalendarRs;
 @RequestScoped
 @Interceptors({ LoggingInterceptor.class })
 public class CalendarRsImpl extends BaseRs implements CalendarRs {
+
+	@Inject
+	private Logger log;
 
 	@Inject
 	private CalendarApi calendarApi;
@@ -40,6 +44,7 @@ public class CalendarRsImpl extends BaseRs implements CalendarRs {
 			result.setMessage(e.getMessage());
 		}
 
+		log.debug("RESPONSE={}", result);
 		return result;
 	}
 
@@ -59,6 +64,7 @@ public class CalendarRsImpl extends BaseRs implements CalendarRs {
 			result.setMessage(e.getMessage());
 		}
 
+		log.debug("RESPONSE={}", result);
 		return result;
 	}
 
@@ -79,6 +85,7 @@ public class CalendarRsImpl extends BaseRs implements CalendarRs {
 			result.getActionStatus().setMessage(e.getMessage());
 		}
 
+		log.debug("RESPONSE={}", result);
 		return result;
 	}
 
@@ -98,6 +105,7 @@ public class CalendarRsImpl extends BaseRs implements CalendarRs {
 			result.setMessage(e.getMessage());
 		}
 
+		log.debug("RESPONSE={}", result);
 		return result;
 	}
 

@@ -31,4 +31,9 @@ public class BillingAccountsDto implements Serializable {
 		this.billingAccount = billingAccount;
 	}
 
+	@Override
+	public String toString() {
+		return "BillingAccountsDto [billingAccount=" + billingAccount + "]";
+	}
+
 }

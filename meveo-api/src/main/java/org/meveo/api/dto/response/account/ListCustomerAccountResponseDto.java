@@ -26,4 +26,9 @@ public class ListCustomerAccountResponseDto extends BaseResponse {
 		this.customerAccounts = customerAccounts;
 	}
 
+	@Override
+	public String toString() {
+		return "ListCustomerAccountResponseDto [customerAccounts=" + customerAccounts + "]";
+	}
+
 }

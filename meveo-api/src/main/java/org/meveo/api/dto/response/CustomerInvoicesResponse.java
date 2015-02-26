@@ -29,4 +29,9 @@ public class CustomerInvoicesResponse extends BaseResponse {
 		CustomerInvoiceDtoList = customerInvoiceDtoList;
 	}
 
+	@Override
+	public String toString() {
+		return "CustomerInvoicesResponse [CustomerInvoiceDtoList=" + CustomerInvoiceDtoList + "]";
+	}
+
 }

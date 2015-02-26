@@ -31,4 +31,9 @@ public class UserAccountsDto implements Serializable {
 		this.userAccount = userAccount;
 	}
 
+	@Override
+	public String toString() {
+		return "UserAccountsDto [userAccount=" + userAccount + "]";
+	}
+
 }

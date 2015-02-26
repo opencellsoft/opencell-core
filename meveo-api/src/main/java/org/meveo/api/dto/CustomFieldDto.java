@@ -78,4 +78,10 @@ public class CustomFieldDto {
 		this.doubleValue = doubleValue;
 	}
 
+	@Override
+	public String toString() {
+		return "CustomFieldDto [code=" + code + ", description=" + description + ", stringValue=" + stringValue
+				+ ", dateValue=" + dateValue + ", longValue=" + longValue + ", doubleValue=" + doubleValue + "]";
+	}
+
 }

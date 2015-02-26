@@ -25,4 +25,9 @@ public class GetCalendarResponse extends BaseResponse {
 		this.calendar = calendar;
 	}
 
+	@Override
+	public String toString() {
+		return "GetCalendarResponse [calendar=" + calendar + "]";
+	}
+
 }

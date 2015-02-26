@@ -14,6 +14,7 @@ import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.LoggingInterceptor;
 import org.meveo.api.rest.catalog.PricePlanRs;
 import org.meveo.api.rest.impl.BaseRs;
+import org.slf4j.Logger;
 
 /**
  * @author Edward P. Legaspi
@@ -21,6 +22,9 @@ import org.meveo.api.rest.impl.BaseRs;
 @RequestScoped
 @Interceptors({ LoggingInterceptor.class })
 public class PricePlanRsImpl extends BaseRs implements PricePlanRs {
+
+	@Inject
+	private Logger log;
 
 	@Inject
 	private PricePlanApi pricePlanApi;
@@ -41,6 +45,7 @@ public class PricePlanRsImpl extends BaseRs implements PricePlanRs {
 			result.setMessage(e.getMessage());
 		}
 
+		log.debug("RESPONSE={}", result);
 		return result;
 	}
 
@@ -60,6 +65,7 @@ public class PricePlanRsImpl extends BaseRs implements PricePlanRs {
 			result.setMessage(e.getMessage());
 		}
 
+		log.debug("RESPONSE={}", result);
 		return result;
 	}
 
@@ -79,6 +85,7 @@ public class PricePlanRsImpl extends BaseRs implements PricePlanRs {
 			result.getActionStatus().setMessage(e.getMessage());
 		}
 
+		log.debug("RESPONSE={}", result);
 		return result;
 	}
 
@@ -98,6 +105,7 @@ public class PricePlanRsImpl extends BaseRs implements PricePlanRs {
 			result.setMessage(e.getMessage());
 		}
 
+		log.debug("RESPONSE={}", result);
 		return result;
 	}
 

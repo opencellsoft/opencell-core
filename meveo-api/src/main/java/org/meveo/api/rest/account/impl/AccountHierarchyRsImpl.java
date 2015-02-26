@@ -14,14 +14,17 @@ import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.LoggingInterceptor;
 import org.meveo.api.rest.account.AccountHierarchyRs;
 import org.meveo.api.rest.impl.BaseRs;
+import org.slf4j.Logger;
 
 /**
  * @author Edward P. Legaspi
  **/
 @RequestScoped
 @Interceptors({ LoggingInterceptor.class })
-public class AccountHierarchyRsImpl extends BaseRs implements
-		AccountHierarchyRs {
+public class AccountHierarchyRsImpl extends BaseRs implements AccountHierarchyRs {
+
+	@Inject
+	private Logger log;
 
 	@Inject
 	private AccountHierarchyApi accountHierarchyApi;
@@ -43,14 +46,14 @@ public class AccountHierarchyRsImpl extends BaseRs implements
 		CustomerListResponse result = new CustomerListResponse();
 
 		try {
-			result.setCustomerDtoList(accountHierarchyApi.find(accountHierarchyDto,
-					getCurrentUser()));
+			result.setCustomerDtoList(accountHierarchyApi.find(accountHierarchyDto, getCurrentUser()));
 		} catch (MeveoApiException e) {
 			result.getActionStatus().setErrorCode(e.getErrorCode());
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
 			result.getActionStatus().setMessage(e.getMessage());
 		}
 
+		log.debug("RESPONSE={}", result);
 		return result;
 	}
 
@@ -68,14 +71,14 @@ public class AccountHierarchyRsImpl extends BaseRs implements
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 		try {
-			accountHierarchyApi.create(accountHierarchyDto,
-					getCurrentUser());
+			accountHierarchyApi.create(accountHierarchyDto, getCurrentUser());
 		} catch (MeveoApiException e) {
 			result.setErrorCode(e.getErrorCode());
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
 		}
 
+		log.debug("RESPONSE={}", result);
 		return result;
 	}
 
@@ -84,14 +87,14 @@ public class AccountHierarchyRsImpl extends BaseRs implements
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 		try {
-			accountHierarchyApi.update(postData,
-					getCurrentUser());
+			accountHierarchyApi.update(postData, getCurrentUser());
 		} catch (MeveoApiException e) {
 			result.setErrorCode(e.getErrorCode());
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
 		}
 
+		log.debug("RESPONSE={}", result);
 		return result;
 	}
 
@@ -100,14 +103,14 @@ public class AccountHierarchyRsImpl extends BaseRs implements
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 		try {
-			accountHierarchyApi.customerHierarchyUpdate(postData,
-					getCurrentUser());
+			accountHierarchyApi.customerHierarchyUpdate(postData, getCurrentUser());
 		} catch (MeveoApiException e) {
 			result.setErrorCode(e.getErrorCode());
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
 		}
 
+		log.debug("RESPONSE={}", result);
 		return result;
 	}
 

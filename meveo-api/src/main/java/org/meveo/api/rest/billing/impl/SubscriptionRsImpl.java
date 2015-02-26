@@ -18,6 +18,7 @@ import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.LoggingInterceptor;
 import org.meveo.api.rest.billing.SubscriptionRs;
 import org.meveo.api.rest.impl.BaseRs;
+import org.slf4j.Logger;
 
 /**
  * @author Edward P. Legaspi
@@ -25,6 +26,9 @@ import org.meveo.api.rest.impl.BaseRs;
 @RequestScoped
 @Interceptors({ LoggingInterceptor.class })
 public class SubscriptionRsImpl extends BaseRs implements SubscriptionRs {
+
+	@Inject
+	private Logger log;
 
 	@Inject
 	private SubscriptionApi subscriptionApi;
@@ -45,6 +49,7 @@ public class SubscriptionRsImpl extends BaseRs implements SubscriptionRs {
 			result.setMessage(e.getMessage());
 		}
 
+		log.debug("RESPONSE={}", result);
 		return result;
 	}
 
@@ -64,6 +69,7 @@ public class SubscriptionRsImpl extends BaseRs implements SubscriptionRs {
 			result.setMessage(e.getMessage());
 		}
 
+		log.debug("RESPONSE={}", result);
 		return result;
 	}
 
@@ -83,6 +89,7 @@ public class SubscriptionRsImpl extends BaseRs implements SubscriptionRs {
 			result.setMessage(e.getMessage());
 		}
 
+		log.debug("RESPONSE={}", result);
 		return result;
 	}
 
@@ -102,6 +109,7 @@ public class SubscriptionRsImpl extends BaseRs implements SubscriptionRs {
 			result.setMessage(e.getMessage());
 		}
 
+		log.debug("RESPONSE={}", result);
 		return result;
 	}
 
@@ -121,6 +129,7 @@ public class SubscriptionRsImpl extends BaseRs implements SubscriptionRs {
 			result.setMessage(e.getMessage());
 		}
 
+		log.debug("RESPONSE={}", result);
 		return result;
 	}
 
@@ -140,6 +149,7 @@ public class SubscriptionRsImpl extends BaseRs implements SubscriptionRs {
 			result.setMessage(e.getMessage());
 		}
 
+		log.debug("RESPONSE={}", result);
 		return result;
 	}
 
@@ -148,8 +158,7 @@ public class SubscriptionRsImpl extends BaseRs implements SubscriptionRs {
 		ListSubscriptionResponseDto result = new ListSubscriptionResponseDto();
 
 		try {
-			result.setSubscriptions(subscriptionApi
-					.listByUserAccount(userAccountCode, getCurrentUser().getProvider()));
+			result.setSubscriptions(subscriptionApi.listByUserAccount(userAccountCode, getCurrentUser().getProvider()));
 		} catch (MeveoApiException e) {
 			result.getActionStatus().setErrorCode(e.getErrorCode());
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
@@ -160,6 +169,7 @@ public class SubscriptionRsImpl extends BaseRs implements SubscriptionRs {
 			result.getActionStatus().setMessage(e.getMessage());
 		}
 
+		log.debug("RESPONSE={}", result);
 		return result;
 	}
 

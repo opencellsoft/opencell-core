@@ -103,7 +103,7 @@ public class CalendarDto extends BaseDto {
 	@Override
 	public String toString() {
 		return "CalendarDto [name=" + name + ", description=" + description + ", calendarType=" + calendarType
-				+ ", dayInYear=" + days + ", hoursInDay=" + hours + ", periodLength=" + periodLength + ", periodUnit="
+				+ ", days=" + days + ", hours=" + hours + ", periodLength=" + periodLength + ", periodUnit="
 				+ periodUnit + ", nbPeriods=" + nbPeriods + "]";
 	}
 

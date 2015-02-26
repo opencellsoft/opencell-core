@@ -84,6 +84,7 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 			result.setMessage(e.getMessage());
 		}
 
+		log.debug("RESPONSE={}", result);
 		return result;
 	}
 
@@ -103,6 +104,7 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 			result.setMessage(e.getMessage());
 		}
 
+		log.debug("RESPONSE={}", result);
 		return result;
 	}
 
@@ -122,6 +124,7 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 			result.getActionStatus().setMessage(e.getMessage());
 		}
 
+		log.debug("RESPONSE={}", result);
 		return result;
 	}
 
@@ -141,6 +144,7 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 			result.setMessage(e.getMessage());
 		}
 
+		log.debug("RESPONSE={}", result);
 		return result;
 	}
 
@@ -160,6 +164,7 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 			result.setMessage(e.getMessage());
 		}
 
+		log.debug("RESPONSE={}", result);
 		return result;
 	}
 
@@ -179,6 +184,7 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 			result.setMessage(e.getMessage());
 		}
 
+		log.debug("RESPONSE={}", result);
 		return result;
 	}
 
@@ -198,6 +204,7 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 			result.getActionStatus().setMessage(e.getMessage());
 		}
 
+		log.debug("RESPONSE={}", result);
 		return result;
 	}
 
@@ -217,6 +224,7 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 			result.setMessage(e.getMessage());
 		}
 
+		log.debug("RESPONSE={}", result);
 		return result;
 	}
 
@@ -236,6 +244,7 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 			result.setMessage(e.getMessage());
 		}
 
+		log.debug("RESPONSE={}", result);
 		return result;
 	}
 
@@ -255,6 +264,7 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 			result.setMessage(e.getMessage());
 		}
 
+		log.debug("RESPONSE={}", result);
 		return result;
 	}
 
@@ -275,6 +285,7 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 			result.getActionStatus().setMessage(e.getMessage());
 		}
 
+		log.debug("RESPONSE={}", result);
 		return result;
 	}
 
@@ -308,6 +319,7 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 			result.setMessage(e.getMessage());
 		}
 
+		log.debug("RESPONSE={}", result);
 		return result;
 	}
 
@@ -327,6 +339,7 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 			result.setMessage(e.getMessage());
 		}
 
+		log.debug("RESPONSE={}", result);
 		return result;
 	}
 
@@ -346,6 +359,7 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 			result.setMessage(e.getMessage());
 		}
 
+		log.debug("RESPONSE={}", result);
 		return result;
 	}
 
@@ -365,6 +379,7 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 			result.getActionStatus().setMessage(e.getMessage());
 		}
 
+		log.debug("RESPONSE={}", result);
 		return result;
 	}
 
@@ -384,6 +399,7 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 			result.setMessage(e.getMessage());
 		}
 
+		log.debug("RESPONSE={}", result);
 		return result;
 	}
 
@@ -403,6 +419,7 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 			result.setMessage(e.getMessage());
 		}
 
+		log.debug("RESPONSE={}", result);
 		return result;
 	}
 
@@ -423,6 +440,7 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 			result.getActionStatus().setMessage(e.getMessage());
 		}
 
+		log.debug("RESPONSE={}", result);
 		return result;
 	}
 
@@ -442,6 +460,7 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 			result.setMessage(e.getMessage());
 		}
 
+		log.debug("RESPONSE={}", result);
 		return result;
 	}
 
@@ -461,6 +480,7 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 			result.setMessage(e.getMessage());
 		}
 
+		log.debug("RESPONSE={}", result);
 		return result;
 	}
 
@@ -480,6 +500,7 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 			result.setMessage(e.getMessage());
 		}
 
+		log.debug("RESPONSE={}", result);
 		return result;
 	}
 
@@ -499,6 +520,7 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 			result.setMessage(e.getMessage());
 		}
 
+		log.debug("RESPONSE={}", result);
 		return result;
 	}
 
@@ -518,6 +540,7 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 			result.getActionStatus().setMessage(e.getMessage());
 		}
 
+		log.debug("RESPONSE={}", result);
 		return result;
 	}
 
@@ -537,6 +560,7 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 			result.setMessage(e.getMessage());
 		}
 
+		log.debug("RESPONSE={}", result);
 		return result;
 	}
 
@@ -556,6 +580,7 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 			result.setMessage(e.getMessage());
 		}
 
+		log.debug("RESPONSE={}", result);
 		return result;
 	}
 
@@ -575,6 +600,7 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 			result.setMessage(e.getMessage());
 		}
 
+		log.debug("RESPONSE={}", result);
 		return result;
 	}
 
@@ -595,6 +621,7 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 			result.getActionStatus().setMessage(e.getMessage());
 		}
 
+		log.debug("RESPONSE={}", result);
 		return result;
 	}
 
@@ -614,6 +641,7 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 			result.setMessage(e.getMessage());
 		}
 
+		log.debug("RESPONSE={}", result);
 		return result;
 	}
 

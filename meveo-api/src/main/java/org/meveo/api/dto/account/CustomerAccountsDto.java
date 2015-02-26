@@ -28,4 +28,9 @@ public class CustomerAccountsDto {
 		this.customerAccount = customerAccount;
 	}
 
+	@Override
+	public String toString() {
+		return "CustomerAccountsDto [customerAccount=" + customerAccount + "]";
+	}
+
 }

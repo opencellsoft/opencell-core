@@ -26,4 +26,9 @@ public final class ListSubscriptionResponseDto extends BaseResponse {
 		this.subscriptions = subscriptions;
 	}
 
+	@Override
+	public String toString() {
+		return "ListSubscriptionResponseDto [subscriptions=" + subscriptions + "]";
+	}
+
 }

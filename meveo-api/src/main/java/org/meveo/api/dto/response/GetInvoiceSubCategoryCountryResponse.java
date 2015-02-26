@@ -28,7 +28,7 @@ public class GetInvoiceSubCategoryCountryResponse extends BaseResponse {
 
 	@Override
 	public String toString() {
-		return "GetInvoiceSubCategoryCountryResponse [invoiceSubCategoryCountryDto="
-				+ invoiceSubCategoryCountryDto + "]";
+		return "GetInvoiceSubCategoryCountryResponse [invoiceSubCategoryCountryDto=" + invoiceSubCategoryCountryDto
+				+ "]";
 	}
 }

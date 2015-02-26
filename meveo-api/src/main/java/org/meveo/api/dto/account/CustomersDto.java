@@ -31,4 +31,9 @@ public class CustomersDto implements Serializable {
 		this.customer = customer;
 	}
 
+	@Override
+	public String toString() {
+		return "CustomersDto [customer=" + customer + "]";
+	}
+
 }

@@ -31,4 +31,10 @@ public class CdrReservationResponse extends BaseResponse {
 		this.reservationId = reservationId;
 	}
 
+	@Override
+	public String toString() {
+		return "CdrReservationResponse [availableQuantity=" + availableQuantity + ", reservationId=" + reservationId
+				+ "]";
+	}
+
 }

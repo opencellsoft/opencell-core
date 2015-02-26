@@ -52,8 +52,8 @@ public class UserAccountDto extends AccountDto {
 	@Override
 	public String toString() {
 		return "UserAccountDto [billingAccount=" + billingAccount + ", subscriptionDate=" + subscriptionDate
-				+ ", terminationDate=" + terminationDate + ", status=" + status + ", subscriptions=" + subscriptions
-				+ "]";
+				+ ", terminationDate=" + terminationDate + ", status=" + status + ", terminationReason="
+				+ terminationReason + ", subscriptions=" + subscriptions + "]";
 	}
 
 	public String getBillingAccount() {

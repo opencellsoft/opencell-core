@@ -14,14 +14,17 @@ import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.LoggingInterceptor;
 import org.meveo.api.rest.catalog.RecurringChargeTemplateRs;
 import org.meveo.api.rest.impl.BaseRs;
+import org.slf4j.Logger;
 
 /**
  * @author Edward P. Legaspi
  **/
 @RequestScoped
 @Interceptors({ LoggingInterceptor.class })
-public class RecurringChargeTemplateRsImpl extends BaseRs implements
-		RecurringChargeTemplateRs {
+public class RecurringChargeTemplateRsImpl extends BaseRs implements RecurringChargeTemplateRs {
+
+	@Inject
+	private Logger log;
 
 	@Inject
 	private RecurringChargeTemplateApi recurringChargeTemplateApi;
@@ -42,29 +45,28 @@ public class RecurringChargeTemplateRsImpl extends BaseRs implements
 			result.setMessage(e.getMessage());
 		}
 
+		log.debug("RESPONSE={}", result);
 		return result;
 	}
 
 	@Override
-	public GetRecurringChargeTemplateResponse find(
-			String recurringChargeTemplateCode) {
+	public GetRecurringChargeTemplateResponse find(String recurringChargeTemplateCode) {
 		GetRecurringChargeTemplateResponse result = new GetRecurringChargeTemplateResponse();
 
 		try {
-			result.setRecurringChargeTemplate(recurringChargeTemplateApi
-					.find(recurringChargeTemplateCode, getCurrentUser()
-							.getProvider()));
+			result.setRecurringChargeTemplate(recurringChargeTemplateApi.find(recurringChargeTemplateCode,
+					getCurrentUser().getProvider()));
 		} catch (MeveoApiException e) {
 			result.getActionStatus().setErrorCode(e.getErrorCode());
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
 			result.getActionStatus().setMessage(e.getMessage());
 		} catch (Exception e) {
-			result.getActionStatus().setErrorCode(
-					MeveoApiErrorCode.GENERIC_API_EXCEPTION);
+			result.getActionStatus().setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
 			result.getActionStatus().setMessage(e.getMessage());
 		}
 
+		log.debug("RESPONSE={}", result);
 		return result;
 	}
 
@@ -84,6 +86,7 @@ public class RecurringChargeTemplateRsImpl extends BaseRs implements
 			result.setMessage(e.getMessage());
 		}
 
+		log.debug("RESPONSE={}", result);
 		return result;
 	}
 
@@ -92,8 +95,7 @@ public class RecurringChargeTemplateRsImpl extends BaseRs implements
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 		try {
-			recurringChargeTemplateApi.remove(recurringChargeTemplateCode,
-					getCurrentUser().getProvider());
+			recurringChargeTemplateApi.remove(recurringChargeTemplateCode, getCurrentUser().getProvider());
 		} catch (MeveoApiException e) {
 			result.setErrorCode(e.getErrorCode());
 			result.setStatus(ActionStatusEnum.FAIL);
@@ -104,6 +106,7 @@ public class RecurringChargeTemplateRsImpl extends BaseRs implements
 			result.setMessage(e.getMessage());
 		}
 
+		log.debug("RESPONSE={}", result);
 		return result;
 	}
 

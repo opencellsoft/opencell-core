@@ -161,10 +161,11 @@ public class PaymentDto extends BaseDto {
 
 	@Override
 	public String toString() {
-		return "PaymentDto [paymentMethod=" + paymentMethod + ", occTemplateCode=" + occTemplateCode + ", amount="
-				+ amount + ", customerAccountCode=" + customerAccountCode + ", reference=" + reference + ", bankLot="
-				+ bankLot + ", depositDate=" + depositDate + ", bankCollectionDate=" + bankCollectionDate
-				+ ", dueDate=" + dueDate + ", transactionDate=" + transactionDate + ", listOCCReferenceforMatching="
+		return "PaymentDto [type=" + type + ", description=" + description + ", paymentMethod=" + paymentMethod
+				+ ", occTemplateCode=" + occTemplateCode + ", amount=" + amount + ", customerAccountCode="
+				+ customerAccountCode + ", reference=" + reference + ", bankLot=" + bankLot + ", depositDate="
+				+ depositDate + ", bankCollectionDate=" + bankCollectionDate + ", dueDate=" + dueDate
+				+ ", transactionDate=" + transactionDate + ", listOCCReferenceforMatching="
 				+ listOCCReferenceforMatching + ", isToMatching=" + isToMatching + "]";
 	}
 

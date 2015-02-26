@@ -33,4 +33,10 @@ public class ServiceUsageChargeTemplateDto extends BaseServiceChargeTemplateDto 
 		this.counterTemplate = counterTemplate;
 	}
 
+	@Override
+	public String toString() {
+		return "ServiceUsageChargeTemplateDto [counterTemplate=" + counterTemplate + ", getCode()=" + getCode()
+				+ ", getWallets()=" + getWallets() + "]";
+	}
+
 }

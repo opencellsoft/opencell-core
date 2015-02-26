@@ -14,6 +14,7 @@ import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.LoggingInterceptor;
 import org.meveo.api.rest.catalog.ServiceTemplateRs;
 import org.meveo.api.rest.impl.BaseRs;
+import org.slf4j.Logger;
 
 /**
  * @author Edward P. Legaspi
@@ -21,6 +22,9 @@ import org.meveo.api.rest.impl.BaseRs;
 @RequestScoped
 @Interceptors({ LoggingInterceptor.class })
 public class ServiceTemplateRsImpl extends BaseRs implements ServiceTemplateRs {
+
+	@Inject
+	private Logger log;
 
 	@Inject
 	private ServiceTemplateApi serviceTemplateApi;
@@ -41,6 +45,7 @@ public class ServiceTemplateRsImpl extends BaseRs implements ServiceTemplateRs {
 			result.setMessage(e.getMessage());
 		}
 
+		log.debug("RESPONSE={}", result);
 		return result;
 	}
 
@@ -60,6 +65,7 @@ public class ServiceTemplateRsImpl extends BaseRs implements ServiceTemplateRs {
 			result.setMessage(e.getMessage());
 		}
 
+		log.debug("RESPONSE={}", result);
 		return result;
 	}
 
@@ -68,19 +74,18 @@ public class ServiceTemplateRsImpl extends BaseRs implements ServiceTemplateRs {
 		GetServiceTemplateResponse result = new GetServiceTemplateResponse();
 
 		try {
-			result.setServiceTemplate(serviceTemplateApi.find(serviceTemplateCode,
-					getCurrentUser().getProvider()));
+			result.setServiceTemplate(serviceTemplateApi.find(serviceTemplateCode, getCurrentUser().getProvider()));
 		} catch (MeveoApiException e) {
 			result.getActionStatus().setErrorCode(e.getErrorCode());
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
 			result.getActionStatus().setMessage(e.getMessage());
 		} catch (Exception e) {
-			result.getActionStatus().setErrorCode(
-					MeveoApiErrorCode.GENERIC_API_EXCEPTION);
+			result.getActionStatus().setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
 			result.getActionStatus().setMessage(e.getMessage());
 		}
 
+		log.debug("RESPONSE={}", result);
 		return result;
 	}
 
@@ -100,6 +105,7 @@ public class ServiceTemplateRsImpl extends BaseRs implements ServiceTemplateRs {
 			result.setMessage(e.getMessage());
 		}
 
+		log.debug("RESPONSE={}", result);
 		return result;
 	}
 

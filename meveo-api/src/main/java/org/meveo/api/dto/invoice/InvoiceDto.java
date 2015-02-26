@@ -130,9 +130,10 @@ public class InvoiceDto extends BaseDto {
 
 	@Override
 	public String toString() {
-		return "InvoiceDto [invoiceNumber =" + invoiceNumber + "," + ", billingAccountCode=" + billingAccountCode
-				+ ", invoiceDate=" + invoiceDate + ", dueDate=" + dueDate + ", discount=" + discount
-				+ ", amountWithoutTax=" + amountWithoutTax + ", amountTax=" + amountTax + ", amountWithTax="
-				+ amountWithTax + ", subCategoryInvoiceAgregates=" + subCategoryInvoiceAgregates + "]";
+		return "InvoiceDto [billingAccountCode=" + billingAccountCode + ", dueDate=" + dueDate + ", invoiceNumber="
+				+ invoiceNumber + ", invoiceDate=" + invoiceDate + ", discount=" + discount + ", amountWithoutTax="
+				+ amountWithoutTax + ", amountTax=" + amountTax + ", amountWithTax=" + amountWithTax
+				+ ", paymentMathod=" + paymentMathod + ", PDFpresent=" + PDFpresent + ", subCategoryInvoiceAgregates="
+				+ subCategoryInvoiceAgregates + "]";
 	}
 }
