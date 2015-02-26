@@ -57,14 +57,20 @@ public class PricePlanDto implements Serializable {
 
 	public PricePlanDto(PricePlanMatrix e) {
 		eventCode = e.getEventCode();
-		seller = e.getSeller().getCode();
-		country = e.getTradingCountry().getCountryCode();
-		currency = e.getTradingCurrency().getCurrencyCode();
-		minQuantity = e.getMinQuantity();
-		maxQuantity = e.getMaxQuantity();
+		if (e.getSeller() != null) {
+			seller = e.getSeller().getCode();
+		}
+		if (e.getTradingCountry() != null) {
+			country = e.getTradingCountry().getCountryCode();
+		}
+		if (e.getTradingCurrency() != null) {
+			currency = e.getTradingCurrency().getCurrencyCode();
+		}
 		if (e.getOfferTemplate() != null) {
 			offerTemplate = e.getOfferTemplate().getCode();
 		}
+		minQuantity = e.getMinQuantity();
+		maxQuantity = e.getMaxQuantity();
 		startSubscriptionDate = e.getStartRatingDate();
 		endSubscriptionDate = e.getEndSubscriptionDate();
 		startRatingDate = e.getStartRatingDate();
