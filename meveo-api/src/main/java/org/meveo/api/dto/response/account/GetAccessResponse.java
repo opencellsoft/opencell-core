@@ -28,7 +28,7 @@ public class GetAccessResponse extends BaseResponse {
 
 	@Override
 	public String toString() {
-		return "GetAccessResponse [access=" + access + "]";
+		return "GetAccessResponse [access=" + access + ", toString()=" + super.toString() + "]";
 	}
 
 }

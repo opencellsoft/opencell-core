@@ -28,7 +28,7 @@ public class GetOfferTemplateResponse extends BaseResponse {
 
 	@Override
 	public String toString() {
-		return "GetOfferTemplateResponse [offerTemplate=" + offerTemplate + "]";
+		return "GetOfferTemplateResponse [offerTemplate=" + offerTemplate + ", toString()=" + super.toString() + "]";
 	}
 
 }

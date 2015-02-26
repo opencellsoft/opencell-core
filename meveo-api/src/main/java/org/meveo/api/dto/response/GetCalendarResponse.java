@@ -14,7 +14,7 @@ import org.meveo.api.dto.CalendarDto;
 public class GetCalendarResponse extends BaseResponse {
 
 	private static final long serialVersionUID = 2550428385118895687L;
-	
+
 	private CalendarDto calendar;
 
 	public CalendarDto getCalendar() {
@@ -27,7 +27,7 @@ public class GetCalendarResponse extends BaseResponse {
 
 	@Override
 	public String toString() {
-		return "GetCalendarResponse [calendar=" + calendar + "]";
+		return "GetCalendarResponse [calendar=" + calendar + ", toString()=" + super.toString() + "]";
 	}
 
 }

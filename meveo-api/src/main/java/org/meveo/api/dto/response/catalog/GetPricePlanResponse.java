@@ -28,10 +28,7 @@ public class GetPricePlanResponse extends BaseResponse {
 
 	@Override
 	public String toString() {
-		return "GetPricePlanResponse [pricePlan=" + pricePlan
-				+ ", getActionStatus()=" + getActionStatus() + ", getClass()="
-				+ getClass() + ", hashCode()=" + hashCode() + ", toString()="
-				+ super.toString() + "]";
+		return "GetPricePlanResponse [pricePlan=" + pricePlan + ", toString()=" + super.toString() + "]";
 	}
 
 }

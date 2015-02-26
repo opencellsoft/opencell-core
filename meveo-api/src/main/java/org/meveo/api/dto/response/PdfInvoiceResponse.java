@@ -32,7 +32,8 @@ public class PdfInvoiceResponse extends BaseResponse {
 
 	@Override
 	public String toString() {
-		return "PdfInvoiceResponse [pdfInvoice=" + Arrays.toString(pdfInvoice) + "]";
+		return "PdfInvoiceResponse [pdfInvoice=" + Arrays.toString(pdfInvoice) + ", toString()=" + super.toString()
+				+ "]";
 	}
 
 }

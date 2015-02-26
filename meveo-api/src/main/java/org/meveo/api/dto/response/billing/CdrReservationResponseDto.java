@@ -34,7 +34,7 @@ public class CdrReservationResponseDto extends BaseResponse {
 	@Override
 	public String toString() {
 		return "CdrReservationResponseDto [availableQuantity=" + availableQuantity + ", reservationId=" + reservationId
-				+ "]";
+				+ ", toString()=" + super.toString() + "]";
 	}
 
 }

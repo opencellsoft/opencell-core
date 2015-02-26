@@ -27,7 +27,7 @@ public class GetBillingCycleResponse extends BaseResponse {
 
 	@Override
 	public String toString() {
-		return "GetBillingCycleResponse [billingCycle=" + billingCycle + "]";
+		return "GetBillingCycleResponse [billingCycle=" + billingCycle + ", toString()=" + super.toString() + "]";
 	}
 
 }

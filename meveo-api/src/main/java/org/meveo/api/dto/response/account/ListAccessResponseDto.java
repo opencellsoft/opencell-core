@@ -32,7 +32,7 @@ public class ListAccessResponseDto extends BaseResponse {
 
 	@Override
 	public String toString() {
-		return "ListAccessResponseDto [accesses=" + accesses + "]";
+		return "ListAccessResponseDto [accesses=" + accesses + ", toString()=" + super.toString() + "]";
 	}
 
 }

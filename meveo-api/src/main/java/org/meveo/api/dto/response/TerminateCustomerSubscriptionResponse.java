@@ -54,7 +54,8 @@ public class TerminateCustomerSubscriptionResponse extends BaseResponse {
 	@Override
 	public String toString() {
 		return "TerminateCustomerSubscriptionResponse [requestId=" + requestId + ", accepted=" + accepted
-				+ ", subscriptionId=" + subscriptionId + ", status=" + status + "]";
+				+ ", subscriptionId=" + subscriptionId + ", status=" + status + ", toString()=" + super.toString()
+				+ "]";
 	}
 
 }

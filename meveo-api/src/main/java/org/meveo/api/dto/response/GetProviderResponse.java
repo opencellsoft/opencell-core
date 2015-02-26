@@ -32,7 +32,7 @@ public class GetProviderResponse extends BaseResponse {
 
 	@Override
 	public String toString() {
-		return "GetProviderResponse [provider=" + provider + "]";
+		return "GetProviderResponse [provider=" + provider + ", toString()=" + super.toString() + "]";
 	}
 
 }

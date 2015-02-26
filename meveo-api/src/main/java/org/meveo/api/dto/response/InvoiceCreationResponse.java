@@ -30,7 +30,7 @@ public class InvoiceCreationResponse extends BaseResponse {
 
 	@Override
 	public String toString() {
-		return "InvoiceCreationResponse [invoiceNumber=" + invoiceNumber + "]";
+		return "InvoiceCreationResponse [invoiceNumber=" + invoiceNumber + ", toString()=" + super.toString() + "]";
 	}
 
 

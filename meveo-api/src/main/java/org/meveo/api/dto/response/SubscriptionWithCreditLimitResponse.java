@@ -54,7 +54,8 @@ public class SubscriptionWithCreditLimitResponse extends BaseResponse {
 	@Override
 	public String toString() {
 		return "SubscriptionWithCreditLimitResponse [requestId=" + requestId + ", accepted=" + accepted
-				+ ", subscriptionId=" + subscriptionId + ", status=" + status + "]";
+				+ ", subscriptionId=" + subscriptionId + ", status=" + status + ", toString()=" + super.toString()
+				+ "]";
 	}
 
 }

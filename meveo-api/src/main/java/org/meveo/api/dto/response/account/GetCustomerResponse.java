@@ -28,7 +28,7 @@ public class GetCustomerResponse extends BaseResponse {
 
 	@Override
 	public String toString() {
-		return "GetCustomerResponse [customer=" + customer + "]";
+		return "GetCustomerResponse [customer=" + customer + ", toString()=" + super.toString() + "]";
 	}
 
 }
