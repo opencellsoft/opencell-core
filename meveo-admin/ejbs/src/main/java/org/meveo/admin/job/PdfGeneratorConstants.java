@@ -40,7 +40,8 @@ public class PdfGeneratorConstants {
     public static final String INVOICE_NUMBER_KEY = "invoiceNumber";
     public static final String HIGH_OPTICAL_LINE_KEY = "TIPligneHaute";
     public static final String LOW_OPTICAL_LINE_KEY = "TIPligneBasse";
-
+    public static final String BA_CUSTOM_FIELDS = "BAcustomFields";
+    
     public static final String MEDIA_TEMPLATES = "mediaTemplates";
     public static final String MEDIA_CONFIG = "mediaConfig";
 

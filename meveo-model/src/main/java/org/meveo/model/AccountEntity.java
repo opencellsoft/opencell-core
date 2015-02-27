@@ -249,7 +249,7 @@ public abstract class AccountEntity extends BusinessEntity implements ICustomFie
 	
 	public String getInheritedCustomStringValue(String code){
 		String result=null;
-		if (getCustomFields().containsKey(code)&& getCustomFields().get(code).getLongValue()!=null) {
+		if (getCustomFields().containsKey(code)&& getCustomFields().get(code).getStringValue()!=null) {
 			result=getCustomFields().get(code).getStringValue();
 		}else{
 			if(this instanceof CustomerAccount){
@@ -294,7 +294,7 @@ public abstract class AccountEntity extends BusinessEntity implements ICustomFie
 	
 	public Double getInheritedCustomDoubleValue(String code){
 		Double result=null;
-		if (getCustomFields().containsKey(code)&& getCustomFields().get(code).getDateValue()!=null) {
+		if (getCustomFields().containsKey(code)&& getCustomFields().get(code).getDoubleValue()!=null) {
 			result=getCustomFields().get(code).getDoubleValue();
 		}else{
 			if(this instanceof CustomerAccount){

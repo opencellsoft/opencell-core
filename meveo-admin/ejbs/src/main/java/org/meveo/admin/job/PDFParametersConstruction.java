@@ -21,7 +21,10 @@ import java.math.BigDecimal;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.text.NumberFormat;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -29,16 +32,24 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 
 import net.sf.jasperreports.engine.JRParameter;
+import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 
 import org.meveo.commons.utils.ParamBean;
+import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.billing.BankCoordinates;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingCycle;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.TIP;
+import org.meveo.model.crm.AccountLevelEnum;
+import org.meveo.model.crm.CustomFieldInstance;
+import org.meveo.model.crm.CustomFieldTemplate;
+import org.meveo.model.crm.CustomFieldTypeEnum;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.payments.CustomerAccount;
+import org.meveo.model.shared.DateUtils;
 import org.meveo.service.catalog.impl.CatMessagesService;
+import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,6 +60,9 @@ public class PDFParametersConstruction {
 			.getLogger(PDFParametersConstruction.class);
     @Inject
     private CatMessagesService catMessagesService;
+    
+	@Inject
+	protected CustomFieldTemplateService customFieldTemplateService;
     
 	private static final String TIP_PAYMENT_METHOD = "TIP";
 	private static final String PDF_DIR_NAME = "pdf";
@@ -153,12 +167,66 @@ public class PDFParametersConstruction {
 			parameters.put(PdfGeneratorConstants.CUSTOMER_ACCOUNT,
 					billingAccount.getCustomerAccount());
 			parameters.put(PdfGeneratorConstants.INVOICE, invoice);
+			
+			
+			parameters.put(PdfGeneratorConstants.BA_CUSTOM_FIELDS,getBACustomFields(billingAccount) );
 
 			return parameters;
 		} catch (Exception e) {
 			log.error(e.getMessage());
 			return null;
 		}
+	}
+	
+	private List<ReportCustomFieldDto> getBACustomFields(
+			BillingAccount billingAccount) {
+		List<CustomFieldTemplate> customFieldTemplates = customFieldTemplateService
+				.findByAccountLevel(AccountLevelEnum.BA);
+		List<ReportCustomFieldDto> customFields = new ArrayList<ReportCustomFieldDto>();
+		ReportCustomFieldDto customFieldDTO = null;
+		if (customFieldTemplates != null && customFieldTemplates.size() > 0) {
+			for (CustomFieldTemplate cf : customFieldTemplates) {
+
+				CustomFieldInstance cfi = billingAccount.getCustomFields().get(
+						cf.getCode());
+				if (cfi != null) {
+					if (cf.getFieldType() == CustomFieldTypeEnum.DATE) {
+						Date dateField = billingAccount
+								.getInheritedCustomDateValue(cf.getCode());
+						if (dateField != null) {
+							customFieldDTO = new ReportCustomFieldDto(
+									cf.getDescription(),
+									DateUtils.formatDateWithPattern(dateField,
+											"MM-dd-yyyy"));
+						}
+					} else if (cf.getFieldType() == CustomFieldTypeEnum.DOUBLE) {
+						Double doubleField = billingAccount
+								.getInheritedCustomDoubleValue(cf.getCode());
+						if (doubleField != null) {
+							customFieldDTO = new ReportCustomFieldDto(
+									cf.getDescription(),
+									String.valueOf(doubleField));
+						}
+					} else if (cf.getFieldType() == CustomFieldTypeEnum.LONG) {
+						Long longField = billingAccount
+								.getInheritedCustomLongValue(cf.getCode());
+						if (longField != null) {
+							customFieldDTO = new ReportCustomFieldDto(
+									cf.getDescription(),
+									String.valueOf(longField));
+						}
+					} else if (cf.getFieldType() == CustomFieldTypeEnum.STRING
+							|| cf.getFieldType() == CustomFieldTypeEnum.LIST) {
+						String stringField = billingAccount
+								.getInheritedCustomStringValue(cf.getCode());
+						if (!StringUtils.isBlank(stringField)) {
+
+							customFieldDTO = new ReportCustomFieldDto(
+									cf.getDescription(), stringField);
+						}}
+					customFields.add(customFieldDTO);
+				}}}
+		return customFields;
 	}
 
 	public String getCustomerAddress(Invoice invoice) {
