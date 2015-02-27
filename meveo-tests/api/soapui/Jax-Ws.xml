@@ -339,6 +339,15 @@
   <wsdl:import location="http://localhost:8080/meveo/SettingsWs?wsdl=SettingsWs.wsdl" namespace="http://ws.api.meveo.org/"></wsdl:import>
   <wsdl:binding name="SettingsWsSoapBinding" type="ns1:SettingsWs">
     <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <wsdl:operation name="getInvoicingConfiguration">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="getInvoicingConfiguration">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="getInvoicingConfigurationResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
     <wsdl:operation name="removeInvoiceSubCategory">
       <soap:operation soapAction="" style="document"/>
       <wsdl:input name="removeInvoiceSubCategory">
@@ -420,12 +429,12 @@
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
-    <wsdl:operation name="updateBillingCycle">
+    <wsdl:operation name="getCustomerConfiguration">
       <soap:operation soapAction="" style="document"/>
-      <wsdl:input name="updateBillingCycle">
+      <wsdl:input name="getCustomerConfiguration">
         <soap:body use="literal"/>
       </wsdl:input>
-      <wsdl:output name="updateBillingCycleResponse">
+      <wsdl:output name="getCustomerConfigurationResponse">
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
@@ -435,6 +444,15 @@
         <soap:body use="literal"/>
       </wsdl:input>
       <wsdl:output name="findInvoiceSubCategoryCountryResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="updateBillingCycle">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="updateBillingCycle">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="updateBillingCycleResponse">
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
@@ -573,24 +591,6 @@
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
-    <wsdl:operation name="updateInvoiceCategory">
-      <soap:operation soapAction="" style="document"/>
-      <wsdl:input name="updateInvoiceCategory">
-        <soap:body use="literal"/>
-      </wsdl:input>
-      <wsdl:output name="updateInvoiceCategoryResponse">
-        <soap:body use="literal"/>
-      </wsdl:output>
-    </wsdl:operation>
-    <wsdl:operation name="findSeller">
-      <soap:operation soapAction="" style="document"/>
-      <wsdl:input name="findSeller">
-        <soap:body use="literal"/>
-      </wsdl:input>
-      <wsdl:output name="findSellerResponse">
-        <soap:body use="literal"/>
-      </wsdl:output>
-    </wsdl:operation>
     <wsdl:operation name="removeLanguage">
       <soap:operation soapAction="" style="document"/>
       <wsdl:input name="removeLanguage">
@@ -636,6 +636,78 @@
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
+    <wsdl:operation name="removeCalendar">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="removeCalendar">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="removeCalendarResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="findInvoiceCategory">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="findInvoiceCategory">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="findInvoiceCategoryResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="findBillingCycle">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="findBillingCycle">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="findBillingCycleResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="findCurrency">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="findCurrency">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="findCurrencyResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="updateUser">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="updateUser">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="updateUserResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getTradingConfiguration">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="getTradingConfiguration">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="getTradingConfigurationResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="updateInvoiceCategory">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="updateInvoiceCategory">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="updateInvoiceCategoryResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="findSeller">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="findSeller">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="findSellerResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
     <wsdl:operation name="findTax">
       <soap:operation soapAction="" style="document"/>
       <wsdl:input name="findTax">
@@ -663,12 +735,12 @@
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
-    <wsdl:operation name="removeCalendar">
+    <wsdl:operation name="createSeller">
       <soap:operation soapAction="" style="document"/>
-      <wsdl:input name="removeCalendar">
+      <wsdl:input name="createSeller">
         <soap:body use="literal"/>
       </wsdl:input>
-      <wsdl:output name="removeCalendarResponse">
+      <wsdl:output name="createSellerResponse">
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
@@ -681,48 +753,12 @@
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
-    <wsdl:operation name="createSeller">
-      <soap:operation soapAction="" style="document"/>
-      <wsdl:input name="createSeller">
-        <soap:body use="literal"/>
-      </wsdl:input>
-      <wsdl:output name="createSellerResponse">
-        <soap:body use="literal"/>
-      </wsdl:output>
-    </wsdl:operation>
-    <wsdl:operation name="findInvoiceCategory">
-      <soap:operation soapAction="" style="document"/>
-      <wsdl:input name="findInvoiceCategory">
-        <soap:body use="literal"/>
-      </wsdl:input>
-      <wsdl:output name="findInvoiceCategoryResponse">
-        <soap:body use="literal"/>
-      </wsdl:output>
-    </wsdl:operation>
-    <wsdl:operation name="findBillingCycle">
-      <soap:operation soapAction="" style="document"/>
-      <wsdl:input name="findBillingCycle">
-        <soap:body use="literal"/>
-      </wsdl:input>
-      <wsdl:output name="findBillingCycleResponse">
-        <soap:body use="literal"/>
-      </wsdl:output>
-    </wsdl:operation>
     <wsdl:operation name="createInvoiceSubCategory">
       <soap:operation soapAction="" style="document"/>
       <wsdl:input name="createInvoiceSubCategory">
         <soap:body use="literal"/>
       </wsdl:input>
       <wsdl:output name="createInvoiceSubCategoryResponse">
-        <soap:body use="literal"/>
-      </wsdl:output>
-    </wsdl:operation>
-    <wsdl:operation name="findCurrency">
-      <soap:operation soapAction="" style="document"/>
-      <wsdl:input name="findCurrency">
-        <soap:body use="literal"/>
-      </wsdl:input>
-      <wsdl:output name="findCurrencyResponse">
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
@@ -762,15 +798,6 @@
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
-    <wsdl:operation name="updateUser">
-      <soap:operation soapAction="" style="document"/>
-      <wsdl:input name="updateUser">
-        <soap:body use="literal"/>
-      </wsdl:input>
-      <wsdl:output name="updateUserResponse">
-        <soap:body use="literal"/>
-      </wsdl:output>
-    </wsdl:operation>
     <wsdl:operation name="updateCurrency">
       <soap:operation soapAction="" style="document"/>
       <wsdl:input name="updateCurrency">
@@ -794,30 +821,44 @@
       <xs:element name="ActionStatus" type="tns:actionStatus"/>
       <xs:element name="Address" type="tns:addressDto"/>
       <xs:element name="BillingCycle" type="tns:billingCycleDto"/>
+      <xs:element name="BillingCycles" type="tns:billingCyclesDto"/>
       <xs:element name="Calendar" type="tns:calendarDto"/>
+      <xs:element name="Calendars" type="tns:calendarsDto"/>
+      <xs:element name="Countries" type="tns:countriesDto"/>
       <xs:element name="Country" type="tns:countryDto"/>
+      <xs:element name="Currencies" type="tns:currenciesDto"/>
       <xs:element name="Currency" type="tns:currencyDto"/>
       <xs:element name="CustomField" type="tns:customFieldDto"/>
       <xs:element name="CustomFields" type="tns:customFieldsDto"/>
+      <xs:element name="CustomerBrand" type="tns:customerBrandDto"/>
+      <xs:element name="CustomerBrands" type="tns:customerBrandsDto"/>
+      <xs:element name="CustomerCategories" type="tns:customerCategoriesDto"/>
+      <xs:element name="CustomerCategory" type="tns:customerCategoryDto"/>
       <xs:element name="DayInYear" type="tns:dayInYearDto"/>
       <xs:element name="GetBillingCycleResponse" type="tns:getBillingCycleResponse"/>
       <xs:element name="GetCalendarResponse" type="tns:getCalendarResponse"/>
       <xs:element name="GetCountryResponse" type="tns:getCountryResponse"/>
       <xs:element name="GetCurrencyResponse" type="tns:getCurrencyResponse"/>
+      <xs:element name="GetCustomerConfigurationResponse" type="tns:getCustomerConfigurationResponseDto"/>
       <xs:element name="GetInvoiceCategoryResponse" type="tns:getInvoiceCategoryResponse"/>
       <xs:element name="GetInvoiceSubCategoryCountryResponse" type="tns:getInvoiceSubCategoryCountryResponse"/>
       <xs:element name="GetInvoiceSubCategoryResponse" type="tns:getInvoiceSubCategoryResponse"/>
+      <xs:element name="GetInvoicingConfigurationResponse" type="tns:getInvoicingConfigurationResponseDto"/>
       <xs:element name="GetLanguageResponse" type="tns:getLanguageResponse"/>
       <xs:element name="GetProviderResponse" type="tns:getProviderResponse"/>
       <xs:element name="GetSellerResponse" type="tns:getSellerResponse"/>
       <xs:element name="GetTaxResponse" type="tns:getTaxResponse"/>
+      <xs:element name="GetTradingConfigurationResponse" type="tns:getTradingConfigurationResponseDto"/>
       <xs:element name="GetUserResponse" type="tns:getUserResponse"/>
       <xs:element name="HourInDay" type="tns:hourInDayDto"/>
+      <xs:element name="InvoiceCategories" type="tns:invoiceCategoriesDto"/>
       <xs:element name="InvoiceCategory" type="tns:invoiceCategoryDto"/>
+      <xs:element name="InvoiceSubCategories" type="tns:invoiceSubCategoriesDto"/>
       <xs:element name="InvoiceSubCategory" type="tns:invoiceSubCategoryDto"/>
       <xs:element name="InvoiceSubCategoryCountry" type="tns:invoiceSubCategoryCountryDto"/>
       <xs:element name="Language" type="tns:languageDto"/>
       <xs:element name="LanguageDescription" type="tns:languageDescriptionDto"/>
+      <xs:element name="Languages" type="tns:languagesDto"/>
       <xs:element name="ListSellersResponse" type="tns:listSellerResponseDto"/>
       <xs:element name="MatchingAmount" type="tns:matchingAmountDto"/>
       <xs:element name="MatchingAmounts" type="tns:matchingAmountsDto"/>
@@ -826,6 +867,10 @@
       <xs:element name="Name" type="tns:nameDto"/>
       <xs:element name="Provider" type="tns:providerDto"/>
       <xs:element name="Tax" type="tns:taxDto"/>
+      <xs:element name="Taxes" type="tns:taxesDto"/>
+      <xs:element name="TerminationReasonDto" nillable="true" type="xs:anyType"/>
+      <xs:element name="Title" type="tns:titleDto"/>
+      <xs:element name="Titles" type="tns:titlesDto"/>
       <xs:element name="User" type="tns:userDto"/>
       <xs:element name="createBillingCycle" type="tns:createBillingCycle"/>
       <xs:element name="createBillingCycleResponse" type="tns:createBillingCycleResponse"/>
@@ -875,6 +920,12 @@
       <xs:element name="findTaxResponse" type="tns:findTaxResponse"/>
       <xs:element name="findUser" type="tns:findUser"/>
       <xs:element name="findUserResponse" type="tns:findUserResponse"/>
+      <xs:element name="getCustomerConfiguration" type="tns:getCustomerConfiguration"/>
+      <xs:element name="getCustomerConfigurationResponse" type="tns:getCustomerConfigurationResponse"/>
+      <xs:element name="getInvoicingConfiguration" type="tns:getInvoicingConfiguration"/>
+      <xs:element name="getInvoicingConfigurationResponse" type="tns:getInvoicingConfigurationResponse"/>
+      <xs:element name="getTradingConfiguration" type="tns:getTradingConfiguration"/>
+      <xs:element name="getTradingConfigurationResponse" type="tns:getTradingConfigurationResponse"/>
       <xs:element name="index" type="tns:index"/>
       <xs:element name="indexResponse" type="tns:indexResponse"/>
       <xs:element name="listSeller" type="tns:listSeller"/>
@@ -925,6 +976,164 @@
       <xs:element name="updateTaxResponse" type="tns:updateTaxResponse"/>
       <xs:element name="updateUser" type="tns:updateUser"/>
       <xs:element name="updateUserResponse" type="tns:updateUserResponse"/>
+      <xs:complexType name="getInvoicingConfiguration">
+        <xs:sequence/>
+      </xs:complexType>
+      <xs:complexType name="getInvoicingConfigurationResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:getInvoicingConfigurationResponseDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="getInvoicingConfigurationResponseDto">
+        <xs:complexContent>
+          <xs:extension base="tns:baseResponse">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="calendars" type="tns:calendarsDto"/>
+              <xs:element minOccurs="0" name="taxes" type="tns:taxesDto"/>
+              <xs:element minOccurs="0" name="invoiceCategories" type="tns:invoiceCategoriesDto"/>
+              <xs:element minOccurs="0" name="invoiceSubCategories" type="tns:invoiceSubCategoriesDto"/>
+              <xs:element minOccurs="0" name="billingCycles" type="tns:billingCyclesDto"/>
+              <xs:element minOccurs="0" name="terminationReasons" type="tns:terminationReasonsDto"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType abstract="true" name="baseResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="actionStatus" type="tns:actionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="calendarsDto">
+        <xs:sequence>
+          <xs:element maxOccurs="unbounded" minOccurs="0" name="calendar" nillable="true" type="tns:calendarDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="calendarDto">
+        <xs:complexContent>
+          <xs:extension base="tns:baseDto">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="description" type="xs:string"/>
+              <xs:element name="calendarType" type="xs:string"/>
+              <xs:element maxOccurs="unbounded" minOccurs="0" name="days" nillable="true" type="tns:dayInYearDto"/>
+              <xs:element maxOccurs="unbounded" minOccurs="0" name="hours" nillable="true" type="tns:hourInDayDto"/>
+              <xs:element minOccurs="0" name="periodLength" type="xs:int"/>
+              <xs:element minOccurs="0" name="periodUnit" type="xs:string"/>
+              <xs:element minOccurs="0" name="nbPeriods" type="xs:int"/>
+            </xs:sequence>
+            <xs:attribute name="name" type="xs:string" use="required"/>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType abstract="true" name="baseDto">
+        <xs:sequence/>
+      </xs:complexType>
+      <xs:complexType name="dayInYearDto">
+        <xs:sequence/>
+        <xs:attribute name="day" type="xs:int" use="required"/>
+        <xs:attribute name="month" type="xs:string" use="required"/>
+      </xs:complexType>
+      <xs:complexType name="hourInDayDto">
+        <xs:sequence/>
+        <xs:attribute name="hour" type="xs:int" use="required"/>
+        <xs:attribute name="min" type="xs:int" use="required"/>
+      </xs:complexType>
+      <xs:complexType name="taxesDto">
+        <xs:sequence>
+          <xs:element maxOccurs="unbounded" minOccurs="0" name="tax" nillable="true" type="tns:taxDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="taxDto">
+        <xs:complexContent>
+          <xs:extension base="tns:baseDto">
+            <xs:sequence>
+              <xs:element name="percent" type="xs:decimal"/>
+              <xs:element minOccurs="0" name="accountingCode" type="xs:string"/>
+              <xs:element maxOccurs="unbounded" minOccurs="0" name="languageDescriptions" nillable="true" type="tns:languageDescriptionDto"/>
+            </xs:sequence>
+            <xs:attribute name="code" type="xs:string" use="required"/>
+            <xs:attribute name="description" type="xs:string" use="required"/>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="languageDescriptionDto">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="languageCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="description" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="invoiceCategoriesDto">
+        <xs:sequence>
+          <xs:element maxOccurs="unbounded" minOccurs="0" name="invoiceCategory" nillable="true" type="tns:invoiceCategoryDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="invoiceCategoryDto">
+        <xs:complexContent>
+          <xs:extension base="tns:baseDto">
+            <xs:sequence>
+              <xs:element maxOccurs="unbounded" minOccurs="0" name="languageDescriptions" nillable="true" type="tns:languageDescriptionDto"/>
+            </xs:sequence>
+            <xs:attribute name="code" type="xs:string" use="required"/>
+            <xs:attribute name="description" type="xs:string" use="required"/>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="invoiceSubCategoriesDto">
+        <xs:sequence>
+          <xs:element maxOccurs="unbounded" minOccurs="0" name="invoiceSubCategory" nillable="true" type="tns:invoiceSubCategoryDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="invoiceSubCategoryDto">
+        <xs:complexContent>
+          <xs:extension base="tns:baseDto">
+            <xs:sequence>
+              <xs:element name="invoiceCategory" type="xs:string"/>
+              <xs:element maxOccurs="unbounded" minOccurs="0" name="languageDescriptions" nillable="true" type="tns:languageDescriptionDto"/>
+            </xs:sequence>
+            <xs:attribute name="code" type="xs:string" use="required"/>
+            <xs:attribute name="description" type="xs:string" use="required"/>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="billingCyclesDto">
+        <xs:sequence>
+          <xs:element maxOccurs="unbounded" minOccurs="0" name="billingCycle" nillable="true" type="tns:billingCycleDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="billingCycleDto">
+        <xs:complexContent>
+          <xs:extension base="tns:baseDto">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="billingTemplateName" type="xs:string"/>
+              <xs:element name="invoiceDateDelay" type="xs:int"/>
+              <xs:element name="dueDateDelay" type="xs:int"/>
+              <xs:element name="calendar" type="xs:string"/>
+            </xs:sequence>
+            <xs:attribute name="code" type="xs:string" use="required"/>
+            <xs:attribute name="description" type="xs:string" use="required"/>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="terminationReasonsDto">
+        <xs:sequence>
+          <xs:element maxOccurs="unbounded" minOccurs="0" name="terminationReason" nillable="true" type="tns:terminationReasonDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="terminationReasonDto">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="code" type="xs:string"/>
+          <xs:element minOccurs="0" name="description" type="xs:string"/>
+          <xs:element name="applyAgreement" type="xs:boolean"/>
+          <xs:element name="applyReimbursment" type="xs:boolean"/>
+          <xs:element name="applyTerminationCharges" type="xs:boolean"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="actionStatus">
+        <xs:sequence>
+          <xs:element name="status" type="tns:actionStatusEnum"/>
+          <xs:element name="errorCode" type="xs:int"/>
+          <xs:element name="message" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
       <xs:complexType name="removeInvoiceSubCategory">
         <xs:sequence>
           <xs:element minOccurs="0" name="invoiceSubCategoryCode" type="xs:string"/>
@@ -933,13 +1142,6 @@
       <xs:complexType name="removeInvoiceSubCategoryResponse">
         <xs:sequence>
           <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="actionStatus">
-        <xs:sequence>
-          <xs:element name="status" type="tns:actionStatusEnum"/>
-          <xs:element name="errorCode" type="xs:int"/>
-          <xs:element name="message" type="xs:string"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="updateSeller">
@@ -963,9 +1165,6 @@
             <xs:attribute name="description" type="xs:string" use="required"/>
           </xs:extension>
         </xs:complexContent>
-      </xs:complexType>
-      <xs:complexType abstract="true" name="baseDto">
-        <xs:sequence/>
       </xs:complexType>
       <xs:complexType name="Customers">
         <xs:sequence>
@@ -1330,23 +1529,6 @@
           <xs:element minOccurs="0" name="invoiceCategory" type="tns:invoiceCategoryDto"/>
         </xs:sequence>
       </xs:complexType>
-      <xs:complexType name="invoiceCategoryDto">
-        <xs:complexContent>
-          <xs:extension base="tns:baseDto">
-            <xs:sequence>
-              <xs:element maxOccurs="unbounded" minOccurs="0" name="languageDescriptions" nillable="true" type="tns:languageDescriptionDto"/>
-            </xs:sequence>
-            <xs:attribute name="code" type="xs:string" use="required"/>
-            <xs:attribute name="description" type="xs:string" use="required"/>
-          </xs:extension>
-        </xs:complexContent>
-      </xs:complexType>
-      <xs:complexType name="languageDescriptionDto">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="languageCode" type="xs:string"/>
-          <xs:element minOccurs="0" name="description" type="xs:string"/>
-        </xs:sequence>
-      </xs:complexType>
       <xs:complexType name="createInvoiceCategoryResponse">
         <xs:sequence>
           <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
@@ -1381,11 +1563,6 @@
           </xs:extension>
         </xs:complexContent>
       </xs:complexType>
-      <xs:complexType abstract="true" name="baseResponse">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="actionStatus" type="tns:actionStatus"/>
-        </xs:sequence>
-      </xs:complexType>
       <xs:complexType name="languageDto">
         <xs:complexContent>
           <xs:extension base="tns:baseDto">
@@ -1415,32 +1592,6 @@
           </xs:extension>
         </xs:complexContent>
       </xs:complexType>
-      <xs:complexType name="calendarDto">
-        <xs:complexContent>
-          <xs:extension base="tns:baseDto">
-            <xs:sequence>
-              <xs:element minOccurs="0" name="description" type="xs:string"/>
-              <xs:element name="calendarType" type="xs:string"/>
-              <xs:element maxOccurs="unbounded" minOccurs="0" name="days" nillable="true" type="tns:dayInYearDto"/>
-              <xs:element maxOccurs="unbounded" minOccurs="0" name="hours" nillable="true" type="tns:hourInDayDto"/>
-              <xs:element minOccurs="0" name="periodLength" type="xs:int"/>
-              <xs:element minOccurs="0" name="periodUnit" type="xs:string"/>
-              <xs:element minOccurs="0" name="nbPeriods" type="xs:int"/>
-            </xs:sequence>
-            <xs:attribute name="name" type="xs:string" use="required"/>
-          </xs:extension>
-        </xs:complexContent>
-      </xs:complexType>
-      <xs:complexType name="dayInYearDto">
-        <xs:sequence/>
-        <xs:attribute name="day" type="xs:int" use="required"/>
-        <xs:attribute name="month" type="xs:string" use="required"/>
-      </xs:complexType>
-      <xs:complexType name="hourInDayDto">
-        <xs:sequence/>
-        <xs:attribute name="hour" type="xs:int" use="required"/>
-        <xs:attribute name="min" type="xs:int" use="required"/>
-      </xs:complexType>
       <xs:complexType name="updateLanguage">
         <xs:sequence>
           <xs:element minOccurs="0" name="language" type="tns:languageDto"/>
@@ -1451,24 +1602,63 @@
           <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
         </xs:sequence>
       </xs:complexType>
+      <xs:complexType name="getCustomerConfiguration">
+        <xs:sequence/>
+      </xs:complexType>
+      <xs:complexType name="getCustomerConfigurationResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:getCustomerConfigurationResponseDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="getCustomerConfigurationResponseDto">
+        <xs:complexContent>
+          <xs:extension base="tns:baseResponse">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="customerBrands" type="tns:customerBrandsDto"/>
+              <xs:element minOccurs="0" name="customerCategories" type="tns:customerCategoriesDto"/>
+              <xs:element minOccurs="0" name="titles" type="tns:titlesDto"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="customerBrandsDto">
+        <xs:sequence>
+          <xs:element maxOccurs="unbounded" minOccurs="0" name="customerBrand" nillable="true" type="tns:customerBrandDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="customerBrandDto">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="code" type="xs:string"/>
+          <xs:element minOccurs="0" name="description" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="customerCategoriesDto">
+        <xs:sequence>
+          <xs:element maxOccurs="unbounded" minOccurs="0" name="customerCategory" nillable="true" type="tns:customerCategoryDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="customerCategoryDto">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="code" type="xs:string"/>
+          <xs:element minOccurs="0" name="description" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="titlesDto">
+        <xs:sequence>
+          <xs:element maxOccurs="unbounded" minOccurs="0" name="title" nillable="true" type="tns:titleDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="titleDto">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="code" type="xs:string"/>
+          <xs:element minOccurs="0" name="description" type="xs:string"/>
+          <xs:element minOccurs="0" name="isCompany" type="xs:boolean"/>
+        </xs:sequence>
+      </xs:complexType>
       <xs:complexType name="updateBillingCycle">
         <xs:sequence>
           <xs:element minOccurs="0" name="billingCycle" type="tns:billingCycleDto"/>
         </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="billingCycleDto">
-        <xs:complexContent>
-          <xs:extension base="tns:baseDto">
-            <xs:sequence>
-              <xs:element minOccurs="0" name="billingTemplateName" type="xs:string"/>
-              <xs:element name="invoiceDateDelay" type="xs:int"/>
-              <xs:element name="dueDateDelay" type="xs:int"/>
-              <xs:element name="calendar" type="xs:string"/>
-            </xs:sequence>
-            <xs:attribute name="code" type="xs:string" use="required"/>
-            <xs:attribute name="description" type="xs:string" use="required"/>
-          </xs:extension>
-        </xs:complexContent>
       </xs:complexType>
       <xs:complexType name="updateBillingCycleResponse">
         <xs:sequence>
@@ -1533,19 +1723,6 @@
           <xs:element minOccurs="0" name="tax" type="tns:taxDto"/>
         </xs:sequence>
       </xs:complexType>
-      <xs:complexType name="taxDto">
-        <xs:complexContent>
-          <xs:extension base="tns:baseDto">
-            <xs:sequence>
-              <xs:element name="percent" type="xs:decimal"/>
-              <xs:element minOccurs="0" name="accountingCode" type="xs:string"/>
-              <xs:element maxOccurs="unbounded" minOccurs="0" name="languageDescriptions" nillable="true" type="tns:languageDescriptionDto"/>
-            </xs:sequence>
-            <xs:attribute name="code" type="xs:string" use="required"/>
-            <xs:attribute name="description" type="xs:string" use="required"/>
-          </xs:extension>
-        </xs:complexContent>
-      </xs:complexType>
       <xs:complexType name="createTaxResponse">
         <xs:sequence>
           <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
@@ -1567,18 +1744,6 @@
             <xs:sequence>
               <xs:element minOccurs="0" name="invoiceSubCategory" type="tns:invoiceSubCategoryDto"/>
             </xs:sequence>
-          </xs:extension>
-        </xs:complexContent>
-      </xs:complexType>
-      <xs:complexType name="invoiceSubCategoryDto">
-        <xs:complexContent>
-          <xs:extension base="tns:baseDto">
-            <xs:sequence>
-              <xs:element name="invoiceCategory" type="xs:string"/>
-              <xs:element maxOccurs="unbounded" minOccurs="0" name="languageDescriptions" nillable="true" type="tns:languageDescriptionDto"/>
-            </xs:sequence>
-            <xs:attribute name="code" type="xs:string" use="required"/>
-            <xs:attribute name="description" type="xs:string" use="required"/>
           </xs:extension>
         </xs:complexContent>
       </xs:complexType>
@@ -1727,35 +1892,6 @@
           <xs:element maxOccurs="unbounded" minOccurs="0" name="seller" nillable="true" type="tns:Seller"/>
         </xs:sequence>
       </xs:complexType>
-      <xs:complexType name="updateInvoiceCategory">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="invoiceCategory" type="tns:invoiceCategoryDto"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="updateInvoiceCategoryResponse">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="findSeller">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="sellerCode" type="xs:string"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="findSellerResponse">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:getSellerResponse"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="getSellerResponse">
-        <xs:complexContent>
-          <xs:extension base="tns:baseResponse">
-            <xs:sequence>
-              <xs:element minOccurs="0" name="seller" type="tns:Seller"/>
-            </xs:sequence>
-          </xs:extension>
-        </xs:complexContent>
-      </xs:complexType>
       <xs:complexType name="removeLanguage">
         <xs:sequence>
           <xs:element minOccurs="0" name="languageCode" type="xs:string"/>
@@ -1804,45 +1940,6 @@
         <xs:sequence>
           <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
         </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="updateProvider">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="provider" type="tns:providerDto"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="updateProviderResponse">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="removeUser">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="username" type="xs:string"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="removeUserResponse">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="findTax">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="taxCode" type="xs:string"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="findTaxResponse">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:getTaxResponse"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="getTaxResponse">
-        <xs:complexContent>
-          <xs:extension base="tns:baseResponse">
-            <xs:sequence>
-              <xs:element minOccurs="0" name="tax" type="tns:taxDto"/>
-            </xs:sequence>
-          </xs:extension>
-        </xs:complexContent>
       </xs:complexType>
       <xs:complexType name="createCurrency">
         <xs:sequence>
@@ -1893,26 +1990,6 @@
           </xs:extension>
         </xs:complexContent>
       </xs:complexType>
-      <xs:complexType name="createSeller">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="seller" type="tns:Seller"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="createSellerResponse">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="createInvoiceSubCategoryCountry">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="invoiceSubCategoryCountry" type="tns:invoiceSubCategoryCountryDto"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="createInvoiceSubCategoryCountryResponse">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
-        </xs:sequence>
-      </xs:complexType>
       <xs:complexType name="findBillingCycle">
         <xs:sequence>
           <xs:element minOccurs="0" name="billingCycleCode" type="xs:string"/>
@@ -1950,6 +2027,150 @@
             </xs:sequence>
           </xs:extension>
         </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="updateUser">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="user" type="tns:userDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="updateUserResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="getTradingConfiguration">
+        <xs:sequence/>
+      </xs:complexType>
+      <xs:complexType name="getTradingConfigurationResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:getTradingConfigurationResponseDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="getTradingConfigurationResponseDto">
+        <xs:complexContent>
+          <xs:extension base="tns:baseResponse">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="countries" type="tns:countriesDto"/>
+              <xs:element minOccurs="0" name="currencies" type="tns:currenciesDto"/>
+              <xs:element minOccurs="0" name="languages" type="tns:languagesDto"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="countriesDto">
+        <xs:complexContent>
+          <xs:extension base="tns:baseDto">
+            <xs:sequence>
+              <xs:element maxOccurs="unbounded" minOccurs="0" name="country" nillable="true" type="tns:countryDto"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="currenciesDto">
+        <xs:complexContent>
+          <xs:extension base="tns:baseDto">
+            <xs:sequence>
+              <xs:element maxOccurs="unbounded" minOccurs="0" name="currency" nillable="true" type="tns:currencyDto"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="languagesDto">
+        <xs:complexContent>
+          <xs:extension base="tns:baseDto">
+            <xs:sequence>
+              <xs:element maxOccurs="unbounded" minOccurs="0" name="language" nillable="true" type="tns:languageDto"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="updateInvoiceCategory">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="invoiceCategory" type="tns:invoiceCategoryDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="updateInvoiceCategoryResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="findSeller">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="sellerCode" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="findSellerResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:getSellerResponse"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="getSellerResponse">
+        <xs:complexContent>
+          <xs:extension base="tns:baseResponse">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="seller" type="tns:Seller"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="findTax">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="taxCode" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="findTaxResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:getTaxResponse"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="getTaxResponse">
+        <xs:complexContent>
+          <xs:extension base="tns:baseResponse">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="tax" type="tns:taxDto"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="removeUser">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="username" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="removeUserResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="updateProvider">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="provider" type="tns:providerDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="updateProviderResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="createSeller">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="seller" type="tns:Seller"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="createSellerResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="createInvoiceSubCategoryCountry">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="invoiceSubCategoryCountry" type="tns:invoiceSubCategoryCountryDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="createInvoiceSubCategoryCountryResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+        </xs:sequence>
       </xs:complexType>
       <xs:complexType name="createInvoiceSubCategory">
         <xs:sequence>
@@ -2010,16 +2231,6 @@
           </xs:extension>
         </xs:complexContent>
       </xs:complexType>
-      <xs:complexType name="updateUser">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="user" type="tns:userDto"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="updateUserResponse">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
-        </xs:sequence>
-      </xs:complexType>
       <xs:complexType name="updateCurrency">
         <xs:sequence>
           <xs:element minOccurs="0" name="currency" type="tns:currencyDto"/>
@@ -2068,14 +2279,14 @@
   <wsdl:message name="updateSellerResponse">
     <wsdl:part element="ns1:updateSellerResponse" name="parameters"></wsdl:part>
   </wsdl:message>
-  <wsdl:message name="findTax">
-    <wsdl:part element="ns1:findTax" name="parameters"></wsdl:part>
+  <wsdl:message name="updateCalendar">
+    <wsdl:part element="ns1:updateCalendar" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="createCurrencyResponse">
     <wsdl:part element="ns1:createCurrencyResponse" name="parameters"></wsdl:part>
   </wsdl:message>
-  <wsdl:message name="updateCalendar">
-    <wsdl:part element="ns1:updateCalendar" name="parameters"></wsdl:part>
+  <wsdl:message name="findTax">
+    <wsdl:part element="ns1:findTax" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="removeCountryResponse">
     <wsdl:part element="ns1:removeCountryResponse" name="parameters"></wsdl:part>
@@ -2083,11 +2294,11 @@
   <wsdl:message name="createInvoiceSubCategoryCountry">
     <wsdl:part element="ns1:createInvoiceSubCategoryCountry" name="parameters"></wsdl:part>
   </wsdl:message>
-  <wsdl:message name="updateInvoiceCategory">
-    <wsdl:part element="ns1:updateInvoiceCategory" name="parameters"></wsdl:part>
-  </wsdl:message>
   <wsdl:message name="findCurrencyResponse">
     <wsdl:part element="ns1:findCurrencyResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="updateInvoiceCategory">
+    <wsdl:part element="ns1:updateInvoiceCategory" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="removeSellerResponse">
     <wsdl:part element="ns1:removeSellerResponse" name="parameters"></wsdl:part>
@@ -2116,6 +2327,9 @@
   <wsdl:message name="findProviderResponse">
     <wsdl:part element="ns1:findProviderResponse" name="parameters"></wsdl:part>
   </wsdl:message>
+  <wsdl:message name="getTradingConfigurationResponse">
+    <wsdl:part element="ns1:getTradingConfigurationResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
   <wsdl:message name="createInvoiceCategory">
     <wsdl:part element="ns1:createInvoiceCategory" name="parameters"></wsdl:part>
   </wsdl:message>
@@ -2137,6 +2351,9 @@
   <wsdl:message name="updateProviderResponse">
     <wsdl:part element="ns1:updateProviderResponse" name="parameters"></wsdl:part>
   </wsdl:message>
+  <wsdl:message name="getInvoicingConfigurationResponse">
+    <wsdl:part element="ns1:getInvoicingConfigurationResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
   <wsdl:message name="updateBillingCycleResponse">
     <wsdl:part element="ns1:updateBillingCycleResponse" name="parameters"></wsdl:part>
   </wsdl:message>
@@ -2146,11 +2363,11 @@
   <wsdl:message name="removeCountry">
     <wsdl:part element="ns1:removeCountry" name="parameters"></wsdl:part>
   </wsdl:message>
-  <wsdl:message name="updateInvoiceSubCategory">
-    <wsdl:part element="ns1:updateInvoiceSubCategory" name="parameters"></wsdl:part>
-  </wsdl:message>
   <wsdl:message name="updateCalendarResponse">
     <wsdl:part element="ns1:updateCalendarResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="updateInvoiceSubCategory">
+    <wsdl:part element="ns1:updateInvoiceSubCategory" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="removeTax">
     <wsdl:part element="ns1:removeTax" name="parameters"></wsdl:part>
@@ -2164,11 +2381,11 @@
   <wsdl:message name="indexResponse">
     <wsdl:part element="ns1:indexResponse" name="parameters"></wsdl:part>
   </wsdl:message>
-  <wsdl:message name="index">
-    <wsdl:part element="ns1:index" name="parameters"></wsdl:part>
-  </wsdl:message>
   <wsdl:message name="updateInvoiceSubCategoryCountry">
     <wsdl:part element="ns1:updateInvoiceSubCategoryCountry" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="index">
+    <wsdl:part element="ns1:index" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="updateCountry">
     <wsdl:part element="ns1:updateCountry" name="parameters"></wsdl:part>
@@ -2178,6 +2395,9 @@
   </wsdl:message>
   <wsdl:message name="updateLanguage">
     <wsdl:part element="ns1:updateLanguage" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="getInvoicingConfiguration">
+    <wsdl:part element="ns1:getInvoicingConfiguration" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="findCountry">
     <wsdl:part element="ns1:findCountry" name="parameters"></wsdl:part>
@@ -2227,14 +2447,14 @@
   <wsdl:message name="updateLanguageResponse">
     <wsdl:part element="ns1:updateLanguageResponse" name="parameters"></wsdl:part>
   </wsdl:message>
-  <wsdl:message name="updateTaxResponse">
-    <wsdl:part element="ns1:updateTaxResponse" name="parameters"></wsdl:part>
-  </wsdl:message>
   <wsdl:message name="removeCurrencyResponse">
     <wsdl:part element="ns1:removeCurrencyResponse" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="findLanguageResponse">
     <wsdl:part element="ns1:findLanguageResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="updateTaxResponse">
+    <wsdl:part element="ns1:updateTaxResponse" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="updateUserResponse">
     <wsdl:part element="ns1:updateUserResponse" name="parameters"></wsdl:part>
@@ -2278,11 +2498,14 @@
   <wsdl:message name="findUser">
     <wsdl:part element="ns1:findUser" name="parameters"></wsdl:part>
   </wsdl:message>
-  <wsdl:message name="findTaxResponse">
-    <wsdl:part element="ns1:findTaxResponse" name="parameters"></wsdl:part>
+  <wsdl:message name="getTradingConfiguration">
+    <wsdl:part element="ns1:getTradingConfiguration" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="findInvoiceCategoryResponse">
     <wsdl:part element="ns1:findInvoiceCategoryResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="findTaxResponse">
+    <wsdl:part element="ns1:findTaxResponse" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="updateInvoiceSubCategoryResponse">
     <wsdl:part element="ns1:updateInvoiceSubCategoryResponse" name="parameters"></wsdl:part>
@@ -2298,6 +2521,12 @@
   </wsdl:message>
   <wsdl:message name="createUserResponse">
     <wsdl:part element="ns1:createUserResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="getCustomerConfigurationResponse">
+    <wsdl:part element="ns1:getCustomerConfigurationResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="getCustomerConfiguration">
+    <wsdl:part element="ns1:getCustomerConfiguration" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="findSeller">
     <wsdl:part element="ns1:findSeller" name="parameters"></wsdl:part>
@@ -2333,6 +2562,10 @@
     <wsdl:part element="ns1:updateCurrencyResponse" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:portType name="SettingsWs">
+    <wsdl:operation name="getInvoicingConfiguration">
+      <wsdl:input message="ns1:getInvoicingConfiguration" name="getInvoicingConfiguration"></wsdl:input>
+      <wsdl:output message="ns1:getInvoicingConfigurationResponse" name="getInvoicingConfigurationResponse"></wsdl:output>
+    </wsdl:operation>
     <wsdl:operation name="removeInvoiceSubCategory">
       <wsdl:input message="ns1:removeInvoiceSubCategory" name="removeInvoiceSubCategory"></wsdl:input>
       <wsdl:output message="ns1:removeInvoiceSubCategoryResponse" name="removeInvoiceSubCategoryResponse"></wsdl:output>
@@ -2368,6 +2601,10 @@
     <wsdl:operation name="updateLanguage">
       <wsdl:input message="ns1:updateLanguage" name="updateLanguage"></wsdl:input>
       <wsdl:output message="ns1:updateLanguageResponse" name="updateLanguageResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getCustomerConfiguration">
+      <wsdl:input message="ns1:getCustomerConfiguration" name="getCustomerConfiguration"></wsdl:input>
+      <wsdl:output message="ns1:getCustomerConfigurationResponse" name="getCustomerConfigurationResponse"></wsdl:output>
     </wsdl:operation>
     <wsdl:operation name="updateBillingCycle">
       <wsdl:input message="ns1:updateBillingCycle" name="updateBillingCycle"></wsdl:input>
@@ -2437,14 +2674,6 @@
       <wsdl:input message="ns1:listSeller" name="listSeller"></wsdl:input>
       <wsdl:output message="ns1:listSellerResponse" name="listSellerResponse"></wsdl:output>
     </wsdl:operation>
-    <wsdl:operation name="updateInvoiceCategory">
-      <wsdl:input message="ns1:updateInvoiceCategory" name="updateInvoiceCategory"></wsdl:input>
-      <wsdl:output message="ns1:updateInvoiceCategoryResponse" name="updateInvoiceCategoryResponse"></wsdl:output>
-    </wsdl:operation>
-    <wsdl:operation name="findSeller">
-      <wsdl:input message="ns1:findSeller" name="findSeller"></wsdl:input>
-      <wsdl:output message="ns1:findSellerResponse" name="findSellerResponse"></wsdl:output>
-    </wsdl:operation>
     <wsdl:operation name="removeLanguage">
       <wsdl:input message="ns1:removeLanguage" name="removeLanguage"></wsdl:input>
       <wsdl:output message="ns1:removeLanguageResponse" name="removeLanguageResponse"></wsdl:output>
@@ -2461,18 +2690,6 @@
       <wsdl:input message="ns1:createLanguage" name="createLanguage"></wsdl:input>
       <wsdl:output message="ns1:createLanguageResponse" name="createLanguageResponse"></wsdl:output>
     </wsdl:operation>
-    <wsdl:operation name="updateProvider">
-      <wsdl:input message="ns1:updateProvider" name="updateProvider"></wsdl:input>
-      <wsdl:output message="ns1:updateProviderResponse" name="updateProviderResponse"></wsdl:output>
-    </wsdl:operation>
-    <wsdl:operation name="removeUser">
-      <wsdl:input message="ns1:removeUser" name="removeUser"></wsdl:input>
-      <wsdl:output message="ns1:removeUserResponse" name="removeUserResponse"></wsdl:output>
-    </wsdl:operation>
-    <wsdl:operation name="findTax">
-      <wsdl:input message="ns1:findTax" name="findTax"></wsdl:input>
-      <wsdl:output message="ns1:findTaxResponse" name="findTaxResponse"></wsdl:output>
-    </wsdl:operation>
     <wsdl:operation name="createCurrency">
       <wsdl:input message="ns1:createCurrency" name="createCurrency"></wsdl:input>
       <wsdl:output message="ns1:createCurrencyResponse" name="createCurrencyResponse"></wsdl:output>
@@ -2485,14 +2702,6 @@
       <wsdl:input message="ns1:findInvoiceCategory" name="findInvoiceCategory"></wsdl:input>
       <wsdl:output message="ns1:findInvoiceCategoryResponse" name="findInvoiceCategoryResponse"></wsdl:output>
     </wsdl:operation>
-    <wsdl:operation name="createSeller">
-      <wsdl:input message="ns1:createSeller" name="createSeller"></wsdl:input>
-      <wsdl:output message="ns1:createSellerResponse" name="createSellerResponse"></wsdl:output>
-    </wsdl:operation>
-    <wsdl:operation name="createInvoiceSubCategoryCountry">
-      <wsdl:input message="ns1:createInvoiceSubCategoryCountry" name="createInvoiceSubCategoryCountry"></wsdl:input>
-      <wsdl:output message="ns1:createInvoiceSubCategoryCountryResponse" name="createInvoiceSubCategoryCountryResponse"></wsdl:output>
-    </wsdl:operation>
     <wsdl:operation name="findBillingCycle">
       <wsdl:input message="ns1:findBillingCycle" name="findBillingCycle"></wsdl:input>
       <wsdl:output message="ns1:findBillingCycleResponse" name="findBillingCycleResponse"></wsdl:output>
@@ -2500,6 +2709,42 @@
     <wsdl:operation name="findCurrency">
       <wsdl:input message="ns1:findCurrency" name="findCurrency"></wsdl:input>
       <wsdl:output message="ns1:findCurrencyResponse" name="findCurrencyResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="updateUser">
+      <wsdl:input message="ns1:updateUser" name="updateUser"></wsdl:input>
+      <wsdl:output message="ns1:updateUserResponse" name="updateUserResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getTradingConfiguration">
+      <wsdl:input message="ns1:getTradingConfiguration" name="getTradingConfiguration"></wsdl:input>
+      <wsdl:output message="ns1:getTradingConfigurationResponse" name="getTradingConfigurationResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="updateInvoiceCategory">
+      <wsdl:input message="ns1:updateInvoiceCategory" name="updateInvoiceCategory"></wsdl:input>
+      <wsdl:output message="ns1:updateInvoiceCategoryResponse" name="updateInvoiceCategoryResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="findSeller">
+      <wsdl:input message="ns1:findSeller" name="findSeller"></wsdl:input>
+      <wsdl:output message="ns1:findSellerResponse" name="findSellerResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="findTax">
+      <wsdl:input message="ns1:findTax" name="findTax"></wsdl:input>
+      <wsdl:output message="ns1:findTaxResponse" name="findTaxResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="removeUser">
+      <wsdl:input message="ns1:removeUser" name="removeUser"></wsdl:input>
+      <wsdl:output message="ns1:removeUserResponse" name="removeUserResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="updateProvider">
+      <wsdl:input message="ns1:updateProvider" name="updateProvider"></wsdl:input>
+      <wsdl:output message="ns1:updateProviderResponse" name="updateProviderResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="createSeller">
+      <wsdl:input message="ns1:createSeller" name="createSeller"></wsdl:input>
+      <wsdl:output message="ns1:createSellerResponse" name="createSellerResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="createInvoiceSubCategoryCountry">
+      <wsdl:input message="ns1:createInvoiceSubCategoryCountry" name="createInvoiceSubCategoryCountry"></wsdl:input>
+      <wsdl:output message="ns1:createInvoiceSubCategoryCountryResponse" name="createInvoiceSubCategoryCountryResponse"></wsdl:output>
     </wsdl:operation>
     <wsdl:operation name="createInvoiceSubCategory">
       <wsdl:input message="ns1:createInvoiceSubCategory" name="createInvoiceSubCategory"></wsdl:input>
@@ -2520,10 +2765,6 @@
     <wsdl:operation name="findProvider">
       <wsdl:input message="ns1:findProvider" name="findProvider"></wsdl:input>
       <wsdl:output message="ns1:findProviderResponse" name="findProviderResponse"></wsdl:output>
-    </wsdl:operation>
-    <wsdl:operation name="updateUser">
-      <wsdl:input message="ns1:updateUser" name="updateUser"></wsdl:input>
-      <wsdl:output message="ns1:updateUserResponse" name="updateUserResponse"></wsdl:output>
     </wsdl:operation>
     <wsdl:operation name="updateCurrency">
       <wsdl:input message="ns1:updateCurrency" name="updateCurrency"></wsdl:input>
@@ -3267,7 +3508,31 @@
    <soapenv:Body>
       <ws:listSeller/>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/listSeller"/><con:wsrmConfig version="1.2"/></con:call></con:operation></con:interface><con:interface xsi:type="con:WsdlInterface" wsaVersion="NONE" name="CatalogWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}CatalogWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="http://localhost:8080/meveo/CatalogWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache type="TEXT" rootPart="http://localhost:8080/meveo/CatalogWs?wsdl"><con:part><con:url>http://localhost:8080/meveo/CatalogWs?wsdl</con:url><con:content><![CDATA[<wsdl:definitions name="CatalogWs" targetNamespace="http://impl.ws.api.meveo.org/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://impl.ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns2="http://schemas.xmlsoap.org/soap/http" xmlns:ns1="http://ws.api.meveo.org/">
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/listSeller"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation isOneWay="false" action="" name="getInvoicingConfiguration" bindingOperationName="getInvoicingConfiguration" type="Request-Response" outputName="getInvoicingConfigurationResponse" inputName="getInvoicingConfiguration" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment xmlns:con="http://eviware.com/soapui/config">
+  &lt;con:entry key="username" value="meveo.admin"/>
+  &lt;con:entry key="password" value="meveo.admin"/>
+&lt;/xml-fragment></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:getInvoicingConfiguration/>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/getInvoicingConfiguration"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation isOneWay="false" action="" name="getCustomerConfiguration" bindingOperationName="getCustomerConfiguration" type="Request-Response" outputName="getCustomerConfigurationResponse" inputName="getCustomerConfiguration" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment xmlns:con="http://eviware.com/soapui/config">
+  &lt;con:entry key="username" value="meveo.admin"/>
+  &lt;con:entry key="password" value="meveo.admin"/>
+&lt;/xml-fragment></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:getCustomerConfiguration/>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/getCustomerConfiguration"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation isOneWay="false" action="" name="getTradingConfiguration" bindingOperationName="getTradingConfiguration" type="Request-Response" outputName="getTradingConfigurationResponse" inputName="getTradingConfiguration" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment xmlns:con="http://eviware.com/soapui/config">
+  &lt;con:entry key="username" value="meveo.admin"/>
+  &lt;con:entry key="password" value="meveo.admin"/>
+&lt;/xml-fragment></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:getTradingConfiguration/>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/getTradingConfiguration"/><con:wsrmConfig version="1.2"/></con:call></con:operation></con:interface><con:interface xsi:type="con:WsdlInterface" wsaVersion="NONE" name="CatalogWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}CatalogWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="http://localhost:8080/meveo/CatalogWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache type="TEXT" rootPart="http://localhost:8080/meveo/CatalogWs?wsdl"><con:part><con:url>http://localhost:8080/meveo/CatalogWs?wsdl</con:url><con:content><![CDATA[<wsdl:definitions name="CatalogWs" targetNamespace="http://impl.ws.api.meveo.org/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://impl.ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns2="http://schemas.xmlsoap.org/soap/http" xmlns:ns1="http://ws.api.meveo.org/">
   <wsdl:import location="http://localhost:8080/meveo/CatalogWs?wsdl=CatalogWs.wsdl" namespace="http://ws.api.meveo.org/"></wsdl:import>
   <wsdl:binding name="CatalogWsSoapBinding" type="ns1:CatalogWs">
     <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
@@ -4790,7 +5055,7 @@
    <soapenv:Body>
       <ws:findPricePlan>
          <!--Optional:-->
-         <pricePlanCode>SOAP_PP1</pricePlanCode>
+         <pricePlanCode>FCA_CPU_2</pricePlanCode>
       </ws:findPricePlan>
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/CatalogWs/findPricePlan"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation isOneWay="false" action="" name="findRecurringChargeTemplate" bindingOperationName="findRecurringChargeTemplate" type="Request-Response" outputName="findRecurringChargeTemplateResponse" inputName="findRecurringChargeTemplate" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment xmlns:con="http://eviware.com/soapui/config">

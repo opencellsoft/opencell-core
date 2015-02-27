@@ -7,9 +7,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement(name = "CdrReservationResponse")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CdrReservationResponse extends BaseResponse {
-	/**
-	 * 
-	 */
+
 	private static final long serialVersionUID = -223187140111247346L;
 
 	private double availableQuantity;

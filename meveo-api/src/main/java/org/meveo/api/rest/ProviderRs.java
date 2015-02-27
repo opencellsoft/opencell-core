@@ -11,7 +11,10 @@ import javax.ws.rs.core.MediaType;
 
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ProviderDto;
+import org.meveo.api.dto.response.GetCustomerConfigurationResponseDto;
+import org.meveo.api.dto.response.GetInvoicingConfigurationResponseDto;
 import org.meveo.api.dto.response.GetProviderResponse;
+import org.meveo.api.dto.response.GetTradingConfigurationResponseDto;
 import org.meveo.api.rest.security.RSSecured;
 
 /**
@@ -33,7 +36,7 @@ public interface ProviderRs extends IBaseRs {
 	 */
 	@POST
 	@Path("/")
-	public ActionStatus create(ProviderDto postData);
+	ActionStatus create(ProviderDto postData);
 
 	/**
 	 * Search for provider with a given code.
@@ -43,8 +46,7 @@ public interface ProviderRs extends IBaseRs {
 	 */
 	@GET
 	@Path("/")
-	public GetProviderResponse find(
-			@QueryParam("providerCode") String providerCode);
+	GetProviderResponse find(@QueryParam("providerCode") String providerCode);
 
 	/**
 	 * Update provider.
@@ -54,6 +56,17 @@ public interface ProviderRs extends IBaseRs {
 	 */
 	@PUT
 	@Path("/")
-	public ActionStatus update(ProviderDto postData);
+	ActionStatus update(ProviderDto postData);
 
+	@GET
+	@Path("/getTradingConfiguration")
+	GetTradingConfigurationResponseDto getTradingConfiguration();
+
+	@GET
+	@Path("/getInvoicingConfiguration")
+	GetInvoicingConfigurationResponseDto getInvoicingConfiguration();
+
+	@GET
+	@Path("/getCustomerConfiguration")
+	GetCustomerConfigurationResponseDto getCustomerConfiguration();
 }
