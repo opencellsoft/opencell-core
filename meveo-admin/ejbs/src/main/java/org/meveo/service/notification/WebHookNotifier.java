@@ -164,7 +164,7 @@ public class WebHookNotifier {
 						DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 						DocumentBuilder builder = dbf.newDocumentBuilder();
 						Document doc = builder.parse(result);
-						userMap.put("xmlDocument",doc);
+						userMap.put("xmlDoc",doc);
 					} catch (Exception e1) {
 						e1.printStackTrace();
 					}
