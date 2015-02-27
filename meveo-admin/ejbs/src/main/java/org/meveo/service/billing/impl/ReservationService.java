@@ -70,11 +70,11 @@ public class ReservationService extends PersistenceService<Reservation> {
 
 	@Inject
 	private WalletOperationService walletOperationService;
-	
+
 	@Inject
-	private UsageRatingService usageRatingService; 
-	
-	//FIXME: rethink this service in term of prepaid wallets
+	private UsageRatingService usageRatingService;
+
+	// FIXME: rethink this service in term of prepaid wallets
 	public Long createReservation(Provider provider, String sellerCode, String offerCode, String userAccountCode,
 			Date subscriptionDate, Date expiryDate, BigDecimal creditLimit, String param1, String param2,
 			String param3, boolean amountWithTax) throws BusinessException {
@@ -283,37 +283,39 @@ public class ReservationService extends PersistenceService<Reservation> {
 	}
 
 	public void cancelPrepaidReservation(Reservation reservation) throws BusinessException {
-		//set to OPEN all reserved operation, this is different from postpaid reservation process
+		// set to OPEN all reserved operation, this is different from postpaid
+		// reservation process
 		@SuppressWarnings("unchecked")
 		List<WalletReservation> ops = getEntityManager().createNamedQuery("WalletReservation.listByReservationId")
-		.setParameter("reservationId", reservation.getId()).getResultList();
-		for(WalletReservation op:ops){
+				.setParameter("reservationId", reservation.getId()).getResultList();
+		for (WalletReservation op : ops) {
 			op.getAuditable().setUpdated(new Date());
 			op.setStatus(WalletOperationStatusEnum.CANCELED);
 			walletOperationService.updateBalanceCache(op);
 		}
-		
-		//restore all counters values
-		if(reservation.getCounterPeriodValues().size()>0){
+
+		// restore all counters values
+		if (reservation.getCounterPeriodValues().size() > 0) {
 			usageRatingService.restoreCounters(reservation.getCounterPeriodValues());
 		}
-		
+
 		reservation.setStatus(ReservationStatus.CANCELLED);
 	}
 
 	public void confirmPrepaidReservation(Reservation reservation) throws BusinessException {
-			//set to OPEN all reserved operation, this is different from postpaid reservation process
-			@SuppressWarnings("unchecked")
-			List<WalletReservation> ops = getEntityManager().createNamedQuery("WalletReservation.listByReservationId")
-			.setParameter("reservationId", reservation.getId()).getResultList();
-			for(WalletReservation op:ops){
-				op.getAuditable().setUpdated(new Date());
-				op.setStatus(WalletOperationStatusEnum.OPEN);
-				walletOperationService.updateBalanceCache(op);
-			}
-			reservation.setStatus(ReservationStatus.CONFIRMED);
+		// set to OPEN all reserved operation, this is different from postpaid
+		// reservation process
+		@SuppressWarnings("unchecked")
+		List<WalletReservation> ops = getEntityManager().createNamedQuery("WalletReservation.listByReservationId")
+				.setParameter("reservationId", reservation.getId()).getResultList();
+		for (WalletReservation op : ops) {
+			op.getAuditable().setUpdated(new Date());
+			op.setStatus(WalletOperationStatusEnum.OPEN);
+			walletOperationService.updateBalanceCache(op);
+		}
+		reservation.setStatus(ReservationStatus.CONFIRMED);
 	}
-	
+
 	public BigDecimal confirmReservation(Long reservationId, Provider provider, String sellerCode, String offerCode,
 			Date subscriptionDate, Date terminationDate, String param1, String param2, String param3)
 			throws BusinessException {
