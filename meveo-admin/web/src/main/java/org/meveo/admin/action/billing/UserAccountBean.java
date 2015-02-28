@@ -37,6 +37,8 @@ import org.meveo.admin.action.CustomFieldEnabledBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.DuplicateDefaultAccountException;
 import org.meveo.model.billing.BillingAccount;
+import org.meveo.model.billing.CounterInstance;
+import org.meveo.model.billing.CounterPeriod;
 import org.meveo.model.billing.OperationTypeEnum;
 import org.meveo.model.billing.RatedTransaction;
 import org.meveo.model.billing.UserAccount;
@@ -92,6 +94,8 @@ public class UserAccountBean extends AccountBean<UserAccount> {
 
 	@Inject
 	private BillingAccountService billingAccountService;
+	
+	private CounterInstance selectedCounterInstance;
 
 	private Long billingAccountId;
 	private WalletOperation reloadOperation;
@@ -135,7 +139,7 @@ public class UserAccountBean extends AccountBean<UserAccount> {
 				entity.setDefaultLevel(true);
 			}
 		}
-
+		selectedCounterInstance=entity.getCounters()!=null && entity.getCounters().size()>0?entity.getCounters().values().iterator().next():null;
 		return entity;
 	}
 
@@ -449,4 +453,17 @@ public class UserAccountBean extends AccountBean<UserAccount> {
 
 		return filterLockedOptions;
 	}
+
+
+	 public CounterInstance getSelectedCounterInstance() {
+		   if(entity==null){
+		    initEntity();
+		   }
+		  return selectedCounterInstance;
+		 }
+
+	public void setSelectedCounterInstance(CounterInstance selectedCounterInstance) {
+		this.selectedCounterInstance = selectedCounterInstance;
+	}
+	 
 }

@@ -19,6 +19,7 @@ package org.meveo.admin.action.billing;
 import java.awt.Color;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -44,6 +45,8 @@ import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingProcessTypesEnum;
 import org.meveo.model.billing.BillingRun;
 import org.meveo.model.billing.BillingRunStatusEnum;
+import org.meveo.model.billing.CounterInstance;
+import org.meveo.model.billing.CounterPeriod;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.crm.AccountLevelEnum;
 import org.meveo.model.payments.CustomerAccount;
@@ -109,6 +112,8 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
 
 	/** Selected billing account in exceptionelInvoicing page. */
 	private ListItemsSelector<BillingAccount> itemSelector;
+	
+	private CounterInstance selectedCounterInstance;
 
 	/**
 	 * Constructor. Invokes super constructor and provides class type of this
@@ -148,6 +153,9 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
 		if (entity.getBankCoordinates() == null) {
 			entity.setBankCoordinates(new BankCoordinates());
 		}
+		
+		selectedCounterInstance=entity.getCounters()!=null && entity.getCounters().size()>0?entity.getCounters().values().iterator().next():null;
+		
 
 		return entity;
 	}
@@ -387,6 +395,8 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
 		}
 		return itemSelector;
 	}
+	
+
 
 	/**
 	 * Check/uncheck all select boxes.
@@ -485,4 +495,17 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
 	protected List<String> getFormFieldsToFetch() {
 		return Arrays.asList("provider", "customerAccount", "customerAccount.billingAccounts", "billingCycle");
 	}
+
+	 public CounterInstance getSelectedCounterInstance() {
+		   if(entity==null){
+		    initEntity();
+		   }
+		  return selectedCounterInstance;
+		 }
+
+	public void setSelectedCounterInstance(CounterInstance selectedCounterInstance) {
+		this.selectedCounterInstance = selectedCounterInstance;
+	}
+	
+	
 }

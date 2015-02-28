@@ -396,6 +396,38 @@
 									</p:panel>
 								</p:tab>
 							</c:forEach>
+							
+								<p:tab title="#{messages['counterPeriod.title']}" rendered="#{!userAccountBean.edit or userAccountBean.entity.id!=null}"> 
+								<hftl:panelGroup>
+								 <p:panelGrid columns="2">
+								 <p:outputLabel for="counterPeriod" value="#{messages['counterInstance.title']}" />
+								<p:selectOneMenu id="counterPeriod"
+								value="#{billingAccountBean.selectedCounterInstance}"> 
+								<f:selectItems value="#{userAccountBean.entity.counters}"/>
+                                <s:objectConverter />
+                                <p:ajax event="valueChange" update=":userAccountFormPanel:formId:userAccountTab:datatable_counters_panel"/>
+							    </p:selectOneMenu>
+                               </p:panelGrid>
+                                </hftl:panelGroup>							   
+								<hftl:dataList resultsId="datatable_counters" backingBean="#{counterPeriodBean}" 
+									dataModel="#{counterPeriodBean.getCounterPeriods(billingAccountBean.selectedCounterInstance)}"
+									 checkMany="false">
+									<hftl:column label="#{messages['businessEntity.code']}"
+								field="code" />
+								<hftl:column label="#{messages['businessEntity.code']}"
+								field="description" />
+								<hftl:column label="#{messages['counterTemplate.counterType']}"
+								field="counterType" childField="label" isMessage="true" />
+								<hftl:column label="#{messages['counterPeriod.periodStartDate']}"
+								field="periodStartDate" isDate="true"/>
+								<hftl:column label="#{messages['counterPeriod.periodEndDate']}"
+								field="periodEndDate" isDate="true"/>
+								<hftl:column label="#{messages['counterPeriod.level']}"
+								field="level"/>
+								<hftl:column label="#{messages['counterPeriod.value']}"
+								field="value"/>	
+						    </hftl:dataList>    
+							</p:tab>
 						</p:tabView>
 
 					</hf:formPanel>
