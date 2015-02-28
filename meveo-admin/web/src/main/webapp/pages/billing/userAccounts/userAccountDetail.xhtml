@@ -402,7 +402,7 @@
 								 <p:panelGrid columns="2">
 								 <p:outputLabel for="counterPeriod" value="#{messages['counterInstance.title']}" />
 								<p:selectOneMenu id="counterPeriod"
-								value="#{billingAccountBean.selectedCounterInstance}"> 
+								value="#{userAccountBean.selectedCounterInstance}"> 
 								<f:selectItems value="#{userAccountBean.entity.counters}"/>
                                 <s:objectConverter />
                                 <p:ajax event="valueChange" update=":userAccountFormPanel:formId:userAccountTab:datatable_counters_panel"/>
@@ -410,7 +410,7 @@
                                </p:panelGrid>
                                 </hftl:panelGroup>							   
 								<hftl:dataList resultsId="datatable_counters" backingBean="#{counterPeriodBean}" 
-									dataModel="#{counterPeriodBean.getCounterPeriods(billingAccountBean.selectedCounterInstance)}"
+									dataModel="#{counterPeriodBean.getCounterPeriods(userAccountBean.selectedCounterInstance)}"
 									 checkMany="false">
 									<hftl:column label="#{messages['businessEntity.code']}"
 								field="code" />
