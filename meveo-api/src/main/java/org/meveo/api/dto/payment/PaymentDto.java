@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.meveo.api.dto.billing;
+package org.meveo.api.dto.payment;
 
 import java.math.BigDecimal;
 import java.util.Date;
@@ -161,10 +161,11 @@ public class PaymentDto extends BaseDto {
 
 	@Override
 	public String toString() {
-		return "PaymentDto [paymentMethod=" + paymentMethod + ", occTemplateCode=" + occTemplateCode + ", amount="
-				+ amount + ", customerAccountCode=" + customerAccountCode + ", reference=" + reference + ", bankLot="
-				+ bankLot + ", depositDate=" + depositDate + ", bankCollectionDate=" + bankCollectionDate
-				+ ", dueDate=" + dueDate + ", transactionDate=" + transactionDate + ", listOCCReferenceforMatching="
+		return "PaymentDto [type=" + type + ", description=" + description + ", paymentMethod=" + paymentMethod
+				+ ", occTemplateCode=" + occTemplateCode + ", amount=" + amount + ", customerAccountCode="
+				+ customerAccountCode + ", reference=" + reference + ", bankLot=" + bankLot + ", depositDate="
+				+ depositDate + ", bankCollectionDate=" + bankCollectionDate + ", dueDate=" + dueDate
+				+ ", transactionDate=" + transactionDate + ", listOCCReferenceforMatching="
 				+ listOCCReferenceforMatching + ", isToMatching=" + isToMatching + "]";
 	}
 

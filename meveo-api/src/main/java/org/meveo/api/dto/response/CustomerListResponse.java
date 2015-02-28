@@ -29,4 +29,9 @@ public class CustomerListResponse extends BaseResponse {
 		this.customerDtoList = customerDtoList;
 	}
 
+	@Override
+	public String toString() {
+		return "CustomerListResponse [customerDtoList=" + customerDtoList + ", toString()=" + super.toString() + "]";
+	}
+
 }

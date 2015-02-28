@@ -13,6 +13,7 @@ import org.meveo.api.dto.response.GetLanguageResponse;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.LoggingInterceptor;
 import org.meveo.api.rest.LanguageRs;
+import org.slf4j.Logger;
 
 /**
  * @author Edward P. Legaspi
@@ -20,6 +21,9 @@ import org.meveo.api.rest.LanguageRs;
 @RequestScoped
 @Interceptors({ LoggingInterceptor.class })
 public class LanguageRsImpl extends BaseRs implements LanguageRs {
+
+	@Inject
+	private Logger log;
 
 	@Inject
 	private LanguageApi languageApi;
@@ -40,6 +44,7 @@ public class LanguageRsImpl extends BaseRs implements LanguageRs {
 			result.setMessage(e.getMessage());
 		}
 
+		log.debug("RESPONSE={}", result);
 		return result;
 	}
 
@@ -48,19 +53,18 @@ public class LanguageRsImpl extends BaseRs implements LanguageRs {
 		GetLanguageResponse result = new GetLanguageResponse();
 
 		try {
-			result.setLanguage(languageApi.find(languageCode, getCurrentUser()
-					.getProvider()));
+			result.setLanguage(languageApi.find(languageCode, getCurrentUser().getProvider()));
 		} catch (MeveoApiException e) {
 			result.getActionStatus().setErrorCode(e.getErrorCode());
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
 			result.getActionStatus().setMessage(e.getMessage());
 		} catch (Exception e) {
-			result.getActionStatus().setErrorCode(
-					MeveoApiErrorCode.GENERIC_API_EXCEPTION);
+			result.getActionStatus().setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
 			result.getActionStatus().setMessage(e.getMessage());
 		}
 
+		log.debug("RESPONSE={}", result);
 		return result;
 	}
 
@@ -80,6 +84,7 @@ public class LanguageRsImpl extends BaseRs implements LanguageRs {
 			result.setMessage(e.getMessage());
 		}
 
+		log.debug("RESPONSE={}", result);
 		return result;
 	}
 
@@ -99,6 +104,7 @@ public class LanguageRsImpl extends BaseRs implements LanguageRs {
 			result.setMessage(e.getMessage());
 		}
 
+		log.debug("RESPONSE={}", result);
 		return result;
 	}
 

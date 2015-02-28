@@ -44,6 +44,19 @@ public class CountryDto extends BaseDto {
 		}
 	}
 
+	public CountryDto(TradingCountry e) {
+		countryCode = e.getCountryCode();
+		name = e.getPrDescription();
+
+		if (e.getCountry() != null && e.getCountry().getCurrency() != null) {
+			currencyCode = e.getCountry().getCurrency().getCurrencyCode();
+		}
+
+		if (e.getCountry() != null && e.getCountry().getLanguage() != null) {
+			languageCode = e.getCountry().getLanguage().getLanguageCode();
+		}
+	}
+
 	public CountryDto(TradingCountry e, Country c) {
 		countryCode = e.getCountryCode();
 		name = e.getPrDescription();

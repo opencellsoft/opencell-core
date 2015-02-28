@@ -26,4 +26,10 @@ public class ListBillingAccountResponseDto extends BaseResponse {
 		this.billingAccounts = billingAccounts;
 	}
 
+	@Override
+	public String toString() {
+		return "ListBillingAccountResponseDto [billingAccounts=" + billingAccounts + ", toString()=" + super.toString()
+				+ "]";
+	}
+
 }

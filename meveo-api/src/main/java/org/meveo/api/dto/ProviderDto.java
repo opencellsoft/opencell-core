@@ -115,4 +115,11 @@ public class ProviderDto extends BaseDto {
 		this.userAccount = userAccount;
 	}
 
+	@Override
+	public String toString() {
+		return "ProviderDto [code=" + code + ", description=" + description + ", currency=" + currency + ", country="
+				+ country + ", language=" + language + ", multiCurrency=" + multiCurrency + ", multiCountry="
+				+ multiCountry + ", multiLanguage=" + multiLanguage + ", userAccount=" + userAccount + "]";
+	}
+
 }

@@ -31,4 +31,9 @@ public class SubscriptionsDto implements Serializable {
 		this.subscription = subscription;
 	}
 
+	@Override
+	public String toString() {
+		return "SubscriptionsDto [subscription=" + subscription + "]";
+	}
+
 }

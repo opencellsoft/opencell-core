@@ -26,4 +26,9 @@ public class ListUserAccountResponseDto extends BaseResponse {
 		this.userAccounts = userAccounts;
 	}
 
+	@Override
+	public String toString() {
+		return "ListUserAccountResponseDto [userAccounts=" + userAccounts + ", toString()=" + super.toString() + "]";
+	}
+
 }

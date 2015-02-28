@@ -30,4 +30,9 @@ public class ListAccessResponseDto extends BaseResponse {
 		return serialVersionUID;
 	}
 
+	@Override
+	public String toString() {
+		return "ListAccessResponseDto [accesses=" + accesses + ", toString()=" + super.toString() + "]";
+	}
+
 }

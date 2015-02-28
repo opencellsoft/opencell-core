@@ -29,4 +29,9 @@ public class ServiceChargeTemplateUsagesDto implements Serializable {
 		this.serviceChargeTemplateUsage = serviceChargeTemplateUsage;
 	}
 
+	@Override
+	public String toString() {
+		return "ServiceChargeTemplateUsagesDto [serviceChargeTemplateUsage=" + serviceChargeTemplateUsage + "]";
+	}
+
 }

@@ -1,4 +1,4 @@
-package org.meveo.api.rest;
+package org.meveo.api.rest.payment;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -9,8 +9,9 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 import org.meveo.api.dto.ActionStatus;
-import org.meveo.api.dto.billing.PaymentDto;
+import org.meveo.api.dto.payment.PaymentDto;
 import org.meveo.api.dto.response.CustomerPaymentsResponse;
+import org.meveo.api.rest.IBaseRs;
 import org.meveo.api.rest.security.RSSecured;
 
 @Path("/payment")
@@ -21,7 +22,7 @@ public interface PaymentRs extends IBaseRs {
 
 	@POST
 	@Path("/create")
-	public ActionStatus create(PaymentDto paymentDto);
+	public ActionStatus create(PaymentDto postData);
 
 	@GET
 	@Path("/customerPayment")

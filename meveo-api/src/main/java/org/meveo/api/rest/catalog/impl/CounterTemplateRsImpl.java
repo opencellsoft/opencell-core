@@ -14,6 +14,7 @@ import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.LoggingInterceptor;
 import org.meveo.api.rest.catalog.CounterTemplateRs;
 import org.meveo.api.rest.impl.BaseRs;
+import org.slf4j.Logger;
 
 /**
  * @author Edward P. Legaspi
@@ -21,6 +22,9 @@ import org.meveo.api.rest.impl.BaseRs;
 @RequestScoped
 @Interceptors({ LoggingInterceptor.class })
 public class CounterTemplateRsImpl extends BaseRs implements CounterTemplateRs {
+
+	@Inject
+	private Logger log;
 
 	@Inject
 	private CounterTemplateApi counterTemplateApi;
@@ -41,6 +45,7 @@ public class CounterTemplateRsImpl extends BaseRs implements CounterTemplateRs {
 			result.setMessage(e.getMessage());
 		}
 
+		log.debug("RESPONSE={}", result);
 		return result;
 	}
 
@@ -60,6 +65,7 @@ public class CounterTemplateRsImpl extends BaseRs implements CounterTemplateRs {
 			result.setMessage(e.getMessage());
 		}
 
+		log.debug("RESPONSE={}", result);
 		return result;
 	}
 
@@ -68,19 +74,18 @@ public class CounterTemplateRsImpl extends BaseRs implements CounterTemplateRs {
 		GetCounterTemplateResponse result = new GetCounterTemplateResponse();
 
 		try {
-			result.setCounterTemplate(counterTemplateApi.find(
-					counterTemplateCode, getCurrentUser().getProvider()));
+			result.setCounterTemplate(counterTemplateApi.find(counterTemplateCode, getCurrentUser().getProvider()));
 		} catch (MeveoApiException e) {
 			result.getActionStatus().setErrorCode(e.getErrorCode());
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
 			result.getActionStatus().setMessage(e.getMessage());
 		} catch (Exception e) {
-			result.getActionStatus().setErrorCode(
-					MeveoApiErrorCode.GENERIC_API_EXCEPTION);
+			result.getActionStatus().setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
 			result.getActionStatus().setMessage(e.getMessage());
 		}
 
+		log.debug("RESPONSE={}", result);
 		return result;
 	}
 
@@ -89,8 +94,7 @@ public class CounterTemplateRsImpl extends BaseRs implements CounterTemplateRs {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 		try {
-			counterTemplateApi.remove(counterTemplateCode, getCurrentUser()
-					.getProvider());
+			counterTemplateApi.remove(counterTemplateCode, getCurrentUser().getProvider());
 		} catch (MeveoApiException e) {
 			result.setErrorCode(e.getErrorCode());
 			result.setStatus(ActionStatusEnum.FAIL);
@@ -101,6 +105,7 @@ public class CounterTemplateRsImpl extends BaseRs implements CounterTemplateRs {
 			result.setMessage(e.getMessage());
 		}
 
+		log.debug("RESPONSE={}", result);
 		return result;
 	}
 

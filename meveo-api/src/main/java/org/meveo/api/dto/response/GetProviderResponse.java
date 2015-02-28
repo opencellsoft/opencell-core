@@ -30,4 +30,9 @@ public class GetProviderResponse extends BaseResponse {
 		this.provider = provider;
 	}
 
+	@Override
+	public String toString() {
+		return "GetProviderResponse [provider=" + provider + ", toString()=" + super.toString() + "]";
+	}
+
 }

@@ -50,7 +50,7 @@ public class HourInDayDto implements Serializable {
     }
 
     @Override
-    public String toString() {
-        return "HourInDayDto [hour=" + hour + ", min=" + min + "]";
-    }
+	public String toString() {
+		return "HourInDayDto [hour=" + hour + ", min=" + min + "]";
+	}
 }

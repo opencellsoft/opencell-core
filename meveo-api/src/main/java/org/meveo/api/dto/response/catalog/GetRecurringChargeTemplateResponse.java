@@ -29,8 +29,8 @@ public class GetRecurringChargeTemplateResponse extends BaseResponse {
 
 	@Override
 	public String toString() {
-		return "GetRecurringChargeTemplateResponse [recurringChargeTemplate="
-				+ recurringChargeTemplate + "]";
+		return "GetRecurringChargeTemplateResponse [recurringChargeTemplate=" + recurringChargeTemplate
+				+ ", toString()=" + super.toString() + "]";
 	}
 
 }

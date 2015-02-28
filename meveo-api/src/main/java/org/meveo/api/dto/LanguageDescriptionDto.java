@@ -45,8 +45,7 @@ public class LanguageDescriptionDto implements Serializable {
 
 	@Override
 	public String toString() {
-		return "LanguageDescriptionDto [languageCode=" + languageCode
-				+ ", description=" + description + "]";
+		return "LanguageDescriptionDto [languageCode=" + languageCode + ", description=" + description + "]";
 	}
 
 }

@@ -340,10 +340,12 @@
 								</p:panelGrid>
 							</h:form>
 
-							<hftl:dataList backingBean="#{accountOperationBean}"
+						<hftl:dataList backingBean="#{accountOperationBean}"
 								dataModel="#{accountOperationBean.getAccountOperations(customerAccountBean.entity)}"
 								label="#{messages['accountOperation.title']}" disabled="true"
-								checkMany="true">
+								checkMany="false" >
+								<p:column selectionMode="multiple" style="width:2%"  />
+							    <p:ajax event="rowSelectCheckbox" update="@form" />
 
 								<p:column style="width:8%">
 									<f:facet name="header">
@@ -395,19 +397,18 @@
 								<hftl:column
 									label="#{messages['accountOperation.unMatchingAmount']}"
 									field="unMatchingAmount" converterParam="4digits" />
-
-								<hftl:column
-									label="#{messages['accountOperation.excludedFromDunning']}"
-									field="excludedFromDunning" isMessage="true" />
-									
+	
 								<hftl:column
 									label="#{messages['accountOperation.matchingStatus']}"
 									field="matchingStatus" childField="label" isMessage="true" />	
+									
+									<hftl:column
+									label="#{messages['accountOperation.excludedFromDunning']}"
+									field="excludedFromDunning" isMessage="true" />
 
 								<hftl:actionsColumn
-									editView="#{accountOperationBean.displayOperation(entity.getId())}" />
-
-								<ui:define name="add-on-buttons">
+									editView="#{accountOperationBean.displayOperation(entity.getId())}" /> 
+								<ui:define name="add-on-buttons"> 
 									<p:panelGrid columns="4" styleClass="form-panel-actions">
 										<p:commandButton
 											action="#{accountOperationBean.matching(customerAccountBean.entity.id)}"
@@ -419,17 +420,17 @@
 											rendered="#{customerAccountBean.isActiveAccount()}" />
 										
 										<p:commandButton
-											action="#{accountOperationBean.excludedFromDunning(customerAccountBean.entity.id,true)}"
+											action="#{accountOperationBean.dunningInclusionExclusion(customerAccountBean.entity.id,true)}"
 											value="#{messages['customerAccount.excludeFromDunning']}"
-											rendered="#{customerAccountBean.isActiveAccount()}" />
-											
-										<p:commandButton
-											action="#{accountOperationBean.excludedFromDunning(customerAccountBean.entity.id,false)}"
+											rendered="#{customerAccountBean.isActiveAccount()}"
+											disabled="#{accountOperationBean.isSelectedOperationExcluded()}"/>
+											<p:commandButton
+											action="#{accountOperationBean.dunningInclusionExclusion(customerAccountBean.entity.id,false)}"
 											value="#{messages['customerAccount.includeToDunning']}"
-											rendered="#{customerAccountBean.isActiveAccount()}"/>	
-											
-									</p:panelGrid>
-								</ui:define>
+											rendered="#{customerAccountBean.isActiveAccount()}"
+											disabled="#{accountOperationBean.isSelectedOperationIncluded()}"/>	
+									</p:panelGrid> 
+								</ui:define> 
 							</hftl:dataList>
 
 							<h:form>

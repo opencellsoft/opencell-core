@@ -127,7 +127,7 @@ public class RatedTransactionsJob implements Job {
 	}
 	@Override
 	public JobCategoryEnum getJobCategory() {
-		return JobCategoryEnum.RATING;
+		return JobCategoryEnum.INVOICING;
 	}
 
 }

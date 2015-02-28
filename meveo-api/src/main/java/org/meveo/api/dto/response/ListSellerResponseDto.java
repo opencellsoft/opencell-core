@@ -23,6 +23,11 @@ public class ListSellerResponseDto extends BaseResponse {
 
 	public void setSellers(SellersDto sellers) {
 		this.sellers = sellers;
+	}
+
+	@Override
+	public String toString() {
+		return "ListSellerResponseDto [sellers=" + sellers + ", toString()=" + super.toString() + "]";
 	} 
 
 }

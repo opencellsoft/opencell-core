@@ -32,7 +32,7 @@ public class GetCurrencyResponse extends BaseResponse {
 
 	@Override
 	public String toString() {
-		return "GetCurrencyResponse [currency=" + currency + "]";
+		return "GetCurrencyResponse [currency=" + currency + ", toString()=" + super.toString() + "]";
 	}
 
 }

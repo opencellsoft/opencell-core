@@ -45,4 +45,9 @@ public class LanguageDto extends BaseDto {
 		this.description = description;
 	}
 
+	@Override
+	public String toString() {
+		return "LanguageDto [code=" + code + ", description=" + description + "]";
+	}
+
 }

@@ -30,4 +30,10 @@ public class ServiceChargeTemplateSubscriptionsDto implements Serializable {
 		this.serviceChargeTemplateSubscription = serviceChargeTemplateSubscription;
 	}
 
+	@Override
+	public String toString() {
+		return "ServiceChargeTemplateSubscriptionsDto [serviceChargeTemplateSubscription="
+				+ serviceChargeTemplateSubscription + "]";
+	}
+
 }

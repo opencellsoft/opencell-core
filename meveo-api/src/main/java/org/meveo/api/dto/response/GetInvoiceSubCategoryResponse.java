@@ -27,8 +27,8 @@ public class GetInvoiceSubCategoryResponse extends BaseResponse {
 
 	@Override
 	public String toString() {
-		return "GetInvoiceSubCategoryResponse [invoiceSubCategory="
-				+ invoiceSubCategory + "]";
+		return "GetInvoiceSubCategoryResponse [invoiceSubCategory=" + invoiceSubCategory + ", toString()="
+				+ super.toString() + "]";
 	}
 
 }

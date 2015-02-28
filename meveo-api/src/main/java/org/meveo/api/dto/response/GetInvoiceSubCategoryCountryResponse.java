@@ -21,14 +21,13 @@ public class GetInvoiceSubCategoryCountryResponse extends BaseResponse {
 		return invoiceSubCategoryCountryDto;
 	}
 
-	public void setInvoiceSubCategoryCountryDto(
-			InvoiceSubCategoryCountryDto invoiceSubCategoryCountryDto) {
+	public void setInvoiceSubCategoryCountryDto(InvoiceSubCategoryCountryDto invoiceSubCategoryCountryDto) {
 		this.invoiceSubCategoryCountryDto = invoiceSubCategoryCountryDto;
 	}
 
 	@Override
 	public String toString() {
-		return "GetInvoiceSubCategoryCountryResponse [invoiceSubCategoryCountryDto="
-				+ invoiceSubCategoryCountryDto + "]";
+		return "GetInvoiceSubCategoryCountryResponse [invoiceSubCategoryCountryDto=" + invoiceSubCategoryCountryDto
+				+ ", toString()=" + super.toString() + "]";
 	}
 }

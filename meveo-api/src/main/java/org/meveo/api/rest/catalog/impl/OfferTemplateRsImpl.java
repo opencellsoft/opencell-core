@@ -14,6 +14,7 @@ import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.LoggingInterceptor;
 import org.meveo.api.rest.catalog.OfferTemplateRs;
 import org.meveo.api.rest.impl.BaseRs;
+import org.slf4j.Logger;
 
 /**
  * @author Edward P. Legaspi
@@ -21,6 +22,9 @@ import org.meveo.api.rest.impl.BaseRs;
 @RequestScoped
 @Interceptors({ LoggingInterceptor.class })
 public class OfferTemplateRsImpl extends BaseRs implements OfferTemplateRs {
+
+	@Inject
+	private Logger log;
 
 	@Inject
 	private OfferTemplateApi offerTemplateApi;
@@ -41,6 +45,7 @@ public class OfferTemplateRsImpl extends BaseRs implements OfferTemplateRs {
 			result.setMessage(e.getMessage());
 		}
 
+		log.debug("RESPONSE={}", result);
 		return result;
 	}
 
@@ -60,6 +65,7 @@ public class OfferTemplateRsImpl extends BaseRs implements OfferTemplateRs {
 			result.setMessage(e.getMessage());
 		}
 
+		log.debug("RESPONSE={}", result);
 		return result;
 	}
 
@@ -68,19 +74,18 @@ public class OfferTemplateRsImpl extends BaseRs implements OfferTemplateRs {
 		GetOfferTemplateResponse result = new GetOfferTemplateResponse();
 
 		try {
-			result.setOfferTemplate(offerTemplateApi.find(offerTemplateCode,
-					getCurrentUser().getProvider()));
+			result.setOfferTemplate(offerTemplateApi.find(offerTemplateCode, getCurrentUser().getProvider()));
 		} catch (MeveoApiException e) {
 			result.getActionStatus().setErrorCode(e.getErrorCode());
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
 			result.getActionStatus().setMessage(e.getMessage());
 		} catch (Exception e) {
-			result.getActionStatus().setErrorCode(
-					MeveoApiErrorCode.GENERIC_API_EXCEPTION);
+			result.getActionStatus().setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
 			result.getActionStatus().setMessage(e.getMessage());
 		}
 
+		log.debug("RESPONSE={}", result);
 		return result;
 	}
 
@@ -89,8 +94,7 @@ public class OfferTemplateRsImpl extends BaseRs implements OfferTemplateRs {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 		try {
-			offerTemplateApi.remove(offerTemplateCode, getCurrentUser()
-					.getProvider());
+			offerTemplateApi.remove(offerTemplateCode, getCurrentUser().getProvider());
 		} catch (MeveoApiException e) {
 			result.setErrorCode(e.getErrorCode());
 			result.setStatus(ActionStatusEnum.FAIL);
@@ -101,6 +105,7 @@ public class OfferTemplateRsImpl extends BaseRs implements OfferTemplateRs {
 			result.setMessage(e.getMessage());
 		}
 
+		log.debug("RESPONSE={}", result);
 		return result;
 	}
 

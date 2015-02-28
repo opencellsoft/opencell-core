@@ -14,6 +14,7 @@ import org.meveo.api.dto.response.ListSellerResponseDto;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.LoggingInterceptor;
 import org.meveo.api.rest.SellerRs;
+import org.slf4j.Logger;
 
 /**
  * @author Edward P. Legaspi
@@ -21,6 +22,9 @@ import org.meveo.api.rest.SellerRs;
 @RequestScoped
 @Interceptors({ LoggingInterceptor.class })
 public class SellerRsImpl extends BaseRs implements SellerRs {
+
+	@Inject
+	private Logger log;
 
 	@Inject
 	private SellerApi sellerApi;
@@ -41,6 +45,7 @@ public class SellerRsImpl extends BaseRs implements SellerRs {
 			result.setMessage(e.getMessage());
 		}
 
+		log.debug("RESPONSE={}", result);
 		return result;
 	}
 
@@ -60,6 +65,7 @@ public class SellerRsImpl extends BaseRs implements SellerRs {
 			result.setMessage(e.getMessage());
 		}
 
+		log.debug("RESPONSE={}", result);
 		return result;
 	}
 
@@ -79,6 +85,7 @@ public class SellerRsImpl extends BaseRs implements SellerRs {
 			result.getActionStatus().setMessage(e.getMessage());
 		}
 
+		log.debug("RESPONSE={}", result);
 		return result;
 	}
 
@@ -98,6 +105,7 @@ public class SellerRsImpl extends BaseRs implements SellerRs {
 			result.setMessage(e.getMessage());
 		}
 
+		log.debug("RESPONSE={}", result);
 		return result;
 	}
 
@@ -113,6 +121,7 @@ public class SellerRsImpl extends BaseRs implements SellerRs {
 			result.getActionStatus().setMessage(e.getMessage());
 		}
 
+		log.debug("RESPONSE={}", result);
 		return result;
 	}
 

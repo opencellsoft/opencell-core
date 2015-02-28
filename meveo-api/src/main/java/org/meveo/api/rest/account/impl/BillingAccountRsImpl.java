@@ -15,6 +15,7 @@ import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.LoggingInterceptor;
 import org.meveo.api.rest.account.BillingAccountRs;
 import org.meveo.api.rest.impl.BaseRs;
+import org.slf4j.Logger;
 
 /**
  * @author Edward P. Legaspi
@@ -22,6 +23,9 @@ import org.meveo.api.rest.impl.BaseRs;
 @RequestScoped
 @Interceptors({ LoggingInterceptor.class })
 public class BillingAccountRsImpl extends BaseRs implements BillingAccountRs {
+
+	@Inject
+	private Logger log;
 
 	@Inject
 	private BillingAccountApi billingAccountApi;
@@ -42,6 +46,7 @@ public class BillingAccountRsImpl extends BaseRs implements BillingAccountRs {
 			result.setMessage(e.getMessage());
 		}
 
+		log.debug("RESPONSE={}", result);
 		return result;
 	}
 
@@ -61,6 +66,7 @@ public class BillingAccountRsImpl extends BaseRs implements BillingAccountRs {
 			result.setMessage(e.getMessage());
 		}
 
+		log.debug("RESPONSE={}", result);
 		return result;
 	}
 
@@ -80,6 +86,7 @@ public class BillingAccountRsImpl extends BaseRs implements BillingAccountRs {
 			result.getActionStatus().setMessage(e.getMessage());
 		}
 
+		log.debug("RESPONSE={}", result);
 		return result;
 	}
 
@@ -99,6 +106,7 @@ public class BillingAccountRsImpl extends BaseRs implements BillingAccountRs {
 			result.setMessage(e.getMessage());
 		}
 
+		log.debug("RESPONSE={}", result);
 		return result;
 	}
 
@@ -119,6 +127,7 @@ public class BillingAccountRsImpl extends BaseRs implements BillingAccountRs {
 			result.getActionStatus().setMessage(e.getMessage());
 		}
 
+		log.debug("RESPONSE={}", result);
 		return result;
 	}
 

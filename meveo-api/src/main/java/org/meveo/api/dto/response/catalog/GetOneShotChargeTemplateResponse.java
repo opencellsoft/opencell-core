@@ -29,8 +29,8 @@ public class GetOneShotChargeTemplateResponse extends BaseResponse {
 
 	@Override
 	public String toString() {
-		return "GetOneShotChargeTemplateResponse [oneShotChargeTemplate="
-				+ oneShotChargeTemplate + "]";
+		return "GetOneShotChargeTemplateResponse [oneShotChargeTemplate=" + oneShotChargeTemplate + ", toString()="
+				+ super.toString() + "]";
 	}
 
 }

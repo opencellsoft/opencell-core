@@ -1,5 +1,7 @@
 package org.meveo.api.dto.response;
 
+import java.util.Arrays;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -26,6 +28,12 @@ public class PdfInvoiceResponse extends BaseResponse {
 
 	public void setPdfInvoice(byte[] pdfInvoice) {
 		this.pdfInvoice = pdfInvoice;
+	}
+
+	@Override
+	public String toString() {
+		return "PdfInvoiceResponse [pdfInvoice=" + Arrays.toString(pdfInvoice) + ", toString()=" + super.toString()
+				+ "]";
 	}
 
 }

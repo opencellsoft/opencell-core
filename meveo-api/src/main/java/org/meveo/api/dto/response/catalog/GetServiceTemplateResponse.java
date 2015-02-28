@@ -28,10 +28,8 @@ public class GetServiceTemplateResponse extends BaseResponse {
 
 	@Override
 	public String toString() {
-		return "GetServiceTemplateResponse [serviceTemplate=" + serviceTemplate
-				+ ", getActionStatus()=" + getActionStatus() + ", getClass()="
-				+ getClass() + ", hashCode()=" + hashCode() + ", toString()="
-				+ super.toString() + "]";
+		return "GetServiceTemplateResponse [serviceTemplate=" + serviceTemplate + ", toString()=" + super.toString()
+				+ "]";
 	}
 
 }

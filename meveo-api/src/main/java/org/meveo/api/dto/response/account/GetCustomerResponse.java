@@ -26,4 +26,9 @@ public class GetCustomerResponse extends BaseResponse {
 		this.customer = customer;
 	}
 
+	@Override
+	public String toString() {
+		return "GetCustomerResponse [customer=" + customer + ", toString()=" + super.toString() + "]";
+	}
+
 }

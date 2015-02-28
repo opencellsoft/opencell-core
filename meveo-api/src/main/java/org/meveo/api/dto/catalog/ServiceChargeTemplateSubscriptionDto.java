@@ -13,4 +13,9 @@ public class ServiceChargeTemplateSubscriptionDto extends BaseServiceChargeTempl
 
 	private static final long serialVersionUID = 6508584475693802506L;
 
+	@Override
+	public String toString() {
+		return "ServiceChargeTemplateSubscriptionDto [getCode()=" + getCode() + ", getWallets()=" + getWallets() + "]";
+	}
+
 }

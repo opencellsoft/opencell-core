@@ -29,8 +29,8 @@ public class GetUsageChargeTemplateResponse extends BaseResponse {
 
 	@Override
 	public String toString() {
-		return "GetUsageChargeTemplateResponse [usageChargeTemplate="
-				+ usageChargeTemplate + "]";
+		return "GetUsageChargeTemplateResponse [usageChargeTemplate=" + usageChargeTemplate + ", toString()="
+				+ super.toString() + "]";
 	}
 
 }

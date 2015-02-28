@@ -13,6 +13,7 @@ import org.meveo.api.dto.response.GetTaxResponse;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.LoggingInterceptor;
 import org.meveo.api.rest.TaxRs;
+import org.slf4j.Logger;
 
 /**
  * @author Edward P. Legaspi
@@ -20,6 +21,9 @@ import org.meveo.api.rest.TaxRs;
 @RequestScoped
 @Interceptors({ LoggingInterceptor.class })
 public class TaxRsImpl extends BaseRs implements TaxRs {
+
+	@Inject
+	private Logger log;
 
 	@Inject
 	private TaxApi taxApi;
@@ -40,6 +44,7 @@ public class TaxRsImpl extends BaseRs implements TaxRs {
 			result.setMessage(e.getMessage());
 		}
 
+		log.debug("RESPONSE={}", result);
 		return result;
 	}
 
@@ -59,6 +64,7 @@ public class TaxRsImpl extends BaseRs implements TaxRs {
 			result.setMessage(e.getMessage());
 		}
 
+		log.debug("RESPONSE={}", result);
 		return result;
 	}
 
@@ -73,12 +79,12 @@ public class TaxRsImpl extends BaseRs implements TaxRs {
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
 			result.getActionStatus().setMessage(e.getMessage());
 		} catch (Exception e) {
-			result.getActionStatus().setErrorCode(
-					MeveoApiErrorCode.GENERIC_API_EXCEPTION);
+			result.getActionStatus().setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
 			result.getActionStatus().setMessage(e.getMessage());
 		}
 
+		log.debug("RESPONSE={}", result);
 		return result;
 	}
 
@@ -98,6 +104,7 @@ public class TaxRsImpl extends BaseRs implements TaxRs {
 			result.setMessage(e.getMessage());
 		}
 
+		log.debug("RESPONSE={}", result);
 		return result;
 	}
 

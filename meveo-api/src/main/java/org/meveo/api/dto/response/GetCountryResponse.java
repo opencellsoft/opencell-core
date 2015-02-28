@@ -32,7 +32,7 @@ public class GetCountryResponse extends BaseResponse {
 
 	@Override
 	public String toString() {
-		return "GetCountryResponse [country=" + country + "]";
+		return "GetCountryResponse [country=" + country + ", toString()=" + super.toString() + "]";
 	}
 
 }

@@ -31,4 +31,9 @@ public class CustomFieldsDto implements Serializable {
 		this.customField = customField;
 	}
 
+	@Override
+	public String toString() {
+		return "CustomFieldsDto [customField=" + customField + "]";
+	}
+
 }

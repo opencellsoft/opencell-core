@@ -13,6 +13,7 @@ import org.meveo.api.dto.response.GetInvoiceCategoryResponse;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.LoggingInterceptor;
 import org.meveo.api.rest.InvoiceCategoryRs;
+import org.slf4j.Logger;
 
 /**
  * @author Edward P. Legaspi
@@ -20,6 +21,9 @@ import org.meveo.api.rest.InvoiceCategoryRs;
 @RequestScoped
 @Interceptors({ LoggingInterceptor.class })
 public class InvoiceCategoryRsImpl extends BaseRs implements InvoiceCategoryRs {
+
+	@Inject
+	private Logger log;
 
 	@Inject
 	private InvoiceCategoryApi invoiceCategoryApi;
@@ -40,6 +44,7 @@ public class InvoiceCategoryRsImpl extends BaseRs implements InvoiceCategoryRs {
 			result.setMessage(e.getMessage());
 		}
 
+		log.debug("RESPONSE={}", result);
 		return result;
 	}
 
@@ -59,6 +64,7 @@ public class InvoiceCategoryRsImpl extends BaseRs implements InvoiceCategoryRs {
 			result.setMessage(e.getMessage());
 		}
 
+		log.debug("RESPONSE={}", result);
 		return result;
 	}
 
@@ -67,19 +73,18 @@ public class InvoiceCategoryRsImpl extends BaseRs implements InvoiceCategoryRs {
 		GetInvoiceCategoryResponse result = new GetInvoiceCategoryResponse();
 
 		try {
-			result.setInvoiceCategory(invoiceCategoryApi.find(
-					invoiceCategoryCode, getCurrentUser().getProvider()));
+			result.setInvoiceCategory(invoiceCategoryApi.find(invoiceCategoryCode, getCurrentUser().getProvider()));
 		} catch (MeveoApiException e) {
 			result.getActionStatus().setErrorCode(e.getErrorCode());
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
 			result.getActionStatus().setMessage(e.getMessage());
 		} catch (Exception e) {
-			result.getActionStatus().setErrorCode(
-					MeveoApiErrorCode.GENERIC_API_EXCEPTION);
+			result.getActionStatus().setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
 			result.getActionStatus().setMessage(e.getMessage());
 		}
 
+		log.debug("RESPONSE={}", result);
 		return result;
 	}
 
@@ -88,8 +93,7 @@ public class InvoiceCategoryRsImpl extends BaseRs implements InvoiceCategoryRs {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 		try {
-			invoiceCategoryApi.remove(invoiceCategoryCode, getCurrentUser()
-					.getProvider());
+			invoiceCategoryApi.remove(invoiceCategoryCode, getCurrentUser().getProvider());
 		} catch (MeveoApiException e) {
 			result.setErrorCode(e.getErrorCode());
 			result.setStatus(ActionStatusEnum.FAIL);
@@ -100,6 +104,7 @@ public class InvoiceCategoryRsImpl extends BaseRs implements InvoiceCategoryRs {
 			result.setMessage(e.getMessage());
 		}
 
+		log.debug("RESPONSE={}", result);
 		return result;
 	}
 

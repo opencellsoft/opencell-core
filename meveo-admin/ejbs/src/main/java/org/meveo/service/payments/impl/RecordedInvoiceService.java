@@ -138,7 +138,7 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
 									+ " where customerAccount.id=:customerAccountId and matchingStatus=:matchingStatus and excludedFromDunning=:dunningExclusion order by dueDate")
 					.setParameter("customerAccountId", customerAccount.getId())
 					.setParameter("matchingStatus", MatchingStatusEnum.O)
-					.setParameter("excludedFromDunning",dunningExclusion)
+					.setParameter("dunningExclusion",dunningExclusion)
 					.getResultList();
 		} catch (Exception e) {
 

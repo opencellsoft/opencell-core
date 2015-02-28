@@ -2,9 +2,7 @@
 	xmlns:s="http://jboss.com/products/seam/taglib"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
-	xmlns:h="http://java.sun.com/jsf/html"
-	xmlns:rich="http://richfaces.org/rich"
-	xmlns:a="http://richfaces.org/a4j" xmlns:hftl="http://hftl.org"
+	xmlns:h="http://java.sun.com/jsf/html" xmlns:hftl="http://hftl.org"
 	xmlns:hf="http://java.sun.com/jsf/composite/tags"
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
@@ -15,24 +13,24 @@
 
 	<ui:define name="body">
 
-		<hf:formPanel id="notificationForm" label="#{messages['menu.notification']}"
+		<hf:formPanel id="notificationForm"
+			label="#{messages['menu.notification']}"
 			backingBean="#{notificationBean}" columns="2">
-			<hf:formField label="#{messages['entity.code']}"
-				field="code"  required="true" maxLength="60"/>
+			<hf:formField label="#{messages['entity.code']}" field="code"
+				required="true" maxLength="60" />
 			<p:separator></p:separator>
 			<hf:formField
 				label="#{messages['entity.notification.classNameFilter']}"
-				field="classNameFilter" required="true" size="100" maxlength="255"/>
+				field="classNameFilter" required="true" size="100" maxlength="255"
+				completeMethod="#{notificationBean.completeText}" />
 			<hf:formField
 				label="#{messages['entity.notification.eventTypeFilter']}"
-				field="eventTypeFilter" required="true"/>
-			<hf:formField
-				label="#{messages['entity.notification.elFilter']}"
+				field="eventTypeFilter" required="true" />
+			<hf:formField label="#{messages['entity.notification.elFilter']}"
 				field="elFilter" textArea="true" maxlength="1000" />
 			<hf:formField label="#{messages['enableEntity.disabled']}"
 				field="disabled" isMessage="true" />
-			<hf:formField
-				label="#{messages['entity.notification.elAction']}"
+			<hf:formField label="#{messages['entity.notification.elAction']}"
 				field="elAction" textArea="true" maxlength="2000" />
 		</hf:formPanel>
 

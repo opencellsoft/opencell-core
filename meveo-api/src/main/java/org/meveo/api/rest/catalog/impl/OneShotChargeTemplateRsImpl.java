@@ -20,14 +20,17 @@ import org.meveo.api.logging.LoggingInterceptor;
 import org.meveo.api.rest.catalog.OneShotChargeTemplateRs;
 import org.meveo.api.rest.impl.BaseRs;
 import org.meveo.model.shared.DateUtils;
+import org.slf4j.Logger;
 
 /**
  * @author Edward P. Legaspi
  **/
 @RequestScoped
 @Interceptors({ LoggingInterceptor.class })
-public class OneShotChargeTemplateRsImpl extends BaseRs implements
-		OneShotChargeTemplateRs {
+public class OneShotChargeTemplateRsImpl extends BaseRs implements OneShotChargeTemplateRs {
+
+	@Inject
+	private Logger log;
 
 	@Inject
 	private OneShotChargeTemplateApi oneShotChargeTemplateApi;
@@ -48,6 +51,7 @@ public class OneShotChargeTemplateRsImpl extends BaseRs implements
 			result.setMessage(e.getMessage());
 		}
 
+		log.debug("RESPONSE={}", result);
 		return result;
 	}
 
@@ -67,44 +71,40 @@ public class OneShotChargeTemplateRsImpl extends BaseRs implements
 			result.setMessage(e.getMessage());
 		}
 
+		log.debug("RESPONSE={}", result);
 		return result;
 	}
 
 	@Override
 	public OneShotChargeTemplateWithPriceListDto listOneShotChargeTemplates(
-			@QueryParam("languageCode") String languageCode,
-			@QueryParam("countryCode") String countryCode,
-			@QueryParam("currencyCode") String currencyCode,
-			@QueryParam("sellerCode") String sellerCode,
+			@QueryParam("languageCode") String languageCode, @QueryParam("countryCode") String countryCode,
+			@QueryParam("currencyCode") String currencyCode, @QueryParam("sellerCode") String sellerCode,
 			@QueryParam("date") String date) {
 
-		Date subscriptionDate = DateUtils.parseDateWithPattern(date,
-				"yyyy-MM-dd");
+		Date subscriptionDate = DateUtils.parseDateWithPattern(date, "yyyy-MM-dd");
 
-		return oneShotChargeTemplateApi.listWithPrice(languageCode,
-				countryCode, currencyCode, sellerCode, subscriptionDate,
-				getCurrentUser());
+		return oneShotChargeTemplateApi.listWithPrice(languageCode, countryCode, currencyCode, sellerCode,
+				subscriptionDate, getCurrentUser());
 	}
 
 	@Override
-	public GetOneShotChargeTemplateResponse find(
-			String oneShotChargeTemplateCode) {
+	public GetOneShotChargeTemplateResponse find(String oneShotChargeTemplateCode) {
 		GetOneShotChargeTemplateResponse result = new GetOneShotChargeTemplateResponse();
 
 		try {
-			result.setOneShotChargeTemplate(oneShotChargeTemplateApi.find(
-					oneShotChargeTemplateCode, getCurrentUser().getProvider()));
+			result.setOneShotChargeTemplate(oneShotChargeTemplateApi.find(oneShotChargeTemplateCode, getCurrentUser()
+					.getProvider()));
 		} catch (MeveoApiException e) {
 			result.getActionStatus().setErrorCode(e.getErrorCode());
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
 			result.getActionStatus().setMessage(e.getMessage());
 		} catch (Exception e) {
-			result.getActionStatus().setErrorCode(
-					MeveoApiErrorCode.GENERIC_API_EXCEPTION);
+			result.getActionStatus().setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
 			result.getActionStatus().setMessage(e.getMessage());
 		}
 
+		log.debug("RESPONSE={}", result);
 		return result;
 	}
 
@@ -113,8 +113,7 @@ public class OneShotChargeTemplateRsImpl extends BaseRs implements
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 		try {
-			oneShotChargeTemplateApi.remove(oneShotChargeTemplateCode,
-					getCurrentUser().getProvider());
+			oneShotChargeTemplateApi.remove(oneShotChargeTemplateCode, getCurrentUser().getProvider());
 		} catch (MeveoApiException e) {
 			result.setErrorCode(e.getErrorCode());
 			result.setStatus(ActionStatusEnum.FAIL);
@@ -125,6 +124,7 @@ public class OneShotChargeTemplateRsImpl extends BaseRs implements
 			result.setMessage(e.getMessage());
 		}
 
+		log.debug("RESPONSE={}", result);
 		return result;
 	}
 

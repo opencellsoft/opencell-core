@@ -9,16 +9,13 @@ import javax.xml.bind.annotation.XmlType;
 
 import org.meveo.api.dto.BaseDto;
 
-@XmlType(name = "ServiceInstance")
+@XmlType(name = "PrepaidReservation")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class PrepaidReservationDto  extends BaseDto {
-	
-	/**
-	 * 
-	 */
+public class PrepaidReservationDto extends BaseDto {
+
 	private static final long serialVersionUID = -1511340678838442101L;
 
-	@XmlAttribute(required = true)	
+	@XmlAttribute(required = true)
 	public long reservationId;
 
 	public BigDecimal consumedQuantity;
@@ -38,6 +35,5 @@ public class PrepaidReservationDto  extends BaseDto {
 	public void setConsumedQuantity(BigDecimal consumedQuantity) {
 		this.consumedQuantity = consumedQuantity;
 	}
-	
-	
+
 }

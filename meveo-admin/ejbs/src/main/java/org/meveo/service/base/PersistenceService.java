@@ -177,6 +177,15 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 		return e;
 	}
 
+	@SuppressWarnings("unchecked")
+	public E findById(Long id, Provider provider) {
+		final Class<? extends E> entityClass = getEntityClass();
+		QueryBuilder queryBuilder = new QueryBuilder(entityClass, "a", null, provider);
+		queryBuilder.addCriterion("id", "=", id, true);
+		Query query = queryBuilder.getQuery(getEntityManager());
+		return (E) query.getSingleResult();
+	}
+
 	/**
 	 * @see org.meveo.service.base.local.IPersistenceService#findById(java.lang.Long,
 	 *      java.util.List, boolean)
@@ -239,7 +248,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 		checkProvider(e);
 		em.remove(e);
 		entityRemovedEventProducer.fire(e);
-		//em.flush();
+		// em.flush();
 		log.debug("end of remove {} entity (id={}).", getEntityClass().getSimpleName(), e.getId());
 	}
 

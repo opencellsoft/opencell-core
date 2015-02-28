@@ -15,6 +15,7 @@ import org.meveo.api.dto.response.GetCountryResponse;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.LoggingInterceptor;
 import org.meveo.api.rest.CountryRs;
+import org.slf4j.Logger;
 
 /**
  * @see {@link org.meveo.api.rest.CountryWs}.
@@ -24,6 +25,9 @@ import org.meveo.api.rest.CountryRs;
 @RequestScoped
 @Interceptors({ LoggingInterceptor.class })
 public class CountryRsImpl extends BaseRs implements CountryRs {
+
+	@Inject
+	private Logger log;
 
 	@Inject
 	private CountryApi countryApi;
@@ -50,6 +54,7 @@ public class CountryRsImpl extends BaseRs implements CountryRs {
 			result.setMessage(e.getMessage());
 		}
 
+		log.debug("RESPONSE={}", result);
 		return result;
 	}
 
@@ -59,19 +64,18 @@ public class CountryRsImpl extends BaseRs implements CountryRs {
 		result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
 
 		try {
-			result.setCountry(countryApi.find(countryCode, getCurrentUser()
-					.getProvider()));
+			result.setCountry(countryApi.find(countryCode, getCurrentUser().getProvider()));
 		} catch (MeveoApiException e) {
 			result.getActionStatus().setErrorCode(e.getErrorCode());
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
 			result.getActionStatus().setMessage(e.getMessage());
 		} catch (Exception e) {
-			result.getActionStatus().setErrorCode(
-					MeveoApiErrorCode.GENERIC_API_EXCEPTION);
+			result.getActionStatus().setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
 			result.getActionStatus().setMessage(e.getMessage());
 		}
 
+		log.debug("RESPONSE={}", result);
 		return result;
 	}
 
@@ -81,8 +85,7 @@ public class CountryRsImpl extends BaseRs implements CountryRs {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 		try {
-			countryApi.remove(countryCode, currencyCode, getCurrentUser()
-					.getProvider());
+			countryApi.remove(countryCode, currencyCode, getCurrentUser().getProvider());
 		} catch (MeveoApiException e) {
 			result.setErrorCode(e.getErrorCode());
 			result.setStatus(ActionStatusEnum.FAIL);
@@ -93,6 +96,7 @@ public class CountryRsImpl extends BaseRs implements CountryRs {
 			result.setMessage(e.getMessage());
 		}
 
+		log.debug("RESPONSE={}", result);
 		return result;
 	}
 
@@ -112,6 +116,7 @@ public class CountryRsImpl extends BaseRs implements CountryRs {
 			result.setMessage(e.getMessage());
 		}
 
+		log.debug("RESPONSE={}", result);
 		return result;
 	}
 

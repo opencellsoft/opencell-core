@@ -31,4 +31,9 @@ public class AccessesDto implements Serializable {
 		this.access = access;
 	}
 
+	@Override
+	public String toString() {
+		return "AccessesDto [access=" + access + "]";
+	}
+
 }

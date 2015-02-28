@@ -26,4 +26,9 @@ public class GetUserAccountResponse extends BaseResponse {
 		this.userAccount = userAccount;
 	}
 
+	@Override
+	public String toString() {
+		return "GetUserAccountResponse [userAccount=" + userAccount + ", toString()=" + super.toString() + "]";
+	}
+
 }

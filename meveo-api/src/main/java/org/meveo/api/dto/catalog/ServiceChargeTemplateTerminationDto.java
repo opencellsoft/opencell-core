@@ -13,4 +13,9 @@ public class ServiceChargeTemplateTerminationDto extends BaseServiceChargeTempla
 
 	private static final long serialVersionUID = -191541706032220541L;
 
+	@Override
+	public String toString() {
+		return "ServiceChargeTemplateTerminationDto [getCode()=" + getCode() + ", getWallets()=" + getWallets() + "]";
+	}
+
 }

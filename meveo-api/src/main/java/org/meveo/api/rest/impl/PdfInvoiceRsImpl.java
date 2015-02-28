@@ -3,53 +3,44 @@ package org.meveo.api.rest.impl;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.MediaType;
 
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.response.PdfInvoiceResponse;
 import org.meveo.api.invoice.PdfInvoiceApi;
 import org.meveo.api.logging.LoggingInterceptor;
-import org.meveo.api.rest.security.RSSecured;
+import org.meveo.api.rest.PdfInvoiceRs;
+import org.slf4j.Logger;
 
 /**
  * @author R.AITYAAZZA
  *
  */
-
-@Path("/PdfInvoice")
 @RequestScoped
-@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
-@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Interceptors({ LoggingInterceptor.class })
-@RSSecured
-public class PdfInvoiceRs extends BaseRs {
+public class PdfInvoiceRsImpl extends BaseRs implements PdfInvoiceRs {
+
+	@Inject
+	private Logger log;
 
 	@Inject
 	private PdfInvoiceApi pdfInvoiceApi;
 
-	@GET
-	@Path("/")
-	public PdfInvoiceResponse getPDFInvoice(
-			@QueryParam("invoiceNumber") String invoiceNumber,
-			@QueryParam("customerAccountCode") String customerAccountCode)
-			throws Exception {
+	@Override
+	public PdfInvoiceResponse getPDFInvoice(@QueryParam("invoiceNumber") String invoiceNumber,
+			@QueryParam("customerAccountCode") String customerAccountCode) throws Exception {
 
 		PdfInvoiceResponse result = new PdfInvoiceResponse();
 		result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
 
 		try {
-			result.setPdfInvoice(pdfInvoiceApi.getPDFInvoice(invoiceNumber,
-					customerAccountCode, getCurrentUser()));
+			result.setPdfInvoice(pdfInvoiceApi.getPDFInvoice(invoiceNumber, customerAccountCode, getCurrentUser()));
 		} catch (Exception e) {
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
 			result.getActionStatus().setMessage(e.getMessage());
 		}
 
+		log.debug("RESPONSE={}", result);
 		return result;
 	}
 

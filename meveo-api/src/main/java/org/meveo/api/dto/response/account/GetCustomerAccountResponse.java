@@ -27,4 +27,10 @@ public class GetCustomerAccountResponse extends BaseResponse {
 		this.customerAccount = customerAccount;
 	}
 
+	@Override
+	public String toString() {
+		return "GetCustomerAccountResponse [customerAccount=" + customerAccount + ", toString()=" + super.toString()
+				+ "]";
+	}
+
 }

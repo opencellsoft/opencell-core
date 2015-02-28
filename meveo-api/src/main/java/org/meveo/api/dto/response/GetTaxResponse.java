@@ -27,7 +27,7 @@ public class GetTaxResponse extends BaseResponse {
 
 	@Override
 	public String toString() {
-		return "GetTaxResponse [tax=" + tax + "]";
+		return "GetTaxResponse [tax=" + tax + ", toString()=" + super.toString() + "]";
 	}
 
 }

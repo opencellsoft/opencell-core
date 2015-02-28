@@ -10,8 +10,6 @@ import javax.ejb.Timeout;
 import javax.ejb.Timer;
 import javax.ejb.TimerConfig;
 import javax.ejb.TimerService;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
@@ -55,8 +53,8 @@ public class MediationApi extends BaseApi {
 
 	@Inject
 	private ReservationService reservationService;
-	
-	Map<Long,Timer> timers= new HashMap<Long,Timer>();
+
+	Map<Long, Timer> timers = new HashMap<Long, Timer>();
 
 	public void registerCdrList(CdrListDto postData, User currentUser) throws MeveoApiException {
 
@@ -89,7 +87,6 @@ public class MediationApi extends BaseApi {
 		}
 	}
 
-	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public void chargeCdr(String cdr, User user, String ip) throws MeveoApiException {
 		if (!StringUtils.isBlank(cdr)) {
 			try {
@@ -134,7 +131,7 @@ public class MediationApi extends BaseApi {
 	private void reservationExpired(Timer timer) {
 		Object[] objs = (Object[]) timer.getInfo();
 		try {
-			Reservation reservation = reservationService.findById((Long)objs[0]);
+			Reservation reservation = reservationService.findById((Long) objs[0]);
 			reservationService.cancelPrepaidReservationInNewTransaction(reservation);
 		} catch (BusinessException e) {
 			e.printStackTrace();
@@ -143,7 +140,6 @@ public class MediationApi extends BaseApi {
 
 	// if the reservation succeed then returns -1, else returns the available
 	// quantity for this cdr
-	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public CdrReservationResponseDto reserveCdr(String cdr, User user, String ip) throws MeveoApiException {
 		CdrReservationResponseDto result = new CdrReservationResponseDto();
 		// TODO: if insufficient balance retry with lower quantity
@@ -172,8 +168,8 @@ public class MediationApi extends BaseApi {
 						TimerConfig timerConfig = new TimerConfig();
 						Object[] objs = { reservation.getId(), user };
 						timerConfig.setInfo(objs);
-						Timer timer=timerService.createSingleActionTimer(
-								user.getProvider().getPrepaidReservationExpirationDelayinMillisec(),timerConfig);
+						Timer timer = timerService.createSingleActionTimer(user.getProvider()
+								.getPrepaidReservationExpirationDelayinMillisec(), timerConfig);
 						timers.put(reservation.getId(), timer);
 					} catch (BusinessException e) {
 						log.error("Exception rating edr={}", e.getMessage());
@@ -196,55 +192,58 @@ public class MediationApi extends BaseApi {
 		return result;
 	}
 
-	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public void confirmReservation(PrepaidReservationDto reservationDto, User user, String ip) throws MeveoApiException {
 		if (reservationDto.getReservationId() > 0) {
 			try {
-				Reservation reservation = reservationService.findById(reservationDto.getReservationId());
-				if(reservation==null){
+				Reservation reservation = reservationService.findById(reservationDto.getReservationId(),
+						user.getProvider());
+				if (reservation == null) {
 					throw new BusinessException("CANNOT_FIND_RESERVATION");
 				}
-				if(reservation.getProvider().getId() != user.getProvider().getId()){
+				if (reservation.getProvider().getId() != user.getProvider().getId()) {
 					throw new BusinessException("NOT_YOUR_RESERVATION");
 				}
 				if (reservation.getStatus() != ReservationStatus.OPEN) {
 					throw new BusinessException("RESERVATION_NOT_OPEN");
 				}
-				log.debug("compare dto qty {} and reserved qty {}",reservationDto.getConsumedQuantity().toPlainString(),reservation.getQuantity().toPlainString());
-				if(reservationDto.getConsumedQuantity().compareTo(reservation.getQuantity())==0){
+				log.debug("compare dto qty {} and reserved qty {}", reservationDto.getConsumedQuantity()
+						.toPlainString(), reservation.getQuantity().toPlainString());
+				if (reservationDto.getConsumedQuantity().compareTo(reservation.getQuantity()) == 0) {
 					reservationService.confirmPrepaidReservation(reservation);
-				} else if(reservationDto.getConsumedQuantity().compareTo(reservation.getQuantity())<0){
+				} else if (reservationDto.getConsumedQuantity().compareTo(reservation.getQuantity()) < 0) {
 					reservationService.cancelPrepaidReservation(reservation);
-					EDR edr =  reservation.getOriginEdr();
+					EDR edr = reservation.getOriginEdr();
 					edr.setQuantity(reservationDto.getConsumedQuantity());
 					try {
 						usageRatingService.rateUsageWithinTransaction(edr, user);
-						if(edr.getStatus()==EDRStatusEnum.REJECTED){
+						if (edr.getStatus() == EDRStatusEnum.REJECTED) {
 							log.error("edr rejected={}", edr.getRejectReason());
 							throw new MeveoApiException(edr.getRejectReason());
 						}
 					} catch (BusinessException e) {
 						log.error("Exception rating edr={}", e.getMessage());
-						if("INSUFFICIENT_BALANCE".equals(e.getMessage())){
-							throw new MeveoApiException(MeveoApiErrorCode.INSUFFICIENT_BALANCE,e.getMessage());
+						if ("INSUFFICIENT_BALANCE".equals(e.getMessage())) {
+							throw new MeveoApiException(MeveoApiErrorCode.INSUFFICIENT_BALANCE, e.getMessage());
 						} else {
-							throw new MeveoApiException(MeveoApiErrorCode.BUSINESS_API_EXCEPTION,e.getMessage());
+							throw new MeveoApiException(MeveoApiErrorCode.BUSINESS_API_EXCEPTION, e.getMessage());
 						}
-						
+
 					}
 				} else {
 					throw new BusinessException("CONSUMPTION_OVER_QUANTITY_RESERVED");
 				}
-				try{
-					if(timers.containsKey(reservation.getId())){
+				try {
+					if (timers.containsKey(reservation.getId())) {
 						Timer timer = timers.get(reservation.getId());
 						timer.cancel();
 						timers.remove(reservation.getId());
-						log.debug("Canceled expiry timer for reservation {}, remains {} active timers",reservation.getId(),timers.size());
+						log.debug("Canceled expiry timer for reservation {}, remains {} active timers",
+								reservation.getId(), timers.size());
 					}
-				} catch(Exception e1){}
+				} catch (Exception e1) {
+				}
 			} catch (BusinessException e) {
-				e.printStackTrace();
+				log.error(e.getMessage());
 				throw new MeveoApiException(e.getMessage());
 			}
 		} else {
@@ -253,20 +252,20 @@ public class MediationApi extends BaseApi {
 		}
 	}
 
-	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public void cancelReservation(PrepaidReservationDto reservationDto, User user, String ip) throws MeveoApiException {
 		if (reservationDto.getReservationId() > 0) {
 			try {
-				Reservation reservation = reservationService.findById(reservationDto.getReservationId());
-				if(reservation==null){
+				Reservation reservation = reservationService.findById(reservationDto.getReservationId(),
+						user.getProvider());
+				if (reservation == null) {
 					throw new BusinessException("CANNOT_FIND_RESERVATION");
 				}
-				if(reservation.getProvider().getId() != user.getProvider().getId()){
+				if (reservation.getProvider().getId() != user.getProvider().getId()) {
 					throw new BusinessException("NOT_YOUR_RESERVATION");
 				}
 				if (reservation.getStatus() != ReservationStatus.OPEN) {
 					throw new BusinessException("RESERVATION_NOT_OPEN");
-				}	
+				}
 				reservationService.cancelPrepaidReservation(reservation);
 			} catch (BusinessException e) {
 				e.printStackTrace();

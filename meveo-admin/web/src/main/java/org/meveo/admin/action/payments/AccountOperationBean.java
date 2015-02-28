@@ -27,6 +27,7 @@ import javax.inject.Named;
 
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
+import org.meveo.admin.exception.BusinessEntityException;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.NoAllOperationUnmatchedException;
 import org.meveo.model.IEntity;
@@ -36,6 +37,7 @@ import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.AutomatedPayment;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.MatchingAmount;
+import org.meveo.model.payments.MatchingCode;
 import org.meveo.model.payments.MatchingStatusEnum;
 import org.meveo.model.payments.OtherCreditAndCharge;
 import org.meveo.model.payments.RecordedInvoice;
@@ -227,36 +229,73 @@ public class AccountOperationBean extends BaseBean<AccountOperation> {
 	 *         operation
 	 */
 
-	public String excludedFromDunning(long customerAccountId,Boolean exclude ) {
-		
-		if(getSelectedEntities()==null || getSelectedEntities().isEmpty()){
-			messages.error(new BundleKey("messages","consultMatching.noOperationSelected"));
-		}else{
-			log.info(" excludedFromDunning operationIds " + getSelectedEntities().size());
-			boolean result=true;
-			for (IEntity operation : getSelectedEntities()) { 
-				AccountOperation accountOperation=(AccountOperation )operation;
-				if ("I".equalsIgnoreCase(accountOperation.getType())) {
-					accountOperation.setExcludedFromDunning(exclude);
-					accountOperationService.update(accountOperation);
-				}else{
-					result=false;
-					break;
-					}}
-			if(!result){
-				messages.error(new BundleKey("messages","excludedFromDunning.operationNotLitigation"));
-				}
-			if(exclude){
-			messages.info(new BundleKey("messages","accountOperation.excludFromDunning"));
-			}else{
-			messages.info(new BundleKey("messages","accountOperation.includFromDunning"));
+	private void dunningInclusionExclusionPartial(AccountOperation accountOperation,Boolean exclude){
+		for(MatchingAmount  matchingAmount : accountOperation.getMatchingAmounts()){
+			   MatchingCode matchingCode = matchingAmount.getMatchingCode();
+				   for(MatchingAmount  ma : matchingCode.getMatchingAmounts()){
+			           AccountOperation accountop=ma.getAccountOperation();
+			           accountop.setExcludedFromDunning(exclude);
+			           accountOperationService.update(accountop); }   
+			   }
+	}
+	public String dunningInclusionExclusion(long customerAccountId, Boolean exclude) {
+		try {
+			if (getSelectedEntities() == null
+					|| getSelectedEntities().isEmpty()) {
+				throw new BusinessEntityException("consultMatching.noOperationSelected");
+			} 
+			else{
+				log.info(" excludedFromDunning operationIds "
+						+ getSelectedEntities().size());
+				for (IEntity operation : getSelectedEntities()) {
+					   AccountOperation accountOperation = (AccountOperation) operation;
+					   if(!accountOperation.getExcludedFromDunning().equals(exclude)){
+					   if (accountOperation instanceof RecordedInvoice) { 
+						 accountOperation.setExcludedFromDunning(exclude);
+					    accountOperationService.update(accountOperation);
+					      }
+					   else {
+						throw new BusinessEntityException("excludedFromDunning.selectOperations.notInvoice");
+						}
+					   if(accountOperation.getMatchingStatus()==MatchingStatusEnum.P){
+						     dunningInclusionExclusionPartial(accountOperation,exclude) ;
+						     }}
+			         }
 			}
-			}	
-		
-	      return "/pages/payments/customerAccounts/customerAccountDetail.xhtml?objectId="
-					+ customerAccountId
-					+ "&edit=false&tab=ops&faces-redirect=true"; 
-	      }
+			messages.info(new BundleKey("messages",
+					exclude ? "accountOperation.excludFromDunning"
+							: "accountOperation.includFromDunning"));
+		} catch (BusinessEntityException e) {
+			messages.error(new BundleKey("messages", e.getMessage()));
+		}
+
+		return "/pages/payments/customerAccounts/customerAccountDetail.xhtml?objectId="
+				+ customerAccountId + "&edit=false&tab=ops&faces-redirect=true";
+	}
+	
+	public boolean isSelectedOperationIncluded(){
+		boolean included=true;
+		if(getSelectedEntities()!=null){
+			for (IEntity operation : getSelectedEntities()) {
+		     AccountOperation accountOperation = (AccountOperation) operation;
+		     if(accountOperation.getExcludedFromDunning()){
+		    	 included=false;
+		    	 break;
+		    	 }}}
+		return included;
+	  }
+	
+	public boolean isSelectedOperationExcluded(){
+		boolean excluded=true;
+		if(getSelectedEntities()!=null){
+			for (IEntity operation : getSelectedEntities()) {
+		     AccountOperation accountOperation = (AccountOperation) operation;
+		     if(!accountOperation.getExcludedFromDunning()){
+		    	 excluded=false;
+		    	 break;
+		     }}}
+		return excluded;
+	  }
 	
 
 	public String consultMatching(long customerAccountId) {

@@ -24,9 +24,14 @@ public class CustomerInvoicesResponse extends BaseResponse {
 		return CustomerInvoiceDtoList;
 	}
 
-	public void setCustomerInvoiceDtoList(
-			List<InvoiceDto> customerInvoiceDtoList) {
+	public void setCustomerInvoiceDtoList(List<InvoiceDto> customerInvoiceDtoList) {
 		CustomerInvoiceDtoList = customerInvoiceDtoList;
+	}
+
+	@Override
+	public String toString() {
+		return "CustomerInvoicesResponse [CustomerInvoiceDtoList=" + CustomerInvoiceDtoList + ", toString()="
+				+ super.toString() + "]";
 	}
 
 }

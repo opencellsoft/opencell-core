@@ -31,4 +31,9 @@ public class ServiceInstancesDto implements Serializable {
 		this.serviceInstance = serviceInstance;
 	}
 
+	@Override
+	public String toString() {
+		return "ServiceInstancesDto [serviceInstance=" + serviceInstance + "]";
+	}
+
 }

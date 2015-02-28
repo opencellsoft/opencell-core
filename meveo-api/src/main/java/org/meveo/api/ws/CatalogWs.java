@@ -80,10 +80,10 @@ public interface CatalogWs extends IBaseWs {
 	ActionStatus updatePricePlan(@WebParam(name = "pricePlan") PricePlanDto postData);
 
 	@WebMethod
-	GetPricePlanResponse findPricePlan(@WebParam(name = "id") Long id);
+	GetPricePlanResponse findPricePlan(@WebParam(name = "pricePlanCode") String pricePlanCode);
 
 	@WebMethod
-	ActionStatus removePricePlan(@WebParam(name = "id") Long id);
+	ActionStatus removePricePlan(@WebParam(name = "pricePlanCode") String pricePlanCode);
 
 	@WebMethod
 	public ActionStatus createRecurringChargeTemplate(

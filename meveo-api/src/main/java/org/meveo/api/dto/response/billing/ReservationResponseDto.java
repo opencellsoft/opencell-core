@@ -22,4 +22,10 @@ public class ReservationResponseDto {
 		this.availableQuantity = availableQuantity;
 	}
 
+	@Override
+	public String toString() {
+		return "ReservationResponseDto [ReservationId=" + ReservationId + ", availableQuantity=" + availableQuantity
+				+ "]";
+	}
+
 }

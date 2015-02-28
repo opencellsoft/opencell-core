@@ -29,4 +29,10 @@ public class ServiceChargeTemplateRecurringsDto implements Serializable {
 		this.serviceChargeTemplateRecurring = serviceChargeTemplateRecurring;
 	}
 
+	@Override
+	public String toString() {
+		return "ServiceChargeTemplateRecurringsDto [serviceChargeTemplateRecurring=" + serviceChargeTemplateRecurring
+				+ "]";
+	}
+
 }

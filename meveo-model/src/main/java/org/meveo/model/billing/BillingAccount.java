@@ -19,7 +19,9 @@ package org.meveo.model.billing;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -30,6 +32,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.MapKey;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
@@ -150,6 +153,13 @@ public class BillingAccount extends AccountEntity {
 	@ManyToOne
 	@JoinColumn(name = "DISCOUNT_PLAN_ID")
 	private DiscountPlan discountPlan;
+
+	@OneToMany(mappedBy = "billingAccount", fetch = FetchType.LAZY)
+	@MapKey(name = "code")
+	// TODO : Add orphanRemoval annotation.
+	// @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
+	// key is the counter template code
+	Map<String, CounterInstance> counters = new HashMap<String, CounterInstance>();
 
 	public List<UserAccount> getUsersAccounts() {
 		return usersAccounts;
@@ -372,6 +382,14 @@ public class BillingAccount extends AccountEntity {
 
 	public void setDiscountPlan(DiscountPlan discountPlan) {
 		this.discountPlan = discountPlan;
+	}
+
+	public Map<String, CounterInstance> getCounters() {
+		return counters;
+	}
+
+	public void setCounters(Map<String, CounterInstance> counters) {
+		this.counters = counters;
 	}
 
 }

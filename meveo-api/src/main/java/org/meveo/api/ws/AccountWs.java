@@ -12,6 +12,8 @@ import org.meveo.api.dto.account.CustomerAccountDto;
 import org.meveo.api.dto.account.CustomerDto;
 import org.meveo.api.dto.account.CustomerHierarchyDto;
 import org.meveo.api.dto.account.UserAccountDto;
+import org.meveo.api.dto.payment.AccountOperationDto;
+import org.meveo.api.dto.payment.DunningInclusionExclusionDto;
 import org.meveo.api.dto.response.CustomerListResponse;
 import org.meveo.api.dto.response.account.GetAccessResponse;
 import org.meveo.api.dto.response.account.GetBillingAccountResponse;
@@ -120,5 +122,12 @@ public interface AccountWs extends IBaseWs {
 
 	@WebMethod
 	ListUserAccountResponseDto listByBillingAccount(@WebParam(name = "billingAccountCode") String billingAccountCode);
+
+	@WebMethod
+	ActionStatus createAccountOperation(@WebParam(name = "accountOperation") AccountOperationDto postData);
+	
+	@WebMethod
+	ActionStatus dunningInclusionExclusion(@WebParam(name = "dunningInclusionExclusion") DunningInclusionExclusionDto dunningDto);
+	
 
 }

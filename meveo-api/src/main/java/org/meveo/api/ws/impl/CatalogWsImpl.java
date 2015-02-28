@@ -84,6 +84,7 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 			result.setMessage(e.getMessage());
 		}
 
+		log.debug("RESPONSE={}", result);
 		return result;
 	}
 
@@ -103,6 +104,7 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 			result.setMessage(e.getMessage());
 		}
 
+		log.debug("RESPONSE={}", result);
 		return result;
 	}
 
@@ -122,6 +124,7 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 			result.getActionStatus().setMessage(e.getMessage());
 		}
 
+		log.debug("RESPONSE={}", result);
 		return result;
 	}
 
@@ -141,9 +144,9 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 			result.setMessage(e.getMessage());
 		}
 
+		log.debug("RESPONSE={}", result);
 		return result;
 	}
-
 
 	@Override
 	public ActionStatus createOfferTemplate(OfferTemplateDto postData) {
@@ -161,6 +164,7 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 			result.setMessage(e.getMessage());
 		}
 
+		log.debug("RESPONSE={}", result);
 		return result;
 	}
 
@@ -180,6 +184,7 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 			result.setMessage(e.getMessage());
 		}
 
+		log.debug("RESPONSE={}", result);
 		return result;
 	}
 
@@ -199,6 +204,7 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 			result.getActionStatus().setMessage(e.getMessage());
 		}
 
+		log.debug("RESPONSE={}", result);
 		return result;
 	}
 
@@ -218,6 +224,7 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 			result.setMessage(e.getMessage());
 		}
 
+		log.debug("RESPONSE={}", result);
 		return result;
 	}
 
@@ -237,6 +244,7 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 			result.setMessage(e.getMessage());
 		}
 
+		log.debug("RESPONSE={}", result);
 		return result;
 	}
 
@@ -256,6 +264,7 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 			result.setMessage(e.getMessage());
 		}
 
+		log.debug("RESPONSE={}", result);
 		return result;
 	}
 
@@ -276,6 +285,7 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 			result.getActionStatus().setMessage(e.getMessage());
 		}
 
+		log.debug("RESPONSE={}", result);
 		return result;
 	}
 
@@ -309,6 +319,7 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 			result.setMessage(e.getMessage());
 		}
 
+		log.debug("RESPONSE={}", result);
 		return result;
 	}
 
@@ -317,7 +328,7 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 		try {
-			result.setMessage(String.valueOf(pricePlanApi.create(postData, getCurrentUser())));
+			pricePlanApi.create(postData, getCurrentUser());
 		} catch (MeveoApiException e) {
 			result.setErrorCode(e.getErrorCode());
 			result.setStatus(ActionStatusEnum.FAIL);
@@ -328,6 +339,7 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 			result.setMessage(e.getMessage());
 		}
 
+		log.debug("RESPONSE={}", result);
 		return result;
 	}
 
@@ -347,15 +359,16 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 			result.setMessage(e.getMessage());
 		}
 
+		log.debug("RESPONSE={}", result);
 		return result;
 	}
 
 	@Override
-	public GetPricePlanResponse findPricePlan(Long id) {
+	public GetPricePlanResponse findPricePlan(String pricePlanCode) {
 		GetPricePlanResponse result = new GetPricePlanResponse();
 
 		try {
-			result.setPricePlan(pricePlanApi.find(id));
+			result.setPricePlan(pricePlanApi.find(pricePlanCode, getCurrentUser().getProvider()));
 		} catch (MeveoApiException e) {
 			result.getActionStatus().setErrorCode(e.getErrorCode());
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
@@ -366,15 +379,16 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 			result.getActionStatus().setMessage(e.getMessage());
 		}
 
+		log.debug("RESPONSE={}", result);
 		return result;
 	}
 
 	@Override
-	public ActionStatus removePricePlan(Long id) {
+	public ActionStatus removePricePlan(String pricePlanCode) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 		try {
-			pricePlanApi.remove(id);
+			pricePlanApi.remove(pricePlanCode, getCurrentUser().getProvider());
 		} catch (MeveoApiException e) {
 			result.setErrorCode(e.getErrorCode());
 			result.setStatus(ActionStatusEnum.FAIL);
@@ -385,6 +399,7 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 			result.setMessage(e.getMessage());
 		}
 
+		log.debug("RESPONSE={}", result);
 		return result;
 	}
 
@@ -404,6 +419,7 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 			result.setMessage(e.getMessage());
 		}
 
+		log.debug("RESPONSE={}", result);
 		return result;
 	}
 
@@ -424,6 +440,7 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 			result.getActionStatus().setMessage(e.getMessage());
 		}
 
+		log.debug("RESPONSE={}", result);
 		return result;
 	}
 
@@ -443,6 +460,7 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 			result.setMessage(e.getMessage());
 		}
 
+		log.debug("RESPONSE={}", result);
 		return result;
 	}
 
@@ -462,6 +480,7 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 			result.setMessage(e.getMessage());
 		}
 
+		log.debug("RESPONSE={}", result);
 		return result;
 	}
 
@@ -481,6 +500,7 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 			result.setMessage(e.getMessage());
 		}
 
+		log.debug("RESPONSE={}", result);
 		return result;
 	}
 
@@ -500,6 +520,7 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 			result.setMessage(e.getMessage());
 		}
 
+		log.debug("RESPONSE={}", result);
 		return result;
 	}
 
@@ -519,6 +540,7 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 			result.getActionStatus().setMessage(e.getMessage());
 		}
 
+		log.debug("RESPONSE={}", result);
 		return result;
 	}
 
@@ -538,6 +560,7 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 			result.setMessage(e.getMessage());
 		}
 
+		log.debug("RESPONSE={}", result);
 		return result;
 	}
 
@@ -557,6 +580,7 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 			result.setMessage(e.getMessage());
 		}
 
+		log.debug("RESPONSE={}", result);
 		return result;
 	}
 
@@ -576,6 +600,7 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 			result.setMessage(e.getMessage());
 		}
 
+		log.debug("RESPONSE={}", result);
 		return result;
 	}
 
@@ -596,6 +621,7 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 			result.getActionStatus().setMessage(e.getMessage());
 		}
 
+		log.debug("RESPONSE={}", result);
 		return result;
 	}
 
@@ -615,6 +641,7 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 			result.setMessage(e.getMessage());
 		}
 
+		log.debug("RESPONSE={}", result);
 		return result;
 	}
 

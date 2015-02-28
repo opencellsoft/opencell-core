@@ -24,5 +24,10 @@ public class GetBillingCycleResponse extends BaseResponse {
 	public void setBillingCycle(BillingCycleDto billingCycle) {
 		this.billingCycle = billingCycle;
 	}
-	
+
+	@Override
+	public String toString() {
+		return "GetBillingCycleResponse [billingCycle=" + billingCycle + ", toString()=" + super.toString() + "]";
+	}
+
 }
