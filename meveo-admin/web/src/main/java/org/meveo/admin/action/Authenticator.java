@@ -29,7 +29,7 @@ import org.meveo.admin.exception.LoginException;
 import org.meveo.admin.exception.NoRoleException;
 import org.meveo.admin.exception.PasswordExpiredException;
 import org.meveo.admin.exception.UnknownUserException;
-import org.meveo.event.qualifier.Created;
+import org.meveo.event.qualifier.LoggedIn;
 import org.meveo.model.admin.User;
 import org.meveo.model.crm.Provider;
 import org.meveo.security.MeveoUser;
@@ -47,7 +47,7 @@ public class Authenticator extends BaseAuthenticator {
 	@Inject
 	private Credentials credentials;
 
-	@Inject @Created
+	@Inject @LoggedIn
 	protected Event<User> userEventProducer;
 	
 	private static final Logger log = LoggerFactory.getLogger(Authenticator.class);

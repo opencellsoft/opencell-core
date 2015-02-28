@@ -10,6 +10,6 @@ import javax.inject.Qualifier;
 @Qualifier
 @Target({METHOD, FIELD, PARAMETER, TYPE})
 @Retention(RUNTIME)
-public @interface CDR {
+public @interface RejectedCDR {
 
 }

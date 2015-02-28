@@ -17,7 +17,7 @@ import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.StringUtils;
-import org.meveo.event.qualifier.CDR;
+import org.meveo.event.qualifier.RejectedCDR;
 import org.meveo.event.qualifier.Created;
 import org.meveo.event.qualifier.Disabled;
 import org.meveo.event.qualifier.InboundRequestReceived;
@@ -158,8 +158,10 @@ public class DefaultObserver {
 			}
 
 			// we first perform the EL actions
-			executeAction(notif.getElAction(), e);
-
+			if (!(notif instanceof WebHook)) {
+				executeAction(notif.getElAction(), e);
+			}
+			
 			boolean sendNotify = true;
 			// Check if the counter associated to notification was not exhausted
 			// yet
@@ -276,7 +278,7 @@ public class DefaultObserver {
 		checkEvent(NotificationEventTypeEnum.REJECTED, e);
 	}
 
-	public void cdrRejected(@Observes @Rejected @CDR Serializable cdr) {
+	public void cdrRejected(@Observes @RejectedCDR Serializable cdr) {
 		log.debug("Defaut observer : cdr {} rejected", cdr);
 		for (Class<BusinessEntity> c : classNotificationMap.get(NotificationEventTypeEnum.REJECTED_CDR).keySet()) {
 			log.debug("try class {} ", c);

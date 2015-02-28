@@ -12,7 +12,7 @@ import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.parse.csv.CdrParserProducer;
-import org.meveo.event.qualifier.CDR;
+import org.meveo.event.qualifier.RejectedCDR;
 import org.meveo.event.qualifier.Rejected;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.mediation.Access;
@@ -34,8 +34,7 @@ public class CDRParsingService {
 	
 
 	@Inject
-	@Rejected
-	@CDR
+	@RejectedCDR
 	private Event<Serializable> rejectededCdrEventProducer;
 
 	@Inject
