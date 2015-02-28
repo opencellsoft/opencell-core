@@ -81,6 +81,7 @@
 	</parameter>
 	<parameter name="invoiceNumber" class="java.lang.String"/>
 	<parameter name="BAcustomFields" class="java.util.List" isForPrompting="false"/>
+	<parameter name="engagement" class="java.lang.String" isForPrompting="false"/>
 	<queryString language="xPath">
 		<![CDATA[/invoice/detail/userAccounts/userAccount/categories/category/subCategories/subCategory/line]]>
 	</queryString>
@@ -780,84 +781,19 @@ Manaty SARL – Head office 128 rue Berbisey 21000 DIJON – Tax reference FR XX
 				</textElement>
 				<textFieldExpression><![CDATA[$F{custAccountdesc}]]></textFieldExpression>
 			</textField>
-			<componentElement>
-				<reportElement key="table 1" style="table 1" x="182" y="153" width="99" height="66" uuid="2227956c-8e3b-4cd9-b09e-a165c86da596"/>
-				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
-					<datasetRun subDataset="Table Dataset 1" uuid="a641b29b-f031-4a96-9832-d78c5733158c">
-						<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($P{BAcustomFields})]]></dataSourceExpression>
-					</datasetRun>
-					<jr:column width="90" uuid="fe055f02-42d8-4cab-8113-8e2840b60482">
-						<jr:tableHeader height="15" rowSpan="1">
-							<staticText>
-								<reportElement x="0" y="0" width="90" height="15" uuid="7b8fe898-bfbc-400e-9f53-01127a3d0c78"/>
-								<box>
-									<topPen lineWidth="0.5"/>
-									<leftPen lineWidth="0.5"/>
-									<bottomPen lineWidth="0.5"/>
-									<rightPen lineWidth="0.5"/>
-								</box>
-								<textElement textAlignment="Center" verticalAlignment="Middle">
-									<font size="7"/>
-								</textElement>
-								<text><![CDATA[Description]]></text>
-							</staticText>
-						</jr:tableHeader>
-						<jr:detailCell style="table 1_TD" height="20" rowSpan="1">
-							<textField>
-								<reportElement x="0" y="0" width="90" height="20" uuid="3d2d595e-62ff-44e4-8e76-f52cb184ba4e"/>
-								<box>
-									<topPen lineWidth="0.5"/>
-									<leftPen lineWidth="0.5"/>
-									<bottomPen lineWidth="0.5"/>
-									<rightPen lineWidth="0.5"/>
-								</box>
-								<textElement>
-									<font size="8"/>
-								</textElement>
-								<textFieldExpression><![CDATA[$F{description}]]></textFieldExpression>
-							</textField>
-						</jr:detailCell>
-					</jr:column>
-					<jr:column width="90" uuid="50574367-2dfe-4400-afbe-32855281a54d">
-						<jr:tableHeader height="15" rowSpan="1">
-							<staticText>
-								<reportElement x="0" y="0" width="90" height="15" uuid="100809a8-78be-4701-830b-c4115ff02125"/>
-								<box>
-									<topPen lineWidth="0.5"/>
-									<leftPen lineWidth="0.5"/>
-									<bottomPen lineWidth="0.5"/>
-									<rightPen lineWidth="0.5"/>
-								</box>
-								<textElement textAlignment="Center" verticalAlignment="Middle">
-									<font size="7"/>
-								</textElement>
-								<text><![CDATA[Value]]></text>
-							</staticText>
-						</jr:tableHeader>
-						<jr:detailCell style="table 1_TD" height="20" rowSpan="1">
-							<textField>
-								<reportElement x="0" y="0" width="90" height="20" uuid="00a9ca16-de62-42fc-8afd-8e77bf403109"/>
-								<box>
-									<topPen lineWidth="0.5"/>
-									<leftPen lineWidth="0.5"/>
-									<bottomPen lineWidth="0.5"/>
-									<rightPen lineWidth="0.5"/>
-								</box>
-								<textElement>
-									<font size="8"/>
-								</textElement>
-								<textFieldExpression><![CDATA[$F{value}]]></textFieldExpression>
-							</textField>
-						</jr:detailCell>
-					</jr:column>
-				</jr:table>
-			</componentElement>
-			<staticText>
-				<reportElement x="182" y="139" width="99" height="14" uuid="43946d44-9031-4cf8-86e9-4232df325fd2"/>
-				<textElement verticalAlignment="Bottom">
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="238" y="72" width="116" height="13" isPrintInFirstWholeBand="true" isPrintWhenDetailOverflows="true" uuid="ae0a799e-39ea-4cfa-88bc-208633172511"/>
+				<textElement>
 					<font size="8"/>
 				</textElement>
-				<text><![CDATA[Billing account custom filed :]]></text>
+				<textFieldExpression><![CDATA[$P{engagement}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="177" y="72" width="61" height="13" uuid="906cc28b-c004-42d3-8bb8-8e8d70b528d6"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[Engagement :]]></text>
 			</staticText>
 		</band>
 	</title>

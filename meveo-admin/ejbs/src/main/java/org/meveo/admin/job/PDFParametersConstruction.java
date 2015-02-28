@@ -21,7 +21,6 @@ import java.math.BigDecimal;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.text.NumberFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -32,7 +31,6 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 
 import net.sf.jasperreports.engine.JRParameter;
-import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.StringUtils;
@@ -167,9 +165,11 @@ public class PDFParametersConstruction {
 			parameters.put(PdfGeneratorConstants.CUSTOMER_ACCOUNT,
 					billingAccount.getCustomerAccount());
 			parameters.put(PdfGeneratorConstants.INVOICE, invoice);
+			Map<String, String> baCustomFields=getBACustomFields(billingAccount);
+			for(String key:baCustomFields.keySet()){
+				parameters.put(key,baCustomFields.get(key));
+			}
 			
-			
-			parameters.put(PdfGeneratorConstants.BA_CUSTOM_FIELDS,getBACustomFields(billingAccount) );
 
 			return parameters;
 		} catch (Exception e) {
@@ -178,12 +178,11 @@ public class PDFParametersConstruction {
 		}
 	}
 	
-	private List<ReportCustomFieldDto> getBACustomFields(
+	private Map<String, String> getBACustomFields(
 			BillingAccount billingAccount) {
 		List<CustomFieldTemplate> customFieldTemplates = customFieldTemplateService
 				.findByAccountLevel(AccountLevelEnum.BA);
-		List<ReportCustomFieldDto> customFields = new ArrayList<ReportCustomFieldDto>();
-		ReportCustomFieldDto customFieldDTO = null;
+		Map<String, String>  customFields = new HashMap<String, String> ();
 		if (customFieldTemplates != null && customFieldTemplates.size() > 0) {
 			for (CustomFieldTemplate cf : customFieldTemplates) {
 
@@ -194,37 +193,28 @@ public class PDFParametersConstruction {
 						Date dateField = billingAccount
 								.getInheritedCustomDateValue(cf.getCode());
 						if (dateField != null) {
-							customFieldDTO = new ReportCustomFieldDto(
-									cf.getDescription(),
-									DateUtils.formatDateWithPattern(dateField,
-											"MM-dd-yyyy"));
+							customFields.put(cf.getCode(), DateUtils.formatDateWithPattern(dateField,
+									"MM-dd-yyyy"));
 						}
 					} else if (cf.getFieldType() == CustomFieldTypeEnum.DOUBLE) {
 						Double doubleField = billingAccount
 								.getInheritedCustomDoubleValue(cf.getCode());
 						if (doubleField != null) {
-							customFieldDTO = new ReportCustomFieldDto(
-									cf.getDescription(),
-									String.valueOf(doubleField));
+							customFields.put(cf.getCode(), String.valueOf(doubleField));
 						}
 					} else if (cf.getFieldType() == CustomFieldTypeEnum.LONG) {
 						Long longField = billingAccount
 								.getInheritedCustomLongValue(cf.getCode());
 						if (longField != null) {
-							customFieldDTO = new ReportCustomFieldDto(
-									cf.getDescription(),
-									String.valueOf(longField));
+							customFields.put(cf.getCode(), 	String.valueOf(longField));
 						}
 					} else if (cf.getFieldType() == CustomFieldTypeEnum.STRING
 							|| cf.getFieldType() == CustomFieldTypeEnum.LIST) {
 						String stringField = billingAccount
 								.getInheritedCustomStringValue(cf.getCode());
 						if (!StringUtils.isBlank(stringField)) {
-
-							customFieldDTO = new ReportCustomFieldDto(
-									cf.getDescription(), stringField);
+							customFields.put(cf.getCode(), 	stringField);
 						}}
-					customFields.add(customFieldDTO);
 				}}}
 		return customFields;
 	}
