@@ -160,8 +160,6 @@ public class BarChartBean extends ChartEntityBean<BarChart> {
 
 		mvSeries.setLabel(sdf.format(curr.getMinDate()));
 
-		log.info("Max Date : " + sdf.format(cal.getTime()) + "MQ: "
-				+ mq.getCode());
 
 		if (mvs.size() > 0) {
 			for (MeasuredValue measuredValue : mvs) {
