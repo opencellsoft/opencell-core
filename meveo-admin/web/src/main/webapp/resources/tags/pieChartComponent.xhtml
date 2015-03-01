@@ -35,7 +35,7 @@
 					style="#{cc.attrs.pieChartEntityModel.pieChart.style}"
 					styleClass="#{cc.attrs.pieChartEntityModel.pieChart.styleClass}" />
 			</p:panel>
-			<p:panelGrid columns="4">
+			<!-- <p:panelGrid columns="4">
 				<p:outputLabel value="#{messages['chart.from']}"></p:outputLabel>
 				<p:calendar value="#{cc.attrs.pieChartEntityModel.minDate}">
 					<p:ajax event="dateSelect"
@@ -48,7 +48,7 @@
 						listener="#{cc.attrs.chartBackingBean.getModel(cc.attrs.pieChartEntityModel)}"
 						update="@form" />
 				</p:calendar>
-			</p:panelGrid>
+			</p:panelGrid> -->
 		</h:form>
 	</ui:fragment>
 

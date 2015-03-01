@@ -37,6 +37,8 @@ public class BarChartBean extends ChartEntityBean<BarChart> {
 
 	private BarChartEntityModel chartEntityModel;
 
+	private List<BarChartEntityModel> barChartEntityModels = new ArrayList<BarChartEntityModel>();
+
 	public BarChartBean() {
 		super(BarChart.class);
 	}
@@ -52,7 +54,7 @@ public class BarChartBean extends ChartEntityBean<BarChart> {
 		return "charts";
 	}
 
-	public List<BarChartEntityModel> getChartModelList() {
+	public List<BarChartEntityModel> initChartModelList() {
 
 		Calendar fromDate = Calendar.getInstance();
 		fromDate.set(Calendar.DAY_OF_MONTH, 1);
@@ -60,7 +62,7 @@ public class BarChartBean extends ChartEntityBean<BarChart> {
 		toDate.setTime(fromDate.getTime());
 		toDate.add(Calendar.MONTH, 1);
 
-		List<BarChartEntityModel> chartModelList = new ArrayList<BarChartEntityModel>();
+		barChartEntityModels = new ArrayList<BarChartEntityModel>();
 		List<BarChart> barChartList = barChartService.list();
 
 		for (BarChart barChart : barChartList) {
@@ -88,11 +90,11 @@ public class BarChartBean extends ChartEntityBean<BarChart> {
 			BarChartEntityModel chartEntityModel = new BarChartEntityModel();
 			chartEntityModel.setBarChart(barChart);
 			chartEntityModel.setModel(chartModel);
-			chartModelList.add(chartEntityModel);
+			barChartEntityModels.add(chartEntityModel);
 
 		}
 
-		return chartModelList;
+		return barChartEntityModels;
 	}
 
 	public BarChartEntityModel getChartEntityModel() {
@@ -140,25 +142,24 @@ public class BarChartBean extends ChartEntityBean<BarChart> {
 		this.chartEntityModel = chartEntityModel;
 	}
 
-	public BarChartEntityModel getModel(BarChartEntityModel bar) {
+	public void setModel(Integer modelIndex) {
 
-		MeasurableQuantity mq = bar.getBarChart().getMeasurableQuantity();
+		BarChartEntityModel curr = barChartEntityModels.get(modelIndex);
+		MeasurableQuantity mq = curr.getBarChart().getMeasurableQuantity();
 		Calendar cal = Calendar.getInstance();
-		cal.setTime(bar.getMaxDate());
+		cal.setTime(curr.getMaxDate());
 		cal.add(Calendar.DATE, 1);
 
 		List<MeasuredValue> mvs = mvService.getByDateAndPeriod(null,
-				bar.getMinDate(), cal.getTime(), null, mq);
+				curr.getMinDate(), cal.getTime(), null, mq);
 
 		CartesianChartModel chartModel = new CartesianChartModel();
 
 		SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-YYYY");
 		ChartSeries mvSeries = new ChartSeries();
 
-		mvSeries.setLabel(sdf.format(bar.getMinDate()));
+		mvSeries.setLabel(sdf.format(curr.getMinDate()));
 
-		log.info("Max Date : " + sdf.format(cal.getTime()) + "MQ: "
-				+ mq.getCode());
 
 		if (mvs.size() > 0) {
 			for (MeasuredValue measuredValue : mvs) {
@@ -170,11 +171,20 @@ public class BarChartBean extends ChartEntityBean<BarChart> {
 			log.info("No measured values found for : " + mq.getCode());
 		}
 
-		BarChartEntityModel result = new BarChartEntityModel();
-		result.setBarChart(bar.getBarChart());
-		result.setModel(chartModel);
+		curr.setBarChart(curr.getBarChart());
+		curr.setModel(chartModel);
+	}
 
-		return result;
+	public List<BarChartEntityModel> getBarChartEntityModels() {
+		if (barChartEntityModels.size() <= 0) {
+			initChartModelList();
+		}
+		return barChartEntityModels;
+	}
+
+	public void setBarChartEntityModels(
+			List<BarChartEntityModel> barChartEntityModels) {
+		this.barChartEntityModels = barChartEntityModels;
 	}
 
 }

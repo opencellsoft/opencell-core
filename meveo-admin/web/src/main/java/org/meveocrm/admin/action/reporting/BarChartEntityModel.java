@@ -8,10 +8,6 @@ public class BarChartEntityModel extends ChartEntityModel {
 	private BarChart barChart;
 	private CartesianChartModel model;
 
-	public BarChartEntityModel() {
-		super();
-	}
-
 	public BarChart getBarChart() {
 		return barChart;
 	}

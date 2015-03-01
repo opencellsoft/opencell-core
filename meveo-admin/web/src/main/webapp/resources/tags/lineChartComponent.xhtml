@@ -44,7 +44,7 @@
 					style="#{cc.attrs.lineChartEntityModel.lineChart.style}"
 					styleClass="#{cc.attrs.lineChartEntityModel.lineChart.styleClass}" />
 			</p:panel>
-			<p:panelGrid columns="4">
+			<!-- <p:panelGrid columns="4">
 				<p:outputLabel value="#{messages['chart.from']}"></p:outputLabel>
 				<p:calendar value="#{cc.attrs.lineChartEntityModel.minDate}">
 					<p:ajax event="dateSelect"
@@ -57,7 +57,7 @@
 						listener="#{cc.attrs.chartBackingBean.getModel(cc.attrs.lineChartEntityModel)}"
 						update="@form" />
 				</p:calendar>
-			</p:panelGrid>
+			</p:panelGrid> -->
 		</h:form>
 	</ui:fragment>
 
