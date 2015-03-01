@@ -16,13 +16,17 @@
  */
 package org.meveo.model.catalog;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.EntityManager;
 
 import org.junit.Assert;
 import org.junit.Test;
 import org.meveo.model.BeforeDBTest;
+import org.meveo.model.catalog.CalendarInterval.CalendarIntervalTypeEnum;
+import org.meveo.model.catalog.CalendarJoin.CalendarJoinTypeEnum;
 import org.meveo.model.shared.DateUtils;
 
 public class CalendarTest {
@@ -230,4 +234,400 @@ public class CalendarTest {
         Assert.assertEquals(DateUtils.newDate(2015, java.util.Calendar.MARCH, 8, 0, 0, 0), nextDate);
 
     }
+
+    @Test()
+    public void testSimpleWeekdayIntervalCalendar() {
+
+        CalendarInterval calendar = new CalendarInterval();
+        calendar.setIntervalType(CalendarIntervalTypeEnum.WDAY);
+        List<CalendarDateInterval> intervals = new ArrayList<CalendarDateInterval>();
+        calendar.setIntervals(intervals);
+        intervals.add(new CalendarDateInterval(calendar, 1, 5)); // monday through friday
+
+        Date nextDate = calendar.nextCalendarDate(DateUtils.newDate(2015, java.util.Calendar.FEBRUARY, 7, 0, 0, 0)); // saturday
+        Assert.assertNull(nextDate);
+
+        Date prevDate = calendar.previousCalendarDate(DateUtils.newDate(2015, java.util.Calendar.FEBRUARY, 7, 0, 0, 0)); // saturday
+        Assert.assertNull(prevDate);
+
+        nextDate = calendar.nextCalendarDate(DateUtils.newDate(2015, java.util.Calendar.FEBRUARY, 6, 0, 0, 0)); // friday
+        Assert.assertNull(nextDate);
+
+        prevDate = calendar.previousCalendarDate(DateUtils.newDate(2015, java.util.Calendar.FEBRUARY, 6, 0, 0, 0)); // friday
+        Assert.assertNull(prevDate);
+
+        nextDate = calendar.nextCalendarDate(DateUtils.newDate(2015, java.util.Calendar.FEBRUARY, 5, 0, 0, 0)); // thursday
+        Assert.assertEquals(DateUtils.newDate(2015, java.util.Calendar.FEBRUARY, 6, 0, 0, 0), nextDate);
+
+        prevDate = calendar.previousCalendarDate(DateUtils.newDate(2015, java.util.Calendar.FEBRUARY, 5, 0, 0, 0)); // thursday
+        Assert.assertEquals(DateUtils.newDate(2015, java.util.Calendar.FEBRUARY, 2, 0, 0, 0), prevDate);
+
+        nextDate = calendar.nextCalendarDate(DateUtils.newDate(2015, java.util.Calendar.FEBRUARY, 2, 0, 0, 0)); // monday
+        Assert.assertEquals(DateUtils.newDate(2015, java.util.Calendar.FEBRUARY, 6, 0, 0, 0), nextDate);
+
+        prevDate = calendar.previousCalendarDate(DateUtils.newDate(2015, java.util.Calendar.FEBRUARY, 2, 0, 0, 0)); // monday
+        Assert.assertEquals(DateUtils.newDate(2015, java.util.Calendar.FEBRUARY, 2, 0, 0, 0), prevDate);
+
+    }
+
+    @Test()
+    public void testCrossWeekdayIntervalCalendar() {
+
+        CalendarInterval calendar = new CalendarInterval();
+        calendar.setIntervalType(CalendarIntervalTypeEnum.WDAY);
+        List<CalendarDateInterval> intervals = new ArrayList<CalendarDateInterval>();
+        calendar.setIntervals(intervals);
+        intervals.add(new CalendarDateInterval(calendar, 5, 2)); // friday through tuesday
+
+        Date nextDate = calendar.nextCalendarDate(DateUtils.newDate(2015, java.util.Calendar.FEBRUARY, 4, 0, 0, 0)); // wednesday
+        Assert.assertNull(nextDate);
+
+        Date prevDate = calendar.previousCalendarDate(DateUtils.newDate(2015, java.util.Calendar.FEBRUARY, 4, 0, 0, 0)); // wednesday
+        Assert.assertNull(prevDate);
+
+        nextDate = calendar.nextCalendarDate(DateUtils.newDate(2015, java.util.Calendar.FEBRUARY, 3, 0, 0, 0)); // tuesday
+        Assert.assertNull(nextDate);
+
+        prevDate = calendar.previousCalendarDate(DateUtils.newDate(2015, java.util.Calendar.FEBRUARY, 3, 0, 0, 0)); // tuesday
+        Assert.assertNull(prevDate);
+
+        nextDate = calendar.nextCalendarDate(DateUtils.newDate(2015, java.util.Calendar.FEBRUARY, 6, 0, 0, 0)); // friday
+        Assert.assertEquals(DateUtils.newDate(2015, java.util.Calendar.FEBRUARY, 10, 0, 0, 0), nextDate);
+
+        prevDate = calendar.previousCalendarDate(DateUtils.newDate(2015, java.util.Calendar.FEBRUARY, 6, 0, 0, 0)); // friday
+        Assert.assertEquals(DateUtils.newDate(2015, java.util.Calendar.FEBRUARY, 6, 0, 0, 0), prevDate);
+
+        nextDate = calendar.nextCalendarDate(DateUtils.newDate(2015, java.util.Calendar.FEBRUARY, 2, 0, 0, 0)); // monday
+        Assert.assertEquals(DateUtils.newDate(2015, java.util.Calendar.FEBRUARY, 3, 0, 0, 0), nextDate);
+
+        prevDate = calendar.previousCalendarDate(DateUtils.newDate(2015, java.util.Calendar.FEBRUARY, 9, 0, 0, 0)); // monday
+        Assert.assertEquals(DateUtils.newDate(2015, java.util.Calendar.FEBRUARY, 6, 0, 0, 0), prevDate);
+    }
+
+    @Test()
+    public void testSimpleDayIntervalCalendar() {
+
+        CalendarInterval calendar = new CalendarInterval();
+        calendar.setIntervalType(CalendarIntervalTypeEnum.DAY);
+        List<CalendarDateInterval> intervals = new ArrayList<CalendarDateInterval>();
+        calendar.setIntervals(intervals);
+        intervals.add(new CalendarDateInterval(calendar, 1015, 1231)); // 10/15 to 12/31
+
+        Date nextDate = calendar.nextCalendarDate(DateUtils.newDate(2015, java.util.Calendar.SEPTEMBER, 7, 0, 0, 0)); // 09/07
+        Assert.assertNull(nextDate);
+
+        Date prevDate = calendar.previousCalendarDate(DateUtils.newDate(2015, java.util.Calendar.SEPTEMBER, 7, 0, 0, 0)); // 09/07
+        Assert.assertNull(prevDate);
+
+        nextDate = calendar.nextCalendarDate(DateUtils.newDate(2015, java.util.Calendar.DECEMBER, 31, 0, 0, 0)); // 12/31
+        Assert.assertNull(nextDate);
+
+        prevDate = calendar.previousCalendarDate(DateUtils.newDate(2015, java.util.Calendar.DECEMBER, 31, 0, 0, 0)); // 12/31
+        Assert.assertNull(prevDate);
+
+        nextDate = calendar.nextCalendarDate(DateUtils.newDate(2015, java.util.Calendar.NOVEMBER, 5, 0, 0, 0)); // 11/05
+        Assert.assertEquals(DateUtils.newDate(2015, java.util.Calendar.DECEMBER, 31, 0, 0, 0), nextDate);
+
+        prevDate = calendar.previousCalendarDate(DateUtils.newDate(2015, java.util.Calendar.NOVEMBER, 5, 0, 0, 0)); // 11/05
+        Assert.assertEquals(DateUtils.newDate(2015, java.util.Calendar.OCTOBER, 15, 0, 0, 0), prevDate);
+
+        nextDate = calendar.nextCalendarDate(DateUtils.newDate(2015, java.util.Calendar.OCTOBER, 15, 0, 0, 0)); // 10/15
+        Assert.assertEquals(DateUtils.newDate(2015, java.util.Calendar.DECEMBER, 31, 0, 0, 0), nextDate);
+
+        prevDate = calendar.previousCalendarDate(DateUtils.newDate(2015, java.util.Calendar.OCTOBER, 15, 0, 0, 0)); // 10/15
+        Assert.assertEquals(DateUtils.newDate(2015, java.util.Calendar.OCTOBER, 15, 0, 0, 0), prevDate);
+
+        nextDate = calendar.nextCalendarDate(DateUtils.newDate(2015, java.util.Calendar.DECEMBER, 30, 0, 0, 0)); // 12/30
+        Assert.assertEquals(DateUtils.newDate(2015, java.util.Calendar.DECEMBER, 31, 0, 0, 0), nextDate);
+
+        prevDate = calendar.previousCalendarDate(DateUtils.newDate(2015, java.util.Calendar.DECEMBER, 30, 0, 0, 0)); // 12/30
+        Assert.assertEquals(DateUtils.newDate(2015, java.util.Calendar.OCTOBER, 15, 0, 0, 0), prevDate);
+
+    }
+
+    @Test()
+    public void testCrossDayIntervalCalendar() {
+
+        CalendarInterval calendar = new CalendarInterval();
+        calendar.setIntervalType(CalendarIntervalTypeEnum.DAY);
+        List<CalendarDateInterval> intervals = new ArrayList<CalendarDateInterval>();
+        calendar.setIntervals(intervals);
+        intervals.add(new CalendarDateInterval(calendar, 1015, 131)); // 10/15 to 01/31
+
+        Date nextDate = calendar.nextCalendarDate(DateUtils.newDate(2015, java.util.Calendar.SEPTEMBER, 7, 0, 0, 0)); // 09/07
+        Assert.assertNull(nextDate);
+
+        Date prevDate = calendar.previousCalendarDate(DateUtils.newDate(2015, java.util.Calendar.SEPTEMBER, 7, 0, 0, 0)); // 09/07
+        Assert.assertNull(prevDate);
+
+        nextDate = calendar.nextCalendarDate(DateUtils.newDate(2015, java.util.Calendar.JANUARY, 31, 0, 0, 0)); // 01/31
+        Assert.assertNull(nextDate);
+
+        prevDate = calendar.previousCalendarDate(DateUtils.newDate(2015, java.util.Calendar.JANUARY, 31, 0, 0, 0)); // 01/31
+        Assert.assertNull(prevDate);
+
+        nextDate = calendar.nextCalendarDate(DateUtils.newDate(2015, java.util.Calendar.NOVEMBER, 5, 0, 0, 0)); // 11/05
+        Assert.assertEquals(DateUtils.newDate(2016, java.util.Calendar.JANUARY, 31, 0, 0, 0), nextDate);
+
+        prevDate = calendar.previousCalendarDate(DateUtils.newDate(2015, java.util.Calendar.NOVEMBER, 5, 0, 0, 0)); // 11/05
+        Assert.assertEquals(DateUtils.newDate(2015, java.util.Calendar.OCTOBER, 15, 0, 0, 0), prevDate);
+
+        nextDate = calendar.nextCalendarDate(DateUtils.newDate(2015, java.util.Calendar.OCTOBER, 15, 0, 0, 0)); // 10/15
+        Assert.assertEquals(DateUtils.newDate(2016, java.util.Calendar.JANUARY, 31, 0, 0, 0), nextDate);
+
+        prevDate = calendar.previousCalendarDate(DateUtils.newDate(2015, java.util.Calendar.OCTOBER, 15, 0, 0, 0)); // 10/15
+        Assert.assertEquals(DateUtils.newDate(2015, java.util.Calendar.OCTOBER, 15, 0, 0, 0), prevDate);
+
+        nextDate = calendar.nextCalendarDate(DateUtils.newDate(2016, java.util.Calendar.JANUARY, 30, 0, 0, 0)); // 01/30
+        Assert.assertEquals(DateUtils.newDate(2016, java.util.Calendar.JANUARY, 31, 0, 0, 0), nextDate);
+
+        prevDate = calendar.previousCalendarDate(DateUtils.newDate(2016, java.util.Calendar.JANUARY, 30, 0, 0, 0)); // 01/30
+        Assert.assertEquals(DateUtils.newDate(2015, java.util.Calendar.OCTOBER, 15, 0, 0, 0), prevDate);
+
+        nextDate = calendar.nextCalendarDate(DateUtils.newDate(2015, java.util.Calendar.DECEMBER, 31, 0, 0, 0)); // 12/31
+        Assert.assertEquals(DateUtils.newDate(2016, java.util.Calendar.JANUARY, 31, 0, 0, 0), nextDate);
+
+        prevDate = calendar.previousCalendarDate(DateUtils.newDate(2015, java.util.Calendar.DECEMBER, 31, 0, 0, 0)); // 12/31
+        Assert.assertEquals(DateUtils.newDate(2015, java.util.Calendar.OCTOBER, 15, 0, 0, 0), prevDate);
+    }
+
+    @Test()
+    public void testSimpleHourIntervalCalendar() {
+
+        CalendarInterval calendar = new CalendarInterval();
+        calendar.setIntervalType(CalendarIntervalTypeEnum.HOUR);
+        List<CalendarDateInterval> intervals = new ArrayList<CalendarDateInterval>();
+        calendar.setIntervals(intervals);
+        intervals.add(new CalendarDateInterval(calendar, 515, 1731)); // 05:15 to 17:31
+
+        Date nextDate = calendar.nextCalendarDate(DateUtils.newDate(2015, java.util.Calendar.SEPTEMBER, 7, 4, 0, 0)); // 04:00
+        Assert.assertNull(nextDate);
+
+        Date prevDate = calendar.previousCalendarDate(DateUtils.newDate(2015, java.util.Calendar.SEPTEMBER, 7, 4, 0, 0)); // 04:00
+        Assert.assertNull(prevDate);
+
+        nextDate = calendar.nextCalendarDate(DateUtils.newDate(2015, java.util.Calendar.SEPTEMBER, 7, 17, 31, 0)); // 17:31
+        Assert.assertNull(nextDate);
+
+        prevDate = calendar.previousCalendarDate(DateUtils.newDate(2015, java.util.Calendar.SEPTEMBER, 7, 17, 31, 0)); // 17:31
+        Assert.assertNull(prevDate);
+
+        nextDate = calendar.nextCalendarDate(DateUtils.newDate(2015, java.util.Calendar.SEPTEMBER, 7, 11, 15, 0)); // 11:15
+        Assert.assertEquals(DateUtils.newDate(2015, java.util.Calendar.SEPTEMBER, 7, 17, 31, 0), nextDate);
+
+        prevDate = calendar.previousCalendarDate(DateUtils.newDate(2015, java.util.Calendar.SEPTEMBER, 7, 11, 15, 0)); // 11:15
+        Assert.assertEquals(DateUtils.newDate(2015, java.util.Calendar.SEPTEMBER, 7, 5, 15, 0), prevDate);
+
+        nextDate = calendar.nextCalendarDate(DateUtils.newDate(2015, java.util.Calendar.SEPTEMBER, 7, 5, 15, 0)); // 05:15
+        Assert.assertEquals(DateUtils.newDate(2015, java.util.Calendar.SEPTEMBER, 7, 17, 31, 0), nextDate);
+
+        prevDate = calendar.previousCalendarDate(DateUtils.newDate(2015, java.util.Calendar.SEPTEMBER, 7, 5, 15, 0)); // 05:15
+        Assert.assertEquals(DateUtils.newDate(2015, java.util.Calendar.SEPTEMBER, 7, 5, 15, 0), prevDate);
+
+        nextDate = calendar.nextCalendarDate(DateUtils.newDate(2015, java.util.Calendar.SEPTEMBER, 7, 17, 30, 59)); // 17:30
+        Assert.assertEquals(DateUtils.newDate(2015, java.util.Calendar.SEPTEMBER, 7, 17, 31, 0), nextDate);
+
+        prevDate = calendar.previousCalendarDate(DateUtils.newDate(2015, java.util.Calendar.SEPTEMBER, 7, 17, 30, 59)); // 17:30
+        Assert.assertEquals(DateUtils.newDate(2015, java.util.Calendar.SEPTEMBER, 7, 5, 15, 0), prevDate);
+
+    }
+
+    @Test()
+    public void testCrossHourIntervalCalendar() {
+
+        CalendarInterval calendar = new CalendarInterval();
+        calendar.setIntervalType(CalendarIntervalTypeEnum.HOUR);
+        List<CalendarDateInterval> intervals = new ArrayList<CalendarDateInterval>();
+        calendar.setIntervals(intervals);
+        intervals.add(new CalendarDateInterval(calendar, 1731, 515)); // 17:31 to 05:15
+
+        Date nextDate = calendar.nextCalendarDate(DateUtils.newDate(2015, java.util.Calendar.SEPTEMBER, 7, 16, 0, 0)); // 16:00
+        Assert.assertNull(nextDate);
+
+        Date prevDate = calendar.previousCalendarDate(DateUtils.newDate(2015, java.util.Calendar.SEPTEMBER, 7, 16, 0, 0)); // 16:00
+        Assert.assertNull(prevDate);
+
+        nextDate = calendar.nextCalendarDate(DateUtils.newDate(2015, java.util.Calendar.SEPTEMBER, 7, 5, 15, 0)); // 05:15
+        Assert.assertNull(nextDate);
+
+        prevDate = calendar.previousCalendarDate(DateUtils.newDate(2015, java.util.Calendar.SEPTEMBER, 7, 5, 15, 0)); // 05:15
+        Assert.assertNull(prevDate);
+
+        nextDate = calendar.nextCalendarDate(DateUtils.newDate(2015, java.util.Calendar.SEPTEMBER, 7, 18, 15, 0)); // 18:15
+        Assert.assertEquals(DateUtils.newDate(2015, java.util.Calendar.SEPTEMBER, 8, 5, 15, 0), nextDate);
+
+        prevDate = calendar.previousCalendarDate(DateUtils.newDate(2015, java.util.Calendar.SEPTEMBER, 7, 18, 15, 0)); // 18:15
+        Assert.assertEquals(DateUtils.newDate(2015, java.util.Calendar.SEPTEMBER, 7, 17, 31, 0), prevDate);
+
+        nextDate = calendar.nextCalendarDate(DateUtils.newDate(2015, java.util.Calendar.SEPTEMBER, 7, 17, 31, 0)); // 17:31
+        Assert.assertEquals(DateUtils.newDate(2015, java.util.Calendar.SEPTEMBER, 8, 5, 15, 0), nextDate);
+
+        prevDate = calendar.previousCalendarDate(DateUtils.newDate(2015, java.util.Calendar.SEPTEMBER, 7, 17, 31, 0)); // 17:31
+        Assert.assertEquals(DateUtils.newDate(2015, java.util.Calendar.SEPTEMBER, 7, 17, 31, 0), prevDate);
+
+        nextDate = calendar.nextCalendarDate(DateUtils.newDate(2015, java.util.Calendar.SEPTEMBER, 7, 5, 14, 59)); // 05:14
+        Assert.assertEquals(DateUtils.newDate(2015, java.util.Calendar.SEPTEMBER, 7, 5, 15, 0), nextDate);
+
+        prevDate = calendar.previousCalendarDate(DateUtils.newDate(2015, java.util.Calendar.SEPTEMBER, 7, 5, 14, 59)); // 05:14
+        Assert.assertEquals(DateUtils.newDate(2015, java.util.Calendar.SEPTEMBER, 6, 17, 31, 0), prevDate);
+
+    }
+
+    @Test()
+    public void testZeroHourIntervalCalendar() {
+
+        CalendarInterval calendar = new CalendarInterval();
+        calendar.setIntervalType(CalendarIntervalTypeEnum.HOUR);
+        List<CalendarDateInterval> intervals = new ArrayList<CalendarDateInterval>();
+        calendar.setIntervals(intervals);
+        intervals.add(new CalendarDateInterval(calendar, 0, 15)); // 00:00 to 00:15
+
+        Date nextDate = calendar.nextCalendarDate(DateUtils.newDate(2015, java.util.Calendar.SEPTEMBER, 7, 1, 0, 0)); // 01:00
+        Assert.assertNull(nextDate);
+
+        Date prevDate = calendar.previousCalendarDate(DateUtils.newDate(2015, java.util.Calendar.SEPTEMBER, 7, 1, 0, 0)); // 01:00
+        Assert.assertNull(prevDate);
+
+        nextDate = calendar.nextCalendarDate(DateUtils.newDate(2015, java.util.Calendar.SEPTEMBER, 7, 0, 15, 0)); // 00:15
+        Assert.assertNull(nextDate);
+
+        prevDate = calendar.previousCalendarDate(DateUtils.newDate(2015, java.util.Calendar.SEPTEMBER, 7, 0, 15, 0)); // 00:15
+        Assert.assertNull(prevDate);
+
+        nextDate = calendar.nextCalendarDate(DateUtils.newDate(2015, java.util.Calendar.SEPTEMBER, 7, 0, 14, 59)); // 00:14:49
+        Assert.assertEquals(DateUtils.newDate(2015, java.util.Calendar.SEPTEMBER, 7, 0, 15, 0), nextDate);
+
+        prevDate = calendar.previousCalendarDate(DateUtils.newDate(2015, java.util.Calendar.SEPTEMBER, 7, 0, 14, 59)); // 00:14:49
+        Assert.assertEquals(DateUtils.newDate(2015, java.util.Calendar.SEPTEMBER, 7, 0, 0, 0), prevDate);
+
+        nextDate = calendar.nextCalendarDate(DateUtils.newDate(2015, java.util.Calendar.SEPTEMBER, 7, 0, 0, 0)); // 00:00
+        Assert.assertEquals(DateUtils.newDate(2015, java.util.Calendar.SEPTEMBER, 7, 0, 15, 0), nextDate);
+
+        prevDate = calendar.previousCalendarDate(DateUtils.newDate(2015, java.util.Calendar.SEPTEMBER, 7, 0, 0, 0)); // 00:00
+        Assert.assertEquals(DateUtils.newDate(2015, java.util.Calendar.SEPTEMBER, 7, 0, 0, 0), prevDate);
+
+        nextDate = calendar.nextCalendarDate(DateUtils.newDate(2015, java.util.Calendar.SEPTEMBER, 7, 0, 3, 59)); // 00:03
+        Assert.assertEquals(DateUtils.newDate(2015, java.util.Calendar.SEPTEMBER, 7, 0, 15, 0), nextDate);
+
+        prevDate = calendar.previousCalendarDate(DateUtils.newDate(2015, java.util.Calendar.SEPTEMBER, 7, 0, 3, 59)); // 00:03
+        Assert.assertEquals(DateUtils.newDate(2015, java.util.Calendar.SEPTEMBER, 7, 0, 0, 0), prevDate);
+
+    }
+
+    @Test()
+    public void testUnionCalendar() {
+
+        CalendarInterval calendar1 = new CalendarInterval();
+        calendar1.setIntervalType(CalendarIntervalTypeEnum.WDAY);
+        List<CalendarDateInterval> intervals = new ArrayList<CalendarDateInterval>();
+        calendar1.setIntervals(intervals);
+        intervals.add(new CalendarDateInterval(calendar1, 1, 5)); // monday through friday
+
+        CalendarInterval calendar2 = new CalendarInterval();
+        calendar2.setIntervalType(CalendarIntervalTypeEnum.HOUR);
+        intervals = new ArrayList<CalendarDateInterval>();
+        calendar2.setIntervals(intervals);
+        intervals.add(new CalendarDateInterval(calendar2, 800, 1500)); // 8:00-15:00
+
+        CalendarJoin calendar = new CalendarJoin();
+        calendar.setJoinType(CalendarJoinTypeEnum.UNION);
+        calendar.setJoinCalendar1(calendar1);
+        calendar.setJoinCalendar2(calendar2);
+
+        Date nextDate = calendar.nextCalendarDate(DateUtils.newDate(2015, java.util.Calendar.FEBRUARY, 7, 9, 0, 0)); // saturday 09:00
+        Assert.assertNull(nextDate);
+
+        Date prevDate = calendar.previousCalendarDate(DateUtils.newDate(2015, java.util.Calendar.FEBRUARY, 7, 9, 0, 0)); // saturday 09:00
+        Assert.assertNull(prevDate);
+
+        nextDate = calendar.nextCalendarDate(DateUtils.newDate(2015, java.util.Calendar.FEBRUARY, 6, 9, 0, 0)); // friday 09:00
+        Assert.assertNull(nextDate);
+
+        prevDate = calendar.previousCalendarDate(DateUtils.newDate(2015, java.util.Calendar.FEBRUARY, 6, 9, 0, 0)); // friday 09:00
+        Assert.assertNull(prevDate);
+
+        nextDate = calendar.nextCalendarDate(DateUtils.newDate(2015, java.util.Calendar.FEBRUARY, 5, 9, 0, 0)); // thursday 09:00
+        Assert.assertEquals(DateUtils.newDate(2015, java.util.Calendar.FEBRUARY, 6, 0, 0, 0), nextDate);
+
+        prevDate = calendar.previousCalendarDate(DateUtils.newDate(2015, java.util.Calendar.FEBRUARY, 5, 9, 0, 0)); // thursday 09:00
+        Assert.assertEquals(DateUtils.newDate(2015, java.util.Calendar.FEBRUARY, 2, 0, 0, 0), prevDate);
+
+        nextDate = calendar.nextCalendarDate(DateUtils.newDate(2015, java.util.Calendar.FEBRUARY, 2, 8, 0, 0)); // monday 08:00
+        Assert.assertEquals(DateUtils.newDate(2015, java.util.Calendar.FEBRUARY, 6, 0, 0, 0), nextDate);
+
+        prevDate = calendar.previousCalendarDate(DateUtils.newDate(2015, java.util.Calendar.FEBRUARY, 2, 8, 0, 0)); // monday 08:00
+        Assert.assertEquals(DateUtils.newDate(2015, java.util.Calendar.FEBRUARY, 2, 0, 0, 0), prevDate);
+
+        nextDate = calendar.nextCalendarDate(DateUtils.newDate(2015, java.util.Calendar.FEBRUARY, 5, 14, 59, 59)); // thursday 14:59
+        Assert.assertEquals(DateUtils.newDate(2015, java.util.Calendar.FEBRUARY, 6, 0, 0, 0), nextDate);
+
+        prevDate = calendar.previousCalendarDate(DateUtils.newDate(2015, java.util.Calendar.FEBRUARY, 5, 14, 59, 59)); // thursday 14:59
+        Assert.assertEquals(DateUtils.newDate(2015, java.util.Calendar.FEBRUARY, 2, 0, 0, 0), prevDate);
+
+    }
+
+    @Test()
+    public void testIntersectCalendar() {
+
+        CalendarInterval calendar1 = new CalendarInterval();
+        calendar1.setIntervalType(CalendarIntervalTypeEnum.WDAY);
+        List<CalendarDateInterval> intervals = new ArrayList<CalendarDateInterval>();
+        calendar1.setIntervals(intervals);
+        intervals.add(new CalendarDateInterval(calendar1, 1, 5)); // monday through friday
+
+        CalendarInterval calendar2 = new CalendarInterval();
+        calendar2.setIntervalType(CalendarIntervalTypeEnum.HOUR);
+        intervals = new ArrayList<CalendarDateInterval>();
+        calendar2.setIntervals(intervals);
+        intervals.add(new CalendarDateInterval(calendar2, 800, 1500)); // 8:00-15:00
+
+        CalendarJoin calendar = new CalendarJoin();
+        calendar.setJoinType(CalendarJoinTypeEnum.INTERSECT);
+        calendar.setJoinCalendar1(calendar1);
+        calendar.setJoinCalendar2(calendar2);
+
+        Date nextDate = calendar.nextCalendarDate(DateUtils.newDate(2015, java.util.Calendar.FEBRUARY, 7, 9, 0, 0)); // saturday 09:00
+        Assert.assertNull(nextDate);
+
+        Date prevDate = calendar.previousCalendarDate(DateUtils.newDate(2015, java.util.Calendar.FEBRUARY, 7, 9, 0, 0)); // saturday 09:00
+        Assert.assertNull(prevDate);
+
+        nextDate = calendar.nextCalendarDate(DateUtils.newDate(2015, java.util.Calendar.FEBRUARY, 6, 9, 0, 0)); // friday 09:00
+        Assert.assertNull(nextDate);
+
+        prevDate = calendar.previousCalendarDate(DateUtils.newDate(2015, java.util.Calendar.FEBRUARY, 6, 9, 0, 0)); // friday 09:00
+        Assert.assertNull(prevDate);
+
+        nextDate = calendar.nextCalendarDate(DateUtils.newDate(2015, java.util.Calendar.FEBRUARY, 5, 15, 0, 0)); // thursday 15:00
+        Assert.assertNull(nextDate);
+
+        prevDate = calendar.previousCalendarDate(DateUtils.newDate(2015, java.util.Calendar.FEBRUARY, 5, 15, 0, 0)); // thursday 15:00
+        Assert.assertNull(prevDate);
+
+        nextDate = calendar.nextCalendarDate(DateUtils.newDate(2015, java.util.Calendar.FEBRUARY, 2, 7, 0, 0)); // monday 07:00
+        Assert.assertNull(nextDate);
+
+        prevDate = calendar.previousCalendarDate(DateUtils.newDate(2015, java.util.Calendar.FEBRUARY, 2, 7, 0, 0)); // monday 07:00
+        Assert.assertNull(prevDate);
+
+        nextDate = calendar.nextCalendarDate(DateUtils.newDate(2015, java.util.Calendar.FEBRUARY, 5, 9, 0, 0)); // thursday 09:00
+        Assert.assertEquals(DateUtils.newDate(2015, java.util.Calendar.FEBRUARY, 5, 15, 0, 0), nextDate);
+
+        prevDate = calendar.previousCalendarDate(DateUtils.newDate(2015, java.util.Calendar.FEBRUARY, 5, 9, 0, 0)); // thursday 09:00
+        Assert.assertEquals(DateUtils.newDate(2015, java.util.Calendar.FEBRUARY, 5, 8, 0, 0), prevDate);
+
+        nextDate = calendar.nextCalendarDate(DateUtils.newDate(2015, java.util.Calendar.FEBRUARY, 5, 14, 59, 59)); // thursday 14:59
+        Assert.assertEquals(DateUtils.newDate(2015, java.util.Calendar.FEBRUARY, 5, 15, 0, 0), nextDate);
+
+        prevDate = calendar.previousCalendarDate(DateUtils.newDate(2015, java.util.Calendar.FEBRUARY, 5, 14, 59, 59)); // thursday 14:59
+        Assert.assertEquals(DateUtils.newDate(2015, java.util.Calendar.FEBRUARY, 5, 8, 0, 0), prevDate);
+
+        nextDate = calendar.nextCalendarDate(DateUtils.newDate(2015, java.util.Calendar.FEBRUARY, 2, 10, 0, 0)); // monday 10:00
+        Assert.assertEquals(DateUtils.newDate(2015, java.util.Calendar.FEBRUARY, 2, 15, 0, 0), nextDate);
+
+        prevDate = calendar.previousCalendarDate(DateUtils.newDate(2015, java.util.Calendar.FEBRUARY, 2, 10, 0, 0)); // monday 10:00
+        Assert.assertEquals(DateUtils.newDate(2015, java.util.Calendar.FEBRUARY, 2, 8, 0, 0), prevDate);
+
+    }
+
 }
