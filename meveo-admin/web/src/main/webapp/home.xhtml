@@ -30,27 +30,44 @@
 
 			</h:panelGrid>
 
-			<!-- <h:panelGrid columns="3">
+			<h:panelGrid columns="3">
 
-				<ui:repeat var="bar" value="#{barChartBean.chartModelList}">
-					<hf:barChartComponent barChartEntityModel="#{bar}"
-						chartBackingBean="#{barChartBean}" />
-					
+				<ui:repeat var="bar" value="#{barChartBean.barChartEntityModels}"
+					varStatus="i">
+
+					<h:form>
+						<p:outputPanel
+							id="barChartC_#{bar.barChart.measurableQuantity.code}"
+							style="width:500px;">
+							<hf:barChartComponent barChartEntityModel="#{bar}" />
+							<!-- chartBackingBean="#{barChartBean}" -->
+						</p:outputPanel>
+						<p:outputLabel value="#{messages['chart.from']}"></p:outputLabel>
+						<p:calendar id="filterFrom" value="#{bar.minDate}">
+							<p:ajax event="dateSelect" update="@form"
+								listener="#{barChartBean.setModel(i.index)}" />
+						</p:calendar>
+						<p:outputLabel value="#{messages['chart.to']}"></p:outputLabel>
+						<p:calendar id="filterTo" value="#{bar.maxDate}">
+							<p:ajax event="dateSelect" update="@form"
+								listener="#{barChartBean.setModel(i.index)}" />
+						</p:calendar>
+					</h:form>
 				</ui:repeat>
 
 				<ui:repeat var="line" value="#{lineChartBean.chartModelList}">
 					<hf:lineChartComponent lineChartEntityModel="#{line}"
 						chartBackingBean="#{lineChartBean}"></hf:lineChartComponent>
-					
+
 				</ui:repeat>
 
 				<ui:repeat var="pie" value="#{pieChartBean.chartModelList}">
 					<hf:pieChartComponent pieChartEntityModel="#{pie}"
 						chartBackingBean="#{pieChartBean}"></hf:pieChartComponent>
-					
+
 				</ui:repeat>
 
-			</h:panelGrid> -->
+			</h:panelGrid>
 		</p:panel>
 
 	</ui:define>

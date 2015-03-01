@@ -12,52 +12,39 @@
 
 <cc:interface componentType="formField">
 	<cc:attribute name="barChartEntityModel" />
-	<cc:attribute name="chartBackingBean"
-		type="org.meveo.admin.action.BaseBean" />
+	<!-- <cc:attribute name="chartBackingBean"
+		type="org.meveo.admin.action.BaseBean" /> -->
 </cc:interface>
 
 <cc:implementation>
 
 	<ui:fragment>
 
-		<p:outputPanel
-			id="barChartC_#{cc.attrs.barChartEntityModel.barChart.measurableQuantity.code}"
-			style="width:500px;">
-			<p:barChart
-				value="#{cc.attrs.chartBackingBean.getModel(cc.attrs.barChartEntityModel).model}"
-				fill="#{cc.attrs.barChartEntityModel.barChart.filled}"
-				legendPosition="#{cc.attrs.barChartEntityModel.barChart.legendPosition}"
-				barPadding="#{cc.attrs.barChartEntityModel.barChart.barPadding}"
-				barMargin="#{cc.attrs.barChartEntityModel.barChart.barMargin}"
-				stacked="#{cc.attrs.barChartEntityModel.barChart.stacked}"
-				min="#{cc.attrs.barChartEntityModel.barChart.min}"
-				max="#{cc.attrs.barChartEntityModel.barChart.max}"
-				breakOnNull="#{cc.attrs.barChartEntityModel.barChart.breakOnNull}"
-				xaxisLabel="#{cc.attrs.barChartEntityModel.barChart.xaxisLabel}"
-				yaxisLabel="#{cc.attrs.barChartEntityModel.barChart.yaxisLabel}"
-				xaxisAngle="#{cc.attrs.barChartEntityModel.barChart.xaxisAngle}"
-				yaxisAngle="#{cc.attrs.barChartEntityModel.barChart.yaxisAngle}"
-				legendCols="#{cc.attrs.barChartEntityModel.barChart.legendCols}"
-				legendRows="#{cc.attrs.barChartEntityModel.barChart.legendRows}"
-				zoom="#{cc.attrs.barChartEntityModel.barChart.zoom}"
-				animate="#{cc.attrs.barChartEntityModel.barChart.animate}"
-				showDatatip="#{cc.attrs.barChartEntityModel.barChart.showDataTip}"
-				datatipFormat="#{cc.attrs.barChartEntityModel.barChart.datatipFormat}"
-				style="#{cc.attrs.barChartEntityModel.barChart.style}"
-				styleClass="#{cc.attrs.barChartEntityModel.barChart.styleClass}" />
-		</p:outputPanel>
+
+		<p:barChart id="mainBarChart"
+			value="#{cc.attrs.barChartEntityModel.model}"
+			fill="#{cc.attrs.barChartEntityModel.barChart.filled}"
+			legendPosition="#{cc.attrs.barChartEntityModel.barChart.legendPosition}"
+			barPadding="#{cc.attrs.barChartEntityModel.barChart.barPadding}"
+			barMargin="#{cc.attrs.barChartEntityModel.barChart.barMargin}"
+			stacked="#{cc.attrs.barChartEntityModel.barChart.stacked}"
+			min="#{cc.attrs.barChartEntityModel.barChart.min}"
+			max="#{cc.attrs.barChartEntityModel.barChart.max}"
+			breakOnNull="#{cc.attrs.barChartEntityModel.barChart.breakOnNull}"
+			xaxisLabel="#{cc.attrs.barChartEntityModel.barChart.xaxisLabel}"
+			yaxisLabel="#{cc.attrs.barChartEntityModel.barChart.yaxisLabel}"
+			xaxisAngle="#{cc.attrs.barChartEntityModel.barChart.xaxisAngle}"
+			yaxisAngle="#{cc.attrs.barChartEntityModel.barChart.yaxisAngle}"
+			legendCols="#{cc.attrs.barChartEntityModel.barChart.legendCols}"
+			legendRows="#{cc.attrs.barChartEntityModel.barChart.legendRows}"
+			zoom="#{cc.attrs.barChartEntityModel.barChart.zoom}"
+			animate="#{cc.attrs.barChartEntityModel.barChart.animate}"
+			showDatatip="#{cc.attrs.barChartEntityModel.barChart.showDataTip}"
+			datatipFormat="#{cc.attrs.barChartEntityModel.barChart.datatipFormat}"
+			style="#{cc.attrs.barChartEntityModel.barChart.style}"
+			styleClass="#{cc.attrs.barChartEntityModel.barChart.styleClass}" />
 
 
-		<p:outputLabel value="#{messages['chart.from']}"></p:outputLabel>
-		<p:calendar value="#{cc.attrs.barChartEntityModel.minDate}">
-			<p:ajax event="dateSelect"
-				update=":#{p:component('barChartC_'.concat(cc.attrs.barChartEntityModel.barChart.measurableQuantity.code))}" />
-		</p:calendar>
-		<p:outputLabel value="#{messages['chart.to']}"></p:outputLabel>
-		<p:calendar value="#{cc.attrs.barChartEntityModel.maxDate}">
-			<p:ajax event="dateSelect"
-				update=":#{p:component('barChartC_'.concat(cc.attrs.barChartEntityModel.barChart.measurableQuantity.code))}" />
-		</p:calendar>
 
 
 	</ui:fragment>

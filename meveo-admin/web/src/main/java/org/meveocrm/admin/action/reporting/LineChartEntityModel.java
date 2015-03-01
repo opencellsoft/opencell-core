@@ -8,10 +8,6 @@ public class LineChartEntityModel extends ChartEntityModel {
 	private LineChart lineChart;
 	private CartesianChartModel model;
 
-	public LineChartEntityModel() {
-		super();
-	}
-
 	public LineChart getLineChart() {
 		return lineChart;
 	}

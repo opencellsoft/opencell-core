@@ -8,10 +8,6 @@ public class PieChartEntityModel extends ChartEntityModel {
 	private PieChart pieChart;
 	private PieChartModel model;
 
-	public PieChartEntityModel() {
-		super();
-	}
-
 	public PieChartModel getModel() {
 		return model;
 	}
