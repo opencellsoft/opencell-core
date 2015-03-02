@@ -25,9 +25,11 @@ import javax.inject.Named;
 
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
+import org.meveo.admin.action.CustomFieldEnabledBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.catalog.RecurringChargeTemplate;
 import org.meveo.model.catalog.TriggeredEDRTemplate;
+import org.meveo.model.crm.AccountLevelEnum;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.catalog.impl.OneShotChargeTemplateService;
@@ -46,6 +48,7 @@ import org.primefaces.model.DualListModel;
  */
 @Named
 @ViewScoped
+@CustomFieldEnabledBean(accountLevel = AccountLevelEnum.CHARGE)
 public class RecurringChargeTemplateBean extends
 		BaseBean<RecurringChargeTemplate> {
 	private static final long serialVersionUID = 1L;

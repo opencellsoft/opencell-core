@@ -51,6 +51,9 @@ import org.meveo.model.admin.User;
 import org.meveo.model.billing.CatMessages;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.TradingLanguage;
+import org.meveo.model.catalog.ChargeTemplate;
+import org.meveo.model.catalog.OfferTemplate;
+import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.crm.AccountLevelEnum;
 import org.meveo.model.crm.CustomFieldInstance;
 import org.meveo.model.crm.CustomFieldTemplate;
@@ -245,7 +248,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 				throw new IllegalStateException("could not instantiate a class, constructor not accessible");
 			}
 		}
-		
+
 		initCustomFields();
 
 		return entity;
@@ -315,8 +318,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 		String outcome = null;
 
 		updateCustomFieldsInEntity();
-		
-		
+
 		if (!isMultilanguageEntity()) {
 			outcome = saveOrUpdate(entity);
 
@@ -355,7 +357,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 		return outcome;
 	}
 
-    /**
+	/**
 	 * Save or update entity depending on if entity is transient.
 	 * 
 	 * @param entity
@@ -908,126 +910,138 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 	}
 
 	/**
-	 * Load available custom fields (templates) and their values 
+	 * Load available custom fields (templates) and their values
 	 */
 	protected void initCustomFields() {
-	    
-	    if (!this.getClass().isAnnotationPresent(CustomFieldEnabledBean.class)){
-	        return ;
-	    }
-	
-	    AccountLevelEnum accountLevel = this.getClass().getAnnotation(CustomFieldEnabledBean.class).accountLevel();
+
+		if (!this.getClass().isAnnotationPresent(CustomFieldEnabledBean.class)) {
+			return;
+		}
+
+		AccountLevelEnum accountLevel = this.getClass().getAnnotation(CustomFieldEnabledBean.class).accountLevel();
 		customFieldTemplates = customFieldTemplateService.findByAccountLevel(accountLevel);
-		
-		if (customFieldTemplates != null && customFieldTemplates.size() > 0 ) {
+
+		if (customFieldTemplates != null && customFieldTemplates.size() > 0) {
 			for (CustomFieldTemplate cf : customFieldTemplates) {
-			    
-				CustomFieldInstance cfi = ((ICustomFieldEntity)entity).getCustomFields().get(cf.getCode());
+
+				CustomFieldInstance cfi = ((ICustomFieldEntity) entity).getCustomFields().get(cf.getCode());
 				if (cfi != null) {
-                    if (cf.getFieldType() == CustomFieldTypeEnum.DATE) {
-                        cf.setDateValue(cfi.getDateValue());
-                    } else if (cf.getFieldType() == CustomFieldTypeEnum.DOUBLE) {
-                        cf.setDoubleValue(cfi.getDoubleValue());
-                    } else if (cf.getFieldType() == CustomFieldTypeEnum.LONG) {
-                        cf.setLongValue(cfi.getLongValue());
-                    } else if (cf.getFieldType() == CustomFieldTypeEnum.STRING || cf.getFieldType() == CustomFieldTypeEnum.LIST) {
-                        cf.setStringValue(cfi.getStringValue());
-                    }
-                    // Clear existing transient values
+					if (cf.getFieldType() == CustomFieldTypeEnum.DATE) {
+						cf.setDateValue(cfi.getDateValue());
+					} else if (cf.getFieldType() == CustomFieldTypeEnum.DOUBLE) {
+						cf.setDoubleValue(cfi.getDoubleValue());
+					} else if (cf.getFieldType() == CustomFieldTypeEnum.LONG) {
+						cf.setLongValue(cfi.getLongValue());
+					} else if (cf.getFieldType() == CustomFieldTypeEnum.STRING
+							|| cf.getFieldType() == CustomFieldTypeEnum.LIST) {
+						cf.setStringValue(cfi.getStringValue());
+					}
+					// Clear existing transient values
 				} else {
-                    if (cf.getFieldType() == CustomFieldTypeEnum.DATE) {
-                        cf.setDateValue(null);
-                    } else if (cf.getFieldType() == CustomFieldTypeEnum.DOUBLE) {
-                        cf.setDoubleValue(null);
-                    } else if (cf.getFieldType() == CustomFieldTypeEnum.LONG) {
-                        cf.setLongValue(null);
-                    } else if (cf.getFieldType() == CustomFieldTypeEnum.STRING || cf.getFieldType() == CustomFieldTypeEnum.LIST) {
-                        cf.setStringValue(null);
-                    }
+					if (cf.getFieldType() == CustomFieldTypeEnum.DATE) {
+						cf.setDateValue(null);
+					} else if (cf.getFieldType() == CustomFieldTypeEnum.DOUBLE) {
+						cf.setDoubleValue(null);
+					} else if (cf.getFieldType() == CustomFieldTypeEnum.LONG) {
+						cf.setLongValue(null);
+					} else if (cf.getFieldType() == CustomFieldTypeEnum.STRING
+							|| cf.getFieldType() == CustomFieldTypeEnum.LIST) {
+						cf.setStringValue(null);
+					}
 				}
 			}
 		}
 	}
 
-    private void updateCustomFieldsInEntity() {
+	private void updateCustomFieldsInEntity() {
 
-        if (!this.getClass().isAnnotationPresent(CustomFieldEnabledBean.class) || customFieldTemplates == null || customFieldTemplates.isEmpty()) {
-            return;
-        }
+		if (!this.getClass().isAnnotationPresent(CustomFieldEnabledBean.class) || customFieldTemplates == null
+				|| customFieldTemplates.isEmpty()) {
+			return;
+		}
 
-        for (CustomFieldTemplate cf : customFieldTemplates) {
+		for (CustomFieldTemplate cf : customFieldTemplates) {
 
-            CustomFieldInstance cfi = ((ICustomFieldEntity) entity).getCustomFields().get(cf.getCode());
-            // Not saving empty values
-            if (cfi != null && cf.isValueEmpty()) {
-                ((ICustomFieldEntity) entity).getCustomFields().remove(cf.getCode());
+			CustomFieldInstance cfi = ((ICustomFieldEntity) entity).getCustomFields().get(cf.getCode());
+			// Not saving empty values
+			if (cfi != null && cf.isValueEmpty()) {
+				((ICustomFieldEntity) entity).getCustomFields().remove(cf.getCode());
 
-                // Update existing value
-            } else if (cfi != null) {
-                if (cf.getFieldType() == CustomFieldTypeEnum.DATE) {
-                    cfi.setDateValue(cf.getDateValue());
-                } else if (cf.getFieldType() == CustomFieldTypeEnum.DOUBLE) {
-                    cfi.setDoubleValue(cf.getDoubleValue());
-                } else if (cf.getFieldType() == CustomFieldTypeEnum.LONG) {
-                    cfi.setLongValue(cf.getLongValue());
-                } else if (cf.getFieldType() == CustomFieldTypeEnum.STRING || cf.getFieldType() == CustomFieldTypeEnum.LIST) {
-                    cfi.setStringValue(cf.getStringValue());
-                }
-                cfi.updateAudit(getCurrentUser());
+				// Update existing value
+			} else if (cfi != null) {
+				if (cf.getFieldType() == CustomFieldTypeEnum.DATE) {
+					cfi.setDateValue(cf.getDateValue());
+				} else if (cf.getFieldType() == CustomFieldTypeEnum.DOUBLE) {
+					cfi.setDoubleValue(cf.getDoubleValue());
+				} else if (cf.getFieldType() == CustomFieldTypeEnum.LONG) {
+					cfi.setLongValue(cf.getLongValue());
+				} else if (cf.getFieldType() == CustomFieldTypeEnum.STRING
+						|| cf.getFieldType() == CustomFieldTypeEnum.LIST) {
+					cfi.setStringValue(cf.getStringValue());
+				}
+				cfi.updateAudit(getCurrentUser());
 
-                // Create a new value
-            } else if (!cf.isValueEmpty()) {
+				// Create a new value
+			} else if (!cf.isValueEmpty()) {
 
-                cfi = new CustomFieldInstance();
-                cfi.setCode(cf.getCode());
-                ((AuditableEntity) cfi).updateAudit(getCurrentUser());
-                ((BaseEntity) cfi).setProvider(getCurrentProvider());
+				cfi = new CustomFieldInstance();
+				cfi.setCode(cf.getCode());
+				((AuditableEntity) cfi).updateAudit(getCurrentUser());
+				((BaseEntity) cfi).setProvider(getCurrentProvider());
 
-                IEntity entity = getEntity();
-                if (entity instanceof AccountEntity) {
-                    cfi.setAccount((AccountEntity) getEntity());
-                } else if (entity instanceof Subscription) {
-                    cfi.setSubscription((Subscription) entity);
-                } else if (entity instanceof Access) {
-                    cfi.setAccess((Access) entity);
-                }
+				IEntity entity = getEntity();
+				if (entity instanceof AccountEntity) {
+					cfi.setAccount((AccountEntity) getEntity());
+				} else if (entity instanceof Subscription) {
+					cfi.setSubscription((Subscription) entity);
+				} else if (entity instanceof Access) {
+					cfi.setAccess((Access) entity);
+				} else if (entity instanceof ChargeTemplate) {
+					cfi.setChargeTemplate((ChargeTemplate) entity);
+				} else if (entity instanceof ServiceTemplate) {
+					cfi.setServiceTemplate((ServiceTemplate) entity);
+				} else if (entity instanceof OfferTemplate) {
+					cfi.setOfferTemplate((OfferTemplate) entity);
+				}
 
-                if (cf.getFieldType() == CustomFieldTypeEnum.DATE) {
-                    cfi.setDateValue(cf.getDateValue());
-                } else if (cf.getFieldType() == CustomFieldTypeEnum.DOUBLE) {
-                    cfi.setDoubleValue(cf.getDoubleValue());
-                } else if (cf.getFieldType() == CustomFieldTypeEnum.LONG) {
-                    cfi.setLongValue(cf.getLongValue());
-                } else if (cf.getFieldType() == CustomFieldTypeEnum.STRING || cf.getFieldType() == CustomFieldTypeEnum.LIST) {
-                    cfi.setStringValue(cf.getStringValue());
-                }
+				if (cf.getFieldType() == CustomFieldTypeEnum.DATE) {
+					cfi.setDateValue(cf.getDateValue());
+				} else if (cf.getFieldType() == CustomFieldTypeEnum.DOUBLE) {
+					cfi.setDoubleValue(cf.getDoubleValue());
+				} else if (cf.getFieldType() == CustomFieldTypeEnum.LONG) {
+					cfi.setLongValue(cf.getLongValue());
+				} else if (cf.getFieldType() == CustomFieldTypeEnum.STRING
+						|| cf.getFieldType() == CustomFieldTypeEnum.LIST) {
+					cfi.setStringValue(cf.getStringValue());
+				}
 
-                ((ICustomFieldEntity) entity).getCustomFields().put(cfi.getCode(), cfi);
-            }
-        }
-    }
+				((ICustomFieldEntity) entity).getCustomFields().put(cfi.getCode(), cfi);
+			}
+		}
+	}
 
 	protected void setAndSaveCustomFields() {
 		if (customFieldTemplates != null && customFieldTemplates.size() > 0) {
 			for (CustomFieldTemplate cf : customFieldTemplates) {
 				CustomFieldInstance cfi = customFieldInstanceService.findByCodeAndAccount(cf.getCode(), getEntity());
 				if (cfi != null) {
-                    if (cf.isValueEmpty()) {
-                        customFieldInstanceService.remove(cfi);
-                        
-                    } else {
-                        if (cf.getFieldType() == CustomFieldTypeEnum.DATE) {
-                            cfi.setDateValue(cf.getDateValue());
-                        } else if (cf.getFieldType() == CustomFieldTypeEnum.DOUBLE) {
-                            cfi.setDoubleValue(cf.getDoubleValue());
-                        } else if (cf.getFieldType() == CustomFieldTypeEnum.LONG) {
-                            cfi.setLongValue(cf.getLongValue());
-                        } else if (cf.getFieldType() == CustomFieldTypeEnum.STRING || cf.getFieldType() == CustomFieldTypeEnum.LIST) {
-                            cfi.setStringValue(cf.getStringValue());
-                        }
-                    }
+					if (cf.isValueEmpty()) {
+						customFieldInstanceService.remove(cfi);
 
-                } else if (!cf.isValueEmpty()) {
+					} else {
+						if (cf.getFieldType() == CustomFieldTypeEnum.DATE) {
+							cfi.setDateValue(cf.getDateValue());
+						} else if (cf.getFieldType() == CustomFieldTypeEnum.DOUBLE) {
+							cfi.setDoubleValue(cf.getDoubleValue());
+						} else if (cf.getFieldType() == CustomFieldTypeEnum.LONG) {
+							cfi.setLongValue(cf.getLongValue());
+						} else if (cf.getFieldType() == CustomFieldTypeEnum.STRING
+								|| cf.getFieldType() == CustomFieldTypeEnum.LIST) {
+							cfi.setStringValue(cf.getStringValue());
+						}
+					}
+
+				} else if (!cf.isValueEmpty()) {
 					// create
 					cfi = new CustomFieldInstance();
 					cfi.setCode(cf.getCode());

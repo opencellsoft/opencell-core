@@ -25,9 +25,11 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.meveo.admin.action.BaseBean;
+import org.meveo.admin.action.CustomFieldEnabledBean;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.ServiceTemplate;
+import org.meveo.model.crm.AccountLevelEnum;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.catalog.impl.OfferTemplateService;
@@ -44,6 +46,7 @@ import org.primefaces.model.DualListModel;
  */
 @Named
 @ViewScoped
+@CustomFieldEnabledBean(accountLevel = AccountLevelEnum.OFFER)
 public class OfferTemplateBean extends BaseBean<OfferTemplate> {
 
 	private static final long serialVersionUID = 1L;
@@ -105,8 +108,7 @@ public class OfferTemplateBean extends BaseBean<OfferTemplate> {
 	}
 
 	public void setDualListModel(DualListModel<ServiceTemplate> perks) {
-		getEntity().setServiceTemplates(
-				(List<ServiceTemplate>) perks.getTarget());
+		getEntity().setServiceTemplates((List<ServiceTemplate>) perks.getTarget());
 	}
 
 	public List<OfferTemplate> listActive() {

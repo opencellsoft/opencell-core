@@ -2,10 +2,13 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html"
-	xmlns:rich="http://richfaces.org/rich"
-	xmlns:a="http://richfaces.org/a4j" xmlns:hftl="http://hftl.org"
+	xmlns:o="http://omnifaces.org/ui" xmlns:hftl="http://hftl.org"
 	xmlns:hf="http://java.sun.com/jsf/composite/tags"
 	xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
+
+	<ui:define name="metadata">
+		<o:importConstants type="org.meveo.model.crm.CustomFieldTypeEnum" />
+	</ui:define>
 
 	<ui:define name="navigation">
 		<ui:include src="/layout/navigation.xhtml" />
@@ -31,46 +34,58 @@
 			label="#{messages['recurringChargeTemplate.chargeTemplatePanel']}"
 			backingBean="#{recurringChargeTemplateBean}">
 
-			<hf:formField label="#{messages['chargeTemplate.code']}" field="code"
-				required="true" validateUnique="true" />
-			<hf:languageFields />
-			<hf:formField label="#{messages['enableEntity.disabled']}"
-				field="disabled" isMessage="true" />
-			<hf:formField label="#{messages['chargeTemplate.amountEditable']}"
-				field="amountEditable" />
-			<hf:formField
-				label="#{messages['recurringChargeTemplate.durationTermInMonth']}"
-				field="durationTermInMonth" />
-			<hf:formField
-				label="#{messages['recurringChargeTemplate.subscriptionProrata']}"
-				field="subscriptionProrata" />
-			<hf:formField
-				label="#{messages['recurringChargeTemplate.terminationProrata']}"
-				field="terminationProrata" />
-			<hf:formField
-				label="#{messages['recurringChargeTemplate.applyInAdvance']}"
-				field="applyInAdvance" />
-			 <hf:formField
-				label="#{messages['recurringChargeTemplate.sharedLevel']}"
-				field="shareLevel" />
-				
-			<hf:formField
-				label="#{messages['menu.triggeredEdrTemplates']}"
-				field="edrTemplates" listType="pickUpList"
-				childField="code"
-				dualListModel="#{recurringChargeTemplateBean.edrTemplatesModel}" />
-				
-			<hf:formEntityField id="invoiceSubCategorySelectedId"
-				label="#{messages['charge.subCategory']}"
-				field="invoiceSubCategory" childField="code" required="true"
-				popup="true" popupId="searchInvoiceSubCategoryPopup" />
-			<hftl:panelGroup columns="2">	
-					<hf:formEntityField label="#{messages['recurringChargeTemplate.calendar']}" field="calendar" childField="name" required="true" popup="false"
-										listElements="#{calendarService.list()}" />
-				</hftl:panelGroup>
+			<p:tabView id="tabView">
+
+				<p:tab title="#{messages['customer.tab.information']}">
+					<p:panelGrid styleClass="form-panel-fields" columns="2">
+						<hf:formField label="#{messages['chargeTemplate.code']}"
+							field="code" required="true" validateUnique="true" />
+						<hf:languageFields />
+						<hf:formField label="#{messages['enableEntity.disabled']}"
+							field="disabled" isMessage="true" />
+						<hf:formField label="#{messages['chargeTemplate.amountEditable']}"
+							field="amountEditable" />
+						<hf:formField
+							label="#{messages['recurringChargeTemplate.durationTermInMonth']}"
+							field="durationTermInMonth" />
+						<hf:formField
+							label="#{messages['recurringChargeTemplate.subscriptionProrata']}"
+							field="subscriptionProrata" />
+						<hf:formField
+							label="#{messages['recurringChargeTemplate.terminationProrata']}"
+							field="terminationProrata" />
+						<hf:formField
+							label="#{messages['recurringChargeTemplate.applyInAdvance']}"
+							field="applyInAdvance" />
+						<hf:formField
+							label="#{messages['recurringChargeTemplate.sharedLevel']}"
+							field="shareLevel" />
+
+						<hf:formField label="#{messages['menu.triggeredEdrTemplates']}"
+							field="edrTemplates" listType="pickUpList" childField="code"
+							dualListModel="#{recurringChargeTemplateBean.edrTemplatesModel}" />
+
+						<hf:formEntityField id="invoiceSubCategorySelectedId"
+							label="#{messages['charge.subCategory']}"
+							field="invoiceSubCategory" childField="code" required="true"
+							popup="true" popupId="searchInvoiceSubCategoryPopup" />
+						<hftl:panelGroup columns="2">
+							<hf:formEntityField
+								label="#{messages['recurringChargeTemplate.calendar']}"
+								field="calendar" childField="name" required="true" popup="false"
+								listElements="#{calendarService.list()}" />
+						</hftl:panelGroup>
+					</p:panelGrid>
+				</p:tab>
+
+				<p:tab title="#{messages['customFieldTemplate.panel']}">
+					<hf:customFields />
+				</p:tab>
+
+			</p:tabView>
 
 		</hf:formPanel>
 
 	</ui:define>
-	
+
 </ui:composition>

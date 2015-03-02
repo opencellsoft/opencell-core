@@ -17,21 +17,27 @@
 package org.meveo.model.catalog;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.MapKeyColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
 import org.meveo.model.BusinessEntity;
+import org.meveo.model.ICustomFieldEntity;
+import org.meveo.model.crm.CustomFieldInstance;
 
 @Entity
 @Table(name = "CAT_SERVICE_TEMPLATE", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE", "PROVIDER_ID" }))
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "CAT_SERVICE_TEMPLATE_SEQ")
-public class ServiceTemplate extends BusinessEntity {
+public class ServiceTemplate extends BusinessEntity implements ICustomFieldEntity {
 
 	private static final long serialVersionUID = 1L;
 
@@ -46,6 +52,10 @@ public class ServiceTemplate extends BusinessEntity {
 
 	@OneToMany(mappedBy = "serviceTemplate", fetch = FetchType.LAZY)
 	private List<ServiceChargeTemplateUsage> serviceUsageCharges = new ArrayList<ServiceChargeTemplateUsage>();
+
+	@OneToMany(mappedBy = "serviceTemplate", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+	@MapKeyColumn(name = "code")
+	private Map<String, CustomFieldInstance> customFields = new HashMap<String, CustomFieldInstance>();
 
 	public ServiceChargeTemplateRecurring getServiceRecurringChargeByChargeCode(String chargeCode) {
 		ServiceChargeTemplateRecurring result = null;
@@ -136,6 +146,14 @@ public class ServiceTemplate extends BusinessEntity {
 		} else if (!code.equals(other.getCode()))
 			return false;
 		return true;
+	}
+
+	public Map<String, CustomFieldInstance> getCustomFields() {
+		return customFields;
+	}
+
+	public void setCustomFields(Map<String, CustomFieldInstance> customFields) {
+		this.customFields = customFields;
 	}
 
 }

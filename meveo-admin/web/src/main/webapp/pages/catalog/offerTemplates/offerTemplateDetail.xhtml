@@ -2,10 +2,13 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html"
-	xmlns:rich="http://richfaces.org/rich"
-	xmlns:a="http://richfaces.org/a4j" xmlns:hftl="http://hftl.org"
+	xmlns:o="http://omnifaces.org/ui" xmlns:hftl="http://hftl.org"
 	xmlns:hf="http://java.sun.com/jsf/composite/tags"
-	template="/layout/template.xhtml">
+	xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
+
+	<ui:define name="metadata">
+		<o:importConstants type="org.meveo.model.crm.CustomFieldTypeEnum" />
+	</ui:define>
 
 	<ui:define name="navigation">
 		<ui:include src="/layout/navigation.xhtml" />
@@ -15,15 +18,29 @@
 
 		<hf:formPanel label="#{messages['offerTemplate.offerTemplatePanel']}"
 			backingBean="#{offerTemplateBean}">
-			<hf:formField label="#{messages['offerTemplate.code']}" field="code"
-				required="true" validateUnique="true" />
-			<hf:formField label="#{messages['offerTemplate.description']}"
-				field="description" required="true" useConverter="false"
-				id="description" maxlength="50" />
-			<hf:formField label="#{messages['enableEntity.disabled']}"
-				field="disabled" isMessage="true" />
-			<hf:formField label="#{messages['offerTemplate.serviceTemplates']}"
-				field="serviceTemplates" listType="pickUpList" childField="code" />
+
+			<p:tabView id="tabView">
+
+				<p:tab title="#{messages['customer.tab.information']}">
+					<p:panelGrid styleClass="form-panel-fields" columns="2">
+						<hf:formField label="#{messages['offerTemplate.code']}"
+							field="code" required="true" validateUnique="true" />
+						<hf:formField label="#{messages['offerTemplate.description']}"
+							field="description" required="true" useConverter="false"
+							id="description" maxlength="50" />
+						<hf:formField label="#{messages['enableEntity.disabled']}"
+							field="disabled" isMessage="true" />
+						<hf:formField
+							label="#{messages['offerTemplate.serviceTemplates']}"
+							field="serviceTemplates" listType="pickUpList" childField="code" />
+					</p:panelGrid>
+				</p:tab>
+
+				<p:tab title="#{messages['customFieldTemplate.panel']}">
+					<hf:customFields />
+				</p:tab>
+
+			</p:tabView>
 		</hf:formPanel>
 
 	</ui:define>

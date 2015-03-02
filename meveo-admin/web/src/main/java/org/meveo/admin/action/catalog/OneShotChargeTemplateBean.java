@@ -25,9 +25,11 @@ import javax.inject.Named;
 
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
+import org.meveo.admin.action.CustomFieldEnabledBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.TriggeredEDRTemplate;
+import org.meveo.model.crm.AccountLevelEnum;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.catalog.impl.OneShotChargeTemplateService;
@@ -46,6 +48,7 @@ import org.primefaces.model.DualListModel;
  */
 @Named
 @ViewScoped
+@CustomFieldEnabledBean(accountLevel = AccountLevelEnum.CHARGE)
 public class OneShotChargeTemplateBean extends BaseBean<OneShotChargeTemplate> {
 	private static final long serialVersionUID = 1L;
 
@@ -124,18 +127,14 @@ public class OneShotChargeTemplateBean extends BaseBean<OneShotChargeTemplate> {
 	 * @see org.meveo.admin.action.BaseBean#saveOrUpdate(boolean)
 	 */
 	@Override
-	public String saveOrUpdate(boolean killConversation)
-			throws BusinessException {
+	public String saveOrUpdate(boolean killConversation) throws BusinessException {
 
 		// check for unicity
-		if (recurringChargeTemplateService.findByCode(entity.getCode(),
-				entity.getProvider()) != null
-				|| usageChargeTemplateService.findByCode(entity.getCode(),
-						entity.getProvider()) != null) {
+		if (recurringChargeTemplateService.findByCode(entity.getCode(), entity.getProvider()) != null
+				|| usageChargeTemplateService.findByCode(entity.getCode(), entity.getProvider()) != null) {
 			messages.error(new BundleKey("messages", "commons.uniqueField.code"));
 			return null;
 		}
-
 
 		return super.saveOrUpdate(killConversation);
 	}
@@ -155,15 +154,13 @@ public class OneShotChargeTemplateBean extends BaseBean<OneShotChargeTemplate> {
 
 	public DualListModel<TriggeredEDRTemplate> getEdrTemplatesModel() {
 		if (edrTemplates == null) {
-			List<TriggeredEDRTemplate> source = triggeredEDRTemplateService
-					.list();
+			List<TriggeredEDRTemplate> source = triggeredEDRTemplateService.list();
 			List<TriggeredEDRTemplate> target = new ArrayList<TriggeredEDRTemplate>();
 			if (getEntity().getEdrTemplates() != null) {
 				target.addAll(getEntity().getEdrTemplates());
 			}
 			source.removeAll(target);
-			edrTemplates = new DualListModel<TriggeredEDRTemplate>(source,
-					target);
+			edrTemplates = new DualListModel<TriggeredEDRTemplate>(source, target);
 		}
 		return edrTemplates;
 	}

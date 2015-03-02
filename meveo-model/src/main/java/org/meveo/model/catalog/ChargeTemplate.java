@@ -17,8 +17,11 @@
 package org.meveo.model.catalog;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -28,6 +31,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.MapKeyColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
@@ -35,15 +39,17 @@ import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 
 import org.meveo.model.BusinessEntity;
+import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.billing.ChargeInstance;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.OperationTypeEnum;
+import org.meveo.model.crm.CustomFieldInstance;
 
 @Entity
 @Table(name = "CAT_CHARGE_TEMPLATE", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE", "PROVIDER_ID" }))
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "CAT_CHARGE_TEMPLATE_SEQ")
 @Inheritance(strategy = InheritanceType.JOINED)
-public class ChargeTemplate extends BusinessEntity {
+public class ChargeTemplate extends BusinessEntity implements ICustomFieldEntity {
 
 	private static final long serialVersionUID = 1L;
 
@@ -64,6 +70,10 @@ public class ChargeTemplate extends BusinessEntity {
 	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(name = "CAT_CHRG_EDR", joinColumns = @JoinColumn(name = "CHARGE_TMPL_ID"), inverseJoinColumns = @JoinColumn(name = "TRIGG_EDR_ID"))
 	private List<TriggeredEDRTemplate> edrTemplates = new ArrayList<TriggeredEDRTemplate>();
+
+	@OneToMany(mappedBy = "chargeTemplate", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+	@MapKeyColumn(name = "code")
+	private Map<String, CustomFieldInstance> customFields = new HashMap<String, CustomFieldInstance>();
 
 	public OperationTypeEnum getType() {
 		return type;
@@ -103,6 +113,14 @@ public class ChargeTemplate extends BusinessEntity {
 
 	public void setEdrTemplates(List<TriggeredEDRTemplate> edrTemplates) {
 		this.edrTemplates = edrTemplates;
+	}
+
+	public Map<String, CustomFieldInstance> getCustomFields() {
+		return customFields;
+	}
+
+	public void setCustomFields(Map<String, CustomFieldInstance> customFields) {
+		this.customFields = customFields;
 	}
 
 }
