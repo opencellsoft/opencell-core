@@ -88,7 +88,7 @@ public class CalendarDateInterval extends BaseProviderlessEntity implements Comp
     }
 
     public boolean isCrossBoundry() {
-        return intervalEnd < intervalBegin;
+        return intervalEnd <= intervalBegin;
     }
 
     /**

@@ -136,7 +136,7 @@ public class CalendarInterval extends Calendar {
                 if (interval.getIntervalBegin() <= monthDayAdjusted && monthDayAdjusted < interval.getIntervalEndAdjusted()) {
                     int endValue = interval.getIntervalEnd();
                     // Advance to another year if interval end value was adjusted by 12 month
-                    if (interval.isCrossBoundry() && monthDay > interval.getIntervalEnd()) {
+                    if (interval.isCrossBoundry() && monthDay >= interval.getIntervalEnd()) {
                         calendar.add(java.util.Calendar.YEAR, 1);
                     }
                     calendar.set(java.util.Calendar.MONTH, endValue / 100 - 1);
@@ -168,7 +168,7 @@ public class CalendarInterval extends Calendar {
                 if (interval.getIntervalBegin() <= hourMinAdjusted && hourMinAdjusted < interval.getIntervalEndAdjusted()) {
                     int endValue = interval.getIntervalEnd();
                     // Advance to another day if interval end value was adjusted by 24 hours
-                    if (interval.isCrossBoundry() && hourMin > interval.getIntervalEnd()) {
+                    if (interval.isCrossBoundry() && hourMin >= interval.getIntervalEnd()) {
                         calendar.add(java.util.Calendar.DAY_OF_MONTH, 1);
                     }
                     calendar.set(java.util.Calendar.HOUR_OF_DAY, endValue / 100);
