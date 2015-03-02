@@ -11,6 +11,8 @@ import java.util.Map;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.el.ArrayELResolver;
 import javax.el.BeanELResolver;
 import javax.el.CompositeELResolver;
@@ -441,8 +443,8 @@ public class RatingService {
 			if (!countryAreEqual) {
 				log.debug(
 						"The countryId={} of the billing account is not the same as pricePlan with countryId={} and code={}",
-						new Object[] { countryId, pricePlan.getTradingCountry().getId(),
-								pricePlan.getTradingCountry().getCountry().getCountryCode() });
+						countryId, pricePlan.getTradingCountry().getId(),
+								pricePlan.getTradingCountry().getCountry().getCountryCode() );
 				continue;
 			}
 			boolean currencyAreEqual = pricePlan.getTradingCurrency() == null
@@ -576,6 +578,34 @@ public class RatingService {
 		return null;
 	}
 
+	//rerate
+	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+	public void reRate(WalletOperation operation,boolean useSamePricePlan){
+		if(useSamePricePlan){
+			if(operation.getPriceplan() !=null){
+				operation.setUnitAmountWithoutTax(operation.getPriceplan().getAmountWithoutTax());
+				operation.setUnitAmountWithTax(operation.getPriceplan().getAmountWithTax());
+				if(operation.getUnitAmountTax()!=null && operation.getUnitAmountWithTax()!=null){
+					operation.setUnitAmountTax(operation.getUnitAmountWithTax().subtract(operation.getUnitAmountWithoutTax()));
+				}
+			}
+			operation.setAmountWithoutTax(operation.getUnitAmountWithoutTax().multiply(operation.getQuantity()));
+			if(operation.getUnitAmountWithTax()!=null){
+				operation.setAmountWithTax(operation.getUnitAmountWithTax());
+			}
+			operation.setAmountTax(operation.getAmountWithTax().subtract(operation.getAmountWithoutTax()));
+		} else {
+			try {
+				rateBareWalletOperation(entityManager, operation, null, null, 
+						operation.getPriceplan().getTradingCountry().getId(), operation.getPriceplan().getTradingCurrency(),
+						operation.getProvider());
+			} catch (BusinessException e) {
+				e.printStackTrace();
+			} 
+		}
+	}
+	
+	
 	// synchronized to avoid different threads to reload the priceplan
 	// concurrently
 	protected synchronized void reloadPricePlan() {

@@ -1281,7 +1281,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 			applicationDate = nextapplicationDate;
 		}
 	}
-
+	
 	public List<WalletOperation> findByStatus(WalletOperationStatusEnum status, Provider provider) {
 		return findByStatus(getEntityManager(), status, provider);
 	}
