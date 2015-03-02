@@ -172,8 +172,11 @@ public class CalendarBean extends BaseBean<Calendar> {
     public Map<String, String> getPeriodTypes() {
         Map<String, String> values = new HashMap<String, String>();
 
-        values.put(Integer.toString(java.util.Calendar.DAY_OF_MONTH), resourceMessages.getString("calendar.periodUnit.5"));
         values.put(Integer.toString(java.util.Calendar.MONTH), resourceMessages.getString("calendar.periodUnit.2"));
+        values.put(Integer.toString(java.util.Calendar.DAY_OF_MONTH), resourceMessages.getString("calendar.periodUnit.5"));
+        values.put(Integer.toString(java.util.Calendar.HOUR_OF_DAY), resourceMessages.getString("calendar.periodUnit.11"));
+        values.put(Integer.toString(java.util.Calendar.MINUTE), resourceMessages.getString("calendar.periodUnit.12"));
+        values.put(Integer.toString(java.util.Calendar.SECOND), resourceMessages.getString("calendar.periodUnit.13"));
 
         return values;
     }

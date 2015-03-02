@@ -73,23 +73,26 @@ public class CalendarPeriod extends Calendar {
     @Override
     public Date nextCalendarDate(Date date) {
 
-        if (periodLength == null || periodUnit == null || getInitDate() == null) {
+        if (periodLength == null || periodUnit == null || getInitDate() == null || date.before(getInitDate())) {
             return null;
         }
         if (nbPeriods == null) {
             nbPeriods = 0;
         }
 
-        Date cleanDate = DateUtils.truncate(getInitDate(), java.util.Calendar.DAY_OF_MONTH);
+        // Truncate date to day or a corresponding period unit if it is more detail
+        // Date cleanDate = DateUtils.truncate(getInitDate(), periodUnit < java.util.Calendar.DAY_OF_MONTH ? java.util.Calendar.DAY_OF_MONTH : periodUnit);
+        // GregorianCalendar calendar = new GregorianCalendar();
+        // calendar.setTime(cleanDate);
+
         GregorianCalendar calendar = new GregorianCalendar();
-        calendar.setTime(cleanDate);
+        calendar.setTime(getInitDate());
 
         int i = 1;
         while (date.compareTo(calendar.getTime()) >= 0) {
             Date oldDate = calendar.getTime();
             calendar.add(periodUnit, periodLength);
             if (date.compareTo(oldDate) >= 0 && date.compareTo(calendar.getTime()) < 0) {
-                calendar.add(java.util.Calendar.DAY_OF_MONTH, -1);
                 return calendar.getTime();
             }
 
@@ -111,16 +114,19 @@ public class CalendarPeriod extends Calendar {
     @Override
     public Date previousCalendarDate(Date date) {
 
-        if (periodLength == null || periodUnit == null || getInitDate() == null) {
+        if (periodLength == null || periodUnit == null || getInitDate() == null || date.before(getInitDate())) {
             return null;
         }
         if (nbPeriods == null) {
             nbPeriods = 0;
         }
 
-        Date cleanDate = DateUtils.truncate(getInitDate(), java.util.Calendar.DAY_OF_MONTH);
+        // Date cleanDate = DateUtils.truncate(getInitDate(), java.util.Calendar.DAY_OF_MONTH);
+        // GregorianCalendar calendar = new GregorianCalendar();
+        // calendar.setTime(cleanDate);
+
         GregorianCalendar calendar = new GregorianCalendar();
-        calendar.setTime(cleanDate);
+        calendar.setTime(getInitDate());
 
         int i = 1;
         while (date.compareTo(calendar.getTime()) >= 0) {
