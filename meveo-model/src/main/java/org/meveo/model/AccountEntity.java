@@ -308,19 +308,19 @@ public abstract class AccountEntity extends BusinessEntity implements ICustomFie
 	  }
 
 	
-	public String getICsvStringValue(String code){
+	public String getICsv(String code){
 		return getInheritedCustomStringValue(code);
 	}
 	
-	public Long getICsvLongValue(String code){
+	public Long getIClv(String code){
 		return getInheritedCustomLongValue(code);
 	}
 	
-	public Date getICsvDateValue(String code){
+	public Date getICdav(String code){
 		return getInheritedCustomDateValue(code);
 	}
 	
-	public Double getICsvDoubleValue(String code){
+	public Double getICdov(String code){
 		return getInheritedCustomDoubleValue(code);
 	}
 	

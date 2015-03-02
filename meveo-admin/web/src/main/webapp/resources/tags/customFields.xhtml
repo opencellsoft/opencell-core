@@ -24,7 +24,7 @@
 				var="cf">
 				<h:column>                
                     <h:panelGroup  rendered="#{not cf.disabled or (cf.disabled and not cf.isValueEmpty())}">
-     
+						 
     					<p:outputLabel value="#{cf.description}" for="cfField_string"
     						rendered="#{cf.fieldType eq CustomFieldTypeEnum.STRING}" />
     					<p:inputText id="cfField_string"
@@ -33,7 +33,14 @@
     					<h:outputText
     						rendered="#{!cc.attrs.edit and cf.fieldType eq CustomFieldTypeEnum.STRING}"
     						value="#{cf.stringValue}" style="font-weight:bold;" />
-    
+    						
+    				  <c:set var="InheritedStringValue"
+					  value="#{cc.backingBeanFromParentOrCurrent.entity.getICsv(cf.code)}" /> 
+                      <p:outputLabel value="#{messages['customField.inheritedStringValue']}" for="cfField_string"
+					  rendered="#{cf.fieldType eq CustomFieldTypeEnum.STRING and cf.stringValue==null and InheritedStringValue !=null}" style="width:180px;" />
+					 <h:outputText
+					  rendered="#{cf.fieldType eq CustomFieldTypeEnum.STRING and cf.stringValue==null and InheritedStringValue !=null}"
+					  value="#{InheritedStringValue}" style="font-weight:bold;" /> 
     					<p:outputLabel value="#{cf.description}" for="cfField_double"
     						rendered="#{cf.fieldType eq CustomFieldTypeEnum.DOUBLE}" />
     					<p:inputText id="cfField_double"
@@ -44,7 +51,15 @@
     					<h:outputText
     						rendered="#{!cc.attrs.edit and cf.fieldType eq CustomFieldTypeEnum.DOUBLE}"
     						value="#{cf.doubleValue}" style="font-weight:bold;" />
-    
+							
+						<c:set var="InheritedDoubleValue"
+					  value="#{cc.backingBeanFromParentOrCurrent.entity.getICdov(cf.code)}" /> 
+                      <p:outputLabel value="#{messages['customField.inheritedDoubleValue']}" for="cfField_double"
+					  rendered="#{cf.fieldType eq CustomFieldTypeEnum.DOUBLE and cf.doubleValue==null and InheritedDoubleValue !=null}" style="width:180px;" />
+					 <h:outputText
+					  rendered="#{cf.fieldType eq CustomFieldTypeEnum.DOUBLE and cf.doubleValue==null and InheritedDoubleValue !=null}"
+					  value="#{InheritedDoubleValue}" style="font-weight:bold;" />	
+						 
     					<p:outputLabel value="#{cf.description}" for="cfField_long"
     						rendered="#{cf.fieldType eq CustomFieldTypeEnum.LONG}" />
     					<p:inputText id="cfField_long"
@@ -55,6 +70,14 @@
     					<h:outputText
     						rendered="#{!cc.attrs.edit and cf.fieldType eq CustomFieldTypeEnum.LONG}"
     						value="#{cf.longValue}" style="font-weight:bold;" />
+							
+						<c:set var="InheritedLongValue"
+					  value="#{cc.backingBeanFromParentOrCurrent.entity.getIClv(cf.code)}" /> 
+                      <p:outputLabel value="#{messages['customField.inheritedLongValue']}" for="cfField_long"
+					  rendered="#{cf.fieldType eq CustomFieldTypeEnum.LONG and cf.longValue==null and InheritedLongValue !=null}"  style="width:180px;"/>
+					 <h:outputText
+					  rendered="#{cf.fieldType eq CustomFieldTypeEnum.LONG and cf.longValue==null and InheritedLongValue !=null}"
+					  value="#{InheritedLongValue}" style="font-weight:bold;" />	
     
     					<p:outputLabel value="#{cf.description}" for="cfField_date"
     						rendered="#{cf.fieldType eq CustomFieldTypeEnum.DATE}" />
@@ -66,6 +89,17 @@
     						rendered="#{!cc.attrs.edit and cf.fieldType eq CustomFieldTypeEnum.DATE}"
     						value="#{cf.dateValue}" style="font-weight:bold;">
     						<f:convertDateTime type="date"
+    							pattern="#{paramBean.getProperty('meveo.dateFormat', '')}" />
+    					</h:outputText>
+						
+						<c:set var="InheritedDateValue"
+					  value="#{cc.backingBeanFromParentOrCurrent.entity.getICdav(cf.code)}" /> 
+                      <p:outputLabel  value="#{messages['customField.inheritedDateValue']}" for="cfField_date"
+					  rendered="#{cf.fieldType eq CustomFieldTypeEnum.DATE and cf.dateValue==null and InheritedDateValue !=null}" style="width:180px;"  />
+					 <h:outputText
+					  rendered="#{cf.fieldType eq CustomFieldTypeEnum.DATE and cf.dateValue==null and InheritedDateValue !=null}"
+					  value="#{InheritedDateValue}" style="font-weight:bold;">
+					  <f:convertDateTime type="date"
     							pattern="#{paramBean.getProperty('meveo.dateFormat', '')}" />
     					</h:outputText>
     
