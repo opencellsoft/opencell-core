@@ -12,44 +12,25 @@
 
 <cc:interface componentType="formField">
 	<cc:attribute name="pieChartEntityModel" />
-	<cc:attribute name="chartBackingBean"
-		type="org.meveo.admin.action.BaseBean" />
 </cc:interface>
 
 <cc:implementation>
 
 	<ui:fragment>
-		<h:form id="barChart">
-			<p:panel style="width:500px;">
-				<p:pieChart
-					value="#{cc.attrs.chartBackingBean.getModel(cc.attrs.pieChartEntityModel).model}"
-					legendPosition="#{cc.attrs.pieChartEntityModel.pieChart.legendPosition}"
-					fill="#{cc.attrs.pieChartEntityModel.pieChart.filled}"
-					seriesColors="#{cc.attrs.pieChartEntityModel.pieChart.seriesColors}"
-					diameter="#{cc.attrs.pieChartEntityModel.pieChart.diameter}"
-					sliceMargin="#{cc.attrs.pieChartEntityModel.pieChart.sliceMargin}"
-					shadow="#{cc.attrs.pieChartEntityModel.pieChart.shadow}"
-					showDataLabels="#{cc.attrs.pieChartEntityModel.pieChart.showDataLabels}"
-					legendCols="#{cc.attrs.pieChartEntityModel.pieChart.legendCols}"
-					legendRows="#{cc.attrs.pieChartEntityModel.pieChart.legendRows}"
-					style="#{cc.attrs.pieChartEntityModel.pieChart.style}"
-					styleClass="#{cc.attrs.pieChartEntityModel.pieChart.styleClass}" />
-			</p:panel>
-			<!-- <p:panelGrid columns="4">
-				<p:outputLabel value="#{messages['chart.from']}"></p:outputLabel>
-				<p:calendar value="#{cc.attrs.pieChartEntityModel.minDate}">
-					<p:ajax event="dateSelect"
-						listener="#{cc.attrs.chartBackingBean.getModel(cc.attrs.pieChartEntityModel)}"
-						update="@form" />
-				</p:calendar>
-				<p:outputLabel value="#{messages['chart.to']}"></p:outputLabel>
-				<p:calendar value="#{cc.attrs.pieChartEntityModel.maxDate}">
-					<p:ajax event="dateSelect"
-						listener="#{cc.attrs.chartBackingBean.getModel(cc.attrs.pieChartEntityModel)}"
-						update="@form" />
-				</p:calendar>
-			</p:panelGrid> -->
-		</h:form>
+
+		<p:pieChart value="#{cc.attrs.pieChartEntityModel.model}"
+			legendPosition="#{cc.attrs.pieChartEntityModel.pieChart.legendPosition}"
+			fill="#{cc.attrs.pieChartEntityModel.pieChart.filled}"
+			seriesColors="#{cc.attrs.pieChartEntityModel.pieChart.seriesColors}"
+			diameter="#{cc.attrs.pieChartEntityModel.pieChart.diameter}"
+			sliceMargin="#{cc.attrs.pieChartEntityModel.pieChart.sliceMargin}"
+			shadow="#{cc.attrs.pieChartEntityModel.pieChart.shadow}"
+			showDataLabels="#{cc.attrs.pieChartEntityModel.pieChart.showDataLabels}"
+			legendCols="#{cc.attrs.pieChartEntityModel.pieChart.legendCols}"
+			legendRows="#{cc.attrs.pieChartEntityModel.pieChart.legendRows}"
+			style="#{cc.attrs.pieChartEntityModel.pieChart.style}"
+			styleClass="#{cc.attrs.pieChartEntityModel.pieChart.styleClass}" />
+
 	</ui:fragment>
 
 </cc:implementation>

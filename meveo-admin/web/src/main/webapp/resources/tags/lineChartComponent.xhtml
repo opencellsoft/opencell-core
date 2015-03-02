@@ -12,53 +12,34 @@
 
 <cc:interface componentType="formField">
 	<cc:attribute name="lineChartEntityModel" />
-	<cc:attribute name="chartBackingBean"
-		type="org.meveo.admin.action.BaseBean" />
 </cc:interface>
 
 <cc:implementation>
 
 	<ui:fragment>
-		<h:form id="barChart">
-			<p:panel style="width:500px;">
 
-				<p:lineChart value="#{cc.attrs.chartBackingBean.getModel(cc.attrs.lineChartEntityModel).model}"
-					fill="#{cc.attrs.lineChartEntityModel.lineChart.filled}"
-					legendPosition="#{cc.attrs.lineChartEntityModel.lineChart.legendPosition}"
-					barPadding="#{cc.attrs.lineChartEntityModel.lineChart.barPadding}"
-					barMargin="#{cc.attrs.lineChartEntityModel.lineChart.barMargin}"
-					stacked="#{cc.attrs.lineChartEntityModel.lineChart.stacked}"
-					min="#{cc.attrs.lineChartEntityModel.lineChart.min}"
-					max="#{cc.attrs.lineChartEntityModel.lineChart.max}"
-					breakOnNull="#{cc.attrs.lineChartEntityModel.lineChart.breakOnNull}"
-					xaxisLabel="#{cc.attrs.lineChartEntityModel.lineChart.xaxisLabel}"
-					yaxisLabel="#{cc.attrs.lineChartEntityModel.lineChart.yaxisLabel}"
-					xaxisAngle="#{cc.attrs.lineChartEntityModel.lineChart.xaxisAngle}"
-					yaxisAngle="#{cc.attrs.lineChartEntityModel.lineChart.yaxisAngle}"
-					legendCols="#{cc.attrs.lineChartEntityModel.lineChart.legendCols}"
-					legendRows="#{cc.attrs.lineChartEntityModel.lineChart.legendRows}"
-					zoom="#{cc.attrs.lineChartEntityModel.lineChart.zoom}"
-					animate="#{cc.attrs.lineChartEntityModel.lineChart.animate}"
-					showDatatip="#{cc.attrs.lineChartEntityModel.lineChart.showDataTip}"
-					datatipFormat="#{cc.attrs.lineChartEntityModel.lineChart.datatipFormat}"
-					style="#{cc.attrs.lineChartEntityModel.lineChart.style}"
-					styleClass="#{cc.attrs.lineChartEntityModel.lineChart.styleClass}" />
-			</p:panel>
-			<!-- <p:panelGrid columns="4">
-				<p:outputLabel value="#{messages['chart.from']}"></p:outputLabel>
-				<p:calendar value="#{cc.attrs.lineChartEntityModel.minDate}">
-					<p:ajax event="dateSelect"
-						listener="#{cc.attrs.chartBackingBean.getModel(cc.attrs.lineChartEntityModel)}"
-						update="@form" />
-				</p:calendar>
-				<p:outputLabel value="#{messages['chart.to']}"></p:outputLabel>
-				<p:calendar value="#{cc.attrs.lineChartEntityModel.maxDate}">
-					<p:ajax event="dateSelect"
-						listener="#{cc.attrs.chartBackingBean.getModel(cc.attrs.lineChartEntityModel)}"
-						update="@form" />
-				</p:calendar>
-			</p:panelGrid> -->
-		</h:form>
+		<p:lineChart value="#{cc.attrs.lineChartEntityModel.model}"
+			fill="#{cc.attrs.lineChartEntityModel.lineChart.filled}"
+			legendPosition="#{cc.attrs.lineChartEntityModel.lineChart.legendPosition}"
+			barPadding="#{cc.attrs.lineChartEntityModel.lineChart.barPadding}"
+			barMargin="#{cc.attrs.lineChartEntityModel.lineChart.barMargin}"
+			stacked="#{cc.attrs.lineChartEntityModel.lineChart.stacked}"
+			min="#{cc.attrs.lineChartEntityModel.lineChart.min}"
+			max="#{cc.attrs.lineChartEntityModel.lineChart.max}"
+			breakOnNull="#{cc.attrs.lineChartEntityModel.lineChart.breakOnNull}"
+			xaxisLabel="#{cc.attrs.lineChartEntityModel.lineChart.xaxisLabel}"
+			yaxisLabel="#{cc.attrs.lineChartEntityModel.lineChart.yaxisLabel}"
+			xaxisAngle="#{cc.attrs.lineChartEntityModel.lineChart.xaxisAngle}"
+			yaxisAngle="#{cc.attrs.lineChartEntityModel.lineChart.yaxisAngle}"
+			legendCols="#{cc.attrs.lineChartEntityModel.lineChart.legendCols}"
+			legendRows="#{cc.attrs.lineChartEntityModel.lineChart.legendRows}"
+			zoom="#{cc.attrs.lineChartEntityModel.lineChart.zoom}"
+			animate="#{cc.attrs.lineChartEntityModel.lineChart.animate}"
+			showDatatip="#{cc.attrs.lineChartEntityModel.lineChart.showDataTip}"
+			datatipFormat="#{cc.attrs.lineChartEntityModel.lineChart.datatipFormat}"
+			style="#{cc.attrs.lineChartEntityModel.lineChart.style}"
+			styleClass="#{cc.attrs.lineChartEntityModel.lineChart.styleClass}" />
+
 	</ui:fragment>
 
 </cc:implementation>

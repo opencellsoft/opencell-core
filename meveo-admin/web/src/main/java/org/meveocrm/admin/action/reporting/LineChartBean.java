@@ -37,6 +37,8 @@ public class LineChartBean extends ChartEntityBean<LineChart> {
 
 	private LineChartEntityModel chartEntityModel;
 
+	private List<LineChartEntityModel> lineChartEntityModels = new ArrayList<LineChartEntityModel>();
+
 	public LineChartBean() {
 		super(LineChart.class);
 	}
@@ -52,7 +54,7 @@ public class LineChartBean extends ChartEntityBean<LineChart> {
 		return "charts";
 	}
 
-	public List<LineChartEntityModel> getChartModelList() {
+	public void initChartModelList() {
 
 		Calendar fromDate = Calendar.getInstance();
 		fromDate.set(Calendar.DAY_OF_MONTH, 1);
@@ -60,7 +62,6 @@ public class LineChartBean extends ChartEntityBean<LineChart> {
 		toDate.setTime(fromDate.getTime());
 		toDate.add(Calendar.MONTH, 1);
 
-		List<LineChartEntityModel> chartModelList = new ArrayList<LineChartEntityModel>();
 		List<LineChart> lineChartList = lineChartService.list();
 
 		for (LineChart lineChart : lineChartList) {
@@ -90,11 +91,10 @@ public class LineChartBean extends ChartEntityBean<LineChart> {
 			chartEntityModel.setLineChart(lineChart);
 			chartEntityModel.setModel(chartModel);
 
-			chartModelList.add(chartEntityModel);
+			lineChartEntityModels.add(chartEntityModel);
 
 		}
 
-		return chartModelList;
 	}
 
 	public LineChartEntityModel getChartEntityModel() {
@@ -138,21 +138,25 @@ public class LineChartBean extends ChartEntityBean<LineChart> {
 		return chartEntityModel;
 	}
 
-	public LineChartEntityModel getModel(LineChartEntityModel line) {
+	public void setModel(Integer index) {
 
-		MeasurableQuantity mq = line.getLineChart().getMeasurableQuantity();
+		LineChartEntityModel curr = lineChartEntityModels.get(index);
+		MeasurableQuantity mq = curr.getLineChart().getMeasurableQuantity();
+		if (!curr.getMinDate().before(curr.getMaxDate())) {
+			curr.setMaxDate(curr.getMinDate());
+		}
 		Calendar cal = Calendar.getInstance();
-		cal.setTime(line.getMaxDate());
+		cal.setTime(curr.getMaxDate());
 		cal.add(Calendar.DATE, 1);
 		List<MeasuredValue> mvs = mvService.getByDateAndPeriod(null,
-				line.getMinDate(), cal.getTime(), null, mq);
+				curr.getMinDate(), cal.getTime(), null, mq);
 
 		CartesianChartModel chartModel = new CartesianChartModel();
 
 		SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-YYYY");
 		ChartSeries mvSeries = new ChartSeries();
 
-		mvSeries.setLabel(sdf.format(line.getMinDate()));
+		mvSeries.setLabel(sdf.format(curr.getMinDate()));
 
 		if (mvs.size() > 0) {
 			for (MeasuredValue measuredValue : mvs) {
@@ -164,10 +168,21 @@ public class LineChartBean extends ChartEntityBean<LineChart> {
 			log.info("No measured values found for : " + mq.getCode());
 		}
 
-		LineChartEntityModel result = new LineChartEntityModel();
-		result.setLineChart(line.getLineChart());
-		result.setModel(chartModel);
+		curr.setLineChart(curr.getLineChart());
+		curr.setModel(chartModel);
 
-		return result;
 	}
+
+	public List<LineChartEntityModel> getLineChartEntityModels() {
+		if (lineChartEntityModels.size() <= 0) {
+			initChartModelList();
+		}
+		return lineChartEntityModels;
+	}
+
+	public void setLineChartEntityModels(
+			List<LineChartEntityModel> lineChartEntityModels) {
+		this.lineChartEntityModels = lineChartEntityModels;
+	}
+
 }

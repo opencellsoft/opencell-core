@@ -37,6 +37,8 @@ public class PieChartBean extends ChartEntityBean<PieChart> {
 
 	private PieChartEntityModel chartEntityModel;
 
+	private List<PieChartEntityModel> pieChartEntityModels = new ArrayList<PieChartEntityModel>();
+
 	public PieChartBean() {
 		super(PieChart.class);
 	}
@@ -52,7 +54,7 @@ public class PieChartBean extends ChartEntityBean<PieChart> {
 		return "charts";
 	}
 
-	public List<PieChartEntityModel> getChartModelList() {
+	public void initChartModelList() {
 
 		Calendar fromDate = Calendar.getInstance();
 		fromDate.set(Calendar.DAY_OF_MONTH, 1);
@@ -60,7 +62,6 @@ public class PieChartBean extends ChartEntityBean<PieChart> {
 		toDate.setTime(fromDate.getTime());
 		toDate.add(Calendar.MONTH, 1);
 
-		List<PieChartEntityModel> chartModelList = new ArrayList<PieChartEntityModel>();
 		List<PieChart> pieChartList = pieChartService.list();
 
 		for (PieChart pieChart : pieChartList) {
@@ -89,11 +90,10 @@ public class PieChartBean extends ChartEntityBean<PieChart> {
 			chartEntityModel.setPieChart(pieChart);
 			chartEntityModel.setModel(chartModel);
 
-			chartModelList.add(chartEntityModel);
+			pieChartEntityModels.add(chartEntityModel);
 
 		}
 
-		return chartModelList;
 	}
 
 	public PieChartEntityModel getChartEntityModel() {
@@ -136,21 +136,25 @@ public class PieChartBean extends ChartEntityBean<PieChart> {
 		return chartEntityModel;
 	}
 
-	public PieChartEntityModel getModel(PieChartEntityModel pie) {
+	public void setModel(Integer index) {
 
-		MeasurableQuantity mq = pie.getPieChart().getMeasurableQuantity();
+		PieChartEntityModel curr = pieChartEntityModels.get(index);
+		MeasurableQuantity mq = curr.getPieChart().getMeasurableQuantity();
+		if (!curr.getMinDate().before(curr.getMaxDate())) {
+			curr.setMaxDate(curr.getMinDate());
+		}
 		Calendar cal = Calendar.getInstance();
-		cal.setTime(pie.getMaxDate());
+		cal.setTime(curr.getMaxDate());
 		cal.add(Calendar.DATE, 1);
 		List<MeasuredValue> mvs = mvService.getByDateAndPeriod(null,
-				pie.getMinDate(), cal.getTime(), null, mq);
+				curr.getMinDate(), cal.getTime(), null, mq);
 
 		PieChartModel chartModel = new PieChartModel();
 
 		SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-YYYY");
 		ChartSeries mvSeries = new ChartSeries();
 
-		mvSeries.setLabel(sdf.format(pie.getMinDate()));
+		mvSeries.setLabel(sdf.format(curr.getMinDate()));
 
 		if (mvs.size() > 0) {
 			for (MeasuredValue measuredValue : mvs) {
@@ -161,10 +165,22 @@ public class PieChartBean extends ChartEntityBean<PieChart> {
 			log.info("No measured values found for : " + mq.getCode());
 		}
 
-		PieChartEntityModel result = new PieChartEntityModel();
-		result.setPieChart(pie.getPieChart());
-		result.setModel(chartModel);
+		
+		curr.setPieChart(curr.getPieChart());
+		curr.setModel(chartModel);
 
-		return result;
 	}
+
+	public List<PieChartEntityModel> getPieChartEntityModels() {
+		if (pieChartEntityModels.size() <= 0) {
+			initChartModelList();
+		}
+		return pieChartEntityModels;
+	}
+
+	public void setPieChartEntityModels(
+			List<PieChartEntityModel> pieChartEntityModels) {
+		this.pieChartEntityModels = pieChartEntityModels;
+	}
+
 }

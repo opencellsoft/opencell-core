@@ -36,9 +36,7 @@
 					varStatus="i">
 
 					<h:form>
-						<p:outputPanel
-							id="barChartC_#{bar.barChart.measurableQuantity.code}"
-							style="width:500px;">
+						<p:outputPanel style="width:500px;">
 							<hf:barChartComponent barChartEntityModel="#{bar}" />
 							<!-- chartBackingBean="#{barChartBean}" -->
 						</p:outputPanel>
@@ -55,16 +53,42 @@
 					</h:form>
 				</ui:repeat>
 
-				<ui:repeat var="line" value="#{lineChartBean.chartModelList}">
-					<hf:lineChartComponent lineChartEntityModel="#{line}"
-						chartBackingBean="#{lineChartBean}"></hf:lineChartComponent>
-
+				<ui:repeat var="line" value="#{lineChartBean.lineChartEntityModels}"
+					varStatus="i">
+					<h:form>
+						<p:outputPanel style="width:500px;">
+							<hf:lineChartComponent lineChartEntityModel="#{line}"></hf:lineChartComponent>
+						</p:outputPanel>
+						<p:outputLabel value="#{messages['chart.from']}"></p:outputLabel>
+						<p:calendar id="filterFrom" value="#{line.minDate}">
+							<p:ajax event="dateSelect" update="@form"
+								listener="#{lineChartBean.setModel(i.index)}" />
+						</p:calendar>
+						<p:outputLabel value="#{messages['chart.to']}"></p:outputLabel>
+						<p:calendar id="filterTo" value="#{line.maxDate}">
+							<p:ajax event="dateSelect" update="@form"
+								listener="#{lineChartBean.setModel(i.index)}" />
+						</p:calendar>
+					</h:form>
 				</ui:repeat>
 
-				<ui:repeat var="pie" value="#{pieChartBean.chartModelList}">
-					<hf:pieChartComponent pieChartEntityModel="#{pie}"
-						chartBackingBean="#{pieChartBean}"></hf:pieChartComponent>
-
+				<ui:repeat var="pie" value="#{pieChartBean.pieChartEntityModels}"
+					varStatus="i">
+					<h:form>
+						<p:outputPanel style="width:500px;">
+							<hf:pieChartComponent pieChartEntityModel="#{pie}"></hf:pieChartComponent>
+						</p:outputPanel>
+						<p:outputLabel value="#{messages['chart.from']}"></p:outputLabel>
+						<p:calendar id="filterFrom" value="#{pie.minDate}">
+							<p:ajax event="dateSelect" update="@form"
+								listener="#{pieChartBean.setModel(i.index)}" />
+						</p:calendar>
+						<p:outputLabel value="#{messages['chart.to']}"></p:outputLabel>
+						<p:calendar id="filterTo" value="#{pie.maxDate}">
+							<p:ajax event="dateSelect" update="@form"
+								listener="#{pieChartBean.setModel(i.index)}" />
+						</p:calendar>
+					</h:form>
 				</ui:repeat>
 
 			</h:panelGrid>
