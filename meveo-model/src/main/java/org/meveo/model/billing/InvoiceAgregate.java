@@ -103,6 +103,11 @@ public abstract class InvoiceAgregate extends AuditableEntity {
 
 	@Column(name = "DESCRIPTION_DISCOUNT", length = 50)
 	private String descriptionDiscount;
+	
+	@Column(name = "DISCOUNT_AGGREGATE", nullable = false)
+	private boolean discountAggregate;
+	
+	
 
 	public TradingCurrency getTradingCurrency() {
 		return tradingCurrency;
