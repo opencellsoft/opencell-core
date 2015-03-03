@@ -5,7 +5,7 @@
 	xmlns:p="http://primefaces.org/ui">
 
 	<p:tooltip for="users">#{help['menu.users']}</p:tooltip>
-    <p:tooltip for="userRoles">#{help['menu.userRoles']}</p:tooltip>
+	<p:tooltip for="userRoles">#{help['menu.userRoles']}</p:tooltip>
 	<p:tooltip for="tradingLanguages">#{help['menu.tradingLanguages']}</p:tooltip>
 	<p:tooltip for="tradingCurrencies">#{help['menu.tradingCurrencies']}</p:tooltip>
 	<p:tooltip for="tradingCountries">#{help['menu.tradingCountries']}</p:tooltip>
@@ -45,7 +45,7 @@
 			<p:menuitem id="userRoles" value="#{messages['menu.userRoles']}"
 				outcome="roles"
 				rendered="#{identity.hasPermission('administration','administrationVisualization')}" />
-			
+
 
 			<p:submenu id="categories" label="#{messages['menu.invoicing']}"
 				rendered="#{identity.hasPermission('administration','administrationVisualization') or identity.hasPermission('catalog','catalogVisualization')}">
@@ -102,22 +102,22 @@
 
 				<p:menuitem id="customerCategories" outcome="customerCategories"
 					value="#{messages['menu.customerCategories']}" />
-                                     
+
 
 				<p:menuitem id="customFieldTemplates" outcome="customFieldTemplates"
 					value="#{messages['menu.customFieldTemplates']}" />
 
-				<p:menuitem id="titles" 
+				<p:menuitem id="titles"
 					rendered="#{identity.hasPermission('administration','administrationVisualization')}"
 					outcome="titles" value="#{messages['menu.titles']}" />
 				<p:submenu id="trading" label="#{messages['menu.trading']}"
 					rendered="#{identity.hasPermission('administration','administrationVisualization')}">
 					<p:menuitem id="tradingLanguages" outcome="tradingLanguages"
 						value="#{messages['menu.comLanguages']}" />
-	
+
 					<p:menuitem id="tradingCurrencies" outcome="tradingCurrencies"
 						value="#{messages['menu.tradingCurrencies']}" />
-	
+
 					<p:menuitem id="tradingCountries" outcome="tradingCountries"
 						value="#{messages['menu.tradingCountries']}" />
 				</p:submenu>
@@ -126,9 +126,9 @@
 					outcome="emailTemplates" value="#{messages['menu.emailTemplates']}" />
 
 			</p:submenu>
-			
+
 			<p:menuitem id="sellers" outcome="sellers"
-					value="#{messages['menu.sellers']}" />
+				value="#{messages['menu.sellers']}" />
 
 			<!-- <p:submenu id="adminJobs" label="#{messages['menu.jobs']}"> -->
 			<p:menuitem id="jobs" outcome="jobTimers"
@@ -276,10 +276,10 @@
 
 
 			</p:submenu>
-            
-            <p:menuitem id="walletTemplates" outcome="walletTemplates"
+
+			<p:menuitem id="walletTemplates" outcome="walletTemplates"
 				value="#{messages['menu.wallets']}" />
-				
+
 			<p:menuitem id="counterTemplates" outcome="counterTemplates"
 				value="#{messages['menu.counterTemplates']}" />
 
@@ -446,11 +446,11 @@
 			<p:menuitem id="pricePlanMatrixes" outcome="pricePlanMatrixes"
 				value="#{messages['menu.pricePlanMatrixes']}" />
 
-			<p:menuitem id="discountPlans" outcome="discountPlans"
-				value="#{messages['menu.discountPlans']}" />
-				
-			<p:menuitem id="discountPlanItems" outcome="discountPlanItems"
-				value="#{messages['menu.discountPlans.items']}" />
+			<!-- 			<p:menuitem id="discountPlans" outcome="discountPlans" -->
+			<!-- 				value="#{messages['menu.discountPlans']}" /> -->
+
+			<!-- 			<p:menuitem id="discountPlanItems" outcome="discountPlanItems" -->
+			<!-- 				value="#{messages['menu.discountPlans.items']}" /> -->
 
 			<p:menuitem id="edr" outcome="edr" value="#{messages['menu.edr']}" />
 		</p:submenu>
@@ -607,30 +607,29 @@
 
 			<p:menuitem id="charts" value="#{messages['menu.charts']}"
 				outcome="charts" />
-			<p:submenu id="notifications" label="#{messages['menu.notifications']}"
-						outcome="notifications">
-					<p:menuitem id="internalNotifications"
-						value="#{messages['menu.notifications']}"
-						outcome="notifications" />
-		
-					<p:menuitem id="webHooks" value="#{messages['menu.webHooks']}"
-						outcome="webHooks" />
-		
-					<p:menuitem id="emailNotifications"
-						value="#{messages['menu.emailNotifications']}"
-						outcome="emailNotifications" />
-		
-					<!-- <p:menuitem id="imNotifications"
+			<p:submenu id="notifications"
+				label="#{messages['menu.notifications']}" outcome="notifications">
+				<p:menuitem id="internalNotifications"
+					value="#{messages['menu.notifications']}" outcome="notifications" />
+
+				<p:menuitem id="webHooks" value="#{messages['menu.webHooks']}"
+					outcome="webHooks" />
+
+				<p:menuitem id="emailNotifications"
+					value="#{messages['menu.emailNotifications']}"
+					outcome="emailNotifications" />
+
+				<!-- <p:menuitem id="imNotifications"
 						value="#{messages['menu.instantMessagingNotifications']}"
 						outcome="instantMessagingNotifications" /> -->
-                        
-                    <p:menuitem id="notificationHistory"
-                        value="#{messages['menu.notificationHistories']}"
-                        outcome="notificationHistories" />   
-                        
-                    <p:menuitem id="inboundRequests"
-                        value="#{messages['menu.inboundRequests']}"
-                        outcome="inboundRequests" />                       
+
+				<p:menuitem id="notificationHistory"
+					value="#{messages['menu.notificationHistories']}"
+					outcome="notificationHistories" />
+
+				<p:menuitem id="inboundRequests"
+					value="#{messages['menu.inboundRequests']}"
+					outcome="inboundRequests" />
 			</p:submenu>
 		</p:submenu>
 
