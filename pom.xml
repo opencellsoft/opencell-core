@@ -233,7 +233,7 @@
 			</activation>
 			<properties>
 				<hibernate.hbm2ddl.auto>update</hibernate.hbm2ddl.auto>
-				<dbtype>postgres</dbtype>
+				<dbtype>generic</dbtype>
 			</properties>
 		</profile>
 
@@ -247,7 +247,7 @@
 			</activation>
 			<properties>
 				<hibernate.hbm2ddl.auto>create-drop</hibernate.hbm2ddl.auto>
-				<dbtype>postgres</dbtype>
+				<dbtype>generic</dbtype>
 			</properties>
 		</profile>
 
@@ -261,7 +261,7 @@
 			</activation>
 			<properties>
 				<hibernate.hbm2ddl.auto>update</hibernate.hbm2ddl.auto>
-				<dbtype>postgres</dbtype>
+				<dbtype>generic</dbtype>
 			</properties>
 
 			<!-- We add the JBoss repository as we need the JBoss AS connectors for 
