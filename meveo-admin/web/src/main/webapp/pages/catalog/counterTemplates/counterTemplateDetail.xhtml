@@ -13,11 +13,9 @@
 
 	<ui:define name="body">
 
-
 		<hf:formPanel id="formPanel" formId="counterTemplatId"
 			label="#{messages['menu.counterTemplates']}"
 			backingBean="#{counterTemplateBean}">
-
 
 			<hf:formField label="#{messages['businessEntity.code']}" field="code"
 				required="true" validateUnique="true" />
@@ -29,6 +27,8 @@
 				field="unityDescription" />
 			<hf:formField label="#{messages['counterTemplate.counterType']}"
 				field="counterType" childField="label" isMessage="true" />
+			<hf:formField label="#{messages['counterTemplate.counterLevel']}"
+				field="counterLevel" childField="label" isMessage="true" />
 			<hf:formField label="#{messages['counterTemplate.level']}"
 				field="level" required="true" />
 			<hf:formField label="#{messages['enableEntity.disabled']}"
@@ -38,7 +38,6 @@
 					field="calendar" childField="name" required="true" popup="false"
 					listElements="#{calendarService.list()}" />
 			</hftl:panelGroup>
-
 
 		</hf:formPanel>
 

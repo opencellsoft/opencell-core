@@ -103,8 +103,11 @@ public class CalendarJoin extends Calendar {
 
         // Get the farthest date
         if (joinType == CalendarJoinTypeEnum.UNION) {
-            if (date1 == null || date2 == null) {
-                return null;
+            if (date1 == null && date2 != null) {
+                return date2;
+
+            } else if (date1 != null && date2 == null) {
+                return date1;
 
             } else if (date1.after(date2)) {
                 return date1;
@@ -150,8 +153,11 @@ public class CalendarJoin extends Calendar {
 
         // Get the farthest date
         if (joinType == CalendarJoinTypeEnum.UNION) {
-            if (date1 == null || date2 == null) {
-                return null;
+            if (date1 == null && date2 != null) {
+                return date2;
+
+            } else if (date1 != null && date2 == null) {
+                return date1;
 
             } else if (date1.before(date2)) {
                 return date1;

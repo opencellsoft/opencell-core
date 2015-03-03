@@ -90,8 +90,8 @@
 					label="#{messages['dialog.reloadPopup.title']}"
 					backingBean="#{userAccountBean}"
 					entity="#{userAccountBean.reloadOperation}" styleClass="formPanel"
-					formId="reloadFrm" showFormButtons="false"
-					useCustomIdParam="true" columns="1">
+					formId="reloadFrm" showFormButtons="false" useCustomIdParam="true"
+					columns="1">
 					<p:panelGrid columns="2">
 						<p:outputLabel for="operationDate"
 							value="#{messages['walletOperation.operationDate']}"></p:outputLabel>
@@ -244,8 +244,9 @@
 								var="wallet">
 								<p:tab title="Wallet #{wallet.key}"
 									id="tab_panelWallet_#{wallet.key}">
-									<p:panel id="panelWallet_#{wallet.key}" styleClass="form-panel-fields">
-										<p:panelGrid columns="1" >
+									<p:panel id="panelWallet_#{wallet.key}"
+										styleClass="form-panel-fields">
+										<p:panelGrid columns="1">
 											<p:panelGrid columns="6">
 												<p:outputLabel value="#{messages['chargeInstance.code']}" />
 												<h:outputText value="#{wallet.value.code}" />
@@ -255,69 +256,75 @@
 												<p:outputLabel value="#{messages['chargeTemplate.type']}" />
 												<h:outputText
 													value="#{wallet.value.walletTemplate.walletType}" />
-												</p:panelGrid>
-												
-												<p:panelGrid columns="5"> 
-												<p:panelGrid columns="2" > 
-                                                <f:facet name="header" >
-													<h:outputText style="font-size:13px"
-														value="#{messages['walletOperationStatus.open']}" />
-												</f:facet>	
-												<h:outputText rendered="#{wallet.key!='PREPAID'}" style="font-weight:bold; !important"
-													value="#{messages['pricePlanMatrix.amountWithTax']} :" />	
-												<h:outputText rendered="#{wallet.key!='PREPAID'}" 
-													value="#{userAccountBean.getOpenBalanceWithTax(userAccountBean.getCurrentProvider(),userAccountBean.entity.billingAccount.customerAccount.customer.seller.code,userAccountBean.entity.code,null,null)}" />
-												<h:outputText rendered="#{wallet.key!='PREPAID'}" style="font-weight:bold; !important"
-													value="#{messages['pricePlanMatrix.amountWithoutTax']} :" />	
-												<h:outputText rendered="#{wallet.key!='PREPAID'}" 
-													value="#{userAccountBean.getOpenBalanceWithoutTax(userAccountBean.getCurrentProvider(),userAccountBean.entity.billingAccount.customerAccount.customer.seller.code
-													,userAccountBean.entity.code,null,null)}" />
-												</p:panelGrid>
-                                             <p:spacer width="40" />											
-												<p:panelGrid columns="2"> 
-                                                <f:facet name="header">
-													<h:outputText style="font-size:13px"
-														value="#{messages['walletOperationStatus.reserved']}" />
-												</f:facet>													
-												<h:outputText rendered="#{wallet.key!='PREPAID'}" style="font-weight:bold; !important"
-													value="#{messages['pricePlanMatrix.amountWithTax']} :" />	
-												<h:outputText rendered="#{wallet.key!='PREPAID'}" 
-													value="#{userAccountBean.getReservedBalanceWithTax(userAccountBean.getCurrentProvider(),userAccountBean.entity.billingAccount.customerAccount.customer.seller.code
-													,userAccountBean.entity.code,null,null)}" />
-												<h:outputText rendered="#{wallet.key!='PREPAID'}" style="font-weight:bold; !important"
-													value="#{messages['pricePlanMatrix.amountWithoutTax']} :" />	
-												<h:outputText rendered="#{wallet.key!='PREPAID'}"
-													value="#{userAccountBean.getReservedBalanceWithoutTax(userAccountBean.getCurrentProvider(),userAccountBean.entity.billingAccount.customerAccount.customer.seller.code
+											</p:panelGrid>
+
+											<p:panelGrid columns="5">
+												<p:panelGrid columns="2">
+													<f:facet name="header">
+														<h:outputText style="font-size:13px"
+															value="#{messages['walletOperationStatus.open']}" />
+													</f:facet>
+													<h:outputText rendered="#{wallet.key!='PREPAID'}"
+														style="font-weight:bold; !important"
+														value="#{messages['pricePlanMatrix.amountWithTax']} :" />
+													<h:outputText rendered="#{wallet.key!='PREPAID'}"
+														value="#{userAccountBean.getOpenBalanceWithTax(userAccountBean.getCurrentProvider(),userAccountBean.entity.billingAccount.customerAccount.customer.seller.code,userAccountBean.entity.code,null,null)}" />
+													<h:outputText rendered="#{wallet.key!='PREPAID'}"
+														style="font-weight:bold; !important"
+														value="#{messages['pricePlanMatrix.amountWithoutTax']} :" />
+													<h:outputText rendered="#{wallet.key!='PREPAID'}"
+														value="#{userAccountBean.getOpenBalanceWithoutTax(userAccountBean.getCurrentProvider(),userAccountBean.entity.billingAccount.customerAccount.customer.seller.code
 													,userAccountBean.entity.code,null,null)}" />
 												</p:panelGrid>
 												<p:spacer width="40" />
-												<p:panelGrid columns="2"> 
-                                                <f:facet name="header">
-													<h:outputText style="font-size:13px"
-														value="#{messages['walletOperationStatus.current']}" />
-												</f:facet>													
-												<h:outputText rendered="#{wallet.key!='PREPAID'}" style="font-weight:bold; !important"
-													value="#{messages['pricePlanMatrix.amountWithTax']} :" />	
-												<h:outputText rendered="#{wallet.key!='PREPAID'}"
-													value="#{userAccountBean.getCurrentBalanceWithoutTax(userAccountBean.getCurrentProvider(),userAccountBean.entity.billingAccount.customerAccount.customer.seller.code
+												<p:panelGrid columns="2">
+													<f:facet name="header">
+														<h:outputText style="font-size:13px"
+															value="#{messages['walletOperationStatus.reserved']}" />
+													</f:facet>
+													<h:outputText rendered="#{wallet.key!='PREPAID'}"
+														style="font-weight:bold; !important"
+														value="#{messages['pricePlanMatrix.amountWithTax']} :" />
+													<h:outputText rendered="#{wallet.key!='PREPAID'}"
+														value="#{userAccountBean.getReservedBalanceWithTax(userAccountBean.getCurrentProvider(),userAccountBean.entity.billingAccount.customerAccount.customer.seller.code
 													,userAccountBean.entity.code,null,null)}" />
-													
-												<h:outputText rendered="#{wallet.key!='PREPAID'}" style="font-weight:bold; !important"
-													value="#{messages['pricePlanMatrix.amountWithoutTax']} :" />	
-												<h:outputText rendered="#{wallet.key!='PREPAID'}"
-													value="#{userAccountBean.getCurrentBalanceWithTax(userAccountBean.getCurrentProvider(),userAccountBean.entity.billingAccount.customerAccount.customer.seller.code
+													<h:outputText rendered="#{wallet.key!='PREPAID'}"
+														style="font-weight:bold; !important"
+														value="#{messages['pricePlanMatrix.amountWithoutTax']} :" />
+													<h:outputText rendered="#{wallet.key!='PREPAID'}"
+														value="#{userAccountBean.getReservedBalanceWithoutTax(userAccountBean.getCurrentProvider(),userAccountBean.entity.billingAccount.customerAccount.customer.seller.code
 													,userAccountBean.entity.code,null,null)}" />
 												</p:panelGrid>
-												
-											</p:panelGrid>	
-												<p:outputLabel  rendered="#{wallet.key!='PRINCIPAL'}"
-													value="#{messages['userAccount.cachedBalance']}" />
-												<h:outputText
-													value="#{userAccountBean.getBalance(wallet.value)}" />
-												<p:outputLabel  rendered="#{wallet.key!='PRINCIPAL'}"
-													value="#{messages['userAccount.cachedReservedBalance']}" />
-												<h:outputText
-													value="#{userAccountBean.getReservedBalance(wallet.value)}" /> 
+												<p:spacer width="40" />
+												<p:panelGrid columns="2">
+													<f:facet name="header">
+														<h:outputText style="font-size:13px"
+															value="#{messages['walletOperationStatus.current']}" />
+													</f:facet>
+													<h:outputText rendered="#{wallet.key!='PREPAID'}"
+														style="font-weight:bold; !important"
+														value="#{messages['pricePlanMatrix.amountWithTax']} :" />
+													<h:outputText rendered="#{wallet.key!='PREPAID'}"
+														value="#{userAccountBean.getCurrentBalanceWithoutTax(userAccountBean.getCurrentProvider(),userAccountBean.entity.billingAccount.customerAccount.customer.seller.code
+													,userAccountBean.entity.code,null,null)}" />
+
+													<h:outputText rendered="#{wallet.key!='PREPAID'}"
+														style="font-weight:bold; !important"
+														value="#{messages['pricePlanMatrix.amountWithoutTax']} :" />
+													<h:outputText rendered="#{wallet.key!='PREPAID'}"
+														value="#{userAccountBean.getCurrentBalanceWithTax(userAccountBean.getCurrentProvider(),userAccountBean.entity.billingAccount.customerAccount.customer.seller.code
+													,userAccountBean.entity.code,null,null)}" />
+												</p:panelGrid>
+
+											</p:panelGrid>
+											<p:outputLabel rendered="#{wallet.key!='PRINCIPAL'}"
+												value="#{messages['userAccount.cachedBalance']}" />
+											<h:outputText
+												value="#{userAccountBean.getBalance(wallet.value)}" />
+											<p:outputLabel rendered="#{wallet.key!='PRINCIPAL'}"
+												value="#{messages['userAccount.cachedReservedBalance']}" />
+											<h:outputText
+												value="#{userAccountBean.getReservedBalance(wallet.value)}" />
 										</p:panelGrid>
 										<p:dataTable id="wallet#{wallet.key}datatable" var="e"
 											paginator="true"
@@ -396,37 +403,54 @@
 									</p:panel>
 								</p:tab>
 							</c:forEach>
-							
-								<p:tab title="#{messages['counterPeriod.title']}" rendered="#{!userAccountBean.edit or userAccountBean.entity.id!=null}"> 
+
+							<p:tab title="#{messages['counterTemplate.title']}">
+								<hftl:dataList resultsId="dt_counterInstances"
+									backingBean="#{userAccountBean}"
+									dataModel="#{userAccountBean.entity.counters}"
+									checkMany="false">
+									<hftl:column label="#{messages['BusinessEntity.code']}"
+										field="code" />
+									<hftl:column label="#{messages['BusinessEntity.description']}"
+										field="description" />
+								</hftl:dataList>
+							</p:tab>
+
+							<p:tab title="#{messages['counterPeriod.title']}"
+								rendered="#{!userAccountBean.edit or userAccountBean.entity.id!=null}">
 								<hftl:panelGroup>
-								 <p:panelGrid columns="2">
-								 <p:outputLabel for="counterPeriod" value="#{messages['counterInstance.title']}" />
-								<p:selectOneMenu id="counterPeriod"
-								value="#{userAccountBean.selectedCounterInstance}"> 
-								<f:selectItems value="#{userAccountBean.entity.counters}"/>
-                                <s:objectConverter />
-                                <p:ajax event="valueChange" update=":userAccountFormPanel:formId:userAccountTab:datatable_counters_panel"/>
-							    </p:selectOneMenu>
-                               </p:panelGrid>
-                                </hftl:panelGroup>							   
-								<hftl:dataList resultsId="datatable_counters" backingBean="#{counterPeriodBean}" 
+									<p:panelGrid columns="2">
+										<p:outputLabel for="counterPeriod"
+											value="#{messages['counterInstance.title']}" />
+										<p:selectOneMenu id="counterPeriod"
+											value="#{userAccountBean.selectedCounterInstance}">
+											<f:selectItems value="#{userAccountBean.entity.counters}" />
+											<s:objectConverter />
+											<p:ajax event="valueChange"
+												update=":userAccountFormPanel:formId:userAccountTab:datatable_counters_panel" />
+										</p:selectOneMenu>
+									</p:panelGrid>
+								</hftl:panelGroup>
+								<hftl:dataList resultsId="datatable_counters"
+									backingBean="#{counterPeriodBean}"
 									dataModel="#{counterPeriodBean.getCounterPeriods(userAccountBean.selectedCounterInstance)}"
-									 checkMany="false">
+									checkMany="false">
 									<hftl:column label="#{messages['businessEntity.code']}"
-								field="code" />
-								<hftl:column label="#{messages['businessEntity.code']}"
-								field="description" />
-								<hftl:column label="#{messages['counterTemplate.counterType']}"
-								field="counterType" childField="label" isMessage="true" />
-								<hftl:column label="#{messages['counterPeriod.periodStartDate']}"
-								field="periodStartDate" isDate="true"/>
-								<hftl:column label="#{messages['counterPeriod.periodEndDate']}"
-								field="periodEndDate" isDate="true"/>
-								<hftl:column label="#{messages['counterPeriod.level']}"
-								field="level"/>
-								<hftl:column label="#{messages['counterPeriod.value']}"
-								field="value"/>	
-						    </hftl:dataList>    
+										field="code" />
+									<hftl:column label="#{messages['businessEntity.code']}"
+										field="description" />
+									<hftl:column label="#{messages['counterTemplate.counterType']}"
+										field="counterType" childField="label" isMessage="true" />
+									<hftl:column
+										label="#{messages['counterPeriod.periodStartDate']}"
+										field="periodStartDate" isDate="true" />
+									<hftl:column label="#{messages['counterPeriod.periodEndDate']}"
+										field="periodEndDate" isDate="true" />
+									<hftl:column label="#{messages['counterPeriod.level']}"
+										field="level" />
+									<hftl:column label="#{messages['counterPeriod.value']}"
+										field="value" />
+								</hftl:dataList>
 							</p:tab>
 						</p:tabView>
 
