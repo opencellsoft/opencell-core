@@ -56,6 +56,10 @@ public class CounterTemplate extends BusinessEntity {
 	@Size(min = 0, max = 20)
 	private String unityDescription;
 
+	@Enumerated(EnumType.STRING)
+	@Column(name = "COUNTER_LEVEL")
+	private CounterTemplateLevel counterLevel;
+
 	public CounterTypeEnum getCounterType() {
 		return counterType;
 	}
@@ -86,6 +90,14 @@ public class CounterTemplate extends BusinessEntity {
 
 	public void setUnityDescription(String unityDescription) {
 		this.unityDescription = unityDescription;
+	}
+
+	public CounterTemplateLevel getCounterLevel() {
+		return counterLevel;
+	}
+
+	public void setCounterLevel(CounterTemplateLevel counterLevel) {
+		this.counterLevel = counterLevel;
 	}
 
 }
