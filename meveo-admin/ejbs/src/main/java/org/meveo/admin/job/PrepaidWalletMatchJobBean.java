@@ -11,11 +11,9 @@ import javax.interceptor.Interceptors;
 
 import org.meveo.admin.job.logging.JobLoggingInterceptor;
 import org.meveo.model.admin.User;
-import org.meveo.model.billing.OneShotChargeInstance;
 import org.meveo.model.billing.WalletInstance;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.service.billing.impl.OneShotChargeInstanceService;
-import org.meveo.service.billing.impl.WalletOperationService;
 import org.meveo.service.billing.impl.WalletService;
 import org.slf4j.Logger;
 
