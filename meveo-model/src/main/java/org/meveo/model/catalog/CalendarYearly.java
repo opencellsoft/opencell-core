@@ -103,7 +103,7 @@ public class CalendarYearly extends Calendar {
 		for (DayInYear dayInYear : days) {
 			Date d = DateUtils.newDate(currentYear, dayInYear.getMonth().getId() - 1,
 					dayInYear.getDay(), 0, 0, 0);
-			if (d.before(date) && d.after(result)) {
+			if ((d.before(date) || d.equals(date)) && d.after(result)) {
 				result = d;
 			}
 		}
@@ -112,7 +112,7 @@ public class CalendarYearly extends Calendar {
 			for (DayInYear dayInYear : days) {
 				Date d = DateUtils.newDate(currentYear, dayInYear.getMonth().getId() - 1,
 						dayInYear.getDay(), 0, 0, 0);
-				if (d.before(date) && d.after(result)) {
+				if ((d.before(date) || d.equals(date)) && d.after(result)) {
 					result = d;
 				}
 			}
