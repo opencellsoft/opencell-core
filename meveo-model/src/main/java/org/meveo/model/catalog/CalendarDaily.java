@@ -108,25 +108,25 @@ public class CalendarDaily extends Calendar {
         calendar.set(java.util.Calendar.SECOND, 0);
         calendar.set(java.util.Calendar.MILLISECOND, 0);
         Date result = null;
-        long minDist = MILLISEC_IN_DAY;
+        long minDist = -MILLISEC_IN_DAY;
         for (HourInDay hourInDay : hours) {
             calendar.set(java.util.Calendar.HOUR_OF_DAY, hourInDay.getHour());
             calendar.set(java.util.Calendar.MINUTE, hourInDay.getMinute());
             Date d = calendar.getTime();
             long dist = d.getTime() - date.getTime();
-            if (dist > 0 & dist < minDist) {
+            if (dist <= 0 & dist > minDist) {
                 result = d;
                 minDist = dist;
             }
         }
         if (result == null) { // if result did not change
-            calendar.add(java.util.Calendar.DATE, 1);
+            calendar.add(java.util.Calendar.DATE, -1);
             for (HourInDay hourInDay : hours) {
                 calendar.set(java.util.Calendar.HOUR_OF_DAY, hourInDay.getHour());
                 calendar.set(java.util.Calendar.MINUTE, hourInDay.getMinute());
                 Date d = calendar.getTime();
                 long dist = d.getTime() - date.getTime();
-                if (dist > 0 & dist < minDist) {
+                if (dist <= 0 & dist > minDist) {
                     result = d;
                     minDist = dist;
                 }

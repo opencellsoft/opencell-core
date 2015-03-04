@@ -1,8 +1,10 @@
 package org.meveo.model.cache;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Date;
 
+import org.meveo.model.BaseEntity;
 import org.meveo.model.crm.Provider;
 
 public class UsageChargeInstanceCache implements Comparable<UsageChargeInstanceCache>{
@@ -13,6 +15,8 @@ public class UsageChargeInstanceCache implements Comparable<UsageChargeInstanceC
 	private Date lastUpdate;
 	private BigDecimal unityMultiplicator = BigDecimal.ONE;
 	private int unityNbDecimal = 2;
+	int roundingUnityNbDecimal=2;
+	int roundingEdrNbDecimal=BaseEntity.NB_DECIMALS;
 	private CounterInstanceCache counter;
 	private Date chargeDate;
 	private Date subscriptionDate;
@@ -43,13 +47,31 @@ public class UsageChargeInstanceCache implements Comparable<UsageChargeInstanceC
 	}
 	public void setUnityMultiplicator(BigDecimal unityMultiplicator) {
 		this.unityMultiplicator = unityMultiplicator;
+		computeRoundingValues();
 	}
+	
 	public int getUnityNbDecimal() {
 		return unityNbDecimal;
 	}
 	public void setUnityNbDecimal(int unityNbDecimal) {
 		this.unityNbDecimal = unityNbDecimal;
+		computeRoundingValues();
 	}
+	
+	private void computeRoundingValues(){
+		try{
+			if(unityNbDecimal>= BaseEntity.NB_DECIMALS){
+				roundingUnityNbDecimal = BaseEntity.NB_DECIMALS;
+			} else {
+				roundingUnityNbDecimal = unityNbDecimal;
+				roundingEdrNbDecimal = (int)Math.round(unityNbDecimal+Math.floor(Math.log10(unityMultiplicator.doubleValue())));
+				if(roundingEdrNbDecimal>BaseEntity.NB_DECIMALS){
+					roundingEdrNbDecimal = BaseEntity.NB_DECIMALS;
+				}
+			}
+		} catch(Exception e){}
+	}
+	
 	public CounterInstanceCache getCounter() {
 		return counter;
 	}
@@ -92,4 +114,17 @@ public class UsageChargeInstanceCache implements Comparable<UsageChargeInstanceC
 		return this.getTemplateCache().getPriority()-o.getTemplateCache().getPriority();
 	}
 	
+	
+	public BigDecimal getInChargeUnit(BigDecimal edrUnitValue){
+		BigDecimal result = edrUnitValue.multiply(unityMultiplicator);
+		if (unityNbDecimal > 0) {
+			result = result.setScale(roundingUnityNbDecimal,
+					RoundingMode.HALF_UP);
+		}
+		return result;
+	}
+	
+	public BigDecimal getInEDRUnit(BigDecimal chargeUnitValue){
+		return chargeUnitValue.divide(unityMultiplicator,roundingEdrNbDecimal, RoundingMode.HALF_UP);
+	}
 }

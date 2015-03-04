@@ -213,7 +213,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 			throws BusinessException {
 		boolean entreprise = billingAccount.getProvider().isEntreprise();
 		int rounding = billingAccount.getProvider().getRounding()==null?2:billingAccount.getProvider().getRounding();
-
+		boolean exoneratedFromTaxes=billingAccount.getCustomerAccount().getCustomer().getCustomerCategory().getExoneratedFromTaxes();
 		BigDecimal nonEnterprisePriceWithTax = BigDecimal.ZERO;
 
 		for (UserAccount userAccount : billingAccount.getUsersAccounts()) {
@@ -314,14 +314,15 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 					taxInvoiceAgregateMap.put(taxId, invoiceAgregateTax);
 				}
 
-				if (tax.getPercent().compareTo(BigDecimal.ZERO) == 0) {
+				if (tax.getPercent().compareTo(BigDecimal.ZERO) == 0 || exoneratedFromTaxes) {
 					invoiceAgregateTax.addAmountWithoutTax(invoiceAgregateSubcat.getAmountWithoutTax());
 					invoiceAgregateTax.addAmountWithTax(invoiceAgregateSubcat.getAmountWithTax());
 					invoiceAgregateTax.addAmountTax(invoiceAgregateSubcat.getAmountTax());
+					invoiceAgregateTax.setTaxPercent(BigDecimal.ZERO);
 				}
 
 				fillAgregates(invoiceAgregateTax, wallet);
-				if (invoiceAgregateSubcat.getSubCategoryTax().getPercent().compareTo(BigDecimal.ZERO) != 0) {
+				if (invoiceAgregateSubcat.getSubCategoryTax().getPercent().compareTo(BigDecimal.ZERO) != 0 && !exoneratedFromTaxes) {
 					invoiceAgregateTax.setTaxPercent(invoiceAgregateSubcat.getSubCategoryTax().getPercent());
 				}
 				invoiceAgregateTax.setProvider(billingAccount.getProvider());
@@ -370,7 +371,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 				invoiceAgregateSubcat.setAmountWithoutTax(invoiceAgregateSubcat.getAmountWithoutTax().setScale(rounding,
 						RoundingMode.HALF_UP));
 				// add it to taxAggregate and CategoryAggregate
-				if (invoiceAgregateSubcat.getSubCategoryTax().getPercent().compareTo(BigDecimal.ZERO) != 0) {
+				if (invoiceAgregateSubcat.getSubCategoryTax().getPercent().compareTo(BigDecimal.ZERO) != 0 && !exoneratedFromTaxes) {
 					TaxInvoiceAgregate taxInvoiceAgregate = taxInvoiceAgregateMap.get(invoiceAgregateSubcat
 							.getSubCategoryTax().getId());
 					taxInvoiceAgregate.addAmountWithoutTax(invoiceAgregateSubcat.getAmountWithoutTax());
@@ -391,31 +392,34 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 			}
 
 			// compute the tax
-			for (Map.Entry<Long, TaxInvoiceAgregate> taxCatMap : taxInvoiceAgregateMap.entrySet()) {
-				TaxInvoiceAgregate taxCat = taxCatMap.getValue();
-				if (taxCat.getTax().getPercent().compareTo(BigDecimal.ZERO) != 0) {
-					// then compute the tax
-					taxCat.setAmountTax(taxCat.getAmountWithoutTax().multiply(taxCat.getTaxPercent())
-							.divide(new BigDecimal("100")));
-					// then round the tax
-					taxCat.setAmountTax(taxCat.getAmountTax().setScale(rounding, RoundingMode.HALF_UP));
+			if(!exoneratedFromTaxes){
+				for (Map.Entry<Long, TaxInvoiceAgregate> taxCatMap : taxInvoiceAgregateMap.entrySet()) {
+					TaxInvoiceAgregate taxCat = taxCatMap.getValue();
+					if (taxCat.getTax().getPercent().compareTo(BigDecimal.ZERO) != 0) {
+						// then compute the tax
+						taxCat.setAmountTax(taxCat.getAmountWithoutTax().multiply(taxCat.getTaxPercent())
+								.divide(new BigDecimal("100")));
+						// then round the tax
+						taxCat.setAmountTax(taxCat.getAmountTax().setScale(rounding, RoundingMode.HALF_UP));
 
-					// and compute amount with tax
-					taxCat.setAmountWithTax(taxCat.getAmountWithoutTax().add(taxCat.getAmountTax())
-							.setScale(rounding, RoundingMode.HALF_UP));
-					log.debug("  tax2 ht ->" + taxCat.getAmountWithoutTax());
-				} else {
-					// compute the percent
-					if (taxCat.getAmountTax() != null && taxCat.getAmount() != null
-							&& taxCat.getAmount().compareTo(BigDecimal.ZERO) != 0) {
-						taxCat.setTaxPercent(taxCat.getAmountTax().divide(taxCat.getAmount(),rounding+2, RoundingMode.HALF_UP)
-								.multiply(new BigDecimal("100")).setScale(rounding, RoundingMode.HALF_UP));
+						// and compute amount with tax
+						taxCat.setAmountWithTax(taxCat.getAmountWithoutTax().add(taxCat.getAmountTax())
+								.setScale(rounding, RoundingMode.HALF_UP));
+						log.debug("  tax2 ht ->" + taxCat.getAmountWithoutTax());
 					} else {
-						taxCat.setTaxPercent(BigDecimal.ZERO);
+						// compute the percent
+						if (taxCat.getAmountTax() != null && taxCat.getAmount() != null
+								&& taxCat.getAmount().compareTo(BigDecimal.ZERO) != 0) {
+							taxCat.setTaxPercent(taxCat.getAmountTax().divide(taxCat.getAmount(),rounding+2, RoundingMode.HALF_UP)
+									.multiply(new BigDecimal("100")).setScale(rounding, RoundingMode.HALF_UP));
+						} else {
+							taxCat.setTaxPercent(BigDecimal.ZERO);
+						}
 					}
-				}
 
+				}
 			}
+			
 
 			for (Map.Entry<Long, TaxInvoiceAgregate> tax : taxInvoiceAgregateMap.entrySet()) {
 				TaxInvoiceAgregate taxInvoiceAgregate = tax.getValue();

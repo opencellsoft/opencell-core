@@ -11,6 +11,7 @@
 		<hf:formPanel label="#{messages['customerCategory.panel']}" backingBean="#{customerCategoryBean}">
 			<hf:formField label="#{messages['businessEntity.code']}" field="code" validateUnique="true" required="true" />
 			<hf:formField label="#{messages['businessEntity.description']}" field="description" useConverter="false" id="description" maxlength="50" required="true" />
+			<hf:formField label="#{messages['customerCategory.exoneratedFromTaxes']}" field="exoneratedFromTaxes"/>
 		</hf:formPanel>
 	</ui:define>
 
