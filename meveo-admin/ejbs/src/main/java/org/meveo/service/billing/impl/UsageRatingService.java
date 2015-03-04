@@ -1,7 +1,6 @@
 package org.meveo.service.billing.impl;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -21,7 +20,6 @@ import javax.persistence.PersistenceContext;
 
 import org.apache.commons.lang.StringUtils;
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.model.BaseEntity;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.CounterInstance;
 import org.meveo.model.billing.CounterPeriod;
@@ -508,17 +506,9 @@ public class UsageRatingService {
 
 		if(periodCache!=null){
 		synchronized (periodCache) {
-			BigDecimal countedValue = edr.getQuantity().multiply(
-					charge.getUnityMultiplicator());
+			BigDecimal countedValue = charge.getInChargeUnit(edr.getQuantity());
 			log.debug("value to deduce {} * {} = {} from current value {}",edr.getQuantity()
 					,charge.getUnityMultiplicator() , countedValue,periodCache.getValue());
-			if (charge.getUnityNbDecimal() > 0) {
-				int rounding = (charge.getUnityNbDecimal() > BaseEntity.NB_DECIMALS) ? BaseEntity.NB_DECIMALS
-						: charge.getUnityNbDecimal();
-				countedValue = countedValue.setScale(rounding,
-						RoundingMode.HALF_UP);
-				log.debug("after rounding we would deduce {}",countedValue);
-			}
 
 			if (periodCache.getLevel() == null) {
 				deducedQuantity = countedValue;
@@ -526,17 +516,8 @@ public class UsageRatingService {
 				if (periodCache.getValue().compareTo(countedValue) < 0) {
 					deducedQuantity = periodCache.getValue();
 					periodCache.setValue(BigDecimal.ZERO);
-					int rounding = BaseEntity.NB_DECIMALS;
-					if (charge.getUnityNbDecimal() < BaseEntity.NB_DECIMALS) {
-						rounding = (int)Math.round(charge.getUnityNbDecimal()+Math.floor(Math.log10(charge.getUnityMultiplicator().doubleValue())));
-						if(rounding>BaseEntity.NB_DECIMALS){
-							rounding = BaseEntity.NB_DECIMALS;
-						}
-					}
-					deducedQuantityInEDRUnit = deducedQuantity.divide(charge
-							.getUnityMultiplicator(),rounding, RoundingMode.HALF_UP);
-					
-					log.debug("we deduced {} and set the counter period value to 0, rounding used for EDR units :{}",deducedQuantity,rounding);
+					deducedQuantityInEDRUnit = charge.getInEDRUnit(deducedQuantity);
+					log.debug("we deduced {} and set the counter period value to 0",deducedQuantity);
 				} else {
 					deducedQuantity = countedValue;
 					periodCache.setValue(periodCache.getValue().subtract(
@@ -595,7 +576,7 @@ public class UsageRatingService {
 			UsageChargeInstance chargeInstance = usageChargeInstanceService
 					.findById(charge.getChargeInstanceId());
 			WalletOperation walletOperation = rateEDRwithMatchingCharge(edr,
-					deducedQuantity, charge, chargeInstance, provider);
+					charge.getInChargeUnit(deducedQuantity), charge, chargeInstance, provider);
 
 			if (deducedQuantity != null) {
 				edr.setQuantity(edr.getQuantity().subtract(deducedQuantity));
