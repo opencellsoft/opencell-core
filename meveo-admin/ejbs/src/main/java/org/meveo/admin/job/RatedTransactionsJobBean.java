@@ -1,5 +1,6 @@
 package org.meveo.admin.job;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import javax.ejb.Stateless;
@@ -50,6 +51,13 @@ public class RatedTransactionsJobBean {
 			
 			for (WalletOperation walletOperation : walletOperations) {
 				try {
+					if(walletOperation.getChargeInstance().getSubscription().getUserAccount().getBillingAccount().getCustomerAccount().getCustomer().getCustomerCategory().getExoneratedFromTaxes()){
+						walletOperation.setAmountWithTax(walletOperation.getAmountWithoutTax());
+						walletOperation.setTaxPercent(BigDecimal.ZERO);
+						walletOperation.setAmountTax(BigDecimal.ZERO); 
+						walletOperation.setUnitAmountWithTax(walletOperation.getUnitAmountWithoutTax());
+						walletOperation.setUnitAmountTax(BigDecimal.ZERO);	
+					}
 					RatedTransaction ratedTransaction = new RatedTransaction(
 							walletOperation.getId(),
 							walletOperation.getOperationDate(),

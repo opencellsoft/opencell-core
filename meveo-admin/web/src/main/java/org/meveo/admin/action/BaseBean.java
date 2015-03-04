@@ -908,21 +908,31 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
         }
     }
 
+    /**
+     * Save non-empty custom field values. Remove existing custom value instances if value changes to null
+     */
     protected void saveCustomFields() {
         if (customFieldTemplates != null && customFieldTemplates.size() > 0) {
             for (CustomFieldTemplate cf : customFieldTemplates) {
                 CustomFieldInstance cfi = customFieldInstanceService.findByCodeAndAccount(cf.getCode(), getEntity());
                 if (cfi != null) {
-                    if (cf.getFieldType() == CustomFieldTypeEnum.DATE) {
-                        cfi.setDateValue(cf.getDateValue());
-                    } else if (cf.getFieldType() == CustomFieldTypeEnum.DOUBLE) {
-                        cfi.setDoubleValue(cf.getDoubleValue());
-                    } else if (cf.getFieldType() == CustomFieldTypeEnum.LONG) {
-                        cfi.setLongValue(cf.getLongValue());
-                    } else if (cf.getFieldType() == CustomFieldTypeEnum.STRING || cf.getFieldType() == CustomFieldTypeEnum.LIST) {
-                        cfi.setStringValue(cf.getStringValue());
+                    if (cf.isValueEmpty()) {
+                        customFieldInstanceService.remove(cfi);
+                        
+                    } else {
+                        if (cf.getFieldType() == CustomFieldTypeEnum.DATE) {
+                            cfi.setDateValue(cf.getDateValue());
+                        } else if (cf.getFieldType() == CustomFieldTypeEnum.DOUBLE) {
+                            cfi.setDoubleValue(cf.getDoubleValue());
+                        } else if (cf.getFieldType() == CustomFieldTypeEnum.LONG) {
+                            cfi.setLongValue(cf.getLongValue());
+                        } else if (cf.getFieldType() == CustomFieldTypeEnum.STRING || cf.getFieldType() == CustomFieldTypeEnum.LIST) {
+                            cfi.setStringValue(cf.getStringValue());
+                        }
                     }
-                } else {
+                    
+                } else if (!cf.isValueEmpty()) {
+
                     // create
                     cfi = new CustomFieldInstance();
                     cfi.setCode(cf.getCode());

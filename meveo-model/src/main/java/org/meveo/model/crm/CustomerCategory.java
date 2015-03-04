@@ -16,6 +16,7 @@
  */
 package org.meveo.model.crm;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
@@ -30,4 +31,14 @@ public class CustomerCategory extends BusinessEntity {
 
 	private static final long serialVersionUID = 1L;
 
+	@Column(name = "EXONERATED_FROM_TAXES")
+	private Boolean exoneratedFromTaxes=false ;
+
+	public Boolean getExoneratedFromTaxes() {
+		return exoneratedFromTaxes;
+	}
+
+	public void setExoneratedFromTaxes(Boolean exoneratedFromTaxes) {
+		this.exoneratedFromTaxes = exoneratedFromTaxes;
+	}
 }

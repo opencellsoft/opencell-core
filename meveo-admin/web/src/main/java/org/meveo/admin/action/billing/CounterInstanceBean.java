@@ -14,41 +14,51 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.meveo.admin.action.catalog;
-
-import java.sql.BatchUpdateException;
+package org.meveo.admin.action.billing;
 
 import javax.enterprise.context.ConversationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.meveo.admin.action.BaseBean;
-import org.meveo.model.billing.BillingWalletTypeEnum;
-import org.meveo.model.catalog.WalletTemplate;
+import org.meveo.admin.action.StatelessBaseBean;
+import org.meveo.model.billing.CounterInstance;
+import org.meveo.model.billing.WalletInstance;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
-import org.meveo.service.billing.impl.WalletTemplateService;
+import org.meveo.service.billing.impl.CounterInstanceService;
 
+/**
+ * Standard backing bean for {@link WalletInstance} (extends {@link BaseBean}
+ * that provides almost all common methods to handle entities filtering/sorting
+ * in datatable, their create, edit, view, delete operations). It works with
+ * Manaty custom JSF components.
+ */
 @Named
 @ConversationScoped
-public class WalletTemplateBean extends BaseBean<WalletTemplate> {
+public class CounterInstanceBean extends StatelessBaseBean<CounterInstance> {
 
 	private static final long serialVersionUID = 1L;
 
 	/**
-	 * Injected @{link TradingCountry} service. Extends
+	 * Injected @{link WalletInstance} service. Extends
 	 * {@link PersistenceService}.
 	 */
 	@Inject
-	private WalletTemplateService walletTemplateService;
+	private CounterInstanceService counterInstanceService;
+
+	/**
+	 * Customer account Id passed as a parameter. Used when creating new
+	 * WalletInstance from customer account window, so default customer account
+	 * will be set on newly created wallet.
+	 */ 
 
 	/**
 	 * Constructor. Invokes super constructor and provides class type of this
 	 * bean for {@link BaseBean}.
 	 */
-	public WalletTemplateBean() {
-		super(WalletTemplate.class);
-
+	public CounterInstanceBean() {
+		super(CounterInstance.class);
 	}
 
 	/**
@@ -58,34 +68,17 @@ public class WalletTemplateBean extends BaseBean<WalletTemplate> {
 	 * @throws IllegalAccessException
 	 * @throws InstantiationException
 	 */
-	@Override
-	public WalletTemplate initEntity() {
-		super.initEntity();
-
-		entity.setWalletType(BillingWalletTypeEnum.PREPAID);
-
+	public CounterInstance initEntity() {
+		super.initEntity(); 
 		return entity;
-	}
-
-	/**
-	 * Override default list view name. (By default its class name starting
-	 * lower case + 's').
-	 * 
-	 * @see org.meveo.admin.action.BaseBean#getDefaultViewName()
-	 */
-	protected String getDefaultViewName() {
-		return "walletTemplates";
 	}
 
 	/**
 	 * @see org.meveo.admin.action.BaseBean#getPersistenceService()
 	 */
 	@Override
-	protected IPersistenceService<WalletTemplate> getPersistenceService() {
-		return walletTemplateService;
+	protected IPersistenceService<CounterInstance> getPersistenceService() {
+		return counterInstanceService;
 	}
 
-	public void test() throws BatchUpdateException {
-		throw new BatchUpdateException();
-	}
 }
