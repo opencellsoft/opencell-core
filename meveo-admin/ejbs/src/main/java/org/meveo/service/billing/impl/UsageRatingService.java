@@ -570,19 +570,14 @@ public class UsageRatingService {
 			stopEDRRating = true;
 		}
 
-		if (deducedQuantity == null
-				|| deducedQuantity.compareTo(BigDecimal.ZERO) > 0) {
+		if (deducedQuantity.compareTo(BigDecimal.ZERO) > 0) {
 			Provider provider = charge.getProvider();
 			UsageChargeInstance chargeInstance = usageChargeInstanceService
 					.findById(charge.getChargeInstanceId());
+			edr.setQuantity(edr.getQuantity().subtract(deducedQuantity));
 			WalletOperation walletOperation = rateEDRwithMatchingCharge(edr,
 					charge.getInChargeUnit(deducedQuantity), charge, chargeInstance, provider);
-
-			if (deducedQuantity != null) {
-				edr.setQuantity(edr.getQuantity().subtract(deducedQuantity));
-				walletOperation.setQuantity(deducedQuantity);
-			}
-
+			
 			walletOperationService.chargeWalletOperation(walletOperation, currentUser, provider);
 			//walletOperationService.create(walletOperation, currentUser, provider);
 
