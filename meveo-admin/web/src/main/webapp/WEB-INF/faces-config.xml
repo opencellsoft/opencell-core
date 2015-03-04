@@ -483,6 +483,18 @@
 			</to-view-id>
 			<redirect />
 		</navigation-case>
+		<navigation-case>
+			<from-outcome>walletOperations</from-outcome>
+			<to-view-id>/pages/billing/walletOperations/walletOperations.xhtml
+			</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>walletOperationDetail</from-outcome>
+			<to-view-id>/pages/billing/walletOperations/walletOperationDetail.xhtml
+			</to-view-id>
+			<redirect />
+		</navigation-case>
 		<!-- Catalog -->
 		<navigation-case>
 			<from-outcome>offerTemplates</from-outcome>
