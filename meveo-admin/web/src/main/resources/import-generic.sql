@@ -32,11 +32,8 @@ INSERT INTO ADM_LANGUAGE (id, version, created, updated, language_code, descript
 INSERT INTO ADM_LANGUAGE (id, version, created, updated, language_code, description_en, creator_id,  updater_id) VALUES (31, 1, CURRENT_TIMESTAMP, NULL, 'CES','tchèque', NULL, NULL);
 INSERT INTO ADM_LANGUAGE (id, version, created, updated, language_code, description_en, creator_id,  updater_id) VALUES (32, 1, CURRENT_TIMESTAMP, NULL, 'TUR','turc', NULL, NULL);
 
-DROP SEQUENCE IF EXISTS ADM_LANGUAGE_SEQ;
-CREATE SEQUENCE ADM_LANGUAGE_SEQ start with 33 increment by 1;
 
 /* CURRENCY */
-
 INSERT INTO ADM_CURRENCY (id, version, currency_code, description_en, system_currency, created, updated, creator_id,  updater_id) VALUES (1,1,'AFA','Afghani',true,CURRENT_TIMESTAMP,null,null,null);
 INSERT INTO ADM_CURRENCY (id, version, currency_code, description_en, system_currency, created, updated, creator_id,  updater_id) VALUES (2,1,'ZAR','Rand',true,CURRENT_TIMESTAMP,null,null,null);
 INSERT INTO ADM_CURRENCY (id, version, currency_code, description_en, system_currency, created, updated, creator_id,  updater_id) VALUES (3,1,'ALL','Lek',true,CURRENT_TIMESTAMP,null,null,null);
@@ -206,11 +203,7 @@ INSERT INTO ADM_CURRENCY (id, version, currency_code, description_en, system_cur
 INSERT INTO ADM_CURRENCY (id, version, currency_code, description_en, system_currency, created, updated, creator_id,  updater_id) VALUES (167,1,'ZWD','Dollar du Zimbabwe',true,CURRENT_TIMESTAMP,null,null,null);
 INSERT INTO ADM_CURRENCY (id, version, currency_code, description_en, system_currency, created, updated, creator_id,  updater_id) VALUES (168,1,'GHS','Cedi ghanéen',true,CURRENT_TIMESTAMP,null,null,null);
 
-DROP SEQUENCE IF EXISTS ADM_CURRENCY_SEQ;
-CREATE SEQUENCE ADM_CURRENCY_SEQ start with 169 increment by 1;
-
 /* COUNTRY */
-
 INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(1,1,CURRENT_TIMESTAMP,null,'AD','Andorra',null,null,8,5);
 INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(2,1,CURRENT_TIMESTAMP,null,'AE','United Arab Emirates',null,null,3,54);
 INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(3,1,CURRENT_TIMESTAMP,null,'AF','Afghanistan',null,null,2,1);
@@ -449,17 +442,11 @@ INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, descriptio
 INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(236,1,CURRENT_TIMESTAMP,null,'ZM','Zambia',null,null,2,166);
 INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(237,1,CURRENT_TIMESTAMP,null,'ZW','Zimbabwe',null,null,2,167);
 
-DROP SEQUENCE IF EXISTS ADM_COUNTRY_SEQ;
-CREATE SEQUENCE ADM_COUNTRY_SEQ start with 238 increment by 1;
-
-/* INSERTS OF TABLE CRM PROVIDER */
+/* CRM PROVIDER */
 
 INSERT INTO CRM_PROVIDER (id, version, disabled, created, updated, code, description, multicountry_flag, multicurrency_flag, multilanguage_flag, payment_methods, logo, invoice_prefix, current_invoice_nb, rating_rounding, bank_code, branch_code, account_number, hash_key, iban, bic, account_owner, bank_name, bank_id, issuer_number, issuer_name, entreprise, automatic_invoicing, display_free_tx_in_invoice, nne, address_1, address_2, address_3, address_zipcode, address_city, address_country, address_state, amount_validation, level_duplication, email, country_id, provider_id, currency_id, updater_id,creator_id,language_id,prepaid_resrv_delay_ms) VALUES (1, 1, false, CURRENT_TIMESTAMP, NULL, 'DEMO', NULL, true, true, true, NULL, NULL, NULL, NULL, NULL, 'SGMB', '12345', '33333333333', '11', '11', '11', 'owner', 'SGMB', '11', '1111', 'DEMO', false, false, true, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, false, false, NULL, 1, NULL, 1, NULL,NULL, 1,60000);
 
-DROP SEQUENCE IF EXISTS CRM_PROVIDER_SEQ;
-CREATE SEQUENCE CRM_PROVIDER_SEQ start with 2 increment by 1;
-
-/* INSERTS OF TABLE ADM_TITLE */
+/* ADM_TITLE */
 
 INSERT INTO ADM_TITLE (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, CODE, DESCRIPTION, IS_COMPANY, CREATOR_ID, UPDATER_ID) VALUES (1, 0, false, CURRENT_TIMESTAMP, 1, null, 'AGCE', 'Agency', true, null, null);
 INSERT INTO ADM_TITLE (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, CODE, DESCRIPTION, IS_COMPANY, CREATOR_ID, UPDATER_ID) VALUES (2, 0, false, CURRENT_TIMESTAMP, 1, null, 'ASSO', 'Association', true, null, null);
@@ -499,26 +486,15 @@ INSERT INTO ADM_TITLE (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, COD
 INSERT INTO ADM_TITLE (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, CODE, DESCRIPTION, IS_COMPANY, CREATOR_ID, UPDATER_ID) VALUES (36, 0, false, CURRENT_TIMESTAMP, 1, null, 'SYNDIC', 'Syndicate', true, null, null);
 INSERT INTO ADM_TITLE (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, CODE, DESCRIPTION, IS_COMPANY, CREATOR_ID, UPDATER_ID) VALUES (37, 0, false, CURRENT_TIMESTAMP, 1, null, 'SYNDCOP', 'Management agent', true, null, null);
 
-DROP SEQUENCE IF EXISTS ADM_TITLE_SEQ;
-CREATE SEQUENCE ADM_TITLE_SEQ start with 38 increment by 1;
-
 /* ADM_USER */
 INSERT INTO ADM_USER (ID, VERSION, DISABLED, CREATED, USERNAME, PASSWORD, LAST_PASSWORD_MODIFICATION, CREATOR_ID, PROVIDER_ID) VALUES ('1', 0, false, CURRENT_TIMESTAMP,  'MEVEO.ADMIN', 'fb93a3221422999ba49eb103977a6d736376505b', CURRENT_TIMESTAMP, 1, 1);
 INSERT INTO ADM_USER (ID, VERSION, DISABLED, CREATED, USERNAME, PASSWORD, LAST_PASSWORD_MODIFICATION, CREATOR_ID, PROVIDER_ID) VALUES ('2', 0, false, CURRENT_TIMESTAMP,  'MEVEO.SUPERADMIN', '6170b9cb8d9d2ef00787ffd326bf60f81a5b30c2', CURRENT_TIMESTAMP , 1, 1);
 
-DROP SEQUENCE IF EXISTS ADM_USER_SEQ;
-CREATE SEQUENCE ADM_USER_SEQ start with 3 increment by 1;
-
 /* ADM_ROLE */
-
-INSERT INTO ADM_ROLE (ID, VERSION, ROLE_NAME, ROLE_DESCRIPTION) VALUES (1, 0, 'administrateur', 'Administrateur');
-INSERT INTO ADM_ROLE (ID, VERSION, ROLE_NAME, ROLE_DESCRIPTION) VALUES (2, 0, 'superAdministrateur', 'Super Administrateur');
-  
-DROP SEQUENCE IF EXISTS ADM_ROLE_SEQ;
-CREATE SEQUENCE ADM_ROLE_SEQ start with 3 increment by 1;
+INSERT INTO ADM_ROLE (ID, VERSION, ROLE_NAME, ROLE_DESCRIPTION, PROVIDER_ID) VALUES (1, 0, 'administrateur', 'Administrateur',1);
+INSERT INTO ADM_ROLE (ID, VERSION, ROLE_NAME, ROLE_DESCRIPTION, PROVIDER_ID) VALUES (2, 0, 'superAdministrateur', 'Super Administrateur',1);
 
 /* ADM_USER_ROLE */
-
 INSERT INTO ADM_USER_ROLE (USER_ID, ROLE_ID) VALUES (1, 1);
 INSERT INTO ADM_USER_ROLE (USER_ID, ROLE_ID) VALUES (2, 2);
 
@@ -526,7 +502,6 @@ INSERT INTO ADM_USER_PROVIDER (PROVIDER_ID, USER_ID) VALUES (1, 1);
 INSERT INTO ADM_USER_PROVIDER (PROVIDER_ID, USER_ID) VALUES (1, 2);
 
 /* ADM_PERMISSION */
-
 INSERT INTO ADM_PERMISSION (ID,NAME,RESSOURCE,PERMISSION) VALUES (1,'Administration visualization','administration','administrationVisualization');
 INSERT INTO ADM_PERMISSION (ID,NAME,RESSOURCE,PERMISSION) VALUES (2,'Administration management','administration','administrationManagement');
 INSERT INTO ADM_PERMISSION (ID,NAME,RESSOURCE,PERMISSION) VALUES (3,'Catalog visualization','catalog','catalogVisualization');
@@ -539,12 +514,8 @@ INSERT INTO ADM_PERMISSION (ID,NAME,RESSOURCE,PERMISSION) VALUES (9,'Customer su
 INSERT INTO ADM_PERMISSION (ID,NAME,RESSOURCE,PERMISSION) VALUES (10,'Billing visualization','billing','billingVisualization');
 INSERT INTO ADM_PERMISSION (ID,NAME,RESSOURCE,PERMISSION) VALUES (11,'Billing management','billing','billingManagement');
 INSERT INTO ADM_PERMISSION (ID,NAME,RESSOURCE,PERMISSION) VALUES (12,'SuperAdmin management','superAdmin','superAdminManagement');
-  
-DROP SEQUENCE IF EXISTS ADM_PERMISSION_SEQ;
-CREATE SEQUENCE ADM_PERMISSION_SEQ start with 13 increment by 1;
 
 /* ADM_ROLE_PERMISSION */
-
 insert into ADM_ROLE_PERMISSION (role_id, permission_id) values (1, 1);
 insert into ADM_ROLE_PERMISSION (role_id, permission_id) values (1, 2);
 insert into ADM_ROLE_PERMISSION (role_id, permission_id) values (1, 3);
@@ -560,7 +531,6 @@ insert into ADM_ROLE_PERMISSION (role_id, permission_id) values (2, 1);
 insert into ADM_ROLE_PERMISSION (role_id, permission_id) values (2, 12);
 
 /* CAT_DAY_IN_YEAR */
-
 INSERT INTO CAT_DAY_IN_YEAR(ID, VERSION, MONTH, DAY, CREATOR_ID, CREATED) VALUES (1, 1, 'JANUARY', 1, 1, CURRENT_TIMESTAMP);
 INSERT INTO CAT_DAY_IN_YEAR(ID, VERSION, MONTH, DAY, CREATOR_ID, CREATED) VALUES (2, 1, 'JANUARY', 2, 1, CURRENT_TIMESTAMP);
 INSERT INTO CAT_DAY_IN_YEAR(ID, VERSION, MONTH, DAY, CREATOR_ID, CREATED) VALUES (3, 1, 'JANUARY', 3, 1, CURRENT_TIMESTAMP);
@@ -928,42 +898,24 @@ INSERT INTO CAT_DAY_IN_YEAR(ID, VERSION, MONTH, DAY, CREATOR_ID, CREATED) VALUES
 INSERT INTO CAT_DAY_IN_YEAR(ID, VERSION, MONTH, DAY, CREATOR_ID, CREATED) VALUES (1130, 1, 'DECEMBER', 30, 1, CURRENT_TIMESTAMP);
 INSERT INTO CAT_DAY_IN_YEAR(ID, VERSION, MONTH, DAY, CREATOR_ID, CREATED) VALUES (1131, 1, 'DECEMBER', 31, 1, CURRENT_TIMESTAMP);
 
-DROP SEQUENCE IF EXISTS CAT_DAY_IN_YEAR_SEQ;
-CREATE SEQUENCE CAT_DAY_IN_YEAR_SEQ start with 1132 increment by 1;
-
 /* Customer Category */
 INSERT INTO CRM_CUSTOMER_CATEGORY (id, disabled, version, created, code, description, provider_id, creator_id) VALUES (1, false, 0, CURRENT_TIMESTAMP, 'PROSPECT', 'Prospect', 1, 1);
 INSERT INTO CRM_CUSTOMER_CATEGORY (id, disabled, version, created, code, description, provider_id, creator_id) VALUES (2, false, 0, CURRENT_TIMESTAMP, 'CLIENT', 'Client', 1, 1);
 
-DROP SEQUENCE IF EXISTS CRM_CUSTOMER_CATEGORY_SEQ;
-CREATE SEQUENCE CRM_CUSTOMER_CATEGORY_SEQ start with 3 increment by 1;
-
 /* Customer Brand */
 INSERT INTO CRM_CUSTOMER_BRAND (id, disabled, version, created, code, description, provider_id, creator_id) VALUES (1, false, 0, CURRENT_TIMESTAMP, 'DEFAULT', 'Demo Product and Services', 1, 1);
-
-DROP SEQUENCE IF EXISTS CRM_CUSTOMER_BRAND_SEQ;
-CREATE SEQUENCE CRM_CUSTOMER_BRAND_SEQ start with 3 increment by 1;
 
 /* Trading Language */
 insert into billing_trading_language (id, version, disabled, created, provider_id, creator_id, language_id, pr_description) values (1, 0, false, CURRENT_TIMESTAMP, 1, 1, 2, 'English');
 insert into billing_trading_language (id, version, disabled, created, provider_id, creator_id, language_id, pr_description) values (2, 0, false, CURRENT_TIMESTAMP, 1, 1, 12, 'French');
 
-DROP SEQUENCE IF EXISTS billing_trading_language_SEQ;
-CREATE SEQUENCE billing_trading_language_SEQ start with 3 increment by 1;
-
 /* Trading Currency */
 insert into billing_trading_currency (id, version, disabled, created, provider_id, creator_id, currency_id, pr_description) values (1, 0, false, CURRENT_TIMESTAMP, 1, 1, 49, 'US Dollar');
 insert into billing_trading_currency (id, version, disabled, created, provider_id, creator_id, currency_id, pr_description) values (2, 0, false, CURRENT_TIMESTAMP, 1, 1, 5, 'France');
 
-DROP SEQUENCE IF EXISTS billing_trading_currency_SEQ;
-CREATE SEQUENCE billing_trading_currency_SEQ start with 3 increment by 1;
-
 /* Trading Country */
 insert into billing_trading_country (id, version, disabled, created, provider_id, creator_id, country_id, pr_description) values (1, 0, false, CURRENT_TIMESTAMP, 1, 1, 220, 'United States');
 insert into billing_trading_country (id, version, disabled, created, provider_id, creator_id, country_id, pr_description) values (2, 0, false, CURRENT_TIMESTAMP, 1, 1, 70, 'France');
-
-DROP SEQUENCE IF EXISTS billing_trading_country_SEQ;
-CREATE SEQUENCE billing_trading_country_SEQ start with 3 increment by 1;
 
 /* Monthly Calendar */
 insert into cat_calendar (cal_type,id, version, disabled, created, provider_id, creator_id, name, description) values ('YEARLY',1, 0, false, CURRENT_TIMESTAMP, 1, 1, 'MONTHLY', 'Monthly Calendar');
@@ -983,68 +935,40 @@ insert into cat_calendar_days (calendar_id, day_id) values (1, 1101);
 insert into cat_calendar (cal_type,id, version, disabled, created, provider_id, creator_id, name, description,PERIOD_LENGTH, NB_PERIODS) values ('PERIOD',2, 0, false, CURRENT_TIMESTAMP, 1, 1, 'One period', 'One period Calendar',7,1);
 insert into cat_calendar (cal_type,id, version, disabled, created, provider_id, creator_id, name, description,PERIOD_LENGTH, NB_PERIODS) values ('PERIOD',3, 0, false, CURRENT_TIMESTAMP, 1, 1, 'Multi period', 'Multi period Calendar',7,6);
 
-DROP SEQUENCE IF EXISTS cat_calendar_SEQ;
-CREATE SEQUENCE cat_calendar_SEQ start with 4 increment by 1;
-
 /* Tax */
 insert into billing_tax (id, version, disabled, created, provider_id, creator_id, code, description, tax_percentage) values (1, 0, false, CURRENT_TIMESTAMP, 1, 1, 'TAX_00', '0 Percent Tax', 0);
 insert into billing_tax (id, version, disabled, created, provider_id, creator_id, code, description, tax_percentage) values (2, 0, false, CURRENT_TIMESTAMP, 1, 1, 'TAX_05', '5 Percent Tax', 5);
 insert into billing_tax (id, version, disabled, created, provider_id, creator_id, code, description, tax_percentage) values (3, 0, false, CURRENT_TIMESTAMP, 1, 1, 'TAX_18', '18 Percent Tax', 18);
 
-DROP SEQUENCE IF EXISTS billing_tax_SEQ;
-CREATE SEQUENCE billing_tax_SEQ start with 4 increment by 1;
-
 /* Invoice Category */
 insert into BILLING_INVOICE_CAT (id, version, disabled, created, provider_id, creator_id, code, description, sort_index) values (1, 0, false, CURRENT_TIMESTAMP, 1, 1, 'CONSUMPTION', 'Consumption', 1);
 insert into BILLING_INVOICE_CAT (id, version, disabled, created, provider_id, creator_id, code, description, sort_index) values (2, 0, false, CURRENT_TIMESTAMP, 1, 1, 'SUBSCRIPTION', 'Subscription', 2);
 
-DROP SEQUENCE IF EXISTS BILLING_INVOICE_CAT_SEQ;
-CREATE SEQUENCE BILLING_INVOICE_CAT_SEQ start with 3 increment by 1;
-
 /* Invoice Sub Category */
 insert into BILLING_INVOICE_SUB_CAT (id, version, disabled, created, provider_id, creator_id, code, description, accounting_code, discount, invoice_category_id) values (1, 0, false, CURRENT_TIMESTAMP, 1, 1, 'CMP_DATA', 'Consumption Data', '120.121.21.2', 0, 1);
 insert into BILLING_INVOICE_SUB_CAT (id, version, disabled, created, provider_id, creator_id, code, description, accounting_code, discount, invoice_category_id) values (2, 0, false, CURRENT_TIMESTAMP, 1, 1, 'SUB_DATA', 'Subscription Data', '120.121.21.4', 0, 2);
-
-DROP SEQUENCE IF EXISTS BILLING_INVOICE_SUB_CAT_SEQ;
-CREATE SEQUENCE BILLING_INVOICE_SUB_CAT_SEQ start with 3 increment by 1;
 
 insert into BILLING_INV_SUB_CAT_COUNTRY (id, version, disabled, created, provider_id, creator_id, discount_code, invoice_sub_category_id, tax_id, trading_country_id) values (1, 0, false, CURRENT_TIMESTAMP, 1, 1, '', 1, 1, 1);
 insert into BILLING_INV_SUB_CAT_COUNTRY (id, version, disabled, created, provider_id, creator_id, discount_code, invoice_sub_category_id, tax_id, trading_country_id) values (2, 0, false, CURRENT_TIMESTAMP, 1, 1, '', 1, 2, 2);
 insert into BILLING_INV_SUB_CAT_COUNTRY (id, version, disabled, created, provider_id, creator_id, discount_code, invoice_sub_category_id, tax_id, trading_country_id) values (3, 0, false, CURRENT_TIMESTAMP, 1, 1, '', 2, 1, 1);
 insert into BILLING_INV_SUB_CAT_COUNTRY (id, version, disabled, created, provider_id, creator_id, discount_code, invoice_sub_category_id, tax_id, trading_country_id) values (4, 0, false, CURRENT_TIMESTAMP, 1, 1, '', 2, 2, 2);
 
-DROP SEQUENCE IF EXISTS BILLING_INV_SUB_CAT_COUNTRY_SEQ;
-CREATE SEQUENCE BILLING_INV_SUB_CAT_COUNTRY_SEQ start with 5 increment by 1;
-
 /* Billing Cycle */
 insert into BILLING_CYCLE (id, version, disabled, created, provider_id, creator_id, code, description, billing_template_name, due_date_delay, invoice_date_delay, calendar) values (1, 0, false, CURRENT_TIMESTAMP, 1, 1, 'CYC_INV_MT_1', 'Monthly Invoice Cycle 1', '1', 2, 4, 1);
 insert into BILLING_CYCLE (id, version, disabled, created, provider_id, creator_id, code, description, billing_template_name, due_date_delay, invoice_date_delay, calendar) values (2, 0, false, CURRENT_TIMESTAMP, 1, 1, 'CYC_INV_MT_2', 'Monthly Invoice Cycle 2', '1', 2, 4, 1);
 
-DROP SEQUENCE IF EXISTS BILLING_CYCLE_SEQ;
-CREATE SEQUENCE BILLING_CYCLE_SEQ start with 3 increment by 1;
-
 /* Primary Contact */
 insert into CRM_PROVIDER_CONTACT (id, version, disabled, created, provider_id, creator_id, code, description, lastname, firstname, email, phone, address_zipcode, address_city) values (1, 0, false, CURRENT_TIMESTAMP, 1, 1, 'DEMO_ADMIN', 'Demo Administrator', 'Admin', 'Admin', 'contact@manaty.net', '09152154716', '21000', 'DIJON');
-
-DROP SEQUENCE IF EXISTS CRM_PROVIDER_CONTACT_SEQ;
-CREATE SEQUENCE CRM_PROVIDER_CONTACT_SEQ start with 2 increment by 1;
 
 /* Seller */
 insert into crm_seller (id, version, disabled, created, provider_id, creator_id, code, description, parent_seller_id, trading_currency_id, trading_language_id) values (1, 0, false, CURRENT_TIMESTAMP, 1, 1, 'MAIN_SELLER', 'Demo Distributor', null, 1, 1);
 insert into crm_seller (id, version, disabled, created, provider_id, creator_id, code, description, parent_seller_id, trading_currency_id, trading_language_id) values (2, 0, false, CURRENT_TIMESTAMP, 1, 1, 'SELLER_US', 'US Seller',1, 1, 1);
 insert into crm_seller (id, version, disabled, created, provider_id, creator_id, code, description, parent_seller_id, trading_currency_id, trading_language_id) values (3, 0, false, CURRENT_TIMESTAMP, 1, 1, 'SELLER_FR', 'France Seller',1, 2, 2);
 
-DROP SEQUENCE IF EXISTS crm_seller_SEQ;
-CREATE SEQUENCE crm_seller_SEQ start with 4 increment by 1;
-
 /* Termination Reasons */
 insert into BILLING_SUBSCRIP_TERMIN_REASON (id, version, provider_id, code, description, apply_agreement, apply_reimbursment, apply_termination_charges) values (1, 0, 1, 'TERM_REASON_1', 'Agreement Reimbursement Charge', true, true, true);
 insert into BILLING_SUBSCRIP_TERMIN_REASON (id, version, provider_id, code, description, apply_agreement, apply_reimbursment, apply_termination_charges) values (2, 0, 1, 'TERM_REASON_2', 'Agreement', true, false, false);
 insert into BILLING_SUBSCRIP_TERMIN_REASON (id, version, provider_id, code, description, apply_agreement, apply_reimbursment, apply_termination_charges) values (3, 0, 1, 'TERM_REASON_3', 'Charge', false, true, false);
-
-DROP SEQUENCE IF EXISTS BILLING_SUB_TERM_REASON_SEQ;
-CREATE SEQUENCE BILLING_SUB_TERM_REASON_SEQ start with 4 increment by 1;
-
 
 
 /* AR_OCC_TEMPLATE  */
@@ -1076,7 +1000,6 @@ Insert into AR_OCC_TEMPLATE (ID,VERSION,DISABLED,CREATED,UPDATED,ACCOUNT_CODE,AC
 
 
 /* MEVEO_TIMER */
-
 INSERT INTO meveo_timer VALUES (1, 0, '*', '*', NULL, '*', 'RATING', 'ReRatingJob', '0', '*', 'Rerate_Job', '0', NULL, false, NULL, 'ReRatingJob', NULL, 1, '*', 1);
 INSERT INTO meveo_timer VALUES (2, 0, '*', '*', NULL, '*', 'IMPORT_HIERARCHY', 'ImportCustomersJob', '0', '*', 'Cust_Job', '0', NULL, false, NULL, 'ImportCustomersJob', NULL, 1, '*', 1);
 INSERT INTO meveo_timer VALUES (3, 0, '*', '*', NULL, '*', 'MEDIATION', 'MediationJob', '0', '*', 'M_Job', '0', NULL, false, NULL, 'MediationJob', NULL, 1, '*', 1);
@@ -1087,5 +1010,76 @@ INSERT INTO meveo_timer VALUES (7, 0, '*', '*', NULL, '*', 'INVOICING', 'XMLInvo
 INSERT INTO meveo_timer VALUES (8, 0, '*', '*', NULL, '*', 'INVOICING', 'PDFInvoiceGenerationJob', '0', '*', 'PDF_Job', '0', NULL, false, NULL, 'PDFInvoiceGenerationJob', NULL, 1, '*', 1);
 
 
+/* UPDATE SEQUENCE - FOR MYSQL, MARIADB, REMOVE THIS LAST PART OF FILE */
+
+DROP SEQUENCE IF EXISTS ADM_LANGUAGE_SEQ;
+CREATE SEQUENCE ADM_LANGUAGE_SEQ start with 33 increment by 1;
+
 DROP SEQUENCE IF EXISTS meveo_timer_seq;
 CREATE SEQUENCE meveo_timer_seq start with 8 increment by 1;
+
+DROP SEQUENCE IF EXISTS ADM_CURRENCY_SEQ;
+CREATE SEQUENCE ADM_CURRENCY_SEQ start with 169 increment by 1;
+
+DROP SEQUENCE IF EXISTS ADM_COUNTRY_SEQ;
+CREATE SEQUENCE ADM_COUNTRY_SEQ start with 238 increment by 1;
+
+DROP SEQUENCE IF EXISTS CRM_PROVIDER_SEQ;
+CREATE SEQUENCE CRM_PROVIDER_SEQ start with 2 increment by 1;
+
+DROP SEQUENCE IF EXISTS ADM_TITLE_SEQ;
+CREATE SEQUENCE ADM_TITLE_SEQ start with 38 increment by 1;
+
+DROP SEQUENCE IF EXISTS ADM_USER_SEQ;
+CREATE SEQUENCE ADM_USER_SEQ start with 3 increment by 1;
+
+DROP SEQUENCE IF EXISTS ADM_ROLE_SEQ;
+CREATE SEQUENCE ADM_ROLE_SEQ start with 3 increment by 1;
+
+DROP SEQUENCE IF EXISTS ADM_PERMISSION_SEQ;
+CREATE SEQUENCE ADM_PERMISSION_SEQ start with 13 increment by 1;
+
+DROP SEQUENCE IF EXISTS CAT_DAY_IN_YEAR_SEQ;
+CREATE SEQUENCE CAT_DAY_IN_YEAR_SEQ start with 1132 increment by 1;
+
+DROP SEQUENCE IF EXISTS CRM_CUSTOMER_CATEGORY_SEQ;
+CREATE SEQUENCE CRM_CUSTOMER_CATEGORY_SEQ start with 3 increment by 1;
+
+DROP SEQUENCE IF EXISTS CRM_CUSTOMER_BRAND_SEQ;
+CREATE SEQUENCE CRM_CUSTOMER_BRAND_SEQ start with 3 increment by 1;
+
+DROP SEQUENCE IF EXISTS billing_trading_language_SEQ;
+CREATE SEQUENCE billing_trading_language_SEQ start with 3 increment by 1;
+
+DROP SEQUENCE IF EXISTS billing_trading_currency_SEQ;
+CREATE SEQUENCE billing_trading_currency_SEQ start with 3 increment by 1;
+
+DROP SEQUENCE IF EXISTS cat_calendar_SEQ;
+CREATE SEQUENCE cat_calendar_SEQ start with 4 increment by 1;
+
+DROP SEQUENCE IF EXISTS billing_tax_SEQ;
+CREATE SEQUENCE billing_tax_SEQ start with 4 increment by 1;
+
+DROP SEQUENCE IF EXISTS billing_trading_country_SEQ;
+CREATE SEQUENCE billing_trading_country_SEQ start with 3 increment by 1;
+
+DROP SEQUENCE IF EXISTS BILLING_INVOICE_CAT_SEQ;
+CREATE SEQUENCE BILLING_INVOICE_CAT_SEQ start with 3 increment by 1;
+
+DROP SEQUENCE IF EXISTS BILLING_INVOICE_SUB_CAT_SEQ;
+CREATE SEQUENCE BILLING_INVOICE_SUB_CAT_SEQ start with 3 increment by 1;
+
+DROP SEQUENCE IF EXISTS BILLING_INV_SUB_CAT_COUNTRY_SEQ;
+CREATE SEQUENCE BILLING_INV_SUB_CAT_COUNTRY_SEQ start with 5 increment by 1;
+
+DROP SEQUENCE IF EXISTS BILLING_CYCLE_SEQ;
+CREATE SEQUENCE BILLING_CYCLE_SEQ start with 3 increment by 1;
+
+DROP SEQUENCE IF EXISTS CRM_PROVIDER_CONTACT_SEQ;
+CREATE SEQUENCE CRM_PROVIDER_CONTACT_SEQ start with 2 increment by 1;
+
+DROP SEQUENCE IF EXISTS crm_seller_SEQ;
+CREATE SEQUENCE crm_seller_SEQ start with 4 increment by 1;
+
+DROP SEQUENCE IF EXISTS BILLING_SUB_TERM_REASON_SEQ;
+CREATE SEQUENCE BILLING_SUB_TERM_REASON_SEQ start with 4 increment by 1;
