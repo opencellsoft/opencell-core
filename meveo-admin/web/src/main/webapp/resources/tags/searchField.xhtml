@@ -22,7 +22,7 @@
 </cc:interface>
 
 <cc:implementation>
-	<ui:fragment rendered="#{cc.isText(cc.attrs.field,cc.attrs.childField, true) and not cc.attrs.popup}">
+	<ui:fragment rendered="#{cc.isText(cc.attrs.field,cc.attrs.childField, true) and not cc.attrs.popup and not cc.isEntity(cc.attrs.field,true)}">
 		<p:panelGrid columns="2" rendered="#{cc.attrs.listValues == null}">
 			<p:outputLabel for="#{cc.attrs.field}_text" value="#{cc.attrs.label}" />
 			<p:inputText id="#{cc.attrs.field}_text" value="#{cc.filters[cc.attrs.field]}" size="#{cc.attrs.size}" disabled="#{cc.attrs.disabled}" rendered="#{cc.attrs.childField == null}"/>
