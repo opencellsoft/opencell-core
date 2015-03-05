@@ -918,7 +918,7 @@ insert into billing_trading_country (id, version, disabled, created, provider_id
 insert into billing_trading_country (id, version, disabled, created, provider_id, creator_id, country_id, pr_description) values (2, 0, false, CURRENT_TIMESTAMP, 1, 1, 70, 'France');
 
 /* Monthly Calendar */
-insert into cat_calendar (cal_type,id, version, disabled, created, provider_id, creator_id, name, description) values ('YEARLY',1, 0, false, CURRENT_TIMESTAMP, 1, 1, 'MONTHLY', 'Monthly Calendar');
+insert into cat_calendar (cal_type,id, version, disabled, created, provider_id, creator_id, code, description) values ('YEARLY',1, 0, false, CURRENT_TIMESTAMP, 1, 1, 'MONTHLY', 'Monthly Calendar');
 insert into cat_calendar_days (calendar_id, day_id) values (1, 1);
 insert into cat_calendar_days (calendar_id, day_id) values (1, 101);
 insert into cat_calendar_days (calendar_id, day_id) values (1, 201);
@@ -932,8 +932,8 @@ insert into cat_calendar_days (calendar_id, day_id) values (1, 901);
 insert into cat_calendar_days (calendar_id, day_id) values (1, 1001);
 insert into cat_calendar_days (calendar_id, day_id) values (1, 1101);
 
-insert into cat_calendar (cal_type,id, version, disabled, created, provider_id, creator_id, name, description,PERIOD_LENGTH, NB_PERIODS) values ('PERIOD',2, 0, false, CURRENT_TIMESTAMP, 1, 1, 'One period', 'One period Calendar',7,1);
-insert into cat_calendar (cal_type,id, version, disabled, created, provider_id, creator_id, name, description,PERIOD_LENGTH, NB_PERIODS) values ('PERIOD',3, 0, false, CURRENT_TIMESTAMP, 1, 1, 'Multi period', 'Multi period Calendar',7,6);
+insert into cat_calendar (cal_type,id, version, disabled, created, provider_id, creator_id, code, description,PERIOD_LENGTH, NB_PERIODS) values ('PERIOD',2, 0, false, CURRENT_TIMESTAMP, 1, 1, 'One period', 'One period Calendar',7,1);
+insert into cat_calendar (cal_type,id, version, disabled, created, provider_id, creator_id, code, description,PERIOD_LENGTH, NB_PERIODS) values ('PERIOD',3, 0, false, CURRENT_TIMESTAMP, 1, 1, 'Multi period', 'Multi period Calendar',7,6);
 
 /* Tax */
 insert into billing_tax (id, version, disabled, created, provider_id, creator_id, code, description, tax_percentage) values (1, 0, false, CURRENT_TIMESTAMP, 1, 1, 'TAX_00', '0 Percent Tax', 0);
