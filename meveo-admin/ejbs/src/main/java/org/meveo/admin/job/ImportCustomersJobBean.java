@@ -36,6 +36,9 @@ import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.service.admin.impl.CustomerImportHistoService;
 import org.meveo.service.admin.impl.SellerService;
+import org.meveo.service.admin.impl.TradingCurrencyService;
+import org.meveo.service.billing.impl.TradingCountryService;
+import org.meveo.service.billing.impl.TradingLanguageService;
 import org.meveo.service.crm.impl.CustomerImportService;
 import org.meveo.service.crm.impl.CustomerService;
 import org.meveo.service.payments.impl.CustomerAccountService;
@@ -46,6 +49,15 @@ public class ImportCustomersJobBean {
 
 	@Inject
 	private Logger log;
+
+	@Inject
+	private TradingCountryService tradingCountryService;
+
+	@Inject
+	private TradingCurrencyService tradingCurrencyService;
+
+	@Inject
+	private TradingLanguageService tradingLanguageService;
 
 	@Inject
 	private CustomerImportHistoService customerImportHistoService;
@@ -91,20 +103,14 @@ public class ImportCustomersJobBean {
 	public void execute(JobExecutionResultImpl result, User currentUser) {
 		Provider provider = currentUser.getProvider();
 
-		String importDir = param
-				.getProperty("providers.rootDir", "/tmp/meveo/")
-				+ File.separator
-				+ provider.getCode()
-				+ File.separator
-				+ "imports" + File.separator + "customers" + File.separator;
+		String importDir = param.getProperty("providers.rootDir", "/tmp/meveo/") + File.separator + provider.getCode()
+				+ File.separator + "imports" + File.separator + "customers" + File.separator;
 		String dirIN = importDir + "input";
 		log.info("dirIN=" + dirIN);
 		String dirOK = importDir + "output";
 		String dirKO = importDir + "reject";
-		String prefix = param.getProperty(
-				"connectorCRM.importCustomers.prefix", "CUSTOMER_");
-		String ext = param.getProperty(
-				"connectorCRM.importCustomers.extension", "xml");
+		String prefix = param.getProperty("connectorCRM.importCustomers.prefix", "CUSTOMER_");
+		String ext = param.getProperty("connectorCRM.importCustomers.extension", "xml");
 
 		File dir = new File(dirIN);
 		if (!dir.exists()) {
@@ -159,8 +165,7 @@ public class ImportCustomersJobBean {
 		return files;
 	}
 
-	public void importFile(File file, String fileName, User currentUser)
-			throws JAXBException, Exception {
+	public void importFile(File file, String fileName, User currentUser) throws JAXBException, Exception {
 
 		log.info("start import file :" + fileName);
 
@@ -220,28 +225,41 @@ public class ImportCustomersJobBean {
 
 				if (seller != null) {
 					nbSellersIgnored++;
-					log.info("File:" + fileName + ", typeEntity:Seller, index:"
-							+ i + ", code:" + sell.getCode()
+					log.info("File:" + fileName + ", typeEntity:Seller, index:" + i + ", code:" + sell.getCode()
 							+ ", status:Ignored");
+				} else {
+					nbSellersCreated++;
+					log.info("File:" + fileName + ", typeEntity:Seller, index:" + i + ", code:" + sell.getCode()
+							+ ", status:Created");
+					
+					seller = new org.meveo.model.admin.Seller();
+					seller.setCode(sell.getCode());
+					seller.setDescription(sell.getDescription());
+					seller.setTradingCountry(tradingCountryService.findByTradingCountryCode(
+							sell.getTradingCountryCode(), provider));
+					seller.setTradingCurrency(tradingCurrencyService.findByTradingCurrencyCode(
+							sell.getTradingCurrencyCode(), provider));
+					seller.setTradingLanguage(tradingLanguageService.findByTradingLanguageCode(
+							sell.getTradingLanguageCode(), provider));
+					seller.setProvider(provider);
+					sellerService.create(seller, currentUser, provider);
 				}
 
 				if (sellerCheckError(sell)) {
 					nbSellersError++;
-					log.info("File:" + fileName + ", typeEntity:Seller, index:"
-							+ i + ", code:" + sell.getCode() + ", status:Error");
+					log.info("File:" + fileName + ", typeEntity:Seller, index:" + i + ", code:" + sell.getCode()
+							+ ", status:Error");
 					continue;
 				}
 
-				for (org.meveo.model.jaxb.customer.Customer cust : sell
-						.getCustomers().getCustomer()) {
+				for (org.meveo.model.jaxb.customer.Customer cust : sell.getCustomers().getCustomer()) {
 					createCustomer(fileName, currentUser, seller, sell, cust, i);
 				}
 			} catch (Exception e) {
-				createSellerError(sell, ExceptionUtils.getRootCause(e)
-						.getMessage());
+				createSellerError(sell, ExceptionUtils.getRootCause(e).getMessage());
 				nbSellersError++;
-				log.info("File:" + fileName + ", typeEntity:Seller, index:" + i
-						+ ", code:" + sell.getCode() + ", status:Error");
+				log.info("File:" + fileName + ", typeEntity:Seller, index:" + i + ", code:" + sell.getCode()
+						+ ", status:Error");
 				log.error(e.getMessage());
 			}
 		}
@@ -252,17 +270,15 @@ public class ImportCustomersJobBean {
 	}
 
 	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
-	private void createCustomer(String fileName, User currentUser,
-			org.meveo.model.admin.Seller seller,
-			org.meveo.model.jaxb.customer.Seller sell,
-			org.meveo.model.jaxb.customer.Customer cust, int i) {
+	private void createCustomer(String fileName, User currentUser, org.meveo.model.admin.Seller seller,
+			org.meveo.model.jaxb.customer.Seller sell, org.meveo.model.jaxb.customer.Customer cust, int i) {
 		Provider provider = currentUser.getProvider();
 		nbSellers++;
 		int j = 0;
 		Customer customer = null;
 
 		try {
-			log.debug("customer found  code:" + cust.getCode());
+			log.debug("customer found code={}", cust.getCode());
 			try {
 				customer = customerService.findByCode(cust.getCode(), provider);
 			} catch (Exception e) {
@@ -274,86 +290,71 @@ public class ImportCustomersJobBean {
 					createCustomerError(sell, cust,
 							"The customer already exists but is attached to a different seller.");
 					nbCustomersError++;
-					log.info("File:" + fileName
-							+ ", typeEntity:Customer, index:" + i + ", code:"
-							+ cust.getCode() + ", status:Error");
+					log.info("File:" + fileName + ", typeEntity:Customer, index:" + i + ", code:" + cust.getCode()
+							+ ", status:Error");
 					return;
 				}
 
-				log.info("File:" + fileName + ", typeEntity:Customer, index:"
-						+ i + ", code:" + cust.getCode() + ", status:Ignored");
+				log.info("File:" + fileName + ", typeEntity:Customer, index:" + i + ", code:" + cust.getCode()
+						+ ", status:Ignored");
 				nbCustomersIgnored++;
 				return;
 			}
 
 			if (customerCheckError(sell, cust)) {
 				nbCustomersError++;
-				log.info("File:" + fileName + ", typeEntity:Customer, index:"
-						+ i + ", code:" + cust.getCode() + ", status:Error");
+				log.info("File:" + fileName + ", typeEntity:Customer, index:" + i + ", code:" + cust.getCode()
+						+ ", status:Error");
 				return;
 			}
 
-			customer = customerImportService.createCustomer(currentUser,
-					seller, sell, cust);
-
-			if (seller == null) {
-				nbSellersCreated++;
-				log.info("File:" + fileName + ", typeEntity:Seller, index:" + i
-						+ ", code:" + sell.getCode() + ", status:Created");
-			}
+			customer = customerImportService.createCustomer(currentUser, seller, sell, cust);
 
 			if (customer == null) {
 				nbCustomersCreated++;
-				log.info("File:" + fileName + ", typeEntity:Customer, index:"
-						+ i + ", code:" + cust.getCode() + ", status:Created");
+				log.info("File:" + fileName + ", typeEntity:Customer, index:" + i + ", code:" + cust.getCode()
+						+ ", status:Created");
 			}
 
-			for (org.meveo.model.jaxb.customer.CustomerAccount custAcc : cust
-					.getCustomerAccounts().getCustomerAccount()) {
+			for (org.meveo.model.jaxb.customer.CustomerAccount custAcc : cust.getCustomerAccounts()
+					.getCustomerAccount()) {
 				j++;
-				createCustomerAccount(fileName, currentUser, customer, seller,
-						custAcc, cust, sell, i, j);
+				createCustomerAccount(fileName, currentUser, customer, seller, custAcc, cust, sell, i, j);
 			}
 		} catch (Exception e) {
-			createCustomerError(sell, cust, ExceptionUtils.getRootCause(e)
-					.getMessage());
+			createCustomerError(sell, cust, ExceptionUtils.getRootCause(e).getMessage());
 			nbCustomersError++;
-			log.info("File:" + fileName + ", typeEntity:Customer, index:" + i
-					+ ", code:" + cust.getCode() + ", status:Error");
+			log.info("File:" + fileName + ", typeEntity:Customer, index:" + i + ", code:" + cust.getCode()
+					+ ", status:Error");
 			log.error(e.getMessage());
 		}
 	}
 
 	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
-	private void createCustomerAccount(String fileName, User currentUser,
-			Customer customer, org.meveo.model.admin.Seller seller,
-			org.meveo.model.jaxb.customer.CustomerAccount custAcc,
-			org.meveo.model.jaxb.customer.Customer cust,
-			org.meveo.model.jaxb.customer.Seller sell, int i, int j) {
+	private void createCustomerAccount(String fileName, User currentUser, Customer customer,
+			org.meveo.model.admin.Seller seller, org.meveo.model.jaxb.customer.CustomerAccount custAcc,
+			org.meveo.model.jaxb.customer.Customer cust, org.meveo.model.jaxb.customer.Seller sell, int i, int j) {
 		nbCustomerAccounts++;
 		CustomerAccount customerAccountTmp = null;
 
 		try {
-			customerAccountTmp = customerAccountService.findByCode(
-					custAcc.getCode(), currentUser.getProvider());
+			customerAccountTmp = customerAccountService.findByCode(custAcc.getCode(), currentUser.getProvider());
 		} catch (Exception e) {
 			log.warn(e.getMessage());
 		}
 
 		if (customerAccountTmp != null) {
-			if (customerAccountTmp.getCustomer().getCode()
-					.equals(cust.getCode())) {
+			if (customerAccountTmp.getCustomer().getCode().equals(cust.getCode())) {
 				nbCustomerAccountsIgnored++;
 				nbCustomersIgnored++;
-				log.info("File:" + fileName
-						+ ", typeEntity:CustomerAccount,  indexCustomer:" + i
-						+ ", index:" + j + " code:" + custAcc.getCode()
-						+ ", status:Ignored");
+				log.info("File:" + fileName + ", typeEntity:CustomerAccount,  indexCustomer:" + i + ", index:" + j
+						+ " code:" + custAcc.getCode() + ", status:Ignored");
 			} else {
 				nbCustomerAccountsError++;
 				createCustomerAccountError(sell, cust, custAcc,
 						"A customer account with same code exists for another customer");
 			}
+			
 			return;
 		}
 
@@ -361,42 +362,32 @@ public class ImportCustomersJobBean {
 
 		if (customerAccountCheckError(cust, sell, custAcc)) {
 			nbCustomerAccountsError++;
-			log.info("File:" + fileName
-					+ ", typeEntity:CustomerAccount, indexCustomer:" + i
-					+ ", index:" + j + " Code:" + custAcc.getCode()
-					+ ", status:Error");
+			log.info("File:" + fileName + ", typeEntity:CustomerAccount, indexCustomer:" + i + ", index:" + j
+					+ " Code:" + custAcc.getCode() + ", status:Error");
 			return;
 		}
 
 		if (customerAccountCheckWarning(cust, sell, custAcc)) {
 			nbCustomerAccountsWarning++;
-			log.info("File:" + fileName
-					+ ", typeEntity:CustomerAccount,  indexCustomer:" + i
-					+ ", index:" + j + " Code:" + custAcc.getCode()
-					+ ", status:Warning");
+			log.info("File:" + fileName + ", typeEntity:CustomerAccount,  indexCustomer:" + i + ", index:" + j
+					+ " Code:" + custAcc.getCode() + ", status:Warning");
 		}
 
-		customerImportService.createCustomerAccount(currentUser, customer,
-				seller, custAcc, cust, sell);
+		customerImportService.createCustomerAccount(currentUser, customer, seller, custAcc, cust, sell);
 		nbCustomerAccountsCreated++;
 
-		log.info("File:" + fileName
-				+ ", typeEntity:CustomerAccount,  indexCustomer:" + i
-				+ ", index:" + j + " ExternalRef1:" + custAcc.getExternalRef1()
-				+ ", status:Created");
+		log.info("File:" + fileName + ", typeEntity:CustomerAccount,  indexCustomer:" + i + ", index:" + j
+				+ " ExternalRef1:" + custAcc.getExternalRef1() + ", status:Created");
 
 	}
 
 	private void createHistory(User currentUser) throws Exception {
 		Provider provider = currentUser.getProvider();
 		customerImportHisto.setNbCustomerAccounts(nbCustomerAccounts);
-		customerImportHisto
-				.setNbCustomerAccountsCreated(nbCustomerAccountsCreated);
+		customerImportHisto.setNbCustomerAccountsCreated(nbCustomerAccountsCreated);
 		customerImportHisto.setNbCustomerAccountsError(nbCustomerAccountsError);
-		customerImportHisto
-				.setNbCustomerAccountsIgnored(nbCustomerAccountsIgnored);
-		customerImportHisto
-				.setNbCustomerAccountsWarning(nbCustomerAccountsWarning);
+		customerImportHisto.setNbCustomerAccountsIgnored(nbCustomerAccountsIgnored);
+		customerImportHisto.setNbCustomerAccountsWarning(nbCustomerAccountsWarning);
 		customerImportHisto.setNbCustomers(nbCustomers);
 		customerImportHisto.setNbCustomersCreated(nbCustomersCreated);
 		customerImportHisto.setNbCustomersError(nbCustomersError);
@@ -408,28 +399,20 @@ public class ImportCustomersJobBean {
 		customerImportHisto.setNbSellersIgnored(nbSellersIgnored);
 		customerImportHisto.setNbSellersWarning(nbSellersWarning);
 		customerImportHisto.setProvider(provider);
-		customerImportHistoService.create(customerImportHisto, currentUser,
-				provider);
+		customerImportHistoService.create(customerImportHisto, currentUser, provider);
 	}
 
-	private void generateReport(String fileName, Provider provider)
-			throws Exception {
-		String importDir = param
-				.getProperty("providers.rootDir", "/tmp/meveo/")
-				+ File.separator
-				+ provider.getCode()
-				+ File.separator
-				+ "imports" + File.separator + "customers" + File.separator;
+	private void generateReport(String fileName, Provider provider) throws Exception {
+		String importDir = param.getProperty("providers.rootDir", "/tmp/meveo/") + File.separator + provider.getCode()
+				+ File.separator + "imports" + File.separator + "customers" + File.separator;
 
 		if (sellersWarning.getWarnings() != null) {
-			String warningDir = importDir + "output" + File.separator
-					+ "warnings";
+			String warningDir = importDir + "output" + File.separator + "warnings";
 			File dir = new File(warningDir);
 			if (!dir.exists()) {
 				dir.mkdirs();
 			}
-			JAXBUtils.marshaller(sellersWarning, new File(warningDir
-					+ File.separator + "WARN_" + fileName));
+			JAXBUtils.marshaller(sellersWarning, new File(warningDir + File.separator + "WARN_" + fileName));
 		}
 
 		if (sellersError.getErrors() != null) {
@@ -439,21 +422,17 @@ public class ImportCustomersJobBean {
 			if (!dir.exists()) {
 				dir.mkdirs();
 			}
-			JAXBUtils.marshaller(sellersError, new File(errorDir
-					+ File.separator + "ERR_" + fileName));
+			JAXBUtils.marshaller(sellersError, new File(errorDir + File.separator + "ERR_" + fileName));
 		}
 	}
 
-	private void createSellerError(org.meveo.model.jaxb.customer.Seller sell,
-			String cause) {
-		String generateFullCrmReject = param.getProperty(
-				"connectorCRM.generateFullCrmReject", "true");
+	private void createSellerError(org.meveo.model.jaxb.customer.Seller sell, String cause) {
+		String generateFullCrmReject = param.getProperty("connectorCRM.generateFullCrmReject", "true");
 		ErrorSeller errorSeller = new ErrorSeller();
 		errorSeller.setCause(cause);
 		errorSeller.setCode(sell.getCode());
 
-		if (!sellersError.getSeller().contains(sell)
-				&& "true".equalsIgnoreCase(generateFullCrmReject)) {
+		if (!sellersError.getSeller().contains(sell) && "true".equalsIgnoreCase(generateFullCrmReject)) {
 			sellersError.getSeller().add(sell);
 		}
 
@@ -466,14 +445,12 @@ public class ImportCustomersJobBean {
 
 	private void createCustomerError(org.meveo.model.jaxb.customer.Seller sell,
 			org.meveo.model.jaxb.customer.Customer cust, String cause) {
-		String generateFullCrmReject = param.getProperty(
-				"connectorCRM.generateFullCrmReject", "true");
+		String generateFullCrmReject = param.getProperty("connectorCRM.generateFullCrmReject", "true");
 		ErrorCustomer errorCustomer = new ErrorCustomer();
 		errorCustomer.setCause(cause);
 		errorCustomer.setCode(cust.getCode());
 
-		if (!sellersError.getSeller().contains(sell)
-				&& "true".equalsIgnoreCase(generateFullCrmReject)) {
+		if (!sellersError.getSeller().contains(sell) && "true".equalsIgnoreCase(generateFullCrmReject)) {
 			sellersError.getSeller().add(sell);
 		}
 
@@ -484,16 +461,13 @@ public class ImportCustomersJobBean {
 		sellersError.getErrors().getErrorCustomer().add(errorCustomer);
 	}
 
-	private void createSellerWarning(org.meveo.model.jaxb.customer.Seller sell,
-			String cause) {
-		String generateFullCrmReject = param.getProperty(
-				"connectorCRM.generateFullCrmReject", "true");
+	private void createSellerWarning(org.meveo.model.jaxb.customer.Seller sell, String cause) {
+		String generateFullCrmReject = param.getProperty("connectorCRM.generateFullCrmReject", "true");
 		WarningSeller warningSeller = new WarningSeller();
 		warningSeller.setCause(cause);
 		warningSeller.setCode(sell == null ? "" : sell.getCode());
 
-		if (!sellersWarning.getSeller().contains(sell)
-				&& "true".equalsIgnoreCase(generateFullCrmReject)
+		if (!sellersWarning.getSeller().contains(sell) && "true".equalsIgnoreCase(generateFullCrmReject)
 				&& sell != null) {
 			sellersWarning.getSeller().add(sell);
 		}
@@ -505,15 +479,12 @@ public class ImportCustomersJobBean {
 		sellersWarning.getWarnings().getWarningSeller().add(warningSeller);
 	}
 
-	private void createCustomerAccountError(
-			org.meveo.model.jaxb.customer.Seller sell,
-			org.meveo.model.jaxb.customer.Customer cust,
-			org.meveo.model.jaxb.customer.CustomerAccount custAccount,
+	private void createCustomerAccountError(org.meveo.model.jaxb.customer.Seller sell,
+			org.meveo.model.jaxb.customer.Customer cust, org.meveo.model.jaxb.customer.CustomerAccount custAccount,
 			String cause) {
 		log.error("Seller={}, customer={}, customerAccount={}, cause={}",
 				new Object[] { sell, cust, custAccount, cause });
-		String generateFullCrmReject = param.getProperty(
-				"connectorCRM.generateFullCrmReject", "true");
+		String generateFullCrmReject = param.getProperty("connectorCRM.generateFullCrmReject", "true");
 		ErrorCustomerAccount errorCustomerAccount = new ErrorCustomerAccount();
 		errorCustomerAccount.setCause(cause);
 		errorCustomerAccount.setCode(custAccount.getCode());
@@ -523,31 +494,25 @@ public class ImportCustomersJobBean {
 			sellersError.setErrors(new Errors());
 		}
 
-		if (!sellersError.getSeller().contains(sell)
-				&& "true".equalsIgnoreCase(generateFullCrmReject)) {
+		if (!sellersError.getSeller().contains(sell) && "true".equalsIgnoreCase(generateFullCrmReject)) {
 			sellersError.getSeller().add(sell);
 		}
 
-		sellersError.getErrors().getErrorCustomerAccount()
-				.add(errorCustomerAccount);
+		sellersError.getErrors().getErrorCustomerAccount().add(errorCustomerAccount);
 	}
 
-	private void createCustomerAccountWarning(
-			org.meveo.model.jaxb.customer.Seller sell,
-			org.meveo.model.jaxb.customer.Customer cust,
-			org.meveo.model.jaxb.customer.CustomerAccount custAccount,
+	private void createCustomerAccountWarning(org.meveo.model.jaxb.customer.Seller sell,
+			org.meveo.model.jaxb.customer.Customer cust, org.meveo.model.jaxb.customer.CustomerAccount custAccount,
 			String cause) {
 		log.warn("Seller={}, customer={}, customerAccount={}, cause={}",
 				new Object[] { sell, cust, custAccount, cause });
-		String generateFullCrmReject = param.getProperty(
-				"connectorCRM.generateFullCrmReject", "true");
+		String generateFullCrmReject = param.getProperty("connectorCRM.generateFullCrmReject", "true");
 		WarningCustomerAccount warningCustomerAccount = new WarningCustomerAccount();
 		warningCustomerAccount.setCause(cause);
 		warningCustomerAccount.setCode(custAccount.getCode());
 		warningCustomerAccount.setCustomerCode(cust.getCode());
 
-		if (!sellersWarning.getSeller().contains(sell)
-				&& "true".equalsIgnoreCase(generateFullCrmReject)) {
+		if (!sellersWarning.getSeller().contains(sell) && "true".equalsIgnoreCase(generateFullCrmReject)) {
 			sellersWarning.getSeller().add(sell);
 		}
 
@@ -555,8 +520,7 @@ public class ImportCustomersJobBean {
 			sellersWarning.setWarnings(new Warnings());
 		}
 
-		sellersWarning.getWarnings().getWarningCustomerAccount()
-				.add(warningCustomerAccount);
+		sellersWarning.getWarnings().getWarningCustomerAccount().add(warningCustomerAccount);
 	}
 
 	private boolean sellerCheckError(org.meveo.model.jaxb.customer.Seller sell) {
@@ -580,8 +544,7 @@ public class ImportCustomersJobBean {
 			return true;
 		}
 
-		if (sell.getCustomers().getCustomer() == null
-				|| sell.getCustomers().getCustomer().isEmpty()) {
+		if (sell.getCustomers().getCustomer() == null || sell.getCustomers().getCustomer().isEmpty()) {
 			createSellerError(sell, "No customer.");
 			return true;
 		}
@@ -589,8 +552,7 @@ public class ImportCustomersJobBean {
 		return false;
 	}
 
-	private boolean customerCheckError(
-			org.meveo.model.jaxb.customer.Seller sell,
+	private boolean customerCheckError(org.meveo.model.jaxb.customer.Seller sell,
 			org.meveo.model.jaxb.customer.Customer cust) {
 
 		/*
@@ -611,10 +573,8 @@ public class ImportCustomersJobBean {
 		return false;
 	}
 
-	private boolean customerAccountCheckError(
-			org.meveo.model.jaxb.customer.Customer cust,
-			org.meveo.model.jaxb.customer.Seller sell,
-			org.meveo.model.jaxb.customer.CustomerAccount custAcc) {
+	private boolean customerAccountCheckError(org.meveo.model.jaxb.customer.Customer cust,
+			org.meveo.model.jaxb.customer.Seller sell, org.meveo.model.jaxb.customer.CustomerAccount custAcc) {
 		/*
 		 * if (StringUtils.isBlank(custAcc.getPaymentMethod()) || ("DIRECTDEBIT"
 		 * + "CHECK" + "TIP" +
@@ -638,21 +598,17 @@ public class ImportCustomersJobBean {
 		return false;
 	}
 
-	private boolean customerAccountCheckWarning(
-			org.meveo.model.jaxb.customer.Customer cust,
-			org.meveo.model.jaxb.customer.Seller sell,
-			org.meveo.model.jaxb.customer.CustomerAccount custAcc) {
+	private boolean customerAccountCheckWarning(org.meveo.model.jaxb.customer.Customer cust,
+			org.meveo.model.jaxb.customer.Seller sell, org.meveo.model.jaxb.customer.CustomerAccount custAcc) {
 		boolean isWarning = false;
 
-		if ("PRO".equals(cust.getCustomerCategory())
-				&& StringUtils.isBlank(custAcc.getCompany())) {
+		if ("PRO".equals(cust.getCustomerCategory()) && StringUtils.isBlank(custAcc.getCompany())) {
 			createCustomerAccountWarning(sell, cust, custAcc, "Company is null");
 			isWarning = true;
 		}
 
 		if ((cust.getCustomerCategory().startsWith("PART_"))
-				&& (custAcc.getName() == null || StringUtils.isBlank(custAcc
-						.getName().getFirstname()))) {
+				&& (custAcc.getName() == null || StringUtils.isBlank(custAcc.getName().getFirstname()))) {
 			createCustomerAccountWarning(sell, cust, custAcc, "Name is null");
 			isWarning = true;
 		}
