@@ -38,7 +38,7 @@ public class BillingCycleApi extends BaseApi {
 				throw new EntityAlreadyExistsException(BillingCycle.class, postData.getCode());
 			}
 
-			Calendar calendar = calendarService.findByName(postData.getCalendar(), provider);
+			Calendar calendar = calendarService.findByCode(postData.getCalendar(), provider);
 			if (calendar == null) {
 				throw new EntityDoesNotExistsException(Calendar.class, postData.getCalendar());
 			}
@@ -85,7 +85,7 @@ public class BillingCycleApi extends BaseApi {
 				throw new EntityDoesNotExistsException(BillingCycle.class, postData.getCode());
 			}
 
-			Calendar calendar = calendarService.findByName(postData.getCalendar(), provider);
+			Calendar calendar = calendarService.findByCode(postData.getCalendar(), provider);
 			if (calendar == null) {
 				throw new EntityDoesNotExistsException(Calendar.class, postData.getCalendar());
 			}

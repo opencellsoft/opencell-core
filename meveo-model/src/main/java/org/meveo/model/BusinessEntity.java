@@ -79,22 +79,32 @@ public class BusinessEntity extends AuditableEntity {
 		return result;
 	}
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		BusinessEntity other = (BusinessEntity) obj;
-		if (code == null) {
-			if (other.code != null)
-				return false;
-		} else if (!code.equals(other.code))
-			return false;
-		return true;
-	}
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        } else if (!(obj instanceof BusinessEntity)) { // Fails with proxed objects: getClass() != obj.getClass()){
+            return false;
+        }
+
+        BusinessEntity other = (BusinessEntity) obj;
+
+        if (getId() != null && other.getId() != null && getId() == other.getId()) {
+            // return true;
+        }
+
+        if (code == null) {
+            if (other.getCode() != null) {
+                return false;
+            }
+        } else if (!code.equals(other.getCode())) {
+            return false;
+        }
+        return true;
+    }
 
 	@Override
 	public String toString() {

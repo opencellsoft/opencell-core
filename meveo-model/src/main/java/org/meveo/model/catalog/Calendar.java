@@ -27,25 +27,17 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
-import javax.validation.constraints.Size;
 
-import org.meveo.model.AuditableEntity;
+import org.meveo.model.BusinessEntity;
 
 @Entity
-@Table(name = "CAT_CALENDAR", uniqueConstraints = @UniqueConstraint(columnNames = { "NAME", "PROVIDER_ID" }))
+@Table(name = "CAT_CALENDAR", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE", "PROVIDER_ID" }))
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "CAL_TYPE")
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "CAT_CALENDAR_SEQ")
-public abstract class Calendar extends AuditableEntity {
+public abstract class Calendar extends BusinessEntity {
 
     private static final long serialVersionUID = 1L;
-
-    @Column(name = "NAME", length = 20)
-    @Size(max = 20)
-    private String name;
-
-    @Column(name = "DESCRIPTION")
-    private String description;
 
     @Column(name = "CAL_TYPE", insertable = false, updatable = false)
     private String calendarType;
@@ -53,14 +45,6 @@ public abstract class Calendar extends AuditableEntity {
     @Transient
     private Date initDate;
     
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
     /**
      * @param date Current date.
      * @return Next calendar date.
@@ -79,40 +63,6 @@ public abstract class Calendar extends AuditableEntity {
      */
     public boolean truncDateTime() {
         return true;
-    }
-
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = super.hashCode();
-        result = prime * result + ((name == null) ? 0 : name.hashCode());
-        return result;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (obj == null)
-            return false;
-        if (this == obj)
-            return true;
-
-        Calendar other = (Calendar) obj;
-        if (other.getId() == getId())
-            return true;
-        if (name == null) {
-            if (other.name != null)
-                return false;
-        } else if (!name.equals(other.name))
-            return false;
-        return true;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public String getDescription() {
-        return description;
     }
 
     public void setCalendarType(String calendarType) {

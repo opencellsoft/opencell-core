@@ -42,7 +42,7 @@ public class CounterTemplateApi extends BaseApi {
 				throw new EntityAlreadyExistsException(CounterTemplate.class,
 						postData.getCode());
 			}
-			Calendar calendar = calendarService.findByName(
+			Calendar calendar = calendarService.findByCode(
 					postData.getCalendar(), provider);
 			if (calendar == null) {
 				throw new EntityDoesNotExistsException(Calendar.class,
@@ -95,7 +95,7 @@ public class CounterTemplateApi extends BaseApi {
 				throw new EntityDoesNotExistsException(CounterTemplate.class,
 						postData.getCode());
 			}
-			Calendar calendar = calendarService.findByName(
+			Calendar calendar = calendarService.findByCode(
 					postData.getCalendar(), provider);
 			if (calendar == null) {
 				throw new EntityDoesNotExistsException(Calendar.class,

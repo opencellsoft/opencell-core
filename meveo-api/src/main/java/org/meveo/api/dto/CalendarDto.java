@@ -11,6 +11,9 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.model.catalog.Calendar;
 import org.meveo.model.catalog.CalendarDaily;
+import org.meveo.model.catalog.CalendarDateInterval;
+import org.meveo.model.catalog.CalendarInterval;
+import org.meveo.model.catalog.CalendarJoin;
 import org.meveo.model.catalog.CalendarPeriod;
 import org.meveo.model.catalog.CalendarYearly;
 import org.meveo.model.catalog.DayInYear;
@@ -26,7 +29,7 @@ public class CalendarDto extends BaseDto {
 	private static final long serialVersionUID = 8269245242022483636L;
 
 	@XmlAttribute(required = true)
-	private String name;
+	private String code;
 
 	private String description;
 
@@ -39,15 +42,25 @@ public class CalendarDto extends BaseDto {
 
 	private Integer periodLength;
 
-	private String periodUnit;
+	private Integer periodUnit;
 
 	private Integer nbPeriods;
 
+	private String joinCalendar1Code;
+	
+	private String joinCalendar2Code;
+
+    private String joinType;
+
+    private String intervalType;    
+
+    private List<CalendarDateIntervalDto> intervals;
+	
 	public CalendarDto() {
 	}
 
 	public CalendarDto(Calendar e) {
-		name = e.getName();
+		code = e.getCode();
 		description = e.getDescription();
 		calendarType = e.getCalendarType();
 
@@ -71,17 +84,35 @@ public class CalendarDto extends BaseDto {
 		} else if (e instanceof CalendarPeriod) {
 			CalendarPeriod calendar = (CalendarPeriod) e;
 			periodLength = calendar.getPeriodLength();
-			periodUnit = "day";
+			periodUnit = calendar.getPeriodUnit();
 			nbPeriods = calendar.getNbPeriods();
-		}
+		
+		} else if (e instanceof CalendarInterval) {
+		    CalendarInterval calendar = (CalendarInterval) e;
+		    intervalType = calendar.getIntervalType().name();
+		    
+		    if (calendar.getIntervals() != null && calendar.getIntervals().size() > 0) {
+                intervals = new ArrayList<CalendarDateIntervalDto>();
+                for (CalendarDateInterval d : calendar.getIntervals()) {
+                    intervals.add(new CalendarDateIntervalDto(d));
+                }
+            }
+            
+		} else if (e instanceof CalendarJoin) {
+		    CalendarJoin calendar = (CalendarJoin) e;
+            
+		    joinCalendar1Code = calendar.getJoinCalendar1().getCode();
+		    joinCalendar2Code = calendar.getJoinCalendar2().getCode();
+		    joinType =calendar.getJoinType().name();
+        }
 	}
 
-	public String getName() {
-		return name;
+	public String getCode() {
+		return code;
 	}
 
-	public void setName(String name) {
-		this.name = name;
+	public void setCode(String code) {
+		this.code = code;
 	}
 
 	public String getDescription() {
@@ -100,18 +131,23 @@ public class CalendarDto extends BaseDto {
 		this.calendarType = calendarType;
 	}
 
-	@Override
-	public String toString() {
-		return "CalendarDto [name=" + name + ", description=" + description + ", calendarType=" + calendarType
-				+ ", days=" + days + ", hours=" + hours + ", periodLength=" + periodLength + ", periodUnit="
-				+ periodUnit + ", nbPeriods=" + nbPeriods + "]";
-	}
+    @Override
+    public String toString() {
+        final int maxLen = 10;
+        return "CalendarDto [code=" + code + ", description=" + description + ", calendarType=" + calendarType + ", days="
+                + (days != null ? days.subList(0, Math.min(days.size(), maxLen)) : null) + ", hours=" + (hours != null ? hours.subList(0, Math.min(hours.size(), maxLen)) : null)
+                + ", periodLength=" + periodLength + ", periodUnit=" + periodUnit + ", nbPeriods=" + nbPeriods + ", joinType=" + joinType + ", joinCalendar1Code="
+                + joinCalendar1Code + ", joinCalendar2Code=" + joinCalendar2Code + ", intervalType=" + intervalType + ", intervals="
+                + (intervals != null ? intervals.subList(0, Math.min(intervals.size(), maxLen)) : null) + "]";
+    }
 
 	public List<DayInYearDto> getDays() {
 		return days;
 	}
 
-	public void setDays(List<DayInYearDto> days) {
+
+
+    public void setDays(List<DayInYearDto> days) {
 		this.days = days;
 	}
 
@@ -131,11 +167,11 @@ public class CalendarDto extends BaseDto {
 		this.periodLength = periodLength;
 	}
 
-	public String getPeriodUnit() {
+	public Integer getPeriodUnit() {
 		return periodUnit;
 	}
 
-	public void setPeriodUnit(String periodUnit) {
+	public void setPeriodUnit(Integer periodUnit) {
 		this.periodUnit = periodUnit;
 	}
 
@@ -146,4 +182,44 @@ public class CalendarDto extends BaseDto {
 	public void setNbPeriods(Integer nbPeriods) {
 		this.nbPeriods = nbPeriods;
 	}
+
+    public String getJoinCalendar1Code() {
+        return joinCalendar1Code;
+    }
+
+    public void setJoinCalendar1Code(String joinCalendar1Code) {
+        this.joinCalendar1Code = joinCalendar1Code;
+    }
+
+    public String getJoinCalendar2Code() {
+        return joinCalendar2Code;
+    }
+
+    public void setJoinCalendar2Code(String joinCalendar2Code) {
+        this.joinCalendar2Code = joinCalendar2Code;
+    }
+
+    public String getJoinType() {
+        return joinType;
+    }
+
+    public void setJoinType(String joinType) {
+        this.joinType = joinType;
+    }
+
+    public String getIntervalType() {
+        return intervalType;
+    }
+
+    public void setIntervalType(String intervalType) {
+        this.intervalType = intervalType;
+    }
+
+    public List<CalendarDateIntervalDto> getIntervals() {
+        return intervals;
+    }
+
+    public void setIntervals(List<CalendarDateIntervalDto> intervals) {
+        this.intervals = intervals;
+    }
 }

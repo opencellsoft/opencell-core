@@ -46,7 +46,7 @@ public class BillingCycleDto extends BaseDto {
 		dueDateDelay = e.getDueDateDelay();
 
 		if (e.getCalendar() != null) {
-			calendar = e.getCalendar().getName();
+			calendar = e.getCalendar().getCode();
 		}
 	}
 

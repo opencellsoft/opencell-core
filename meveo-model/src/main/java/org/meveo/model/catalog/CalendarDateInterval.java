@@ -26,21 +26,6 @@ public class CalendarDateInterval extends BaseProviderlessEntity implements Comp
 
     private static final long serialVersionUID = -8419267880869260329L;
 
-    public CalendarDateInterval() {
-        super();
-    }
-
-    public CalendarDateInterval(CalendarInterval calendar, int intervalBegin, int intervalEnd) {
-        super();
-        this.calendar = calendar;
-        this.intervalBegin = intervalBegin;
-        this.intervalEnd = intervalEnd;
-    }
-
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "CALENDAR_ID")
-    private CalendarInterval calendar;
-
     /**
      * Specified interval start. Depending on calendar interval type (calendar.intervalType) specifies:
      * 
@@ -62,6 +47,21 @@ public class CalendarDateInterval extends BaseProviderlessEntity implements Comp
     @Column(name = "INTERVAL_END", nullable = false)
     @NotNull
     private int intervalEnd;
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "CALENDAR_ID")
+    private CalendarInterval calendar;
+
+    public CalendarDateInterval() {
+        super();
+    }
+
+    public CalendarDateInterval(CalendarInterval calendar, int intervalBegin, int intervalEnd) {
+        super();
+        this.calendar = calendar;
+        this.intervalBegin = intervalBegin;
+        this.intervalEnd = intervalEnd;
+    }
 
     public CalendarInterval getCalendar() {
         return calendar;

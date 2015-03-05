@@ -11,15 +11,15 @@
 
         <hftl:entityPopup id="searchCalendarPopup1" header="#{messages['calendar.search']}" backingBean="#{calendarBean}"
             updateField=":calendarPanel:formId:joinCalendar1:joinCalendar1" selection="#{calendarBean.entity.joinCalendar1}"
-            searchField1Label="#{messages['calendar.name']}" searchField1="name" searchField2Label="#{messages['BusinessEntity.description']}"
-            searchField2="description" column1Label="#{messages['calendar.name']}" column1="name"
+            searchField1Label="#{messages['calendar.name']}" searchField1="code" searchField2Label="#{messages['BusinessEntity.description']}"
+            searchField2="description" column1Label="#{messages['calendar.name']}" column1="code"
             column2Label="#{messages['BusinessEntity.description']}" column2="description">
         </hftl:entityPopup>
 
         <hftl:entityPopup id="searchCalendarPopup2" header="#{messages['calendar.search']}" backingBean="#{calendarBean}"
             updateField=":calendarPanel:formId:joinCalendar2:joinCalendar2" selection="#{calendarBean.entity.joinCalendar2}"
-            searchField1Label="#{messages['calendar.name']}" searchField1="name" searchField2Label="#{messages['BusinessEntity.description']}"
-            searchField2="description" column1Label="#{messages['calendar.name']}" column1="name"
+            searchField1Label="#{messages['calendar.name']}" searchField1="code" searchField2Label="#{messages['BusinessEntity.description']}"
+            searchField2="description" column1Label="#{messages['calendar.name']}" column1="code"
             column2Label="#{messages['BusinessEntity.description']}" column2="description">
         </hftl:entityPopup>
 
@@ -37,7 +37,7 @@
                     <p:ajax event="change" listener="#{calendarBean.changeCalendarType}" partialSubmit="true" process="@this" update="@form" />
                 </p:selectOneMenu>
             </p:panelGrid>
-            <hf:formField label="#{messages['calendar.name']}" field="name" required="true" validateUnique="true" useConverter="false" />
+            <hf:formField label="#{messages['calendar.name']}" field="code" required="true" validateUnique="true" useConverter="false" />
             <hf:formField label="#{messages['calendar.description']}" field="description" useConverter="false" id="description" />
 
 
@@ -75,10 +75,10 @@
 
             <h:panelGroup rendered="#{calendarBean.entity.calendarType=='JOIN'}">
 
-                <hf:formEntityField id="joinCalendar1" label="#{messages['calendar.joinCalendar1']}" field="joinCalendar1" childField="name"
+                <hf:formEntityField id="joinCalendar1" label="#{messages['calendar.joinCalendar1']}" field="joinCalendar1" childField="code"
                     required="true" popup="true" popupId="searchCalendarPopup1" />
 
-                <hf:formEntityField id="joinCalendar2" label="#{messages['calendar.joinCalendar2']}" field="joinCalendar2" childField="name"
+                <hf:formEntityField id="joinCalendar2" label="#{messages['calendar.joinCalendar2']}" field="joinCalendar2" childField="code"
                     required="true" popup="true" popupId="searchCalendarPopup2" />
             </h:panelGroup>
 

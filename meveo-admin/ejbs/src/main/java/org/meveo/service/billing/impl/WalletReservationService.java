@@ -5,7 +5,6 @@ import java.util.Date;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-import javax.inject.Named;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.ParamBean;
@@ -180,7 +179,7 @@ public class WalletReservationService extends PersistenceService<WalletReservati
 		Date startDate = null;
 		Date endDate = null;
 
-		Calendar cal = calendarService.findByName(paramBean.getProperty("default.calendar.monthly", "MONTHLY"),
+		Calendar cal = calendarService.findByCode(paramBean.getProperty("default.calendar.monthly", "MONTHLY"),
 				provider);
 		cal.setInitDate(subscriptionDate);
 		startDate = cal.previousCalendarDate(subscriptionDate);

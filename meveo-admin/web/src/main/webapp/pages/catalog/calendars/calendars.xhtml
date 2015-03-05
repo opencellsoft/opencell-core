@@ -16,14 +16,14 @@
 	<ui:define name="body">
 
 		<hf:searchPanel label="#{messages['calendar.search']}" backingBean="#{calendarListBean}" columns="1" >
-			<hf:searchField label="#{messages['calendar.name']}" field="name" />
+			<hf:searchField label="#{messages['calendar.name']}" field="code" />
 			<hf:searchField label="#{messages['calendar.type']}" field="calendarType" listValues="#{calendarListBean.calendarTypes}"/>
 			<hf:searchField label="#{messages['calendar.description']}" field="description" size="100" />
 
 		</hf:searchPanel>
 
-		<hftl:dataList label="#{messages['calendar.title']}" backingBean="#{calendarListBean}">
-			<hftl:column label="#{messages['calendar.name']}" field="name" />
+		<hftl:dataList label="#{messages['calendar.title']}" backingBean="#{calendarListBean}" sortBy="code">
+			<hftl:column label="#{messages['calendar.name']}" field="code" />
 			<hftl:column label="#{messages['calendar.type']}" field="calendarType" isMessage="true" messagePrefix="calendar.calendarType"/>
 			<hftl:column label="#{messages['calendar.description']}" field="description" />
 			<hftl:actionsColumn permission="#{identity.hasPermission('catalog','catalogManagement')}" />

@@ -149,7 +149,7 @@ public class CalendarBean extends BaseBean<Calendar> {
 
     @Override
     protected String getDefaultSort() {
-        return "name";
+        return "code";
     }
 
     @Override

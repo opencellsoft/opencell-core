@@ -42,7 +42,7 @@ public class CounterTemplateDto implements Serializable {
 		type = e.getCounterType().getId();
 		level = e.getLevel();
 		disabled = e.isDisabled();
-		calendar = e.getCalendar().getName();
+		calendar = e.getCalendar().getCode();
 	}
 
 	public String getCode() {

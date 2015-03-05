@@ -33,14 +33,14 @@ import org.meveo.service.base.PersistenceService;
 @Named
 public class CalendarService extends PersistenceService<Calendar> {
 
-	public Calendar findByName(String name, Provider provider) {
-		return findByName(getEntityManager(), name, provider);
+	public Calendar findByCode(String code, Provider provider) {
+		return findByCode(getEntityManager(), code, provider);
 	}
 
-	public Calendar findByName(EntityManager em, String name, Provider provider) {
+	public Calendar findByCode(EntityManager em, String code, Provider provider) {
 		try {
 			QueryBuilder qb = new QueryBuilder(Calendar.class, "c");
-			qb.addCriterion("name", "=", name, true);
+			qb.addCriterion("code", "=", code, true);
 			qb.addCriterionEntity("c.provider", provider);
 
 			return (Calendar) qb.getQuery(em).getSingleResult();
@@ -50,10 +50,10 @@ public class CalendarService extends PersistenceService<Calendar> {
 		}
 	}
 
-	public Calendar findByName(EntityManager em, String name) {
+	public Calendar findByCode(EntityManager em, String code) {
 		try {
 			QueryBuilder qb = new QueryBuilder(Calendar.class, "c");
-			qb.addCriterion("name", "=", name, true);
+			qb.addCriterion("code", "=", code, true);
 
 			return (Calendar) qb.getQuery(em).getSingleResult();
 		} catch (NoResultException e) {

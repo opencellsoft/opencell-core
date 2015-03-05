@@ -69,7 +69,7 @@ public class RecurringChargeTemplateApi extends ChargeTemplateApi {
 						postData.getInvoiceSubCategory());
 			}
 
-			Calendar calendar = calendarService.findByName(
+			Calendar calendar = calendarService.findByCode(
 					postData.getCalendar(), provider);
 			if (calendar == null) {
 				throw new EntityDoesNotExistsException(Calendar.class,
@@ -176,7 +176,7 @@ public class RecurringChargeTemplateApi extends ChargeTemplateApi {
 						postData.getInvoiceSubCategory());
 			}
 
-			Calendar calendar = calendarService.findByName(
+			Calendar calendar = calendarService.findByCode(
 					postData.getCalendar(), provider);
 			if (calendar == null) {
 				throw new EntityDoesNotExistsException(Calendar.class,
