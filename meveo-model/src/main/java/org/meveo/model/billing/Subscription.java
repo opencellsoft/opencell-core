@@ -213,7 +213,7 @@ public class Subscription extends BusinessEntity implements ICustomFieldEntity{
 	String result=null; 
 	if (getCustomFields().containsKey(code)&& getCustomFields().get(code).getStringValue()!=null) {
 		result=getCustomFields().get(code).getStringValue();
-	}else{
+	}else if(userAccount!=null){
 		result=userAccount.getInheritedCustomStringValue(code);
 	}
 	return result;
@@ -223,7 +223,7 @@ public class Subscription extends BusinessEntity implements ICustomFieldEntity{
 		Long result=null; 
 		if (getCustomFields().containsKey(code)&& getCustomFields().get(code).getLongValue()!=null) {
 			result=getCustomFields().get(code).getLongValue();
-		}else{
+		}else if(userAccount!=null){
 			result=userAccount.getInheritedCustomLongValue(code);
 		}
 		return result;
@@ -233,7 +233,7 @@ public class Subscription extends BusinessEntity implements ICustomFieldEntity{
 		Date result=null; 
 		if (getCustomFields().containsKey(code)&& getCustomFields().get(code).getDateValue()!=null) {
 			result=getCustomFields().get(code).getDateValue();
-		}else{
+		}else if(userAccount!=null){
 			result=userAccount.getInheritedCustomDateValue(code);
 		}
 		return result;
@@ -244,9 +244,9 @@ public class Subscription extends BusinessEntity implements ICustomFieldEntity{
 		Double result=null; 
 		if (getCustomFields().containsKey(code)&& getCustomFields().get(code).getDoubleValue()!=null) {
 			result=getCustomFields().get(code).getDoubleValue();
-		}else{
-			result=userAccount.getInheritedCustomDoubleValue(code);
-		}
+		}else if(userAccount!=null){
+            result=userAccount.getInheritedCustomDoubleValue(code);
+    }
 		return result;
 		}
 	

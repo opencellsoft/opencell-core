@@ -251,16 +251,28 @@ public abstract class AccountEntity extends BusinessEntity implements ICustomFie
 		String result=null;
 		if (getCustomFields().containsKey(code)&& getCustomFields().get(code).getStringValue()!=null) {
 			result=getCustomFields().get(code).getStringValue();
-		}else{
+		}else {
 			if(this instanceof CustomerAccount){
-				result= ((CustomerAccount)this).getCustomer().getInheritedCustomStringValue(code); 
+				CustomerAccount customerAccount=  (CustomerAccount)this;
+				if(customerAccount.getCustomer()!=null){
+					result= ((CustomerAccount)this).getCustomer().getInheritedCustomStringValue(code);
+				} 
 			}else  if(this instanceof BillingAccount){
-				result= ((BillingAccount)this).getCustomerAccount().getInheritedCustomStringValue(code); 
+				BillingAccount billingAccount=  (BillingAccount)this;
+				if(billingAccount.getCustomerAccount()!=null){
+				result= ((BillingAccount)this).getCustomerAccount().getInheritedCustomStringValue(code);	
+				} 
 			}else  if(this instanceof UserAccount){
+				UserAccount userAccount=(UserAccount)this;
+				if(userAccount.getBillingAccount()!=null){
 				result= ((UserAccount)this).getBillingAccount().getInheritedCustomStringValue(code); 
 			}}
+			}
 		return result;
 	  }
+	
+	
+	
 	
 	public Long getInheritedCustomLongValue(String code){
 		Long result=null;
@@ -268,11 +280,20 @@ public abstract class AccountEntity extends BusinessEntity implements ICustomFie
 			result=getCustomFields().get(code).getLongValue();
 		}else{
 			if(this instanceof CustomerAccount){
-				result= ((CustomerAccount)this).getCustomer().getInheritedCustomLongValue(code); 
+				CustomerAccount customerAccount=  (CustomerAccount)this;
+				if(customerAccount.getCustomer()!=null){
+				result= ((CustomerAccount)this).getCustomer().getInheritedCustomLongValue(code);
+				}
 			}else  if(this instanceof BillingAccount){
-				result= ((BillingAccount)this).getCustomerAccount().getInheritedCustomLongValue(code); 
+				BillingAccount billigAccount=  (BillingAccount)this;
+				if(billigAccount.getCustomerAccount()!=null){
+				result= ((BillingAccount)this).getCustomerAccount().getInheritedCustomLongValue(code);
+				}
 			}else  if(this instanceof UserAccount){
+				UserAccount userAccount=(UserAccount)this;
+				if(userAccount.getBillingAccount()!=null){
 				result= ((UserAccount)this).getBillingAccount().getInheritedCustomLongValue(code); 
+				}
 			}}
 		return result;
 	  }
@@ -283,12 +304,20 @@ public abstract class AccountEntity extends BusinessEntity implements ICustomFie
 			result=getCustomFields().get(code).getDateValue();
 		}else{
 			if(this instanceof CustomerAccount){
+				CustomerAccount customerAccount=  (CustomerAccount)this;
+				if(customerAccount.getCustomer()!=null){
 				result= ((CustomerAccount)this).getCustomer().getInheritedCustomDateValue(code); 
+				}
 			}else  if(this instanceof BillingAccount){
-				result= ((BillingAccount)this).getCustomerAccount().getInheritedCustomDateValue(code); 
-			}else  if(this instanceof UserAccount){
+				BillingAccount billigAccount=  (BillingAccount)this;
+				if(billigAccount.getCustomerAccount()!=null){
+				result= ((BillingAccount)this).getCustomerAccount().getInheritedCustomDateValue(code);
+				}
+				}else  if(this instanceof UserAccount){
+					UserAccount userAccount=(UserAccount)this;
+					if(userAccount.getBillingAccount()!=null){
 				result= ((UserAccount)this).getBillingAccount().getInheritedCustomDateValue(code); 
-			}}
+			}}}
 		return result;
 	  }
 	
@@ -296,14 +325,21 @@ public abstract class AccountEntity extends BusinessEntity implements ICustomFie
 		Double result=null;
 		if (getCustomFields().containsKey(code)&& getCustomFields().get(code).getDoubleValue()!=null) {
 			result=getCustomFields().get(code).getDoubleValue();
-		}else{
 			if(this instanceof CustomerAccount){
+				CustomerAccount customerAccount=  (CustomerAccount)this;
+				if(customerAccount.getCustomer()!=null){
 				result= ((CustomerAccount)this).getCustomer().getInheritedCustomDoubleValue(code); 
+				}
 			}else  if(this instanceof BillingAccount){
+				BillingAccount billigAccount=  (BillingAccount)this;
+				if(billigAccount.getCustomerAccount()!=null){
 				result= ((BillingAccount)this).getCustomerAccount().getInheritedCustomDoubleValue(code); 
+				}
 			}else  if(this instanceof UserAccount){
+				UserAccount userAccount=(UserAccount)this;
+				if(userAccount.getBillingAccount()!=null){
 				result= ((UserAccount)this).getBillingAccount().getInheritedCustomDoubleValue(code); 
-			}}
+			}}}
 		return result;
 	  }
 
