@@ -51,23 +51,27 @@ public class RatedTransactionsJobBean {
 			
 			for (WalletOperation walletOperation : walletOperations) {
 				try {
+					BigDecimal amountWithTAx=walletOperation.getAmountWithTax();
+					BigDecimal amountTax=walletOperation.getAmountTax();
+					BigDecimal unitAmountWithTax=walletOperation.getUnitAmountWithTax();
+					BigDecimal unitAmountTax=walletOperation.getUnitAmountTax();
+					
 					if(walletOperation.getChargeInstance().getSubscription().getUserAccount().getBillingAccount().getCustomerAccount().getCustomer().getCustomerCategory().getExoneratedFromTaxes()){
-						walletOperation.setAmountWithTax(walletOperation.getAmountWithoutTax());
-						walletOperation.setTaxPercent(BigDecimal.ZERO);
-						walletOperation.setAmountTax(BigDecimal.ZERO); 
-						walletOperation.setUnitAmountWithTax(walletOperation.getUnitAmountWithoutTax());
-						walletOperation.setUnitAmountTax(BigDecimal.ZERO);	
+						amountWithTAx=walletOperation.getAmountWithoutTax();
+						amountTax=BigDecimal.ZERO; 
+						unitAmountWithTax=walletOperation.getUnitAmountWithoutTax();
+						unitAmountTax=BigDecimal.ZERO;	
 					}
 					RatedTransaction ratedTransaction = new RatedTransaction(
 							walletOperation.getId(),
 							walletOperation.getOperationDate(),
 							walletOperation.getUnitAmountWithoutTax(),
-							walletOperation.getUnitAmountWithTax(),
-							walletOperation.getUnitAmountTax(),
+							unitAmountWithTax,
+							unitAmountTax,
 							walletOperation.getQuantity(),
 							walletOperation.getAmountWithoutTax(),
-							walletOperation.getAmountWithTax(),
-							walletOperation.getAmountTax(),
+							amountWithTAx,
+							amountTax,
 							RatedTransactionStatusEnum.OPEN,
 							walletOperation.getProvider(),
 							walletOperation.getWallet(), 
