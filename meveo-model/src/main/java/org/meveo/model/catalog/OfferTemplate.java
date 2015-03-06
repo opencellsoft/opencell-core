@@ -16,6 +16,7 @@
  */
 package org.meveo.model.catalog;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -64,6 +65,55 @@ public class OfferTemplate extends BusinessEntity implements ICustomFieldEntity 
 
 	public void setCustomFields(Map<String, CustomFieldInstance> customFields) {
 		this.customFields = customFields;
+	}
+	
+	public String getInheritedCustomStringValue(String code){
+		String stringValue=null;
+		if (getCustomFields().containsKey(code)&& getCustomFields().get(code).getStringValue()!=null) {
+			stringValue=getCustomFields().get(code).getStringValue();
+		} 
+		return stringValue;
+		}
+	
+	public Long getInheritedCustomLongValue(String code){
+		Long result=null; 
+		if (getCustomFields().containsKey(code)&& getCustomFields().get(code).getLongValue()!=null) {
+			result=getCustomFields().get(code).getLongValue();
+		} 
+		return result;
+		}
+	
+	public Date getInheritedCustomDateValue(String code){
+		Date result=null; 
+		if (getCustomFields().containsKey(code)&& getCustomFields().get(code).getDateValue()!=null) {
+			result=getCustomFields().get(code).getDateValue();
+		} 
+		return result;
+		}
+	
+
+	public Double getInheritedCustomDoubleValue(String code){
+		Double result=null; 
+		if (getCustomFields().containsKey(code)&& getCustomFields().get(code).getDoubleValue()!=null) {
+			result=getCustomFields().get(code).getDoubleValue();
+		} 
+		return result;
+		}
+	
+	public String getICsv(String code){
+		return getInheritedCustomStringValue(code);
+	}
+	
+	public Long getIClv(String code){
+		return getInheritedCustomLongValue(code);
+	}
+	
+	public Date getICdav(String code){
+		return getInheritedCustomDateValue(code);
+	}
+	
+	public Double getICdov(String code){
+		return getInheritedCustomDoubleValue(code);
 	}
 
 }
