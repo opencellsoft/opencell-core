@@ -305,14 +305,14 @@
 														style="font-weight:bold; !important"
 														value="#{messages['pricePlanMatrix.amountWithTax']} :" />
 													<h:outputText rendered="#{wallet.key!='PREPAID'}"
-														value="#{userAccountBean.getCurrentBalanceWithoutTax(userAccountBean.getCurrentProvider(),userAccountBean.entity.billingAccount.customerAccount.customer.seller.code
+														value="#{userAccountBean.getCurrentBalanceWithTax(userAccountBean.getCurrentProvider(),userAccountBean.entity.billingAccount.customerAccount.customer.seller.code
 													,userAccountBean.entity.code,null,null)}" />
 
 													<h:outputText rendered="#{wallet.key!='PREPAID'}"
 														style="font-weight:bold; !important"
 														value="#{messages['pricePlanMatrix.amountWithoutTax']} :" />
 													<h:outputText rendered="#{wallet.key!='PREPAID'}"
-														value="#{userAccountBean.getCurrentBalanceWithTax(userAccountBean.getCurrentProvider(),userAccountBean.entity.billingAccount.customerAccount.customer.seller.code
+														value="#{userAccountBean.getCurrentBalanceWithoutTax(userAccountBean.getCurrentProvider(),userAccountBean.entity.billingAccount.customerAccount.customer.seller.code
 													,userAccountBean.entity.code,null,null)}" />
 												</p:panelGrid>
 
