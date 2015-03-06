@@ -65,20 +65,6 @@ public class CustomerImportService {
 		Provider provider = currentUser.getProvider();
 		Customer customer = null;
 
-		if (seller == null) {
-			seller = new org.meveo.model.admin.Seller();
-			seller.setCode(sell.getCode());
-			seller.setDescription(sell.getDescription());
-			seller.setTradingCountry(tradingCountryService.findByTradingCountryCode(sell.getTradingCountryCode(),
-					provider));
-			seller.setTradingCurrency(tradingCurrencyService.findByTradingCurrencyCode(sell.getTradingCurrencyCode(),
-					provider));
-			seller.setTradingLanguage(tradingLanguageService.findByTradingLanguageCode(sell.getTradingLanguageCode(),
-					provider));
-			seller.setProvider(provider);
-			sellerService.create(seller, currentUser, provider);
-		}
-
 		if (customer == null) {
 			customer = new Customer();
 			customer.setCode(cust.getCode());
@@ -87,7 +73,7 @@ public class CustomerImportService {
 			customer.setCustomerCategory(customerCategoryService.findByCode(cust.getCustomerCategory(), provider));
 			customer.setSeller(seller);
 			customer.setProvider(provider);
-			
+
 			if (cust.getCustomFields() != null && cust.getCustomFields().getCustomField() != null
 					&& cust.getCustomFields().getCustomField().size() > 0) {
 				for (CustomField customField : cust.getCustomFields().getCustomField()) {
