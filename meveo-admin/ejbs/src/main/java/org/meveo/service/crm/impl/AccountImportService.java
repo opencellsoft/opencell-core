@@ -17,6 +17,8 @@ import org.meveo.model.billing.BankCoordinates;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingCycle;
 import org.meveo.model.billing.UserAccount;
+import org.meveo.model.billing.WalletInstance;
+import org.meveo.model.catalog.WalletTemplate;
 import org.meveo.model.crm.CustomFieldInstance;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.jaxb.customer.CustomField;
@@ -29,6 +31,7 @@ import org.meveo.service.billing.impl.BillingCycleService;
 import org.meveo.service.billing.impl.TradingCountryService;
 import org.meveo.service.billing.impl.TradingLanguageService;
 import org.meveo.service.billing.impl.UserAccountService;
+import org.meveo.service.billing.impl.WalletService;
 import org.meveo.service.catalog.impl.TitleService;
 import org.meveo.service.payments.impl.CustomerAccountService;
 import org.slf4j.Logger;
@@ -38,6 +41,9 @@ public class AccountImportService {
 
 	@Inject
 	private Logger log;
+	
+	@Inject
+	private WalletService walletService;
 
 	@Inject
 	private CustomerAccountService customerAccountService;
@@ -318,7 +324,6 @@ public class AccountImportService {
 		userAccountCheckError(billAccount, uAccount);
 		userAccountCheckWarning(billAccount, uAccount);
 		UserAccount userAccount = new UserAccount();
-		userAccount.setBillingAccount(billingAccount);
 		Address addressUA = new Address();
 
 		if (uAccount.getAddress() != null) {
@@ -369,7 +374,16 @@ public class AccountImportService {
 		userAccount.setStatusDate(new Date());
 		userAccount.setProvider(provider);
 
-		userAccountService.createUserAccount(billingAccount, userAccount, userJob);
+		userAccountService.create(userAccount, userJob);
+
+		// create wallet
+		WalletInstance wallet = new WalletInstance();
+		wallet.setCode(WalletTemplate.PRINCIPAL);
+		wallet.setUserAccount(userAccount);
+		walletService.create(wallet, userJob, provider);
+
+		userAccount.setWallet(wallet);
+		userAccount.setBillingAccount(billingAccount);
 	}
 
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)

@@ -186,92 +186,104 @@ public class ImportAccountsJobBean {
 
 		for (org.meveo.model.jaxb.account.BillingAccount billingAccountDto : billingAccounts.getBillingAccount()) {
 			i++;
-			int j = -1;
-			org.meveo.model.billing.BillingAccount billingAccount = null;
-			try {
-				try {
-					billingAccount = billingAccountService.findByCode(billingAccountDto.getCode(), provider);
-					if (billingAccount == null) {
-						billingAccount = accountImportService.importBillingAccount(billingAccountDto, provider,
-								currentUser);
-						log.info("file6:" + fileName + ", typeEntity:BillingAccount, index:" + i + ", code:"
-								+ billingAccountDto.getCode() + ", status:Created");
-						nbBillingAccountsCreated++;
-					} else {
-						log.info("file1:" + fileName + ", typeEntity:BillingAccount, index:" + i + ", code:"
-								+ billingAccountDto.getCode() + ", status:Updated");
-						billingAccount = accountImportService.updateBillingAccount(billingAccountDto, provider,
-								currentUser);
-						nbBillingAccountsUpdated++;
-					}
-				} catch (ImportWarningException w) {
-					createBillingAccountWarning(billingAccountDto, w.getMessage());
-					nbBillingAccountsWarning++;
-					log.info("file5:" + fileName + ", typeEntity:BillingAccount,  index:" + i + " code:"
-							+ billingAccountDto.getCode() + ", status:Warning");
-				} catch (BusinessException e) {
-					createBillingAccountError(billingAccountDto, e.getMessage());
-					nbBillingAccountsError++;
-					log.info("file2:" + fileName + ", typeEntity:BillingAccount, index:" + i + ", code:"
-							+ billingAccountDto.getCode() + ", status:Error");
-				}
-			} catch (Exception e) {
-				createBillingAccountError(billingAccountDto, ExceptionUtils.getRootCause(e).getMessage());
-				nbBillingAccountsError++;
-				log.info("file7:" + fileName + ", typeEntity:BillingAccount, index:" + i + ", code:"
-						+ billingAccountDto.getCode() + ", status:Error");
-				log.error(e.getMessage());
-			}
-
-			if (billingAccount == null) {
-				continue;
-			}
-
-			for (org.meveo.model.jaxb.account.UserAccount uAccount : billingAccountDto.getUserAccounts()
-					.getUserAccount()) {
-				j++;
-				UserAccount userAccount = null;
-				log.debug("userAccount found code:" + uAccount.getCode());
-
-				try {
-					userAccount = userAccountService.findByCode(uAccount.getCode(), provider);
-				} catch (Exception e) {
-					log.error(e.getMessage());
-				}
-
-				if (userAccount != null) {
-					nbUserAccountsUpdated++;
-					log.info("file:" + fileName + ", typeEntity:UserAccount,  indexBillingAccount:" + i + ", index:"
-							+ j + " code:" + uAccount.getCode() + ", status:Updated");
-					accountImportService.updateUserAccount(billingAccount, billingAccountDto, uAccount, provider,
-							currentUser);
-				} else {
-					try {
-						accountImportService.importUserAccount(billingAccount, billingAccountDto, uAccount, provider,
-								currentUser);
-						log.info("file:" + fileName + ", typeEntity:UserAccount,  indexBillingAccount:" + i
-								+ ", index:" + j + " code:" + uAccount.getCode() + ", status:Created");
-						nbUserAccountsCreated++;
-					} catch (ImportWarningException w) {
-						createUserAccountWarning(billingAccountDto, uAccount, w.getMessage());
-						nbUserAccountsWarning++;
-						log.info("file:" + fileName + ", typeEntity:UserAccount,  indexBillingAccount:" + i
-								+ ", index:" + j + " code:" + uAccount.getCode() + ", status:Warning");
-
-					} catch (BusinessException e) {
-						createUserAccountError(billingAccountDto, uAccount, e.getMessage());
-						nbUserAccountsError++;
-						log.info("file:" + fileName + ", typeEntity:UserAccount,  indexBillingAccount:" + i
-								+ ", index:" + j + " code:" + uAccount.getCode() + ", status:Error");
-					}
-				}
-			}
+			createBillingAccount(billingAccountDto, fileName, i, currentUser, provider);
 		}
 
 		generateReport(fileName, provider);
 		createHistory(provider, currentUser);
 
 		log.info("end import file ");
+	}
+
+	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
+	private void createBillingAccount(org.meveo.model.jaxb.account.BillingAccount billingAccountDto, String fileName,
+			int i, User currentUser, Provider provider) throws BusinessException, ImportWarningException {
+		int j = -1;
+		org.meveo.model.billing.BillingAccount billingAccount = null;
+		try {
+			try {
+				billingAccount = billingAccountService.findByCode(billingAccountDto.getCode(), provider);
+				if (billingAccount == null) {
+					billingAccount = accountImportService
+							.importBillingAccount(billingAccountDto, provider, currentUser);
+					log.info("file6:" + fileName + ", typeEntity:BillingAccount, index:" + i + ", code:"
+							+ billingAccountDto.getCode() + ", status:Created");
+					nbBillingAccountsCreated++;
+				} else {
+					log.info("file1:" + fileName + ", typeEntity:BillingAccount, index:" + i + ", code:"
+							+ billingAccountDto.getCode() + ", status:Updated");
+					billingAccount = accountImportService
+							.updateBillingAccount(billingAccountDto, provider, currentUser);
+					nbBillingAccountsUpdated++;
+				}
+			} catch (ImportWarningException w) {
+				createBillingAccountWarning(billingAccountDto, w.getMessage());
+				nbBillingAccountsWarning++;
+				log.info("file5:" + fileName + ", typeEntity:BillingAccount,  index:" + i + " code:"
+						+ billingAccountDto.getCode() + ", status:Warning");
+			} catch (BusinessException e) {
+				createBillingAccountError(billingAccountDto, e.getMessage());
+				nbBillingAccountsError++;
+				log.info("file2:" + fileName + ", typeEntity:BillingAccount, index:" + i + ", code:"
+						+ billingAccountDto.getCode() + ", status:Error");
+			}
+		} catch (Exception e) {
+			createBillingAccountError(billingAccountDto, ExceptionUtils.getRootCause(e).getMessage());
+			nbBillingAccountsError++;
+			log.info("file7:" + fileName + ", typeEntity:BillingAccount, index:" + i + ", code:"
+					+ billingAccountDto.getCode() + ", status:Error");
+			log.error(e.getMessage());
+		}
+
+		if (billingAccount == null) {
+			return;
+		}
+
+		for (org.meveo.model.jaxb.account.UserAccount uAccount : billingAccountDto.getUserAccounts().getUserAccount()) {
+			j++;
+			createUserAccount(uAccount, billingAccount, billingAccountDto, fileName, i, j, currentUser, provider);
+		}
+	}
+
+	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
+	private void createUserAccount(org.meveo.model.jaxb.account.UserAccount uAccount,
+			org.meveo.model.billing.BillingAccount billingAccount,
+			org.meveo.model.jaxb.account.BillingAccount billingAccountDto, String fileName, int i, int j,
+			User currentUser, Provider provider) throws BusinessException, ImportWarningException {
+		UserAccount userAccount = null;
+		log.debug("userAccount found code:" + uAccount.getCode());
+
+		try {
+			userAccount = userAccountService.findByCode(uAccount.getCode(), provider);
+		} catch (Exception e) {
+			log.error(e.getMessage());
+		}
+
+		if (userAccount != null) {
+			nbUserAccountsUpdated++;
+			log.info("file:" + fileName + ", typeEntity:UserAccount,  indexBillingAccount:" + i + ", index:" + j
+					+ " code:" + uAccount.getCode() + ", status:Updated");
+			accountImportService.updateUserAccount(billingAccount, billingAccountDto, uAccount, provider, currentUser);
+		} else {
+			try {
+				accountImportService.importUserAccount(billingAccount, billingAccountDto, uAccount, provider,
+						currentUser);
+				log.info("file:" + fileName + ", typeEntity:UserAccount,  indexBillingAccount:" + i + ", index:" + j
+						+ " code:" + uAccount.getCode() + ", status:Created");
+				nbUserAccountsCreated++;
+			} catch (ImportWarningException w) {
+				createUserAccountWarning(billingAccountDto, uAccount, w.getMessage());
+				nbUserAccountsWarning++;
+				log.info("file:" + fileName + ", typeEntity:UserAccount,  indexBillingAccount:" + i + ", index:" + j
+						+ " code:" + uAccount.getCode() + ", status:Warning");
+
+			} catch (BusinessException e) {
+				createUserAccountError(billingAccountDto, uAccount, e.getMessage());
+				nbUserAccountsError++;
+				log.info("file:" + fileName + ", typeEntity:UserAccount,  indexBillingAccount:" + i + ", index:" + j
+						+ " code:" + uAccount.getCode() + ", status:Error");
+			}
+		}
 	}
 
 	private void createBillingAccountError(org.meveo.model.jaxb.account.BillingAccount billAccount, String cause) {

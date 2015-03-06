@@ -22,10 +22,7 @@ import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.shared.Address;
 import org.meveo.model.shared.ContactInformation;
 import org.meveo.model.shared.Title;
-import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.admin.impl.TradingCurrencyService;
-import org.meveo.service.billing.impl.TradingCountryService;
-import org.meveo.service.billing.impl.TradingLanguageService;
 import org.meveo.service.catalog.impl.TitleService;
 import org.meveo.service.payments.impl.CustomerAccountService;
 
@@ -33,16 +30,7 @@ import org.meveo.service.payments.impl.CustomerAccountService;
 public class CustomerImportService {
 
 	@Inject
-	private TradingCountryService tradingCountryService;
-
-	@Inject
 	private TradingCurrencyService tradingCurrencyService;
-
-	@Inject
-	private TradingLanguageService tradingLanguageService;
-
-	@Inject
-	private SellerService sellerService;
 
 	@Inject
 	private CustomerService customerService;
@@ -65,20 +53,6 @@ public class CustomerImportService {
 		Provider provider = currentUser.getProvider();
 		Customer customer = null;
 
-		if (seller == null) {
-			seller = new org.meveo.model.admin.Seller();
-			seller.setCode(sell.getCode());
-			seller.setDescription(sell.getDescription());
-			seller.setTradingCountry(tradingCountryService.findByTradingCountryCode(sell.getTradingCountryCode(),
-					provider));
-			seller.setTradingCurrency(tradingCurrencyService.findByTradingCurrencyCode(sell.getTradingCurrencyCode(),
-					provider));
-			seller.setTradingLanguage(tradingLanguageService.findByTradingLanguageCode(sell.getTradingLanguageCode(),
-					provider));
-			seller.setProvider(provider);
-			sellerService.create(seller, currentUser, provider);
-		}
-
 		if (customer == null) {
 			customer = new Customer();
 			customer.setCode(cust.getCode());
@@ -87,7 +61,7 @@ public class CustomerImportService {
 			customer.setCustomerCategory(customerCategoryService.findByCode(cust.getCustomerCategory(), provider));
 			customer.setSeller(seller);
 			customer.setProvider(provider);
-			
+
 			if (cust.getCustomFields() != null && cust.getCustomFields().getCustomField() != null
 					&& cust.getCustomFields().getCustomField().size() > 0) {
 				for (CustomField customField : cust.getCustomFields().getCustomField()) {
