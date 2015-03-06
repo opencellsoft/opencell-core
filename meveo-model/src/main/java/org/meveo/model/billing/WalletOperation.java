@@ -178,6 +178,13 @@ public class WalletOperation extends BusinessEntity {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "PRICEPLAN_ID")
 	private PricePlanMatrix priceplan;
+	
+	@Transient
+	private BillingAccount billingAccount;
+	
+	
+	@Transient
+	private InvoiceSubCategory invoiceSubCategory;
 
 	public WalletInstance getWallet() {
 		return wallet;
@@ -401,6 +408,25 @@ public class WalletOperation extends BusinessEntity {
 				+ "," + unitAmountWithoutTax + "," + unitAmountWithTax + "," + unitAmountTax + "," + counter + ","
 				+ parameter1 + "," + parameter2 + "," + parameter3 + "," + startDate + "," + endDate + ","
 				+ subscriptionDate + "," + offerCode + "," + status + "," + seller+","+priceplan;
+	}
+	
+	
+	
+	public BillingAccount getBillingAccount() {
+		return billingAccount;
+	}
+
+
+	public InvoiceSubCategory getInvoiceSubCategory() {
+		return invoiceSubCategory;
+	}
+
+	public void setInvoiceSubCategory(InvoiceSubCategory invoiceSubCategory) {
+		this.invoiceSubCategory = invoiceSubCategory;
+	}
+
+	public void setBillingAccount(BillingAccount billingAccount) {
+		this.billingAccount = billingAccount;
 	}
 
 	@Transient

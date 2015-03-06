@@ -29,6 +29,7 @@ import java.util.Map.Entry;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.persistence.NoResultException;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -43,6 +44,7 @@ import org.meveo.admin.exception.IncorrectSusbcriptionException;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.BillingAccount;
+import org.meveo.model.billing.BillingRun;
 import org.meveo.model.billing.CategoryInvoiceAgregate;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.InvoiceAgregate;
@@ -56,6 +58,8 @@ import org.meveo.model.billing.Tax;
 import org.meveo.model.billing.TaxInvoiceAgregate;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.billing.WalletInstance;
+import org.meveo.model.catalog.WalletTemplate;
+import org.meveo.model.crm.Provider;
 import org.meveo.service.api.dto.ConsumptionDTO;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
@@ -509,4 +513,19 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 
 	}
 
+	public List<RatedTransaction> getNotBilledRatedTransactions(Long walletOperationId) { 
+		QueryBuilder qb = new QueryBuilder("from RatedTransaction c");
+		qb.addCriterionEntity("c.walletOperationId", walletOperationId);
+		qb.addCriterion("c.status", "!=", RatedTransactionStatusEnum.BILLED, false); 
+		try {
+			return (List<RatedTransaction>) qb.getQuery(getEntityManager())
+					.getResultList();
+		} catch (NoResultException e) {
+			log.warn(e.getMessage());
+			return null;
+		}
+
+	}
+ 
+ 	 
 }

@@ -16,13 +16,18 @@
  */
 package org.meveo.service.admin.impl;
 
+import java.util.List;
+
 import javax.ejb.Stateless;
 import javax.inject.Named;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
+import org.meveo.commons.utils.QueryBuilder;
+import org.meveo.model.admin.Currency;
 import org.meveo.model.billing.TradingCurrency;
+import org.meveo.model.catalog.WalletTemplate;
 import org.meveo.model.crm.Provider;
 import org.meveo.service.base.PersistenceService;
 
@@ -53,6 +58,19 @@ public class TradingCurrencyService extends PersistenceService<TradingCurrency> 
 					"findByTradingCurrencyCode not found : tradingCurrencyCode={},provider={}",
 					tradingCurrencyCode, provider != null ? provider.getCode()
 							: null);
+			return null;
+		}
+	}
+	
+	public List<TradingCurrency> listByProvider(Provider provider) { 
+		QueryBuilder qb = new QueryBuilder(TradingCurrency.class, "t"); 
+		qb.addCriterionEntity("t.provider", provider);
+
+		try {
+			return (List<TradingCurrency>) qb.getQuery(getEntityManager())
+					.getResultList();
+		} catch (NoResultException e) {
+			log.warn(e.getMessage());
 			return null;
 		}
 	}

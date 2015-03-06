@@ -6,7 +6,7 @@
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:a="http://richfaces.org/a4j" xmlns:hftl="http://hftl.org"
 	xmlns:hf="http://java.sun.com/jsf/composite/tags"
-	template="/layout/template.xhtml">
+	template="/layout/template.xhtml" xmlns:p="http://primefaces.org/ui">
 
 	<ui:define name="metadata">
 		<f:metadata>
@@ -19,7 +19,7 @@
 	</ui:define>
 
 	<ui:define name="body">  
-	
+	 
 	<hftl:entityPopup id="searchSellerPopup"
 			header="#{messages['seller.search']}"
 			updateField=":searchPanel:searchForm:seller:seller_child"
@@ -75,11 +75,56 @@
 			updateField=":searchPanel:searchForm:priceplan:priceplan_child">
 		</hftl:entityPopup> 
 		
+		<hftl:entityPopup id="billingAccountPopup"
+			header="#{messages['billingAccount.popup.header']}"
+			backingBean="#{billingAccountBean}"
+			searchField1Label="#{messages['billingAccount.code']}"
+			searchField1="code" 
+			searchField2Label="#{messages['invoiceSubCategory.description']}"
+			searchField2="description"
+			column1Label="#{messages['billingAccount.code']}"
+			column1="code"
+			column2Label="#{messages['invoiceSubCategory.description']}"
+			column2="description" 
+			selection="#{walletOperationBean.filters['billingAccount']}"
+            updateField=":searchPanel:searchForm">
+		</hftl:entityPopup>
+		
+			<hftl:entityPopup id="searchInvoiceSubCategoryPopup"
+			header="#{messages['invoiceSubCategory.panel']}"
+			backingBean="#{invoiceSubCategoryBean}"
+			updateField=":searchPanel:searchForm"
+			selection="#{walletOperationBean.filters['invoiceSubCategory']}"
+			searchField1Label="#{messages['invoiceSubCategory.code']}"
+			searchField1="code"
+			searchField2Label="#{messages['invoiceSubCategory.description']}"
+			searchField2="description"
+			column1Label="#{messages['invoiceSubCategory.code']}" column1="code"
+			column2Label="#{messages['invoiceSubCategory.description']}"
+			column2="description">
+		  </hftl:entityPopup>
+		
+		<p:messages id="messages" />
 		<hf:searchPanel id="searchPanel" label="#{messages['walletOperation.search']}"
 			backingBean="#{walletOperationBean}">
 		<hftl:panelGroup columns="2">
-		 <hf:searchField label="#{messages['currency.codeCurrency']}" field="currency" />
-		 
+		
+		<p:panelGrid columns="2">
+	   <p:outputLabel for="currency"
+	    value="#{messages['currency.codeCurrency']}" style="width:105px" />
+	   <p:selectOneMenu id="currency"
+		value="#{walletOperationBean.filters['currency.currencyCode']}">
+	   <f:selectItem itemValue="" itemLabel="" />
+	   <f:selectItems value="#{walletOperationBean.getListCurrency}" />												 
+	   </p:selectOneMenu>
+	  </p:panelGrid>
+	
+		<hf:searchField label="#{messages['billingAccount.billingAccountPanel']}" id="ba"
+		    field="billingAccount" childField="code" popup="true" popupId="billingAccountPopup" clearButton="true"/> 
+
+		<hf:searchField label="#{messages['invoiceSubCategory.title']}" id="invoiceSubCategoryId"
+		    field="invoiceSubCategory" childField="code" popup="true" popupId="searchInvoiceSubCategoryPopup" clearButton="true"/> 
+			
 		 <hf:searchField label="#{messages['walletOperation.chargeInstance']}" id="chargeInstance" field="chargeInstance" 
 		     childField="code" popup="true" popupId="searchChargeInstancePopup" clearButton="true"/> 
 		  <hf:searchField label="#{messages['counterTemplate.title']}" id="counter"
@@ -93,19 +138,21 @@
 		     <hf:searchField label="#{messages['operation.wallet']}" id="wallet"
 		    field="wallet" childField="code" popup="true" popupId="searchWalletInstancePopup" clearButton="true"/>
 
-		 <hf:searchField label="#{messages['walletOperation.unitAmountWithouTax']}" field="unitAmountWithoutTax" />
-		 <hf:searchField label="#{messages['walletOperation.quantity']}" field="quantity" />
-		 <hf:searchField label="#{messages['walletOperation.amountWithoutTax']}" field="amountWithoutTax" />
+		
+		
 		    <hf:searchField label="#{messages['walletOperation.param1']}" field="parameter1" />
 		    <hf:searchField label="#{messages['walletOperation.param2']}" field="parameter2" />
 		    <hf:searchField label="#{messages['walletOperation.param3']}" field="parameter3" />
 		    
 			 <hf:searchField label="#{messages['walletOperation.offer']}" field="offerCode" />
 			<hf:searchField label="#{messages['walletOperation.status']}" field="status" childField="label" />
+			 <hf:searchField label="#{messages['walletOperation.unitAmountWithoutTax']}" field="unitAmountWithoutTax" />
 			<hf:searchField label="#{messages['walletOperation.subscriptionDate']}" field="subscriptionDate" />
 		 <hf:searchField label="#{messages['walletOperation.operationDate']}" field="operationDate" />
 		    <hf:searchField label="#{messages['walletOperation.startDate']}" field="startDate" />
 		    <hf:searchField label="#{messages['walletOperation.endDate']}" field="endDate" />
+			 <hf:searchField label="#{messages['walletOperation.quantity']}" field="quantity" />
+		 <hf:searchField label="#{messages['invoice.amountWithoutTax']}" field="amountWithoutTax" />
 	</hftl:panelGroup>
 		</hf:searchPanel>
 		<hftl:dataList label="#{messages['walletOperations.title']}"
@@ -116,12 +163,48 @@
 			<hftl:column label="#{messages['walletOperation.operationDate']}" field="operationDate" />
 			<hftl:column label="#{messages['walletOperation.chargeInstance']}" field="chargeInstance" childField="code" />
 			<hftl:column label="#{messages['walletOperation.quantity']}" field="quantity" />
-			<hftl:column label="#{messages['walletOperation.amountWithoutTax']}" field="amountWithoutTax" />
-			<hftl:column label="#{messages['walletOperation.amountWithTax']}" field="amountWithTax" />
+			<hftl:column label="#{messages['invoice.amountWithoutTax']}" field="amountWithoutTax" />
+			<hftl:column label="#{messages['invoice.amountWithTax']}" field="amountWithTax" />
 			<hftl:column label="#{messages['walletOperation.status']}" field="status" childField="label" isMessage="true" />
+			
+			 
+				
+				 <p:column  width="50px"> 
+			<f:facet name="header">
+			<h:outputText value="Actions" />
+		</f:facet>
 			<hftl:actionsColumn
 				permission="#{identity.hasPermission('billing','billingManagement')}" />
-		</hftl:dataList>
+			  <p:tooltip for="updateWallet" value="#{messages['action.update']}"
+					showEffect="slide" hideEffect="slide" />
+				<p:commandButton id="updateWallet" icon="ui-icon-play"
+					actionListener="#{walletOperationBean.updateStatus(entity)}"
+					update=":results_form">
+					<p:confirm header="#{messages['message.confirmation']}"
+						message="#{messages['message.confirm.walletOperation.update']}"
+						icon="ui-icon-alert" />
+				</p:commandButton>
+				</p:column>
+				</hftl:dataList>
+		
+		<p:panel styleClass="action-buttons">
+			<p:tooltip for="massUpdateWallet" value="#{messages['action.update']}"
+				showEffect="slide" hideEffect="slide" />
+			<p:commandButton id="massUpdateWallet"
+				value="#{messages['action.massRerate']}"
+				  update=":results_form :messages" action="#{walletOperationBean.massRerate()}">
+				<p:confirm header="#{messages['message.confirmation']}"
+					message="#{messages['message.confirm.walletOperation.update']}"
+					icon="ui-icon-alert" />
+			</p:commandButton>
+		</p:panel>
+
+		<p:confirmDialog global="true" showEffect="fade" hideEffect="explode">
+			<p:commandButton value="#{messages['commons.yes']}" type="button"
+				styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+			<p:commandButton value="#{messages['commons.no']}" type="button"
+				styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+		</p:confirmDialog>
 
 	</ui:define>
 

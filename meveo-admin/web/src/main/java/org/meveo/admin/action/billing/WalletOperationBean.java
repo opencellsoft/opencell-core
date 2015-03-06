@@ -16,6 +16,11 @@
  */
 package org.meveo.admin.action.billing;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import javax.enterprise.context.ConversationScoped;
 import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
@@ -23,10 +28,19 @@ import javax.inject.Named;
 
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.action.StatelessBaseBean;
+import org.meveo.model.admin.Currency;
+import org.meveo.model.billing.RatedTransaction;
+import org.meveo.model.billing.RatedTransactionStatusEnum;
+import org.meveo.model.billing.TradingCurrency;
 import org.meveo.model.billing.WalletOperation;
+import org.meveo.model.billing.WalletOperationStatusEnum;
+import org.meveo.service.admin.impl.TradingCurrencyService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
+import org.meveo.service.billing.impl.RatedTransactionService;
 import org.meveo.service.billing.impl.WalletOperationService;
+import org.meveo.service.billing.impl.WalletService;
+import org.primefaces.model.LazyDataModel;
 
 @Named
 @ConversationScoped
@@ -40,6 +54,14 @@ public class WalletOperationBean extends StatelessBaseBean<WalletOperation> {
 	 */
 	@Inject
 	private WalletOperationService walletOperationService;
+	
+	@Inject
+	private TradingCurrencyService tradingCurrencyService;
+	
+	@Inject
+	private RatedTransactionService ratedTransactionService;
+   private Map<String, Currency> listCurrency = new HashMap<String, Currency>(); 
+
 
 	/**
 	 * Constructor. Invokes super constructor and provides class type of this
@@ -70,4 +92,63 @@ public class WalletOperationBean extends StatelessBaseBean<WalletOperation> {
 		return walletOperationService;
 	}
 
-}
+
+	public Map<String, Currency> getListCurrency() {
+		listCurrency.clear();
+		if(tradingCurrencyService.listByProvider(getCurrentProvider()).size()>0 && tradingCurrencyService.listByProvider(getCurrentProvider())!=null){
+			for(TradingCurrency trading :tradingCurrencyService.listByProvider(getCurrentProvider()) ){
+				listCurrency.put(trading.getCurrency().getCurrencyCode(),trading.getCurrency());
+				}	
+		       }
+		return listCurrency;
+	}
+	
+	@Override
+	public LazyDataModel<WalletOperation> getLazyDataModel() {
+		getFilters();
+		if (filters.containsKey("billingAccount")) {
+			filters.put("wallet.userAccount.billingAccount", filters.get("billingAccount"));
+			filters.remove("billingAccount");
+		}
+		if (filters.containsKey("invoiceSubCategory")) {
+			filters.put("chargeInstance.chargeTemplate.invoiceSubCategory", filters.get("invoiceSubCategory"));
+			filters.remove("invoiceSubCategory");
+		}
+	
+		
+		return super.getLazyDataModel();
+	}
+
+	public boolean  updateStatus(WalletOperation selectedWallet) {
+		boolean rerateWallet=false;
+		List<RatedTransaction> ratedTransactions=new ArrayList<RatedTransaction>();
+		  if(selectedWallet.getStatus().equals(WalletOperationStatusEnum.OPEN )|| selectedWallet.getStatus().equals(WalletOperationStatusEnum.TREATED) ){
+			ratedTransactions=ratedTransactionService.getNotBilledRatedTransactions(selectedWallet.getId());
+			if(ratedTransactions!=null && !ratedTransactions.isEmpty()){
+				rerateWallet=true;
+			} }	
+			if(rerateWallet){
+				selectedWallet.setStatus(WalletOperationStatusEnum.TO_RERATE);
+				getPersistenceService().update(selectedWallet); 
+				for (RatedTransaction rated :ratedTransactions){
+					rated.setStatus(RatedTransactionStatusEnum.CANCELED);
+					ratedTransactionService.update(rated);
+				}
+			}
+		return rerateWallet;
+	}
+	
+	public void massRerate() {
+		if (getSelectedEntities() != null) {
+			log.debug("updating {} walletOperation", getSelectedEntities().size());
+			int count=0;
+			for (WalletOperation wallet : getSelectedEntities()) {
+				if(updateStatus(wallet)){
+					count++;
+				}
+			} 
+			messages.info(count + " wallet operations are rerated"); 
+		}
+	}
+	 
+} 
