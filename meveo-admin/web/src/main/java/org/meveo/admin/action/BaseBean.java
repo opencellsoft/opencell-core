@@ -626,30 +626,74 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 		return "No popup information. Override BaseBean.getPopupInfo() method.";
 	}
 
-	/**
-	 * Delete Entity using it's ID. Add error message to {@link statusMessages}
-	 * if unsuccessful.
-	 * 
-	 * @param id
-	 *            Entity id to delete
-	 */
-	public void disable(Long id) {
-		try {
-			log.info(String.format("Disabling entity %s with id = %s", clazz.getName(), id));
-			getPersistenceService().disable(id);
-			messages.info(new BundleKey("messages", "disabled.successful"));
+    /**
+     * Disable current entity. Add error message to {@link statusMessages} if unsuccessful.
+     * 
+     * @param id Entity id to disable
+     */
+    public void disable() {
+        try {
+            log.info(String.format("Disabling entity %s with id = %s", clazz.getName(), entity.getId()));
+            entity = getPersistenceService().disable(entity);
+            messages.info(new BundleKey("messages", "disabled.successful"));
 
-		} catch (Throwable t) {
-			if (t.getCause() instanceof EntityExistsException) {
-				log.info("delete was unsuccessful because entity is used in the system", t);
-				messages.error(new BundleKey("messages", "error.delete.entityUsed"));
-			} else {
-				log.info("unexpected exception when deleting!", t);
-				messages.error(new BundleKey("messages", "error.delete.unexpected"));
-			}
-		}
-	}
+        } catch (Exception t) {
+            log.info("unexpected exception when disabling!", t);
+            messages.error(new BundleKey("messages", "error.unexpected"));
+        }
+    }
 
+    /**
+     * Disable Entity using it's ID. Add error message to {@link statusMessages} if unsuccessful.
+     * 
+     * @param id Entity id to disable
+     */
+    public void disable(Long id) {
+        try {
+            log.info(String.format("Disabling entity %s with id = %s", clazz.getName(), id));
+            getPersistenceService().disable(id);
+            messages.info(new BundleKey("messages", "disabled.successful"));
+
+        } catch (Throwable t) {
+            log.info("unexpected exception when disabling!", t);
+            messages.error(new BundleKey("messages", "error.unexpected"));
+        }
+    }
+
+    /**
+     * Enable current entity. Add error message to {@link statusMessages} if unsuccessful.
+     * 
+     * @param id Entity id to enable
+     */
+    public void enable() {
+        try {
+            log.info(String.format("Enabling entity %s with id = %s", clazz.getName(), entity.getId()));
+            entity = getPersistenceService().enable(entity);
+            messages.info(new BundleKey("messages", "enabled.successful"));
+
+        } catch (Exception t) {
+            log.info("unexpected exception when enabling!", t);
+            messages.error(new BundleKey("messages", "error.unexpected"));
+        }
+    }
+
+    /**
+     * Enable Entity using it's ID. Add error message to {@link statusMessages} if unsuccessful.
+     * 
+     * @param id Entity id to enable
+     */
+    public void enable(Long id) {
+        try {
+            log.info(String.format("Enabling entity %s with id = %s", clazz.getName(), id));
+            getPersistenceService().enable(id);
+            messages.info(new BundleKey("messages", "enabled.successful"));
+
+        } catch (Throwable t) {
+            log.info("unexpected exception when enabling!", t);
+            messages.error(new BundleKey("messages", "error.unexpected"));
+        }
+    }
+    
 	/**
 	 * DataModel for primefaces lazy loading datatable component.
 	 * 

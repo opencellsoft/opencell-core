@@ -12,7 +12,7 @@
 
 		<hf:formPanel id="formPanel"
 			label="#{messages['customFieldTemplate.panel']}"
-			backingBean="#{customFieldTemplateBean}">
+			backingBean="#{customFieldTemplateBean}" showEnableDisableButton="true">
 			<hf:formField label="#{messages['BusinessEntity.code']}" field="code"
 				required="true" validateUnique="true" disabled="#{! customFieldTemplateBean.entity.transient}"/>
 			<hf:formField label="#{messages['customFieldTemplate.fieldLabel']}"
@@ -34,7 +34,7 @@
 					mapValueLabel="#{messages['commons.label']}" />
 			</p:panel>
 			<hf:formField label="#{messages['enableEntity.disabled']}"
-				field="disabled" isMessage="true" />
+				field="disabled" isMessage="true" showOnlyOnConsult="true"/>
 		</hf:formPanel>
 
 	</ui:define>

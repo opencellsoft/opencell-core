@@ -17,13 +17,14 @@ import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.StringUtils;
-import org.meveo.event.qualifier.RejectedCDR;
 import org.meveo.event.qualifier.Created;
 import org.meveo.event.qualifier.Disabled;
+import org.meveo.event.qualifier.Enabled;
 import org.meveo.event.qualifier.InboundRequestReceived;
 import org.meveo.event.qualifier.LoggedIn;
 import org.meveo.event.qualifier.Processed;
 import org.meveo.event.qualifier.Rejected;
+import org.meveo.event.qualifier.RejectedCDR;
 import org.meveo.event.qualifier.Removed;
 import org.meveo.event.qualifier.Terminated;
 import org.meveo.event.qualifier.Updated;
@@ -260,8 +261,20 @@ public class DefaultObserver {
 	public void entityDisabled(@Observes @Disabled IEntity e) {
 		log.debug("Defaut observer : Entity {} with id {} disabled", e.getClass().getName(), e.getId());
 		checkEvent(NotificationEventTypeEnum.DISABLED, e);
+		if (Notification.class.isAssignableFrom(e.getClass())) {
+		    removeNotificationFromCache((Notification) e);
+        }
 		updateCache(e, true);
 	}
+
+    public void entityEnabled(@Observes @Enabled IEntity e) {
+        log.debug("Defaut observer : Entity {} with id {} enabled", e.getClass().getName(), e.getId());
+        checkEvent(NotificationEventTypeEnum.ENABLED, e);
+        if (Notification.class.isAssignableFrom(e.getClass())) {
+            addNotificationToCache((Notification) e);
+        }
+        updateCache(e, false);
+    }
 
 	public void entityTerminated(@Observes @Terminated IEntity e) {
 		log.debug("Defaut observer : Entity {} with id {} terminated", e.getClass().getName(), e.getId());
@@ -355,7 +368,6 @@ public class DefaultObserver {
 						chargeTemplatesMap.remove(((UsageChargeTemplate) e).getCode());
 					}
 				}
-
 			}
 		} else if (e instanceof Access) {
 			Access access = (Access) e;

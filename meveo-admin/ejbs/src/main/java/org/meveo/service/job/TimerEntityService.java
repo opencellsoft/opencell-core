@@ -137,7 +137,7 @@ public class TimerEntityService extends PersistenceService<TimerEntity> {
 		}
 	}
 
-	public void update(TimerEntity entity) {// FIXME: throws BusinessException{
+	public TimerEntity update(TimerEntity entity) {// FIXME: throws BusinessException{
 		log.info("update " + entity.getJobName());
 		if (jobEntries.containsKey(entity.getJobCategoryEnum())) {
 			HashMap<String, Job> jobs = jobEntries.get(entity.getJobCategoryEnum());
@@ -156,8 +156,9 @@ public class TimerEntityService extends PersistenceService<TimerEntity> {
 				entity.getTimerInfo().setFollowingTimerId(
 						entity.getFollowingTimer().getId());
 			}
-			super.update(entity);
+			return super.update(entity);
 		}
+		return entity;
 	}
 
 	public void remove(TimerEntity entity) {// FIXME: throws BusinessException{

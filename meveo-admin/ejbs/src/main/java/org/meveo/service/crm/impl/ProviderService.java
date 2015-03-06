@@ -115,10 +115,11 @@ public class ProviderService extends PersistenceService<Provider> {
 		return query.getResultList();
 	}
 
-	public void update(Provider e) {
+	public Provider update(Provider e) {
 		((AuditableEntity) e).updateAudit(getCurrentUser());
-		getEntityManager().merge(e);
+		e = getEntityManager().merge(e);
 		log.info("updated provider");
+		return e;
 	}
 
 	public void create(Provider e) {

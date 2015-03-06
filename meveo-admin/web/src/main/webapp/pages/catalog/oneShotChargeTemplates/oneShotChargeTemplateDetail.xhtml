@@ -31,7 +31,7 @@
 
 		<hf:formPanel id="formPanel"
 			label="#{messages['oneShotChargeTemplate.chargeTemplatePanel']}"
-			backingBean="#{oneShotChargeTemplateBean}" columns="2">
+			backingBean="#{oneShotChargeTemplateBean}" columns="2" showEnableDisableButton="true">
 
 			<p:tabView id="tabView">
 
@@ -41,7 +41,7 @@
 							field="code" required="true" validateUnique="true" />
 						<hf:languageFields />
 						<hf:formField label="#{messages['enableEntity.disabled']}"
-							field="disabled" isMessage="true" />
+							field="disabled" isMessage="true" showOnlyOnConsult="true"/>
 						<hf:formField label="#{messages['chargeTemplate.amountEditable']}"
 							field="amountEditable" />
 						<hf:formField label="#{messages['oneShotChargeTemplate.type']}"

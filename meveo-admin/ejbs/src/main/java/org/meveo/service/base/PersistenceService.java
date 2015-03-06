@@ -38,6 +38,7 @@ import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.event.qualifier.Created;
 import org.meveo.event.qualifier.Disabled;
+import org.meveo.event.qualifier.Enabled;
 import org.meveo.event.qualifier.Removed;
 import org.meveo.event.qualifier.Updated;
 import org.meveo.model.AuditableEntity;
@@ -87,6 +88,10 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 	@Inject
 	@Disabled
 	protected Event<E> entityDisabledEventProducer;
+	
+    @Inject
+    @Enabled
+    protected Event<E> entityEnabledEventProducer;
 
 	@Inject
 	@Removed
@@ -122,6 +127,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 	/**
 	 * @see org.meveo.service.base.local.IPersistenceService#create(org.manaty.model.BaseEntity)
 	 */
+	@Override
 	public void create(E e) throws BusinessException {
 		create(e, getCurrentUser());
 	}
@@ -129,18 +135,20 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 	/**
 	 * @see org.meveo.service.base.local.IPersistenceService#update(org.manaty.model.BaseEntity)
 	 */
-	public void update(E e) {
-		update(e, getCurrentUser());
+	@Override
+	public E update(E e) {
+		return update(e, getCurrentUser());
 	}
 
-	public void updateNoCheck(E e) {
+	public E updateNoCheck(E e) {
 		log.debug("start of update {} entity (id={}) ..", e.getClass().getSimpleName(), e.getId());
-		getEntityManager().merge(e);
+		return getEntityManager().merge(e);
 	}
 
 	/**
 	 * @see org.meveo.service.base.local.IPersistenceService#findById(java.lang.Long)
 	 */
+	@Override
 	public E findById(Long id) {
 		return findById(id, false);
 	}
@@ -149,10 +157,12 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 	 * @see org.meveo.service.base.local.IPersistenceService#findById(java.lang.Long,
 	 *      java.util.List)
 	 */
+	@Override
 	public E findById(Long id, List<String> fetchFields) {
 		return findById(id, fetchFields, false);
 	}
 
+	@Override
 	public E findById(Long id, boolean refresh) {
 		return findById(getEntityManager(), id, refresh);
 	}
@@ -217,15 +227,47 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 	/**
 	 * @see org.meveo.service.base.local.IPersistenceService#disable(java.lang.Long)
 	 */
+	@Override
 	public void disable(Long id) {
 		E e = findById(id);
-		if (e instanceof EnableEntity) {
+        if (e != null) {
+            disable(e);
+        }
+	}
+	
+	
+	@Override
+	public E disable(E e){
+		if (e instanceof EnableEntity && ((EnableEntity) e).isActive()) {
 			((EnableEntity) e).setDisabled(true);
-			update(e);
+            e = update(e, getCurrentUser(), false);
 			entityDisabledEventProducer.fire(e);
 		}
-	}
+		return e;
+    }
 
+	/**
+     * @see org.meveo.service.base.local.IPersistenceService#enable(java.lang.Long)
+     */
+	@Override
+    public void enable(Long id) {
+        E e = findById(id);
+        if (e != null) {
+            enable(e);
+        }
+    }
+    
+	@Override
+    public E enable(E e) {
+        if (e instanceof EnableEntity && ((EnableEntity) e).isDisabled()) {
+            ((EnableEntity) e).setDisabled(false);
+            e = update(e, getCurrentUser(), false);
+            entityEnabledEventProducer.fire(e);
+        }
+        return e;
+    }
+
+	@Override
 	public void remove(E e) {
 		remove(getEntityManager(), e);
 	}
@@ -255,6 +297,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 	/**
 	 * @see org.meveo.service.base.local.IPersistenceService#remove(java.util.Set)
 	 */
+	@Override
 	public void remove(Set<Long> ids) {
 		Query query = getEntityManager().createQuery(
 				"delete from " + getEntityClass().getName() + " where id in (:ids) and provider.id = :providerId");
@@ -267,30 +310,47 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 	 * @see org.meveo.service.base.local.IPersistenceService#update(org.manaty.model.BaseEntity,
 	 *      org.manaty.model.user.User)
 	 */
-	public void update(E e, User updater) {
-		log.debug("start of update {} entity (id={}) ..", e.getClass().getSimpleName(), e.getId());
+    @Override
+    public E update(E e, User updater) {
+        return update(e, updater, true);
+    }
 
-		if (e instanceof AuditableEntity) {
-			if (updater != null) {
-				((AuditableEntity) e).updateAudit(updater);
-			} else {
-				((AuditableEntity) e).updateAudit(getCurrentUser());
-			}
-		}
-		checkProvider(e);
-		getEntityManager().merge(e);
-		entityUpdatedEventProducer.fire(e);
-		log.debug("end of update {} entity (id={}).", e.getClass().getSimpleName(), e.getId());
-	}
+    /**
+     * Update entity to DB with optionally firing an update event
+     * @param e Entity to update to DB
+     * @param updater User peforming an action
+     * @param fireUpdateEvent True if update event should be fired
+     * @return
+     */
+    protected E update(E e, User updater, boolean fireUpdateEvent) {
+        log.debug("start of update {} entity (id={}) ..", e.getClass().getSimpleName(), e.getId());
+
+        if (e instanceof AuditableEntity) {
+            if (updater != null) {
+                ((AuditableEntity) e).updateAudit(updater);
+            } else {
+                ((AuditableEntity) e).updateAudit(getCurrentUser());
+            }
+        }
+        checkProvider(e);
+        e = getEntityManager().merge(e);
+        if (fireUpdateEvent) {
+            entityUpdatedEventProducer.fire(e);
+        }
+        log.debug("end of update {} entity (id={}).", e.getClass().getSimpleName(), e.getId());
+        return e;
+    }
 
 	/**
 	 * @see org.meveo.service.base.local.IPersistenceService#create(org.manaty.model.BaseEntity,
 	 *      org.manaty.model.user.User)
 	 */
+	@Override
 	public void create(E e, User creator) {
 		create(e, creator, getCurrentProvider());
 	}
 
+	@Override
 	public void create(E e, User creator, Provider provider) {
 		log.debug("start of create {} entity={}", e.getClass().getSimpleName(), e);
 
@@ -315,6 +375,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 	/**
 	 * @see org.meveo.service.base.local.IPersistenceService#list()
 	 */
+	@Override
 	public List<E> list() {
 		return list(getCurrentProvider());
 	}
@@ -332,6 +393,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 	 */
 
 	@SuppressWarnings({ "unchecked" })
+	@Override
 	public List<E> list(PaginationConfiguration config) {
 		QueryBuilder queryBuilder = getQuery(config);
 		Query query = queryBuilder.getQuery(getEntityManager());
@@ -342,7 +404,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 	 * @see org.meveo.service.base.local.IPersistenceService#count(PaginationConfiguration
 	 *      config)
 	 */
-
+	@Override
 	public long count(PaginationConfiguration config) {
 		List<String> fetchFields = config.getFetchFields();
 		config.setFetchFields(null);
@@ -354,7 +416,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 	/**
 	 * @see org.meveo.service.base.local.IPersistenceService#count()
 	 */
-
+	@Override
 	public long count() {
 		final Class<? extends E> entityClass = getEntityClass();
 		QueryBuilder queryBuilder = new QueryBuilder(entityClass, "a", null, null);
@@ -364,7 +426,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 	/**
 	 * @see org.meveo.service.base.local.IPersistenceService#detach
 	 */
-
+	@Override
 	public void detach(Object entity) {
 		// TODO: Hibernate. org.hibernate.Session session = (Session)
 		// getEntityManager().getDelegate();
@@ -374,7 +436,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 	/**
 	 * @see org.meveo.service.base.local.IPersistenceService#refresh(org.meveo.model.BaseEntity)
 	 */
-
+	@Override
 	public void refresh(BaseEntity entity) {
 		// entity manager throws exception if trying to refresh not managed
 		// entity (ejb spec requires this).
