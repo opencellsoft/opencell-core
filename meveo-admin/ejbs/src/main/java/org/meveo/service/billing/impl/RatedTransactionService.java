@@ -526,6 +526,21 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 		}
 
 	}
+	
+ 
+	
+	public List<RatedTransaction> getRatedTransactionsByBillingRun(BillingRun BillingRun) { 
+		QueryBuilder qb = new QueryBuilder("from RatedTransaction c");
+		qb.addCriterionEntity("c.billingRun", BillingRun); 
+		try {
+			return (List<RatedTransaction>) qb.getQuery(getEntityManager())
+					.getResultList();
+		} catch (NoResultException e) {
+			log.warn(e.getMessage());
+			return null;
+		}
+
+	}
  
  	 
 }

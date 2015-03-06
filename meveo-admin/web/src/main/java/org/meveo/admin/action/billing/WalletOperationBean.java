@@ -26,9 +26,11 @@ import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.action.StatelessBaseBean;
 import org.meveo.model.admin.Currency;
+import org.meveo.model.billing.BillingRun;
 import org.meveo.model.billing.RatedTransaction;
 import org.meveo.model.billing.RatedTransactionStatusEnum;
 import org.meveo.model.billing.TradingCurrency;
@@ -39,7 +41,6 @@ import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.RatedTransactionService;
 import org.meveo.service.billing.impl.WalletOperationService;
-import org.meveo.service.billing.impl.WalletService;
 import org.primefaces.model.LazyDataModel;
 
 @Named
@@ -114,8 +115,29 @@ public class WalletOperationBean extends StatelessBaseBean<WalletOperation> {
 			filters.put("chargeInstance.chargeTemplate.invoiceSubCategory", filters.get("invoiceSubCategory"));
 			filters.remove("invoiceSubCategory");
 		}
+		if (filters.containsKey("billingRun")) {
+			List<Long> walletOperationIds=new ArrayList<Long>();
+			BillingRun br=(BillingRun)filters.get("billingRun");
+			List<RatedTransaction> ListRated=ratedTransactionService.getRatedTransactionsByBillingRun(br);
+			if(ListRated.size()>0 && !ListRated.isEmpty()){
+			for(RatedTransaction rated : ListRated){
+				walletOperationIds.add(rated.getWalletOperationId());
+			} 
+			   StringBuffer wpIds=new StringBuffer();
+			   String sep="";
+			   for(Long ids:walletOperationIds){
+			    wpIds.append(sep);
+			    wpIds.append(ids.toString());
+			    sep=",";
+			   }
+			   filters.put("inList-id", wpIds);
+			  }
+			else{
+				return null;
+			}
+			 filters.remove("billingRun");
+		}
 	
-		
 		return super.getLazyDataModel();
 	}
 
@@ -134,6 +156,7 @@ public class WalletOperationBean extends StatelessBaseBean<WalletOperation> {
 					rated.setStatus(RatedTransactionStatusEnum.CANCELED);
 					ratedTransactionService.update(rated);
 				}
+			messages.info(new BundleKey("messages", "walletOperation.reratingSuccessful"));
 			}
 		return rerateWallet;
 	}
@@ -145,9 +168,8 @@ public class WalletOperationBean extends StatelessBaseBean<WalletOperation> {
 			for (WalletOperation wallet : getSelectedEntities()) {
 				if(updateStatus(wallet)){
 					count++;
-				}
-			} 
-			messages.info(count + " wallet operations are rerated"); 
+				}} 
+			messages.info("rerating of "+count+" wallet operations has successfully done"); 
 		}
 	}
 	 

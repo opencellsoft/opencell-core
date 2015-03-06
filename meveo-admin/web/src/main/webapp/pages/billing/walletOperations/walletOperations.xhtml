@@ -103,6 +103,20 @@
 			column2Label="#{messages['invoiceSubCategory.description']}"
 			column2="description">
 		  </hftl:entityPopup>
+		  
+		  <hftl:entityPopup id="searchBillingRunPopup"
+			header="#{messages['billingRun.search']}"
+			backingBean="#{billingRunBean}"
+			updateField=":searchPanel:searchForm"
+			selection="#{walletOperationBean.filters['billingRun']}"
+			searchField1Label="#{messages['role.id']}"
+			searchField1="id" 
+			searchField2Label="#{messages['billingRun.status']}"
+			searchField2="status" 
+			column1Label="#{messages['role.id']}" column1="id"
+			column2Label="#{messages['billingRun.status']}" column2="status"
+			column3Label="#{messages['billingRun.processDate']}" column3="processDate">
+		  </hftl:entityPopup>
 		
 		<p:messages id="messages" />
 		<hf:searchPanel id="searchPanel" label="#{messages['walletOperation.search']}"
@@ -119,6 +133,9 @@
 	   </p:selectOneMenu>
 	  </p:panelGrid>
 	
+	      <hf:searchField label="#{messages['billingRun.panel']}" id="billingRunId"
+		    field="billingRun" childField="id" popup="true" popupId="searchBillingRunPopup" clearButton="true"/>
+		    
 		<hf:searchField label="#{messages['billingAccount.billingAccountPanel']}" id="ba"
 		    field="billingAccount" childField="code" popup="true" popupId="billingAccountPopup" clearButton="true"/> 
 
@@ -160,11 +177,11 @@
 			
 			<hftl:column label="#{messages['businessEntity.code']}" field="code" />
 			<hftl:column label="#{messages['businessEntity.description']}" field="description" />
-			<hftl:column label="#{messages['walletOperation.operationDate']}" field="operationDate" />
+			<hftl:column label="#{messages['walletOperation.operationDate']}" field="operationDate" isDate="true" />
 			<hftl:column label="#{messages['walletOperation.chargeInstance']}" field="chargeInstance" childField="code" />
-			<hftl:column label="#{messages['walletOperation.quantity']}" field="quantity" />
-			<hftl:column label="#{messages['invoice.amountWithoutTax']}" field="amountWithoutTax" />
-			<hftl:column label="#{messages['invoice.amountWithTax']}" field="amountWithTax" />
+			<hftl:column label="#{messages['walletOperation.quantity']}" field="quantity"  converterParam="4digits" wrapHeader="true" />
+			<hftl:column label="#{messages['invoice.amountWithoutTax']}" field="amountWithoutTax"  converterParam="4digits" wrapHeader="true" />
+			<hftl:column label="#{messages['invoice.amountWithTax']}" field="amountWithTax"  converterParam="4digits" wrapHeader="true" />
 			<hftl:column label="#{messages['walletOperation.status']}" field="status" childField="label" isMessage="true" />
 			
 			 

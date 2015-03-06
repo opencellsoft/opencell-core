@@ -185,6 +185,9 @@ public class WalletOperation extends BusinessEntity {
 	
 	@Transient
 	private InvoiceSubCategory invoiceSubCategory;
+	
+	@Transient
+	private BillingRun billingRun;
 
 	public WalletInstance getWallet() {
 		return wallet;
@@ -427,6 +430,14 @@ public class WalletOperation extends BusinessEntity {
 
 	public void setBillingAccount(BillingAccount billingAccount) {
 		this.billingAccount = billingAccount;
+	}
+
+	public BillingRun getBillingRun() {
+		return billingRun;
+	}
+
+	public void setBillingRun(BillingRun billingRun) {
+		this.billingRun = billingRun;
 	}
 
 	@Transient
