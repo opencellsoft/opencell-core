@@ -61,7 +61,7 @@
 	<cc:attribute name="mapValueLabel"
 		default="#{messages['commons.value']}" />
 	<cc:attribute name="show"
-		default="#{((not cc.attrs.showOnlyOnNew) or (cc.attrs.showOnlyOnNew and cc.attrs.edit and cc.entityFromBackingBeanOrAttribute.id==null)) or ((not cc.attrs.showOnlyOnConsult) or (cc.attrs.showOnlyOnConsult and cc.attrs.edit== false))}" />
+		default="#{((not cc.attrs.showOnlyOnNew) or (cc.attrs.showOnlyOnNew and cc.attrs.edit and cc.entityFromBackingBeanOrAttribute.id==null)) and ((not cc.attrs.showOnlyOnConsult) or (cc.attrs.showOnlyOnConsult and cc.attrs.edit== false))}" />
 	<cc:attribute name="completeMethod" required="false" />
 </cc:interface>
 

@@ -15,7 +15,7 @@
 
 		<hf:formPanel id="formPanel" formId="counterTemplatId"
 			label="#{messages['menu.counterTemplates']}"
-			backingBean="#{counterTemplateBean}">
+			backingBean="#{counterTemplateBean}" showEnableDisableButton="true">
 
 			<hf:formField label="#{messages['businessEntity.code']}" field="code"
 				required="true" validateUnique="true" />
@@ -32,7 +32,7 @@
 			<hf:formField label="#{messages['counterTemplate.level']}"
 				field="level" required="true" />
 			<hf:formField label="#{messages['enableEntity.disabled']}"
-				field="disabled" isMessage="true" />
+				field="disabled" isMessage="true" showOnlyOnConsult="true"/>
 			<hftl:panelGroup columns="2">
 				<hf:formEntityField label="#{messages['billingCycle.calendar']}"
 					field="calendar" childField="code" required="true" popup="false"

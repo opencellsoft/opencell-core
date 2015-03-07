@@ -30,8 +30,8 @@
 			</a:commandLink>
 		</custom:entityPopup>
 			
-		<hf:formPanel label="#{messages['matrixDefinition.matrixPanel']}" backingBean="#{matrixBean}">
-			<hf:formField label="#{messages['matrixDefinition.disabled']}" field="disabled" isMessage="true" />
+		<hf:formPanel label="#{messages['matrixDefinition.matrixPanel']}" backingBean="#{matrixBean}" showEnableDisableButton="true">
+			<hf:formField label="#{messages['enableEntity.disabled']}" field="disabled" isMessage="true" showOnlyOnConsult="true"/>
 			<hf:formField label="#{messages['matrixDefinition.activated']}" field="activated" />
 			<hf:formField label="#{messages['matrixDefinition.name']}" field="name" required="true" size="60"/>
 			<hf:formField label="#{messages['matrixDefinition.dimension']}" field="dimension" required="true" />

@@ -32,7 +32,7 @@
 
 		<hf:formPanel id="panelUsage" formId="usageChargeId"
 			label="#{messages['usageChargeTemplate.title']}"
-			backingBean="#{usageChargeTemplateBean}">
+			backingBean="#{usageChargeTemplateBean}" showEnableDisableButton="true">
 
 			<p:tabView id="tabView">
 
@@ -43,7 +43,7 @@
 							field="code" required="true" validateUnique="true" />
 						<hf:languageFields />
 						<hf:formField label="#{messages['enableEntity.disabled']}"
-							field="disabled" isMessage="true" />
+							field="disabled" isMessage="true" showOnlyOnConsult="true"/>
 						<hf:formField label="#{messages['chargeTemplate.amountEditable']}"
 							field="amountEditable" />
 						<hf:formField

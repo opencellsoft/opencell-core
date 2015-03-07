@@ -10,7 +10,8 @@ PROCESSED(6,"enum.notificationEventTypeEnum.PROCESSED"),
 REJECTED(7,"enum.notificationEventTypeEnum.REJECTED"),
 REJECTED_CDR(8,"enum.notificationEventTypeEnum.REJECTED_CDR"),
 LOGGED_IN(9,"enum.notificationEventTypeEnum.LOGGED_IN"),
-INBOUND_REQ(10,"enum.notificationEventTypeEnum.INBOUND_REQ");
+INBOUND_REQ(10,"enum.notificationEventTypeEnum.INBOUND_REQ"),
+ENABLED(11,"enum.notificationEventTypeEnum.ENABLED");
 
 private Integer id;
 private String label;

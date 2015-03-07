@@ -28,7 +28,7 @@
 
 		<hf:formPanel id="formPanel" 
 			label="#{messages['tradingCountry.tradingCountryPanel']}"
-			backingBean="#{tradingCountryBean}">
+			backingBean="#{tradingCountryBean}" showEnableDisableButton="true">
 
 			<hf:formEntityField id="countrySelectedId"
 				label="#{messages['tradingCountry.countryCode']}" field="country"
@@ -36,8 +36,8 @@
 
 			<hf:formField label="#{messages['tradingCountry.prDescription']}"
 				field="prDescription" maxlength="80" id="prDescription"/>
-			<hf:formField label="#{messages['tradingCountry.disabled']}"
-				field="disabled" isMessage="true" />
+			<hf:formField label="#{messages['enableEntity.disabled']}"
+				field="disabled" isMessage="true" showOnlyOnConsult="true"/>
 
 		</hf:formPanel>
 

@@ -56,14 +56,16 @@ public class UsageChargeTemplateService extends
 		usageRatingService.updateTemplateCache(e);
 	}
 
-	public void update(UsageChargeTemplate e) {
-		super.update(e);
+	public UsageChargeTemplate update(UsageChargeTemplate e) {
+		e = super.update(e);
 		usageRatingService.updateTemplateCache(e);
+		return e;
 	}
 
-	public void update(UsageChargeTemplate e, User updater) {
-		super.update(e, updater);
+	public UsageChargeTemplate update(UsageChargeTemplate e, User updater) {
+		e = super.update(e, updater);
 		usageRatingService.updateTemplateCache(e);
+		return e;
 	}
 
 	@SuppressWarnings("unchecked")

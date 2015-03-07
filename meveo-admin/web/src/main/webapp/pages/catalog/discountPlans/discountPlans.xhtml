@@ -29,8 +29,6 @@
 			<hftl:column label="#{messages['BusinessEntity.code']}" field="code" />
 			<hftl:column label="#{messages['BusinessEntity.description']}"
 				field="description" />
-			<hftl:column label="#{messages['commons.status']}" field="disabled"
-				isMessage="true" />
 			<hftl:column label="#{messages['discountPlanMatrix.minDuration']}"
 				field="minDuration" />
 			<hftl:column label="#{messages['discountPlanMatrix.maxDuration']}"
@@ -40,6 +38,8 @@
 				childFieldId="id"
 				entityView="/pages/catalog/discountPlanItems/discountPlanItemDetail.xhtml"
 				backView="discountPlans" showPopup="true" popupFields="code" />
+            <hftl:column label="#{messages['enableEntity.active']}" field="active"
+                isMessage="true" />
 
 			<hftl:actionsColumn
 				permission="#{identity.hasPermission('catalog','catalogManagement')}" />

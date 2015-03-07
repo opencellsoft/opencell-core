@@ -95,11 +95,13 @@ public class RatedTransactionsJobBean {
 							.setStatus(WalletOperationStatusEnum.TREATED);
 					walletOperation.updateAudit(currentUser);
 				} catch (Exception e) {
+					e.printStackTrace();
 					log.error(e.getMessage());
 					result.registerError(e.getMessage());
 				}
 			}
 		} catch (Exception e) {
+			e.printStackTrace();
 			log.error(e.getMessage());
 		}
 

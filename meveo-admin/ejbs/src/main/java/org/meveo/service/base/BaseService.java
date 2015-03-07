@@ -29,6 +29,7 @@ import org.meveo.model.admin.User;
 import org.meveo.security.MeveoUser;
 import org.meveo.service.admin.impl.UserService;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public abstract class BaseService {
 	private static final Random RANDOM = new Random();
@@ -36,8 +37,7 @@ public abstract class BaseService {
 	@Inject
 	protected Identity identity;
 
-	@Inject
-	protected Logger log;
+	protected Logger log = LoggerFactory.getLogger(getClass());
 
 	@Inject
 	private BeanManager beanManager;

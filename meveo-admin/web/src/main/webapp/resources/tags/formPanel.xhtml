@@ -19,12 +19,13 @@
 	<cc:attribute name="formId" default="formId" />
 	<cc:attribute name="columns" default="2" />
 	<cc:attribute name="showFormButtons" default="true" />
-	<cc:attribute name="formButtonsColumns" default="3" />
+	<cc:attribute name="formButtonsColumns" default="4" />
 	<cc:attribute name="ajaxSubmit" default="false" />
 	<cc:attribute name="killConversationOnSave" default="false" />
 	<cc:attribute name="killConversationOnBack" default="false" />
 	<cc:attribute name="showBackButton" default="true" />
 	<cc:attribute name="showEditButton" default="true" />
+    <cc:attribute name="showEnableDisableButton" default="false" />
 	<cc:attribute name="useCustomIdParam" default="false" />
 	<cc:attribute name="objectIdParamName" />
 	<cc:attribute name="styleClass"
@@ -55,7 +56,8 @@
 				useCustomIdParam="#{cc.attrs.useCustomIdParam}"
 				objectIdParamName="#{cc.attrs.objectIdParamName}"
 				showBackButton="#{cc.attrs.showBackButton}"
-				showEditButton="#{cc.attrs.showEditButton}" />
+				showEditButton="#{cc.attrs.showEditButton}" 
+                showEnableDisableButton="#{cc.attrs.showEnableDisableButton}"/>
 
 		</p:panel>
 	</h:form>

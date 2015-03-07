@@ -23,7 +23,7 @@ public abstract class NotificationInstanceService<T extends Notification> extend
     }
 
     @Override
-    public void update(T entity) {
+    public T update(T entity) {
 
         // Instantiate a counter instance if counter template is provided
         try {
@@ -31,7 +31,7 @@ public abstract class NotificationInstanceService<T extends Notification> extend
         } catch (BusinessException e) {
             throw new RuntimeException(e);
         }
-        super.update(entity);
+        return super.update(entity);
     }
 
     /**

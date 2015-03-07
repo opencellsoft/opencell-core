@@ -21,14 +21,14 @@
 					<hf:formPanel edit="#{edit}" id="discountFormPanel"
 						formId="formDiscountPlan"
 						label="#{messages['discountPlanMatrix.panel']}"
-						backingBean="#{discountPlanBean}" columns="2">
+						backingBean="#{discountPlanBean}" columns="2" showEnableDisableButton="true">
 						<hf:formField id="chargeSelectId" required="true"
 							label="#{messages['discountPlanMatrix.eventCode']}" field="code" />
 						<hf:formField label="#{messages['BusinessEntity.description']}"
 							field="description" required="true" useConverter="false"
 							id="description" maxlength="50" />
 						<hf:formField label="#{messages['enableEntity.disabled']}"
-							field="disabled" isMessage="true" />
+							field="disabled" isMessage="true" showOnlyOnConsult="true"/>
 						<hf:formField
 							label="#{messages['discountPlanMatrix.minDuration']}"
 							field="minDuration" />

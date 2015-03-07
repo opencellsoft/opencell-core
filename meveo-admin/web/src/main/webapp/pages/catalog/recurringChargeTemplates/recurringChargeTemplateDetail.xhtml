@@ -32,7 +32,7 @@
 
 		<hf:formPanel id="formPanel" formId="reccuringChargeId"
 			label="#{messages['recurringChargeTemplate.chargeTemplatePanel']}"
-			backingBean="#{recurringChargeTemplateBean}">
+			backingBean="#{recurringChargeTemplateBean}" showEnableDisableButton="true">
 
 			<p:tabView id="tabView">
 
@@ -42,7 +42,7 @@
 							field="code" required="true" validateUnique="true" />
 						<hf:languageFields />
 						<hf:formField label="#{messages['enableEntity.disabled']}"
-							field="disabled" isMessage="true" />
+							field="disabled" isMessage="true" showOnlyOnConsult="true"/>
 						<hf:formField label="#{messages['chargeTemplate.amountEditable']}"
 							field="amountEditable" />
 						<hf:formField
