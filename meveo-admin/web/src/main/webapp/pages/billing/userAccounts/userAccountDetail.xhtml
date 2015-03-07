@@ -404,18 +404,6 @@
 								</p:tab>
 							</c:forEach>
 
-							<p:tab title="#{messages['counterTemplate.title']}">
-								<hftl:dataList resultsId="dt_counterInstances"
-									backingBean="#{userAccountBean}"
-									dataModel="#{userAccountBean.entity.counters}"
-									checkMany="false">
-									<hftl:column label="#{messages['BusinessEntity.code']}"
-										field="code" />
-									<hftl:column label="#{messages['BusinessEntity.description']}"
-										field="description" />
-								</hftl:dataList>
-							</p:tab>
-
 							<p:tab title="#{messages['counterPeriod.title']}"
 								rendered="#{!userAccountBean.edit or userAccountBean.entity.id!=null}">
 								<hftl:panelGroup>
@@ -427,10 +415,23 @@
 											<f:selectItems value="#{userAccountBean.entity.counters}" />
 											<s:objectConverter />
 											<p:ajax event="valueChange"
-												update=":userAccountFormPanel:formId:userAccountTab:datatable_counters_panel" />
-										</p:selectOneMenu>
-									</p:panelGrid>
-								</hftl:panelGroup>
+															update=":userAccountFormPanel:formId:userAccountTab:counters1" />
+													</p:selectOneMenu>
+												</p:panelGrid>
+											</hftl:panelGroup>
+											<p:panel id="counters1">
+											<hftl:panelGroup>
+											<p:panelGrid columns="8">
+											<p:outputLabel value="#{messages['businessEntity.description']} :" />
+											<h:outputText value="#{userAccountBean.selectedCounterInstance.description}"  />
+											<p:outputLabel value="#{messages['invoice.billingAccount']} :" />
+											<h:outputText value="#{userAccountBean.selectedCounterInstance.billingAccount.description}"  />
+											<p:outputLabel value="#{messages['subscription.userAccount']} :" />
+											<h:outputText value="#{userAccountBean.selectedCounterInstance.userAccount.description}"  />
+											<p:outputLabel value="#{messages['counterTemplate.title']} :" />
+											<h:outputText value="#{userAccountBean.selectedCounterInstance.counterTemplate.description}"  />
+											</p:panelGrid>
+											</hftl:panelGroup>
 								<hftl:dataList resultsId="datatable_counters"
 									backingBean="#{counterPeriodBean}"
 									dataModel="#{counterPeriodBean.getCounterPeriods(userAccountBean.selectedCounterInstance)}"
@@ -447,10 +448,11 @@
 									<hftl:column label="#{messages['counterPeriod.periodEndDate']}"
 										field="periodEndDate" isDate="true" />
 									<hftl:column label="#{messages['counterPeriod.level']}"
-										field="level" />
+										field="level" converterParam="4digits" wrapHeader="true" />
 									<hftl:column label="#{messages['counterPeriod.value']}"
-										field="value" />
+										field="value" converterParam="4digits" wrapHeader="true" />
 								</hftl:dataList>
+								</p:panel>
 							</p:tab>
 						</p:tabView>
 
