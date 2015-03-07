@@ -38,7 +38,7 @@ public class ReRatingJob implements Job {
 	private JobExecutionService jobExecutionService;
 
 	@Inject
-	private RecurringRatingJobBean recurringRatingJobBean;
+	private ReRatingJobBean reRatingJobBean;
 
 	@Inject
 	protected Logger log;
@@ -51,7 +51,7 @@ public class ReRatingJob implements Job {
 	@Override
 	public JobExecutionResult execute(String parameter, User currentUser) {
 		JobExecutionResultImpl result = new JobExecutionResultImpl();
-		recurringRatingJobBean.execute(result, currentUser);
+		reRatingJobBean.execute(result, currentUser,"justPrice".equalsIgnoreCase(parameter));
 		result.close("");
 
 		return result;

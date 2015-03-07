@@ -19,6 +19,7 @@ package org.meveo.model.billing;
 import java.math.BigDecimal;
 import java.util.Date;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorType;
@@ -33,6 +34,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -178,6 +180,9 @@ public class WalletOperation extends BusinessEntity {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "PRICEPLAN_ID")
 	private PricePlanMatrix priceplan;
+	
+	@OneToOne(fetch = FetchType.LAZY,cascade={CascadeType.PERSIST})
+	private WalletOperation reratedWalletOperation;
 
 	public WalletInstance getWallet() {
 		return wallet;
@@ -394,6 +399,14 @@ public class WalletOperation extends BusinessEntity {
 
 	public void setPriceplan(PricePlanMatrix priceplan) {
 		this.priceplan = priceplan;
+	}
+
+	public WalletOperation getReratedWalletOperation() {
+		return reratedWalletOperation;
+	}
+
+	public void setReratedWalletOperation(WalletOperation reratedWalletOperation) {
+		this.reratedWalletOperation = reratedWalletOperation;
 	}
 
 	public String toString() {

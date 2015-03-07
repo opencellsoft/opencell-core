@@ -40,9 +40,11 @@ import javax.persistence.criteria.Root;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.IncorrectSusbcriptionException;
+import org.meveo.admin.exception.UnrolledbackBusinessException;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.BillingAccount;
+import org.meveo.model.billing.BillingRunStatusEnum;
 import org.meveo.model.billing.CategoryInvoiceAgregate;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.InvoiceAgregate;
@@ -507,6 +509,21 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 
 		return ratedTransactions;
 
+	}
+
+	public int reratedByWalletOperationId(Long id) throws UnrolledbackBusinessException {
+		int result = 0;
+		List<RatedTransaction> ratedTransactions =  (List<RatedTransaction>) getEntityManager()
+		.createNamedQuery("RatedTransaction.listByWalletOperationId", RatedTransaction.class)
+		.setParameter("walletOperationId", id).getResultList();
+		for(RatedTransaction ratedTransaction:ratedTransactions){
+			if(ratedTransaction.getBillingRun()!=null && ratedTransaction.getBillingRun().getStatus()!=BillingRunStatusEnum.CANCELED){
+				throw new UnrolledbackBusinessException("A rated transaction "+ratedTransaction.getId()+" forbid rerating of wallet operation "+id);
+			}
+			ratedTransaction.setStatus(RatedTransactionStatusEnum.RERATED);
+			result++;
+		}
+		return result;
 	}
 
 }

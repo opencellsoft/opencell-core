@@ -43,6 +43,7 @@ import org.meveo.model.crm.Provider;
 @Table(name = "BILLING_RATED_TRANSACTION")
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_RATED_TRANSACTION_SEQ")
 @NamedQueries({
+		@NamedQuery(name = "RatedTransaction.listByWalletOperationId", query = "SELECT r FROM RatedTransaction r where r.walletOperationId=:walletOperationId"),
 		@NamedQuery(name = "RatedTransaction.listInvoiced", query = "SELECT r FROM RatedTransaction r where r.wallet=:wallet and invoice is not null order by usageDate desc "),
 		@NamedQuery(name = "RatedTransaction.countNotInvoinced", query = "SELECT count(r) FROM RatedTransaction r WHERE r.billingAccount=:billingAccount"
 				+ " AND r.status=org.meveo.model.billing.RatedTransactionStatusEnum.OPEN"

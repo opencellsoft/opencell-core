@@ -30,6 +30,7 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.exception.UnrolledbackBusinessException;
 import org.meveo.commons.utils.NumberUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.BaseEntity;
@@ -76,6 +77,9 @@ public class RatingService {
 
 	@EJB
 	private SubscriptionService subscriptionService;
+	
+	@EJB
+	private RatedTransactionService ratedTransactionService;
 
 	private static boolean isPricePlanDirty;
 
@@ -580,31 +584,53 @@ public class RatingService {
 
 	//rerate
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public void reRate(WalletOperation operation,boolean useSamePricePlan){
-		if(useSamePricePlan){
-			if(operation.getPriceplan() !=null){
-				operation.setUnitAmountWithoutTax(operation.getPriceplan().getAmountWithoutTax());
-				operation.setUnitAmountWithTax(operation.getPriceplan().getAmountWithTax());
-				if(operation.getUnitAmountTax()!=null && operation.getUnitAmountWithTax()!=null){
-					operation.setUnitAmountTax(operation.getUnitAmountWithTax().subtract(operation.getUnitAmountWithoutTax()));
+	public void reRate(WalletOperation operationToRerate,
+			boolean useSamePricePlan) throws BusinessException {
+		try {
+			ratedTransactionService
+					.reratedByWalletOperationId(operationToRerate.getId());
+			WalletOperation operation = operationToRerate.getUnratedClone();
+			operationToRerate.setReratedWalletOperation(operationToRerate);
+			operationToRerate.setStatus(WalletOperationStatusEnum.RERATED);
+			if (useSamePricePlan) {
+				if (operation.getPriceplan() != null) {
+					operation.setUnitAmountWithoutTax(operation.getPriceplan()
+							.getAmountWithoutTax());
+					operation.setUnitAmountWithTax(operation.getPriceplan()
+							.getAmountWithTax());
+					if (operation.getUnitAmountTax() != null
+							&& operation.getUnitAmountWithTax() != null) {
+						operation.setUnitAmountTax(operation
+								.getUnitAmountWithTax().subtract(
+										operation.getUnitAmountWithoutTax()));
+					}
+				}
+				operation.setAmountWithoutTax(operation
+						.getUnitAmountWithoutTax().multiply(
+								operation.getQuantity()));
+				if (operation.getUnitAmountWithTax() != null) {
+					operation
+							.setAmountWithTax(operation.getUnitAmountWithTax());
+				}
+				operation.setAmountTax(operation.getAmountWithTax().subtract(
+						operation.getAmountWithoutTax()));
+			} else {
+				try {
+					rateBareWalletOperation(entityManager, operation, null,
+							null, operation.getPriceplan().getTradingCountry()
+									.getId(), operation.getPriceplan()
+									.getTradingCurrency(),
+							operation.getProvider());
+				} catch (BusinessException e) {
+					e.printStackTrace();
 				}
 			}
-			operation.setAmountWithoutTax(operation.getUnitAmountWithoutTax().multiply(operation.getQuantity()));
-			if(operation.getUnitAmountWithTax()!=null){
-				operation.setAmountWithTax(operation.getUnitAmountWithTax());
-			}
-			operation.setAmountTax(operation.getAmountWithTax().subtract(operation.getAmountWithoutTax()));
-		} else {
-			try {
-				rateBareWalletOperation(entityManager, operation, null, null, 
-						operation.getPriceplan().getTradingCountry().getId(), operation.getPriceplan().getTradingCurrency(),
-						operation.getProvider());
-			} catch (BusinessException e) {
-				e.printStackTrace();
-			} 
+		} catch (UnrolledbackBusinessException e) {
+			log.info(e.getMessage());
+			operationToRerate.setStatus(WalletOperationStatusEnum.TREATED);
+			;
 		}
 	}
-	
 	
 	// synchronized to avoid different threads to reload the priceplan
 	// concurrently
