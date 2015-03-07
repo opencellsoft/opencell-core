@@ -21,6 +21,7 @@
 	<cc:attribute name="killConversationOnBack" default="true" />
 	<cc:attribute name="showBackButton" default="true" />
     <cc:attribute name="showEditButton" default="true" />
+    <cc:attribute name="showEnableDisableButton" default="false" />
 	<cc:attribute name="useCustomIdParam" default="false" />
 	<cc:attribute name="objectIdParamName"
 		default="#{cc.attrs.useCustomIdParam?cc.attrs.backingBean.idParameterName:'objectId'}" />
@@ -39,7 +40,15 @@
 				value="#{javax.enterprise.context.conversation.id}" />
 		</p:button>
 
-		<p:commandButton id="saveButtonWithObjectId"
+        <p:commandButton value="#{messages['commons.disable']}"
+            rendered="#{!cc.attrs.edit and cc.attrs.showEnableDisableButton and cc.attrs.backingBean.entity.active}"
+            action="#{cc.attrs.backingBean.disable}" update="@form"/>
+            
+        <p:commandButton value="#{messages['commons.enable']}"
+            rendered="#{!cc.attrs.edit and cc.attrs.showEnableDisableButton and cc.attrs.backingBean.entity.disabled}"
+            action="#{cc.attrs.backingBean.enable}" update="@form"/>
+
+        <p:commandButton id="saveButtonWithObjectId"
 			rendered="#{cc.attrs.edit and empty(cc.attrs.backingBean.objectId)}"
 			value="#{messages['action.save']}"
 			action="#{cc.attrs.backingBean.saveOrUpdate(cc.attrs.killConversationOnSave,cc.attrs.objectIdParamName,cc.attrs.backingBean.objectId)}"

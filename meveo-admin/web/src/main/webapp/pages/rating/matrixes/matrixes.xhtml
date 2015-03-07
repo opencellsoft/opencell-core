@@ -17,7 +17,7 @@
     	<custom:listPanel label="#{messages['matrixDefinition.title']}" backingBean="#{matrixBean}">
     	
     		<custom:searchPanel label="#{messages['matrixDefinition.search']}" newButtonView="/pages/rating/matrixes/matrixDetail.xhtml">
-				<custom:searchField label="#{messages['matrixDefinition.disabled']}" field="disabled"  />
+				<custom:searchField label="#{messages['enableEntity.disabled']}" field="disabled"  />
 				<custom:searchField label="#{messages['matrixDefinition.activated']}" field="activated" />
 				<custom:searchField label="#{messages['matrixDefinition.name']}" field="name" size="20" />
 				<custom:searchField label="#{messages['matrixDefinition.startDate']}" field="startDate" />
@@ -27,7 +27,7 @@
 			</custom:searchPanel>
     		
 	    	<custom:dataList dataModel="#{matrixes}">
-	    		<custom:column label="#{messages['matrixDefinition.disabled']}" field="disabled"  isMessage="true"/>
+	    		<custom:column label="#{messages['enableEntity.active']}" field="active"  isMessage="true"/>
 	    		<custom:column label="#{messages['matrixDefinition.activated']}" field="activated" isMessage="true" />
 	    		<custom:column label="#{messages['matrixDefinition.name']}" field="name" />
 	    		<custom:column label="#{messages['matrixDefinition.usageType']}" field="usageType" childField="code" />

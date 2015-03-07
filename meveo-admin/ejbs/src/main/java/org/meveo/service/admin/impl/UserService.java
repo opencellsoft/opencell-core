@@ -78,7 +78,7 @@ public class UserService extends PersistenceService<User> {
 
 	@Override
 	@UserUpdate
-	public void update(User user) throws UsernameAlreadyExistsException {
+	public User update(User user) throws UsernameAlreadyExistsException {
 		if (isUsernameExists(user.getUserName(), user.getId())) {
 			getEntityManager().refresh(user);
 			throw new UsernameAlreadyExistsException(user.getUserName());
@@ -91,7 +91,7 @@ public class UserService extends PersistenceService<User> {
 			user.setPassword(encryptedPassword);
 		}
 
-		super.update(user);
+		return super.update(user);
 	}
 
 	@Override

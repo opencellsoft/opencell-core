@@ -23,7 +23,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
@@ -61,29 +60,9 @@ public class PricePlanMatrixService extends PersistenceService<PricePlanMatrix> 
 		RatingService.setPricePlanDirty();
 	}
 
-	public void update(PricePlanMatrix e) {
-		super.update(e);
-	}
-
-	public void remove(Long id) {
-		super.remove(id);
-	}
-
 	public void disable(Long id) {
 		super.disable(id);
 		RatingService.setPricePlanDirty();
-	}
-
-	public void remove(PricePlanMatrix e) {
-		super.remove(e);
-	}
-
-	public void remove(Set<Long> ids) {
-		super.remove(ids);
-	}
-
-	public void update(PricePlanMatrix e, User updater) {
-		super.update(e, updater);
 	}
 
 	public void create(PricePlanMatrix e, User creator) {

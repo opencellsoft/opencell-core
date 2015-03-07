@@ -33,7 +33,7 @@
 		<hf:formPanel id="formPanel" formId="currenciesFormId"
 			edit="#{tradingCurrencyBean.edit}"
 			label="#{messages['tradingCurrency.tradingCurrencyPanel']}"
-			backingBean="#{tradingCurrencyBean}">
+			backingBean="#{tradingCurrencyBean}" showEnableDisableButton="true">
 
 			<hf:formEntityField id="currencySelectedId"
 				label="#{messages['tradingCurrency.currencyCode']}" field="currency"
@@ -45,8 +45,8 @@
 			<hf:formField label="#{messages['tradingCurrency.prCurrencyToThis']}"
 				field="prCurrencyToThis">
 			</hf:formField>
-			<hf:formField label="#{messages['tradingCurrency.disabled']}"
-				field="disabled" isMessage="true" />
+			<hf:formField label="#{messages['enableEntity.disabled']}"
+				field="disabled" isMessage="true" showOnlyOnConsult="true"/>
 
 		</hf:formPanel>
 

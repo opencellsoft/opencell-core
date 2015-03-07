@@ -82,13 +82,13 @@
 			<p:tabView id="tabView">
 				<p:tab title="#{messages['serviceUsageChargeTemplate.info']}">
 
-					<hf:formPanel backingBean="#{serviceTemplateBean}" columns="1">
+					<hf:formPanel backingBean="#{serviceTemplateBean}" columns="1" showEnableDisableButton="true">
 
 						<hftl:panelGroup columns="2">
 							<hf:formField label="#{messages['serviceTemplate.code']}"
 								field="code" required="true" validateUnique="true" />
 							<hf:formField label="#{messages['enableEntity.disabled']}"
-								field="disabled" isMessage="true" />
+								field="disabled" isMessage="true" showOnlyOnConsult="true"/>
 							<hf:formField label="#{messages['serviceTemplate.description']}"
 								field="description" required="true" useConverter="false"
 								size="50" maxlength="50" />
