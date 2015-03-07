@@ -145,19 +145,19 @@ public class WalletOperationBean extends StatelessBaseBean<WalletOperation> {
 		boolean rerateWallet=false;
 		List<RatedTransaction> ratedTransactions=new ArrayList<RatedTransaction>();
 		  if(selectedWallet.getStatus().equals(WalletOperationStatusEnum.OPEN )|| selectedWallet.getStatus().equals(WalletOperationStatusEnum.TREATED) ){
-			ratedTransactions=ratedTransactionService.getNotBilledRatedTransactions(selectedWallet.getId());
-			if(ratedTransactions!=null && !ratedTransactions.isEmpty()){
-				rerateWallet=true;
-			} }	
+			  selectedWallet.setStatus(WalletOperationStatusEnum.TO_RERATE);
+			  getPersistenceService().update(selectedWallet); 
+			  rerateWallet=true;
+		  }
 			if(rerateWallet){
-				selectedWallet.setStatus(WalletOperationStatusEnum.TO_RERATE);
-				getPersistenceService().update(selectedWallet); 
+				ratedTransactions=ratedTransactionService.getNotBilledRatedTransactions(selectedWallet.getId());
+				if(ratedTransactions!=null && !ratedTransactions.isEmpty()){
 				for (RatedTransaction rated :ratedTransactions){
 					rated.setStatus(RatedTransactionStatusEnum.CANCELED);
 					ratedTransactionService.update(rated);
-				}
-			messages.info(new BundleKey("messages", "walletOperation.reratingSuccessful"));
-			}
+				}}
+				messages.info(new BundleKey("messages", "walletOperation.reratingSuccessful"));
+				}	
 		return rerateWallet;
 	}
 	
@@ -169,7 +169,7 @@ public class WalletOperationBean extends StatelessBaseBean<WalletOperation> {
 				if(updateStatus(wallet)){
 					count++;
 				}} 
-			messages.info("rerating of "+count+" wallet operations has successfully done"); 
+			messages.info("Rerating of "+count+" wallet operations has successfully done"); 
 		}
 	}
 	 
