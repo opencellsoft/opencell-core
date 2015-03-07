@@ -119,6 +119,7 @@
 		  </hftl:entityPopup>
 		
 		<p:messages id="messages" />
+		<p:messages id="msg" />
 		<hf:searchPanel id="searchPanel" label="#{messages['walletOperation.search']}"
 			backingBean="#{walletOperationBean}">
 		<hftl:panelGroup columns="2">
@@ -196,7 +197,7 @@
 					showEffect="slide" hideEffect="slide" />
 				<p:commandButton id="updateWallet" icon="ui-icon-play"
 					actionListener="#{walletOperationBean.updateStatus(entity)}"
-					update=":results_form">
+					update=":results_form :messages">
 					<p:confirm header="#{messages['message.confirmation']}"
 						message="#{messages['message.confirm.walletOperation.update']}"
 						icon="ui-icon-alert" />
@@ -209,7 +210,7 @@
 				showEffect="slide" hideEffect="slide" />
 			<p:commandButton id="massUpdateWallet"
 				value="#{messages['action.massRerate']}"
-				  update=":results_form :messages" action="#{walletOperationBean.massRerate()}">
+				  update=":results_form :msg" action="#{walletOperationBean.massRerate()}">
 				<p:confirm header="#{messages['message.confirmation']}"
 					message="#{messages['message.confirm.walletOperation.update']}"
 					icon="ui-icon-alert" />

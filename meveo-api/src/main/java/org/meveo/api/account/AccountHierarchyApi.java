@@ -1145,7 +1145,12 @@ public class AccountHierarchyApi extends BaseApi {
 
 													userAccount.setProvider(provider);
 													if (userAccount.isTransient()) {
-														userAccountService.create(userAccount, currentUser, provider);
+														try {
+															userAccountService.createUserAccount(billingAccount,
+																	userAccount, currentUser);
+														} catch (AccountAlreadyExistsException e) {
+															throw new MeveoApiException(e.getMessage());
+														}
 													} else {
 														userAccountService.update(userAccount, currentUser);
 													}
