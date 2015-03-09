@@ -15,7 +15,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.meveo.admin.exception;import org.meveo.model.admin.User;
-;
 
 /**
  * Exception thrown when {@link User} entity does not exist
