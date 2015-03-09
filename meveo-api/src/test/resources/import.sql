@@ -1144,7 +1144,7 @@ CREATE SEQUENCE CAT_CHARGE_TEMPLATE_SEQ start with 5 increment by 1;
 
 insert into CAT_RECURRING_CHARGE_TEMPL (id, CALENDAR_ID, APPLY_IN_ADVANCE, subscription_prorata, termination_prorata) values (1, 3, false, false, false);
 insert into CAT_ONE_SHOT_CHARGE_TEMPL (id, type, immediate_invoicing) values (2, 'SUBSCRIPTION', false);
-insert into CAT_USAGE_CHARGE_TEMPLATE (id, UNITY_NB_DECIMAL) values (3, 2);
+insert into CAT_USAGE_CHARGE_TEMPLATE (id, UNITY_NB_DECIMAL, UNITY_MULTIPLICATOR) values (3, 2, 1);
 insert into CAT_ONE_SHOT_CHARGE_TEMPL (id, type, immediate_invoicing) values (4, 'SUBSCRIPTION', false);
 
 insert into CAT_SERVICE_TEMPLATE (id, version, disabled, created, code, description, provider_id) values (1, 0, false, now(), 'SERV1', 'SERV1', 1);

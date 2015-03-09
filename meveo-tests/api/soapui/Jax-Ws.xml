@@ -8095,12 +8095,12 @@
   <wsdl:import location="http://localhost:8080/meveo/MediationWs?wsdl=MediationWs.wsdl" namespace="http://ws.api.meveo.org/"></wsdl:import>
   <wsdl:binding name="MediationWsSoapBinding" type="ns1:MediationWs">
     <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
-    <wsdl:operation name="registerUsage">
+    <wsdl:operation name="reserveCdr">
       <soap:operation soapAction="" style="document"/>
-      <wsdl:input name="registerUsage">
+      <wsdl:input name="reserveCdr">
         <soap:body use="literal"/>
       </wsdl:input>
-      <wsdl:output name="registerUsageResponse">
+      <wsdl:output name="reserveCdrResponse">
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
@@ -8110,6 +8110,42 @@
         <soap:body use="literal"/>
       </wsdl:input>
       <wsdl:output name="indexResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="chargeCdr">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="chargeCdr">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="chargeCdrResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="cancelReservation">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="cancelReservation">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="cancelReservationResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="registerCdrList">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="registerCdrList">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="registerCdrListResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="confirmReservation">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="confirmReservation">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="confirmReservationResponse">
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
@@ -8124,30 +8160,42 @@
     <xs:schema elementFormDefault="unqualified" targetNamespace="http://ws.api.meveo.org/" version="1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://ws.api.meveo.org/">
       <xs:element name="ActionStatus" type="tns:actionStatus"/>
       <xs:element name="CdrList" type="tns:cdrListDto"/>
+      <xs:element name="CdrReservationResponse" type="tns:cdrReservationResponseDto"/>
+      <xs:element name="cancelReservation" type="tns:cancelReservation"/>
+      <xs:element name="cancelReservationResponse" type="tns:cancelReservationResponse"/>
+      <xs:element name="chargeCdr" type="tns:chargeCdr"/>
+      <xs:element name="chargeCdrResponse" type="tns:chargeCdrResponse"/>
+      <xs:element name="confirmReservation" type="tns:confirmReservation"/>
+      <xs:element name="confirmReservationResponse" type="tns:confirmReservationResponse"/>
       <xs:element name="index" type="tns:index"/>
       <xs:element name="indexResponse" type="tns:indexResponse"/>
-      <xs:element name="registerUsage" type="tns:registerUsage"/>
-      <xs:element name="registerUsageResponse" type="tns:registerUsageResponse"/>
-      <xs:complexType name="registerUsage">
+      <xs:element name="registerCdrList" type="tns:registerCdrList"/>
+      <xs:element name="registerCdrListResponse" type="tns:registerCdrListResponse"/>
+      <xs:element name="reserveCdr" type="tns:reserveCdr"/>
+      <xs:element name="reserveCdrResponse" type="tns:reserveCdrResponse"/>
+      <xs:complexType name="reserveCdr">
         <xs:sequence>
-          <xs:element minOccurs="0" name="cdrList" type="tns:cdrListDto"/>
+          <xs:element minOccurs="0" name="cdr" type="xs:string"/>
         </xs:sequence>
       </xs:complexType>
-      <xs:complexType name="cdrListDto">
+      <xs:complexType name="reserveCdrResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:cdrReservationResponseDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="cdrReservationResponseDto">
         <xs:complexContent>
-          <xs:extension base="tns:baseDto">
+          <xs:extension base="tns:baseResponse">
             <xs:sequence>
-              <xs:element maxOccurs="unbounded" minOccurs="0" name="cdr" type="xs:string"/>
+              <xs:element name="availableQuantity" type="xs:double"/>
+              <xs:element name="reservationId" type="xs:long"/>
             </xs:sequence>
           </xs:extension>
         </xs:complexContent>
       </xs:complexType>
-      <xs:complexType abstract="true" name="baseDto">
-        <xs:sequence/>
-      </xs:complexType>
-      <xs:complexType name="registerUsageResponse">
+      <xs:complexType abstract="true" name="baseResponse">
         <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+          <xs:element minOccurs="0" name="actionStatus" type="tns:actionStatus"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="actionStatus">
@@ -8165,6 +8213,68 @@
           <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
         </xs:sequence>
       </xs:complexType>
+      <xs:complexType name="chargeCdr">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="cdr" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="chargeCdrResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="cancelReservation">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="reservation" type="tns:PrepaidReservation"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="PrepaidReservation">
+        <xs:complexContent>
+          <xs:extension base="tns:baseDto">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="consumedQuantity" type="xs:decimal"/>
+            </xs:sequence>
+            <xs:attribute name="reservationId" type="xs:long" use="required"/>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType abstract="true" name="baseDto">
+        <xs:sequence/>
+      </xs:complexType>
+      <xs:complexType name="cancelReservationResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="registerCdrList">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="cdrList" type="tns:cdrListDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="cdrListDto">
+        <xs:complexContent>
+          <xs:extension base="tns:baseDto">
+            <xs:sequence>
+              <xs:element maxOccurs="unbounded" minOccurs="0" name="cdr" nillable="true" type="xs:string"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="registerCdrListResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="confirmReservation">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="reservation" type="tns:PrepaidReservation"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="confirmReservationResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
       <xs:simpleType name="actionStatusEnum">
         <xs:restriction base="xs:string">
           <xs:enumeration value="SUCCESS"/>
@@ -8173,26 +8283,66 @@
       </xs:simpleType>
     </xs:schema>
   </wsdl:types>
+  <wsdl:message name="confirmReservationResponse">
+    <wsdl:part element="ns1:confirmReservationResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="registerCdrListResponse">
+    <wsdl:part element="ns1:registerCdrListResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
   <wsdl:message name="index">
     <wsdl:part element="ns1:index" name="parameters"></wsdl:part>
   </wsdl:message>
-  <wsdl:message name="registerUsageResponse">
-    <wsdl:part element="ns1:registerUsageResponse" name="parameters"></wsdl:part>
+  <wsdl:message name="cancelReservationResponse">
+    <wsdl:part element="ns1:cancelReservationResponse" name="parameters"></wsdl:part>
   </wsdl:message>
-  <wsdl:message name="registerUsage">
-    <wsdl:part element="ns1:registerUsage" name="parameters"></wsdl:part>
+  <wsdl:message name="confirmReservation">
+    <wsdl:part element="ns1:confirmReservation" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="chargeCdr">
+    <wsdl:part element="ns1:chargeCdr" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="reserveCdrResponse">
+    <wsdl:part element="ns1:reserveCdrResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="chargeCdrResponse">
+    <wsdl:part element="ns1:chargeCdrResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="reserveCdr">
+    <wsdl:part element="ns1:reserveCdr" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="registerCdrList">
+    <wsdl:part element="ns1:registerCdrList" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="cancelReservation">
+    <wsdl:part element="ns1:cancelReservation" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="indexResponse">
     <wsdl:part element="ns1:indexResponse" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:portType name="MediationWs">
-    <wsdl:operation name="registerUsage">
-      <wsdl:input message="ns1:registerUsage" name="registerUsage"></wsdl:input>
-      <wsdl:output message="ns1:registerUsageResponse" name="registerUsageResponse"></wsdl:output>
+    <wsdl:operation name="reserveCdr">
+      <wsdl:input message="ns1:reserveCdr" name="reserveCdr"></wsdl:input>
+      <wsdl:output message="ns1:reserveCdrResponse" name="reserveCdrResponse"></wsdl:output>
     </wsdl:operation>
     <wsdl:operation name="index">
       <wsdl:input message="ns1:index" name="index"></wsdl:input>
       <wsdl:output message="ns1:indexResponse" name="indexResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="chargeCdr">
+      <wsdl:input message="ns1:chargeCdr" name="chargeCdr"></wsdl:input>
+      <wsdl:output message="ns1:chargeCdrResponse" name="chargeCdrResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="cancelReservation">
+      <wsdl:input message="ns1:cancelReservation" name="cancelReservation"></wsdl:input>
+      <wsdl:output message="ns1:cancelReservationResponse" name="cancelReservationResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="registerCdrList">
+      <wsdl:input message="ns1:registerCdrList" name="registerCdrList"></wsdl:input>
+      <wsdl:output message="ns1:registerCdrListResponse" name="registerCdrListResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="confirmReservation">
+      <wsdl:input message="ns1:confirmReservation" name="confirmReservation"></wsdl:input>
+      <wsdl:output message="ns1:confirmReservationResponse" name="confirmReservationResponse"></wsdl:output>
     </wsdl:operation>
   </wsdl:portType>
 </wsdl:definitions>]]></con:content><con:type>http://schemas.xmlsoap.org/wsdl/</con:type></con:part></con:definitionCache><con:endpoints><con:endpoint>http://localhost:8080/meveo/MediationWs</con:endpoint></con:endpoints><con:operation isOneWay="false" action="" name="index" bindingOperationName="index" type="Request-Response" outputName="indexResponse" inputName="index" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/MediationWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
@@ -8200,22 +8350,56 @@
    <soapenv:Body>
       <ws:index/>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/MediationWs/index"/></con:call></con:operation><con:operation isOneWay="false" action="" name="registerUsage" bindingOperationName="registerUsage" type="Request-Response" outputName="registerUsageResponse" inputName="registerUsage" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment xmlns:con="http://eviware.com/soapui/config">
-  &lt;con:entry key="username" value="meveo.admin"/>
-  &lt;con:entry key="password" value="meveo.admin"/>
-&lt;/xml-fragment></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/MediationWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+</soapenv:Envelope>]]></con:request><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/MediationWs/index"/></con:call></con:operation><con:operation isOneWay="false" action="" name="reserveCdr" bindingOperationName="reserveCdr" type="Request-Response" outputName="reserveCdrResponse" inputName="reserveCdr" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/MediationWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
-      <ws:registerUsage>
+      <ws:reserveCdr>
+         <!--Optional:-->
+         <cdr>?</cdr>
+      </ws:reserveCdr>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/MediationWs/reserveCdr"/></con:call></con:operation><con:operation isOneWay="false" action="" name="chargeCdr" bindingOperationName="chargeCdr" type="Request-Response" outputName="chargeCdrResponse" inputName="chargeCdr" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/MediationWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:chargeCdr>
+         <!--Optional:-->
+         <cdr>?</cdr>
+      </ws:chargeCdr>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/MediationWs/chargeCdr"/></con:call></con:operation><con:operation isOneWay="false" action="" name="cancelReservation" bindingOperationName="cancelReservation" type="Request-Response" outputName="cancelReservationResponse" inputName="cancelReservation" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/MediationWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:cancelReservation>
+         <!--Optional:-->
+         <reservation reservationId="?">
+            <!--Optional:-->
+            <consumedQuantity>?</consumedQuantity>
+         </reservation>
+      </ws:cancelReservation>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/MediationWs/cancelReservation"/></con:call></con:operation><con:operation isOneWay="false" action="" name="registerCdrList" bindingOperationName="registerCdrList" type="Request-Response" outputName="registerCdrListResponse" inputName="registerCdrList" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/MediationWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:registerCdrList>
          <!--Optional:-->
          <cdrList>
             <!--Zero or more repetitions:-->
-            <cdr>2015-02-13T00:15:11.000Z;5;IMSI1;DATA</cdr>
-            <cdr>2015-02-13T00:15:11.000Z;5;IMSI1;DATA</cdr>
+            <cdr>2015-03-09T00:15:11.000Z;5;IMSI2;DATA</cdr>
          </cdrList>
-      </ws:registerUsage>
+      </ws:registerCdrList>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/MediationWs/registerUsage"/><con:wsrmConfig version="1.2"/></con:call></con:operation></con:interface><con:interface xsi:type="con:WsdlInterface" wsaVersion="NONE" name="WalletWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}WalletWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="http://localhost:8080/meveo/WalletWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache type="TEXT" rootPart="http://localhost:8080/meveo/WalletWs?wsdl"><con:part><con:url>http://localhost:8080/meveo/WalletWs?wsdl</con:url><con:content><![CDATA[<wsdl:definitions name="WalletWs" targetNamespace="http://impl.ws.api.meveo.org/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://impl.ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns2="http://schemas.xmlsoap.org/soap/http" xmlns:ns1="http://ws.api.meveo.org/">
+</soapenv:Envelope>]]></con:request><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:authType>Global HTTP Settings</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/MediationWs/registerCdrList"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation isOneWay="false" action="" name="confirmReservation" bindingOperationName="confirmReservation" type="Request-Response" outputName="confirmReservationResponse" inputName="confirmReservation" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/MediationWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:confirmReservation>
+         <!--Optional:-->
+         <reservation reservationId="?">
+            <!--Optional:-->
+            <consumedQuantity>?</consumedQuantity>
+         </reservation>
+      </ws:confirmReservation>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/MediationWs/confirmReservation"/></con:call></con:operation></con:interface><con:interface xsi:type="con:WsdlInterface" wsaVersion="NONE" name="WalletWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}WalletWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="http://localhost:8080/meveo/WalletWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache type="TEXT" rootPart="http://localhost:8080/meveo/WalletWs?wsdl"><con:part><con:url>http://localhost:8080/meveo/WalletWs?wsdl</con:url><con:content><![CDATA[<wsdl:definitions name="WalletWs" targetNamespace="http://impl.ws.api.meveo.org/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://impl.ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns2="http://schemas.xmlsoap.org/soap/http" xmlns:ns1="http://ws.api.meveo.org/">
   <wsdl:import location="http://localhost:8080/meveo/WalletWs?wsdl=WalletWs.wsdl" namespace="http://ws.api.meveo.org/"></wsdl:import>
   <wsdl:binding name="WalletWsSoapBinding" type="ns1:WalletWs">
     <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
@@ -9938,19 +10122,7 @@ for( testCase in testSuite.getTestCaseList() ) {
    <soapenv:Body>
       <ws:index/>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/MediationWs/index"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="registerUsage TestCase" searchProperties="true"><con:settings/><con:testStep type="request" name="registerUsage"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>MediationWsSoapBinding</con:interface><con:operation>registerUsage</con:operation><con:request name="registerUsage" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType=""><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/MediationWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
-   <soapenv:Header/>
-   <soapenv:Body>
-      <ws:registerUsage>
-         <!--Optional:-->
-         <cdrList>
-            <!--Zero or more repetitions:-->
-            <cdr>2015-02-13T00:15:11.000Z;5;IMSI1;DATA</cdr>
-            <cdr>2015-02-13T00:15:11.000Z;5;IMSI1;DATA</cdr>
-         </cdrList>
-      </ws:registerUsage>
-   </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/MediationWs/registerUsage"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:properties/><con:setupScript>import com.eviware.soapui.impl.wsdl.teststeps.*
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/MediationWs/index"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="registerUsage TestCase" searchProperties="true"><con:settings/><con:properties/></con:testCase><con:properties/><con:setupScript>import com.eviware.soapui.impl.wsdl.teststeps.*
 import com.eviware.soapui.support.types.*;
 
 StringToStringMap headers = new StringToStringMap();
