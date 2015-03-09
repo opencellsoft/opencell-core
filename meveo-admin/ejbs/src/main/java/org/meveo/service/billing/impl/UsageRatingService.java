@@ -100,11 +100,13 @@ public class UsageRatingService {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	public void updateTemplateCache(TriggeredEDRTemplate triggeredEDRTemplate) {
-		log.debug("updateTemplateCache for tigeredEDR {}", triggeredEDRTemplate.toString());
-		@SuppressWarnings("unchecked")
+		log.debug("updateTemplateCache for triggeredEDR {}", triggeredEDRTemplate.toString());
+
 		List<UsageChargeTemplate> charges = em.createNamedQuery("UsageChargeTemplate.getWithTemplateEDR")
 				.setParameter("edrTemplate", triggeredEDRTemplate).getResultList();
+
 		for (UsageChargeTemplate charge : charges) {
 			updateTemplateCache(charge);
 		}
@@ -724,9 +726,9 @@ public class UsageRatingService {
 					edr.setRejectReason("subscription has no usage charge");
 				}
 			} catch (Exception e) {
+				log.error(e.getMessage());
 				edr.setStatus(EDRStatusEnum.REJECTED);
 				edr.setRejectReason(e.getMessage());
-				// e.printStackTrace();
 				throw new BusinessException(e.getMessage());
 			}
 		}

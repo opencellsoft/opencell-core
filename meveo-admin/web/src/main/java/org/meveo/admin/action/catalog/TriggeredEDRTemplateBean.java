@@ -46,6 +46,7 @@ public class TriggeredEDRTemplateBean extends BaseBean<TriggeredEDRTemplate> {
 
 	@Inject
 	private UsageRatingService usageRatingService;
+
 	/**
 	 * Constructor. Invokes super constructor and provides class type of this
 	 * bean for {@link BaseBean}.
@@ -81,16 +82,18 @@ public class TriggeredEDRTemplateBean extends BaseBean<TriggeredEDRTemplate> {
 	protected List<String> getFormFieldsToFetch() {
 		return Arrays.asList("provider");
 	}
-	
+
 	@Override
-	public String saveOrUpdate(boolean killConversation) throws BusinessException{
+	public String saveOrUpdate(boolean killConversation) throws BusinessException {
+		String result = super.saveOrUpdate(killConversation);
 		usageRatingService.updateTemplateCache(entity);
-		return super.saveOrUpdate(killConversation);
+		return result;
 	}
 
 	@Override
-   protected String saveOrUpdate(TriggeredEDRTemplate entity) throws BusinessException {
+	protected String saveOrUpdate(TriggeredEDRTemplate entity) throws BusinessException {
+		String result = super.saveOrUpdate(entity);
 		usageRatingService.updateTemplateCache(entity);
-		return super.saveOrUpdate(entity);
-   }
+		return result;
+	}
 }
