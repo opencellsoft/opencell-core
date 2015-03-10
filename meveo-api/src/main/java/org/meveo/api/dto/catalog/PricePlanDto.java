@@ -51,6 +51,8 @@ public class PricePlanDto implements Serializable {
 	private String criteria2;
 	private String criteria3;
 
+	private String validityCalendarCode;
+	
 	public PricePlanDto() {
 
 	}
@@ -83,6 +85,9 @@ public class PricePlanDto implements Serializable {
 		criteria1 = e.getCriteria1Value();
 		criteria2 = e.getCriteria2Value();
 		criteria3 = e.getCriteria3Value();
+        if (e.getValidityCalendar() != null) {
+            validityCalendarCode = e.getValidityCalendar().getCode();
+        }
 	}
 
 	public String getEventCode() {
@@ -256,5 +261,13 @@ public class PricePlanDto implements Serializable {
 	public void setCode(String code) {
 		this.code = code;
 	}
+
+    public String getValidityCalendarCode() {
+        return validityCalendarCode;
+    }
+
+    public void setValidityCalendarCode(String validityCalendarCode) {
+        this.validityCalendarCode = validityCalendarCode;
+    }
 
 }

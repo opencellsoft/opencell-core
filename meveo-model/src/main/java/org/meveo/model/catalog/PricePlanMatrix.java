@@ -117,6 +117,10 @@ public class PricePlanMatrix extends BusinessEntity implements Comparable<PriceP
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "SELLER_ID")
 	private Seller seller;
+	
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "VALID_CAL_ID")
+    private Calendar validityCalendar;
 
 	public String getEventCode() {
 		return eventCode;
@@ -278,13 +282,21 @@ public class PricePlanMatrix extends BusinessEntity implements Comparable<PriceP
 		this.seller = seller;
 	}
 
-	public String toString() {
+	public Calendar getValidityCalendar() {
+        return validityCalendar;
+    }
+
+    public void setValidityCalendar(Calendar validityCalendar) {
+        this.validityCalendar = validityCalendar;
+    }
+
+    public String toString() {
 		return eventCode + "," + startSubscriptionDate + "," + endSubscriptionDate + ","
 				+ startRatingDate + "," + endRatingDate + "," + minSubscriptionAgeInMonth + ","
 				+ maxSubscriptionAgeInMonth + "," + criteria1Value + "," + criteria2Value + ","
 				+ criteria3Value + "," + amountWithoutTax + "," + amountWithTax + ","
 				+ tradingCurrency + "," + "," + tradingCountry + "," + "," + priority + "," + ","
-				+ seller;
+				+ seller+", "+ validityCalendar;
 	}
 
 	@Override
@@ -377,6 +389,13 @@ public class PricePlanMatrix extends BusinessEntity implements Comparable<PriceP
 		if (priority != other.priority) {
 			return false;
 		}
+        if (validityCalendar == null) {
+            if (other.validityCalendar != null) {
+                return false;
+            }
+        } else if (validityCalendar.getId() != other.getValidityCalendar().getId()) {
+            return false;
+        }
 		return true;
 	}
 
