@@ -189,6 +189,10 @@ public class ImportCustomersJobBean {
 		nbCustomersIgnored = 0;
 		nbCustomersCreated = 0;
 
+		nbSellersUpdated = 0;
+		nbCustomersUpdated = 0;
+		nbCustomerAccountsUpdated = 0;
+
 		nbCustomerAccounts = 0;
 		nbCustomerAccountsError = 0;
 		nbCustomerAccountsWarning = 0;
