@@ -45,6 +45,7 @@ import javax.validation.constraints.Size;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.admin.Currency;
 import org.meveo.model.admin.Seller;
+import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.PricePlanMatrix;
 
 @Entity
@@ -183,6 +184,18 @@ public class WalletOperation extends BusinessEntity {
 	
 	@OneToOne(fetch = FetchType.LAZY,cascade={CascadeType.PERSIST})
 	private WalletOperation reratedWalletOperation;
+	
+	@Transient
+	private BillingAccount billingAccount;
+
+	@Transient
+	private InvoiceSubCategory invoiceSubCategory;
+	
+	@Transient
+	private BillingRun billingRun;
+	
+	@Transient
+	private OfferTemplate offerTemplate;
 
 	public WalletInstance getWallet() {
 		return wallet;
@@ -448,5 +461,38 @@ public class WalletOperation extends BusinessEntity {
 		result.setUnityDescription(unityDescription);
 		return result;
 	}
+
+	public BillingAccount getBillingAccount() {
+		return billingAccount;
+	}
+
+	public void setBillingAccount(BillingAccount billingAccount) {
+		this.billingAccount = billingAccount;
+	}
+
+	public InvoiceSubCategory getInvoiceSubCategory() {
+		return invoiceSubCategory;
+	}
+
+	public void setInvoiceSubCategory(InvoiceSubCategory invoiceSubCategory) {
+		this.invoiceSubCategory = invoiceSubCategory;
+	}
+
+	public BillingRun getBillingRun() {
+		return billingRun;
+	}
+
+	public void setBillingRun(BillingRun billingRun) {
+		this.billingRun = billingRun;
+	}
+
+	public OfferTemplate getOfferTemplate() {
+		return offerTemplate;
+	}
+
+	public void setOfferTemplate(OfferTemplate offerTemplate) {
+		this.offerTemplate = offerTemplate;
+	}
+	
 
 }
