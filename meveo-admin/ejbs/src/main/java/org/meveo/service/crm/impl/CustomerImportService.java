@@ -6,7 +6,7 @@ import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
-
+import org.meveo.commons.utils.StringUtils;
 import org.apache.commons.lang.RandomStringUtils;
 import org.meveo.model.Auditable;
 import org.meveo.model.admin.Seller;
@@ -141,7 +141,9 @@ public class CustomerImportService {
 		customerAccount.setCreditCategory(CreditCategoryEnum.valueOf(custAcc.getCreditCategory()));
 		customerAccount.setExternalRef1(custAcc.getExternalRef1());
 		customerAccount.setExternalRef2(custAcc.getExternalRef2());
-		customerAccount.setPaymentMethod(PaymentMethodEnum.valueOf(custAcc.getPaymentMethod()));
+		if(!StringUtils.isBlank(custAcc.getPaymentMethod())){
+		 customerAccount.setPaymentMethod(PaymentMethodEnum.valueOf(custAcc.getPaymentMethod()));
+		 }
 		org.meveo.model.shared.Name name = new org.meveo.model.shared.Name();
 
 		if (custAcc.getName() != null) {
@@ -281,7 +283,9 @@ public class CustomerImportService {
 		customerAccount.setCreditCategory(CreditCategoryEnum.valueOf(custAcc.getCreditCategory()));
 		customerAccount.setExternalRef1(custAcc.getExternalRef1());
 		customerAccount.setExternalRef2(custAcc.getExternalRef2());
-		customerAccount.setPaymentMethod(PaymentMethodEnum.valueOf(custAcc.getPaymentMethod()));
+		if(!StringUtils.isBlank(custAcc.getPaymentMethod())){
+			 customerAccount.setPaymentMethod(PaymentMethodEnum.valueOf(custAcc.getPaymentMethod()));
+			 }
 		org.meveo.model.shared.Name name = new org.meveo.model.shared.Name();
 
 		if (custAcc.getName() != null) {
