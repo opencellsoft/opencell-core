@@ -8,6 +8,7 @@ import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
 import org.apache.commons.lang.RandomStringUtils;
+import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.Auditable;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.admin.User;
@@ -23,7 +24,6 @@ import org.meveo.model.payments.DunningLevelEnum;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.shared.Address;
 import org.meveo.model.shared.ContactInformation;
-import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.shared.Title;
 import org.meveo.service.admin.impl.TradingCurrencyService;
 import org.meveo.service.catalog.impl.TitleService;
@@ -200,7 +200,9 @@ public class CustomerImportService {
 			 }
 		customerAccount.setExternalRef1(custAcc.getExternalRef1());
 		customerAccount.setExternalRef2(custAcc.getExternalRef2());
-		customerAccount.setPaymentMethod(PaymentMethodEnum.valueOf(custAcc.getPaymentMethod()));
+		 if(!StringUtils.isBlank(custAcc.getPaymentMethod())){
+			 customerAccount.setPaymentMethod(PaymentMethodEnum.valueOf(custAcc.getPaymentMethod()));
+			 }
 		org.meveo.model.shared.Name name = new org.meveo.model.shared.Name();
 
 		if (custAcc.getName() != null) {
@@ -280,10 +282,14 @@ public class CustomerImportService {
 		contactInformation.setPhone(custAcc.getTel1());
 		contactInformation.setMobile(custAcc.getTel2());
 		customerAccount.setContactInformation(contactInformation);
-		customerAccount.setCreditCategory(CreditCategoryEnum.valueOf(custAcc.getCreditCategory()));
+		 if(!StringUtils.isBlank(custAcc.getCreditCategory())){
+			 customerAccount.setCreditCategory(CreditCategoryEnum.valueOf(custAcc.getCreditCategory()));
+			 }
 		customerAccount.setExternalRef1(custAcc.getExternalRef1());
 		customerAccount.setExternalRef2(custAcc.getExternalRef2());
-		customerAccount.setPaymentMethod(PaymentMethodEnum.valueOf(custAcc.getPaymentMethod()));
+		 if(!StringUtils.isBlank(custAcc.getPaymentMethod())){
+			 customerAccount.setPaymentMethod(PaymentMethodEnum.valueOf(custAcc.getPaymentMethod()));
+			 }
 		org.meveo.model.shared.Name name = new org.meveo.model.shared.Name();
 
 		if (custAcc.getName() != null) {
