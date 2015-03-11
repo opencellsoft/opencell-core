@@ -195,9 +195,7 @@ public class CustomerImportService {
 		contactInformation.setPhone(custAcc.getTel1());
 		contactInformation.setMobile(custAcc.getTel2());
 		customerAccount.setContactInformation(contactInformation);
-		 if(!StringUtils.isBlank(custAcc.getCreditCategory())){
-			 customerAccount.setCreditCategory(CreditCategoryEnum.valueOf(custAcc.getCreditCategory()));
-			 }
+	    customerAccount.setCreditCategory(CreditCategoryEnum.valueOf(custAcc.getCreditCategory()));
 		customerAccount.setExternalRef1(custAcc.getExternalRef1());
 		customerAccount.setExternalRef2(custAcc.getExternalRef2());
 		 if(!StringUtils.isBlank(custAcc.getPaymentMethod())){
@@ -282,9 +280,7 @@ public class CustomerImportService {
 		contactInformation.setPhone(custAcc.getTel1());
 		contactInformation.setMobile(custAcc.getTel2());
 		customerAccount.setContactInformation(contactInformation);
-		 if(!StringUtils.isBlank(custAcc.getCreditCategory())){
-			 customerAccount.setCreditCategory(CreditCategoryEnum.valueOf(custAcc.getCreditCategory()));
-			 }
+		customerAccount.setCreditCategory(CreditCategoryEnum.valueOf(custAcc.getCreditCategory()));
 		customerAccount.setExternalRef1(custAcc.getExternalRef1());
 		customerAccount.setExternalRef2(custAcc.getExternalRef2());
 		 if(!StringUtils.isBlank(custAcc.getPaymentMethod())){
