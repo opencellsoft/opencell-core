@@ -91,6 +91,10 @@ public class ImportCustomersJobBean {
 	int nbSellersIgnored;
 	int nbSellersCreated;
 
+	int nbSellersUpdated;
+	int nbCustomersUpdated;
+	int nbCustomerAccountsUpdated;
+
 	int nbCustomerAccounts;
 	int nbCustomerAccountsError;
 	int nbCustomerAccountsWarning;
@@ -224,13 +228,20 @@ public class ImportCustomersJobBean {
 				}
 
 				if (seller != null) {
-					nbSellersIgnored++;
+					nbSellersUpdated++;
+					seller.setDescription(sell.getDescription());
+					seller.setTradingCountry(tradingCountryService.findByTradingCountryCode(
+							sell.getTradingCountryCode(), provider));
+					seller.setTradingCurrency(tradingCurrencyService.findByTradingCurrencyCode(
+							sell.getTradingCurrencyCode(), provider));
+					seller.setTradingLanguage(tradingLanguageService.findByTradingLanguageCode(
+							sell.getTradingLanguageCode(), provider));
+					seller.updateAudit(currentUser);
+					sellerService.updateNoCheck(seller);
 					log.info("File:" + fileName + ", typeEntity:Seller, index:" + i + ", code:" + sell.getCode()
-							+ ", status:Ignored");
+							+ ", status:Updated");
 				} else {
 					nbSellersCreated++;
-					log.info("File:" + fileName + ", typeEntity:Seller, index:" + i + ", code:" + sell.getCode()
-							+ ", status:Created");
 					seller = new org.meveo.model.admin.Seller();
 					seller.setCode(sell.getCode());
 					seller.setDescription(sell.getDescription());
@@ -242,6 +253,8 @@ public class ImportCustomersJobBean {
 							sell.getTradingLanguageCode(), provider));
 					seller.setProvider(provider);
 					sellerService.create(seller, currentUser, provider);
+					log.info("File:" + fileName + ", typeEntity:Seller, index:" + i + ", code:" + sell.getCode()
+							+ ", status:Created");
 				}
 
 				if (sellerCheckError(sell)) {
@@ -278,6 +291,14 @@ public class ImportCustomersJobBean {
 
 		try {
 			log.debug("customer found  code:" + cust.getCode());
+
+			if (customerCheckError(sell, cust)) {
+				nbCustomersError++;
+				log.info("File:" + fileName + ", typeEntity:Customer, index:" + i + ", code:" + cust.getCode()
+						+ ", status:Error");
+				return;
+			}
+
 			try {
 				customer = customerService.findByCode(cust.getCode(), provider);
 			} catch (Exception e) {
@@ -294,23 +315,13 @@ public class ImportCustomersJobBean {
 					return;
 				}
 
+				nbCustomersUpdated++;
+				customer = customerImportService.updateCustomer(customer, currentUser, seller, sell, cust);
 				log.info("File:" + fileName + ", typeEntity:Customer, index:" + i + ", code:" + cust.getCode()
-						+ ", status:Ignored");
-				nbCustomersIgnored++;
-				return;
-			}
-
-			if (customerCheckError(sell, cust)) {
-				nbCustomersError++;
-				log.info("File:" + fileName + ", typeEntity:Customer, index:" + i + ", code:" + cust.getCode()
-						+ ", status:Error");
-				return;
-			}
-
-			customer = customerImportService.createCustomer(currentUser, seller, sell, cust);
-
-			if (customer == null) {
+						+ ", status:Updated");
+			} else {
 				nbCustomersCreated++;
+				customer = customerImportService.createCustomer(currentUser, seller, sell, cust);
 				log.info("File:" + fileName + ", typeEntity:Customer, index:" + i + ", code:" + cust.getCode()
 						+ ", status:Created");
 			}
@@ -336,28 +347,6 @@ public class ImportCustomersJobBean {
 		nbCustomerAccounts++;
 		CustomerAccount customerAccountTmp = null;
 
-		try {
-			customerAccountTmp = customerAccountService.findByCode(custAcc.getCode(), currentUser.getProvider());
-		} catch (Exception e) {
-			log.warn(e.getMessage());
-		}
-
-		if (customerAccountTmp != null) {
-			if (customerAccountTmp.getCustomer().getCode().equals(cust.getCode())) {
-				nbCustomerAccountsIgnored++;
-				nbCustomersIgnored++;
-				log.info("File:" + fileName + ", typeEntity:CustomerAccount,  indexCustomer:" + i + ", index:" + j
-						+ " code:" + custAcc.getCode() + ", status:Ignored");
-			} else {
-				nbCustomerAccountsError++;
-				createCustomerAccountError(sell, cust, custAcc,
-						"A customer account with same code exists for another customer");
-			}
-			return;
-		}
-
-		log.debug("customerAccount founded  code:" + custAcc.getCode());
-
 		if (customerAccountCheckError(cust, sell, custAcc)) {
 			nbCustomerAccountsError++;
 			log.info("File:" + fileName + ", typeEntity:CustomerAccount, indexCustomer:" + i + ", index:" + j
@@ -371,12 +360,31 @@ public class ImportCustomersJobBean {
 					+ " Code:" + custAcc.getCode() + ", status:Warning");
 		}
 
-		customerImportService.createCustomerAccount(currentUser, customer, seller, custAcc, cust, sell);
-		nbCustomerAccountsCreated++;
+		try {
+			customerAccountTmp = customerAccountService.findByCode(custAcc.getCode(), currentUser.getProvider());
+		} catch (Exception e) {
+			log.warn(e.getMessage());
+		}
 
-		log.info("File:" + fileName + ", typeEntity:CustomerAccount,  indexCustomer:" + i + ", index:" + j
-				+ " ExternalRef1:" + custAcc.getExternalRef1() + ", status:Created");
+		if (customerAccountTmp != null) {
+			if (!customerAccountTmp.getCustomer().getCode().equals(cust.getCode())) {
+				nbCustomerAccountsError++;
+				createCustomerAccountError(sell, cust, custAcc,
+						"A customer account with same code exists for another customer");
+				return;
+			}
 
+			customerImportService.updateCustomerAccount(customerAccountTmp, currentUser, customer, seller, custAcc,
+					cust, sell);
+			nbCustomerAccountsUpdated++;
+			log.info("File:" + fileName + ", typeEntity:CustomerAccount,  indexCustomer:" + i + ", index:" + j
+					+ " code:" + custAcc.getCode() + ", status:Updated");
+		} else {
+			customerImportService.createCustomerAccount(currentUser, customer, seller, custAcc, cust, sell);
+			nbCustomerAccountsCreated++;
+			log.info("File:" + fileName + ", typeEntity:CustomerAccount,  indexCustomer:" + i + ", index:" + j
+					+ " code:" + custAcc.getCode() + ", status:Created");
+		}
 	}
 
 	private void createHistory(User currentUser) throws Exception {

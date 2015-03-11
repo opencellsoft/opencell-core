@@ -90,8 +90,8 @@ public class AccountApi extends BaseApi {
 		if (postData.getCustomFields() != null) {
 			for (CustomFieldDto cf : postData.getCustomFields().getCustomField()) {
 				// check if custom field exists has a template
-				List<CustomFieldTemplate> customFieldTemplates = customFieldTemplateService
-						.findByAccountLevel(accountLevel);
+				List<CustomFieldTemplate> customFieldTemplates = customFieldTemplateService.findByAccountLevel(
+						accountLevel, currentUser.getProvider());
 				if (customFieldTemplates != null && customFieldTemplates.size() > 0) {
 					for (CustomFieldTemplate cft : customFieldTemplates) {
 						if (cf.getCode().equals(cft.getCode())) {
@@ -160,8 +160,8 @@ public class AccountApi extends BaseApi {
 		if (postData.getCustomFields() != null) {
 			for (CustomFieldDto cf : postData.getCustomFields().getCustomField()) {
 				// check if custom field exists has a template
-				List<CustomFieldTemplate> customFieldTemplates = customFieldTemplateService
-						.findByAccountLevel(accountLevel);
+				List<CustomFieldTemplate> customFieldTemplates = customFieldTemplateService.findByAccountLevel(
+						accountLevel, currentUser.getProvider());
 				boolean found = false;
 				if (customFieldTemplates != null && customFieldTemplates.size() > 0) {
 					for (CustomFieldTemplate cft : customFieldTemplates) {

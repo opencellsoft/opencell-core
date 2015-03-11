@@ -1476,8 +1476,8 @@ public class AccountHierarchyApi extends BaseApi {
 		if (accountDto.getCustomFields() != null) {
 			for (CustomFieldDto cf : accountDto.getCustomFields().getCustomField()) {
 				// check if custom field exists has a template
-				List<CustomFieldTemplate> customFieldTemplates = customFieldTemplateService
-						.findByAccountLevel(accountLevel);
+				List<CustomFieldTemplate> customFieldTemplates = customFieldTemplateService.findByAccountLevel(
+						accountLevel, currentUser.getProvider());
 				boolean found = false;
 				if (customFieldTemplates != null && customFieldTemplates.size() > 0) {
 					for (CustomFieldTemplate cft : customFieldTemplates) {

@@ -123,7 +123,7 @@ public class SubscriptionApi extends BaseApi {
 				for (CustomFieldDto cf : postData.getCustomFields().getCustomField()) {
 					// check if custom field exists has a template
 					List<CustomFieldTemplate> customFieldTemplates = customFieldTemplateService
-							.findByAccountLevel(AccountLevelEnum.SUB);
+							.findByAccountLevel(AccountLevelEnum.SUB, provider);
 					if (customFieldTemplates != null && customFieldTemplates.size() > 0) {
 						for (CustomFieldTemplate cft : customFieldTemplates) {
 							if (cf.getCode().equals(cft.getCode())) {
@@ -209,7 +209,7 @@ public class SubscriptionApi extends BaseApi {
 				for (CustomFieldDto cf : postData.getCustomFields().getCustomField()) {
 					// check if custom field exists has a template
 					List<CustomFieldTemplate> customFieldTemplates = customFieldTemplateService
-							.findByAccountLevel(AccountLevelEnum.SUB);
+							.findByAccountLevel(AccountLevelEnum.SUB, provider);
 					boolean found = false;
 					if (customFieldTemplates != null && customFieldTemplates.size() > 0) {
 						for (CustomFieldTemplate cft : customFieldTemplates) {

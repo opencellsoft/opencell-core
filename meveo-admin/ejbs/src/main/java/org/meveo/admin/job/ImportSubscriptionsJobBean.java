@@ -78,24 +78,15 @@ public class ImportSubscriptionsJobBean {
 	public void execute(JobExecutionResultImpl result, User currentUser) {
 		Provider provider = currentUser.getProvider();
 
-		String importDir = paramBean.getProperty("providers.rootDir",
-				"/tmp/meveo/")
-				+ File.separator
-				+ provider.getCode()
-				+ File.separator
-				+ "imports"
-				+ File.separator
-				+ "subscriptions"
-				+ File.separator;
+		String importDir = paramBean.getProperty("providers.rootDir", "/tmp/meveo/") + File.separator
+				+ provider.getCode() + File.separator + "imports" + File.separator + "subscriptions" + File.separator;
 
 		String dirIN = importDir + "input";
 		log.info("dirIN=" + dirIN);
 		String dirOK = importDir + "output";
 		String dirKO = importDir + "reject";
-		String prefix = paramBean.getProperty(
-				"connectorCRM.importSubscriptions.prefix", "SUB_");
-		String ext = paramBean.getProperty(
-				"connectorCRM.importSubscriptions.extension", "xml");
+		String prefix = paramBean.getProperty("connectorCRM.importSubscriptions.prefix", "SUB_");
+		String ext = paramBean.getProperty("connectorCRM.importSubscriptions.extension", "xml");
 
 		File dir = new File(dirIN);
 		if (!dir.exists()) {
@@ -112,7 +103,7 @@ public class ImportSubscriptionsJobBean {
 			try {
 				log.info("InputFiles job {} in progress...", file.getName());
 				currentFile = FileUtils.addExtension(file, ".processing");
-				
+
 				importFile(currentFile, file.getName(), currentUser);
 
 				FileUtils.moveFile(dirOK, currentFile, file.getName());
@@ -130,8 +121,7 @@ public class ImportSubscriptionsJobBean {
 		}
 	}
 
-	public void importFile(File file, String fileName, User currentUser)
-			throws JAXBException, Exception {
+	public void importFile(File file, String fileName, User currentUser) throws JAXBException, Exception {
 		log.info("start import file :" + fileName);
 
 		Provider provider = currentUser.getProvider();
@@ -154,8 +144,7 @@ public class ImportSubscriptionsJobBean {
 			return;
 		}
 
-		Subscriptions jaxbSubscriptions = (Subscriptions) JAXBUtils.unmarshaller(
-				Subscriptions.class, file);
+		Subscriptions jaxbSubscriptions = (Subscriptions) JAXBUtils.unmarshaller(Subscriptions.class, file);
 		log.debug("parsing file ok");
 
 		int i = -1;
@@ -164,37 +153,29 @@ public class ImportSubscriptionsJobBean {
 			createSubscriptionWarning(null, "Empty file.");
 		}
 
-		for (org.meveo.model.jaxb.subscription.Subscription jaxbSubscription : jaxbSubscriptions
-				.getSubscription()) {
+		for (org.meveo.model.jaxb.subscription.Subscription jaxbSubscription : jaxbSubscriptions.getSubscription()) {
 			try {
 				i++;
-				CheckedSubscription checkSubscription = subscriptionCheckError(
-						provider, jaxbSubscription);
+				CheckedSubscription checkSubscription = subscriptionCheckError(provider, jaxbSubscription);
 
 				if (checkSubscription == null) {
-					createSubscriptionError(jaxbSubscription,
-							"Error in checkSubscription");
+					createSubscriptionError(jaxbSubscription, "Error in checkSubscription");
 					nbSubscriptionsError++;
-					log.info("File:" + fileName
-							+ ", typeEntity:Subscription, index:" + i
-							+ ", code:" + jaxbSubscription.getCode() + ", status:Error");
+					log.info("File:" + fileName + ", typeEntity:Subscription, index:" + i + ", code:"
+							+ jaxbSubscription.getCode() + ", status:Error");
 					break;
 				}
 
-				nbSubscriptionsCreated += subscriptionImportService
-						.importSubscription(checkSubscription, jaxbSubscription,
-								fileName, currentUser, i);
+				nbSubscriptionsCreated += subscriptionImportService.importSubscription(checkSubscription,
+						jaxbSubscription, fileName, currentUser, i);
 			} catch (ImportIgnoredException ie) {
-				log.info("File:" + fileName
-						+ ", typeEntity:Subscription, index:" + i + ", code:"
+				log.info("File:" + fileName + ", typeEntity:Subscription, index:" + i + ", code:"
 						+ jaxbSubscription.getCode() + ", status:Ignored");
 				nbSubscriptionsIgnored++;
 			} catch (SubscriptionServiceException se) {
-				createServiceInstanceError(se.getSubscrip(),
-						se.getServiceInst(), se.getMess());
+				createServiceInstanceError(se.getSubscrip(), se.getServiceInst(), se.getMess());
 				nbSubscriptionsError++;
-				log.info("File:" + fileName
-						+ ", typeEntity:Subscription, index:" + i + ", code:"
+				log.info("File:" + fileName + ", typeEntity:Subscription, index:" + i + ", code:"
 						+ jaxbSubscription.getCode() + ", status:Error");
 			} catch (Exception e) {
 
@@ -202,8 +183,7 @@ public class ImportSubscriptionsJobBean {
 				// ExceptionUtils.getRootCause(e).getMessage());
 				createSubscriptionError(jaxbSubscription, e.getMessage());
 				nbSubscriptionsError++;
-				log.info("File:" + fileName
-						+ ", typeEntity:Subscription, index:" + i + ", code:"
+				log.info("File:" + fileName + ", typeEntity:Subscription, index:" + i + ", code:"
 						+ jaxbSubscription.getCode() + ", status:Error");
 				log.error(e.getMessage());
 			}
@@ -219,36 +199,23 @@ public class ImportSubscriptionsJobBean {
 		subscriptionImportHisto.setLinesRead(nbSubscriptions);
 		subscriptionImportHisto.setLinesInserted(nbSubscriptionsCreated);
 		subscriptionImportHisto.setLinesRejected(nbSubscriptionsError);
-		subscriptionImportHisto
-				.setNbSubscriptionsIgnored(nbSubscriptionsIgnored);
-		subscriptionImportHisto
-				.setNbSubscriptionsTerminated(nbSubscriptionsTerminated);
+		subscriptionImportHisto.setNbSubscriptionsIgnored(nbSubscriptionsIgnored);
+		subscriptionImportHisto.setNbSubscriptionsTerminated(nbSubscriptionsTerminated);
 		subscriptionImportHisto.setProvider(provider);
-		subscriptionImportHistoService.create(subscriptionImportHisto,
-				currentUser, provider);
+		subscriptionImportHistoService.create(subscriptionImportHisto, currentUser, provider);
 	}
 
-	private void generateReport(String fileName, Provider provider)
-			throws Exception {
-		String importDir = paramBean.getProperty("providers.rootDir",
-				"/tmp/meveo/")
-				+ File.separator
-				+ provider.getCode()
-				+ File.separator
-				+ "imports"
-				+ File.separator
-				+ "subscriptions"
-				+ File.separator;
+	private void generateReport(String fileName, Provider provider) throws Exception {
+		String importDir = paramBean.getProperty("providers.rootDir", "/tmp/meveo/") + File.separator
+				+ provider.getCode() + File.separator + "imports" + File.separator + "subscriptions" + File.separator;
 
 		if (subscriptionsWarning.getWarnings() != null) {
-			String warningDir = importDir + "output" + File.separator
-					+ "warnings";
+			String warningDir = importDir + "output" + File.separator + "warnings";
 			File dir = new File(warningDir);
 			if (!dir.exists()) {
 				dir.mkdirs();
 			}
-			JAXBUtils.marshaller(subscriptionsWarning, new File(warningDir
-					+ File.separator + "WARN_" + fileName));
+			JAXBUtils.marshaller(subscriptionsWarning, new File(warningDir + File.separator + "WARN_" + fileName));
 		}
 
 		if (subscriptionsError.getErrors() != null) {
@@ -258,8 +225,7 @@ public class ImportSubscriptionsJobBean {
 				dir.mkdirs();
 			}
 
-			JAXBUtils.marshaller(subscriptionsError, new File(errorDir
-					+ File.separator + "ERR_" + fileName));
+			JAXBUtils.marshaller(subscriptionsError, new File(errorDir + File.separator + "ERR_" + fileName));
 		}
 
 	}
@@ -317,70 +283,61 @@ public class ImportSubscriptionsJobBean {
 
 		OfferTemplate offerTemplate = null;
 		try {
-			offerTemplate = offerTemplateService.findByCode(jaxbSubscription
-					.getOfferCode().toUpperCase(), provider);
+			offerTemplate = offerTemplateService.findByCode(jaxbSubscription.getOfferCode().toUpperCase(), provider);
 		} catch (Exception e) {
 			log.warn(e.getMessage());
 		}
 
 		if (offerTemplate == null) {
-			createSubscriptionError(
-					jaxbSubscription,
-					"Cannot find OfferTemplate with code="
-							+ jaxbSubscription.getOfferCode());
+			createSubscriptionError(jaxbSubscription,
+					"Cannot find OfferTemplate with code=" + jaxbSubscription.getOfferCode());
 			return null;
 		}
 		checkSubscription.offerTemplate = offerTemplate;
 
 		UserAccount userAccount = null;
 		try {
-			userAccount = userAccountService.findByCode(
-					jaxbSubscription.getUserAccountId(), provider);
+			userAccount = userAccountService.findByCode(jaxbSubscription.getUserAccountId(), provider);
 		} catch (Exception e) {
 			log.error(e.getMessage());
 		}
 
 		if (userAccount == null) {
-			createSubscriptionError(jaxbSubscription, "Cannot find UserAccount entity="
-					+ jaxbSubscription.getUserAccountId());
+			createSubscriptionError(jaxbSubscription,
+					"Cannot find UserAccount entity=" + jaxbSubscription.getUserAccountId());
 			return null;
 		}
 		checkSubscription.userAccount = userAccount;
 
 		try {
-			checkSubscription.subscription = subscriptionService.findByCode(
-					jaxbSubscription.getCode(), provider);
+			checkSubscription.subscription = subscriptionService.findByCode(jaxbSubscription.getCode(), provider);
 		} catch (Exception e) {
 			log.error(e.getMessage());
 		}
 
-		if (!"ACTIVE".equals(jaxbSubscription.getStatus().getValue())
-				&& checkSubscription.subscription == null) {
+		if (!"ACTIVE".equals(jaxbSubscription.getStatus().getValue()) && checkSubscription.subscription == null) {
 			createSubscriptionError(jaxbSubscription,
 					"Cannot find subscription with code=" + jaxbSubscription.getCode());
 			return null;
 		}
 
 		if ("ACTIVE".equals(jaxbSubscription.getStatus().getValue())) {
-			if (jaxbSubscription.getServices() == null
-					|| jaxbSubscription.getServices().getServiceInstance() == null
+			if (jaxbSubscription.getServices() == null || jaxbSubscription.getServices().getServiceInstance() == null
 					|| jaxbSubscription.getServices().getServiceInstance().isEmpty()) {
-				createSubscriptionError(jaxbSubscription,
-						"Cannot create subscription without services");
+				createSubscriptionError(jaxbSubscription, "Cannot create subscription without services");
 				return null;
 			}
 
-			for (org.meveo.model.jaxb.subscription.ServiceInstance serviceInst : jaxbSubscription
-					.getServices().getServiceInstance()) {
+			for (org.meveo.model.jaxb.subscription.ServiceInstance serviceInst : jaxbSubscription.getServices()
+					.getServiceInstance()) {
 				if (serviceInstanceCheckError(jaxbSubscription, serviceInst)) {
 					return null;
 				}
-				
+
 				checkSubscription.serviceInsts.add(serviceInst);
 			}
 
-			for (org.meveo.model.jaxb.subscription.Access jaxbAccess : jaxbSubscription
-					.getAccesses().getAccess()) {
+			for (org.meveo.model.jaxb.subscription.Access jaxbAccess : jaxbSubscription.getAccesses().getAccess()) {
 				if (accessCheckError(jaxbSubscription, jaxbAccess)) {
 					return null;
 				}
@@ -392,19 +349,15 @@ public class ImportSubscriptionsJobBean {
 		return checkSubscription;
 	}
 
-	private void createSubscriptionError(
-			org.meveo.model.jaxb.subscription.Subscription subscrip,
-			String cause) {
+	private void createSubscriptionError(org.meveo.model.jaxb.subscription.Subscription subscrip, String cause) {
 		log.error(cause);
 
-		String generateFullCrmReject = paramBean.getProperty(
-				"connectorCRM.generateFullCrmReject", "true");
+		String generateFullCrmReject = paramBean.getProperty("connectorCRM.generateFullCrmReject", "true");
 		ErrorSubscription errorSubscription = new ErrorSubscription();
 		errorSubscription.setCause(cause);
 		errorSubscription.setCode(subscrip.getCode());
 
-		if (!subscriptionsError.getSubscription().contains(subscrip)
-				&& "true".equalsIgnoreCase(generateFullCrmReject)) {
+		if (!subscriptionsError.getSubscription().contains(subscrip) && "true".equalsIgnoreCase(generateFullCrmReject)) {
 			subscriptionsError.getSubscription().add(subscrip);
 		}
 
@@ -412,24 +365,19 @@ public class ImportSubscriptionsJobBean {
 			subscriptionsError.setErrors(new Errors());
 		}
 
-		subscriptionsError.getErrors().getErrorSubscription()
-				.add(errorSubscription);
+		subscriptionsError.getErrors().getErrorSubscription().add(errorSubscription);
 	}
 
-	private void createSubscriptionWarning(
-			org.meveo.model.jaxb.subscription.Subscription subscrip,
-			String cause) {
+	private void createSubscriptionWarning(org.meveo.model.jaxb.subscription.Subscription subscrip, String cause) {
 		log.warn(cause);
 
-		String generateFullCrmReject = paramBean.getProperty(
-				"connectorCRM.generateFullCrmReject", "true");
+		String generateFullCrmReject = paramBean.getProperty("connectorCRM.generateFullCrmReject", "true");
 		WarningSubscription warningSubscription = new WarningSubscription();
 		warningSubscription.setCause(cause);
 		warningSubscription.setCode(subscrip == null ? "" : subscrip.getCode());
 
 		if (!subscriptionsWarning.getSubscription().contains(subscrip)
-				&& "true".equalsIgnoreCase(generateFullCrmReject)
-				&& subscrip != null) {
+				&& "true".equalsIgnoreCase(generateFullCrmReject) && subscrip != null) {
 			subscriptionsWarning.getSubscription().add(subscrip);
 		}
 
@@ -437,12 +385,10 @@ public class ImportSubscriptionsJobBean {
 			subscriptionsWarning.setWarnings(new Warnings());
 		}
 
-		subscriptionsWarning.getWarnings().getWarningSubscription()
-				.add(warningSubscription);
+		subscriptionsWarning.getWarnings().getWarningSubscription().add(warningSubscription);
 	}
 
-	private boolean serviceInstanceCheckError(
-			org.meveo.model.jaxb.subscription.Subscription subscrip,
+	private boolean serviceInstanceCheckError(org.meveo.model.jaxb.subscription.Subscription subscrip,
 			org.meveo.model.jaxb.subscription.ServiceInstance serviceInst) {
 
 		if (StringUtils.isBlank(serviceInst.getCode())) {
@@ -458,8 +404,7 @@ public class ImportSubscriptionsJobBean {
 		return false;
 	}
 
-	private boolean accessCheckError(
-			org.meveo.model.jaxb.subscription.Subscription subscrip,
+	private boolean accessCheckError(org.meveo.model.jaxb.subscription.Subscription subscrip,
 			org.meveo.model.jaxb.subscription.Access access) {
 
 		if (StringUtils.isBlank(access.getAccessUserId())) {
@@ -470,10 +415,8 @@ public class ImportSubscriptionsJobBean {
 		return false;
 	}
 
-	private void createServiceInstanceError(
-			org.meveo.model.jaxb.subscription.Subscription subscrip,
-			org.meveo.model.jaxb.subscription.ServiceInstance serviceInst,
-			String cause) {
+	private void createServiceInstanceError(org.meveo.model.jaxb.subscription.Subscription subscrip,
+			org.meveo.model.jaxb.subscription.ServiceInstance serviceInst, String cause) {
 		ErrorServiceInstance errorServiceInstance = new ErrorServiceInstance();
 		errorServiceInstance.setCause(cause);
 		errorServiceInstance.setCode(serviceInst.getCode());
@@ -487,8 +430,7 @@ public class ImportSubscriptionsJobBean {
 			subscriptionsError.setErrors(new Errors());
 		}
 
-		subscriptionsError.getErrors().getErrorServiceInstance()
-				.add(errorServiceInstance);
+		subscriptionsError.getErrors().getErrorServiceInstance().add(errorServiceInstance);
 	}
 
 }

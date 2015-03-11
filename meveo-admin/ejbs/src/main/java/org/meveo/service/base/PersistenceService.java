@@ -76,16 +76,20 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 	@Resource
 	protected TransactionSynchronizationRegistry txReg;
 
-	@Inject @Created
+	@Inject
+	@Created
 	protected Event<E> entityCreatedEventProducer;
 
-	@Inject @Updated
+	@Inject
+	@Updated
 	protected Event<E> entityUpdatedEventProducer;
-	
-	@Inject @Disabled
+
+	@Inject
+	@Disabled
 	protected Event<E> entityDisabledEventProducer;
-	
-	@Inject @Removed
+
+	@Inject
+	@Removed
 	protected Event<E> entityRemovedEventProducer;
 
 	private Provider provider;
@@ -132,6 +136,8 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 	public void updateNoCheck(E e) {
 		log.debug("start of update {} entity (id={}) ..", e.getClass().getSimpleName(), e.getId());
 		getEntityManager().merge(e);
+		entityUpdatedEventProducer.fire(e);
+		log.debug("end of update {} entity (id={}).", e.getClass().getSimpleName(), e.getId());
 	}
 
 	/**
@@ -235,7 +241,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 		checkProvider(e);
 		em.remove(e);
 		entityRemovedEventProducer.fire(e);
-		//em.flush();
+		// em.flush();
 		log.debug("end of remove {} entity (id={}).", getEntityClass().getSimpleName(), e.getId());
 	}
 
@@ -390,7 +396,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 		// Ignore current provider constraint if "skipProviderConstraint"
 		// parameter was passed to search
 		Provider provider = getCurrentProvider();
-		if (filters!=null && filters.containsKey(SEARCH_SKIP_PROVIDER_CONSTRAINT)) {
+		if (filters != null && filters.containsKey(SEARCH_SKIP_PROVIDER_CONSTRAINT)) {
 			provider = null;
 		}
 
@@ -430,11 +436,10 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 							String parsedKey = key.substring(5);
 							queryBuilder.addSqlCriterion(":" + parsedKey + " in elements(a." + parsedKey + ")",
 									parsedKey, filter);
-						}
-						else if (key.contains("inList-")) {
+						} else if (key.contains("inList-")) {
 							// if searching elements from list
 							String parsedKey = key.substring(7);
-							queryBuilder.addSql("a."+ parsedKey + " in ("+filter+")");
+							queryBuilder.addSql("a." + parsedKey + " in (" + filter + ")");
 						}
 						// if not ranged search
 						else {
