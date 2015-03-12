@@ -36,20 +36,20 @@ public class GenerateImportXmlV2 {
 	private final int MAX_CUSTOMER_ACCOUNTS = 1;
 
 	private final int MAX_BILLING_ACCOUNTS = 1;
-	private final int MAX_USER_ACCOUNTS = 100000;
+	private final int MAX_USER_ACCOUNTS = 50000;
 
-	
 	private final int MAX_SUBSCRIPTIONS = 2;
 
-	private static String customersFile = "c:\\temp\\CUSTOMERS_JOB.xml";
-	private static String accountsFile = "c:\\temp\\ACCOUNTS_JOB.xml";
-	private static String subscriptionsFile = "c:\\temp\\SUBSCRIPTIONS_JOB.xml";
+	private static String customersFile = "c:\\temp\\CUSTOMER_JOB.xml";
+	private static String accountsFile = "c:\\temp\\ACCOUNT_JOB.xml";
+	private static String subscriptionsFile = "c:\\temp\\SUB_JOB.xml";
 	private static String customerBrand = "DEFAULT";
 	private static String customerCategory = "CLIENT";
 	private static String serviceCode = "SERV1";
 	private static String creditCategory = "VIP";
 	private static String offerCode = "OFF1";
-	private static String billingCycle = "CYC_INV_MT";
+	private static String billingCycle = "CYC_INV_MT_1";
+	private static String paymentMethod = "CHECK";
 
 	/***********************************************************************/
 
@@ -116,9 +116,11 @@ public class GenerateImportXmlV2 {
 							BillingAccount billingAccount = new BillingAccount();
 							billingAccount.setCode("JOB_BA" + i + "_" + j + "_" + k + "_" + l);
 							billingAccount.setDescription("JOB_BA" + i + "_" + j + "_" + k + "_" + l);
+							billingAccount.setCustomerAccountId(customerAccount.getCode());
 							billingAccount.setBillingCycle(billingCycle);
 							billingAccount.setTradingCountryCode("FR");
 							billingAccount.setTradingLanguageCode("FRA");
+							billingAccount.setPaymentMethod(paymentMethod);
 
 							UserAccounts userAccounts = new UserAccounts();
 							for (int m = 0; m < MAX_USER_ACCOUNTS; m++) {
@@ -135,6 +137,7 @@ public class GenerateImportXmlV2 {
 									subscription.setUserAccountId(userAccount.getCode());
 									subscription.setOfferCode(offerCode);
 									subscription.setSubscriptionDate(new Date().toString());
+									subscription.setUserAccountId(userAccount.getCode());
 									Status statuSub = new Status();
 									statuSub.setDate("2014-02-20");
 									statuSub.setValue("ACTIVE");
