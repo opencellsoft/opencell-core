@@ -14,6 +14,7 @@ import org.meveo.model.admin.Seller;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.TradingCountry;
 import org.meveo.model.billing.TradingCurrency;
+import org.meveo.model.catalog.Calendar;
 import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.PricePlanMatrix;
@@ -21,6 +22,7 @@ import org.meveo.model.crm.Provider;
 import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.admin.impl.TradingCurrencyService;
 import org.meveo.service.billing.impl.TradingCountryService;
+import org.meveo.service.catalog.impl.CalendarService;
 import org.meveo.service.catalog.impl.ChargeTemplateServiceAll;
 import org.meveo.service.catalog.impl.OfferTemplateService;
 import org.meveo.service.catalog.impl.PricePlanMatrixService;
@@ -48,6 +50,9 @@ public class PricePlanApi extends BaseApi {
 
 	@Inject
 	private PricePlanMatrixService pricePlanMatrixService;
+	
+	@Inject
+	private CalendarService calendarService;
 
 	public void create(PricePlanDto postData, User currentUser) throws MeveoApiException {
 		if (!StringUtils.isBlank(postData.getEventCode()) && !StringUtils.isBlank(postData.getCode())) {
@@ -100,6 +105,14 @@ public class PricePlanApi extends BaseApi {
 				}
 				pricePlanMatrix.setOfferTemplate(offerTemplate);
 			}
+			
+            if (!StringUtils.isBlank(postData.getValidityCalendarCode())) {
+                Calendar calendar = calendarService.findByCode(postData.getValidityCalendarCode(), provider);
+                if (calendar == null) {
+                    throw new EntityDoesNotExistsException(Calendar.class, postData.getValidityCalendarCode());
+                }
+                pricePlanMatrix.setValidityCalendar(calendar);
+            }
 
 			pricePlanMatrix.setMinQuantity(postData.getMinQuantity());
 			pricePlanMatrix.setMaxQuantity(postData.getMaxQuantity());
@@ -178,6 +191,16 @@ public class PricePlanApi extends BaseApi {
 				}
 				pricePlanMatrix.setOfferTemplate(offerTemplate);
 			}
+			
+            if (!StringUtils.isBlank(postData.getValidityCalendarCode())) {
+                Calendar calendar = calendarService.findByCode(postData.getValidityCalendarCode(), provider);
+                if (calendar == null) {
+                    throw new EntityDoesNotExistsException(Calendar.class, postData.getValidityCalendarCode());
+                }
+                pricePlanMatrix.setValidityCalendar(calendar);
+            } else {
+                pricePlanMatrix.setValidityCalendar(null);
+            }
 
 			pricePlanMatrix.setMinQuantity(postData.getMinQuantity());
 			pricePlanMatrix.setMaxQuantity(postData.getMaxQuantity());

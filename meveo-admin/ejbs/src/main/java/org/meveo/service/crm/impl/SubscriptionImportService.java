@@ -24,6 +24,7 @@ import org.meveo.model.billing.SubscriptionTerminationReason;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.ServiceTemplate;
+import org.meveo.model.crm.AccountLevelEnum;
 import org.meveo.model.crm.CustomFieldInstance;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.jaxb.customer.CustomField;
@@ -42,6 +43,9 @@ public class SubscriptionImportService {
 
 	@Inject
 	private Logger log;
+
+	@Inject
+	private CustomFieldTemplateService customFieldTemplateService;
 
 	@Inject
 	private SubscriptionService subscriptionService;
@@ -68,16 +72,14 @@ public class SubscriptionImportService {
 
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public int importSubscription(CheckedSubscription checkSubscription,
-			org.meveo.model.jaxb.subscription.Subscription jaxbSubscription,
-			String fileName, User currentUser, int i) throws BusinessException,
-			SubscriptionServiceException, ImportIgnoredException {
+			org.meveo.model.jaxb.subscription.Subscription jaxbSubscription, String fileName, User currentUser, int i)
+			throws BusinessException, SubscriptionServiceException, ImportIgnoredException {
 
 		Provider provider = currentUser.getProvider();
 
 		OfferTemplate offerTemplate = null;
 		try {
-			offerTemplate = offerTemplateService.findByCode(jaxbSubscription
-					.getOfferCode().toUpperCase(), provider);
+			offerTemplate = offerTemplateService.findByCode(jaxbSubscription.getOfferCode().toUpperCase(), provider);
 		} catch (Exception e) {
 			log.warn(e.getMessage());
 		}
@@ -85,16 +87,14 @@ public class SubscriptionImportService {
 
 		UserAccount userAccount = null;
 		try {
-			userAccount = userAccountService.findByCode(
-					jaxbSubscription.getUserAccountId(), provider);
+			userAccount = userAccountService.findByCode(jaxbSubscription.getUserAccountId(), provider);
 		} catch (Exception e) {
 			log.error(e.getMessage());
 		}
 		checkSubscription.userAccount = userAccount;
 
 		try {
-			checkSubscription.subscription = subscriptionService.findByCode(
-					jaxbSubscription.getCode(), provider);
+			checkSubscription.subscription = subscriptionService.findByCode(jaxbSubscription.getCode(), provider);
 		} catch (Exception e) {
 			log.error(e.getMessage());
 		}
@@ -102,34 +102,29 @@ public class SubscriptionImportService {
 		Subscription subscription = checkSubscription.subscription;
 		if (subscription != null) {
 			if (!"ACTIVE".equals(jaxbSubscription.getStatus().getValue())) {
-				if (!provider.getCode().equals(
-						subscription.getProvider().getCode())) {
-					throw new BusinessException(
-							"Conflict subscription.provider and file.provider.");
+				if (!provider.getCode().equals(subscription.getProvider().getCode())) {
+					throw new BusinessException("Conflict subscription.provider and file.provider.");
 				}
 
 				SubscriptionTerminationReason subscriptionTerminationType = null;
 				try {
-					subscriptionTerminationType = subscriptionTerminationReasonService
-							.findByCodeReason(jaxbSubscription.getStatus()
-									.getReason(), provider);
+					subscriptionTerminationType = subscriptionTerminationReasonService.findByCodeReason(
+							jaxbSubscription.getStatus().getReason(), provider);
 				} catch (Exception e) {
 					log.error(e.getMessage());
 				}
 
 				if (subscriptionTerminationType == null) {
-					throw new BusinessException(
-							"subscriptionTerminationType not found for codeReason:"
-									+ jaxbSubscription.getStatus().getReason());
+					throw new BusinessException("subscriptionTerminationType not found for codeReason:"
+							+ jaxbSubscription.getStatus().getReason());
 				}
 
-				subscriptionService.terminateSubscription(subscription,
-						DateUtils.parseDateWithPattern(jaxbSubscription
-								.getStatus().getDate(), paramBean.getProperty(
-								"connectorCRM.dateFormat", "dd/MM/yyyy")),
+				subscriptionService.terminateSubscription(
+						subscription,
+						DateUtils.parseDateWithPattern(jaxbSubscription.getStatus().getDate(),
+								paramBean.getProperty("connectorCRM.dateFormat", "dd/MM/yyyy")),
 						subscriptionTerminationType, currentUser);
-				log.info("File:" + fileName
-						+ ", typeEntity:Subscription, index:" + i + ", code:"
+				log.info("File:" + fileName + ", typeEntity:Subscription, index:" + i + ", code:"
 						+ jaxbSubscription.getCode() + ", status:Terminated");
 
 				return 0;
@@ -145,6 +140,13 @@ public class SubscriptionImportService {
 		if (jaxbSubscription.getCustomFields() != null && jaxbSubscription.getCustomFields().getCustomField() != null
 				&& jaxbSubscription.getCustomFields().getCustomField().size() > 0) {
 			for (CustomField customField : jaxbSubscription.getCustomFields().getCustomField()) {
+				// check if cft exists
+				if (customFieldTemplateService.findByCodeAndAccountLevel(customField.getCode(), AccountLevelEnum.SUB,
+						provider) == null) {
+					log.warn("CustomFieldTemplate with code={} does not exists.", customField.getCode());
+					continue;
+				}
+
 				CustomFieldInstance cfi = new CustomFieldInstance();
 				cfi.setSubscription(subscription);
 				cfi.setActive(true);
@@ -162,58 +164,41 @@ public class SubscriptionImportService {
 				subscription.getCustomFields().put(cfi.getCode(), cfi);
 			}
 		}
-		subscription
-				.setSubscriptionDate(DateUtils.parseDateWithPattern(
-						jaxbSubscription.getSubscriptionDate(), paramBean
-								.getProperty("connectorCRM.dateFormat",
-										"dd/MM/yyyy")));
-		subscription
-				.setEndAgrementDate(DateUtils.parseDateWithPattern(
-						jaxbSubscription.getEndAgreementDate(), paramBean
-								.getProperty("connectorCRM.dateFormat",
-										"dd/MM/yyyy")));
-		subscription
-				.setStatusDate(DateUtils.parseDateWithPattern(jaxbSubscription
-						.getStatus().getDate(), paramBean.getProperty(
-						"connectorCRM.dateFormat", "dd/MM/yyyy")));
+		subscription.setSubscriptionDate(DateUtils.parseDateWithPattern(jaxbSubscription.getSubscriptionDate(),
+				paramBean.getProperty("connectorCRM.dateFormat", "dd/MM/yyyy")));
+		subscription.setEndAgrementDate(DateUtils.parseDateWithPattern(jaxbSubscription.getEndAgreementDate(),
+				paramBean.getProperty("connectorCRM.dateFormat", "dd/MM/yyyy")));
+		subscription.setStatusDate(DateUtils.parseDateWithPattern(jaxbSubscription.getStatus().getDate(),
+				paramBean.getProperty("connectorCRM.dateFormat", "dd/MM/yyyy")));
 		subscription.setStatus(SubscriptionStatusEnum.ACTIVE);
 		subscription.setUserAccount(checkSubscription.userAccount);
 		subscriptionService.create(subscription, currentUser, provider);
 
-		log.info("File:" + fileName + ", typeEntity:Subscription, index:" + i
-				+ ", code:" + jaxbSubscription.getCode() + ", status:Created");
+		log.info("File:" + fileName + ", typeEntity:Subscription, index:" + i + ", code:" + jaxbSubscription.getCode()
+				+ ", status:Created");
 
 		for (org.meveo.model.jaxb.subscription.ServiceInstance serviceInst : checkSubscription.serviceInsts) {
 			try {
 				ServiceTemplate serviceTemplate = null;
 				ServiceInstance serviceInstance = new ServiceInstance();
-				serviceTemplate = serviceTemplateService.findByCode(serviceInst
-						.getCode().toUpperCase(), provider);
+				serviceTemplate = serviceTemplateService.findByCode(serviceInst.getCode().toUpperCase(), provider);
 				serviceInstance.setCode(serviceTemplate.getCode());
-				serviceInstance
-						.setDescription(serviceTemplate.getDescription());
+				serviceInstance.setDescription(serviceTemplate.getDescription());
 				serviceInstance.setServiceTemplate(serviceTemplate);
 				serviceInstance.setSubscription(subscription);
-				serviceInstance.setSubscriptionDate(DateUtils
-						.parseDateWithPattern(
-								serviceInst.getSubscriptionDate(), paramBean
-										.getProperty("connectorCRM.dateFormat",
-												"dd/MM/yyyy")));
+				serviceInstance.setSubscriptionDate(DateUtils.parseDateWithPattern(serviceInst.getSubscriptionDate(),
+						paramBean.getProperty("connectorCRM.dateFormat", "dd/MM/yyyy")));
 				BigDecimal quantity = BigDecimal.ONE;
 
-				if (serviceInst.getQuantity() != null
-						&& serviceInst.getQuantity().trim().length() != 0) {
-					quantity = new BigDecimal(serviceInst.getQuantity()
-							.trim());
+				if (serviceInst.getQuantity() != null && serviceInst.getQuantity().trim().length() != 0) {
+					quantity = new BigDecimal(serviceInst.getQuantity().trim());
 				}
 
-				log.debug("File:" + fileName
-						+ ", typeEntity:Subscription, index:" + i + ", code:"
+				log.debug("File:" + fileName + ", typeEntity:Subscription, index:" + i + ", code:"
 						+ jaxbSubscription.getCode() + ", quantity:" + quantity);
 				serviceInstance.setQuantity(quantity);
 				serviceInstance.setProvider(provider);
-				serviceInstanceService.serviceInstanciation(serviceInstance,
-						currentUser);
+				serviceInstanceService.serviceInstanciation(serviceInstance, currentUser);
 
 				subscription.getServiceInstances().add(serviceInstance);
 
@@ -221,62 +206,31 @@ public class SubscriptionImportService {
 					if (serviceInstance.getRecurringChargeInstances() != null) {
 						for (RecurringChargeInstance recurringChargeInstance : serviceInstance
 								.getRecurringChargeInstances()) {
-							log.debug("File:" + fileName
-									+ ", typeEntity:Subscription, index:" + i
-									+ ", code:" + jaxbSubscription.getCode()
-									+ ", recurringChargeInstance:"
+							log.debug("File:" + fileName + ", typeEntity:Subscription, index:" + i + ", code:"
+									+ jaxbSubscription.getCode() + ", recurringChargeInstance:"
 									+ recurringChargeInstance.getCode());
 
-							if (serviceInst.getRecurringCharges()
-									.getAmountWithoutTax() != null) {
-								recurringChargeInstance
-										.setAmountWithoutTax(new BigDecimal(
-												serviceInst
-														.getRecurringCharges()
-														.getAmountWithoutTax()
-														.replace(',', '.'))
-												.setScale(
-														BaseEntity.NB_DECIMALS,
-														RoundingMode.HALF_UP));
-								log.debug("File:"
-										+ fileName
-										+ ", typeEntity:Subscription, index:"
-										+ i
-										+ ", code:"
-										+ jaxbSubscription.getCode()
-										+ ", recurringChargeInstance.setAmountWithoutTax:"
-										+ serviceInst.getRecurringCharges()
-												.getAmountWithoutTax());
+							if (serviceInst.getRecurringCharges().getAmountWithoutTax() != null) {
+								recurringChargeInstance.setAmountWithoutTax(new BigDecimal(serviceInst
+										.getRecurringCharges().getAmountWithoutTax().replace(',', '.')).setScale(
+										BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP));
+								log.debug("File:" + fileName + ", typeEntity:Subscription, index:" + i + ", code:"
+										+ jaxbSubscription.getCode() + ", recurringChargeInstance.setAmountWithoutTax:"
+										+ serviceInst.getRecurringCharges().getAmountWithoutTax());
 							}
 
-							if (serviceInst.getRecurringCharges()
-									.getAmountWithoutTax() != null) {
-								recurringChargeInstance
-										.setAmountWithTax(new BigDecimal(
-												serviceInst
-														.getRecurringCharges()
-														.getAmountWithTax()
-														.replace(',', '.'))
-												.setScale(
-														BaseEntity.NB_DECIMALS,
-														RoundingMode.HALF_UP));
-								log.debug("File:"
-										+ fileName
-										+ ", typeEntity:Subscription, index:"
-										+ i
-										+ ", code:"
-										+ jaxbSubscription.getCode()
-										+ ", recurringChargeInstance.setAmount2:"
-										+ serviceInst.getRecurringCharges()
-												.getAmountWithTax());
+							if (serviceInst.getRecurringCharges().getAmountWithoutTax() != null) {
+								recurringChargeInstance.setAmountWithTax(new BigDecimal(serviceInst
+										.getRecurringCharges().getAmountWithTax().replace(',', '.')).setScale(
+										BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP));
+								log.debug("File:" + fileName + ", typeEntity:Subscription, index:" + i + ", code:"
+										+ jaxbSubscription.getCode() + ", recurringChargeInstance.setAmount2:"
+										+ serviceInst.getRecurringCharges().getAmountWithTax());
 							}
 
-							recurringChargeInstance.setCriteria1(serviceInst
-									.getRecurringCharges().getC1());
-							recurringChargeInstance.setCriteria2(serviceInst
-									.getRecurringCharges().getC2());
-							recurringChargeInstance.setCriteria3(serviceInst
-									.getRecurringCharges().getC3());
+							recurringChargeInstance.setCriteria1(serviceInst.getRecurringCharges().getC1());
+							recurringChargeInstance.setCriteria2(serviceInst.getRecurringCharges().getC2());
+							recurringChargeInstance.setCriteria3(serviceInst.getRecurringCharges().getC3());
 						}
 					}
 				}
@@ -285,70 +239,41 @@ public class SubscriptionImportService {
 					if (serviceInstance.getSubscriptionChargeInstances() != null) {
 						for (ChargeInstance subscriptionChargeInstance : serviceInstance
 								.getSubscriptionChargeInstances()) {
-							if (serviceInst.getOneshotCharges()
-									.getAmountWithoutTax() != null) {
-								subscriptionChargeInstance
-										.setAmountWithoutTax(new BigDecimal(
-												serviceInst.getOneshotCharges()
-														.getAmountWithoutTax()
-														.replace(',', '.'))
-												.setScale(
-														BaseEntity.NB_DECIMALS,
-														RoundingMode.HALF_UP));
-								log.debug("File:"
-										+ fileName
-										+ ", typeEntity:Subscription, index:"
-										+ i
-										+ ", code:"
+							if (serviceInst.getOneshotCharges().getAmountWithoutTax() != null) {
+								subscriptionChargeInstance.setAmountWithoutTax(new BigDecimal(serviceInst
+										.getOneshotCharges().getAmountWithoutTax().replace(',', '.')).setScale(
+										BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP));
+								log.debug("File:" + fileName + ", typeEntity:Subscription, index:" + i + ", code:"
 										+ jaxbSubscription.getCode()
 										+ ", subscriptionChargeInstance.setAmountWithoutTax:"
-										+ serviceInst.getOneshotCharges()
-												.getAmountWithoutTax());
+										+ serviceInst.getOneshotCharges().getAmountWithoutTax());
 							}
 
-							if (serviceInst.getOneshotCharges()
-									.getAmountWithoutTax() != null) {
-								subscriptionChargeInstance
-										.setAmountWithTax(new BigDecimal(
-												serviceInst.getOneshotCharges()
-														.getAmountWithTax()
-														.replace(',', '.'))
-												.setScale(
-														BaseEntity.NB_DECIMALS,
-														RoundingMode.HALF_UP));
-								log.debug("File:"
-										+ fileName
-										+ ", typeEntity:Subscription, index:"
-										+ i
-										+ ", code:"
-										+ jaxbSubscription.getCode()
-										+ ", subscriptionChargeInstance.setAmount2:"
-										+ serviceInst.getOneshotCharges()
-												.getAmountWithTax());
+							if (serviceInst.getOneshotCharges().getAmountWithoutTax() != null) {
+								subscriptionChargeInstance.setAmountWithTax(new BigDecimal(serviceInst
+										.getOneshotCharges().getAmountWithTax().replace(',', '.')).setScale(
+										BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP));
+								log.debug("File:" + fileName + ", typeEntity:Subscription, index:" + i + ", code:"
+										+ jaxbSubscription.getCode() + ", subscriptionChargeInstance.setAmount2:"
+										+ serviceInst.getOneshotCharges().getAmountWithTax());
 							}
 
-							subscriptionChargeInstance.setCriteria1(serviceInst
-									.getOneshotCharges().getC1());
-							subscriptionChargeInstance.setCriteria2(serviceInst
-									.getOneshotCharges().getC2());
-							subscriptionChargeInstance.setCriteria3(serviceInst
-									.getOneshotCharges().getC3());
+							subscriptionChargeInstance.setCriteria1(serviceInst.getOneshotCharges().getC1());
+							subscriptionChargeInstance.setCriteria2(serviceInst.getOneshotCharges().getC2());
+							subscriptionChargeInstance.setCriteria3(serviceInst.getOneshotCharges().getC3());
 						}
 					}
 				}
 
 				subscription.updateAudit(currentUser);
 
-				serviceInstanceService.serviceActivation(serviceInstance, null,
-						null, currentUser);
+				serviceInstanceService.serviceActivation(serviceInstance, null, null, currentUser);
 			} catch (Exception e) {
 				log.error(e.getMessage());
-				throw new SubscriptionServiceException(jaxbSubscription,
-						serviceInst, e.getMessage());
+				throw new SubscriptionServiceException(jaxbSubscription, serviceInst, e.getMessage());
 			}
 
-			log.info("File:" + fileName
-					+ ", typeEntity:ServiceInstance, index:" + i + ", code:"
+			log.info("File:" + fileName + ", typeEntity:ServiceInstance, index:" + i + ", code:"
 					+ serviceInst.getCode() + ", status:Actived");
 		}
 
@@ -358,36 +283,29 @@ public class SubscriptionImportService {
 			org.meveo.model.mediation.Access access = new org.meveo.model.mediation.Access();
 			access.setSubscription(subscription);
 			access.setAccessUserId(jaxbAccessPoint.getAccessUserId());
-			access.setStartDate(DateUtils.parseDateWithPattern(
-					jaxbAccessPoint.getStartDate(),
+			access.setStartDate(DateUtils.parseDateWithPattern(jaxbAccessPoint.getStartDate(),
 					paramBean.getProperty("meveo.dateFormat", "dd/MM/yyyy")));
-			access.setEndDate(DateUtils.parseDateWithPattern(
-					jaxbAccessPoint.getEndDate(),
+			access.setEndDate(DateUtils.parseDateWithPattern(jaxbAccessPoint.getEndDate(),
 					paramBean.getProperty("meveo.dateFormat", "dd/MM/yyyy")));
 			accessService.create(access, currentUser, provider);
-			log.info("File:" + fileName + ", typeEntity:access, index:" + i
-					+ ", AccessUserId:" + access.getAccessUserId());
+			log.info("File:" + fileName + ", typeEntity:access, index:" + i + ", AccessUserId:"
+					+ access.getAccessUserId());
 		}
 
 		return 1;
 	}
 
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public void activateServices(EntityManager em,
-			CheckedSubscription checkSubscription,
-			org.meveo.model.jaxb.subscription.Subscription subscrip,
-			User currentUser) throws SubscriptionServiceException {
-		if (checkSubscription.subscription != null
-				&& checkSubscription.subscription.getServiceInstances().size() > 0) {
-			for (ServiceInstance serviceInstance : checkSubscription.subscription
-					.getServiceInstances()) {
+	public void activateServices(EntityManager em, CheckedSubscription checkSubscription,
+			org.meveo.model.jaxb.subscription.Subscription subscrip, User currentUser)
+			throws SubscriptionServiceException {
+		if (checkSubscription.subscription != null && checkSubscription.subscription.getServiceInstances().size() > 0) {
+			for (ServiceInstance serviceInstance : checkSubscription.subscription.getServiceInstances()) {
 				try {
-					serviceInstanceService.serviceActivation(em,
-							serviceInstance, null, null, currentUser);
+					serviceInstanceService.serviceActivation(em, serviceInstance, null, null, currentUser);
 				} catch (Exception e) {
 					log.error(e.getMessage());
-					throw new SubscriptionServiceException(subscrip, null,
-							e.getMessage());
+					throw new SubscriptionServiceException(subscrip, null, e.getMessage());
 				}
 			}
 		}

@@ -19,6 +19,7 @@ import org.meveo.model.billing.BillingCycle;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.billing.WalletInstance;
 import org.meveo.model.catalog.WalletTemplate;
+import org.meveo.model.crm.AccountLevelEnum;
 import org.meveo.model.crm.CustomFieldInstance;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.jaxb.customer.CustomField;
@@ -38,6 +39,12 @@ import org.slf4j.Logger;
 
 @Stateless
 public class AccountImportService {
+
+	@Inject
+	private CustomFieldTemplateService customFieldTemplateService;
+
+	@Inject
+	private CustomFieldInstanceService customFieldInstanceService;
 
 	@Inject
 	private Logger log;
@@ -112,7 +119,11 @@ public class AccountImportService {
 		billingAccount.setStatus(AccountStatusEnum.ACTIVE);
 		billingAccount.setStatusDate(new Date());
 		billingAccount.setDescription(billAccount.getDescription());
-		billingAccount.setPaymentMethod(PaymentMethodEnum.valueOf(billAccount.getPaymentMethod()));
+		try {
+			billingAccount.setPaymentMethod(PaymentMethodEnum.valueOf(billAccount.getPaymentMethod()));
+		} catch (NullPointerException | IllegalArgumentException e) {
+			log.warn("paymentMethod={}", e.getMessage());
+		}
 
 		if (billAccount.getBankCoordinates() != null
 				&& ("DIRECTDEBIT".equalsIgnoreCase(billAccount.getPaymentMethod()) || "TIP"
@@ -161,6 +172,13 @@ public class AccountImportService {
 		if (billAccount.getCustomFields() != null && billAccount.getCustomFields().getCustomField() != null
 				&& billAccount.getCustomFields().getCustomField().size() > 0) {
 			for (CustomField customField : billAccount.getCustomFields().getCustomField()) {
+				// check if cft exists
+				if (customFieldTemplateService.findByCodeAndAccountLevel(customField.getCode(), AccountLevelEnum.BA,
+						provider) == null) {
+					log.warn("CustomFieldTemplate with code={} does not exists.", customField.getCode());
+					continue;
+				}
+
 				CustomFieldInstance cfi = new CustomFieldInstance();
 				cfi.setAccount(billingAccount);
 				cfi.setActive(true);
@@ -288,21 +306,41 @@ public class AccountImportService {
 		if (billingAccountDto.getCustomFields() != null && billingAccountDto.getCustomFields().getCustomField() != null
 				&& billingAccountDto.getCustomFields().getCustomField().size() > 0) {
 			for (CustomField customField : billingAccountDto.getCustomFields().getCustomField()) {
-				CustomFieldInstance cfi = new CustomFieldInstance();
-				cfi.setAccount(billingAccount);
-				cfi.setActive(true);
-				cfi.setCode(customField.getCode());
-				cfi.setDateValue(customField.getDateValue());
-				cfi.setDescription(customField.getDescription());
-				cfi.setDoubleValue(customField.getDoubleValue());
-				cfi.setLongValue(customField.getLongValue());
-				cfi.setProvider(provider);
-				cfi.setStringValue(customField.getStringValue());
-				Auditable auditable = new Auditable();
-				auditable.setCreated(new Date());
-				auditable.setCreator(userJob);
-				cfi.setAuditable(auditable);
-				billingAccount.getCustomFields().put(cfi.getCode(), cfi);
+				CustomFieldInstance cfi = customFieldInstanceService.findByCodeAndAccount(customField.getCode(),
+						billingAccount);
+
+				if (cfi == null) {
+					if (customFieldTemplateService.findByCodeAndAccountLevel(customField.getCode(),
+							AccountLevelEnum.BA, provider) == null) {
+						log.warn("CustomFieldTemplate with code={} does not exists.", customField.getCode());
+						continue;
+					}
+
+					cfi = new CustomFieldInstance();
+					cfi.setAccount(billingAccount);
+					cfi.setActive(true);
+					cfi.setCode(customField.getCode());
+					cfi.setDateValue(customField.getDateValue());
+					cfi.setDescription(customField.getDescription());
+					cfi.setDoubleValue(customField.getDoubleValue());
+					cfi.setLongValue(customField.getLongValue());
+					cfi.setProvider(provider);
+					cfi.setStringValue(customField.getStringValue());
+					Auditable auditable = new Auditable();
+					auditable.setCreated(new Date());
+					auditable.setCreator(userJob);
+					cfi.setAuditable(auditable);
+					billingAccount.getCustomFields().put(cfi.getCode(), cfi);
+				} else {
+					cfi.setDateValue(customField.getDateValue());
+					cfi.setDescription(customField.getDescription());
+					cfi.setDoubleValue(customField.getDoubleValue());
+					cfi.setLongValue(customField.getLongValue());
+					cfi.setProvider(provider);
+					cfi.setStringValue(customField.getStringValue());
+					cfi.getAuditable().setUpdated(new Date());
+					cfi.getAuditable().setUpdater(userJob);
+				}
 			}
 		}
 
@@ -353,6 +391,12 @@ public class AccountImportService {
 		if (uAccount.getCustomFields() != null && uAccount.getCustomFields().getCustomField() != null
 				&& uAccount.getCustomFields().getCustomField().size() > 0) {
 			for (CustomField customField : uAccount.getCustomFields().getCustomField()) {
+				if (customFieldTemplateService.findByCodeAndAccountLevel(customField.getCode(), AccountLevelEnum.UA,
+						provider) == null) {
+					log.warn("CustomFieldTemplate with code={} does not exists.", customField.getCode());
+					continue;
+				}
+
 				CustomFieldInstance cfi = new CustomFieldInstance();
 				cfi.setAccount(userAccount);
 				cfi.setActive(true);
@@ -428,21 +472,40 @@ public class AccountImportService {
 		if (userAccountDto.getCustomFields() != null && userAccountDto.getCustomFields().getCustomField() != null
 				&& userAccountDto.getCustomFields().getCustomField().size() > 0) {
 			for (CustomField customField : userAccountDto.getCustomFields().getCustomField()) {
-				CustomFieldInstance cfi = new CustomFieldInstance();
-				cfi.setAccount(userAccount);
-				cfi.setActive(true);
-				cfi.setCode(customField.getCode());
-				cfi.setDateValue(customField.getDateValue());
-				cfi.setDescription(customField.getDescription());
-				cfi.setDoubleValue(customField.getDoubleValue());
-				cfi.setLongValue(customField.getLongValue());
-				cfi.setProvider(provider);
-				cfi.setStringValue(customField.getStringValue());
-				Auditable auditable = new Auditable();
-				auditable.setCreated(new Date());
-				auditable.setCreator(userJob);
-				cfi.setAuditable(auditable);
-				userAccount.getCustomFields().put(cfi.getCode(), cfi);
+				CustomFieldInstance cfi = customFieldInstanceService.findByCodeAndAccount(customField.getCode(),
+						userAccount);
+				if (cfi == null) {
+					if (customFieldTemplateService.findByCodeAndAccountLevel(customField.getCode(),
+							AccountLevelEnum.UA, provider) == null) {
+						log.warn("CustomFieldTemplate with code={} does not exists.", customField.getCode());
+						continue;
+					}
+
+					cfi = new CustomFieldInstance();
+					cfi.setAccount(userAccount);
+					cfi.setActive(true);
+					cfi.setCode(customField.getCode());
+					cfi.setDateValue(customField.getDateValue());
+					cfi.setDescription(customField.getDescription());
+					cfi.setDoubleValue(customField.getDoubleValue());
+					cfi.setLongValue(customField.getLongValue());
+					cfi.setProvider(provider);
+					cfi.setStringValue(customField.getStringValue());
+					Auditable auditable = new Auditable();
+					auditable.setCreated(new Date());
+					auditable.setCreator(userJob);
+					cfi.setAuditable(auditable);
+					userAccount.getCustomFields().put(cfi.getCode(), cfi);
+				} else {
+					cfi.setDateValue(customField.getDateValue());
+					cfi.setDescription(customField.getDescription());
+					cfi.setDoubleValue(customField.getDoubleValue());
+					cfi.setLongValue(customField.getLongValue());
+					cfi.setProvider(provider);
+					cfi.setStringValue(customField.getStringValue());
+					cfi.getAuditable().setUpdated(new Date());
+					cfi.getAuditable().setUpdater(userJob);
+				}
 			}
 		}
 

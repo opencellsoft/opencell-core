@@ -966,7 +966,7 @@ DROP SEQUENCE IF EXISTS billing_trading_country_SEQ;
 CREATE SEQUENCE billing_trading_country_SEQ start with 3 increment by 1;
 
 --Counter Calendar
-insert into cat_calendar (cal_type,id, version, disabled, created, provider_id, creator_id, name, description) values ('YEARLY',1, 0, false, now(), 1, 1, 'CAL_COUNTER', 'Counter Calendar');
+insert into cat_calendar (cal_type,id, version, disabled, created, provider_id, creator_id, code, description) values ('YEARLY',1, 0, false, now(), 1, 1, 'CAL_COUNTER', 'Counter Calendar');
 insert into cat_calendar_days (calendar_id, day_id) values (1, 1);
 insert into cat_calendar_days (calendar_id, day_id) values (1, 101);
 insert into cat_calendar_days (calendar_id, day_id) values (1, 201);
@@ -981,7 +981,7 @@ insert into cat_calendar_days (calendar_id, day_id) values (1, 1001);
 insert into cat_calendar_days (calendar_id, day_id) values (1, 1101);
 
 --Billing Calendar
-insert into cat_calendar (cal_type,id, version, disabled, created, provider_id, creator_id, name, description) values ('YEARLY',2, 0, false, now(), 1, 1, 'CAL_INV_MONTHLY', 'Billing Calendar');
+insert into cat_calendar (cal_type,id, version, disabled, created, provider_id, creator_id, code, description) values ('YEARLY',2, 0, false, now(), 1, 1, 'CAL_INV_MONTHLY', 'Billing Calendar');
 insert into cat_calendar_days (calendar_id, day_id) values (2, 1);
 insert into cat_calendar_days (calendar_id, day_id) values (2, 101);
 insert into cat_calendar_days (calendar_id, day_id) values (2, 201);
@@ -996,7 +996,7 @@ insert into cat_calendar_days (calendar_id, day_id) values (2, 1001);
 insert into cat_calendar_days (calendar_id, day_id) values (2, 1101);
 
 --Charge Imputation
-insert into cat_calendar (cal_type,id, version, disabled, created, provider_id, creator_id, name, description) values ('YEARLY',3, 0, false, now(), 1, 1, 'CAL_VAL_MONTHLY', 'Charge Imputation Calendar');
+insert into cat_calendar (cal_type,id, version, disabled, created, provider_id, creator_id, code, description) values ('YEARLY',3, 0, false, now(), 1, 1, 'CAL_VAL_MONTHLY', 'Charge Imputation Calendar');
 insert into cat_calendar_days (calendar_id, day_id) values (3, 1);
 insert into cat_calendar_days (calendar_id, day_id) values (3, 101);
 insert into cat_calendar_days (calendar_id, day_id) values (3, 201);
@@ -1011,7 +1011,7 @@ insert into cat_calendar_days (calendar_id, day_id) values (3, 1001);
 insert into cat_calendar_days (calendar_id, day_id) values (3, 1101);
 
 --Monthly Counter Calendar
-insert into cat_calendar (cal_type,id, version, disabled, created, provider_id, creator_id, name, description) values ('YEARLY',4, 0, false, now(), 1, 1, 'MONTHLY', 'Monthly Calendar');
+insert into cat_calendar (cal_type,id, version, disabled, created, provider_id, creator_id, code, description) values ('YEARLY',4, 0, false, now(), 1, 1, 'MONTHLY', 'Monthly Calendar');
 insert into cat_calendar_days (calendar_id, day_id) values (4, 1);
 insert into cat_calendar_days (calendar_id, day_id) values (4, 101);
 insert into cat_calendar_days (calendar_id, day_id) values (4, 201);
@@ -1026,7 +1026,7 @@ insert into cat_calendar_days (calendar_id, day_id) values (4, 1001);
 insert into cat_calendar_days (calendar_id, day_id) values (4, 1101);
 
 --Billing Calendar
-insert into cat_calendar (cal_type,id, version, disabled, created, provider_id, creator_id, name, description) values ('YEARLY',5, 0, false, now(), 1, 1, 'BILLING', 'Billing Calendar');
+insert into cat_calendar (cal_type,id, version, disabled, created, provider_id, creator_id, code, description) values ('YEARLY',5, 0, false, now(), 1, 1, 'BILLING', 'Billing Calendar');
 insert into cat_calendar_days (calendar_id, day_id) values (5, 1);
 insert into cat_calendar_days (calendar_id, day_id) values (5, 101);
 insert into cat_calendar_days (calendar_id, day_id) values (5, 201);
@@ -1144,7 +1144,7 @@ CREATE SEQUENCE CAT_CHARGE_TEMPLATE_SEQ start with 5 increment by 1;
 
 insert into CAT_RECURRING_CHARGE_TEMPL (id, CALENDAR_ID, APPLY_IN_ADVANCE, subscription_prorata, termination_prorata) values (1, 3, false, false, false);
 insert into CAT_ONE_SHOT_CHARGE_TEMPL (id, type, immediate_invoicing) values (2, 'SUBSCRIPTION', false);
-insert into CAT_USAGE_CHARGE_TEMPLATE (id, UNITY_NB_DECIMAL) values (3, 2);
+insert into CAT_USAGE_CHARGE_TEMPLATE (id, UNITY_NB_DECIMAL, UNITY_MULTIPLICATOR) values (3, 2, 1);
 insert into CAT_ONE_SHOT_CHARGE_TEMPL (id, type, immediate_invoicing) values (4, 'SUBSCRIPTION', false);
 
 insert into CAT_SERVICE_TEMPLATE (id, version, disabled, created, code, description, provider_id) values (1, 0, false, now(), 'SERV1', 'SERV1', 1);

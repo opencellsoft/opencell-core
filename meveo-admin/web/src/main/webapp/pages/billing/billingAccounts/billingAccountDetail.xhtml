@@ -417,7 +417,6 @@
 											<hf:customFields />
 										</p:tab>
 
-
 										<p:tab title="#{messages['counterPeriod.title']}"
 											rendered="#{!billingAccountBean.edit or billingAccountBean.entity.id!=null}">
 											<hftl:panelGroup>
@@ -425,55 +424,64 @@
 													<p:outputLabel for="counterPeriod"
 														value="#{messages['counterInstance.title']}" />
 													<p:selectOneMenu id="counterPeriod"
+														converter="omnifaces.SelectItemsConverter"
 														value="#{billingAccountBean.selectedCounterInstance}">
 														<f:selectItems
 															value="#{billingAccountBean.entity.counters}" />
-														<s:objectConverter />
 														<p:ajax event="valueChange"
 															update=":parentTab:formBillingAccountPanel:formId:childTab:counters" />
 													</p:selectOneMenu>
 												</p:panelGrid>
 											</hftl:panelGroup>
-											
+
 											<p:panel id="counters">
-											<hftl:panelGroup>
-											<p:panelGrid columns="13">
-											<p:outputLabel value="#{messages['businessEntity.description']} :" />
-											<h:outputText value="#{billingAccountBean.selectedCounterInstance.description}"  />
-											<p:outputLabel value="#{messages['invoice.billingAccount']} :" />
-											<h:outputText value="#{billingAccountBean.selectedCounterInstance.billingAccount.description}"  />
-											<p:outputLabel value="#{messages['subscription.userAccount']} :" />
-											<h:outputText value="#{billingAccountBean.selectedCounterInstance.userAccount.description}"  />
-											<p:outputLabel value="#{messages['counterTemplate.title']} :" />
-											<h:outputText value="#{billingAccountBean.selectedCounterInstance.counterTemplate.description}"  />
-											<p:outputLabel value="#{messages['counterTemplate.counterType']} :" />
-											<h:outputText value="#{billingAccountBean.selectedCounterInstance.counterTemplate.counterType}"/>
-											<p:outputLabel value="#{messages['counterTemplate.counterLevel']} :" />
-											<h:outputText value="#{billingAccountBean.selectedCounterInstance.counterTemplate.counterLevel}"/>
-											</p:panelGrid>
-											</hftl:panelGroup>
-											<hftl:dataList resultsId="datatable_counters"
-												backingBean="#{counterPeriodBean}"
-												dataModel="#{counterPeriodBean.getCounterPeriods(billingAccountBean.selectedCounterInstance)}"
-												checkMany="false" sortBy="periodStartDate" sortOrder="DESCENDING">
-												<hftl:column label="#{messages['businessEntity.code']}"
-													field="code" />
-												<hftl:column label="#{messages['businessEntity.code']}"
-													field="description" />
-												<hftl:column
-													label="#{messages['counterTemplate.counterType']}"
-													field="counterType" childField="label" isMessage="true" />
-												<hftl:column
-													label="#{messages['counterPeriod.periodStartDate']}"
-													field="periodStartDate" isDate="true" />
-												<hftl:column
-													label="#{messages['counterPeriod.periodEndDate']}"
-													field="periodEndDate" isDate="true" />
-												<hftl:column label="#{messages['counterPeriod.level']}"
-													field="level" converterParam="4digits" wrapHeader="true" />
-												<hftl:column label="#{messages['counterPeriod.value']}"
-													field="value" converterParam="4digits" wrapHeader="true"/>
-											</hftl:dataList>
+												<hftl:panelGroup>
+													<p:panelGrid columns="13">
+														<p:outputLabel
+															value="#{messages['businessEntity.description']} :" />
+														<h:outputText
+															value="#{billingAccountBean.selectedCounterInstance.description}" />
+														<p:outputLabel
+															value="#{messages['invoice.billingAccount']} :" />
+														<h:outputText
+															value="#{billingAccountBean.selectedCounterInstance.billingAccount.description}" />
+														<p:outputLabel
+															value="#{messages['counterTemplate.title']} :" />
+														<h:outputText
+															value="#{billingAccountBean.selectedCounterInstance.counterTemplate.description}" />
+														<p:outputLabel
+															value="#{messages['counterTemplate.counterType']} :" />
+														<h:outputText
+															value="#{billingAccountBean.selectedCounterInstance.counterTemplate.counterType}" />
+														<p:outputLabel
+															value="#{messages['counterTemplate.counterLevel']} :" />
+														<h:outputText
+															value="#{billingAccountBean.selectedCounterInstance.counterTemplate.counterLevel}" />
+													</p:panelGrid>
+												</hftl:panelGroup>
+												<hftl:dataList resultsId="datatable_counters"
+													backingBean="#{counterPeriodBean}"
+													dataModel="#{counterPeriodBean.getCounterPeriods(billingAccountBean.selectedCounterInstance)}"
+													checkMany="false" sortBy="periodStartDate"
+													sortOrder="DESCENDING">
+													<hftl:column label="#{messages['businessEntity.code']}"
+														field="code" />
+													<hftl:column label="#{messages['businessEntity.description']}"
+														field="description" />
+													<hftl:column
+														label="#{messages['counterTemplate.counterType']}"
+														field="counterType" childField="label" isMessage="true" />
+													<hftl:column
+														label="#{messages['counterPeriod.periodStartDate']}"
+														field="periodStartDate" isDate="true" />
+													<hftl:column
+														label="#{messages['counterPeriod.periodEndDate']}"
+														field="periodEndDate" isDate="true" />
+													<hftl:column label="#{messages['counterPeriod.level']}"
+														field="level" converterParam="4digits" wrapHeader="true" />
+													<hftl:column label="#{messages['counterPeriod.value']}"
+														field="value" converterParam="4digits" wrapHeader="true" />
+												</hftl:dataList>
 											</p:panel>
 										</p:tab>
 

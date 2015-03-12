@@ -68,34 +68,34 @@
 			updateField=":formPanel:formId:priceplanSelectId:priceplanSelectId">
 		</hftl:entityPopup>
 		
-		
-		
-
 		 <hf:formPanel id="formPanel"
 			label="#{messages['walletOperation.panel']}"
 			backingBean="#{walletOperationBean}">
 		<hftl:panelGroup columns="2">
+		
+		 <hf:formField label="#{messages['BusinessEntity.code']}" field="code" />
+		 <hf:formField label="#{messages['BusinessEntity.description']}" field="description" />
 		  <hf:formEntityField id="sellerSelectId" label="#{messages['seller.parent']}" field="seller" childField="description" popup="true"
 					popupId="searchSellerPopup" clearButton="true" />				
 		  <hf:formEntityField label="#{messages['walletOperation.chargeInstance']}" id="chargeInstanceSelectId" field="chargeInstance" 
 				 childField="code" popup="true" popupId="searchChargeInstancePopup" clearButton="true"/> 	 
 		  <hf:formEntityField label="#{messages['counterTemplate.title']}" id="counterSelectId"
 		    field="counter" childField="code" popup="true" popupId="searchCounterInstancePopup" clearButton="true"/>
+			
 			<hf:formEntityField label="#{messages['pricePlan.title']}" id="priceplanSelectId"
 		    field="priceplan" childField="eventCode" popup="true" popupId="searchPricePlanPopup" clearButton="true"/>	
 		     <hf:formEntityField label="#{messages['operation.wallet']}" id="walletSelectId"
 		    field="wallet" childField="code" popup="true" popupId="searchWalletInstancePopup" clearButton="true"/>
-			
 		 <hf:formField label="#{messages['walletOperation.operationDate']}" field="operationDate" />
-		 <hf:formField label="#{messages['walletOperation.unitAmountWithouTax']}" field="unitAmountWithoutTax" />
-		 <hf:formField label="#{messages['walletOperation.quantity']}" field="quantity" />
-		 <hf:formField label="#{messages['walletOperation.amountWithoutTax']}" field="amountWithoutTax" />
+		 <hf:formField label="#{messages['walletOperation.unitAmountWithoutTax']}" field="unitAmountWithoutTax" converter="bigDecimal4DigitsConverter" />
+		 <hf:formField label="#{messages['walletOperation.quantity']}" field="quantity" converter="bigDecimal4DigitsConverter" />
+		 <hf:formField label="#{messages['invoice.amountWithoutTax']}" field="amountWithoutTax" converter="bigDecimal4DigitsConverter" />
 		 <hf:formField label="#{messages['accountOperation.type']}" field="type" isMessage="true" />
 		 <hf:formField label="#{messages['walletOperation.unityDescription']}" field="unityDescription" />
-		 <hf:formField label="#{messages['walletOperation.taxPercent']}" field="taxPercent" />
-		 <hf:formField label="#{messages['walletOperation.unitAmountWithTax']}" field="unitAmountWithTax" />
-		 <hf:formField label="#{messages['walletOperation.amountWithTax']}" field="amountWithTax" />
-		 <hf:formField label="#{messages['walletOperation.amountTax']}" field="amountTax" />
+		 <hf:formField label="#{messages['walletOperation.taxPercent']}" field="taxPercent" converter="bigDecimal4DigitsConverter" />
+		 <hf:formField label="#{messages['walletOperation.unitAmountWithTax']}" field="unitAmountWithTax" converter="bigDecimal4DigitsConverter" />
+		 <hf:formField label="#{messages['invoice.amountWithTax']}" field="amountWithTax" converter="bigDecimal4DigitsConverter" />
+		 <hf:formField label="#{messages['walletOperation.amountTax']}" field="amountTax" converter="bigDecimal4DigitsConverter" />
 		 <hf:formField label="#{messages['walletOperation.param1']}" field="parameter1" />
 		 <hf:formField label="#{messages['walletOperation.param2']}" field="parameter2" />
 		 <hf:formField label="#{messages['walletOperation.param3']}" field="parameter3" />

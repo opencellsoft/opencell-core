@@ -508,7 +508,7 @@ public class RatingService {
 
 			boolean applicationDateInPricePlanPeriod = (pricePlan.getStartRatingDate() == null
 					|| bareOperation.getOperationDate().after(pricePlan.getStartRatingDate()) || bareOperation
-					.getOperationDate().equals(pricePlan.getStartRatingDate()))
+                .getOperationDate().equals(pricePlan.getStartRatingDate()))
 					&& (pricePlan.getEndRatingDate() == null || bareOperation.getOperationDate().before(
 							pricePlan.getEndRatingDate()));
 			log.debug("applicationDateInPricePlanPeriod(" + pricePlan.getStartRatingDate() + " - "
@@ -574,13 +574,22 @@ public class RatingService {
 			}
 			boolean quantityMinOk = pricePlan.getMinQuantity() == null
 					|| pricePlan.getMinQuantity().compareTo(bareOperation.getQuantity()) <= 0;
-			if (quantityMinOk) {
-				log.debug("quantityMinOkInPricePlan");
-				bareOperation.setPriceplan(pricePlan);
-				return pricePlan;
+			if (!quantityMinOk) {
+			    log.debug("the quantity " + bareOperation.getQuantity() + " is less than " + pricePlan.getMinQuantity());
+	            continue;
 			} else {
-				log.debug("the quantity " + bareOperation.getQuantity() + " is less than " + pricePlan.getMinQuantity());
-			}
+			    log.debug("quantityMinOkInPricePlan");
+			} 
+
+            boolean validityCalendarOK = pricePlan.getValidityCalendar() == null || pricePlan.getValidityCalendar().previousCalendarDate(bareOperation.getOperationDate()) != null;
+            if (validityCalendarOK) {
+                log.debug("validityCalendarOkInPricePlan calendar " + pricePlan.getValidityCalendar() + " operation date " + bareOperation.getOperationDate());
+                bareOperation.setPriceplan(pricePlan);
+                return pricePlan;
+            } else if (pricePlan.getValidityCalendar() != null ){
+                log.debug("the operation date " + bareOperation.getOperationDate() + " does not match pricePlan validity calendar " + pricePlan.getValidityCalendar().getCode()
+                        + "period range ");
+            }
 		}
 		return null;
 	}
@@ -683,7 +692,10 @@ public class RatingService {
 				if (pricePlan.getOfferTemplate() != null) {
 					pricePlan.getOfferTemplate().getCode();
 				}
-
+                if (pricePlan.getValidityCalendar() != null) {
+                    pricePlan.getValidityCalendar().getCode();
+                }
+                
 				log.info("Add pricePlan for provider=" + pricePlan.getProvider().getCode() + "; chargeCode="
 						+ pricePlan.getEventCode() + "; priceplan=" + pricePlan + "; criteria1="
 						+ pricePlan.getCriteria1Value() + "; criteria2=" + pricePlan.getCriteria2Value()

@@ -510,6 +510,11 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 							queryBuilder.addSqlCriterion(":" + parsedKey + " in elements(a." + parsedKey + ")",
 									parsedKey, filter);
 						}
+						else if (key.contains("inList-")) {
+							// if searching elements from list
+							String parsedKey = key.substring(7);
+							queryBuilder.addSql("a."+ parsedKey + " in ("+filter+")");
+						}
 						// if not ranged search
 						else {
 							if (filter instanceof String) {
