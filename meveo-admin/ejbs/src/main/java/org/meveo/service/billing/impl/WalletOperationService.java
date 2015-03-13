@@ -123,9 +123,9 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 		if (usageChargeInstanceWallet == null) {
 			usageChargeInstanceWallet = meveoContainer.getCache("meveo-usageChargeInstanceWallet");
 		}
-		if (balanceCache.size() == 0) {
+		/*if (balanceCache.size() == 0) {
 			buildCacheFromDB();
-		}
+		}*/
 	}
 
 	public void buildCacheFromDB() {
