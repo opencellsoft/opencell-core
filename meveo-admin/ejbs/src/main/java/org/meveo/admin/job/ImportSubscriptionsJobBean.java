@@ -112,6 +112,7 @@ public class ImportSubscriptionsJobBean {
 			} catch (Exception e) {
 				log.error(e.getMessage());
 				result.registerError(e.getMessage());
+				e.printStackTrace();
 				log.info("InputFiles job {} failed.", file.getName());
 				FileUtils.moveFile(dirKO, currentFile, file.getName());
 			} finally {

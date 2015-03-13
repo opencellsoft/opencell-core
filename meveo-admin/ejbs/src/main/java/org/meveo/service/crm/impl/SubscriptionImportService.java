@@ -74,7 +74,7 @@ public class SubscriptionImportService {
 	public int importSubscription(CheckedSubscription checkSubscription,
 			org.meveo.model.jaxb.subscription.Subscription jaxbSubscription, String fileName, User currentUser, int i)
 			throws BusinessException, SubscriptionServiceException, ImportIgnoredException {
-
+		log.debug("importSubscription {}",fileName);
 		Provider provider = currentUser.getProvider();
 
 		OfferTemplate offerTemplate = null;
@@ -84,14 +84,16 @@ public class SubscriptionImportService {
 			log.warn(e.getMessage());
 		}
 		checkSubscription.offerTemplate = offerTemplate;
-
+		log.debug("offerTemplate {}",offerTemplate);
+		
 		UserAccount userAccount = null;
 		try {
 			userAccount = userAccountService.findByCode(jaxbSubscription.getUserAccountId(), provider);
 		} catch (Exception e) {
 			log.error(e.getMessage());
 		}
-
+		log.debug("userAccount {}",userAccount);
+		
 		if (userAccount == null) {
 			throw new BusinessException("UserAccount does not exists.");
 		}
@@ -105,6 +107,7 @@ public class SubscriptionImportService {
 		}
 
 		Subscription subscription = checkSubscription.subscription;
+		log.debug("subscription {} xml status {}",subscription,jaxbSubscription.getStatus().getValue());
 		if (subscription != null) {
 			if (!"ACTIVE".equals(jaxbSubscription.getStatus().getValue())) {
 				if (!provider.getCode().equals(subscription.getProvider().getCode())) {
@@ -118,7 +121,7 @@ public class SubscriptionImportService {
 				} catch (Exception e) {
 					log.error(e.getMessage());
 				}
-
+				log.debug("subscriptionTerminationType {}",subscriptionTerminationType);
 				if (subscriptionTerminationType == null) {
 					throw new BusinessException("subscriptionTerminationType not found for codeReason:"
 							+ jaxbSubscription.getStatus().getReason());
@@ -138,6 +141,7 @@ public class SubscriptionImportService {
 			}
 		}
 
+		log.debug("create new subscription");
 		subscription = new Subscription();
 		subscription.setOffer(checkSubscription.offerTemplate);
 		subscription.setCode(jaxbSubscription.getCode());
@@ -151,6 +155,7 @@ public class SubscriptionImportService {
 					log.warn("CustomFieldTemplate with code={} does not exists.", customField.getCode());
 					continue;
 				}
+				log.debug("instanciate custom field {}",customField.getCode());
 				CustomFieldInstance cfi = new CustomFieldInstance();
 				cfi.setSubscription(subscription);
 				cfi.setActive(true);
@@ -176,6 +181,7 @@ public class SubscriptionImportService {
 				paramBean.getProperty("connectorCRM.dateFormat", "dd/MM/yyyy")));
 		subscription.setStatus(SubscriptionStatusEnum.ACTIVE);
 		subscription.setUserAccount(checkSubscription.userAccount);
+		log.debug("persist subscription",subscription);
 		subscriptionService.create(subscription, currentUser, provider);
 
 		log.info("File:" + fileName + ", typeEntity:Subscription, index:" + i + ", code:" + jaxbSubscription.getCode()
