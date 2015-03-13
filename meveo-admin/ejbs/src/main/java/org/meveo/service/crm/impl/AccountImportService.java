@@ -119,7 +119,11 @@ public class AccountImportService {
 		billingAccount.setStatus(AccountStatusEnum.ACTIVE);
 		billingAccount.setStatusDate(new Date());
 		billingAccount.setDescription(billAccount.getDescription());
-		billingAccount.setPaymentMethod(PaymentMethodEnum.valueOf(billAccount.getPaymentMethod()));
+		try {
+			billingAccount.setPaymentMethod(PaymentMethodEnum.valueOf(billAccount.getPaymentMethod()));
+		} catch (NullPointerException | IllegalArgumentException e) {
+			log.warn("paymentMethod={}", e.getMessage());
+		}
 
 		if (billAccount.getBankCoordinates() != null
 				&& ("DIRECTDEBIT".equalsIgnoreCase(billAccount.getPaymentMethod()) || "TIP"

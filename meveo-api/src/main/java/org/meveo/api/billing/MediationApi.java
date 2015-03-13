@@ -109,6 +109,7 @@ public class MediationApi extends BaseApi {
 						}
 					} catch (BusinessException e) {
 						log.error("Exception rating edr={}", e.getMessage());
+						e.printStackTrace();
 						if ("INSUFFICIENT_BALANCE".equals(e.getMessage())) {
 							throw new MeveoApiException(MeveoApiErrorCode.INSUFFICIENT_BALANCE, e.getMessage());
 						} else {

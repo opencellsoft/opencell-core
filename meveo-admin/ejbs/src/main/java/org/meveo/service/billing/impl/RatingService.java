@@ -45,9 +45,12 @@ import org.meveo.model.billing.UsageChargeInstance;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.billing.WalletOperationStatusEnum;
+import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.LevelEnum;
+import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.model.catalog.RecurringChargeTemplate;
+import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.catalog.TriggeredEDRTemplate;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.rating.EDR;
@@ -716,6 +719,16 @@ public class RatingService {
 		}
 		Map<Object, Object> userMap = new HashMap<Object, Object>();
 		userMap.put("op", bareOperation);
+		if(expression.indexOf("charge") >= 0){
+			ChargeTemplate charge=bareOperation.getChargeInstance().getChargeTemplate();
+			userMap.put("charge",charge);
+			charge.getCustomFields();
+		}
+		if(expression.indexOf("offer") >= 0){
+			OfferTemplate offer=bareOperation.getChargeInstance().getSubscription().getOffer();
+			offer.getCustomFields();
+			userMap.put("offer",offer);
+		}
 		if (expression.indexOf("ua.") >= 0) {
 			userMap.put("ua", ua);
 		}
@@ -745,7 +758,16 @@ public class RatingService {
 		}
 		Map<Object, Object> userMap = new HashMap<Object, Object>();
 		userMap.put("op", walletOperation);
-
+		if(expression.indexOf("charge") >= 0){
+			ChargeTemplate charge=walletOperation.getChargeInstance().getChargeTemplate();
+			userMap.put("charge",charge);
+			charge.getCustomFields();
+		}
+		if(expression.indexOf("offer") >= 0){
+			OfferTemplate offer=walletOperation.getChargeInstance().getSubscription().getOffer();
+			offer.getCustomFields();
+			userMap.put("offer",offer);
+		}
 		if (expression.indexOf("ua.") >= 0) {
 			userMap.put("ua", ua);
 		}
@@ -776,6 +798,21 @@ public class RatingService {
 		}
 		Map<Object, Object> userMap = new HashMap<Object, Object>();
 		userMap.put("op", walletOperation);
+		if(expression.indexOf("charge") >= 0){
+			ChargeTemplate charge=walletOperation.getChargeInstance().getChargeTemplate();
+			userMap.put("charge",charge);
+			charge.getCustomFields();
+		}
+		if(expression.indexOf("offer") >= 0){
+			OfferTemplate offer=walletOperation.getChargeInstance().getSubscription().getOffer();
+			offer.getCustomFields();
+			userMap.put("offer",offer);
+		}
+		/*if(expression.indexOf("service") >= 0){
+			ServiceTemplate service=walletOperation.getServiceInstance();
+			offer.getCustomFields();
+			userMap.put("offer",offer);
+		}*/
 		if (expression.indexOf("ua.") >= 0) {
 			userMap.put("ua", ua);
 		}

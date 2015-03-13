@@ -6,8 +6,9 @@ import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
-import org.meveo.commons.utils.StringUtils;
+
 import org.apache.commons.lang.RandomStringUtils;
+import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.Auditable;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.admin.User;
@@ -124,14 +125,16 @@ public class CustomerImportService {
 		customerAccount.setStatus(CustomerAccountStatusEnum.ACTIVE);
 
 		Address address = new Address();
-		address.setAddress1(custAcc.getAddress().getAddress1());
-		address.setAddress2(custAcc.getAddress().getAddress2());
-		address.setAddress3(custAcc.getAddress().getAddress3());
-		address.setCity(custAcc.getAddress().getCity());
-		address.setCountry(custAcc.getAddress().getCountry());
-		address.setZipCode("" + custAcc.getAddress().getZipCode());
-		address.setState(custAcc.getAddress().getState());
-		customerAccount.setAddress(address);
+		if (custAcc.getAddress() != null) {
+			address.setAddress1(custAcc.getAddress().getAddress1());
+			address.setAddress2(custAcc.getAddress().getAddress2());
+			address.setAddress3(custAcc.getAddress().getAddress3());
+			address.setCity(custAcc.getAddress().getCity());
+			address.setCountry(custAcc.getAddress().getCountry());
+			address.setZipCode("" + custAcc.getAddress().getZipCode());
+			address.setState(custAcc.getAddress().getState());
+			customerAccount.setAddress(address);
+		}
 
 		ContactInformation contactInformation = new ContactInformation();
 		contactInformation.setEmail(custAcc.getEmail());
@@ -141,16 +144,18 @@ public class CustomerImportService {
 		customerAccount.setCreditCategory(CreditCategoryEnum.valueOf(custAcc.getCreditCategory()));
 		customerAccount.setExternalRef1(custAcc.getExternalRef1());
 		customerAccount.setExternalRef2(custAcc.getExternalRef2());
-		if(!StringUtils.isBlank(custAcc.getPaymentMethod())){
-		 customerAccount.setPaymentMethod(PaymentMethodEnum.valueOf(custAcc.getPaymentMethod()));
-		 }
+		if (!StringUtils.isBlank(custAcc.getPaymentMethod())) {
+			customerAccount.setPaymentMethod(PaymentMethodEnum.valueOf(custAcc.getPaymentMethod()));
+		}
 		org.meveo.model.shared.Name name = new org.meveo.model.shared.Name();
 
 		if (custAcc.getName() != null) {
 			name.setFirstName(custAcc.getName().getFirstname());
 			name.setLastName(custAcc.getName().getName());
-			Title title = titleService.findByCode(provider, custAcc.getName().getTitle().trim());
-			name.setTitle(title);
+			if (!StringUtils.isBlank(custAcc.getName().getTitle())) {
+				Title title = titleService.findByCode(provider, custAcc.getName().getTitle().trim());
+				name.setTitle(title);
+			}
 			customerAccount.setName(name);
 		}
 
@@ -283,16 +288,18 @@ public class CustomerImportService {
 		customerAccount.setCreditCategory(CreditCategoryEnum.valueOf(custAcc.getCreditCategory()));
 		customerAccount.setExternalRef1(custAcc.getExternalRef1());
 		customerAccount.setExternalRef2(custAcc.getExternalRef2());
-		if(!StringUtils.isBlank(custAcc.getPaymentMethod())){
-			 customerAccount.setPaymentMethod(PaymentMethodEnum.valueOf(custAcc.getPaymentMethod()));
-			 }
+		if (!StringUtils.isBlank(custAcc.getPaymentMethod())) {
+			customerAccount.setPaymentMethod(PaymentMethodEnum.valueOf(custAcc.getPaymentMethod()));
+		}
 		org.meveo.model.shared.Name name = new org.meveo.model.shared.Name();
 
 		if (custAcc.getName() != null) {
 			name.setFirstName(custAcc.getName().getFirstname());
 			name.setLastName(custAcc.getName().getName());
-			Title title = titleService.findByCode(provider, custAcc.getName().getTitle().trim());
-			name.setTitle(title);
+			if (!StringUtils.isBlank(custAcc.getName().getTitle())) {
+				Title title = titleService.findByCode(provider, custAcc.getName().getTitle().trim());
+				name.setTitle(title);
+			}
 			customerAccount.setName(name);
 		}
 
