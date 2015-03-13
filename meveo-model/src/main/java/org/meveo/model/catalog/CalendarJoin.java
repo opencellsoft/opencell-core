@@ -42,7 +42,11 @@ import javax.persistence.ManyToOne;
 public class CalendarJoin extends Calendar {
 
     public enum CalendarJoinTypeEnum {
-        UNION, INTERSECT
+        UNION, INTERSECT;
+        
+        public String getLabel() {
+            return "CalendarJoinTypeEnum." + this.name();
+        }
     }
 
     private static final long serialVersionUID = 1L;
