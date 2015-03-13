@@ -263,18 +263,26 @@ public class ImportCustomersJobBean {
 
 				if (sellerCheckError(sell)) {
 					nbSellersError++;
-					log.info("File:" + fileName + ", typeEntity:Seller, index:" + i + ", code:" + sell.getCode()
+					log.error("File:" + fileName + ", typeEntity:Seller, index:" + i + ", code:" + sell.getCode()
 							+ ", status:Error");
 					continue;
 				}
 
 				for (org.meveo.model.jaxb.customer.Customer cust : sell.getCustomers().getCustomer()) {
 					createCustomer(fileName, currentUser, seller, sell, cust, i);
+
+					if (nbCustomersError != 0 || nbCustomerAccountsError != 0) {
+						break;
+					}
+				}
+
+				if (nbCustomersError != 0 || nbCustomerAccountsError != 0) {
+					break;
 				}
 			} catch (Exception e) {
 				createSellerError(sell, ExceptionUtils.getRootCause(e).getMessage());
 				nbSellersError++;
-				log.info("File:" + fileName + ", typeEntity:Seller, index:" + i + ", code:" + sell.getCode()
+				log.error("File:" + fileName + ", typeEntity:Seller, index:" + i + ", code:" + sell.getCode()
 						+ ", status:Error");
 				log.error(e.getMessage());
 			}
@@ -298,7 +306,7 @@ public class ImportCustomersJobBean {
 
 			if (customerCheckError(sell, cust)) {
 				nbCustomersError++;
-				log.info("File:" + fileName + ", typeEntity:Customer, index:" + i + ", code:" + cust.getCode()
+				log.error("File:" + fileName + ", typeEntity:Customer, index:" + i + ", code:" + cust.getCode()
 						+ ", status:Error");
 				return;
 			}
@@ -314,7 +322,7 @@ public class ImportCustomersJobBean {
 					createCustomerError(sell, cust,
 							"The customer already exists but is attached to a different seller.");
 					nbCustomersError++;
-					log.info("File:" + fileName + ", typeEntity:Customer, index:" + i + ", code:" + cust.getCode()
+					log.error("File:" + fileName + ", typeEntity:Customer, index:" + i + ", code:" + cust.getCode()
 							+ ", status:Error");
 					return;
 				}
@@ -333,12 +341,26 @@ public class ImportCustomersJobBean {
 			for (org.meveo.model.jaxb.customer.CustomerAccount custAcc : cust.getCustomerAccounts()
 					.getCustomerAccount()) {
 				j++;
+
+				if (customerAccountCheckError(cust, sell, custAcc)) {
+					nbCustomerAccountsError++;
+					log.error("File:" + fileName + ", typeEntity:CustomerAccount, indexCustomer:" + i + ", index:" + j
+							+ " Code:" + custAcc.getCode() + ", status:Error");
+					return;
+				}
+
+				if (customerAccountCheckWarning(cust, sell, custAcc)) {
+					nbCustomerAccountsWarning++;
+					log.info("File:" + fileName + ", typeEntity:CustomerAccount,  indexCustomer:" + i + ", index:" + j
+							+ " Code:" + custAcc.getCode() + ", status:Warning");
+				}
+
 				createCustomerAccount(fileName, currentUser, customer, seller, custAcc, cust, sell, i, j);
 			}
 		} catch (Exception e) {
 			createCustomerError(sell, cust, ExceptionUtils.getRootCause(e).getMessage());
 			nbCustomersError++;
-			log.info("File:" + fileName + ", typeEntity:Customer, index:" + i + ", code:" + cust.getCode()
+			log.error("File:" + fileName + ", typeEntity:Customer, index:" + i + ", code:" + cust.getCode()
 					+ ", status:Error");
 			log.error(e.getMessage());
 		}
@@ -350,19 +372,6 @@ public class ImportCustomersJobBean {
 			org.meveo.model.jaxb.customer.Customer cust, org.meveo.model.jaxb.customer.Seller sell, int i, int j) {
 		nbCustomerAccounts++;
 		CustomerAccount customerAccountTmp = null;
-
-		if (customerAccountCheckError(cust, sell, custAcc)) {
-			nbCustomerAccountsError++;
-			log.info("File:" + fileName + ", typeEntity:CustomerAccount, indexCustomer:" + i + ", index:" + j
-					+ " Code:" + custAcc.getCode() + ", status:Error");
-			return;
-		}
-
-		if (customerAccountCheckWarning(cust, sell, custAcc)) {
-			nbCustomerAccountsWarning++;
-			log.info("File:" + fileName + ", typeEntity:CustomerAccount,  indexCustomer:" + i + ", index:" + j
-					+ " Code:" + custAcc.getCode() + ", status:Warning");
-		}
 
 		try {
 			customerAccountTmp = customerAccountService.findByCode(custAcc.getCode(), currentUser.getProvider());
@@ -565,15 +574,23 @@ public class ImportCustomersJobBean {
 	private boolean customerCheckError(org.meveo.model.jaxb.customer.Seller sell,
 			org.meveo.model.jaxb.customer.Customer cust) {
 
-		/*
-		 * if (StringUtils.isBlank(cust.getDesCustomer())) {
-		 * createCustomerError(sell,cust, "Description is null"); return true; }
-		 * if (StringUtils.isBlank(cust.getCustomerBrand())) {
-		 * createCustomerError(sell,cust, "CustomerBrand is null"); return true;
-		 * } if (StringUtils.isBlank(cust.getCustomerCategory())) {
-		 * createCustomerError(sell,cust, "CustomerCategory is null"); return
-		 * true; }
-		 */
+		if (StringUtils.isBlank(cust.getCode())) {
+			createCustomerError(sell, cust, "Code is null");
+			return true;
+		}
+		if (StringUtils.isBlank(cust.getDesCustomer())) {
+			createCustomerError(sell, cust, "Description is null");
+			return true;
+		}
+		if (StringUtils.isBlank(cust.getCustomerCategory())) {
+			createCustomerError(sell, cust, "CustomerCategory is null");
+			return true;
+		}
+		if (StringUtils.isBlank(cust.getCustomerBrand())) {
+			createCustomerError(sell, cust, "CustomerBrand is null");
+			return true;
+		}
+
 		if (cust.getCustomerAccounts().getCustomerAccount() == null
 				|| cust.getCustomerAccounts().getCustomerAccount().isEmpty()) {
 			createCustomerError(sell, cust, "No customer account");
@@ -585,6 +602,26 @@ public class ImportCustomersJobBean {
 
 	private boolean customerAccountCheckError(org.meveo.model.jaxb.customer.Customer cust,
 			org.meveo.model.jaxb.customer.Seller sell, org.meveo.model.jaxb.customer.CustomerAccount custAcc) {
+		if (StringUtils.isBlank(custAcc.getCode())) {
+			createCustomerAccountError(sell, cust, custAcc, "Code is null");
+			return true;
+		}
+		if (StringUtils.isBlank(custAcc.getDescription())) {
+			createCustomerAccountError(sell, cust, custAcc, "Description is null");
+			return true;
+		}
+		if (StringUtils.isBlank(custAcc.getTradingCurrencyCode())) {
+			createCustomerAccountError(sell, cust, custAcc, "Currency is null");
+			return true;
+		}
+		if (StringUtils.isBlank(custAcc.getCreditCategory())) {
+			createCustomerAccountError(sell, cust, custAcc, "Credit Category is null");
+			return true;
+		}
+		if (custAcc.getName() == null || StringUtils.isBlank(custAcc.getName().getName())) {
+			createCustomerAccountError(sell, cust, custAcc, "Lastname is null");
+			return true;
+		}
 		/*
 		 * if (StringUtils.isBlank(custAcc.getPaymentMethod()) || ("DIRECTDEBIT"
 		 * + "CHECK" + "TIP" +
