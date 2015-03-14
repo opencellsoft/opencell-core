@@ -16,7 +16,8 @@ import org.meveo.model.admin.User;
 import org.meveo.model.security.Role;
 
 @Entity
-@Table(name = "DWH_CHART", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE", "PROVIDER_ID" }))
+@Table(name = "DWH_CHART", uniqueConstraints = @UniqueConstraint(columnNames = {
+		"CODE", "PROVIDER_ID" }))
 @Inheritance(strategy = InheritanceType.JOINED)
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_BILLING_RUN_SEQ")
 public class Chart extends BusinessEntity {
@@ -46,6 +47,9 @@ public class Chart extends BusinessEntity {
 
 	@Column(name = "EXTENDER")
 	String extender;
+
+	@Column(name = "ISVISIBLE")
+	Boolean isVisible = false;
 
 	public User getUser() {
 		return user;
@@ -93,6 +97,14 @@ public class Chart extends BusinessEntity {
 
 	public void setExtender(String extender) {
 		this.extender = extender;
+	}
+
+	public boolean isVisible() {
+		return isVisible;
+	}
+
+	public void setVisible(boolean isVisible) {
+		this.isVisible = isVisible;
 	}
 
 }

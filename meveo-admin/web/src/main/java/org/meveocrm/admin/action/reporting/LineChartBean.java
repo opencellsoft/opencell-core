@@ -88,6 +88,13 @@ public class LineChartBean extends ChartEntityBean<LineChart> {
 			}
 
 			LineChartEntityModel chartEntityModel = new LineChartEntityModel();
+			boolean isAdmin = lineChart.getAuditable().getCreator()
+					.hasRole("administrateur");
+			boolean equalUser = lineChart.getAuditable().getCreator().getId() == getCurrentUser()
+					.getId();
+			boolean sameRoleWithChart = lineChart.getRole() != null ? getCurrentUser()
+					.hasRole(lineChart.getRole().getDescription()) : false;
+			lineChart.setVisible(isAdmin || equalUser || sameRoleWithChart);
 			chartEntityModel.setLineChart(lineChart);
 			chartEntityModel.setModel(chartModel);
 
