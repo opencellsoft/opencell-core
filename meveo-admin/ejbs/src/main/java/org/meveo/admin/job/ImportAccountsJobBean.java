@@ -19,10 +19,12 @@ import org.meveo.commons.utils.FileUtils;
 import org.meveo.commons.utils.ImportFileFiltre;
 import org.meveo.commons.utils.JAXBUtils;
 import org.meveo.commons.utils.ParamBean;
+import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.AccountImportHisto;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.crm.Provider;
+import org.meveo.model.jaxb.account.BillingAccount;
 import org.meveo.model.jaxb.account.BillingAccounts;
 import org.meveo.model.jaxb.account.ErrorBillingAccount;
 import org.meveo.model.jaxb.account.ErrorUserAccount;
@@ -187,6 +189,10 @@ public class ImportAccountsJobBean {
 		for (org.meveo.model.jaxb.account.BillingAccount billingAccountDto : billingAccounts.getBillingAccount()) {
 			i++;
 			createBillingAccount(billingAccountDto, fileName, i, currentUser, provider);
+
+			if (nbBillingAccountsError != 0 || nbUserAccountsError != 0) {
+				break;
+			}
 		}
 
 		generateReport(fileName, provider);
@@ -195,9 +201,42 @@ public class ImportAccountsJobBean {
 		log.info("end import file ");
 	}
 
+	private boolean billingCheckError(BillingAccount billingAccount) {
+		if (StringUtils.isBlank(billingAccount.getCode())) {
+			createBillingAccountError(billingAccount, "Code is null");
+			return true;
+		}
+		if (StringUtils.isBlank(billingAccount.getDescription())) {
+			createBillingAccountError(billingAccount, "Description is null");
+			return true;
+		}
+		if (StringUtils.isBlank(billingAccount.getBillingCycle())) {
+			createBillingAccountError(billingAccount, "BillingCycle is null");
+			return true;
+		}
+		if (StringUtils.isBlank(billingAccount.getTradingCountryCode())) {
+			createBillingAccountError(billingAccount, "Country is null");
+			return true;
+		}
+		if (StringUtils.isBlank(billingAccount.getTradingLanguageCode())) {
+			createBillingAccountError(billingAccount, "Language is null");
+			return true;
+		}
+
+		return false;
+	}
+
 	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
 	private void createBillingAccount(org.meveo.model.jaxb.account.BillingAccount billingAccountDto, String fileName,
 			int i, User currentUser, Provider provider) throws BusinessException, ImportWarningException {
+
+		if (billingCheckError(billingAccountDto)) {
+			nbBillingAccountsError++;
+			log.error("File:" + fileName + ", typeEntity:BillingAccount, index:" + i + ", code:"
+					+ billingAccountDto.getCode() + ", status:Error");
+			return;
+		}
+
 		int j = -1;
 		org.meveo.model.billing.BillingAccount billingAccount = null;
 		try {
@@ -224,13 +263,13 @@ public class ImportAccountsJobBean {
 			} catch (BusinessException e) {
 				createBillingAccountError(billingAccountDto, e.getMessage());
 				nbBillingAccountsError++;
-				log.info("file2:" + fileName + ", typeEntity:BillingAccount, index:" + i + ", code:"
+				log.error("file2:" + fileName + ", typeEntity:BillingAccount, index:" + i + ", code:"
 						+ billingAccountDto.getCode() + ", status:Error");
 			}
 		} catch (Exception e) {
 			createBillingAccountError(billingAccountDto, ExceptionUtils.getRootCause(e).getMessage());
 			nbBillingAccountsError++;
-			log.info("file7:" + fileName + ", typeEntity:BillingAccount, index:" + i + ", code:"
+			log.error("file7:" + fileName + ", typeEntity:BillingAccount, index:" + i + ", code:"
 					+ billingAccountDto.getCode() + ", status:Error");
 			log.error(e.getMessage());
 		}
@@ -241,8 +280,30 @@ public class ImportAccountsJobBean {
 
 		for (org.meveo.model.jaxb.account.UserAccount uAccount : billingAccountDto.getUserAccounts().getUserAccount()) {
 			j++;
+
+			if (userAccountCheckError(billingAccountDto, uAccount)) {
+				nbUserAccountsError++;
+				log.error("File:" + fileName + ", typeEntity:UserAccount, index:" + i + ", code:"
+						+ billingAccountDto.getCode() + ", status:Error");
+				return;
+			}
+
 			createUserAccount(uAccount, billingAccount, billingAccountDto, fileName, i, j, currentUser, provider);
 		}
+	}
+
+	private boolean userAccountCheckError(BillingAccount billingAccount,
+			org.meveo.model.jaxb.account.UserAccount userAccount) {
+		if (StringUtils.isBlank(userAccount.getCode())) {
+			createUserAccountError(billingAccount, userAccount, "Code is null");
+			return true;
+		}
+		if (StringUtils.isBlank(userAccount.getDescription())) {
+			createUserAccountError(billingAccount, userAccount, "Description is null");
+			return true;
+		}
+
+		return false;
 	}
 
 	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
@@ -280,7 +341,7 @@ public class ImportAccountsJobBean {
 			} catch (BusinessException e) {
 				createUserAccountError(billingAccountDto, uAccount, e.getMessage());
 				nbUserAccountsError++;
-				log.info("file:" + fileName + ", typeEntity:UserAccount,  indexBillingAccount:" + i + ", index:" + j
+				log.error("file:" + fileName + ", typeEntity:UserAccount,  indexBillingAccount:" + i + ", index:" + j
 						+ " code:" + uAccount.getCode() + ", status:Error");
 			}
 		}

@@ -71,10 +71,7 @@ public class BackingBeanBasedCompositeComponent extends UINamingContainer {
 	 * @throws NoSuchMethodException
 	 * @throws InvocationTargetException
 	 */
-	public Object getEntityFromBackingBeanOrAttribute()
-			throws SecurityException, NoSuchFieldException,
-			IllegalArgumentException, IllegalAccessException,
-			InvocationTargetException, NoSuchMethodException {
+	public Object getEntityFromBackingBeanOrAttribute() {
 		Object entity = getStateHelper().get("entity");
 
 		if (entity == null) {
@@ -113,6 +110,16 @@ public class BackingBeanBasedCompositeComponent extends UINamingContainer {
 		return entityClass;
 	}
 
+	/**
+     * Helper method to get entity instance to query field definitions.
+     */
+    @SuppressWarnings("rawtypes")
+    public Class getEntityClassFromEntity() {
+        if (entityClass == null) {
+            entityClass = getEntityFromBackingBeanOrAttribute().getClass();
+        }
+        return entityClass;
+    }
 	/**
 	 * Return date pattern to use for rendered date/calendar fields. If time
 	 * attribute was set to true then this methods returns date/time pattern,
@@ -322,7 +329,7 @@ public class BackingBeanBasedCompositeComponent extends UINamingContainer {
 
 	public Object[] getEnumConstants(String fieldName)
 			throws SecurityException, NoSuchFieldException {
-		Field field = getBeanFieldThrowException(getEntityClass(), fieldName);
+		Field field = getBeanFieldThrowException(getEntityClassFromEntity(), fieldName);
 		Object[] objArr = field.getType().getEnumConstants();
 		Arrays.sort(objArr, new Comparator<Object>() {
 			@Override
