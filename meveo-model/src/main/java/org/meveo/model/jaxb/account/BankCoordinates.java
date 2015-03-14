@@ -87,8 +87,23 @@ public class BankCoordinates {
     protected String iban;
     @XmlElement(name = "BIC", required = true)
     protected String bic;
+    
+    public BankCoordinates(){}
+    
+    public BankCoordinates(
+			org.meveo.model.billing.BankCoordinates bankCoordinates) {
+    	if(bankCoordinates!=null){
+			accountName=bankCoordinates.getAccountOwner();
+			bankName=bankCoordinates.getBankName();
+			bankCode=bankCoordinates.getBankCode();
+			branchCode=bankCoordinates.getBranchCode();
+			accountNumber=bankCoordinates.getAccountNumber();
+			key=bankCoordinates.getKey();
+			iban=bankCoordinates.getIban();
+    	}
+	}
 
-    /**
+	/**
      * Gets the value of the accountName property.
      * 
      * @return

@@ -32,6 +32,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 import org.meveo.model.jaxb.customer.CustomFields;
+import org.meveo.model.shared.DateUtils;
 
 
 /**
@@ -92,8 +93,24 @@ public class UserAccount {
     protected CustomFields customFields;
     @XmlAttribute(name = "code")
     protected String code;
+    
+    public UserAccount(){}
+    
+    public UserAccount(org.meveo.model.billing.UserAccount ua,String dateFormat) {
+    	if(ua!=null){
+	    	subscriptionDate=ua.getSubscriptionDate()==null?"":
+	    		DateUtils.formatDateWithPattern(ua.getSubscriptionDate(), dateFormat);
+	    	description=ua.getDescription();
+	    	externalRef1=ua.getExternalRef1();
+	    	externalRef2=ua.getExternalRef2();
+	    	name=new Name(ua.getName());
+	    	address=new Address(ua.getAddress());
+	    	customFields=new CustomFields(ua.getCustomFields());
+	    	code=ua.getCode();
+    	}
+	}
 
-    /**
+	/**
      * Gets the value of the subscriptionDate property.
      * 
      * @return

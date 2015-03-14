@@ -83,8 +83,22 @@ public class Address {
     protected String state;
     @XmlElement(required = true)
     protected String country;
+    
+    public Address(){}
+    
+    public Address(org.meveo.model.shared.Address address) {
+    	if(address!=null){
+			address1=address.getAddress1();
+			address2=address.getAddress2();
+			address3=address.getAddress3();
+			zipCode=address.getZipCode();
+			city=address.getCity();
+			state=address.getState();
+			country=address.getCountry();
+    	}
+	}
 
-    /**
+	/**
      * Gets the value of the address1 property.
      * 
      * @return

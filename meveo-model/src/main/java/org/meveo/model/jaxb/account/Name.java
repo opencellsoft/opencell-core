@@ -64,8 +64,18 @@ public class Name {
     protected String firstname;
     @XmlElement(required = true)
     protected String name;
+    
+    public Name(){
+    }
+    public Name(org.meveo.model.shared.Name n) {
+		if(n!=null){
+			title=n.getTitle()==null?"":n.getTitle().getCode();
+			firstname=n.getFirstName()==null?"":n.getFirstName();
+			name=n.getLastName()==null?"":n.getLastName();
+		}
+	}
 
-    /**
+	/**
      * Gets the value of the title property.
      * 
      * @return possible object is {@link String }
