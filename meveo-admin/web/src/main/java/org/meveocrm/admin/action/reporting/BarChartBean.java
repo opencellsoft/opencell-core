@@ -88,6 +88,13 @@ public class BarChartBean extends ChartEntityBean<BarChart> {
 			}
 
 			BarChartEntityModel chartEntityModel = new BarChartEntityModel();
+			boolean isAdmin = barChart.getAuditable().getCreator()
+					.hasRole("administrateur");
+			boolean equalUser = barChart.getAuditable().getCreator().getId() == getCurrentUser()
+					.getId();
+			boolean sameRoleWithChart = barChart.getRole() != null ? getCurrentUser()
+					.hasRole(barChart.getRole().getDescription()) : false;
+					barChart.setVisible(isAdmin || equalUser || sameRoleWithChart);
 			chartEntityModel.setBarChart(barChart);
 			chartEntityModel.setModel(chartModel);
 			barChartEntityModels.add(chartEntityModel);
@@ -130,7 +137,6 @@ public class BarChartBean extends ChartEntityBean<BarChart> {
 				} else {
 					log.info("No measured values found for : " + mq.getCode());
 				}
-
 				chartEntityModel.setModel(chartModel);
 				chartEntityModel.setBarChart(getEntity());
 			}

@@ -87,6 +87,13 @@ public class PieChartBean extends ChartEntityBean<PieChart> {
 			}
 
 			PieChartEntityModel chartEntityModel = new PieChartEntityModel();
+			boolean isAdmin = pieChart.getAuditable().getCreator()
+					.hasRole("administrateur");
+			boolean equalUser = pieChart.getAuditable().getCreator().getId() == getCurrentUser()
+					.getId();
+			boolean sameRoleWithChart = pieChart.getRole() != null ? getCurrentUser()
+					.hasRole(pieChart.getRole().getDescription()) : false;
+					pieChart.setVisible(isAdmin || equalUser || sameRoleWithChart);
 			chartEntityModel.setPieChart(pieChart);
 			chartEntityModel.setModel(chartModel);
 
@@ -165,7 +172,6 @@ public class PieChartBean extends ChartEntityBean<PieChart> {
 			log.info("No measured values found for : " + mq.getCode());
 		}
 
-		
 		curr.setPieChart(curr.getPieChart());
 		curr.setModel(chartModel);
 

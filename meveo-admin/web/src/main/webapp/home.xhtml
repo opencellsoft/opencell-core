@@ -35,7 +35,7 @@
 				<ui:repeat var="bar" value="#{barChartBean.barChartEntityModels}"
 					varStatus="i">
 
-					<h:form>
+					<h:form rendered="#{bar.barChart.isVisible}">
 						<p:outputPanel style="width:500px;">
 							<hf:barChartComponent barChartEntityModel="#{bar}" />
 							<!-- chartBackingBean="#{barChartBean}" -->
@@ -55,7 +55,7 @@
 
 				<ui:repeat var="line" value="#{lineChartBean.lineChartEntityModels}"
 					varStatus="i">
-					<h:form>
+					<h:form rendered="#{line.lineChart.isVisible}">
 						<p:outputPanel style="width:500px;">
 							<hf:lineChartComponent lineChartEntityModel="#{line}"></hf:lineChartComponent>
 						</p:outputPanel>
@@ -74,7 +74,7 @@
 
 				<ui:repeat var="pie" value="#{pieChartBean.pieChartEntityModels}"
 					varStatus="i">
-					<h:form>
+					<h:form rendered="#{pie.pieChart.isVisible}">
 						<p:outputPanel style="width:500px;">
 							<hf:pieChartComponent pieChartEntityModel="#{pie}"></hf:pieChartComponent>
 						</p:outputPanel>
