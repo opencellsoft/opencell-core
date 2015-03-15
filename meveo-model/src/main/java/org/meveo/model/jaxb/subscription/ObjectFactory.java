@@ -89,14 +89,6 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link RecurringCharges }
-     * 
-     */
-    public RecurringCharges createRecurringCharges() {
-        return new RecurringCharges();
-    }
-
-    /**
      * Create an instance of {@link Errors }
      * 
      */
@@ -158,14 +150,6 @@ public class ObjectFactory {
      */
     public ServiceInstance createServiceInstance() {
         return new ServiceInstance();
-    }
-
-    /**
-     * Create an instance of {@link OneshotCharges }
-     * 
-     */
-    public OneshotCharges createOneshotCharges() {
-        return new OneshotCharges();
     }
 
     /**

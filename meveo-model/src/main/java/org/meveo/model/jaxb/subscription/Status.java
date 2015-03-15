@@ -31,6 +31,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlValue;
 
+import org.meveo.model.shared.DateUtils;
+
 
 /**
  * <p>Java class for anonymous complex type.
@@ -64,7 +66,28 @@ public class Status {
     @XmlAttribute(name = "reason")
     protected String reason;
 
-    /**
+    public Status(){}
+    
+    public Status(org.meveo.model.billing.Subscription sub,String dateFormat) {
+		if(sub!=null){
+			value=sub.getStatus()==null?null:sub.getStatus().name();
+			date=sub.getStatusDate()==null?null:
+	    		DateUtils.formatDateWithPattern(sub.getStatusDate(), dateFormat);
+			if(sub.getSubscriptionTerminationReason()!=null){
+				reason=sub.getSubscriptionTerminationReason().getCode();
+			}
+		}
+	}
+
+	public Status(org.meveo.model.billing.ServiceInstance serv,String dateFormat) {
+		if(serv!=null){
+			value=serv.getStatus()==null?null:serv.getStatus().name();
+			date=serv.getStatusDate()==null?null:
+	    		DateUtils.formatDateWithPattern(serv.getStatusDate(), dateFormat);
+		}
+	}
+
+	/**
      * Gets the value of the value property.
      * 
      * @return

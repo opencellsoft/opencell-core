@@ -3,6 +3,7 @@ package org.meveo.service.crm.impl;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Date;
+import java.util.List;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
@@ -16,7 +17,6 @@ import org.meveo.model.Auditable;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.ChargeInstance;
-import org.meveo.model.billing.RecurringChargeInstance;
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.SubscriptionStatusEnum;
@@ -29,6 +29,7 @@ import org.meveo.model.crm.CustomFieldInstance;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.jaxb.customer.CustomField;
 import org.meveo.model.jaxb.subscription.Access;
+import org.meveo.model.jaxb.subscription.Charge;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.billing.impl.ServiceInstanceService;
 import org.meveo.service.billing.impl.SubscriptionService;
@@ -202,67 +203,17 @@ public class SubscriptionImportService {
 
 				subscription.getServiceInstances().add(serviceInstance);
 
-				if (serviceInst.getRecurringCharges() != null) {
-					if (serviceInstance.getRecurringChargeInstances() != null) {
-						for (RecurringChargeInstance recurringChargeInstance : serviceInstance
-								.getRecurringChargeInstances()) {
-							log.debug("File:" + fileName + ", typeEntity:Subscription, index:" + i + ", code:"
-									+ jaxbSubscription.getCode() + ", recurringChargeInstance:"
-									+ recurringChargeInstance.getCode());
-
-							if (serviceInst.getRecurringCharges().getAmountWithoutTax() != null) {
-								recurringChargeInstance.setAmountWithoutTax(new BigDecimal(serviceInst
-										.getRecurringCharges().getAmountWithoutTax().replace(',', '.')).setScale(
-										BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP));
-								log.debug("File:" + fileName + ", typeEntity:Subscription, index:" + i + ", code:"
-										+ jaxbSubscription.getCode() + ", recurringChargeInstance.setAmountWithoutTax:"
-										+ serviceInst.getRecurringCharges().getAmountWithoutTax());
-							}
-
-							if (serviceInst.getRecurringCharges().getAmountWithoutTax() != null) {
-								recurringChargeInstance.setAmountWithTax(new BigDecimal(serviceInst
-										.getRecurringCharges().getAmountWithTax().replace(',', '.')).setScale(
-										BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP));
-								log.debug("File:" + fileName + ", typeEntity:Subscription, index:" + i + ", code:"
-										+ jaxbSubscription.getCode() + ", recurringChargeInstance.setAmount2:"
-										+ serviceInst.getRecurringCharges().getAmountWithTax());
-							}
-
-							recurringChargeInstance.setCriteria1(serviceInst.getRecurringCharges().getC1());
-							recurringChargeInstance.setCriteria2(serviceInst.getRecurringCharges().getC2());
-							recurringChargeInstance.setCriteria3(serviceInst.getRecurringCharges().getC3());
-						}
-					}
+				if (serviceInst.getRecurringCharges() != null && serviceInstance.getRecurringChargeInstances() != null) {
+				   updateCharges(serviceInstance.getRecurringChargeInstances(),serviceInst.getRecurringCharges());
 				}
-
-				if (serviceInst.getOneshotCharges() != null) {
-					if (serviceInstance.getSubscriptionChargeInstances() != null) {
-						for (ChargeInstance subscriptionChargeInstance : serviceInstance
-								.getSubscriptionChargeInstances()) {
-							if (serviceInst.getOneshotCharges().getAmountWithoutTax() != null) {
-								subscriptionChargeInstance.setAmountWithoutTax(new BigDecimal(serviceInst
-										.getOneshotCharges().getAmountWithoutTax().replace(',', '.')).setScale(
-										BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP));
-								log.debug("File:" + fileName + ", typeEntity:Subscription, index:" + i + ", code:"
-										+ jaxbSubscription.getCode()
-										+ ", subscriptionChargeInstance.setAmountWithoutTax:"
-										+ serviceInst.getOneshotCharges().getAmountWithoutTax());
-							}
-
-							if (serviceInst.getOneshotCharges().getAmountWithoutTax() != null) {
-								subscriptionChargeInstance.setAmountWithTax(new BigDecimal(serviceInst
-										.getOneshotCharges().getAmountWithTax().replace(',', '.')).setScale(
-										BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP));
-								log.debug("File:" + fileName + ", typeEntity:Subscription, index:" + i + ", code:"
-										+ jaxbSubscription.getCode() + ", subscriptionChargeInstance.setAmount2:"
-										+ serviceInst.getOneshotCharges().getAmountWithTax());
-							}
-
-							subscriptionChargeInstance.setCriteria1(serviceInst.getOneshotCharges().getC1());
-							subscriptionChargeInstance.setCriteria2(serviceInst.getOneshotCharges().getC2());
-							subscriptionChargeInstance.setCriteria3(serviceInst.getOneshotCharges().getC3());
-						}
-					}
+				if (serviceInst.getSubscriptionCharges() != null && serviceInstance.getSubscriptionChargeInstances() != null) {
+				   updateCharges(serviceInstance.getSubscriptionChargeInstances(),serviceInst.getSubscriptionCharges());
+				}
+				if (serviceInst.getTerminationCharges() != null && serviceInstance.getTerminationChargeInstances() != null) {
+					updateCharges(serviceInstance.getTerminationChargeInstances(),serviceInst.getTerminationCharges());
+				}
+				if (serviceInst.getUsageCharges() != null && serviceInstance.getUsageChargeInstances() != null) {
+					updateCharges(serviceInstance.getUsageChargeInstances(),serviceInst.getUsageCharges());
 				}
 
 				subscription.updateAudit(currentUser);
@@ -294,7 +245,38 @@ public class SubscriptionImportService {
 
 		return 1;
 	}
-
+	
+	private void updateCharges(
+			List<? extends ChargeInstance> chargeInstances,
+			List<Charge> charges) {
+		     for(ChargeInstance chargeInstance:chargeInstances){
+		    	 Charge charge=null;
+		    	 for(Charge chargeToTest:charges){
+		    		 if(chargeToTest.getCode().equals(chargeInstance.getCode())){
+		    			 charge=chargeToTest;
+		    			 break;
+		    	 }
+		         if(charge!=null){
+					if (charge.getAmountWithoutTax() != null) {
+						chargeInstance.setAmountWithoutTax(new BigDecimal(charge.getAmountWithoutTax()
+								.replace(',', '.')).setScale(BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP));
+						log.debug("set charge :" + charge.getCode() + ", amountWithoutTax:"
+								+ chargeInstance.getAmountWithoutTax());
+					}
+					if (charge.getAmountWithTax() != null) {
+						chargeInstance.setAmountWithTax(new BigDecimal(charge.getAmountWithTax()
+								.replace(',', '.')).setScale(BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP));
+						log.debug("set charge :" + charge.getCode() + ", amountWithTax:"
+								+ chargeInstance.getAmountWithoutTax());
+					}
+					chargeInstance.setCriteria1(charge.getC1());
+					chargeInstance.setCriteria2(charge.getC2());
+					chargeInstance.setCriteria3(charge.getC3());
+		         }
+		     } 
+	}
+		
+	}
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public void activateServices(EntityManager em, CheckedSubscription checkSubscription,
 			org.meveo.model.jaxb.subscription.Subscription subscrip, User currentUser)

@@ -137,24 +137,24 @@ public class BillingAccount {
     		if(dateFormat==null){
     			dateFormat="yyyy-MM-dd";
     		}
-	    	subscriptionDate=ba.getSubscriptionDate()==null?"":
+	    	subscriptionDate=ba.getSubscriptionDate()==null?null:
 	    		DateUtils.formatDateWithPattern(ba.getSubscriptionDate(), dateFormat);
 	    	description=ba.getDescription();
 	    	externalRef1=ba.getExternalRef1();
 	        externalRef2=ba.getExternalRef2();
 	        name=new Name(ba.getName());
 	        address = new Address(ba.getAddress());
-	        electronicBilling = ba.getElectronicBilling()==null?"":ba.getElectronicBilling()+"";
-	        email=ba.getEmail()==null?"":ba.getEmail();
+	        electronicBilling = ba.getElectronicBilling()==null?null:ba.getElectronicBilling()+"";
+	        email=ba.getEmail()==null?null:ba.getEmail();
 	        bankCoordinates = new BankCoordinates(ba.getBankCoordinates());
-	        tradingCountryCode=ba.getTradingCountry()==null?"":ba.getTradingCountry().getCountryCode();
-	        tradingLanguageCode=ba.getTradingLanguage()==null?"":ba.getTradingLanguage().getLanguageCode();
+	        tradingCountryCode=ba.getTradingCountry()==null?null:ba.getTradingCountry().getCountryCode();
+	        tradingLanguageCode=ba.getTradingLanguage()==null?null:ba.getTradingLanguage().getLanguageCode();
 	        customFields=new CustomFields(ba.getCustomFields());
 	        userAccounts=new UserAccounts(ba.getUsersAccounts(),dateFormat);
-	        code=ba.getCode()==null?"":ba.getCode();
+	        code=ba.getCode()==null?null:ba.getCode();
 	        customerAccountId=ba.getCustomerAccount().getCode();
-	        paymentMethod=ba.getPaymentMethod()==null?"":ba.getPaymentMethod().name();
-	        billingCycle=ba.getBillingCycle()==null?"":ba.getBillingCycle().getCode();
+	        paymentMethod=ba.getPaymentMethod()==null?null:ba.getPaymentMethod().name();
+	        billingCycle=ba.getBillingCycle()==null?null:ba.getBillingCycle().getCode();
     	}
 	}
 

@@ -9,6 +9,8 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
+import org.meveo.model.shared.DateUtils;
+
 /**
  * <p>
  * Java class for anonymous complex type.
@@ -50,6 +52,16 @@ public class Access {
 	@XmlJavaTypeAdapter(CollapsedStringAdapter.class)
 	@XmlSchemaType(name = "NCName")
 	protected String accessUserId;
+
+	public Access(){}
+	
+	public Access(org.meveo.model.mediation.Access access,String dateFormat) {
+		startDate=access.getStartDate()==null?null:
+    		DateUtils.formatDateWithPattern(access.getStartDate(), dateFormat);
+		endDate=access.getEndDate()==null?null:
+    		DateUtils.formatDateWithPattern(access.getEndDate(), dateFormat);
+		accessUserId=access.getAccessUserId();
+	}
 
 	/**
 	 * Gets the value of the startDate property.

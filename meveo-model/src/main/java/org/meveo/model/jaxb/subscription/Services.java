@@ -61,7 +61,18 @@ public class Services {
 
     protected List<ServiceInstance> serviceInstance;
 
-    /**
+    public Services(){}
+    
+    public Services(org.meveo.model.billing.Subscription sub, String dateFormat) {
+		if(sub!=null && sub.getServiceInstances()!=null){
+			serviceInstance= new ArrayList<ServiceInstance>(sub.getServiceInstances().size());
+			for(org.meveo.model.billing.ServiceInstance serv:sub.getServiceInstances()){
+				serviceInstance.add(new ServiceInstance(serv,dateFormat));
+			}
+		}
+	}
+
+	/**
      * Gets the value of the serviceInstance property.
      * 
      * <p>
