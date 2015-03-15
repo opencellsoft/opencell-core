@@ -23,11 +23,17 @@
 
 package org.meveo.model.jaxb.customer;
 
+import java.util.List;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+
+import org.meveo.model.crm.Customer;
+import org.meveo.model.jaxb.account.Address;
 
 /**
  * <p>
@@ -62,6 +68,9 @@ import javax.xml.bind.annotation.XmlType;
 		"tradingCurrencyCode",
 		"tradingCountryCode",
 		"tradingLanguageCode",
+		"address",
+		"currentInvoiceNb",
+		"invoicePrefix",
 		"customers" })
 @XmlRootElement(name = "seller")
 public class Seller {
@@ -76,8 +85,29 @@ public class Seller {
     protected String tradingCountryCode;
     @XmlAttribute(name = "tradingLanguageCode")
     protected String tradingLanguageCode;
+    @XmlElement()
+    protected Address address;
+    @XmlElement()
+    protected Long currentInvoiceNb;
+    @XmlElement()
+    protected String invoicePrefix;
     
     protected Customers customers;
+    
+    public Seller(){}
+    
+	public Seller(org.meveo.model.admin.Seller seller) {
+		if(seller!=null){
+			code=seller.getCode();
+			description=seller.getDescription();
+			tradingCurrencyCode=seller.getTradingCurrency()==null?"":seller.getTradingCurrency().getCurrencyCode();
+			tradingCountryCode=seller.getTradingCountry()==null?"":seller.getTradingCountry().getCountryCode();
+			tradingLanguageCode=seller.getTradingLanguage()==null?"":seller.getTradingLanguage().getLanguageCode();
+			address=new Address(seller.getAddress());
+			currentInvoiceNb=seller.getCurrentInvoiceNb();
+			invoicePrefix=seller.getInvoicePrefix();
+		}
+	}
 
 	public String getCode() {
 		return code;
@@ -119,12 +149,45 @@ public class Seller {
 		this.tradingLanguageCode = tradingLanguageCode;
 	}
 
+	public Address getAddress() {
+		return address;
+	}
+
+	public void setAddress(Address address) {
+		this.address = address;
+	}
+
+	public Long getCurrentInvoiceNb() {
+		return currentInvoiceNb;
+	}
+
+	public void setCurrentInvoiceNb(Long currentInvoiceNb) {
+		this.currentInvoiceNb = currentInvoiceNb;
+	}
+
+	public String getInvoicePrefix() {
+		return invoicePrefix;
+	}
+
+	public void setInvoicePrefix(String invoicePrefix) {
+		this.invoicePrefix = invoicePrefix;
+	}
+
 	public Customers getCustomers() {
 		return customers;
 	}
 
 	public void setCustomers(Customers customers) {
 		this.customers = customers;
+	}
+
+	public void setCustomers(List<Customer> customerList) {
+		if(customerList==null){
+			this.customers = null;
+		} else {
+			customers = new Customers(customerList);
+		}
+		
 	}
 
 }

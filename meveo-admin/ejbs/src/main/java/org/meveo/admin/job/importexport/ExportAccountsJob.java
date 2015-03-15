@@ -19,7 +19,6 @@ import org.meveo.model.jobs.JobExecutionResult;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.TimerInfo;
 import org.meveo.service.admin.impl.UserService;
-import org.meveo.service.crm.impl.CustomerService;
 import org.meveo.service.job.Job;
 import org.meveo.service.job.JobExecutionService;
 import org.meveo.service.job.TimerEntityService;

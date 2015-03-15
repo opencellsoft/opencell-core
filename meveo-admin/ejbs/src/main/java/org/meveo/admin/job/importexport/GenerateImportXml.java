@@ -3,17 +3,17 @@ package org.meveo.admin.job.importexport;
 import java.io.File;
 
 import org.meveo.commons.utils.JAXBUtils;
+import org.meveo.model.jaxb.account.Address;
 import org.meveo.model.jaxb.account.BankCoordinates;
 import org.meveo.model.jaxb.account.BillingAccount;
 import org.meveo.model.jaxb.account.BillingAccounts;
+import org.meveo.model.jaxb.account.Name;
 import org.meveo.model.jaxb.account.UserAccount;
 import org.meveo.model.jaxb.account.UserAccounts;
-import org.meveo.model.jaxb.customer.Address;
 import org.meveo.model.jaxb.customer.Customer;
 import org.meveo.model.jaxb.customer.CustomerAccount;
 import org.meveo.model.jaxb.customer.CustomerAccounts;
 import org.meveo.model.jaxb.customer.Customers;
-import org.meveo.model.jaxb.customer.Name;
 import org.meveo.model.jaxb.customer.Seller;
 import org.meveo.model.jaxb.customer.Sellers;
 import org.meveo.model.jaxb.subscription.ServiceInstance;
@@ -22,10 +22,6 @@ import org.meveo.model.jaxb.subscription.Status;
 import org.meveo.model.jaxb.subscription.Subscription;
 import org.meveo.model.jaxb.subscription.Subscriptions;
 
-/**
- * @author R.AITYAAZZA
- *
- */
 public class GenerateImportXml {
 
 	/**

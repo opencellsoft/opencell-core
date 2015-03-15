@@ -40,6 +40,8 @@ import org.meveo.model.jobs.JobExecutionResult;
 import org.meveo.model.jobs.TimerEntity;
 import org.meveo.service.admin.impl.UserService;
 import org.meveo.service.base.PersistenceService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Stateless
 public class TimerEntityService extends PersistenceService<TimerEntity> {
@@ -52,6 +54,8 @@ public class TimerEntityService extends PersistenceService<TimerEntity> {
 	@Inject
 	private UserService userService;
 
+	private static Logger log = LoggerFactory.getLogger(TimerEntityService.class);
+	
 	/* static boolean timersCleaned = false; */
 
 	static ParamBean paramBean = ParamBean.getInstance();
@@ -77,10 +81,12 @@ public class TimerEntityService extends PersistenceService<TimerEntity> {
 	public static void registerJob(Job job) {
 		if (jobEntries.containsKey(job.getJobCategory())) {
 			if (!jobEntries.containsKey(job.getClass().getSimpleName())) {
+				log.debug("registerJob "+job.getClass().getSimpleName()+" into existing category "+job.getJobCategory());
 				Map<String, Job> jobs = jobEntries.get(job.getJobCategory());
 				jobs.put(job.getClass().getSimpleName(), job);
 			}	
 		}else{
+			log.debug("registerJob "+job.getClass().getSimpleName()+" into new category "+job.getJobCategory());
 			HashMap<String, Job> jobs = new HashMap<String, Job>();
 			jobs.put(job.getClass().getSimpleName(), job);
 			jobEntries.put(job.getJobCategory(), jobs);

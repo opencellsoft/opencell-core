@@ -23,11 +23,15 @@
 
 package org.meveo.model.jaxb.customer;
 
+import java.util.Date;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+
+import org.meveo.model.jaxb.account.Address;
 
 /**
  * <p>
@@ -57,21 +61,51 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = { "desCustomer", "customerAccounts","customFields" })
+@XmlType(name = "", 
+	propOrder = { 
+		"desCustomer",
+		"customerAccounts",
+		"customFields",
+		"address",
+		"mandateDate",
+		"mandateIdentification"
+		}
+)
 @XmlRootElement(name = "customer")
 public class Customer {
 
-    protected String desCustomer;
-    protected CustomerAccounts customerAccounts;
     @XmlAttribute(name = "code")
     protected String code;
     @XmlAttribute(name = "customerCategory")
     protected String customerCategory;
     @XmlAttribute(name = "customerBrand")
     protected String customerBrand;
-    protected CustomFields customFields;
 
-    /**
+    protected String desCustomer;
+    protected CustomerAccounts customerAccounts;
+    protected CustomFields customFields;
+    protected Address address;
+    protected Date mandateDate;
+    protected String mandateIdentification;
+    
+
+    public Customer(){}
+    
+    public Customer(org.meveo.model.crm.Customer cust) {
+    	if(cust!=null){
+	    	desCustomer=cust.getDescription();
+	    	code=cust.getCode();
+	    	customerCategory=cust.getCustomerCategory()==null?"":cust.getCustomerCategory().getCode();
+	    	customerBrand=cust.getCustomerBrand()==null?"":cust.getCustomerBrand().getCode();
+	    	customFields=new CustomFields(cust.getCustomFields());
+	    	address=new Address(cust.getAddress());
+	    	mandateDate=cust.getMandateDate();
+	    	mandateIdentification=cust.getMandateIdentification();
+	    	customerAccounts=new CustomerAccounts(cust.getCustomerAccounts());
+    	}
+	}
+
+	/**
      * Gets the value of the desCustomer property.
      * 
      * @return possible object is {@link String }
@@ -183,4 +217,29 @@ public class Customer {
 	public void setCustomFields(CustomFields customFields) {
 		this.customFields = customFields;
 	}
+
+	public Address getAddress() {
+		return address;
+	}
+
+	public void setAddress(Address address) {
+		this.address = address;
+	}
+
+	public Date getMandateDate() {
+		return mandateDate;
+	}
+
+	public void setMandateDate(Date mandateDate) {
+		this.mandateDate = mandateDate;
+	}
+
+	public String getMandateIdentification() {
+		return mandateIdentification;
+	}
+
+	public void setMandateIdentification(String mandateIdentification) {
+		this.mandateIdentification = mandateIdentification;
+	}
+	
 }

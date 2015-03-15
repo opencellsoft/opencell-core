@@ -61,8 +61,19 @@ public class Customers {
 
     protected List<Customer> customer;
 
+    public Customers(){}
+    
+    public Customers(List<org.meveo.model.crm.Customer> customerList) {
+		if(customerList!=null){
+			customer = new ArrayList<Customer>(customerList.size());
+			for(org.meveo.model.crm.Customer cust:customerList){
+				customer.add(new Customer(cust));
+			}
+		}
+	}
 
-    /**
+
+	/**
      * Gets the value of the customer property.
      * 
      * <p>

@@ -12,7 +12,7 @@ import org.meveo.model.jaxb.customer.Customer;
 import org.meveo.model.jaxb.customer.CustomerAccount;
 import org.meveo.model.jaxb.customer.CustomerAccounts;
 import org.meveo.model.jaxb.customer.Customers;
-import org.meveo.model.jaxb.customer.Name;
+import org.meveo.model.jaxb.account.Name;
 import org.meveo.model.jaxb.customer.Seller;
 import org.meveo.model.jaxb.customer.Sellers;
 import org.meveo.model.jaxb.subscription.ServiceInstance;
@@ -21,10 +21,6 @@ import org.meveo.model.jaxb.subscription.Status;
 import org.meveo.model.jaxb.subscription.Subscription;
 import org.meveo.model.jaxb.subscription.Subscriptions;
 
-/**
- * @author Edward P. Legaspi
- *
- */
 public class GenerateImportXmlV2 {
 
 	/**
