@@ -14,7 +14,7 @@
 			label="#{messages['customFieldTemplate.panel']}"
 			backingBean="#{customFieldTemplateBean}" showEnableDisableButton="true">
 			<hf:formField label="#{messages['BusinessEntity.code']}" field="code"
-				required="true" validateUnique="true" disabled="#{! customFieldTemplateBean.entity.transient}"/>
+				required="true" disabled="#{! customFieldTemplateBean.entity.transient}"/>
 			<hf:formField label="#{messages['customFieldTemplate.fieldLabel']}"
 				field="description" required="true" useConverter="false"
 				id="description" maxlength="50" />
