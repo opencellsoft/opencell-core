@@ -81,7 +81,7 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
 				billingAccountService.setProvider(creator.getProvider());
 				billingAccountService.update(billingAccount, creator);
 			} else {
-				result = userAccount.getCounters().get(counterTemplate.getCode());
+				result = userAccount.getBillingAccount().getCounters().get(counterTemplate.getCode());
 			}
 		} else {
 			if (!userAccount.getCounters().containsKey(counterTemplate.getCode())) {
@@ -194,10 +194,7 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
 	 * @return Found or created counter period
 	 */
 	public CounterPeriod getCounterPeriod(CounterInstance counterInstance, Date date, Date initDate, User currentUser) {
-
-		Query query = getEntityManager()
-				.createQuery(
-						"select cp from CounterPeriod cp where cp.counterInstance=:counterInstance and cp.periodStartDate<=:date and cp.periodEndDate>:date ");
+		Query query = getEntityManager().createNamedQuery("CounterPeriod.findByPeriodDate");
 		query.setParameter("counterInstance", counterInstance);
 		query.setParameter("date", date, TemporalType.TIMESTAMP);
 
