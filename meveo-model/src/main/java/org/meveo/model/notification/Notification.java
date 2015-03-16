@@ -102,5 +102,4 @@ public class Notification extends BusinessEntity {
     public void setCounterInstance(CounterInstance counterInstance) {
         this.counterInstance = counterInstance;
     }
-
 }

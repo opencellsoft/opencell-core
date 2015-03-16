@@ -4,6 +4,9 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.cache.NotificationCacheContainerProvider;
+import org.meveo.model.admin.User;
+import org.meveo.model.crm.Provider;
 import org.meveo.model.notification.Notification;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.billing.impl.CounterInstanceService;
@@ -12,26 +15,54 @@ import org.meveo.service.billing.impl.CounterInstanceService;
 public abstract class NotificationInstanceService<T extends Notification> extends BusinessService<T> {
 
     @Inject
-    CounterInstanceService counterInstanceService;
+    private CounterInstanceService counterInstanceService;
+
+    @Inject
+    private NotificationCacheContainerProvider notificationCacheContainerProvider;
 
     @Override
-    public void create(T entity) throws BusinessException {
-
-        // Instantiate a counter instance if counter template is provided
-        manageCounterInstantiation(entity);
-        super.create(entity);
-    }
-
-    @Override
-    public T update(T entity) {
-
+    public void create(T entity, User creator, Provider provider) {
         // Instantiate a counter instance if counter template is provided
         try {
             manageCounterInstantiation(entity);
         } catch (BusinessException e) {
             throw new RuntimeException(e);
         }
-        return super.update(entity);
+        super.create(entity, creator, provider);
+        notificationCacheContainerProvider.addNotificationToCache(entity);
+    }
+
+    @Override
+    public T update(T entity, User updater) {
+        // Instantiate a counter instance if counter template is provided
+        try {
+            manageCounterInstantiation(entity);
+        } catch (BusinessException e) {
+            throw new RuntimeException(e);
+        }
+        entity = super.update(entity, updater);
+        notificationCacheContainerProvider.updateNotificationInCache(entity);
+        return entity;
+    }
+
+    @Override
+    public void remove(T e) {
+        super.remove(e);
+        notificationCacheContainerProvider.removeNotificationFromCache(e);
+    }
+
+    @Override
+    public T disable(T e) {
+        e = super.disable(e);
+        notificationCacheContainerProvider.removeNotificationFromCache(e);
+        return e;
+    }
+
+    @Override
+    public T enable(T e) {
+        e = super.enable(e);
+        notificationCacheContainerProvider.addNotificationToCache(e);
+        return e;
     }
 
     /**
@@ -48,8 +79,8 @@ public abstract class NotificationInstanceService<T extends Notification> extend
 
             // Instantiate a a counter instance if new template was specified or it was changed
         } else if (entity.getCounterTemplate() != null
-                && (entity.getCounterInstance() == null || (entity.getCounterInstance() != null && !entity.getCounterTemplate().getId().equals(
-                    entity.getCounterInstance().getCounterTemplate().getId())))) {
+                && (entity.getCounterInstance() == null || (entity.getCounterInstance() != null && !entity.getCounterTemplate().getId()
+                    .equals(entity.getCounterInstance().getCounterTemplate().getId())))) {
             counterInstanceService.counterInstanciation(entity, entity.getCounterTemplate(), getCurrentUser());
         }
     }

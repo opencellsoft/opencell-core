@@ -2,8 +2,6 @@ package org.meveo.service.billing.impl;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -31,6 +29,7 @@ import javax.persistence.Query;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.UnrolledbackBusinessException;
+import org.meveo.cache.RatingCacheContainerProvider;
 import org.meveo.commons.utils.NumberUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.BaseEntity;
@@ -50,7 +49,6 @@ import org.meveo.model.catalog.LevelEnum;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.model.catalog.RecurringChargeTemplate;
-import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.catalog.TriggeredEDRTemplate;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.rating.EDR;
@@ -60,7 +58,6 @@ import org.meveo.service.base.SimpleELResolver;
 import org.meveo.service.base.SimpleFunctionMapper;
 import org.meveo.service.base.SimpleVariableMapper;
 import org.meveo.service.catalog.impl.CatMessagesService;
-import org.meveo.util.MeveoCacheContainerProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -84,13 +81,10 @@ public class RatingService {
 	@EJB
 	private RatedTransactionService ratedTransactionService;
 
-	private static boolean isPricePlanDirty;
-
+	@Inject
+	private RatingCacheContainerProvider ratingCacheContainerProvider;
+	
 	private static final BigDecimal HUNDRED = new BigDecimal("100");
-
-	public static void setPricePlanDirty() {
-		isPricePlanDirty = true;
-	}
 
 	/*
 	 * public int getSharedQuantity(LevelEnum level, Provider provider, String
@@ -345,22 +339,11 @@ public class RatingService {
 		String providerCode = provider.getCode();
 
 		if (unitPriceWithoutTax == null) {
-			if (MeveoCacheContainerProvider.getAllPricePlan().isEmpty()) {
-				loadPricePlan(em);
-			} else if (isPricePlanDirty) {
-				reloadPricePlan();
-			}
-			if (!MeveoCacheContainerProvider.getAllPricePlan().containsKey(providerCode)) {
-				throw new RuntimeException("No price plan for provider " + providerCode);
-			}
-			if (!MeveoCacheContainerProvider.getAllPricePlan().get(providerCode)
-					.containsKey(bareWalletOperation.getCode())) {
-				throw new RuntimeException("No price plan for provider " + providerCode + " and charge code "
-						+ bareWalletOperation.getCode());
-			}
-			ratePrice = ratePrice(
-					MeveoCacheContainerProvider.getAllPricePlan().get(providerCode).get(bareWalletOperation.getCode()),
-					bareWalletOperation, countryId, tcurrency,
+            List<PricePlanMatrix> chargePricePlans = ratingCacheContainerProvider.getPricePlansByChargeCode(provider.getId(), bareWalletOperation.getCode());
+            if (chargePricePlans == null || chargePricePlans.isEmpty()) {
+                throw new RuntimeException("No price plan for provider " + providerCode + " and charge code " + bareWalletOperation.getCode());
+            }
+			ratePrice = ratePrice(chargePricePlans,bareWalletOperation, countryId, tcurrency,
 					bareWalletOperation.getSeller() != null ? bareWalletOperation.getSeller().getId() : null);
 			if (ratePrice == null || ratePrice.getAmountWithoutTax() == null) {
 				throw new BusinessException("Invalid price plan for provider " + providerCode + " and charge code "
@@ -644,73 +627,6 @@ public class RatingService {
 		}
 	}
 	
-	// synchronized to avoid different threads to reload the priceplan
-	// concurrently
-	protected synchronized void reloadPricePlan() {
-		if (isPricePlanDirty) {
-			log.info("Reload priceplan");
-			loadPricePlan();
-			isPricePlanDirty = false;
-		}
-	}
-
-	protected void loadPricePlan() {
-		loadPricePlan(entityManager);
-	}
-
-	// FIXME : call this method when priceplan is edited (or more precisely add
-	// a button to reload the priceplan)
-	@SuppressWarnings("unchecked")
-	protected void loadPricePlan(EntityManager em) {
-		List<PricePlanMatrix> allPricePlans = (List<PricePlanMatrix>) em.createQuery(
-				"from PricePlanMatrix where disabled=false order by priority ASC").getResultList();
-		if (allPricePlans != null & allPricePlans.size() > 0) {
-			for (PricePlanMatrix pricePlan : allPricePlans) {
-				if (!MeveoCacheContainerProvider.getAllPricePlan().containsKey(pricePlan.getProvider().getCode())) {
-					MeveoCacheContainerProvider.getAllPricePlan().put(pricePlan.getProvider().getCode(),
-							new HashMap<String, List<PricePlanMatrix>>());
-				}
-				HashMap<String, List<PricePlanMatrix>> providerPricePlans = MeveoCacheContainerProvider
-						.getAllPricePlan().get(pricePlan.getProvider().getCode());
-				if (!providerPricePlans.containsKey(pricePlan.getEventCode())) {
-					providerPricePlans.put(pricePlan.getEventCode(), new ArrayList<PricePlanMatrix>());
-				}
-				if (pricePlan.getCriteria1Value() != null && pricePlan.getCriteria1Value().length() == 0) {
-					pricePlan.setCriteria1Value(null);
-				}
-				if (pricePlan.getCriteria2Value() != null && pricePlan.getCriteria2Value().length() == 0) {
-					pricePlan.setCriteria2Value(null);
-				}
-				if (pricePlan.getCriteria3Value() != null && pricePlan.getCriteria3Value().length() == 0) {
-					pricePlan.setCriteria3Value(null);
-				}
-				if (pricePlan.getCriteriaEL() != null && pricePlan.getCriteriaEL().length() == 0) {
-					pricePlan.setCriteriaEL(null);
-				}
-
-				// Lazy loading workaround
-				if (pricePlan.getOfferTemplate() != null) {
-					pricePlan.getOfferTemplate().getCode();
-				}
-                if (pricePlan.getValidityCalendar() != null) {
-                    pricePlan.getValidityCalendar().getCode();
-                }
-                
-				log.info("Add pricePlan for provider=" + pricePlan.getProvider().getCode() + "; chargeCode="
-						+ pricePlan.getEventCode() + "; priceplan=" + pricePlan + "; criteria1="
-						+ pricePlan.getCriteria1Value() + "; criteria2=" + pricePlan.getCriteria2Value()
-						+ "; criteria3=" + pricePlan.getCriteria3Value() + "; criteriaEL=" + pricePlan.getCriteriaEL());
-				List<PricePlanMatrix> chargePriceList = providerPricePlans.get(pricePlan.getEventCode());
-				chargePriceList.add(pricePlan);
-				Collections.sort(chargePriceList);
-			}
-		}
-
-		log.info("loadPricePlan allPricePlan.size()=" + MeveoCacheContainerProvider.getAllPricePlan() != null ? MeveoCacheContainerProvider
-				.getAllPricePlan().size() + ""
-				: null);
-	}
-
 	private boolean matchExpression(String expression, WalletOperation bareOperation, UserAccount ua)
 			throws BusinessException {
 		Boolean result = true;

@@ -20,9 +20,11 @@ import java.util.Date;
 import java.util.List;
 
 import javax.ejb.Stateless;
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 
+import org.meveo.cache.WalletCacheContainerProvider;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.UserAccount;
@@ -38,6 +40,15 @@ import org.meveo.service.base.PersistenceService;
 @Stateless
 public class WalletService extends PersistenceService<WalletInstance> {
 
+    @Inject
+    private WalletCacheContainerProvider walletCacheContainerProvider; 
+    
+    @Override
+    public void create(WalletInstance walletInstance, User creator, Provider provider) {
+        super.create(walletInstance, creator, provider);
+        walletCacheContainerProvider.updateBalanceCache(walletInstance);
+    }
+    
 	public WalletInstance findByUserAccount(UserAccount userAccount) {
 		return findByUserAccount(getEntityManager(), userAccount);
 	}

@@ -105,7 +105,7 @@ public class CustomerAccountApi extends AccountApi {
 				customerAccount.getContactInformation().setFax(postData.getContactInformation().getFax());
 			}
 
-			customerAccountService.create(customerAccount, currentUser, currentUser.getProvider());
+			customerAccountService.create(customerAccount, currentUser, provider);
 		} else {
 			if (StringUtils.isBlank(postData.getCode())) {
 				missingParameters.add("code");

@@ -36,9 +36,9 @@ import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.action.CustomFieldEnabledBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.DuplicateDefaultAccountException;
+import org.meveo.cache.WalletCacheContainerProvider;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.CounterInstance;
-import org.meveo.model.billing.CounterPeriod;
 import org.meveo.model.billing.OperationTypeEnum;
 import org.meveo.model.billing.RatedTransaction;
 import org.meveo.model.billing.UserAccount;
@@ -95,6 +95,9 @@ public class UserAccountBean extends AccountBean<UserAccount> {
 	@Inject
 	private BillingAccountService billingAccountService;
 	
+	@Inject
+	private WalletCacheContainerProvider walletCacheContainerProvider;
+	   
 	private CounterInstance selectedCounterInstance;
 
 	private Long billingAccountId;
@@ -359,7 +362,7 @@ public class UserAccountBean extends AccountBean<UserAccount> {
 
 	public String getBalance(WalletInstance wallet) {
 		String result = "-";
-		BigDecimal balance = walletOperationService.getCacheBalance(wallet.getId());
+		BigDecimal balance = walletCacheContainerProvider.getCacheBalance(wallet.getId());
 		if (balance != null) {
 			result = balance.toPlainString();
 		}
@@ -368,7 +371,7 @@ public class UserAccountBean extends AccountBean<UserAccount> {
 
 	public String getReservedBalance(WalletInstance wallet) {
 		String result = "-";
-		BigDecimal balance = walletOperationService.getReservedCacheBalance(wallet.getId());
+		BigDecimal balance = walletCacheContainerProvider.getReservedCacheBalance(wallet.getId());
 		if (balance != null) {
 			result = balance.toPlainString();
 		}

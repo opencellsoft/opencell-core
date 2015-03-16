@@ -65,7 +65,7 @@ public class LanguageApi extends BaseApi {
 			tradingLanguage.setPrDescription(postData.getDescription());
 			tradingLanguage.setProvider(provider);
 			tradingLanguage.setActive(true);
-			tradingLanguageService.create(tradingLanguage, currentUser);
+			tradingLanguageService.create(tradingLanguage, currentUser, provider);
 		} else {
 			if (StringUtils.isBlank(postData.getCode())) {
 				missingParameters.add("code");

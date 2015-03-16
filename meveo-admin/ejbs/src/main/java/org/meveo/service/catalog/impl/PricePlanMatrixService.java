@@ -27,6 +27,7 @@ import java.util.List;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
@@ -38,6 +39,7 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.cache.RatingCacheContainerProvider;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
@@ -50,44 +52,65 @@ import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.model.crm.Provider;
 import org.meveo.service.base.PersistenceService;
-import org.meveo.service.billing.impl.RatingService;
 
 @Stateless
 public class PricePlanMatrixService extends PersistenceService<PricePlanMatrix> {
 
-	public void create(PricePlanMatrix e) throws BusinessException {
-		super.create(e);
-		RatingService.setPricePlanDirty();
-	}
+    @Inject
+    private RatingCacheContainerProvider ratingCacheContainerProvider;
 
-	public void disable(Long id) {
-		super.disable(id);
-		RatingService.setPricePlanDirty();
-	}
+    public void create(PricePlanMatrix pricePlan, User creator, Provider provider) {
+        super.create(pricePlan, creator, provider);
+        ratingCacheContainerProvider.addPricePlanToCache(pricePlan);
+    }
 
-	public void create(PricePlanMatrix e, User creator) {
-		super.create(e, creator);
-		RatingService.setPricePlanDirty();
-	}
+    @Override
+    public PricePlanMatrix disable(PricePlanMatrix pricePlan) {
+        pricePlan = super.disable(pricePlan);
+        ratingCacheContainerProvider.removePricePlanFromCache(pricePlan);
+        return pricePlan;
+    }
 
-	public void create(PricePlanMatrix e, User creator, Provider provider) {
-		super.create(e, creator, provider);
-		RatingService.setPricePlanDirty();
-	}
+    @Override
+    public PricePlanMatrix enable(PricePlanMatrix pricePlan) {
+        pricePlan = super.enable(pricePlan);
+        ratingCacheContainerProvider.addPricePlanToCache(pricePlan);
+        return pricePlan;
+    }
 
-	public void removeByPrefix(EntityManager em, String prefix, Provider provider) {
-		Query query = em.createQuery("DELETE PricePlanMatrix m WHERE m.eventCode LIKE '" + prefix
-				+ "%' AND m.provider=:provider");
-		query.setParameter("provider", provider);
-		query.executeUpdate();
-	}
+    @Override
+    public void remove(PricePlanMatrix pricePlan) {
+        super.remove(pricePlan);
+        ratingCacheContainerProvider.removePricePlanFromCache(pricePlan);
+    }
 
-	public void removeByCode(EntityManager em, String code, Provider provider) {
-		Query query = em.createQuery("DELETE PricePlanMatrix m WHERE m.eventCode=:code AND m.provider=:provider");
-		query.setParameter("code", code);
-		query.setParameter("provider", provider);
-		query.executeUpdate();
-	}
+    @Override
+    public PricePlanMatrix update(PricePlanMatrix pricePlan, User updater) {
+        pricePlan = super.update(pricePlan, updater);
+        ratingCacheContainerProvider.updatePricePlanInCache(pricePlan);
+        return pricePlan;
+    }
+    
+    @SuppressWarnings("unchecked")
+    public void removeByPrefix(EntityManager em, String prefix, Provider provider) {
+        Query query = em.createQuery("select m from PricePlanMatrix m WHERE m.eventCode LIKE '" + prefix + "%' AND m.provider=:provider");
+        query.setParameter("provider", provider);
+        List<PricePlanMatrix> pricePlans = query.getResultList();
+        for (PricePlanMatrix pricePlan : pricePlans) {
+            remove(pricePlan);
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    public void removeByCode(EntityManager em, String code, Provider provider) {
+        Query query = em.createQuery("select m PricePlanMatrix m WHERE m.eventCode=:code AND m.provider=:provider");
+        query.setParameter("code", code);
+        query.setParameter("provider", provider);
+        List<PricePlanMatrix> pricePlans = query.getResultList();
+        for (PricePlanMatrix pricePlan : pricePlans) {
+            remove(pricePlan);
+        }
+    }
 
 	String[] colNames = { "Charge code", "Seller", "Country", "Currency", "Start appli.", "End appli.", "Offer code",
 			"Priority", "Amount w/out tax", "Amount with tax", "Min quantity", "Max quantity", "Criteria 1",
@@ -469,4 +492,14 @@ public class PricePlanMatrixService extends PersistenceService<PricePlanMatrix> 
 			return null;
 		}
 	}
+
+    /**
+     * Get a list of priceplans to populate a cache
+     * 
+     * @return A list of active priceplans
+     */
+    @SuppressWarnings("unchecked")
+    public List<PricePlanMatrix> getPricePlansForCache() {
+        return getEntityManager().createNamedQuery("PricePlanMatrix.getPricePlansForCache", PricePlanMatrix.class).getResultList();
+    }
 }
