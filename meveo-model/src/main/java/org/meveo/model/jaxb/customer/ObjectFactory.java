@@ -29,6 +29,9 @@ import javax.xml.bind.annotation.XmlElementDecl;
 import javax.xml.bind.annotation.XmlRegistry;
 import javax.xml.namespace.QName;
 
+import org.meveo.model.jaxb.account.Address;
+import org.meveo.model.jaxb.account.Name;
+
 
 /**
  * This object contains factory methods for each 

@@ -1688,10 +1688,10 @@ public class CsvReader {
 
         public int Length;
 
-        @SuppressWarnings("unchecked")
-        public HashMap IndexByName;
+        @SuppressWarnings("rawtypes")
+		public HashMap IndexByName;
 
-        @SuppressWarnings("unchecked")
+        @SuppressWarnings("rawtypes")
         public HeadersHolder() {
             Headers = null;
             Length = 0;

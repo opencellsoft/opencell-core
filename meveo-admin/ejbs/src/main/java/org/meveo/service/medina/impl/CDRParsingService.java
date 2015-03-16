@@ -13,7 +13,6 @@ import javax.inject.Inject;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.parse.csv.CdrParserProducer;
 import org.meveo.event.qualifier.RejectedCDR;
-import org.meveo.event.qualifier.Rejected;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.mediation.Access;
 import org.meveo.model.rating.EDR;

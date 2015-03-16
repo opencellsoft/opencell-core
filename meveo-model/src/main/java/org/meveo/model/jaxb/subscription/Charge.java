@@ -26,9 +26,10 @@ package org.meveo.model.jaxb.subscription;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+
+import org.meveo.model.billing.ChargeInstance;
 
 
 /**
@@ -41,6 +42,7 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
+ *         &lt;element ref="{}code"/>
  *         &lt;element ref="{}amountWithoutTax"/>
  *         &lt;element ref="{}amountWithTax"/>
  *         &lt;element ref="{}C1"/>
@@ -56,27 +58,47 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
-    "amountWithoutTax",
+	"code",
+	"amountWithoutTax",
     "amountWithTax",
     "c1",
     "c2",
     "c3"
 })
-@XmlRootElement(name = "recurringCharges")
-public class RecurringCharges {
-
-    @XmlElement(required = true)
+@XmlRootElement(name = "charge")
+public class Charge {
+	protected String code;
     protected String amountWithoutTax;
-    @XmlElement(required = true)
     protected String amountWithTax;
-    @XmlElement(name = "C1", required = true)
     protected String c1;
-    @XmlElement(name = "C2", required = true)
     protected String c2;
-    @XmlElement(name = "C3", required = true)
     protected String c3;
+    
 
-    /**
+    public Charge(){}
+    
+    public Charge(ChargeInstance charge) {
+		this.code=charge.getCode();
+		if(charge.getAmountWithoutTax()!=null){
+			this.amountWithoutTax=charge.getAmountWithoutTax().toPlainString();
+	    }
+		if(charge.getAmountWithTax()!=null){
+			this.amountWithTax=charge.getAmountWithTax().toPlainString();
+	    }
+		c1=charge.getCriteria1();
+		c2=charge.getCriteria2();
+		c3=charge.getCriteria3();
+	}
+
+	public String getCode() {
+		return code;
+	}
+
+	public void setCode(String code) {
+		this.code = code;
+	}
+
+	/**
      * Gets the value of the amountWithoutTax property.
      * 
      * @return

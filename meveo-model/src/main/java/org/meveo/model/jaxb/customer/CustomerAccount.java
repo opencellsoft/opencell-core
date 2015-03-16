@@ -31,6 +31,9 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
+import org.meveo.model.jaxb.account.Address;
+import org.meveo.model.jaxb.account.Name;
+
 
 /**
  * <p>Java class for anonymous complex type.
@@ -113,8 +116,29 @@ public class CustomerAccount {
     protected String creditCategory;
     protected CustomFields customFields;
     
+    public CustomerAccount(){}
+    
+    public CustomerAccount(org.meveo.model.payments.CustomerAccount ca) {
+		if(ca!=null){
+			code=ca.getCode();
+			description=ca.getDescription();
+			externalRef1=ca.getExternalRef1();
+	        externalRef2=ca.getExternalRef2();
+	        name=new Name(ca.getName());
+	        address = new Address(ca.getAddress());
+	        tradingCurrencyCode=ca.getTradingCurrency()==null?null:ca.getTradingCurrency().getCurrencyCode();
+	        customFields=new CustomFields(ca.getCustomFields());
+	        paymentMethod=ca.getPaymentMethod()==null?null:ca.getPaymentMethod().name();
+	        creditCategory=ca.getCreditCategory()==null?null:ca.getCreditCategory().name();
+	        if(ca.getContactInformation()!=null){
+	        	email=ca.getContactInformation().getEmail();
+	        	tel1=ca.getContactInformation().getPhone();
+	        	tel2=ca.getContactInformation().getMobile();
+	        }
+		}
+	}
 
-    /**
+	/**
      * Gets the value of the description property.
      * 
      * @return

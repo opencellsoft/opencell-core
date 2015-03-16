@@ -40,6 +40,7 @@ import javax.xml.transform.Result;
 import javax.xml.transform.stream.StreamResult;
 
 
+
 /**
  * <p>Java class for anonymous complex type.
  * 
@@ -80,7 +81,19 @@ public class Sellers {
     protected String providerCode;
     protected List<Seller> seller;
 
-    /**
+    public Sellers(){}
+    
+    public Sellers(List<org.meveo.model.admin.Seller> sellersInDB,String providerCode) {
+		this.providerCode=providerCode;
+		if(sellersInDB!=null){
+			seller=new ArrayList<Seller>(sellersInDB.size());
+			for(org.meveo.model.admin.Seller sell:sellersInDB){
+				seller.add(new Seller(sell));
+			}
+		}
+	}
+
+	/**
      * Gets the value of the errors property.
      * 
      * @return

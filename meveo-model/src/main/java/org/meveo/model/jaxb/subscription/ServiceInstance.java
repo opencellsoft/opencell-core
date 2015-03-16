@@ -24,12 +24,18 @@
 
 package org.meveo.model.jaxb.subscription;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+
+import org.meveo.model.billing.ChargeInstance;
+import org.meveo.model.shared.DateUtils;
 
 
 /**
@@ -46,7 +52,9 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element ref="{}status"/>
  *         &lt;element ref="{}quantity" minOccurs="0"/>
  *         &lt;element ref="{}recurringCharges" minOccurs="0"/>
- *         &lt;element ref="{}oneshotCharges" minOccurs="0"/>
+ *         &lt;element ref="{}subscriptionCharges" minOccurs="0"/>
+ *         &lt;element ref="{}terminationCharges" minOccurs="0"/>
+ *         &lt;element ref="{}usageCharges" minOccurs="0"/>
  *       &lt;/sequence>
  *       &lt;attribute name="code" type="{http://www.w3.org/2001/XMLSchema}string" />
  *     &lt;/restriction>
@@ -62,7 +70,9 @@ import javax.xml.bind.annotation.XmlType;
     "status",
     "quantity",
     "recurringCharges",
-    "oneshotCharges"
+    "subscriptionCharges",
+    "terminationCharges",
+    "usageCharges"
 })
 @XmlRootElement(name = "serviceInstance")
 public class ServiceInstance {
@@ -72,12 +82,51 @@ public class ServiceInstance {
     @XmlElement(required = true)
     protected Status status;
     protected String quantity;
-    protected RecurringCharges recurringCharges;
-    protected OneshotCharges oneshotCharges;
+    protected List<Charge> recurringCharges;
+    protected List<Charge> subscriptionCharges;
+    protected List<Charge> terminationCharges;
+    protected List<Charge> usageCharges;
     @XmlAttribute(name = "code")
     protected String code;
 
-    /**
+	public ServiceInstance() {}
+
+    public ServiceInstance(org.meveo.model.billing.ServiceInstance serv,String dateFormat) {
+    	if(serv!=null){
+			subscriptionDate=serv.getSubscriptionDate()==null?null:
+	    		DateUtils.formatDateWithPattern(serv.getSubscriptionDate(), dateFormat);
+			status = new Status(serv,dateFormat);
+			quantity= serv.getQuantity()==null?null:(""+serv.getQuantity());
+			code = serv.getCode();
+			if(serv.getRecurringChargeInstances()!=null && serv.getRecurringChargeInstances().size()>0){
+				recurringCharges = new ArrayList<Charge>(serv.getRecurringChargeInstances().size());
+				for(ChargeInstance charge:serv.getRecurringChargeInstances()){
+					recurringCharges.add(new Charge(charge));
+				}
+			}
+			if(serv.getSubscriptionChargeInstances()!=null && serv.getSubscriptionChargeInstances().size()>0){
+				subscriptionCharges = new ArrayList<Charge>(serv.getSubscriptionChargeInstances().size());
+				for(ChargeInstance charge:serv.getSubscriptionChargeInstances()){
+					subscriptionCharges.add(new Charge(charge));
+				}
+			}
+			if(serv.getTerminationChargeInstances()!=null && serv.getTerminationChargeInstances().size()>0){
+				terminationCharges = new ArrayList<Charge>(serv.getTerminationChargeInstances().size());
+				for(ChargeInstance charge:serv.getTerminationChargeInstances()){
+					terminationCharges.add(new Charge(charge));
+				}
+			}
+			if(serv.getUsageChargeInstances()!=null && serv.getUsageChargeInstances().size()>0){
+				usageCharges = new ArrayList<Charge>(serv.getUsageChargeInstances().size());
+				for(ChargeInstance charge:serv.getUsageChargeInstances()){
+					usageCharges.add(new Charge(charge));
+				}
+			}
+			
+    	}
+	}
+
+	/**
      * Gets the value of the subscriptionDate property.
      * 
      * @return
@@ -149,55 +198,7 @@ public class ServiceInstance {
         this.quantity = value;
     }
 
-    /**
-     * Gets the value of the recurringCharges property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link RecurringCharges }
-     *     
-     */
-    public RecurringCharges getRecurringCharges() {
-        return recurringCharges;
-    }
-
-    /**
-     * Sets the value of the recurringCharges property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link RecurringCharges }
-     *     
-     */
-    public void setRecurringCharges(RecurringCharges value) {
-        this.recurringCharges = value;
-    }
-
-    /**
-     * Gets the value of the oneshotCharges property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link OneshotCharges }
-     *     
-     */
-    public OneshotCharges getOneshotCharges() {
-        return oneshotCharges;
-    }
-
-    /**
-     * Sets the value of the oneshotCharges property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link OneshotCharges }
-     *     
-     */
-    public void setOneshotCharges(OneshotCharges value) {
-        this.oneshotCharges = value;
-    }
-
-    /**
+	/**
      * Gets the value of the code property.
      * 
      * @return
@@ -220,5 +221,37 @@ public class ServiceInstance {
     public void setCode(String value) {
         this.code = value;
     }
+
+	public List<Charge> getRecurringCharges() {
+		return recurringCharges;
+	}
+
+	public void setRecurringCharges(List<Charge> recurringCharges) {
+		this.recurringCharges = recurringCharges;
+	}
+
+	public List<Charge> getSubscriptionCharges() {
+		return subscriptionCharges;
+	}
+
+	public void setSubscriptionCharges(List<Charge> subscriptionCharges) {
+		this.subscriptionCharges = subscriptionCharges;
+	}
+
+	public List<Charge> getTerminationCharges() {
+		return terminationCharges;
+	}
+
+	public void setTerminationCharges(List<Charge> terminationCharges) {
+		this.terminationCharges = terminationCharges;
+	}
+
+	public List<Charge> getUsageCharges() {
+		return usageCharges;
+	}
+
+	public void setUsageCharges(List<Charge> usageCharges) {
+		this.usageCharges = usageCharges;
+	}
 
 }

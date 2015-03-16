@@ -25,7 +25,6 @@ import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
 import org.meveo.commons.utils.QueryBuilder;
-import org.meveo.model.catalog.WalletTemplate;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.CustomerAccount;

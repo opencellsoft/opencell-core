@@ -32,6 +32,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 import org.meveo.model.jaxb.customer.CustomFields;
+import org.meveo.model.shared.DateUtils;
 
 
 /**
@@ -89,8 +90,8 @@ import org.meveo.model.jaxb.customer.CustomFields;
     "userAccounts"
 })
 @XmlRootElement(name = "billingAccount")
-public class BillingAccount {
-
+public class BillingAccount { 
+	
     @XmlElement(required = true)
     protected String subscriptionDate;
     @XmlElement(required = true)
@@ -127,7 +128,37 @@ public class BillingAccount {
     @XmlAttribute(name = "billingCycle")
     protected String billingCycle;
 
-    /**
+    public BillingAccount(){
+    	
+    }
+    
+    public BillingAccount(org.meveo.model.billing.BillingAccount ba,String dateFormat) {
+    	if(ba!=null){
+    		if(dateFormat==null){
+    			dateFormat="yyyy-MM-dd";
+    		}
+	    	subscriptionDate=ba.getSubscriptionDate()==null?null:
+	    		DateUtils.formatDateWithPattern(ba.getSubscriptionDate(), dateFormat);
+	    	description=ba.getDescription();
+	    	externalRef1=ba.getExternalRef1();
+	        externalRef2=ba.getExternalRef2();
+	        name=new Name(ba.getName());
+	        address = new Address(ba.getAddress());
+	        electronicBilling = ba.getElectronicBilling()==null?null:ba.getElectronicBilling()+"";
+	        email=ba.getEmail()==null?null:ba.getEmail();
+	        bankCoordinates = new BankCoordinates(ba.getBankCoordinates());
+	        tradingCountryCode=ba.getTradingCountry()==null?null:ba.getTradingCountry().getCountryCode();
+	        tradingLanguageCode=ba.getTradingLanguage()==null?null:ba.getTradingLanguage().getLanguageCode();
+	        customFields=new CustomFields(ba.getCustomFields());
+	        userAccounts=new UserAccounts(ba.getUsersAccounts(),dateFormat);
+	        code=ba.getCode()==null?null:ba.getCode();
+	        customerAccountId=ba.getCustomerAccount().getCode();
+	        paymentMethod=ba.getPaymentMethod()==null?null:ba.getPaymentMethod().name();
+	        billingCycle=ba.getBillingCycle()==null?null:ba.getBillingCycle().getCode();
+    	}
+	}
+
+	/**
      * Gets the value of the subscriptionDate property.
      * 
      * @return

@@ -77,7 +77,19 @@ public class BillingAccounts {
     protected Warnings warnings;
     protected List<BillingAccount> billingAccount;
 
-    /**
+    public BillingAccounts(){
+    	
+    }
+    
+    public BillingAccounts(List<org.meveo.model.billing.BillingAccount> bas,String dateFormat) {
+    	billingAccount = new ArrayList<BillingAccount>(bas.size());
+    	for(org.meveo.model.billing.BillingAccount ba:bas){
+    		BillingAccount billingAcc = new BillingAccount(ba,dateFormat);
+    		billingAccount.add(billingAcc);
+    	}
+	}
+
+	/**
      * Gets the value of the errors property.
      * 
      * @return

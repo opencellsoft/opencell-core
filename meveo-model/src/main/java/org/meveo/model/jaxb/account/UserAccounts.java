@@ -61,7 +61,19 @@ public class UserAccounts {
 
     protected List<UserAccount> userAccount;
 
-    /**
+    public UserAccounts(){
+    }
+    		
+    public UserAccounts(List<org.meveo.model.billing.UserAccount> usersAccounts,String dateFormat) {
+    	if(usersAccounts!=null){
+    		userAccount=new ArrayList<UserAccount>(usersAccounts.size());
+    	}
+    	for(org.meveo.model.billing.UserAccount userAcc:usersAccounts){
+    		userAccount.add(new UserAccount(userAcc,dateFormat));
+    	}
+	}
+
+	/**
      * Gets the value of the userAccount property.
      * 
      * <p>

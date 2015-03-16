@@ -1,4 +1,4 @@
-package org.meveo.admin.job;
+package org.meveo.admin.job.importexport;
 
 import java.util.Collection;
 
@@ -26,7 +26,7 @@ import org.slf4j.Logger;
 
 @Startup
 @Singleton
-public class ImportSubscriptionsJob implements Job {
+public class ImportCustomersJob implements Job {
 
 	@Resource
 	private TimerService timerService;
@@ -38,10 +38,10 @@ public class ImportSubscriptionsJob implements Job {
 	private Logger log;
 
 	@Inject
-	private UserService userService;
+	private ImportCustomersJobBean importCustomersJobBean;
 
 	@Inject
-	private ImportSubscriptionsJobBean importSubscriptionsJobBean;
+	private UserService userService;
 
 	@PostConstruct
 	public void init() {
@@ -51,7 +51,7 @@ public class ImportSubscriptionsJob implements Job {
 	@Override
 	public JobExecutionResult execute(String parameter, User currentUser) {
 		JobExecutionResultImpl result = new JobExecutionResultImpl();
-		importSubscriptionsJobBean.execute(result, currentUser);
+		importCustomersJobBean.execute(result, currentUser);
 		return result;
 	}
 
@@ -60,7 +60,7 @@ public class ImportSubscriptionsJob implements Job {
 			TimerInfo infos) {
 		TimerConfig timerConfig = new TimerConfig();
 		timerConfig.setInfo(infos);
-		timerConfig.setPersistent(false);
+		// timerConfig.setPersistent(false);
 
 		return timerService
 				.createCalendarTimer(scheduleExpression, timerConfig);
@@ -106,9 +106,9 @@ public class ImportSubscriptionsJob implements Job {
 			}
 		}
 	}
+	
 	@Override
 	public JobCategoryEnum getJobCategory() {
 		return JobCategoryEnum.IMPORT_HIERARCHY;
 	}
-
 }

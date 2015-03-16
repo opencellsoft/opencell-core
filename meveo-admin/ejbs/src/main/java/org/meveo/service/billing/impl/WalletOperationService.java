@@ -102,8 +102,8 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 		ParamBean paramBean = ParamBean.getInstance();
 		sdf = new SimpleDateFormat(paramBean.getProperty("walletOperation.dateFormat", "dd/MM/yyyy"));
 		str_tooPerceived = resourceBundle.getString("str_tooPerceived");
-
 	}
+
 	public BigDecimal getRatedAmount(Provider provider, Seller seller, Customer customer,
 			CustomerAccount customerAccount, BillingAccount billingAccount, UserAccount userAccount, Date startDate,
 			Date endDate, boolean amountWithTax) {

@@ -932,8 +932,8 @@ DROP SEQUENCE IF EXISTS CAT_DAY_IN_YEAR_SEQ;
 CREATE SEQUENCE CAT_DAY_IN_YEAR_SEQ start with 1132 increment by 1;
 
 --Customer Category
-INSERT INTO CRM_CUSTOMER_CATEGORY (id, disabled, version, created, code, description, provider_id, creator_id) VALUES (1, false, 0, now(), 'PROSPECT', 'Prospect', 1, 1);
-INSERT INTO CRM_CUSTOMER_CATEGORY (id, disabled, version, created, code, description, provider_id, creator_id) VALUES (2, false, 0, now(), 'CLIENT', 'Client', 1, 1);
+INSERT INTO CRM_CUSTOMER_CATEGORY (id, disabled, version, created, code, description, provider_id, creator_id, exonerated_from_taxes) VALUES (1, false, 0, now(), 'PROSPECT', 'Prospect', 1, 1, false);
+INSERT INTO CRM_CUSTOMER_CATEGORY (id, disabled, version, created, code, description, provider_id, creator_id, exonerated_from_taxes) VALUES (2, false, 0, now(), 'CLIENT', 'Client', 1, 1, false);
 
 DROP SEQUENCE IF EXISTS CRM_CUSTOMER_CATEGORY_SEQ;
 CREATE SEQUENCE CRM_CUSTOMER_CATEGORY_SEQ start with 3 increment by 1;
