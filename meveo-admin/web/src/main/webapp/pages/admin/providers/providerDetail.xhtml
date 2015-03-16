@@ -33,8 +33,8 @@
 							<hf:formField label="#{messages['businessEntity.description']}"
 								field="description" id="description" maxlength="100" />
 
-							<hf:formEntityField id="languageSelectedId" label="#{messages['tradingLanguage.languageCode']}" field="language" childField="languageCode"
-								popup="true" popupId="languagePopup" clearButton="true" required="true" />
+							<!-- <hf:formEntityField id="languageSelectedId" label="#{messages['tradingLanguage.languageCode']}" field="language" childField="languageCode"
+								popup="true" popupId="languagePopup" clearButton="true" required="true" /> -->
 				
 							<hf:formField label="#{messages['provider.enterprise']}"
 								field="entreprise" id="enterprise" />
@@ -51,14 +51,18 @@
 							<hf:formField label="#{messages['provider.currentInvoiceNb']}"
 								field="currentInvoiceNb" id="currentInvoiceNb"/>
 						
-							<hf:formField label="#{messages['provider.amountValidation']}"
-								field="amountValidation" id="amountValidation"/>
+							<!-- <hf:formField label="#{messages['provider.amountValidation']}"
+								field="amountValidation" id="amountValidation"/> -->
 						
+							<hf:formField label="#{messages['provider.discountAccountingCode']}"
+								field="discountAccountingCode" id="discountAccountingCode"/>
+								
 							<hf:formField label="#{messages['provider.levelDuplication']}"
 								field="levelDuplication" id="levelDuplication"/>
 								
 							<hf:formField label="#{messages['provider.email']}"
 								field="email" id="email"/>
+								
 						
 				</hftl:panelGroup>
 			</hf:formPanel>

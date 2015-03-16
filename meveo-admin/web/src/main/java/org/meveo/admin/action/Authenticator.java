@@ -180,7 +180,9 @@ public class Authenticator extends BaseAuthenticator {
             } else {
                 currentProvider = user.getProviders().iterator().next();
             }
-            currentProvider.getLanguage().getLanguageCode(); // Lazy loading issue
+            if(currentProvider.getLanguage()!=null){
+            	currentProvider.getLanguage().getLanguageCode(); // Lazy loading issue
+            }
             meveoUser.setCurrentProvider(currentProvider);
 
             setUser(meveoUser);
