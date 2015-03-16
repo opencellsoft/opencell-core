@@ -20,6 +20,7 @@ import org.meveo.commons.utils.ImportFileFiltre;
 import org.meveo.commons.utils.JAXBUtils;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.interceptor.PerformanceInterceptor;
 import org.meveo.model.admin.AccountImportHisto;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.UserAccount;
@@ -77,7 +78,7 @@ public class ImportAccountsJobBean {
 	int nbUserAccountsCreated;
 	AccountImportHisto accountImportHisto;
 
-	@Interceptors({ JobLoggingInterceptor.class })
+	@Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public void execute(JobExecutionResultImpl result, User currentUser) {
 		Provider provider = currentUser.getProvider();

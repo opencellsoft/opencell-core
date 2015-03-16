@@ -19,7 +19,6 @@ import org.meveo.model.crm.Customer;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.jaxb.customer.Sellers;
 import org.meveo.model.jobs.JobExecutionResultImpl;
-import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.crm.impl.CustomerService;
 import org.slf4j.Logger;
 
@@ -31,9 +30,6 @@ public class ExportCustomersJobBean {
 	@Inject
 	private Logger log;
 	
-	@Inject
-	private SellerService sellerService;
-
 	@Inject
 	private CustomerService customerService;
 	
@@ -57,7 +53,7 @@ public class ExportCustomersJobBean {
 		}
 		
 		String timestamp = sdf.format(new Date());
-		List<Seller> sellersInDB = sellerService.list();	
+		List<Seller> sellersInDB = customerService.listSellersWithCustomers(provider);	
 		sellers = new Sellers(sellersInDB,provider.getCode());//,param.getProperty("connectorCRM.dateFormat", "yyyy-MM-dd"));
 		for(org.meveo.model.jaxb.customer.Seller seller:sellers.getSeller()){
 			List<Customer> customers= customerService.listBySellerCode(provider,seller.getCode());

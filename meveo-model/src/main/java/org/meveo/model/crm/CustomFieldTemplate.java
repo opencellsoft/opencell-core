@@ -19,7 +19,7 @@ import javax.persistence.UniqueConstraint;
 import org.meveo.model.BusinessEntity;
 
 @Entity
-@Table(name = "CRM_CUSTOM_FIELD_TMPL", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE", "PROVIDER_ID" }))
+@Table(name = "CRM_CUSTOM_FIELD_TMPL", uniqueConstraints = @UniqueConstraint(columnNames = {"CODE","ACCOUNT_TYPE","PROVIDER_ID"}))
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "CRM_CUSTOM_FLD_TMP_SEQ")
 public class CustomFieldTemplate extends BusinessEntity {
 
