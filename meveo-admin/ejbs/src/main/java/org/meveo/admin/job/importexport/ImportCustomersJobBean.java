@@ -20,6 +20,7 @@ import org.meveo.commons.utils.ImportFileFiltre;
 import org.meveo.commons.utils.JAXBUtils;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.interceptor.PerformanceInterceptor;
 import org.meveo.model.admin.CustomerImportHisto;
 import org.meveo.model.admin.User;
 import org.meveo.model.crm.Customer;
@@ -28,6 +29,7 @@ import org.meveo.model.jaxb.customer.ErrorCustomer;
 import org.meveo.model.jaxb.customer.ErrorCustomerAccount;
 import org.meveo.model.jaxb.customer.ErrorSeller;
 import org.meveo.model.jaxb.customer.Errors;
+import org.meveo.model.jaxb.customer.Seller;
 import org.meveo.model.jaxb.customer.Sellers;
 import org.meveo.model.jaxb.customer.WarningCustomerAccount;
 import org.meveo.model.jaxb.customer.WarningSeller;
@@ -102,8 +104,8 @@ public class ImportCustomersJobBean {
 	int nbCustomerAccountsCreated;
 	CustomerImportHisto customerImportHisto;
 
-	@Interceptors({ JobLoggingInterceptor.class })
-	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+	@Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
+	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
 	public void execute(JobExecutionResultImpl result, User currentUser) {
 		Provider provider = currentUser.getProvider();
 
@@ -225,42 +227,6 @@ public class ImportCustomersJobBean {
 			org.meveo.model.admin.Seller seller = null;
 			try {
 				log.debug("seller found  code:" + sell.getCode());
-				try {
-					seller = sellerService.findByCode(sell.getCode(), provider);
-				} catch (Exception e) {
-					log.warn(e.getMessage());
-				}
-
-				if (seller != null) {
-					nbSellersUpdated++;
-					seller.setDescription(sell.getDescription());
-					seller.setTradingCountry(tradingCountryService.findByTradingCountryCode(
-							sell.getTradingCountryCode(), provider));
-					seller.setTradingCurrency(tradingCurrencyService.findByTradingCurrencyCode(
-							sell.getTradingCurrencyCode(), provider));
-					seller.setTradingLanguage(tradingLanguageService.findByTradingLanguageCode(
-							sell.getTradingLanguageCode(), provider));
-					seller.updateAudit(currentUser);
-					sellerService.updateNoCheck(seller);
-					log.info("File:" + fileName + ", typeEntity:Seller, index:" + i + ", code:" + sell.getCode()
-							+ ", status:Updated");
-				} else {
-					nbSellersCreated++;
-					log.info("File:" + fileName + ", typeEntity:Seller, index:" + i + ", code:" + sell.getCode()
-							+ ", status:Created");
-
-					seller = new org.meveo.model.admin.Seller();
-					seller.setCode(sell.getCode());
-					seller.setDescription(sell.getDescription());
-					seller.setTradingCountry(tradingCountryService.findByTradingCountryCode(
-							sell.getTradingCountryCode(), provider));
-					seller.setTradingCurrency(tradingCurrencyService.findByTradingCurrencyCode(
-							sell.getTradingCurrencyCode(), provider));
-					seller.setTradingLanguage(tradingLanguageService.findByTradingLanguageCode(
-							sell.getTradingLanguageCode(), provider));
-					seller.setProvider(provider);
-					sellerService.create(seller, currentUser, provider);
-				}
 
 				if (sellerCheckError(sell)) {
 					nbSellersError++;
@@ -268,6 +234,8 @@ public class ImportCustomersJobBean {
 							+ ", status:Error");
 					continue;
 				}
+
+				seller = createSeller(sell, fileName, i, currentUser, provider);
 
 				for (org.meveo.model.jaxb.customer.Customer cust : sell.getCustomers().getCustomer()) {
 					createCustomer(fileName, currentUser, seller, sell, cust, i);
@@ -292,6 +260,50 @@ public class ImportCustomersJobBean {
 		generateReport(fileName, provider);
 		createHistory(currentUser);
 		log.info("end import file ");
+	}
+
+	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
+	private org.meveo.model.admin.Seller createSeller(Seller sell, String fileName, int i, User currentUser,
+			Provider provider) {
+		org.meveo.model.admin.Seller seller = null;
+		try {
+			seller = sellerService.findByCode(sell.getCode(), provider);
+		} catch (Exception e) {
+			log.warn(e.getMessage());
+		}
+
+		if (seller != null) {
+			nbSellersUpdated++;
+			seller.setDescription(sell.getDescription());
+			seller.setTradingCountry(tradingCountryService.findByTradingCountryCode(sell.getTradingCountryCode(),
+					provider));
+			seller.setTradingCurrency(tradingCurrencyService.findByTradingCurrencyCode(sell.getTradingCurrencyCode(),
+					provider));
+			seller.setTradingLanguage(tradingLanguageService.findByTradingLanguageCode(sell.getTradingLanguageCode(),
+					provider));
+			seller.updateAudit(currentUser);
+			customerImportService.updateSeller(seller);
+			log.info("File:" + fileName + ", typeEntity:Seller, index:" + i + ", code:" + sell.getCode()
+					+ ", status:Updated");
+		} else {
+			nbSellersCreated++;
+			log.info("File:" + fileName + ", typeEntity:Seller, index:" + i + ", code:" + sell.getCode()
+					+ ", status:Created");
+
+			seller = new org.meveo.model.admin.Seller();
+			seller.setCode(sell.getCode());
+			seller.setDescription(sell.getDescription());
+			seller.setTradingCountry(tradingCountryService.findByTradingCountryCode(sell.getTradingCountryCode(),
+					provider));
+			seller.setTradingCurrency(tradingCurrencyService.findByTradingCurrencyCode(sell.getTradingCurrencyCode(),
+					provider));
+			seller.setTradingLanguage(tradingLanguageService.findByTradingLanguageCode(sell.getTradingLanguageCode(),
+					provider));
+			seller.setProvider(provider);
+			customerImportService.createSeller(seller, currentUser, provider);
+		}
+
+		return seller;
 	}
 
 	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)

@@ -25,6 +25,7 @@ import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.shared.Address;
 import org.meveo.model.shared.ContactInformation;
 import org.meveo.model.shared.Title;
+import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.admin.impl.TradingCurrencyService;
 import org.meveo.service.catalog.impl.TitleService;
 import org.meveo.service.payments.impl.CustomerAccountService;
@@ -35,6 +36,9 @@ public class CustomerImportService {
 
 	@Inject
 	private Logger log;
+
+	@Inject
+	private SellerService sellerService;
 
 	@Inject
 	private CustomFieldTemplateService customFieldTemplateService;
@@ -268,14 +272,16 @@ public class CustomerImportService {
 		if (address == null) {
 			address = new Address();
 		}
-		address.setAddress1(custAcc.getAddress().getAddress1());
-		address.setAddress2(custAcc.getAddress().getAddress2());
-		address.setAddress3(custAcc.getAddress().getAddress3());
-		address.setCity(custAcc.getAddress().getCity());
-		address.setCountry(custAcc.getAddress().getCountry());
-		address.setZipCode("" + custAcc.getAddress().getZipCode());
-		address.setState(custAcc.getAddress().getState());
-		customerAccount.setAddress(address);
+		if (custAcc.getAddress() != null) {
+			address.setAddress1(custAcc.getAddress().getAddress1());
+			address.setAddress2(custAcc.getAddress().getAddress2());
+			address.setAddress3(custAcc.getAddress().getAddress3());
+			address.setCity(custAcc.getAddress().getCity());
+			address.setCountry(custAcc.getAddress().getCountry());
+			address.setZipCode("" + custAcc.getAddress().getZipCode());
+			address.setState(custAcc.getAddress().getState());
+			customerAccount.setAddress(address);
+		}
 
 		ContactInformation contactInformation = customerAccount.getContactInformation();
 		if (contactInformation == null) {
@@ -349,6 +355,16 @@ public class CustomerImportService {
 		customerAccount.setCustomer(customer);
 		customerAccount.updateAudit(currentUser);
 		customerAccountService.update(customerAccount);
+	}
+
+	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+	public void updateSeller(org.meveo.model.admin.Seller seller) {
+		sellerService.updateNoCheck(seller);
+	}
+
+	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+	public void createSeller(org.meveo.model.admin.Seller seller, User currentUser, Provider provider) {
+		sellerService.create(seller, currentUser, provider);
 	}
 
 }

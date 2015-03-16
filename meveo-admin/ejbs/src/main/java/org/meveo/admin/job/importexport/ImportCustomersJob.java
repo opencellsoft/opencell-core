@@ -4,6 +4,7 @@ import java.util.Collection;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
+import javax.ejb.Asynchronous;
 import javax.ejb.ScheduleExpression;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
@@ -11,6 +12,8 @@ import javax.ejb.Timeout;
 import javax.ejb.Timer;
 import javax.ejb.TimerConfig;
 import javax.ejb.TimerService;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
 import org.meveo.model.admin.User;
@@ -50,41 +53,44 @@ public class ImportCustomersJob implements Job {
 
 	@Override
 	public JobExecutionResult execute(String parameter, User currentUser) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Asynchronous
+	public JobExecutionResult execute(TimerInfo info) {
 		JobExecutionResultImpl result = new JobExecutionResultImpl();
-		importCustomersJobBean.execute(result, currentUser);
-		return result;
-	}
-
-	@Override
-	public Timer createTimer(ScheduleExpression scheduleExpression,
-			TimerInfo infos) {
-		TimerConfig timerConfig = new TimerConfig();
-		timerConfig.setInfo(infos);
-		// timerConfig.setPersistent(false);
-
-		return timerService
-				.createCalendarTimer(scheduleExpression, timerConfig);
-	}
-
-	boolean running = false;
-
-	@Timeout
-	public void trigger(Timer timer) {
-		TimerInfo info = (TimerInfo) timer.getInfo();
 		if (!running && info.isActive()) {
 			try {
 				running = true;
-				User currentUser = userService.findById(info.getUserId());
-				JobExecutionResult result = execute(info.getParametres(),
-						currentUser);
-				jobExecutionService.persistResult(this, result, info,
-						currentUser,getJobCategory());
+				User currentUser = userService.findByIdLoadProvider(info.getUserId());
+				importCustomersJobBean.execute(result, currentUser);
+				jobExecutionService.persistResult(this, result, info, currentUser, getJobCategory());
 			} catch (Exception e) {
 				log.error(e.getMessage());
 			} finally {
 				running = false;
 			}
 		}
+
+		return result;
+	}
+
+	@Override
+	public Timer createTimer(ScheduleExpression scheduleExpression, TimerInfo infos) {
+		TimerConfig timerConfig = new TimerConfig();
+		timerConfig.setInfo(infos);
+		// timerConfig.setPersistent(false);
+
+		return timerService.createCalendarTimer(scheduleExpression, timerConfig);
+	}
+
+	boolean running = false;
+
+	@Timeout
+	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
+	public void trigger(Timer timer) {
+		execute((TimerInfo) timer.getInfo());
 	}
 
 	@Override
@@ -95,8 +101,7 @@ public class ImportCustomersJob implements Job {
 	@Override
 	public void cleanAllTimers() {
 		Collection<Timer> alltimers = timerService.getTimers();
-		log.info("Cancel " + alltimers.size() + " timers for"
-				+ this.getClass().getSimpleName());
+		log.info("Cancel " + alltimers.size() + " timers for" + this.getClass().getSimpleName());
 
 		for (Timer timer : alltimers) {
 			try {
@@ -106,9 +111,10 @@ public class ImportCustomersJob implements Job {
 			}
 		}
 	}
-	
+
 	@Override
 	public JobCategoryEnum getJobCategory() {
 		return JobCategoryEnum.IMPORT_HIERARCHY;
 	}
+
 }
