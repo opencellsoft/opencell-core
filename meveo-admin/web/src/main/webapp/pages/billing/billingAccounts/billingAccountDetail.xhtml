@@ -442,21 +442,9 @@
 														<h:outputText
 															value="#{billingAccountBean.selectedCounterInstance.description}" />
 														<p:outputLabel
-															value="#{messages['invoice.billingAccount']} :" />
-														<h:outputText
-															value="#{billingAccountBean.selectedCounterInstance.billingAccount.description}" />
-														<p:outputLabel
 															value="#{messages['counterTemplate.title']} :" />
 														<h:outputText
-															value="#{billingAccountBean.selectedCounterInstance.counterTemplate.description}" />
-														<p:outputLabel
-															value="#{messages['counterTemplate.counterType']} :" />
-														<h:outputText
-															value="#{billingAccountBean.selectedCounterInstance.counterTemplate.counterType}" />
-														<p:outputLabel
-															value="#{messages['counterTemplate.counterLevel']} :" />
-														<h:outputText
-															value="#{billingAccountBean.selectedCounterInstance.counterTemplate.counterLevel}" />
+															value="#{billingAccountBean.selectedCounterInstance.counterTemplate.code}" />
 													</p:panelGrid>
 												</hftl:panelGroup>
 												<hftl:dataList resultsId="datatable_counters"

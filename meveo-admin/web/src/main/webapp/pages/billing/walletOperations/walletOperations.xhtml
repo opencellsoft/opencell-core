@@ -162,7 +162,7 @@
 		    field="counter" childField="code" popup="true" popupId="searchCounterInstancePopup" clearButton="true"/>
 			<hf:searchField label="#{messages['pricePlan.title']}" id="priceplan"
 		    field="priceplan" childField="eventCode" popup="true" popupId="searchPricePlanPopup" clearButton="true"/>
-			<hf:searchField id="seller" label="#{messages['seller.parent']}" field="seller" childField="description" popup="true"
+			<hf:searchField id="seller" label="#{messages['seller.title']}" field="seller" childField="description" popup="true"
 				popupId="searchSellerPopup" clearButton="true" />
 		    <hf:searchField label="#{messages['walletOperation.param1']}" field="parameter1" />
 		     <hf:searchField label="#{messages['operation.wallet']}" id="wallet"
@@ -180,7 +180,7 @@
 	</hftl:panelGroup>
 		</hf:searchPanel>
 		<hftl:dataList label="#{messages['walletOperations.title']}"
-			backingBean="#{walletOperationBean}" sortBy="operationDate" sortOrder="DESCENDING">
+			backingBean="#{walletOperationBean}" sortBy="operationDate" sortOrder="DESCENDING" >
 			
 			<hftl:column label="#{messages['businessEntity.code']}" field="code" />
 			<hftl:column label="#{messages['businessEntity.description']}" field="description" />
@@ -197,7 +197,7 @@
 			<f:facet name="header">
 			<h:outputText value="Actions" />
 		</f:facet>
-			<hftl:actionsColumn
+			<hftl:actionsColumn renderEditLink="false" renderDeleteLink="false"
 				permission="#{identity.hasPermission('billing','billingManagement')}" />
 			  <p:tooltip for="updateWallet" value="#{messages['action.update']}"
 					showEffect="slide" hideEffect="slide" />

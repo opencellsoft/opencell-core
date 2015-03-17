@@ -430,21 +430,9 @@
 												value="#{messages['businessEntity.description']} :" />
 											<h:outputText
 												value="#{userAccountBean.selectedCounterInstance.description}" />
-											<p:outputLabel
-												value="#{messages['subscription.userAccount']} :" />
-											<h:outputText
-												value="#{userAccountBean.selectedCounterInstance.userAccount.description}" />
 											<p:outputLabel value="#{messages['counterTemplate.title']} :" />
 											<h:outputText
-												value="#{userAccountBean.selectedCounterInstance.counterTemplate.description}" />
-											<p:outputLabel
-												value="#{messages['counterTemplate.counterType']} :" />
-											<h:outputText
-												value="#{userAccountBean.selectedCounterInstance.counterTemplate.counterType}" />
-											<p:outputLabel
-												value="#{messages['counterTemplate.counterLevel']} :" />
-											<h:outputText
-												value="#{userAccountBean.selectedCounterInstance.counterTemplate.counterLevel}" />
+												value="#{userAccountBean.selectedCounterInstance.counterTemplate.code}" />
 										</p:panelGrid>
 									</hftl:panelGroup>
 									<hftl:dataList resultsId="datatable_counters"
