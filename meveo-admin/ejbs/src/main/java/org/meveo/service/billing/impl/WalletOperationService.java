@@ -1463,10 +1463,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 			walletsOpToRerate=getEntityManager().createNamedQuery("WalletOperation.setStatusToRerate").setParameter("notBilledWalletIdList", walletIdList).executeUpdate();
 			getEntityManager().createNamedQuery("RatedTransaction.setStatusToCanceled").setParameter("notBilledWalletIdList", walletIdList).executeUpdate();	
 		}
-		for(Long walletOpId:walletIdList){
-			WalletOperation walletOp=findById(walletOpId);
-			getEntityManager().refresh(walletOp);
-		}
+		getEntityManager().flush();
 		return walletsOpToRerate;
 	}
 }

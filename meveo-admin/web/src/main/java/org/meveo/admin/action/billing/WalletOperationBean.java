@@ -28,15 +28,11 @@ import javax.inject.Named;
 
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
-import org.meveo.admin.exception.BusinessException;
-import org.meveo.admin.exception.DuplicateDefaultAccountException;
 import org.meveo.model.admin.Currency;
 import org.meveo.model.billing.BillingRun;
 import org.meveo.model.billing.RatedTransaction;
-import org.meveo.model.billing.RatedTransactionStatusEnum;
 import org.meveo.model.billing.TradingCurrency;
 import org.meveo.model.billing.WalletOperation;
-import org.meveo.model.billing.WalletOperationStatusEnum;
 import org.meveo.service.admin.impl.TradingCurrencyService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
@@ -148,22 +144,30 @@ public class WalletOperationBean extends BaseBean<WalletOperation> {
 	}
 
 	public void  updatedToRerate(WalletOperation walletOperation) {
+		try{
 		List<Long> walletIdList=new ArrayList<Long>();
 		walletIdList.add(walletOperation.getId());
 		if(walletOperationService.updateToRerate(walletIdList)>0){
 		messages.info(new BundleKey("messages","update.successful"));
-		}}
+		}
+		}catch (Exception e) {
+			log.error(e.getMessage());	
+		}
+	}
 	
 	public void massToRerate() {
+		try{
 		List<Long> walletIdList=null;
 		if (getSelectedEntities() != null) {
 			walletIdList=new ArrayList<Long>();
 			for (WalletOperation wallet : getSelectedEntities()) {
 				walletIdList.add(wallet.getId());	
 			}}
-		int count=walletOperationService.updateToRerate(walletIdList); 
-		messages.info("Update of "+count+" wallet operations has successfully done");
-	}
-	 
+			int count=walletOperationService.updateToRerate(walletIdList); 
+			messages.info("Update of "+count+" wallet operations has successfully done");
+		}catch (Exception e) {
+			log.error(e.getMessage());	
+		}
+	} 
 } 
 
