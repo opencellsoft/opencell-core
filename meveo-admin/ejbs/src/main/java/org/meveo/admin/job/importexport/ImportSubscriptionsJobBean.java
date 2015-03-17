@@ -75,7 +75,7 @@ public class ImportSubscriptionsJobBean {
 	SubscriptionImportHisto subscriptionImportHisto;
 
 	@Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
-	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
 	public void execute(JobExecutionResultImpl result, User currentUser) {
 		Provider provider = currentUser.getProvider();
 
@@ -122,6 +122,7 @@ public class ImportSubscriptionsJobBean {
 		}
 	}
 
+	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
 	public void importFile(File file, String fileName, User currentUser) throws JAXBException, Exception {
 		log.info("start import file :" + fileName);
 
@@ -164,7 +165,7 @@ public class ImportSubscriptionsJobBean {
 					nbSubscriptionsError++;
 					log.info("File:" + fileName + ", typeEntity:Subscription, index:" + i + ", code:"
 							+ jaxbSubscription.getCode() + ", status:Error");
-					break;
+					continue;
 				}
 
 				nbSubscriptionsCreated += subscriptionImportService.importSubscription(checkSubscription,
@@ -338,12 +339,14 @@ public class ImportSubscriptionsJobBean {
 				checkSubscription.serviceInsts.add(serviceInst);
 			}
 
-			for (org.meveo.model.jaxb.subscription.Access jaxbAccess : jaxbSubscription.getAccesses().getAccess()) {
-				if (accessCheckError(jaxbSubscription, jaxbAccess)) {
-					return null;
-				}
+			if (jaxbSubscription.getAccesses() != null) {
+				for (org.meveo.model.jaxb.subscription.Access jaxbAccess : jaxbSubscription.getAccesses().getAccess()) {
+					if (accessCheckError(jaxbSubscription, jaxbAccess)) {
+						return null;
+					}
 
-				checkSubscription.accessPoints.add(jaxbAccess);
+					checkSubscription.accessPoints.add(jaxbAccess);
+				}
 			}
 		}
 
