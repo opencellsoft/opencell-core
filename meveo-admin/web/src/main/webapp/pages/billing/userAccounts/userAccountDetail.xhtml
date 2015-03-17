@@ -317,15 +317,19 @@
 												</p:panelGrid>
 
 											</p:panelGrid>
+											
+											<p:panelGrid columns="4">
 											<p:outputLabel rendered="#{wallet.key!='PRINCIPAL'}"
-												value="#{messages['userAccount.cachedBalance']}" />
+												value="#{messages['userAccount.cachedBalance']} :" />
 											<h:outputText
 												value="#{userAccountBean.getBalance(wallet.value)}" />
-											<p:outputLabel rendered="#{wallet.key!='PRINCIPAL'}"
-												value="#{messages['userAccount.cachedReservedBalance']}" />
+											<p:outputLabel rendered="#{wallet.key!='PRINCIPAL'}" style="width:180px;"
+												value="#{messages['userAccount.cachedReservedBalance']} :" />
 											<h:outputText
 												value="#{userAccountBean.getReservedBalance(wallet.value)}" />
+												</p:panelGrid>
 										</p:panelGrid>
+										
 										<p:dataTable id="wallet#{wallet.key}datatable" var="e"
 											paginator="true"
 											value="#{userAccountBean.getWalletOperations(wallet.key)}"
