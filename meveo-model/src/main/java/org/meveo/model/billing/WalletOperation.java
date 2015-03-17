@@ -77,7 +77,11 @@ import org.meveo.model.catalog.PricePlanMatrix;
 	@NamedQuery(name = "WalletOperation.getReservedBalance", 
 			query = "SELECT sum(o.amountWithTax)*-1 FROM WalletOperation o WHERE o.wallet.id=:walletId and "
 					+ "(o.status=org.meveo.model.billing.WalletOperationStatusEnum.OPEN or "
-					+ "o.status=org.meveo.model.billing.WalletOperationStatusEnum.RESERVED) ")
+					+ "o.status=org.meveo.model.billing.WalletOperationStatusEnum.RESERVED) "),
+	 @NamedQuery(name = "WalletOperation.setStatusToRerate",   
+					     query = "update WalletOperation w set w.status=org.meveo.model.billing.WalletOperationStatusEnum.TO_RERATE"
+					    		  + " where (w.status=org.meveo.model.billing.WalletOperationStatusEnum.OPEN OR w.status=org.meveo.model.billing.WalletOperationStatusEnum.TREATED)"
+					        + " and w.id IN :notBilledWalletIdList")
 })
 public class WalletOperation extends BusinessEntity {
 

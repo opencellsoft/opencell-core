@@ -28,6 +28,8 @@ import javax.inject.Named;
 
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
+import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.exception.DuplicateDefaultAccountException;
 import org.meveo.model.admin.Currency;
 import org.meveo.model.billing.BillingRun;
 import org.meveo.model.billing.RatedTransaction;
@@ -102,6 +104,8 @@ public class WalletOperationBean extends BaseBean<WalletOperation> {
 		return listCurrency;
 	}
 	
+	
+	
 	@Override
 	public LazyDataModel<WalletOperation> getLazyDataModel() {
 		getFilters();
@@ -143,36 +147,22 @@ public class WalletOperationBean extends BaseBean<WalletOperation> {
 		return super.getLazyDataModel();
 	}
 
-	public boolean  updateStatus(WalletOperation selectedWallet) {
-		boolean rerateWallet=false;
-		List<RatedTransaction> ratedTransactions=new ArrayList<RatedTransaction>();
-		  if(selectedWallet.getStatus().equals(WalletOperationStatusEnum.OPEN )|| selectedWallet.getStatus().equals(WalletOperationStatusEnum.TREATED) ){
-			  selectedWallet.setStatus(WalletOperationStatusEnum.TO_RERATE);
-			  getPersistenceService().update(selectedWallet); 
-			  rerateWallet=true;
-		  }
-			if(rerateWallet){
-				ratedTransactions=ratedTransactionService.getNotBilledRatedTransactions(selectedWallet.getId());
-				if(ratedTransactions!=null && !ratedTransactions.isEmpty()){
-				for (RatedTransaction rated :ratedTransactions){
-					rated.setStatus(RatedTransactionStatusEnum.CANCELED);
-					ratedTransactionService.update(rated);
-				}}
-				messages.info(new BundleKey("messages", "update.successful"));
-				}	
-		return rerateWallet;
-	}
+	public void  updatedToRerate(WalletOperation walletOperation) {
+		List<Long> walletIdList=new ArrayList<Long>();
+		walletIdList.add(walletOperation.getId());
+		if(walletOperationService.updateToRerate(walletIdList)>0){
+		messages.info(new BundleKey("messages","update.successful"));
+		}}
 	
-	public void massRerate() {
+	public void massToRerate() {
+		List<Long> walletIdList=null;
 		if (getSelectedEntities() != null) {
-			log.debug("updating {} walletOperation", getSelectedEntities().size());
-			int count=0;
+			walletIdList=new ArrayList<Long>();
 			for (WalletOperation wallet : getSelectedEntities()) {
-				if(updateStatus(wallet)){
-					count++;
-				}} 
-			messages.info("Update of "+count+" wallet operations has successfully done"); 
-		}
+				walletIdList.add(wallet.getId());	
+			}}
+		int count=walletOperationService.updateToRerate(walletIdList); 
+		messages.info("Update of "+count+" wallet operations has successfully done");
 	}
 	 
 } 

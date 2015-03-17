@@ -135,7 +135,7 @@
 		  </hftl:entityPopup>
 		
 		<hf:searchPanel id="searchPanel" label="#{messages['walletOperation.search']}"
-			backingBean="#{walletOperationBean}">
+			backingBean="#{walletOperationBean}" renderNewButton="false">
 		<hftl:panelGroup columns="2">
 		
 		<p:panelGrid columns="2">
@@ -149,7 +149,7 @@
 	  </p:panelGrid>
 	
 	      <hf:searchField label="#{messages['billingRun.panel']}" id="billingRunId"
-		    field="billingRun" childField="id" popup="true" popupId="searchBillingRunPopup" clearButton="true"/>
+		    field="billingRun" childField="id" popup="true" popupId="searchBillingRunPopup" clearButton="true" renderNewButton="false"/>
 		<hf:searchField label="#{messages['billingAccount.billingAccountPanel']}" id="billingAccountId"
 		    field="billingAccount" childField="code" popup="true" popupId="billingAccountPopup" clearButton="true"/> 
 		<hf:searchField label="#{messages['invoiceSubCategory.title']}" id="invoiceSubCategoryId"
@@ -202,7 +202,7 @@
 			  <p:tooltip for="updateWallet" value="#{messages['action.update']}"
 					showEffect="slide" hideEffect="slide" />
 				<p:commandButton id="updateWallet" icon="ui-icon-play"
-					actionListener="#{walletOperationBean.updateStatus(entity)}"
+					actionListener="#{walletOperationBean.updatedToRerate(entity)}"
 					update=":results_form :messages">
 					<p:confirm header="#{messages['message.confirmation']}"
 						message="#{messages['message.confirm.walletOperation.update']}"
@@ -216,7 +216,7 @@
 				showEffect="slide" hideEffect="slide" />
 			<p:commandButton id="massUpdateWallet"
 				value="#{messages['action.massRerate']}"
-				  update=":results_form :msg" action="#{walletOperationBean.massRerate()}">
+				  update=":results_form :msg" action="#{walletOperationBean.massToRerate()}">
 				<p:confirm header="#{messages['message.confirmation']}"
 					message="#{messages['message.confirm.walletOperation.update']}"
 					icon="ui-icon-alert" />
