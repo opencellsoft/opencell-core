@@ -6,13 +6,13 @@ import java.util.Date;
 import org.meveo.commons.utils.JAXBUtils;
 import org.meveo.model.jaxb.account.BillingAccount;
 import org.meveo.model.jaxb.account.BillingAccounts;
+import org.meveo.model.jaxb.account.Name;
 import org.meveo.model.jaxb.account.UserAccount;
 import org.meveo.model.jaxb.account.UserAccounts;
 import org.meveo.model.jaxb.customer.Customer;
 import org.meveo.model.jaxb.customer.CustomerAccount;
 import org.meveo.model.jaxb.customer.CustomerAccounts;
 import org.meveo.model.jaxb.customer.Customers;
-import org.meveo.model.jaxb.account.Name;
 import org.meveo.model.jaxb.customer.Seller;
 import org.meveo.model.jaxb.customer.Sellers;
 import org.meveo.model.jaxb.subscription.ServiceInstance;
@@ -31,13 +31,13 @@ public class GenerateImportXmlV2 {
 	private final int MAX_CUSTOMERS = 1;
 	private final int MAX_CUSTOMER_ACCOUNTS = 1;
 
-	private final int MAX_BILLING_ACCOUNTS = 100000;
+	private final int MAX_BILLING_ACCOUNTS = 1;
 	private final int MAX_USER_ACCOUNTS = 1;
 
-	private final int MAX_SUBSCRIPTIONS = 2;
-	
+	private final int MAX_SUBSCRIPTIONS = 10;
+
 	private final boolean IGNORE_ACCOUNTS_IMPORT = false;
-	private final boolean IGNORE_SUBSCRIPTION_IMPORT = true;
+	private final boolean IGNORE_SUBSCRIPTION_IMPORT = false;
 
 	private static String customersFile = "c:\\temp\\CUSTOMER_JOB.xml";
 	private static String accountsFile = "c:\\temp\\ACCOUNT_JOB.xml";
@@ -71,7 +71,7 @@ public class GenerateImportXmlV2 {
 
 			ServiceInstance serviceInstance = new ServiceInstance();
 			serviceInstance.setCode(serviceCode);
-			serviceInstance.setSubscriptionDate(new Date().toString());
+			serviceInstance.setSubscriptionDate("2015-03-17");
 			Status status = new Status();
 			status.setDate(new Date().toString());
 			status.setValue("ACTIVE");
@@ -110,8 +110,8 @@ public class GenerateImportXmlV2 {
 						Name name = new Name();
 						name.setName("JOB_NAME" + i + "_" + j + "_" + k);
 						customerAccount.setName(name);
-						
-						if(IGNORE_ACCOUNTS_IMPORT) {
+
+						if (IGNORE_ACCOUNTS_IMPORT) {
 							customerAccounts.getCustomerAccount().add(customerAccount);
 							continue;
 						}
@@ -132,11 +132,11 @@ public class GenerateImportXmlV2 {
 								userAccount.setCode("JOB_UA" + i + "_" + j + "_" + k + "_" + l + "_" + m);
 								userAccount.setDescription("JOB_UA" + i + "_" + j + "_" + k + "_" + l + "_" + m);
 
-								if(IGNORE_SUBSCRIPTION_IMPORT) {
+								if (IGNORE_SUBSCRIPTION_IMPORT) {
 									userAccounts.getUserAccount().add(userAccount);
 									continue;
 								}
-								
+
 								for (int n = 0; n < MAX_SUBSCRIPTIONS; n++) {
 									Subscription subscription = new Subscription();
 									subscription.setCode("JOB_SUB" + i + "_" + j + "_" + k + "_" + l + "_" + m + "_"
@@ -145,7 +145,7 @@ public class GenerateImportXmlV2 {
 											+ "_" + n);
 									subscription.setUserAccountId(userAccount.getCode());
 									subscription.setOfferCode(offerCode);
-									subscription.setSubscriptionDate(new Date().toString());
+									subscription.setSubscriptionDate("2015-03-17");
 									subscription.setUserAccountId(userAccount.getCode());
 									Status statuSub = new Status();
 									statuSub.setDate("2014-02-20");
