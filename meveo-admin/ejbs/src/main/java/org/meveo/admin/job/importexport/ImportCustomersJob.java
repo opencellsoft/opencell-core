@@ -18,7 +18,6 @@ import javax.inject.Inject;
 
 import org.meveo.model.admin.User;
 import org.meveo.model.jobs.JobCategoryEnum;
-import org.meveo.model.jobs.JobExecutionResult;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.TimerInfo;
 import org.meveo.service.admin.impl.UserService;
@@ -52,19 +51,17 @@ public class ImportCustomersJob implements Job {
 	}
 
 	@Override
-	public JobExecutionResult execute(String parameter, User currentUser) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 	@Asynchronous
-	public JobExecutionResult execute(TimerInfo info) {
+	public void execute(TimerInfo info, User currentUser) {
 		JobExecutionResultImpl result = new JobExecutionResultImpl();
-		if (!running && info.isActive()) {
+		if (!running && (info.isActive() || currentUser != null)) {
 			try {
 				running = true;
-				User currentUser = userService.findByIdLoadProvider(info.getUserId());
+				if (currentUser == null) {
+					currentUser = userService.findByIdLoadProvider(info.getUserId());
+				}
 				importCustomersJobBean.execute(result, currentUser);
+
 				jobExecutionService.persistResult(this, result, info, currentUser, getJobCategory());
 			} catch (Exception e) {
 				log.error(e.getMessage());
@@ -72,8 +69,6 @@ public class ImportCustomersJob implements Job {
 				running = false;
 			}
 		}
-
-		return result;
 	}
 
 	@Override
@@ -87,10 +82,11 @@ public class ImportCustomersJob implements Job {
 
 	boolean running = false;
 
+	@Override
 	@Timeout
 	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
 	public void trigger(Timer timer) {
-		execute((TimerInfo) timer.getInfo());
+		execute((TimerInfo) timer.getInfo(), null);
 	}
 
 	@Override

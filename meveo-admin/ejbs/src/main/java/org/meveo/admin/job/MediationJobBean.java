@@ -19,6 +19,7 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.job.logging.JobLoggingInterceptor;
 import org.meveo.commons.utils.FileUtils;
 import org.meveo.commons.utils.ParamBean;
+import org.meveo.interceptor.PerformanceInterceptor;
 import org.meveo.model.admin.User;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.jobs.JobExecutionResultImpl;
@@ -53,7 +54,7 @@ public class MediationJobBean {
 	PrintWriter rejectFileWriter;
 	String report;
 
-	@Interceptors({ JobLoggingInterceptor.class })
+	@Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public void execute(JobExecutionResultImpl result, String parameter, User currentUser) {
 		Provider provider = currentUser.getProvider();

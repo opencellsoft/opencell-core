@@ -31,10 +31,13 @@ public class GenerateImportXmlV2 {
 	private final int MAX_CUSTOMERS = 1;
 	private final int MAX_CUSTOMER_ACCOUNTS = 1;
 
-	private final int MAX_BILLING_ACCOUNTS = 1;
-	private final int MAX_USER_ACCOUNTS = 50000;
+	private final int MAX_BILLING_ACCOUNTS = 100000;
+	private final int MAX_USER_ACCOUNTS = 1;
 
 	private final int MAX_SUBSCRIPTIONS = 2;
+	
+	private final boolean IGNORE_ACCOUNTS_IMPORT = false;
+	private final boolean IGNORE_SUBSCRIPTION_IMPORT = true;
 
 	private static String customersFile = "c:\\temp\\CUSTOMER_JOB.xml";
 	private static String accountsFile = "c:\\temp\\ACCOUNT_JOB.xml";
@@ -107,6 +110,11 @@ public class GenerateImportXmlV2 {
 						Name name = new Name();
 						name.setName("JOB_NAME" + i + "_" + j + "_" + k);
 						customerAccount.setName(name);
+						
+						if(IGNORE_ACCOUNTS_IMPORT) {
+							customerAccounts.getCustomerAccount().add(customerAccount);
+							continue;
+						}
 
 						for (int l = 0; l < MAX_BILLING_ACCOUNTS; l++) {
 							BillingAccount billingAccount = new BillingAccount();
@@ -124,6 +132,11 @@ public class GenerateImportXmlV2 {
 								userAccount.setCode("JOB_UA" + i + "_" + j + "_" + k + "_" + l + "_" + m);
 								userAccount.setDescription("JOB_UA" + i + "_" + j + "_" + k + "_" + l + "_" + m);
 
+								if(IGNORE_SUBSCRIPTION_IMPORT) {
+									userAccounts.getUserAccount().add(userAccount);
+									continue;
+								}
+								
 								for (int n = 0; n < MAX_SUBSCRIPTIONS; n++) {
 									Subscription subscription = new Subscription();
 									subscription.setCode("JOB_SUB" + i + "_" + j + "_" + k + "_" + l + "_" + m + "_"

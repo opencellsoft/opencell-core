@@ -8,6 +8,7 @@ import java.util.List;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
+import javax.ejb.Asynchronous;
 import javax.ejb.ScheduleExpression;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
@@ -18,12 +19,14 @@ import javax.ejb.TimerService;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
+import javax.interceptor.Interceptors;
 
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.job.logging.JobLoggingInterceptor;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.interceptor.PerformanceInterceptor;
 import org.meveo.model.admin.User;
 import org.meveo.model.jobs.JobCategoryEnum;
-import org.meveo.model.jobs.JobExecutionResult;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.TimerInfo;
 import org.meveo.service.admin.impl.UserService;
@@ -50,7 +53,7 @@ public class MeasurableQuantityAggregationJob implements Job {
 	private TimerService timerService;
 
 	@Inject
-	JobExecutionService jobExecutionService;
+	private JobExecutionService jobExecutionService;
 
 	@Inject
 	private MeasurableQuantityService mqService;
@@ -102,59 +105,60 @@ public class MeasurableQuantityAggregationJob implements Job {
 	}
 
 	@Override
-	public JobExecutionResult execute(String parameter, User currentUser) {
-		log.info("executing MeasurableQuantityAggregation");
+	@Asynchronous
+	@Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
+	public void execute(TimerInfo info, User currentUser) {
 		JobExecutionResultImpl result = new JobExecutionResultImpl();
-		result.setProvider(currentUser.getProvider());
-		mqService.setProvider(currentUser.getProvider());
+		if (!running && (info.isActive() || currentUser != null)) {
+			try {
+				running = true;
+				if (currentUser == null) {
+					currentUser = userService.findByIdLoadProvider(info.getUserId());
+				}
+				result.setProvider(currentUser.getProvider());
+				mqService.setProvider(currentUser.getProvider());
 
-		String report = "";
-		if (parameter != null) {
-			if (!parameter.isEmpty()) {
-				MeasurableQuantity mq = mqService.listByCode(parameter).get(0);
-				aggregateMeasuredValues(result, report, mq);
-				result.setReport(report);
-			} else {
-				aggregateMeasuredValues(result, report, mqService.list());
-				result.setReport(report);
+				String report = "";
+				if (info.getParametres() != null) {
+					if (!info.getParametres().isEmpty()) {
+						MeasurableQuantity mq = mqService.listByCode(info.getParametres()).get(0);
+						aggregateMeasuredValues(result, report, mq);
+						result.setReport(report);
+					} else {
+						aggregateMeasuredValues(result, report, mqService.list());
+						result.setReport(report);
+					}
+				} else {
+					aggregateMeasuredValues(result, report, mqService.list());
+					result.setReport(report);
+				}
+
+				result.setDone(true);
+
+				jobExecutionService.persistResult(this, result, info, currentUser, getJobCategory());
+			} catch (Exception e) {
+				log.error(e.getMessage());
+			} finally {
+				running = false;
 			}
-		} else {
-			aggregateMeasuredValues(result, report, mqService.list());
-			result.setReport(report);
 		}
-
-		result.setDone(true);
-
-		return result;
 	}
 
 	public BigDecimal getMeasuredValueListValueSum(List<MeasuredValue> mvList) {
 		BigDecimal mvTotal = BigDecimal.ZERO;
 		for (MeasuredValue mv : mvList) {
-			mvTotal=mvTotal.add(mv.getValue());
+			mvTotal = mvTotal.add(mv.getValue());
 		}
 		return mvTotal;
 	}
 
 	boolean running = false;
 
+	@Override
 	@Timeout
+	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
 	public void trigger(Timer timer) {
-		TimerInfo info = (TimerInfo) timer.getInfo();
-		if (!running && info.isActive()) {
-			try {
-				if (info.isActive()) {
-					running = true;
-					User currentUser = userService.findById(info.getUserId());
-					JobExecutionResult result = execute(info.getParametres(), currentUser);
-					jobExecutionService.persistResult(this, result, info, currentUser,getJobCategory());
-				}
-			} catch (Exception e) {
-				log.error("error in trigger", e);
-			} finally {
-				running = false;
-			}
-		}
+		execute((TimerInfo) timer.getInfo(), null);
 	}
 
 	@Override

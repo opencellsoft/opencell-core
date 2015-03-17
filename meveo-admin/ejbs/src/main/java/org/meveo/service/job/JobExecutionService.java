@@ -37,71 +37,58 @@ import org.meveo.model.jobs.TimerInfo;
 import org.meveo.service.base.PersistenceService;
 
 @Stateless
-public class JobExecutionService extends
-		PersistenceService<JobExecutionResultImpl> {
+public class JobExecutionService extends PersistenceService<JobExecutionResultImpl> {
 
 	@Inject
 	private TimerEntityService timerEntityService;
 
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public void executeJob(String jobName, TimerInfo info, User currentUser,JobCategoryEnum jobCategory) {
+	public void executeJob(String jobName, TimerInfo info, User currentUser, JobCategoryEnum jobCategory) {
 		try {
 			HashMap<String, Job> jobs = TimerEntityService.jobEntries.get(jobCategory);
 			Job jobInstance = jobs.get(jobName);
-			JobExecutionResult result = jobInstance.execute(
-					info.getParametres(), currentUser);
-			persistResult(jobInstance, result, info, currentUser,jobCategory);
+			jobInstance.execute(info, currentUser);
 		} catch (Exception e) {
 			log.error(e.getMessage());
 		}
 	}
 
 	@TransactionAttribute(TransactionAttributeType.REQUIRED)
-	public void persistResult(Job job, JobExecutionResult result,
-			TimerInfo info, User currentUser,JobCategoryEnum jobCategory) {
+	public void persistResult(Job job, JobExecutionResult result, TimerInfo info, User currentUser,
+			JobCategoryEnum jobCategory) {
 		try {
 			log.info("JobExecutionService persistResult...");
 
-			JobExecutionResultImpl entity = JobExecutionResultImpl
-					.createFromInterface(job.getClass().getSimpleName(), result);
+			JobExecutionResultImpl entity = JobExecutionResultImpl.createFromInterface(job.getClass().getSimpleName(),
+					result);
 			if (!entity.isDone()
-					|| (entity.getNbItemsCorrectlyProcessed()
-							+ entity.getNbItemsProcessedWithError() + entity
-								.getNbItemsProcessedWithWarning()) > 0) {
+					|| (entity.getNbItemsCorrectlyProcessed() + entity.getNbItemsProcessedWithError() + entity
+							.getNbItemsProcessedWithWarning()) > 0) {
 
 				create(entity, currentUser, currentUser.getProvider());
 				log.info("PersistResult entity.isDone()=" + entity.isDone());
 
 				if (!entity.isDone()) {
-					executeJob(job.getClass().getSimpleName(), info,
-							currentUser,jobCategory);
-				} else if (info.getFollowingTimerId() != null
-						&& info.getFollowingTimerId() > 0) {
+					executeJob(job.getClass().getSimpleName(), info, currentUser, jobCategory);
+				} else if (info.getFollowingTimerId() != null && info.getFollowingTimerId() > 0) {
 					try {
-						TimerEntity timerEntity = timerEntityService
-								.findById(info.getFollowingTimerId());
-						executeJob(timerEntity.getJobName(),
-								(TimerInfo) timerEntity.getTimerInfo(),
-								currentUser,jobCategory);
+						TimerEntity timerEntity = timerEntityService.findById(info.getFollowingTimerId());
+						executeJob(timerEntity.getJobName(), (TimerInfo) timerEntity.getTimerInfo(), currentUser,
+								jobCategory);
 					} catch (Exception e) {
-						log.warn("PersistResult cannot excute the following job.="
-								+ info.getFollowingTimerId());
+						log.warn("PersistResult cannot excute the following job.=" + info.getFollowingTimerId());
 					}
 				}
 			} else {
 				log.info(job.getClass().getName() + ": nothing to do");
 
-				if (info.getFollowingTimerId() != null
-						&& info.getFollowingTimerId() > 0) {
+				if (info.getFollowingTimerId() != null && info.getFollowingTimerId() > 0) {
 					try {
-						TimerEntity timerEntity = timerEntityService
-								.findById(info.getFollowingTimerId());
-						executeJob(timerEntity.getJobName(),
-								(TimerInfo) timerEntity.getTimerInfo(),
-								currentUser,jobCategory);
+						TimerEntity timerEntity = timerEntityService.findById(info.getFollowingTimerId());
+						executeJob(timerEntity.getJobName(), (TimerInfo) timerEntity.getTimerInfo(), currentUser,
+								jobCategory);
 					} catch (Exception e) {
-						log.warn("PersistResult cannot excute the following job.="
-								+ info.getFollowingTimerId());
+						log.warn("PersistResult cannot excute the following job.=" + info.getFollowingTimerId());
 					}
 				}
 			}
@@ -110,8 +97,7 @@ public class JobExecutionService extends
 		}
 	}
 
-	private QueryBuilder getFindQuery(String jobName,
-			PaginationConfiguration configuration) {
+	private QueryBuilder getFindQuery(String jobName, PaginationConfiguration configuration) {
 		String sql = "select distinct t from JobExecutionResultImpl t";
 		QueryBuilder qb = new QueryBuilder(sql);// FIXME:.cacheable();
 
@@ -148,8 +134,7 @@ public class JobExecutionService extends
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<JobExecutionResultImpl> find(String jobName,
-			PaginationConfiguration configuration) {
+	public List<JobExecutionResultImpl> find(String jobName, PaginationConfiguration configuration) {
 		return getFindQuery(jobName, configuration).find(getEntityManager());
 	}
 

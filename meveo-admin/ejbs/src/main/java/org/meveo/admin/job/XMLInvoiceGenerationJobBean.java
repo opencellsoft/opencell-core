@@ -13,6 +13,7 @@ import javax.interceptor.Interceptors;
 
 import org.meveo.admin.job.logging.JobLoggingInterceptor;
 import org.meveo.commons.utils.ParamBean;
+import org.meveo.interceptor.PerformanceInterceptor;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.BillingRun;
 import org.meveo.model.billing.Invoice;
@@ -34,17 +35,15 @@ public class XMLInvoiceGenerationJobBean {
 	@Inject
 	private XMLInvoiceCreator xmlInvoiceCreator;
 
-	@Interceptors({ JobLoggingInterceptor.class })
+	@Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public void execute(JobExecutionResultImpl result, String parameter,
-			User currentUser) {
+	public void execute(JobExecutionResultImpl result, String parameter, User currentUser) {
 		Provider provider = currentUser.getProvider();
 		List<BillingRun> billingRuns = new ArrayList<BillingRun>();
 
 		if (parameter != null && parameter.trim().length() > 0) {
 			try {
-				billingRuns.add(billingRunService.getBillingRunById(
-						Long.parseLong(parameter), provider));
+				billingRuns.add(billingRunService.getBillingRunById(Long.parseLong(parameter), provider));
 			} catch (Exception e) {
 				log.error(e.getMessage());
 				result.registerError(e.getMessage());
@@ -56,26 +55,21 @@ public class XMLInvoiceGenerationJobBean {
 		log.info("billingRuns to process={}", billingRuns.size());
 
 		ParamBean param = ParamBean.getInstance();
-		String invoicesDir = param.getProperty("providers.rootDir",
-				"/tmp/meveo");
+		String invoicesDir = param.getProperty("providers.rootDir", "/tmp/meveo");
 
 		for (BillingRun billingRun : billingRuns) {
 			try {
-				File billingRundir = new File(invoicesDir + File.separator
-						+ provider.getCode() + File.separator + "invoices"
-						+ File.separator + "xml" + File.separator
-						+ billingRun.getId());
+				File billingRundir = new File(invoicesDir + File.separator + provider.getCode() + File.separator
+						+ "invoices" + File.separator + "xml" + File.separator + billingRun.getId());
 				billingRundir.mkdirs();
 
 				for (Invoice invoice : billingRun.getInvoices()) {
 					long startDate = System.currentTimeMillis();
-					
-					Future<Boolean> xmlCreated = xmlInvoiceCreator
-							.createXMLInvoice(invoice, billingRundir);
+
+					Future<Boolean> xmlCreated = xmlInvoiceCreator.createXMLInvoice(invoice, billingRundir);
 					xmlCreated.get();
-					
-					log.info("Invoice creation delay :"
-							+ (System.currentTimeMillis() - startDate)
+
+					log.info("Invoice creation delay :" + (System.currentTimeMillis() - startDate)
 							+ ", xmlCreated={1} " + xmlCreated.get() + "");
 				}
 

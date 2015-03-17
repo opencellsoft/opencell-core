@@ -12,6 +12,7 @@ import javax.interceptor.Interceptors;
 
 import org.meveo.admin.job.logging.JobLoggingInterceptor;
 import org.meveo.event.qualifier.Rejected;
+import org.meveo.interceptor.PerformanceInterceptor;
 import org.meveo.model.admin.User;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.rating.EDR;
@@ -31,13 +32,12 @@ public class UsageRatingJobBean {
 
 	@Inject
 	private UsageRatingService usageRatingService;
-	
 
 	@Inject
 	@Rejected
 	Event<Serializable> rejectededEdrProducer;
 
-	@Interceptors({ JobLoggingInterceptor.class })
+	@Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public void execute(JobExecutionResultImpl result, User currentUser) {
 		try {

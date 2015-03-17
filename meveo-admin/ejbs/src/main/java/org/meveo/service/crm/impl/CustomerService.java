@@ -166,4 +166,15 @@ public class CustomerService extends PersistenceService<Customer> {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
+	public List<Seller> listSellersWithCustomers(Provider provider) {
+		try {
+			return (List<Seller>) getEntityManager().createQuery("SELECT DISTINCT c.seller "
+					+ "FROM Customer c WHERE c.provider=:provider ")
+					.setParameter("provider", provider).getResultList();
+		} catch (NoResultException e) {
+			return null;
+		}
+	}
+
 }
