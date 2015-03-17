@@ -6,6 +6,7 @@
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:a="http://richfaces.org/a4j" xmlns:hftl="http://hftl.org"
 	xmlns:hf="http://java.sun.com/jsf/composite/tags"
+	xmlns:p="http://primefaces.org/ui"
 	template="/layout/template.xhtml">
 
 	<ui:define name="navigation">
@@ -70,7 +71,7 @@
 		
 		 <hf:formPanel id="formPanel"
 			label="#{messages['walletOperation.panel']}"
-			backingBean="#{walletOperationBean}">
+			backingBean="#{walletOperationBean}" renderNewButton="false" showFormButtons="false">
 		<hftl:panelGroup columns="2">
 		
 		 <hf:formField label="#{messages['BusinessEntity.code']}" field="code" />
@@ -103,10 +104,14 @@
 		 <hf:formField label="#{messages['walletOperation.endDate']}" field="endDate" />
 		 <hf:formField label="#{messages['walletOperation.subscriptionDate']}" field="subscriptionDate" />
 		 <hf:formField label="#{messages['walletOperation.status']}" field="status" /> 
+		 <hf:formField label="#{messages['walletOperation.offer']}" field="offerCode" /> 
 		 
-       </hftl:panelGroup>	 
-		</hf:formPanel>
+       </hftl:panelGroup>
 
+		<p:button id="back" value="#{messages['action.back']}"
+			outcome="#{walletOperationBean.back()}" includeViewParams="true">
+		</p:button>   
+		</hf:formPanel>
 	</ui:define>
 
 </ui:composition>
