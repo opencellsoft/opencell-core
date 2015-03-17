@@ -11,6 +11,7 @@ import javax.interceptor.Interceptors;
 
 import org.apache.commons.lang.StringUtils;
 import org.meveo.admin.job.logging.JobLoggingInterceptor;
+import org.meveo.interceptor.PerformanceInterceptor;
 import org.meveo.model.Auditable;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.BillingCycle;
@@ -35,15 +36,13 @@ public class BillingRunJobBean {
 	@Inject
 	private BillingCycleService billingCycleService;
 
-	@Interceptors({ JobLoggingInterceptor.class })
+	@Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public void execute(JobExecutionResultImpl result, String parameter,
-			User currentUser) {
+	public void execute(JobExecutionResultImpl result, String parameter, User currentUser) {
 		Provider provider = currentUser.getProvider();
 
 		try {
-			List<BillingRun> billruns = billingRunService.getbillingRuns(
-					provider, parameter);
+			List<BillingRun> billruns = billingRunService.getbillingRuns(provider, parameter);
 
 			boolean notTerminatedBillRun = false;
 			if (billruns != null) {
@@ -59,9 +58,8 @@ public class BillingRunJobBean {
 			}
 
 			if (!notTerminatedBillRun && !StringUtils.isEmpty(parameter)) {
-				BillingCycle billingCycle = billingCycleService
-						.findByBillingCycleCode(parameter, provider);
-				
+				BillingCycle billingCycle = billingCycleService.findByBillingCycleCode(parameter, provider);
+
 				if (billingCycle != null) {
 					BillingRun billingRun = new BillingRun();
 					Auditable auditable = new Auditable();
@@ -71,11 +69,11 @@ public class BillingRunJobBean {
 					billingRun.setBillingCycle(billingCycle);
 					billingRun.setProcessType(BillingProcessTypesEnum.AUTOMATIC);
 					billingRun.setStatus(BillingRunStatusEnum.NEW);
-					billingRunService.create(billingRun, currentUser,
-							provider);
+					billingRunService.create(billingRun, currentUser, provider);
 					result.registerSucces();
 				} else {
-					result.registerError("Cannot find billingCycle wit code '"+parameter+"' (this code should be the parameter of the job)");
+					result.registerError("Cannot find billingCycle wit code '" + parameter
+							+ "' (this code should be the parameter of the job)");
 				}
 			}
 		} catch (Exception e) {

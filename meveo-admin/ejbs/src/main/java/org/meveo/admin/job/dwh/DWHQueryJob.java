@@ -4,6 +4,7 @@ import java.util.Collection;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
+import javax.ejb.Asynchronous;
 import javax.ejb.ScheduleExpression;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
@@ -11,12 +12,13 @@ import javax.ejb.Timeout;
 import javax.ejb.Timer;
 import javax.ejb.TimerConfig;
 import javax.ejb.TimerService;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.admin.User;
 import org.meveo.model.jobs.JobCategoryEnum;
-import org.meveo.model.jobs.JobExecutionResult;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.TimerInfo;
 import org.meveo.service.admin.impl.UserService;
@@ -56,60 +58,54 @@ public class DWHQueryJob implements Job {
 	}
 
 	@Override
-	public JobExecutionResult execute(String parameter, User currentUser) {
-		log.info("executing DWHQueryJob for " + parameter);
-		
+	@Asynchronous
+	public void execute(TimerInfo info, User currentUser) {
 		JobExecutionResultImpl result = new JobExecutionResultImpl();
-		result.setProvider(currentUser.getProvider());
-		
-		try {
-			queryBean.executeQuery(result,parameter,currentUser.getProvider());
-		} catch (BusinessException e) {
-			result.setReport("error:"+e.getMessage());
-			e.printStackTrace();
-		}
-		result.setDone(true);
-		return result;
-	}
-
-	boolean running = false;
-
-	@Timeout
-	public void trigger(Timer timer) {
-		TimerInfo info = (TimerInfo) timer.getInfo();
-		if (!running && info.isActive()) {
+		if (!running && (info.isActive() || currentUser != null)) {
 			try {
-				if (info.isActive()) {
-					running = true;
-					User currentUser = userService.findById(info.getUserId());
-					JobExecutionResult result = execute(info.getParametres(),
-							currentUser);
-					jobExecutionService.persistResult(this, result, info,
-							currentUser,getJobCategory());
+				running = true;
+				if (currentUser == null) {
+					currentUser = userService.findByIdLoadProvider(info.getUserId());
 				}
+				result.setProvider(currentUser.getProvider());
+
+				try {
+					queryBean.executeQuery(result, info.getParametres(), currentUser.getProvider());
+				} catch (BusinessException e) {
+					result.setReport("error:" + e.getMessage());
+					log.error(e.getMessage());
+				}
+				result.setDone(true);
+				jobExecutionService.persistResult(this, result, info, currentUser, getJobCategory());
 			} catch (Exception e) {
-				log.error("error in trigger", e);
+				log.error(e.getMessage());
 			} finally {
 				running = false;
 			}
 		}
 	}
 
+	boolean running = false;
+
 	@Override
-	public Timer createTimer(ScheduleExpression scheduleExpression,
-			TimerInfo infos) {
+	@Timeout
+	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
+	public void trigger(Timer timer) {
+		execute((TimerInfo) timer.getInfo(), null);
+	}
+
+	@Override
+	public Timer createTimer(ScheduleExpression scheduleExpression, TimerInfo infos) {
 		TimerConfig timerConfig = new TimerConfig();
 		timerConfig.setInfo(infos);
 		timerConfig.setPersistent(false);
-		return timerService
-				.createCalendarTimer(scheduleExpression, timerConfig);
+		return timerService.createCalendarTimer(scheduleExpression, timerConfig);
 	}
 
 	@Override
 	public void cleanAllTimers() {
 		Collection<Timer> alltimers = timerService.getTimers();
-		log.info("Cancel " + alltimers.size() + " timers for"
-				+ this.getClass().getSimpleName());
+		log.info("Cancel " + alltimers.size() + " timers for" + this.getClass().getSimpleName());
 		for (Timer timer : alltimers) {
 			try {
 				timer.cancel();
@@ -123,6 +119,7 @@ public class DWHQueryJob implements Job {
 	public JobExecutionService getJobExecutionService() {
 		return jobExecutionService;
 	}
+
 	@Override
 	public JobCategoryEnum getJobCategory() {
 		return JobCategoryEnum.DWH;

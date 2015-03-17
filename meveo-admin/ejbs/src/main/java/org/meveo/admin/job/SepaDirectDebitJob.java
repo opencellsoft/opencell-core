@@ -4,6 +4,7 @@ import java.util.Collection;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
+import javax.ejb.Asynchronous;
 import javax.ejb.ScheduleExpression;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
@@ -11,11 +12,12 @@ import javax.ejb.Timeout;
 import javax.ejb.Timer;
 import javax.ejb.TimerConfig;
 import javax.ejb.TimerService;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
 import org.meveo.model.admin.User;
 import org.meveo.model.jobs.JobCategoryEnum;
-import org.meveo.model.jobs.JobExecutionResult;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.TimerInfo;
 import org.meveo.service.admin.impl.UserService;
@@ -49,13 +51,24 @@ public class SepaDirectDebitJob implements Job {
 	}
 
 	@Override
-	public JobExecutionResult execute(String parameter, User currentUser) {
+	@Asynchronous
+	public void execute(TimerInfo info, User currentUser) {
 		JobExecutionResultImpl result = new JobExecutionResultImpl();
+		if (!running && (info.isActive() || currentUser != null)) {
+			try {
+				running = true;
+				if (currentUser == null) {
+					currentUser = userService.findByIdLoadProvider(info.getUserId());
+				}
+				sepaDirectDebitJobBean.execute(result, info.getParametres(), currentUser);
 
-		sepaDirectDebitJobBean.execute(result, parameter, currentUser);
-
-		result.close("");
-		return result;
+				jobExecutionService.persistResult(this, result, info, currentUser, getJobCategory());
+			} catch (Exception e) {
+				log.error(e.getMessage());
+			} finally {
+				running = false;
+			}
+		}
 	}
 
 	public Timer createTimer(ScheduleExpression scheduleExpression, TimerInfo infos) {
@@ -68,21 +81,11 @@ public class SepaDirectDebitJob implements Job {
 
 	boolean running = false;
 
+	@Override
 	@Timeout
+	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
 	public void trigger(Timer timer) {
-		TimerInfo info = (TimerInfo) timer.getInfo();
-		if ((!running) && (info.isActive())) {
-			try {
-				running = true;
-				User currentUser = userService.findById(info.getUserId());
-				JobExecutionResult result = execute(info.getParametres(), currentUser);
-				jobExecutionService.persistResult(this, result, info, currentUser,getJobCategory());
-			} catch (Exception e) {
-				log.error(e.getMessage());
-			} finally {
-				running = false;
-			}
-		}
+		execute((TimerInfo) timer.getInfo(), null);
 	}
 
 	public Collection<Timer> getTimers() {
@@ -107,6 +110,7 @@ public class SepaDirectDebitJob implements Job {
 			}
 		}
 	}
+
 	@Override
 	public JobCategoryEnum getJobCategory() {
 		return JobCategoryEnum.ACCOUNT_RECEIVABLES;
