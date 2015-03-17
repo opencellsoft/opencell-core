@@ -628,8 +628,8 @@ public class RatingService {
 			} else {
 				try {
 					rateBareWalletOperation(entityManager, operation, null,
-							null, operation.getPriceplan().getTradingCountry()
-									.getId(), operation.getPriceplan()
+							null, operation.getPriceplan().getTradingCountry()==null?null:
+								operation.getPriceplan().getTradingCountry().getId(), operation.getPriceplan()
 									.getTradingCurrency(),
 							operation.getProvider());
 				} catch (BusinessException e) {
