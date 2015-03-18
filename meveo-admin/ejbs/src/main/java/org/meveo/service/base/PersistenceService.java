@@ -384,6 +384,10 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
     public List<E> listActive() {
         return list(getCurrentProvider(), true);
     }
+    
+    public List<E> list(Provider provider) {
+        return list(provider, null);
+    }
 
     @SuppressWarnings("unchecked")
     public List<E> list(Provider provider, Boolean active) {
