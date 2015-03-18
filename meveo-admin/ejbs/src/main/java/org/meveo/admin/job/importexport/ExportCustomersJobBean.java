@@ -13,6 +13,7 @@ import javax.xml.bind.JAXBException;
 import org.meveo.admin.job.logging.JobLoggingInterceptor;
 import org.meveo.commons.utils.JAXBUtils;
 import org.meveo.commons.utils.ParamBean;
+import org.meveo.interceptor.PerformanceInterceptor;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.admin.User;
 import org.meveo.model.crm.Customer;
@@ -26,13 +27,13 @@ import org.slf4j.Logger;
 public class ExportCustomersJobBean {
 
 	SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_hhmmss");
-	
+
 	@Inject
 	private Logger log;
-	
+
 	@Inject
 	private CustomerService customerService;
-	
+
 	Sellers sellers;
 	ParamBean param = ParamBean.getInstance();
 
@@ -40,8 +41,8 @@ public class ExportCustomersJobBean {
 
 	int nbCustomers;
 
-	@Interceptors({ JobLoggingInterceptor.class })
-	public void execute(JobExecutionResultImpl result,String parameter, User currentUser) {
+	@Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
+	public void execute(JobExecutionResultImpl result, String parameter, User currentUser) {
 		Provider provider = currentUser.getProvider();
 
 		String exportDir = param.getProperty("providers.rootDir", "/tmp/meveo/") + File.separator + provider.getCode()
@@ -51,21 +52,21 @@ public class ExportCustomersJobBean {
 		if (!dir.exists()) {
 			dir.mkdirs();
 		}
-		
+
 		String timestamp = sdf.format(new Date());
-		List<Seller> sellersInDB = customerService.listSellersWithCustomers(provider);	
-		sellers = new Sellers(sellersInDB,provider.getCode());//,param.getProperty("connectorCRM.dateFormat", "yyyy-MM-dd"));
-		for(org.meveo.model.jaxb.customer.Seller seller:sellers.getSeller()){
-			List<Customer> customers= customerService.listBySellerCode(provider,seller.getCode());
+		List<Seller> sellersInDB = customerService.listSellersWithCustomers(provider);
+		sellers = new Sellers(sellersInDB, provider.getCode());// ,param.getProperty("connectorCRM.dateFormat",
+																// "yyyy-MM-dd"));
+		for (org.meveo.model.jaxb.customer.Seller seller : sellers.getSeller()) {
+			List<Customer> customers = customerService.listBySellerCode(provider, seller.getCode());
 			seller.setCustomers(customers);
 		}
 		try {
-			JAXBUtils.marshaller(sellers, new File(dir + File.separator + "CUSTOMER_" + timestamp+".xml"));
+			JAXBUtils.marshaller(sellers, new File(dir + File.separator + "CUSTOMER_" + timestamp + ".xml"));
 		} catch (JAXBException e) {
 			e.printStackTrace();
 		}
-		
-	}
 
+	}
 
 }

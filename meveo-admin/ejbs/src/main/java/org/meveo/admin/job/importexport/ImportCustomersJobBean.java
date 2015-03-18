@@ -238,15 +238,14 @@ public class ImportCustomersJobBean {
 				seller = createSeller(sell, fileName, i, currentUser, provider);
 
 				for (org.meveo.model.jaxb.customer.Customer cust : sell.getCustomers().getCustomer()) {
-					createCustomer(fileName, currentUser, seller, sell, cust, i);
-
-					if (nbCustomersError != 0 || nbCustomerAccountsError != 0) {
-						break;
+					if (customerCheckError(sell, cust)) {
+						nbCustomersError++;
+						log.error("File:" + fileName + ", typeEntity:Customer, index:" + i + ", code:" + cust.getCode()
+								+ ", status:Error");
+						return;
 					}
-				}
 
-				if (nbCustomersError != 0 || nbCustomerAccountsError != 0) {
-					break;
+					createCustomer(fileName, currentUser, seller, sell, cust, i);
 				}
 			} catch (Exception e) {
 				createSellerError(sell, ExceptionUtils.getRootCause(e).getMessage());
@@ -317,13 +316,6 @@ public class ImportCustomersJobBean {
 		try {
 			log.debug("customer found code={}", cust.getCode());
 
-			if (customerCheckError(sell, cust)) {
-				nbCustomersError++;
-				log.error("File:" + fileName + ", typeEntity:Customer, index:" + i + ", code:" + cust.getCode()
-						+ ", status:Error");
-				return;
-			}
-
 			try {
 				customer = customerService.findByCode(cust.getCode(), provider);
 			} catch (Exception e) {
@@ -359,7 +351,7 @@ public class ImportCustomersJobBean {
 					nbCustomerAccountsError++;
 					log.error("File:" + fileName + ", typeEntity:CustomerAccount, indexCustomer:" + i + ", index:" + j
 							+ " Code:" + custAcc.getCode() + ", status:Error");
-					return;
+					continue;
 				}
 
 				if (customerAccountCheckWarning(cust, sell, custAcc)) {

@@ -79,7 +79,7 @@ public class ImportAccountsJobBean {
 	AccountImportHisto accountImportHisto;
 
 	@Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
-	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
 	public void execute(JobExecutionResultImpl result, User currentUser) {
 		Provider provider = currentUser.getProvider();
 
@@ -189,11 +189,15 @@ public class ImportAccountsJobBean {
 
 		for (org.meveo.model.jaxb.account.BillingAccount billingAccountDto : billingAccounts.getBillingAccount()) {
 			i++;
-			createBillingAccount(billingAccountDto, fileName, i, currentUser, provider);
 
-			if (nbBillingAccountsError != 0 || nbUserAccountsError != 0) {
-				break;
+			if (billingCheckError(billingAccountDto)) {
+				nbBillingAccountsError++;
+				log.error("File:" + fileName + ", typeEntity:BillingAccount, index:" + i + ", code:"
+						+ billingAccountDto.getCode() + ", status:Error");
+				continue;
 			}
+
+			createBillingAccount(billingAccountDto, fileName, i, currentUser, provider);
 		}
 
 		generateReport(fileName, provider);
@@ -230,14 +234,6 @@ public class ImportAccountsJobBean {
 	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
 	private void createBillingAccount(org.meveo.model.jaxb.account.BillingAccount billingAccountDto, String fileName,
 			int i, User currentUser, Provider provider) throws BusinessException, ImportWarningException {
-
-		if (billingCheckError(billingAccountDto)) {
-			nbBillingAccountsError++;
-			log.error("File:" + fileName + ", typeEntity:BillingAccount, index:" + i + ", code:"
-					+ billingAccountDto.getCode() + ", status:Error");
-			return;
-		}
-
 		int j = -1;
 		org.meveo.model.billing.BillingAccount billingAccount = null;
 		try {
@@ -286,7 +282,7 @@ public class ImportAccountsJobBean {
 				nbUserAccountsError++;
 				log.error("File:" + fileName + ", typeEntity:UserAccount, index:" + i + ", code:"
 						+ billingAccountDto.getCode() + ", status:Error");
-				return;
+				continue;
 			}
 
 			createUserAccount(uAccount, billingAccount, billingAccountDto, fileName, i, j, currentUser, provider);

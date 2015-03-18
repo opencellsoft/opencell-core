@@ -17,6 +17,7 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.job.logging.JobLoggingInterceptor;
 import org.meveo.commons.utils.FileUtils;
 import org.meveo.commons.utils.ParamBean;
+import org.meveo.interceptor.PerformanceInterceptor;
 import org.meveo.model.admin.User;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.jobs.JobExecutionResultImpl;
@@ -43,28 +44,19 @@ public class ImportCatalogJobBean {
 	String report;
 
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	@Interceptors({ JobLoggingInterceptor.class })
-	public void execute(JobExecutionResultImpl result, String parameter,
-			User currentUser) {
+	@Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
+	public void execute(JobExecutionResultImpl result, String parameter, User currentUser) {
 		Provider provider = currentUser.getProvider();
 
 		InputStream inputFileStream = null;
 		try {
 
 			ParamBean parambean = ParamBean.getInstance();
-			String catalogDir = parambean.getProperty("providers.rootDir",
-					"/tmp/meveo/")
-					+ File.separator
-					+ provider.getCode()
-					+ File.separator
-					+ "imports"
-					+ File.separator
-					+ "catalog"
-					+ File.separator;
+			String catalogDir = parambean.getProperty("providers.rootDir", "/tmp/meveo/") + File.separator
+					+ provider.getCode() + File.separator + "imports" + File.separator + "catalog" + File.separator;
 
 			inputDir = catalogDir + "input";
-			String fileExtension = parambean.getProperty(
-					"catalogImport.extensions", "xls");
+			String fileExtension = parambean.getProperty("catalogImport.extensions", "xls");
 			ArrayList<String> fileExtensions = new ArrayList<String>();
 			fileExtensions.add(fileExtension);
 			outputDir = catalogDir + "output";
@@ -96,8 +88,7 @@ public class ImportCatalogJobBean {
 
 				int processed = 0;
 				try {
-					processed = pricePlanService.importFromExcel(em,
-							inputFileStream, currentUser, provider);
+					processed = pricePlanService.importFromExcel(em, inputFileStream, currentUser, provider);
 				} catch (BusinessException e) {
 					report += "Error " + e.getMessage();
 					log.error(e.getMessage());
@@ -109,8 +100,7 @@ public class ImportCatalogJobBean {
 				}
 
 				if (processed > 0) {
-					File fi = FileUtils
-							.replaceFileExtension(file, ".processed");
+					File fi = FileUtils.replaceFileExtension(file, ".processed");
 					FileUtils.moveFile(outputDir, fi, null);
 					try {
 						if (inputFileStream != null) {

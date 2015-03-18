@@ -12,6 +12,7 @@ import javax.interceptor.Interceptors;
 
 import org.meveo.admin.job.logging.JobLoggingInterceptor;
 import org.meveo.event.qualifier.Rejected;
+import org.meveo.interceptor.PerformanceInterceptor;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.billing.WalletOperationStatusEnum;
@@ -33,7 +34,7 @@ public class ReRatingJobBean implements Serializable {
 
 	@Inject
 	private RatingService ratingService;
-	
+
 	@Inject
 	protected Logger log;
 
@@ -41,21 +42,20 @@ public class ReRatingJobBean implements Serializable {
 	@Rejected
 	Event<WalletOperation> rejectededOperationProducer;
 
-
-	@Interceptors({ JobLoggingInterceptor.class })
+	@Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public void execute(JobExecutionResultImpl result, User currentUser, boolean useSamePricePlan) {
 		try {
-			List<WalletOperation> walletOperations = 
-					walletOperationService.findByStatus(WalletOperationStatusEnum.TO_RERATE, currentUser.getProvider());
+			List<WalletOperation> walletOperations = walletOperationService.findByStatus(
+					WalletOperationStatusEnum.TO_RERATE, currentUser.getProvider());
 
 			log.info("operations to rerate={}", walletOperations.size());
 
 			for (WalletOperation walletOperation : walletOperations) {
 				try {
-					
+
 					ratingService.reRate(walletOperation, useSamePricePlan);
-					
+
 				} catch (Exception e) {
 					rejectededOperationProducer.fire(walletOperation);
 					log.error(e.getMessage());

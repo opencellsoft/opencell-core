@@ -27,17 +27,23 @@ import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
+import javax.persistence.NamedQuery;
 import javax.persistence.NoResultException;
+import javax.persistence.Persistence;
 import javax.persistence.Query;
+import javax.persistence.TypedQuery;
 
 import org.infinispan.api.BasicCache;
 import org.infinispan.manager.CacheContainer;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.IncorrectChargeInstanceException;
 import org.meveo.admin.exception.IncorrectChargeTemplateException;
+import org.meveo.admin.exception.UnrolledbackBusinessException;
 import org.meveo.admin.util.ResourceBundle;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.QueryBuilder;
@@ -47,12 +53,15 @@ import org.meveo.model.admin.Seller;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.ApplicationTypeEnum;
 import org.meveo.model.billing.BillingAccount;
+import org.meveo.model.billing.BillingRunStatusEnum;
 import org.meveo.model.billing.BillingWalletTypeEnum;
 import org.meveo.model.billing.ChargeApplicationModeEnum;
 import org.meveo.model.billing.ChargeInstance;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.InvoiceSubcategoryCountry;
 import org.meveo.model.billing.OneShotChargeInstance;
+import org.meveo.model.billing.RatedTransaction;
+import org.meveo.model.billing.RatedTransactionStatusEnum;
 import org.meveo.model.billing.RecurringChargeInstance;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.Tax;
@@ -1445,4 +1454,16 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 		return result;
 	}
 
+	@TransactionAttribute(TransactionAttributeType.REQUIRED)
+	public int updateToRerate(List<Long> walletIdList ) {
+		int walletsOpToRerate=0;
+		List<RatedTransaction> ratedTransactionsBilled=(List<RatedTransaction>)getEntityManager().createNamedQuery("RatedTransaction.getRatedTransactionsBilled").setParameter("walletIdList", walletIdList).getResultList();
+		walletIdList.removeAll(ratedTransactionsBilled);
+		if(walletIdList.size()>0 && !walletIdList.isEmpty()){
+			walletsOpToRerate=getEntityManager().createNamedQuery("WalletOperation.setStatusToRerate").setParameter("notBilledWalletIdList", walletIdList).executeUpdate();
+			getEntityManager().createNamedQuery("RatedTransaction.setStatusToCanceled").setParameter("notBilledWalletIdList", walletIdList).executeUpdate();	
+		}
+		getEntityManager().flush();
+		return walletsOpToRerate;
+	}
 }

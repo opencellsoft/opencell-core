@@ -81,7 +81,17 @@ import org.meveo.model.crm.Provider;
 		@NamedQuery(name = "RatedTransaction.updateInvoicedDisplayFree", query = "UPDATE RatedTransaction r "
 				+ "SET r.billingRun=:billingRun,r.invoice=:invoice,r.status=org.meveo.model.billing.RatedTransactionStatusEnum.BILLED "
 				+ "where r.invoice is null" + " and r.status=org.meveo.model.billing.RatedTransactionStatusEnum.OPEN "
-				+ " and r.doNotTriggerInvoicing=false" + " and r.billingAccount=:billingAccount") })
+				+ " and r.doNotTriggerInvoicing=false" + " and r.billingAccount=:billingAccount"),
+				
+	 @NamedQuery(name = "RatedTransaction.getRatedTransactionsBilled",  
+				  query = "SELECT r.walletOperationId FROM RatedTransaction r "
+				  + " WHERE r.status=org.meveo.model.billing.RatedTransactionStatusEnum.BILLED"
+				  + " AND r.walletOperationId IN :walletIdList"),
+				
+	@NamedQuery(name = "RatedTransaction.setStatusToCanceled", 
+		           query = "UPDATE RatedTransaction rt set rt.status=org.meveo.model.billing.RatedTransactionStatusEnum.CANCELED"
+		         + " where rt.walletOperationId IN :notBilledWalletIdList")
+		})
 public class RatedTransaction extends BaseEntity {
 
 	private static final long serialVersionUID = 1L;
