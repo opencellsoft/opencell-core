@@ -933,6 +933,18 @@
 			</to-view-id>
 			<redirect />
 		</navigation-case>
+		<navigation-case>
+			<from-outcome>occTemplates</from-outcome>
+			<to-view-id>/pages/payments/occTemplates/occTemplates.xhtml
+			</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>occTemplateDetail</from-outcome>
+			<to-view-id>/pages/payments/occTemplates/occTemplateDetail.xhtml
+			</to-view-id>
+			<redirect />
+		</navigation-case>
 
 		<!-- <navigation-case> -->
 		<!-- <from-outcome>accountOperationDetail</from-outcome> -->
