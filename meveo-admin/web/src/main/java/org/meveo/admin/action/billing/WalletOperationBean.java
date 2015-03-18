@@ -143,13 +143,15 @@ public class WalletOperationBean extends BaseBean<WalletOperation> {
 		return super.getLazyDataModel();
 	}
 	
+	
 
 	public void updatedToRerate(WalletOperation walletOperation) {
 		 try{
 			  List<Long> walletIdList=new ArrayList<Long>();
 			  walletIdList.add(walletOperation.getId());
 			  if(walletOperationService.updateToRerate(walletIdList)>0){
-			   messages.info(new BundleKey("messages","update.successful"));
+				  walletOperationService.refresh(walletOperation);
+			      messages.info(new BundleKey("messages","update.successful"));
 			  }else{
 			 messages.info(new BundleKey("messages","walletOperation.alreadyBilled"));
 			 }
@@ -172,6 +174,6 @@ public class WalletOperationBean extends BaseBean<WalletOperation> {
 			log.error(e.getMessage());
 			messages.error(new BundleKey("messages","update.failed"));
 		}
-	} 
+	}
 } 
 
