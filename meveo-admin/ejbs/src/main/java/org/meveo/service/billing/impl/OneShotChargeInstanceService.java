@@ -270,7 +270,7 @@ public class OneShotChargeInstanceService extends BusinessService<OneShotChargeI
 				currentUser);
 		//we check that balance is unchanged
 		//
-		BigDecimal cacheBalance=walletCacheContainerProvider.getCacheBalance(wallet.getId());
+		BigDecimal cacheBalance=walletCacheContainerProvider.getBalance(wallet.getId());
 		if(cacheBalance.compareTo(balanceWithTax)!=0){
 			log.error("balances in prepaid matching process do not match cache={}, compensated={}"
 					,cacheBalance,balanceWithTax);

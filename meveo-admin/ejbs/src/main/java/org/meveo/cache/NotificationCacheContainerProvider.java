@@ -6,10 +6,11 @@ import java.util.HashMap;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.Resource;
+import javax.ejb.EJB;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
 import javax.inject.Inject;
-import javax.naming.InitialContext;
 
 import org.infinispan.api.BasicCache;
 import org.infinispan.manager.CacheContainer;
@@ -31,21 +32,26 @@ public class NotificationCacheContainerProvider {
     @Inject
     protected Logger log;
 
+    @EJB
+    private NotificationService notificationService;
+
     /**
      * Contains association between event type, entity class and notifications. Key format: <eventTypeFilter> //<provider id>_<eventTypeFilter>
      */
+    // @Resource(lookup = "java:jboss/infinispan/cache/meveo/meveo-notification-cache")
     private BasicCache<String, HashMap<Class<BusinessEntity>, List<Notification>>> eventNotificationCache;
 
-    @Inject
-    private NotificationService notificationService;
+    @Resource(name = "java:jboss/infinispan/container/meveo")
+    private CacheContainer meveoContainer;
 
     @PostConstruct
     private void init() {
         try {
             log.debug("NotificationCacheContainerProvider initializing...");
-            CacheContainer meveoContainer = (CacheContainer) new InitialContext().lookup("java:jboss/infinispan/container/meveo");
             eventNotificationCache = meveoContainer.getCache("meveo-notification-cache");
+
             populateNotificationCache();
+
             log.debug("NotificationCacheContainerProvider initialized");
 
         } catch (Exception e) {
@@ -57,12 +63,12 @@ public class NotificationCacheContainerProvider {
      * Populate notification cache
      */
     private void populateNotificationCache() {
-        log.info("start to populate notification cache");
-        List<Notification> allNotif = notificationService.listAll();
-        for (Notification notif : allNotif) {
+        log.info("Start to populate notification cache");
+        List<Notification> activeNotifications = notificationService.getNotificationsForCache();
+        for (Notification notif : activeNotifications) {
             addNotificationToCache(notif);
         }
-        log.debug("notification cache populated with {} notifications", allNotif.size());
+        log.debug("Notification cache populated with {} notifications", activeNotifications.size());
     }
 
     /**
@@ -71,13 +77,12 @@ public class NotificationCacheContainerProvider {
      * @param notif Notification to add
      */
     public void addNotificationToCache(Notification notif) {
-        if (notif.isDisabled()) {
-            return;
-        }
+
         try {
             String cacheKey = notif.getEventTypeFilter().name(); // notif.getProvider().getId() + "_" + notif.getEventTypeFilter().name();
             @SuppressWarnings("unchecked")
             Class<BusinessEntity> c = (Class<BusinessEntity>) Class.forName(notif.getClassNameFilter());
+            eventNotificationCache.putIfAbsent(cacheKey, new HashMap<Class<BusinessEntity>, List<Notification>>());
             if (!eventNotificationCache.get(cacheKey).containsKey(c)) {
                 eventNotificationCache.get(cacheKey).put(c, new ArrayList<Notification>());
             }
@@ -97,16 +102,18 @@ public class NotificationCacheContainerProvider {
      */
     public void removeNotificationFromCache(Notification notif) {
         String cacheKey = notif.getEventTypeFilter().name(); // notif.getProvider().getId() + "_" + notif.getEventTypeFilter().name();
-        for (Class<BusinessEntity> c : eventNotificationCache.get(cacheKey).keySet()) {
-            eventNotificationCache.get(cacheKey).get(c).remove(notif);
-            log.info("Remove notification {} from notification cache", notif);
+        if (eventNotificationCache.containsKey(cacheKey)) {
+            for (Class<BusinessEntity> c : eventNotificationCache.get(cacheKey).keySet()) {
+                eventNotificationCache.get(cacheKey).get(c).remove(notif);
+                log.info("Remove notification {} from notification cache", notif);
+            }
         }
     }
 
     /**
      * Update notification in cache
      * 
-     * @param notif Notification to upate
+     * @param notif Notification to update
      */
     public void updateNotificationInCache(Notification notif) {
         removeNotificationFromCache(notif);
@@ -124,9 +131,11 @@ public class NotificationCacheContainerProvider {
         List<Notification> notifications = new ArrayList<Notification>();
 
         String cacheKey = eventType.name(); // entity.getProvider().getId() + "_" + eventType.name();
-        for (Class<BusinessEntity> c : eventNotificationCache.get(cacheKey).keySet()) {
-            if (c.isAssignableFrom(entity.getClass())) {
-                notifications.addAll(eventNotificationCache.get(cacheKey).get(c));
+        if (eventNotificationCache.containsKey(cacheKey)) {
+            for (Class<BusinessEntity> c : eventNotificationCache.get(cacheKey).keySet()) {
+                if (c.isAssignableFrom(entity.getClass())) {
+                    notifications.addAll(eventNotificationCache.get(cacheKey).get(c));
+                }
             }
         }
         return notifications;

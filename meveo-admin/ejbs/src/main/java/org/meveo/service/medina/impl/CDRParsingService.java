@@ -12,13 +12,13 @@ import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.parse.csv.CdrParserProducer;
+import org.meveo.cache.CdrEdrProcessingCacheContainerProvider;
 import org.meveo.event.qualifier.RejectedCDR;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.mediation.Access;
 import org.meveo.model.rating.EDR;
 import org.meveo.model.rating.EDRStatusEnum;
 import org.meveo.service.billing.impl.EdrService;
-import org.meveo.util.MeveoCacheContainerProvider;
 
 @Stateless
 public class CDRParsingService {
@@ -29,15 +29,14 @@ public class CDRParsingService {
 	private EdrService edrService;
 
 	@Inject
-	private AccessService accessService;
-	
-
-	@Inject
 	@RejectedCDR
 	private Event<Serializable> rejectededCdrEventProducer;
 
 	@Inject
 	private CdrParserProducer cdrParserProducer;
+	
+	@Inject
+	private CdrEdrProcessingCacheContainerProvider cdrEdrProcessingCacheContainerProvider;
 
 	public void init(File CDRFile) throws BusinessException {
 		cdrParser = cdrParserProducer.getParser();
@@ -78,7 +77,7 @@ public class CDRParsingService {
 	public List<EDR> getEDRList(String line,Provider provider) throws CDRParsingException {
 		List<EDR> result = new ArrayList<EDR>();
 		Serializable cdr = cdrParser.getCDR(line);
-		deduplicate(cdr);
+		deduplicate(cdr, provider);
 		List<Access> accessPoints = accessPointLookup(cdr,provider);
 		boolean foundMatchingAccess = false;
 		for (Access accessPoint : accessPoints) {
@@ -112,28 +111,21 @@ public class CDRParsingService {
 		return result;
 	}
 
-	private void deduplicate(Serializable cdr) throws DuplicateException {
-		if (edrService.duplicateFound(cdrParser.getOriginBatch(), cdrParser.getOriginRecord(cdr))) {
+	private void deduplicate(Serializable cdr, Provider provider) throws DuplicateException {
+		if (edrService.duplicateFound(provider, cdrParser.getOriginBatch(), cdrParser.getOriginRecord(cdr))) {
 			throw new DuplicateException(cdr);
 		}
 	}
 
-	private List<Access> accessPointLookup(Serializable cdr,Provider provider) throws InvalidAccessException {
-		String userId = cdrParser.getAccessUserId(cdr);
-		String cacheKey = provider.getCode()+"_"+userId;
-		List<Access> accesses = null;
-		if (MeveoCacheContainerProvider.getAccessCache().containsKey(cacheKey)) {
-			accesses = MeveoCacheContainerProvider.getAccessCache().get(cacheKey);
-		} else {
-			accesses = accessService.findByUserID(userId,provider);
-			if (accesses.size() == 0) {
-				rejectededCdrEventProducer.fire(cdr);
-				throw new InvalidAccessException(cdr);
-			}
-			MeveoCacheContainerProvider.getAccessCache().put(cacheKey, accesses);
-		}
-		return accesses;
-	}
+    private List<Access> accessPointLookup(Serializable cdr, Provider provider) throws InvalidAccessException {
+        String accessUserId = cdrParser.getAccessUserId(cdr);
+        List<Access> accesses = cdrEdrProcessingCacheContainerProvider.getAccessesByAccessUserId(provider.getId(), accessUserId);
+        if (accesses == null || accesses.size() == 0) {
+            rejectededCdrEventProducer.fire(cdr);
+            throw new InvalidAccessException(cdr);
+        }
+        return accesses;
+    }
 
 	public String getCDRLine(Serializable cdr, String reason) {
 		return cdrParser.getCDRLine(cdr, reason);

@@ -25,6 +25,7 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.cache.RatingCacheContainerProvider;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.admin.User;
@@ -42,14 +43,14 @@ import org.meveo.service.base.BusinessService;
 @Stateless
 public class UsageChargeInstanceService extends BusinessService<UsageChargeInstance> {
 
-	@EJB
-	UsageRatingService usageRatingService;
-
 	@Inject
 	private WalletService walletService;
 
 	@Inject
 	private CounterInstanceService counterInstanceService;
+
+    @Inject
+    private RatingCacheContainerProvider ratingCacheContainerProvider;
 
 	public UsageChargeInstance usageChargeInstanciation(Subscription subscription, ServiceInstance serviceInstance,
 			ServiceChargeTemplateUsage serviceUsageChargeTemplate, Date startDate, Seller seller, User creator)
@@ -120,7 +121,7 @@ public class UsageChargeInstanceService extends BusinessService<UsageChargeInsta
 		usageChargeInstance.setStatus(InstanceStatusEnum.ACTIVE);
 		setProvider(currentUser.getProvider());
 		update(usageChargeInstance, currentUser);
-		usageRatingService.updateCache(usageChargeInstance);
+		ratingCacheContainerProvider.updateUsageChargeInstanceInCache(usageChargeInstance);
 	}
 
 	public void terminateUsageChargeInstance(UsageChargeInstance usageChargeInstance, Date terminationDate) {
@@ -136,14 +137,14 @@ public class UsageChargeInstanceService extends BusinessService<UsageChargeInsta
 			Date terminationDate, User currentUser) {
 		usageChargeInstance.setTerminationDate(terminationDate);
 		usageChargeInstance.setStatus(InstanceStatusEnum.TERMINATED);
-		usageRatingService.updateCache(usageChargeInstance);
+		ratingCacheContainerProvider.updateUsageChargeInstanceInCache(usageChargeInstance);
 		update(usageChargeInstance, currentUser);
 	}
 
 	public void suspendUsageChargeInstance(UsageChargeInstance usageChargeInstance, Date suspensionDate) {
 		usageChargeInstance.setTerminationDate(suspensionDate);
 		usageChargeInstance.setStatus(InstanceStatusEnum.SUSPENDED);
-		usageRatingService.updateCache(usageChargeInstance);
+		ratingCacheContainerProvider.updateUsageChargeInstanceInCache(usageChargeInstance);
 		update(usageChargeInstance);
 	}
 
@@ -151,7 +152,7 @@ public class UsageChargeInstanceService extends BusinessService<UsageChargeInsta
 		usageChargeInstance.setChargeDate(reactivationDate);
 		usageChargeInstance.setTerminationDate(null);
 		usageChargeInstance.setStatus(InstanceStatusEnum.ACTIVE);
-		usageRatingService.updateCache(usageChargeInstance);
+		ratingCacheContainerProvider.updateUsageChargeInstanceInCache(usageChargeInstance);
 		update(usageChargeInstance);
 	}
 
@@ -162,4 +163,21 @@ public class UsageChargeInstanceService extends BusinessService<UsageChargeInsta
 		return qb.getQuery(getEntityManager()).getResultList();
 	}
 
+    /**
+     * Get a list of prepaid and active usage charge instances to populate a cache
+     * 
+     * @return A list of prepaid and active usage charge instances
+     */
+    public List<UsageChargeInstance> getPrepaidUsageChargeInstancesForCache() {
+        return getEntityManager().createNamedQuery("UsageChargeInstance.listPrepaidActive", UsageChargeInstance.class).getResultList();
+    }
+    
+    /**
+     * Get a list of all active usage charge instances to populate a cache
+     * 
+     * @return A list of prepaid and active usage charge instances
+     */
+    public List<UsageChargeInstance> getAllUsageChargeInstancesForCache() {
+        return getEntityManager().createNamedQuery("UsageChargeInstance.listActive", UsageChargeInstance.class).getResultList();
+    }
 }

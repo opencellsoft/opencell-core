@@ -20,11 +20,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.ejb.Stateless;
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
+import org.meveo.cache.CdrEdrProcessingCacheContainerProvider;
 import org.meveo.commons.utils.QueryBuilder;
+import org.meveo.model.admin.User;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.mediation.Access;
@@ -32,6 +35,9 @@ import org.meveo.service.base.PersistenceService;
 
 @Stateless
 public class AccessService extends PersistenceService<Access> {
+    
+    @Inject
+    private CdrEdrProcessingCacheContainerProvider cdrEdrProcessingCacheContainerProvider;
 
 	@SuppressWarnings("unchecked")
 	public List<Access> findByUserID(String userId,Provider provider) {
@@ -86,4 +92,45 @@ public class AccessService extends PersistenceService<Access> {
 		}
 	}
 
+    /**
+     * Get a list of access to populate a cache
+     * 
+     * @return A list of active access
+     */
+    public List<Access> getAccessesForCache() {
+        return getEntityManager().createNamedQuery("Access.getAccessesForCache", Access.class).getResultList();
+    }
+    
+    @Override
+    public void create(Access access, User creator, Provider provider) {
+        super.create(access, creator, provider);
+        cdrEdrProcessingCacheContainerProvider.addAccessToCache(access);
+    }
+
+    @Override
+    public Access update(Access access, User updater) {
+        access = super.update(access, updater);
+        cdrEdrProcessingCacheContainerProvider.updateAccessInCache(access);
+        return access;
+    }
+
+    @Override
+    public void remove(Access access) {
+        super.remove(access);
+        cdrEdrProcessingCacheContainerProvider.removeAccessFromCache(access);
+    }
+
+    @Override
+    public Access disable(Access access) {
+        access = super.disable(access);
+        cdrEdrProcessingCacheContainerProvider.removeAccessFromCache(access);
+        return access;
+    }
+
+    @Override
+    public Access enable(Access access) {
+        access = super.enable(access);
+        cdrEdrProcessingCacheContainerProvider.addAccessToCache(access);
+        return access;
+    }
 }

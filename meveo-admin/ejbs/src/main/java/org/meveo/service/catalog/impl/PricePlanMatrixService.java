@@ -498,7 +498,6 @@ public class PricePlanMatrixService extends PersistenceService<PricePlanMatrix> 
      * 
      * @return A list of active priceplans
      */
-    @SuppressWarnings("unchecked")
     public List<PricePlanMatrix> getPricePlansForCache() {
         return getEntityManager().createNamedQuery("PricePlanMatrix.getPricePlansForCache", PricePlanMatrix.class).getResultList();
     }

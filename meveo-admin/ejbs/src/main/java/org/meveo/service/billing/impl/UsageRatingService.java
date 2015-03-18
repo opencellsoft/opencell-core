@@ -2,15 +2,11 @@ package org.meveo.service.billing.impl;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
-import javax.annotation.PostConstruct;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
@@ -20,11 +16,11 @@ import javax.persistence.PersistenceContext;
 
 import org.apache.commons.lang.StringUtils;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.cache.RatingCacheContainerProvider;
 import org.meveo.model.Auditable;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.CounterInstance;
 import org.meveo.model.billing.CounterPeriod;
-import org.meveo.model.billing.InstanceStatusEnum;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.InvoiceSubcategoryCountry;
 import org.meveo.model.billing.Reservation;
@@ -42,13 +38,9 @@ import org.meveo.model.cache.CounterPeriodCache;
 import org.meveo.model.cache.TriggeredEDRCache;
 import org.meveo.model.cache.UsageChargeInstanceCache;
 import org.meveo.model.cache.UsageChargeTemplateCache;
-import org.meveo.model.catalog.ChargeTemplate;
-import org.meveo.model.catalog.TriggeredEDRTemplate;
-import org.meveo.model.catalog.UsageChargeTemplate;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.rating.EDR;
 import org.meveo.model.rating.EDRStatusEnum;
-import org.meveo.util.MeveoCacheContainerProvider;
 import org.meveo.util.MeveoJpa;
 import org.slf4j.Logger;
 
@@ -61,6 +53,7 @@ public class UsageRatingService {
 
 	@Inject
 	protected Logger log;
+	
 	@Inject
 	private EdrService edrService;
 
@@ -69,9 +62,6 @@ public class UsageRatingService {
 
 	@Inject
 	private CounterInstanceService counterInstanceService;
-
-	@Inject
-	private CounterPeriodService counterPeriodService;
 
 	@Inject
 	private RatingService ratingService;
@@ -84,242 +74,9 @@ public class UsageRatingService {
 
 	@Inject
 	private SubscriptionService subscriptionService;
-
-	@PostConstruct
-	public synchronized void updateCacheFromDB() {
-		log.info("loading usage charge cache");
-		@SuppressWarnings("unchecked")
-		List<UsageChargeInstance> usageChargeInstances = em.createQuery(
-				"From UsageChargeInstance u " + "where u.status=org.meveo.model.billing.InstanceStatusEnum.ACTIVE")
-				.getResultList();
-		if (usageChargeInstances != null) {
-			log.debug("loading cache for {} usage charges", usageChargeInstances.size());
-			for (UsageChargeInstance usageChargeInstance : usageChargeInstances) {
-				updateCache(usageChargeInstance);
-			}
-		}
-	}
-
-	@SuppressWarnings("unchecked")
-	public void updateTemplateCache(TriggeredEDRTemplate triggeredEDRTemplate) {
-		log.debug("updateTemplateCache for triggeredEDR {}", triggeredEDRTemplate.toString());
-
-		List<UsageChargeTemplate> charges = em.createNamedQuery("UsageChargeTemplate.getWithTemplateEDR")
-				.setParameter("edrTemplate", triggeredEDRTemplate).getResultList();
-
-		for (UsageChargeTemplate charge : charges) {
-			updateTemplateCache(charge);
-		}
-	}
-
-	public UsageChargeTemplateCache updateTemplateCache(UsageChargeTemplate usageChargeTemplate) {
-		UsageChargeTemplateCache cachedValue = null;
-		if (usageChargeTemplate != null) {
-			log.debug("updateTemplateCache for charge {}", usageChargeTemplate.getCode());
-			if (MeveoCacheContainerProvider.getUsageChargeTemplateCacheCache().containsKey(usageChargeTemplate.getId())) {
-				log.info("cache already contains the code");
-				cachedValue = MeveoCacheContainerProvider.getUsageChargeTemplateCacheCache().get(
-						usageChargeTemplate.getId());
-				cachedValue.setEdrTemplates(new HashSet<TriggeredEDRCache>());
-			} else {
-				log.info("cache does not contain the code");
-				cachedValue = new UsageChargeTemplateCache();
-				MeveoCacheContainerProvider.getUsageChargeTemplateCacheCache().put(usageChargeTemplate.getId(),
-						cachedValue);
-			}
-
-			if (usageChargeTemplate.getFilterExpression() == null
-					|| usageChargeTemplate.getFilterExpression().equals("")) {
-				log.info("set filterExpression to null");
-				cachedValue.setFilterExpression(null);
-			} else {
-				log.info("set filterExpression to " + usageChargeTemplate.getFilterExpression());
-				cachedValue.setFilterExpression(usageChargeTemplate.getFilterExpression());
-			}
-			if (usageChargeTemplate.getFilterParam1() == null || usageChargeTemplate.getFilterParam1().equals("")) {
-				log.info("set filter1 to null");
-				cachedValue.setFilter1(null);
-			} else {
-				log.info("set filter1 to " + usageChargeTemplate.getFilterParam1());
-				cachedValue.setFilter1(usageChargeTemplate.getFilterParam1());
-			}
-			if (usageChargeTemplate.getFilterParam2() == null || usageChargeTemplate.getFilterParam2().equals("")) {
-				log.info("set filter2 to null");
-				cachedValue.setFilter2(null);
-			} else {
-				log.info("set filter2 to " + usageChargeTemplate.getFilterParam2());
-				cachedValue.setFilter2(usageChargeTemplate.getFilterParam2());
-			}
-			if (usageChargeTemplate.getFilterParam3() == null || usageChargeTemplate.getFilterParam3().equals("")) {
-				log.info("set filter3 to null");
-				cachedValue.setFilter3(null);
-			} else {
-				log.info("set filter3 to " + usageChargeTemplate.getFilterParam3());
-				cachedValue.setFilter3(usageChargeTemplate.getFilterParam3());
-			}
-			if (usageChargeTemplate.getFilterParam4() == null || usageChargeTemplate.getFilterParam4().equals("")) {
-				log.info("set filter4 to null");
-				cachedValue.setFilter4(null);
-			} else {
-				log.info("set filter4 to " + usageChargeTemplate.getFilterParam4());
-				cachedValue.setFilter4(usageChargeTemplate.getFilterParam4());
-			}
-			if (usageChargeTemplate.getEdrTemplates() == null || usageChargeTemplate.getEdrTemplates().size() == 0) {
-				log.info("do not set erdTemplates");
-			} else {
-				log.info("set erdTemplates");
-				Set<TriggeredEDRCache> edrTemplates = cachedValue.getEdrTemplates();
-				for (TriggeredEDRTemplate edrTemplate : usageChargeTemplate.getEdrTemplates()) {
-					TriggeredEDRCache trigerredEDRCache = new TriggeredEDRCache();
-					trigerredEDRCache.setConditionEL(edrTemplate.getConditionEl());
-
-					trigerredEDRCache.setCode(edrTemplate.getCode());
-					trigerredEDRCache.setSubscriptionEL(edrTemplate.getSubscriptionEl());
-
-					if (edrTemplate.getQuantityEl() == null || (edrTemplate.getQuantityEl().equals(""))) {
-						log.error("edrTemplate QuantityEL must be set for triggeredEDRTemplate=" + edrTemplate.getId());
-					} else {
-						trigerredEDRCache.setQuantityEL(edrTemplate.getQuantityEl());
-					}
-					if (edrTemplate.getParam1El() == null || (edrTemplate.getParam1El().equals(""))) {
-						log.error("edrTemplate param1El must be set for triggeredEDRTemplate=" + edrTemplate.getId());
-					} else {
-						trigerredEDRCache.setParam1EL(edrTemplate.getParam1El());
-					}
-
-					if (edrTemplate.getParam2El() == null || (edrTemplate.getParam2El().equals(""))) {
-						log.info("set param2El to null");
-						trigerredEDRCache.setParam2EL(null);
-					} else {
-						log.info("set param2El to " + edrTemplate.getParam2El());
-						trigerredEDRCache.setParam2EL(edrTemplate.getParam2El());
-					}
-
-					if (edrTemplate.getParam3El() == null || (edrTemplate.getParam3El().equals(""))) {
-						log.info("set param3El to null");
-						trigerredEDRCache.setParam3EL(null);
-					} else {
-						log.info("set param3El to " + edrTemplate.getParam3El());
-						trigerredEDRCache.setParam3EL(edrTemplate.getParam3El());
-					}
-
-					if (edrTemplate.getParam4El() == null || (edrTemplate.getParam4El().equals(""))) {
-						log.info("set param4El to null");
-						trigerredEDRCache.setParam4EL(null);
-					} else {
-						log.info("set param4El to " + edrTemplate.getParam4El());
-						trigerredEDRCache.setParam4EL(edrTemplate.getParam4El());
-					}
-					edrTemplates.add(trigerredEDRCache);
-				}
-			}
-			if (cachedValue.getPriority() != usageChargeTemplate.getPriority()) {
-				log.info("set priority to " + usageChargeTemplate.getPriority());
-				cachedValue.setPriority(usageChargeTemplate.getPriority());
-				// TODO reorder all cacheInstance associated to this template
-				for (Long subscriptionId : cachedValue.getSubscriptionIds()) {
-					log.info("reorder charge cache for subscription " + subscriptionId);
-					reorderChargeCache(subscriptionId);
-				}
-			}
-			cachedValue.setFilterExpression(usageChargeTemplate.getFilterExpression());
-
-		}
-		return cachedValue;
-	}
-
-	private void reorderChargeCache(Long id) {
-		List<UsageChargeInstanceCache> charges = MeveoCacheContainerProvider.getUsageChargeInstanceCache().get(id);
-		Collections.sort(charges);
-		log.info("sorted " + charges.size() + " usage charges");
-	}
-
-	public void updateCache(UsageChargeInstance usageChargeInstance) {
-		if (usageChargeInstance != null) {
-
-			UsageChargeInstanceCache cachedValue = new UsageChargeInstanceCache();
-			ChargeTemplate chargeTemplate = usageChargeInstance.getChargeTemplate();
-			log.debug("chargeTemplateId={}" + chargeTemplate.getId());
-			// UsageChargeTemplate usageChargeTemplate=(UsageChargeTemplate)
-			// usageChargeInstance.getChargeTemplate();
-			UsageChargeTemplate usageChargeTemplate = em.find(UsageChargeTemplate.class, chargeTemplate.getId());
-			Long key = usageChargeInstance.getServiceInstance().getSubscription().getId();
-			log.info("update cache key (subs Id)={} for charge with id={}", key, usageChargeInstance.getId());
-			boolean cacheContainsKey = MeveoCacheContainerProvider.getUsageChargeInstanceCache().containsKey(key);
-			boolean cacheContainsCharge = false;
-
-			List<UsageChargeInstanceCache> charges = null;
-			if (cacheContainsKey) {
-				log.info("the cache contains the key");
-				charges = MeveoCacheContainerProvider.getUsageChargeInstanceCache().get(key);
-				for (UsageChargeInstanceCache charge : charges) {
-					if (charge.getChargeInstanceId() == usageChargeInstance.getId()) {
-						if (usageChargeInstance.getStatus() != InstanceStatusEnum.ACTIVE) {
-							log.info("the cache contains the charge but its status in db is not active so we remove it");
-							charges.remove(charge);
-							if (charges.size() == 0) {
-								MeveoCacheContainerProvider.getUsageChargeInstanceCache().remove(key);
-							}
-							return;
-						} else {
-							cachedValue = charge;
-							cacheContainsCharge = true;
-
-						}
-					}
-				}
-			} else {
-				log.info("the cache does not contains the key");
-				charges = new ArrayList<UsageChargeInstanceCache>();
-			}
-			if (usageChargeInstance.getStatus() != InstanceStatusEnum.ACTIVE) {
-				log.info("the charge is not active, we dont add it to cache");
-				return;
-			}
-
-			cachedValue.setSubscriptionDate(usageChargeInstance.getServiceInstance().getSubscriptionDate());
-			cachedValue.setChargeDate(usageChargeInstance.getChargeDate());
-			cachedValue.setChargeInstanceId(usageChargeInstance.getId());
-			usageChargeInstance.getProvider().getCode();
-			cachedValue.setProvider(usageChargeInstance.getProvider());
-			cachedValue.setCurrencyId(usageChargeInstance.getCurrency().getId());
-			if (usageChargeInstance.getCounter() != null) {
-				CounterInstanceCache counterCacheValue = null;
-				Long counterKey = CounterInstanceCache.getKey(usageChargeInstance.getCounter());
-
-				log.info("counter key:" + counterKey);
-				if (MeveoCacheContainerProvider.getCounterCache().containsKey(counterKey)) {
-					log.info("the counter cache contains the key");
-					counterCacheValue = MeveoCacheContainerProvider.getCounterCache().get(counterKey);
-				} else {
-					log.info("the counter cache doesnt contain the key, we add it");
-					counterCacheValue = CounterInstanceCache.getInstance(usageChargeInstance.getCounter());
-					MeveoCacheContainerProvider.getCounterCache().put(counterKey, counterCacheValue);
-				}
-				cachedValue.setCounter(counterCacheValue);
-			}
-			cachedValue.setTerminationDate(usageChargeInstance.getTerminationDate());
-			UsageChargeTemplateCache templateCache = updateTemplateCache(usageChargeTemplate);
-			cachedValue.setTemplateCache(templateCache);
-			templateCache.getSubscriptionIds().add(key);
-			cachedValue.setUnityMultiplicator(usageChargeTemplate.getUnityMultiplicator());
-			cachedValue.setUnityNbDecimal(usageChargeTemplate.getUnityNbDecimal());
-			cachedValue.setLastUpdate(new Date());
-
-			if (!cacheContainsCharge) {
-				charges.add(cachedValue);
-				log.info("charge added, we order it");
-				Collections.sort(charges);
-			}
-
-			if (!cacheContainsKey) {
-				log.info("key added to charge cache");
-				MeveoCacheContainerProvider.getUsageChargeInstanceCache().put(key, charges);
-			}
-
-			reorderChargeCache(key);
-		}
-	}
+	
+    @Inject
+    private RatingCacheContainerProvider ratingCacheContainerProvider;
 
 	// @PreDestroy
 	// accessing Entity manager in predestroy is bugged in jboss7.1.3
@@ -429,19 +186,19 @@ public class UsageRatingService {
 	 * This method first look if there is a counter and a
 	 * 
 	 * @param edr
-	 * @param charge
+	 * @param cachedCharge
 	 * @return if edr quantity fits partially in the counter, returns the
 	 *         remaining quantity
 	 * @throws BusinessException
 	 */
-	BigDecimal deduceCounter(EDR edr, UsageChargeInstanceCache charge, Reservation reservation, User currentUser)
+	BigDecimal deduceCounter(EDR edr, UsageChargeInstanceCache cachedCharge, Reservation reservation, User currentUser)
 			throws BusinessException {
-		log.info("Deduce counter for key " + charge.getCounter().getKey());
+		log.info("Deduce counter for key " + cachedCharge.getCounter().getCounterInstanceId());
 
 		BigDecimal deducedQuantity = BigDecimal.ZERO;
 		BigDecimal deducedQuantityInEDRUnit = BigDecimal.ZERO;
-		CounterInstanceCache counterInstanceCache = MeveoCacheContainerProvider.getCounterCache().get(
-				charge.getCounter().getKey());
+		CounterInstanceCache counterInstanceCache = ratingCacheContainerProvider.getCounterInstance(
+				cachedCharge.getCounter().getCounterInstanceId());
 		CounterPeriodCache periodCache = null;
 
 		if (counterInstanceCache.getCounterPeriods() != null) {
@@ -459,9 +216,9 @@ public class UsageRatingService {
 
 		CounterInstance counterInstance = null;
 		if (periodCache == null) {
-			counterInstance = counterInstanceService.findById(counterInstanceCache.getKey());
+			counterInstance = counterInstanceService.findById(counterInstanceCache.getCounterInstanceId());
 			CounterPeriod counterPeriod = counterInstanceService.createPeriod(counterInstance, edr.getEventDate(),
-					charge.getSubscriptionDate(), currentUser);
+					cachedCharge.getSubscriptionDate(), currentUser);
 			if (counterPeriod != null) {
 				periodCache = CounterPeriodCache.getInstance(counterPeriod, counterInstance.getCounterTemplate());
 				counterInstanceCache.getCounterPeriods().add(periodCache);
@@ -472,9 +229,9 @@ public class UsageRatingService {
 
 		if (periodCache != null) {
 			synchronized (periodCache) {
-				BigDecimal countedValue = charge.getInChargeUnit(edr.getQuantity());
+				BigDecimal countedValue = cachedCharge.getInChargeUnit(edr.getQuantity());
 				log.debug("value to deduce {} * {} = {} from current value {}", edr.getQuantity(),
-						charge.getUnityMultiplicator(), countedValue, periodCache.getValue());
+						cachedCharge.getUnityMultiplicator(), countedValue, periodCache.getValue());
 
 				if (periodCache.getLevel() == null) {
 					deducedQuantity = countedValue;
@@ -482,7 +239,7 @@ public class UsageRatingService {
 					if (periodCache.getValue().compareTo(countedValue) < 0) {
 						deducedQuantity = periodCache.getValue();
 						periodCache.setValue(BigDecimal.ZERO);
-						deducedQuantityInEDRUnit = charge.getInEDRUnit(deducedQuantity);
+						deducedQuantityInEDRUnit = cachedCharge.getInEDRUnit(deducedQuantity);
 						log.debug("we deduced {} and set the counter period value to 0", deducedQuantity);
 					} else {
 						deducedQuantity = countedValue;
@@ -509,26 +266,7 @@ public class UsageRatingService {
 		return deducedQuantityInEDRUnit;
 	}
 
-	public void restoreCounters(Map<Long, BigDecimal> counterPeriodValues) throws BusinessException {
-		for (Long cId : counterPeriodValues.keySet()) {
-			CounterPeriod counterPeriod = counterPeriodService.findById(cId);
-			BigDecimal value = counterPeriodValues.get(cId);
-			Long counterKey = CounterInstanceCache.getKey(counterPeriod.getCounterInstance());
-			if (MeveoCacheContainerProvider.getCounterCache().containsKey(counterKey)) {
-				CounterInstanceCache counterCacheValue = MeveoCacheContainerProvider.getCounterCache().get(counterKey);
-				for (CounterPeriodCache cpc : counterCacheValue.getCounterPeriods()) {
-					if (cpc.getCounterPeriodId() == cId) {
-						cpc.getValue().add(value);
-						log.debug("added {} to cache (new value {})", value, cpc.getValue());
-						break;
-					}
-				}
-			}
-			counterPeriod.setValue(counterPeriod.getValue().add(value));
-			log.debug("added {}  (new value {}) to counterPeriod {}, counter {}", value, counterPeriod.getValue(),
-					counterPeriod.getId(), counterKey);
-		}
-	}
+
 
 	/**
 	 * this method evaluate the EDR against the charge and its counter it
@@ -677,11 +415,9 @@ public class UsageRatingService {
 			boolean edrIsRated = false;
 
 			try {
-				if (MeveoCacheContainerProvider.getUsageChargeInstanceCache()
-						.containsKey(edr.getSubscription().getId())) {
+				if (ratingCacheContainerProvider.isUsageChargeInstancesCached(edr.getSubscription().getId())) {
 					// TODO:order charges by priority and id
-					List<UsageChargeInstanceCache> charges = MeveoCacheContainerProvider.getUsageChargeInstanceCache()
-							.get(edr.getSubscription().getId());
+					List<UsageChargeInstanceCache> charges = ratingCacheContainerProvider.getUsageChargeInstances(edr.getSubscription().getId());
 
 					for (UsageChargeInstanceCache charge : charges) {
 						UsageChargeTemplateCache templateCache = charge.getTemplateCache();
@@ -756,11 +492,9 @@ public class UsageRatingService {
 			boolean edrIsRated = false;
 
 			try {
-				if (MeveoCacheContainerProvider.getUsageChargeInstanceCache()
-						.containsKey(edr.getSubscription().getId())) {
+				if (ratingCacheContainerProvider.isUsageChargeInstancesCached(edr.getSubscription().getId())) {
 					// TODO:order charges by priority and id
-					List<UsageChargeInstanceCache> charges = MeveoCacheContainerProvider.getUsageChargeInstanceCache()
-							.get(edr.getSubscription().getId());
+					List<UsageChargeInstanceCache> charges = ratingCacheContainerProvider.getUsageChargeInstances(edr.getSubscription().getId());
 					reservation = new Reservation();
 					reservation.setProvider(currentUser.getProvider());
 					reservation.setReservationDate(edr.getEventDate());

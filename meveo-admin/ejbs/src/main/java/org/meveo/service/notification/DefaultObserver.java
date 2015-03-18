@@ -4,7 +4,6 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import javax.ejb.Singleton;
@@ -30,9 +29,6 @@ import org.meveo.event.qualifier.Updated;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.IEntity;
 import org.meveo.model.admin.User;
-import org.meveo.model.catalog.PricePlanMatrix;
-import org.meveo.model.catalog.UsageChargeTemplate;
-import org.meveo.model.mediation.Access;
 import org.meveo.model.notification.EmailNotification;
 import org.meveo.model.notification.InboundRequest;
 import org.meveo.model.notification.InstantMessagingNotification;
@@ -44,7 +40,6 @@ import org.meveo.model.notification.WebHook;
 import org.meveo.service.billing.impl.CounterInstanceService;
 import org.meveo.service.billing.impl.CounterValueInsufficientException;
 import org.meveo.service.billing.impl.RatingService;
-import org.meveo.util.MeveoCacheContainerProvider;
 import org.slf4j.Logger;
 
 @Singleton
@@ -183,27 +178,21 @@ public class DefaultObserver {
     public void entityUpdated(@Observes @Updated BaseEntity e) {
         log.debug("Defaut observer : Entity {} with id {} updated", e.getClass().getName(), e.getId());
         checkEvent(NotificationEventTypeEnum.UPDATED, e);
-
-        updateCache(e, false);
     }
 
     public void entityRemoved(@Observes @Removed BaseEntity e) {
         log.debug("Defaut observer : Entity {} with id {} removed", e.getClass().getName(), e.getId());
         checkEvent(NotificationEventTypeEnum.REMOVED, e);
-        updateCache(e, true);
     }
 
     public void entityDisabled(@Observes @Disabled BaseEntity e) {
         log.debug("Defaut observer : Entity {} with id {} disabled", e.getClass().getName(), e.getId());
         checkEvent(NotificationEventTypeEnum.DISABLED, e);
-        updateCache(e, true);
     }
 
     public void entityEnabled(@Observes @Enabled BaseEntity e) {
         log.debug("Defaut observer : Entity {} with id {} enabled", e.getClass().getName(), e.getId());
         checkEvent(NotificationEventTypeEnum.ENABLED, e);
-
-        updateCache(e, false);
     }
 
     public void entityTerminated(@Observes @Terminated BaseEntity e) {
@@ -237,63 +226,4 @@ public class DefaultObserver {
         log.debug("Defaut observer : inbound request {} ", e.getCode());
         checkEvent(NotificationEventTypeEnum.INBOUND_REQ, e);
     }
-
-    public void updateCache(IEntity e, boolean removeAction) {
-        if (e instanceof PricePlanMatrix) {
-            if (MeveoCacheContainerProvider.getAllPricePlan().containsKey(((PricePlanMatrix) e).getProvider().getCode())) {
-
-                if (MeveoCacheContainerProvider.getAllPricePlan().get(((PricePlanMatrix) e).getProvider().getCode()).containsKey(((PricePlanMatrix) e).getEventCode())) {
-                    List<PricePlanMatrix> listPricePlan = MeveoCacheContainerProvider.getAllPricePlan().get(((PricePlanMatrix) e).getProvider().getCode())
-                        .get(((PricePlanMatrix) e).getEventCode());
-                    Integer pricePlanIndex = null;
-                    Integer index = 0;
-                    for (PricePlanMatrix pricePlan : listPricePlan) {
-                        if (pricePlan.getId().equals(e.getId())) {
-                            pricePlanIndex = index;
-                            break;
-                        }
-                        index++;
-                    }
-                    if (pricePlanIndex != null) {
-                        if (!removeAction) {
-                            listPricePlan.set(pricePlanIndex, (PricePlanMatrix) e);
-                        } else {
-                            listPricePlan.remove(pricePlanIndex.intValue());
-                        }
-
-                    }
-
-                }
-            }
-
-        } else if (e instanceof UsageChargeTemplate) {
-            UsageChargeTemplate usageChargeTemplate = (UsageChargeTemplate) e;
-            if (MeveoCacheContainerProvider.getUsageChargeTemplateCacheCache().containsKey(usageChargeTemplate.getId())) {
-                MeveoCacheContainerProvider.getUsageChargeTemplateCacheCache().remove(usageChargeTemplate.getCode()); // if
-                                                                                                                      // update
-                                                                                                                      // action
-                                                                                                                      // the
-                                                                                                                      // UsageChargeTemplateCache
-                                                                                                                      // will
-                                                                                                                      // be
-                                                                                                                      // reconstructed
-            }
-            if (MeveoCacheContainerProvider.getUsageChargeTemplateCache().containsKey(usageChargeTemplate.getProvider().getCode())) {
-                Map<String, UsageChargeTemplate> chargeTemplatesMap = MeveoCacheContainerProvider.getUsageChargeTemplateCache().get(usageChargeTemplate.getProvider().getCode());
-                if (chargeTemplatesMap.containsKey(((UsageChargeTemplate) e).getCode())) {
-                    if (!removeAction) {
-                        chargeTemplatesMap.put(((UsageChargeTemplate) e).getCode(), usageChargeTemplate);
-                    } else {
-                        chargeTemplatesMap.remove(((UsageChargeTemplate) e).getCode());
-                    }
-                }
-            }
-        } else if (e instanceof Access) {
-            Access access = (Access) e;
-            if (MeveoCacheContainerProvider.getAccessCache().containsKey(access.getCacheKey())) {
-                MeveoCacheContainerProvider.getAccessCache().remove(access.getCacheKey());
-            }
-        }
-    }
-
 }

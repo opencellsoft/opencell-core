@@ -362,7 +362,7 @@ public class UserAccountBean extends AccountBean<UserAccount> {
 
 	public String getBalance(WalletInstance wallet) {
 		String result = "-";
-		BigDecimal balance = walletCacheContainerProvider.getCacheBalance(wallet.getId());
+		BigDecimal balance = walletCacheContainerProvider.getBalance(wallet.getId());
 		if (balance != null) {
 			result = balance.toPlainString();
 		}
@@ -371,7 +371,7 @@ public class UserAccountBean extends AccountBean<UserAccount> {
 
 	public String getReservedBalance(WalletInstance wallet) {
 		String result = "-";
-		BigDecimal balance = walletCacheContainerProvider.getReservedCacheBalance(wallet.getId());
+		BigDecimal balance = walletCacheContainerProvider.getReservedBalance(wallet.getId());
 		if (balance != null) {
 			result = balance.toPlainString();
 		}

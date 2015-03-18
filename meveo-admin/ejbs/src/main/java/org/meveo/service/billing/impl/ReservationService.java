@@ -28,6 +28,7 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.cache.RatingCacheContainerProvider;
 import org.meveo.cache.WalletCacheContainerProvider;
 import org.meveo.model.Auditable;
 import org.meveo.model.admin.Seller;
@@ -71,9 +72,9 @@ public class ReservationService extends PersistenceService<Reservation> {
     
 	@Inject
     private WalletCacheContainerProvider walletCacheContainerProvider;
-    
-	@Inject
-	private UsageRatingService usageRatingService;
+    	
+    @Inject
+    private RatingCacheContainerProvider ratingCacheContainerProvider;
 
 	// FIXME: rethink this service in term of prepaid wallets
 	public Long createReservation(Provider provider, String sellerCode, String offerCode, String userAccountCode,
@@ -297,7 +298,7 @@ public class ReservationService extends PersistenceService<Reservation> {
 
 		// restore all counters values
 		if (reservation.getCounterPeriodValues().size() > 0) {
-			usageRatingService.restoreCounters(reservation.getCounterPeriodValues());
+		    ratingCacheContainerProvider.restoreCounters(reservation.getCounterPeriodValues());
 		}
 
 		reservation.setStatus(ReservationStatus.CANCELLED);

@@ -1,6 +1,5 @@
 package org.meveo.service.notification;
 
-import javax.ejb.Stateless;
 import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
@@ -11,7 +10,6 @@ import org.meveo.model.notification.Notification;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.billing.impl.CounterInstanceService;
 
-@Stateless
 public abstract class NotificationInstanceService<T extends Notification> extends BusinessService<T> {
 
     @Inject
@@ -21,48 +19,48 @@ public abstract class NotificationInstanceService<T extends Notification> extend
     private NotificationCacheContainerProvider notificationCacheContainerProvider;
 
     @Override
-    public void create(T entity, User creator, Provider provider) {
+    public void create(T notification, User creator, Provider provider) {
         // Instantiate a counter instance if counter template is provided
         try {
-            manageCounterInstantiation(entity);
+            manageCounterInstantiation(notification);
         } catch (BusinessException e) {
             throw new RuntimeException(e);
         }
-        super.create(entity, creator, provider);
-        notificationCacheContainerProvider.addNotificationToCache(entity);
+        super.create(notification, creator, provider);
+        notificationCacheContainerProvider.addNotificationToCache(notification);
     }
 
     @Override
-    public T update(T entity, User updater) {
+    public T update(T notification, User updater) {
         // Instantiate a counter instance if counter template is provided
         try {
-            manageCounterInstantiation(entity);
+            manageCounterInstantiation(notification);
         } catch (BusinessException e) {
             throw new RuntimeException(e);
         }
-        entity = super.update(entity, updater);
-        notificationCacheContainerProvider.updateNotificationInCache(entity);
-        return entity;
+        notification = super.update(notification, updater);
+        notificationCacheContainerProvider.updateNotificationInCache(notification);
+        return notification;
     }
 
     @Override
-    public void remove(T e) {
-        super.remove(e);
-        notificationCacheContainerProvider.removeNotificationFromCache(e);
+    public void remove(T notification) {
+        super.remove(notification);
+        notificationCacheContainerProvider.removeNotificationFromCache(notification);
     }
 
     @Override
-    public T disable(T e) {
-        e = super.disable(e);
-        notificationCacheContainerProvider.removeNotificationFromCache(e);
-        return e;
+    public T disable(T notification) {
+        notification = super.disable(notification);
+        notificationCacheContainerProvider.removeNotificationFromCache(notification);
+        return notification;
     }
 
     @Override
-    public T enable(T e) {
-        e = super.enable(e);
-        notificationCacheContainerProvider.addNotificationToCache(e);
-        return e;
+    public T enable(T notification) {
+        notification = super.enable(notification);
+        notificationCacheContainerProvider.addNotificationToCache(notification);
+        return notification;
     }
 
     /**

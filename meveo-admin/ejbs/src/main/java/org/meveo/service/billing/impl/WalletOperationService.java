@@ -1215,13 +1215,13 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 			Provider provider) throws BusinessException {
 		List<WalletOperation> result = new ArrayList<>();
 		BigDecimal remainingAmountToCharge = op.getAmountWithTax();
-		BigDecimal totalBalance = walletCacheContainerProvider.getReservedCacheBalance(walletIds);
+		BigDecimal totalBalance = walletCacheContainerProvider.getReservedBalance(walletIds);
         log.debug("chargeOnWalletIds remainingAmountToCharge={}, totalBalance={}", remainingAmountToCharge, totalBalance);
         if (remainingAmountToCharge.compareTo(totalBalance) > 0 && walletCacheContainerProvider.isReservedBalanceCached(walletIds.get(walletIds.size() - 1))) {
 			throw new BusinessException("INSUFFICIENT_BALANCE");
 		}
 		for (Long walletId : walletIds) {
-			BigDecimal balance = walletCacheContainerProvider.getReservedCacheBalance(walletId);
+			BigDecimal balance = walletCacheContainerProvider.getReservedBalance(walletId);
 			log.debug("chargeOnWalletIds walletId={}, balance={}", walletId, balance);
 			if (balance.compareTo(BigDecimal.ZERO) > 0 || remainingAmountToCharge.compareTo(BigDecimal.ZERO) < 0) {
 				if (balance.compareTo(op.getAmountWithTax()) >= 0) {

@@ -62,13 +62,7 @@ public class CounterInstanceCache implements Serializable{
 		return cacheValue;
 	}
 
-	public Long getKey(){
+	public Long getCounterInstanceId(){
 		return counterInstanceId;
 	}
-
-	static public Long getKey(CounterInstance counter){
-		return counter.getId();
-	}
-	
-	
 }
