@@ -212,6 +212,13 @@ public interface IPersistenceService<E extends IEntity> {
 	 */
 	public List<E> list();// ? extends E
 
+    /**
+     * Load and return the complete list of active entities from database.
+     * 
+     * @return List of entities.
+     */	
+	public List<E> listActive();
+	
 	/**
 	 * Load and return the list of the entities from database according to
 	 * sorting and paging information in {@link PaginationConfiguration} object.
@@ -250,5 +257,4 @@ public interface IPersistenceService<E extends IEntity> {
 	public void refresh(BaseEntity entity);
 
 	public EntityManager getEntityManager();
-
 }
