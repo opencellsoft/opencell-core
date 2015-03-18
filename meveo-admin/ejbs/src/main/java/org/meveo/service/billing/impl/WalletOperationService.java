@@ -1457,7 +1457,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 	@TransactionAttribute(TransactionAttributeType.REQUIRED)
 	public int updateToRerate(List<Long> walletIdList ) {
 		int walletsOpToRerate=0;
-		List<RatedTransaction> ratedTransactionsBilled=(List<RatedTransaction>)getEntityManager().createNamedQuery("RatedTransaction.getRatedTransactionsBilled").setParameter("walletIdList", walletIdList).getResultList();
+		List<Long> ratedTransactionsBilled=(List<Long>)getEntityManager().createNamedQuery("RatedTransaction.getRatedTransactionsBilled").setParameter("walletIdList", walletIdList).getResultList();
 		walletIdList.removeAll(ratedTransactionsBilled);
 		if(walletIdList.size()>0 && !walletIdList.isEmpty()){
 			walletsOpToRerate=getEntityManager().createNamedQuery("WalletOperation.setStatusToRerate").setParameter("notBilledWalletIdList", walletIdList).executeUpdate();
