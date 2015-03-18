@@ -12,6 +12,7 @@ import org.meveo.admin.exception.BusinessEntityException;
 import org.meveo.admin.job.logging.JobLoggingInterceptor;
 import org.meveo.admin.sepa.SepaService;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.interceptor.PerformanceInterceptor;
 import org.meveo.model.admin.User;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.payments.DDRequestLotOp;
@@ -35,7 +36,7 @@ public class SepaDirectDebitJobBean {
 	@Inject
 	private SepaService SepaService;
 
-	@Interceptors({ JobLoggingInterceptor.class })
+	@Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public void execute(JobExecutionResultImpl result, String parameter, User currentUser) {
 		User user = null;

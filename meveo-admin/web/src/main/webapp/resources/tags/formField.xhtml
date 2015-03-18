@@ -523,30 +523,42 @@
 			<ui:fragment rendered="#{cc.attrs.listType=='pickUpList'}">
 				<p:panelGrid columns="2">
 					<p:outputLabel for="#{cc.attrs.id}_picklist"
-						value="#{cc.attrs.label}" />
-					<c:if test="#{empty cc.attrs.dualListModel}">
-						<c:set var="elements"
-							value="#{cc.backingBeanFromParentOrCurrent.dualListModel}" />
-					</c:if>
-					<c:if test="#{!empty cc.attrs.dualListModel}">
-						<c:set var="elements" value="#{cc.attrs.dualListModel}" />
-					</c:if>
-					<c:if test="#{not empty(cc.attrs.childField2)}">
-						<p:pickList required="#{cc.attrs.required}"
-							id="#{cc.attrs.id}_picklist" value="#{elements}" var="elem"
-							itemLabel="#{elem[cc.attrs.childField]} #{elem[cc.attrs.childField2]}"
-							itemValue="#{elem}" disabled="#{not cc.attrs.edit}">
-							<s:objectConverter />
-						</p:pickList>
-					</c:if>
-					<c:if test="#{empty(cc.attrs.childField2)}">
-						<p:pickList required="#{cc.attrs.required}"
-							id="#{cc.attrs.id}_picklist" value="#{elements}" var="elem"
-							itemLabel="#{elem[cc.attrs.childField]}" itemValue="#{elem}"
-							disabled="#{not cc.attrs.edit}">
-							<s:objectConverter />
-						</p:pickList>
-					</c:if>
+						value="#{cc.attrs.label}" />                        
+                        
+                    <h:panelGroup rendered="#{cc.attrs.edit}">
+    					<c:if test="#{empty cc.attrs.dualListModel}">
+    						<c:set var="elements"
+    							value="#{cc.backingBeanFromParentOrCurrent.dualListModel}" />
+    					</c:if>
+    					<c:if test="#{!empty cc.attrs.dualListModel}">
+    						<c:set var="elements" value="#{cc.attrs.dualListModel}" />
+    					</c:if>
+    					<c:if test="#{not empty(cc.attrs.childField2)}">
+    						<p:pickList required="#{cc.attrs.required}"
+    							id="#{cc.attrs.id}_picklist" value="#{elements}" var="elem"
+    							itemLabel="#{elem[cc.attrs.childField]} #{elem[cc.attrs.childField2]}"
+    							itemValue="#{elem}" disabled="#{not cc.attrs.edit}">
+    							<s:objectConverter />
+    						</p:pickList>
+    					</c:if>
+    					<c:if test="#{empty(cc.attrs.childField2)}">
+    						<p:pickList required="#{cc.attrs.required}"
+    							id="#{cc.attrs.id}_picklist" value="#{elements}" var="elem"
+    							itemLabel="#{elem[cc.attrs.childField]}" itemValue="#{elem}"
+    							disabled="#{not cc.attrs.edit}">
+    							<s:objectConverter />
+    						</p:pickList>
+    					</c:if>
+                  
+                    </h:panelGroup>
+                    <p:dataList value="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}" var="elem" type="ordered" rendered="#{! cc.attrs.edit}">
+                        <c:if test="#{not empty(cc.attrs.childField2)}">
+                            #{elem[cc.attrs.childField]} #{elem[cc.attrs.childField2]}
+                        </c:if>
+                        <c:if test="#{empty(cc.attrs.childField2)}">
+                            #{elem[cc.attrs.childField]}
+                        </c:if>                    
+                    </p:dataList>                    
 				</p:panelGrid>
 			</ui:fragment>
 		</ui:fragment>

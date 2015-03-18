@@ -13,6 +13,7 @@ import javax.interceptor.Interceptors;
 
 import org.meveo.admin.job.logging.JobLoggingInterceptor;
 import org.meveo.event.qualifier.Rejected;
+import org.meveo.interceptor.PerformanceInterceptor;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.InstanceStatusEnum;
 import org.meveo.model.billing.RecurringChargeInstance;
@@ -44,20 +45,19 @@ public class RecurringRatingJobBean implements Serializable {
 	@Rejected
 	Event<Serializable> rejectededChargeProducer;
 
-
-	@Interceptors({ JobLoggingInterceptor.class })
+	@Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public void execute(JobExecutionResultImpl result, User currentUser) {
 		try {
 			Date maxDate = DateUtils.addDaysToDate(new Date(), 1);
-			List<RecurringChargeInstance> activeRecurringChargeInstances = recurringChargeInstanceService
-					.findByStatus(InstanceStatusEnum.ACTIVE,maxDate);
+			List<RecurringChargeInstance> activeRecurringChargeInstances = recurringChargeInstanceService.findByStatus(
+					InstanceStatusEnum.ACTIVE, maxDate);
 
 			log.info("charges to rate={}", activeRecurringChargeInstances.size());
 
 			for (RecurringChargeInstance activeRecurringChargeInstance : activeRecurringChargeInstances) {
 				try {
-					
+
 					RecurringChargeTemplate recurringChargeTemplate = (RecurringChargeTemplate) activeRecurringChargeInstance
 							.getRecurringChargeTemplate();
 					if (recurringChargeTemplate.getCalendar() == null) {
@@ -72,33 +72,28 @@ public class RecurringRatingJobBean implements Serializable {
 
 					Date applicationDate = null;
 					if (recurringChargeTemplate.getApplyInAdvance()) {
-						applicationDate = activeRecurringChargeInstance
-								.getNextChargeDate();
+						applicationDate = activeRecurringChargeInstance.getNextChargeDate();
 					} else {
-						applicationDate = activeRecurringChargeInstance
-								.getChargeDate();
+						applicationDate = activeRecurringChargeInstance.getChargeDate();
 					}
 
-					if(applicationDate.getTime()<=maxDate.getTime()){
-					log.info("applicationDate={}", applicationDate);
+					if (applicationDate.getTime() <= maxDate.getTime()) {
+						log.info("applicationDate={}", applicationDate);
 
-					applicationDate = DateUtils.parseDateWithPattern(
-							applicationDate, "dd/MM/yyyy");
+						applicationDate = DateUtils.parseDateWithPattern(applicationDate, "dd/MM/yyyy");
 
-					if (!recurringChargeTemplate.getApplyInAdvance()) {
-						walletOperationService
-								.applyNotAppliedinAdvanceReccuringCharge(
-										activeRecurringChargeInstance, false,
-										recurringChargeTemplate, currentUser);
-						result.registerSucces();
+						if (!recurringChargeTemplate.getApplyInAdvance()) {
+							walletOperationService.applyNotAppliedinAdvanceReccuringCharge(
+									activeRecurringChargeInstance, false, recurringChargeTemplate, currentUser);
+							result.registerSucces();
+						} else {
+							walletOperationService.applyReccuringCharge(activeRecurringChargeInstance, false,
+									recurringChargeTemplate, currentUser);
+							result.registerSucces();
+						}
 					} else {
-						walletOperationService.applyReccuringCharge(
-								activeRecurringChargeInstance, false,
-								recurringChargeTemplate, currentUser);
-						result.registerSucces();
-					}
-					} else {
-						log.info("applicationDate={} is posterior to maxdate={} 2nd level cache is probably in cause",applicationDate,maxDate);
+						log.info("applicationDate={} is posterior to maxdate={} 2nd level cache is probably in cause",
+								applicationDate, maxDate);
 					}
 				} catch (Exception e) {
 					rejectededChargeProducer.fire(activeRecurringChargeInstance);

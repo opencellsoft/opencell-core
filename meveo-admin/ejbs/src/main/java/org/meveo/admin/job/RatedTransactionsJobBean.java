@@ -10,6 +10,7 @@ import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 
 import org.meveo.admin.job.logging.JobLoggingInterceptor;
+import org.meveo.interceptor.PerformanceInterceptor;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.RatedTransaction;
 import org.meveo.model.billing.RatedTransactionStatusEnum;
@@ -34,65 +35,46 @@ public class RatedTransactionsJobBean {
 	@Inject
 	private RatedTransactionService ratedTransactionService;
 
-	@Interceptors({ JobLoggingInterceptor.class })
+	@Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public JobExecutionResult execute(JobExecutionResultImpl result,
-			User currentUser)
-{
+	public JobExecutionResult execute(JobExecutionResultImpl result, User currentUser) {
 		Provider provider = currentUser.getProvider();
 
 		try {
 			// FIXME: only for postpaid wallets
-			List<WalletOperation> walletOperations = walletOperationService
-					.findByStatus(WalletOperationStatusEnum.OPEN, provider);
-	
-			log.info("WalletOperations to convert into rateTransactions={}",
-					walletOperations.size());
-			
+			List<WalletOperation> walletOperations = walletOperationService.findByStatus(
+					WalletOperationStatusEnum.OPEN, provider);
+
+			log.info("WalletOperations to convert into rateTransactions={}", walletOperations.size());
+
 			for (WalletOperation walletOperation : walletOperations) {
 				try {
-					BigDecimal amountWithTAx=walletOperation.getAmountWithTax();
-					BigDecimal amountTax=walletOperation.getAmountTax();
-					BigDecimal unitAmountWithTax=walletOperation.getUnitAmountWithTax();
-					BigDecimal unitAmountTax=walletOperation.getUnitAmountTax();
-					
-					if(walletOperation.getChargeInstance().getSubscription().getUserAccount().getBillingAccount().getCustomerAccount().getCustomer().getCustomerCategory().getExoneratedFromTaxes()){
-						amountWithTAx=walletOperation.getAmountWithoutTax();
-						amountTax=BigDecimal.ZERO; 
-						unitAmountWithTax=walletOperation.getUnitAmountWithoutTax();
-						unitAmountTax=BigDecimal.ZERO;	
-					}
-					RatedTransaction ratedTransaction = new RatedTransaction(
-							walletOperation.getId(),
-							walletOperation.getOperationDate(),
-							walletOperation.getUnitAmountWithoutTax(),
-							unitAmountWithTax,
-							unitAmountTax,
-							walletOperation.getQuantity(),
-							walletOperation.getAmountWithoutTax(),
-							amountWithTAx,
-							amountTax,
-							RatedTransactionStatusEnum.OPEN,
-							walletOperation.getProvider(),
-							walletOperation.getWallet(), 
-							walletOperation
-									.getWallet().getUserAccount()
-									.getBillingAccount(), 
-							walletOperation
-									.getChargeInstance().getChargeTemplate()
-									.getInvoiceSubCategory(),
-							walletOperation.getParameter1(),
-							walletOperation.getParameter2(),
-							walletOperation.getParameter3(),
-							walletOperation.getUnityDescription(),
-							walletOperation.getPriceplan(),
-							walletOperation.getOfferCode()
-							);
-					ratedTransactionService.create(ratedTransaction,
-							currentUser, currentUser.getProvider());
+					BigDecimal amountWithTAx = walletOperation.getAmountWithTax();
+					BigDecimal amountTax = walletOperation.getAmountTax();
+					BigDecimal unitAmountWithTax = walletOperation.getUnitAmountWithTax();
+					BigDecimal unitAmountTax = walletOperation.getUnitAmountTax();
 
-					walletOperation
-							.setStatus(WalletOperationStatusEnum.TREATED);
+					if (walletOperation.getChargeInstance().getSubscription().getUserAccount().getBillingAccount()
+							.getCustomerAccount().getCustomer().getCustomerCategory().getExoneratedFromTaxes()) {
+						amountWithTAx = walletOperation.getAmountWithoutTax();
+						amountTax = BigDecimal.ZERO;
+						unitAmountWithTax = walletOperation.getUnitAmountWithoutTax();
+						unitAmountTax = BigDecimal.ZERO;
+					}
+					RatedTransaction ratedTransaction = new RatedTransaction(walletOperation.getId(),
+							walletOperation.getOperationDate(), walletOperation.getUnitAmountWithoutTax(),
+							unitAmountWithTax, unitAmountTax, walletOperation.getQuantity(),
+							walletOperation.getAmountWithoutTax(), amountWithTAx, amountTax,
+							RatedTransactionStatusEnum.OPEN, walletOperation.getProvider(),
+							walletOperation.getWallet(), walletOperation.getWallet().getUserAccount()
+									.getBillingAccount(), walletOperation.getChargeInstance().getChargeTemplate()
+									.getInvoiceSubCategory(), walletOperation.getParameter1(),
+							walletOperation.getParameter2(), walletOperation.getParameter3(),
+							walletOperation.getUnityDescription(), walletOperation.getPriceplan(),
+							walletOperation.getOfferCode());
+					ratedTransactionService.create(ratedTransaction, currentUser, currentUser.getProvider());
+
+					walletOperation.setStatus(WalletOperationStatusEnum.TREATED);
 					walletOperation.updateAudit(currentUser);
 				} catch (Exception e) {
 					e.printStackTrace();

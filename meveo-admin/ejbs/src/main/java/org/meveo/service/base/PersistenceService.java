@@ -336,54 +336,61 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
     /**
 	 * @see org.meveo.service.base.local.IPersistenceService#create(org.manaty.model.BaseEntity,
 	 *      org.manaty.model.user.User)
-     */
-    @Override
-    public void create(E e, User creator) {
-        create(e, creator, getCurrentProvider());
-    }
+	 */
+	@Override
+	public void create(E e, User creator) {
+		create(e, creator, getCurrentProvider());
+	}
 
-    @Override
-    public void create(E e, User creator, Provider provider) {
-        log.debug("start of create {} entity={}", e.getClass().getSimpleName(), e);
+	@Override
+	public void create(E e, User creator, Provider provider) {
+		log.debug("start of create {} entity={}", e.getClass().getSimpleName(), e);
 
-        if (e instanceof AuditableEntity) {
-            if (creator != null) {
-                ((AuditableEntity) e).updateAudit(creator);
-            } else {
-                ((AuditableEntity) e).updateAudit(getCurrentUser());
-            }
-        }
+		if (e instanceof AuditableEntity) {
+			if (creator != null) {
+				((AuditableEntity) e).updateAudit(creator);
+			} else {
+				((AuditableEntity) e).updateAudit(getCurrentUser());
+			}
+		}
 
-        if (e instanceof BaseEntity && (((BaseEntity) e).getProvider() == null)) {
-            ((BaseEntity) e).setProvider(provider);
-        }
+		if (e instanceof BaseEntity && (((BaseEntity) e).getProvider() == null)) {
+			((BaseEntity) e).setProvider(provider);
+		}
 
-        getEntityManager().persist(e);
-        entityCreatedEventProducer.fire(e);
-        log.debug("end of create {}. entity id={}.", e.getClass().getSimpleName(), e.getId());
+		getEntityManager().persist(e);
+		entityCreatedEventProducer.fire(e);
+		log.debug("end of create {}. entity id={}.", e.getClass().getSimpleName(), e.getId());
 
-    }
+	}
 
-    /**
-     * @see org.meveo.service.base.local.IPersistenceService#list()
-     */
+	/**
+	 * @see org.meveo.service.base.local.IPersistenceService#list()
+	 */
     @Override
     public List<E> list() {
-        return list(getCurrentProvider());
+        return list(getCurrentProvider(), null);
+    }
+    
+    @Override
+    public List<E> listActive() {
+        return list(getCurrentProvider(), true);
     }
 
     @SuppressWarnings("unchecked")
-    public List<E> list(Provider provider) {
+    public List<E> list(Provider provider, Boolean active) {
         final Class<? extends E> entityClass = getEntityClass();
         QueryBuilder queryBuilder = new QueryBuilder(entityClass, "a", null, provider);
+        if (active!=null && EnableEntity.class.isAssignableFrom(entityClass)){
+            queryBuilder.addBooleanCriterion("disabled", !active);
+        }
         Query query = queryBuilder.getQuery(getEntityManager());
         return query.getResultList();
     }
 
-    /**
-     * @see org.meveo.service.base.local.IPersistenceService#list(org.meveo.admin.util.pagination.PaginationConfiguration)
-     */
-
+	/**
+	 * @see org.meveo.service.base.local.IPersistenceService#list(org.meveo.admin.util.pagination.PaginationConfiguration)
+	 */
     @SuppressWarnings({ "unchecked" })
     @Override
     public List<E> list(PaginationConfiguration config) {

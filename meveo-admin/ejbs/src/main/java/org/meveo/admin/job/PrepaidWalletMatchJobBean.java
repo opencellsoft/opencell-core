@@ -10,6 +10,7 @@ import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 
 import org.meveo.admin.job.logging.JobLoggingInterceptor;
+import org.meveo.interceptor.PerformanceInterceptor;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.WalletInstance;
 import org.meveo.model.jobs.JobExecutionResultImpl;
@@ -25,14 +26,13 @@ public class PrepaidWalletMatchJobBean {
 
 	@Inject
 	private WalletService walletService;
-	
+
 	@Inject
 	OneShotChargeInstanceService oneShotChargeInstanceService;
 
-
-	@Interceptors({ JobLoggingInterceptor.class })
+	@Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public void execute(String matchingChargeCode,JobExecutionResultImpl result, User currentUser) {
+	public void execute(String matchingChargeCode, JobExecutionResultImpl result, User currentUser) {
 		try {
 			List<WalletInstance> wallets = walletService.getWalletsToMatch(new Date());
 
@@ -42,7 +42,7 @@ public class PrepaidWalletMatchJobBean {
 				log.debug("match wallet={}", wallet.getId());
 
 				try {
-					oneShotChargeInstanceService.matchPrepaidWallet(wallet,matchingChargeCode,currentUser);
+					oneShotChargeInstanceService.matchPrepaidWallet(wallet, matchingChargeCode, currentUser);
 					result.registerSucces();
 				} catch (Exception e) {
 					log.error(e.getMessage());

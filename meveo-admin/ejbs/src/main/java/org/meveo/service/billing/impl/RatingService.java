@@ -585,7 +585,7 @@ public class RatingService {
 			ratedTransactionService
 					.reratedByWalletOperationId(operationToRerate.getId());
 			WalletOperation operation = operationToRerate.getUnratedClone();
-			operationToRerate.setReratedWalletOperation(operationToRerate);
+			operationToRerate.setReratedWalletOperation(operation);
 			operationToRerate.setStatus(WalletOperationStatusEnum.RERATED);
 			if (useSamePricePlan) {
 				if (operation.getPriceplan() != null) {
@@ -612,14 +612,15 @@ public class RatingService {
 			} else {
 				try {
 					rateBareWalletOperation(entityManager, operation, null,
-							null, operation.getPriceplan().getTradingCountry()
-									.getId(), operation.getPriceplan()
+							null, operation.getPriceplan().getTradingCountry()==null?null:
+								operation.getPriceplan().getTradingCountry().getId(), operation.getPriceplan()
 									.getTradingCurrency(),
 							operation.getProvider());
 				} catch (BusinessException e) {
 					e.printStackTrace();
 				}
 			}
+			entityManager.persist(operation);
 		} catch (UnrolledbackBusinessException e) {
 			log.info(e.getMessage());
 			operationToRerate.setStatus(WalletOperationStatusEnum.TREATED);

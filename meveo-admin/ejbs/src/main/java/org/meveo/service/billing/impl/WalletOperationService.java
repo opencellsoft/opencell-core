@@ -26,6 +26,8 @@ import java.util.List;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
@@ -48,6 +50,7 @@ import org.meveo.model.billing.ChargeInstance;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.InvoiceSubcategoryCountry;
 import org.meveo.model.billing.OneShotChargeInstance;
+import org.meveo.model.billing.RatedTransaction;
 import org.meveo.model.billing.RecurringChargeInstance;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.Tax;
@@ -1299,4 +1302,16 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 		return result;
 	}
 
+	@TransactionAttribute(TransactionAttributeType.REQUIRED)
+	public int updateToRerate(List<Long> walletIdList ) {
+		int walletsOpToRerate=0;
+		List<RatedTransaction> ratedTransactionsBilled=(List<RatedTransaction>)getEntityManager().createNamedQuery("RatedTransaction.getRatedTransactionsBilled").setParameter("walletIdList", walletIdList).getResultList();
+		walletIdList.removeAll(ratedTransactionsBilled);
+		if(walletIdList.size()>0 && !walletIdList.isEmpty()){
+			walletsOpToRerate=getEntityManager().createNamedQuery("WalletOperation.setStatusToRerate").setParameter("notBilledWalletIdList", walletIdList).executeUpdate();
+			getEntityManager().createNamedQuery("RatedTransaction.setStatusToCanceled").setParameter("notBilledWalletIdList", walletIdList).executeUpdate();	
+		}
+		getEntityManager().flush();
+		return walletsOpToRerate;
+	}
 }

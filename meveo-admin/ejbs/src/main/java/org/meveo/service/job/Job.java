@@ -2,12 +2,9 @@ package org.meveo.service.job;
 
 import javax.ejb.ScheduleExpression;
 import javax.ejb.Timer;
-import javax.interceptor.Interceptors;
 
-import org.meveo.admin.job.logging.JobLoggingInterceptor;
 import org.meveo.model.admin.User;
 import org.meveo.model.jobs.JobCategoryEnum;
-import org.meveo.model.jobs.JobExecutionResult;
 import org.meveo.model.jobs.TimerInfo;
 
 /**
@@ -31,11 +28,9 @@ public interface Job {
 	 *            the provider for which the job must apply.
 	 * @return the result of execute(parameter,false) method
 	 */
-	@Interceptors({ JobLoggingInterceptor.class })
-	public JobExecutionResult execute(String parameter, User currentUser);
+	public void execute(TimerInfo info, User currentUser);
 
-	public Timer createTimer(ScheduleExpression scheduleExpression,
-			TimerInfo infos);
+	public Timer createTimer(ScheduleExpression scheduleExpression, TimerInfo infos);
 
 	public void cleanAllTimers();
 
@@ -47,7 +42,7 @@ public interface Job {
 	public void trigger(Timer timer);
 
 	public JobExecutionService getJobExecutionService();
-	
+
 	public JobCategoryEnum getJobCategory();
 
 	/*

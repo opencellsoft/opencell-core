@@ -70,7 +70,7 @@ public class OfferTemplateBean extends BaseBean<OfferTemplate> {
 
 	public DualListModel<ServiceTemplate> getDualListModel() {
 		if (perks == null) {
-			List<ServiceTemplate> perksSource = serviceTemplateService.list();
+			List<ServiceTemplate> perksSource = serviceTemplateService.listActive();
 			List<ServiceTemplate> perksTarget = new ArrayList<ServiceTemplate>();
 			if (getEntity().getCode() != null) {
 				perksTarget.addAll(getEntity().getServiceTemplates());
