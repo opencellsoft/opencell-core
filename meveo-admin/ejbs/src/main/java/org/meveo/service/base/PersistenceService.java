@@ -375,18 +375,30 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 	/**
 	 * @see org.meveo.service.base.local.IPersistenceService#list()
 	 */
-	@Override
-	public List<E> list() {
-		return list(getCurrentProvider());
-	}
+    @Override
+    public List<E> list() {
+        return list(getCurrentProvider(), null);
+    }
+    
+    @Override
+    public List<E> listActive() {
+        return list(getCurrentProvider(), true);
+    }
+    
+    public List<E> list(Provider provider) {
+        return list(provider, null);
+    }
 
-	@SuppressWarnings("unchecked")
-	public List<E> list(Provider provider) {
-		final Class<? extends E> entityClass = getEntityClass();
-		QueryBuilder queryBuilder = new QueryBuilder(entityClass, "a", null, provider);
-		Query query = queryBuilder.getQuery(getEntityManager());
-		return query.getResultList();
-	}
+    @SuppressWarnings("unchecked")
+    public List<E> list(Provider provider, Boolean active) {
+        final Class<? extends E> entityClass = getEntityClass();
+        QueryBuilder queryBuilder = new QueryBuilder(entityClass, "a", null, provider);
+        if (active!=null && EnableEntity.class.isAssignableFrom(entityClass)){
+            queryBuilder.addBooleanCriterion("disabled", !active);
+        }
+        Query query = queryBuilder.getQuery(getEntityManager());
+        return query.getResultList();
+    }
 
 	/**
 	 * @see org.meveo.service.base.local.IPersistenceService#list(org.meveo.admin.util.pagination.PaginationConfiguration)

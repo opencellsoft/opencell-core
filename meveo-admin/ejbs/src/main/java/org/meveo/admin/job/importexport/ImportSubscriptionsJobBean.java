@@ -157,7 +157,7 @@ public class ImportSubscriptionsJobBean {
 
 		for (org.meveo.model.jaxb.subscription.Subscription jaxbSubscription : jaxbSubscriptions.getSubscription()) {
 			try {
-				i++;
+				log.debug("importing subscription index={}, code={}", i++, jaxbSubscription.getCode());
 				CheckedSubscription checkSubscription = subscriptionCheckError(provider, jaxbSubscription);
 
 				if (checkSubscription == null) {
