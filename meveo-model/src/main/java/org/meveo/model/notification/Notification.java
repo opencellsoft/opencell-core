@@ -8,6 +8,8 @@ import javax.persistence.FetchType;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
@@ -24,6 +26,7 @@ import org.meveo.validation.constraint.ClassName;
 @Table(name = "ADM_NOTIFICATION", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE", "PROVIDER_ID" }))
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "ADM_NOTIFICATION_SEQ")
 @Inheritance(strategy = InheritanceType.JOINED)
+@NamedQueries({ @NamedQuery(name = "Notification.getNotificationsForCache", query = "SELECT n from Notification n where n.disabled=false") })
 public class Notification extends BusinessEntity {
 
     private static final long serialVersionUID = 2634877161620665288L;
@@ -102,5 +105,4 @@ public class Notification extends BusinessEntity {
     public void setCounterInstance(CounterInstance counterInstance) {
         this.counterInstance = counterInstance;
     }
-
 }

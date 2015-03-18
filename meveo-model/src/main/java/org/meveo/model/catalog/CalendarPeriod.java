@@ -23,8 +23,6 @@ import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 
-import org.apache.commons.lang.time.DateUtils;
-
 @Entity
 @DiscriminatorValue("PERIOD")
 public class CalendarPeriod extends Calendar {
@@ -142,6 +140,16 @@ public class CalendarPeriod extends Calendar {
             }
         }
 
+        return null;
+    }    
+
+    @Override
+    public Date previousPeriodEndDate(Date date) {
+        return null;
+    }
+
+    @Override
+    public Date nextPeriodStartDate(Date date) {
         return null;
     }
 }

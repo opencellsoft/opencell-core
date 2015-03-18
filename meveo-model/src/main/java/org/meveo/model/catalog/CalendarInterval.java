@@ -271,7 +271,7 @@ public class CalendarInterval extends Calendar {
 
             for (CalendarDateInterval interval : intervals) {
 
-                // Adjust given date time if interval crosses to another day - and date time corresponds to another day. E.g checking 23:11 for 23:00 - 01:30 period
+                // Adjust given date time if interval crosses to another day - and date time corresponds to another day. E.g checking 01:11 for 23:00 - 01:30 period
                 int hourMinAdjusted = hourMin;
                 if (interval.isCrossBoundry() && hourMin < interval.getIntervalBegin()) {
                     hourMinAdjusted = hourMin + 2400;
@@ -292,6 +292,258 @@ public class CalendarInterval extends Calendar {
                 }
             }
 
+        }
+
+        if (found) {
+            return calendar.getTime();
+        } else {
+            return null;
+        }
+    }
+
+    @Override
+    public Date previousPeriodEndDate(Date date) {
+
+        GregorianCalendar calendar = new GregorianCalendar();
+        calendar.setTime(date);
+
+        boolean found = false;
+
+        // Calculate the previous earliest interval end time given current date's time. To handle a special case that calculation crosses to another week (e.g. checking monday for
+        // tuesday to wednesday period), the interval end value is adjusted by -7 days.
+        if (intervalType == CalendarIntervalTypeEnum.WDAY) {
+
+            int weekday = calendar.get(java.util.Calendar.DAY_OF_WEEK) - 1;
+            if (weekday == 0) {
+                weekday = 7;
+            }
+
+            int earliestWeekday = -10000000;
+            for (CalendarDateInterval interval : intervals) {
+
+                // Adjust given date time if interval is on another week - and date time corresponds to previous week. E.g checking monday for tuesday to wednesday period
+                int intervalEndAdjusted = interval.getIntervalEnd();
+                if (weekday < interval.getIntervalEnd()) {
+                    intervalEndAdjusted = intervalEndAdjusted - 7;
+
+                }
+                // Remember the earliest value
+                if (intervalEndAdjusted <= weekday && earliestWeekday < intervalEndAdjusted) {
+                    earliestWeekday = intervalEndAdjusted;
+                }
+
+            }
+            if (earliestWeekday != 10000000) {
+
+                calendar.add(java.util.Calendar.DAY_OF_MONTH, -1 * Math.abs(earliestWeekday - weekday));
+                calendar.set(java.util.Calendar.HOUR_OF_DAY, 0);
+                calendar.set(java.util.Calendar.MINUTE, 0);
+                calendar.set(java.util.Calendar.SECOND, 0);
+                calendar.set(java.util.Calendar.MILLISECOND, 0);
+                found = true;
+            }
+
+            // Calculate the previous earliest interval end time given current date's time. To handle a special case that calculation crosses to another year (e.g. checking 01/10
+            // for 01/15 to 03/25 period), the interval begin value is adjusted by -12 month.
+        } else if (intervalType == CalendarIntervalTypeEnum.DAY) {
+
+            int monthDay = Integer.parseInt((calendar.get(java.util.Calendar.MONTH) + 1) + "" + (calendar.get(java.util.Calendar.DAY_OF_MONTH) < 10 ? "0" : "")
+                    + calendar.get(java.util.Calendar.DAY_OF_MONTH));
+
+            int earliestMonthDay = -10000000;
+            for (CalendarDateInterval interval : intervals) {
+
+                // Adjust given date time if interval is on another year - and date time corresponds to previous year. E.g checking 01/10 for 01/15 to 03/25 period
+                int intervalEndAdjusted = interval.getIntervalEnd();
+                if (monthDay < interval.getIntervalEnd()) {
+                    intervalEndAdjusted = intervalEndAdjusted - 1200;
+
+                }
+                // Remember the earliest value
+                if (intervalEndAdjusted <= monthDay && earliestMonthDay < intervalEndAdjusted) {
+                    earliestMonthDay = intervalEndAdjusted;
+                }
+
+            }
+            if (earliestMonthDay != 10000000) {
+
+                // Advance to a previous year if interval end value was adjusted by -12 month
+                int beginValue = earliestMonthDay;
+                if (earliestMonthDay < 100) {
+                    calendar.add(java.util.Calendar.YEAR, -1);
+                    beginValue = earliestMonthDay + 1200;
+                }
+                calendar.set(java.util.Calendar.MONTH, beginValue / 100 - 1);
+                calendar.set(java.util.Calendar.DAY_OF_MONTH, beginValue % 100);
+                calendar.set(java.util.Calendar.HOUR_OF_DAY, 0);
+                calendar.set(java.util.Calendar.MINUTE, 0);
+                calendar.set(java.util.Calendar.SECOND, 0);
+                calendar.set(java.util.Calendar.MILLISECOND, 0);
+                found = true;
+            }
+
+            // Calculate the previous earliest interval end time given current date's time. To handle a special case that calculation crosses to another day (e.g. 01:15 to 10:45
+            // when checking for 01:00), the interval end value is adjusted by -24 hours.
+        } else if (intervalType == CalendarIntervalTypeEnum.HOUR) {
+
+            int hourMin = Integer.parseInt(calendar.get(java.util.Calendar.HOUR_OF_DAY) + "" + (calendar.get(java.util.Calendar.MINUTE) < 10 ? "0" : "")
+                    + calendar.get(java.util.Calendar.MINUTE));
+
+            int earliestHourMin = -10000000;
+            for (CalendarDateInterval interval : intervals) {
+
+                // Adjust interval end time if interval end time is on another day - and date time corresponds to next day. E.g checking 01:00 for 01:15 to 10:45 period
+                int intervalEndAdjusted = interval.getIntervalEnd();
+                if (hourMin < interval.getIntervalEnd()) {
+                    intervalEndAdjusted = intervalEndAdjusted - 2400;
+
+                }
+
+                // Remember the earliest value
+                if (intervalEndAdjusted <= hourMin && earliestHourMin < intervalEndAdjusted) {
+                    earliestHourMin = intervalEndAdjusted;
+                }
+
+            }
+            if (earliestHourMin != -10000000) {
+                // Advance to a previous day if interval end time was adjusted by -24 hours
+                int beginValue = earliestHourMin;
+                if (earliestHourMin < 0) {
+                    calendar.add(java.util.Calendar.DAY_OF_MONTH, -1);
+                    beginValue = earliestHourMin + 2400;
+                }
+                calendar.set(java.util.Calendar.HOUR_OF_DAY, beginValue / 100);
+                calendar.set(java.util.Calendar.MINUTE, beginValue % 100);
+                calendar.set(java.util.Calendar.SECOND, 0);
+                calendar.set(java.util.Calendar.MILLISECOND, 0);
+                found = true;
+            }
+        }
+
+        if (found) {
+            return calendar.getTime();
+        } else {
+            return null;
+        }
+    }
+
+    @Override
+    public Date nextPeriodStartDate(Date date) {
+
+        GregorianCalendar calendar = new GregorianCalendar();
+        calendar.setTime(date);
+
+        boolean found = false;
+
+        // Get the next earliest interval begin time given current date's time. To handle a special case that calculation crosses to another week (e.g. checking friday for monday
+        // to wednesday period), the interval begin value is adjusted by 7 days.
+        if (intervalType == CalendarIntervalTypeEnum.WDAY) {
+
+            int weekday = calendar.get(java.util.Calendar.DAY_OF_WEEK) - 1;
+            if (weekday == 0) {
+                weekday = 7;
+            }
+
+            int earliestWeekday = 10000000;
+            for (CalendarDateInterval interval : intervals) {
+
+                // Adjust given date time if interval is on another week - and date time corresponds to previous week. E.g checking friday for monday to wednesday period
+                int intervalBeginAdjusted = interval.getIntervalBegin();
+                if (weekday > interval.getIntervalBegin()) {
+                    intervalBeginAdjusted = intervalBeginAdjusted + 7;
+
+                }
+                // Remember the earliest value
+                if (intervalBeginAdjusted >= weekday && earliestWeekday >= intervalBeginAdjusted) {
+                    earliestWeekday = intervalBeginAdjusted;
+                }
+
+            }
+            if (earliestWeekday != 10000000) {
+
+                calendar.add(java.util.Calendar.DAY_OF_MONTH, 1 * (earliestWeekday - weekday));
+                calendar.set(java.util.Calendar.HOUR_OF_DAY, 0);
+                calendar.set(java.util.Calendar.MINUTE, 0);
+                calendar.set(java.util.Calendar.SECOND, 0);
+                calendar.set(java.util.Calendar.MILLISECOND, 0);
+                found = true;
+            }
+
+            // Get the next earliest interval begin time given current date's time. To handle a special case that calculation crosses to another year (e.g. checking 05/20 for 01/15
+            // to 03/25 period), the interval begin value is adjusted by 12 month.
+        } else if (intervalType == CalendarIntervalTypeEnum.DAY) {
+
+            int monthDay = Integer.parseInt((calendar.get(java.util.Calendar.MONTH) + 1) + "" + (calendar.get(java.util.Calendar.DAY_OF_MONTH) < 10 ? "0" : "")
+                    + calendar.get(java.util.Calendar.DAY_OF_MONTH));
+
+            int earliestMonthDay = 10000000;
+            for (CalendarDateInterval interval : intervals) {
+
+                // Adjust given date time if interval is on another year - and date time corresponds to previous year. E.g checking 05/20 for 01/15 to 03/25 period
+                int intervalBeginAdjusted = interval.getIntervalBegin();
+                if (monthDay > interval.getIntervalBegin()) {
+                    intervalBeginAdjusted = intervalBeginAdjusted + 1200;
+
+                }
+                // Remember the earliest value
+                if (intervalBeginAdjusted >= monthDay && earliestMonthDay >= intervalBeginAdjusted) {
+                    earliestMonthDay = intervalBeginAdjusted;
+                }
+
+            }
+            if (earliestMonthDay != 10000000) {
+
+                // Advance to a next year if interval begin value was adjusted by 12 month
+                int beginValue = earliestMonthDay;
+                if (earliestMonthDay > 1300) {
+                    calendar.add(java.util.Calendar.YEAR, +1);
+                    beginValue = earliestMonthDay - 1200;
+                }
+                calendar.set(java.util.Calendar.MONTH, beginValue / 100 - 1);
+                calendar.set(java.util.Calendar.DAY_OF_MONTH, beginValue % 100);
+                calendar.set(java.util.Calendar.HOUR_OF_DAY, 0);
+                calendar.set(java.util.Calendar.MINUTE, 0);
+                calendar.set(java.util.Calendar.SECOND, 0);
+                calendar.set(java.util.Calendar.MILLISECOND, 0);
+                found = true;
+            }
+
+            // Get the next earliest interval begin time given current date's time. To handle a special case that calculation crosses to another day (e.g. 01:15 to 10:45 when
+            // checking for 23:00), the interval begin value is adjusted by 24 hours.
+        } else if (intervalType == CalendarIntervalTypeEnum.HOUR) {
+
+            int hourMin = Integer.parseInt(calendar.get(java.util.Calendar.HOUR_OF_DAY) + "" + (calendar.get(java.util.Calendar.MINUTE) < 10 ? "0" : "")
+                    + calendar.get(java.util.Calendar.MINUTE));
+
+            int earliestHourMin = 10000000;
+            for (CalendarDateInterval interval : intervals) {
+
+                // Adjust interval begin time if interval begin time is on another day - and date time corresponds to previous day. E.g checking 23:00 for 02:00 - 11:30 period
+                int intervalBeginAdjusted = interval.getIntervalBegin();
+                if (hourMin > interval.getIntervalBegin()) {
+                    intervalBeginAdjusted = intervalBeginAdjusted + 2400;
+
+                }
+
+                // Remember the earliest value
+                if (intervalBeginAdjusted >= hourMin && earliestHourMin >= intervalBeginAdjusted) {
+                    earliestHourMin = intervalBeginAdjusted;
+                }
+
+            }
+            if (earliestHourMin != 10000000) {
+                // Advance to a next day if interval begin value was adjusted by 24 hours
+                int beginValue = earliestHourMin;
+                if (earliestHourMin >= 2400) {
+                    calendar.add(java.util.Calendar.DAY_OF_MONTH, 1);
+                    beginValue = earliestHourMin - 2400;
+                }
+                calendar.set(java.util.Calendar.HOUR_OF_DAY, beginValue / 100);
+                calendar.set(java.util.Calendar.MINUTE, beginValue % 100);
+                calendar.set(java.util.Calendar.SECOND, 0);
+                calendar.set(java.util.Calendar.MILLISECOND, 0);
+                found = true;
+            }
         }
 
         if (found) {

@@ -28,6 +28,8 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.cache.RatingCacheContainerProvider;
+import org.meveo.cache.WalletCacheContainerProvider;
 import org.meveo.model.Auditable;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.Reservation;
@@ -67,12 +69,12 @@ public class ReservationService extends PersistenceService<Reservation> {
 
 	@Inject
 	private WalletService walletService;
-
+    
 	@Inject
-	private WalletOperationService walletOperationService;
-
-	@Inject
-	private UsageRatingService usageRatingService;
+    private WalletCacheContainerProvider walletCacheContainerProvider;
+    	
+    @Inject
+    private RatingCacheContainerProvider ratingCacheContainerProvider;
 
 	// FIXME: rethink this service in term of prepaid wallets
 	public Long createReservation(Provider provider, String sellerCode, String offerCode, String userAccountCode,
@@ -291,12 +293,12 @@ public class ReservationService extends PersistenceService<Reservation> {
 		for (WalletReservation op : ops) {
 			op.getAuditable().setUpdated(new Date());
 			op.setStatus(WalletOperationStatusEnum.CANCELED);
-			walletOperationService.updateBalanceCache(op);
+			walletCacheContainerProvider.updateBalanceCache(op);
 		}
 
 		// restore all counters values
 		if (reservation.getCounterPeriodValues().size() > 0) {
-			usageRatingService.restoreCounters(reservation.getCounterPeriodValues());
+		    ratingCacheContainerProvider.restoreCounters(reservation.getCounterPeriodValues());
 		}
 
 		reservation.setStatus(ReservationStatus.CANCELLED);
@@ -311,7 +313,7 @@ public class ReservationService extends PersistenceService<Reservation> {
 		for (WalletReservation op : ops) {
 			op.getAuditable().setUpdated(new Date());
 			op.setStatus(WalletOperationStatusEnum.OPEN);
-			walletOperationService.updateBalanceCache(op);
+			walletCacheContainerProvider.updateBalanceCache(op);
 		}
 		reservation.setStatus(ReservationStatus.CONFIRMED);
 	}

@@ -43,7 +43,7 @@ public class CalendarJoin extends Calendar {
 
     public enum CalendarJoinTypeEnum {
         UNION, INTERSECT;
-        
+
         public String getLabel() {
             return "CalendarJoinTypeEnum." + this.name();
         }
@@ -150,6 +150,107 @@ public class CalendarJoin extends Calendar {
 
         Date date1 = joinCalendar1.previousCalendarDate(date);
         Date date2 = joinCalendar2.previousCalendarDate(date);
+
+        if (date1 == null && date2 == null) {
+            return null;
+        }
+
+        // Get the farthest date
+        if (joinType == CalendarJoinTypeEnum.UNION) {
+            if (date1 == null && date2 != null) {
+                return date2;
+
+            } else if (date1 != null && date2 == null) {
+                return date1;
+
+            } else if (date1.before(date2)) {
+                return date1;
+
+            } else {
+                return date2;
+            }
+
+            // Get the closest date
+        } else if (joinType == CalendarJoinTypeEnum.INTERSECT) {
+            if (date1 == null || date2 == null) {
+                return null;
+
+            } else if (date1.after(date2)) {
+                return date1;
+
+            } else {
+                return date2;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Determines a previous period end date by joining previousPeriodEndDate result from two calendars. Result depends on a join type:
+     * 
+     * given one calendar as a weekday calendar with interval monday - friday and another calendar of as hour calendar with interval 8 - 15. A union calendar will return friday as
+     * previous period end date and intersection calendar will return 15 as period end date
+     * 
+     * @param date Date to check
+     * @return Previous period end date calendar date.
+     */
+    @Override
+    public Date previousPeriodEndDate(Date date) {
+
+        Date date1 = joinCalendar1.previousPeriodEndDate(date);
+        Date date2 = joinCalendar2.previousPeriodEndDate(date);
+
+        if (date1 == null && date2 == null) {
+            return null;
+        }
+
+        // Get the farthest date
+        if (joinType == CalendarJoinTypeEnum.UNION) {
+            if (date1 == null && date2 != null) {
+                return date2;
+
+            } else if (date1 != null && date2 == null) {
+                return date1;
+
+            } else if (date1.after(date2)) {
+                return date1;
+
+            } else {
+
+                return date2;
+            }
+
+            // Get the closest date
+        } else if (joinType == CalendarJoinTypeEnum.INTERSECT) {
+            if (date1 == null || date2 == null) {
+                return null;
+
+            } else if (date1.before(date2)) {
+                return date1;
+
+            } else {
+                return date2;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Determines a next period start date joining nextPeriodStartDate result from two calendars. Result depends on a join type:
+     * 
+     * given one calendar as a weekday calendar with interval monday - friday and another calendar of as hour calendar with interval 8 - 15. A union calendar will return monday as
+     * next period start date and intersection calendar will return 8 as next period start date
+     * 
+     * @param date Date to check
+     * @return Next period start date.
+     */
+    @Override
+    public Date nextPeriodStartDate(Date date) {
+
+        Date date1 = joinCalendar1.nextPeriodStartDate(date);
+        Date date2 = joinCalendar2.nextPeriodStartDate(date);
 
         if (date1 == null && date2 == null) {
             return null;

@@ -28,6 +28,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.cache.WalletCacheContainerProvider;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.BillingWalletTypeEnum;
@@ -57,6 +58,9 @@ public class OneShotChargeInstanceService extends BusinessService<OneShotChargeI
 	
 	@Inject
 	private WalletOperationService walletOperationService;
+	
+    @Inject
+    private WalletCacheContainerProvider walletCacheContainerProvider; 
 
 	public OneShotChargeInstance findByCodeAndSubsription(String code, Long subscriptionId) {
 		OneShotChargeInstance oneShotChargeInstance = null;
@@ -266,7 +270,7 @@ public class OneShotChargeInstanceService extends BusinessService<OneShotChargeI
 				currentUser);
 		//we check that balance is unchanged
 		//
-		BigDecimal cacheBalance=walletOperationService.getCacheBalance(wallet.getId());
+		BigDecimal cacheBalance=walletCacheContainerProvider.getBalance(wallet.getId());
 		if(cacheBalance.compareTo(balanceWithTax)!=0){
 			log.error("balances in prepaid matching process do not match cache={}, compensated={}"
 					,cacheBalance,balanceWithTax);

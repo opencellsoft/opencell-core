@@ -18,17 +18,17 @@ package org.meveo.service.catalog.impl;
 
 import java.util.List;
 
-import javax.ejb.EJB;
 import javax.ejb.Stateless;
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 
-import org.meveo.admin.exception.BusinessException;
+import org.meveo.cache.RatingCacheContainerProvider;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.QueryBuilder.QueryLikeStyleEnum;
 import org.meveo.model.admin.User;
+import org.meveo.model.catalog.TriggeredEDRTemplate;
 import org.meveo.model.catalog.UsageChargeTemplate;
 import org.meveo.model.crm.Provider;
-import org.meveo.service.billing.impl.UsageRatingService;
 
 /**
  * Charge Template service implementation.
@@ -38,33 +38,17 @@ import org.meveo.service.billing.impl.UsageRatingService;
 public class UsageChargeTemplateService extends
 		ChargeTemplateService<UsageChargeTemplate> {
 
-	@EJB
-	UsageRatingService usageRatingService;
-
-	public void create(UsageChargeTemplate e) throws BusinessException {
-		super.create(e);
-		usageRatingService.updateTemplateCache(e);
-	}
-
-	public void create(UsageChargeTemplate e, User creator) {
-		super.create(e, creator);
-		usageRatingService.updateTemplateCache(e);
-	}
+    @Inject
+    private RatingCacheContainerProvider ratingCacheContainerProvider;
 
 	public void create(UsageChargeTemplate e, User creator, Provider provider) {
 		super.create(e, creator, provider);
-		usageRatingService.updateTemplateCache(e);
-	}
-
-	public UsageChargeTemplate update(UsageChargeTemplate e) {
-		e = super.update(e);
-		usageRatingService.updateTemplateCache(e);
-		return e;
+		ratingCacheContainerProvider.updateUsageChargeTemplateInCache(e);
 	}
 
 	public UsageChargeTemplate update(UsageChargeTemplate e, User updater) {
 		e = super.update(e, updater);
-		usageRatingService.updateTemplateCache(e);
+		ratingCacheContainerProvider.updateUsageChargeTemplateInCache(e);
 		return e;
 	}
 
@@ -75,6 +59,10 @@ public class UsageChargeTemplateService extends
 		qb.like("code", usageChargePrefix, QueryLikeStyleEnum.MATCH_BEGINNING, true);
 
 		return (List<UsageChargeTemplate>) qb.getQuery(em).getResultList();
-	}
+    }
 
+    public List<UsageChargeTemplate> findAssociatedToEDRTemplate(TriggeredEDRTemplate triggeredEDRTemplate) {
+        return getEntityManager().createNamedQuery("UsageChargeTemplate.getWithTemplateEDR", UsageChargeTemplate.class).setParameter("edrTemplate", triggeredEDRTemplate)
+            .getResultList();
+    }
 }
