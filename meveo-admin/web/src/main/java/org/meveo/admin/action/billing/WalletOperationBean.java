@@ -142,18 +142,21 @@ public class WalletOperationBean extends BaseBean<WalletOperation> {
 	
 		return super.getLazyDataModel();
 	}
+	
 
-	public void  updatedToRerate(WalletOperation walletOperation) {
-		try{
-		List<Long> walletIdList=new ArrayList<Long>();
-		walletIdList.add(walletOperation.getId());
-		if(walletOperationService.updateToRerate(walletIdList)>0){
-		messages.info(new BundleKey("messages","update.successful"));
-		}
-		}catch (Exception e) {
-			log.error(e.getMessage());	
-		}
-	}
+	public void updatedToRerate(WalletOperation walletOperation) {
+		 try{
+			  List<Long> walletIdList=new ArrayList<Long>();
+			  walletIdList.add(walletOperation.getId());
+			  if(walletOperationService.updateToRerate(walletIdList)>0){
+			   messages.info(new BundleKey("messages","update.successful"));
+			  }else{
+			 messages.info(new BundleKey("messages","walletOperation.alreadyBilled"));
+			 }
+			  }catch (Exception e) {
+			   log.error(e.getMessage()); 
+			    messages.error(new BundleKey("messages","update.failed"));
+			  }}
 	
 	public void massToRerate() {
 		try{
@@ -164,9 +167,10 @@ public class WalletOperationBean extends BaseBean<WalletOperation> {
 				walletIdList.add(wallet.getId());	
 			}}
 			int count=walletOperationService.updateToRerate(walletIdList); 
-			messages.info("Update of "+count+" wallet operations has successfully done");
+			messages.info(new BundleKey("messages", "walletOperation.updateToRerate"),count);
 		}catch (Exception e) {
-			log.error(e.getMessage());	
+			log.error(e.getMessage());
+			messages.error(new BundleKey("messages","update.failed"));
 		}
 	} 
 } 
