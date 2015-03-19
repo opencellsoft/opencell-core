@@ -175,6 +175,7 @@ public class MediationJobBean {
 							}
 						} catch (Exception e) {
 							log.error(e.getMessage());
+							e.printStackTrace();
 						}
 					}
 				}
@@ -185,6 +186,7 @@ public class MediationJobBean {
 			}
 		} catch (Exception e) {
 			log.error(e.getMessage());
+			e.printStackTrace();
 		}
 	}
 

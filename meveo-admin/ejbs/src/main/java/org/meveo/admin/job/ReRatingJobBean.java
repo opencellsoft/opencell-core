@@ -49,20 +49,21 @@ public class ReRatingJobBean implements Serializable {
 			List<WalletOperation> walletOperations = walletOperationService.findByStatus(
 					WalletOperationStatusEnum.TO_RERATE, currentUser.getProvider());
 
-			log.info("operations to rerate={}", walletOperations.size());
-
+			log.info("rerate with useSamePricePlan={} ,#operations={}", useSamePricePlan,walletOperations.size());
+			result.setNbItemsToProcess(walletOperations.size());
 			for (WalletOperation walletOperation : walletOperations) {
 				try {
-
 					ratingService.reRate(walletOperation, useSamePricePlan);
-
+					result.registerSucces();
 				} catch (Exception e) {
 					rejectededOperationProducer.fire(walletOperation);
+					e.printStackTrace();
 					log.error(e.getMessage());
 					result.registerError(e.getMessage());
 				}
 			}
 		} catch (Exception e) {
+			e.printStackTrace();
 			log.error(e.getMessage());
 		}
 	}

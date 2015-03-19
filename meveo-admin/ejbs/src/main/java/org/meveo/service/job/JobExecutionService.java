@@ -73,6 +73,8 @@ public class JobExecutionService extends PersistenceService<JobExecutionResultIm
 				} else if (info.getFollowingTimerId() != null && info.getFollowingTimerId() > 0) {
 					try {
 						TimerEntity timerEntity = timerEntityService.findById(info.getFollowingTimerId());
+
+						log.info("execute following timer "+timerEntity.getJobName());
 						executeJob(timerEntity.getJobName(), (TimerInfo) timerEntity.getTimerInfo(), currentUser,
 								jobCategory);
 					} catch (Exception e) {

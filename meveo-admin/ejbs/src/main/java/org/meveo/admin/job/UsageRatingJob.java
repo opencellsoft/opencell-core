@@ -53,23 +53,27 @@ public class UsageRatingJob implements Job {
 	@Override
 	@Asynchronous
 	public void execute(TimerInfo info, User currentUser) {
+		log.debug("execute usgRating, info={}, currentUser={}",info,currentUser);
 		JobExecutionResultImpl result = new JobExecutionResultImpl();
 		if (!running && (info.isActive() || currentUser != null)) {
 			try {
 				running = true;
 				if (currentUser == null) {
 					currentUser = userService.findByIdLoadProvider(info.getUserId());
+					log.debug("execute usgRating, found user from info {}",currentUser);
 				}
 				usageRatingJobBean.execute(result, currentUser);
 				result.close("");
-
+				log.debug("execute usgRating, persist job execution");
 				jobExecutionService.persistResult(this, result, info, currentUser, getJobCategory());
 			} catch (Exception e) {
 				log.error(e.getMessage());
+				e.printStackTrace();
 			} finally {
 				running = false;
 			}
 		}
+		log.debug("end execute usgRating");
 	}
 
 	@Override

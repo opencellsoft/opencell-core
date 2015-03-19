@@ -253,6 +253,7 @@ public class ImportCustomersJobBean {
 				log.error("File:" + fileName + ", typeEntity:Seller, index:" + i + ", code:" + sell.getCode()
 						+ ", status:Error");
 				log.error(e.getMessage());
+				e.printStackTrace();
 			}
 		}
 

@@ -69,6 +69,7 @@ public class InvoicingJob implements Job {
 	@Override
 	@Asynchronous
 	public void execute(TimerInfo info, User currentUser) {
+		log.debug("execute invoicing, info={}, currentUser={}",info,currentUser);
 		JobExecutionResultImpl result = new JobExecutionResultImpl();
 		if (!running && (info.isActive() || currentUser != null)) {
 			try {
@@ -78,14 +79,16 @@ public class InvoicingJob implements Job {
 				}
 				invoicingJobBean.execute(result, currentUser);
 				result.close("");
-
+				log.debug("execute invoicing, persist job execution");
 				jobExecutionService.persistResult(this, result, info, currentUser, getJobCategory());
 			} catch (Exception e) {
 				log.error(e.getMessage());
+				e.printStackTrace();
 			} finally {
 				running = false;
 			}
 		}
+		log.debug("end execute invoicing");
 	}
 
 	@Override

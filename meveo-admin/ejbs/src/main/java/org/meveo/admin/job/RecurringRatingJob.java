@@ -53,23 +53,27 @@ public class RecurringRatingJob implements Job {
 	@Override
 	@Asynchronous
 	public void execute(TimerInfo info, User currentUser) {
+		log.debug("execute recurRating, info={}, currentUser={}",info,currentUser);
 		JobExecutionResultImpl result = new JobExecutionResultImpl();
 		if (!running && (info.isActive() || currentUser != null)) {
 			try {
 				running = true;
 				if (currentUser == null) {
 					currentUser = userService.findByIdLoadProvider(info.getUserId());
+					log.debug("execute recurRating, found user from info {}",currentUser);
 				}
 				recurringRatingJobBean.execute(result, currentUser);
 				result.close("");
-
+				log.debug("execute recurRating, persist job execution");
 				jobExecutionService.persistResult(this, result, info, currentUser, getJobCategory());
 			} catch (Exception e) {
 				log.error(e.getMessage());
+				e.printStackTrace();
 			} finally {
 				running = false;
 			}
 		}
+		log.debug("end execute recurRating");
 	}
 
 	@Override

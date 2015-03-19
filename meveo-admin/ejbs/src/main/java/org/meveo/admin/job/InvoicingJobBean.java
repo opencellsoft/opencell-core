@@ -88,17 +88,21 @@ public class InvoicingJobBean {
 						} catch (Exception e) {
 							log.error("Error: {}", e.getMessage());
 							result.registerError(e.getMessage());
+							e.printStackTrace();
 						}
 					} catch (Exception e) {
 						log.error("Error: {}", e.getMessage());
 						result.registerError(e.getMessage());
+						e.printStackTrace();
 					}
 				}
 			} catch (Exception e) {
 				log.error(e.getMessage());
+				e.printStackTrace();
 			}
 		} catch (Exception e) {
 			log.error(e.getMessage());
+			e.printStackTrace();
 		}
 	}
 
