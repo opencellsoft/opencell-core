@@ -59,270 +59,264 @@ import org.meveo.util.MeveoJpaForJobs;
  * persistence methods declared in the {@link IPersistenceService} interface.
  */
 public abstract class PersistenceService<E extends IEntity> extends BaseService implements IPersistenceService<E> {
-	protected final Class<E> entityClass;
+    protected final Class<E> entityClass;
 
-	public static String SEARCH_SKIP_PROVIDER_CONSTRAINT = "skipProviderConstraint";
+    public static String SEARCH_SKIP_PROVIDER_CONSTRAINT = "skipProviderConstraint";
 
-	@Inject
-	@MeveoJpa
-	private EntityManager em;
+    @Inject
+    @MeveoJpa
+    private EntityManager em;
 
-	@Inject
-	@MeveoJpaForJobs
-	private EntityManager emfForJobs;
+    @Inject
+    @MeveoJpaForJobs
+    private EntityManager emfForJobs;
 
-	@Inject
-	private Conversation conversation;
+    @Inject
+    private Conversation conversation;
 
-	@Resource
-	protected TransactionSynchronizationRegistry txReg;
+    @Resource
+    protected TransactionSynchronizationRegistry txReg;
 
-	@Inject
-	@Created
-	protected Event<E> entityCreatedEventProducer;
+    @Inject
+    @Created
+    protected Event<E> entityCreatedEventProducer;
 
-	@Inject
-	@Updated
-	protected Event<E> entityUpdatedEventProducer;
+    @Inject
+    @Updated
+    protected Event<E> entityUpdatedEventProducer;
 
-	@Inject
-	@Disabled
-	protected Event<E> entityDisabledEventProducer;
-	
+    @Inject
+    @Disabled
+    protected Event<E> entityDisabledEventProducer;
+
     @Inject
     @Enabled
     protected Event<E> entityEnabledEventProducer;
 
-	@Inject
-	@Removed
-	protected Event<E> entityRemovedEventProducer;
+    @Inject
+    @Removed
+    protected Event<E> entityRemovedEventProducer;
 
-	private Provider provider;
+    private Provider provider;
 
-	/**
-	 * Constructor.
-	 */
-	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public PersistenceService() {
-		Class clazz = getClass();
-		while (!(clazz.getGenericSuperclass() instanceof ParameterizedType)) {
-			clazz = clazz.getSuperclass();
-		}
-		Object o = ((ParameterizedType) clazz.getGenericSuperclass()).getActualTypeArguments()[0];
+    /**
+     * Constructor.
+     */
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+    public PersistenceService() {
+        Class clazz = getClass();
+        while (!(clazz.getGenericSuperclass() instanceof ParameterizedType)) {
+            clazz = clazz.getSuperclass();
+        }
+        Object o = ((ParameterizedType) clazz.getGenericSuperclass()).getActualTypeArguments()[0];
 
-		if (o instanceof TypeVariable) {
-			this.entityClass = (Class<E>) ((TypeVariable) o).getBounds()[0];
-		} else {
-			this.entityClass = (Class<E>) o;
-		}
-	}
+        if (o instanceof TypeVariable) {
+            this.entityClass = (Class<E>) ((TypeVariable) o).getBounds()[0];
+        } else {
+            this.entityClass = (Class<E>) o;
+        }
+    }
 
-	/**
-	 * @see org.meveo.service.base.local.IPersistenceService#getEntityClass()
-	 */
-	public Class<E> getEntityClass() {
-		return entityClass;
-	}
+    /**
+     * @see org.meveo.service.base.local.IPersistenceService#getEntityClass()
+     */
+    public Class<E> getEntityClass() {
+        return entityClass;
+    }
 
-	/**
-	 * @see org.meveo.service.base.local.IPersistenceService#create(org.manaty.model.BaseEntity)
-	 */
-	@Override
-	public void create(E e) throws BusinessException {
-		create(e, getCurrentUser());
-	}
+    /**
+     * @see org.meveo.service.base.local.IPersistenceService#create(org.manaty.model.BaseEntity)
+     */
+    @Override
+    public void create(E e) throws BusinessException {
+        create(e, getCurrentUser());
+    }
 
-	/**
-	 * @see org.meveo.service.base.local.IPersistenceService#update(org.manaty.model.BaseEntity)
-	 */
-	@Override
-	public E update(E e) {
-		return update(e, getCurrentUser());
-	}
+    /**
+     * @see org.meveo.service.base.local.IPersistenceService#update(org.manaty.model.BaseEntity)
+     */
+    @Override
+    public E update(E e) {
+        return update(e, getCurrentUser());
+    }
 
-	public E updateNoCheck(E e) {
-		log.debug("start of update {} entity (id={}) ..", e.getClass().getSimpleName(), e.getId());
-		return getEntityManager().merge(e);
-	}
+    public E updateNoCheck(E e) {
+        log.debug("start of update {} entity (id={}) ..", e.getClass().getSimpleName(), e.getId());
+        return getEntityManager().merge(e);
+    }
 
-	/**
-	 * @see org.meveo.service.base.local.IPersistenceService#findById(java.lang.Long)
-	 */
-	@Override
-	public E findById(Long id) {
-		return findById(id, false);
-	}
+    /**
+     * @see org.meveo.service.base.local.IPersistenceService#findById(java.lang.Long)
+     */
+    @Override
+    public E findById(Long id) {
+        return findById(id, false);
+    }
 
-	/**
+    /**
 	 * @see org.meveo.service.base.local.IPersistenceService#findById(java.lang.Long,
 	 *      java.util.List)
-	 */
-	@Override
-	public E findById(Long id, List<String> fetchFields) {
-		return findById(id, fetchFields, false);
-	}
+     */
+    @Override
+    public E findById(Long id, List<String> fetchFields) {
+        return findById(id, fetchFields, false);
+    }
 
-	@Override
-	public E findById(Long id, boolean refresh) {
-		return findById(getEntityManager(), id, refresh);
-	}
+    @Override
+    public E findById(Long id, boolean refresh) {
+        return findById(getEntityManager(), id, refresh);
+    }
 
-	public E findById(EntityManager em, Long id) {
-		return findById(em, id, false);
-	}
+    public E findById(EntityManager em, Long id) {
+        return findById(em, id, false);
+    }
 
-	/**
+    /**
 	 * @see org.meveo.service.base.local.IPersistenceService#findById(java.lang.Long,
 	 *      boolean)
-	 */
-	public E findById(EntityManager em, Long id, boolean refresh) {
-		log.debug("start of find {} by id (id={}) ..", getEntityClass().getSimpleName(), id);
-		final Class<? extends E> productClass = getEntityClass();
-		E e = em.find(productClass, id);
-		if (refresh) {
-			log.debug("refreshing loaded entity");
-			em.refresh(e);
-		}
-		log.debug("end of find {} by id (id={}). Result found={}.", getEntityClass().getSimpleName(), id, e != null);
-		return e;
-	}
+     */
+    public E findById(EntityManager em, Long id, boolean refresh) {
+        log.debug("start of find {} by id (id={}) ..", getEntityClass().getSimpleName(), id);
+        final Class<? extends E> productClass = getEntityClass();
+        E e = em.find(productClass, id);
+        if (refresh) {
+            log.debug("refreshing loaded entity");
+            em.refresh(e);
+        }
+        log.debug("end of find {} by id (id={}). Result found={}.", getEntityClass().getSimpleName(), id, e != null);
+        return e;
+    }
 
-	@SuppressWarnings("unchecked")
-	public E findById(Long id, Provider provider) {
-		final Class<? extends E> entityClass = getEntityClass();
-		QueryBuilder queryBuilder = new QueryBuilder(entityClass, "a", null, provider);
-		queryBuilder.addCriterion("id", "=", id, true);
-		Query query = queryBuilder.getQuery(getEntityManager());
-		return (E) query.getSingleResult();
-	}
+    @SuppressWarnings("unchecked")
+    public E findById(Long id, Provider provider) {
+        final Class<? extends E> entityClass = getEntityClass();
+        QueryBuilder queryBuilder = new QueryBuilder(entityClass, "a", null, provider);
+        queryBuilder.addCriterion("id", "=", id, true);
+        Query query = queryBuilder.getQuery(getEntityManager());
+        return (E) query.getSingleResult();
+    }
 
-	/**
+    /**
 	 * @see org.meveo.service.base.local.IPersistenceService#findById(java.lang.Long,
 	 *      java.util.List, boolean)
-	 */
-	@SuppressWarnings("unchecked")
-	public E findById(Long id, List<String> fetchFields, boolean refresh) {
-		log.debug("start of find {} by id (id={}) ..", getEntityClass().getSimpleName(), id);
-		final Class<? extends E> productClass = getEntityClass();
-		StringBuilder queryString = new StringBuilder("from " + productClass.getName() + " a");
-		if (fetchFields != null && !fetchFields.isEmpty()) {
-			for (String fetchField : fetchFields) {
-				queryString.append(" left join fetch a." + fetchField);
-			}
-		}
-		queryString.append(" where a.id = :id");
-		Query query = getEntityManager().createQuery(queryString.toString());
-		query.setParameter("id", id);
+     */
+    @SuppressWarnings("unchecked")
+    public E findById(Long id, List<String> fetchFields, boolean refresh) {
+        log.debug("start of find {} by id (id={}) ..", getEntityClass().getSimpleName(), id);
+        final Class<? extends E> productClass = getEntityClass();
+        StringBuilder queryString = new StringBuilder("from " + productClass.getName() + " a");
+        if (fetchFields != null && !fetchFields.isEmpty()) {
+            for (String fetchField : fetchFields) {
+                queryString.append(" left join fetch a." + fetchField);
+            }
+        }
+        queryString.append(" where a.id = :id");
+        Query query = getEntityManager().createQuery(queryString.toString());
+        query.setParameter("id", id);
 
-		E e = (E) query.getResultList().get(0);
+        E e = (E) query.getResultList().get(0);
 
-		if (refresh) {
-			log.debug("refreshing loaded entity");
-			getEntityManager().refresh(e);
-		}
-		log.debug("end of find {} by id (id={}). Result found={}.", getEntityClass().getSimpleName(), id, e != null);
-		return e;
-	}
+        if (refresh) {
+            log.debug("refreshing loaded entity");
+            getEntityManager().refresh(e);
+        }
+        log.debug("end of find {} by id (id={}). Result found={}.", getEntityClass().getSimpleName(), id, e != null);
+        return e;
+    }
 
-	/**
-	 * @see org.meveo.service.base.local.IPersistenceService#disable(java.lang.Long)
-	 */
-	@Override
-	public void disable(Long id) {
-		E e = findById(id);
+    /**
+     * @see org.meveo.service.base.local.IPersistenceService#disable(java.lang.Long)
+     */
+    @Override
+    public void disable(Long id) {
+        E e = findById(id);
         if (e != null) {
             disable(e);
         }
-	}
-	
-	
-	@Override
-	public E disable(E e){
-		if (e instanceof EnableEntity && ((EnableEntity) e).isActive()) {
-			((EnableEntity) e).setDisabled(true);
-            e = update(e, getCurrentUser(), false);
-			entityDisabledEventProducer.fire(e);
-		}
-		return e;
     }
 
-	/**
+	
+    @Override
+    public E disable(E e) {
+        if (e instanceof EnableEntity && ((EnableEntity) e).isActive()) {
+            log.debug("start of disable {} entity (id={}) ..", getEntityClass().getSimpleName(), e.getId());
+            ((EnableEntity) e).setDisabled(true);
+            if (e instanceof AuditableEntity) {
+                ((AuditableEntity) e).updateAudit(getCurrentUser());
+            }
+            checkProvider(e);
+            e = getEntityManager().merge(e);
+            entityDisabledEventProducer.fire(e);
+            log.debug("end of disable {} entity (id={}).", e.getClass().getSimpleName(), e.getId());
+        }
+        return e;
+    }
+
+    /**
      * @see org.meveo.service.base.local.IPersistenceService#enable(java.lang.Long)
      */
-	@Override
+    @Override
     public void enable(Long id) {
         E e = findById(id);
         if (e != null) {
             enable(e);
         }
     }
-    
-	@Override
+
+    @Override
     public E enable(E e) {
         if (e instanceof EnableEntity && ((EnableEntity) e).isDisabled()) {
+            log.debug("start of enable {} entity (id={}) ..", getEntityClass().getSimpleName(), e.getId());
             ((EnableEntity) e).setDisabled(false);
-            e = update(e, getCurrentUser(), false);
+            if (e instanceof AuditableEntity) {
+                ((AuditableEntity) e).updateAudit(getCurrentUser());
+            }
+            checkProvider(e);
+            e = getEntityManager().merge(e);
             entityEnabledEventProducer.fire(e);
+            log.debug("end of enable {} entity (id={}).", e.getClass().getSimpleName(), e.getId());
         }
         return e;
     }
 
-	@Override
-	public void remove(E e) {
-		remove(getEntityManager(), e);
-	}
-
-	/**
-	 * @see org.meveo.service.base.local.IPersistenceService#remove(java.lang.Long)
-	 */
-	public void remove(Long id) {
-		E e = findById(id);
-		if (e != null) {
-			remove(e);
-		}
-	}
-
-	/**
-	 * @see org.meveo.service.base.local.IPersistenceService#remove(org.manaty.model.BaseEntity)
-	 */
-	public void remove(EntityManager em, E e) {
-		log.debug("start of remove {} entity (id={}) ..", getEntityClass().getSimpleName(), e.getId());
-		checkProvider(e);
-		em.remove(e);
-		entityRemovedEventProducer.fire(e);
-		// em.flush();
-		log.debug("end of remove {} entity (id={}).", getEntityClass().getSimpleName(), e.getId());
-	}
-
-	/**
-	 * @see org.meveo.service.base.local.IPersistenceService#remove(java.util.Set)
-	 */
-	@Override
-	public void remove(Set<Long> ids) {
-		Query query = getEntityManager().createQuery(
-				"delete from " + getEntityClass().getName() + " where id in (:ids) and provider.id = :providerId");
-		query.setParameter("ids", ids);
-		query.setParameter("providerId", getCurrentProvider() != null ? getCurrentProvider().getId() : null);
-		query.executeUpdate();
-	}
-
-	/**
-	 * @see org.meveo.service.base.local.IPersistenceService#update(org.manaty.model.BaseEntity,
-	 *      org.manaty.model.user.User)
-	 */
     @Override
-    public E update(E e, User updater) {
-        return update(e, updater, true);
+    public void remove(E e) {
+        log.debug("start of remove {} entity (id={}) ..", getEntityClass().getSimpleName(), e.getId());
+        checkProvider(e);
+        getEntityManager().remove(e);
+        entityRemovedEventProducer.fire(e);
+        // getEntityManager().flush();
+        log.debug("end of remove {} entity (id={}).", getEntityClass().getSimpleName(), e.getId());
     }
 
     /**
-     * Update entity to DB with optionally firing an update event
-     * @param e Entity to update to DB
-     * @param updater User peforming an action
-     * @param fireUpdateEvent True if update event should be fired
-     * @return
+     * @see org.meveo.service.base.local.IPersistenceService#remove(java.lang.Long)
      */
-    protected E update(E e, User updater, boolean fireUpdateEvent) {
+    public void remove(Long id) {
+        E e = findById(id);
+        if (e != null) {
+            remove(e);
+        }
+    }
+
+    /**
+     * @see org.meveo.service.base.local.IPersistenceService#remove(java.util.Set)
+     */
+    @Override
+    public void remove(Set<Long> ids) {
+		Query query = getEntityManager().createQuery(
+				"delete from " + getEntityClass().getName() + " where id in (:ids) and provider.id = :providerId");
+        query.setParameter("ids", ids);
+        query.setParameter("providerId", getCurrentProvider() != null ? getCurrentProvider().getId() : null);
+        query.executeUpdate();
+    }
+
+    /**
+	 * @see org.meveo.service.base.local.IPersistenceService#update(org.manaty.model.BaseEntity,
+	 *      org.manaty.model.user.User)
+     */
+    @Override
+    public E update(E e, User updater) {
         log.debug("start of update {} entity (id={}) ..", e.getClass().getSimpleName(), e.getId());
 
         if (e instanceof AuditableEntity) {
@@ -334,14 +328,12 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
         }
         checkProvider(e);
         e = getEntityManager().merge(e);
-        if (fireUpdateEvent) {
-            entityUpdatedEventProducer.fire(e);
-        }
+        entityUpdatedEventProducer.fire(e);
         log.debug("end of update {} entity (id={}).", e.getClass().getSimpleName(), e.getId());
         return e;
     }
 
-	/**
+    /**
 	 * @see org.meveo.service.base.local.IPersistenceService#create(org.manaty.model.BaseEntity,
 	 *      org.manaty.model.user.User)
 	 */
@@ -375,182 +367,193 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 	/**
 	 * @see org.meveo.service.base.local.IPersistenceService#list()
 	 */
-	@Override
-	public List<E> list() {
-		return list(getCurrentProvider());
-	}
+    @Override
+    public List<E> list() {
+        return list(getCurrentProvider(), null);
+    }
+    
+    @Override
+    public List<E> listActive() {
+        return list(getCurrentProvider(), true);
+    }
+    
+    public List<E> list(Provider provider) {
+        return list(provider, null);
+    }
 
-	@SuppressWarnings("unchecked")
-	public List<E> list(Provider provider) {
-		final Class<? extends E> entityClass = getEntityClass();
-		QueryBuilder queryBuilder = new QueryBuilder(entityClass, "a", null, provider);
-		Query query = queryBuilder.getQuery(getEntityManager());
-		return query.getResultList();
-	}
+    @SuppressWarnings("unchecked")
+    public List<E> list(Provider provider, Boolean active) {
+        final Class<? extends E> entityClass = getEntityClass();
+        QueryBuilder queryBuilder = new QueryBuilder(entityClass, "a", null, provider);
+        if (active!=null && EnableEntity.class.isAssignableFrom(entityClass)){
+            queryBuilder.addBooleanCriterion("disabled", !active);
+        }
+        Query query = queryBuilder.getQuery(getEntityManager());
+        return query.getResultList();
+    }
 
 	/**
 	 * @see org.meveo.service.base.local.IPersistenceService#list(org.meveo.admin.util.pagination.PaginationConfiguration)
 	 */
+    @SuppressWarnings({ "unchecked" })
+    @Override
+    public List<E> list(PaginationConfiguration config) {
+        QueryBuilder queryBuilder = getQuery(config);
+        Query query = queryBuilder.getQuery(getEntityManager());
+        return query.getResultList();
+    }
 
-	@SuppressWarnings({ "unchecked" })
-	@Override
-	public List<E> list(PaginationConfiguration config) {
-		QueryBuilder queryBuilder = getQuery(config);
-		Query query = queryBuilder.getQuery(getEntityManager());
-		return query.getResultList();
-	}
-
-	/**
+    /**
 	 * @see org.meveo.service.base.local.IPersistenceService#count(PaginationConfiguration
 	 *      config)
-	 */
-	@Override
-	public long count(PaginationConfiguration config) {
-		List<String> fetchFields = config.getFetchFields();
-		config.setFetchFields(null);
-		QueryBuilder queryBuilder = getQuery(config);
-		config.setFetchFields(fetchFields);
-		return queryBuilder.count(getEntityManager());
-	}
+     */
+    @Override
+    public long count(PaginationConfiguration config) {
+        List<String> fetchFields = config.getFetchFields();
+        config.setFetchFields(null);
+        QueryBuilder queryBuilder = getQuery(config);
+        config.setFetchFields(fetchFields);
+        return queryBuilder.count(getEntityManager());
+    }
 
-	/**
-	 * @see org.meveo.service.base.local.IPersistenceService#count()
-	 */
-	@Override
-	public long count() {
-		final Class<? extends E> entityClass = getEntityClass();
-		QueryBuilder queryBuilder = new QueryBuilder(entityClass, "a", null, null);
-		return queryBuilder.count(getEntityManager());
-	}
+    /**
+     * @see org.meveo.service.base.local.IPersistenceService#count()
+     */
+    @Override
+    public long count() {
+        final Class<? extends E> entityClass = getEntityClass();
+        QueryBuilder queryBuilder = new QueryBuilder(entityClass, "a", null, null);
+        return queryBuilder.count(getEntityManager());
+    }
 
-	/**
-	 * @see org.meveo.service.base.local.IPersistenceService#detach
-	 */
-	@Override
-	public void detach(Object entity) {
-		// TODO: Hibernate. org.hibernate.Session session = (Session)
-		// getEntityManager().getDelegate();
-		// session.evict(entity);
-	}
+    /**
+     * @see org.meveo.service.base.local.IPersistenceService#detach
+     */
+    @Override
+    public void detach(Object entity) {
+        // TODO: Hibernate. org.hibernate.Session session = (Session)
+        // getEntityManager().getDelegate();
+        // session.evict(entity);
+    }
 
-	/**
-	 * @see org.meveo.service.base.local.IPersistenceService#refresh(org.meveo.model.BaseEntity)
-	 */
-	@Override
-	public void refresh(BaseEntity entity) {
-		// entity manager throws exception if trying to refresh not managed
-		// entity (ejb spec requires this).
-		/*
+    /**
+     * @see org.meveo.service.base.local.IPersistenceService#refresh(org.meveo.model.BaseEntity)
+     */
+    @Override
+    public void refresh(BaseEntity entity) {
+        // entity manager throws exception if trying to refresh not managed
+        // entity (ejb spec requires this).
+        /*
 		 * TODO: Hibernate. org.hibernate.Session session = (Session)
 		 * getEntityManager().getDelegate(); session.refresh(entity);
-		 */
-		// getEntityManager().getEntityManagerFactory().getCache().evict(entity.getClass(),
-		// entity.getId());
-		if (getEntityManager().contains(entity)) {
-			getEntityManager().refresh(entity);
-		}
-	}
+         */
+        // getEntityManager().getEntityManagerFactory().getCache().evict(entity.getClass(),
+        // entity.getId());
+        if (getEntityManager().contains(entity)) {
+            getEntityManager().refresh(entity);
+        }
+    }
 
-	/**
+    /**
 	 * Creates query to filter entities according data provided in pagination
 	 * configuration.
-	 * 
+     * 
 	 * @param config
 	 *            PaginationConfiguration data holding object
-	 * @return query to filter entities according pagination configuration data.
-	 */
-	@SuppressWarnings("rawtypes")
-	public QueryBuilder getQuery(PaginationConfiguration config) {
+     * @return query to filter entities according pagination configuration data.
+     */
+    @SuppressWarnings("rawtypes")
+    public QueryBuilder getQuery(PaginationConfiguration config) {
 
-		final Class<? extends E> entityClass = getEntityClass();
+        final Class<? extends E> entityClass = getEntityClass();
 
-		Map<String, Object> filters = config.getFilters();
+        Map<String, Object> filters = config.getFilters();
 
-		// Ignore current provider constraint if "skipProviderConstraint"
-		// parameter was passed to search
-		Provider provider = getCurrentProvider();
-		if (filters != null && filters.containsKey(SEARCH_SKIP_PROVIDER_CONSTRAINT)) {
-			provider = null;
-		}
+        // Ignore current provider constraint if "skipProviderConstraint"
+        // parameter was passed to search
+        Provider provider = getCurrentProvider();
+        if (filters != null && filters.containsKey(SEARCH_SKIP_PROVIDER_CONSTRAINT)) {
+            provider = null;
+        }
 
-		QueryBuilder queryBuilder = new QueryBuilder(entityClass, "a", config.getFetchFields(), provider);
+        QueryBuilder queryBuilder = new QueryBuilder(entityClass, "a", config.getFetchFields(), provider);
 
-		if (filters != null) {
-			if (!filters.isEmpty()) {
-				for (String key : filters.keySet()) {
-					if (SEARCH_SKIP_PROVIDER_CONSTRAINT.equals(key)) {
-						continue;
-					}
-					Object filter = filters.get(key);
-					if (filter != null) {
-						// if ranged search (from - to fields)
-						if (key.contains("fromRange-")) {
-							String parsedKey = key.substring(10);
-							if (filter instanceof Double) {
-								BigDecimal rationalNumber = new BigDecimal((Double) filter);
-								queryBuilder.addCriterion("a." + parsedKey, " >= ", rationalNumber, true);
-							} else if (filter instanceof Number) {
-								queryBuilder.addCriterion("a." + parsedKey, " >= ", filter, true);
-							} else if (filter instanceof Date) {
-								queryBuilder.addCriterionDateRangeFromTruncatedToDay("a." + parsedKey, (Date) filter);
-							}
-						} else if (key.contains("toRange-")) {
-							String parsedKey = key.substring(8);
-							if (filter instanceof Double) {
-								BigDecimal rationalNumber = new BigDecimal((Double) filter);
-								queryBuilder.addCriterion("a." + parsedKey, " <= ", rationalNumber, true);
-							} else if (filter instanceof Number) {
-								queryBuilder.addCriterion("a." + parsedKey, " <= ", filter, true);
-							} else if (filter instanceof Date) {
-								queryBuilder.addCriterionDateRangeToTruncatedToDay("a." + parsedKey, (Date) filter);
-							}
-						} else if (key.contains("list-")) {
-							// if searching elements from list
-							String parsedKey = key.substring(5);
+        if (filters != null) {
+            if (!filters.isEmpty()) {
+                for (String key : filters.keySet()) {
+                    if (SEARCH_SKIP_PROVIDER_CONSTRAINT.equals(key)) {
+                        continue;
+                    }
+                    Object filter = filters.get(key);
+                    if (filter != null) {
+                        // if ranged search (from - to fields)
+                        if (key.contains("fromRange-")) {
+                            String parsedKey = key.substring(10);
+                            if (filter instanceof Double) {
+                                BigDecimal rationalNumber = new BigDecimal((Double) filter);
+                                queryBuilder.addCriterion("a." + parsedKey, " >= ", rationalNumber, true);
+                            } else if (filter instanceof Number) {
+                                queryBuilder.addCriterion("a." + parsedKey, " >= ", filter, true);
+                            } else if (filter instanceof Date) {
+                                queryBuilder.addCriterionDateRangeFromTruncatedToDay("a." + parsedKey, (Date) filter);
+                            }
+                        } else if (key.contains("toRange-")) {
+                            String parsedKey = key.substring(8);
+                            if (filter instanceof Double) {
+                                BigDecimal rationalNumber = new BigDecimal((Double) filter);
+                                queryBuilder.addCriterion("a." + parsedKey, " <= ", rationalNumber, true);
+                            } else if (filter instanceof Number) {
+                                queryBuilder.addCriterion("a." + parsedKey, " <= ", filter, true);
+                            } else if (filter instanceof Date) {
+                                queryBuilder.addCriterionDateRangeToTruncatedToDay("a." + parsedKey, (Date) filter);
+                            }
+                        } else if (key.contains("list-")) {
+                            // if searching elements from list
+                            String parsedKey = key.substring(5);
 							queryBuilder.addSqlCriterion(":" + parsedKey + " in elements(a." + parsedKey + ")",
 									parsedKey, filter);
 						}
 						else if (key.contains("inList-")) {
-							// if searching elements from list
-							String parsedKey = key.substring(7);
-							queryBuilder.addSql("a."+ parsedKey + " in ("+filter+")");
-						}
-						// if not ranged search
-						else {
-							if (filter instanceof String) {
-								// if contains dot, that means join is needed
-								String filterString = (String) filter;
-								queryBuilder.addCriterionWildcard("a." + key, filterString, true);
-							} else if (filter instanceof Date) {
-								queryBuilder.addCriterionDateTruncatedToDay("a." + key, (Date) filter);
-							} else if (filter instanceof Number) {
-								queryBuilder.addCriterion("a." + key, " = ", filter, true);
-							} else if (filter instanceof Boolean) {
-								queryBuilder.addCriterion("a." + key, " is ", filter, true);
-							} else if (filter instanceof Enum) {
-								if (filter instanceof IdentifiableEnum) {
-									String enumIdKey = new StringBuilder(key).append("Id").toString();
+                            // if searching elements from list
+                            String parsedKey = key.substring(7);
+                            queryBuilder.addSql("a." + parsedKey + " in (" + filter + ")");
+                        }
+                        // if not ranged search
+                        else {
+                            if (filter instanceof String) {
+                                // if contains dot, that means join is needed
+                                String filterString = (String) filter;
+                                queryBuilder.addCriterionWildcard("a." + key, filterString, true);
+                            } else if (filter instanceof Date) {
+                                queryBuilder.addCriterionDateTruncatedToDay("a." + key, (Date) filter);
+                            } else if (filter instanceof Number) {
+                                queryBuilder.addCriterion("a." + key, " = ", filter, true);
+                            } else if (filter instanceof Boolean) {
+                                queryBuilder.addCriterion("a." + key, " is ", filter, true);
+                            } else if (filter instanceof Enum) {
+                                if (filter instanceof IdentifiableEnum) {
+                                    String enumIdKey = new StringBuilder(key).append("Id").toString();
 									queryBuilder.addCriterion("a." + enumIdKey, " = ",
 											((IdentifiableEnum) filter).getId(), true);
-								} else {
-									queryBuilder.addCriterionEnum("a." + key, (Enum) filter);
-								}
-							} else if (BaseEntity.class.isAssignableFrom(filter.getClass())) {
-								queryBuilder.addCriterionEntity("a." + key, filter);
-							} else if (filter instanceof UniqueEntity || filter instanceof IEntity) {
-								queryBuilder.addCriterionEntity("a." + key, filter);
-							}
-						}
-					}
-				}
-			}
-		}
-		queryBuilder.addPaginationConfiguration(config, "a");
+                                } else {
+                                    queryBuilder.addCriterionEnum("a." + key, (Enum) filter);
+                                }
+                            } else if (BaseEntity.class.isAssignableFrom(filter.getClass())) {
+                                queryBuilder.addCriterionEntity("a." + key, filter);
+                            } else if (filter instanceof UniqueEntity || filter instanceof IEntity) {
+                                queryBuilder.addCriterionEntity("a." + key, filter);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        queryBuilder.addPaginationConfiguration(config, "a");
 
-		return queryBuilder;
-	}
+        return queryBuilder;
+    }
 
-	/**
+    /**
 	 * Check entity provider. If current provider is not same as entity provider
 	 * exception is thrown since different provider should not be allowed to
 	 * modify (update or delete) entity.
@@ -562,64 +565,64 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 				if (notSameProvider) {
 					log.debug("CheckProvider getCurrentProvider() id={}, entityProvider id={}", new Object[] {
 							getCurrentProvider().getId(), ((BaseEntity) e).getProvider().getId() });
-					throw new ProviderNotAllowedException();
-				}
-			}
-		}
-	}
+                    throw new ProviderNotAllowedException();
+                }
+            }
+        }
+    }
 
-	public Provider getCurrentProvider() {
-		Provider result = provider;
-		try {
-			if (result == null && identity.isLoggedIn() && identity.getUser() != null) {
-				result = ((MeveoUser) identity.getUser()).getCurrentProvider();
-			}
-		} catch (Exception e) {
-			log.error(e.getMessage());
-		}
+    public Provider getCurrentProvider() {
+        Provider result = provider;
+        try {
+            if (result == null && identity.isLoggedIn() && identity.getUser() != null) {
+                result = ((MeveoUser) identity.getUser()).getCurrentProvider();
+            }
+        } catch (Exception e) {
+            log.error(e.getMessage());
+        }
 
-		if (result == null && getCurrentUser() != null) {
-			result = getCurrentUser().getProvider();
-		}
+        if (result == null && getCurrentUser() != null) {
+            result = getCurrentUser().getProvider();
+        }
 
-		return result;
-	}
+        return result;
+    }
 
-	public Provider getProvider() {
-		return provider;
-	}
+    public Provider getProvider() {
+        return provider;
+    }
 
-	public void setProvider(Provider provider) {
-		this.provider = provider;
-	}
+    public void setProvider(Provider provider) {
+        this.provider = provider;
+    }
 
-	public BaseEntity attach(BaseEntity e) {
-		return (BaseEntity) getEntityManager().merge(e);
-	}
+    public BaseEntity attach(BaseEntity e) {
+        return (BaseEntity) getEntityManager().merge(e);
+    }
 
-	public EntityManager getEntityManager() {
-		EntityManager result = emfForJobs;
-		if (conversation != null) {
-			try {
-				conversation.isTransient();
-				result = em;
-			} catch (Exception e) {
-			}
-		}
+    public EntityManager getEntityManager() {
+        EntityManager result = emfForJobs;
+        if (conversation != null) {
+            try {
+                conversation.isTransient();
+                result = em;
+            } catch (Exception e) {
+            }
+        }
 
-		// log.debug("em.txKey={}, em.hashCode={}", txReg.getTransactionKey(),
-		// em.hashCode());
-		return result;
-	}
+        // log.debug("em.txKey={}, em.hashCode={}", txReg.getTransactionKey(),
+        // em.hashCode());
+        return result;
+    }
 
-	public void updateAudit(E e) {
-		updateAudit(e, getCurrentUser());
-	}
+    public void updateAudit(E e) {
+        updateAudit(e, getCurrentUser());
+    }
 
-	public void updateAudit(E e, User currentUser) {
-		if (e instanceof AuditableEntity) {
-			((AuditableEntity) e).updateAudit(currentUser);
-		}
-	}
+    public void updateAudit(E e, User currentUser) {
+        if (e instanceof AuditableEntity) {
+            ((AuditableEntity) e).updateAudit(currentUser);
+        }
+    }
 
 }

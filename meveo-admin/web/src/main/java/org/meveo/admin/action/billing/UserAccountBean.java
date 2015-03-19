@@ -36,9 +36,9 @@ import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.action.CustomFieldEnabledBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.DuplicateDefaultAccountException;
+import org.meveo.cache.WalletCacheContainerProvider;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.CounterInstance;
-import org.meveo.model.billing.CounterPeriod;
 import org.meveo.model.billing.OperationTypeEnum;
 import org.meveo.model.billing.RatedTransaction;
 import org.meveo.model.billing.UserAccount;
@@ -95,6 +95,9 @@ public class UserAccountBean extends AccountBean<UserAccount> {
 	@Inject
 	private BillingAccountService billingAccountService;
 	
+	@Inject
+	private WalletCacheContainerProvider walletCacheContainerProvider;
+	   
 	private CounterInstance selectedCounterInstance;
 
 	private Long billingAccountId;
@@ -358,8 +361,9 @@ public class UserAccountBean extends AccountBean<UserAccount> {
 	}
 
 	public String getBalance(WalletInstance wallet) {
-		String result = "-";
-		BigDecimal balance = walletOperationService.getCacheBalance(wallet.getId());
+
+		String result = null;
+		BigDecimal balance = walletCacheContainerProvider.getBalance(wallet.getId());
 		if (balance != null) {
 			result = balance.toPlainString();
 		}
@@ -367,8 +371,8 @@ public class UserAccountBean extends AccountBean<UserAccount> {
 	}
 
 	public String getReservedBalance(WalletInstance wallet) {
-		String result = "-";
-		BigDecimal balance = walletOperationService.getReservedCacheBalance(wallet.getId());
+		String result = null;
+		BigDecimal balance = walletCacheContainerProvider.getReservedBalance(wallet.getId());
 		if (balance != null) {
 			result = balance.toPlainString();
 		}
@@ -377,7 +381,7 @@ public class UserAccountBean extends AccountBean<UserAccount> {
 
 	public String getOpenBalanceWithoutTax(Provider provider, String sellerCode, String userAccountCode,
 			Date startDate, Date endDate) throws BusinessException {
-		String result = "-";
+		String result = null;
 		BigDecimal balance = walletReservationService.getOpenBalanceWithoutTax(provider, sellerCode, userAccountCode,
 				startDate, endDate);
 		if (balance != null) {
@@ -388,7 +392,7 @@ public class UserAccountBean extends AccountBean<UserAccount> {
 
 	public String getOpenBalanceWithTax(Provider provider, String sellerCode, String userAccountCode, Date startDate,
 			Date endDate) throws BusinessException {
-		String result = "-";
+		String result = null;
 		BigDecimal balance = walletReservationService.getOpenBalanceWithTax(provider, sellerCode, userAccountCode,
 				startDate, endDate);
 		if (balance != null) {
@@ -399,7 +403,7 @@ public class UserAccountBean extends AccountBean<UserAccount> {
 
 	public String getReservedBalanceWithoutTax(Provider provider, String sellerCode, String userAccountCode,
 			Date startDate, Date endDate) throws BusinessException {
-		String result = "-";
+		String result = null;
 		BigDecimal balance = walletReservationService.getReservedBalanceWithoutTax(provider, sellerCode,
 				userAccountCode, startDate, endDate);
 		if (balance != null) {
@@ -410,7 +414,7 @@ public class UserAccountBean extends AccountBean<UserAccount> {
 
 	public String getReservedBalanceWithTax(Provider provider, String sellerCode, String userAccountCode,
 			Date startDate, Date endDate) throws BusinessException {
-		String result = "-";
+		String result = null;
 		BigDecimal balance = walletReservationService.getReservedBalanceWithTax(provider, sellerCode, userAccountCode,
 				startDate, endDate);
 		if (balance != null) {
@@ -421,7 +425,7 @@ public class UserAccountBean extends AccountBean<UserAccount> {
 
 	public String getCurrentBalanceWithoutTax(Provider provider, String sellerCode, String userAccountCode,
 			Date startDate, Date endDate) throws BusinessException {
-		String result = "-";
+		String result = null;
 		BigDecimal balance = walletReservationService.getCurrentBalanceWithoutTax(provider, sellerCode,
 				userAccountCode, startDate, endDate);
 		if (balance != null) {
@@ -432,7 +436,7 @@ public class UserAccountBean extends AccountBean<UserAccount> {
 
 	public String getCurrentBalanceWithTax(Provider provider, String sellerCode, String userAccountCode,
 			Date startDate, Date endDate) throws BusinessException {
-		String result = "-";
+		String result = null;
 		BigDecimal balance = walletReservationService.getCurrentBalanceWithTax(provider, sellerCode, userAccountCode,
 				startDate, endDate);
 		if (balance != null) {

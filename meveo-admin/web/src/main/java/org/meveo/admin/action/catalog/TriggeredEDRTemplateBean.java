@@ -24,10 +24,10 @@ import javax.inject.Named;
 
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.cache.RatingCacheContainerProvider;
 import org.meveo.model.catalog.TriggeredEDRTemplate;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
-import org.meveo.service.billing.impl.UsageRatingService;
 import org.meveo.service.catalog.impl.TriggeredEDRTemplateService;
 import org.omnifaces.cdi.ViewScoped;
 
@@ -45,8 +45,9 @@ public class TriggeredEDRTemplateBean extends BaseBean<TriggeredEDRTemplate> {
 	private TriggeredEDRTemplateService triggeredEdrService;
 
 	@Inject
-	private UsageRatingService usageRatingService;
+    private RatingCacheContainerProvider ratingCacheContainerProvider;
 
+	
 	/**
 	 * Constructor. Invokes super constructor and provides class type of this
 	 * bean for {@link BaseBean}.
@@ -86,14 +87,14 @@ public class TriggeredEDRTemplateBean extends BaseBean<TriggeredEDRTemplate> {
 	@Override
 	public String saveOrUpdate(boolean killConversation) throws BusinessException {
 		String result = super.saveOrUpdate(killConversation);
-		usageRatingService.updateTemplateCache(entity);
+		ratingCacheContainerProvider.updateUsageChargeTemplateInCache(entity);
 		return result;
 	}
 
 	@Override
 	protected String saveOrUpdate(TriggeredEDRTemplate entity) throws BusinessException {
 		String result = super.saveOrUpdate(entity);
-		usageRatingService.updateTemplateCache(entity);
+		ratingCacheContainerProvider.updateUsageChargeTemplateInCache(entity);
 		return result;
 	}
 }

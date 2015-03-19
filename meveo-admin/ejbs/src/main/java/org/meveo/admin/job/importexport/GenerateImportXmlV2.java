@@ -20,6 +20,7 @@ import org.meveo.model.jaxb.subscription.Services;
 import org.meveo.model.jaxb.subscription.Status;
 import org.meveo.model.jaxb.subscription.Subscription;
 import org.meveo.model.jaxb.subscription.Subscriptions;
+import org.meveo.model.shared.DateUtils;
 
 public class GenerateImportXmlV2 {
 
@@ -34,7 +35,7 @@ public class GenerateImportXmlV2 {
 	private final int MAX_BILLING_ACCOUNTS = 1;
 	private final int MAX_USER_ACCOUNTS = 1;
 
-	private final int MAX_SUBSCRIPTIONS = 10;
+	private final int MAX_SUBSCRIPTIONS = 1000;
 
 	private final boolean IGNORE_ACCOUNTS_IMPORT = false;
 	private final boolean IGNORE_SUBSCRIPTION_IMPORT = false;
@@ -71,9 +72,9 @@ public class GenerateImportXmlV2 {
 
 			ServiceInstance serviceInstance = new ServiceInstance();
 			serviceInstance.setCode(serviceCode);
-			serviceInstance.setSubscriptionDate("2015-03-17");
+			serviceInstance.setSubscriptionDate(DateUtils.formatDateWithPattern(new Date(), "Y-MM-d"));
 			Status status = new Status();
-			status.setDate(new Date().toString());
+			status.setDate(DateUtils.formatDateWithPattern(new Date(), "Y-MM-d"));
 			status.setValue("ACTIVE");
 			serviceInstance.setStatus(status);
 			serviceInstance.setQuantity("1");
@@ -145,10 +146,11 @@ public class GenerateImportXmlV2 {
 											+ "_" + n);
 									subscription.setUserAccountId(userAccount.getCode());
 									subscription.setOfferCode(offerCode);
-									subscription.setSubscriptionDate("2015-03-17");
+									subscription.setSubscriptionDate(DateUtils.formatDateWithPattern(new Date(),
+											"Y-MM-d"));
 									subscription.setUserAccountId(userAccount.getCode());
 									Status statuSub = new Status();
-									statuSub.setDate("2014-02-20");
+									statuSub.setDate(new Date().toString());
 									statuSub.setValue("ACTIVE");
 									subscription.setStatus(statuSub);
 									Services services = new Services();

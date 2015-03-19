@@ -27,6 +27,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
+import org.meveo.cache.CdrEdrProcessingCacheContainerProvider;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.admin.User;
@@ -35,42 +36,25 @@ import org.meveo.model.crm.Provider;
 import org.meveo.model.rating.EDR;
 import org.meveo.model.rating.EDRStatusEnum;
 import org.meveo.service.base.PersistenceService;
-import org.meveo.util.MeveoCacheContainerProvider;
 import org.slf4j.Logger;
 
 @Stateless
 public class EdrService extends PersistenceService<EDR> {
 
 	ParamBean paramBean = ParamBean.getInstance();
+	
+	@Inject
+	private CdrEdrProcessingCacheContainerProvider cdrEdrProcessingCacheContainerProvider;
 
 	@Inject
 	private Logger log;
 
 	static boolean useInMemoryDeduplication = true;
-	static int maxDuplicateRecords = 100000;
 
 	
-	
-
-
-	private void loadCacheFromDB() {
-		synchronized (MeveoCacheContainerProvider.getEdrCache()) {
-			loadDeduplicationInfo(maxDuplicateRecords);
-		}
-	}
-
 	@PostConstruct
 	private void init() {
 		useInMemoryDeduplication = paramBean.getProperty("mediation.deduplicateInMemory", "true").equals("true");
-		if (useInMemoryDeduplication) {
-			int newMaxDuplicateRecords = Integer.parseInt(paramBean.getProperty("mediation.deduplicateCacheSize",
-					"100000"));
-			
-			maxDuplicateRecords = newMaxDuplicateRecords;
-			if (MeveoCacheContainerProvider.getEdrCache().isEmpty()) {
-				loadCacheFromDB();
-			}
-		}
 	}
 
 	@SuppressWarnings("unchecked")
@@ -98,35 +82,21 @@ public class EdrService extends PersistenceService<EDR> {
 		return result;
 	}
 
-	public void loadDeduplicationInfo(int maxDuplicateRecords) {
-		MeveoCacheContainerProvider.getEdrCache().clear();
-		Query query = getEntityManager()
-				.createQuery(
-						"select CONCAT(e.originBatch,e.originRecord) from EDR e where e.status=:status ORDER BY e.eventDate DESC")
-				.setParameter("status", EDRStatusEnum.OPEN).setMaxResults(maxDuplicateRecords);
-		@SuppressWarnings("unchecked")
-		List<String> results = query.getResultList();
-		for (String edrHash : results) {
-			MeveoCacheContainerProvider.getEdrCache().put(edrHash, 0);
-		}
-	}
 
-	public boolean duplicateFound(String originBatch, String originRecord) {
-		boolean result = false;
-		if (useInMemoryDeduplication) {
-			result = MeveoCacheContainerProvider.getEdrCache().containsKey(originBatch + originRecord);
-		} else {
-			result = findByBatchAndRecordId(originBatch, originRecord) != null;
-		}
-		return result;
-	}
+    public boolean duplicateFound(Provider provider, String originBatch, String originRecord) {
+        boolean result = false;
+        if (useInMemoryDeduplication) {
+            result = cdrEdrProcessingCacheContainerProvider.isEDRCached(provider.getId(), originBatch, originRecord);
+        } else {
+            result = findByBatchAndRecordId(originBatch, originRecord) != null;
+        }
+        return result;
+    }
 
-	public void create(EntityManager em, EDR e, User user, Provider provider) {
-		super.create(e, user, provider);
+	public void create(EntityManager em, EDR edr, User user, Provider provider) {
+		super.create(edr, user, provider);
 		if (useInMemoryDeduplication) {
-			synchronized (MeveoCacheContainerProvider.getEdrCache()) {
-				MeveoCacheContainerProvider.getEdrCache().put(e.getOriginBatch() + e.getOriginRecord(), 0);
-			}
+		    cdrEdrProcessingCacheContainerProvider.addEdrToCache(edr);
 		}
 	}
 
@@ -164,4 +134,14 @@ public class EdrService extends PersistenceService<EDR> {
 			log.error(e.getMessage());
 		}
 	}
+
+    /**
+     * Get EDRs that are unprocessed
+     * 
+     * @param maxRecords Max records to retrieve
+     * @return A list of EDR identifiers
+     */
+    public List<String> getUnprocessedEdrsForCache(int maxRecords) {
+        return getEntityManager().createNamedQuery("EDR.getEdrsForCache", String.class).getResultList();
+    }
 }

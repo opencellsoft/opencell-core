@@ -46,16 +46,36 @@ public abstract class Calendar extends BusinessEntity {
     private Date initDate;
     
     /**
+     * Get the period end date for a given date
+     * 
      * @param date Current date.
      * @return Next calendar date.
      */
     public abstract Date nextCalendarDate(Date date);
 
     /**
+     * Get the period start date for a given date
+     * 
      * @param date Current date.
      * @return Next calendar date.
      */
     public abstract Date previousCalendarDate(Date date);
+
+    /**
+     * Get the previous period end date
+     * 
+     * @param date Current date
+     * @return The previous period end date
+     */
+    public abstract Date previousPeriodEndDate(Date date);
+
+    /**
+     * Get the next period start date
+     * 
+     * @param date Current date
+     * @return The next period start date
+     */
+    public abstract Date nextPeriodStartDate(Date date);
 
     /**
      * 

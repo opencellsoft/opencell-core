@@ -28,6 +28,8 @@ import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.MapKeyColumn;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
@@ -38,6 +40,7 @@ import javax.persistence.UniqueConstraint;
 import org.meveo.model.Auditable;
 import org.meveo.model.EnableEntity;
 import org.meveo.model.ICustomFieldEntity;
+import org.meveo.model.IEntity;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.crm.CustomFieldInstance;
 
@@ -48,6 +51,7 @@ import org.meveo.model.crm.CustomFieldInstance;
 @Table(name = "MEDINA_ACCESS", uniqueConstraints = { @UniqueConstraint(columnNames = {
 		"ACCES_USER_ID", "SUBSCRIPTION_ID" }) })
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "MEDINA_ACCESS_SEQ")
+@NamedQueries({ @NamedQuery(name = "Access.getAccessesForCache", query = "SELECT a from Access a where a.disabled=false order by a.accessUserId") })
 public class Access extends EnableEntity implements ICustomFieldEntity{
 
 	private static final long serialVersionUID = 1L;
@@ -259,4 +263,22 @@ public class Access extends EnableEntity implements ICustomFieldEntity{
 	public Double getICdov(String code){
 		return getInheritedCustomDoubleValue(code);
 	}
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+
+        IEntity other = (IEntity) obj;
+
+        if (getId() != null && other.getId() != null && getId() == other.getId()) {
+            return true;
+        }
+
+        return false;
+    }
 }

@@ -19,6 +19,7 @@
 	<p:tooltip for="customerCategories">#{help['menu.customerCategories']}</p:tooltip>
 	<p:tooltip for="sellers">#{help['menu.sellers']}</p:tooltip>
 	<p:tooltip for="emailTemplates">#{help['menu.emailTemplates']}</p:tooltip>
+	<p:tooltip for="occTemplates">#{help['menu.occTemplates']}</p:tooltip>
 	<p:tooltip for="offerTemplates">#{help['menu.offerTemplates']}</p:tooltip>
 	<p:tooltip for="serviceTemplates">#{help['menu.serviceTemplates']}</p:tooltip>
 	<p:tooltip for="recurringChargeTemplate">#{help['menu.recurringChargeTemplate']}</p:tooltip>
@@ -130,6 +131,9 @@
 				<p:menuitem id="emailTemplates"
 					rendered="#{identity.hasPermission('administration','administrationVisualization')}"
 					outcome="emailTemplates" value="#{messages['menu.emailTemplates']}" />
+				<p:menuitem id="occTemplates"
+					rendered="#{identity.hasPermission('administration','administrationVisualization')}"
+					outcome="occTemplates" value="#{messages['menu.occTemplates']}" />
 
 			</p:submenu>
 

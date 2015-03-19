@@ -1,0 +1,32 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:hftl="http://hftl.org"
+	xmlns:hf="http://java.sun.com/jsf/composite/tags" xmlns:f="http://java.sun.com/jsf/core" template="/layout/template.xhtml">
+
+	<ui:define name="metadata">
+		<f:metadata>
+			<f:event type="preRenderView" listener="#{occTemplateBean.preRenderView}" />
+		</f:metadata>
+	</ui:define>
+
+	<ui:define name="navigation">
+		<ui:include src="/layout/navigation.xhtml" />
+	</ui:define>
+
+	<ui:define name="body">
+
+		<hf:searchPanel label="#{messages['occTemplate.search']}" backingBean="#{occTemplateBean}">
+			<hf:searchField label="#{messages['businessEntity.code']}" field="code" />
+			<hf:searchField label="#{messages['businessEntity.description']}" id="description" field="description" />
+		</hf:searchPanel>
+
+		<hftl:dataList backingBean="#{occTemplateBean}" label="#{messages['occTemplate.title']}" sortBy="code">
+			<hftl:column label="#{messages['businessEntity.code']}" field="code" />
+			<hftl:column label="#{messages['businessEntity.description']}" field="description" />
+			<hftl:column label="#{messages['occTemplate.accountCode']}" field="accountCode" />
+			<hftl:column label="#{messages['occTemplate.accountCodeClientSide']}" field="accountCodeClientSide" />
+			<hftl:column label="#{messages['occTemplate.occCategory']}" field="occCategory" childField="label" isMessage="true"  />
+			<hftl:actionsColumn permission="#{identity.hasPermission('administration','administrationManagement')}" />
+		</hftl:dataList>
+
+	</ui:define>
+
+</ui:composition>

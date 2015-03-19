@@ -198,6 +198,10 @@ public class SubscriptionBean extends BaseBean<Subscription> {
 		if (entity.getOffer() != null) {
 			List<ServiceInstance> serviceInstances = entity.getServiceInstances();
 			for (ServiceTemplate serviceTemplate : entity.getOffer().getServiceTemplates()) {
+			    if (serviceTemplate.isDisabled()){
+			        continue;
+			    }
+			    
 				boolean alreadyInstanciated = false;
 
 				for (ServiceInstance serviceInstance : serviceInstances) {

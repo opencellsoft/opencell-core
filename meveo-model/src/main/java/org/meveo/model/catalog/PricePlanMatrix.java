@@ -24,6 +24,8 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -42,8 +44,9 @@ import org.meveo.model.billing.TradingCurrency;
 @MultilanguageEntity
 @Table(name = "CAT_PRICE_PLAN_MATRIX", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE", "PROVIDER_ID" }))
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "CAT_PRICE_PLAN_MATRIX_SEQ")
+@NamedQueries({ @NamedQuery(name = "PricePlanMatrix.getPricePlansForCache", query = "SELECT ppm from PricePlanMatrix ppm left join ppm.offerTemplate ot left join ppm.validityCalendar vc where ppm.disabled=false order by ppm.priority ASC") })
 public class PricePlanMatrix extends BusinessEntity implements Comparable<PricePlanMatrix> {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
 	@Column(name = "EVENT_CODE", length = 100, nullable = false)
 	@Size(min = 1, max = 100)

@@ -121,5 +121,15 @@ public class CalendarYearly extends Calendar {
 			throw new IllegalStateException("Previous calendar date could not be found!");
 		}
 		return result;
-	}
+	}	
+
+    @Override
+    public Date previousPeriodEndDate(Date date) {
+        return null;
+    }
+
+    @Override
+    public Date nextPeriodStartDate(Date date) {
+        return null;
+    }
 }

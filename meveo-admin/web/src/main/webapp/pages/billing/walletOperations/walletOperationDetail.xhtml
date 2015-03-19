@@ -14,61 +14,7 @@
 	</ui:define>
 
 	<ui:define name="body">
-	
-	   <hftl:entityPopup id="searchSellerPopup"
-			header="#{messages['seller.search']}"
-			updateField=":formPanel:formId:sellerSelectId:sellerSelectId"
-			selection="#{walletOperationBean.entity.seller}"
-			backingBean="#{sellerBean}"
-			searchField1Label="#{messages['BusinessEntity.code']}"
-			searchField1="code" column1Label="#{messages['BusinessEntity.code']}"
-			column1="code"
-			column2Label="#{messages['BusinessEntity.description']}"
-			column2="description">
-		</hftl:entityPopup>  
-		<hftl:entityPopup id="searchChargeInstancePopup"
-			header="#{messages['walletOperation.chargeInstance']}"
-			updateField=":formPanel:formId:chargeInstanceSelectId:chargeInstanceSelectId"
-			selection="#{walletOperationBean.entity.chargeInstance}"
-			backingBean="#{chargeInstanceBean}"
-			searchField1Label="#{messages['BusinessEntity.code']}"
-			searchField1="code" column1Label="#{messages['BusinessEntity.code']}"
-			column1="code"
-			column2Label="#{messages['BusinessEntity.description']}"
-			column2="description">
-		</hftl:entityPopup>
-		<hftl:entityPopup id="searchCounterInstancePopup"
-			header="#{messages['counterTemplate.title']}"
-			updateField=":formPanel:formId:counterSelectId:counterSelectId"
-			selection="#{walletOperationBean.entity.counter}"
-			backingBean="#{counterInstanceBean}"
-			searchField1Label="#{messages['BusinessEntity.code']}"
-			searchField1="code" column1Label="#{messages['BusinessEntity.code']}"
-			column1="code"
-			column2Label="#{messages['BusinessEntity.description']}"
-			column2="description">
-		</hftl:entityPopup>
-			<hftl:entityPopup id="searchWalletInstancePopup"
-			header="#{messages['walletTemplate.title']}"
-			updateField=":formPanel:formId:walletSelectId:walletSelectId"
-			selection="#{walletOperationBean.entity.wallet}"
-			backingBean="#{walletBean}"
-			searchField1Label="#{messages['BusinessEntity.code']}"
-			searchField1="code" column1Label="#{messages['BusinessEntity.code']}"
-			column1="code"
-			column2Label="#{messages['BusinessEntity.description']}"
-			column2="description">
-		</hftl:entityPopup>
-		<hftl:entityPopup id="searchPricePlanPopup"
-			header="#{messages['pricePlan.title']}"
-			backingBean="#{pricePlanMatrixBean}"
-			searchField1Label="#{messages['pricePlanMatrix.table.eventCode']}"
-			searchField1="eventCode" 
-			column1Label="#{messages['BusinessEntity.code']}" column1="eventCode" 
-			selection="#{walletOperationBean.entity.priceplan}" 
-			updateField=":formPanel:formId:priceplanSelectId:priceplanSelectId">
-		</hftl:entityPopup>
-		
+
 		 <hf:formPanel id="formPanel"
 			label="#{messages['walletOperation.panel']}"
 			backingBean="#{walletOperationBean}" renderNewButton="false" showFormButtons="false">
@@ -76,17 +22,12 @@
 		
 		 <hf:formField label="#{messages['BusinessEntity.code']}" field="code" />
 		 <hf:formField label="#{messages['BusinessEntity.description']}" field="description" />
-		  <hf:formEntityField id="sellerSelectId" label="#{messages['seller.parent']}" field="seller" childField="description" popup="true"
-					popupId="searchSellerPopup" clearButton="true" />				
-		  <hf:formEntityField label="#{messages['walletOperation.chargeInstance']}" id="chargeInstanceSelectId" field="chargeInstance" 
-				 childField="code" popup="true" popupId="searchChargeInstancePopup" clearButton="true"/> 	 
-		  <hf:formEntityField label="#{messages['counterTemplate.title']}" id="counterSelectId"
-		    field="counter" childField="code" popup="true" popupId="searchCounterInstancePopup" clearButton="true"/>
-			
-			<hf:formEntityField label="#{messages['pricePlan.title']}" id="priceplanSelectId"
-		    field="priceplan" childField="eventCode" popup="true" popupId="searchPricePlanPopup" clearButton="true"/>	
-		     <hf:formEntityField label="#{messages['operation.wallet']}" id="walletSelectId"
-		    field="wallet" childField="code" popup="true" popupId="searchWalletInstancePopup" clearButton="true"/>
+          <hf:formEntityField label="#{messages['seller.title']}" field="seller" childField="description" /> 
+		  <hf:formEntityField label="#{messages['walletOperation.chargeInstance']}" field="chargeInstance"  childField="code"/> 	 
+		  <hf:formEntityField label="#{messages['counterTemplate.title']}" field="counter" childField="code"/>	
+		 <hf:formEntityField label="#{messages['pricePlan.title']}" id="priceplanSelectId" field="priceplan" childField="code"/>	
+		 <hf:formField label="#{messages['walletOperation.offer']}" field="offerCode" /> 
+		 <hf:formEntityField label="#{messages['operation.wallet']}" field="wallet" childField="code"/>
 		 <hf:formField label="#{messages['walletOperation.operationDate']}" field="operationDate" />
 		 <hf:formField label="#{messages['walletOperation.unitAmountWithoutTax']}" field="unitAmountWithoutTax" converter="bigDecimal4DigitsConverter" />
 		 <hf:formField label="#{messages['walletOperation.quantity']}" field="quantity" converter="bigDecimal4DigitsConverter" />
@@ -104,7 +45,7 @@
 		 <hf:formField label="#{messages['walletOperation.endDate']}" field="endDate" />
 		 <hf:formField label="#{messages['walletOperation.subscriptionDate']}" field="subscriptionDate" />
 		 <hf:formField label="#{messages['walletOperation.status']}" field="status" /> 
-		 <hf:formField label="#{messages['walletOperation.offer']}" field="offerCode" /> 
+		 
 		 
        </hftl:panelGroup>
 
