@@ -191,7 +191,7 @@
 				entityView="/pages/billing/walletOperations/walletOperationDetail.xhtml"
 				backView="walletOperations" showPopup="true" popupFields="code"/>
 			<hftl:column label="#{messages['walletOperation.status']}" field="status" childField="label" isMessage="true" />
-             <p:column  width="50px"> 
+				 <p:column  width="50px"> 
 			<f:facet name="header">
 			<h:outputText value="Actions" />
 		</f:facet>
@@ -201,20 +201,23 @@
 					showEffect="slide" hideEffect="slide" />
 				<p:commandButton id="updateWallet" icon="ui-icon-play"
 					actionListener="#{walletOperationBean.updatedToRerate(entity)}"
-					update="@all">
+					update=":searchPanel:searchForm">
 					<p:confirm header="#{messages['message.confirmation']}"
 						message="#{messages['message.confirm.walletOperation.update']}"
 						icon="ui-icon-alert" />
 				</p:commandButton>
 				</p:column>
 				</hftl:dataList>
-		  
+		  	<p:panel styleClass="action-buttons">
 			<p:commandButton id="massUpdateWallet"
             value="#{messages['action.massRerate']}"
             action="#{walletOperationBean.massToRerate()}" 
             icon="ui-icon-check">
+			<p:confirm header="#{messages['message.confirmation']}"
+				message="#{messages['message.confirm.walletOperation.update']}"
+				icon="ui-icon-alert" />
            </p:commandButton> 
-
+			</p:panel>
 		<p:confirmDialog global="true" showEffect="fade" hideEffect="explode">
 			<p:commandButton value="#{messages['commons.yes']}" type="button"
 				styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
