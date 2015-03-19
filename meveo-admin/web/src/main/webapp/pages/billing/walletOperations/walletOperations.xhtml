@@ -234,22 +234,38 @@
 					showEffect="slide" hideEffect="slide" />
 				<p:commandButton id="updateWallet" icon="ui-icon-play"
 					actionListener="#{walletOperationBean.updatedToRerate(entity)}"
-					update="@all">
+					update=":searchPanel:searchForm">
 					<p:confirm header="#{messages['message.confirmation']}"
 						message="#{messages['message.confirm.walletOperation.update']}"
 						icon="ui-icon-alert" />
 				</p:commandButton>
+<<<<<<< master
 			</p:column>
 		</hftl:dataList>
 		<p:panel styleClass="action-buttons">
-			<p:commandButton id="massUpdateWallet"
+=======
+				</p:column>
+			</hftl:dataList>
+			<p:panel styleClass="action-buttons">
+>>>>>>> f80623b add confirmdialog to massToRerate
+			<p:commandButton id="massUpdateWallet"<<<<<<< master
 				value="#{messages['action.massRerate']}"
 				action="#{walletOperationBean.massToRerate()}" icon="ui-icon-check">
 				<p:confirm header="#{messages['message.confirmation']}"
-					message="#{messages['message.confirm.walletOperation.update']}"
-					icon="ui-icon-alert" />
+						message="#{messages['message.confirm.walletOperation.update']}"
+						icon="ui-icon-alert" />
+				</p:commandButton>
+			</p:panel>
+=======
+            value="#{messages['action.massRerate']}"
+            action="#{walletOperationBean.massToRerate()}" 
+            icon="ui-icon-check">
+			<p:confirm header="#{messages['message.confirmation']}"
+				message="#{messages['message.confirm.walletOperation.update']}"
+				icon="ui-icon-alert" />
 			</p:commandButton>
 		</p:panel>
+>>>>>>> f80623b add confirmdialog to massToRerate
 		<p:confirmDialog global="true" showEffect="fade" hideEffect="explode">
 			<p:commandButton value="#{messages['commons.yes']}" type="button"
 				styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
