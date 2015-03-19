@@ -468,6 +468,7 @@ public class WalletOperation extends BusinessEntity {
 		result.setUnitAmountWithoutTax(unitAmountWithoutTax);
 		result.setUnitAmountWithTax(unitAmountWithTax);
 		result.setUnityDescription(unityDescription);
+		result.setWallet(wallet);
 		return result;
 	}
 

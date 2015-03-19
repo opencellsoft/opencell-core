@@ -54,6 +54,7 @@ import org.meveo.model.crm.Provider;
 import org.meveo.model.rating.EDR;
 import org.meveo.model.rating.EDRStatusEnum;
 import org.meveo.model.shared.DateUtils;
+import org.meveo.service.base.BusinessService;
 import org.meveo.service.base.SimpleELResolver;
 import org.meveo.service.base.SimpleFunctionMapper;
 import org.meveo.service.base.SimpleVariableMapper;
@@ -62,7 +63,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Stateless
-public class RatingService {
+public class RatingService extends BusinessService<WalletOperation>{
 
 	@PersistenceContext
 	protected EntityManager entityManager;
@@ -627,11 +628,16 @@ public class RatingService {
 									.getTradingCurrency(),
 							operation.getProvider());
 			}
-			entityManager.persist(operation);
+			create(operation);
+			update(operationToRerate);
+			log.debug("updated wallet operation");
 		} catch (UnrolledbackBusinessException e) {
 			log.info(e.getMessage());
+			e.printStackTrace();
 			operationToRerate.setStatus(WalletOperationStatusEnum.TREATED);
+			operationToRerate.setReratedWalletOperation(null);
 		}
+		log.debug("end rerate wallet operation");
 	}
 	
 	private boolean matchExpression(String expression, WalletOperation bareOperation, UserAccount ua)

@@ -43,7 +43,7 @@ public class ReRatingJobBean implements Serializable {
 	Event<WalletOperation> rejectededOperationProducer;
 
 	@Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
-	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
 	public void execute(JobExecutionResultImpl result, User currentUser, boolean useSamePricePlan) {
 		try {
 			List<WalletOperation> walletOperations = walletOperationService.findByStatus(
