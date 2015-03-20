@@ -32,10 +32,10 @@
 		<version.jboss.bom>1.0.7.Final</version.jboss.bom>
 		<version.shrinkwrap.resolvers>2.1.1</version.shrinkwrap.resolvers>
 		<version.resteasy>3.0.10.Final</version.resteasy>
-	
+
 		<sonar.host.url>http://localhost:9000</sonar.host.url>
-		
-		<dbtype>generic</dbtype>		
+
+		<dbtype>generic</dbtype>
 	</properties>
 
 	<scm>
@@ -123,7 +123,7 @@
 				<groupId>org.manaty</groupId>
 				<artifactId>meveo-model</artifactId>
 				<version>${project.version}</version>
-			</dependency>        
+			</dependency>
 		</dependencies>
 	</dependencyManagement>
 
@@ -196,7 +196,7 @@
 					<groupId>org.jboss.as.plugins</groupId>
 					<artifactId>jboss-as-maven-plugin</artifactId>
 					<version>7.5.Final</version>
-				</plugin>			
+				</plugin>
 			</plugins>
 		</pluginManagement>
 
@@ -243,9 +243,9 @@
 			<properties>
 				<!-- Properties for liquibase plugin -->
 				<db.driver>org.postgresql.Driver </db.driver>
-                <db.url>jdbc:postgresql://localhost/meveo</db.url>
-                <db.username>meveo</db.username>
-                <db.password>meveo</db.password>
+				<db.url>jdbc:postgresql://localhost/meveo_liqui</db.url>
+				<db.username>meveo</db.username>
+				<db.password>meveo</db.password>
 			</properties>
 			<dependencies>
 				<!-- Dependency for liquibase plugin -->
@@ -253,13 +253,11 @@
 					<groupId>org.postgresql</groupId>
 					<artifactId>postgresql</artifactId>
 					<version>9.2-1002-jdbc4</version>
-					<scope>provided</scope>
 				</dependency>
 				<dependency>
 					<groupId>org.liquibase.ext</groupId>
 					<artifactId>liquibase-postgresql</artifactId>
 					<version>3.0</version>
-					<scope>provided</scope>
 				</dependency>
 			</dependencies>
 		</profile>
@@ -275,9 +273,9 @@
 			<properties>
 				<!-- Properties for liquibase plugin -->
 				<db.driver>org.postgresql.Driver </db.driver>
-                <db.url>jdbc:postgresql://localhost/meveo</db.url>
-                <db.username>meveo</db.username>
-                <db.password>meveo</db.password>
+				<db.url>jdbc:postgresql://localhost/meveo</db.url>
+				<db.username>meveo</db.username>
+				<db.password>meveo</db.password>
 			</properties>
 			<dependencies>
 				<!-- Dependency for liquibase plugin -->
@@ -305,9 +303,9 @@
 			<properties>
 				<!-- Properties for liquibase plugin -->
 				<db.driver>org.postgresql.Driver </db.driver>
-                <db.url>jdbc:postgresql://localhost/meveo</db.url>
-                <db.username>meveo</db.username>
-                <db.password>meveo</db.password>
+				<db.url>jdbc:postgresql://localhost/meveo</db.url>
+				<db.username>meveo</db.username>
+				<db.password>meveo</db.password>
 			</properties>
 			<dependencies>
 				<!-- Dependency for liquibase plugin -->
@@ -321,7 +319,7 @@
 					<artifactId>liquibase-postgresql</artifactId>
 					<version>3.0</version>
 				</dependency>
-				
+
 				<!-- Dependency for testing -->
 				<dependency>
 					<groupId>org.jboss.as</groupId>
@@ -395,33 +393,16 @@
 		</profile>
 
 
-		<!-- 
-		A sample profile for specifying a different database and database drivers for liquibase plugin
-        <profile>
-            <id>SampleProfileForLiquibasePlugin</id>
-            <properties>
-                <db.driver>org.postgresql.Driver</db.driver> - Driver to connect to DB
-                <db.url>jdbc:postgresql://localhost/meveo</db.url> - URL to connect to DB
-                <db.username>meveo</db.username> - Username to connect to DB
-                <db.password>meveo</db.password> - Password to conenct to DB
-            </properties>
-            <activation>
-                <activeByDefault>false</activeByDefault>
-            </activation>
-			<dependencies>
-				- Library containing drivers (<db.driver> parameter) to connect to DB 
-				<dependency>
-					<groupId>org.postgresql</groupId>
-					<artifactId>postgresql</artifactId>
-					<version>9.2-1002-jdbc4</version>
-				</dependency>
-				<dependency>
-					<groupId>org.liquibase.ext</groupId>
-					<artifactId>liquibase-postgresql</artifactId>
-					<version>3.0</version>
-				</dependency>
-			</dependencies>
-        </profile>
-		 -->
+		<!-- A sample profile for specifying a different database and database 
+			drivers for liquibase plugin <profile> <id>SampleProfileForLiquibasePlugin</id> 
+			<properties> <db.driver>org.postgresql.Driver</db.driver> - Driver to connect 
+			to DB <db.url>jdbc:postgresql://localhost/meveo</db.url> - URL to connect 
+			to DB <db.username>meveo</db.username> - Username to connect to DB <db.password>meveo</db.password> 
+			- Password to conenct to DB </properties> <activation> <activeByDefault>false</activeByDefault> 
+			</activation> <dependencies> - Library containing drivers (<db.driver> parameter) 
+			to connect to DB <dependency> <groupId>org.postgresql</groupId> <artifactId>postgresql</artifactId> 
+			<version>9.2-1002-jdbc4</version> </dependency> <dependency> <groupId>org.liquibase.ext</groupId> 
+			<artifactId>liquibase-postgresql</artifactId> <version>3.0</version> </dependency> 
+			</dependencies> </profile> -->
 	</profiles>
 </project>
