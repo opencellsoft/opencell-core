@@ -356,36 +356,36 @@
 
 	</dependencies>
 
-	<profiles>
-		<profile>
-			<id>development</id>
-			<activation>
-				<activeByDefault>true</activeByDefault>
-				<property>
-					<name>env</name>
-					<value>dev</value>
-				</property>
-			</activation>
-		</profile>
+<!-- 	<profiles> -->
+<!-- 		<profile> -->
+<!-- 			<id>development</id> -->
+<!-- 			<activation> -->
+<!-- 				<activeByDefault>true</activeByDefault> -->
+<!-- 				<property> -->
+<!-- 					<name>env</name> -->
+<!-- 					<value>dev</value> -->
+<!-- 				</property> -->
+<!-- 			</activation> -->
+<!-- 		</profile> -->
 
-		<profile>
-			<id>integration</id>
-			<activation>
-				<property>
-					<name>env</name>
-					<value>integr</value>
-				</property>
-			</activation>
-		</profile>
+<!-- 		<profile> -->
+<!-- 			<id>integration</id> -->
+<!-- 			<activation> -->
+<!-- 				<property> -->
+<!-- 					<name>env</name> -->
+<!-- 					<value>integr</value> -->
+<!-- 				</property> -->
+<!-- 			</activation> -->
+<!-- 		</profile> -->
 
-		<profile>
-			<id>production</id>
-			<activation>
-				<property>
-					<name>env</name>
-					<value>prod</value>
-				</property>
-			</activation>
-		</profile>
-	</profiles>
+<!-- 		<profile> -->
+<!-- 			<id>production</id> -->
+<!-- 			<activation> -->
+<!-- 				<property> -->
+<!-- 					<name>env</name> -->
+<!-- 					<value>prod</value> -->
+<!-- 				</property> -->
+<!-- 			</activation> -->
+<!-- 		</profile> -->
+<!-- 	</profiles> -->
 </project>
