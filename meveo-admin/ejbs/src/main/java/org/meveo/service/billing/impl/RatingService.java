@@ -605,26 +605,32 @@ public class RatingService {
 								operation.getQuantity()));
 				if (operation.getUnitAmountWithTax() != null) {
 					operation
-							.setAmountWithTax(operation.getUnitAmountWithTax());
+							.setAmountWithTax(operation.getUnitAmountWithTax().multiply(
+									operation.getQuantity()));
+				}
+				Integer rounding=operationToRerate.getProvider().getRounding();
+				if (rounding != null && rounding > 0) {
+					operation.setAmountWithoutTax(NumberUtils.round(operation.getAmountWithoutTax(), rounding));
+					operation.setAmountWithTax(NumberUtils.round(operation.getAmountWithTax(), rounding));
 				}
 				operation.setAmountTax(operation.getAmountWithTax().subtract(
 						operation.getAmountWithoutTax()));
 			} else {
-				try {
-					rateBareWalletOperation(entityManager, operation, null,
+				if(operation.getPriceplan()==null){
+					operation.setUnitAmountWithoutTax(null);
+					operation.setUnitAmountWithTax(null);
+					operation.setUnitAmountTax(null);
+				}
+				rateBareWalletOperation(entityManager, operation, null,
 							null, operation.getPriceplan().getTradingCountry()==null?null:
 								operation.getPriceplan().getTradingCountry().getId(), operation.getPriceplan()
 									.getTradingCurrency(),
 							operation.getProvider());
-				} catch (BusinessException e) {
-					e.printStackTrace();
-				}
 			}
 			entityManager.persist(operation);
 		} catch (UnrolledbackBusinessException e) {
 			log.info(e.getMessage());
 			operationToRerate.setStatus(WalletOperationStatusEnum.TREATED);
-			;
 		}
 	}
 	

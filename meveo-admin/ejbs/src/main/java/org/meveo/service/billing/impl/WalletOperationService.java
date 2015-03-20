@@ -38,6 +38,7 @@ import org.meveo.admin.exception.IncorrectChargeInstanceException;
 import org.meveo.admin.exception.IncorrectChargeTemplateException;
 import org.meveo.admin.util.ResourceBundle;
 import org.meveo.cache.WalletCacheContainerProvider;
+import org.meveo.commons.utils.NumberUtils;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.BaseEntity;
@@ -50,7 +51,6 @@ import org.meveo.model.billing.ChargeInstance;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.InvoiceSubcategoryCountry;
 import org.meveo.model.billing.OneShotChargeInstance;
-import org.meveo.model.billing.RatedTransaction;
 import org.meveo.model.billing.RecurringChargeInstance;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.Tax;
@@ -1239,10 +1239,14 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 							RoundingMode.HALF_UP);
 					remainingAmountToCharge = remainingAmountToCharge.subtract(balance);
 					BigDecimal newOpAmountWithTax = balance;
-					BigDecimal newOpAmountTax = op.getAmountTax().multiply(newOverOldCoeff);
-					BigDecimal newOpAmountWithoutTax = newOpAmountWithTax.subtract(newOpAmountTax);
+					BigDecimal newOpAmountWithoutTax = op.getAmountWithoutTax().multiply(newOverOldCoeff);
+					if (provider.getRounding() != null && provider.getRounding() > 0) {
+						newOpAmountWithoutTax = NumberUtils.round(newOpAmountWithoutTax, provider.getRounding());
+						newOpAmountWithTax = NumberUtils.round(newOpAmountWithTax, provider.getRounding());
+					}
+					BigDecimal newOpAmountTax = newOpAmountWithTax.subtract(newOpAmountWithoutTax);
 					BigDecimal newOpQuantity = op.getQuantity().multiply(newOverOldCoeff);
-
+					
 					BigDecimal opAmountWithTax = remainingAmountToCharge;
 					BigDecimal opAmountTax = op.getAmountTax().subtract(newOpAmountTax);
 					BigDecimal opAmountWithoutTax = opAmountWithTax.subtract(opAmountTax);
@@ -1305,6 +1309,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 	@TransactionAttribute(TransactionAttributeType.REQUIRED)
 	public int updateToRerate(List<Long> walletIdList ) {
 		int walletsOpToRerate=0;
+		@SuppressWarnings("unchecked")
 		List<Long> ratedTransactionsBilled=(List<Long>)getEntityManager().createNamedQuery("RatedTransaction.getRatedTransactionsBilled").setParameter("walletIdList", walletIdList).getResultList();
 		walletIdList.removeAll(ratedTransactionsBilled);
 		if(walletIdList.size()>0 && !walletIdList.isEmpty()){

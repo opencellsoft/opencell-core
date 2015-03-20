@@ -160,7 +160,7 @@ public class WalletOperationBean extends BaseBean<WalletOperation> {
 			    messages.error(new BundleKey("messages","update.failed"));
 			  }}
 	
-	public void massToRerate() {
+	public String massToRerate() {
 		try{
 		List<Long> walletIdList=null;
 		if (getSelectedEntities() != null) {
@@ -174,6 +174,8 @@ public class WalletOperationBean extends BaseBean<WalletOperation> {
 			log.error(e.getMessage());
 			messages.error(new BundleKey("messages","update.failed"));
 		}
+		conversation.end();
+		return "walletOperations";
 	}
 } 
 

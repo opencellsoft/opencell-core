@@ -20,8 +20,6 @@
 
 	<ui:define name="body">  
 	 
-		<p:messages id="messages" />
-		<p:messages id="msg" />
 	<hftl:entityPopup id="searchSellerPopup"
 			header="#{messages['seller.search']}"
 			updateField=":searchPanel:searchForm:seller:seller_child"
@@ -193,9 +191,6 @@
 				entityView="/pages/billing/walletOperations/walletOperationDetail.xhtml"
 				backView="walletOperations" showPopup="true" popupFields="code"/>
 			<hftl:column label="#{messages['walletOperation.status']}" field="status" childField="label" isMessage="true" />
-			
-			 
-				
 				 <p:column  width="50px"> 
 			<f:facet name="header">
 			<h:outputText value="Actions" />
@@ -206,26 +201,23 @@
 					showEffect="slide" hideEffect="slide" />
 				<p:commandButton id="updateWallet" icon="ui-icon-play"
 					actionListener="#{walletOperationBean.updatedToRerate(entity)}"
-					update=":results_form :messages">
+					update=":searchPanel:searchForm">
 					<p:confirm header="#{messages['message.confirmation']}"
 						message="#{messages['message.confirm.walletOperation.update']}"
 						icon="ui-icon-alert" />
 				</p:commandButton>
 				</p:column>
 				</hftl:dataList>
-		
-		<p:panel styleClass="action-buttons">
-			<p:tooltip for="massUpdateWallet" value="#{messages['action.update']}"
-				showEffect="slide" hideEffect="slide" />
+		  	<p:panel styleClass="action-buttons">
 			<p:commandButton id="massUpdateWallet"
-				value="#{messages['action.massRerate']}"
-				  update=":results_form :msg" action="#{walletOperationBean.massToRerate()}">
-				<p:confirm header="#{messages['message.confirmation']}"
-					message="#{messages['message.confirm.walletOperation.update']}"
-					icon="ui-icon-alert" />
-			</p:commandButton>
-		</p:panel>
-
+            value="#{messages['action.massRerate']}"
+            action="#{walletOperationBean.massToRerate()}" 
+            icon="ui-icon-check">
+			<p:confirm header="#{messages['message.confirmation']}"
+				message="#{messages['message.confirm.walletOperation.update']}"
+				icon="ui-icon-alert" />
+           </p:commandButton> 
+			</p:panel>
 		<p:confirmDialog global="true" showEffect="fade" hideEffect="explode">
 			<p:commandButton value="#{messages['commons.yes']}" type="button"
 				styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />

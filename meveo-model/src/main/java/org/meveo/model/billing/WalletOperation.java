@@ -438,7 +438,9 @@ public class WalletOperation extends BusinessEntity {
 		WalletOperation result = new WalletOperation();
 		result.setActive(true);
 		result.setAggregatedServiceInstance(aggregatedServiceInstance);
+		result.setAppendGeneratedCode(appendGeneratedCode);
 		result.setAuditable(getAuditable());
+		result.setBillingAccount(billingAccount);
 		result.setChargeInstance(chargeInstance);
 		result.setCode(code);
 		result.setCounter(counter);
@@ -446,13 +448,16 @@ public class WalletOperation extends BusinessEntity {
 		result.setDescription(description);
 		result.setDisabled(false);
 		result.setEndDate(endDate);
+		result.setInvoiceSubCategory(invoiceSubCategory);
 		result.setOfferCode(offerCode);
+		result.setOfferTemplate(offerTemplate);
 		result.setOperationDate(operationDate);
 		result.setParameter1(parameter1);
 		result.setParameter2(parameter2);
 		result.setParameter3(parameter3);
 		result.setPriceplan(priceplan);
 		result.setProvider(getProvider());
+		result.setQuantity(quantity);
 		result.setSeller(seller);
 		result.setStartDate(startDate);
 		result.setStatus(WalletOperationStatusEnum.OPEN);
