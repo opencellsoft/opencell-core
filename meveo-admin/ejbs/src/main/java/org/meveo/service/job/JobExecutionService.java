@@ -24,6 +24,7 @@ import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
+import javax.naming.InitialContext;
 
 import org.apache.commons.lang.StringUtils;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
@@ -45,8 +46,9 @@ public class JobExecutionService extends PersistenceService<JobExecutionResultIm
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public void executeJob(String jobName, TimerInfo info, User currentUser, JobCategoryEnum jobCategory) {
 		try {
-			HashMap<String, Job> jobs = TimerEntityService.jobEntries.get(jobCategory);
-			Job jobInstance = jobs.get(jobName);
+			HashMap<String, String> jobs = TimerEntityService.jobEntries.get(jobCategory);
+			InitialContext ic = new InitialContext();
+			Job jobInstance = (Job) ic.lookup(jobs.get(jobName));
 			jobInstance.execute(info, currentUser);
 		} catch (Exception e) {
 			log.error(e.getMessage());

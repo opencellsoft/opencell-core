@@ -133,7 +133,7 @@ public class UsageRatingService {
 		// FIXME: copy those info in chargeInstance instead of performing
 		// multiple queries
 		InvoiceSubCategory invoiceSubCat = chargeInstance.getChargeTemplate().getInvoiceSubCategory();
-		TradingCountry country = edr.getSubscription().getUserAccount().getBillingAccount().getTradingCountry();
+		TradingCountry country = chargeInstance.getSubscription().getUserAccount().getBillingAccount().getTradingCountry();
 		Long countryId = country.getId();
 		InvoiceSubcategoryCountry invoiceSubcategoryCountry = invoiceSubCategoryCountryService
 				.findInvoiceSubCategoryCountry(invoiceSubCat.getId(), countryId, provider);
@@ -143,17 +143,17 @@ public class UsageRatingService {
 					+ invoiceSubCat.getCode());
 		}
 
-		TradingCurrency currency = edr.getSubscription().getUserAccount().getBillingAccount().getCustomerAccount()
+		TradingCurrency currency = chargeInstance.getSubscription().getUserAccount().getBillingAccount().getCustomerAccount()
 				.getTradingCurrency();
 		Tax tax = invoiceSubcategoryCountry.getTax();
 
 		walletOperation.setChargeInstance(chargeInstance);
 		walletOperation.setUnityDescription(chargeInstance.getUnityDescription());
-		walletOperation.setSeller(edr.getSubscription().getUserAccount().getBillingAccount().getCustomerAccount()
+		walletOperation.setSeller(chargeInstance.getSubscription().getUserAccount().getBillingAccount().getCustomerAccount()
 				.getCustomer().getSeller());
 		// we set here the wallet to the pricipal wallet but it will later be
 		// overriden by charging algo
-		walletOperation.setWallet(edr.getSubscription().getUserAccount().getWallet());
+		walletOperation.setWallet(chargeInstance.getSubscription().getUserAccount().getWallet());
 		walletOperation.setCode(chargeInstance.getCode());
 		walletOperation.setDescription(chargeInstance.getDescription());
 
@@ -172,7 +172,7 @@ public class UsageRatingService {
 			walletOperation.setCounter(chargeInstance.getCounter());
 		}
 
-		walletOperation.setOfferCode(edr.getSubscription().getOffer().getCode());
+		walletOperation.setOfferCode(chargeInstance.getSubscription().getOffer().getCode());
 		walletOperation.setStatus(WalletOperationStatusEnum.OPEN);
 
 		// log.info("provider code:" + provider.getCode());
@@ -465,7 +465,7 @@ public class UsageRatingService {
 				log.error(e.getMessage());
 				edr.setStatus(EDRStatusEnum.REJECTED);
 				edr.setRejectReason(e.getMessage());
-				throw new BusinessException(e.getMessage());
+				throw new BusinessException(e);
 			}
 		}
 

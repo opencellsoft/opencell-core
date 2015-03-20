@@ -94,9 +94,10 @@ public class CdrEdrProcessingCacheContainerProvider {
      * @param access Access to add
      */
     public void addAccessToCache(Access access) {
-
         String cacheKey = access.getProvider().getId() + "_" + access.getAccessUserId();
         accessCache.putIfAbsent(cacheKey, new ArrayList<Access>());
+        //because acccessed later, to avoid lazy init
+        access.getSubscription().getId();
         accessCache.get(cacheKey).add(access);
         log.info("Added access {} to access cache", access);
     }
