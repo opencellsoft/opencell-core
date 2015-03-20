@@ -18,9 +18,9 @@
 		<ui:include src="/layout/navigation.xhtml" />
 	</ui:define>
 
-	<ui:define name="body">
-
-		<hftl:entityPopup id="searchSellerPopup"
+	<ui:define name="body">  
+	 
+	<hftl:entityPopup id="searchSellerPopup"
 			header="#{messages['seller.search']}"
 			updateField=":searchPanel:searchForm:seller:seller_child"
 			selection="#{walletOperationBean.filters['seller']}"
@@ -30,8 +30,8 @@
 			column1="code"
 			column2Label="#{messages['BusinessEntity.description']}"
 			column2="description">
-		</hftl:entityPopup>
-
+		</hftl:entityPopup> 
+		
 		<hftl:entityPopup id="searchChargeInstancePopup"
 			header="#{messages['walletOperation.chargeInstance']}"
 			updateField=":searchPanel:searchForm:chargeInstance:chargeInstance_child"
@@ -54,7 +54,7 @@
 			column2Label="#{messages['BusinessEntity.description']}"
 			column2="description">
 		</hftl:entityPopup>
-		<hftl:entityPopup id="searchWalletInstancePopup"
+			<hftl:entityPopup id="searchWalletInstancePopup"
 			header="#{messages['walletTemplate.title']}"
 			updateField=":searchPanel:searchForm:wallet:wallet_child"
 			selection="#{walletOperationBean.filters['wallet']}"
@@ -69,27 +69,28 @@
 			header="#{messages['pricePlan.title']}"
 			backingBean="#{pricePlanMatrixBean}"
 			searchField1Label="#{messages['pricePlanMatrix.table.eventCode']}"
-			searchField1="eventCode"
-			column1Label="#{messages['BusinessEntity.code']}" column1="eventCode"
-			selection="#{walletOperationBean.filters['priceplan']}"
+			searchField1="eventCode" 
+			column1Label="#{messages['BusinessEntity.code']}" column1="eventCode" 
+			selection="#{walletOperationBean.filters['priceplan']}" 
 			updateField=":searchPanel:searchForm:priceplan:priceplan_child">
-		</hftl:entityPopup>
-
+		</hftl:entityPopup> 
+		
 		<hftl:entityPopup id="billingAccountPopup"
 			header="#{messages['billingAccount.popup.header']}"
 			backingBean="#{billingAccountBean}"
 			searchField1Label="#{messages['billingAccount.code']}"
-			searchField1="code"
+			searchField1="code" 
 			searchField2Label="#{messages['invoiceSubCategory.description']}"
 			searchField2="description"
-			column1Label="#{messages['billingAccount.code']}" column1="code"
+			column1Label="#{messages['billingAccount.code']}"
+			column1="code"
 			column2Label="#{messages['invoiceSubCategory.description']}"
-			column2="description"
+			column2="description" 
 			selection="#{walletOperationBean.filters['billingAccount']}"
-			updateField=":searchPanel:searchForm">
+            updateField=":searchPanel:searchForm">
 		</hftl:entityPopup>
-
-		<hftl:entityPopup id="searchInvoiceSubCategoryPopup"
+		
+			<hftl:entityPopup id="searchInvoiceSubCategoryPopup"
 			header="#{messages['invoiceSubCategory.panel']}"
 			backingBean="#{invoiceSubCategoryBean}"
 			updateField=":searchPanel:searchForm"
@@ -101,21 +102,23 @@
 			column1Label="#{messages['invoiceSubCategory.code']}" column1="code"
 			column2Label="#{messages['invoiceSubCategory.description']}"
 			column2="description">
-		</hftl:entityPopup>
-
-		<hftl:entityPopup id="searchBillingRunPopup"
+		  </hftl:entityPopup>
+		  
+		  <hftl:entityPopup id="searchBillingRunPopup"
 			header="#{messages['billingRun.search']}"
-			backingBean="#{billingRunBean}" updateField=":searchPanel:searchForm"
+			backingBean="#{billingRunBean}"
+			updateField=":searchPanel:searchForm"
 			selection="#{walletOperationBean.filters['billingRun']}"
-			searchField1Label="#{messages['role.id']}" searchField1="id"
+			searchField1Label="#{messages['role.id']}"
+			searchField1="id" 
 			searchField2Label="#{messages['billingRun.status']}"
-			searchField2="status" column1Label="#{messages['role.id']}"
-			column1="id" column2Label="#{messages['billingRun.status']}"
-			column2="status" column3Label="#{messages['billingRun.processDate']}"
-			column3="processDate">
-		</hftl:entityPopup>
-
-		<hftl:entityPopup id="searchOfferPopup"
+			searchField2="status" 
+			column1Label="#{messages['role.id']}" column1="id"
+			column2Label="#{messages['billingRun.status']}" column2="status"
+			column3Label="#{messages['billingRun.processDate']}" column3="processDate">
+		  </hftl:entityPopup>
+		  
+		  <hftl:entityPopup id="searchOfferPopup"
 			header="#{messages['offerTemplate.search']}"
 			backingBean="#{offerTemplateBean}"
 			updateField=":searchPanel:searchForm"
@@ -127,145 +130,94 @@
 			column1Label="#{messages['BusinessEntity.code']}" column1="code"
 			column2Label="#{messages['BusinessEntity.description']}"
 			column2="description">
-		</hftl:entityPopup>
-
-		<hf:searchPanel id="searchPanel"
-			label="#{messages['walletOperation.search']}"
+		  </hftl:entityPopup>
+		
+		<hf:searchPanel id="searchPanel" label="#{messages['walletOperation.search']}"
 			backingBean="#{walletOperationBean}" renderNewButton="false">
-			<hftl:panelGroup columns="2">
-
-				<p:panelGrid columns="2">
-					<p:outputLabel for="currency"
-						value="#{messages['currency.codeCurrency']}" style="width:105px" />
-					<p:selectOneMenu id="currency"
-						value="#{walletOperationBean.filters['currency.currencyCode']}">
-						<f:selectItem itemValue="" itemLabel="" />
-						<f:selectItems value="#{walletOperationBean.getListCurrency}" />
-					</p:selectOneMenu>
-				</p:panelGrid>
-
-				<hf:searchField label="#{messages['billingRun.panel']}"
-					id="billingRunId" field="billingRun" childField="id" popup="true"
-					popupId="searchBillingRunPopup" clearButton="true"
-					renderNewButton="false" />
-				<hf:searchField
-					label="#{messages['billingAccount.billingAccountPanel']}"
-					id="billingAccountId" field="billingAccount" childField="code"
-					popup="true" popupId="billingAccountPopup" clearButton="true" />
-				<hf:searchField label="#{messages['invoiceSubCategory.title']}"
-					id="invoiceSubCategoryId" field="invoiceSubCategory"
-					childField="code" popup="true"
-					popupId="searchInvoiceSubCategoryPopup" clearButton="true" />
-				<hf:searchField label="#{messages['walletOperation.offer']}"
-					id="offerCodeId" field="offerTemplate" childField="code"
-					popup="true" popupId="searchOfferPopup" clearButton="true" />
-				<hf:searchField
-					label="#{messages['walletOperation.chargeInstance']}"
-					id="chargeInstance" field="chargeInstance" childField="code"
-					popup="true" popupId="searchChargeInstancePopup" clearButton="true" />
-				<hf:searchField label="#{messages['counterTemplate.title']}"
-					id="counter" field="counter" childField="code" popup="true"
-					popupId="searchCounterInstancePopup" clearButton="true" />
-				<hf:searchField label="#{messages['pricePlan.title']}"
-					id="priceplan" field="priceplan" childField="eventCode"
-					popup="true" popupId="searchPricePlanPopup" clearButton="true" />
-				<hf:searchField id="seller" label="#{messages['seller.title']}"
-					field="seller" childField="description" popup="true"
-					popupId="searchSellerPopup" clearButton="true" />
-				<hf:searchField label="#{messages['walletOperation.param1']}"
-					field="parameter1" />
-				<hf:searchField label="#{messages['operation.wallet']}" id="wallet"
-					field="wallet" childField="code" popup="true"
-					popupId="searchWalletInstancePopup" clearButton="true" />
-				<hf:searchField label="#{messages['walletOperation.param2']}"
-					field="parameter2" />
-				<hf:searchField label="#{messages['walletOperation.status']}"
-					field="status" />
-				<hf:searchField label="#{messages['walletOperation.param3']}"
-					field="parameter3" />
-				<hf:searchField
-					label="#{messages['walletOperation.unitAmountWithoutTax']}"
-					field="unitAmountWithoutTax" />
-				<hf:searchField
-					label="#{messages['walletOperation.subscriptionDate']}"
-					field="subscriptionDate" />
-				<hf:searchField label="#{messages['walletOperation.operationDate']}"
-					field="operationDate" />
-				<hf:searchField label="#{messages['walletOperation.startDate']}"
-					field="startDate" />
-				<hf:searchField label="#{messages['walletOperation.endDate']}"
-					field="endDate" />
-				<hf:searchField label="#{messages['walletOperation.quantity']}"
-					field="quantity" />
-				<hf:searchField label="#{messages['invoice.amountWithoutTax']}"
-					field="amountWithoutTax" />
-			</hftl:panelGroup>
+		<hftl:panelGroup columns="2">
+		
+		<p:panelGrid columns="2">
+	   <p:outputLabel for="currency"
+	    value="#{messages['currency.codeCurrency']}" style="width:105px" />
+	   <p:selectOneMenu id="currency"
+		value="#{walletOperationBean.filters['currency.currencyCode']}">
+	   <f:selectItem itemValue="" itemLabel="" />
+	   <f:selectItems value="#{walletOperationBean.getListCurrency}" />												 
+	   </p:selectOneMenu>
+	  </p:panelGrid>
+	
+	      <hf:searchField label="#{messages['billingRun.panel']}" id="billingRunId"
+		    field="billingRun" childField="id" popup="true" popupId="searchBillingRunPopup" clearButton="true" renderNewButton="false"/>
+		<hf:searchField label="#{messages['billingAccount.billingAccountPanel']}" id="billingAccountId"
+		    field="billingAccount" childField="code" popup="true" popupId="billingAccountPopup" clearButton="true"/> 
+		<hf:searchField label="#{messages['invoiceSubCategory.title']}" id="invoiceSubCategoryId"
+		    field="invoiceSubCategory" childField="code" popup="true" popupId="searchInvoiceSubCategoryPopup" clearButton="true"/> 
+		<hf:searchField label="#{messages['walletOperation.offer']}" id="offerCodeId"
+		     field="offerTemplate" childField="code" popup="true" popupId="searchOfferPopup" clearButton="true"/>	
+		 <hf:searchField label="#{messages['walletOperation.chargeInstance']}" id="chargeInstance" field="chargeInstance" 
+		     childField="code" popup="true" popupId="searchChargeInstancePopup" clearButton="true"/> 
+		  <hf:searchField label="#{messages['counterTemplate.title']}" id="counter"
+		    field="counter" childField="code" popup="true" popupId="searchCounterInstancePopup" clearButton="true"/>
+			<hf:searchField label="#{messages['pricePlan.title']}" id="priceplan"
+		    field="priceplan" childField="eventCode" popup="true" popupId="searchPricePlanPopup" clearButton="true"/>
+			<hf:searchField id="seller" label="#{messages['seller.title']}" field="seller" childField="description" popup="true"
+				popupId="searchSellerPopup" clearButton="true" />
+		    <hf:searchField label="#{messages['walletOperation.param1']}" field="parameter1" />
+		     <hf:searchField label="#{messages['operation.wallet']}" id="wallet"
+		    field="wallet" childField="code" popup="true" popupId="searchWalletInstancePopup" clearButton="true"/>	 
+		    <hf:searchField label="#{messages['walletOperation.param2']}" field="parameter2" />
+			<hf:searchField label="#{messages['walletOperation.status']}" field="status"/>
+		    <hf:searchField label="#{messages['walletOperation.param3']}" field="parameter3" />
+			 <hf:searchField label="#{messages['walletOperation.unitAmountWithoutTax']}" field="unitAmountWithoutTax" />
+			<hf:searchField label="#{messages['walletOperation.subscriptionDate']}" field="subscriptionDate" />
+		 <hf:searchField label="#{messages['walletOperation.operationDate']}" field="operationDate" />
+		    <hf:searchField label="#{messages['walletOperation.startDate']}" field="startDate" />
+		    <hf:searchField label="#{messages['walletOperation.endDate']}" field="endDate" />
+			 <hf:searchField label="#{messages['walletOperation.quantity']}" field="quantity" />
+		 <hf:searchField label="#{messages['invoice.amountWithoutTax']}" field="amountWithoutTax" />
+	</hftl:panelGroup>
 		</hf:searchPanel>
 		<hftl:dataList label="#{messages['walletOperations.title']}"
-			backingBean="#{walletOperationBean}" sortBy="operationDate"
-			sortOrder="DESCENDING">
-
+			backingBean="#{walletOperationBean}" sortBy="operationDate" sortOrder="DESCENDING" >
+			
 			<hftl:column label="#{messages['businessEntity.code']}" field="code" />
-			<hftl:column label="#{messages['businessEntity.description']}"
-				field="description" />
-			<hftl:column label="#{messages['walletOperation.operationDate']}"
-				field="operationDate" isDate="true" />
-			<hftl:column label="#{messages['walletOperation.chargeInstance']}"
-				field="chargeInstance" childField="code" />
-			<hftl:column label="#{messages['walletOperation.quantity']}"
-				field="quantity" converterParam="4digits" wrapHeader="true" />
-			<hftl:column label="#{messages['invoice.amountWithoutTax']}"
-				field="amountWithoutTax" converterParam="4digits" wrapHeader="true" />
-			<hftl:column label="#{messages['invoice.amountWithTax']}"
-				field="amountWithTax" converterParam="4digits" wrapHeader="true" />
-			<hftl:column label="#{messages['walletOperationStatus.rerated']}"
-				field="reratedWalletOperation" childField="code" childFieldId="id"
+			<hftl:column label="#{messages['businessEntity.description']}" field="description" />
+			<hftl:column label="#{messages['walletOperation.operationDate']}" field="operationDate" isDate="true" />
+			<hftl:column label="#{messages['walletOperation.chargeInstance']}" field="chargeInstance" childField="code" />
+			<hftl:column label="#{messages['walletOperation.quantity']}" field="quantity"  converterParam="4digits" wrapHeader="true" />
+			<hftl:column label="#{messages['invoice.amountWithoutTax']}" field="amountWithoutTax"  converterParam="4digits" wrapHeader="true" />
+			<hftl:column label="#{messages['invoice.amountWithTax']}" field="amountWithTax"  converterParam="4digits" wrapHeader="true" />
+			<hftl:column label="#{messages['walletOperationStatus.rerated']}" field="reratedWalletOperation" childField="code" childFieldId="id"
 				entityView="/pages/billing/walletOperations/walletOperationDetail.xhtml"
-				backView="walletOperations" showPopup="true" popupFields="code" />
-			<hftl:column label="#{messages['walletOperation.status']}"
-				field="status" childField="label" isMessage="true" />
-			<p:column width="50px">
-				<f:facet name="header">
-					<h:outputText value="Actions" />
-				</f:facet>
-				<hftl:actionsColumn renderEditLink="false" renderDeleteLink="false"
-					permission="#{identity.hasPermission('billing','billingManagement')}" />
-				<p:tooltip for="updateWallet" value="#{messages['action.update']}"
+				backView="walletOperations" showPopup="true" popupFields="code"/>
+			<hftl:column label="#{messages['walletOperation.status']}" field="status" childField="label" isMessage="true" />
+				 <p:column  width="50px"> 
+			<f:facet name="header">
+			<h:outputText value="Actions" />
+		</f:facet>
+			<hftl:actionsColumn renderEditLink="false" renderDeleteLink="false"
+				permission="#{identity.hasPermission('billing','billingManagement')}" />
+			  <p:tooltip for="updateWallet" value="#{messages['action.update']}"
 					showEffect="slide" hideEffect="slide" />
 				<p:commandButton id="updateWallet" icon="ui-icon-play"
 					actionListener="#{walletOperationBean.updatedToRerate(entity)}"
-					update=":searchPanel:searchForm">
+					update="@all">
 					<p:confirm header="#{messages['message.confirmation']}"
 						message="#{messages['message.confirm.walletOperation.update']}"
 						icon="ui-icon-alert" />
 				</p:commandButton>
-<<<<<<< master
-			</p:column>
-		</hftl:dataList>
-		<p:panel styleClass="action-buttons">
-=======
 				</p:column>
-			</hftl:dataList>
-			<p:panel styleClass="action-buttons">
->>>>>>> f80623b add confirmdialog to massToRerate
-			<p:commandButton id="massUpdateWallet"<<<<<<< master
-				value="#{messages['action.massRerate']}"
-				action="#{walletOperationBean.massToRerate()}" icon="ui-icon-check">
-				<p:confirm header="#{messages['message.confirmation']}"
-						message="#{messages['message.confirm.walletOperation.update']}"
-						icon="ui-icon-alert" />
-				</p:commandButton>
-			</p:panel>
-=======
+				</hftl:dataList>
+		  	<p:panel styleClass="action-buttons">
+			<p:commandButton id="massUpdateWallet"
             value="#{messages['action.massRerate']}"
             action="#{walletOperationBean.massToRerate()}" 
             icon="ui-icon-check">
 			<p:confirm header="#{messages['message.confirmation']}"
 				message="#{messages['message.confirm.walletOperation.update']}"
 				icon="ui-icon-alert" />
-			</p:commandButton>
-		</p:panel>
->>>>>>> f80623b add confirmdialog to massToRerate
+           </p:commandButton> 
+			</p:panel>
 		<p:confirmDialog global="true" showEffect="fade" hideEffect="explode">
 			<p:commandButton value="#{messages['commons.yes']}" type="button"
 				styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
