@@ -1,19 +1,17 @@
 package org.meveo.api.dto.account;
 
-import java.math.BigDecimal;
-import java.util.HashMap;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.BaseDto;
+import org.meveo.api.dto.billing.ServicesToActivateDto;
 
 /**
  * @author Edward P. Legaspi
  **/
-@XmlRootElement(name = "Customer")
+@XmlRootElement(name = "ActivateServices")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ActivateServicesDto extends BaseDto {
 
@@ -22,8 +20,8 @@ public class ActivateServicesDto extends BaseDto {
 	@XmlElement(required = true)
 	private String subscription;
 
-	@XmlElement(required = true)
-	private HashMap<String, BigDecimal> services;
+	@XmlElement
+	private ServicesToActivateDto servicesToActivateDto = new ServicesToActivateDto();
 
 	public String getSubscription() {
 		return subscription;
@@ -33,17 +31,12 @@ public class ActivateServicesDto extends BaseDto {
 		this.subscription = subscription;
 	}
 
-	public HashMap<String, BigDecimal> getServices() {
-		return services;
+	public ServicesToActivateDto getServicesToActivateDto() {
+		return servicesToActivateDto;
 	}
 
-	public void setServices(HashMap<String, BigDecimal> services) {
-		this.services = services;
-	}
-
-	@Override
-	public String toString() {
-		return "InstantiateServicesDto [subscription=" + subscription + ", services=" + services + "]";
+	public void setServicesToActivateDto(ServicesToActivateDto servicesToActivateDto) {
+		this.servicesToActivateDto = servicesToActivateDto;
 	}
 
 }
