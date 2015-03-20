@@ -35,7 +35,7 @@ public class GenerateImportXmlV2 {
 	private final int MAX_BILLING_ACCOUNTS = 1;
 	private final int MAX_USER_ACCOUNTS = 1;
 
-	private final int MAX_SUBSCRIPTIONS = 1000;
+	private final int MAX_SUBSCRIPTIONS = 10;
 
 	private final boolean IGNORE_ACCOUNTS_IMPORT = false;
 	private final boolean IGNORE_SUBSCRIPTION_IMPORT = false;

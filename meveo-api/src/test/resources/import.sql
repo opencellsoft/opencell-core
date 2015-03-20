@@ -1163,10 +1163,10 @@ CREATE SEQUENCE CAT_OFFER_TEMPLATE_SEQ start with 2 increment by 1;
 
 insert into CAT_OFFER_SERV_TEMPLATES (offer_template_id, service_template_id) values (1, 1);
 
-insert into CAT_PRICE_PLAN_MATRIX (id, version, disabled, created, provider_id, PRIORITY, EVENT_CODE, AMOUNT_WITHOUT_TAX, AMOUNT_WITH_TAX, code, description) values (1, 0, false, now(), 1, 1, 'REC1', 5, 10, 'PP1', 'PP1');
-insert into CAT_PRICE_PLAN_MATRIX (id, version, disabled, created, provider_id, PRIORITY, EVENT_CODE, AMOUNT_WITHOUT_TAX, AMOUNT_WITH_TAX, code, description) values (2, 0, false, now(), 1, 1, 'SUB1', 15, 20, 'PP2', 'PP2');
-insert into CAT_PRICE_PLAN_MATRIX (id, version, disabled, created, provider_id, PRIORITY, EVENT_CODE, AMOUNT_WITHOUT_TAX, AMOUNT_WITH_TAX, code, description) values (3, 0, false, now(), 1, 1, 'USAGE1', 25, 30, 'PP3', 'PP3');
-insert into CAT_PRICE_PLAN_MATRIX (id, version, disabled, created, provider_id, PRIORITY, EVENT_CODE, AMOUNT_WITHOUT_TAX, AMOUNT_WITH_TAX, code, description) values (4, 0, false, now(), 1, 1, 'SUB2', 15, 20, 'PP4', 'PP4');
+insert into CAT_PRICE_PLAN_MATRIX (id, version, disabled, created, provider_id, PRIORITY, EVENT_CODE, AMOUNT_WITHOUT_TAX, AMOUNT_WITH_TAX, code, description) values (1, 0, false, now(), 1, 1, 'REC1', 5, 10, 'REC1', 'REC1');
+insert into CAT_PRICE_PLAN_MATRIX (id, version, disabled, created, provider_id, PRIORITY, EVENT_CODE, AMOUNT_WITHOUT_TAX, AMOUNT_WITH_TAX, code, description) values (2, 0, false, now(), 1, 1, 'SUB1', 15, 20, 'SUB1', 'SUB1');
+insert into CAT_PRICE_PLAN_MATRIX (id, version, disabled, created, provider_id, PRIORITY, EVENT_CODE, AMOUNT_WITHOUT_TAX, AMOUNT_WITH_TAX, code, description) values (3, 0, false, now(), 1, 1, 'USAGE1', 25, 30, 'USAGE1', 'USAGE1');
+insert into CAT_PRICE_PLAN_MATRIX (id, version, disabled, created, provider_id, PRIORITY, EVENT_CODE, AMOUNT_WITHOUT_TAX, AMOUNT_WITH_TAX, code, description) values (4, 0, false, now(), 1, 1, 'SUB2', 15, 20, 'SUB2', 'SUB2');
 
 DROP SEQUENCE IF EXISTS CAT_PRICE_PLAN_MATRIX_SEQ;
 CREATE SEQUENCE CAT_PRICE_PLAN_MATRIX_SEQ start with 5 increment by 1;

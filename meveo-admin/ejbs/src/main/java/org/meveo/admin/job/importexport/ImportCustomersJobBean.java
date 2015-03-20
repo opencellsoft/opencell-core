@@ -242,7 +242,7 @@ public class ImportCustomersJobBean {
 						nbCustomersError++;
 						log.error("File:" + fileName + ", typeEntity:Customer, index:" + i + ", code:" + cust.getCode()
 								+ ", status:Error");
-						return;
+						continue;
 					}
 
 					createCustomer(fileName, currentUser, seller, sell, cust, i);
