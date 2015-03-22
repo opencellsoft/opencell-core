@@ -452,6 +452,10 @@ public class WalletOperation extends BusinessEntity {
 	@Transient
 	public WalletOperation getUnratedClone() {
 		WalletOperation result = new WalletOperation();
+		return fillUnratedClone(result);
+	}
+	
+	protected WalletOperation fillUnratedClone(WalletOperation result) {
 		result.setActive(true);
 		result.setAggregatedServiceInstance(aggregatedServiceInstance);
 		result.setAppendGeneratedCode(appendGeneratedCode);
