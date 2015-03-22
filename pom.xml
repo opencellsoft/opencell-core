@@ -243,7 +243,7 @@
 			<properties>
 				<!-- Properties for liquibase plugin -->
 				<db.driver>org.postgresql.Driver </db.driver>
-				<db.url>jdbc:postgresql://localhost/meveo_liqui</db.url>
+				<db.url>jdbc:postgresql://localhost/meveo</db.url>
 				<db.username>meveo</db.username>
 				<db.password>meveo</db.password>
 			</properties>
@@ -253,11 +253,13 @@
 					<groupId>org.postgresql</groupId>
 					<artifactId>postgresql</artifactId>
 					<version>9.2-1002-jdbc4</version>
+					<scope>provided</scope>
 				</dependency>
 				<dependency>
 					<groupId>org.liquibase.ext</groupId>
 					<artifactId>liquibase-postgresql</artifactId>
 					<version>3.0</version>
+					<scope>provided</scope>
 				</dependency>
 			</dependencies>
 		</profile>
