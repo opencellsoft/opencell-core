@@ -54,13 +54,13 @@ public class RatedTransactionsJobBean {
 					BigDecimal unitAmountWithTax = walletOperation.getUnitAmountWithTax();
 					BigDecimal unitAmountTax = walletOperation.getUnitAmountTax();
 
-					if (walletOperation.getChargeInstance().getSubscription().getUserAccount().getBillingAccount()
+					/*if (walletOperation.getChargeInstance().getSubscription().getUserAccount().getBillingAccount()
 							.getCustomerAccount().getCustomer().getCustomerCategory().getExoneratedFromTaxes()) {
 						amountWithTAx = walletOperation.getAmountWithoutTax();
 						amountTax = BigDecimal.ZERO;
 						unitAmountWithTax = walletOperation.getUnitAmountWithoutTax();
 						unitAmountTax = BigDecimal.ZERO;
-					}
+					}*/
 					RatedTransaction ratedTransaction = new RatedTransaction(walletOperation.getId(),
 							walletOperation.getOperationDate(), walletOperation.getUnitAmountWithoutTax(),
 							unitAmountWithTax, unitAmountTax, walletOperation.getQuantity(),
