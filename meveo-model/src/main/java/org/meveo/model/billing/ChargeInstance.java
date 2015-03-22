@@ -75,7 +75,7 @@ public class ChargeInstance extends BusinessEntity {
 	protected ChargeTemplate chargeTemplate;
 
 	@ManyToOne
-	@JoinColumn(name = "INVOICING_CAL")
+	@JoinColumn(name = "INVOICING_CALENDAR_ID")
 	private Calendar invoicingCalendar;
 	
 	@Temporal(TemporalType.DATE)

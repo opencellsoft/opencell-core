@@ -59,7 +59,7 @@ public class ServiceInstance extends BusinessEntity {
 	private ServiceTemplate serviceTemplate;
 
 	@ManyToOne
-	@JoinColumn(name = "INVOICING_CAL")
+	@JoinColumn(name = "INVOICING_CALENDAR_ID")
 	private Calendar invoicingCalendar;
 	
 	@Enumerated(EnumType.STRING)
