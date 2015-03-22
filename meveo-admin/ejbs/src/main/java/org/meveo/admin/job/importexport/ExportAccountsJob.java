@@ -53,22 +53,26 @@ public class ExportAccountsJob implements Job {
 	@Override
 	@Asynchronous
 	public void execute(TimerInfo info, User currentUser) {
+		log.debug("execute expAccounts, info={}, currentUser={}",info,currentUser);
 		JobExecutionResultImpl result = new JobExecutionResultImpl();
 		if (!running && (info.isActive() || currentUser != null)) {
 			try {
 				running = true;
 				if (currentUser == null) {
 					currentUser = userService.findByIdLoadProvider(info.getUserId());
+					log.debug("execute expAccounts, found user from info {}",currentUser);
 				}
 				exportAccountsJobBean.execute(result, info.getParametres(), currentUser);
-
+				log.debug("execute expAccounts, persist job execution");
 				jobExecutionService.persistResult(this, result, info, currentUser, getJobCategory());
 			} catch (Exception e) {
 				log.error(e.getMessage());
+				e.printStackTrace();
 			} finally {
 				running = false;
 			}
 		}
+		log.debug("end expAccounts rerating");
 	}
 
 	@Override

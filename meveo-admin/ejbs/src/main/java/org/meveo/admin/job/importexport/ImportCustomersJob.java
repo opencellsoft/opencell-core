@@ -53,21 +53,25 @@ public class ImportCustomersJob implements Job {
 	@Override
 	@Asynchronous
 	public void execute(TimerInfo info, User currentUser) {
+		log.debug("execute impCust, info={}, currentUser={}",info,currentUser);
 		JobExecutionResultImpl result = new JobExecutionResultImpl();
 		if (!running && (info.isActive() || currentUser != null)) {
 			try {
 				running = true;
 				if (currentUser == null) {
 					currentUser = userService.findByIdLoadProvider(info.getUserId());
+					log.debug("execute impCust, found user from info {}",currentUser);
 				}
 				importCustomersJobBean.execute(result, currentUser);
-
+				log.debug("execute impCust, persist job execution");
 				jobExecutionService.persistResult(this, result, info, currentUser, getJobCategory());
 			} catch (Exception e) {
 				log.error(e.getMessage());
+				e.printStackTrace();
 			} finally {
 				running = false;
 			}
+			log.debug("end impCust rerating");
 		}
 	}
 

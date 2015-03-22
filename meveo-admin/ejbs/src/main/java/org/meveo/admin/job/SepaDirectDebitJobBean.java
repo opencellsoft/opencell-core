@@ -60,17 +60,20 @@ public class SepaDirectDebitJobBean {
 				} catch (BusinessEntityException e) {
 					log.error(e.getMessage());
 
+					e.printStackTrace();
 					ddrequestLotOp.setStatus(DDRequestOpStatusEnum.ERROR);
 					ddrequestLotOp.setErrorCause(StringUtils.truncate(e.getMessage(), 255, true));
 				} catch (Exception e) {
 					log.error(e.getMessage());
 
+					e.printStackTrace();
 					ddrequestLotOp.setStatus(DDRequestOpStatusEnum.ERROR);
 					ddrequestLotOp.setErrorCause(StringUtils.truncate(e.getMessage(), 255, true));
 				}
 			}
 		} catch (Exception e) {
 			log.error(e.getMessage());
+			e.printStackTrace();
 		}
 	}
 

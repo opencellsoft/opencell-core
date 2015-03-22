@@ -11,6 +11,12 @@
 
 	<packaging>jar</packaging>
 	<name>MEVEO Model</name>
+	
+	<properties>	
+		<liquibase.changeLogFile>src/main/db_resources/changelog/db.current.xml</liquibase.changeLogFile>
+	</properties>
+	
+	
 	<build>
 		<plugins>
 			<plugin>
@@ -80,6 +86,27 @@
 						</lifecycleMappingMetadata>
 					</configuration>
 				</plugin>
+				<plugin>
+					<groupId>org.liquibase</groupId>
+					<artifactId>liquibase-maven-plugin</artifactId>
+					<version>3.3.2</version>
+					<configuration>
+						<changeLogFile>${liquibase.changeLogFile}</changeLogFile>
+						<driver>${db.driver}</driver>
+						<url>${db.url}</url>
+						<username>${db.username}</username>
+						<password>${db.password}</password>
+<!--  						<referenceUrl>hibernate:ejb3:MeveoAdmin</referenceUrl> -->
+						<promptOnNonLocalDatabase>false</promptOnNonLocalDatabase>
+					</configuration>
+<!-- 					<dependencies>					 -->
+<!-- 						<dependency> -->
+<!-- 				            <groupId>org.liquibase.ext</groupId> -->
+<!-- 				            <artifactId>liquibase-hibernate4</artifactId> -->
+<!-- 				            <version>3.5</version> -->
+<!-- 				        </dependency> -->
+<!-- 					</dependencies> -->
+				</plugin>				
 			</plugins>
 		</pluginManagement>
 	</build>
@@ -102,7 +129,7 @@
 			<artifactId>slf4j-api</artifactId>
 			<version>1.7.7</version>
 		</dependency>
-
+				
 		<!-- Import the CDI API, we use provided scope as the API is included in 
 			JBoss AS 7 -->
 		<dependency>
@@ -146,7 +173,7 @@
 			<groupId>joda-time</groupId>
 			<artifactId>joda-time</artifactId>
 		</dependency>
-
+		
 		<!-- TESTING dependencies -->
 		<dependency>
 			<groupId>org.dbunit</groupId>
@@ -162,4 +189,12 @@
 		</dependency>
 	</dependencies>
 
+	<profiles>
+		<profile>
+			<id>rebuild</id>
+			<properties>
+				<liquibase.changeLogFile>src/main/db_resources/changelog/db.rebuild.xml</liquibase.changeLogFile>
+			</properties>
+		</profile>
+	</profiles>
 </project>

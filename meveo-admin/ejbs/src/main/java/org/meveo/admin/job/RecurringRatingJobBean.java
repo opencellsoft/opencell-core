@@ -99,10 +99,12 @@ public class RecurringRatingJobBean implements Serializable {
 					rejectededChargeProducer.fire(activeRecurringChargeInstance);
 					log.error(e.getMessage());
 					result.registerError(e.getMessage());
+					e.printStackTrace();
 				}
 			}
 		} catch (Exception e) {
 			log.error(e.getMessage());
+			e.printStackTrace();
 		}
 	}
 }

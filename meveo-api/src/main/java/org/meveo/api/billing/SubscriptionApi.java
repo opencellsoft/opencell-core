@@ -1,12 +1,9 @@
 package org.meveo.api.billing;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -17,6 +14,7 @@ import org.meveo.api.BaseApi;
 import org.meveo.api.dto.CustomFieldDto;
 import org.meveo.api.dto.account.ActivateServicesDto;
 import org.meveo.api.dto.account.ApplyOneShotChargeInstanceDto;
+import org.meveo.api.dto.billing.ServiceToActivateDto;
 import org.meveo.api.dto.billing.SubscriptionDto;
 import org.meveo.api.dto.billing.SubscriptionsDto;
 import org.meveo.api.dto.billing.TerminateSubscriptionDto;
@@ -123,8 +121,8 @@ public class SubscriptionApi extends BaseApi {
 			if (postData.getCustomFields() != null) {
 				for (CustomFieldDto cf : postData.getCustomFields().getCustomField()) {
 					// check if custom field exists has a template
-					List<CustomFieldTemplate> customFieldTemplates = customFieldTemplateService
-							.findByAccountLevel(AccountLevelEnum.SUB);
+					List<CustomFieldTemplate> customFieldTemplates = customFieldTemplateService.findByAccountLevel(
+							AccountLevelEnum.SUB, provider);
 					if (customFieldTemplates != null && customFieldTemplates.size() > 0) {
 						for (CustomFieldTemplate cft : customFieldTemplates) {
 							if (cf.getCode().equals(cft.getCode())) {
@@ -209,8 +207,8 @@ public class SubscriptionApi extends BaseApi {
 			if (postData.getCustomFields() != null) {
 				for (CustomFieldDto cf : postData.getCustomFields().getCustomField()) {
 					// check if custom field exists has a template
-					List<CustomFieldTemplate> customFieldTemplates = customFieldTemplateService
-							.findByAccountLevel(AccountLevelEnum.SUB);
+					List<CustomFieldTemplate> customFieldTemplates = customFieldTemplateService.findByAccountLevel(
+							AccountLevelEnum.SUB, provider);
 					boolean found = false;
 					if (customFieldTemplates != null && customFieldTemplates.size() > 0) {
 						for (CustomFieldTemplate cft : customFieldTemplates) {
@@ -276,8 +274,9 @@ public class SubscriptionApi extends BaseApi {
 	}
 
 	public void activateServices(ActivateServicesDto postData, User currentUser) throws MeveoApiException {
-		if (!StringUtils.isBlank(postData.getSubscription()) && postData.getServices() != null
-				&& postData.getServices().size() > 0) {
+		if (!StringUtils.isBlank(postData.getSubscription())
+				&& postData.getServicesToActivateDto().getServices() != null
+				&& postData.getServicesToActivateDto().getServices().size() > 0) {
 			Provider provider = currentUser.getProvider();
 
 			Subscription subscription = subscriptionService.findByCode(postData.getSubscription(), provider);
@@ -291,19 +290,22 @@ public class SubscriptionApi extends BaseApi {
 			}
 
 			// check if exists
-			Map<ServiceTemplate, BigDecimal> serviceTemplates = new HashMap<ServiceTemplate, BigDecimal>();
-			for (String serviceTemplateCode : postData.getServices().keySet()) {
-				ServiceTemplate serviceTemplate = serviceTemplateService.findByCode(serviceTemplateCode, provider);
+			List<ServiceToActivateDto> serviceToActivateDtos = new ArrayList<>();
+			for (ServiceToActivateDto serviceToActivateDto : postData.getServicesToActivateDto().getServices()) {
+				ServiceTemplate serviceTemplate = serviceTemplateService.findByCode(serviceToActivateDto.getCode(),
+						provider);
 				if (serviceTemplate == null) {
-					throw new EntityDoesNotExistsException(ServiceTemplate.class, serviceTemplateCode);
+					throw new EntityDoesNotExistsException(ServiceTemplate.class, serviceToActivateDto.getCode());
 				}
 
-				serviceTemplates.put(serviceTemplate, postData.getServices().get(serviceTemplateCode));
+				serviceToActivateDto.setServiceTemplate(serviceTemplate);
+				serviceToActivateDtos.add(serviceToActivateDto);
 			}
 
 			// instantiate
 			List<ServiceInstance> serviceInstances = new ArrayList<ServiceInstance>();
-			for (ServiceTemplate serviceTemplate : serviceTemplates.keySet()) {
+			for (ServiceToActivateDto serviceToActivateDto : serviceToActivateDtos) {
+				ServiceTemplate serviceTemplate = serviceToActivateDto.getServiceTemplate();
 				log.debug("instanciateService id={} checked, quantity={}", serviceTemplate.getId(), 1);
 
 				ServiceInstance serviceInstance = new ServiceInstance();
@@ -312,16 +314,19 @@ public class SubscriptionApi extends BaseApi {
 				serviceInstance.setDescription(serviceTemplate.getDescription());
 				serviceInstance.setServiceTemplate(serviceTemplate);
 				serviceInstance.setSubscription(subscription);
-				Calendar calendar = Calendar.getInstance();
-				calendar.setTime(new Date());
-				calendar.set(Calendar.HOUR_OF_DAY, 0);
-				calendar.set(Calendar.MINUTE, 0);
-				calendar.set(Calendar.SECOND, 0);
-				calendar.set(Calendar.MILLISECOND, 0);
 
-				serviceInstance.setSubscriptionDate(calendar.getTime());
-				BigDecimal quantity = serviceTemplates.get(serviceTemplate);
-				serviceInstance.setQuantity(quantity);
+				if (serviceToActivateDto.getSubscriptionDate() == null) {
+					Calendar calendar = Calendar.getInstance();
+					calendar.setTime(new Date());
+					calendar.set(Calendar.HOUR_OF_DAY, 0);
+					calendar.set(Calendar.MINUTE, 0);
+					calendar.set(Calendar.SECOND, 0);
+					calendar.set(Calendar.MILLISECOND, 0);
+					serviceInstance.setSubscriptionDate(calendar.getTime());
+				} else {
+					serviceInstance.setSubscriptionDate(serviceToActivateDto.getSubscriptionDate());
+				}
+				serviceInstance.setQuantity(serviceToActivateDto.getQuantity());
 				try {
 					serviceInstanceService.serviceInstanciation(serviceInstance, currentUser);
 					serviceInstances.add(serviceInstance);
@@ -351,7 +356,8 @@ public class SubscriptionApi extends BaseApi {
 			if (StringUtils.isBlank(postData.getSubscription())) {
 				missingParameters.add("subscription");
 			}
-			if (postData.getServices() == null || postData.getServices().size() == 0) {
+			if (postData.getServicesToActivateDto().getServices() == null
+					|| postData.getServicesToActivateDto().getServices().size() == 0) {
 				missingParameters.add("services");
 			}
 

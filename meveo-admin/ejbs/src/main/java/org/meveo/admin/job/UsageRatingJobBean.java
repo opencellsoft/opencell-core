@@ -64,10 +64,12 @@ public class UsageRatingJobBean {
 					log.error(e.getMessage());
 					rejectededEdrProducer.fire(edr);
 					result.registerError(e.getMessage());
+					e.printStackTrace();
 				}
 			}
 		} catch (Exception e) {
 			log.error(e.getMessage());
+			e.printStackTrace();
 		}
 	}
 

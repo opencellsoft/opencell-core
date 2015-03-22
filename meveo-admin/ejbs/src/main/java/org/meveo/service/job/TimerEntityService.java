@@ -77,20 +77,22 @@ public class TimerEntityService extends PersistenceService<TimerEntity> {
 	 */
 
 	public static void registerJob(Job job) {
-		if (jobEntries.containsKey(job.getJobCategory())) {
-			if (!jobEntries.containsKey(job.getClass().getSimpleName())) {
-				log.debug("registerJob " + job.getClass().getSimpleName() + " into existing category "
-						+ job.getJobCategory());
-				Map<String, Job> jobs = jobEntries.get(job.getJobCategory());
+		synchronized (jobEntries) {
+			if (jobEntries.containsKey(job.getJobCategory())) {
+				if (!jobEntries.containsKey(job.getClass().getSimpleName())) {
+					log.debug("registerJob " + job.getClass().getSimpleName() + " into existing category "
+							+ job.getJobCategory());
+					Map<String, Job> jobs = jobEntries.get(job.getJobCategory());
+					jobs.put(job.getClass().getSimpleName(), job);
+				}
+			} else {
+				log.debug("registerJob " + job.getClass().getSimpleName() + " into new category " + job.getJobCategory());
+				HashMap<String, Job> jobs = new HashMap<String, Job>();
 				jobs.put(job.getClass().getSimpleName(), job);
+				jobEntries.put(job.getJobCategory(), jobs);
 			}
-		} else {
-			log.debug("registerJob " + job.getClass().getSimpleName() + " into new category " + job.getJobCategory());
-			HashMap<String, Job> jobs = new HashMap<String, Job>();
-			jobs.put(job.getClass().getSimpleName(), job);
-			jobEntries.put(job.getJobCategory(), jobs);
+			job.getJobExecutionService().getTimerEntityService().startTimers(job);
 		}
-		job.getJobExecutionService().getTimerEntityService().startTimers(job);
 	}
 
 	public Collection<Timer> getTimers() {
@@ -187,6 +189,8 @@ public class TimerEntityService extends PersistenceService<TimerEntity> {
 				Job job = jobs.get(entity.getJobName());
 				job.execute(entity.getTimerInfo() != null ? entity.getTimerInfo() : null, getCurrentUser());
 			}
+		} else {
+			throw new BusinessException("cannot find job category " + entity.getJobCategoryEnum());
 		}
 	}
 

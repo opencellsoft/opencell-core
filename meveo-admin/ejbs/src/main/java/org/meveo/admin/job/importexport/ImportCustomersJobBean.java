@@ -242,7 +242,7 @@ public class ImportCustomersJobBean {
 						nbCustomersError++;
 						log.error("File:" + fileName + ", typeEntity:Customer, index:" + i + ", code:" + cust.getCode()
 								+ ", status:Error");
-						return;
+						continue;
 					}
 
 					createCustomer(fileName, currentUser, seller, sell, cust, i);
@@ -253,6 +253,7 @@ public class ImportCustomersJobBean {
 				log.error("File:" + fileName + ", typeEntity:Seller, index:" + i + ", code:" + sell.getCode()
 						+ ", status:Error");
 				log.error(e.getMessage());
+				e.printStackTrace();
 			}
 		}
 

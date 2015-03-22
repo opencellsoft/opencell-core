@@ -47,10 +47,12 @@ public class PrepaidWalletMatchJobBean {
 				} catch (Exception e) {
 					log.error(e.getMessage());
 					result.registerError(e.getMessage());
+					e.printStackTrace();
 				}
 			}
 		} catch (Exception e) {
 			log.error(e.getMessage());
+			e.printStackTrace();
 		}
 	}
 

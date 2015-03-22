@@ -25,6 +25,17 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
 		}
 	}
 
+	@SuppressWarnings("unchecked")
+	public List<CustomFieldTemplate> findByAccountLevel(AccountLevelEnum accountLevel, Provider provider) {
+		QueryBuilder qb = new QueryBuilder(CustomFieldTemplate.class, "c", null, getCurrentProvider());
+		qb.addCriterion("accountLevel", "=", accountLevel, true);
+		try {
+			return (List<CustomFieldTemplate>) qb.getQuery(getEntityManager()).getResultList();
+		} catch (NoResultException e) {
+			return null;
+		}
+	}
+
 	public CustomFieldTemplate findByCodeAndAccountLevel(String code, AccountLevelEnum accountLevel, Provider provider) {
 		QueryBuilder qb = new QueryBuilder(CustomFieldTemplate.class, "c", null, provider);
 		qb.addCriterion("code", "=", code, true);
