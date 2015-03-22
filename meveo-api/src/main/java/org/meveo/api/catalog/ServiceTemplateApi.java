@@ -18,6 +18,7 @@ import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.User;
+import org.meveo.model.catalog.Calendar;
 import org.meveo.model.catalog.CounterTemplate;
 import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.RecurringChargeTemplate;
@@ -30,6 +31,7 @@ import org.meveo.model.catalog.UsageChargeTemplate;
 import org.meveo.model.catalog.WalletTemplate;
 import org.meveo.model.crm.Provider;
 import org.meveo.service.billing.impl.WalletTemplateService;
+import org.meveo.service.catalog.impl.CalendarService;
 import org.meveo.service.catalog.impl.CounterTemplateService;
 import org.meveo.service.catalog.impl.OneShotChargeTemplateService;
 import org.meveo.service.catalog.impl.RecurringChargeTemplateService;
@@ -52,6 +54,9 @@ public class ServiceTemplateApi extends BaseApi {
 	@Inject
 	private RecurringChargeTemplateService recurringChargeTemplateService;
 
+	@Inject
+	private CalendarService calendarService;
+	
 	@Inject
 	private OneShotChargeTemplateService oneShotChargeTemplateService;
 
@@ -239,9 +244,20 @@ public class ServiceTemplateApi extends BaseApi {
 				throw new EntityAlreadyExistsException(ServiceTemplateService.class, postData.getCode());
 			}
 
+			Calendar invoicingCalendar = null;
+			if(postData.getInvoicingCalendar()!=null){
+				invoicingCalendar = calendarService.findByCode(
+						postData.getInvoicingCalendar(), provider);
+				if (invoicingCalendar == null) {
+					throw new EntityDoesNotExistsException(Calendar.class,
+							postData.getInvoicingCalendar());
+				}
+			}
+			
 			ServiceTemplate serviceTemplate = new ServiceTemplate();
 			serviceTemplate.setCode(postData.getCode());
 			serviceTemplate.setDescription(postData.getDescription());
+			serviceTemplate.setInvoicingCalendar(invoicingCalendar);
 			serviceTemplate.setProvider(provider);
 			serviceTemplateService.create(serviceTemplate, currentUser, provider);
 
@@ -279,6 +295,17 @@ public class ServiceTemplateApi extends BaseApi {
 			}
 			serviceTemplate.setDescription(postData.getDescription());
 
+			Calendar invoicingCalendar = null;
+			if(postData.getInvoicingCalendar()!=null){
+				invoicingCalendar = calendarService.findByCode(
+						postData.getInvoicingCalendar(), provider);
+				if (invoicingCalendar == null) {
+					throw new EntityDoesNotExistsException(Calendar.class,
+							postData.getInvoicingCalendar());
+				}
+			}
+			serviceTemplate.setInvoicingCalendar(invoicingCalendar);
+			
 			setAllWalletTemplatesToNull(serviceTemplate);
 
 			serviceTemplateService.update(serviceTemplate, currentUser);

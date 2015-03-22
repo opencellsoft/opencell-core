@@ -211,7 +211,6 @@ public class CalendarApi extends BaseApi {
                 calendarInterval.getIntervals().clear();
                 
                 if (postData.getIntervals() != null && postData.getIntervals().size() > 0) {
-                    List<CalendarDateInterval> intervals = new ArrayList<CalendarDateInterval>();
                     for (CalendarDateIntervalDto interval : postData.getIntervals()) {
                         calendarInterval.getIntervals().add(new CalendarDateInterval(calendarInterval, interval.getIntervalBegin(), interval.getIntervalEnd()));
                     }
