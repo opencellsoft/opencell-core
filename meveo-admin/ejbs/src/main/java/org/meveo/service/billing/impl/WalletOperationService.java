@@ -1335,4 +1335,11 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 		getEntityManager().flush();
 		return walletsOpToRerate;
 	}
+
+	@SuppressWarnings("unchecked")
+	public List<Long> listToRerate(Provider provider) {
+		return (List<Long>) getEntityManager().createQuery("SELECT o.id FROM WalletOperation o "
+				+ "WHERE o.status=org.meveo.model.billing.WalletOperationStatusEnum.TO_RERATE"
+				+ " AND o.provider=:provider").setParameter("provider",provider).getResultList();
+	}
 }

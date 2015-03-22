@@ -46,17 +46,16 @@ public class ReRatingJobBean implements Serializable {
 	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
 	public void execute(JobExecutionResultImpl result, User currentUser, boolean useSamePricePlan) {
 		try {
-			List<WalletOperation> walletOperations = walletOperationService.findByStatus(
-					WalletOperationStatusEnum.TO_RERATE, currentUser.getProvider());
+			List<Long> walletOperationIds = walletOperationService.listToRerate(currentUser.getProvider());
 
-			log.info("rerate with useSamePricePlan={} ,#operations={}", useSamePricePlan,walletOperations.size());
-			result.setNbItemsToProcess(walletOperations.size());
-			for (WalletOperation walletOperation : walletOperations) {
+			log.info("rerate with useSamePricePlan={} ,#operations={}", useSamePricePlan,walletOperationIds.size());
+			result.setNbItemsToProcess(walletOperationIds.size());
+			for (Long walletOperationId : walletOperationIds) {
 				try {
-					ratingService.reRate(walletOperation, useSamePricePlan);
+					ratingService.reRate(walletOperationId, useSamePricePlan);
 					result.registerSucces();
 				} catch (Exception e) {
-					rejectededOperationProducer.fire(walletOperation);
+					//rejectededOperationProducer.fire(walletOperationId);
 					e.printStackTrace();
 					log.error(e.getMessage());
 					result.registerError(e.getMessage());

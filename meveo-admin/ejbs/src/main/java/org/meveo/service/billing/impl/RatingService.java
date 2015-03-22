@@ -585,8 +585,9 @@ public class RatingService extends BusinessService<WalletOperation>{
 
 	//rerate
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public void reRate(WalletOperation operationToRerate,
+	public void reRate(Long operationToRerateId,
 			boolean useSamePricePlan) throws BusinessException {
+		WalletOperation operationToRerate=getEntityManager().find(WalletOperation.class,operationToRerateId);
 		try {
 			ratedTransactionService
 					.reratedByWalletOperationId(operationToRerate.getId());
