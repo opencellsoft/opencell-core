@@ -253,11 +253,13 @@
 					<groupId>org.postgresql</groupId>
 					<artifactId>postgresql</artifactId>
 					<version>9.2-1002-jdbc4</version>
+					<scope>provided</scope>
 				</dependency>
 				<dependency>
 					<groupId>org.liquibase.ext</groupId>
 					<artifactId>liquibase-postgresql</artifactId>
 					<version>3.0</version>
+					<scope>provided</scope>
 				</dependency>
 			</dependencies>
 		</profile>
