@@ -92,6 +92,10 @@
 							<hf:formField label="#{messages['serviceTemplate.description']}"
 								field="description" required="true" useConverter="false"
 								size="50" maxlength="50" />
+							<hf:formEntityField
+								label="#{messages['serviceTemplate.calendar']}"
+								field="invoicingCalendar" childField="code" required="true" popup="false"
+								listBean="#{calendarBean}" />
 						</hftl:panelGroup>
 
 					</hf:formPanel>

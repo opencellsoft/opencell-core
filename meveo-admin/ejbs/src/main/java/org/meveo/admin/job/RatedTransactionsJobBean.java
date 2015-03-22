@@ -1,6 +1,7 @@
 package org.meveo.admin.job;
 
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 
 import javax.ejb.Stateless;
@@ -41,9 +42,8 @@ public class RatedTransactionsJobBean {
 		Provider provider = currentUser.getProvider();
 
 		try {
-			// FIXME: only for postpaid wallets
-			List<WalletOperation> walletOperations = walletOperationService.findByStatus(
-					WalletOperationStatusEnum.OPEN, provider);
+			List<WalletOperation> walletOperations = walletOperationService.listToInvoice(
+					new Date(), provider);
 
 			log.info("WalletOperations to convert into rateTransactions={}", walletOperations.size());
 

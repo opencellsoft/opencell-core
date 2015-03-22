@@ -25,6 +25,8 @@ import java.util.Map;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.MapKeyColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
@@ -58,6 +60,10 @@ public class ServiceTemplate extends BusinessEntity implements ICustomFieldEntit
 	@MapKeyColumn(name = "code")
 	private Map<String, CustomFieldInstance> customFields = new HashMap<String, CustomFieldInstance>();
 
+	@ManyToOne
+	@JoinColumn(name = "INVOICING_CALENDAR_ID")
+	private Calendar invoicingCalendar;
+	
 	public ServiceChargeTemplateRecurring getServiceRecurringChargeByChargeCode(String chargeCode) {
 		ServiceChargeTemplateRecurring result = null;
 		for (ServiceChargeTemplateRecurring sctr : serviceRecurringCharges) {
@@ -203,6 +209,14 @@ public class ServiceTemplate extends BusinessEntity implements ICustomFieldEntit
 	
 	public Double getICdov(String code){
 		return getInheritedCustomDoubleValue(code);
+	}
+
+	public Calendar getInvoicingCalendar() {
+		return invoicingCalendar;
+	}
+
+	public void setInvoicingCalendar(Calendar invoicingCalendar) {
+		this.invoicingCalendar = invoicingCalendar;
 	}
 
 }

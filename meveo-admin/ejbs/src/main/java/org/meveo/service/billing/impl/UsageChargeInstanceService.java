@@ -72,6 +72,7 @@ public class UsageChargeInstanceService extends BusinessService<UsageChargeInsta
 		usageChargeInstance.setAmountWithTax(null);
 		usageChargeInstance.setStatus(InstanceStatusEnum.INACTIVE);
 		usageChargeInstance.setServiceInstance(serviceInstance);
+		usageChargeInstance.setInvoicingCalendar(serviceInstance.getInvoicingCalendar());
 		usageChargeInstance.setUnityDescription(serviceUsageChargeTemplate.getChargeTemplate().getUnityDescription());
 		usageChargeInstance.setSeller(seller);
 		usageChargeInstance.setCountry(subscription.getUserAccount().getBillingAccount().getTradingCountry());

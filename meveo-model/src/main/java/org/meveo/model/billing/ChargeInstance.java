@@ -46,6 +46,7 @@ import javax.persistence.TemporalType;
 
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.admin.Seller;
+import org.meveo.model.catalog.Calendar;
 import org.meveo.model.catalog.ChargeTemplate;
 
 @Entity
@@ -73,6 +74,10 @@ public class ChargeInstance extends BusinessEntity {
 	@JoinColumn(name = "CHARGE_TEMPLATE_ID")
 	protected ChargeTemplate chargeTemplate;
 
+	@ManyToOne
+	@JoinColumn(name = "INVOICING_CAL")
+	private Calendar invoicingCalendar;
+	
 	@Temporal(TemporalType.DATE)
 	@Column(name = "CHARGE_DATE")
 	protected Date chargeDate;
@@ -196,6 +201,14 @@ public class ChargeInstance extends BusinessEntity {
 
 	public void setChargeDate(Date chargeDate) {
 		this.chargeDate = chargeDate;
+	}
+
+	public Calendar getInvoicingCalendar() {
+		return invoicingCalendar;
+	}
+
+	public void setInvoicingCalendar(Calendar invoicingCalendar) {
+		this.invoicingCalendar = invoicingCalendar;
 	}
 
 	public Set<WalletOperation> getWalletOperations() {

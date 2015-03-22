@@ -171,6 +171,7 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
 		chargeInstance.setChargeTemplate(recurringChargeTemplate);
 		chargeInstance.setRecurringChargeTemplate(recurringChargeTemplate);
 		chargeInstance.setServiceInstance(serviceInst);
+		chargeInstance.setInvoicingCalendar(serviceInst.getInvoicingCalendar());
 		chargeInstance.setSeller(seller);
 		chargeInstance.setCountry(serviceInst.getSubscription().getUserAccount().getBillingAccount()
 				.getTradingCountry());
