@@ -27,6 +27,7 @@ import org.meveo.model.cache.CounterPeriodCache;
 import org.meveo.model.cache.TriggeredEDRCache;
 import org.meveo.model.cache.UsageChargeInstanceCache;
 import org.meveo.model.cache.UsageChargeTemplateCache;
+import org.meveo.model.catalog.Calendar;
 import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.model.catalog.TriggeredEDRTemplate;
 import org.meveo.model.catalog.UsageChargeTemplate;
@@ -114,6 +115,12 @@ public class RatingCacheContainerProvider {
 			log.error("RatingCacheContainerProvider init() error", e);
 		}
 	}
+	
+	private void preloadCache(Calendar calendar){
+		if(calendar!=null){
+			calendar.nextCalendarDate(new Date());
+		}
+	}
 
 	/**
 	 * Populate price plan cache from db
@@ -148,7 +155,7 @@ public class RatingCacheContainerProvider {
 				pricePlan.getOfferTemplate().getCode();
 			}
 			if (pricePlan.getValidityCalendar() != null) {
-				pricePlan.getValidityCalendar().getCode();
+				preloadCache(pricePlan.getValidityCalendar());
 			}
 
 			log.info("Added pricePlan to cache for provider=" + pricePlan.getProvider().getCode() + "; chargeCode="
@@ -196,7 +203,7 @@ public class RatingCacheContainerProvider {
 			pricePlan.getOfferTemplate().getCode();
 		}
 		if (pricePlan.getValidityCalendar() != null) {
-			pricePlan.getValidityCalendar().getCode();
+			preloadCache(pricePlan.getValidityCalendar());
 		}
 
 		chargePriceList.add(pricePlan);
