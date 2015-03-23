@@ -50,6 +50,7 @@ import org.meveo.model.billing.BillingRunStatusEnum;
 import org.meveo.model.billing.CategoryInvoiceAgregate;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.InvoiceAgregate;
+import org.meveo.model.billing.InvoiceCategory;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.InvoiceSubcategoryCountry;
 import org.meveo.model.billing.RatedTransaction;
@@ -60,6 +61,9 @@ import org.meveo.model.billing.Tax;
 import org.meveo.model.billing.TaxInvoiceAgregate;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.billing.WalletInstance;
+import org.meveo.model.catalog.DiscountPlan;
+import org.meveo.model.catalog.DiscountPlanItem;
+import org.meveo.model.shared.DateUtils;
 import org.meveo.service.api.dto.ConsumptionDTO;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
@@ -458,6 +462,20 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 					throw new BusinessException("account balance calculation failed");
 				}
 			}
+            createInvoiceDiscountAggregates(userAccount, invoice);
+			
+			Object[] object=invoiceAgregateService.findTotalAmountsForDiscountAggregates(invoice);
+			
+			BigDecimal discountAmountWithoutTax=(BigDecimal)object[0];
+			BigDecimal discountAmountTax=(BigDecimal)object[1];
+			BigDecimal discountAmountWithTax=(BigDecimal)object[2];
+			
+
+			log.info("amountWithoutTax= {},amountTax={},amountWithTax={}" ,object[0],object[1], object[2]);
+			
+			invoice.addAmountWithoutTax(discountAmountWithoutTax);
+			invoice.addAmountTax(discountAmountTax);
+			invoice.addAmountWithTax(discountAmountWithTax);
 			BigDecimal netToPay = BigDecimal.ZERO;
 			if (entreprise) {
 				netToPay = invoice.getAmountWithTax();
@@ -559,6 +577,70 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 		}
 
 	}
- 
- 	 
+	private void createInvoiceDiscountAggregates(UserAccount userAccount,Invoice invoice){
+		try {
+			
+			BillingAccount billingAccount=userAccount.getBillingAccount();
+			DiscountPlan discountPlan=billingAccount.getDiscountPlan();
+			if(discountPlan!=null && discountPlan.isActive()){
+				for(Subscription subscription : userAccount.getSubscriptions()){
+					int subscriptionAge = DateUtils.monthsBetween(DateUtils.addDaysToDate(subscription.getSubscriptionDate(), -1),new Date());
+					if(subscriptionAge>=discountPlan.getMinDuration() && subscriptionAge<=discountPlan.getMaxDuration()){
+						List<DiscountPlanItem> discountPlanItems =discountPlan.getDiscountPlanItems();
+						for(DiscountPlanItem discountPlanItem:discountPlanItems){
+							if(discountPlanItem.isActive()){
+								if(discountPlanItem.getInvoiceSubCategory()!=null){
+									createDiscountAggregate(userAccount,userAccount.getWallet(), invoice, discountPlanItem.getInvoiceSubCategory(),discountPlanItem.getPercent());
+								}else if(discountPlanItem.getInvoiceCategory()!=null){
+									InvoiceCategory invoiceCat=discountPlanItem.getInvoiceCategory();
+									for(InvoiceSubCategory invoiceSubCat:invoiceCat.getInvoiceSubCategories()){
+										createDiscountAggregate(userAccount,userAccount.getWallet(), invoice, invoiceSubCat,discountPlanItem.getPercent());
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+			
+		} catch (BusinessException e) {
+			log.error("Error when trying to create discount aggregates",e);
+		}
+		
+	}
+	
+	private void createDiscountAggregate(UserAccount userAccount,WalletInstance wallet,Invoice invoice,InvoiceSubCategory invoiceSubCat,BigDecimal percent) throws BusinessException{
+		BillingAccount billingAccount=userAccount.getBillingAccount();
+		BigDecimal amount=invoiceAgregateService.findTotalAmountByWalletSubCat(wallet, invoiceSubCat, wallet.getProvider());
+		BigDecimal discountAmountWithoutTax=amount.multiply(percent).negate();
+		
+		Tax tax = null;
+		for (InvoiceSubcategoryCountry invoicesubcatCountry : invoiceSubCat
+				.getInvoiceSubcategoryCountries()) {
+			if (invoicesubcatCountry.getTradingCountry().getCountryCode()
+					.equalsIgnoreCase(wallet.getUserAccount().getBillingAccount().getTradingCountry().getCountryCode())) {
+				tax = invoicesubcatCountry.getTax();
+			}
+		}
+		
+		BigDecimal discountAmountTax=discountAmountWithoutTax.multiply(tax.getPercent());
+		BigDecimal discountAmountWithTax=discountAmountWithoutTax.add(discountAmountTax);
+		
+		SubCategoryInvoiceAgregate invoiceAgregateSubcat = new SubCategoryInvoiceAgregate();
+		invoiceAgregateSubcat.setAuditable(billingAccount.getAuditable());
+		invoiceAgregateSubcat.setProvider(billingAccount.getProvider());
+		invoiceAgregateSubcat.setInvoice(invoice);
+		invoiceAgregateSubcat.setBillingRun(billingAccount.getBillingRun());
+		invoiceAgregateSubcat.setWallet(userAccount.getWallet());
+		invoiceAgregateSubcat.setAccountingCode(invoiceSubCat.getAccountingCode());
+		fillAgregates(invoiceAgregateSubcat, userAccount.getWallet());
+		invoiceAgregateSubcat.setAmountWithoutTax(discountAmountWithoutTax);
+		invoiceAgregateSubcat.setAmountWithTax(discountAmountWithTax);
+		invoiceAgregateSubcat.setAmountTax(discountAmountTax);
+		invoiceAgregateSubcat.setProvider(billingAccount.getProvider());
+		invoiceAgregateSubcat.setDiscountAggregate(true);
+		invoiceAgregateService.create(invoiceAgregateSubcat);
+
+	}
+
 }

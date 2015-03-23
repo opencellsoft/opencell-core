@@ -16,12 +16,56 @@
  */
 package org.meveo.service.billing.impl;
 
-import javax.ejb.Stateless;
+import java.math.BigDecimal;
 
+import javax.ejb.Stateless;
+import javax.persistence.NoResultException;
+
+import org.meveo.commons.utils.QueryBuilder;
+import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.InvoiceAgregate;
+import org.meveo.model.billing.InvoiceSubCategory;
+import org.meveo.model.billing.SubCategoryInvoiceAgregate;
+import org.meveo.model.billing.WalletInstance;
+import org.meveo.model.crm.Provider;
 import org.meveo.service.base.PersistenceService;
 
 @Stateless
 public class InvoiceAgregateService extends PersistenceService<InvoiceAgregate> {
+
+	
+	public BigDecimal findTotalAmountByWalletSubCat(WalletInstance wallet,
+			InvoiceSubCategory invoiceSubCategory, Provider provider) {
+		QueryBuilder qb = new QueryBuilder("select sum(amountWithoutTax) from "
+				+ SubCategoryInvoiceAgregate.class.getSimpleName());
+		qb.addCriterionEntity("provider", provider);
+		qb.addCriterionEntity("invoiceSubCategory", invoiceSubCategory);
+		qb.addCriterionEntity("wallet", wallet);
+		try {
+			BigDecimal result = (BigDecimal) qb.getQuery(getEntityManager())
+					.getSingleResult();
+			return result;
+		} catch (NoResultException e) {
+			return BigDecimal.ZERO;
+		}
+
+	}
+	
+	
+	public Object[] findTotalAmountsForDiscountAggregates(Invoice invoice) {
+		QueryBuilder qb = new QueryBuilder("select sum(amountWithoutTax),sum(amountTax),sum(amountWithTax) from "
+				+ SubCategoryInvoiceAgregate.class.getSimpleName());
+		qb.addCriterionEntity("provider", invoice.getProvider());
+		qb.addBooleanCriterion("discountAggregate", true);
+		qb.addCriterionEntity("invoice", invoice);
+		try {
+			Object[] result = (Object[]) qb.getQuery(getEntityManager())
+					.getSingleResult();
+			return result;
+		} catch (NoResultException e) {
+			return null;
+		}
+
+	}
 
 }
