@@ -2,6 +2,7 @@ package org.meveo.admin.job.importexport;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -318,7 +319,7 @@ public class ImportCustomersJobBean {
 			log.debug("customer found code={}", cust.getCode());
 
 			try {
-				customer = customerService.findByCode(cust.getCode(), provider);
+				customer = customerService.findByCodeAndFetch(cust.getCode(), Arrays.asList("seller"), provider);
 			} catch (Exception e) {
 				log.warn(e.getMessage());
 			}
@@ -569,7 +570,8 @@ public class ImportCustomersJobBean {
 			return true;
 		}
 
-		if (sell.getCustomers().getCustomer() == null || sell.getCustomers().getCustomer().isEmpty()) {
+		if (sell.getCustomers() == null || sell.getCustomers().getCustomer() == null
+				|| sell.getCustomers().getCustomer().isEmpty()) {
 			createSellerError(sell, "No customer.");
 			return true;
 		}
