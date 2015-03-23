@@ -81,10 +81,10 @@ public class TimerEntityService extends PersistenceService<TimerEntity> {
 	public static void registerJob(Job job) {
 		synchronized (jobEntries) {
 			if (jobEntries.containsKey(job.getJobCategory())) {
-				if (!jobEntries.containsKey(job.getClass().getSimpleName())) {
+				Map<String, String> jobs = jobEntries.get(job.getJobCategory());
+				if (!jobs.containsKey(job.getClass().getSimpleName())) {
 					log.debug("registerJob " + job.getClass().getSimpleName() + " into existing category "
 							+ job.getJobCategory());
-					Map<String, String> jobs = jobEntries.get(job.getJobCategory());
 					jobs.put(job.getClass().getSimpleName(), "java:global/meveo/" + job.getClass().getSimpleName());
 				}
 			} else {
@@ -224,7 +224,7 @@ public class TimerEntityService extends PersistenceService<TimerEntity> {
 		}
 	}
 
-	public void executeViaJob(String jobCategory, String jobName, User currentUser) throws Exception {
+	public void executeViaJob(JobCategoryEnum jobCategory, String jobName, User currentUser) throws Exception {
 		log.info("execute job={} via api", jobName);
 		InitialContext ic;
 		try {

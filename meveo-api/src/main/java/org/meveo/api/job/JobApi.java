@@ -9,6 +9,7 @@ import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.User;
+import org.meveo.model.jobs.JobCategoryEnum;
 import org.meveo.service.job.TimerEntityService;
 import org.slf4j.Logger;
 
@@ -27,7 +28,8 @@ public class JobApi extends BaseApi {
 	public void executeJob(ExecuteJobDto postData, User currentUser) throws MeveoApiException {
 		if (!StringUtils.isBlank(postData.getJobCategory()) && !StringUtils.isBlank(postData.getJobName())) {
 			try {
-				timerEntityService.executeViaJob(postData.getJobCategory(), postData.getJobName(), currentUser);
+				JobCategoryEnum category = JobCategoryEnum.valueOf(postData.getJobCategory());
+				timerEntityService.executeViaJob(category, postData.getJobName(), currentUser);
 			} catch (Exception e) {
 				log.error(e.getMessage());
 			}
