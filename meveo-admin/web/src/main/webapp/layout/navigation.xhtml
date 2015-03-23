@@ -636,6 +636,11 @@
 					value="#{messages['menu.inboundRequests']}"
 					outcome="inboundRequests" />
 			</p:submenu>
+            
+            
+            <p:menuitem id="cache"
+                rendered="#{identity.hasPermission('administration','administrationVisualization')}"
+                outcome="caches" value="#{messages['menu.cacheInfo']}" />
 		</p:submenu>
 
 		<!-- 

@@ -15,7 +15,6 @@
 
 	<properties>
 		<manaty.seam.version>3.1.0.Final</manaty.seam.version>
-		<version.org.infinispan>5.1.7.Final</version.org.infinispan>
 	</properties>
 
 	<build>
@@ -269,7 +268,6 @@
 		<dependency>
 			<groupId>org.infinispan</groupId>
 			<artifactId>infinispan-core</artifactId>
-			<version>${version.org.infinispan}</version>
 			<scope>provided</scope>
 			<exclusions>
 				<exclusion>

@@ -1,7 +1,9 @@
 package org.meveo.cache;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
@@ -43,17 +45,16 @@ public class CdrEdrProcessingCacheContainerProvider {
     /**
      * Contains association between access code and accesses sharing this code. Key format: <provider id>_<Access.accessUserId>
      */
-    //@Resource(lookup = "java:jboss/infinispan/cache/meveo/meveo-access-cache")
+    // @Resource(lookup = "java:jboss/infinispan/cache/meveo/meveo-access-cache")
     private BasicCache<String, List<Access>> accessCache;
-
 
     @Resource(name = "java:jboss/infinispan/container/meveo")
     private CacheContainer meveoContainer;
-    
+
     /**
      * Stores a list of processed EDR's. Key format: <provider id>_<originBatch>_<originRecord>
      */
-    //@Resource(lookup = "java:jboss/infinispan/cache/meveo/meveo-edr-cache")
+    // @Resource(lookup = "java:jboss/infinispan/cache/meveo/meveo-edr-cache")
     private BasicCache<String, Integer> edrCache;
 
     @PostConstruct
@@ -62,7 +63,7 @@ public class CdrEdrProcessingCacheContainerProvider {
             log.debug("CdrEdrProcessingCacheContainerProvider initializing...");
             accessCache = meveoContainer.getCache("meveo-access-cache");
             edrCache = meveoContainer.getCache("meveo-edr-cache");
-            
+
             populateAccessCache();
             populateEdrCache();
 
@@ -79,6 +80,7 @@ public class CdrEdrProcessingCacheContainerProvider {
     private void populateAccessCache() {
 
         log.info("Start to populate access cache");
+        accessCache.clear();
         List<Access> activeAccesses = accessService.getAccessesForCache();
 
         for (Access access : activeAccesses) {
@@ -145,6 +147,7 @@ public class CdrEdrProcessingCacheContainerProvider {
 
         log.info("Start to populate EDR cache");
 
+        edrCache.clear();
         int maxDuplicateRecords = Integer.parseInt(paramBean.getProperty("mediation.deduplicateCacheSize", "100000"));
         List<String> edrs = edrService.getUnprocessedEdrsForCache(maxDuplicateRecords);
         for (String edrHash : edrs) {
@@ -174,5 +177,34 @@ public class CdrEdrProcessingCacheContainerProvider {
      */
     public void addEdrToCache(EDR edr) {
         edrCache.putIfAbsent(edr.getProvider().getId() + "_" + edr.getOriginBatch() + "_" + edr.getOriginRecord(), 0);
+    }
+
+    /**
+     * Get a summary of cached information
+     * 
+     * @return A list of a map containing cache information with cache name as a key and cache as a value
+     */
+    @SuppressWarnings("rawtypes")
+    public Map<String, BasicCache> getCaches() {
+        Map<String, BasicCache> summaryOfCaches = new HashMap<String, BasicCache>();
+        summaryOfCaches.put(accessCache.getName(), accessCache);
+        summaryOfCaches.put(edrCache.getName(), edrCache);
+
+        return summaryOfCaches;
+    }
+
+    /**
+     * Refresh cache by name
+     * 
+     * @param cacheName Name of cache to refresh
+     */
+    public void refreshCache(String cacheName) {
+
+        if (cacheName.equals(accessCache.getName())) {
+            populateAccessCache();
+
+        } else if (cacheName.equals(edrCache.getName())) {
+            populateEdrCache();
+        }
     }
 }

@@ -2,7 +2,9 @@ package org.meveo.cache;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
@@ -43,22 +45,22 @@ public class WalletCacheContainerProvider {
     private WalletService walletService;
 
     /**
-     * Contains association between prepaid wallet instance and balance value. WalletInstance.id is a cache key.
+     * Contains association between prepaid wallet instance and balance value. Key format:  WalletInstance.id.
      */
     // @Resource(lookup = "java:jboss/infinispan/cache/meveo/meveo-balance")
     private BasicCache<Long, BigDecimal> balanceCache;
 
     /**
-     * Contains association between prepaid wallet instance and reserved balance value. WalletInstance.id is a cache key.
+     * Contains association between prepaid wallet instance and reserved balance value. Key format: WalletInstance.id.
      */
     // @Resource(lookup = "java:jboss/infinispan/cache/meveo/meveo-reservedBalance")
     private BasicCache<Long, BigDecimal> reservedBalanceCache;
 
     /**
-     * Contains association between usage chargeInstance and wallets ids (if it is not the only principal one). UsageChargeInstance.id is a cache key.
+     * Contains association between usage chargeInstance and wallets ids (if it is not the only principal one). Key format: UsageChargeInstance.id.
      */
     // @Resource(lookup = "java:jboss/infinispan/cache/meveo/meveo-usageChargeInstanceWallet")
-    private BasicCache<Long, List<Long>> usageChargeInstanceWallet;
+    private BasicCache<Long, List<Long>> usageChargeInstanceWalletCache;
 
     @Resource(name = "java:jboss/infinispan/container/meveo")
     private CacheContainer meveoContainer;
@@ -70,7 +72,7 @@ public class WalletCacheContainerProvider {
 
             balanceCache = meveoContainer.getCache("meveo-balance");
             reservedBalanceCache = meveoContainer.getCache("meveo-reservedBalance");
-            usageChargeInstanceWallet = meveoContainer.getCache("meveo-usageChargeInstanceWallet");
+            usageChargeInstanceWalletCache = meveoContainer.getCache("meveo-usageChargeInstanceWallet");
 
             populateWalletCache();
 
@@ -82,6 +84,11 @@ public class WalletCacheContainerProvider {
 
     private void populateWalletCache() {
         log.info("Start to populate wallet cache");
+
+        balanceCache.clear();
+        reservedBalanceCache.clear();
+        usageChargeInstanceWalletCache.clear();
+
         // for each recurring usage charInstance of active subscription we create association
         List<UsageChargeInstance> charges = usageChargeInstanceService.getPrepaidUsageChargeInstancesForCache();
         for (UsageChargeInstance charge : charges) {
@@ -112,9 +119,9 @@ public class WalletCacheContainerProvider {
 
         log.info("UpdateCache usageChargeInstanceWallet charge {} wallets:{}", charge.getId(), walletIds.size());
         if (walletIds.size() > 0) {
-            usageChargeInstanceWallet.put(charge.getId(), walletIds);
+            usageChargeInstanceWalletCache.put(charge.getId(), walletIds);
         } else {
-            usageChargeInstanceWallet.remove(charge.getId());
+            usageChargeInstanceWalletCache.remove(charge.getId());
         }
     }
 
@@ -229,7 +236,7 @@ public class WalletCacheContainerProvider {
      * @return True if wallet ids cached
      */
     public boolean isWalletIdsCached(Long usageChargeInstanceId) {
-        return usageChargeInstanceWallet.containsKey(usageChargeInstanceId);
+        return usageChargeInstanceWalletCache.containsKey(usageChargeInstanceId);
     }
 
     /**
@@ -239,6 +246,33 @@ public class WalletCacheContainerProvider {
      * @return A list of wallets
      */
     public List<Long> getWallets(Long usageChargeInstanceId) {
-        return usageChargeInstanceWallet.get(usageChargeInstanceId);
+        return usageChargeInstanceWalletCache.get(usageChargeInstanceId);
+    }
+
+    /**
+     * Get a summary of cached information
+     * 
+     * @return A list of a map containing cache information with cache name as a key and cache as a value
+     */
+    @SuppressWarnings("rawtypes")
+    public Map<String, BasicCache> getCaches() {
+        Map<String, BasicCache> summaryOfCaches = new HashMap<String, BasicCache>();
+        summaryOfCaches.put(balanceCache.getName(), balanceCache);
+        summaryOfCaches.put(reservedBalanceCache.getName(), reservedBalanceCache);
+        summaryOfCaches.put(usageChargeInstanceWalletCache.getName(), usageChargeInstanceWalletCache);
+
+        return summaryOfCaches;
+    }
+
+    /**
+     * Refresh cache by name
+     * 
+     * @param cacheName Name of cache to refresh
+     */
+    public void refreshCache(String cacheName) {
+
+        if (cacheName.equals(balanceCache.getName()) || cacheName.equals(reservedBalanceCache.getName()) || cacheName.equals(usageChargeInstanceWalletCache.getName())) {
+            populateWalletCache();
+        }
     }
 }

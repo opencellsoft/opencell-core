@@ -1270,6 +1270,18 @@
 			<redirect />
 		</navigation-case>
 				
+		<navigation-case>
+			<from-outcome>cacheDetail</from-outcome>
+			<to-view-id>/pages/reporting/cache/cacheDetail.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+
+		<navigation-case>
+			<from-outcome>caches</from-outcome>
+			<to-view-id>/pages/reporting/cache/caches.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>				
+				
 	</navigation-rule>
 	<navigation-rule>
 		<!-- Reporting -->

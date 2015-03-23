@@ -51,7 +51,7 @@
 				<artifactId>jsf-api</artifactId>
 				<version>2.1.7</version>
 				<scope>compile</scope>
-			</dependency>
+			</dependency>		
 		</dependencies>
 	</dependencyManagement>
 </project>

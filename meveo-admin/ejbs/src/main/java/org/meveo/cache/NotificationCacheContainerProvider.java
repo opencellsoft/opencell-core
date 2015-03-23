@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
@@ -64,6 +65,8 @@ public class NotificationCacheContainerProvider {
      */
     private void populateNotificationCache() {
         log.info("Start to populate notification cache");
+
+        eventNotificationCache.clear();
         List<Notification> activeNotifications = notificationService.getNotificationsForCache();
         for (Notification notif : activeNotifications) {
             addNotificationToCache(notif);
@@ -139,5 +142,30 @@ public class NotificationCacheContainerProvider {
             }
         }
         return notifications;
+    }
+
+    /**
+     * Get a summary of cached information
+     * 
+     * @return A list of a map containing cache information with cache name as a key and cache as a value
+     */
+    @SuppressWarnings("rawtypes")
+    public Map<String, BasicCache> getCaches() {
+        Map<String, BasicCache> summaryOfCaches = new HashMap<String, BasicCache>();
+        summaryOfCaches.put(eventNotificationCache.getName(), eventNotificationCache);
+
+        return summaryOfCaches;
+    }
+
+    /**
+     * Refresh cache by name
+     * 
+     * @param cacheName Name of cache to refresh
+     */
+    public void refreshCache(String cacheName) {
+
+        if (cacheName.equals(eventNotificationCache.getName())) {
+            populateNotificationCache();
+        }
     }
 }
