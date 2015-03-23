@@ -50,6 +50,18 @@ public class CustomerService extends PersistenceService<Customer> {
 		return (Customer) query.getResultList().get(0);
 	}
 
+	public Customer findByCodeAndFetch(String code, List<String> fetchFields, Provider provider) {
+		QueryBuilder qb = new QueryBuilder(Customer.class, "c", fetchFields, provider);
+		qb.addCriterionEntity("c.provider", provider);
+		qb.addCriterion("c.code", "=", code, true);
+
+		try {
+			return (Customer) qb.getQuery(getEntityManager()).getSingleResult();
+		} catch (NoResultException e) {
+			return null;
+		}
+	}
+
 	public Customer findByCode(EntityManager em, String code, Provider provider) {
 		QueryBuilder qb = new QueryBuilder(Customer.class, "c");
 
@@ -169,8 +181,8 @@ public class CustomerService extends PersistenceService<Customer> {
 	@SuppressWarnings("unchecked")
 	public List<Seller> listSellersWithCustomers(Provider provider) {
 		try {
-			return (List<Seller>) getEntityManager().createQuery("SELECT DISTINCT c.seller "
-					+ "FROM Customer c WHERE c.provider=:provider ")
+			return (List<Seller>) getEntityManager()
+					.createQuery("SELECT DISTINCT c.seller " + "FROM Customer c WHERE c.provider=:provider ")
 					.setParameter("provider", provider).getResultList();
 		} catch (NoResultException e) {
 			return null;

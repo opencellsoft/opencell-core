@@ -162,7 +162,6 @@ public class ImportSubscriptionsJobBean {
 				CheckedSubscription checkSubscription = subscriptionCheckError(provider, jaxbSubscription);
 
 				if (checkSubscription == null) {
-					createSubscriptionError(jaxbSubscription, "Error in checkSubscription");
 					nbSubscriptionsError++;
 					log.info("File:" + fileName + ", typeEntity:Subscription, index:" + i + ", code:"
 							+ jaxbSubscription.getCode() + ", status:Error");
