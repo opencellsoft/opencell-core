@@ -235,6 +235,8 @@ public class TimerEntityService extends PersistenceService<TimerEntity> {
 				if (jobs.containsKey(jobName)) {
 					Job job = (Job) ic.lookup(jobs.get(jobName));
 					job.execute(null, getCurrentUser());
+				} else {
+					throw new Exception("cannot find job name " + jobName);
 				}
 			} else {
 				throw new Exception("cannot find job category " + jobCategory);
