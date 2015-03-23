@@ -21,7 +21,7 @@ import org.meveo.api.rest.security.RSSecured;
 public interface JobRs extends IBaseRs {
 
 	@POST
-	@Path("/")
+	@Path("/executeJob")
 	ActionStatus executeJob(ExecuteJobDto postData);
 
 }
