@@ -30,6 +30,8 @@ public class ServiceTemplateDto implements Serializable {
 	@XmlAttribute(required = true)
 	private String description;
 
+	private String invoicingCalendar;
+
 	private ServiceChargeTemplateRecurringsDto serviceChargeTemplateRecurrings;
 	private ServiceChargeTemplateSubscriptionsDto serviceChargeTemplateSubscriptions;
 	private ServiceChargeTemplateTerminationsDto serviceChargeTemplateTerminations;
@@ -41,6 +43,7 @@ public class ServiceTemplateDto implements Serializable {
 	public ServiceTemplateDto(ServiceTemplate serviceTemplate) {
 		code = serviceTemplate.getCode();
 		description = serviceTemplate.getDescription();
+		invoicingCalendar=serviceTemplate.getInvoicingCalendar()==null?null:serviceTemplate.getInvoicingCalendar().getCode();
 
 		// set serviceChargeTemplateRecurrings
 		if (serviceTemplate.getServiceRecurringCharges().size() > 0) {
@@ -136,6 +139,14 @@ public class ServiceTemplateDto implements Serializable {
 		this.description = description;
 	}
 
+	public String getInvoicingCalendar() {
+		return invoicingCalendar;
+	}
+
+	public void setInvoicingCalendar(String invoicingCalendar) {
+		this.invoicingCalendar = invoicingCalendar;
+	}
+
 	public ServiceChargeTemplateRecurringsDto getServiceChargeTemplateRecurrings() {
 		return serviceChargeTemplateRecurrings;
 	}
@@ -172,7 +183,7 @@ public class ServiceTemplateDto implements Serializable {
 
 	@Override
 	public String toString() {
-		return "ServiceTemplateDto [code=" + code + ", description=" + description
+		return "ServiceTemplateDto [code=" + code + ", description=" + description+", invoicingCalendar=" + invoicingCalendar  
 				+ ", serviceChargeTemplateRecurrings=" + serviceChargeTemplateRecurrings
 				+ ", serviceChargeTemplateSubscriptions=" + serviceChargeTemplateSubscriptions
 				+ ", serviceChargeTemplateTerminations=" + serviceChargeTemplateTerminations

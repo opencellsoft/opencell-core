@@ -399,18 +399,5 @@
 				</plugins>
 			</build>
 		</profile>
-
-
-		<!-- A sample profile for specifying a different database and database 
-			drivers for liquibase plugin <profile> <id>SampleProfileForLiquibasePlugin</id> 
-			<properties> <db.driver>org.postgresql.Driver</db.driver> - Driver to connect 
-			to DB <db.url>jdbc:postgresql://localhost/meveo</db.url> - URL to connect 
-			to DB <db.username>meveo</db.username> - Username to connect to DB <db.password>meveo</db.password> 
-			- Password to conenct to DB </properties> <activation> <activeByDefault>false</activeByDefault> 
-			</activation> <dependencies> - Library containing drivers (<db.driver> parameter) 
-			to connect to DB <dependency> <groupId>org.postgresql</groupId> <artifactId>postgresql</artifactId> 
-			<version>9.2-1002-jdbc4</version> </dependency> <dependency> <groupId>org.liquibase.ext</groupId> 
-			<artifactId>liquibase-postgresql</artifactId> <version>3.0</version> </dependency> 
-			</dependencies> </profile> -->
 	</profiles>
 </project>

@@ -206,6 +206,11 @@ public class RatingService extends BusinessService<WalletOperation>{
 		result.setParameter3(criteria3);
 		result.setProvider(provider);
 		result.setChargeInstance(chargeInstance);
+		if(chargeInstance.getInvoicingCalendar()!=null){
+			result.setInvoicingDate(
+					chargeInstance.getInvoicingCalendar().nextCalendarDate(
+							result.getOperationDate()));
+		}
 		result.setCode(code);
 		result.setQuantity(quantity);
 		result.setTaxPercent(taxPercent);
@@ -580,8 +585,9 @@ public class RatingService extends BusinessService<WalletOperation>{
 
 	//rerate
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public void reRate(WalletOperation operationToRerate,
+	public void reRate(Long operationToRerateId,
 			boolean useSamePricePlan) throws BusinessException {
+		WalletOperation operationToRerate=getEntityManager().find(WalletOperation.class,operationToRerateId);
 		try {
 			ratedTransactionService
 					.reratedByWalletOperationId(operationToRerate.getId());

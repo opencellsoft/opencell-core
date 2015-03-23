@@ -170,7 +170,7 @@ public class TimerBean extends BaseBean<JobExecutionResultImpl> {
 	 */
 
 	public Set<String> getJobNames() {
-		HashMap<String, Job> jobs = new HashMap<String, Job>();
+		HashMap<String, String> jobs = new HashMap<String, String>();
 		if (timerEntity.getJobCategoryEnum() != null) {
 			jobs = TimerEntityService.jobEntries.get(timerEntity.getJobCategoryEnum());
 			return jobs.keySet();

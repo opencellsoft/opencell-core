@@ -18,10 +18,11 @@ import org.meveo.model.crm.Provider;
 import org.meveo.model.mediation.Access;
 import org.meveo.model.rating.EDR;
 import org.meveo.model.rating.EDRStatusEnum;
+import org.meveo.service.base.PersistenceService;
 import org.meveo.service.billing.impl.EdrService;
 
 @Stateless
-public class CDRParsingService {
+public class CDRParsingService extends PersistenceService<EDR> {
 	
 	private CSVCDRParser cdrParser;
 

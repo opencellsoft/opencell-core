@@ -497,8 +497,6 @@ public class RatingCacheContainerProvider {
 
         if (cacheName.equals(pricePlanCache.getName())) {
             populatePricePlanCache();
-        } else if (cacheName.equals(usageChargeTemplateCacheCache.getName()) || cacheName.equals(usageChargeInstanceCache.getName()) || cacheName.equals(counterCache.getName())) {
-            populateUsageChargeCache();
         }
     }
 }

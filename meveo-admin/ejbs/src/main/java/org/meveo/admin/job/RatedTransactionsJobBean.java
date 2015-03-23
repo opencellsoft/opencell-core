@@ -1,6 +1,7 @@
 package org.meveo.admin.job;
 
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 
 import javax.ejb.Stateless;
@@ -41,9 +42,8 @@ public class RatedTransactionsJobBean {
 		Provider provider = currentUser.getProvider();
 
 		try {
-			// FIXME: only for postpaid wallets
-			List<WalletOperation> walletOperations = walletOperationService.findByStatus(
-					WalletOperationStatusEnum.OPEN, provider);
+			List<WalletOperation> walletOperations = walletOperationService.listToInvoice(
+					new Date(), provider);
 
 			log.info("WalletOperations to convert into rateTransactions={}", walletOperations.size());
 
@@ -54,13 +54,13 @@ public class RatedTransactionsJobBean {
 					BigDecimal unitAmountWithTax = walletOperation.getUnitAmountWithTax();
 					BigDecimal unitAmountTax = walletOperation.getUnitAmountTax();
 
-					if (walletOperation.getChargeInstance().getSubscription().getUserAccount().getBillingAccount()
+					/*if (walletOperation.getChargeInstance().getSubscription().getUserAccount().getBillingAccount()
 							.getCustomerAccount().getCustomer().getCustomerCategory().getExoneratedFromTaxes()) {
 						amountWithTAx = walletOperation.getAmountWithoutTax();
 						amountTax = BigDecimal.ZERO;
 						unitAmountWithTax = walletOperation.getUnitAmountWithoutTax();
 						unitAmountTax = BigDecimal.ZERO;
-					}
+					}*/
 					RatedTransaction ratedTransaction = new RatedTransaction(walletOperation.getId(),
 							walletOperation.getOperationDate(), walletOperation.getUnitAmountWithoutTax(),
 							unitAmountWithTax, unitAmountTax, walletOperation.getQuantity(),

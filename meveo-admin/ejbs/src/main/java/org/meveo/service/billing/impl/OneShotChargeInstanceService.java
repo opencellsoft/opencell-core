@@ -104,6 +104,8 @@ public class OneShotChargeInstanceService extends BusinessService<OneShotChargeI
 				chargeTemplate);
 		oneShotChargeInstance.setStatus(InstanceStatusEnum.INACTIVE);
 
+
+		//FIXME :  this code should not be here
 		if (chargeTemplate.getOneShotChargeTemplateType() == OneShotChargeTemplateTypeEnum.TERMINATION) {
 			log.debug("set the termination service instance to {}",serviceInstance.getId());
 			oneShotChargeInstance.setTerminationServiceInstance(serviceInstance);
@@ -112,8 +114,13 @@ public class OneShotChargeInstanceService extends BusinessService<OneShotChargeI
 			oneShotChargeInstance.setSubscriptionServiceInstance(serviceInstance);
 		}
 
+		oneShotChargeInstance.setInvoicingCalendar(serviceInstance.getInvoicingCalendar());
+		
 		oneShotChargeInstance.setChargeDate(serviceInstance.getSubscriptionDate());
+		
 		List<WalletTemplate> walletTemplates = null;
+		
+		//FIXME :  this code should not be here
 		if (isSubscriptionCharge) {
 			ServiceChargeTemplateSubscription recChTmplServ = serviceInstance.getServiceTemplate()
 					.getServiceChargeTemplateSubscriptionByChargeCode(chargeTemplate.getCode());

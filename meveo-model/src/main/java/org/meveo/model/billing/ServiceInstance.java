@@ -39,6 +39,7 @@ import javax.persistence.TemporalType;
 
 import org.apache.commons.lang.StringUtils;
 import org.meveo.model.BusinessEntity;
+import org.meveo.model.catalog.Calendar;
 import org.meveo.model.catalog.ServiceTemplate;
 
 @Entity
@@ -57,6 +58,10 @@ public class ServiceInstance extends BusinessEntity {
 	@JoinColumn(name = "SERVICE_TEMPLATE_ID")
 	private ServiceTemplate serviceTemplate;
 
+	@ManyToOne
+	@JoinColumn(name = "INVOICING_CALENDAR_ID")
+	private Calendar invoicingCalendar;
+	
 	@Enumerated(EnumType.STRING)
 	@Column(name = "STATUS")
 	private InstanceStatusEnum status;
@@ -159,6 +164,14 @@ public class ServiceInstance extends BusinessEntity {
 
 	public void setServiceTemplate(ServiceTemplate serviceTemplate) {
 		this.serviceTemplate = serviceTemplate;
+	}
+
+	public Calendar getInvoicingCalendar() {
+		return invoicingCalendar;
+	}
+
+	public void setInvoicingCalendar(Calendar invoicingCalendar) {
+		this.invoicingCalendar = invoicingCalendar;
 	}
 
 	public List<RecurringChargeInstance> getRecurringChargeInstances() {

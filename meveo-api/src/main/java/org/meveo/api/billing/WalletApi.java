@@ -438,6 +438,11 @@ public class WalletApi extends BaseApi {
 			walletOperation.setSubscriptionDate(postData.getSubscriptionDate());
 			walletOperation.setOperationDate(postData.getOperationDate() == null ? new Date() : postData
 					.getOperationDate());
+			if(chargeInstance.getInvoicingCalendar()!=null){
+				walletOperation.setInvoicingDate(
+						chargeInstance.getInvoicingCalendar().nextCalendarDate(
+								walletOperation.getOperationDate()));
+			}
 
 			walletOperationService.create(walletOperation, currentUser, provider);
 		} else {

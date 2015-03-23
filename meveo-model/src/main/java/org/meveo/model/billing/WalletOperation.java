@@ -55,6 +55,10 @@ import org.meveo.model.catalog.PricePlanMatrix;
 @DiscriminatorColumn(name = "OPERATION_TYPE", discriminatorType = DiscriminatorType.STRING)
 @DiscriminatorValue("W")
 @NamedQueries({
+	@NamedQuery(name = "WalletOperation.listToInvoice", 
+					query = "SELECT o FROM WalletOperation o WHERE (o.invoicingDate is NULL or o.invoicingDate<:invoicingDate ) "
+							+ " AND o.status=org.meveo.model.billing.WalletOperationStatusEnum.OPEN"
+							+ " AND o.provider=:provider"),
 	@NamedQuery(name = "WalletOperation.getBalance", 
 			query = "SELECT sum(o.amountWithTax)*-1 FROM WalletOperation o WHERE o.wallet.id=:walletId and "
 					+ "o.status=org.meveo.model.billing.WalletOperationStatusEnum.OPEN"),
@@ -97,6 +101,10 @@ public class WalletOperation extends BusinessEntity {
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "OPERATION_DATE")
 	private Date operationDate;
+
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column(name = "INVOICING_DATE")
+	private Date invoicingDate;
 
 	@Enumerated(EnumType.STRING)
 	@Column(name = "CREDIT_DEBIT_FLAG")
@@ -219,6 +227,14 @@ public class WalletOperation extends BusinessEntity {
 
 	public void setOperationDate(Date operationDate) {
 		this.operationDate = operationDate;
+	}
+
+	public Date getInvoicingDate() {
+		return invoicingDate;
+	}
+
+	public void setInvoicingDate(Date invoicingDate) {
+		this.invoicingDate = invoicingDate;
 	}
 
 	public OperationTypeEnum getType() {
@@ -436,6 +452,10 @@ public class WalletOperation extends BusinessEntity {
 	@Transient
 	public WalletOperation getUnratedClone() {
 		WalletOperation result = new WalletOperation();
+		return fillUnratedClone(result);
+	}
+	
+	protected WalletOperation fillUnratedClone(WalletOperation result) {
 		result.setActive(true);
 		result.setAggregatedServiceInstance(aggregatedServiceInstance);
 		result.setAppendGeneratedCode(appendGeneratedCode);
@@ -449,6 +469,7 @@ public class WalletOperation extends BusinessEntity {
 		result.setDisabled(false);
 		result.setEndDate(endDate);
 		result.setInvoiceSubCategory(invoiceSubCategory);
+		result.setInvoicingDate(invoicingDate);
 		result.setOfferCode(offerCode);
 		result.setOfferTemplate(offerTemplate);
 		result.setOperationDate(operationDate);

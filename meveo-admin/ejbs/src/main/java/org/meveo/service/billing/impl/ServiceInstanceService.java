@@ -153,6 +153,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 		serviceInstance.setStatus(InstanceStatusEnum.INACTIVE);
 		serviceInstance.setStatusDate(new Date());
 		serviceInstance.setCode(serviceCode);
+		serviceInstance.setInvoicingCalendar(serviceInstance.getServiceTemplate().getInvoicingCalendar());
 		create(serviceInstance, creator, subscription.getProvider());
 
 		ServiceTemplate serviceTemplate = serviceInstance.getServiceTemplate();

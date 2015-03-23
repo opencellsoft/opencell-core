@@ -29,6 +29,8 @@ import javax.ejb.TimerService;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
@@ -44,7 +46,7 @@ import org.slf4j.LoggerFactory;
 
 @Stateless
 public class TimerEntityService extends PersistenceService<TimerEntity> {
-	public static Map<JobCategoryEnum, HashMap<String, Job>> jobEntries = new HashMap<JobCategoryEnum, HashMap<String, Job>>();
+	public static Map<JobCategoryEnum, HashMap<String, String>> jobEntries = new HashMap<JobCategoryEnum, HashMap<String, String>>();
 	public static Map<Long, Timer> jobTimers = new HashMap<Long, Timer>();
 
 	@Resource
@@ -82,13 +84,13 @@ public class TimerEntityService extends PersistenceService<TimerEntity> {
 				if (!jobEntries.containsKey(job.getClass().getSimpleName())) {
 					log.debug("registerJob " + job.getClass().getSimpleName() + " into existing category "
 							+ job.getJobCategory());
-					Map<String, Job> jobs = jobEntries.get(job.getJobCategory());
-					jobs.put(job.getClass().getSimpleName(), job);
+					Map<String, String> jobs = jobEntries.get(job.getJobCategory());
+					jobs.put(job.getClass().getSimpleName(), "java:global/meveo/"+job.getClass().getSimpleName());
 				}
 			} else {
 				log.debug("registerJob " + job.getClass().getSimpleName() + " into new category " + job.getJobCategory());
-				HashMap<String, Job> jobs = new HashMap<String, Job>();
-				jobs.put(job.getClass().getSimpleName(), job);
+				HashMap<String, String> jobs = new HashMap<String, String>();
+				jobs.put(job.getClass().getSimpleName(), "java:global/meveo/"+job.getClass().getSimpleName());
 				jobEntries.put(job.getJobCategory(), jobs);
 			}
 			job.getJobExecutionService().getTimerEntityService().startTimers(job);
@@ -116,42 +118,55 @@ public class TimerEntityService extends PersistenceService<TimerEntity> {
 		}
 	}
 
+	
 	public void create(TimerEntity entity) throws BusinessException {
-		if (jobEntries.containsKey(entity.getJobCategoryEnum())) {
-			HashMap<String, Job> jobs = jobEntries.get(entity.getJobCategoryEnum());
-			if (jobs.containsKey(entity.getJobName())) {
-				Job job = jobs.get(entity.getJobName());
-				jobTimers.put(entity.getId(), job.createTimer(entity.getScheduleExpression(), entity.getTimerInfo()));
+		InitialContext ic;
+		try {
+			ic = new InitialContext();
+			if (jobEntries.containsKey(entity.getJobCategoryEnum())) {
+				HashMap<String, String> jobs = jobEntries.get(entity.getJobCategoryEnum());
+				if (jobs.containsKey(entity.getJobName())) {
+					Job job = (Job) ic.lookup(jobs.get(entity.getJobName()));
+					jobTimers.put(entity.getId(), job.createTimer(entity.getScheduleExpression(), entity.getTimerInfo()));
+				}
+				entity.getTimerInfo().setJobName(entity.getJobName());
+				if (getCurrentUser() == null) {
+					throw new BusinessException("User must be logged in to perform this action.");
+				}
+				entity.getTimerInfo().setUserId(getCurrentUser().getId());
+				if (entity.getFollowingTimer() != null) {
+					entity.getTimerInfo().setFollowingTimerId(entity.getFollowingTimer().getId());
+				}
+				super.create(entity);
 			}
-			entity.getTimerInfo().setJobName(entity.getJobName());
-			if (getCurrentUser() == null) {
-				throw new BusinessException("User must be logged in to perform this action.");
-			}
-			entity.getTimerInfo().setUserId(getCurrentUser().getId());
-			if (entity.getFollowingTimer() != null) {
-				entity.getTimerInfo().setFollowingTimerId(entity.getFollowingTimer().getId());
-			}
-			super.create(entity);
+		} catch (NamingException e) {
+			throw new BusinessException(e);
 		}
 	}
 
-	public TimerEntity update(TimerEntity entity) {// FIXME: throws
-													// BusinessException{
+	public TimerEntity update(TimerEntity entity) {
 		log.info("update " + entity.getJobName());
-		if (jobEntries.containsKey(entity.getJobCategoryEnum())) {
-			HashMap<String, Job> jobs = jobEntries.get(entity.getJobCategoryEnum());
-			if (jobs.containsKey(entity.getJobName())) {
-				Job job = jobs.get(entity.getJobName());
-				jobTimers.put(entity.getId(), job.createTimer(entity.getScheduleExpression(), entity.getTimerInfo()));
+		InitialContext ic;
+		try {
+			ic = new InitialContext();
+			if (jobEntries.containsKey(entity.getJobCategoryEnum())) {
+				HashMap<String, String> jobs = jobEntries.get(entity.getJobCategoryEnum());
+				if (jobs.containsKey(entity.getJobName())) {
+					Job job = (Job) ic.lookup(jobs.get(entity.getJobName()));
+					jobTimers.put(entity.getId(), job.createTimer(entity.getScheduleExpression(), entity.getTimerInfo()));
+				}
+				Timer timer = jobTimers.get(entity.getId());
+				log.info("Cancelling existing " + timer.getTimeRemaining() / 1000 + " sec");
+				timer.cancel();
+				if (entity.getFollowingTimer() != null) {
+					entity.getTimerInfo().setFollowingTimerId(entity.getFollowingTimer().getId());
+				}
+				return super.update(entity);
 			}
-			Timer timer = jobTimers.get(entity.getId());
-			log.info("Cancelling existing " + timer.getTimeRemaining() / 1000 + " sec");
-			timer.cancel();
-			if (entity.getFollowingTimer() != null) {
-				entity.getTimerInfo().setFollowingTimerId(entity.getFollowingTimer().getId());
-			}
-			return super.update(entity);
+		} catch (NamingException e) {
+			e.printStackTrace();
 		}
+
 		return entity;
 	}
 
@@ -165,32 +180,45 @@ public class TimerEntityService extends PersistenceService<TimerEntity> {
 
 	public void execute(TimerEntity entity) throws BusinessException {
 		log.info("execute {}", entity.getJobName());
-		if (jobEntries.containsKey(entity.getJobCategoryEnum())) {
-			HashMap<String, Job> jobs = jobEntries.get(entity.getJobCategoryEnum());
-			if (entity.getTimerInfo().isActive() && jobs.containsKey(entity.getJobName())) {
-				Job job = jobs.get(entity.getJobName());
-
-				User currentUser = userService.findById(entity.getTimerInfo().getUserId());
-				job.execute(entity.getTimerInfo() != null ? entity.getTimerInfo() : null, currentUser);
+		InitialContext ic;
+		try {
+			ic = new InitialContext();
+			if (jobEntries.containsKey(entity.getJobCategoryEnum())) {
+				HashMap<String, String> jobs = jobEntries.get(entity.getJobCategoryEnum());
+				if (entity.getTimerInfo().isActive() && jobs.containsKey(entity.getJobName())) {
+	
+					Job job = (Job) ic.lookup(jobs.get(entity.getJobName()));
+	
+					User currentUser = userService.findById(entity.getTimerInfo().getUserId());
+					job.execute(entity.getTimerInfo() != null ? entity.getTimerInfo() : null, currentUser);
+				}
 			}
+		} catch (NamingException e) {
+			e.printStackTrace();
 		}
 	}
 
 	public void manualExecute(TimerEntity entity) throws BusinessException {
 		log.info("manual execute " + entity.getJobName());
-		User currentUser = userService.findById(entity.getTimerInfo().getUserId());
-		if (entity.getTimerInfo() != null && currentUser.getProvider().getId() != getCurrentProvider().getId()) {
-			throw new BusinessException("Not authorized to execute this job");
-		}
-
-		if (jobEntries.containsKey(entity.getJobCategoryEnum())) {
-			HashMap<String, Job> jobs = jobEntries.get(entity.getJobCategoryEnum());
-			if (jobs.containsKey(entity.getJobName())) {
-				Job job = jobs.get(entity.getJobName());
-				job.execute(entity.getTimerInfo() != null ? entity.getTimerInfo() : null, getCurrentUser());
+		InitialContext ic;
+		try {
+			ic = new InitialContext();
+			User currentUser = userService.findById(entity.getTimerInfo().getUserId());
+			if (entity.getTimerInfo() != null && currentUser.getProvider().getId() != getCurrentProvider().getId()) {
+				throw new BusinessException("Not authorized to execute this job");
 			}
-		} else {
-			throw new BusinessException("cannot find job category " + entity.getJobCategoryEnum());
+	
+			if (jobEntries.containsKey(entity.getJobCategoryEnum())) {
+				HashMap<String, String> jobs = jobEntries.get(entity.getJobCategoryEnum());
+				if (jobs.containsKey(entity.getJobName())) {
+					Job job = (Job) ic.lookup(jobs.get(entity.getJobName()));
+					job.execute(entity.getTimerInfo() != null ? entity.getTimerInfo() : null, getCurrentUser());
+				}
+			} else {
+				throw new BusinessException("cannot find job category " + entity.getJobCategoryEnum());
+			}
+		} catch (NamingException e) {
+			e.printStackTrace();
 		}
 	}
 
