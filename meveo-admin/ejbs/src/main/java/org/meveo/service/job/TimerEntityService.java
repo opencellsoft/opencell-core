@@ -153,15 +153,19 @@ public class TimerEntityService extends PersistenceService<TimerEntity> {
 			if (jobEntries.containsKey(entity.getJobCategoryEnum())) {
 				HashMap<String, String> jobs = jobEntries.get(entity.getJobCategoryEnum());
 				if (jobs.containsKey(entity.getJobName())) {
-					Job job = (Job) ic.lookup(jobs.get(entity.getJobName()));
+	                Timer timer = jobTimers.get(entity.getId());
+	                log.info("Cancelling existing " + timer.getTimeRemaining() / 1000 + " sec");
+	                timer.cancel();
+				    Job job = (Job) ic.lookup(jobs.get(entity.getJobName()));
+				    log.info("Scheduling job {}",job);
 					jobTimers.put(entity.getId(),
 							job.createTimer(entity.getScheduleExpression(), entity.getTimerInfo()));
-				}
-				Timer timer = jobTimers.get(entity.getId());
-				log.info("Cancelling existing " + timer.getTimeRemaining() / 1000 + " sec");
-				timer.cancel();
-				if (entity.getFollowingTimer() != null) {
-					entity.getTimerInfo().setFollowingTimerId(entity.getFollowingTimer().getId());
+
+	                if (entity.getFollowingTimer() != null) {
+	                    entity.getTimerInfo().setFollowingTimerId(entity.getFollowingTimer().getId());
+	                }
+				} else {
+				    throw new RuntimeException("cannot find job "+entity.getJobName());
 				}
 				return super.update(entity);
 			}
