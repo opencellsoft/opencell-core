@@ -129,9 +129,12 @@ public class TimerEntityService extends PersistenceService<TimerEntity> {
 			if (jobEntries.containsKey(entity.getJobCategoryEnum())) {
 				HashMap<String, String> jobs = jobEntries.get(entity.getJobCategoryEnum());
 				if (jobs.containsKey(entity.getJobName()) && entity.getTimerInfo().isActive()) {
+				    log.debug("job created active, we schedule it");
 					Job job = (Job) ic.lookup(jobs.get(entity.getJobName()));
 					jobTimers.put(entity.getId(),
 							job.createTimer(entity.getScheduleExpression(), entity.getTimerInfo()));
+				} else {
+				    log.debug("job created inactive, we do not schedule it");
 				}
 				entity.getTimerInfo().setJobName(entity.getJobName());
 				if (getCurrentUser() == null) {
@@ -185,8 +188,12 @@ public class TimerEntityService extends PersistenceService<TimerEntity> {
 	}
 
 	public void remove(TimerEntity entity) {// FIXME: throws BusinessException{
-		Timer timer = jobTimers.get(entity.getId());
-		timer.cancel();
+		try{
+		    Timer timer = jobTimers.get(entity.getId());
+		    timer.cancel();
+		} catch(Exception e){
+		    log.error(e.getMessage());
+		}
 		jobTimers.remove(entity.getId());
 
 		super.remove(entity);
