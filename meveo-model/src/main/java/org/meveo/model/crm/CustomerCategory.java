@@ -32,13 +32,13 @@ public class CustomerCategory extends BusinessEntity {
 	private static final long serialVersionUID = 1L;
 
 	@Column(name = "EXONERATED_FROM_TAXES")
-	private Boolean exoneratedFromTaxes=false ;
+	private boolean exoneratedFromTaxes=false ;
 
-	public Boolean getExoneratedFromTaxes() {
+	public boolean getExoneratedFromTaxes() {
 		return exoneratedFromTaxes;
 	}
 
-	public void setExoneratedFromTaxes(Boolean exoneratedFromTaxes) {
+	public void setExoneratedFromTaxes(boolean exoneratedFromTaxes) {
 		this.exoneratedFromTaxes = exoneratedFromTaxes;
 	}
 }
