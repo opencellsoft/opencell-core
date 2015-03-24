@@ -63,6 +63,14 @@ public class PricePlanMatrixService extends PersistenceService<PricePlanMatrix> 
         super.create(pricePlan, creator, provider);
         ratingCacheContainerProvider.addPricePlanToCache(pricePlan);
     }
+    
+    public void create(PricePlanMatrix pricePlan, User creator){
+        create(pricePlan,creator,creator.getProvider());
+    }
+    
+    public void create(PricePlanMatrix pricePlan){
+        create(pricePlan,getCurrentUser(),getCurrentProvider());
+    }
 
     @Override
     public PricePlanMatrix disable(PricePlanMatrix pricePlan) {
@@ -89,6 +97,10 @@ public class PricePlanMatrixService extends PersistenceService<PricePlanMatrix> 
         pricePlan = super.update(pricePlan, updater);
         ratingCacheContainerProvider.updatePricePlanInCache(pricePlan);
         return pricePlan;
+    }
+    
+    public PricePlanMatrix update(PricePlanMatrix pricePlan){
+        return update(pricePlan,getCurrentUser());
     }
     
     @SuppressWarnings("unchecked")
@@ -413,9 +425,7 @@ public class PricePlanMatrixService extends PersistenceService<PricePlanMatrix> 
 						pricePlan.setCriteriaEL(null);
 					}
 
-					if (pricePlan.getId() == null) {
-						em.persist(pricePlan);
-					}
+					
 
 					// startAppli
 					if (!StringUtils.isBlank(startRating)) {
@@ -468,6 +478,12 @@ public class PricePlanMatrixService extends PersistenceService<PricePlanMatrix> 
 					} else {
 						pricePlan.setMaxSubscriptionAgeInMonth(9999L);
 					}
+					
+					if (pricePlan.getId() == null) {
+                        create(pricePlan,user,provider);
+                    } else {
+                        update(pricePlan,user);
+                    }
 					result++;
 				}
 			}
