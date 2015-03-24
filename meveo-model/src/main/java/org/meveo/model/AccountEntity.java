@@ -48,6 +48,7 @@ import org.meveo.model.shared.Address;
 import org.meveo.model.shared.Name;
 
 @Entity
+@ObservableEntity
 @Table(name = "ACCOUNT_ENTITY", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE", "PROVIDER_ID" }))
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "ACCOUNT_ENTITY_SEQ")
 @Inheritance(strategy = InheritanceType.JOINED)

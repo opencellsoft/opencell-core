@@ -25,9 +25,11 @@ import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
 import org.meveo.model.BusinessEntity;
+import org.meveo.model.ObservableEntity;
 import org.meveo.model.billing.BillingWalletTypeEnum;
 
 @Entity
+@ObservableEntity
 @Table(name = "CAT_WALLET_TEMPLATE", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE", "PROVIDER_ID" }))
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "CAT_WALLET_TEMPLATE_SEQ")
 public class WalletTemplate extends BusinessEntity {

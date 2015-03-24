@@ -25,8 +25,6 @@ import javax.persistence.Table;
 import org.meveo.model.Auditable;
 import org.meveo.model.AuditableEntity;
 import org.meveo.model.IEntity;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @Entity
 @Cacheable
@@ -109,7 +107,7 @@ public class CatMessages extends AuditableEntity {
      */
     public long getEntityId() {
         
-        Logger log = LoggerFactory.getLogger(this.getClass());
+        //Logger log = LoggerFactory.getLogger(this.getClass());
         try {
             return Long.parseLong(messageCode.substring(messageCode.lastIndexOf('_') + 1));
         } catch (NumberFormatException e) {

@@ -11,11 +11,13 @@ import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.Size;
 
 import org.meveo.model.AuditableEntity;
+import org.meveo.model.ObservableEntity;
 
 /**
  * @author Edward P. Legaspi
  **/
 @Entity
+@ObservableEntity
 @Table(name = "CAT_DISCOUNT_PLAN", uniqueConstraints = { @UniqueConstraint(columnNames = { "CODE", "PROVIDER_ID" }) })
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "CAT_DISCOUNT_PLAN_SEQ")
 public class DiscountPlan extends AuditableEntity {

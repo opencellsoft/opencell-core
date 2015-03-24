@@ -36,9 +36,11 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import org.meveo.model.BusinessEntity;
+import org.meveo.model.ObservableEntity;
 import org.meveo.model.catalog.WalletTemplate;
 
 @Entity
+@ObservableEntity
 @Table(name = "BILLING_WALLET")
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_WALLET_SEQ")
 @NamedQueries({

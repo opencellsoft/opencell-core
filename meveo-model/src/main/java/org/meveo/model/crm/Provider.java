@@ -39,6 +39,7 @@ import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 import org.meveo.model.BusinessEntity;
+import org.meveo.model.ObservableEntity;
 import org.meveo.model.admin.Currency;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.BankCoordinates;
@@ -56,6 +57,7 @@ import org.meveo.model.shared.InterBankTitle;
 import org.meveo.model.shared.Title;
 
 @Entity
+@ObservableEntity
 @Table(name = "CRM_PROVIDER", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE", "PROVIDER_ID" }))
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "CRM_PROVIDER_SEQ")
 public class Provider extends BusinessEntity {
