@@ -40,6 +40,7 @@ import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.RejectedBillingAccount;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.payments.CustomerAccount;
+import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.crm.impl.ProviderService;
@@ -293,7 +294,11 @@ public class InvoiceService extends PersistenceService<Invoice> {
 			}
 			invoice.setDueDate(dueDate);
 
-			invoice.setPaymentMethod(billingAccount.getPaymentMethod());
+            PaymentMethodEnum paymentMethod= billingAccount.getPaymentMethod();
+            if(paymentMethod==null){
+                paymentMethod=billingAccount.getCustomerAccount().getPaymentMethod();
+            }
+			invoice.setPaymentMethod(paymentMethod);
 			invoice.setProvider(billingRun.getProvider());
 			em.persist(invoice);
 			// create(invoice, currentUser, currentUser.getProvider());
