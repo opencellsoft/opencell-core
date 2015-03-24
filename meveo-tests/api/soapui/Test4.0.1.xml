@@ -22655,8 +22655,8 @@
       	  <description>Open hours</description>
       	  <calendarType>INTERVAL</calendarType>
             <intervalType>HOUR</intervalType>
-            <intervals intervalBegin="8" intervalEnd="12"/>
-            <intervals intervalBegin="13" intervalEnd="19"/>
+            <intervals intervalBegin="800" intervalEnd="1200"/>
+            <intervals intervalBegin="1300" intervalEnd="1900"/>
       </calendar>
       </ws:createCalendar>
    </soapenv:Body>
