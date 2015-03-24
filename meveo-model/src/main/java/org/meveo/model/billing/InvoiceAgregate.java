@@ -296,4 +296,14 @@ public abstract class InvoiceAgregate extends AuditableEntity {
 		amountTax = amountTax.add(amountToAdd);
 	}
 
+	public boolean isDiscountAggregate() {
+		return discountAggregate;
+	}
+
+	public void setDiscountAggregate(boolean discountAggregate) {
+		this.discountAggregate = discountAggregate;
+	}
+	
+	
+
 }

@@ -19,7 +19,8 @@
 			label="#{messages['walletOperation.panel']}"
 			backingBean="#{walletOperationBean}" renderNewButton="false" showFormButtons="false">
 		<hftl:panelGroup columns="2">
-		
+		 
+		 
 		 <hf:formField label="#{messages['BusinessEntity.code']}" field="code" />
 		 <hf:formField label="#{messages['BusinessEntity.description']}" field="description" />
           <hf:formEntityField label="#{messages['seller.title']}" field="seller" childField="description" /> 
@@ -45,9 +46,19 @@
 		 <hf:formField label="#{messages['walletOperation.endDate']}" field="endDate" />
 		 <hf:formField label="#{messages['walletOperation.subscriptionDate']}" field="subscriptionDate" />
 		 <hf:formField label="#{messages['walletOperation.invoicingDate']}" field="invoicingDate" />
-		 <hf:formField label="#{messages['walletOperation.status']}" field="status" /> 
-		 
-		 
+		 <hf:formField label="#{messages['walletOperation.status']}" field="status" />
+		 <h:panelGrid columns="2">
+		<p:outputLabel value="#{messages['walletOperationStatus.rerated']}"/>	
+		<h:link id="rerated"  outcome="walletOperationDetail" >
+		<f:param name="objectId" value="#{walletOperationBean.entity.reratedWalletOperation.id}" /> 
+		<f:param name="edit" value="false" />
+		<f:param name="cid" value="#{javax.enterprise.context.conversation.id}" />
+		<h:outputText value="#{walletOperationBean.entity.reratedWalletOperation.auditable.created}">
+		 <f:convertDateTime pattern="yyyy/MM/dd" />
+		 </h:outputText> 
+		 <h:outputText value=" #{walletOperationBean.entity.reratedWalletOperation.code}"/>
+	    </h:link>
+		</h:panelGrid> 
        </hftl:panelGroup>
 
 		<p:button id="back" value="#{messages['action.back']}"

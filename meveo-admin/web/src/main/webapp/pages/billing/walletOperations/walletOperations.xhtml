@@ -187,9 +187,6 @@
 			<hftl:column label="#{messages['walletOperation.quantity']}" field="quantity"  converterParam="4digits" wrapHeader="true" />
 			<hftl:column label="#{messages['invoice.amountWithoutTax']}" field="amountWithoutTax"  converterParam="4digits" wrapHeader="true" />
 			<hftl:column label="#{messages['invoice.amountWithTax']}" field="amountWithTax"  converterParam="4digits" wrapHeader="true" />
-			<hftl:column label="#{messages['walletOperationStatus.rerated']}" field="reratedWalletOperation" childField="code" childFieldId="id"
-				entityView="/pages/billing/walletOperations/walletOperationDetail.xhtml"
-				backView="walletOperations" showPopup="true" popupFields="code"/>
 			<hftl:column label="#{messages['walletOperation.status']}" field="status" childField="label" isMessage="true" />
 				 <p:column  width="50px"> 
 			<f:facet name="header">
