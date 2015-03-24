@@ -45,7 +45,7 @@ public class TimerEntity extends BaseEntity {
 	@Transient
 	private Logger log = LoggerFactory.getLogger(TimerEntity.class);
 
-	@Column(name = "NAME", nullable = false)
+	@Column(name = "NAME", nullable = false, unique=true)
 	private String name;
 
 	@Column(name = "JOB_NAME", nullable = false)

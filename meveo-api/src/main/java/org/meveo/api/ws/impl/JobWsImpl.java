@@ -6,16 +6,13 @@ import javax.jws.WebService;
 
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
-import org.meveo.api.dto.job.ExecuteJobDto;
+import org.meveo.api.dto.job.TimerInfoDto;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.job.JobApi;
 import org.meveo.api.logging.LoggingInterceptor;
 import org.meveo.api.ws.JobWs;
 import org.slf4j.Logger;
 
-/**
- * @author Edward P. Legaspi
- **/
 @WebService(serviceName = "JobWs", endpointInterface = "org.meveo.api.ws.JobWs")
 @Interceptors({ LoggingInterceptor.class })
 public class JobWsImpl extends BaseWs implements JobWs {
@@ -27,11 +24,11 @@ public class JobWsImpl extends BaseWs implements JobWs {
 	private JobApi jobApi;
 
 	@Override
-	public ActionStatus executeJob(ExecuteJobDto postData) {
+	public ActionStatus executeTimer(TimerInfoDto postData) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 		try {
-			jobApi.executeJob(postData, getCurrentUser());
+			jobApi.executeTimer(postData, getCurrentUser());
 		} catch (MeveoApiException e) {
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());

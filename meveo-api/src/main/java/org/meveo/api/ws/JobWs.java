@@ -5,15 +5,12 @@ import javax.jws.WebParam;
 import javax.jws.WebService;
 
 import org.meveo.api.dto.ActionStatus;
-import org.meveo.api.dto.job.ExecuteJobDto;
+import org.meveo.api.dto.job.TimerInfoDto;
 
-/**
- * @author Edward P. Legaspi
- **/
 @WebService
 public interface JobWs extends IBaseWs {
 
 	@WebMethod
-	ActionStatus executeJob(@WebParam(name = "executeJob") ExecuteJobDto postData);
+	ActionStatus executeTimer(@WebParam(name = "timer") TimerInfoDto postData);
 
 }

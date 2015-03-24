@@ -253,26 +253,25 @@ public class TimerEntityService extends PersistenceService<TimerEntity> {
 		}
 	}
 
-	public void executeViaJob(JobCategoryEnum jobCategory, String jobName, User currentUser) throws Exception {
-		log.info("execute job={} via api", jobName);
+	public void executeAPITimer(String timerName, User currentUser) throws Exception {
+		log.info("execute timer={} via api", timerName);
+		TimerEntity entity=(TimerEntity) getEntityManager().createQuery("FROM TimerEntity where name=:name and provider=:provider")
+		.setParameter("name", timerName).setParameter("provider", currentUser.getProvider()).getSingleResult();
 		InitialContext ic;
-		try {
-			ic = new InitialContext();
-
-			if (jobEntries.containsKey(jobCategory)) {
-				HashMap<String, String> jobs = jobEntries.get(jobCategory);
-				if (jobs.containsKey(jobName)) {
-					Job job = (Job) ic.lookup(jobs.get(jobName));
-					job.execute(null, getCurrentUser());
-				} else {
-					throw new Exception("cannot find job name " + jobName);
-				}
-			} else {
-				throw new Exception("cannot find job category " + jobCategory);
-			}
-		} catch (NamingException e) {
-			log.error(e.getMessage());
-		}
+        try {
+            ic = new InitialContext();
+            if (jobEntries.containsKey(entity.getJobCategoryEnum())) {
+                HashMap<String, String> jobs = jobEntries.get(entity.getJobCategoryEnum());
+                if (jobs.containsKey(entity.getJobName())) {
+                    Job job = (Job) ic.lookup(jobs.get(entity.getJobName()));
+                    job.execute(entity.getTimerInfo() != null ? entity.getTimerInfo() : null, getCurrentUser());
+                }
+            } else {
+                throw new BusinessException("cannot find job category " + entity.getJobCategoryEnum());
+            }
+        } catch (NamingException e) {
+            log.error(e.getMessage());
+        }
 	}
 
 	public TimerEntity getByTimer(Timer timer) {

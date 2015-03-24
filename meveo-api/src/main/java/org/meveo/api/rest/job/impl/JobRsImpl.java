@@ -6,7 +6,7 @@ import javax.interceptor.Interceptors;
 
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
-import org.meveo.api.dto.job.ExecuteJobDto;
+import org.meveo.api.dto.job.TimerInfoDto;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.job.JobApi;
 import org.meveo.api.logging.LoggingInterceptor;
@@ -28,11 +28,11 @@ public class JobRsImpl extends BaseRs implements JobRs {
 	private JobApi jobApi;
 
 	@Override
-	public ActionStatus executeJob(ExecuteJobDto postData) {
+	public ActionStatus executeTimer(TimerInfoDto postData) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 		try {
-			jobApi.executeJob(postData, getCurrentUser());
+			jobApi.executeTimer(postData, getCurrentUser());
 		} catch (MeveoApiException e) {
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
