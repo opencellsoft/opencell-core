@@ -33,11 +33,11 @@ import org.meveo.model.billing.UsageChargeInstance;
 import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.billing.WalletOperationStatusEnum;
 import org.meveo.model.billing.WalletReservation;
-import org.meveo.model.cache.CounterInstanceCache;
-import org.meveo.model.cache.CounterPeriodCache;
-import org.meveo.model.cache.TriggeredEDRCache;
-import org.meveo.model.cache.UsageChargeInstanceCache;
-import org.meveo.model.cache.UsageChargeTemplateCache;
+import org.meveo.model.cache.CachedCounterInstance;
+import org.meveo.model.cache.CachedCounterPeriod;
+import org.meveo.model.cache.CachedTriggeredEDR;
+import org.meveo.model.cache.CachedUsageChargeInstance;
+import org.meveo.model.cache.CachedUsageChargeTemplate;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.rating.EDR;
 import org.meveo.model.rating.EDRStatusEnum;
@@ -114,7 +114,7 @@ public class UsageRatingService {
 	 * @throws BusinessException
 	 */
 	public WalletOperation rateEDRwithMatchingCharge(EDR edr, BigDecimal deducedQuantity,
-			UsageChargeInstanceCache chargeCache, UsageChargeInstance chargeInstance, Provider provider,
+			CachedUsageChargeInstance chargeCache, UsageChargeInstance chargeInstance, Provider provider,
 			boolean isReservation) throws BusinessException {
 		WalletOperation walletOperation = null;
 		if (isReservation) {
@@ -191,18 +191,18 @@ public class UsageRatingService {
 	 *         remaining quantity
 	 * @throws BusinessException
 	 */
-	BigDecimal deduceCounter(EDR edr, UsageChargeInstanceCache cachedCharge, Reservation reservation, User currentUser)
+	BigDecimal deduceCounter(EDR edr, CachedUsageChargeInstance cachedCharge, Reservation reservation, User currentUser)
 			throws BusinessException {
 		log.info("Deduce counter for key " + cachedCharge.getCounter().getCounterInstanceId());
 
 		BigDecimal deducedQuantity = BigDecimal.ZERO;
 		BigDecimal deducedQuantityInEDRUnit = BigDecimal.ZERO;
-		CounterInstanceCache counterInstanceCache = ratingCacheContainerProvider.getCounterInstance(
+		CachedCounterInstance counterInstanceCache = ratingCacheContainerProvider.getCounterInstance(
 				cachedCharge.getCounter().getCounterInstanceId());
-		CounterPeriodCache periodCache = null;
+		CachedCounterPeriod periodCache = null;
 
 		if (counterInstanceCache.getCounterPeriods() != null) {
-			for (CounterPeriodCache itemPeriodCache : counterInstanceCache.getCounterPeriods()) {
+			for (CachedCounterPeriod itemPeriodCache : counterInstanceCache.getCounterPeriods()) {
 				if ((itemPeriodCache.getStartDate().before(edr.getEventDate()) || itemPeriodCache.getStartDate()
 						.equals(edr.getEventDate())) && itemPeriodCache.getEndDate().after(edr.getEventDate())) {
 					periodCache = itemPeriodCache;
@@ -211,7 +211,7 @@ public class UsageRatingService {
 				}
 			}
 		} else {
-			counterInstanceCache.setCounterPeriods(new ArrayList<CounterPeriodCache>());
+			counterInstanceCache.setCounterPeriods(new ArrayList<CachedCounterPeriod>());
 		}
 
 		CounterInstance counterInstance = null;
@@ -220,7 +220,7 @@ public class UsageRatingService {
 			CounterPeriod counterPeriod = counterInstanceService.createPeriod(counterInstance, edr.getEventDate(),
 					cachedCharge.getSubscriptionDate(), currentUser);
 			if (counterPeriod != null) {
-				periodCache = CounterPeriodCache.getInstance(counterPeriod, counterInstance.getCounterTemplate());
+				periodCache = new CachedCounterPeriod(counterPeriod, counterInstance.getCounterTemplate());
 				counterInstanceCache.getCounterPeriods().add(periodCache);
 
 				log.debug("created counter period in cache:{}", periodCache);
@@ -278,7 +278,7 @@ public class UsageRatingService {
 	 * @return
 	 * @throws BusinessException
 	 */
-	public boolean rateEDRonChargeAndCounters(EDR edr, UsageChargeInstanceCache charge, User currentUser)
+	public boolean rateEDRonChargeAndCounters(EDR edr, CachedUsageChargeInstance charge, User currentUser)
 			throws BusinessException {
 		boolean stopEDRRating = false;
 		BigDecimal deducedQuantity = null;
@@ -298,7 +298,7 @@ public class UsageRatingService {
 
 		if (deducedQuantity == null || deducedQuantity.compareTo(BigDecimal.ZERO) > 0) {
 			Provider provider = charge.getProvider();
-			UsageChargeInstance chargeInstance = usageChargeInstanceService.findById(charge.getChargeInstanceId());
+			UsageChargeInstance chargeInstance = usageChargeInstanceService.findById(charge.getId());
 			WalletOperation walletOperation = null;
 			if (deducedQuantity == null) {
 				walletOperation = rateEDRwithMatchingCharge(edr, charge.getInChargeUnit(edr.getQuantity()), charge,
@@ -313,7 +313,7 @@ public class UsageRatingService {
 
 			// handle associated edr creation
 			if (charge.getTemplateCache().getEdrTemplates().size() > 0) {
-				for (TriggeredEDRCache triggeredEDRCache : charge.getTemplateCache().getEdrTemplates()) {
+				for (CachedTriggeredEDR triggeredEDRCache : charge.getTemplateCache().getEdrTemplates()) {
 					if (triggeredEDRCache.getConditionEL() == null || "".equals(triggeredEDRCache.getConditionEL())
 							|| matchExpression(triggeredEDRCache.getConditionEL(), edr, walletOperation)) {
 						EDR newEdr = new EDR();
@@ -357,7 +357,7 @@ public class UsageRatingService {
 		return stopEDRRating;
 	}
 
-	public boolean reserveEDRonChargeAndCounters(Reservation reservation, EDR edr, UsageChargeInstanceCache charge,
+	public boolean reserveEDRonChargeAndCounters(Reservation reservation, EDR edr, CachedUsageChargeInstance charge,
 			User currentUser) throws BusinessException {
 		boolean stopEDRRating = false;
 		BigDecimal deducedQuantity = null;
@@ -372,7 +372,7 @@ public class UsageRatingService {
 
 		if (deducedQuantity == null || deducedQuantity.compareTo(BigDecimal.ZERO) > 0) {
 			Provider provider = charge.getProvider();
-			UsageChargeInstance chargeInstance = usageChargeInstanceService.findById(charge.getChargeInstanceId());
+			UsageChargeInstance chargeInstance = usageChargeInstanceService.findById(charge.getId());
 			WalletReservation walletOperation = (WalletReservation) rateEDRwithMatchingCharge(edr, deducedQuantity,
 					charge, chargeInstance, provider, true);
 			walletOperation.setReservation(reservation);
@@ -417,10 +417,10 @@ public class UsageRatingService {
 			try {
 				if (ratingCacheContainerProvider.isUsageChargeInstancesCached(edr.getSubscription().getId())) {
 					// TODO:order charges by priority and id
-					List<UsageChargeInstanceCache> charges = ratingCacheContainerProvider.getUsageChargeInstances(edr.getSubscription().getId());
+					List<CachedUsageChargeInstance> charges = ratingCacheContainerProvider.getUsageChargeInstances(edr.getSubscription().getId());
 
-					for (UsageChargeInstanceCache charge : charges) {
-						UsageChargeTemplateCache templateCache = charge.getTemplateCache();
+					for (CachedUsageChargeInstance charge : charges) {
+						CachedUsageChargeTemplate templateCache = charge.getTemplateCache();
 						log.info("try templateCache=" + templateCache.toString());
 						if (templateCache.getFilter1() == null
 								|| templateCache.getFilter1().equals(edr.getParameter1())) {
@@ -440,7 +440,7 @@ public class UsageRatingService {
 											// we found matching charge, if we
 											// rate
 											// it we exit the look
-											log.debug("found matchig charge inst : id=" + charge.getChargeInstanceId());
+											log.debug("found matchig charge inst : id=" + charge.getId());
 											edrIsRated = rateEDRonChargeAndCounters(edr, charge, currentUser);
 											if (edrIsRated) {
 												edr.setStatus(EDRStatusEnum.RATED);
@@ -494,7 +494,7 @@ public class UsageRatingService {
 			try {
 				if (ratingCacheContainerProvider.isUsageChargeInstancesCached(edr.getSubscription().getId())) {
 					// TODO:order charges by priority and id
-					List<UsageChargeInstanceCache> charges = ratingCacheContainerProvider.getUsageChargeInstances(edr.getSubscription().getId());
+					List<CachedUsageChargeInstance> charges = ratingCacheContainerProvider.getUsageChargeInstances(edr.getSubscription().getId());
 					reservation = new Reservation();
 					reservation.setProvider(currentUser.getProvider());
 					reservation.setReservationDate(edr.getEventDate());
@@ -512,8 +512,8 @@ public class UsageRatingService {
 					// the JTA transaction
 					em.persist(reservation);
 
-					for (UsageChargeInstanceCache charge : charges) {
-						UsageChargeTemplateCache templateCache = charge.getTemplateCache();
+					for (CachedUsageChargeInstance charge : charges) {
+						CachedUsageChargeTemplate templateCache = charge.getTemplateCache();
 						log.info("try templateCache=" + templateCache.toString());
 						if (templateCache.getFilter1() == null
 								|| templateCache.getFilter1().equals(edr.getParameter1())) {
@@ -533,7 +533,7 @@ public class UsageRatingService {
 											// we found matching charge, if we
 											// rate
 											// it we exit the look
-											log.debug("found matchig charge inst : id=" + charge.getChargeInstanceId());
+											log.debug("found matchig charge inst : id=" + charge.getId());
 											edrIsRated = reserveEDRonChargeAndCounters(reservation, edr, charge,
 													currentUser);
 											if (edrIsRated) {

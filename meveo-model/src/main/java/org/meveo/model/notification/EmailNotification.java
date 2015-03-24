@@ -1,5 +1,7 @@
 package org.meveo.model.notification;
 
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.Set;
 
 import javax.persistence.CollectionTable;
@@ -111,6 +113,25 @@ public class EmailNotification extends Notification {
 
 	public void setAttachmentExpressions(Set<String> attachmentExpressions) {
 		this.attachmentExpressions = attachmentExpressions;
-	}
-	
+    }
+
+    @Override
+    public String toString() {
+        final int maxLen = 10;
+        return String.format("EmailNotification [emailFrom=%s, emailToEl=%s, emails=%s,  subject=%s, attachmentExpressions=%s, notification=%s]", emailFrom, emailToEl,
+            emails != null ? toString(emails, maxLen) : null, subject, attachmentExpressions != null ? toString(attachmentExpressions, maxLen) : null, super.toString());
+    }
+
+    private String toString(Collection<?> collection, int maxLen) {
+        StringBuilder builder = new StringBuilder();
+        builder.append("[");
+        int i = 0;
+        for (Iterator<?> iterator = collection.iterator(); iterator.hasNext() && i < maxLen; i++) {
+            if (i > 0)
+                builder.append(", ");
+            builder.append(iterator.next());
+        }
+        builder.append("]");
+        return builder.toString();
+    }
 }

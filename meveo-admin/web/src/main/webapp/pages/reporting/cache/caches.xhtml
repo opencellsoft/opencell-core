@@ -12,6 +12,13 @@
 
 
     <ui:define name="body">
+        <p:panelGrid columns="1" styleClass="search-panel">
+            <f:facet name="header">
+                <h:outputText value="#{messages['cache.caches']}" />
+            </f:facet>
+
+        </p:panelGrid>
+        
         <p:panel width="100">
             <h:form>
                 <p:dataTable id="datatable_caches" var="cacheInfo" value="#{cacheBean.summaryOfCaches}" paginator="true" rows="10"

@@ -29,6 +29,7 @@ import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.apache.commons.lang3.reflect.MethodUtils;
 import org.infinispan.api.BasicCache;
 import org.jboss.solder.servlet.http.RequestParam;
 import org.meveo.cache.CdrEdrProcessingCacheContainerProvider;
@@ -64,17 +65,31 @@ public class CacheBean implements Serializable {
     protected org.slf4j.Logger log;
 
     /**
-     * Request parameter. Should form be displayed in create/edit or view mode
+     * Request parameter. Name of a cache to show details of
      */
     @Inject
     @RequestParam()
     private Instance<String> cacheName;
 
     /**
-     * Selected cache to display details of
+     * Selected cache to display details of - retrieved from cacheName request parameter
      */
     @SuppressWarnings("rawtypes")
-    private BasicCache cache;
+    private BasicCache selectedCache;
+
+    /**
+     * In case that cache contains a list of values, this contains an Entry selected from a cache values.\
+     * 
+     * In case that cache contains a map of values, this contains an Entry selected from a selectedCacheMapItem values.
+     */
+    @SuppressWarnings("rawtypes")
+    private Entry selectedCacheItem;
+
+    /**
+     * In case that cache contains a map of values, this contains an Entry selected from a cache values.
+     */
+    @SuppressWarnings("rawtypes")
+    private Entry selectedCacheMapItem;
 
     /**
      * Datamodel for lazy dataloading in cached contents.
@@ -82,18 +97,28 @@ public class CacheBean implements Serializable {
     @SuppressWarnings("rawtypes")
     protected LazyDataModel cacheContents;
 
+    /**
+     * Datamodel for lazy dataloading in cached item map contents.
+     */
+    @SuppressWarnings("rawtypes")
+    protected LazyDataModel cacheMapContents;
+
+    /**
+     * Datamodel for lazy dataloading in cached item or item in a cached map contents.
+     */
+    @SuppressWarnings("rawtypes")
+    protected LazyDataModel cacheItemContents;
+
     @SuppressWarnings("rawtypes")
     public void preRenderView() {
 
         if (cacheName.get() != null) {
-            log.error("AKK cache is " + cacheName.get());
             Map<String, BasicCache> caches = walletCacheContainerProvider.getCaches();
             caches.putAll(cdrEdrProcessingCacheContainerProvider.getCaches());
             caches.putAll(notificationCacheContainerProvider.getCaches());
             caches.putAll(ratingCacheContainerProvider.getCaches());
 
-            cache = caches.get(cacheName.get());
-            log.error("AKK cache is " + cache);
+            selectedCache = caches.get(cacheName.get());
         }
     }
 
@@ -148,78 +173,195 @@ public class CacheBean implements Serializable {
 
                 private static final long serialVersionUID = -5796910936316457321L;
 
-                private Integer rowCount;
-
                 @SuppressWarnings("unchecked")
                 @Override
                 public List load(int first, int pageSize, String sortField, SortOrder sortOrder, Map filters) {
-                    setRowCount(cache.size());
+                    setRowCount(selectedCache.size());
 
                     if (getRowCount() > 0) {
-                        int toNr = ((first + 1) * pageSize) - 1;
-                        return new LinkedList(cache.entrySet()).subList(first * pageSize, rowCount - 1 <= toNr ? rowCount : toNr);
+                        int toNr = first + pageSize;
+                        return new LinkedList(selectedCache.entrySet()).subList(first, getRowCount() <= toNr ? getRowCount() : toNr);
 
                     } else {
                         return new ArrayList();
                     }
                 }
-
-                @Override
-                public void setRowCount(int rowCount) {
-                    this.rowCount = rowCount;
-                }
-
-                @Override
-                public int getRowCount() {
-                    return rowCount;
-                }
-
             };
         }
         return cacheContents;
     }
 
+    @SuppressWarnings("rawtypes")
+    public LazyDataModel getCacheMapContents() {
+        return getCacheMapContents(null, false);
+    }
+
+    @SuppressWarnings("rawtypes")
+    public LazyDataModel getCacheMapContents(Map<String, Object> inputFilters, boolean forceReload) {
+        if (cacheMapContents == null || forceReload) {
+
+            // final Map<String, Object> filters = inputFilters;
+
+            cacheMapContents = new LazyDataModel() {
+
+                private static final long serialVersionUID = -5796910936316457321L;
+
+                @SuppressWarnings("unchecked")
+                @Override
+                public List load(int first, int pageSize, String sortField, SortOrder sortOrder, Map filters) {
+                    Map selectedMap = (Map) selectedCacheMapItem.getValue();
+                    setRowCount(selectedMap.size());
+
+                    if (getRowCount() > 0) {
+                        int toNr = first + pageSize;
+                        return new LinkedList(selectedMap.entrySet()).subList(first, getRowCount() <= toNr ? getRowCount() : toNr);
+
+                    } else {
+                        return new ArrayList();
+                    }
+                }
+            };
+        }
+        return cacheMapContents;
+    }
+
+    @SuppressWarnings("rawtypes")
+    public LazyDataModel getCacheItemContents() {
+        return getCacheItemContents(null, false);
+    }
+
+    @SuppressWarnings("rawtypes")
+    public LazyDataModel getCacheItemContents(Map<String, Object> inputFilters, boolean forceReload) {
+        if (cacheItemContents == null || forceReload) {
+
+            // final Map<String, Object> filters = inputFilters;
+
+            cacheItemContents = new LazyDataModel() {
+
+                private static final long serialVersionUID = -5796910936316457322L;
+
+                @Override
+                public List load(int first, int pageSize, String sortField, SortOrder sortOrder, Map filters) {
+                    List valueList = (List) selectedCacheItem.getValue();
+                    setRowCount(valueList.size());
+
+                    if (getRowCount() > 0) {
+                        int toNr = first + pageSize;
+                        return valueList.subList(first, getRowCount() <= toNr ? getRowCount() : toNr);
+
+                    } else {
+                        return new ArrayList();
+                    }
+                }
+            };
+        }
+        return cacheItemContents;
+    }
+
     public String getCacheName() {
-        return cache.getName();
+        return selectedCache.getName();
+    }
+
+    public Object getSelectedCacheItem() {
+        return selectedCacheItem;
+    }
+
+    @SuppressWarnings("rawtypes")
+    public void setSelectedCacheItem(Object selectedCacheItem) {
+        this.selectedCacheItem = (Entry) selectedCacheItem;
+    }
+
+    @SuppressWarnings("rawtypes")
+    public void setSelectedCacheMapItem(Object selectedCacheMapItem) {
+        this.selectedCacheMapItem = (Entry) selectedCacheMapItem;
+        this.selectedCacheItem = null;
+    }
+
+    public Object getSelectedCacheMapItem() {
+        return selectedCacheMapItem;
     }
 
     /**
-     * Extract values of cached object to show in a list. In case of list of items, show only the first 10 items
+     * Extract values of cached object to show in a list. In case of list of items, show only the first 10 items, in case of mapped items - only first 2 entries.
      * 
-     * @param cachedObject Cached object to display
-     * @return A string representation
+     * @param cachedObject Item to convert to string
+     * @return A string representation of an item. Preferred way is code (id) or id or a value. For lists, separate items by a comma, for maps: key:[items..]
      */
-    public String getExtractOfValuesForList(Object cachedObject) {
-        StringBuilder builder = new StringBuilder();
+    @SuppressWarnings("rawtypes")
+    public String getShortRepresentationOfCachedValue(Object item, boolean returnToStringForSimpleObjects) {
 
-        if (cachedObject instanceof List) {
-            List listObject = (List) cachedObject;
+        if (item instanceof List) {
+            StringBuilder builder = new StringBuilder();
+            List listObject = (List) item;
             for (int i = 0; i < 10 && i < listObject.size(); i++) {
-                Object item = listObject.get(i);
-                if (item instanceof BusinessEntity) {
-                    builder.append(builder.length() == 0 ? "" : ", ").append(((BusinessEntity) item).getCode());
-
-                } else if (item instanceof IEntity) {
-                    builder.append(builder.length() == 0 ? "" : ", ").append(((IEntity) item).getId());
-
-                } else {
-                    builder.append(builder.length() == 0 ? "" : ", ").append(item);
-                }
+                builder.append(builder.length() == 0 ? "" : ", ");
+                Object listItem = listObject.get(i);
+                builder.append(getShortRepresentationOfCachedValue(listItem, false));
             }
 
             if (listObject.size() > 10) {
                 builder.append(", ...");
             }
-        } else if (cachedObject instanceof BusinessEntity) {
-            builder.append(builder.length() == 0 ? "" : ", ").append(((BusinessEntity) cachedObject).getCode());
 
-        } else if (cachedObject instanceof IEntity) {
-            builder.append(builder.length() == 0 ? "" : ", ").append(((IEntity) cachedObject).getId());
+            return builder.toString();
+
+        } else if (item instanceof Map) {
+            StringBuilder builder = new StringBuilder();
+            Map mapObject = (Map) item;
+            int i = 0;
+            for (Object mapEntry : mapObject.entrySet()) {
+                builder.append(builder.length() == 0 ? "" : ", ");
+                Object key = ((Entry) mapEntry).getKey();
+                Object value = ((Entry) mapEntry).getValue();
+                if (i > 2) {
+                    break;
+                }
+                builder.append(String.format("%s: [%s]", key, getShortRepresentationOfCachedValue(value, false)));
+                i++;
+            }
+            if (mapObject.size() > 2) {
+                builder.append(", ...");
+            }
+            return builder.toString();
+
+        } else if (returnToStringForSimpleObjects) {
+            return item.toString();
+
+        } else if (item instanceof BusinessEntity) {
+            return String.format("%s (%s)", ((BusinessEntity) item).getCode(), ((BusinessEntity) item).getId());
+
+        } else if (item instanceof IEntity) {
+            return ((IEntity) item).getId().toString();
+
+        } else if (item instanceof Long) {
+            return item.toString();
 
         } else {
-            builder.append(builder.length() == 0 ? "" : ", ").append(cachedObject);
+
+            Object code = null;
+            try {
+                code = MethodUtils.invokeExactMethod(item, "getCode");
+            } catch (Exception e) {
+                // Method does not exist - so just ignore
+            }
+            Object id = null;
+            try {
+                id = MethodUtils.invokeExactMethod(item, "getId");
+            } catch (Exception e) {
+                // Method does not exist - so just ignore
+            }
+
+            if (code != null && id != null) {
+                return String.format("%s (%s)", code, id);
+            } else if (code != null) {
+                return code.toString();
+            } else if (id != null) {
+                return id.toString();
+            } else {
+                return item.toString();
+            }
         }
 
-        return builder.toString();
     }
+
 }
