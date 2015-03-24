@@ -48,6 +48,7 @@ import org.meveo.model.billing.RatedTransactionStatusEnum;
 import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.billing.WalletOperationStatusEnum;
 import org.meveo.model.crm.Provider;
+import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.service.base.PersistenceService;
 
 @Stateless
@@ -107,8 +108,11 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 		BigDecimal wiretransferBillableBAAmountHT = BigDecimal.ZERO;
 
 		for (BillingAccount billingAccount : billingAccounts) {
-
-			switch (billingAccount.getPaymentMethod()) {
+		    PaymentMethodEnum paymentMethod= billingAccount.getPaymentMethod();
+		    if(paymentMethod==null){
+		        paymentMethod=billingAccount.getCustomerAccount().getPaymentMethod();
+		    }
+			switch (paymentMethod) {
 			case CHECK:
 				checkBANumber++;
 				break;
@@ -129,7 +133,11 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 		}
 
 		for (BillingAccount billingAccount : billingRun.getBillableBillingAccounts()) {
-			switch (billingAccount.getPaymentMethod()) {
+            PaymentMethodEnum paymentMethod= billingAccount.getPaymentMethod();
+            if(paymentMethod==null){
+                paymentMethod=billingAccount.getCustomerAccount().getPaymentMethod();
+            }
+            switch (paymentMethod) {
 			case CHECK:
 				checkBillableBANumber++;
 				checkBillableBAAmountHT = checkBillableBAAmountHT.add(billingAccount.getBrAmountWithoutTax());

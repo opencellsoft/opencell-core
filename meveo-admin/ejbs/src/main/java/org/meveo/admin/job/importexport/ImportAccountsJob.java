@@ -67,7 +67,6 @@ public class ImportAccountsJob implements Job {
 				jobExecutionService.persistResult(this, result, info, currentUser, getJobCategory());
 			} catch (Exception e) {
 				log.error(e.getMessage());
-				e.printStackTrace();
 			} finally {
 				running = false;
 			}

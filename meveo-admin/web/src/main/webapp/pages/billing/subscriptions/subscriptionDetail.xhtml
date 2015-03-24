@@ -987,7 +987,7 @@
 							update=":#{p:component('OS_usage_results_form')}"
 							oncomplete="dlg_usageChgPopup.hide()" />
 						<p:button value="#{messages['action.cancel']}"
-							onclick="dlg_usageChgPopup.hide();" />
+							onclick="dlg_usageChgPopup.hide();return false;" />
 					</p:panelGrid>
 				</hf:formPanel>
 			</p:outputPanel>

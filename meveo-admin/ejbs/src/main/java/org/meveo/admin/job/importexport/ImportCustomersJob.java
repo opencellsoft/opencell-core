@@ -79,7 +79,7 @@ public class ImportCustomersJob implements Job {
 	public Timer createTimer(ScheduleExpression scheduleExpression, TimerInfo infos) {
 		TimerConfig timerConfig = new TimerConfig();
 		timerConfig.setInfo(infos);
-		// timerConfig.setPersistent(false);
+		timerConfig.setPersistent(false);
 
 		return timerService.createCalendarTimer(scheduleExpression, timerConfig);
 	}

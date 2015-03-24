@@ -899,8 +899,8 @@ INSERT INTO CAT_DAY_IN_YEAR(ID, VERSION, MONTH, DAY, CREATOR_ID, CREATED) VALUES
 INSERT INTO CAT_DAY_IN_YEAR(ID, VERSION, MONTH, DAY, CREATOR_ID, CREATED) VALUES (1131, 1, 'DECEMBER', 31, 1, CURRENT_TIMESTAMP);
 
 /* Customer Category */
-INSERT INTO CRM_CUSTOMER_CATEGORY (id, disabled, version, created, code, description, provider_id, creator_id) VALUES (1, false, 0, CURRENT_TIMESTAMP, 'PROSPECT', 'Prospect', 1, 1);
-INSERT INTO CRM_CUSTOMER_CATEGORY (id, disabled, version, created, code, description, provider_id, creator_id) VALUES (2, false, 0, CURRENT_TIMESTAMP, 'CLIENT', 'Client', 1, 1);
+INSERT INTO CRM_CUSTOMER_CATEGORY (id, disabled, version, created, code, description, exonerated_from_taxes,provider_id, creator_id) VALUES (1, false, 0, CURRENT_TIMESTAMP, 'PROSPECT', 'Prospect',false, 1, 1);
+INSERT INTO CRM_CUSTOMER_CATEGORY (id, disabled, version, created, code, description, exonerated_from_taxes,provider_id, creator_id) VALUES (2, false, 0, CURRENT_TIMESTAMP, 'CLIENT', 'Client',false, 1, 1);
 
 /* Customer Brand */
 INSERT INTO CRM_CUSTOMER_BRAND (id, disabled, version, created, code, description, provider_id, creator_id) VALUES (1, false, 0, CURRENT_TIMESTAMP, 'DEFAULT', 'Demo Product and Services', 1, 1);

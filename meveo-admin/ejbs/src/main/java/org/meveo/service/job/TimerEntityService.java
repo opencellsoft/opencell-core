@@ -81,16 +81,17 @@ public class TimerEntityService extends PersistenceService<TimerEntity> {
 	public static void registerJob(Job job) {
 		synchronized (jobEntries) {
 			if (jobEntries.containsKey(job.getJobCategory())) {
-				if (!jobEntries.containsKey(job.getClass().getSimpleName())) {
+				Map<String, String> jobs = jobEntries.get(job.getJobCategory());
+				if (!jobs.containsKey(job.getClass().getSimpleName())) {
 					log.debug("registerJob " + job.getClass().getSimpleName() + " into existing category "
 							+ job.getJobCategory());
-					Map<String, String> jobs = jobEntries.get(job.getJobCategory());
-					jobs.put(job.getClass().getSimpleName(), "java:global/meveo/"+job.getClass().getSimpleName());
+					jobs.put(job.getClass().getSimpleName(), "java:global/meveo/" + job.getClass().getSimpleName());
 				}
 			} else {
-				log.debug("registerJob " + job.getClass().getSimpleName() + " into new category " + job.getJobCategory());
+				log.debug("registerJob " + job.getClass().getSimpleName() + " into new category "
+						+ job.getJobCategory());
 				HashMap<String, String> jobs = new HashMap<String, String>();
-				jobs.put(job.getClass().getSimpleName(), "java:global/meveo/"+job.getClass().getSimpleName());
+				jobs.put(job.getClass().getSimpleName(), "java:global/meveo/" + job.getClass().getSimpleName());
 				jobEntries.put(job.getJobCategory(), jobs);
 			}
 			job.getJobExecutionService().getTimerEntityService().startTimers(job);
@@ -109,35 +110,41 @@ public class TimerEntityService extends PersistenceService<TimerEntity> {
 				.setParameter("jobName", job.getClass().getSimpleName()).getResultList();
 
 		if (timerEntities != null) {
-			log.debug("Starting " + timerEntities.size() + " timers for " + job.getClass().getSimpleName());
-
+			int started=0;
 			for (TimerEntity timerEntity : timerEntities) {
-				jobTimers.put(timerEntity.getId(),
+			    if(timerEntity.getTimerInfo().isActive()){
+			        jobTimers.put(timerEntity.getId(),
 						job.createTimer(timerEntity.getScheduleExpression(), timerEntity.getTimerInfo()));
+			        started++;
+			    }
 			}
+            log.debug("Found {} timers for {}, started {}",timerEntities.size(),job.getClass().getSimpleName(),started);
 		}
 	}
 
-	
 	public void create(TimerEntity entity) throws BusinessException {
 		InitialContext ic;
 		try {
 			ic = new InitialContext();
 			if (jobEntries.containsKey(entity.getJobCategoryEnum())) {
+                entity.getTimerInfo().setJobName(entity.getJobName());
+                if (getCurrentUser() == null) {
+                    throw new BusinessException("User must be logged in to perform this action.");
+                }
+                entity.getTimerInfo().setUserId(getCurrentUser().getId());
+                if (entity.getFollowingTimer() != null) {
+                    entity.getTimerInfo().setFollowingTimerId(entity.getFollowingTimer().getId());
+                }
+                super.create(entity);
 				HashMap<String, String> jobs = jobEntries.get(entity.getJobCategoryEnum());
-				if (jobs.containsKey(entity.getJobName())) {
+				if (jobs.containsKey(entity.getJobName()) && entity.getTimerInfo().isActive()) {
+				    log.debug("job created active, we schedule it and store it with id {}",entity.getId());
 					Job job = (Job) ic.lookup(jobs.get(entity.getJobName()));
-					jobTimers.put(entity.getId(), job.createTimer(entity.getScheduleExpression(), entity.getTimerInfo()));
+					jobTimers.put(entity.getId(),
+							job.createTimer(entity.getScheduleExpression(), entity.getTimerInfo()));
+				} else {
+				    log.debug("job created inactive, we do not schedule it");
 				}
-				entity.getTimerInfo().setJobName(entity.getJobName());
-				if (getCurrentUser() == null) {
-					throw new BusinessException("User must be logged in to perform this action.");
-				}
-				entity.getTimerInfo().setUserId(getCurrentUser().getId());
-				if (entity.getFollowingTimer() != null) {
-					entity.getTimerInfo().setFollowingTimerId(entity.getFollowingTimer().getId());
-				}
-				super.create(entity);
 			}
 		} catch (NamingException e) {
 			throw new BusinessException(e);
@@ -145,23 +152,37 @@ public class TimerEntityService extends PersistenceService<TimerEntity> {
 	}
 
 	public TimerEntity update(TimerEntity entity) {
-		log.info("update " + entity.getJobName());
+		log.info("update timer {} , id=", entity.getJobName(),entity.getId());
 		InitialContext ic;
 		try {
 			ic = new InitialContext();
 			if (jobEntries.containsKey(entity.getJobCategoryEnum())) {
 				HashMap<String, String> jobs = jobEntries.get(entity.getJobCategoryEnum());
 				if (jobs.containsKey(entity.getJobName())) {
-					Job job = (Job) ic.lookup(jobs.get(entity.getJobName()));
-					jobTimers.put(entity.getId(), job.createTimer(entity.getScheduleExpression(), entity.getTimerInfo()));
+                    if (entity.getId() == null) {
+                        log.info("updating timer entity with null id, something is wrong");
+                    } else if (jobTimers.containsKey(entity.getId())) {
+                        try {
+                            Timer timer = jobTimers.get(entity.getId());
+                            timer.cancel();
+                            log.info("cancelled timer {} , id=", entity.getJobName(),entity.getId());
+                        } catch (Exception ex) {
+                            log.info("cannot cancel timer {}", ex.getMessage());
+                        }
+                    }
+                    if (entity.getFollowingTimer() != null) {
+                        entity.getTimerInfo().setFollowingTimerId(entity.getFollowingTimer().getId());
+                    }
+                    super.update(entity);
+				    if(entity.getTimerInfo().isActive()){
+    				    Job job = (Job) ic.lookup(jobs.get(entity.getJobName()));
+    				    log.info("Scheduling job {} : timer {}",job,entity.getId());
+    					jobTimers.put(entity.getId(),
+    							job.createTimer(entity.getScheduleExpression(), entity.getTimerInfo()));
+				    }
+				} else {
+				    throw new RuntimeException("cannot find job "+entity.getJobName());
 				}
-				Timer timer = jobTimers.get(entity.getId());
-				log.info("Cancelling existing " + timer.getTimeRemaining() / 1000 + " sec");
-				timer.cancel();
-				if (entity.getFollowingTimer() != null) {
-					entity.getTimerInfo().setFollowingTimerId(entity.getFollowingTimer().getId());
-				}
-				return super.update(entity);
 			}
 		} catch (NamingException e) {
 			e.printStackTrace();
@@ -171,10 +192,20 @@ public class TimerEntityService extends PersistenceService<TimerEntity> {
 	}
 
 	public void remove(TimerEntity entity) {// FIXME: throws BusinessException{
-		Timer timer = jobTimers.get(entity.getId());
-		timer.cancel();
-		jobTimers.remove(entity.getId());
-
+        log.info("remove timer {} , id=", entity.getJobName(),entity.getId());
+	    if (entity.getId() == null) {
+            log.info("removing timer entity with null id, something is wrong");
+        } else if (jobTimers.containsKey(entity.getId())) {
+            try {
+                Timer timer = jobTimers.get(entity.getId());
+                timer.cancel();
+            } catch (Exception ex) {
+                log.info("cannot cancel timer " + ex.getMessage());
+            }
+            jobTimers.remove(entity.getId());
+        } else {
+            log.info("timer not found, cannot remove it");
+        }
 		super.remove(entity);
 	}
 
@@ -186,9 +217,9 @@ public class TimerEntityService extends PersistenceService<TimerEntity> {
 			if (jobEntries.containsKey(entity.getJobCategoryEnum())) {
 				HashMap<String, String> jobs = jobEntries.get(entity.getJobCategoryEnum());
 				if (entity.getTimerInfo().isActive() && jobs.containsKey(entity.getJobName())) {
-	
+
 					Job job = (Job) ic.lookup(jobs.get(entity.getJobName()));
-	
+
 					User currentUser = userService.findById(entity.getTimerInfo().getUserId());
 					job.execute(entity.getTimerInfo() != null ? entity.getTimerInfo() : null, currentUser);
 				}
@@ -207,7 +238,7 @@ public class TimerEntityService extends PersistenceService<TimerEntity> {
 			if (entity.getTimerInfo() != null && currentUser.getProvider().getId() != getCurrentProvider().getId()) {
 				throw new BusinessException("Not authorized to execute this job");
 			}
-	
+
 			if (jobEntries.containsKey(entity.getJobCategoryEnum())) {
 				HashMap<String, String> jobs = jobEntries.get(entity.getJobCategoryEnum());
 				if (jobs.containsKey(entity.getJobName())) {
@@ -218,7 +249,29 @@ public class TimerEntityService extends PersistenceService<TimerEntity> {
 				throw new BusinessException("cannot find job category " + entity.getJobCategoryEnum());
 			}
 		} catch (NamingException e) {
-			e.printStackTrace();
+			log.error(e.getMessage());
+		}
+	}
+
+	public void executeViaJob(JobCategoryEnum jobCategory, String jobName, User currentUser) throws Exception {
+		log.info("execute job={} via api", jobName);
+		InitialContext ic;
+		try {
+			ic = new InitialContext();
+
+			if (jobEntries.containsKey(jobCategory)) {
+				HashMap<String, String> jobs = jobEntries.get(jobCategory);
+				if (jobs.containsKey(jobName)) {
+					Job job = (Job) ic.lookup(jobs.get(jobName));
+					job.execute(null, getCurrentUser());
+				} else {
+					throw new Exception("cannot find job name " + jobName);
+				}
+			} else {
+				throw new Exception("cannot find job category " + jobCategory);
+			}
+		} catch (NamingException e) {
+			log.error(e.getMessage());
 		}
 	}
 

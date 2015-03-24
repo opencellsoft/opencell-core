@@ -52,6 +52,7 @@ public class ExportAccountsJob implements Job {
 
 	@Override
 	@Asynchronous
+    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
 	public void execute(TimerInfo info, User currentUser) {
 		log.debug("execute expAccounts, info={}, currentUser={}",info,currentUser);
 		JobExecutionResultImpl result = new JobExecutionResultImpl();
@@ -72,7 +73,7 @@ public class ExportAccountsJob implements Job {
 				running = false;
 			}
 		}
-		log.debug("end expAccounts rerating");
+		log.debug("end expAccounts");
 	}
 
 	@Override

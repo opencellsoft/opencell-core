@@ -30,6 +30,7 @@ import org.meveo.model.billing.TaxInvoiceAgregate;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.payments.CustomerAccount;
+import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.billing.impl.BillingRunService;
 import org.meveo.service.billing.impl.InvoiceAgregateService;
@@ -131,7 +132,11 @@ public class InvoiceApi extends BaseApi {
 			Date invoiceDate = new Date();
 			invoice.setInvoiceDate(invoiceDate);
 			invoice.setDueDate(invoiceDTO.getDueDate());
-			invoice.setPaymentMethod(billingAccount.getPaymentMethod());
+            PaymentMethodEnum paymentMethod= billingAccount.getPaymentMethod();
+            if(paymentMethod==null){
+                paymentMethod=billingAccount.getCustomerAccount().getPaymentMethod();
+            }
+			invoice.setPaymentMethod(paymentMethod);
 			invoice.setAmountTax(invoiceDTO.getAmountTax());
 			invoice.setAmountWithoutTax(invoiceDTO.getAmountWithoutTax());
 			invoice.setAmountWithTax(invoiceDTO.getAmountWithTax());

@@ -16,8 +16,6 @@
         </services>
         <accesses>
             <access>
-                <startDate>22/12/2014</startDate>
-                <endDate>29/12/2014</endDate>
                 <accessUserId>MSISDN1</accessUserId>
             </access>
             <access>
