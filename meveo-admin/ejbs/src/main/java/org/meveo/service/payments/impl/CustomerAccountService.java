@@ -114,6 +114,7 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
 			}
 			queryBuilder.endOrClause();
 		}
+		log.debug("query={}",queryBuilder.getSqlString());
 		Query query = queryBuilder.getQuery(getEntityManager());
 		balance = (BigDecimal) query.getSingleResult();
 		return balance;
@@ -121,8 +122,8 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
 
 	private BigDecimal computeBalance(CustomerAccount customerAccount, Date to, boolean isDue,boolean dunningExclusion,
 			MatchingStatusEnum... status) throws BusinessException {
-		log.info("computeBalance  customerAccount:" + (customerAccount == null ? "null" : customerAccount.getCode())
-				+ " toDate:" + to);
+		log.info("computeBalance  customerAccount:{}, toDate:{}, isDue:{}, dunningExclusion:{}",(customerAccount == null ? "null" : customerAccount.getCode())
+				,to,isDue,dunningExclusion);
 		if (customerAccount == null) {
 			log.warn("Error when customerAccount is null!");
 			throw new BusinessException("customerAccount is null");
@@ -165,7 +166,7 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
 
 	public BigDecimal customerAccountBalanceExigibleWithoutLitigation(Long customerAccountId,
 			String customerAccountCode, Date to) throws BusinessException {
-		log.info("customerAccountBalanceExigibleWithoutLitigation with id:#0,code:#1,toDate:#2", customerAccountId,
+		log.info("customerAccountBalanceExigibleWithoutLitigation with id:{},code:{},toDate:{}", customerAccountId,
 				customerAccountCode, to);
 		return customerAccountBalanceExigibleWithoutLitigation(
 				findCustomerAccount(customerAccountId, customerAccountCode), to);

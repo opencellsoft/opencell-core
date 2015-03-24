@@ -103,7 +103,7 @@ public class AccountOperation extends AuditableEntity {
 	
 	
 	@Column(name = "EXCLUDED_FROM_DUNNING")
-	private Boolean excludedFromDunning;
+	private boolean excludedFromDunning;
 	
 
 	public Date getDueDate() {
@@ -251,11 +251,11 @@ public class AccountOperation extends AuditableEntity {
 		return matchingAmounts;
 	}
 
-	public Boolean getExcludedFromDunning() {
+	public boolean getExcludedFromDunning() {
 		return excludedFromDunning;
 	}
 
-	public void setExcludedFromDunning(Boolean excludedFromDunning) {
+	public void setExcludedFromDunning(boolean excludedFromDunning) {
 		this.excludedFromDunning = excludedFromDunning;
 	}
 	

@@ -238,7 +238,7 @@ public class AccountOperationBean extends BaseBean<AccountOperation> {
 			           accountOperationService.update(accountop); }   
 			   }
 	}
-	public String dunningInclusionExclusion(long customerAccountId, Boolean exclude) {
+	public String dunningInclusionExclusion(long customerAccountId, boolean exclude) {
 		try {
 			if (getSelectedEntities() == null
 					|| getSelectedEntities().isEmpty()) {
@@ -249,7 +249,7 @@ public class AccountOperationBean extends BaseBean<AccountOperation> {
 						+ getSelectedEntities().size());
 				for (IEntity operation : getSelectedEntities()) {
 					   AccountOperation accountOperation = (AccountOperation) operation;
-					   if(!accountOperation.getExcludedFromDunning().equals(exclude)){
+					   if(!accountOperation.getExcludedFromDunning()==exclude){
 					   if (accountOperation instanceof RecordedInvoice) { 
 						 accountOperation.setExcludedFromDunning(exclude);
 					    accountOperationService.update(accountOperation);

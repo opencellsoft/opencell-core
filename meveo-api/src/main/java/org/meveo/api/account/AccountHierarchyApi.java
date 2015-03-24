@@ -370,6 +370,7 @@ public class AccountHierarchyApi extends BaseApi {
 				customerAccount.setPaymentMethod(PaymentMethodEnum.getValue(caPaymentMethod));
 				customerAccount.setCreditCategory(CreditCategoryEnum.getValue(creditCategory));
 				customerAccount.setTradingCurrency(tradingCurrency);
+				customerAccount.setDateDunningLevel(new Date());
 				customerAccountService.create(customerAccount, currentUser, provider);
 
 				String billingCycleCode = enleverAccent(postData.getBillingCycleCode());

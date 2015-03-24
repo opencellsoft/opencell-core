@@ -131,6 +131,7 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
 			CustomerAccount customerAccount, MatchingStatusEnum o,boolean dunningExclusion) {
 		List<RecordedInvoice> invoices = new ArrayList<RecordedInvoice>();
 		try {
+		    //FIXME Mbarek use NamedQuery
 			invoices = (List<RecordedInvoice>) getEntityManager()
 					.createQuery(
 							"from "

@@ -123,6 +123,11 @@ public class UpgradeDunningLevel {
 							+ ", dunningplan:"
 							+ dunningPlan.getCode());
 					return upgradeDunningReturn;
+				} else {
+				    logger.info("UpgradeDunningLevelStep dunningPlanTransition found:"+dunningPlanTransition.getId());
+				}
+				if(customerAccount.getDateDunningLevel()==null && customerAccount.getAuditable()!=null){
+				    customerAccount.setDateDunningLevel(customerAccount.getAuditable().getCreated());
 				}
 				if (DateUtils.addDaysToDate(
 						customerAccount.getDateDunningLevel(),
@@ -130,7 +135,7 @@ public class UpgradeDunningLevel {
 						new Date())) {
 					List<RecordedInvoice> recordedInvoices = recordedInvoiceService
 							.getRecordedInvoices(customerAccount,
-									MatchingStatusEnum.O,true);
+									MatchingStatusEnum.O,false);
 					if (recordedInvoices != null && !recordedInvoices.isEmpty()) {
 						RecordedInvoice recordedInvoice = recordedInvoices
 								.get(0);

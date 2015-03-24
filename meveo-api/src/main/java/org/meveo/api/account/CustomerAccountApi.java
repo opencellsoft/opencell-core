@@ -82,7 +82,7 @@ public class CustomerAccountApi extends AccountApi {
 
 			CustomerAccount customerAccount = new CustomerAccount();
 			populate(postData, customerAccount, currentUser, AccountLevelEnum.CA);
-
+			customerAccount.setDateDunningLevel(new Date());
 			customerAccount.setCustomer(customer);
 			customerAccount.setTradingCurrency(tradingCurrency);
 			try {

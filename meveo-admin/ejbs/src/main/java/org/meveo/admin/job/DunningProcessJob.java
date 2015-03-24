@@ -135,6 +135,7 @@ public class DunningProcessJob implements Job {
 						} catch (Exception e) {
 							errorCustomerAccounts++;
 							log.error(e.getMessage());
+							e.printStackTrace();
 						}
 					}
 
