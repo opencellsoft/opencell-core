@@ -41,6 +41,7 @@ import org.meveo.model.Auditable;
 import org.meveo.model.EnableEntity;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.IEntity;
+import org.meveo.model.ObservableEntity;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.crm.CustomFieldInstance;
 
@@ -48,6 +49,7 @@ import org.meveo.model.crm.CustomFieldInstance;
  * Access linked to Subscription and Zone.
  */
 @Entity
+@ObservableEntity
 @Table(name = "MEDINA_ACCESS", uniqueConstraints = { @UniqueConstraint(columnNames = {
 		"ACCES_USER_ID", "SUBSCRIPTION_ID" }) })
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "MEDINA_ACCESS_SEQ")

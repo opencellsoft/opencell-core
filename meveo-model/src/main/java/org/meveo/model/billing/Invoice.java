@@ -34,10 +34,12 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import org.meveo.model.AuditableEntity;
+import org.meveo.model.ObservableEntity;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.payments.RecordedInvoice;
 
 @Entity
+@ObservableEntity
 @Table(name = "BILLING_INVOICE")
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_INVOICE_SEQ")
 public class Invoice extends AuditableEntity {

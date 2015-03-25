@@ -46,6 +46,7 @@ import org.meveo.model.BaseEntity;
 import org.meveo.model.EnableEntity;
 import org.meveo.model.IEntity;
 import org.meveo.model.IdentifiableEnum;
+import org.meveo.model.ObservableEntity;
 import org.meveo.model.UniqueEntity;
 import org.meveo.model.admin.User;
 import org.meveo.model.crm.Provider;
@@ -246,7 +247,9 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
             }
             checkProvider(e);
             e = getEntityManager().merge(e);
-            entityDisabledEventProducer.fire(e);
+            if (e.getClass().isAnnotationPresent(ObservableEntity.class)) {
+                entityDisabledEventProducer.fire(e);
+            }
             log.debug("end of disable {} entity (id={}).", e.getClass().getSimpleName(), e.getId());
         }
         return e;
@@ -273,7 +276,9 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
             }
             checkProvider(e);
             e = getEntityManager().merge(e);
-            entityEnabledEventProducer.fire(e);
+            if (e.getClass().isAnnotationPresent(ObservableEntity.class)) {
+                entityEnabledEventProducer.fire(e);
+            }
             log.debug("end of enable {} entity (id={}).", e.getClass().getSimpleName(), e.getId());
         }
         return e;
@@ -284,7 +289,9 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
         log.debug("start of remove {} entity (id={}) ..", getEntityClass().getSimpleName(), e.getId());
         checkProvider(e);
         getEntityManager().remove(e);
-        entityRemovedEventProducer.fire(e);
+        if (e.getClass().isAnnotationPresent(ObservableEntity.class)) {
+            entityRemovedEventProducer.fire(e);
+        }
         // getEntityManager().flush();
         log.debug("end of remove {} entity (id={}).", getEntityClass().getSimpleName(), e.getId());
     }
@@ -328,7 +335,9 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
         }
         checkProvider(e);
         e = getEntityManager().merge(e);
-        entityUpdatedEventProducer.fire(e);
+        if (e.getClass().isAnnotationPresent(ObservableEntity.class)) {
+            entityUpdatedEventProducer.fire(e);
+        }
         log.debug("end of update {} entity (id={}).", e.getClass().getSimpleName(), e.getId());
         return e;
     }
@@ -359,7 +368,9 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 		}
 
 		getEntityManager().persist(e);
-		entityCreatedEventProducer.fire(e);
+        if (e.getClass().isAnnotationPresent(ObservableEntity.class)) {
+            entityCreatedEventProducer.fire(e);
+        }
 		log.debug("end of create {}. entity id={}.", e.getClass().getSimpleName(), e.getId());
 
 	}
