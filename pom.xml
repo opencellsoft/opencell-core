@@ -28,7 +28,8 @@
 		<!-- Define the version of JBoss' Java EE 6 APIs and Tools we want to import. -->
 		<jboss.bom.version>1.0.0.Final</jboss.bom.version>
 		<manaty.seam.version>3.1.0.Final</manaty.seam.version>
-
+		
+		<version.org.infinispan>5.1.7.Final</version.org.infinispan>
 		<version.jboss.bom>1.0.7.Final</version.jboss.bom>
 		<version.shrinkwrap.resolvers>2.1.1</version.shrinkwrap.resolvers>
 		<version.resteasy>3.0.10.Final</version.resteasy>
@@ -124,6 +125,11 @@
 				<artifactId>meveo-model</artifactId>
 				<version>${project.version}</version>
 			</dependency>
+			<dependency>
+				<groupId>org.infinispan</groupId>
+				<artifactId>infinispan-core</artifactId>
+				<version>${version.org.infinispan}</version>		
+			</dependency>	
 		</dependencies>
 	</dependencyManagement>
 

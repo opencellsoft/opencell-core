@@ -1,6 +1,8 @@
 package org.meveo.model.notification;
 
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 import javax.persistence.CollectionTable;
@@ -16,111 +18,128 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 @Entity
-@Table(name="ADM_NOTIF_WEBHOOKS")
-public class WebHook extends Notification{
-	
-	private static final long serialVersionUID = -2527123286118840886L;
+@Table(name = "ADM_NOTIF_WEBHOOKS")
+public class WebHook extends Notification {
 
-	@Column(name="HTTP_HOST",length=255,nullable=false)
-	@NotNull
-	@Size(max=255)
-	private String host;
-	
-	@Column(name="HTTP_PORT")
-	@NotNull
-	@Max(65535)
-	private int port;
-	
-	@Column(name="HTTP_PAGE",length=255)
-	@NotNull
-	@Size(max=255)
-	private String page;
-	
-	@Column(name="HTTP_METHOD",nullable=false)
-	@NotNull
-	@Enumerated(EnumType.STRING)
-	private WebHookMethodEnum httpMethod;
-	
+    private static final long serialVersionUID = -2527123286118840886L;
 
-	@Column(name="USERNAME",length=255)
-	@Size(max=255)
-	private String username;
-	
+    @Column(name = "HTTP_HOST", length = 255, nullable = false)
+    @NotNull
+    @Size(max = 255)
+    private String host;
 
-	@Column(name="PASSWORD",length=255)
-	@Size(max=255)
-	private String password;
+    @Column(name = "HTTP_PORT")
+    @NotNull
+    @Max(65535)
+    private int port;
 
-	@ElementCollection(fetch=FetchType.EAGER)
-	@CollectionTable(name="ADM_NOTIF_WEBHOOK_HEADER")
-	private Map<String,String> headers=new HashMap<String,String>();
+    @Column(name = "HTTP_PAGE", length = 255)
+    @NotNull
+    @Size(max = 255)
+    private String page;
 
-	@ElementCollection(fetch=FetchType.EAGER)
-	@CollectionTable(name="ADM_NOTIF_WEBHOOK_PARAM")
-	private Map<String,String> params=new HashMap<String,String>();
+    @Column(name = "HTTP_METHOD", nullable = false)
+    @NotNull
+    @Enumerated(EnumType.STRING)
+    private WebHookMethodEnum httpMethod;
 
-	public String getHost() {
-		return host;
-	}
+    @Column(name = "USERNAME", length = 255)
+    @Size(max = 255)
+    private String username;
 
-	public void setHost(String host) {
-		this.host = host;
-	}
+    @Column(name = "PASSWORD", length = 255)
+    @Size(max = 255)
+    private String password;
 
-	public int getPort() {
-		return port;
-	}
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "ADM_NOTIF_WEBHOOK_HEADER")
+    private Map<String, String> headers = new HashMap<String, String>();
 
-	public void setPort(int port) {
-		this.port = port;
-	}
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "ADM_NOTIF_WEBHOOK_PARAM")
+    private Map<String, String> params = new HashMap<String, String>();
 
-	public String getPage() {
-		return page;
-	}
+    public String getHost() {
+        return host;
+    }
 
-	public void setPage(String page) {
-		this.page = page;
-	}
+    public void setHost(String host) {
+        this.host = host;
+    }
 
-	public WebHookMethodEnum getHttpMethod() {
-		return httpMethod;
-	}
+    public int getPort() {
+        return port;
+    }
 
-	public void setHttpMethod(WebHookMethodEnum httpMethod) {
-		this.httpMethod = httpMethod;
-	}
+    public void setPort(int port) {
+        this.port = port;
+    }
 
-	public String getUsername() {
-		return username;
-	}
+    public String getPage() {
+        return page;
+    }
 
-	public void setUsername(String username) {
-		this.username = username;
-	}
+    public void setPage(String page) {
+        this.page = page;
+    }
 
-	public String getPassword() {
-		return password;
-	}
+    public WebHookMethodEnum getHttpMethod() {
+        return httpMethod;
+    }
 
-	public void setPassword(String password) {
-		this.password = password;
-	}
+    public void setHttpMethod(WebHookMethodEnum httpMethod) {
+        this.httpMethod = httpMethod;
+    }
 
-	public Map<String, String> getHeaders() {
-		return headers;
-	}
+    public String getUsername() {
+        return username;
+    }
 
-	public void setHeaders(Map<String, String> headers) {
-		this.headers = headers;
-	}
+    public void setUsername(String username) {
+        this.username = username;
+    }
 
-	public Map<String, String> getParams() {
-		return params;
-	}
+    public String getPassword() {
+        return password;
+    }
 
-	public void setParams(Map<String, String> params) {
-		this.params = params;
-	}
-	
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public Map<String, String> getHeaders() {
+        return headers;
+    }
+
+    public void setHeaders(Map<String, String> headers) {
+        this.headers = headers;
+    }
+
+    public Map<String, String> getParams() {
+        return params;
+    }
+
+    public void setParams(Map<String, String> params) {
+        this.params = params;
+    }
+
+    @Override
+    public String toString() {
+        final int maxLen = 10;
+        return String.format("WebHook [host=%s, port=%s, page=%s, httpMethod=%s, username=%s, password=%s, headers=%s, params=%s, notification=%s]", host, port, page, httpMethod,
+            username, password, headers != null ? toString(headers.entrySet(), maxLen) : null, params != null ? toString(params.entrySet(), maxLen) : null, super.toString());
+    }
+
+    private String toString(Collection<?> collection, int maxLen) {
+        StringBuilder builder = new StringBuilder();
+        builder.append("[");
+        int i = 0;
+        for (Iterator<?> iterator = collection.iterator(); iterator.hasNext() && i < maxLen; i++) {
+            if (i > 0)
+                builder.append(", ");
+            builder.append(iterator.next());
+        }
+        builder.append("]");
+        return builder.toString();
+    }
 }

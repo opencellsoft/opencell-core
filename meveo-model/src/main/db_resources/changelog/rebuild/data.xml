@@ -7578,7 +7578,7 @@
 			<column name="created" valueDate="2015-03-19 00:04:19.089" />
 			<column name="code" value="PROSPECT" />
 			<column name="description" value="Prospect" />
-			<column name="exonerated_from_taxes" />
+			<column name="exonerated_from_taxes" valueBoolean="false"  />
 			<column name="provider_id" valueNumeric="1" />
 		</insert>
 		<insert tableName="crm_customer_category">
@@ -7588,7 +7588,7 @@
 			<column name="created" valueDate="2015-03-19 00:04:19.11" />
 			<column name="code" value="CLIENT" />
 			<column name="description" value="Client" />
-			<column name="exonerated_from_taxes" />
+			<column name="exonerated_from_taxes" valueBoolean="false" />
 			<column name="provider_id" valueNumeric="1" />
 		</insert>
 	</changeSet>

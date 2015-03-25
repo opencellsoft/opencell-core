@@ -105,4 +105,11 @@ public class Notification extends BusinessEntity {
     public void setCounterInstance(CounterInstance counterInstance) {
         this.counterInstance = counterInstance;
     }
+
+    @Override
+    public String toString() {
+        return String.format("Notification [%s, classNameFilter=%s, eventTypeFilter=%s, elFilter=%s, elAction=%s, counterTemplate=%s, counterInstance=%s]", super.toString(),
+            classNameFilter, eventTypeFilter, elFilter, elAction, counterTemplate != null ? counterTemplate.getId() : null, counterInstance != null ? counterInstance.getId()
+                    : null);
+    }
 }

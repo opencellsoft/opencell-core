@@ -281,4 +281,10 @@ public class Access extends EnableEntity implements ICustomFieldEntity{
 
         return false;
     }
+
+    @Override
+    public String toString() {
+        return String.format("Access [%s, accessUserId=%s, startDate=%s, endDate=%s, subscription=%s]", super.toString(), accessUserId, startDate, endDate,
+            subscription != null ? subscription.getId() : null);
+    }
 }

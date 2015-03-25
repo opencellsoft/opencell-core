@@ -293,16 +293,18 @@ public class PricePlanMatrix extends BusinessEntity implements Comparable<PriceP
         this.validityCalendar = validityCalendar;
     }
 
+    @Override
     public String toString() {
-		return eventCode + "," + startSubscriptionDate + "," + endSubscriptionDate + ","
-				+ startRatingDate + "," + endRatingDate + "," + minSubscriptionAgeInMonth + ","
-				+ maxSubscriptionAgeInMonth + "," + criteria1Value + "," + criteria2Value + ","
-				+ criteria3Value + "," + amountWithoutTax + "," + amountWithTax + ","
-				+ tradingCurrency + "," + "," + tradingCountry + "," + "," + priority + "," + ","
-				+ seller+", "+ validityCalendar;
-	}
+        return String
+            .format(
+                "PricePlanMatrix [%s, eventCode=%s, offerTemplate=%s, startSubscriptionDate=%s, endSubscriptionDate=%s, startRatingDate=%s, endRatingDate=%s, minQuantity=%s, maxQuantity=%s, minSubscriptionAgeInMonth=%s, maxSubscriptionAgeInMonth=%s, criteria1Value=%s, criteria2Value=%s, criteria3Value=%s, criteriaEL=%s, amountWithoutTax=%s, amountWithTax=%s, tradingCurrency=%s, tradingCountry=%s, priority=%s, seller=%s, validityCalendar=%s]",
+                super.toString(), eventCode, offerTemplate != null ? offerTemplate.getId() : null, startSubscriptionDate, endSubscriptionDate, startRatingDate, endRatingDate,
+                minQuantity, maxQuantity, minSubscriptionAgeInMonth, maxSubscriptionAgeInMonth, criteria1Value, criteria2Value, criteria3Value, criteriaEL, amountWithoutTax,
+                amountWithTax, tradingCurrency != null ? tradingCurrency.getId() : null, tradingCountry != null ? tradingCountry.getId() : null, priority,
+                seller != null ? seller.getId() : null, validityCalendar != null ? validityCalendar.getId() : null);
+    }
 
-	@Override
+    @Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
