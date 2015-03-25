@@ -365,10 +365,8 @@
 													<h:outputText
 														value="#{messages['walletOperation.quantity']}" />
 												</f:facet>
-												<c:set var="converter4"
-													value="#{getConverter.forType(e[quantity], '4digits')}"></c:set>
 												<h:outputText value="#{e.quantity}"
-													converter="#{converter4}" />
+													converter="bigDecimal4DigitsConverter" />
 											</p:column>
 
 											<p:column>
@@ -376,10 +374,9 @@
 													<h:outputText
 														value="#{messages['walletOperation.amountWithoutTax']}" />
 												</f:facet>
-												<c:set var="converter5"
-													value="#{getConverter.forType(e[amountWithoutTax], '4digits')}"></c:set>
+												
 												<h:outputText value="#{e.amountWithoutTax}"
-													converter="#{converter5}" />
+													converter="bigDecimal12DigitsConverter" />
 											</p:column>
 
 											<p:column>
@@ -387,10 +384,9 @@
 													<h:outputText
 														value="#{messages['walletOperation.amountWithTax']}" />
 												</f:facet>
-												<c:set var="converter6"
-													value="#{getConverter.forType(e[amountWithTax], '4digits')}"></c:set>
+												
 												<h:outputText value="#{e.amountWithTax}"
-													converter="#{converter6}" />
+													converter="bigDecimal12DigitsConverter" />
 											</p:column>
 											<p:column filterBy="#{e.status}"
 												headerText="#{messages['walletOperation.status']}"
