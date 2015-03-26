@@ -8,6 +8,7 @@ import java.util.Map;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
+import javax.ejb.Asynchronous;
 import javax.ejb.EJB;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
@@ -269,6 +270,7 @@ public class WalletCacheContainerProvider {
      * 
      * @param cacheName Name of cache to refresh
      */
+    @Asynchronous
     public void refreshCache(String cacheName) {
 
         if (cacheName.equals(balanceCache.getName()) || cacheName.equals(reservedBalanceCache.getName()) || cacheName.equals(usageChargeInstanceWalletCache.getName())) {

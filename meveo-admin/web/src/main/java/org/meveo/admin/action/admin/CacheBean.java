@@ -31,6 +31,8 @@ import javax.inject.Named;
 
 import org.apache.commons.lang3.reflect.MethodUtils;
 import org.infinispan.api.BasicCache;
+import org.jboss.seam.international.status.Messages;
+import org.jboss.seam.international.status.builder.BundleKey;
 import org.jboss.solder.servlet.http.RequestParam;
 import org.meveo.cache.CdrEdrProcessingCacheContainerProvider;
 import org.meveo.cache.NotificationCacheContainerProvider;
@@ -63,6 +65,9 @@ public class CacheBean implements Serializable {
     /** Logger. */
     @Inject
     protected org.slf4j.Logger log;
+
+    @Inject
+    protected Messages messages;
 
     /**
      * Request parameter. Name of a cache to show details of
@@ -156,6 +161,7 @@ public class CacheBean implements Serializable {
         cdrEdrProcessingCacheContainerProvider.refreshCache(cacheName);
         notificationCacheContainerProvider.refreshCache(cacheName);
         ratingCacheContainerProvider.refreshCache(cacheName);
+        messages.info(new BundleKey("messages", "cache.refreshInitiated"));
     }
 
     @SuppressWarnings("rawtypes")
