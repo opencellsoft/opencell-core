@@ -280,10 +280,10 @@
 			</activation>
 			<properties>
 				<!-- Properties for liquibase plugin -->
-				<db.driver>org.postgresql.Driver </db.driver>
-				<db.url>jdbc:postgresql://localhost/meveo</db.url>
-				<db.username>meveo</db.username>
-				<db.password>meveo</db.password>
+				<db.driver>org.postgresql.Driver</db.driver>
+				<db.url>jdbc:postgresql://localhost/integrmeveo</db.url>
+				<db.username>integrmeveo</db.username>
+				<db.password>integrmeveo</db.password>
 			</properties>
 			<dependencies>
 				<!-- Dependency for liquibase plugin -->
