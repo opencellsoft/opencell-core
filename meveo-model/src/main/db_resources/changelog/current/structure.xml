@@ -16,4 +16,8 @@
 			<column name="INVOICING_DATE" type="TIMESTAMP WITHOUT TIME ZONE"/>
 		</addColumn>
 	</changeSet>
+	<changeSet id="ticket678_20150326" author="AndriusKarpavicius">
+		<dropColumn tableName="CRM_PROVIDER" columnName="PROVIDER_ID"/>
+		<addUniqueConstraint constraintName="UK_CRM_PROVIDER" columnNames="CODE" tableName="CRM_PROVIDER" />
+	</changeSet>
 </databaseChangeLog>
