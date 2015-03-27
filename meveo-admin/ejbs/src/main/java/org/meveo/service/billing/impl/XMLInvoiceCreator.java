@@ -962,7 +962,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 			Element discount = doc.createElement("discount");
 			discount.setAttribute("invoiceSubCategoryCode", subCategoryInvoiceAgregate.getInvoiceSubCategory().getCode());
 			discount.setAttribute("discountAmountWithoutTax", round(subCategoryInvoiceAgregate.getAmountWithoutTax(), rounding)+"");
-			discount.setAttribute("discountPercent", subCategoryInvoiceAgregate.getDiscountPercent()+"");
+			discount.setAttribute("discountPercent", round(subCategoryInvoiceAgregate.getDiscountPercent(), rounding)+"");
 			discounts.appendChild(discount);
 			
 		}
