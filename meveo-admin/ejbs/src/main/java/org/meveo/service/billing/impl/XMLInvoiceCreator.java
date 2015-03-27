@@ -89,6 +89,9 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 
 	@Inject
 	private CatMessagesService catMessagesService;
+	
+	@Inject
+	private InvoiceAgregateService invoiceAgregateService;
 
 	private static Logger log = LoggerFactory.getLogger(XMLInvoiceCreator.class);
 
@@ -246,6 +249,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 			header.appendChild(comment);
 
 			addHeaderCategories(invoice, doc, header);
+			addDiscounts(invoice, doc, header);
 
 			Element amount = doc.createElement("amount");
 			invoiceTag.appendChild(amount);
@@ -946,6 +950,23 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 			}
 
 		}
+	}
+	
+	private void addDiscounts(Invoice invoice,Document doc,
+			Element parent){
+		int rounding = invoice.getProvider().getRounding() == null ? 2 : invoice.getProvider().getRounding();
+		Element discounts = doc.createElement("discounts");
+		parent.appendChild(discounts);
+		for(SubCategoryInvoiceAgregate subCategoryInvoiceAgregate:invoiceAgregateService.findDiscountAggregates(invoice)){
+			
+			Element discount = doc.createElement("discount");
+			discount.setAttribute("invoiceSubCategoryCode", subCategoryInvoiceAgregate.getInvoiceSubCategory().getCode());
+			discount.setAttribute("discountAmountWithoutTax", round(subCategoryInvoiceAgregate.getAmountWithoutTax(), rounding)+"");
+			discount.setAttribute("discountPercent", subCategoryInvoiceAgregate.getDiscountPercent()+"");
+			discounts.appendChild(discount);
+			
+		}
+		
 	}
 
 	private static String round(BigDecimal amount, Integer scale) {

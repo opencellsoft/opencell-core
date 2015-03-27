@@ -259,16 +259,16 @@ public class Invoice extends AuditableEntity {
 
 	public void addAmountWithTax(BigDecimal amountToAdd) {
 		if (amountWithTax == null) {
-			amountWithTax = new BigDecimal("0");
+			amountWithTax = BigDecimal.ZERO;
 		}
-		if (amountToAdd == null) {
+		if (amountToAdd != null) {
 			amountWithTax = amountWithTax.add(amountToAdd);
 		}
 	}
 
 	public void addAmountWithoutTax(BigDecimal amountToAdd) {
 		if (amountWithoutTax == null) {
-			amountWithoutTax = new BigDecimal("0");
+			amountWithoutTax = BigDecimal.ZERO;
 		}
 		if (amountToAdd != null) {
 		amountWithoutTax = amountWithoutTax.add(amountToAdd);
@@ -277,9 +277,9 @@ public class Invoice extends AuditableEntity {
 
 	public void addAmountTax(BigDecimal amountToAdd) {
 		if (amountTax == null) {
-			amountTax = new BigDecimal("0");
+			amountTax = BigDecimal.ZERO;
 		}
-		if (amountToAdd == null) {
+		if (amountToAdd != null) {
 		amountTax = amountTax.add(amountToAdd);	
 		}
 	}

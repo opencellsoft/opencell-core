@@ -84,6 +84,8 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 
 	@Inject
 	private CustomerAccountService customerAccountService;
+	
+	private static final BigDecimal HUNDRED = new BigDecimal("100");
 
 	public List<RatedTransaction> getRatedTransactionsInvoiced(UserAccount userAccount) {
 		if (userAccount == null || userAccount.getWallet() == null) {
@@ -268,7 +270,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 			BigDecimal biggestAmount = new BigDecimal("-100000000");
 
 			for (Object[] object : invoiceSubCats) {
-				log.info("amountWithoutTax=" + object[1] + "amountWithTax" + object[2] + "amountTax" + object[3]);
+				log.info("amountWithoutTax=" + object[1] + "amountWithTax =" + object[2] + "amountTax=" + object[3]);
 				Long invoiceSubCategoryId = (Long) object[0];
 				InvoiceSubCategory invoiceSubCategory = invoiceSubCategoryService.findById(invoiceSubCategoryId);
 				Tax tax = null;
@@ -277,6 +279,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 					if (invoicesubcatCountry.getTradingCountry().getCountryCode()
 							.equalsIgnoreCase(invoice.getBillingAccount().getTradingCountry().getCountryCode())) {
 						tax = invoicesubcatCountry.getTax();
+						break;
 					}
 				}
 
@@ -612,7 +615,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 	private void createDiscountAggregate(UserAccount userAccount,WalletInstance wallet,Invoice invoice,InvoiceSubCategory invoiceSubCat,BigDecimal percent) throws BusinessException{
 		BillingAccount billingAccount=userAccount.getBillingAccount();
 		BigDecimal amount=invoiceAgregateService.findTotalAmountByWalletSubCat(wallet, invoiceSubCat, wallet.getProvider());
-		BigDecimal discountAmountWithoutTax=amount.multiply(percent).negate();
+		BigDecimal discountAmountWithoutTax=amount.multiply(percent.divide(HUNDRED)).negate();
 		
 		Tax tax = null;
 		for (InvoiceSubcategoryCountry invoicesubcatCountry : invoiceSubCat
@@ -623,7 +626,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 			}
 		}
 		
-		BigDecimal discountAmountTax=discountAmountWithoutTax.multiply(tax.getPercent());
+		BigDecimal discountAmountTax=discountAmountWithoutTax.multiply(tax.getPercent().divide(HUNDRED));
 		BigDecimal discountAmountWithTax=discountAmountWithoutTax.add(discountAmountTax);
 		
 		SubCategoryInvoiceAgregate invoiceAgregateSubcat = new SubCategoryInvoiceAgregate();
@@ -638,7 +641,10 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 		invoiceAgregateSubcat.setAmountWithTax(discountAmountWithTax);
 		invoiceAgregateSubcat.setAmountTax(discountAmountTax);
 		invoiceAgregateSubcat.setProvider(billingAccount.getProvider());
+		invoiceAgregateSubcat.setInvoiceSubCategory(invoiceSubCat);
+		invoiceAgregateSubcat.setSubCategoryTax(tax);
 		invoiceAgregateSubcat.setDiscountAggregate(true);
+		invoiceAgregateSubcat.setDiscountPercent(percent);
 		invoiceAgregateService.create(invoiceAgregateSubcat);
 
 	}

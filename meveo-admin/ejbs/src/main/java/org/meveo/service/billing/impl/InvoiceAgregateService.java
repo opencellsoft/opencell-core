@@ -17,6 +17,7 @@
 package org.meveo.service.billing.impl;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 import javax.ejb.Stateless;
 import javax.persistence.NoResultException;
@@ -65,6 +66,19 @@ public class InvoiceAgregateService extends PersistenceService<InvoiceAgregate> 
 		} catch (NoResultException e) {
 			return null;
 		}
+
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<SubCategoryInvoiceAgregate> findDiscountAggregates(Invoice invoice) {
+		QueryBuilder qb = new QueryBuilder("from "
+				+ SubCategoryInvoiceAgregate.class.getSimpleName());
+		qb.addCriterionEntity("provider", invoice.getProvider());
+		qb.addBooleanCriterion("discountAggregate", true);
+		qb.addCriterionEntity("invoice", invoice);
+		List<SubCategoryInvoiceAgregate> result = (List<SubCategoryInvoiceAgregate>) qb.getQuery(getEntityManager())
+					.getResultList();
+		return result;
 
 	}
 

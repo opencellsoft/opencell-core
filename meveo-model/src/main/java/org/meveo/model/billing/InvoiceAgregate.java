@@ -107,6 +107,9 @@ public abstract class InvoiceAgregate extends AuditableEntity {
 	@Column(name = "DISCOUNT_AGGREGATE", nullable = false)
 	private boolean discountAggregate;
 	
+	@Column(name = "DISCOUNT_PERCENT", precision = NB_PRECISION, scale = NB_DECIMALS)
+	private BigDecimal discountPercent;
+	
 	
 
 	public TradingCurrency getTradingCurrency() {
@@ -302,6 +305,14 @@ public abstract class InvoiceAgregate extends AuditableEntity {
 
 	public void setDiscountAggregate(boolean discountAggregate) {
 		this.discountAggregate = discountAggregate;
+	}
+
+	public BigDecimal getDiscountPercent() {
+		return discountPercent;
+	}
+
+	public void setDiscountPercent(BigDecimal discountPercent) {
+		this.discountPercent = discountPercent;
 	}
 	
 	
