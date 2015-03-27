@@ -41,9 +41,9 @@ import org.meveo.event.qualifier.Disabled;
 import org.meveo.event.qualifier.Enabled;
 import org.meveo.event.qualifier.Removed;
 import org.meveo.event.qualifier.Updated;
-import org.meveo.model.AuditableEntity;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.EnableEntity;
+import org.meveo.model.IAuditable;
 import org.meveo.model.IEntity;
 import org.meveo.model.IdentifiableEnum;
 import org.meveo.model.ObservableEntity;
@@ -242,8 +242,8 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
         if (e instanceof EnableEntity && ((EnableEntity) e).isActive()) {
             log.debug("start of disable {} entity (id={}) ..", getEntityClass().getSimpleName(), e.getId());
             ((EnableEntity) e).setDisabled(true);
-            if (e instanceof AuditableEntity) {
-                ((AuditableEntity) e).updateAudit(getCurrentUser());
+            if (e instanceof IAuditable) {
+                ((IAuditable) e).updateAudit(getCurrentUser());
             }
             checkProvider(e);
             e = getEntityManager().merge(e);
@@ -271,8 +271,8 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
         if (e instanceof EnableEntity && ((EnableEntity) e).isDisabled()) {
             log.debug("start of enable {} entity (id={}) ..", getEntityClass().getSimpleName(), e.getId());
             ((EnableEntity) e).setDisabled(false);
-            if (e instanceof AuditableEntity) {
-                ((AuditableEntity) e).updateAudit(getCurrentUser());
+            if (e instanceof IAuditable) {
+                ((IAuditable) e).updateAudit(getCurrentUser());
             }
             checkProvider(e);
             e = getEntityManager().merge(e);
@@ -326,11 +326,11 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
     public E update(E e, User updater) {
         log.debug("start of update {} entity (id={}) ..", e.getClass().getSimpleName(), e.getId());
 
-        if (e instanceof AuditableEntity) {
+        if (e instanceof IAuditable) {
             if (updater != null) {
-                ((AuditableEntity) e).updateAudit(updater);
+                ((IAuditable) e).updateAudit(updater);
             } else {
-                ((AuditableEntity) e).updateAudit(getCurrentUser());
+                ((IAuditable) e).updateAudit(getCurrentUser());
             }
         }
         checkProvider(e);
@@ -355,11 +355,11 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 	public void create(E e, User creator, Provider provider) {
 		log.debug("start of create {} entity={}", e.getClass().getSimpleName(), e);
 
-		if (e instanceof AuditableEntity) {
+		if (e instanceof IAuditable) {
 			if (creator != null) {
-				((AuditableEntity) e).updateAudit(creator);
+				((IAuditable) e).updateAudit(creator);
 			} else {
-				((AuditableEntity) e).updateAudit(getCurrentUser());
+				((IAuditable) e).updateAudit(getCurrentUser());
 			}
 		}
 
@@ -631,8 +631,8 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
     }
 
     public void updateAudit(E e, User currentUser) {
-        if (e instanceof AuditableEntity) {
-            ((AuditableEntity) e).updateAudit(currentUser);
+        if (e instanceof IAuditable) {
+            ((IAuditable) e).updateAudit(currentUser);
         }
     }
 

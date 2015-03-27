@@ -4,18 +4,18 @@
 	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.3.xsd http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
 	<changeSet author="AndriusKarpavicius" id="rebuild-4.0.2-struct-1">
 		<createSequence sequenceName="account_entity_seq" />
-		<createSequence sequenceName="adm_country_seq" />
-		<createSequence sequenceName="adm_currency_seq" />
+		<createSequence sequenceName="adm_country_seq" startValue="238" />
+		<createSequence sequenceName="adm_currency_seq" startValue="169" />
 		<createSequence sequenceName="adm_inbound_request_seq" />
 		<createSequence sequenceName="adm_input_history_seq" />
-		<createSequence sequenceName="adm_language_seq" />
+		<createSequence sequenceName="adm_language_seq" startValue="33" />
 		<createSequence sequenceName="adm_messages_seq" />
 		<createSequence sequenceName="adm_notif_history_seq" />
 		<createSequence sequenceName="adm_notification_seq" />
-		<createSequence sequenceName="adm_permission_seq" />
-		<createSequence sequenceName="adm_role_seq" />
-		<createSequence sequenceName="adm_title_seq" />
-		<createSequence sequenceName="adm_user_seq" />
+		<createSequence sequenceName="adm_permission_seq" startValue="13" />
+		<createSequence sequenceName="adm_role_seq" startValue="3" />
+		<createSequence sequenceName="adm_title_seq" startValue="38" />
+		<createSequence sequenceName="adm_user_seq" startValue="3"/>
 		<createSequence sequenceName="ar_account_operation_seq" />
 		<createSequence sequenceName="ar_action_dunning_seq" />
 		<createSequence sequenceName="ar_action_plan_item_seq" />
@@ -29,7 +29,7 @@
 		<createSequence sequenceName="ar_dunning_plan_transition_seq" />
 		<createSequence sequenceName="ar_matching_amount_seq" />
 		<createSequence sequenceName="ar_matching_code_seq" />
-		<createSequence sequenceName="ar_occ_template_seq" />
+		<createSequence sequenceName="ar_occ_template_seq" startValue="26"/>
 		<createSequence sequenceName="bi_job_history_seq" />
 		<createSequence sequenceName="bi_job_seq" />
 		<createSequence sequenceName="bi_report_seq" />
@@ -38,16 +38,16 @@
 		<createSequence sequenceName="billing_charge_instance_seq" />
 		<createSequence sequenceName="billing_counter_instance_seq" />
 		<createSequence sequenceName="billing_counter_period_seq" />
-		<createSequence sequenceName="billing_cycle_seq" />
+		<createSequence sequenceName="billing_cycle_seq" startValue="3"/>
 		<createSequence sequenceName="billing_disc_inst_seq" />
 		<createSequence sequenceName="billing_discount_language_seq" />
 		<createSequence sequenceName="billing_discount_seq" />
-		<createSequence sequenceName="billing_inv_sub_cat_country_seq" />
+		<createSequence sequenceName="billing_inv_sub_cat_country_seq" startValue="5"/>
 		<createSequence sequenceName="billing_invoice_agregate_seq" />
 		<createSequence sequenceName="billing_invoice_cat_lang_seq" />
-		<createSequence sequenceName="billing_invoice_cat_seq" />
+		<createSequence sequenceName="billing_invoice_cat_seq" startValue="3" />
 		<createSequence sequenceName="billing_invoice_seq" />
-		<createSequence sequenceName="billing_invoice_sub_cat_seq" />
+		<createSequence sequenceName="billing_invoice_sub_cat_seq"  startValue="3" />
 		<createSequence sequenceName="billing_invoice_sub_country_seq" />
 		<createSequence sequenceName="billing_invoice_template_seq" />
 		<createSequence sequenceName="billing_priceplan_inst_seq" />
@@ -56,20 +56,20 @@
 		<createSequence sequenceName="billing_reservation_seq" />
 		<createSequence sequenceName="billing_serv_param_inst_seq" />
 		<createSequence sequenceName="billing_service_instance_seq" />
-		<createSequence sequenceName="billing_sub_term_reason_seq" />
+		<createSequence sequenceName="billing_sub_term_reason_seq" startValue="4" />
 		<createSequence sequenceName="billing_subscription_seq" />
 		<createSequence sequenceName="billing_tax_language_seq" />
-		<createSequence sequenceName="billing_tax_seq" />
-		<createSequence sequenceName="billing_trading_country_seq" />
-		<createSequence sequenceName="billing_trading_currency_seq" />
-		<createSequence sequenceName="billing_trading_language_seq" />
+		<createSequence sequenceName="billing_tax_seq" startValue="4"/>
+		<createSequence sequenceName="billing_trading_country_seq" startValue="3"/>
+		<createSequence sequenceName="billing_trading_currency_seq" startValue="3"/>
+		<createSequence sequenceName="billing_trading_language_seq" startValue="3"/>
 		<createSequence sequenceName="billing_wallet_operation_seq" />
 		<createSequence sequenceName="billing_wallet_seq" />
 		<createSequence sequenceName="cat_calendar_interval_seq" />
-		<createSequence sequenceName="cat_calendar_seq" />
+		<createSequence sequenceName="cat_calendar_seq" startValue="4"/>
 		<createSequence sequenceName="cat_charge_template_seq" />
 		<createSequence sequenceName="cat_counter_template_seq" />
-		<createSequence sequenceName="cat_day_in_year_seq" />
+		<createSequence sequenceName="cat_day_in_year_seq" startValue="1132"/>
 		<createSequence sequenceName="cat_discount_plan_item_seq" />
 		<createSequence sequenceName="cat_discount_plan_seq" />
 		<createSequence sequenceName="cat_hour_in_day_seq" />
@@ -93,13 +93,13 @@
 		<createSequence sequenceName="com_sndr_conf_seq" />
 		<createSequence sequenceName="crm_custom_field_inst_seq" />
 		<createSequence sequenceName="crm_custom_fld_tmp_seq" />
-		<createSequence sequenceName="crm_customer_brand_seq" />
-		<createSequence sequenceName="crm_customer_category_seq" />
+		<createSequence sequenceName="crm_customer_brand_seq" startValue="2"/>
+		<createSequence sequenceName="crm_customer_category_seq" startValue="3"/>
 		<createSequence sequenceName="crm_email_seq" />
 		<createSequence sequenceName="crm_provider_config_seq" />
-		<createSequence sequenceName="crm_provider_contact_seq" />
-		<createSequence sequenceName="crm_provider_seq" />
-		<createSequence sequenceName="crm_seller_seq" />
+		<createSequence sequenceName="crm_provider_contact_seq" startValue="2" />
+		<createSequence sequenceName="crm_provider_seq" startValue="2" />
+		<createSequence sequenceName="crm_seller_seq" startValue="4"/>
 		<createSequence sequenceName="dwh_account_operation_seq" />
 		<createSequence sequenceName="dwh_journal_entries_seq" />
 		<createSequence sequenceName="dwh_measurable_quant_seq" />
@@ -113,7 +113,7 @@
 		<createSequence sequenceName="medina_rejected_cdr_seq" />
 		<createSequence sequenceName="medina_time_plan_seq" />
 		<createSequence sequenceName="medina_zonning_plan_seq" />
-		<createSequence sequenceName="meveo_timer_seq" />
+		<createSequence sequenceName="meveo_timer_seq" startValue="9"/>
 		<createSequence sequenceName="rating_edr_seq" />
 		<createSequence sequenceName="rm_service_param_template_seq" />
 		<createTable tableName="account_entity">

@@ -16,29 +16,19 @@
  */
 package org.meveo.service.crm.impl;
 
-import java.math.BigDecimal;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
-import javax.persistence.Query;
 
-import org.meveo.admin.util.pagination.PaginationConfiguration;
-import org.meveo.admin.util.security.Sha1Encrypt;
+import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.exception.UsernameAlreadyExistsException;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.QueryBuilder;
-import org.meveo.model.Auditable;
-import org.meveo.model.AuditableEntity;
-import org.meveo.model.BaseEntity;
-import org.meveo.model.IEntity;
-import org.meveo.model.IdentifiableEnum;
-import org.meveo.model.UniqueEntity;
 import org.meveo.model.admin.User;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.security.Role;
@@ -92,164 +82,27 @@ public class ProviderService extends PersistenceService<Provider> {
 		return providers;
 	}
 
-	@SuppressWarnings("unchecked")
-	@Override
-	public List<Provider> list() {
-		Query query = getEntityManager().createQuery(
-				"FROM " + Provider.class.getName());
-		return (List<Provider>) query.getResultList();
-	}
 
-	public long count(PaginationConfiguration config) {
-		List<String> fetchFields = config.getFetchFields();
-		config.setFetchFields(null);
-		QueryBuilder queryBuilder = getQuery(config);
-		config.setFetchFields(fetchFields);
-		return queryBuilder.count(getEntityManager());
-	}
-
-	@SuppressWarnings({ "unchecked" })
-	public List<Provider> list(PaginationConfiguration config) {
-		QueryBuilder queryBuilder = getQuery(config);
-		Query query = queryBuilder.getQuery(getEntityManager());
-		return query.getResultList();
-	}
-
-	public Provider update(Provider e) {
-		((AuditableEntity) e).updateAudit(getCurrentUser());
-		e = getEntityManager().merge(e);
-		log.info("updated provider");
-		return e;
-	}
-
-	public void create(Provider e) {
-		log.info("start of create provider");
-		if (e instanceof AuditableEntity) {
-			((AuditableEntity) e).updateAudit(getCurrentUser());
-		}
-		e.setProvider(null);
-		getEntityManager().persist(e);
-		log.info("created provider id={}. creating default user", e.getId());
-		User user = new User();
-		user.setProvider(e);
-		Set<Provider> providers = new HashSet<Provider>();
-		providers.add(e);
-		user.setProviders(providers);
-		user.setActive(true);
-		Auditable au = new Auditable();
-		au.setCreated(new Date());
-		au.setCreator(getCurrentUser());
-		user.setAuditable(au);
-		user.setDisabled(false);
-		user.setLastPasswordModification(new Date());
-		user.setPassword(Sha1Encrypt.encodePassword(e.getCode() + ".password"));
-		Role role = roleService.findById(Long.parseLong(paramBean.getProperty(
-				"systgetEntityManager().adminRoleid", "1")));
-		Set<Role> roles = new HashSet<Role>();
-		roles.add(role);
-		user.setRoles(roles);
-		user.setUserName(e.getCode() + ".ADMIN");
-		getEntityManager().persist(user);
-		log.info("created default user id={}.", user.getId());
-	}
-
-	@SuppressWarnings("rawtypes")
-	public QueryBuilder getQuery(PaginationConfiguration config) {
-
-		QueryBuilder queryBuilder = new QueryBuilder(Provider.class, "a",
-				config.getFetchFields(), null);
-
-		Map<String, Object> filters = config.getFilters();
-		if (filters != null) {
-			if (!filters.isEmpty()) {
-				for (String key : filters.keySet()) {
-					Object filter = filters.get(key);
-					if (filter != null) {
-						// if ranged search (from - to fields)
-						if (key.contains("fromRange-")) {
-							String parsedKey = key.substring(10);
-							if (filter instanceof Double) {
-								BigDecimal rationalNumber = new BigDecimal(
-										(Double) filter);
-								queryBuilder.addCriterion("a." + parsedKey,
-										" >= ", rationalNumber, true);
-							} else if (filter instanceof Number) {
-								queryBuilder.addCriterion("a." + parsedKey,
-										" >= ", filter, true);
-							} else if (filter instanceof Date) {
-								queryBuilder
-										.addCriterionDateRangeFromTruncatedToDay(
-												"a." + parsedKey, (Date) filter);
-							}
-						} else if (key.contains("toRange-")) {
-							String parsedKey = key.substring(8);
-							if (filter instanceof Double) {
-								BigDecimal rationalNumber = new BigDecimal(
-										(Double) filter);
-								queryBuilder.addCriterion("a." + parsedKey,
-										" <= ", rationalNumber, true);
-							} else if (filter instanceof Number) {
-								queryBuilder.addCriterion("a." + parsedKey,
-										" <= ", filter, true);
-							} else if (filter instanceof Date) {
-								queryBuilder
-										.addCriterionDateRangeToTruncatedToDay(
-												"a." + parsedKey, (Date) filter);
-							}
-						} else if (key.contains("list-")) {
-							// if searching elements from list
-							String parsedKey = key.substring(5);
-							queryBuilder.addSqlCriterion(":" + parsedKey
-									+ " in elements(a." + parsedKey + ")",
-									parsedKey, filter);
-						}
-						// if not ranged search
-						else {
-							if (filter instanceof String) {
-								// if contains dot, that means join is needed
-								String filterString = (String) filter;
-								queryBuilder.addCriterionWildcard("a." + key,
-										filterString, true);
-							} else if (filter instanceof Date) {
-								queryBuilder.addCriterionDateTruncatedToDay(
-										"a." + key, (Date) filter);
-							} else if (filter instanceof Number) {
-								queryBuilder.addCriterion("a." + key, " = ",
-										filter, true);
-							} else if (filter instanceof Boolean) {
-								queryBuilder.addCriterion("a." + key, " is ",
-										filter, true);
-							} else if (filter instanceof Enum) {
-								if (filter instanceof IdentifiableEnum) {
-									String enumIdKey = new StringBuilder(key)
-											.append("Id").toString();
-									queryBuilder
-											.addCriterion("a." + enumIdKey,
-													" = ",
-													((IdentifiableEnum) filter)
-															.getId(), true);
-								} else {
-									queryBuilder.addCriterionEnum("a." + key,
-											(Enum) filter);
-								}
-							} else if (BaseEntity.class.isAssignableFrom(filter
-									.getClass())) {
-								queryBuilder.addCriterionEntity("a." + key,
-										filter);
-							} else if (filter instanceof UniqueEntity
-									|| filter instanceof IEntity) {
-								queryBuilder.addCriterionEntity("a." + key,
-										filter);
-							}
-						}
-					}
-				}
-			}
-		}
-		queryBuilder.addPaginationConfiguration(config, "a");
-
-		return queryBuilder;
-	}
+    public void create(Provider e) throws UsernameAlreadyExistsException, BusinessException {
+        log.info("start of create provider");
+        super.create(e);
+        log.info("created provider id={}. creating default user", e.getId());
+        
+        User user = new User();
+        user.setProvider(e);
+        Set<Provider> providers = new HashSet<Provider>();
+        providers.add(e);
+        user.setProviders(providers);
+        user.setPassword("admin");
+        user.setUserName(e.getCode() + ".ADMIN");
+        Role role = roleService.findById(Long.parseLong(paramBean.getProperty("systgetEntityManager().adminRoleid", "1")));
+        Set<Role> roles = new HashSet<Role>();
+        roles.add(role);
+        user.setRoles(roles);
+        userService.create(user);
+        
+        log.info("created default user id={}.", user.getId());
+    }
 
 	public Provider findByCodeWithFetch(String code, List<String> fetchFields) {
 		QueryBuilder qb = new QueryBuilder(Provider.class, "p", fetchFields,

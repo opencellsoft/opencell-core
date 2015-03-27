@@ -551,7 +551,7 @@
     					</c:if>
                   
                     </h:panelGroup>
-                    <p:dataList value="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}" var="elem" type="ordered" rendered="#{! cc.attrs.edit}">
+                    <p:dataList value="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field].toArray()}" var="elem" type="ordered" rendered="#{! cc.attrs.edit}">
                         <c:if test="#{not empty(cc.attrs.childField2)}">
                             #{elem[cc.attrs.childField]} #{elem[cc.attrs.childField2]}
                         </c:if>

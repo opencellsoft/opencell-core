@@ -16,14 +16,14 @@
             <f:facet name="header">
                 <h:outputText value="#{messages['cache.caches']}" />
             </f:facet>
-
+            <p:messages />
         </p:panelGrid>
-        
+
         <p:panel width="100">
             <h:form>
                 <p:dataTable id="datatable_caches" var="cacheInfo" value="#{cacheBean.summaryOfCaches}" paginator="true" rows="10"
                     paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
-                    rowsPerPageTemplate="5,10,15" lazy="false" styleClass="custom-grid">
+                    rowsPerPageTemplate="5,10,15" lazy="false" styleClass="custom-grid" rowIndexVar="rowIndex">
                     <p:column headerText="#{messages['cache.name']}" sortBy="#{cacheInfo['name']}">
                         <h:link outcome="cacheDetail" value="#{cacheInfo['name']}">
                             <f:param name="cacheName" value="#{cacheInfo['name']}" />
@@ -39,18 +39,21 @@
                         </p:button>
 
                         <p:tooltip for="refreshlink" value="#{messages['commons.refresh']}" showEffect="slide" hideEffect="slide" />
-                        <p:commandButton id="refreshlink" icon="ui-icon-refresh" oncomplete="confirmRefreshWidget.show()" />
+                        <p:commandButton id="refreshlink" icon="ui-icon-refresh" oncomplete="confirmRefreshWidget#{rowIndex}.show()" />
 
-                        <p:confirmDialog id="confirmDialog" styleClass="confirm-dialog" message="#{messages['commons.confirmRefresh']}" header=""
-                            severity="alert" widgetVar="confirmRefreshWidget">
+                        <p:confirmDialog styleClass="confirm-dialog" message="#{messages['commons.confirmRefresh']}" header="" severity="alert"
+                            widgetVar="confirmRefreshWidget#{rowIndex}">
                             <p:panel styleClass="confirm-dialog-content">
-                                <p:commandButton id="refreshOk" value="#{messages['commons.yes']}" oncomplete="confirmRefreshWidget.hide()"
+                                <p:commandButton id="refreshOk" value="#{messages['commons.yes']}" oncomplete="confirmRefreshWidget#{rowIndex}.hide()"
                                     action="#{cacheBean.refresh(cacheInfo['name'])}" update="@all" />
-                                <p:commandButton id="refreshKo" value="#{messages['commons.no']}" onclick="confirmRefreshWidget.hide()" type="button" />
+                                <p:commandButton id="refreshKo" value="#{messages['commons.no']}" onclick="confirmRefreshWidget#{rowIndex}.hide()"
+                                    type="button" />
                             </p:panel>
                         </p:confirmDialog>
                     </p:column>
                 </p:dataTable>
+
+                <p:button value="#{messages['commons.refresh']}" outcome="caches" />
             </h:form>
         </p:panel>
     </ui:define>
