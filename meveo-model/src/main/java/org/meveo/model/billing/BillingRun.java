@@ -93,7 +93,7 @@ public class BillingRun extends AuditableEntity {
 
 	@Column(name = "PR_AMOUNT_TAX", precision = NB_PRECISION, scale = NB_DECIMALS)
 	private BigDecimal prAmountTax;
-
+	
 	@OneToMany(mappedBy = "billingRun", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	private List<Invoice> invoices = new ArrayList<Invoice>();
 
@@ -117,6 +117,14 @@ public class BillingRun extends AuditableEntity {
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "END_DATE")
 	private Date endDate;
+	
+    @Column(name = "INVOICE_DATE")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date invoiceDate;
+
+    @Column(name = "LAST_TRANSACTION_DATE")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date lastTransactionDate;
 
 	@Column(name = "REJECTION_REASON")
 	private String rejectionReason;
@@ -282,7 +290,23 @@ public class BillingRun extends AuditableEntity {
 		this.endDate = endDate;
 	}
 
-	public PreInvoicingReportsDTO getPreInvoicingReports() {
+	public Date getInvoiceDate() {
+        return invoiceDate;
+    }
+
+    public void setInvoiceDate(Date invoiceDate) {
+        this.invoiceDate = invoiceDate;
+    }
+
+    public Date getLastTransactionDate() {
+        return lastTransactionDate;
+    }
+
+    public void setLastTransactionDate(Date lastTransactionDate) {
+        this.lastTransactionDate = lastTransactionDate;
+    }
+
+    public PreInvoicingReportsDTO getPreInvoicingReports() {
 		return preInvoicingReports;
 	}
 

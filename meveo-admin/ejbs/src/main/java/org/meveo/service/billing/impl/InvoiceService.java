@@ -284,7 +284,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
 			invoice.setBillingRun(billingRun);
 			invoice.setAuditable(billingRun.getAuditable());
 			invoice.setProvider(billingRun.getProvider());
-			Date invoiceDate = new Date();
+			//ticket 680
+			Date invoiceDate = billingRun.getInvoiceDate();
 			invoice.setInvoiceDate(invoiceDate);
 
 			Integer delay = billingCycle.getDueDateDelay();
@@ -304,17 +305,21 @@ public class InvoiceService extends PersistenceService<Invoice> {
 			// create(invoice, currentUser, currentUser.getProvider());
 			log.debug("created invoice entity with id={},  tx status={}, em open={}", invoice.getId(),
 					txReg.getTransactionStatus(), em.isOpen());
-			ratedTransactionService.createInvoiceAndAgregates(billingAccount, invoice, currentUser);
+			ratedTransactionService.createInvoiceAndAgregates(billingAccount, invoice,billingRun.getLastTransactionDate(), currentUser);
 			log.debug("created aggregates tx status={}, em open={}", txReg.getTransactionStatus(), em.isOpen());
 			em.joinTransaction();
 
 			if (billingRun.getProvider().isDisplayFreeTransacInInvoice()) {
 				em.createNamedQuery("RatedTransaction.updateInvoicedDisplayFree")
-						.setParameter("billingAccount", billingAccount).setParameter("billingRun", billingRun)
+						.setParameter("billingAccount", billingAccount)
+						.setParameter("billingRun", billingRun)
 						.setParameter("invoice", invoice).executeUpdate();
 			} else {
-				em.createNamedQuery("RatedTransaction.updateInvoiced").setParameter("billingAccount", billingAccount)
-						.setParameter("billingRun", billingRun).setParameter("invoice", invoice).executeUpdate();
+				em.createNamedQuery("RatedTransaction.updateInvoiced")
+				.setParameter("billingAccount", billingAccount)
+						.setParameter("billingRun", billingRun)
+						.setParameter("invoice", invoice)
+						.executeUpdate();
 
 			}
 

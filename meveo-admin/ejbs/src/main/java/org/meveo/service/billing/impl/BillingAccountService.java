@@ -54,9 +54,6 @@ public class BillingAccountService extends AccountService<BillingAccount> {
 	@Inject
 	private UserAccountService userAccountService;
 
-	@Inject
-	private RatedTransactionService ratedTransactionService;
-
 	@EJB
 	private BillingRunService billingRunService;
 
@@ -214,13 +211,8 @@ public class BillingAccountService extends AccountService<BillingAccount> {
 
 	}
 
-	public List<BillingAccount> findBillingAccounts(BillingCycle billingCycle, Date startdate, Date endDate) {
-		return findBillingAccounts(getEntityManager(), billingCycle, startdate, endDate);
-	}
-
 	@SuppressWarnings("unchecked")
-	public List<BillingAccount> findBillingAccounts(EntityManager em, BillingCycle billingCycle, Date startdate,
-			Date endDate) {
+    public List<BillingAccount> findBillingAccounts(BillingCycle billingCycle, Date startdate, Date endDate) {
 		try {
 			QueryBuilder qb = new QueryBuilder(BillingAccount.class, "b");
 			qb.addCriterionEntity("b.billingCycle", billingCycle);
@@ -244,18 +236,15 @@ public class BillingAccountService extends AccountService<BillingAccount> {
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public boolean updateBillingAccountTotalAmounts(BillingAccount billingAccount, BillingRun billingRun,
 			User currentUser) {
-		boolean result = false;
 
 		log.debug("updateBillingAccountTotalAmounts  billingAccount:" + billingAccount.getCode());
 
 		billingAccount = findById(billingAccount.getId(), true);
 
-		result = ratedTransactionService.isBillingAccountBillable(billingAccount);
-
-		if (result) {
 			Query q = null;
 			if (billingAccount.getProvider().isDisplayFreeTransacInInvoice()) {
-				q = getEntityManager().createNamedQuery("RatedTransaction.sumBillingAccount").setParameter(
+				q = getEntityManager().createNamedQuery("RatedTransaction.sumBillingAccount")
+				        .setParameter(
 						"billingAccount", billingAccount);
 			} else {
 				q = getEntityManager().createNamedQuery("RatedTransaction.sumBillingAccountDisplayFree").setParameter(
@@ -263,10 +252,14 @@ public class BillingAccountService extends AccountService<BillingAccount> {
 			}
 
 			@SuppressWarnings("unchecked")
-			List<Object[]> queryResults = q.getResultList();
+			List<Object[]> queryResults = q.setParameter("lastTransactionDate", billingRun.getLastTransactionDate())
+			        .getResultList();
 			Object[] queryResult = queryResults.size() > 0 ? queryResults.get(0) : null;
 
 			if (queryResult != null) {
+			    if(queryResult[0]==null){
+			        return false;
+			    }
 				billingAccount.setBrAmountWithoutTax((BigDecimal) queryResult[0]);
 				billingAccount.setBrAmountWithTax((BigDecimal) queryResult[1]);
 				log.debug("set brAmount {} in BA {}", queryResult[0], billingAccount.getId());
@@ -276,10 +269,9 @@ public class BillingAccountService extends AccountService<BillingAccount> {
 			billingAccount.updateAudit(currentUser);
 			updateNoCheck(billingAccount);
 			getEntityManager().flush();
-			result = true;
-		}
+		
 
-		return result;
+		return true;
 	}
 
 	@SuppressWarnings("unchecked")

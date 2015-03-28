@@ -71,6 +71,8 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 		preInvoicingReportsDTO.setBillingCycleCode(billingRun.getBillingCycle() != null ? billingRun.getBillingCycle()
 				.getCode() : null);
 		preInvoicingReportsDTO.setBillingAccountNumber(billingRun.getBillingAccountNumber());
+		preInvoicingReportsDTO.setLastTransactionDate(billingRun.getLastTransactionDate());
+		preInvoicingReportsDTO.setInvoiceDate(billingRun.getInvoiceDate());
 		preInvoicingReportsDTO.setBillableBillingAccountNumber(billingRun.getBillableBillingAcountNumber());
 		preInvoicingReportsDTO.setAmoutWitountTax(billingRun.getPrAmountWithoutTax());
 
@@ -478,12 +480,16 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 						.createNamedQuery("RatedTransaction.sumbillingRunByCycle")
 						.setParameter("status", RatedTransactionStatusEnum.OPEN)
 						.setParameter("billingCycle", billingCycle).setParameter("startDate", startDate)
-						.setParameter("endDate", endDate).getSingleResult();
+						.setParameter("endDate", endDate)
+						.setParameter("lastTransactionDate", billingRun.getLastTransactionDate())
+						.getSingleResult();
 			} else {
 				ratedTransactionsAmounts = (Object[]) getEntityManager()
 						.createNamedQuery("RatedTransaction.sumbillingRunByCycleNoDate")
 						.setParameter("status", RatedTransactionStatusEnum.OPEN)
-						.setParameter("billingCycle", billingCycle).getSingleResult();
+						.setParameter("billingCycle", billingCycle)
+                        .setParameter("lastTransactionDate", billingRun.getLastTransactionDate())
+                        .getSingleResult();
 			}
 
 			result = billingAccountService.findBillingAccounts(billingCycle, startDate, endDate);
@@ -498,7 +504,9 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 
 			ratedTransactionsAmounts = (Object[]) getEntityManager()
 					.createNamedQuery("RatedTransaction.sumbillingRunByList")
-					.setParameter("status", RatedTransactionStatusEnum.OPEN).setParameter("billingAccountList", result)
+					.setParameter("status", RatedTransactionStatusEnum.OPEN)
+					.setParameter("billingAccountList", result)
+					.setParameter("lastTransactionDate", billingRun.getLastTransactionDate())
 					.getSingleResult();
 		}
 
@@ -506,6 +514,10 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 			billingRun.setPrAmountWithoutTax((BigDecimal) ratedTransactionsAmounts[0]);
 			billingRun.setPrAmountWithTax((BigDecimal) ratedTransactionsAmounts[1]);
 			billingRun.setPrAmountTax((BigDecimal) ratedTransactionsAmounts[2]);
+		} else {
+            billingRun.setPrAmountWithoutTax(BigDecimal.ZERO);
+            billingRun.setPrAmountWithTax(BigDecimal.ZERO);
+            billingRun.setPrAmountTax(BigDecimal.ZERO);
 		}
 
 		updateNoCheck(billingRun);
@@ -514,10 +526,11 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 	}
 
 	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
-	public void createAgregatesAndInvoice(Long billingRunId, User currentUser) throws BusinessException, Exception {
+	public void createAgregatesAndInvoice(Long billingRunId,Date lastTransactionDate, User currentUser) throws BusinessException, Exception {
 		List<BillingAccount> billingAccounts = getEntityManager()
 				.createNamedQuery("BillingAccount.listByBillingRunId", BillingAccount.class)
-				.setParameter("billingRunId", billingRunId).getResultList();
+				.setParameter("billingRunId", billingRunId)
+                .getResultList();
 
 		for (BillingAccount billingAccount : billingAccounts) {
 			try {

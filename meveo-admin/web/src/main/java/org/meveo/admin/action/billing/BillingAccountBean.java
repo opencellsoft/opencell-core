@@ -48,6 +48,7 @@ import org.meveo.model.billing.CounterInstance;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.crm.AccountLevelEnum;
 import org.meveo.model.payments.CustomerAccount;
+import org.meveo.model.shared.DateUtils;
 import org.meveo.model.shared.Name;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
@@ -113,6 +114,7 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
 
 	private CounterInstance selectedCounterInstance;
 
+	
 	/**
 	 * Constructor. Invokes super constructor and provides class type of this
 	 * bean for {@link BaseBean}.
@@ -360,10 +362,14 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
 			String selectedBillingAccounts = "";
 			String sep = "";
 			boolean isBillable = false;
+			Date lastTransactionDate=new Date();
+			if(entity.getBillingCycle()!=null&& entity.getBillingCycle().getInvoiceDateProductionDelay()!=null){
+			    DateUtils.addDaysToDate(new Date(), entity.getBillingCycle().getInvoiceDateProductionDelay());
+			}
 			for (BillingAccount ba : getSelectedEntities()) {
 				selectedBillingAccounts = selectedBillingAccounts + sep + ba.getId();
 				sep = ",";
-				if (!isBillable && ratedTransactionService.isBillingAccountBillable(ba)) {
+				if (!isBillable && ratedTransactionService.isBillingAccountBillable(ba,lastTransactionDate)) {
 					isBillable = true;
 				}
 			}

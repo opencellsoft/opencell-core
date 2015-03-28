@@ -47,30 +47,37 @@ import org.meveo.model.crm.Provider;
 		@NamedQuery(name = "RatedTransaction.listInvoiced", query = "SELECT r FROM RatedTransaction r where r.wallet=:wallet and invoice is not null order by usageDate desc "),
 		@NamedQuery(name = "RatedTransaction.countNotInvoinced", query = "SELECT count(r) FROM RatedTransaction r WHERE r.billingAccount=:billingAccount"
 				+ " AND r.status=org.meveo.model.billing.RatedTransactionStatusEnum.OPEN"
-				+ " AND r.doNotTriggerInvoicing=false" + " AND r.amountWithoutTax<>0" + " AND r.invoice is null "),
+				+ " AND r.usageDate<:lastTransactionDate "
+                + " AND r.doNotTriggerInvoicing=false AND r.amountWithoutTax<>0 AND r.invoice is null "),
 		@NamedQuery(name = "RatedTransaction.countNotInvoincedDisplayFree", query = "SELECT count(r) FROM RatedTransaction r WHERE r.billingAccount=:billingAccount"
 				+ " AND r.status=org.meveo.model.billing.RatedTransactionStatusEnum.OPEN"
-				+ " AND r.doNotTriggerInvoicing=false" + " AND r.invoice is null "),
+		        + " AND r.usageDate<:lastTransactionDate "
+				+ " AND r.doNotTriggerInvoicing=false AND r.invoice is null "),
 		@NamedQuery(name = "RatedTransaction.sumbillingRunByCycle", query = "SELECT sum(r.amountWithoutTax),sum(r.amountWithTax),sum(r.amountTax) FROM RatedTransaction r"
 				+ " WHERE r.status=:status AND r.doNotTriggerInvoicing=false AND r.amountWithoutTax<>0 AND r.invoice is null"
+                + " AND r.usageDate<:lastTransactionDate "
 				+ " AND r.billingAccount.billingCycle=:billingCycle"
 				+ " AND (r.billingAccount.nextInvoiceDate >= :startDate)"
 				+ " AND (r.billingAccount.nextInvoiceDate < :endDate)"),
 		@NamedQuery(name = "RatedTransaction.sumbillingRunByCycleNoDate", query = "SELECT sum(r.amountWithoutTax),sum(r.amountWithTax),sum(r.amountTax) FROM RatedTransaction r"
 				+ " WHERE r.status=:status AND r.doNotTriggerInvoicing=false AND r.amountWithoutTax<>0 AND r.invoice is null"
+                + " AND r.usageDate<:lastTransactionDate "
 				+ " AND r.billingAccount.billingCycle=:billingCycle"),
 		@NamedQuery(name = "RatedTransaction.sumbillingRunByList", query = "SELECT sum(r.amountWithoutTax),sum(r.amountWithTax),sum(r.amountTax) FROM RatedTransaction r "
 				+ "WHERE r.status=:status AND r.doNotTriggerInvoicing=false AND r.amountWithoutTax<>0 AND r.invoice is null"
-				+ " AND r.billingAccount IN :billingAccountList"),
+				+ " AND r.usageDate<:lastTransactionDate "
+                + " AND r.billingAccount IN :billingAccountList"),
 		@NamedQuery(name = "RatedTransaction.sumBillingAccount", query = "SELECT sum(r.amountWithoutTax),sum(r.amountWithTax),sum(r.amountTax) FROM RatedTransaction r "
 				+ "WHERE r.status=org.meveo.model.billing.RatedTransactionStatusEnum.OPEN"
 				+ " AND r.doNotTriggerInvoicing=false "
 				+ "AND r.amountWithoutTax<>0 "
-				+ "AND r.invoice is null"
+				+ " AND r.usageDate<:lastTransactionDate "
+                + "AND r.invoice is null"
 				+ " AND r.billingAccount=:billingAccount"),
 		@NamedQuery(name = "RatedTransaction.sumBillingAccountDisplayFree", query = "SELECT sum(r.amountWithoutTax),sum(r.amountWithTax),sum(r.amountTax) FROM RatedTransaction r "
 				+ "WHERE r.status=org.meveo.model.billing.RatedTransactionStatusEnum.OPEN"
-				+ " AND r.doNotTriggerInvoicing=false "
+				+ " AND r.usageDate<:lastTransactionDate "
+                + " AND r.doNotTriggerInvoicing=false "
 				+ "AND r.invoice is null"
 				+ " AND r.billingAccount=:billingAccount"),
 		@NamedQuery(name = "RatedTransaction.updateInvoiced", query = "UPDATE RatedTransaction r "

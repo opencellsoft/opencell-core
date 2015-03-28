@@ -64,9 +64,14 @@
 				editView="billingAccountDetail" />
 
 			<ui:define name="add-on-buttons">
+				<!-- <hf:formField id="invoiceDate" label="#{messages['billingRun.invoiceDate']}"
+					field="invoiceDate" edit="true" required="false" />
+				<hf:formField id="lastTransactionDate" label="#{messages['billingRun.lastTransactionDate']}"
+					field="lastTransactionDate" required="false" edit="true" /> -->
 				<p:commandButton
 					action="#{billingAccountBean.launchExceptionalInvoicing}"
-					ajax="false" value="#{messages['button.launchInvoicing']}" />
+					ajax="false" value="#{messages['button.launchInvoicing']}" 
+					rendered="#{billingAccountBean.entity.billingCycle!=null}"/>
 			</ui:define>
 		</hftl:dataList>
 	</ui:define>

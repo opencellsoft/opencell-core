@@ -52,6 +52,14 @@ public class BillingCycle extends BusinessEntity {
 	@JoinColumn(name = "CALENDAR")
 	private Calendar calendar;
 
+    @Column(name = "TRANSACTION_DATE_DELAY")
+    private Integer transactionDateDelay;
+    
+    //used to compute the invoice date from date of billing run
+    @Column(name = "INVOICE_DATE_PRODUCTION_DELAY")
+    private Integer invoiceDateProductionDelay;
+    
+    //used for immediate invoicing by oneshot charge
 	@Column(name = "INVOICE_DATE_DELAY")
 	private Integer invoiceDateDelay;
 
@@ -77,7 +85,23 @@ public class BillingCycle extends BusinessEntity {
 		this.calendar = calendar;
 	}
 
-	public Integer getInvoiceDateDelay() {
+	public Integer getTransactionDateDelay() {
+        return transactionDateDelay;
+    }
+
+    public void setTransactionDateDelay(Integer transactionDateDelay) {
+        this.transactionDateDelay = transactionDateDelay;
+    }
+
+    public Integer getInvoiceDateProductionDelay() {
+        return invoiceDateProductionDelay;
+    }
+
+    public void setInvoiceDateProductionDelay(Integer invoiceDateProductionDelay) {
+        this.invoiceDateProductionDelay = invoiceDateProductionDelay;
+    }
+
+    public Integer getInvoiceDateDelay() {
 		return invoiceDateDelay;
 	}
 

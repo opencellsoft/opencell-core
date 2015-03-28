@@ -20,4 +20,23 @@
 		<dropColumn tableName="CRM_PROVIDER" columnName="PROVIDER_ID"/>
 		<addUniqueConstraint constraintName="UK_CRM_PROVIDER" columnNames="CODE" tableName="CRM_PROVIDER" />
 	</changeSet>
+    <changeSet id="ticket528_20150327" author="AndriusKarpavicius">
+        <addColumn tableName="BILLING_INVOICE_AGREGATE">
+            <column name="DISCOUNT_PERCENT" type="numeric(23, 12)" />
+        </addColumn>
+    </changeSet>
+	<changeSet id="ticket680_20150328" author='SebastienMichea'>
+		<addColumn tableName="BILLING_CYCLE">
+			<column name="TRANSACTION_DATE_DELAY" type="INT4"/>
+		</addColumn>
+		<addColumn tableName="BILLING_CYCLE">
+			<column name="INVOICE_DATE_PRODUCTION_DELAY" type="INT4"/>
+		</addColumn>
+		<addColumn tableName="BILLING_BILLING_RUN">
+			<column name="INVOICE_DATE" type="TIMESTAMP WITHOUT TIME ZONE"/>
+		</addColumn>
+		<addColumn tableName="BILLING_BILLING_RUN">
+			<column name="LAST_TRANSACTION_DATE" type="TIMESTAMP WITHOUT TIME ZONE"/>
+		</addColumn>
+	</changeSet>
 </databaseChangeLog>

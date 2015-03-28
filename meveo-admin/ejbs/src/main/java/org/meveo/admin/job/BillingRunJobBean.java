@@ -20,6 +20,7 @@ import org.meveo.model.billing.BillingRun;
 import org.meveo.model.billing.BillingRunStatusEnum;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.jobs.JobExecutionResultImpl;
+import org.meveo.model.shared.DateUtils;
 import org.meveo.service.billing.impl.BillingCycleService;
 import org.meveo.service.billing.impl.BillingRunService;
 import org.slf4j.Logger;
@@ -67,6 +68,17 @@ public class BillingRunJobBean {
 					auditable.setCreator(currentUser);
 					billingRun.setAuditable(auditable);
 					billingRun.setBillingCycle(billingCycle);
+					billingRun.setProcessDate(auditable.getCreated());
+					if(billingCycle.getInvoiceDateProductionDelay()!=null){
+					    billingRun.setInvoiceDate(DateUtils.addDaysToDate(billingRun.getProcessDate(),billingCycle.getInvoiceDateProductionDelay())); 
+		            } else {
+		                billingRun.setInvoiceDate(billingRun.getProcessDate());
+		            }
+		            if(billingCycle.getTransactionDateDelay()!=null){
+		                billingRun.setLastTransactionDate(DateUtils.addDaysToDate(billingRun.getProcessDate(),billingCycle.getTransactionDateDelay())); 
+		            } else {
+		                billingRun.setLastTransactionDate(billingRun.getProcessDate());
+		            }
 					billingRun.setProcessType(BillingProcessTypesEnum.AUTOMATIC);
 					billingRun.setStatus(BillingRunStatusEnum.NEW);
 					billingRunService.create(billingRun, currentUser, provider);

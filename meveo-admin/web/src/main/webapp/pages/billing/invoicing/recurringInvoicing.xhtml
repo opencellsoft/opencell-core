@@ -28,8 +28,8 @@
 			column1Label="#{messages['businessEntity.code']}" column1="code"
 			column2Label="#{messages['businessEntity.description']}"
 			column2="description"
-			selection="#{billingRunBean.entity.billingCycle}"
-			updateField=":formPanel:formId:billingCycleId:billingCycleId">
+			selection="#{billingRunBean.billingCycle}"
+			updateField=":formPanel:formId">
 
 		</hftl:entityPopup>
 
@@ -47,6 +47,10 @@
 				field="startDate" edit="true" required="false" />
 			<hf:formField label="#{messages['billingRun.endDate']}"
 				field="endDate" required="false" edit="true" />
+			<hf:formField id="invoiceDateId" label="#{messages['billingRun.invoiceDate']}"
+				field="invoiceDate" edit="true" required="false" />
+			<hf:formField id="lastTransactionDate" label="#{messages['billingRun.lastTransactionDate']}"
+				field="lastTransactionDate" required="false" edit="true" />
 
 			<p:commandButton action="#{billingRunBean.launchRecurringInvoicing}"
 				value="#{messages['button.launchInvoicing']}" update="@form" />

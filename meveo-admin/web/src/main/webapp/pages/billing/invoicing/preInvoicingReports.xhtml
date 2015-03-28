@@ -28,6 +28,18 @@
 
 			<hftl:panelGroup columns="2">
 				<hf:formEntityField
+					label="#{messages['billingRun.lastTransactionDate']}"
+					field="preInvoicingReports" childField="lastTransactionDate"
+					popup="false" />
+
+				<hf:formEntityField
+					label="#{messages['billingRun.invoiceDate']}"
+					field="preInvoicingReports" childField="invoiceDate" 
+					popup="false" />
+			</hftl:panelGroup>
+
+			<hftl:panelGroup columns="2">
+				<hf:formEntityField
 					label="#{messages['preInvoicingReport.noOfAccountNoCharged']}"
 					field="preInvoicingReports"
 					childField="billableBillingAccountNumber" popup="false" />

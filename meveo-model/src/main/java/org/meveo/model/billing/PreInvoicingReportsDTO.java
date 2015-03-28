@@ -18,6 +18,7 @@ package org.meveo.model.billing;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class PreInvoicingReportsDTO {
@@ -25,6 +26,8 @@ public class PreInvoicingReportsDTO {
     private String billingCycleCode;
     private Integer billingAccountNumber;
     private Integer billableBillingAccountNumber;
+    private Date lastTransactionDate;
+    private Date invoiceDate;
     private BigDecimal amoutWitountTax;
     private Integer checkBANumber;
     private Integer directDebitBANumber;
@@ -59,6 +62,24 @@ public class PreInvoicingReportsDTO {
 
     public void setBillingAccountNumber(Integer billingAccountNumber) {
         this.billingAccountNumber = billingAccountNumber;
+    }
+    
+    
+
+    public Date getLastTransactionDate() {
+        return lastTransactionDate;
+    }
+
+    public void setLastTransactionDate(Date lastTransactionDate) {
+        this.lastTransactionDate = lastTransactionDate;
+    }
+
+    public Date getInvoiceDate() {
+        return invoiceDate;
+    }
+
+    public void setInvoiceDate(Date invoiceDate) {
+        this.invoiceDate = invoiceDate;
     }
 
     public Integer getBillableBillingAccountNumber() {
