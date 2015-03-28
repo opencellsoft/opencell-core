@@ -20,4 +20,9 @@
 		<dropColumn tableName="CRM_PROVIDER" columnName="PROVIDER_ID"/>
 		<addUniqueConstraint constraintName="UK_CRM_PROVIDER" columnNames="CODE" tableName="CRM_PROVIDER" />
 	</changeSet>
+	<changeSet id="ticket528_20150327" author="AndriusKarpavicius">
+		<addColumn tableName="BILLING_INVOICE_AGREGATE">
+			<column name="DISCOUNT_PERCENT" type="numeric(23, 12)" />
+		</addColumn>
+	</changeSet>
 </databaseChangeLog>
