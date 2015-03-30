@@ -39,4 +39,7 @@
 			<column name="LAST_TRANSACTION_DATE" type="TIMESTAMP WITHOUT TIME ZONE"/>
 		</addColumn>
 	</changeSet>
+	<changeSet id="ticket674_20150330" author="SebastienMichea">
+		<modifyDataType tableName="JOB_EXECUTION" columnName="REPORT" newDataType="TEXT"/>
+	</changeSet>
 </databaseChangeLog>

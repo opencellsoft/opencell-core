@@ -77,7 +77,7 @@ public class ImportCatalogJob implements Job {
 					currentUser = userService.findByIdLoadProvider(info.getUserId());
 				}
 				importCatalogJobBean.execute(result, info.getParametres(), currentUser);
-				result.close("");
+				result.close(result.getReport());
 
 				jobExecutionService.persistResult(this, result, info, currentUser, getJobCategory());
 			} catch (Exception e) {
