@@ -401,3 +401,9 @@ input[type="submit"],
 .ui-fileupload-content{
 	border:none;
 }
+
+.ui-accordion-header{
+  border: 0 !important;
+  background-color: rgb(242, 244, 243)!important;
+  background:rgb(242, 244, 243)!important;
+}

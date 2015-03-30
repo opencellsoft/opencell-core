@@ -16,6 +16,8 @@
  */
 package org.meveo.service.catalog.impl;
 
+import java.util.List;
+
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
@@ -46,5 +48,17 @@ public class CounterTemplateService<P extends CounterTemplate> extends
 	public P findByCode(String code, Provider provider) {
 		return findByCode(getEntityManager(), code, provider);
 	}
+	
+	public  int getNbrCounterWithNotService(Provider provider) { 
+		return ((Long)getEntityManager().createQuery(
+				"select count(*) from CounterTemplate c where c.id not in (select serv.counterTemplate from ServiceChargeTemplateUsage serv) "
+				+ " and c.provider=:provider").setParameter("provider", provider).getSingleResult()).intValue();
+		}
+
+	public List<CounterTemplate> getCounterWithNotService(Provider provider) { 
+		return (List<CounterTemplate>)getEntityManager().createQuery(
+				"from CounterTemplate c where c.id not in (select serv.counterTemplate from ServiceChargeTemplateUsage serv) "
+				+ " and c.provider=:provider").setParameter("provider", provider).getResultList();
+		}
 
 }

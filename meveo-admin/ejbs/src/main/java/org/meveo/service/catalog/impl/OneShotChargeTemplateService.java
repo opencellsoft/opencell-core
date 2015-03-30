@@ -91,4 +91,28 @@ public class OneShotChargeTemplateService extends
 		}
 	}
 
+
+	public int getNbrOneShotWithNotPricePlan(Provider provider) { 
+		return ((Long)getEntityManager().
+				createQuery("select count (*) from OneShotChargeTemplate o where o.code not in (select p.eventCode from  PricePlanMatrix p where p.eventCode is not null) and o.provider=:provider")
+				.setParameter("provider", provider).getSingleResult()).intValue();
+		}
+	public  List<OneShotChargeTemplate> getOneShotChrgWithNotPricePlan(Provider provider) { 
+		return (List<OneShotChargeTemplate>)getEntityManager().createQuery("from OneShotChargeTemplate o where o.code not in (select p.eventCode from  PricePlanMatrix p where p.eventCode is not null) "
+				+ " and o.provider=:provider")
+				.setParameter("provider", provider).getResultList();
+		}
+   
+	public  int getNbrOneShotNotAssociated(Provider provider,OneShotChargeTemplateTypeEnum oneShotChargeTemplateType) { 
+		return ((Long)getEntityManager().createQuery("select count (*) from OneShotChargeTemplate o where o.id not in (select serv.chargeTemplate from ServiceChargeTemplateSubscription serv)"
+				+ " and o.code not in (select p.eventCode from  PricePlanMatrix p where p.eventCode is not null) "
+				+ " and  oneShotChargeTemplateType=:oneShotChargeTemplateType and o.provider=:provider").setParameter("oneShotChargeTemplateType",oneShotChargeTemplateType)
+				    .setParameter("provider", provider).getSingleResult()).intValue();
+		}
+	public  List<OneShotChargeTemplate> getOneShotNotAssociated(Provider provider,OneShotChargeTemplateTypeEnum oneShotChargeTemplateType) { 
+		return (List<OneShotChargeTemplate>)getEntityManager().createQuery("from OneShotChargeTemplate o where o.id not in (select serv.chargeTemplate from ServiceChargeTemplateSubscription serv)"
+				+ " and o.code not in (select p.eventCode from  PricePlanMatrix p where p.eventCode is not null) "
+				+ " and  oneShotChargeTemplateType=:oneShotChargeTemplateType and o.provider=:provider").setParameter("oneShotChargeTemplateType",oneShotChargeTemplateType)
+				.setParameter("provider", provider).getResultList();
+		      }
 }

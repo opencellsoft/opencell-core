@@ -16,6 +16,8 @@
  */
 package org.meveo.service.billing.impl;
 
+import java.util.List;
+
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
@@ -62,4 +64,14 @@ public class TradingLanguageService extends PersistenceService<TradingLanguage> 
 			return null;
 		}
 	}
+	
+	public int getNbLanguageNotAssociated(Provider provider) { 
+		return ((Long)getEntityManager().createQuery("select count(*) from TradingLanguage tr where tr.id not in (select s.tradingLanguage.id from Seller s where s.tradingLanguage.id is not null) "
+				+ " and tr.provider=:provider").setParameter("provider", provider).getSingleResult()).intValue();
+		}
+	
+	public  List<TradingLanguage> getLanguagesNotAssociated(Provider provider) { 
+		return (List<TradingLanguage>)getEntityManager().createQuery("from TradingLanguage tr where tr.id not in (select s.tradingLanguage.id from Seller s where s.tradingLanguage.id is not null) "
+				+ " and tr.provider=:provider").setParameter("provider", provider).getResultList();
+		}
 }

@@ -16,6 +16,8 @@
  */
 package org.meveo.service.catalog.impl;
 
+import java.util.List;
+
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
@@ -62,5 +64,15 @@ public class InvoiceCategoryService extends PersistenceService<InvoiceCategory> 
 			return null;
 		}
 	}
+	
+	public int getNbInvCatNotAssociated(Provider provider) { 
+		return ((Long)getEntityManager().createQuery("select count(*) from InvoiceCategory v where v.id not in (select sub.invoiceCategory.id from InvoiceSubCategory sub where sub.invoiceCategory.id is not null ) "
+				+ " and v.provider=:provider").setParameter("provider", provider).getSingleResult()).intValue();
+		}
+	
+	public  List<InvoiceCategory> getInvoiceCatNotAssociated(Provider provider) { 
+		return (List<InvoiceCategory>)getEntityManager().createQuery("from InvoiceCategory v where v.id not in (select sub.invoiceCategory.id from InvoiceSubCategory sub where sub.invoiceCategory.id is not null ) "
+				+ " and v.provider=:provider").setParameter("provider", provider).getResultList();
+		}
 
 }

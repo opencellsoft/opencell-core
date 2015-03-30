@@ -72,5 +72,17 @@ public class InvoiceSubCategoryService extends
 			return null;
 		}
 	}
+	
+	public int getNbInvSubCatNotAssociated(Provider provider) { 
+		return ((Long)getEntityManager().createQuery("select count(*) from InvoiceSubCategory v "
+				+" where v.id not in (select c.invoiceSubCategory.id from ChargeTemplate c where c.invoiceSubCategory.id is not null)"
+				+ " and v.provider=:provider").setParameter("provider", provider).getSingleResult()).intValue();
+            }
+	
+	public  List<InvoiceSubCategory> getInvoiceSubCatNotAssociated(Provider provider) { 
+		return (List<InvoiceSubCategory>)getEntityManager().createQuery("from InvoiceSubCategory v "
+				+ "where v.id not in (select c.invoiceSubCategory.id from ChargeTemplate c where c.invoiceSubCategory.id is not null)"
+				+ " and v.provider=:provider").setParameter("provider", provider).getResultList();
+		}
 
 }

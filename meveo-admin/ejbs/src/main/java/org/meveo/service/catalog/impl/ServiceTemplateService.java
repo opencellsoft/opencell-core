@@ -16,6 +16,8 @@
  */
 package org.meveo.service.catalog.impl;
 
+import java.util.List;
+
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
@@ -38,5 +40,17 @@ public class ServiceTemplateService extends BusinessService<ServiceTemplate> {
 		query.setParameter("provider", provider);
 		query.executeUpdate();
 	}
+	
+	public  int getNbServiceWithNotOffer(Provider provider) { 
+		return ((Long)getEntityManager().createQuery(
+				" select count(*) from ServiceTemplate s where s.id not in (select serv from OfferTemplate o join o.serviceTemplates serv)"
+				+ " and s.provider=:provider").setParameter("provider", provider).getSingleResult()).intValue();
+		}
+	
+	public  List<ServiceTemplate> getServicesWithNotOffer(Provider provider) { 
+		return (List<ServiceTemplate>)getEntityManager().createQuery(
+				"from ServiceTemplate s where s.id not in (select serv from OfferTemplate o join o.serviceTemplates serv)"
+				+ " and s.provider=:provider").setParameter("provider", provider).getResultList();
+		}
 
 }
