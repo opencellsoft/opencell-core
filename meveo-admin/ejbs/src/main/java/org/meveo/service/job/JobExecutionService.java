@@ -56,16 +56,12 @@ public class JobExecutionService extends PersistenceService<JobExecutionResultIm
 	}
 
 	@TransactionAttribute(TransactionAttributeType.REQUIRED)
-	public void persistResult(Job job, JobExecutionResult result, TimerInfo info, User currentUser,
-			JobCategoryEnum jobCategory) {
+	public void persistResult(Job job, JobExecutionResult result, TimerInfo info, User currentUser, JobCategoryEnum jobCategory) {
 		try {
 			log.info("JobExecutionService persistResult...");
 
-			JobExecutionResultImpl entity = JobExecutionResultImpl.createFromInterface(job.getClass().getSimpleName(),
-					result);
-			if (!entity.isDone()
-					|| (entity.getNbItemsCorrectlyProcessed() + entity.getNbItemsProcessedWithError() + entity
-							.getNbItemsProcessedWithWarning()) > 0) {
+			JobExecutionResultImpl entity = JobExecutionResultImpl.createFromInterface(job.getClass().getSimpleName(), result);
+			if (!entity.isDone() || (entity.getNbItemsCorrectlyProcessed() + entity.getNbItemsProcessedWithError() + entity.getNbItemsProcessedWithWarning()) > 0) {
 
 				create(entity, currentUser, currentUser.getProvider());
 				log.info("PersistResult entity.isDone()=" + entity.isDone());
@@ -76,9 +72,8 @@ public class JobExecutionService extends PersistenceService<JobExecutionResultIm
 					try {
 						TimerEntity timerEntity = timerEntityService.findById(info.getFollowingTimerId());
 
-						log.info("execute following timer "+timerEntity.getJobName());
-						executeJob(timerEntity.getJobName(), (TimerInfo) timerEntity.getTimerInfo(), currentUser,
-								jobCategory);
+						log.info("execute following timer " + timerEntity.getJobName());
+						executeJob(timerEntity.getJobName(), (TimerInfo) timerEntity.getTimerInfo(), currentUser, timerEntity.getJobCategoryEnum());
 					} catch (Exception e) {
 						log.warn("PersistResult cannot excute the following job.=" + info.getFollowingTimerId());
 					}
@@ -89,8 +84,7 @@ public class JobExecutionService extends PersistenceService<JobExecutionResultIm
 				if (info.getFollowingTimerId() != null && info.getFollowingTimerId() > 0) {
 					try {
 						TimerEntity timerEntity = timerEntityService.findById(info.getFollowingTimerId());
-						executeJob(timerEntity.getJobName(), (TimerInfo) timerEntity.getTimerInfo(), currentUser,
-								jobCategory);
+						executeJob(timerEntity.getJobName(), (TimerInfo) timerEntity.getTimerInfo(), currentUser, timerEntity.getJobCategoryEnum());
 					} catch (Exception e) {
 						log.warn("PersistResult cannot excute the following job.=" + info.getFollowingTimerId());
 					}
