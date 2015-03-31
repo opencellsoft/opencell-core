@@ -84,6 +84,9 @@
 							<hftl:column
 								label="#{messages['dunningPlanTransition.waitDuration']}"
 								field="waitDuration" />
+							<hftl:column
+								label="#{messages['dunningPlan.conditionEl']}"
+								field="conditionEl" />
 
 							<p:column styleClass="actions-column"
 								rendered="#{dunningPlanBean.edit}">
@@ -145,6 +148,9 @@
 										label="#{messages['dunningPlanTransition.waitDuration']}"
 										field="waitDuration" required="true"
 										edit="#{dunningPlanBean.edit}" />
+									<hf:formField label="#{messages['dunningPlan.conditionEl']}"
+							         field="conditionEl"  textArea="true" maxlength="1000"
+									 edit="#{dunningPlanBean.edit}"/>
 									<p:panelGrid columns="3">
 										<p:commandButton rendered="#{dunningPlanTransition.id==null}"
 											action="#{dunningPlanBean.saveDunningPlanTransition}"
@@ -221,6 +227,9 @@
 									<hftl:column
 										label="#{messages['actionPlanItem.letterTemplate']}"
 										field="letterTemplate" />
+								    <hftl:column
+										label="#{messages['dunningPlan.conditionEl']}"
+										field="conditionEl" />		
 
 									<p:column styleClass="actions-column"
 										rendered="#{dunningPlanBean.edit}">
@@ -287,6 +296,9 @@
 											field="chargeAmount" required="true" />
 									</h:panelGroup>
 								</p:outputPanel>
+								<hf:formField label="#{messages['dunningPlan.conditionEl']}"
+							         field="conditionEl"  textArea="true" maxlength="1000"
+									 edit="#{dunningPlanBean.edit}"/>
 								<p:panelGrid columns="3">
 									<p:commandButton rendered="#{actionPlanItem.id==null}"
 										action="#{dunningPlanBean.saveActionPlanItem}"

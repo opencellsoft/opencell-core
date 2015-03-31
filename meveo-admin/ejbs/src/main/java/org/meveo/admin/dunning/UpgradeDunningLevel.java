@@ -18,12 +18,17 @@ package org.meveo.admin.dunning;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.ParamBean;
+import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.admin.User;
 import org.meveo.model.payments.ActionDunning;
 import org.meveo.model.payments.ActionPlanItem;
 import org.meveo.model.payments.CustomerAccount;
@@ -38,6 +43,7 @@ import org.meveo.model.payments.OtherCreditAndCharge;
 import org.meveo.model.payments.RecordedInvoice;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.admin.impl.UserService;
+import org.meveo.service.billing.impl.RatingService;
 import org.meveo.service.payments.impl.ActionDunningService;
 import org.meveo.service.payments.impl.ActionPlanItemService;
 import org.meveo.service.payments.impl.CustomerAccountService;
@@ -90,6 +96,7 @@ public class UpgradeDunningLevel {
 
 	@Inject
 	ActionDunningService actionDunningService;
+	
 
 	public UpgradeDunningReturn execute(CustomerAccount customerAccount,
 			BigDecimal balanceExigible, DunningPlan dunningPlan)
@@ -145,9 +152,11 @@ public class UpgradeDunningLevel {
 								.before(new Date())) {
 							if (balanceExigible.compareTo(dunningPlanTransition
 									.getThresholdAmount()) == 1) {
+						if (matchExpression(dunningPlanTransition.getConditionEl(), customerAccount,dunningPlanTransition, balanceExigible)) {
 								for (ActionPlanItem actionPlanItem : actionPlanItemService
 										.getActionPlanItems(dunningPlan,
 												dunningPlanTransition)) {
+								if (matchExpression(actionPlanItem.getConditionEl(), customerAccount,dunningPlanTransition, balanceExigible)) {
 									BigDecimal amoutDue = balanceExigible;
 									ActionDunning actionDunning = new ActionDunning();
 									actionDunning
@@ -181,6 +190,7 @@ public class UpgradeDunningLevel {
 									upgradeDunningReturn.getListActionDunning()
 											.add(actionDunning);
 								}
+								}
 
 								customerAccount
 										.setDunningLevel(dunningPlanTransition
@@ -189,7 +199,8 @@ public class UpgradeDunningLevel {
 								upgradeDunningReturn.setUpgraded(true);
 								customerAccountService.update(customerAccount);
 								logger.info("UpgradeDunningLevelStep   upgrade ok");
-							} else {
+							} 
+							}else {
 								logger.info("UpgradeDunningLevelStep   ThresholdAmount < invoice.amount");
 							}
 						} else {
@@ -232,6 +243,41 @@ public class UpgradeDunningLevel {
 		otherCreditAndChargeService.create(occ);
 		return occ;
 
+	}
+	
+	private boolean matchExpression(String expression,
+			CustomerAccount customerAccount,DunningPlanTransition dunningPlanTransition,BigDecimal balanceExigible) throws BusinessException {
+		Boolean result = true;
+		if (StringUtils.isBlank(expression)) {
+			return result;
+		}
+		Map<Object, Object> userMap = new HashMap<Object, Object>();
+		userMap.put("ca", customerAccount);
+		
+		if (expression.indexOf("dt.") >= 0) {
+			userMap.put("dt", dunningPlanTransition);
+		}
+		if (expression.indexOf("$be") >= 0) {
+			userMap.put("$be", balanceExigible);
+		}
+		if (expression.indexOf("iv.") >= 0) {
+			List<RecordedInvoice> recordedInvoices = recordedInvoiceService
+					.getRecordedInvoices(customerAccount, MatchingStatusEnum.O,
+							false);
+			if (recordedInvoices != null && !recordedInvoices.isEmpty()) {
+				RecordedInvoice recordedInvoice = recordedInvoices.get(0);
+				userMap.put("iv", recordedInvoice);
+			}
+		}
+		Object res = RatingService.evaluateExpression(expression, userMap,
+				Boolean.class);
+		try {
+			result = (Boolean) res;
+		} catch (Exception e) {
+			throw new BusinessException("Expression " + expression
+					+ " do not evaluate to boolean but " + res);
+		}
+		return result;
 	}
 
 }

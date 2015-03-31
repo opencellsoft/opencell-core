@@ -28,6 +28,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
+import javax.validation.constraints.Size;
 
 import org.meveo.model.AuditableEntity;
 
@@ -59,6 +60,10 @@ public class DunningPlanTransition extends AuditableEntity {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "DUNNING_PLAN_ID")
 	private DunningPlan dunningPlan;
+	
+	@Column(name = "CONDITION_EL", length = 1000)
+	@Size(max = 1000)
+	private String conditionEl;
 
 	public DunningLevelEnum getDunningLevelFrom() {
 		return dunningLevelFrom;
@@ -106,6 +111,14 @@ public class DunningPlanTransition extends AuditableEntity {
 
 	public void setDunningPlan(DunningPlan dunningPlan) {
 		this.dunningPlan = dunningPlan;
+	}
+	
+	public String getConditionEl() {
+		return conditionEl;
+	}
+
+	public void setConditionEl(String conditionEl) {
+		this.conditionEl = conditionEl;
 	}
 
 	@Override
