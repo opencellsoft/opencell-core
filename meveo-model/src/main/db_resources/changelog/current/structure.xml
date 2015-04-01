@@ -56,4 +56,12 @@
 			constraintName="uk_customfieldinst" deferrable="false"
 			disabled="false" initiallyDeferred="false" tableName="crm_custom_field_inst" />
 	</changeSet>
+	<changeSet id="ticket552_20150331" author="Mbarek">
+		<addColumn tableName="AR_DUNNING_PLAN_TRANSITION">
+			<column name="CONDITION_EL" type="VARCHAR(1000)"/>
+		</addColumn>
+		<addColumn tableName="AR_ACTION_PLAN_ITEM">
+			<column name="CONDITION_EL" type="VARCHAR(1000)"/>
+		</addColumn>
+	</changeSet>
 </databaseChangeLog>

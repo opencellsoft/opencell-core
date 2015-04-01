@@ -91,7 +91,7 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
 	}
 
 	private BigDecimal computeOccAmount(CustomerAccount customerAccount, OperationCategoryEnum operationCategoryEnum,
-			boolean isDue, Date to, boolean dunningExclusion,MatchingStatusEnum... status) throws Exception {
+			boolean isDue, Date to, boolean activeDunningExclusion ,MatchingStatusEnum... status) throws Exception {
 
 		BigDecimal balance = null;
 		QueryBuilder queryBuilder = new QueryBuilder("select sum(unMatchingAmount) from AccountOperation");
@@ -101,7 +101,7 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
 		} else {
 			queryBuilder.addCriterion("transactionDate", "<=", to, false);
 		}
-		if(dunningExclusion){
+		if(activeDunningExclusion){
 			queryBuilder.addBooleanCriterion("excludedFromDunning", false);
 		}
 		queryBuilder.addCriterionEntity("customerAccount", customerAccount);

@@ -67,4 +67,14 @@ public class TaxService extends PersistenceService<Tax> {
 			return null;
 		}
 	}
+	
+	public int getNbTaxesNotAssociated(Provider provider) { 
+		return ((Long)getEntityManager().createQuery("select count(*) from Tax t where t.id not in (select l.tax.id from TaxLanguage l where l.tax.id is not null ) "
+				+ " and t.id not in (select cntr.tax.id from InvoiceSubcategoryCountry cntr where cntr.tax.id is not null) and t.provider=:provider").setParameter("provider", provider).getSingleResult()).intValue();
+		}
+	
+	public  List<Tax> getTaxesNotAssociated(Provider provider) { 
+		return (List<Tax>)getEntityManager().createQuery("from Tax t where t.id not in (select l.tax.id from TaxLanguage l where l.tax.id is not null ) "
+				+ " and t.id not in (select cntr.tax.id from InvoiceSubcategoryCountry cntr where cntr.tax.id is not null) and t.provider=:provider").setParameter("provider", provider).getResultList();
+		}
 }

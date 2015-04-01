@@ -68,6 +68,8 @@ import org.meveo.model.catalog.RecurringChargeTemplate;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.payments.CustomerAccount;
+import org.meveo.model.rating.EDR;
+import org.meveo.model.rating.EDRStatusEnum;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.catalog.impl.OneShotChargeTemplateService;
@@ -1342,4 +1344,21 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 				+ "WHERE o.status=org.meveo.model.billing.WalletOperationStatusEnum.TO_RERATE"
 				+ " AND o.provider=:provider").setParameter("provider",provider).getResultList();
 	}
+	
+	
+	public Long getNbrWalletOperationByStatus(WalletOperationStatusEnum status,Provider provider) { 
+        QueryBuilder qb = new QueryBuilder(WalletOperation.class, "w"); 
+        qb.addCriterionEnum("w.status",status);
+        qb.addCriterionEntity("provider", provider);
+        log.debug("totalCount: queryString={}", qb);
+        return ((Long)qb.getCountQuery(getEntityManager()).getSingleResult());
+        }
+	
+	public Long getNbrEdrByStatus(EDRStatusEnum status,Provider provider) { 
+        QueryBuilder qb = new QueryBuilder(EDR.class, "e"); 
+        qb.addCriterionEnum("e.status",status);
+        qb.addCriterionEntity("provider", provider);
+        log.debug("totalCount: queryString={}", qb);
+        return ((Long)qb.getCountQuery(getEntityManager()).getSingleResult());
+        }
 }

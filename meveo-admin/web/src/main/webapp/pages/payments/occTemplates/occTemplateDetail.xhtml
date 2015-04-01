@@ -17,9 +17,9 @@
 		<hf:formPanel label="#{messages['occTemplate.title']}" backingBean="#{occTemplateBean}" >
 			<hf:formField label="#{messages['businessEntity.code']}" field="code" validateUnique="true" required="true"/>
 			<hf:formField label="#{messages['businessEntity.description']}" field="description" required="true"/>
-			<hf:formField label="#{messages['occTemplate.accountCode']}" field="accountCode" />
+			<hf:formField label="#{messages['occTemplate.accountCode']}" field="accountCode" required="true" />
 			<hf:formField label="#{messages['occTemplate.accountCodeClientSide']}" field="accountCodeClientSide" />
-			<hf:formField label="#{messages['occTemplate.occCategory']}" field="occCategory"/>
+			<hf:formField label="#{messages['occTemplate.occCategory']}" field="occCategory" required="true"/>
 		</hf:formPanel>
 	</ui:define>
 
