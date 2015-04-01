@@ -131,10 +131,6 @@
 				<p:menuitem id="emailTemplates"
 					rendered="#{identity.hasPermission('administration','administrationVisualization')}"
 					outcome="emailTemplates" value="#{messages['menu.emailTemplates']}" />
-				<p:menuitem id="occTemplates"
-					rendered="#{identity.hasPermission('administration','administrationVisualization')}"
-					outcome="occTemplates" value="#{messages['menu.occTemplates']}" />
-
 			</p:submenu>
 
 
@@ -593,6 +589,9 @@
 				value="#{messages['menu.ddrequestLotOp']}" />
 			<p:menuitem id="ddrequestLots" outcome="ddrequestLots"
 				value="#{messages['menu.ddrequestLot']}" />
+			<p:menuitem id="occTemplates"
+					rendered="#{identity.hasPermission('administration','administrationVisualization')}"
+					outcome="occTemplates" value="#{messages['menu.occTemplates']}" />
 		</p:submenu>
 
 
