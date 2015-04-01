@@ -17,11 +17,12 @@ import org.meveo.model.billing.Subscription;
 import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.ServiceTemplate;
+import org.meveo.model.jobs.TimerEntity;
 import org.meveo.model.mediation.Access;
 
 @Entity
 @Table(name = "CRM_CUSTOM_FIELD_INST", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE", "SUBSCRIPTION_ID",
-		"ACCOUNT_ID", "PROVIDER_ID" }))
+		"ACCOUNT_ID", "CHARGE_TEMPLATE_ID","SERVICE_TEMPLATE_ID","OFFER_TEMPLATE_ID","ACCESS_ID","MEVEO_TIMER_ID", "PROVIDER_ID" }))
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "CRM_CUSTOM_FIELD_INST_SEQ")
 public class CustomFieldInstance extends BusinessEntity {
 
@@ -51,6 +52,10 @@ public class CustomFieldInstance extends BusinessEntity {
 	@JoinColumn(name = "ACCESS_ID")
 	private Access access;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "MEVEO_TIMER_ID")
+    private TimerEntity timerEntity;
+    
 	@Column(name = "STRING_VALUE")
 	private String stringValue;
 
@@ -119,7 +124,40 @@ public class CustomFieldInstance extends BusinessEntity {
 		this.access = access;
 	}
 
-	public String toJson() {
+    public ChargeTemplate getChargeTemplate() {
+        return chargeTemplate;
+    }
+
+    public void setChargeTemplate(ChargeTemplate chargeTemplate) {
+        this.chargeTemplate = chargeTemplate;
+    }
+
+    public ServiceTemplate getServiceTemplate() {
+        return serviceTemplate;
+    }
+
+    public void setServiceTemplate(ServiceTemplate serviceTemplate) {
+        this.serviceTemplate = serviceTemplate;
+    }
+
+    public OfferTemplate getOfferTemplate() {
+        return offerTemplate;
+    }
+
+    public void setOfferTemplate(OfferTemplate offerTemplate) {
+        this.offerTemplate = offerTemplate;
+    }
+
+
+	public TimerEntity getTimerEntity() {
+        return timerEntity;
+    }
+
+    public void setTimerEntity(TimerEntity timerEntity) {
+        this.timerEntity = timerEntity;
+    }
+
+    public String toJson() {
 		String result = code + ":";
 
 		if (stringValue != null) {
@@ -141,32 +179,7 @@ public class CustomFieldInstance extends BusinessEntity {
 	public String toString() {
 		return "CustomFieldInstance [account=" + account + ", subscription=" + subscription + ", chargeTemplate="
 				+ chargeTemplate + ", serviceTemplate=" + serviceTemplate + ", offerTemplate=" + offerTemplate
-				+ ", access=" + access + ", stringValue=" + stringValue + ", dateValue=" + dateValue + ", longValue="
-				+ longValue + ", doubleValue=" + doubleValue + "]";
+				+ ", access=" + access +  ", timerEntity=" + timerEntity + ", stringValue=" + stringValue + ", "
+				+ "dateValue=" + dateValue + ", longValue=" + longValue + ", doubleValue=" + doubleValue + "]";
 	}
-
-	public ChargeTemplate getChargeTemplate() {
-		return chargeTemplate;
-	}
-
-	public void setChargeTemplate(ChargeTemplate chargeTemplate) {
-		this.chargeTemplate = chargeTemplate;
-	}
-
-	public ServiceTemplate getServiceTemplate() {
-		return serviceTemplate;
-	}
-
-	public void setServiceTemplate(ServiceTemplate serviceTemplate) {
-		this.serviceTemplate = serviceTemplate;
-	}
-
-	public OfferTemplate getOfferTemplate() {
-		return offerTemplate;
-	}
-
-	public void setOfferTemplate(OfferTemplate offerTemplate) {
-		this.offerTemplate = offerTemplate;
-	}
-
 }

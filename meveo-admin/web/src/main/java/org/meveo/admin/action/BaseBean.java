@@ -59,6 +59,7 @@ import org.meveo.model.crm.CustomFieldInstance;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.CustomFieldTypeEnum;
 import org.meveo.model.crm.Provider;
+import org.meveo.model.jobs.TimerEntity;
 import org.meveo.model.mediation.Access;
 import org.meveo.security.MeveoUser;
 import org.meveo.service.base.local.IPersistenceService;
@@ -1045,8 +1046,10 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 				} else if (entity instanceof ServiceTemplate) {
 					cfi.setServiceTemplate((ServiceTemplate) entity);
 				} else if (entity instanceof OfferTemplate) {
-					cfi.setOfferTemplate((OfferTemplate) entity);
-				}
+                    cfi.setOfferTemplate((OfferTemplate) entity);
+                }else if (entity instanceof TimerEntity) {
+                    cfi.setTimerEntity((TimerEntity) entity);
+                }
 
 				if (cf.getFieldType() == CustomFieldTypeEnum.DATE) {
 					cfi.setDateValue(cf.getDateValue());
@@ -1096,7 +1099,15 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 						cfi.setSubscription((Subscription) entity);
 					} else if (entity instanceof Access) {
 						cfi.setAccess((Access) entity);
-					}
+					}else if (entity instanceof ChargeTemplate) {
+	                    cfi.setChargeTemplate((ChargeTemplate) entity);
+	                } else if (entity instanceof ServiceTemplate) {
+	                    cfi.setServiceTemplate((ServiceTemplate) entity);
+	                } else if (entity instanceof OfferTemplate) {
+	                    cfi.setOfferTemplate((OfferTemplate) entity);
+	                }else if (entity instanceof TimerEntity) {
+	                    cfi.setTimerEntity((TimerEntity) entity);
+	                }
 
 					if (cf.getFieldType() == CustomFieldTypeEnum.DATE) {
 						cfi.setDateValue(cf.getDateValue());

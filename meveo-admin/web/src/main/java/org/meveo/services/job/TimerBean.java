@@ -39,7 +39,6 @@ import org.meveo.model.jobs.JobCategoryEnum;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.TimerEntity;
 import org.meveo.service.base.local.IPersistenceService;
-import org.meveo.service.job.Job;
 import org.meveo.service.job.JobExecutionService;
 import org.meveo.service.job.TimerEntityService;
 import org.omnifaces.cdi.ViewScoped;
@@ -80,6 +79,7 @@ public class TimerBean extends BaseBean<JobExecutionResultImpl> {
 	@Named
 	@ConversationScoped
 	public TimerEntity getTimerEntity() {
+        super.initEntity();
 		conversation.getId();
 
 		if (timerEntity == null) {

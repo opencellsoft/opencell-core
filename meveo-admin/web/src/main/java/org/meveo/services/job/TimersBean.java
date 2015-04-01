@@ -2,11 +2,7 @@ package org.meveo.services.job;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 import javax.ejb.Timer;
 import javax.enterprise.context.ConversationScoped;
@@ -18,17 +14,18 @@ import javax.inject.Named;
 import org.jboss.seam.international.status.Messages;
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
+import org.meveo.admin.action.CustomFieldEnabledBean;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.admin.util.pagination.PaginationDataModel;
-import org.meveo.model.jobs.JobCategoryEnum;
+import org.meveo.model.crm.AccountLevelEnum;
 import org.meveo.model.jobs.TimerEntity;
 import org.meveo.model.jobs.TimerInfo;
 import org.meveo.service.base.local.IPersistenceService;
-import org.meveo.service.job.Job;
 import org.meveo.service.job.TimerEntityService;
 
 @Named
 @ConversationScoped
+@CustomFieldEnabledBean(accountLevel = AccountLevelEnum.TIMER)
 public class TimersBean extends BaseBean<TimerEntity> {
 
 	private static final long serialVersionUID = 5578930292531038376L;

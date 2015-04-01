@@ -135,6 +135,11 @@
 								itemLabel="#{t_.name}" itemValue="#{t_.id}" />
 						</p:selectOneMenu>
 					</p:panelGrid>
+					
+					<p:panelGrid columns="2">
+						<p:outputLabel value="#{messages['customFieldTemplate.panel']}"></p:outputLabel>
+						<hf:customFields />
+					</p:panelGrid>
 
 					<p:panelGrid columns="4">
 						<div class="action-buttons">
