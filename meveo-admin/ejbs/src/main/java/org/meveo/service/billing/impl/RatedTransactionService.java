@@ -251,7 +251,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 			if (!billingAccount.getProvider().isDisplayFreeTransacInInvoice()) {
 				pAmoutWithoutTax = cb.notEqual(from.get("amountWithoutTax"), BigDecimal.ZERO);
 			}
-			Predicate pOldTransaction = cb.lessThan(from.get("amountWithoutTax"),lastTransactionDate);
+			Predicate pOldTransaction = cb.lessThan(from.get("usageDate"),lastTransactionDate);
 			Predicate pdoNotTriggerInvoicing = cb.isFalse(from.get("doNotTriggerInvoicing"));
 			Predicate pInvoice = cb.isNull(from.get("invoice"));
 			if (!billingAccount.getProvider().isDisplayFreeTransacInInvoice()) {
