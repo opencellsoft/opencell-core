@@ -307,7 +307,7 @@ public class AccountImportService {
 				&& billingAccountDto.getCustomFields().getCustomField().size() > 0) {
 			for (CustomField customField : billingAccountDto.getCustomFields().getCustomField()) {
 				CustomFieldInstance cfi = customFieldInstanceService.findByCodeAndAccount(customField.getCode(),
-						billingAccount);
+						billingAccount,provider);
 
 				if (cfi == null) {
 					if (customFieldTemplateService.findByCodeAndAccountLevel(customField.getCode(),
@@ -473,7 +473,7 @@ public class AccountImportService {
 				&& userAccountDto.getCustomFields().getCustomField().size() > 0) {
 			for (CustomField customField : userAccountDto.getCustomFields().getCustomField()) {
 				CustomFieldInstance cfi = customFieldInstanceService.findByCodeAndAccount(customField.getCode(),
-						userAccount);
+						userAccount,provider);
 				if (cfi == null) {
 					if (customFieldTemplateService.findByCodeAndAccountLevel(customField.getCode(),
 							AccountLevelEnum.UA, provider) == null) {

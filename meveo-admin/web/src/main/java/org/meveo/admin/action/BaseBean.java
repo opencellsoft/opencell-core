@@ -1070,7 +1070,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 	protected void setAndSaveCustomFields() {
 		if (customFieldTemplates != null && customFieldTemplates.size() > 0) {
 			for (CustomFieldTemplate cf : customFieldTemplates) {
-				CustomFieldInstance cfi = customFieldInstanceService.findByCodeAndAccount(cf.getCode(), getEntity());
+				CustomFieldInstance cfi = customFieldInstanceService.findByCodeAndAccount(cf.getCode(), getEntity(),getCurrentProvider());
 				if (cfi != null) {
 					if (cf.isValueEmpty()) {
 						customFieldInstanceService.remove(cfi);
@@ -1129,7 +1129,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 	protected void deleteCustomFields() {
 		if (customFieldTemplates != null && customFieldTemplates.size() > 0) {
 			for (CustomFieldTemplate cf : customFieldTemplates) {
-				CustomFieldInstance cfi = customFieldInstanceService.findByCodeAndAccount(cf.getCode(), getEntity());
+				CustomFieldInstance cfi = customFieldInstanceService.findByCodeAndAccount(cf.getCode(), getEntity(),getCurrentProvider());
 				if (cfi != null) {
 					customFieldInstanceService.remove(cfi);
 				}

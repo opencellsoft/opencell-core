@@ -168,7 +168,7 @@ public class AccountApi extends BaseApi {
 						if (cf.getCode().equals(cft.getCode())) {
 							found = true;
 							CustomFieldInstance cfi = customFieldInstanceService.findByCodeAndAccount(cf.getCode(),
-									accountEntity);
+									accountEntity,currentUser.getProvider());
 							if (cfi != null) {
 								// update
 								cfi.setActive(true);

@@ -212,7 +212,8 @@ public class CustomerImportService {
 				&& cust.getCustomFields().getCustomField().size() > 0) {
 			for (CustomField customField : cust.getCustomFields().getCustomField()) {
 				CustomFieldInstance cfi = customFieldInstanceService.findByCodeAndAccount(customField.getCode(),
-						customer);
+						customer,currentUser
+						.getProvider());
 				if (cfi == null) {
 					// check if cft exists
 					if (customFieldTemplateService.findByCodeAndAccountLevel(customField.getCode(),
@@ -313,7 +314,7 @@ public class CustomerImportService {
 				&& custAcc.getCustomFields().getCustomField().size() > 0) {
 			for (CustomField customField : custAcc.getCustomFields().getCustomField()) {
 				CustomFieldInstance cfi = customFieldInstanceService.findByCodeAndAccount(customField.getCode(),
-						customerAccount);
+						customerAccount,currentUser.getProvider());
 				if (cfi == null) {
 					// check if cft exists
 					if (customFieldTemplateService.findByCodeAndAccountLevel(customField.getCode(),
