@@ -39,6 +39,7 @@ import javax.persistence.TemporalType;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 
+import org.meveo.model.Auditable;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.ObservableEntity;
@@ -202,14 +203,80 @@ public class Subscription extends BusinessEntity implements ICustomFieldEntity{
 		this.customFields = customFields;
 	}
 
-	public String getStringCustomValue(String code) {
-		String result = null;
-		if (customFields.containsKey(code)) {
-			result = customFields.get(code).getStringValue();
-		}
+    private CustomFieldInstance getOrCreateCustomFieldInstance(String code) {
+        CustomFieldInstance cfi = null;
 
-		return result;
-	}
+        if (customFields.containsKey(code)) {
+            cfi = customFields.get(code);
+        } else {
+            cfi = new CustomFieldInstance();
+            Auditable au = new Auditable();
+            au.setCreated(new Date());
+            if (this.getAuditable() != null) {
+                au.setCreator(this.getAuditable().getCreator());
+            }
+            cfi.setAuditable(au);
+            cfi.setCode(code);
+            cfi.setSubscription(this);
+            cfi.setProvider(this.getProvider());
+            customFields.put(code, cfi);
+        }
+
+        return cfi;
+    }
+
+    public String getStringCustomValue(String code) {
+        String result = null;
+        if (customFields.containsKey(code)) {
+            result = customFields.get(code).getStringValue();
+        }
+
+        return result;
+    }
+
+    public void setStringCustomValue(String code, String value) {
+        getOrCreateCustomFieldInstance(code).setStringValue(value);
+    }
+
+    public Date getDateCustomValue(String code) {
+        Date result = null;
+        if (customFields.containsKey(code)) {
+            result = customFields.get(code).getDateValue();
+        }
+
+        return result;
+    }
+
+    public void setDateCustomValue(String code, Date value) {
+        getOrCreateCustomFieldInstance(code).setDateValue(value);
+    }
+
+    public Long getLongCustomValue(String code) {
+        Long result = null;
+        if (customFields.containsKey(code)) {
+            result = customFields.get(code).getLongValue();
+        }
+        return result;
+    }
+
+    public void setLongCustomValue(String code, Long value) {
+        getOrCreateCustomFieldInstance(code).setLongValue(value);
+    }
+
+    public Double getDoubleCustomValue(String code) {
+        Double result = null;
+
+        if (customFields.containsKey(code)) {
+            result = customFields.get(code).getDoubleValue();
+        }
+
+        return result;
+    }
+
+    public void setDoubleCustomValue(String code, Double value) {
+        getOrCreateCustomFieldInstance(code).setDoubleValue(value);
+    }
+
 	
 	public String getInheritedCustomStringValue(String code){
 	String result=null; 

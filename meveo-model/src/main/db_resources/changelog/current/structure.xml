@@ -42,6 +42,20 @@
 	<changeSet id="ticket674_20150330" author="SebastienMichea">
 		<modifyDataType tableName="JOB_EXECUTION" columnName="REPORT" newDataType="TEXT"/>
 	</changeSet>
+	<changeSet id="ticket585_20150330" author="SebastienMichea">
+		<addColumn tableName="CRM_CUSTOM_FIELD_INST">
+			<column name="MEVEO_TIMER_ID" type="BIGINT"/>
+		</addColumn>
+		<addForeignKeyConstraint baseColumnNames="MEVEO_TIMER_ID"
+			baseTableName="CRM_CUSTOM_FIELD_INST" constraintName="fk_customfieldinstmeveotimer"
+			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+			onUpdate="NO ACTION" referencedColumnNames="id"
+			referencedTableName="MEVEO_TIMER" />
+		<dropUniqueConstraint tableName="crm_custom_field_inst" constraintName="uk_6yeqeouehb38bt3l7r0dy8a0k"/>
+	    <addUniqueConstraint columnNames="code, subscription_id, account_id, charge_template_id,service_template_id,offer_template_id,access_id,provider_id"
+			constraintName="uk_customfieldinst" deferrable="false"
+			disabled="false" initiallyDeferred="false" tableName="crm_custom_field_inst" />
+	</changeSet>
 	<changeSet id="ticket552_20150331" author="Mbarek">
 		<addColumn tableName="AR_DUNNING_PLAN_TRANSITION">
 			<column name="CONDITION_EL" type="VARCHAR(1000)"/>

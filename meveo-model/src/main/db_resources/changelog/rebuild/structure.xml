@@ -3652,7 +3652,7 @@
 		<addUniqueConstraint columnNames="code, provider_id"
 			constraintName="uk_6u1l58s8u672jj9sqb9tgqdbu" deferrable="false"
 			disabled="false" initiallyDeferred="false" tableName="cat_service_template" />
-		<addUniqueConstraint columnNames="code, subscription_id, account_id, provider_id"
+		<addUniqueConstraint columnNames="code, subscription_id, account_id, charge_template_id,service_template_id,offer_template_id,access_id,provider_id"
 			constraintName="uk_6yeqeouehb38bt3l7r0dy8a0k" deferrable="false"
 			disabled="false" initiallyDeferred="false" tableName="crm_custom_field_inst" />
 		<addUniqueConstraint columnNames="code, provider_id"

@@ -17,13 +17,20 @@
 package org.meveo.model.jobs;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.ejb.ScheduleExpression;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
+import javax.persistence.MapKeyColumn;
+import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -31,14 +38,17 @@ import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
 import org.apache.commons.lang.StringUtils;
+import org.meveo.model.Auditable;
 import org.meveo.model.BaseEntity;
+import org.meveo.model.ICustomFieldEntity;
+import org.meveo.model.crm.CustomFieldInstance;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Entity
 @Table(name = "MEVEO_TIMER")
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "MEVEO_TIMER_SEQ")
-public class TimerEntity extends BaseEntity {
+public class TimerEntity extends BaseEntity implements ICustomFieldEntity {
 
 	private static final long serialVersionUID = -3764934334462355788L;
 
@@ -89,6 +99,11 @@ public class TimerEntity extends BaseEntity {
 	@Enumerated(EnumType.STRING)
 	@Column(name = "JOB_CATEGORY")
 	JobCategoryEnum jobCategoryEnum;
+	
+	@OneToMany(mappedBy = "timerEntity", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+	@MapKeyColumn(name = "code")
+	private Map<String, CustomFieldInstance> customFields = new HashMap<String, CustomFieldInstance>();
+
 
 	public String getName() {
 		return (name == null) ? (getId() == null ? null : jobName + "_"
@@ -253,7 +268,95 @@ public class TimerEntity extends BaseEntity {
 	public void setJobCategoryEnum(JobCategoryEnum jobCategoryEnum) {
 		this.jobCategoryEnum = jobCategoryEnum;
 	}
-	
-	
+
+    public Map<String, CustomFieldInstance> getCustomFields() {
+        return customFields;
+    }
+
+    public void setCustomFields(Map<String, CustomFieldInstance> customFields) {
+        this.customFields = customFields;
+    }
+    private CustomFieldInstance getOrCreateCustomFieldInstance(String code) {
+        CustomFieldInstance cfi = null;
+
+        if (customFields.containsKey(code)) {
+            cfi = customFields.get(code);
+        } else {
+            cfi = new CustomFieldInstance();
+            Auditable au = new Auditable();
+            au.setCreated(new Date());
+            cfi.setAuditable(au);
+            cfi.setCode(code);
+            cfi.setTimerEntity(this);
+            cfi.setProvider(this.getProvider());
+            customFields.put(code, cfi);
+        }
+
+        return cfi;
+    }
+
+    public String getStringCustomValue(String code) {
+        String result = null;
+        if (customFields.containsKey(code)) {
+            result = customFields.get(code).getStringValue();
+        }
+
+        return result;
+    }
+
+    public void setStringCustomValue(String code, String value) {
+        getOrCreateCustomFieldInstance(code).setStringValue(value);
+    }
+
+    public Date getDateCustomValue(String code) {
+        Date result = null;
+        if (customFields.containsKey(code)) {
+            result = customFields.get(code).getDateValue();
+        }
+
+        return result;
+    }
+
+    public void setDateCustomValue(String code, Date value) {
+        getOrCreateCustomFieldInstance(code).setDateValue(value);
+    }
+
+    public Long getLongCustomValue(String code) {
+        Long result = null;
+        if (customFields.containsKey(code)) {
+            result = customFields.get(code).getLongValue();
+        }
+        return result;
+    }
+
+    public void setLongCustomValue(String code, Long value) {
+        getOrCreateCustomFieldInstance(code).setLongValue(value);
+    }
+
+    public Double getDoubleCustomValue(String code) {
+        Double result = null;
+
+        if (customFields.containsKey(code)) {
+            result = customFields.get(code).getDoubleValue();
+        }
+
+        return result;
+    }
+
+    public void setDoubleCustomValue(String code, Double value) {
+        getOrCreateCustomFieldInstance(code).setDoubleValue(value);
+    }
+
+    public String getCustomFieldsAsJson() {
+        String result = "";
+        String sep = "";
+
+        for (Entry<String, CustomFieldInstance> cf : customFields.entrySet()) {
+            result += sep + cf.getValue().toJson();
+            sep = ";";
+        }
+
+        return result;
+    }
 
 }
