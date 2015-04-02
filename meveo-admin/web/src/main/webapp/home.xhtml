@@ -91,11 +91,8 @@
 					</h:form>
 				</ui:repeat>
 			</h:panelGrid>
-			<h:panelGrid columns="1">
-		    <f:facet name="header">
-		    <h:outputText value="#{messages['configIssuesReporting.title']}" />
-		   </f:facet>
-             <br/>
+			<h:panelGrid columns="2" columnClasses="panelGrid-column,panelGrid-column" >
+			<h:panelGrid>
 			<p:accordionPanel activeIndex="null" dynamic="true" cache="false">
 			<p:ajax event="tabChange" listener="#{configIssuesReportingBean.constructChargesWithNotPricePlan}" />>
 			<p:tab>  	
@@ -398,6 +395,7 @@
 			</h:panelGrid>
 		    </p:tab>
 		  </p:accordionPanel>
+		  
 		   <p:accordionPanel activeIndex="null" dynamic="true" cache="false">
 		    <p:ajax event="tabChange" listener="#{configIssuesReportingBean.constructUsagesChrgNotAssociated}" />
 			<p:tab> 
@@ -443,7 +441,9 @@
 			</h:panelGrid>
 		    </p:tab>
 			</p:accordionPanel>
-		   <p:accordionPanel activeIndex="null" dynamic="true" cache="false">
+			</h:panelGrid>
+		 <h:panelGrid>
+		   <p:accordionPanel activeIndex="null" dynamic="true" cache="false" >
 		   <p:ajax event="tabChange" listener="#{configIssuesReportingBean.constructCounterWithNotService}" />
 			<p:tab> 
 			<f:facet name="title">
@@ -644,6 +644,7 @@
 			</h:panelGrid>
 		    </p:tab>
           </p:accordionPanel>		  
+			</h:panelGrid>
 			</h:panelGrid>
 		</p:panel>
 

@@ -407,3 +407,7 @@ input[type="submit"],
   background-color: rgb(242, 244, 243)!important;
   background:rgb(242, 244, 243)!important;
 }
+
+.panelGrid-column{
+vertical-align:top !important;
+}
