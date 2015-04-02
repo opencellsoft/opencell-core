@@ -5,7 +5,6 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html" xmlns:hftl="http://hftl.org"
-	xmlns:o="http://omnifaces.org/ui"
 	xmlns:hf="http://java.sun.com/jsf/composite/tags"
 	template="/layout/template.xhtml">
 
@@ -19,8 +18,6 @@
 				value="#{customerAccountBean.customerId}" />
 			<f:viewParam name="customerId" value="#{customerBean.objectId}" />
 		</f:metadata>
-
-		<o:importConstants type="org.meveo.model.crm.CustomFieldTypeEnum" />
 	</ui:define>
 
 	<ui:define name="navigation">

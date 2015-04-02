@@ -7,6 +7,7 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:cc="http://java.sun.com/jsf/composite"
 	xmlns:p="http://primefaces.org/ui"
+    xmlns:o="http://omnifaces.org/ui" 
 	xmlns:c="http://java.sun.com/jsp/jstl/core">
 
 <cc:interface componentType="formField">
@@ -15,8 +16,10 @@
 </cc:interface>
 
 <cc:implementation>
-
-	<ui:fragment>
+    
+    <o:importConstants type="org.meveo.model.crm.CustomFieldTypeEnum" />
+	
+    <ui:fragment>
 
 		<p:panelGrid columns="2" id="description">
 			<h:dataTable
@@ -24,7 +27,7 @@
 				var="cf">
 				<h:column>                
                     <h:panelGroup  rendered="#{not cf.disabled or (cf.disabled and not cf.isValueEmpty())}">
-						 
+						
     					<p:outputLabel value="#{cf.description}" for="cfField_string"
     						rendered="#{cf.fieldType eq CustomFieldTypeEnum.STRING}" />
     					<p:inputText id="cfField_string"

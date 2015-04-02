@@ -358,5 +358,55 @@ public class TimerEntity extends BaseEntity implements ICustomFieldEntity {
 
         return result;
     }
+    
+
+    public String getInheritedCustomStringValue(String code) {
+        String result = null;
+        if (getCustomFields().containsKey(code) && getCustomFields().get(code).getStringValue() != null) {
+            result = getCustomFields().get(code).getStringValue();
+        } 
+        return result;
+    }
+
+    public Long getInheritedCustomLongValue(String code) {
+        Long result = null;
+        if (getCustomFields().containsKey(code) && getCustomFields().get(code).getLongValue() != null) {
+            result = getCustomFields().get(code).getLongValue();
+        } 
+        return result;
+    }
+
+    public Date getInheritedCustomDateValue(String code) {
+        Date result = null;
+        if (getCustomFields().containsKey(code) && getCustomFields().get(code).getDateValue() != null) {
+            result = getCustomFields().get(code).getDateValue();
+        } 
+        return result;
+    }
+
+    public Double getInheritedCustomDoubleValue(String code) {
+        Double result = null;
+        if (getCustomFields().containsKey(code) && getCustomFields().get(code).getDoubleValue() != null) {
+            result = getCustomFields().get(code).getDoubleValue();
+            
+        }
+        return result;
+    }
+
+    public String getICsv(String code) {
+        return getInheritedCustomStringValue(code);
+    }
+
+    public Long getIClv(String code) {
+        return getInheritedCustomLongValue(code);
+    }
+
+    public Date getICdav(String code) {
+        return getInheritedCustomDateValue(code);
+    }
+
+    public Double getICdov(String code) {
+        return getInheritedCustomDoubleValue(code);
+    }
 
 }
