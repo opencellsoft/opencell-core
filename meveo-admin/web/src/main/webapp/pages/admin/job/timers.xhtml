@@ -4,7 +4,7 @@
 	xmlns:e="http://jboss.com/products/seam/excel" xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
 
 	<f:metadata>
-		<f:event type="preRenderView" listener="#{timersBean.preRenderView}" />
+		<f:event type="preRenderView" listener="#{timerEntityListBean.preRenderView}" />
 	</f:metadata>
 
 	<ui:define name="navigation">
@@ -13,26 +13,26 @@
 
 
 	<ui:define name="body">
-		<hf:searchPanel label="#{messages['timers.page.title']}" backingBean="#{timersBean}" newButtonView="jobTimerDetail">
+		<hf:searchPanel label="#{messages['timers.page.title']}" backingBean="#{timerEntityListBean}" newButtonView="jobTimerDetail">
 			<h:panelGrid columns="2">
 			<p:outputLabel for="jobCategory" value="#{messages['timer.jobCategory']}"/>
 				<p:selectOneMenu id="jobCategory"
-				value="#{timersBean.filters['jobCategoryEnum']}">
+				value="#{timerEntityListBean.filters['jobCategoryEnum']}">
 				<f:selectItem itemLabel="" />
-				<f:selectItems value="#{timerBean.jobCategoryEnumValues}" var="enumElement" itemValue="#{enumElement}"
+				<f:selectItems value="#{timerEntityListBean.jobCategoryEnumValues}" var="enumElement" itemValue="#{enumElement}"
 				itemLabel="#{messages[enumElement.label]}"/>
 				<f:converter converterId="enumConverter" />
 			   </p:selectOneMenu>
 			</h:panelGrid>
 		</hf:searchPanel>
 
-		<hftl:dataList backingBean="#{timersBean}" resultsId="timersBean_results" checkMany="false">
+		<hftl:dataList backingBean="#{timerEntityListBean}" resultsId="timersBean_results" checkMany="false">
 			<p:column>
 		    <f:facet name="header">
 			<h:outputText value="#{messages['timer.name']}" />
 			</f:facet>
 			<h:link outcome="jobTimerDetail" value="#{entity.name}">
-		    <f:param name="timerId" value="#{entity.id}" />
+		    <f:param name="objectId" value="#{entity.id}" />
 			</h:link>
 			</p:column>
 			<hftl:column label="#{messages['timer.jobName']}" field="jobName" />

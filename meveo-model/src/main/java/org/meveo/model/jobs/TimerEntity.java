@@ -40,6 +40,7 @@ import javax.persistence.Transient;
 import org.apache.commons.lang.StringUtils;
 import org.meveo.model.Auditable;
 import org.meveo.model.BaseEntity;
+import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.crm.CustomFieldInstance;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,7 +48,7 @@ import org.slf4j.LoggerFactory;
 @Entity
 @Table(name = "MEVEO_TIMER")
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "MEVEO_TIMER_SEQ")
-public class TimerEntity extends BaseEntity {
+public class TimerEntity extends BaseEntity implements ICustomFieldEntity {
 
 	private static final long serialVersionUID = -3764934334462355788L;
 
