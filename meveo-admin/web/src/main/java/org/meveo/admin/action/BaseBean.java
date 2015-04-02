@@ -72,6 +72,7 @@ import org.primefaces.event.SelectEvent;
 import org.primefaces.event.data.PageEvent;
 import org.primefaces.model.LazyDataModel;
 import org.primefaces.model.SortOrder;
+import org.slf4j.LoggerFactory;
 
 /**
  * Base bean class. Other seam backing beans extends this class if they need
@@ -82,8 +83,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	/** Logger. */
-	@Inject
-	protected org.slf4j.Logger log;
+	protected org.slf4j.Logger log = LoggerFactory.getLogger(this.getClass());
 
 	@Inject
 	protected Messages messages;
