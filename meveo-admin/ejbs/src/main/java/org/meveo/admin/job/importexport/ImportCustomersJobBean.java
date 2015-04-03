@@ -79,7 +79,7 @@ public class ImportCustomersJobBean {
 
 	Sellers sellersWarning;
 	Sellers sellersError;
-
+	
 	ParamBean param = ParamBean.getInstance();
 
 	int nbCustomers;
@@ -381,11 +381,11 @@ public class ImportCustomersJobBean {
 		CustomerAccount customerAccountTmp = null;
 
 		try {
-			customerAccountTmp = customerAccountService.findByCode(custAcc.getCode(), currentUser.getProvider());
+			customerAccountTmp = customerAccountService.findByCode(custAcc.getCode(), currentUser.getProvider(), Arrays.asList("customer"));
 		} catch (Exception e) {
 			log.warn(e.getMessage());
 		}
-
+		
 		if (customerAccountTmp != null) {
 			if (!customerAccountTmp.getCustomer().getCode().equals(cust.getCode())) {
 				nbCustomerAccountsError++;
@@ -626,7 +626,7 @@ public class ImportCustomersJobBean {
 			createCustomerAccountError(sell, cust, custAcc, "Credit Category is null");
 			return true;
 		}
-		if (custAcc.getName() == null || StringUtils.isBlank(custAcc.getName().getName())) {
+		if (custAcc.getName() == null || StringUtils.isBlank(custAcc.getName().getLastName())) {
 			createCustomerAccountError(sell, cust, custAcc, "Lastname is null");
 			return true;
 		}

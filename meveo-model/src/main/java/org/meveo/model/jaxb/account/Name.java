@@ -54,7 +54,7 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = { "title", "firstname", "name" })
+@XmlType(name = "", propOrder = { "title", "firstname", "lastName" })
 @XmlRootElement(name = "name")
 public class Name {
 
@@ -63,7 +63,7 @@ public class Name {
     @XmlElement(required = true)
     protected String firstname;
     @XmlElement(required = true)
-    protected String name;
+    protected String lastName;
     
     public Name(){
     }
@@ -71,7 +71,7 @@ public class Name {
 		if(n!=null){
 			title=n.getTitle()==null?"":n.getTitle().getCode();
 			firstname=n.getFirstName()==null?"":n.getFirstName();
-			name=n.getLastName()==null?"":n.getLastName();
+			lastName=n.getLastName()==null?"":n.getLastName();
 		}
 	}
 
@@ -123,9 +123,7 @@ public class Name {
      * @return possible object is {@link String }
      * 
      */
-    public String getName() {
-        return name;
-    }
+
 
     /**
      * Sets the value of the name property.
@@ -134,8 +132,12 @@ public class Name {
      *            allowed object is {@link String }
      * 
      */
-    public void setName(String value) {
-        this.name = value;
-    }
+  
+	public String getLastName() {
+		return lastName;
+	}
+	public void setLastName(String value) {
+		this.lastName = value;
+	}
 
 }

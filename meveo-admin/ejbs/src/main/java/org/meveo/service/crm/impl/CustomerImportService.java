@@ -155,7 +155,7 @@ public class CustomerImportService {
 
 		if (custAcc.getName() != null) {
 			name.setFirstName(custAcc.getName().getFirstname());
-			name.setLastName(custAcc.getName().getName());
+			name.setLastName(custAcc.getName().getLastName());
 			if (!StringUtils.isBlank(custAcc.getName().getTitle())) {
 				Title title = titleService.findByCode(provider, custAcc.getName().getTitle().trim());
 				name.setTitle(title);
@@ -302,7 +302,7 @@ public class CustomerImportService {
 
 		if (custAcc.getName() != null) {
 			name.setFirstName(custAcc.getName().getFirstname());
-			name.setLastName(custAcc.getName().getName());
+			name.setLastName(custAcc.getName().getLastName());
 			if (!StringUtils.isBlank(custAcc.getName().getTitle())) {
 				Title title = titleService.findByCode(provider, custAcc.getName().getTitle().trim());
 				name.setTitle(title);
@@ -355,7 +355,7 @@ public class CustomerImportService {
 				custAcc.getTradingCurrencyCode(), provider));
 		customerAccount.setCustomer(customer);
 		customerAccount.updateAudit(currentUser);
-		customerAccountService.update(customerAccount);
+		customerAccountService.updateNoCheck(customerAccount);
 	}
 
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)

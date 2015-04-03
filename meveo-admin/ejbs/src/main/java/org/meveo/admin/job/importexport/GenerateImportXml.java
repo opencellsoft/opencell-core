@@ -87,7 +87,7 @@ public class GenerateImportXml {
 				ca.setTradingCurrencyCode("EUR");
 				Name name = new Name();
 				name.setFirstname("firstName" + i);
-				name.setName("name" + i);
+				name.setLastName("lastName" + i);
 				name.setTitle("SA");
 				ca.setName(name);
 				Address address = new Address();
@@ -112,7 +112,7 @@ public class GenerateImportXml {
 
 				org.meveo.model.jaxb.account.Name nameBa = new org.meveo.model.jaxb.account.Name();
 				nameBa.setFirstname("firstName" + i);
-				nameBa.setName("name" + i);
+				nameBa.setLastName("lastName" + i);
 				nameBa.setTitle("SA");
 				ba.setName(nameBa);
 				org.meveo.model.jaxb.account.Address addressBa = new org.meveo.model.jaxb.account.Address();
@@ -135,8 +135,8 @@ public class GenerateImportXml {
 
 				org.meveo.model.jaxb.account.Name nameUA = new org.meveo.model.jaxb.account.Name();
 				nameUA.setTitle("M");
-				nameUA.setName("name" + i);
 				nameUA.setFirstname("firstName" + i);
+				nameUA.setLastName("lastName" + i);
 				userAccount.setName(nameUA);
 
 				org.meveo.model.jaxb.account.Address addressUA = new org.meveo.model.jaxb.account.Address();

@@ -164,7 +164,7 @@ public class AccountImportService {
 
 		if (billAccount.getName() != null) {
 			name.setFirstName(billAccount.getName().getFirstname());
-			name.setLastName(billAccount.getName().getName());
+			name.setLastName(billAccount.getName().getLastName());
 			name.setTitle(titleService.findByCode(provider, billAccount.getName().getTitle().trim()));
 			billingAccount.setName(name);
 		}
@@ -298,7 +298,7 @@ public class AccountImportService {
 
 		if (billingAccountDto.getName() != null) {
 			name.setFirstName(billingAccountDto.getName().getFirstname());
-			name.setLastName(billingAccountDto.getName().getName());
+			name.setLastName(billingAccountDto.getName().getLastName());
 			name.setTitle(titleService.findByCode(provider, billingAccountDto.getName().getTitle().trim()));
 			billingAccount.setName(name);
 		}
@@ -383,7 +383,7 @@ public class AccountImportService {
 
 		if (uAccount.getName() != null) {
 			nameUA.setFirstName(uAccount.getName().getFirstname());
-			nameUA.setLastName(uAccount.getName().getName());
+			nameUA.setLastName(uAccount.getName().getLastName());
 			nameUA.setTitle(titleService.findByCode(provider, uAccount.getName().getTitle().trim()));
 			userAccount.setName(nameUA);
 		}
@@ -464,7 +464,7 @@ public class AccountImportService {
 
 		if (userAccountDto.getName() != null) {
 			nameUA.setFirstName(userAccountDto.getName().getFirstname());
-			nameUA.setLastName(userAccountDto.getName().getName());
+			nameUA.setLastName(userAccountDto.getName().getLastName());
 			nameUA.setTitle(titleService.findByCode(provider, userAccountDto.getName().getTitle().trim()));
 			userAccount.setName(nameUA);
 		}
