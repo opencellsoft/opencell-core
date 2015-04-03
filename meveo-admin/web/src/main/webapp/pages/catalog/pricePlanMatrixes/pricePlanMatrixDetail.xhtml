@@ -139,7 +139,7 @@
 					label="#{messages['pricePlanMatrix.minSubscriptionAgeInMonth']}"
 					field="minSubscriptionAgeInMonth" maxValue="9999" maxlength="4" />
 				<hf:formField label="#{messages['pricePlanMatrix.amountWithTax']}"
-                    field="amountWithTax" converter="bigDecimal4DigitsConverter" rendered="#{!pricePlanMatrixBean.entity.provider.isEntreprise}" required="true" />
+                    field="amountWithTax" converter="bigDecimal4DigitsConverter" rendered="#{!pricePlanMatrixBean.entity.provider.entreprise}" required="true" />
                 <hf:formField
 					label="#{messages['pricePlanMatrix.maxSubscriptionAgeInMonth']}"
 					field="maxSubscriptionAgeInMonth" maxValue="9999" maxlength="4" />

@@ -476,7 +476,7 @@
 															disabled="#{!subscriptionBean.oneShotChargeInstance.chargeTemplate.amountEditable and subscriptionBean.oneShotChargeInstance.id != null}">
 														</p:inputText>
 													</h:panelGrid>
-													<h:panelGrid columns="2">
+													<h:panelGrid columns="2" rendered="#{!subscriptionBean.entity.provider.entreprise}">
 														<p:outputLabel for="amountWithTax"
 															value="#{messages['oneShotChargeInstance.amountWithTax']}" />
 														<p:inputText id="amountWithTax"
@@ -546,7 +546,7 @@
 																</p:column>
 
 																<!-- 																<hftl:column label="#{messages['walletOperation.amountWithTax']}" showSortLinks="false" field="amountWithTax" /> -->
-																<p:column>
+																<p:column rendered="#{!subscriptionBean.entity.provider.entreprise}">
 																	<f:facet name="header">
 																		<h:outputText
 																			value="#{messages['walletOperation.amountWithTax']}" />
@@ -793,9 +793,10 @@
 										<hftl:column
 											label="#{messages['pricePlanMatrix.amountWithoutTax']}"
 											field="amountWithoutTax" isMessage="false" />
-										<hftl:column
-											label="#{messages['pricePlanMatrix.amountWithTax']}"
-											field="amountWithTax" isMessage="false" />
+											<p:column headerText="#{messages['pricePlanMatrix.amountWithTax']}" rendered="#{!subscriptionBean.entity.provider.entreprise}" >
+											 <h:outputText value="#{entity.amountWithTax}"
+											 converter="#{getConverter.forType(entity.amountWithTax,'4digits')}" />
+											</p:column>
 										<hftl:column
 											label="#{messages['oneShotChargeInstance.criteria1']}"
 											field="criteria1" isMessage="false" />
@@ -961,7 +962,7 @@
 							field="chargeTemplate" childField="code" disabled="true" />
 						<hf:formField label="#{messages['businessEntity.description']}"
 							field="description" disabled="true" />
-						<hf:formField
+						<hf:formField rendered="#{!subscriptionBean.entity.provider.entreprise}"
 							label="#{messages['oneShotChargeInstance.amountWithTax']}"
 							field="amountWithTax" edit="true" />
 						<hf:formField
@@ -1023,7 +1024,7 @@
 								disabled="#{subscriptionBean.recurringChargeInstance.id!=null and !subscriptionBean.recurringChargeInstance.chargeTemplate.amountEditable}">
 							</p:inputText>
 						</p:panelGrid>
-						<p:panelGrid columns="2">
+						<p:panelGrid columns="2" rendered="#{!subscriptionBean.entity.provider.entreprise}">
 							<p:outputLabel for="RCamountWithTax"
 								value="#{messages['recurringChargeInstance.amountWithTax']}" />
 							<p:inputText id="RCamountWithTax"
@@ -1238,7 +1239,7 @@
 								</f:facet>
 								<h:outputText value="#{shotApplication.amountWithoutTax}" />
 							</p:column>
-							<p:column>
+							<p:column rendered="#{!subscriptionBean.entity.provider.entreprise}">
 								<f:facet name="header">
 									<h:outputText
 										value="#{messages['walletOperation.amountWithTax']}" />
