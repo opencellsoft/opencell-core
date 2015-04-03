@@ -36,6 +36,7 @@ import org.meveo.admin.exception.RejectedImportException;
 import org.meveo.commons.utils.CsvBuilder;
 import org.meveo.commons.utils.CsvReader;
 import org.meveo.commons.utils.ParamBean;
+import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.notification.StrategyImportTypeEnum;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.local.IPersistenceService;
@@ -122,7 +123,7 @@ public class MeasurableQuantityBean extends BaseBean<MeasurableQuantity> {
 			csv.appendValue(measurableQuantity.getDimension3());
 			csv.appendValue(measurableQuantity.getDimension4());
 			csv.appendValue(measurableQuantity.getSqlQuery());
-			csv.appendValue(measurableQuantity.getMeasurementPeriod()+"" );
+			csv.appendValue(measurableQuantity.getMeasurementPeriod()!=null?measurableQuantity.getMeasurementPeriod()+"":null );
 			csv.appendValue(DateUtils.formatDateWithPattern(measurableQuantity.getLastMeasureDate(), "dd/MM/yyyy"));
 			csv.appendValue(measurableQuantity.isEditable()+"");
 			csv.startNewLine();
@@ -176,7 +177,9 @@ public void handleFileUpload(FileUploadEvent event) throws Exception {
 						measurableQuantity.setDimension3(values[DIMENSION_3]);
 						measurableQuantity.setDimension4(values[DIMENSION_4]);
 						measurableQuantity.setSqlQuery(values[SQL_QUERY]);
-						measurableQuantity.setMeasurementPeriod(MeasurementPeriodEnum.valueOf(values[MEASUREMENT_PERIOD]));
+						if(!StringUtils.isBlank(values[MEASUREMENT_PERIOD])){
+							measurableQuantity.setMeasurementPeriod(MeasurementPeriodEnum.valueOf(values[MEASUREMENT_PERIOD]));	
+						}
 						measurableQuantity.setLastMeasureDate(DateUtils.parseDateWithPattern((values[LAST_MEASURE_DATE]),"dd/MM/yyyy"));
 						measurableQuantity.setEditable(Boolean.parseBoolean(values[EDITABLE]));
 						measurableQuantityService.create(measurableQuantity);
@@ -184,7 +187,7 @@ public void handleFileUpload(FileUploadEvent event) throws Exception {
 				if(isEntityAlreadyExist && strategyImportType.equals(StrategyImportTypeEnum.REJECT_EXISTING_RECORDS)){
 					csv.writeFile(csv.toString().getBytes(), existingEntitiesCsvFile);
 				}
-				messages.info(new BundleKey("messages", "import.csv.successfulimport.csv.successful"));
+				messages.info(new BundleKey("messages", "import.csv.successful"));
 			} catch (RejectedImportException e) {
 				messages.error(new BundleKey("messages", e.getMessage()));
 			}}}
@@ -198,7 +201,9 @@ public void handleFileUpload(FileUploadEvent event) throws Exception {
 			existingEntity.setDimension3(values[DIMENSION_3]);
 			existingEntity.setDimension4(values[DIMENSION_4]);
 			existingEntity.setSqlQuery(values[SQL_QUERY]);
+			if(!StringUtils.isBlank(values[MEASUREMENT_PERIOD])){
 			existingEntity.setMeasurementPeriod(MeasurementPeriodEnum.valueOf(values[MEASUREMENT_PERIOD]));
+			}
 			existingEntity.setLastMeasureDate(DateUtils.parseDateWithPattern((values[LAST_MEASURE_DATE]),"dd/MM/yyyy"));
 			existingEntity.setEditable(Boolean.parseBoolean(values[EDITABLE]));
 			measurableQuantityService.update(existingEntity);
