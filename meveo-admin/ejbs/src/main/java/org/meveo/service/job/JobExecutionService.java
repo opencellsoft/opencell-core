@@ -60,7 +60,7 @@ public class JobExecutionService extends PersistenceService<JobExecutionResultIm
 		try {
 			log.info("JobExecutionService persistResult...");
 
-            TimerInfo info=timerEntity.getTimerInfo();
+			TimerInfo info = timerEntity.getTimerInfo();
 			JobExecutionResultImpl entity = JobExecutionResultImpl.createFromInterface(job.getClass().getSimpleName(), result);
 			if (!entity.isDone() || (entity.getNbItemsCorrectlyProcessed() + entity.getNbItemsProcessedWithError() + entity.getNbItemsProcessedWithWarning()) > 0) {
 
@@ -84,7 +84,7 @@ public class JobExecutionService extends PersistenceService<JobExecutionResultIm
 				if (info.getFollowingTimerId() != null && info.getFollowingTimerId() > 0) {
 					try {
 						TimerEntity followingTimerEntity = timerEntityService.findById(info.getFollowingTimerId());
-						executeJob(followingTimerEntity.getJobName(), followingTimerEntity, currentUser, timerEntity.getJobCategoryEnum());
+						executeJob(followingTimerEntity.getJobName(), followingTimerEntity, currentUser, followingTimerEntity.getJobCategoryEnum());
 					} catch (Exception e) {
 						log.warn("PersistResult cannot excute the following job.=" + info.getFollowingTimerId());
 					}

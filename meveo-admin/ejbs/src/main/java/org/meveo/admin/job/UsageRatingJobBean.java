@@ -37,8 +37,8 @@ public class UsageRatingJobBean {
 	@Rejected
 	Event<Serializable> rejectededEdrProducer;
 
-	@Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+	@Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
 	public void execute(JobExecutionResultImpl result, User currentUser) {
 		try {
 			List<EDR> edrs = edrService.getEDRToRate(currentUser.getProvider());

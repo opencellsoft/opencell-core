@@ -16,10 +16,7 @@ import javax.ejb.TimerService;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
-import javax.interceptor.Interceptors;
 
-import org.meveo.admin.job.logging.JobLoggingInterceptor;
-import org.meveo.interceptor.PerformanceInterceptor;
 import org.meveo.model.admin.User;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.jobs.JobCategoryEnum;
@@ -58,17 +55,16 @@ public class ImportAccountsJob implements Job {
 
 	@Override
 	@Asynchronous
-    @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
-    public void execute(TimerEntity timerEntity, User currentUser) {
-        JobExecutionResultImpl result = new JobExecutionResultImpl();
-        TimerInfo info=timerEntity.getTimerInfo();
-		log.debug("execute impAccounts, info={}, currentUser={}",info,currentUser);
+	public void execute(TimerEntity timerEntity, User currentUser) {
+		JobExecutionResultImpl result = new JobExecutionResultImpl();
+		TimerInfo info = timerEntity.getTimerInfo();
+		log.debug("execute impAccounts, info={}, currentUser={}", info, currentUser);
 		if (!running && (info.isActive() || currentUser != null)) {
 			try {
 				running = true;
 				if (currentUser == null) {
 					currentUser = userService.findByIdLoadProvider(info.getUserId());
-					log.debug("execute impAccounts, found user from info {}",currentUser);
+					log.debug("execute impAccounts, found user from info {}", currentUser);
 				}
 				importAccountsJobBean.execute(result, currentUser);
 				log.debug("execute impAccounts, persist job execution");
@@ -124,9 +120,9 @@ public class ImportAccountsJob implements Job {
 		return JobCategoryEnum.IMPORT_HIERARCHY;
 	}
 
-    @Override
-    public List<CustomFieldTemplate> getCustomFields(User currentUser) {
-        // TODO Auto-generated method stub
-        return null;
-    }
+	@Override
+	public List<CustomFieldTemplate> getCustomFields(User currentUser) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

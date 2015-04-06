@@ -16,11 +16,8 @@ import javax.ejb.TimerService;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
-import javax.interceptor.Interceptors;
 
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.admin.job.logging.JobLoggingInterceptor;
-import org.meveo.interceptor.PerformanceInterceptor;
 import org.meveo.model.admin.User;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.jobs.JobCategoryEnum;
@@ -65,10 +62,9 @@ public class DWHQueryJob implements Job {
 
 	@Override
 	@Asynchronous
-    @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
-    public void execute(TimerEntity timerEntity, User currentUser) {
-        JobExecutionResultImpl result = new JobExecutionResultImpl();
-        TimerInfo info=timerEntity.getTimerInfo();
+	public void execute(TimerEntity timerEntity, User currentUser) {
+		JobExecutionResultImpl result = new JobExecutionResultImpl();
+		TimerInfo info = timerEntity.getTimerInfo();
 		if (!running && (info.isActive() || currentUser != null)) {
 			try {
 				running = true;
@@ -133,9 +129,9 @@ public class DWHQueryJob implements Job {
 		return JobCategoryEnum.DWH;
 	}
 
-    @Override
-    public List<CustomFieldTemplate> getCustomFields(User currentUser) {
-        // TODO Auto-generated method stub
-        return null;
-    }
+	@Override
+	public List<CustomFieldTemplate> getCustomFields(User currentUser) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }
