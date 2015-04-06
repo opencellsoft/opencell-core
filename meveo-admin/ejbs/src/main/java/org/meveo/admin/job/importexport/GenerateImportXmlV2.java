@@ -15,6 +15,7 @@ import org.meveo.model.jaxb.customer.CustomerAccounts;
 import org.meveo.model.jaxb.customer.Customers;
 import org.meveo.model.jaxb.customer.Seller;
 import org.meveo.model.jaxb.customer.Sellers;
+import org.meveo.model.jaxb.subscription.Access;
 import org.meveo.model.jaxb.subscription.ServiceInstance;
 import org.meveo.model.jaxb.subscription.Services;
 import org.meveo.model.jaxb.subscription.Status;
@@ -29,13 +30,15 @@ public class GenerateImportXmlV2 {
 	 */
 	/************************** configuration properties ***********************************/
 	private final int MAX_SELLERS = 1;
-	private final int MAX_CUSTOMERS = 1;
+	private final int MAX_CUSTOMERS = 5000;
 	private final int MAX_CUSTOMER_ACCOUNTS = 1;
 
 	private final int MAX_BILLING_ACCOUNTS = 1;
 	private final int MAX_USER_ACCOUNTS = 1;
 
-	private final int MAX_SUBSCRIPTIONS = 10;
+	private final int MAX_SUBSCRIPTIONS = 1;
+
+	private final int MAX_ACCESSES = 1;
 
 	private final boolean IGNORE_ACCOUNTS_IMPORT = false;
 	private final boolean IGNORE_SUBSCRIPTION_IMPORT = false;
@@ -83,6 +86,7 @@ public class GenerateImportXmlV2 {
 			BillingAccounts billingAccounts = new BillingAccounts();
 			Subscriptions subscriptions = new Subscriptions();
 
+			int accessCtr = 0;
 			for (int i = 0; i < MAX_SELLERS; i++) {
 				System.out.println("processing seller # " + i);
 
@@ -141,14 +145,11 @@ public class GenerateImportXmlV2 {
 
 								for (int n = 0; n < MAX_SUBSCRIPTIONS; n++) {
 									Subscription subscription = new Subscription();
-									subscription.setCode("JOB_SUB" + i + "_" + j + "_" + k + "_" + l + "_" + m + "_"
-											+ n);
-									subscription.setDescription("JOB_SUB" + i + "_" + j + "_" + k + "_" + l + "_" + m
-											+ "_" + n);
+									subscription.setCode("JOB_SUB" + i + "_" + j + "_" + k + "_" + l + "_" + m + "_" + n);
+									subscription.setDescription("JOB_SUB" + i + "_" + j + "_" + k + "_" + l + "_" + m + "_" + n);
 									subscription.setUserAccountId(userAccount.getCode());
 									subscription.setOfferCode(offerCode);
-									subscription.setSubscriptionDate(DateUtils.formatDateWithPattern(new Date(),
-											"Y-MM-d"));
+									subscription.setSubscriptionDate(DateUtils.formatDateWithPattern(new Date(), "Y-MM-d"));
 									subscription.setUserAccountId(userAccount.getCode());
 									Status statuSub = new Status();
 									statuSub.setDate(new Date().toString());
@@ -157,6 +158,12 @@ public class GenerateImportXmlV2 {
 									Services services = new Services();
 									services.getServiceInstance().add(serviceInstance);
 									subscription.setServices(services);
+
+									for (int o = 0; o < MAX_ACCESSES; o++) {
+										Access access = new Access();
+										access.setAccessUserId("IMSI" + (accessCtr++));
+										subscription.getAccesses().getAccess().add(access);
+									}
 
 									subscriptions.getSubscription().add(subscription);
 								}
