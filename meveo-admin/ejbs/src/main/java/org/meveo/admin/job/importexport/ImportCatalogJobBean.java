@@ -127,7 +127,19 @@ public class ImportCatalogJobBean {
                     }
 
                 } catch (Exception e) {
+                    e.printStackTrace();
                     log.error(e.getMessage());
+                    File fi = FileUtils.replaceFileExtension(file, "");
+                    FileUtils.moveFile(rejectDir, fi, null);
+                    try {
+                        if (excelInputStream != null) {
+                            excelInputStream.close();
+                        }
+                    } catch (Exception ex) {
+                        log.error(ex.getMessage());
+                    } finally {
+                        fi.delete();
+                    }
                     throw new BusinessException("Error while parsing the excel file." + e.getMessage());
                 }
                 report += result.getErrorsAString();
