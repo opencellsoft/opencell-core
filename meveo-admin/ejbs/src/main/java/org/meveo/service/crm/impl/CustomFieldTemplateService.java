@@ -14,6 +14,18 @@ import org.meveo.service.base.BusinessService;
 @Stateless
 public class CustomFieldTemplateService extends BusinessService<CustomFieldTemplate> {
 
+    @SuppressWarnings("unchecked")
+    public List<CustomFieldTemplate> findByJobName(String jobName) {
+        QueryBuilder qb = new QueryBuilder(CustomFieldTemplate.class, "c", null, getCurrentProvider());
+        qb.addCriterion("accountLevel", "=", AccountLevelEnum.TIMER, true);
+        qb.addCriterionWildcard("code", jobName+"_*", false);
+        try {
+            return (List<CustomFieldTemplate>) qb.getQuery(getEntityManager()).getResultList();
+        } catch (NoResultException e) {
+            return null;
+        }
+    }
+
 	@SuppressWarnings("unchecked")
 	public List<CustomFieldTemplate> findByAccountLevel(AccountLevelEnum accountLevel) {
 		QueryBuilder qb = new QueryBuilder(CustomFieldTemplate.class, "c", null, getCurrentProvider());

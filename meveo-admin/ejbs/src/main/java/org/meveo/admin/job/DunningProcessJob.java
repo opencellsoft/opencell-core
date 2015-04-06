@@ -28,9 +28,11 @@ import org.meveo.interceptor.PerformanceInterceptor;
 import org.meveo.model.admin.BayadDunningInputHistory;
 import org.meveo.model.admin.DunningHistory;
 import org.meveo.model.admin.User;
+import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.jobs.JobCategoryEnum;
 import org.meveo.model.jobs.JobExecutionResultImpl;
+import org.meveo.model.jobs.TimerEntity;
 import org.meveo.model.jobs.TimerInfo;
 import org.meveo.model.payments.ActionDunning;
 import org.meveo.model.payments.CustomerAccount;
@@ -90,8 +92,9 @@ public class DunningProcessJob implements Job {
 	@Override
 	@Asynchronous
 	@Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
-	public void execute(TimerInfo info, User currentUser) {
-		JobExecutionResultImpl result = new JobExecutionResultImpl();
+    public void execute(TimerEntity timerEntity, User currentUser) {
+        JobExecutionResultImpl result = new JobExecutionResultImpl();
+        TimerInfo info=timerEntity.getTimerInfo();
 		if (!running && (info.isActive() || currentUser != null)) {
 			try {
 				running = true;
@@ -154,7 +157,7 @@ public class DunningProcessJob implements Job {
 
 				result.close("");
 
-				jobExecutionService.persistResult(this, result, info, currentUser, getJobCategory());
+				jobExecutionService.persistResult(this, result, timerEntity, currentUser, getJobCategory());
 			} catch (Exception e) {
 				log.error(e.getMessage());
 			} finally {
@@ -164,7 +167,7 @@ public class DunningProcessJob implements Job {
 	}
 
 	@Override
-	public Timer createTimer(ScheduleExpression scheduleExpression, TimerInfo infos) {
+	public Timer createTimer(ScheduleExpression scheduleExpression, TimerEntity infos) {
 		TimerConfig timerConfig = new TimerConfig();
 		timerConfig.setInfo(infos);
 		timerConfig.setPersistent(false);
@@ -176,7 +179,7 @@ public class DunningProcessJob implements Job {
 	@Timeout
 	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
 	public void trigger(Timer timer) {
-		execute((TimerInfo) timer.getInfo(), null);
+		execute((TimerEntity) timer.getInfo(), null);
 	}
 
 	public boolean DowngradeDunningLevel(CustomerAccount customerAccount, BigDecimal balanceExigible) throws Exception {
@@ -232,4 +235,10 @@ public class DunningProcessJob implements Job {
 	public JobCategoryEnum getJobCategory() {
 		return JobCategoryEnum.ACCOUNT_RECEIVABLES;
 	}
+
+    @Override
+    public List<CustomFieldTemplate> getCustomFields(User currentUser) {
+        // TODO Auto-generated method stub
+        return null;
+    }
 }

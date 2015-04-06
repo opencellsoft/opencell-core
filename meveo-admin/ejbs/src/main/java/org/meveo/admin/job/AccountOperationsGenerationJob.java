@@ -1,6 +1,7 @@
 package org.meveo.admin.job;
 
 import java.util.Collection;
+import java.util.List;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
@@ -17,8 +18,10 @@ import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
 import org.meveo.model.admin.User;
+import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.jobs.JobCategoryEnum;
 import org.meveo.model.jobs.JobExecutionResultImpl;
+import org.meveo.model.jobs.TimerEntity;
 import org.meveo.model.jobs.TimerInfo;
 import org.meveo.service.admin.impl.UserService;
 import org.meveo.service.job.Job;
@@ -52,8 +55,9 @@ public class AccountOperationsGenerationJob implements Job {
 
 	@Override
 	@Asynchronous
-	public void execute(TimerInfo info, User currentUser) {
-		JobExecutionResultImpl result = new JobExecutionResultImpl();
+    public void execute(TimerEntity timerEntity, User currentUser) {
+        JobExecutionResultImpl result = new JobExecutionResultImpl();
+        TimerInfo info=timerEntity.getTimerInfo();
 		if (!running && (info.isActive() || currentUser != null)) {
 			try {
 				running = true;
@@ -63,7 +67,7 @@ public class AccountOperationsGenerationJob implements Job {
 				accountOperationsGenerationJobBean.execute(result, info.getParametres(), currentUser);
 				result.close("");
 
-				jobExecutionService.persistResult(this, result, info, currentUser, getJobCategory());
+				jobExecutionService.persistResult(this, result, timerEntity, currentUser, getJobCategory());
 			} catch (Exception e) {
 				log.error(e.getMessage());
 			} finally {
@@ -73,7 +77,7 @@ public class AccountOperationsGenerationJob implements Job {
 	}
 
 	@Override
-	public Timer createTimer(ScheduleExpression scheduleExpression, TimerInfo infos) {
+	public Timer createTimer(ScheduleExpression scheduleExpression, TimerEntity infos) {
 		TimerConfig timerConfig = new TimerConfig();
 		timerConfig.setInfo(infos);
 		timerConfig.setPersistent(false);
@@ -86,7 +90,7 @@ public class AccountOperationsGenerationJob implements Job {
 	@Timeout
 	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
 	public void trigger(Timer timer) {
-		execute((TimerInfo) timer.getInfo(), null);
+		execute((TimerEntity) timer.getInfo(), null);
 	}
 
 	@Override
@@ -112,5 +116,11 @@ public class AccountOperationsGenerationJob implements Job {
 	public JobCategoryEnum getJobCategory() {
 		return JobCategoryEnum.ACCOUNT_RECEIVABLES;
 	}
+
+    @Override
+    public List<CustomFieldTemplate> getCustomFields(User currentUser) {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
 }
