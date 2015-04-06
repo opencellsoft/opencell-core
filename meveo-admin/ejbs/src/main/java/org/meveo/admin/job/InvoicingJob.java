@@ -32,10 +32,7 @@ import javax.ejb.TimerService;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
-import javax.interceptor.Interceptors;
 
-import org.meveo.admin.job.logging.JobLoggingInterceptor;
-import org.meveo.interceptor.PerformanceInterceptor;
 import org.meveo.model.admin.User;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.jobs.JobCategoryEnum;
@@ -73,12 +70,11 @@ public class InvoicingJob implements Job {
 	}
 
 	@Override
-	@Asynchronous  
-    @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
+	@Asynchronous
 	public void execute(TimerEntity timerEntity, User currentUser) {
-        JobExecutionResultImpl result = new JobExecutionResultImpl();
-        TimerInfo info=timerEntity.getTimerInfo();
-		log.debug("execute invoicing, info={}, currentUser={}",info,currentUser);
+		JobExecutionResultImpl result = new JobExecutionResultImpl();
+		TimerInfo info = timerEntity.getTimerInfo();
+		log.debug("execute invoicing, info={}, currentUser={}", info, currentUser);
 		if (!running && (info.isActive() || currentUser != null)) {
 			try {
 				running = true;
@@ -140,10 +136,10 @@ public class InvoicingJob implements Job {
 		return JobCategoryEnum.INVOICING;
 	}
 
-    @Override
-    public List<CustomFieldTemplate> getCustomFields(User currentUser) {
-        // TODO Auto-generated method stub
-        return null;
-    }
+	@Override
+	public List<CustomFieldTemplate> getCustomFields(User currentUser) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 }

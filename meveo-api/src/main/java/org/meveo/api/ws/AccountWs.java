@@ -32,6 +32,8 @@ import org.meveo.api.dto.response.account.ListUserAccountResponseDto;
 @WebService
 public interface AccountWs extends IBaseWs {
 
+	// customer
+
 	@WebMethod
 	ActionStatus createCustomer(@WebParam(name = "customer") CustomerDto postData);
 
@@ -43,6 +45,11 @@ public interface AccountWs extends IBaseWs {
 
 	@WebMethod
 	ActionStatus removeCustomer(@WebParam(name = "customerCode") String customerCode);
+
+	@WebMethod
+	ListCustomerResponseDto listCustomerWithFilter(@WebParam(name = "customer") CustomerDto postData);
+
+	// customer account
 
 	@WebMethod
 	ActionStatus createCustomerAccount(@WebParam(name = "customerAccount") CustomerAccountDto postData);
@@ -57,6 +64,11 @@ public interface AccountWs extends IBaseWs {
 	ActionStatus removeCustomerAccount(@WebParam(name = "customerAccountCode") String customerAccountCode);
 
 	@WebMethod
+	ListCustomerAccountResponseDto listByCustomer(@WebParam(name = "customerCode") String customerCode);
+
+	// billing account
+
+	@WebMethod
 	ActionStatus createBillingAccount(@WebParam(name = "billingAccount") BillingAccountDto postData);
 
 	@WebMethod
@@ -67,6 +79,11 @@ public interface AccountWs extends IBaseWs {
 
 	@WebMethod
 	ActionStatus removeBillingAccount(@WebParam(name = "billingAccountCode") String billingAccountCode);
+
+	@WebMethod
+	ListBillingAccountResponseDto listByCustomerAccount(@WebParam(name = "customerAccountCode") String customerAccountCode);
+
+	// user account
 
 	@WebMethod
 	ActionStatus createUserAccount(@WebParam(name = "userAccount") UserAccountDto postData);
@@ -81,53 +98,49 @@ public interface AccountWs extends IBaseWs {
 	ActionStatus removeUserAccount(@WebParam(name = "userAccountCode") String userAccountCode);
 
 	@WebMethod
+	ListUserAccountResponseDto listByBillingAccount(@WebParam(name = "billingAccountCode") String billingAccountCode);
+
+	// access
+
+	@WebMethod
 	ActionStatus createAccess(@WebParam(name = "access") AccessDto postData);
 
 	@WebMethod
 	ActionStatus updateAccess(@WebParam(name = "access") AccessDto postData);
 
 	@WebMethod
-	GetAccessResponse findAccess(@WebParam(name = "accessCode") String accessCode,
-			@WebParam(name = "subscriptionCode") String subscriptionCode);
+	GetAccessResponse findAccess(@WebParam(name = "accessCode") String accessCode, @WebParam(name = "subscriptionCode") String subscriptionCode);
 
 	@WebMethod
-	ActionStatus removeAccess(@WebParam(name = "accessCode") String accessCode,
-			@WebParam(name = "subscriptionCode") String subscriptionCode);
+	ActionStatus removeAccess(@WebParam(name = "accessCode") String accessCode, @WebParam(name = "subscriptionCode") String subscriptionCode);
 
 	@WebMethod
-	CustomerListResponse findAccountHierarchy(
-			@WebParam(name = "accountHierarchy") AccountHierarchyDto accountHierarchyDto);
+	ListAccessResponseDto listAccess(@WebParam(name = "subscriptionCode") String subscriptionCode);
+
+	// account hierarchy
 
 	@WebMethod
 	ActionStatus createAccountHierarchy(@WebParam(name = "accountHierarchy") AccountHierarchyDto accountHierarchyDto);
 
 	@WebMethod
+	CustomerListResponse findAccountHierarchy(@WebParam(name = "accountHierarchy") AccountHierarchyDto accountHierarchyDto);
+
+	@WebMethod
 	ActionStatus updateAccountHierarchy(@WebParam(name = "accountHierarchy") AccountHierarchyDto accountHierarchyDto);
+
+	// customer hierarchy
 
 	@WebMethod
 	ActionStatus customerHierarchyUpdate(@WebParam(name = "customerHierarchy") CustomerHierarchyDto postData);
 
-	@WebMethod
-	ListAccessResponseDto listAccess(@WebParam(name = "subscriptionCode") String subscriptionCode);
-
-	@WebMethod
-	ListCustomerResponseDto listCustomerWithFilter(@WebParam(name = "customer") CustomerDto postData);
-
-	@WebMethod
-	ListCustomerAccountResponseDto listByCustomer(@WebParam(name = "customerCode") String customerCode);
-
-	@WebMethod
-	ListBillingAccountResponseDto listByCustomerAccount(
-			@WebParam(name = "customerAccountCode") String customerAccountCode);
-
-	@WebMethod
-	ListUserAccountResponseDto listByBillingAccount(@WebParam(name = "billingAccountCode") String billingAccountCode);
+	// account operation
 
 	@WebMethod
 	ActionStatus createAccountOperation(@WebParam(name = "accountOperation") AccountOperationDto postData);
-	
+
+	// dunning
+
 	@WebMethod
 	ActionStatus dunningInclusionExclusion(@WebParam(name = "dunningInclusionExclusion") DunningInclusionExclusionDto dunningDto);
-	
 
 }

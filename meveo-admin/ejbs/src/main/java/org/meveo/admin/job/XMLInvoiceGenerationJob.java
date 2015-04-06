@@ -16,10 +16,7 @@ import javax.ejb.TimerService;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
-import javax.interceptor.Interceptors;
 
-import org.meveo.admin.job.logging.JobLoggingInterceptor;
-import org.meveo.interceptor.PerformanceInterceptor;
 import org.meveo.model.admin.User;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.jobs.JobCategoryEnum;
@@ -58,21 +55,20 @@ public class XMLInvoiceGenerationJob implements Job {
 
 	@Override
 	@Asynchronous
-    @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
-    public void execute(TimerEntity timerEntity, User currentUser) {
-        JobExecutionResultImpl result = new JobExecutionResultImpl();
-        TimerInfo info=timerEntity.getTimerInfo();
-		log.debug("execute XML, info={}, currentUser={}",info,currentUser);
+	public void execute(TimerEntity timerEntity, User currentUser) {
+		JobExecutionResultImpl result = new JobExecutionResultImpl();
+		TimerInfo info = timerEntity.getTimerInfo();
+		log.debug("execute XML, info={}, currentUser={}", info, currentUser);
 		if (!running && (info.isActive() || currentUser != null)) {
 			try {
 				running = true;
 				if (currentUser == null) {
 					currentUser = userService.findByIdLoadProvider(info.getUserId());
-					log.debug("execute XML, found user from info {}",currentUser);
+					log.debug("execute XML, found user from info {}", currentUser);
 				}
 				xmlInvoiceGenerationJobBean.execute(result, info.getParametres(), currentUser);
 				result.close("");
-				log.debug("execute XML, found user from info {}",currentUser);
+				log.debug("execute XML, found user from info {}", currentUser);
 				jobExecutionService.persistResult(this, result, timerEntity, currentUser, getJobCategory());
 			} catch (Exception e) {
 				log.error(e.getMessage());
@@ -127,9 +123,9 @@ public class XMLInvoiceGenerationJob implements Job {
 		return JobCategoryEnum.INVOICING;
 	}
 
-    @Override
-    public List<CustomFieldTemplate> getCustomFields(User currentUser) {
-        // TODO Auto-generated method stub
-        return null;
-    }
+	@Override
+	public List<CustomFieldTemplate> getCustomFields(User currentUser) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

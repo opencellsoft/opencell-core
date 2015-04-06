@@ -35,8 +35,8 @@ public class XMLInvoiceGenerationJobBean {
 	@Inject
 	private XMLInvoiceCreator xmlInvoiceCreator;
 
-	@Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+	@Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
 	public void execute(JobExecutionResultImpl result, String parameter, User currentUser) {
 		Provider provider = currentUser.getProvider();
 		List<BillingRun> billingRuns = new ArrayList<BillingRun>();
@@ -59,8 +59,8 @@ public class XMLInvoiceGenerationJobBean {
 
 		for (BillingRun billingRun : billingRuns) {
 			try {
-				File billingRundir = new File(invoicesDir + File.separator + provider.getCode() + File.separator
-						+ "invoices" + File.separator + "xml" + File.separator + billingRun.getId());
+				File billingRundir = new File(invoicesDir + File.separator + provider.getCode() + File.separator + "invoices" + File.separator + "xml" + File.separator
+						+ billingRun.getId());
 				billingRundir.mkdirs();
 
 				for (Invoice invoice : billingRun.getInvoices()) {
@@ -69,8 +69,7 @@ public class XMLInvoiceGenerationJobBean {
 					Future<Boolean> xmlCreated = xmlInvoiceCreator.createXMLInvoice(invoice, billingRundir);
 					xmlCreated.get();
 
-					log.info("Invoice creation delay :" + (System.currentTimeMillis() - startDate)
-							+ ", xmlCreated={1} " + xmlCreated.get() + "");
+					log.info("Invoice creation delay :" + (System.currentTimeMillis() - startDate) + ", xmlCreated={1} " + xmlCreated.get() + "");
 				}
 
 				billingRun.setXmlInvoiceGenerated(true);
