@@ -28,7 +28,6 @@ import javax.inject.Named;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.StringUtils;
-import org.meveo.model.admin.User;
 import org.meveo.model.payments.ActionDunning;
 import org.meveo.model.payments.ActionPlanItem;
 import org.meveo.model.payments.CustomerAccount;
@@ -257,8 +256,8 @@ public class UpgradeDunningLevel {
 		if (expression.indexOf("dt.") >= 0) {
 			userMap.put("dt", dunningPlanTransition);
 		}
-		if (expression.indexOf("$be") >= 0) {
-			userMap.put("$be", balanceExigible);
+		if (expression.indexOf("be") >= 0) {
+			userMap.put("be", balanceExigible);
 		}
 		if (expression.indexOf("iv.") >= 0) {
 			List<RecordedInvoice> recordedInvoices = recordedInvoiceService
