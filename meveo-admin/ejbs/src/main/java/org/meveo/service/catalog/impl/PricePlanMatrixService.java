@@ -17,6 +17,7 @@
 package org.meveo.service.catalog.impl;
 
 import java.math.BigDecimal;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -31,6 +32,7 @@ import javax.persistence.Query;
 
 import org.apache.commons.collections.IteratorUtils;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.usermodel.Row;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.cache.RatingCacheContainerProvider;
@@ -42,6 +44,7 @@ import org.meveo.model.admin.Seller;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.TradingCountry;
 import org.meveo.model.billing.TradingCurrency;
+import org.meveo.model.catalog.Calendar;
 import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.PricePlanMatrix;
@@ -53,6 +56,10 @@ public class PricePlanMatrixService extends PersistenceService<PricePlanMatrix> 
 
     @Inject
     private RatingCacheContainerProvider ratingCacheContainerProvider;
+  
+    ParamBean param = ParamBean.getInstance();
+
+    SimpleDateFormat sdf = new SimpleDateFormat(param.getProperty("excelImport.dateFormat", "dd/MM/yyyy"));
 
     public void create(PricePlanMatrix pricePlan, User creator, Provider provider) {
         super.create(pricePlan, creator, provider);
@@ -118,17 +125,50 @@ public class PricePlanMatrixService extends PersistenceService<PricePlanMatrix> 
             remove(pricePlan);
         }
     }
+    
+    private String getCellAsString(Cell cell){
+        switch (cell.getCellType()) {
+        case Cell.CELL_TYPE_BOOLEAN:
+            return cell.getBooleanCellValue()+"";
+        case Cell.CELL_TYPE_ERROR:
+        case Cell.CELL_TYPE_BLANK:
+        case Cell.CELL_TYPE_FORMULA:
+            return null;
+        case Cell.CELL_TYPE_NUMERIC:
+            return ""+cell.getNumericCellValue();
+        default:
+            return cell.getStringCellValue(); 
+        }
+    }
 
+    private Date getCellAsDate(Cell cell){
+        switch (cell.getCellType()) {
+        case Cell.CELL_TYPE_ERROR:
+        case Cell.CELL_TYPE_BLANK:
+        case Cell.CELL_TYPE_FORMULA:
+            return null;
+        case Cell.CELL_TYPE_NUMERIC:
+            return DateUtil.getJavaDate(cell.getNumericCellValue());
+        default:
+            try{
+                return cell.getDateCellValue();
+            } catch(Exception e){
+                try {
+                    return sdf.parse(cell.getStringCellValue());
+                } catch (ParseException e1) {
+                    return null;
+                }
+            }
+        }
+    }
 
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void importExcelLine(Row row,User user, Provider provider) throws BusinessException {
-        ParamBean param = ParamBean.getInstance();
-        SimpleDateFormat sdf = new SimpleDateFormat(param.getProperty("excelImport.dateFormat", "dd/MM/yyyy"));
         EntityManager em=getEntityManager();
         Object[] cellsObj = IteratorUtils.toArray(row.cellIterator());
         int rowIndex= row.getRowNum();
         int i = 0;
-        String pricePlanCode = ((Cell) cellsObj[i++]).getStringCellValue();
+        String pricePlanCode = getCellAsString((Cell) cellsObj[i++]);
 
         PricePlanMatrix pricePlan = null;
         QueryBuilder qb = new QueryBuilder(PricePlanMatrix.class, "p");
@@ -149,37 +189,57 @@ public class PricePlanMatrixService extends PersistenceService<PricePlanMatrix> 
             throw new BusinessException("More than one priceplan in line=" + rowIndex + "with code=" + pricePlanCode);
         }
 
-        String pricePlanDescription = ((Cell) cellsObj[i++]).getStringCellValue();
-        String eventCode = ((Cell) cellsObj[i++]).getStringCellValue();
-        String sellerCode = ((Cell) cellsObj[i++]).getStringCellValue();
-        String countryCode = ((Cell) cellsObj[i++]).getStringCellValue();
-        String currencyCode = ((Cell) cellsObj[i++]).getStringCellValue();
-        String startSub = ((Cell) cellsObj[i++]).getStringCellValue();
-        String endSub = ((Cell) cellsObj[i++]).getStringCellValue();
-        String offerCode = ((Cell) cellsObj[i++]).getStringCellValue();
-        String priority = ((Cell) cellsObj[i++]).getStringCellValue() + "";
-        String amountWOTax = ((Cell) cellsObj[i++]).getStringCellValue() + "";
-        String amountWithTax = ((Cell) cellsObj[i++]).getStringCellValue() + "";
-        String minQuantity = ((Cell) cellsObj[i++]).getStringCellValue() + "";
-        String maxQuantity = ((Cell) cellsObj[i++]).getStringCellValue() + "";
-        String criteria1 = ((Cell) cellsObj[i++]).getStringCellValue();
-        String criteria2 = ((Cell) cellsObj[i++]).getStringCellValue();
-        String criteria3 = ((Cell) cellsObj[i++]).getStringCellValue();
-        String criteriaEL = ((Cell) cellsObj[i++]).getStringCellValue();
-        String startRating = ((Cell) cellsObj[i++]).getStringCellValue();
-        String endRating = ((Cell) cellsObj[i++]).getStringCellValue();
-        String minSubAge = ((Cell) cellsObj[i++]).getStringCellValue() + "";
-        String maxSubAge = ((Cell) cellsObj[i++]).getStringCellValue() + "";
-        String validityCalendarCode = ((Cell) cellsObj[i++]).getStringCellValue();
+        String pricePlanDescription = getCellAsString((Cell) cellsObj[i++]);
+        String eventCode = getCellAsString((Cell) cellsObj[i++]);
+        String sellerCode = getCellAsString((Cell) cellsObj[i++]);
+        String countryCode = getCellAsString((Cell) cellsObj[i++]);
+        String currencyCode = getCellAsString((Cell) cellsObj[i++]);
+        try {
+            pricePlan.setStartSubscriptionDate(getCellAsDate((Cell) cellsObj[i++]));
+        } catch (Exception e) {
+            throw new BusinessException("Invalid startAppli in line=" + rowIndex + " expected format:"
+                    + param.getProperty("excelImport.dateFormat", "dd/MM/yyyy") + ", you may change the property excelImport.dateFormat.");
+        }
+        try {
+            pricePlan.setEndSubscriptionDate(getCellAsDate((Cell) cellsObj[i++]));
+        } catch (Exception e) {
+            throw new BusinessException("Invalid endAppli in line=" + rowIndex  + " expected format:"
+                    + param.getProperty("excelImport.dateFormat", "dd/MM/yyyy") + ", you may change the property excelImport.dateFormat.");
+        }
+        String offerCode = getCellAsString((Cell) cellsObj[i++]);
+        String priority = getCellAsString((Cell) cellsObj[i++]);
+        String amountWOTax = getCellAsString((Cell) cellsObj[i++]);
+        String amountWithTax = getCellAsString((Cell) cellsObj[i++]);
+        String minQuantity = getCellAsString((Cell) cellsObj[i++]);
+        String maxQuantity = getCellAsString((Cell) cellsObj[i++]);
+        String criteria1 = getCellAsString((Cell) cellsObj[i++]);
+        String criteria2 = getCellAsString((Cell) cellsObj[i++]);
+        String criteria3 = getCellAsString((Cell) cellsObj[i++]);
+        String criteriaEL = getCellAsString((Cell) cellsObj[i++]);
+        try {
+            pricePlan.setStartRatingDate(getCellAsDate((Cell) cellsObj[i++]));
+        } catch (Exception e) {
+            throw new BusinessException("Invalid startRating in line=" + rowIndex + " expected format:"
+                    + param.getProperty("excelImport.dateFormat", "dd/MM/yyyy") + ", you may change the property excelImport.dateFormat.");
+        }
+        try {
+            pricePlan.setEndRatingDate(getCellAsDate((Cell) cellsObj[i++]));
+        } catch (Exception e) {
+            throw new BusinessException("Invalid endRating in line=" + rowIndex  + " expected format:"
+                    + param.getProperty("excelImport.dateFormat", "dd/MM/yyyy") + ", you may change the property excelImport.dateFormat.");
+        }
+        String minSubAge = getCellAsString((Cell) cellsObj[i++]);
+        String maxSubAge = getCellAsString((Cell) cellsObj[i++]);
+        String validityCalendarCode = getCellAsString((Cell) cellsObj[i++]);
         log.debug(
             "priceplanCode={}, priceplanDescription= {}, chargeCode={} sellerCode={}, countryCode={}, currencyCode={},"
                     + " startSub={}, endSub={}, offerCode={}, priority={}, amountWOTax={}, amountWithTax={},"
                     + " minQuantity={}, maxQuantity={}, criteria1={}, criteria2={}, criteria3={}, criteriaEL={},"
                     + " startRating={}, endRating={}, minSubAge={}, maxSubAge={}, validityCalendarCode={}",
                     new Object[] { pricePlanCode, pricePlanDescription,eventCode, sellerCode, countryCode,
-                    currencyCode, startSub, endSub, offerCode, priority, amountWOTax, amountWithTax, minQuantity,
+                    currencyCode, pricePlan.getStartSubscriptionDate(), pricePlan.getEndSubscriptionDate(), offerCode, priority, amountWOTax, amountWithTax, minQuantity,
                     maxQuantity, criteria1, criteria2, criteria3, criteriaEL,
-                    startRating, endRating, minSubAge, maxSubAge,validityCalendarCode });
+                    pricePlan.getStartRatingDate(),pricePlan.getEndRatingDate(), minSubAge, maxSubAge,validityCalendarCode });
 
         if(!StringUtils.isBlank(eventCode)){
             qb = new QueryBuilder(ChargeTemplate.class, "p");
@@ -255,30 +315,6 @@ public class PricePlanMatrixService extends PersistenceService<PricePlanMatrix> 
             pricePlan.setTradingCurrency(null);
         }
 
-        // startAppli
-        if (!StringUtils.isBlank(startSub)) {
-            try {
-                pricePlan.setStartSubscriptionDate(sdf.parse(startSub));
-            } catch (Exception e) {
-                throw new BusinessException("Invalid startSub in line=" + rowIndex + ", startSub=" + startSub + " expected format:"
-                        + param.getProperty("excelImport.dateFormat", "dd/MM/yyyy") + ", you may change the property excelImport.dateFormat.");
-            }
-        } else {
-            pricePlan.setStartSubscriptionDate(null);
-        }
-
-        // endAppli
-        if (!StringUtils.isBlank(endSub)) {
-            try {
-                pricePlan.setEndSubscriptionDate(sdf.parse(endSub));
-            } catch (Exception e) {
-                throw new BusinessException("Invalid endSub in line=" + rowIndex + ", endSub=" + endSub + " expected format:"
-                        + param.getProperty("excelImport.dateFormat", "dd/MM/yyyy") + ", you may change the property excelImport.dateFormat.");
-            }
-        } else {
-            pricePlan.setEndSubscriptionDate(null);
-        }
-
         if (!StringUtils.isBlank(pricePlanCode)) {
             pricePlan.setCode(pricePlanCode);
         } else {
@@ -311,19 +347,19 @@ public class PricePlanMatrixService extends PersistenceService<PricePlanMatrix> 
         }
         
         if (!StringUtils.isBlank(validityCalendarCode)) {
-            qb = new QueryBuilder(OfferTemplate.class, "p");
-            qb.addCriterion("code", "=", offerCode, false);
+            qb = new QueryBuilder(Calendar.class, "p");
+            qb.addCriterion("code", "=", validityCalendarCode, false);
             qb.addCriterionEntity("provider", provider);
             @SuppressWarnings("unchecked")
-            List<OfferTemplate> offers = qb.getQuery(em).getResultList();
-            OfferTemplate offer = null;
+            List<Calendar> calendars = qb.getQuery(em).getResultList();
+            Calendar calendar = null;
 
-            if (offers == null || offers.size() == 0) {
-                throw new BusinessException("Invalid offer code in line=" + rowIndex + ", code=" + offerCode);
+            if (calendars == null || calendars.size() == 0) {
+                throw new BusinessException("Invalid calendars code in line=" + rowIndex + ", code=" + validityCalendarCode);
             }
 
-            offer = offers.get(0);
-            pricePlan.setOfferTemplate(offer);
+            calendar = calendars.get(0);
+            pricePlan.setValidityCalendar(calendar);
         } else {
             pricePlan.setValidityCalendar(null);
         }
@@ -428,29 +464,6 @@ public class PricePlanMatrixService extends PersistenceService<PricePlanMatrix> 
             pricePlan.setCriteriaEL(null);
         }
 
-        // startAppli
-        if (!StringUtils.isBlank(startRating)) {
-            try {
-                pricePlan.setStartRatingDate(sdf.parse(startRating));
-            } catch (Exception e) {
-                throw new BusinessException("Invalid startRating in line=" + rowIndex + ", startRating=" + startRating + " expected format:"
-                        + param.getProperty("excelImport.dateFormat", "dd/MM/yyyy") + ", you may change the property excelImport.dateFormat.");
-            }
-        } else {
-            pricePlan.setStartRatingDate(null);
-        }
-
-        // endAppli
-        if (!StringUtils.isBlank(endRating)) {
-            try {
-                pricePlan.setEndRatingDate(sdf.parse(endRating));
-            } catch (Exception e) {
-                throw new BusinessException("Invalid endRating in line=" + rowIndex + ", endRating=" + endRating + " expected format:"
-                        + param.getProperty("excelImport.dateFormat", "dd/MM/yyyy") + ", you may change the property excelImport.dateFormat.");
-            }
-        } else {
-            pricePlan.setEndRatingDate(null);
-        }
 
         // minSubAge
         if (!StringUtils.isBlank(minSubAge)) {

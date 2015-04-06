@@ -958,7 +958,8 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 	 * Load available custom fields (templates) and their values
 	 */
 	protected void initCustomFields() {
-
+	    //BEWARE this function is overriden in TimerEntityBean to filter custom fields based on their name
+	    
 		if (!this.getClass().isAnnotationPresent(CustomFieldEnabledBean.class)) {
 			return;
 		}

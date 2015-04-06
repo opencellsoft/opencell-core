@@ -1,6 +1,7 @@
 package org.meveo.admin.job;
 
 import java.util.Collection;
+import java.util.List;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
@@ -15,10 +16,15 @@ import javax.ejb.TimerService;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
+import javax.interceptor.Interceptors;
 
+import org.meveo.admin.job.logging.JobLoggingInterceptor;
+import org.meveo.interceptor.PerformanceInterceptor;
 import org.meveo.model.admin.User;
+import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.jobs.JobCategoryEnum;
 import org.meveo.model.jobs.JobExecutionResultImpl;
+import org.meveo.model.jobs.TimerEntity;
 import org.meveo.model.jobs.TimerInfo;
 import org.meveo.service.admin.impl.UserService;
 import org.meveo.service.job.Job;
@@ -52,9 +58,11 @@ public class PDFInvoiceGenerationJob implements Job {
 
 	@Override
 	@Asynchronous
-	public void execute(TimerInfo info, User currentUser) {
+    @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
+    public void execute(TimerEntity timerEntity, User currentUser) {
+        JobExecutionResultImpl result = new JobExecutionResultImpl();
+        TimerInfo info=timerEntity.getTimerInfo();
 		log.debug("execute PDF, info={}, currentUser={}",info,currentUser);
-		JobExecutionResultImpl result = new JobExecutionResultImpl();
 		if (!running && (info.isActive() || currentUser != null)) {
 			try {
 				running = true;
@@ -65,7 +73,7 @@ public class PDFInvoiceGenerationJob implements Job {
 				pdfInvoiceGenerationJobBean.execute(result, info.getParametres(), currentUser);
 				result.close("");
 				log.debug("execute PDF, persist job execution");
-				jobExecutionService.persistResult(this, result, info, currentUser, getJobCategory());
+				jobExecutionService.persistResult(this, result, timerEntity, currentUser, getJobCategory());
 			} catch (Exception e) {
 				log.error(e.getMessage());
 				e.printStackTrace();
@@ -77,7 +85,7 @@ public class PDFInvoiceGenerationJob implements Job {
 	}
 
 	@Override
-	public Timer createTimer(ScheduleExpression scheduleExpression, TimerInfo infos) {
+	public Timer createTimer(ScheduleExpression scheduleExpression, TimerEntity infos) {
 		TimerConfig timerConfig = new TimerConfig();
 		timerConfig.setInfo(infos);
 		timerConfig.setPersistent(false);
@@ -92,7 +100,7 @@ public class PDFInvoiceGenerationJob implements Job {
 	@Timeout
 	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
 	public void trigger(Timer timer) {
-		execute((TimerInfo) timer.getInfo(), null);
+		execute((TimerEntity) timer.getInfo(), null);
 	}
 
 	@Override
@@ -118,4 +126,10 @@ public class PDFInvoiceGenerationJob implements Job {
 	public JobCategoryEnum getJobCategory() {
 		return JobCategoryEnum.INVOICING;
 	}
+
+    @Override
+    public List<CustomFieldTemplate> getCustomFields(User currentUser) {
+        // TODO Auto-generated method stub
+        return null;
+    }
 }

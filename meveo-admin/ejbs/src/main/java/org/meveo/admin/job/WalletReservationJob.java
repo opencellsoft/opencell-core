@@ -1,6 +1,7 @@
 package org.meveo.admin.job;
 
 import java.util.Collection;
+import java.util.List;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
@@ -15,10 +16,15 @@ import javax.ejb.TimerService;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
+import javax.interceptor.Interceptors;
 
+import org.meveo.admin.job.logging.JobLoggingInterceptor;
+import org.meveo.interceptor.PerformanceInterceptor;
 import org.meveo.model.admin.User;
+import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.jobs.JobCategoryEnum;
 import org.meveo.model.jobs.JobExecutionResultImpl;
+import org.meveo.model.jobs.TimerEntity;
 import org.meveo.model.jobs.TimerInfo;
 import org.meveo.service.admin.impl.UserService;
 import org.meveo.service.billing.impl.ReservationService;
@@ -53,8 +59,10 @@ public class WalletReservationJob implements Job {
 
 	@Override
 	@Asynchronous
-	public void execute(TimerInfo info, User currentUser) {
-		JobExecutionResultImpl result = new JobExecutionResultImpl();
+    @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
+    public void execute(TimerEntity timerEntity, User currentUser) {
+        JobExecutionResultImpl result = new JobExecutionResultImpl();
+        TimerInfo info=timerEntity.getTimerInfo();
 		if (!running && (info.isActive() || currentUser != null)) {
 			try {
 				running = true;
@@ -68,7 +76,7 @@ public class WalletReservationJob implements Job {
 
 				result.close("");
 
-				jobExecutionService.persistResult(this, result, info, currentUser, getJobCategory());
+				jobExecutionService.persistResult(this, result, timerEntity, currentUser, getJobCategory());
 			} catch (Exception e) {
 				result.registerError(e.getMessage());
 				log.error(e.getMessage());
@@ -79,7 +87,7 @@ public class WalletReservationJob implements Job {
 	}
 
 	@Override
-	public Timer createTimer(ScheduleExpression scheduleExpression, TimerInfo infos) {
+	public Timer createTimer(ScheduleExpression scheduleExpression, TimerEntity infos) {
 		TimerConfig timerConfig = new TimerConfig();
 		timerConfig.setInfo(infos);
 
@@ -92,7 +100,7 @@ public class WalletReservationJob implements Job {
 	@Timeout
 	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
 	public void trigger(Timer timer) {
-		execute((TimerInfo) timer.getInfo(), null);
+		execute((TimerEntity) timer.getInfo(), null);
 	}
 
 	@Override
@@ -118,4 +126,10 @@ public class WalletReservationJob implements Job {
 	public JobCategoryEnum getJobCategory() {
 		return JobCategoryEnum.WALLET;
 	}
+
+    @Override
+    public List<CustomFieldTemplate> getCustomFields(User currentUser) {
+        // TODO Auto-generated method stub
+        return null;
+    }
 }

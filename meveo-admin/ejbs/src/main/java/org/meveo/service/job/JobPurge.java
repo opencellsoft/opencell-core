@@ -1,10 +1,13 @@
 package org.meveo.service.job;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
+import javax.ejb.Asynchronous;
 import javax.ejb.ScheduleExpression;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
@@ -19,9 +22,14 @@ import javax.interceptor.Interceptors;
 
 import org.meveo.admin.job.logging.JobLoggingInterceptor;
 import org.meveo.interceptor.PerformanceInterceptor;
+import org.meveo.model.Auditable;
 import org.meveo.model.admin.User;
+import org.meveo.model.crm.AccountLevelEnum;
+import org.meveo.model.crm.CustomFieldTemplate;
+import org.meveo.model.crm.CustomFieldTypeEnum;
 import org.meveo.model.jobs.JobCategoryEnum;
 import org.meveo.model.jobs.JobExecutionResultImpl;
+import org.meveo.model.jobs.TimerEntity;
 import org.meveo.model.jobs.TimerInfo;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.admin.impl.UserService;
@@ -49,22 +57,20 @@ public class JobPurge implements Job {
 	}
 
 	@Override
+    @Asynchronous 
 	@Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
-	public void execute(TimerInfo info, User currentUser) {
+	public void execute(TimerEntity timerEntity, User currentUser) {
 		JobExecutionResultImpl result = new JobExecutionResultImpl();
-
-		if (info.isActive()) {
+		TimerInfo info=timerEntity.getTimerInfo();
+        if (info.isActive() || currentUser != null) {
 			if (currentUser == null) {
 				currentUser = userService.findById(info.getUserId());
 			}
 
-			String jobname = "";
+			String jobname = timerEntity.getStringCustomValue("JobPurge_jobName");
 			int nbDays = 30;
-			try {
-				String[] params = info.getParametres().split("-");
-				jobname = params[0];
-				nbDays = Integer.parseInt(params[1]);
-			} catch (Exception e) {
+			if(timerEntity.getLongCustomValue("JobPurge_nbDays")!=null){
+			    nbDays = timerEntity.getLongCustomValue("JobPurge_nbDays").intValue();
 			}
 			Date date = DateUtils.addDaysToDate(new Date(), nbDays * (-1));
 			long nbItemsToProcess = jobExecutionService.countJobsToDelete(jobname, date);
@@ -83,13 +89,13 @@ public class JobPurge implements Job {
 			result.close(nbSuccess > 0 ? ("purged " + jobname) : "");
 		}
 
-		jobExecutionService.persistResult(this, result, info, currentUser, getJobCategory());
+		jobExecutionService.persistResult(this, result, timerEntity, currentUser, getJobCategory());
 	}
 
 	@Override
-	public Timer createTimer(ScheduleExpression scheduleExpression, TimerInfo infos) {
+	public Timer createTimer(ScheduleExpression scheduleExpression, TimerEntity timerEntity) {
 		TimerConfig timerConfig = new TimerConfig();
-		timerConfig.setInfo(infos);
+		timerConfig.setInfo(timerEntity);
 		timerConfig.setPersistent(false);
 
 		return timerService.createCalendarTimer(scheduleExpression, timerConfig);
@@ -99,7 +105,7 @@ public class JobPurge implements Job {
 	@Timeout
 	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
 	public void trigger(Timer timer) {
-		execute((TimerInfo) timer.getInfo(), null);
+		execute((TimerEntity) timer.getInfo(), null);
 	}
 
 	@Override
@@ -125,4 +131,39 @@ public class JobPurge implements Job {
 	public JobCategoryEnum getJobCategory() {
 		return JobCategoryEnum.UTILS;
 	}
+
+    @Override
+    public List<CustomFieldTemplate> getCustomFields(User currentUser) {
+        List<CustomFieldTemplate> result = new ArrayList<CustomFieldTemplate>();
+                
+        CustomFieldTemplate jobName = new CustomFieldTemplate();
+        jobName.setCode("JobPurge_jobName");
+        jobName.setAccountLevel(AccountLevelEnum.TIMER);
+        jobName.setActive(true);
+        Auditable audit= new Auditable();
+        audit.setCreated(new Date());
+        audit.setCreator(currentUser);
+        jobName.setAuditable(audit);
+        jobName.setProvider(currentUser.getProvider());
+        jobName.setDescription("Job Name (to purge)");
+        jobName.setFieldType(CustomFieldTypeEnum.STRING);
+        jobName.setValueRequired(true);
+        result.add(jobName);
+        
+        CustomFieldTemplate nbDays=new CustomFieldTemplate();
+        nbDays.setCode("JobPurge_nbDays");
+        nbDays.setAccountLevel(AccountLevelEnum.TIMER);
+        nbDays.setActive(true);
+        Auditable audit2= new Auditable();
+        audit2.setCreated(new Date());
+        audit2.setCreator(currentUser);
+        nbDays.setAuditable(audit2);
+        nbDays.setProvider(currentUser.getProvider());
+        nbDays.setDescription("older that (in days)");
+        nbDays.setFieldType(CustomFieldTypeEnum.LONG);
+        nbDays.setValueRequired(true);
+        result.add(nbDays);
+        
+        return result;
+    }
 }
