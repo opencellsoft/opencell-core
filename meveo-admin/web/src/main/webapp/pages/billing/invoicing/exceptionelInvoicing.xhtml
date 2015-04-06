@@ -62,18 +62,32 @@
 				permission="#{identity.hasPermission('administration','administrationManagement')}"
 				renderEditLink="false" renderDeleteLink="false"
 				editView="billingAccountDetail" />
-
 			<ui:define name="add-on-buttons">
-				<!-- <hf:formField id="invoiceDate" label="#{messages['billingRun.invoiceDate']}"
-					field="invoiceDate" edit="true" required="false" />
-				<hf:formField id="lastTransactionDate" label="#{messages['billingRun.lastTransactionDate']}"
-					field="lastTransactionDate" required="false" edit="true" /> -->
+			<p:panelGrid columns="2">
+				<p:outputLabel for="invoiceDate" value="#{messages['billingRun.invoiceDate']}" />
+				<p:calendar id="invoiceDate"
+				value="#{billingAccountBean.exceptionalInvoicingDate}"
+				 pattern="#{paramBean.getProperty('meveo.dateFormat','dd/MM/yyyy')}"
+				required="true" />
+			</p:panelGrid>
+			<p:panelGrid columns="2">
+				<p:outputLabel for="lastTransactionDate" value="#{messages['billingRun.lastTransactionDate']}" />
+				<p:calendar id="lastTransactionDate"
+				value="#{billingAccountBean.exceptionalLastTransactionDate}"
+				 pattern="#{paramBean.getProperty('meveo.dateFormat','dd/MM/yyyy')}"
+				required="true" />
+			</p:panelGrid>
 				<p:commandButton
 					action="#{billingAccountBean.launchExceptionalInvoicing}"
-					ajax="false" value="#{messages['button.launchInvoicing']}" 
-					rendered="#{billingAccountBean.entity.billingCycle!=null}"/>
+					ajax="false" value="#{messages['button.launchInvoicing']}"/>
 			</ui:define>
 		</hftl:dataList>
+		
+		<!-- <hf:formPanel id="formPanel" edit="true"
+			label=""
+			backingBean="#{billingAccountBean}" showFormButtons="false">
+			
+		</hf:formPanel>-->
 	</ui:define>
 
 </ui:composition>

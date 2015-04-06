@@ -48,7 +48,6 @@ import org.meveo.model.billing.CounterInstance;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.crm.AccountLevelEnum;
 import org.meveo.model.payments.CustomerAccount;
-import org.meveo.model.shared.DateUtils;
 import org.meveo.model.shared.Name;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
@@ -112,6 +111,10 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
 	/** Selected billing account in exceptionelInvoicing page. */
 	private ListItemsSelector<BillingAccount> itemSelector;
 
+	private Date exceptionalInvoicingDate=new Date();
+	
+	private Date exceptionalLastTransactionDate=new Date();
+	
 	private CounterInstance selectedCounterInstance;
 
 	
@@ -363,9 +366,6 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
 			String sep = "";
 			boolean isBillable = false;
 			Date lastTransactionDate=new Date();
-			if(entity.getBillingCycle()!=null&& entity.getBillingCycle().getInvoiceDateProductionDelay()!=null){
-			    DateUtils.addDaysToDate(new Date(), entity.getBillingCycle().getInvoiceDateProductionDelay());
-			}
 			for (BillingAccount ba : getSelectedEntities()) {
 				selectedBillingAccounts = selectedBillingAccounts + sep + ba.getId();
 				sep = ",";
@@ -379,6 +379,10 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
 			}
 			log.info("selectedBillingAccounts=" + selectedBillingAccounts);
 			billingRun.setSelectedBillingAccounts(selectedBillingAccounts);
+
+            
+            billingRun.setInvoiceDate(exceptionalInvoicingDate);
+            billingRun.setLastTransactionDate(exceptionalLastTransactionDate);
 			billingRunService.create(billingRun);
 			return "/pages/billing/invoicing/billingRuns.xhtml?edit=false";
 		} catch (Exception e) {
@@ -508,5 +512,21 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
 	public void setSelectedCounterInstance(CounterInstance selectedCounterInstance) {
 		this.selectedCounterInstance = selectedCounterInstance;
 	}
+
+    public Date getExceptionalInvoicingDate() {
+        return exceptionalInvoicingDate;
+    }
+
+    public void setExceptionalInvoicingDate(Date exceptionalInvoicingDate) {
+        this.exceptionalInvoicingDate = exceptionalInvoicingDate;
+    }
+
+    public Date getExceptionalLastTransactionDate() {
+        return exceptionalLastTransactionDate;
+    }
+
+    public void setExceptionalLastTransactionDate(Date exceptionalLastTransactionDate) {
+        this.exceptionalLastTransactionDate = exceptionalLastTransactionDate;
+    }
 
 }
