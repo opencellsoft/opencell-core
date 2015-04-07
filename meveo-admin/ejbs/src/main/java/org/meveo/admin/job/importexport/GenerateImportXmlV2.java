@@ -113,7 +113,7 @@ public class GenerateImportXmlV2 {
 						customerAccount.setTradingCurrencyCode("EUR");
 						customerAccount.setCreditCategory(creditCategory);
 						Name name = new Name();
-						name.setFirstname("JOB_FIRST_NAME" + i + "_" + j + "_" + k);
+						name.setFirstName("JOB_FIRST_NAME" + i + "_" + j + "_" + k);
 						name.setLastName("JOB_LAST_NAME" + i + "_" + j + "_" + k);
 						customerAccount.setName(name);
 

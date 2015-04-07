@@ -628,7 +628,7 @@ public class ImportCustomersJobBean {
 			isWarning = true;
 		}
 
-		if ((cust.getCustomerCategory().startsWith("PART_")) && (custAcc.getName() == null || StringUtils.isBlank(custAcc.getName().getFirstname()))) {
+		if ((cust.getCustomerCategory().startsWith("PART_")) && (custAcc.getName() == null || StringUtils.isBlank(custAcc.getName().getFirstName()))) {
 			createCustomerAccountWarning(sell, cust, custAcc, "Name is null");
 			isWarning = true;
 		}
