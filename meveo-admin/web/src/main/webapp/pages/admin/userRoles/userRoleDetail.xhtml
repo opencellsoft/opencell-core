@@ -16,10 +16,10 @@
 
 		<hf:formPanel label="#{messages['role.userRolePanel']}"
 			backingBean="#{userRoleBean}">
-			<hf:formField label="#{messages['role.name']}" field="name" />
-			<hf:formField label="#{messages['role.description']}"
+			<hf:formField label="#{messages['role.name']}" field="name" required="true" />
+			<hf:formField label="#{messages['role.description']}" required="true"
 				field="description" size="50" maxlength="50" />
-			<hf:formField label="#{messages['role.permission']}"
+			<hf:formField label="#{messages['role.permission']}" required="true"
 				field="permissions" listType="pickUpList"
 				listService="#{roleService}" childField="name" />
 		</hf:formPanel>
