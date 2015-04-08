@@ -139,10 +139,10 @@ public class ConfigIssuesReportingBean{
     	 recurringNotAssociatedList= recurringChargeTemplateService.getRecurringChrgNotAssociated(currentProvider);
      }
      public void constructTermChrgNotAssociated(TabChangeEvent event){
-    	 terminationNotAssociatedList= oneShotChargeTemplateService.getOneShotNotAssociated(currentProvider,OneShotChargeTemplateTypeEnum.TERMINATION);
+    	 terminationNotAssociatedList= oneShotChargeTemplateService.getTerminationChrgNotAssociated(currentProvider);
      }
      public void constructSubChrgNotAssociated(TabChangeEvent event){
-    	 subNotAssociatedList= oneShotChargeTemplateService.getOneShotNotAssociated(currentProvider,OneShotChargeTemplateTypeEnum.SUBSCRIPTION);
+    	 subNotAssociatedList= oneShotChargeTemplateService.getSubscriptionChrgNotAssociated(currentProvider);
      }
      
   
@@ -175,9 +175,9 @@ public class ConfigIssuesReportingBean{
 		    
 		    reportConfigDto.setNbrRecurringChrgNotAssociated(recurringChargeTemplateService.getNbrRecurringChrgNotAssociated(currentProvider));
 
-		    reportConfigDto.setNbrTerminationChrgNotAssociated(oneShotChargeTemplateService.getNbrOneShotNotAssociated(currentProvider,OneShotChargeTemplateTypeEnum.TERMINATION));
-		    reportConfigDto.setNbrSubChrgNotAssociated(oneShotChargeTemplateService.getNbrOneShotNotAssociated(currentProvider,OneShotChargeTemplateTypeEnum.SUBSCRIPTION));
-           }
+		    reportConfigDto.setNbrTerminationChrgNotAssociated(oneShotChargeTemplateService.getNbrTerminationChrgNotAssociated(currentProvider));
+		    reportConfigDto.setNbrSubChrgNotAssociated(oneShotChargeTemplateService.getNbrSubscriptionChrgNotAssociated(currentProvider));
+	        }
 	        
 	   
 			public ConfigIssuesReportingDTO getReportConfigDto() {
