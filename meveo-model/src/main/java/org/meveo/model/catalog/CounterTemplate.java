@@ -52,7 +52,7 @@ public class CounterTemplate extends BusinessEntity {
 
 	@Column(name = "LEVEL_NUM", precision = NB_PRECISION, scale = NB_DECIMALS)
 	@Digits(integer = NB_PRECISION, fraction = NB_DECIMALS)
-	private BigDecimal level;
+	private BigDecimal ceiling;
 
 	@Column(name = "UNITY_DESCRIPTION", length = 20)
 	@Size(min = 0, max = 20)
@@ -78,12 +78,12 @@ public class CounterTemplate extends BusinessEntity {
 		this.calendar = calendar;
 	}
 
-	public BigDecimal getLevel() {
-		return level;
+	public BigDecimal getCeiling() {
+		return ceiling;
 	}
 
-	public void setLevel(BigDecimal level) {
-		this.level = level;
+	public void setCeiling(BigDecimal ceiling) {
+		this.ceiling = ceiling;
 	}
 
 	public String getUnityDescription() {

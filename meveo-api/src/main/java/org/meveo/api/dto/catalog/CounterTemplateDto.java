@@ -24,25 +24,29 @@ public class CounterTemplateDto implements Serializable {
 
 	@XmlAttribute(required = true)
 	private String description;
-
-	private String unity;
-	private int type;
-	private BigDecimal level;
-	private boolean disabled;
+    
+	@XmlAttribute(required = true)
 	private String calendar;
+	
+	private String unity;
+	private String type;
+	private BigDecimal ceiling;
+	private boolean disabled;
+	private String counterLevel;
+	
 
 	public CounterTemplateDto() {
-
 	}
 
 	public CounterTemplateDto(CounterTemplate e) {
 		code = e.getCode();
 		description = e.getDescription();
 		unity = e.getUnityDescription();
-		type = e.getCounterType().getId();
-		level = e.getLevel();
+		type = e.getCounterType().getLabel();
+		ceiling = e.getCeiling();
 		disabled = e.isDisabled();
 		calendar = e.getCalendar().getCode();
+		counterLevel=String.valueOf(e.getCounterLevel());
 	}
 
 	public String getCode() {
@@ -69,20 +73,20 @@ public class CounterTemplateDto implements Serializable {
 		this.unity = unity;
 	}
 
-	public int getType() {
+	public String getType() {
 		return type;
 	}
 
-	public void setType(int type) {
+	public void setType(String type) {
 		this.type = type;
 	}
 
-	public BigDecimal getLevel() {
-		return level;
+	public BigDecimal getCeiling() {
+		return ceiling;
 	}
 
-	public void setLevel(BigDecimal level) {
-		this.level = level;
+	public void setCeiling(BigDecimal ceiling) {
+		this.ceiling = ceiling;
 	}
 
 	public boolean isDisabled() {
@@ -100,11 +104,19 @@ public class CounterTemplateDto implements Serializable {
 	public void setCalendar(String calendar) {
 		this.calendar = calendar;
 	}
+	
+	public String getCounterLevel() {
+		return counterLevel;
+	}
+
+	public void setCounterLevel(String counterLevel) {
+		this.counterLevel = counterLevel;
+	}
 
 	@Override
 	public String toString() {
 		return "CounterTemplateDto [code=" + code + ", description=" + description + ", unity=" + unity + ", type="
-				+ type + ", level=" + level + ", disabled=" + disabled + ", calendar=" + calendar + "]";
+				+ type + ", ceiling=" + ceiling + ", counterLevel=" + counterLevel + ", disabled=" + disabled + ", calendar=" + calendar + "]";
 	}
 
 }

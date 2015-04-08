@@ -164,10 +164,10 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
 		counterPeriod.setPeriodStartDate(startDate);
 		counterPeriod.setPeriodEndDate(endDate);
 		counterPeriod.setProvider(counterInstance.getProvider());
-		counterPeriod.setValue(counterInstance.getCounterTemplate().getLevel());
+		counterPeriod.setValue(counterInstance.getCounterTemplate().getCeiling());
 		counterPeriod.setCode(counterInstance.getCode());
 		counterPeriod.setDescription(counterInstance.getDescription());
-		counterPeriod.setLevel(counterInstance.getCounterTemplate().getLevel());
+		counterPeriod.setLevel(counterInstance.getCounterTemplate().getCeiling());
 		counterPeriod.setCounterType(counterInstance.getCounterTemplate().getCounterType());
 		Auditable auditable = new Auditable();
 		auditable.setCreated(new Date());
