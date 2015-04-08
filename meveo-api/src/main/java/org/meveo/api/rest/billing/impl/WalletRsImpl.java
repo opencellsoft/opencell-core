@@ -8,9 +8,11 @@ import org.meveo.api.MeveoApiErrorCode;
 import org.meveo.api.billing.WalletApi;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
+import org.meveo.api.dto.billing.FindWalletOperationsDto;
 import org.meveo.api.dto.billing.WalletBalanceDto;
 import org.meveo.api.dto.billing.WalletOperationDto;
 import org.meveo.api.dto.billing.WalletReservationDto;
+import org.meveo.api.dto.response.billing.FindWalletOperationsResponseDto;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.LoggingInterceptor;
 import org.meveo.api.rest.billing.WalletRs;
@@ -177,6 +179,25 @@ public class WalletRsImpl extends BaseRs implements WalletRs {
 			result.setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
+		}
+
+		log.debug("RESPONSE={}", result);
+		return result;
+	}
+
+	@Override
+	public FindWalletOperationsResponseDto findOperations(FindWalletOperationsDto postData) {
+		FindWalletOperationsResponseDto result = new FindWalletOperationsResponseDto();
+
+		try {
+			result = walletApi.findOperations(postData, getCurrentUser().getProvider());
+		} catch (MeveoApiException e) {
+			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
+			result.getActionStatus().setMessage(e.getMessage());
+		} catch (Exception e) {
+			result.getActionStatus().setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
+			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
+			result.getActionStatus().setMessage(e.getMessage());
 		}
 
 		log.debug("RESPONSE={}", result);

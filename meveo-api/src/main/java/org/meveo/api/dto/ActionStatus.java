@@ -27,7 +27,7 @@ public class ActionStatus {
 	/**
 	 * {@link https://www.assembla.com/spaces/meveo/wiki/Error_Codes}.
 	 */
-	private int errorCode;
+	private String errorCode;
 
 	/**
 	 * Customer message.
@@ -66,11 +66,11 @@ public class ActionStatus {
 		this.status = status;
 	}
 
-	public int getErrorCode() {
+	public String getErrorCode() {
 		return errorCode;
 	}
 
-	public void setErrorCode(int errorCode) {
+	public void setErrorCode(String errorCode) {
 		this.errorCode = errorCode;
 	}
 

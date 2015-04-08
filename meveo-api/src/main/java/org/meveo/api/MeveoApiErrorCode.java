@@ -7,25 +7,24 @@ package org.meveo.api;
 public class MeveoApiErrorCode {
 
 	// General API Errors 1xxx
-	public static int ENTITY_DOES_NOT_EXISTS_EXCEPTION = 1000;
-	public static int ENTITY_ALREADY_EXISTS_EXCEPTION = 1001;
+	public static String ENTITY_DOES_NOT_EXISTS_EXCEPTION = "ENTITY_DOES_NOT_EXISTS_EXCEPTION";
+	public static String ENTITY_ALREADY_EXISTS_EXCEPTION = "ENTITY_DOES_NOT_EXISTS_EXCEPTION";
 
 	// Validation Errors 2xxx
 	/**
 	 * Missing Parameter.
 	 */
-	public static int MISSING_PARAMETER = 2000;
+	public static String MISSING_PARAMETER = "MISSING_PARAMETER";
 
 	/**
 	 * Invalid Parameter.
 	 */
-	public static int INVALID_PARAMETER = 2001;
+	public static String INVALID_PARAMETER = "INVALID_PARAMETER";
 
-	//Balance error
-	public static int INSUFFICIENT_BALANCE = 3000;
-	
-	public static int GENERIC_API_EXCEPTION = 9000;
-	public static int BUSINESS_API_EXCEPTION = 9001;
-	
+	// Balance error
+	public static String INSUFFICIENT_BALANCE = "INSUFFICIENT_BALANCE";
+
+	public static String GENERIC_API_EXCEPTION = "GENERIC_API_EXCEPTION";
+	public static String BUSINESS_API_EXCEPTION = "BUSINESS_API_EXCEPTION";
 
 }
