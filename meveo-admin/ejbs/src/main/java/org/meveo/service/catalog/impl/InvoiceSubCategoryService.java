@@ -74,15 +74,13 @@ public class InvoiceSubCategoryService extends
 	}
 	
 	public int getNbInvSubCatNotAssociated(Provider provider) { 
-		return ((Long)getEntityManager().createQuery("select count(*) from InvoiceSubCategory v "
-				+" where v.id not in (select c.invoiceSubCategory.id from ChargeTemplate c where c.invoiceSubCategory.id is not null)"
-				+ " and v.provider=:provider").setParameter("provider", provider).getSingleResult()).intValue();
+		return ((Long)getEntityManager().createNamedQuery("invoiceSubCategory.getNbrInvoiceSubCatNotAssociated",Long.class)
+				.setParameter("provider", provider).getSingleResult()).intValue();
             }
 	
 	public  List<InvoiceSubCategory> getInvoiceSubCatNotAssociated(Provider provider) { 
-		return (List<InvoiceSubCategory>)getEntityManager().createQuery("from InvoiceSubCategory v "
-				+ "where v.id not in (select c.invoiceSubCategory.id from ChargeTemplate c where c.invoiceSubCategory.id is not null)"
-				+ " and v.provider=:provider").setParameter("provider", provider).getResultList();
+		return (List<InvoiceSubCategory>)getEntityManager().createNamedQuery("invoiceSubCategory.getInvoiceSubCatNotAssociated",InvoiceSubCategory.class)
+				.setParameter("provider", provider).getResultList();
 		}
 
 }

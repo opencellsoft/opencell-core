@@ -20,6 +20,8 @@ import java.math.BigDecimal;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
@@ -27,12 +29,22 @@ import javax.persistence.UniqueConstraint;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.MultilanguageEntity;
 import org.meveo.model.ObservableEntity;
+import org.meveo.model.crm.Provider;
 
 @Entity
 @ObservableEntity
 @MultilanguageEntity
 @Table(name = "BILLING_TAX", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE", "PROVIDER_ID" }))
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_TAX_SEQ")
+@NamedQueries({			
+@NamedQuery(name = "tax.getNbTaxesNotAssociated", 
+	           query = "select count(*) from Tax t where t.id not in (select l.tax.id from TaxLanguage l where l.tax.id is not null)"
+	         + " and t.id not in (select inv.tax.id from InvoiceSubcategoryCountry inv where inv.tax.id is not null) and t.provider=:provider"),
+@NamedQuery(name = "tax.getTaxesNotAssociated", 
+	           query = "from Tax t where t.id not in (select l.tax.id from TaxLanguage l where l.tax.id is not null ) "
+				+ " and t.id not in (select inv.tax.id from InvoiceSubcategoryCountry inv where inv.tax.id is not null) and t.provider=:provider")	              
+	         
+	})
 public class Tax extends BusinessEntity {
 	private static final long serialVersionUID = 1L;
 

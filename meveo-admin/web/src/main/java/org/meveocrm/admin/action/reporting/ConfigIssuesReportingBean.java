@@ -16,7 +16,6 @@ import org.meveo.model.billing.TradingLanguage;
 import org.meveo.model.billing.WalletOperationStatusEnum;
 import org.meveo.model.catalog.CounterTemplate;
 import org.meveo.model.catalog.OneShotChargeTemplate;
-import org.meveo.model.catalog.OneShotChargeTemplateTypeEnum;
 import org.meveo.model.catalog.RecurringChargeTemplate;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.catalog.UsageChargeTemplate;

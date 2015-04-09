@@ -66,12 +66,10 @@ public class TradingLanguageService extends PersistenceService<TradingLanguage> 
 	}
 	
 	public int getNbLanguageNotAssociated(Provider provider) { 
-		return ((Long)getEntityManager().createQuery("select count(*) from TradingLanguage tr where tr.id not in (select s.tradingLanguage.id from Seller s where s.tradingLanguage.id is not null) "
-				+ " and tr.provider=:provider").setParameter("provider", provider).getSingleResult()).intValue();
+		return ((Long)getEntityManager().createNamedQuery("tradingLanguage.getNbLanguageNotAssociated",Long.class).setParameter("provider", provider).getSingleResult()).intValue();
 		}
 	
 	public  List<TradingLanguage> getLanguagesNotAssociated(Provider provider) { 
-		return (List<TradingLanguage>)getEntityManager().createQuery("from TradingLanguage tr where tr.id not in (select s.tradingLanguage.id from Seller s where s.tradingLanguage.id is not null) "
-				+ " and tr.provider=:provider").setParameter("provider", provider).getResultList();
+		return (List<TradingLanguage>)getEntityManager().createNamedQuery("tradingLanguage.getLanguagesNotAssociated",TradingLanguage.class).setParameter("provider", provider).getResultList();
 		}
 }

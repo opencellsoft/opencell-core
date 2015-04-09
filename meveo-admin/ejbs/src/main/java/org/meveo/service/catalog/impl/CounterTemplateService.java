@@ -50,15 +50,13 @@ public class CounterTemplateService<P extends CounterTemplate> extends
 	}
 	
 	public  int getNbrCounterWithNotService(Provider provider) { 
-		return ((Long)getEntityManager().createQuery(
-				"select count(*) from CounterTemplate c where c.id not in (select serv.counterTemplate from ServiceChargeTemplateUsage serv) "
-				+ " and c.provider=:provider").setParameter("provider", provider).getSingleResult()).intValue();
+		return ((Long)getEntityManager().createNamedQuery("counterTemplate.getNbrCounterWithNotService",Long.class)
+				.setParameter("provider", provider).getSingleResult()).intValue();
 		}
 
 	public List<CounterTemplate> getCounterWithNotService(Provider provider) { 
-		return (List<CounterTemplate>)getEntityManager().createQuery(
-				"from CounterTemplate c where c.id not in (select serv.counterTemplate from ServiceChargeTemplateUsage serv) "
-				+ " and c.provider=:provider").setParameter("provider", provider).getResultList();
+		return (List<CounterTemplate>)getEntityManager().createNamedQuery("counterTemplate.getCounterWithNotService",CounterTemplate.class)
+				.setParameter("provider", provider).getResultList();
 		}
 
 }

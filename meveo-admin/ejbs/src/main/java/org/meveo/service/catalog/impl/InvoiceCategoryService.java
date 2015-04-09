@@ -66,13 +66,11 @@ public class InvoiceCategoryService extends PersistenceService<InvoiceCategory> 
 	}
 	
 	public int getNbInvCatNotAssociated(Provider provider) { 
-		return ((Long)getEntityManager().createQuery("select count(*) from InvoiceCategory v where v.id not in (select sub.invoiceCategory.id from InvoiceSubCategory sub where sub.invoiceCategory.id is not null ) "
-				+ " and v.provider=:provider").setParameter("provider", provider).getSingleResult()).intValue();
+		return ((Long)getEntityManager().createNamedQuery("invoiceCategory.getNbrInvoiceCatNotAssociated",Long.class).setParameter("provider", provider).getSingleResult()).intValue();
 		}
 	
 	public  List<InvoiceCategory> getInvoiceCatNotAssociated(Provider provider) { 
-		return (List<InvoiceCategory>)getEntityManager().createQuery("from InvoiceCategory v where v.id not in (select sub.invoiceCategory.id from InvoiceSubCategory sub where sub.invoiceCategory.id is not null ) "
-				+ " and v.provider=:provider").setParameter("provider", provider).getResultList();
+		return (List<InvoiceCategory>)getEntityManager().createNamedQuery("invoiceCategory.getInvoiceCatNotAssociated",InvoiceCategory.class).setParameter("provider", provider).getResultList();
 		}
 
 }
