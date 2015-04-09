@@ -8,7 +8,7 @@ public class MeveoApiErrorCode {
 
 	// General API Errors 1xxx
 	public static String ENTITY_DOES_NOT_EXISTS_EXCEPTION = "ENTITY_DOES_NOT_EXISTS_EXCEPTION";
-	public static String ENTITY_ALREADY_EXISTS_EXCEPTION = "ENTITY_DOES_NOT_EXISTS_EXCEPTION";
+	public static String ENTITY_ALREADY_EXISTS_EXCEPTION = "ENTITY_ALREADY_EXISTS_EXCEPTION";
 
 	// Validation Errors 2xxx
 	/**
@@ -20,6 +20,7 @@ public class MeveoApiErrorCode {
 	 * Invalid Parameter.
 	 */
 	public static String INVALID_PARAMETER = "INVALID_PARAMETER";
+	public static String INVALID_ENUM_VALUE = "INVALID_ENUM_VALUE";
 
 	// Balance error
 	public static String INSUFFICIENT_BALANCE = "INSUFFICIENT_BALANCE";
