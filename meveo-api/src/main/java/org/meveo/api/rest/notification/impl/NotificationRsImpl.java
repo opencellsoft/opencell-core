@@ -8,6 +8,8 @@ import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.notification.NotificationDto;
 import org.meveo.api.dto.response.notification.GetNotificationResponseDto;
+import org.meveo.api.dto.response.notification.ListInboundRequestResponseDto;
+import org.meveo.api.dto.response.notification.ListNotificationHistoryResponseDto;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.LoggingInterceptor;
 import org.meveo.api.notification.NotificationApi;
@@ -105,6 +107,48 @@ public class NotificationRsImpl extends BaseRs implements NotificationRs {
 		} catch (Exception e) {
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
+			log.error(e.getMessage());
+		}
+
+		log.debug("RESPONSE={}", result);
+		return result;
+	}
+
+	@Override
+	public ListNotificationHistoryResponseDto listNotificationHistory() {
+		ListNotificationHistoryResponseDto result = new ListNotificationHistoryResponseDto();
+
+		try {
+			result.setNotificationHistories(notificationApi.listNotificationHistory(getCurrentUser().getProvider()));
+		} catch (MeveoApiException e) {
+			result.getActionStatus().setErrorCode(e.getErrorCode());
+			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
+			result.getActionStatus().setMessage(e.getMessage());
+			log.error(e.getMessage());
+		} catch (Exception e) {
+			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
+			result.getActionStatus().setMessage(e.getMessage());
+			log.error(e.getMessage());
+		}
+
+		log.debug("RESPONSE={}", result);
+		return result;
+	}
+
+	@Override
+	public ListInboundRequestResponseDto listInboundRequest() {
+		ListInboundRequestResponseDto result = new ListInboundRequestResponseDto();
+
+		try {
+			result.setInboundRequests(notificationApi.listInboundRequest(getCurrentUser().getProvider()));
+		} catch (MeveoApiException e) {
+			result.getActionStatus().setErrorCode(e.getErrorCode());
+			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
+			result.getActionStatus().setMessage(e.getMessage());
+			log.error(e.getMessage());
+		} catch (Exception e) {
+			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
+			result.getActionStatus().setMessage(e.getMessage());
 			log.error(e.getMessage());
 		}
 

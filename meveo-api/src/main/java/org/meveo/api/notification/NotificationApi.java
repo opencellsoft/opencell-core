@@ -1,10 +1,16 @@
 package org.meveo.api.notification;
 
+import java.util.List;
+
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
 import org.meveo.api.BaseApi;
+import org.meveo.api.dto.notification.InboundRequestDto;
+import org.meveo.api.dto.notification.InboundRequestsDto;
 import org.meveo.api.dto.notification.NotificationDto;
+import org.meveo.api.dto.notification.NotificationHistoriesDto;
+import org.meveo.api.dto.notification.NotificationHistoryDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.InvalidEnumValue;
@@ -14,9 +20,13 @@ import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.User;
 import org.meveo.model.catalog.CounterTemplate;
 import org.meveo.model.crm.Provider;
+import org.meveo.model.notification.InboundRequest;
 import org.meveo.model.notification.Notification;
 import org.meveo.model.notification.NotificationEventTypeEnum;
+import org.meveo.model.notification.NotificationHistory;
 import org.meveo.service.catalog.impl.CounterTemplateService;
+import org.meveo.service.notification.InboundRequestService;
+import org.meveo.service.notification.NotificationHistoryService;
 import org.meveo.service.notification.NotificationService;
 import org.slf4j.Logger;
 
@@ -35,6 +45,12 @@ public class NotificationApi extends BaseApi {
 	@SuppressWarnings("rawtypes")
 	@Inject
 	private CounterTemplateService counterTemplateService;
+
+	@Inject
+	private NotificationHistoryService notificationHistoryService;
+
+	@Inject
+	private InboundRequestService inboundRequestService;
 
 	public void create(NotificationDto postData, User currentUser) throws MeveoApiException {
 		if (!StringUtils.isBlank(postData.getCode()) && !StringUtils.isBlank(postData.getClassNameFilter()) && !StringUtils.isBlank(postData.getEventTypeFilter())) {
@@ -113,7 +129,7 @@ public class NotificationApi extends BaseApi {
 			if (notif == null) {
 				throw new EntityDoesNotExistsException(Notification.class, postData.getCode());
 			}
-			
+
 			// check class
 			try {
 				Class.forName(postData.getClassNameFilter());
@@ -170,6 +186,32 @@ public class NotificationApi extends BaseApi {
 
 			throw new MissingParameterException(getMissingParametersExceptionMessage());
 		}
+	}
+
+	public NotificationHistoriesDto listNotificationHistory(Provider provider) throws MeveoApiException {
+		NotificationHistoriesDto result = new NotificationHistoriesDto();
+
+		List<NotificationHistory> notificationHistories = notificationHistoryService.list(provider);
+		if (notificationHistories != null) {
+			for (NotificationHistory nh : notificationHistories) {
+				result.getNotificationHistory().add(new NotificationHistoryDto(nh));
+			}
+		}
+
+		return result;
+	}
+
+	public InboundRequestsDto listInboundRequest(Provider provider) throws MeveoApiException {
+		InboundRequestsDto result = new InboundRequestsDto();
+
+		List<InboundRequest> inboundRequests = inboundRequestService.list(provider);
+		if (inboundRequests != null) {
+			for (InboundRequest ir : inboundRequests) {
+				result.getInboundRequest().add(new InboundRequestDto(ir));
+			}
+		}
+
+		return result;
 	}
 
 }
