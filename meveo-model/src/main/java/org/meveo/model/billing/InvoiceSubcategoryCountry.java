@@ -16,7 +16,6 @@
  */
 package org.meveo.model.billing;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
@@ -43,9 +42,6 @@ public class InvoiceSubcategoryCountry extends AuditableEntity {
 	@JoinColumn(name = "TRADING_COUNTRY_ID")
 	private TradingCountry tradingCountry;
 
-	@Column(name = "DISCOUNT_CODE", length = 20)
-	private String discountCode;
-
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "TAX_ID")
 	private Tax tax;
@@ -65,14 +61,6 @@ public class InvoiceSubcategoryCountry extends AuditableEntity {
 
 	public void setTradingCountry(TradingCountry tradingCountry) {
 		this.tradingCountry = tradingCountry;
-	}
-
-	public String getDiscountCode() {
-		return discountCode;
-	}
-
-	public void setDiscountCode(String discountCode) {
-		this.discountCode = discountCode;
 	}
 
 	public Tax getTax() {

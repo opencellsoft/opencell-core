@@ -79,8 +79,6 @@ public class InvoiceSubCategoryCountryApi extends BaseApi {
 			}
 
 			InvoiceSubcategoryCountry invoiceSubcategoryCountry = new InvoiceSubcategoryCountry();
-			invoiceSubcategoryCountry.setDiscountCode(postData
-					.getDiscountCode());
 			invoiceSubcategoryCountry.setInvoiceSubCategory(invoiceSubCategory);
 			invoiceSubcategoryCountry.setTax(tax);
 			invoiceSubcategoryCountry.setTradingCountry(tradingCountry);
@@ -142,8 +140,6 @@ public class InvoiceSubCategoryCountryApi extends BaseApi {
 								+ " does not exists.");
 			}
 
-			invoiceSubcategoryCountry.setDiscountCode(postData
-					.getDiscountCode());
 			invoiceSubcategoryCountry.setTax(tax);
 
 			invoiceSubCategoryCountryService.update(invoiceSubcategoryCountry,

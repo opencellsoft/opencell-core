@@ -64,4 +64,8 @@
 			<column name="CONDITION_EL" type="VARCHAR(1000)"/>
 		</addColumn>
 	</changeSet>
+	<changeSet id="ticket682_20150410" author="Mbarek">
+		<dropTable cascadeConstraints="true" tableName="BILLING_INVOICE_CAT_COUNTRY"/>
+		<dropColumn tableName="BILLING_INV_SUB_CAT_COUNTRY" columnName="DISCOUNT_CODE"/>
+	</changeSet>
 </databaseChangeLog>
