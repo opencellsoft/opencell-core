@@ -41,6 +41,7 @@ import javax.validation.constraints.NotNull;
 
 import org.meveo.model.Auditable;
 import org.meveo.model.BusinessEntity;
+import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.ObservableEntity;
 import org.meveo.model.catalog.OfferTemplate;
@@ -52,6 +53,7 @@ import org.meveo.model.mediation.Access;
  */
 @Entity
 @ObservableEntity
+@ExportIdentifier({ "code", "provider" })
 @Table(name = "BILLING_SUBSCRIPTION", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE", "PROVIDER_ID" }))
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_SUBSCRIPTION_SEQ")
 public class Subscription extends BusinessEntity implements ICustomFieldEntity{

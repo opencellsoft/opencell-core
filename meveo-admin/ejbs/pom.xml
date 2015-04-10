@@ -115,6 +115,11 @@
 		</dependency>
 
 		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-lang3</artifactId>
+		</dependency>
+		
+		<dependency>
 			<groupId>org.richfaces.ui</groupId>
 			<artifactId>richfaces-components-ui</artifactId>
 			<version>${manaty.richfaces.version}</version>
@@ -277,6 +282,17 @@
 			</exclusions>
 		</dependency>
 
+		<dependency>
+			<groupId>com.thoughtworks.xstream</groupId>
+			<artifactId>xstream</artifactId>
+			<version>1.4.7</version>
+		</dependency>
+		<dependency>
+			<groupId>com.thoughtworks.xstream</groupId>
+			<artifactId>xstream-hibernate</artifactId>
+			<version>1.4.7</version>
+		</dependency>
+	
 		<!-- For testing -->
 		<dependency>
 			<groupId>hsqldb</groupId>

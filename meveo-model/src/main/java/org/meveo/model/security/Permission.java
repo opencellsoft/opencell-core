@@ -9,6 +9,7 @@ import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import org.meveo.model.ExportIdentifier;
 import org.meveo.model.IEntity;
 
 /*
@@ -28,6 +29,7 @@ import org.meveo.model.IEntity;
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 @Entity
+@ExportIdentifier("name")
 @Table(name = "ADM_PERMISSION")
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "ADM_PERMISSION_SEQ")
 public class Permission implements IEntity, Serializable {

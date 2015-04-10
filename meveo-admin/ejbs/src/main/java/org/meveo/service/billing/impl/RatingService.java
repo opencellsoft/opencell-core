@@ -65,7 +65,7 @@ import org.slf4j.LoggerFactory;
 @Stateless
 public class RatingService extends BusinessService<WalletOperation>{
 
-	@PersistenceContext
+	@PersistenceContext(unitName = "MeveoAdmin")
 	protected EntityManager entityManager;
 
 	static protected Logger log = LoggerFactory.getLogger(RatingService.class);

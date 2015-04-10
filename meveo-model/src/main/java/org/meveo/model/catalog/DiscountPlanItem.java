@@ -15,6 +15,7 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.Size;
 
 import org.meveo.model.AuditableEntity;
+import org.meveo.model.ExportIdentifier;
 import org.meveo.model.billing.InvoiceCategory;
 import org.meveo.model.billing.InvoiceSubCategory;
 
@@ -22,6 +23,7 @@ import org.meveo.model.billing.InvoiceSubCategory;
  * @author Edward P. Legaspi
  **/
 @Entity
+@ExportIdentifier({ "code", "provider" })
 @Table(name = "CAT_DISCOUNT_PLAN_ITEM", uniqueConstraints = { @UniqueConstraint(columnNames = { "CODE", "PROVIDER_ID" }) })
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "CAT_DISCOUNT_PLAN_ITEM_SEQ")
 public class DiscountPlanItem extends AuditableEntity {

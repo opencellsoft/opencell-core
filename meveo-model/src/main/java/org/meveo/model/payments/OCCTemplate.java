@@ -25,8 +25,10 @@ import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
 import org.meveo.model.AuditableEntity;
+import org.meveo.model.ExportIdentifier;
 
 @Entity
+@ExportIdentifier({ "code", "provider" })
 @Table(name = "AR_OCC_TEMPLATE", uniqueConstraints = @UniqueConstraint(columnNames = {
 		"PROVIDER_ID", "CODE" }))
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "AR_OCC_TEMPLATE_SEQ")

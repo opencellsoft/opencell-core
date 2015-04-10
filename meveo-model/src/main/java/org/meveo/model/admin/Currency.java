@@ -21,12 +21,14 @@ import javax.persistence.Entity;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ProviderlessEntity;
 
 /**
  * Currency entity.
  */
 @Entity
+@ExportIdentifier("currencyCode")
 @Table(name = "ADM_CURRENCY")
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "ADM_CURRENCY_SEQ")
 public class Currency extends ProviderlessEntity {

@@ -34,12 +34,13 @@ import javax.persistence.UniqueConstraint;
 import javax.persistence.Version;
 
 import org.meveo.model.IEntity;
+import org.meveo.model.IVersionedEntity;
 
 @Entity
 @Table(name = "DWH_JOURNAL_ENTRIES", uniqueConstraints = @UniqueConstraint(columnNames = {
 		"ORIGIN_ID", "INVOICE_NUMBER", "ACCOUNTING_CODE" }))
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "DWH_JOURNAL_ENTRIES_SEQ")
-public class JournalEntry implements IEntity {
+public class JournalEntry implements IEntity, IVersionedEntity {
 	@SuppressWarnings("unused")
 	private static final long serialVersionUID = 1L;
 

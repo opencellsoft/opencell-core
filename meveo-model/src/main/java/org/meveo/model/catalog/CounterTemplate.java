@@ -32,9 +32,11 @@ import javax.validation.constraints.Digits;
 import javax.validation.constraints.Size;
 
 import org.meveo.model.BusinessEntity;
+import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ObservableEntity;
 
 @Entity
+@ExportIdentifier({ "code", "provider" })
 @ObservableEntity
 @Table(name = "CAT_COUNTER_TEMPLATE", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE", "PROVIDER_ID" }))
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "CAT_COUNTER_TEMPLATE_SEQ")

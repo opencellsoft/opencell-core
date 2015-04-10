@@ -39,7 +39,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
-import org.meveo.model.BusinessEntity;
+import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ObservableEntity;
 import org.meveo.model.ProviderlessEntity;
 import org.meveo.model.admin.Currency;
@@ -60,6 +60,7 @@ import org.meveo.model.shared.Title;
 
 @Entity
 @ObservableEntity
+@ExportIdentifier("code")
 @Table(name = "CRM_PROVIDER", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE" }))
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "CRM_PROVIDER_SEQ")
 public class Provider extends ProviderlessEntity {
@@ -548,6 +549,6 @@ public class Provider extends ProviderlessEntity {
 
     @Override
     public String toString() {
-        return super.toString() + ", code=" + code;
-    }
+        return String.format("Provider [code=%s]", code);
+    }   
 }

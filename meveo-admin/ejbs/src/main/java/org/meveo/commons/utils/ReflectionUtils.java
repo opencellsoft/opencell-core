@@ -1,6 +1,6 @@
 /*
-* (C) Copyright 2009-2014 Manaty SARL (http://manaty.net/) and contributors.
-*
+ * (C) Copyright 2009-2014 Manaty SARL (http://manaty.net/) and contributors.
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
  * published by the Free Software Foundation, either version 3 of the
@@ -13,10 +13,20 @@
  *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 package org.meveo.commons.utils;
 
-import java.lang.reflect.Field;
+import java.io.File;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLDecoder;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.List;
+import java.util.TreeSet;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,12 +44,11 @@ public class ReflectionUtils {
     /**
      * Creates instance from class name.
      * 
-     * @param className
-     *            Class name for which instance is created.
+     * @param className Class name for which instance is created.
      * @return Instance of className.
      */
     @SuppressWarnings("rawtypes")
-	public static Object createObject(String className) {
+    public static Object createObject(String className) {
         Object object = null;
         try {
             Class classDefinition = Class.forName(className);
@@ -54,54 +63,68 @@ public class ReflectionUtils {
         return object;
     }
 
-    /**
-     * Gets unaccessible private field.
-     * 
-     * @param clazz
-     *            Class of object.
-     * @param instance
-     *            Object itself.
-     * @param fieldName
-     *            Private field name.
-     * 
-     * @return Value of that private field.
-     * @throws IllegalAccessException
-     * @throws IllegalArgumentException
-     * @throws NoSuchFieldException
-     * @throws SecurityException
-     */
-    @SuppressWarnings("rawtypes")
-    public static Object getPrivateField(Class clazz, Object instance, String fieldName)
-            throws IllegalArgumentException, IllegalAccessException, SecurityException, NoSuchFieldException {
-        final Field field = clazz.getDeclaredField(fieldName);
-        field.setAccessible(true);
-        return field.get(instance);
+    public static List<Class> getClasses(String packageName) throws ClassNotFoundException, IOException {
+
+        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+        assert classLoader != null;
+        String path = packageName.replace('.', '/');
+
+        Enumeration<URL> resources = classLoader.getResources(path);
+
+        List<String> dirs = new ArrayList<String>();
+
+        while (resources.hasMoreElements()) {
+            URL resource = resources.nextElement();
+            dirs.add(URLDecoder.decode(resource.getFile(), "UTF-8"));
+        }
+
+        TreeSet<String> classes = new TreeSet<String>();
+        for (String directory : dirs) {
+            classes.addAll(findClasses(directory, packageName));
+        }
+
+        ArrayList<Class> classList = new ArrayList<Class>();
+        for (String clazz : classes) {
+            classList.add(Class.forName(clazz));
+        }
+
+        return classList;
     }
 
-    /**
-     * Sets unaccessible private field.
-     * 
-     * @param clazz
-     *            Class of object.
-     * @param instance
-     *            Object itself.
-     * @param fieldName
-     *            Private field name.
-     * @param fieldValue
-     *            Private field value to set.
-     * 
-     * @return Value of that private field.
-     * @throws IllegalAccessException
-     * @throws IllegalArgumentException
-     * @throws NoSuchFieldException
-     * @throws SecurityException
-     */
-    @SuppressWarnings("rawtypes")
-    public static void setPrivateField(Class clazz, Object instance, String fieldName, Object fieldValue)
-            throws SecurityException, NoSuchFieldException, IllegalArgumentException, IllegalAccessException {
-        final Field field = clazz.getDeclaredField(fieldName);
-        field.setAccessible(true);
-        field.set(instance, fieldValue);
-    }
+    private static TreeSet<String> findClasses(String path, String packageName) throws MalformedURLException, IOException {
 
+        TreeSet<String> classes = new TreeSet<String>();
+
+        if (path.startsWith("file:") && path.contains("!")) {
+            String[] split = path.split("!");
+            URL jar = new URL(split[0]);
+            ZipInputStream zip = new ZipInputStream(jar.openStream());
+            ZipEntry entry;
+            while ((entry = zip.getNextEntry()) != null) {
+                if (entry.getName().endsWith(".class")) {
+                    String className = entry.getName().replaceAll("[$].*", "").replaceAll("[.]class", "").replace('/', '.');
+                    if (className.startsWith(packageName)) {
+                        classes.add(className);
+                    }
+                }
+            }
+        }
+
+        File dir = new File(path);
+        if (!dir.exists()) {
+            return classes;
+        }
+        File[] files = dir.listFiles();
+        for (File file : files) {
+            if (file.isDirectory()) {
+                assert !file.getName().contains(".");
+                classes.addAll(findClasses(file.getAbsolutePath(), packageName + "." + file.getName()));
+            } else if (file.getName().endsWith(".class")) {
+                String className = packageName + '.' + file.getName().substring(0, file.getName().length() - 6);
+
+                classes.add(className);
+            }
+        }
+        return classes;
+    }
 }

@@ -44,6 +44,13 @@ public class Resources {
 	@MeveoJpaForJobs
 	private EntityManager emfForJobs;
 
+	
+    @Produces
+//    @PersistenceContext(unitName = "MeveoAdminTarget")
+    @PersistenceContext(unitName = "MeveoAdmin")
+    @MeveoJpaForTarget
+    static EntityManager emfForTarget;
+    
 	/*
 	 * @ExtensionManaged
 	 * 

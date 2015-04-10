@@ -30,8 +30,10 @@ import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
 import org.meveo.model.BusinessEntity;
+import org.meveo.model.ExportIdentifier;
 
 @Entity
+@ExportIdentifier({ "code", "provider", "creditCategory", "paymentMethod" })
 @Table(name = "AR_DUNNING_PLAN", uniqueConstraints = @UniqueConstraint(columnNames = { "CREDIT_CATEGORY",
 		"PAYMENT_METHOD", "PROVIDER_ID", "CODE" }))
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "AR_DUNNING_PLAN_SEQ")

@@ -23,8 +23,10 @@ import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
 import org.meveo.model.BaseEntity;
+import org.meveo.model.ExportIdentifier;
 
 @Entity
+@ExportIdentifier({ "code", "provider" })
 @Table(name = "BILLING_SUBSCRIP_TERMIN_REASON", uniqueConstraints = @UniqueConstraint(columnNames = {
 		"PROVIDER_ID", "CODE" }))
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_SUB_TERM_REASON_SEQ")

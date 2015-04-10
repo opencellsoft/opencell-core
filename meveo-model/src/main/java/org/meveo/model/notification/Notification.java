@@ -18,11 +18,13 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.meveo.model.BusinessEntity;
+import org.meveo.model.ExportIdentifier;
 import org.meveo.model.billing.CounterInstance;
 import org.meveo.model.catalog.CounterTemplate;
 import org.meveo.validation.constraint.ClassName;
 
 @Entity
+@ExportIdentifier({ "code", "provider" })
 @Table(name = "ADM_NOTIFICATION", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE", "PROVIDER_ID" }))
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "ADM_NOTIFICATION_SEQ")
 @Inheritance(strategy = InheritanceType.JOINED)

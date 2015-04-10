@@ -20,8 +20,10 @@ import java.io.Serializable;
 
 public interface IEntity {
 
-	public Serializable getId();
+    public Serializable getId();
 
-	public boolean isTransient();
+    public void setId(Long id);
+
+    public boolean isTransient();
 
 }

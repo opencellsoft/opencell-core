@@ -31,11 +31,12 @@ import javax.persistence.TemporalType;
 import javax.persistence.Version;
 
 import org.meveo.model.IEntity;
+import org.meveo.model.IVersionedEntity;
 
 @Entity
 @Table(name = "DWH_ACCOUNT_OPERATION")
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "DWH_ACCOUNT_OPERATION_SEQ")
-public class DWHAccountOperation implements Serializable, IEntity {
+public class DWHAccountOperation implements Serializable, IEntity, IVersionedEntity {
 
 	private static final long serialVersionUID = 1L;
 	

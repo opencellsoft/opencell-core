@@ -8,10 +8,12 @@ import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.Size;
 
 import org.meveo.model.BusinessEntity;
+import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ObservableEntity;
 
 @Entity
 @ObservableEntity
+@ExportIdentifier({ "code", "provider" })
 @Table(name = "CAT_TRIGGERED_EDR", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE", "PROVIDER_ID" }))
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "CAT_TRIGGERED_EDR_SEQ")
 public class TriggeredEDRTemplate extends BusinessEntity {

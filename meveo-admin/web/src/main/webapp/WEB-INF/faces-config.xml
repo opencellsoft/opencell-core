@@ -427,6 +427,18 @@
 			<redirect />
 		</navigation-case>
 		<navigation-case>
+			<from-outcome>export</from-outcome>
+			<to-view-id>/pages/admin/export/export.xhtml
+			</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>import</from-outcome>
+			<to-view-id>/pages/admin/export/import.xhtml
+			</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
 			<from-outcome>terminationReasons</from-outcome>
 			<to-view-id>/pages/admin/terminationReason/terminationReasons.xhtml
 			</to-view-id>

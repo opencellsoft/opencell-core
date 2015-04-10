@@ -28,7 +28,7 @@ import javax.persistence.Version;
  * Base class for entities that does not have Providers nor Auditable.
  */
 @MappedSuperclass
-public abstract class BaseProviderlessEntity implements Serializable, IEntity {
+public abstract class BaseProviderlessEntity implements Serializable, IEntity, IVersionedEntity {
 
     private static final long serialVersionUID = 1L;
 

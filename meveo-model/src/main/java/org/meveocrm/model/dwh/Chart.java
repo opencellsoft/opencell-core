@@ -12,10 +12,12 @@ import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
 import org.meveo.model.BusinessEntity;
+import org.meveo.model.ExportIdentifier;
 import org.meveo.model.admin.User;
 import org.meveo.model.security.Role;
 
 @Entity
+@ExportIdentifier({ "code", "provider" })
 @Table(name = "DWH_CHART", uniqueConstraints = @UniqueConstraint(columnNames = {
 		"CODE", "PROVIDER_ID" }))
 @Inheritance(strategy = InheritanceType.JOINED)

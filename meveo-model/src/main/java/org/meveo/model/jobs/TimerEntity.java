@@ -41,11 +41,13 @@ import org.apache.commons.lang.StringUtils;
 import org.meveo.model.Auditable;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.ICustomFieldEntity;
+import org.meveo.model.ExportIdentifier;
 import org.meveo.model.crm.CustomFieldInstance;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Entity
+@ExportIdentifier({ "name", "provider" })
 @Table(name = "MEVEO_TIMER")
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "MEVEO_TIMER_SEQ")
 public class TimerEntity extends BaseEntity implements ICustomFieldEntity {

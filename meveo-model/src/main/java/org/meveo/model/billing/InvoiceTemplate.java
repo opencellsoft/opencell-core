@@ -27,8 +27,10 @@ import javax.persistence.TemporalType;
 import javax.persistence.UniqueConstraint;
 
 import org.meveo.model.BaseEntity;
+import org.meveo.model.ExportIdentifier;
 
 @Entity
+@ExportIdentifier({ "code", "provider" })
 @Table(name = "BILLING_INVOICE_TEMPLATE", uniqueConstraints = {
 		@UniqueConstraint(columnNames = { "CODE", "PROVIDER_ID" }),
 		@UniqueConstraint(columnNames = { "FILE_NAME", "PROVIDER_ID" }) })

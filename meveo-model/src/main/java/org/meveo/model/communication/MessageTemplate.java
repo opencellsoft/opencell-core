@@ -32,10 +32,12 @@ import javax.persistence.TemporalType;
 import javax.persistence.UniqueConstraint;
 
 import org.meveo.model.BusinessEntity;
+import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ObservableEntity;
 
 @Entity
 @ObservableEntity
+@ExportIdentifier({ "code", "provider" })
 @Table(name = "COM_MESSAGE_TEMPLATE", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE", "PROVIDER_ID" }))
 @DiscriminatorColumn(name = "MEDIA")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)

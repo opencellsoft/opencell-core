@@ -32,12 +32,14 @@ import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.Size;
 
 import org.meveo.model.BusinessEntity;
+import org.meveo.model.ExportIdentifier;
 import org.meveo.model.catalog.Calendar;
 
 /**
  * Billing cycle.
  */
 @Entity
+@ExportIdentifier({ "code", "provider" })
 @Table(name = "BILLING_CYCLE", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE", "PROVIDER_ID" }))
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_CYCLE_SEQ")
 public class BillingCycle extends BusinessEntity {

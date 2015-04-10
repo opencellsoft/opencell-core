@@ -27,6 +27,7 @@ import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
 import org.meveo.model.BusinessEntity;
+import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ObservableEntity;
 import org.meveo.model.billing.TradingCountry;
 import org.meveo.model.billing.TradingCurrency;
@@ -35,6 +36,7 @@ import org.meveo.model.shared.Address;
 
 @Entity
 @ObservableEntity
+@ExportIdentifier({ "code", "provider" })
 @Table(name = "CRM_SELLER", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE", "PROVIDER_ID" }))
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "CRM_SELLER_SEQ")
 public class Seller extends BusinessEntity {

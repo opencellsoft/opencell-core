@@ -24,10 +24,12 @@ import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ProviderlessEntity;
 import org.meveo.model.admin.Currency;
 
 @Entity
+@ExportIdentifier("countryCode")
 @Table(name = "ADM_COUNTRY")
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "ADM_COUNTRY_SEQ")
 public class Country extends ProviderlessEntity {

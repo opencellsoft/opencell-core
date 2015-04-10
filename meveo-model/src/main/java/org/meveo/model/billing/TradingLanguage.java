@@ -27,10 +27,12 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import org.meveo.model.AuditableEntity;
+import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ObservableEntity;
 
 @Entity
 @ObservableEntity
+@ExportIdentifier({ "language.languageCode", "provider" })
 @Cacheable
 @Table(name = "BILLING_TRADING_LANGUAGE")
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_TRADING_LANGUAGE_SEQ")

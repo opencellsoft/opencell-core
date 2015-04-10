@@ -39,7 +39,7 @@ public class DWHQueryBean {
 	@Inject
 	private MeasuredValueService mvService;
 
-	@PersistenceContext
+	@PersistenceContext(unitName = "MeveoAdmin")
 	private EntityManager em;
 
 	@Inject

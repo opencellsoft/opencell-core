@@ -106,8 +106,8 @@ public class BusinessEntity extends AuditableEntity {
         return true;
     }
 
-	@Override
-	public String toString() {
-		return super.toString() + ", code=" + code;
-	}
+    @Override
+    public String toString() {
+        return String.format("%s[%s, code=%s]", this.getClass().getName(), super.toString(), code);
+    }
 }

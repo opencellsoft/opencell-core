@@ -29,8 +29,10 @@ import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
 import org.meveo.model.BusinessEntity;
+import org.meveo.model.ExportIdentifier;
 
 @Entity
+@ExportIdentifier({ "code", "provider" })
 @Table(name = "COM_SENDER_CONFIG", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE", "PROVIDER_ID" }))
 @DiscriminatorColumn(name = "MEDIA")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)

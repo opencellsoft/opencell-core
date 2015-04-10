@@ -24,11 +24,13 @@ import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
 import org.meveo.model.BusinessEntity;
+import org.meveo.model.ExportIdentifier;
 import org.meveo.model.MultilanguageEntity;
 
 @Entity
 @Cacheable
 @MultilanguageEntity
+@ExportIdentifier({ "code", "provider" })
 @Table(name = "ADM_TITLE", uniqueConstraints = @UniqueConstraint(columnNames = { "PROVIDER_ID", "CODE" }))
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "ADM_TITLE_SEQ")
 public class Title extends BusinessEntity {

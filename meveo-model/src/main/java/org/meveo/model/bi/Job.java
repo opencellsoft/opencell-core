@@ -27,12 +27,14 @@ import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ProviderlessEntity;
 
 /**
  * Data transformation Job
  */
 @Entity
+@ExportIdentifier("name")
 @Table(name = "BI_JOB")
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BI_JOB_SEQ")
 public class Job extends ProviderlessEntity {

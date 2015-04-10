@@ -27,10 +27,12 @@ import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
 import org.meveo.model.BaseEntity;
+import org.meveo.model.ExportIdentifier;
 import org.meveo.model.communication.CommunicationPolicy;
 import org.meveo.model.communication.Message;
 
 @Entity
+@ExportIdentifier({ "contactCode", "provider" })
 @Table(name = "COM_CONTACT", uniqueConstraints = @UniqueConstraint(columnNames = { "PROVIDER_ID",
 		"CONTACT_CODE" }))
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "COM_CONTACT_SEQ")

@@ -34,7 +34,7 @@ import org.meveo.model.crm.Provider;
  * Base class for all entity classes.
  */
 @MappedSuperclass
-public abstract class BaseEntity implements Serializable, IEntity {
+public abstract class BaseEntity implements Serializable, IEntity, IVersionedEntity {
 	private static final long serialVersionUID = 1L;
 
 	public static final int NB_PRECISION = 23;
@@ -100,12 +100,13 @@ public abstract class BaseEntity implements Serializable, IEntity {
 		throw new IllegalStateException("Equals method was not overriden!");
 	}
 
-	@Override
-	public String toString() {
-		return "id=" + (id == null ? "" : id.toString());
-	}
 
-	/**
+	@Override
+    public String toString() {
+        return String.format("id=%s", id);
+    }
+
+    /**
 	 * Check whether [current] provider matches the provider field of an entity
 	 * 
 	 * @param providerToMatch

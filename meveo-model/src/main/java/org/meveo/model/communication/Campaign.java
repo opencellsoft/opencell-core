@@ -31,8 +31,10 @@ import javax.persistence.TemporalType;
 import javax.persistence.UniqueConstraint;
 
 import org.meveo.model.BusinessEntity;
+import org.meveo.model.ExportIdentifier;
 
 @Entity
+@ExportIdentifier({ "code", "provider" })
 @Table(name = "COM_CAMPAIGN", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE", "PROVIDER_ID" }))
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "COM_CAMPAIGN_SEQ")
 public class Campaign extends BusinessEntity {

@@ -21,12 +21,14 @@ import javax.persistence.Entity;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ProviderlessEntity;
 
 /**
  * Language entity.
  */
 @Entity
+@ExportIdentifier("languageCode")
 @Table(name = "ADM_LANGUAGE")
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "ADM_LANGUAGE_SEQ")
 public class Language extends ProviderlessEntity {

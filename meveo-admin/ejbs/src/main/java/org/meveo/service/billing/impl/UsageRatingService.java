@@ -47,7 +47,7 @@ import org.slf4j.Logger;
 @Stateless
 public class UsageRatingService {
 
-	@PersistenceContext
+    @PersistenceContext(unitName = "MeveoAdmin")
 	@MeveoJpa
 	protected EntityManager em;
 

@@ -42,6 +42,7 @@ import javax.validation.constraints.NotNull;
 
 import org.meveo.model.Auditable;
 import org.meveo.model.BusinessEntity;
+import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.ObservableEntity;
 import org.meveo.model.billing.ChargeInstance;
@@ -51,6 +52,7 @@ import org.meveo.model.crm.CustomFieldInstance;
 
 @Entity
 @ObservableEntity
+@ExportIdentifier({ "code", "provider" })
 @Table(name = "CAT_CHARGE_TEMPLATE", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE", "PROVIDER_ID" }))
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "CAT_CHARGE_TEMPLATE_SEQ")
 @Inheritance(strategy = InheritanceType.JOINED)

@@ -31,7 +31,7 @@ import org.meveo.model.admin.User;
  * Base class for entities that does not have providers.
  */
 @MappedSuperclass
-public abstract class ProviderlessEntity implements Serializable, IEntity, IAuditable {
+public abstract class ProviderlessEntity implements Serializable, IEntity, IAuditable, IVersionedEntity {
 
 	private static final long serialVersionUID = 1L;
 

@@ -33,12 +33,14 @@ import javax.persistence.Table;
 import javax.validation.constraints.Size;
 
 import org.meveo.model.BaseEntity;
+import org.meveo.model.ExportIdentifier;
 import org.meveo.model.crm.Email;
 
 /**
  * Report entity.
  */
 @Entity
+@ExportIdentifier({ "name", "provider" })
 @Table(name = "BI_REPORT")
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BI_REPORT_SEQ")
 public class Report extends BaseEntity {

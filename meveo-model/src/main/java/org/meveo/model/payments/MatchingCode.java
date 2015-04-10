@@ -33,8 +33,10 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import org.meveo.model.AuditableEntity;
+import org.meveo.model.ExportIdentifier;
 
 @Entity
+@ExportIdentifier({ "code", "provider" })
 @Table(name = "AR_MATCHING_CODE")
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "AR_MATCHING_CODE_SEQ")
 public class MatchingCode extends AuditableEntity {

@@ -15,8 +15,10 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import org.meveo.model.BaseEntity;
+import org.meveo.model.ExportIdentifier;
 
 @Entity
+@ExportIdentifier("name")
 @Table(name = "ADM_ROLE")
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "ADM_ROLE_SEQ")
 // @org.hibernate.annotations.Cache(usage =

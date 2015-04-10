@@ -1,0 +1,60 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:s="http://jboss.com/products/seam/taglib" xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html" xmlns:hftl="http://hftl.org"
+    xmlns:hf="http://java.sun.com/jsf/composite/tags" xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
+
+    <f:metadata>
+        <!-- 		<f:event type="preRenderView" listener="#{entityExportImportBean.preRenderView}" /> -->
+    </f:metadata>
+
+    <ui:define name="navigation">
+        <ui:include src="/layout/navigation.xhtml" />
+    </ui:define>
+
+    <ui:define name="body">
+        <h:form id="searchForm" enctype="multipart/form-data">
+            <p:panelGrid id="searchPanel" columns="1" styleClass="search-panel">
+                <f:facet name="header">
+                    <h:outputText value="#{messages['export.import']}" />
+                </f:facet>
+                <p:messages id="messages" autoUpdate="true" />
+                <p:panelGrid columns="2">
+                    <p:outputLabel for="import_requireFK" value="#{messages['export.requireFK']}" />
+                    <p:selectBooleanCheckbox id="import_requireFK" value="#{entityExportImportBean.requireFK}">
+                        <p:ajax event="change" />
+                    </p:selectBooleanCheckbox>
+                </p:panelGrid>
+                <p:panelGrid columns="2">
+                    <p:outputLabel for="import_file" value="#{messages['export.importFile']}" />
+                    <p:fileUpload id="import_file" mode="advanced" fileUploadListener="#{entityExportImportBean.uploadImportFile}"
+                        allowTypes="/(\.|\/)(xml)$/" auto="false" update=":importSummary" />
+                </p:panelGrid>
+            </p:panelGrid>
+
+        </h:form>
+
+
+        <p:panelGrid id="importSummary" columns="1" styleClass="search-panel">
+            <f:facet name="header">
+                <h:outputText value="#{messages['export.importResults']}" rendered="#{entityExportImportBean.exportImportStats!=null}" />
+            </f:facet>
+            <p:panel width="100">
+                <h:form id="form">
+                    <p:dataTable id="datatable" var="stat" value="#{entityExportImportBean.exportImportStats.summary.entrySet().toArray()}"
+                        paginator="true" rows="20"
+                        paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
+                        rowsPerPageTemplate="20,30,50" lazy="false" styleClass="custom-grid" rowIndexVar="rowIndex"
+                        rendered="#{entityExportImportBean.exportImportStats!=null}">
+                        <p:column headerText="#{messages['export.entityClass']}" sortBy="#{stat.key}">
+                            <h:outputText value="#{stat.key.name}" />
+                        </p:column>
+                        <p:column headerText="#{messages['export.numberImported']}">
+                            <h:outputText value="#{stat.value}" />
+                        </p:column>
+                    </p:dataTable>
+                </h:form>
+            </p:panel>
+        </p:panelGrid>
+
+    </ui:define>
+
+</ui:composition>

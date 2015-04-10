@@ -34,6 +34,7 @@ import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
 import org.meveo.model.AuditableEntity;
+import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ObservableEntity;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.security.Role;
@@ -44,6 +45,7 @@ import org.meveo.model.shared.Name;
  */
 @Entity
 @ObservableEntity
+@ExportIdentifier({ "userName" })
 @Table(name = "ADM_USER")
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "ADM_USER_SEQ")
 public class User extends AuditableEntity {
