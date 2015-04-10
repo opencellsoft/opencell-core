@@ -14,6 +14,7 @@ import org.meveo.api.BaseApi;
 import org.meveo.api.dto.CustomFieldDto;
 import org.meveo.api.dto.account.ActivateServicesDto;
 import org.meveo.api.dto.account.ApplyOneShotChargeInstanceDto;
+import org.meveo.api.dto.billing.ChargeInstanceOverrideDto;
 import org.meveo.api.dto.billing.ServiceToActivateDto;
 import org.meveo.api.dto.billing.SubscriptionDto;
 import org.meveo.api.dto.billing.SubscriptionsDto;
@@ -25,6 +26,7 @@ import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.User;
+import org.meveo.model.billing.ChargeInstance;
 import org.meveo.model.billing.InstanceStatusEnum;
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.Subscription;
@@ -39,6 +41,7 @@ import org.meveo.model.crm.AccountLevelEnum;
 import org.meveo.model.crm.CustomFieldInstance;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.Provider;
+import org.meveo.service.billing.impl.ChargeInstanceService;
 import org.meveo.service.billing.impl.OneShotChargeInstanceService;
 import org.meveo.service.billing.impl.ServiceInstanceService;
 import org.meveo.service.billing.impl.SubscriptionService;
@@ -91,10 +94,13 @@ public class SubscriptionApi extends BaseApi {
 	@Inject
 	private CustomFieldTemplateService customFieldTemplateService;
 
+	@SuppressWarnings("rawtypes")
+	@Inject
+	private ChargeInstanceService chargeInstanceService;
+
 	public void create(SubscriptionDto postData, User currentUser) throws MeveoApiException {
-		if (!StringUtils.isBlank(postData.getUserAccount()) && !StringUtils.isBlank(postData.getOfferTemplate())
-				&& !StringUtils.isBlank(postData.getCode()) && !StringUtils.isBlank(postData.getDescription())
-				&& !StringUtils.isBlank(postData.getSubscriptionDate())) {
+		if (!StringUtils.isBlank(postData.getUserAccount()) && !StringUtils.isBlank(postData.getOfferTemplate()) && !StringUtils.isBlank(postData.getCode())
+				&& !StringUtils.isBlank(postData.getDescription()) && !StringUtils.isBlank(postData.getSubscriptionDate())) {
 			Provider provider = currentUser.getProvider();
 
 			if (subscriptionService.findByCode(postData.getCode(), provider) != null) {
@@ -121,8 +127,7 @@ public class SubscriptionApi extends BaseApi {
 			if (postData.getCustomFields() != null) {
 				for (CustomFieldDto cf : postData.getCustomFields().getCustomField()) {
 					// check if custom field exists has a template
-					List<CustomFieldTemplate> customFieldTemplates = customFieldTemplateService.findByAccountLevel(
-							AccountLevelEnum.SUB, provider);
+					List<CustomFieldTemplate> customFieldTemplates = customFieldTemplateService.findByAccountLevel(AccountLevelEnum.SUB, provider);
 					if (customFieldTemplates != null && customFieldTemplates.size() > 0) {
 						for (CustomFieldTemplate cft : customFieldTemplates) {
 							if (cf.getCode().equals(cft.getCode())) {
@@ -173,9 +178,8 @@ public class SubscriptionApi extends BaseApi {
 	}
 
 	public void update(SubscriptionDto postData, User currentUser) throws MeveoApiException {
-		if (!StringUtils.isBlank(postData.getUserAccount()) && !StringUtils.isBlank(postData.getOfferTemplate())
-				&& !StringUtils.isBlank(postData.getCode()) && !StringUtils.isBlank(postData.getDescription())
-				&& !StringUtils.isBlank(postData.getSubscriptionDate())) {
+		if (!StringUtils.isBlank(postData.getUserAccount()) && !StringUtils.isBlank(postData.getOfferTemplate()) && !StringUtils.isBlank(postData.getCode())
+				&& !StringUtils.isBlank(postData.getDescription()) && !StringUtils.isBlank(postData.getSubscriptionDate())) {
 			Provider provider = currentUser.getProvider();
 
 			Subscription subscription = subscriptionService.findByCode(postData.getCode(), provider);
@@ -207,15 +211,13 @@ public class SubscriptionApi extends BaseApi {
 			if (postData.getCustomFields() != null) {
 				for (CustomFieldDto cf : postData.getCustomFields().getCustomField()) {
 					// check if custom field exists has a template
-					List<CustomFieldTemplate> customFieldTemplates = customFieldTemplateService.findByAccountLevel(
-							AccountLevelEnum.SUB, provider);
+					List<CustomFieldTemplate> customFieldTemplates = customFieldTemplateService.findByAccountLevel(AccountLevelEnum.SUB, provider);
 					boolean found = false;
 					if (customFieldTemplates != null && customFieldTemplates.size() > 0) {
 						for (CustomFieldTemplate cft : customFieldTemplates) {
 							if (cf.getCode().equals(cft.getCode())) {
 								found = true;
-								CustomFieldInstance cfi = customFieldInstanceService.findByCodeAndAccount(cf.getCode(),
-										subscription,currentUser.getProvider());
+								CustomFieldInstance cfi = customFieldInstanceService.findByCodeAndAccount(cf.getCode(), subscription, currentUser.getProvider());
 								if (cfi != null) {
 									// update
 									cfi.setActive(true);
@@ -274,9 +276,8 @@ public class SubscriptionApi extends BaseApi {
 	}
 
 	public void activateServices(ActivateServicesDto postData, User currentUser) throws MeveoApiException {
-		if (!StringUtils.isBlank(postData.getSubscription())
-				&& postData.getServicesToActivateDto().getServices() != null
-				&& postData.getServicesToActivateDto().getServices().size() > 0) {
+		if (!StringUtils.isBlank(postData.getSubscription()) && postData.getServicesToActivateDto().getService() != null
+				&& postData.getServicesToActivateDto().getService().size() > 0) {
 			Provider provider = currentUser.getProvider();
 
 			Subscription subscription = subscriptionService.findByCode(postData.getSubscription(), provider);
@@ -284,16 +285,14 @@ public class SubscriptionApi extends BaseApi {
 				throw new EntityDoesNotExistsException(Subscription.class, postData.getSubscription());
 			}
 
-			if (subscription.getStatus() == SubscriptionStatusEnum.RESILIATED
-					|| subscription.getStatus() == SubscriptionStatusEnum.CANCELED) {
+			if (subscription.getStatus() == SubscriptionStatusEnum.RESILIATED || subscription.getStatus() == SubscriptionStatusEnum.CANCELED) {
 				throw new MeveoApiException("Subscription is already RESILIATED or CANCELLED.");
 			}
 
 			// check if exists
 			List<ServiceToActivateDto> serviceToActivateDtos = new ArrayList<>();
-			for (ServiceToActivateDto serviceToActivateDto : postData.getServicesToActivateDto().getServices()) {
-				ServiceTemplate serviceTemplate = serviceTemplateService.findByCode(serviceToActivateDto.getCode(),
-						provider);
+			for (ServiceToActivateDto serviceToActivateDto : postData.getServicesToActivateDto().getService()) {
+				ServiceTemplate serviceTemplate = serviceTemplateService.findByCode(serviceToActivateDto.getCode(), provider);
 				if (serviceTemplate == null) {
 					throw new EntityDoesNotExistsException(ServiceTemplate.class, serviceToActivateDto.getCode());
 				}
@@ -335,11 +334,25 @@ public class SubscriptionApi extends BaseApi {
 				}
 			}
 
+			// override price
+			for (ServiceToActivateDto serviceToActivateDto : serviceToActivateDtos) {
+				if (serviceToActivateDto.getChargeInstanceOverrides() != null && serviceToActivateDto.getChargeInstanceOverrides().getChargeInstanceOverride() != null) {
+					for (ChargeInstanceOverrideDto chargeInstanceOverrideDto : serviceToActivateDto.getChargeInstanceOverrides().getChargeInstanceOverride()) {
+						if (chargeInstanceOverrideDto.getAmountWithoutTax() != null) {
+							ChargeInstance chargeInstance = chargeInstanceService.findByCodeAndService(chargeInstanceOverrideDto.getChargeInstanceCode(), subscription.getId());
+							if (chargeInstance == null) {
+								throw new EntityDoesNotExistsException(ChargeInstance.class, chargeInstanceOverrideDto.getChargeInstanceCode());
+							}
+							chargeInstance.setAmountWithoutTax(chargeInstanceOverrideDto.getAmountWithoutTax());
+						}
+					}
+				}
+			}
+
 			// activate services
 			for (ServiceInstance serviceInstance : serviceInstances) {
 				if (serviceInstance.getStatus() == InstanceStatusEnum.TERMINATED) {
-					throw new MeveoApiException(
-							new BundleKey("messages", "error.activation.terminatedService").getBundle());
+					throw new MeveoApiException(new BundleKey("messages", "error.activation.terminatedService").getBundle());
 				}
 
 				if (serviceInstance.getStatus() == InstanceStatusEnum.ACTIVE) {
@@ -356,8 +369,7 @@ public class SubscriptionApi extends BaseApi {
 			if (StringUtils.isBlank(postData.getSubscription())) {
 				missingParameters.add("subscription");
 			}
-			if (postData.getServicesToActivateDto().getServices() == null
-					|| postData.getServicesToActivateDto().getServices().size() == 0) {
+			if (postData.getServicesToActivateDto().getService() == null || postData.getServicesToActivateDto().getService().size() == 0) {
 				missingParameters.add("services");
 			}
 
@@ -365,14 +377,11 @@ public class SubscriptionApi extends BaseApi {
 		}
 	}
 
-	public void applyOneShotChargeInstance(ApplyOneShotChargeInstanceDto postData, User currentUser)
-			throws MeveoApiException {
-		if (!StringUtils.isBlank(postData.getOneShotCharge()) && !StringUtils.isBlank(postData.getSubscription())
-				&& postData.getOperationDate() != null) {
+	public void applyOneShotChargeInstance(ApplyOneShotChargeInstanceDto postData, User currentUser) throws MeveoApiException {
+		if (!StringUtils.isBlank(postData.getOneShotCharge()) && !StringUtils.isBlank(postData.getSubscription()) && postData.getOperationDate() != null) {
 			Provider provider = currentUser.getProvider();
 
-			OneShotChargeTemplate oneShotChargeTemplate = oneShotChargeTemplateService.findByCode(
-					postData.getOneShotCharge(), provider);
+			OneShotChargeTemplate oneShotChargeTemplate = oneShotChargeTemplateService.findByCode(postData.getOneShotCharge(), provider);
 			if (oneShotChargeTemplate == null) {
 				throw new EntityDoesNotExistsException(OneShotChargeTemplate.class, postData.getOneShotCharge());
 			}
@@ -382,8 +391,7 @@ public class SubscriptionApi extends BaseApi {
 				throw new EntityDoesNotExistsException(Subscription.class, postData.getSubscription());
 			}
 
-			if (subscription.getStatus() == SubscriptionStatusEnum.RESILIATED
-					|| subscription.getStatus() == SubscriptionStatusEnum.CANCELED) {
+			if (subscription.getStatus() == SubscriptionStatusEnum.RESILIATED || subscription.getStatus() == SubscriptionStatusEnum.CANCELED) {
 				throw new MeveoApiException("Subscription is already RESILIATED or CANCELLED.");
 			}
 			if (postData.getWallet() != null) {
@@ -392,8 +400,7 @@ public class SubscriptionApi extends BaseApi {
 					throw new EntityDoesNotExistsException(WalletTemplate.class, postData.getWallet());
 				}
 
-				if ((!postData.getWallet().equals("PRINCIPAL"))
-						&& !subscription.getUserAccount().getPrepaidWallets().containsKey(postData.getWallet())) {
+				if ((!postData.getWallet().equals("PRINCIPAL")) && !subscription.getUserAccount().getPrepaidWallets().containsKey(postData.getWallet())) {
 					if (postData.getCreateWallet() != null && postData.getCreateWallet()) {
 						subscription.getUserAccount().getWalletInstance(postData.getWallet());
 					} else {
@@ -403,11 +410,9 @@ public class SubscriptionApi extends BaseApi {
 			}
 
 			try {
-				oneShotChargeInstanceService.oneShotChargeApplication(subscription,
-						(OneShotChargeTemplate) oneShotChargeTemplate, postData.getWallet(),
-						postData.getOperationDate(), postData.getAmountWithoutTax(), postData.getAmountWithTax(),
-						postData.getQuantity(), postData.getCriteria1(), postData.getCriteria2(),
-						postData.getCriteria3(), currentUser, true);
+				oneShotChargeInstanceService.oneShotChargeApplication(subscription, (OneShotChargeTemplate) oneShotChargeTemplate, postData.getWallet(),
+						postData.getOperationDate(), postData.getAmountWithoutTax(), postData.getAmountWithTax(), postData.getQuantity(), postData.getCriteria1(),
+						postData.getCriteria2(), postData.getCriteria3(), currentUser, true);
 			} catch (BusinessException e) {
 				throw new MeveoApiException(e.getMessage());
 			}
@@ -428,12 +433,10 @@ public class SubscriptionApi extends BaseApi {
 	}
 
 	public void terminateSubscription(TerminateSubscriptionDto postData, User currentUser) throws MeveoApiException {
-		if (!StringUtils.isBlank(postData.getSubscriptionCode())
-				&& !StringUtils.isBlank(postData.getTerminationReason()) && postData.getTerminationDate() != null) {
+		if (!StringUtils.isBlank(postData.getSubscriptionCode()) && !StringUtils.isBlank(postData.getTerminationReason()) && postData.getTerminationDate() != null) {
 			Provider provider = currentUser.getProvider();
 
-			Subscription subscription = subscriptionService.findByCode(postData.getSubscriptionCode(),
-					currentUser.getProvider());
+			Subscription subscription = subscriptionService.findByCode(postData.getSubscriptionCode(), currentUser.getProvider());
 			if (subscription == null) {
 				throw new EntityDoesNotExistsException(Subscription.class, postData.getSubscriptionCode());
 			}
@@ -442,16 +445,13 @@ public class SubscriptionApi extends BaseApi {
 				throw new MeveoApiException("Subscription is already RESILIATED.");
 			}
 
-			SubscriptionTerminationReason subscriptionTerminationReason = terminationReasonService.findByCode(
-					postData.getTerminationReason(), provider);
+			SubscriptionTerminationReason subscriptionTerminationReason = terminationReasonService.findByCode(postData.getTerminationReason(), provider);
 			if (subscriptionTerminationReason == null) {
-				throw new EntityDoesNotExistsException(SubscriptionTerminationReason.class,
-						postData.getTerminationReason());
+				throw new EntityDoesNotExistsException(SubscriptionTerminationReason.class, postData.getTerminationReason());
 			}
 
 			try {
-				subscriptionService.terminateSubscription(subscription, postData.getTerminationDate(),
-						subscriptionTerminationReason, currentUser);
+				subscriptionService.terminateSubscription(subscription, postData.getTerminationDate(), subscriptionTerminationReason, currentUser);
 			} catch (BusinessException e) {
 				log.error("subscription termination={}", e.getMessage());
 				throw new MeveoApiException(e.getMessage());
@@ -472,27 +472,22 @@ public class SubscriptionApi extends BaseApi {
 	}
 
 	public void terminateServices(TerminateSubscriptionServicesDto postData, User currentUser) throws MeveoApiException {
-		if (!StringUtils.isBlank(postData.getSubscriptionCode())
-				&& (postData.getServices() != null || postData.getServices().size() != 0)
+		if (!StringUtils.isBlank(postData.getSubscriptionCode()) && (postData.getServices() != null || postData.getServices().size() != 0)
 				&& !StringUtils.isBlank(postData.getTerminationReason()) && postData.getTerminationDate() != null) {
 			Provider provider = currentUser.getProvider();
 
-			Subscription subscription = subscriptionService.findByCode(postData.getSubscriptionCode(),
-					currentUser.getProvider());
+			Subscription subscription = subscriptionService.findByCode(postData.getSubscriptionCode(), currentUser.getProvider());
 			if (subscription == null) {
 				throw new EntityDoesNotExistsException(Subscription.class, postData.getSubscriptionCode());
 			}
 
-			SubscriptionTerminationReason serviceTerminationReason = terminationReasonService.findByCode(
-					postData.getTerminationReason(), provider);
+			SubscriptionTerminationReason serviceTerminationReason = terminationReasonService.findByCode(postData.getTerminationReason(), provider);
 			if (serviceTerminationReason == null) {
-				throw new EntityDoesNotExistsException(SubscriptionTerminationReason.class,
-						postData.getTerminationReason());
+				throw new EntityDoesNotExistsException(SubscriptionTerminationReason.class, postData.getTerminationReason());
 			}
 
 			for (String serviceInstanceCode : postData.getServices()) {
-				ServiceInstance serviceInstance = serviceInstanceService.findByCodeAndSubscription(serviceInstanceCode,
-						subscription);
+				ServiceInstance serviceInstance = serviceInstanceService.findByCodeAndSubscription(serviceInstanceCode, subscription);
 				if (serviceInstance == null) {
 					throw new EntityDoesNotExistsException(ServiceInstance.class, serviceInstanceCode);
 				}
@@ -503,8 +498,7 @@ public class SubscriptionApi extends BaseApi {
 				}
 
 				try {
-					serviceInstanceService.terminateService(serviceInstance, postData.getTerminationDate(),
-							serviceTerminationReason, currentUser);
+					serviceInstanceService.terminateService(serviceInstance, postData.getTerminationDate(), serviceTerminationReason, currentUser);
 				} catch (BusinessException e) {
 					log.error("service termination={}", e.getMessage());
 					throw new MeveoApiException(e.getMessage());

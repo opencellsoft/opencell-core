@@ -21,7 +21,7 @@ public class ActivateServicesDto extends BaseDto {
 	private String subscription;
 
 	@XmlElement
-	private ServicesToActivateDto servicesToActivateDto = new ServicesToActivateDto();
+	private ServicesToActivateDto servicesToActivate = new ServicesToActivateDto();
 
 	public String getSubscription() {
 		return subscription;
@@ -32,11 +32,16 @@ public class ActivateServicesDto extends BaseDto {
 	}
 
 	public ServicesToActivateDto getServicesToActivateDto() {
-		return servicesToActivateDto;
+		return servicesToActivate;
 	}
 
-	public void setServicesToActivateDto(ServicesToActivateDto servicesToActivateDto) {
-		this.servicesToActivateDto = servicesToActivateDto;
+	public void setServicesToActivateDto(ServicesToActivateDto servicesToActivate) {
+		this.servicesToActivate = servicesToActivate;
+	}
+
+	@Override
+	public String toString() {
+		return "ActivateServicesDto [subscription=" + subscription + ", servicesToActivate=" + servicesToActivate + "]";
 	}
 
 }

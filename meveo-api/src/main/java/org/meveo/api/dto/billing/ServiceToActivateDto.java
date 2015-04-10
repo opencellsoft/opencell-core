@@ -23,6 +23,7 @@ public class ServiceToActivateDto implements Serializable {
 	private String code;
 	private BigDecimal quantity;
 	private Date subscriptionDate;
+	private ChargeInstanceOverridesDto chargeInstanceOverrides;
 
 	@XmlTransient
 	private ServiceTemplate serviceTemplate;
@@ -55,8 +56,8 @@ public class ServiceToActivateDto implements Serializable {
 
 	@Override
 	public String toString() {
-		return "ServiceToActivateDto [code=" + code + ", quantity=" + quantity + ", subscriptionDate="
-				+ subscriptionDate + "]";
+		return "ServiceToActivateDto [code=" + code + ", quantity=" + quantity + ", subscriptionDate=" + subscriptionDate + ", chargeInstanceOverrides=" + chargeInstanceOverrides
+				+ ", serviceTemplate=" + serviceTemplate + "]";
 	}
 
 	public ServiceTemplate getServiceTemplate() {
@@ -65,6 +66,14 @@ public class ServiceToActivateDto implements Serializable {
 
 	public void setServiceTemplate(ServiceTemplate serviceTemplate) {
 		this.serviceTemplate = serviceTemplate;
+	}
+
+	public ChargeInstanceOverridesDto getChargeInstanceOverrides() {
+		return chargeInstanceOverrides;
+	}
+
+	public void setChargeInstanceOverrides(ChargeInstanceOverridesDto chargeInstanceOverrides) {
+		this.chargeInstanceOverrides = chargeInstanceOverrides;
 	}
 
 }

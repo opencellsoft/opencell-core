@@ -17,19 +17,19 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class ServicesToActivateDto implements Serializable {
 
 	private static final long serialVersionUID = -6088111478916521480L;
-	
+
 	@XmlElement(required = true)
-	private List<ServiceToActivateDto> services;
-	
-	public List<ServiceToActivateDto> getServices() {
-		if (services == null) {
-			services = new ArrayList<>();
+	private List<ServiceToActivateDto> service;
+
+	public List<ServiceToActivateDto> getService() {
+		if (service == null) {
+			service = new ArrayList<>();
 		}
-		return services;
+		return service;
 	}
 
-	public void setServices(List<ServiceToActivateDto> services) {
-		this.services = services;
+	public void setService(List<ServiceToActivateDto> services) {
+		this.service = services;
 	}
-	
+
 }
