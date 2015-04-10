@@ -196,7 +196,7 @@
 								value="#{measurementBean.objectId}" />
 						</p:button>
 
-						<h:commandLink>
+						<h:commandLink rendered="#{measurementBean.mainMVModel != null}">
 							<h:outputText
 								value="#{messages['page.measuredValue.exporttable']}"></h:outputText>
 							<p:dataExporter type="xls" target="mqTable"
