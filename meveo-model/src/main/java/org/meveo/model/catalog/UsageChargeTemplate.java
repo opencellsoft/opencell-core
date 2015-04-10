@@ -17,6 +17,7 @@
 package org.meveo.model.catalog;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -28,13 +29,29 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import org.meveo.model.MultilanguageEntity;
+import org.meveo.model.crm.Provider;
 
 @Entity
 @MultilanguageEntity
 @Table(name = "CAT_USAGE_CHARGE_TEMPLATE")
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "CAT_USAGE_CHARGE_TEMPLATE_SEQ")
 @NamedQueries({ @NamedQuery(name = "UsageChargeTemplate.getWithTemplateEDR", query = "SELECT u FROM UsageChargeTemplate u join u.edrTemplates t WHERE :edrTemplate=t"
-		+ " and u.disabled=false") })
+		+ " and u.disabled=false"),		
+@NamedQuery(name = "usageChargeTemplate.getNbrUsagesChrgWithNotPricePlan", 
+query = "select count (*) from UsageChargeTemplate u where u.code not in (select p.eventCode from  PricePlanMatrix p where p.eventCode is not null) and u.provider=:provider "),
+
+@NamedQuery(name = "usageChargeTemplate.getUsagesChrgWithNotPricePlan", 
+query = "from UsageChargeTemplate u where u.code not in (select p.eventCode from  PricePlanMatrix p where p.eventCode is not null) and u.provider=:provider "),
+
+@NamedQuery(name = "usageChargeTemplate.getNbrUsagesChrgNotAssociated", 
+query = "select count(*) from UsageChargeTemplate u where u.id not in (select serv.chargeTemplate from ServiceChargeTemplateUsage serv) "
+		+ " OR u.code not in (select p.eventCode from  PricePlanMatrix p where p.eventCode is not null) and u.provider=:provider"),
+		
+@NamedQuery(name = "usageChargeTemplate.getUsagesChrgNotAssociated", 
+		query = "from UsageChargeTemplate u where u.id not in (select serv.chargeTemplate from ServiceChargeTemplateUsage serv) "
+				+ " OR u.code not in (select p.eventCode from  PricePlanMatrix p where p.eventCode is not null) and u.provider=:provider")
+})
+
 public class UsageChargeTemplate extends ChargeTemplate {
 	static String WILCARD = "";
 

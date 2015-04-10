@@ -10,6 +10,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.BaseDto;
+import org.meveo.model.billing.WalletOperation;
 
 /**
  * @author Edward P. Legaspi
@@ -58,6 +59,41 @@ public class WalletOperationDto extends BaseDto {
 	private Date endDate;
 	private Date operationDate;
 	private Date subscriptionDate;
+
+	public WalletOperationDto() {
+
+	}
+
+	public WalletOperationDto(WalletOperation wo) {
+		code = wo.getCode();
+		seller = wo.getSeller().getCode();
+
+		if (wo.getWallet() != null && wo.getWallet().getWalletTemplate() != null) {
+			walletTemplate = wo.getWallet().getWalletTemplate().getCode();
+		}
+
+		currency = wo.getCurrency().getCurrencyCode();
+		if (wo.getType() != null) {
+			type = wo.getType().name();
+		}
+		status = wo.getStatus().name();
+		unityDescription = wo.getUnityDescription();
+		taxPercent = wo.getTaxPercent();
+		unitAmountWithoutTax = wo.getUnitAmountWithoutTax();
+		unitAmountWithTax = wo.getUnitAmountWithTax();
+		unitAmountTax = wo.getUnitAmountTax();
+		quantity = wo.getQuantity();
+		amountWithoutTax = wo.getAmountWithoutTax();
+		amountWithTax = wo.getAmountWithTax();
+		amountTax = wo.getAmountTax();
+		parameter1 = wo.getParameter1();
+		parameter2 = wo.getParameter2();
+		parameter3 = wo.getParameter3();
+		startDate = wo.getStartDate();
+		endDate = wo.getEndDate();
+		operationDate = wo.getOperationDate();
+		subscriptionDate = wo.getSubscriptionDate();
+	}
 
 	public String getCode() {
 		return code;
@@ -237,15 +273,12 @@ public class WalletOperationDto extends BaseDto {
 
 	@Override
 	public String toString() {
-		return "WalletOperationDto [code=" + code + ", userAccount=" + userAccount + ", subscription=" + subscription
-				+ ", walletTemplate=" + walletTemplate + ", seller=" + seller + ", chargeInstance=" + chargeInstance
-				+ ", currency=" + currency + ", type=" + type + ", status=" + status + ", unityDescription="
-				+ unityDescription + ", taxPercent=" + taxPercent + ", unitAmountWithoutTax=" + unitAmountWithoutTax
-				+ ", unitAmountWithTax=" + unitAmountWithTax + ", unitAmountTax=" + unitAmountTax + ", quantity="
-				+ quantity + ", amountWithoutTax=" + amountWithoutTax + ", amountWithTax=" + amountWithTax
-				+ ", amountTax=" + amountTax + ", parameter1=" + parameter1 + ", parameter2=" + parameter2
-				+ ", parameter3=" + parameter3 + ", startDate=" + startDate + ", endDate=" + endDate
-				+ ", operationDate=" + operationDate + ", subscriptionDate=" + subscriptionDate + "]";
+		return "WalletOperationDto [code=" + code + ", userAccount=" + userAccount + ", subscription=" + subscription + ", walletTemplate=" + walletTemplate + ", seller=" + seller
+				+ ", chargeInstance=" + chargeInstance + ", currency=" + currency + ", type=" + type + ", status=" + status + ", unityDescription=" + unityDescription
+				+ ", taxPercent=" + taxPercent + ", unitAmountWithoutTax=" + unitAmountWithoutTax + ", unitAmountWithTax=" + unitAmountWithTax + ", unitAmountTax=" + unitAmountTax
+				+ ", quantity=" + quantity + ", amountWithoutTax=" + amountWithoutTax + ", amountWithTax=" + amountWithTax + ", amountTax=" + amountTax + ", parameter1="
+				+ parameter1 + ", parameter2=" + parameter2 + ", parameter3=" + parameter3 + ", startDate=" + startDate + ", endDate=" + endDate + ", operationDate="
+				+ operationDate + ", subscriptionDate=" + subscriptionDate + "]";
 	}
 
 	public String getWalletTemplate() {

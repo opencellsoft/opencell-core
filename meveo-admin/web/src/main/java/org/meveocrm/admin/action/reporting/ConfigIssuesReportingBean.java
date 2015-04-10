@@ -16,7 +16,6 @@ import org.meveo.model.billing.TradingLanguage;
 import org.meveo.model.billing.WalletOperationStatusEnum;
 import org.meveo.model.catalog.CounterTemplate;
 import org.meveo.model.catalog.OneShotChargeTemplate;
-import org.meveo.model.catalog.OneShotChargeTemplateTypeEnum;
 import org.meveo.model.catalog.RecurringChargeTemplate;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.catalog.UsageChargeTemplate;
@@ -139,10 +138,10 @@ public class ConfigIssuesReportingBean{
     	 recurringNotAssociatedList= recurringChargeTemplateService.getRecurringChrgNotAssociated(currentProvider);
      }
      public void constructTermChrgNotAssociated(TabChangeEvent event){
-    	 terminationNotAssociatedList= oneShotChargeTemplateService.getOneShotNotAssociated(currentProvider,OneShotChargeTemplateTypeEnum.TERMINATION);
+    	 terminationNotAssociatedList= oneShotChargeTemplateService.getTerminationChrgNotAssociated(currentProvider);
      }
      public void constructSubChrgNotAssociated(TabChangeEvent event){
-    	 subNotAssociatedList= oneShotChargeTemplateService.getOneShotNotAssociated(currentProvider,OneShotChargeTemplateTypeEnum.SUBSCRIPTION);
+    	 subNotAssociatedList= oneShotChargeTemplateService.getSubscriptionChrgNotAssociated(currentProvider);
      }
      
   
@@ -175,9 +174,9 @@ public class ConfigIssuesReportingBean{
 		    
 		    reportConfigDto.setNbrRecurringChrgNotAssociated(recurringChargeTemplateService.getNbrRecurringChrgNotAssociated(currentProvider));
 
-		    reportConfigDto.setNbrTerminationChrgNotAssociated(oneShotChargeTemplateService.getNbrOneShotNotAssociated(currentProvider,OneShotChargeTemplateTypeEnum.TERMINATION));
-		    reportConfigDto.setNbrSubChrgNotAssociated(oneShotChargeTemplateService.getNbrOneShotNotAssociated(currentProvider,OneShotChargeTemplateTypeEnum.SUBSCRIPTION));
-           }
+		    reportConfigDto.setNbrTerminationChrgNotAssociated(oneShotChargeTemplateService.getNbrTerminationChrgNotAssociated(currentProvider));
+		    reportConfigDto.setNbrSubChrgNotAssociated(oneShotChargeTemplateService.getNbrSubscriptionChrgNotAssociated(currentProvider));
+	        }
 	        
 	   
 			public ConfigIssuesReportingDTO getReportConfigDto() {

@@ -54,14 +54,14 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = { "title", "firstname", "lastName" })
+@XmlType(name = "", propOrder = { "title", "firstName", "lastName" })
 @XmlRootElement(name = "name")
 public class Name {
 
     @XmlElement(required = true)
     protected String title;
     @XmlElement(required = true)
-    protected String firstname;
+    protected String firstName;
     @XmlElement(required = true)
     protected String lastName;
     
@@ -70,7 +70,7 @@ public class Name {
     public Name(org.meveo.model.shared.Name n) {
 		if(n!=null){
 			title=n.getTitle()==null?"":n.getTitle().getCode();
-			firstname=n.getFirstName()==null?"":n.getFirstName();
+			firstName=n.getFirstName()==null?"":n.getFirstName();
 			lastName=n.getLastName()==null?"":n.getLastName();
 		}
 	}
@@ -102,9 +102,7 @@ public class Name {
      * @return possible object is {@link String }
      * 
      */
-    public String getFirstname() {
-        return firstname;
-    }
+    
 
     /**
      * Sets the value of the firstname property.
@@ -113,9 +111,7 @@ public class Name {
      *            allowed object is {@link String }
      * 
      */
-    public void setFirstname(String value) {
-        this.firstname = value;
-    }
+    
 
     /**
      * Gets the value of the name property.
@@ -135,6 +131,12 @@ public class Name {
   
 	public String getLastName() {
 		return lastName;
+	}
+	public String getFirstName() {
+		return firstName;
+	}
+	public void setFirstName(String value) {
+		this.firstName = value;
 	}
 	public void setLastName(String value) {
 		this.lastName = value;

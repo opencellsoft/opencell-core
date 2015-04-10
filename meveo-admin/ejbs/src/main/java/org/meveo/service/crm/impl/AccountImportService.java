@@ -163,7 +163,7 @@ public class AccountImportService {
 		org.meveo.model.shared.Name name = new org.meveo.model.shared.Name();
 
 		if (billAccount.getName() != null) {
-			name.setFirstName(billAccount.getName().getFirstname());
+			name.setFirstName(billAccount.getName().getFirstName());
 			name.setLastName(billAccount.getName().getLastName());
 			name.setTitle(titleService.findByCode(provider, billAccount.getName().getTitle().trim()));
 			billingAccount.setName(name);
@@ -297,7 +297,7 @@ public class AccountImportService {
 		org.meveo.model.shared.Name name = new org.meveo.model.shared.Name();
 
 		if (billingAccountDto.getName() != null) {
-			name.setFirstName(billingAccountDto.getName().getFirstname());
+			name.setFirstName(billingAccountDto.getName().getFirstName());
 			name.setLastName(billingAccountDto.getName().getLastName());
 			name.setTitle(titleService.findByCode(provider, billingAccountDto.getName().getTitle().trim()));
 			billingAccount.setName(name);
@@ -382,7 +382,7 @@ public class AccountImportService {
 		org.meveo.model.shared.Name nameUA = new org.meveo.model.shared.Name();
 
 		if (uAccount.getName() != null) {
-			nameUA.setFirstName(uAccount.getName().getFirstname());
+			nameUA.setFirstName(uAccount.getName().getFirstName());
 			nameUA.setLastName(uAccount.getName().getLastName());
 			nameUA.setTitle(titleService.findByCode(provider, uAccount.getName().getTitle().trim()));
 			userAccount.setName(nameUA);
@@ -463,7 +463,7 @@ public class AccountImportService {
 		org.meveo.model.shared.Name nameUA = new org.meveo.model.shared.Name();
 
 		if (userAccountDto.getName() != null) {
-			nameUA.setFirstName(userAccountDto.getName().getFirstname());
+			nameUA.setFirstName(userAccountDto.getName().getFirstName());
 			nameUA.setLastName(userAccountDto.getName().getLastName());
 			nameUA.setTitle(titleService.findByCode(provider, userAccountDto.getName().getTitle().trim()));
 			userAccount.setName(nameUA);

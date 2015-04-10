@@ -94,25 +94,36 @@ public class OneShotChargeTemplateService extends
 
 	public int getNbrOneShotWithNotPricePlan(Provider provider) { 
 		return ((Long)getEntityManager().
-				createQuery("select count (*) from OneShotChargeTemplate o where o.code not in (select p.eventCode from  PricePlanMatrix p where p.eventCode is not null) and o.provider=:provider")
+				createNamedQuery("oneShotChargeTemplate.getNbrOneShotWithNotPricePlan",Long.class)
 				.setParameter("provider", provider).getSingleResult()).intValue();
 		}
 	public  List<OneShotChargeTemplate> getOneShotChrgWithNotPricePlan(Provider provider) { 
-		return (List<OneShotChargeTemplate>)getEntityManager().createQuery("from OneShotChargeTemplate o where o.code not in (select p.eventCode from  PricePlanMatrix p where p.eventCode is not null) "
-				+ " and o.provider=:provider")
+		return (List<OneShotChargeTemplate>)getEntityManager().createNamedQuery("oneShotChargeTemplate.getOneShotWithNotPricePlan",OneShotChargeTemplate.class)
 				.setParameter("provider", provider).getResultList();
 		}
-   
-	public  int getNbrOneShotNotAssociated(Provider provider,OneShotChargeTemplateTypeEnum oneShotChargeTemplateType) { 
-		return ((Long)getEntityManager().createQuery("select count (*) from OneShotChargeTemplate o where o.id not in (select serv.chargeTemplate from ServiceChargeTemplateSubscription serv)"
-				+ " and o.code not in (select p.eventCode from  PricePlanMatrix p where p.eventCode is not null) "
-				+ " and  oneShotChargeTemplateType=:oneShotChargeTemplateType and o.provider=:provider").setParameter("oneShotChargeTemplateType",oneShotChargeTemplateType)
-				    .setParameter("provider", provider).getSingleResult()).intValue();
+	
+	public int getNbrSubscriptionChrgNotAssociated(Provider provider) { 
+		return ((Long)getEntityManager().
+				createNamedQuery("oneShotChargeTemplate.getNbrSubscriptionChrgNotAssociated",Long.class)
+				.setParameter("oneShotChargeTemplateType",OneShotChargeTemplateTypeEnum.SUBSCRIPTION)
+				.setParameter("provider", provider).getSingleResult()).intValue();
 		}
-	public  List<OneShotChargeTemplate> getOneShotNotAssociated(Provider provider,OneShotChargeTemplateTypeEnum oneShotChargeTemplateType) { 
-		return (List<OneShotChargeTemplate>)getEntityManager().createQuery("from OneShotChargeTemplate o where o.id not in (select serv.chargeTemplate from ServiceChargeTemplateSubscription serv)"
-				+ " and o.code not in (select p.eventCode from  PricePlanMatrix p where p.eventCode is not null) "
-				+ " and  oneShotChargeTemplateType=:oneShotChargeTemplateType and o.provider=:provider").setParameter("oneShotChargeTemplateType",oneShotChargeTemplateType)
+	
+	public  List<OneShotChargeTemplate> getSubscriptionChrgNotAssociated(Provider provider) { 
+		return (List<OneShotChargeTemplate>)getEntityManager().createNamedQuery("oneShotChargeTemplate.getSubscriptionChrgNotAssociated",OneShotChargeTemplate.class)
+				.setParameter("oneShotChargeTemplateType",OneShotChargeTemplateTypeEnum.SUBSCRIPTION)
+				.setParameter("provider", provider).getResultList();
+		      }
+	
+	public int getNbrTerminationChrgNotAssociated(Provider provider) { 
+		return ((Long)getEntityManager().createNamedQuery("oneShotChargeTemplate.getNbrTerminationChrgNotAssociated",Long.class)
+				.setParameter("oneShotChargeTemplateType",OneShotChargeTemplateTypeEnum.TERMINATION)
+				.setParameter("provider", provider).getSingleResult()).intValue();
+		      }
+	
+	public  List<OneShotChargeTemplate> getTerminationChrgNotAssociated(Provider provider) { 
+		return (List<OneShotChargeTemplate>)getEntityManager().createNamedQuery("oneShotChargeTemplate.getTerminationChrgNotAssociated",OneShotChargeTemplate.class)
+				.setParameter("oneShotChargeTemplateType",OneShotChargeTemplateTypeEnum.TERMINATION)
 				.setParameter("provider", provider).getResultList();
 		      }
 }

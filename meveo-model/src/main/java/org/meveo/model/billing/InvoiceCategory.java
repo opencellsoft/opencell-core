@@ -21,6 +21,8 @@ import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
@@ -35,6 +37,16 @@ import org.meveo.model.MultilanguageEntity;
 @ExportIdentifier({ "code", "provider" })
 @Table(name = "BILLING_INVOICE_CAT", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE", "PROVIDER_ID" }))
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_INVOICE_CAT_SEQ")
+@NamedQueries({			
+@NamedQuery(name = "invoiceCategory.getNbrInvoiceCatNotAssociated", 
+	           query = "select count(*) from InvoiceCategory v where v.id not in (select sub.invoiceCategory.id from InvoiceSubCategory sub where sub.invoiceCategory.id is not null)"
+	           		+ " and v.provider=:provider"),
+	           
+@NamedQuery(name = "invoiceCategory.getInvoiceCatNotAssociated", 
+	           query = "from InvoiceCategory v where v.id not in (select sub.invoiceCategory.id from InvoiceSubCategory sub where sub.invoiceCategory.id is not null) "
+	           		+ " and v.provider=:provider")         	                  	         
+})
+ 
 public class InvoiceCategory extends BusinessEntity {
 
 	private static final long serialVersionUID = 1L;

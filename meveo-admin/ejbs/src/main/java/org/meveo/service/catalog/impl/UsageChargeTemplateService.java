@@ -68,29 +68,25 @@ public class UsageChargeTemplateService extends
     
     public int getNbrUsagesChrgWithNotPricePlan(Provider provider) { 
 		return ((Long)getEntityManager().
-				createQuery("select count (*) from UsageChargeTemplate u where u.code not in (select p.eventCode from  PricePlanMatrix p where p.eventCode is not null) and u.provider=:provider")
+				createNamedQuery("usageChargeTemplate.getNbrUsagesChrgWithNotPricePlan",Long.class)
 				.setParameter("provider", provider).getSingleResult()).intValue();
 		}
-	
-	public  List<UsageChargeTemplate> getUsagesChrgWithNotPricePlan(Provider provider) { 
-	return (List<UsageChargeTemplate>)getEntityManager().
-			createQuery("from UsageChargeTemplate u where u.code not in (select p.eventCode from  PricePlanMatrix p where p.eventCode is not null) and u.provider=:provider").setParameter("provider", provider).getResultList();
-	}
-
-	
-	public  int getNbrUsagesChrgNotAssociated(Provider provider) { 
-		return ((Long)getEntityManager().createQuery(
-				"select count(*) from UsageChargeTemplate u where u.id not in (select serv.chargeTemplate from ServiceChargeTemplateUsage serv) "
-				+ " OR u.code not in (select p.eventCode from  PricePlanMatrix p where p.eventCode is not null) "
-				+ " and u.provider=:provider").setParameter("provider", provider).getSingleResult()).intValue();
+    
+		public  List<UsageChargeTemplate> getUsagesChrgWithNotPricePlan(Provider provider) { 
+		return (List<UsageChargeTemplate>)getEntityManager().createNamedQuery("usageChargeTemplate.getUsagesChrgWithNotPricePlan",UsageChargeTemplate.class)
+				.setParameter("provider", provider).getResultList();
 		}
-
-	public  List<UsageChargeTemplate> getUsagesChrgNotAssociated(Provider provider) { 
-		return (List<UsageChargeTemplate>)getEntityManager().createQuery(
-				"from UsageChargeTemplate u where u.id not in (select serv.chargeTemplate from ServiceChargeTemplateUsage serv)"
-				+ " OR u.code not in (select p.eventCode from  PricePlanMatrix p where p.eventCode is not null)"
-				+ " and u.provider=:provider").setParameter("provider", provider).getResultList();
-		}
+	
+		public int getNbrUsagesChrgNotAssociated(Provider provider) { 
+				return ((Long)getEntityManager().
+						createNamedQuery("usageChargeTemplate.getNbrUsagesChrgNotAssociated",Long.class)
+						.setParameter("provider", provider).getSingleResult()).intValue();
+				}
+		    
+	    public  List<UsageChargeTemplate> getUsagesChrgNotAssociated(Provider provider) { 
+			return (List<UsageChargeTemplate>)getEntityManager().createNamedQuery("usageChargeTemplate.getUsagesChrgNotAssociated",UsageChargeTemplate.class)
+					.setParameter("provider", provider).getResultList();
+			}
 	
     
     

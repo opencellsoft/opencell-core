@@ -17,6 +17,7 @@
 package org.meveo.model.catalog;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -25,6 +26,8 @@ import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
@@ -34,12 +37,22 @@ import javax.validation.constraints.Size;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ObservableEntity;
+import org.meveo.model.crm.Provider;
 
 @Entity
 @ExportIdentifier({ "code", "provider" })
 @ObservableEntity
 @Table(name = "CAT_COUNTER_TEMPLATE", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE", "PROVIDER_ID" }))
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "CAT_COUNTER_TEMPLATE_SEQ")
+@NamedQueries({			
+@NamedQuery(name = "counterTemplate.getNbrCounterWithNotService", 
+	           query = "select count(*) from CounterTemplate c where c.id not in (select serv.counterTemplate from ServiceChargeTemplateUsage serv)"
+	           		+ " and c.provider=:provider"),
+	           
+@NamedQuery(name = "counterTemplate.getCounterWithNotService", 
+	           query = "from CounterTemplate c where c.id not in (select serv.counterTemplate from ServiceChargeTemplateUsage serv) "
+	           		+ " and c.provider=:provider")         	                  	         
+})
 public class CounterTemplate extends BusinessEntity {
 
 	private static final long serialVersionUID = -1246995971618884001L;
@@ -54,7 +67,7 @@ public class CounterTemplate extends BusinessEntity {
 
 	@Column(name = "LEVEL_NUM", precision = NB_PRECISION, scale = NB_DECIMALS)
 	@Digits(integer = NB_PRECISION, fraction = NB_DECIMALS)
-	private BigDecimal level;
+	private BigDecimal ceiling;
 
 	@Column(name = "UNITY_DESCRIPTION", length = 20)
 	@Size(min = 0, max = 20)
@@ -80,12 +93,12 @@ public class CounterTemplate extends BusinessEntity {
 		this.calendar = calendar;
 	}
 
-	public BigDecimal getLevel() {
-		return level;
+	public BigDecimal getCeiling() {
+		return ceiling;
 	}
 
-	public void setLevel(BigDecimal level) {
-		this.level = level;
+	public void setCeiling(BigDecimal ceiling) {
+		this.ceiling = ceiling;
 	}
 
 	public String getUnityDescription() {

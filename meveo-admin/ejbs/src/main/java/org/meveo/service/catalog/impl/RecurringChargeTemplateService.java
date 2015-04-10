@@ -42,28 +42,23 @@ public class RecurringChargeTemplateService extends
 	}
 	
 	public int getNbrRecurringChrgWithNotPricePlan(Provider provider) { 
-		return ((Long)getEntityManager().
-				createQuery("select count (*) from RecurringChargeTemplate r where r.code not in (select p.eventCode from  PricePlanMatrix p where p.eventCode is not null) and r.provider=:provider")
+		return ((Long)getEntityManager().createNamedQuery("recurringChargeTemplate.getNbrRecurringChrgWithNotPricePlan",Long.class)
 				.setParameter("provider", provider).getSingleResult()).intValue();
 		}
 	
 	public  List<RecurringChargeTemplate> getRecurringChrgWithNotPricePlan(Provider provider) { 
-		return (List<RecurringChargeTemplate>)getEntityManager().createQuery("from RecurringChargeTemplate r where r.code not in (select p.eventCode from  PricePlanMatrix p where p.eventCode is not null)"
-				+ " and r.provider=:provider").setParameter("provider", provider).getResultList();
+		return (List<RecurringChargeTemplate>)getEntityManager().createNamedQuery("recurringChargeTemplate.getRecurringChrgWithNotPricePlan",RecurringChargeTemplate.class)
+				.setParameter("provider", provider).getResultList();
 		}
-	
-	public  int getNbrRecurringChrgNotAssociated(Provider provider) { 
-		return ((Long)getEntityManager().createQuery(
-				"select count(*) from RecurringChargeTemplate r where r.id not in (select serv.chargeTemplate from ServiceChargeTemplateRecurring serv) "
-				+ " OR r.code not in (select p.eventCode from  PricePlanMatrix p where p.eventCode is not null) "
-				+ " and r.provider=:provider").setParameter("provider", provider).getSingleResult()).intValue();
+
+	public int getNbrRecurringChrgNotAssociated(Provider provider) { 
+		return ((Long)getEntityManager().createNamedQuery("recurringChargeTemplate.getNbrRecurringChrgNotAssociated",Long.class)
+				.setParameter("provider", provider).getSingleResult()).intValue();
 		}
 	
 	public  List<RecurringChargeTemplate> getRecurringChrgNotAssociated(Provider provider) { 
-		return (List<RecurringChargeTemplate>)getEntityManager().createQuery(
-				"from RecurringChargeTemplate r where r.id not in (select serv.chargeTemplate from ServiceChargeTemplateRecurring serv)"
-				+ " OR r.code not in (select p.eventCode from  PricePlanMatrix p where p.eventCode is not null)"
-				+ " and r.provider=:provider").setParameter("provider", provider).getResultList();
+		return (List<RecurringChargeTemplate>)getEntityManager().createNamedQuery("recurringChargeTemplate.getRecurringChrgNotAssociated",RecurringChargeTemplate.class)
+				.setParameter("provider", provider).getResultList();
 		}
 
 }

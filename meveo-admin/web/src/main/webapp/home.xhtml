@@ -261,8 +261,8 @@
 				field="language" childField="languageCode" width="10%" />
 			<hftl:column label="#{messages['tradingLanguage.prDescription']}"
 				field="prDescription" />
-			<hftl:column label="#{messages['tradingLanguage.disabled']}"
-				field="disabled" isMessage="true" showOnlyOnConsult="false"
+			<hftl:column label="#{messages['enableEntity.active']}"
+				field="active" isMessage="true"
 				width="10%" />
 			<p:column style="width:5px"> 
 			<f:facet name="header">
@@ -465,7 +465,7 @@
 			<hftl:column label="#{messages['counterTemplate.counterType']}"
 				field="counterType" childField="label" isMessage="true" />
 			<hftl:column label="#{messages['counterTemplate.level']}"
-				field="level" converterParam="4digits" />
+				field="ceiling" converterParam="4digits" />
 			<hftl:column label="#{messages['billingCycle.calendar']}"
 				field="calendar" childField="code" />
 
@@ -517,7 +517,7 @@
 			<f:facet name="header">
 			<h:outputText value="Actions" />
 		   </f:facet>
-				<p:button id="recButton" outcome="recurringChargeTemplates" icon="ui-icon-search">
+				<p:button id="recButton" outcome="recurringChargeTemplateDetail" icon="ui-icon-search">
 				<f:param name="objectId" value="#{entity.id}" />
 				<f:param name="edit" value="true" /> 
 				</p:button>

@@ -10,9 +10,11 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import org.meveo.api.dto.ActionStatus;
+import org.meveo.api.dto.billing.FindWalletOperationsDto;
 import org.meveo.api.dto.billing.WalletBalanceDto;
 import org.meveo.api.dto.billing.WalletOperationDto;
 import org.meveo.api.dto.billing.WalletReservationDto;
+import org.meveo.api.dto.response.billing.FindWalletOperationsResponseDto;
 import org.meveo.api.rest.IBaseRs;
 import org.meveo.api.rest.security.RSSecured;
 
@@ -56,5 +58,9 @@ public interface WalletRs extends IBaseRs {
 	@POST
 	@Path("/operation")
 	ActionStatus createOperation(WalletOperationDto postData);
+
+	@POST
+	@Path("/operation/find")
+	FindWalletOperationsResponseDto findOperations(FindWalletOperationsDto postData);
 
 }

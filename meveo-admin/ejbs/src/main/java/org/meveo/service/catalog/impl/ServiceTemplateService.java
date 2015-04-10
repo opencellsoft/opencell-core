@@ -42,15 +42,12 @@ public class ServiceTemplateService extends BusinessService<ServiceTemplate> {
 	}
 	
 	public  int getNbServiceWithNotOffer(Provider provider) { 
-		return ((Long)getEntityManager().createQuery(
-				" select count(*) from ServiceTemplate s where s.id not in (select serv from OfferTemplate o join o.serviceTemplates serv)"
-				+ " and s.provider=:provider").setParameter("provider", provider).getSingleResult()).intValue();
+		return ((Long)getEntityManager().createNamedQuery(
+				"serviceTemplate.getNbServiceWithNotOffer",Long.class).setParameter("provider", provider).getSingleResult()).intValue();
 		}
 	
 	public  List<ServiceTemplate> getServicesWithNotOffer(Provider provider) { 
-		return (List<ServiceTemplate>)getEntityManager().createQuery(
-				"from ServiceTemplate s where s.id not in (select serv from OfferTemplate o join o.serviceTemplates serv)"
-				+ " and s.provider=:provider").setParameter("provider", provider).getResultList();
+		return (List<ServiceTemplate>)getEntityManager().createNamedQuery("serviceTemplate.getServicesWithNotOffer",ServiceTemplate.class).setParameter("provider", provider).getResultList();
 		}
 
 }

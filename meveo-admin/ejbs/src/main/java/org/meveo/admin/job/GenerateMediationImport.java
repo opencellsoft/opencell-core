@@ -15,7 +15,7 @@ import org.meveo.commons.utils.StringUtils;
 public class GenerateMediationImport {
 
 	private final int START_ROW = 0;
-	private final int MAX_ROW = 4999;
+	private final int MAX_ROW = 9999;
 	private String outputFile = "c://temp//";
 	private final String ACCESS_NAME = "IMSI";
 	private final String PARAM1 = "DATA";

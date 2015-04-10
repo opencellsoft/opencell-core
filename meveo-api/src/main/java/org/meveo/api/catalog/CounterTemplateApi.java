@@ -13,6 +13,7 @@ import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.User;
 import org.meveo.model.catalog.Calendar;
 import org.meveo.model.catalog.CounterTemplate;
+import org.meveo.model.catalog.CounterTemplateLevel;
 import org.meveo.model.catalog.CounterTypeEnum;
 import org.meveo.model.crm.Provider;
 import org.meveo.service.catalog.impl.CalendarService;
@@ -34,7 +35,7 @@ public class CounterTemplateApi extends BaseApi {
 			throws MeveoApiException {
 		if (!StringUtils.isBlank(postData.getCode())
 				&& !StringUtils.isBlank(postData.getDescription())
-				&& !StringUtils.isBlank(postData.getLevel())
+				&& !StringUtils.isBlank(postData.getCeiling())
 				&& !StringUtils.isBlank(postData.getCalendar())) {
 			Provider provider = currentUser.getProvider();
 
@@ -54,11 +55,13 @@ public class CounterTemplateApi extends BaseApi {
 			counterTemplate.setCode(postData.getCode());
 			counterTemplate.setDescription(postData.getDescription());
 			counterTemplate.setUnityDescription(postData.getUnity());
-			counterTemplate.setCounterType(CounterTypeEnum.getValue(postData
+			counterTemplate.setCounterType(CounterTypeEnum.valueOf(postData
 					.getType()));
-			counterTemplate.setLevel(postData.getLevel());
+			counterTemplate.setCeiling(postData.getCeiling());
 			counterTemplate.setDisabled(postData.isDisabled());
 			counterTemplate.setCalendar(calendar);
+			counterTemplate.setCounterLevel(CounterTemplateLevel.valueOf(postData
+					.getCounterLevel()));
 
 			counterTemplateService.create(counterTemplate, currentUser,
 					provider);
@@ -69,13 +72,13 @@ public class CounterTemplateApi extends BaseApi {
 			if (StringUtils.isBlank(postData.getDescription())) {
 				missingParameters.add("description");
 			}
-			if (StringUtils.isBlank(postData.getLevel())) {
+			if (StringUtils.isBlank(postData.getCeiling())) {
 				missingParameters.add("level");
 			}
 			if (StringUtils.isBlank(postData.getCalendar())) {
 				missingParameters.add("calendar");
 			}
-
+			
 			throw new MissingParameterException(
 					getMissingParametersExceptionMessage());
 		}
@@ -85,7 +88,7 @@ public class CounterTemplateApi extends BaseApi {
 			throws MeveoApiException {
 		if (!StringUtils.isBlank(postData.getCode())
 				&& !StringUtils.isBlank(postData.getDescription())
-				&& !StringUtils.isBlank(postData.getLevel())
+				&& !StringUtils.isBlank(postData.getCeiling())
 				&& !StringUtils.isBlank(postData.getCalendar())) {
 			Provider provider = currentUser.getProvider();
 
@@ -104,11 +107,13 @@ public class CounterTemplateApi extends BaseApi {
 
 			counterTemplate.setDescription(postData.getDescription());
 			counterTemplate.setUnityDescription(postData.getUnity());
-			counterTemplate.setCounterType(CounterTypeEnum.getValue(postData
+			counterTemplate.setCounterType(CounterTypeEnum.valueOf(postData
 					.getType()));
-			counterTemplate.setLevel(postData.getLevel());
+			counterTemplate.setCeiling(postData.getCeiling());
 			counterTemplate.setDisabled(postData.isDisabled());
 			counterTemplate.setCalendar(calendar);
+			counterTemplate.setCounterLevel(CounterTemplateLevel.valueOf(postData
+					.getCounterLevel()));
 
 			counterTemplateService.update(counterTemplate, currentUser);
 		} else {
@@ -118,7 +123,7 @@ public class CounterTemplateApi extends BaseApi {
 			if (StringUtils.isBlank(postData.getDescription())) {
 				missingParameters.add("description");
 			}
-			if (StringUtils.isBlank(postData.getLevel())) {
+			if (StringUtils.isBlank(postData.getCeiling())) {
 				missingParameters.add("level");
 			}
 			if (StringUtils.isBlank(postData.getCalendar())) {

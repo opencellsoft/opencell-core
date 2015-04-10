@@ -29,6 +29,8 @@ import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.MapKeyColumn;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
@@ -46,6 +48,13 @@ import org.meveo.model.crm.CustomFieldInstance;
 @ExportIdentifier({ "code", "provider" })
 @Table(name = "CAT_SERVICE_TEMPLATE", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE", "PROVIDER_ID" }))
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "CAT_SERVICE_TEMPLATE_SEQ")
+@NamedQueries({			
+@NamedQuery(name = "serviceTemplate.getNbServiceWithNotOffer", 
+	           query = "select count(*) from ServiceTemplate s where s.id not in (select serv from OfferTemplate o join o.serviceTemplates serv) and s.provider=:provider"),
+	           
+@NamedQuery(name = "serviceTemplate.getServicesWithNotOffer", 
+	           query = "from ServiceTemplate s where s.id not in (select serv from OfferTemplate o join o.serviceTemplates serv) and s.provider=:provider")                     
+})
 public class ServiceTemplate extends BusinessEntity implements ICustomFieldEntity {
 
 	private static final long serialVersionUID = 1L;

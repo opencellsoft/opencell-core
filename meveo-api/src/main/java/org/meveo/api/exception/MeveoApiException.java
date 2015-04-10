@@ -7,13 +7,13 @@ public class MeveoApiException extends Exception {
 
 	private static final long serialVersionUID = 1L;
 
-	private int errorCode;
+	private String errorCode;
 
 	public MeveoApiException() {
 
 	}
 
-	public MeveoApiException(int errorCode, String message) {
+	public MeveoApiException(String errorCode, String message) {
 		super(message);
 		this.errorCode = errorCode;
 	}
@@ -22,11 +22,11 @@ public class MeveoApiException extends Exception {
 		super(message);
 	}
 
-	public int getErrorCode() {
+	public String getErrorCode() {
 		return errorCode;
 	}
 
-	public void setErrorCode(int errorCode) {
+	public void setErrorCode(String errorCode) {
 		this.errorCode = errorCode;
 	}
 

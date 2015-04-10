@@ -154,7 +154,7 @@ public class CustomerImportService {
 		org.meveo.model.shared.Name name = new org.meveo.model.shared.Name();
 
 		if (custAcc.getName() != null) {
-			name.setFirstName(custAcc.getName().getFirstname());
+			name.setFirstName(custAcc.getName().getFirstName());
 			name.setLastName(custAcc.getName().getLastName());
 			if (!StringUtils.isBlank(custAcc.getName().getTitle())) {
 				Title title = titleService.findByCode(provider, custAcc.getName().getTitle().trim());
@@ -301,7 +301,7 @@ public class CustomerImportService {
 		org.meveo.model.shared.Name name = new org.meveo.model.shared.Name();
 
 		if (custAcc.getName() != null) {
-			name.setFirstName(custAcc.getName().getFirstname());
+			name.setFirstName(custAcc.getName().getFirstName());
 			name.setLastName(custAcc.getName().getLastName());
 			if (!StringUtils.isBlank(custAcc.getName().getTitle())) {
 				Title title = titleService.findByCode(provider, custAcc.getName().getTitle().trim());

@@ -21,20 +21,21 @@
 					<hf:formPanel edit="#{edit}" id="discountFormPanel"
 						formId="formDiscountPlan"
 						label="#{messages['discountPlanMatrix.panel']}"
-						backingBean="#{discountPlanBean}" columns="2" showEnableDisableButton="true">
+						backingBean="#{discountPlanBean}" columns="2"
+						showEnableDisableButton="true">
 						<hf:formField id="chargeSelectId" required="true"
 							label="#{messages['discountPlanMatrix.eventCode']}" field="code" />
 						<hf:formField label="#{messages['BusinessEntity.description']}"
 							field="description" required="true" useConverter="false"
 							id="description" maxlength="50" />
 						<hf:formField label="#{messages['enableEntity.disabled']}"
-							field="disabled" isMessage="true" showOnlyOnConsult="true"/>
+							field="disabled" isMessage="true" showOnlyOnConsult="true" />
 						<hf:formField
 							label="#{messages['discountPlanMatrix.minDuration']}"
 							field="minDuration" />
 						<hf:formField
 							label="#{messages['discountPlanMatrix.maxDuration']}"
-							field="minDuration" />
+							field="maxDuration" />
 					</hf:formPanel>
 				</p:tab>
 
@@ -90,7 +91,7 @@
 							<div class="alert-box alert-box-notice">
 								#{messages['message.discountPlanItem.info.requiredFields']}</div>
 
-							<hf:formField label="#{messages['BusinessEntity.code']}"
+							<hf:formField label="#{messages['discountPlanMatrix.itemCode']}"
 								field="code" required="true" />
 
 							<hf:formEntityField id="invoiceCategory"

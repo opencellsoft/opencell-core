@@ -57,7 +57,7 @@ public class CachedCounterPeriod {
         counterPeriodId = counterPeriod.getId();
         counterType = template.getCounterType();
         endDate = counterPeriod.getPeriodEndDate();
-        level = template.getLevel();
+        level = template.getCeiling();
         startDate = counterPeriod.getPeriodStartDate();
         value = counterPeriod.getValue();
     }

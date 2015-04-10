@@ -23,6 +23,8 @@ import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 
 import org.meveo.model.MultilanguageEntity;
@@ -30,6 +32,21 @@ import org.meveo.model.MultilanguageEntity;
 @Entity
 @MultilanguageEntity
 @Table(name = "CAT_RECURRING_CHARGE_TEMPL")
+@NamedQueries({			
+@NamedQuery(name = "recurringChargeTemplate.getNbrRecurringChrgWithNotPricePlan", 
+	           query = "select count (*) from RecurringChargeTemplate r where r.code not in (select p.eventCode from  PricePlanMatrix p where p.eventCode is not null) and r.provider=:provider"),
+	           
+@NamedQuery(name = "recurringChargeTemplate.getRecurringChrgWithNotPricePlan", 
+	           query = "from RecurringChargeTemplate r where r.code not in (select p.eventCode from  PricePlanMatrix p where p.eventCode is not null) and r.provider=:provider"),
+	           
+@NamedQuery(name = "recurringChargeTemplate.getNbrRecurringChrgNotAssociated", 
+	           query = "select count(*) from RecurringChargeTemplate r where r.id not in (select serv.chargeTemplate from ServiceChargeTemplateRecurring serv) "
+	           		+ " OR r.code not in (select p.eventCode from  PricePlanMatrix p where p.eventCode is not null) and r.provider=:provider  "),
+	           		
+@NamedQuery(name = "recurringChargeTemplate.getRecurringChrgNotAssociated", 
+	 	           query = "from RecurringChargeTemplate r where r.id not in (select serv.chargeTemplate from ServiceChargeTemplateRecurring serv) "
+	 	           		+ " OR r.code not in (select p.eventCode from  PricePlanMatrix p where p.eventCode is not null) and r.provider=:provider ")	                
+	       })
 public class RecurringChargeTemplate extends ChargeTemplate {
 
 	private static final long serialVersionUID = 1L;

@@ -20,6 +20,8 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 
 import org.meveo.model.MultilanguageEntity;
@@ -27,6 +29,33 @@ import org.meveo.model.MultilanguageEntity;
 @Entity
 @MultilanguageEntity
 @Table(name = "CAT_ONE_SHOT_CHARGE_TEMPL")
+@NamedQueries({			
+@NamedQuery(name = "oneShotChargeTemplate.getNbrOneShotWithNotPricePlan", 
+	           query = "select count (*) from OneShotChargeTemplate o where o.code not in (select p.eventCode from  PricePlanMatrix p where p.eventCode is not null) and o.provider=:provider"),
+	           
+@NamedQuery(name = "oneShotChargeTemplate.getOneShotWithNotPricePlan", 
+	           query = "from OneShotChargeTemplate o where o.code not in (select p.eventCode from  PricePlanMatrix p where p.eventCode is not null) and o.provider=:provider"),
+	           	              
+@NamedQuery(name = "oneShotChargeTemplate.getNbrSubscriptionChrgNotAssociated", 
+	           query = "select count (*) from  OneShotChargeTemplate o where (o.id not in (select serv.chargeTemplate from ServiceChargeTemplateSubscription serv) "
+	           		+ "OR o.code not in (select p.eventCode from  PricePlanMatrix p where p.eventCode is not null))"
+	           		+ " and  oneShotChargeTemplateType=:oneShotChargeTemplateType and o.provider=:provider"),
+	           	              
+@NamedQuery(name = "oneShotChargeTemplate.getSubscriptionChrgNotAssociated", 
+	 	           query = "from  OneShotChargeTemplate o where (o.id not in (select serv.chargeTemplate from ServiceChargeTemplateSubscription serv) "
+	 	           		+ " OR o.code not in (select p.eventCode from  PricePlanMatrix p where p.eventCode is not null))"
+	 	           		+ " and  oneShotChargeTemplateType=:oneShotChargeTemplateType and o.provider=:provider"),
+	 	           		
+@NamedQuery(name = "oneShotChargeTemplate.getNbrTerminationChrgNotAssociated", 
+		 	           query = "select count (*) from  OneShotChargeTemplate o where (o.id not in (select serv.chargeTemplate from ServiceChargeTemplateTermination serv) "
+		 	           		+ " OR o.code not in (select p.eventCode from  PricePlanMatrix p where p.eventCode is not null))"
+		 	           		+ " and  oneShotChargeTemplateType=:oneShotChargeTemplateType and o.provider=:provider"),
+		 	           		
+@NamedQuery(name = "oneShotChargeTemplate.getTerminationChrgNotAssociated", 
+		 	           query = "from  OneShotChargeTemplate o where (o.id not in (select serv.chargeTemplate from ServiceChargeTemplateTermination serv) "
+		 	           		+ " OR o.code not in (select p.eventCode from  PricePlanMatrix p where p.eventCode is not null))"
+		 	           		+ " and  oneShotChargeTemplateType=:oneShotChargeTemplateType and o.provider=:provider")           	                  	         
+	})
 public class OneShotChargeTemplate extends ChargeTemplate {
 
     private static final long serialVersionUID = 1L;
