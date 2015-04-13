@@ -68,4 +68,7 @@
 		<dropTable cascadeConstraints="true" tableName="BILLING_INVOICE_CAT_COUNTRY"/>
 		<dropColumn tableName="BILLING_INV_SUB_CAT_COUNTRY" columnName="DISCOUNT_CODE"/>
 	</changeSet>
+	<changeSet id="ticket542_20150413" author="AndriusKarpavicius">
+		<dropTable cascadeConstraints="true" tableName="PROVIDER_TITLES"/>
+	</changeSet>	
 </databaseChangeLog>

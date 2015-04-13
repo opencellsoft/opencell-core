@@ -56,7 +56,6 @@ import org.meveo.model.catalog.WalletTemplate;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.shared.InterBankTitle;
-import org.meveo.model.shared.Title;
 
 @Entity
 @ObservableEntity
@@ -134,10 +133,6 @@ public class Provider extends ProviderlessEntity {
 
     @Transient
     private List<PaymentMethodEnum> paymentMethods;
-
-    @ManyToMany()
-    @JoinTable(name = "PROVIDER_TITLES")
-    private List<Title> titles;
 
     @Column(name = "LOGO")
     @Lob
@@ -345,14 +340,6 @@ public class Provider extends ProviderlessEntity {
 
     public void setUsers(List<User> users) {
         this.users = users;
-    }
-
-    public List<Title> getTitles() {
-        return titles;
-    }
-
-    public void setTitles(List<Title> titles) {
-        this.titles = titles;
     }
 
     public Blob getLogo() {
