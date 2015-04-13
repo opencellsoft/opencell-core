@@ -24,6 +24,9 @@ public class WalletOperationDto extends BaseDto {
 	@XmlAttribute(required = true)
 	private String code;
 
+	@XmlAttribute(required = true)
+	private String description;
+
 	@XmlElement(required = true)
 	private String userAccount;
 
@@ -273,12 +276,12 @@ public class WalletOperationDto extends BaseDto {
 
 	@Override
 	public String toString() {
-		return "WalletOperationDto [code=" + code + ", userAccount=" + userAccount + ", subscription=" + subscription + ", walletTemplate=" + walletTemplate + ", seller=" + seller
-				+ ", chargeInstance=" + chargeInstance + ", currency=" + currency + ", type=" + type + ", status=" + status + ", unityDescription=" + unityDescription
-				+ ", taxPercent=" + taxPercent + ", unitAmountWithoutTax=" + unitAmountWithoutTax + ", unitAmountWithTax=" + unitAmountWithTax + ", unitAmountTax=" + unitAmountTax
-				+ ", quantity=" + quantity + ", amountWithoutTax=" + amountWithoutTax + ", amountWithTax=" + amountWithTax + ", amountTax=" + amountTax + ", parameter1="
-				+ parameter1 + ", parameter2=" + parameter2 + ", parameter3=" + parameter3 + ", startDate=" + startDate + ", endDate=" + endDate + ", operationDate="
-				+ operationDate + ", subscriptionDate=" + subscriptionDate + "]";
+		return "WalletOperationDto [code=" + code + ", description=" + description + ", userAccount=" + userAccount + ", subscription=" + subscription + ", walletTemplate="
+				+ walletTemplate + ", seller=" + seller + ", chargeInstance=" + chargeInstance + ", currency=" + currency + ", type=" + type + ", status=" + status
+				+ ", unityDescription=" + unityDescription + ", taxPercent=" + taxPercent + ", unitAmountWithoutTax=" + unitAmountWithoutTax + ", unitAmountWithTax="
+				+ unitAmountWithTax + ", unitAmountTax=" + unitAmountTax + ", quantity=" + quantity + ", amountWithoutTax=" + amountWithoutTax + ", amountWithTax=" + amountWithTax
+				+ ", amountTax=" + amountTax + ", parameter1=" + parameter1 + ", parameter2=" + parameter2 + ", parameter3=" + parameter3 + ", startDate=" + startDate
+				+ ", endDate=" + endDate + ", operationDate=" + operationDate + ", subscriptionDate=" + subscriptionDate + "]";
 	}
 
 	public String getWalletTemplate() {
@@ -303,6 +306,14 @@ public class WalletOperationDto extends BaseDto {
 
 	public void setSubscription(String subscription) {
 		this.subscription = subscription;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
 	}
 
 }

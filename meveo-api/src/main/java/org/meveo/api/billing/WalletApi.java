@@ -16,6 +16,7 @@ import org.meveo.api.dto.billing.WalletBalanceDto;
 import org.meveo.api.dto.billing.WalletOperationDto;
 import org.meveo.api.dto.billing.WalletReservationDto;
 import org.meveo.api.dto.response.billing.FindWalletOperationsResponseDto;
+import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
@@ -334,8 +335,9 @@ public class WalletApi extends BaseApi {
 	}
 
 	public void createOperation(WalletOperationDto postData, User currentUser) throws MeveoApiException {
-		if (!StringUtils.isBlank(postData.getCode()) && !StringUtils.isBlank(postData.getUserAccount()) && !StringUtils.isBlank(postData.getWalletTemplate())
-				&& !StringUtils.isBlank(postData.getChargeInstance()) && !StringUtils.isBlank(postData.getSubscription()) && !StringUtils.isBlank(postData.getSeller())) {
+		if (!StringUtils.isBlank(postData.getCode()) && !StringUtils.isBlank(postData.getDescription()) && !StringUtils.isBlank(postData.getUserAccount())
+				&& !StringUtils.isBlank(postData.getWalletTemplate()) && !StringUtils.isBlank(postData.getChargeInstance()) && !StringUtils.isBlank(postData.getSubscription())
+				&& !StringUtils.isBlank(postData.getSeller())) {
 			Provider provider = currentUser.getProvider();
 
 			UserAccount userAccount = userAccountService.findByCode(postData.getUserAccount(), provider);
@@ -344,7 +346,7 @@ public class WalletApi extends BaseApi {
 			}
 
 			if (walletOperationService.findByUserAccountAndCode(postData.getCode(), userAccount, provider) != null) {
-				throw new EntityDoesNotExistsException(WalletOperation.class, postData.getCode());
+				throw new EntityAlreadyExistsException(WalletOperation.class, postData.getCode());
 			}
 
 			Subscription subscription = subscriptionService.findByCode(postData.getSubscription(), provider);
@@ -378,6 +380,7 @@ public class WalletApi extends BaseApi {
 			}
 
 			WalletOperation walletOperation = new WalletOperation();
+			walletOperation.setDescription(postData.getDescription());
 			walletOperation.setProvider(provider);
 			walletOperation.setCode(postData.getCode());
 			walletOperation.setOfferCode(subscription.getOffer().getCode());
@@ -421,6 +424,9 @@ public class WalletApi extends BaseApi {
 		} else {
 			if (StringUtils.isBlank(postData.getCode())) {
 				missingParameters.add("code");
+			}
+			if (StringUtils.isBlank(postData.getDescription())) {
+				missingParameters.add("description");
 			}
 			if (StringUtils.isBlank(postData.getUserAccount())) {
 				missingParameters.add("userAccount");
