@@ -307,30 +307,51 @@ public class SubscriptionApi extends BaseApi {
 				ServiceTemplate serviceTemplate = serviceToActivateDto.getServiceTemplate();
 				log.debug("instanciateService id={} checked, quantity={}", serviceTemplate.getId(), 1);
 
-				ServiceInstance serviceInstance = new ServiceInstance();
-				serviceInstance.setProvider(serviceTemplate.getProvider());
-				serviceInstance.setCode(serviceTemplate.getCode());
-				serviceInstance.setDescription(serviceTemplate.getDescription());
-				serviceInstance.setServiceTemplate(serviceTemplate);
-				serviceInstance.setSubscription(subscription);
+				ServiceInstance serviceInstance = serviceInstanceService.findByCodeAndSubscription(serviceTemplate.getCode(), subscription);
+				if (serviceInstance == null) {
+					serviceInstance = new ServiceInstance();
+					serviceInstance.setProvider(serviceTemplate.getProvider());
+					serviceInstance.setCode(serviceTemplate.getCode());
+					serviceInstance.setDescription(serviceTemplate.getDescription());
+					serviceInstance.setServiceTemplate(serviceTemplate);
+					serviceInstance.setSubscription(subscription);
 
-				if (serviceToActivateDto.getSubscriptionDate() == null) {
-					Calendar calendar = Calendar.getInstance();
-					calendar.setTime(new Date());
-					calendar.set(Calendar.HOUR_OF_DAY, 0);
-					calendar.set(Calendar.MINUTE, 0);
-					calendar.set(Calendar.SECOND, 0);
-					calendar.set(Calendar.MILLISECOND, 0);
-					serviceInstance.setSubscriptionDate(calendar.getTime());
+					if (serviceToActivateDto.getSubscriptionDate() == null) {
+						Calendar calendar = Calendar.getInstance();
+						calendar.setTime(new Date());
+						calendar.set(Calendar.HOUR_OF_DAY, 0);
+						calendar.set(Calendar.MINUTE, 0);
+						calendar.set(Calendar.SECOND, 0);
+						calendar.set(Calendar.MILLISECOND, 0);
+						serviceInstance.setSubscriptionDate(calendar.getTime());
+					} else {
+						serviceInstance.setSubscriptionDate(serviceToActivateDto.getSubscriptionDate());
+					}
+					serviceInstance.setQuantity(serviceToActivateDto.getQuantity());
+					try {
+						serviceInstanceService.serviceInstanciation(serviceInstance, currentUser);
+
+						if (serviceToActivateDto.getSubscriptionDate() != null) {
+							serviceInstances.add(serviceInstance);
+						}
+					} catch (BusinessException e) {
+						throw new MeveoApiException(e.getMessage());
+					}
 				} else {
-					serviceInstance.setSubscriptionDate(serviceToActivateDto.getSubscriptionDate());
-				}
-				serviceInstance.setQuantity(serviceToActivateDto.getQuantity());
-				try {
-					serviceInstanceService.serviceInstanciation(serviceInstance, currentUser);
-					serviceInstances.add(serviceInstance);
-				} catch (BusinessException e) {
-					throw new MeveoApiException(e.getMessage());
+					// service instance must be inactive at this stage
+					if (serviceInstance.getStatus() != InstanceStatusEnum.INACTIVE) {
+						log.error("serviceInstance with code={} must be INACTIVE", serviceInstance.getCode());
+						throw new MeveoApiException("ServiceInstance with code=" + serviceInstance.getCode() + " must be INACTIVE.");
+					}
+
+					// subscription date must be set
+					if (serviceToActivateDto.getSubscriptionDate() != null) {
+						log.warn("need date for serviceInstance with code={}", serviceInstance.getCode());
+						serviceInstance.setDescription(serviceTemplate.getDescription());
+						serviceInstance.setSubscriptionDate(serviceToActivateDto.getSubscriptionDate());
+						serviceInstance.setQuantity(serviceToActivateDto.getQuantity());
+						serviceInstances.add(serviceInstance);
+					}
 				}
 			}
 
@@ -338,12 +359,14 @@ public class SubscriptionApi extends BaseApi {
 			for (ServiceToActivateDto serviceToActivateDto : serviceToActivateDtos) {
 				if (serviceToActivateDto.getChargeInstanceOverrides() != null && serviceToActivateDto.getChargeInstanceOverrides().getChargeInstanceOverride() != null) {
 					for (ChargeInstanceOverrideDto chargeInstanceOverrideDto : serviceToActivateDto.getChargeInstanceOverrides().getChargeInstanceOverride()) {
-						if (chargeInstanceOverrideDto.getAmountWithoutTax() != null) {
+						if (!StringUtils.isBlank(chargeInstanceOverrideDto.getChargeInstanceCode()) && chargeInstanceOverrideDto.getAmountWithoutTax() != null) {
 							ChargeInstance chargeInstance = chargeInstanceService.findByCodeAndService(chargeInstanceOverrideDto.getChargeInstanceCode(), subscription.getId());
 							if (chargeInstance == null) {
 								throw new EntityDoesNotExistsException(ChargeInstance.class, chargeInstanceOverrideDto.getChargeInstanceCode());
 							}
 							chargeInstance.setAmountWithoutTax(chargeInstanceOverrideDto.getAmountWithoutTax());
+						} else {
+							log.warn("chargeInstance.code and amountWithoutTax must not be null.");
 						}
 					}
 				}

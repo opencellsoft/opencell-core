@@ -5,6 +5,8 @@ import java.math.BigDecimal;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
 /**
@@ -16,7 +18,10 @@ public class ChargeInstanceOverrideDto implements Serializable {
 
 	private static final long serialVersionUID = 5653231200327069483L;
 
+	@XmlAttribute(required = true)
 	private String chargeInstanceCode;
+
+	@XmlElement(required = true)
 	private BigDecimal amountWithoutTax;
 
 	public String getChargeInstanceCode() {
