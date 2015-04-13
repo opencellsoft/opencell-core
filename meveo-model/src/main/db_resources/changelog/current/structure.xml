@@ -71,4 +71,7 @@
 	<changeSet id="ticket542_20150413" author="AndriusKarpavicius">
 		<dropTable cascadeConstraints="true" tableName="PROVIDER_TITLES"/>
 	</changeSet>	
+	<changeSet id="ticket704_20150413" author="AndriusKarpavicius" failOnError="false">
+		<dropUniqueConstraint tableName="ACCOUNT_ENTITY" constraintName="uk_mx9oogbtker4j4jyxidjxkmhi"/>
+	</changeSet>	
 </databaseChangeLog>

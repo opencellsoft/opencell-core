@@ -35,6 +35,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import org.meveo.model.AccountEntity;
+import org.meveo.model.ExportIdentifier;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.TradingCurrency;
 import org.meveo.model.crm.Customer;
@@ -44,6 +45,7 @@ import org.meveo.model.shared.ContactInformation;
  * Customer Account entity.
  */
 @Entity
+@ExportIdentifier({ "code", "provider" })
 @Table(name = "AR_CUSTOMER_ACCOUNT")
 public class CustomerAccount extends AccountEntity {
 

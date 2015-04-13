@@ -38,8 +38,10 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import org.meveo.model.AccountEntity;
+import org.meveo.model.ExportIdentifier;
 
 @Entity
+@ExportIdentifier({ "code", "provider" })
 @Table(name = "BILLING_USER_ACCOUNT")
 public class UserAccount extends AccountEntity {
 

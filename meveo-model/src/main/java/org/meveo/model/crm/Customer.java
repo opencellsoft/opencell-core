@@ -33,11 +33,13 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import org.meveo.model.AccountEntity;
+import org.meveo.model.ExportIdentifier;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.shared.ContactInformation;
 
 @Entity
+@ExportIdentifier({ "code", "provider" })
 @Table(name = "CRM_CUSTOMER")
 public class Customer extends AccountEntity {
 
