@@ -654,7 +654,7 @@ public class EntityExportImportService implements Serializable {
         try {
             classes = ReflectionUtils.getClasses("org.meveo.model");
         } catch (Exception e) {
-            log.error("Failed to get a list of classes for a model package");
+            log.error("Failed to get a list of classes for a model package", e);
         }
 
         for (Class clazz : classes) {
@@ -682,7 +682,7 @@ public class EntityExportImportService implements Serializable {
         try {
             classes = ReflectionUtils.getClasses("org.meveo.model");
         } catch (Exception e) {
-            log.error("Failed to get a list of classes for a model package");
+            log.error("Failed to get a list of classes for a model package", e);
         }
 
         for (Class clazz : classes) {
@@ -730,7 +730,7 @@ public class EntityExportImportService implements Serializable {
         try {
             classes = ReflectionUtils.getClasses("org.meveo.model");
         } catch (Exception e) {
-            log.error("Failed to get a list of classes for a model package");
+            log.error("Failed to get a list of classes for a model package", e);
         }
 
         for (Class clazz : classes) {
