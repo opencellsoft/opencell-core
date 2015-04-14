@@ -23,6 +23,7 @@ import org.meveo.export.ExportImportStatistics;
 import org.meveo.export.ExportTemplate;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.IEntity;
+import org.meveo.model.crm.Provider;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.LazyDataModel;
 import org.primefaces.model.SortOrder;
@@ -55,6 +56,8 @@ public class EntityExportImportBean implements Serializable {
 
     private boolean requireFK;
 
+    private Provider forceToProvider;
+
     private ExportTemplate selectedExportTemplate;
 
     /** Entity selection for export search criteria. */
@@ -78,6 +81,14 @@ public class EntityExportImportBean implements Serializable {
 
     public void setRequireFK(boolean requireFK) {
         this.requireFK = requireFK;
+    }
+
+    public Provider getForceToProvider() {
+        return forceToProvider;
+    }
+
+    public void setForceToProvider(Provider forceToProvider) {
+        this.forceToProvider = forceToProvider;
     }
 
     public ExportTemplate getSelectedExportTemplate() {
@@ -237,8 +248,7 @@ public class EntityExportImportBean implements Serializable {
         } catch (Exception e) {
             exportImportStats = null;
             log.error("Failed to export entities for {} template", selectedExportTemplate, e);
-            messages.info(new BundleKey("messages", "export.exportFailed"), exportTemplate.getName(),
-                e.getMessage() == null ? e.getClass().getSimpleName() : e.getMessage());
+            messages.info(new BundleKey("messages", "export.exportFailed"), exportTemplate.getName(), e.getMessage() == null ? e.getClass().getSimpleName() : e.getMessage());
         }
 
         exportParameters.clear();
@@ -270,7 +280,8 @@ public class EntityExportImportBean implements Serializable {
         exportImportStats = null;
         if (event.getFile() != null) {
             try {
-                exportImportStats = entityExportImportService.importEntities(event.getFile().getInputstream(), false, !requireFK);
+                log.error("Provider to force is "+forceToProvider);
+                exportImportStats = entityExportImportService.importEntities(event.getFile().getInputstream(), false, !requireFK, forceToProvider);
                 messages.info(new BundleKey("messages", "export.imported"), event.getFile().getFileName());
 
             } catch (Exception e) {

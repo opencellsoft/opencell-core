@@ -83,4 +83,8 @@ public class TradingLanguage extends AuditableEntity {
 		this.languageCode = languageCode;
 	}
 
+    @Override
+    public String toString() {
+        return String.format("TradingLanguage [language=%s, id=%s]", language, getId());
+    }
 }

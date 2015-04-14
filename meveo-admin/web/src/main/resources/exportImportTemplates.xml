@@ -16,6 +16,9 @@
 					<java-class>org.meveo.model.billing.TradingCurrency</java-class>
 					<java-class>org.meveo.model.billing.TradingCountry</java-class>
 				</classesToExportAsFull>
+				<classesToIgnoreFKNotFound>
+					<java-class>org.meveo.model.admin.User</java-class>
+				</classesToIgnoreFKNotFound>
 			</template>
 			<template>
 				<name>WalletTemplate</name>
@@ -87,6 +90,9 @@
 			<template>
 				<name>ChargeTemplate</name>
 				<entityToExport>org.meveo.model.catalog.ChargeTemplate</entityToExport>
+				<classesToExportAsFull>
+					<java-class>org.meveo.model.crm.CustomFieldInstance</java-class>
+				</classesToExportAsFull>
 			</template>
 			<template>
 				<name>ServiceTemplate</name>
@@ -133,26 +139,49 @@
 			<template>
 				<name>Customer</name>
 				<entityToExport>org.meveo.model.crm.Customer</entityToExport>
+				<classesToExportAsFull>
+					<java-class>org.meveo.model.crm.CustomFieldInstance</java-class>
+				</classesToExportAsFull>
 			</template>
 			<template>
 				<name>CustomerAccount</name>
 				<entityToExport>org.meveo.model.payments.CustomerAccount</entityToExport>
+				<classesToExportAsFull>
+					<java-class>org.meveo.model.crm.CustomFieldInstance</java-class>
+				</classesToExportAsFull>
 			</template>
 			<template>
 				<name>BillingAccount</name>
 				<entityToExport>org.meveo.model.billing.BillingAccount</entityToExport>
+				<classesToExportAsFull>
+					<java-class>org.meveo.model.crm.CustomFieldInstance</java-class>
+				</classesToExportAsFull>
 			</template>
 			<template>
 				<name>UserAccount</name>
 				<entityToExport>org.meveo.model.billing.UserAccount</entityToExport>
+				<classesToExportAsFull>
+					<java-class>org.meveo.model.billing.WalletInstance</java-class>
+					<java-class>org.meveo.model.crm.CustomFieldInstance</java-class>
+				</classesToExportAsFull>
 			</template>
 			<template>
 				<name>Subscription</name>
 				<entityToExport>org.meveo.model.billing.Subscription</entityToExport>
+				<classesToExportAsFull>
+					<java-class>org.meveo.model.crm.CustomFieldInstance</java-class>
+				</classesToExportAsFull>
 			</template>
 			<template>
 				<name>ServiceInstance</name>
 				<entityToExport>org.meveo.model.billing.ServiceInstance</entityToExport>
+			</template>
+			<template>
+				<name>Access</name>
+				<entityToExport>org.meveo.model.mediation.Access</entityToExport>
+				<classesToExportAsFull>
+					<java-class>org.meveo.model.crm.CustomFieldInstance</java-class>
+				</classesToExportAsFull>
 			</template>
 		</groupedTemplates>
 	</template>
@@ -167,6 +196,21 @@
 			</entry>
 			<entry>
 				<string>eventDate</string>
+				<string>dateRange</string>
+			</entry>
+		</parameters>
+		<canDeleteAfterExport>true</canDeleteAfterExport>
+	</template>
+	<template>
+		<name>WalletOperation</name>
+		<entityToExport>org.meveo.model.billing.WalletOperation</entityToExport>
+		<parameters>
+			<entry>
+				<string>provider</string>
+				<string>provider</string>
+			</entry>
+			<entry>
+				<string>operationDate</string>
 				<string>dateRange</string>
 			</entry>
 		</parameters>

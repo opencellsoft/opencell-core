@@ -73,5 +73,8 @@
 	</changeSet>	
 	<changeSet id="ticket704_20150413" author="AndriusKarpavicius" failOnError="false">
 		<dropUniqueConstraint tableName="ACCOUNT_ENTITY" constraintName="uk_mx9oogbtker4j4jyxidjxkmhi"/>
+	</changeSet>		
+	<changeSet id="ticket542_20150414" author="AndriusKarpavicius">
+		<addUniqueConstraint columnNames="CODE, USER_ACCOUNT_ID, PROVIDER_ID" tableName="BILLING_WALLET" constraintName="UK_BILLING_WALLET"/>
 	</changeSet>	
 </databaseChangeLog>
