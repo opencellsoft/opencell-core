@@ -76,5 +76,8 @@
 	</changeSet>		
 	<changeSet id="ticket542_20150414" author="AndriusKarpavicius">
 		<addUniqueConstraint columnNames="CODE, USER_ACCOUNT_ID, PROVIDER_ID" tableName="BILLING_WALLET" constraintName="UK_BILLING_WALLET"/>
+	</changeSet>
+	<changeSet id="ticket650_20150414" author="Mbarek">
+		<dropColumn tableName="DWH_CHART" columnName="USER_ID"/>
 	</changeSet>	
 </databaseChangeLog>

@@ -9,6 +9,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 
 import org.meveo.model.BusinessEntity;
@@ -29,9 +30,7 @@ public class Chart extends BusinessEntity {
 	 */
 	private static final long serialVersionUID = 7127515648757614672L;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "USER_ID")
-	User user;
+	
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "ROLE_ID")
@@ -52,7 +51,10 @@ public class Chart extends BusinessEntity {
 
 	@Column(name = "ISVISIBLE")
 	Boolean isVisible = false;
-
+	
+	@Transient
+	private User user;
+	
 	public User getUser() {
 		return user;
 	}
