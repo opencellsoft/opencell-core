@@ -15513,6 +15513,15 @@
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
+    <wsdl:operation name="findOperations">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="findOperations">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="findOperationsResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
     <wsdl:operation name="currentBalance">
       <soap:operation soapAction="" style="document"/>
       <wsdl:input name="currentBalance">
@@ -15577,6 +15586,7 @@
   <wsdl:types>
     <xs:schema elementFormDefault="unqualified" targetNamespace="http://ws.api.meveo.org/" version="1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://ws.api.meveo.org/">
       <xs:element name="ActionStatus" type="tns:actionStatus"/>
+      <xs:element name="FindWalletOperationsResponse" type="tns:findWalletOperationsResponseDto"/>
       <xs:element name="WalletBalance" type="tns:walletBalanceDto"/>
       <xs:element name="WalletOperation" type="tns:walletOperationDto"/>
       <xs:element name="WalletReservation" type="tns:walletReservationDto"/>
@@ -15590,6 +15600,8 @@
       <xs:element name="createReservationResponse" type="tns:createReservationResponse"/>
       <xs:element name="currentBalance" type="tns:currentBalance"/>
       <xs:element name="currentBalanceResponse" type="tns:currentBalanceResponse"/>
+      <xs:element name="findOperations" type="tns:findOperations"/>
+      <xs:element name="findOperationsResponse" type="tns:findOperationsResponse"/>
       <xs:element name="index" type="tns:index"/>
       <xs:element name="indexResponse" type="tns:indexResponse"/>
       <xs:element name="openBalance" type="tns:openBalance"/>
@@ -15627,7 +15639,7 @@
       <xs:complexType name="actionStatus">
         <xs:sequence>
           <xs:element name="status" type="tns:actionStatusEnum"/>
-          <xs:element name="errorCode" type="xs:int"/>
+          <xs:element minOccurs="0" name="errorCode" type="xs:string"/>
           <xs:element name="message" type="xs:string"/>
         </xs:sequence>
       </xs:complexType>
@@ -15697,12 +15709,48 @@
               <xs:element minOccurs="0" name="subscriptionDate" type="xs:dateTime"/>
             </xs:sequence>
             <xs:attribute name="code" type="xs:string" use="required"/>
+            <xs:attribute name="description" type="xs:string" use="required"/>
           </xs:extension>
         </xs:complexContent>
       </xs:complexType>
       <xs:complexType name="createOperationResponse">
         <xs:sequence>
           <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="findOperations">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="findWalletOperations" type="tns:FindWalletOperations"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="FindWalletOperations">
+        <xs:complexContent>
+          <xs:extension base="tns:baseDto">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="offerCode" type="xs:string"/>
+              <xs:element minOccurs="0" name="seller" type="xs:string"/>
+              <xs:element minOccurs="0" name="status" type="xs:string"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="findOperationsResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:findWalletOperationsResponseDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="findWalletOperationsResponseDto">
+        <xs:complexContent>
+          <xs:extension base="tns:baseResponse">
+            <xs:sequence>
+              <xs:element maxOccurs="unbounded" minOccurs="0" name="walletOperations" nillable="true" type="tns:walletOperationDto"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType abstract="true" name="baseResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="actionStatus" type="tns:actionStatus"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="index">
@@ -15780,6 +15828,9 @@
   <wsdl:message name="updateReservationResponse">
     <wsdl:part element="ns1:updateReservationResponse" name="parameters"></wsdl:part>
   </wsdl:message>
+  <wsdl:message name="findOperationsResponse">
+    <wsdl:part element="ns1:findOperationsResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
   <wsdl:message name="openBalanceResponse">
     <wsdl:part element="ns1:openBalanceResponse" name="parameters"></wsdl:part>
   </wsdl:message>
@@ -15788,6 +15839,9 @@
   </wsdl:message>
   <wsdl:message name="createOperationResponse">
     <wsdl:part element="ns1:createOperationResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="findOperations">
+    <wsdl:part element="ns1:findOperations" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="indexResponse">
     <wsdl:part element="ns1:indexResponse" name="parameters"></wsdl:part>
@@ -15837,6 +15891,10 @@
     <wsdl:operation name="createOperation">
       <wsdl:input message="ns1:createOperation" name="createOperation"></wsdl:input>
       <wsdl:output message="ns1:createOperationResponse" name="createOperationResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="findOperations">
+      <wsdl:input message="ns1:findOperations" name="findOperations"></wsdl:input>
+      <wsdl:output message="ns1:findOperationsResponse" name="findOperationsResponse"></wsdl:output>
     </wsdl:operation>
     <wsdl:operation name="index">
       <wsdl:input message="ns1:index" name="index"></wsdl:input>
@@ -16084,7 +16142,22 @@
          </walletReservation>
       </ws:updateReservation>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/WalletWs/updateReservation"/></con:call></con:operation></con:interface><con:interface xsi:type="con:WsdlInterface" wsaVersion="NONE" name="MediationWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}MediationWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="http://${#Project#meveoEndpoint}/MediationWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache type="TEXT" rootPart="http://localhost:8080/meveo/MediationWs?wsdl"><con:part><con:url>http://localhost:8080/meveo/MediationWs?wsdl</con:url><con:content><![CDATA[<wsdl:definitions name="MediationWs" targetNamespace="http://impl.ws.api.meveo.org/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://impl.ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns2="http://schemas.xmlsoap.org/soap/http" xmlns:ns1="http://ws.api.meveo.org/">
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/WalletWs/updateReservation"/></con:call></con:operation><con:operation isOneWay="false" action="" name="findOperations" bindingOperationName="findOperations" type="Request-Response" outputName="findOperationsResponse" inputName="findOperations" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/WalletWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:findOperations>
+         <!--Optional:-->
+         <findWalletOperations>
+            <!--Optional:-->
+            <offerCode>OFF1</offerCode>
+            <!--Optional:-->
+            <seller>MAIN_SELLER</seller>
+            <!--Optional:-->
+            <!--<status>?</status>-->
+         </findWalletOperations>
+      </ws:findOperations>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:authType>Global HTTP Settings</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/WalletWs/findOperations"/><con:wsrmConfig version="1.2"/></con:call></con:operation></con:interface><con:interface xsi:type="con:WsdlInterface" wsaVersion="NONE" name="MediationWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}MediationWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="http://${#Project#meveoEndpoint}/MediationWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache type="TEXT" rootPart="http://localhost:8080/meveo/MediationWs?wsdl"><con:part><con:url>http://localhost:8080/meveo/MediationWs?wsdl</con:url><con:content><![CDATA[<wsdl:definitions name="MediationWs" targetNamespace="http://impl.ws.api.meveo.org/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://impl.ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns2="http://schemas.xmlsoap.org/soap/http" xmlns:ns1="http://ws.api.meveo.org/">
   <wsdl:import location="http://localhost:8080/meveo/MediationWs?wsdl=MediationWs.wsdl" namespace="http://ws.api.meveo.org/"></wsdl:import>
   <wsdl:binding name="MediationWsSoapBinding" type="ns1:MediationWs">
     <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
