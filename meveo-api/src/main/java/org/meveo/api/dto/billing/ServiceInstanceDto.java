@@ -18,6 +18,10 @@ public class ServiceInstanceDto extends BaseDto {
 
 	@XmlAttribute(required = true)
 	private String code;
+
+	@XmlAttribute(required = true)
+	private String description;
+
 	private String status;
 	private Date subscriptionDate;
 	private Date terminationDate;
@@ -66,9 +70,8 @@ public class ServiceInstanceDto extends BaseDto {
 
 	@Override
 	public String toString() {
-		return "ServiceInstanceDto [code=" + code + ", status=" + status + ", subscriptionDate=" + subscriptionDate
-				+ ", terminationDate=" + terminationDate + ", quantity=" + quantity + ", terminationReason="
-				+ terminationReason + "]";
+		return "ServiceInstanceDto [code=" + code + ", description=" + description + ", status=" + status + ", subscriptionDate=" + subscriptionDate + ", terminationDate="
+				+ terminationDate + ", quantity=" + quantity + ", terminationReason=" + terminationReason + "]";
 	}
 
 	public String getTerminationReason() {
@@ -77,6 +80,14 @@ public class ServiceInstanceDto extends BaseDto {
 
 	public void setTerminationReason(String terminationReason) {
 		this.terminationReason = terminationReason;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
 	}
 
 }

@@ -211,13 +211,10 @@ public class AccountHierarchyApi extends BaseApi {
 		if (customerService.findByCode(postData.getCustomerId(), provider) != null) {
 			throw new EntityAlreadyExistsException(Customer.class, postData.getCustomerId());
 		} else {
-			if (!StringUtils.isEmpty(postData.getCustomerId()) && !StringUtils.isEmpty(postData.getCustomerBrandCode())
-					&& !StringUtils.isEmpty(postData.getCustomerCategoryCode())
-					&& !StringUtils.isEmpty(postData.getSellerCode())
-					&& !StringUtils.isEmpty(postData.getCurrencyCode())
-					&& !StringUtils.isEmpty(postData.getBillingCycleCode())
-					&& !StringUtils.isEmpty(postData.getCountryCode()) && !StringUtils.isEmpty(postData.getLastName())
-					&& !StringUtils.isEmpty(postData.getLanguageCode()) && !StringUtils.isEmpty(postData.getEmail())) {
+			if (!StringUtils.isEmpty(postData.getCustomerId()) && !StringUtils.isEmpty(postData.getCustomerBrandCode()) && !StringUtils.isEmpty(postData.getCustomerCategoryCode())
+					&& !StringUtils.isEmpty(postData.getSellerCode()) && !StringUtils.isEmpty(postData.getCurrencyCode()) && !StringUtils.isEmpty(postData.getBillingCycleCode())
+					&& !StringUtils.isEmpty(postData.getCountryCode()) && !StringUtils.isEmpty(postData.getLastName()) && !StringUtils.isEmpty(postData.getLanguageCode())
+					&& !StringUtils.isEmpty(postData.getEmail())) {
 
 				Seller seller = sellerService.findByCode(postData.getSellerCode(), provider);
 
@@ -225,8 +222,7 @@ public class AccountHierarchyApi extends BaseApi {
 				auditableTrading.setCreated(new Date());
 				auditableTrading.setCreator(currentUser);
 
-				TradingCountry tradingCountry = tradingCountryService.findByTradingCountryCode(
-						postData.getCountryCode(), provider);
+				TradingCountry tradingCountry = tradingCountryService.findByTradingCountryCode(postData.getCountryCode(), provider);
 
 				if (tradingCountry == null) {
 					Country country = countryService.findByCode(postData.getCountryCode());
@@ -244,8 +240,7 @@ public class AccountHierarchyApi extends BaseApi {
 					}
 				}
 
-				TradingCurrency tradingCurrency = tradingCurrencyService.findByTradingCurrencyCode(
-						postData.getCurrencyCode(), provider);
+				TradingCurrency tradingCurrency = tradingCurrencyService.findByTradingCurrencyCode(postData.getCurrencyCode(), provider);
 				if (tradingCurrency == null) {
 					Currency currency = currencyService.findByCode(postData.getCurrencyCode());
 
@@ -264,8 +259,7 @@ public class AccountHierarchyApi extends BaseApi {
 					}
 				}
 
-				TradingLanguage tradingLanguage = tradingLanguageService.findByTradingLanguageCode(
-						postData.getLanguageCode(), provider);
+				TradingLanguage tradingLanguage = tradingLanguageService.findByTradingLanguageCode(postData.getLanguageCode(), provider);
 				if (tradingLanguage == null) {
 					Language language = languageService.findByCode(postData.getLanguageCode());
 
@@ -284,8 +278,7 @@ public class AccountHierarchyApi extends BaseApi {
 					}
 				}
 
-				CustomerBrand customerBrand = customerBrandService.findByCode(postData.getCustomerBrandCode(),
-						currentUser.getProvider());
+				CustomerBrand customerBrand = customerBrandService.findByCode(postData.getCustomerBrandCode(), currentUser.getProvider());
 
 				if (customerBrand == null) {
 					customerBrand = new CustomerBrand();
@@ -294,8 +287,7 @@ public class AccountHierarchyApi extends BaseApi {
 					customerBrandService.create(customerBrand, currentUser, provider);
 				}
 
-				CustomerCategory customerCategory = customerCategoryService.findByCode(
-						postData.getCustomerCategoryCode(), currentUser.getProvider());
+				CustomerCategory customerCategory = customerCategoryService.findByCode(postData.getCustomerCategoryCode(), currentUser.getProvider());
 
 				if (customerCategory == null) {
 					customerCategory = new CustomerCategory();
@@ -304,12 +296,9 @@ public class AccountHierarchyApi extends BaseApi {
 					customerCategoryService.create(customerCategory, currentUser, provider);
 				}
 
-				int caPaymentMethod = Integer.parseInt(paramBean.getProperty(
-						"api.default.customerAccount.paymentMethod", "1"));
-				int creditCategory = Integer.parseInt(paramBean.getProperty(
-						"api.default.customerAccount.creditCategory", "5"));
-				int baPaymentMethod = Integer.parseInt(paramBean.getProperty(
-						"api.default.customerAccount.paymentMethod", "1"));
+				int caPaymentMethod = Integer.parseInt(paramBean.getProperty("api.default.customerAccount.paymentMethod", "1"));
+				int creditCategory = Integer.parseInt(paramBean.getProperty("api.default.customerAccount.creditCategory", "5"));
+				int baPaymentMethod = Integer.parseInt(paramBean.getProperty("api.default.customerAccount.paymentMethod", "1"));
 
 				Auditable auditable = new Auditable();
 				auditable.setCreated(new Date());
@@ -374,8 +363,7 @@ public class AccountHierarchyApi extends BaseApi {
 				customerAccountService.create(customerAccount, currentUser, provider);
 
 				String billingCycleCode = enleverAccent(postData.getBillingCycleCode());
-				BillingCycle billingCycle = billingCycleService.findByBillingCycleCode(billingCycleCode, currentUser,
-						provider);
+				BillingCycle billingCycle = billingCycleService.findByBillingCycleCode(billingCycleCode, currentUser, provider);
 				if (billingCycle == null) {
 					throw new EntityDoesNotExistsException(BillingCycle.class, billingCycleCode);
 				}
@@ -387,8 +375,7 @@ public class AccountHierarchyApi extends BaseApi {
 				billingAccount.setStatus(AccountStatusEnum.ACTIVE);
 				billingAccount.setCustomerAccount(customerAccount);
 				billingAccount.setPaymentMethod(PaymentMethodEnum.getValue(baPaymentMethod));
-				billingAccount.setElectronicBilling(Boolean.valueOf(paramBean.getProperty(
-						"api.customerHeirarchy.billingAccount.electronicBilling", "true")));
+				billingAccount.setElectronicBilling(Boolean.valueOf(paramBean.getProperty("api.customerHeirarchy.billingAccount.electronicBilling", "true")));
 				billingAccount.setTradingCountry(tradingCountry);
 				billingAccount.setTradingLanguage(tradingLanguage);
 				billingAccount.setBillingCycle(billingCycle);
@@ -453,12 +440,10 @@ public class AccountHierarchyApi extends BaseApi {
 			throw new EntityDoesNotExistsException(Customer.class, postData.getCustomerId());
 		}
 
-		if (!StringUtils.isEmpty(postData.getCustomerId()) && !StringUtils.isEmpty(postData.getCustomerBrandCode())
-				&& !StringUtils.isEmpty(postData.getCustomerCategoryCode())
-				&& !StringUtils.isEmpty(postData.getSellerCode()) && !StringUtils.isEmpty(postData.getCurrencyCode())
-				&& !StringUtils.isEmpty(postData.getBillingCycleCode())
-				&& !StringUtils.isEmpty(postData.getCountryCode()) && !StringUtils.isEmpty(postData.getLastName())
-				&& !StringUtils.isEmpty(postData.getLanguageCode()) && !StringUtils.isEmpty(postData.getEmail())) {
+		if (!StringUtils.isEmpty(postData.getCustomerId()) && !StringUtils.isEmpty(postData.getCustomerBrandCode()) && !StringUtils.isEmpty(postData.getCustomerCategoryCode())
+				&& !StringUtils.isEmpty(postData.getSellerCode()) && !StringUtils.isEmpty(postData.getCurrencyCode()) && !StringUtils.isEmpty(postData.getBillingCycleCode())
+				&& !StringUtils.isEmpty(postData.getCountryCode()) && !StringUtils.isEmpty(postData.getLastName()) && !StringUtils.isEmpty(postData.getLanguageCode())
+				&& !StringUtils.isEmpty(postData.getEmail())) {
 
 			Seller seller = sellerService.findByCode(postData.getSellerCode(), provider);
 
@@ -472,8 +457,7 @@ public class AccountHierarchyApi extends BaseApi {
 				throw new EntityDoesNotExistsException(Country.class, postData.getCountryCode());
 			}
 
-			TradingCountry tradingCountry = tradingCountryService.findByTradingCountryCode(postData.getCountryCode(),
-					provider);
+			TradingCountry tradingCountry = tradingCountryService.findByTradingCountryCode(postData.getCountryCode(), provider);
 
 			if (tradingCountry == null) {
 				tradingCountry = new TradingCountry();
@@ -497,8 +481,7 @@ public class AccountHierarchyApi extends BaseApi {
 				throw new EntityDoesNotExistsException(Currency.class, postData.getCurrencyCode());
 			}
 
-			TradingCurrency tradingCurrency = tradingCurrencyService.findByTradingCurrencyCode(
-					postData.getCurrencyCode(), provider);
+			TradingCurrency tradingCurrency = tradingCurrencyService.findByTradingCurrencyCode(postData.getCurrencyCode(), provider);
 
 			if (tradingCurrency == null) {
 				// create tradingCountry
@@ -524,8 +507,7 @@ public class AccountHierarchyApi extends BaseApi {
 				throw new EntityDoesNotExistsException(Language.class, postData.getLanguageCode());
 			}
 
-			TradingLanguage tradingLanguage = tradingLanguageService.findByTradingLanguageCode(
-					postData.getLanguageCode(), provider);
+			TradingLanguage tradingLanguage = tradingLanguageService.findByTradingLanguageCode(postData.getLanguageCode(), provider);
 
 			if (tradingLanguage == null) {
 				tradingLanguage = new TradingLanguage();
@@ -544,11 +526,9 @@ public class AccountHierarchyApi extends BaseApi {
 				tradingLanguageService.update(tradingLanguage, currentUser);
 			}
 
-			CustomerBrand customerBrand = customerBrandService.findByCode(postData.getCustomerBrandCode(),
-					currentUser.getProvider());
+			CustomerBrand customerBrand = customerBrandService.findByCode(postData.getCustomerBrandCode(), currentUser.getProvider());
 
-			CustomerCategory customerCategory = customerCategoryService.findByCode(postData.getCustomerCategoryCode(),
-					currentUser.getProvider());
+			CustomerCategory customerCategory = customerCategoryService.findByCode(postData.getCustomerCategoryCode(), currentUser.getProvider());
 
 			if (customerBrand == null) {
 				customerBrand = new CustomerBrand();
@@ -576,13 +556,10 @@ public class AccountHierarchyApi extends BaseApi {
 				customerCategoryService.update(customerCategory, currentUser);
 			}
 
-			int caPaymentMethod = Integer.parseInt(paramBean.getProperty("api.default.customerAccount.paymentMethod",
-					"1"));
-			int creditCategory = Integer.parseInt(paramBean.getProperty("api.default.customerAccount.creditCategory",
-					"5"));
+			int caPaymentMethod = Integer.parseInt(paramBean.getProperty("api.default.customerAccount.paymentMethod", "1"));
+			int creditCategory = Integer.parseInt(paramBean.getProperty("api.default.customerAccount.creditCategory", "5"));
 
-			int baPaymentMethod = Integer.parseInt(paramBean.getProperty("api.default.customerAccount.paymentMethod",
-					"1"));
+			int baPaymentMethod = Integer.parseInt(paramBean.getProperty("api.default.customerAccount.paymentMethod", "1"));
 
 			Auditable auditable = new Auditable();
 			auditable.setCreated(new Date());
@@ -623,8 +600,7 @@ public class AccountHierarchyApi extends BaseApi {
 
 			customerService.update(customer, currentUser);
 
-			CustomerAccount customerAccount = customerAccountService.findByCode(
-					CUSTOMER_ACCOUNT_PREFIX + postData.getCustomerId(), provider);
+			CustomerAccount customerAccount = customerAccountService.findByCode(CUSTOMER_ACCOUNT_PREFIX + postData.getCustomerId(), provider);
 			if (customerAccount == null) {
 				customerAccount = new CustomerAccount();
 				customerAccount.setCode(CUSTOMER_ACCOUNT_PREFIX + enleverAccent(postData.getCustomerId()));
@@ -649,14 +625,12 @@ public class AccountHierarchyApi extends BaseApi {
 			}
 
 			String billingCycleCode = enleverAccent(postData.getBillingCycleCode());
-			BillingCycle billingCycle = billingCycleService.findByBillingCycleCode(billingCycleCode, currentUser,
-					provider);
+			BillingCycle billingCycle = billingCycleService.findByBillingCycleCode(billingCycleCode, currentUser, provider);
 			if (billingCycle == null) {
 				throw new EntityDoesNotExistsException(BillingCycle.class, billingCycleCode);
 			}
 
-			BillingAccount billingAccount = billingAccountService.findByCode(
-					BILLING_ACCOUNT_PREFIX + postData.getCustomerId(), provider);
+			BillingAccount billingAccount = billingAccountService.findByCode(BILLING_ACCOUNT_PREFIX + postData.getCustomerId(), provider);
 
 			if (billingAccount == null) {
 				billingAccount = new BillingAccount();
@@ -668,8 +642,7 @@ public class AccountHierarchyApi extends BaseApi {
 			billingAccount.setStatus(AccountStatusEnum.ACTIVE);
 			billingAccount.setCustomerAccount(customerAccount);
 			billingAccount.setPaymentMethod(PaymentMethodEnum.getValue(baPaymentMethod));
-			billingAccount.setElectronicBilling(Boolean.valueOf(paramBean.getProperty(
-					"api.customerHeirarchy.billingAccount.electronicBilling", "true")));
+			billingAccount.setElectronicBilling(Boolean.valueOf(paramBean.getProperty("api.customerHeirarchy.billingAccount.electronicBilling", "true")));
 			billingAccount.setTradingCountry(tradingCountry);
 			billingAccount.setTradingLanguage(tradingLanguage);
 			billingAccount.setBillingCycle(billingCycle);
@@ -680,8 +653,7 @@ public class AccountHierarchyApi extends BaseApi {
 				billingAccountService.update(billingAccount, currentUser);
 			}
 
-			UserAccount userAccount = userAccountService.findByCode(USER_ACCOUNT_PREFIX + postData.getCustomerId(),
-					provider);
+			UserAccount userAccount = userAccountService.findByCode(USER_ACCOUNT_PREFIX + postData.getCustomerId(), provider);
 			if (userAccount == null) {
 				userAccount = new UserAccount();
 			}
@@ -742,8 +714,7 @@ public class AccountHierarchyApi extends BaseApi {
 
 		customerFilter = customerUtil.getCustomer(customerDto, currentUser.getProvider());
 
-		PaginationConfiguration paginationConfiguration = new PaginationConfiguration(customerDto.getIndex(),
-				customerDto.getLimit(), null, null, customerDto.getSortField(), null);
+		PaginationConfiguration paginationConfiguration = new PaginationConfiguration(customerDto.getIndex(), customerDto.getLimit(), null, null, customerDto.getSortField(), null);
 
 		List<Customer> customers = customerService.findByValues(customerFilter, paginationConfiguration);
 		for (Customer customer : customers) {
@@ -768,24 +739,21 @@ public class AccountHierarchyApi extends BaseApi {
 					seller.setInvoicePrefix(sellerDto.getInvoicePrefix());
 
 					if (!StringUtils.isBlank(sellerDto.getCurrencyCode())) {
-						TradingCurrency tradingCurrency = tradingCurrencyService.findByTradingCurrencyCode(
-								sellerDto.getCurrencyCode(), provider);
+						TradingCurrency tradingCurrency = tradingCurrencyService.findByTradingCurrencyCode(sellerDto.getCurrencyCode(), provider);
 						if (tradingCurrency != null) {
 							seller.setTradingCurrency(tradingCurrency);
 						}
 					}
 
 					if (!StringUtils.isBlank(sellerDto.getCountryCode())) {
-						TradingCountry tradingCountry = tradingCountryService.findByTradingCountryCode(
-								sellerDto.getCountryCode(), provider);
+						TradingCountry tradingCountry = tradingCountryService.findByTradingCountryCode(sellerDto.getCountryCode(), provider);
 						if (tradingCountry != null) {
 							seller.setTradingCountry(tradingCountry);
 						}
 					}
 
 					if (!StringUtils.isBlank(sellerDto.getLanguageCode())) {
-						TradingLanguage tradingLanguage = tradingLanguageService.findByTradingLanguageCode(
-								sellerDto.getLanguageCode(), provider);
+						TradingLanguage tradingLanguage = tradingLanguageService.findByTradingLanguageCode(sellerDto.getLanguageCode(), provider);
 						if (tradingLanguage != null) {
 							seller.setTradingLanguage(tradingLanguage);
 						}
@@ -819,8 +787,7 @@ public class AccountHierarchyApi extends BaseApi {
 							customer.setSeller(seller);
 
 							if (!StringUtils.isBlank(customerDto.getCustomerBrand())) {
-								CustomerBrand customerBrand = customerBrandService.findByCode(
-										customerDto.getCustomerBrand(), provider);
+								CustomerBrand customerBrand = customerBrandService.findByCode(customerDto.getCustomerBrand(), provider);
 								if (customerBrand != null) {
 									customer.setCustomerBrand(customerBrand);
 								}
@@ -830,8 +797,7 @@ public class AccountHierarchyApi extends BaseApi {
 							}
 
 							if (!StringUtils.isBlank(customerDto.getCustomerCategory())) {
-								CustomerCategory customerCategory = customerCategoryService.findByCode(
-										customerDto.getCustomerCategory(), provider);
+								CustomerCategory customerCategory = customerCategoryService.findByCode(customerDto.getCustomerCategory(), provider);
 								if (customerCategory != null) {
 									customer.setCustomerCategory(customerCategory);
 								}
@@ -841,12 +807,9 @@ public class AccountHierarchyApi extends BaseApi {
 							}
 
 							if (customerDto.getContactInformation() != null) {
-								customer.getContactInformation().setEmail(
-										customerDto.getContactInformation().getEmail());
-								customer.getContactInformation().setPhone(
-										customerDto.getContactInformation().getPhone());
-								customer.getContactInformation().setMobile(
-										customerDto.getContactInformation().getMobile());
+								customer.getContactInformation().setEmail(customerDto.getContactInformation().getEmail());
+								customer.getContactInformation().setPhone(customerDto.getContactInformation().getPhone());
+								customer.getContactInformation().setMobile(customerDto.getContactInformation().getMobile());
 								customer.getContactInformation().setFax(customerDto.getContactInformation().getFax());
 							}
 
@@ -864,8 +827,7 @@ public class AccountHierarchyApi extends BaseApi {
 
 							// customerAccounts
 							if (customerDto.getCustomerAccounts() != null) {
-								for (CustomerAccountDto customerAccountDto : customerDto.getCustomerAccounts()
-										.getCustomerAccount()) {
+								for (CustomerAccountDto customerAccountDto : customerDto.getCustomerAccounts().getCustomerAccount()) {
 									if (StringUtils.isBlank(customerAccountDto.getCode())) {
 										log.warn("code is null={}", customerAccountDto);
 										continue;
@@ -875,8 +837,7 @@ public class AccountHierarchyApi extends BaseApi {
 										throw new MissingParameterException(getMissingParametersExceptionMessage());
 									}
 
-									CustomerAccount customerAccount = customerAccountService.findByCode(
-											customerAccountDto.getCode(), provider);
+									CustomerAccount customerAccount = customerAccountService.findByCode(customerAccountDto.getCode(), provider);
 									if (customerAccount == null) {
 										customerAccount = new CustomerAccount();
 										customerAccount.setStatus(CustomerAccountStatusEnum.ACTIVE);
@@ -884,17 +845,13 @@ public class AccountHierarchyApi extends BaseApi {
 									} else {
 										if (!StringUtils.isBlank(customerAccountDto.getStatus())) {
 											try {
-												CustomerAccountStatusEnum customerAccountStatusEnum = CustomerAccountStatusEnum
-														.valueOf(customerAccountDto.getStatus());
+												CustomerAccountStatusEnum customerAccountStatusEnum = CustomerAccountStatusEnum.valueOf(customerAccountDto.getStatus());
 												if (customerAccountStatusEnum == CustomerAccountStatusEnum.CLOSE) {
 													try {
-														customerAccountService.closeCustomerAccount(customerAccount,
-																currentUser);
+														customerAccountService.closeCustomerAccount(customerAccount, currentUser);
 													} catch (Exception e) {
-														throw new MeveoApiException(
-																"Failed closing customerAccount with code="
-																		+ customerAccountDto.getCode() + ". "
-																		+ e.getMessage());
+														throw new MeveoApiException("Failed closing customerAccount with code=" + customerAccountDto.getCode() + ". "
+																+ e.getMessage());
 													}
 												}
 											} catch (IllegalStateException e) {
@@ -906,11 +863,9 @@ public class AccountHierarchyApi extends BaseApi {
 									customerAccount.setCustomer(customer);
 
 									if (!StringUtils.isBlank(customerAccountDto.getCurrency())) {
-										TradingCurrency tradingCurrency = tradingCurrencyService
-												.findByTradingCurrencyCode(customerAccountDto.getCurrency(), provider);
+										TradingCurrency tradingCurrency = tradingCurrencyService.findByTradingCurrencyCode(customerAccountDto.getCurrency(), provider);
 										if (tradingCurrency == null) {
-											throw new EntityDoesNotExistsException(TradingCurrency.class,
-													customerAccountDto.getCurrency());
+											throw new EntityDoesNotExistsException(TradingCurrency.class, customerAccountDto.getCurrency());
 										}
 
 										customerAccount.setTradingCurrency(tradingCurrency);
@@ -920,26 +875,22 @@ public class AccountHierarchyApi extends BaseApi {
 									}
 
 									try {
-										customerAccount.setStatus(CustomerAccountStatusEnum.valueOf(customerAccountDto
-												.getStatus()));
+										customerAccount.setStatus(CustomerAccountStatusEnum.valueOf(customerAccountDto.getStatus()));
 									} catch (IllegalArgumentException | NullPointerException e) {
 										log.warn("customerAccount.status={}", e.getMessage());
 									}
 									try {
-										customerAccount.setPaymentMethod(PaymentMethodEnum.valueOf(customerAccountDto
-												.getPaymentMethod()));
+										customerAccount.setPaymentMethod(PaymentMethodEnum.valueOf(customerAccountDto.getPaymentMethod()));
 									} catch (IllegalArgumentException | NullPointerException e) {
 										log.warn("customerAccount.paymentMethod={}", e.getMessage());
 									}
 									try {
-										customerAccount.setCreditCategory(CreditCategoryEnum.valueOf(customerAccountDto
-												.getCreditCategory()));
+										customerAccount.setCreditCategory(CreditCategoryEnum.valueOf(customerAccountDto.getCreditCategory()));
 									} catch (IllegalArgumentException | NullPointerException e) {
 										log.warn("customerAccount.creditCategory={}", e.getMessage());
 									}
 									try {
-										customerAccount.setDunningLevel(DunningLevelEnum.valueOf(customerAccountDto
-												.getDunningLevel()));
+										customerAccount.setDunningLevel(DunningLevelEnum.valueOf(customerAccountDto.getDunningLevel()));
 									} catch (IllegalArgumentException | NullPointerException e) {
 										log.warn("customerAccount.dunningLevel={}", e.getMessage());
 									}
@@ -947,29 +898,20 @@ public class AccountHierarchyApi extends BaseApi {
 									customerAccount.setDateStatus(customerAccountDto.getDateStatus());
 									customerAccount.setDateDunningLevel(customerAccount.getDateDunningLevel());
 									if (customerAccountDto.getContactInformation() != null) {
-										customerAccount.getContactInformation().setEmail(
-												customerAccountDto.getContactInformation().getEmail());
-										customerAccount.getContactInformation().setPhone(
-												customerAccountDto.getContactInformation().getPhone());
-										customerAccount.getContactInformation().setMobile(
-												customerAccountDto.getContactInformation().getMobile());
-										customerAccount.getContactInformation().setFax(
-												customerAccountDto.getContactInformation().getFax());
+										customerAccount.getContactInformation().setEmail(customerAccountDto.getContactInformation().getEmail());
+										customerAccount.getContactInformation().setPhone(customerAccountDto.getContactInformation().getPhone());
+										customerAccount.getContactInformation().setMobile(customerAccountDto.getContactInformation().getMobile());
+										customerAccount.getContactInformation().setFax(customerAccountDto.getContactInformation().getFax());
 									}
 
 									customerAccount.setMandateDate(customerAccountDto.getMandateDate());
-									customerAccount.setMandateIdentification(customerAccountDto
-											.getMandateIdentification());
+									customerAccount.setMandateIdentification(customerAccountDto.getMandateIdentification());
 
 									if (customerAccount.getContactInformation() != null) {
-										customer.getContactInformation().setEmail(
-												customerAccount.getContactInformation().getEmail());
-										customer.getContactInformation().setPhone(
-												customerAccount.getContactInformation().getPhone());
-										customer.getContactInformation().setMobile(
-												customerAccount.getContactInformation().getMobile());
-										customer.getContactInformation().setFax(
-												customerAccount.getContactInformation().getFax());
+										customer.getContactInformation().setEmail(customerAccount.getContactInformation().getEmail());
+										customer.getContactInformation().setPhone(customerAccount.getContactInformation().getPhone());
+										customer.getContactInformation().setMobile(customerAccount.getContactInformation().getMobile());
+										customer.getContactInformation().setFax(customerAccount.getContactInformation().getFax());
 									}
 
 									customerAccount.setProvider(provider);
@@ -979,25 +921,21 @@ public class AccountHierarchyApi extends BaseApi {
 										customerAccountService.update(customerAccount, currentUser);
 									}
 
-									populateNameAndAddress(customerAccount, customerAccountDto, AccountLevelEnum.CA,
-											currentUser);
+									populateNameAndAddress(customerAccount, customerAccountDto, AccountLevelEnum.CA, currentUser);
 
 									// billing accounts
 									if (customerAccountDto.getBillingAccounts() != null) {
-										for (BillingAccountDto billingAccountDto : customerAccountDto
-												.getBillingAccounts().getBillingAccount()) {
+										for (BillingAccountDto billingAccountDto : customerAccountDto.getBillingAccounts().getBillingAccount()) {
 											if (StringUtils.isBlank(billingAccountDto.getCode())) {
 												log.warn("code is null={}", billingAccountDto);
 												continue;
 											}
 											if (StringUtils.isBlank(billingAccountDto.getDescription())) {
 												missingParameters.add("billingAccountDto.description");
-												throw new MissingParameterException(
-														getMissingParametersExceptionMessage());
+												throw new MissingParameterException(getMissingParametersExceptionMessage());
 											}
 
-											BillingAccount billingAccount = billingAccountService.findByCode(
-													billingAccountDto.getCode(), provider);
+											BillingAccount billingAccount = billingAccountService.findByCode(billingAccountDto.getCode(), provider);
 											if (billingAccount == null) {
 												billingAccount = new BillingAccount();
 												billingAccount.setStatus(AccountStatusEnum.ACTIVE);
@@ -1006,27 +944,21 @@ public class AccountHierarchyApi extends BaseApi {
 												if (billingAccountDto.getTerminationDate() != null) {
 													if (StringUtils.isBlank(billingAccountDto.getTerminationReason())) {
 														missingParameters.add("billingAccount.terminationReason");
-														throw new MissingParameterException(
-																getMissingParametersExceptionMessage());
+														throw new MissingParameterException(getMissingParametersExceptionMessage());
 													}
 
-													SubscriptionTerminationReason terminationReason = terminationReasonService
-															.findByCode(billingAccountDto.getTerminationReason(),
-																	provider);
+													SubscriptionTerminationReason terminationReason = terminationReasonService.findByCode(billingAccountDto.getTerminationReason(),
+															provider);
 													if (terminationReason == null) {
-														throw new EntityDoesNotExistsException(
-																SubscriptionTerminationReason.class,
-																billingAccountDto.getTerminationReason());
+														throw new EntityDoesNotExistsException(SubscriptionTerminationReason.class, billingAccountDto.getTerminationReason());
 													}
 
 													try {
-														billingAccountService.billingAccountTermination(billingAccount,
-																billingAccountDto.getTerminationDate(),
-																terminationReason, currentUser);
+														billingAccountService.billingAccountTermination(billingAccount, billingAccountDto.getTerminationDate(), terminationReason,
+																currentUser);
 														continue;
 													} catch (BusinessException e) {
-														throw new MeveoApiException(
-																"Failed terminating billingAccount. " + e.getMessage());
+														throw new MeveoApiException("Failed terminating billingAccount. " + e.getMessage());
 													}
 												}
 											}
@@ -1034,52 +966,42 @@ public class AccountHierarchyApi extends BaseApi {
 											billingAccount.setCustomerAccount(customerAccount);
 
 											if (!StringUtils.isBlank(billingAccountDto.getBillingCycle())) {
-												BillingCycle billingCycle = billingCycleService.findByBillingCycleCode(
-														billingAccountDto.getBillingCycle(), provider);
+												BillingCycle billingCycle = billingCycleService.findByBillingCycleCode(billingAccountDto.getBillingCycle(), provider);
 												if (billingCycle != null) {
 													billingAccount.setBillingCycle(billingCycle);
 												}
 											} else {
 												missingParameters.add("billingAccount.billingCycle");
-												throw new MissingParameterException(
-														getMissingParametersExceptionMessage());
+												throw new MissingParameterException(getMissingParametersExceptionMessage());
 											}
 
 											if (!StringUtils.isBlank(billingAccountDto.getCountry())) {
-												TradingCountry tradingCountry = tradingCountryService
-														.findByTradingCountryCode(billingAccountDto.getCountry(),
-																provider);
+												TradingCountry tradingCountry = tradingCountryService.findByTradingCountryCode(billingAccountDto.getCountry(), provider);
 												if (tradingCountry != null) {
 													billingAccount.setTradingCountry(tradingCountry);
 												}
 											} else {
 												missingParameters.add("billingAccount.country");
-												throw new MissingParameterException(
-														getMissingParametersExceptionMessage());
+												throw new MissingParameterException(getMissingParametersExceptionMessage());
 											}
 
 											if (!StringUtils.isBlank(billingAccountDto.getLanguage())) {
-												TradingLanguage tradingLanguage = tradingLanguageService
-														.findByTradingLanguageCode(billingAccountDto.getLanguage(),
-																provider);
+												TradingLanguage tradingLanguage = tradingLanguageService.findByTradingLanguageCode(billingAccountDto.getLanguage(), provider);
 												if (tradingLanguage != null) {
 													billingAccount.setTradingLanguage(tradingLanguage);
 												}
 											} else {
 												missingParameters.add("billingAccount.language");
-												throw new MissingParameterException(
-														getMissingParametersExceptionMessage());
+												throw new MissingParameterException(getMissingParametersExceptionMessage());
 											}
 
 											try {
-												billingAccount.setPaymentMethod(PaymentMethodEnum
-														.valueOf(billingAccountDto.getPaymentMethod()));
+												billingAccount.setPaymentMethod(PaymentMethodEnum.valueOf(billingAccountDto.getPaymentMethod()));
 											} catch (IllegalArgumentException | NullPointerException e) {
 												log.warn("billingAccount.paymentMethod={}", e.getMessage());
 											}
 											try {
-												billingAccount.setPaymentTerm(PaymentTermEnum.valueOf(billingAccountDto
-														.getPaymentTerms()));
+												billingAccount.setPaymentTerm(PaymentTermEnum.valueOf(billingAccountDto.getPaymentTerms()));
 											} catch (IllegalArgumentException | NullPointerException e) {
 												log.warn("billingAccount.paymentTerms={}", e.getMessage());
 											}
@@ -1087,8 +1009,7 @@ public class AccountHierarchyApi extends BaseApi {
 											billingAccount.setNextInvoiceDate(billingAccountDto.getNextInvoiceDate());
 											billingAccount.setSubscriptionDate(billingAccountDto.getSubscriptionDate());
 											billingAccount.setTerminationDate(billingAccount.getTerminationDate());
-											billingAccount.setElectronicBilling(billingAccountDto
-													.getElectronicBilling());
+											billingAccount.setElectronicBilling(billingAccountDto.getElectronicBilling());
 											billingAccount.setEmail(billingAccountDto.getEmail());
 
 											billingAccount.setProvider(provider);
@@ -1098,56 +1019,44 @@ public class AccountHierarchyApi extends BaseApi {
 												billingAccountService.update(billingAccount, currentUser);
 											}
 
-											populateNameAndAddress(billingAccount, billingAccountDto,
-													AccountLevelEnum.BA, currentUser);
+											populateNameAndAddress(billingAccount, billingAccountDto, AccountLevelEnum.BA, currentUser);
 
 											// user accounts
 											if (billingAccountDto.getUserAccounts() != null) {
-												for (UserAccountDto userAccountDto : billingAccountDto
-														.getUserAccounts().getUserAccount()) {
+												for (UserAccountDto userAccountDto : billingAccountDto.getUserAccounts().getUserAccount()) {
 													if (StringUtils.isBlank(userAccountDto.getCode())) {
 														log.warn("code is null={}", userAccountDto);
 														continue;
 													}
 													if (StringUtils.isBlank(userAccountDto.getDescription())) {
 														missingParameters.add("userAccountDto.description");
-														throw new MissingParameterException(
-																getMissingParametersExceptionMessage());
+														throw new MissingParameterException(getMissingParametersExceptionMessage());
 													}
 
-													UserAccount userAccount = userAccountService.findByCode(
-															userAccountDto.getCode(), provider);
+													UserAccount userAccount = userAccountService.findByCode(userAccountDto.getCode(), provider);
 													if (userAccount == null) {
 														userAccount = new UserAccount();
 														userAccount.setStatus(AccountStatusEnum.ACTIVE);
 														userAccount.setCode(userAccountDto.getCode());
 													} else {
 														if (userAccountDto.getTerminationDate() != null) {
-															if (StringUtils.isBlank(userAccountDto
-																	.getTerminationReason())) {
+															if (StringUtils.isBlank(userAccountDto.getTerminationReason())) {
 																missingParameters.add("userAccount.terminationReason");
-																throw new MissingParameterException(
-																		getMissingParametersExceptionMessage());
+																throw new MissingParameterException(getMissingParametersExceptionMessage());
 															}
 
-															SubscriptionTerminationReason terminationReason = terminationReasonService
-																	.findByCode(userAccountDto.getTerminationReason(),
-																			provider);
+															SubscriptionTerminationReason terminationReason = terminationReasonService.findByCode(
+																	userAccountDto.getTerminationReason(), provider);
 															if (terminationReason == null) {
-																throw new EntityDoesNotExistsException(
-																		SubscriptionTerminationReason.class,
-																		userAccountDto.getTerminationReason());
+																throw new EntityDoesNotExistsException(SubscriptionTerminationReason.class, userAccountDto.getTerminationReason());
 															}
 
 															try {
-																userAccountService.userAccountTermination(userAccount,
-																		userAccountDto.getTerminationDate(),
-																		terminationReason, currentUser);
+																userAccountService.userAccountTermination(userAccount, userAccountDto.getTerminationDate(), terminationReason,
+																		currentUser);
 																continue;
 															} catch (BusinessException e) {
-																throw new MeveoApiException(
-																		"Failed terminating billingAccount. "
-																				+ e.getMessage());
+																throw new MeveoApiException("Failed terminating billingAccount. " + e.getMessage());
 															}
 														}
 													}
@@ -1155,21 +1064,18 @@ public class AccountHierarchyApi extends BaseApi {
 													userAccount.setBillingAccount(billingAccount);
 
 													try {
-														userAccount.setStatus(AccountStatusEnum.valueOf(userAccountDto
-																.getStatus()));
+														userAccount.setStatus(AccountStatusEnum.valueOf(userAccountDto.getStatus()));
 													} catch (IllegalArgumentException | NullPointerException e) {
 														log.warn("userAccountDto.status={}", e.getMessage());
 													}
 
-													userAccount.setSubscriptionDate(userAccountDto
-															.getSubscriptionDate());
+													userAccount.setSubscriptionDate(userAccountDto.getSubscriptionDate());
 													userAccount.setTerminationDate(userAccountDto.getTerminationDate());
 
 													userAccount.setProvider(provider);
 													if (userAccount.isTransient()) {
 														try {
-															userAccountService.createUserAccount(billingAccount,
-																	userAccount, currentUser);
+															userAccountService.createUserAccount(billingAccount, userAccount, currentUser);
 														} catch (AccountAlreadyExistsException e) {
 															throw new MeveoApiException(e.getMessage());
 														}
@@ -1177,111 +1083,83 @@ public class AccountHierarchyApi extends BaseApi {
 														userAccountService.update(userAccount, currentUser);
 													}
 
-													populateNameAndAddress(userAccount, userAccountDto,
-															AccountLevelEnum.UA, currentUser);
+													populateNameAndAddress(userAccount, userAccountDto, AccountLevelEnum.UA, currentUser);
 
 													// subscriptions
 													if (userAccountDto.getSubscriptions() != null) {
-														for (SubscriptionDto subscriptionDto : userAccountDto
-																.getSubscriptions().getSubscription()) {
+														for (SubscriptionDto subscriptionDto : userAccountDto.getSubscriptions().getSubscription()) {
 															if (StringUtils.isBlank(subscriptionDto.getCode())) {
 																log.warn("code is null={}", subscriptionDto);
 																continue;
 															}
 															if (StringUtils.isBlank(subscriptionDto.getDescription())) {
 																missingParameters.add("subscriptionDto.description");
-																throw new MissingParameterException(
-																		getMissingParametersExceptionMessage());
+																throw new MissingParameterException(getMissingParametersExceptionMessage());
 															}
 
-															Subscription subscription = subscriptionService.findByCode(
-																	subscriptionDto.getCode(), provider);
+															Subscription subscription = subscriptionService.findByCode(subscriptionDto.getCode(), provider);
 															if (subscription == null) {
 																subscription = new Subscription();
 																subscription.setCode(subscriptionDto.getCode());
 															} else {
 																if (subscriptionDto.getTerminationDate() != null) {
-																	if (StringUtils.isBlank(subscriptionDto
-																			.getTerminationReason())) {
-																		missingParameters
-																				.add("subscription.terminationReason");
-																		throw new MissingParameterException(
-																				getMissingParametersExceptionMessage());
+																	if (StringUtils.isBlank(subscriptionDto.getTerminationReason())) {
+																		missingParameters.add("subscription.terminationReason");
+																		throw new MissingParameterException(getMissingParametersExceptionMessage());
 																	}
 
-																	SubscriptionTerminationReason subscriptionTerminationReason = terminationReasonService
-																			.findByCode(subscriptionDto
-																					.getTerminationReason(), provider);
+																	SubscriptionTerminationReason subscriptionTerminationReason = terminationReasonService.findByCode(
+																			subscriptionDto.getTerminationReason(), provider);
 
 																	if (subscriptionTerminationReason == null) {
-																		throw new EntityDoesNotExistsException(
-																				SubscriptionTerminationReason.class,
+																		throw new EntityDoesNotExistsException(SubscriptionTerminationReason.class,
 																				subscriptionDto.getTerminationReason());
 																	}
 
 																	try {
-																		subscriptionService.terminateSubscription(
-																				subscription,
-																				subscriptionDto.getTerminationDate(),
-																				subscriptionTerminationReason,
-																				currentUser);
+																		subscriptionService.terminateSubscription(subscription, subscriptionDto.getTerminationDate(),
+																				subscriptionTerminationReason, currentUser);
 																	} catch (BusinessException e) {
-																		log.error("Error terminating subscription with code="
-																				+ subscriptionDto.getCode());
-																		throw new MeveoApiException(
-																				"Error terminating subscription with code="
-																						+ subscriptionDto.getCode());
+																		log.error("Error terminating subscription with code=" + subscriptionDto.getCode());
+																		throw new MeveoApiException("Error terminating subscription with code=" + subscriptionDto.getCode());
 																	}
 
 																	continue;
 																}
 															}
 
-															if (!StringUtils
-																	.isBlank(subscriptionDto.getOfferTemplate())) {
-																OfferTemplate offerTemplate = offerTemplateService
-																		.findByCode(subscriptionDto.getOfferTemplate(),
-																				provider);
+															if (!StringUtils.isBlank(subscriptionDto.getOfferTemplate())) {
+																OfferTemplate offerTemplate = offerTemplateService.findByCode(subscriptionDto.getOfferTemplate(), provider);
 																if (offerTemplate == null) {
-																	throw new EntityDoesNotExistsException(
-																			OfferTemplate.class,
-																			subscriptionDto.getOfferTemplate());
+																	throw new EntityDoesNotExistsException(OfferTemplate.class, subscriptionDto.getOfferTemplate());
 																}
 
 																subscription.setOffer(offerTemplate);
 															} else {
-																throw new MeveoApiException(
-																		"Subscription.offerTemplate cannot be null.");
+																throw new MeveoApiException("Subscription.offerTemplate cannot be null.");
 															}
 
 															subscription.setUserAccount(userAccount);
-															subscription.setDescription(subscriptionDto
-																	.getDescription());
-															subscription.setSubscriptionDate(subscriptionDto
-																	.getSubscriptionDate());
-															subscription.setTerminationDate(subscriptionDto
-																	.getTerminationDate());
+															subscription.setDescription(subscriptionDto.getDescription());
+															subscription.setSubscriptionDate(subscriptionDto.getSubscriptionDate());
+															subscription.setTerminationDate(subscriptionDto.getTerminationDate());
 
 															subscription.setProvider(provider);
 															if (subscription.isTransient()) {
-																subscriptionService.create(subscription, currentUser,
-																		provider);
+																subscriptionService.create(subscription, currentUser, provider);
 															} else {
 																subscriptionService.update(subscription, currentUser);
 															}
 
 															// accesses
 															if (subscriptionDto.getAccesses() != null) {
-																for (AccessDto accessDto : subscriptionDto
-																		.getAccesses().getAccess()) {
+																for (AccessDto accessDto : subscriptionDto.getAccesses().getAccess()) {
 																	if (StringUtils.isBlank(accessDto.getCode())) {
 																		log.warn("code is null={}", accessDto);
 																		continue;
 																	}
 
-																	Access access = accessService
-																			.findByUserIdAndSubscription(
-																					accessDto.getCode(), subscription);
+																	Access access = accessService.findByUserIdAndSubscription(accessDto.getCode(), subscription);
 																	if (access == null) {
 																		access = new Access();
 																		access.setAccessUserId(accessDto.getCode());
@@ -1293,8 +1171,7 @@ public class AccountHierarchyApi extends BaseApi {
 
 																	access.setProvider(provider);
 																	if (access.isTransient()) {
-																		accessService.create(access, currentUser,
-																				provider);
+																		accessService.create(access, currentUser, provider);
 																	} else {
 																		accessService.update(access, currentUser);
 																	}
@@ -1303,152 +1180,114 @@ public class AccountHierarchyApi extends BaseApi {
 
 															// service instances
 															if (subscriptionDto.getServices() != null) {
-																for (ServiceInstanceDto serviceInstanceDto : subscriptionDto
-																		.getServices().getServiceInstance()) {
-																	if (StringUtils.isBlank(serviceInstanceDto
-																			.getCode())) {
+																for (ServiceInstanceDto serviceInstanceDto : subscriptionDto.getServices().getServiceInstance()) {
+																	if (StringUtils.isBlank(serviceInstanceDto.getCode())) {
 																		log.warn("code is null={}", serviceInstanceDto);
 																		continue;
 																	}
 
 																	if (serviceInstanceDto.getTerminationDate() != null) {
 																		// terminate
-																		ServiceInstance serviceInstance = serviceInstanceService
-																				.findByCodeAndSubscription(
-																						serviceInstanceDto.getCode(),
-																						subscription);
+																		ServiceInstance serviceInstance = serviceInstanceService.findByCodeAndSubscription(
+																				serviceInstanceDto.getCode(), subscription);
 																		if (serviceInstance == null) {
-																			throw new EntityDoesNotExistsException(
-																					ServiceInstance.class,
-																					serviceInstanceDto.getCode());
+																			throw new EntityDoesNotExistsException(ServiceInstance.class, serviceInstanceDto.getCode());
 																		}
 
 																		if (serviceInstance.getStatus() == InstanceStatusEnum.TERMINATED) {
-																			log.info(
-																					"serviceInstance with code={} is already TERMINATED",
-																					serviceInstance.getCode());
+																			log.info("serviceInstance with code={} is already TERMINATED", serviceInstance.getCode());
 																			continue;
 																		}
 
-																		if (!StringUtils.isBlank(serviceInstanceDto
-																				.getTerminationReason())) {
-																			SubscriptionTerminationReason serviceTerminationReason = terminationReasonService
-																					.findByCode(serviceInstanceDto
-																							.getTerminationReason(),
-																							provider);
+																		if (!StringUtils.isBlank(serviceInstanceDto.getTerminationReason())) {
+																			SubscriptionTerminationReason serviceTerminationReason = terminationReasonService.findByCode(
+																					serviceInstanceDto.getTerminationReason(), provider);
 																			if (serviceTerminationReason == null) {
-																				throw new EntityDoesNotExistsException(
-																						SubscriptionTerminationReason.class,
-																						serviceInstanceDto
-																								.getTerminationReason());
+																				throw new EntityDoesNotExistsException(SubscriptionTerminationReason.class,
+																						serviceInstanceDto.getTerminationReason());
 																			}
 
 																			try {
-																				serviceInstanceService
-																						.terminateService(
-																								serviceInstance,
-																								serviceInstanceDto
-																										.getTerminationDate(),
-																								serviceTerminationReason,
-																								currentUser);
+																				serviceInstanceService.terminateService(serviceInstance, serviceInstanceDto.getTerminationDate(),
+																						serviceTerminationReason, currentUser);
 																			} catch (BusinessException e) {
-																				log.error("service termination={}",
-																						e.getMessage());
-																				throw new MeveoApiException(
-																						e.getMessage());
+																				log.error("service termination={}", e.getMessage());
+																				throw new MeveoApiException(e.getMessage());
 																			}
 																		} else {
-																			missingParameters
-																					.add("serviceInstance.terminationReason");
-																			throw new MissingParameterException(
-																					getMissingParametersExceptionMessage());
+																			missingParameters.add("serviceInstance.terminationReason");
+																			throw new MissingParameterException(getMissingParametersExceptionMessage());
 																		}
 																	} else {
 																		if (subscription.getStatus() == SubscriptionStatusEnum.RESILIATED) {
-																			throw new MeveoApiException(
-																					"Failed activating a service. Subscription is already RESILIATED.");
+																			throw new MeveoApiException("Failed activating a service. Subscription is already RESILIATED.");
 																		}
 
 																		// check
 																		// if
 																		// already
 																		// exists
-																		ServiceInstance serviceInstance = serviceInstanceService
-																				.findByCodeAndSubscription(
-																						serviceInstanceDto.getCode(),
-																						subscription);
+																		ServiceInstance serviceInstance = serviceInstanceService.findByCodeAndSubscription(
+																				serviceInstanceDto.getCode(), subscription);
 																		if (serviceInstance != null) {
 																			// update
-																			log.debug(
-																					"update service instance with code={}",
-																					serviceInstanceDto.getCode());
-																			serviceInstance
-																					.setSubscriptionDate(serviceInstanceDto
-																							.getSubscriptionDate());
-																			serviceInstance
-																					.setQuantity(serviceInstanceDto
-																							.getQuantity() == null ? BigDecimal.ONE
-																							: serviceInstanceDto
-																									.getQuantity());
+																			log.debug("update service instance with code={}", serviceInstanceDto.getCode());
+																			serviceInstance.setSubscriptionDate(serviceInstanceDto.getSubscriptionDate());
+																			serviceInstance.setQuantity(serviceInstanceDto.getQuantity() == null ? BigDecimal.ONE
+																					: serviceInstanceDto.getQuantity());
+																			serviceInstance.setDescription(serviceInstanceDto.getDescription());
+
+																			// check
+																			// if
+																			// status=INACTIVE
+																			if (serviceInstance.getStatus() != InstanceStatusEnum.INACTIVE
+																					&& serviceInstanceDto.getSubscriptionDate() == null) {
+																				log.error("serviceInstance with code={} must be INACTIVE", serviceInstance.getCode());
+																				throw new MeveoApiException("ServiceInstance with code=" + serviceInstance.getCode()
+																						+ " must be INACTIVE.");
+																			} else {
+																				// activate
+																				try {
+																					serviceInstanceService.serviceActivation(serviceInstance, null, null, currentUser);
+																				} catch (BusinessException e) {
+																					throw new MeveoApiException(e.getMessage());
+																				}
+																			}
 																		} else {
-																			ServiceTemplate serviceTemplate = serviceTemplateService
-																					.findByCode(serviceInstanceDto
-																							.getCode(), provider);
+																			ServiceTemplate serviceTemplate = serviceTemplateService.findByCode(serviceInstanceDto.getCode(),
+																					provider);
 																			if (serviceTemplate == null) {
-																				throw new EntityDoesNotExistsException(
-																						ServiceTemplate.class,
-																						serviceInstanceDto.getCode());
+																				throw new EntityDoesNotExistsException(ServiceTemplate.class, serviceInstanceDto.getCode());
 																			}
 
 																			// instantiate
-																			log.debug(
-																					"instanciateService id={} checked, quantity={}",
-																					serviceTemplate.getId(), 1);
+																			log.debug("instanciateService id={} checked, quantity={}", serviceTemplate.getId(), 1);
 
 																			serviceInstance = new ServiceInstance();
-																			serviceInstance.setProvider(serviceTemplate
-																					.getProvider());
-																			serviceInstance.setCode(serviceTemplate
-																					.getCode());
-																			serviceInstance
-																					.setDescription(serviceTemplate
-																							.getDescription());
-																			serviceInstance
-																					.setServiceTemplate(serviceTemplate);
-																			serviceInstance
-																					.setSubscription(subscription);
-																			serviceInstance
-																					.setSubscriptionDate(serviceInstanceDto
-																							.getSubscriptionDate());
-																			serviceInstance
-																					.setQuantity(serviceInstanceDto
-																							.getQuantity() == null ? BigDecimal.ONE
-																							: serviceInstanceDto
-																									.getQuantity());
+																			serviceInstance.setProvider(serviceTemplate.getProvider());
+																			serviceInstance.setCode(serviceTemplate.getCode());
+																			serviceInstance.setDescription(serviceTemplate.getDescription());
+																			serviceInstance.setServiceTemplate(serviceTemplate);
+																			serviceInstance.setSubscription(subscription);
+																			serviceInstance.setSubscriptionDate(serviceInstanceDto.getSubscriptionDate());
+																			serviceInstance.setQuantity(serviceInstanceDto.getQuantity() == null ? BigDecimal.ONE
+																					: serviceInstanceDto.getQuantity());
 																			try {
-																				serviceInstanceService
-																						.serviceInstanciation(
-																								serviceInstance,
-																								currentUser);
+																				serviceInstanceService.serviceInstanciation(serviceInstance, currentUser);
 																			} catch (BusinessException e) {
-																				throw new MeveoApiException(
-																						e.getMessage());
+																				throw new MeveoApiException(e.getMessage());
 																			}
 
 																			// instantiate
-																			log.debug(
-																					"activateService id={} checked, quantity={}",
-																					serviceTemplate.getId(), 1);
+																			log.debug("activateService id={} checked, quantity={}", serviceTemplate.getId(), 1);
 
-																			// activate
-																			try {
-																				serviceInstanceService
-																						.serviceActivation(
-																								serviceInstance, null,
-																								null, currentUser);
-																			} catch (BusinessException e) {
-																				throw new MeveoApiException(
-																						e.getMessage());
+																			if (serviceInstanceDto.getSubscriptionDate() != null) {
+																				// activate
+																				try {
+																					serviceInstanceService.serviceActivation(serviceInstance, null, null, currentUser);
+																				} catch (BusinessException e) {
+																					throw new MeveoApiException(e.getMessage());
+																				}
 																			}
 																		}
 																	}
@@ -1477,8 +1316,7 @@ public class AccountHierarchyApi extends BaseApi {
 		}
 	}
 
-	private void populateNameAndAddress(AccountEntity accountEntity, AccountDto accountDto,
-			AccountLevelEnum accountLevel, User currentUser) {
+	private void populateNameAndAddress(AccountEntity accountEntity, AccountDto accountDto, AccountLevelEnum accountLevel, User currentUser) {
 
 		accountEntity.setDescription(accountDto.getDescription());
 		accountEntity.setExternalRef1(accountDto.getExternalRef1());
@@ -1508,15 +1346,13 @@ public class AccountHierarchyApi extends BaseApi {
 		if (accountDto.getCustomFields() != null) {
 			for (CustomFieldDto cf : accountDto.getCustomFields().getCustomField()) {
 				// check if custom field exists has a template
-				List<CustomFieldTemplate> customFieldTemplates = customFieldTemplateService
-						.findByAccountLevel(accountLevel);
+				List<CustomFieldTemplate> customFieldTemplates = customFieldTemplateService.findByAccountLevel(accountLevel);
 				boolean found = false;
 				if (customFieldTemplates != null && customFieldTemplates.size() > 0) {
 					for (CustomFieldTemplate cft : customFieldTemplates) {
 						if (cf.getCode().equals(cft.getCode())) {
 							found = true;
-							CustomFieldInstance cfi = customFieldInstanceService.findByCodeAndAccount(cf.getCode(),
-									accountEntity,currentUser.getProvider());
+							CustomFieldInstance cfi = customFieldInstanceService.findByCodeAndAccount(cf.getCode(), accountEntity, currentUser.getProvider());
 							if (cfi != null) {
 								// update
 								cfi.setActive(true);
