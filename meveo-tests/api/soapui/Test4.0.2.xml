@@ -1243,24 +1243,24 @@
       <wsdl:output message="ns1:removePricePlanResponse" name="removePricePlanResponse"></wsdl:output>
     </wsdl:operation>
   </wsdl:portType>
-</wsdl:definitions>]]></con:content><con:type>http://schemas.xmlsoap.org/wsdl/</con:type></con:part></con:definitionCache><con:endpoints><con:endpoint>http://localhost:8080/meveo/CatalogWs</con:endpoint></con:endpoints><con:operation isOneWay="false" action="" name="createCounterTemplate" bindingOperationName="createCounterTemplate" type="Request-Response" outputName="createCounterTemplateResponse" inputName="createCounterTemplate" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/meveo/CatalogWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+</wsdl:definitions>]]></con:content><con:type>http://schemas.xmlsoap.org/wsdl/</con:type></con:part></con:definitionCache><con:endpoints><con:endpoint>http://localhost:8080/meveo/CatalogWs</con:endpoint></con:endpoints><con:operation isOneWay="false" action="" name="createCounterTemplate" bindingOperationName="createCounterTemplate" type="Request-Response" outputName="createCounterTemplateResponse" inputName="createCounterTemplate" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/CatalogWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createCounterTemplate>
          <!--Optional:-->
-         <counterTemplate code="?" description="?">
+          <counterTemplate code="CT1" description="CT1" calendar="MONTHLY">
             <!--Optional:-->
-            <unity>?</unity>
-            <type>?</type>
+            <unity>Quantity</unity>
+            <type>USAGE</type>
             <!--Optional:-->
-            <level>?</level>
-            <disabled>?</disabled>
+            <ceiling>1</ceiling>
+            <disabled>false</disabled>
             <!--Optional:-->
-            <calendar>?</calendar>
+            <counterLevel>BA</counterLevel>
          </counterTemplate>
       </ws:createCounterTemplate>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/CatalogWs/createCounterTemplate"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation isOneWay="false" action="" name="createOfferTemplate" bindingOperationName="createOfferTemplate" type="Request-Response" outputName="createOfferTemplateResponse" inputName="createOfferTemplate" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/meveo/CatalogWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+</soapenv:Envelope>]]></con:request><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>No Authorization</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/CatalogWs/createCounterTemplate"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation isOneWay="false" action="" name="createOfferTemplate" bindingOperationName="createOfferTemplate" type="Request-Response" outputName="createOfferTemplateResponse" inputName="createOfferTemplate" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/meveo/CatalogWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createOfferTemplate>
@@ -1669,24 +1669,24 @@
          <usageChargeTemplateCode>?</usageChargeTemplateCode>
       </ws:removeUsageChargeTemplate>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/CatalogWs/removeUsageChargeTemplate"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation isOneWay="false" action="" name="updateCounterTemplate" bindingOperationName="updateCounterTemplate" type="Request-Response" outputName="updateCounterTemplateResponse" inputName="updateCounterTemplate" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/meveo/CatalogWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/CatalogWs/removeUsageChargeTemplate"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation isOneWay="false" action="" name="updateCounterTemplate" bindingOperationName="updateCounterTemplate" type="Request-Response" outputName="updateCounterTemplateResponse" inputName="updateCounterTemplate" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/CatalogWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
       <ws:updateCounterTemplate>
          <!--Optional:-->
-         <counterTemplate code="?" description="?">
+          <counterTemplate code="CT1" description="CT1" calendar="MONTHLY">
             <!--Optional:-->
-            <unity>?</unity>
-            <type>?</type>
+            <unity>Quantity</unity>
+            <type>USAGE</type>
             <!--Optional:-->
-            <level>?</level>
-            <disabled>?</disabled>
+            <ceiling>13</ceiling>
+            <disabled>false</disabled>
             <!--Optional:-->
-            <calendar>?</calendar>
+            <counterLevel>UA</counterLevel>
          </counterTemplate>
       </ws:updateCounterTemplate>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/CatalogWs/updateCounterTemplate"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation isOneWay="false" action="" name="updateOfferTemplate" bindingOperationName="updateOfferTemplate" type="Request-Response" outputName="updateOfferTemplateResponse" inputName="updateOfferTemplate" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/meveo/CatalogWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+</soapenv:Envelope>]]></con:request><con:credentials><con:username/><con:password/><con:selectedAuthProfile>No Authorization</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:preemptive>false</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/CatalogWs/updateCounterTemplate"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation isOneWay="false" action="" name="updateOfferTemplate" bindingOperationName="updateOfferTemplate" type="Request-Response" outputName="updateOfferTemplateResponse" inputName="updateOfferTemplate" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/meveo/CatalogWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
       <ws:updateOfferTemplate>
@@ -19015,21 +19015,20 @@
          </invoiceSubCategory>
       </ws:createInvoiceSubCategory>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/createInvoiceSubCategory"/></con:call></con:operation><con:operation isOneWay="false" action="" name="createInvoiceSubCategoryCountry" bindingOperationName="createInvoiceSubCategoryCountry" type="Request-Response" outputName="createInvoiceSubCategoryCountryResponse" inputName="createInvoiceSubCategoryCountry" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/createInvoiceSubCategory"/></con:call></con:operation><con:operation isOneWay="false" action="" name="createInvoiceSubCategoryCountry" bindingOperationName="createInvoiceSubCategoryCountry" type="Request-Response" outputName="createInvoiceSubCategoryCountryResponse" inputName="createInvoiceSubCategoryCountry" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
-      <ws:createInvoiceSubCategoryCountry>
+        <ws:createInvoiceSubCategoryCountry>
          <!--Optional:-->
          <invoiceSubCategoryCountry>
-            <invoiceSubCategory>?</invoiceSubCategory>
-            <country>?</country>
-            <tax>?</tax>
+            <invoiceSubCategory>CMP_DATA</invoiceSubCategory>
+            <country>FR</country>
+            <tax>TAX_00</tax>
             <!--Optional:-->
-            <discountCode>?</discountCode>
          </invoiceSubCategoryCountry>
       </ws:createInvoiceSubCategoryCountry>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/createInvoiceSubCategoryCountry"/></con:call></con:operation><con:operation isOneWay="false" action="" name="createLanguage" bindingOperationName="createLanguage" type="Request-Response" outputName="createLanguageResponse" inputName="createLanguage" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/createInvoiceSubCategoryCountry"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation isOneWay="false" action="" name="createLanguage" bindingOperationName="createLanguage" type="Request-Response" outputName="createLanguageResponse" inputName="createLanguage" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createLanguage>
@@ -20990,21 +20989,20 @@
          </invoiceSubCategory>
       </ws:updateInvoiceSubCategory>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/updateInvoiceSubCategory"/></con:call></con:operation><con:operation isOneWay="false" action="" name="updateInvoiceSubCategoryCountry" bindingOperationName="updateInvoiceSubCategoryCountry" type="Request-Response" outputName="updateInvoiceSubCategoryCountryResponse" inputName="updateInvoiceSubCategoryCountry" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/updateInvoiceSubCategory"/></con:call></con:operation><con:operation isOneWay="false" action="" name="updateInvoiceSubCategoryCountry" bindingOperationName="updateInvoiceSubCategoryCountry" type="Request-Response" outputName="updateInvoiceSubCategoryCountryResponse" inputName="updateInvoiceSubCategoryCountry" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
       <ws:updateInvoiceSubCategoryCountry>
          <!--Optional:-->
          <invoiceSubCategoryCountry>
-            <invoiceSubCategory>?</invoiceSubCategory>
-            <country>?</country>
-            <tax>?</tax>
+            <invoiceSubCategory>CMP_DATA</invoiceSubCategory>
+            <country>US</country>
+            <tax>TAX_00</tax>
             <!--Optional:-->
-            <discountCode>?</discountCode>
          </invoiceSubCategoryCountry>
       </ws:updateInvoiceSubCategoryCountry>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/updateInvoiceSubCategoryCountry"/></con:call></con:operation><con:operation isOneWay="false" action="" name="updateLanguage" bindingOperationName="updateLanguage" type="Request-Response" outputName="updateLanguageResponse" inputName="updateLanguage" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/updateInvoiceSubCategoryCountry"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation isOneWay="false" action="" name="updateLanguage" bindingOperationName="updateLanguage" type="Request-Response" outputName="updateLanguageResponse" inputName="updateLanguage" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
       <ws:updateLanguage>
@@ -22835,16 +22833,16 @@ we check that the recurring charge is correctly applied with prorata and quantit
          </usageChargeTemplate>
       </ws:createUsageChargeTemplate>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response"/><con:assertion type="Simple Contains" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:selectedAuthProfile>No Authorization</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Create  voice counter"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>CatalogWsSoapBinding</con:interface><con:operation>createUsageChargeTemplate</con:operation><con:request name="Create  voice counter"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/CatalogWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response"/><con:assertion type="Simple Contains" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:selectedAuthProfile>No Authorization</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Create  voice counter"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>CatalogWsSoapBinding</con:interface><con:operation>createUsageChargeTemplate</con:operation><con:request name="Create  voice counter"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createCounterTemplate>
-         <counterTemplate code="SEB_VOICE_60" description="60min voice">
+         <counterTemplate code="SEB_VOICE_60" description="60min voice" calendar="MONTHLY">
             <unity>min</unity>
-            <type>1</type>
-            <level>60</level>
+            <type>USAGE</type>
+            <ceiling>60</ceiling>
             <disabled>false</disabled>
-            <calendar>MONTHLY</calendar>
+            <counterLevel>BA</counterLevel>
          </counterTemplate>
       </ws:createCounterTemplate>
    </soapenv:Body>
@@ -23389,7 +23387,7 @@ for( testCase in testSuite.getTestCaseList() ) {
          </calendar>\r
       </ws:createCalendar>\r
    </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="09e96101-b49a-49eb-9179-92e6637febc7"/><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Create Calendar &quot;Billing&quot;"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>createCalendar</con:operation><con:request name="Create Calendar &quot;Billing&quot;" id="54a31362-b6ae-4491-a16f-7e4ea570a831"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="09e96101-b49a-49eb-9179-92e6637febc7"/><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Create Calendar &quot;Billing&quot;"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>createCalendar</con:operation><con:request name="Create Calendar &quot;Billing&quot;" id="54a31362-b6ae-4491-a16f-7e4ea570a831"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <ws:createCalendar>\r
@@ -23455,9 +23453,7 @@ for( testCase in testSuite.getTestCaseList() ) {
          <invoiceSubCategoryCountry>\r
             <invoiceSubCategory>DOCA_PLIS_OFFERTS</invoiceSubCategory>\r
             <country>FR</country>\r
-            <tax>TVA_20</tax>\r
-            <!--Optional:-->\r
-            <discountCode>?</discountCode>\r
+            <tax>TVA_20</tax>
          </invoiceSubCategoryCountry>\r
       </ws:createInvoiceSubCategoryCountry>\r
    </soapenv:Body>\r
@@ -23486,9 +23482,7 @@ for( testCase in testSuite.getTestCaseList() ) {
          <invoiceSubCategoryCountry>\r
             <invoiceSubCategory>DOCA_PLIS_NON_OFFERTS</invoiceSubCategory>\r
             <country>FR</country>\r
-            <tax>TVA_20</tax>\r
-            <!--Optional:-->\r
-            <discountCode>?</discountCode>\r
+            <tax>TVA_20</tax>
          </invoiceSubCategoryCountry>\r
       </ws:createInvoiceSubCategoryCountry>\r
    </soapenv:Body>\r
@@ -23542,8 +23536,7 @@ for( testCase in testSuite.getTestCaseList() ) {
             <invoiceSubCategory>DOCA_VISITES_FORFAIT</invoiceSubCategory>\r
             <country>FR</country>\r
             <tax>TVA_20</tax>\r
-            <!--Optional:-->\r
-            <discountCode>?</discountCode>\r
+            <!--Optional:-->
          </invoiceSubCategoryCountry>\r
       </ws:createInvoiceSubCategoryCountry>\r
    </soapenv:Body>\r
@@ -23573,8 +23566,7 @@ for( testCase in testSuite.getTestCaseList() ) {
             <invoiceSubCategory>DOCA_VISITES</invoiceSubCategory>\r
             <country>FR</country>\r
             <tax>TVA_20</tax>\r
-            <!--Optional:-->\r
-            <discountCode>?</discountCode>\r
+            <!--Optional:-->
          </invoiceSubCategoryCountry>\r
       </ws:createInvoiceSubCategoryCountry>\r
    </soapenv:Body>\r
@@ -23643,13 +23635,13 @@ for( testCase in testSuite.getTestCaseList() ) {
    <soapenv:Body>\r
       <ws:createCounterTemplate>\r
          <!--Optional:-->\r
-         <counterTemplate code="DOCA_PLIS_OFFERTS" description="Compteur des plis offerts">\r
+         <counterTemplate code="DOCA_PLIS_OFFERTS" description="Compteur des plis offerts" calendar="BIG">\r
             <!--Optional:-->\r
             <unity>qty</unity>\r
-            <type>1</type>
-            <calendar>BIG</calendar>\r
+            <type>USAGE</type>
             <disabled>false</disabled>
-            <level>500</level>
+            <ceiling>500</ceiling>
+            <counterLevel>BA</counterLevel>
          </counterTemplate>\r
       </ws:createCounterTemplate>\r
    </soapenv:Body>\r
@@ -23960,13 +23952,13 @@ for( testCase in testSuite.getTestCaseList() ) {
    <soapenv:Body>\r
       <ws:createCounterTemplate>\r
          <!--Optional:-->\r
-         <counterTemplate code="DOCA_VISITES_FORFAIT" description="Compteur des visites dans le forfait">\r
+         <counterTemplate code="DOCA_VISITES_FORFAIT" description="Compteur des visites dans le forfait" calendar="BILLING">\r
             <!--Optional:-->\r
             <unity>qty</unity>\r
-            <type>1</type>
-            <calendar>BILLING</calendar>\r
+            <type>USAGE</type>
             <disabled>false</disabled>
-            <level>15</level>
+            <ceiling>15</ceiling>
+            <counterLevel>BA</counterLevel>
          </counterTemplate>\r
       </ws:createCounterTemplate>\r
    </soapenv:Body>\r
