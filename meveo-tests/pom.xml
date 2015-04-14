@@ -13,7 +13,6 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
-
 	<repositories>
 		<repository>
 			<id>smartbear-plugin-repository</id>
@@ -35,10 +34,11 @@
 	  <version>5.0.0</version>
 	  <configuration>
 	    <projectFile>${basedir}/api/soapui/Jax-Ws.xml</projectFile>
-	    <outputFolder>/var/www/html/tests_reports/</outputFolder>
+	    <outputFolder>${basedir}/target/surefire-reports/</outputFolder>
 	    <junitReport>true</junitReport>
 	    <exportwAll>true</exportwAll>
 	    <printReport>true</printReport>
+            <testFailIgnore>false</testFailIgnore>
 	  </configuration>
 	  <executions>
 	    <execution>
@@ -52,28 +52,18 @@
 	  </plugin>
 	</plugins>
 	</build>
-
-
-  <dependencies>
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>4.9</version>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
-        <groupId>org.seleniumhq.selenium</groupId>
-        <artifactId>selenium-java</artifactId>
-    </dependency>
-  </dependencies>
-  <dependencyManagement>
-      <dependencies>
-          <dependency>
-              <groupId>org.seleniumhq.selenium</groupId>
-              <artifactId>selenium-java</artifactId>
-              <version>2.32.0</version>
-          </dependency>
-      </dependencies>
-  </dependencyManagement>
+<reporting>
+  <plugins>
+    <plugin>
+      <groupId>org.apache.maven.plugins</groupId>
+      <artifactId>maven-surefire-report-plugin</artifactId>
+	<configuration>
+	<outputDirectory>/var/www/html/tests_reports/</outputDirectory>
+	<reportsDirectories>
+	<reportsDirectories>${basedir}/target/surefire-reports/</reportsDirectories>
+	</reportsDirectories>
+	</configuration>
+    </plugin>
+  </plugins>
+</reporting>
 </project>
