@@ -17,6 +17,7 @@
 package org.meveo.commons.utils;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -95,10 +96,10 @@ public class ReflectionUtils {
 
         TreeSet<String> classes = new TreeSet<String>();
 
-        if (path.startsWith("file:") && path.contains("!")) {
-            String[] split = path.split("!");
-            URL jar = new URL(split[0]);
-            ZipInputStream zip = new ZipInputStream(jar.openStream());
+        // if (path.startsWith("file:") && path.contains("!")) {
+        if (path.contains(".jar")) {
+            String jarFile = path.substring(0, path.indexOf(".jar") + 4);
+            ZipInputStream zip = new ZipInputStream(new FileInputStream(jarFile));
             ZipEntry entry;
             while ((entry = zip.getNextEntry()) != null) {
                 if (entry.getName().endsWith(".class")) {
@@ -108,21 +109,26 @@ public class ReflectionUtils {
                     }
                 }
             }
-        }
+            zip.close();
 
-        File dir = new File(path);
-        if (!dir.exists()) {
-            return classes;
-        }
-        File[] files = dir.listFiles();
-        for (File file : files) {
-            if (file.isDirectory()) {
-                assert !file.getName().contains(".");
-                classes.addAll(findClasses(file.getAbsolutePath(), packageName + "." + file.getName()));
-            } else if (file.getName().endsWith(".class")) {
-                String className = packageName + '.' + file.getName().substring(0, file.getName().length() - 6);
+        } else {
 
-                classes.add(className);
+            File dir = new File(path);
+            if (!dir.exists()) {
+                return classes;
+            }
+            File[] files = dir.listFiles();
+            if (files != null) {
+                for (File file : files) {
+                    if (file.isDirectory()) {
+                        assert !file.getName().contains(".");
+                        classes.addAll(findClasses(file.getAbsolutePath(), packageName + "." + file.getName()));
+                    } else if (file.getName().endsWith(".class")) {
+                        String className = packageName + '.' + file.getName().substring(0, file.getName().length() - 6);
+
+                        classes.add(className);
+                    }
+                }
             }
         }
         return classes;

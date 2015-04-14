@@ -35,7 +35,6 @@ import javax.persistence.MapKeyColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.Size;
 
 import org.meveo.model.billing.BillingAccount;
@@ -49,8 +48,7 @@ import org.meveo.model.shared.Name;
 
 @Entity
 @ObservableEntity
-@ExportIdentifier({ "code", "provider" })
-@Table(name = "ACCOUNT_ENTITY", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE", "PROVIDER_ID" }))
+@Table(name = "ACCOUNT_ENTITY")
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "ACCOUNT_ENTITY_SEQ")
 @Inheritance(strategy = InheritanceType.JOINED)
 @EntityListeners({ AccountCodeGenerationListener.class })

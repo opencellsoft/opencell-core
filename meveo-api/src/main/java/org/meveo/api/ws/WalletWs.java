@@ -7,9 +7,11 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 
 import org.meveo.api.dto.ActionStatus;
+import org.meveo.api.dto.billing.FindWalletOperationsDto;
 import org.meveo.api.dto.billing.WalletBalanceDto;
 import org.meveo.api.dto.billing.WalletOperationDto;
 import org.meveo.api.dto.billing.WalletReservationDto;
+import org.meveo.api.dto.response.billing.FindWalletOperationsResponseDto;
 
 /**
  * @author Edward P. Legaspi
@@ -41,5 +43,8 @@ public interface WalletWs extends IBaseWs {
 
 	@WebMethod
 	ActionStatus createOperation(@WebParam(name = "walletOperation") WalletOperationDto postData);
+
+	@WebMethod
+	FindWalletOperationsResponseDto findOperations(@WebParam(name = "findWalletOperations") FindWalletOperationsDto postData);
 
 }

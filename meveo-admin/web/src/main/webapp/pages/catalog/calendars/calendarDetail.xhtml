@@ -51,15 +51,18 @@
                     <p:commandButton icon="ui-icon-plus" action="#{calendarBean.addTime()}" partialSubmit="true"
                         process=":calendarPanel:formId:date, @this" update=":calendarPanel:formId:date, :calendarPanel:formId:calendarHours"
                         rendered="#{calendarBean.edit}" />
-
-                    <p:dataList id="calendarHours" value="#{calendarBean.entity.hours}" var="hourMin" paginator="false" styleClass="paginated">
+                    <p:dataTable id="calendarHours" value="#{calendarBean.entity.hours}" var="hourMin" paginator="false" styleClass="paginated">
                         <f:facet name="header">#{messages['calendar.time']}</f:facet>
+						<p:column>
                         <h:outputText value="#{hourMin.hourAsString}" style="display:inline-block" />
+						</p:column>
+						<p:column>
                         <p:commandLink styleClass="ui-icon ui-icon-trash" style="float:right;margin-right:10px"
                             action="#{calendarBean.removeTime(hourMin)}" partialSubmit="true" process="@this"
                             update=":calendarPanel:formId:calendarHours" rendered="#{calendarBean.edit}">
                         </p:commandLink>
-                    </p:dataList>
+						</p:column>
+                    </p:dataTable>
                 </p:panelGrid>
             </p:panelGrid>
 
@@ -106,15 +109,19 @@
                             process=":calendarPanel:formId:hourIntervalToAdd, @this"
                             update=":calendarPanel:formId:hourIntervalToAdd, :calendarPanel:formId:intervalHours" rendered="#{calendarBean.edit}" />
 
-                        <p:dataList id="intervalHours" value="#{calendarBean.entity.intervals}" var="interval" paginator="false"
+                         <p:dataTable  id="intervalHours" value="#{calendarBean.entity.intervals}" var="interval" paginator="false"
                             styleClass="paginated">
                             <f:facet name="header">#{messages['calendar.hourIntervals']}</f:facet>
+							<p:column>
                             <h:outputText value="#{interval.intervalAsString}" style="display:inline-block" />
+							</p:column>
+							<p:column>
                             <p:commandLink styleClass="ui-icon ui-icon-trash" style="float:right;margin-right:10px"
                                 action="#{calendarBean.removeInterval(interval)}" partialSubmit="true" process="@this"
                                 update=":calendarPanel:formId:intervalHours" rendered="#{calendarBean.edit}">
                             </p:commandLink>
-                        </p:dataList>
+							</p:column>
+                        </p:dataTable>	
                     </p:panelGrid>
                 </p:panelGrid>
 
@@ -126,14 +133,18 @@
                             process=":calendarPanel:formId:dayIntervalToAdd, @this"
                             update=":calendarPanel:formId:dayIntervalToAdd, :calendarPanel:formId:intervalDays" rendered="#{calendarBean.edit}" />
 
-                        <p:dataList id="intervalDays" value="#{calendarBean.entity.intervals}" var="interval" paginator="false" styleClass="paginated">
+                        <p:dataTable id="intervalDays" value="#{calendarBean.entity.intervals}" var="interval" paginator="false" styleClass="paginated">
                             <f:facet name="header">#{messages['calendar.dayIntervals']}</f:facet>
-                            <h:outputText value="#{interval.intervalAsString}" style="display:inline-block" />
+                            <p:column>
+							<h:outputText value="#{interval.intervalAsString}" style="display:inline-block" />
+							</p:column>
+							<p:column>
                             <p:commandLink styleClass="ui-icon ui-icon-trash" style="float:right;margin-right:10px"
                                 action="#{calendarBean.removeInterval(interval)}" partialSubmit="true" process="@this"
                                 update=":calendarPanel:formId:intervalDays" rendered="#{calendarBean.edit}">
                             </p:commandLink>
-                        </p:dataList>
+							</p:column>
+                        </p:dataTable>
                     </p:panelGrid>
                 </p:panelGrid>
 
@@ -165,17 +176,21 @@
                             update=":calendarPanel:formId:weekdayIntervalFrom, :calendarPanel:formId:weekdayIntervalTo, :calendarPanel:formId:intervalWeekdays"
                             rendered="#{calendarBean.edit}" />
 
-                        <p:dataList id="intervalWeekdays" value="#{calendarBean.entity.intervals}" var="interval" paginator="false"
+                        <p:dataTable id="intervalWeekdays" value="#{calendarBean.entity.intervals}" var="interval" paginator="false"
                             styleClass="paginated">
                             <f:facet name="header">#{messages['calendar.weekdayIntervals']}</f:facet>
-                            <h:outputText
+                            <p:column>
+							<h:outputText
                                 value="#{messages['calendar.weekday.'.concat(interval.intervalBegin)]} - #{messages['calendar.weekday.'.concat(interval.intervalEnd)]}"
                                 style="display:inline-block" />
+							</p:column>	
+							<p:column>
                             <p:commandLink styleClass="ui-icon ui-icon-trash" style="float:right;margin-right:10px"
                                 action="#{calendarBean.removeInterval(interval)}" partialSubmit="true" process="@this"
                                 update=":calendarPanel:formId:intervalWeekdays" rendered="#{calendarBean.edit}">
                             </p:commandLink>
-                        </p:dataList>
+							</p:column>
+                        </p:dataTable>
                     </p:panelGrid>
                 </p:panelGrid>
 
