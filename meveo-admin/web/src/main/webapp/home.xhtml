@@ -41,12 +41,12 @@
 							<!-- chartBackingBean="#{barChartBean}" -->
 						</p:outputPanel>
 						<p:outputLabel value="#{messages['chart.from']}"></p:outputLabel>
-						<p:calendar id="filterFrom" value="#{bar.minDate}">
+						<p:calendar id="filterFrom" value="#{bar.minDate}" pattern="#{paramBean.getProperty('meveo.dateFormat','dd/MM/yyyy')}">
 							<p:ajax event="dateSelect" update="@form"
 								listener="#{barChartBean.setModel(i.index)}" />
 						</p:calendar>
 						<p:outputLabel value="#{messages['chart.to']}"></p:outputLabel>
-						<p:calendar id="filterTo" value="#{bar.maxDate}">
+						<p:calendar id="filterTo" value="#{bar.maxDate}" pattern="#{paramBean.getProperty('meveo.dateFormat','dd/MM/yyyy')}">
 							<p:ajax event="dateSelect" update="@form"
 								listener="#{barChartBean.setModel(i.index)}" />
 						</p:calendar>
@@ -60,12 +60,12 @@
 							<hf:lineChartComponent lineChartEntityModel="#{line}"></hf:lineChartComponent>
 						</p:outputPanel>
 						<p:outputLabel value="#{messages['chart.from']}"></p:outputLabel>
-						<p:calendar id="filterFrom" value="#{line.minDate}">
+						<p:calendar id="filterFrom" value="#{line.minDate}" pattern="#{paramBean.getProperty('meveo.dateFormat','dd/MM/yyyy')}">
 							<p:ajax event="dateSelect" update="@form"
 								listener="#{lineChartBean.setModel(i.index)}" />
 						</p:calendar>
 						<p:outputLabel value="#{messages['chart.to']}"></p:outputLabel>
-						<p:calendar id="filterTo" value="#{line.maxDate}">
+						<p:calendar id="filterTo" value="#{line.maxDate}" pattern="#{paramBean.getProperty('meveo.dateFormat','dd/MM/yyyy')}">
 							<p:ajax event="dateSelect" update="@form"
 								listener="#{lineChartBean.setModel(i.index)}" />
 						</p:calendar>
@@ -79,12 +79,12 @@
 							<hf:pieChartComponent pieChartEntityModel="#{pie}"></hf:pieChartComponent>
 						</p:outputPanel>
 						<p:outputLabel value="#{messages['chart.from']}"></p:outputLabel>
-						<p:calendar id="filterFrom" value="#{pie.minDate}">
+						<p:calendar id="filterFrom" value="#{pie.minDate}" pattern="#{paramBean.getProperty('meveo.dateFormat','dd/MM/yyyy')}">
 							<p:ajax event="dateSelect" update="@form"
 								listener="#{pieChartBean.setModel(i.index)}" />
 						</p:calendar>
 						<p:outputLabel value="#{messages['chart.to']}"></p:outputLabel>
-						<p:calendar id="filterTo" value="#{pie.maxDate}">
+						<p:calendar id="filterTo" value="#{pie.maxDate}" pattern="#{paramBean.getProperty('meveo.dateFormat','dd/MM/yyyy')}">
 							<p:ajax event="dateSelect" update="@form"
 								listener="#{pieChartBean.setModel(i.index)}" />
 						</p:calendar>
