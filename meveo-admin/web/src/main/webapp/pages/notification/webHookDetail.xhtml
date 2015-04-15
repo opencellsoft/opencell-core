@@ -35,7 +35,7 @@
 				required="true" maxLength="60" />
 			<hf:formField
 				label="#{messages['entity.notification.classNameFilter']}"
-				field="classNameFilter" required="true" size="100" maxlength="255" />
+				field="classNameFilter" required="true" size="60" maxlength="255" autocompleteMethod="#{notificationBean.autocompleteClassNames}"/>
 			<hf:formField
 				label="#{messages['entity.notification.eventTypeFilter']}"
 				field="eventTypeFilter" required="true" />

@@ -19,15 +19,22 @@
 	<cc:attribute name="popup" default="false" />
 	<cc:attribute name="popupId" default="popup" />    
     <cc:attribute name="listValues" />
+    <cc:attribute name="autocompleteMethod"  method-signature="java.lang.String action(java.lang.String)" />
 </cc:interface>
 
 <cc:implementation>
 	<ui:fragment rendered="#{cc.isText(cc.attrs.field,cc.attrs.childField, true) and not cc.attrs.popup and not cc.isEntity(cc.attrs.field,true)}">
 		<p:panelGrid columns="2" rendered="#{cc.attrs.listValues == null}">
-			<p:outputLabel for="#{cc.attrs.field}_text" value="#{cc.attrs.label}" />
-			<p:inputText id="#{cc.attrs.field}_text" value="#{cc.filters[cc.attrs.field]}" size="#{cc.attrs.size}" disabled="#{cc.attrs.disabled}" rendered="#{cc.attrs.childField == null}"/>
-            <p:inputText id="#{cc.attrs.field}_#{cc.attrs.childField}_text" value="#{cc.filters[cc.attrs.field.concat('.').concat(cc.attrs.childField)]}" size="#{cc.attrs.size}" disabled="#{cc.attrs.disabled}" rendered="#{cc.attrs.childField != null}"/>
-		</p:panelGrid>
+			<p:outputLabel for="#{cc.attrs.field}_text" value="#{cc.attrs.label}" rendered="#{cc.attrs.childField == null}"/>
+			<p:inputText id="#{cc.attrs.field}_text" value="#{cc.filters[cc.attrs.field]}" size="#{cc.attrs.size}" disabled="#{cc.attrs.disabled}" rendered="#{cc.attrs.childField == null and cc.attrs.autocompleteMethod == null}"/>
+            <p:autoComplete id="#{cc.attrs.field}_text_ac" value="#{cc.filters[cc.attrs.field]}" size="#{cc.attrs.size}" disabled="#{cc.attrs.disabled}" rendered="#{cc.attrs.childField == null and cc.attrs.autocompleteMethod != null}" dropdown="true" completeMethod="#{cc.attrs.autocompleteMethod}"/>
+
+            <p:outputLabel for="#{cc.attrs.field}_#{cc.attrs.childField}_text" value="#{cc.attrs.label}" rendered="#{cc.attrs.childField != null}"/>
+            <p:inputText id="#{cc.attrs.field}_#{cc.attrs.childField}_text" value="#{cc.filters[cc.attrs.field.concat('.').concat(cc.attrs.childField)]}" size="#{cc.attrs.size}" disabled="#{cc.attrs.disabled}" rendered="#{cc.attrs.childField != null and cc.attrs.autocompleteMethod == null}"/>
+            <p:autoComplete id="#{cc.attrs.field}_#{cc.attrs.childField}_text_ac" value="#{cc.filters[cc.attrs.field.concat('.').concat(cc.attrs.childField)]}" size="#{cc.attrs.size}" disabled="#{cc.attrs.disabled}" rendered="#{cc.attrs.childField != null and cc.attrs.autocompleteMethod != null}" dropdown="true" completeMethod="#{cc.attrs.autocompleteMethod}"/>
+
+
+        </p:panelGrid>
         
         <p:panelGrid columns="2"  rendered="#{cc.attrs.listValues != null}">
             <p:outputLabel for="#{cc.attrs.field}_pick" value="#{cc.attrs.label}" />

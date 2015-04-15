@@ -25,7 +25,7 @@
 
 			<hf:searchPanel label="#{messages['menu.notifications']}" columns="3" backingBean="#{notificationListBean}">
 				<hf:searchField label="#{messages['entity.code']}" field="code" />
-				<hf:searchField label="#{messages['entity.notification.classNameFilter']}" field="classNameFilter" />
+				<hf:searchField label="#{messages['entity.notification.classNameFilter']}" field="classNameFilter" size="50" autocompleteMethod="#{notificationBean.autocompleteClassNames}"/>
 				<hf:searchField label="#{messages['entity.notification.eventTypeFilter']}" field="eventTypeFilter" />
 			</hf:searchPanel>
 
@@ -53,7 +53,7 @@
 						<f:param name="cid" value="#{javax.enterprise.context.conversation.id}" />
 					</p:button>
 			
-					<p:button id="#{resultsId}editlink" outcome="notificationDetail"
+					<p:button id="#{resultsId}editlink" outcome="#{entity.class.simpleName.substring(0,1).toLowerCase()}#{entity.class.simpleName.substring(1)}Detail"
 						icon="ui-icon-document">
 						<f:param name="objectId" value="#{entity.id}" />
 						<f:param name="edit" value="true" />
