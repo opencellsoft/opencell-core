@@ -10,8 +10,9 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 import org.meveo.api.dto.ActionStatus;
-import org.meveo.api.dto.account.ActivateServicesDto;
 import org.meveo.api.dto.account.ApplyOneShotChargeInstanceDto;
+import org.meveo.api.dto.billing.ActivateServicesDto;
+import org.meveo.api.dto.billing.InstantiateServicesDto;
 import org.meveo.api.dto.billing.SubscriptionDto;
 import org.meveo.api.dto.billing.TerminateSubscriptionDto;
 import org.meveo.api.dto.billing.TerminateSubscriptionServicesDto;
@@ -35,6 +36,10 @@ public interface SubscriptionRs extends IBaseRs {
 	@PUT
 	@Path("/")
 	ActionStatus update(SubscriptionDto postData);
+
+	@POST
+	@Path("/instantiateServices")
+	ActionStatus instantiateServices(InstantiateServicesDto postData);
 
 	@POST
 	@Path("/activateServices")

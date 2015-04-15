@@ -12598,6 +12598,15 @@
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
+    <wsdl:operation name="instantiateServices">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="instantiateServices">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="instantiateServicesResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
     <wsdl:operation name="terminateServices">
       <soap:operation soapAction="" style="document"/>
       <wsdl:input name="terminateServices">
@@ -12648,9 +12657,12 @@
       <xs:element name="ApplyOneShotChargeInstance" type="tns:applyOneShotChargeInstanceDto"/>
       <xs:element name="CustomField" type="tns:customFieldDto"/>
       <xs:element name="CustomFields" type="tns:customFieldsDto"/>
+      <xs:element name="InstantiateServices" type="tns:instantiateServicesDto"/>
       <xs:element name="ListSubscriptionResponse" type="tns:listSubscriptionResponseDto"/>
       <xs:element name="ServiceToActivate" type="tns:serviceToActivateDto"/>
+      <xs:element name="ServiceToInstantiate" type="tns:serviceToInstantiateDto"/>
       <xs:element name="ServicesToActivate" type="tns:servicesToActivateDto"/>
+      <xs:element name="ServicesToInstantiate" type="tns:servicesToInstantiateDto"/>
       <xs:element name="TerminateSubscription" type="tns:terminateSubscriptionDto"/>
       <xs:element name="TerminateSubscriptionServices" type="tns:terminateSubscriptionServicesDto"/>
       <xs:element name="activateServices" type="tns:activateServices"/>
@@ -12661,6 +12673,8 @@
       <xs:element name="createResponse" type="tns:createResponse"/>
       <xs:element name="index" type="tns:index"/>
       <xs:element name="indexResponse" type="tns:indexResponse"/>
+      <xs:element name="instantiateServices" type="tns:instantiateServices"/>
+      <xs:element name="instantiateServicesResponse" type="tns:instantiateServicesResponse"/>
       <xs:element name="listSubscriptionByUserAccount" type="tns:listSubscriptionByUserAccount"/>
       <xs:element name="listSubscriptionByUserAccountResponse" type="tns:listSubscriptionByUserAccountResponse"/>
       <xs:element name="terminateServices" type="tns:terminateServices"/>
@@ -12805,6 +12819,7 @@
               <xs:element minOccurs="0" name="terminationReason" type="xs:string"/>
             </xs:sequence>
             <xs:attribute name="code" type="xs:string" use="required"/>
+            <xs:attribute name="description" type="xs:string" use="required"/>
           </xs:extension>
         </xs:complexContent>
       </xs:complexType>
@@ -12814,6 +12829,50 @@
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="updateResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="instantiateServices">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="instantiateServices" type="tns:instantiateServicesDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="instantiateServicesDto">
+        <xs:complexContent>
+          <xs:extension base="tns:baseDto">
+            <xs:sequence>
+              <xs:element name="subscription" type="xs:string"/>
+              <xs:element minOccurs="0" name="servicesToInstantiate" type="tns:servicesToInstantiateDto"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="servicesToInstantiateDto">
+        <xs:sequence>
+          <xs:element maxOccurs="unbounded" name="service" type="tns:serviceToInstantiateDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="serviceToInstantiateDto">
+        <xs:sequence>
+          <xs:element name="quantity" type="xs:decimal"/>
+          <xs:element minOccurs="0" name="subscriptionDate" type="xs:dateTime"/>
+          <xs:element minOccurs="0" name="chargeInstanceOverrides" type="tns:ChargeInstanceOverrides"/>
+        </xs:sequence>
+        <xs:attribute name="code" type="xs:string" use="required"/>
+      </xs:complexType>
+      <xs:complexType name="ChargeInstanceOverrides">
+        <xs:sequence>
+          <xs:element maxOccurs="unbounded" minOccurs="0" name="chargeInstanceOverride" nillable="true" type="tns:ChargeInstanceOverride"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="ChargeInstanceOverride">
+        <xs:sequence>
+          <xs:element name="amountWithoutTax" type="xs:decimal"/>
+        </xs:sequence>
+        <xs:attribute name="chargeInstanceCode" type="xs:string" use="required"/>
+      </xs:complexType>
+      <xs:complexType name="instantiateServicesResponse">
         <xs:sequence>
           <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
         </xs:sequence>
@@ -12907,17 +12966,6 @@
         </xs:sequence>
         <xs:attribute name="code" type="xs:string" use="required"/>
       </xs:complexType>
-      <xs:complexType name="ChargeInstanceOverrides">
-        <xs:sequence>
-          <xs:element maxOccurs="unbounded" minOccurs="0" name="chargeInstanceOverride" nillable="true" type="tns:ChargeInstanceOverride"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="ChargeInstanceOverride">
-        <xs:sequence>
-          <xs:element name="amountWithoutTax" type="xs:decimal"/>
-        </xs:sequence>
-        <xs:attribute name="chargeInstanceCode" type="xs:string" use="required"/>
-      </xs:complexType>
       <xs:complexType name="activateServicesResponse">
         <xs:sequence>
           <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
@@ -12946,6 +12994,9 @@
   <wsdl:message name="updateResponse">
     <wsdl:part element="ns1:updateResponse" name="parameters"></wsdl:part>
   </wsdl:message>
+  <wsdl:message name="instantiateServices">
+    <wsdl:part element="ns1:instantiateServices" name="parameters"></wsdl:part>
+  </wsdl:message>
   <wsdl:message name="activateServicesResponse">
     <wsdl:part element="ns1:activateServicesResponse" name="parameters"></wsdl:part>
   </wsdl:message>
@@ -12973,6 +13024,9 @@
   <wsdl:message name="applyOneShotChargeInstance">
     <wsdl:part element="ns1:applyOneShotChargeInstance" name="parameters"></wsdl:part>
   </wsdl:message>
+  <wsdl:message name="instantiateServicesResponse">
+    <wsdl:part element="ns1:instantiateServicesResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
   <wsdl:message name="applyOneShotChargeInstanceResponse">
     <wsdl:part element="ns1:applyOneShotChargeInstanceResponse" name="parameters"></wsdl:part>
   </wsdl:message>
@@ -12991,6 +13045,10 @@
     <wsdl:operation name="update">
       <wsdl:input message="ns1:update" name="update"></wsdl:input>
       <wsdl:output message="ns1:updateResponse" name="updateResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="instantiateServices">
+      <wsdl:input message="ns1:instantiateServices" name="instantiateServices"></wsdl:input>
+      <wsdl:output message="ns1:instantiateServicesResponse" name="instantiateServicesResponse"></wsdl:output>
     </wsdl:operation>
     <wsdl:operation name="index">
       <wsdl:input message="ns1:index" name="index"></wsdl:input>
@@ -13270,7 +13328,26 @@
          <userAccountCode>?</userAccountCode>
       </ws:listSubscriptionByUserAccount>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SubscriptionWs/listSubscriptionByUserAccount"/></con:call></con:operation></con:interface><con:interface xsi:type="con:WsdlInterface" wsaVersion="NONE" name="MediationWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}MediationWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="http://localhost:8080/meveo/MediationWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache type="TEXT" rootPart="http://localhost:8080/meveo/MediationWs?wsdl"><con:part><con:url>http://localhost:8080/meveo/MediationWs?wsdl</con:url><con:content><![CDATA[<wsdl:definitions name="MediationWs" targetNamespace="http://impl.ws.api.meveo.org/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://impl.ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns2="http://schemas.xmlsoap.org/soap/http" xmlns:ns1="http://ws.api.meveo.org/">
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SubscriptionWs/listSubscriptionByUserAccount"/></con:call></con:operation><con:operation isOneWay="false" action="" name="instantiateServices" bindingOperationName="instantiateServices" type="Request-Response" outputName="instantiateServicesResponse" inputName="instantiateServices" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/SubscriptionWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:instantiateServices>
+         <!--Optional:-->
+         <instantiateServices>
+            <subscription>SOAP_SUB1</subscription>
+            <!--Optional:-->
+            <servicesToInstantiate>
+               <!--1 or more repetitions:-->
+               <service code="SERV1">
+                  <quantity>1</quantity>
+                  <!--Optional:-->
+                  <subscriptionDate>2015-04-16</subscriptionDate>
+               </service>
+            </servicesToInstantiate>
+         </instantiateServices>
+      </ws:instantiateServices>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:authType>Global HTTP Settings</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SubscriptionWs/instantiateServices"/><con:wsrmConfig version="1.2"/></con:call></con:operation></con:interface><con:interface xsi:type="con:WsdlInterface" wsaVersion="NONE" name="MediationWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}MediationWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="http://localhost:8080/meveo/MediationWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache type="TEXT" rootPart="http://localhost:8080/meveo/MediationWs?wsdl"><con:part><con:url>http://localhost:8080/meveo/MediationWs?wsdl</con:url><con:content><![CDATA[<wsdl:definitions name="MediationWs" targetNamespace="http://impl.ws.api.meveo.org/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://impl.ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns2="http://schemas.xmlsoap.org/soap/http" xmlns:ns1="http://ws.api.meveo.org/">
   <wsdl:import location="http://localhost:8080/meveo/MediationWs?wsdl=MediationWs.wsdl" namespace="http://ws.api.meveo.org/"></wsdl:import>
   <wsdl:binding name="MediationWsSoapBinding" type="ns1:MediationWs">
     <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>

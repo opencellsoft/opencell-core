@@ -12,29 +12,29 @@ import javax.xml.bind.annotation.XmlRootElement;
 /**
  * @author Edward P. Legaspi
  **/
-@XmlRootElement(name = "ServicesToActivate")
+@XmlRootElement(name = "ServicesToInstantiate")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ServicesToActivateDto implements Serializable {
+public class ServicesToInstantiateDto implements Serializable {
 
 	private static final long serialVersionUID = -6088111478916521480L;
 
 	@XmlElement(required = true)
-	private List<ServiceToActivateDto> service;
+	private List<ServiceToInstantiateDto> service;
 
-	public List<ServiceToActivateDto> getService() {
+	public List<ServiceToInstantiateDto> getService() {
 		if (service == null) {
 			service = new ArrayList<>();
 		}
 		return service;
 	}
 
-	public void setService(List<ServiceToActivateDto> services) {
+	public void setService(List<ServiceToInstantiateDto> services) {
 		this.service = services;
 	}
 
 	@Override
 	public String toString() {
-		return "ServicesToActivateDto [service=" + service + "]";
+		return "ServicesToInstantiateDto [service=" + service + "]";
 	}
 
 }
