@@ -634,9 +634,9 @@
 			<p:tab title="#{messages['configIssuesReporting.edrStatus']}">
 			<h:panelGrid>
 			<hftl:panelGroup columns="4">
-				<h:outputLabel value="#{messages['edrStatus.rejected']} :"/>
-				<h:outputText value="#{configIssuesReportingBean.reportConfigDto.nbrEdrOpen}"/>
 				<h:outputLabel value="#{messages['edrStatus.open']} :"/>
+				<h:outputText value="#{configIssuesReportingBean.reportConfigDto.nbrEdrOpen}"/>
+				<h:outputLabel value="#{messages['edrStatus.rejected']} :"/>
 				<h:outputText value="#{configIssuesReportingBean.reportConfigDto.nbrEdrRejected}"/> 
 				<h:outputLabel value="#{messages['edrStatus.rated']} :"/>
 				<h:outputText value="#{configIssuesReportingBean.reportConfigDto.nbrEdrRated}"/>
