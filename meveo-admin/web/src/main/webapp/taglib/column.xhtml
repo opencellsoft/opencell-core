@@ -79,6 +79,20 @@
 
 	<c:set var="converter"
 		value="#{getConverter.forType(entity[field], converterParam)}"></c:set>
+		
+	<c:if test="${empty propagateConversation}">
+		<c:set var="propagateConversation" value="true" />
+	</c:if>
+	<c:if test="${empty renderViewLink}">
+		<c:set var="renderViewLink" value="true" />
+	</c:if>
+	<c:if test="${empty objectIdParamName}">
+		<c:set var="objectIdParamName" value="objectId" />
+	</c:if>
+		<c:if test="${empty editView}">
+		<c:set var="editView" value="#{backingBean.getEditViewName()}" />
+	</c:if>
+
 
 	<p:column exportable="#{exportable}" rendered="#{rendered}">
 		<f:facet name="header">
@@ -107,13 +121,30 @@
 				<!-- If there is date field, show date in specified pattern 
 		    	 If isDate is not set then it basically means it is not a date. Also if time is not set it basically means that time=true
 		    	 -->
-				<h:outputText value="#{entity[field]}"
-					rendered="#{!isDate and show}" converter="#{converter}">
-				</h:outputText>
-
-				<h:outputText value="#{entity[field]}" rendered="#{isDate}">
-					<f:convertDateTime pattern="#{datePattern}" />
-				</h:outputText>
+		    	<c:choose>
+		    		<c:when test="#{field eq 'code' or field eq 'description'}">
+		    			<p:tooltip for="#{resultsId}_#{field}_viewlink"
+							value="#{messages['commons.view']}" showEffect="slide"
+								hideEffect="slide" />
+						<h:link id="#{resultsId}_#{field}_viewlink" outcome="#{editView}"
+							rendered="#{renderViewLink}" value="#{entity[field]}">
+							<f:param name="#{objectIdParamName}" value="#{entity.id}" />
+							<f:param name="edit" value="false" />
+							<c:if test="${propagateConversation}">
+								<f:param name="cid"
+								value="#{javax.enterprise.context.conversation.id}" />
+							</c:if>
+						</h:link>
+		    		</c:when>
+		    		<c:otherwise>
+		    			<h:outputText value="#{entity[field]}"
+							rendered="#{!isDate and show}" converter="#{converter}">
+						</h:outputText>
+						<h:outputText value="#{entity[field]}" rendered="#{isDate}">
+							<f:convertDateTime pattern="#{datePattern}" />
+						</h:outputText>
+		    		</c:otherwise>
+		    	</c:choose>
 			</c:if>
             
             <!-- If its map then run through it and show results. -->
