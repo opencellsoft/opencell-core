@@ -243,11 +243,11 @@ public class BillingAccountService extends AccountService<BillingAccount> {
 
 			Query q = null;
 			if (billingAccount.getProvider().isDisplayFreeTransacInInvoice()) {
-				q = getEntityManager().createNamedQuery("RatedTransaction.sumBillingAccount")
+				q = getEntityManager().createNamedQuery("RatedTransaction.sumBillingAccountDisplayFree")
 				        .setParameter(
 						"billingAccount", billingAccount);
 			} else {
-				q = getEntityManager().createNamedQuery("RatedTransaction.sumBillingAccountDisplayFree").setParameter(
+				q = getEntityManager().createNamedQuery("RatedTransaction.sumBillingAccount").setParameter(
 						"billingAccount", billingAccount);
 			}
 
