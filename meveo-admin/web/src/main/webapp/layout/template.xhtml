@@ -69,12 +69,6 @@
 						onclick="dlg_providerSelectPopup.show(); return false;"
 						rendered="#{identity.loggedIn and !identity.user.user.onlyOneProvider}" />
 				</li>
-				<li>
-					<div class="top-bar-logout"></div> <h:commandLink
-						action="#{checkUpdateBean.doIt}" value="Chek Update"
-						rendered="#{identity.loggedIn}" styleClass="headerLink"
-						immediate="true" target="_blank" />
-				</li>			
 
 
 			</ul>
@@ -97,7 +91,7 @@
 
 	</div>
 
-	<div class="footer"><a href='http://localhost:8080/mum/rest/getVersion' title='Check for update' target='_blank'>MEVEO  @VERSION_NUMBER@ </a> @BUILD_NUMBER@</div>
+	<div class="footer">MEVEO @VERSION_NUMBER@ @BUILD_NUMBER@</div>
 
 	<p:ajaxStatus
 		style="width:64px;height:64px;position:fixed;right:5px;bottom:5px">
