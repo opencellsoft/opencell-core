@@ -48,7 +48,7 @@
 							label="#{messages['discountPlan.title']}"
 							backingBean="#{discountPlanItemBean}" sortBy="code"
 							dataModel="#{discountPlanBean.entity.discountPlanItems}">
-							<hftl:column label="#{messages['discountPlan.title']}"
+							<hftl:column label="#{messages['discountPlanMatrix.itemCode']}"
 								field="discountPlan" childField="code" />
 							<hftl:column
 								label="#{messages['discountPlanItem.invoiceCategory']}"
@@ -115,7 +115,7 @@
 
 								<p:commandButton id="saveButton"
 									rendered="#{discountPlanBean.edit}"
-									value="#{messages['action.save']}"
+									value="#{messages['discountPlanItem.addNew']}"
 									action="#{discountPlanBean.saveOrUpdateDiscountPlan()}"
 									icon="ui-icon-check"
 									update=":#{p:component('discountPlanItemPanel')}">

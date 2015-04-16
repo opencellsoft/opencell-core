@@ -58,6 +58,7 @@ import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.RatedTransaction;
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.SubCategoryInvoiceAgregate;
+import org.meveo.model.billing.Tax;
 import org.meveo.model.billing.TaxInvoiceAgregate;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.billing.WalletOperation;
@@ -604,9 +605,16 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 					subCategories.appendChild(subCategory);
 					subCategory.setAttribute("label", (invoiceSubCategoryLabel != null) ? invoiceSubCategoryLabel : "");
 					subCategory.setAttribute("code", invoiceSubCat.getCode());
-					subCategory.setAttribute("taxCode", subCatInvoiceAgregate.getSubCategoryTax().getCode());
-					subCategory.setAttribute("taxPercent", subCatInvoiceAgregate.getSubCategoryTax().getPercent()
-							.toPlainString());
+					String taxesCode="";
+					String taxesPercent="";
+					String sep="";
+					for(Tax tax : subCatInvoiceAgregate.getSubCategoryTaxes()){
+						taxesCode=taxesCode+sep+tax.getCode();
+						taxesPercent=taxesPercent+sep+tax.getPercent().toPlainString();
+						sep=",";
+					}
+					subCategory.setAttribute("taxCode", taxesCode);
+					subCategory.setAttribute("taxPercent", taxesPercent);
 
 					for (RatedTransaction ratedTransaction : transactions) {
 						BigDecimal transactionAmount = entreprise ? ratedTransaction.getAmountWithTax()

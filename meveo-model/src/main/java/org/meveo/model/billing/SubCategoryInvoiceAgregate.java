@@ -17,15 +17,20 @@
 package org.meveo.model.billing;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.PreRemove;
 
 @Entity
 @DiscriminatorValue("F")
@@ -37,17 +42,16 @@ public class SubCategoryInvoiceAgregate extends InvoiceAgregate {
 	@JoinColumn(name = "invoiceSubCategory")
 	private InvoiceSubCategory invoiceSubCategory;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "SUB_CATEGORY_TAX")
-	private Tax subCategoryTax;
+	@JoinTable(name="BILLING_INVOICE_AGREGATE_TAXES")
+	@ManyToMany(fetch = FetchType.LAZY)
+	private List<Tax> subCategoryTaxes = new ArrayList<Tax>();
 
 	@ManyToOne(fetch = FetchType.LAZY,cascade=CascadeType.ALL)
 	@JoinColumn(name = "CATEGORY_INVOICE_AGREGATE")
 	private CategoryInvoiceAgregate categoryInvoiceAgregate;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "TAX_INVOICE_AGREGATE")
-	private TaxInvoiceAgregate taxInvoiceAgregate;
+	@OneToMany(mappedBy = "subCategoryInvoiceAggregate", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	private Set<TaxInvoiceAgregate> taxInvoiceAggregates = new HashSet<TaxInvoiceAgregate>();
 	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "WALLET_ID")
@@ -64,13 +68,7 @@ public class SubCategoryInvoiceAgregate extends InvoiceAgregate {
 		this.invoiceSubCategory = invoiceSubCategory;
 	}
 
-	public Tax getSubCategoryTax() {
-		return subCategoryTax;
-	}
 
-	public void setSubCategoryTax(Tax subCategoryTax) {
-		this.subCategoryTax = subCategoryTax;
-	}
 
 	public CategoryInvoiceAgregate getCategoryInvoiceAgregate() {
 		return categoryInvoiceAgregate;
@@ -83,16 +81,22 @@ public class SubCategoryInvoiceAgregate extends InvoiceAgregate {
 		}
 	}
 
-	public TaxInvoiceAgregate getTaxInvoiceAgregate() {
-		return taxInvoiceAgregate;
+	
+	public Set<TaxInvoiceAgregate> getTaxInvoiceAggregates() {
+		return taxInvoiceAggregates;
 	}
 
-	public void setTaxInvoiceAgregate(TaxInvoiceAgregate taxInvoiceAgregate) {
-
-		if (taxInvoiceAgregate != null) {
-			taxInvoiceAgregate.getSubCategoryInvoiceAgregates().add(this);
+	public void setTaxInvoiceAggregates(Set<TaxInvoiceAgregate> taxInvoiceAggregates) {
+		this.taxInvoiceAggregates = taxInvoiceAggregates;
+	}
+	
+	public void addTaxInvoiceAggregate(TaxInvoiceAgregate taxInvoiceAggregate) {
+		if(taxInvoiceAggregates==null){
+			taxInvoiceAggregates=new HashSet<TaxInvoiceAgregate>();
 		}
-		this.taxInvoiceAgregate = taxInvoiceAgregate;
+		if(taxInvoiceAggregate!=null){
+			taxInvoiceAggregates.add(taxInvoiceAggregate);
+		}
 	}
 
 	public List<RatedTransaction> getRatedtransactions() {
@@ -110,7 +114,30 @@ public class SubCategoryInvoiceAgregate extends InvoiceAgregate {
 	public void setWallet(WalletInstance wallet) {
 		this.wallet = wallet;
 	}
+
+	public List<Tax> getSubCategoryTaxes() {
+		return subCategoryTaxes;
+	}
+
+	public void setSubCategoryTaxes(List<Tax> subCategoryTaxes) {
+		this.subCategoryTaxes = subCategoryTaxes;
+	}
 	
+	public void addSubCategoryTax(Tax subCategoryTax) {
+		if(subCategoryTaxes==null){
+			subCategoryTaxes=new ArrayList<Tax>();
+		}
+		if(subCategoryTax!=null){
+			subCategoryTaxes.add(subCategoryTax);
+		}
+	}
+	
+	@PreRemove
+	public void removeSubCatInvoiceAggregates(){
+		 for (Tax tax : subCategoryTaxes) {
+			 tax.getSubCategoryInvoiceAggregates().remove(this);
+		    }
+	}
 	
 
 }
