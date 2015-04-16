@@ -122,7 +122,7 @@
 		    	 If isDate is not set then it basically means it is not a date. Also if time is not set it basically means that time=true
 		    	 -->
 		    	<c:choose>
-		    		<c:when test="#{field eq 'code' or field eq 'description'}">
+		    		<c:when test="#{field eq 'code'}">
 		    			<p:tooltip for="#{resultsId}_#{field}_viewlink"
 							value="#{messages['commons.view']}" showEffect="slide"
 								hideEffect="slide" />
@@ -266,14 +266,35 @@
 					</c:if>
 					<!-- If entityView provided then show link to childField entity page. -->
 					<c:if test="#{not empty entityView}">
-						<hf:linkToEntity linkId="#{field}_#{childField}_message_link"
-							rendered="#{isMessage}" entityId="#{c[childFieldId]}"
-							entity="#{c}" popupFields="#{popupFields}"
-							value="#{c[childField]}" view="#{entityView}" />
-						<hf:linkToEntity linkId="#{field}_#{childField}_link"
-							rendered="#{not isMessage}" entity="#{c}"
-							popupFields="#{popupFields}" entityId="#{c[childFieldId]}"
-							value="#{c[childField]}" view="#{entityView}" />
+						<c:choose>
+							<c:when test="#{not empty childChildFields}">
+								<c:set var="ccvalue" value="#{''}"/>
+							<c:forEach items="#{childChildFields.split(',')}" var="cc" varStatus="status">
+								<c:if test="#{!status.first and !status.end}">
+									<c:set var="ccvalue" value="#{ccvalue}, "/>
+								</c:if>
+								<c:set var="ccvalue" value="#{ccvalue}#{c[childField][cc]}"/>
+							</c:forEach>	
+							<hf:linkToEntity linkId="#{field}_#{childField}_message_link"
+								rendered="#{isMessage}" entityId="#{c[childFieldId]}"
+								entity="#{c}" popupFields="#{popupFields}"
+								value="#{ccvalue}" view="#{entityView}" />
+							<hf:linkToEntity linkId="#{field}_#{childField}_link"
+								rendered="#{not isMessage}" entity="#{c}"
+								popupFields="#{popupFields}" entityId="#{c[childFieldId]}"
+								value="#{ccvalue}" view="#{entityView}" />
+							</c:when>
+							<c:otherwise>
+								<hf:linkToEntity linkId="#{field}_#{childField}_message_link"
+									rendered="#{isMessage}" entityId="#{c[childFieldId]}"
+									entity="#{c}" popupFields="#{popupFields}"
+									value="#{c[childField]}" view="#{entityView}" />
+								<hf:linkToEntity linkId="#{field}_#{childField}_link"
+									rendered="#{not isMessage}" entity="#{c}"
+									popupFields="#{popupFields}" entityId="#{c[childFieldId]}"
+									value="#{c[childField]}" view="#{entityView}" />
+							</c:otherwise>
+						</c:choose>
 					</c:if>
 					<br />
 				</ui:repeat>

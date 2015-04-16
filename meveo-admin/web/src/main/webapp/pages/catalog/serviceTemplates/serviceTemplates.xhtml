@@ -37,8 +37,8 @@
 				field="description" />
 			<hftl:column label="#{messages['serviceTemplate.recurringCharges']}"
 				field="serviceRecurringCharges" isList="true"
-				childField="chargeTemplate" childFieldId="id"
-				view="/pages/catalog/recurringChargeTemplates/recurringChargeTemplateDetail.xhtml"
+				childField="chargeTemplate" childFieldId="id" childChildFields="code"
+				entityView="recurringChargeTemplateDetail"
 				backView="serviceTemplates" />
 			<hftl:column
 				label="#{messages['serviceTemplate.subscriptionCharges']}"
