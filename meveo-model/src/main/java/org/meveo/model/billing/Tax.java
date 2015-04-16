@@ -17,11 +17,17 @@
 package org.meveo.model.billing;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.ManyToMany;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.PreRemove;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
@@ -55,6 +61,9 @@ public class Tax extends BusinessEntity {
 
 	@Column(name = "TAX_PERCENTAGE", precision = NB_PRECISION, scale = NB_DECIMALS)
 	private BigDecimal percent;
+	
+	@ManyToMany(fetch = FetchType.LAZY,mappedBy="subCategoryTaxes")
+	private List<SubCategoryInvoiceAgregate> subCategoryInvoiceAggregates = new ArrayList<SubCategoryInvoiceAgregate>();
 
 	public String getAccountingCode() {
 		return accountingCode;
@@ -71,5 +80,23 @@ public class Tax extends BusinessEntity {
 	public void setPercent(BigDecimal percent) {
 		this.percent = percent;
 	}
+
+	public List<SubCategoryInvoiceAgregate> getSubCategoryInvoiceAggregates() {
+		return subCategoryInvoiceAggregates;
+	}
+
+	public void setSubCategoryInvoiceAggregates(
+			List<SubCategoryInvoiceAgregate> subCategoryInvoiceAggregates) {
+		this.subCategoryInvoiceAggregates = subCategoryInvoiceAggregates;
+	}
+
+	@PreRemove
+	public void removeSubCategoryTaxes(){
+		 for (SubCategoryInvoiceAgregate aggregate : subCategoryInvoiceAggregates) {
+			 aggregate.getSubCategoryTaxes().remove(this);
+		    }
+	}
+	
+	
 
 }

@@ -354,9 +354,15 @@ public class WalletApi extends BaseApi {
 				throw new EntityDoesNotExistsException(Subscription.class, postData.getSubscription());
 			}
 
-			WalletTemplate walletTemplate = walletTemplateService.findByCode(postData.getWalletTemplate(), provider);
-			if (walletTemplate == null) {
-				throw new EntityDoesNotExistsException(WalletTemplate.class, postData.getWalletTemplate());
+			WalletTemplate walletTemplate = null;
+			if (!postData.getWalletTemplate().equals(WalletTemplate.PRINCIPAL)) {
+				walletTemplate = walletTemplateService.findByCode(postData.getWalletTemplate(), provider);
+				if (walletTemplate == null) {
+					throw new EntityDoesNotExistsException(WalletTemplate.class, postData.getWalletTemplate());
+				}
+			} else {
+				walletTemplate = new WalletTemplate();
+				walletTemplate.setCode(WalletTemplate.PRINCIPAL);
 			}
 
 			WalletInstance walletInstance = walletService.getWalletInstance(userAccount, walletTemplate, currentUser, provider);

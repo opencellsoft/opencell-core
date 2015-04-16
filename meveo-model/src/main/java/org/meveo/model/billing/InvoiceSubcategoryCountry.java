@@ -16,12 +16,14 @@
  */
 package org.meveo.model.billing;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.validation.constraints.Size;
 
 import org.meveo.model.AuditableEntity;
 
@@ -45,6 +47,9 @@ public class InvoiceSubcategoryCountry extends AuditableEntity {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "TAX_ID")
 	private Tax tax;
+	
+	@Column(name = "FILTER_EL", length = 2000)
+	private String filterEL;
 
 	public InvoiceSubCategory getInvoiceSubCategory() {
 		return invoiceSubCategory;
@@ -69,6 +74,16 @@ public class InvoiceSubcategoryCountry extends AuditableEntity {
 
 	public void setTax(Tax tax) {
 		this.tax = tax;
+	}
+	
+	
+
+	public String getFilterEL() {
+		return filterEL;
+	}
+
+	public void setFilterEL(String filterEL) {
+		this.filterEL = filterEL;
 	}
 
 	@Override

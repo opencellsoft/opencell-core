@@ -85,11 +85,12 @@ public class TradingCountry extends AuditableEntity {
 		return country.getCountryCode();
 	}
 
-	public String toString() {
-		return "" + country;
-	}
-	
-	public boolean equals(Object other){
+	@Override
+    public String toString() {
+        return String.format("TradingCountry [country=%s, id=%s]", country, getId());
+    }
+
+    public boolean equals(Object other){
 		if(other==null || !(other instanceof TradingCountry)){
 			return false;
 		}

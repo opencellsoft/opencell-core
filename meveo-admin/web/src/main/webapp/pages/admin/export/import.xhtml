@@ -3,7 +3,7 @@
     xmlns:hf="http://java.sun.com/jsf/composite/tags" xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
 
     <f:metadata>
-        <!-- 		<f:event type="preRenderView" listener="#{entityExportImportBean.preRenderView}" /> -->
+        <f:event type="preRenderView" listener="#{entityExportImportBean.preRenderView}" />
     </f:metadata>
 
     <ui:define name="navigation">
@@ -22,6 +22,16 @@
                     <p:selectBooleanCheckbox id="import_requireFK" value="#{entityExportImportBean.requireFK}">
                         <p:ajax event="change" />
                     </p:selectBooleanCheckbox>
+                </p:panelGrid>
+                <p:panelGrid columns="2">
+                    <p:outputLabel for="import_forceToProvider" value="#{messages['export.forceToProvider']}" />
+                    <p:selectOneMenu id="import_forceToProvider" value="#{entityExportImportBean.forceToProvider}"
+                        converter="org.jboss.seam.faces.conversion.ObjectConverter">
+                        <f:selectItem />
+                        <f:selectItems value="#{identity.user.user.providers.toArray()}" var="listVal" itemLabel="#{listVal.code}"
+                            itemValue="#{listVal}" />
+                        <p:ajax event="change" />
+                    </p:selectOneMenu>
                 </p:panelGrid>
                 <p:panelGrid columns="2">
                     <p:outputLabel for="import_file" value="#{messages['export.importFile']}" />

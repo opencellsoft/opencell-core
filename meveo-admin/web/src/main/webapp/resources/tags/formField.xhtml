@@ -62,7 +62,7 @@
 		default="#{messages['commons.value']}" />
 	<cc:attribute name="show"
 		default="#{((not cc.attrs.showOnlyOnNew) or (cc.attrs.showOnlyOnNew and cc.attrs.edit and cc.entityFromBackingBeanOrAttribute.id==null)) and ((not cc.attrs.showOnlyOnConsult) or (cc.attrs.showOnlyOnConsult and cc.attrs.edit== false))}" />
-	<cc:attribute name="completeMethod" required="false" />
+    <cc:attribute name="autocompleteMethod"  method-signature="java.lang.String action(java.lang.String)" />
 </cc:interface>
 
 <cc:implementation>
@@ -115,79 +115,93 @@
 		<ui:fragment rendered="#{!cc.attrs.popup}">
 			<p:panelGrid id="textPanel" columns="3"
 				rendered="#{cc.isText(cc.attrs.field,false)}">
-				<p:outputLabel for="#{cc.attrs.id}_text2" value="#{cc.attrs.label}" />
-				<p:inputText id="#{cc.attrs.id}_text2"
-					rendered="#{not cc.attrs.isHtml and not cc.attrs.textArea and cc.attrs.listValues == null and cc.attrs.edit}"
-					value="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}"
-					disabled="#{cc.attrs.disabled}" required="#{cc.attrs.required}"
-					size="#{cc.attrs.size}" maxlength="#{cc.attrs.maxlength}"
-					completeMethod="#{cc.attrs.completeMethod}">
-
-					<c:if test="#{not empty cc.attrs.converter}">
-						<f:converter converterId="#{cc.attrs.converter}" />
-					</c:if>
-
-					<c:if test="#{cc.attrs.useConverter}">
-						<f:converter converterId="stringConverter" />
-					</c:if>
-
-					<c:if test="#{cc.attrs.validateEmail}">
-						<!-- <f:validateRegex pattern="([^.@]+)(\.[^.@]+)*@([^.@]+\.)+([^.@]+)"></f:validateRegex> -->
-						<o:validator validatorId="javax.faces.RegularExpression"
-							pattern="([^.@]+)(\.[^.@]+)*@([^.@]+\.)+([^.@]+)"
-							message="#{messages['validator.email.invalid']}" />
-					</c:if>
-
-					<c:if test="#{not empty cc.attrs.validatorId}">
-						<f:validator validatorId="#{cc.attrs.validatorId}" />
-					</c:if>
-
-					<c:if test="#{cc.attrs.validateUnique}">
-						<f:validator validatorId="uniqueConstraintValidator" />
-						<f:attribute name="className"
-							value="#{cc.entityFromBackingBeanOrAttribute.getClass().getSimpleName()}" />
-						<f:attribute name="fieldName" value="#{cc.attrs.field}" />
-						<f:attribute name="idValue"
-							value="#{cc.entityFromBackingBeanOrAttribute.getId()}" />
-					</c:if>
-
-					<c:if test="#{cc.attrs.validateRib}">
-						<f:validator validatorId="ribValidator" />
-						<f:attribute name="bankCodeId"
-							value="#{rich:clientId('bankCode')}" />
-						<f:attribute name="branchCodeId"
-							value="#{rich:clientId('branchCode')}" />
-						<f:attribute name="accountNumberId"
-							value="#{rich:clientId('accountNumber')}" />
-						<f:attribute name="keyId" value="#{rich:clientId('key')}" />
-					</c:if>
-
-				</p:inputText>
-
-				<p:inputTextarea rendered="#{cc.attrs.textArea and cc.attrs.edit}"
-					id="#{cc.attrs.id}_textArea" disabled="#{cc.attrs.disabled}"
-					value="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}"
-					required="#{cc.attrs.required}" cols="#{cc.attrs.cols}"
-					rows="#{cc.attrs.rows}" maxlength="#{cc.attrs.maxlength}" />
-				<p:editor rendered="#{cc.attrs.isHtml and cc.attrs.edit}"
-					id="#{cc.attrs.id}_editor" disabled="#{cc.attrs.disabled}"
-					value="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}"
-					required="#{cc.attrs.required}"></p:editor>
-
-				<p:selectOneMenu id="#{cc.attrs.id}_pick"
-					value="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}"
-					required="#{cc.attrs.required}" disabled="#{cc.attrs.disabled}"
-					rendered="#{cc.attrs.listValues != null and cc.attrs.edit}">
-					<f:selectItem itemValue="#{null}" itemLabel="" />
-					<f:selectItems value="#{cc.attrs.listValues.entrySet()}"
-						var="listVal" itemValue="#{listVal.key}"
-						itemLabel="#{listVal.value}" />
-				</p:selectOneMenu>
-
-				<h:outputText rendered="#{not cc.attrs.edit}"
-					value="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}"
-					styleClass="field-value" />
-				<cc:insertChildren />
+                <h:panelGroup rendered="#{not cc.attrs.isHtml and not cc.attrs.textArea and cc.attrs.listValues == null and cc.attrs.autocompleteMethod == null and cc.attrs.edit}">
+    				<p:outputLabel for="#{cc.attrs.id}_text2" value="#{cc.attrs.label}" />
+    				<p:inputText id="#{cc.attrs.id}_text2"
+    					value="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}"
+    					disabled="#{cc.attrs.disabled}" required="#{cc.attrs.required}"
+    					size="#{cc.attrs.size}" maxlength="#{cc.attrs.maxlength}">
+    
+    					<c:if test="#{not empty cc.attrs.converter}">
+    						<f:converter converterId="#{cc.attrs.converter}" />
+    					</c:if>
+    
+    					<c:if test="#{cc.attrs.useConverter}">
+    						<f:converter converterId="stringConverter" />
+    					</c:if>
+    
+    					<c:if test="#{cc.attrs.validateEmail}">
+    						<!-- <f:validateRegex pattern="([^.@]+)(\.[^.@]+)*@([^.@]+\.)+([^.@]+)"></f:validateRegex> -->
+    						<o:validator validatorId="javax.faces.RegularExpression"
+    							pattern="([^.@]+)(\.[^.@]+)*@([^.@]+\.)+([^.@]+)"
+    							message="#{messages['validator.email.invalid']}" />
+    					</c:if>
+    
+    					<c:if test="#{not empty cc.attrs.validatorId}">
+    						<f:validator validatorId="#{cc.attrs.validatorId}" />
+    					</c:if>
+    
+    					<c:if test="#{cc.attrs.validateUnique}">
+    						<f:validator validatorId="uniqueConstraintValidator" />
+    						<f:attribute name="className"
+    							value="#{cc.entityFromBackingBeanOrAttribute.getClass().getSimpleName()}" />
+    						<f:attribute name="fieldName" value="#{cc.attrs.field}" />
+    						<f:attribute name="idValue"
+    							value="#{cc.entityFromBackingBeanOrAttribute.getId()}" />
+    					</c:if>
+    
+    					<c:if test="#{cc.attrs.validateRib}">
+    						<f:validator validatorId="ribValidator" />
+    						<f:attribute name="bankCodeId"
+    							value="#{rich:clientId('bankCode')}" />
+    						<f:attribute name="branchCodeId"
+    							value="#{rich:clientId('branchCode')}" />
+    						<f:attribute name="accountNumberId"
+    							value="#{rich:clientId('accountNumber')}" />
+    						<f:attribute name="keyId" value="#{rich:clientId('key')}" />
+    					</c:if>    
+    				</p:inputText>
+                </h:panelGroup>
+                <h:panelGroup rendered="#{not cc.attrs.isHtml and not cc.attrs.textArea and cc.attrs.listValues == null and cc.attrs.autocompleteMethod!=null and  cc.attrs.edit}">
+                    <p:outputLabel for="#{cc.attrs.id}_text_ac" value="#{cc.attrs.label}" />
+                    <p:autoComplete id="#{cc.attrs.id}_text_ac"
+                        value="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}"
+                        disabled="#{cc.attrs.disabled}" required="#{cc.attrs.required}"
+                        size="#{cc.attrs.size}" maxlength="#{cc.attrs.maxlength}" dropdown="true" completeMethod="#{cc.attrs.autocompleteMethod}"/>
+				</h:panelGroup>
+                <h:panelGroup rendered="#{cc.attrs.textArea and cc.attrs.edit}">
+                    <p:outputLabel for="#{cc.attrs.id}_textArea" value="#{cc.attrs.label}" />
+                    <p:inputTextarea 
+    					id="#{cc.attrs.id}_textArea" disabled="#{cc.attrs.disabled}"
+    					value="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}"
+    					required="#{cc.attrs.required}" cols="#{cc.attrs.cols}"
+    					rows="#{cc.attrs.rows}" maxlength="#{cc.attrs.maxlength}" />
+                </h:panelGroup>
+                <h:panelGroup rendered="#{cc.attrs.isHtml and cc.attrs.edit}">
+                    <p:outputLabel for="#{cc.attrs.id}_editor" value="#{cc.attrs.label}" />
+    				<p:editor 
+    					id="#{cc.attrs.id}_editor" disabled="#{cc.attrs.disabled}"
+    					value="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}"
+    					required="#{cc.attrs.required}"></p:editor>
+                    </h:panelGroup>
+                <h:panelGroup rendered="#{cc.attrs.listValues != null and cc.attrs.edit}">
+                    <p:outputLabel for="#{cc.attrs.id}_pick" value="#{cc.attrs.label}" />
+    				<p:selectOneMenu id="#{cc.attrs.id}_pick"
+    					value="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}"
+    					required="#{cc.attrs.required}" disabled="#{cc.attrs.disabled}">
+    					<f:selectItem itemValue="#{null}" itemLabel="" />
+    					<f:selectItems value="#{cc.attrs.listValues.entrySet()}"
+    						var="listVal" itemValue="#{listVal.key}"
+    						itemLabel="#{listVal.value}" />
+    				</p:selectOneMenu>
+                </h:panelGroup>
+                <h:panelGroup rendered="#{not cc.attrs.edit}">
+                    <p:outputLabel for="#{cc.attrs.id}_textArea" value="#{cc.attrs.label}" />
+    				<h:outputText 
+    					value="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}"
+    					styleClass="field-value" />
+    				<cc:insertChildren />
+                </h:panelGroup>
 			</p:panelGrid>
 		</ui:fragment>
 

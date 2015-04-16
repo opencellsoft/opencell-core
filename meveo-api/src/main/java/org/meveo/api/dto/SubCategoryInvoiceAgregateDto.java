@@ -45,6 +45,10 @@ public class SubCategoryInvoiceAgregateDto implements Serializable {
 	private BigDecimal amountWithoutTax;
 	private BigDecimal amountTax;
 	private BigDecimal amountWithTax;
+	private String invoiceSubCategoryCode;
+	private List<String> taxesCodes=new ArrayList<String>();
+	
+	
 	private List<RatedTransactionDto> ratedTransactions = new ArrayList<RatedTransactionDto>();
 
 	public Integer getItemNumber() {
@@ -134,5 +138,25 @@ public class SubCategoryInvoiceAgregateDto implements Serializable {
 	public void setType(String type) {
 		this.type = type;
 	}
+
+	public String getInvoiceSubCategoryCode() {
+		return invoiceSubCategoryCode;
+	}
+
+	public void setInvoiceSubCategoryCode(String invoiceSubCategoryCode) {
+		this.invoiceSubCategoryCode = invoiceSubCategoryCode;
+	}
+
+	public List<String> getTaxesCodes() {
+		return taxesCodes;
+	}
+
+	public void setTaxesCodes(List<String> taxesCodes) {
+		this.taxesCodes = taxesCodes;
+	}
+
+
+	
+	
 
 }

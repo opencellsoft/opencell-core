@@ -87,4 +87,8 @@ public class TradingCurrency extends AuditableEntity {
 		this.currencyCode = currencyCode;
 	}
 
+    @Override
+    public String toString() {
+        return String.format("TradingCurrency [currency=%s, id=%s]", currency, getId());
+    }
 }

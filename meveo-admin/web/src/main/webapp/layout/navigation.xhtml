@@ -152,14 +152,13 @@
 				outcome="meveoProperties" value="#{messages['menu.properties']}" />
 
             <p:submenu id="tools" label="#{messages['menu.tools']}"
-                rendered="#{identity.hasPermission('superAdmin','superAdminManagement')}">
+                rendered="#{identity.hasPermission('superAdmin','superAdminManagement') || identity.hasPermission('administration','administrationVisualization')}">
 
                 <p:menuitem id="export" outcome="export" value="#{messages['menu.export']}" />
                 <p:menuitem id="import" outcome="import" value="#{messages['menu.import']}" />
-                
             </p:submenu>
 
-			<!--
+            <!--
 			<rich:menuGroup id="history" label="#{messages['menu.history']}"
 				rendered="#{identity.hasPermission('administration','administrationVisualization')}">
 				<rich:menuItem id="accountImportHisto">

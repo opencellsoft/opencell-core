@@ -30,6 +30,7 @@ import org.meveocrm.model.dwh.LineChart;
 import org.meveocrm.model.dwh.PieChart;
 import org.meveocrm.services.dwh.ChartService;
 import org.omnifaces.cdi.ViewScoped;
+import org.primefaces.model.LazyDataModel;
 
 @Named
 @ViewScoped
@@ -72,6 +73,18 @@ public class ChartBean extends BaseBean<Chart> {
 	protected List<String> getFormFieldsToFetch() {
 		return Arrays.asList("provider");
 	}
+	
+	
+	@Override
+	public LazyDataModel<Chart> getLazyDataModel() {
+		getFilters();
+		if (filters.containsKey("user")) {
+			filters.put("auditable.creator", filters.get("user"));
+			filters.remove("user");
+		}
+		return super.getLazyDataModel();
+	}
+	
 
 	@Override
 	protected List<String> getListFieldsToFetch() {

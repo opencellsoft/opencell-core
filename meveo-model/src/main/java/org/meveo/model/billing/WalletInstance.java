@@ -34,14 +34,17 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.UniqueConstraint;
 
 import org.meveo.model.BusinessEntity;
+import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ObservableEntity;
 import org.meveo.model.catalog.WalletTemplate;
 
 @Entity
 @ObservableEntity
-@Table(name = "BILLING_WALLET")
+@ExportIdentifier({ "code", "userAccount.code", "provider" })
+@Table(name = "BILLING_WALLET", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE", "USER_ACCOUNT_ID", "PROVIDER_ID" }))
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_WALLET_SEQ")
 @NamedQueries({
 	@NamedQuery(name = "WalletInstance.listPrepaidActiveWalletIds", 
@@ -94,11 +97,15 @@ public class WalletInstance extends BusinessEntity {
 		}
 	}
 
-	public String toString() {
-		return walletTemplate == null ? null : walletTemplate.getCode();
-	}
 
-	public UserAccount getUserAccount() {
+
+	@Override
+    public String toString() {
+        return String.format("WalletInstance [%s, walletTemplate=%s, userAccount=%s]", super.toString(), walletTemplate != null ? walletTemplate.getCode() : null,
+            userAccount != null ? userAccount.getCode() : null);
+    }
+
+    public UserAccount getUserAccount() {
 		return userAccount;
 	}
 

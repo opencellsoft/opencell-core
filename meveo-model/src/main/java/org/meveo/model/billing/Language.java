@@ -73,4 +73,8 @@ public class Language extends ProviderlessEntity {
 		return true;
 	}
 
+	@Override
+	public String toString() {
+	    return languageCode;
+	}
 }
