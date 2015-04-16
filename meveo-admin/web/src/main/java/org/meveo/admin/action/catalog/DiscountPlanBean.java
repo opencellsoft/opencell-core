@@ -1,5 +1,7 @@
 package org.meveo.admin.action.catalog;
 
+import java.util.ArrayList;
+
 import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -71,6 +73,11 @@ public class DiscountPlanBean extends BaseBean<DiscountPlan> {
 		}
 
 		discountPlanItem.setDiscountPlan(getEntity());
+
+		if (getEntity().getDiscountPlanItems() == null) {
+			getEntity().setDiscountPlanItems(new ArrayList<DiscountPlanItem>());
+		}
+
 		if (getEntity().getDiscountPlanItems().contains(discountPlanItem)) {
 			messages.error(new BundleKey("messages", "discountPlan.discountPlanItem.unique"));
 		} else {
