@@ -24,6 +24,9 @@ public class ChargeInstanceOverrideDto implements Serializable {
 	@XmlElement(required = true)
 	private BigDecimal amountWithoutTax;
 
+	@XmlElement(required = false)
+	private BigDecimal amountWithTax;
+
 	public String getChargeInstanceCode() {
 		return chargeInstanceCode;
 	}
@@ -42,7 +45,15 @@ public class ChargeInstanceOverrideDto implements Serializable {
 
 	@Override
 	public String toString() {
-		return "ChargeInstanceOverrideDto [chargeInstanceCode=" + chargeInstanceCode + ", amountWithoutTax=" + amountWithoutTax + "]";
+		return "ChargeInstanceOverrideDto [chargeInstanceCode=" + chargeInstanceCode + ", amountWithoutTax=" + amountWithoutTax + ", amountWithTax=" + amountWithTax + "]";
+	}
+
+	public BigDecimal getAmountWithTax() {
+		return amountWithTax;
+	}
+
+	public void setAmountWithTax(BigDecimal amountWithTax) {
+		this.amountWithTax = amountWithTax;
 	}
 
 }

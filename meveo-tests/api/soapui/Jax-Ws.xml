@@ -14151,10 +14151,10 @@
    <soapenv:Body>
       <ws:createOperation>
          <!--Optional:-->
-         <walletOperation code="SOAP_WO3" description="SOAP_WO3">
+         <walletOperation code="SOAP_WO1" description="SOAP_WO1">
          	<userAccount>UA1</userAccount>
-         	<subscription>SUB1</subscription>
-		<walletTemplate>POSTPAID_WALLET</walletTemplate>
+         	<subscription>SOAP_SUB1</subscription>
+		<walletTemplate>PRINCIPAL</walletTemplate>
 		<chargeInstance>SUB1</chargeInstance>
 		<seller>MAIN_SELLER</seller>
             <!--Optional:-->
