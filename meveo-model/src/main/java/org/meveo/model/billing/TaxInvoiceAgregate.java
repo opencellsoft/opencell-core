@@ -16,16 +16,11 @@
  */
 package org.meveo.model.billing;
 
-import java.util.HashSet;
-import java.util.Set;
-
-import javax.persistence.CascadeType;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 
 @Entity
 @DiscriminatorValue("T")
@@ -36,9 +31,10 @@ public class TaxInvoiceAgregate extends InvoiceAgregate {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "TAX_ID")
 	private Tax tax;
-
-	@OneToMany(mappedBy = "taxInvoiceAgregate", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	private Set<SubCategoryInvoiceAgregate> subCategoryInvoiceAgregates = new HashSet<SubCategoryInvoiceAgregate>();
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "SUb_CAT_INVOICE_AGREGATE_ID")
+	SubCategoryInvoiceAgregate subCategoryInvoiceAggregate;
 
 	public Tax getTax() {
 		return tax;
@@ -48,13 +44,15 @@ public class TaxInvoiceAgregate extends InvoiceAgregate {
 		this.tax = tax;
 	}
 
-	public Set<SubCategoryInvoiceAgregate> getSubCategoryInvoiceAgregates() {
-		return subCategoryInvoiceAgregates;
+	public SubCategoryInvoiceAgregate getSubCategoryInvoiceAggregate() {
+		return subCategoryInvoiceAggregate;
 	}
 
-	public void setSubCategoryInvoiceAgregates(
-			Set<SubCategoryInvoiceAgregate> subCategoryInvoiceAgregates) {
-		this.subCategoryInvoiceAgregates = subCategoryInvoiceAgregates;
+	public void setSubCategoryInvoiceAggregate(
+			SubCategoryInvoiceAgregate subCategoryInvoiceAggregate) {
+		this.subCategoryInvoiceAggregate = subCategoryInvoiceAggregate;
 	}
+
+
 
 }

@@ -26,6 +26,9 @@ public class InvoiceSubCategoryCountryDto extends BaseDto {
 	private String tax;
 
 	private String discountCode;
+	
+
+	private String filterEL;
 
 	public InvoiceSubCategoryCountryDto() {
 
@@ -35,6 +38,7 @@ public class InvoiceSubCategoryCountryDto extends BaseDto {
 		invoiceSubCategory = invoiceSubcategoryCountry.getInvoiceSubCategory().getCode();
 		country = invoiceSubcategoryCountry.getTradingCountry().getCountryCode();
 		tax = invoiceSubcategoryCountry.getTax().getCode();
+		filterEL=invoiceSubcategoryCountry.getFilterEL();
 	}
 
 	public String getInvoiceSubCategory() {
@@ -68,11 +72,21 @@ public class InvoiceSubCategoryCountryDto extends BaseDto {
 	public void setDiscountCode(String discountCode) {
 		this.discountCode = discountCode;
 	}
+	
+	
+
+	public String getFilterEL() {
+		return filterEL;
+	}
+
+	public void setFilterEL(String filterEL) {
+		this.filterEL = filterEL;
+	}
 
 	@Override
 	public String toString() {
 		return "InvoiceSubCategoryCountryDto [invoiceSubCategory=" + invoiceSubCategory + ", country=" + country
-				+ ", tax=" + tax + ", discountCode=" + discountCode + "]";
+				+ ", tax=" + tax + ", discountCode=" + discountCode +",filterEL="+filterEL+ "]";
 	}
 
 }

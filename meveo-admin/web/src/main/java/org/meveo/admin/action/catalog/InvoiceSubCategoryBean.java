@@ -93,20 +93,7 @@ public class InvoiceSubCategoryBean extends
 
 		try {
 			if (invoiceSubcategoryCountry != null) {
-				for (InvoiceSubcategoryCountry inc : entity
-						.getInvoiceSubcategoryCountries()) {
-					if (inc.getTradingCountry()
-							.getCountry()
-							.getCountryCode()
-							.equalsIgnoreCase(
-									invoiceSubcategoryCountry
-											.getTradingCountry().getCountry()
-											.getCountryCode())
-							&& !inc.getId().equals(
-									invoiceSubcategoryCountry.getId())) {
-						throw new Exception();
-					}
-				}
+			
 
 				if (invoiceSubcategoryCountry.getId() != null) {
 					invoiceSubCategoryCountryService
