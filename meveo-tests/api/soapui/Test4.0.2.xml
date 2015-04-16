@@ -19050,6 +19050,8 @@
             <invoiceDateDelay>1</invoiceDateDelay>
             <dueDateDelay>1</dueDateDelay>
             <calendar>MONTHLY</calendar>
+            <invoiceDateProductionDelay>1</invoiceDateProductionDelay>
+            <transactionDateDelay>1</transactionDateDelay>
          </billingCycle>
       </ws:createBillingCycle>
    </soapenv:Body>
@@ -21027,7 +21029,7 @@
          </billingCycle>
       </ws:updateBillingCycle>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/updateBillingCycle"/></con:call></con:operation><con:operation isOneWay="false" action="" name="updateCalendar" bindingOperationName="updateCalendar" type="Request-Response" outputName="updateCalendarResponse" inputName="updateCalendar" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/updateBillingCycle"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation isOneWay="false" action="" name="updateCalendar" bindingOperationName="updateCalendar" type="Request-Response" outputName="updateCalendarResponse" inputName="updateCalendar" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
       <ws:updateCalendar>
