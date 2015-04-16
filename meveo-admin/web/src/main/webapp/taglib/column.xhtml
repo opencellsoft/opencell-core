@@ -83,8 +83,8 @@
 	<c:if test="${empty propagateConversation}">
 		<c:set var="propagateConversation" value="true" />
 	</c:if>
-	<c:if test="${empty renderViewLink}">
-		<c:set var="renderViewLink" value="true" />
+	<c:if test="${empty renderEditLink}">
+		<c:set var="renderEditLink" value="true" />
 	</c:if>
 	<c:if test="${empty objectIdParamName}">
 		<c:set var="objectIdParamName" value="objectId" />
@@ -123,13 +123,13 @@
 		    	 -->
 		    	<c:choose>
 		    		<c:when test="#{field eq 'code'}">
-		    			<p:tooltip for="#{resultsId}_#{field}_viewlink"
-							value="#{messages['commons.view']}" showEffect="slide"
+		    			<p:tooltip for="#{resultsId}_#{field}_editlink"
+							value="#{messages['commons.edit']}" showEffect="slide"
 								hideEffect="slide" />
-						<h:link id="#{resultsId}_#{field}_viewlink" outcome="#{editView}"
-							rendered="#{renderViewLink}" value="#{entity[field]}">
+						<h:link id="#{resultsId}_#{field}_editlink" outcome="#{editView}"
+							rendered="#{renderEditLink}" value="#{entity[field]}">
 							<f:param name="#{objectIdParamName}" value="#{entity.id}" />
-							<f:param name="edit" value="false" />
+							<f:param name="edit" value="true" />
 							<c:if test="${propagateConversation}">
 								<f:param name="cid"
 								value="#{javax.enterprise.context.conversation.id}" />
