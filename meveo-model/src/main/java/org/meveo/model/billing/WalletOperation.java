@@ -442,14 +442,17 @@ public class WalletOperation extends BusinessEntity {
 		this.reratedWalletOperation = reratedWalletOperation;
 	}
 
-	public String toString() {
-		return wallet + "," + operationDate + "," + type + "," + chargeInstance + "," + currency + "," + taxPercent
-				+ "," + unitAmountWithoutTax + "," + unitAmountWithTax + "," + unitAmountTax + "," + counter + ","
-				+ parameter1 + "," + parameter2 + "," + parameter3 + "," + startDate + "," + endDate + ","
-				+ subscriptionDate + "," + offerCode + "," + status + "," + seller+","+priceplan;
-	}
+    @Override
+    public String toString() {
+        return String
+            .format(
+                "WalletOperation [%s, wallet=%s, operationDate=%s, invoicingDate=%s, type=%s, chargeInstance=%s, unityDescription=%s, currency=%s, taxPercent=%s, unitAmountWithoutTax=%s, unitAmountWithTax=%s, unitAmountTax=%s, quantity=%s, amountWithoutTax=%s, amountWithTax=%s, amountTax=%s, aggregatedServiceInstance=%s, parameter1=%s, parameter2=%s, parameter3=%s, startDate=%s, endDate=%s, subscriptionDate=%s, offerCode=%s, status=%s, seller=%s, priceplan=%s, reratedWalletOperation=%s, billingAccount=%s, invoiceSubCategory=%s, billingRun=%s, offerTemplate=%s]",
+                super.toString(), wallet, operationDate, invoicingDate, type, chargeInstance, unityDescription, currency, taxPercent, unitAmountWithoutTax, unitAmountWithTax,
+                unitAmountTax, quantity, amountWithoutTax, amountWithTax, amountTax, aggregatedServiceInstance, parameter1, parameter2, parameter3, startDate, endDate,
+                subscriptionDate, offerCode, status, seller, priceplan, reratedWalletOperation, billingAccount, invoiceSubCategory, billingRun, offerTemplate);
+    }
 
-	@Transient
+    @Transient
 	public WalletOperation getUnratedClone() {
 		WalletOperation result = new WalletOperation();
 		return fillUnratedClone(result);

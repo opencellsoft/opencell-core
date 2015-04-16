@@ -1,6 +1,8 @@
 package org.meveo.export;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -22,9 +24,14 @@ public class ExportImportConfig {
     private Set<Class<? extends IEntity>> classesToExportAsFull = new HashSet<Class<? extends IEntity>>();
 
     /**
-     * A list of classes that should be exported in a short version - only attributes that can uniquely identify an entity in db
+     * A list of classes that should be exported in a short version - only ID attribute
      */
     private Set<Class<? extends IEntity>> classesToExportAsId = new HashSet<Class<? extends IEntity>>();
+
+    /**
+     * A list of classes that should not raise an exception if foreign key to entity of these classes was not found and import was explicitly requested to validate foreign keys
+     */
+    private List<Class<? extends IEntity>> classesToIgnoreFKNotFound = new ArrayList<Class<? extends IEntity>>();
 
     /**
      * A mapping between a class and attributes for <code>classesToExportAsId</code> parameter
@@ -40,6 +47,9 @@ public class ExportImportConfig {
         }
         if (exportTemplate.getClassesToExportAsId() != null) {
             classesToExportAsId.addAll(exportTemplate.getClassesToExportAsId());
+        }
+        if (exportTemplate.getClassesToIgnoreFKNotFound() != null) {
+            classesToIgnoreFKNotFound.addAll(exportTemplate.getClassesToIgnoreFKNotFound());
         }
         this.exportIdMapping = exportIdMapping;
     }
@@ -58,6 +68,14 @@ public class ExportImportConfig {
 
     public void setClassesToExportAsId(Set<Class<? extends IEntity>> classesToExportAsId) {
         this.classesToExportAsId = classesToExportAsId;
+    }
+
+    public List<Class<? extends IEntity>> getClassesToIgnoreFKNotFound() {
+        return classesToIgnoreFKNotFound;
+    }
+
+    public void setClassesToIgnoreFKNotFound(List<Class<? extends IEntity>> classesToIgnoreFKNotFound) {
+        this.classesToIgnoreFKNotFound = classesToIgnoreFKNotFound;
     }
 
     public void setExportIdMapping(Map<Class<? extends IEntity>, String[]> exportIdMapping) {
@@ -96,6 +114,20 @@ public class ExportImportConfig {
     public boolean isExportIdOnly(Class<? extends IEntity> clazz) {
         if (classesToExportAsId != null) {
             return classesToExportAsId.contains(clazz);
+        }
+        return false;
+    }
+
+    /**
+     * Should ignore when FK to an entity of a given class was not found
+     * 
+     * @param clazz Class in question
+     * @return True if was told to ignore FK to this class
+     */
+    public boolean isIgnoreFKToClass(Class<? extends IEntity> clazz) {
+        log.error("classesToIgnoreFKNotFound check "+clazz+ " classesToIgnoreFKNotFound contains "+classesToIgnoreFKNotFound);
+        if (classesToIgnoreFKNotFound != null) {
+            return classesToIgnoreFKNotFound.contains(clazz);
         }
         return false;
     }

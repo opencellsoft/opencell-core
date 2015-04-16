@@ -43,6 +43,7 @@ public class IEntityExportIdentifierConverter implements Converter {
     private EntityManager em;
     private boolean referenceFKById;
     private boolean ignoreNotFoundFK;
+    private Provider forceToProvider;
     private Map<String, Long> providerMap = new HashMap<String, Long>();
 
     private Logger log = LoggerFactory.getLogger(this.getClass());
@@ -62,12 +63,14 @@ public class IEntityExportIdentifierConverter implements Converter {
      * @param referenceFKById Should ID be used as a preferred way of retrieving an entity from DB - used when no ID clash can occur(e.g.import to a clean DB, import to a clone of
      *        DB)
      * @param ignoreNotFoundFK Ignore if entity was not found. Otherwise a runtime exception will be thrown
+     * @param forceToProvider
      */
-    public IEntityExportIdentifierConverter(ExportImportConfig exportImportConfig, EntityManager em, boolean referenceFKById, boolean ignoreNotFoundFK) {
+    public IEntityExportIdentifierConverter(ExportImportConfig exportImportConfig, EntityManager em, boolean referenceFKById, boolean ignoreNotFoundFK, Provider forceToProvider) {
         this.exportImportConfig = exportImportConfig;
         this.em = em;
         this.referenceFKById = referenceFKById;
         this.ignoreNotFoundFK = ignoreNotFoundFK;
+        this.forceToProvider = forceToProvider;
     }
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
@@ -81,7 +84,7 @@ public class IEntityExportIdentifierConverter implements Converter {
 
         boolean willConvert = isIEntity && !exportImportConfig.isExportFull(clazz);
         if (willConvert) {
-            log.debug("Will be using " + this.getClass().getSimpleName() + " for " + clazz);
+            log.trace("Will be using " + this.getClass().getSimpleName() + " for " + clazz);
         }
         return willConvert;
     }
@@ -149,6 +152,13 @@ public class IEntityExportIdentifierConverter implements Converter {
     public Object unmarshal(final HierarchicalStreamReader reader, final UnmarshallingContext context) {
 
         Class expectedType = context.getRequiredType();
+
+        // If unmarshaling a provider entity and were told to explicitly force it to be given provider
+        if (forceToProvider != null && Provider.class.isAssignableFrom(expectedType)) {
+            log.trace("Forcing provider to {}", forceToProvider);
+            return forceToProvider;
+        }
+
         String idValue = reader.getAttribute("id");
 
         // Obtain a reference to an entity by ID
@@ -172,7 +182,7 @@ public class IEntityExportIdentifierConverter implements Converter {
             final Iterator<String> it = reader.getAttributeNames();
             while (it.hasNext()) {
                 final String attrName = it.next();
-                final String attrValue = reader.getAttribute(attrName);
+                String attrValue = reader.getAttribute(attrName);
 
                 // Ignore ID field if looking up entity by non-id attributes
                 if ("id".equals(attrName)) {
@@ -182,23 +192,26 @@ public class IEntityExportIdentifierConverter implements Converter {
                 } else if ("class".equals(attrName)) {
                     continue;
 
-                    // Look up a provider by code
-                } else if ("provider".equals(attrName)) {// TODO Add a check by field type
-                    Provider provider = null;
-                    if (providerMap.containsKey(attrValue)) {
-                        provider = em.getReference(Provider.class, providerMap.get(attrValue));
-                    } else {
-                        try {
-                            provider = em.createQuery("select p from Provider p where p.code=:code", Provider.class).setParameter("code", attrValue).getSingleResult();
-                            providerMap.put(attrValue, provider.getId());
-                        } catch (NoResultException e) {
-                            if (ignoreNotFoundFK) {
-                                log.debug("Entity Provider not found by code " + attrValue + " and FK for " + expectedType.getSimpleName() + "." + attrName + " will be ignored");
-                                return null;
-                            } else {
-                                Map<String, Object> providerParams = new HashMap<String, Object>();
-                                providerParams.put("code", attrValue);
-                                throw new ImportFKNotFoundException(Provider.class, null, providerParams, e.getClass());
+                    // Look up a provider by code or force it to a value provided
+                } else if ("provider".equals(attrName)) {// TODO A check by field type would be better
+                    Provider provider = forceToProvider;
+                    if (provider == null) {
+                        if (providerMap.containsKey(attrValue)) {
+                            provider = em.getReference(Provider.class, providerMap.get(attrValue));
+                        } else {
+                            try {
+                                provider = em.createQuery("select p from Provider p where p.code=:code", Provider.class).setParameter("code", attrValue).getSingleResult();
+                                providerMap.put(attrValue, provider.getId());
+                            } catch (NoResultException e) {
+                                if (ignoreNotFoundFK) {
+                                    log.debug("Entity Provider not found by code " + attrValue + " and FK for " + expectedType.getSimpleName() + "." + attrName
+                                            + " will be ignored");
+                                    return null;
+                                } else {
+                                    Map<String, Object> providerParams = new HashMap<String, Object>();
+                                    providerParams.put("code", attrValue);
+                                    throw new ImportFKNotFoundException(Provider.class, null, providerParams, e.getClass());
+                                }
                             }
                         }
                     }
@@ -242,13 +255,13 @@ public class IEntityExportIdentifierConverter implements Converter {
             }
             try {
                 IEntity entity = (IEntity) query.getSingleResult();
-                log.trace("Found entity " + entity.getClass().getName() + " " + entity.getId() + " with attributes " + parameters);
+                log.trace("Found entity {} id={} with attributes {}", entity.getClass().getName(), entity.getId(), parameters);
                 return entity;
 
             } catch (NoResultException | NonUniqueResultException e) {
-                if (ignoreNotFoundFK) {
-                    log.debug("Entity " + expectedType.getName() + " not found and will be ignored. Reason:" + e.getClass().getName() + ". Lookup attributes: [id=" + idValue + "]"
-                            + parameters);
+                if (ignoreNotFoundFK || exportImportConfig.isIgnoreFKToClass(expectedType)) {
+                    log.debug("Entity {} not found and will be ignored. Reason: {}. Lookup attributes: [id={}] {}", expectedType.getName(), e.getClass().getName(), idValue,
+                        parameters);
                     return null;
                 } else {
                     throw new ImportFKNotFoundException(expectedType, idValue, parameters, e.getClass());

@@ -528,6 +528,11 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
                             // if searching elements from list
                             String parsedKey = key.substring(7);
                             queryBuilder.addSql("a." + parsedKey + " in (" + filter + ")");
+                        
+						} else if (key.contains("not-")) {
+                            // if searching elements NOT matching a value
+                            String parsedKey = key.substring(4);
+                            queryBuilder.addCriterion("a." + parsedKey, " != ", filter, true);
                         }
                         // if not ranged search
                         else {

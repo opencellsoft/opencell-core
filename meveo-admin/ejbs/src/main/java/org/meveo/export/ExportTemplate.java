@@ -6,6 +6,11 @@ import java.util.Map;
 
 import org.meveo.model.IEntity;
 
+/**
+ * Export/import process template
+ * 
+ * @author Andrius Karpavicius
+ */
 public class ExportTemplate {
 
     private String name;
@@ -14,10 +19,24 @@ public class ExportTemplate {
 
     private Map<String, String> parameters;
 
+    /**
+     * A list of classes that should be exported with all attributes
+     */
     private List<Class<? extends IEntity>> classesToExportAsFull = new ArrayList<Class<? extends IEntity>>();
 
+    /**
+     * A list of classes that should be exported in a short version - only ID attribute
+     */
     private List<Class<? extends IEntity>> classesToExportAsId = new ArrayList<Class<? extends IEntity>>();
 
+    /**
+     * A list of classes that should not raise an exception if foreign key to entity of these classes was not found and import was explicitly requested to validate foreign keys
+     */
+    private List<Class<? extends IEntity>> classesToIgnoreFKNotFound = new ArrayList<Class<? extends IEntity>>();
+
+    /**
+     * Other export/import templates grouped under this template
+     */
     private List<ExportTemplate> groupedTemplates = new ArrayList<ExportTemplate>();
 
     private boolean canDeleteAfterExport = false;
@@ -70,6 +89,14 @@ public class ExportTemplate {
 
     public void setClassesToExportAsId(List<Class<? extends IEntity>> classesToExportAsId) {
         this.classesToExportAsId = classesToExportAsId;
+    }
+
+    public List<Class<? extends IEntity>> getClassesToIgnoreFKNotFound() {
+        return classesToIgnoreFKNotFound;
+    }
+
+    public void setClassesToIgnoreFKNotFound(List<Class<? extends IEntity>> classesToIgnoreFKNotFound) {
+        this.classesToIgnoreFKNotFound = classesToIgnoreFKNotFound;
     }
 
     public List<ExportTemplate> getGroupedTemplates() {

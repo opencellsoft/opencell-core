@@ -50,7 +50,7 @@
 
 			<hf:formEntityField id="roleId" label="#{messages['chart.role']}"
 				field="role" childField="name" required="false" popup="true"
-				popupId="searchRole" />
+				popupId="searchRole" rendered="#{identity.hasPermission('administration','administrationVisualization')}" />
 
 			<hf:formField label="#{messages['chart.style']}" field="style" />
 			<hf:formField label="#{messages['chart.styleClass']}"

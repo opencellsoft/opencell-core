@@ -29,9 +29,8 @@ public class BillingCycleApi extends BaseApi {
 	private CalendarService calendarService;
 
 	public void create(BillingCycleDto postData, User currentUser) throws MeveoApiException {
-		if (!StringUtils.isBlank(postData.getCode()) && !StringUtils.isBlank(postData.getDescription())
-				&& !StringUtils.isBlank(postData.getCalendar()) && postData.getInvoiceDateDelay() != null
-				&& postData.getDueDateDelay() != null) {
+		if (postData.getInvoiceDateDelay() != null && !StringUtils.isBlank(postData.getCode()) && !StringUtils.isBlank(postData.getDescription())
+				&& !StringUtils.isBlank(postData.getCalendar()) && postData.getInvoiceDateDelay() != null && postData.getDueDateDelay() != null) {
 			Provider provider = currentUser.getProvider();
 
 			if (billingCycleService.findByBillingCycleCode(postData.getCode(), provider) != null) {
@@ -68,15 +67,17 @@ public class BillingCycleApi extends BaseApi {
 			if (postData.getDueDateDelay() == null) {
 				missingParameters.add("dueDateDelay");
 			}
+			if (postData.getInvoiceDateDelay() == null) {
+				missingParameters.add("invoiceDateDelay");
+			}
 
 			throw new MissingParameterException(getMissingParametersExceptionMessage());
 		}
 	}
 
 	public void update(BillingCycleDto postData, User currentUser) throws MeveoApiException {
-		if (!StringUtils.isBlank(postData.getCode()) && !StringUtils.isBlank(postData.getDescription())
-				&& !StringUtils.isBlank(postData.getCalendar()) && postData.getInvoiceDateDelay() != null
-				&& postData.getDueDateDelay() != null) {
+		if (postData.getInvoiceDateDelay() != null && !StringUtils.isBlank(postData.getCode()) && !StringUtils.isBlank(postData.getDescription())
+				&& !StringUtils.isBlank(postData.getCalendar()) && postData.getInvoiceDateDelay() != null && postData.getDueDateDelay() != null) {
 			Provider provider = currentUser.getProvider();
 
 			BillingCycle billingCycle = billingCycleService.findByBillingCycleCode(postData.getCode(), provider);
@@ -112,6 +113,9 @@ public class BillingCycleApi extends BaseApi {
 			}
 			if (postData.getDueDateDelay() == null) {
 				missingParameters.add("dueDateDelay");
+			}
+			if (postData.getInvoiceDateDelay() == null) {
+				missingParameters.add("invoiceDateDelay");
 			}
 
 			throw new MissingParameterException(getMissingParametersExceptionMessage());

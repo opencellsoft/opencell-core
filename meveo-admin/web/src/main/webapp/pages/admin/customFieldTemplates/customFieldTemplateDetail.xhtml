@@ -14,18 +14,18 @@
 			label="#{messages['customFieldTemplate.panel']}"
 			backingBean="#{customFieldTemplateBean}" showEnableDisableButton="true">
 			<hf:formField label="#{messages['BusinessEntity.code']}" field="code"
-				required="true" disabled="#{! customFieldTemplateBean.entity.transient}"/>
+				required="true" allowEdit="false" />
 			<hf:formField label="#{messages['customFieldTemplate.fieldLabel']}"
 				field="description" required="true" useConverter="false"
 				id="description" maxlength="50" />
 			<hf:formField label="#{messages['customFieldTemplate.fieldType']}"
 				field="fieldType" required="true"
-				listenerUpdate=":formPanel:formId:listValuesField" />
+				listenerUpdate=":formPanel:formId:listValuesField" allowEdit="false"  />
 			<hf:formField
 				label="#{messages['customFieldTemplate.fieldRequired']}"
 				field="valueRequired" isMessage="true" />
 			<hf:formField label="#{messages['customFieldTemplate.accountType']}"
-				field="accountLevel" required="true" />
+				field="accountLevel" required="true" allowEdit="false" listValues="#{customFieldTemplateBean.accountLevelsNoTimer}"/>
 			<p:panel id="listValuesField">
 				<hf:formField label="#{messages['customFieldTemplate.listValues']}"
 					field="listValues"

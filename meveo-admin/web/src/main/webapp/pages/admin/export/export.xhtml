@@ -75,9 +75,17 @@
                     <ui:repeat var="parameter" value="#{entityExportImportBean.selectedExportTemplate.parameters.entrySet().toArray()}">
                         <p:panelGrid columns="2" rendered="#{parameter.value eq 'provider'}">
                             <p:outputLabel value="#{messages['export.exportCriteria.'.concat(parameter.key)]}" />
-                            <p:selectOneMenu value="#{entityExportImportBean.exportParameters[parameter.key]}">
+                            <p:selectOneMenu value="#{entityExportImportBean.exportParameters[parameter.key]}"
+                                rendered="#{identity.user.user.onlyOneProvider}">
+                                <f:selectItems value="#{identity.user.user.providers.toArray()}" var="listVal" itemLabel="#{listVal.code}"
+                                    itemValue="#{listVal}" />
+                                <s:objectConverter />
+                            </p:selectOneMenu>
+                            <p:selectOneMenu value="#{entityExportImportBean.exportParameters[parameter.key]}"
+                                rendered="#{!identity.user.user.onlyOneProvider}">
                                 <f:selectItem />
-                                <f:selectItems value="#{providerBean.listAll()}" var="listVal" itemLabel="#{listVal.code}" itemValue="#{listVal}" />
+                                <f:selectItems value="#{identity.user.user.providers.toArray()}" var="listVal" itemLabel="#{listVal.code}"
+                                    itemValue="#{listVal}" />
                                 <s:objectConverter />
                             </p:selectOneMenu>
                         </p:panelGrid>
@@ -113,7 +121,7 @@
                 paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
                 rowsPerPageTemplate="20,30,50" lazy="false" styleClass="custom-grid" rowIndexVar="rowIndex"
                 rendered="#{entityExportImportBean.exportImportStats!=null}" emptyMessage="#{messages['export.nothingExported']}">
-                <p:column headerText="#{messages['export.entityClass']}" sortBy="#{stat.key}">
+                <p:column headerText="#{messages['export.entityClass']}">
                     <h:outputText value="#{stat.key.name}" />
                 </p:column>
                 <p:column headerText="#{messages['export.numberExported']}">

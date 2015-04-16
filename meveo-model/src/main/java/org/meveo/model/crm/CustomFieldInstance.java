@@ -13,6 +13,7 @@ import javax.persistence.UniqueConstraint;
 
 import org.meveo.model.AccountEntity;
 import org.meveo.model.BusinessEntity;
+import org.meveo.model.ExportIdentifier;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.OfferTemplate;
@@ -21,6 +22,7 @@ import org.meveo.model.jobs.TimerEntity;
 import org.meveo.model.mediation.Access;
 
 @Entity
+@ExportIdentifier({ "code", "subscription.code", "account.code", "chargeTemplate.code", "serviceTemplate.code", "offerTemplate.code", "access.accessUserId", "access.subscription.code", "timerEntity.name", "provider" })
 @Table(name = "CRM_CUSTOM_FIELD_INST", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE", "SUBSCRIPTION_ID",
 		"ACCOUNT_ID", "CHARGE_TEMPLATE_ID","SERVICE_TEMPLATE_ID","OFFER_TEMPLATE_ID","ACCESS_ID","MEVEO_TIMER_ID", "PROVIDER_ID" }))
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "CRM_CUSTOM_FIELD_INST_SEQ")

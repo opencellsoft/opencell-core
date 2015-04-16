@@ -33,6 +33,7 @@ import javax.persistence.Id;
 import javax.persistence.NoResultException;
 import javax.persistence.NonUniqueResultException;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Query;
 import javax.persistence.Transient;
 import javax.persistence.Version;
@@ -46,6 +47,7 @@ import org.meveo.model.Auditable;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.IEntity;
 import org.meveo.model.IVersionedEntity;
+import org.meveo.model.crm.Provider;
 import org.meveo.util.MeveoJpa;
 import org.meveo.util.MeveoJpaForJobs;
 import org.meveo.util.MeveoJpaForTarget;
@@ -160,14 +162,14 @@ public class EntityExportImportService implements Serializable {
             fos = new FileOutputStream(filename);
             xstream.toXML(exportInfos, fos);
         } catch (Exception e) {
-            log.error("Failed to export data to a file " + filename, e);
+            log.error("Failed to export data to a file {}", filename, e);
 
         } finally {
             if (fos != null) {
                 try {
                     fos.close();
                 } catch (IOException e) {
-                    log.error("Failed to export data to a file " + filename, e);
+                    log.error("Failed to export data to a file {}", filename, e);
                 }
             }
         }
@@ -196,10 +198,10 @@ public class EntityExportImportService implements Serializable {
                 try {
                     emForRemove.remove(emForRemove.getReference(removeInfo.getKey(), id));
                     exportStats.updateDeleteSummary(removeInfo.getKey(), 1);
-                    log.trace("Removed entity " + removeInfo.getKey().getName() + " id " + id);
+                    log.trace("Removed entity {} id {}", removeInfo.getKey().getName(), id);
 
                 } catch (Exception e) {
-                    log.error("Failed to remove entity " + removeInfo.getKey().getName() + " id " + id);
+                    log.error("Failed to remove entity {} id {}", removeInfo.getKey().getName(), id);
                 }
             }
         }
@@ -240,8 +242,6 @@ public class EntityExportImportService implements Serializable {
 
         // xstream.setMode(XStream.NO_REFERENCES);
 
-        List<IEntity> entities = null;
-
         // Construct a query to retrieve entities to export by selection criteria. OR examine selection criteria - could be that top export entity matches search criteria for
         // related entities (e.g. exporting provider and related info and some provider is search criteria, but also it matches the top entity)
         StringBuilder sql = new StringBuilder("select e from " + exportTemplate.getEntityToExport().getName() + " e  ");
@@ -254,41 +254,43 @@ public class EntityExportImportService implements Serializable {
             if (paramValue == null) {
                 continue;
 
-                // Handle the case when top export entity matches search criteria for related entities (e.g. exporting provider and related info and some provider is search
-                // criteria, but also it matches the top entity)
+                // Handle the case when top export entity matches search criteria for related entities (e.g. exporting provider and related info. If search criteria is Provider -
+                // for related entities it is just search criteria, but for top entity (provider) it has to match it)
             } else if (exportTemplate.getEntityToExport().isAssignableFrom(paramValue.getClass())) {
-                entities = new ArrayList<>();
-                entities.add((IEntity) paramValue);
-                break;
-            }
-            String fieldName = paramName;
-            String fieldCondition = "=";
-            if (fieldName.contains("_")) {
-                String[] paramInfo = fieldName.split("_");
-                fieldName = paramInfo[0];
-                fieldCondition = "from".equals(paramInfo[1]) ? ">" : "to".equals(paramInfo[1]) ? "<" : "=";
-            }
+                sql.append(firstWhere ? " where " : " and ").append(" id=:id");
+                firstWhere = false;
+                parametersToApply.put("id", ((IEntity) paramValue).getId());
 
-            Field field = FieldUtils.getField(exportTemplate.getEntityToExport(), fieldName, true);
-            if (field == null) {
-                continue;
-            }
-
-            sql.append(firstWhere ? " where " : " and ").append(String.format(" %s%s:%s", fieldName, fieldCondition, paramName));
-            firstWhere = false;
-            parametersToApply.put(paramName, paramValue);
-        }
-
-        // If top entity was not matched to some search criteria, do a search
-        if (entities == null) {
-            Query query = getEntityManager().createQuery(sql.toString());
-            for (Entry<String, Object> param : parametersToApply.entrySet()) {
-                if (param.getValue() != null) {
-                    query.setParameter(param.getKey(), param.getValue());
+            } else {
+                String fieldName = paramName;
+                String fieldCondition = "=";
+                if (fieldName.contains("_")) {
+                    String[] paramInfo = fieldName.split("_");
+                    fieldName = paramInfo[0];
+                    fieldCondition = "from".equals(paramInfo[1]) ? ">" : "to".equals(paramInfo[1]) ? "<" : "=";
                 }
+
+                Field field = FieldUtils.getField(exportTemplate.getEntityToExport(), fieldName, true);
+                if (field == null) {
+                    continue;
+                }
+
+                sql.append(firstWhere ? " where " : " and ").append(String.format(" %s%s:%s", fieldName, fieldCondition, paramName));
+                firstWhere = false;
+                parametersToApply.put(paramName, paramValue);
             }
-            entities = query.getResultList();
         }
+
+        // Do a search
+
+        Query query = getEntityManager().createQuery(sql.toString());
+        for (Entry<String, Object> param : parametersToApply.entrySet()) {
+            if (param.getValue() != null) {
+                query.setParameter(param.getKey(), param.getValue());
+            }
+        }
+        List<IEntity> entities = query.getResultList();
+
         String xml = null;
         if (!entities.isEmpty()) {
             xml = xstream.toXML(entities);
@@ -303,31 +305,55 @@ public class EntityExportImportService implements Serializable {
 
     }
 
+    /**
+     * Import entities from xml stream.
+     * 
+     * @param inputStreamXML stream contains a template that was used to export data and serialized data
+     * @param preserveId Should Ids of entities be preserved when importing instead of using sequence values for ID generation (DOES NOT WORK)
+     * @param ignoreNotFoundFK Should import fail if any FK was not found
+     * @param forceToProvider Ignore provider specified in an entity and force provider value to this value
+     * @return Import statistics
+     */
     @SuppressWarnings("unchecked")
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
-    public ExportImportStatistics importEntities(InputStream inputStream, boolean preserveId, boolean ignoreNotFoundFK) {
+    public ExportImportStatistics importEntities(InputStream inputStream, boolean preserveId, boolean ignoreNotFoundFK, Provider forceToProvider) {
 
         XStream xstream = new XStream();
         xstream.alias("exportInfo", ExportInfo.class);
         List<ExportInfo> exportInfos = (List<ExportInfo>) xstream.fromXML(inputStream);
 
-        ExportImportStatistics importStatsTotal = new ExportImportStatistics();
+        if (forceToProvider != null) {
+            forceToProvider = emTarget.createQuery("select p from Provider p where p.code=:code", Provider.class).setParameter("code", forceToProvider.getCode()).getSingleResult();
+        }
 
+        ExportImportStatistics importStatsTotal = new ExportImportStatistics();
         for (ExportInfo exportInfo : exportInfos) {
-            ExportImportStatistics importStats = importEntities(exportInfo.exportTemplate, exportInfo.serializedData, preserveId, ignoreNotFoundFK);
+            ExportImportStatistics importStats = importEntities(exportInfo.exportTemplate, exportInfo.serializedData, preserveId, ignoreNotFoundFK, forceToProvider);
             importStatsTotal.updateSummary(importStats);
         }
         return importStatsTotal;
     }
 
+    /**
+     * Import entities
+     * 
+     * @param exportTemplate Export template used to export data
+     * @param serializedData Serialized data
+     * @param preserveId Should Ids of entities be preserved when importing instead of using sequence values for ID generation (DOES NOT WORK)
+     * @param ignoreNotFoundFK Should import fail if any FK was not found
+     * @param forceToProvider Ignore provider specified in an entity and force provider value to this value
+     * @return Import statistics
+     */
     @SuppressWarnings("unchecked")
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
-    public ExportImportStatistics importEntities(ExportTemplate exportTemplate, String serializedData, boolean preserveId, boolean ignoreNotFoundFK) {
+    public ExportImportStatistics importEntities(ExportTemplate exportTemplate, String serializedData, boolean preserveId, boolean ignoreNotFoundFK, Provider forceToProvider) {
 
         if (serializedData == null) {
             log.info("No entities to import from {} export template ", exportTemplate.getName());
             return null;
         }
+        log.info("Importing entities from template {} ignore not found FK={}, forcing import to a provider {}", exportTemplate.getName(), ignoreNotFoundFK, forceToProvider);
+        log.trace("Importing entities from xml {}", serializedData);
 
         ExportImportStatistics importStats = null;
         XStream xstream = new XStream() {
@@ -338,19 +364,13 @@ public class EntityExportImportService implements Serializable {
         };
 
         ExportImportConfig exportImportConfig = new ExportImportConfig(exportTemplate, exportIdMapping);
-
-        xstream.registerConverter(new IEntityHibernateProxyConverter(exportImportConfig), XStream.PRIORITY_VERY_HIGH);
-        xstream.registerConverter(new IEntityExportIdentifierConverter(exportImportConfig, emTarget, preserveId, ignoreNotFoundFK), XStream.PRIORITY_NORMAL);
-        xstream.registerConverter(new HibernatePersistentCollectionConverter(xstream.getMapper()));
-        xstream.registerConverter(new HibernatePersistentMapConverter(xstream.getMapper()));
-        xstream.registerConverter(new HibernatePersistentSortedMapConverter(xstream.getMapper()));
-        xstream.registerConverter(new HibernatePersistentSortedSetConverter(xstream.getMapper()));
+        xstream.registerConverter(new IEntityExportIdentifierConverter(exportImportConfig, emTarget, preserveId, ignoreNotFoundFK, forceToProvider), XStream.PRIORITY_NORMAL);
         xstream.registerConverter(new IEntityClassConverter(xstream.getMapper(), xstream.getReflectionProvider(), preserveId), XStream.PRIORITY_LOW);
 
         List<? extends IEntity> entities = null;
         try {
             entities = (List<? extends IEntity>) xstream.fromXML(serializedData);
-            importStats = saveEntitiesToTarget(entities, preserveId);
+            importStats = saveEntitiesToTarget(entities, preserveId, forceToProvider);
 
         } catch (Exception e) {
             log.error("Failed to import XML contents. Template {}, serialized data {}: ", exportTemplate.getName(), serializedData, e);
@@ -368,52 +388,79 @@ public class EntityExportImportService implements Serializable {
      * 
      * @param entities Entities to save
      * @param lookupById Should a lookup of existing entity in DB be done by ID or by attributes
+     * @param forceToProvider Ignore provider specified in an entity and force provider value to this value
      */
-    @SuppressWarnings({ "unchecked", "rawtypes" })
-    private ExportImportStatistics saveEntitiesToTarget(List<? extends IEntity> entities, boolean lookupById) {
+    private ExportImportStatistics saveEntitiesToTarget(List<? extends IEntity> entities, boolean lookupById, Provider forceToProvider) {
 
         ExportImportStatistics importStats = new ExportImportStatistics();
 
         for (IEntity entityToSave : entities) {
-            log.debug("Saving entity {} preserveId={}", entityToSave, lookupById);
 
-            List extractedRelatedEntities = extractNonCascadedEntities(entityToSave);
+            // Check if entity to be saved is a provider entity but were told to force importing to a given provider - just replace a code
+            if (forceToProvider != null && entityToSave instanceof Provider) {
+                ((Provider) entityToSave).setCode(forceToProvider.getCode());
+            }
+            saveEntityToTarget(entityToSave, lookupById, importStats, false);
+        }
+        return importStats;
+    }
 
-            IEntity entityFound = null;
-            // Check that entity does not exist yet
-            // Check by id
-            if (lookupById && entityToSave.getId() != null) {
-                entityFound = emTarget.find(entityToSave.getClass(), entityToSave.getId());
-            } else {
-                entityFound = findEntityByAttributes(entityToSave);
+    /**
+     * Save entity to a target DB
+     * 
+     * @param entityToSave Entity to save
+     * @param lookupById Should a lookup of existing entity in DB be done by ID or by attributes
+     * @param importStats Import statistics
+     * @param saveUpdateOnly Should only existing entity be saved
+     */
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+    private IEntity saveEntityToTarget(IEntity entityToSave, boolean lookupById, ExportImportStatistics importStats, boolean updateExistingOnly) {
+
+        log.debug("Saving entity {} preserveId={}", entityToSave, lookupById);
+
+        // Check that entity does not exist yet
+        IEntity entityFound = null;
+
+        // Check by id
+        if (lookupById && entityToSave.getId() != null) {
+            entityFound = emTarget.find(entityToSave.getClass(), entityToSave.getId());
+        } else {
+            entityFound = findEntityByAttributes(entityToSave);
+        }
+
+        if (entityFound == null && updateExistingOnly) {
+            log.debug("No existing entity was found. Entity will be saved by other means.");
+            return entityToSave;
+        }
+
+        if (entityFound == null) {
+            // Clear version field
+            if (IVersionedEntity.class.isAssignableFrom(entityToSave.getClass())) {
+                ((IVersionedEntity) entityToSave).setVersion(null);
             }
 
-            if (entityFound == null) {
-                // Clear version field
-                if (IVersionedEntity.class.isAssignableFrom(entityToSave.getClass())) {
-                    ((IVersionedEntity) entityToSave).setVersion(null);
-                }
+            saveNotManagedFields(entityToSave, lookupById, importStats);
+            emTarget.persist(entityToSave);
 
-                emTarget.persist(entityToSave);
-                log.debug("Entity {} saved", entityToSave);
+            log.debug("Entity {} saved", entityToSave);
 
-            } else {
-                log.debug("Existing entity found with ID " + entityFound.getId() + ". Entity will be updated.");
-                updateEntityFromDB(entityFound, entityToSave);
+        } else {
+            log.debug("Existing entity found with ID {}. Entity will be updated.", entityFound.getId());
+            updateEntityFromDB(entityFound, entityToSave, lookupById, importStats);
 
-                log.debug("Entity {} saved", entityFound);
-            }
+            log.debug("Entity {} saved", entityFound);
+        }
 
-            // Save related entities that were not saved during main entity saving
-            if (extractedRelatedEntities != null && !extractedRelatedEntities.isEmpty()) {
-                ExportImportStatistics importStatsRelated = saveEntitiesToTarget(extractedRelatedEntities, lookupById);
-                importStats.updateSummary(importStatsRelated);
-            }
+        List extractedRelatedEntities = extractNonCascadedEntities(entityToSave);
+        if (extractedRelatedEntities != null && !extractedRelatedEntities.isEmpty()) {
+            ExportImportStatistics importStatsRelated = saveEntitiesToTarget(extractedRelatedEntities, lookupById, null);
+            importStats.updateSummary(importStatsRelated);
         }
 
         // Update statistics
-        importStats.updateSummary(entities.get(0).getClass(), entities.size());
-        return importStats;
+        importStats.updateSummary(entityToSave.getClass(), 1);
+
+        return entityFound == null ? entityToSave : entityFound;
     }
 
     /**
@@ -469,14 +516,25 @@ public class EntityExportImportService implements Serializable {
      * Copy data from deserialized entity to an entity from DB
      * 
      * @param entityFromDB Entity found in DB
-     * @param entityDeserialized Entity deserialized
+     * @param entityDeserialized Entity deserialised
+     * @param lookupById Should a lookup of existing entity in DB be done by ID or by attributes
+     * @param importStats
      * @return A updated
      */
     @SuppressWarnings({ "unchecked", "rawtypes" })
-    private void updateEntityFromDB(IEntity entityFromDB, IEntity entityDeserialized) {
+    private void updateEntityFromDB(IEntity entityFromDB, IEntity entityDeserialized, boolean lookupById, ExportImportStatistics importStats) {
 
         if (HibernateProxy.class.isAssignableFrom(entityFromDB.getClass())) {
             entityFromDB = (IEntity) ((HibernateProxy) entityFromDB).getHibernateLazyInitializer().getImplementation();
+        }
+
+        // Update id and version fields, so if entity was referred from other importing entities, it would be referring to a newly saved entity
+        entityDeserialized.setId((Long) entityFromDB.getId());
+        log.trace("Deserialized entity updated with id {}", entityFromDB.getId());
+
+        if (IVersionedEntity.class.isAssignableFrom(entityDeserialized.getClass())) {
+            ((IVersionedEntity) entityDeserialized).setVersion(((IVersionedEntity) entityFromDB).getVersion());
+            log.trace("Deserialized entity updated with version {}", ((IVersionedEntity) entityFromDB).getVersion());
         }
 
         Class clazz = entityDeserialized.getClass();
@@ -490,20 +548,32 @@ public class EntityExportImportService implements Serializable {
                         continue;
                     }
 
-                    // Do not overwrite fields that should have been omitted during export, but are not empty
                     Object sourceValue = FieldUtils.readField(field, entityDeserialized, true);
+
+                    // Do not overwrite fields that should have been omitted during export, unless they are not empty
                     if (sourceValue == null && attributesToOmit.containsKey(clazz.getName() + "." + field.getName())) {
                         continue;
                     }
 
-                    // Do not overwrite @oneToMany fields that do not cascade as they wont be saved anyway
+                    // Do not overwrite @oneToMany and @oneToOne fields THAT DO NOT CASCASE as they wont be saved anyway - that is handled apart in saveEntityToTarget()
                     if (field.isAnnotationPresent(OneToMany.class)) {
                         OneToMany oneToManyAnotation = field.getAnnotation(OneToMany.class);
                         if (!(ArrayUtils.contains(oneToManyAnotation.cascade(), CascadeType.ALL) || ArrayUtils.contains(oneToManyAnotation.cascade(), CascadeType.MERGE) || ArrayUtils
                             .contains(oneToManyAnotation.cascade(), CascadeType.PERSIST))) {
                             continue;
                         }
+
+                        // Extract @oneToOne fields that do not cascade
+                    } else if (field.isAnnotationPresent(OneToOne.class)) {
+                        OneToOne oneToOneAnotation = field.getAnnotation(OneToOne.class);
+                        if (!(ArrayUtils.contains(oneToOneAnotation.cascade(), CascadeType.ALL) || ArrayUtils.contains(oneToOneAnotation.cascade(), CascadeType.MERGE) || ArrayUtils
+                            .contains(oneToOneAnotation.cascade(), CascadeType.PERSIST))) {
+                            continue;
+                        }
                     }
+
+                    // Save related entities that were not saved during main entity saving
+                    sourceValue = saveNotManagedField(sourceValue, entityDeserialized, field, lookupById, importStats, clazz);
 
                     // Populate existing Map, List and Set type fields by modifying field contents instead of rewriting a whole field
                     if (Map.class.isAssignableFrom(field.getType())) {
@@ -553,14 +623,146 @@ public class EntityExportImportService implements Serializable {
 
         // entityFromDB = emTarget.merge(entityFromDB);
 
-        // Update id and version fields, so if entity was referred from other importing entities, it would be referring to a newly saved entity
-        entityDeserialized.setId((Long) entityFromDB.getId());
-        log.trace("Deserialized entity updated with id {}", entityFromDB.getId());
+    }
 
-        if (IVersionedEntity.class.isAssignableFrom(entityDeserialized.getClass())) {
-            ((IVersionedEntity) entityDeserialized).setVersion(((IVersionedEntity) entityFromDB).getVersion());
-            log.trace("Deserialized entity updated with version {}", ((IVersionedEntity) entityFromDB).getVersion());
+    /**
+     * Determine if fields that are entity type fields are managed, and if they are not managed yet - save them first
+     * 
+     * @param entityDeserialized Entity deserialised
+     * @param lookupById Should a lookup of existing entity in DB be done by ID or by attributes
+     * @param importStats Import statistics
+     */
+    @SuppressWarnings({ "rawtypes" })
+    private void saveNotManagedFields(IEntity entityDeserialized, boolean lookupById, ExportImportStatistics importStats) {
+
+        Class clazz = entityDeserialized.getClass();
+        Class cls = clazz;
+        while (!Object.class.equals(cls) && cls != null) {
+
+            for (Field field : cls.getDeclaredFields()) {
+                try {
+                    // Do not overwrite id, version and static fields
+                    if (field.isAnnotationPresent(Id.class) || field.isAnnotationPresent(Version.class) || Modifier.isStatic(field.getModifiers())) {
+                        continue;
+                    }
+
+                    saveNotManagedField(null, entityDeserialized, field, lookupById, importStats, clazz);
+
+                } catch (IllegalAccessException | IllegalArgumentException e) {
+                    throw new RuntimeException("Failed to access field " + clazz.getSimpleName() + "." + field.getName(), e);
+                }
+            }
+            cls = cls.getSuperclass();
         }
+    }
+
+    /**
+     * Determine if field is an entity type field, and if it is not managed yet - save it first. TODO fix here as when lookupById, id value would be filled already
+     * 
+     * @param fieldValue Field value
+     * @param entity Entity to obtain field value from if one is not provided. Also used to update the value if it was saved (after merge)
+     * @param field Field definition
+     * @param lookupById Is a lookup for FK or entity duplication performed by ID or attributes
+     * @param importStats Import statistics
+     * @param clazz A class of an entity that this field belongs to
+     * @throws IllegalAccessException
+     */
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+    private Object saveNotManagedField(Object fieldValue, IEntity entity, Field field, boolean lookupById, ExportImportStatistics importStats, Class clazz)
+            throws IllegalAccessException {
+
+        if (fieldValue == null) {
+            fieldValue = FieldUtils.readField(field, entity, true);
+            if (fieldValue == null) {
+                return fieldValue;
+            }
+        }
+
+        // Do not care about @oneToMany and @OneToOne fields that do not cascade they will be ignored anyway and their saving is handled in saveEntityToTarget()
+        boolean isCascadedField = false;
+        if (field.isAnnotationPresent(OneToMany.class)) {
+            OneToMany oneToManyAnotation = field.getAnnotation(OneToMany.class);
+            if (!(ArrayUtils.contains(oneToManyAnotation.cascade(), CascadeType.ALL) || ArrayUtils.contains(oneToManyAnotation.cascade(), CascadeType.MERGE) || ArrayUtils
+                .contains(oneToManyAnotation.cascade(), CascadeType.PERSIST))) {
+                return fieldValue;
+            } else {
+                isCascadedField = true;
+            }
+
+            // Extract @oneToOne fields that do not cascade
+        } else if (field.isAnnotationPresent(OneToOne.class)) {
+            OneToOne oneToOneAnotation = field.getAnnotation(OneToOne.class);
+            if (!(ArrayUtils.contains(oneToOneAnotation.cascade(), CascadeType.ALL) || ArrayUtils.contains(oneToOneAnotation.cascade(), CascadeType.MERGE) || ArrayUtils.contains(
+                oneToOneAnotation.cascade(), CascadeType.PERSIST))) {
+                return fieldValue;
+            } else {
+                isCascadedField = true;
+            }
+        }
+
+        // Do not care about non-entity type fields
+        if (!checkIfFieldIsOfType(field, IEntity.class)) {
+            return fieldValue;
+        }
+
+        // Ensure that field value is managed (or saved) before continuing
+        boolean isManaged = false;
+
+        // Examine Map, List and Set type fields to see if they are persisted, and if not - persist them
+        if (Map.class.isAssignableFrom(field.getType())) {
+            Map mapValue = (Map) fieldValue;
+            for (Object entry : mapValue.entrySet()) {
+                Object key = ((Entry) entry).getKey();
+                Object singleValue = ((Entry) entry).getValue();
+                if (singleValue == null) {
+                    continue;
+                }
+                // If entity is managed, then continue on. Update value in a map with a new value. TODO fix here as when lookupById, id value would be filled already
+                isManaged = ((IEntity) singleValue).getId() != null; // emTarget.contains(singleValue);
+                if (!isManaged) {
+                    log.debug("Persisting child field {}.{}'s (cascaded={}) value {}", clazz.getSimpleName(), field.getName(), isCascadedField, singleValue);
+                    mapValue.put(key, saveEntityToTarget((IEntity) singleValue, lookupById, importStats, isCascadedField));
+                    // } else {
+                    // log.trace("Persisting field {}.{} is managed", clazz.getSimpleName(), field.getName());
+                }
+            }
+
+        } else if (Collection.class.isAssignableFrom(field.getType())) {
+            Collection collectionValue = (Collection) fieldValue;
+            Object[] collectionValues = collectionValue.toArray();
+
+            // Clear and construct collection again with updated values (if were not managed before)
+            collectionValue.clear();
+            for (Object singleValue : collectionValues) {
+                if (singleValue == null) {
+                    continue;
+                }
+                // If entity is managed, then save it. TODO fix here as when lookupById, id value would be filled already
+                isManaged = ((IEntity) singleValue).getId() != null; // emTarget.contains(singleValue);
+                if (!isManaged) {
+                    log.debug("Persisting child field {}.{}'s (cascaded={}) value {}", clazz.getSimpleName(), field.getName(), isCascadedField, singleValue);
+                    collectionValue.add(saveEntityToTarget((IEntity) singleValue, lookupById, importStats, isCascadedField));
+                } else {
+                    collectionValue.add(singleValue);
+                    // log.trace("Persisting field {}.{} is managed", clazz.getSimpleName(), field.getName());
+                }
+            }
+
+        } else {
+
+            // If entity is managed, then save it. TODO fix here as when lookupById, id value would be filled already
+            isManaged = ((IEntity) fieldValue).getId() != null; // emTarget.contains(fieldValue);
+            if (!isManaged) {
+                log.debug("Persisting child field {}.{}'s (cascaded={}) value {}", clazz.getSimpleName(), field.getName(), isCascadedField, fieldValue);
+                fieldValue = saveEntityToTarget((IEntity) fieldValue, lookupById, importStats, isCascadedField);
+                // Update field value in an entity with a new value
+                FieldUtils.writeField(field, entity, fieldValue, true);
+                // } else {
+                // log.trace("Persisting field {}.{} is managed", clazz.getSimpleName(), field.getName());
+            }
+        }
+
+        return fieldValue;
     }
 
     /**
@@ -582,7 +784,9 @@ public class EntityExportImportService implements Serializable {
             Object attrValue;
             try {
                 attrValue = getAttributeValue(entityToSave, attributeName);
-                parameters.put(attributeName, attrValue);
+                if (attrValue != null) {
+                    parameters.put(attributeName, attrValue);
+                }
             } catch (IllegalAccessException e) {
                 throw new RuntimeException("Failed to access " + entityToSave.getClass().getName() + "." + attributeName + "field", e);
             }
@@ -604,15 +808,15 @@ public class EntityExportImportService implements Serializable {
         }
         try {
             IEntity entity = (IEntity) query.getSingleResult();
-            log.trace("Found entity " + entity.getClass().getName() + " " + entity.getId() + " with attributes " + parameters + ". Entity will be updated.");
+            log.trace("Found entity {} id={} with attributes {}. Entity will be updated.", entity.getClass().getName(), entity.getId(), parameters);
             return entity;
 
         } catch (NoResultException | NonUniqueResultException e) {
-            log.debug("Entity " + entityToSave.getClass().getName() + " not found matching attributes: " + parameters + ". Entity will be inserted.");
+            log.debug("Entity {} not found matching attributes: {}. Entity will be inserted.", entityToSave.getClass().getName(), parameters);
             return null;
 
         } catch (Exception e) {
-            log.error("Failed to search for entity " + entityToSave.getClass().getName() + " with attributes: " + parameters + " sql " + sql, e);
+            log.error("Failed to search for entity {} with attributes: {} sql {}", entityToSave.getClass().getName(), parameters, sql, e);
             throw new RuntimeException(e);
         }
     }
@@ -718,7 +922,7 @@ public class EntityExportImportService implements Serializable {
     }
 
     /**
-     * Identify fields in classes that contain a list of related entities (@OneToMany), but are not cascaded
+     * Identify fields in classes that contain a list of related entities (@OneToMany and @OneToOne), but are not cascaded
      * 
      * @return A map of <Class, List of non-cascaded fields>
      */
@@ -753,6 +957,14 @@ public class EntityExportImportService implements Serializable {
                         OneToMany oneToManyAnotation = field.getAnnotation(OneToMany.class);
                         if (!(ArrayUtils.contains(oneToManyAnotation.cascade(), CascadeType.ALL) || ArrayUtils.contains(oneToManyAnotation.cascade(), CascadeType.MERGE) || ArrayUtils
                             .contains(oneToManyAnotation.cascade(), CascadeType.PERSIST))) {
+                            classNonCascadableFields.add(field);
+                        }
+
+                        // Extract @oneToOne fields that do not cascade
+                    } else if (field.isAnnotationPresent(OneToOne.class)) {
+                        OneToOne oneToOneAnotation = field.getAnnotation(OneToOne.class);
+                        if (!(ArrayUtils.contains(oneToOneAnotation.cascade(), CascadeType.ALL) || ArrayUtils.contains(oneToOneAnotation.cascade(), CascadeType.MERGE) || ArrayUtils
+                            .contains(oneToOneAnotation.cascade(), CascadeType.PERSIST))) {
                             classNonCascadableFields.add(field);
                         }
                     }
@@ -804,19 +1016,34 @@ public class EntityExportImportService implements Serializable {
      * @param typesToCheck Class to match
      * @return True is field is of type classToMatch or is parameterized with classToMatch class (e.g. List<classToMatch>
      */
-    @SuppressWarnings("rawtypes")
     private boolean checkIfFieldIsOfType(Field field, Collection<Class<? extends IEntity>> typesToCheck) {
-        for (Class<? extends IEntity> typeNotToOmit : typesToCheck) {
-            if (typeNotToOmit.isAssignableFrom(field.getType())) {
+        for (Class<? extends IEntity> typeToCheck : typesToCheck) {
+            boolean isOfType = checkIfFieldIsOfType(field, typeToCheck);
+            if (isOfType) {
                 return true;
-            } else if (field.getGenericType() instanceof ParameterizedType) {
-                ParameterizedType aType = (ParameterizedType) field.getGenericType();
-                Type[] fieldArgTypes = aType.getActualTypeArguments();
-                for (Type fieldArgType : fieldArgTypes) {
-                    Class fieldArgClass = (Class) fieldArgType;
-                    if (typeNotToOmit.isAssignableFrom(fieldArgClass)) {
-                        return true;
-                    }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Check if class field is of type - including List<>, Map<>, Set<> and potentially other parameterized classes
+     * 
+     * @param field Field to analyse
+     * @param typeToCheck Class to match
+     * @return True is field is of type classToMatch or is parameterized with classToMatch class (e.g. List<classToMatch>
+     */
+    @SuppressWarnings("rawtypes")
+    private boolean checkIfFieldIsOfType(Field field, Class<? extends IEntity> typeToCheck) {
+        if (typeToCheck.isAssignableFrom(field.getType())) {
+            return true;
+        } else if (field.getGenericType() instanceof ParameterizedType) {
+            ParameterizedType aType = (ParameterizedType) field.getGenericType();
+            Type[] fieldArgTypes = aType.getActualTypeArguments();
+            for (Type fieldArgType : fieldArgTypes) {
+                Class fieldArgClass = (Class) fieldArgType;
+                if (typeToCheck.isAssignableFrom(fieldArgClass)) {
+                    return true;
                 }
             }
         }
@@ -834,10 +1061,10 @@ public class EntityExportImportService implements Serializable {
     private void applyAttributesToOmit(XStream xstream, Collection<Class<? extends IEntity>> typesNotToOmit) {
         for (Object[] classFieldInfo : attributesToOmit.values()) {
             if (typesNotToOmit != null && checkIfFieldIsOfType((Field) classFieldInfo[1], typesNotToOmit)) {
-                log.trace("Explicitly not omitting " + classFieldInfo[0] + "." + ((Field) classFieldInfo[1]).getName() + " attribute from export");
+                log.trace("Explicitly not omitting {}.{} attribute from export", classFieldInfo[0], ((Field) classFieldInfo[1]).getName());
                 continue;
             }
-            log.trace("Will ommit " + classFieldInfo[0] + "." + ((Field) classFieldInfo[1]).getName() + " attribute from export");
+            log.trace("Will ommit {}.{} attribute from export", classFieldInfo[0], ((Field) classFieldInfo[1]).getName());
             xstream.omitField((Class) classFieldInfo[0], ((Field) classFieldInfo[1]).getName());
         }
         xstream.omitField(Auditable.class, "creator");

@@ -63,7 +63,6 @@ public class IEntityClassConverter extends ReflectionConverter {
     @Override
     public Object unmarshal(HierarchicalStreamReader reader, UnmarshallingContext context) {
         IEntity entity = (IEntity) super.unmarshal(reader, context);
-
         if (!preserveId) {
             entity.setId(null);
         }
