@@ -55,6 +55,7 @@ public class RecurringRatingJob implements Job {
 
 	@Override
 	@Asynchronous
+	@TransactionAttribute(TransactionAttributeType.NEVER)
 	public void execute(TimerEntity timerEntity, User currentUser) {
 		JobExecutionResultImpl result = new JobExecutionResultImpl();
 		TimerInfo info = timerEntity.getTimerInfo();
@@ -93,9 +94,11 @@ public class RecurringRatingJob implements Job {
 
 	@Override
 	@Timeout
-	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
+	@TransactionAttribute(TransactionAttributeType.NEVER)
 	public void trigger(Timer timer) {
+
 		execute((TimerEntity) timer.getInfo(), null);
+
 	}
 
 	@Override
