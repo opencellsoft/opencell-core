@@ -79,7 +79,7 @@
 
 	<c:set var="converter"
 		value="#{getConverter.forType(entity[field], converterParam)}"></c:set>
-		
+
 	<c:if test="${empty propagateConversation}">
 		<c:set var="propagateConversation" value="true" />
 	</c:if>
@@ -89,11 +89,10 @@
 	<c:if test="${empty objectIdParamName}">
 		<c:set var="objectIdParamName" value="objectId" />
 	</c:if>
-		<c:if test="${empty editView}">
+	<c:if test="${empty editView}">
 		<c:set var="editView" value="#{backingBean.getEditViewName()}" />
 	</c:if>
-
-
+			
 	<p:column exportable="#{exportable}" rendered="#{rendered}">
 		<f:facet name="header">
 			<h:outputText value="#{label}" />
@@ -266,35 +265,23 @@
 					</c:if>
 					<!-- If entityView provided then show link to childField entity page. -->
 					<c:if test="#{not empty entityView}">
-						<c:choose>
-							<c:when test="#{not empty childChildFields}">
-								<c:set var="ccvalue" value="#{''}"/>
-							<c:forEach items="#{childChildFields.split(',')}" var="cc" varStatus="status">
-								<c:if test="#{!status.first and !status.end}">
-									<c:set var="ccvalue" value="#{ccvalue}, "/>
-								</c:if>
-								<c:set var="ccvalue" value="#{ccvalue}#{c[childField][cc]}"/>
-							</c:forEach>	
-							<hf:linkToEntity linkId="#{field}_#{childField}_message_link"
-								rendered="#{isMessage}" entityId="#{c[childFieldId]}"
-								entity="#{c}" popupFields="#{popupFields}"
-								value="#{ccvalue}" view="#{entityView}" />
-							<hf:linkToEntity linkId="#{field}_#{childField}_link"
-								rendered="#{not isMessage}" entity="#{c}"
-								popupFields="#{popupFields}" entityId="#{c[childFieldId]}"
-								value="#{ccvalue}" view="#{entityView}" />
-							</c:when>
-							<c:otherwise>
-								<hf:linkToEntity linkId="#{field}_#{childField}_message_link"
-									rendered="#{isMessage}" entityId="#{c[childFieldId]}"
-									entity="#{c}" popupFields="#{popupFields}"
-									value="#{c[childField]}" view="#{entityView}" />
-								<hf:linkToEntity linkId="#{field}_#{childField}_link"
-									rendered="#{not isMessage}" entity="#{c}"
-									popupFields="#{popupFields}" entityId="#{c[childFieldId]}"
-									value="#{c[childField]}" view="#{entityView}" />
-							</c:otherwise>
-						</c:choose>
+						<c:set var="ccvalue" value="#{c}"/>
+						<c:forEach var="cvar" items="#{childField.split('\\.')}">
+							<c:set var="ccvalue" value="#{ccvalue[cvar]}"/>
+						</c:forEach>
+						<c:set var="ccid" value="#{c}"/>
+						<c:forEach var="idvar" items="#{childFieldId.split('\\.')}">
+							<c:set var="ccid" value="#{ccid[idvar]}"/>
+						</c:forEach>
+						<c:set var="childField" value="#{childField.replaceAll('\\.','\\_')}"/>
+						<hf:linkToEntity linkId="#{field}_#{childField}_message_link"
+							rendered="#{isMessage}" entityId="#{ccid}"
+							entity="#{c}" popupFields="#{popupFields}"
+							value="#{ccvalue}" view="#{entityView}" />
+						<hf:linkToEntity linkId="#{field}_#{childField}_link"
+							rendered="#{not isMessage}" entity="#{c}"
+							popupFields="#{popupFields}" entityId="#{ccid}"
+							value="#{ccvalue}" view="#{entityView}" />
 					</c:if>
 					<br />
 				</ui:repeat>

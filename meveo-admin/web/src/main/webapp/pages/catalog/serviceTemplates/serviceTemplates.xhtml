@@ -37,25 +37,25 @@
 				field="description" />
 			<hftl:column label="#{messages['serviceTemplate.recurringCharges']}"
 				field="serviceRecurringCharges" isList="true"
-				childField="chargeTemplate" childFieldId="id" childChildFields="code"
+				childField="chargeTemplate.code" childFieldId="chargeTemplate.id"
 				entityView="recurringChargeTemplateDetail"
 				backView="serviceTemplates" />
 			<hftl:column
 				label="#{messages['serviceTemplate.subscriptionCharges']}"
 				field="serviceSubscriptionCharges" isList="true"
-				childField="chargeTemplate" childFieldId="id"
-				view="/pages/catalog/oneShotChargeTemplates/oneShotChargeTemplateDetail.xhtml"
+				childField="chargeTemplate.code" childFieldId="chargeTemplate.id"
+				entityView="oneShotChargeTemplateDetail"
 				backView="serviceTemplates" />
 			<hftl:column
 				label="#{messages['serviceTemplate.terminationCharges']}"
 				field="serviceTerminationCharges" isList="true"
-				childField="chargeTemplate" childFieldId="id"
-				view="/pages/catalog/oneShotChargeTemplates/oneShotChargeTemplateDetail.xhtml"
+				childField="chargeTemplate.code" childFieldId="chargeTemplate.id"
+				entityView="oneShotChargeTemplateDetail"
 				backView="serviceTemplates" />
 			<hftl:column label="#{messages['serviceTemplate.usageCharges']}"
 				field="serviceUsageCharges" isList="true"
-				childField="chargeTemplate" childFieldId="id"
-				view="/pages/catalog/usageChargeTemplates/usageChargeTemplateDetail.xhtml"
+				childField="chargeTemplate.code" childFieldId="chargeTemplate.id"
+				entityView="usageChargeTemplateDetail"
 				backView="serviceTemplates" />
 			<hftl:column label="#{messages['enableEntity.active']}"
 				field="active" isMessage="true" />
