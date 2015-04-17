@@ -16,10 +16,7 @@
  */
 package org.meveo.admin.action.crm;
 
-import java.io.IOException;
-
 import javax.enterprise.context.ConversationScoped;
-import javax.faces.event.ValueChangeEvent;
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -56,8 +53,6 @@ public class CustomerSearchBean extends BaseBean<AccountEntity> {
 	@Inject
 	private AccountEntitySearchService accountEntitySearchService;
 
-	private String customerPage;
-
 	/**
 	 * Constructor. Invokes super constructor and provides class type of this
 	 * bean for {@link BaseBean}.
@@ -76,10 +71,6 @@ public class CustomerSearchBean extends BaseBean<AccountEntity> {
 		return new AccountEntity() {
 			private static final long serialVersionUID = 1L;
 
-			@Override
-			public String getAccountType() {
-				return "";
-			}
 		};
 	}
 
@@ -116,28 +107,6 @@ public class CustomerSearchBean extends BaseBean<AccountEntity> {
 			// throw new
 			// IllegalStateException("Wrong customer type provided in EL in .xhtml");
 		}
-	}
-
-	/**
-	 * Redirect to view that is selected as type in search field. (for example
-	 * when user selects customer account type in search, he is redirected to
-	 * custmer accounts search page).
-	 */
-	public String changeCustomerPage(ValueChangeEvent event) throws IOException {
-		String page = (String) event.getNewValue();
-		/*
-		 * TODO: Redirect.instance().setViewId(page);
-		 * Redirect.instance().execute();
-		 */
-		return page;
-	}
-
-	public String getCustomerPage() {
-		return customerPage;
-	}
-
-	public void setCustomerPage(String customerPage) {
-		this.customerPage = customerPage;
 	}
 
 	public String getIdParameterName(String type) {

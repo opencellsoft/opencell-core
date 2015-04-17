@@ -34,7 +34,7 @@
 				<p:tree id="#{cc.attrs.id}_tree" value="#{cc.attrs.treeValue}"
 					var="node" selectionMode="single" dynamic="true">
 
-					<p:treeNode type="customer.type" icon="tree-customer-icon"
+					<p:treeNode type="ACCT_CUST" icon="tree-customer-icon"
 						expandedIcon="ui-icon-folder-open"
 						collapsedIcon="ui-icon-folder-collapsed">
 						<h:link id="customer_tree_value" value="#{node}"
@@ -48,7 +48,7 @@
 							for="customer_tree_value" value="#{node.firstAndLastName}" />
 					</p:treeNode>
 
-					<p:treeNode type="customerAccount.type"
+					<p:treeNode type="ACCT_CA"
 						icon="tree-customer-account-icon"
 						expandedIcon="ui-icon-folder-open"
 						collapsedIcon="ui-icon-folder-collapsed">
@@ -63,7 +63,7 @@
 							for="customerAccount_tree_value" value="#{node.firstAndLastName}" />
 					</p:treeNode>
 
-					<p:treeNode type="billingAccount.type"
+					<p:treeNode type="ACCT_BA"
 						icon="tree-billing-account-icon"
 						expandedIcon="ui-icon-folder-open"
 						collapsedIcon="ui-icon-folder-collapsed">
@@ -78,7 +78,7 @@
 							for="billingAccount_tree_value" value="#{node.firstAndLastName}" />
 					</p:treeNode>
 
-					<p:treeNode type="userAccount.type" icon="tree-user-account-icon"
+					<p:treeNode type="ACCT_UA" icon="tree-user-account-icon"
 						expandedIcon="ui-icon-folder-open"
 						collapsedIcon="ui-icon-folder-collapsed">
 						<h:link id="userAccount_tree_value" value="#{node}"

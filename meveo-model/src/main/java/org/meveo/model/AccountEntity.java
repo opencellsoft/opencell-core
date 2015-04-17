@@ -23,6 +23,7 @@ import java.util.Map.Entry;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.DiscriminatorColumn;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
@@ -35,6 +36,7 @@ import javax.persistence.MapKeyColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.Size;
 
 import org.meveo.model.billing.BillingAccount;
@@ -48,9 +50,10 @@ import org.meveo.model.shared.Name;
 
 @Entity
 @ObservableEntity
-@Table(name = "ACCOUNT_ENTITY")
+@Table(name = "ACCOUNT_ENTITY", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE", "ACCOUNT_TYPE", "PROVIDER_ID" }))
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "ACCOUNT_ENTITY_SEQ")
 @Inheritance(strategy = InheritanceType.JOINED)
+@DiscriminatorColumn(name = "ACCOUNT_TYPE") // Hibernate does not support of discriminator column with Joined strategy, so need to set it manually
 @EntityListeners({ AccountCodeGenerationListener.class })
 public abstract class AccountEntity extends BusinessEntity implements ICustomFieldEntity {
 
@@ -84,7 +87,10 @@ public abstract class AccountEntity extends BusinessEntity implements ICustomFie
 	@MapKeyColumn(name = "code")
 	private Map<String, CustomFieldInstance> customFields = new HashMap<String, CustomFieldInstance>();
 
-	public String getExternalRef1() {
+    @Column(name = "ACCOUNT_TYPE", insertable = true, updatable = false)
+    protected String accountType;
+        
+    public String getExternalRef1() {
 		return externalRef1;
 	}
 
@@ -124,8 +130,6 @@ public abstract class AccountEntity extends BusinessEntity implements ICustomFie
 		this.address = address;
 	}
 
-	public abstract String getAccountType();
-
 	public Boolean getDefaultLevel() {
 		return defaultLevel;
 	}
@@ -149,6 +153,10 @@ public abstract class AccountEntity extends BusinessEntity implements ICustomFie
 	public void setPrimaryContact(ProviderContact primaryContact) {
 		this.primaryContact = primaryContact;
 	}
+
+    public String getAccountType() {
+        return accountType;
+    }
 
 	public Map<String, CustomFieldInstance> getCustomFields() {
 		return customFields;

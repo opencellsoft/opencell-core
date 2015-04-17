@@ -117,11 +117,6 @@ public class CustomerTreeBean extends BaseBean<AccountEntity> {
 	public AccountEntity getInstance() throws InstantiationException, IllegalAccessException {
 		return new AccountEntity() {
 			private static final long serialVersionUID = 1L;
-
-			@Override
-			public String getAccountType() {
-				return "";
-			}
 		};
 	}
 

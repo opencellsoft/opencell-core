@@ -19,6 +19,8 @@ package org.meveo.service.base;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.TypeVariable;
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -63,6 +65,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
     protected final Class<E> entityClass;
 
     public static String SEARCH_SKIP_PROVIDER_CONSTRAINT = "skipProviderConstraint";
+    public static String SEARCH_ATTR_TYPE_CLASS = "type_class";
 
     @Inject
     @MeveoJpa
@@ -473,7 +476,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 	 *            PaginationConfiguration data holding object
      * @return query to filter entities according pagination configuration data.
      */
-    @SuppressWarnings("rawtypes")
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     public QueryBuilder getQuery(PaginationConfiguration config) {
 
         final Class<? extends E> entityClass = getEntityClass();
@@ -495,6 +498,11 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
                     if (SEARCH_SKIP_PROVIDER_CONSTRAINT.equals(key)) {
                         continue;
                     }
+                    
+                    String[] fieldInfo = key.split(" ");
+                    String condition = fieldInfo.length == 1 ? null : fieldInfo[0];
+                    String fieldName = fieldInfo.length == 1 ? fieldInfo[0] : fieldInfo[1];
+                    
                     Object filter = filters.get(key);
                     if (filter != null) {
                         // if ranged search (from - to fields)
@@ -529,35 +537,77 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
                             String parsedKey = key.substring(7);
                             queryBuilder.addSql("a." + parsedKey + " in (" + filter + ")");
                         
-						} else if (key.contains("not-")) {
-                            // if searching elements NOT matching a value
-                            String parsedKey = key.substring(4);
-                            queryBuilder.addCriterion("a." + parsedKey, " != ", filter, true);
-                        }
+                            // Search by an entity type
+						} else if (SEARCH_ATTR_TYPE_CLASS.equals(fieldName)) {
+                            if (filter instanceof Collection) {
+                                List classes = new ArrayList<Class>();
+                                for (String className : (Collection<String>) filter) {
+                                    try {
+                                        classes.add(Class.forName(className));
+                                    } catch (ClassNotFoundException e) {
+                                        log.error("Search by a type will be ignored - unknown class {}", className);
+                                    }
+                                }
+
+                                if (condition == null) {
+                                    queryBuilder.addSqlCriterion("a.type in (:typeClass)", "typeClass", classes);
+                                } else if ("ne".equalsIgnoreCase(condition)) {
+                                    queryBuilder.addSqlCriterion("a.type not in (:typeClass)", "typeClass", classes);
+                                }
+
+                            } else if (filter instanceof Class) {
+                                if (condition == null) {
+                                    queryBuilder.addSqlCriterion("a.type = :typeClass", "typeClass", filter);
+                                } else if ("ne".equalsIgnoreCase(condition)) {
+                                    queryBuilder.addSqlCriterion("a.type != :typeClass", "typeClass", filter);
+                                }
+
+                            } else if (filter instanceof String) {
+                                try {
+                                    if (condition == null) {
+                                        queryBuilder.addSqlCriterion("type(a) = :typeClass", "typeClass", Class.forName((String) filter));
+                                    } else if ("ne".equalsIgnoreCase(condition)) {
+                                        queryBuilder.addSqlCriterion("type(a) != :typeClass", "typeClass", Class.forName((String) filter));
+                                    }
+                                } catch (ClassNotFoundException e) {
+                                    log.error("Search by a type will be ignored - unknown class {}", filter);
+                                }
+                            }
+
                         // if not ranged search
-                        else {
+						} else {
                             if (filter instanceof String) {
                                 // if contains dot, that means join is needed
                                 String filterString = (String) filter;
-                                queryBuilder.addCriterionWildcard("a." + key, filterString, true);
+                                boolean wildcard = (filterString.indexOf("*") != -1);
+                                if (wildcard){
+                                    queryBuilder.addCriterionWildcard("a." + fieldName, filterString, true, "ne".equals(condition));
+                                } else {
+                                    queryBuilder.addCriterion("a." + fieldName, "ne".equals(condition) ? " != " : " = ", filterString, true);
+                                }
+                                
                             } else if (filter instanceof Date) {
-                                queryBuilder.addCriterionDateTruncatedToDay("a." + key, (Date) filter);
+                                queryBuilder.addCriterionDateTruncatedToDay("a." + fieldName, (Date) filter);
+                                
                             } else if (filter instanceof Number) {
-                                queryBuilder.addCriterion("a." + key, " = ", filter, true);
+                                queryBuilder.addCriterion("a." + fieldName, "ne".equals(condition) ? " != " : " = ", filter, true);
+                           
                             } else if (filter instanceof Boolean) {
-                                queryBuilder.addCriterion("a." + key, " is ", filter, true);
+                                queryBuilder.addCriterion("a." + fieldName, "ne".equals(condition) ? " not is" : " is ", filter, true);
+                            
                             } else if (filter instanceof Enum) {
                                 if (filter instanceof IdentifiableEnum) {
-                                    String enumIdKey = new StringBuilder(key).append("Id").toString();
-									queryBuilder.addCriterion("a." + enumIdKey, " = ",
-											((IdentifiableEnum) filter).getId(), true);
+                                    String enumIdKey = new StringBuilder(fieldName).append("Id").toString();
+                                    queryBuilder.addCriterion("a." + enumIdKey, "ne".equals(condition) ? " != " : " = ", ((IdentifiableEnum) filter).getId(), true);
                                 } else {
-                                    queryBuilder.addCriterionEnum("a." + key, (Enum) filter);
+                                    queryBuilder.addCriterionEnum("a." + fieldName, (Enum) filter, "ne".equals(condition) ? " != " : " = ");
                                 }
+
                             } else if (BaseEntity.class.isAssignableFrom(filter.getClass())) {
-                                queryBuilder.addCriterionEntity("a." + key, filter);
+                                queryBuilder.addCriterionEntity("a." + fieldName, filter, "ne".equals(condition) ? " != " : " = ");
+
                             } else if (filter instanceof UniqueEntity || filter instanceof IEntity) {
-                                queryBuilder.addCriterionEntity("a." + key, filter);
+                                queryBuilder.addCriterionEntity("a." + fieldName, filter, "ne".equals(condition) ? " != " : " = ");
                             }
                         }
                     }
@@ -565,7 +615,6 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
             }
         }
         queryBuilder.addPaginationConfiguration(config, "a");
-
         return queryBuilder;
     }
 

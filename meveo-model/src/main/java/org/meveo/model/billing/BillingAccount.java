@@ -25,6 +25,7 @@ import java.util.Map;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.DiscriminatorValue;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -50,10 +51,11 @@ import org.meveo.model.payments.PaymentTermEnum;
 @Entity
 @ExportIdentifier({ "code", "provider" })
 @Table(name = "BILLING_BILLING_ACCOUNT")
+@DiscriminatorValue(value = "ACCT_BA")
 @NamedQueries({ @NamedQuery(name = "BillingAccount.listByBillingRunId", query = "SELECT b FROM BillingAccount b where b.billingRun.id=:billingRunId") })
 public class BillingAccount extends AccountEntity {
-
-	public static final String ACCOUNT_TYPE = "billingAccount.type";
+    
+    public static final String ACCOUNT_TYPE = ((DiscriminatorValue) BillingAccount.class.getAnnotation(DiscriminatorValue.class)).value();
 
 	private static final long serialVersionUID = 1L;
 
@@ -162,6 +164,10 @@ public class BillingAccount extends AccountEntity {
 	// @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
 	// key is the counter template code
 	Map<String, CounterInstance> counters = new HashMap<String, CounterInstance>();
+
+    public BillingAccount() {
+        accountType = ACCOUNT_TYPE;
+    }
 
 	public List<UserAccount> getUsersAccounts() {
 		return usersAccounts;
@@ -274,11 +280,6 @@ public class BillingAccount extends AccountEntity {
 
 	public void setBillingCycle(BillingCycle billingCycle) {
 		this.billingCycle = billingCycle;
-	}
-
-	@Override
-	public String getAccountType() {
-		return ACCOUNT_TYPE;
 	}
 
 	public BillingRun getBillingRun() {

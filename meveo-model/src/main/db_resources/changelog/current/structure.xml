@@ -111,5 +111,28 @@
 			onUpdate="NO ACTION" referencedColumnNames="id"
 			referencedTableName="billing_invoice_agregate" />
 			
-	</changeSet>	
+	</changeSet>
+	<changeSet id="ticket704_20150416" author="AndriusKarpavicius">
+		<addColumn tableName="ACCOUNT_ENTITY">
+			<column name="account_type" type="VARCHAR(10)"/>
+		</addColumn>
+		<update tableName="ACCOUNT_ENTITY">
+			<column name="account_type" value="ACCT_CUST"/>
+			<where>id in (select id from CRM_CUSTOMER)</where>
+		</update>
+		<update tableName="ACCOUNT_ENTITY">
+			<column name="account_type" value="ACCT_CA"/>
+			<where>id in (select id from AR_CUSTOMER_ACCOUNT)</where>
+		</update>
+		<update tableName="ACCOUNT_ENTITY">
+			<column name="account_type" value="ACCT_UA"/>
+			<where>id in (select id from BILLING_USER_ACCOUNT)</where>
+		</update>				
+		<update tableName="ACCOUNT_ENTITY">
+			<column name="account_type" value="ACCT_BA"/>
+			<where>id in (select id from BILLING_BILLING_ACCOUNT)</where>
+		</update>				
+		<addNotNullConstraint tableName="ACCOUNT_ENTITY" columnName="account_type"/>
+		<addUniqueConstraint columnNames="CODE, ACCOUNT_TYPE, PROVIDER_ID" tableName="ACCOUNT_ENTITY" constraintName="UK_ACCOUNT_ENTITY"/>
+	</changeSet>
 </databaseChangeLog>

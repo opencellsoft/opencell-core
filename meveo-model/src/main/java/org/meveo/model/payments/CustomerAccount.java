@@ -22,6 +22,7 @@ import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.DiscriminatorValue;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -46,10 +47,11 @@ import org.meveo.model.shared.ContactInformation;
  */
 @Entity
 @ExportIdentifier({ "code", "provider" })
+@DiscriminatorValue(value = "ACCT_CA")
 @Table(name = "AR_CUSTOMER_ACCOUNT")
 public class CustomerAccount extends AccountEntity {
 
-	public static final String ACCOUNT_TYPE = "customerAccount.type";
+    public static final String ACCOUNT_TYPE = ((DiscriminatorValue) CustomerAccount.class.getAnnotation(DiscriminatorValue.class)).value();
 
 	private static final long serialVersionUID = 1L;
 
@@ -117,7 +119,11 @@ public class CustomerAccount extends AccountEntity {
 	@Column(name = "MANDATE_DATE")
 	@Temporal(TemporalType.DATE)
 	private Date mandateDate;
-
+	
+	public CustomerAccount() {
+        accountType = ACCOUNT_TYPE;
+    }
+	
 	public Customer getCustomer() {
 		return customer;
 	}
@@ -191,11 +197,6 @@ public class CustomerAccount extends AccountEntity {
 
 	public void setContactInformation(ContactInformation contactInformation) {
 		this.contactInformation = contactInformation;
-	}
-
-	@Override
-	public String getAccountType() {
-		return ACCOUNT_TYPE;
 	}
 
 	public void setDunningLevel(DunningLevelEnum dunningLevel) {

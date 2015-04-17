@@ -87,7 +87,7 @@ public class CustomFieldTemplateBean extends BaseBean<CustomFieldTemplate> {
     protected Map<String, Object> supplementSearchCriteria(Map<String, Object> searchCriteria) {
 
         if (!searchCriteria.containsKey("accountLevel")){
-            searchCriteria.put("not-accountLevel", AccountLevelEnum.TIMER);
+            searchCriteria.put("ne accountLevel", AccountLevelEnum.TIMER);
         }
         return super.supplementSearchCriteria(searchCriteria);
     }
