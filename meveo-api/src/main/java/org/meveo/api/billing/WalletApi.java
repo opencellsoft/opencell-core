@@ -336,8 +336,7 @@ public class WalletApi extends BaseApi {
 
 	public void createOperation(WalletOperationDto postData, User currentUser) throws MeveoApiException {
 		if (!StringUtils.isBlank(postData.getCode()) && !StringUtils.isBlank(postData.getDescription()) && !StringUtils.isBlank(postData.getUserAccount())
-				&& !StringUtils.isBlank(postData.getWalletTemplate()) && !StringUtils.isBlank(postData.getChargeInstance()) && !StringUtils.isBlank(postData.getSubscription())
-				&& !StringUtils.isBlank(postData.getSeller())) {
+				&& !StringUtils.isBlank(postData.getChargeInstance()) && !StringUtils.isBlank(postData.getSubscription()) && !StringUtils.isBlank(postData.getSeller())) {
 			Provider provider = currentUser.getProvider();
 
 			UserAccount userAccount = userAccountService.findByCode(postData.getUserAccount(), provider);
@@ -355,10 +354,15 @@ public class WalletApi extends BaseApi {
 			}
 
 			WalletTemplate walletTemplate = null;
-			if (!postData.getWalletTemplate().equals(WalletTemplate.PRINCIPAL)) {
-				walletTemplate = walletTemplateService.findByCode(postData.getWalletTemplate(), provider);
-				if (walletTemplate == null) {
-					throw new EntityDoesNotExistsException(WalletTemplate.class, postData.getWalletTemplate());
+			if (!StringUtils.isBlank(postData.getWalletTemplate())) {
+				if (!postData.getWalletTemplate().equals(WalletTemplate.PRINCIPAL)) {
+					walletTemplate = walletTemplateService.findByCode(postData.getWalletTemplate(), provider);
+					if (walletTemplate == null) {
+						throw new EntityDoesNotExistsException(WalletTemplate.class, postData.getWalletTemplate());
+					}
+				} else {
+					walletTemplate = new WalletTemplate();
+					walletTemplate.setCode(WalletTemplate.PRINCIPAL);
 				}
 			} else {
 				walletTemplate = new WalletTemplate();
@@ -436,9 +440,6 @@ public class WalletApi extends BaseApi {
 			}
 			if (StringUtils.isBlank(postData.getUserAccount())) {
 				missingParameters.add("userAccount");
-			}
-			if (StringUtils.isBlank(postData.getWalletTemplate())) {
-				missingParameters.add("walletTemplate");
 			}
 			if (StringUtils.isBlank(postData.getSubscription())) {
 				missingParameters.add("subscription");
