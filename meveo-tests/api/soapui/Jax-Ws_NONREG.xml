@@ -3450,7 +3450,9 @@
             <dueDateDelay>1</dueDateDelay>
             <calendar>MONTHLY</calendar>
             <invoiceDateDelay>1</invoiceDateDelay>
-            <billingTemplateName>1</billingTemplateName>
+            <billingTemplateName></billingTemplateName>
+            <invoiceDateProductionDelay>1</invoiceDateProductionDelay>
+            <transactionDateDelay>1</transactionDateDelay>
          </billingCycle>
       </ws:createBillingCycle>
    </soapenv:Body>
