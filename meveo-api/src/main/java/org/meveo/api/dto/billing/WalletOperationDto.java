@@ -96,6 +96,8 @@ public class WalletOperationDto extends BaseDto {
 		endDate = wo.getEndDate();
 		operationDate = wo.getOperationDate();
 		subscriptionDate = wo.getSubscriptionDate();
+		walletTemplate = wo.getWallet().getCode();
+		userAccount = wo.getWallet().getUserAccount().getCode();
 	}
 
 	public String getCode() {

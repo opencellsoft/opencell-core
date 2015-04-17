@@ -14351,8 +14351,9 @@
             <!--Optional:-->
             <seller>MAIN_SELLER</seller>
             <!--Optional:-->
-            <!--<status>?</status>
--->
+            <!--<status>?</status>-->
+            <userAccount>UA1</userAccount>
+            <!--<walletTemplate>POSTPAID_WALLET</walletTemplate>-->
          </findWalletOperations>
       </ws:findOperations>
    </soapenv:Body>

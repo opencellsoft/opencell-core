@@ -66,6 +66,7 @@ import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.LevelEnum;
 import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.RecurringChargeTemplate;
+import org.meveo.model.catalog.WalletTemplate;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.payments.CustomerAccount;
@@ -1247,7 +1248,8 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<WalletOperation> findWalletOperation(Seller seller, String offerCode, WalletOperationStatusEnum status, List<String> fetchFields, Provider provider) {
+	public List<WalletOperation> findWalletOperation(Seller seller, String offerCode, WalletOperationStatusEnum status, WalletTemplate walletTemplate,
+			WalletInstance walletInstance, UserAccount userAccount, List<String> fetchFields, Provider provider) {
 		try {
 			QueryBuilder qb = new QueryBuilder(WalletOperation.class, "w", fetchFields, provider);
 			if (seller != null) {
@@ -1258,6 +1260,14 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 			}
 			if (status != null) {
 				qb.addCriterionEnum("w.status", status);
+			}
+			if (walletTemplate != null) {
+				qb.addCriterionEntity("w.wallet.walletTemplate", walletTemplate);
+			} else {
+				qb.addCriterionEntity("w.wallet", walletInstance);
+			}
+			if (userAccount != null) {
+				qb.addCriterionEntity("w.wallet.userAccount", userAccount);
 			}
 
 			return (List<WalletOperation>) qb.getQuery(getEntityManager()).getResultList();

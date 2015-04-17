@@ -2,6 +2,7 @@ package org.meveo.api.dto.billing;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
 import org.meveo.api.dto.BaseDto;
@@ -19,6 +20,10 @@ public class FindWalletOperationsDto extends BaseDto {
 	private String offerCode;
 	private String seller;
 	private String status;
+	private String walletTemplate;
+
+	@XmlElement(required = true)
+	private String userAccount;
 
 	public String getSeller() {
 		return seller;
@@ -30,7 +35,8 @@ public class FindWalletOperationsDto extends BaseDto {
 
 	@Override
 	public String toString() {
-		return "FindWalletOperationsDto [offerCode=" + offerCode + ", seller=" + seller + ", status=" + status + "]";
+		return "FindWalletOperationsDto [offerCode=" + offerCode + ", seller=" + seller + ", status=" + status + ", walletTemplate=" + walletTemplate + ", userAccount="
+				+ userAccount + "]";
 	}
 
 	public String getOfferCode() {
@@ -47,6 +53,22 @@ public class FindWalletOperationsDto extends BaseDto {
 
 	public void setStatus(String status) {
 		this.status = status;
+	}
+
+	public String getWalletTemplate() {
+		return walletTemplate;
+	}
+
+	public void setWalletTemplate(String walletTemplate) {
+		this.walletTemplate = walletTemplate;
+	}
+
+	public String getUserAccount() {
+		return userAccount;
+	}
+
+	public void setUserAccount(String userAccount) {
+		this.userAccount = userAccount;
 	}
 
 }

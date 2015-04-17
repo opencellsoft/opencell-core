@@ -41,83 +41,98 @@ import org.meveo.service.base.PersistenceService;
 @Stateless
 public class WalletService extends PersistenceService<WalletInstance> {
 
-    @Inject
-    private WalletCacheContainerProvider walletCacheContainerProvider;
+	@Inject
+	private WalletCacheContainerProvider walletCacheContainerProvider;
 
-    @Override
-    public void create(WalletInstance walletInstance, User creator, Provider provider) {
-        super.create(walletInstance, creator, provider);
-        walletCacheContainerProvider.updateBalanceCache(walletInstance);
-    }
+	@Override
+	public void create(WalletInstance walletInstance, User creator, Provider provider) {
+		super.create(walletInstance, creator, provider);
+		walletCacheContainerProvider.updateBalanceCache(walletInstance);
+	}
 
-    public WalletInstance findByUserAccount(UserAccount userAccount) {
-        return findByUserAccount(getEntityManager(), userAccount);
-    }
+	public WalletInstance findByUserAccount(UserAccount userAccount) {
+		return findByUserAccount(getEntityManager(), userAccount);
+	}
 
-    public WalletInstance findByUserAccount(EntityManager em, UserAccount userAccount) {
-        QueryBuilder qb = new QueryBuilder(WalletInstance.class, "w");
-        try {
-            qb.addCriterionEntity("userAccount", userAccount);
+	public WalletInstance findByUserAccount(EntityManager em, UserAccount userAccount) {
+		QueryBuilder qb = new QueryBuilder(WalletInstance.class, "w");
+		try {
+			qb.addCriterionEntity("userAccount", userAccount);
 
-            return (WalletInstance) qb.getQuery(em).getSingleResult();
-        } catch (NoResultException e) {
-            log.warn(e.getMessage());
-            return null;
-        }
-    }
+			return (WalletInstance) qb.getQuery(em).getSingleResult();
+		} catch (NoResultException e) {
+			log.warn(e.getMessage());
+			return null;
+		}
+	}
 
-    public WalletInstance getWalletInstance(UserAccount userAccount, WalletTemplate walletTemplate, User creator, Provider provider) {
-        String walletCode = walletTemplate.getCode();
-        log.debug("get wallet instance for userAccount {} and wallet template {}", userAccount.getCode(), walletCode);
-        if (!WalletTemplate.PRINCIPAL.equals(walletCode)) {
-            if (!userAccount.getPrepaidWallets().containsKey(walletCode)) {
-                WalletInstance wallet = new WalletInstance();
-                wallet.setCode(walletCode);
-                wallet.setWalletTemplate(walletTemplate);
-                wallet.setUserAccount(userAccount);
-                create(wallet, creator, provider);
-                log.debug("add prepaid wallet {} to useraccount {}", walletCode, userAccount.getCode());
-                userAccount.getPrepaidWallets().put(walletCode, wallet);
-                getEntityManager().merge(userAccount);
-            }
+	public WalletInstance findByUserAccountAndCode(UserAccount userAccount, String code) {
+		QueryBuilder qb = new QueryBuilder(WalletInstance.class, "w");
+		try {
+			qb.addCriterionEntity("userAccount", userAccount);
+			qb.addCriterion("w.code", "=", code, true);
 
-            return userAccount.getPrepaidWallets().get(walletCode);
-        } else {
-            log.debug("return the Principal wallet instance {}", userAccount.getWallet().getId());
-            return userAccount.getWallet();
-        }
-    }
+			return (WalletInstance) qb.getQuery(getEntityManager()).getSingleResult();
+		} catch (NoResultException e) {
+			log.warn(e.getMessage());
+			return null;
+		}
+	}
 
-    public List<WalletInstance> getWalletsToMatch(Date date) {
-        return getEntityManager().createNamedQuery("WalletInstance.listPrepaidWalletsToMatch", WalletInstance.class).setParameter("matchingDate", date).getResultList();
-    }
+	public WalletInstance getWalletInstance(UserAccount userAccount, WalletTemplate walletTemplate, User creator, Provider provider) {
+		String walletCode = walletTemplate.getCode();
+		log.debug("get wallet instance for userAccount {} and wallet template {}", userAccount.getCode(), walletCode);
+		if (!WalletTemplate.PRINCIPAL.equals(walletCode)) {
+			if (!userAccount.getPrepaidWallets().containsKey(walletCode)) {
+				WalletInstance wallet = new WalletInstance();
+				wallet.setCode(walletCode);
+				wallet.setWalletTemplate(walletTemplate);
+				wallet.setUserAccount(userAccount);
+				create(wallet, creator, provider);
+				log.debug("add prepaid wallet {} to useraccount {}", walletCode, userAccount.getCode());
+				userAccount.getPrepaidWallets().put(walletCode, wallet);
+				getEntityManager().merge(userAccount);
+			}
 
-    /**
-     * Get a list of prepaid and active wallet ids to populate a cache
-     * 
-     * @return A list of prepaid and active wallet ids
-     */
-    public List<Long> getWalletsIdsForCache() {
-        return getEntityManager().createNamedQuery("WalletInstance.listPrepaidActiveWalletIds", Long.class).getResultList();
-    }
+			return userAccount.getPrepaidWallets().get(walletCode);
+		} else {
+			log.debug("return the Principal wallet instance {}", userAccount.getWallet().getId());
+			return userAccount.getWallet();
+		}
+	}
 
-    /**
-     * Get balance amount for a give wallet instance
-     * 
-     * @param walletInstanceId Wallet instance id
-     * @return Wallet balance amount
-     */
-    public BigDecimal getWalletBalance(Long walletInstanceId) {
-        return getEntityManager().createNamedQuery("WalletOperation.getBalance", BigDecimal.class).setParameter("walletId", walletInstanceId).getSingleResult();
-    }
+	public List<WalletInstance> getWalletsToMatch(Date date) {
+		return getEntityManager().createNamedQuery("WalletInstance.listPrepaidWalletsToMatch", WalletInstance.class).setParameter("matchingDate", date).getResultList();
+	}
 
-    /**
-     * Get reserved balance amount for a give wallet instance
-     * 
-     * @param walletInstanceId Wallet instance id
-     * @return Wallet's reserved balance amount
-     */
-    public BigDecimal getWalletReservedBalance(Long walletInstanceId) {
-        return getEntityManager().createNamedQuery("WalletOperation.getReservedBalance", BigDecimal.class).setParameter("walletId", walletInstanceId).getSingleResult();
-    }
+	/**
+	 * Get a list of prepaid and active wallet ids to populate a cache
+	 * 
+	 * @return A list of prepaid and active wallet ids
+	 */
+	public List<Long> getWalletsIdsForCache() {
+		return getEntityManager().createNamedQuery("WalletInstance.listPrepaidActiveWalletIds", Long.class).getResultList();
+	}
+
+	/**
+	 * Get balance amount for a give wallet instance
+	 * 
+	 * @param walletInstanceId
+	 *            Wallet instance id
+	 * @return Wallet balance amount
+	 */
+	public BigDecimal getWalletBalance(Long walletInstanceId) {
+		return getEntityManager().createNamedQuery("WalletOperation.getBalance", BigDecimal.class).setParameter("walletId", walletInstanceId).getSingleResult();
+	}
+
+	/**
+	 * Get reserved balance amount for a give wallet instance
+	 * 
+	 * @param walletInstanceId
+	 *            Wallet instance id
+	 * @return Wallet's reserved balance amount
+	 */
+	public BigDecimal getWalletReservedBalance(Long walletInstanceId) {
+		return getEntityManager().createNamedQuery("WalletOperation.getReservedBalance", BigDecimal.class).setParameter("walletId", walletInstanceId).getSingleResult();
+	}
 }
