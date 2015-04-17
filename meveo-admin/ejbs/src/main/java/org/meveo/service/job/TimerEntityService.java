@@ -39,6 +39,7 @@ import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.admin.User;
 import org.meveo.model.jobs.JobCategoryEnum;
 import org.meveo.model.jobs.TimerEntity;
+import org.meveo.model.jobs.TimerInfoDto;
 import org.meveo.service.admin.impl.UserService;
 import org.meveo.service.base.PersistenceService;
 import org.slf4j.Logger;
@@ -264,10 +265,10 @@ public class TimerEntityService extends PersistenceService<TimerEntity> {
 		}
 	}
 
-	public void executeAPITimer(String timerName, User currentUser) throws Exception {
-		log.info("execute timer={} via api", timerName);
+	public void executeAPITimer(TimerInfoDto timerInfoDTO, User currentUser) throws Exception {
+		log.info("execute timer={} via api", timerInfoDTO.getTimerName());
 		TimerEntity entity=(TimerEntity) getEntityManager().createQuery("FROM TimerEntity where name=:name and provider=:provider")
-		.setParameter("name", timerName).setParameter("provider", currentUser.getProvider()).getSingleResult();
+		.setParameter("name", timerInfoDTO.getTimerName()).setParameter("provider", currentUser.getProvider()).getSingleResult();
 		InitialContext ic;
         try {
             ic = new InitialContext();
@@ -275,6 +276,16 @@ public class TimerEntityService extends PersistenceService<TimerEntity> {
                 HashMap<String, String> jobs = jobEntries.get(entity.getJobCategoryEnum());
                 if (jobs.containsKey(entity.getJobName())) {
                     Job job = (Job) ic.lookup(jobs.get(entity.getJobName()));
+                    
+                    if(timerInfoDTO.getInvoiceDate()!=null){
+                    	entity.setDateCustomValue("BillingRunJob_invoiceDate",timerInfoDTO.getInvoiceDate());
+                    }
+                    if(timerInfoDTO.getLastTransactionDate()!=null){
+                    	entity.setDateCustomValue("BillingRunJob_lastTransactionDate",timerInfoDTO.getLastTransactionDate());
+                    }
+                    if(timerInfoDTO.getBillingCycle()!=null){
+                    	entity.setStringCustomValue("BillingRunJob_billingCycle",timerInfoDTO.getBillingCycle());
+                    }
                     job.execute(entity, getCurrentUser());
                 }
             } else {
