@@ -459,20 +459,10 @@ public class WalletApi extends BaseApi {
 		FindWalletOperationsResponseDto result = new FindWalletOperationsResponseDto();
 
 		if (!StringUtils.isBlank(postData.getUserAccount())) {
-			Seller seller = null;
-			String offerCode = null;
 			WalletOperationStatusEnum status = null;
 			WalletTemplate walletTemplate = null;
 			WalletInstance walletInstance = null;
 			UserAccount userAccount = null;
-
-			if (!StringUtils.isBlank(postData.getSeller())) {
-				seller = sellerService.findByCode(postData.getSeller(), provider);
-			}
-
-			if (!StringUtils.isBlank(postData.getOfferCode())) {
-				offerCode = postData.getOfferCode();
-			}
 
 			userAccount = userAccountService.findByCode(postData.getUserAccount(), provider);
 			if (userAccount == null) {
@@ -496,8 +486,8 @@ public class WalletApi extends BaseApi {
 				}
 			}
 
-			List<WalletOperation> walletOperations = walletOperationService.findWalletOperation(seller, offerCode, status, walletTemplate, walletInstance, userAccount,
-					Arrays.asList("wallet"), provider, 1000);
+			List<WalletOperation> walletOperations = walletOperationService.findWalletOperation(status, walletTemplate, walletInstance, userAccount, Arrays.asList("wallet"),
+					provider, 1000);
 
 			for (WalletOperation wo : walletOperations) {
 				result.getWalletOperations().add(new WalletOperationDto(wo));

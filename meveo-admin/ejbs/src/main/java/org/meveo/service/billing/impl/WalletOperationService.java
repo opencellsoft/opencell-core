@@ -41,7 +41,6 @@ import org.meveo.cache.WalletCacheContainerProvider;
 import org.meveo.commons.utils.NumberUtils;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.QueryBuilder;
-import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.admin.User;
@@ -1248,16 +1247,11 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<WalletOperation> findWalletOperation(Seller seller, String offerCode, WalletOperationStatusEnum status, WalletTemplate walletTemplate,
-			WalletInstance walletInstance, UserAccount userAccount, List<String> fetchFields, Provider provider, int maxResult) {
+	public List<WalletOperation> findWalletOperation(WalletOperationStatusEnum status, WalletTemplate walletTemplate, WalletInstance walletInstance, UserAccount userAccount,
+			List<String> fetchFields, Provider provider, int maxResult) {
 		try {
 			QueryBuilder qb = new QueryBuilder(WalletOperation.class, "w", fetchFields, provider);
-			if (seller != null) {
-				qb.addCriterionEntity("w.seller", seller);
-			}
-			if (!StringUtils.isBlank(offerCode)) {
-				qb.addCriterion("w.offerCode", "=", offerCode, true);
-			}
+
 			if (status != null) {
 				qb.addCriterionEnum("w.status", status);
 			}

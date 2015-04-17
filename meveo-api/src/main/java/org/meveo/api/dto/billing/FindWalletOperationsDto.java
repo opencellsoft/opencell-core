@@ -17,34 +17,15 @@ public class FindWalletOperationsDto extends BaseDto {
 
 	private static final long serialVersionUID = 4342970913973071312L;
 
-	private String offerCode;
-	private String seller;
 	private String status;
 	private String walletTemplate;
 
 	@XmlElement(required = true)
 	private String userAccount;
 
-	public String getSeller() {
-		return seller;
-	}
-
-	public void setSeller(String seller) {
-		this.seller = seller;
-	}
-
 	@Override
 	public String toString() {
-		return "FindWalletOperationsDto [offerCode=" + offerCode + ", seller=" + seller + ", status=" + status + ", walletTemplate=" + walletTemplate + ", userAccount="
-				+ userAccount + "]";
-	}
-
-	public String getOfferCode() {
-		return offerCode;
-	}
-
-	public void setOfferCode(String offerCode) {
-		this.offerCode = offerCode;
+		return "FindWalletOperationsDto [status=" + status + ", walletTemplate=" + walletTemplate + ", userAccount=" + userAccount + "]";
 	}
 
 	public String getStatus() {

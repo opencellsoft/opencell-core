@@ -16275,10 +16275,6 @@
          <!--Optional:-->
          <findWalletOperations>
             <!--Optional:-->
-            <offerCode>OFF1</offerCode>
-            <!--Optional:-->
-            <seller>MAIN_SELLER</seller>
-            <!--Optional:-->
             <!--<status>?</status>-->
             <userAccount>UA1</userAccount>
             <!--<walletTemplate>POSTPAID_WALLET</walletTemplate>-->
@@ -24561,7 +24557,7 @@ for( testCase in testSuite.getTestCaseList() ) {
    <soapenv:Body>
       <ws:createOperation>
          <!--Optional:-->
-         <walletOperation code="613_WO" description="613_WO">
+         <walletOperation code="613_WO1" description="613_WO1">
             <userAccount>613_UA1</userAccount>
             <subscription>613_SUB1</subscription>
             <walletTemplate>PRINCIPAL</walletTemplate>
@@ -24615,11 +24611,74 @@ for( testCase in testSuite.getTestCaseList() ) {
          <!--Optional:-->
          <findWalletOperations>
             <!--Optional:-->
-            <offerCode>613_OFFER</offerCode>
-            <!--Optional:-->
+            <!--<status>?</status>-->
+            <userAccount>613_UA1</userAccount>
+            <walletTemplate>PRINCIPAL</walletTemplate>
+         </findWalletOperations>
+      </ws:findOperations>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response"/><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:authType>Global HTTP Settings</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Create WO 2"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>WalletWsSoapBinding</con:interface><con:operation>createOperation</con:operation><con:request name="Create WO 2"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/WalletWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createOperation>
+         <!--Optional:-->
+         <walletOperation code="613_WO2" description="613_WO2">
+            <userAccount>613_UA1</userAccount>
+            <subscription>613_SUB1</subscription>
+            <walletTemplate></walletTemplate>
             <seller>MAIN_SELLER</seller>
+            <chargeInstance>613_REC</chargeInstance>
+            <!--Optional:-->
+            <currency>EUR</currency>
+            <!--Optional:-->
+            <type>CREDIT</type>
+            <!--Optional:-->
+            <status>OPEN</status>
+            <!--Optional:-->
+            <unityDescription>quantity</unityDescription>
+            <!--Optional:-->
+            <taxPercent>.2</taxPercent>
+            <!--Optional:-->
+            <unitAmountWithoutTax>1</unitAmountWithoutTax>
+            <!--Optional:-->
+            <unitAmountWithTax>1.2</unitAmountWithTax>
+            <!--Optional:-->
+            <unitAmountTax>0.2</unitAmountTax>
+            <!--Optional:-->
+            <quantity>1</quantity>
+            <!--Optional:-->
+            <amountWithoutTax>1</amountWithoutTax>
+            <!--Optional:-->
+            <amountWithTax>1.2</amountWithTax>
+            <!--Optional:-->
+            <amountTax>0.2</amountTax>
+            <!--Optional:-->
+            <parameter1>1</parameter1>
+            <!--Optional:-->
+            <parameter2>2</parameter2>
+            <!--Optional:-->
+            <parameter3>3</parameter3>
+            <!--Optional:-->
+            <!--<startDate>?</startDate>-->
+            <!--Optional:-->
+            <!--<endDate>?</endDate>-->
+            <!--Optional:-->
+            <operationDate>2015-03-15</operationDate>
+            <!--Optional:-->
+            <subscriptionDate>2015-03-15</subscriptionDate>
+         </walletOperation>
+      </ws:createOperation>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response"/><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:authType>Global HTTP Settings</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Find WO 2"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>WalletWsSoapBinding</con:interface><con:operation>findOperations</con:operation><con:request name="Find WO 2"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/WalletWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:findOperations>
+         <!--Optional:-->
+         <findWalletOperations>
             <!--Optional:-->
             <!--<status>?</status>-->
+            <userAccount>613_UA1</userAccount>
+            <!--<walletTemplate>POSTPAID_WALLET</walletTemplate>-->
          </findWalletOperations>
       </ws:findOperations>
    </soapenv:Body>
