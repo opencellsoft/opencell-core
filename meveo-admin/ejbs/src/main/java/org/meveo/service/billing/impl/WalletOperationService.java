@@ -1249,7 +1249,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 
 	@SuppressWarnings("unchecked")
 	public List<WalletOperation> findWalletOperation(Seller seller, String offerCode, WalletOperationStatusEnum status, WalletTemplate walletTemplate,
-			WalletInstance walletInstance, UserAccount userAccount, List<String> fetchFields, Provider provider) {
+			WalletInstance walletInstance, UserAccount userAccount, List<String> fetchFields, Provider provider, int maxResult) {
 		try {
 			QueryBuilder qb = new QueryBuilder(WalletOperation.class, "w", fetchFields, provider);
 			if (seller != null) {
@@ -1270,7 +1270,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 				qb.addCriterionEntity("w.wallet.userAccount", userAccount);
 			}
 
-			return (List<WalletOperation>) qb.getQuery(getEntityManager()).getResultList();
+			return (List<WalletOperation>) qb.getQuery(getEntityManager()).setMaxResults(maxResult).getResultList();
 		} catch (NoResultException e) {
 			return null;
 		}

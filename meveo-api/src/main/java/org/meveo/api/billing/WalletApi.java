@@ -497,7 +497,7 @@ public class WalletApi extends BaseApi {
 			}
 
 			List<WalletOperation> walletOperations = walletOperationService.findWalletOperation(seller, offerCode, status, walletTemplate, walletInstance, userAccount,
-					Arrays.asList("wallet"), provider);
+					Arrays.asList("wallet"), provider, 1000);
 
 			for (WalletOperation wo : walletOperations) {
 				result.getWalletOperations().add(new WalletOperationDto(wo));
