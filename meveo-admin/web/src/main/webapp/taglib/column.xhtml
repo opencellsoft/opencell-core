@@ -92,6 +92,9 @@
 	<c:if test="${empty editView}">
 		<c:set var="editView" value="#{backingBean.getEditViewName()}" />
 	</c:if>
+	<c:if test="${empty edit}">
+		<c:set var="edit" value="true"/>
+	</c:if>
 			
 	<p:column exportable="#{exportable}" rendered="#{rendered}">
 		<f:facet name="header">
@@ -128,7 +131,7 @@
 						<h:link id="#{resultsId}_#{field}_editlink" outcome="#{editView}"
 							rendered="#{renderEditLink}" value="#{entity[field]}">
 							<f:param name="#{objectIdParamName}" value="#{entity.id}" />
-							<f:param name="edit" value="true" />
+							<f:param name="edit" value="#{edit}" />
 							<c:if test="${propagateConversation}">
 								<f:param name="cid"
 								value="#{javax.enterprise.context.conversation.id}" />
@@ -276,11 +279,11 @@
 						<c:set var="childField" value="#{childField.replaceAll('\\.','\\_')}"/>
 						<hf:linkToEntity linkId="#{field}_#{childField}_message_link"
 							rendered="#{isMessage}" entityId="#{ccid}"
-							entity="#{c}" popupFields="#{popupFields}"
+							entity="#{c}" popupFields="#{popupFields}" edit="#{edit}"
 							value="#{ccvalue}" view="#{entityView}" />
 						<hf:linkToEntity linkId="#{field}_#{childField}_link"
 							rendered="#{not isMessage}" entity="#{c}"
-							popupFields="#{popupFields}" entityId="#{ccid}"
+							popupFields="#{popupFields}" entityId="#{ccid}" edit="#{edit}"
 							value="#{ccvalue}" view="#{entityView}" />
 					</c:if>
 					<br />
