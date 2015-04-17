@@ -39,9 +39,11 @@ public class BillingRunJobBean {
 
 	@Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public void execute(JobExecutionResultImpl result, String parameter, User currentUser) {
+	public void execute(JobExecutionResultImpl result, String parameter,String billingCycleCode,Date invoiceDate,Date lastTransactionDate, User currentUser) {
 		Provider provider = currentUser.getProvider();
-
+		if(!StringUtils.isBlank(billingCycleCode)){
+			parameter=billingCycleCode;
+		}
 		try {
 			List<BillingRun> billruns = billingRunService.getbillingRuns(provider, parameter);
 
@@ -69,12 +71,16 @@ public class BillingRunJobBean {
 					billingRun.setAuditable(auditable);
 					billingRun.setBillingCycle(billingCycle);
 					billingRun.setProcessDate(auditable.getCreated());
-					if(billingCycle.getInvoiceDateProductionDelay()!=null){
+					if(invoiceDate!=null){
+						billingRun.setInvoiceDate(invoiceDate);
+					}else if(billingCycle.getInvoiceDateProductionDelay()!=null){
 					    billingRun.setInvoiceDate(DateUtils.addDaysToDate(billingRun.getProcessDate(),billingCycle.getInvoiceDateProductionDelay())); 
 		            } else {
 		                billingRun.setInvoiceDate(billingRun.getProcessDate());
 		            }
-		            if(billingCycle.getTransactionDateDelay()!=null){
+					if(lastTransactionDate!=null){
+						billingRun.setLastTransactionDate(lastTransactionDate);
+					}else if(billingCycle.getTransactionDateDelay()!=null){
 		                billingRun.setLastTransactionDate(DateUtils.addDaysToDate(billingRun.getProcessDate(),billingCycle.getTransactionDateDelay())); 
 		            } else {
 		                billingRun.setLastTransactionDate(billingRun.getProcessDate());

@@ -4,11 +4,11 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 
 import org.meveo.api.BaseApi;
-import org.meveo.api.dto.job.TimerInfoDto;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.User;
+import org.meveo.model.jobs.TimerInfoDto;
 import org.meveo.service.job.TimerEntityService;
 import org.slf4j.Logger;
 
@@ -27,7 +27,7 @@ public class JobApi extends BaseApi {
 	public void executeTimer(TimerInfoDto postData, User currentUser) throws MeveoApiException {
 		if (!StringUtils.isBlank(postData.getTimerName())) {
 			try {
-				timerEntityService.executeAPITimer(postData.getTimerName(),currentUser);
+				timerEntityService.executeAPITimer(postData,currentUser);
 			} catch (Exception e) {
 				log.error(e.getMessage());
 			}

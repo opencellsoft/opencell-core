@@ -5,7 +5,7 @@ import javax.jws.WebParam;
 import javax.jws.WebService;
 
 import org.meveo.api.dto.ActionStatus;
-import org.meveo.api.dto.job.TimerInfoDto;
+import org.meveo.model.jobs.TimerInfoDto;
 
 @WebService
 public interface JobWs extends IBaseWs {

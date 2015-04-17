@@ -32,7 +32,7 @@
 			<hf:formField label="#{messages['billingCycle.dueDateDelay']}"
 				field="dueDateDelay" required="true" />
 			<hf:formField label="#{messages['billingCycle.invoiceDateDelay']}"
-				field="invoiceDateDelay" required="true" />
+				field="invoiceDateDelay" minValue="-999999" required="true" />
 			<hftl:panelGroup columns="2">
 				<hf:formEntityField label="#{messages['billingCycle.calendar']}"
 					field="calendar" childField="code" required="true" popup="false"

@@ -6,11 +6,11 @@ import javax.jws.WebService;
 
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
-import org.meveo.api.dto.job.TimerInfoDto;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.job.JobApi;
 import org.meveo.api.logging.LoggingInterceptor;
 import org.meveo.api.ws.JobWs;
+import org.meveo.model.jobs.TimerInfoDto;
 import org.slf4j.Logger;
 
 @WebService(serviceName = "JobWs", endpointInterface = "org.meveo.api.ws.JobWs")
