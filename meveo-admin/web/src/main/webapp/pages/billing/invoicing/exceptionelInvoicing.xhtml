@@ -41,9 +41,9 @@
 			<hftl:column label="#{messages['businessEntity.code']}" field="code" />
 			<hftl:column label="#{messages['billingAccount.status']}"
 				field="status" childField="label" isMessage="true" />
-			<hftl:column label="#{messages['billingAccount.subscriptionDate']}"
+			<hftl:column label="#{messages['billingAccount.subscriptionDate']}" isDate="true"
 				field="subscriptionDate" />
-			<hftl:column label="#{messages['billingAccount.nextInvoiceDate']}"
+			<hftl:column label="#{messages['billingAccount.nextInvoiceDate']}" isDate="true"
 				field="nextInvoiceDate" />
 			<p:column>
 				<f:facet name="header">
