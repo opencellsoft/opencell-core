@@ -22,6 +22,7 @@ import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.DiscriminatorValue;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -40,10 +41,11 @@ import org.meveo.model.shared.ContactInformation;
 
 @Entity
 @ExportIdentifier({ "code", "provider" })
+@DiscriminatorValue(value = "ACCT_CUST")
 @Table(name = "CRM_CUSTOMER")
 public class Customer extends AccountEntity {
 
-	public static final String ACCOUNT_TYPE = "customer.type";
+    public static final String ACCOUNT_TYPE = ((DiscriminatorValue) Customer.class.getAnnotation(DiscriminatorValue.class)).value();
 
 	private static final long serialVersionUID = 1L;
 
@@ -71,7 +73,11 @@ public class Customer extends AccountEntity {
 	@Column(name = "MANDATE_DATE")
 	@Temporal(TemporalType.DATE)
 	private Date mandateDate;
-
+	 
+	public Customer() {
+        accountType = ACCOUNT_TYPE;
+    }
+	
 	public Seller getSeller() {
 		return seller;
 	}
@@ -113,11 +119,6 @@ public class Customer extends AccountEntity {
 
 	public void setContactInformation(ContactInformation contactInformation) {
 		this.contactInformation = contactInformation;
-	}
-
-	@Override
-	public String getAccountType() {
-		return ACCOUNT_TYPE;
 	}
 
 	public String getMandateIdentification() {

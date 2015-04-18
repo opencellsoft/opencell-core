@@ -93,7 +93,7 @@
 			<p:outputLabel for="#{cc.attrs.field}_enum" value="#{cc.attrs.label}" />
 			<p:selectOneMenu id="#{cc.attrs.field}_enum" value="#{cc.filters[cc.attrs.field]}" disabled="#{cc.attrs.disabled}">
 				<f:selectItem itemLabel="" />
-				<f:selectItems value="#{cc.getEnumConstants(cc.attrs.field)}" var="enumElement" itemValue="#{enumElement}"
+				<f:selectItems value="#{cc.attrs.listValues !=null? cc.attrs.listValues: cc.getEnumConstants(cc.attrs.field)}" var="enumElement" itemValue="#{enumElement}"
 					itemLabel="#{messages[enumElement.label]}" />
 				<f:converter converterId="enumConverter" />
 			</p:selectOneMenu>

@@ -47,7 +47,7 @@ public class BillingCycle extends BusinessEntity {
 	private static final long serialVersionUID = 1L;
 
 	@Column(name = "BILLING_TEMPLATE_NAME", nullable = true)
-	@Size(max = 50, min = 1)
+	@Size(max = 50, min = 0)
 	private String billingTemplateName;
 
 	@ManyToOne(fetch = FetchType.LAZY)

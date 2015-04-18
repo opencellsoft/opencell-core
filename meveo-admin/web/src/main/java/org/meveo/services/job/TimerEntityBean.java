@@ -94,7 +94,25 @@ public class TimerEntityBean extends BaseBean<TimerEntity> {
         return "jobTimers";
     }
 
-    protected void initCustomFields() {
+    
+    /**
+     * Get timer name from a timer id
+     * 
+     * @param timerId
+     * @return
+     */
+    public String translateToTimerName(Long timerId) {
+        if (timerId != null) {
+            TimerEntity timerEntity = timerEntityservice.findById(timerId);
+            if (timerEntity != null) {
+                return timerEntity.getName();
+            }
+        }
+        return null;
+    }
+    
+    public void initCustomFields() {
+        customFieldTemplates.clear();
         if (entity.getJobName() != null) {
             Job job = timerEntityservice.getJobByName(entity.getJobName());
             if (job.getCustomFields(getCurrentUser()) != null) {

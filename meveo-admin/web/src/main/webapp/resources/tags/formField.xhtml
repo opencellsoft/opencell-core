@@ -47,8 +47,9 @@
 	<cc:attribute name="validatorId" default="" />
 	<cc:attribute name="datePattern"
 		default="#{cc.attrs.time?paramBean.getProperty('meveo.dateTimeFormat','dd/MM/yyyy HH:mm'):paramBean.getProperty('meveo.dateFormat','dd/MM/yyyy')}" />
-	<cc:attribute name="edit"
-		default="#{cc.backingBeanFromParentOrCurrent.edit}" />
+	<cc:attribute name="allowEdit" default="true" />
+    <cc:attribute name="edit"
+		default="#{cc.backingBeanFromParentOrCurrent.edit and (cc.entityFromBackingBeanOrAttribute.id==null or (cc.entityFromBackingBeanOrAttribute.id!=null and cc.attrs.allowEdit))}" />
 	<cc:attribute name="minValue" default="0" />
 	<cc:attribute name="maxValue" default="" />
 	<cc:attribute name="popup" default="false" />
@@ -63,6 +64,7 @@
 	<cc:attribute name="show"
 		default="#{((not cc.attrs.showOnlyOnNew) or (cc.attrs.showOnlyOnNew and cc.attrs.edit and cc.entityFromBackingBeanOrAttribute.id==null)) and ((not cc.attrs.showOnlyOnConsult) or (cc.attrs.showOnlyOnConsult and cc.attrs.edit== false))}" />
     <cc:attribute name="autocompleteMethod"  method-signature="java.lang.String action(java.lang.String)" />
+    <cc:attribute name="listValues"/>
 </cc:interface>
 
 <cc:implementation>
@@ -470,7 +472,7 @@
 				required="#{cc.attrs.required}" style="#{cc.attrs.style}"
 				panelStyle="#{cc.attrs.panelStyle}">
 				<f:selectItem itemLabel="" itemValue="" />
-				<f:selectItems value="#{cc.getEnumConstants(cc.attrs.field)}"
+				<f:selectItems value="#{cc.attrs.listValues !=null? cc.attrs.listValues: cc.getEnumConstants(cc.attrs.field)}"
 					var="enumElement" itemLabel="#{messages[enumElement.label]}" />
 				<c:if test="#{not empty cc.attrs.listenerUpdate}">
 					<p:ajax update="#{cc.attrs.listenerUpdate}" event="change" />

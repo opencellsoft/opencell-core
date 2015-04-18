@@ -1065,10 +1065,10 @@ insert into BILLING_INVOICE_SUB_CAT (id, version, disabled, created, provider_id
 DROP SEQUENCE IF EXISTS BILLING_INVOICE_SUB_CAT_SEQ;
 CREATE SEQUENCE BILLING_INVOICE_SUB_CAT_SEQ start with 3 increment by 1;
 
-insert into BILLING_INV_SUB_CAT_COUNTRY (id, version, disabled, created, provider_id, creator_id, discount_code, invoice_sub_category_id, tax_id, trading_country_id) values (1, 0, false, now(), 1, 1, '', 1, 1, 1);
-insert into BILLING_INV_SUB_CAT_COUNTRY (id, version, disabled, created, provider_id, creator_id, discount_code, invoice_sub_category_id, tax_id, trading_country_id) values (2, 0, false, now(), 1, 1, '', 1, 2, 2);
-insert into BILLING_INV_SUB_CAT_COUNTRY (id, version, disabled, created, provider_id, creator_id, discount_code, invoice_sub_category_id, tax_id, trading_country_id) values (3, 0, false, now(), 1, 1, '', 2, 1, 1);
-insert into BILLING_INV_SUB_CAT_COUNTRY (id, version, disabled, created, provider_id, creator_id, discount_code, invoice_sub_category_id, tax_id, trading_country_id) values (4, 0, false, now(), 1, 1, '', 2, 2, 2);
+insert into BILLING_INV_SUB_CAT_COUNTRY (id, version, disabled, created, provider_id, creator_id, invoice_sub_category_id, tax_id, trading_country_id) values (1, 0, false, now(), 1, 1, 1, 1, 1);
+insert into BILLING_INV_SUB_CAT_COUNTRY (id, version, disabled, created, provider_id, creator_id, invoice_sub_category_id, tax_id, trading_country_id) values (2, 0, false, now(), 1, 1, 1, 2, 2);
+insert into BILLING_INV_SUB_CAT_COUNTRY (id, version, disabled, created, provider_id, creator_id, invoice_sub_category_id, tax_id, trading_country_id) values (3, 0, false, now(), 1, 1, 2, 1, 1);
+insert into BILLING_INV_SUB_CAT_COUNTRY (id, version, disabled, created, provider_id, creator_id, invoice_sub_category_id, tax_id, trading_country_id) values (4, 0, false, now(), 1, 1, 2, 2, 2);
 
 DROP SEQUENCE IF EXISTS BILLING_INV_SUB_CAT_COUNTRY_SEQ;
 CREATE SEQUENCE BILLING_INV_SUB_CAT_COUNTRY_SEQ start with 5 increment by 1;

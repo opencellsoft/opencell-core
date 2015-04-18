@@ -24,6 +24,7 @@ import java.util.Map;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -42,12 +43,14 @@ import org.meveo.model.ExportIdentifier;
 
 @Entity
 @ExportIdentifier({ "code", "provider" })
+@DiscriminatorValue(value = "ACCT_UA")
 @Table(name = "BILLING_USER_ACCOUNT")
 public class UserAccount extends AccountEntity {
 
-	private static final long serialVersionUID = 1L;
+    public static final String ACCOUNT_TYPE = ((DiscriminatorValue) UserAccount.class.getAnnotation(DiscriminatorValue.class)).value();
 
-	public static final String ACCOUNT_TYPE = "userAccount.type";
+    
+	private static final long serialVersionUID = 1L;
 
 	@Enumerated(EnumType.STRING)
 	@Column(name = "STATUS", length = 10)
@@ -100,6 +103,10 @@ public class UserAccount extends AccountEntity {
 	@JoinColumn(name = "TERMIN_REASON_ID", nullable = true)
 	private SubscriptionTerminationReason terminationReason;
 
+	public UserAccount() {
+        accountType = ACCOUNT_TYPE;
+    }
+	
 	public BillingAccount getBillingAccount() {
 		return billingAccount;
 	}
@@ -171,11 +178,6 @@ public class UserAccount extends AccountEntity {
 
 	public void setCounters(Map<String, CounterInstance> counters) {
 		this.counters = counters;
-	}
-
-	@Override
-	public String getAccountType() {
-		return ACCOUNT_TYPE;
 	}
 
 	public List<InvoiceAgregate> getInvoiceAgregates() {

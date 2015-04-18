@@ -41,7 +41,6 @@ import org.meveo.cache.WalletCacheContainerProvider;
 import org.meveo.commons.utils.NumberUtils;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.QueryBuilder;
-import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.admin.User;
@@ -66,6 +65,7 @@ import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.LevelEnum;
 import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.RecurringChargeTemplate;
+import org.meveo.model.catalog.WalletTemplate;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.payments.CustomerAccount;
@@ -1247,20 +1247,24 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<WalletOperation> findWalletOperation(Seller seller, String offerCode, WalletOperationStatusEnum status, List<String> fetchFields, Provider provider) {
+	public List<WalletOperation> findWalletOperation(WalletOperationStatusEnum status, WalletTemplate walletTemplate, WalletInstance walletInstance, UserAccount userAccount,
+			List<String> fetchFields, Provider provider, int maxResult) {
 		try {
 			QueryBuilder qb = new QueryBuilder(WalletOperation.class, "w", fetchFields, provider);
-			if (seller != null) {
-				qb.addCriterionEntity("w.seller", seller);
-			}
-			if (!StringUtils.isBlank(offerCode)) {
-				qb.addCriterion("w.offerCode", "=", offerCode, true);
-			}
+
 			if (status != null) {
 				qb.addCriterionEnum("w.status", status);
 			}
+			if (walletTemplate != null) {
+				qb.addCriterionEntity("w.wallet.walletTemplate", walletTemplate);
+			} else {
+				qb.addCriterionEntity("w.wallet", walletInstance);
+			}
+			if (userAccount != null) {
+				qb.addCriterionEntity("w.wallet.userAccount", userAccount);
+			}
 
-			return (List<WalletOperation>) qb.getQuery(getEntityManager()).getResultList();
+			return (List<WalletOperation>) qb.getQuery(getEntityManager()).setMaxResults(maxResult).getResultList();
 		} catch (NoResultException e) {
 			return null;
 		}

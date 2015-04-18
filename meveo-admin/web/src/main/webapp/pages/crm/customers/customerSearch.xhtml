@@ -34,23 +34,15 @@
 				field="externalRef2" />
 
 			<p:panelGrid columns="2">
-				<p:outputLabel for="accountType"
-					value="#{messages['customerSearch.type']}"></p:outputLabel>
-				<p:selectOneMenu id="accountType"
-					value="#{customerSearchBean.customerPage}"
-					valueChangeListener="#{customerSearchBean.changeCustomerPage}">
-					<p:ajax event="change" update="@form" />
-					<f:selectItem itemLabel="" />
-					<f:selectItem itemLabel="#{messages['customer.type']}"
-						itemValue="/pages/crm/customers/customers.xhtml" />
-					<f:selectItem itemLabel="#{messages['customerAccount.type']}"
-						itemValue="/pages/payments/customerAccounts/customerAccounts.xhtml" />
-					<f:selectItem itemLabel="#{messages['billingAccount.type']}"
-						itemValue="/pages/billing/billingAccounts/billingAccounts.xhtml" />
-					<f:selectItem itemLabel="#{messages['userAccount.type']}"
-						itemValue="/pages/billing/userAccounts/userAccounts.xhtml" />
-				</p:selectOneMenu>
-			</p:panelGrid>
+                <p:outputLabel for="accountType" value="#{messages['customerSearch.type']}"></p:outputLabel>
+                <p:selectOneMenu id="accountType" value="#{customerSearchBean.filters['type_class']}">
+                    <f:selectItem itemLabel="" />
+                    <f:selectItem itemLabel="#{messages['customer.type']}" itemValue="org.meveo.model.crm.Customer" />
+                    <f:selectItem itemLabel="#{messages['customerAccount.type']}" itemValue="org.meveo.model.payments.CustomerAccount" />
+                    <f:selectItem itemLabel="#{messages['billingAccount.type']}" itemValue="org.meveo.model.billing.BillingAccount" />
+                    <f:selectItem itemLabel="#{messages['userAccount.type']}" itemValue="org.meveo.model.billing.UserAccount" />
+                </p:selectOneMenu>
+            </p:panelGrid>
 		</hf:searchPanel>
 
 		<hftl:dataList backingBean="#{customerSearchBean}"

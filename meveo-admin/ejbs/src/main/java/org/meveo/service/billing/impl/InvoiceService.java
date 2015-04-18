@@ -312,11 +312,13 @@ public class InvoiceService extends PersistenceService<Invoice> {
 			if (billingRun.getProvider().isDisplayFreeTransacInInvoice()) {
 				em.createNamedQuery("RatedTransaction.updateInvoicedDisplayFree")
 						.setParameter("billingAccount", billingAccount)
+						.setParameter("lastTransactionDate", billingRun.getLastTransactionDate())
 						.setParameter("billingRun", billingRun)
 						.setParameter("invoice", invoice).executeUpdate();
 			} else {
 				em.createNamedQuery("RatedTransaction.updateInvoiced")
-				.setParameter("billingAccount", billingAccount)
+				        .setParameter("billingAccount", billingAccount)
+				        .setParameter("lastTransactionDate", billingRun.getLastTransactionDate())
 						.setParameter("billingRun", billingRun)
 						.setParameter("invoice", invoice)
 						.executeUpdate();

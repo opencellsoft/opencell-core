@@ -226,36 +226,72 @@ public class QueryBuilder {
 
 		return addSqlCriterion(sql.toString(), param, nvalue);
 	}
+	
+	   /**
+     * @param field
+     * @param entity
+     * @return
+     */
+    public QueryBuilder addCriterionEntity(String field, Object entity) {
+        return addCriterionEntity(field, entity, " = ");
+    }
 
 	/**
 	 * @param field
 	 * @param entity
+     * @param condition Comparison type
 	 * @return
 	 */
-	public QueryBuilder addCriterionEntity(String field, Object entity) {
+	public QueryBuilder addCriterionEntity(String field, Object entity, String condition) {
 		if (entity == null)
 			return this;
 
 		String param = convertFieldToParam(field);
 
-		return addSqlCriterion(field + "=:" + param, param, entity);
+		return addSqlCriterion(field + condition+":" + param, param, entity);
 	}
 
+	
+	/**
+     * @param field 
+     * @param enumValue
+     * @return
+     */
+	public QueryBuilder addCriterionEnum(String field, Enum enumValue){
+	    return addCriterionEnum(field, enumValue, "=");
+	}
+	
 	/**
 	 * @param field
 	 * @param enumValue
+	 * @param condition Comparison type
 	 * @return
 	 */
 	@SuppressWarnings("rawtypes")
-	public QueryBuilder addCriterionEnum(String field, Enum enumValue) {
+	public QueryBuilder addCriterionEnum(String field, Enum enumValue, String condition) {
 		if (enumValue == null)
 			return this;
 
 		String param = convertFieldToParam(field);
 
-		return addSqlCriterion(field + "=:" + param, param, enumValue);
-	}
+        return addSqlCriterion(field + " " + condition + ":" + param, param, enumValue);
+    }
 
+	/**
+     * Ajouter un critere like
+     * 
+     * @param field
+     * @param value
+     * @param style
+     *            : 0=aucun travail sur la valeur rechercher, 1=Recherche sur
+     *            dbut du mot, 2=Recherche partout dans le mot
+     * @param caseInsensitive
+     * @return
+     */
+    public QueryBuilder like(String field, String value, QueryLikeStyleEnum style, boolean caseInsensitive){
+        return like(field, value, style, caseInsensitive, false);
+    }
+            
 	/**
 	 * Ajouter un critere like
 	 * 
@@ -265,12 +301,13 @@ public class QueryBuilder {
 	 *            : 0=aucun travail sur la valeur rechercher, 1=Recherche sur
 	 *            dbut du mot, 2=Recherche partout dans le mot
 	 * @param caseInsensitive
+     * @param addNot Should NOT be added to comparison
 	 * @return
 	 */
-	public QueryBuilder like(String field, String value, QueryLikeStyleEnum style,
-			boolean caseInsensitive) {
-		if (StringUtils.isBlank(value))
+    public QueryBuilder like(String field, String value, QueryLikeStyleEnum style, boolean caseInsensitive, boolean addNot) {
+		if (StringUtils.isBlank(value)) {
 			return this;
+		}
 
 		String v = value;
 
@@ -281,25 +318,38 @@ public class QueryBuilder {
             v = "%" + v;
         }
 
-		return addCriterion(field, " like ", v, caseInsensitive);
+		return addCriterion(field, addNot? "not like ": " like ", v, caseInsensitive);
 	}
+	
+	   /**
+     * @param field
+     * @param value
+     * @param caseInsensitive
+     * @return
+     */
+    public QueryBuilder addCriterionWildcard(String field, String value, boolean caseInsensitive){
+        return addCriterionWildcard(field, value, caseInsensitive, false);
+    }
 
 	/**
 	 * @param field
 	 * @param value
 	 * @param caseInsensitive
+     * @param addNot Should NOT be added to comparison
 	 * @return
 	 */
-	public QueryBuilder addCriterionWildcard(String field, String value,
-			boolean caseInsensitive) {
-		if (StringUtils.isBlank(value))
+    public QueryBuilder addCriterionWildcard(String field, String value, boolean caseInsensitive, boolean addNot) {
+	    
+		if (StringUtils.isBlank(value)){
 			return this;
+		}
 		boolean wildcard = (value.indexOf("*") != -1);
 
-		if (wildcard)
-			return like(field, value.replace("*", "%"), QueryLikeStyleEnum.MATCH_EQUAL, caseInsensitive);
-		else
-			return addCriterion(field, "=", value, caseInsensitive);
+        if (wildcard) {
+            return like(field, value.replace("*", "%"), QueryLikeStyleEnum.MATCH_EQUAL, caseInsensitive, addNot);
+        } else {
+            return addCriterion(field, addNot? " != ":" = ", value, caseInsensitive);
+        }
 	}
 
 	/**
