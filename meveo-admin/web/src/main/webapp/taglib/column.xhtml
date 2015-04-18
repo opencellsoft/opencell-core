@@ -52,6 +52,9 @@
 	<c:if test="${empty isList}">
 		<c:set var="isList" value="false" />
 	</c:if>
+	<c:if test="${isList}">
+		<c:set var="sort" value="false"/>
+	</c:if>
     
     <c:if test="${empty isMap}">
         <c:set var="isMap" value="false" />
@@ -73,7 +76,7 @@
 		<c:set var="exportable" value="true" />
 		<c:if test="${isList}">
 			<!-- List columns are not exportable, because its ui:reapeat component. -->
-			<c:set var="exportable" value="false" />
+			<c:set var="exportable" value="true" />
 		</c:if>
 	</c:if>
 
