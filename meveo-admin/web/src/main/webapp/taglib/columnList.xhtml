@@ -71,10 +71,10 @@
 				<h:outputText rendered="#{not isMessage}" value="#{ccvalue}" />
 			</c:if>
 			<c:if test="#{not empty entityView}">
-				<hf:linkToEntity linkId="#{fieldId}_editlink" rendered="#{isMessage}"
+				<hf:linkToEntity linkId="#{fieldId}_#{edit?'edit':'view'}link" rendered="#{isMessage}"
 					entityId="#{ccid}" entity="#{c}" popupFields="#{popupFields}"
-					edit="#{edit}" value="#{ccvalue}" view="#{entityView}" />
-				<hf:linkToEntity linkId="#{fieldId}_editlink"
+					edit="#{edit}" value="#{messages[ccvalue]}" view="#{entityView}" />
+				<hf:linkToEntity linkId="#{fieldId}_#{edit?'edit':'view'}link"
 					rendered="#{not isMessage}" entity="#{c}"
 					popupFields="#{popupFields}" entityId="#{ccid}" edit="#{edit}"
 					value="#{ccvalue}" view="#{entityView}" />
