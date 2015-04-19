@@ -124,12 +124,12 @@
 
 		<navigation-case>
 			<from-outcome>jobTimers</from-outcome>
-			<to-view-id>/pages/admin/job/timers.xhtml</to-view-id>
+			<to-view-id>/pages/admin/job/timerEntitys.xhtml</to-view-id>
 			<redirect />
 		</navigation-case>
 		<navigation-case>
 			<from-outcome>jobTimerDetail</from-outcome>
-			<to-view-id>/pages/admin/job/timer.xhtml</to-view-id>
+			<to-view-id>/pages/admin/job/timerEntityDetail.xhtml</to-view-id>
 			<redirect />
 		</navigation-case>
 

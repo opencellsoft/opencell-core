@@ -39,6 +39,8 @@
 			<hftl:column label="#{messages['job.category']}" field="jobCategoryEnum" />
 			<hftl:column label="#{messages['timer.schedule']}" field="timerSchedule" sort="false" />	
 			<hftl:column label="#{messages['timer.active']}" field="timerInfo" childField="active" sort="false" />
+			<hftl:actionsColumn
+				permission="#{identity.hasPermission('administration','administrationManagement')}" />
 		</hftl:dataList>
 
 	</ui:define>
