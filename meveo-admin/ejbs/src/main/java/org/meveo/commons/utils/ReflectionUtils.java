@@ -16,19 +16,12 @@
  */
 package org.meveo.commons.utils;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLDecoder;
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.List;
-import java.util.TreeSet;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
+import java.util.Vector;
 
+import org.jfree.util.Log;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -64,73 +57,34 @@ public class ReflectionUtils {
         return object;
     }
 
+    @SuppressWarnings("rawtypes")
     public static List<Class> getClasses(String packageName) throws ClassNotFoundException, IOException {
 
-        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-        assert classLoader != null;
-        String path = packageName.replace('.', '/');
+        try {
+            ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
 
-        Enumeration<URL> resources = classLoader.getResources(path);
+            Class CL_class = classLoader.getClass();
+            while (CL_class != java.lang.ClassLoader.class) {
+                CL_class = CL_class.getSuperclass();
+            }
+            java.lang.reflect.Field ClassLoader_classes_field = CL_class.getDeclaredField("classes");
+            ClassLoader_classes_field.setAccessible(true);
+            Vector classes = (Vector) ClassLoader_classes_field.get(classLoader);
 
-        List<String> dirs = new ArrayList<String>();
+            ArrayList<Class> classList = new ArrayList<Class>();
 
-        while (resources.hasMoreElements()) {
-            URL resource = resources.nextElement();
-            dirs.add(URLDecoder.decode(resource.getFile(), "UTF-8"));
-        }
-
-        TreeSet<String> classes = new TreeSet<String>();
-        for (String directory : dirs) {
-            classes.addAll(findClasses(directory, packageName));
-        }
-
-        ArrayList<Class> classList = new ArrayList<Class>();
-        for (String clazz : classes) {
-            classList.add(Class.forName(clazz));
-        }
-
-        return classList;
-    }
-
-    private static TreeSet<String> findClasses(String path, String packageName) throws MalformedURLException, IOException {
-
-        TreeSet<String> classes = new TreeSet<String>();
-
-        // if (path.startsWith("file:") && path.contains("!")) {
-        if (path.contains(".jar")) {
-            String jarFile = path.substring(0, path.indexOf(".jar") + 4);
-            ZipInputStream zip = new ZipInputStream(new FileInputStream(jarFile));
-            ZipEntry entry;
-            while ((entry = zip.getNextEntry()) != null) {
-                if (entry.getName().endsWith(".class")) {
-                    String className = entry.getName().replaceAll("[$].*", "").replaceAll("[.]class", "").replace('/', '.');
-                    if (className.startsWith(packageName)) {
-                        classes.add(className);
-                    }
+            for (Object clazz : classes) {
+                if (((Class) clazz).getName().startsWith(packageName)) {
+                    classList.add((Class) clazz);
                 }
             }
-            zip.close();
 
-        } else {
+            return classList;
 
-            File dir = new File(path);
-            if (!dir.exists()) {
-                return classes;
-            }
-            File[] files = dir.listFiles();
-            if (files != null) {
-                for (File file : files) {
-                    if (file.isDirectory()) {
-                        assert !file.getName().contains(".");
-                        classes.addAll(findClasses(file.getAbsolutePath(), packageName + "." + file.getName()));
-                    } else if (file.getName().endsWith(".class")) {
-                        String className = packageName + '.' + file.getName().substring(0, file.getName().length() - 6);
-
-                        classes.add(className);
-                    }
-                }
-            }
+        } catch (IllegalArgumentException | IllegalAccessException | NoSuchFieldException | SecurityException e) {
+            Log.error("Failed to get a list of classes", e);
         }
-        return classes;
+
+        return new ArrayList<Class>();
     }
 }
