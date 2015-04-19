@@ -283,7 +283,7 @@
 						<hf:linkToEntity linkId="#{field}_#{childField}_message_link"
 							rendered="#{isMessage}" entityId="#{ccid}"
 							entity="#{c}" popupFields="#{popupFields}" edit="#{edit}"
-							value="#{ccvalue}" view="#{entityView}" />
+							value="#{messages[ccvalue]}" view="#{entityView}" />
 						<hf:linkToEntity linkId="#{field}_#{childField}_link"
 							rendered="#{not isMessage}" entity="#{c}"
 							popupFields="#{popupFields}" entityId="#{ccid}" edit="#{edit}"

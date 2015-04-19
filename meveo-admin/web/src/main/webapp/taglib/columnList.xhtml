@@ -1,0 +1,87 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:hf="http://java.sun.com/jsf/composite/tags"
+	xmlns:c="http://java.sun.com/jsp/jstl/core">
+
+<ui:composition>
+
+	<c:if test="${empty isMessage}">
+		<c:set var="isMessage" value="false" />
+	</c:if>
+
+	<c:if test="${!empty messagePrefix}">
+		<c:set var="messagePrefix" value="${messagePrefix.concat('.')}" />
+	</c:if>
+
+	<c:if test="${empty show}">
+		<c:set var="show" value="true" />
+	</c:if>
+
+	<c:if test="${empty sort}">
+		<c:set var="sort" value="false" />
+	</c:if>
+
+	<c:if test="${empty rendered}">
+		<c:set var="rendered" value="true" />
+	</c:if>
+
+	<c:if test="${empty propagateConversation}">
+		<c:set var="propagateConversation" value="true" />
+	</c:if>
+
+	<c:set var="exportable" value="false" />
+
+	<c:if test="${empty edit}">
+		<c:set var="edit" value="true" />
+	</c:if>
+
+	<p:column exportable="#{exportable}" rendered="#{rendered}">
+		<f:facet name="header">
+			<h:outputText value="#{label}" />
+		</f:facet>
+
+		<ui:repeat value="#{value}" var="c">
+			<c:set var="ccvalue" value="#{c}" />
+			<c:forEach var="ccvar" items="#{field.split('\\.')}">
+				<c:set var="ccvalue" value="#{ccvalue[ccvar]}" />
+			</c:forEach>
+			<c:set var="ccid" value="#{c}" />
+			<c:forEach var="idvar" items="#{fieldId.split('\\.')}">
+				<c:set var="ccid" value="#{ccid[idvar]}" />
+			</c:forEach>
+			<c:set var="fieldId" value="#{fieldId.replaceAll('\\.','\\_')}"/>
+			<c:if test="#{empty entityView}">
+				<c:if test="#{isMessage}">
+					<h:outputText
+						rendered="#{ccvalue != null and ccvalue.toString() == 'true'}"
+						value="#{messages['commons.yes']}" />
+					<h:outputText
+						rendered="#{ccvalue != null and ccvalue.toString() == 'false'}"
+						value="#{messages['commons.no']}" />
+					<h:outputText
+						rendered="#{ccvalue != null and ccvalue.toString() != 'true' and ccvalue.toString() != 'false'}"
+						value="#{messages[ccvalue]}" />
+				</c:if>
+				<h:outputText rendered="#{not isMessage}" value="#{ccvalue}" />
+			</c:if>
+			<c:if test="#{not empty entityView}">
+				<hf:linkToEntity linkId="#{fieldId}_editlink" rendered="#{isMessage}"
+					entityId="#{ccid}" entity="#{c}" popupFields="#{popupFields}"
+					edit="#{edit}" value="#{ccvalue}" view="#{entityView}" />
+				<hf:linkToEntity linkId="#{fieldId}_editlink"
+					rendered="#{not isMessage}" entity="#{c}"
+					popupFields="#{popupFields}" entityId="#{ccid}" edit="#{edit}"
+					value="#{ccvalue}" view="#{entityView}" />
+			</c:if>
+			<br />
+		</ui:repeat>
+		<ui:insert />
+	</p:column>
+</ui:composition>
+</html>
