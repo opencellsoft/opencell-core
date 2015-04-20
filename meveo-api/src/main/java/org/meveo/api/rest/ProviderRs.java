@@ -11,6 +11,7 @@ import javax.ws.rs.core.MediaType;
 
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ProviderDto;
+import org.meveo.api.dto.response.GetCustomerAccountConfigurationResponseDto;
 import org.meveo.api.dto.response.GetCustomerConfigurationResponseDto;
 import org.meveo.api.dto.response.GetInvoicingConfigurationResponseDto;
 import org.meveo.api.dto.response.GetProviderResponse;
@@ -69,4 +70,9 @@ public interface ProviderRs extends IBaseRs {
 	@GET
 	@Path("/getCustomerConfiguration")
 	GetCustomerConfigurationResponseDto getCustomerConfiguration();
+
+	@GET
+	@Path("/getCustomerAccountConfiguration")
+	GetCustomerAccountConfigurationResponseDto getCustomerAccountConfiguration();
+
 }

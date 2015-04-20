@@ -35,6 +35,7 @@ import org.meveo.api.dto.response.GetBillingCycleResponse;
 import org.meveo.api.dto.response.GetCalendarResponse;
 import org.meveo.api.dto.response.GetCountryResponse;
 import org.meveo.api.dto.response.GetCurrencyResponse;
+import org.meveo.api.dto.response.GetCustomerAccountConfigurationResponseDto;
 import org.meveo.api.dto.response.GetCustomerConfigurationResponseDto;
 import org.meveo.api.dto.response.GetInvoiceCategoryResponse;
 import org.meveo.api.dto.response.GetInvoiceSubCategoryCountryResponse;
@@ -380,13 +381,11 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
 	}
 
 	@Override
-	public GetInvoiceSubCategoryCountryResponse findInvoiceSubCategoryCountry(String invoiceSubCategoryCode,
-			String country) {
+	public GetInvoiceSubCategoryCountryResponse findInvoiceSubCategoryCountry(String invoiceSubCategoryCode, String country) {
 		GetInvoiceSubCategoryCountryResponse result = new GetInvoiceSubCategoryCountryResponse();
 
 		try {
-			result.setInvoiceSubCategoryCountryDto(invoiceSubCategoryCountryApi.find(invoiceSubCategoryCode, country,
-					getCurrentUser().getProvider()));
+			result.setInvoiceSubCategoryCountryDto(invoiceSubCategoryCountryApi.find(invoiceSubCategoryCode, country, getCurrentUser().getProvider()));
 		} catch (MeveoApiException e) {
 			result.getActionStatus().setErrorCode(e.getErrorCode());
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
@@ -466,8 +465,7 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
 		GetInvoiceSubCategoryResponse result = new GetInvoiceSubCategoryResponse();
 
 		try {
-			result.setInvoiceSubCategory(invoiceSubCategoryApi.find(invoiceSubCategoryCode, getCurrentUser()
-					.getProvider()));
+			result.setInvoiceSubCategory(invoiceSubCategoryApi.find(invoiceSubCategoryCode, getCurrentUser().getProvider()));
 		} catch (MeveoApiException e) {
 			result.getActionStatus().setErrorCode(e.getErrorCode());
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
@@ -1106,6 +1104,26 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
 
 		try {
 			result = providerApi.getCustomerConfigurationResponse(getCurrentUser());
+		} catch (MeveoApiException e) {
+			result.getActionStatus().setErrorCode(e.getErrorCode());
+			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
+			result.getActionStatus().setMessage(e.getMessage());
+		} catch (Exception e) {
+			result.getActionStatus().setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
+			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
+			result.getActionStatus().setMessage(e.getMessage());
+		}
+
+		log.debug("RESPONSE={}", result);
+		return result;
+	}
+
+	@Override
+	public GetCustomerAccountConfigurationResponseDto getCustomerAccountConfiguration() {
+		GetCustomerAccountConfigurationResponseDto result = new GetCustomerAccountConfigurationResponseDto();
+
+		try {
+			result = providerApi.getCustomerAccountConfigurationResponseDto(getCurrentUser().getProvider());
 		} catch (MeveoApiException e) {
 			result.getActionStatus().setErrorCode(e.getErrorCode());
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);

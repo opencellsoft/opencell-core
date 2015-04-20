@@ -21,6 +21,7 @@ import org.meveo.api.dto.response.GetBillingCycleResponse;
 import org.meveo.api.dto.response.GetCalendarResponse;
 import org.meveo.api.dto.response.GetCountryResponse;
 import org.meveo.api.dto.response.GetCurrencyResponse;
+import org.meveo.api.dto.response.GetCustomerAccountConfigurationResponseDto;
 import org.meveo.api.dto.response.GetCustomerConfigurationResponseDto;
 import org.meveo.api.dto.response.GetInvoiceCategoryResponse;
 import org.meveo.api.dto.response.GetInvoiceSubCategoryCountryResponse;
@@ -95,7 +96,7 @@ public interface SettingsWs extends IBaseWs {
 
 	@WebMethod
 	public ActionStatus updateLanguage(@WebParam(name = "language") LanguageDto postData);
-	
+
 	// country
 
 	@WebMethod
@@ -219,5 +220,8 @@ public interface SettingsWs extends IBaseWs {
 
 	@WebMethod
 	GetCustomerConfigurationResponseDto getCustomerConfiguration();
+
+	@WebMethod
+	GetCustomerAccountConfigurationResponseDto getCustomerAccountConfiguration();
 
 }

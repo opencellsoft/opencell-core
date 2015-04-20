@@ -465,6 +465,15 @@
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
+    <wsdl:operation name="getCustomerAccountConfiguration">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="getCustomerAccountConfiguration">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="getCustomerAccountConfigurationResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
     <wsdl:operation name="removeCountry">
       <soap:operation soapAction="" style="document"/>
       <wsdl:input name="removeCountry">
@@ -921,6 +930,8 @@
       <xs:element name="findTaxResponse" type="tns:findTaxResponse"/>
       <xs:element name="findUser" type="tns:findUser"/>
       <xs:element name="findUserResponse" type="tns:findUserResponse"/>
+      <xs:element name="getCustomerAccountConfiguration" type="tns:getCustomerAccountConfiguration"/>
+      <xs:element name="getCustomerAccountConfigurationResponse" type="tns:getCustomerAccountConfigurationResponse"/>
       <xs:element name="getCustomerConfiguration" type="tns:getCustomerConfiguration"/>
       <xs:element name="getCustomerConfigurationResponse" type="tns:getCustomerConfigurationResponse"/>
       <xs:element name="getInvoicingConfiguration" type="tns:getInvoicingConfiguration"/>
@@ -1117,6 +1128,8 @@
               <xs:element minOccurs="0" name="billingTemplateName" type="xs:string"/>
               <xs:element name="invoiceDateDelay" type="xs:int"/>
               <xs:element name="dueDateDelay" type="xs:int"/>
+              <xs:element minOccurs="0" name="invoiceDateProductionDelay" type="xs:int"/>
+              <xs:element minOccurs="0" name="transactionDateDelay" type="xs:int"/>
               <xs:element name="calendar" type="xs:string"/>
             </xs:sequence>
             <xs:attribute name="code" type="xs:string" use="required"/>
@@ -1141,7 +1154,7 @@
       <xs:complexType name="actionStatus">
         <xs:sequence>
           <xs:element name="status" type="tns:actionStatusEnum"/>
-          <xs:element name="errorCode" type="xs:int"/>
+          <xs:element minOccurs="0" name="errorCode" type="xs:string"/>
           <xs:element name="message" type="xs:string"/>
         </xs:sequence>
       </xs:complexType>
@@ -1460,6 +1473,7 @@
               <xs:element minOccurs="0" name="terminationReason" type="xs:string"/>
             </xs:sequence>
             <xs:attribute name="code" type="xs:string" use="required"/>
+            <xs:attribute name="description" type="xs:string" use="required"/>
           </xs:extension>
         </xs:complexContent>
       </xs:complexType>
@@ -1704,6 +1718,25 @@
               <xs:element name="country" type="xs:string"/>
               <xs:element name="tax" type="xs:string"/>
               <xs:element minOccurs="0" name="discountCode" type="xs:string"/>
+              <xs:element minOccurs="0" name="filterEL" type="xs:string"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="getCustomerAccountConfiguration">
+        <xs:sequence/>
+      </xs:complexType>
+      <xs:complexType name="getCustomerAccountConfigurationResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:getCustomerAccountConfigurationResponseDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="getCustomerAccountConfigurationResponseDto">
+        <xs:complexContent>
+          <xs:extension base="tns:baseResponse">
+            <xs:sequence>
+              <xs:element maxOccurs="unbounded" minOccurs="0" name="creditCategories" nillable="true" type="xs:string"/>
+              <xs:element maxOccurs="unbounded" minOccurs="0" name="paymentMethods" nillable="true" type="xs:string"/>
             </xs:sequence>
           </xs:extension>
         </xs:complexContent>
@@ -2323,6 +2356,9 @@
   <wsdl:message name="removeLanguageResponse">
     <wsdl:part element="ns1:removeLanguageResponse" name="parameters"></wsdl:part>
   </wsdl:message>
+  <wsdl:message name="getCustomerAccountConfiguration">
+    <wsdl:part element="ns1:getCustomerAccountConfiguration" name="parameters"></wsdl:part>
+  </wsdl:message>
   <wsdl:message name="createCurrency">
     <wsdl:part element="ns1:createCurrency" name="parameters"></wsdl:part>
   </wsdl:message>
@@ -2479,6 +2515,9 @@
   <wsdl:message name="findUserResponse">
     <wsdl:part element="ns1:findUserResponse" name="parameters"></wsdl:part>
   </wsdl:message>
+  <wsdl:message name="getCustomerAccountConfigurationResponse">
+    <wsdl:part element="ns1:getCustomerAccountConfigurationResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
   <wsdl:message name="updateSeller">
     <wsdl:part element="ns1:updateSeller" name="parameters"></wsdl:part>
   </wsdl:message>
@@ -2624,6 +2663,10 @@
     <wsdl:operation name="findInvoiceSubCategoryCountry">
       <wsdl:input message="ns1:findInvoiceSubCategoryCountry" name="findInvoiceSubCategoryCountry"></wsdl:input>
       <wsdl:output message="ns1:findInvoiceSubCategoryCountryResponse" name="findInvoiceSubCategoryCountryResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getCustomerAccountConfiguration">
+      <wsdl:input message="ns1:getCustomerAccountConfiguration" name="getCustomerAccountConfiguration"></wsdl:input>
+      <wsdl:output message="ns1:getCustomerAccountConfigurationResponse" name="getCustomerAccountConfigurationResponse"></wsdl:output>
     </wsdl:operation>
     <wsdl:operation name="createCalendar">
       <wsdl:input message="ns1:createCalendar" name="createCalendar"></wsdl:input>
@@ -3511,27 +3554,32 @@
          </calendar>
       </ws:updateCalendar>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/updateCalendar"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation isOneWay="false" action="" name="getInvoicingConfiguration" bindingOperationName="getInvoicingConfiguration" type="Request-Response" outputName="getInvoicingConfigurationResponse" inputName="getInvoicingConfiguration" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/updateCalendar"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation isOneWay="false" action="" name="getInvoicingConfiguration" bindingOperationName="getInvoicingConfiguration" type="Request-Response" outputName="getInvoicingConfigurationResponse" inputName="getInvoicingConfiguration" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
       <ws:getInvoicingConfiguration/>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/getInvoicingConfiguration"/></con:call></con:operation><con:operation isOneWay="false" action="" name="getCustomerConfiguration" bindingOperationName="getCustomerConfiguration" type="Request-Response" outputName="getCustomerConfigurationResponse" inputName="getCustomerConfiguration" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+</soapenv:Envelope>]]></con:request><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:authType>Global HTTP Settings</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/getInvoicingConfiguration"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation isOneWay="false" action="" name="getCustomerConfiguration" bindingOperationName="getCustomerConfiguration" type="Request-Response" outputName="getCustomerConfigurationResponse" inputName="getCustomerConfiguration" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
       <ws:getCustomerConfiguration/>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/getCustomerConfiguration"/></con:call></con:operation><con:operation isOneWay="false" action="" name="listSeller" bindingOperationName="listSeller" type="Request-Response" outputName="listSellerResponse" inputName="listSeller" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+</soapenv:Envelope>]]></con:request><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:authType>Global HTTP Settings</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/getCustomerConfiguration"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation isOneWay="false" action="" name="listSeller" bindingOperationName="listSeller" type="Request-Response" outputName="listSellerResponse" inputName="listSeller" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
       <ws:listSeller/>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/listSeller"/></con:call></con:operation><con:operation isOneWay="false" action="" name="getTradingConfiguration" bindingOperationName="getTradingConfiguration" type="Request-Response" outputName="getTradingConfigurationResponse" inputName="getTradingConfiguration" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+</soapenv:Envelope>]]></con:request><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:authType>Global HTTP Settings</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/listSeller"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation isOneWay="false" action="" name="getTradingConfiguration" bindingOperationName="getTradingConfiguration" type="Request-Response" outputName="getTradingConfigurationResponse" inputName="getTradingConfiguration" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
       <ws:getTradingConfiguration/>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/getTradingConfiguration"/></con:call></con:operation></con:interface><con:interface xsi:type="con:WsdlInterface" wsaVersion="NONE" name="CatalogWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}CatalogWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="http://localhost:8080/meveo/CatalogWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache type="TEXT" rootPart="http://localhost:8080/meveo/CatalogWs?wsdl"><con:part><con:url>http://localhost:8080/meveo/CatalogWs?wsdl</con:url><con:content><![CDATA[<wsdl:definitions name="CatalogWs" targetNamespace="http://impl.ws.api.meveo.org/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://impl.ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns2="http://schemas.xmlsoap.org/soap/http" xmlns:ns1="http://ws.api.meveo.org/">
+</soapenv:Envelope>]]></con:request><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:authType>Global HTTP Settings</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/getTradingConfiguration"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation isOneWay="false" action="" name="getCustomerAccountConfiguration" bindingOperationName="getCustomerAccountConfiguration" type="Request-Response" outputName="getCustomerAccountConfigurationResponse" inputName="getCustomerAccountConfiguration" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:getCustomerAccountConfiguration/>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:authType>Global HTTP Settings</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/getCustomerAccountConfiguration"/><con:wsrmConfig version="1.2"/></con:call></con:operation></con:interface><con:interface xsi:type="con:WsdlInterface" wsaVersion="NONE" name="CatalogWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}CatalogWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="http://localhost:8080/meveo/CatalogWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache type="TEXT" rootPart="http://localhost:8080/meveo/CatalogWs?wsdl"><con:part><con:url>http://localhost:8080/meveo/CatalogWs?wsdl</con:url><con:content><![CDATA[<wsdl:definitions name="CatalogWs" targetNamespace="http://impl.ws.api.meveo.org/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://impl.ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns2="http://schemas.xmlsoap.org/soap/http" xmlns:ns1="http://ws.api.meveo.org/">
   <wsdl:import location="http://localhost:8080/meveo/CatalogWs?wsdl=CatalogWs.wsdl" namespace="http://ws.api.meveo.org/"></wsdl:import>
   <wsdl:binding name="CatalogWsSoapBinding" type="ns1:CatalogWs">
     <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>

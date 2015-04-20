@@ -10,6 +10,7 @@ import org.meveo.api.ProviderApi;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.ProviderDto;
+import org.meveo.api.dto.response.GetCustomerAccountConfigurationResponseDto;
 import org.meveo.api.dto.response.GetCustomerConfigurationResponseDto;
 import org.meveo.api.dto.response.GetInvoicingConfigurationResponseDto;
 import org.meveo.api.dto.response.GetProviderResponse;
@@ -138,6 +139,26 @@ public class ProviderRsImpl extends BaseRs implements ProviderRs {
 
 		try {
 			result = providerApi.getCustomerConfigurationResponse(getCurrentUser());
+		} catch (MeveoApiException e) {
+			result.getActionStatus().setErrorCode(e.getErrorCode());
+			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
+			result.getActionStatus().setMessage(e.getMessage());
+		} catch (Exception e) {
+			result.getActionStatus().setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
+			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
+			result.getActionStatus().setMessage(e.getMessage());
+		}
+
+		log.debug("RESPONSE={}", result);
+		return result;
+	}
+
+	@Override
+	public GetCustomerAccountConfigurationResponseDto getCustomerAccountConfiguration() {
+		GetCustomerAccountConfigurationResponseDto result = new GetCustomerAccountConfigurationResponseDto();
+
+		try {
+			result = providerApi.getCustomerAccountConfigurationResponseDto(getCurrentUser().getProvider());
 		} catch (MeveoApiException e) {
 			result.getActionStatus().setErrorCode(e.getErrorCode());
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
