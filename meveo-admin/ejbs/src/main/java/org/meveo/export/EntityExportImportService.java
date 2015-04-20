@@ -11,6 +11,7 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -38,6 +39,7 @@ import javax.persistence.Query;
 import javax.persistence.Transient;
 import javax.persistence.Version;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.hibernate.proxy.HibernateProxy;
@@ -48,6 +50,7 @@ import org.meveo.model.ExportIdentifier;
 import org.meveo.model.IEntity;
 import org.meveo.model.IVersionedEntity;
 import org.meveo.model.crm.Provider;
+import org.meveo.model.shared.DateUtils;
 import org.meveo.util.MeveoJpa;
 import org.meveo.util.MeveoJpaForJobs;
 import org.meveo.util.MeveoJpaForTarget;
@@ -143,6 +146,9 @@ public class EntityExportImportService implements Serializable {
 
         XStream xstream = new XStream();
         xstream.alias("exportInfo", ExportInfo.class);
+        xstream.useAttributeFor(ExportTemplate.class, "name");
+        xstream.useAttributeFor(ExportTemplate.class, "entityToExport");
+        xstream.useAttributeFor(ExportTemplate.class, "canDeleteAfterExport");
 
         ExportImportStatistics exportStats = new ExportImportStatistics();
         List<ExportInfo> exportInfos = new LinkedList<ExportInfo>();
@@ -157,8 +163,18 @@ public class EntityExportImportService implements Serializable {
         }
 
         FileOutputStream fos = null;
-        String filename = param.getProperty("providers.rootDir", "/tmp/meveo/") + File.separator + "exports" + File.separator + exportTemplate.getName() + ".xml";
+        String filename = param.getProperty("providers.rootDir", "/tmp/meveo/");
+        if (!filename.endsWith(File.separator)) {
+            filename = filename + File.separator;
+        }
+        if (parameters.get("provider") != null) {
+            filename = filename + ((Provider) parameters.get("provider")).getCode() + File.separator;
+        }
+        filename = filename + "exports";
         try {
+            FileUtils.forceMkdir(new File(filename));
+            filename = filename + File.separator + exportTemplate.getName() + DateUtils.formatDateWithPattern(new Date(), "yyyy-MM-DD_HH_mm_ss") + ".xml";
+
             fos = new FileOutputStream(filename);
             xstream.toXML(exportInfos, fos);
         } catch (Exception e) {
@@ -320,6 +336,9 @@ public class EntityExportImportService implements Serializable {
 
         XStream xstream = new XStream();
         xstream.alias("exportInfo", ExportInfo.class);
+        xstream.useAttributeFor(ExportTemplate.class, "name");
+        xstream.useAttributeFor(ExportTemplate.class, "entityToExport");
+        xstream.useAttributeFor(ExportTemplate.class, "canDeleteAfterExport");
         List<ExportInfo> exportInfos = (List<ExportInfo>) xstream.fromXML(inputStream);
 
         if (forceToProvider != null) {
