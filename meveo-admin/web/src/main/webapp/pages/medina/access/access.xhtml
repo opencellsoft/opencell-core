@@ -51,7 +51,7 @@
 				value="#{entity}" fieldId="id" propagateConversation="true"
 				field="accessUserId" entityView="accessDetail"/>
 			<hftl:columnList label="#{messages['access.subscription']}" 
-				value="#{entity.subscription}" field="code" fieldId="id" 
+				value="#{entity.subscription}" field="code" fieldId="id" propagateConversation="false"
 				entityView="subscriptionDetail" objectIdParamName="subscriptionId"/>
 			<hftl:column label="#{messages['access.startDate']}"
 				field="startDate" isDate="true" />

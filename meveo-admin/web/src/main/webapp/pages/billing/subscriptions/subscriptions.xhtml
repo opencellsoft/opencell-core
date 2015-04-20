@@ -38,7 +38,7 @@
 				sortByField="true" />
 			<hftl:columnList label="#{messages['subscription.userAccount']}"
 				value="#{entity.userAccount}" field="code" fieldId="id" objectIdParamName="userAccountId"
-				entityView="userAccountDetail"/>
+				entityView="userAccountDetail" propagateConversation="false"/>
 			<hftl:column label="#{messages['subscription.serviceInstances']}"
 				field="serviceInstances" isList="true" childField="descriptionAndStatus"
 				childFieldId="id" sort="false"
