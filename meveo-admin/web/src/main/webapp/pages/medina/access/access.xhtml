@@ -47,10 +47,12 @@
 
 		<hftl:dataList label="#{messages['access.title']}"
 			backingBean="#{accessListBean}" sortBy="accessUserId">
-			<hftl:column label="#{messages['access.accessUserId']}"
-				field="accessUserId" />
-			<hftl:column label="#{messages['access.subscription']}" field="subscription"
-				childField="code" />
+			<hftl:columnList label="#{messages['access.accessUserId']}"
+				value="#{entity}" fieldId="id" propagateConversation="true"
+				field="accessUserId" entityView="accessDetail"/>
+			<hftl:columnList label="#{messages['access.subscription']}" 
+				value="#{entity.subscription}" field="code" fieldId="id" 
+				entityView="subscriptionDetail" objectIdParamName="subscriptionId"/>
 			<hftl:column label="#{messages['access.startDate']}"
 				field="startDate" isDate="true" />
 			<hftl:column label="#{messages['access.endDate']}" field="endDate"

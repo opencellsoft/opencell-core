@@ -65,7 +65,7 @@
 				field="creditCategory" childField="label" isMessage="true" />
 			<hftl:columnList label="#{messages['customerAccount.customer']}"
 				value="#{entity.customer}" field="code" fieldId="id"
-				entityView="customerDetail"/>
+				entityView="customerDetail" objectIdParamName="customerId"/>
 			<hftl:column label="#{messages['currency.codeCurrency']}"
 				field="tradingCurrency" childField="currencyCode" />
 

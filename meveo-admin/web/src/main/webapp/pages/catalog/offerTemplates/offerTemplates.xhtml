@@ -28,7 +28,7 @@
 			<hftl:column label="#{messages['offerTemplate.code']}" field="code" />
 			<hftl:column label="#{messages['offerTemplate.description']}" field="description" />
 			<hftl:columnList label="#{messages['offerTemplate.serviceTemplates']}" value="#{entity.serviceTemplates}" field="code" fieldId="id"
-				entityView="serviceTemplateDetail" backView="offerTemplates" />
+				entityView="serviceTemplateDetail"/>
             <hftl:column label="#{messages['enableEntity.active']}" field="active" isMessage="true" />
 			<hftl:actionsColumn permission="#{identity.hasPermission('catalog','catalogManagement')}" />
 		</hftl:dataList>

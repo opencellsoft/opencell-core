@@ -22,9 +22,12 @@
 
 
 <cc:implementation>
+	<c:if test="${empty objectIdParamName}">
+		<c:set var="objectIdParamName" value="objectId" />
+	</c:if>
 	<h:link id="#{cc.attrs.linkId}" value="#{cc.attrs.value}"
 		outcome="#{cc.attrs.view}">
-		<f:param name="objectId" value="#{cc.attrs.entityId}" />
+		<f:param name="#{objectIdParamName}" value="#{cc.attrs.entityId}" />
 		<f:param name="cid" value="#{javax.enterprise.context.conversation.id}" />
 		<f:param name="edit" value="#{cc.attrs.edit}" />
 	</h:link>

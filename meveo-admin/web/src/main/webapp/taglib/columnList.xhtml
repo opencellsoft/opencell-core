@@ -32,7 +32,7 @@
 	</c:if>
 
 	<c:if test="${empty propagateConversation}">
-		<c:set var="propagateConversation" value="true" />
+		<c:set var="propagateConversation" value="false" />
 	</c:if>
 
 	<c:set var="exportable" value="false" />
@@ -40,7 +40,12 @@
 	<c:if test="${empty edit}">
 		<c:set var="edit" value="true" />
 	</c:if>
-
+	<c:if test="${empty objectIdParamName}">
+		<c:set var="objectIdParamName" value="objectId" />
+	</c:if>
+	<c:if test="${useCustomIdParam}">
+		<c:set var="objectIdParamName" value="#{backingBean.idParameterName}" />
+	</c:if>
 	<p:column exportable="#{exportable}" rendered="#{rendered}">
 		<f:facet name="header">
 			<h:outputText value="#{label}" />
@@ -55,7 +60,7 @@
 			<c:forEach var="idvar" items="#{fieldId.split('\\.')}">
 				<c:set var="ccid" value="#{ccid[idvar]}" />
 			</c:forEach>
-			<c:set var="fieldId" value="#{fieldId.replaceAll('\\.','\\_')}"/>
+			<c:set var="fieldId" value="#{fieldId.replaceAll('\\.','\\_')}" />
 			<c:if test="#{empty entityView}">
 				<c:if test="#{isMessage}">
 					<h:outputText
@@ -71,13 +76,31 @@
 				<h:outputText rendered="#{not isMessage}" value="#{ccvalue}" />
 			</c:if>
 			<c:if test="#{not empty entityView}">
-				<hf:linkToEntity linkId="#{fieldId}_#{edit?'edit':'view'}link" rendered="#{isMessage}"
-					entityId="#{ccid}" entity="#{c}" popupFields="#{popupFields}"
-					edit="#{edit}" value="#{messages[ccvalue]}" view="#{entityView}" />
-				<hf:linkToEntity linkId="#{fieldId}_#{edit?'edit':'view'}link"
-					rendered="#{not isMessage}" entity="#{c}"
-					popupFields="#{popupFields}" entityId="#{ccid}" edit="#{edit}"
-					value="#{ccvalue}" view="#{entityView}" />
+				<h:link id="#{fieldId}_#{edit?'edit':'view'}Msglink"
+					rendered="#{isMessage}" value="#{ccvalue}" outcome="#{entityView}">
+					<f:param name="#{objectIdParamName}" value="#{ccid}" />
+					<c:if test="#{propagateConversation}">
+						<f:param name="cid"
+							value="#{javax.enterprise.context.conversation.id}" />
+					</c:if>
+					<f:param name="edit" value="#{edit}" />
+				</h:link>
+				<h:link id="#{fieldId}_#{edit?'edit':'view'}link"
+					rendered="#{not isMessage}" value="#{ccvalue}"
+					outcome="#{entityView}">
+					<f:param name="#{objectIdParamName}" value="#{ccid}" />
+					<c:if test="#{propagateConversation}">
+						<f:param name="cid"
+							value="#{javax.enterprise.context.conversation.id}" />
+					</c:if>
+					<f:param name="edit" value="#{edit}" />
+				</h:link>
+				<p:tooltip
+					for="#{fieldId}_#{edit?'edit':'view'}#{isMessage?'Msg':''}link"
+					showEffect="slide" hideEffect="slide">
+					<h:outputText style="white-space:nowrap"
+						value="#{edit?messages['commons.edit']:messages['commons.view']}" />
+				</p:tooltip>
 			</c:if>
 			<br />
 		</ui:repeat>

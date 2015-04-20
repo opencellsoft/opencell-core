@@ -53,7 +53,7 @@
 
 		<hftl:dataList label="#{messages['customer.search']}" sortBy="code"
 			backingBean="#{customerListBean}">
-			<hftl:column label="#{messages['businessEntity.code']}" field="code" />
+			<hftl:column label="#{messages['businessEntity.code']}" field="code" useCustomIdParam="true"/>
 			<hftl:column label="#{messages['customer.customerCategory']}"
 				field="customerCategory" childField="description" isMessage="false" />
 			<hftl:column label="#{messages['customer.customerBrand']}"
