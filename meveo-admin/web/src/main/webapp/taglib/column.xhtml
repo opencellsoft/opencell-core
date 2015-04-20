@@ -235,7 +235,7 @@
 							value="#{entity[field][childField]}" outcome="#{entityView}">
 							<f:param name="objectId" value="#{entity[field][childFieldId]}" />
 							<f:param name="cid" value="#{javax.enterprise.context.conversation.id}" />
-							<f:param name="edit" value="false" />
+							<f:param name="edit" value="#{edit}" />
 						</h:link>
 						<p:tooltip rendered="#{not empty popupFields}"
 							for="#{field}_#{childField}_message_link" showEffect="slide"
