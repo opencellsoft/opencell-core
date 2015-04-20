@@ -33,7 +33,7 @@
 	  <artifactId>soapui-maven-plugin</artifactId>
 	  <version>5.0.0</version>
 	  <configuration>
-	    <projectFile>${basedir}/api/soapui/Jax-Ws.xml</projectFile>
+	    <projectFile>${basedir}/api/soapui/Jax-Ws_NONREG.xml</projectFile>
 	    <outputFolder>${basedir}/target/surefire-reports/</outputFolder>
 	    <junitReport>true</junitReport>
 	    <exportwAll>true</exportwAll>
