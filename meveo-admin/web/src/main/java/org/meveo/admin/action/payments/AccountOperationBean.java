@@ -96,9 +96,6 @@ public class AccountOperationBean extends BaseBean<AccountOperation> {
 	/**
 	 * TODO
 	 */
-	@SuppressWarnings("unused")
-	// TODO: @Out(required = false)
-	private OtherCreditAndCharge otherCreditAndCharge;
 
 	/**
 	 * Constructor. Invokes super constructor and provides class type of this
