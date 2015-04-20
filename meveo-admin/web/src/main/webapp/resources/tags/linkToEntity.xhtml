@@ -7,6 +7,7 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:p="http://primefaces.org/ui"
 	xmlns:hf="http://java.sun.com/jsf/composite/tags"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
 	xmlns:cc="http://java.sun.com/jsf/composite">
 
 <cc:interface>
@@ -16,14 +17,19 @@
 	<cc:attribute name="entityId" required="true" />
 	<cc:attribute name="entity" required="true" />
 	<cc:attribute name="popupFields" />
+	<cc:attribute name="edit" default="true"/>
 </cc:interface>
 
+
 <cc:implementation>
+	<c:if test="${empty objectIdParamName}">
+		<c:set var="objectIdParamName" value="objectId" />
+	</c:if>
 	<h:link id="#{cc.attrs.linkId}" value="#{cc.attrs.value}"
 		outcome="#{cc.attrs.view}">
-		<f:param name="objectId" value="#{cc.attrs.entityId}" />
+		<f:param name="#{objectIdParamName}" value="#{cc.attrs.entityId}" />
 		<f:param name="cid" value="#{javax.enterprise.context.conversation.id}" />
-		<f:param name="edit" value="false" />
+		<f:param name="edit" value="#{cc.attrs.edit}" />
 	</h:link>
 	<cc:insertChildren />
 

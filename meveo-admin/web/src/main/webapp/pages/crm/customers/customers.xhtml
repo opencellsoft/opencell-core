@@ -53,15 +53,15 @@
 
 		<hftl:dataList label="#{messages['customer.search']}" sortBy="code"
 			backingBean="#{customerListBean}">
-			<hftl:column label="#{messages['businessEntity.code']}" field="code" />
+			<hftl:column label="#{messages['businessEntity.code']}" field="code" useCustomIdParam="true"/>
 			<hftl:column label="#{messages['customer.customerCategory']}"
 				field="customerCategory" childField="description" isMessage="false" />
 			<hftl:column label="#{messages['customer.customerBrand']}"
 				field="customerBrand" childField="description" isMessage="false" />
 			<hftl:column label="#{messages['businessEntity.description']}"
 				field="description" />
-			<hftl:column label="#{messages['seller.title']}" field="seller"
-				childField="description" />
+			<hftl:columnList label="#{messages['seller.title']}" value="#{entity.seller}"
+				field="description" fieldId="id" entityView="sellerDetail"/>
 			<hftl:actionsColumn useCustomIdParam="true"
 				permission="#{identity.hasPermission('account','accountManagement')}" />
 		</hftl:dataList>

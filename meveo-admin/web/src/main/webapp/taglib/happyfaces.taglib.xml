@@ -17,6 +17,10 @@
 		<tag-name>column</tag-name>
 		<source>column.xhtml</source>
 	</tag>
+		<tag>
+		<tag-name>columnList</tag-name>
+		<source>columnList.xhtml</source>
+	</tag>
 
 	<tag>
 		<tag-name>actionsColumn</tag-name>
