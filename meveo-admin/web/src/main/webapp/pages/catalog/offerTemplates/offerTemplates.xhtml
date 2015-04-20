@@ -27,8 +27,8 @@
 		<hftl:dataList label="#{messages['offerTemplate.title']}" checkMany="false" noClose="false" backingBean="#{offerTemplateListBean}">
 			<hftl:column label="#{messages['offerTemplate.code']}" field="code" />
 			<hftl:column label="#{messages['offerTemplate.description']}" field="description" />
-			<hftl:column label="#{messages['offerTemplate.serviceTemplates']}" field="serviceTemplates" isList="true" childField="code" childFieldId="id"
-				view="/pages/catalog/serviceTemplates/serviceTemplateDetail.xhtml" backView="offerTemplates" />
+			<hftl:columnList label="#{messages['offerTemplate.serviceTemplates']}" value="#{entity.serviceTemplates}" field="code" fieldId="id"
+				entityView="serviceTemplateDetail" backView="offerTemplates" />
             <hftl:column label="#{messages['enableEntity.active']}" field="active" isMessage="true" />
 			<hftl:actionsColumn permission="#{identity.hasPermission('catalog','catalogManagement')}" />
 		</hftl:dataList>
