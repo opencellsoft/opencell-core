@@ -397,7 +397,7 @@ public class UsageRatingService {
 	 * 
 	 * @param edr
 	 */
-	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+	@TransactionAttribute(TransactionAttributeType.REQUIRED)
 	public void ratePostpaidUsage(EDR edr, User currentUser) throws BusinessException {
 		rateUsageWithinTransaction(edr, currentUser);
 	}

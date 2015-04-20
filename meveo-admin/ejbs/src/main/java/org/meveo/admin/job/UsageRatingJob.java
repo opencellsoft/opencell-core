@@ -53,8 +53,10 @@ public class UsageRatingJob implements Job {
 		TimerEntityService.registerJob(this);
 	}
 
+
 	@Override
 	@Asynchronous
+	@TransactionAttribute(TransactionAttributeType.NEVER)
 	public void execute(TimerEntity timerEntity, User currentUser) {
 		JobExecutionResultImpl result = new JobExecutionResultImpl();
 		TimerInfo info = timerEntity.getTimerInfo();
