@@ -93,7 +93,7 @@ public class ProviderService extends PersistenceService<Provider> {
         Set<Provider> providers = new HashSet<Provider>();
         providers.add(e);
         user.setProviders(providers);
-        user.setPassword("admin");
+        user.setPassword(e.getCode() + ".password");
         user.setUserName(e.getCode() + ".ADMIN");
         Role role = roleService.findById(Long.parseLong(paramBean.getProperty("systgetEntityManager().adminRoleid", "1")));
         Set<Role> roles = new HashSet<Role>();

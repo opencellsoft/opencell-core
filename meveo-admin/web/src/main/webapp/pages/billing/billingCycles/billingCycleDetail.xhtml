@@ -26,13 +26,13 @@
 				field="billingTemplateName" size="20" maxlength="20"
 				required="false" />
 			<hf:formField label="#{messages['billingCycle.transactionDateDelay']}"
-				field="transactionDateDelay" required="true" />
+				field="transactionDateDelay" required="true" negativeValue="true" />
 			<hf:formField label="#{messages['billingCycle.invoiceProductionDateDelay']}"
-				field="invoiceDateProductionDelay" required="true" />
+				field="invoiceDateProductionDelay" required="true" negativeValue="true"/>
 			<hf:formField label="#{messages['billingCycle.dueDateDelay']}"
 				field="dueDateDelay" required="true" />
 			<hf:formField label="#{messages['billingCycle.invoiceDateDelay']}"
-				field="invoiceDateDelay" minValue="-999999" required="true" />
+				field="invoiceDateDelay" required="true" />
 			<hftl:panelGroup columns="2">
 				<hf:formEntityField label="#{messages['billingCycle.calendar']}"
 					field="calendar" childField="code" required="true" popup="false"

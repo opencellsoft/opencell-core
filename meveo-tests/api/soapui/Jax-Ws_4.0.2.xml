@@ -2408,7 +2408,7 @@
       <xs:complexType name="actionStatus">
         <xs:sequence>
           <xs:element name="status" type="tns:actionStatusEnum"/>
-          <xs:element name="errorCode" type="xs:int"/>
+          <xs:element minOccurs="0" name="errorCode" type="xs:string"/>
           <xs:element name="message" type="xs:string"/>
         </xs:sequence>
       </xs:complexType>
@@ -2564,6 +2564,7 @@
               <xs:element minOccurs="0" name="terminationReason" type="xs:string"/>
             </xs:sequence>
             <xs:attribute name="code" type="xs:string" use="required"/>
+            <xs:attribute name="description" type="xs:string" use="required"/>
           </xs:extension>
         </xs:complexContent>
       </xs:complexType>
@@ -4962,7 +4963,7 @@
                         <!--Optional:-->
                         <services>
                            <!--Zero or more repetitions:-->
-                           <serviceInstance code="?">
+                           <serviceInstance code="?" description="?">
                               <!--Optional:-->
                               <status>?</status>
                               <!--Optional:-->
@@ -6514,7 +6515,7 @@
                                     <!--Optional:-->
                                     <services>
                                        <!--Zero or more repetitions:-->
-                                       <serviceInstance code="?">
+                                       <serviceInstance code="?" description="?">
                                           <!--Optional:-->
                                           <status>?</status>
                                           <!--Optional:-->
@@ -8005,7 +8006,7 @@
                               <!--Optional:-->
                               <services>
                                  <!--Zero or more repetitions:-->
-                                 <serviceInstance code="?">
+                                 <serviceInstance code="?" description="?">
                                     <!--Optional:-->
                                     <status>?</status>
                                     <!--Optional:-->
@@ -8126,7 +8127,7 @@
                   <!--Optional:-->
                   <services>
                      <!--Zero or more repetitions:-->
-                     <serviceInstance code="?">
+                     <serviceInstance code="?" description="?">
                         <!--Optional:-->
                         <status>?</status>
                         <!--Optional:-->
@@ -8146,7 +8147,7 @@
          </userAccount>
       </ws:createUserAccount>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/createUserAccount"/></con:call></con:operation><con:operation isOneWay="false" action="" name="customerHierarchyUpdate" bindingOperationName="customerHierarchyUpdate" type="Request-Response" outputName="customerHierarchyUpdateResponse" inputName="customerHierarchyUpdate" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/createUserAccount"/></con:call></con:operation><con:operation isOneWay="false" action="" name="customerHierarchyUpdate" bindingOperationName="customerHierarchyUpdate" type="Request-Response" outputName="customerHierarchyUpdateResponse" inputName="customerHierarchyUpdate" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
       <ws:customerHierarchyUpdate>
@@ -8154,7 +8155,7 @@
          <customerHierarchy>
             <sellers>
                <!--Zero or more repetitions:-->
-               <seller code="?" description="?">
+               <seller code="SELLER_FR" description="?">
                   <!--Optional:-->
                   <invoicePrefix>?</invoicePrefix>
                   <!--Optional:-->
@@ -8170,7 +8171,7 @@
                   <!--Optional:-->
                   <customers>
                      <!--Zero or more repetitions:-->
-                     <customer code="?" description="?">
+                     <customer code="cust1" description="?">
                         <!--Optional:-->
                         <externalRef1>?</externalRef1>
                         <!--Optional:-->
@@ -8235,7 +8236,7 @@
                         <!--Optional:-->
                         <customerAccounts>
                            <!--Zero or more repetitions:-->
-                           <customerAccount code="?" description="?">
+                           <customerAccount code="CA1" description="?">
                               <!--Optional:-->
                               <externalRef1>?</externalRef1>
                               <!--Optional:-->
@@ -9535,35 +9536,35 @@
                               <!--Optional:-->
                               <billingAccounts>
                                  <!--Zero or more repetitions:-->
-                                 <billingAccount code="?" description="?">
+                                 <billingAccount code="BA1" description="BA 1">
                                     <!--Optional:-->
-                                    <externalRef1>?</externalRef1>
+                                    <externalRef1>extRef1</externalRef1>
                                     <!--Optional:-->
-                                    <externalRef2>?</externalRef2>
+                                    <externalRef2>extRef2</externalRef2>
                                     <!--Optional:-->
                                     <name>
+                                        <!--Optional:-->
+                                       <title>MR</title>
                                        <!--Optional:-->
-                                       <title>?</title>
-                                       <!--Optional:-->
-                                       <firstName>?</firstName>
-                                       <lastName>?</lastName>
+                                       <firstName>firstname</firstName>
+                                       <lastName>lastname</lastName>
                                     </name>
                                     <!--Optional:-->
                                     <address>
                                        <!--Optional:-->
-                                       <address1>?</address1>
+                                       <address1>address1</address1>
                                        <!--Optional:-->
-                                       <address2>?</address2>
+                                       <address2>address2</address2>
                                        <!--Optional:-->
-                                       <address3>?</address3>
+                                       <address3>address3</address3>
                                        <!--Optional:-->
-                                       <zipCode>?</zipCode>
+                                       <zipCode>48200</zipCode>
                                        <!--Optional:-->
-                                       <city>?</city>
+                                       <city>binan</city>
                                        <!--Optional:-->
-                                       <country>?</country>
+                                       <country>PH</country>
                                        <!--Optional:-->
-                                       <state>?</state>
+                                       <state>Laguna</state>
                                     </address>
                                     <!--Optional:-->
                                     <customFields>
@@ -9580,10 +9581,10 @@
                                        </customField>
                                     </customFields>
                                     <customerAccount>?</customerAccount>
-                                    <billingCycle>?</billingCycle>
-                                    <country>?</country>
-                                    <language>?</language>
-                                    <paymentMethod>?</paymentMethod>
+                                    <billingCycle>CYC_INV_MT_1</billingCycle>
+                                    <country>FR</country>
+                                    <language>FRA</language>
+                                    <paymentMethod>CHECK</paymentMethod>
                                     <!--Optional:-->
                                     <nextInvoiceDate>?</nextInvoiceDate>
                                     <!--Optional:-->
@@ -9603,11 +9604,11 @@
                                     <!--Optional:-->
                                     <userAccounts>
                                        <!--Zero or more repetitions:-->
-                                       <userAccount code="?" description="?">
+                                       <userAccount code="UA1" description="UA 1">
                                           <!--Optional:-->
-                                          <externalRef1>?</externalRef1>
+                                          <externalRef1>uextref1</externalRef1>
                                           <!--Optional:-->
-                                          <externalRef2>?</externalRef2>
+                                          <externalRef2>uextr</externalRef2>
                                           <!--Optional:-->
                                           <name>
                                              <!--Optional:-->
@@ -9659,10 +9660,10 @@
                                           <!--Optional:-->
                                           <subscriptions>
                                              <!--Zero or more repetitions:-->
-                                             <subscription code="?" description="?">
+                                             <subscription code="SUB1" description="sub 1">
                                                 <userAccount>?</userAccount>
-                                                <offerTemplate>?</offerTemplate>
-                                                <subscriptionDate>?</subscriptionDate>
+                                                <offerTemplate>offre1</offerTemplate>
+                                                <subscriptionDate>2015-02-01</subscriptionDate>
                                                 <!--Optional:-->
                                                 <terminationDate>?</terminationDate>
                                                 <!--Optional:-->
@@ -9695,7 +9696,7 @@
                                                 <!--Optional:-->
                                                 <services>
                                                    <!--Zero or more repetitions:-->
-                                                   <serviceInstance code="?">
+                                                   <serviceInstance code="serv1" description="?">
                                                       <!--Optional:-->
                                                       <status>?</status>
                                                       <!--Optional:-->
@@ -9703,7 +9704,7 @@
                                                       <!--Optional:-->
                                                       <terminationDate>?</terminationDate>
                                                       <!--Optional:-->
-                                                      <quantity>?</quantity>
+                                                      <quantity>1</quantity>
                                                       <!--Optional:-->
                                                       <terminationReason>?</terminationReason>
                                                    </serviceInstance>
@@ -9725,7 +9726,7 @@
          </customerHierarchy>
       </ws:customerHierarchyUpdate>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/customerHierarchyUpdate"/></con:call></con:operation><con:operation isOneWay="false" action="" name="dunningInclusionExclusion" bindingOperationName="dunningInclusionExclusion" type="Request-Response" outputName="dunningInclusionExclusionResponse" inputName="dunningInclusionExclusion" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/customerHierarchyUpdate"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation isOneWay="false" action="" name="dunningInclusionExclusion" bindingOperationName="dunningInclusionExclusion" type="Request-Response" outputName="dunningInclusionExclusionResponse" inputName="dunningInclusionExclusion" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
       <ws:dunningInclusionExclusion>?</ws:dunningInclusionExclusion>
@@ -11384,7 +11385,7 @@
                                     <!--Optional:-->
                                     <services>
                                        <!--Zero or more repetitions:-->
-                                       <serviceInstance code="?">
+                                       <serviceInstance code="?" description="?">
                                           <!--Optional:-->
                                           <status>?</status>
                                           <!--Optional:-->
@@ -11511,7 +11512,7 @@
          </accountHierarchy>
       </ws:updateAccountHierarchy>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/updateAccountHierarchy"/></con:call></con:operation><con:operation isOneWay="false" action="" name="updateBillingAccount" bindingOperationName="updateBillingAccount" type="Request-Response" outputName="updateBillingAccountResponse" inputName="updateBillingAccount" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/updateAccountHierarchy"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation isOneWay="false" action="" name="updateBillingAccount" bindingOperationName="updateBillingAccount" type="Request-Response" outputName="updateBillingAccountResponse" inputName="updateBillingAccount" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
       <ws:updateBillingAccount>
@@ -11676,7 +11677,7 @@
                         <!--Optional:-->
                         <services>
                            <!--Zero or more repetitions:-->
-                           <serviceInstance code="?">
+                           <serviceInstance code="?" description="?">
                               <!--Optional:-->
                               <status>?</status>
                               <!--Optional:-->
@@ -13228,7 +13229,7 @@
                                     <!--Optional:-->
                                     <services>
                                        <!--Zero or more repetitions:-->
-                                       <serviceInstance code="?">
+                                       <serviceInstance code="?" description="?">
                                           <!--Optional:-->
                                           <status>?</status>
                                           <!--Optional:-->
@@ -14719,7 +14720,7 @@
                               <!--Optional:-->
                               <services>
                                  <!--Zero or more repetitions:-->
-                                 <serviceInstance code="?">
+                                 <serviceInstance code="?" description="?">
                                     <!--Optional:-->
                                     <status>?</status>
                                     <!--Optional:-->
@@ -14840,7 +14841,7 @@
                   <!--Optional:-->
                   <services>
                      <!--Zero or more repetitions:-->
-                     <serviceInstance code="?">
+                     <serviceInstance code="?" description="?">
                         <!--Optional:-->
                         <status>?</status>
                         <!--Optional:-->
