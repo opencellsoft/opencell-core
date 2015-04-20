@@ -367,7 +367,7 @@ public class SubscriptionApi extends BaseApi {
 								throw new EntityDoesNotExistsException(ChargeInstance.class, chargeInstanceOverrideDto.getChargeInstanceCode());
 							}
 							chargeInstance.setAmountWithoutTax(chargeInstanceOverrideDto.getAmountWithoutTax());
-							if (currentUser.getProvider().isEntreprise()) {
+							if (!currentUser.getProvider().isEntreprise()) {
 								chargeInstance.setAmountWithTax(chargeInstanceOverrideDto.getAmountWithTax());
 							}
 						} else {
