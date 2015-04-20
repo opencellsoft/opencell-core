@@ -52,7 +52,7 @@
 		</hf:searchPanel>
 
 		<hftl:dataList backingBean="#{customerAccountListBean}" sortBy="code">
-			<hftl:column label="#{messages['businessEntity.code']}" field="code" />
+			<hftl:column label="#{messages['businessEntity.code']}" field="code" useCustomIdParam="true"/>
 			<hftl:column label="#{messages['businessEntity.description']}"
 				field="description" />
 			<hftl:column label="#{messages['customerAccount.name']}" field="name"

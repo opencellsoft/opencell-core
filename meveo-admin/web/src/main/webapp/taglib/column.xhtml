@@ -92,6 +92,9 @@
 	<c:if test="${empty objectIdParamName}">
 		<c:set var="objectIdParamName" value="objectId" />
 	</c:if>
+	<c:if test="${useCustomIdParam}">
+		<c:set var="objectIdParamName" value="#{backingBean.idParameterName}" />
+	</c:if>
 	<c:if test="${empty editView}">
 		<c:set var="editView" value="#{backingBean.getEditViewName()}" />
 	</c:if>
