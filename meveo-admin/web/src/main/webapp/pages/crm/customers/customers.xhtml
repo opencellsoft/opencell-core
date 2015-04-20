@@ -60,8 +60,8 @@
 				field="customerBrand" childField="description" isMessage="false" />
 			<hftl:column label="#{messages['businessEntity.description']}"
 				field="description" />
-			<hftl:column label="#{messages['seller.title']}" field="seller"
-				childField="description" />
+			<hftl:columnList label="#{messages['seller.title']}" value="#{entity.seller}"
+				field="description" fieldId="id" entityView="sellerDetail"/>
 			<hftl:actionsColumn useCustomIdParam="true"
 				permission="#{identity.hasPermission('account','accountManagement')}" />
 		</hftl:dataList>
