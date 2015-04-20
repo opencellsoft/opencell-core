@@ -76,7 +76,7 @@
 		<c:set var="exportable" value="true" />
 		<c:if test="${isList}">
 			<!-- List columns are not exportable, because its ui:reapeat component. -->
-			<c:set var="exportable" value="true" />
+			<c:set var="exportable" value="false" />
 		</c:if>
 	</c:if>
 
@@ -271,23 +271,14 @@
 					</c:if>
 					<!-- If entityView provided then show link to childField entity page. -->
 					<c:if test="#{not empty entityView}">
-						<c:set var="ccvalue" value="#{c}"/>
-						<c:forEach var="cvar" items="#{childField.split('\\.')}">
-							<c:set var="ccvalue" value="#{ccvalue[cvar]}"/>
-						</c:forEach>
-						<c:set var="ccid" value="#{c}"/>
-						<c:forEach var="idvar" items="#{childFieldId.split('\\.')}">
-							<c:set var="ccid" value="#{ccid[idvar]}"/>
-						</c:forEach>
-						<c:set var="childField" value="#{childField.replaceAll('\\.','\\_')}"/>
 						<hf:linkToEntity linkId="#{field}_#{childField}_message_link"
-							rendered="#{isMessage}" entityId="#{ccid}"
-							entity="#{c}" popupFields="#{popupFields}" edit="#{edit}"
-							value="#{messages[ccvalue]}" view="#{entityView}" />
+							rendered="#{isMessage}" entityId="#{c[childFieldId]}"
+							entity="#{c}" popupFields="#{popupFields}"
+							value="#{c[childField]}" view="#{entityView}" />
 						<hf:linkToEntity linkId="#{field}_#{childField}_link"
 							rendered="#{not isMessage}" entity="#{c}"
-							popupFields="#{popupFields}" entityId="#{ccid}" edit="#{edit}"
-							value="#{ccvalue}" view="#{entityView}" />
+							popupFields="#{popupFields}" entityId="#{c[childFieldId]}"
+							value="#{c[childField]}" view="#{entityView}" />
 					</c:if>
 					<br />
 				</ui:repeat>
