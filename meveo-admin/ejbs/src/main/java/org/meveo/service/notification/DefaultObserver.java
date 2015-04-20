@@ -132,6 +132,8 @@ public class DefaultObserver {
                 webHookNotifier.sendRequest((WebHook) notif, e);
             } else if (notif instanceof InstantMessagingNotification) {
                 imNotifier.sendInstantMessage((InstantMessagingNotification) notif, e);
+            } else if (notif.getEventTypeFilter() != NotificationEventTypeEnum.INBOUND_REQ){
+                notificationHistoryService.create(notif, e, "", NotificationHistoryStatusEnum.SENT);
             }
             if (notif.getEventTypeFilter() == NotificationEventTypeEnum.INBOUND_REQ) {
                 NotificationHistory histo = notificationHistoryService.create(notif, e, "", NotificationHistoryStatusEnum.SENT);

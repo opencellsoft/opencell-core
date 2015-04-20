@@ -104,7 +104,7 @@
 													childField="currencyCode" popup="true"
 													popupId="customerAccCurrencyPopup" />
 											</hftl:panelGroup>
-											<hftl:panelGroup columns="2">
+											<hftl:panelGroup columns="4">
 												<p:panelGrid columns="2"
 													rendered="#{!customerAccountBean.edit}">
 													<p:outputLabel for="dunning_text"
@@ -112,6 +112,15 @@
 													<h:outputText id="dunning_text"
 														rendered="#{!customerAccountBean.edit}"
 														value="#{customerAccountBean.entity.getDunningLevel()}"
+														style="font-weight:bold;" />
+												</p:panelGrid>
+												<p:panelGrid columns="2"
+													rendered="#{!customerAccountBean.edit}">
+													<p:outputLabel for="dunning_date_text"
+														value="#{messages['customerAccount.dateDunningLevel']}" />
+													<h:outputText id="dunning_date_text"
+														rendered="#{!customerAccountBean.edit}"
+														value="#{customerAccountBean.entity.getDateDunningLevel()}"
 														style="font-weight:bold;" />
 												</p:panelGrid>
 												<hf:emtyFormField />
