@@ -74,6 +74,10 @@ public class JobExecutionResultImpl extends BaseEntity implements
 		this.report = report;
 		this.endDate = new Date();
 	}
+	
+	public void close() {
+	    this.endDate = new Date();
+    }
 
 	// helper
 	public static JobExecutionResultImpl createFromInterface(String jobName,

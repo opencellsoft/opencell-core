@@ -15,7 +15,7 @@ import org.slf4j.Logger;
 
 @WebService(serviceName = "JobWs", endpointInterface = "org.meveo.api.ws.JobWs")
 @Interceptors({ LoggingInterceptor.class })
-public class JobWsImpl extends BaseWs implements JobWs {
+public class JobWsImpl extends BaseWs extends JobWs {
 
 	@Inject
 	private Logger log;
