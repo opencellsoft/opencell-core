@@ -216,4 +216,13 @@
 		</parameters>
 		<canDeleteAfterExport>true</canDeleteAfterExport>
 	</template>
+	
+	<template>
+	    <name>DunningPlan</name>
+	    <entityToExport>org.meveo.model.payments.DunningPlan</entityToExport>
+	    <classesToExportAsFull>
+	     <java-class>org.meveo.model.payments.DunningPlanTransition</java-class>
+	     <java-class>org.meveo.model.payments.ActionPlanItem</java-class>
+	    </classesToExportAsFull>
+   </template>
 </list>
