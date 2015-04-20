@@ -1,6 +1,5 @@
 <list>
-	<template>
-		<name>Catalog</name>
+	<template name="Catalog">
 		<parameters>
 			<entry>
 				<string>provider</string>
@@ -8,9 +7,7 @@
 			</entry>
 		</parameters>
 		<groupedTemplates>
-			<template>
-				<name>Provider</name>
-				<entityToExport>org.meveo.model.crm.Provider</entityToExport>
+			<template name="Provider" entityToExport="org.meveo.model.crm.Provider">
 				<classesToExportAsFull>
 					<java-class>org.meveo.model.billing.TradingLanguage</java-class>
 					<java-class>org.meveo.model.billing.TradingCurrency</java-class>
@@ -20,83 +17,36 @@
 					<java-class>org.meveo.model.admin.User</java-class>
 				</classesToIgnoreFKNotFound>
 			</template>
-			<template>
-				<name>WalletTemplate</name>
-				<entityToExport>org.meveo.model.catalog.WalletTemplate</entityToExport>
-			</template>
-			<template>
-				<name>Seller</name>
-				<entityToExport>org.meveo.model.admin.Seller</entityToExport>
-			</template>
-			<template>
-				<name>ProviderContact</name>
-				<entityToExport>org.meveo.model.crm.ProviderContact</entityToExport>
-			</template>
-			<template>
-				<name>CustomerBrand</name>
-				<entityToExport>org.meveo.model.crm.CustomerBrand</entityToExport>
-			</template>
-			<template>
-				<name>CustomerCategory</name>
-				<entityToExport>org.meveo.model.crm.CustomerCategory</entityToExport>
-			</template>
-			<template>
-				<name>CustomFieldTemplate</name>
-				<entityToExport>org.meveo.model.crm.CustomFieldTemplate</entityToExport>
-			</template>
-			<template>
-				<name>Title</name>
-				<entityToExport>org.meveo.model.shared.Title</entityToExport>
-			</template>
-			<template>
-				<name>Calendar</name>
-				<entityToExport>org.meveo.model.catalog.Calendar</entityToExport>
+			<template name="WalletTemplate" entityToExport="org.meveo.model.catalog.WalletTemplate" />
+			<template name="Seller" entityToExport="org.meveo.model.admin.Seller" />
+			<template name="ProviderContact" entityToExport="org.meveo.model.crm.ProviderContact" />
+			<template name="CustomerBrand" entityToExport="org.meveo.model.crm.CustomerBrand" />
+			<template name="CustomerCategory" entityToExport="org.meveo.model.crm.CustomerCategory" />
+			<template name="CustomFieldTemplate" entityToExport="org.meveo.model.crm.CustomFieldTemplate" />
+			<template name="Title" entityToExport="org.meveo.model.shared.Title" />
+			<template name="Calendar" entityToExport="org.meveo.model.catalog.Calendar">
 				<classesToExportAsFull>
 					<java-class>org.meveo.model.catalog.CalendarDateInterval</java-class>
 					<java-class>org.meveo.model.catalog.HourInDay</java-class>
 				</classesToExportAsFull>
 			</template>
-			<template>
-				<name>Tax</name>
-				<entityToExport>org.meveo.model.billing.Tax</entityToExport>
-			</template>
-			<template>
-				<name>InvoiceCategory</name>
-				<entityToExport>org.meveo.model.billing.InvoiceCategory</entityToExport>
+			<template name="Tax" entityToExport="org.meveo.model.billing.Tax" />
+			<template name="InvoiceCategory" entityToExport="org.meveo.model.billing.InvoiceCategory">
 				<classesToExportAsFull>
 					<java-class>org.meveo.model.billing.InvoiceSubCategory</java-class>
 				</classesToExportAsFull>
 			</template>
-			<template>
-				<name>BillingCycle</name>
-				<entityToExport>org.meveo.model.billing.BillingCycle</entityToExport>
-			</template>
-			<template>
-				<name>SubscriptionTerminationReason</name>
-				<entityToExport>org.meveo.model.billing.SubscriptionTerminationReason</entityToExport>
-			</template>
-			<template>
-				<name>MessageTemplate</name>
-				<entityToExport>org.meveo.model.communication.MessageTemplate</entityToExport>
-			</template>
-			<template>
-				<name>TriggeredEDRTemplate</name>
-				<entityToExport>org.meveo.model.catalog.TriggeredEDRTemplate</entityToExport>
-			</template>
-			<template>
-				<name>CounterTemplate</name>
-				<entityToExport>org.meveo.model.catalog.CounterTemplate</entityToExport>
-			</template>
-			<template>
-				<name>ChargeTemplate</name>
-				<entityToExport>org.meveo.model.catalog.ChargeTemplate</entityToExport>
+			<template name="BillingCycle" entityToExport="org.meveo.model.billing.BillingCycle" />
+			<template name="SubscriptionTerminationReason" entityToExport="org.meveo.model.billing.SubscriptionTerminationReason" />
+			<template name="MessageTemplate" entityToExport="org.meveo.model.communication.MessageTemplate" />
+			<template name="TriggeredEDRTemplate" entityToExport="org.meveo.model.catalog.TriggeredEDRTemplate" />
+			<template name="CounterTemplate" entityToExport="org.meveo.model.catalog.CounterTemplate" />
+			<template name="ChargeTemplate" entityToExport="org.meveo.model.catalog.ChargeTemplate">
 				<classesToExportAsFull>
 					<java-class>org.meveo.model.crm.CustomFieldInstance</java-class>
 				</classesToExportAsFull>
 			</template>
-			<template>
-				<name>ServiceTemplate</name>
-				<entityToExport>org.meveo.model.catalog.ServiceTemplate</entityToExport>
+			<template name="ServiceTemplate" entityToExport="org.meveo.model.catalog.ServiceTemplate">
 				<classesToExportAsFull>
 					<java-class>org.meveo.model.catalog.ServiceChargeTemplateRecurring</java-class>
 					<java-class>org.meveo.model.catalog.ServiceChargeTemplateSubscription</java-class>
@@ -105,30 +55,21 @@
 					<java-class>org.meveo.model.crm.CustomFieldInstance</java-class>
 				</classesToExportAsFull>
 			</template>
-			<template>
-				<name>OfferTemplate</name>
-				<entityToExport>org.meveo.model.catalog.OfferTemplate</entityToExport>
+			<template name="OfferTemplate" entityToExport="org.meveo.model.catalog.OfferTemplate">
 				<classesToExportAsFull>
 					<java-class>org.meveo.model.crm.CustomFieldInstance</java-class>
 				</classesToExportAsFull>
 			</template>
-			<template>
-				<name>PricePlanMatrix</name>
-				<entityToExport>org.meveo.model.catalog.PricePlanMatrix</entityToExport>
-			</template>
-			<template>
-				<name>DiscountPlan</name>
-				<entityToExport>org.meveo.model.catalog.DiscountPlan</entityToExport>
+			<template name="PricePlanMatrix" entityToExport="org.meveo.model.catalog.PricePlanMatrix" />
+			<template name="DiscountPlan" entityToExport="org.meveo.model.catalog.DiscountPlan">
 				<classesToExportAsFull>
 					<java-class>org.meveo.model.catalog.DiscountPlanItem</java-class>
 				</classesToExportAsFull>
 			</template>
-
 		</groupedTemplates>
 	</template>
 
-	<template>
-		<name>Customer hierarchy and subscriptions</name>
+	<template name="Customer hierarchy and subscriptions">
 		<parameters>
 			<entry>
 				<string>provider</string>
@@ -136,49 +77,34 @@
 			</entry>
 		</parameters>
 		<groupedTemplates>
-			<template>
-				<name>Customer</name>
-				<entityToExport>org.meveo.model.crm.Customer</entityToExport>
+			<template name="Customer" entityToExport="org.meveo.model.crm.Customer">
 				<classesToExportAsFull>
 					<java-class>org.meveo.model.crm.CustomFieldInstance</java-class>
 				</classesToExportAsFull>
 			</template>
-			<template>
-				<name>CustomerAccount</name>
-				<entityToExport>org.meveo.model.payments.CustomerAccount</entityToExport>
+			<template name="CustomerAccount" entityToExport="org.meveo.model.payments.CustomerAccount">
 				<classesToExportAsFull>
 					<java-class>org.meveo.model.crm.CustomFieldInstance</java-class>
 				</classesToExportAsFull>
 			</template>
-			<template>
-				<name>BillingAccount</name>
-				<entityToExport>org.meveo.model.billing.BillingAccount</entityToExport>
+			<template name="BillingAccount" entityToExport="org.meveo.model.billing.BillingAccount">
 				<classesToExportAsFull>
 					<java-class>org.meveo.model.crm.CustomFieldInstance</java-class>
 				</classesToExportAsFull>
 			</template>
-			<template>
-				<name>UserAccount</name>
-				<entityToExport>org.meveo.model.billing.UserAccount</entityToExport>
+			<template name="UserAccount" entityToExport="org.meveo.model.billing.UserAccount">
 				<classesToExportAsFull>
 					<java-class>org.meveo.model.billing.WalletInstance</java-class>
 					<java-class>org.meveo.model.crm.CustomFieldInstance</java-class>
 				</classesToExportAsFull>
 			</template>
-			<template>
-				<name>Subscription</name>
-				<entityToExport>org.meveo.model.billing.Subscription</entityToExport>
+			<template name="Subscription" entityToExport="org.meveo.model.billing.Subscription">
 				<classesToExportAsFull>
 					<java-class>org.meveo.model.crm.CustomFieldInstance</java-class>
 				</classesToExportAsFull>
 			</template>
-			<template>
-				<name>ServiceInstance</name>
-				<entityToExport>org.meveo.model.billing.ServiceInstance</entityToExport>
-			</template>
-			<template>
-				<name>Access</name>
-				<entityToExport>org.meveo.model.mediation.Access</entityToExport>
+			<template name="ServiceInstance" entityToExport="org.meveo.model.billing.ServiceInstance" />
+			<template name="Access" entityToExport="org.meveo.model.mediation.Access">
 				<classesToExportAsFull>
 					<java-class>org.meveo.model.crm.CustomFieldInstance</java-class>
 				</classesToExportAsFull>
@@ -186,9 +112,7 @@
 		</groupedTemplates>
 	</template>
 
-	<template>
-		<name>EDR</name>
-		<entityToExport>org.meveo.model.rating.EDR</entityToExport>
+	<template name="EDR" entityToExport="org.meveo.model.rating.EDR" canDeleteAfterExport="true">
 		<parameters>
 			<entry>
 				<string>provider</string>
@@ -199,11 +123,8 @@
 				<string>dateRange</string>
 			</entry>
 		</parameters>
-		<canDeleteAfterExport>true</canDeleteAfterExport>
 	</template>
-	<template>
-		<name>WalletOperation</name>
-		<entityToExport>org.meveo.model.billing.WalletOperation</entityToExport>
+	<template name="WalletOperation" entityToExport="org.meveo.model.billing.WalletOperation" canDeleteAfterExport="true">
 		<parameters>
 			<entry>
 				<string>provider</string>
@@ -214,15 +135,17 @@
 				<string>dateRange</string>
 			</entry>
 		</parameters>
-		<canDeleteAfterExport>true</canDeleteAfterExport>
 	</template>
-	
-	<template>
-	    <name>DunningPlan</name>
-	    <entityToExport>org.meveo.model.payments.DunningPlan</entityToExport>
-	    <classesToExportAsFull>
-	     <java-class>org.meveo.model.payments.DunningPlanTransition</java-class>
-	     <java-class>org.meveo.model.payments.ActionPlanItem</java-class>
-	    </classesToExportAsFull>
-   </template>
+	<template name="DunningPlan" entityToExport="org.meveo.model.payments.DunningPlan">
+		<parameters>
+			<entry>
+				<string>provider</string>
+				<string>provider</string>
+			</entry>
+		</parameters>
+		<classesToExportAsFull>
+			<java-class>org.meveo.model.payments.DunningPlanTransition</java-class>
+			<java-class>org.meveo.model.payments.ActionPlanItem</java-class>
+		</classesToExportAsFull>
+	</template>
 </list>

@@ -220,6 +220,10 @@ public class EntityExportImportBean implements Serializable {
         // Retrieve complex export template definitions from configuration
         XStream xstream = new XStream();
         xstream.alias("template", ExportTemplate.class);
+        xstream.useAttributeFor(ExportTemplate.class, "name");
+        xstream.useAttributeFor(ExportTemplate.class, "entityToExport");
+        xstream.useAttributeFor(ExportTemplate.class, "canDeleteAfterExport");
+
         xstream.setMode(XStream.NO_REFERENCES);
 
         List<ExportTemplate> templatesFromXml = (List<ExportTemplate>) xstream.fromXML(this.getClass().getClassLoader().getResourceAsStream("exportImportTemplates.xml"));
@@ -280,7 +284,7 @@ public class EntityExportImportBean implements Serializable {
         exportImportStats = null;
         if (event.getFile() != null) {
             try {
-                log.error("Provider to force is "+forceToProvider);
+                log.error("Provider to force is " + forceToProvider);
                 exportImportStats = entityExportImportService.importEntities(event.getFile().getInputstream(), false, !requireFK, forceToProvider);
                 messages.info(new BundleKey("messages", "export.imported"), event.getFile().getFileName());
 
