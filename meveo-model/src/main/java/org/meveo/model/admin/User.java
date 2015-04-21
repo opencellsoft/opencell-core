@@ -249,4 +249,17 @@ public class User extends AuditableEntity {
         }
         return false;
     }
+    
+    /**
+     * Check if [current] provider match any of the providers user is attached to 
+     */
+    @Override
+    public boolean doesProviderMatch(Long providerToMatch) {
+        for (Provider providerItem : providers) {
+            if (providerItem.getId().equals(providerToMatch)) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

@@ -19,7 +19,7 @@ import org.slf4j.Logger;
  **/
 @RequestScoped
 @Interceptors({ LoggingInterceptor.class })
-public class JobRsImpl extends BaseRs extends JobRs {
+public class JobRsImpl extends BaseRs implements JobRs {
 
 	@Inject
 	private Logger log;

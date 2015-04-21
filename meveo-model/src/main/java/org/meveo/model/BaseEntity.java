@@ -123,4 +123,22 @@ public abstract class BaseEntity implements Serializable, IEntity, IVersionedEnt
 
 		return false;
 	}
+	
+    /**
+     * Check whether [current] provider matches the provider field of an entity
+     * 
+     * @param providerToMatch
+     *            [Current] provider id value to match
+     * @return
+     */
+    public boolean doesProviderMatch(Long providerToMatch) {
+
+        if (providerToMatch == null && provider == null) {
+            return true;
+        } else if (providerToMatch != null && provider != null) {
+            return provider.getId().equals(providerToMatch);
+        }
+
+        return false;
+    }
 }

@@ -40,8 +40,8 @@ import javax.persistence.Transient;
 import org.apache.commons.lang.StringUtils;
 import org.meveo.model.Auditable;
 import org.meveo.model.BaseEntity;
-import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.ExportIdentifier;
+import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.crm.CustomFieldInstance;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -106,6 +106,11 @@ public class TimerEntity extends BaseEntity implements ICustomFieldEntity {
 	@MapKeyColumn(name = "code")
 	private Map<String, CustomFieldInstance> customFields = new HashMap<String, CustomFieldInstance>();
 
+    /**
+     * A flag to tag that timer is running
+     */
+	@Transient
+	private boolean running;
 
 	public String getName() {
 		return (name == null) ? (getId() == null ? null : jobName + "_"
@@ -411,4 +416,11 @@ public class TimerEntity extends BaseEntity implements ICustomFieldEntity {
         return getInheritedCustomDoubleValue(code);
     }
 
+    public boolean isRunning() {
+        return running;
+    }
+    
+    public void setRunning(boolean running) {
+        this.running = running;
+    }
 }

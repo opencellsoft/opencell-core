@@ -47,8 +47,6 @@ public abstract class Job {
 
     protected Logger log = LoggerFactory.getLogger(this.getClass());
 
-    protected boolean running = false;
-
     @PostConstruct
     public void init() {
         TimerEntityService.registerJob(this);
@@ -65,31 +63,40 @@ public abstract class Job {
     public void execute(TimerEntity timerEntity, User currentUser) {
         JobExecutionResultImpl result = new JobExecutionResultImpl();
         TimerInfo info = timerEntity.getTimerInfo();
-        if (!running && (info.isActive() || currentUser != null)) {
+
+        if (!timerEntity.isRunning() && (info.isActive() || currentUser != null)) {
+            log.debug("Job {} of type {} execution start, info={}, currentUser={}", timerEntity.getName(), timerEntity.getJobName(), info, currentUser);
+
             try {
-                running = true;
+                timerEntity.setRunning(true);
                 if (currentUser == null) {
                     currentUser = userService.findByIdLoadProvider(info.getUserId());
                 }
                 execute(result, timerEntity, currentUser);
                 result.close();
 
+                log.trace("Job {} of type {} executed. Persisting job execution results", timerEntity.getName(), timerEntity.getJobName());
                 jobExecutionService.persistResult(this, result, timerEntity, currentUser, getJobCategory());
-                
+
+                log.debug("Job {} of type {} execution finished", timerEntity.getName(), timerEntity.getJobName());
+
             } catch (Exception e) {
-                log.error("Failed to execute a job {}", timerEntity.getJobName(), e);
-                
+                log.error("Failed to execute a job {} of type {}", timerEntity.getJobName(), timerEntity.getJobName(), e);
+
             } finally {
-                running = false;
+                timerEntity.setRunning(false);
             }
+        } else {
+            log.trace("Job {} of type {} execution will be skipped. Reason: isRunning={}, isActive={}, currentUser={}", timerEntity.getName(), timerEntity.getJobName(),
+                timerEntity.isRunning(), info.isActive(), currentUser != null);
         }
     }
 
     protected abstract void execute(JobExecutionResultImpl result, TimerEntity timerEntity, User currentUser) throws BusinessException;
 
-    public Timer createTimer(ScheduleExpression scheduleExpression, TimerEntity infos) {
+    public Timer createTimer(ScheduleExpression scheduleExpression, TimerEntity timerEntity) {
         TimerConfig timerConfig = new TimerConfig();
-        timerConfig.setInfo(infos);
+        timerConfig.setInfo(timerEntity);
         timerConfig.setPersistent(false);
         return timerService.createCalendarTimer(scheduleExpression, timerConfig);
     }

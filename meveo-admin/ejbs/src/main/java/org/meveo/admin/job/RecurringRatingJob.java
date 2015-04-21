@@ -1,5 +1,6 @@
 package org.meveo.admin.job;
 
+import javax.ejb.Asynchronous;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
 import javax.ejb.TransactionAttribute;
@@ -20,7 +21,13 @@ public class RecurringRatingJob extends Job {
     @Inject
     private RecurringRatingJobBean recurringRatingJobBean;
 
+    @Override
+	@Asynchronous
     @TransactionAttribute(TransactionAttributeType.NEVER)
+    public void execute(TimerEntity timerEntity, User currentUser) {
+        super.execute(timerEntity, currentUser);
+    }
+    
     @Override
     protected void execute(JobExecutionResultImpl result, TimerEntity timerEntity, User currentUser) throws BusinessException {
         recurringRatingJobBean.execute(result, currentUser);
