@@ -2,6 +2,8 @@ package org.meveo.admin.job;
 
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
@@ -18,6 +20,7 @@ public class UsageRatingJob extends Job {
     @Inject
     private UsageRatingJobBean usageRatingJobBean;
 
+    @TransactionAttribute(TransactionAttributeType.NEVER)
     @Override
     protected void execute(JobExecutionResultImpl result, TimerEntity timerEntity, User currentUser) throws BusinessException {
         usageRatingJobBean.execute(result, currentUser);

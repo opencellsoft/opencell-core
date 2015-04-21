@@ -15,10 +15,7 @@ import org.meveo.event.qualifier.Rejected;
 import org.meveo.interceptor.PerformanceInterceptor;
 import org.meveo.model.admin.User;
 import org.meveo.model.jobs.JobExecutionResultImpl;
-import org.meveo.model.rating.EDR;
-import org.meveo.model.rating.EDRStatusEnum;
 import org.meveo.service.billing.impl.EdrService;
-import org.meveo.service.billing.impl.UsageRatingService;
 import org.slf4j.Logger;
 
 @Stateless
@@ -31,46 +28,30 @@ public class UsageRatingJobBean {
 	private EdrService edrService;
 
 	@Inject
-	private UsageRatingService usageRatingService;
+	private UnitUsageRatingJobBean unitUsageRatingJobBean;
 
 	@Inject
 	@Rejected
 	Event<Serializable> rejectededEdrProducer;
 
-	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+
 	@Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
+	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
 	public void execute(JobExecutionResultImpl result, User currentUser) {
 		try {
-			List<EDR> edrs = edrService.getEDRToRate(currentUser.getProvider());
+			
+			List<Long> ids = edrService.getEDRidsToRate(currentUser.getProvider());			
+			log.debug("edr to rate:" + ids.size());
 
-			log.debug("edr to rate:" + edrs.size());
-
-			for (EDR edr : edrs) {
-				log.debug("rate edr={}", edr.getId());
-
-				try {
-					usageRatingService.ratePostpaidUsage(edr, currentUser);
-
-					edrService.setProvider(currentUser.getProvider());
-					edrService.update(edr, currentUser);
-
-					if (edr.getStatus() == EDRStatusEnum.RATED) {
-						result.registerSucces();
-					} else {
-						rejectededEdrProducer.fire(edr);
-						result.registerError(edr.getRejectReason());
-					}
-				} catch (Exception e) {
-					log.error(e.getMessage());
-					rejectededEdrProducer.fire(edr);
-					result.registerError(e.getMessage());
-					e.printStackTrace();
-				}
+			for (Long edrId : ids) {				
+				unitUsageRatingJobBean.execute(result, currentUser, edrId);				
 			}
+			
 		} catch (Exception e) {
 			log.error(e.getMessage());
 			e.printStackTrace();
 		}
 	}
+
 
 }
