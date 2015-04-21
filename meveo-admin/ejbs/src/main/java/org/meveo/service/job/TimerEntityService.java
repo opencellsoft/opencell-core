@@ -177,10 +177,12 @@ public class TimerEntityService extends PersistenceService<TimerEntity> {
                         try {
                             Timer timer = jobTimers.get(entity.getId());
                             timer.cancel();
+                            jobTimers.remove(entity.getId());
                             log.info("cancelled timer {} , id=", entity.getJobName(),entity.getId());
                         } catch (Exception ex) {
                             log.info("cannot cancel timer {}", ex.getMessage());
                         }
+                        
                     }
                     if (entity.getFollowingTimer() != null) {
                         entity.getTimerInfo().setFollowingTimerId(entity.getFollowingTimer().getId());
@@ -344,9 +346,13 @@ public class TimerEntityService extends PersistenceService<TimerEntity> {
      */
     public boolean isTimerRunning(Long timerEntityId) {
         Timer timer = jobTimers.get(timerEntityId);
-        
+
         if (timer != null) {
-            return ((TimerEntity) timer.getInfo()).isRunning();
+            try {
+                return ((TimerEntity) timer.getInfo()).isRunning();
+            } catch (Exception e) {
+                log.error("Failed to access timer status {}", e.getMessage());
+            }
         }
         return false;
     }

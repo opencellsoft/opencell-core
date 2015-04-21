@@ -32,8 +32,7 @@
                         <f:selectItems value="#{timerEntityBean.jobCategoryEnumValues}" var="jobCat" itemLabel="#{messages[jobCat.label]}" />
                         <p:ajax event="valueChange" update="@form"></p:ajax>
                     </p:selectOneMenu>
-                    <h:outputText value="#{messages[timerEntityBean.entity.jobCategoryEnum.label]}"
-                        rendered="#{timerEntityBean.entity.id!=null}" />
+                    <h:outputText value="#{messages[timerEntityBean.entity.jobCategoryEnum.label]}" rendered="#{timerEntityBean.entity.id!=null}" />
                 </p:panelGrid>
 
 
@@ -60,18 +59,24 @@
                     <hf:formField label="#{messages['timer.month']}" field="month" required="true" />
                     <hf:formField label="#{messages['timer.dayOfMonth']}" field="dayOfMonth" required="true" />
                     <hf:formField label="#{messages['timer.dayOfWeek']}" field="dayOfWeek" required="true" />
-                    <hf:formField label="#{messages['timer.parameter']}" field="timerInfo" childField="parametres" required="true" />
+                    <p:panelGrid columns="2">
+                        <p:outputLabel for="parameters" value="#{messages['timer.parameter']}" />
+                        <p:inputText id="parameters" value="#{timerEntityBean.entity.timerInfo.parametres}" rendered="#{timerEntityBean.edit}" />
+                        <h:outputText value="#{timerEntityBean.entity.timerInfo.parametres}" rendered="#{!timerEntityBean.edit}" />
+                    </p:panelGrid>
                     <hf:formField label="#{messages['timer.active']}" field="timerInfo" childField="active" />
 
                 </p:panelGrid>
 
                 <p:panelGrid columns="2">
                     <p:outputLabel for="timerFollowingJob" value="#{messages['timer.followingJob']}"></p:outputLabel>
-                    <p:selectOneMenu id="timerFollowingJob" value="#{timerEntityBean.entity.timerInfo.followingTimerId}" rendered="#{timerEntityBean.edit}">
+                    <p:selectOneMenu id="timerFollowingJob" value="#{timerEntityBean.entity.timerInfo.followingTimerId}"
+                        rendered="#{timerEntityBean.edit}">
                         <f:selectItem itemLabel="#{messages['commons.select']}" />
                         <f:selectItems value="#{timerEntityBean.getTimerEntityList()}" var="t_" itemLabel="#{t_.name}" itemValue="#{t_.id}" />
                     </p:selectOneMenu>
-                    <h:outputText value="#{timerEntityBean.translateToTimerName(timerEntityBean.entity.timerInfo.followingTimerId)}" rendered="#{!timerEntityBean.edit}" />
+                    <h:outputText value="#{timerEntityBean.translateToTimerName(timerEntityBean.entity.timerInfo.followingTimerId)}"
+                        rendered="#{!timerEntityBean.edit}" />
                 </p:panelGrid>
 
                 <p:panelGrid columns="2">

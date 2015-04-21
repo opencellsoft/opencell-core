@@ -438,21 +438,29 @@
 
 		<!--  If the value binding is a boolean, display a selectBooleanCheckbox field. -->
 		<p:panelGrid columns="2"
-			rendered="#{cc.isBoolean(cc.attrs.field,false)}">
+			rendered="#{cc.isBoolean(cc.attrs.field,cc.attrs.childField, false)}">
 			<p:outputLabel for="#{cc.attrs.id}_boolean" value="#{cc.attrs.label}" />
 
 			<p:selectBooleanCheckbox id="#{cc.attrs.id}_boolean"
-				rendered="#{cc.attrs.edit}" disabled="#{cc.attrs.disabled}"
+				rendered="#{cc.attrs.edit and cc.attrs.childField==null}" disabled="#{cc.attrs.disabled}"
 				value="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}"
 				required="#{cc.attrs.required}">
 				<c:if test="#{not empty cc.attrs.listenerUpdate}">
 					<p:ajax update="#{cc.attrs.listenerUpdate}" event="change" />
 				</c:if>
 			</p:selectBooleanCheckbox>
+            <p:selectBooleanCheckbox id="#{cc.attrs.id}_child_boolean"
+                rendered="#{cc.attrs.edit and cc.attrs.childField!=null}" disabled="#{cc.attrs.disabled}"
+                value="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field][cc.attrs.childField]}"
+                required="#{cc.attrs.required}">
+                <c:if test="#{not empty cc.attrs.listenerUpdate}">
+                    <p:ajax update="#{cc.attrs.listenerUpdate}" event="change" />
+                </c:if>
+            </p:selectBooleanCheckbox>
 
 			<ui:fragment rendered="#{not cc.attrs.edit and cc.attrs.isMessage}">
 				<c:set var="fieldValue"
-					value="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}" />
+					value="#{cc.attrs.childField==null?cc.entityFromBackingBeanOrAttribute[cc.attrs.field]:cc.entityFromBackingBeanOrAttribute[cc.attrs.field][cc.attrs.childField]}" />
 
 				<h:outputText
 					rendered="#{fieldValue != null and fieldValue.toString() == 'true' and not cc.attrs.edit}"
@@ -463,13 +471,13 @@
 				<!-- 				toString was some workaround - todo: maybe works without toString  -->
 				<h:outputText
 					rendered="#{fieldValue != null and fieldValue.toString() != 'true' and fieldValue.toString() != 'false' and not cc.attrs.edit}"
-					value="#{messages[cc.entityFromBackingBeanOrAttribute[cc.attrs.field]]}"
+					value="#{messages[fieldValue]}"
 					styleClass="field-value" />
 			</ui:fragment>
 
 			<h:outputText
 				rendered="#{not cc.attrs.edit and not cc.attrs.isMessage}"
-				value="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}"
+				value="#{cc.attrs.childField==null?cc.entityFromBackingBeanOrAttribute[cc.attrs.field]:cc.entityFromBackingBeanOrAttribute[cc.attrs.field][cc.attrs.childField]}"
 				styleClass="field-value" />
 
 			<cc:insertChildren />

@@ -153,9 +153,12 @@ public class BackingBeanBasedCompositeComponent extends UINamingContainer {
         }
         
         Field entityField = getBeanFieldThrowException(determineFromEntityClass ? getEntityClass() : getEntityFromBackingBeanOrAttribute().getClass(), fieldName);
-        Field field = getBeanFieldThrowException(entityField.getType(), childFieldName);
-        
-        return field.getType() == String.class;
+        Field field = getBeanField(entityField.getType(), childFieldName);
+        if (field != null) {
+            return field.getType() == String.class;
+        } else {
+            return false;
+        }
     }
     
 	public boolean isBoolean(String fieldName, boolean determineFromEntityClass)
@@ -171,6 +174,24 @@ public class BackingBeanBasedCompositeComponent extends UINamingContainer {
 				|| (type.isPrimitive() && type.getName().equals("boolean"));
 	}
 
+    public boolean isBoolean(String fieldName, String childFieldName, boolean determineFromEntityClass) throws SecurityException, NoSuchFieldException, IllegalArgumentException, IllegalAccessException,
+            InvocationTargetException, NoSuchMethodException {
+        
+        if (StringUtils.isEmpty(childFieldName)) {
+            return isBoolean(fieldName, determineFromEntityClass);
+        }
+        
+        Field entityField = getBeanFieldThrowException(determineFromEntityClass ? getEntityClass() : getEntityFromBackingBeanOrAttribute().getClass(), fieldName);
+        
+        Field field = getBeanField(entityField.getType(), childFieldName);
+        if (field != null) {
+            Class<?> type = field.getType();
+            return type == Boolean.class || (type.isPrimitive() && type.getName().equals("boolean"));
+        } else {
+            return false;
+        }
+    }
+	
 	public boolean isDate(String fieldName, boolean determineFromEntityClass)
 			throws SecurityException, NoSuchFieldException,
 			IllegalArgumentException, IllegalAccessException,
@@ -190,9 +211,12 @@ public class BackingBeanBasedCompositeComponent extends UINamingContainer {
         }
         
         Field entityField = getBeanFieldThrowException(determineFromEntityClass ? getEntityClass() : getEntityFromBackingBeanOrAttribute().getClass(), fieldName);
-        Field field = getBeanFieldThrowException(entityField.getType(), childFieldName);
-        
-        return field.getType() == Date.class;
+        Field field = getBeanField(entityField.getType(), childFieldName);
+        if (field != null) {
+            return field.getType() == Date.class;
+        } else {
+            return false;
+        }
     }
     
 	public boolean isEnum(String fieldName, boolean determineFromEntityClass)
