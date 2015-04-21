@@ -71,8 +71,9 @@
             <hftl:column label="#{messages['BusinessEntity.code']}" field="code" />
 			<hftl:column label="#{messages['pricePlanMatrix.table.eventCode']}"
 				field="eventCode" />
-			<hftl:column label="#{messages['seller.title']}" field="seller"
-				childField="description" />
+			<hftl:columnList label="#{messages['seller.title']}"
+				value="#{entity.seller}" field="description" fieldId="id"
+				entityView="sellerDetail" />
 			<hftl:column label="#{messages['tradingCountry.tradingCountry']}"
 				field="tradingCountry" childField="countryCode" />
 			<hftl:column label="#{messages['currency.codeCurrency']}"
@@ -104,8 +105,9 @@
 			<hftl:column
 				label="#{messages['pricePlanMatrix.table.criteria3Value']}"
 				field="criteria3Value" /> -->
-			<hftl:column label="#{messages['pricePlanMatrix.offerCode']}" 
-			field="offerTemplate" childfield="code" />
+			<hftl:columnList label="#{messages['pricePlanMatrix.offerCode']}" 
+				value="#{entity.offerTemplate}" field="code" fieldId="id"
+				entityView="offerTemplateDetail" />
 			<hftl:column label="#{messages['pricePlanMatrix.priority']}"
 				field="priority" />
 			<hftl:column label="#{messages['pricePlanMatrix.amountWithoutTax']}"

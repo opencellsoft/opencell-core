@@ -1,16 +1,13 @@
 package org.meveo.api.dto.account;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
-import org.meveo.api.dto.payment.AccountOperationDto;
 import org.meveo.model.payments.CustomerAccount;
 
 @XmlType(name = "CustomerAccount")
@@ -28,11 +25,10 @@ public class CustomerAccountDto extends AccountDto {
 	private String status;
 	private String paymentMethod;
 	private String creditCategory;
-	private List<AccountOperationDto> accountOperations = new ArrayList<AccountOperationDto>();
 	private Date dateStatus;
 	private Date dateDunningLevel;
 
-	private ContactInformationDto contactInformation = new ContactInformationDto();
+	private ContactInformationDto contactInformation;
 
 	private String dunningLevel;
 	private String mandateIdentification = "";
@@ -101,14 +97,6 @@ public class CustomerAccountDto extends AccountDto {
 		this.creditCategory = creditCategory;
 	}
 
-	public List<AccountOperationDto> getAccountOperations() {
-		return accountOperations;
-	}
-
-	public void setAccountOperations(List<AccountOperationDto> accountOperations) {
-		this.accountOperations = accountOperations;
-	}
-
 	public Date getDateStatus() {
 		return dateStatus;
 	}
@@ -173,13 +161,6 @@ public class CustomerAccountDto extends AccountDto {
 		this.balance = balance;
 	}
 
-	public void addAccountOperations(AccountOperationDto accountOperation) {
-		if (accountOperations == null) {
-			accountOperations = new ArrayList<AccountOperationDto>();
-		}
-		this.accountOperations.add(accountOperation);
-	}
-
 	public String getCurrency() {
 		return currency;
 	}
@@ -190,12 +171,10 @@ public class CustomerAccountDto extends AccountDto {
 
 	@Override
 	public String toString() {
-		return "CustomerAccountDto [customer=" + customer + ", currency=" + currency + ", status=" + status
-				+ ", paymentMethod=" + paymentMethod + ", creditCategory=" + creditCategory + ", accountOperations="
-				+ accountOperations + ", dateStatus=" + dateStatus + ", dateDunningLevel=" + dateDunningLevel
-				+ ", contactInformation=" + contactInformation + ", dunningLevel=" + dunningLevel
-				+ ", mandateIdentification=" + mandateIdentification + ", mandateDate=" + mandateDate + ", balance="
-				+ balance + ", terminationDate=" + terminationDate + ", billingAccounts=" + billingAccounts + "]";
+		return "CustomerAccountDto [customer=" + customer + ", currency=" + currency + ", status=" + status + ", paymentMethod=" + paymentMethod + ", creditCategory="
+				+ creditCategory + ", dateStatus=" + dateStatus + ", dateDunningLevel=" + dateDunningLevel + ", contactInformation=" + contactInformation + ", dunningLevel="
+				+ dunningLevel + ", mandateIdentification=" + mandateIdentification + ", mandateDate=" + mandateDate + ", balance=" + balance + ", terminationDate="
+				+ terminationDate + ", billingAccounts=" + billingAccounts + "]";
 	}
 
 	public Date getTerminationDate() {
@@ -215,6 +194,9 @@ public class CustomerAccountDto extends AccountDto {
 	}
 
 	public ContactInformationDto getContactInformation() {
+		if (contactInformation == null) {
+			contactInformation = new ContactInformationDto();
+		}
 		return contactInformation;
 	}
 

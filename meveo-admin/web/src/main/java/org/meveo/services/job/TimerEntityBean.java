@@ -161,4 +161,14 @@ public class TimerEntityBean extends BaseBean<TimerEntity> {
             }
         }
     }
+    
+    /**
+     * Check if a timer, identifier by a timer id, is running
+     * 
+     * @param timerEntityId Timer entity id
+     * @return True if running
+     */
+    public boolean isTimerRunning(Long timerEntityId){
+        return timerEntityservice.isTimerRunning(timerEntityId);
+    }
 }

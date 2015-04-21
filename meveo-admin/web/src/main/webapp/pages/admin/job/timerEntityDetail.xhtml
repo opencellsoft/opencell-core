@@ -81,27 +81,27 @@
 
                 <p:panelGrid columns="4">
                     <!--  <div class="action-buttons">
-							<p:commandButton ajax="false" id="button_create"
-								value="#{messages['action.save']}"
-								action="#{timerEntityBean.create()}"
-								rendered="#{timerEntityBean.entity.id==null and timerEntityBean.entity.jobName!=null}" />
-							<p:commandButton ajax="false" id="button_update"
-								value="#{messages['action.save']}"
-								action="#{timerEntityBean.updateTimer()}"
-								rendered="#{timerEntityBean.entity.id!=null}" />
-							<p:commandButton ajax="false" id="button_delete"
-								value="#{messages['commons.delete']}"
-								action="#{timerBean.deleteTimer()}" immediate="true"
-								onclick="if(!confirm('#{messages['entity.remove.confirmation']}')) return false;"
-								rendered="#{timerBean.timerEntity.id!=null }" />
-							<p:commandButton ajax="false" id="button_execute"
-								value="#{messages['job.executeJobNow']}"
-								action="#{timerBean.executeTimer()}"
-								rendered="#{timerBean.timerEntity.id!=null}" />
-							<p:button id="button_back" value="#{messages['action.back']}"
-								outcome="jobTimers" />
-						</div>
-						-->
+                            <p:commandButton ajax="false" id="button_create"
+                                value="#{messages['action.save']}"
+                                action="#{timerEntityBean.create()}"
+                                rendered="#{timerEntityBean.entity.id==null and timerEntityBean.entity.jobName!=null}" />
+                            <p:commandButton ajax="false" id="button_update"
+                                value="#{messages['action.save']}"
+                                action="#{timerEntityBean.updateTimer()}"
+                                rendered="#{timerEntityBean.entity.id!=null}" />
+                            <p:commandButton ajax="false" id="button_delete"
+                                value="#{messages['commons.delete']}"
+                                action="#{timerBean.deleteTimer()}" immediate="true"
+                                onclick="if(!confirm('#{messages['entity.remove.confirmation']}')) return false;"
+                                rendered="#{timerBean.timerEntity.id!=null }" />
+                            <p:commandButton ajax="false" id="button_execute"
+                                value="#{messages['job.executeJobNow']}"
+                                action="#{timerBean.executeTimer()}"
+                                rendered="#{timerBean.timerEntity.id!=null}" />
+                            <p:button id="button_back" value="#{messages['action.back']}"
+                                outcome="jobTimers" />
+                        </div>
+                        -->
                     <p:commandButton ajax="false" id="button_execute" value="#{messages['job.executeJobNow']}"
                         action="#{timerEntityBean.executeTimer()}" rendered="#{timerEntityBean.entity.id!=null}" />
                 </p:panelGrid>

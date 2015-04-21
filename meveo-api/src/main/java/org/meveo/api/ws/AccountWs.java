@@ -25,6 +25,7 @@ import org.meveo.api.dto.response.account.ListBillingAccountResponseDto;
 import org.meveo.api.dto.response.account.ListCustomerAccountResponseDto;
 import org.meveo.api.dto.response.account.ListCustomerResponseDto;
 import org.meveo.api.dto.response.account.ListUserAccountResponseDto;
+import org.meveo.api.dto.response.payment.ListAccountOperationsResponseDto;
 
 /**
  * @author Edward P. Legaspi
@@ -137,6 +138,9 @@ public interface AccountWs extends IBaseWs {
 
 	@WebMethod
 	ActionStatus createAccountOperation(@WebParam(name = "accountOperation") AccountOperationDto postData);
+
+	@WebMethod
+	ListAccountOperationsResponseDto listAccountOperations(@WebParam(name = "customerAccountCode") String customerAccountCode);
 
 	// dunning
 

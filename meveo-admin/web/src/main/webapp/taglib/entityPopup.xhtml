@@ -58,11 +58,13 @@
 							backingBean="#{backingBean}" field="#{searchField3}" />
 					</c:if>
 				</p:panelGrid>
-				<p:panelGrid columns="2">
+				<p:panelGrid columns="3">
 					<p:commandButton id="buttonSearch"
 						value="#{messages['commons.search']}" update="#{id}popupForm" />
 					<p:commandButton id="buttonClear" action="#{backingBean.clean}"
 						value="#{messages['commons.clean']}" update="#{id}popupForm" />
+					<p:commandButton id="buttonAll" action="#{backingBean.back}"
+						value="#{messages['commons.all']}" />
 				</p:panelGrid>
 			</c:if>
 

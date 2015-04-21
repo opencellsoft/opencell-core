@@ -35,28 +35,24 @@
 			<hftl:column label="#{messages['serviceTemplate.code']}" field="code" />
 			<hftl:column label="#{messages['serviceTemplate.description']}"
 				field="description" />
-			<hftl:column label="#{messages['serviceTemplate.recurringCharges']}"
-				field="serviceRecurringCharges" isList="true"
-				childField="chargeTemplate" childFieldId="id"
-				view="/pages/catalog/recurringChargeTemplates/recurringChargeTemplateDetail.xhtml"
-				backView="serviceTemplates" />
-			<hftl:column
+			<hftl:columnList label="#{messages['serviceTemplate.recurringCharges']}"
+				value="#{entity.serviceRecurringCharges.toArray()}"
+				field="chargeTemplate.code" fieldId="chargeTemplate.id"
+				entityView="recurringChargeTemplateDetail"/>
+			<hftl:columnList
 				label="#{messages['serviceTemplate.subscriptionCharges']}"
-				field="serviceSubscriptionCharges" isList="true"
-				childField="chargeTemplate" childFieldId="id"
-				view="/pages/catalog/oneShotChargeTemplates/oneShotChargeTemplateDetail.xhtml"
-				backView="serviceTemplates" />
-			<hftl:column
+				value="#{entity.serviceSubscriptionCharges.toArray()}"
+				field="chargeTemplate.code" fieldId="chargeTemplate.id"
+				entityView="oneShotChargeTemplateDetail"/>
+			<hftl:columnList
 				label="#{messages['serviceTemplate.terminationCharges']}"
-				field="serviceTerminationCharges" isList="true"
-				childField="chargeTemplate" childFieldId="id"
-				view="/pages/catalog/oneShotChargeTemplates/oneShotChargeTemplateDetail.xhtml"
-				backView="serviceTemplates" />
-			<hftl:column label="#{messages['serviceTemplate.usageCharges']}"
-				field="serviceUsageCharges" isList="true"
-				childField="chargeTemplate" childFieldId="id"
-				view="/pages/catalog/usageChargeTemplates/usageChargeTemplateDetail.xhtml"
-				backView="serviceTemplates" />
+				value="#{entity.serviceTerminationCharges.toArray()}"
+				field="chargeTemplate.code" fieldId="chargeTemplate.id"
+				entityView="oneShotChargeTemplateDetail" />
+			<hftl:columnList label="#{messages['serviceTemplate.usageCharges']}"
+				value="#{entity.serviceUsageCharges.toArray()}"
+				field="chargeTemplate.code" fieldId="chargeTemplate.id"
+				entityView="usageChargeTemplateDetail" />
 			<hftl:column label="#{messages['enableEntity.active']}"
 				field="active" isMessage="true" />
 

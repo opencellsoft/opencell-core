@@ -30,14 +30,15 @@
 
 		<hftl:dataList label="#{messages['subscription.title']}" sortBy="code"
 			backingBean="#{subscriptionListBean}" checkMany="false">
-			<hftl:column label="#{messages['businessEntity.code']}" field="code" />
+			<hftl:column label="#{messages['businessEntity.code']}" field="code" useCustomIdParam="true"/>
 			<hftl:column label="#{messages['businessEntity.description']}"
 				field="description" />
 			<hftl:column label="#{messages['subscription.status']}"
 				field="status" childField="label" isMessage="true"
 				sortByField="true" />
-			<hftl:column label="#{messages['subscription.userAccount']}"
-				field="userAccount" childField="code" />
+			<hftl:columnList label="#{messages['subscription.userAccount']}"
+				value="#{entity.userAccount}" field="code" fieldId="id" objectIdParamName="userAccountId"
+				entityView="userAccountDetail" propagateConversation="false"/>
 			<hftl:column label="#{messages['subscription.serviceInstances']}"
 				field="serviceInstances" isList="true" childField="descriptionAndStatus"
 				childFieldId="id" sort="false"

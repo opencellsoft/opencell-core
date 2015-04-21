@@ -3,19 +3,10 @@ package org.meveo.admin.job.dwh;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Collection;
 import java.util.List;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.Resource;
-import javax.ejb.Asynchronous;
-import javax.ejb.ScheduleExpression;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
-import javax.ejb.Timeout;
-import javax.ejb.Timer;
-import javax.ejb.TimerConfig;
-import javax.ejb.TimerService;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
@@ -26,179 +17,93 @@ import org.meveo.admin.job.logging.JobLoggingInterceptor;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.interceptor.PerformanceInterceptor;
 import org.meveo.model.admin.User;
-import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.jobs.JobCategoryEnum;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.TimerEntity;
-import org.meveo.model.jobs.TimerInfo;
-import org.meveo.service.admin.impl.UserService;
 import org.meveo.service.job.Job;
-import org.meveo.service.job.JobExecutionService;
-import org.meveo.service.job.TimerEntityService;
 import org.meveocrm.model.dwh.MeasurableQuantity;
 import org.meveocrm.model.dwh.MeasuredValue;
 import org.meveocrm.services.dwh.MeasurableQuantityService;
 import org.meveocrm.services.dwh.MeasuredValueService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @Startup
 @Singleton
-public class MeasurableQuantityAggregationJob implements Job {
+public class MeasurableQuantityAggregationJob extends Job {
 
-	protected Logger log = LoggerFactory.getLogger(MeasurableQuantityAggregationJob.class);
+    @Inject
+    private MeasurableQuantityService mqService;
 
-	@Inject
-	private UserService userService;
+    @Inject
+    private MeasuredValueService mvService;
 
-	@Resource
-	private TimerService timerService;
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    private void aggregateMeasuredValues(JobExecutionResultImpl result, StringBuilder report, MeasurableQuantity mq) {
+        if (report.length() == 0) {
+            report.append("Generate Measured Value for : " + mq.getCode());
+        } else {
+            report.append(",").append(mq.getCode());
+        }
+        Object[] mvObject = mqService.executeMeasurableQuantitySQL(mq);
 
-	@Inject
-	private JobExecutionService jobExecutionService;
+        try {
+            if (mvObject.length > 0) {
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                MeasuredValue mv = new MeasuredValue();
+                mv.setMeasurableQuantity(mq);
+                mv.setMeasurementPeriod(mq.getMeasurementPeriod());
+                mv.setDate(sdf.parse(mvObject[0] + ""));
+                mv.setValue(new BigDecimal(mvObject[1] + ""));
+                mvService.create(mv);
+            }
+        } catch (IllegalArgumentException e) {
+            log.error(e.getMessage());
+        } catch (SecurityException e) {
+            log.error(e.getMessage());
+        } catch (ParseException e) {
+            log.error(e.getMessage());
+        } catch (BusinessException e) {
+            log.error(e.getMessage());
+        }
+    }
 
-	@Inject
-	private MeasurableQuantityService mqService;
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    private void aggregateMeasuredValues(JobExecutionResultImpl result, StringBuilder report, List<MeasurableQuantity> mq) {
+        for (MeasurableQuantity measurableQuantity : mq) {
+            aggregateMeasuredValues(result, report, measurableQuantity);
+        }
 
-	@Inject
-	private MeasuredValueService mvService;
+    }
 
-	@PostConstruct
-	public void init() {
-		TimerEntityService.registerJob(this);
-	}
+    @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
+    @Override
+    protected void execute(JobExecutionResultImpl result, TimerEntity timerEntity, User currentUser) throws BusinessException {
+        mqService.setProvider(currentUser.getProvider());
 
-	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public void aggregateMeasuredValues(JobExecutionResultImpl result, String report, MeasurableQuantity mq) {
-		if (StringUtils.isBlank(report)) {
-			report = "Generate Measured Value for : " + mq.getCode();
-		} else {
-			report += "," + mq.getCode();
-		}
-		Object[] mvObject = mqService.executeMeasurableQuantitySQL(mq);
+        StringBuilder report = new StringBuilder();
+        if (timerEntity.getTimerInfo().getParametres() != null && !timerEntity.getTimerInfo().getParametres().isEmpty()) {
 
-		try {
-			if (mvObject.length > 0) {
-				SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-				MeasuredValue mv = new MeasuredValue();
-				mv.setMeasurableQuantity(mq);
-				mv.setMeasurementPeriod(mq.getMeasurementPeriod());
-				mv.setDate(sdf.parse(mvObject[0] + ""));
-				mv.setValue(new BigDecimal(mvObject[1] + ""));
-				mvService.create(mv);
-			}
-		} catch (IllegalArgumentException e) {
-			log.error(e.getMessage());
-		} catch (SecurityException e) {
-			log.error(e.getMessage());
-		} catch (ParseException e) {
-			log.error(e.getMessage());
-		} catch (BusinessException e) {
-			log.error(e.getMessage());
-		}
-	}
+            MeasurableQuantity mq = mqService.listByCode(timerEntity.getTimerInfo().getParametres()).get(0);
+            aggregateMeasuredValues(result, report, mq);
+            result.setReport(report.toString());
 
-	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public void aggregateMeasuredValues(JobExecutionResultImpl result, String report, List<MeasurableQuantity> mq) {
-		for (MeasurableQuantity measurableQuantity : mq) {
-			aggregateMeasuredValues(result, report, measurableQuantity);
-		}
+        } else {
+            aggregateMeasuredValues(result, report, mqService.list());
+            result.setReport(report.toString());
+        }
 
-	}
+        result.setDone(true);
+    }
 
-	@Override
-	@Asynchronous
-	@Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
-    public void execute(TimerEntity timerEntity, User currentUser) {
-        JobExecutionResultImpl result = new JobExecutionResultImpl();
-        TimerInfo info=timerEntity.getTimerInfo();
-		if (!running && (info.isActive() || currentUser != null)) {
-			try {
-				running = true;
-				if (currentUser == null) {
-					currentUser = userService.findByIdLoadProvider(info.getUserId());
-				}
-				result.setProvider(currentUser.getProvider());
-				mqService.setProvider(currentUser.getProvider());
-
-				String report = "";
-				if (info.getParametres() != null) {
-					if (!info.getParametres().isEmpty()) {
-						MeasurableQuantity mq = mqService.listByCode(info.getParametres()).get(0);
-						aggregateMeasuredValues(result, report, mq);
-						result.setReport(report);
-					} else {
-						aggregateMeasuredValues(result, report, mqService.list());
-						result.setReport(report);
-					}
-				} else {
-					aggregateMeasuredValues(result, report, mqService.list());
-					result.setReport(report);
-				}
-
-				result.setDone(true);
-
-				jobExecutionService.persistResult(this, result, timerEntity, currentUser, getJobCategory());
-			} catch (Exception e) {
-				log.error(e.getMessage());
-			} finally {
-				running = false;
-			}
-		}
-	}
-
-	public BigDecimal getMeasuredValueListValueSum(List<MeasuredValue> mvList) {
-		BigDecimal mvTotal = BigDecimal.ZERO;
-		for (MeasuredValue mv : mvList) {
-			mvTotal = mvTotal.add(mv.getValue());
-		}
-		return mvTotal;
-	}
-
-	boolean running = false;
-
-	@Override
-	@Timeout
-	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
-	public void trigger(Timer timer) {
-		execute((TimerEntity) timer.getInfo(), null);
-	}
-
-	@Override
-	public Timer createTimer(ScheduleExpression scheduleExpression, TimerEntity infos) {
-		TimerConfig timerConfig = new TimerConfig();
-		timerConfig.setInfo(infos);
-		timerConfig.setPersistent(false);
-
-		return timerService.createCalendarTimer(scheduleExpression, timerConfig);
-	}
-
-	@Override
-	public void cleanAllTimers() {
-		Collection<Timer> alltimers = timerService.getTimers();
-		log.info("Cancel " + alltimers.size() + " timers for" + this.getClass().getSimpleName());
-		for (Timer timer : alltimers) {
-			try {
-				timer.cancel();
-			} catch (Exception e) {
-				log.error(e.getMessage());
-			}
-		}
-	}
-
-	@Override
-	public JobExecutionService getJobExecutionService() {
-		return jobExecutionService;
-	}
-
-	@Override
-	public JobCategoryEnum getJobCategory() {
-		return JobCategoryEnum.DWH;
-	}
+    public BigDecimal getMeasuredValueListValueSum(List<MeasuredValue> mvList) {
+        BigDecimal mvTotal = BigDecimal.ZERO;
+        for (MeasuredValue mv : mvList) {
+            mvTotal = mvTotal.add(mv.getValue());
+        }
+        return mvTotal;
+    }
 
     @Override
-    public List<CustomFieldTemplate> getCustomFields(User currentUser) {
-        // TODO Auto-generated method stub
-        return null;
+    public JobCategoryEnum getJobCategory() {
+        return JobCategoryEnum.DWH;
     }
 }
