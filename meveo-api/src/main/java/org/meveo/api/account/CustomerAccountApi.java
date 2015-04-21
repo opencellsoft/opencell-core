@@ -13,9 +13,7 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.CustomFieldDto;
 import org.meveo.api.dto.account.CustomerAccountDto;
 import org.meveo.api.dto.account.CustomerAccountsDto;
-import org.meveo.api.dto.payment.AccountOperationDto;
 import org.meveo.api.dto.payment.DunningInclusionExclusionDto;
-import org.meveo.api.dto.payment.MatchingAmountDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
@@ -52,7 +50,7 @@ public class CustomerAccountApi extends AccountApi {
 
 	@Inject
 	private CustomerService customerService;
-	
+
 	@Inject
 	private AccountOperationService accountOperationService;
 
@@ -60,9 +58,8 @@ public class CustomerAccountApi extends AccountApi {
 	private TradingCurrencyService tradingCurrencyService;
 
 	public void create(CustomerAccountDto postData, User currentUser) throws MeveoApiException {
-		if (!StringUtils.isBlank(postData.getCode()) && !StringUtils.isBlank(postData.getDescription())
-				&& !StringUtils.isBlank(postData.getCustomer()) && !StringUtils.isBlank(postData.getCurrency())
-				&& !StringUtils.isBlank(postData.getName()) && !StringUtils.isBlank(postData.getName().getLastName())) {
+		if (!StringUtils.isBlank(postData.getCode()) && !StringUtils.isBlank(postData.getDescription()) && !StringUtils.isBlank(postData.getCustomer())
+				&& !StringUtils.isBlank(postData.getCurrency()) && !StringUtils.isBlank(postData.getName()) && !StringUtils.isBlank(postData.getName().getLastName())) {
 			Provider provider = currentUser.getProvider();
 			// check if already exists
 			if (customerAccountService.findByCode(postData.getCode(), currentUser.getProvider()) != null) {
@@ -74,8 +71,7 @@ public class CustomerAccountApi extends AccountApi {
 				throw new EntityDoesNotExistsException(Customer.class, postData.getCustomer());
 			}
 
-			TradingCurrency tradingCurrency = tradingCurrencyService.findByTradingCurrencyCode(postData.getCurrency(),
-					provider);
+			TradingCurrency tradingCurrency = tradingCurrencyService.findByTradingCurrencyCode(postData.getCurrency(), provider);
 			if (tradingCurrency == null) {
 				throw new EntityDoesNotExistsException(TradingCurrency.class, postData.getCurrency());
 			}
@@ -132,13 +128,11 @@ public class CustomerAccountApi extends AccountApi {
 	}
 
 	public void update(CustomerAccountDto postData, User currentUser) throws MeveoApiException {
-		if (!StringUtils.isBlank(postData.getCode()) && !StringUtils.isBlank(postData.getDescription())
-				&& !StringUtils.isBlank(postData.getCustomer()) && !StringUtils.isBlank(postData.getCurrency())
-				&& !StringUtils.isBlank(postData.getName()) && !StringUtils.isBlank(postData.getName().getLastName())) {
+		if (!StringUtils.isBlank(postData.getCode()) && !StringUtils.isBlank(postData.getDescription()) && !StringUtils.isBlank(postData.getCustomer())
+				&& !StringUtils.isBlank(postData.getCurrency()) && !StringUtils.isBlank(postData.getName()) && !StringUtils.isBlank(postData.getName().getLastName())) {
 			Provider provider = currentUser.getProvider();
 			// check if already exists
-			CustomerAccount customerAccount = customerAccountService.findByCode(postData.getCode(),
-					currentUser.getProvider());
+			CustomerAccount customerAccount = customerAccountService.findByCode(postData.getCode(), currentUser.getProvider());
 			if (customerAccount == null) {
 				throw new EntityDoesNotExistsException(CustomerAccount.class, postData.getCode());
 			}
@@ -148,8 +142,7 @@ public class CustomerAccountApi extends AccountApi {
 				throw new EntityDoesNotExistsException(Customer.class, postData.getCustomer());
 			}
 
-			TradingCurrency tradingCurrency = tradingCurrencyService.findByTradingCurrencyCode(postData.getCurrency(),
-					provider);
+			TradingCurrency tradingCurrency = tradingCurrencyService.findByTradingCurrencyCode(postData.getCurrency(), provider);
 			if (tradingCurrency == null) {
 				throw new EntityDoesNotExistsException(TradingCurrency.class, postData.getCurrency());
 			}
@@ -214,19 +207,14 @@ public class CustomerAccountApi extends AccountApi {
 			}
 
 			if (customerAccount.getStatus() != null) {
-				customerAccountDto.setStatus(customerAccount.getStatus().toString() != null ? customerAccount
-						.getStatus().toString() : null);
+				customerAccountDto.setStatus(customerAccount.getStatus().toString() != null ? customerAccount.getStatus().toString() : null);
 			}
 			if (customerAccount.getPaymentMethod() != null) {
-				customerAccountDto
-						.setPaymentMethod(customerAccount.getPaymentMethod().toString() != null ? customerAccount
-								.getPaymentMethod().toString() : null);
+				customerAccountDto.setPaymentMethod(customerAccount.getPaymentMethod().toString() != null ? customerAccount.getPaymentMethod().toString() : null);
 			}
 
 			if (customerAccount.getCreditCategory() != null) {
-				customerAccountDto
-						.setCreditCategory(customerAccount.getCreditCategory().toString() != null ? customerAccount
-								.getCreditCategory().toString() : null);
+				customerAccountDto.setCreditCategory(customerAccount.getCreditCategory().toString() != null ? customerAccount.getCreditCategory().toString() : null);
 			}
 
 			customerAccountDto.setDateStatus(customerAccount.getDateStatus());
@@ -234,17 +222,13 @@ public class CustomerAccountApi extends AccountApi {
 
 			if (customerAccount.getContactInformation() != null) {
 				customerAccountDto.getContactInformation().setEmail(
-						customerAccount.getContactInformation().getEmail() != null ? customerAccount
-								.getContactInformation().getEmail() : null);
+						customerAccount.getContactInformation().getEmail() != null ? customerAccount.getContactInformation().getEmail() : null);
 				customerAccountDto.getContactInformation().setPhone(
-						customerAccount.getContactInformation().getPhone() != null ? customerAccount
-								.getContactInformation().getPhone() : null);
+						customerAccount.getContactInformation().getPhone() != null ? customerAccount.getContactInformation().getPhone() : null);
 				customerAccountDto.getContactInformation().setMobile(
-						customerAccount.getContactInformation().getMobile() != null ? customerAccount
-								.getContactInformation().getMobile() : null);
+						customerAccount.getContactInformation().getMobile() != null ? customerAccount.getContactInformation().getMobile() : null);
 				customerAccountDto.getContactInformation().setFax(
-						customerAccount.getContactInformation().getFax() != null ? customerAccount
-								.getContactInformation().getFax() : null);
+						customerAccount.getContactInformation().getFax() != null ? customerAccount.getContactInformation().getFax() : null);
 			}
 
 			if (customerAccount.getCustomer() != null) {
@@ -265,46 +249,12 @@ public class CustomerAccountApi extends AccountApi {
 			}
 
 			if (customerAccount.getDunningLevel() != null) {
-				customerAccountDto
-						.setDunningLevel(customerAccount.getDunningLevel().toString() != null ? customerAccount
-								.getDunningLevel().toString() : null);
+				customerAccountDto.setDunningLevel(customerAccount.getDunningLevel().toString() != null ? customerAccount.getDunningLevel().toString() : null);
 			}
 			customerAccountDto.setMandateIdentification(customerAccount.getMandateIdentification());
 			customerAccountDto.setMandateDate(customerAccount.getMandateDate());
 
-			List<AccountOperation> accountOperations = customerAccount.getAccountOperations();
-			AccountOperationDto accountOperationDto = new AccountOperationDto();
-
-			for (AccountOperation accountOp : accountOperations) {
-				accountOperationDto.setDueDate(accountOp.getDueDate());
-				accountOperationDto.setType(accountOp.getType());
-				accountOperationDto.setTransactionDate(accountOp.getTransactionDate());
-				accountOperationDto
-						.setTransactionCategory(accountOp.getTransactionCategory().toString() != null ? accountOp
-								.getTransactionCategory().toString() : null);
-				accountOperationDto.setReference(accountOp.getReference());
-				accountOperationDto.setAccountCode(accountOp.getAccountCode());
-				accountOperationDto.setAccountCodeClientSide(accountOp.getAccountCodeClientSide());
-				accountOperationDto.setAmount(accountOp.getAmount());
-				accountOperationDto.setMatchingAmount(accountOp.getMatchingAmount());
-				accountOperationDto.setUnMatchingAmount(accountOp.getUnMatchingAmount());
-				accountOperationDto.setMatchingStatus(accountOp.getMatchingStatus().toString() != null ? accountOp
-						.getMatchingStatus().toString() : null);
-				accountOperationDto.setOccCode(accountOp.getOccCode());
-				accountOperationDto.setOccDescription(accountOp.getOccDescription());
-
-				List<MatchingAmount> matchingAmounts = accountOp.getMatchingAmounts();
-				MatchingAmountDto matchingAmountDto = new MatchingAmountDto();
-				for (MatchingAmount matchingAmount : matchingAmounts) {
-					matchingAmountDto.setMatchingCode(matchingAmount.getMatchingCode().getCode());
-					matchingAmountDto.setMatchingAmount(matchingAmount.getMatchingAmount());
-					accountOperationDto.addMatchingAmounts(matchingAmountDto);
-				}
-
-				customerAccountDto.addAccountOperations(accountOperationDto);
-			}
-			BigDecimal balance = customerAccountService.customerAccountBalanceDue(null, customerAccount.getCode(),
-					new Date());
+			BigDecimal balance = customerAccountService.customerAccountBalanceDue(null, customerAccount.getCode(), new Date());
 
 			if (balance == null) {
 				throw new BusinessException("account balance calculation failed");
@@ -359,35 +309,26 @@ public class CustomerAccountApi extends AccountApi {
 			throw new MissingParameterException(getMissingParametersExceptionMessage());
 		}
 	}
- 
-	public void dunningExclusionInclusion(
-			DunningInclusionExclusionDto dunningDto,Provider provider) throws MeveoApiException {
+
+	public void dunningExclusionInclusion(DunningInclusionExclusionDto dunningDto, Provider provider) throws MeveoApiException {
 		try {
 			for (String ref : dunningDto.getInvoiceReferences()) {
-				AccountOperation accountOp = accountOperationService
-						.findByReference(ref, provider);
+				AccountOperation accountOp = accountOperationService.findByReference(ref, provider);
 				if (accountOp == null) {
-					throw new EntityDoesNotExistsException(
-							AccountOperation.class,"no account operation with this reference "+ref);
+					throw new EntityDoesNotExistsException(AccountOperation.class, "no account operation with this reference " + ref);
 				}
 				if (accountOp instanceof RecordedInvoice) {
 					accountOp.setExcludedFromDunning(dunningDto.getExclude());
 					accountOperationService.update(accountOp);
 				} else {
-					throw new BusinessEntityException(accountOp.getReference()
-							+ " is not an invoice account operation");
-				 }
+					throw new BusinessEntityException(accountOp.getReference() + " is not an invoice account operation");
+				}
 				if (accountOp.getMatchingStatus() == MatchingStatusEnum.P) {
-					for (MatchingAmount matchingAmount : accountOp
-							.getMatchingAmounts()) {
-						MatchingCode matchingCode = matchingAmount
-								.getMatchingCode();
-						for (MatchingAmount ma : matchingCode
-								.getMatchingAmounts()) {
-							AccountOperation accountoperation = ma
-									.getAccountOperation();
-							accountoperation.setExcludedFromDunning(dunningDto
-									.getExclude());
+					for (MatchingAmount matchingAmount : accountOp.getMatchingAmounts()) {
+						MatchingCode matchingCode = matchingAmount.getMatchingCode();
+						for (MatchingAmount ma : matchingCode.getMatchingAmounts()) {
+							AccountOperation accountoperation = ma.getAccountOperation();
+							accountoperation.setExcludedFromDunning(dunningDto.getExclude());
 							accountOperationService.update(accountoperation);
 						}
 					}
@@ -397,6 +338,5 @@ public class CustomerAccountApi extends AccountApi {
 			throw new MeveoApiException(e.getMessage());
 		}
 	}
-
 
 }

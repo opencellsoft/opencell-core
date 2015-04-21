@@ -2086,6 +2086,15 @@
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
+    <wsdl:operation name="listAccountOperations">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="listAccountOperations">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="listAccountOperationsResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
     <wsdl:operation name="createUserAccount">
       <soap:operation soapAction="" style="document"/>
       <wsdl:input name="createUserAccount">
@@ -2296,6 +2305,7 @@
       <xs:element name="Account" type="tns:accountDto"/>
       <xs:element name="AccountHierarchy" type="tns:accountHierarchyDto"/>
       <xs:element name="AccountOperation" type="tns:accountOperationDto"/>
+      <xs:element name="AccountOperationsDto" type="tns:accountOperationsDto"/>
       <xs:element name="ActionStatus" type="tns:actionStatus"/>
       <xs:element name="Address" type="tns:addressDto"/>
       <xs:element name="CustomField" type="tns:customFieldDto"/>
@@ -2307,6 +2317,7 @@
       <xs:element name="GetCustomerResponse" type="tns:getCustomerResponse"/>
       <xs:element name="GetUserAccountResponse" type="tns:getUserAccountResponse"/>
       <xs:element name="ListAccessResponse" type="tns:listAccessResponseDto"/>
+      <xs:element name="ListAccountOperationsResponse" type="tns:listAccountOperationsResponseDto"/>
       <xs:element name="ListBillingAccountResponse" type="tns:listBillingAccountResponseDto"/>
       <xs:element name="ListCustomerAccountResponse" type="tns:listCustomerAccountResponseDto"/>
       <xs:element name="ListCustomerResponse" type="tns:listCustomerResponseDto"/>
@@ -2350,6 +2361,8 @@
       <xs:element name="indexResponse" type="tns:indexResponse"/>
       <xs:element name="listAccess" type="tns:listAccess"/>
       <xs:element name="listAccessResponse" type="tns:listAccessResponse"/>
+      <xs:element name="listAccountOperations" type="tns:listAccountOperations"/>
+      <xs:element name="listAccountOperationsResponse" type="tns:listAccountOperationsResponse"/>
       <xs:element name="listByBillingAccount" type="tns:listByBillingAccount"/>
       <xs:element name="listByBillingAccountResponse" type="tns:listByBillingAccountResponse"/>
       <xs:element name="listByCustomer" type="tns:listByCustomer"/>
@@ -2651,7 +2664,6 @@
               <xs:element minOccurs="0" name="status" type="xs:string"/>
               <xs:element minOccurs="0" name="paymentMethod" type="xs:string"/>
               <xs:element minOccurs="0" name="creditCategory" type="xs:string"/>
-              <xs:element maxOccurs="unbounded" minOccurs="0" name="accountOperations" nillable="true" type="tns:accountOperationDto"/>
               <xs:element minOccurs="0" name="dateStatus" type="xs:dateTime"/>
               <xs:element minOccurs="0" name="dateDunningLevel" type="xs:dateTime"/>
               <xs:element minOccurs="0" name="contactInformation" type="tns:ContactInformation"/>
@@ -2661,104 +2673,6 @@
               <xs:element minOccurs="0" name="balance" type="xs:decimal"/>
               <xs:element minOccurs="0" name="terminationDate" type="xs:dateTime"/>
               <xs:element minOccurs="0" name="billingAccounts" type="tns:BillingAccounts"/>
-            </xs:sequence>
-          </xs:extension>
-        </xs:complexContent>
-      </xs:complexType>
-      <xs:complexType name="accountOperationDto">
-        <xs:complexContent>
-          <xs:extension base="tns:baseDto">
-            <xs:sequence>
-              <xs:element minOccurs="0" name="dueDate" type="xs:dateTime"/>
-              <xs:element minOccurs="0" name="type" type="xs:string"/>
-              <xs:element minOccurs="0" name="transactionDate" type="xs:dateTime"/>
-              <xs:element minOccurs="0" name="transactionCategory" type="xs:string"/>
-              <xs:element minOccurs="0" name="reference" type="xs:string"/>
-              <xs:element minOccurs="0" name="accountCode" type="xs:string"/>
-              <xs:element minOccurs="0" name="accountCodeClientSide" type="xs:string"/>
-              <xs:element minOccurs="0" name="amount" type="xs:decimal"/>
-              <xs:element minOccurs="0" name="matchingAmount" type="xs:decimal"/>
-              <xs:element minOccurs="0" name="unMatchingAmount" type="xs:decimal"/>
-              <xs:element minOccurs="0" name="matchingStatus" type="xs:string"/>
-              <xs:element minOccurs="0" name="occCode" type="xs:string"/>
-              <xs:element minOccurs="0" name="occDescription" type="xs:string"/>
-              <xs:element minOccurs="0" name="customerAccount" type="xs:string"/>
-              <xs:element minOccurs="0" name="excludedFromDunning" type="xs:boolean"/>
-              <xs:element minOccurs="0" name="matchingAmounts" type="tns:matchingAmountsDto"/>
-              <xs:element minOccurs="0" name="otherCreditAndCharge" type="tns:OtherCreditAndCharge"/>
-              <xs:element minOccurs="0" name="recordedInvoice" type="tns:RecordedInvoice"/>
-              <xs:element minOccurs="0" name="rejectedPayment" type="tns:RejectedPayment"/>
-            </xs:sequence>
-          </xs:extension>
-        </xs:complexContent>
-      </xs:complexType>
-      <xs:complexType name="matchingAmountsDto">
-        <xs:sequence>
-          <xs:element maxOccurs="unbounded" minOccurs="0" name="matchingAmount" nillable="true" type="tns:matchingAmountDto"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="matchingAmountDto">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="matchingCode" type="xs:string"/>
-          <xs:element minOccurs="0" name="matchingAmount" type="xs:decimal"/>
-          <xs:element minOccurs="0" name="matchingCodes" type="tns:matchingCodesDto"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="matchingCodesDto">
-        <xs:sequence>
-          <xs:element maxOccurs="unbounded" minOccurs="0" name="matchingCode" nillable="true" type="tns:matchingCodeDto"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="matchingCodeDto">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="code" type="xs:string"/>
-          <xs:element minOccurs="0" name="matchingType" type="xs:string"/>
-          <xs:element minOccurs="0" name="matchingDate" type="xs:dateTime"/>
-          <xs:element minOccurs="0" name="matchingAmountCredit" type="xs:decimal"/>
-          <xs:element minOccurs="0" name="matchingAmountDebit" type="xs:decimal"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="OtherCreditAndCharge">
-        <xs:complexContent>
-          <xs:extension base="tns:accountOperationDto">
-            <xs:sequence>
-              <xs:element minOccurs="0" name="operationDate" type="xs:dateTime"/>
-            </xs:sequence>
-          </xs:extension>
-        </xs:complexContent>
-      </xs:complexType>
-      <xs:complexType name="RecordedInvoice">
-        <xs:complexContent>
-          <xs:extension base="tns:accountOperationDto">
-            <xs:sequence>
-              <xs:element minOccurs="0" name="productionDate" type="xs:dateTime"/>
-              <xs:element minOccurs="0" name="invoiceDate" type="xs:dateTime"/>
-              <xs:element minOccurs="0" name="amountWithoutTax" type="xs:decimal"/>
-              <xs:element minOccurs="0" name="taxAmount" type="xs:decimal"/>
-              <xs:element minOccurs="0" name="netToPay" type="xs:decimal"/>
-              <xs:element minOccurs="0" name="paymentMethod" type="xs:string"/>
-              <xs:element minOccurs="0" name="paymentInfo" type="xs:string"/>
-              <xs:element minOccurs="0" name="paymentInfo1" type="xs:string"/>
-              <xs:element minOccurs="0" name="paymentInfo2" type="xs:string"/>
-              <xs:element minOccurs="0" name="paymentInfo3" type="xs:string"/>
-              <xs:element minOccurs="0" name="paymentInfo4" type="xs:string"/>
-              <xs:element minOccurs="0" name="paymentInfo5" type="xs:string"/>
-              <xs:element minOccurs="0" name="paymentInfo6" type="xs:string"/>
-              <xs:element minOccurs="0" name="billingAccountName" type="xs:string"/>
-            </xs:sequence>
-          </xs:extension>
-        </xs:complexContent>
-      </xs:complexType>
-      <xs:complexType name="RejectedPayment">
-        <xs:complexContent>
-          <xs:extension base="tns:accountOperationDto">
-            <xs:sequence>
-              <xs:element minOccurs="0" name="rejectedType" type="xs:string"/>
-              <xs:element minOccurs="0" name="bankLot" type="xs:string"/>
-              <xs:element minOccurs="0" name="bankReference" type="xs:string"/>
-              <xs:element minOccurs="0" name="rejectedDate" type="xs:dateTime"/>
-              <xs:element minOccurs="0" name="rejectedDescription" type="xs:string"/>
-              <xs:element minOccurs="0" name="rejectedCode" type="xs:string"/>
             </xs:sequence>
           </xs:extension>
         </xs:complexContent>
@@ -2855,6 +2769,128 @@
           <xs:extension base="tns:baseResponse">
             <xs:sequence>
               <xs:element maxOccurs="unbounded" minOccurs="0" name="customerDtoList" nillable="true" type="tns:accountHierarchyDto"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="listAccountOperations">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="customerAccountCode" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="listAccountOperationsResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:listAccountOperationsResponseDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="listAccountOperationsResponseDto">
+        <xs:complexContent>
+          <xs:extension base="tns:baseResponse">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="accountOperations" type="tns:accountOperationsDto"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="accountOperationsDto">
+        <xs:sequence>
+          <xs:element maxOccurs="unbounded" minOccurs="0" name="accountOperation" nillable="true" type="tns:accountOperationDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="accountOperationDto">
+        <xs:complexContent>
+          <xs:extension base="tns:baseDto">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="dueDate" type="xs:dateTime"/>
+              <xs:element minOccurs="0" name="type" type="xs:string"/>
+              <xs:element minOccurs="0" name="transactionDate" type="xs:dateTime"/>
+              <xs:element minOccurs="0" name="transactionCategory" type="xs:string"/>
+              <xs:element minOccurs="0" name="reference" type="xs:string"/>
+              <xs:element minOccurs="0" name="accountCode" type="xs:string"/>
+              <xs:element minOccurs="0" name="accountCodeClientSide" type="xs:string"/>
+              <xs:element minOccurs="0" name="amount" type="xs:decimal"/>
+              <xs:element minOccurs="0" name="matchingAmount" type="xs:decimal"/>
+              <xs:element minOccurs="0" name="unMatchingAmount" type="xs:decimal"/>
+              <xs:element minOccurs="0" name="matchingStatus" type="xs:string"/>
+              <xs:element minOccurs="0" name="occCode" type="xs:string"/>
+              <xs:element minOccurs="0" name="occDescription" type="xs:string"/>
+              <xs:element minOccurs="0" name="customerAccount" type="xs:string"/>
+              <xs:element minOccurs="0" name="excludedFromDunning" type="xs:boolean"/>
+              <xs:element minOccurs="0" name="matchingAmounts" type="tns:matchingAmountsDto"/>
+              <xs:element minOccurs="0" name="otherCreditAndCharge" type="tns:OtherCreditAndCharge"/>
+              <xs:element minOccurs="0" name="recordedInvoice" type="tns:RecordedInvoice"/>
+              <xs:element minOccurs="0" name="rejectedPayment" type="tns:RejectedPayment"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="matchingAmountsDto">
+        <xs:sequence>
+          <xs:element maxOccurs="unbounded" minOccurs="0" name="matchingAmount" nillable="true" type="tns:matchingAmountDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="matchingAmountDto">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="matchingCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="matchingAmount" type="xs:decimal"/>
+          <xs:element minOccurs="0" name="matchingCodes" type="tns:matchingCodesDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="matchingCodesDto">
+        <xs:sequence>
+          <xs:element maxOccurs="unbounded" minOccurs="0" name="matchingCode" nillable="true" type="tns:matchingCodeDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="matchingCodeDto">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="code" type="xs:string"/>
+          <xs:element minOccurs="0" name="matchingType" type="xs:string"/>
+          <xs:element minOccurs="0" name="matchingDate" type="xs:dateTime"/>
+          <xs:element minOccurs="0" name="matchingAmountCredit" type="xs:decimal"/>
+          <xs:element minOccurs="0" name="matchingAmountDebit" type="xs:decimal"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="OtherCreditAndCharge">
+        <xs:complexContent>
+          <xs:extension base="tns:accountOperationDto">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="operationDate" type="xs:dateTime"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="RecordedInvoice">
+        <xs:complexContent>
+          <xs:extension base="tns:accountOperationDto">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="productionDate" type="xs:dateTime"/>
+              <xs:element minOccurs="0" name="invoiceDate" type="xs:dateTime"/>
+              <xs:element minOccurs="0" name="amountWithoutTax" type="xs:decimal"/>
+              <xs:element minOccurs="0" name="taxAmount" type="xs:decimal"/>
+              <xs:element minOccurs="0" name="netToPay" type="xs:decimal"/>
+              <xs:element minOccurs="0" name="paymentMethod" type="xs:string"/>
+              <xs:element minOccurs="0" name="paymentInfo" type="xs:string"/>
+              <xs:element minOccurs="0" name="paymentInfo1" type="xs:string"/>
+              <xs:element minOccurs="0" name="paymentInfo2" type="xs:string"/>
+              <xs:element minOccurs="0" name="paymentInfo3" type="xs:string"/>
+              <xs:element minOccurs="0" name="paymentInfo4" type="xs:string"/>
+              <xs:element minOccurs="0" name="paymentInfo5" type="xs:string"/>
+              <xs:element minOccurs="0" name="paymentInfo6" type="xs:string"/>
+              <xs:element minOccurs="0" name="billingAccountName" type="xs:string"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="RejectedPayment">
+        <xs:complexContent>
+          <xs:extension base="tns:accountOperationDto">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="rejectedType" type="xs:string"/>
+              <xs:element minOccurs="0" name="bankLot" type="xs:string"/>
+              <xs:element minOccurs="0" name="bankReference" type="xs:string"/>
+              <xs:element minOccurs="0" name="rejectedDate" type="xs:dateTime"/>
+              <xs:element minOccurs="0" name="rejectedDescription" type="xs:string"/>
+              <xs:element minOccurs="0" name="rejectedCode" type="xs:string"/>
             </xs:sequence>
           </xs:extension>
         </xs:complexContent>
@@ -3239,6 +3275,9 @@
   <wsdl:message name="listByCustomer">
     <wsdl:part element="ns1:listByCustomer" name="parameters"></wsdl:part>
   </wsdl:message>
+  <wsdl:message name="listAccountOperationsResponse">
+    <wsdl:part element="ns1:listAccountOperationsResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
   <wsdl:message name="findUserAccount">
     <wsdl:part element="ns1:findUserAccount" name="parameters"></wsdl:part>
   </wsdl:message>
@@ -3280,6 +3319,9 @@
   </wsdl:message>
   <wsdl:message name="findBillingAccount">
     <wsdl:part element="ns1:findBillingAccount" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="listAccountOperations">
+    <wsdl:part element="ns1:listAccountOperations" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="updateCustomerAccountResponse">
     <wsdl:part element="ns1:updateCustomerAccountResponse" name="parameters"></wsdl:part>
@@ -3423,6 +3465,10 @@
     <wsdl:operation name="findAccountHierarchy">
       <wsdl:input message="ns1:findAccountHierarchy" name="findAccountHierarchy"></wsdl:input>
       <wsdl:output message="ns1:findAccountHierarchyResponse" name="findAccountHierarchyResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="listAccountOperations">
+      <wsdl:input message="ns1:listAccountOperations" name="listAccountOperations"></wsdl:input>
+      <wsdl:output message="ns1:listAccountOperationsResponse" name="listAccountOperationsResponse"></wsdl:output>
     </wsdl:operation>
     <wsdl:operation name="createUserAccount">
       <wsdl:input message="ns1:createUserAccount" name="createUserAccount"></wsdl:input>
@@ -14861,7 +14907,15 @@
          </userAccount>
       </ws:updateUserAccount>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/updateUserAccount"/></con:call></con:operation></con:interface><con:interface xsi:type="con:WsdlInterface" wsaVersion="NONE" name="SubscriptionWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}SubscriptionWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="http://${#Project#meveoEndpoint}/SubscriptionWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache type="TEXT" rootPart="http://localhost:8080/meveo/SubscriptionWs?wsdl"><con:part><con:url>http://localhost:8080/meveo/SubscriptionWs?wsdl</con:url><con:content><![CDATA[<wsdl:definitions name="SubscriptionWs" targetNamespace="http://impl.ws.api.meveo.org/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://impl.ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns2="http://schemas.xmlsoap.org/soap/http" xmlns:ns1="http://ws.api.meveo.org/">
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/updateUserAccount"/></con:call></con:operation><con:operation isOneWay="false" action="" name="listAccountOperations" bindingOperationName="listAccountOperations" type="Request-Response" outputName="listAccountOperationsResponse" inputName="listAccountOperations" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:listAccountOperations>
+         <!--Optional:-->
+         <customerAccountCode>CA1</customerAccountCode>
+      </ws:listAccountOperations>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:authType>Global HTTP Settings</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/listAccountOperations"/><con:wsrmConfig version="1.2"/></con:call></con:operation></con:interface><con:interface xsi:type="con:WsdlInterface" wsaVersion="NONE" name="SubscriptionWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}SubscriptionWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="http://${#Project#meveoEndpoint}/SubscriptionWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache type="TEXT" rootPart="http://localhost:8080/meveo/SubscriptionWs?wsdl"><con:part><con:url>http://localhost:8080/meveo/SubscriptionWs?wsdl</con:url><con:content><![CDATA[<wsdl:definitions name="SubscriptionWs" targetNamespace="http://impl.ws.api.meveo.org/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://impl.ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns2="http://schemas.xmlsoap.org/soap/http" xmlns:ns1="http://ws.api.meveo.org/">
   <wsdl:import location="http://localhost:8080/meveo/SubscriptionWs?wsdl=SubscriptionWs.wsdl" namespace="http://ws.api.meveo.org/"></wsdl:import>
   <wsdl:binding name="SubscriptionWsSoapBinding" type="ns1:SubscriptionWs">
     <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
