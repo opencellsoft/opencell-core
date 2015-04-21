@@ -296,7 +296,7 @@ public class TimerEntityService extends PersistenceService<TimerEntity> {
                     if(timerInfoDTO.getBillingCycle()!=null){
                     	entity.setStringCustomValue("BillingRunJob_billingCycle",timerInfoDTO.getBillingCycle());
                     }
-                    job.execute(entity, getCurrentUser());
+                    job.execute(entity, currentUser);
                 }
             } else {
                 throw new BusinessException("cannot find job category " + entity.getJobCategoryEnum());
