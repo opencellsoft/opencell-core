@@ -30,6 +30,8 @@
                 <p:column headerText="#{messages['timer.name']}">
                     <h:link outcome="jobTimerDetail" value="#{entity.name}">
                         <f:param name="objectId" value="#{entity.id}" />
+                        <f:param name="edit" value="true"/>
+                        <f:param name="cid" value="#{javax.enterprise.context.conversation.id}"/>
                     </h:link>
                 </p:column>
                 <hftl:column label="#{messages['timer.jobName']}" field="jobName" />
