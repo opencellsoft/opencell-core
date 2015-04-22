@@ -12,6 +12,32 @@
 	</ui:define>
 
 	<ui:define name="body">
+	
+	<hftl:entityPopup id="searchInvoiceCategoryPopup"
+			header="#{messages['invoiceCategory.panel']}"
+			updateField=":tabView:discountPlanItemFormPanel:formDiscountPlanItem:categorySelectId:categorySelectId"
+			selection="#{discountPlanItem.invoiceCategory}"
+			backingBean="#{invoiceCategoryBean}"
+			searchField1Label="#{messages['invoiceCategory.code']}"
+			searchField1="code"
+			searchField2Label="#{messages['invoiceCategory.description']}"
+			searchField2="description"
+			column1Label="#{messages['invoiceCategory.code']}" column1="code"
+			column2Label="#{messages['invoiceCategory.description']}"
+			column2="description" />
+			
+			<hftl:entityPopup id="searchInvoiceSubCategoryPopup"
+			header="#{messages['invoiceSubCategory.panel']}"
+			backingBean="#{invoiceSubCategoryBean}"
+			updateField=":tabView:discountPlanItemFormPanel:formDiscountPlanItem:invoiceSubCategorySelectedId:invoiceSubCategorySelectedId"
+			selection="#{discountPlanItem.invoiceSubCategory}"
+			searchField1Label="#{messages['invoiceSubCategory.code']}"
+			searchField1="code"
+			searchField2Label="#{messages['invoiceSubCategory.description']}"
+			searchField2="description"
+			column1Label="#{messages['invoiceSubCategory.code']}" column1="code"
+			column2Label="#{messages['invoiceSubCategory.description']}"
+			column2="description"/>
 			
 		<p:panel styleClass="form-panel">
 
@@ -101,15 +127,15 @@
 							<hf:formField label="#{messages['discountPlanMatrix.itemCode']}"
 								field="code" required="true" />
 
-							<hf:formEntityField id="invoiceCategory"
-								label="#{messages['discountPlanItem.invoiceCategory']}"
-								field="invoiceCategory" childField="code" required="false"
-								listBean="#{invoiceCategoryBean}" labelField="description" />
-
-							<hf:formEntityField id="invoiceSubCategory"
-								label="#{messages['discountPlanItem.invoiceSubCategory']}"
-								field="invoiceSubCategory" childField="code" required="false"
-								listBean="#{invoiceSubCategoryBean}" />
+							 <hf:formEntityField id="categorySelectId"
+							label="#{messages['invoiceSubCategory.invoiceCategory']}"
+							field="invoiceCategory" childField="code" required="true"
+							popup="true" popupId="searchInvoiceCategoryPopup" /> 
+							
+							<hf:formEntityField id="invoiceSubCategorySelectedId"
+							label="#{messages['charge.subCategory']}"
+							field="invoiceSubCategory" childField="code" required="true"
+							popup="true" popupId="searchInvoiceSubCategoryPopup" />	
 
 							<hf:formField
 								label="#{messages['discountPlanItem.accountingCode']}"
@@ -121,8 +147,8 @@
 							<hf:formField label="#{messages['discountPlanItem.expressionEl']}"
 							         field="expressionEl"  textArea="true" maxlength="2000"
 									 edit="#{discountPlanBean.edit}"/> 
-							<hf:formField label="#{messages['enableEntity.disabled']}"
-				                    field="disabled" isMessage="true" />		 
+									 
+						   
 
 							<p:panelGrid columns="3">
 
