@@ -31,6 +31,7 @@ INSERT INTO ADM_LANGUAGE (id, version, created, updated, language_code, descript
 INSERT INTO ADM_LANGUAGE (id, version, created, updated, language_code, description_en, creator_id,  updater_id) VALUES (30, 1, CURRENT_TIMESTAMP, NULL, 'SWE','suédois', NULL, NULL);
 INSERT INTO ADM_LANGUAGE (id, version, created, updated, language_code, description_en, creator_id,  updater_id) VALUES (31, 1, CURRENT_TIMESTAMP, NULL, 'CES','tchèque', NULL, NULL);
 INSERT INTO ADM_LANGUAGE (id, version, created, updated, language_code, description_en, creator_id,  updater_id) VALUES (32, 1, CURRENT_TIMESTAMP, NULL, 'TUR','turc', NULL, NULL);
+INSERT INTO ADM_LANGUAGE (id, version, created, updated, language_code, description_en, creator_id,  updater_id) VALUES (33, 1, CURRENT_TIMESTAMP, NULL, ‘GLE’,’irlandais’, NULL, NULL);
 
 
 /* CURRENCY */
@@ -298,7 +299,7 @@ INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, descriptio
 INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(92,1,CURRENT_TIMESTAMP,null,'HT','Haiti',null,null,2,68);
 INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(93,1,CURRENT_TIMESTAMP,null,'HU','Hungary',null,null,2,71);
 INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(94,1,CURRENT_TIMESTAMP,null,'ID','Indonesia',null,null,2,74);
-INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(95,1,CURRENT_TIMESTAMP,null,'IE','Ireland',null,null,2,5);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(95,1,CURRENT_TIMESTAMP,null,'IE','Ireland',null,null,33,5);
 INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(96,1,CURRENT_TIMESTAMP,null,'IL','Israel',null,null,2,78);
 INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(97,1,CURRENT_TIMESTAMP,null,'IN','India',null,null,2,73);
 INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(98,1,CURRENT_TIMESTAMP,null,'IO','British Indian Ocean Territory',null,null,2,49);
