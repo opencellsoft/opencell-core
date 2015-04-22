@@ -54,6 +54,10 @@ public class DiscountPlanItem extends AuditableEntity {
 
 	@Column(name = "ACCOUNTING_CODE", length = 255)
 	private String accountingCode;
+	
+	@Column(name = "EXPRESSION_EL", length = 1000)
+   	@Size(max = 1000)
+   	private String expressionEl;
 
 	public DiscountPlan getDiscountPlan() {
 		return discountPlan;
@@ -93,6 +97,14 @@ public class DiscountPlanItem extends AuditableEntity {
 
 	public void setCode(String code) {
 		this.code = code;
+	}
+
+	public String getExpressionEl() {
+		return expressionEl;
+	}
+
+	public void setExpressionEl(String expressionEl) {
+		this.expressionEl = expressionEl;
 	}
 
 	@Override
