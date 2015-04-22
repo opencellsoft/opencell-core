@@ -23,15 +23,19 @@
 </cc:interface>
 
 <cc:implementation>
+	<c:set var="size" value="#{cc.attrs.size}"/>
+	<c:if test="#{cc.attrs.field =='description'}">
+		<c:set var="size" value="80"/>
+	</c:if>
 	<ui:fragment rendered="#{cc.isText(cc.attrs.field,cc.attrs.childField, true) and not cc.attrs.popup and not cc.isEntity(cc.attrs.field,true)}">
 		<p:panelGrid columns="2" rendered="#{cc.attrs.listValues == null}">
 			<p:outputLabel for="#{cc.attrs.field}_text" value="#{cc.attrs.label}" rendered="#{cc.attrs.childField == null}"/>
-			<p:inputText id="#{cc.attrs.field}_text" value="#{cc.filters[cc.attrs.field]}" size="#{cc.attrs.size}" disabled="#{cc.attrs.disabled}" rendered="#{cc.attrs.childField == null and cc.attrs.autocompleteMethod == null}"/>
-            <p:autoComplete id="#{cc.attrs.field}_text_ac" value="#{cc.filters[cc.attrs.field]}" size="#{cc.attrs.size}" disabled="#{cc.attrs.disabled}" rendered="#{cc.attrs.childField == null and cc.attrs.autocompleteMethod != null}" dropdown="true" completeMethod="#{cc.attrs.autocompleteMethod}"/>
+			<p:inputText id="#{cc.attrs.field}_text" value="#{cc.filters[cc.attrs.field]}" size="#{size}" disabled="#{cc.attrs.disabled}" rendered="#{cc.attrs.childField == null and cc.attrs.autocompleteMethod == null}"/>
+            <p:autoComplete id="#{cc.attrs.field}_text_ac" value="#{cc.filters[cc.attrs.field]}" size="#{size}" disabled="#{cc.attrs.disabled}" rendered="#{cc.attrs.childField == null and cc.attrs.autocompleteMethod != null}" dropdown="true" completeMethod="#{cc.attrs.autocompleteMethod}"/>
 
             <p:outputLabel for="#{cc.attrs.field}_#{cc.attrs.childField}_text" value="#{cc.attrs.label}" rendered="#{cc.attrs.childField != null}"/>
-            <p:inputText id="#{cc.attrs.field}_#{cc.attrs.childField}_text" value="#{cc.filters[cc.attrs.field.concat('.').concat(cc.attrs.childField)]}" size="#{cc.attrs.size}" disabled="#{cc.attrs.disabled}" rendered="#{cc.attrs.childField != null and cc.attrs.autocompleteMethod == null}"/>
-            <p:autoComplete id="#{cc.attrs.field}_#{cc.attrs.childField}_text_ac" value="#{cc.filters[cc.attrs.field.concat('.').concat(cc.attrs.childField)]}" size="#{cc.attrs.size}" disabled="#{cc.attrs.disabled}" rendered="#{cc.attrs.childField != null and cc.attrs.autocompleteMethod != null}" dropdown="true" completeMethod="#{cc.attrs.autocompleteMethod}"/>
+            <p:inputText id="#{cc.attrs.field}_#{cc.attrs.childField}_text" value="#{cc.filters[cc.attrs.field.concat('.').concat(cc.attrs.childField)]}" size="#{size}" disabled="#{cc.attrs.disabled}" rendered="#{cc.attrs.childField != null and cc.attrs.autocompleteMethod == null}"/>
+            <p:autoComplete id="#{cc.attrs.field}_#{cc.attrs.childField}_text_ac" value="#{cc.filters[cc.attrs.field.concat('.').concat(cc.attrs.childField)]}" size="#{size}" disabled="#{cc.attrs.disabled}" rendered="#{cc.attrs.childField != null and cc.attrs.autocompleteMethod != null}" dropdown="true" completeMethod="#{cc.attrs.autocompleteMethod}"/>
 
 
         </p:panelGrid>
@@ -130,7 +134,7 @@
 				<p:outputLabel for="#{cc.attrs.field}_child" value="#{cc.attrs.label}" />
 				<p:panelGrid id="#{cc.attrs.field}" columns="3">
 					<p:inputText id="#{cc.attrs.field}_child" value="#{cc.filters[cc.attrs.field][cc.attrs.childField]}" required="#{cc.attrs.required}"
-						size="#{cc.attrs.size}" disabled="true" />
+						size="#{size}" disabled="true" />
 					<p:commandButton id="selectLink" onclick="dlg_#{cc.attrs.popupId}.show()" icon="ui-icon-search" />
 					<p:tooltip for="selectLink" value="#{messages['commons.search']}" />
 				</p:panelGrid>

@@ -70,6 +70,13 @@
 
 <cc:implementation>
 
+	<c:set var="size" value="#{cc.attrs.size}"/>
+	<c:set var="maxlength" value="#{cc.attrs.maxlength}"/>
+	<c:if test="#{cc.attrs.field =='description'}">
+		<c:set var="size" value="80"/>
+		<c:set var="maxlength" value="100"/>
+	</c:if>
+
 	<ui:fragment rendered="#{cc.attrs.show}">
 		<!--  If the value binding is a string, display an inputText field. -->
 		<ui:fragment rendered="#{cc.attrs.popup}">
@@ -85,7 +92,7 @@
 					<p:inputText id="#{cc.attrs.id}_text"
 						rendered="#{cc.attrs.edit and not empty cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}"
 						value="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}"
-						required="#{cc.attrs.required}" size="#{cc.attrs.size}"
+						required="#{cc.attrs.required}" size="#{size}"
 						disabled="true" />
 					<p:commandButton
 						rendered="#{cc.attrs.edit and cc.attrs.popup and not empty cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}"
@@ -95,7 +102,7 @@
 				<p:panelGrid columns="3" styleClass="no-padding">
 					<p:inputText id="#{cc.attrs.id}_placeholder"
 						rendered="#{cc.attrs.edit and empty cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}"
-						value="" size="#{cc.attrs.size}" required="#{cc.attrs.required}"
+						value="" size="#{size}" required="#{cc.attrs.required}"
 						disabled="true" />
 					<p:commandButton
 						rendered="#{cc.attrs.edit and cc.attrs.popup and empty cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}"
@@ -123,7 +130,7 @@
     				<p:inputText id="#{cc.attrs.id}_text2"
     					value="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}"
     					disabled="#{cc.attrs.disabled}" required="#{cc.attrs.required}"
-    					size="#{cc.attrs.size}" maxlength="#{cc.attrs.maxlength}">
+    					size="#{size}" maxlength="#{maxlength}">
     
     					<c:if test="#{not empty cc.attrs.converter}">
     						<f:converter converterId="#{cc.attrs.converter}" />
@@ -170,7 +177,7 @@
                     <p:autoComplete id="#{cc.attrs.id}_text_ac"
                         value="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}"
                         disabled="#{cc.attrs.disabled}" required="#{cc.attrs.required}"
-                        size="#{cc.attrs.size}" maxlength="#{cc.attrs.maxlength}" dropdown="true" completeMethod="#{cc.attrs.autocompleteMethod}"/>
+                        size="#{size}" maxlength="#{maxlength}" dropdown="true" completeMethod="#{cc.attrs.autocompleteMethod}"/>
 				</h:panelGroup>
                 <h:panelGroup rendered="#{cc.attrs.textArea and cc.attrs.edit}">
                     <p:outputLabel for="#{cc.attrs.id}_textArea" value="#{cc.attrs.label}" />
@@ -178,7 +185,7 @@
     					id="#{cc.attrs.id}_textArea" disabled="#{cc.attrs.disabled}"
     					value="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}"
     					required="#{cc.attrs.required}" cols="#{cc.attrs.cols}"
-    					rows="#{cc.attrs.rows}" maxlength="#{cc.attrs.maxlength}" />
+    					rows="#{cc.attrs.rows}" maxlength="#{maxlength}" />
                 </h:panelGroup>
                 <h:panelGroup rendered="#{cc.attrs.isHtml and cc.attrs.edit}">
                     <p:outputLabel for="#{cc.attrs.id}_editor" value="#{cc.attrs.label}" />
@@ -253,21 +260,21 @@
 						disabled="#{cc.attrs.disabled}"
 						value="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}"
 						required="#{cc.attrs.required}" min="#{cc.attrs.minValue}"
-						max="#{cc.attrs.maxValue}" maxlength="#{cc.attrs.maxlength}" />
+						max="#{cc.attrs.maxValue}" maxlength="#{maxlength}" />
 				</c:if>
 				<c:if test="#{empty(cc.attrs.maxValue) and !cc.attrs.negativeValue}">
 					<p:spinner rendered="#{cc.attrs.edit}" id="#{cc.attrs.id}_int"
 						disabled="#{cc.attrs.disabled}"
 						value="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}"
 						required="#{cc.attrs.required}" min="#{cc.attrs.minValue}"
-						maxlength="#{cc.attrs.maxlength}" />
+						maxlength="#{maxlength}" />
 				</c:if>
 				<!--  for negative values, it is duplicated because if we set minValue=-99999999 the default value diplayed in GUI is -99999999 -->
 				<c:if test="#{cc.attrs.negativeValue}">
 					<p:spinner rendered="#{cc.attrs.edit}" id="#{cc.attrs.id}_int"
 						disabled="#{cc.attrs.disabled}"
 						value="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}"
-						required="#{cc.attrs.required}" maxlength="#{cc.attrs.maxlength}" />
+						required="#{cc.attrs.required}" maxlength="#{maxlength}" />
 				</c:if>
 				<h:outputText
 					rendered="#{not cc.attrs.edit and not cc.attrs.isMessage}"
@@ -303,21 +310,21 @@
 					disabled="#{cc.attrs.disabled}"
 					value="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}"
 					required="#{cc.attrs.required}" min="#{cc.attrs.minValue}"
-					max="#{cc.attrs.maxValue}" maxlength="#{cc.attrs.maxlength}" />
+					max="#{cc.attrs.maxValue}" maxlength="#{maxlength}" />
 			</c:if>
 			<c:if test="#{empty(cc.attrs.maxValue) and !cc.attrs.negativeValue}">
 				<p:spinner rendered="#{cc.attrs.edit}" id="#{cc.attrs.id}_byte"
 					disabled="#{cc.attrs.disabled}"
 					value="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}"
 					required="#{cc.attrs.required}" min="#{cc.attrs.minValue}"
-					maxlength="#{cc.attrs.maxlength}" />
+					maxlength="#{maxlength}" />
 			</c:if>
 			<!--  for negative values, it is duplicated because if we set minValue=-99999999 the default value diplayed in GUI is -99999999 -->
 			<c:if test="#{cc.attrs.negativeValue}">
 					<p:spinner rendered="#{cc.attrs.edit}" id="#{cc.attrs.id}_byte"
 						disabled="#{cc.attrs.disabled}"
 						value="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}"
-						required="#{cc.attrs.required}" maxlength="#{cc.attrs.maxlength}"/>
+						required="#{cc.attrs.required}" maxlength="#{maxlength}"/>
 				</c:if>
 			<h:outputText rendered="#{not cc.attrs.edit}"
 				value="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}"
@@ -332,20 +339,20 @@
 					disabled="#{cc.attrs.disabled}"
 					value="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}"
 					required="#{cc.attrs.required}" min="#{cc.attrs.minValue}"
-					max="#{cc.attrs.maxValue}" maxlength="#{cc.attrs.maxlength}" />
+					max="#{cc.attrs.maxValue}" maxlength="#{maxlength}" />
 			</c:if>
 			<c:if test="#{empty(cc.attrs.maxValue) and !cc.attrs.negativeValue}">
 				<p:spinner rendered="#{cc.attrs.edit}" id="#{cc.attrs.id}_long"
 					disabled="#{cc.attrs.disabled}"
 					value="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}"
 					required="#{cc.attrs.required}" min="#{cc.attrs.minValue}"
-					maxlength="#{cc.attrs.maxlength}" />
+					maxlength="#{maxlength}" />
 			</c:if>
 			<c:if test="#{cc.attrs.negativeValue}">
 					<p:spinner rendered="#{cc.attrs.edit}" id="#{cc.attrs.id}_long"
 						disabled="#{cc.attrs.disabled}"
 						value="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}"
-						required="#{cc.attrs.required}" maxlength="#{cc.attrs.maxlength}"/>
+						required="#{cc.attrs.required}" maxlength="#{maxlength}"/>
 			</c:if>
 			<h:outputText rendered="#{not cc.attrs.edit}"
 				value="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}"
@@ -362,20 +369,20 @@
 					disabled="#{cc.attrs.disabled}"
 					value="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}"
 					required="#{cc.attrs.required}" min="#{cc.attrs.minValue}"
-					max="#{cc.attrs.maxValue}" maxlength="#{cc.attrs.maxlength}" />
+					max="#{cc.attrs.maxValue}" maxlength="#{maxlength}" />
 			</c:if>
 			<c:if test="#{empty(cc.attrs.maxValue) and !cc.attrs.negativeValue}">
 				<p:spinner rendered="#{cc.attrs.edit}" id="#{cc.attrs.id}_short"
 					disabled="#{cc.attrs.disabled}"
 					value="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}"
 					required="#{cc.attrs.required}" min="#{cc.attrs.minValue}"
-					maxlength="#{cc.attrs.maxlength}" />
+					maxlength="#{maxlength}" />
 			</c:if>
 			<c:if test="#{cc.attrs.negativeValue}">
 					<p:spinner rendered="#{cc.attrs.edit}" id="#{cc.attrs.id}_short"
 						disabled="#{cc.attrs.disabled}"
 						value="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}"
-						required="#{cc.attrs.required}" maxlength="#{cc.attrs.maxlength}"/>
+						required="#{cc.attrs.required}" maxlength="#{maxlength}"/>
 				</c:if>
 			<h:outputText rendered="#{not cc.attrs.edit}"
 				value="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}"
@@ -393,7 +400,7 @@
 				id="#{cc.attrs.id}_bigDecimal" disabled="#{cc.attrs.disabled}"
 				value="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}"
 				required="#{cc.attrs.required}" size="20"
-				maxlength="#{cc.attrs.maxlength}">
+				maxlength="#{maxlength}">
 				<c:if test="#{not empty cc.attrs.converter}">
 					<f:converter converterId="#{cc.attrs.converter}" />
 				</c:if>
@@ -429,7 +436,7 @@
 				disabled="#{cc.attrs.disabled}"
 				value="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}"
 				required="#{cc.attrs.required}" size="5"
-				maxlength="#{cc.attrs.maxlength}" />
+				maxlength="#{maxlength}" />
 			<h:outputText rendered="#{not cc.attrs.edit}"
 				value="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}"
 				styleClass="field-value" />
