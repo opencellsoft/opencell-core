@@ -598,13 +598,14 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 			
 			BillingAccount billingAccount=userAccount.getBillingAccount();
 			DiscountPlan discountPlan=billingAccount.getDiscountPlan();
+			CustomerAccount customerAccount=billingAccount.getCustomerAccount();
 			if(discountPlan!=null && discountPlan.isActive()){
 				for(Subscription subscription : userAccount.getSubscriptions()){
 					int subscriptionAge = DateUtils.monthsBetween(DateUtils.addDaysToDate(subscription.getSubscriptionDate(), -1),new Date());
 					if(subscriptionAge>=discountPlan.getMinDuration() && subscriptionAge<=discountPlan.getMaxDuration()){
 						List<DiscountPlanItem> discountPlanItems =discountPlan.getDiscountPlanItems();
 						for(DiscountPlanItem discountPlanItem:discountPlanItems){
-							if(discountPlanItem.isActive()){
+							if(discountPlanItem.isActive() && matchDiscountPlanItemExpression(discountPlanItem.getExpressionEl(),customerAccount, billingAccount, invoice)){
 								if(discountPlanItem.getInvoiceSubCategory()!=null){
 									createDiscountAggregate(userAccount,userAccount.getWallet(), invoice, discountPlanItem.getInvoiceSubCategory(),discountPlanItem.getPercent());
 								}else if(discountPlanItem.getInvoiceCategory()!=null){
@@ -679,6 +680,35 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 		
 		if (expression.indexOf("ca.") >= 0) {
 			userMap.put("ca", billingAccount.getCustomerAccount());
+		}
+		if (expression.indexOf("ba.") >= 0) {
+			userMap.put("ba", billingAccount);
+		}
+		if (expression.indexOf("iv.") >= 0) {
+				userMap.put("iv", invoice);
+			
+		}
+		Object res = RatingService.evaluateExpression(expression, userMap,
+				Boolean.class);
+		try {
+			result = (Boolean) res;
+		} catch (Exception e) {
+			throw new BusinessException("Expression " + expression
+					+ " do not evaluate to boolean but " + res);
+		}
+		return result;
+	}
+	
+	private boolean matchDiscountPlanItemExpression(String expression,CustomerAccount customerAccount,BillingAccount billingAccount,Invoice invoice) throws BusinessException {
+		Boolean result = true;
+		if (StringUtils.isBlank(expression)) {
+			return result;
+		}
+		Map<Object, Object> userMap = new HashMap<Object, Object>();
+		
+		
+		if (expression.indexOf("ca.") >= 0) {
+			userMap.put("ca",customerAccount);
 		}
 		if (expression.indexOf("ba.") >= 0) {
 			userMap.put("ba", billingAccount);
