@@ -12,7 +12,7 @@
 	</ui:define>
 
 	<ui:define name="body">
-
+			
 		<p:panel styleClass="form-panel">
 
 			<p:tabView id="tabView">
@@ -41,6 +41,12 @@
 
 				<p:tab title="#{messages['discountPlanItem.title']}"
 					rendered="#{!discountPlanBean.entity.transient}">
+					<p:outputPanel id="discountPlanItems_MSG_panel">
+						<h:graphicImage value="/img/msgerror.png" style="border:0"
+							rendered="#{validation.failed}" />
+						<h:outputText value="#{messages['validation.validationFailure']}"
+							rendered="#{validation.failed}" styleClass="errorMessage" />
+					</p:outputPanel>
 
 					<p:panel id="discountPlanItemPanel">
 
@@ -69,7 +75,7 @@
 									value="#{messages['commons.edit']}" showEffect="slide"
 									hideEffect="slide" />
 								<p:commandButton id="editDiscountPlanItemLink"
-									update=":#{p:component('discountPlanItemFormPanel')}"
+									update=":tabView:discountPlanItemPanel,:tabView:discountPlanItemFormPanel:formDiscountPlanItem"
 									action="#{discountPlanBean.setDiscountPlanItem(entity)}"
 									icon="ui-icon-document" />
 								<p:tooltip for="deleteDiscountPlanItemLink"
@@ -78,7 +84,8 @@
 								<p:commandButton id="deleteDiscountPlanItemLink"
 									action="#{discountPlanBean.deleteDiscountPlan(entity)}"
 									icon="ui-icon-trash" ajax="true"
-									update=":#{p:component('discountPlanItemPanel')}" />
+									update=":tabView:discountPlanItemPanel,:tabView:discountPlanItemFormPanel:formDiscountPlanItem" />
+									 
 							</p:column>
 						</hftl:dataList>
 
@@ -110,16 +117,26 @@
 
 							<hf:formField label="#{messages['discountPlanItem.percent']}"
 								field="percent" required="true" minValue="-100" maxValue="100" />
+								 
+							<hf:formField label="#{messages['discountPlanItem.expressionEl']}"
+							         field="expressionEl"  textArea="true" maxlength="2000"
+									 edit="#{discountPlanBean.edit}"/> 
 
 							<p:panelGrid columns="3">
 
 								<p:commandButton id="saveButton"
-									rendered="#{discountPlanBean.edit}"
+									rendered="#{discountPlanItem.id==null}"
 									value="#{messages['discountPlanItem.addNew']}"
 									action="#{discountPlanBean.saveOrUpdateDiscountPlan()}"
 									icon="ui-icon-check"
 									update=":#{p:component('discountPlanItemPanel')}">
-								</p:commandButton>
+								</p:commandButton> 
+								<p:commandButton
+											rendered="#{discountPlanItem.id!=null}"
+											action="#{discountPlanBean.saveOrUpdateDiscountPlan}"
+											value="#{messages['discountPlanItem.modifyDiscountPlantItem']}"
+											icon="ui-icon-check"
+											update=":#{p:component('discountPlanItemPanel')}"/>
 
 								<hf:clearButton id="resetButton"
 									label="#{messages['action.reset']}"

@@ -77,22 +77,31 @@ public class DiscountPlanBean extends BaseBean<DiscountPlan> {
 		if (getEntity().getDiscountPlanItems() == null) {
 			getEntity().setDiscountPlanItems(new ArrayList<DiscountPlanItem>());
 		}
-
-		if (getEntity().getDiscountPlanItems().contains(discountPlanItem)) {
-			messages.error(new BundleKey("messages", "discountPlan.discountPlanItem.unique"));
-		} else {
+		
+		if (discountPlanItem.getId() != null) {
+			discountPlanItemService
+					.update(discountPlanItem);
+			messages.info(new BundleKey("messages", "update.successful"));
+			
+		}
+		 
 			if (discountPlanItem.isTransient()) {
 				try {
+					if (getEntity().getDiscountPlanItems().contains(discountPlanItem)) {
+						messages.error(new BundleKey("messages", "discountPlan.discountPlanItem.unique"));
+					}
+					else{
 					discountPlanItemService.create(discountPlanItem);
 					getEntity().getDiscountPlanItems().add(discountPlanItem);
-				} catch (BusinessException e) {
+					messages.info(new BundleKey("messages", "save.successful"));
+				} 
+				}catch (BusinessException e) {
 					log.error(e.getMessage());
 					messages.error(new BundleKey("messages", e.getMessage()));
 				}
-			} else {
-				discountPlanItemService.update(discountPlanItem);
-			}
-		}
+				 
+			} 
+			
 
 		discountPlanItem = new DiscountPlanItem();
 		discountPlanItem.setAccountingCode(getCurrentProvider().getDiscountAccountingCode());
@@ -101,6 +110,8 @@ public class DiscountPlanBean extends BaseBean<DiscountPlan> {
 	public void deleteDiscountPlan(DiscountPlanItem discountPlanItem) {
 		getEntity().getDiscountPlanItems().remove(discountPlanItem);
 		discountPlanItemService.remove(discountPlanItem);
+		messages.info(new BundleKey("messages", "delete.successful"));
 	}
+	
 
 }
