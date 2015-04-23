@@ -42,6 +42,7 @@ public class InvoiceAgregateService extends PersistenceService<InvoiceAgregate> 
 		qb.addCriterionEntity("provider", provider);
 		qb.addCriterionEntity("invoiceSubCategory", invoiceSubCategory);
 		qb.addCriterionEntity("wallet", wallet);
+		qb.addBooleanCriterion("discountAggregate", false);
 		try {
 			BigDecimal result = (BigDecimal) qb.getQuery(getEntityManager())
 					.getSingleResult();

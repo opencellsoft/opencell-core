@@ -82,7 +82,7 @@ public class InvoiceSubCategoryCountryApi extends BaseApi {
 			invoiceSubcategoryCountry.setInvoiceSubCategory(invoiceSubCategory);
 			invoiceSubcategoryCountry.setTax(tax);
 			invoiceSubcategoryCountry.setTradingCountry(tradingCountry);
-
+			invoiceSubcategoryCountry.setFilterEL(postData.getFilterEL());
 			invoiceSubCategoryCountryService.create(invoiceSubcategoryCountry,
 					currentUser, provider);
 		} else {
