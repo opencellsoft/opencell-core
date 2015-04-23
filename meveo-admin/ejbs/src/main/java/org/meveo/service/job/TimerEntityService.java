@@ -86,13 +86,13 @@ public class TimerEntityService extends PersistenceService<TimerEntity> {
 				if (!jobs.containsKey(job.getClass().getSimpleName())) {
 					log.debug("registerJob " + job.getClass().getSimpleName() + " into existing category "
 							+ job.getJobCategory());
-					jobs.put(job.getClass().getSimpleName(), "java:global/meveo/" + job.getClass().getSimpleName());
+					jobs.put(job.getClass().getSimpleName(), "java:global/"+paramBean.getProperty("meveo.moduleName", "meveo")+"/" + job.getClass().getSimpleName());
 				}
 			} else {
 				log.debug("registerJob " + job.getClass().getSimpleName() + " into new category "
 						+ job.getJobCategory());
 				HashMap<String, String> jobs = new HashMap<String, String>();
-				jobs.put(job.getClass().getSimpleName(), "java:global/meveo/" + job.getClass().getSimpleName());
+				jobs.put(job.getClass().getSimpleName(), "java:global/"+paramBean.getProperty("meveo.moduleName", "meveo")+"/" + job.getClass().getSimpleName());
 				jobEntries.put(job.getJobCategory(), jobs);
 			}
 			job.getJobExecutionService().getTimerEntityService().startTimers(job);
@@ -127,7 +127,7 @@ public class TimerEntityService extends PersistenceService<TimerEntity> {
 	    Job result=null;
 	    try {
             InitialContext ic=new InitialContext();
-            result = (Job) ic.lookup("java:global/meveo/"+jobName);
+            result = (Job) ic.lookup("java:global/"+paramBean.getProperty("meveo.moduleName", "meveo")+"/"+jobName);
         } catch (NamingException e) {
             e.printStackTrace();
         }
