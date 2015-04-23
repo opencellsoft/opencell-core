@@ -38,12 +38,29 @@
 			selection="#{pricePlanMatrixListBean.filters['seller']}"
 			updateField=":searchPanel:searchForm:seller:seller_child">
 		</hftl:entityPopup>
+		<hftl:entityPopup id="searchTradingCountryPopup"
+			header="#{messages['country.search']}" backingBean="#{tradingCountryBean}"
+			searchField1Label="#{messages['BusinessEntity.description']}"
+			searchField1="prDescription" column1Label="#{messages['BusinessEntity.code']}"
+			column1="countryCode" column2Label="#{messages['BusinessEntity.description']}"
+			column2="prDescription"
+			selection="#{pricePlanMatrixListBean.filters['tradingCountry']}"
+			updateField=":searchPanel:searchForm:tradingCountry:tradingCountry_child">
+		</hftl:entityPopup>
+		<hftl:entityPopup id="searchTradingCurrencyPopup"
+			header="#{messages['currency.search']}" backingBean="#{tradingCurrencyBean}"
+			searchField1Label="#{messages['BusinessEntity.description']}"
+			searchField1="prDescription" column1Label="#{messages['BusinessEntity.code']}"
+			column1="currencyCode" column2Label="#{messages['BusinessEntity.description']}"
+			column2="prDescription"
+			selection="#{pricePlanMatrixListBean.filters['tradingCurrency']}"
+			updateField=":searchPanel:searchForm:tradingCurrency:tradingCurrency_child">
+		</hftl:entityPopup>
 
-		<hf:searchPanel id="searchPanel"
+		<hf:searchPanel id="searchPanel" columns="3"
 			label="#{messages['pricePlanMatrix.search']}"
 			backingBean="#{pricePlanMatrixListBean}">
             <hf:searchField label="#{messages['BusinessEntity.code']}" field="code" />
-            <hf:searchField label="#{messages['BusinessEntity.description']}" id="description" field="description" />
             <hf:searchField label="#{messages['pricePlanMatrix.eventCode']}"
 				field="eventCode" />
 			<hf:searchField id="offer" label="#{messages['pricePlanMatrix.offerCode']}"
@@ -52,6 +69,15 @@
 			<hf:searchField id="seller" label="#{messages['seller.title']}"
 				field="seller" childField="description" popup="true"
 				popupId="searchSellerPopup" clearButton="true" />
+			<hf:searchField id="tradingCountry" label="#{messages['pricePlanMatrix.tradingCountry']}"
+				field="tradingCountry"  childField="prDescription" popup="true" 
+				popupId="searchTradingCountryPopup" clearButton="true" />
+			<hf:searchField id="tradingCurrency" label="#{messages['pricePlanMatrix.tradingCurrency']}"
+				field="tradingCurrency"  childField="prDescription" popup="true" 
+				popupId="searchTradingCurrencyPopup" clearButton="true" />
+			<hf:searchField label="#{messages['pricePlanMatrix.maxQuantity']}" field="maxQuantity" />
+			<hf:searchField label="#{messages['pricePlanMatrix.startSubscriptionDate']}" field="startSubscriptionDate" />
+			<hf:searchField label="#{messages['pricePlanMatrix.criteria1Value']}" field="criteria1Value" />
 
 			<!-- <hf:searchField label="#{messages['pricePlanMatrix.startSubscriptionDate']}" field="startSubscriptionDate" />
     			<hf:searchField label="#{messages['pricePlanMatrix.endSubscriptionDate']}" field="endSubscriptionDate" />
@@ -75,9 +101,9 @@
 				value="#{entity.seller}" field="description" fieldId="id"
 				entityView="sellerDetail" />
 			<hftl:column label="#{messages['tradingCountry.tradingCountry']}"
-				field="tradingCountry" childField="countryCode" />
-			<hftl:column label="#{messages['currency.codeCurrency']}"
-				field="tradingCurrency" childField="currencyCode" />
+				field="tradingCountry" childField="prDescription" />
+			<hftl:column label="#{messages['tradingCurrency.tradingCurrency']}"
+				field="tradingCurrency" childField="prDescription" />
 			<!-- <hftl:column
 				label="#{messages['pricePlanMatrix.table.startSubscriptionDate']}"
 				field="startSubscriptionDate" isDate="true" />
