@@ -14,6 +14,7 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.parse.csv.CdrParserProducer;
 import org.meveo.cache.CdrEdrProcessingCacheContainerProvider;
 import org.meveo.event.qualifier.RejectedCDR;
+import org.meveo.model.IProvider;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.mediation.Access;
 import org.meveo.model.rating.EDR;
@@ -122,6 +123,7 @@ public class CDRParsingService extends PersistenceService<EDR> {
         String accessUserId = cdrParser.getAccessUserId(cdr);
         List<Access> accesses = cdrEdrProcessingCacheContainerProvider.getAccessesByAccessUserId(provider.getId(), accessUserId);
         if (accesses == null || accesses.size() == 0) {
+            ((IProvider)cdr).setProvider(provider);
             rejectededCdrEventProducer.fire(cdr);
             throw new InvalidAccessException(cdr);
         }
