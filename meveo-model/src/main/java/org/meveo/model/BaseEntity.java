@@ -34,7 +34,7 @@ import org.meveo.model.crm.Provider;
  * Base class for all entity classes.
  */
 @MappedSuperclass
-public abstract class BaseEntity implements Serializable, IEntity, IVersionedEntity {
+public abstract class BaseEntity implements Serializable, IEntity, IVersionedEntity, IProvider {
 	private static final long serialVersionUID = 1L;
 
 	public static final int NB_PRECISION = 23;

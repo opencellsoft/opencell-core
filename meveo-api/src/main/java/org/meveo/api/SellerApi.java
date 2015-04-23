@@ -8,6 +8,7 @@ import javax.inject.Inject;
 
 import org.meveo.api.dto.SellerDto;
 import org.meveo.api.dto.SellersDto;
+import org.meveo.api.dto.response.ListSellerCodesResponseDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
@@ -58,8 +59,7 @@ public class SellerApi extends BaseApi {
 
 			// check trading entities
 			if (!StringUtils.isBlank(postData.getCurrencyCode())) {
-				TradingCurrency tradingCurrency = tradingCurrencyService.findByTradingCurrencyCode(
-						postData.getCurrencyCode(), provider);
+				TradingCurrency tradingCurrency = tradingCurrencyService.findByTradingCurrencyCode(postData.getCurrencyCode(), provider);
 				if (tradingCurrency == null) {
 					throw new EntityDoesNotExistsException(TradingCurrency.class, postData.getCurrencyCode());
 				}
@@ -68,8 +68,7 @@ public class SellerApi extends BaseApi {
 			}
 
 			if (!StringUtils.isBlank(postData.getCountryCode())) {
-				TradingCountry tradingCountry = tradingCountryService.findByTradingCountryCode(
-						postData.getCountryCode(), provider);
+				TradingCountry tradingCountry = tradingCountryService.findByTradingCountryCode(postData.getCountryCode(), provider);
 				if (tradingCountry == null) {
 					throw new EntityDoesNotExistsException(TradingCountry.class, postData.getCountryCode());
 				}
@@ -78,8 +77,7 @@ public class SellerApi extends BaseApi {
 			}
 
 			if (!StringUtils.isBlank(postData.getLanguageCode())) {
-				TradingLanguage tradingLanguage = tradingLanguageService.findByTradingLanguageCode(
-						postData.getLanguageCode(), provider);
+				TradingLanguage tradingLanguage = tradingLanguageService.findByTradingLanguageCode(postData.getLanguageCode(), provider);
 				if (tradingLanguage == null) {
 					throw new EntityDoesNotExistsException(TradingLanguage.class, postData.getLanguageCode());
 				}
@@ -124,8 +122,7 @@ public class SellerApi extends BaseApi {
 
 			// check trading entities
 			if (!StringUtils.isBlank(postData.getCurrencyCode())) {
-				TradingCurrency tradingCurrency = tradingCurrencyService.findByTradingCurrencyCode(
-						postData.getCurrencyCode(), provider);
+				TradingCurrency tradingCurrency = tradingCurrencyService.findByTradingCurrencyCode(postData.getCurrencyCode(), provider);
 				if (tradingCurrency == null) {
 					throw new EntityDoesNotExistsException(TradingCurrency.class, postData.getCurrencyCode());
 				}
@@ -134,8 +131,7 @@ public class SellerApi extends BaseApi {
 			}
 
 			if (!StringUtils.isBlank(postData.getCountryCode())) {
-				TradingCountry tradingCountry = tradingCountryService.findByTradingCountryCode(
-						postData.getCountryCode(), provider);
+				TradingCountry tradingCountry = tradingCountryService.findByTradingCountryCode(postData.getCountryCode(), provider);
 				if (tradingCountry == null) {
 					throw new EntityDoesNotExistsException(TradingCountry.class, postData.getCountryCode());
 				}
@@ -144,8 +140,7 @@ public class SellerApi extends BaseApi {
 			}
 
 			if (!StringUtils.isBlank(postData.getLanguageCode())) {
-				TradingLanguage tradingLanguage = tradingLanguageService.findByTradingLanguageCode(
-						postData.getLanguageCode(), provider);
+				TradingLanguage tradingLanguage = tradingLanguageService.findByTradingLanguageCode(postData.getLanguageCode(), provider);
 				if (tradingLanguage == null) {
 					throw new EntityDoesNotExistsException(TradingLanguage.class, postData.getLanguageCode());
 				}
@@ -180,8 +175,7 @@ public class SellerApi extends BaseApi {
 		SellerDto result = new SellerDto();
 
 		if (!StringUtils.isBlank(sellerCode)) {
-			Seller seller = sellerService.findByCode(sellerCode, provider,
-					Arrays.asList("tradingCountry", "tradingCurrency", "tradingLanguage"));
+			Seller seller = sellerService.findByCode(sellerCode, provider, Arrays.asList("tradingCountry", "tradingCurrency", "tradingLanguage"));
 			if (seller == null) {
 				throw new EntityDoesNotExistsException(Seller.class, sellerCode);
 			}
@@ -222,6 +216,19 @@ public class SellerApi extends BaseApi {
 		if (sellers != null) {
 			for (Seller seller : sellers) {
 				result.getSeller().add(new SellerDto(seller));
+			}
+		}
+
+		return result;
+	}
+
+	public ListSellerCodesResponseDto listSellerCodes(Provider provider) {
+		ListSellerCodesResponseDto result = new ListSellerCodesResponseDto();
+
+		List<Seller> sellers = sellerService.list(provider);
+		if (sellers != null) {
+			for (Seller seller : sellers) {
+				result.getSellerCodes().add(seller.getCode());
 			}
 		}
 

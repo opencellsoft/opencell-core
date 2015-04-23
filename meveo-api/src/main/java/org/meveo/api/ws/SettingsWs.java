@@ -33,6 +33,7 @@ import org.meveo.api.dto.response.GetSellerResponse;
 import org.meveo.api.dto.response.GetTaxResponse;
 import org.meveo.api.dto.response.GetTradingConfigurationResponseDto;
 import org.meveo.api.dto.response.GetUserResponse;
+import org.meveo.api.dto.response.ListSellerCodesResponseDto;
 import org.meveo.api.dto.response.ListSellerResponseDto;
 
 /**
@@ -82,6 +83,9 @@ public interface SettingsWs extends IBaseWs {
 
 	@WebMethod
 	public ListSellerResponseDto listSeller();
+
+	@WebMethod
+	ListSellerCodesResponseDto listSellerCodes();
 
 	// language
 
