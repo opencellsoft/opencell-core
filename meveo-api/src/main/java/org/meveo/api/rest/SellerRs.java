@@ -14,6 +14,7 @@ import javax.ws.rs.core.MediaType;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.SellerDto;
 import org.meveo.api.dto.response.GetSellerResponse;
+import org.meveo.api.dto.response.ListSellerCodesResponseDto;
 import org.meveo.api.dto.response.ListSellerResponseDto;
 import org.meveo.api.rest.security.RSSecured;
 
@@ -36,7 +37,7 @@ public interface SellerRs extends IBaseRs {
 	 */
 	@Path("/")
 	@POST
-	public ActionStatus create(SellerDto postData);
+	ActionStatus create(SellerDto postData);
 
 	/**
 	 * Update seller.
@@ -46,7 +47,7 @@ public interface SellerRs extends IBaseRs {
 	 */
 	@Path("/")
 	@PUT
-	public ActionStatus update(SellerDto postData);
+	ActionStatus update(SellerDto postData);
 
 	/**
 	 * Search for seller with a given code.
@@ -56,7 +57,7 @@ public interface SellerRs extends IBaseRs {
 	 */
 	@Path("/")
 	@GET
-	public GetSellerResponse find(@QueryParam("sellerCode") String sellerCode);
+	GetSellerResponse find(@QueryParam("sellerCode") String sellerCode);
 
 	/**
 	 * Remove seller with a given code.
@@ -66,7 +67,7 @@ public interface SellerRs extends IBaseRs {
 	 */
 	@Path("/{sellerCode}")
 	@DELETE
-	public ActionStatus remove(@PathParam("sellerCode") String sellerCode);
+	ActionStatus remove(@PathParam("sellerCode") String sellerCode);
 
 	/**
 	 * Search for seller with a given code.
@@ -76,6 +77,10 @@ public interface SellerRs extends IBaseRs {
 	 */
 	@Path("/list")
 	@GET
-	public ListSellerResponseDto list();
+	ListSellerResponseDto list();
+
+	@Path("/listSellerCodes")
+	@GET
+	ListSellerCodesResponseDto listSellerCodes();
 
 }

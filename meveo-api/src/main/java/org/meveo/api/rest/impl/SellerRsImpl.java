@@ -10,6 +10,7 @@ import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.SellerDto;
 import org.meveo.api.dto.response.GetSellerResponse;
+import org.meveo.api.dto.response.ListSellerCodesResponseDto;
 import org.meveo.api.dto.response.ListSellerResponseDto;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.LoggingInterceptor;
@@ -115,6 +116,22 @@ public class SellerRsImpl extends BaseRs implements SellerRs {
 
 		try {
 			result.setSellers(sellerApi.list(getCurrentUser().getProvider()));
+		} catch (Exception e) {
+			result.getActionStatus().setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
+			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
+			result.getActionStatus().setMessage(e.getMessage());
+		}
+
+		log.debug("RESPONSE={}", result);
+		return result;
+	}
+
+	@Override
+	public ListSellerCodesResponseDto listSellerCodes() {
+		ListSellerCodesResponseDto result = new ListSellerCodesResponseDto();
+
+		try {
+			result = sellerApi.listSellerCodes(getCurrentUser().getProvider());
 		} catch (Exception e) {
 			result.getActionStatus().setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
