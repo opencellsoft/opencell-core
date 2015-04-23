@@ -1,5 +1,7 @@
 package org.meveo.api.payment;
 
+import java.util.List;
+
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
@@ -7,9 +9,13 @@ import org.meveo.api.BaseApi;
 import org.meveo.api.dto.payment.AccountOperationDto;
 import org.meveo.api.dto.payment.MatchingAmountDto;
 import org.meveo.api.dto.payment.MatchingCodeDto;
+import org.meveo.api.dto.response.payment.ListAccountOperationsResponseDto;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
+import org.meveo.api.exception.MissingParameterException;
+import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.User;
+import org.meveo.model.crm.Provider;
 import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.MatchingAmount;
@@ -52,8 +58,7 @@ public class AccountOperationApi extends BaseApi {
 	public void create(AccountOperationDto postData, User currentUser) throws MeveoApiException {
 		AccountOperation accountOperation = null;
 
-		CustomerAccount customerAccount = customerAccountService.findByCode(postData.getCustomerAccount(),
-				currentUser.getProvider());
+		CustomerAccount customerAccount = customerAccountService.findByCode(postData.getCustomerAccount(), currentUser.getProvider());
 		if (customerAccount == null) {
 			throw new EntityDoesNotExistsException(CustomerAccount.class, postData.getCustomerAccount());
 		}
@@ -73,8 +78,7 @@ public class AccountOperationApi extends BaseApi {
 			recordedInvoice.setNetToPay(postData.getRecordedInvoice().getNetToPay());
 
 			try {
-				recordedInvoice.setPaymentMethod(PaymentMethodEnum.valueOf(postData.getRecordedInvoice()
-						.getPaymentMethod()));
+				recordedInvoice.setPaymentMethod(PaymentMethodEnum.valueOf(postData.getRecordedInvoice().getPaymentMethod()));
 			} catch (IllegalStateException e) {
 				log.warn("paymentMethod={}", e.getMessage());
 			} catch (NullPointerException e) {
@@ -116,8 +120,7 @@ public class AccountOperationApi extends BaseApi {
 		}
 
 		if (accountOperation == null) {
-			throw new MeveoApiException(
-					"Type and data mismatch OCC=otherCreditAndCharge, I=recordedInvoice, R=rejectedPayment.");
+			throw new MeveoApiException("Type and data mismatch OCC=otherCreditAndCharge, I=recordedInvoice, R=rejectedPayment.");
 		}
 
 		accountOperation.setDueDate(postData.getDueDate());
@@ -159,8 +162,7 @@ public class AccountOperationApi extends BaseApi {
 				matchingAmount.setAccountOperation(accountOperation);
 				if (matchingAmountDto.getMatchingCodes() != null) {
 					for (MatchingCodeDto matchingCodeDto : matchingAmountDto.getMatchingCodes().getMatchingCode()) {
-						MatchingCode matchingCode = matchingCodeService.findByCode(matchingCodeDto.getCode(),
-								currentUser.getProvider());
+						MatchingCode matchingCode = matchingCodeService.findByCode(matchingCodeDto.getCode(), currentUser.getProvider());
 						if (matchingCode == null) {
 							matchingCode = new MatchingCode();
 							matchingCode.setCode(matchingCodeDto.getCode());
@@ -198,4 +200,51 @@ public class AccountOperationApi extends BaseApi {
 			}
 		}
 	}
+
+	public ListAccountOperationsResponseDto list(String customerAccountCode, Provider provider) throws MeveoApiException {
+		if (!StringUtils.isBlank(customerAccountCode)) {
+			ListAccountOperationsResponseDto result = new ListAccountOperationsResponseDto();
+
+			CustomerAccount customerAccount = customerAccountService.findByCode(customerAccountCode, provider);
+			if (customerAccount == null) {
+				throw new EntityDoesNotExistsException(CustomerAccount.class, customerAccountCode);
+			}
+
+			List<AccountOperation> accountOperations = accountOperationService.listAccountOperationByCustomerAccount(customerAccount, provider);
+
+			for (AccountOperation accountOp : accountOperations) {
+				AccountOperationDto accountOperationDto = new AccountOperationDto();
+				accountOperationDto.setDueDate(accountOp.getDueDate());
+				accountOperationDto.setType(accountOp.getType());
+				accountOperationDto.setTransactionDate(accountOp.getTransactionDate());
+				accountOperationDto.setTransactionCategory(accountOp.getTransactionCategory().toString() != null ? accountOp.getTransactionCategory().toString() : null);
+				accountOperationDto.setReference(accountOp.getReference());
+				accountOperationDto.setAccountCode(accountOp.getAccountCode());
+				accountOperationDto.setAccountCodeClientSide(accountOp.getAccountCodeClientSide());
+				accountOperationDto.setAmount(accountOp.getAmount());
+				accountOperationDto.setMatchingAmount(accountOp.getMatchingAmount());
+				accountOperationDto.setUnMatchingAmount(accountOp.getUnMatchingAmount());
+				accountOperationDto.setMatchingStatus(accountOp.getMatchingStatus().toString() != null ? accountOp.getMatchingStatus().toString() : null);
+				accountOperationDto.setOccCode(accountOp.getOccCode());
+				accountOperationDto.setOccDescription(accountOp.getOccDescription());
+
+				List<MatchingAmount> matchingAmounts = accountOp.getMatchingAmounts();
+				MatchingAmountDto matchingAmountDto = new MatchingAmountDto();
+				for (MatchingAmount matchingAmount : matchingAmounts) {
+					matchingAmountDto.setMatchingCode(matchingAmount.getMatchingCode().getCode());
+					matchingAmountDto.setMatchingAmount(matchingAmount.getMatchingAmount());
+					accountOperationDto.addMatchingAmounts(matchingAmountDto);
+				}
+
+				result.getAccountOperations().getAccountOperation().add(accountOperationDto);
+			}
+
+			return result;
+		} else {
+			missingParameters.add("customerAccountCode");
+
+			throw new MissingParameterException(getMissingParametersExceptionMessage());
+		}
+	}
+
 }

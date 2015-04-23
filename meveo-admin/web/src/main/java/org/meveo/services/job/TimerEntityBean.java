@@ -161,4 +161,19 @@ public class TimerEntityBean extends BaseBean<TimerEntity> {
             }
         }
     }
+
+    /**
+     * Check if a timer is running.
+     * 
+     * @param timerEntity Timer entity
+     * @return True if running
+     */
+    public boolean isTimerRunning(TimerEntity timerEntity) {
+        // Check a timerEntityservice's job cache only when timerEntity itself does not have that info - cases when executing an inactive job manually.
+        if (!timerEntity.isRunning()) {
+            return timerEntityservice.isTimerRunning(timerEntity.getId());
+        } else {
+            return true;
+        }
+    }
 }

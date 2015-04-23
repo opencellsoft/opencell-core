@@ -23,6 +23,7 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 
 import org.meveo.admin.dunning.DunningLotBuilder;
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.Auditable;
 import org.meveo.model.admin.DunningHistory;
@@ -51,7 +52,7 @@ public class DunningLOTService extends PersistenceService<DunningLOT> {
 
 	public void createDunningLOTAndCsvFile(
 			List<ActionDunning> listActionDunning,
-			DunningHistory dunningHistory, Provider provider) throws Exception {
+			DunningHistory dunningHistory, Provider provider) throws BusinessException {
 		log.info("createDunningLOTAndCsvFile ...");
 
 		User systemUser = userService.findById(Long.valueOf(ParamBean
@@ -100,7 +101,7 @@ public class DunningLOTService extends PersistenceService<DunningLOT> {
 		return bunningLotBuilder.getFileName();
 	}
 
-	public static Auditable getAuditable(User user) throws Exception {
+	public static Auditable getAuditable(User user) {
 		Auditable auditable = new Auditable();
 		auditable.setCreated(new Date());
 		auditable.setCreator(user);

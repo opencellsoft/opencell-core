@@ -34,7 +34,7 @@ import org.meveo.model.crm.Provider;
  * Base class for all entity classes.
  */
 @MappedSuperclass
-public abstract class BaseEntity implements Serializable, IEntity, IVersionedEntity {
+public abstract class BaseEntity implements Serializable, IEntity, IVersionedEntity, IProvider {
 	private static final long serialVersionUID = 1L;
 
 	public static final int NB_PRECISION = 23;
@@ -123,4 +123,22 @@ public abstract class BaseEntity implements Serializable, IEntity, IVersionedEnt
 
 		return false;
 	}
+	
+    /**
+     * Check whether [current] provider matches the provider field of an entity
+     * 
+     * @param providerToMatch
+     *            [Current] provider id value to match
+     * @return
+     */
+    public boolean doesProviderMatch(Long providerToMatch) {
+
+        if (providerToMatch == null && provider == null) {
+            return true;
+        } else if (providerToMatch != null && provider != null) {
+            return provider.getId().equals(providerToMatch);
+        }
+
+        return false;
+    }
 }

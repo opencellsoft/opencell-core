@@ -5,6 +5,7 @@
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:a="http://richfaces.org/a4j"
+	xmlns:p="http://primefaces.org/ui"
 	xmlns:hftl="http://hftl.org" xmlns:hf="http://java.sun.com/jsf/composite/tags"
 	template="/layout/template.xhtml">
 
@@ -12,7 +13,7 @@
 		<ui:include src="/layout/navigation.xhtml" />
 	</ui:define>
 	<ui:define name="body">	
-				<hf:formPanel  showFormButtons ="#{false}" edit="#{false}"  label="#{messages['accountOperation.form']}" backingBean="#{accountOperationBean}" entity="#{accountOperationBean.otherCreditAndCharge}">
+				<hf:formPanel  showFormButtons ="#{false}" edit="#{false}"  label="#{messages['accountOperation.form']}" backingBean="#{accountOperationBean}" >
 					<hftl:panelGroup columns="3">
 						<hf:formField label="#{messages['accountOperation.transactionDate']}" field="transactionDate"  />
 						<hf:formField label="#{messages['accountOperation.type']}" field="type"  />
@@ -26,12 +27,12 @@
 					</hftl:panelGroup>	
 					<hftl:panelGroup columns="1">
 						<hf:formField label="#{messages['accountOperation.amount']}" field="amount"   />													
-					</hftl:panelGroup>				
-					<h:commandButton value="#{messages['action.back']}"	action="/pages/payments/customerAccounts/customerAccountDetail.xhtml">
-						<f:attribute name="objectId" value="#{otherCreditAndCharge.getCustomerAccount().getId()}" />
-						<f:attribute name="edit" value="false" />
-						<f:attribute name="tab" value="ops" />
-					</h:commandButton>
+					</hftl:panelGroup>
+					<p:button  outcome="customerAccountDetail" value="#{messages['action.back']}">
+						<f:param name="customerAccountId" value="#{accountOperationBean.entity.getCustomerAccount().getId()}" />
+						<f:param name="edit" value="false" /> 
+						<f:param name="cid" value="#{javax.enterprise.context.conversation.id}" />
+					</p:button>	
 				</hf:formPanel>				
 	</ui:define>
 </ui:composition>

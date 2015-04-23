@@ -3,7 +3,7 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:rich="http://richfaces.org/rich"
-	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:s="http://jboss.org/seam/faces"
 	xmlns:a="http://richfaces.org/a4j" xmlns:hftl="http://hftl.org"
 	xmlns:hf="http://java.sun.com/jsf/composite/tags"
 	xmlns:p="http://primefaces.org/ui"
@@ -51,13 +51,56 @@
 								<hftl:panelGroup columns="2">
 									<hf:formField label="#{messages['businessEntity.code']}"
 										field="code" validateUnique="true" required="true" />
-									<hf:formField label="#{messages['businessEntity.description']}"
-										field="description" useConverter="false" id="description"
-										maxlength="50" required="true" />
-									<hf:formField label="#{messages['customer.externalRef1']}"
-										field="externalRef1" validateUnique="false" />
-									<hf:formField label="#{messages['customer.externalRef2']}"
-										field="externalRef2" />
+									<hftl:panelGroup columns="2">
+										<hf:formField label="#{messages['businessEntity.description']}"
+											field="description" useConverter="false" id="description"
+											maxlength="50" required="true" />
+										<hf:formField label="#{messages['customer.externalRef1']}"
+											field="externalRef1" validateUnique="false" />
+										<hf:formField label="#{messages['customer.externalRef2']}"
+											field="externalRef2" />
+									</hftl:panelGroup>
+									<hftl:panelGroup columns="1">
+									  <h:panelGrid columns="2">
+										<p:outputLabel for="title_text"
+											value="#{messages['name.title']}" />
+										<p:selectOneMenu id="title_text"
+											value="#{customerBean.entity.name.title}" required="false"
+											rendered="#{customerBean.edit}">
+											<f:selectItem itemLabel="" itemValue="" />
+											<f:selectItems value="#{titleBean.listAll()}" var="t"
+												itemLabel="#{t.description}" />
+											<s:objectConverter />
+											<p:ajax event="valueChange"
+												update=":formCustomerPanel:formCustomer:tabView:userNamePanel" />
+										</p:selectOneMenu>
+										<h:outputText rendered="#{!customerBean.edit}"
+											value="#{customerBean.entity.name.title.description}"
+											style="font-weight:bold;" />
+									  </h:panelGrid>
+									</hftl:panelGroup>
+
+									<h:panelGroup id="userNamePanel">
+										<h:panelGrid columns="2" columnClasses="twoColGrid">
+											<hf:formEntityField label="#{messages['name.lastName']}"
+												field="name" childField="lastName" popup="false"
+												maxlength="50" required="true" />
+											<p:panelGrid columns="2"
+												rendered="#{customerBean.entity.name.title == null or !customerBean.entity.name.title.isCompany}">
+												<p:outputLabel for="firstName_text"
+													value="#{messages['name.firstName']}" />
+	
+												<p:inputText id="firstName_text"
+													value="#{customerBean.entity.name.firstName}"
+													rendered="#{(customerBean.entity.name.title == null or !customerBean.entity.name.title.isCompany) and customerBean.edit}" />
+												<h:outputText value="#{customerBean.entity.name.firstName}"
+													rendered="#{(customerBean.entity.name.title == null or !customerBean.entity.name.title.isCompany) and !customerBean.edit}"
+													style="font-weight:bold;" />
+											</p:panelGrid>
+											<hf:emtyFormField
+												show="#{customerBean.entity.name.title == null or !customerBean.entity.name.title.isCompany}" />
+										</h:panelGrid>
+									</h:panelGroup>
 									<hf:formEntityField
 										label="#{messages['customer.customerCategory']}"
 										field="customerCategory" childField="description"
@@ -75,8 +118,9 @@
 								</hftl:panelGroup>
 							</p:tab>
 
-							<p:tab title="#{messages['customer.tab.information']}">
+							<p:tab title="#{messages['customer.tab.information']}" id="tabContact">
 								<p:fieldset legend="#{messages['commons.contacts']}">
+									
 									<p:panelGrid columns="1">
 										<hf:formEntityField
 											label="#{messages['contactInformation.email']}"

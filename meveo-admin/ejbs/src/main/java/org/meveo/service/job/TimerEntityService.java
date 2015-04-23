@@ -177,10 +177,12 @@ public class TimerEntityService extends PersistenceService<TimerEntity> {
                         try {
                             Timer timer = jobTimers.get(entity.getId());
                             timer.cancel();
+                            jobTimers.remove(entity.getId());
                             log.info("cancelled timer {} , id=", entity.getJobName(),entity.getId());
                         } catch (Exception ex) {
                             log.info("cannot cancel timer {}", ex.getMessage());
                         }
+                        
                     }
                     if (entity.getFollowingTimer() != null) {
                         entity.getTimerInfo().setFollowingTimerId(entity.getFollowingTimer().getId());
@@ -242,12 +244,18 @@ public class TimerEntityService extends PersistenceService<TimerEntity> {
 	}
 
 	public void manualExecute(TimerEntity entity) throws BusinessException {
-		log.info("manual execute " + entity.getJobName());
-		InitialContext ic;
+		log.info("Manual execute a job {} of type {}", entity.getName(), entity.getJobName());
+		
 		try {
-			ic = new InitialContext();
+		    
+		    // Retrieve a timer entity from registered job timers, so if job is launched manually and automatically at the same time, only one will run 
+		    if (jobTimers.containsKey(entity.getId())){
+		        entity = (TimerEntity) jobTimers.get(entity.getId()).getInfo();
+		    }
+		    		    
+		    InitialContext ic = new InitialContext();
 			User currentUser = userService.findById(entity.getTimerInfo().getUserId());
-			if (entity.getTimerInfo() != null && currentUser.getProvider().getId() != getCurrentProvider().getId()) {
+			if (entity.getTimerInfo() != null && !currentUser.doesProviderMatch(getCurrentProvider())) {
 				throw new BusinessException("Not authorized to execute this job");
 			}
 
@@ -258,10 +266,14 @@ public class TimerEntityService extends PersistenceService<TimerEntity> {
 					job.execute(entity, getCurrentUser());
 				}
 			} else {
-				throw new BusinessException("cannot find job category " + entity.getJobCategoryEnum());
+				throw new BusinessException("Cannot find job category " + entity.getJobCategoryEnum());
 			}
 		} catch (NamingException e) {
 			log.error(e.getMessage());
+		
+		} catch (Exception e){
+		    log.error("Failed to manually execute a job {} of type {}", entity.getName(), entity.getJobName(),e);
+		    throw e;
 		}
 	}
 
@@ -286,7 +298,7 @@ public class TimerEntityService extends PersistenceService<TimerEntity> {
                     if(timerInfoDTO.getBillingCycle()!=null){
                     	entity.setStringCustomValue("BillingRunJob_billingCycle",timerInfoDTO.getBillingCycle());
                     }
-                    job.execute(entity, getCurrentUser());
+                    job.execute(entity, currentUser);
                 }
             } else {
                 throw new BusinessException("cannot find job category " + entity.getJobCategoryEnum());
@@ -326,4 +338,22 @@ public class TimerEntityService extends PersistenceService<TimerEntity> {
 		return getFindQuery(configuration).count(getEntityManager());
 	}
 
+    /**
+     * Check if a timer, identifier by a timer id, is running
+     * 
+     * @param timerEntityId Timer entity id
+     * @return True if running
+     */
+    public boolean isTimerRunning(Long timerEntityId) {
+        Timer timer = jobTimers.get(timerEntityId);
+
+        if (timer != null) {
+            try {
+                return ((TimerEntity) timer.getInfo()).isRunning();
+            } catch (Exception e) {
+                log.error("Failed to access timer status {}", e.getMessage());
+            }
+        }
+        return false;
+    }
 }

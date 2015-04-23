@@ -135,4 +135,9 @@
 		<addNotNullConstraint tableName="ACCOUNT_ENTITY" columnName="account_type"/>
 		<addUniqueConstraint columnNames="CODE, ACCOUNT_TYPE, PROVIDER_ID" tableName="ACCOUNT_ENTITY" constraintName="UK_ACCOUNT_ENTITY"/>
 	</changeSet>
+	<changeSet id="ticket528_20150421" author="Mbarek">
+		<addColumn tableName="CAT_DISCOUNT_PLAN_ITEM">
+			<column name="EXPRESSION_EL" type="VARCHAR(1000)"/>
+		</addColumn>
+	</changeSet>
 </databaseChangeLog>

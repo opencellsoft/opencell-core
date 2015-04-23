@@ -1,6 +1,5 @@
 package org.meveo.service.notification;
 
-import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashMap;
@@ -28,6 +27,7 @@ import org.meveo.event.qualifier.Terminated;
 import org.meveo.event.qualifier.Updated;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.IEntity;
+import org.meveo.model.IProvider;
 import org.meveo.model.admin.User;
 import org.meveo.model.notification.EmailNotification;
 import org.meveo.model.notification.InboundRequest;
@@ -153,7 +153,7 @@ public class DefaultObserver {
         }
     }
 
-    private void fireCdrNotification(Notification notif, Serializable cdr) {
+    private void fireCdrNotification(Notification notif, IProvider cdr) {
         log.debug("Fire Cdr Notification for notif {} and  cdr {}", notif, cdr);
         try {
             if (!StringUtils.isBlank(notif.getElAction()) && matchExpression(notif.getElFilter(), cdr)) {
@@ -212,7 +212,7 @@ public class DefaultObserver {
         checkEvent(NotificationEventTypeEnum.REJECTED, e);
     }
 
-    public void cdrRejected(@Observes @RejectedCDR Serializable cdr) {
+    public void cdrRejected(@Observes @RejectedCDR IProvider cdr) {
         log.debug("Defaut observer : cdr {} rejected", cdr);
         for (Notification notif : notificationCacheContainerProvider.getApplicableNotifications(NotificationEventTypeEnum.REJECTED_CDR, cdr)) {
             fireCdrNotification(notif, cdr);

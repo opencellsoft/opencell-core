@@ -7,10 +7,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.meveo.api.dto.account.BillingAccountDto;
 import org.meveo.api.dto.response.BaseResponse;
 
-/**
- * @author Edward P. Legaspi
- **/
-@XmlRootElement(name = "GetCustomerAccountResponse")
+
+@XmlRootElement(name = "GetBillingAccountResponse")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class GetBillingAccountResponse extends BaseResponse {
 
