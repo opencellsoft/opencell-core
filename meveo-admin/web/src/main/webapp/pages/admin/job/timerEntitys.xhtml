@@ -39,7 +39,7 @@
                 <hftl:column label="#{messages['timer.schedule']}" field="timerSchedule" sort="false" />
                 <hftl:column label="#{messages['timer.active']}" field="timerInfo" childField="active" sort="false" />
                 <p:column headerText="#{messages['timer.isRunning']}">
-                    <h:outputText styleClass="ui-icon ui-icon-circle-check" rendered="#{timerEntityListBean.isTimerRunning(entity.id)}" />
+                    <h:outputText styleClass="ui-icon ui-icon-circle-check" rendered="#{timerEntityListBean.isTimerRunning(entity)}" />
                 </p:column>
                 <hftl:actionsColumn permission="#{identity.hasPermission('administration','administrationManagement')}" />
             </hftl:dataList>
