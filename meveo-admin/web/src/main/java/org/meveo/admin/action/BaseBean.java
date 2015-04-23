@@ -628,10 +628,6 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 		return "No popup information. Override BaseBean.getPopupInfo() method.";
 	}
 	
-	protected boolean isEnableEntity(T entity){
-		return entity instanceof EnableEntity;
-	}
-	
     /**
      * Disable current entity. Add error message to {@link statusMessages} if unsuccessful.
      * 
