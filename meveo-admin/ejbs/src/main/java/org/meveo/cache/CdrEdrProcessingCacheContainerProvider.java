@@ -111,8 +111,25 @@ public class CdrEdrProcessingCacheContainerProvider {
      * @param access Access to remove
      */
     public void removeAccessFromCache(Access access) {
-        accessCache.get(access.getProvider().getId() + "_" + access.getAccessUserId()).remove(access);
-        log.info("Removed access {} from access cache", access);
+        
+        // Case when AccessUserId value has not changed
+        if (accessCache.containsKey(access.getProvider().getId() + "_" + access.getAccessUserId())
+                && accessCache.get(access.getProvider().getId() + "_" + access.getAccessUserId()).contains(access)) {
+            accessCache.get(access.getProvider().getId() + "_" + access.getAccessUserId()).remove(access);
+            log.info("Removed access {} from access cache", access);
+            return;
+        
+        // Case when AccessUserId values has changed
+        } else {
+            for (List<Access> accesses : accessCache.values()) {
+                if (accesses.contains(access)){
+                    accesses.remove(access);
+                    log.info("Removed access {} from access cache", access);
+                    return;
+                }
+            }                                  
+        }
+        log.error("Failed to find and remove access {} from access cache", access);
     }
 
     /**
