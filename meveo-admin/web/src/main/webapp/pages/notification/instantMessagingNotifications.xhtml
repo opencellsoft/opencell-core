@@ -46,7 +46,8 @@
 					label="#{messages['entity.instantMessagingNotification.idEL']}"
 					field="idEl" />
 				<hftl:column label="#{messages['enableEntity.active']}" field="active" isMessage="true" />
-				  <hftl:actionsColumn editView="/pages/notification/instantMessagingNotificationDetail.xhtml" permission="#{persistentPermissionResolver.hasPermission('reporting','reportingManagement')}"  />
+				<hftl:actionsColumn renderEnableLink="true" 
+					editView="/pages/notification/instantMessagingNotificationDetail.xhtml" permission="#{persistentPermissionResolver.hasPermission('reporting','reportingManagement')}"  />
 			    
 			</hftl:dataList>
 	</ui:define>

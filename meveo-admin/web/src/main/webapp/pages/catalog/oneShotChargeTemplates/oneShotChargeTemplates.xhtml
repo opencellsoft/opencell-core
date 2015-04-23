@@ -58,7 +58,7 @@
 				label="#{messages['oneShotChargeTemplate.immediateInvoicing']}"
 				field="immediateInvoicing" isMessage="true" />
 
-			<hftl:actionsColumn
+			<hftl:actionsColumn renderEnableLink="true"
 				permission="#{identity.hasPermission('catalog','catalogManagement')}" />
 		</hftl:dataList>
 

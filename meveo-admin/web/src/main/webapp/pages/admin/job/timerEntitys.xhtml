@@ -40,7 +40,7 @@
 			<hftl:column label="#{messages['timer.schedule']}" field="timerSchedule" sort="false" />	
 			<hftl:column label="#{messages['timer.active']}" field="timerInfo" childField="active" sort="false" />
 			<hftl:actionsColumn
-				permission="#{identity.hasPermission('administration','administrationManagement')}" />
+				permission="#{identity.hasPermission('administration','administrationManagement')}" renderEnableLink="true"/>
 		</hftl:dataList>
 
 	</ui:define>
