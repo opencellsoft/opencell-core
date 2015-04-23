@@ -25126,8 +25126,8 @@ for( testCase in testSuite.getTestCaseList() ) {
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createCalendar>
-         <calendar code="ONE_DAY_CALENDAR">
-            <description>ONE_DAY_CALENDAR</description>
+         <calendar code="ONE_SHOT_CALENDAR">
+            <description>ONE_SHOT_CALENDAR</description>
             <calendarType>YEARLY</calendarType>
             <days day="1" month="12"/>
          </calendar>
