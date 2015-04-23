@@ -114,7 +114,8 @@
 									 
 							</p:column>
 						</hftl:dataList>
-
+						</p:panel>
+						<p:panel>
 						<hf:formPanel edit="#{edit}" id="discountPlanItemFormPanel"
 							formId="formDiscountPlanItem"
 							label="#{messages['discountPlanItem.title']}"
@@ -129,12 +130,12 @@
 
 							 <hf:formEntityField id="categorySelectId"
 							label="#{messages['invoiceSubCategory.invoiceCategory']}"
-							field="invoiceCategory" childField="code" required="true"
+							field="invoiceCategory" childField="code" required="false"
 							popup="true" popupId="searchInvoiceCategoryPopup" /> 
 							
 							<hf:formEntityField id="invoiceSubCategorySelectedId"
 							label="#{messages['charge.subCategory']}"
-							field="invoiceSubCategory" childField="code" required="true"
+							field="invoiceSubCategory" childField="code" required="false"
 							popup="true" popupId="searchInvoiceSubCategoryPopup" />	
 
 							<hf:formField
@@ -156,14 +157,13 @@
 									value="#{messages['discountPlanItem.addNew']}"
 									action="#{discountPlanBean.saveOrUpdateDiscountPlan()}"
 									icon="ui-icon-check"
-									update=":#{p:component('discountPlanItemPanel')}">
-								</p:commandButton> 
+									update=":tabView:discountPlanItemPanel,:tabView:discountPlanItemFormPanel:formDiscountPlanItem"/>
 								<p:commandButton
 											rendered="#{discountPlanItem.id!=null}"
 											action="#{discountPlanBean.saveOrUpdateDiscountPlan}"
 											value="#{messages['discountPlanItem.modifyDiscountPlantItem']}"
 											icon="ui-icon-check"
-											update=":#{p:component('discountPlanItemPanel')}"/>
+											update=":tabView:discountPlanItemPanel,:tabView:discountPlanItemFormPanel:formDiscountPlanItem"/>
 
 								<hf:clearButton id="resetButton"
 									label="#{messages['action.reset']}"
