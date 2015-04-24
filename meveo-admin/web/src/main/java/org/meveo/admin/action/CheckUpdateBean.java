@@ -42,10 +42,10 @@ public class CheckUpdateBean implements Serializable {
 		try {
 			String input = buildJsonRequest();
 			log.debug("Request Check Update ={}",input);
-			
+
 			String urlMoni = paramBean.getProperty("checkUpdate.url", "http://version.meveo.info/meveo-moni/api/rest/getVersion");
 			log.debug("Request Check Update url={}",urlMoni);
-			
+
 			//FIXME : deprecated
 			ClientRequest request = new ClientRequest(urlMoni);
 			request.body("application/json", input);
@@ -82,7 +82,7 @@ public class CheckUpdateBean implements Serializable {
 			}else{
 				log.debug("checkVersion remote service fail");
 			}
-			
+
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -104,28 +104,33 @@ public class CheckUpdateBean implements Serializable {
 
 	private String buildJsonRequest(){
 		try{
-			byte[] mac  = NetworkInterface.getByInetAddress(InetAddress.getLocalHost()).getHardwareAddress();
-
-			StringBuilder sb = new StringBuilder();
-			for (int i = 0; i < mac.length; i++) {
-				sb.append(String.format("%02X%s", mac[i], (i < mac.length - 1) ? "-" : ""));        
-			}
-
 			String productVersion = "4.0.2";
 			String productName = paramBean.getProperty("checkUpdate.productName", "Meveo");
 			String owner = paramBean.getProperty("checkUpdate.owner", "OpenCell");
-			String macAddress = sb.toString() ;
+			String macAddress = "";
 			String md5="";
 			String creationDate="";
 			String updateDate="";
 			String keyEntreprise="";
 			String machineVendor= "";
 			String installationMode="";
+			try{
+				byte[] mac  = NetworkInterface.getByInetAddress(InetAddress.getLocalHost()).getHardwareAddress();
+
+				StringBuilder sb = new StringBuilder();
+				for (int i = 0; i < mac.length; i++) {
+					sb.append(String.format("%02X%s", mac[i], (i < mac.length - 1) ? "-" : ""));        
+				}
+				macAddress = sb.toString() ;
+			}catch(Exception e){
+				macAddress="error:"+e.getMessage();
+			}
 
 			Runtime runtime = Runtime.getRuntime();
 			String nbCores=""+runtime.availableProcessors();
 			String memory=runtime.freeMemory()+";"+runtime.totalMemory()+";"+runtime.maxMemory();
 			String hdSize="";
+
 			for (Path root : FileSystems.getDefault().getRootDirectories())
 			{
 				try
