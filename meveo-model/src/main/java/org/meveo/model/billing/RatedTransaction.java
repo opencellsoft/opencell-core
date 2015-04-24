@@ -71,12 +71,12 @@ import org.meveo.model.crm.Provider;
 				+ "WHERE r.status=org.meveo.model.billing.RatedTransactionStatusEnum.OPEN"
 				+ " AND r.doNotTriggerInvoicing=false "
 				+ "AND r.amountWithoutTax<>0 "
-				+ " AND r.usageDate<:lastTransactionDate "
+				+ " AND r.usageDate<=:lastTransactionDate "
                 + "AND r.invoice is null"
 				+ " AND r.billingAccount=:billingAccount"),
 		@NamedQuery(name = "RatedTransaction.sumBillingAccountDisplayFree", query = "SELECT sum(r.amountWithoutTax),sum(r.amountWithTax),sum(r.amountTax) FROM RatedTransaction r "
 				+ "WHERE r.status=org.meveo.model.billing.RatedTransactionStatusEnum.OPEN"
-				+ " AND r.usageDate<:lastTransactionDate "
+				+ " AND r.usageDate<=:lastTransactionDate "
                 + " AND r.doNotTriggerInvoicing=false "
 				+ "AND r.invoice is null"
 				+ " AND r.billingAccount=:billingAccount"),
