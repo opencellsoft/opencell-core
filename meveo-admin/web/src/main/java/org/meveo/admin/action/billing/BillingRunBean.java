@@ -116,14 +116,12 @@ public class BillingRunBean extends BaseBean<BillingRun> {
 			if (billingRun.getId() == null) {
 				billingRun.setProcessType(BillingProcessTypesEnum.MANUAL);
 			}
-            
+
 			if (billingRun != null && billingRun.getId() != null && preReport.get() != null && preReport.get()) {
-				PreInvoicingReportsDTO preInvoicingReportsDTO = billingRunService
-						.generatePreInvoicingReports(billingRun);
+				PreInvoicingReportsDTO preInvoicingReportsDTO = billingRunService.generatePreInvoicingReports(billingRun);
 				billingRun.setPreInvoicingReports(preInvoicingReportsDTO);
 			} else if (billingRun != null && billingRun.getId() != null && postReport.get() != null && postReport.get()) {
-				PostInvoicingReportsDTO postInvoicingReportsDTO = billingRunService
-						.generatePostInvoicingReports(billingRun);
+				PostInvoicingReportsDTO postInvoicingReportsDTO = billingRunService.generatePostInvoicingReports(billingRun);
 				billingRun.setPostInvoicingReports(postInvoicingReportsDTO);
 			}
 
@@ -153,37 +151,34 @@ public class BillingRunBean extends BaseBean<BillingRun> {
 		return billingRunService;
 	}
 
-	public  BillingCycle getBillingCycle(){
-	    return entity.getBillingCycle();
+	public BillingCycle getBillingCycle() {
+		return entity.getBillingCycle();
 	}
-	
-	public void setBillingCycle(BillingCycle billingCycle){
-	    entity.setBillingCycle(billingCycle);
-	    if(entity.getProcessDate()==null){
-	        entity.setProcessDate(new Date());
-	    }
-        log.debug("setBillingCycle {}, invoicedate={}, lastTransactionDate={}", billingCycle.getCode()
-            ,entity.getInvoiceDate(),entity.getLastTransactionDate());
-	    if(billingCycle!=null){
-            if(billingCycle.getInvoiceDateProductionDelay()!=null){
-                entity.setInvoiceDate(DateUtils.addDaysToDate(entity.getProcessDate(),billingCycle.getInvoiceDateProductionDelay())); 
-            } else {
-                entity.setInvoiceDate(entity.getProcessDate());
-            }
-            if(billingCycle.getTransactionDateDelay()!=null){
-                entity.setLastTransactionDate(DateUtils.addDaysToDate(entity.getProcessDate(),billingCycle.getTransactionDateDelay())); 
-            } else {
-                entity.setLastTransactionDate(entity.getProcessDate());
-            }
-         }
-        log.debug("after setBillingCycle invoicedate={}, lastTransactionDate={}"
-            ,entity.getInvoiceDate(),entity.getLastTransactionDate());
+
+	public void setBillingCycle(BillingCycle billingCycle) {
+		entity.setBillingCycle(billingCycle);
+		if (entity.getProcessDate() == null) {
+			entity.setProcessDate(new Date());
+		}
+		log.debug("setBillingCycle {}, invoicedate={}, lastTransactionDate={}", billingCycle.getCode(), entity.getInvoiceDate(), entity.getLastTransactionDate());
+		if (billingCycle != null) {
+			if (billingCycle.getInvoiceDateProductionDelay() != null) {
+				entity.setInvoiceDate(DateUtils.addDaysToDate(entity.getProcessDate(), billingCycle.getInvoiceDateProductionDelay()));
+			} else {
+				entity.setInvoiceDate(entity.getProcessDate());
+			}
+			if (billingCycle.getTransactionDateDelay() != null) {
+				entity.setLastTransactionDate(DateUtils.addDaysToDate(entity.getProcessDate(), billingCycle.getTransactionDateDelay()));
+			} else {
+				entity.setLastTransactionDate(DateUtils.addDaysToDate(entity.getProcessDate(), 1));
+			}
+		}
+		log.debug("after setBillingCycle invoicedate={}, lastTransactionDate={}", entity.getInvoiceDate(), entity.getLastTransactionDate());
 	}
-	
-	
+
 	public String launchRecurringInvoicing() {
-		log.info("launchInvoicing billingRun BillingCycle={}, invoicedate={}, lastTransactionDate={}", entity.getBillingCycle().getCode()
-            ,entity.getInvoiceDate(),entity.getLastTransactionDate());
+		log.info("launchInvoicing billingRun BillingCycle={}, invoicedate={}, lastTransactionDate={}", entity.getBillingCycle().getCode(), entity.getInvoiceDate(),
+				entity.getLastTransactionDate());
 		try {
 			ParamBean param = ParamBean.getInstance();
 			String allowManyInvoicing = param.getProperty("billingRun.allowManyInvoicing", "true");
@@ -198,10 +193,10 @@ public class BillingRunBean extends BaseBean<BillingRun> {
 			entity.setStatus(BillingRunStatusEnum.NEW);
 			entity.setProcessDate(new Date());
 			entity.setProvider(entity.getBillingCycle().getProvider());
-	        
+
 			billingRunService.create(entity);
-            return "billingRuns";
-            
+			return "billingRuns";
+
 		} catch (Exception e) {
 			log.error(e.getMessage());
 			messages.error(e.getMessage());
@@ -214,7 +209,7 @@ public class BillingRunBean extends BaseBean<BillingRun> {
 			// statusMessages.add("facturation confirmee avec succes");
 			entity.setStatus(BillingRunStatusEnum.ON_GOING);
 			billingRunService.update(entity);
-            return "billingRuns";
+			return "billingRuns";
 
 		} catch (Exception e) {
 			log.error(e.getMessage());
@@ -232,16 +227,16 @@ public class BillingRunBean extends BaseBean<BillingRun> {
 				billingRun.setStatus(BillingRunStatusEnum.NEW);
 				billingRun.setProcessDate(new Date());
 				BillingCycle billingCycle = entity.getBillingCycle();
-				if(billingCycle!=null && billingCycle.getInvoiceDateProductionDelay()!=null){
-				    billingRun.setInvoiceDate(DateUtils.addDaysToDate(billingRun.getProcessDate(),billingCycle.getInvoiceDateProductionDelay())); 
-	            } else {
-	                billingRun.setInvoiceDate(entity.getProcessDate());
-	            }
-	            if(billingCycle!=null && billingCycle.getTransactionDateDelay()!=null){
-	                billingRun.setLastTransactionDate(DateUtils.addDaysToDate(billingRun.getProcessDate(),billingCycle.getTransactionDateDelay())); 
-	            } else {
-	                billingRun.setLastTransactionDate(billingRun.getProcessDate());
-	            }
+				if (billingCycle != null && billingCycle.getInvoiceDateProductionDelay() != null) {
+					billingRun.setInvoiceDate(DateUtils.addDaysToDate(billingRun.getProcessDate(), billingCycle.getInvoiceDateProductionDelay()));
+				} else {
+					billingRun.setInvoiceDate(entity.getProcessDate());
+				}
+				if (billingCycle != null && billingCycle.getTransactionDateDelay() != null) {
+					billingRun.setLastTransactionDate(DateUtils.addDaysToDate(billingRun.getProcessDate(), billingCycle.getTransactionDateDelay()));
+				} else {
+					billingRun.setLastTransactionDate(billingRun.getProcessDate());
+				}
 				billingRun.setProcessType(BillingProcessTypesEnum.MANUAL);
 				billingRun.setProvider(getCurrentProvider());
 				String selectedBillingAccounts = "";
@@ -250,7 +245,7 @@ public class BillingRunBean extends BaseBean<BillingRun> {
 				for (RejectedBillingAccount ba : entity.getRejectedBillingAccounts()) {
 					selectedBillingAccounts = selectedBillingAccounts + sep + ba.getId();
 					sep = ",";
-					if (!isBillable && ratedTransactionService.isBillingAccountBillable(ba.getBillingAccount(),billingRun.getLastTransactionDate())) {
+					if (!isBillable && ratedTransactionService.isBillingAccountBillable(ba.getBillingAccount(), billingRun.getLastTransactionDate())) {
 						isBillable = true;
 						break;
 					}
@@ -263,8 +258,8 @@ public class BillingRunBean extends BaseBean<BillingRun> {
 				billingRun.setSelectedBillingAccounts(selectedBillingAccounts);
 				billingRunService.create(billingRun);
 			}
-            return "billingRuns";
-            
+			return "billingRuns";
+
 		} catch (Exception e) {
 			log.error(e.getMessage());
 			messages.error(e.getMessage());
@@ -289,8 +284,8 @@ public class BillingRunBean extends BaseBean<BillingRun> {
 			entity.setStatus(BillingRunStatusEnum.CANCELED);
 			billingRunService.cleanBillingRun(entity);
 			billingRunService.update(entity);
-            return "billingRuns";
-            
+			return "billingRuns";
+
 		} catch (Exception e) {
 			log.error(e.getMessage());
 			messages.error(e.getMessage());
@@ -302,7 +297,7 @@ public class BillingRunBean extends BaseBean<BillingRun> {
 		try {
 			billingRunService.retateBillingRunTransactions(entity);
 			return cancelConfirmedInvoicing();
-			
+
 		} catch (Exception e) {
 			log.error(e.getMessage());
 			messages.error(e.getMessage());
@@ -314,7 +309,7 @@ public class BillingRunBean extends BaseBean<BillingRun> {
 		try {
 			billingRunService.retateBillingRunTransactions(entity);
 			return cancelInvoicing();
-			
+
 		} catch (Exception e) {
 			log.error(e.getMessage());
 			messages.error(e.getMessage());
@@ -358,8 +353,7 @@ public class BillingRunBean extends BaseBean<BillingRun> {
 			messages.error(e.getMessage());
 		}
 
-		return "/pages/billing/invoicing/postInvoicingReports.xhtml?edit=false&postReport=true&objectId="
-				+ entity.getId();
+		return "/pages/billing/invoicing/postInvoicingReports.xhtml?edit=false&postReport=true&objectId=" + entity.getId();
 	}
 
 	/**
