@@ -605,7 +605,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 					if(subscriptionAge>=discountPlan.getMinDuration() && subscriptionAge<=discountPlan.getMaxDuration()){
 						List<DiscountPlanItem> discountPlanItems =discountPlan.getDiscountPlanItems();
 						for(DiscountPlanItem discountPlanItem:discountPlanItems){
-							if(discountPlanItem.isActive() || matchDiscountPlanItemExpression(discountPlanItem.getExpressionEl(),customerAccount, billingAccount, invoice)){
+							if(discountPlanItem.isActive() && matchDiscountPlanItemExpression(discountPlanItem.getExpressionEl(),customerAccount, billingAccount, invoice)){
 								if(discountPlanItem.getInvoiceSubCategory()!=null){
 									createDiscountAggregate(userAccount,userAccount.getWallet(), invoice, discountPlanItem.getInvoiceSubCategory(),discountPlanItem.getPercent());
 								}else if(discountPlanItem.getInvoiceCategory()!=null){
@@ -701,7 +701,9 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 	
 	private boolean matchDiscountPlanItemExpression(String expression,CustomerAccount customerAccount,BillingAccount billingAccount,Invoice invoice) throws BusinessException {
 		Boolean result = true;
-		if (StringUtils.isBlank(expression)) {
+		
+		
+		if (StringUtils.isBlank(expression) ) {
 			return result;
 		}
 		Map<Object, Object> userMap = new HashMap<Object, Object>();
