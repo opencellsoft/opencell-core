@@ -85,7 +85,6 @@ public class CheckUpdateBean implements Serializable {
 
 
 		} catch (Exception e) {
-			e.printStackTrace();
 			log.error("Exception on getVersionOutput : ",e.getMessage());
 			versionOutput="-";
 		}
@@ -195,7 +194,6 @@ public class CheckUpdateBean implements Serializable {
 			return input;
 
 		}catch(Exception e){
-			e.printStackTrace();
 			log.error("Exception on buildJsonRequest: ",e.getMessage());
 		}
 		return null;
