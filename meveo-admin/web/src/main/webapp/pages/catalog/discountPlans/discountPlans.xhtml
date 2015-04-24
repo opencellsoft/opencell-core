@@ -33,11 +33,7 @@
 				field="minDuration" />
 			<hftl:column label="#{messages['pricePlanMatrix.maxSubscriptionAgeInMonth']}"
 				field="maxDuration" />
-			<hftl:column label="#{messages['discountPlanMatrix.planItems']}"
-				field="discountPlanItems" childField="code" isList="true"
-				childFieldId="id"
-				entityView="/pages/catalog/discountPlanItems/discountPlanItemDetail.xhtml"
-				backView="discountPlans" showPopup="true" popupFields="code" />
+			<hftl:columnList label="#{messages['discountPlanMatrix.planItems']}" value="#{entity.discountPlanItems}" field="code" fieldId="id"/>
             <hftl:column label="#{messages['enableEntity.active']}" field="active"
                 isMessage="true" />
 

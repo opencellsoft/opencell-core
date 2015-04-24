@@ -80,10 +80,11 @@
 							label="#{messages['discountPlan.title']}"
 							backingBean="#{discountPlanItemBean}" sortBy="code"
 							dataModel="#{discountPlanBean.entity.discountPlanItems}">
-								
-							<hftl:column label="#{messages['discountPlanMatrix.itemCode']}"
-								field="code" />
-								
+					
+							<p:column headerText="#{messages['discountPlanMatrix.itemCode']}"  >
+								<h:outputText value="#{entity.code}" />
+									</p:column>
+								 	
 							<hftl:column
 								label="#{messages['discountPlanItem.invoiceCategory']}"
 								field="invoiceCategory" childField="code" />
