@@ -101,7 +101,7 @@
 				field="eventCode" />
 			<hftl:column label="#{messages['BusinessEntity.description']}" field="description" />
 			<hftl:column label="#{messages['pricePlanMatrix.offerCode']}"
-				field="offer" />
+				field="offerTemplate" childField="code" />
 			<hftl:columnList label="#{messages['seller.title']}"
 				value="#{entity.seller}" field="description" fieldId="id"
 				entityView="sellerDetail" />
