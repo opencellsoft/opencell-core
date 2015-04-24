@@ -57,10 +57,10 @@
 						<hf:formField label="#{messages['enableEntity.disabled']}"
 							field="disabled" isMessage="true" showOnlyOnConsult="true" />
 						<hf:formField
-							label="#{messages['discountPlanMatrix.minDuration']}"
+							label="#{messages['pricePlanMatrix.minSubscriptionAgeInMonth']}"
 							field="minDuration" />
 						<hf:formField
-							label="#{messages['discountPlanMatrix.maxDuration']}"
+							label="#{messages['pricePlanMatrix.maxSubscriptionAgeInMonth']}"
 							field="maxDuration" />
 					</hf:formPanel>
 				</p:tab>
@@ -80,6 +80,9 @@
 							label="#{messages['discountPlan.title']}"
 							backingBean="#{discountPlanItemBean}" sortBy="code"
 							dataModel="#{discountPlanBean.entity.discountPlanItems}">
+							<hftl:column label="#{messages['BusinessEntity.code']}"
+								field="code" />
+								
 							<hftl:column label="#{messages['discountPlanMatrix.itemCode']}"
 								field="discountPlan" childField="code" />
 							<hftl:column
