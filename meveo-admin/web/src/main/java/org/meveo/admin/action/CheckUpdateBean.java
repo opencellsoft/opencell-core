@@ -2,40 +2,41 @@ package org.meveo.admin.action;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.PrintWriter;
 import java.io.Serializable;
 import java.net.InetAddress;
-import java.net.MalformedURLException;
 import java.net.NetworkInterface;
-import java.util.Enumeration;
-import java.util.Map;
+import java.nio.file.FileStore;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
-import javax.enterprise.context.ConversationScoped;
-import javax.faces.context.ExternalContext;
-import javax.faces.context.FacesContext;
-import javax.inject.Inject;
+import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Named;
-import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.vfs.FileSystemException;
 import org.jboss.resteasy.client.ClientRequest;
 import org.jboss.resteasy.client.ClientResponse;
 import org.meveo.commons.utils.ParamBean;
+import org.slf4j.LoggerFactory;
 
+@SuppressWarnings("deprecation")
 @Named
-@ConversationScoped
+@ApplicationScoped
 public class CheckUpdateBean implements Serializable {
 
 
+    private org.slf4j.Logger log = LoggerFactory.getLogger(this.getClass());
+    
 	private static final long serialVersionUID = 1L;
 
-	@Inject
-	private org.slf4j.Logger log;
+
 
 	private ParamBean paramBean = ParamBean.getInstance();
+	
+	private String versionOutput=null;
 
-	public String doIt() {
+	public void checkVersion() {
 		try {
 			byte[] mac  = NetworkInterface.getByInetAddress(InetAddress.getLocalHost()).getHardwareAddress();
 			
@@ -54,10 +55,23 @@ public class CheckUpdateBean implements Serializable {
 			String keyEntreprise="";
 			String machineVendor= "";
 			String installationMode="";
-			
-			String nbCores="";
-			String memory="";
-			String hdSize="";
+
+            Runtime runtime = Runtime.getRuntime();
+			String nbCores=""+runtime.availableProcessors();
+			String memory=runtime.freeMemory()+";"+runtime.totalMemory()+";"+runtime.maxMemory();
+            String hdSize="";
+			for (Path root : FileSystems.getDefault().getRootDirectories())
+			{
+			    try
+			    {
+			        FileStore store = Files.getFileStore(root);
+			        hdSize=store.getUsableSpace()+";"+store.getTotalSpace();
+			    }
+			    catch (FileSystemException e)
+			    {
+			        hdSize="error:"+e.getMessage();
+			    }
+			}
 			
 			String osName = System.getProperty("os.name");
 			String osVersion = System.getProperty("os.version");
@@ -71,9 +85,10 @@ public class CheckUpdateBean implements Serializable {
 			
 			String urlMoni = paramBean.getProperty("checkUpdate.url", "http://version.meveo.info/meveo-moni/api/rest/getVersion");
 			
+			//FIXME : deprecated
 			ClientRequest request = new ClientRequest(urlMoni);
 			
-			log.info("Requet Check Update url={}",urlMoni);
+			log.debug("Request Check Update url={}",urlMoni);
 			String input = "{"+
 					"	  #productName#: #"+productName+"#,"+
 					"	  #productVersion#: #"+productVersion+"#,"+
@@ -108,38 +123,42 @@ public class CheckUpdateBean implements Serializable {
 					"}";
 			
 			input = input.replaceAll("#", "\"");
-			log.info("Requet Check Update ={}",input);
+			log.debug("Request Check Update ={}",input);
 			
 			request.body("application/json", input);
 			request.accept("application/json");
 			
 			ClientResponse<String> response = request.post(String.class);
 			if (response.getStatus() != 201) {
-				throw new RuntimeException("ChekUpdate Failed : HTTP error code : "+ response.getStatus());
-			}
-
-			BufferedReader br = new BufferedReader(new InputStreamReader(new ByteArrayInputStream(response.getEntity().getBytes())));
-			String output = "",tmp=null;
-			while ((tmp = br.readLine())!= null) {
-				output+=tmp ;
+			    log.debug("ChekUpdate Failed : HTTP error code : "+ response.getStatus());
+			} else {    
+			    String output = "",tmp=null;
+                try(BufferedReader br = new BufferedReader(new InputStreamReader(new ByteArrayInputStream(response.getEntity().getBytes()))))
+			    {  
+        			while ((tmp = br.readLine())!= null) {
+        				output+=tmp ;
+        			}
+			    }
+                versionOutput = output;
 			}
 			
-			br.close();
-			return output;
 			
-		} catch (MalformedURLException e) {
-
-			e.printStackTrace();
-
-		} catch (IOException e) {
-			e.printStackTrace();
-
 		} catch (Exception e) {
-
-			e.printStackTrace();
-
+			//e.printStackTrace();
+		    versionOutput="-";
 		}
-		return null;
 	}
 
+    public String getVersionOutput() {
+        if(versionOutput==null){
+            checkVersion();
+        }
+        return versionOutput;
+    }
+
+    public void setVersionOutput(String versionOutput) {
+        this.versionOutput = versionOutput;
+    }
+
+	
 }
