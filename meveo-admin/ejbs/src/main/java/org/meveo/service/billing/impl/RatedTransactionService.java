@@ -629,8 +629,8 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 	private void createDiscountAggregate(UserAccount userAccount,WalletInstance wallet,Invoice invoice,InvoiceSubCategory invoiceSubCat,BigDecimal percent) throws BusinessException{
 		BillingAccount billingAccount=userAccount.getBillingAccount();
 		BigDecimal amount=invoiceAgregateService.findTotalAmountByWalletSubCat(wallet, invoiceSubCat, wallet.getProvider());
-		BigDecimal discountAmountWithoutTax=amount.multiply(percent.divide(HUNDRED)).negate();
-		
+		if (amount!=null && !BigDecimal.ZERO.equals(amount)){
+			BigDecimal discountAmountWithoutTax=amount.multiply(percent.divide(HUNDRED)).negate();
 		List<Tax> taxes = new ArrayList<Tax>();
 		for (InvoiceSubcategoryCountry invoicesubcatCountry : invoiceSubCat
 				.getInvoiceSubcategoryCountries()) {
@@ -669,7 +669,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 		invoiceAgregateSubcat.setDiscountPercent(percent);
 		invoiceAgregateService.create(invoiceAgregateSubcat);
 
-	}
+	}}
 	private boolean matchInvoicesubcatCountryExpression(String expression,BillingAccount billingAccount,Invoice invoice) throws BusinessException {
 		Boolean result = true;
 		if (StringUtils.isBlank(expression)) {
