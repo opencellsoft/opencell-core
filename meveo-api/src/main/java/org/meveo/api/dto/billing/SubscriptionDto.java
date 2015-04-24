@@ -14,6 +14,7 @@ import org.meveo.api.dto.CustomFieldDto;
 import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.account.AccessDto;
 import org.meveo.api.dto.account.AccessesDto;
+import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.crm.CustomFieldInstance;
 import org.meveo.model.mediation.Access;
@@ -44,7 +45,7 @@ public class SubscriptionDto extends BaseDto {
 
 	private Date terminationDate;
 	private String status;
-	
+
 	@XmlElement(required = false)
 	private CustomFieldsDto customFields = new CustomFieldsDto();
 
@@ -53,7 +54,7 @@ public class SubscriptionDto extends BaseDto {
 
 	@XmlElement(required = false)
 	private ServiceInstancesDto services = new ServiceInstancesDto();
-	
+
 	private String terminationReason;
 
 	public SubscriptionDto() {
@@ -91,6 +92,12 @@ public class SubscriptionDto extends BaseDto {
 				cfDto.setLongValue(entry.getValue().getLongValue());
 				cfDto.setStringValue(entry.getValue().getStringValue());
 				customFields.getCustomField().add(cfDto);
+			}
+		}
+
+		if (e.getServiceInstances() != null) {
+			for (ServiceInstance serviceInstance : e.getServiceInstances()) {
+				services.getServiceInstance().add(new ServiceInstanceDto(serviceInstance));
 			}
 		}
 	}
@@ -137,10 +144,9 @@ public class SubscriptionDto extends BaseDto {
 
 	@Override
 	public String toString() {
-		return "SubscriptionDto [code=" + code + ", description=" + description + ", userAccount=" + userAccount
-				+ ", offerTemplate=" + offerTemplate + ", subscriptionDate=" + subscriptionDate + ", terminationDate="
-				+ terminationDate + ", status=" + status + ", customFields=" + customFields + ", accesses=" + accesses
-				+ ", services=" + services + ", terminationReason=" + terminationReason + "]";
+		return "SubscriptionDto [code=" + code + ", description=" + description + ", userAccount=" + userAccount + ", offerTemplate=" + offerTemplate + ", subscriptionDate="
+				+ subscriptionDate + ", terminationDate=" + terminationDate + ", status=" + status + ", customFields=" + customFields + ", accesses=" + accesses + ", services="
+				+ services + ", terminationReason=" + terminationReason + "]";
 	}
 
 	public String getDescription() {

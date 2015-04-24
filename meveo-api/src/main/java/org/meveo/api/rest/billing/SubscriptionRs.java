@@ -16,6 +16,7 @@ import org.meveo.api.dto.billing.InstantiateServicesDto;
 import org.meveo.api.dto.billing.SubscriptionDto;
 import org.meveo.api.dto.billing.TerminateSubscriptionDto;
 import org.meveo.api.dto.billing.TerminateSubscriptionServicesDto;
+import org.meveo.api.dto.response.billing.GetSubscriptionResponseDto;
 import org.meveo.api.dto.response.billing.ListSubscriptionResponseDto;
 import org.meveo.api.rest.IBaseRs;
 import org.meveo.api.rest.security.RSSecured;
@@ -66,5 +67,9 @@ public interface SubscriptionRs extends IBaseRs {
 	@GET
 	@Path("/list")
 	ListSubscriptionResponseDto listByUserAccount(@QueryParam("userAccountCode") String userAccountCode);
+
+	@GET
+	@Path("/")
+	GetSubscriptionResponseDto findSubscription(@QueryParam("subscriptionCode") String subscriptionCode);
 
 }

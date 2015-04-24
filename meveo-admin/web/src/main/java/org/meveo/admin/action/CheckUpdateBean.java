@@ -2,81 +2,163 @@ package org.meveo.admin.action;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.PrintWriter;
 import java.io.Serializable;
-import java.net.MalformedURLException;
+import java.net.InetAddress;
+import java.net.NetworkInterface;
+import java.nio.file.FileStore;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
-import javax.enterprise.context.ConversationScoped;
-import javax.faces.context.ExternalContext;
-import javax.faces.context.FacesContext;
-import javax.inject.Inject;
+import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Named;
-import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.vfs.FileSystemException;
 import org.jboss.resteasy.client.ClientRequest;
 import org.jboss.resteasy.client.ClientResponse;
 import org.meveo.commons.utils.ParamBean;
+import org.slf4j.LoggerFactory;
 
+@SuppressWarnings("deprecation")
 @Named
-@ConversationScoped
+@ApplicationScoped
 public class CheckUpdateBean implements Serializable {
 
 
+    private org.slf4j.Logger log = LoggerFactory.getLogger(this.getClass());
+    
 	private static final long serialVersionUID = 1L;
 
-	@Inject
-	private org.slf4j.Logger log;
+
 
 	private ParamBean paramBean = ParamBean.getInstance();
+	
+	private String versionOutput=null;
 
-	public String doIt() {
+	public void checkVersion() {
 		try {
+			byte[] mac  = NetworkInterface.getByInetAddress(InetAddress.getLocalHost()).getHardwareAddress();
 			
-			String productVersion = paramBean.getProperty("checkUpdate.productVersion", "4.1");
+			 StringBuilder sb = new StringBuilder();
+		        for (int i = 0; i < mac.length; i++) {
+		            sb.append(String.format("%02X%s", mac[i], (i < mac.length - 1) ? "-" : ""));        
+		        }
+			
+			String productVersion = "4.0.2";
 			String productName = paramBean.getProperty("checkUpdate.productName", "Meveo");
 			String owner = paramBean.getProperty("checkUpdate.owner", "OpenCell");
-			String macAddress = paramBean.getProperty("checkUpdate.macAddress", "aa:zz:ee:rr:tt:yy");
-		
-			ClientRequest request = new ClientRequest(paramBean.getProperty("checkUpdate.url", "http://localhost:8080/meveo-moni/api/rest/getVersion"));
+			String macAddress = sb.toString() ;
+			String md5="";
+			String creationDate="";
+			String updateDate="";
+			String keyEntreprise="";
+			String machineVendor= "";
+			String installationMode="";
+
+            Runtime runtime = Runtime.getRuntime();
+			String nbCores=""+runtime.availableProcessors();
+			String memory=runtime.freeMemory()+";"+runtime.totalMemory()+";"+runtime.maxMemory();
+            String hdSize="";
+			for (Path root : FileSystems.getDefault().getRootDirectories())
+			{
+			    try
+			    {
+			        FileStore store = Files.getFileStore(root);
+			        hdSize=store.getUsableSpace()+";"+store.getTotalSpace();
+			    }
+			    catch (FileSystemException e)
+			    {
+			        hdSize="error:"+e.getMessage();
+			    }
+			}
 			
-			String input = "{ \"productName\": \""+productName+"\","+
-					       "  \"productVersion\": \""+productVersion+"\","+
-						   "  \"owner\": \""+owner+"\",	"+								
-					       "  \"machineInfo\": { \"macAddress\": \""+macAddress+"\"}	"+
-					       "}";
+			String osName = System.getProperty("os.name");
+			String osVersion = System.getProperty("os.version");
+			String osArch = System.getProperty("os.arch");
+			String javaVendor = System.getProperty("java.vendor");
+			String  javaVmVersion = System.getProperty("java.vm.version");
+			String  javaVmName = System.getProperty("java.vm.name");
+			String  javaSpecVersion = System.getProperty("java.runtime.version");
+			String  asName = System.getProperty("program.name");
+			String asVersion = System.getProperty("program.name");
+			
+			String urlMoni = paramBean.getProperty("checkUpdate.url", "http://version.meveo.info/meveo-moni/api/rest/getVersion");
+			
+			//FIXME : deprecated
+			ClientRequest request = new ClientRequest(urlMoni);
+			
+			log.debug("Request Check Update url={}",urlMoni);
+			String input = "{"+
+					"	  #productName#: #"+productName+"#,"+
+					"	  #productVersion#: #"+productVersion+"#,"+
+					"	  #owner#: #"+owner+"#,"+
+					"	  #productInfo#: {"+
+					"					    #md5#: #"+md5+"#,"+
+					"					    #creationDate#: #"+creationDate+"#,"+
+					"					    #updateDate#: #"+updateDate+"#,"+
+					"					    #keyEntreprise#: #"+keyEntreprise+"#"+					
+					"	  				},"+
+					"	  #machineInfo#: {"+
+					"					    #macAddress#: #"+macAddress+"#,"+
+					"					    #vendor#: #"+machineVendor+"#,"+
+					"					    #installationMode#:#"+installationMode+"#"+
+					"	  				},"+
+					"	  #machinePhysicalInfo#: {"+
+					"					    #nbCores#: #"+nbCores+"#,"+
+					"					    #memory#: #"+memory+"#,"+
+					"					    #hdSize#: #"+hdSize+"#"+
+					"	  				},"+		  						  				
+					"	  #machineSoftwareInfo#: {"+
+					"					    #osName#: #"+osName+"#,"+
+					"					    #osVersion#: #"+osVersion+"#,"+
+					"					    #osArch#: #"+osArch+"#,"+					
+					"					    #javaVendor#: #"+javaVendor+"#,"+
+					"					    #javaVersion#: #"+javaSpecVersion+"#,"+
+					"					    #javaVmVersion#: #"+javaVmVersion+"#,"+
+					"					    #javaVmName#: #"+javaVmName+"#,"+
+					"					    #asName#: #"+asName+"#,"+
+					"					    #asVersion#: #"+asVersion+"#"+					
+					"	  				}"+			
+					"}";
+			
+			input = input.replaceAll("#", "\"");
+			log.debug("Request Check Update ={}",input);
 			
 			request.body("application/json", input);
 			request.accept("application/json");
 			
 			ClientResponse<String> response = request.post(String.class);
 			if (response.getStatus() != 201) {
-				throw new RuntimeException("ChekUpdate Failed : HTTP error code : "+ response.getStatus());
-			}
-
-			BufferedReader br = new BufferedReader(new InputStreamReader(new ByteArrayInputStream(response.getEntity().getBytes())));
-			String output = "",tmp=null;
-			while ((tmp = br.readLine())!= null) {
-				output+=tmp ;
+			    log.debug("ChekUpdate Failed : HTTP error code : "+ response.getStatus());
+			} else {    
+			    String output = "",tmp=null;
+                try(BufferedReader br = new BufferedReader(new InputStreamReader(new ByteArrayInputStream(response.getEntity().getBytes()))))
+			    {  
+        			while ((tmp = br.readLine())!= null) {
+        				output+=tmp ;
+        			}
+			    }
+                versionOutput = output;
 			}
 			
-			br.close();
-			return output;
 			
-		} catch (MalformedURLException e) {
-
-			e.printStackTrace();
-
-		} catch (IOException e) {
-			e.printStackTrace();
-
 		} catch (Exception e) {
-
-			e.printStackTrace();
-
+			//e.printStackTrace();
+		    versionOutput="-";
 		}
-		return null;
 	}
 
+    public String getVersionOutput() {
+        if(versionOutput==null){
+            checkVersion();
+        }
+        return versionOutput;
+    }
+
+    public void setVersionOutput(String versionOutput) {
+        this.versionOutput = versionOutput;
+    }
+
+	
 }

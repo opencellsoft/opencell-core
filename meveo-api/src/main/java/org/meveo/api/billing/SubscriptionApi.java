@@ -664,4 +664,23 @@ public class SubscriptionApi extends BaseApi {
 		}
 	}
 
+	public SubscriptionDto findSubscription(String subscriptionCode, Provider provider) throws MeveoApiException {
+		SubscriptionDto result = new SubscriptionDto();
+
+		if (!StringUtils.isBlank(subscriptionCode)) {
+			Subscription subscription = subscriptionService.findByCode(subscriptionCode, provider);
+			if (subscription == null) {
+				throw new EntityDoesNotExistsException(Subscription.class, subscriptionCode);
+			}
+
+			result = new SubscriptionDto(subscription);
+		} else {
+			missingParameters.add("subscriptionCode");
+
+			throw new MissingParameterException(getMissingParametersExceptionMessage());
+		}
+
+		return result;
+	}
+
 }
