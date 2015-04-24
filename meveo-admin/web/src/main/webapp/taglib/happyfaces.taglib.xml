@@ -12,6 +12,10 @@
 		<tag-name>dataList</tag-name>
 		<source>dataList.xhtml</source>
 	</tag>
+	<tag>
+	<tag-name>dataEditList</tag-name>
+		<source>dataEditList.xhtml</source>
+	</tag>
 
 	<tag>
 		<tag-name>column</tag-name>
@@ -21,7 +25,6 @@
 		<tag-name>columnList</tag-name>
 		<source>columnList.xhtml</source>
 	</tag>
-
 	<tag>
 		<tag-name>actionsColumn</tag-name>
 		<source>actionsColumn.xhtml</source>

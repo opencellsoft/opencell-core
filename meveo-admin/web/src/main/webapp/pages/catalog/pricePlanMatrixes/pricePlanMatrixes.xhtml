@@ -75,10 +75,12 @@
 			<hf:searchField id="tradingCurrency" label="#{messages['pricePlanMatrix.tradingCurrency']}"
 				field="tradingCurrency"  childField="prDescription" popup="true" 
 				popupId="searchTradingCurrencyPopup" clearButton="true" />
-			<hf:searchField label="#{messages['pricePlanMatrix.maxQuantity']}" field="maxQuantity" />
-			<hf:searchField label="#{messages['pricePlanMatrix.startSubscriptionDate']}" field="startSubscriptionDate" />
-			<hf:searchField label="#{messages['pricePlanMatrix.criteria1Value']}" field="criteria1Value" />
-
+			<hf:minmaxSearchField label="#{messages['pricePlanMatrix.quantity']}" minField="minQuantity" maxField="maxQuantity" />
+			<hf:likeCriteriasSearchField label="#{messages['pricePlanMatrix.criteria1Value']}" fields="criteria1Value,criteria2Value,criteria3Value" />
+			<hf:minmaxSearchField label="#{messages['pricePlanMatrix.subscriptionDate']}" minField="startSubscriptionDate" maxField="endSubscriptionDate" />
+			<hf:minmaxSearchField label="#{messages['pricePlanMatrix.ratingDate']}" minField="startRatingDate" maxField="endRatingDate" />
+			<hf:minmaxSearchField label="#{messages['pricePlanMatrix.subscriptionAgeInMonth']}" minField="minSubscriptionAgeInMonth" maxField="maxSubscriptionAgeInMonth" />
+			
 			<!-- <hf:searchField label="#{messages['pricePlanMatrix.startSubscriptionDate']}" field="startSubscriptionDate" />
     			<hf:searchField label="#{messages['pricePlanMatrix.endSubscriptionDate']}" field="endSubscriptionDate" />
     			<hf:searchField label="#{messages['pricePlanMatrix.startRatingDate']}" field="startRatingDate" />
@@ -92,11 +94,14 @@
     			<hf:searchField label="#{messages['pricePlanMatrix.amountWithTax']}" field="amountWithTax" /> -->
 		</hf:searchPanel>
 
-		<hftl:dataList label="#{messages['pricePlanMatrix.title']}"
+		<hftl:dataEditList label="#{messages['pricePlanMatrix.title']}"
 			backingBean="#{pricePlanMatrixListBean}" sortBy="code">
             <hftl:column label="#{messages['BusinessEntity.code']}" field="code" />
 			<hftl:column label="#{messages['pricePlanMatrix.table.eventCode']}"
 				field="eventCode" />
+			<hftl:column label="#{messages['BusinessEntity.description']}" field="description" />
+			<hftl:column label="#{messages['pricePlanMatrix.offerCode']}"
+				field="offer" />
 			<hftl:columnList label="#{messages['seller.title']}"
 				value="#{entity.seller}" field="description" fieldId="id"
 				entityView="sellerDetail" />
@@ -145,7 +150,7 @@
 			</p:column>
 			<hftl:actionsColumn
 				permission="#{identity.hasPermission('catalog','catalogManagement')}" />
-		</hftl:dataList>
+		</hftl:dataEditList>
 	</ui:define>
 
 </ui:composition>
