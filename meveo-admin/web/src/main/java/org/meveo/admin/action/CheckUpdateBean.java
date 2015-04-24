@@ -6,7 +6,11 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.io.Serializable;
+import java.net.InetAddress;
 import java.net.MalformedURLException;
+import java.net.NetworkInterface;
+import java.util.Enumeration;
+import java.util.Map;
 
 import javax.enterprise.context.ConversationScoped;
 import javax.faces.context.ExternalContext;
@@ -33,19 +37,78 @@ public class CheckUpdateBean implements Serializable {
 
 	public String doIt() {
 		try {
+			byte[] mac  = NetworkInterface.getByInetAddress(InetAddress.getLocalHost()).getHardwareAddress();
 			
-			String productVersion = paramBean.getProperty("checkUpdate.productVersion", "4.1");
+			 StringBuilder sb = new StringBuilder();
+		        for (int i = 0; i < mac.length; i++) {
+		            sb.append(String.format("%02X%s", mac[i], (i < mac.length - 1) ? "-" : ""));        
+		        }
+			
+			String productVersion = "4.0.2";
 			String productName = paramBean.getProperty("checkUpdate.productName", "Meveo");
 			String owner = paramBean.getProperty("checkUpdate.owner", "OpenCell");
-			String macAddress = paramBean.getProperty("checkUpdate.macAddress", "aa:zz:ee:rr:tt:yy");
-		
-			ClientRequest request = new ClientRequest(paramBean.getProperty("checkUpdate.url", "http://localhost:8080/meveo-moni/api/rest/getVersion"));
+			String macAddress = sb.toString() ;
+			String md5="";
+			String creationDate="";
+			String updateDate="";
+			String keyEntreprise="";
+			String machineVendor= "";
+			String installationMode="";
 			
-			String input = "{ \"productName\": \""+productName+"\","+
-					       "  \"productVersion\": \""+productVersion+"\","+
-						   "  \"owner\": \""+owner+"\",	"+								
-					       "  \"machineInfo\": { \"macAddress\": \""+macAddress+"\"}	"+
-					       "}";
+			String nbCores="";
+			String memory="";
+			String hdSize="";
+			
+			String osName = System.getProperty("os.name");
+			String osVersion = System.getProperty("os.version");
+			String osArch = System.getProperty("os.arch");
+			String javaVendor = System.getProperty("java.vendor");
+			String  javaVmVersion = System.getProperty("java.vm.version");
+			String  javaVmName = System.getProperty("java.vm.name");
+			String  javaSpecVersion = System.getProperty("java.runtime.version");
+			String  asName = System.getProperty("program.name");
+			String asVersion = System.getProperty("program.name");
+			
+			String urlMoni = paramBean.getProperty("checkUpdate.url", "http://version.meveo.info/meveo-moni/api/rest/getVersion");
+			
+			ClientRequest request = new ClientRequest(urlMoni);
+			
+			log.info("Requet Check Update url={}",urlMoni);
+			String input = "{"+
+					"	  #productName#: #"+productName+"#,"+
+					"	  #productVersion#: #"+productVersion+"#,"+
+					"	  #owner#: #"+owner+"#,"+
+					"	  #productInfo#: {"+
+					"					    #md5#: #"+md5+"#,"+
+					"					    #creationDate#: #"+creationDate+"#,"+
+					"					    #updateDate#: #"+updateDate+"#,"+
+					"					    #keyEntreprise#: #"+keyEntreprise+"#"+					
+					"	  				},"+
+					"	  #machineInfo#: {"+
+					"					    #macAddress#: #"+macAddress+"#,"+
+					"					    #vendor#: #"+machineVendor+"#,"+
+					"					    #installationMode#:#"+installationMode+"#"+
+					"	  				},"+
+					"	  #machinePhysicalInfo#: {"+
+					"					    #nbCores#: #"+nbCores+"#,"+
+					"					    #memory#: #"+memory+"#,"+
+					"					    #hdSize#: #"+hdSize+"#"+
+					"	  				},"+		  						  				
+					"	  #machineSoftwareInfo#: {"+
+					"					    #osName#: #"+osName+"#,"+
+					"					    #osVersion#: #"+osVersion+"#,"+
+					"					    #osArch#: #"+osArch+"#,"+					
+					"					    #javaVendor#: #"+javaVendor+"#,"+
+					"					    #javaVersion#: #"+javaSpecVersion+"#,"+
+					"					    #javaVmVersion#: #"+javaVmVersion+"#,"+
+					"					    #javaVmName#: #"+javaVmName+"#,"+
+					"					    #asName#: #"+asName+"#,"+
+					"					    #asVersion#: #"+asVersion+"#"+					
+					"	  				}"+			
+					"}";
+			
+			input = input.replaceAll("#", "\"");
+			log.info("Requet Check Update ={}",input);
 			
 			request.body("application/json", input);
 			request.accept("application/json");
