@@ -17,6 +17,8 @@ import javax.inject.Named;
 import org.apache.commons.vfs.FileSystemException;
 import org.jboss.resteasy.client.ClientRequest;
 import org.jboss.resteasy.client.ClientResponse;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
 import org.meveo.commons.utils.ParamBean;
 import org.slf4j.LoggerFactory;
 
@@ -26,25 +28,88 @@ import org.slf4j.LoggerFactory;
 public class CheckUpdateBean implements Serializable {
 
 
-    private org.slf4j.Logger log = LoggerFactory.getLogger(this.getClass());
-    
+	private org.slf4j.Logger log = LoggerFactory.getLogger(this.getClass());
+
 	private static final long serialVersionUID = 1L;
 
 
 
 	private ParamBean paramBean = ParamBean.getInstance();
-	
+
 	private String versionOutput=null;
 
 	public void checkVersion() {
 		try {
+			String input = buildJsonRequest();
+			log.debug("Request Check Update ={}",input);
+			
+			String urlMoni = paramBean.getProperty("checkUpdate.url", "http://version.meveo.info/meveo-moni/api/rest/getVersion");
+			log.debug("Request Check Update url={}",urlMoni);
+			
+			//FIXME : deprecated
+			ClientRequest request = new ClientRequest(urlMoni);
+			request.body("application/json", input);
+			request.accept("application/json");
+
+			ClientResponse<String> response = request.post(String.class);
+			String jsonResponse = "";
+			if (response.getStatus() != 201) {
+				log.debug("ChekUpdate Failed : HTTP error code : "+ response.getStatus());
+			} else {    
+				String tmp=null;
+				try(BufferedReader br = new BufferedReader(new InputStreamReader(new ByteArrayInputStream(response.getEntity().getBytes()))))
+				{  
+					while ((tmp = br.readLine())!= null) {
+						jsonResponse+=tmp ;
+					}
+				} 
+			}
+
+			log.debug("Response jsonResponse ={}",jsonResponse);
+			JSONParser jsonParser = new JSONParser();
+			JSONObject jsonResponseObject = (JSONObject) jsonParser.parse(jsonResponse);
+			JSONObject jsonActionStatus =  (JSONObject) jsonResponseObject.get("actionStatus");
+			String responseStatus  =(String) jsonActionStatus.get("status");
+			Boolean newVersion  =(Boolean) jsonResponseObject.get("newVersion");
+			if("SUCCESS".equals(responseStatus)){
+				if(newVersion.booleanValue()){ 
+					JSONObject jsonVersionObjectDto =  (JSONObject) jsonResponseObject.get("versionObjectDto");
+					versionOutput = (String)jsonVersionObjectDto.get("htmlContent");
+					log.debug("there's a NEW version  ={}",versionOutput);
+				}else{
+					log.debug("there is NO new version");
+				}
+			}else{
+				log.debug("checkVersion remote service fail");
+			}
+			
+
+		} catch (Exception e) {
+			log.error("Exception on getVersionOutput: ",e.getMessage());
+			versionOutput="-";
+		}
+	}
+
+	public String getVersionOutput() {
+		if(versionOutput==null){
+			checkVersion();
+		}
+		return versionOutput;
+	}
+
+	public void setVersionOutput(String versionOutput) {
+		this.versionOutput = versionOutput;
+	}
+
+	private String buildJsonRequest(){
+		try{
 			byte[] mac  = NetworkInterface.getByInetAddress(InetAddress.getLocalHost()).getHardwareAddress();
-			
-			 StringBuilder sb = new StringBuilder();
-		        for (int i = 0; i < mac.length; i++) {
-		            sb.append(String.format("%02X%s", mac[i], (i < mac.length - 1) ? "-" : ""));        
-		        }
-			
+
+			StringBuilder sb = new StringBuilder();
+			for (int i = 0; i < mac.length; i++) {
+				sb.append(String.format("%02X%s", mac[i], (i < mac.length - 1) ? "-" : ""));        
+			}
+
 			String productVersion = "4.0.2";
 			String productName = paramBean.getProperty("checkUpdate.productName", "Meveo");
 			String owner = paramBean.getProperty("checkUpdate.owner", "OpenCell");
@@ -56,23 +121,23 @@ public class CheckUpdateBean implements Serializable {
 			String machineVendor= "";
 			String installationMode="";
 
-            Runtime runtime = Runtime.getRuntime();
+			Runtime runtime = Runtime.getRuntime();
 			String nbCores=""+runtime.availableProcessors();
 			String memory=runtime.freeMemory()+";"+runtime.totalMemory()+";"+runtime.maxMemory();
-            String hdSize="";
+			String hdSize="";
 			for (Path root : FileSystems.getDefault().getRootDirectories())
 			{
-			    try
-			    {
-			        FileStore store = Files.getFileStore(root);
-			        hdSize=store.getUsableSpace()+";"+store.getTotalSpace();
-			    }
-			    catch (FileSystemException e)
-			    {
-			        hdSize="error:"+e.getMessage();
-			    }
+				try
+				{
+					FileStore store = Files.getFileStore(root);
+					hdSize=store.getUsableSpace()+";"+store.getTotalSpace();
+				}
+				catch (FileSystemException e)
+				{
+					hdSize="error:"+e.getMessage();
+				}
 			}
-			
+
 			String osName = System.getProperty("os.name");
 			String osVersion = System.getProperty("os.version");
 			String osArch = System.getProperty("os.arch");
@@ -82,13 +147,12 @@ public class CheckUpdateBean implements Serializable {
 			String  javaSpecVersion = System.getProperty("java.runtime.version");
 			String  asName = System.getProperty("program.name");
 			String asVersion = System.getProperty("program.name");
-			
-			String urlMoni = paramBean.getProperty("checkUpdate.url", "http://version.meveo.info/meveo-moni/api/rest/getVersion");
-			
-			//FIXME : deprecated
-			ClientRequest request = new ClientRequest(urlMoni);
-			
-			log.debug("Request Check Update url={}",urlMoni);
+
+
+			/*
+			 * Dont add any fields in this json object
+			 * if needed , so add idd it first in the remote service
+			 */
 			String input = "{"+
 					"	  #productName#: #"+productName+"#,"+
 					"	  #productVersion#: #"+productVersion+"#,"+
@@ -121,44 +185,13 @@ public class CheckUpdateBean implements Serializable {
 					"					    #asVersion#: #"+asVersion+"#"+					
 					"	  				}"+			
 					"}";
-			
 			input = input.replaceAll("#", "\"");
-			log.debug("Request Check Update ={}",input);
-			
-			request.body("application/json", input);
-			request.accept("application/json");
-			
-			ClientResponse<String> response = request.post(String.class);
-			if (response.getStatus() != 201) {
-			    log.debug("ChekUpdate Failed : HTTP error code : "+ response.getStatus());
-			} else {    
-			    String output = "",tmp=null;
-                try(BufferedReader br = new BufferedReader(new InputStreamReader(new ByteArrayInputStream(response.getEntity().getBytes()))))
-			    {  
-        			while ((tmp = br.readLine())!= null) {
-        				output+=tmp ;
-        			}
-			    }
-                versionOutput = output;
-			}
-			
-			
-		} catch (Exception e) {
-			//e.printStackTrace();
-		    versionOutput="-";
+			return input;
+
+		}catch(Exception e){
+			log.error("Exception on buildJsonRequest: ",e.getMessage());
 		}
+		return null;
+
 	}
-
-    public String getVersionOutput() {
-        if(versionOutput==null){
-            checkVersion();
-        }
-        return versionOutput;
-    }
-
-    public void setVersionOutput(String versionOutput) {
-        this.versionOutput = versionOutput;
-    }
-
-	
 }
