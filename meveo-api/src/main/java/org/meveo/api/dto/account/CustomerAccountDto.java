@@ -44,7 +44,7 @@ public class CustomerAccountDto extends AccountDto {
 	}
 
 	public CustomerAccountDto(CustomerAccount e) {
-		super();
+		super(e);
 
 		if (e.getCustomer() != null) {
 			customer = e.getCustomer().getCode();
