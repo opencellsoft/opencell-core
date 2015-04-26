@@ -65,7 +65,6 @@ import org.meveo.model.billing.WalletInstance;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.catalog.DiscountPlanItem;
 import org.meveo.model.payments.CustomerAccount;
-import org.meveo.model.shared.DateUtils;
 import org.meveo.service.api.dto.ConsumptionDTO;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
@@ -600,9 +599,6 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 			DiscountPlan discountPlan=billingAccount.getDiscountPlan();
 			CustomerAccount customerAccount=billingAccount.getCustomerAccount();
 			if(discountPlan!=null && discountPlan.isActive()){
-				for(Subscription subscription : userAccount.getSubscriptions()){
-					int subscriptionAge = DateUtils.monthsBetween(DateUtils.addDaysToDate(subscription.getSubscriptionDate(), -1),new Date());
-					if(subscriptionAge>=discountPlan.getMinDuration() && subscriptionAge<=discountPlan.getMaxDuration()){
 						List<DiscountPlanItem> discountPlanItems =discountPlan.getDiscountPlanItems();
 						for(DiscountPlanItem discountPlanItem:discountPlanItems){
 							if(discountPlanItem.isActive() && matchDiscountPlanItemExpression(discountPlanItem.getExpressionEl(),customerAccount, billingAccount, invoice)){
@@ -615,9 +611,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 									}
 								}
 							}
-						}
 					}
-				}
 			}
 			
 		} catch (BusinessException e) {
@@ -642,15 +636,12 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 		}
 		SubCategoryInvoiceAgregate invoiceAgregateSubcat = new SubCategoryInvoiceAgregate();
 		BigDecimal discountAmountTax=BigDecimal.ZERO;
-		BigDecimal discountAmountWithTax=BigDecimal.ZERO;
 		for (Tax tax:taxes) {
 			 discountAmountTax=discountAmountTax.add(discountAmountWithoutTax.multiply(tax.getPercent().divide(HUNDRED)));
-			 discountAmountWithTax=discountAmountWithTax.add(discountAmountWithoutTax.add(discountAmountTax));
 			 invoiceAgregateSubcat.addSubCategoryTax(tax);
 		}
 		
-		
-		
+		BigDecimal discountAmountWithTax=discountAmountWithoutTax.add(discountAmountTax);
 		
 		invoiceAgregateSubcat.setAuditable(billingAccount.getAuditable());
 		invoiceAgregateSubcat.setProvider(billingAccount.getProvider());

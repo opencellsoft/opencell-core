@@ -101,14 +101,10 @@ public abstract class InvoiceAgregate extends AuditableEntity {
 	@Column(name = "PR_DESCRIPTION", length = 50)
 	private String prDescription;
 
-	@Column(name = "DESCRIPTION_DISCOUNT", length = 50)
-	private String descriptionDiscount;
-	
+
 	@Column(name = "DISCOUNT_AGGREGATE", nullable = false)
 	private boolean discountAggregate;
 	
-	@Column(name = "DISCOUNT_PERCENT", precision = NB_PRECISION, scale = NB_DECIMALS)
-	private BigDecimal discountPercent;
 	
 	
 
@@ -144,13 +140,6 @@ public abstract class InvoiceAgregate extends AuditableEntity {
 		this.prDescription = prDescription;
 	}
 
-	public String getDescriptionDiscount() {
-		return descriptionDiscount;
-	}
-
-	public void setDescriptionDiscount(String descriptionDiscount) {
-		this.descriptionDiscount = descriptionDiscount;
-	}
 
 	public BillingAccount getBillingAccount() {
 		return billingAccount;
@@ -307,13 +296,6 @@ public abstract class InvoiceAgregate extends AuditableEntity {
 		this.discountAggregate = discountAggregate;
 	}
 
-	public BigDecimal getDiscountPercent() {
-		return discountPercent;
-	}
-
-	public void setDiscountPercent(BigDecimal discountPercent) {
-		this.discountPercent = discountPercent;
-	}
 	
 	
 

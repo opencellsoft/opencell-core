@@ -45,6 +45,7 @@ import org.meveo.model.billing.PostInvoicingReportsDTO;
 import org.meveo.model.billing.PreInvoicingReportsDTO;
 import org.meveo.model.billing.RatedTransaction;
 import org.meveo.model.billing.RatedTransactionStatusEnum;
+import org.meveo.model.billing.SubCategoryInvoiceAgregate;
 import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.billing.WalletOperationStatusEnum;
 import org.meveo.model.crm.Provider;
@@ -311,6 +312,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 		return amount;
 	}
 
+	@SuppressWarnings("unchecked")
 	public void cleanBillingRun(BillingRun billingRun) {
 		Query queryTrans = getEntityManager()
 				.createQuery(
@@ -323,11 +325,15 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 		
 		Query queryAgregate = getEntityManager()
 				.createQuery(
-						"update "
-								+ InvoiceAgregate.class.getName()
-								+ " set invoice=null where billingRun=:billingRun");
+						"from "
+								+ InvoiceAgregate.class.getName()+" where billingRun=:billingRun");
 		queryAgregate.setParameter("billingRun", billingRun);
-		queryAgregate.executeUpdate();
+		List<InvoiceAgregate> invoiceAgregates=(List<InvoiceAgregate>)queryAgregate.getResultList();
+		for(InvoiceAgregate invoiceAgregate:invoiceAgregates){
+			
+			getEntityManager().remove(invoiceAgregate);
+		}
+		getEntityManager().flush();
 
 		Query queryInvoices = getEntityManager().createQuery(
 				"delete from " + Invoice.class.getName() + " where billingRun=:billingRun");
