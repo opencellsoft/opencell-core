@@ -162,7 +162,9 @@
 			referencedTableName="billing_invoice_agregate" />
 		<addColumn tableName="BILLING_INVOICE_AGREGATE">
             <column name="DISCOUNT_PLAN_CODE" type="VARCHAR(50)" />
-			<column name="DISCOUNT_PLAN_ITEM_CODE" type="VARCHAR(50)" />
         </addColumn>	
+		<addColumn tableName="BILLING_INVOICE_AGREGATE">
+			<column name="DISCOUNT_PLAN_ITEM_CODE" type="VARCHAR(50)" />
+        </addColumn>
 	</changeSet>
 </databaseChangeLog>

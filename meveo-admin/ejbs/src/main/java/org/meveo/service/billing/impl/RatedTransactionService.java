@@ -465,38 +465,40 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 
 					invoice.setAmountWithoutTax(invoice.getAmountWithoutTax().add(delta).setScale(rounding, RoundingMode.HALF_UP));
 					invoice.setAmountWithTax(nonEnterprisePriceWithTax.setScale(rounding, RoundingMode.HALF_UP));
-					balance = customerAccountService.customerAccountBalanceDue(null, invoice.getBillingAccount()
-							.getCustomerAccount().getCode(), invoice.getDueDate());
-
-					if (balance == null) {
-						throw new BusinessException("account balance calculation failed");
-					}
+					
 				
 				}
 	            createInvoiceDiscountAggregates(userAccount, invoice);
 				
-				Object[] object=invoiceAgregateService.findTotalAmountsForDiscountAggregates(invoice);
 				
-				BigDecimal discountAmountWithoutTax=(BigDecimal)object[0];
-				BigDecimal discountAmountTax=(BigDecimal)object[1];
-				BigDecimal discountAmountWithTax=(BigDecimal)object[2];
-				
-
-				log.info("amountWithoutTax= {},amountTax={},amountWithTax={}" ,object[0],object[1], object[2]);
-				
-				invoice.addAmountWithoutTax(discountAmountWithoutTax);
-				invoice.addAmountTax(discountAmountTax);
-				invoice.addAmountWithTax(discountAmountWithTax);
-				BigDecimal netToPay = BigDecimal.ZERO;
-				if (entreprise) {
-					netToPay = invoice.getAmountWithTax();
-				} else {
-					netToPay = invoice.getAmountWithTax().add(balance);
-				}
-				invoice.setNetToPay(netToPay);
 			}
 
 		}
+		Object[] object=invoiceAgregateService.findTotalAmountsForDiscountAggregates(invoice);
+		
+		BigDecimal discountAmountWithoutTax=(BigDecimal)object[0];
+		BigDecimal discountAmountTax=(BigDecimal)object[1];
+		BigDecimal discountAmountWithTax=(BigDecimal)object[2];
+		
+
+		log.info("discountAmountWithoutTax= {},discountAmountTax={},discountAmountWithTax={}" ,object[0],object[1], object[2]);
+		
+		invoice.addAmountWithoutTax(discountAmountWithoutTax);
+		invoice.addAmountTax(discountAmountTax);
+		invoice.addAmountWithTax(discountAmountWithTax);
+		BigDecimal netToPay = BigDecimal.ZERO;
+		if (entreprise) {
+			netToPay = invoice.getAmountWithTax();
+		} else {
+			BigDecimal balance = customerAccountService.customerAccountBalanceDue(null, invoice.getBillingAccount()
+					.getCustomerAccount().getCode(), invoice.getDueDate());
+
+			if (balance == null) {
+				throw new BusinessException("account balance calculation failed");
+			}
+			netToPay = invoice.getAmountWithTax().add(balance);
+		}
+		invoice.setNetToPay(netToPay);
 	}
 
 	private void fillAgregates(InvoiceAgregate invoiceAgregate, WalletInstance wallet) {
