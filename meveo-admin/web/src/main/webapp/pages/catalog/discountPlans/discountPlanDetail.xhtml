@@ -105,7 +105,7 @@
 									hideEffect="slide" />
 								<p:commandButton id="editDiscountPlanItemLink"
 									update=":tabView:discountPlanItemPanel,:tabView:discountPlanItemFormPanel:formDiscountPlanItem"
-									action="#{discountPlanBean.setDiscountPlanItem(entity)}"
+									action="#{discountPlanBean.setDiscountPlanItem(entity)}" ajax="true"
 									icon="ui-icon-document" />
 								<p:tooltip for="deleteDiscountPlanItemLink"
 									value="#{messages['commons.delete']}" showEffect="slide"
@@ -135,12 +135,15 @@
 							label="#{messages['invoiceSubCategory.invoiceCategory']}"
 							field="invoiceCategory" childField="code" required="false"
 							popup="true" popupId="searchInvoiceCategoryPopup" /> 
-							
-							<hf:formEntityField id="invoiceSubCategorySelectedId"
+							<p:panelGrid columns="2" styleClass="no-padding">
+							<hf:formEntityField id="invoiceSubCategorySelectedId" styleClass="field-value"
 							label="#{messages['charge.subCategory']}"
 							field="invoiceSubCategory" childField="code" required="false"
 							popup="true" popupId="searchInvoiceSubCategoryPopup" />	
-
+							<p:commandButton id="selectLink" actionListener="#{discountPlanItem.setInvoiceSubCategory('')}"  
+							icon="ui-icon-close" update="@form"/>
+							<p:tooltip for="selectLink" value="#{messages['commons.search']}" />
+							</p:panelGrid>
 							<hf:formField
 								label="#{messages['discountPlanItem.accountingCode']}"
 								field="accountingCode" />
@@ -167,12 +170,10 @@
 											value="#{messages['discountPlanItem.modifyDiscountPlantItem']}"
 											icon="ui-icon-check"
 											update=":tabView:discountPlanItemPanel,:tabView:discountPlanItemFormPanel:formDiscountPlanItem"/>
-
-								<hf:clearButton id="resetButton"
-									label="#{messages['action.reset']}"
-									edit="#{discountPlanBean.edit}"
-									resetAction="#{discountPlanBean.resetFormEntity()}"
-									includeViewParams="true" />
+								
+								<p:commandButton value="#{messages['action.reset']}"
+											action="#{discountPlanBean.newDiscountPlanItem}"
+											update="@form" />	
 
 								<p:button id="backButton" value="#{messages['action.back']}"
 									outcome="#{discountPlanBean.back()}" includeViewParams="true">
