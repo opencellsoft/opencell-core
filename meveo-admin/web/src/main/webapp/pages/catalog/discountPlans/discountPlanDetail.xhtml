@@ -44,6 +44,13 @@
 							id="description" maxlength="50" />
 						<hf:formField label="#{messages['enableEntity.disabled']}"
 							field="disabled" isMessage="true" showOnlyOnConsult="true" />
+							<!-- 
+							<hf:formField
+							label="#{messages['pricePlanMatrix.minSubscriptionAgeInMonth']}"
+							field="minDuration" />
+						<hf:formField
+							label="#{messages['pricePlanMatrix.maxSubscriptionAgeInMonth']}"
+							field="maxDuration" /> -->
 					</hf:formPanel>
 				</p:tab>
 
@@ -137,7 +144,8 @@
 							         field="expressionEl"  textArea="true" maxlength="2000"
 									 edit="#{discountPlanBean.edit}"/> 
 							<hf:formField label="#{messages['enableEntity.disabled']}"
-							field="disabled" isMessage="true" />	
+							field="disabled" isMessage="true" />
+								
 							<p:panelGrid columns="3">
 
 								<p:commandButton id="saveButton"
