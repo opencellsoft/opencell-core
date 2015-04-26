@@ -605,11 +605,11 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 						for(DiscountPlanItem discountPlanItem:discountPlanItems){
 							if(discountPlanItem.isActive() && matchDiscountPlanItemExpression(discountPlanItem.getExpressionEl(),customerAccount, billingAccount, invoice)){
 								if(discountPlanItem.getInvoiceSubCategory()!=null){
-									createDiscountAggregate(userAccount,userAccount.getWallet(), invoice, discountPlanItem.getInvoiceSubCategory(),discountPlanItem.getPercent());
+									createDiscountAggregate(userAccount,userAccount.getWallet(), invoice, discountPlanItem.getInvoiceSubCategory(),discountPlanItem);
 								}else if(discountPlanItem.getInvoiceCategory()!=null){
 									InvoiceCategory invoiceCat=discountPlanItem.getInvoiceCategory();
 									for(InvoiceSubCategory invoiceSubCat:invoiceCat.getInvoiceSubCategories()){
-										createDiscountAggregate(userAccount,userAccount.getWallet(), invoice, invoiceSubCat,discountPlanItem.getPercent());
+										createDiscountAggregate(userAccount,userAccount.getWallet(), invoice, invoiceSubCat,discountPlanItem);
 									}
 								}
 							}
@@ -622,11 +622,11 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 		
 	}
 	
-	private void createDiscountAggregate(UserAccount userAccount,WalletInstance wallet,Invoice invoice,InvoiceSubCategory invoiceSubCat,BigDecimal percent) throws BusinessException{
+	private void createDiscountAggregate(UserAccount userAccount,WalletInstance wallet,Invoice invoice,InvoiceSubCategory invoiceSubCat,DiscountPlanItem discountPlanItem) throws BusinessException{
 		BillingAccount billingAccount=userAccount.getBillingAccount();
 		BigDecimal amount=invoiceAgregateService.findTotalAmountByWalletSubCat(wallet, invoiceSubCat, wallet.getProvider());
 		if (amount!=null && !BigDecimal.ZERO.equals(amount)){
-			BigDecimal discountAmountWithoutTax=amount.multiply(percent.divide(HUNDRED)).negate();
+			BigDecimal discountAmountWithoutTax=amount.multiply(discountPlanItem.getPercent().divide(HUNDRED)).negate();
 		List<Tax> taxes = new ArrayList<Tax>();
 		for (InvoiceSubcategoryCountry invoicesubcatCountry : invoiceSubCat
 				.getInvoiceSubcategoryCountries()) {
@@ -659,7 +659,9 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 		invoiceAgregateSubcat.setInvoiceSubCategory(invoiceSubCat);
 		
 		invoiceAgregateSubcat.setDiscountAggregate(true);
-		invoiceAgregateSubcat.setDiscountPercent(percent);
+		invoiceAgregateSubcat.setDiscountPercent(discountPlanItem.getPercent());
+		invoiceAgregateSubcat.setDiscountPlanCode(discountPlanItem.getDiscountPlan().getCode());
+		invoiceAgregateSubcat.setDiscountPlanItemCode(discountPlanItem.getCode());
 		invoiceAgregateService.create(invoiceAgregateSubcat);
 
 	}}
