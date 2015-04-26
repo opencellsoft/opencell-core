@@ -1,0 +1,183 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:hf="http://java.sun.com/jsf/composite/tags"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:s="http://jboss.org/seam/faces">
+
+<ui:composition>
+
+	<c:if test="${empty isMessage}">
+		<c:set var="isMessage" value="false" />
+	</c:if>
+
+	<c:if test="${!empty messagePrefix}">
+		<c:set var="messagePrefix" value="${messagePrefix.concat('.')}" />
+	</c:if>
+
+	<c:if test="${empty show}">
+		<c:set var="show" value="true" />
+	</c:if>
+	<c:if test="${not empty listValue and not popup}">
+		<c:set var="isMenu" value="true" />
+	</c:if>
+	<c:if test="${empty isDate}">
+		<c:set var="isDate" value="false" />
+	</c:if>
+
+	<c:if test="${empty time}">
+		<c:set var="time" value="false" />
+	</c:if>
+
+	<c:if test="${time}">
+		<c:set var="datePattern"
+			value="#{paramBean.getProperty('meveo.dateTimeFormat','dd/MM/yyyy HH:mm')}" />
+	</c:if>
+
+	<c:if test="${!time}">
+		<c:set var="datePattern"
+			value="#{paramBean.getProperty('meveo.dateFormat','dd/MM/yyyy')}" />
+	</c:if>
+
+	<c:if test="${empty isList}">
+		<c:set var="isList" value="false" />
+	</c:if>
+	<c:if test="${isList}">
+		<c:set var="sort" value="false" />
+	</c:if>
+
+	<c:if test="${empty isMap}">
+		<c:set var="isMap" value="false" />
+	</c:if>
+	<c:if
+		test="${!isMessage and !isDate and !isList and !isMap and !isMenu}">
+		<c:set var="isText" value="true" />
+	</c:if>
+
+
+	<c:if test="${not empty sortBy}">
+		<c:set var="sort" value="true" />
+	</c:if>
+
+	<c:if test="${empty rendered}">
+		<c:set var="rendered" value="true" />
+	</c:if>
+	<c:if test="${empty required}">
+		<c:set var="required" value="false" />
+	</c:if>
+	<c:if test="${empty exportable}">
+		<c:set var="exportable" value="true" />
+		<c:if test="${isList}">
+			<!-- List columns are not exportable, because its ui:reapeat component. -->
+			<c:set var="exportable" value="false" />
+			<c:set var="sort" value="false" />
+		</c:if>
+	</c:if>
+
+	<c:set var="converter"
+		value="#{getConverter.forType(fieldValue, converterParam)}"></c:set>
+
+	<c:if test="${empty propagateConversation}">
+		<c:set var="propagateConversation" value="true" />
+	</c:if>
+	<c:if test="${empty renderEditLink}">
+		<c:set var="renderEditLink" value="true" />
+	</c:if>
+	<c:if test="${empty objectIdParamName}">
+		<c:set var="objectIdParamName" value="objectId" />
+	</c:if>
+	<c:if test="${empty edit}">
+		<c:set var="edit" value="true" />
+	</c:if>
+
+	<p:column exportable="#{exportable}" rendered="#{rendered}">
+		<f:facet name="header">
+			<h:outputText value="#{label}" />
+		</f:facet>
+
+		<c:if test="#{sort}">
+			<f:attribute name="sortBy" value="#{sortBy}" />
+		</c:if>
+		<c:if test="#{isMessage}">
+			<p:cellEditor>
+				<f:facet name="output">
+					<h:outputText
+						rendered="#{fieldValue != null and fieldValue.toString() == 'true'}"
+						value="#{messages['commons.yes']}" />
+					<h:outputText
+						rendered="#{fieldValue != null and fieldValue.toString() == 'false'}"
+						value="#{messages['commons.no']}" />
+					<h:outputText
+						rendered="#{fieldValue != null and fieldValue.toString() != 'true' and fieldValue.toString() != 'false'}"
+						value="#{messages[''.concat(messagePrefix).concat(fieldValue)]}" />
+				</f:facet>
+				<f:facet name="input">
+					<p:selectBooleanCheckbox value="#{fieldValue}" />
+				</f:facet>
+			</p:cellEditor>
+		</c:if>
+		<c:if test="#{isDate or isText}">
+			<!-- If there is date field, show date in specified pattern 
+		    	 If isDate is not set then it basically means it is not a date. Also if time is not set it basically means that time=true
+		    	 -->
+			<p:cellEditor>
+				<f:facet name="output">
+					<h:outputText value="#{fieldValue}" rendered="#{!isDate and show}"
+						converter="#{converter}">
+					</h:outputText>
+					<h:outputText value="#{fieldValue}" rendered="#{isDate}">
+						<f:convertDateTime pattern="#{datePattern}" />
+					</h:outputText>
+				</f:facet>
+				<f:facet name="input">
+					<p:inputText value="#{fieldValue}" required="#{required}"
+						style="width:100%;" maxlength="#{maxlength}"
+						rendered="#{!isDate and show}" disabled="#{disabled}">
+						<c:if test="#{not empty converter}">
+							<f:converter converterId="#{converter}" />
+						</c:if>
+					</p:inputText>
+					<p:calendar value="#{fieldValue}" showOn="button"
+						rendered="#{isDate and show}" />
+				</f:facet>
+			</p:cellEditor>
+		</c:if>
+
+		<!-- If its map then run through it and show results. -->
+		<c:if test="#{isMap}">
+			<c:set var="map" value="#{fieldValue}" />
+			<ui:repeat value="#{map.keySet().toArray()}" var="key">
+				<h:outputText value="#{key}" /> = <h:outputText value="#{map[key]}" />
+				<br />
+			</ui:repeat>
+		</c:if>
+
+		<c:if test="#{isMenu}">
+			<p:cellEditor>
+				<f:facet name="output">
+					<h:outputText value="#{fieldValue}" rendered="#{empty fieldLabel}" />
+					<h:outputText value="#{fieldValue[fieldLabel]}"
+						rendered="#{not empty fieldLabel}" />
+				</f:facet>
+				<f:facet name="input">
+					<h:selectOneMenu value="#{fieldValue}" style="width:100%"
+						required="#{required}">
+						<f:selectItem itemValue="#{null}" itemLabel="" />
+						<f:selectItems value="#{listValue}" var="item"
+							itemLabel="#{itemLabel}" itemValue="#{itemValue}" />
+						<s:objectConverter />
+					</h:selectOneMenu>
+				</f:facet>
+			</p:cellEditor>
+		</c:if>
+		<ui:insert />
+	</p:column>
+
+</ui:composition>
+
+</html>
