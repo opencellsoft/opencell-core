@@ -1,14 +1,24 @@
 package org.meveo.admin.action.catalog;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Set;
+
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.persistence.NoResultException;
 
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.model.billing.InvoiceCategory;
+import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.catalog.DiscountPlanItem;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.catalog.impl.DiscountPlanItemService;
+import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
+import org.meveo.service.job.TimerEntityService;
 import org.omnifaces.cdi.ViewScoped;
 
 /**
@@ -22,6 +32,9 @@ public class DiscountPlanItemBean extends BaseBean<DiscountPlanItem> {
 
 	@Inject
 	private DiscountPlanItemService discountPlanItemService;
+	
+	@Inject
+	private InvoiceSubCategoryService invoiceSubCategoryService;
 
 	public DiscountPlanItemBean() {
 		super(DiscountPlanItem.class);
@@ -42,5 +55,15 @@ public class DiscountPlanItemBean extends BaseBean<DiscountPlanItem> {
 
 		return super.saveOrUpdate(killConversation);
 	}
+	
+	  public  List<InvoiceSubCategory> getInvoiceSubCategories(InvoiceCategory invoiceCategory){  
+		  try { 
+		    return invoiceSubCategoryService.findByInvoiceCategory(invoiceCategory, getCurrentUser().getProvider());  
+			} catch (NoResultException e) {
+			return null;
+			}  
+		 }
+	  
+	   
 
 }
