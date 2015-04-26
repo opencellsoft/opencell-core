@@ -39,32 +39,32 @@
 
 	<!--  If the value binding is a number display number field. -->
 	<ui:fragment
-		rendered="#{cc.isBigDecimal(cc.attrs.minField,true) and cc.isBigDecimal(cc.attrs.maxField,true)}">
-		<h:panelGrid columns="2">
-			<p:outputLabel
-				for="minmaxRange_#{cc.attrs.minField}_#{cc.attrs.maxField}_decimal"
-				value="#{cc.attrs.label}" />
-			<p:inputText
-				id="minmaxRange_#{cc.attrs.minField}_#{cc.attrs.maxField}_decimal"
-				value="#{cc.filters[cc.minmaxRangeSearchFilterName]}" size="5"
-				disabled="#{cc.attrs.disabled}">
-				<f:converter converterId="javax.faces.BigDecimal" />
-			</p:inputText>
-		</h:panelGrid>
+		rendered="#{cc.isInteger(cc.attrs.minField,true) and cc.isInteger(cc.attrs.maxField,true)}">
+		<hf:numberField converterId="javax.faces.Integer" />
+	</ui:fragment>
+	<ui:fragment
+		rendered="#{cc.isLong(cc.attrs.minField,true) and cc.isLong(cc.attrs.maxField,true)}">
+		<hf:numberField converterId="javax.faces.Long" />
+	</ui:fragment>
+	<ui:fragment
+		rendered="#{cc.isByte(cc.attrs.minField,true) and cc.isByte(cc.attrs.maxField,true)}}">
+		<hf:numberField converterId="javax.faces.Byte" />
+	</ui:fragment>
+	<ui:fragment
+		rendered="#{cc.isShort(cc.attrs.minField,true) and cc.isShort(cc.attrs.maxField,true)}">
+		<hf:numberField converterId="javax.faces.Short" />
 	</ui:fragment>
 	<ui:fragment
 		rendered="#{cc.isDouble(cc.attrs.minField,true) and cc.isDouble(cc.attrs.maxField,true)}">
-		<h:panelGrid columns="2">
-			<p:outputLabel
-				for="minmaxRange_#{cc.attrs.minField}_#{cc.attrs.maxField}_double"
-				value="#{cc.attrs.label}" />
-			<p:inputText
-				id="minmaxRange_#{cc.attrs.minField}_#{cc.attrs.maxField}_double"
-				value="#{cc.filters[cc.minmaxRangeSearchFilterName]}" size="5"
-				disabled="#{cc.attrs.disabled}">
-				<f:converter converterId="javax.faces.Double" />
-			</p:inputText>
-		</h:panelGrid>
+		<hf:numberField converterId="javax.faces.Double" />
+	</ui:fragment>
+	<ui:fragment
+		rendered="#{cc.isFloat(cc.attrs.minField,true) and cc.isFloat(cc.attrs.maxField,true)}">
+		<hf:numberField converterId="javax.faces.Float" />
+	</ui:fragment>
+	<ui:fragment
+		rendered="#{cc.isBigDecimal(cc.attrs.minField,true) and cc.isBigDecimal(cc.attrs.maxField,true)}">
+		<hf:numberField converterId="javax.faces.BigDecimal" />
 	</ui:fragment>
 </cc:implementation>
 

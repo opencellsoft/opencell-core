@@ -16,7 +16,17 @@
 	<c:if test="${empty pdf}">
 		<c:set var="pdf" value="false" />
 	</c:if>
-
+	<c:if test="${empty editable}">
+		<c:set var="editable" value="false" />
+	</c:if>
+	<c:if test="${empty scrollable}">
+		<c:set var="scrollable" value="false" />
+	</c:if>
+	<c:if test="${editable}">
+		<c:if test="${empty editMode}">
+			<c:set var="editMode" value="cell" />
+		</c:if>
+	</c:if>
 	<c:if test="${empty edit}">
 		<c:set var="edit" value="true" />
 	</c:if>
@@ -61,8 +71,8 @@
 
 		<h:form id="#{formId}" prependId="false">
 
-			<p:dataTable id="datatable_#{resultsId}" var="entity"
-				value="#{dataModel}" paginator="true" rows="10"
+			<p:dataTable id="datatable_#{resultsId}" var="entity"  scrollable="#{scrollable}"
+				value="#{dataModel}" paginator="true" rows="10" editable="#{editable}" editMode="#{editMode}"  widgetVar="cellEntity"
 				selection="#{backingBean.selectedEntities}" sortBy="#{sortBy}" sortOrder="#{sortOrder}"
 				paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
 				rowsPerPageTemplate="5,10,15" lazy="true"

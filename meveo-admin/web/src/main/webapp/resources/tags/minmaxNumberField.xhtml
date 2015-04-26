@@ -16,13 +16,13 @@
 <cc:implementation>
 	<h:panelGrid columns="2">
 		<p:outputLabel
-			for="minmaxRange_#{cc.attrs.minField}_#{cc.attrs.maxField}"
-			value="#{cc.attrs.label}" />
+			for="minmaxRange_#{cc.parent.attrs.minField}_#{cc.parent.attrs.maxField}_number"
+			value="#{cc.parent.attrs.label}" />
 		<p:inputText
-			id="minmaxRange_#{cc.attrs.minField}_#{cc.attrs.maxField}"
-			value="#{cc.filters[cc.minmaxRangeSearchFilterName]}" size="5"
-			disabled="#{cc.attrs.disabled}">
-			<f:converter converterId="javax.faces.BigDecimal" />
+			id="minmaxRange_#{cc.attrs.minField}_#{cc.attrs.maxField}_number"
+			value="#{cc.filters[cc.parent.minmaxRangeSearchFilterName]}" size="5"
+			disabled="#{cc.parent.attrs.disabled}">
+			<f:converter converterId="#{cc.attrs.converterId}" />
 		</p:inputText>
 	</h:panelGrid>
 </cc:implementation>

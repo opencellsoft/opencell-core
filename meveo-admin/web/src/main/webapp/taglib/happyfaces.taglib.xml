@@ -13,15 +13,14 @@
 		<source>dataList.xhtml</source>
 	</tag>
 	<tag>
-	<tag-name>dataEditList</tag-name>
-		<source>dataEditList.xhtml</source>
-	</tag>
-
-	<tag>
 		<tag-name>column</tag-name>
 		<source>column.xhtml</source>
 	</tag>
-		<tag>
+	<tag>
+		<tag-name>editColumn</tag-name>
+		<source>editColumn.xhtml</source>
+	</tag>
+	<tag>
 		<tag-name>columnList</tag-name>
 		<source>columnList.xhtml</source>
 	</tag>

@@ -86,5 +86,14 @@ public class TradingCurrency extends AuditableEntity {
 	public void setCurrencyCode(String currencyCode) {
 		this.currencyCode = currencyCode;
 	}
+	
+	public boolean equals(Object other){
+		if(other==null || !(other instanceof TradingCurrency)){
+			return false;
+		}
+		TradingCurrency o = (TradingCurrency) other;
 
+		return getId()!=null &&getId().equals(o.getId());
+//		return (o.currency!=null) && o.currency.equals(this.currency);
+	}
 }
