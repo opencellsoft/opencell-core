@@ -5,7 +5,8 @@
 	xmlns:p="http://primefaces.org/ui"
 	xmlns:c="http://java.sun.com/jsp/jstl/core"
 	xmlns:hf="http://java.sun.com/jsf/composite/tags"
-	template="/layout/template.xhtml">
+	template="/layout/template.xhtml"
+	xmlns:s="http://jboss.org/seam/faces">
 
 	<ui:define name="navigation">
 		<ui:include src="/layout/navigation.xhtml" />
@@ -15,7 +16,7 @@
 	
 	<hftl:entityPopup id="searchInvoiceCategoryPopup"
 			header="#{messages['invoiceCategory.panel']}"
-			updateField=":tabView:discountPlanItemFormPanel:formDiscountPlanItem:categorySelectId:categorySelectId"
+			updateField=":tabView:discountPlanItemFormPanel:formDiscountPlanItem:categorySelectId:categorySelectId,:tabView:discountPlanItemFormPanel:formDiscountPlanItem:invoiceSubCategories"
 			selection="#{discountPlanItem.invoiceCategory}"
 			backingBean="#{invoiceCategoryBean}"
 			searchField1Label="#{messages['invoiceCategory.code']}"
@@ -25,19 +26,6 @@
 			column1Label="#{messages['invoiceCategory.code']}" column1="code"
 			column2Label="#{messages['invoiceCategory.description']}"
 			column2="description" />
-			
-			<hftl:entityPopup id="searchInvoiceSubCategoryPopup"
-			header="#{messages['invoiceSubCategory.panel']}"
-			backingBean="#{invoiceSubCategoryBean}"
-			updateField=":tabView:discountPlanItemFormPanel:formDiscountPlanItem:invoiceSubCategorySelectedId:invoiceSubCategorySelectedId"
-			selection="#{discountPlanItem.invoiceSubCategory}"
-			searchField1Label="#{messages['invoiceSubCategory.code']}"
-			searchField1="code"
-			searchField2Label="#{messages['invoiceSubCategory.description']}"
-			searchField2="description"
-			column1Label="#{messages['invoiceSubCategory.code']}" column1="code"
-			column2Label="#{messages['invoiceSubCategory.description']}"
-			column2="description"/>
 			
 		<p:panel styleClass="form-panel">
 
@@ -56,12 +44,6 @@
 							id="description" maxlength="50" />
 						<hf:formField label="#{messages['enableEntity.disabled']}"
 							field="disabled" isMessage="true" showOnlyOnConsult="true" />
-						<hf:formField
-							label="#{messages['pricePlanMatrix.minSubscriptionAgeInMonth']}"
-							field="minDuration" />
-						<hf:formField
-							label="#{messages['pricePlanMatrix.maxSubscriptionAgeInMonth']}"
-							field="maxDuration" />
 					</hf:formPanel>
 				</p:tab>
 
@@ -133,17 +115,17 @@
 
 							 <hf:formEntityField id="categorySelectId"
 							label="#{messages['invoiceSubCategory.invoiceCategory']}"
-							field="invoiceCategory" childField="code" required="false"
+							field="invoiceCategory" childField="code" required="true"
 							popup="true" popupId="searchInvoiceCategoryPopup" /> 
-							<p:panelGrid columns="2" styleClass="no-padding">
-							<hf:formEntityField id="invoiceSubCategorySelectedId" styleClass="field-value"
-							label="#{messages['charge.subCategory']}"
-							field="invoiceSubCategory" childField="code" required="false"
-							popup="true" popupId="searchInvoiceSubCategoryPopup" />	
-							<p:commandButton id="selectLink" actionListener="#{discountPlanItem.setInvoiceSubCategory('')}"  
-							icon="ui-icon-close" update="@form"/>
-							<p:tooltip for="selectLink" value="#{messages['commons.search']}" />
-							</p:panelGrid>
+							
+							<p:panelGrid columns="2">
+                    		<p:outputLabel value="#{messages['charge.subCategory']}"></p:outputLabel>
+                   			 <p:selectOneMenu id="invoiceSubCategories" value="#{discountPlanItem.invoiceSubCategory}" >  
+						  	<f:selectItem itemLabel="" />
+                        	<f:selectItems value="#{discountPlanItemBean.getInvoiceSubCategories(discountPlanItem.invoiceCategory)}" var="t" itemLabel="#{t.code}"/> 
+							<s:objectConverter />
+                    		</p:selectOneMenu> 
+							</p:panelGrid> 
 							<hf:formField
 								label="#{messages['discountPlanItem.accountingCode']}"
 								field="accountingCode" />
