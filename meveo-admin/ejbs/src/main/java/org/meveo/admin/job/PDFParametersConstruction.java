@@ -181,7 +181,7 @@ public class PDFParametersConstruction {
 	private Map<String, String> getBACustomFields(
 			BillingAccount billingAccount) {
 		List<CustomFieldTemplate> customFieldTemplates = customFieldTemplateService
-				.findByAccountLevel(AccountLevelEnum.BA);
+				.findByAccountLevel(AccountLevelEnum.BA,billingAccount.getProvider());
 		Map<String, String>  customFields = new HashMap<String, String> ();
 		if (customFieldTemplates != null && customFieldTemplates.size() > 0) {
 			for (CustomFieldTemplate cf : customFieldTemplates) {
