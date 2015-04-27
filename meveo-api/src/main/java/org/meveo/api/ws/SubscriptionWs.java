@@ -11,6 +11,7 @@ import org.meveo.api.dto.billing.InstantiateServicesDto;
 import org.meveo.api.dto.billing.SubscriptionDto;
 import org.meveo.api.dto.billing.TerminateSubscriptionDto;
 import org.meveo.api.dto.billing.TerminateSubscriptionServicesDto;
+import org.meveo.api.dto.response.billing.GetSubscriptionResponseDto;
 import org.meveo.api.dto.response.billing.ListSubscriptionResponseDto;
 
 /**
@@ -42,5 +43,8 @@ public interface SubscriptionWs extends IBaseWs {
 
 	@WebMethod
 	ListSubscriptionResponseDto listSubscriptionByUserAccount(@WebParam(name = "userAccountCode") String userAccountCode);
+
+	@WebMethod
+	GetSubscriptionResponseDto findSubscription(@WebParam(name = "subscriptionCode") String subscriptionCode);
 
 }

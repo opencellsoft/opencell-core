@@ -65,7 +65,6 @@ import org.meveo.model.billing.WalletInstance;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.catalog.DiscountPlanItem;
 import org.meveo.model.payments.CustomerAccount;
-import org.meveo.model.shared.DateUtils;
 import org.meveo.service.api.dto.ConsumptionDTO;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
@@ -466,38 +465,40 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 
 					invoice.setAmountWithoutTax(invoice.getAmountWithoutTax().add(delta).setScale(rounding, RoundingMode.HALF_UP));
 					invoice.setAmountWithTax(nonEnterprisePriceWithTax.setScale(rounding, RoundingMode.HALF_UP));
-					balance = customerAccountService.customerAccountBalanceDue(null, invoice.getBillingAccount()
-							.getCustomerAccount().getCode(), invoice.getDueDate());
-
-					if (balance == null) {
-						throw new BusinessException("account balance calculation failed");
-					}
+					
 				
 				}
-	            createInvoiceDiscountAggregates(userAccount, invoice);
+	            createInvoiceDiscountAggregates(currentUser,userAccount, invoice,taxInvoiceAgregateMap);
 				
-				Object[] object=invoiceAgregateService.findTotalAmountsForDiscountAggregates(invoice);
 				
-				BigDecimal discountAmountWithoutTax=(BigDecimal)object[0];
-				BigDecimal discountAmountTax=(BigDecimal)object[1];
-				BigDecimal discountAmountWithTax=(BigDecimal)object[2];
-				
-
-				log.info("amountWithoutTax= {},amountTax={},amountWithTax={}" ,object[0],object[1], object[2]);
-				
-				invoice.addAmountWithoutTax(discountAmountWithoutTax);
-				invoice.addAmountTax(discountAmountTax);
-				invoice.addAmountWithTax(discountAmountWithTax);
-				BigDecimal netToPay = BigDecimal.ZERO;
-				if (entreprise) {
-					netToPay = invoice.getAmountWithTax();
-				} else {
-					netToPay = invoice.getAmountWithTax().add(balance);
-				}
-				invoice.setNetToPay(netToPay);
 			}
 
 		}
+		Object[] object=invoiceAgregateService.findTotalAmountsForDiscountAggregates(invoice);
+		
+		BigDecimal discountAmountWithoutTax=(BigDecimal)object[0];
+		BigDecimal discountAmountTax=(BigDecimal)object[1];
+		BigDecimal discountAmountWithTax=(BigDecimal)object[2];
+		
+
+		log.info("discountAmountWithoutTax= {},discountAmountTax={},discountAmountWithTax={}" ,object[0],object[1], object[2]);
+		
+		invoice.addAmountWithoutTax(discountAmountWithoutTax);
+		invoice.addAmountTax(discountAmountTax);
+		invoice.addAmountWithTax(discountAmountWithTax);
+		BigDecimal netToPay = BigDecimal.ZERO;
+		if (entreprise) {
+			netToPay = invoice.getAmountWithTax();
+		} else {
+			BigDecimal balance = customerAccountService.customerAccountBalanceDue(null, invoice.getBillingAccount()
+					.getCustomerAccount().getCode(), invoice.getDueDate());
+
+			if (balance == null) {
+				throw new BusinessException("account balance calculation failed");
+			}
+			netToPay = invoice.getAmountWithTax().add(balance);
+		}
+		invoice.setNetToPay(netToPay);
 	}
 
 	private void fillAgregates(InvoiceAgregate invoiceAgregate, WalletInstance wallet) {
@@ -593,31 +594,26 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 		}
 
 	}
-	private void createInvoiceDiscountAggregates(UserAccount userAccount,Invoice invoice){
+	private void createInvoiceDiscountAggregates(User currentUser,UserAccount userAccount,Invoice invoice,Map<Long, TaxInvoiceAgregate> taxInvoiceAgregateMap){
 		try {
 			
 			BillingAccount billingAccount=userAccount.getBillingAccount();
 			DiscountPlan discountPlan=billingAccount.getDiscountPlan();
 			CustomerAccount customerAccount=billingAccount.getCustomerAccount();
 			if(discountPlan!=null && discountPlan.isActive()){
-				for(Subscription subscription : userAccount.getSubscriptions()){
-					int subscriptionAge = DateUtils.monthsBetween(DateUtils.addDaysToDate(subscription.getSubscriptionDate(), -1),new Date());
-					if(subscriptionAge>=discountPlan.getMinDuration() && subscriptionAge<=discountPlan.getMaxDuration()){
 						List<DiscountPlanItem> discountPlanItems =discountPlan.getDiscountPlanItems();
 						for(DiscountPlanItem discountPlanItem:discountPlanItems){
 							if(discountPlanItem.isActive() && matchDiscountPlanItemExpression(discountPlanItem.getExpressionEl(),customerAccount, billingAccount, invoice)){
 								if(discountPlanItem.getInvoiceSubCategory()!=null){
-									createDiscountAggregate(userAccount,userAccount.getWallet(), invoice, discountPlanItem.getInvoiceSubCategory(),discountPlanItem.getPercent());
+									createDiscountAggregate(currentUser,userAccount,userAccount.getWallet(), invoice, discountPlanItem.getInvoiceSubCategory(),discountPlanItem,taxInvoiceAgregateMap);
 								}else if(discountPlanItem.getInvoiceCategory()!=null){
 									InvoiceCategory invoiceCat=discountPlanItem.getInvoiceCategory();
 									for(InvoiceSubCategory invoiceSubCat:invoiceCat.getInvoiceSubCategories()){
-										createDiscountAggregate(userAccount,userAccount.getWallet(), invoice, invoiceSubCat,discountPlanItem.getPercent());
+										createDiscountAggregate(currentUser,userAccount,userAccount.getWallet(), invoice, invoiceSubCat,discountPlanItem,taxInvoiceAgregateMap);
 									}
 								}
 							}
-						}
 					}
-				}
 			}
 			
 		} catch (BusinessException e) {
@@ -626,11 +622,11 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 		
 	}
 	
-	private void createDiscountAggregate(UserAccount userAccount,WalletInstance wallet,Invoice invoice,InvoiceSubCategory invoiceSubCat,BigDecimal percent) throws BusinessException{
+	private void createDiscountAggregate(User currentUser,UserAccount userAccount,WalletInstance wallet,Invoice invoice,InvoiceSubCategory invoiceSubCat,DiscountPlanItem discountPlanItem,Map<Long, TaxInvoiceAgregate> taxInvoiceAgregateMap) throws BusinessException{
 		BillingAccount billingAccount=userAccount.getBillingAccount();
 		BigDecimal amount=invoiceAgregateService.findTotalAmountByWalletSubCat(wallet, invoiceSubCat, wallet.getProvider());
-		BigDecimal discountAmountWithoutTax=amount.multiply(percent.divide(HUNDRED)).negate();
-		
+		if (amount!=null && !BigDecimal.ZERO.equals(amount)){
+			BigDecimal discountAmountWithoutTax=amount.multiply(discountPlanItem.getPercent().divide(HUNDRED)).negate();
 		List<Tax> taxes = new ArrayList<Tax>();
 		for (InvoiceSubcategoryCountry invoicesubcatCountry : invoiceSubCat
 				.getInvoiceSubcategoryCountries()) {
@@ -642,15 +638,18 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 		}
 		SubCategoryInvoiceAgregate invoiceAgregateSubcat = new SubCategoryInvoiceAgregate();
 		BigDecimal discountAmountTax=BigDecimal.ZERO;
-		BigDecimal discountAmountWithTax=BigDecimal.ZERO;
 		for (Tax tax:taxes) {
-			 discountAmountTax=discountAmountTax.add(discountAmountWithoutTax.multiply(tax.getPercent().divide(HUNDRED)));
-			 discountAmountWithTax=discountAmountWithTax.add(discountAmountWithoutTax.add(discountAmountTax));
+			BigDecimal amountTax=discountAmountWithoutTax.multiply(tax.getPercent().divide(HUNDRED));
+			 discountAmountTax=discountAmountTax.add(amountTax);
 			 invoiceAgregateSubcat.addSubCategoryTax(tax);
+			  TaxInvoiceAgregate 	taxInvoiceAgregate= taxInvoiceAgregateMap.get(tax.getId());
+			  taxInvoiceAgregate.addAmountTax(amountTax);
+			  taxInvoiceAgregate.addAmountWithoutTax(discountAmountWithoutTax);
+			  invoiceAgregateService.update(taxInvoiceAgregate,currentUser);
+			 
 		}
 		
-		
-		
+		BigDecimal discountAmountWithTax=discountAmountWithoutTax.add(discountAmountTax);
 		
 		invoiceAgregateSubcat.setAuditable(billingAccount.getAuditable());
 		invoiceAgregateSubcat.setProvider(billingAccount.getProvider());
@@ -666,10 +665,12 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 		invoiceAgregateSubcat.setInvoiceSubCategory(invoiceSubCat);
 		
 		invoiceAgregateSubcat.setDiscountAggregate(true);
-		invoiceAgregateSubcat.setDiscountPercent(percent);
-		invoiceAgregateService.create(invoiceAgregateSubcat);
+		invoiceAgregateSubcat.setDiscountPercent(discountPlanItem.getPercent());
+		invoiceAgregateSubcat.setDiscountPlanCode(discountPlanItem.getDiscountPlan().getCode());
+		invoiceAgregateSubcat.setDiscountPlanItemCode(discountPlanItem.getCode());
+		invoiceAgregateService.create(invoiceAgregateSubcat,currentUser);
 
-	}
+	}}
 	private boolean matchInvoicesubcatCountryExpression(String expression,BillingAccount billingAccount,Invoice invoice) throws BusinessException {
 		Boolean result = true;
 		if (StringUtils.isBlank(expression)) {
@@ -701,7 +702,9 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 	
 	private boolean matchDiscountPlanItemExpression(String expression,CustomerAccount customerAccount,BillingAccount billingAccount,Invoice invoice) throws BusinessException {
 		Boolean result = true;
-		if (StringUtils.isBlank(expression)) {
+		
+		
+		if (StringUtils.isBlank(expression) ) {
 			return result;
 		}
 		Map<Object, Object> userMap = new HashMap<Object, Object>();

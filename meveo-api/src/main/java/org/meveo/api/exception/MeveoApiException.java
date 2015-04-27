@@ -2,6 +2,8 @@ package org.meveo.api.exception;
 
 import javax.ejb.ApplicationException;
 
+import org.meveo.api.MeveoApiErrorCode;
+
 @ApplicationException(rollback = true)
 public class MeveoApiException extends Exception {
 
@@ -10,7 +12,7 @@ public class MeveoApiException extends Exception {
 	private String errorCode;
 
 	public MeveoApiException() {
-
+		errorCode = MeveoApiErrorCode.GENERIC_API_EXCEPTION;
 	}
 
 	public MeveoApiException(String errorCode, String message) {

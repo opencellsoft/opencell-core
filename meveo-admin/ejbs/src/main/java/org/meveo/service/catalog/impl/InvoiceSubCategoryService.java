@@ -23,6 +23,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 
 import org.meveo.commons.utils.QueryBuilder;
+import org.meveo.model.billing.InvoiceCategory;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.crm.Provider;
 import org.meveo.service.base.PersistenceService;
@@ -81,6 +82,19 @@ public class InvoiceSubCategoryService extends
 	public  List<InvoiceSubCategory> getInvoiceSubCatNotAssociated(Provider provider) { 
 		return (List<InvoiceSubCategory>)getEntityManager().createNamedQuery("invoiceSubCategory.getInvoiceSubCatNotAssociated",InvoiceSubCategory.class)
 				.setParameter("provider", provider).getResultList();
+		}
+	
+	
+	public  List<InvoiceSubCategory> findByInvoiceCategory(InvoiceCategory invoiceCategory,Provider provider) { 
+		QueryBuilder qb = new QueryBuilder(InvoiceSubCategory.class, "sc");
+		qb.addCriterionEntity("sc.invoiceCategory", invoiceCategory);
+		qb.addCriterionEntity("sc.provider", provider);
+		try {
+			return qb.getQuery(getEntityManager()).getResultList();
+		
+		} catch (NoResultException e) {
+		return null;
+		}
 		}
 
 }

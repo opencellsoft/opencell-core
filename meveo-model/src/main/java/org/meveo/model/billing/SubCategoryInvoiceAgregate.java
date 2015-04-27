@@ -16,12 +16,14 @@
  */
 package org.meveo.model.billing;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -30,7 +32,6 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.PreRemove;
 
 @Entity
 @DiscriminatorValue("F")
@@ -42,9 +43,11 @@ public class SubCategoryInvoiceAgregate extends InvoiceAgregate {
 	@JoinColumn(name = "invoiceSubCategory")
 	private InvoiceSubCategory invoiceSubCategory;
 
-	@JoinTable(name="BILLING_INVOICE_AGREGATE_TAXES")
+	
 	@ManyToMany(fetch = FetchType.LAZY)
-	private List<Tax> subCategoryTaxes = new ArrayList<Tax>();
+	@JoinTable(name = "BILLING_INVOICE_AGREGATE_TAXES", joinColumns = @JoinColumn(name = "SUB_CAT_INVOICE_AGGREGAT_ID"), inverseJoinColumns = @JoinColumn(name = "TAX_ID"))
+	private Set<Tax> subCategoryTaxes = new HashSet<Tax>();
+
 
 	@ManyToOne(fetch = FetchType.LAZY,cascade=CascadeType.ALL)
 	@JoinColumn(name = "CATEGORY_INVOICE_AGREGATE")
@@ -59,6 +62,17 @@ public class SubCategoryInvoiceAgregate extends InvoiceAgregate {
 
 	@OneToMany(mappedBy = "invoiceAgregateF", fetch = FetchType.LAZY)
 	private List<RatedTransaction> ratedtransactions = new ArrayList<RatedTransaction>();
+	
+	@Column(name = "DISCOUNT_PLAN_CODE", length = 50)
+	private String discountPlanCode;
+	
+	@Column(name = "DISCOUNT_PLAN_ITEM_CODE", length = 50)
+	private String discountPlanItemCode;
+	
+	
+	
+	@Column(name = "DISCOUNT_PERCENT", precision = NB_PRECISION, scale = NB_DECIMALS)
+	private BigDecimal discountPercent;
 
 	public InvoiceSubCategory getInvoiceSubCategory() {
 		return invoiceSubCategory;
@@ -115,29 +129,52 @@ public class SubCategoryInvoiceAgregate extends InvoiceAgregate {
 		this.wallet = wallet;
 	}
 
-	public List<Tax> getSubCategoryTaxes() {
+	
+	
+	public Set<Tax> getSubCategoryTaxes() {
 		return subCategoryTaxes;
 	}
 
-	public void setSubCategoryTaxes(List<Tax> subCategoryTaxes) {
+	public void setSubCategoryTaxes(Set<Tax> subCategoryTaxes) {
 		this.subCategoryTaxes = subCategoryTaxes;
 	}
-	
+
 	public void addSubCategoryTax(Tax subCategoryTax) {
 		if(subCategoryTaxes==null){
-			subCategoryTaxes=new ArrayList<Tax>();
+			subCategoryTaxes=new HashSet<Tax>();
 		}
 		if(subCategoryTax!=null){
 			subCategoryTaxes.add(subCategoryTax);
 		}
 	}
-	
-	@PreRemove
-	public void removeSubCatInvoiceAggregates(){
-		 for (Tax tax : subCategoryTaxes) {
-			 tax.getSubCategoryInvoiceAggregates().remove(this);
-		    }
+
+	public String getDiscountPlanCode() {
+		return discountPlanCode;
 	}
+
+	public void setDiscountPlanCode(String discountPlanCode) {
+		this.discountPlanCode = discountPlanCode;
+	}
+
+	public String getDiscountPlanItemCode() {
+		return discountPlanItemCode;
+	}
+
+	public void setDiscountPlanItemCode(String discountPlanItemCode) {
+		this.discountPlanItemCode = discountPlanItemCode;
+	}
+
+
+
+	public BigDecimal getDiscountPercent() {
+		return discountPercent;
+	}
+
+	public void setDiscountPercent(BigDecimal discountPercent) {
+		this.discountPercent = discountPercent;
+	}
+	
+	
 	
 
 }

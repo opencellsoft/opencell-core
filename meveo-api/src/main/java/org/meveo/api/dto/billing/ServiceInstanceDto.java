@@ -9,6 +9,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
 
 import org.meveo.api.dto.BaseDto;
+import org.meveo.model.billing.ServiceInstance;
 
 @XmlType(name = "ServiceInstance")
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -27,6 +28,22 @@ public class ServiceInstanceDto extends BaseDto {
 	private Date terminationDate;
 	private BigDecimal quantity;
 	private String terminationReason;
+
+	public ServiceInstanceDto() {
+
+	}
+
+	public ServiceInstanceDto(ServiceInstance e) {
+		code = e.getCode();
+		description = e.getDescription();
+		status = e.getStatus().name();
+		subscriptionDate = e.getSubscriptionDate();
+		terminationDate = e.getTerminationDate();
+		quantity = e.getQuantity();
+		if (e.getSubscriptionTerminationReason() != null) {
+			terminationReason = e.getSubscriptionTerminationReason().getCode();
+		}
+	}
 
 	public String getCode() {
 		return code;

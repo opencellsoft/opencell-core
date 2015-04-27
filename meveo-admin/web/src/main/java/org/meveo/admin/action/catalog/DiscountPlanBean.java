@@ -53,7 +53,7 @@ public class DiscountPlanBean extends BaseBean<DiscountPlan> {
 	public String saveOrUpdate(boolean killConversation) throws BusinessException {
 		super.saveOrUpdate(killConversation);
 
-		return "";
+		return getListViewName();
 	}
 
 	@Named
@@ -105,6 +105,10 @@ public class DiscountPlanBean extends BaseBean<DiscountPlan> {
 
 		discountPlanItem = new DiscountPlanItem();
 		discountPlanItem.setAccountingCode(getCurrentProvider().getDiscountAccountingCode());
+	}
+	
+	public void newDiscountPlanItem() {
+		discountPlanItem = new DiscountPlanItem();
 	}
 
 	public void deleteDiscountPlan(DiscountPlanItem discountPlanItem) {
