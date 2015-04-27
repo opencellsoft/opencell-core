@@ -963,7 +963,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 	private void addDiscounts(Invoice invoice,Document doc,
 			Element parent){
 		int rounding = invoice.getProvider().getRounding() == null ? 2 : invoice.getProvider().getRounding();
-		Element discounts = doc.createElement("discountPlan");
+		Element discounts = doc.createElement("discounts");
 		
 		parent.appendChild(discounts);
 		for(SubCategoryInvoiceAgregate subCategoryInvoiceAgregate:invoiceAgregateService.findDiscountAggregates(invoice)){

@@ -468,7 +468,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 					
 				
 				}
-	            createInvoiceDiscountAggregates(userAccount, invoice);
+	            createInvoiceDiscountAggregates(currentUser,userAccount, invoice,taxInvoiceAgregateMap);
 				
 				
 			}
@@ -594,7 +594,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 		}
 
 	}
-	private void createInvoiceDiscountAggregates(UserAccount userAccount,Invoice invoice){
+	private void createInvoiceDiscountAggregates(User currentUser,UserAccount userAccount,Invoice invoice,Map<Long, TaxInvoiceAgregate> taxInvoiceAgregateMap){
 		try {
 			
 			BillingAccount billingAccount=userAccount.getBillingAccount();
@@ -605,11 +605,11 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 						for(DiscountPlanItem discountPlanItem:discountPlanItems){
 							if(discountPlanItem.isActive() && matchDiscountPlanItemExpression(discountPlanItem.getExpressionEl(),customerAccount, billingAccount, invoice)){
 								if(discountPlanItem.getInvoiceSubCategory()!=null){
-									createDiscountAggregate(userAccount,userAccount.getWallet(), invoice, discountPlanItem.getInvoiceSubCategory(),discountPlanItem);
+									createDiscountAggregate(currentUser,userAccount,userAccount.getWallet(), invoice, discountPlanItem.getInvoiceSubCategory(),discountPlanItem,taxInvoiceAgregateMap);
 								}else if(discountPlanItem.getInvoiceCategory()!=null){
 									InvoiceCategory invoiceCat=discountPlanItem.getInvoiceCategory();
 									for(InvoiceSubCategory invoiceSubCat:invoiceCat.getInvoiceSubCategories()){
-										createDiscountAggregate(userAccount,userAccount.getWallet(), invoice, invoiceSubCat,discountPlanItem);
+										createDiscountAggregate(currentUser,userAccount,userAccount.getWallet(), invoice, invoiceSubCat,discountPlanItem,taxInvoiceAgregateMap);
 									}
 								}
 							}
@@ -622,7 +622,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 		
 	}
 	
-	private void createDiscountAggregate(UserAccount userAccount,WalletInstance wallet,Invoice invoice,InvoiceSubCategory invoiceSubCat,DiscountPlanItem discountPlanItem) throws BusinessException{
+	private void createDiscountAggregate(User currentUser,UserAccount userAccount,WalletInstance wallet,Invoice invoice,InvoiceSubCategory invoiceSubCat,DiscountPlanItem discountPlanItem,Map<Long, TaxInvoiceAgregate> taxInvoiceAgregateMap) throws BusinessException{
 		BillingAccount billingAccount=userAccount.getBillingAccount();
 		BigDecimal amount=invoiceAgregateService.findTotalAmountByWalletSubCat(wallet, invoiceSubCat, wallet.getProvider());
 		if (amount!=null && !BigDecimal.ZERO.equals(amount)){
@@ -639,8 +639,14 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 		SubCategoryInvoiceAgregate invoiceAgregateSubcat = new SubCategoryInvoiceAgregate();
 		BigDecimal discountAmountTax=BigDecimal.ZERO;
 		for (Tax tax:taxes) {
-			 discountAmountTax=discountAmountTax.add(discountAmountWithoutTax.multiply(tax.getPercent().divide(HUNDRED)));
+			BigDecimal amountTax=discountAmountWithoutTax.multiply(tax.getPercent().divide(HUNDRED));
+			 discountAmountTax=discountAmountTax.add(amountTax);
 			 invoiceAgregateSubcat.addSubCategoryTax(tax);
+			  TaxInvoiceAgregate 	taxInvoiceAgregate= taxInvoiceAgregateMap.get(tax.getId());
+			  taxInvoiceAgregate.addAmountTax(amountTax);
+			  taxInvoiceAgregate.addAmountWithoutTax(discountAmountWithoutTax);
+			  invoiceAgregateService.update(taxInvoiceAgregate,currentUser);
+			 
 		}
 		
 		BigDecimal discountAmountWithTax=discountAmountWithoutTax.add(discountAmountTax);
@@ -662,7 +668,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 		invoiceAgregateSubcat.setDiscountPercent(discountPlanItem.getPercent());
 		invoiceAgregateSubcat.setDiscountPlanCode(discountPlanItem.getDiscountPlan().getCode());
 		invoiceAgregateSubcat.setDiscountPlanItemCode(discountPlanItem.getCode());
-		invoiceAgregateService.create(invoiceAgregateSubcat);
+		invoiceAgregateService.create(invoiceAgregateSubcat,currentUser);
 
 	}}
 	private boolean matchInvoicesubcatCountryExpression(String expression,BillingAccount billingAccount,Invoice invoice) throws BusinessException {
