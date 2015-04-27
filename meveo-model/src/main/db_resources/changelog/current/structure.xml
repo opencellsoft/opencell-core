@@ -140,4 +140,31 @@
 			<column name="EXPRESSION_EL" type="VARCHAR(1000)"/>
 		</addColumn>
 	</changeSet>
+	<changeSet id="ticket861_20150426" author="RachidAityaazza">
+		<dropTable cascadeConstraints="true" tableName="billing_invoice_agregate_taxes"/>
+		<createTable tableName="billing_invoice_agregate_taxes">
+			<column name="sub_cat_invoice_aggregat_id" type="BIGINT">
+				<constraints nullable="false" />
+			</column>
+			<column name="tax_id" type="BIGINT">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+		<addForeignKeyConstraint baseColumnNames="tax_id"
+			baseTableName="billing_invoice_agregate_taxes" constraintName="fkf7299c74ade17a12"
+			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+			onUpdate="NO ACTION" referencedColumnNames="id"
+			referencedTableName="billing_tax" />
+		<addForeignKeyConstraint baseColumnNames="sub_cat_invoice_aggregat_id"
+			baseTableName="billing_invoice_agregate_taxes" constraintName="fkf7299c74d8f96095"
+			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+			onUpdate="NO ACTION" referencedColumnNames="id"
+			referencedTableName="billing_invoice_agregate" />
+		<addColumn tableName="BILLING_INVOICE_AGREGATE">
+            <column name="DISCOUNT_PLAN_CODE" type="VARCHAR(50)" />
+        </addColumn>	
+		<addColumn tableName="BILLING_INVOICE_AGREGATE">
+			<column name="DISCOUNT_PLAN_ITEM_CODE" type="VARCHAR(50)" />
+        </addColumn>
+	</changeSet>
 </databaseChangeLog>

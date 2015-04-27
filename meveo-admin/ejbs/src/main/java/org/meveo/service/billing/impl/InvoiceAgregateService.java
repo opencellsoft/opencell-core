@@ -21,12 +21,17 @@ import java.util.List;
 
 import javax.ejb.Stateless;
 import javax.persistence.NoResultException;
+import javax.persistence.Query;
 
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.InvoiceAgregate;
 import org.meveo.model.billing.InvoiceSubCategory;
+import org.meveo.model.billing.RatedTransaction;
+import org.meveo.model.billing.RatedTransactionStatusEnum;
 import org.meveo.model.billing.SubCategoryInvoiceAgregate;
+import org.meveo.model.billing.Tax;
+import org.meveo.model.billing.TaxInvoiceAgregate;
 import org.meveo.model.billing.WalletInstance;
 import org.meveo.model.crm.Provider;
 import org.meveo.service.base.PersistenceService;
@@ -80,6 +85,23 @@ public class InvoiceAgregateService extends PersistenceService<InvoiceAgregate> 
 		List<SubCategoryInvoiceAgregate> result = (List<SubCategoryInvoiceAgregate>) qb.getQuery(getEntityManager())
 					.getResultList();
 		return result;
+
+	}
+	
+	public void updateTaxAggregates(WalletInstance wallet,Tax tax,Invoice invoice,BigDecimal amountWithoutTax, BigDecimal amountTax) {
+		
+		
+		Query queryAggregat = getEntityManager()
+				.createQuery(
+						"update "
+								+ TaxInvoiceAgregate.class.getName()
+								+ " set amountWithoutTax=:amountWithoutTax,amountTax=:amountTax where invoice=:invoice and wallet=:wallet and tax=:tax");
+		queryAggregat.setParameter("amountWithoutTax", amountWithoutTax);
+		queryAggregat.setParameter("amountTax", amountTax);
+		queryAggregat.setParameter("invoice", invoice);
+		queryAggregat.setParameter("wallet", wallet);
+		queryAggregat.setParameter("tax", tax);
+		queryAggregat.executeUpdate();
 
 	}
 
