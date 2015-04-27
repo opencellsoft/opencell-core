@@ -106,6 +106,10 @@ public class DiscountPlanBean extends BaseBean<DiscountPlan> {
 		discountPlanItem = new DiscountPlanItem();
 		discountPlanItem.setAccountingCode(getCurrentProvider().getDiscountAccountingCode());
 	}
+	
+	public void newDiscountPlanItem() {
+		discountPlanItem = new DiscountPlanItem();
+	}
 
 	public void deleteDiscountPlan(DiscountPlanItem discountPlanItem) {
 		getEntity().getDiscountPlanItems().remove(discountPlanItem);
