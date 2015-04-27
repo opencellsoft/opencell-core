@@ -57,13 +57,10 @@ public class DiscountPlanItemBean extends BaseBean<DiscountPlanItem> {
 	}
 	
 	  public  List<InvoiceSubCategory> getInvoiceSubCategories(InvoiceCategory invoiceCategory){  
-		  try { 
-		    return invoiceSubCategoryService.findByInvoiceCategory(invoiceCategory, getCurrentUser().getProvider());  
-			} catch (NoResultException e) {
-			return null;
+	     if(invoiceCategory!=null){
+		return invoiceSubCategoryService.findByInvoiceCategory(invoiceCategory, getCurrentUser().getProvider()); 
+			}else{
+	     return null; 
 			}  
-		 }
-	  
-	   
+		 }}
 
-}
