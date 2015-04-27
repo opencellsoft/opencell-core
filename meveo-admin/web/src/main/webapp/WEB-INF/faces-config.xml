@@ -112,6 +112,18 @@
 			<redirect />
 		</navigation-case>
 		<navigation-case>
+			<from-outcome>catMessagess</from-outcome>
+			<to-view-id>/pages/admin/catMessages/catMessagess.xhtml
+			</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>catMessagesDetail</from-outcome>
+			<to-view-id>/pages/admin/catMessages/catMessagesDetail.xhtml
+			</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
 			<from-outcome>sellers</from-outcome>
 			<to-view-id>/pages/admin/sellers/sellers.xhtml</to-view-id>
 			<redirect />

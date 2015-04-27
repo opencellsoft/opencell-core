@@ -66,6 +66,9 @@
     <c:if test="${sortOrder==null}">
         <c:set var="sortOrder" value="ASCENDING" />
     </c:if>
+    <c:if test="${empty rowsPerPage}">
+        <c:set var="rowsPerPage" value="5,10,15" />
+    </c:if>
 
 	<p:panel id="#{resultsId}_panel" width="100">
 
@@ -75,7 +78,7 @@
 				value="#{dataModel}" paginator="true" rows="10" editable="#{editable}" editMode="#{editMode}"  widgetVar="cellEntity"
 				selection="#{backingBean.selectedEntities}" sortBy="#{sortBy}" sortOrder="#{sortOrder}"
 				paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
-				rowsPerPageTemplate="5,10,15" lazy="true"
+				rowsPerPageTemplate="#{rowsPerPage}" lazy="true"
 				binding="#{backingBean.dataTable}" styleClass="custom-grid"
 				rowKey="#{entity.id}" first="#{backingBean.dataTableFirstAttribute}">
 				<p:ajax event="page" listener="#{backingBean.onPageChange}" />

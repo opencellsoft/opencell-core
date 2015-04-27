@@ -12,6 +12,15 @@
 
 <ui:composition>
 
+	<c:if test="${empty required}">
+		<c:set var="required" value="false" />
+	</c:if>
+	<c:if test="${empty size}">
+		<c:set var="size" value="20" />
+	</c:if>
+	<c:if test="${empty maxlength}">
+		<c:set var="maxlength" value="40" />
+	</c:if>
 	<c:if test="${empty isMessage}">
 		<c:set var="isMessage" value="false" />
 	</c:if>
@@ -82,18 +91,6 @@
 	<c:set var="converter"
 		value="#{getConverter.forType(fieldValue, converterParam)}"></c:set>
 
-	<c:if test="${empty propagateConversation}">
-		<c:set var="propagateConversation" value="true" />
-	</c:if>
-	<c:if test="${empty renderEditLink}">
-		<c:set var="renderEditLink" value="true" />
-	</c:if>
-	<c:if test="${empty objectIdParamName}">
-		<c:set var="objectIdParamName" value="objectId" />
-	</c:if>
-	<c:if test="${empty edit}">
-		<c:set var="edit" value="true" />
-	</c:if>
 
 	<p:column exportable="#{exportable}" rendered="#{rendered}">
 		<f:facet name="header">
@@ -136,7 +133,7 @@
 				</f:facet>
 				<f:facet name="input">
 					<p:inputText value="#{fieldValue}" required="#{required}"
-						style="width:100%;" maxlength="#{maxlength}"
+						style="width:100%;" maxlength="#{maxlength}" size="#{size}"
 						rendered="#{!isDate and show}" disabled="#{disabled}">
 						<c:if test="#{not empty converter}">
 							<f:converter converterId="#{converter}" />

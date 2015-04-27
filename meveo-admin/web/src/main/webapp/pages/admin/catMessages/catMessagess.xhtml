@@ -1,0 +1,48 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html" xmlns:hftl="http://hftl.org"
+	xmlns:hf="http://java.sun.com/jsf/composite/tags"
+	xmlns:c="http://java.sun.com/jstl/core"
+	template="/layout/template.xhtml" xmlns:p="http://primefaces.org/ui">
+
+	<ui:define name="metadata">
+		<f:metadata>
+			<f:event type="preRenderView"
+				listener="#{catMessagesListBean.preRenderView}" />
+		</f:metadata>
+	</ui:define>
+
+	<ui:define name="navigation">
+		<ui:include src="/layout/navigation.xhtml" />
+	</ui:define>
+
+	<ui:define name="body">
+
+		<hf:searchPanel id="searchPanel" backingBean="#{catMessagesListBean}"
+			label="#{messages['catMessages.search']}" renderNewButton="false">
+			<hf:searchField label="#{messages['catMessages.objectType']}"
+				field="messageCode" listValues="#{catMessagesListBean.objectTypes}"/>
+			<hf:searchField label="#{messages['catMessages.languageCode']}"
+				field="languageCode" listValues="#{tradingLanguageListBean.languageCodes}"/>
+		</hf:searchPanel>
+
+		<hftl:dataList label="#{messages['catMessages.title']}"
+			editable="true" backingBean="#{catMessagesListBean}" rowsPerPage="10,20,50,100">
+			<hftl:commonColumn label="#{messages['catMessages.objectType']}"
+				fieldValue="#{entity.messageCode.split('_')[0]}" />
+			<hftl:commonColumn label="#{messages['catMessages.messageCode']}"
+				fieldValue="#{entity.messageCode.split('_')[1]}" />
+			<hftl:commonColumn
+				label="#{messages['catMessages.basicDescription']}"
+				fieldValue="#{backingBean.getBasicDescription(entity)}" />
+			<hftl:column label="#{messages['catMessages.languageCode']}"
+				field="languageCode" />
+			<hftl:editColumn maxlength="100"
+				label="#{messages['catMessages.descriptionTranslation']}"
+				fieldValue="#{entity.description}" />
+		</hftl:dataList>
+	</ui:define>
+
+</ui:composition>
