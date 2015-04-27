@@ -646,8 +646,8 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 			  if(taxInvoiceAgregate!=null){
 			   taxInvoiceAgregate.addAmountTax(amountTax);
 				  taxInvoiceAgregate.addAmountWithoutTax(discountAmountWithoutTax);
+				  invoiceAgregateService.update(taxInvoiceAgregate,currentUser);
 			  }
-			  invoiceAgregateService.update(taxInvoiceAgregate,currentUser);
 			 }
 		
 		
