@@ -4,187 +4,323 @@
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:a="http://richfaces.org/a4j" xmlns:hftl="http://hftl.org"
-	xmlns:c="http://java.sun.com/jsp/jstl/core"
 	xmlns:hf="http://java.sun.com/jsf/composite/tags"
+	xmlns:s="http://jboss.org/seam/faces"
 	xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml"
-	xmlns:s="http://jboss.org/seam/faces">
+	xmlns:e="http://primefaces.org/extension">
 
 	<ui:define name="navigation">
 		<ui:include src="/layout/navigation.xhtml" />
 	</ui:define>
 
 	<ui:define name="body">
-	
-	<hftl:entityPopup id="searchInvoiceCategoryPopup"
-			header="#{messages['invoiceCategory.panel']}"
-			updateField=":tabView:discountPlanItemFormPanel:formDiscountPlanItem:categorySelectId:categorySelectId,:tabView:discountPlanItemFormPanel:formDiscountPlanItem:invoiceSubCategories"
-			selection="#{discountPlanItem.invoiceCategory}"
-			backingBean="#{invoiceCategoryBean}"
-			searchField1Label="#{messages['invoiceCategory.code']}"
-			searchField1="code"
-			searchField2Label="#{messages['invoiceCategory.description']}"
-			searchField2="description"
-			column1Label="#{messages['invoiceCategory.code']}" column1="code"
-			column2Label="#{messages['invoiceCategory.description']}"
-			column2="description" />
-			
-			<p:panelGrid styleClass="col1-set tab-view-container" columns="1">
+		<p:panelGrid styleClass="col1-set tab-view-container" columns="1">
 			<f:facet name="header">
-				<h:outputText value="#{messages['invoiceSubCategory.panel']}" />
+				<h:outputText value="#{messages['dunningPlan.panel']}" />
 			</f:facet>
-
-			<p:tabView id="tabView">
-
-				<p:tab title="#{messages['commons.information']}">
-					<hf:formPanel id="discountFormPanel" formId="formDiscountPlan"
-						backingBean="#{discountPlanBean}">
-						<hf:formField id="chargeSelectId" required="true"
-							label="#{messages['discountPlanMatrix.eventCode']}" field="code" />
-						<hf:formField label="#{messages['BusinessEntity.description']}"
-							field="description" required="true" useConverter="false"
-							id="description" maxlength="50" />
-						<hf:formField label="#{messages['enableEntity.disabled']}"
-							field="disabled" isMessage="true" showOnlyOnConsult="true" />
-							<!-- 
-							<hf:formField
-							label="#{messages['pricePlanMatrix.minSubscriptionAgeInMonth']}"
-							field="minDuration" />
-						<hf:formField
-							label="#{messages['pricePlanMatrix.maxSubscriptionAgeInMonth']}"
-							field="maxDuration" /> -->
+			<p:tabView id="tabView" dynamic="true" cache="true">
+				<p:tab title="#{messages['dunningPlan.panel']}">
+					<hf:formPanel backingBean="#{dunningPlanBean}">
+						<hftl:panelGroup columns="2">
+							<hf:formField label="#{messages['businessEntity.code']}"
+								field="code" required="true" validateUnique="true" />
+							<hf:formField label="#{messages['businessEntity.description']}"
+								field="description" useConverter="false" size="50"
+								maxlength="50" />
+							<hf:formField label="#{messages['dunningPlan.creditCategory']}"
+								field="creditCategory" required="true" />
+							<hf:formField label="#{messages['dunningPlan.paymentMethod']}"
+								field="paymentMethod" required="true" />
+						</hftl:panelGroup>
+						<hf:formField label="#{messages['commons.status']}" field="status"
+							required="true" />
 					</hf:formPanel>
 				</p:tab>
 
-				<p:tab title="#{messages['discountPlanItem.title']}"
-					rendered="#{discountPlanBean.entity.id!=null}">
-					<p:outputPanel id="discountPlanItems_MSG_panel">
+				<p:tab title="#{messages['dunningPlan.transitions']}" id="tab2"
+					rendered="#{dunningPlanBean.entity.id!=null}">
+					<p:outputPanel id="dunningPlanTransition_MSG_panel">
 						<h:graphicImage value="/img/msgerror.png" style="border:0"
 							rendered="#{validation.failed}" />
 						<h:outputText value="#{messages['validation.validationFailure']}"
 							rendered="#{validation.failed}" styleClass="errorMessage" />
 					</p:outputPanel>
 
-					<p:outputPanel id="discountPlanItemPanel">
+					<p:panelGrid columns="2">
 
-						<hftl:dataList id="discountPlanItemsList"
-							label="#{messages['discountPlan.title']}"
-							backingBean="#{discountPlanItemBean}" sortBy="code"
-							dataModel="#{discountPlanBean.entity.discountPlanItems}">
-					
-							<p:column headerText="#{messages['discountPlanMatrix.itemCode']}"  >
-								<h:outputText value="#{entity.code}" />
-									</p:column>
-								 	
+						<h:outputText value="#{messages['businessEntity.code']}" />
+						<p:panelGrid columns="2">
+							<h:outputText value="#{dunningPlanBean.entity.code}"
+								disabled="true" style="font-weight:bold;" />
+							<h:inputHidden rendered="#{dunningPlanBean.edit}" />
+						</p:panelGrid>
+
+						<h:outputText value="#{messages['businessEntity.description']}" />
+						<p:panelGrid columns="2">
+							<h:outputText value="#{dunningPlanBean.entity.description}"
+								required="true" disabled="true" style="font-weight:bold;" />
+							<h:inputHidden rendered="#{dunningPlanBean.edit}" />
+						</p:panelGrid>
+
+					</p:panelGrid>
+
+					<br />
+					<p:outputPanel id="dunningPlanTransition_panel">
+						<hftl:dataList backingBean="#{dunningPlanTransitionBean}"
+							dataModel="#{dunningPlanBean.entity.transitions}"
+							resultsId="dunningPlanTransitions_results" checkMany="false">
 							<hftl:column
-								label="#{messages['discountPlanItem.invoiceCategory']}"
-								field="invoiceCategory" childField="code" />
+								label="#{messages['dunningPlanTransition.dunningLevelFrom']}"
+								field="dunningLevelFrom" />
 							<hftl:column
-								label="#{messages['discountPlanItem.invoiceSubCategory']}"
-								field="invoiceSubCategory" childField="code" />
-							<hftl:column label="#{messages['discountPlanItem.percent']}"
-								field="percent" />
+								label="#{messages['dunningPlanTransition.dunningLevelTo']}"
+								field="dunningLevelTo" />
+							<hftl:column
+								label="#{messages['dunningPlanTransition.delayBeforeProcess']}"
+								field="delayBeforeProcess" />
+							<hftl:column
+								label="#{messages['dunningPlanTransition.thresholdAmount']}"
+								field="thresholdAmount" />
+							<hftl:column
+								label="#{messages['dunningPlanTransition.waitDuration']}"
+								field="waitDuration" />
+							<hftl:column
+								label="#{messages['dunningPlan.conditionEl']}"
+								field="conditionEl" />
 
 							<p:column styleClass="actions-column"
-								>
+								rendered="#{dunningPlanBean.edit}">
 								<f:facet name="header">
 									<h:outputText value="#{messages['commons.actions']}" />
 								</f:facet>
 
-								<p:tooltip for="editDiscountPlanItemLink"
+								<p:tooltip for="editDunningPlanTransitionLink"
 									value="#{messages['commons.edit']}" showEffect="slide"
 									hideEffect="slide" />
-								<p:commandButton id="editDiscountPlanItemLink" 
-									update=":tabView:discountPlanItemPanel,:tabView:discountPlanItemFormPanel:formDiscountPlanItem"
-									action="#{discountPlanBean.setDiscountPlanItem(entity)}" ajax="true"
+								<p:commandButton id="editDunningPlanTransitionLink"
+									update=":tabView:formPanelDunningPlanTransition:formDunningPlanTransition"
+									action="#{dunningPlanBean.editDunningPlanTransition(entity)}"
 									icon="ui-icon-document" />
-								<p:tooltip for="deleteDiscountPlanItemLink"
+								<p:tooltip for="editDunningPlanTransitionDeleteLink"
 									value="#{messages['commons.delete']}" showEffect="slide"
 									hideEffect="slide" />
-								<p:commandButton id="deleteDiscountPlanItemLink" rendered="#{discountPlanBean.edit}"
-									action="#{discountPlanBean.deleteDiscountPlan(entity)}"
+								<p:commandButton id="editDunningPlanTransitionDeleteLink"
+									action="#{dunningPlanBean.deleteDunningPlanTransition(entity)}"
 									icon="ui-icon-trash" ajax="true"
-									update=":tabView:discountPlanItemPanel,:tabView:discountPlanItemFormPanel:formDiscountPlanItem" />
-									 
+									update=":tabView:dunningPlanTransition_panel,:tabView:formPanelDunningPlanTransition:formDunningPlanTransition" />
 							</p:column>
+
 						</hftl:dataList>
-						</p:outputPanel>
-						<p:panel>
-						<p:panel id="discountPlanItemdiv"
-							rendered="#{discountPlanBean.edit}">
-							<p:panel id="subCategoryCountrySdiv">
-						<hf:formPanel  id="discountPlanItemFormPanel"
-							formId="formDiscountPlanItem" edit="#{discountPlanBean.edit}"
-							label="#{messages['discountPlanItem.title']}"
-							backingBean="#{discountPlanBean}" entity="#{discountPlanItem}"
-							showFormButtons="false" ajaxSubmit="true">
+					</p:outputPanel>
 
-							<div class="alert-box alert-box-notice">
-								#{messages['message.discountPlanItem.info.requiredFields']}</div>
+					<p:panel>
+						<p:panel id="dunningPlanTransitiondiv"
+							rendered="#{dunningPlanBean.edit}">
 
-							<hf:formField label="#{messages['discountPlanMatrix.itemCode']}"
-								field="code" required="true" />
+							<p:panel id="dunningPlanTransitiondiv1">
+								<hf:formPanel id="formPanelDunningPlanTransition"
+									formId="formDunningPlanTransition"
+									edit="#{dunningPlanBean.edit}"
+									label="#{messages['dunningPlan.transitions']}"
+									backingBean="#{dunningPlanTransitionBean}"
+									entity="#{dunningPlanBean.dunningPlanTransition}" showFormButtons="false"
+									ajaxSubmit="true">
 
-							 <hf:formEntityField id="categorySelectId"
-							label="#{messages['invoiceSubCategory.invoiceCategory']}"
-							field="invoiceCategory" childField="code" required="true"
-							popup="true" popupId="searchInvoiceCategoryPopup" /> 
-							
-							<p:panelGrid columns="2">
-                    		<p:outputLabel value="#{messages['charge.subCategory']}"></p:outputLabel>
-                   			 <p:selectOneMenu id="invoiceSubCategories" value="#{discountPlanItem.invoiceSubCategory}" >  
-						  	<f:selectItem itemLabel="" />
-                        	<f:selectItems value="#{discountPlanItemBean.getInvoiceSubCategories(discountPlanItem.invoiceCategory)}" var="t" itemLabel="#{t.code}"/> 
-							<s:objectConverter />
-                    		</p:selectOneMenu> 
-							</p:panelGrid> 
-							<hf:formField
-								label="#{messages['discountPlanItem.accountingCode']}"
-								field="accountingCode" />
+									<hf:formField
+										label="#{messages['dunningPlanTransition.dunningLevelFrom']}"
+										style="width: 100px" panelStyle="width: 100px"
+										field="dunningLevelFrom" required="true" isMessage="true"
+										edit="#{dunningPlanBean.edit}" />
+									<hf:formField
+										label="#{messages['dunningPlanTransition.dunningLevelTo']}"
+										style="width: 100px" panelStyle="width: 100px"
+										field="dunningLevelTo" required="true" isMessage="true"
+										edit="#{dunningPlanBean.edit}" />
+									<hf:formField
+										label="#{messages['dunningPlanTransition.delayBeforeProcess']}"
+										field="delayBeforeProcess" required="true"
+										edit="#{dunningPlanBean.edit}" />
+									<hf:formField
+										label="#{messages['dunningPlanTransition.thresholdAmount']}"
+										field="thresholdAmount" required="true"
+										edit="#{dunningPlanBean.edit}" />
+									<hf:formField
+										label="#{messages['dunningPlanTransition.waitDuration']}"
+										field="waitDuration" required="true"
+										edit="#{dunningPlanBean.edit}" />
+									<hf:formField label="#{messages['dunningPlan.conditionEl']}"
+							         field="conditionEl"  textArea="true" maxlength="1000"
+									 edit="#{dunningPlanBean.edit}"/>
+									<p:panelGrid columns="3">
+										<p:commandButton rendered="#{dunningPlanTransition.id==null}"
+											action="#{dunningPlanBean.saveDunningPlanTransition}"
+											value="#{messages['dunningPlanTransition.saveNewDunningPlanTransition']}"
+											update=":tabView:dunningPlanTransition_panel,:tabView:formPanelDunningPlanTransition:formDunningPlanTransition,:tabView:dunningPlanTransitiondiv" />
+										<p:commandButton rendered="#{dunningPlanTransition.id!=null}"
+											action="#{dunningPlanBean.saveDunningPlanTransition}"
+											value="#{messages['dunningPlanTransition.modifyDunningPlanTransition']}"
+											update=":tabView:dunningPlanTransition_panel,:tabView:formPanelDunningPlanTransition:formDunningPlanTransition,:tabView:dunningPlanTransitiondiv" />
 
-							<hf:formField label="#{messages['discountPlanItem.percent']}"
-								field="percent" required="true" minValue="-100" maxValue="100" />
-								 
-							<hf:formField label="#{messages['discountPlanItem.expressionEl']}"
-							         field="expressionEl"  textArea="true" maxlength="2000" /> 
-							<hf:formField label="#{messages['enableEntity.disabled']}"
-							field="disabled" isMessage="true" />
-								
-							<p:panelGrid columns="4">
+										<p:commandButton value="#{messages['action.cancel']}"
+											action="#{dunningPlanBean.newDunningPlanTransitionInstance}"
+											update=":tabView:dunningPlanTransitiondiv" />
 
-								<p:commandButton id="saveButton"
-									rendered="#{discountPlanItem.id==null}"
-									value="#{messages['discountPlanItem.addNew']}"
-									action="#{discountPlanBean.saveOrUpdateDiscountPlan()}"
-									icon="ui-icon-check"
-									update=":tabView:discountPlanItemPanel,:tabView:discountPlanItemFormPanel:formDiscountPlanItem,:tabView:discountPlanItemdiv"/>
-								<p:commandButton
-											rendered="#{discountPlanItem.id!=null}"
-											action="#{discountPlanBean.saveOrUpdateDiscountPlan}"
-											value="#{messages['discountPlanItem.modifyDiscountPlantItem']}"
-											update=":tabView:discountPlanItemPanel,:tabView:discountPlanItemFormPanel:formDiscountPlanItem,:tabView:discountPlanItemdiv"
-											icon="ui-icon-check" 
-											/>
-								
-								<p:commandButton value="#{messages['action.reset']}" 
-											action="#{discountPlanBean.newDiscountPlanItem}"
-											update=":tabView:discountPlanItemdiv" />	
+										<p:button id="buttonBack" value="#{messages['action.back']}"
+											outcome="#{dunningPlanBean.back()}" includeViewParams="true">
+											<f:param name="cid"
+												value="#{javax.enterprise.context.conversation.id}" />
+										</p:button>
+									</p:panelGrid>
 
-								<p:button id="backButton" value="#{messages['action.back']}" immediate="true"
-									outcome="#{discountPlanBean.back()}" includeViewParams="true">
-									<c:if
-										test="#{conversation.id != null and not cc.attrs.killConversationOnBack}">
-										<f:param name="cid"
-											value="#{javax.enterprise.context.conversation.id}" />
-									</c:if>
-								</p:button>
-								
-								 
+								</hf:formPanel>
+							</p:panel>
 
-							</p:panelGrid>
-
-						</hf:formPanel>
+						</p:panel>
 
 					</p:panel>
+				</p:tab>
+
+				<p:tab title="#{messages['dunningPlan.actions']}" id="tab3"
+					rendered="#{dunningPlanBean.entity.id!=null}">
+					<p:outputPanel id="dunningPlanActions_MSG_panel">
+						<h:graphicImage value="/img/msgerror.png" style="border:0"
+							rendered="#{validation.failed}" />
+						<h:outputText value="#{messages['validation.validationFailure']}"
+							rendered="#{validation.failed}" styleClass="errorMessage" />
+					</p:outputPanel>
+
+					<p:panelGrid columns="2">
+
+						<h:outputText value="#{messages['businessEntity.code']}" />
+						<p:panelGrid columns="2">
+							<h:outputText value="#{dunningPlanBean.entity.code}"
+								disabled="true" style="font-weight:bold;" />
+							<h:inputHidden rendered="#{dunningPlanBean.edit}" />
+						</p:panelGrid>
+
+						<h:outputText value="#{messages['businessEntity.description']}" />
+						<p:panelGrid columns="2">
+							<h:outputText value="#{dunningPlanBean.entity.description}"
+								required="true" disabled="true" style="font-weight:bold;" />
+							<h:inputHidden rendered="#{dunningPlanBean.edit}" />
+						</p:panelGrid>
+
+					</p:panelGrid>
+
+					<br />
+
+					<p:panel id="actionPlanItems_panel">
+						<p:panel>
+							<h:form id="actionItems_form">
+								<hftl:dataList backingBean="#{actionPlanItemBean}"
+									dataModel="#{dunningPlanBean.entity.actions}"
+									resultsId="dunningPlanActions_results" checkMany="false">
+									<hftl:column label="#{messages['actionPlanItem.dunningLevel']}"
+										field="dunningLevel" />
+									<hftl:column label="#{messages['actionPlanItem.actionType']}"
+										field="actionType" />
+									<hftl:column label="#{messages['actionPlanItem.order']}"
+										field="itemOrder" />
+									<hftl:column
+										label="#{messages['actionPlanItem.thresholdAmount']}"
+										field="thresholdAmount" />
+									<hftl:column
+										label="#{messages['actionPlanItem.letterTemplate']}"
+										field="letterTemplate" />
+								    <hftl:column
+										label="#{messages['dunningPlan.conditionEl']}"
+										field="conditionEl" />		
+
+									<p:column styleClass="actions-column"
+										rendered="#{dunningPlanBean.edit}">
+										<f:facet name="header">
+											<h:outputText value="#{messages['commons.actions']}" />
+										</f:facet>
+
+										<p:tooltip for="editActionPlanItemsLink"
+											value="#{messages['commons.edit']}" showEffect="slide"
+											hideEffect="slide" />
+										<p:commandButton id="editActionPlanItemsLink"
+											update=":tabView:formPanelActionPlanItems:formActionPlanItems"
+											action="#{dunningPlanBean.editActionPlanItem(entity)}"
+											icon="ui-icon-document" />
+										<p:tooltip for="editActionPlanItemDeleteLink"
+											value="#{messages['commons.delete']}" showEffect="slide"
+											hideEffect="slide" />
+										<p:commandButton id="editActionPlanItemDeleteLink"
+											action="#{dunningPlanBean.deleteActionPlanItem(entity)}"
+											icon="ui-icon-trash" ajax="true"
+											update=":tabView:actionPlanItems_panel,:tabView:formPanelActionPlanItems:formActionPlanItems" />
+									</p:column>
+
+								</hftl:dataList>
+							</h:form>
+						</p:panel>
+					</p:panel>
+					<p:panel>
+
+						<p:panel id="actionPlanItemsdiv"
+							rendered="#{dunningPlanBean.edit}">
+							<hf:formPanel id="formPanelActionPlanItems"
+								formId="formActionPlanItems" edit="#{dunningPlanBean.edit}"
+								label="#{messages['dunningPlan.actions']}"
+								backingBean="#{actionPlanItemBean}" entity="#{dunningPlanBean.actionPlanItem}"
+								showFormButtons="false" ajaxSubmit="true">
+
+								<hf:formField label="#{messages['actionPlanItem.dunningLevel']}"
+									field="dunningLevel" style="width: 100px"
+									panelStyle="width: 100px" required="true" isMessage="true"
+									edit="#{dunningPlanBean.edit}" />
+								<hf:formField label="#{messages['actionPlanItem.actionType']}"
+									field="actionType" style="width: 100px"
+									panelStyle="width: 100px" required="true" event="onchange"
+									render="amountOrTemplate" edit="#{dunningPlanBean.edit}" />
+								<hf:formField label="#{messages['actionPlanItem.order']}"
+									field="itemOrder" required="true"
+									edit="#{dunningPlanBean.edit}" />
+								<hf:formField
+									label="#{messages['actionPlanItem.thresholdAmount']}"
+									field="thresholdAmount" required="true"
+									edit="#{dunningPlanBean.edit}" />
+								<p:outputPanel id="amountOrTemplate">
+									<h:panelGroup style="display:block;"
+										rendered="#{actionPlanItem.actionType.toString() != 'CHARGE'}">
+										<hf:formField
+											label="#{messages['actionPlanItem.letterTemplate']}"
+											field="letterTemplate" size="50" required="false" />
+									</h:panelGroup>
+									<h:panelGroup style="display:block;"
+										rendered="#{actionPlanItem.actionType.toString() == 'CHARGE'}">
+										<hf:formField
+											label="#{messages['actionPlanItem.chargeAmount']}"
+											field="chargeAmount" required="true" />
+									</h:panelGroup>
+								</p:outputPanel>
+								<hf:formField label="#{messages['dunningPlan.conditionEl']}"
+							         field="conditionEl"  textArea="true" maxlength="1000"
+									 edit="#{dunningPlanBean.edit}"/>
+								<p:panelGrid columns="3">
+									<p:commandButton rendered="#{actionPlanItem.id==null}"
+										action="#{dunningPlanBean.saveActionPlanItem}"
+										value="#{messages['actionPlanItem.saveNewActionPlanItem']}"
+										update=":tabView:actionPlanItems_panel,:tabView:formPanelActionPlanItems:formActionPlanItems,:tabView:actionPlanItemsdiv" />
+									<p:commandButton rendered="#{actionPlanItem.id!=null}"
+										action="#{dunningPlanBean.saveActionPlanItem}"
+										value="#{messages['actionPlanItem.modifyActionPlanItem']}"
+										update=":tabView:actionPlanItems_panel,:tabView:formPanelActionPlanItems:formActionPlanItems,:tabView:actionPlanItemsdiv" />
+
+									<p:commandButton value="#{messages['action.cancel']}"
+										action="#{dunningPlanBean.newActionPlanItemInstance}"
+										update=":tabView:actionPlanItemsdiv" />
+
+									<p:button id="back" value="#{messages['action.back']}"
+										outcome="#{dunningPlanBean.back()}" includeViewParams="true">
+										<f:param name="cid"
+											value="#{javax.enterprise.context.conversation.id}" />
+									</p:button>
+								</p:panelGrid>
+
+							</hf:formPanel>
 
 						</p:panel>
 

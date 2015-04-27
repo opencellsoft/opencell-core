@@ -30,7 +30,7 @@
 			
 			<p:panelGrid styleClass="col1-set tab-view-container" columns="1">
 			<f:facet name="header">
-				<h:outputText value="#{messages['invoiceSubCategory.panel']}" />
+				<h:outputText value="#{messages['discountPlan.title']}" />
 			</f:facet>
 
 			<p:tabView id="tabView">
@@ -85,7 +85,7 @@
 								field="percent" />
 
 							<p:column styleClass="actions-column"
-								>
+								rendered="#{discountPlanBean.edit}">
 								<f:facet name="header">
 									<h:outputText value="#{messages['commons.actions']}" />
 								</f:facet>
@@ -93,14 +93,14 @@
 								<p:tooltip for="editDiscountPlanItemLink"
 									value="#{messages['commons.edit']}" showEffect="slide"
 									hideEffect="slide" />
-								<p:commandButton id="editDiscountPlanItemLink" 
+								<p:commandButton id="editDiscountPlanItemLink"
 									update=":tabView:discountPlanItemPanel,:tabView:discountPlanItemFormPanel:formDiscountPlanItem"
-									action="#{discountPlanBean.setDiscountPlanItem(entity)}" ajax="true"
+									action="#{discountPlanBean.setDiscountPlanItem(entity)}"
 									icon="ui-icon-document" />
 								<p:tooltip for="deleteDiscountPlanItemLink"
 									value="#{messages['commons.delete']}" showEffect="slide"
 									hideEffect="slide" />
-								<p:commandButton id="deleteDiscountPlanItemLink" rendered="#{discountPlanBean.edit}"
+								<p:commandButton id="deleteDiscountPlanItemLink"
 									action="#{discountPlanBean.deleteDiscountPlan(entity)}"
 									icon="ui-icon-trash" ajax="true"
 									update=":tabView:discountPlanItemPanel,:tabView:discountPlanItemFormPanel:formDiscountPlanItem" />
@@ -167,9 +167,9 @@
 											/>
 								
 								<p:commandButton value="#{messages['action.reset']}" 
-											action="#{discountPlanBean.newDiscountPlanItem}"
-											update=":tabView:discountPlanItemdiv" />	
-
+											action="#{discountPlanBean.newDiscountPlanItem()}"
+											update=":tabView:discountPlanItemdiv" /> 
+											
 								<p:button id="backButton" value="#{messages['action.back']}" immediate="true"
 									outcome="#{discountPlanBean.back()}" includeViewParams="true">
 									<c:if
