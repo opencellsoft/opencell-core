@@ -3,8 +3,7 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html"
-	xmlns:rich="http://richfaces.org/rich"
-	xmlns:a="http://richfaces.org/a4j"
+	xmlns:p="http://primefaces.org/ui"
 	xmlns:hftl="http://hftl.org" xmlns:hf="http://java.sun.com/jsf/composite/tags"
 	template="/layout/template.xhtml">
 
@@ -12,7 +11,7 @@
 		<ui:include src="/layout/navigation.xhtml" />
 	</ui:define>
 	<ui:define name="body">	
-	<rich:panel>				
+	<p:panel>				
 				<hf:formPanel  showFormButtons ="#{false}" label="#{messages['dunningLOT.panel']}" backingBean="#{dunningLOTBean}">
 				
 					<hftl:panelGroup columns="2">							 
@@ -20,7 +19,7 @@
 						<hf:formField label="#{messages['dunningLOT.actionType']}" field="actionType"  />
 																							                  															
 					</hftl:panelGroup>												
-					<a:commandButton value="#{messages['action.back']}"	 onclick="javascript:history.back()"/>											
+					<h:commandButton value="#{messages['action.back']}"	 onclick="javascript:history.back()"/>											
 				</hf:formPanel>
 				<custom:listPanel label="#{messages['dunningLOT.actionsDunning']}">
 					<custom:dataList backingBean="#{dunningLOTBean}"
@@ -35,6 +34,6 @@
 					</custom:dataList>
 				</custom:listPanel>
 				
-			</rich:panel>		
+			</p:panel>		
 		</ui:define>
 </ui:composition>

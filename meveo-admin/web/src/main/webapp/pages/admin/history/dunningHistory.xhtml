@@ -3,16 +3,16 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html"
-	xmlns:rich="http://richfaces.org/rich"
-	xmlns:a="http://richfaces.org/a4j"
-	xmlns:hftl="http://hftl.org" xmlns:hf="http://java.sun.com/jsf/composite/tags"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:hftl="http://hftl.org" 
+	xmlns:hf="http://java.sun.com/jsf/composite/tags"
 	template="/layout/template.xhtml">
 
 	<ui:define name="navigation">
 		<ui:include src="/layout/navigation.xhtml" />
 	</ui:define>
 	<ui:define name="body">	
-	<rich:panel>				
+	<p:panel>				
 				<hf:formPanel  showFormButtons ="#{false}" edit="#{false}" label="#{messages['dunningHistory.panel']}" backingBean="#{dunningHistoryBean}">
 					<hftl:panelGroup columns="2">
 						<hf:formField label="#{messages['jobHistory.executionDate']}" field="executionDate"  />	  
@@ -20,7 +20,7 @@
 						<hf:formField label="#{messages['dunningHistory.updatedCustomerAccounts']}" field="linesInserted"  />
 						<hf:formField label="#{messages['dunningHistory.errorCustomerAccounts']}" field="linesRejected"  />																		                  																
 					</hftl:panelGroup>												
-					<a:commandButton value="#{messages['action.back']}"	 onclick="javascript:history.back()"/>											
+					<h:commandButton value="#{messages['action.back']}"	 onclick="javascript:history.back()"/>											
 				</hf:formPanel>
 				<custom:listPanel label="#{messages['dunningHistory.dunningLot']}">
 					<custom:dataList backingBean="#{dunningHistoryBean}"
@@ -34,7 +34,6 @@
 						<custom:actionsColumn editView="/pages/payments/dunning/dunningLOTDetail.xhtml" noEdit="true" noDelete="true"/> 					
 					</custom:dataList>
 				</custom:listPanel>
-				
-			</rich:panel>		
+			</p:panel>		
 		</ui:define>
 </ui:composition>

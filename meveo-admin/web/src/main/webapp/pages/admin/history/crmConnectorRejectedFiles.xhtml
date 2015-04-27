@@ -3,10 +3,10 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html"
-	xmlns:rich="http://richfaces.org/rich"
-	xmlns:a="http://richfaces.org/a4j"
 	xmlns:c="http://java.sun.com/jstl/core"
-	xmlns:hftl="http://hftl.org" xmlns:hf="http://java.sun.com/jsf/composite/tags"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:hftl="http://hftl.org" 
+	xmlns:hf="http://java.sun.com/jsf/composite/tags"
 	template="/layout/template.xhtml">
 
 	<ui:define name="navigation">
@@ -15,7 +15,7 @@
 
 	<ui:define name="body">
 
-		<rich:panel>
+		<p:panel>
 			<f:facet name="header">
 				<h:outputText value="#{messages['document.panel']}" />
 			</f:facet>
@@ -37,12 +37,12 @@
 						</ui:define>
 						<h:outputText value="#{messages['commons.dateFrom']}"
 							style="padding-right:5px" />
-						<rich:calendar value="#{crmConnectorRejectedFileBean.fromDate}" popup="true"
+						<p:calendar value="#{crmConnectorRejectedFileBean.fromDate}" popup="true"
 							showApplyButton="false" cellWidth="24px" cellHeight="22px"
 							datePattern="yyyy-MM-dd HH:mm" style="width:200px;" />
 						<h:outputText value="#{messages['commons.dateTill']}"
 							style="padding:5px" />
-						<rich:calendar value="#{crmConnectorRejectedFileBean.toDate}" popup="true"
+						<p:calendar value="#{crmConnectorRejectedFileBean.toDate}" popup="true"
 							showApplyButton="false" cellWidth="24px" cellHeight="22px"
 							datePattern="yyyy-MM-dd HH:mm" style="width:200px" />
 					</s:decorate>
@@ -55,43 +55,41 @@
 						reRender="documentSearchForm" value="#{messages['commons.clean']}" />
 				</h:panelGrid>
 			</h:form>
-		</rich:panel>
+		</p:panel>
 
 
-		<a:outputPanel id="documentsPanel" width="100%">
-			<rich:spacer />
+		<p:panel id="documentsPanel" width="100%">
+			<p:spacer />
 			<h:outputText value="#{messages['commons.noItems']}"
 				rendered="#{crmConnectorRejectedFiles.size==0}" />
-			<a:form id="documentsForm" rendered="#{crmConnectorRejectedFiles.size&gt;0}">
+			<h:form id="documentsForm" rendered="#{crmConnectorRejectedFiles.size&gt;0}">
 				<h:panelGrid width="100%" columns="1" border="0"
 					style="padding:0px; margin:0px;text-align: right;">
 					<h:outputText
 						value="#{crmConnectorRejectedFiles.size} #{messages['commons.itemsFound']}" />
 				</h:panelGrid>
-				<rich:dataTable id="documentsDatatable" value="#{crmConnectorRejectedFiles}"
+				<p:dataTable id="documentsDatatable" value="#{crmConnectorRejectedFiles}"
 					var="_document"
-					onRowMouseOver="this.style.backgroundColor='#F1F1F1'"
-					onRowMouseOut="this.style.backgroundColor='#{a4jSkin.tableBackgroundColor}'"
 					reRender="documentsScroller" rows="10">
-					<rich:column width="50%">
+					<p:column width="50%">
 						<f:facet name="header">
 							<h:outputText value="#{messages['document.name']}" />
 						</f:facet>
 						<h:outputText value="#{_document.filename}" />
-					</rich:column>
-					<rich:column width="10%">
+					</p:column>
+					<p:column width="10%">
 						<f:facet name="header">
 							<h:outputText value="#{messages['document.size']}" />
 						</f:facet>
 						<h:outputText value="#{_document.size}" />
-					</rich:column>
-					<rich:column width="20%">
+					</p:column>
+					<p:column width="20%">
 						<f:facet name="header">
 							<h:outputText value="#{messages['document.createdDate']}" />
 						</f:facet>
 						<h:outputText value="#{_document.createDate}" />
-					</rich:column>
-					<rich:column styleClass="actions-column">
+					</p:column>
+					<p:column styleClass="actions-column">
 						<f:facet name="header">
 							<h:outputText value="#{messages['commons.actions']}" />
 						</f:facet>
@@ -99,21 +97,19 @@
 							action="#{crmConnectorRejectedFileBean.compress(_document)}">
 							<h:graphicImage value="/img/compress.png" style="border:0;" />
 						</h:commandLink>
-						<rich:toolTip for="compressLink" value="#{messages['commons.compress']}" />
-						<rich:spacer width="5px" />
+						<p:tooltip for="compressLink" value="#{messages['commons.compress']}" />
+						<p:spacer width="5px" />
 						<h:commandLink id="downloadLink" action="#{crmConnectorRejectedFileBean.download(_document)}">
 							<h:graphicImage value="/img/download.png" style="border:0;" />
 						</h:commandLink>
-						<rich:toolTip for="downloadLink" value="#{messages['commons.download']}" />
+						<p:tooltip for="downloadLink" value="#{messages['commons.download']}" />
 						<h:commandLink id="deleteLink" action="#{crmConnectorRejectedFileBean.delete(_document)}">
 							<h:graphicImage value="/img/delete.gif" style="border:0;" />
 						</h:commandLink>
-						<rich:toolTip for="deleteLink" value="#{messages['commons.delete']}" />
-					</rich:column>
-				</rich:dataTable>
-				<rich:datascroller id="documentsScroller" for="documentsDatatable"
-					renderIfSinglePage="false" maxPages="10" />
-			</a:form>
-		</a:outputPanel>
+						<p:tooltip for="deleteLink" value="#{messages['commons.delete']}" />
+					</p:column>
+				</p:dataTable>
+			</h:form>
+		</p:panel>
 	</ui:define>
 </ui:composition>

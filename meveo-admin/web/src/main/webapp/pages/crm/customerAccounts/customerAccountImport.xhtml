@@ -2,8 +2,7 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html"
-	xmlns:rich="http://richfaces.org/rich"
-	xmlns:a="http://richfaces.org/a4j" xmlns:hftl="http://hftl.org"
+	xmlns:hftl="http://hftl.org"
 	xmlns:hf="http://java.sun.com/jsf/composite/tags"
 	xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
 
@@ -12,7 +11,7 @@
 	</ui:define>
 
 	<ui:define name="body">
-		<rich:panel>
+		<p:panel>
 			<f:facet name="header">#{messages['customerAccount.import']}</f:facet>
 			<h:panelGrid columns="2">
 				<h:form id="customerAccountImportForm">
@@ -21,7 +20,7 @@
 						<f:facet name="header">
 								#{messages['customerAccount.importFiles']}
 							</f:facet>
-						<rich:fileUpload id="fileUpload"
+						<p:fileUpload id="fileUpload"
 							addControlLabel="#{messages['customerAccount.addImportFile']}"
 							maxFilesQuantity="5" immediateUpload="true" autoclear="true"
 							fileUploadListener="#{customerAccountImportAction.uploadListener}"
@@ -30,7 +29,7 @@
 							listHeight="50">
 							<a:support event="onuploadcomplete"
 								reRender="importcustomerAccounts,buttons" />
-						</rich:fileUpload>
+						</p:fileUpload>
 						<h:panelGrid columns="1" id="parseId"
 							rendered="#{not empty customerAccountImportAction.filename}">
 							<h:outputText
@@ -46,7 +45,7 @@
 
 				</h:form>
 			</h:panelGrid>
-		</rich:panel>
+		</p:panel>
 	</ui:define>
 
 </ui:composition>

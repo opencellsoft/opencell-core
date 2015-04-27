@@ -3,8 +3,6 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html"
-	xmlns:rich="http://richfaces.org/rich"
-	xmlns:a="http://richfaces.org/a4j"
 	xmlns:hftl="http://hftl.org" xmlns:hf="http://java.sun.com/jsf/composite/tags"
 	template="/layout/template.xhtml">
 
@@ -14,7 +12,7 @@
 
 	<ui:define name="body">
 
-		<rich:panel>
+		<p:panel>
 			<f:facet name="header">
 				<h:outputText value="#{messages['customerAccount.transferAccountTitle']}" />
 			</f:facet>
@@ -27,14 +25,14 @@
 			<custom:column label="#{messages['accountOperation.debit']}" field="accountOperation"	childField="amount" show="#{entity.accountOperation.transactionCategory.toString() == 'DEBIT'}" />						
 			<custom:column label="#{messages['accountOperation.credit']}" field="accountOperation"	childField="amount" show="#{entity.accountOperation.transactionCategory.toString() == 'CREDIT'}" />
 	    	<custom:column label="#{messages['accountOperation.matchingStatus']}" field="accountOperation"	childField="matchingStatus" />
-			<rich:column styleClass="actions-column">
+			<p:column styleClass="actions-column">
             	<f:facet name="header">
                 	<h:outputText value="#{messages['commons.actions']}" />
              	</f:facet>
                 <h:commandLink id="selectPartialOcc" value="#{messages['matching.buttonSelectPartialOcc']}" rendered="#{entity.partialMatchingAllowed}" action="#{accountOperationBean.partialMatching(entity)}" />                	             	          	             
-            	<rich:toolTip for="selectPartialOcc" value="#{messages['matching.selectPartialOcc']}"/>
-             </rich:column>							
+            	<p:toolTip for="selectPartialOcc" value="#{messages['matching.selectPartialOcc']}"/>
+             </p:column>							
 		</custom:dataList>	  
-	  	</rich:panel>				
+	  	</p:panel>				
 	</ui:define>
 </ui:composition>

@@ -3,8 +3,6 @@
     xmlns:ui="http://java.sun.com/jsf/facelets"
     xmlns:f="http://java.sun.com/jsf/core"
     xmlns:h="http://java.sun.com/jsf/html"
-    xmlns:rich="http://richfaces.org/rich"
-    xmlns:a="http://richfaces.org/a4j"
     xmlns:hftl="http://hftl.org" xmlns:hf="http://java.sun.com/jsf/composite/tags"
     template="/layout/template.xhtml">
     
@@ -16,12 +14,12 @@
 
 		
 		
-		<rich:panel>
+		<p:panel>
 			<f:facet name="header">
 				<h:outputText value="#{messages['bordereauRemiseCheque.bordereauRemiseChequePanel']}" />
 			</f:facet>
 			
-			<a:form id="bordereauRemiseChequeForm" styleClass="mainForm" render="datatable">
+			<h:form id="bordereauRemiseChequeForm" styleClass="mainForm" render="datatable">
 				<s:validateAll>		
 				<h:panelGrid columns="1" styleClass="formPanelGrid">
     	
@@ -30,7 +28,7 @@
 				<ui:define name="label">
 					<h:outputText value="#{messages['bordereauRemiseCheque.date']}" />
 				</ui:define>
-				<rich:calendar value="#{bordereauRemiseChequeBean.date}" popup="true" showApplyButton="false" cellWidth="24px"
+				<p:calendar value="#{bordereauRemiseChequeBean.date}" popup="true" showApplyButton="false" cellWidth="24px"
 					cellHeight="22px" style="width:200px" required="true" />
 				<ui:insert />
 			</s:decorate>
@@ -38,8 +36,8 @@
 <h:commandButton  id="executeReportNow" value="#{messages['report.generateReport']}" action="#{bordereauRemiseChequeBean.generateReport()}"/>
 				</h:panelGrid>
 				</s:validateAll>
-			</a:form>
-		</rich:panel>
+			</h:form>
+		</p:panel>
        
     </ui:define>
     
