@@ -41,12 +41,13 @@ public class InvoiceAgregateService extends PersistenceService<InvoiceAgregate> 
 
 	
 	public BigDecimal findTotalAmountByWalletSubCat(WalletInstance wallet,
-			InvoiceSubCategory invoiceSubCategory, Provider provider) {
+			InvoiceSubCategory invoiceSubCategory, Provider provider,Invoice invoice) {
 		QueryBuilder qb = new QueryBuilder("select sum(amountWithoutTax) from "
 				+ SubCategoryInvoiceAgregate.class.getSimpleName());
 		qb.addCriterionEntity("provider", provider);
 		qb.addCriterionEntity("invoiceSubCategory", invoiceSubCategory);
 		qb.addCriterionEntity("wallet", wallet);
+		qb.addCriterionEntity("invoice", invoice);
 		qb.addBooleanCriterion("discountAggregate", false);
 		try {
 			BigDecimal result = (BigDecimal) qb.getQuery(getEntityManager())
@@ -87,22 +88,6 @@ public class InvoiceAgregateService extends PersistenceService<InvoiceAgregate> 
 		return result;
 
 	}
-	
-	public void updateTaxAggregates(WalletInstance wallet,Tax tax,Invoice invoice,BigDecimal amountWithoutTax, BigDecimal amountTax) {
-		
-		
-		Query queryAggregat = getEntityManager()
-				.createQuery(
-						"update "
-								+ TaxInvoiceAgregate.class.getName()
-								+ " set amountWithoutTax=:amountWithoutTax,amountTax=:amountTax where invoice=:invoice and wallet=:wallet and tax=:tax");
-		queryAggregat.setParameter("amountWithoutTax", amountWithoutTax);
-		queryAggregat.setParameter("amountTax", amountTax);
-		queryAggregat.setParameter("invoice", invoice);
-		queryAggregat.setParameter("wallet", wallet);
-		queryAggregat.setParameter("tax", tax);
-		queryAggregat.executeUpdate();
 
-	}
 
 }
