@@ -275,17 +275,21 @@ public abstract class InvoiceAgregate extends AuditableEntity {
 	}
 
 	public void addAmountWithoutTax(BigDecimal amountToAdd) {
+		if(amountToAdd!=null){
 		if (amountWithoutTax == null) {
 			amountWithoutTax = new BigDecimal("0");
 		}
 		amountWithoutTax = amountWithoutTax.add(amountToAdd);
 	}
+	}
 
 	public void addAmountTax(BigDecimal amountToAdd) {
+		if(amountToAdd!=null){
 		if (amountTax == null) {
 			amountTax = new BigDecimal("0");
 		}
 		amountTax = amountTax.add(amountToAdd);
+	}
 	}
 
 	public boolean isDiscountAggregate() {

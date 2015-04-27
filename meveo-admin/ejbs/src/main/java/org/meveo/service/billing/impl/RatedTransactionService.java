@@ -643,11 +643,13 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 			 discountAmountTax=discountAmountTax.add(amountTax);
 			 invoiceAgregateSubcat.addSubCategoryTax(tax);
 			  TaxInvoiceAgregate 	taxInvoiceAgregate= taxInvoiceAgregateMap.get(tax.getId());
-			  taxInvoiceAgregate.addAmountTax(amountTax);
-			  taxInvoiceAgregate.addAmountWithoutTax(discountAmountWithoutTax);
+			  if(taxInvoiceAgregate!=null){
+			   taxInvoiceAgregate.addAmountTax(amountTax);
+				  taxInvoiceAgregate.addAmountWithoutTax(discountAmountWithoutTax);
+			  }
 			  invoiceAgregateService.update(taxInvoiceAgregate,currentUser);
-			 
-		}
+			 }
+		
 		
 		BigDecimal discountAmountWithTax=discountAmountWithoutTax.add(discountAmountTax);
 		
