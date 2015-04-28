@@ -40,31 +40,31 @@
 	<!--  If the value binding is a number display number field. -->
 	<ui:fragment
 		rendered="#{cc.isInteger(cc.attrs.minField,true) and cc.isInteger(cc.attrs.maxField,true)}">
-		<hf:numberField converterId="javax.faces.Integer" />
+		<hf:minmaxNumberField converterId="javax.faces.Integer" />
 	</ui:fragment>
 	<ui:fragment
 		rendered="#{cc.isLong(cc.attrs.minField,true) and cc.isLong(cc.attrs.maxField,true)}">
-		<hf:numberField converterId="javax.faces.Long" />
+		<hf:minmaxNumberField converterId="javax.faces.Long" />
 	</ui:fragment>
 	<ui:fragment
 		rendered="#{cc.isByte(cc.attrs.minField,true) and cc.isByte(cc.attrs.maxField,true)}}">
-		<hf:numberField converterId="javax.faces.Byte" />
+		<hf:minmaxNumberField converterId="javax.faces.Byte" />
 	</ui:fragment>
 	<ui:fragment
 		rendered="#{cc.isShort(cc.attrs.minField,true) and cc.isShort(cc.attrs.maxField,true)}">
-		<hf:numberField converterId="javax.faces.Short" />
+		<hf:minmaxNumberField converterId="javax.faces.Short" />
 	</ui:fragment>
 	<ui:fragment
 		rendered="#{cc.isDouble(cc.attrs.minField,true) and cc.isDouble(cc.attrs.maxField,true)}">
-		<hf:numberField converterId="javax.faces.Double" />
+		<hf:minmaxNumberField converterId="javax.faces.Double" />
 	</ui:fragment>
 	<ui:fragment
 		rendered="#{cc.isFloat(cc.attrs.minField,true) and cc.isFloat(cc.attrs.maxField,true)}">
-		<hf:numberField converterId="javax.faces.Float" />
+		<hf:minmaxNumberField converterId="javax.faces.Float" />
 	</ui:fragment>
 	<ui:fragment
 		rendered="#{cc.isBigDecimal(cc.attrs.minField,true) and cc.isBigDecimal(cc.attrs.maxField,true)}">
-		<hf:numberField converterId="javax.faces.BigDecimal" />
+		<hf:minmaxNumberField converterId="javax.faces.BigDecimal" />
 	</ui:fragment>
 </cc:implementation>
 

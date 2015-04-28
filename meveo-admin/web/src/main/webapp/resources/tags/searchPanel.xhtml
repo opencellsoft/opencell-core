@@ -16,8 +16,6 @@
 	<cc:attribute name="columns" default="2" />
 	<cc:attribute name="renderNewButton" type="java.lang.Boolean"
 		default="true" />
-	<cc:attribute name="renderAdvancedButton" type="java.lang.Boolean"
-		default="true" />
 	<cc:attribute name="newButtonView"
 		default="#{cc.attrs.backingBean.getNewViewName()}" />
 	<cc:attribute name="ajax" default="false" />
@@ -36,7 +34,7 @@
 				styleClass="search-panel-fields">
 				<cc:insertChildren />
 			</p:panelGrid>
-			<p:panelGrid columns="4" style="float: right;"
+			<p:panelGrid columns="3" style="float: right;"
 				styleClass="search-panel-actions">
 				<p:commandButton id="buttonSearch"
 					value="#{messages['commons.search']}" ajax="#{cc.attrs.ajax}"
@@ -51,15 +49,6 @@
 						value="#{javax.enterprise.context.conversation.id}" />
 					<f:param name="edit" value="true" />
 				</p:button>
-				<p:commandButton value="#{messages['commons.advanced']}" process="@form"
-					rendered="#{cc.attrs.renderAdvancedButton}" update="@form"
-					action="#{cc.attrs.backingBean.clean}">
-					<f:actionListener
-						type="org.omnifaces.eventlistener.ResetInputAjaxActionListener" />
-					<f:param name="advancedButton" value="#{!cc.attrs.backingBean.advancedButton}" />
-					<f:param name="cid"
-						value="#{javax.enterprise.context.conversation.id}" />
-				</p:commandButton>
 			</p:panelGrid>
 		</p:panelGrid>
 	</h:form>

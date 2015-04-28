@@ -17,6 +17,7 @@
 	<cc:attribute name="backingBean" required="false" />
 	<cc:attribute name="disabled" default="false" />
 	<cc:attribute name="size" default="20" />
+	<cc:attribute name="maxlength" default="40" />
 	<cc:attribute name="padding" default="5px" />
 </cc:interface>
 
@@ -28,7 +29,7 @@
 				for="likeCriteriasRange_#{cc.attrs.fields.replaceAll(',','-')}"
 				value="#{cc.attrs.label}" />
 			<p:inputText
-				id="likeCriteriasRange_#{cc.attrs.fields.replaceAll(',','-')}"
+				id="likeCriteriasRange_#{cc.attrs.fields.replaceAll(',','-')}" size="#{size}" maxlength="#{maxlength}"
 				value="#{cc.filters[cc.likeCriteriasRangeSearchFilterName]}"
 				disabled="#{cc.attrs.disabled}" />
 		</p:panelGrid>

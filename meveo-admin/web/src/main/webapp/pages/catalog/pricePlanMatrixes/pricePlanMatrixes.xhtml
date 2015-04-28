@@ -36,6 +36,7 @@
 			column2Label="#{messages['BusinessEntity.description']}"
 			column2="description"
 			selection="#{pricePlanMatrixListBean.filters['seller']}"
+			lazy="false" dataModel="#{sellerBean.listAll}"
 			updateField=":searchPanel:searchForm:seller:seller_child">
 		</hftl:entityPopup>
 		<hftl:entityPopup id="searchTradingCountryPopup"
@@ -48,6 +49,7 @@
 			column2Label="#{messages['BusinessEntity.description']}"
 			column2="prDescription"
 			selection="#{pricePlanMatrixListBean.filters['tradingCountry']}"
+			lazy="false" dataModel="#{tradingCountryBean.listAll}"
 			updateField=":searchPanel:searchForm:tradingCountry:tradingCountry_child">
 		</hftl:entityPopup>
 		<hftl:entityPopup id="searchTradingCurrencyPopup"
@@ -60,11 +62,12 @@
 			column2Label="#{messages['BusinessEntity.description']}"
 			column2="prDescription"
 			selection="#{pricePlanMatrixListBean.filters['tradingCurrency']}"
+			lazy="false" dataModel="#{tradingCurrencyBean.listAll}"
 			updateField=":searchPanel:searchForm:tradingCurrency:tradingCurrency_child">
 		</hftl:entityPopup>
 
 		<hf:searchPanel id="searchPanel" columns="3"
-			label="#{messages['pricePlanMatrix.search']}" renderAdvancedButton="true"
+			label="#{messages['pricePlanMatrix.search']}"
 			backingBean="#{pricePlanMatrixListBean}">
 			<hf:searchField label="#{messages['BusinessEntity.code']}"
 				field="code" />
@@ -80,33 +83,26 @@
 			<hf:searchField id="tradingCountry"
 				label="#{messages['tradingCountry.tradingCountry']}"
 				field="tradingCountry" childField="countryCode" popup="true"
-				popupId="searchTradingCountryPopup" clearButton="true" 
-				rendered="#{backingBean.advancedButton}"/>
+				popupId="searchTradingCountryPopup" clearButton="true" />
 			<hf:searchField id="tradingCurrency"
 				label="#{messages['currency.codeCurrency']}" field="tradingCurrency"
 				childField="currencyCode" popup="true"
-				popupId="searchTradingCurrencyPopup" clearButton="true"
-				rendered="#{backingBean.getAdvancedButton()}" />
+				popupId="searchTradingCurrencyPopup" clearButton="true" />
 			<hf:minmaxSearchField label="#{messages['pricePlanMatrix.quantity']}"
-				minField="minQuantity" maxField="maxQuantity"
-				rendered="#{backingBean.advancedButton}" />
+				minField="minQuantity" maxField="maxQuantity" />
 			<hf:likeCriteriasSearchField
 				label="#{messages['pricePlanMatrix.criteriaValue']}"
-				fields="criteria1Value,criteria2Value,criteria3Value"
-				rendered="#{backingBean.advancedButton}" />
+				fields="criteria1Value,criteria2Value,criteria3Value" />
 			<hf:minmaxSearchField
 				label="#{messages['pricePlanMatrix.subscriptionDate']}"
-				minField="startSubscriptionDate" maxField="endSubscriptionDate"
-				rendered="#{backingBean.advancedButton}" />
+				minField="startSubscriptionDate" maxField="endSubscriptionDate" />
 			<hf:minmaxSearchField
 				label="#{messages['pricePlanMatrix.ratingDate']}"
-				minField="startRatingDate" maxField="endRatingDate"
-				rendered="#{backingBean.advancedButton}" />
+				minField="startRatingDate" maxField="endRatingDate" />
 			<hf:minmaxSearchField
 				label="#{messages['pricePlanMatrix.subscriptionAgeInMonth']}"
 				minField="minSubscriptionAgeInMonth"
-				maxField="maxSubscriptionAgeInMonth"
-				rendered="#{backingBean.advancedButton}" />
+				maxField="maxSubscriptionAgeInMonth" />
 		</hf:searchPanel>
 
 		<hftl:dataList label="#{messages['pricePlanMatrix.title']}"
