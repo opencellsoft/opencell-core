@@ -87,10 +87,10 @@
 			<c:set var="sort" value="false" />
 		</c:if>
 	</c:if>
-
-	<c:set var="converter"
-		value="#{getConverter.forType(fieldValue, converterParam)}"></c:set>
-
+	
+	<c:if test="${not converterParam}">
+		<c:set var="outConverter" value="#{getConverter.forType(fieldValue, converterParam)}" />
+	</c:if>
 
 	<p:column exportable="#{exportable}" rendered="#{rendered}">
 		<f:facet name="header">
@@ -104,17 +104,17 @@
 			<p:cellEditor>
 				<f:facet name="output">
 					<h:outputText
-						rendered="#{fieldValue != null and fieldValue.toString() == 'true'}"
+						rendered="#{fieldValue != null and fieldValue.toString() == 'true' and show}"
 						value="#{messages['commons.yes']}" />
 					<h:outputText
-						rendered="#{fieldValue != null and fieldValue.toString() == 'false'}"
+						rendered="#{fieldValue != null and fieldValue.toString() == 'false' and show}"
 						value="#{messages['commons.no']}" />
 					<h:outputText
-						rendered="#{fieldValue != null and fieldValue.toString() != 'true' and fieldValue.toString() != 'false'}"
+						rendered="#{fieldValue != null and fieldValue.toString() != 'true' and fieldValue.toString() != 'false' and show}"
 						value="#{messages[''.concat(messagePrefix).concat(fieldValue)]}" />
 				</f:facet>
 				<f:facet name="input">
-					<p:selectBooleanCheckbox value="#{fieldValue}" />
+					<p:selectBooleanCheckbox value="#{fieldValue}" rendered="#{show}" required="#{required}"/>
 				</f:facet>
 			</p:cellEditor>
 		</c:if>
@@ -125,9 +125,9 @@
 			<p:cellEditor>
 				<f:facet name="output">
 					<h:outputText value="#{fieldValue}" rendered="#{!isDate and show}"
-						converter="#{converter}">
+						converter="#{outConverter}">
 					</h:outputText>
-					<h:outputText value="#{fieldValue}" rendered="#{isDate}">
+					<h:outputText value="#{fieldValue}" rendered="#{isDate and show}">
 						<f:convertDateTime pattern="#{datePattern}" />
 					</h:outputText>
 				</f:facet>
@@ -139,7 +139,7 @@
 							<f:converter converterId="#{converter}" />
 						</c:if>
 					</p:inputText>
-					<p:calendar value="#{fieldValue}" showOn="button"
+					<p:calendar value="#{fieldValue}" showOn="button" required="#{required}" size="12"
 						rendered="#{isDate and show}" />
 				</f:facet>
 			</p:cellEditor>

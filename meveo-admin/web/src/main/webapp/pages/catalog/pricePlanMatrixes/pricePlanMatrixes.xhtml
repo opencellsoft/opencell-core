@@ -64,7 +64,7 @@
 		</hftl:entityPopup>
 
 		<hf:searchPanel id="searchPanel" columns="3"
-			label="#{messages['pricePlanMatrix.search']}"
+			label="#{messages['pricePlanMatrix.search']}" renderAdvancedButton="true"
 			backingBean="#{pricePlanMatrixListBean}">
 			<hf:searchField label="#{messages['BusinessEntity.code']}"
 				field="code" />
@@ -80,39 +80,46 @@
 			<hf:searchField id="tradingCountry"
 				label="#{messages['tradingCountry.tradingCountry']}"
 				field="tradingCountry" childField="countryCode" popup="true"
-				popupId="searchTradingCountryPopup" clearButton="true" />
+				popupId="searchTradingCountryPopup" clearButton="true" 
+				rendered="#{backingBean.advancedButton}"/>
 			<hf:searchField id="tradingCurrency"
 				label="#{messages['currency.codeCurrency']}" field="tradingCurrency"
 				childField="currencyCode" popup="true"
-				popupId="searchTradingCurrencyPopup" clearButton="true" />
+				popupId="searchTradingCurrencyPopup" clearButton="true"
+				rendered="#{backingBean.getAdvancedButton()}" />
 			<hf:minmaxSearchField label="#{messages['pricePlanMatrix.quantity']}"
-				minField="minQuantity" maxField="maxQuantity" />
+				minField="minQuantity" maxField="maxQuantity"
+				rendered="#{backingBean.advancedButton}" />
 			<hf:likeCriteriasSearchField
 				label="#{messages['pricePlanMatrix.criteriaValue']}"
-				fields="criteria1Value,criteria2Value,criteria3Value" />
+				fields="criteria1Value,criteria2Value,criteria3Value"
+				rendered="#{backingBean.advancedButton}" />
 			<hf:minmaxSearchField
 				label="#{messages['pricePlanMatrix.subscriptionDate']}"
-				minField="startSubscriptionDate" maxField="endSubscriptionDate" />
+				minField="startSubscriptionDate" maxField="endSubscriptionDate"
+				rendered="#{backingBean.advancedButton}" />
 			<hf:minmaxSearchField
 				label="#{messages['pricePlanMatrix.ratingDate']}"
-				minField="startRatingDate" maxField="endRatingDate" />
+				minField="startRatingDate" maxField="endRatingDate"
+				rendered="#{backingBean.advancedButton}" />
 			<hf:minmaxSearchField
 				label="#{messages['pricePlanMatrix.subscriptionAgeInMonth']}"
 				minField="minSubscriptionAgeInMonth"
-				maxField="maxSubscriptionAgeInMonth" />
+				maxField="maxSubscriptionAgeInMonth"
+				rendered="#{backingBean.advancedButton}" />
 		</hf:searchPanel>
 
 		<hftl:dataList label="#{messages['pricePlanMatrix.title']}"
 			editable="true" editMode="cell" scrollable="true"
 			backingBean="#{pricePlanMatrixListBean}" sortBy="code">
 			<hftl:editColumn label="#{messages['BusinessEntity.code']}"
-				sortBy="code" fieldValue="#{entity.code}" />
+				sortBy="code" fieldValue="#{entity.code}" required="true"/>
 			<hftl:editColumn label="#{messages['pricePlanMatrix.eventCode']}"
-				fieldValue="#{entity.eventCode}"
+				fieldValue="#{entity.eventCode}" required="true"
 				listValue="#{chargeTemplateBean.listAll}" itemLabel="#{item.code}"
 				itemValue="#{item.code}" sortBy="eventCode" />
 			<hftl:editColumn label="#{messages['BusinessEntity.description']}"
-				fieldValue="#{entity.description}" sortBy="description" />
+				fieldValue="#{entity.description}" sortBy="description" maxlength="100" required="true"/>
 			<hftl:editColumn label="#{messages['pricePlanMatrix.offerCode']}"
 				fieldValue="#{entity.offerTemplate}" fieldLabel="code"
 				listValue="#{offerTemplateBean.listAll}" itemLabel="#{item.code}"
@@ -123,56 +130,56 @@
 				itemValue="#{item}" />
 			<hftl:editColumn label="#{messages['pricePlanMatrix.amountWithTax']}"
 				rendered="#{!pricePlanMatrixBean.entity.provider.entreprise}"
-				converterParam="4digits" fieldValue="#{entity.amountWithTax}" />
+				converterParam="4digits" converter="bigDecimal4DigitsConverter" fieldValue="#{entity.amountWithTax}" required="true"/>
 			<hftl:editColumn
 				label="#{messages['pricePlanMatrix.amountWithoutTax']}"
-				fieldValue="#{entity.amountWithoutTax}" converterParam="4digits" />
+				fieldValue="#{entity.amountWithoutTax}" converterParam="4digits" converter="bigDecimal4DigitsConverter" required="true"/>
 
 			<hftl:editColumn label="#{messages['pricePlanMatrix.criteriaEL']}"
-				fieldValue="#{entity.criteriaEL}" />
+				fieldValue="#{entity.criteriaEL}" rendered="false"/>
 			<hftl:editColumn label="#{messages['tradingCountry.tradingCountry']}"
 				fieldValue="#{entity.tradingCountry}" fieldLabel="countryCode"
 				listValue="#{tradingCountryBean.listAll}"
-				itemLabel="#{item.countryCode}" itemValue="#{item}" />
+				itemLabel="#{item.countryCode}" itemValue="#{item}" rendered="false"/>
 			<hftl:editColumn label="#{messages['currency.codeCurrency']}"
 				fieldValue="#{entity.tradingCurrency}" fieldLabel="currencyCode"
 				listValue="#{tradingCurrencyBean.listAll}"
-				itemLabel="#{item.currencyCode}" itemValue="#{item}" />
+				itemLabel="#{item.currencyCode}" itemValue="#{item}" rendered="false"/>
 			<hftl:editColumn
 				label="#{messages['pricePlanMatrix.criteria1Value']}"
-				fieldValue="#{entity.criteria1Value}" />
+				fieldValue="#{entity.criteria1Value}" rendered="false"/>
 			<hftl:editColumn
 				label="#{messages['pricePlanMatrix.criteria2Value']}"
-				fieldValue="#{entity.criteria1Value}" />
+				fieldValue="#{entity.criteria1Value}" rendered="false"/>
 			<hftl:editColumn
 				label="#{messages['pricePlanMatrix.criteria3Value']}"
-				fieldValue="#{entity.criteria1Value}" />
+				fieldValue="#{entity.criteria1Value}" rendered="false"/>
 
 			<hftl:editColumn
 				label="#{messages['pricePlanMatrix.table.startRatingDate']}"
-				fieldValue="#{entity.startRatingDate}" isDate="true" />
+				fieldValue="#{entity.startRatingDate}" isDate="true" rendered="false"/>
 			<hftl:editColumn
 				label="#{messages['pricePlanMatrix.table.endRatingDate']}"
-				fieldValue="#{entity.endRatingDate}" isDate="true" />
+				fieldValue="#{entity.endRatingDate}" isDate="true"  rendered="false"/>
 			<hftl:editColumn label="#{messages['pricePlanMatrix.priority']}"
-				fieldValue="#{entity.priority}" />
+				fieldValue="#{entity.priority}"  rendered="false"/>
 			<hftl:editColumn label="#{messages['pricePlanMatrix.priority']}"
-				fieldValue="#{entity.priority}" />
+				fieldValue="#{entity.priority}"  rendered="false"/>
 			<hftl:editColumn label="#{messages['pricePlanMatrix.minQuantity']}"
-				fieldValue="#{entity.minQuantity}" />
+				fieldValue="#{entity.minQuantity}"  rendered="false"/>
 			<hftl:editColumn label="#{messages['pricePlanMatrix.maxQuantity']}"
-				fieldValue="#{entity.maxQuantity}" />
+				fieldValue="#{entity.maxQuantity}"  rendered="false"/>
 			<hftl:editColumn
 				label="#{messages['pricePlanMatrix.minSubscriptionAgeInMonth']}"
-				fieldValue="#{entity.minSubscriptionAgeInMonth}" />
+				fieldValue="#{entity.minSubscriptionAgeInMonth}" rendered="false" />
 			<hftl:editColumn
 				label="#{messages['pricePlanMatrix.maxSubscriptionAgeInMonth']}"
 				fieldValue="#{entity.maxSubscriptionAgeInMonth}"
 				converter="bigDecimal4DigitsConverter"
-				rendered="#{!pricePlanMatrixBean.entity.provider.entreprise}"
+				rendered="#{!pricePlanMatrixBean.entity.provider.entreprise and false}"
 				required="true" />
 			<hftl:editColumn
-				label="#{messages['pricePlanMatrix.validityCalendar']}"
+				label="#{messages['pricePlanMatrix.validityCalendar']}"  rendered="false"
 				fieldValue="#{entity.validityCalendar}" isDate="true" />
 			<hftl:actionsColumn
 				permission="#{identity.hasPermission('catalog','catalogManagement')}" />

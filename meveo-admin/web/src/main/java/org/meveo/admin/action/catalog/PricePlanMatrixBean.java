@@ -19,9 +19,11 @@ package org.meveo.admin.action.catalog;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.jboss.solder.servlet.http.RequestParam;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.PricePlanMatrix;
@@ -42,6 +44,20 @@ import org.primefaces.event.SelectEvent;
 public class PricePlanMatrixBean extends BaseBean<PricePlanMatrix> {
 
 	private static final long serialVersionUID = 1L;
+	
+	@Inject
+	@RequestParam("advancedButton")
+	private Instance<Boolean> advancedButtonParam;
+	private Boolean advancedButton=Boolean.FALSE;
+	public Boolean getAdvancedButton(){
+		 System.out.println("####advancedButton###"+advancedButtonParam!=null?advancedButtonParam.get():"NULL");
+		 advancedButton=advancedButtonParam!=null?advancedButtonParam.get():advancedButton;
+		 return advancedButton;
+	}
+	public void setAdvancedButton(Boolean advancedButton) {
+		this.advancedButton = advancedButton;
+	}
+
 
 	/**
 	 * Injected @{link PricePlanMatrix} service. Extends
