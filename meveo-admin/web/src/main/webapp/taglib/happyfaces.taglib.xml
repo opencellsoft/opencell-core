@@ -17,14 +17,6 @@
 		<source>column.xhtml</source>
 	</tag>
 	<tag>
-		<tag-name>commonColumn</tag-name>
-		<source>commonColumn.xhtml</source>
-	</tag>
-	<tag>
-		<tag-name>editColumn</tag-name>
-		<source>editColumn.xhtml</source>
-	</tag>
-	<tag>
 		<tag-name>columnList</tag-name>
 		<source>columnList.xhtml</source>
 	</tag>

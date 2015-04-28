@@ -119,21 +119,21 @@
 			<artifactId>commons-lang3</artifactId>
 		</dependency>
 		
-		<dependency>
-			<groupId>org.richfaces.ui</groupId>
-			<artifactId>richfaces-components-ui</artifactId>
-			<version>${manaty.richfaces.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.richfaces.ui</groupId>
-			<artifactId>richfaces-components-api</artifactId>
-			<version>${manaty.richfaces.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.richfaces.core</groupId>
-			<artifactId>richfaces-core-impl</artifactId>
-			<version>${manaty.richfaces.version}</version>
-		</dependency>
+<!-- 		<dependency> -->
+<!-- 			<groupId>org.richfaces.ui</groupId> -->
+<!-- 			<artifactId>richfaces-components-ui</artifactId> -->
+<!-- 			<version>${manaty.richfaces.version}</version> -->
+<!-- 		</dependency> -->
+<!-- 		<dependency> -->
+<!-- 			<groupId>org.richfaces.ui</groupId> -->
+<!-- 			<artifactId>richfaces-components-api</artifactId> -->
+<!-- 			<version>${manaty.richfaces.version}</version> -->
+<!-- 		</dependency> -->
+<!-- 		<dependency> -->
+<!-- 			<groupId>org.richfaces.core</groupId> -->
+<!-- 			<artifactId>richfaces-core-impl</artifactId> -->
+<!-- 			<version>${manaty.richfaces.version}</version> -->
+<!-- 		</dependency> -->
 
 		<dependency>
 			<groupId>org.primefaces</groupId>
@@ -193,20 +193,20 @@
 			<groupId>org.apache.poi</groupId>
 			<artifactId>poi-ooxml</artifactId>
 			<version>3.10-FINAL</version>
-			<exclusions>
-				<exclusion>
-					<groupId>org.apache.xmlbeans</groupId>
-					<artifactId>xmlbeans</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.apache.geronimo.specs</groupId>
-					<artifactId>geronimo-stax-api_1.0_spec</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.apache.poi</groupId>
-					<artifactId>poi-ooxml-schemas</artifactId>
-				</exclusion>
-			</exclusions>
+<!-- 			<exclusions> -->
+<!-- 				<exclusion> -->
+<!-- 					<groupId>org.apache.xmlbeans</groupId> -->
+<!-- 					<artifactId>xmlbeans</artifactId> -->
+<!-- 				</exclusion> -->
+<!-- 				<exclusion> -->
+<!-- 					<groupId>org.apache.geronimo.specs</groupId> -->
+<!-- 					<artifactId>geronimo-stax-api_1.0_spec</artifactId> -->
+<!-- 				</exclusion> -->
+<!-- 				<exclusion> -->
+<!-- 					<groupId>org.apache.poi</groupId> -->
+<!-- 					<artifactId>poi-ooxml-schemas</artifactId> -->
+<!-- 				</exclusion> -->
+<!-- 			</exclusions> -->
 		</dependency>
 
 		<dependency>

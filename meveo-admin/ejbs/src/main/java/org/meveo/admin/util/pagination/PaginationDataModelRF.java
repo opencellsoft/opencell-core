@@ -9,17 +9,20 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import javax.faces.context.FacesContext;
+import javax.faces.model.DataModel;
 
-import org.ajax4jsf.model.DataVisitor;
-import org.ajax4jsf.model.ExtendedDataModel;
-import org.ajax4jsf.model.Range;
-import org.ajax4jsf.model.SequenceRange;
+
+//import org.ajax4jsf.model.DataVisitor;
+//import org.ajax4jsf.model.ExtendedDataModel;
+//import org.ajax4jsf.model.Range;
+//import org.ajax4jsf.model.SequenceRange;
 import org.meveo.model.IEntity;
-import org.richfaces.component.SortOrder;
-import org.richfaces.model.Arrangeable;
-import org.richfaces.model.ArrangeableState;
-import org.richfaces.model.FilterField;
-import org.richfaces.model.SortField;
+//import org.richfaces.component.SortOrder;
+//import org.richfaces.model.Arrangeable;
+//import org.richfaces.model.ArrangeableState;
+//import org.richfaces.model.FilterField;
+//import org.richfaces.model.SortField;
+import org.primefaces.model.SortOrder;
 
 /**
  * Pagination model implementation. To make sorting work, initiate object with sorting options.
@@ -28,7 +31,9 @@ import org.richfaces.model.SortField;
  * 
  * @param <T> Base class
  */
-public abstract class PaginationDataModelRF<T> extends ExtendedDataModel<T> implements Arrangeable, Serializable {
+//public abstract class PaginationDataModelRF<T> extends ExtendedDataModel<T> implements Arrangeable, Serializable {
+
+public abstract class PaginationDataModelRF<T> extends DataModel<T> implements Serializable {
 
     private static final long serialVersionUID = -4528523844716548059L;
 
@@ -43,7 +48,7 @@ public abstract class PaginationDataModelRF<T> extends ExtendedDataModel<T> impl
 
     private String sortProperty;
 
-    private ArrangeableState arrangeableState;
+//    private ArrangeableState arrangeableState;
 
     private int currentFirstRow = -1;
 
@@ -72,98 +77,98 @@ public abstract class PaginationDataModelRF<T> extends ExtendedDataModel<T> impl
         super();
 
         for (String fieldName : unsortedFields) {
-            sortOrders.put(fieldName, SortOrder.unsorted);
+            sortOrders.put(fieldName, SortOrder.UNSORTED);
         }
 
         if (defaultSortField != null && defaultSortField.length() > 0) {
-            sortOrders.put(defaultSortField, sortAscending ? SortOrder.ascending : SortOrder.descending);
+            sortOrders.put(defaultSortField, sortAscending ? SortOrder.ASCENDING : SortOrder.DESCENDING);
         }
     }
 
-    @Override
-    public void walk(FacesContext context, DataVisitor visitor, Range range, Object argument) {
+//    @Override
+//    public void walk(FacesContext context, DataVisitor visitor, Range range, Object argument) {
+//
+//        final int firstRow = ((SequenceRange) range).getFirstRow();
+//        final int numberOfRows = ((SequenceRange) range).getRows();
+//
+//        if (isDetached && (firstRow == currentFirstRow)) {
+//            for (Serializable key : wrappedKeys) {
+//                setRowKey(key);
+//                visitor.process(context, key, argument);
+//            }
+//        } else {
+//            wrappedKeys.clear();
+//            wrappedData.clear();
+//
+//            final List<T> objects = loadData(new PaginationConfiguration(firstRow, numberOfRows, retrieveFilters(), null,null,null,retrieveSorting()));
+//            for (T object : objects) {
+//                final Serializable id = getId(object);
+//                wrappedKeys.add(id);
+//                wrappedData.put(id, object);
+//                visitor.process(context, id, argument);
+//            }
+//            currentFirstRow = firstRow;
+//        }
+//    }
+//
+//    private LinkedHashMap<String, String> retrieveSorting() {
+//        if (arrangeableState == null) {
+//            return null;
+//        }
+//
+//        List<SortField> sortFields = arrangeableState.getSortFields();
+//        if (sortFields == null || sortFields.isEmpty()) {
+//            return null;
+//        }
 
-        final int firstRow = ((SequenceRange) range).getFirstRow();
-        final int numberOfRows = ((SequenceRange) range).getRows();
+//        LinkedHashMap<String, String> sortingMap = new LinkedHashMap<String, String>();
+//
+//        FacesContext facesContext = FacesContext.getCurrentInstance();
+//
+//        for (SortField sortField : sortFields) {
+//
+//            String propertyName = (String) sortField.getSortBy().getValue(facesContext.getELContext());
+//
+//            SortOrder sortOrder = sortField.getSortOrder();
+//
+//            if (sortOrder == SortOrder.ascending || sortOrder == SortOrder.descending) {
+//                sortingMap.put(propertyName, sortOrder.toString());
+//            } else {
+//                throw new IllegalArgumentException(sortOrder.toString());
+//            }
+//        }
+//
+//        return sortingMap;
+//    }
 
-        if (isDetached && (firstRow == currentFirstRow)) {
-            for (Serializable key : wrappedKeys) {
-                setRowKey(key);
-                visitor.process(context, key, argument);
-            }
-        } else {
-            wrappedKeys.clear();
-            wrappedData.clear();
+//    private LinkedHashMap<String, Object> retrieveFilters() {
+//
+//        if (arrangeableState == null) {
+//            return null;
+//        }
+//
+//        List<FilterField> filterFields = arrangeableState.getFilterFields();
+//        if (filterFields == null || filterFields.isEmpty()) {
+//            return null;
+//        }
+//        LinkedHashMap<String, Object> filterMap = new LinkedHashMap<String, Object>();
+//
+//        FacesContext facesContext = FacesContext.getCurrentInstance();
+//
+//        for (FilterField filterField : filterFields) {
+//            String propertyName = (String) filterField.getFilterExpression().getValue(facesContext.getELContext());
+//            Object filterValue = filterField.getFilterValue();
+//
+//            filterMap.put(propertyName, filterValue);
+//        }
+//        return filterMap;
 
-            final List<T> objects = loadData(new PaginationConfiguration(firstRow, numberOfRows, retrieveFilters(), null,null,null,retrieveSorting()));
-            for (T object : objects) {
-                final Serializable id = getId(object);
-                wrappedKeys.add(id);
-                wrappedData.put(id, object);
-                visitor.process(context, id, argument);
-            }
-            currentFirstRow = firstRow;
-        }
-    }
-
-    private LinkedHashMap<String, String> retrieveSorting() {
-        if (arrangeableState == null) {
-            return null;
-        }
-
-        List<SortField> sortFields = arrangeableState.getSortFields();
-        if (sortFields == null || sortFields.isEmpty()) {
-            return null;
-        }
-
-        LinkedHashMap<String, String> sortingMap = new LinkedHashMap<String, String>();
-
-        FacesContext facesContext = FacesContext.getCurrentInstance();
-
-        for (SortField sortField : sortFields) {
-
-            String propertyName = (String) sortField.getSortBy().getValue(facesContext.getELContext());
-
-            SortOrder sortOrder = sortField.getSortOrder();
-
-            if (sortOrder == SortOrder.ascending || sortOrder == SortOrder.descending) {
-                sortingMap.put(propertyName, sortOrder.toString());
-            } else {
-                throw new IllegalArgumentException(sortOrder.toString());
-            }
-        }
-
-        return sortingMap;
-    }
-
-    private LinkedHashMap<String, Object> retrieveFilters() {
-
-        if (arrangeableState == null) {
-            return null;
-        }
-
-        List<FilterField> filterFields = arrangeableState.getFilterFields();
-        if (filterFields == null || filterFields.isEmpty()) {
-            return null;
-        }
-        LinkedHashMap<String, Object> filterMap = new LinkedHashMap<String, Object>();
-
-        FacesContext facesContext = FacesContext.getCurrentInstance();
-
-        for (FilterField filterField : filterFields) {
-            String propertyName = (String) filterField.getFilterExpression().getValue(facesContext.getELContext());
-            Object filterValue = filterField.getFilterValue();
-
-            filterMap.put(propertyName, filterValue);
-        }
-        return filterMap;
-
-    }
+//    }
 
     @Override
     public int getRowCount() {
         if (rowCount == null) {
-            updateRowCount();
+//            updateRowCount();
         }
         return rowCount;
     }
@@ -279,23 +284,23 @@ public abstract class PaginationDataModelRF<T> extends ExtendedDataModel<T> impl
     // }
     // }
 
-    public void arrange(FacesContext context, ArrangeableState state) {
-        arrangeableState = state;
-    }
-
-    protected ArrangeableState getArrangeableState() {
-        return arrangeableState;
-    }
-
-    @Override
-    public void setRowKey(Object key) {
-        rowKey = key;
-    }
-
-    @Override
-    public Object getRowKey() {
-        return rowKey;
-    }
+//    public void arrange(FacesContext context, ArrangeableState state) {
+//        arrangeableState = state;
+//    }
+//
+//    protected ArrangeableState getArrangeableState() {
+//        return arrangeableState;
+//    }
+//
+//    @Override
+//    public void setRowKey(Object key) {
+//        rowKey = key;
+//    }
+//
+//    @Override
+//    public Object getRowKey() {
+//        return rowKey;
+//    }
 
     public void setSortProperty(String sortProperty) {
         this.sortProperty = sortProperty;
@@ -323,21 +328,21 @@ public abstract class PaginationDataModelRF<T> extends ExtendedDataModel<T> impl
         currentFirstRow = -1;
     }
 
-    private void updateRowCount() {
-        rowCount = countRecords(new PaginationConfiguration(retrieveFilters()));
-    }
+//    private void updateRowCount() {
+//        rowCount = countRecords(new PaginationConfiguration(retrieveFilters()));
+//    }
 
     protected Serializable getId(T object) {
         return ((IEntity) object).getId();
     }
-
-    public void setSortOrders(Map<String, SortOrder> sortOrders) {
-        this.sortOrders = sortOrders;
-    }
-
-    public Map<String, SortOrder> getSortOrders() {
-        return sortOrders;
-    }
+//
+//    public void setSortOrders(Map<String, SortOrder> sortOrders) {
+//        this.sortOrders = sortOrders;
+//    }
+//
+//    public Map<String, SortOrder> getSortOrders() {
+//        return sortOrders;
+//    }
 
     public void setFilterValues(Map<String, String> filterValues) {
         this.filterValues = filterValues;
@@ -367,42 +372,42 @@ public abstract class PaginationDataModelRF<T> extends ExtendedDataModel<T> impl
 
     public void toggleSort() {
 
-        for (Entry<String, SortOrder> orderEntry : sortOrders.entrySet()) {
-            SortOrder newOrder;
-
-            if (orderEntry.getKey().equals(sortProperty)) {
-                if (orderEntry.getValue() == SortOrder.ascending) {
-                    newOrder = SortOrder.descending;
-                } else {
-                    newOrder = SortOrder.ascending;
-                }
-            } else {
-                newOrder = SortOrder.unsorted;
-            }
-
-            orderEntry.setValue(newOrder);
-        }
+//        for (Entry<String, SortOrder> orderEntry : sortOrders.entrySet()) {
+//            SortOrder newOrder;
+//
+//            if (orderEntry.getKey().equals(sortProperty)) {
+//                if (orderEntry.getValue() == SortOrder.ascending) {
+//                    newOrder = SortOrder.descending;
+//                } else {
+//                    newOrder = SortOrder.ascending;
+//                }
+//            } else {
+//                newOrder = SortOrder.unsorted;
+//            }
+//
+//            orderEntry.setValue(newOrder);
+//        }
 
         forceRefresh();
     }
 
     public void toggleSort(String propertyName) {
 
-        for (Entry<String, SortOrder> orderEntry : sortOrders.entrySet()) {
-            SortOrder newOrder;
-
-            if (orderEntry.getKey().equals(propertyName)) {
-                if (orderEntry.getValue() == SortOrder.ascending) {
-                    newOrder = SortOrder.descending;
-                } else {
-                    newOrder = SortOrder.ascending;
-                }
-            } else {
-                newOrder = SortOrder.unsorted;
-            }
-
-            orderEntry.setValue(newOrder);
-        }
+//        for (Entry<String, SortOrder> orderEntry : sortOrders.entrySet()) {
+//            SortOrder newOrder;
+//
+//            if (orderEntry.getKey().equals(propertyName)) {
+//                if (orderEntry.getValue() == SortOrder.ascending) {
+//                    newOrder = SortOrder.descending;
+//                } else {
+//                    newOrder = SortOrder.ascending;
+//                }
+//            } else {
+//                newOrder = SortOrder.unsorted;
+//            }
+//
+//            orderEntry.setValue(newOrder);
+//        }
 
         forceRefresh();
     }

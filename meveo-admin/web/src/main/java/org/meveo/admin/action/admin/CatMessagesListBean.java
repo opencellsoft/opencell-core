@@ -19,9 +19,12 @@ package org.meveo.admin.action.admin;
 import javax.enterprise.context.ConversationScoped;
 import javax.inject.Named;
 
+import org.meveo.model.billing.CatMessages;
+
 @Named
 @ConversationScoped
 public class CatMessagesListBean extends CatMessagesBean {
 
     private static final long serialVersionUID = -3037867704912788015L;
+    
 }

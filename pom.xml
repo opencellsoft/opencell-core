@@ -21,7 +21,7 @@
 		<env>dev</env>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-		<manaty.richfaces.version>4.3.0.Final</manaty.richfaces.version>
+<!-- 		<manaty.richfaces.version>4.3.0.Final</manaty.richfaces.version> -->
 		<manaty.jsf.version>2.1.19</manaty.jsf.version>
 		<manaty.hibernate.version>4.1.7.Final</manaty.hibernate.version>
 		<manaty.hibernateValidator.version>4.3.0.Final</manaty.hibernateValidator.version>
@@ -56,6 +56,13 @@
 		<repository>
 			<id>primefaces.repo</id>
 			<url>http://repository.primefaces.org</url>
+		</repository>
+		<repository>
+			<id>sonatype-oss-public</id>
+			<url>https://oss.sonatype.org/content/groups/public/</url>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
 		</repository>
 	</repositories>
 

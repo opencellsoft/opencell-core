@@ -101,8 +101,9 @@
 			<p:commandButton id="#{formId}buttonExport" icon="ui-icon-xls"
 				value="#{messages['commons.exportExcel']}" ajax="false"
 				rendered="#{exportButton}">
-				<p:dataExporter type="xls" target="datatable_#{resultsId}"
-					fileName="data" pageOnly="false" />
+<!-- 				<p:dataExporter type="xls" target="datatable_#{resultsId}" -->
+<!-- 					fileName="data" pageOnly="false" /> -->
+        		<pe:exporter type="xlsx" target="datatable_#{resultsId}" fileName="data" pageOnly="false" skipComponents="true"/>
 			</p:commandButton>
 			<p:panelGrid columns="2" >
 			<p:commandButton style="margin-left:4px;" value="Export to CSV" action="#{backingBean.exportToFile()}" rendered="#{exportToCsv}" ajax="false"/>

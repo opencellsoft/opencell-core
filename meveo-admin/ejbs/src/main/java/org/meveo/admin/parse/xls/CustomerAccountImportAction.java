@@ -29,8 +29,8 @@ import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.service.payments.impl.CustomerAccountService;
-import org.richfaces.event.FileUploadEvent;
-import org.richfaces.model.UploadedFile;
+//import org.richfaces.event.FileUploadEvent;
+//import org.richfaces.model.UploadedFile;
 import org.slf4j.Logger;
 
 /**
@@ -123,38 +123,38 @@ public class CustomerAccountImportAction implements Serializable {
 	 * @throws Exception
 	 */
 	// TODO why synchronized??
-	public synchronized void uploadListener(FileUploadEvent  event) throws Exception {
+//	public synchronized void uploadListener(FileUploadEvent  event) throws Exception {
+//
+//		UploadedFile item = event.getUploadedFile();
+//
+//		log.debug("#{currentUser.username} > Start processing uploaded XLS file (name='{}') ..",
+//				item);
+//
+//		// file name validation
+//		if (!validateFileNameAndExtention(item)) {
+//			return;
+//		}
+//
+//		filename = item.getName();
+//		log.debug("#{currentUser.username} > Start parsing uploaded file ..");
+//
+//		try {
+//// TODO			xls = new XLSFile(item.getData());
+//			xls.parse();
+//			importCustomerAccountData = xls.getContexts();
+//			customerAccountsTotal = xls.getContexts().size();
+//			imported = 0;
+//			failed = 0;
+//		} catch (Exception e) {
+//			log.error("#{currentUser.username} > Error while parsing uploaded file", e);
+//			throw e;
+//		}
 
-		UploadedFile item = event.getUploadedFile();
-
-		log.debug("#{currentUser.username} > Start processing uploaded XLS file (name='{}') ..",
-				item);
-
-		// file name validation
-		if (!validateFileNameAndExtention(item)) {
-			return;
-		}
-
-		filename = item.getName();
-		log.debug("#{currentUser.username} > Start parsing uploaded file ..");
-
-		try {
-// TODO			xls = new XLSFile(item.getData());
-			xls.parse();
-			importCustomerAccountData = xls.getContexts();
-			customerAccountsTotal = xls.getContexts().size();
-			imported = 0;
-			failed = 0;
-		} catch (Exception e) {
-			log.error("#{currentUser.username} > Error while parsing uploaded file", e);
-			throw e;
-		}
-
-		log.debug("#{currentUser.username} > Uploaded file parsed successfully");
-
-		log.debug("#{currentUser.username} > End processing uploaded XML file (name='{}')",
-				item.getName());
-	}
+//		log.debug("#{currentUser.username} > Uploaded file parsed successfully");
+//
+//		log.debug("#{currentUser.username} > End processing uploaded XML file (name='{}')",
+//				item.getName());
+//	}
 
 	/**
 	 * Validate file name and extension.
@@ -163,26 +163,26 @@ public class CustomerAccountImportAction implements Serializable {
 	 *            Upload file
 	 * @return Null if valid and error code otherwise.
 	 */
-	private boolean validateFileNameAndExtention(UploadedFile item) {
-		log.debug("#{currentUser.username} > Start uploaded file name and extention validation ..");
-		boolean valid = true;
-
-		if (item != null && item.getName() != null) {
-			int dot = item.getName().lastIndexOf(".");
-			String fileExt = item.getName().substring(dot + 1);
-			if (!fileExt.toUpperCase().equals("XLS") && !fileExt.toUpperCase().equals("TXT")) {
-				log.debug("#{currentUser.username} > File name validation failed!");
-				messages.error(new BundleKey("messages", "import.badFileExtension"));
-				valid = false;
-			}
-		} else {
-			log.debug("#{currentUser.username} > File name validation failed!");
-			messages.error(new BundleKey("messages", "import.fileNotFound"));
-			valid = false;
-		}
-
-		return valid;
-	}
+//	private boolean validateFileNameAndExtention(UploadedFile item) {
+//		log.debug("#{currentUser.username} > Start uploaded file name and extention validation ..");
+//		boolean valid = true;
+//
+//		if (item != null && item.getName() != null) {
+//			int dot = item.getName().lastIndexOf(".");
+//			String fileExt = item.getName().substring(dot + 1);
+//			if (!fileExt.toUpperCase().equals("XLS") && !fileExt.toUpperCase().equals("TXT")) {
+//				log.debug("#{currentUser.username} > File name validation failed!");
+//				messages.error(new BundleKey("messages", "import.badFileExtension"));
+//				valid = false;
+//			}
+//		} else {
+//			log.debug("#{currentUser.username} > File name validation failed!");
+//			messages.error(new BundleKey("messages", "import.fileNotFound"));
+//			valid = false;
+//		}
+//
+//		return valid;
+//	}
 
 	public String getFilename() {
 		return filename;
