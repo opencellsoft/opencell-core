@@ -610,11 +610,11 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 					String sep="";
 					for(Tax tax : subCatInvoiceAgregate.getSubCategoryTaxes()){
 						taxesCode=taxesCode+sep+tax.getCode();
-						taxesPercent=taxesPercent+sep+tax.getPercent().toPlainString();
-						sep=",";
+						taxesPercent=taxesPercent+sep+round(tax.getPercent(), rounding);
+						sep=";";
 					}
-					subCategory.setAttribute("taxCode", taxesCode);
-					subCategory.setAttribute("taxPercent", taxesPercent);
+						subCategory.setAttribute("taxCode", taxesCode);
+						subCategory.setAttribute("taxPercent", taxesPercent);
 
 					for (RatedTransaction ratedTransaction : transactions) {
 						BigDecimal transactionAmount = entreprise ? ratedTransaction.getAmountWithTax()
