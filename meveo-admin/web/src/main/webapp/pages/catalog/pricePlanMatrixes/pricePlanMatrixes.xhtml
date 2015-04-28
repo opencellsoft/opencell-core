@@ -108,10 +108,10 @@
 		<hftl:dataList label="#{messages['pricePlanMatrix.title']}"
 			editable="true" editMode="cell" scrollable="true"
 			backingBean="#{pricePlanMatrixListBean}" sortBy="code">
-			<hftl:editColumn label="#{messages['BusinessEntity.code']}"
+			<hftl:editColumn label="#{messages['BusinessEntity.code']}" maxlength="60"
 				sortBy="code" fieldValue="#{entity.code}" required="true"/>
 			<hftl:editColumn label="#{messages['pricePlanMatrix.eventCode']}"
-				fieldValue="#{entity.eventCode}" required="true"
+				fieldValue="#{entity.eventCode}" required="true" maxlength="100"
 				listValue="#{chargeTemplateBean.listAll}" itemLabel="#{item.code}"
 				itemValue="#{item.code}" sortBy="eventCode" />
 			<hftl:editColumn label="#{messages['BusinessEntity.description']}"

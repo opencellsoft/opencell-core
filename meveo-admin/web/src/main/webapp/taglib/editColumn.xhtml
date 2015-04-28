@@ -164,7 +164,9 @@
 				<f:facet name="input">
 					<h:selectOneMenu value="#{fieldValue}" style="width:100%"
 						required="#{required}">
-						<f:selectItem itemValue="#{null}" itemLabel="" />
+						<c:if test="#{!required}">
+							<f:selectItem itemLabel="" itemValue=""/>
+						</c:if>
 						<f:selectItems value="#{listValue}" var="item"
 							itemLabel="#{itemLabel}" itemValue="#{itemValue}" />
 						<s:objectConverter />
