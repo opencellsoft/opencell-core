@@ -1,0 +1,77 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html" xmlns:hftl="http://hftl.org"
+	xmlns:hf="http://java.sun.com/jsf/composite/tags"
+	xmlns:c="http://java.sun.com/jstl/core"
+	template="/layout/template.xhtml" xmlns:p="http://primefaces.org/ui">
+
+	<ui:define name="metadata">
+		<f:metadata>
+			<f:event type="preRenderView"
+				listener="#{catMessagesListBean.preRenderView}" />
+		</f:metadata>
+	</ui:define>
+
+	<ui:define name="navigation">
+		<ui:include src="/layout/navigation.xhtml" />
+	</ui:define>
+
+	<ui:define name="body">
+
+		<hf:searchPanel id="searchPanel" backingBean="#{catMessagesListBean}"
+			label="#{messages['catMessages.search']}" renderNewButton="false">
+			<hf:searchField label="#{messages['catMessages.objectType']}"
+				field="messageCode" listValues="#{catMessagesListBean.objectTypes}" />
+			<hf:searchField label="#{messages['catMessages.languageCode']}"
+				field="languageCode"
+				listValues="#{tradingLanguageListBean.languageCodes}" />
+		</hf:searchPanel>
+
+		<hftl:dataList label="#{messages['catMessages.title']}"
+			editable="true" backingBean="#{catMessagesListBean}"
+			rowsPerPage="10,20,50,100" exportButton="false">
+			<p:column exportable="false">
+				<f:facet name="header">
+					<h:outputText value="#{messages['catMessages.objectType']}" />
+				</f:facet>
+				<h:outputText value="#{backingBean.getObjectType(entity)}" />
+			</p:column>
+			<p:column exportable="true" sortBy="messageCode">
+				<f:facet name="header">
+					<h:outputText value="#{messages['catMessages.messageCode']}" />
+				</f:facet>
+				<h:outputText value="#{entity.messageCode}" />
+			</p:column>
+			<p:column exportable="true">
+				<f:facet name="header">
+					<h:outputText value="#{messages['catMessages.basicDescription']}" />
+				</f:facet>
+				<h:outputText value="#{backingBean.getBasicDescription(entity)}" />
+			</p:column>
+			<p:column exportable="true" sortBy="languageCode">
+				<f:facet name="header">
+					<h:outputText value="#{messages['catMessages.languageCode']}" />
+				</f:facet>
+				<h:outputText value="#{entity.languageCode}" />
+			</p:column>
+			<p:column exportable="true">
+				<f:facet name="header">
+					<h:outputText
+						value="#{messages['catMessages.descriptionTranslation']}" />
+				</f:facet>
+				<p:cellEditor>
+					<f:facet name="output">
+						<h:outputText value="#{entity.description}" />
+					</f:facet>
+					<f:facet name="input">
+						<p:inputText value="#{entity.description}" size="60"
+							maxlength="100" style="width:100%;" />
+					</f:facet>
+				</p:cellEditor>
+			</p:column>
+		</hftl:dataList>
+	</ui:define>
+
+</ui:composition>

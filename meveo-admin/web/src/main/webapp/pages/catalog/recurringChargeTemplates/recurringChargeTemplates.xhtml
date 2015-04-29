@@ -59,7 +59,7 @@
 				childField="code" isList="true" sort="false" />
 			<hftl:column label="#{messages['enableEntity.active']}"
 				field="active" isMessage="true" />
-			<hftl:actionsColumn
+			<hftl:actionsColumn renderEnableLink="true"
 				permission="#{identity.hasPermission('catalog','catalogManagement')}" />
 		</hftl:dataList>
 

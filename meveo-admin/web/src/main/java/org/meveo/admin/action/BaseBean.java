@@ -44,6 +44,7 @@ import org.meveo.model.AccountEntity;
 import org.meveo.model.AuditableEntity;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.BusinessEntity;
+import org.meveo.model.EnableEntity;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.IEntity;
 import org.meveo.model.MultilanguageEntity;
@@ -618,7 +619,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 	protected List<String> getFormFieldsToFetch() {
 		return null;
 	}
-
+	
 	/**
 	 * Override this method when pop up with additional entity information is
 	 * needed.
@@ -626,7 +627,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 	protected String getPopupInfo() {
 		return "No popup information. Override BaseBean.getPopupInfo() method.";
 	}
-
+	
     /**
      * Disable current entity. Add error message to {@link statusMessages} if unsuccessful.
      * 

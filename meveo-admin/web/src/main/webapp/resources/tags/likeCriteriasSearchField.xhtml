@@ -1,0 +1,39 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:hf="http://java.sun.com/jsf/composite/tags"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:s="http://jboss.org/seam/faces"
+	xmlns:cc="http://java.sun.com/jsf/composite">
+
+<cc:interface componentType="likeCriteriasSearchField">
+	<cc:attribute name="label" required="false" />
+	<cc:attribute name="fields" required="true" />
+	<cc:attribute name="backingBean" required="false" />
+	<cc:attribute name="disabled" default="false" />
+	<cc:attribute name="size" default="20" />
+	<cc:attribute name="maxlength" default="40" />
+	<cc:attribute name="padding" default="5px" />
+</cc:interface>
+
+<cc:implementation>
+	<!--  If the value binding is a date, display a p:calendar field. -->
+	<ui:fragment>
+		<p:panelGrid columns="2">
+			<p:outputLabel
+				for="likeCriteriasRange_#{cc.attrs.fields.replaceAll(',','-')}"
+				value="#{cc.attrs.label}" />
+			<p:inputText
+				id="likeCriteriasRange_#{cc.attrs.fields.replaceAll(',','-')}" size="#{size}" maxlength="#{maxlength}"
+				value="#{cc.filters[cc.likeCriteriasRangeSearchFilterName]}"
+				disabled="#{cc.attrs.disabled}" />
+		</p:panelGrid>
+	</ui:fragment>
+</cc:implementation>
+
+</html>

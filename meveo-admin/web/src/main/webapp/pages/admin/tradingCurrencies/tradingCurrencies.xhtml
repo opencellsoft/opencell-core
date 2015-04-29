@@ -3,8 +3,7 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html"
-	xmlns:rich="http://richfaces.org/rich"
-	xmlns:a="http://richfaces.org/a4j" xmlns:hftl="http://hftl.org"
+	xmlns:hftl="http://hftl.org"
 	xmlns:hf="http://java.sun.com/jsf/composite/tags"
 	xmlns:c="http://java.sun.com/jstl/core"
 	template="/layout/template.xhtml">
@@ -39,7 +38,7 @@
 			<hftl:column label="#{messages['tradingCurrency.prCurrencyToThis']}"
 				field="prCurrencyToThis" converterParam="4digits" />
 
-			<hftl:actionsColumn
+			<hftl:actionsColumn renderEnableLink="true"
 				permission="#{identity.hasPermission('administration','administrationManagement')}" />
 		</hftl:dataList>
 

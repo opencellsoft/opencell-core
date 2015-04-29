@@ -3,8 +3,6 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html"
-	xmlns:rich="http://richfaces.org/rich"
-	xmlns:a="http://richfaces.org/a4j"
 	xmlns:hftl="http://hftl.org" xmlns:hf="http://java.sun.com/jsf/composite/tags"
 	template="/layout/template.xhtml">
 
@@ -22,8 +20,8 @@
 			tout moment vérifier vos informations et consulter vos dernières
 			factures de télé-services. Simplifiez-vous la vie!</div>
 			<h:panelGroup>
-				<rich:tabPanel switchType="client">
-					<rich:tab label="#{messages['syntheseClient.tab.compte']}">
+				<p:tabPanel switchType="client">
+					<p:tab label="#{messages['syntheseClient.tab.compte']}">
 						<hftl:fieldset name="#{messages['Mon compte']}" columns="1">
 							<hftl:panelGroup columns="1">
 								<h:panelGrid columns="2">
@@ -31,7 +29,7 @@
 										value="#{messages['Votre référence client :']}" /></strong>
 									<h:outputText value="#{synCustomerAccount.code}" />
 								</h:panelGrid>
-								<rich:spacer height="10px" />
+								<p:spacer height="10px" />
 								<h:panelGrid columns="1">
 									<strong> <h:outputLabel
 										value="#{messages['Votre adresse :']}" /></strong>
@@ -42,7 +40,7 @@
 									<h:outputText
 										value="#{stringUtil.merge(synCustomerAccount.address.zipCode,' ',synCustomerAccount.address.city,' ',synCustomerAccount.address.country)}" />
 								</h:panelGrid>
-								<rich:spacer height="10px" />
+								<p:spacer height="10px" />
 								<strong><h:outputLabel
 									value="#{messages['Votre référence bancaire :']}" /></strong>
 
@@ -76,7 +74,7 @@
 										value="#{synBillingAccount.bankCoordinates.accountNumber}" />
 								</h:panelGrid>
 
-								<rich:spacer height="10px" />
+								<p:spacer height="10px" />
 
 								<strong><h:outputLabel
 									value="#{messages['Votre solde :']}" /></strong>
@@ -84,67 +82,67 @@
 								</s:div>
 							</hftl:panelGroup>
 						</hftl:fieldset>
-					</rich:tab>
-					<rich:tab label="#{messages['Mes Factures']}">
+					</p:tab>
+					<p:tab label="#{messages['Mes Factures']}">
 						<hftl:fieldset name="#{messages['Mes Factures']}" columns="1">
 							<hftl:dataList backingBean="#{syntheseClientBean}"
 								dataModel="#{synInvoices}" edit="false">
 								<hftl:column label="#{messages['Votre facture du']}"
 									field="invoiceDate" />
-								<rich:column styleClass="textOnRight">
+								<p:column styleClass="textOnRight">
 									<f:facet name="header">
 										<h:panelGrid columns="2">
 											<h:column>
 												<h:outputText value="#{messages['Montant']}" />
 											</h:column>
 											<h:column>
-												<a:commandLink render="datatable">
+												<h:commandLink render="datatable">
 													<h:graphicImage value="/img/arrow-asc.png" style="border:0" />
-													<a:actionparam name="sortField" value="#{invoiceNumber}" />
-													<a:actionparam name="sortOrder" value="asc" />
-												</a:commandLink>
-												<a:commandLink render="datatable">
+													<h:actionparam name="sortField" value="#{invoiceNumber}" />
+													<h:actionparam name="sortOrder" value="asc" />
+												</h:commandLink>
+												<h:commandLink render="datatable">
 													<h:graphicImage value="/img/arrow-desc.png"
 														style="border:0" />
-													<a:actionparam name="sortField" value="#{invoiceNumber}" />
-													<a:actionparam name="sortOrder" value="desc" />
-												</a:commandLink>
+													<h:actionparam name="sortField" value="#{invoiceNumber}" />
+													<h:actionparam name="sortOrder" value="desc" />
+												</h:commandLink>
 											</h:column>	
 										</h:panelGrid>
 									</f:facet>
 									<h:outputText value="#{entity.amountWithTax}" converter="bigDecimalConverter"/>  €
 									
 									
-								</rich:column>									
+								</p:column>									
 									
-								<rich:column>
+								<p:column>
 									<f:facet name="header">
 										<h:panelGrid columns="2">
 											<h:column>
 												<h:outputText value="#{messages['Télécharger']}" />
 											</h:column>
 											<h:column>
-												<a:commandLink render="datatable">
+												<h:commandLink render="datatable">
 													<h:graphicImage value="/img/arrow-asc.png" style="border:0" />
-													<a:actionparam name="sortField" value="#{invoiceNumber}" />
-													<a:actionparam name="sortOrder" value="asc" />
-												</a:commandLink>
-												<a:commandLink render="datatable">
+													<h:actionparam name="sortField" value="#{invoiceNumber}" />
+													<h:actionparam name="sortOrder" value="asc" />
+												</h:commandLink>
+												<h:commandLink render="datatable">
 													<h:graphicImage value="/img/arrow-desc.png"
 														style="border:0" />
-													<a:actionparam name="sortField" value="#{invoiceNumber}" />
-													<a:actionparam name="sortOrder" value="desc" />
-												</a:commandLink>
+													<h:actionparam name="sortField" value="#{invoiceNumber}" />
+													<h:actionparam name="sortOrder" value="desc" />
+												</h:commandLink>
 											</h:column>
 										</h:panelGrid>
 									</f:facet>
 									
 									<h:commandLink action="#{syntheseClientBean.downloadPdf(entity.invoiceNumber)}" value="#{entity.invoiceNumber}" />
-								</rich:column>
+								</p:column>
 							</hftl:dataList>
 						</hftl:fieldset>
-					</rich:tab>
-				</rich:tabPanel>
+					</p:tab>
+				</p:tabPanel>
 
 			</h:panelGroup>
 		</h:panelGrid>

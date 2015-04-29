@@ -8,15 +8,24 @@
 	xmlns:p="http://primefaces.org/ui"
 	xmlns:e="http://primefaces.org/extension"
 	xmlns:pe="http://primefaces.org/ui/extensions"
-	xmlns:c="http://java.sun.com/jsp/jstl/core"
-	xmlns:a="http://richfaces.org/a4j">
+	xmlns:c="http://java.sun.com/jsp/jstl/core">
 
 <ui:composition>
 
 	<c:if test="${empty pdf}">
 		<c:set var="pdf" value="false" />
 	</c:if>
-
+	<c:if test="${empty editable}">
+		<c:set var="editable" value="false" />
+	</c:if>
+	<c:if test="${empty scrollable}">
+		<c:set var="scrollable" value="false" />
+	</c:if>
+	<c:if test="${editable}">
+		<c:if test="${empty editMode}">
+			<c:set var="editMode" value="cell" />
+		</c:if>
+	</c:if>
 	<c:if test="${empty edit}">
 		<c:set var="edit" value="true" />
 	</c:if>
@@ -27,6 +36,9 @@
 
 	<c:if test="${empty exportButton}">
 		<c:set var="exportButton" value="true" />
+	</c:if>
+	<c:if test="${empty exportXlsxButton}">
+		<c:set var="exportXlsxButton" value="false" />
 	</c:if>
 	
 	<c:if test="${empty exportToCsv}">
@@ -56,16 +68,19 @@
     <c:if test="${sortOrder==null}">
         <c:set var="sortOrder" value="ASCENDING" />
     </c:if>
+    <c:if test="${empty rowsPerPage}">
+        <c:set var="rowsPerPage" value="5,10,15" />
+    </c:if>
 
 	<p:panel id="#{resultsId}_panel" width="100">
 
 		<h:form id="#{formId}" prependId="false">
 
-			<p:dataTable id="datatable_#{resultsId}" var="entity"
-				value="#{dataModel}" paginator="true" rows="10"
+			<p:dataTable id="datatable_#{resultsId}" var="entity"  scrollable="#{scrollable}"
+				value="#{dataModel}" paginator="true" rows="10" editable="#{editable}" editMode="#{editMode}"  widgetVar="cellEntity"
 				selection="#{backingBean.selectedEntities}" sortBy="#{sortBy}" sortOrder="#{sortOrder}"
 				paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
-				rowsPerPageTemplate="5,10,15" lazy="true"
+				rowsPerPageTemplate="#{rowsPerPage}" lazy="true"
 				binding="#{backingBean.dataTable}" styleClass="custom-grid"
 				rowKey="#{entity.id}" first="#{backingBean.dataTableFirstAttribute}">
 				<p:ajax event="page" listener="#{backingBean.onPageChange}" />
@@ -90,6 +105,11 @@
 				rendered="#{exportButton}">
 				<p:dataExporter type="xls" target="datatable_#{resultsId}"
 					fileName="data" pageOnly="false" />
+			</p:commandButton>
+			<p:commandButton id="#{formId}buttonXlsxExport" icon="ui-icon-xls"
+				value="#{messages['commons.exportExcel']}" ajax="false"
+				rendered="#{exportXlsxButton}">
+        		<pe:exporter type="xlsx" target="datatable_#{resultsId}" fileName="data" pageOnly="false" skipComponents="true"/>
 			</p:commandButton>
 			<p:panelGrid columns="2" >
 			<p:commandButton style="margin-left:4px;" value="Export to CSV" action="#{backingBean.exportToFile()}" rendered="#{exportToCsv}" ajax="false"/>

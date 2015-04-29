@@ -26,7 +26,7 @@
             <hftl:column label="#{messages['customFieldTemplate.accountType']}" field="accountLevel" childField="label" isMessage="true" />
             <hftl:column label="#{messages['customFieldTemplate.fieldRequired']}" field="valueRequired" isMessage="true" />
             <hftl:column label="#{messages['enableEntity.active']}" field="active" isMessage="true" />
-            <hftl:actionsColumn permission="#{identity.hasPermission('administration','administrationManagement')}" renderDeleteLink="false"/>
+            <hftl:actionsColumn permission="#{identity.hasPermission('administration','administrationManagement')}" renderDeleteLink="false" renderEnableLink="true"/>
         </hftl:dataList>
 
     </ui:define>

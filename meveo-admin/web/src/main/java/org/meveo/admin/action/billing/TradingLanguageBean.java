@@ -17,7 +17,9 @@
 package org.meveo.admin.action.billing;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -152,6 +154,15 @@ public class TradingLanguageBean extends BaseBean<TradingLanguage> {
 	@Override
 	protected String getDefaultSort() {
 		return "language.languageCode";
+	}
+	
+	protected Map<String,String> getLanguageCodes(){
+		Map<String,String> result=new HashMap<String,String>();
+		List<TradingLanguage> langs=tradingLanguageService.list();
+		for(TradingLanguage lang:langs){
+			result.put(lang.getLanguageCode(), lang.getLanguageCode());
+		}
+		return result;
 	}
 
 }

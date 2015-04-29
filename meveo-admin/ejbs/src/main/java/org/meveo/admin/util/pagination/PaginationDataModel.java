@@ -25,16 +25,17 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.faces.context.FacesContext;
+import javax.faces.model.DataModel;
 
-import org.ajax4jsf.model.DataVisitor;
-import org.ajax4jsf.model.ExtendedDataModel;
-import org.ajax4jsf.model.Range;
-import org.ajax4jsf.model.SequenceRange;
+//import org.ajax4jsf.model.DataVisitor;
+//import org.ajax4jsf.model.ExtendedDataModel;
+//import org.ajax4jsf.model.Range;
+//import org.ajax4jsf.model.SequenceRange;
 import org.meveo.model.IEntity;
 import org.meveo.service.base.local.IPersistenceService;
 import org.primefaces.model.SortOrder;
-import org.richfaces.model.Arrangeable;
-import org.richfaces.model.ArrangeableState;
+//import org.richfaces.model.Arrangeable;
+//import org.richfaces.model.ArrangeableState;
 
 /**
  * Pagination data model. This data model is used together with
@@ -43,14 +44,15 @@ import org.richfaces.model.ArrangeableState;
  * Persistence service is passed through constructor.
  * 
  */
-public class PaginationDataModel<T>extends ExtendedDataModel<T> implements Arrangeable, Serializable  {
+//public class PaginationDataModel<T>extends ExtendedDataModel<T> implements Arrangeable, Serializable  {
+public class PaginationDataModel<T>extends DataModel<T> implements Serializable  {
 
     private static final long serialVersionUID = 1L;
 
     private Integer rowCount;
     private boolean isDetached = false;
     private Serializable rowKey;
-    private ArrangeableState arrangeableState;
+//    private ArrangeableState arrangeableState;
     private int currentFirstRow = -1;
 
 	@SuppressWarnings("rawtypes")
@@ -136,32 +138,32 @@ public class PaginationDataModel<T>extends ExtendedDataModel<T> implements Arran
      * This is main part of Visitor pattern. Method called by framework many
      * times during request processing.
      */
-    @Override
-    public void walk(FacesContext context, DataVisitor visitor, Range range, Object argument) {
-
-        final int firstRow = ((SequenceRange) range).getFirstRow();
-        final int numberOfRows = ((SequenceRange) range).getRows();
-
-        if (isDetached && (firstRow == currentFirstRow)) {
-            for (Serializable key : wrappedKeys) {
-                setRowKey(key);
-                visitor.process(context, key, argument);
-            }
-        } else {
-            wrappedKeys.clear();
-            wrappedData.clear();
-            final List<T> objects = loadData(new PaginationConfiguration(firstRow, numberOfRows, filters, fetchFields,
-                    getSortField(), getSortOrdering()));
-            for (T object : objects) {
-                final Serializable id = getId(object);
-                wrappedKeys.add(id);
-                wrappedData.put(id, object);
-                visitor.process(context, id, argument);
-            }
-
-            currentFirstRow = firstRow;
-        }
-    }
+//    @Override
+//    public void walk(FacesContext context, DataVisitor visitor, Range range, Object argument) {
+//
+//        final int firstRow = ((SequenceRange) range).getFirstRow();
+//        final int numberOfRows = ((SequenceRange) range).getRows();
+//
+//        if (isDetached && (firstRow == currentFirstRow)) {
+//            for (Serializable key : wrappedKeys) {
+//                setRowKey(key);
+//                visitor.process(context, key, argument);
+//            }
+//        } else {
+//            wrappedKeys.clear();
+//            wrappedData.clear();
+//            final List<T> objects = loadData(new PaginationConfiguration(firstRow, numberOfRows, filters, fetchFields,
+//                    getSortField(), getSortOrdering()));
+//            for (T object : objects) {
+//                final Serializable id = getId(object);
+//                wrappedKeys.add(id);
+//                wrappedData.put(id, object);
+//                visitor.process(context, id, argument);
+//            }
+//
+//            currentFirstRow = firstRow;
+//        }
+//    }
 
     /**
      * This method return list of filtered entities
@@ -269,31 +271,31 @@ public class PaginationDataModel<T>extends ExtendedDataModel<T> implements Arran
         return false;
     }
 
-    public void arrange(FacesContext context, ArrangeableState state) {
-        arrangeableState = state;
-    }
-
-    protected ArrangeableState getArrangeableState() {
-        return arrangeableState;
-    }
+//    public void arrange(FacesContext context, ArrangeableState state) {
+//        arrangeableState = state;
+//    }
+//
+//    protected ArrangeableState getArrangeableState() {
+//        return arrangeableState;
+//    }
     
     /**
      * This method never called from framework.
      * 
      * @see org.ajax4jsf.model.ExtendedDataModel#getRowKey()
      */
-    @Override
-    public Object getRowKey() {
-        return rowKey;
-    }
+//    @Override
+//    public Object getRowKey() {
+//        return rowKey;
+//    }
 
     /**
      * This method normally called by Visitor before request Data Row.
      */
-    @Override
-    public void setRowKey(final Object key) {
-        this.rowKey = (Serializable) key;
-    }
+//    @Override
+//    public void setRowKey(final Object key) {
+//        this.rowKey = (Serializable) key;
+//    }
 
     /**
      * Force a complete database refresh at the next call.

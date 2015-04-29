@@ -90,15 +90,16 @@ public class TradingCountry extends AuditableEntity {
         return String.format("TradingCountry [country=%s, id=%s]", country, getId());
     }
 
+	@Override
     public boolean equals(Object other){
+		
 		if(other==null || !(other instanceof TradingCountry)){
 			return false;
 		}
 		TradingCountry o = (TradingCountry) other;
-		if(o.getProvider()==null || !o.getProvider().equals(this.getProvider())){
-			return false;
-		}
-		return (o.country!=null) && o.country.equals(this.country);
+
+		return getId()!=null&&getId().equals(o.getId());
+//		return (o.country!=null) && o.country.equals(this.country);
 	}
 
 }

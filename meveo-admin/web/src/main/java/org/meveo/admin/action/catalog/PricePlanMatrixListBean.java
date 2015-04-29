@@ -17,7 +17,10 @@
 package org.meveo.admin.action.catalog;
 
 import javax.enterprise.context.ConversationScoped;
+import javax.inject.Inject;
 import javax.inject.Named;
+
+import org.jboss.solder.servlet.http.RequestParam;
 
 @Named
 @ConversationScoped
