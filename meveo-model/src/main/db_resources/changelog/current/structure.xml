@@ -3,4 +3,13 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.2.xsd">
 
+	<changeSet id="ticket703_20150429" author="Mbarek"> 
+     <modifyDataType tableName="billing_invoice" columnName="invoice_number" newDataType="VARCHAR(50)"/>
+   </changeSet>
+	<changeSet id="ticket599_20150429" author="Mbarek">
+	<addColumn tableName="AR_CUSTOMER_ACCOUNT">
+	<column name="TRADING_LANGUAGE_ID" type="BIGINT"/>
+	</addColumn>
+	</changeSet>
+	
 </databaseChangeLog>

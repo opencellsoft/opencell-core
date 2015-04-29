@@ -39,6 +39,7 @@ import org.meveo.model.AccountEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.TradingCurrency;
+import org.meveo.model.billing.TradingLanguage;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.shared.ContactInformation;
 
@@ -123,6 +124,10 @@ public class CustomerAccount extends AccountEntity {
 	public CustomerAccount() {
         accountType = ACCOUNT_TYPE;
     }
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "TRADING_LANGUAGE_ID")
+	private TradingLanguage tradingLanguage;
 	
 	public Customer getCustomer() {
 		return customer;
@@ -263,5 +268,15 @@ public class CustomerAccount extends AccountEntity {
 	public void setMandateDate(Date mandateDate) {
 		this.mandateDate = mandateDate;
 	}
+
+	public TradingLanguage getTradingLanguage() {
+		return tradingLanguage;
+	}
+
+	public void setTradingLanguage(TradingLanguage tradingLanguage) {
+		this.tradingLanguage = tradingLanguage;
+	}
+	
+	
 
 }

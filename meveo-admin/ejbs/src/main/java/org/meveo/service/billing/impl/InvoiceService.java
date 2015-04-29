@@ -30,6 +30,7 @@ import javax.persistence.Query;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.QueryBuilder;
+import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.BillingAccount;
@@ -161,15 +162,25 @@ public class InvoiceService extends PersistenceService<Invoice> {
 	public String getInvoiceNumber(Invoice invoice, User currentUser) {
 		Seller seller = invoice.getBillingAccount().getCustomerAccount().getCustomer().getSeller();
 		String prefix = seller.getInvoicePrefix();
-
+        
 		if (prefix == null) {
 			prefix = seller.getProvider().getInvoicePrefix();
 		}
-
 		if (prefix == null) {
 			prefix = "";
 		}
-
+		
+		if(prefix!=null && !StringUtils.isBlank(prefix)){
+			  if(prefix.indexOf("%")>=0){
+	              int startIndex=prefix.indexOf("%")+1;
+	              int endIndex=prefix.indexOf("%",startIndex);
+	              if(endIndex>0){
+	                String datePattern=prefix.substring(startIndex,endIndex); 
+	                String invioceDate=DateUtils.formatDateWithPattern(new Date(), datePattern);
+	                prefix=prefix.replace("%"+datePattern+"%", invioceDate);
+	              }       
+	             } 
+		    }
 		if (currentUser != null) {
 			seller.updateAudit(currentUser);
 		} else {
