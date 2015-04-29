@@ -38,7 +38,7 @@ public abstract class ServiceBasedLazyDataModel<T extends IEntity> extends
 
 	@Override
 	public List<T> load(int first, int pageSize, String sortField,
-			SortOrder sortOrder, Map<String, Object> loadingFilters) {
+			SortOrder sortOrder, Map<String, String> loadingFilters) {
 
 		if (StringUtils.isBlank(sortField)
 				&& !StringUtils.isBlank(getDefaultSortImpl())) {

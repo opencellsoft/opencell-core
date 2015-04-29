@@ -88,17 +88,11 @@ public class CounterPeriodBean extends BaseBean<CounterPeriod> {
 
 		  return new LazyDataModel<CounterPeriod>() {  
 		   private static final long serialVersionUID = 1L;
-//		   @Override
-//		   public List<CounterPeriod> load(int first, int pageSize, String sortField,
-//					SortOrder sortOrder, Map<String, String> loadingFilters) {
-//		    return new ArrayList<CounterPeriod>();
-//		   }
-		@Override
-		public List<CounterPeriod> load(int first, int pageSize,
-				List<SortMeta> multiSortMeta, Map<String, Object> filters) {
-			// TODO Auto-generated method stub
-			return new ArrayList<CounterPeriod>();
-		}
+		   @Override
+		   public List<CounterPeriod> load(int first, int pageSize, String sortField,
+					SortOrder sortOrder, Map<String, String> loadingFilters) {
+		    return new ArrayList<CounterPeriod>();
+		   }
 		   
 		  };
 		 }
