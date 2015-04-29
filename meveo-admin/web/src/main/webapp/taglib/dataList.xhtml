@@ -37,6 +37,9 @@
 	<c:if test="${empty exportButton}">
 		<c:set var="exportButton" value="true" />
 	</c:if>
+	<c:if test="${empty exportXlsxButton}">
+		<c:set var="exportXlsxButton" value="false" />
+	</c:if>
 	
 	<c:if test="${empty exportToCsv}">
 		<c:set var="exportToCsv" value="false" />
