@@ -427,8 +427,8 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 			BillingAccount billingAccount = subscription.getUserAccount().getBillingAccount();
 			int delay = billingAccount.getBillingCycle().getInvoiceDateDelay();
 			Date nextInvoiceDate = DateUtils.addDaysToDate(billingAccount.getNextInvoiceDate(), -delay);
-			nextInvoiceDate = DateUtils.parseDateWithPattern(nextInvoiceDate, "dd/MM/yyyy");
-			applicationDate = DateUtils.parseDateWithPattern(applicationDate, "dd/MM/yyyy");
+			nextInvoiceDate = DateUtils.setTimeToZero(nextInvoiceDate);
+			applicationDate = DateUtils.setTimeToZero(applicationDate);
 
 			if (applicationDate.after(nextInvoiceDate)) {
 				billingAccount.setNextInvoiceDate(applicationDate);
@@ -493,26 +493,19 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 		RecurringChargeTemplate recurringChargeTemplate = chargeInstance.getRecurringChargeTemplate();
 		Calendar cal = recurringChargeTemplate.getCalendar();
 		if (cal.truncDateTime()) {
-			applicationDate = DateUtils.parseDateWithPattern(chargeInstance.getSubscriptionDate(), "dd/MM/yyyy");
+			applicationDate = DateUtils.setTimeToZero(chargeInstance.getSubscriptionDate());
 		}
 		chargeInstance.setChargeDate(applicationDate);
-		Date nextapplicationDate = recurringChargeTemplate.getCalendar().nextCalendarDate(applicationDate);
+		cal.setInitDate(chargeInstance.getSubscriptionDate());
+		Date nextapplicationDate = cal.nextCalendarDate(applicationDate);
 		if (cal.truncDateTime()) {
-			nextapplicationDate = DateUtils.parseDateWithPattern(nextapplicationDate, "dd/MM/yyyy");
+			nextapplicationDate = DateUtils.setTimeToZero(nextapplicationDate);
 		}
 		return nextapplicationDate;
 	}
 
 	public WalletOperation prerateSubscription(Date subscriptionDate, RecurringChargeInstance chargeInstance, Date nextapplicationDate) throws BusinessException {
 		return rateSubscription(subscriptionDate, chargeInstance, nextapplicationDate);
-	}
-
-	public WalletOperation rateSubscription(RecurringChargeInstance chargeInstance, Date nextapplicationDate) throws BusinessException {
-		return rateSubscription(getEntityManager(), chargeInstance, nextapplicationDate);
-	}
-
-	public WalletOperation rateSubscription(EntityManager em, RecurringChargeInstance chargeInstance, Date nextapplicationDate) throws BusinessException {
-		return rateSubscription(em, null, chargeInstance, nextapplicationDate);
 	}
 
 	public WalletOperation rateSubscription(Date subscriptionDate, RecurringChargeInstance chargeInstance, Date nextapplicationDate) throws BusinessException {
@@ -529,9 +522,9 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 		cal.setInitDate(subscriptionDate);
 		Date previousapplicationDate = cal.previousCalendarDate(applicationDate);
 		if (cal.truncDateTime()) {
-			previousapplicationDate = DateUtils.parseDateWithPattern(previousapplicationDate, "dd/MM/yyyy");
+			previousapplicationDate = DateUtils.setTimeToZero(previousapplicationDate);
 		}
-		log.debug("rateSubscription applicationDate={}, nextapplicationDate={},previousapplicationDate={}", applicationDate, nextapplicationDate, previousapplicationDate);
+		log.debug("rateSubscription subscriptionDate={} applicationDate={}, nextapplicationDate={},previousapplicationDate={}",subscriptionDate, applicationDate, nextapplicationDate, previousapplicationDate);
 
 		BigDecimal quantity = chargeInstance.getServiceInstance() == null ? null : chargeInstance.getServiceInstance().getQuantity();
 		if (Boolean.TRUE.equals(recurringChargeTemplate.getSubscriptionProrata())) {
@@ -617,7 +610,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 		Date nextapplicationDate = getNextApplicationDate(chargeInstance);
 
 		if (recurringChargeTemplate.getApplyInAdvance() != null && recurringChargeTemplate.getApplyInAdvance()) {
-			WalletOperation chargeApplication = rateSubscription(em, chargeInstance, nextapplicationDate);
+			WalletOperation chargeApplication = rateSubscription(em,chargeInstance.getSubscriptionDate(), chargeInstance, nextapplicationDate);
 			// create(chargeApplication, creator, chargeInstance.getProvider());
 			chargeWalletOperation(chargeApplication, creator, chargeInstance.getProvider());
 			chargeInstance.setNextChargeDate(nextapplicationDate);
@@ -650,18 +643,18 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 		Calendar cal = recurringChargeTemplate.getCalendar();
 		cal.setInitDate(chargeInstance.getServiceInstance().getSubscriptionDate());
 		if (cal.truncDateTime()) {
-			applicationDate = DateUtils.parseDateWithPattern(applicationDate, "dd/MM/yyyy");
+			applicationDate = DateUtils.setTimeToZero(applicationDate);
 		}
 
 		BigDecimal quantity = chargeInstance.getServiceInstance().getQuantity();
 
 		Date nextapplicationDate = cal.nextCalendarDate(applicationDate);
 		if (cal.truncDateTime()) {
-			nextapplicationDate = DateUtils.parseDateWithPattern(nextapplicationDate, "dd/MM/yyyy");
+			nextapplicationDate = DateUtils.setTimeToZero(nextapplicationDate);
 		}
 		Date previousapplicationDate = cal.previousCalendarDate(applicationDate);
 		if (cal.truncDateTime()) {
-			previousapplicationDate = DateUtils.parseDateWithPattern(previousapplicationDate, "dd/MM/yyyy");
+			previousapplicationDate = DateUtils.setTimeToZero(previousapplicationDate);
 		}
 		log.debug("applicationDate={}, nextapplicationDate={},previousapplicationDate={}", applicationDate, nextapplicationDate, previousapplicationDate);
 
@@ -890,7 +883,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 					applicationDate, nextapplicationDate, nextChargeDate);
 
 			Date previousapplicationDate = cal.previousCalendarDate(applicationDate);
-			previousapplicationDate = DateUtils.parseDateWithPattern(previousapplicationDate, "dd/MM/yyyy");
+			previousapplicationDate = DateUtils.setTimeToZero(previousapplicationDate);
 			log.debug("ApplyNotAppliedinAdvanceReccuringCharge applicationDate={}, nextapplicationDate={},previousapplicationDate={}", applicationDate, nextapplicationDate,
 					previousapplicationDate);
 
