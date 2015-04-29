@@ -79,8 +79,7 @@ public class UnitRecurringRatingJobBean implements Serializable {
 			if (applicationDate.getTime() <= maxDate.getTime()) {
 				log.info("applicationDate={}", applicationDate);
 
-				applicationDate = DateUtils.parseDateWithPattern(
-						applicationDate, "dd/MM/yyyy");
+				applicationDate = DateUtils.setTimeToZero(applicationDate);
 
 				if (!recurringChargeTemplate.getApplyInAdvance()) {
 					walletOperationService

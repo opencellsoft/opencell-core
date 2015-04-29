@@ -34,7 +34,7 @@ import org.joda.time.Days;
 public class DateUtils {
 
 	private static long lastTime = System.currentTimeMillis() / 1000;
-
+    
 	public static synchronized Date getCurrentDateWithUniqueSeconds() {
 		long current = System.currentTimeMillis();
 		while (current / 1000 <= lastTime / 1000) {
@@ -57,11 +57,20 @@ public class DateUtils {
 		return result;
 	}
 
-	public static Date parseDateWithPattern(Date value, String pattern) {
-		String dateValue = formatDateWithPattern(value, pattern);
-		return parseDateWithPattern(dateValue, pattern);
+	public static Date setTimeToZero(Date date)
+	{
+	    if(date==null){
+	        return null;
+	    }
+	    final GregorianCalendar gc = new GregorianCalendar();
+	    gc.setTime( date );
+	    gc.set( Calendar.HOUR_OF_DAY, 0 );
+	    gc.set( Calendar.MINUTE, 0 );
+	    gc.set( Calendar.SECOND, 0 );
+	    gc.set( Calendar.MILLISECOND, 0 );
+	    return gc.getTime();
 	}
-
+	
 	public static Date parseDateWithPattern(String dateValue, String pattern) {
 		if (dateValue == null || dateValue.trim().length() == 0) {
 			return null;
