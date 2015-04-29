@@ -321,6 +321,7 @@
 															<f:selectItems
 																value="#{cc.getEnumConstants('paymentMethod')}"
 																var="enumElement"
+																itemValue="#{enumElement}"
 																itemLabel="#{messages[enumElement.label]}" />
 															<p:ajax event="valueChange" immediate="false"
 																update=":parentTab:formBillingAccountPanel:formId:childTab" />
@@ -368,7 +369,7 @@
 																id="bankCode" field="bankCoordinates"
 																childField="bankCode" size="5" maxlength="5"
 																required="#{billingAccountBean.entity.paymentMethod.toString() == 'DIRECTDEBIT'}"
-																validateRib="true" />
+																validateRib="false" />
 															<hf:formEntityField
 																label="#{messages['bankCoordinates.branchCode']}"
 																field="bankCoordinates" childField="branchCode" size="5"

@@ -37,6 +37,7 @@ import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.action.CustomFieldEnabledBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.DuplicateDefaultAccountException;
+import org.meveo.admin.jsf.validator.RibValidator;
 import org.meveo.admin.util.ListItemsSelector;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.billing.BankCoordinates;
@@ -180,6 +181,20 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
 	@Override
 	public String saveOrUpdate(boolean killConversation) {
 		try {
+			// validate RIB
+			if (getEntity().getBankCoordinates() != null) {
+				StringBuilder rib = new StringBuilder();
+				rib.append(getEntity().getBankCoordinates().getBankCode());
+				rib.append(getEntity().getBankCoordinates().getBranchCode());
+				rib.append(getEntity().getBankCoordinates().getAccountNumber());
+				rib.append(getEntity().getBankCoordinates().getKey());
+
+				if (!RibValidator.checkRib(rib.toString())) {
+					messages.error(new BundleKey("messages", "commons.ribValidation"));
+					return "";
+				}
+			}
+			
 			if (entity.getDefaultLevel() != null && entity.getDefaultLevel()) {
 				if (billingAccountService.isDuplicationExist(entity)) {
 					entity.setDefaultLevel(false);
