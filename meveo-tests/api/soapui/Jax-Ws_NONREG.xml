@@ -5681,7 +5681,8 @@
       <xs:element name="CustomerHierarchy" type="tns:customerHierarchyDto"/>
       <xs:element name="CustomerListResponse" type="tns:customerListResponse"/>
       <xs:element name="GetAccessResponse" type="tns:getAccessResponse"/>
-      <xs:element name="GetCustomerAccountResponse" nillable="true" type="xs:anyType"/>
+      <xs:element name="GetBillingAccountResponse" type="tns:getBillingAccountResponse"/>
+      <xs:element name="GetCustomerAccountResponse" type="tns:getCustomerAccountResponse"/>
       <xs:element name="GetCustomerResponse" type="tns:getCustomerResponse"/>
       <xs:element name="GetUserAccountResponse" type="tns:getUserAccountResponse"/>
       <xs:element name="ListAccessResponse" type="tns:listAccessResponseDto"/>
@@ -5989,10 +5990,27 @@
               <xs:element minOccurs="0" name="status" type="xs:string"/>
               <xs:element minOccurs="0" name="terminationReason" type="xs:string"/>
               <xs:element minOccurs="0" name="email" type="xs:string"/>
+              <xs:element minOccurs="0" name="bankCoordinates" type="tns:BankCoordinates"/>
               <xs:element minOccurs="0" name="userAccounts" type="tns:UserAccounts"/>
             </xs:sequence>
           </xs:extension>
         </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="BankCoordinates">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="bankCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="branchCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="accountNumber" type="xs:string"/>
+          <xs:element minOccurs="0" name="key" type="xs:string"/>
+          <xs:element minOccurs="0" name="iban" type="xs:string"/>
+          <xs:element minOccurs="0" name="bic" type="xs:string"/>
+          <xs:element minOccurs="0" name="accountOwner" type="xs:string"/>
+          <xs:element minOccurs="0" name="bankName" type="xs:string"/>
+          <xs:element minOccurs="0" name="bankId" type="xs:string"/>
+          <xs:element minOccurs="0" name="issuerNumber" type="xs:string"/>
+          <xs:element minOccurs="0" name="issuerName" type="xs:string"/>
+          <xs:element minOccurs="0" name="ics" type="xs:string"/>
+        </xs:sequence>
       </xs:complexType>
       <xs:complexType name="UserAccounts">
         <xs:sequence>

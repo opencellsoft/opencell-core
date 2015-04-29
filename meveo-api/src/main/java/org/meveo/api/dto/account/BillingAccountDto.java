@@ -42,6 +42,7 @@ public class BillingAccountDto extends AccountDto {
 	private String status;
 	private String terminationReason;
 	private String email;
+	private BankCoordinatesDto bankCoordinates = new BankCoordinatesDto();
 
 	private UserAccountsDto userAccounts;
 
@@ -64,17 +65,27 @@ public class BillingAccountDto extends AccountDto {
 		if (e.getTradingLanguage() != null) {
 			language = e.getTradingLanguage().getLanguageCode();
 		}
-		nextInvoiceDate = e.getNextInvoiceDate();
-		subscriptionDate = e.getSubscriptionDate();
-		terminationDate = e.getTerminationDate();
-		electronicBilling = e.getElectronicBilling();
 		if (e.getPaymentMethod() != null) {
 			paymentMethod = e.getPaymentMethod().name();
 		}
+		nextInvoiceDate = e.getNextInvoiceDate();
+		subscriptionDate = e.getSubscriptionDate();
+		terminationDate = e.getTerminationDate();
 		if (e.getPaymentTerm() != null) {
 			paymentTerms = e.getPaymentTerm().name();
 		}
+		electronicBilling = e.getElectronicBilling();
+		if (e.getStatus() != null) {
+			status = e.getStatus().name();
+		}
+		if (e.getTerminationReason() != null) {
+			terminationReason = e.getTerminationReason().getCode();
+		}
+		email = e.getEmail();
 
+		if (e.getBankCoordinates() != null) {
+			bankCoordinates = new BankCoordinatesDto(e.getBankCoordinates());
+		}
 	}
 
 	public String getCustomerAccount() {
@@ -143,12 +154,10 @@ public class BillingAccountDto extends AccountDto {
 
 	@Override
 	public String toString() {
-		return "BillingAccountDto [customerAccount=" + customerAccount + ", billingCycle=" + billingCycle
-				+ ", country=" + country + ", language=" + language + ", paymentMethod=" + paymentMethod
-				+ ", nextInvoiceDate=" + nextInvoiceDate + ", subscriptionDate=" + subscriptionDate
-				+ ", terminationDate=" + terminationDate + ", paymentTerms=" + paymentTerms + ", electronicBilling="
-				+ electronicBilling + ", status=" + status + ", terminationReason=" + terminationReason + ", email="
-				+ email + ", userAccounts=" + userAccounts + "]";
+		return "BillingAccountDto [customerAccount=" + customerAccount + ", billingCycle=" + billingCycle + ", country=" + country + ", language=" + language + ", paymentMethod="
+				+ paymentMethod + ", nextInvoiceDate=" + nextInvoiceDate + ", subscriptionDate=" + subscriptionDate + ", terminationDate=" + terminationDate + ", paymentTerms="
+				+ paymentTerms + ", electronicBilling=" + electronicBilling + ", status=" + status + ", terminationReason=" + terminationReason + ", email=" + email
+				+ ", bankCoordinates=" + bankCoordinates + ", userAccounts=" + userAccounts + "]";
 	}
 
 	public Date getSubscriptionDate() {
@@ -197,6 +206,14 @@ public class BillingAccountDto extends AccountDto {
 
 	public void setEmail(String email) {
 		this.email = email;
+	}
+
+	public BankCoordinatesDto getBankCoordinates() {
+		return bankCoordinates;
+	}
+
+	public void setBankCoordinates(BankCoordinatesDto bankCoordinates) {
+		this.bankCoordinates = bankCoordinates;
 	}
 
 }
