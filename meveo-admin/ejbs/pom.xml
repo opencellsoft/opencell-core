@@ -5,7 +5,7 @@
 	<parent>
 		<artifactId>meveo-admin</artifactId>
 		<groupId>org.manaty</groupId>
-		<version>4.0.2</version>
+		<version>4.0.3</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 	<artifactId>meveo-admin-ejbs</artifactId>
