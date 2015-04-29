@@ -61,11 +61,11 @@
 		<c:set var="dataModel" value="#{backingBean.lazyDataModel}" />
 	</c:if>
     
-    <c:if test="${sortBy==null}">
+    <c:if test="${empty sortBy}">
         <c:set var="sortBy" value="#{null}" />
     </c:if>
     
-    <c:if test="${sortOrder==null}">
+    <c:if test="${empty sortOrder}">
         <c:set var="sortOrder" value="ASCENDING" />
     </c:if>
     <c:if test="${empty rowsPerPage}">
