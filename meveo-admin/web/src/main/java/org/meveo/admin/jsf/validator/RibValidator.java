@@ -40,7 +40,7 @@ public class RibValidator implements Validator {
     @Inject
     private ResourceBundle resourceMessages;
     
-	public boolean checkRib(String rib) {
+	public static boolean checkRib(String rib) {
 		StringBuilder extendedRib = new StringBuilder(rib.length());
 		for (char currentChar : rib.toCharArray()) {
 			// Works on base 36
