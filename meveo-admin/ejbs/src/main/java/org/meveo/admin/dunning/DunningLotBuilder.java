@@ -18,12 +18,16 @@ package org.meveo.admin.dunning;
 
 import java.io.File;
 
+import javax.inject.Inject;
+
 import org.meveo.commons.utils.CsvBuilder;
 import org.meveo.commons.utils.NumberUtils;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.payments.ActionDunning;
 import org.meveo.model.payments.DunningLOT;
 import org.meveo.model.shared.DateUtils;
+import org.meveo.model.shared.Title;
+import org.meveo.service.catalog.impl.CatMessagesService;
 
 /**
  * DunningLotBuilder
@@ -41,6 +45,9 @@ public class DunningLotBuilder {
 	private static final String DECIMAL_FORMAT = "bayad.decimalFormat";
 	
 	private static final String DUNNING_LOT_OUTPUT_DIR = "bayad.dunning.lotOutputDir";
+	
+	@Inject
+	private CatMessagesService catMessagesService;
 	            
 	ParamBean paramBean=ParamBean.getInstance();
 	
@@ -87,10 +94,14 @@ public class DunningLotBuilder {
             
             if (actionDunning.getCustomerAccount().getName() != null) {
                 if (actionDunning.getCustomerAccount().getName().getTitle() != null) {
-//                    Title title = actionDunning.getCustomerAccount().getName().getTitle();
-//                    String languageCode = actionDunning.getCustomerAccount().getProvider().getLanguage().getLanguageCode();
-//                    descTitle = catMessagesService.getMessageDescription(title, languageCode, title.getDescription());
-                    descTitle = actionDunning.getCustomerAccount().getName().getTitle().getDescription();
+                    Title title = actionDunning.getCustomerAccount().getName().getTitle();
+                    String languageCode = actionDunning.getCustomerAccount().getTradingLanguage().getLanguageCode();
+                    String messageCode=catMessagesService.getMessageCode(title);
+                    if(languageCode!=null){
+                    descTitle = catMessagesService.getMessageDescription(messageCode, languageCode, title.getDescription());	
+                    }else{
+                     descTitle = actionDunning.getCustomerAccount().getName().getTitle().getDescription();	
+                      }
                 }      
                 firstName = actionDunning.getCustomerAccount().getName().getFirstName();
                 lastName =  actionDunning.getCustomerAccount().getName().getLastName();
