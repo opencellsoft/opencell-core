@@ -2,7 +2,7 @@
 <databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
 	xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.2.xsd http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
-	<changeSet author="AndriusKarpavicius" id="rebuild-4.0.2-data-currencies">
+	<changeSet author="AndriusKarpavicius" id="rebuild-4.0.3-data-currencies">
 		<insert tableName="adm_currency">
 			<column name="id" valueNumeric="1" />
 			<column name="created" valueDate="2015-03-19 00:03:59.913" />
@@ -1348,7 +1348,7 @@
 			<column name="system_currency" valueBoolean="true" />
 		</insert>
 	</changeSet>
-	<changeSet author="AndriusKarpavicius" id="rebuild-4.0.2-data-languages">
+	<changeSet author="AndriusKarpavicius" id="rebuild-4.0.3-data-languages">
 		<insert tableName="adm_language">
 			<column name="id" valueNumeric="1" />
 			<column name="created" valueDate="2015-03-19 00:03:59.123" />
@@ -1574,7 +1574,7 @@
 			<column name="language_code" value="TUR" />
 		</insert>
 	</changeSet>
-	<changeSet author="AndriusKarpavicius" id="rebuild-4.0.2-data-countries">
+	<changeSet author="AndriusKarpavicius" id="rebuild-4.0.3-data-countries">
 		<insert tableName="adm_country">
 			<column name="id" valueNumeric="1" />
 			<column name="created" valueDate="2015-03-19 00:04:03.579" />
@@ -3709,7 +3709,7 @@
 			<column name="language_id" valueNumeric="2" />
 		</insert>
 	</changeSet>
-	<changeSet author="AndriusKarpavicius" id="rebuild-4.0.2-data-permissions">
+	<changeSet author="AndriusKarpavicius" id="rebuild-4.0.3-data-permissions">
 		<insert tableName="adm_permission">
 			<column name="id" valueNumeric="1" />
 			<column name="name" value="Administration visualization" />
@@ -3783,7 +3783,7 @@
 			<column name="ressource" value="superAdmin" />
 		</insert>
 	</changeSet>
-	<changeSet author="AndriusKarpavicius" id="rebuild-4.0.2-data-calendarDays">
+	<changeSet author="AndriusKarpavicius" id="rebuild-4.0.3-data-calendarDays">
 		<insert tableName="cat_day_in_year">
 			<column name="id" valueNumeric="1" />
 			<column name="created" valueDate="2015-03-19 00:04:10.495" />
@@ -6347,7 +6347,7 @@
 			<column name="month" value="DECEMBER" />
 		</insert>
 	</changeSet>
-	<changeSet author="AndriusKarpavicius" id="rebuild-4.0.2-data-providerDEMO">
+	<changeSet author="AndriusKarpavicius" id="rebuild-4.0.3-data-providerDEMO">
 		<insert tableName="crm_provider">
 			<column name="id" valueNumeric="1" />
 			<column name="version" valueNumeric="1" />
@@ -6426,7 +6426,7 @@
 			<column name="provider_id" valueNumeric="1" />
 		</insert>
 	</changeSet>
-	<changeSet author="AndriusKarpavicius" id="rebuild-4.0.2-data-rolesDEMO">
+	<changeSet author="AndriusKarpavicius" id="rebuild-4.0.3-data-rolesDEMO">
 		<insert tableName="adm_role">
 			<column name="id" valueNumeric="1" />
 			<column name="version" valueNumeric="0" />
@@ -6494,7 +6494,7 @@
 			<column name="permission_id" valueNumeric="12" />
 		</insert>
 	</changeSet>
-	<changeSet author="AndriusKarpavicius" id="rebuild-4.0.2-data-titlesDEMO">
+	<changeSet author="AndriusKarpavicius" id="rebuild-4.0.3-data-titlesDEMO">
 		<insert tableName="adm_title">
 			<column name="id" valueNumeric="1" />
 			<column name="version" valueNumeric="0" />
@@ -6866,7 +6866,7 @@
 			<column name="provider_id" valueNumeric="1" />
 		</insert>
 	</changeSet>
-	<changeSet author="AndriusKarpavicius" id="rebuild-4.0.2-data-usersDEMO">
+	<changeSet author="AndriusKarpavicius" id="rebuild-4.0.3-data-usersDEMO">
 		<insert tableName="adm_user">
 			<column name="id" valueNumeric="1" />
 			<column name="version" valueNumeric="0" />
@@ -6912,7 +6912,7 @@
 			<column name="role_id" valueNumeric="2" />
 		</insert>
 	</changeSet>
-	<changeSet author="AndriusKarpavicius" id="rebuild-4.0.2-data-occTemplatesDEMO">
+	<changeSet author="AndriusKarpavicius" id="rebuild-4.0.3-data-occTemplatesDEMO">
 		<insert tableName="ar_occ_template">
 			<column name="id" valueNumeric="1" />
 			<column name="version" valueNumeric="0" />
@@ -7214,7 +7214,7 @@
 			<column name="provider_id" valueNumeric="1" />
 		</insert>
 	</changeSet>
-	<changeSet author="AndriusKarpavicius" id="rebuild-4.0.2-data-calendarDEMO">
+	<changeSet author="AndriusKarpavicius" id="rebuild-4.0.3-data-calendarDEMO">
 		<insert tableName="cat_calendar">
 			<column name="cal_type" value="YEARLY" />
 			<column name="id" valueNumeric="1" />
@@ -7318,7 +7318,7 @@
 			<column name="day_id" valueNumeric="1101" />
 		</insert>
 	</changeSet>
-	<changeSet author="AndriusKarpavicius" id="rebuild-4.0.2-data-billingCyclesDEMO">
+	<changeSet author="AndriusKarpavicius" id="rebuild-4.0.3-data-billingCyclesDEMO">
 		<insert tableName="billing_cycle">
 			<column name="id" valueNumeric="1" />
 			<column name="version" valueNumeric="0" />
@@ -7346,7 +7346,7 @@
 			<column name="calendar" valueNumeric="1" />
 		</insert>
 	</changeSet>
-	<changeSet author="AndriusKarpavicius" id="rebuild-4.0.2-data-taxesDEMO">
+	<changeSet author="AndriusKarpavicius" id="rebuild-4.0.3-data-taxesDEMO">
 		<insert tableName="billing_tax">
 			<column name="id" valueNumeric="1" />
 			<column name="version" valueNumeric="0" />
@@ -7381,7 +7381,7 @@
 			<column name="provider_id" valueNumeric="1" />
 		</insert>
 	</changeSet>
-	<changeSet author="AndriusKarpavicius" id="rebuild-4.0.2-data-tradingsDEMO">
+	<changeSet author="AndriusKarpavicius" id="rebuild-4.0.3-data-tradingsDEMO">
 		<insert tableName="billing_trading_country">
 			<column name="id" valueNumeric="1" />
 			<column name="version" valueNumeric="0" />
@@ -7439,7 +7439,7 @@
 			<column name="language_id" valueNumeric="12" />
 		</insert>
 	</changeSet>
-	<changeSet author="AndriusKarpavicius" id="rebuild-4.0.2-data-invoiceCategoriesDEMO">
+	<changeSet author="AndriusKarpavicius" id="rebuild-4.0.3-data-invoiceCategoriesDEMO">
 		<insert tableName="billing_invoice_cat">
 			<column name="id" valueNumeric="1" />
 			<column name="version" valueNumeric="0" />
@@ -7489,7 +7489,6 @@
 			<column name="version" valueNumeric="0" />
 			<column name="disabled" valueBoolean="false" />
 			<column name="created" valueDate="2015-03-19 00:04:19.765" />
-			<column name="discount_code" value="" />
 			<column name="provider_id" valueNumeric="1" />
 			<column name="invoice_sub_category_id" valueNumeric="1" />
 			<column name="tax_id" valueNumeric="1" />
@@ -7500,7 +7499,6 @@
 			<column name="version" valueNumeric="0" />
 			<column name="disabled" valueBoolean="false" />
 			<column name="created" valueDate="2015-03-19 00:04:19.786" />
-			<column name="discount_code" value="" />
 			<column name="provider_id" valueNumeric="1" />
 			<column name="invoice_sub_category_id" valueNumeric="1" />
 			<column name="tax_id" valueNumeric="2" />
@@ -7511,7 +7509,6 @@
 			<column name="version" valueNumeric="0" />
 			<column name="disabled" valueBoolean="false" />
 			<column name="created" valueDate="2015-03-19 00:04:19.807" />
-			<column name="discount_code" value="" />
 			<column name="provider_id" valueNumeric="1" />
 			<column name="invoice_sub_category_id" valueNumeric="2" />
 			<column name="tax_id" valueNumeric="1" />
@@ -7522,14 +7519,13 @@
 			<column name="version" valueNumeric="0" />
 			<column name="disabled" valueBoolean="false" />
 			<column name="created" valueDate="2015-03-19 00:04:19.829" />
-			<column name="discount_code" value="" />
 			<column name="provider_id" valueNumeric="1" />
 			<column name="invoice_sub_category_id" valueNumeric="2" />
 			<column name="tax_id" valueNumeric="2" />
 			<column name="trading_country_id" valueNumeric="2" />
 		</insert>
 	</changeSet>
-	<changeSet author="AndriusKarpavicius" id="rebuild-4.0.2-data-subscriptionTerminationReasonsDEMO">
+	<changeSet author="AndriusKarpavicius" id="rebuild-4.0.3-data-subscriptionTerminationReasonsDEMO">
 		<insert tableName="billing_subscrip_termin_reason">
 			<column name="id" valueNumeric="1" />
 			<column name="version" valueNumeric="0" />
@@ -7561,7 +7557,7 @@
 			<column name="provider_id" valueNumeric="1" />
 		</insert>
 	</changeSet>
-	<changeSet author="AndriusKarpavicius" id="rebuild-4.0.2-data-customerClasifDEMO">
+	<changeSet author="AndriusKarpavicius" id="rebuild-4.0.3-data-customerClasifDEMO">
 		<insert tableName="crm_customer_brand">
 			<column name="id" valueNumeric="1" />
 			<column name="version" valueNumeric="0" />
@@ -7592,7 +7588,7 @@
 			<column name="provider_id" valueNumeric="1" />
 		</insert>
 	</changeSet>
-	<changeSet author="AndriusKarpavicius" id="rebuild-4.0.2-data-sellerDEMO">
+	<changeSet author="AndriusKarpavicius" id="rebuild-4.0.3-data-sellerDEMO">
 		<insert tableName="crm_seller">
 			<column name="id" valueNumeric="1" />
 			<column name="version" valueNumeric="0" />
@@ -7660,7 +7656,7 @@
 			<column name="trading_language_id" valueNumeric="2" />
 		</insert>
 	</changeSet>
-	<changeSet author="AndriusKarpavicius" id="rebuild-4.0.2-data-timerDEMO">
+	<changeSet author="AndriusKarpavicius" id="rebuild-4.0.3-data-timerDEMO">
 		<insert tableName="meveo_timer">
 			<column name="id" valueNumeric="1" />
 			<column name="version" valueNumeric="0" />
