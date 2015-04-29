@@ -30,7 +30,7 @@
 			<hftl:columnList label="#{messages['offerTemplate.serviceTemplates']}" value="#{entity.serviceTemplates}" field="code" fieldId="id"
 				entityView="serviceTemplateDetail"/>
             <hftl:column label="#{messages['enableEntity.active']}" field="active" isMessage="true" />
-			<hftl:actionsColumn permission="#{identity.hasPermission('catalog','catalogManagement')}" />
+			<hftl:actionsColumn permission="#{identity.hasPermission('catalog','catalogManagement')}" renderEnableLink="true"/>
 		</hftl:dataList>
 
 	</ui:define>

@@ -42,7 +42,7 @@ import org.primefaces.event.SelectEvent;
 public class PricePlanMatrixBean extends BaseBean<PricePlanMatrix> {
 
 	private static final long serialVersionUID = 1L;
-
+	
 	/**
 	 * Injected @{link PricePlanMatrix} service. Extends
 	 * {@link PersistenceService}.

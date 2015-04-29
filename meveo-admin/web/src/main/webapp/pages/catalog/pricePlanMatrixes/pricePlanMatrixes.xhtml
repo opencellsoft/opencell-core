@@ -3,8 +3,8 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html" xmlns:hftl="http://hftl.org"
 	xmlns:hf="http://java.sun.com/jsf/composite/tags"
-	xmlns:p="http://primefaces.org/ui"
-	template="/layout/template.xhtml">
+	xmlns:s="http://jboss.org/seam/faces"
+	xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
 
 	<f:metadata>
 		<f:event type="preRenderView"
@@ -24,7 +24,8 @@
 			searchField2="description"
 			column1Label="#{messages['offerTemplate.code']}" column1="code"
 			column2Label="#{messages['offerTemplate.description']}"
-			column2="description" selection="#{pricePlanMatrixListBean.filters['offerTemplate']}"
+			column2="description"
+			selection="#{pricePlanMatrixListBean.filters['offerTemplate']}"
 			lazy="false" dataModel="#{offerTemplateBean.listActive}"
 			updateField=":searchPanel:searchForm:offer:offerTemplate_child">
 		</hftl:entityPopup>
@@ -35,91 +36,247 @@
 			column1="code"
 			column2Label="#{messages['BusinessEntity.description']}"
 			column2="description"
-			selection="#{pricePlanMatrixListBean.filters['seller']}"
+			selection="#{pricePlanMatrixListBean.filters['seller']}" lazy="false"
+			dataModel="#{sellerBean.listAll}"
 			updateField=":searchPanel:searchForm:seller:seller_child">
 		</hftl:entityPopup>
+		<hftl:entityPopup id="searchTradingCountryPopup"
+			header="#{messages['country.search']}"
+			backingBean="#{tradingCountryBean}"
+			searchField1Label="#{messages['BusinessEntity.description']}"
+			searchField1="prDescription"
+			column1Label="#{messages['BusinessEntity.code']}"
+			column1="countryCode"
+			column2Label="#{messages['BusinessEntity.description']}"
+			column2="prDescription"
+			selection="#{pricePlanMatrixListBean.filters['tradingCountry']}"
+			lazy="false" dataModel="#{tradingCountryBean.listAll}"
+			updateField=":searchPanel:searchForm:tradingCountry:tradingCountry_child">
+		</hftl:entityPopup>
+		<hftl:entityPopup id="searchTradingCurrencyPopup"
+			header="#{messages['currency.search']}"
+			backingBean="#{tradingCurrencyBean}"
+			searchField1Label="#{messages['BusinessEntity.description']}"
+			searchField1="prDescription"
+			column1Label="#{messages['BusinessEntity.code']}"
+			column1="currencyCode"
+			column2Label="#{messages['BusinessEntity.description']}"
+			column2="prDescription"
+			selection="#{pricePlanMatrixListBean.filters['tradingCurrency']}"
+			lazy="false" dataModel="#{tradingCurrencyBean.listAll}"
+			updateField=":searchPanel:searchForm:tradingCurrency:tradingCurrency_child">
+		</hftl:entityPopup>
 
-		<hf:searchPanel id="searchPanel"
+		<hf:searchPanel id="searchPanel" columns="3"
 			label="#{messages['pricePlanMatrix.search']}"
 			backingBean="#{pricePlanMatrixListBean}">
-            <hf:searchField label="#{messages['BusinessEntity.code']}" field="code" />
-            <hf:searchField label="#{messages['BusinessEntity.description']}" id="description" field="description" />
-            <hf:searchField label="#{messages['pricePlanMatrix.eventCode']}"
+			<hf:searchField label="#{messages['BusinessEntity.code']}"
+				field="code" />
+			<hf:searchField label="#{messages['pricePlanMatrix.eventCode']}"
 				field="eventCode" />
-			<hf:searchField id="offer" label="#{messages['pricePlanMatrix.offerCode']}"
-				field="offerTemplate"  childField="code" popup="true" 
+			<hf:searchField id="offer"
+				label="#{messages['pricePlanMatrix.offerCode']}"
+				field="offerTemplate" childField="code" popup="true"
 				popupId="offerPopup" clearButton="true" />
 			<hf:searchField id="seller" label="#{messages['seller.title']}"
 				field="seller" childField="description" popup="true"
 				popupId="searchSellerPopup" clearButton="true" />
-
-			<!-- <hf:searchField label="#{messages['pricePlanMatrix.startSubscriptionDate']}" field="startSubscriptionDate" />
-    			<hf:searchField label="#{messages['pricePlanMatrix.endSubscriptionDate']}" field="endSubscriptionDate" />
-    			<hf:searchField label="#{messages['pricePlanMatrix.startRatingDate']}" field="startRatingDate" />
-    			<hf:searchField label="#{messages['pricePlanMatrix.endRatingDate']}" field="endRatingDate" />
-    			<hf:searchField label="#{messages['pricePlanMatrix.minSubscriptionAgeInMonth']}" field="minSubscriptionAgeInMonth" />
-    			<hf:searchField label="#{messages['pricePlanMatrix.maxSubscriptionAgeInMonth']}" field="maxSubscriptionAgeInMonth" />
-    			<hf:searchField label="#{messages['pricePlanMatrix.criteria1Value']}" field="criteria1Value" />
-    			<hf:searchField label="#{messages['pricePlanMatrix.criteria2Value']}" field="criteria2Value" />
-    			<hf:searchField label="#{messages['pricePlanMatrix.criteria3Value']}" field="criteria3Value" />
-    			<hf:searchField label="#{messages['pricePlanMatrix.amountWithoutTax']}" field="amountWithoutTax" />
-    			<hf:searchField label="#{messages['pricePlanMatrix.amountWithTax']}" field="amountWithTax" /> -->
+			<hf:searchField id="tradingCountry"
+				label="#{messages['tradingCountry.tradingCountry']}"
+				field="tradingCountry" childField="countryCode" popup="true"
+				popupId="searchTradingCountryPopup" clearButton="true" />
+			<hf:searchField id="tradingCurrency"
+				label="#{messages['currency.codeCurrency']}" field="tradingCurrency"
+				childField="currencyCode" popup="true"
+				popupId="searchTradingCurrencyPopup" clearButton="true" />
+			<hf:minmaxSearchField label="#{messages['pricePlanMatrix.quantity']}"
+				minField="minQuantity" maxField="maxQuantity" />
+			<hf:likeCriteriasSearchField
+				label="#{messages['pricePlanMatrix.criteriaValue']}"
+				fields="criteria1Value,criteria2Value,criteria3Value" />
+			<hf:minmaxSearchField
+				label="#{messages['pricePlanMatrix.subscriptionDate']}"
+				minField="startSubscriptionDate" maxField="endSubscriptionDate" />
+			<hf:minmaxSearchField
+				label="#{messages['pricePlanMatrix.ratingDate']}"
+				minField="startRatingDate" maxField="endRatingDate" />
+			<hf:minmaxSearchField
+				label="#{messages['pricePlanMatrix.subscriptionAgeInMonth']}"
+				minField="minSubscriptionAgeInMonth"
+				maxField="maxSubscriptionAgeInMonth" />
 		</hf:searchPanel>
 
 		<hftl:dataList label="#{messages['pricePlanMatrix.title']}"
+			editable="true" editMode="cell" scrollable="true" exportButton="false" exportXlsxButton="true"
 			backingBean="#{pricePlanMatrixListBean}" sortBy="code">
-            <hftl:column label="#{messages['BusinessEntity.code']}" field="code" />
-			<hftl:column label="#{messages['pricePlanMatrix.table.eventCode']}"
-				field="eventCode" />
-			<hftl:columnList label="#{messages['seller.title']}"
-				value="#{entity.seller}" field="description" fieldId="id"
-				entityView="sellerDetail" />
-			<hftl:column label="#{messages['tradingCountry.tradingCountry']}"
-				field="tradingCountry" childField="countryCode" />
-			<hftl:column label="#{messages['currency.codeCurrency']}"
-				field="tradingCurrency" childField="currencyCode" />
-			<!-- <hftl:column
-				label="#{messages['pricePlanMatrix.table.startSubscriptionDate']}"
-				field="startSubscriptionDate" isDate="true" />
-			<hftl:column
-				label="#{messages['pricePlanMatrix.table.endSubscriptionDate']}"
-				field="endSubscriptionDate" isDate="true" /> -->
-			<hftl:column
-				label="#{messages['pricePlanMatrix.table.startRatingDate']}"
-				field="startRatingDate" wrapHeader="true" isDate="true" />
-			<hftl:column
-				label="#{messages['pricePlanMatrix.table.endRatingDate']}"
-				field="endRatingDate" wrapHeader="true" isDate="true" />
-			<!-- <hftl:column
-				label="#{messages['pricePlanMatrix.table.minSubscriptionAgeInMonth']}"
-				field="minSubscriptionAgeInMonth" wrapHeader="true" />
-			<hftl:column
-				label="#{messages['pricePlanMatrix.table.maxSubscriptionAgeInMonth']}"
-				field="maxSubscriptionAgeInMonth" wrapHeader="true" />
-			<hftl:column
-				label="#{messages['pricePlanMatrix.table.criteria1Value']}"
-				field="criteria1Value" />
-			<hftl:column
-				label="#{messages['pricePlanMatrix.table.criteria2Value']}"
-				field="criteria2Value" />
-			<hftl:column
-				label="#{messages['pricePlanMatrix.table.criteria3Value']}"
-				field="criteria3Value" /> -->
-			<hftl:columnList label="#{messages['pricePlanMatrix.offerCode']}" 
-				value="#{entity.offerTemplate}" field="code" fieldId="id"
-				entityView="offerTemplateDetail" />
-			<hftl:column label="#{messages['pricePlanMatrix.priority']}"
-				field="priority" />
-			<hftl:column label="#{messages['pricePlanMatrix.amountWithoutTax']}"
-				field="amountWithoutTax" converterParam="4digits" wrapHeader="true" />
-			<p:column headerText="#{messages['pricePlanMatrix.amountWithTax']}" 
-				rendered="#{!pricePlanMatrixBean.entity.provider.entreprise}" >
-			     <h:outputText value="#{entity.amountWithTax}"
-				 converter="#{getConverter.forType(entity.amountWithTax,'4digits')}" />
+			<p:column exportable="true" sortBy="code">
+				<f:facet name="header">
+					<h:outputText value="#{messages['BusinessEntity.code']}" />
+				</f:facet>
+				<p:cellEditor>
+					<f:facet name="output">
+						<h:outputText value="#{entity.code}" />
+					</f:facet>
+					<f:facet name="input">
+						<p:inputText value="#{entity.code}" required="true" maxlength="60"
+							size="20" />
+					</f:facet>
+				</p:cellEditor>
 			</p:column>
+			<p:column exportable="true" sortBy="eventCode">
+				<f:facet name="header">
+					<h:outputText value="#{messages['pricePlanMatrix.eventCode']}" />
+				</f:facet>
+				<p:cellEditor>
+					<f:facet name="output">
+						<h:outputText value="#{entity.code}" />
+					</f:facet>
+					<f:facet name="input">
+						<h:selectOneMenu value="#{entity.eventCode}" style="width:75%"
+							required="true">
+							<f:selectItems value="#{chargeTemplateBean.listAll}" var="item"
+								itemLabel="#{item.code}" itemValue="#{item.code}" />
+							<s:objectConverter />
+						</h:selectOneMenu>
+					</f:facet>
+				</p:cellEditor>
+			</p:column>
+			<p:column exportable="true" sortBy="description">
+				<f:facet name="header">
+					<h:outputText value="#{messages['BusinessEntity.description']}" />
+				</f:facet>
+				<p:cellEditor>
+					<f:facet name="output">
+						<h:outputText value="#{entity.description}" />
+					</f:facet>
+					<f:facet name="input">
+						<p:inputText value="#{entity.description}" required="true"
+							maxlength="100" size="20" />
+					</f:facet>
+				</p:cellEditor>
+			</p:column>
+			<p:column exportable="true" sortBy="offerTemplate.code">
+				<f:facet name="header">
+					<h:outputText value="#{messages['pricePlanMatrix.offerCode']}" />
+				</f:facet>
+				<p:cellEditor>
+					<f:facet name="output">
+						<h:outputText value="#{entity.offerTemplate.code}" />
+					</f:facet>
+					<f:facet name="input">
+						<h:selectOneMenu value="#{entity.offerTemplate}" style="width:75%">
+							<f:selectItem itemLabel="" itemValue="" />
+							<f:selectItems value="#{chargeTemplateBean.listAll}" var="item"
+								itemLabel="#{item.code}" itemValue="#{item}" />
+							<s:objectConverter />
+						</h:selectOneMenu>
+					</f:facet>
+				</p:cellEditor>
+			</p:column>
+
+			<p:column exportable="true" sortBy="seller.code">
+				<f:facet name="header">
+					<h:outputText value="#{messages['seller.title']}" />
+				</f:facet>
+				<p:cellEditor>
+					<f:facet name="output">
+						<h:outputText value="#{entity.seller.code}" />
+					</f:facet>
+					<f:facet name="input">
+						<h:selectOneMenu value="#{entity.seller}" style="width:75%">
+							<f:selectItem itemLabel="" itemValue="" />
+							<f:selectItems value="#{sellerBean.listAll}" var="item"
+								itemLabel="#{item.code}" itemValue="#{item}" />
+							<s:objectConverter />
+						</h:selectOneMenu>
+					</f:facet>
+				</p:cellEditor>
+			</p:column>
+			<p:column exportable="true" sortBy="amountWithTax"
+				rendered="#{!pricePlanMatrixBean.entity.provider.entreprise}">
+				<f:facet name="header">
+					<h:outputText value="#{messages['pricePlanMatrix.amountWithTax']}" />
+				</f:facet>
+				<p:cellEditor>
+					<f:facet name="output">
+						<h:outputText value="#{entity.amountWithTax}"
+							converter="bigDecimal4DigitsConverter" />
+					</f:facet>
+					<f:facet name="input">
+						<p:inputText value="#{entity.amountWithTax}" required="true"
+							converter="bigDecimal4DigitsConverter" size="5" />
+					</f:facet>
+				</p:cellEditor>
+			</p:column>
+			<p:column exportable="true" sortBy="amountWithTax"
+				rendered="#{!pricePlanMatrixBean.entity.provider.entreprise}">
+				<f:facet name="header">
+					<h:outputText
+						value="#{messages['pricePlanMatrix.amountWithoutTax']}" />
+				</f:facet>
+				<p:cellEditor>
+					<f:facet name="output">
+						<h:outputText value="#{entity.amountWithoutTax}"
+							converter="bigDecimal4DigitsConverter" />
+					</f:facet>
+					<f:facet name="input">
+						<p:inputText value="#{entity.amountWithoutTax}" required="true"
+							converter="bigDecimal4DigitsConverter" size="5" />
+					</f:facet>
+				</p:cellEditor>
+			</p:column>
+
+<!-- 			<hftl:editColumn label="#{messages['pricePlanMatrix.criteriaEL']}" -->
+<!-- 				fieldValue="#{entity.criteriaEL}" rendered="false" /> -->
+<!-- 			<hftl:editColumn label="#{messages['tradingCountry.tradingCountry']}" -->
+<!-- 				fieldValue="#{entity.tradingCountry}" fieldLabel="countryCode" -->
+<!-- 				listValue="#{tradingCountryBean.listAll}" -->
+<!-- 				itemLabel="#{item.countryCode}" itemValue="#{item}" rendered="false" /> -->
+<!-- 			<hftl:editColumn label="#{messages['currency.codeCurrency']}" -->
+<!-- 				fieldValue="#{entity.tradingCurrency}" fieldLabel="currencyCode" -->
+<!-- 				listValue="#{tradingCurrencyBean.listAll}" -->
+<!-- 				itemLabel="#{item.currencyCode}" itemValue="#{item}" -->
+<!-- 				rendered="false" /> -->
+<!-- 			<hftl:editColumn -->
+<!-- 				label="#{messages['pricePlanMatrix.criteria1Value']}" -->
+<!-- 				fieldValue="#{entity.criteria1Value}" rendered="false" /> -->
+<!-- 			<hftl:editColumn -->
+<!-- 				label="#{messages['pricePlanMatrix.criteria2Value']}" -->
+<!-- 				fieldValue="#{entity.criteria1Value}" rendered="false" /> -->
+<!-- 			<hftl:editColumn -->
+<!-- 				label="#{messages['pricePlanMatrix.criteria3Value']}" -->
+<!-- 				fieldValue="#{entity.criteria1Value}" rendered="false" /> -->
+
+<!-- 			<hftl:editColumn -->
+<!-- 				label="#{messages['pricePlanMatrix.table.startRatingDate']}" -->
+<!-- 				fieldValue="#{entity.startRatingDate}" isDate="true" -->
+<!-- 				rendered="false" /> -->
+<!-- 			<hftl:editColumn -->
+<!-- 				label="#{messages['pricePlanMatrix.table.endRatingDate']}" -->
+<!-- 				fieldValue="#{entity.endRatingDate}" isDate="true" rendered="false" /> -->
+<!-- 			<hftl:editColumn label="#{messages['pricePlanMatrix.priority']}" -->
+<!-- 				fieldValue="#{entity.priority}" rendered="false" /> -->
+<!-- 			<hftl:editColumn label="#{messages['pricePlanMatrix.priority']}" -->
+<!-- 				fieldValue="#{entity.priority}" rendered="false" /> -->
+<!-- 			<hftl:editColumn label="#{messages['pricePlanMatrix.minQuantity']}" -->
+<!-- 				fieldValue="#{entity.minQuantity}" rendered="false" /> -->
+<!-- 			<hftl:editColumn label="#{messages['pricePlanMatrix.maxQuantity']}" -->
+<!-- 				fieldValue="#{entity.maxQuantity}" rendered="false" /> -->
+<!-- 			<hftl:editColumn -->
+<!-- 				label="#{messages['pricePlanMatrix.minSubscriptionAgeInMonth']}" -->
+<!-- 				fieldValue="#{entity.minSubscriptionAgeInMonth}" rendered="false" /> -->
+<!-- 			<hftl:editColumn -->
+<!-- 				label="#{messages['pricePlanMatrix.maxSubscriptionAgeInMonth']}" -->
+<!-- 				fieldValue="#{entity.maxSubscriptionAgeInMonth}" -->
+<!-- 				converter="bigDecimal4DigitsConverter" -->
+<!-- 				rendered="#{!pricePlanMatrixBean.entity.provider.entreprise and false}" -->
+<!-- 				required="true" /> -->
+<!-- 			<hftl:editColumn -->
+<!-- 				label="#{messages['pricePlanMatrix.validityCalendar']}" -->
+<!-- 				rendered="false" fieldValue="#{entity.validityCalendar}" -->
+<!-- 				isDate="true" /> -->
 			<hftl:actionsColumn
 				permission="#{identity.hasPermission('catalog','catalogManagement')}" />
 		</hftl:dataList>
 	</ui:define>
-
 </ui:composition>

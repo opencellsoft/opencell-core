@@ -20,6 +20,7 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.TypeVariable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
@@ -573,7 +574,48 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
                                     log.error("Search by a type will be ignored - unknown class {}", filter);
                                 }
                             }
-
+                        } else if (key.contains("minmaxRange-")) {
+                            // if searching elements from list
+                            String parsedKey = key.substring(12);
+                            String[] kss=parsedKey.split("-");
+                            System.out.println("#####minmaxRange ####"+kss.length);
+                            if(kss.length==2){
+                            	System.out.println("#####minmaxRange ####"+kss[0]);
+                            	System.out.println("#####minmaxRange ####"+kss[1]);
+                            	if (filter instanceof Double) {
+                                    BigDecimal rationalNumber = new BigDecimal((Double) filter);
+                                    queryBuilder.addCriterion("a." + kss[0], " <= ", rationalNumber, false);
+                                    queryBuilder.addCriterion("a." + kss[1], " >= ", rationalNumber, false);
+                                }else if (filter instanceof Number) {
+                                    queryBuilder.addCriterion("a." + kss[0], " <= ", filter, false);
+                                    queryBuilder.addCriterion("a." + kss[1], " >= ", filter, false);
+                                }if(filter instanceof Date){
+                                	Date value=(Date)filter;
+                                	Calendar c = Calendar.getInstance();
+                            		c.setTime(value);
+                            		int year = c.get(Calendar.YEAR);
+                            		int month = c.get(Calendar.MONTH);
+                            		int date = c.get(Calendar.DATE);
+                            		c.set(year, month, date, 0, 0, 0);
+                            		value=c.getTime();
+                            		queryBuilder.addCriterion("a." + kss[0],"<=", value,false);
+                                    queryBuilder.addCriterion("a." + kss[1],">=", value,false);
+                            	} 
+                            }
+                        }else if (key.contains("likeCriterias-")) {
+                            // if searching elements from list
+                            String parsedKey = key.substring(14);
+                            String[] fields=parsedKey.split("-");
+                            System.out.println("#####likeCriterias ####"+fields.length);
+                            queryBuilder.startOrClause();
+                            for(String field:fields){
+                            	if(filter instanceof String){
+                            		String filterString = (String) filter;
+                                    queryBuilder.addCriterionWildcard("a." + field, filterString, true);
+                            	}
+                            }
+                            queryBuilder.endOrClause();
+                        
                         // if not ranged search
 						} else {
                             if (filter instanceof String) {

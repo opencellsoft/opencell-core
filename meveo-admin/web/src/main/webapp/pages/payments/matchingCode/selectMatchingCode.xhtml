@@ -3,8 +3,6 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html"
-	xmlns:rich="http://richfaces.org/rich"
-	xmlns:a="http://richfaces.org/a4j"
 	xmlns:hftl="http://hftl.org" xmlns:hf="http://java.sun.com/jsf/composite/tags"
 	template="/layout/template.xhtml">
 
@@ -14,7 +12,7 @@
 
 	<ui:define name="body">
 
-		<rich:panel>
+		<p:panel>
 			<f:facet name="header">
 				<h:outputText value="#{messages['matchingCode.selectMatching']}" />
 			</f:facet>
@@ -23,7 +21,7 @@
 			<custom:column label="#{messages['matchingCode.code']}" field="matchingCode"	childField="id" />									
 			<custom:column label="#{messages['matchingCode.matchingAmount']}" field="matchingAmount"	 />							
 	    	<custom:column label="#{messages['matchingCode.matchingDate']}" field="matchingCode"	childField="matchingDate" />
-			<rich:column styleClass="actions-column">
+			<p:column styleClass="actions-column">
             	<f:facet name="header">
                 	<h:outputText value="#{messages['commons.actions']}" />
              	</f:facet>
@@ -32,9 +30,9 @@
              	<f:param name="objectId" value="#{entity.matchingCode.id}"/>
              	<f:param name="edit" value="false"/>
              </s:link>                               	             	          	            
-            	<rich:toolTip for="viewlink" value="#{messages['matching.viewMatchingCode']}"/>
-             </rich:column>							
+            	<p:toolTip for="viewlink" value="#{messages['matching.viewMatchingCode']}"/>
+             </p:column>							
 		</custom:dataList>	  
-	  	</rich:panel>				
+	  	</p:panel>				
 	</ui:define>
 </ui:composition>

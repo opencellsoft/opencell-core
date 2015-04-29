@@ -3,8 +3,7 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html"
-	xmlns:rich="http://richfaces.org/rich"
-	xmlns:a="http://richfaces.org/a4j" xmlns:hftl="http://hftl.org"
+	xmlns:hftl="http://hftl.org"
 	xmlns:hf="http://java.sun.com/jsf/composite/tags"
 	template="/layout/template.xhtml"
 	xmlns:e="http://jboss.com/products/seam/excel"
@@ -151,7 +150,7 @@
 
 			<hftl:column label="#{messages['businessEntity.code']}"
 				field="billingAccount" childField="code" />
-			<rich:column width="100">
+			<p:column width="100">
 				<f:facet name="header">
 					<h:outputText value="#{messages['name.title']}" />
 				</f:facet>
@@ -160,7 +159,7 @@
 						rendered="#{entity.billingAccount.name.title != null}"
 						value="#{entity.billingAccount.name.title.description}" />
 				</e:cell>
-			</rich:column>
+			</p:column>
 
 			<hftl:column label="#{messages['billingAccount.name']}"
 				field="billingAccount" childField="name" />
@@ -186,7 +185,7 @@
 			<hftl:column label="#{messages['businessEntity.code']}"
 				field="billingAccount" childField="code" />
 
-			<rich:column width="100">
+			<p:column width="100">
 				<f:facet name="header">
 					<h:outputText value="#{messages['name.title']}" />
 				</f:facet>
@@ -195,7 +194,7 @@
 						rendered="#{entity.billingAccount.name.title != null}"
 						value="#{entity.billingAccount.name.title.description}" />
 				</e:cell>
-			</rich:column>
+			</p:column>
 
 			<hftl:column label="#{messages['billingAccount.name']}"
 				field="billingAccount" childField="name" />

@@ -3,7 +3,7 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html"
-	xmlns:rich="http://richfaces.org/rich"
+	
 	xmlns:e="http://jboss.com/products/seam/excel"
 	xmlns:p="http://primefaces.org/ui" xmlns:hftl="http://hftl.org"
 	xmlns:hf="http://java.sun.com/jsf/composite/tags"
@@ -38,12 +38,14 @@
 
 		<hftl:dataList label="#{messages['billingRun.exceptionelInvoicing']}"
 			backingBean="#{billingAccountBean}">
-			<hftl:column label="#{messages['businessEntity.code']}" field="code" />
+			<hftl:column label="#{messages['businessEntity.code']}" field="code" 
+				propagateConversation="false" entityView="billingAccountDetail"
+				objectIdParamName="billingAccountId"/>
 			<hftl:column label="#{messages['billingAccount.status']}"
 				field="status" childField="label" isMessage="true" />
-			<hftl:column label="#{messages['billingAccount.subscriptionDate']}"
+			<hftl:column label="#{messages['billingAccount.subscriptionDate']}" isDate="true"
 				field="subscriptionDate" />
-			<hftl:column label="#{messages['billingAccount.nextInvoiceDate']}"
+			<hftl:column label="#{messages['billingAccount.nextInvoiceDate']}" isDate="true"
 				field="nextInvoiceDate" />
 			<p:column>
 				<f:facet name="header">
