@@ -44,6 +44,8 @@ public abstract class ServiceBasedLazyDataModel<T extends IEntity> extends
 				&& !StringUtils.isBlank(getDefaultSortImpl())) {
 			sortField = getDefaultSortImpl();
 		}
+		
+		System.out.println("Sortfield#####"+sortField);
 
         if ((sortOrder == null || sortOrder == SortOrder.UNSORTED) && getDefaultSortOrderImpl() != null) {
             sortOrder = getDefaultSortOrderImpl();
