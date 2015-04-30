@@ -75,7 +75,7 @@
 		</p:commandButton>
 
 		<p:tooltip for="#{resultsId}enablelink" rendered="#{renderEnableLink}"
-			value="#{entity.active?messages['commons.disable']:messages['commons.enable']}" showEffect="slide"
+			value="#{!entity.disabled?messages['commons.disable']:messages['commons.enable']}" showEffect="slide"
 			hideEffect="slide"  />
 		<p:confirmDialog id="confirmEnableDialog" styleClass="confirm-dialog"
 			message="#{entity.disabled?messages['commons.confirmEnable']:messages['commons.confirmDisable']}" header=""
@@ -86,7 +86,7 @@
 					oncomplete="confirmEnableWidget.hide()" rendered="#{entity.disabled}"
 					action="#{backingBean.enable()}" update="@all" />
 				<p:commandButton id="disenableOk" value="#{messages['commons.yes']}"
-					oncomplete="confirmEnableWidget.hide()" rendered="#{entity.active}"
+					oncomplete="confirmEnableWidget.hide()" rendered="#{!entity.disabled}"
 					action="#{backingBean.disable()}" update="@all" />
 				<p:commandButton id="enableKo" value="#{messages['commons.no']}"
 					onclick="confirmEnableWidget.hide()" type="button" />
