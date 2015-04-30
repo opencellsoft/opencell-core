@@ -22,7 +22,7 @@ import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.IEntity;
 import org.meveo.model.notification.EmailNotification;
 import org.meveo.model.notification.NotificationHistoryStatusEnum;
-import org.meveo.service.billing.impl.RatingService;
+import org.meveo.service.base.ValueExpressionWrapper;
 
 //TODO : transform that into MDB to correctly handle retries
 @Stateless
@@ -42,18 +42,18 @@ public class EmailNotifier {
 			msg.setSentDate(new Date());
 			HashMap<Object,Object> userMap = new HashMap<Object, Object>();
 			userMap.put("event", e);
-			msg.setSubject((String)RatingService.evaluateExpression(notification.getSubject(), userMap, String.class));
+			msg.setSubject((String)ValueExpressionWrapper.evaluateExpression(notification.getSubject(), userMap, String.class));
 			if(!StringUtils.isBlank(notification.getHtmlBody())){
-				String htmlBody=(String)RatingService.evaluateExpression(notification.getHtmlBody(), userMap, String.class);
+				String htmlBody=(String)ValueExpressionWrapper.evaluateExpression(notification.getHtmlBody(), userMap, String.class);
 				msg.setContent(htmlBody, "text/html");
 			} else {
-				String body=(String)RatingService.evaluateExpression(notification.getBody(), userMap, String.class);
+				String body=(String)ValueExpressionWrapper.evaluateExpression(notification.getBody(), userMap, String.class);
 				msg.setContent(body, "text/plain");
 			}
 			List<InternetAddress> addressTo = new ArrayList<InternetAddress>();
 			
 			if(!StringUtils.isBlank(notification.getEmailToEl())){
-				addressTo.add(new InternetAddress((String)RatingService.evaluateExpression(notification.getEmailToEl(), userMap, String.class)));
+				addressTo.add(new InternetAddress((String)ValueExpressionWrapper.evaluateExpression(notification.getEmailToEl(), userMap, String.class)));
 			}
 			if(notification.getEmails()!=null){
 				for (String address:notification.getEmails()) {
@@ -66,11 +66,11 @@ public class EmailNotifier {
 					notification.getEmailFrom()) };
 			msg.setReplyTo(replytoAddress);
 			if(!StringUtils.isBlank(notification.getBody())){
-				String htmlBody=(String)RatingService.evaluateExpression(notification.getBody(), userMap, String.class);
+				String htmlBody=(String)ValueExpressionWrapper.evaluateExpression(notification.getBody(), userMap, String.class);
 				msg.setContent(htmlBody, "text/plain");
 			}
 			if(!StringUtils.isBlank(notification.getHtmlBody())){
-				String htmlBody=(String)RatingService.evaluateExpression(notification.getHtmlBody(), userMap, String.class);
+				String htmlBody=(String)ValueExpressionWrapper.evaluateExpression(notification.getHtmlBody(), userMap, String.class);
 				msg.setContent(htmlBody, "text/html");
 			}
 			Transport.send(msg);

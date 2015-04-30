@@ -41,6 +41,7 @@ import org.meveo.model.cache.CachedUsageChargeTemplate;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.rating.EDR;
 import org.meveo.model.rating.EDRStatusEnum;
+import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.util.MeveoJpa;
 import org.slf4j.Logger;
 
@@ -573,7 +574,7 @@ public class UsageRatingService {
 	private boolean matchExpression(String expression, EDR edr) throws BusinessException {
 		Map<Object, Object> userMap = new HashMap<Object, Object>();
 		userMap.put("edr", edr);
-		return (Boolean) RatingService.evaluateExpression(expression, userMap, Boolean.class);
+		return (Boolean) ValueExpressionWrapper.evaluateExpression(expression, userMap, Boolean.class);
 	}
 
 	private boolean matchExpression(String expression, EDR edr, WalletOperation walletOperation)
@@ -589,7 +590,7 @@ public class UsageRatingService {
 			userMap.put("ua", walletOperation.getWallet().getUserAccount());
 		}
 
-		Object res = RatingService.evaluateExpression(expression, userMap, Boolean.class);
+		Object res = ValueExpressionWrapper.evaluateExpression(expression, userMap, Boolean.class);
 		try {
 			result = (Boolean) res;
 		} catch (Exception e) {
@@ -610,7 +611,7 @@ public class UsageRatingService {
 		if (expression.indexOf("ua") >= 0) {
 			userMap.put("ua", walletOperation.getWallet().getUserAccount());
 		}
-		Object res = RatingService.evaluateExpression(expression, userMap, String.class);
+		Object res = ValueExpressionWrapper.evaluateExpression(expression, userMap, String.class);
 		try {
 			result = (String) res;
 		} catch (Exception e) {
@@ -628,7 +629,7 @@ public class UsageRatingService {
 		if (expression.indexOf("ua") >= 0) {
 			userMap.put("ua", walletOperation.getWallet().getUserAccount());
 		}
-		Object res = RatingService.evaluateExpression(expression, userMap, Double.class);
+		Object res = ValueExpressionWrapper.evaluateExpression(expression, userMap, Double.class);
 		try {
 			result = (Double) res;
 		} catch (Exception e) {

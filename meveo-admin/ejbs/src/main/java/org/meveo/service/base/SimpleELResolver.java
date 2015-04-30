@@ -69,7 +69,6 @@ public Class<?> getCommonPropertyType(ELContext context, Object base) {
 }
 
 public void setUserMap(Map<Object, Object> userMap2) {
-    userMap=userMap2;
+    this.userMap  = userMap2;
 }
-
 }
