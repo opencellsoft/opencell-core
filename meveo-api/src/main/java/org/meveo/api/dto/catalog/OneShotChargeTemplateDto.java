@@ -26,11 +26,7 @@ public class OneShotChargeTemplateDto extends ChargeTemplateDto {
 	}
 
 	public OneShotChargeTemplateDto(OneShotChargeTemplate e) {
-		setCode(e.getCode());
-		setDescription(e.getDescription());
-		setInvoiceSubCategory(e.getInvoiceSubCategory().getCode());
-		setAmountEditable(e.getAmountEditable());
-		setDisabled(e.isDisabled());
+		super(e);
 		oneShotChargeTemplateType = e.getOneShotChargeTemplateType().getId();
 		immediateInvoicing = e.getImmediateInvoicing();
 	}

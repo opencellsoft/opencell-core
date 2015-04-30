@@ -37,9 +37,9 @@ import org.meveo.model.notification.NotificationEventTypeEnum;
 import org.meveo.model.notification.NotificationHistory;
 import org.meveo.model.notification.NotificationHistoryStatusEnum;
 import org.meveo.model.notification.WebHook;
+import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.billing.impl.CounterInstanceService;
 import org.meveo.service.billing.impl.CounterValueInsufficientException;
-import org.meveo.service.billing.impl.RatingService;
 import org.slf4j.Logger;
 
 @Singleton
@@ -78,7 +78,7 @@ public class DefaultObserver {
         Map<Object, Object> userMap = new HashMap<Object, Object>();
         userMap.put("event", o);
 
-        Object res = RatingService.evaluateExpression(expression, userMap, Boolean.class);
+        Object res = ValueExpressionWrapper.evaluateExpression(expression, userMap, Boolean.class);
         try {
             result = (Boolean) res;
         } catch (Exception e) {
@@ -95,7 +95,7 @@ public class DefaultObserver {
         Map<Object, Object> userMap = new HashMap<Object, Object>();
         userMap.put("event", o);
         userMap.put("manager", manager);
-        return (String) RatingService.evaluateExpression(expression, userMap, String.class);
+        return (String) ValueExpressionWrapper.evaluateExpression(expression, userMap, String.class);
     }
 
     private void fireNotification(Notification notif, IEntity e) {

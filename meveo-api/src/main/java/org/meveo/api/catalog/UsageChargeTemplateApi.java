@@ -22,7 +22,6 @@ import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.TradingLanguage;
 import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.UsageChargeTemplate;
-import org.meveo.model.catalog.UsageChgTemplateEnum;
 import org.meveo.model.crm.Provider;
 import org.meveo.service.catalog.impl.CatMessagesService;
 import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
@@ -96,12 +95,10 @@ public class UsageChargeTemplateApi extends BaseApi {
 			chargeTemplate.setDescription(postData.getDescription());
 			chargeTemplate.setDisabled(postData.isDisabled());
 			chargeTemplate.setAmountEditable(postData.getAmountEditable());
-			chargeTemplate.setUnityMultiplicator(postData
-					.getUnityMultiplicator());
-			chargeTemplate.setUnityDescription(postData.getUnityDescription());
-			chargeTemplate.setUnityFormatter(UsageChgTemplateEnum
-					.getValue(postData.getUnityFormatter()));
-			chargeTemplate.setUnityNbDecimal(postData.getUnityNbDecimal());
+			chargeTemplate.setUnitMultiplicator(postData.getUnitMultiplicator());
+			chargeTemplate.setRatingUnitDescription(postData.getRatingUnitDescription());
+			chargeTemplate.setUnitNbDecimal(postData.getUnitNbDecimal());
+			chargeTemplate.setInputUnitDescription(postData.getInputUnitDescription());
 			chargeTemplate.setPriority(postData.getPriority());
 			chargeTemplate.setFilterParam1(postData.getFilterParam1());
 			chargeTemplate.setFilterParam2(postData.getFilterParam2());
@@ -109,6 +106,10 @@ public class UsageChargeTemplateApi extends BaseApi {
 			chargeTemplate.setFilterParam4(postData.getFilterParam4());
 			chargeTemplate.setFilterExpression(postData.getFilterExpression());
 			chargeTemplate.setInvoiceSubCategory(invoiceSubCategory);
+			chargeTemplate.setUnitMultiplicator(postData.getUnitMultiplicator());
+			chargeTemplate.setRatingUnitDescription(postData.getRatingUnitDescription());
+			chargeTemplate.setUnitNbDecimal(postData.getUnitNbDecimal());
+			chargeTemplate.setInputUnitDescription(postData.getInputUnitDescription());
 
 			usageChargeTemplateService.create(chargeTemplate, currentUser,
 					provider);
@@ -194,12 +195,10 @@ public class UsageChargeTemplateApi extends BaseApi {
 			chargeTemplate.setDescription(postData.getDescription());
 			chargeTemplate.setDisabled(postData.isDisabled());
 			chargeTemplate.setAmountEditable(postData.getAmountEditable());
-			chargeTemplate.setUnityMultiplicator(postData
-					.getUnityMultiplicator());
-			chargeTemplate.setUnityDescription(postData.getUnityDescription());
-			chargeTemplate.setUnityFormatter(UsageChgTemplateEnum
-					.getValue(postData.getUnityFormatter()));
-			chargeTemplate.setUnityNbDecimal(postData.getUnityNbDecimal());
+			chargeTemplate.setUnitMultiplicator(postData.getUnitMultiplicator());
+			chargeTemplate.setRatingUnitDescription(postData.getRatingUnitDescription());
+			chargeTemplate.setUnitNbDecimal(postData.getUnitNbDecimal());
+			chargeTemplate.setInputUnitDescription(postData.getInputUnitDescription());
 			chargeTemplate.setPriority(postData.getPriority());
 			chargeTemplate.setFilterParam1(postData.getFilterParam1());
 			chargeTemplate.setFilterParam2(postData.getFilterParam2());
@@ -207,6 +206,10 @@ public class UsageChargeTemplateApi extends BaseApi {
 			chargeTemplate.setFilterParam4(postData.getFilterParam4());
 			chargeTemplate.setFilterExpression(postData.getFilterExpression());
 			chargeTemplate.setInvoiceSubCategory(invoiceSubCategory);
+			chargeTemplate.setUnitMultiplicator(postData.getUnitMultiplicator());
+			chargeTemplate.setRatingUnitDescription(postData.getRatingUnitDescription());
+			chargeTemplate.setUnitNbDecimal(postData.getUnitNbDecimal());
+			chargeTemplate.setInputUnitDescription(postData.getInputUnitDescription());
 
 			if (provider.getTradingLanguages() != null) {
 				if (postData.getLanguageDescriptions() != null) {

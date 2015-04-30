@@ -574,16 +574,16 @@
     var formatedValueHT;
 
     function caseTTCamount(){
-    	if ((document.getElementById('#{rich:clientId('amountWithTax')}').value!='')&&(document.getElementById('#{rich:clientId('amountWithoutTax')}').value=='')) 
-    	{return true;} else {return false;}
+//     	if ((document.getElementById('{rich:clientId('amountWithTax')}').value!='')&&(document.getElementById('{rich:clientId('amountWithoutTax')}').value=='')) 
+//     	{return true;} else {return false;}
     }
     function caseHTamount(){
-    	if ((document.getElementById('#{rich:clientId('amountWithTax')}').value=='')&&(document.getElementById('#{rich:clientId('amountWithoutTax')}').value!='')) 
-    	{return true;} else {return false;}
+//     	if ((document.getElementById('{rich:clientId('amountWithTax')}').value=='')&&(document.getElementById('{rich:clientId('amountWithoutTax')}').value!='')) 
+//     	{return true;} else {return false;}
     }
     function caseHTandTTCamouts(){
-    	if ((document.getElementById('#{rich:clientId('amountWithTax')}').value!='')&&(document.getElementById('#{rich:clientId('amountWithoutTax')}').value!='')) 
-    	{return true;} else {return false;}
+//     	if ((document.getElementById('{rich:clientId('amountWithTax')}').value!='')&&(document.getElementById('{rich:clientId('amountWithoutTax')}').value!='')) 
+//     	{return true;} else {return false;}
     }
 	
     function getValidAmout(){
@@ -614,26 +614,26 @@
 	var exceptionHandler = function(ex) { alert("Error: " + ex.getMessage()); };
 	
 	function validateAmounts(){
-       	amountWithoutTax = document.getElementById('#{rich:clientId('amountWithoutTax')}').value; 
-    	chargeTemplate= document.getElementById('#{rich:clientId('chargeTemplateSelectId')}').value;
-    	amountWithTax = document.getElementById('#{rich:clientId('amountWithTax')}').value;
-    	if ((document.getElementById('#{rich:clientId('amountWithTax')}').value=='')&&(document.getElementById('#{rich:clientId('amountWithoutTax')}').value=='')) 
-    	{validAmount = true;}
-    	else {
-    		if(document.getElementById('#{rich:clientId('amountWithoutTax')}').value!='') {
-    	Seam.Component.getInstance("javaScriptAction").calculateOneShotChargeInstanceAmount(chargeTemplate, amountWithoutTax,function(result) {calculatedAmount=result;}, exceptionHandler);
-    	getValidFormatHT(amountWithoutTax);
-		amountWithoutTax = formatedValueHT;
-		}
-    	if(document.getElementById('#{rich:clientId('amountWithTax')}').value!='') {
-    	Seam.Component.getInstance("javaScriptAction").calculateOneShotChargeInstanceAmountWithoutTax(chargeTemplate, amountWithTax, function(result) {calculatedAmountWithoutTax=result;}, exceptionHandler);
-    	getValidFormat(amountWithTax);
-		amountWithTax = formatedValue;
-    	}
-    	if (calculatedAmount==amountWithTax)
-		 {validAmount = true;}
-		 else {validAmount = false;}
-    	}
+//        	amountWithoutTax = document.getElementById('{rich:clientId('amountWithoutTax')}').value; 
+//     	chargeTemplate= document.getElementById('{rich:clientId('chargeTemplateSelectId')}').value;
+//     	amountWithTax = document.getElementById('{rich:clientId('amountWithTax')}').value;
+//     	if ((document.getElementById('{rich:clientId('amountWithTax')}').value=='')&&(document.getElementById('{rich:clientId('amountWithoutTax')}').value=='')) 
+//     	{validAmount = true;}
+//     	else {
+//     		if(document.getElementById('{rich:clientId('amountWithoutTax')}').value!='') {
+//     	Seam.Component.getInstance("javaScriptAction").calculateOneShotChargeInstanceAmount(chargeTemplate, amountWithoutTax,function(result) {calculatedAmount=result;}, exceptionHandler);
+//     	getValidFormatHT(amountWithoutTax);
+// 		amountWithoutTax = formatedValueHT;
+// 		}
+//     	if(document.getElementById('{rich:clientId('amountWithTax')}').value!='') {
+//     	Seam.Component.getInstance("javaScriptAction").calculateOneShotChargeInstanceAmountWithoutTax(chargeTemplate, amountWithTax, function(result) {calculatedAmountWithoutTax=result;}, exceptionHandler);
+//     	getValidFormat(amountWithTax);
+// 		amountWithTax = formatedValue;
+//     	}
+//     	if (calculatedAmount==amountWithTax)
+// 		 {validAmount = true;}
+// 		 else {validAmount = false;}
+//     	}
 	}
 	function validation(){
 		var resultValidAmout=getValidAmout();
@@ -664,9 +664,9 @@
 															action="#{subscriptionBean.saveOneShotChargeIns}"
 															value="#{messages['action.save']}"
 															rendered="#{currentProvider.amountValidation}">
-															<a:ajax event="click" render="OS_oneShot_results_form"
-																onsubmit="return validation();"
-																oncomplete="document.getElementById('oneShotChgDiv').style.display='none';" />
+<!-- 															<a:ajax event="click" render="OS_oneShot_results_form" -->
+<!-- 																onsubmit="return validation();" -->
+<!-- 																oncomplete="document.getElementById('oneShotChgDiv').style.display='none';" /> -->
 														</h:commandButton>
 
 														<p:commandButton
@@ -1067,16 +1067,16 @@
     var formatedValueHTRC;
 
     function caseTTCamountRC(){
-    	if ((document.getElementById('#{rich:clientId('RCamountWithTax')}').value!='')&&(document.getElementById('#{rich:clientId('RCamountWithoutTax')}').value=='')) 
-    	{return true;} else {return false;}
+//     	if ((document.getElementById('{rich:clientId('RCamountWithTax')}').value!='')&&(document.getElementById('{rich:clientId('RCamountWithoutTax')}').value=='')) 
+//     	{return true;} else {return false;}
     }
     function caseHTamountRC(){
-    	if ((document.getElementById('#{rich:clientId('RCamountWithTax')}').value=='')&&(document.getElementById('#{rich:clientId('RCamountWithoutTax')}').value!='')) 
-    	{return true;} else {return false;}
+//     	if ((document.getElementById('{rich:clientId('RCamountWithTax')}').value=='')&&(document.getElementById('{rich:clientId('RCamountWithoutTax')}').value!='')) 
+//     	{return true;} else {return false;}
     }
     function caseHTandTTCamoutsRC(){
-    	if ((document.getElementById('#{rich:clientId('RCamountWithTax')}').value!='')&&(document.getElementById('#{rich:clientId('RCamountWithoutTax')}').value!='')) 
-    	{return true;} else {return false;}
+//     	if ((document.getElementById('{rich:clientId('RCamountWithTax')}').value!='')&&(document.getElementById('{rich:clientId('RCamountWithoutTax')}').value!='')) 
+//     	{return true;} else {return false;}
     }
 	
     function getValidAmoutRC(){
@@ -1106,26 +1106,26 @@
 	var exceptionHandler = function(ex) { alert("Error: " + ex.getMessage()); };
 	
 	function validateAmountsRC(){
-       	amountWithoutTaxRC = document.getElementById('#{rich:clientId('RCamountWithoutTax')}').value; 
-    	chargeTemplateRC = document.getElementById('#{rich:clientId('RCchargeTemplateSelectId')}').value;
-    	amountWithTaxRC = document.getElementById('#{rich:clientId('RCamountWithTax')}').value;
-    	if ((document.getElementById('#{rich:clientId('RCamountWithTax')}').value=='')&&(document.getElementById('#{rich:clientId('RCamountWithoutTax')}').value=='')) 
-    	{validAmountRC = true;}
-    	else {
-    		if(document.getElementById('#{rich:clientId('RCamountWithoutTax')}').value!='') {
-    	Seam.Component.getInstance("javaScriptAction").calculateOneShotChargeInstanceAmount(chargeTemplateRC, amountWithoutTaxRC,function(result) {calculatedAmountRC=result;}, exceptionHandler);
-    	getValidFormatRC(amountWithoutTaxRC);
-		amountWithoutTaxRC = formatedValueHTRC;
-		}
-    	if(document.getElementById('#{rich:clientId('RCamountWithTax')}').value!='') {
-    	Seam.Component.getInstance("javaScriptAction").calculateOneShotChargeInstanceAmountWithoutTax(chargeTemplateRC, amountWithTaxRC, function(result) {calculatedAmountWithoutTaxRC=result;}, exceptionHandler);
-    	getValidFormatRC(amountWithTaxRC);
-		amountWithTaxRC = formatedValueRC;
-    	}
-    	if (calculatedAmountRC==amountWithTaxRC)
-		 {validAmountRC = true;}
-		 else {validAmountRC = false;}
-    	}
+//        	amountWithoutTaxRC = document.getElementById('{rich:clientId('RCamountWithoutTax')}').value; 
+//     	chargeTemplateRC = document.getElementById('{rich:clientId('RCchargeTemplateSelectId')}').value;
+//     	amountWithTaxRC = document.getElementById('{rich:clientId('RCamountWithTax')}').value;
+//     	if ((document.getElementById('{rich:clientId('RCamountWithTax')}').value=='')&&(document.getElementById('{rich:clientId('RCamountWithoutTax')}').value=='')) 
+//     	{validAmountRC = true;}
+//     	else {
+//     		if(document.getElementById('{rich:clientId('RCamountWithoutTax')}').value!='') {
+//     	Seam.Component.getInstance("javaScriptAction").calculateOneShotChargeInstanceAmount(chargeTemplateRC, amountWithoutTaxRC,function(result) {calculatedAmountRC=result;}, exceptionHandler);
+//     	getValidFormatRC(amountWithoutTaxRC);
+// 		amountWithoutTaxRC = formatedValueHTRC;
+// 		}
+//     	if(document.getElementById('{rich:clientId('RCamountWithTax')}').value!='') {
+//     	Seam.Component.getInstance("javaScriptAction").calculateOneShotChargeInstanceAmountWithoutTax(chargeTemplateRC, amountWithTaxRC, function(result) {calculatedAmountWithoutTaxRC=result;}, exceptionHandler);
+//     	getValidFormatRC(amountWithTaxRC);
+// 		amountWithTaxRC = formatedValueRC;
+//     	}
+//     	if (calculatedAmountRC==amountWithTaxRC)
+// 		 {validAmountRC = true;}
+// 		 else {validAmountRC = false;}
+//     	}
 	}
 	
 	function validationRC(){

@@ -42,6 +42,7 @@ import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 import javax.validation.constraints.Size;
 
+import org.meveo.model.BaseEntity;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.admin.Currency;
 import org.meveo.model.admin.Seller;
@@ -112,10 +113,7 @@ public class WalletOperation extends BusinessEntity {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "CHARGE_INSTANCE_ID",nullable=false)
-	private ChargeInstance chargeInstance;
-
-	@Column(name = "UNITY_DESCRIPTION", length = 20)
-	private String unityDescription;
+	private ChargeInstance chargeInstance;	
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "CURRENCY_ID")
@@ -197,6 +195,15 @@ public class WalletOperation extends BusinessEntity {
 	@OneToOne(fetch = FetchType.LAZY,cascade={CascadeType.PERSIST})
 	private WalletOperation reratedWalletOperation;
 	
+	@Column(name = "INPUT_UNIT_DESCRIPTION", length = 20)
+	private String inputUnitDescription;
+	
+	@Column(name = "RATING_UNIT_DESCRIPTION", length = 20)
+	private String ratingUnitDescription;
+	
+	@Column(name = "INPUT_QUANTITY", precision = BaseEntity.NB_PRECISION, scale = BaseEntity.NB_DECIMALS)
+	private BigDecimal inputQuantity;
+	
 	@Transient
 	private BillingAccount billingAccount;
 
@@ -251,14 +258,6 @@ public class WalletOperation extends BusinessEntity {
 
 	public void setChargeInstance(ChargeInstance chargeInstance) {
 		this.chargeInstance = chargeInstance;
-	}
-
-	public String getUnityDescription() {
-		return unityDescription;
-	}
-
-	public void setUnityDescription(String unityDescription) {
-		this.unityDescription = unityDescription;
 	}
 
 	public Currency getCurrency() {
@@ -442,15 +441,15 @@ public class WalletOperation extends BusinessEntity {
 		this.reratedWalletOperation = reratedWalletOperation;
 	}
 
-    @Override
-    public String toString() {
-        return String
-            .format(
-                "WalletOperation [%s, wallet=%s, operationDate=%s, invoicingDate=%s, type=%s, chargeInstance=%s, unityDescription=%s, currency=%s, taxPercent=%s, unitAmountWithoutTax=%s, unitAmountWithTax=%s, unitAmountTax=%s, quantity=%s, amountWithoutTax=%s, amountWithTax=%s, amountTax=%s, aggregatedServiceInstance=%s, parameter1=%s, parameter2=%s, parameter3=%s, startDate=%s, endDate=%s, subscriptionDate=%s, offerCode=%s, status=%s, seller=%s, priceplan=%s, reratedWalletOperation=%s, billingAccount=%s, invoiceSubCategory=%s, billingRun=%s, offerTemplate=%s]",
-                super.toString(), wallet, operationDate, invoicingDate, type, chargeInstance, unityDescription, currency, taxPercent, unitAmountWithoutTax, unitAmountWithTax,
-                unitAmountTax, quantity, amountWithoutTax, amountWithTax, amountTax, aggregatedServiceInstance, parameter1, parameter2, parameter3, startDate, endDate,
-                subscriptionDate, offerCode, status, seller, priceplan, reratedWalletOperation, billingAccount, invoiceSubCategory, billingRun, offerTemplate);
-    }
+	@Override
+	public String toString() {
+		return String
+				.format("WalletOperation [%s, wallet=%s, operationDate=%s, invoicingDate=%s, type=%s, chargeInstance=%s, inputUnitDescription=%s, ratingUnitDescription=%, inputQuantity=%, currency=%s, taxPercent=%s, unitAmountWithoutTax=%s, unitAmountWithTax=%s, unitAmountTax=%s, quantity=%s, amountWithoutTax=%s, amountWithTax=%s, amountTax=%s, aggregatedServiceInstance=%s, parameter1=%s, parameter2=%s, parameter3=%s, startDate=%s, endDate=%s, subscriptionDate=%s, offerCode=%s, status=%s, seller=%s, priceplan=%s, reratedWalletOperation=%s, billingAccount=%s, invoiceSubCategory=%s, billingRun=%s, offerTemplate=%s]",
+						super.toString(), wallet, operationDate, invoicingDate, type, chargeInstance, inputUnitDescription, ratingUnitDescription, inputQuantity, currency,
+						taxPercent, unitAmountWithoutTax, unitAmountWithTax, unitAmountTax, quantity, amountWithoutTax, amountWithTax, amountTax, aggregatedServiceInstance,
+						parameter1, parameter2, parameter3, startDate, endDate, subscriptionDate, offerCode, status, seller, priceplan, reratedWalletOperation, billingAccount,
+						invoiceSubCategory, billingRun, offerTemplate);
+	}
 
     @Transient
 	public WalletOperation getUnratedClone() {
@@ -491,7 +490,9 @@ public class WalletOperation extends BusinessEntity {
 		result.setUnitAmountTax(unitAmountTax);
 		result.setUnitAmountWithoutTax(unitAmountWithoutTax);
 		result.setUnitAmountWithTax(unitAmountWithTax);
-		result.setUnityDescription(unityDescription);
+		result.setRatingUnitDescription(ratingUnitDescription);
+		result.setInputQuantity(inputQuantity);
+		result.setInputUnitDescription(inputUnitDescription);
 		result.setWallet(wallet);
 		return result;
 	}
@@ -526,6 +527,30 @@ public class WalletOperation extends BusinessEntity {
 
 	public void setOfferTemplate(OfferTemplate offerTemplate) {
 		this.offerTemplate = offerTemplate;
+	}
+
+	public String getInputUnitDescription() {
+		return inputUnitDescription;
+	}
+
+	public void setInputUnitDescription(String inputUnitDescription) {
+		this.inputUnitDescription = inputUnitDescription;
+	}
+
+	public String getRatingUnitDescription() {
+		return ratingUnitDescription;
+	}
+
+	public void setRatingUnitDescription(String ratingUnitDescription) {
+		this.ratingUnitDescription = ratingUnitDescription;
+	}
+
+	public BigDecimal getInputQuantity() {
+		return inputQuantity;
+	}
+
+	public void setInputQuantity(BigDecimal inputQuantity) {
+		this.inputQuantity = inputQuantity;
 	}
 	
 

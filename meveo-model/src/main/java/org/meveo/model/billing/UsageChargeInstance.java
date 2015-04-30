@@ -49,8 +49,8 @@ public class UsageChargeInstance extends ChargeInstance {
 	@JoinColumn(name = "COUNTER_ID")
 	private CounterInstance counter;
 
-	@Column(name = "UNITY_DESCRIPTION", length = 20)
-	private String unityDescription;
+	@Column(name = "RATING_UNIT_DESCRIPTION", length = 20)
+	private String ratingUnitDescription;
 	
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "LAST_UPDATE")
@@ -75,20 +75,20 @@ public class UsageChargeInstance extends ChargeInstance {
 		this.counter = counter;
 	}
 
-	public String getUnityDescription() {
-		return unityDescription;
-	}
-
-	public void setUnityDescription(String unityDescription) {
-		this.unityDescription = unityDescription;
-	}
-
 	public Date getLastUpdate() {
 		return lastUpdate;
 	}
 
 	public void setLastUpdate(Date lastUpdate) {
 		this.lastUpdate = lastUpdate;
+	}
+
+	public String getRatingUnitDescription() {
+		return ratingUnitDescription;
+	}
+
+	public void setRatingUnitDescription(String ratingUnitDescription) {
+		this.ratingUnitDescription = ratingUnitDescription;
 	}
 
 }

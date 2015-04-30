@@ -11,5 +11,34 @@
 	<column name="TRADING_LANGUAGE_ID" type="BIGINT"/>
 	</addColumn>
 	</changeSet>
-	
+
+	<changeSet id="ticket685_20150430" author="EdwardLegaspi">
+		<addColumn tableName="billing_wallet_operation">
+			<column name="input_quantity" type="numeric(23, 12)" />
+			<column name="input_unit_description" type="varchar(20)" />
+			<column name="rating_unit_description" type="varchar(20)" />
+		</addColumn>
+		<dropColumn columnName="unity_description" tableName="billing_wallet_operation" />
+
+		<addColumn tableName="cat_charge_template">
+			<column name="input_unit_description" type="varchar(20)" />
+			<column name="rating_unit_description" type="varchar(20)" />
+			<column name="unit_multiplicator" type="numeric(23, 12)" />
+			<column name="unit_nb_decimal" type="int4" />
+		</addColumn>
+
+		<dropColumn columnName="unity_description" tableName="cat_usage_charge_template" />
+		<dropColumn columnName="unity_multiplicator" tableName="cat_usage_charge_template" />
+		<dropColumn columnName="unity_nb_decimal" tableName="cat_usage_charge_template" />
+		<dropColumn columnName="unity_formatter" tableName="cat_usage_charge_template" />
+
+		<dropColumn columnName="unity_description" tableName="billing_usage_charge_inst" />
+		
+		<addColumn tableName="billing_usage_charge_inst">
+			<column name="rating_unit_description" type="varchar(20)" />
+		</addColumn>
+	</changeSet>
+	<changeSet id="ticket685_20150430" author="AndriusKarpavicius">
+		<sql>update cat_charge_template set unit_nb_decimal=0 where unit_nb_decimal is null</sql>
+	</changeSet>
 </databaseChangeLog>
