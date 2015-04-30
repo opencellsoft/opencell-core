@@ -3952,6 +3952,10 @@
           <xs:element name="disabled" type="xs:boolean"/>
           <xs:element minOccurs="0" name="amountEditable" type="xs:boolean"/>
           <xs:element maxOccurs="unbounded" minOccurs="0" name="languageDescriptions" nillable="true" type="tns:languageDescriptionDto"/>
+          <xs:element minOccurs="0" name="inputUnitDescription" type="xs:string"/>
+          <xs:element minOccurs="0" name="ratingUnitDescription" type="xs:string"/>
+          <xs:element minOccurs="0" name="unitMultiplicator" type="xs:decimal"/>
+          <xs:element name="unitNbDecimal" type="xs:int"/>
         </xs:sequence>
         <xs:attribute name="code" type="xs:string" use="required"/>
         <xs:attribute name="description" type="xs:string" use="required"/>
@@ -4193,10 +4197,6 @@
         <xs:complexContent>
           <xs:extension base="tns:chargeTemplateDto">
             <xs:sequence>
-              <xs:element minOccurs="0" name="unityMultiplicator" type="xs:decimal"/>
-              <xs:element minOccurs="0" name="unityDescription" type="xs:string"/>
-              <xs:element minOccurs="0" name="unityFormatter" type="xs:int"/>
-              <xs:element name="unityNbDecimal" type="xs:int"/>
               <xs:element minOccurs="0" name="filterParam1" type="xs:string"/>
               <xs:element minOccurs="0" name="filterParam2" type="xs:string"/>
               <xs:element minOccurs="0" name="filterParam3" type="xs:string"/>

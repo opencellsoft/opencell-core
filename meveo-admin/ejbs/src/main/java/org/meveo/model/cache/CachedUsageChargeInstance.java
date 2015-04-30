@@ -141,8 +141,8 @@ public class CachedUsageChargeInstance implements Comparable<CachedUsageChargeIn
         counter = counterCacheValue;
         terminationDate = usageChargeInstance.getTerminationDate();
         templateCache = cachedTemplate;
-        unityMultiplicator = usageChargeTemplate.getUnityMultiplicator();
-        unityNbDecimal = usageChargeTemplate.getUnityNbDecimal();
+        unityMultiplicator = usageChargeTemplate.getUnitMultiplicator();
+        unityNbDecimal = usageChargeTemplate.getUnitNbDecimal();
         lastUpdate = new Date();
         computeRoundingValues();
     }

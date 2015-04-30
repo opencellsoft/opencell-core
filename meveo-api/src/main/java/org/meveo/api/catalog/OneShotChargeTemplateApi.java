@@ -123,6 +123,10 @@ public class OneShotChargeTemplateApi extends BaseApi {
 					.getOneShotChargeTemplateType()));
 			chargeTemplate.setInvoiceSubCategory(invoiceSubCategory);
 			chargeTemplate.setImmediateInvoicing(postData.getImmediateInvoicing());
+			chargeTemplate.setUnitMultiplicator(postData.getUnitMultiplicator());
+			chargeTemplate.setRatingUnitDescription(postData.getRatingUnitDescription());
+			chargeTemplate.setUnitNbDecimal(postData.getUnitNbDecimal());
+			chargeTemplate.setInputUnitDescription(postData.getInputUnitDescription());
 			oneShotChargeTemplateService.create(chargeTemplate, currentUser, provider);
 
 			// create cat messages
@@ -213,6 +217,10 @@ public class OneShotChargeTemplateApi extends BaseApi {
 					.getOneShotChargeTemplateType()));
 			chargeTemplate.setInvoiceSubCategory(invoiceSubCategory);
 			chargeTemplate.setImmediateInvoicing(postData.getImmediateInvoicing());
+			chargeTemplate.setUnitMultiplicator(postData.getUnitMultiplicator());
+			chargeTemplate.setRatingUnitDescription(postData.getRatingUnitDescription());
+			chargeTemplate.setUnitNbDecimal(postData.getUnitNbDecimal());
+			chargeTemplate.setInputUnitDescription(postData.getInputUnitDescription());
 			oneShotChargeTemplateService.update(chargeTemplate, currentUser);
 		} else {
 			if (StringUtils.isBlank(postData.getCode())) {

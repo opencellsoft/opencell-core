@@ -148,7 +148,7 @@ public class UsageRatingService {
 		Tax tax = invoiceSubcategoryCountry.getTax();
 
 		walletOperation.setChargeInstance(chargeInstance);
-		walletOperation.setUnityDescription(chargeInstance.getUnityDescription());
+		walletOperation.setRatingUnitDescription(chargeInstance.getRatingUnitDescription());
 		walletOperation.setSeller(chargeInstance.getSubscription().getUserAccount().getBillingAccount().getCustomerAccount()
 				.getCustomer().getSeller());
 		// we set here the wallet to the pricipal wallet but it will later be

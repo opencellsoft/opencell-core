@@ -1,6 +1,7 @@
 package org.meveo.api.dto.catalog;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -35,6 +36,11 @@ public class ChargeTemplateDto implements Serializable {
 
 	private Boolean amountEditable;
 	private List<LanguageDescriptionDto> languageDescriptions;
+	
+	private String inputUnitDescription;
+	private String ratingUnitDescription;
+	private BigDecimal unitMultiplicator;
+	private int unitNbDecimal;
 
 	public ChargeTemplateDto() {
 
@@ -77,7 +83,8 @@ public class ChargeTemplateDto implements Serializable {
 	@Override
 	public String toString() {
 		return "ChargeTemplateDto [code=" + code + ", description=" + description + ", invoiceSubCategory=" + invoiceSubCategory + ", disabled=" + disabled + ", amountEditable="
-				+ amountEditable + ", languageDescriptions=" + languageDescriptions + "]";
+				+ amountEditable + ", languageDescriptions=" + languageDescriptions + ", inputUnitDescription=" + inputUnitDescription + ", ratingUnitDescription="
+				+ ratingUnitDescription + ", unitNbDecimal=" + unitNbDecimal + "]";
 	}
 
 	public Boolean getAmountEditable() {
@@ -102,6 +109,38 @@ public class ChargeTemplateDto implements Serializable {
 
 	public void setDisabled(boolean disabled) {
 		this.disabled = disabled;
+	}
+
+	public String getInputUnitDescription() {
+		return inputUnitDescription;
+	}
+
+	public void setInputUnitDescription(String inputUnitDescription) {
+		this.inputUnitDescription = inputUnitDescription;
+	}
+
+	public String getRatingUnitDescription() {
+		return ratingUnitDescription;
+	}
+
+	public void setRatingUnitDescription(String ratingUnitDescription) {
+		this.ratingUnitDescription = ratingUnitDescription;
+	}
+
+	public BigDecimal getUnitMultiplicator() {
+		return unitMultiplicator;
+	}
+
+	public void setUnitMultiplicator(BigDecimal unitMultiplicator) {
+		this.unitMultiplicator = unitMultiplicator;
+	}
+
+	public int getUnitNbDecimal() {
+		return unitNbDecimal;
+	}
+
+	public void setUnitNbDecimal(int unitNbDecimal) {
+		this.unitNbDecimal = unitNbDecimal;
 	}
 
 }

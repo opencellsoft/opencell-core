@@ -119,6 +119,10 @@ public class RecurringChargeTemplateApi extends BaseApi {
 					.getShareLevel()));
 			chargeTemplate.setInvoiceSubCategory(invoiceSubCategory);
 			chargeTemplate.setCalendar(calendar);
+			chargeTemplate.setUnitMultiplicator(postData.getUnitMultiplicator());
+			chargeTemplate.setRatingUnitDescription(postData.getRatingUnitDescription());
+			chargeTemplate.setUnitNbDecimal(postData.getUnitNbDecimal());
+			chargeTemplate.setInputUnitDescription(postData.getInputUnitDescription());
 
 			recurringChargeTemplateService.create(chargeTemplate, currentUser,
 					provider);
@@ -198,6 +202,10 @@ public class RecurringChargeTemplateApi extends BaseApi {
 					.getShareLevel()));
 			chargeTemplate.setInvoiceSubCategory(invoiceSubCategory);
 			chargeTemplate.setCalendar(calendar);
+			chargeTemplate.setUnitMultiplicator(postData.getUnitMultiplicator());
+			chargeTemplate.setRatingUnitDescription(postData.getRatingUnitDescription());
+			chargeTemplate.setUnitNbDecimal(postData.getUnitNbDecimal());
+			chargeTemplate.setInputUnitDescription(postData.getInputUnitDescription());
 
 			if (provider.getTradingLanguages() != null) {
 				if (postData.getLanguageDescriptions() != null) {

@@ -16,6 +16,7 @@
  */
 package org.meveo.model.catalog;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -41,6 +42,7 @@ import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 
 import org.meveo.model.Auditable;
+import org.meveo.model.BaseEntity;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ICustomFieldEntity;
@@ -81,6 +83,18 @@ public class ChargeTemplate extends BusinessEntity implements ICustomFieldEntity
 	@OneToMany(mappedBy = "chargeTemplate", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
 	@MapKeyColumn(name = "code")
 	private Map<String, CustomFieldInstance> customFields = new HashMap<String, CustomFieldInstance>();
+	
+	@Column(name = "INPUT_UNIT_DESCRIPTION", length = 20)
+	private String inputUnitDescription;
+	
+	@Column(name = "RATING_UNIT_DESCRIPTION", length = 20)
+	private String ratingUnitDescription;
+	
+	@Column(name = "UNIT_MULTIPLICATOR", precision = BaseEntity.NB_PRECISION, scale = BaseEntity.NB_DECIMALS)
+	private BigDecimal unitMultiplicator;
+	
+	@Column(name = "UNIT_NB_DECIMAL")
+	private int unitNbDecimal;
 
 	public OperationTypeEnum getType() {
 		return type;
@@ -262,6 +276,38 @@ public class ChargeTemplate extends BusinessEntity implements ICustomFieldEntity
 	
 	public Double getICdov(String code){
 		return getInheritedCustomDoubleValue(code);
+	}
+
+	public String getInputUnitDescription() {
+		return inputUnitDescription;
+	}
+
+	public void setInputUnitDescription(String inputUnitDescription) {
+		this.inputUnitDescription = inputUnitDescription;
+	}
+
+	public String getRatingUnitDescription() {
+		return ratingUnitDescription;
+	}
+
+	public void setRatingUnitDescription(String ratingUnitDescription) {
+		this.ratingUnitDescription = ratingUnitDescription;
+	}
+
+	public BigDecimal getUnitMultiplicator() {
+		return unitMultiplicator;
+	}
+
+	public void setUnitMultiplicator(BigDecimal unitMultiplicator) {
+		this.unitMultiplicator = unitMultiplicator;
+	}
+
+	public int getUnitNbDecimal() {
+		return unitNbDecimal;
+	}
+
+	public void setUnitNbDecimal(int unitNbDecimal) {
+		this.unitNbDecimal = unitNbDecimal;
 	}
 
 }

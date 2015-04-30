@@ -1,7 +1,5 @@
 package org.meveo.api.dto.catalog;
 
-import java.math.BigDecimal;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -19,10 +17,6 @@ public class UsageChargeTemplateDto extends ChargeTemplateDto {
 
 	static String WILCARD = "";
 
-	private BigDecimal unityMultiplicator = BigDecimal.ONE;
-	private String unityDescription;
-	private Integer unityFormatter;
-	private int unityNbDecimal = 2;
 	private String filterParam1 = WILCARD;
 	private String filterParam2 = WILCARD;
 	private String filterParam3 = WILCARD;
@@ -35,55 +29,13 @@ public class UsageChargeTemplateDto extends ChargeTemplateDto {
 	}
 
 	public UsageChargeTemplateDto(UsageChargeTemplate e) {
-		setCode(e.getCode());
-		setDescription(e.getDescription());
-		setInvoiceSubCategory(e.getInvoiceSubCategory().getCode());
-		setAmountEditable(e.getAmountEditable());
-		setDisabled(e.isDisabled());
-		unityDescription = e.getUnityDescription();
-		if (e.getUnityFormatter() != null) {
-			unityFormatter = e.getUnityFormatter().getId();
-		}
-		unityMultiplicator = e.getUnityMultiplicator();
-		unityNbDecimal = e.getUnityNbDecimal();
+		super(e);
 		filterParam1 = e.getFilterParam1();
 		filterParam2 = e.getFilterParam2();
 		filterParam3 = e.getFilterParam3();
 		filterParam4 = e.getFilterParam4();
 		filterExpression = e.getFilterExpression();
 		priority = e.getPriority();
-	}
-
-	public BigDecimal getUnityMultiplicator() {
-		return unityMultiplicator;
-	}
-
-	public void setUnityMultiplicator(BigDecimal unityMultiplicator) {
-		this.unityMultiplicator = unityMultiplicator;
-	}
-
-	public String getUnityDescription() {
-		return unityDescription;
-	}
-
-	public void setUnityDescription(String unityDescription) {
-		this.unityDescription = unityDescription;
-	}
-
-	public Integer getUnityFormatter() {
-		return unityFormatter;
-	}
-
-	public void setUnityFormatter(Integer unityFormatter) {
-		this.unityFormatter = unityFormatter;
-	}
-
-	public int getUnityNbDecimal() {
-		return unityNbDecimal;
-	}
-
-	public void setUnityNbDecimal(int unityNbDecimal) {
-		this.unityNbDecimal = unityNbDecimal;
 	}
 
 	public String getFilterParam1() {
@@ -136,20 +88,7 @@ public class UsageChargeTemplateDto extends ChargeTemplateDto {
 
 	@Override
 	public String toString() {
-		return "UsageChargeTemplateDto [unityMultiplicator="
-				+ unityMultiplicator + ", unityDescription=" + unityDescription
-				+ ", unityFormatter=" + unityFormatter + ", unityNbDecimal="
-				+ unityNbDecimal + ", filterParam1=" + filterParam1
-				+ ", filterParam2=" + filterParam2 + ", filterParam3="
-				+ filterParam3 + ", filterParam4=" + filterParam4
-				+ ", filterExpression=" + filterExpression + ", priority="
-				+ priority + ", getCode()=" + getCode() + ", getDescription()="
-				+ getDescription() + ", getLanguageDescriptions()="
-				+ getLanguageDescriptions() + ", toString()="
-				+ super.toString() + ", getAmountEditable()="
-				+ getAmountEditable() + ", getInvoiceSubCategory()="
-				+ getInvoiceSubCategory() + ", isDisabled()=" + isDisabled()
-				+ ", getClass()=" + getClass() + ", hashCode()=" + hashCode()
-				+ "]";
+		return "UsageChargeTemplateDto [filterParam1=" + filterParam1 + ", filterParam2=" + filterParam2 + ", filterParam3=" + filterParam3 + ", filterParam4=" + filterParam4
+				+ ", filterExpression=" + filterExpression + ", priority=" + priority + "]";
 	}
 }
