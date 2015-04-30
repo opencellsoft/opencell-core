@@ -35,11 +35,11 @@
 			   
 			 <h:form id="form"> 
 			 <hftl:fieldset name="#{messages['invoice.details']}">
-				 <p:dataTable id="catTable" var="cat" value="#{invoiceBean.invoiceCategories}" style="width:600px">  
+				 <p:dataTable id="catTable" var="cat" value="#{invoiceBean.invoiceCategories}"  >  
 				  
 						<p:columnGroup type="header">  
 							<p:row>  
-								<p:column rowspan="2" headerText="#{messages['invoice.cat.subcat']}" />  
+								<p:column rowspan="2" headerText="#{messages['invoice.cat.subcat.ratedTransaction']}" />  
 							</p:row>  
 							<p:row>  
 								<p:column headerText="#{messages['invoice.amountWithoutTax']}" />   
@@ -51,17 +51,37 @@
 							  #{cat.description}   
 							</f:facet>  
 							<p:column>  
-								#{subCat.description}  
+								 
+			<p:accordionPanel activeIndex="null" > 
+		   <p:tab> 
+				<f:facet name="title">
+               <h:outputText value="#{subCat.description}"/>
+				</f:facet>  
+			<hftl:dataList label="#{messages['wallet.ratedTransactions']}" exportButton="false" resultsId="taxes_panel" checkMany="false"
+				backingBean="#{ratedTransactionBean}"   dataModel="#{invoiceBean.ratedTransactions}"> 
+				 <hftl:column label="#{messages['subscription.offer']}" field="offerCode"/>
+				<hftl:column label="#{messages['billingRun.panel']}" field="billingRun" childField="id"/> 			 
+				<hftl:column label="#{messages['pricePlan.panel']}" field="priceplan" childField="code"/> 
+				<hftl:column label="#{messages['pricePlanMatrix.amountWithoutTax']}" field="amountWithoutTax"/> 
+				<hftl:column label="#{messages['pricePlanMatrix.amountWithTax']}" field="amountWithTax"/> 
+				<hftl:column label="#{messages['walletOperation.amountTax']}" field="amountTax"/> 
+				<hftl:column label="#{messages['serviceInstance.quantity']}" field="quantity"/> 
+				<hftl:column label="#{messages['ratedTransaction.status']}" field="status"/> 			
+			  </hftl:dataList> 				     
+		    </p:tab>
+			 </p:accordionPanel>
 							</p:column>  
 							<p:column>  
 								#{subCat.amountWithoutTax}  
-							</p:column>  
+							</p:column> 
+						  
+							
 						</p:subTable>  
 					</p:dataTable> 
 				</hftl:fieldset> 	
 			 </h:form>  
 			   
-		<hf:formPanel backingBean="#{invoiceBean}" showFormButtons="false"> 
+		     <hf:formPanel backingBean="#{invoiceBean}" showFormButtons="false"> 
 				<hftl:fieldset name="#{messages['invoice.totals']}">
 				   <hf:formField label="#{messages['invoice.amountWithoutTax']}" field="amountWithoutTax" />
 					<hf:formField label="#{messages['invoice.amountTax']}" field="amountTax" />

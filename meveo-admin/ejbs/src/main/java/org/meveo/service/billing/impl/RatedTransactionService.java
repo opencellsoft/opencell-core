@@ -733,5 +733,12 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 		return result;
 	}
 	
-
-}
+	public List<RatedTransaction> getListByInvoiceAndSubCategory(Invoice invoice,InvoiceSubCategory invoiceSubCategory) {
+		if (invoice == null || invoiceSubCategory == null) {
+			return null;
+		}
+		return (List<RatedTransaction>)getEntityManager().createNamedQuery("RatedTransaction.getListByInvoiceAndSubCategory",RatedTransaction.class)
+				.setParameter("invoice", invoice).setParameter("invoiceSubCategory", invoiceSubCategory).getResultList();
+	}
+	}
+	

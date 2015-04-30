@@ -38,11 +38,13 @@ import org.meveo.model.billing.InvoiceCategory;
 import org.meveo.model.billing.InvoiceCategoryDTO;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.InvoiceSubCategoryDTO;
+import org.meveo.model.billing.RatedTransaction;
 import org.meveo.model.billing.SubCategoryInvoiceAgregate;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.billing.impl.InvoiceService;
+import org.meveo.service.billing.impl.RatedTransactionService;
 import org.meveo.service.payments.impl.CustomerAccountService;
 import org.omnifaces.cdi.ViewScoped;
 import org.primefaces.model.LazyDataModel;
@@ -72,6 +74,11 @@ public class InvoiceBean extends BaseBean<Invoice> {
 
 	@Inject
 	CustomerAccountService customerAccountService;
+	
+	@Inject
+	RatedTransactionService ratedTransactionService;
+	
+	private List<RatedTransaction> ratedTransactions=new ArrayList<RatedTransaction>();
 
 	/**
 	 * Constructor. Invokes super constructor and provides class type of this
@@ -181,7 +188,8 @@ public class InvoiceBean extends BaseBean<Invoice> {
 							.getAmountWithTax());
 					headerSubCategories.put(invoiceSubCategory.getCode(),
 							headerSUbCat);
-				}
+				} 
+				ratedTransactions=ratedTransactionService.getListByInvoiceAndSubCategory(entity, invoiceSubCategory);	
 			}
 		}
 		return new ArrayList<InvoiceCategoryDTO>(headerCategories.values());
@@ -205,4 +213,15 @@ public class InvoiceBean extends BaseBean<Invoice> {
 		return netToPay.setScale(2, RoundingMode.HALF_UP).toString();
 	}
 
+	public List<RatedTransaction> getRatedTransactions() {
+		return ratedTransactions;
+	}
+
+	public void setRatedTransactions(List<RatedTransaction> ratedTransactions) {
+		this.ratedTransactions = ratedTransactions;
+	}
+
+
+
+	
 }
