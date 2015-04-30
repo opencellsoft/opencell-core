@@ -26,7 +26,7 @@ import org.meveo.model.IEntity;
 import org.meveo.model.notification.NotificationHistoryStatusEnum;
 import org.meveo.model.notification.WebHook;
 import org.meveo.model.notification.WebHookMethodEnum;
-import org.meveo.service.billing.impl.RatingService;
+import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.util.MeveoJpaForJobs;
 import org.primefaces.json.JSONException;
 import org.primefaces.json.JSONObject;
@@ -50,7 +50,7 @@ public class WebHookNotifier {
 		HashMap<Object, Object> userMap = new HashMap<Object, Object>();
 		userMap.put("event", e);
 
-		return (String) RatingService.evaluateExpression(expression, userMap, String.class);
+		return (String) ValueExpressionWrapper.evaluateExpression(expression, userMap, String.class);
 	}
 
 	private Map<String, String> evaluateMap(Map<String, String> map, IEntity e) throws BusinessException {
@@ -59,7 +59,7 @@ public class WebHookNotifier {
 		userMap.put("event", e);
 
 		for (String key : map.keySet()) {
-			result.put(key, (String) RatingService.evaluateExpression(map.get(key), userMap, String.class));
+			result.put(key, (String) ValueExpressionWrapper.evaluateExpression(map.get(key), userMap, String.class));
 		}
 
 		return result;
@@ -171,7 +171,7 @@ public class WebHookNotifier {
 				}
 				
 				try {
-					RatingService.evaluateExpression(webHook.getElAction(), userMap, String.class);
+				    ValueExpressionWrapper.evaluateExpression(webHook.getElAction(), userMap, String.class);
 				} catch(Exception e1){
 					e1.printStackTrace();
 				}

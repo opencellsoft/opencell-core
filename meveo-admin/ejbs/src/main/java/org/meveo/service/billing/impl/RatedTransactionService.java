@@ -67,6 +67,7 @@ import org.meveo.model.catalog.DiscountPlanItem;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.service.api.dto.ConsumptionDTO;
 import org.meveo.service.base.PersistenceService;
+import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
 import org.meveo.service.payments.impl.CustomerAccountService;
 import org.slf4j.Logger;
@@ -691,7 +692,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 				userMap.put("iv", invoice);
 			
 		}
-		Object res = RatingService.evaluateExpression(expression, userMap,
+		Object res = ValueExpressionWrapper.evaluateExpression(expression, userMap,
 				Boolean.class);
 		try {
 			result = (Boolean) res;
@@ -722,7 +723,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 				userMap.put("iv", invoice);
 			
 		}
-		Object res = RatingService.evaluateExpression(expression, userMap,
+		Object res = ValueExpressionWrapper.evaluateExpression(expression, userMap,
 				Boolean.class);
 		try {
 			result = (Boolean) res;

@@ -67,4 +67,8 @@ public Class<?> getCommonPropertyType(ELContext context, Object base) {
 	}
 	return delegate.getCommonPropertyType(context, base);
 }
+
+public void setUserMap(Map<Object, Object> userMap2) {
+    this.userMap  = userMap2;
+}
 }
