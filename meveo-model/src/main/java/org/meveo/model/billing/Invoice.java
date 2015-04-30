@@ -64,7 +64,7 @@ public class Invoice extends AuditableEntity {
 	@Column(name = "INVOICE_NUMBER", length = 20)
 	private String invoiceNumber;
 
-	@Column(name = "TEMPORARY_INVOICE_NUMBER", length = 20, unique = true)
+	@Column(name = "TEMPORARY_INVOICE_NUMBER", length = 50, unique = true)
 	private String temporaryInvoiceNumber;
 
 	@Column(name = "PRODUCT_DATE")

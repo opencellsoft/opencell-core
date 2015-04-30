@@ -47,6 +47,19 @@
 			selection="#{customerAccountBean.entity.tradingCurrency}"
 			updateField=":parentTab:formCustomerAccountPanel:formCustomerAccount:childTab:currencySelectId:currencySelectId">
 		</hftl:entityPopup>
+		
+		<hftl:entityPopup id="tradingLanguagePopup"
+				header="#{messages['tradingLanguage.popup.header']}"
+				backingBean="#{tradingLanguageBean}"
+				searchField1Label="#{messages['businessEntity.code']}"
+				searchField1="languageCode"
+				column1Label="#{messages['businessEntity.code']}"
+				column1="languageCode"
+				column2Label="#{messages['businessEntity.description']}"
+				column2="prDescription"
+				selection="#{customerAccountBean.entity.tradingLanguage}"
+				updateField=":parentTab:formCustomerAccountPanel:formCustomerAccount:childTab:trLanguageSelectId:trLanguageSelectId">
+		</hftl:entityPopup>
 
 		<p:panelGrid styleClass="col2-set">
 			<p:row>
@@ -91,7 +104,7 @@
 													field="description" id="description" maxlength="100"
 													required="true" />
 											</hftl:panelGroup>
-											<hftl:panelGroup columns="2">
+											<hftl:panelGroup columns="3">
 												<hf:formField
 													label="#{messages['customerAccount.externalRef1']}"
 													field="externalRef1" maxlength="50" />
@@ -103,6 +116,12 @@
 													required="true" field="tradingCurrency"
 													childField="currencyCode" popup="true"
 													popupId="customerAccCurrencyPopup" />
+                                               <hf:formEntityField id="trLanguageSelectId"
+														label="#{messages['tradingLanguage.tradingLanguage']}"
+														field="tradingLanguage" childField="languageCode"
+														required="true" popup="true"
+														popupId="tradingLanguagePopup" />												
+												
 											</hftl:panelGroup>
 											<hftl:panelGroup columns="4">
 												<p:panelGrid columns="2"

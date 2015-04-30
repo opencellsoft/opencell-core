@@ -123,18 +123,15 @@ public class AccountOperationsGenerationJobBean {
 				}
 
 				try {
-					recordedInvoice.setDueDate(DateUtils.parseDateWithPattern(invoice.getDueDate(),
-							paramBean.getProperty("accountOperationsGenerationJob.dateFormat", "dd/MM/yyyy")));
+					recordedInvoice.setDueDate(DateUtils.setTimeToZero(invoice.getDueDate()));
 				} catch (Exception e) {
 					log.error("dueDate={}", e.getMessage());
 					throw new ImportInvoiceException("Error on DueDate");
 				}
 
 				try {
-					recordedInvoice.setInvoiceDate(DateUtils.parseDateWithPattern(invoice.getInvoiceDate(),
-							paramBean.getProperty("accountOperationsGenerationJob.dateFormat", "dd/MM/yyyy")));
-					recordedInvoice.setTransactionDate(DateUtils.parseDateWithPattern(invoice.getInvoiceDate(),
-							paramBean.getProperty("accountOperationsGenerationJob.dateFormat", "dd/MM/yyyy")));
+					recordedInvoice.setInvoiceDate(DateUtils.setTimeToZero(invoice.getInvoiceDate()));
+					recordedInvoice.setTransactionDate(DateUtils.setTimeToZero(invoice.getInvoiceDate()));
 				} catch (Exception e) {
 					log.error("invoiceDate={}", e.getMessage());
 					throw new ImportInvoiceException("Error on invoiceDate");

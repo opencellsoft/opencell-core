@@ -196,5 +196,47 @@
 				<liquibase.changeLogFile>src/main/db_resources/changelog/db.rebuild.xml</liquibase.changeLogFile>
 			</properties>
 		</profile>
+		<profile>
+			<id>edward</id>
+			<properties>
+				<liquibase.changeLogFile>src/main/db_resources/changelog/db.current.xml</liquibase.changeLogFile>
+			</properties>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.liquibase</groupId>
+						<artifactId>liquibase-maven-plugin</artifactId>
+						<version>3.3.1</version>
+						<configuration>
+							<driver>org.postgresql.Driver</driver>
+							<url>jdbc:postgresql://localhost:5432/meveo</url>
+							<username>meveo</username>
+							<password>meveo</password>
+							<referenceUrl>jdbc:postgresql://localhost:5432/meveociber</referenceUrl>
+							<referenceUsername>meveociber</referenceUsername>
+							<referencePassword>meveociber</referencePassword>
+							<diffChangeLogFile>target/liquibase/changeLog.xml</diffChangeLogFile>
+						</configuration>
+						<dependencies>
+							<dependency>
+								<groupId>org.liquibase.ext</groupId>
+								<artifactId>liquibase-hibernate4</artifactId>
+								<version>3.5</version>
+							</dependency>
+							<dependency>
+								<groupId>org.liquibase</groupId>
+								<artifactId>liquibase-core</artifactId>
+								<version>3.3.0</version>
+							</dependency>
+							<dependency>
+								<groupId>org.postgresql</groupId>
+								<artifactId>postgresql</artifactId>
+								<version>9.2-1002-jdbc4</version>
+							</dependency>
+						</dependencies>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
 	</profiles>
 </project>

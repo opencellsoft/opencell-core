@@ -7,6 +7,7 @@ import java.util.List;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
+import org.meveo.api.BaseApi;
 import org.meveo.api.MeveoApiErrorCode;
 import org.meveo.api.dto.LanguageDescriptionDto;
 import org.meveo.api.dto.catalog.RecurringChargeTemplateDto;
@@ -33,7 +34,7 @@ import org.meveo.service.catalog.impl.RecurringChargeTemplateService;
  * @author Edward P. Legaspi
  **/
 @Stateless
-public class RecurringChargeTemplateApi extends ChargeTemplateApi {
+public class RecurringChargeTemplateApi extends BaseApi {
 
 	@Inject
 	private RecurringChargeTemplateService recurringChargeTemplateService;

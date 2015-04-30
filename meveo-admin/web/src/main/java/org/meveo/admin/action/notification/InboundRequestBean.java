@@ -211,7 +211,7 @@ public class InboundRequestBean extends BaseBean<InboundRequest> {
    					}
    	        	 csv.appendValue(responseHeaders.toString());
    			   }
-        	 csv.appendValue(DateUtils.parseDateWithPattern(inboundRequest.getAuditable().getUpdated(), "dd/MM/yyyy")+"");
+        	 csv.appendValue(DateUtils.setTimeToZero(inboundRequest.getAuditable().getUpdated())+"");
         	 csv.startNewLine();
         }
         InputStream inputStream=new ByteArrayInputStream(csv.toString().getBytes());
