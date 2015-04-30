@@ -3757,6 +3757,15 @@
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
+    <wsdl:operation name="findChargeTemplate">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="findChargeTemplate">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="findChargeTemplateResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
     <wsdl:operation name="removeOfferTemplate">
       <soap:operation soapAction="" style="document"/>
       <wsdl:input name="removeOfferTemplate">
@@ -3805,6 +3814,7 @@
       <xs:element name="ActionStatus" type="tns:actionStatus"/>
       <xs:element name="ChargeTemplate" type="tns:chargeTemplateDto"/>
       <xs:element name="CounterTemplate" type="tns:counterTemplateDto"/>
+      <xs:element name="GetChargeTemplateResponse" type="tns:getChargeTemplateResponseDto"/>
       <xs:element name="GetCounterTemplateResponse" type="tns:getCounterTemplateResponse"/>
       <xs:element name="GetOfferTemplateResponse" type="tns:getOfferTemplateResponse"/>
       <xs:element name="GetOneShotChargeTemplateResponse" type="tns:getOneShotChargeTemplateResponse"/>
@@ -3836,6 +3846,8 @@
       <xs:element name="createServiceTemplateResponse" type="tns:createServiceTemplateResponse"/>
       <xs:element name="createUsageChargeTemplate" type="tns:createUsageChargeTemplate"/>
       <xs:element name="createUsageChargeTemplateResponse" type="tns:createUsageChargeTemplateResponse"/>
+      <xs:element name="findChargeTemplate" type="tns:findChargeTemplate"/>
+      <xs:element name="findChargeTemplateResponse" type="tns:findChargeTemplateResponse"/>
       <xs:element name="findCounterTemplate" type="tns:findCounterTemplate"/>
       <xs:element name="findCounterTemplateResponse" type="tns:findCounterTemplateResponse"/>
       <xs:element name="findOfferTemplate" type="tns:findOfferTemplate"/>
@@ -3895,7 +3907,7 @@
       <xs:complexType name="actionStatus">
         <xs:sequence>
           <xs:element name="status" type="tns:actionStatusEnum"/>
-          <xs:element name="errorCode" type="xs:int"/>
+          <xs:element minOccurs="0" name="errorCode" type="xs:string"/>
           <xs:element name="message" type="xs:string"/>
         </xs:sequence>
       </xs:complexType>
@@ -3934,7 +3946,7 @@
           </xs:extension>
         </xs:complexContent>
       </xs:complexType>
-      <xs:complexType abstract="true" name="chargeTemplateDto">
+      <xs:complexType name="chargeTemplateDto">
         <xs:sequence>
           <xs:element name="invoiceSubCategory" type="xs:string"/>
           <xs:element name="disabled" type="xs:boolean"/>
@@ -3975,6 +3987,7 @@
       </xs:complexType>
       <xs:complexType name="serviceTemplateDto">
         <xs:sequence>
+          <xs:element minOccurs="0" name="invoicingCalendar" type="xs:string"/>
           <xs:element minOccurs="0" name="serviceChargeTemplateRecurrings" type="tns:ServiceChargeTemplateRecurrings"/>
           <xs:element minOccurs="0" name="serviceChargeTemplateSubscriptions" type="tns:ServiceChargeTemplateSubscriptions"/>
           <xs:element minOccurs="0" name="serviceChargeTemplateTerminations" type="tns:ServiceChargeTemplateTerminations"/>
@@ -4075,6 +4088,7 @@
           <xs:element minOccurs="0" name="criteria1" type="xs:string"/>
           <xs:element minOccurs="0" name="criteria2" type="xs:string"/>
           <xs:element minOccurs="0" name="criteria3" type="xs:string"/>
+          <xs:element minOccurs="0" name="validityCalendarCode" type="xs:string"/>
         </xs:sequence>
         <xs:attribute name="code" type="xs:string" use="required"/>
       </xs:complexType>
@@ -4243,13 +4257,14 @@
       <xs:complexType name="counterTemplateDto">
         <xs:sequence>
           <xs:element minOccurs="0" name="unity" type="xs:string"/>
-          <xs:element name="type" type="xs:int"/>
-          <xs:element minOccurs="0" name="level" type="xs:decimal"/>
+          <xs:element minOccurs="0" name="type" type="xs:string"/>
+          <xs:element minOccurs="0" name="ceiling" type="xs:decimal"/>
           <xs:element name="disabled" type="xs:boolean"/>
-          <xs:element minOccurs="0" name="calendar" type="xs:string"/>
+          <xs:element minOccurs="0" name="counterLevel" type="xs:string"/>
         </xs:sequence>
         <xs:attribute name="code" type="xs:string" use="required"/>
         <xs:attribute name="description" type="xs:string" use="required"/>
+        <xs:attribute name="calendar" type="xs:string" use="required"/>
       </xs:complexType>
       <xs:complexType name="updateCounterTemplateResponse">
         <xs:sequence>
@@ -4402,6 +4417,25 @@
           <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
         </xs:sequence>
       </xs:complexType>
+      <xs:complexType name="findChargeTemplate">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="chargeTemplateCode" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="findChargeTemplateResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:getChargeTemplateResponseDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="getChargeTemplateResponseDto">
+        <xs:complexContent>
+          <xs:extension base="tns:baseResponse">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="chargeTemplate" type="tns:chargeTemplateDto"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
       <xs:complexType name="updateRecurringChargeTemplate">
         <xs:sequence>
           <xs:element minOccurs="0" name="recurringChargeTemplate" type="tns:recurringChargeTemplateDto"/>
@@ -4522,6 +4556,9 @@
   <wsdl:message name="removeOneShotChargeTemplateResponse">
     <wsdl:part element="ns1:removeOneShotChargeTemplateResponse" name="parameters"></wsdl:part>
   </wsdl:message>
+  <wsdl:message name="findChargeTemplate">
+    <wsdl:part element="ns1:findChargeTemplate" name="parameters"></wsdl:part>
+  </wsdl:message>
   <wsdl:message name="createPricePlanResponse">
     <wsdl:part element="ns1:createPricePlanResponse" name="parameters"></wsdl:part>
   </wsdl:message>
@@ -4557,6 +4594,9 @@
   </wsdl:message>
   <wsdl:message name="createUsageChargeTemplateResponse">
     <wsdl:part element="ns1:createUsageChargeTemplateResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="findChargeTemplateResponse">
+    <wsdl:part element="ns1:findChargeTemplateResponse" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="removeOfferTemplateResponse">
     <wsdl:part element="ns1:removeOfferTemplateResponse" name="parameters"></wsdl:part>
@@ -4743,6 +4783,10 @@
     <wsdl:operation name="updateServiceTemplate">
       <wsdl:input message="ns1:updateServiceTemplate" name="updateServiceTemplate"></wsdl:input>
       <wsdl:output message="ns1:updateServiceTemplateResponse" name="updateServiceTemplateResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="findChargeTemplate">
+      <wsdl:input message="ns1:findChargeTemplate" name="findChargeTemplate"></wsdl:input>
+      <wsdl:output message="ns1:findChargeTemplateResponse" name="findChargeTemplateResponse"></wsdl:output>
     </wsdl:operation>
     <wsdl:operation name="updateRecurringChargeTemplate">
       <wsdl:input message="ns1:updateRecurringChargeTemplate" name="updateRecurringChargeTemplate"></wsdl:input>
@@ -5360,7 +5404,15 @@
          </usageChargeTemplate>
       </ws:updateUsageChargeTemplate>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/CatalogWs/updateUsageChargeTemplate"/><con:wsrmConfig version="1.2"/></con:call></con:operation></con:interface><con:interface xsi:type="con:WsdlInterface" wsaVersion="NONE" name="AccountWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}AccountWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="http://localhost:8080/meveo/AccountWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache type="TEXT" rootPart="http://localhost:8080/meveo/AccountWs?wsdl"><con:part><con:url>http://localhost:8080/meveo/AccountWs?wsdl</con:url><con:content><![CDATA[<wsdl:definitions name="AccountWs" targetNamespace="http://impl.ws.api.meveo.org/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://impl.ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns2="http://schemas.xmlsoap.org/soap/http" xmlns:ns1="http://ws.api.meveo.org/">
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/CatalogWs/updateUsageChargeTemplate"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation isOneWay="false" action="" name="findChargeTemplate" bindingOperationName="findChargeTemplate" type="Request-Response" outputName="findChargeTemplateResponse" inputName="findChargeTemplate" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/CatalogWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:findChargeTemplate>
+         <!--Optional:-->
+         <chargeTemplateCode>OS1</chargeTemplateCode>
+      </ws:findChargeTemplate>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:authType>Global HTTP Settings</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/CatalogWs/findChargeTemplate"/><con:wsrmConfig version="1.2"/></con:call></con:operation></con:interface><con:interface xsi:type="con:WsdlInterface" wsaVersion="NONE" name="AccountWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}AccountWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="http://localhost:8080/meveo/AccountWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache type="TEXT" rootPart="http://localhost:8080/meveo/AccountWs?wsdl"><con:part><con:url>http://localhost:8080/meveo/AccountWs?wsdl</con:url><con:content><![CDATA[<wsdl:definitions name="AccountWs" targetNamespace="http://impl.ws.api.meveo.org/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://impl.ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns2="http://schemas.xmlsoap.org/soap/http" xmlns:ns1="http://ws.api.meveo.org/">
   <wsdl:import location="http://localhost:8080/meveo/AccountWs?wsdl=AccountWs.wsdl" namespace="http://ws.api.meveo.org/"></wsdl:import>
   <wsdl:binding name="AccountWsSoapBinding" type="ns1:AccountWs">
     <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>

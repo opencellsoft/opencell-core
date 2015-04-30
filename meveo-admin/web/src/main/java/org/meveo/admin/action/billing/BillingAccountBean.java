@@ -49,6 +49,7 @@ import org.meveo.model.billing.CounterInstance;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.crm.AccountLevelEnum;
 import org.meveo.model.payments.CustomerAccount;
+import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.shared.Name;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
@@ -112,13 +113,12 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
 	/** Selected billing account in exceptionelInvoicing page. */
 	private ListItemsSelector<BillingAccount> itemSelector;
 
-	private Date exceptionalInvoicingDate=new Date();
-	
-	private Date exceptionalLastTransactionDate=new Date();
-	
+	private Date exceptionalInvoicingDate = new Date();
+
+	private Date exceptionalLastTransactionDate = new Date();
+
 	private CounterInstance selectedCounterInstance;
 
-	
 	/**
 	 * Constructor. Invokes super constructor and provides class type of this
 	 * bean for {@link BaseBean}.
@@ -158,8 +158,7 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
 			entity.setBankCoordinates(new BankCoordinates());
 		}
 
-		selectedCounterInstance = entity.getCounters() != null && entity.getCounters().size() > 0 ? entity
-				.getCounters().values().iterator().next() : null;
+		selectedCounterInstance = entity.getCounters() != null && entity.getCounters().size() > 0 ? entity.getCounters().values().iterator().next() : null;
 
 		return entity;
 	}
@@ -182,7 +181,7 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
 	public String saveOrUpdate(boolean killConversation) {
 		try {
 			// validate RIB
-			if (getEntity().getBankCoordinates() != null) {
+			if (getEntity().getPaymentMethod() != null && getEntity().getPaymentMethod() == PaymentMethodEnum.DIRECTDEBIT && getEntity().getBankCoordinates() != null) {
 				StringBuilder rib = new StringBuilder();
 				rib.append(getEntity().getBankCoordinates().getBankCode());
 				rib.append(getEntity().getBankCoordinates().getBranchCode());
@@ -194,7 +193,7 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
 					return "";
 				}
 			}
-			
+
 			if (entity.getDefaultLevel() != null && entity.getDefaultLevel()) {
 				if (billingAccountService.isDuplicationExist(entity)) {
 					entity.setDefaultLevel(false);
@@ -220,8 +219,7 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
 
 			log.debug("isAttached={}", getPersistenceService().getEntityManager().contains(entity));
 
-			return "/pages/billing/billingAccounts/billingAccountDetail.xhtml?edit=false&billingAccountId="
-					+ entity.getId() + "&faces-redirect=true&includeViewParams=true";
+			return "/pages/billing/billingAccounts/billingAccountDetail.xhtml?edit=false&billingAccountId=" + entity.getId() + "&faces-redirect=true&includeViewParams=true";
 		} catch (DuplicateDefaultAccountException e1) {
 			messages.error(new BundleKey("messages", "error.account.duplicateDefautlLevel"));
 		} catch (Exception e) {
@@ -242,8 +240,7 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
 	public void terminateAccount() {
 		log.debug("terminateAccount billingAccountId: {}", entity.getId());
 		try {
-			billingAccountService.billingAccountTermination(entity, entity.getTerminationDate(),
-					entity.getTerminationReason(), getCurrentUser());
+			billingAccountService.billingAccountTermination(entity, entity.getTerminationDate(), entity.getTerminationReason(), getCurrentUser());
 			messages.info(new BundleKey("messages", "resiliation.resiliateSuccessful"));
 		} catch (BusinessException e) {
 			log.error(e.getMessage());
@@ -259,8 +256,7 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
 		try {
 			billingAccountService.billingAccountCancellation(entity, new Date(), getCurrentUser());
 			messages.info(new BundleKey("messages", "cancellation.cancelSuccessful"));
-			return "/pages/billing/billingAccounts/billingAccountDetail.xhtml?objectId=" + entity.getId()
-					+ "&edit=false";
+			return "/pages/billing/billingAccounts/billingAccountDetail.xhtml?objectId=" + entity.getId() + "&edit=false";
 		} catch (BusinessException e) {
 			log.error(e.getMessage());
 			messages.error(e.getMessage());
@@ -276,8 +272,7 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
 		try {
 			billingAccountService.closeBillingAccount(entity, getCurrentUser());
 			messages.info(new BundleKey("messages", "close.closeSuccessful"));
-			return "/pages/billing/billingAccounts/billingAccountDetail.xhtml?objectId=" + entity.getId()
-					+ "&edit=false";
+			return "/pages/billing/billingAccounts/billingAccountDetail.xhtml?objectId=" + entity.getId() + "&edit=false";
 		} catch (BusinessException e) {
 			log.error(e.getMessage());
 			messages.error(e.getMessage());
@@ -330,8 +325,7 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
 					over.setTextMatrix(document.top(), document.bottom());
 					over.setFontAndSize(bf, 150);
 					over.setColorFill(Color.GRAY);
-					over.showTextAligned(Element.ALIGN_CENTER, "TEST", document.getPageSize().getWidth() / 2, document
-							.getPageSize().getHeight() / 2, 45);
+					over.showTextAligned(Element.ALIGN_CENTER, "TEST", document.getPageSize().getWidth() / 2, document.getPageSize().getHeight() / 2, 45);
 					over.endText();
 					i++;
 				}
@@ -380,11 +374,11 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
 			String selectedBillingAccounts = "";
 			String sep = "";
 			boolean isBillable = false;
-			Date lastTransactionDate=new Date();
+			Date lastTransactionDate = new Date();
 			for (BillingAccount ba : getSelectedEntities()) {
 				selectedBillingAccounts = selectedBillingAccounts + sep + ba.getId();
 				sep = ",";
-				if (!isBillable && ratedTransactionService.isBillingAccountBillable(ba,lastTransactionDate)) {
+				if (!isBillable && ratedTransactionService.isBillingAccountBillable(ba, lastTransactionDate)) {
 					isBillable = true;
 				}
 			}
@@ -395,9 +389,8 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
 			log.info("selectedBillingAccounts=" + selectedBillingAccounts);
 			billingRun.setSelectedBillingAccounts(selectedBillingAccounts);
 
-            
-            billingRun.setInvoiceDate(exceptionalInvoicingDate);
-            billingRun.setLastTransactionDate(exceptionalLastTransactionDate);
+			billingRun.setInvoiceDate(exceptionalInvoicingDate);
+			billingRun.setLastTransactionDate(exceptionalLastTransactionDate);
 			billingRunService.create(billingRun);
 			return "/pages/billing/invoicing/billingRuns.xhtml?edit=false";
 		} catch (Exception e) {
@@ -485,8 +478,7 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
 		} else {
 			entity.setDefaultLevel(true);
 		}
-		if (customerAccount != null && customerAccount.getProvider() != null
-				&& customerAccount.getProvider().isLevelDuplication()) {
+		if (customerAccount != null && customerAccount.getProvider() != null && customerAccount.getProvider().isLevelDuplication()) {
 
 			entity.setCode(customerAccount.getCode());
 			entity.setDescription(customerAccount.getDescription());
@@ -528,20 +520,20 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
 		this.selectedCounterInstance = selectedCounterInstance;
 	}
 
-    public Date getExceptionalInvoicingDate() {
-        return exceptionalInvoicingDate;
-    }
+	public Date getExceptionalInvoicingDate() {
+		return exceptionalInvoicingDate;
+	}
 
-    public void setExceptionalInvoicingDate(Date exceptionalInvoicingDate) {
-        this.exceptionalInvoicingDate = exceptionalInvoicingDate;
-    }
+	public void setExceptionalInvoicingDate(Date exceptionalInvoicingDate) {
+		this.exceptionalInvoicingDate = exceptionalInvoicingDate;
+	}
 
-    public Date getExceptionalLastTransactionDate() {
-        return exceptionalLastTransactionDate;
-    }
+	public Date getExceptionalLastTransactionDate() {
+		return exceptionalLastTransactionDate;
+	}
 
-    public void setExceptionalLastTransactionDate(Date exceptionalLastTransactionDate) {
-        this.exceptionalLastTransactionDate = exceptionalLastTransactionDate;
-    }
+	public void setExceptionalLastTransactionDate(Date exceptionalLastTransactionDate) {
+		this.exceptionalLastTransactionDate = exceptionalLastTransactionDate;
+	}
 
 }
