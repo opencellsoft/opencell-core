@@ -67,7 +67,7 @@
 					value="#{javax.enterprise.context.conversation.id}" />
 			</c:if>
 		</p:button>
-		<p:commandButton id="#{resultsId}enablelink" icon="#{entity.active?'ui-icon-circle-close':'ui-icon-circle-check'}"
+		<p:commandButton id="#{resultsId}enablelink" icon="#{!entity.disabled?'ui-icon-circle-close':'ui-icon-circle-check'}"
 			rendered="#{renderEnableLink}"
 			oncomplete="confirmEnableWidget.show()">
 			<f:setPropertyActionListener target="#{backingBean.entity}"
