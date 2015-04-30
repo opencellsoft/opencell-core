@@ -43,7 +43,6 @@ import org.meveo.service.catalog.impl.RecurringChargeTemplateService;
 import org.meveo.service.catalog.impl.TaxService;
 import org.meveo.service.catalog.impl.TitleService;
 import org.meveo.service.catalog.impl.UsageChargeTemplateService;
-import org.omg.CORBA.CODESET_INCOMPATIBLE;
 import org.omnifaces.cdi.ViewScoped;
 
 /**
@@ -160,22 +159,5 @@ public class CatMessagesBean extends BaseBean<CatMessages> {
 		result.put("PricePlanMatrix_*","Price plans");
 		return result;
 	}
-	 public String getObjectType(CatMessages catMessages){
-			if(catMessages==null) return "";
-			String code=catMessages.getMessageCode();
-			if(code.indexOf("Title_")==0){
-				return "Titles";
-			}else if(code.indexOf("Tax_")==0){
-				return "Taxes";
-			}else if(code.indexOf("InvoiceCategory_")==0){
-				return "InvoiceCategory";
-			}else if(code.indexOf("InvoiceSubCategory_")==0){
-				return "Invoice subcategories";
-			}else if(code.indexOf("ChargeTemplate_")>=0){
-				return "Charges";
-			}else if(code.indexOf("PricePlanMatrix_")==0){
-				return "Price plans";
-			}
-			return "";
-		}
+	
 }

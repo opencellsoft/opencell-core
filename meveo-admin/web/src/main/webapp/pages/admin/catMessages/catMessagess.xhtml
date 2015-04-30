@@ -31,12 +31,12 @@
 
 		<hftl:dataList label="#{messages['catMessages.title']}"
 			editable="true" backingBean="#{catMessagesListBean}"
-			rowsPerPage="10,20,50,100" exportButton="false">
-			<p:column exportable="false">
+			rowsPerPage="10,20,50,100" exportButton="false" exportXlsxButton="true">
+			<p:column exportable="true">
 				<f:facet name="header">
 					<h:outputText value="#{messages['catMessages.objectType']}" />
 				</f:facet>
-				<h:outputText value="#{backingBean.getObjectType(entity)}" />
+				<h:outputText value="#{entity.objectType}" />
 			</p:column>
 			<p:column exportable="true" sortBy="messageCode">
 				<f:facet name="header">
@@ -44,7 +44,7 @@
 				</f:facet>
 				<h:outputText value="#{entity.messageCode}" />
 			</p:column>
-			<p:column exportable="true">
+			<p:column exportable="false">
 				<f:facet name="header">
 					<h:outputText value="#{messages['catMessages.basicDescription']}" />
 				</f:facet>
