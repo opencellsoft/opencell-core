@@ -42,7 +42,7 @@ import org.meveo.model.payments.OtherCreditAndCharge;
 import org.meveo.model.payments.RecordedInvoice;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.admin.impl.UserService;
-import org.meveo.service.billing.impl.RatingService;
+import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.payments.impl.ActionDunningService;
 import org.meveo.service.payments.impl.ActionPlanItemService;
 import org.meveo.service.payments.impl.CustomerAccountService;
@@ -268,7 +268,7 @@ public class UpgradeDunningLevel {
 				userMap.put("iv", recordedInvoice);
 			}
 		}
-		Object res = RatingService.evaluateExpression(expression, userMap,
+		Object res = ValueExpressionWrapper.evaluateExpression(expression, userMap,
 				Boolean.class);
 		try {
 			result = (Boolean) res;
