@@ -10,13 +10,14 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.LanguageDescriptionDto;
+import org.meveo.model.catalog.ChargeTemplate;
 
 /**
  * @author Edward P. Legaspi
  **/
 @XmlRootElement(name = "ChargeTemplate")
 @XmlAccessorType(XmlAccessType.FIELD)
-public abstract class ChargeTemplateDto implements Serializable {
+public class ChargeTemplateDto implements Serializable {
 
 	private static final long serialVersionUID = -5143285194077662656L;
 
@@ -34,6 +35,20 @@ public abstract class ChargeTemplateDto implements Serializable {
 
 	private Boolean amountEditable;
 	private List<LanguageDescriptionDto> languageDescriptions;
+
+	public ChargeTemplateDto() {
+
+	}
+
+	public ChargeTemplateDto(ChargeTemplate e) {
+		code = e.getCode();
+		description = e.getDescription();
+		if (e.getInvoiceSubCategory() != null) {
+			invoiceSubCategory = e.getInvoiceSubCategory().getCode();
+		}
+		disabled = e.isDisabled();
+		amountEditable = e.getAmountEditable();
+	}
 
 	public String getCode() {
 		return code;
@@ -55,18 +70,14 @@ public abstract class ChargeTemplateDto implements Serializable {
 		return languageDescriptions;
 	}
 
-	public void setLanguageDescriptions(
-			List<LanguageDescriptionDto> languageDescriptions) {
+	public void setLanguageDescriptions(List<LanguageDescriptionDto> languageDescriptions) {
 		this.languageDescriptions = languageDescriptions;
 	}
 
 	@Override
 	public String toString() {
-		return "ChargeTemplateDto [code=" + code + ", description="
-				+ description + ", invoiceSubCategory=" + invoiceSubCategory
-				+ ", disabled=" + disabled + ", amountEditable="
-				+ amountEditable + ", languageDescriptions="
-				+ languageDescriptions + "]";
+		return "ChargeTemplateDto [code=" + code + ", description=" + description + ", invoiceSubCategory=" + invoiceSubCategory + ", disabled=" + disabled + ", amountEditable="
+				+ amountEditable + ", languageDescriptions=" + languageDescriptions + "]";
 	}
 
 	public Boolean getAmountEditable() {

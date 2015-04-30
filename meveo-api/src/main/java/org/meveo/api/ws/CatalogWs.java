@@ -13,6 +13,7 @@ import org.meveo.api.dto.catalog.PricePlanDto;
 import org.meveo.api.dto.catalog.RecurringChargeTemplateDto;
 import org.meveo.api.dto.catalog.ServiceTemplateDto;
 import org.meveo.api.dto.catalog.UsageChargeTemplateDto;
+import org.meveo.api.dto.response.catalog.GetChargeTemplateResponseDto;
 import org.meveo.api.dto.response.catalog.GetCounterTemplateResponse;
 import org.meveo.api.dto.response.catalog.GetOfferTemplateResponse;
 import org.meveo.api.dto.response.catalog.GetOneShotChargeTemplateResponse;
@@ -42,6 +43,9 @@ public interface CatalogWs extends IBaseWs {
 	ActionStatus removeCounterTemplate(@WebParam(name = "counterTemplateCode") String counterTemplateCode);
 
 	// charges
+	
+	@WebMethod
+	GetChargeTemplateResponseDto findChargeTemplate(@WebParam(name = "chargeTemplateCode") String chargeTemplateCode);
 
 	@WebMethod
 	public ActionStatus createRecurringChargeTemplate(@WebParam(name = "recurringChargeTemplate") RecurringChargeTemplateDto postData);
