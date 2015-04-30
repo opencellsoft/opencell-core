@@ -181,7 +181,8 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
 	public String saveOrUpdate(boolean killConversation) {
 		try {
 			// validate RIB
-			if (getEntity().getPaymentMethod() != null && getEntity().getPaymentMethod() == PaymentMethodEnum.DIRECTDEBIT && getEntity().getBankCoordinates() != null) {
+			if ((getEntity().getPaymentMethod() != null && (getEntity().getPaymentMethod() == PaymentMethodEnum.DIRECTDEBIT || getEntity().getPaymentMethod() == PaymentMethodEnum.TIP))
+					&& getEntity().getBankCoordinates() != null) {
 				StringBuilder rib = new StringBuilder();
 				rib.append(getEntity().getBankCoordinates().getBankCode());
 				rib.append(getEntity().getBankCoordinates().getBranchCode());
