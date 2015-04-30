@@ -46,7 +46,7 @@ public class WalletOperationDto extends BaseDto {
 	private String type;
 	private String status;
 
-	private String unityDescription;
+	private String ratingUnitDescription;
 	private BigDecimal taxPercent;
 	private BigDecimal unitAmountWithoutTax;
 	private BigDecimal unitAmountWithTax;
@@ -80,7 +80,7 @@ public class WalletOperationDto extends BaseDto {
 			type = wo.getType().name();
 		}
 		status = wo.getStatus().name();
-		unityDescription = wo.getUnityDescription();
+		ratingUnitDescription = wo.getRatingUnitDescription();
 		taxPercent = wo.getTaxPercent();
 		unitAmountWithoutTax = wo.getUnitAmountWithoutTax();
 		unitAmountWithTax = wo.getUnitAmountWithTax();
@@ -154,14 +154,6 @@ public class WalletOperationDto extends BaseDto {
 
 	public void setOperationDate(Date operationDate) {
 		this.operationDate = operationDate;
-	}
-
-	public String getUnityDescription() {
-		return unityDescription;
-	}
-
-	public void setUnityDescription(String unityDescription) {
-		this.unityDescription = unityDescription;
 	}
 
 	public BigDecimal getTaxPercent() {
@@ -280,7 +272,7 @@ public class WalletOperationDto extends BaseDto {
 	public String toString() {
 		return "WalletOperationDto [code=" + code + ", description=" + description + ", userAccount=" + userAccount + ", subscription=" + subscription + ", walletTemplate="
 				+ walletTemplate + ", seller=" + seller + ", chargeInstance=" + chargeInstance + ", currency=" + currency + ", type=" + type + ", status=" + status
-				+ ", unityDescription=" + unityDescription + ", taxPercent=" + taxPercent + ", unitAmountWithoutTax=" + unitAmountWithoutTax + ", unitAmountWithTax="
+				+ ", ratingUnitDescription=" + ratingUnitDescription + ", taxPercent=" + taxPercent + ", unitAmountWithoutTax=" + unitAmountWithoutTax + ", unitAmountWithTax="
 				+ unitAmountWithTax + ", unitAmountTax=" + unitAmountTax + ", quantity=" + quantity + ", amountWithoutTax=" + amountWithoutTax + ", amountWithTax=" + amountWithTax
 				+ ", amountTax=" + amountTax + ", parameter1=" + parameter1 + ", parameter2=" + parameter2 + ", parameter3=" + parameter3 + ", startDate=" + startDate
 				+ ", endDate=" + endDate + ", operationDate=" + operationDate + ", subscriptionDate=" + subscriptionDate + "]";
@@ -316,6 +308,14 @@ public class WalletOperationDto extends BaseDto {
 
 	public void setDescription(String description) {
 		this.description = description;
+	}
+
+	public String getRatingUnitDescription() {
+		return ratingUnitDescription;
+	}
+
+	public void setRatingUnitDescription(String ratingUnitDescription) {
+		this.ratingUnitDescription = ratingUnitDescription;
 	}
 
 }

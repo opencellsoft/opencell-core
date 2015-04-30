@@ -474,5 +474,30 @@
 				</dependency>
 			</dependencies>
 		</profile>
+		<profile>
+			<id>edward_ciber</id>
+			<properties>
+				<!-- Properties for liquibase plugin -->
+				<db.driver>org.postgresql.Driver </db.driver>
+				<db.url>jdbc:postgresql://localhost/meveociber</db.url>
+				<db.username>meveociber</db.username>
+				<db.password>meveociber</db.password>
+			</properties>
+			<dependencies>
+				<!-- Dependency for liquibase plugin -->
+				<dependency>
+					<groupId>org.postgresql</groupId>
+					<artifactId>postgresql</artifactId>
+					<version>9.2-1002-jdbc4</version>
+					<scope>provided</scope>
+				</dependency>
+				<dependency>
+					<groupId>org.liquibase.ext</groupId>
+					<artifactId>liquibase-postgresql</artifactId>
+					<version>3.0</version>
+					<scope>provided</scope>
+				</dependency>
+			</dependencies>
+		</profile>
 	</profiles>
 </project>

@@ -26,6 +26,7 @@ import org.meveo.model.billing.ApplicationTypeEnum;
 import org.meveo.model.billing.ChargeApplicationModeEnum;
 import org.meveo.model.billing.ChargeInstance;
 import org.meveo.model.billing.InvoiceSubCategory;
+import org.meveo.model.billing.OneShotChargeInstance;
 import org.meveo.model.billing.RecurringChargeInstance;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.TradingCurrency;
@@ -181,9 +182,13 @@ public class RatingService extends BusinessService<WalletOperation>{
 
 		if (chargeInstance instanceof RecurringChargeInstance) {
 			result.setSubscriptionDate(subscriptionDate);
-		} else if (chargeInstance instanceof UsageChargeInstance) {
-			result.setUnityDescription(((UsageChargeInstance) chargeInstance).getUnityDescription());
 		}
+		if (chargeInstance instanceof RecurringChargeInstance || chargeInstance instanceof OneShotChargeInstance) {
+			result.setInputQuantity(quantity);
+		}
+		
+		result.setRatingUnitDescription(((UsageChargeInstance) chargeInstance).getRatingUnitDescription());
+		result.setInputUnitDescription(chargeInstance.getChargeTemplate().getInputUnitDescription());
 
 		Provider provider = chargeInstance.getProvider();
 

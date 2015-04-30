@@ -209,13 +209,13 @@
 						<version>3.3.1</version>
 						<configuration>
 							<driver>org.postgresql.Driver</driver>
-							<url>jdbc:postgresql://localhost:5432/meveo</url>
-							<username>meveo</username>
-							<password>meveo</password>
-							<referenceUrl>jdbc:postgresql://localhost:5432/meveociber</referenceUrl>
-							<referenceUsername>meveociber</referenceUsername>
-							<referencePassword>meveociber</referencePassword>
-							<diffChangeLogFile>target/liquibase/changeLog.xml</diffChangeLogFile>
+							<url>jdbc:postgresql://localhost:5432/meveociber</url>
+							<username>meveociber</username>
+							<password>meveociber</password>
+							<referenceUrl>jdbc:postgresql://localhost:5432/meveo</referenceUrl>
+							<referenceUsername>meveo</referenceUsername>
+							<referencePassword>meveo</referencePassword>
+							<diffChangeLogFile>target/changeLog.xml</diffChangeLogFile>
 						</configuration>
 						<dependencies>
 							<dependency>

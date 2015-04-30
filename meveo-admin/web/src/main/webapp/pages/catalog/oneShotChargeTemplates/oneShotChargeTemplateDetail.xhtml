@@ -42,6 +42,17 @@
 							field="amountEditable" />
 						<hf:formField label="#{messages['oneShotChargeTemplate.type']}"
 							field="oneShotChargeTemplateType" required="true" />
+						<hf:formField
+							label="#{messages['chargeTemplate.inputUnitDescription']}"
+							field="inputUnitDescription" />
+						<hf:formField
+							label="#{messages['chargeTemplate.ratingUnitDescription']}"
+							field="ratingUnitDescription" />
+						<hf:formField
+							label="#{messages['chargeTemplate.unitMultiplicator']}"
+							field="unitMultiplicator" converter="bigDecimal12DigitsConverter" />
+						<hf:formField label="#{messages['chargeTemplate.unitNbDecimal']}"
+							field="unitNbDecimal" />
 
 						<hf:formField label="#{messages['menu.triggeredEdrTemplates']}"
 							field="edrTemplates" listType="pickUpList" childField="code"
