@@ -11,17 +11,6 @@ import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
-import javax.el.ArrayELResolver;
-import javax.el.BeanELResolver;
-import javax.el.CompositeELResolver;
-import javax.el.ELContext;
-import javax.el.ELResolver;
-import javax.el.ExpressionFactory;
-import javax.el.FunctionMapper;
-import javax.el.ListELResolver;
-import javax.el.MapELResolver;
-import javax.el.ValueExpression;
-import javax.el.VariableMapper;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -55,9 +44,7 @@ import org.meveo.model.rating.EDR;
 import org.meveo.model.rating.EDRStatusEnum;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.BusinessService;
-import org.meveo.service.base.SimpleELResolver;
-import org.meveo.service.base.SimpleFunctionMapper;
-import org.meveo.service.base.SimpleVariableMapper;
+import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.catalog.impl.CatMessagesService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -676,7 +663,7 @@ public class RatingService extends BusinessService<WalletOperation>{
 		if (expression.indexOf("c.") >= 0) {
 			userMap.put("c", ua.getBillingAccount().getCustomerAccount().getCustomer());
 		}
-		Object res = evaluateExpression(expression, userMap, Boolean.class);
+		Object res = ValueExpressionWrapper.evaluateExpression(expression, userMap, Boolean.class);
 		try {
 			result = (Boolean) res;
 		} catch (Exception e) {
@@ -716,7 +703,7 @@ public class RatingService extends BusinessService<WalletOperation>{
 			userMap.put("c", ua.getBillingAccount().getCustomerAccount().getCustomer());
 		}
 
-		Object res = evaluateExpression(expression, userMap, String.class);
+		Object res = ValueExpressionWrapper.evaluateExpression(expression, userMap, String.class);
 		try {
 			result = (String) res;
 		} catch (Exception e) {
@@ -761,7 +748,7 @@ public class RatingService extends BusinessService<WalletOperation>{
 			userMap.put("c", ua.getBillingAccount().getCustomerAccount().getCustomer());
 		}
 
-		Object res = evaluateExpression(expression, userMap, Double.class);
+		Object res = ValueExpressionWrapper.evaluateExpression(expression, userMap, Double.class);
 		try {
 			result = (Double) res;
 		} catch (Exception e) {
@@ -770,65 +757,5 @@ public class RatingService extends BusinessService<WalletOperation>{
 		return result;
 	}
 
-	public static Object evaluateExpression(String expression, Map<Object, Object> userMap,
-			@SuppressWarnings("rawtypes") Class resultClass) throws BusinessException {
-		Object result = null;
-		if (StringUtils.isBlank(expression)) {
-			return null;
-		}
-		if (expression.indexOf("#{") < 0) {
-			log.debug("the expression '{}' doesnt contain any EL", expression);
-			if (resultClass.equals(String.class)) {
-				return expression;
-			} else if (resultClass.equals(Double.class)) {
-				return Double.parseDouble(expression);
-			} else if (resultClass.equals(Boolean.class)) {
-				if ("true".equalsIgnoreCase(expression)) {
-					return Boolean.TRUE;
-				} else {
-					return Boolean.FALSE;
-				}
-			}
-		}
-		// FIXME: externilize the resolver to instance variable and simply set
-		// the bare operation
-		// before evaluation
-		try {
-			ELResolver simpleELResolver = new SimpleELResolver(userMap);
-			final VariableMapper variableMapper = new SimpleVariableMapper();
-			final FunctionMapper functionMapper = new SimpleFunctionMapper();
-			final CompositeELResolver compositeELResolver = new CompositeELResolver();
-			compositeELResolver.add(simpleELResolver);
-			compositeELResolver.add(new ArrayELResolver());
-			compositeELResolver.add(new ListELResolver());
-			compositeELResolver.add(new BeanELResolver());
-			compositeELResolver.add(new MapELResolver());
-			ELContext context = new ELContext() {
-				@Override
-				public ELResolver getELResolver() {
-					return compositeELResolver;
-				}
-
-				@Override
-				public FunctionMapper getFunctionMapper() {
-					return functionMapper;
-				}
-
-				@Override
-				public VariableMapper getVariableMapper() {
-					return variableMapper;
-				}
-			};
-			ExpressionFactory expressionFactory = ExpressionFactory.newInstance();
-
-			ValueExpression ve = expressionFactory.createValueExpression(context, expression, resultClass);
-			result = ve.getValue(context);
-			log.debug("EL {} => {}", expression, result);
-
-		} catch (Exception e) {
-			log.warn("EL {} throw error {}", expression, e.getMessage());
-			throw new BusinessException("Error while evaluating expression " + expression + " : " + e.getMessage());
-		}
-		return result;
-	}
+	
 }
