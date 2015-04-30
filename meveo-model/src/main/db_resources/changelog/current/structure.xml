@@ -38,5 +38,7 @@
 			<column name="rating_unit_description" type="varchar(20)" />
 		</addColumn>
 	</changeSet>
-	
+	<changeSet id="ticket685_20150430" author="AndriusKarpavicius">
+		<sql>update cat_charge_template set unit_nb_decimal=0 where unit_nb_decimal is null</sql>
+	</changeSet>
 </databaseChangeLog>
