@@ -123,29 +123,132 @@
 					</f:facet>
 				</p:cellEditor>
 			</p:column>
-			<hftl:column label="#{messages['pricePlanMatrix.eventCode']}"
-				field="eventCode" />
-			<hftl:column label="#{messages['BusinessEntity.description']}"
-				field="description" />
-			<hftl:column label="#{messages['pricePlanMatrix.offerCode']}"
-				field="offerTemplate" childField="code" />
-			<hftl:column label="#{messages['seller.title']}"
-				field="seller" childField="code" />
-			<hftl:column label="#{messages['pricePlanMatrix.amountWithTax']}" converterParam="4digits"
-				field="amountWithTax" rendered="#{!pricePlanMatrixBean.entity.provider.entreprise}"/>
-			<hftl:column label="#{messages['pricePlanMatrix.amountWithoutTax']}" converterParam="4digits"
-				field="amountWithoutTax" />
+			<p:column exportable="true" sortBy="eventCode">
+				<f:facet name="header">
+					<h:outputText value="#{messages['pricePlanMatrix.eventCode']}" />
+				</f:facet>
+				<p:cellEditor>
+					<f:facet name="output">
+						<h:outputText value="#{entity.eventCode}" />
+					</f:facet>
+					<f:facet name="input">
+						<h:selectOneMenu value="#{entity.eventCode}" style="width:75%"
+							required="true">
+							<f:selectItems value="#{chargeTemplateBean.listAll}" var="item"
+								itemLabel="#{item.code}" itemValue="#{item.code}" />
+							<s:objectConverter />
+						</h:selectOneMenu>
+					</f:facet>
+				</p:cellEditor>
+			</p:column>
+			<p:column exportable="true" sortBy="description">
+				<f:facet name="header">
+					<h:outputText value="#{messages['BusinessEntity.description']}" />
+				</f:facet>
+				<p:cellEditor>
+					<f:facet name="output">
+						<h:outputText value="#{entity.description}" />
+					</f:facet>
+					<f:facet name="input">
+						<p:inputText value="#{entity.description}" required="true"
+							maxlength="100" size="20" />
+					</f:facet>
+				</p:cellEditor>
+			</p:column>
+			<p:column exportable="true" sortBy="offerTemplate.code">
+				<f:facet name="header">
+					<h:outputText value="#{messages['pricePlanMatrix.offerCode']}" />
+				</f:facet>
+				<p:cellEditor>
+					<f:facet name="output">
+						<h:outputText value="#{entity.offerTemplate.code}" />
+					</f:facet>
+					<f:facet name="input">
+						<h:selectOneMenu value="#{entity.offerTemplate}" style="width:75%">
+							<f:selectItem itemLabel="" itemValue="" />
+							<f:selectItems value="#{offerTemplateBean.listAll}" var="item"
+								itemLabel="#{item.code}" itemValue="#{item}" />
+							<s:objectConverter />
+						</h:selectOneMenu>
+					</f:facet>
+				</p:cellEditor>
+			</p:column>
+
+			<p:column exportable="true" sortBy="seller.code">
+				<f:facet name="header">
+					<h:outputText value="#{messages['seller.title']}" />
+				</f:facet>
+				<p:cellEditor>
+					<f:facet name="output">
+						<h:outputText value="#{entity.seller.code}" />
+					</f:facet>
+					<f:facet name="input">
+						<h:selectOneMenu value="#{entity.seller}" style="width:75%">
+							<f:selectItem itemLabel="" itemValue="" />
+							<f:selectItems value="#{sellerBean.listAll}" var="item"
+								itemLabel="#{item.code}" itemValue="#{item}" />
+							<s:objectConverter />
+						</h:selectOneMenu>
+					</f:facet>
+				</p:cellEditor>
+			</p:column>
+			<p:column exportable="true" sortBy="amountWithTax"
+				rendered="#{!pricePlanMatrixBean.entity.provider.entreprise}">
+				<f:facet name="header">
+					<h:outputText value="#{messages['pricePlanMatrix.amountWithTax']}" />
+				</f:facet>
+				<p:cellEditor>
+					<f:facet name="output">
+						<h:outputText value="#{entity.amountWithTax}"
+							converter="bigDecimal4DigitsConverter" />
+					</f:facet>
+					<f:facet name="input">
+						<p:inputText value="#{entity.amountWithTax}" required="true"
+							converter="bigDecimal4DigitsConverter" size="5" />
+					</f:facet>
+				</p:cellEditor>
+			</p:column>
+			<p:column exportable="true" sortBy="amountWithoutTax">
+				<f:facet name="header">
+					<h:outputText
+						value="#{messages['pricePlanMatrix.amountWithoutTax']}" />
+				</f:facet>
+				<p:cellEditor>
+					<f:facet name="output">
+						<h:outputText value="#{entity.amountWithoutTax}"
+							converter="bigDecimal4DigitsConverter" />
+					</f:facet>
+					<f:facet name="input">
+						<p:inputText value="#{entity.amountWithoutTax}" required="true"
+							converter="bigDecimal4DigitsConverter" size="5" />
+					</f:facet>
+				</p:cellEditor>
+			</p:column>
 			<p:column exportable="true" sortBy="startRatingDate">
 				<f:facet name="header">
 					<h:outputText value="#{messages['pricePlanMatrix.ratingDate']}" />
 				</f:facet>
-				<h:outputText value="#{entity.startRatingDate}">
-					<f:convertDateTime pattern="#{paramBean.getProperty('meveo.dateFormat','dd/MM/yyyy')}" />
-				</h:outputText>
-				<h:outputText value=" - " rendered="#{not empty entity.startRatingDate or not empty entity.endRatingDate}"/>
-				<h:outputText value="#{entity.endRatingDate}">
-					<f:convertDateTime pattern="#{paramBean.getProperty('meveo.dateFormat','dd/MM/yyyy')}" />
-				</h:outputText>
+				<p:cellEditor>
+					<f:facet name="output">
+						<h:outputText value="#{entity.startRatingDate}">
+							<f:convertDateTime
+								pattern="#{paramBean.getProperty('meveo.dateFormat','dd/MM/yyyy')}" />
+						</h:outputText>
+						<h:outputText value=" - "
+							rendered="#{not empty entity.startRatingDate or not empty entity.endRatingDate}" />
+						<h:outputText value="#{entity.endRatingDate}">
+							<f:convertDateTime
+								pattern="#{paramBean.getProperty('meveo.dateFormat','dd/MM/yyyy')}" />
+						</h:outputText>
+					</f:facet>
+					<f:facet name="input">
+						<p:calendar	value="#{entity.startRatingDate}" pattern="#{paramBean.getProperty('meveo.dateFormat','dd/MM/yyyy')}"
+							size="10" showOn="button"/>
+						<h:outputText value=" - "/>
+						<p:calendar	value="#{entity.endRatingDate}" pattern="#{paramBean.getProperty('meveo.dateFormat','dd/MM/yyyy')}"
+							size="10" showOn="button"/>
+					</f:facet>
+				</p:cellEditor>
 			</p:column>
 
 <!-- 			<hftl:editColumn label="#{messages['pricePlanMatrix.criteriaEL']}" -->

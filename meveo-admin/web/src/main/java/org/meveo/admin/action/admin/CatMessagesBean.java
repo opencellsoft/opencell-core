@@ -23,6 +23,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.meveo.admin.action.BaseBean;
+import org.meveo.model.BusinessEntity;
 import org.meveo.model.billing.CatMessages;
 import org.meveo.model.billing.InvoiceCategory;
 import org.meveo.model.billing.InvoiceSubCategory;
@@ -103,9 +104,9 @@ public class CatMessagesBean extends BaseBean<CatMessages> {
 		return "catMessagess";
 	}
 	
-	protected String getBasicDescription(CatMessages catMessages){
+	protected BusinessEntity getObject(CatMessages catMessages){
 		if(catMessages==null){
-			return "";
+			return null;
 		}
 		String messagesCode=catMessages.getMessageCode();
 		String[] codes=messagesCode.split("_");
@@ -115,36 +116,28 @@ public class CatMessagesBean extends BaseBean<CatMessages> {
 			try{
 				id=Long.valueOf(codes[1]);
 			}catch(Exception e){
-				return "";
+				return null;
 			}
 			if("Title".equals(codes[0])){
-				Title title=titleService.findById(id);
-				return title!=null?title.getDescription():"";
+				return titleService.findById(id);
 			}else if("Tax".equals(codes[0])){
-				Tax tax=taxService.findById(id);
-				return tax!=null?tax.getDescription():"";
+				return taxService.findById(id);
 			}else if("InvoiceCategory".equals(codes[0])){
-				InvoiceCategory invoiceCategory=invoiceCategoryService.findById(id);
-				return invoiceCategory!=null?invoiceCategory.getDescription():"";
+				return invoiceCategoryService.findById(id);
 			}else if("InvoiceSubCategory".equals(codes[0])){
-				InvoiceSubCategory invoiceSubCategory=invoiceSubCategoryService.findById(id);
-				return invoiceSubCategory!=null?invoiceSubCategory.getDescription():"";
+				return invoiceSubCategoryService.findById(id);
 			}else if("UsageChargeTemplate".equals(codes[0])){
-				UsageChargeTemplate usageChargeTemplate=usageChargeTemplateService.findById(id);
-				return usageChargeTemplate!=null?usageChargeTemplate.getDescription():"";
+				return usageChargeTemplateService.findById(id);
 			}else if("OneShotChargeTemplate".equals(codes[0])){
-				OneShotChargeTemplate oneShotChargeTemplate=oneShotChargeTemplateService.findById(id);
-				return oneShotChargeTemplate!=null?oneShotChargeTemplate.getDescription():"";
+				return oneShotChargeTemplateService.findById(id);
 			}else if("RecurringChargeTemplate".equals(codes[0])){
-				RecurringChargeTemplate recurringChargeTemplate=recurringChargeTemplateService.findById(id);
-				return recurringChargeTemplate!=null?recurringChargeTemplate.getDescription():"";
+				return recurringChargeTemplateService.findById(id);
 			}else if("PricePlanMatrix".equals(codes[0])){
-				PricePlanMatrix pricePlanMatrix=pricePlanMatrixService.findById(id);
-				return pricePlanMatrix!=null?pricePlanMatrix.getDescription():"";
+				return pricePlanMatrixService.findById(id);
 			}
 		}
 		
-		return "";
+		return null;
 	}
 	
 	protected Map<String,String> getObjectTypes(){

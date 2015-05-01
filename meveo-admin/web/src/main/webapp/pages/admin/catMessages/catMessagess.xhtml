@@ -40,17 +40,17 @@
 				</f:facet>
 				<h:outputText value="#{entity.objectType}" />
 			</p:column>
-			<p:column exportable="true" sortBy="messageCode">
+			<p:column exportable="false">
 				<f:facet name="header">
 					<h:outputText value="#{messages['catMessages.messageCode']}" />
 				</f:facet>
-				<h:outputText value="#{entity.messageCode}" />
+				<h:outputText value="#{backingBean.getObject(entity).code}" />
 			</p:column>
 			<p:column exportable="false">
 				<f:facet name="header">
 					<h:outputText value="#{messages['catMessages.basicDescription']}" />
 				</f:facet>
-				<h:outputText value="#{backingBean.getBasicDescription(entity)}" />
+				<h:outputText value="#{backingBean.getObject(entity).description}" />
 			</p:column>
 			<p:column exportable="true" sortBy="languageCode">
 				<f:facet name="header">
