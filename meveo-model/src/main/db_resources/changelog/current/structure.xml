@@ -41,4 +41,12 @@
 	<changeSet id="ticket685_20150430" author="AndriusKarpavicius">
 		<sql>update cat_charge_template set unit_nb_decimal=0 where unit_nb_decimal is null</sql>
 	</changeSet>
+	
+	<changeSet id="ticket684_20150501" author="EdwardLegaspi">
+		<addColumn tableName="crm_provider">
+			<column name="display_subscriptions" type="BOOL" />
+			<column name="display_services" type="BOOL" />
+			<column name="display_offers" type="BOOL" />
+		</addColumn>
+	</changeSet>
 </databaseChangeLog>

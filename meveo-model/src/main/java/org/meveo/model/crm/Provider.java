@@ -185,6 +185,15 @@ public class Provider extends ProviderlessEntity {
 
     @Column(name = "PREPAID_RESRV_DELAY_MS")
     private Long prepaidReservationExpirationDelayinMillisec = Long.valueOf(60000);
+    
+    @Column(name = "DISPLAY_SUBSCRIPTIONS")
+    private Boolean displaySubscriptions = false;
+    
+    @Column(name = "DISPLAY_SERVICES")
+    private Boolean displayServices = false;
+    
+    @Column(name = "DISPLAY_OFFERS")
+    private Boolean displayOffers = false;
 
     public String getCode() {
         return code;
@@ -537,5 +546,29 @@ public class Provider extends ProviderlessEntity {
     @Override
     public String toString() {
         return String.format("Provider [code=%s]", code);
-    }   
+    }
+
+	public Boolean getDisplaySubscriptions() {
+		return displaySubscriptions;
+	}
+
+	public void setDisplaySubscriptions(Boolean displaySubscriptions) {
+		this.displaySubscriptions = displaySubscriptions;
+	}
+
+	public Boolean getDisplayServices() {
+		return displayServices;
+	}
+
+	public void setDisplayServices(Boolean displayServices) {
+		this.displayServices = displayServices;
+	}
+
+	public Boolean getDisplayOffers() {
+		return displayOffers;
+	}
+
+	public void setDisplayOffers(Boolean displayOffers) {
+		this.displayOffers = displayOffers;
+	}   
 }

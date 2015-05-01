@@ -441,16 +441,6 @@ public class WalletOperation extends BusinessEntity {
 		this.reratedWalletOperation = reratedWalletOperation;
 	}
 
-	@Override
-	public String toString() {
-		return String
-				.format("WalletOperation [%s, wallet=%s, operationDate=%s, invoicingDate=%s, type=%s, chargeInstance=%s, inputUnitDescription=%s, ratingUnitDescription=%, inputQuantity=%, currency=%s, taxPercent=%s, unitAmountWithoutTax=%s, unitAmountWithTax=%s, unitAmountTax=%s, quantity=%s, amountWithoutTax=%s, amountWithTax=%s, amountTax=%s, aggregatedServiceInstance=%s, parameter1=%s, parameter2=%s, parameter3=%s, startDate=%s, endDate=%s, subscriptionDate=%s, offerCode=%s, status=%s, seller=%s, priceplan=%s, reratedWalletOperation=%s, billingAccount=%s, invoiceSubCategory=%s, billingRun=%s, offerTemplate=%s]",
-						super.toString(), wallet, operationDate, invoicingDate, type, chargeInstance, inputUnitDescription, ratingUnitDescription, inputQuantity, currency,
-						taxPercent, unitAmountWithoutTax, unitAmountWithTax, unitAmountTax, quantity, amountWithoutTax, amountWithTax, amountTax, aggregatedServiceInstance,
-						parameter1, parameter2, parameter3, startDate, endDate, subscriptionDate, offerCode, status, seller, priceplan, reratedWalletOperation, billingAccount,
-						invoiceSubCategory, billingRun, offerTemplate);
-	}
-
     @Transient
 	public WalletOperation getUnratedClone() {
 		WalletOperation result = new WalletOperation();
@@ -551,6 +541,18 @@ public class WalletOperation extends BusinessEntity {
 
 	public void setInputQuantity(BigDecimal inputQuantity) {
 		this.inputQuantity = inputQuantity;
+	}
+
+	@Override
+	public String toString() {
+		return "WalletOperation [wallet=" + wallet + ", operationDate=" + operationDate + ", invoicingDate=" + invoicingDate + ", type=" + type + ", chargeInstance="
+				+ chargeInstance + ", currency=" + currency + ", taxPercent=" + taxPercent + ", unitAmountWithoutTax=" + unitAmountWithoutTax + ", unitAmountWithTax="
+				+ unitAmountWithTax + ", unitAmountTax=" + unitAmountTax + ", quantity=" + quantity + ", amountWithoutTax=" + amountWithoutTax + ", amountWithTax=" + amountWithTax
+				+ ", amountTax=" + amountTax + ", counter=" + counter + ", aggregatedServiceInstance=" + aggregatedServiceInstance + ", parameter1=" + parameter1 + ", parameter2="
+				+ parameter2 + ", parameter3=" + parameter3 + ", startDate=" + startDate + ", endDate=" + endDate + ", subscriptionDate=" + subscriptionDate + ", offerCode="
+				+ offerCode + ", status=" + status + ", seller=" + seller + ", priceplan=" + priceplan + ", reratedWalletOperation=" + reratedWalletOperation
+				+ ", inputUnitDescription=" + inputUnitDescription + ", ratingUnitDescription=" + ratingUnitDescription + ", inputQuantity=" + inputQuantity + ", billingAccount="
+				+ billingAccount + ", invoiceSubCategory=" + invoiceSubCategory + ", billingRun=" + billingRun + ", offerTemplate=" + offerTemplate + "]";
 	}
 	
 
