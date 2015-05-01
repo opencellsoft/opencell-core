@@ -128,6 +128,7 @@ public class UsageRatingService {
 		walletOperation.setParameter1(edr.getParameter1());
 		walletOperation.setParameter2(edr.getParameter2());
 		walletOperation.setParameter3(edr.getParameter3());
+		walletOperation.setInputQuantity(edr.getQuantity());
 
 		walletOperation.setProvider(provider);
 
@@ -231,8 +232,8 @@ public class UsageRatingService {
 		if (periodCache != null) {
 			synchronized (periodCache) {
 				BigDecimal countedValue = cachedCharge.getInChargeUnit(edr.getQuantity());
-				log.debug("value to deduce {} * {} = {} from current value {}", edr.getQuantity(),
-						cachedCharge.getUnityMultiplicator(), countedValue, periodCache.getValue());
+				log.debug("value to deduce {} * {} = {} from current value {}",
+						new Object[] { edr.getQuantity(), cachedCharge.getUnityMultiplicator(), countedValue, periodCache.getValue() });
 
 				if (periodCache.getLevel() == null) {
 					deducedQuantity = countedValue;

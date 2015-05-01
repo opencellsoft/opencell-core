@@ -182,12 +182,20 @@ public class RatingService extends BusinessService<WalletOperation>{
 
 		if (chargeInstance instanceof RecurringChargeInstance) {
 			result.setSubscriptionDate(subscriptionDate);
-		}
-		if (chargeInstance instanceof RecurringChargeInstance || chargeInstance instanceof OneShotChargeInstance) {
-			result.setInputQuantity(quantity);
+			result.setInputQuantity(((RecurringChargeInstance) chargeInstance).getServiceInstance().getQuantity());
+			if (result.getInputQuantity() != null && chargeInstance.getChargeTemplate().getUnitMultiplicator() != null) {
+				result.setQuantity(result.getInputQuantity().multiply(chargeInstance.getChargeTemplate().getUnitMultiplicator()));	
+			}
+		} else if (chargeInstance instanceof OneShotChargeInstance) {
+			result.setInputQuantity(((OneShotChargeInstance) chargeInstance).getSubscriptionServiceInstance().getQuantity());
+			if (result.getInputQuantity() != null && chargeInstance.getChargeTemplate().getUnitMultiplicator() != null) {
+				result.setQuantity(result.getInputQuantity().multiply(chargeInstance.getChargeTemplate().getUnitMultiplicator()));
+			}
+		} else {
+			result.setQuantity(quantity);
 		}
 		
-		result.setRatingUnitDescription(((UsageChargeInstance) chargeInstance).getRatingUnitDescription());
+		result.setRatingUnitDescription(chargeInstance.getChargeTemplate().getRatingUnitDescription());
 		result.setInputUnitDescription(chargeInstance.getChargeTemplate().getInputUnitDescription());
 
 		Provider provider = chargeInstance.getProvider();
@@ -204,7 +212,6 @@ public class RatingService extends BusinessService<WalletOperation>{
 							result.getOperationDate()));
 		}
 		result.setCode(code);
-		result.setQuantity(quantity);
 		result.setTaxPercent(taxPercent);
 		result.setCurrency(tCurrency.getCurrency());
 		result.setStartDate(startdate);
