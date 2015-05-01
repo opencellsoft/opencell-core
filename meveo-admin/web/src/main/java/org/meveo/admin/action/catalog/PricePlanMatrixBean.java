@@ -17,8 +17,10 @@
 package org.meveo.admin.action.catalog;
 
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 
+import javax.faces.event.ActionEvent;
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -110,6 +112,31 @@ public class PricePlanMatrixBean extends BaseBean<PricePlanMatrix> {
 	@Override
 	protected List<String> getFormFieldsToFetch() {
 		return Arrays.asList("provider");
+	}
+
+//	@Override
+//	protected boolean canDelete(PricePlanMatrix entity) {
+//		// TODO Auto-generated method stub
+//		return true;
+//	}
+	//show advanced button in search panel
+	private boolean advanced=false;
+	public boolean getAdvanced(){
+		return this.advanced;
+	}
+
+	protected void advancedAction(ActionEvent actionEvent){
+		this.advanced = !advanced;
+		if (filters != null) {
+			Iterator<String> iter = filters.keySet().iterator();
+			while (iter.hasNext()) {
+				String key = iter.next();
+				if (!"eventCode".equals(key) && !"seller".equals(key)
+						&& !"code".equals(key) && !"offerTemplate".equals(key)) {
+					iter.remove();
+				}
+			}
+		}
 	}
 
 }

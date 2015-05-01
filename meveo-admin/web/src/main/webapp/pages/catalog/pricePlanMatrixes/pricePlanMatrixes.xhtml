@@ -69,7 +69,8 @@
 
 		<hf:searchPanel id="searchPanel" columns="3"
 			label="#{messages['pricePlanMatrix.search']}"
-			backingBean="#{pricePlanMatrixListBean}">
+			backingBean="#{pricePlanMatrixListBean}" renderAdvancedLink="#{!pricePlanMatrixListBrean.advanced}"
+			renderHideAdvancedLink="#{pricePlanMatrixListBean.advanced}">
 			<hf:searchField label="#{messages['BusinessEntity.code']}"
 				field="code" />
 			<hf:searchField label="#{messages['pricePlanMatrix.eventCode']}"
@@ -81,29 +82,44 @@
 			<hf:searchField id="seller" label="#{messages['seller.title']}"
 				field="seller" childField="description" popup="true"
 				popupId="searchSellerPopup" clearButton="true" />
-			<hf:searchField id="tradingCountry"
-				label="#{messages['tradingCountry.tradingCountry']}"
-				field="tradingCountry" childField="countryCode" popup="true"
-				popupId="searchTradingCountryPopup" clearButton="true" />
-			<hf:searchField id="tradingCurrency"
-				label="#{messages['currency.codeCurrency']}" field="tradingCurrency"
-				childField="currencyCode" popup="true"
-				popupId="searchTradingCurrencyPopup" clearButton="true" />
-			<hf:minmaxSearchField label="#{messages['pricePlanMatrix.quantity']}"
-				minField="minQuantity" maxField="maxQuantity" />
-			<hf:likeCriteriasSearchField
-				label="#{messages['pricePlanMatrix.criteriaValue']}"
-				fields="criteria1Value,criteria2Value,criteria3Value" />
-			<hf:minmaxSearchField
-				label="#{messages['pricePlanMatrix.subscriptionDate']}"
-				minField="startSubscriptionDate" maxField="endSubscriptionDate" />
-			<hf:minmaxSearchField
-				label="#{messages['pricePlanMatrix.ratingDate']}"
-				minField="startRatingDate" maxField="endRatingDate" />
-			<hf:minmaxSearchField
-				label="#{messages['pricePlanMatrix.subscriptionAgeInMonth']}"
-				minField="minSubscriptionAgeInMonth"
-				maxField="maxSubscriptionAgeInMonth" />
+			<h:panelGroup rendered="#{pricePlanMatrixListBean.advanced}">
+				<hf:searchField id="tradingCountry"
+					label="#{messages['tradingCountry.tradingCountry']}"
+					field="tradingCountry" childField="countryCode" popup="true"
+					popupId="searchTradingCountryPopup" clearButton="true" />
+			</h:panelGroup>
+			<h:panelGroup rendered="#{pricePlanMatrixListBean.advanced}">
+				<hf:searchField id="tradingCurrency"
+					label="#{messages['currency.codeCurrency']}"
+					field="tradingCurrency" childField="currencyCode" popup="true"
+					popupId="searchTradingCurrencyPopup" clearButton="true" />
+			</h:panelGroup>
+			<h:panelGroup rendered="#{pricePlanMatrixListBean.advanced}">
+				<hf:minmaxSearchField
+					label="#{messages['pricePlanMatrix.quantity']}"
+					minField="minQuantity" maxField="maxQuantity" />
+			</h:panelGroup>
+			<h:panelGroup rendered="#{pricePlanMatrixListBean.advanced}">
+				<hf:likeCriteriasSearchField
+					label="#{messages['pricePlanMatrix.criteriaValue']}"
+					fields="criteria1Value,criteria2Value,criteria3Value" />
+			</h:panelGroup>
+			<h:panelGroup rendered="#{pricePlanMatrixListBean.advanced}">
+				<hf:minmaxSearchField
+					label="#{messages['pricePlanMatrix.subscriptionDate']}"
+					minField="startSubscriptionDate" maxField="endSubscriptionDate" />
+			</h:panelGroup>
+			<h:panelGroup rendered="#{pricePlanMatrixListBean.advanced}">
+				<hf:minmaxSearchField
+					label="#{messages['pricePlanMatrix.ratingDate']}"
+					minField="startRatingDate" maxField="endRatingDate" />
+			</h:panelGroup>
+			<h:panelGroup rendered="#{pricePlanMatrixListBean.advanced}">
+				<hf:minmaxSearchField
+					label="#{messages['pricePlanMatrix.subscriptionAgeInMonth']}"
+					minField="minSubscriptionAgeInMonth"
+					maxField="maxSubscriptionAgeInMonth" />
+			</h:panelGroup>
 		</hf:searchPanel>
 
 		<hftl:dataList label="#{messages['pricePlanMatrix.title']}"

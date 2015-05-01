@@ -29,7 +29,7 @@
 				for="likeCriteriasRange_#{cc.attrs.fields.replaceAll(',','-')}"
 				value="#{cc.attrs.label}" />
 			<p:inputText
-				id="likeCriteriasRange_#{cc.attrs.fields.replaceAll(',','-')}" size="#{size}" maxlength="#{maxlength}"
+				id="likeCriteriasRange_#{cc.attrs.fields.replaceAll(',','-')}" size="#{cc.attrs.size}" maxlength="#{cc.attrs.maxlength}"
 				value="#{cc.filters[cc.likeCriteriasRangeSearchFilterName]}"
 				disabled="#{cc.attrs.disabled}" />
 		</p:panelGrid>
