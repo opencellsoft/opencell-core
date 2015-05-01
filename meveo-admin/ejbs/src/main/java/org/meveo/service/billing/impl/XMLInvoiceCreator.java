@@ -58,11 +58,14 @@ import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.RatedTransaction;
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.SubCategoryInvoiceAgregate;
+import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.Tax;
 import org.meveo.model.billing.TaxInvoiceAgregate;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.billing.XMLInvoiceHeaderCategoryDTO;
+import org.meveo.model.catalog.OfferTemplate;
+import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.payments.CustomerAccount;
@@ -339,8 +342,86 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 			userAccounts.appendChild(userAccountTag);
 			addNameAndAdress(userAccount, doc, userAccountTag, billingAccountLanguage);
 			addCategories(userAccount, invoice, doc, userAccountTag, true, enterprise);
+			if (invoice.getProvider().getDisplaySubscriptions() != null && invoice.getProvider().getDisplaySubscriptions()) {
+				addSubscriptions(userAccount, invoice, doc, userAccountTag);
+			}
 		}
 
+	}
+
+	private void addSubscriptions(UserAccount userAccount, Invoice invoice, Document doc, Element parent) {		
+		if (userAccount.getSubscriptions() != null && userAccount.getSubscriptions().size() > 0) {
+			Element subscriptionsTag = doc.createElement("subscriptions");
+			parent.appendChild(subscriptionsTag);
+
+			for (Subscription subscription : userAccount.getSubscriptions()) {
+				Element subscriptionTag = doc.createElement("subscription");
+				subscriptionTag.setAttribute("id", subscription.getId() + "");
+				subscriptionTag.setAttribute("code", subscription.getCode() != null ? subscription.getCode() : "");
+				subscriptionTag.setAttribute("description", subscription.getDescription() != null ? subscription.getDescription() : "");
+
+				Element subscriptionDateTag = doc.createElement("subscriptionDate");
+				Text subscriptionDateText = null;
+				if (subscription.getSubscriptionDate() != null) {
+					subscriptionDateText = doc.createTextNode(subscription.getSubscriptionDate().toString());
+				} else {
+					subscriptionDateText = doc.createTextNode("");
+				}
+				subscriptionDateTag.appendChild(subscriptionDateText);
+
+				Element endAgreementTag = doc.createElement("endAgreementDate");
+				Text endAgreementText = null;
+				if (subscription.getEndAgrementDate() != null) {
+					endAgreementText = doc.createTextNode(subscription.getEndAgrementDate().toString());
+				} else {
+					endAgreementText = doc.createTextNode("");
+				}
+				endAgreementTag.appendChild(endAgreementText);
+				
+				if (invoice.getProvider().getDisplayOffers() != null && invoice.getProvider().getDisplayOffers()) {
+					if(subscription.getOffer() != null) {
+						OfferTemplate offerTemplate = subscription.getOffer();
+						Element offerTag = doc.createElement("offer");
+						offerTag.setAttribute("id", offerTemplate.getId() + "");
+						offerTag.setAttribute("code", offerTemplate.getCode() != null ? offerTemplate.getCode() : "");
+						offerTag.setAttribute("description", offerTemplate.getDescription() != null ? offerTemplate.getDescription() : "");
+						
+						if (invoice.getProvider().getDisplayServices() != null && invoice.getProvider().getDisplayServices()) {
+							addServices(offerTemplate, invoice, doc, offerTag);
+						}
+						
+						subscriptionTag.appendChild(offerTag);
+					}
+				}
+				
+				subscriptionsTag.appendChild(subscriptionTag);
+			}
+		}
+	}
+
+	private void addServices(OfferTemplate offerTemplate, Invoice invoice, Document doc, Element parent) {
+		if (offerTemplate.getServiceTemplates() != null && offerTemplate.getServiceTemplates().size() > 0) {
+			Element servicesTag = doc.createElement("services");
+			parent.appendChild(servicesTag);
+			
+			for (ServiceTemplate serviceTemplate : offerTemplate.getServiceTemplates()) {
+				Element serviceTag = doc.createElement("service");
+				serviceTag.setAttribute("id", serviceTemplate.getId() + "");
+				serviceTag.setAttribute("code", serviceTemplate.getCode() != null ? serviceTemplate.getCode() : "");
+				serviceTag.setAttribute("description", serviceTemplate.getDescription() != null ? serviceTemplate.getDescription() : "");
+				
+				Element calendarTag = doc.createElement("calendar");
+				Text calendarText = null;
+				if (serviceTemplate.getInvoicingCalendar() != null) {
+					calendarText = doc.createTextNode(serviceTemplate.getInvoicingCalendar().getCode());
+				} else {
+					calendarText = doc.createTextNode("");
+				}
+				calendarTag.appendChild(calendarText);
+				
+				servicesTag.appendChild(serviceTag);
+			}
+		}
 	}
 
 	public void addNameAndAdress(AccountEntity account, Document doc, Element parent, String languageCode) {
