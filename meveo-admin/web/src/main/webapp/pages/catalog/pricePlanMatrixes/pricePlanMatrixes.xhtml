@@ -135,6 +135,18 @@
 				field="amountWithTax" rendered="#{!pricePlanMatrixBean.entity.provider.entreprise}"/>
 			<hftl:column label="#{messages['pricePlanMatrix.amountWithoutTax']}" converterParam="4digits"
 				field="amountWithoutTax" />
+			<p:column exportable="true" sortBy="startRatingDate">
+				<f:facet name="header">
+					<h:outputText value="#{messages['pricePlanMatrix.ratingDate']}" />
+				</f:facet>
+				<h:outputText value="#{entity.startRatingDate}">
+					<f:convertDateTime pattern="#{paramBean.getProperty('meveo.dateFormat','dd/MM/yyyy')}" />
+				</h:outputText>
+				<h:outputText value=" - " rendered="#{not empty entity.startRatingDate or not empty entity.endRatingDate}"/>
+				<h:outputText value="#{entity.endRatingDate}">
+					<f:convertDateTime pattern="#{paramBean.getProperty('meveo.dateFormat','dd/MM/yyyy')}" />
+				</h:outputText>
+			</p:column>
 
 <!-- 			<hftl:editColumn label="#{messages['pricePlanMatrix.criteriaEL']}" -->
 <!-- 				fieldValue="#{entity.criteriaEL}" rendered="false" /> -->
