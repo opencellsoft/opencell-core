@@ -20,13 +20,15 @@
 
 	<ui:define name="body">
 
-		<hf:searchPanel id="searchPanel" backingBean="#{catMessagesListBean}"
+		<hf:searchPanel id="searchPanel" backingBean="#{catMessagesListBean}" columns="3"
 			label="#{messages['catMessages.search']}" renderNewButton="false">
 			<hf:searchField label="#{messages['catMessages.objectType']}"
 				field="messageCode" listValues="#{catMessagesListBean.objectTypes}" />
 			<hf:searchField label="#{messages['catMessages.languageCode']}"
 				field="languageCode"
 				listValues="#{tradingLanguageListBean.languageCodes}" />
+			<hf:searchField label="#{messages['catMessages.messageCode']}"
+				field="messageCode" />
 		</hf:searchPanel>
 
 		<hftl:dataList label="#{messages['catMessages.title']}"
