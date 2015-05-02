@@ -10,12 +10,34 @@
 	xmlns:c="http://java.sun.com/jsp/jstl/core"
     xmlns:hftl="http://hftl.org">
 
+<!-- 
+
+    Makes part of "happy faces" component group.
+    A custom tag to enhance p:datatable component.
+        
+    Attributes
+        backingBean - a backig bean associated to datatable
+        dataModel - datamodel. Use lazyDataModel from a backingBean if one not provided
+        formId - id of a form that wraps the datatable
+        resultsId - id assigned to a datatable with "datatable_" prefix        
+        editable and editMode - are values in datatable are inline editable and in what mode
+        scrollable - is datatabel scrolable
+        checkMany - show multiple item checkboxes
+        exportButton - show "export to xls" button
+        exportXlsxButton - show "export to xlsx" button
+        exportToCsv - show "export to Csv" button
+        importCsv - show "import from Csv" button
+        sortBy and sortOrder - a default field to sort by and a default sort order
+        rowsPerPage - possible paging sizes separated by a comma
+         
+-->
+
 <ui:composition>
 
-	<c:if test="${empty pdf}">
-		<c:set var="pdf" value="false" />
-	</c:if>
-	<c:if test="${empty editable}">
+<!--     <c:if test="${empty pdf}"> -->
+<!--         <c:set var="pdf" value="false" /> -->
+<!--     </c:if> -->
+    <c:if test="${empty editable}">
 		<c:set var="editable" value="false" />
 	</c:if>
 	<c:if test="${empty scrollable}">
@@ -26,9 +48,9 @@
 			<c:set var="editMode" value="cell" />
 		</c:if>
 	</c:if>
-	<c:if test="${empty edit}">
-		<c:set var="edit" value="true" />
-	</c:if>
+<!-- 	<c:if test="${empty edit}"> -->
+<!-- 		<c:set var="edit" value="true" /> -->
+<!-- 	</c:if> -->
 
 	<c:if test="${empty checkMany}">
 		<c:set var="checkMany" value="true" />

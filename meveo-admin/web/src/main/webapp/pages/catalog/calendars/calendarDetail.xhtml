@@ -78,7 +78,7 @@
             </h:panelGroup>
 
             <h:panelGroup rendered="#{calendarBean.entity.calendarType=='JOIN'}">
-                <hf:formField id="joinType" label="#{messages['calendar.joinType']}" field="joinType" valueLabelField="label" isMessage="true" newLine="true" required="true"/>
+                <hf:formField id="joinType" label="#{messages['calendar.joinType']}" field="joinType" newLine="true" required="true"/>
                 <hf:formField id="joinCalendar1" label="#{messages['calendar.joinCalendar1']}" field="joinCalendar1" valueLabelField="code"
                     required="true" popup="true" popupId="searchCalendarPopup1" />
 

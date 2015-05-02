@@ -279,7 +279,7 @@
 											field="subscriptionDate" required="true" />
 										<hf:formField
 											label="#{messages[subscriptionBean.entity.status=='SUSPENDED'?'billingAccount.suspensionDate': 'billingAccount.terminationDate']}"
-											field="terminationDate" show="#{!subscriptionBean.edit}" />
+											field="terminationDate" rendered="#{!subscriptionBean.edit}" />
 										<hf:formField
 											label="#{messages['subscription.endAgrementDate']}"
 											field="endAgrementDate" />

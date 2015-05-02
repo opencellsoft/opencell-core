@@ -21,6 +21,7 @@
         inputStyle="#{cc.parent.attrs.inputStyle}" inputStyleClass="#{cc.parent.attrs.inputStyleClass}" labelWidth="#{cc.parent.attrs.labelWidth}"
         inputWidth="#{cc.parent.attrs.inputWidth}">
 
+        <!--  As a list of values -->
         <c:if test="#{cc.parent.attrs.listType == 'simpleList'}">
             <p:dataTable id="#{cc.parent.attrs.fieldIdPrefix}_list" value="#{cc.attrs.fieldItem}" var="listElement" rendered="#{cc.attrs.edit}">
                 <c:forEach items="#{cc.attrs.showFields.split(';')}" var="fieldToShow">
@@ -53,6 +54,7 @@
                 value="#{messages['commons.addNew']}" onclick="alert('not implemented. formListField.xhtml line 52')" />
         </c:if>
 
+        <!--  As a dual picklist of values -->
         <c:if test="#{cc.parent.attrs.listType=='pickUpList'}">
 
             <h:panelGroup rendered="#{cc.attrs.edit}">

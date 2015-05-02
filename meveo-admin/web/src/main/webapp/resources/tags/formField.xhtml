@@ -5,62 +5,155 @@
     xmlns:p="http://primefaces.org/ui" xmlns:s="http://jboss.org/seam/faces" xmlns:c="http://java.sun.com/jsp/jstl/core" xmlns:o="http://omnifaces.org/ui"
     xmlns:of="http://omnifaces.org/functions" xmlns:cc="http://java.sun.com/jsf/composite" xmlns:hf="http://java.sun.com/jsf/composite/tags" xmlns:hftl="http://hftl.org">
 
+<!-- 
+
+    Makes part of "happy faces" component group.
+    A custom component to display a label and a data entry control in edit mode or value output in a view mode
+    
+    Must be located inside a formPanel component or have the following attributes provided if used as standalone: entity, edit and backingBean for map and list type fields only
+    
+    An applicable input control or a value output format is determined automatically based on field's type. The following field types are supported:
+        Text - as regular text entry, html editor, textarea, list of values, autocomplete and selection via popup
+        Number -  as regular text entry, as a spinner of numbers and a list of values
+        Boolean - as a checkbox
+        Entity - as a list of values or selection via popup search
+        Map - as an editable list of key and value pairs
+        Date - as a calendar
+        Enum - as a list of enum values
+        List - as a dual picklist or list of values
+        
+        
+     Attributes applicable to all types of fields
+        entity - an entity containing a given field. If not provided and entity passed to a parent formPanel will be used.
+        backingBean - backing bean associated with data entry. Required for Map and List type fields only. If not provided a backing bean passed to a parent formPanel will be used.
+        label - a label
+        field and optional childField - a field.childField for data entry/view. E.g. address.email
+        required - is field mandatory
+        disabled - is data entry control disabled        
+
+        edit - should data entry or value output be displayed. If not provided, value is determined from a backing bean (either provided or from parent formPanel)
+        allowEdit - allow to edit a field when in edit mode       
+        showOnlyOnNew - show field only in new entity creation mode
+        showOnlyOnConsult - show field only in entity view mode
+        
+     Attributes applicable to Text type fields
+        size - a size attribute of inputText control
+        maxlength - a maxlength attribute of inputText control
+        isHtml - text entry as html editor
+        textArea - text entry as text area control
+        cols and rows - number of columns and rows in text are control 
+        autocomplete - a method for autocomplete
+        listValues - a map of value (key) and label (value) pairs for picklist 
+        popup and popupId - text entry via a popup and associated popup id 
+        useConverter - add string converter
+        converter - converter to apply (unrelated to useConverter attribute)
+        validateUnique - validate that field value is unique per entity class
+        validateRib - validate rib values
+        validateEmail - validate email value
+        validatorId - validator to apply
+          
+        
+     Attributes applicable to Number type fields
+        size - a size attribute of inputText control
+        maxlength - a maxlength attribute of inputText control
+        listValues - a map of value (key) and label (value) pairs for picklist 
+        minValue - a minimum value for a spinner
+        maxValue - a maximum value for a spinner
+        isMessage and messagePrefix - display a translatable message prefixed with messagePrefix and a field value
+        converter - converter to apply 
+        negativeValue - allow to enter negative values in a spinner
+        
+     Attributes applicable to Boolean type fields        
+        isMessage - display a translatable message commons.yes/no instead of a plain true/false value 
+        listenerUpdate - components (ids) to update when value changes 
+     
+     Attributes applicable to Date type fields
+        datePattern - date pattern to apply in calendar selection. If not provided, time attribute is consulted whether to add time part to a date 
+        time - should a date selection be time specific.  
+     
+     Attributes applicable to Enum type fields             
+        listValues - a map of value (key) and label (value) pairs for picklist 
+        listenerUpdate - components (ids) to update when value changes 
+        
+     Attributes applicable to Entity type fields    
+        size - a size attribute of inputText control
+        popup and popupId - entity search via a popup and associated popup id 
+        listBean - a backing bean to provide a list of entities via listAll method
+        listElements - a list of entities
+        fkToEntity - store a "sort of FK" to a selected entity without a formal FK JPA relationship - any value can be stored
+        valueLabelField - selected entity's attribute to display when entity is selected. In a list of entities used as a label attribute for list item.
+        listenerUpdate - components (ids) to update when value changes (entity selection via picklist only)
+
+    Attributes applicable to List type fields 
+        listType - list type - "simpleList" or "pickUpList"
+        dualListModel - dual list model for "pickUpList" list type.
+        deleteButton - should a delete button be displayed to manage "simpleList" list type values
+        showButtonAddNew - should a "add new value" button be displayed to manage "simpleList" list type values
+        valueLabelField and valueLabelField2 - selected entity's attribute(s) to display when entity is selected. In a list of entities used as a label attribute for list item.
+
+    Attributes applicable to Map type fields          
+        mapKeyLabel - header label for key  
+        mapValueLabel - header label for value
+
+ -->
 <cc:interface componentType="formField">
-    <cc:attribute name="label" required="true" />
-    <cc:attribute name="field" required="true" />
     <cc:attribute name="backingBean" required="true" type="org.meveo.admin.action.BaseBean" />
     <cc:attribute name="entity" required="false" type="java.lang.Object" />
+    <cc:attribute name="label" required="true" />
+    <cc:attribute name="field" required="true" />
+    <cc:attribute name="childField" required="false" />
     <cc:attribute name="required" default="false" />
+    <cc:attribute name="disabled" default="false" />
+    
     <cc:attribute name="size" default="#{cc.attrs.field =='description'?80:20}" />
     <cc:attribute name="maxlength" default="#{cc.attrs.field =='description'?100:40}" />
-    <cc:attribute name="deleteButton" default="true" />
-    <cc:attribute name="time" default="false" />
-    <cc:attribute name="listType" default="simpleList" />
-    <cc:attribute name="valueLabelField" />
-    <cc:attribute name="valueLabelField2" />
-    <cc:attribute name="showButtonAddNew" default="true" />
-    <cc:attribute name="disabled" default="false" />
     <cc:attribute name="textArea" default="false" />
     <cc:attribute name="cols" default="80" />
     <cc:attribute name="rows" default="5" />
-    <cc:attribute name="childField" required="false" />
-    <cc:attribute name="childField2" required="false" />
-    <cc:attribute name="isMessage" required="false" />
-    <cc:attribute name="messagePrefix" required="false" />
-    <cc:attribute name="messagePrefixWithDot" default="#{cc.attrs.messagePrefix==null?'':cc.attrs.messagePrefix.concat('.')}" />
-    <cc:attribute name="showOnlyOnNew" default="false" />
-    <cc:attribute name="showOnlyOnConsult" default="false" />
-    <cc:attribute name="dualListModel" />
     <cc:attribute name="isHtml" default="false" />
+    <cc:attribute name="autocompleteMethod" method-signature="java.lang.String action(java.lang.String)" />
+    <cc:attribute name="listValues" />
     <cc:attribute name="useConverter" default="false" />
     <cc:attribute name="validateUnique" default="false" />
     <cc:attribute name="validateRib" default="false" />
     <cc:attribute name="validateEmail" default="false" />
-    <cc:attribute name="validatorId" default="" />
-    <cc:attribute name="datePattern"
-        default="#{cc.attrs.time?paramBean.getProperty('meveo.dateTimeFormat','dd/MM/yyyy HH:mm'):paramBean.getProperty('meveo.dateFormat','dd/MM/yyyy')}" />
-    <cc:attribute name="allowEdit" default="true" />
-    <cc:attribute name="edit"
-        default="#{cc.backingBeanFromParentOrCurrent.edit and (cc.entityFromBackingBeanOrAttribute.id==null or (cc.entityFromBackingBeanOrAttribute.id!=null and cc.attrs.allowEdit))}" />
+    <cc:attribute name="validatorId" default="" />  
     <cc:attribute name="minValue" default="0" />
     <cc:attribute name="maxValue" default="" />
     <cc:attribute name="popup" default="false" />
     <cc:attribute name="popupId" default="popup" />
     <cc:attribute name="fkToEntity" default="false" />
     <cc:attribute name="listBean" required="false" />
-    <cc:attribute name="listElements" required="false" />
+    <cc:attribute name="listElements" required="false" />    
+    <cc:attribute name="mapKeyLabel" default="#{messages['commons.name']}" />
+    <cc:attribute name="mapValueLabel" default="#{messages['commons.value']}" />  
+    <cc:attribute name="time" default="false" />
+    <cc:attribute name="datePattern"
+        default="#{cc.attrs.time?paramBean.getProperty('meveo.dateTimeFormat','dd/MM/yyyy HH:mm'):paramBean.getProperty('meveo.dateFormat','dd/MM/yyyy')}" />
+    <cc:attribute name="listType" default="simpleList" />
+    <cc:attribute name="dualListModel" />
+    <cc:attribute name="deleteButton" default="true" />
+    <cc:attribute name="showButtonAddNew" default="true" />
+    <cc:attribute name="valueLabelField" />
+    <cc:attribute name="valueLabelField2" />
+    <cc:attribute name="isMessage" required="false" />
+    <cc:attribute name="messagePrefix" required="false" />
     <cc:attribute name="listenerUpdate" default=""></cc:attribute>
     <cc:attribute name="converter" required="false" />
-    <cc:attribute name="style" default="" />
-    <cc:attribute name="panelStyle" default="" />
-    <cc:attribute name="mapKeyLabel" default="#{messages['commons.name']}" />
-    <cc:attribute name="mapValueLabel" default="#{messages['commons.value']}" />
+    <cc:attribute name="negativeValue" default="false" />
+        
+    <cc:attribute name="showOnlyOnNew" default="false" />
+    <cc:attribute name="showOnlyOnConsult" default="false" />
+    <cc:attribute name="allowEdit" default="true" />
+    <cc:attribute name="edit"
+        default="#{cc.backingBeanFromParentOrCurrent.edit and (cc.entityFromBackingBeanOrAttribute.id==null or (cc.entityFromBackingBeanOrAttribute.id!=null and cc.attrs.allowEdit))}" />
+
+    <!--  Internal attribute - don't use -->
     <cc:attribute name="show"
         default="#{((not cc.attrs.showOnlyOnNew) or (cc.attrs.showOnlyOnNew and cc.attrs.edit and cc.entityFromBackingBeanOrAttribute.id==null)) and ((not cc.attrs.showOnlyOnConsult) or (cc.attrs.showOnlyOnConsult and cc.attrs.edit== false))}" />
-    <cc:attribute name="autocompleteMethod" method-signature="java.lang.String action(java.lang.String)" />
-    <cc:attribute name="listValues" />
-    <cc:attribute name="negativeValue" default="false" />
 
+
+    <!--  Component display layout and style attributes. See decorateFormField for description and use -->
     <cc:attribute name="newLine" />
     <cc:attribute name="displayOneLine" />
     <cc:attribute name="styleClass" />
@@ -74,6 +167,7 @@
     <cc:attribute name="labelWidth" />
     <cc:attribute name="inputWidth" />
 
+    <!--  Internal attribute - don't use -->
     <cc:attribute name="fieldIdPrefix" default="#{cc.attrs.field.concat(cc.attrs.childField!=null?'_'.concat(cc.attrs.childField):'')}" />
 
 </cc:interface>
@@ -81,35 +175,62 @@
 <cc:implementation>
 
     <ui:fragment rendered="#{cc.attrs.show}">
-        <span id="#{cc.clientId}" style="white-space: nowrap"> <!--  Select and entity or a FK to an entity --> <ui:fragment
+        <span id="#{cc.clientId}" style="white-space: nowrap"> 
+        
+            <!--  Select and entity or a FK to an entity --> 
+            <ui:fragment
                 rendered="#{cc.isEntity(cc.attrs.field, cc.attrs.childField, false) or cc.attrs.fkToEntity}">
                 <hf:formEntityField id="entityFieldSingle" fieldItem="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}" edit="#{cc.attrs.edit}"
                     newEntity="#{cc.entityFromBackingBeanOrAttribute.id == null}" rendered="#{cc.attrs.childField==null}" />
                 <hf:formEntityField id="entityFieldWChild" fieldItem="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field][cc.attrs.childField]}" edit="#{cc.attrs.edit}"
                     newEntity="#{cc.entityFromBackingBeanOrAttribute.id == null}" rendered="#{cc.attrs.childField!=null}" />
-            </ui:fragment> <!--  Enter text --> <ui:fragment rendered="#{cc.isText(cc.attrs.field, cc.attrs.childField, false) and !cc.attrs.fkToEntity}">
+            </ui:fragment> 
+            
+            <!--  Enter text --> 
+            <ui:fragment rendered="#{cc.isText(cc.attrs.field, cc.attrs.childField, false) and !cc.attrs.fkToEntity}">
                 <hf:formTextField id="txtFieldSingle" fieldItem="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}" edit="#{cc.attrs.edit}"
                     rendered="#{cc.attrs.childField==null}" />
                 <hf:formTextField id="txtFieldWChild" fieldItem="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field][cc.attrs.childField]}" edit="#{cc.attrs.edit}"
                     rendered="#{cc.attrs.childField!=null}" />
-            </ui:fragment> <!--  Enter map values --> <ui:fragment rendered="#{cc.isMap(cc.attrs.field,false)}">
+            </ui:fragment> 
+            
+            <!--  Enter map values --> 
+            <ui:fragment rendered="#{cc.isMap(cc.attrs.field,false)}">
                 <hf:formMapField fieldItem="#{cc.backingBeanFromParentOrCurrent.mapTypeFieldValues[cc.attrs.field]}" edit="#{cc.attrs.edit}" />
-            </ui:fragment> <!--  If the value binding is a number, display an input number spinner. --> <ui:fragment
-                rendered="#{cc.isInteger(cc.attrs.field,false) or cc.isByte(cc.attrs.field,false) or cc.isLong(cc.attrs.field,false) or cc.isShort(cc.attrs.field,false)}">
+            </ui:fragment> 
+            
+            <!--  If the value binding is a number, display an input number spinner. --> 
+            <ui:fragment rendered="#{cc.isInteger(cc.attrs.field,false) or cc.isByte(cc.attrs.field,false) or cc.isLong(cc.attrs.field,false) or cc.isShort(cc.attrs.field,false)}">
                 <hf:formNumberField fieldItem="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}" edit="#{cc.attrs.edit}" spinner="true" />
-            </ui:fragment> <!--  If the value binding is a rational number, display an input text field. --> <ui:fragment rendered="#{cc.isBigDecimal(cc.attrs.field,false)}">
+            </ui:fragment> 
+            
+            <!--  If the value binding is a rational number, display an input text field. --> 
+            <ui:fragment rendered="#{cc.isBigDecimal(cc.attrs.field,false)}">
                 <hf:formNumberField fieldItem="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}" edit="#{cc.attrs.edit}" spinner="false" size="20" />
-            </ui:fragment> <ui:fragment rendered="#{cc.isDouble(cc.attrs.field,false) or cc.isFloat(cc.attrs.field,false)}">
+            </ui:fragment> 
+            <ui:fragment rendered="#{cc.isDouble(cc.attrs.field,false) or cc.isFloat(cc.attrs.field,false)}">
                 <hf:formNumberField fieldItem="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}" edit="#{cc.attrs.edit}" spinner="false" size="5" />
-            </ui:fragment> <!--  If the value binding is a boolean, display a selectBooleanCheckbox field. --> <ui:fragment rendered="#{cc.isBoolean(cc.attrs.field,cc.attrs.childField, false)}">
+            </ui:fragment> 
+            
+            <!--  If the value binding is a boolean, display a selectBooleanCheckbox field. --> 
+            <ui:fragment rendered="#{cc.isBoolean(cc.attrs.field,cc.attrs.childField, false)}">
                 <hf:formBooleanField fieldItem="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}" edit="#{cc.attrs.edit}" rendered="#{cc.attrs.childField==null}" />
                 <hf:formBooleanField fieldItem="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field][cc.attrs.childField]}" edit="#{cc.attrs.edit}"
                     rendered="#{cc.attrs.childField!=null}" />
-            </ui:fragment> <!-- If the value binding is a date, display a p:calendar field. --> <ui:fragment rendered="#{cc.isDate(cc.attrs.field, cc.attrs.childField, false)}">
+            </ui:fragment> 
+            
+            <!-- If the value binding is a date, display a p:calendar field. --> 
+            <ui:fragment rendered="#{cc.isDate(cc.attrs.field, cc.attrs.childField, false)}">
                 <hf:formDateField fieldItem="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}" edit="#{cc.attrs.edit}" />
-            </ui:fragment> <!--  If the value binding is an enum, display a drop down. --> <ui:fragment rendered="#{cc.isEnum(cc.attrs.field, cc.attrs.childField, false)}">
+            </ui:fragment> 
+            
+            <!--  If the value binding is an enum, display a drop down. --> 
+            <ui:fragment rendered="#{cc.isEnum(cc.attrs.field, cc.attrs.childField, false)}">
                 <hf:formEnumField fieldItem="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}" edit="#{cc.attrs.edit}" />
-            </ui:fragment> <!--  If the value binding is a List, display a panel with list of entities. --> <ui:fragment rendered="#{cc.isList(cc.attrs.field,false)}">
+            </ui:fragment> 
+            
+            <!--  If the value binding is a List, display a panel with list of entities. --> 
+            <ui:fragment rendered="#{cc.isList(cc.attrs.field,false)}">
                 <hf:formListField fieldItem="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}" edit="#{cc.attrs.edit}" />
             </ui:fragment>
         </span>

@@ -5,23 +5,74 @@
     xmlns:p="http://primefaces.org/ui" xmlns:hf="http://java.sun.com/jsf/composite/tags" xmlns:c="http://java.sun.com/jsp/jstl/core" xmlns:s="http://jboss.org/seam/faces"
     xmlns:cc="http://java.sun.com/jsf/composite">
 
+<!--
+    Makes part of "happy faces" component group.
+    A custom component to display a search field with a label and a data entry control 
+    
+    Must be located inside a searchPanel component or have the following attributes provided if used as standalone: backingBean
+    
+    An applicable input control is determined automatically based on a field, of an entity type associated to a backing bean, type. The following field types are supported:
+        Text - as regular text entry, html editor, textarea, list of values, autocomplete and selection via popup
+        Number -  as regular text entry, as a spinner of numbers and a list of values
+        Boolean - as a checkbox
+        Entity - as a list of values or selection via popup search
+        Date - as a calendar
+        Enum - as a list of enum values
+
+     Attributes applicable to all types of fields
+        backingBean - backing bean associated with search. If not provided a backing bean passed to a parent searchPanel will be used.
+        label - a label
+        field - a field for data entry/view. Can contain "." for hierarchy of fields e.g. address.email
+        disabled - is data entry control disabled        
+       
+     Attributes applicable to Text type fields
+        size - a size attribute of inputText control
+        maxlength - a maxlength attribute of inputText control
+        listValues - a map of value (key) and label (value) pairs for picklist          
+        
+     Attributes applicable to Number type fields
+        rangeSearch - search by a range of values
+        
+     Attributes applicable to Boolean type fields        
+        none
+     
+     Attributes applicable to Date type fields
+        rangeSearch - search by a range of dates 
+        datePattern - date pattern to apply in calendar selection. If not provided, time attribute is consulted whether to add time part to a date 
+        time - should a date selection be time specific.          
+     
+     Attributes applicable to Enum type fields             
+        listValues - a map of value (key) and label (value) pairs for picklist
+        
+     Attributes applicable to Entity type fields    
+        size - a size attribute of inputText control
+        popup and popupId - entity search via a popup and associated popup id 
+        listBean - a backing bean to provide a list of entities via listAll method
+        listElements - a list of entities
+        valueLabelField - selected entity's attribute to display when entity is selected. In a list of entities used as a label attribute for list item.
+
+-->
+
 <cc:interface componentType="searchField">
     <cc:attribute name="label" required="false" />
     <cc:attribute name="field" required="true" />
     <cc:attribute name="backingBean" required="false" />
     <cc:attribute name="disabled" default="false" />
     <cc:attribute name="size" default="20" />
+    <cc:attribute name="maxlength" default="40" />
     <cc:attribute name="rangeSearch" default="true" />
-    <cc:attribute name="padding" default="5px" />
-    <cc:attribute name="time" default="false" />
-    <cc:attribute name="childField" required="false" />
     <cc:attribute name="listBean" required="false" />
     <cc:attribute name="valueLabelField" required="false" />
     <cc:attribute name="popup" default="false" />
     <cc:attribute name="popupId" default="popup" />
     <cc:attribute name="listValues" />
     <cc:attribute name="autocompleteMethod" method-signature="java.lang.String action(java.lang.String)" />
+    <cc:attribute name="time" default="false" />
+    <cc:attribute name="datePattern"
+        default="#{cc.attrs.time?paramBean.getProperty('meveo.dateTimeFormat','dd/MM/yyyy HH:mm'):paramBean.getProperty('meveo.dateFormat','dd/MM/yyyy')}" />
 
+
+    <!--  Component display layout and style attributes. See decorateFormField for description and use -->
     <cc:attribute name="newLine" />
     <cc:attribute name="displayOneLine" />
     <cc:attribute name="styleClass" />
@@ -35,6 +86,7 @@
     <cc:attribute name="labelWidth"  />
     <cc:attribute name="inputWidth" />
 
+    <!--  Internal attribute - don't use -->
     <cc:attribute name="fieldIdPrefix" default="#{cc.attrs.field.replace('.','_')}" />
     
 </cc:interface>
@@ -53,7 +105,7 @@
         </ui:fragment> 
         
         <!--  If the value binding is a date, display a p:calendar field. --> 
-        <ui:fragment rendered="#{cc.isDate(cc.attrs.field,cc.attrs.childField,true)}">
+        <ui:fragment rendered="#{cc.isDate(cc.attrs.field,true)}">
             <hf:searchDateField />
         </ui:fragment> 
         

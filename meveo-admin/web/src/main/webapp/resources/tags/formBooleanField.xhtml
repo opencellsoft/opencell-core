@@ -26,13 +26,13 @@
             </c:if>
         </p:selectBooleanCheckbox>
 
-        <ui:fragment rendered="#{not cc.attrs.edit and cc.parent.attrs.isMessage}">
-            <h:outputText rendered="#{cc.attrs.fieldItem != null and cc.attrs.fieldItem.toString() == 'true' and not cc.attrs.edit}" value="#{messages['commons.yes']}"
+        <ui:fragment rendered="#{not cc.attrs.edit and cc.parent.attrs.isMessage and cc.attrs.fieldItem != null}">
+            <h:outputText rendered="#{cc.attrs.fieldItem.toString() == 'true'}" value="#{messages['commons.yes']}"
                 styleClass="field-value" />
-            <h:outputText rendered="#{cc.attrs.fieldItem != null and cc.attrs.fieldItem.toString() == 'false' and not cc.attrs.edit}" value="#{messages['commons.no']}"
+            <h:outputText rendered="#{cc.attrs.fieldItem.toString() == 'false'}" value="#{messages['commons.no']}"
                 styleClass="field-value" />
             <!--                toString was some workaround - todo: maybe works without toString  -->
-            <h:outputText rendered="#{cc.attrs.fieldItem != null and cc.attrs.fieldItem.toString() != 'true' and cc.attrs.fieldItem.toString() != 'false' and not cc.attrs.edit}"
+            <h:outputText rendered="#{cc.attrs.fieldItem.toString() != 'true' and cc.attrs.fieldItem.toString() != 'false'}"
                 value="#{messages[cc.attrs.fieldItem]}" styleClass="field-value" />
         </ui:fragment>
 

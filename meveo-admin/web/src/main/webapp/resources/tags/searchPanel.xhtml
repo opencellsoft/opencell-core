@@ -5,16 +5,31 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core"
     xmlns:p="http://primefaces.org/ui" xmlns:hf="http://java.sun.com/jsf/composite/tags" xmlns:cc="http://java.sun.com/jsf/composite">
 
+<!--
+    Makes part of "happy faces" component group.
+    A custom component to display a search panel wrapping search fields and buttons implementing search and additional navigation functionality 
+ 
+    Attributes
+        backingBean - backing bean associated with search.
+        label - a panel header
+        renderNewButton - should a "create new entity" button be displayed   
+        newButtonView - an outcome view for "create new entity"
+        ajax and ajaxUpdateIds - should search be done in ajax way and a list of component ids to update upon completion
+        renderAdvancedLink - should a "show/hide advanced search fields" button be displayed
+        
+    Facets
+        buttons - additional buttons to include    
+-->
+
+
 <cc:interface componentType="searchFormPanelCC">
     <cc:attribute name="label" default="" />
     <cc:attribute name="backingBean" required="true" />
-    <cc:attribute name="columns" default="2" />
     <cc:attribute name="renderNewButton" type="java.lang.Boolean" default="true" />
     <cc:attribute name="newButtonView" default="#{cc.attrs.backingBean.getNewViewName()}" />
     <cc:attribute name="ajax" default="false" />
     <cc:attribute name="ajaxUpdateIds" required="false" />
-    <cc:attribute name="renderAdvancedButton" default="false" />
-    <cc:attribute name="renderHideAdvancedButton" default="false" />
+    <cc:attribute name="renderAdvancedLink" default="false" />
     <cc:facet name="buttons" />
 </cc:interface>
 

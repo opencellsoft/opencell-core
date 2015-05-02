@@ -40,12 +40,12 @@
 
             <hf:formField label="#{messages['user.roles']}" field="roles"
 				listType="pickUpList" valueLabelField="name" required="true"
-				dualListModel="#{userBean.dualListModel}" newLine="true" />
+				dualListModel="#{userBean.dualListModel}" newLine="true"/>
 
 			<hf:formField label="#{messages['user.providers']}"
 				rendered="#{identity.hasPermission('superAdmin','superAdminManagement')}"
 				field="providers" listType="pickUpList" valueLabelField="code"
-				required="true" dualListModel="#{userBean.providersDualListModel}" newLine="true" />
+				required="true" dualListModel="#{userBean.providersDualListModel}" newLine="true" />                
 		</hf:formPanel>
 		
 	</ui:define>

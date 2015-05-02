@@ -158,14 +158,13 @@
 
 												<hf:formField
 													label="#{messages['customerAccount.paymentMethod']}"
-													field="paymentMethod" valueLabelField="label" isMessage="true" newLine="true"/>
+													field="paymentMethod" newLine="true"/>
 												<hf:formField
 													label="#{messages['customerAccount.creditCategory']}"
-													field="creditCategory" valueLabelField="label" isMessage="true" required="true" />
+													field="creditCategory" required="true" />
 
 												<hf:formField label="#{messages['customerAccount.status']}"
-													field="status" valueLabelField="label" isMessage="true"
-													disabled="true" />
+													field="status" disabled="true" />
 
 												<hf:formField
 													label="#{messages['accountEntity.defaultLevel']}"
@@ -345,12 +344,12 @@
 
 								<hftl:column label="#{messages['accountOperation.debit']}"
 									field="amount"
-									show="#{entity.transactionCategory.toString() == 'DEBIT'}"
+									rendered="#{entity.transactionCategory.toString() == 'DEBIT'}"
 									converterParam="4digits" />
 
 								<hftl:column label="#{messages['accountOperation.credit']}"
 									field="amount"
-									show="#{entity.transactionCategory.toString() == 'CREDIT'}"
+									rendered="#{entity.transactionCategory.toString() == 'CREDIT'}"
 									converterParam="4digits" />
 
 								<hftl:column

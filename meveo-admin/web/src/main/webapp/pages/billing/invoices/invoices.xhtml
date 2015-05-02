@@ -30,12 +30,12 @@
 			<hf:searchField label="#{messages['invoice.invoiceNumber']}"
 				field="invoiceNumber" />
 			<hf:searchField label="#{messages['invoice.productDate']}"
-				field="productDate" />
+				field="productDate"  newLine="true"/>
 			<hf:searchField label="#{messages['invoice.invoiceDate']}"
 				field="invoiceDate" />
 			<hf:searchField label="#{messages['invoice.dueDate']}"
 				field="dueDate" />
-			<hf:searchField label="#{messages['invoice.amount']}" field="amount" />
+			<hf:searchField label="#{messages['invoice.amount']}" field="amount" newLine="true"/>
 			<hf:searchField label="#{messages['invoice.discount']}"
 				field="discount" />
 			<hf:searchField label="#{messages['invoice.amountWithoutTax']}"
@@ -45,7 +45,7 @@
 			<hf:searchField label="#{messages['invoice.amountWithTax']}"
 				field="amountWithTax" />
 			<hf:searchField label="#{messages['invoice.paymentMethod']}"
-				field="paymentMethod" valueLabelField="label" isMessage="true" />
+				field="paymentMethod"/>
 			<hf:searchField label="#{messages['invoice.iban']}" field="iban" />
 			<hf:searchField label="#{messages['invoice.alias']}" field="alias" />
 		</hf:searchPanel>

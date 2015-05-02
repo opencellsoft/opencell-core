@@ -17,7 +17,7 @@
 
 
         <!--  Regular text input field -->
-        <p:inputText id="#{cc.parent.attrs.fieldIdPrefix}_text" value="#{cc.parent.filters[cc.parent.attrs.field]}" size="#{cc.parent.attrs.size}"
+        <p:inputText id="#{cc.parent.attrs.fieldIdPrefix}_text" value="#{cc.parent.filters[cc.parent.attrs.field]}" size="#{cc.parent.attrs.size}" maxlength="#{cc.parent.attrs.maxlength}"
             disabled="#{cc.parent.attrs.disabled}" rendered="#{cc.parent.attrs.listValues == null and cc.attrs.autocompleteMethod == null}" />
 
         <!--  Autocomplete -->

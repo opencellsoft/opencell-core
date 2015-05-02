@@ -23,12 +23,12 @@
         <!--  A range of values -->
         <h:panelGrid columns="4" rendered="#{cc.parent.attrs.rangeSearch}">
             <h:outputText value="#{messages['commons.dateFrom']}" style="padding-right:5px" />
-            <p:calendar id="#{cc.parent.attrs.fieldIdPrefix}_date_fromRange" value="#{cc.parent.filters[cc.parent.fromRangeSearchFilterName]}" pattern="#{cc.parent.datePattern}"
-                disabled="#{cc.parent.attrs.disabled}" />
+            <p:calendar id="#{cc.parent.attrs.fieldIdPrefix}_date_fromRange" value="#{cc.parent.filters[cc.parent.fromRangeSearchFilterName]}" pattern="#{cc.parent.attrs.datePattern}"
+                disabled="#{cc.parent.attrs.disabled}" size="16"/>
 
             <h:outputText value="#{messages['commons.dateTill']}" style="padding:5px" />
-            <p:calendar id="#{cc.parent.attrs.fieldIdPrefix}_date_toRange" value="#{cc.parent.filters[cc.parent.toRangeSearchFilterName]}" pattern="#{cc.parent.datePattern}"
-                disabled="#{cc.parent.attrs.disabled}" />
+            <p:calendar id="#{cc.parent.attrs.fieldIdPrefix}_date_toRange" value="#{cc.parent.filters[cc.parent.toRangeSearchFilterName]}" pattern="#{cc.parent.attrs.datePattern}"
+                disabled="#{cc.parent.attrs.disabled}"  size="16"/>
         </h:panelGrid>
 
     </hftl:decorateFormField>

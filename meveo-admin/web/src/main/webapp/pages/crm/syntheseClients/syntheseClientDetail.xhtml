@@ -3,6 +3,7 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:p="http://primefaces.org/ui"
 	xmlns:hftl="http://hftl.org" xmlns:hf="http://java.sun.com/jsf/composite/tags"
 	template="/layout/template.xhtml">
 
@@ -12,18 +13,17 @@
 
 	<ui:define name="body">
 
-		<h:panelGrid columns="1" width="100%">
+		<h:panel>
 			<div style="font-size: 12px; font-weight: bold;">Bonjour
 			#{synCustomerAccount.name.title.code}
 			#{synCustomerAccount.name.lastName}</div>
 			<div>Bienvenue à votre Espace client personnel. Vous pouvez à
 			tout moment vérifier vos informations et consulter vos dernières
 			factures de télé-services. Simplifiez-vous la vie!</div>
-			<h:panelGroup>
 				<p:tabPanel switchType="client">
 					<p:tab label="#{messages['syntheseClient.tab.compte']}">
-						<hftl:fieldset name="#{messages['Mon compte']}" columns="1">
-							<hftl:panelGroup columns="1">
+						<p:fieldset legend="#{messages['Mon compte']}">
+							<h:panelGrid columns="1">
 								<h:panelGrid columns="2">
 									<strong> <h:outputLabel
 										value="#{messages['Votre référence client :']}" /></strong>
@@ -44,47 +44,42 @@
 								<strong><h:outputLabel
 									value="#{messages['Votre référence bancaire :']}" /></strong>
 
-								<h:panelGrid columns="2">
-									<h:outputLabel value="#{messages['Nom de la banque :']}" />
+								<hftl:decorateFormField label="#{messages['Nom de la banque :']}" >
 									<h:outputText
 										value="#{synBillingAccount.bankCoordinates.bankName}" />
-								</h:panelGrid>
+								</hftl:decorateFormField>
 
-								<h:panelGrid columns="2">
-									<h:outputLabel value="#{messages['Nom du titulaire :']}" />
+								<hftl:decorateFormField label="#{messages['Nom du titulaire :']}" >
 									<h:outputText
 										value="#{synBillingAccount.bankCoordinates.accountOwner}" />
-								</h:panelGrid>
+								</hftl:decorateFormField>
 
-								<h:panelGrid columns="2">
-									<h:outputLabel value="#{messages['Code de la banque :']}" />
+								<hftl:decorateFormField label="#{messages['Code de la banque :']}" >
 									<h:outputText
 										value="#{synBillingAccount.bankCoordinates.bankCode}" />
-								</h:panelGrid>
+								</hftl:decorateFormField>
 								
-								<h:panelGrid columns="2">
-									<h:outputLabel value="#{messages['Code guichet :']}" />
+								<hftl:decorateFormField label="#{messages['Code guichet :']}" >
 									<h:outputText
 										value="#{synBillingAccount.bankCoordinates.branchCode}" />
-								</h:panelGrid>
+								</hftl:decorateFormField>
 
-								<h:panelGrid columns="2">
-									<h:outputLabel value="#{messages['Numéro du compte :']}" />
+								<hftl:decorateFormField label="#{messages['Numéro du compte :']}" >
 									<h:outputText
 										value="#{synBillingAccount.bankCoordinates.accountNumber}" />
-								</h:panelGrid>
+								</hftl:decorateFormField>
 
 								<p:spacer height="10px" />
 
 								<strong><h:outputLabel
 									value="#{messages['Votre solde :']}" /></strong>
-								<s:div>Le solde est de : <h:outputText value="#{customerAccountBalance}" style="font-weight:bold;padding-left:5px;"  converter="bigDecimalConverter" /> €
-								</s:div>
-							</hftl:panelGroup>
-						</hftl:fieldset>
+								<div>Le solde est de : <h:outputText value="#{customerAccountBalance}" style="font-weight:bold;padding-left:5px;"  converter="bigDecimalConverter" /> €
+								</div>
+							</h:panelGrid>
+						</p:fieldset>
 					</p:tab>
 					<p:tab label="#{messages['Mes Factures']}">
-						<hftl:fieldset name="#{messages['Mes Factures']}" columns="1">
+						<p:fieldset legend="#{messages['Mes Factures']}">
 							<hftl:dataList backingBean="#{syntheseClientBean}"
 								dataModel="#{synInvoices}" edit="false">
 								<hftl:column label="#{messages['Votre facture du']}"
@@ -140,17 +135,11 @@
 									<h:commandLink action="#{syntheseClientBean.downloadPdf(entity.invoiceNumber)}" value="#{entity.invoiceNumber}" />
 								</p:column>
 							</hftl:dataList>
-						</hftl:fieldset>
+						</p:fieldset>
 					</p:tab>
 				</p:tabPanel>
-
-			</h:panelGroup>
-		</h:panelGrid>
-
-
-
+		</h:panel>
 
 	</ui:define>
-
 
 </ui:composition>

@@ -34,12 +34,7 @@
 		<tag-name>panelGroup</tag-name>
 		<source>panelGroup.xhtml</source>
 	</tag>	
-	
-	<tag>
-		<tag-name>fieldset</tag-name>
-		<source>fieldset.xhtml</source>
-	</tag>		
-		
+			
 	<tag>
 		<tag-name>decorateFormPanel</tag-name>
 		<source>decorateFormPanel.xhtml</source>

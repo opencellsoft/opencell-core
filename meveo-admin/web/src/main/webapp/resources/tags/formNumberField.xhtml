@@ -10,6 +10,7 @@
     <cc:attribute name="edit" default="true" />
     <cc:attribute name="spinner" default="false" />
     <cc:attribute name="size" default="5" />
+    <cc:attribute name="messagePrefixWithDot" default="#{cc.parent.attrs.messagePrefix==null?'':cc.attrs.messagePrefix.concat('.')}" />
 
 </cc:interface>
 
@@ -21,6 +22,7 @@
         inputStyle="#{cc.parent.attrs.inputStyle}" inputStyleClass="#{cc.parent.attrs.inputStyleClass}" labelWidth="#{cc.parent.attrs.labelWidth}"
         inputWidth="#{cc.parent.attrs.inputWidth}">
 
+        <!--  As a spinner of values -->
         <c:if test="#{cc.attrs.spinner and cc.parent.attrs.listValues == null}">
 
             <c:if test="#{not empty(cc.parent.attrs.maxValue) and !cc.parent.attrs.negativeValue}">
@@ -37,6 +39,8 @@
                     required="#{cc.parent.attrs.required}" maxlength="#{cc.parent.attrs.maxlength}" />
             </c:if>
         </c:if>
+        
+        <!-- As a text field -->
         <c:if test="#{!cc.attrs.spinner and cc.parent.attrs.listValues == null}">
             <p:inputText rendered="#{cc.attrs.edit}" id="#{cc.parent.attrs.fieldIdPrefix}_number" disabled="#{cc.parent.attrs.disabled}" value="#{cc.attrs.fieldItem}"
                 required="#{cc.parent.attrs.required}" size="#{cc.attrs.size}" maxlength="#{cc.parent.attrs.maxlength}">
@@ -47,6 +51,7 @@
 
         </c:if>
 
+        <!--  As a list of values -->
         <c:if test="#{ cc.parent.attrs.listValues != null}">
             <p:selectOneMenu id="#{cc.parent.attrs.fieldIdPrefix}_number_list" value="#{cc.attrs.fieldItem}" required="#{cc.parent.attrs.required}"
                 disabled="#{cc.parent.attrs.disabled or not cc.attrs.edit}">
@@ -62,7 +67,7 @@
                 <f:converter converterId="#{cc.parent.attrs.converter}" />
             </c:if>
         </h:outputText>
-        <h:outputText rendered="#{not cc.attrs.edit and cc.parent.attrs.isMessage}" value="#{messages[cc.parent.attrs.messagePrefixWithDot.concat(cc.attrs.fieldItem)]}"
+        <h:outputText rendered="#{not cc.attrs.edit and cc.parent.attrs.isMessage}" value="#{messages[cc.attrs.messagePrefixWithDot.concat(cc.attrs.fieldItem)]}"
             styleClass="field-value" />
 
         <cc:insertChildren />
@@ -118,7 +123,7 @@
     <!--                     <f:converter converterId="#{cc.parent.attrs.converter}" /> -->
     <!--                 </c:if> -->
     <!--             </h:outputText> -->
-    <!--             <h:outputText rendered="#{not cc.attrs.edit and cc.parent.attrs.isMessage}" value="#{messages[cc.parent.attrs.messagePrefixWithDot.concat(cc.attrs.fieldItem)]}" -->
+    <!--             <h:outputText rendered="#{not cc.attrs.edit and cc.parent.attrs.isMessage}" value="#{messages[cc.attrs.messagePrefixWithDot.concat(cc.attrs.fieldItem)]}" -->
     <!--                 styleClass="field-value" /> -->
 
     <!--             <cc:insertChildren /> -->

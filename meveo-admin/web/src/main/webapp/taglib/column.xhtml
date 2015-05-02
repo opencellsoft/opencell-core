@@ -114,6 +114,7 @@
 			<c:if test="#{sort}">
 				<f:attribute name="field" value="#{field}" />
                 <f:attribute name="sortable" value="#{true}" />
+                <f:attribute name="sortBy" value="#{null}" />
 			</c:if>
 			<c:if test="#{isMessage}">
 				<h:outputText
@@ -171,10 +172,14 @@
 			<c:if test="#{sort}">
 			   <c:choose>
 			   		<c:when test="${sortByField}">
-						<f:attribute name="sortBy" value="#{field}" />
+						<f:attribute name="field" value="#{field}" />
+                        <f:attribute name="sortable" value="#{true}" />
+                        <f:attribute name="sortBy" value="#{null}" />
 					</c:when>    
 			    	<c:otherwise>
-						<f:attribute name="sortBy" value="#{field}.#{childField}" />
+						<f:attribute name="field" value="#{field}.#{childField}" />
+                        <f:attribute name="sortable" value="#{true}" />
+                        <f:attribute name="sortBy" value="#{null}" />
 					</c:otherwise>
 			   </c:choose>
 			</c:if>

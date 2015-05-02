@@ -22,8 +22,8 @@
 			<custom:column label="#{messages['accountOperation.occDescription']}" fiefield="accountOperation"	childFieldld="occDescription"/>
 			<custom:column label="#{messages['accountOperation.transactionDate']}" field="accountOperation"	childField="transactionDate" />						
 			<custom:column label="#{messages['accountOperation.dueDate']}" field="accountOperation"	childField="dueDate" />
-			<custom:column label="#{messages['accountOperation.debit']}" field="accountOperation"	childField="amount" show="#{entity.accountOperation.transactionCategory.toString() == 'DEBIT'}" />						
-			<custom:column label="#{messages['accountOperation.credit']}" field="accountOperation"	childField="amount" show="#{entity.accountOperation.transactionCategory.toString() == 'CREDIT'}" />
+			<custom:column label="#{messages['accountOperation.debit']}" field="accountOperation"	childField="amount" rendered="#{entity.accountOperation.transactionCategory.toString() == 'DEBIT'}" />						
+			<custom:column label="#{messages['accountOperation.credit']}" field="accountOperation"	childField="amount" rendered="#{entity.accountOperation.transactionCategory.toString() == 'CREDIT'}" />
 	    	<custom:column label="#{messages['accountOperation.matchingStatus']}" field="accountOperation"	childField="matchingStatus" />
 			<p:column styleClass="actions-column">
             	<f:facet name="header">

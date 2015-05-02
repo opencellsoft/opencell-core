@@ -14,29 +14,25 @@
     	
 		<hf:formPanel label="#{messages['report.reportPanel']}" backingBean="#{reportBean}">
 			<hf:formField label="#{messages['report.name']}" field="name" useConverter="false"/>
-			<hftl:panelGroup columns="2">	
 				<hf:formField label="#{messages['report.startDate']}" field="startDate" isDate="true"/>
 				<hf:formField label="#{messages['report.endDate']}" field="endDate" isDate="true"/>
-			</hftl:panelGroup>
 			<hf:formField label="#{messages['report.nextExecution']}" field="schedule" isDate="true"/>
 			<hf:formField label="#{messages['report.frequency']}" field="frequency" />
-			<hftl:panelGroup columns="2">	
 				<hf:formField label="#{messages['report.executionHour']}" field="executionHour" />
 				<hf:formField label="#{messages['report.executionMinutes']}" field="executionMinutes" />
 				<hf:formField label="#{messages['report.executionIntervalMinutes']}" field="executionIntervalMinutes" />
 				<hf:formField label="#{messages['report.executionIntervalSeconds']}" field="executionIntervalSeconds" />
 				<hf:formField label="#{messages['report.executionDayOfWeek']}" field="executionDayOfWeek" />
-				<hf:formField label="#{messages['report.executionDayOfMonth']}" field="executionDayOfMonth" />
-				</hftl:panelGroup>
 			<hf:formField  label="#{messages['report.emails']}" field="emails" isList="true" childField="address" listService="#{emailService}" listType="pickUpList" />	
 			<hf:formField label="#{messages['report.outputFormat']}" field="outputFormat" required="true"/>
 		
+          <f:facet name="buttons">
 			<h:commandButton rendered="#{edit}" value="#{messages['commons.addNew']}" action="addNew"/>
 		
 			<h:commandButton rendered="#{edit}" id="executeReportNow" value="#{messages['report.generateReport']}" action="#{reportBean.executeReport}">
 				<f:attribute  name="backView" value="#{backView}" />
 			</h:commandButton>
-		
+		  </f:facet>
 		</hf:formPanel>
       
        

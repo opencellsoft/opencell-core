@@ -11,6 +11,25 @@
 	xmlns:hf="http://java.sun.com/jsf/composite/tags"
 	xmlns:cc="http://java.sun.com/jsf/composite">
 
+<!--
+    Makes part of "happy faces" component group.
+    A custom component to display default data entry and navigation related buttons in a formPanel.
+    
+    Must be located inside a formPanel component.   
+ 
+    Attributes
+        edit - edit or view mode
+        ajaxSubmit - should form submit be done in ajax way
+        killConversationOnSave - should conversation be killed uppon saving
+        killConversationOnBack - should conversation be killed uppon navigating back
+        showBackButton - show a default "navigate back" button
+        showEditButton - show a default "edit" button
+        showEnableDisableButton - show a default "enable/disable" button
+        useCustomIdParam and objectIdParamName - should a custom parameter id instead of a default "objectId" be used for navigation 
+        
+-->
+
+
 <cc:interface>
 	<cc:attribute name="backingBean" required="true"
 		type="org.meveo.admin.action.BaseBean" />

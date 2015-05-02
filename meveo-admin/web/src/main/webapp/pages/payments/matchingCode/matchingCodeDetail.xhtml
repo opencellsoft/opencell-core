@@ -14,16 +14,12 @@
 	<ui:define name="body">	
 	<p:panel>				
 				<hf:formPanel  showFormButtons ="#{false}" label="#{messages['matchingCode.panel']}" backingBean="#{matchingCodeBean}">
-					<hftl:panelGroup columns="2">
 						<hf:formField label="#{messages['matchingCode.matchingDate']}" field="matchingDate"  />	  
 						<hf:formField label="#{messages['matchingCode.matchingType']}" field="matchingType"  childField="label" isMessage="true" />
 						<hf:formField label="#{messages['matchingCode.matchingAmountDebit']}" field="matchingAmountDebit"  />
-						<hf:formField label="#{messages['matchingCode.matchingAmountCredit']}" field="matchingAmountCredit"  />																		                  																
-					</hftl:panelGroup>		
-					<hftl:panelGroup columns="2">										
+						<hf:formField label="#{messages['matchingCode.matchingAmountCredit']}" field="matchingAmountCredit"  />																		                  																						
 					<p:commandButton value="#{messages['action.back']}"	 action="#{matchingCodeBean.backToCA()}"/>						
 					<p:commandButton value="#{messages['matchingCode.button.unmatching']}"	 action="#{matchingCodeBean.unmatching()}"/>
-					</hftl:panelGroup>
 				</hf:formPanel>
 				<p:panel label="#{messages['customerAccount.operations']}">
 					<hftl:dataList backingBean="#{matchingCodeBean}"

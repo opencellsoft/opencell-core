@@ -21,7 +21,7 @@
 	
 		<hf:formPanel label="#{messages['accountOperation.form']}" backingBean="#{otherCreditAndChargeBean}" killConversationOnSave="#{otherCreditAndChargeBean.customerAccount==null}" killConversationOnBack="#{otherCreditAndChargeBean.customerAccount==null}">				   		
        		<hf:formField label="#{messages['accountOperation.customerAccount']}" field="customerAccount" valueLabelField="code" edit="false" />
-	       	<hf:formField label="#{messages['accountOperation.transactionCategory']}" field="transactionCategory" valueLabelField="label" edit="false" isMessage="true" />	       	  
+	       	<hf:formField label="#{messages['accountOperation.transactionCategory']}" field="transactionCategory" edit="false" />	       	  
 	      	<hf:formField label="#{messages['accountOperation.occCode']}" field="occCode" edit="false" />
 	      	<hf:formField label="#{messages['accountOperation.accountCode']}" field="accountCode" edit="false" />			       
 	      	<hf:formField label="#{messages['accountOperation.occDescription']}" required="true" field="occDescription" useConverter="false" size="50" maxlength="50"/>         						      

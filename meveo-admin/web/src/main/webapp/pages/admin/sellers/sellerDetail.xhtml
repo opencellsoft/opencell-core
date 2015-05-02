@@ -104,7 +104,6 @@
 						
 					</p:tab>
 					<!-- <p:tab title="#{messages['billingAccount.tab.information']}">
-						<hftl:panelGroup columns="1">
 							<hf:formField label="#{messages['address.address1']}"
 								field="address" id="address1" childField="address1"
 								popup="false" size="80" maxlength="80" />
@@ -114,9 +113,6 @@
 							<hf:formField label="#{messages['address.address3']}"
 								field="address" id="address3" childField="address3"
 								popup="false" size="80" maxlength="80" />
-						</hftl:panelGroup>
-
-						<hftl:panelGroup columns="2">
 							<hf:formField label="#{messages['address.zipCode']}"
 								field="address" id="zipCode" childField="zipCode" popup="false"
 								required="true" maxlength="10" size="10" />
@@ -124,10 +120,9 @@
 								field="address" id="city" childField="city" popup="false"
 								required="true" maxlength="50" />
 							<hf:formField label="#{messages['address.country']}"
-								embedded="true" field="address" childField="country"
+								fkToEntity="true" field="address" childField="country"
 								valueLabelField="descriptionEn" valueField="countryCode"
 								listBean="#{countryBean}"/>
-						</hftl:panelGroup>
 
 					</p:tab> -->
 				</p:tabView>

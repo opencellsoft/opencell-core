@@ -525,7 +525,7 @@ public class QueryBuilder {
 	public Query getQuery(EntityManager em) {
 		applyPagination(paginationSortAlias);
 		Logger log = LoggerFactory.getLogger(getClass());
-		log.error("AKK sql is {}", getSqlString());
+
 		Query result = em.createQuery(q.toString());
 		applyPagination(result);
 

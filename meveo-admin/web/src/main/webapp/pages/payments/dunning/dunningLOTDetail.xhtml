@@ -13,13 +13,12 @@
 	<ui:define name="body">	
 	<p:panel>				
 				<hf:formPanel  showFormButtons ="#{false}" label="#{messages['dunningLOT.panel']}" backingBean="#{dunningLOTBean}">
-				
-					<hftl:panelGroup columns="2">							 
+							 
 						<hf:formField label="#{messages['dunningLOT.fileName']}" field="fileName"  />
 						<hf:formField label="#{messages['dunningLOT.actionType']}" field="actionType"  />
-																							                  															
-					</hftl:panelGroup>												
-					<h:commandButton value="#{messages['action.back']}"	 onclick="javascript:history.back()"/>											
+                    <f:facet name="buttons">											
+					   <h:commandButton value="#{messages['action.back']}"	 onclick="javascript:history.back()"/>
+                    </f:facet>											
 				</hf:formPanel>
 				<custom:listPanel label="#{messages['dunningLOT.actionsDunning']}">
 					<custom:dataList backingBean="#{dunningLOTBean}"
