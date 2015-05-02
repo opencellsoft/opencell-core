@@ -33,8 +33,7 @@
 			<hf:searchField label="#{messages['accountEntity.externalRef2']}"
 				field="externalRef2" />
 
-			<p:panelGrid columns="2">
-                <p:outputLabel for="accountType" value="#{messages['customerSearch.type']}"></p:outputLabel>
+			<hf:formDecorateField fieldId="accountType" label="#{messages['customerSearch.type']}">
                 <p:selectOneMenu id="accountType" value="#{customerSearchBean.filters['type_class']}">
                     <f:selectItem itemLabel="" />
                     <f:selectItem itemLabel="#{messages['customer.type']}" itemValue="org.meveo.model.crm.Customer" />
@@ -42,7 +41,7 @@
                     <f:selectItem itemLabel="#{messages['billingAccount.type']}" itemValue="org.meveo.model.billing.BillingAccount" />
                     <f:selectItem itemLabel="#{messages['userAccount.type']}" itemValue="org.meveo.model.billing.UserAccount" />
                 </p:selectOneMenu>
-            </p:panelGrid>
+            </hf:formDecorateField>
 		</hf:searchPanel>
 
 		<hftl:dataList backingBean="#{customerSearchBean}"

@@ -10,7 +10,7 @@
     <ui:define name="body">
 
         <hftl:entityPopup id="searchCounterTemplatePopup" header="#{messages['counterTemplate.title']}"
-            updateField=":instantMessagingNotificationForm:formId:counterTemplateSelectedId:counterTemplateSelectedId"
+            updateField=":instantMessagingNotificationForm:formId:counterTemplateSelectedId"
             selection="#{instantMessagingNotificationBean.entity.counterTemplate}" backingBean="#{counterTemplateBean}"
             searchField1Label="#{messages['businessEntity.code']}" searchField1="code" column1Label="#{messages['businessEntity.code']}"
             column1="code" column2Label="#{messages['businessEntity.description']}" column2="description"
@@ -35,7 +35,7 @@
             <hf:formField label="#{messages['entity.instantMessagingNotification.message']}" field="message" textArea="true" maxlength="2000"
                 required="true" />
 
-            <hf:formEntityField id="counterTemplateSelectedId" label="#{messages['counterTemplate.title']}" field="counterTemplate" childField="code"
+            <hf:formField id="counterTemplateSelectedId" label="#{messages['counterTemplate.title']}" field="counterTemplate" valueLabelField="code"
                 popup="true" popupId="searchCounterTemplatePopup" clearButton="true" required="false" />
         </hf:formPanel>
 

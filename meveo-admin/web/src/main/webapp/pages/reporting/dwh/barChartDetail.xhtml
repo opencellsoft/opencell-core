@@ -17,7 +17,7 @@
 
 		<hftl:entityPopup id="searchMeasurableQuantity"
 			header="#{messages['measurableQuantity.popup.header']}"
-			updateField=":chartFormPanel:formChat:measurableQuantityId:measurableQuantityId"
+			updateField=":chartFormPanel:formChat:measurableQuantityId"
 			selection="#{barChartBean.entity.measurableQuantity}"
 			backingBean="#{measurableQuantityBean}"
 			searchField1Label="#{messages['businessEntity.code']}"
@@ -28,7 +28,7 @@
 
 		<hftl:entityPopup id="searchRole"
 			header="#{messages['role.userRolePanel']}"
-			updateField=":chartFormPanel:formChat:roleId:roleId"
+			updateField=":chartFormPanel:formChat:roleId"
 			selection="#{barChartBean.entity.role}" backingBean="#{userRoleBean}"
 			searchField1Label="#{messages['commons.name']}" searchField1="name"
 			column1Label="#{messages['commons.name']}" column1="name"
@@ -41,13 +41,13 @@
 
 			<hf:formField label="#{messages['businessEntity.code']}" field="code" />
 
-			<hf:formEntityField id="measurableQuantityId"
+			<hf:formField id="measurableQuantityId"
 				label="#{messages['chart.measurableQuantity']}"
-				field="measurableQuantity" childField="code" required="true"
+				field="measurableQuantity" valueLabelField="code" required="true"
 				popup="true" popupId="searchMeasurableQuantity" />
 
-			<hf:formEntityField id="roleId" label="#{messages['chart.role']}"
-				field="role" childField="name" required="false" popup="true"
+			<hf:formField id="roleId" label="#{messages['chart.role']}"
+				field="role" valueLabelField="name" required="false" popup="true"
 				popupId="searchRole" rendered="#{identity.hasPermission('administration','administrationVisualization')}" />
 
 			<hf:formField label="#{messages['chart.style']}" field="style" />
@@ -86,7 +86,7 @@
 
 			<p:outputPanel id="chartPreview"
 				rendered="#{barChartBean.chartEntityModel.model != null}">
-				<p:barChart value="#{barChartBean.chartEntityModel.model}"
+				<p:chart type="bar" model="#{barChartBean.chartEntityModel.model}"
 					fill="#{barChartBean.chartEntityModel.barChart.filled}"
 					legendPosition="#{barChartBean.chartEntityModel.barChart.legendPosition}"
 					barPadding="#{barChartBean.chartEntityModel.barChart.barPadding}"

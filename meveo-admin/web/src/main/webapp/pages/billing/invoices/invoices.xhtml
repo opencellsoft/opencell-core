@@ -23,9 +23,9 @@
 
 		<hf:searchPanel label="#{messages['invoice.search']}"
 			backingBean="#{invoiceListBean}" columns="3">
-			<hf:searchField listBean=""
+			<hf:searchField 
 				label="#{messages['invoice.billingAccount']}" field="billingAccount"
-				childField="code" popup="true" popupId="searchBillingAccountPopup"
+				valueLabelField="code" popup="true" popupId="searchBillingAccountPopup"
 				clearButton="true" />
 			<hf:searchField label="#{messages['invoice.invoiceNumber']}"
 				field="invoiceNumber" />
@@ -45,7 +45,7 @@
 			<hf:searchField label="#{messages['invoice.amountWithTax']}"
 				field="amountWithTax" />
 			<hf:searchField label="#{messages['invoice.paymentMethod']}"
-				field="paymentMethod" childField="label" isMessage="true" />
+				field="paymentMethod" valueLabelField="label" isMessage="true" />
 			<hf:searchField label="#{messages['invoice.iban']}" field="iban" />
 			<hf:searchField label="#{messages['invoice.alias']}" field="alias" />
 		</hf:searchPanel>

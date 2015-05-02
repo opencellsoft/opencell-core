@@ -35,9 +35,9 @@
 				label="#{messages['billingAccount.electronicBilling']}"
 				field="electronicBilling" />
 			<hf:searchField label="#{messages['billingAccount.countryCode']}"
-				field="tradingCountry" childField="prDescription" />
+				field="tradingCountry.country.countryCode" />
 			<hf:searchField label="#{messages['billingAccount.languageCode']}"
-				field="tradingLanguage" childField="prDescription" />
+				field="tradingLanguage.language.languageCode" />
 		</hf:searchPanel>
 
 		<hftl:dataList label="#{messages['billingAccount.title']}"

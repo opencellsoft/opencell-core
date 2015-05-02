@@ -15,7 +15,7 @@
 			header="#{messages['invoiceSubCategory.panel']}"
 			backingBean="#{invoiceSubCategoryBean}"
 			selection="#{oneShotChargeTemplateBean.entity.invoiceSubCategory}"
-			updateField=":formPanel:formId:tabView:invoiceSubCategorySelectedId:invoiceSubCategorySelectedId"
+			updateField=":formPanel:formId:tabView:invoiceSubCategorySelectedId"
 			searchField1Label="#{messages['invoiceSubCategory.code']}"
 			searchField1="code"
 			searchField2Label="#{messages['invoiceSubCategory.description']}"
@@ -32,14 +32,8 @@
 			<p:tabView id="tabView">
 
 				<p:tab title="#{messages['customer.tab.information']}">
-					<p:panelGrid styleClass="form-panel-fields" columns="2">
 						<hf:formField label="#{messages['chargeTemplate.code']}"
 							field="code" required="true" validateUnique="true" />
-						<hf:languageFields />
-						<hf:formField label="#{messages['enableEntity.disabled']}"
-							field="disabled" isMessage="true" showOnlyOnConsult="true"/>
-						<hf:formField label="#{messages['chargeTemplate.amountEditable']}"
-							field="amountEditable" />
 						<hf:formField label="#{messages['oneShotChargeTemplate.type']}"
 							field="oneShotChargeTemplateType" required="true" />
 						<hf:formField
@@ -54,25 +48,34 @@
 						<hf:formField label="#{messages['chargeTemplate.unitNbDecimal']}"
 							field="unitNbDecimal" />
 
-						<hf:formField label="#{messages['menu.triggeredEdrTemplates']}"
-							field="edrTemplates" listType="pickUpList" childField="code"
-							dualListModel="#{oneShotChargeTemplateBean.edrTemplatesModel}" />
 
-						<hftl:panelGroup columns="2">
-							<hf:formEntityField id="invoiceSubCategorySelectedId"
+						<hf:formField id="invoiceSubCategorySelectedId"
 								label="#{messages['charge.subCategory']}"
-								field="invoiceSubCategory" childField="code" required="true"
+							field="invoiceSubCategory" valueLabelField="code" required="true"
 								popup="true" popupId="searchInvoiceSubCategoryPopup" />
-							<hf:formEntityField id="invoiceSubCategoryId"
+						<hf:formField id="invoiceSubCategoryId"
 								label="#{messages['invoiceSubCategory.description']}"
-								field="invoiceSubCategory" childField="description"
+							field="invoiceSubCategory" valueLabelField="description"
 								show="#{!invoiceSubCategoryBean.edit}" />
-						</hftl:panelGroup>
 
+                        <hf:languageFields />
+                        
+
+                        <hf:formField label="#{messages['chargeTemplate.amountEditable']}"
+                            field="amountEditable" /> 
+                            
 						<hf:formField
 							label="#{messages['oneShotChargeTemplate.immediateInvoicing']}"
 							field="immediateInvoicing" />
-					</p:panelGrid>
+                            
+                        <hf:formField label="#{messages['enableEntity.disabled']}"
+                            field="disabled" isMessage="true" showOnlyOnConsult="true"/>
+                            
+                        <hf:formField label="#{messages['menu.triggeredEdrTemplates']}"
+                            field="edrTemplates" listType="pickUpList" valueLabelField="code"
+                            dualListModel="#{oneShotChargeTemplateBean.edrTemplatesModel}" newLine="true" />
+
+
 				</p:tab>
 
 				<p:tab title="#{messages['customFieldTemplate.panel']}">

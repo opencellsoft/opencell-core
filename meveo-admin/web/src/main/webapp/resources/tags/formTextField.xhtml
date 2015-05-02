@@ -1,0 +1,172 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:p="http://primefaces.org/ui" xmlns:c="http://java.sun.com/jsp/jstl/core" xmlns:cc="http://java.sun.com/jsf/composite" xmlns:o="http://omnifaces.org/ui"
+    xmlns:hftl="http://hftl.org">
+
+<cc:interface>
+
+    <cc:attribute name="fieldItem" required="true" />
+    <cc:attribute name="edit" default="true" />
+    <cc:attribute name="action" method-signature="java.lang.String action(java.lang.String)" />
+
+</cc:interface>
+
+<cc:implementation>
+
+    <hftl:decorateFormField
+        fieldId="#{cc.parent.attrs.fieldIdPrefix}_text#{cc.attrs.autocompleteMethod!=null?'_ac':cc.parent.attrs.textArea?'_area':cc.parent.attrs.isHtml?'_html':cc.parent.attrs.listValues != null?'_list':cc.parent.attrs.popup?'_pp':''}#{cc.attrs.edit?'':'_view'}"
+        label="#{cc.parent.attrs.label}" componentWidth="#{cc.parent.attrs.componentWidth}" newLine="#{cc.parent.attrs.newLine}" displayOneLine="#{cc.parent.attrs.displayOneLine}"
+        styleClass="#{cc.parent.attrs.styleClass}" style="#{cc.parent.attrs.style}" labelStyle="#{cc.parent.attrs.labelStyle}" labelStyleClass="#{cc.parent.attrs.labelStyleClass}"
+        inputStyle="#{cc.parent.attrs.inputStyle}" inputStyleClass="#{cc.parent.attrs.inputStyleClass}" labelWidth="#{cc.parent.attrs.labelWidth}"
+        inputWidth="#{cc.parent.attrs.inputWidth}">
+
+        <h:panelGroup
+            rendered="#{not cc.parent.attrs.isHtml and not cc.parent.attrs.textArea and cc.parent.attrs.listValues == null and cc.attrs.autocompleteMethod == null and not cc.parent.attrs.popup and cc.attrs.edit}">
+
+            <p:inputText id="#{cc.parent.attrs.fieldIdPrefix}_text" value="#{cc.attrs.fieldItem}" disabled="#{cc.parent.attrs.disabled}" required="#{cc.parent.attrs.required}"
+                size="#{cc.parent.attrs.size}" maxlength="#{cc.parent.attrs.maxlength}">
+
+                <c:if test="#{not empty cc.parent.attrs.converter}">
+                    <f:converter converterId="#{cc.parent.attrs.converter}" />
+                </c:if>
+                <c:if test="#{cc.parent.attrs.useConverter}">
+                    <f:converter converterId="stringConverter" />
+                </c:if>
+                <c:if test="#{cc.parent.attrs.validateEmail}">
+                    <!-- <f:validateRegex pattern="([^.@]+)(\.[^.@]+)*@([^.@]+\.)+([^.@]+)"></f:validateRegex> -->
+                    <o:validator validatorId="javax.faces.RegularExpression" pattern="([^.@]+)(\.[^.@]+)*@([^.@]+\.)+([^.@]+)" message="#{messages['validator.email.invalid']}" />
+                </c:if>
+                <c:if test="#{not empty cc.parent.attrs.validatorId}">
+                    <f:validator validatorId="#{cc.parent.attrs.validatorId}" />
+                </c:if>
+                <c:if test="#{cc.parent.attrs.validateUnique}">
+                    <f:validator validatorId="uniqueConstraintValidator" />
+                    <f:attribute name="className" value="#{cc.parent.entityFromBackingBeanOrAttribute.getClass().getSimpleName()}" />
+                    <f:attribute name="fieldName" value="#{cc.parent.attrs.field}" />
+                    <f:attribute name="idValue" value="#{cc.parent.entityFromBackingBeanOrAttribute.getId()}" />
+                </c:if>
+                <c:if test="#{cc.parent.attrs.validateRib}">
+                    <f:validator validatorId="ribValidator" />
+                    <f:attribute name="bankCodeId" value="#{rich:clientId('bankCode')}" />
+                    <f:attribute name="branchCodeId" value="#{rich:clientId('branchCode')}" />
+                    <f:attribute name="accountNumberId" value="#{rich:clientId('accountNumber')}" />
+                    <f:attribute name="keyId" value="#{rich:clientId('key')}" />
+                </c:if>
+            </p:inputText>
+        </h:panelGroup>
+        <h:panelGroup rendered="#{cc.attrs.autocompleteMethod!=null and  cc.attrs.edit}">
+            <p:autoComplete id="#{cc.parent.attrs.fieldIdPrefix}_text_ac" value="#{cc.attrs.fieldItem}" disabled="#{cc.parent.attrs.disabled}"
+                required="#{cc.parent.attrs.required}" size="#{cc.parent.attrs.size}" maxlength="#{cc.parent.attrs.maxlength}" dropdown="true"
+                completeMethod="#{cc.attrs.autocompleteMethod}" />
+        </h:panelGroup>
+        <h:panelGroup rendered="#{cc.parent.attrs.textArea and cc.attrs.edit}">
+            <p:inputTextarea id="#{cc.parent.attrs.fieldIdPrefix}_text_area" disabled="#{cc.parent.attrs.disabled}" value="#{cc.attrs.fieldItem}"
+                required="#{cc.parent.attrs.required}" cols="#{cc.parent.attrs.cols}" rows="#{cc.parent.attrs.rows}" maxlength="#{cc.parent.attrs.maxlength}" />
+        </h:panelGroup>
+        <h:panelGroup rendered="#{cc.parent.attrs.isHtml and cc.attrs.edit}">
+            <p:editor id="#{cc.parent.attrs.fieldIdPrefix}_text_html" disabled="#{cc.parent.attrs.disabled}" value="#{cc.attrs.fieldItem}" required="#{cc.parent.attrs.required}"></p:editor>
+        </h:panelGroup>
+        <h:panelGroup rendered="#{cc.parent.attrs.listValues != null and cc.attrs.edit}">
+            <p:selectOneMenu id="#{cc.parent.attrs.fieldIdPrefix}_text_list" value="#{cc.attrs.fieldItem}" required="#{cc.parent.attrs.required}"
+                disabled="#{cc.parent.attrs.disabled}">
+                <f:selectItem itemValue="#{null}" itemLabel="" />
+                <f:selectItems value="#{cc.parent.attrs.listValues.entrySet()}" var="listVal" itemValue="#{listVal.key}" itemLabel="#{listVal.value}" />
+            </p:selectOneMenu>
+        </h:panelGroup>
+
+        <h:panelGroup rendered="#{cc.parent.attrs.popup and cc.attrs.edit}">
+            <p:inputText id="#{cc.parent.attrs.fieldIdPrefix}_text_pp" value="#{cc.attrs.fieldItem}" required="#{cc.parent.attrs.required}" size="#{cc.parent.attrs.size}"
+                disabled="true" />
+            <p:commandButton id="selectLink" onclick="PF('dlg_#{cc.parent.attrs.popupId}').show()" icon="ui-icon-search" />
+            <p:tooltip for="selectLink" value="#{messages['commons.search']}" />
+        </h:panelGroup>
+
+        <h:outputText
+            id="#{cc.parent.attrs.fieldIdPrefix}_text#{cc.attrs.autocompleteMethod!=null?'_ac':cc.parent.attrs.textArea?'_area':cc.parent.attrs.isHtml?'_html':cc.parent.attrs.listValues != null?'_list':cc.parent.attrs.popup?'_pp':''}_view"
+            value="#{cc.attrs.fieldItem}" styleClass="field-value" rendered="#{!cc.attrs.edit}" />
+
+        <cc:insertChildren />
+    </hftl:decorateFormField>
+
+
+    <!--     <h:panelGroup layout="block" styleClass="formFieldGroup #{cc.parent.attrs.styleClass}" style="width:#{cc.parent.attrs.componentWidth}%; #{cc.parent.attrs.style}"> -->
+    <!--         <p:outputLabel -->
+    <!--             for="#{cc.parent.attrs.fieldIdPrefix}_text#{cc.attrs.autocompleteMethod!=null?'_ac':cc.parent.attrs.textArea?'_area':cc.parent.attrs.isHtml?'_html':cc.parent.attrs.listValues != null?'_list':cc.parent.attrs.popup?'_pp':''}#{cc.attrs.edit?'':'_view'}" -->
+    <!--             value="#{cc.parent.attrs.label}" /> -->
+    <!--         <h:panelGroup layout="block" styleClass="#{cc.parent.attrs.fieldStyle}  #{cc.parent.attrs.inputStyleClass}" -->
+    <!--             style="width:#{cc.parent.attrs.inputWidth}%; #{cc.parent.attrs.inputStyle}"> -->
+
+    <!--             <h:panelGroup -->
+    <!--                 rendered="#{not cc.parent.attrs.isHtml and not cc.parent.attrs.textArea and cc.parent.attrs.listValues == null and cc.attrs.autocompleteMethod == null and not cc.parent.attrs.popup and cc.attrs.edit}"> -->
+
+    <!--                 <p:inputText id="#{cc.parent.attrs.fieldIdPrefix}_text" value="#{cc.attrs.fieldItem}" disabled="#{cc.parent.attrs.disabled}" required="#{cc.parent.attrs.required}" -->
+    <!--                     size="#{cc.parent.attrs.size}" maxlength="#{cc.parent.attrs.maxlength}"> -->
+
+    <!--                     <c:if test="#{not empty cc.parent.attrs.converter}"> -->
+    <!--                         <f:converter converterId="#{cc.parent.attrs.converter}" /> -->
+    <!--                     </c:if> -->
+    <!--                     <c:if test="#{cc.parent.attrs.useConverter}"> -->
+    <!--                         <f:converter converterId="stringConverter" /> -->
+    <!--                     </c:if> -->
+    <!--                     <c:if test="#{cc.parent.attrs.validateEmail}"> -->
+    <!--                         <f:validateRegex pattern="([^.@]+)(\.[^.@]+)*@([^.@]+\.)+([^.@]+)"></f:validateRegex> -->
+    <!--                         <o:validator validatorId="javax.faces.RegularExpression" pattern="([^.@]+)(\.[^.@]+)*@([^.@]+\.)+([^.@]+)" message="#{messages['validator.email.invalid']}" /> -->
+    <!--                     </c:if> -->
+    <!--                     <c:if test="#{not empty cc.parent.attrs.validatorId}"> -->
+    <!--                         <f:validator validatorId="#{cc.parent.attrs.validatorId}" /> -->
+    <!--                     </c:if> -->
+    <!--                     <c:if test="#{cc.parent.attrs.validateUnique}"> -->
+    <!--                         <f:validator validatorId="uniqueConstraintValidator" /> -->
+    <!--                         <f:attribute name="className" value="#{cc.parent.entityFromBackingBeanOrAttribute.getClass().getSimpleName()}" /> -->
+    <!--                         <f:attribute name="fieldName" value="#{cc.parent.attrs.field}" /> -->
+    <!--                         <f:attribute name="idValue" value="#{cc.parent.entityFromBackingBeanOrAttribute.getId()}" /> -->
+    <!--                     </c:if> -->
+    <!--                     <c:if test="#{cc.parent.attrs.validateRib}"> -->
+    <!--                         <f:validator validatorId="ribValidator" /> -->
+    <!--                         <f:attribute name="bankCodeId" value="#{rich:clientId('bankCode')}" /> -->
+    <!--                         <f:attribute name="branchCodeId" value="#{rich:clientId('branchCode')}" /> -->
+    <!--                         <f:attribute name="accountNumberId" value="#{rich:clientId('accountNumber')}" /> -->
+    <!--                         <f:attribute name="keyId" value="#{rich:clientId('key')}" /> -->
+    <!--                     </c:if> -->
+    <!--                 </p:inputText> -->
+    <!--             </h:panelGroup> -->
+    <!--             <h:panelGroup rendered="#{cc.attrs.autocompleteMethod!=null and  cc.attrs.edit}"> -->
+    <!--                 <p:autoComplete id="#{cc.parent.attrs.fieldIdPrefix}_text_ac" value="#{cc.attrs.fieldItem}" disabled="#{cc.parent.attrs.disabled}" -->
+    <!--                     required="#{cc.parent.attrs.required}" size="#{cc.parent.attrs.size}" maxlength="#{cc.parent.attrs.maxlength}" dropdown="true" -->
+    <!--                     completeMethod="#{cc.attrs.autocompleteMethod}" /> -->
+    <!--             </h:panelGroup> -->
+    <!--             <h:panelGroup rendered="#{cc.parent.attrs.textArea and cc.attrs.edit}"> -->
+    <!--                 <p:inputTextarea id="#{cc.parent.attrs.fieldIdPrefix}_text_area" disabled="#{cc.parent.attrs.disabled}" value="#{cc.attrs.fieldItem}" -->
+    <!--                     required="#{cc.parent.attrs.required}" cols="#{cc.parent.attrs.cols}" rows="#{cc.parent.attrs.rows}" maxlength="#{cc.parent.attrs.maxlength}" /> -->
+    <!--             </h:panelGroup> -->
+    <!--             <h:panelGroup rendered="#{cc.parent.attrs.isHtml and cc.attrs.edit}"> -->
+    <!--                 <p:editor id="#{cc.parent.attrs.fieldIdPrefix}_text_html" disabled="#{cc.parent.attrs.disabled}" value="#{cc.attrs.fieldItem}" -->
+    <!--                     required="#{cc.parent.attrs.required}"></p:editor> -->
+    <!--             </h:panelGroup> -->
+    <!--             <h:panelGroup rendered="#{cc.parent.attrs.listValues != null and cc.attrs.edit}"> -->
+    <!--                 <p:selectOneMenu id="#{cc.parent.attrs.fieldIdPrefix}_text_list" value="#{cc.attrs.fieldItem}" required="#{cc.parent.attrs.required}" -->
+    <!--                     disabled="#{cc.parent.attrs.disabled}"> -->
+    <!--                     <f:selectItem itemValue="#{null}" itemLabel="" /> -->
+    <!--                     <f:selectItems value="#{cc.parent.attrs.listValues.entrySet()}" var="listVal" itemValue="#{listVal.key}" itemLabel="#{listVal.value}" /> -->
+    <!--                 </p:selectOneMenu> -->
+    <!--             </h:panelGroup> -->
+
+    <!--             <h:panelGroup rendered="#{cc.parent.attrs.popup and cc.attrs.edit}"> -->
+    <!--                 <p:inputText id="#{cc.parent.attrs.fieldIdPrefix}_text_pp" value="#{cc.attrs.fieldItem}" required="#{cc.parent.attrs.required}" size="#{cc.parent.attrs.size}" -->
+    <!--                     disabled="true" /> -->
+    <!--                 <p:commandButton id="selectLink" onclick="PF('dlg_#{cc.parent.attrs.popupId}').show()" icon="ui-icon-search" /> -->
+    <!--                 <p:tooltip for="selectLink" value="#{messages['commons.search']}" /> -->
+    <!--             </h:panelGroup> -->
+
+    <!--             <h:outputText -->
+    <!--                 id="#{cc.parent.attrs.fieldIdPrefix}_text#{cc.attrs.autocompleteMethod!=null?'_ac':cc.parent.attrs.textArea?'_area':cc.parent.attrs.isHtml?'_html':cc.parent.attrs.listValues != null?'_list':cc.parent.attrs.popup?'_pp':''}_view" -->
+    <!--                 value="#{cc.attrs.fieldItem}" styleClass="field-value" rendered="#{!cc.attrs.edit}" /> -->
+
+    <!--             <cc:insertChildren /> -->
+    <!--         </h:panelGroup> -->
+    <!--     </h:panelGroup> -->
+</cc:implementation>
+
+</html>

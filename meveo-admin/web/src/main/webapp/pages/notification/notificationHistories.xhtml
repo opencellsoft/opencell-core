@@ -18,7 +18,7 @@
 
         <hf:searchPanel label="#{messages['menu.notificationHistories']}" columns="2" backingBean="#{notificationHistoryBean}" renderNewButton="false">
             <hf:searchField label="#{messages['entity.notification.notificationType']}" field="entityClassName" />
-            <hf:searchField label="#{messages['entity.notification']}" field="notification" childField="code" listBean="#{notificationBean}" />
+            <hf:searchField label="#{messages['entity.notification']}" field="notification" valueLabelField="code" listBean="#{notificationBean}" />
             <hf:searchField label="#{messages['commons.status']}" field="status" />
             <hf:searchField label="#{messages['commons.date']}" field="auditable" childField="updated" />
         </hf:searchPanel>

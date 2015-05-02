@@ -19,8 +19,8 @@
 	<ui:fragment>
 
 
-		<p:barChart id="mainBarChart"
-			value="#{cc.attrs.barChartEntityModel.model}"
+		<p:chart type="bar" id="mainBarChart"
+			model="#{cc.attrs.barChartEntityModel.model}"
 			fill="#{cc.attrs.barChartEntityModel.barChart.filled}"
 			legendPosition="#{cc.attrs.barChartEntityModel.barChart.legendPosition}"
 			barPadding="#{cc.attrs.barChartEntityModel.barChart.barPadding}"

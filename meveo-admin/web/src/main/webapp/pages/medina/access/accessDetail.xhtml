@@ -17,7 +17,7 @@
 
 		<hftl:entityPopup id="searchSubscriptionPopup"
 			header="#{messages['access.subscription']}"
-			updateField=":#{p:component('subscriptionId')}:subscriptionId"
+			updateField=":#{p:component('subscriptionId')}"
 			selection="#{accessBean.entity.subscription}"
 			backingBean="#{subscriptionBean}"
 			searchField1Label="#{messages['subscription.code']}"
@@ -26,28 +26,22 @@
 			column2="description">
 		</hftl:entityPopup>
 
-		<p:panel styleClass="form-panel">
-			<f:facet name="header">
-				<h:outputText value="#{messages['access.accessPanel']}" />
-			</f:facet>
 
-			<hf:formPanel id="formPanel" backingBean="#{accessBean}" columns="2">
+			<hf:formPanel id="formPanel" backingBean="#{accessBean}" label="#{messages['access.accessPanel']}">
 
 				<p:tabView id="tabView">
 
 					<p:tab title="#{messages['customer.tab.information']}">
-						<p:panelGrid styleClass="form-panel-fields" columns="2">
 							<hf:formField label="#{messages['access.accessUserId']}"
 								field="accessUserId" required="true" />
-							<hf:formEntityField id="subscriptionId"
+							<hf:formField id="subscriptionId"
 								label="#{messages['access.subscription']}" field="subscription"
-								childField="code" popup="true" popupId="searchSubscriptionPopup"
+								valueLabelField="code" popup="true" popupId="searchSubscriptionPopup"
 								required="true" />
 							<hf:formField label="#{messages['access.startDate']}"
 								field="startDate" />
 							<hf:formField label="#{messages['access.endDate']}"
 								field="endDate" />
-						</p:panelGrid>
 					</p:tab>
 
 					<p:tab title="#{messages['customFieldTemplate.panel']}">
@@ -57,7 +51,6 @@
 
 			</hf:formPanel>
 
-		</p:panel>
 	</ui:define>
 
 </ui:composition>

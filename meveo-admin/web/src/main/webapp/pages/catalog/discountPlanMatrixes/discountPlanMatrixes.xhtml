@@ -27,7 +27,7 @@
 			column2="description"
 			selection="#{discountPlanMatrixBean.filters['offerTemplate']}"
 			lazy="false" dataModel="#{offerTemplateBean.listActive}"
-			updateField=":searchPanel:searchForm:offer:offer_child">
+			updateField=":searchPanel:searchForm:offer">
 		</hftl:entityPopup>
 		<hftl:entityPopup id="searchSellerPopup"
 			header="#{messages['customer.popup.header']}"
@@ -37,7 +37,7 @@
 			column2Label="#{messages['BusinessEntity.description']}"
 			column2="description"
 			selection="#{discountPlanMatrixBean.filters['seller']}"
-			updateField=":searchPanel:searchForm:seller:seller_child">
+			updateField=":searchPanel:searchForm:seller">
 		</hftl:entityPopup>
 		<hf:searchPanel id="searchPanel"
 			label="#{messages['discountPlanMatrix.search']}"

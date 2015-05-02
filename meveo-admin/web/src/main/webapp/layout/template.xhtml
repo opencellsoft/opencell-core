@@ -39,7 +39,7 @@
 			<div id="logo">
 			</div>
 
-			<ul>
+			<ul >
 				<li><div class="top-bar-home"></div> <h:link
 						outcome="/home.xhtml" value="#{messages['menutop.home']}"
 						styleClass="headerLink" /></li>
@@ -66,7 +66,7 @@
 
 					<h:link
 						value="#{messages['commons.connectedProvider']} : #{currentProvider.code} wwss"
-						onclick="dlg_providerSelectPopup.show(); return false;"
+						onclick="PF('dlg_providerSelectPopup').show(); return false;"
 						rendered="#{identity.loggedIn and !identity.user.user.onlyOneProvider}" />
 				</li>
 
@@ -111,11 +111,11 @@
 		rendered="#{identity.loggedIn and ! identity.user.user.onlyOneProvider}"
 		header="#{messages['provider.popup.header']}"
 		widgetVar="dlg_providerSelectPopup"  modal="true"
-		styleClass="form-dialog">
+		styleClass="form-dialog" width="500" closeOnEscape="true">
 		<h:form id="providerSelectPopupForm">
 
 
-			<p:dataTable var="provider" value="#{identity.user.user.providers.toArray()}">
+			<p:dataTable var="provider" value="#{identity.user.user.providers.toArray()}" reflow="true">
 
 				<p:column headerText="#{messages['businessEntity.code']}">
 					<h:outputText value="#{provider.code}" />
@@ -127,7 +127,7 @@
 				<p:column>
 					<p:commandLink value="#{messages['commons.select']}"
 						action="#{currentProviderBean.setCurrentProvider(provider)}"
-						oncomplete="dlg_providerSelectPopup.hide()">
+						oncomplete="PF('dlg_providerSelectPopup').hide()">
 					</p:commandLink>
 				</p:column>
 			</p:dataTable>

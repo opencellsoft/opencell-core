@@ -22,7 +22,7 @@
 	 
 	<hftl:entityPopup id="searchSellerPopup"
 			header="#{messages['seller.search']}"
-			updateField=":searchPanel:searchForm:seller:seller_child"
+			updateField=":searchPanel:searchForm:seller"
 			selection="#{walletOperationBean.filters['seller']}"
 			backingBean="#{sellerBean}"
 			searchField1Label="#{messages['BusinessEntity.code']}"
@@ -34,7 +34,7 @@
 		
 		<hftl:entityPopup id="searchChargeInstancePopup"
 			header="#{messages['walletOperation.chargeInstance']}"
-			updateField=":searchPanel:searchForm:chargeInstance:chargeInstance_child"
+			updateField=":searchPanel:searchForm:chargeInstance"
 			selection="#{walletOperationBean.filters['chargeInstance']}"
 			backingBean="#{chargeInstanceBean}"
 			searchField1Label="#{messages['BusinessEntity.code']}"
@@ -45,7 +45,7 @@
 		</hftl:entityPopup>
 		<hftl:entityPopup id="searchCounterInstancePopup"
 			header="#{messages['counterTemplate.title']}"
-			updateField=":searchPanel:searchForm:counter:counter_child"
+			updateField=":searchPanel:searchForm:counter"
 			selection="#{walletOperationBean.filters['counter']}"
 			backingBean="#{counterInstanceBean}"
 			searchField1Label="#{messages['BusinessEntity.code']}"
@@ -56,7 +56,7 @@
 		</hftl:entityPopup>
 			<hftl:entityPopup id="searchWalletInstancePopup"
 			header="#{messages['walletTemplate.title']}"
-			updateField=":searchPanel:searchForm:wallet:wallet_child"
+			updateField=":searchPanel:searchForm:wallet"
 			selection="#{walletOperationBean.filters['wallet']}"
 			backingBean="#{walletBean}"
 			searchField1Label="#{messages['BusinessEntity.code']}"
@@ -72,7 +72,7 @@
 			searchField1="eventCode" 
 			column1Label="#{messages['BusinessEntity.code']}" column1="eventCode" 
 			selection="#{walletOperationBean.filters['priceplan']}" 
-			updateField=":searchPanel:searchForm:priceplan:priceplan_child">
+			updateField=":searchPanel:searchForm:priceplan">
 		</hftl:entityPopup> 
 		
 		<hftl:entityPopup id="billingAccountPopup"
@@ -90,7 +90,7 @@
             updateField=":searchPanel:searchForm">
 		</hftl:entityPopup>
 		
-			<hftl:entityPopup id="searchInvoiceSubCategoryPopup"
+		<hftl:entityPopup id="searchInvoiceSubCategoryPopup"
 			header="#{messages['invoiceSubCategory.panel']}"
 			backingBean="#{invoiceSubCategoryBean}"
 			updateField=":searchPanel:searchForm"

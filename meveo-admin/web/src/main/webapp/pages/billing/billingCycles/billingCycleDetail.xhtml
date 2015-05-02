@@ -32,11 +32,9 @@
 				field="dueDateDelay" required="true" />
 			<hf:formField label="#{messages['billingCycle.invoiceDateDelay']}"
 				field="invoiceDateDelay" required="true" />
-			<hftl:panelGroup columns="2">
-				<hf:formEntityField label="#{messages['billingCycle.calendar']}"
-					field="calendar" childField="code" required="true" popup="false"
-					listBean="#{calendarBean}" />
-			</hftl:panelGroup>
+			<hf:formField label="#{messages['billingCycle.calendar']}"
+				field="calendar" valueLabelField="code" required="true"
+				listBean="#{calendarBean}" />
 		</hf:formPanel>
 
 	</ui:define>

@@ -110,108 +110,68 @@
 		
 			<hf:formField label="#{messages['edrRatingPlan.eventType']}" field="eventType"   />
 			
-			<hftl:panelGroup columns="2">
 				<hf:formField label="#{messages['edrRatingPlan.customText1Prefix']}" field="customText1Prefix"  />
 				<hf:formField label="#{messages['edrRatingPlan.customText1Regex']}" field="customText1Regex"  />
-			</hftl:panelGroup>
-			<hftl:panelGroup columns="2">
+
 				<hf:formField label="#{messages['edrRatingPlan.customText2Prefix']}" field="customText2Prefix"  />
 				<hf:formField label="#{messages['edrRatingPlan.customText2Regex']}" field="customText2Regex"  />
-			</hftl:panelGroup>
-			<hftl:panelGroup columns="2">
+
 				<hf:formField label="#{messages['edrRatingPlan.customText3Prefix']}" field="customText3Prefix"  />
 				<hf:formField label="#{messages['edrRatingPlan.customText3Regex']}" field="customText3Regex"  />
-			</hftl:panelGroup>
-			<hftl:panelGroup columns="2">
+
 				<hf:formField label="#{messages['edrRatingPlan.customText4Prefix']}" field="customText4Prefix"  />
 				<hf:formField label="#{messages['edrRatingPlan.customText4Regex']}" field="customText4Regex"  />
-			</hftl:panelGroup>
-			
-			<hftl:panelGroup columns="2">
+
 				<hf:formField label="#{messages['edrRatingPlan.customNumber1Min']}" field="customNumber1Min"  />
 				<hf:formField label="#{messages['edrRatingPlan.customNumber1Max']}" field="customNumber1Max"  />
-			</hftl:panelGroup>
-			
-			<hftl:panelGroup columns="2">
+
 				<hf:formField label="#{messages['edrRatingPlan.customNumber2Min']}" field="customNumber2Min"  />
 				<hf:formField label="#{messages['edrRatingPlan.customNumber2Max']}" field="customNumber2Max"  />
-			</hftl:panelGroup>
-			
-			<hftl:panelGroup columns="2">
+
 				<hf:formField label="#{messages['edrRatingPlan.customNumber3Min']}" field="customNumber3Min"  />
 				<hf:formField label="#{messages['edrRatingPlan.customNumber3Max']}" field="customNumber3Max"  />
-			</hftl:panelGroup>
-			<hftl:panelGroup columns="2">
+
 				<hf:formField label="#{messages['edrRatingPlan.customNumber4Min']}" field="customNumber4Min"  />
 				<hf:formField label="#{messages['edrRatingPlan.customNumber4Max']}" field="customNumber4Max"  />
-			</hftl:panelGroup>
-			
-			<hftl:panelGroup columns="2">
+
 				<hf:formField label="#{messages['edrRatingPlan.customDate1Min']}" field="customDate1Min"  />
 				 <hf:formField label="#{messages['edrRatingPlan.customDate1Max']}" field="customDate1Max"  />
-			</hftl:panelGroup>
-			
-			<hftl:panelGroup columns="2">
+
 				<hf:formField label="#{messages['edrRatingPlan.customDate2Min']}" field="customDate2Min"  />
 				 <hf:formField label="#{messages['edrRatingPlan.customDate2Max']}" field="customDate2Max"  />
-			</hftl:panelGroup>
-			
-			<hftl:panelGroup columns="2">
+
 				<hf:formField label="#{messages['edrRatingPlan.customDate3Min']}" field="customDate3Min"  />
 				 <hf:formField label="#{messages['edrRatingPlan.customDate3Max']}" field="customDate3Max"  />
-			</hftl:panelGroup>
-			
-			<hftl:panelGroup columns="2">
+
 				<hf:formField label="#{messages['edrRatingPlan.customDate4Min']}" field="customDate4Min"  />
 				 <hf:formField label="#{messages['edrRatingPlan.customDate4Max']}" field="customDate4Max"  />
-			</hftl:panelGroup>
-			
-			
-			<hftl:panelGroup columns="2">
+
 				<hf:formField label="#{messages['edrRatingPlan.customDate4Min']}" field="customDate4Min"  />
 				 <hf:formField label="#{messages['edrRatingPlan.customDate4Max']}" field="customDate4Max"  />
-			</hftl:panelGroup>
-			
-			<hftl:panelGroup columns="2">
+
    		    <hf:formField label="#{messages['edrRatingPlan.customBoolean1']}" field="customBoolean1"  />
 		    <hf:formField label="#{messages['edrRatingPlan.customBoolean2']}" field="customBoolean2"  />
-		    </hftl:panelGroup>
-		    <hftl:panelGroup columns="2">
+
 		    <hf:formField label="#{messages['edrRatingPlan.customBoolean3']}" field="customBoolean3"  /> 
 		    <hf:formField label="#{messages['edrRatingPlan.customBoolean4']}" field="customBoolean4"  />
-			</hftl:panelGroup>
-			
-			<hftl:panelGroup columns="2">
-			<hf:formEntityField id="priceCodeSelectId"  label="#{messages['edrRatingPlan.priceCode']}" field="priceCode" childField="code" popup="true" popupId="priceCodePopup2" required="true"  clearButton="true"/>
-			</hftl:panelGroup>
-		  
-		  <hftl:panelGroup columns="2">
-			 <hf:formEntityField id="oneShotChargeTemplateSelectId" label="#{messages['edrRatingPlan.chargeTemplateOut']}" field="chargeTemplateOut" childField="code" popup="true" popupId="oneShotChargeTemplatePopup1" clearButton="true"/>
-			 <hf:formEntityField id="oneShotChargeTemplateSelectId"  label="#{messages['edrRatingPlan.chargeTemplateIn']}" field="chargeTemplateIn" childField="code" popup="true" popupId="oneShotChargeTemplatePopup" clearButton="true"/>
-			</hftl:panelGroup>
-		 	
-			<hftl:panelGroup columns="2">
+
+			<hf:formField id="priceCodeSelectId"  label="#{messages['edrRatingPlan.priceCode']}" field="priceCode" valueLabelField="code" popup="true" popupId="priceCodePopup2" required="true"  clearButton="true"/>
+
+			 <hf:formField id="oneShotChargeTemplateSelectId" label="#{messages['edrRatingPlan.chargeTemplateOut']}" field="chargeTemplateOut" valueLabelField="code" popup="true" popupId="oneShotChargeTemplatePopup1" clearButton="true"/>
+			 <hf:formField id="oneShotChargeTemplateSelectId"  label="#{messages['edrRatingPlan.chargeTemplateIn']}" field="chargeTemplateIn" valueLabelField="code" popup="true" popupId="oneShotChargeTemplatePopup" clearButton="true"/>
+
 		    <hf:formField label="#{messages['edrRatingPlan.chargeInPrice1']}" field="chargeInPrice1"  /> 
 		     <hf:formField label="#{messages['edrRatingPlan.chargeOutPrice1']}" field="chargeOutPrice1"  />
-		     </hftl:panelGroup>
-		     <hftl:panelGroup columns="2">
+
 			    <hf:formField label="#{messages['edrRatingPlan.chargeInPrice2']}" field="chargeInPrice2"  />
 			    <hf:formField label="#{messages['edrRatingPlan.chargeOutPrice2']}" field="chargeOutPrice2"  /> 
-		    </hftl:panelGroup>
-		    
-		    <hftl:panelGroup columns="2">
+
 		    <hf:formField label="#{messages['access.startDate']}" field="startDate"  />
 			<hf:formField label="#{messages['access.endDate']}" field="endDate"   />
-		    </hftl:panelGroup>
-		    
-		    <hftl:panelGroup columns="2">
- 		    <hf:formEntityField id="customerSelectId" label="#{messages['edrRatingPlan.originCustomer']}" field="originCustomer" childField="code" popup="true" popupId="customerPopup" clearButton="true"/>
- 		    <hf:formEntityField id="oneShotChargeTemplateSelectId"  label="#{messages['edrRatingPlan.targetCustomer']}" field="targetCustomer" childField="code" popup="true" popupId="customerPopup1" clearButton="true"/>
-			
-			</hftl:panelGroup>
-	 
-		
-				
+
+ 		    <hf:formField id="customerSelectId" label="#{messages['edrRatingPlan.originCustomer']}" field="originCustomer" valueLabelField="code" popup="true" popupId="customerPopup" clearButton="true"/>
+ 		    <hf:formField id="oneShotChargeTemplateSelectId"  label="#{messages['edrRatingPlan.targetCustomer']}" field="targetCustomer" valueLabelField="code" popup="true" popupId="customerPopup1" clearButton="true"/>
+
 		</hf:formPanel>
 
 	</ui:define>

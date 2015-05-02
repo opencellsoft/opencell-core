@@ -17,7 +17,7 @@
 
 		<hftl:entityPopup id="searchCounterTemplatePopup"
 			header="#{messages['counterTemplate.title']}"
-			updateField=":webHookForm:formId:counterTemplateSelectedId:counterTemplateSelectedId"
+			updateField=":webHookForm:formId:counterTemplateSelectedId"
 			selection="#{webHookBean.entity.counterTemplate}"
 			backingBean="#{counterTemplateBean}"
 			searchField1Label="#{messages['businessEntity.code']}"
@@ -35,37 +35,40 @@
 				required="true" maxLength="60" />
 			<hf:formField
 				label="#{messages['entity.notification.classNameFilter']}"
-				field="classNameFilter" required="true" size="60" maxlength="255" autocompleteMethod="#{notificationBean.autocompleteClassNames}"/>
+				field="classNameFilter" required="true" size="60" maxlength="255"/> 
+<!--                 autocompleteMethod="#{notificationBean.autocompleteClassNames}"/> -->
 			<hf:formField
 				label="#{messages['entity.notification.eventTypeFilter']}"
 				field="eventTypeFilter" required="true" />
 			<hf:formField label="#{messages['entity.notification.elFilter']}"
-				field="elFilter" textArea="true" maxlength="1000" />
-			<hf:formField label="#{messages['enableEntity.disabled']}"
-				field="disabled" isMessage="true" showOnlyOnConsult="true"/>
+				field="elFilter" textArea="true" maxlength="1000" componentWidth="50" newLine="true"/>
 			<hf:formField label="#{messages['entity.notification.elAction']}"
-				field="elAction" textArea="true" maxlength="2000" />
+				field="elAction" textArea="true" maxlength="2000" componentWidth="50"/>
+
 			<hf:formField label="#{messages['entity.webHook.host']}" field="host"
 				required="true" size="100" maxlength="255" />
-			<hf:formField label="#{messages['entity.webHook.port']}" field="port" />
+			<hf:formField label="#{messages['entity.webHook.port']}" field="port" maxValue="65535"/>
 			<hf:formField label="#{messages['entity.webHook.page']}" field="page"
 				size="100" maxlength="255" required="true" />
 			<hf:formField label="#{messages['entity.webHook.httpMethod']}"
 				field="httpMethod" required="true" />
 			<hf:formField label="#{messages['entity.webHook.username']}"
-				field="username" size="50" maxlength="255" />
+				field="username" size="40" maxlength="255" newLine="true"/>
 			<hf:formField label="#{messages['entity.webHook.password']}"
-				field="password" size="50" maxlength="255" />
+				field="password" size="40" maxlength="255" />
 
 			<hf:formField label="#{messages['entity.webHook.headers']}"
-				field="headers" />
+				field="headers" componentWidth="100" />
 			<hf:formField label="#{messages['entity.webHook.params']}"
-				field="params" />
+				field="params" componentWidth="100"/>
 
-			<hf:formEntityField id="counterTemplateSelectedId"
+			<hf:formField id="counterTemplateSelectedId"
 				label="#{messages['counterTemplate.title']}" field="counterTemplate"
-				childField="code" popup="true" popupId="searchCounterTemplatePopup"
+				valueLabelField="code" popup="true" popupId="searchCounterTemplatePopup"
 				clearButton="true" required="false" />
+                
+            <hf:formField label="#{messages['enableEntity.disabled']}"
+                field="disabled" isMessage="true" showOnlyOnConsult="true"/>
 		</hf:formPanel>
 
 		<p:panel rendered="#{!webHookBean.edit}">

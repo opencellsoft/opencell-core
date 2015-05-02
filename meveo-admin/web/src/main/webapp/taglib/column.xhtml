@@ -102,7 +102,7 @@
 		<c:set var="edit" value="true"/>
 	</c:if>
 			
-	<p:column exportable="#{exportable}" rendered="#{rendered}">
+	<p:column exportable="#{exportable}" rendered="#{rendered}" >
 		<f:facet name="header">
 			<h:outputText value="#{label}" />
 		</f:facet>
@@ -112,7 +112,8 @@
         	Also if childField is not set then it basically means it can't be isList=true even if it is set, so we don't check isList here.-->
 		<c:if test="#{empty childField}">
 			<c:if test="#{sort}">
-				<f:attribute name="sortBy" value="#{field}" />
+				<f:attribute name="field" value="#{field}" />
+                <f:attribute name="sortable" value="#{true}" />
 			</c:if>
 			<c:if test="#{isMessage}">
 				<h:outputText

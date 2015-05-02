@@ -36,9 +36,9 @@
 		<hf:formPanel id="formPanel" edit="true"
 			label="#{messages['billingRun.panel']}"
 			backingBean="#{billingRunBean}" showFormButtons="false">
-			<hf:formEntityField id="billingCycleId"
+			<hf:formField id="billingCycleId"
 				label="#{messages['billingRun.billingCycle']}" field="billingCycle"
-				childField="code" required="true" popup="true"
+				valueLabelField="code" required="true" popup="true"
 				popupId="billingCyclePopup" edit="true" />
 			<hf:formField label="#{messages['billingRun.type']}"
 				field="processType" required="true" noSelectionLabel="false"
@@ -51,9 +51,10 @@
 				field="invoiceDate" edit="true" required="false" />
 			<hf:formField id="lastTransactionDate" label="#{messages['billingRun.lastTransactionDate']}"
 				field="lastTransactionDate" required="false" edit="true" />
-
-			<p:commandButton action="#{billingRunBean.launchRecurringInvoicing}"
-				value="#{messages['button.launchInvoicing']}" update="@form" />
+            <f:facet name="buttons">
+    			<p:commandButton action="#{billingRunBean.launchRecurringInvoicing}"
+    				value="#{messages['button.launchInvoicing']}" update=":formPanel:formId" />
+            </f:facet>
 		</hf:formPanel>
 
 	</ui:define>

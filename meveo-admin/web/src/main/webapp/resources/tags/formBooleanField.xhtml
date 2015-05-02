@@ -1,0 +1,77 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:p="http://primefaces.org/ui" xmlns:c="http://java.sun.com/jsp/jstl/core" xmlns:cc="http://java.sun.com/jsf/composite" xmlns:hftl="http://hftl.org">
+
+<cc:interface>
+
+    <cc:attribute name="fieldItem" required="true" />
+    <cc:attribute name="edit" default="true" />
+
+</cc:interface>
+
+<cc:implementation>
+
+    <hftl:decorateFormField fieldId="#{cc.parent.attrs.fieldIdPrefix}_boolean#{cc.attrs.edit?'':'_view'}" label="#{cc.parent.attrs.label}"
+        componentWidth="#{cc.parent.attrs.componentWidth}" newLine="#{cc.parent.attrs.newLine}" displayOneLine="#{cc.parent.attrs.displayOneLine}"
+        styleClass="#{cc.parent.attrs.styleClass}" style="#{cc.parent.attrs.style}" labelStyle="#{cc.parent.attrs.labelStyle}" labelStyleClass="#{cc.parent.attrs.labelStyleClass}"
+        inputStyle="#{cc.parent.attrs.inputStyle}" inputStyleClass="#{cc.parent.attrs.inputStyleClass}" labelWidth="#{cc.parent.attrs.labelWidth}"
+        inputWidth="#{cc.parent.attrs.inputWidth}">
+
+        <p:selectBooleanCheckbox id="#{cc.parent.attrs.fieldIdPrefix}_boolean" rendered="#{cc.attrs.edit}" disabled="#{cc.parent.attrs.disabled}" value="#{cc.attrs.fieldItem}"
+            required="#{cc.parent.attrs.required}">
+            <c:if test="#{not empty cc.parent.attrs.listenerUpdate}">
+                <p:ajax update="#{cc.parent.attrs.listenerUpdate}" event="change" />
+            </c:if>
+        </p:selectBooleanCheckbox>
+
+        <ui:fragment rendered="#{not cc.attrs.edit and cc.parent.attrs.isMessage}">
+            <h:outputText rendered="#{cc.attrs.fieldItem != null and cc.attrs.fieldItem.toString() == 'true' and not cc.attrs.edit}" value="#{messages['commons.yes']}"
+                styleClass="field-value" />
+            <h:outputText rendered="#{cc.attrs.fieldItem != null and cc.attrs.fieldItem.toString() == 'false' and not cc.attrs.edit}" value="#{messages['commons.no']}"
+                styleClass="field-value" />
+            <!--                toString was some workaround - todo: maybe works without toString  -->
+            <h:outputText rendered="#{cc.attrs.fieldItem != null and cc.attrs.fieldItem.toString() != 'true' and cc.attrs.fieldItem.toString() != 'false' and not cc.attrs.edit}"
+                value="#{messages[cc.attrs.fieldItem]}" styleClass="field-value" />
+        </ui:fragment>
+
+        <h:outputText id="#{cc.parent.attrs.fieldIdPrefix}_boolean_view" rendered="#{not cc.attrs.edit and not cc.parent.attrs.isMessage}" value="#{cc.attrs.fieldItem}"
+            styleClass="field-value" />
+
+        <cc:insertChildren />
+    </hftl:decorateFormField>
+
+
+    <!--         <h:panelGroup layout="block" styleClass="formFieldGroup #{cc.parent.attrs.styleClass}" style="width:#{cc.parent.attrs.componentWidth}%; #{cc.parent.attrs.style}"> -->
+    <!--         <p:outputLabel for="#{cc.parent.attrs.fieldIdPrefix}_boolean#{cc.attrs.edit?'':'_view'}" value="#{cc.parent.attrs.label}" /> -->
+    <!--         <h:panelGroup layout="block" styleClass="#{cc.parent.attrs.fieldStyle}  #{cc.parent.attrs.inputStyleClass}" -->
+    <!--             style="width:#{cc.parent.attrs.inputWidth}%; #{cc.parent.attrs.inputStyle}"> -->
+
+    <!--             <p:selectBooleanCheckbox id="#{cc.parent.attrs.fieldIdPrefix}_boolean" rendered="#{cc.attrs.edit}" disabled="#{cc.parent.attrs.disabled}" value="#{cc.attrs.fieldItem}" -->
+    <!--                 required="#{cc.parent.attrs.required}"> -->
+    <!--                 <c:if test="#{not empty cc.parent.attrs.listenerUpdate}"> -->
+    <!--                     <p:ajax update="#{cc.parent.attrs.listenerUpdate}" event="change" /> -->
+    <!--                 </c:if> -->
+    <!--             </p:selectBooleanCheckbox> -->
+
+    <!--             <ui:fragment rendered="#{not cc.attrs.edit and cc.parent.attrs.isMessage}"> -->
+    <!--                 <h:outputText rendered="#{cc.attrs.fieldItem != null and cc.attrs.fieldItem.toString() == 'true' and not cc.attrs.edit}" value="#{messages['commons.yes']}" -->
+    <!--                     styleClass="field-value" /> -->
+    <!--                 <h:outputText rendered="#{cc.attrs.fieldItem != null and cc.attrs.fieldItem.toString() == 'false' and not cc.attrs.edit}" value="#{messages['commons.no']}" -->
+    <!--                     styleClass="field-value" /> -->
+    <!--                                toString was some workaround - todo: maybe works without toString  -->
+    <!--                 <h:outputText -->
+    <!--                     rendered="#{cc.attrs.fieldItem != null and cc.attrs.fieldItem.toString() != 'true' and cc.attrs.fieldItem.toString() != 'false' and not cc.attrs.edit}" -->
+    <!--                     value="#{messages[cc.attrs.fieldItem]}" styleClass="field-value" /> -->
+    <!--             </ui:fragment> -->
+
+    <!--             <h:outputText id="#{cc.parent.attrs.fieldIdPrefix}_boolean_view" rendered="#{not cc.attrs.edit and not cc.parent.attrs.isMessage}" value="#{cc.attrs.fieldItem}" styleClass="field-value" /> -->
+
+    <!--             <cc:insertChildren /> -->
+    <!--         </h:panelGroup> -->
+    <!--     </h:panelGroup> -->
+
+</cc:implementation>
+
+</html>

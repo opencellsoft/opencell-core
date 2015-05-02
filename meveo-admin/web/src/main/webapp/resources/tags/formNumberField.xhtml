@@ -1,0 +1,130 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:p="http://primefaces.org/ui" xmlns:c="http://java.sun.com/jsp/jstl/core" xmlns:cc="http://java.sun.com/jsf/composite" xmlns:hftl="http://hftl.org">
+
+<cc:interface>
+
+    <cc:attribute name="fieldItem" required="true" />
+    <cc:attribute name="edit" default="true" />
+    <cc:attribute name="spinner" default="false" />
+    <cc:attribute name="size" default="5" />
+
+</cc:interface>
+
+<cc:implementation>
+
+    <hftl:decorateFormField fieldId="#{cc.parent.attrs.fieldIdPrefix}_number#{cc.parent.attrs.listValues != null?'_list':cc.attrs.spinner?'_spinner':''}#{cc.attrs.edit?'':'_view'}"
+        label="#{cc.parent.attrs.label}" componentWidth="#{cc.parent.attrs.componentWidth}" newLine="#{cc.parent.attrs.newLine}" displayOneLine="#{cc.parent.attrs.displayOneLine}"
+        styleClass="#{cc.parent.attrs.styleClass}" style="#{cc.parent.attrs.style}" labelStyle="#{cc.parent.attrs.labelStyle}" labelStyleClass="#{cc.parent.attrs.labelStyleClass}"
+        inputStyle="#{cc.parent.attrs.inputStyle}" inputStyleClass="#{cc.parent.attrs.inputStyleClass}" labelWidth="#{cc.parent.attrs.labelWidth}"
+        inputWidth="#{cc.parent.attrs.inputWidth}">
+
+        <c:if test="#{cc.attrs.spinner and cc.parent.attrs.listValues == null}">
+
+            <c:if test="#{not empty(cc.parent.attrs.maxValue) and !cc.parent.attrs.negativeValue}">
+                <p:spinner rendered="#{cc.attrs.edit}" id="#{cc.parent.attrs.fieldIdPrefix}_number_spinner" disabled="#{cc.parent.attrs.disabled}" value="#{cc.attrs.fieldItem}"
+                    required="#{cc.parent.attrs.required}" min="#{cc.parent.attrs.minValue}" max="#{cc.parent.attrs.maxValue}" maxlength="#{cc.parent.attrs.maxlength}" />
+            </c:if>
+            <c:if test="#{empty(cc.parent.attrs.maxValue) and !cc.parent.attrs.negativeValue}">
+                <p:spinner rendered="#{cc.attrs.edit}" id="#{cc.parent.attrs.fieldIdPrefix}_number_spinner" disabled="#{cc.parent.attrs.disabled}" value="#{cc.attrs.fieldItem}"
+                    required="#{cc.parent.attrs.required}" min="#{cc.parent.attrs.minValue}" maxlength="#{cc.parent.attrs.maxlength}" />
+            </c:if>
+            <!--  for negative values, it is duplicated because if we set minValue=-99999999 the default value diplayed in GUI is -99999999 -->
+            <c:if test="#{cc.parent.attrs.negativeValue}">
+                <p:spinner rendered="#{cc.attrs.edit}" id="#{cc.parent.attrs.fieldIdPrefix}_number_spinner" disabled="#{cc.parent.attrs.disabled}" value="#{cc.attrs.fieldItem}"
+                    required="#{cc.parent.attrs.required}" maxlength="#{cc.parent.attrs.maxlength}" />
+            </c:if>
+        </c:if>
+        <c:if test="#{!cc.attrs.spinner and cc.parent.attrs.listValues == null}">
+            <p:inputText rendered="#{cc.attrs.edit}" id="#{cc.parent.attrs.fieldIdPrefix}_number" disabled="#{cc.parent.attrs.disabled}" value="#{cc.attrs.fieldItem}"
+                required="#{cc.parent.attrs.required}" size="#{cc.attrs.size}" maxlength="#{cc.parent.attrs.maxlength}">
+                <c:if test="#{not empty cc.parent.attrs.converter}">
+                    <f:converter converterId="#{cc.parent.attrs.converter}" />
+                </c:if>
+            </p:inputText>
+
+        </c:if>
+
+        <c:if test="#{ cc.parent.attrs.listValues != null}">
+            <p:selectOneMenu id="#{cc.parent.attrs.fieldIdPrefix}_number_list" value="#{cc.attrs.fieldItem}" required="#{cc.parent.attrs.required}"
+                disabled="#{cc.parent.attrs.disabled or not cc.attrs.edit}">
+                <f:selectItem itemValue="#{null}" itemLabel="" />
+                <f:selectItems value="#{cc.parent.attrs.listValues.entrySet()}" var="listVal" itemValue="#{listVal.key}" itemLabel="#{listVal.value}" />
+            </p:selectOneMenu>
+        </c:if>
+
+
+        <h:outputText id="#{cc.parent.attrs.fieldIdPrefix}_number#{cc.parent.attrs.listValues != null?'_list':cc.attrs.spinner?'_spinner':''}_view"
+            rendered="#{not cc.attrs.edit and not cc.parent.attrs.isMessage}" value="#{cc.attrs.fieldItem}" styleClass="field-value">
+            <c:if test="#{not empty cc.parent.attrs.converter}">
+                <f:converter converterId="#{cc.parent.attrs.converter}" />
+            </c:if>
+        </h:outputText>
+        <h:outputText rendered="#{not cc.attrs.edit and cc.parent.attrs.isMessage}" value="#{messages[cc.parent.attrs.messagePrefixWithDot.concat(cc.attrs.fieldItem)]}"
+            styleClass="field-value" />
+
+        <cc:insertChildren />
+    </hftl:decorateFormField>
+
+
+
+
+    <!--     <h:panelGroup layout="block" styleClass="formFieldGroup #{cc.parent.attrs.styleClass}" style="width:#{cc.parent.attrs.componentWidth}%; #{cc.parent.attrs.style}"> -->
+    <!--         <p:outputLabel for="#{cc.parent.attrs.fieldIdPrefix}_number#{cc.parent.attrs.listValues != null?'_list':cc.attrs.spinner?'_spinner':''}#{cc.attrs.edit?'':'_view'}" -->
+    <!--             value="#{cc.parent.attrs.label}" /> -->
+    <!--         <h:panelGroup layout="block" styleClass="#{cc.parent.attrs.fieldStyle}  #{cc.parent.attrs.inputStyleClass}" -->
+    <!--             style="width:#{cc.parent.attrs.inputWidth}%; #{cc.parent.attrs.inputStyle}"> -->
+
+    <!--             <c:if test="#{cc.attrs.spinner and cc.parent.attrs.listValues == null}"> -->
+
+    <!--                 <c:if test="#{not empty(cc.parent.attrs.maxValue) and !cc.parent.attrs.negativeValue}"> -->
+    <!--                     <p:spinner rendered="#{cc.attrs.edit}" id="#{cc.parent.attrs.fieldIdPrefix}_number_spinner" disabled="#{cc.parent.attrs.disabled}" value="#{cc.attrs.fieldItem}" -->
+    <!--                         required="#{cc.parent.attrs.required}" min="#{cc.parent.attrs.minValue}" max="#{cc.parent.attrs.maxValue}" maxlength="#{cc.parent.attrs.maxlength}" /> -->
+    <!--                 </c:if> -->
+    <!--                 <c:if test="#{empty(cc.parent.attrs.maxValue) and !cc.parent.attrs.negativeValue}"> -->
+    <!--                     <p:spinner rendered="#{cc.attrs.edit}" id="#{cc.parent.attrs.fieldIdPrefix}_number_spinner" disabled="#{cc.parent.attrs.disabled}" value="#{cc.attrs.fieldItem}" -->
+    <!--                         required="#{cc.parent.attrs.required}" min="#{cc.parent.attrs.minValue}" maxlength="#{cc.parent.attrs.maxlength}" /> -->
+    <!--                 </c:if> -->
+    <!--                  for negative values, it is duplicated because if we set minValue=-99999999 the default value diplayed in GUI is -99999999 -->
+    <!--                 <c:if test="#{cc.parent.attrs.negativeValue}"> -->
+    <!--                     <p:spinner rendered="#{cc.attrs.edit}" id="#{cc.parent.attrs.fieldIdPrefix}_number_spinner" disabled="#{cc.parent.attrs.disabled}" value="#{cc.attrs.fieldItem}" -->
+    <!--                         required="#{cc.parent.attrs.required}" maxlength="#{cc.parent.attrs.maxlength}" /> -->
+    <!--                 </c:if> -->
+    <!--             </c:if> -->
+    <!--             <c:if test="#{!cc.attrs.spinner and cc.parent.attrs.listValues == null}"> -->
+    <!--                 <p:inputText rendered="#{cc.attrs.edit}" id="#{cc.parent.attrs.fieldIdPrefix}_number" disabled="#{cc.parent.attrs.disabled}" value="#{cc.attrs.fieldItem}" -->
+    <!--                     required="#{cc.parent.attrs.required}" size="#{cc.attrs.size}" maxlength="#{cc.parent.attrs.maxlength}"> -->
+    <!--                     <c:if test="#{not empty cc.parent.attrs.converter}"> -->
+    <!--                         <f:converter converterId="#{cc.parent.attrs.converter}" /> -->
+    <!--                     </c:if> -->
+    <!--                 </p:inputText> -->
+
+    <!--             </c:if> -->
+
+    <!--             <c:if test="#{ cc.parent.attrs.listValues != null}"> -->
+    <!--                 <p:selectOneMenu id="#{cc.parent.attrs.fieldIdPrefix}_number_list" value="#{cc.attrs.fieldItem}" required="#{cc.parent.attrs.required}" -->
+    <!--                     disabled="#{cc.parent.attrs.disabled or not cc.attrs.edit}"> -->
+    <!--                     <f:selectItem itemValue="#{null}" itemLabel="" /> -->
+    <!--                     <f:selectItems value="#{cc.parent.attrs.listValues.entrySet()}" var="listVal" itemValue="#{listVal.key}" itemLabel="#{listVal.value}" /> -->
+    <!--                 </p:selectOneMenu> -->
+    <!--             </c:if> -->
+
+
+    <!--             <h:outputText id="#{cc.parent.attrs.fieldIdPrefix}_number#{cc.parent.attrs.listValues != null?'_list':cc.attrs.spinner?'_spinner':''}_view" -->
+    <!--                 rendered="#{not cc.attrs.edit and not cc.parent.attrs.isMessage}" value="#{cc.attrs.fieldItem}" styleClass="field-value"> -->
+    <!--                 <c:if test="#{not empty cc.parent.attrs.converter}"> -->
+    <!--                     <f:converter converterId="#{cc.parent.attrs.converter}" /> -->
+    <!--                 </c:if> -->
+    <!--             </h:outputText> -->
+    <!--             <h:outputText rendered="#{not cc.attrs.edit and cc.parent.attrs.isMessage}" value="#{messages[cc.parent.attrs.messagePrefixWithDot.concat(cc.attrs.fieldItem)]}" -->
+    <!--                 styleClass="field-value" /> -->
+
+    <!--             <cc:insertChildren /> -->
+    <!--         </h:panelGroup> -->
+    <!--     </h:panelGroup> -->
+
+</cc:implementation>
+
+</html>

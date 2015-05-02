@@ -54,10 +54,6 @@
 			<url>http://repository.pentaho.org/artifactory/repo/</url>
 		</repository>
 		<repository>
-			<id>primefaces.repo</id>
-			<url>http://repository.primefaces.org</url>
-		</repository>
-		<repository>
 			<id>sonatype-oss-public</id>
 			<url>https://oss.sonatype.org/content/groups/public/</url>
 			<snapshots>
@@ -142,6 +138,16 @@
 				<artifactId>commons-lang3</artifactId>
 				<version>3.1</version>
 			</dependency>
+			<dependency>
+				<groupId>org.primefaces.extensions</groupId>
+				<artifactId>primefaces-extensions</artifactId>
+				<version>3.1.0</version>
+			</dependency>
+			<dependency>
+				<groupId>org.primefaces</groupId>
+				<artifactId>primefaces</artifactId>
+				<version>5.2</version>
+			</dependency>			
 		</dependencies>
 	</dependencyManagement>
 

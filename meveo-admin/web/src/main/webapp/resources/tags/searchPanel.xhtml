@@ -2,66 +2,48 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
-<html xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:ui="http://java.sun.com/jsf/facelets"
-	xmlns:h="http://java.sun.com/jsf/html"
-	xmlns:f="http://java.sun.com/jsf/core"
-	xmlns:p="http://primefaces.org/ui"
-	xmlns:hf="http://java.sun.com/jsf/composite/tags"
-	xmlns:cc="http://java.sun.com/jsf/composite">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:p="http://primefaces.org/ui" xmlns:hf="http://java.sun.com/jsf/composite/tags" xmlns:cc="http://java.sun.com/jsf/composite">
 
 <cc:interface componentType="searchFormPanelCC">
-	<cc:attribute name="label" default="" />
-	<cc:attribute name="backingBean" required="true" />
-	<cc:attribute name="columns" default="2" />
-	<cc:attribute name="renderNewButton" type="java.lang.Boolean"
-		default="true" />
-	<cc:attribute name="newButtonView"
-		default="#{cc.attrs.backingBean.getNewViewName()}" />
-	<cc:attribute name="ajax" default="false" />
-	<cc:attribute name="ajaxUpdateIds" required="false" />
-	<cc:attribute name="renderAdvancedButton" default="false"/>
-	<cc:attribute name="renderHideAdvancedButton" default="false"/>
+    <cc:attribute name="label" default="" />
+    <cc:attribute name="backingBean" required="true" />
+    <cc:attribute name="columns" default="2" />
+    <cc:attribute name="renderNewButton" type="java.lang.Boolean" default="true" />
+    <cc:attribute name="newButtonView" default="#{cc.attrs.backingBean.getNewViewName()}" />
+    <cc:attribute name="ajax" default="false" />
+    <cc:attribute name="ajaxUpdateIds" required="false" />
+    <cc:attribute name="renderAdvancedButton" default="false" />
+    <cc:attribute name="renderHideAdvancedButton" default="false" />
+    <cc:facet name="buttons" />
 </cc:interface>
 
 <cc:implementation>
-	<h:form id="searchForm">
-		<p:panelGrid columns="1" styleClass="search-panel">
-			<f:facet name="header">
-				<h:outputText value="#{cc.attrs.label}" />
-			</f:facet>
+    <h:form id="searchForm">
+        <p:panel header="#{cc.attrs.label}">
+            <h:panelGroup layout="block" styleClass="search-panel">
+                <p:messages />
+                <p:outputPanel styleClass="search-panel-fields">
+                    <cc:insertChildren />
+                </p:outputPanel>
+                <h:panelGroup layout="block" styleClass="search-panel-actions">
+                    <p:commandButton id="buttonSearch" value="#{messages['commons.search']}" ajax="#{cc.attrs.ajax}" action="#{cc.attrs.backingBean.search}"
+                        update="#{cc.attrs.ajaxUpdateIds}" />
+                    <p:commandButton id="buttonAdvanced" rendered="#{cc.attrs.renderAdvancedLink and !cc.attrs.backingBean.advanced}" value="#{messages['commons.advancedButton']}"
+                        actionListener="#{cc.attrs.backingBean.advancedAction}" update="@form" />
+                    <p:commandButton id="buttonHideAdvanced" rendered="#{cc.attrs.renderHideAdvancedLink and cc.attrs.backingBean.advanced}"
+                        value="#{messages['commons.hideAdvancedButton']}" actionListener="#{cc.attrs.backingBean.advancedAction}" update="@form" />                        
+                    <hf:clearButton label="#{messages['commons.clean']}" resetAction="#{cc.attrs.backingBean.clean}" />
+                    <p:button id="buttonNew" value="#{messages['commons.new']}" outcome="#{cc.attrs.newButtonView}" rendered="#{cc.attrs.renderNewButton}">
+                        <f:param name="cid" value="#{javax.enterprise.context.conversation.id}" />
+                        <f:param name="edit" value="true" />
+                    </p:button>
 
-			<p:messages />
-			<p:panelGrid columns="#{cc.attrs.columns}"
-				styleClass="search-panel-fields">
-				<cc:insertChildren />
-			</p:panelGrid>
-			<p:panelGrid columns="5" style="float: right;"
-				styleClass="search-panel-actions">
-				<p:commandButton id="buttonSearch"
-					value="#{messages['commons.search']}" ajax="#{cc.attrs.ajax}"
-					action="#{cc.attrs.backingBean.search}"
-					update="#{cc.attrs.ajaxUpdateIds}" />
-				<hf:clearButton label="#{messages['commons.clean']}"
-					resetAction="#{cc.attrs.backingBean.clean}" />
-				<p:button id="buttonNew" value="#{messages['commons.new']}"
-					outcome="#{cc.attrs.newButtonView}"
-					rendered="#{cc.attrs.renderNewButton}">
-					<f:param name="cid"
-						value="#{javax.enterprise.context.conversation.id}" />
-					<f:param name="edit" value="true" />
-				</p:button>
-				<p:commandButton id="buttonAdvanced" rendered="#{cc.attrs.renderAdvancedLink and !cc.attrs.backingBean.advanced}"
-					value="#{messages['commons.advancedButton']}"
-					actionListener="#{cc.attrs.backingBean.advancedAction}"
-					update="@form" />
-				<p:commandButton id="buttonHideAdvanced" rendered="#{cc.attrs.renderHideAdvancedLink and cc.attrs.backingBean.advanced}"
-					value="#{messages['commons.hideAdvancedButton']}"
-					actionListener="#{cc.attrs.backingBean.advancedAction}"
-					update="@form" />
-			</p:panelGrid>
-		</p:panelGrid>
-	</h:form>
+                    <cc:insertFacet name="buttons" />
+                </h:panelGroup>
+            </h:panelGroup>
+        </p:panel>
+    </h:form>
 </cc:implementation>
 
 </html>

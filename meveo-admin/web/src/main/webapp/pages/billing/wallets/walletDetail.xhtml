@@ -34,7 +34,7 @@
 		</custom:entityPopup>
 
 		<hf:formPanel label="#{messages['wallet.walletPanel']}" backingBean="#{walletBean}" pdf="true">
-			<hf:formEntityField id="userAccount" label="#{messages['wallet.userAccount']}" field="userAccount" childField="name" required="true" popup="true" popupId="userAccountPopup" />
+			<hf:formField id="userAccount" label="#{messages['wallet.userAccount']}" field="userAccount" valueLabelField="name" required="true" popup="true" popupId="userAccountPopup" />
 			<hf:formField label="#{messages['wallet.name']}" field="name" />
 			<hf:formField label="#{messages['wallet.walletType']}" field="walletType" childField="label" isMessage="true" />
 			<hf:formField label="#{messages['wallet.ratedTransactions']}" field="ratedTransactions" edit="false" showFields="ratedTransaction.usageCode,usageCode;ratedTransaction.usageAmount,usageAmount;ratedTransaction.amount1,amount1" />

@@ -1,49 +1,36 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
-<html xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:ui="http://java.sun.com/jsf/facelets"
-	xmlns:h="http://java.sun.com/jsf/html"
-	xmlns:f="http://java.sun.com/jsf/core"
-	xmlns:c="http://java.sun.com/jstl/core"
-	xmlns:cc="http://java.sun.com/jsf/composite"
-	xmlns:hftl="http://hftl.org" xmlns:p="http://primefaces.org/ui"
-	xmlns:hf="http://java.sun.com/jsf/composite/tags">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:cc="http://java.sun.com/jsf/composite" xmlns:p="http://primefaces.org/ui" xmlns:hf="http://java.sun.com/jsf/composite/tags" xmlns:hftl="http://hftl.org">
 
 <cc:interface componentType="formField">
+    <cc:attribute name="displayOneLine" default="false" />
 </cc:interface>
 
 <cc:implementation>
 
-	<ui:fragment>
-		<hf:formField label="#{messages['businessEntity.defaultDescription']}"
-			field="description" required="true" id="prDescription" size="80"
-			maxlength="100" />
+    <hf:formField field="description" label="#{messages['businessEntity.description']}" componentWidth="50" newLine="true" displayOneLine="#{cc.attrs.displayOneLine}"/>
 
-		<p:panelGrid columns="2" id="description">
-			<p:outputLabel for="description"
-				value="#{messages['businessEntity.languageDescriptions']}" />
-			<h:dataTable
-				value="#{cc.backingBeanFromParentOrCurrent.getProviderLanguages()}"
-				var="languageCom">
-				<h:column>
-					<h:graphicImage
-						value="/img/img#{languageCom.language.languageCode}.png"
-						style="height:17px; width:33px;" />
-				</h:column>
-				<h:column>
-					<p:inputText
-						rendered="#{cc.backingBeanFromParentOrCurrent.edit and !empty(languageCom.language)}"
-						value="#{cc.backingBeanFromParentOrCurrent.languageMessagesMap[languageCom.language.languageCode]}"
-						size="80" maxlength="100" />
-					<h:outputText
-						rendered="#{!cc.backingBeanFromParentOrCurrent.edit and !empty(languageCom.language)}"
-						value="#{cc.backingBeanFromParentOrCurrent.languageMessagesMap[languageCom.language.languageCode]}"
-						style="font-weight:bold;" />
-				</h:column>
-			</h:dataTable>
-		</p:panelGrid>
-	</ui:fragment>
+    <hftl:decorateFormField fieldId="descriptionI" label="#{messages['businessEntity.languageDescriptions']}" componentWidth="50" 
+        displayOneLine="#{cc.attrs.displayOneLine}">
+
+        <!--         <p:inputText id="description" value="#{cc.entityFromBackingBeanOrAttribute.description}" size="80" maxlength="100" style="margin-left:50px;" -->
+        <!--             rendered="#{cc.backingBeanFromParentOrCurrent.edit}" /> -->
+        <h:outputText value="#{cc.entityFromBackingBeanOrAttribute.description}" style="margin-left:50px;" rendered="#{! cc.backingBeanFromParentOrCurrent.edit}" />
+
+        <h:dataTable id="descriptionI" value="#{cc.backingBeanFromParentOrCurrent.getProviderLanguages()}" var="languageCom">
+            <h:column>
+                <h:graphicImage value="/img/img#{languageCom.language.languageCode}.png" style="height:17px; width:33px;" />
+            </h:column>
+            <h:column>
+                <p:inputText rendered="#{cc.backingBeanFromParentOrCurrent.edit and !empty(languageCom.language)}"
+                    value="#{cc.backingBeanFromParentOrCurrent.languageMessagesMap[languageCom.language.languageCode]}" size="80" maxlength="100" />
+                <h:outputText rendered="#{!cc.backingBeanFromParentOrCurrent.edit and !empty(languageCom.language)}"
+                    value="#{cc.backingBeanFromParentOrCurrent.languageMessagesMap[languageCom.language.languageCode]}" style="font-weight:bold;" />
+            </h:column>
+        </h:dataTable>
+    </hftl:decorateFormField>
 
 </cc:implementation>
 </html>

@@ -20,21 +20,22 @@
 				id="description" maxlength="50" />
 			<hf:formField label="#{messages['customFieldTemplate.fieldType']}"
 				field="fieldType" required="true"
-				listenerUpdate=":formPanel:formId:listValuesField" allowEdit="false"  />
-			<hf:formField
-				label="#{messages['customFieldTemplate.fieldRequired']}"
-				field="valueRequired" isMessage="true" />
+				listenerUpdate=":formPanel:formId:listValuesField" allowEdit="false" newLine="true" />
+
 			<hf:formField label="#{messages['customFieldTemplate.accountType']}"
 				field="accountLevel" required="true" allowEdit="false" listValues="#{customFieldTemplateBean.accountLevelsNoTimer}"/>
-			<p:panel id="listValuesField">
+			<hf:formField
+                label="#{messages['customFieldTemplate.fieldRequired']}"
+                field="valueRequired" isMessage="true" />
+            <h:panelGroup id="listValuesField">
 				<hf:formField label="#{messages['customFieldTemplate.listValues']}"
 					field="listValues"
 					rendered="#{customFieldTemplateBean.entity.fieldType == 'LIST'}"
 					mapKeyLabel="#{messages['commons.value']}"
-					mapValueLabel="#{messages['commons.label']}" />
-			</p:panel>
+					mapValueLabel="#{messages['commons.label']}" componentWidth="75" newLine="true"/>
+			</h:panelGroup>
 			<hf:formField label="#{messages['enableEntity.disabled']}"
-				field="disabled" isMessage="true" showOnlyOnConsult="true"/>
+				field="disabled" isMessage="true" showOnlyOnConsult="true" newLine="true"/>
 		</hf:formPanel>
 
 	</ui:define>

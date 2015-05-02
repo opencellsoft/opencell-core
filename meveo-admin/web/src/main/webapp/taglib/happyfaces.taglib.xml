@@ -39,5 +39,15 @@
 		<tag-name>fieldset</tag-name>
 		<source>fieldset.xhtml</source>
 	</tag>		
+		
+	<tag>
+		<tag-name>decorateFormPanel</tag-name>
+		<source>decorateFormPanel.xhtml</source>
+	</tag>	
+
+	<tag>
+		<tag-name>decorateFormField</tag-name>
+		<source>decorateFormField.xhtml</source>
+	</tag>		
 
 </facelet-taglib>

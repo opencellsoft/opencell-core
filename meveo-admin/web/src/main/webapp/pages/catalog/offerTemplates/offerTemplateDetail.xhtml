@@ -19,7 +19,6 @@
 			<p:tabView id="tabView">
 
 				<p:tab title="#{messages['customer.tab.information']}">
-					<p:panelGrid styleClass="form-panel-fields" columns="2">
 						<hf:formField label="#{messages['offerTemplate.code']}"
 							field="code" required="true" validateUnique="true" />
 						<hf:formField label="#{messages['offerTemplate.description']}"
@@ -29,8 +28,7 @@
 							field="disabled" isMessage="true" showOnlyOnConsult="true"/>
 						<hf:formField
 							label="#{messages['offerTemplate.serviceTemplates']}"
-							field="serviceTemplates" listType="pickUpList" childField="code" />
-					</p:panelGrid>
+							field="serviceTemplates" listType="pickUpList" valueLabelField="code" newLine="true" />
 				</p:tab>
 
 				<p:tab title="#{messages['customFieldTemplate.panel']}">

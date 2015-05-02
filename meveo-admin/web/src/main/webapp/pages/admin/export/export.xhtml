@@ -12,26 +12,24 @@
 
     <ui:define name="body">
         <h:form id="searchForm">
-            <p:panelGrid id="searchPanel" columns="1" styleClass="search-panel">
-                <f:facet name="header">
-                    <h:outputText value="#{messages['export.exportTemplates']}" />
-                </f:facet>
+          <p:panel header="#{messages['export.exportTemplates']}">
+            <h:panelGroup id="searchPanel" layout="block" styleClass="search-panel">  
                 <p:messages id="messages" autoUpdate="false" />
-                <p:panelGrid columns="2">
-                    <p:outputLabel for="search_templateName" value="#{messages['export.templateName']}" />
+                
+                <hf:formDecorateField fieldId="search_templateName" label="#{messages['export.templateName']}">  
                     <p:inputText id="search_templateName" value="#{entityExportImportBean.filters['templateName']}" size="40" />
-                </p:panelGrid>
-                <p:panelGrid columns="2">
-                    <p:outputLabel for="search_complex" value="#{messages['export.complex']}" />
+                </hf:formDecorateField>
+                <hf:formDecorateField fieldId="search_complex" label="#{messages['export.complex']}"> 
                     <p:selectBooleanCheckbox id="search_complex" value="#{entityExportImportBean.filters['complex']}" />
-                </p:panelGrid>
-                <p:panelGrid columns="2" style="float: right;" styleClass="search-panel-actions">
+                </hf:formDecorateField>
+                <h:panelGroup layout="block" styleClass="search-panel-actions">
                     <p:commandButton value="#{messages['commons.search']}" action="#{entityExportImportBean.searchExportTemplates}"
                         update=":form:datatable" />
                     <p:commandButton value="#{messages['commons.clean']}" action="#{entityExportImportBean.cleanExportTemplates}"
                         update=":searchForm:searchPanel, :form:datatable" />
-                </p:panelGrid>
-            </p:panelGrid>
+                </h:panelGroup>
+            </h:panelGroup>
+          </p:panel>
         </h:form>
 
 
@@ -53,12 +51,12 @@
                         <p:tooltip for="exportLink" value="#{messages['export.export']}" showEffect="slide" hideEffect="slide"
                             rendered="#{! templateInfo.value.hasParameters}" />
                         <p:commandButton id="exportLink" icon="ui-icon-play" action="#{entityExportImportBean.export(templateInfo.value)}"
-                            update=":searchForm:messages, :exportResults" oncomplete="exportResultsDialog.show()"
+                            update=":searchForm:messages, :exportResults" oncomplete="PF('exportResultsDialog').show()"
                             rendered="#{! templateInfo.value.hasParameters}" />
                         <p:tooltip for="exportLinkDialog" value="#{messages['export.export']}" showEffect="slide" hideEffect="slide"
                             rendered="#{ templateInfo.value.hasParameters}" />
                         <p:commandButton id="exportLinkDialog" icon="ui-icon-play" update=":exportParametersDialog"
-                            oncomplete="exportParametersDialog.show()" rendered="#{ templateInfo.value.hasParameters}">
+                            oncomplete="PF('exportParametersDialog').show()" rendered="#{ templateInfo.value.hasParameters}">
                             <f:setPropertyActionListener target="#{entityExportImportBean.selectedExportTemplate}" value="#{templateInfo.value}" />
                         </p:commandButton>
                     </p:column>
@@ -107,8 +105,8 @@
                     </p:panelGrid>
                     <p:panelGrid columns="2" style="float: right;" styleClass="search-panel-actions">
                         <p:commandButton value="#{messages['export.export']}" action="#{entityExportImportBean.export()}"
-                            oncomplete="exportParametersDialog.hide();exportResultsDialog.show()" update=":searchForm:messages, :exportResults" />
-                        <p:commandButton value="#{messages['action.cancel']}" onclick="exportParametersDialog.hide()" type="button" />
+                            oncomplete="PF('exportParametersDialog').hide();PF('exportResultsDialog').show()" update=":searchForm:messages, :exportResults" />
+                        <p:commandButton value="#{messages['action.cancel']}" onclick="PF('exportParametersDialog').hide()" type="button" />
                     </p:panelGrid>
                 </p:panelGrid>
             </h:form>

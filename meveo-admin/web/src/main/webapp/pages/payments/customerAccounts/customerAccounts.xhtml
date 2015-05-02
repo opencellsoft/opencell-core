@@ -25,7 +25,7 @@
 			searchField1Label="#{messages['customer.code']}" searchField1="code"
 			column1Label="#{messages['customer.code']}" column1="code"
 			selection="#{customerAccountListBean.filters['customer']}"
-			updateField=":searchPanel:searchForm:customer:customer_child">
+			updateField=":searchPanel:searchForm:customer">
 		</hftl:entityPopup>
 
 		<hf:searchPanel id="searchPanel"
@@ -33,7 +33,7 @@
 			backingBean="#{customerAccountListBean}">
 			<hf:searchField id="customer"
 				label="#{messages['customerAccount.customer']}" field="customer"
-				childField="code" popup="true" popupId="searchCustomerPopup" />
+				valueLabelField="code" popup="true" popupId="searchCustomerPopup" />
 			<hf:searchField label="#{messages['businessEntity.code']}"
 				field="code" />
 			<hf:searchField label="#{messages['businessEntity.description']}"
@@ -46,8 +46,6 @@
 				field="paymentMethod" />
 			<hf:searchField label="#{messages['customerAccount.creditCategory']}"
 				field="creditCategory" />
-			<hf:searchField label="#{messages['customerAccount.customer']}"
-				field="customer" />
 		</hf:searchPanel>
 
 		<hftl:dataList backingBean="#{customerAccountListBean}" sortBy="code">

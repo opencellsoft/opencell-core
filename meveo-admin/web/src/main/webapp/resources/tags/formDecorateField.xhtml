@@ -1,0 +1,79 @@
+<?xml version="1.0"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:p="http://primefaces.org/ui" xmlns:cc="http://java.sun.com/jsf/composite"
+    xmlns:fn="http://java.sun.com/jsp/jstl/functions" xmlns:hftl="http://hftl.org">
+<!-- 
+JSF composite tag to display a pair of field label and field entry/output value in a SINGLE or TWO line as a floating div in the following format:
+ <div class="formFieldGroup ...">
+    <label class="header-text ...">
+    <div class="formFieldItem/formFieldItem2Lines ...">
+        anything that was surrounded by c:decorate tag
+    </div>
+ </div> 
+
+
+Accepts the following attributes:
+id - a standard (optional) JSF attribute to assign ID to this component. If not provided a standard one will be generated. Need to supply only in cases when you have an ajax updatable component surrounded by this decorate tag.
+rendered - a standard JSF attribute to not render this component
+label - field label
+fieldId - input component's id value. Used to add p:messages component bound to the id of an input field. Note: no fieldId - no p:messages.
+required - should * be added to the label to indicate a required field
+styleClass - additional style class to apply to a component's div - will be added next to formFieldGroup class
+labelStyleClass - additional style class to apply to a label
+inputStyleClass - additional style class to apply to a div surrounding an input - will to be added next to formFieldItem class
+style - additional inline style to apply to a component's div
+labelStyle - additional inline style to apply to a label
+inputStyle - additional inline style to apply to a iv surrounding an input
+newLine - should component apply clear:left style on a component DIV
+
+Component by default will occupy a full width of a parent's container space - 100%
+To display two components in one line, each component width should be limited to 50% each. 
+To display three - should be limited into 33% each.
+
+The following parameters manage the width of the component, label and input container. Note that label and input container's with is measured in relation to component's with - not the page width.
+displayOneLine - should input controls be displayed in one (true) or two lines (false)
+componentWidth - a percentage (without % sign) of parent's component's space that component should occupy. Default 25 - a quarter width of a parent container's space.
+labelWidth - applies only when displayOneLine=true - a percentage (without % sign) that label should occupy. Input would occupy 100-labelWidth percent of space. Default - 20, that is 20% of a component's width.
+
+ -->
+
+
+<cc:interface componentType="formField">
+    <cc:attribute name="label" />
+    <cc:attribute name="required" default="false" />
+    <cc:attribute name="fieldId" />
+    <cc:attribute name="displayOneLine" />
+    <cc:attribute name="componentWidth" default="25" />
+    <cc:attribute name="labelWidth" />
+    <cc:attribute name="inputWidth" />
+
+    <cc:attribute name="newLine" />
+    <cc:attribute name="styleClass" />
+    <cc:attribute name="labelStyleClass" />
+    <cc:attribute name="inputStyleClass" />
+    <cc:attribute name="style" />
+    <cc:attribute name="labelStyle" />
+    <cc:attribute name="inputStyle" />
+
+</cc:interface>
+
+<cc:implementation>
+    <span id="#{cc.clientId}" style="white-space: nowrap">
+    
+        <hftl:decorateFormField fieldId="#{cc.attrs.fieldId}" label="#{cc.attrs.label}"
+            componentWidth="#{cc.attrs.componentWidth}" newLine="#{cc.attrs.newLine}" displayOneLine="#{cc.attrs.displayOneLine}" styleClass="#{cc.attrs.styleClass}"
+            style="#{cc.attrs.style}" labelStyle="#{cc.attrs.labelStyle}" labelStyleClass="#{cc.attrs.labelStyleClass}" inputStyle="#{cc.attrs.inputStyle}"
+            inputStyleClass="#{cc.attrs.inputStyleClass}" labelWidth="#{cc.attrs.labelWidth}" inputWidth="#{cc.attrs.inputWidth}">
+            <cc:insertChildren />
+        </hftl:decorateFormField> 
+        
+        
+        <!--         <h:panelGroup layout="block" styleClass="formFieldGroup #{cc.attrs.styleClass}" style="width:#{cc.attrs.componentWidth}%; #{cc.attrs.style} #{cc.attrs.newLine?'clearLeft':''}"> -->
+        <!--             <p:outputLabel for="#{cc.attrs.fieldId}" styleClass="#{cc.attrs.labelStyleClass}" style="width:#{cc.attrs.labelWidth}%; #{cc.attrs.labelStyle}" --> <!--                 value="#{cc.attrs.label}" rendered="#{cc.attrs.label!=null and cc.attrs.fieldId!=null}" /> -->
+        <!--             <p:outputLabel styleClass="header-text #{cc.attrs.labelStyleClass}" style="width:#{cc.attrs.labelWidth}%; #{cc.attrs.labelStyle}" --> <!--                 value="#{cc.attrs.label}" rendered="#{cc.attrs.label!=null and cc.attrs.fieldId==null}" /> -->
+        <!--             <h:panelGroup layout="block" styleClass="#{cc.attrs.fieldStyle} #{cc.attrs.inputStyleClass}" style="width:#{cc.attrs.inputWidth}%;  #{cc.attrs.inputStyle}"> -->
+        <!--                 <cc:insertChildren /> --> <!--             </h:panelGroup> --> <!--         </h:panelGroup> -->
+    </span>
+</cc:implementation>
+</html>

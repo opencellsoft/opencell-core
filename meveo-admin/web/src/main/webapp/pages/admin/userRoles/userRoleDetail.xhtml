@@ -20,7 +20,7 @@
 				field="description" size="50" maxlength="50" />
 			<hf:formField label="#{messages['role.permission']}" required="true"
 				field="permissions" listType="pickUpList"
-				listService="#{roleService}" childField="name" />
+				valueLabelField="name" styleClass="clearLeft" />
 		</hf:formPanel>
 	</ui:define>
 </ui:composition>

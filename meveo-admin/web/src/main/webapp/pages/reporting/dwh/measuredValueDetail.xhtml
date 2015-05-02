@@ -20,19 +20,9 @@
 
 	<ui:define name="body">
 
-		<p:panel header="#{messages['page.title.measuredValue']}"
-			styleClass="form-panel">
-
-			<p:messages id="formMessages" showDetail="true" showSummary="false"
-				redisplay="false"></p:messages>
-
-			<p:panelGrid columns="1" style="width: 100%">
-				<h:form id="measurementForm">
-					<p:panelGrid columns="4">
-
-						<p:panelGrid columns="2">
-							<p:outputLabel for="measurableQuantityCode"
-								value="#{messages['entity.measuredvalue.measurableQuantityCode']}"></p:outputLabel>
+			<hftl:decorateFormPanel formId="measurementForm" header="#{messages['page.title.measuredValue']}">
+					<ui:define name="fields">
+                        <hftl:decorateFormField fieldId="measurableQuantityCode" label="#{messages['entity.measuredvalue.measurableQuantityCode']}">
 							<p:selectOneMenu id="measurableQuantityCode" required="true"
 								value="#{measurementBean.measurableQuantityCode}"
 								converter="omnifaces.SelectItemsConverter" style="width: 150px">
@@ -42,12 +32,9 @@
 									var="obj" itemValue="#{obj}" itemLabel="#{obj}"></f:selectItems>
 								<p:ajax event="valueChange" update=":measurementForm"></p:ajax>
 							</p:selectOneMenu>
-						</p:panelGrid>
+						</hftl:decorateFormField>
 
-						<p:panelGrid columns="2"
-							rendered="#{measurementBean.measurableQuantity != null}">
-							<p:outputLabel for="measurablePeriod"
-								value="#{messages['entity.measuredvalue.measurementPeriod']}"></p:outputLabel>
+						<hftl:decorateFormField fieldId="measurablePeriod" label="#{messages['entity.measuredvalue.measurementPeriod']}" rendered="#{measurementBean.measurableQuantity != null}" displayOneLine="true" componentWidth="100">
 							<p:selectOneMenu id="measurablePeriod" required="true"
 								value="#{measurementBean.measuredPeriod}"
 								converter="omnifaces.SelectItemsConverter" style="width: 150px">
@@ -57,30 +44,20 @@
 									itemLabel="#{messages['enum.measurementperiod.'.concat(obj)]}"></f:selectItems>
 								<p:ajax event="valueChange" update=":measurementForm"></p:ajax>
 							</p:selectOneMenu>
-						</p:panelGrid>
+						</hftl:decorateFormField>
 
-						<p:panelGrid columns="2"
-							rendered="#{measurementBean.measurableQuantity != null}">
-							<p:outputLabel for="selectedDate"
-								value="#{messages['commons.date']}" />
+						<hftl:decorateFormField fieldId="selectedDate" label="#{messages['commons.date']}" rendered="#{measurementBean.measurableQuantity != null}">
 							<p:calendar id="selectedDate"
 								value="#{measurementBean.selectedDate}" required="true"
 								pattern="MMMM yyyy">
 								<p:ajax event="dateSelect" update=":measurementForm"></p:ajax>
 							</p:calendar>
-						</p:panelGrid>
+						</hftl:decorateFormField>
+                        
 
-						<p:commandButton value="Display Table"
-							action="#{measurementBean.generateMVModel()}"
-							update=":mqTableForm "
-							rendered="#{(measurementBean.measurableQuantity != null)  and (measurementBean.selectedDate != null)}" />
-					</p:panelGrid>
 
-					<p:panelGrid columns="4">
-						<p:panelGrid columns="2"
-							rendered="#{measurementBean.measurableQuantityCode != null}">
-							<p:outputLabel for="dimension1Filter"
-								value="#{messages['entity.measurablequantity.dimension1']}"></p:outputLabel>
+					<h:panelGroup rendered="#{measurementBean.measurableQuantityCode != null}">
+                        <hftl:decorateFormField fieldId="dimension1Filter" label="#{messages['entity.measurablequantity.dimension1']}" newLine="true">
 							<p:selectOneMenu id="dimension1Filter"
 								value="#{measurementBean.dimension1Filter}"
 								converter="omnifaces.SelectItemsConverter"
@@ -90,14 +67,11 @@
 									var="obj" itemValue="#{obj}"></f:selectItems>
 								<p:ajax event="valueChange" update=":measurementForm"></p:ajax>
 							</p:selectOneMenu>
-							<p:outputLabel value="#{measurementBean.dimension1Filter}"
-								rendered="#{measurementBean.measurableQuantity != null}"></p:outputLabel>
-						</p:panelGrid>
+							<h:outputText value="#{measurementBean.dimension1Filter}"
+								rendered="#{measurementBean.measurableQuantity != null}"/>
+						</hftl:decorateFormField>
 
-						<p:panelGrid columns="2"
-							rendered="#{measurementBean.measurableQuantityCode != null}">
-							<p:outputLabel for="dimension2Filter"
-								value="#{messages['entity.measurablequantity.dimension2']}"></p:outputLabel>
+                        <hftl:decorateFormField fieldId="dimension2Filter" label="#{messages['entity.measurablequantity.dimension2']}">
 							<p:selectOneMenu id="dimension2Filter"
 								value="#{measurementBean.dimension2Filter}"
 								converter="omnifaces.SelectItemsConverter"
@@ -107,14 +81,11 @@
 									var="obj" itemValue="#{obj}"></f:selectItems>
 								<p:ajax event="valueChange" update=":measurementForm"></p:ajax>
 							</p:selectOneMenu>
-							<p:outputLabel value="#{measurementBean.dimension2Filter}"
-								rendered="#{measurementBean.measurableQuantity != null}"></p:outputLabel>
-						</p:panelGrid>
+							<h:outputText value="#{measurementBean.dimension2Filter}"
+								rendered="#{measurementBean.measurableQuantity != null}"/>
+						</hftl:decorateFormField>
 
-						<p:panelGrid columns="2"
-							rendered="#{measurementBean.measurableQuantityCode != null}">
-							<p:outputLabel for="dimension3Filter"
-								value="#{messages['entity.measurablequantity.dimension3']}"></p:outputLabel>
+						<hftl:decorateFormField fieldId="dimension3Filter" label="#{messages['entity.measurablequantity.dimension3']}">
 							<p:selectOneMenu id="dimension3Filter"
 								value="#{measurementBean.dimension3Filter}"
 								converter="omnifaces.SelectItemsConverter"
@@ -124,14 +95,11 @@
 									var="obj" itemValue="#{obj}"></f:selectItems>
 								<p:ajax event="valueChange" update=":measurementForm"></p:ajax>
 							</p:selectOneMenu>
-							<p:outputLabel value="#{measurementBean.dimension3Filter}"
-								rendered="#{measurementBean.measurableQuantity != null}"></p:outputLabel>
-						</p:panelGrid>
+							<h:outputText value="#{measurementBean.dimension3Filter}"
+								rendered="#{measurementBean.measurableQuantity != null}"/>
+						</hftl:decorateFormField>
 
-						<p:panelGrid columns="2"
-							rendered="#{measurementBean.measurableQuantityCode != null}">
-							<p:outputLabel for="dimension4Filter"
-								value="#{messages['entity.measurablequantity.dimension4']}"></p:outputLabel>
+						<hftl:decorateFormField fieldId="dimension4Filter" label="#{messages['entity.measurablequantity.dimension4']}">
 							<p:selectOneMenu id="dimension4Filter"
 								value="#{measurementBean.dimension4Filter}"
 								converter="omnifaces.SelectItemsConverter"
@@ -141,19 +109,25 @@
 									var="obj" itemValue="#{obj}"></f:selectItems>
 								<p:ajax event="valueChange" update=":measurementForm"></p:ajax>
 							</p:selectOneMenu>
-							<p:outputLabel value="#{measurementBean.dimension4Filter}"
-								rendered="#{measurementBean.measurableQuantity != null}"></p:outputLabel>
-						</p:panelGrid>
-					</p:panelGrid>
-				</h:form>
+							<h:outputText value="#{measurementBean.dimension4Filter}"
+								rendered="#{measurementBean.measurableQuantity != null}"/>
+						</hftl:decorateFormField>
+                    </h:panelGroup>
+                   </ui:define>
+                   <ui:define name="buttons">
+                        <p:commandButton value="Display Table"
+                            action="#{measurementBean.generateMVModel()}"
+                            update=":mqTableForm "
+                            rendered="#{(measurementBean.measurableQuantity != null)  and (measurementBean.selectedDate != null)}" />
+                   </ui:define>
+			</hftl:decorateFormPanel>
 
 				<h:form id="mqTableForm">
 					<p:dataTable id="mqTable" value="#{measurementBean.mainMVModel}"
 						var="meas" rendered="#{measurementBean.mainMVModel != null}"
 						editable="true" editMode="cell">
 
-						<p:ajax event="cellEdit" listener="#{measurementBean.onCellEdit}"
-							update=":#{p:component('formMessages')} " />
+						<p:ajax event="cellEdit" listener="#{measurementBean.onCellEdit}" />
 
 						<p:columnGroup type="header">
 							<p:row>
@@ -204,8 +178,7 @@
 						</h:commandLink>
 					</p:panel>
 				</h:form>
-			</p:panelGrid>
-		</p:panel>
+
 
 		<p:dialog id="editMV" header="#{messages['menu.measuredValue']}"
 			showEffect="fade" widgetVar="editMVWidget" modal="true"

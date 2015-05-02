@@ -19,19 +19,12 @@
 
 	<ui:fragment>
 		<!-- Default size -->
-		<c:if test="${empty panelWidth}">
-			<c:set var="panelWidth" value="26%" />
-		</c:if>
 
-		<p:panelGrid columns="1" styleClass="#{cc.attrs.id}_grid">
-			<f:facet name="header">
-				<h:outputText value="#{messages['customer.tree']}" />
-			</f:facet>
-
-			<h:form>
-
+        <h:form>
+		  <p:panel styleClass="#{cc.attrs.id}_grid" header="#{messages['customer.tree']}" >
+			
 				<p:tree id="#{cc.attrs.id}_tree" value="#{cc.attrs.treeValue}"
-					var="node" selectionMode="single" dynamic="true">
+					var="node" selectionMode="single" dynamic="true" style="width: 100%">
 
 					<p:treeNode type="ACCT_CUST" icon="tree-customer-icon"
 						expandedIcon="ui-icon-folder-open"
@@ -119,9 +112,9 @@
 
 				</p:tree>
 
-			</h:form>
+            </p:panel>
+	    </h:form>
 
-		</p:panelGrid>
 	</ui:fragment>
 </cc:implementation>
 

@@ -43,36 +43,33 @@
 		value="#{getConverter.forParam(column7Converter)}"></c:set>
 
 	<p:dialog id="#{id}" header="#{header}" widgetVar="dlg_#{id}"
-		dynamic="true" modal="true" styleClass="form-dialog">
+		dynamic="true" modal="true" styleClass="form-dialog" closeOnEscape="true" width="500">
 		<h:form id="#{id}popupForm">
-			<c:if test="#{not empty searchField1}">
-				<p:panelGrid id="#{id}searchFormPanel" columns="2">
-					<hf:searchField label="#{searchField1Label}"
-						backingBean="#{backingBean}" field="#{searchField1}" />
-					<c:if test="#{not empty searchField2}">
-						<hf:searchField label="#{searchField2Label}"
-							backingBean="#{backingBean}" field="#{searchField2}" />
-					</c:if>
-					<c:if test="#{not empty searchField3}">
-						<hf:searchField label="#{searchField3Label}"
-							backingBean="#{backingBean}" field="#{searchField3}" />
-					</c:if>
-				</p:panelGrid>
-				<p:panelGrid columns="3">
-					<p:commandButton id="buttonSearch"
-						value="#{messages['commons.search']}" update="#{id}popupForm" />
-					<p:commandButton id="buttonClear" action="#{backingBean.clean}"
-						value="#{messages['commons.clean']}" update="#{id}popupForm" />
-					<p:commandButton id="buttonAll" action="#{backingBean.back}"
-						value="#{messages['commons.all']}" />
-				</p:panelGrid>
-			</c:if>
+            <c:if test="#{not empty searchField1}">
+                <h:panelGroup layout="block" styleClass="search-panel">
+                    <p:messages />
+                    <p:outputPanel styleClass="search-panel-fields">
+                        <hf:searchField label="#{searchField1Label}" backingBean="#{backingBean}" field="#{searchField1}" />
+                        <c:if test="#{not empty searchField2}">
+                            <hf:searchField label="#{searchField2Label}" backingBean="#{backingBean}" field="#{searchField2}" />
+                        </c:if>
+                        <c:if test="#{not empty searchField3}">
+                            <hf:searchField label="#{searchField3Label}" backingBean="#{backingBean}" field="#{searchField3}" />
+                        </c:if>
+                    </p:outputPanel>
+                    <h:panelGroup layout="block" styleClass="search-panel-actions">
+                        <p:commandButton id="buttonSearch" value="#{messages['commons.search']}" update="#{id}popupForm" />
+                        <p:commandButton id="buttonClear" action="#{backingBean.clean}" value="#{messages['commons.clean']}" update="#{id}popupForm" />
+                        <p:commandButton id="buttonAll" action="#{backingBean.back}" value="#{messages['commons.all']}" />
+                    </h:panelGroup>
+                </h:panelGroup>
+            </c:if>
 
-			<p:dataTable id="#{id}datatable" var="e" paginator="true"
+            <p:dataTable id="#{id}datatable" var="e" paginator="true"
 				value="#{dataModel}" rows="10" selection="#{selection}"
 				selectionMode="single" rowKey="#{e.id}" lazy="#{lazy}">
 				<p:ajax event="rowSelect" listener="#{eventBackingBean.onRowSelect}"
-					oncomplete="dlg_#{id}.hide()" update="#{updateField}" />
+					oncomplete="PF('dlg_#{id}').hide()" update="#{updateField}" />
 
 				<c:if test="#{not empty column1}">
 					<p:column>

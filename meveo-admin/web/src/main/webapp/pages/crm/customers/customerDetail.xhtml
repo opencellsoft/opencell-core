@@ -30,135 +30,101 @@
 			column1="code" selection="#{customerBean.entity.seller}"
 			column2Label="#{messages['BusinessEntity.description']}"
 			column2="description"
-			updateField=":formCustomerPanel:formCustomer:tabView:parentSelectId:parentSelectId">
+			updateField=":formCustomerPanel:formCustomer:tabView:parentSelectId">
 		</hftl:entityPopup>
 
-		<p:panelGrid styleClass="col2-set">
-			<p:row>
-				<p:column styleClass="col1">
+        <h:panelGroup styleClass="col2-set">
+            <h:panelGroup styleClass="col1">
 					<hf:hierarchyPanel
 						treeValue="#{customerTreeBean.buildAccountsHierarchy(customerBean.entity)}"
 						entity="#{customerBean.entity}" />
-				</p:column>
-				<p:column styleClass="col2 tab-view-container">
-					<hf:formPanel id="formCustomerPanel" formId="formCustomer"
+            </h:panelGroup>
+			<h:panelGroup styleClass="col2">
+            		<hf:formPanel id="formCustomerPanel" formId="formCustomer"
 						label="#{messages['customer.customerPanel']}"
 						showFormButtons="false" backingBean="#{customerBean}"
 						useCustomIdParam="true">
 						<p:tabView id="tabView">
 							<p:tab title="#{messages['customer.tab.account']}">
-								<hftl:panelGroup columns="1">
+								
 									<hf:formField label="#{messages['businessEntity.code']}"
-										field="code" validateUnique="true" required="true" />
+										field="code" validateUnique="true" required="true" displayOneLine="true" componentWidth="50"/>
+									
 									<hf:formField label="#{messages['businessEntity.description']}"
 											field="description" useConverter="false" id="description"
-											maxlength="50" required="true" />
-									<hftl:panelGroup columns="2">
+											maxlength="50" required="true" newLine="true"/>
 										<hf:formField label="#{messages['customer.externalRef1']}"
 											field="externalRef1" validateUnique="false" />
 										<hf:formField label="#{messages['customer.externalRef2']}"
 											field="externalRef2" />
-									</hftl:panelGroup>
-									 <h:panelGrid columns="2">
-										<p:outputLabel for="title_text"
-											value="#{messages['name.title']}" />
-										<p:selectOneMenu id="title_text"
-											value="#{customerBean.entity.name.title}" required="false"
-											rendered="#{customerBean.edit}">
-											<f:selectItem itemLabel="" itemValue="" />
-											<f:selectItems value="#{titleBean.listAll()}" var="t"
-												itemLabel="#{t.description}" />
-											<s:objectConverter />
-											<p:ajax event="valueChange"
-												update=":formCustomerPanel:formCustomer:tabView:userNamePanel" />
-										</p:selectOneMenu>
-										<h:outputText rendered="#{!customerBean.edit}"
-											value="#{customerBean.entity.name.title.description}"
-											style="font-weight:bold;" />
-									  </h:panelGrid>
-								</hftl:panelGroup>
-								<h:panelGroup id="userNamePanel">
-										<h:panelGrid columns="2" columnClasses="twoColGrid">
-											<hf:formEntityField label="#{messages['name.lastName']}"
-												field="name" childField="lastName" popup="false"
+
+                                    <hf:formField label="#{messages['name.title']}" field="name" childField="title" valueLabelField="description" required="true"
+                                        listBean="#{titleBean}" listenerUpdate=":formCustomerPanel:formCustomer:tabView:userNamePanel" styleClass="clearLeft"/>
+
+									<h:panelGroup id="userNamePanel" layout="block">
+											<hf:formField label="#{messages['name.lastName']}"
+												field="name" childField="lastName" 
 												maxlength="50" required="true" />
-											<p:panelGrid columns="2"
-												rendered="#{customerBean.entity.name.title == null or !customerBean.entity.name.title.isCompany}">
-												<p:outputLabel for="firstName_text"
-													value="#{messages['name.firstName']}" />
-	
-												<p:inputText id="firstName_text"
-													value="#{customerBean.entity.name.firstName}"
-													rendered="#{(customerBean.entity.name.title == null or !customerBean.entity.name.title.isCompany) and customerBean.edit}" />
-												<h:outputText value="#{customerBean.entity.name.firstName}"
-													rendered="#{(customerBean.entity.name.title == null or !customerBean.entity.name.title.isCompany) and !customerBean.edit}"
-													style="font-weight:bold;" />
-											</p:panelGrid>
-											<hf:emtyFormField
-												show="#{customerBean.entity.name.title == null or !customerBean.entity.name.title.isCompany}" />
-										</h:panelGrid>
+                                            <hf:formField label="#{messages['name.firstName']}"
+                                                field="name" childField="firstName" 
+                                                maxlength="50" rendered="#{customerBean.entity.name.title == null or !customerBean.entity.name.title.isCompany}"/>
 									</h:panelGroup>
-								<hftl:panelGroup columns="1">
-									<hf:formEntityField
+	
+									<hf:formField
 										label="#{messages['customer.customerCategory']}"
-										field="customerCategory" childField="description"
-										popup="false" required="true"
-										listBean="#{customerCategoryBean}" />
-									<hf:formEntityField
+										field="customerCategory" valueLabelField="description"
+										required="true"
+										listBean="#{customerCategoryBean}" styleClass="clearLeft" />
+									<hf:formField
 										label="#{messages['customer.customerBrand']}"
-										field="customerBrand" childField="description" popup="false"
-										service="#{customerBrandService}" required="true"
+										field="customerBrand" valueLabelField="description" 
+										required="true"
 										listBean="#{customerBrandBean}" />
-									<hf:formEntityField id="parentSelectId"
+									<hf:formField id="parentSelectId"
 										label="#{messages['seller.parent']}" field="seller"
-										childField="description" required="true" popup="true"
+										valueLabelField="description" required="true" popup="true"
 										popupId="sellerParentPopup" />
-								</hftl:panelGroup>
+								
 							</p:tab>
 
 							<p:tab title="#{messages['customer.tab.information']}" id="tabContact">
 								<p:fieldset legend="#{messages['commons.contacts']}">
 									
-									<p:panelGrid columns="1">
-										<hf:formEntityField
+										<hf:formField
 											label="#{messages['contactInformation.email']}"
-											field="contactInformation" childField="email" popup="false"
+											field="contactInformation" childField="email" 
 											required="false" size="50" maxlength="100"
 											useConverter="false" validateEmail="true" />
-										<hf:formEntityField label="#{messages['address.address1']}"
+										<hf:formField label="#{messages['address.address1']}"
 											field="address" id="address1" childField="address1"
-											popup="false" size="80" maxlength="80" />
-										<hf:formEntityField label="#{messages['address.address2']}"
+											 size="80" maxlength="80" />
+										<hf:formField label="#{messages['address.address2']}"
 											field="address" id="address2" childField="address2"
-											popup="false" size="80" maxlength="80" />
-										<hf:formEntityField label="#{messages['address.address3']}"
+											 size="80" maxlength="80" />
+										<hf:formField label="#{messages['address.address3']}"
 											field="address" id="address3" childField="address3"
-											popup="false" size="80" maxlength="80" />
-									</p:panelGrid>
-									<p:panelGrid columns="2">
-										<hf:formEntityField label="#{messages['address.zipCode']}"
-											field="address" childField="zipCode" popup="false"
-											id="zipCode" maxlength="10" size="10" />
-										<hf:formEntityField label="#{messages['address.city']}"
-											field="address" childField="city" popup="false" id="city"
+											size="80" maxlength="80" />
+									
+										<hf:formField label="#{messages['address.zipCode']}"
+											field="address" childField="zipCode" 
+											id="zipCode" maxlength="10" size="10"  newLine="true"/>
+										<hf:formField label="#{messages['address.city']}"
+											field="address" childField="city"  id="city"
 											maxlength="50" />
-									</p:panelGrid>
-									<hf:formEntityField label="#{messages['address.country']}"
-										embedded="true" field="address" childField="country"
-										labelField="descriptionEn" valueField="countryCode"
-										listBean="#{countryBean}"></hf:formEntityField>
+									
+									<hf:formField label="#{messages['address.country']}"
+										fkToEntity="true" field="address" childField="country"
+										valueLabelField="descriptionEn" valueField="countryCode"
+										listBean="#{countryBean}"/>
 								</p:fieldset>
-								<hftl:fieldset name="#{messages['customerAccount.sepaDebit']}"
-									columns="1">
-									<hftl:panelGroup columns="1">
+								<p:fieldset legend="#{messages['customerAccount.sepaDebit']}">
 										<hf:formField
 											label="#{messages['customerAccount.mandateIdentification']}"
 											field="mandateIdentification" />
 										<hf:formField
 											label="#{messages['customerAccount.mandateDate']}"
 											field="mandateDate" isDate="true" />
-									</hftl:panelGroup>
-								</hftl:fieldset>
+								</p:fieldset>
 							</p:tab>
 
 							<p:tab title="#{messages['customFieldTemplate.panel']}">
@@ -177,9 +143,8 @@
 							</p:button>
 						</hf:formButtons>
 					</hf:formPanel>
-				</p:column>
-			</p:row>
-		</p:panelGrid>
+            </h:panelGroup>
+        </h:panelGroup>
 	</ui:define>
 
 </ui:composition>

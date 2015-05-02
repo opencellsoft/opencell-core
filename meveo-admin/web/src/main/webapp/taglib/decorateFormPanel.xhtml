@@ -1,0 +1,41 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:p="http://primefaces.org/ui" xmlns:c="http://java.sun.com/jsp/jstl/core">
+
+<ui:composition>
+
+    <c:if test="${empty formId}">
+        <c:set var="formId" value="form" />
+    </c:if>
+
+    <c:if test="${empty edit}">
+        <c:set var="edit" value="true" />
+    </c:if>
+
+    <c:if test="${empty showMessages}">
+        <c:set var="showMessages" value="true" />
+    </c:if>
+
+    <h:form id="#{formId}">
+        <p:panel styleClass="form-panel">
+            <c:if test="#{not empty header}">
+                <f:facet name="header">
+                    <h:outputText value="#{header}" />
+                </f:facet>
+            </c:if>
+            <c:if test="#{showMessages}">
+                <p:messages id="messages" autoUpdate="true" />
+            </c:if>
+            <p:outputPanel styleClass="form-panel-fields #{edit?'':' form-panel-fields-view'}">
+                <ui:insert name="fields" />
+            </p:outputPanel>
+            <h:panelGroup layout="block" styleClass="form-panel-actions">
+                <ui:insert name="buttons" />
+            </h:panelGroup>
+        </p:panel>
+    </h:form>
+</ui:composition>
+
+</html>

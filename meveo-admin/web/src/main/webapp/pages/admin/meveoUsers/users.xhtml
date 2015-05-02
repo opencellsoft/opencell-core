@@ -3,7 +3,7 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html" xmlns:hftl="http://hftl.org"
-	xmlns:hf="http://java.sun.com/jsf/composite/tags"
+	xmlns:hf="http://java.sun.com/jsf/composite/tags" xmlns:p="http://primefaces.org/ui"
 	template="/layout/template.xhtml">
 
 	<ui:define name="metadata">
@@ -24,8 +24,7 @@
 		</hf:searchPanel>
 
 		<hftl:dataList label="#{messages['user.title']}"
-			backingBean="#{userListBean}">
-			<!-- Simple fields like numbers, strings, dates etc only needs field name provided. -->
+			backingBean="#{userListBean}" sortBy="userName">
 			<hftl:column label="#{messages['user.userName']}" field="userName" />
 			<hftl:column label="#{messages['user.roles']}" field="roles"
 				childField="name" isList="true" sort="false" />

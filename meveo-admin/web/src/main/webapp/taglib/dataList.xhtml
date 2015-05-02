@@ -6,9 +6,9 @@
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:p="http://primefaces.org/ui"
-	xmlns:e="http://primefaces.org/extension"
 	xmlns:pe="http://primefaces.org/ui/extensions"
-	xmlns:c="http://java.sun.com/jsp/jstl/core">
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+    xmlns:hftl="http://hftl.org">
 
 <ui:composition>
 
@@ -78,18 +78,18 @@
 
 			<p:dataTable id="datatable_#{resultsId}" var="entity"  scrollable="#{scrollable}"
 				value="#{dataModel}" paginator="true" rows="10" editable="#{editable}" editMode="#{editMode}"  widgetVar="cellEntity"
-				selection="#{backingBean.selectedEntities}" sortBy="#{sortBy}" sortOrder="#{sortOrder}"
+				selection="#{backingBean.selectedEntities}" sortField="#{sortBy}" sortOrder="#{sortOrder}"
 				paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
 				rowsPerPageTemplate="#{rowsPerPage}" lazy="true"
 				binding="#{backingBean.dataTable}" styleClass="custom-grid"
-				rowKey="#{entity.id}" first="#{backingBean.dataTableFirstAttribute}">
+				rowKey="#{entity.id}" first="#{backingBean.dataTableFirstAttribute}" reflow="true">
 				<p:ajax event="page" listener="#{backingBean.onPageChange}" />
 				<p:ajax event="toggleSelect" update="@this" process="@this" />
 				<p:ajax event="rowSelectCheckbox" />
 				<p:ajax event="rowUnselectCheckbox" />
 				<p:ajax event="rowSelect" />
 				<p:ajax event="rowUnselect" />
-				<p:column selectionMode="multiple" style="width:2%"
+				<p:column selectionMode="multiple" width="3%"  
 					rendered="#{checkMany}" exportable="false" />
 				<ui:insert />
 			</p:dataTable>
@@ -111,26 +111,25 @@
 				rendered="#{exportXlsxButton}">
         		<pe:exporter type="xlsx" target="datatable_#{resultsId}" fileName="data" pageOnly="false" skipComponents="true"/>
 			</p:commandButton>
-			<p:panelGrid columns="2" >
-			<p:commandButton style="margin-left:4px;" value="Export to CSV" action="#{backingBean.exportToFile()}" rendered="#{exportToCsv}" ajax="false"/>
-			<p:commandButton value="Import CSV"  rendered="#{importCsv}" type="button" onclick="PF('csvDialog').show();" />
-			<p:dialog header="Import CSV"  id="#{formId}_strategyDlg" widgetVar="csvDialog" rendered="#{importCsv}">
-            <p:panelGrid columns="2" >
-		    <p:outputLabel for="#{formId}_strategy" style="width:180px;margin-left:-70px;" value="#{messages['notification.strategyImportType']}" />
-            <p:selectOneMenu id="#{formId}_strategy" value="#{backingBean.strategyImportType}" >
-            <f:selectItem itemLabel="#{messages['commons.select']}" />
-            <f:selectItem itemLabel="#{messages['enum.strategyImportTypeEnum.UPDATED']}"  itemValue="UPDATED" /> 
-			<f:selectItem itemLabel="#{messages['enum.strategyImportTypeEnum.REJECTE_IMPORT']}"  itemValue="REJECTE_IMPORT" />
-            <f:selectItem itemLabel="#{messages['enum.strategyImportTypeEnum.REJECT_EXISTING_RECORDS']}"  itemValue="REJECT_EXISTING_RECORDS" />			
-			<p:ajax event="valueChange" update="@this"></p:ajax>
-           </p:selectOneMenu>
-			</p:panelGrid>
-			<br/><br/>
-			<p:fileUpload fileUploadListener="#{backingBean.handleFileUpload}" update="@all" ajax="false"
-			rendered="#{importCsv}" multiple="true" mode="advanced" dragDropSupport="true" fileLimit="5"/>
-           </p:dialog>
-		   </p:panelGrid>
-			<p:panel styleClass="buttons-set-data-table">
+                <p:commandButton style="margin-left:4px;" value="Export to CSV" action="#{backingBean.exportToFile()}" rendered="#{exportToCsv}" ajax="false" />
+                <p:commandButton value="Import CSV" rendered="#{importCsv}" type="button" onclick="PF('csvDialog').show();" />
+                <p:dialog header="Import CSV" id="#{formId}_strategyDlg" widgetVar="csvDialog" rendered="#{importCsv}">
+                    
+                     <hftl:decorateFormField fieldId="#{formId}_strategy" label="#{messages['notification.strategyImportType']}">
+                        <p:selectOneMenu id="#{formId}_strategy" value="#{backingBean.strategyImportType}">
+                            <f:selectItem itemLabel="#{messages['commons.select']}" />
+                            <f:selectItem itemLabel="#{messages['enum.strategyImportTypeEnum.UPDATED']}" itemValue="UPDATED" />
+                            <f:selectItem itemLabel="#{messages['enum.strategyImportTypeEnum.REJECTE_IMPORT']}" itemValue="REJECTE_IMPORT" />
+                            <f:selectItem itemLabel="#{messages['enum.strategyImportTypeEnum.REJECT_EXISTING_RECORDS']}" itemValue="REJECT_EXISTING_RECORDS" />
+                            <p:ajax event="valueChange" update="@this"></p:ajax>
+                        </p:selectOneMenu>
+                    </hftl:decorateFormField>
+                    <div class="clearLeft">
+                        <p:fileUpload fileUploadListener="#{backingBean.handleFileUpload}" update="@all" ajax="false" rendered="#{importCsv}" multiple="true" mode="advanced"
+                            dragDropSupport="true" fileLimit="5" />
+                    </div>
+                </p:dialog>
+            <p:panel styleClass="buttons-set-data-table">
 				<ui:insert name="add-on-buttons" />
 			</p:panel>
 

@@ -16,8 +16,8 @@
 	
 	<hftl:entityPopup id="searchInvoiceCategoryPopup"
 			header="#{messages['invoiceCategory.panel']}"
-			updateField=":tabView:discountPlanItemFormPanel:formDiscountPlanItem:categorySelectId:categorySelectId,:tabView:discountPlanItemFormPanel:formDiscountPlanItem:invoiceSubCategories"
-			selection="#{discountPlanItem.invoiceCategory}"
+			updateField=":tabView:discountPlanItemFormPanel:formDiscountPlanItem:categorySelectId,:tabView:discountPlanItemFormPanel:formDiscountPlanItem:invoiceSubCategories"
+			selection="#{discountPlanBean.discountPlanItem.invoiceCategory}"
 			backingBean="#{invoiceCategoryBean}"
 			searchField1Label="#{messages['invoiceCategory.code']}"
 			searchField1="code"
@@ -27,10 +27,7 @@
 			column2Label="#{messages['invoiceCategory.description']}"
 			column2="description" />
 			
-			<p:panelGrid styleClass="col1-set tab-view-container" columns="1">
-			<f:facet name="header">
-				<h:outputText value="#{messages['discountPlan.title']}" />
-			</f:facet>
+			<p:panel header="#{messages['discountPlan.title']}" >
 
 			<p:tabView id="tabView">
 
@@ -107,14 +104,13 @@
 							</p:column>
 						</hftl:dataList>
 						</p:outputPanel>
-						<p:panel>
+                        
 						<p:panel id="discountPlanItemdiv"
 							rendered="#{discountPlanBean.edit}">
-							<p:panel id="subCategoryCountrySdiv">
 						<hf:formPanel  id="discountPlanItemFormPanel"
 							formId="formDiscountPlanItem" edit="#{discountPlanBean.edit}"
 							label="#{messages['discountPlanItem.title']}"
-							backingBean="#{discountPlanBean}" entity="#{discountPlanItem}"
+							backingBean="#{discountPlanBean}" entity="#{discountPlanBean.discountPlanItem}"
 							showFormButtons="false" ajaxSubmit="true">
 
 							<div class="alert-box alert-box-notice">
@@ -123,19 +119,18 @@
 							<hf:formField label="#{messages['discountPlanMatrix.itemCode']}"
 								field="code" required="true" />
 
-							 <hf:formEntityField id="categorySelectId"
-							label="#{messages['invoiceSubCategory.invoiceCategory']}"
-							field="invoiceCategory" childField="code" required="true"
-							popup="true" popupId="searchInvoiceCategoryPopup" /> 
-							
-							<p:panelGrid columns="2">
-                    		<p:outputLabel value="#{messages['charge.subCategory']}"></p:outputLabel>
-                   			 <p:selectOneMenu id="invoiceSubCategories" value="#{discountPlanItem.invoiceSubCategory}" >  
-						  	<f:selectItem itemLabel="" />
-                        	<f:selectItems value="#{discountPlanItemBean.getInvoiceSubCategories(discountPlanItem.invoiceCategory)}" var="t" itemLabel="#{t.code}"/> 
-							<s:objectConverter />
-                    		</p:selectOneMenu> 
-							</p:panelGrid> 
+							<hf:formField id="categorySelectId"
+    							label="#{messages['invoiceSubCategory.invoiceCategory']}"
+    							field="invoiceCategory" valueLabelField="code" required="true"
+    							popup="true" popupId="searchInvoiceCategoryPopup" /> 
+
+                            <hf:formDecorateField id="invoiceSubCategories" fieldId="invoiceSubCategories" label="#{messages['charge.subCategory']}">
+                       			<p:selectOneMenu id="invoiceSubCategories" value="#{discountPlanBean.discountPlanItem.invoiceSubCategory}" >  
+        						  	<f:selectItem itemLabel="" />
+                                	<f:selectItems value="#{discountPlanItemBean.getInvoiceSubCategories(discountPlanBean.discountPlanItem.invoiceCategory)}" var="t" itemLabel="#{t.code}"/> 
+        							<s:objectConverter />
+                        		</p:selectOneMenu> 
+                            </hf:formDecorateField>
 							<hf:formField
 								label="#{messages['discountPlanItem.accountingCode']}"
 								field="accountingCode" />
@@ -149,16 +144,16 @@
 							<hf:formField label="#{messages['enableEntity.disabled']}"
 							field="disabled" isMessage="true" />
 								
-							<p:panelGrid columns="4">
+							<f:facet name="buttons">
 
 								<p:commandButton id="saveButton"
-									rendered="#{discountPlanItem.id==null}"
+									rendered="#{discountPlanBean.discountPlanItem.id==null}"
 									value="#{messages['discountPlanItem.addNew']}"
 									action="#{discountPlanBean.saveOrUpdateDiscountPlan()}"
 									icon="ui-icon-check"
 									update=":tabView:discountPlanItemPanel,:tabView:discountPlanItemFormPanel:formDiscountPlanItem,:tabView:discountPlanItemdiv"/>
 								<p:commandButton
-											rendered="#{discountPlanItem.id!=null}"
+											rendered="#{discountPlanBean.discountPlanItem.id!=null}"
 											action="#{discountPlanBean.saveOrUpdateDiscountPlan}"
 											value="#{messages['discountPlanItem.modifyDiscountPlantItem']}"
 											update=":tabView:discountPlanItemPanel,:tabView:discountPlanItemFormPanel:formDiscountPlanItem,:tabView:discountPlanItemdiv"
@@ -177,22 +172,14 @@
 											value="#{javax.enterprise.context.conversation.id}" />
 									</c:if>
 								</p:button>
-								
-								 
-
-							</p:panelGrid>
+							</f:facet>
 
 						</hf:formPanel>
 
 					</p:panel>
-
-						</p:panel>
-
-					</p:panel>
 				</p:tab>
-
 			</p:tabView>
-		</p:panelGrid>
+		</p:panel>
 	</ui:define>
 
 </ui:composition>

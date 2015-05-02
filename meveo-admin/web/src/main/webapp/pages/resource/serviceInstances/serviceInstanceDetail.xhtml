@@ -52,18 +52,18 @@
 		<hf:formPanel label="#{messages['serviceInstance.panel']}"
 			backingBean="#{serviceInstanceBean}" columns="2" objectIdParamName="serviceInstanceId" >
 
-			<hf:formEntityField id="serviceSelectedId"
+			<hf:formField id="serviceSelectedId"
 				label="#{messages['serviceInstance.code']}" field="serviceTemplate"
-				childField="code" required="true" popup="true"
+				valueLabelField="code" required="true" popup="true"
 				popupId="serviceTemplatePopup" />
 
-			<hf:formEntityField id="subscriptionSelectedId"
+			<hf:formField id="subscriptionSelectedId"
 				label="#{messages['serviceInstance.subscription']}"
-				field="subscription" childField="code" required="true" popup="true"
+				field="subscription" valueLabelField="code" required="true" popup="true"
 				popupId="subscriptionPopup" showOnlyOnConsult="true" />
 
 			<hf:formField label="#{messages['serviceInstance.description']}"
-				field="description" size="50" maxlength="50"
+				field="description" size="40" maxlength="50"
 				showOnlyOnConsult="true" />
 			<hf:formField label="#{messages['serviceInstance.status']}"
 				field="status" show="#{!serviceInstanceBean.edit}" />
@@ -79,10 +79,10 @@
 				field="terminationDate" show="#{!serviceInstanceBean.edit}" />
 			<hf:formField label="#{messages['serviceInstance.quantity']}"
 				field="quantity" showOnlyOnNew="true" />
-			<hf:formEntityField
+			<hf:formField
 				label="#{messages['serviceInstance.terminationReason']}"
-				field="subscriptionTerminationReason" childField="description"
-				show="#{!serviceInstanceBean.edit and serviceInstanceBean.entity.subscriptionTerminationReason!=null}" />
+				field="subscriptionTerminationReason" valueLabelField="description"
+				rendered="#{!serviceInstanceBean.edit and serviceInstanceBean.entity.subscriptionTerminationReason!=null}" />
 		</hf:formPanel>
 
 		<h:form id="operationsForm" rendered="#{!serviceInstanceBean.edit}">
