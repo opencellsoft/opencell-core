@@ -8,6 +8,26 @@
 	xmlns:p="http://primefaces.org/ui"
 	xmlns:c="http://java.sun.com/jsp/jstl/core">
 
+<!-- 
+
+    Makes part of "happy faces" component group.
+    A custom tag to create a p:column component containing buttons to manage an entity item  
+        
+    Can be used inside any p:datatable type component including hftl:datalist 
+    
+    Attributes
+        backingbean - backing bean for data action/navigation. If not provided, defaults to #{backingBean} used in hftl:datalist
+        entity - a p:datatable model iteration variable. If not provided, defaults to #{entity} - a default iteration variable of hftl:datalist
+        renderViewLink - should reder a "view" button       
+        renderEditLink - should render "edit" button
+        renderDeleteLink - should render "delete" button
+        renderEnableLink - should render "enable" button
+        editView - specifies view/edit link outcome.
+        propagateConversation - propagate conversation id in a link to an entity view 
+        renderLinkInEdit - should a link to an entity view open edit mode
+        useCustomIdParam and objectIdParamName - should a custom parameter id instead of a default "objectId" be used for navigation 
+        
+-->    
 <ui:composition>
 
 	<c:if test="${empty propagateConversation}">

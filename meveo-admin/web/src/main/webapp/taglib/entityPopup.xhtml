@@ -9,14 +9,33 @@
 	xmlns:c="http://java.sun.com/jsp/jstl/core"
 	xmlns:hf="http://java.sun.com/jsf/composite/tags">
 
+
+<!-- 
+
+    Makes part of "happy faces" component group.
+    A custom tag to create a dialog component to search and select an entity. 
+        
+    Used in conjunction with searchField and formFields of type entity with popup="true" attribute. 
+    
+    Attributes
+        id - popup identifier
+        backingBean - backing bean for data search. 
+        dataModel - data search result model. Defaults to backingBean.lazyDataModel.
+        lazy - is data model lazy loaded
+        eventBackingBean - backing bean to call onRowSelectEvent when entity is selected from a list. Defaults to backingBean parameter.
+        searchField(1-3) and searchField(1-3)Label - a search field name and a label - up to 3 fields. Allows a use of "." in a fieldname
+        column(1-7) and column(1-7)Child - name of a field and child field in case of field hierarchy  of up to 7 columns in search results datatable
+        column(1-7)Label - up to 7 column labels 
+        column(1-7)Converter - up to 7 value converters for corresponding search results datatable columns
+        selection - a variable to hold selected item from a search results datatable
+        updateField - a list of component ids to update separated by a comma
+-->   
+
 <ui:composition>
 
 	<!-- No is is set. -->
 	<c:if test="${empty id}">
 		<c:set var="id" value="popup" />
-	</c:if>
-	<c:if test="${empty editParam}">
-		<c:set var="editParam" value="#{param['edit']}" />
 	</c:if>
 	<c:if test="${empty eventBackingBean}">
 		<c:set var="eventBackingBean" value="#{backingBean}" />

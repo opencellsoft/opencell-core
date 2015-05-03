@@ -19,32 +19,32 @@
         Date - as a calendar
         Enum - as a list of enum values
 
-     Attributes applicable to all types of fields
+     Attributes applicable to ALL types of fields
         backingBean - backing bean associated with search. If not provided a backing bean passed to a parent searchPanel will be used.
         label - a label
         field - a field for data entry/view. Can contain "." for hierarchy of fields e.g. address.email
         disabled - is data entry control disabled        
        
-     Attributes applicable to Text type fields
+     Additional attributes applicable to Text type fields
         size - a size attribute of inputText control
         maxlength - a maxlength attribute of inputText control
         listValues - a map of value (key) and label (value) pairs for picklist          
         
-     Attributes applicable to Number type fields
+     Additional attributes applicable to Number type fields
         rangeSearch - search by a range of values
         
-     Attributes applicable to Boolean type fields        
+     Additional attributes applicable to Boolean type fields        
         none
      
-     Attributes applicable to Date type fields
+     Additional attributes applicable to Date type fields
         rangeSearch - search by a range of dates 
         datePattern - date pattern to apply in calendar selection. If not provided, time attribute is consulted whether to add time part to a date 
         time - should a date selection be time specific.          
      
-     Attributes applicable to Enum type fields             
+     Additional attributes applicable to Enum type fields             
         listValues - a map of value (key) and label (value) pairs for picklist
         
-     Attributes applicable to Entity type fields    
+     Additional attributes applicable to Entity type fields    
         size - a size attribute of inputText control
         popup and popupId - entity search via a popup and associated popup id 
         listBean - a backing bean to provide a list of entities via listAll method

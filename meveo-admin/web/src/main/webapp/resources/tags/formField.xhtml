@@ -23,7 +23,7 @@
         List - as a dual picklist or list of values
         
         
-     Attributes applicable to all types of fields
+     Attributes applicable to ALL types of fields
         entity - an entity containing a given field. If not provided and entity passed to a parent formPanel will be used.
         backingBean - backing bean associated with data entry. Required for Map and List type fields only. If not provided a backing bean passed to a parent formPanel will be used.
         label - a label
@@ -36,7 +36,7 @@
         showOnlyOnNew - show field only in new entity creation mode
         showOnlyOnConsult - show field only in entity view mode
         
-     Attributes applicable to Text type fields
+     Additional attributes applicable to Text type fields
         size - a size attribute of inputText control
         maxlength - a maxlength attribute of inputText control
         isHtml - text entry as html editor
@@ -53,7 +53,7 @@
         validatorId - validator to apply
           
         
-     Attributes applicable to Number type fields
+     Additional attributes applicable to Number type fields
         size - a size attribute of inputText control
         maxlength - a maxlength attribute of inputText control
         listValues - a map of value (key) and label (value) pairs for picklist 
@@ -63,19 +63,19 @@
         converter - converter to apply 
         negativeValue - allow to enter negative values in a spinner
         
-     Attributes applicable to Boolean type fields        
+     Additional attributes applicable to Boolean type fields        
         isMessage - display a translatable message commons.yes/no instead of a plain true/false value 
         listenerUpdate - components (ids) to update when value changes 
      
-     Attributes applicable to Date type fields
+     Additional attributes applicable to Date type fields
         datePattern - date pattern to apply in calendar selection. If not provided, time attribute is consulted whether to add time part to a date 
         time - should a date selection be time specific.  
      
-     Attributes applicable to Enum type fields             
+     Additional attributes applicable to Enum type fields             
         listValues - a map of value (key) and label (value) pairs for picklist 
         listenerUpdate - components (ids) to update when value changes 
         
-     Attributes applicable to Entity type fields    
+     Additional attributes applicable to Entity type fields    
         size - a size attribute of inputText control
         popup and popupId - entity search via a popup and associated popup id 
         listBean - a backing bean to provide a list of entities via listAll method
@@ -85,14 +85,14 @@
         valueField - used in along with fkToEntity="true". Specifies a name of a field in list item that represents FK value.
         listenerUpdate - components (ids) to update when value changes (entity selection via picklist only)
 
-    Attributes applicable to List type fields 
+    Additional attributes applicable to List type fields 
         listType - list type - "simpleList" or "pickUpList"
         dualListModel - dual list model for "pickUpList" list type.
         deleteButton - should a delete button be displayed to manage "simpleList" list type values
         showButtonAddNew - should a "add new value" button be displayed to manage "simpleList" list type values
         valueLabelField and valueLabelField2 - selected entity's attribute(s) to display when entity is selected. In a list of entities used as a label attribute for list item.
 
-    Attributes applicable to Map type fields          
+    Additional attributes applicable to Map type fields          
         mapKeyLabel - header label for key  
         mapValueLabel - header label for value
 
