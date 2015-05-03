@@ -19,22 +19,25 @@
     Attributes
         entity - a p:datatable model iteration variable. If not provided, defaults to #{entity} - a default iteration variable of hftl:datalist
         field - a name of a field in an entity
-        isList - is field value is a collection - supports both List, Map and Set type fields
-        isDate - is field value a date
+        isList - is field value is a collection - supports both List, Map and Set type fields.
+        isDate - is entity field or a list value item field is a date
         sort - is column sortable
         rendered - should a column be rendered
         exportable - is value exportable
         
-    Attributes for date fields
-        datePattern - date pattern to apply in date value output. If not provided, time attribute is consulted whether to add time part to a date 
-        time - should a date selection be time specific.  
-        
     Attributes for list type fields
         valueLabelField - used along with isList="true". Specifies a name of a field in list value item.
         
-    Attributes for other type fields
+                
+    Attributes for date type values
+        datePattern - date pattern to apply in date value output. If not provided, time attribute is consulted whether to add time part to a date 
+        time - should a date selection be time specific.  
+        
+
+    Attributes for other type values
         isMessage - should field or valueLabelField value be treated as message key. In case of boolean, boolean value is converted to translatable commons.yes/no value.
         messagePrefix - a prefix to append to value to form a full message key.
+        converter - converter to apply
     
     Attributes to render a link to an entity        
         entityView - render a link to an entity when isList="false" or list value item  when isList="true". Specifies view outcome.
