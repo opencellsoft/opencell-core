@@ -9,6 +9,45 @@
 	xmlns:hf="http://java.sun.com/jsf/composite/tags"
 	xmlns:c="http://java.sun.com/jsp/jstl/core">
 
+<!-- 
+
+    Makes part of "happy faces" component group.
+    A custom tag to enhance p:column component.
+        
+    Can be used inside any p:datatable type component including hftl:datalist 
+    
+    Attributes
+        entity - a p:datatable model iteration variable. If not provided, defaults to #{entity} - a default iteration variable of hftl:datalist
+        field - a name of a field in an entity
+        isList - is field value is a collection - supports both List, Map and Set type fields
+        isDate - is field value a date
+        sort - is column sortable
+        rendered - should a column be rendered
+        exportable - is value exportable
+        
+    Attributes for date fields
+        datePattern - date pattern to apply in date value output. If not provided, time attribute is consulted whether to add time part to a date 
+        time - should a date selection be time specific.  
+        
+    Attributes for list type fields
+        valueLabelField - used along with isList="true". Specifies a name of a field in list value item.
+        
+    Attributes for other type fields
+        isMessage - should field or valueLabelField value be treated as message key. In case of boolean, boolean value is converted to translatable commons.yes/no value.
+        messagePrefix - a prefix to append to value to form a full message key.
+    
+    Attributes to render a link to an entity        
+        entityView - render a link to an entity when isList="false" or list value item  when isList="true". Specifies view outcome.
+        valueIdField - used along with entityView attribute. Specifies a field in an entity when isList="false" or in a list value item when isList="true" to obtain entity identifier value
+        propagateConversation - propagate conversation id in a link to an entity view 
+        renderLinkInEdit - should a link to an entity view open edit mode
+        useCustomIdParam and objectIdParamName - should a custom parameter id instead of a default "objectId" be used for navigation 
+    
+    Note: field, valueLabelField and valueIdField can be a single field name or a field name hierarchy containing "." (unlimited) (e.g. address.email)
+    
+-->    
+
+
 <ui:composition>
 
 	<c:if test="${empty childField}">
