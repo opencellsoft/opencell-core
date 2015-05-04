@@ -1,7 +1,7 @@
 /**************************************************************************
  * Generic html element
  **************************************************************************/
-body { width: 100%; margin: auto; position: relative; background: #DBDBDB; font-size: 13px;}
+body { width: 100%; margin: auto; position: relative; background: #DBDBDB; font-size: 12px;}
 
 .body
 {
