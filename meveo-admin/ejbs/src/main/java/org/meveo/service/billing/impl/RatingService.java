@@ -30,7 +30,6 @@ import org.meveo.model.billing.OneShotChargeInstance;
 import org.meveo.model.billing.RecurringChargeInstance;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.TradingCurrency;
-import org.meveo.model.billing.UsageChargeInstance;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.billing.WalletOperationStatusEnum;
@@ -185,11 +184,15 @@ public class RatingService extends BusinessService<WalletOperation>{
 			result.setInputQuantity(((RecurringChargeInstance) chargeInstance).getServiceInstance().getQuantity());
 			if (result.getInputQuantity() != null && chargeInstance.getChargeTemplate().getUnitMultiplicator() != null) {
 				result.setQuantity(result.getInputQuantity().multiply(chargeInstance.getChargeTemplate().getUnitMultiplicator()));	
+			} else {
+				result.setQuantity(quantity);
 			}
 		} else if (chargeInstance instanceof OneShotChargeInstance) {
 			result.setInputQuantity(((OneShotChargeInstance) chargeInstance).getSubscriptionServiceInstance().getQuantity());
 			if (result.getInputQuantity() != null && chargeInstance.getChargeTemplate().getUnitMultiplicator() != null) {
 				result.setQuantity(result.getInputQuantity().multiply(chargeInstance.getChargeTemplate().getUnitMultiplicator()));
+			} else {
+				result.setQuantity(quantity);
 			}
 		} else {
 			result.setQuantity(quantity);
