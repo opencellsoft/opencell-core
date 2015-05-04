@@ -564,7 +564,9 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 
 		Element paymentMethod = doc.createElement("paymentMethod");
 		parent.appendChild(paymentMethod);
-		paymentMethod.setAttribute("type", billingAccount.getPaymentMethod().toString());
+		if (billingAccount.getPaymentMethod() != null) {
+			paymentMethod.setAttribute("type", billingAccount.getPaymentMethod().name());
+		}
 
 		Element bankCoordinates = doc.createElement("bankCoordinates");
 		Element bankCode = doc.createElement("bankCode");
