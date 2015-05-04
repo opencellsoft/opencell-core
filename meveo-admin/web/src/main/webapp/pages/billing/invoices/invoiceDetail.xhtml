@@ -51,15 +51,15 @@
                                     <f:facet name="title">
                                         <h:outputText value="#{subCat.description}" />
                                     </f:facet>
-                                    <hftl:dataList label="#{messages['wallet.ratedTransactions']}" exportButton="false" resultsId="taxes_panel" checkMany="false"
+                                    <hftl:dataList label="#{messages['wallet.ratedTransactions']}" exportButton="false" resultsId="ratedTransactions_panel" checkMany="false"
                                         backingBean="#{ratedTransactionBean}" dataModel="#{invoiceBean.ratedTransactions}">
                                         <hftl:column label="#{messages['subscription.offer']}" field="offerCode" />
                                         <hftl:column label="#{messages['billingRun.panel']}" field="billingRun" childField="id" />
                                         <hftl:column label="#{messages['pricePlan.panel']}" field="priceplan" childField="code" />
-                                        <hftl:column label="#{messages['pricePlanMatrix.amountWithoutTax']}" field="amountWithoutTax" />
-                                        <hftl:column label="#{messages['pricePlanMatrix.amountWithTax']}" field="amountWithTax" />
-                                        <hftl:column label="#{messages['walletOperation.amountTax']}" field="amountTax" />
-                                        <hftl:column label="#{messages['serviceInstance.quantity']}" field="quantity" />
+                                        <hftl:column label="#{messages['pricePlanMatrix.amountWithoutTax']}" field="amountWithoutTax" converterParam="4digits" />
+                                        <hftl:column label="#{messages['pricePlanMatrix.amountWithTax']}" field="amountWithTax" converterParam="4digits" />
+                                        <hftl:column label="#{messages['walletOperation.amountTax']}" field="amountTax" converterParam="4digits" />
+                                        <hftl:column label="#{messages['serviceInstance.quantity']}" field="quantity" converterParam="4digits" />
                                         <hftl:column label="#{messages['ratedTransaction.status']}" field="status" />
                                     </hftl:dataList>
                                 </p:tab>
@@ -75,9 +75,9 @@
 
         <hf:formPanel backingBean="#{invoiceBean}" showFormButtons="false">
             <p:fieldset legend="#{messages['invoice.totals']}">
-                <hf:formField label="#{messages['invoice.amountWithoutTax']}" field="amountWithoutTax" />
-                <hf:formField label="#{messages['invoice.amountTax']}" field="amountTax" />
-                <hf:formField label="#{messages['invoice.amountWithTax']}" field="amountWithTax" />
+                <hf:formField label="#{messages['invoice.amountWithoutTax']}" field="amountWithoutTax"  converter="bigDecimal4DigitsConverter" />
+                <hf:formField label="#{messages['invoice.amountTax']}" field="amountTax"  converter="bigDecimal4DigitsConverter" />
+                <hf:formField label="#{messages['invoice.amountWithTax']}" field="amountWithTax"  converter="bigDecimal4DigitsConverter" />
                 <hftl:decorateFormField fieldId="netTopayId" label="#{messages['invoice.netToPay']}">
                     <h:outputText id="netTopayId" value="#{invoiceBean.netToPay}" styleClass="field-value" />
                 </hftl:decorateFormField>

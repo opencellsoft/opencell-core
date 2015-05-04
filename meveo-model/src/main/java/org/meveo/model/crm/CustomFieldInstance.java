@@ -176,6 +176,24 @@ public class CustomFieldInstance extends BusinessEntity {
 
 		return result;
 	}
+    
+    public String getValueAsString() {
+    	String result = "";
+
+		if (stringValue != null) {
+			result += stringValue;
+		} else if (dateValue != null) {
+			result += sdf.format(dateValue);
+		} else if (longValue != null) {
+			result += longValue;
+		} else if (doubleValue != null) {
+			result += doubleValue;
+		} else {
+			result = "";
+		}
+
+		return result;
+	}
 
 	@Override
 	public String toString() {
