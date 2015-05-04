@@ -153,7 +153,6 @@
     <cc:attribute name="show"
         default="#{((not cc.attrs.showOnlyOnNew) or (cc.attrs.showOnlyOnNew and cc.attrs.edit and cc.entityFromBackingBeanOrAttribute.id==null)) and ((not cc.attrs.showOnlyOnConsult) or (cc.attrs.showOnlyOnConsult and cc.attrs.edit== false))}" />
 
-
     <!--  Component display layout and style attributes. See decorateFormField for description and use -->
     <cc:attribute name="newLine" />
     <cc:attribute name="displayOneLine" />
@@ -201,17 +200,29 @@
             </ui:fragment> 
             
             <!--  If the value binding is a number, display an input number spinner. --> 
-            <ui:fragment rendered="#{cc.isInteger(cc.attrs.field,false) or cc.isByte(cc.attrs.field,false) or cc.isLong(cc.attrs.field,false) or cc.isShort(cc.attrs.field,false)}">
-                <hf:formNumberField fieldItem="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}" edit="#{cc.attrs.edit}" spinner="true" />
+            <ui:fragment rendered="#{cc.isInteger(cc.attrs.field,false)}">
+                <hf:formNumberField fieldItem="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}" edit="#{cc.attrs.edit}" spinner="true" converter="#{cc.attrs.converter!=null?cc.attrs.converter:'javax.faces.Integer'}"/>
             </ui:fragment> 
+            <ui:fragment rendered="#{cc.isByte(cc.attrs.field,false)}">
+                <hf:formNumberField fieldItem="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}" edit="#{cc.attrs.edit}" spinner="true" converter="#{cc.attrs.converter!=null?cc.attrs.converter:'javax.faces.Byte'}"/>
+            </ui:fragment> 
+            <ui:fragment rendered="#{cc.isLong(cc.attrs.field,false)}">
+                <hf:formNumberField fieldItem="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}" edit="#{cc.attrs.edit}" spinner="true" converter="#{cc.attrs.converter!=null?cc.attrs.converter:'javax.faces.Long'}"/>
+            </ui:fragment> 
+            <ui:fragment rendered="#{cc.isShort(cc.attrs.field,false)}">
+                <hf:formNumberField fieldItem="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}" edit="#{cc.attrs.edit}" spinner="true" converter="#{cc.attrs.converter!=null?cc.attrs.converter:'javax.faces.Short'}"/>
+            </ui:fragment>                         
             
             <!--  If the value binding is a rational number, display an input text field. --> 
             <ui:fragment rendered="#{cc.isBigDecimal(cc.attrs.field,false)}">
-                <hf:formNumberField fieldItem="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}" edit="#{cc.attrs.edit}" spinner="false" size="20" />
+                <hf:formNumberField fieldItem="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}" edit="#{cc.attrs.edit}" spinner="false" size="20" converter="#{cc.attrs.converter!=null?cc.attrs.converter:'javax.faces.BigDecimal'}"/>
             </ui:fragment> 
-            <ui:fragment rendered="#{cc.isDouble(cc.attrs.field,false) or cc.isFloat(cc.attrs.field,false)}">
-                <hf:formNumberField fieldItem="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}" edit="#{cc.attrs.edit}" spinner="false" size="5" />
+            <ui:fragment rendered="#{cc.isDouble(cc.attrs.field,false)}">
+                <hf:formNumberField fieldItem="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}" edit="#{cc.attrs.edit}" spinner="false" size="5" converter="#{cc.attrs.converter!=null?cc.attrs.converter:'javax.faces.Double'}"/>
             </ui:fragment> 
+            <ui:fragment rendered="#{cc.isFloat(cc.attrs.field,false)}">
+                <hf:formNumberField fieldItem="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}" edit="#{cc.attrs.edit}" spinner="false" size="5" converter="#{cc.attrs.converter!=null?cc.attrs.converter:'javax.faces.Float'}"/>
+            </ui:fragment>             
             
             <!--  If the value binding is a boolean, display a selectBooleanCheckbox field. --> 
             <ui:fragment rendered="#{cc.isBoolean(cc.attrs.field,cc.attrs.childField, false)}">

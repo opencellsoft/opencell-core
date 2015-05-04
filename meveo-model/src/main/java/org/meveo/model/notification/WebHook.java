@@ -30,7 +30,7 @@ public class WebHook extends Notification {
 
     @Column(name = "HTTP_PORT")
     @NotNull
-//    @Max(65535)
+    @Max(65535)
     private int port;
 
     @Column(name = "HTTP_PAGE", length = 255)
