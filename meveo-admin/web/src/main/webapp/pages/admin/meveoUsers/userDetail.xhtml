@@ -29,12 +29,12 @@
 
             <p:outputPanel id="passwordPanel" styleClass="clearLeft">
                 <h:panelGroup rendered="#{(userBean.show or userBean.entity.id==null) and userBean.edit}">
-                    <hf:formDecorateField fieldId="password" label="#{messages['user.password']}">
-                        <p:password autocomplete="off" id="password" feedback="true" value="#{userBean.password}" required="true" match=":formPanel:formId:repeatedPassword:repeatedPassword"/>
-                    </hf:formDecorateField>
-                    <hf:formDecorateField id="repeatedPassword" fieldId="repeatedPassword" label="#{messages['user.repeatedPassword']}">
+                    <hftl:decorateFormField fieldId="password" label="#{messages['user.password']}">
+                        <p:password autocomplete="off" id="password" feedback="true" value="#{userBean.password}" required="true" match="repeatedPassword"/>
+                    </hftl:decorateFormField>
+                    <hftl:decorateFormField id="repeatedPassword" fieldId="repeatedPassword" label="#{messages['user.repeatedPassword']}">
                         <p:password id="repeatedPassword" value="#{userBean.repeatedPassword}" autocomplete="off"/>
-                    </hf:formDecorateField>
+                    </hftl:decorateFormField>
                 </h:panelGroup>
             </p:outputPanel>
 
