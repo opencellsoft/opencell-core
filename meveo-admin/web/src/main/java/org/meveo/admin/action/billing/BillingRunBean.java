@@ -177,7 +177,7 @@ public class BillingRunBean extends BaseBean<BillingRun> {
 	}
 
 	public String launchRecurringInvoicing() {
-		log.info("launchInvoicing billingRun BillingCycle={}, invoicedate={}, lastTransactionDate={}", entity.getBillingCycle().getCode(), entity.getInvoiceDate(),
+		log.info("launchInvoicing billingRun BillingCycle={}, invoicedate={}, lastTransactionDate={}", entity.getBillingCycle(), entity.getInvoiceDate(),
 				entity.getLastTransactionDate());
 		try {
 			ParamBean param = ParamBean.getInstance();
@@ -198,8 +198,8 @@ public class BillingRunBean extends BaseBean<BillingRun> {
 			return "billingRuns";
 
 		} catch (Exception e) {
-			log.error(e.getMessage());
-			messages.error(e.getMessage());
+			log.error("Failed to launch invoicing", e);
+			messages.error(new BundleKey("messages", "error.execution"));
 		}
 		return null;
 	}
@@ -212,8 +212,8 @@ public class BillingRunBean extends BaseBean<BillingRun> {
 			return "billingRuns";
 
 		} catch (Exception e) {
-			log.error(e.getMessage());
-			messages.error(e.getMessage());
+		    log.error("Failed to confirm invoicing", e);
+            messages.error(new BundleKey("messages", "error.execution"));
 		}
 		return null;
 	}
@@ -261,8 +261,8 @@ public class BillingRunBean extends BaseBean<BillingRun> {
 			return "billingRuns";
 
 		} catch (Exception e) {
-			log.error(e.getMessage());
-			messages.error(e.getMessage());
+		    log.error("Failed to validate invoicing", e);
+            messages.error(new BundleKey("messages", "error.execution"));
 		}
 		return null;
 	}
@@ -273,8 +273,8 @@ public class BillingRunBean extends BaseBean<BillingRun> {
 			billingRunService.update(entity);
 			return "billingRuns";
 		} catch (Exception e) {
-			log.error(e.getMessage());
-			messages.error(e.getMessage());
+		    log.error("Failed to cancel invoicing", e);
+            messages.error(new BundleKey("messages", "error.execution"));
 		}
 		return null;
 	}
@@ -287,8 +287,8 @@ public class BillingRunBean extends BaseBean<BillingRun> {
 			return "billingRuns";
 
 		} catch (Exception e) {
-			log.error(e.getMessage());
-			messages.error(e.getMessage());
+		    log.error("Failed to cancel confirmed invoicing", e);
+            messages.error(new BundleKey("messages", "error.execution"));
 		}
 		return null;
 	}
@@ -299,8 +299,8 @@ public class BillingRunBean extends BaseBean<BillingRun> {
 			return cancelConfirmedInvoicing();
 
 		} catch (Exception e) {
-			log.error(e.getMessage());
-			messages.error(e.getMessage());
+		    log.error("Failed to rerate confirmed invoicing", e);
+            messages.error(new BundleKey("messages", "error.execution"));
 		}
 		return null;
 	}
@@ -311,8 +311,8 @@ public class BillingRunBean extends BaseBean<BillingRun> {
 			return cancelInvoicing();
 
 		} catch (Exception e) {
-			log.error(e.getMessage());
-			messages.error(e.getMessage());
+		    log.error("Failed to rerate invoicing", e);
+            messages.error(new BundleKey("messages", "error.execution"));
 		}
 		return null;
 	}
@@ -322,8 +322,8 @@ public class BillingRunBean extends BaseBean<BillingRun> {
 			return "/pages/billing/invoicing/preInvoicingReports.xhtml?edit=false&preReport=true&objectId=" + id;
 
 		} catch (Exception e) {
-			log.error(e.getMessage());
-			messages.error(e.getMessage());
+		    log.error("Failed to retrieve pre-invoicing report", e);
+            messages.error(new BundleKey("messages", "error.execution"));
 		}
 		return null;
 	}
@@ -333,8 +333,8 @@ public class BillingRunBean extends BaseBean<BillingRun> {
 			return "/pages/billing/invoicing/postInvoicingReports.xhtml?edit=false&postReport=true&objectId=" + id;
 
 		} catch (Exception e) {
-			log.error(e.getMessage());
-			messages.error(e.getMessage());
+		    log.error("Failed to retrieve post-invoicing report", e);
+            messages.error(new BundleKey("messages", "error.execution"));
 		}
 		return null;
 	}
@@ -348,9 +348,8 @@ public class BillingRunBean extends BaseBean<BillingRun> {
 			messages.info(new BundleKey("messages", "info.invoicing.billingAccountExcluded"));
 
 		} catch (Exception e) {
-			log.error("unexpected exception when excluding BillingAccounts!", e);
-			messages.error(e.getMessage());
-			messages.error(e.getMessage());
+			log.error("Failed to exclude BillingAccounts!", e);
+            messages.error(new BundleKey("messages", "error.execution"));
 		}
 
 		return "/pages/billing/invoicing/postInvoicingReports.xhtml?edit=false&postReport=true&objectId=" + entity.getId();

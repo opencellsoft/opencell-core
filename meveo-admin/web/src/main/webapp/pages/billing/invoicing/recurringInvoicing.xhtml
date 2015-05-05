@@ -39,21 +39,21 @@
 			<hf:formField id="billingCycleId"
 				label="#{messages['billingRun.billingCycle']}" field="billingCycle"
 				valueLabelField="code" required="true" popup="true"
-				popupId="billingCyclePopup" edit="true" />
+				popupId="billingCyclePopup" />
 			<hf:formField label="#{messages['billingRun.type']}"
 				field="processType" required="true" noSelectionLabel="false"
-				disabled="false" edit="true" />
+				disabled="false" />
 			<hf:formField label="#{messages['billingRun.startDate']}"
-				field="startDate" edit="true" required="false" />
+				field="startDate" />
 			<hf:formField label="#{messages['billingRun.endDate']}"
-				field="endDate" required="false" edit="true" />
+				field="endDate" />
 			<hf:formField id="invoiceDateId" label="#{messages['billingRun.invoiceDate']}"
-				field="invoiceDate" edit="true" required="false" />
+				field="invoiceDate" />
 			<hf:formField id="lastTransactionDate" label="#{messages['billingRun.lastTransactionDate']}"
-				field="lastTransactionDate" required="false" edit="true" />
+				field="lastTransactionDate" />
             <f:facet name="buttons">
     			<p:commandButton action="#{billingRunBean.launchRecurringInvoicing}"
-    				value="#{messages['button.launchInvoicing']}" update=":formPanel:formId" />
+    				value="#{messages['button.launchInvoicing']}" update=":formPanel:formId " />
             </f:facet>
 		</hf:formPanel>
 

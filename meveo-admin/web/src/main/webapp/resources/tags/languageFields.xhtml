@@ -7,11 +7,12 @@
 <cc:interface componentType="formField">
     <cc:attribute name="displayOneLine" default="false" />
     <cc:attribute name="multiLang" default="false" />
+    <cc:attribute name="newLine" default="true" />
 </cc:interface>
 
 <cc:implementation>
 
-    <hf:formField field="description" label="#{messages['businessEntity.description']}" componentWidth="50" newLine="true" displayOneLine="#{cc.attrs.displayOneLine}"/>
+    <hf:formField field="description" label="#{messages['businessEntity.description']}" componentWidth="50" newLine="#{cc.attrs.newLine}" displayOneLine="#{cc.attrs.displayOneLine}"/>
 
     <hftl:decorateFormField fieldId="descriptionI" label="#{messages['businessEntity.languageDescriptions']}" componentWidth="50" 
         displayOneLine="#{cc.attrs.displayOneLine}" rendered="#{cc.attrs.multiLang}">

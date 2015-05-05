@@ -89,6 +89,9 @@
                 <hf:formField id="chargeSelectId" required="true"
 					label="#{messages['pricePlanMatrix.eventCode']}" field="eventCode"
 					popup="true" popupId="pricPlanMatChargePopup" disabled="true" />
+                    
+                <hf:languageFields newLine="false"/>
+                
 				<hf:formField id="parentSelectId"
 					label="#{messages['seller.title']}" field="seller"
 					valueLabelField="description" popup="true" popupId="sellerParentPopup" />
@@ -109,7 +112,6 @@
                 <hf:formField label="#{messages['pricePlanMatrix.priority']}"
                     field="priority" />
                     
-                <hf:languageFields />
                 
 				<hf:formField label="#{messages['pricePlanMatrix.minQuantity']}"
 					field="minQuantity" />
@@ -121,6 +123,10 @@
 				<hf:formField
 					label="#{messages['pricePlanMatrix.endSubscriptionDate']}"
 					field="endSubscriptionDate" />
+                <hf:formField label="#{messages['pricePlanMatrix.startRatingDate']}"
+                    field="startRatingDate" />
+                <hf:formField label="#{messages['pricePlanMatrix.endRatingDate']}"
+                    field="endRatingDate" />                    
                 <hf:formField label="#{messages['pricePlanMatrix.criteria1Value']}"
                     field="criteria1Value" />
                 <hf:formField label="#{messages['pricePlanMatrix.criteria2Value']}"
@@ -129,13 +135,10 @@
                     field="criteria3Value" />
 				<hf:formField label="#{messages['pricePlanMatrix.criteriaEL']}"
 			        field="criteriaEL" textArea="true" maxlength="2000"/>
-                <hf:formField label="#{messages['pricePlanMatrix.startRatingDate']}"
-					field="startRatingDate" />
-                <hf:formField label="#{messages['pricePlanMatrix.endRatingDate']}"
-                    field="endRatingDate" />
+
 				<hf:formField
 					label="#{messages['pricePlanMatrix.amountWithoutTax']}"
-					field="amountWithoutTax" converter="bigDecimal4DigitsConverter" required="true" />
+					field="amountWithoutTax" converter="bigDecimal4DigitsConverter" required="true" newLine="true"/>
                 <hf:formField label="#{messages['pricePlanMatrix.amountWithTax']}"
                     field="amountWithTax" converter="bigDecimal4DigitsConverter" rendered="#{!pricePlanMatrixBean.entity.provider.entreprise}" required="true" />
  
