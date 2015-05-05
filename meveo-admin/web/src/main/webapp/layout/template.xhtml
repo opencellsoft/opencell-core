@@ -111,7 +111,7 @@
 		rendered="#{identity.loggedIn and ! identity.user.user.onlyOneProvider}"
 		header="#{messages['provider.popup.header']}"
 		widgetVar="dlg_providerSelectPopup"  modal="true"
-		styleClass="form-dialog" width="500" closeOnEscape="true">
+		styleClass="form-dialog" width="500" closeOnEscape="true" visible="#{param['chooseProvider']!=null}">
 		<h:form id="providerSelectPopupForm">
 
 
