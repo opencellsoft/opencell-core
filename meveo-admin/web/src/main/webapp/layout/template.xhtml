@@ -65,7 +65,7 @@
 						rendered="#{identity.loggedIn and identity.user.user.onlyOneProvider}" />
 
 					<h:link
-						value="#{messages['commons.connectedProvider']} : #{currentProvider.code} wwss"
+						value="#{messages['commons.connectedProvider']} : #{currentProvider.code}"
 						onclick="PF('dlg_providerSelectPopup').show(); return false;"
 						rendered="#{identity.loggedIn and !identity.user.user.onlyOneProvider}" />
 				</li>
