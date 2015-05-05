@@ -9,9 +9,10 @@
     <ui:define name="body">
 
 
-        <hf:formPanel label="#{messages['invoice.panel']}" backingBean="#{invoiceBean}" showFormButtons="false">
-            <p:fieldset legend="#{messages['invoice.header']}">
-
+        <hf:formPanel label="#{messages['invoice.panel']}" backingBean="#{invoiceBean}" showFormButtons="false" id="headerForm">
+            <h:panelGrid columns="8" styleClass="panelGrid-column">
+			<p:fieldset legend="#{messages['invoice.header']}">
+				<h:panelGroup>
                 <hf:formField label="#{messages['invoice.billingAccount']}" field="billingAccount" valueLabelField="code" popup="false" popupId="searchBillingAccountPopup"
                     clearButton="true" />
                 <hf:formField label="#{messages['invoice.invoiceNumber']}" field="invoiceNumber" validateUnique="true" />
@@ -21,10 +22,24 @@
                 <hf:formField label="#{messages['invoice.discount']}" field="discount" />
                 <hf:formField label="#{messages['invoice.iban']}" field="iban" />
                 <hf:formField label="#{messages['invoice.alias']}" field="alias" />
-
                 <hf:formField label="#{messages['invoice.comment']}" field="comment" textArea="true" />
+				<hf:formField label="#{messages['invoice.paymentMethod']}" field="paymentMethod" isMessage="true" />
+				</h:panelGroup>
             </p:fieldset>
-
+			
+			<p:fieldset legend="#{messages['invoice.attachments']}">
+				
+				<h:panelGroup rendered="#{invoiceBean.entity.pdf!=null}" column="4"> 
+                <h:commandLink action="#{billingAccountBean.generatePDF(invoiceBean.entity.id)}">
+                    <h:outputText value="#{invoiceBean.entity.invoiceNumber}.pdf"/> 
+                </h:commandLink> 
+				<p:spacer width="35px"/>
+				<p:commandButton   icon="ui-icon-close" rendered="#{invoiceBean.entity.pdf!=null}"
+				action="#{invoiceBean.deleteInvoicePdf}" update="totalForm:formId:buttonGenerate,@form"/> 
+				</h:panelGroup>
+			
+            </p:fieldset>
+			</h:panelGrid>
         </hf:formPanel>
 
         <h:form id="form">
@@ -73,7 +88,9 @@
             </p:fieldset>
         </h:form>
 
-        <hf:formPanel backingBean="#{invoiceBean}" showFormButtons="false">
+       <hf:formPanel backingBean="#{invoiceBean}" showFormButtons="false" id="totalForm">
+	   
+          
             <p:fieldset legend="#{messages['invoice.totals']}">
                 <hf:formField label="#{messages['invoice.amountWithoutTax']}" field="amountWithoutTax"  converter="bigDecimal4DigitsConverter" />
                 <hf:formField label="#{messages['invoice.amountTax']}" field="amountTax"  converter="bigDecimal4DigitsConverter" />
@@ -82,23 +99,18 @@
                     <h:outputText id="netTopayId" value="#{invoiceBean.netToPay}" styleClass="field-value" />
                 </hftl:decorateFormField>
             </p:fieldset>
-            <hf:formField label="#{messages['invoice.paymentMethod']}" field="paymentMethod" childField="label" isMessage="true" />
-
-            <hftl:decorateFormField label="#{messages['invoice.file']}" rendered="#{billingAccountBean.pdfExists(invoiceBean.entity.id)}">
-                <h:commandLink action="#{billingAccountBean.generatePDF(invoiceBean.entity.id)}">
-                    <h:graphicImage value="/img/pdf.gif" style="border:0" />
-                </h:commandLink>
-            </hftl:decorateFormField>
-
-            <f:facet name="buttons">
+			<br/>
+			<p:outputPanel column="2" id="buttonGenerate">
                 <p:button outcome="billingAccountDetail" value="#{messages['action.back']}">
                     <f:param name="billingAccountId" value="#{invoiceBean.entity.getBillingAccount().getId}" />
                     <f:param name="edit" value="false" />
                     <f:param name="cid" value="#{javax.enterprise.context.conversation.id}" />
-                </p:button>
-            </f:facet>
-        </hf:formPanel>
-        
+                </p:button> 
+			<p:commandButton value="#{messages['invoice.generatePdf']}" icon="ui-icon-refresh"
+				rendered="#{invoiceBean.entity.pdf==null and invoiceBean.entity.invoiceNumber!=null}"
+				action="#{invoiceBean.generatePdf()}" update="headerForm:formId,buttonGenerate" /> 
+			</p:outputPanel> 			
+        </hf:formPanel> 
     </ui:define>
 
 </ui:composition>

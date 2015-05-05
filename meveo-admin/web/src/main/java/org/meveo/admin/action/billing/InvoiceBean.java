@@ -23,13 +23,16 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.job.PDFParametersConstruction;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.CategoryInvoiceAgregate;
 import org.meveo.model.billing.Invoice;
@@ -79,7 +82,10 @@ public class InvoiceBean extends BaseBean<Invoice> {
 	RatedTransactionService ratedTransactionService;
 	
 	private List<RatedTransaction> ratedTransactions=new ArrayList<RatedTransaction>();
-
+	
+	@Inject
+	private PDFParametersConstruction pDFParametersConstruction;
+ 
 	/**
 	 * Constructor. Invokes super constructor and provides class type of this
 	 * bean for {@link BaseBean}.
@@ -211,6 +217,26 @@ public class InvoiceBean extends BaseBean<Invoice> {
 			netToPay = entity.getAmountWithTax().add(balance);
 		}
 		return netToPay.setScale(2, RoundingMode.HALF_UP).toString();
+	}
+	
+	public void deleteInvoicePdf(){
+		try{
+			entity.setPdf(null);
+			invoiceService.update(entity);	
+			messages.info(new BundleKey("messages", "delete.successful"));
+		} catch (Exception e) {
+			log.error(e.getMessage());
+		}}
+	
+	public void generatePdf(){
+		try {
+			Map<String, Object> parameters = pDFParametersConstruction
+			   .constructParameters(entity);
+			invoiceService.producePdf(parameters, getCurrentUser()); 
+			messages.info(new BundleKey("messages", "invoice.pdfGeneration"));
+		} catch (Exception e) {
+			log.error(e.getMessage());  
+		}	
 	}
 
 	public List<RatedTransaction> getRatedTransactions() {
