@@ -537,4 +537,10 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
 		this.exceptionalLastTransactionDate = exceptionalLastTransactionDate;
 	}
 
+	@Override
+	protected boolean canDelete(BillingAccount entity) {
+		// TODO Auto-generated method stub
+		return true;
+	}
+
 }

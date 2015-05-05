@@ -158,4 +158,10 @@ public class TradingCountryBean extends BaseBean<TradingCountry> {
 	protected String getDefaultSort() {
 		return "country.countryCode";
 	}
+
+	@Override
+	protected boolean canDelete(TradingCountry entity) {
+		// TODO Auto-generated method stub
+		return true;
+	}
 }

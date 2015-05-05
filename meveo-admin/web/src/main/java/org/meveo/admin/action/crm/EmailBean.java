@@ -68,4 +68,10 @@ public class EmailBean extends BaseBean<Email> {
 		return Arrays.asList("reports");
 	}
 
+	@Override
+	protected boolean canDelete(Email entity) {
+		// TODO Auto-generated method stub
+		return true;
+	}
+
 }

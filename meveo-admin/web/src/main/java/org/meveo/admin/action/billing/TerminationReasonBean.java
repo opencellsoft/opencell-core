@@ -68,4 +68,10 @@ public class TerminationReasonBean extends
 		return Arrays.asList("provider");
 	}
 
+	@Override
+	protected boolean canDelete(SubscriptionTerminationReason entity) {
+		// TODO Auto-generated method stub
+		return true;
+	}
+
 }

@@ -62,4 +62,10 @@ public class TerminationChargeTemplateBean extends BaseBean<OneShotChargeTemplat
 	protected String getDefaultSort() {
 		return "code";
 	}
+
+	@Override
+	protected boolean canDelete(OneShotChargeTemplate entity) {
+		// TODO Auto-generated method stub
+		return true;
+	}
 }

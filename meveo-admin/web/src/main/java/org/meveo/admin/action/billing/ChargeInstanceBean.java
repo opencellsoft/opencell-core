@@ -82,4 +82,10 @@ public class ChargeInstanceBean extends BaseBean<ChargeInstance> {
 		return chargeInstanceService;
 	}
 
+	@Override
+	protected boolean canDelete(ChargeInstance entity) {
+		// TODO Auto-generated method stub
+		return true;
+	}
+
 }

@@ -115,4 +115,11 @@ public class RecordedInvoiceBean extends BaseBean<RecordedInvoice> {
 		return null;
 	}
 
+	@Override
+	protected boolean canDelete(RecordedInvoice entity) {
+		// TODO Auto-generated method stub
+		return true;
+	}
+
 }
+

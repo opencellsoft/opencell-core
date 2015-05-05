@@ -73,4 +73,10 @@ public class EmailTemplateBean extends BaseBean<EmailTemplate> {
 	protected List<String> getFormFieldsToFetch() {
 		return Arrays.asList("provider");
 	}
+
+	@Override
+	protected boolean canDelete(EmailTemplate entity) {
+		// TODO Auto-generated method stub
+		return true;
+	}
 }

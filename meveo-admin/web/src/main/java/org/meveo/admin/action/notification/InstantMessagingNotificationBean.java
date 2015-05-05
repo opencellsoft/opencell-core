@@ -333,19 +333,20 @@ public void handleFileUpload(FileUploadEvent event) throws Exception {
 		    csv.appendValue(values[COUNTER_TEMPLATE]);
 		}
 
-}
-public StrategyImportTypeEnum getStrategyImportType() {
-return strategyImportType;
-}
+	}
 
-public void setStrategyImportType(StrategyImportTypeEnum strategyImportType) {
-this.strategyImportType = strategyImportType;
-}
+	public StrategyImportTypeEnum getStrategyImportType() {
+		return strategyImportType;
+	}
 
+	public void setStrategyImportType(StrategyImportTypeEnum strategyImportType) {
+		this.strategyImportType = strategyImportType;
+	}
 
-
-
-
-
+	@Override
+	protected boolean canDelete(InstantMessagingNotification entity) {
+		// TODO Auto-generated method stub
+		return true;
+	}
 
 }

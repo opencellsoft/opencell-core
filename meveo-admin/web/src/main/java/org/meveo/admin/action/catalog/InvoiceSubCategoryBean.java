@@ -242,4 +242,10 @@ public class InvoiceSubCategoryBean extends
 	public void setIndex() {
 		tabView.setActiveIndex(0);
 	}
+
+	@Override
+	protected boolean canDelete(InvoiceSubCategory entity) {
+		// TODO Auto-generated method stub
+		return true;
+	}
 }

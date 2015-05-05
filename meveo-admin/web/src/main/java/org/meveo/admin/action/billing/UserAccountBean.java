@@ -469,5 +469,11 @@ public class UserAccountBean extends AccountBean<UserAccount> {
 	public void setSelectedCounterInstance(CounterInstance selectedCounterInstance) {
 		this.selectedCounterInstance = selectedCounterInstance;
 	}
+
+	@Override
+	protected boolean canDelete(UserAccount entity) {
+		// TODO Auto-generated method stub
+		return true;
+	}
 	 
 }

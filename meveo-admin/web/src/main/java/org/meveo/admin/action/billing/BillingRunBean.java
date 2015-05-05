@@ -441,4 +441,10 @@ public class BillingRunBean extends BaseBean<BillingRun> {
 		return Arrays.asList("provider");
 	}
 
+	@Override
+	protected boolean canDelete(BillingRun entity) {
+		// TODO Auto-generated method stub
+		return true;
+	}
+
 }

@@ -27,12 +27,16 @@ import javax.inject.Named;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.action.CustomFieldEnabledBean;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
+import org.meveo.model.billing.Subscription;
 import org.meveo.model.catalog.OfferTemplate;
+import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.crm.AccountLevelEnum;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
+import org.meveo.service.billing.impl.SubscriptionService;
 import org.meveo.service.catalog.impl.OfferTemplateService;
+import org.meveo.service.catalog.impl.PricePlanMatrixService;
 import org.meveo.service.catalog.impl.ServiceTemplateService;
 import org.omnifaces.cdi.ViewScoped;
 import org.primefaces.model.DualListModel;
@@ -62,6 +66,11 @@ public class OfferTemplateBean extends BaseBean<OfferTemplate> {
 	private ServiceTemplateService serviceTemplateService;
 
 	private DualListModel<ServiceTemplate> perks;
+	
+	@Inject
+	private SubscriptionService subscriptionService;
+	@Inject
+	private PricePlanMatrixService pricePlanMatrixService;
 
 	/**
 	 * Constructor. Invokes super constructor and provides class type of this
@@ -122,5 +131,18 @@ public class OfferTemplateBean extends BaseBean<OfferTemplate> {
 	@Override
 	protected String getDefaultSort() {
 		return "code";
+	}
+	
+	@Override
+	protected boolean canDelete(OfferTemplate entity) {
+		boolean result=true;
+		if(entity==null) return false;
+		List<Subscription> subscriptions=subscriptionService.findByOfferTemplate(entity);
+		result=(subscriptions==null||subscriptions.size()==0)?true:false;
+		if(!result){
+			return result;
+		}
+		List<PricePlanMatrix> prices=pricePlanMatrixService.findByOfferTemplate(entity);
+		return (prices==null||prices.size()==0)?true:false;
 	}
 }

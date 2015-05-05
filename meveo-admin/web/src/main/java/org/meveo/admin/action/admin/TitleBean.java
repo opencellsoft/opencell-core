@@ -59,4 +59,10 @@ public class TitleBean extends BaseBean<Title> {
     public void test() throws BatchUpdateException {
         throw new BatchUpdateException();
     }
+
+	@Override
+	protected boolean canDelete(Title entity) {
+		// TODO Auto-generated method stub
+		return true;
+	}
 }

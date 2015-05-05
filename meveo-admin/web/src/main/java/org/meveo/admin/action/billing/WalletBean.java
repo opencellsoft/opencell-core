@@ -87,4 +87,10 @@ public class WalletBean extends BaseBean<WalletInstance> {
 		return walletService;
 	}
 
+	@Override
+	protected boolean canDelete(WalletInstance entity) {
+		// TODO Auto-generated method stub
+		return true;
+	}
+
 }

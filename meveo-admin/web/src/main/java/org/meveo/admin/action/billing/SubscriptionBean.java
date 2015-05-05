@@ -733,4 +733,10 @@ public class SubscriptionBean extends BaseBean<Subscription> {
 		this.selectedWalletTemplate = selectedWalletTemplate;
 	}
 
+	@Override
+	protected boolean canDelete(Subscription entity) {
+		// TODO Auto-generated method stub
+		return true;
+	}
+
 }

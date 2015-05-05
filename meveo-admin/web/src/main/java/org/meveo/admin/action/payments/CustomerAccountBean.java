@@ -350,4 +350,10 @@ public class CustomerAccountBean extends AccountBean<CustomerAccount> {
 	protected List<String> getListFieldsToFetch() {
 		return Arrays.asList("provider", "customer");
 	}
+
+	@Override
+	protected boolean canDelete(CustomerAccount entity) {
+		// TODO Auto-generated method stub
+		return true;
+	}
 }

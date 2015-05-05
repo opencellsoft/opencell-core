@@ -60,4 +60,10 @@ public class DunningLOTBean extends BaseBean<DunningLOT> {
 		return dunningLOTService;
 	}
 
+	@Override
+	protected boolean canDelete(DunningLOT entity) {
+		// TODO Auto-generated method stub
+		return true;
+	}
+
 }

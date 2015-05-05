@@ -80,4 +80,10 @@ public class CounterInstanceBean extends BaseBean<CounterInstance> {
 		return counterInstanceService;
 	}
 
+	@Override
+	protected boolean canDelete(CounterInstance entity) {
+		// TODO Auto-generated method stub
+		return true;
+	}
+
 }

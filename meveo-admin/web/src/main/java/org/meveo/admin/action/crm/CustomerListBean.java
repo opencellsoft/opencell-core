@@ -88,4 +88,10 @@ public class CustomerListBean extends BaseBean<Customer> {
 	protected String getDefaultSort() {
 		return "code";
 	}
+
+	@Override
+	protected boolean canDelete(Customer entity) {
+		// TODO Auto-generated method stub
+		return true;
+	}
 }

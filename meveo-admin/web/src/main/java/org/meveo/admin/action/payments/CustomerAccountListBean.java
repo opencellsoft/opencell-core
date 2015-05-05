@@ -65,4 +65,10 @@ public class CustomerAccountListBean extends BaseBean<CustomerAccount> {
 	protected String getDefaultSort() {
 		return "code";
 	}
+
+	@Override
+	protected boolean canDelete(CustomerAccount entity) {
+		// TODO Auto-generated method stub
+		return true;
+	}
 }
