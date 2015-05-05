@@ -27,6 +27,7 @@ import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.action.CustomFieldEnabledBean;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.ServiceChargeTemplateRecurring;
 import org.meveo.model.catalog.ServiceChargeTemplateSubscription;
 import org.meveo.model.catalog.ServiceChargeTemplateTermination;
@@ -37,6 +38,7 @@ import org.meveo.model.crm.AccountLevelEnum;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.WalletTemplateService;
+import org.meveo.service.catalog.impl.OfferTemplateService;
 import org.meveo.service.catalog.impl.ServiceChargeTemplateRecurringService;
 import org.meveo.service.catalog.impl.ServiceChargeTemplateSubscriptionService;
 import org.meveo.service.catalog.impl.ServiceChargeTemplateTerminationService;
@@ -415,11 +417,14 @@ public class ServiceTemplateBean extends BaseBean<ServiceTemplate> {
 	protected String getDefaultSort() {
 		return "code";
 	}
+	
+	@Inject
+	private OfferTemplateService offerTemplateService;
 
 	@Override
 	protected boolean canDelete(ServiceTemplate entity) {
-		// TODO Auto-generated method stub
-		return true;
+		List<OfferTemplate> offers=offerTemplateService.findByServiceTemplate(entity);
+		return offers==null||offers.size()==0;
 	}
 
 }
