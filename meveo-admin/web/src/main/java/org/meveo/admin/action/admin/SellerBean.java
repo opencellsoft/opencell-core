@@ -98,4 +98,10 @@ public class SellerBean extends BaseBean<Seller> {
 		}
 	}
 
+	@Override
+	protected boolean canDelete(Seller entity) {
+		// TODO Auto-generated method stub
+		return true;
+	}
+
 }

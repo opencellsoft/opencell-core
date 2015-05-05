@@ -65,4 +65,10 @@ public class CountryBean extends BaseBean<Country> {
 	protected String getDefaultSort() {
 		return "descriptionEn";
 	}
+
+	@Override
+	protected boolean canDelete(Country entity) {
+		return true;
+	}
+	
 }

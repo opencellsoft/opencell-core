@@ -59,4 +59,10 @@ public class NumberingPlanBean extends BaseBean<NumberingPlan> {
 	protected IPersistenceService<NumberingPlan> getPersistenceService() {
 		return numberingPlanService;
 	}
+
+	@Override
+	protected boolean canDelete(NumberingPlan entity) {
+		// TODO Auto-generated method stub
+		return true;
+	}
 }

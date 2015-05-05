@@ -96,4 +96,10 @@ public class OccTemplateBean extends BaseBean<OCCTemplate> {
 		return occTemplateService;
 	}
 
+	@Override
+	protected boolean canDelete(OCCTemplate entity) {
+		// TODO Auto-generated method stub
+		return true;
+	}
+
 }

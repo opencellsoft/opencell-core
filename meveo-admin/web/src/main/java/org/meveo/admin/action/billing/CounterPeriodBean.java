@@ -102,4 +102,10 @@ public class CounterPeriodBean extends BaseBean<CounterPeriod> {
 		return Arrays.asList("provider");
 	}
 
+	@Override
+	protected boolean canDelete(CounterPeriod entity) {
+		// TODO Auto-generated method stub
+		return true;
+	}
+
 }

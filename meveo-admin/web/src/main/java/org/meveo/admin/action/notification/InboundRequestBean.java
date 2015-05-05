@@ -484,6 +484,12 @@ public class InboundRequestBean extends BaseBean<InboundRequest> {
 	public void setStrategyImportType(StrategyImportTypeEnum strategyImportType) {
 		this.strategyImportType = strategyImportType;
 	}
+
+	@Override
+	protected boolean canDelete(InboundRequest entity) {
+		// TODO Auto-generated method stub
+		return true;
+	}
     
     
 }

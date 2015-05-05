@@ -75,4 +75,10 @@ public class BillingAccountListBean extends BaseBean<BillingAccount> {
 		return Arrays.asList("name");
 	}
 
+	@Override
+	protected boolean canDelete(BillingAccount entity) {
+		// TODO Auto-generated method stub
+		return true;
+	}
+
 }

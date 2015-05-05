@@ -62,4 +62,10 @@ public class ServiceParameterInstanceBean extends
 		return serviceParameterService;
 	}
 
+	@Override
+	protected boolean canDelete(ServiceParameterInstance entity) {
+		// TODO Auto-generated method stub
+		return true;
+	}
+
 }

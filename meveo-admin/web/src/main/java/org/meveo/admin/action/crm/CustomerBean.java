@@ -94,4 +94,10 @@ public class CustomerBean extends AccountBean<Customer> {
 	protected List<String> getListFieldsToFetch() {
 		return Arrays.asList("provider");
 	}
+
+	@Override
+	protected boolean canDelete(Customer entity) {
+		// TODO Auto-generated method stub
+		return true;
+	}
 }

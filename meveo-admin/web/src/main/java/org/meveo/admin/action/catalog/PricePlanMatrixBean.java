@@ -114,11 +114,11 @@ public class PricePlanMatrixBean extends BaseBean<PricePlanMatrix> {
 		return Arrays.asList("provider");
 	}
 
-//	@Override
-//	protected boolean canDelete(PricePlanMatrix entity) {
-//		// TODO Auto-generated method stub
-//		return true;
-//	}
+	@Override
+	protected boolean canDelete(PricePlanMatrix entity) {
+		// TODO Auto-generated method stub
+		return true;
+	}
 	//show advanced button in search panel
 	private boolean advanced=false;
 	public boolean getAdvanced(){

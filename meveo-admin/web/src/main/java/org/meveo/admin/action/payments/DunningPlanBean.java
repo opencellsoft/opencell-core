@@ -197,4 +197,10 @@ public class DunningPlanBean extends BaseBean<DunningPlan> {
 		return Arrays.asList("provider");
 	}
 
+	@Override
+	protected boolean canDelete(DunningPlan entity) {
+		// TODO Auto-generated method stub
+		return true;
+	}
+
 }

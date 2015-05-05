@@ -84,4 +84,10 @@ public class JobHistoryBean extends BaseBean<JobHistory> {
 		}
 		return page;
 	}
+
+	@Override
+	protected boolean canDelete(JobHistory entity) {
+		// TODO Auto-generated method stub
+		return true;
+	}
 }

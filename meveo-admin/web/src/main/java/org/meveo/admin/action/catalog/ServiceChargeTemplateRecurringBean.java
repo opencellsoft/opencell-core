@@ -50,4 +50,10 @@ public class ServiceChargeTemplateRecurringBean extends BaseBean<ServiceChargeTe
     protected IPersistenceService<ServiceChargeTemplateRecurring> getPersistenceService() {
         return serviceChargeTemplateRecurringService;
     }
+
+	@Override
+	protected boolean canDelete(ServiceChargeTemplateRecurring entity) {
+		// TODO Auto-generated method stub
+		return true;
+	}
 }

@@ -160,4 +160,10 @@ public class TradingCurrencyBean extends BaseBean<TradingCurrency> {
 		return "currency.currencyCode";
 	}
 
+	@Override
+	protected boolean canDelete(TradingCurrency entity) {
+		// TODO Auto-generated method stub
+		return true;
+	}
+
 }

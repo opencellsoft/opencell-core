@@ -247,6 +247,12 @@ public class InvoiceBean extends BaseBean<Invoice> {
 		this.ratedTransactions = ratedTransactions;
 	}
 
+	@Override
+	protected boolean canDelete(Invoice entity) {
+		// TODO Auto-generated method stub
+		return true;
+	}
+
 
 
 	

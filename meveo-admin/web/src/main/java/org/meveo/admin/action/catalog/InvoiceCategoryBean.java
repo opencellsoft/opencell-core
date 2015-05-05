@@ -83,4 +83,10 @@ public class InvoiceCategoryBean extends BaseBean<InvoiceCategory> {
 		return "code";
 	}
 
+	@Override
+	protected boolean canDelete(InvoiceCategory entity) {
+		// TODO Auto-generated method stub
+		return true;
+	}
+
 }

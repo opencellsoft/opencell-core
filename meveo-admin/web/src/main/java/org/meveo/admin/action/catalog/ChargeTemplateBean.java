@@ -75,4 +75,10 @@ public class ChargeTemplateBean extends BaseBean<ChargeTemplate> {
 		return chargeTemplateService;
 	}
 
+	@Override
+	protected boolean canDelete(ChargeTemplate entity) {
+		// TODO Auto-generated method stub
+		return true;
+	}
+
 }

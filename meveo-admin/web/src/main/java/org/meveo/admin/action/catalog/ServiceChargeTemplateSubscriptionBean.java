@@ -49,4 +49,10 @@ public class ServiceChargeTemplateSubscriptionBean extends BaseBean<ServiceCharg
 	protected IPersistenceService<ServiceChargeTemplateSubscription> getPersistenceService() {
 		return serviceChargeTemplateSubscriptionService;
 	}
+
+	@Override
+	protected boolean canDelete(ServiceChargeTemplateSubscription entity) {
+		// TODO Auto-generated method stub
+		return true;
+	}
 }

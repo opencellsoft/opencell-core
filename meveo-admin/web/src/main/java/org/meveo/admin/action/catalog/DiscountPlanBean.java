@@ -113,6 +113,12 @@ public class DiscountPlanBean extends BaseBean<DiscountPlan> {
 		discountPlanItemService.remove(discountPlanItem);
 		messages.info(new BundleKey("messages", "delete.successful"));
 	}
+
+	@Override
+	protected boolean canDelete(DiscountPlan entity) {
+		// TODO Auto-generated method stub
+		return true;
+	}
 	
 
 }

@@ -95,4 +95,10 @@ public class ReportBean extends BaseBean<Report> {
 		return save;
 	}
 
+	@Override
+	protected boolean canDelete(Report entity) {
+		// TODO Auto-generated method stub
+		return true;
+	}
+
 }

@@ -127,4 +127,10 @@ public class SyntheseClientBean extends BaseBean<BillingAccount> {
 		}
 
 	}
+
+	@Override
+	protected boolean canDelete(BillingAccount entity) {
+		// TODO Auto-generated method stub
+		return true;
+	}
 }

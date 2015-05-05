@@ -195,4 +195,10 @@ public class TaxBean extends BaseBean<Tax> {
 		return "code";
 	}
 
+	@Override
+	protected boolean canDelete(Tax entity) {
+		// TODO Auto-generated method stub
+		return true;
+	}
+
 }

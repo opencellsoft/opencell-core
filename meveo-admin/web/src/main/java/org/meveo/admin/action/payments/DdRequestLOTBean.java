@@ -233,4 +233,10 @@ public class DdRequestLOTBean extends BaseBean<DDRequestLOT> {
 	protected List<String> getListFieldsToFetch() {
 		return Arrays.asList("provider");
 	}
+
+	@Override
+	protected boolean canDelete(DDRequestLOT entity) {
+		// TODO Auto-generated method stub
+		return true;
+	}
 }

@@ -91,4 +91,10 @@ public class ChartBean extends BaseBean<Chart> {
 		return Arrays.asList("provider");
 	}
 
+	@Override
+	protected boolean canDelete(Chart entity) {
+		// TODO Auto-generated method stub
+		return true;
+	}
+
 }

@@ -57,4 +57,10 @@ public class LanguageBean extends BaseBean<Language> {
 		return "languageCode";
 	}
 
+	@Override
+	protected boolean canDelete(Language entity) {
+		// TODO Auto-generated method stub
+		return true;
+	}
+
 }

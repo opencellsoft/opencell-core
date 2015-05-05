@@ -50,4 +50,10 @@ public class ServiceChargeTemplateTerminationBean extends BaseBean<ServiceCharge
     protected IPersistenceService<ServiceChargeTemplateTermination> getPersistenceService() {
         return serviceChargeTemplateTerminationService;
     }
+
+	@Override
+	protected boolean canDelete(ServiceChargeTemplateTermination entity) {
+		// TODO Auto-generated method stub
+		return true;
+	}
 }

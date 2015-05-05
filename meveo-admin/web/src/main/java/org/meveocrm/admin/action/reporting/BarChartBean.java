@@ -195,4 +195,11 @@ public class BarChartBean extends ChartEntityBean<BarChart> {
 		this.barChartEntityModels = barChartEntityModels;
 	}
 
+	@Override
+	protected boolean canDelete(BarChart entity) {
+		// TODO Auto-generated method stub
+		return true;
+	}
+
 }
+

@@ -91,4 +91,10 @@ public class CustomFieldTemplateBean extends BaseBean<CustomFieldTemplate> {
         }
         return super.supplementSearchCriteria(searchCriteria);
     }
+
+	@Override
+	protected boolean canDelete(CustomFieldTemplate entity) {
+		// TODO Auto-generated method stub
+		return true;
+	}
 }

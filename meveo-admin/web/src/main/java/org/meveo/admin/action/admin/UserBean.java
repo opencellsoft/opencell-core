@@ -631,4 +631,10 @@ public class UserBean extends BaseBean<User> {
         
         
     }
+	@Override
+	protected boolean canDelete(User entity) {
+		// TODO Auto-generated method stub
+		return true;
+	}
+
 }

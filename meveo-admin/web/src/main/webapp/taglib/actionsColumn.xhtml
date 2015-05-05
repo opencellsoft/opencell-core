@@ -135,10 +135,14 @@
 		</p:confirmDialog>
 		
 		<p:commandButton id="#{resultsId}deletelink" icon="ui-icon-trash"
-			rendered="#{renderDeleteLink}"
+			rendered="#{renderDeleteLink and backingBean.canDelete(entity)}"
 			oncomplete="PF('confirmDeleteWidget').show()">
 			<f:setPropertyActionListener target="#{backingBean.entity}"
 				value="#{entity}"></f:setPropertyActionListener>
+		</p:commandButton>
+		<p:commandButton id="#{resultsId}candeletelink" icon="ui-icon-trash"
+			rendered="#{renderDeleteLink and not backingBean.canDelete(entity)}"
+			oncomplete="PF('confirmCanotDeleteWidget').show()">
 		</p:commandButton>
 
 		<p:confirmDialog id="confirmDialog" styleClass="confirm-dialog"
@@ -152,6 +156,15 @@
 					onclick="PF('confirmDeleteWidget').hide()" type="button" />
 			</p:panel>
 		</p:confirmDialog>
+		<p:confirmDialog id="confirmCanDeleteDialog" styleClass="confirm-dialog"
+			message="#{messages['commons.confirmCanotDelete']}" header=""
+			severity="alert" widgetVar="confirmCanotDeleteWidget">
+			<p:panel styleClass="confirm-dialog-content">
+				<p:commandButton id="canotdeleteOk" value="#{messages['commons.ok']}"
+					oncomplete="PF('confirmCanotDeleteWidget').hide()" update="@this" />
+			</p:panel>
+		</p:confirmDialog>
+		
 
 	</p:column>
 </ui:composition>
