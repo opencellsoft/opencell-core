@@ -16,7 +16,7 @@
 </cc:interface>
 
 <cc:implementation>
-<h:outputText value="converter #{converter}"/>
+
     <hftl:decorateFormField fieldId="#{cc.parent.attrs.fieldIdPrefix}_number#{cc.parent.attrs.listValues != null?'_list':cc.attrs.spinner?'_spinner':''}#{cc.attrs.edit?'':'_view'}"
         label="#{cc.parent.attrs.label}" componentWidth="#{cc.parent.attrs.componentWidth}" newLine="#{cc.parent.attrs.newLine}" displayOneLine="#{cc.parent.attrs.displayOneLine}"
         styleClass="#{cc.parent.attrs.styleClass}" style="#{cc.parent.attrs.style}" labelStyle="#{cc.parent.attrs.labelStyle}" labelStyleClass="#{cc.parent.attrs.labelStyleClass}"

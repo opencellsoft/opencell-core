@@ -16,7 +16,7 @@
 <cc:implementation>
 
     <hftl:decorateFormField
-        fieldId="#{cc.parent.attrs.fieldIdPrefix}_text#{cc.attrs.autocompleteMethod!=null?'_ac':cc.parent.attrs.textArea?'_area':cc.parent.attrs.isHtml?'_html':cc.parent.attrs.listValues != null?'_list':cc.parent.attrs.popup?'_pp':''}#{cc.attrs.edit?'':'_view'}"
+        fieldId="#{cc.parent.attrs.fieldIdPrefix}_text#{cc.attrs.autocompleteMethod!=null?'_ac':cc.parent.attrs.textArea?'_area':cc.parent.attrs.isHtml?'_html':cc.parent.attrs.listValues != null?'_list':cc.parent.attrs.popup?'_pp':''}#{(cc.parent.attrs.popup and cc.attrs.edit and cc.attrs.fieldItem==null)?'_noValue':''}#{cc.attrs.edit?'':'_view'}"
         label="#{cc.parent.attrs.label}" componentWidth="#{cc.parent.attrs.componentWidth}" newLine="#{cc.parent.attrs.newLine}" displayOneLine="#{cc.parent.attrs.displayOneLine}"
         styleClass="#{cc.parent.attrs.styleClass}" style="#{cc.parent.attrs.style}" labelStyle="#{cc.parent.attrs.labelStyle}" labelStyleClass="#{cc.parent.attrs.labelStyleClass}"
         inputStyle="#{cc.parent.attrs.inputStyle}" inputStyleClass="#{cc.parent.attrs.inputStyleClass}" labelWidth="#{cc.parent.attrs.labelWidth}"
@@ -79,6 +79,7 @@
         <h:panelGroup rendered="#{cc.parent.attrs.popup and cc.attrs.edit}">
             <p:inputText id="#{cc.parent.attrs.fieldIdPrefix}_text_pp" value="#{cc.attrs.fieldItem}" required="#{cc.parent.attrs.required}" size="#{cc.parent.attrs.size}"
                 disabled="true" />
+            <h:inputHidden id="#{cc.parent.attrs.fieldIdPrefix}_text_pp_noValue" rendered="#{cc.attrs.edit and cc.attrs.fieldItem==null}" required="#{cc.parent.attrs.required}" />
             <p:commandButton id="selectLink" onclick="PF('dlg_#{cc.parent.attrs.popupId}').show()" icon="ui-icon-search" />
             <p:tooltip for="selectLink" value="#{messages['commons.search']}" />
         </h:panelGroup>

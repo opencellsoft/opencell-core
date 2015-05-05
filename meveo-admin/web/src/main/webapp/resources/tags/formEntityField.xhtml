@@ -14,7 +14,7 @@
 
 <cc:implementation>
 
-    <hftl:decorateFormField fieldId="#{cc.parent.attrs.fieldIdPrefix}_entity#{cc.attrs.edit?'':'_view'}" label="#{cc.parent.attrs.label}"
+    <hftl:decorateFormField fieldId="#{cc.parent.attrs.fieldIdPrefix}_entity#{(cc.parent.attrs.popup and cc.attrs.edit and cc.attrs.fieldItem==null)?'_noValue':''}#{cc.attrs.edit?'':'_view'}" label="#{cc.parent.attrs.label}"
         componentWidth="#{cc.parent.attrs.componentWidth}" newLine="#{cc.parent.attrs.newLine}" displayOneLine="#{cc.parent.attrs.displayOneLine}"
         styleClass="#{cc.parent.attrs.styleClass}" style="#{cc.parent.attrs.style}" labelStyle="#{cc.parent.attrs.labelStyle}" labelStyleClass="#{cc.parent.attrs.labelStyleClass}"
         inputStyle="#{cc.parent.attrs.inputStyle}" inputStyleClass="#{cc.parent.attrs.inputStyleClass}" labelWidth="#{cc.parent.attrs.labelWidth}"
@@ -26,9 +26,7 @@
 
             <p:inputText id="#{cc.parent.attrs.fieldIdPrefix}_entity" rendered="#{cc.attrs.edit and cc.attrs.fieldItem!=null}"
                 value="#{cc.attrs.fieldItem[cc.parent.attrs.valueLabelField]}" required="#{cc.parent.attrs.required}" size="#{cc.parent.attrs.size}" disabled="true" />
-
-
-            <!--                     <h:inputHidden id="#{cc.parent.attrs.fieldIdPrefix}_notext" rendered="#{cc.attrs.edit and cc.attrs.fieldItem==null}" required="#{cc.parent.attrs.required}" /> -->
+            <h:inputHidden id="#{cc.parent.attrs.fieldIdPrefix}_entity_noValue" rendered="#{cc.attrs.edit and cc.attrs.fieldItem==null}" required="#{cc.parent.attrs.required}" />
             <p:inputText rendered="#{cc.attrs.edit and cc.attrs.fieldItem==null}" value="" size="#{cc.parent.attrs.size}" required="#{cc.parent.attrs.required}" disabled="true" />
 
             <p:commandButton immediate="true"
@@ -102,7 +100,7 @@
     <!--                     value="#{cc.attrs.fieldItem[cc.parent.attrs.valueLabelField]}" required="#{cc.parent.attrs.required}" size="#{cc.parent.attrs.size}" disabled="true" /> -->
 
 
-    <!--                                     <h:inputHidden id="#{cc.parent.attrs.fieldIdPrefix}_notext" rendered="#{cc.attrs.edit and cc.attrs.fieldItem==null}" required="#{cc.parent.attrs.required}" /> -->
+    <!--                 <h:inputHidden id="#{cc.parent.attrs.fieldIdPrefix}_entity_noValue" rendered="#{cc.attrs.edit and cc.attrs.fieldItem==null}" required="#{cc.parent.attrs.required}" /> -->
     <!--                 <p:inputText rendered="#{cc.attrs.edit and cc.attrs.fieldItem==null}" value="" size="#{cc.parent.attrs.size}" required="#{cc.parent.attrs.required}" disabled="true" /> -->
 
     <!--                 <p:commandButton immediate="true" -->

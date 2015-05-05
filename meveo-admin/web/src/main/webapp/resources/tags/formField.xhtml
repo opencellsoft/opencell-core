@@ -147,7 +147,7 @@
     <cc:attribute name="showOnlyOnConsult" default="false" />
     <cc:attribute name="allowEdit" default="true" />
     <cc:attribute name="edit"
-        default="#{cc.backingBeanFromParentOrCurrent.edit and (cc.entityFromBackingBeanOrAttribute.id==null or (cc.entityFromBackingBeanOrAttribute.id!=null and cc.attrs.allowEdit))}" />
+        default="#{cc.fieldEdit and (cc.entityFromBackingBeanOrAttribute.id==null or (cc.entityFromBackingBeanOrAttribute.id!=null and cc.attrs.allowEdit))}" />
 
     <!--  Internal attribute - don't use -->
     <cc:attribute name="show"
