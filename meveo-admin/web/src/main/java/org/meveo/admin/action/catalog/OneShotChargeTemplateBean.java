@@ -174,4 +174,10 @@ public class OneShotChargeTemplateBean extends BaseBean<OneShotChargeTemplate> {
 		return Arrays.asList("provider");
 	}
 
+	@Override
+	protected boolean canDelete(OneShotChargeTemplate entity) {
+		// TODO Auto-generated method stub
+		return true;
+	}
+
 }

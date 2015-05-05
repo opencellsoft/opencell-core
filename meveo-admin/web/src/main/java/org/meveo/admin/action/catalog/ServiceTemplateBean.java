@@ -416,4 +416,10 @@ public class ServiceTemplateBean extends BaseBean<ServiceTemplate> {
 		return "code";
 	}
 
+	@Override
+	protected boolean canDelete(ServiceTemplate entity) {
+		// TODO Auto-generated method stub
+		return true;
+	}
+
 }

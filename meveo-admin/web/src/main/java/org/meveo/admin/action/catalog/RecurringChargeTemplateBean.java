@@ -154,4 +154,10 @@ public class RecurringChargeTemplateBean extends
 	public void setEdrTemplatesModel(DualListModel<TriggeredEDRTemplate> temp) {
 		getEntity().setEdrTemplates(temp.getTarget());
 	}
+
+	@Override
+	protected boolean canDelete(RecurringChargeTemplate entity) {
+		// TODO Auto-generated method stub
+		return true;
+	}
 }

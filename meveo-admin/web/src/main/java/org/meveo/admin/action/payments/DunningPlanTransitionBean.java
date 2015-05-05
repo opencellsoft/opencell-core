@@ -134,4 +134,11 @@ public class DunningPlanTransitionBean extends BaseBean<DunningPlanTransition> {
 			}
 		}
 	}
+
+	@Override
+	protected boolean canDelete(DunningPlanTransition entity) {
+		// TODO Auto-generated method stub
+		return true;
+	}
 }
+

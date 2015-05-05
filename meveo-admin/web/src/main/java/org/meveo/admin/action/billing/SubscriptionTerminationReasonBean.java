@@ -70,4 +70,10 @@ public class SubscriptionTerminationReasonBean extends
 		return subscriptionTerminationReasonService;
 	}
 
+	@Override
+	protected boolean canDelete(SubscriptionTerminationReason entity) {
+		// TODO Auto-generated method stub
+		return true;
+	}
+
 }

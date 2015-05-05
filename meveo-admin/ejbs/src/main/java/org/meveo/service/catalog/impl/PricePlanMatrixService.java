@@ -515,4 +515,18 @@ public class PricePlanMatrixService extends PersistenceService<PricePlanMatrix> 
     public List<PricePlanMatrix> getPricePlansForCache() {
         return getEntityManager().createNamedQuery("PricePlanMatrix.getPricePlansForCache", PricePlanMatrix.class).getResultList();
     }
+    
+    @SuppressWarnings("unchecked")
+	public List<PricePlanMatrix> findByOfferTemplate(OfferTemplate offerTemplate){
+		QueryBuilder qb = new QueryBuilder(PricePlanMatrix.class, "p");
+		qb.addCriterionEntity("offerTemplate", offerTemplate);
+
+		try {
+			return (List<PricePlanMatrix>) qb.getQuery(getEntityManager())
+					.getResultList();
+		} catch (NoResultException e) {
+			log.warn(e.getMessage());
+			return null;
+		}
+	}
 }

@@ -192,4 +192,11 @@ public class LineChartBean extends ChartEntityBean<LineChart> {
 		this.lineChartEntityModels = lineChartEntityModels;
 	}
 
+	@Override
+	protected boolean canDelete(LineChart entity) {
+		// TODO Auto-generated method stub
+		return true;
+	}
+
 }
+

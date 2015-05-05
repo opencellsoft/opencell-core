@@ -133,4 +133,10 @@ public class ActionPlanItemBean extends BaseBean<ActionPlanItem> {
 			}
 		}
 	}
+
+	@Override
+	protected boolean canDelete(ActionPlanItem entity) {
+		// TODO Auto-generated method stub
+		return true;
+	}
 }

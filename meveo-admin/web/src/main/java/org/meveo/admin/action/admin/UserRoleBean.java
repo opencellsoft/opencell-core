@@ -98,4 +98,10 @@ public class UserRoleBean extends BaseBean<Role> {
 
         return searchCriteria;
     }
+
+	@Override
+	protected boolean canDelete(Role entity) {
+		// TODO Auto-generated method stub
+		return true;
+	}
 }

@@ -165,4 +165,10 @@ public class TradingLanguageBean extends BaseBean<TradingLanguage> {
 		return result;
 	}
 
+	@Override
+	protected boolean canDelete(TradingLanguage entity) {
+		// TODO Auto-generated method stub
+		return true;
+	}
+
 }

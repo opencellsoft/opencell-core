@@ -443,4 +443,10 @@ public class CustomerTreeBean extends BaseBean<AccountEntity> {
 		}
 	}
 
+	@Override
+	protected boolean canDelete(AccountEntity entity) {
+		// TODO Auto-generated method stub
+		return true;
+	}
+
 }

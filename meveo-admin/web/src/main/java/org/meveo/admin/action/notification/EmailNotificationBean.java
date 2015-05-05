@@ -296,6 +296,12 @@ public class EmailNotificationBean extends BaseBean<EmailNotification> {
 	public void setStrategyImportType(StrategyImportTypeEnum strategyImportType) {
 		this.strategyImportType = strategyImportType;
 	}
+
+	@Override
+	protected boolean canDelete(EmailNotification entity) {
+		// TODO Auto-generated method stub
+		return true;
+	}
 	
 	
 

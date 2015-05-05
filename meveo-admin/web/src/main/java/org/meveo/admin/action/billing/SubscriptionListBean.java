@@ -63,4 +63,10 @@ public class SubscriptionListBean extends BaseBean<Subscription> {
 		return "code";
 	}
 
+	@Override
+	protected boolean canDelete(Subscription entity) {
+		// TODO Auto-generated method stub
+		return true;
+	}
+
 }

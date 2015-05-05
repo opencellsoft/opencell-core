@@ -54,4 +54,10 @@ public class TimePlanBean extends BaseBean<TimePlan> {
 		return timePlanService;
 	}
 
+	@Override
+	protected boolean canDelete(TimePlan entity) {
+		// TODO Auto-generated method stub
+		return true;
+	}
+	
 }

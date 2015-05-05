@@ -89,4 +89,10 @@ public class MatchingCodeBean extends BaseBean<MatchingCode> {
 		}
 		return returnPage;
 	}
+
+	@Override
+	protected boolean canDelete(MatchingCode entity) {
+		// TODO Auto-generated method stub
+		return true;
+	}
 }

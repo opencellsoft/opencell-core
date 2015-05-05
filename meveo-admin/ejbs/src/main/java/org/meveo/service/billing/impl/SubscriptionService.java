@@ -265,6 +265,20 @@ public class SubscriptionService extends BusinessService<Subscription> {
 		return false;
 
 	}
+	
+	@SuppressWarnings("unchecked")
+	public List<Subscription> findByOfferTemplate(OfferTemplate offerTemplate){
+		QueryBuilder qb = new QueryBuilder(Subscription.class, "s");
+		qb.addCriterionEntity("offer", offerTemplate);
+
+		try {
+			return (List<Subscription>) qb.getQuery(getEntityManager())
+					.getResultList();
+		} catch (NoResultException e) {
+			log.warn(e.getMessage());
+			return null;
+		}
+	}
 
 	@SuppressWarnings("unchecked")
 	public List<Subscription> findByOfferTemplate(EntityManager em,

@@ -1171,4 +1171,5 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 	protected Locale getCurrentLocale() {
 		return FacesContext.getCurrentInstance().getViewRoot().getLocale();
 	}
+	protected abstract boolean canDelete(T entity); 
 }

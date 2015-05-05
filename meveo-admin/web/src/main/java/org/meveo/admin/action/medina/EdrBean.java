@@ -80,4 +80,10 @@ public class EdrBean extends BaseBean<EDR> {
 		return Arrays.asList("provider");
 	}
 
+	@Override
+	protected boolean canDelete(EDR entity) {
+		// TODO Auto-generated method stub
+		return true;
+	}
+
 }

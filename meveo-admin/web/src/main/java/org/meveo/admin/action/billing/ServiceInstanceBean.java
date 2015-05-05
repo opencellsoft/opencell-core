@@ -207,4 +207,10 @@ public class ServiceInstanceBean extends BaseBean<ServiceInstance> {
 		return super.saveOrUpdate(killConversation);
 	}
 
+	@Override
+	protected boolean canDelete(ServiceInstance entity) {
+		// TODO Auto-generated method stub
+		return true;
+	}
+
 }

@@ -152,5 +152,11 @@ public class CatMessagesBean extends BaseBean<CatMessages> {
 		result.put("PricePlanMatrix_*","Price plans");
 		return result;
 	}
+
+	@Override
+	protected boolean canDelete(CatMessages entity) {
+		// TODO Auto-generated method stub
+		return true;
+	}
 	
 }

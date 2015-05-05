@@ -88,4 +88,10 @@ public class AutomatedPaymentBean extends BaseBean<AutomatedPayment> {
 		return automatedPaymentService;
 	}
 
+	@Override
+	protected boolean canDelete(AutomatedPayment entity) {
+		// TODO Auto-generated method stub
+		return true;
+	}
+
 }

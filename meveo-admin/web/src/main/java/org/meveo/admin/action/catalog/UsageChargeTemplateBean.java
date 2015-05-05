@@ -131,4 +131,10 @@ public class UsageChargeTemplateBean extends BaseBean<UsageChargeTemplate> {
 		getEntity().setEdrTemplates(temp.getTarget());
 	}
 
+	@Override
+	protected boolean canDelete(UsageChargeTemplate entity) {
+		// TODO Auto-generated method stub
+		return true;
+	}
+
 }

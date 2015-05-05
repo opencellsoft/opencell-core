@@ -77,4 +77,10 @@ public class CountryComBean extends BaseBean<TradingCountry> {
 	public void test() throws BatchUpdateException {
 		throw new BatchUpdateException();
 	}
+
+	@Override
+	protected boolean canDelete(TradingCountry entity) {
+		// TODO Auto-generated method stub
+		return true;
+	}
 }

@@ -74,4 +74,10 @@ public class InvoiceSubCategoryCountryBean extends
 		return Arrays.asList("invoiceSubCategory", "tradingCountry", "tax");
 	}
 
+	@Override
+	protected boolean canDelete(InvoiceSubcategoryCountry entity) {
+		// TODO Auto-generated method stub
+		return true;
+	}
+
 }

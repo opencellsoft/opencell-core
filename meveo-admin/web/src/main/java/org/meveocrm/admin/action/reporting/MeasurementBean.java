@@ -610,4 +610,11 @@ public class MeasurementBean extends BaseBean<MeasuredValue> {
 		return Arrays.asList("provider");
 	}
 
+	@Override
+	protected boolean canDelete(MeasuredValue entity) {
+		// TODO Auto-generated method stub
+		return true;
+	}
+
 }
+
