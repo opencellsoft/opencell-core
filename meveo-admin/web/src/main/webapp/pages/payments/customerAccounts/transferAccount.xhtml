@@ -40,7 +40,7 @@
 			</a:commandLink> -->
 		</hftl:entityPopup>
 
-        <hftl:decorateFormPanel formId="transferAccountForm" header="#{messages['customerAccount.transferAccountTitle']}">
+        <hftl:decorateFormPanel formId="transferAccountForm" label="#{messages['customerAccount.transferAccountTitle']}">
             <ui:define name="fields">        
                     <hf:formDecorateField fieldId="accountTransferFrom" label="#{messages['customerAccount.accountTransferFrom']}">
                         <p:inputText id="accountTransferFrom" value="#{customerAccountBean.entity.code}" disabled="true" size="30"></p:inputText>

@@ -26,7 +26,6 @@ public class FormFieldCompositeComponent extends BackingBeanBasedCompositeCompon
 
         UIComponent parent = getCompositeComponentParent(this);
         while (parent != null) {
-            log.error("AKK getting parent component for {}", getAttributes().get("field"));
             if (parent instanceof FormPanelCompositeComponent) {
                 if (parent.getAttributes().containsKey("edit")) {
 

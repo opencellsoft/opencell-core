@@ -13,7 +13,7 @@
 
     <ui:define name="body">
 
-        <hftl:decorateFormPanel formId="selectionTypeTitle" header="#{messages['accountOperation.selectionTypeTitle']}">
+        <hftl:decorateFormPanel formId="selectionTypeTitle" label="#{messages['accountOperation.selectionTypeTitle']}">
             <ui:define name="fields">
                 <hf:formDecorateField fieldId="codeType" label="#{messages['accountOperation.selectTypeOCC']}">
                     <p:selectOneMenu id="codeType" required="true" value="#{otherCreditAndChargeBean.occTemplate}">

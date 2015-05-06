@@ -1,6 +1,6 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:s="http://jboss.com/products/seam/taglib" xmlns:ui="http://java.sun.com/jsf/facelets"
-    xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html" xmlns:hftl="http://hftl.org"
-    xmlns:hf="http://java.sun.com/jsf/composite/tags" xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
+    xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html" xmlns:hftl="http://hftl.org" xmlns:hf="http://java.sun.com/jsf/composite/tags"
+    xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
 
     <f:metadata>
         <f:event type="preRenderView" listener="#{entityExportImportBean.preRenderView}" />
@@ -12,58 +12,48 @@
 
     <ui:define name="body">
         <h:form id="searchForm" enctype="multipart/form-data">
-            <p:panelGrid id="searchPanel" columns="1" styleClass="search-panel">
+            <p:panel id="searchPanel" styleClass="search-panel">
                 <f:facet name="header">
                     <h:outputText value="#{messages['export.import']}" />
                 </f:facet>
                 <p:messages id="messages" autoUpdate="true" />
-                <p:panelGrid columns="2">
-                    <p:outputLabel for="import_requireFK" value="#{messages['export.requireFK']}" />
+                <hftl:decorateFormField fieldId="import_requireFK" label="#{messages['export.requireFK']}" displayOneLine="true" labelWidth="60" componentWidth="20">
                     <p:selectBooleanCheckbox id="import_requireFK" value="#{entityExportImportBean.requireFK}">
                         <p:ajax event="change" />
                     </p:selectBooleanCheckbox>
-                </p:panelGrid>
-                <p:panelGrid columns="2">
-                    <p:outputLabel for="import_forceToProvider" value="#{messages['export.forceToProvider']}" />
-                    <p:selectOneMenu id="import_forceToProvider" value="#{entityExportImportBean.forceToProvider}"
-                        converter="org.jboss.seam.faces.conversion.ObjectConverter">
+                </hftl:decorateFormField>
+                <hftl:decorateFormField fieldId="import_forceToProvider" label="#{messages['export.forceToProvider']}" displayOneLine="true" labelWidth="40">
+                    <p:selectOneMenu id="import_forceToProvider" value="#{entityExportImportBean.forceToProvider}" converter="org.jboss.seam.faces.conversion.ObjectConverter">
                         <f:selectItem />
-                        <f:selectItems value="#{identity.user.user.providers.toArray()}" var="listVal" itemLabel="#{listVal.code}"
-                            itemValue="#{listVal}" />
+                        <f:selectItems value="#{identity.user.user.providers.toArray()}" var="listVal" itemLabel="#{listVal.code}" itemValue="#{listVal}" />
                         <p:ajax event="change" />
                     </p:selectOneMenu>
-                </p:panelGrid>
-                <p:panelGrid columns="2">
-                    <p:outputLabel for="import_file" value="#{messages['export.importFile']}" />
-                    <p:fileUpload id="import_file" mode="advanced" fileUploadListener="#{entityExportImportBean.uploadImportFile}"
-                        allowTypes="/(\.|\/)(xml)$/" auto="false" update=":importSummary" />
-                </p:panelGrid>
-            </p:panelGrid>
-
+                </hftl:decorateFormField>
+                <hftl:decorateFormField fieldId="import_file" label="#{messages['export.importFile']}" newLine="true">
+                    <p:fileUpload id="import_file" mode="advanced" fileUploadListener="#{entityExportImportBean.uploadImportFile}" allowTypes="/(\.|\/)(xml)$/" auto="false"
+                        update=":importSummary" />
+                </hftl:decorateFormField>
+            </p:panel>
         </h:form>
 
 
-        <p:panelGrid id="importSummary" columns="1" styleClass="search-panel">
+        <p:panel id="importSummary" styleClass="search-panel">
             <f:facet name="header">
                 <h:outputText value="#{messages['export.importResults']}" rendered="#{entityExportImportBean.exportImportStats!=null}" />
             </f:facet>
-            <p:panel width="100">
-                <h:form id="form">
-                    <p:dataTable id="datatable" var="stat" value="#{entityExportImportBean.exportImportStats.summary.entrySet().toArray()}"
-                        paginator="true" rows="20"
-                        paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
-                        rowsPerPageTemplate="20,30,50" lazy="false" styleClass="custom-grid" rowIndexVar="rowIndex"
-                        rendered="#{entityExportImportBean.exportImportStats!=null}">
-                        <p:column headerText="#{messages['export.entityClass']}" sortBy="#{stat.key}">
-                            <h:outputText value="#{stat.key.name}" />
-                        </p:column>
-                        <p:column headerText="#{messages['export.numberImported']}">
-                            <h:outputText value="#{stat.value}" />
-                        </p:column>
-                    </p:dataTable>
-                </h:form>
-            </p:panel>
-        </p:panelGrid>
+            <h:form id="form">
+                <p:dataTable id="datatable" var="stat" value="#{entityExportImportBean.exportImportStats.summary.entrySet().toArray()}" paginator="true" rows="20"
+                    paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}" rowsPerPageTemplate="20,30,50"
+                    lazy="false" styleClass="custom-grid" rowIndexVar="rowIndex" rendered="#{entityExportImportBean.exportImportStats!=null}">
+                    <p:column headerText="#{messages['export.entityClass']}" sortBy="#{stat.key}">
+                        <h:outputText value="#{stat.key.name}" />
+                    </p:column>
+                    <p:column headerText="#{messages['export.numberImported']}">
+                        <h:outputText value="#{stat.value}" />
+                    </p:column>
+                </p:dataTable>
+            </h:form>
+        </p:panel>
 
     </ui:define>
 

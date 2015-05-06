@@ -1,6 +1,6 @@
-<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:s="http://jboss.org/seam/faces" xmlns:ui="http://java.sun.com/jsf/facelets"
-    xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html" xmlns:hftl="http://hftl.org"
-    xmlns:hf="http://java.sun.com/jsf/composite/tags" xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:s="http://jboss.org/seam/faces" xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html" xmlns:hftl="http://hftl.org" xmlns:hf="http://java.sun.com/jsf/composite/tags" xmlns:p="http://primefaces.org/ui"
+    template="/layout/template.xhtml">
 
     <f:metadata>
         <f:event type="preRenderView" listener="#{entityExportImportBean.preRenderView}" />
@@ -12,32 +12,31 @@
 
     <ui:define name="body">
         <h:form id="searchForm">
-          <p:panel header="#{messages['export.exportTemplates']}">
-            <h:panelGroup id="searchPanel" layout="block" styleClass="search-panel">  
-                <p:messages id="messages" autoUpdate="false" />
-                
-                <hf:formDecorateField fieldId="search_templateName" label="#{messages['export.templateName']}">  
-                    <p:inputText id="search_templateName" value="#{entityExportImportBean.filters['templateName']}" size="40" />
-                </hf:formDecorateField>
-                <hf:formDecorateField fieldId="search_complex" label="#{messages['export.complex']}"> 
-                    <p:selectBooleanCheckbox id="search_complex" value="#{entityExportImportBean.filters['complex']}" />
-                </hf:formDecorateField>
-                <h:panelGroup layout="block" styleClass="search-panel-actions">
-                    <p:commandButton value="#{messages['commons.search']}" action="#{entityExportImportBean.searchExportTemplates}"
-                        update=":form:datatable" />
-                    <p:commandButton value="#{messages['commons.clean']}" action="#{entityExportImportBean.cleanExportTemplates}"
-                        update=":searchForm:searchPanel, :form:datatable" />
+            <p:panel header="#{messages['export.exportTemplates']}">
+                <h:panelGroup id="searchPanel" layout="block" styleClass="search-panel">
+                    <p:messages id="messages" autoUpdate="false" />
+
+                    <hf:formDecorateField fieldId="search_templateName" label="#{messages['export.templateName']}">
+                        <p:inputText id="search_templateName" value="#{entityExportImportBean.filters['templateName']}" size="40" />
+                    </hf:formDecorateField>
+                    <hf:formDecorateField fieldId="search_complex" label="#{messages['export.complex']}">
+                        <p:selectBooleanCheckbox id="search_complex" value="#{entityExportImportBean.filters['complex']}" />
+                    </hf:formDecorateField>
+                    <h:panelGroup layout="block" styleClass="search-panel-actions">
+                        <p:commandButton value="#{messages['commons.search']}" action="#{entityExportImportBean.searchExportTemplates}" update=":form:datatable" />
+                        <p:commandButton value="#{messages['commons.clean']}" action="#{entityExportImportBean.cleanExportTemplates}"
+                            update=":searchForm:searchPanel, :form:datatable" />
+                    </h:panelGroup>
                 </h:panelGroup>
-            </h:panelGroup>
-          </p:panel>
+            </p:panel>
         </h:form>
 
 
         <p:panel width="100">
             <h:form id="form">
                 <p:dataTable id="datatable" var="templateInfo" value="#{entityExportImportBean.exportTemplates}" paginator="true" rows="20"
-                    paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
-                    rowsPerPageTemplate="20,30,50" lazy="true" styleClass="custom-grid" rowIndexVar="rowIndex">
+                    paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}" rowsPerPageTemplate="20,30,50"
+                    lazy="true" styleClass="custom-grid" rowIndexVar="rowIndex">
                     <p:column headerText="#{messages['export.templateName']}" sortBy="#{templateInfo.key}">
                         <h:outputText value="#{templateInfo.value.name}" />
                     </p:column>
@@ -48,15 +47,12 @@
                         <h:outputText value="#{templateInfo.value.classesToExportAsFullTxt}" />
                     </p:column>
                     <p:column style="width: 100px;" headerText="#{messages['commons.actions']}">
-                        <p:tooltip for="exportLink" value="#{messages['export.export']}" showEffect="slide" hideEffect="slide"
-                            rendered="#{! templateInfo.value.hasParameters}" />
+                        <p:tooltip for="exportLink" value="#{messages['export.export']}" showEffect="slide" hideEffect="slide" rendered="#{! templateInfo.value.hasParameters}" />
                         <p:commandButton id="exportLink" icon="ui-icon-play" action="#{entityExportImportBean.export(templateInfo.value)}"
-                            update=":searchForm:messages, :exportResults" oncomplete="PF('exportResultsDialog').show()"
-                            rendered="#{! templateInfo.value.hasParameters}" />
-                        <p:tooltip for="exportLinkDialog" value="#{messages['export.export']}" showEffect="slide" hideEffect="slide"
-                            rendered="#{ templateInfo.value.hasParameters}" />
-                        <p:commandButton id="exportLinkDialog" icon="ui-icon-play" update=":exportParametersDialog"
-                            oncomplete="PF('exportParametersDialog').show()" rendered="#{ templateInfo.value.hasParameters}">
+                            update=":searchForm:messages, :exportResults" oncomplete="PF('exportResultsDialog').show()" rendered="#{! templateInfo.value.hasParameters}" />
+                        <p:tooltip for="exportLinkDialog" value="#{messages['export.export']}" showEffect="slide" hideEffect="slide" rendered="#{ templateInfo.value.hasParameters}" />
+                        <p:commandButton id="exportLinkDialog" icon="ui-icon-play" update=":exportParametersDialog" oncomplete="PF('exportParametersDialog').show()"
+                            rendered="#{ templateInfo.value.hasParameters}">
                             <f:setPropertyActionListener target="#{entityExportImportBean.selectedExportTemplate}" value="#{templateInfo.value}" />
                         </p:commandButton>
                     </p:column>
@@ -65,68 +61,59 @@
             </h:form>
         </p:panel>
 
-        <p:dialog id="exportParametersDialog" styleClass="confirm-dialog" header="#{messages['export.exportCriteria']}" severity="alert"
-            widgetVar="exportParametersDialog">
+        <p:dialog id="exportParametersDialog" styleClass="confirm-dialog" header="#{messages['export.exportCriteria']}" severity="alert" widgetVar="exportParametersDialog" width="700" modal="true" closeOnEscape="true">
 
-            <h:form id="parameterForm">
-                <p:panelGrid id="parameterPanel" columns="1">
+            <hftl:decorateFormPanel formId="parameterForm">
+                <ui:define name="fields">
                     <ui:repeat var="parameter" value="#{entityExportImportBean.selectedExportTemplate.parameters.entrySet().toArray()}">
-                        <p:panelGrid columns="2" rendered="#{parameter.value eq 'provider'}">
-                            <p:outputLabel value="#{messages['export.exportCriteria.'.concat(parameter.key)]}" />
-                            <p:selectOneMenu value="#{entityExportImportBean.exportParameters[parameter.key]}"
-                                rendered="#{identity.user.user.onlyOneProvider}">
-                                <f:selectItems value="#{identity.user.user.providers.toArray()}" var="listVal" itemLabel="#{listVal.code}"
-                                    itemValue="#{listVal}" />
+                        <hftl:decorateFormField label="#{messages['export.exportCriteria.'.concat(parameter.key)]}" rendered="#{parameter.value eq 'provider'}">
+                            <p:selectOneMenu value="#{entityExportImportBean.exportParameters[parameter.key]}" rendered="#{identity.user.user.onlyOneProvider}">
+                                <f:selectItems value="#{identity.user.user.providers.toArray()}" var="listVal" itemLabel="#{listVal.code}" itemValue="#{listVal}" />
                                 <s:objectConverter />
                             </p:selectOneMenu>
-                            <p:selectOneMenu value="#{entityExportImportBean.exportParameters[parameter.key]}"
-                                rendered="#{!identity.user.user.onlyOneProvider}">
+                            <p:selectOneMenu value="#{entityExportImportBean.exportParameters[parameter.key]}" rendered="#{!identity.user.user.onlyOneProvider}">
                                 <f:selectItem />
-                                <f:selectItems value="#{identity.user.user.providers.toArray()}" var="listVal" itemLabel="#{listVal.code}"
-                                    itemValue="#{listVal}" />
+                                <f:selectItems value="#{identity.user.user.providers.toArray()}" var="listVal" itemLabel="#{listVal.code}" itemValue="#{listVal}" />
                                 <s:objectConverter />
                             </p:selectOneMenu>
-                        </p:panelGrid>
-                        <p:panelGrid columns="2" rendered="#{parameter.value eq 'dateRange'}">
-                            <p:outputLabel value="#{messages['export.exportCriteria.'.concat(parameter.key)]}" />
-                            <p:panelGrid columns="4">
+                        </hftl:decorateFormField>
+
+                        <hftl:decorateFormField label="#{messages['export.exportCriteria.'.concat(parameter.key)]}" rendered="#{parameter.value eq 'dateRange'}">
+                            <h:panelGrid columns="4">
                                 <h:outputText value="#{messages['commons.dateFrom']}" style="padding-right:5px" />
-                                <p:calendar value="#{entityExportImportBean.exportParameters[parameter.key.concat('_from')]}"
-                                    pattern="#{entityExportImportBean.datePattern}" />
+                                <p:calendar value="#{entityExportImportBean.exportParameters[parameter.key.concat('_from')]}" pattern="#{entityExportImportBean.datePattern}" />
                                 <h:outputText value="#{messages['commons.dateTill']}" style="padding:5px" />
-                                <p:calendar value="#{entityExportImportBean.exportParameters[parameter.key.concat('_to')]}"
-                                    pattern="#{entityExportImportBean.datePattern}" />
-                            </p:panelGrid>
-                        </p:panelGrid>
+                                <p:calendar value="#{entityExportImportBean.exportParameters[parameter.key.concat('_to')]}" pattern="#{entityExportImportBean.datePattern}" />
+                            </h:panelGrid>
+                        </hftl:decorateFormField>
                     </ui:repeat>
-                    <p:panelGrid columns="2" rendered="#{entityExportImportBean.selectedExportTemplate.canDeleteAfterExport}">
-                        <p:outputLabel for="param_delete" value="#{messages['export.deleteAfterExport']}" />
+                    <hftl:decorateFormField fieldId="param_delete" label="#{messages['export.deleteAfterExport']}"
+                        rendered="#{entityExportImportBean.selectedExportTemplate.canDeleteAfterExport}">
                         <p:selectBooleanCheckbox id="param_delete" value="#{entityExportImportBean.exportParameters['delete']}" />
-                    </p:panelGrid>
-                    <p:panelGrid columns="2" style="float: right;" styleClass="search-panel-actions">
-                        <p:commandButton value="#{messages['export.export']}" action="#{entityExportImportBean.export()}"
-                            oncomplete="PF('exportParametersDialog').hide();PF('exportResultsDialog').show()" update=":searchForm:messages, :exportResults" />
-                        <p:commandButton value="#{messages['action.cancel']}" onclick="PF('exportParametersDialog').hide()" type="button" />
-                    </p:panelGrid>
-                </p:panelGrid>
-            </h:form>
+                    </hftl:decorateFormField>
+                </ui:define>
+                <ui:define name="buttons">
+                    <p:commandButton value="#{messages['export.export']}" action="#{entityExportImportBean.export()}"
+                        oncomplete="PF('exportParametersDialog').hide();PF('exportResultsDialog').show()" update=":searchForm:messages, :exportResults" />
+                    <p:commandButton value="#{messages['action.cancel']}" onclick="PF('exportParametersDialog').hide()" type="button" />
+                </ui:define>
+            </hftl:decorateFormPanel>
         </p:dialog>
 
         <p:dialog id="exportResults" dynamic="true" header="#{messages['export.exportResults']}" modal="true" closeOnEscape="true" maximizable="true"
-            widgetVar="exportResultsDialog">
+            widgetVar="exportResultsDialog" width="900">
 
             <p:dataTable var="stat" value="#{entityExportImportBean.exportImportStats.summary.entrySet().toArray()}" paginator="true" rows="20"
-                paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
-                rowsPerPageTemplate="20,30,50" lazy="false" styleClass="custom-grid" rowIndexVar="rowIndex"
-                rendered="#{entityExportImportBean.exportImportStats!=null}" emptyMessage="#{messages['export.nothingExported']}">
+                paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}" rowsPerPageTemplate="20,30,50"
+                lazy="false" styleClass="custom-grid" rowIndexVar="rowIndex" rendered="#{entityExportImportBean.exportImportStats!=null}"
+                emptyMessage="#{messages['export.nothingExported']}">
                 <p:column headerText="#{messages['export.entityClass']}">
                     <h:outputText value="#{stat.key.name}" />
                 </p:column>
                 <p:column headerText="#{messages['export.numberExported']}">
                     <h:outputText value="#{stat.value}" />
                 </p:column>
-                <p:column headerText="#{messages['export.numberDeleted']}"
-                    rendered="#{! entityExportImportBean.exportImportStats.deleteSummary.isEmpty()}">
+                <p:column headerText="#{messages['export.numberDeleted']}" rendered="#{! entityExportImportBean.exportImportStats.deleteSummary.isEmpty()}">
                     <h:outputText value="#{entityExportImportBean.exportImportStats.getDeleteCount(stat.key)}" />
                 </p:column>
             </p:dataTable>

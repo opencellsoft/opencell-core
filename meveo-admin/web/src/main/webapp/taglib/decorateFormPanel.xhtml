@@ -11,7 +11,7 @@
     Unlike formPanel component, this tag serves layout and styling functionality purpose only. Requires no backing beans nor entities. 
  
     Attributes
-        header - a panel header
+        label - a panel header
         edit - edit or view mode
         formId - form id value
         showMessages - should messages component be included
@@ -40,7 +40,7 @@
         <p:panel styleClass="form-panel">
             <c:if test="#{not empty header}">
                 <f:facet name="header">
-                    <h:outputText value="#{header}" />
+                    <h:outputText value="#{label}" />
                 </f:facet>
             </c:if>
             <c:if test="#{showMessages}">
