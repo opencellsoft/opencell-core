@@ -123,7 +123,7 @@
 								field="chargeTemplate.code" valueIdField="chargeTemplate.id" 
 								entityView="recurringChargeTemplateDetail"/>
 							<hftl:column label="#{messages['menu.wallets']}"
-								field="walletTemplates" childField="code" isList="true" />
+								field="walletTemplates" valueLabelField="code" isList="true" />
 							<p:column styleClass="actions-column"
 								rendered="#{serviceTemplateBean.edit}">
 								<f:facet name="header">
@@ -306,7 +306,7 @@
 								field="chargeTemplate.code" valueIdField="chargeTemplate.id" 
 								entityView="oneShotChargeTemplateDetail"/>
 							<hftl:column label="#{messages['menu.wallets']}"
-								field="walletTemplates" childField="code" isList="true" />
+								field="walletTemplates" valueLabelField="code" isList="true" />
 							<p:column styleClass="actions-column"
 								rendered="#{serviceTemplateBean.edit}">
 								<f:facet name="header">
@@ -395,9 +395,9 @@
 								field="chargeTemplate.code" valueIdField="chargeTemplate.id" 
 								entityView="usageChargeTemplateDetail"/>
 							<hftl:column label="#{messages['menu.wallets']}"
-								field="walletTemplates" childField="code" isList="true" />
+								field="walletTemplates" valueLabelField="code" isList="true" />
 							<hftl:column label="#{messages['counterTemplate.title']}"
-								field="counterTemplate" childField="code" />
+								field="counterTemplate.code" />
 							<p:column styleClass="actions-column"
 								rendered="#{serviceTemplateBean.edit}">
 								<f:facet name="header">

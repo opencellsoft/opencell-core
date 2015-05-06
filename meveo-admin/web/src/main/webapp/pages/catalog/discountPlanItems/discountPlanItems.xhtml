@@ -53,18 +53,18 @@
 		<hftl:dataList label="#{messages['discountPlan.title']}"
 			backingBean="#{discountPlanItemListBean}" sortBy="code">
 			<hftl:column label="#{messages['discountPlan.title']}"
-				field="discountPlan" childField="code" />
+				field="discountPlan.code" />
 			<hftl:column label="#{messages['discountPlanItem.offerTemplate']}"
-				field="offerTemplate" childField="code" />
+				field="offerTemplate.code" />
 			<hftl:column label="#{messages['discountPlanItem.invoiceCategory']}"
-				field="invoiceCategory" childField="code" />
+				field="invoiceCategory.code" />
 			<hftl:column
 				label="#{messages['discountPlanItem.invoiceSubCategory']}"
-				field="invoiceSubCategory" childField="code" />
+				field="invoiceSubCategory.code" />
 			<hftl:column label="#{messages['discountPlanItem.chargeTemplate']}"
-				field="chargeTemplate" childField="code" />
+				field="chargeTemplate.code" />
 			<hftl:column label="#{messages['discountPlanItem.percent']}"
-				field="percent" />
+				field="percent" converterParam="4digits"/>
 
 			<hftl:actionsColumn
 				permission="#{identity.hasPermission('catalog','catalogManagement')}" />

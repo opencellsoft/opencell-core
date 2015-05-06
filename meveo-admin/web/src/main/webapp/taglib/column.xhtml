@@ -54,14 +54,6 @@
 
 <ui:composition>
 
-	<!-- 	<c:if test="${empty childField}"> -->
-	<!-- 		<c:set var="fieldName" value="#{field}" /> -->
-	<!-- 	</c:if> -->
-
-	<!-- 	<c:if test="${not empty childField}"> -->
-	<!-- 		<c:set var="fieldName" value="#{childField}" /> -->
-	<!-- 	</c:if> -->
-
 	<c:if test="${empty isMessage}">
 		<c:set var="isMessage" value="false" />
 	</c:if>
@@ -106,10 +98,6 @@
 	<c:if test="${empty sort}">
 		<c:set var="sort" value="true" />
 	</c:if>
-
-	<!-- 	<c:if test="${empty childFieldId}"> -->
-	<!-- 		<c:set var="childFieldId" value="id" /> -->
-	<!-- 	</c:if> -->
 
 	<c:if test="${empty rendered}">
 		<c:set var="rendered" value="true" />
@@ -185,10 +173,10 @@
 		    	 -->
 		    	 	<c:set var="converter"
 						value="#{getConverter.forType(valueField, converterParam)}"></c:set>
-					<h:outputText value="#{valueField}" rendered="#{!isDate and show}"
+					<h:outputText value="#{valueField}" rendered="#{!isDate and not time and show}"
 						converter="#{converter}">
 					</h:outputText>
-					<h:outputText value="#{valueField}" rendered="#{isDate}">
+					<h:outputText value="#{valueField}" rendered="#{isDate or time}">
 						<f:convertDateTime pattern="#{datePattern}" />
 					</h:outputText>
 				</c:if>

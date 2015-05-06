@@ -91,13 +91,11 @@
 
 		<hftl:dataList backingBean="#{chartListBean}">
 			<hftl:column label="#{messages['BusinessEntity.code']}" field="code" />
-			<hftl:column label="#{messages['user.userPanel']}" field="auditable"
-				childField="creator" />
-			<hftl:column label="#{messages['role.userRolePanel']}" field="role"
-				childField="description" />
+			<hftl:column label="#{messages['user.userPanel']}" field="auditable.creator" />
+			<hftl:column label="#{messages['role.userRolePanel']}" field="role.description" />
 			<hftl:column
 				label="#{messages['entity.measuredvalue.measurableQuantity']}"
-				field="measurableQuantity" childField="code" />
+				field="measurableQuantity.code" />
 
 			<hftl:actionsColumn editView="#{chartListBean.getEditView(entity)}"
 				permission="#{persistentPermissionResolver.hasPermission('reporting','reportingManagement')}" />

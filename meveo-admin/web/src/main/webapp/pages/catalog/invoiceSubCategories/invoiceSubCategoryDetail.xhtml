@@ -108,10 +108,10 @@
 							resultsId="invoiceSubCategoryCountries_results" checkMany="false">
 							<hftl:column
 								label="#{messages['invoiceSubCategoryCountry.countryCode']}"
-								field="tradingCountry" childField="countryCode" />
+								field="tradingCountry.countryCode" />
 							<hftl:column
 								label="#{messages['invoiceSubCategoryCountry.taxe']}"
-								field="tax" childField="code" />
+								field="tax.code" />
 							<p:column styleClass="actions-column"
 								rendered="#{invoiceSubCategoryBean.edit}">
 								<f:facet name="header">

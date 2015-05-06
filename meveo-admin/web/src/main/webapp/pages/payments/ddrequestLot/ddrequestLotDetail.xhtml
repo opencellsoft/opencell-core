@@ -29,7 +29,7 @@
 			<hftl:dataList backingBean="#{recordedInvoiceBean}" dataModel="#{ddRequestLOTBean.entity.getInvoices()}" edit="#{false}" checkMany="#{false}">
 						<hftl:column showSortLinks="false"
 							label="#{messages['accountOperation.operationDate']}"
-							field="auditable" childField="created" />
+							field="auditable.created" isDate="true"/>
 						<hftl:column label="#{messages['accountOperation.reference']}"
 							field="reference" />	
 						<hftl:column label="#{messages['accountOperation.occCode']}"

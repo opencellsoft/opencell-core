@@ -77,13 +77,12 @@
 			<hftl:dataList backingBean="#{notificationHistoryBean}"
 				checkMany="false"
 				dataModel="#{notificationHistoryBean.getLazyDataModel(emailNotificationBean.entity.id)}">
-				<hftl:column label="#{messages['commons.date']}" field="auditable"
-					childField="updated" isDate="true" time="true" />
+				<hftl:column label="#{messages['commons.date']}" field="auditable.updated" isDate="true" time="true" />
 				<hftl:column
 					label="#{messages['entity.notification.notificationType']}"
 					field="entityClassName" />
 				<hftl:column label="#{messages['entity.notification']}"
-					field="notification" childField="code" />
+					field="notification.code" />
 				<hftl:column label="#{messages['entity.notification.retryNr']}"
 					field="nbRetry" />
 				<hftl:column label="#{messages['entity.notification.result']}"
@@ -96,8 +95,7 @@
 						<f:param name="objectId" value="#{entity.inboundRequest.id}" />
 					</h:link>
 				</p:column>
-				<hftl:column label="#{messages['commons.status']}" field="status"
-					childField="label" isMessage="true" />
+				<hftl:column label="#{messages['commons.status']}" field="status.label" isMessage="true" />
 			</hftl:dataList>
 		</p:panel>
 

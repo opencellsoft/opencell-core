@@ -43,15 +43,14 @@
 			<hftl:column label="#{messages['chargeTemplate.amountEditable']}"
 				field="amountEditable" isMessage="true" />
 			<hftl:column label="#{messages['chargeTemplate.type']}"
-				field="oneShotChargeTemplateType" childField="label"
+				field="oneShotChargeTemplateType.label"
 				isMessage="true" />
 			<hftl:column label="#{messages['charge.subCategory']}"
-				field="invoiceSubCategory" childField="code" isMessage="false"
-				childFieldId="id"
-				entityView="/pages/catalog/invoiceSubCategories/invoiceSubCategoryDetail.xhtml"
+				field="invoiceSubCategory.code" valueIdField="invoiceSubCategory.id"
+				entityView="invoiceSubCategoryDetail" propagateConversation="false"
 				backView="invoiceCategories" />
 			<hftl:column label="#{messages['menu.triggeredEdrTemplates']}" field="edrTemplates"
-				childField="code" isList="true" sort="false" />
+				valueLabelField="code" valueIdField="id" isList="true" entityView="triggeredEdrTemplateDetail"/>
 			<hftl:column label="#{messages['enableEntity.active']}"
 				field="active" isMessage="true" />
 			<hftl:column

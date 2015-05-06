@@ -26,18 +26,18 @@
 						dataModel="#{matchingCodeBean.entity.matchingAmounts}"
 						edit="#{false}" checkMany="#{false}">
 						<hftl:column label="#{messages['accountOperation.occCode']}"
-							field="accountOperation" childField="occCode" />					
+							field="accountOperation.occCode" />					
 						<hftl:column
 							label="#{messages['accountOperation.occDescription']}"
-							field="accountOperation" childField="occDescription" />
+							field="accountOperation.occDescription" />
 						<hftl:column label="#{messages['accountOperation.transactionDate']}"
-							field="accountOperation" childField="transactionDate" />						
+							field="accountOperation.transactionDate" />						
 						<hftl:column label="#{messages['accountOperation.dueDate']}"
-							field="accountOperation" childField="dueDate" />
+							field="accountOperation.dueDate" />
 						<hftl:column label="#{messages['accountOperation.credit']}"
-							field="accountOperation" childField="amount" show="#{entity.accountOperation.transactionCategory.toString() == 'CREDIT'}" />
+							field="accountOperation.amount" show="#{entity.accountOperation.transactionCategory.toString() == 'CREDIT'}" />
 						<hftl:column label="#{messages['accountOperation.debit']}"
-							field="accountOperation" childField="amount" show="#{entity.accountOperation.transactionCategory.toString() == 'DEBIT'}" />								- 					
+							field="accountOperation.amount" show="#{entity.accountOperation.transactionCategory.toString() == 'DEBIT'}" />								- 					
 	                    <hftl:column label="#{messages['matchingAmount.amount']}"
 							field="matchingAmount"  />								-							
 					</hftl:dataList>

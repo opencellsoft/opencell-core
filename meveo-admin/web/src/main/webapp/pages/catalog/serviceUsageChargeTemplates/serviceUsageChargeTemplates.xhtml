@@ -80,12 +80,12 @@
     		
     		<hftl:dataList label="#{messages['serviceUsageChargeTemplate.title']}" checkMany="false" backingBean="#{serviceUsageChargeTemplateBean}">
     		<hftl:column label="#{messages['serviceTemplate.code']}"
-				field="serviceTemplate" childField="code" width="20%" />
+				field="serviceTemplate.code" width="20%" />
 			
 			<hftl:column label="#{messages['usageChargeTemplate.title']}"
-				field="chargeTemplate" childField="code" width="20%" />
+				field="chargeTemplate.code" width="20%" />
 				<hftl:column label="#{messages['counterTemplate.title']}"
-				field="counterTemplate" childField="code" width="20%" />
+				field="counterTemplate.code" width="20%" />
     			<hftl:actionsColumn permission="#{identity.hasPermission('catalog','catalogManagement')}" />
 		    </hftl:dataList>
 		   		
