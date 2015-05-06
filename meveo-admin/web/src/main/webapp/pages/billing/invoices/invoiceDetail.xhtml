@@ -24,7 +24,7 @@
                 <hf:formField label="#{messages['invoice.comment']}" field="comment" textArea="true" />
 				<hf:formField label="#{messages['invoice.paymentMethod']}" field="paymentMethod" isMessage="true" />
 				</h:panelGroup>
-            </p:fieldset>
+            </p:fieldset> 
 			
 			<p:fieldset legend="#{messages['invoice.attachments']}">
 				<h:panelGroup rendered="#{invoiceBean.entity.pdf!=null}" column="4"> 
@@ -36,11 +36,8 @@
 				action="#{invoiceBean.deleteInvoicePdf}" update="totalForm:formId:buttonGenerate,@form"/> 
 				</h:panelGroup>
             </p:fieldset>
-			</h:panelGrid>
-        </hf:formPanel>
-		 
-          
-			<p:fieldset legend="#{messages['invoice.discounts']}" style="width:60%">
+			</h:panelGrid>  
+			<p:fieldset legend="#{messages['invoice.discounts']}" style="width:60%" rendered="#{invoiceBean.getDiscountAggregates.size()>0}">
 				
 				<p:dataTable id="invoiceAgregats" var="agregate" value="#{invoiceBean.getDiscountAggregates}">
 				<p:column headerText="#{messages['discountPlan.title']}">
@@ -62,7 +59,7 @@
 				</p:dataTable>
 			
             </p:fieldset> 
-
+			</hf:formPanel>
         <h:form id="form">
             <p:fieldset legend="#{messages['invoice.details']}">
                 <p:dataTable id="catTable" var="cat" value="#{invoiceBean.invoiceCategories}">
@@ -126,6 +123,8 @@
 				action="#{invoiceBean.generatePdf()}" update="headerForm:formId,buttonGenerate" /> 
 			</p:outputPanel> 			
         </hf:formPanel> 
+		
+		
     </ui:define>
 
 </ui:composition>
