@@ -119,8 +119,8 @@
 							backingBean="#{serviceChargeTemplateRecurringBean}"
 							dataModel="#{serviceTemplateBean.entity.serviceRecurringCharges}"
 							resultsId="serviceRecurringCharges_results" checkMany="false">
-							<hftl:columnList label="#{messages['pricePlanMatrix.eventCode']}"
-								value="#{entity}" field="chargeTemplate.code" fieldId="chargeTemplate.id" 
+							<hftl:column label="#{messages['pricePlanMatrix.eventCode']}"
+								field="chargeTemplate.code" valueIdField="chargeTemplate.id" 
 								entityView="recurringChargeTemplateDetail"/>
 							<hftl:column label="#{messages['menu.wallets']}"
 								field="walletTemplates" childField="code" isList="true" />
@@ -212,8 +212,8 @@
 							backingBean="#{serviceChargeTemplateSubscriptionBean}"
 							dataModel="#{serviceTemplateBean.entity.serviceSubscriptionCharges}"
 							resultsId="serviceSubscriptionCharges_results" checkMany="false">
-							<hftl:columnList label="#{messages['pricePlanMatrix.eventCode']}"
-								value="#{entity}" field="chargeTemplate.code" fieldId="chargeTemplate.id" 
+							<hftl:column label="#{messages['pricePlanMatrix.eventCode']}"
+								field="chargeTemplate.code" valueIdField="chargeTemplate.id" 
 								entityView="oneShotChargeTemplateDetail"/>
 							<hftl:column label="#{messages['menu.wallets']}"
 								field="walletTemplates" childitField="code" isList="true" />
@@ -302,8 +302,8 @@
 							backingBean="#{serviceChargeTemplateTerminationBean}"
 							dataModel="#{serviceTemplateBean.entity.serviceTerminationCharges}"
 							resultsId="serviceTerminationCharges_results" checkMany="false">
-							<hftl:columnList label="#{messages['pricePlanMatrix.eventCode']}"
-								value="#{entity}" field="chargeTemplate.code" fieldId="chargeTemplate.id" 
+							<hftl:column label="#{messages['pricePlanMatrix.eventCode']}"
+								field="chargeTemplate.code" valueIdField="chargeTemplate.id" 
 								entityView="oneShotChargeTemplateDetail"/>
 							<hftl:column label="#{messages['menu.wallets']}"
 								field="walletTemplates" childField="code" isList="true" />
@@ -391,8 +391,8 @@
 						<hftl:dataList backingBean="#{serviceChargeTemplateUsageBean}"
 							dataModel="#{serviceTemplateBean.entity.serviceUsageCharges}"
 							resultsId="serviceUsageCharges_results" checkMany="false">
-							<hftl:columnList label="#{messages['pricePlanMatrix.eventCode']}"
-								value="#{entity}" field="chargeTemplate.code" fieldId="chargeTemplate.id" 
+							<hftl:column label="#{messages['pricePlanMatrix.eventCode']}"
+								field="chargeTemplate.code" valueIdField="chargeTemplate.id" 
 								entityView="usageChargeTemplateDetail"/>
 							<hftl:column label="#{messages['menu.wallets']}"
 								field="walletTemplates" childField="code" isList="true" />

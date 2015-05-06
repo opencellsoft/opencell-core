@@ -35,23 +35,23 @@
 			<hftl:column label="#{messages['serviceTemplate.code']}" field="code" />
 			<hftl:column label="#{messages['serviceTemplate.description']}"
 				field="description" />
-			<hftl:columnList label="#{messages['serviceTemplate.recurringCharges']}"
-				value="#{entity.serviceRecurringCharges.toArray()}"
-				field="chargeTemplate.code" fieldId="chargeTemplate.id"
+			<hftl:column label="#{messages['serviceTemplate.recurringCharges']}"
+				field="serviceRecurringCharges" isList="true"
+				valueLabelField="chargeTemplate.code" valueIdField="chargeTemplate.id"
 				entityView="recurringChargeTemplateDetail"/>
-			<hftl:columnList
+			<hftl:column
 				label="#{messages['serviceTemplate.subscriptionCharges']}"
-				value="#{entity.serviceSubscriptionCharges.toArray()}"
-				field="chargeTemplate.code" fieldId="chargeTemplate.id"
+				field="serviceSubscriptionCharges" isList="true"
+				valueLabelField="chargeTemplate.code" valueIdField="chargeTemplate.id"
 				entityView="oneShotChargeTemplateDetail"/>
-			<hftl:columnList
+			<hftl:column
 				label="#{messages['serviceTemplate.terminationCharges']}"
-				value="#{entity.serviceTerminationCharges.toArray()}"
-				field="chargeTemplate.code" fieldId="chargeTemplate.id"
+				field="serviceTerminationCharges" isList="true"
+				valueLabelField="chargeTemplate.code" valueIdField="chargeTemplate.id"
 				entityView="oneShotChargeTemplateDetail" />
-			<hftl:columnList label="#{messages['serviceTemplate.usageCharges']}"
-				value="#{entity.serviceUsageCharges.toArray()}"
-				field="chargeTemplate.code" fieldId="chargeTemplate.id"
+			<hftl:column label="#{messages['serviceTemplate.usageCharges']}"
+				field="serviceUsageCharges" isList="true"
+				valueLabelField="chargeTemplate.code" valueIdField="chargeTemplate.id"
 				entityView="usageChargeTemplateDetail" />
 			<hftl:column label="#{messages['enableEntity.active']}"
 				field="active" isMessage="true" />

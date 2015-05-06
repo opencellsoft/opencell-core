@@ -49,27 +49,27 @@
     
     Note: field, valueLabelField and valueIdField can be a single field name or a field name hierarchy containing "." (unlimited) (e.g. address.email)
     
--->    
+-->
 
 
 <ui:composition>
 
-	<c:if test="${empty childField}">
-		<c:set var="fieldName" value="#{field}" />
-	</c:if>
+	<!-- 	<c:if test="${empty childField}"> -->
+	<!-- 		<c:set var="fieldName" value="#{field}" /> -->
+	<!-- 	</c:if> -->
 
-	<c:if test="${not empty childField}">
-		<c:set var="fieldName" value="#{childField}" />
-	</c:if>
+	<!-- 	<c:if test="${not empty childField}"> -->
+	<!-- 		<c:set var="fieldName" value="#{childField}" /> -->
+	<!-- 	</c:if> -->
 
 	<c:if test="${empty isMessage}">
 		<c:set var="isMessage" value="false" />
 	</c:if>
 
-    <c:if test="${!empty messagePrefix}">
-        <c:set var="messagePrefix" value="${messagePrefix.concat('.')}" />
-    </c:if>
-        
+	<c:if test="${!empty messagePrefix}">
+		<c:set var="messagePrefix" value="${messagePrefix.concat('.')}" />
+	</c:if>
+
 	<c:if test="${empty show}">
 		<c:set var="show" value="true" />
 	</c:if>
@@ -96,21 +96,21 @@
 		<c:set var="isList" value="false" />
 	</c:if>
 	<c:if test="${isList}">
-		<c:set var="sort" value="false"/>
+		<c:set var="sort" value="false" />
 	</c:if>
-    
-    <c:if test="${empty isMap}">
-        <c:set var="isMap" value="false" />
-    </c:if>
+
+	<c:if test="${empty isMap}">
+		<c:set var="isMap" value="false" />
+	</c:if>
 
 	<c:if test="${empty sort}">
 		<c:set var="sort" value="true" />
 	</c:if>
 
-	<c:if test="${empty childFieldId}">
-		<c:set var="childFieldId" value="id" />
-	</c:if>
-	
+	<!-- 	<c:if test="${empty childFieldId}"> -->
+	<!-- 		<c:set var="childFieldId" value="id" /> -->
+	<!-- 	</c:if> -->
+
 	<c:if test="${empty rendered}">
 		<c:set var="rendered" value="true" />
 	</c:if>
@@ -122,10 +122,7 @@
 			<c:set var="exportable" value="false" />
 		</c:if>
 	</c:if>
-
-	<c:set var="converter"
-		value="#{getConverter.forType(entity[field], converterParam)}"></c:set>
-
+	
 	<c:if test="${empty propagateConversation}">
 		<c:set var="propagateConversation" value="true" />
 	</c:if>
@@ -142,199 +139,146 @@
 		<c:set var="editView" value="#{backingBean.getEditViewName()}" />
 	</c:if>
 	<c:if test="${empty edit}">
-		<c:set var="edit" value="true"/>
+		<c:set var="edit" value="true" />
 	</c:if>
-			
-	<p:column exportable="#{exportable}" rendered="#{rendered}" >
+	<c:if test="#{field eq 'code'}">
+		<c:set var="entityView" value="#{editView}"/>
+		<c:set var="valueIdField" value="id"/>
+	</c:if>
+
+	<p:column exportable="#{exportable}" rendered="#{rendered}">
 		<f:facet name="header">
 			<h:outputText value="#{label}" />
 		</f:facet>
 
-		<!-- If there is no child field, just show fieldValue. However if fieldValue can be message check if it is not boolean first
-        	if so use standard yes and no messages. If its not boolean just translate fieldValue message. 
-        	Also if childField is not set then it basically means it can't be isList=true even if it is set, so we don't check isList here.-->
-		<c:if test="#{empty childField}">
-			<c:if test="#{sort}">
-				<f:attribute name="field" value="#{field}" />
-                <f:attribute name="sortable" value="#{true}" />
-                <f:attribute name="sortBy" value="#{null}" />
-			</c:if>
-			<c:if test="#{isMessage}">
-				<h:outputText
-					rendered="#{entity[field] != null and entity[field].toString() == 'true'}"
-					value="#{messages['commons.yes']}" />
-				<h:outputText
-					rendered="#{entity[field] != null and entity[field].toString() == 'false'}"
-					value="#{messages['commons.no']}" />
-				<h:outputText
-					rendered="#{entity[field] != null and entity[field].toString() != 'true' and entity[field].toString() != 'false'}"
-					value="#{messages[''.concat(messagePrefix).concat(entity[field])]}" />
-			</c:if>
-			<c:if test="#{not isMessage and not isMap}">
-				<!-- If there is date field, show date in specified pattern 
-		    	 If isDate is not set then it basically means it is not a date. Also if time is not set it basically means that time=true
-		    	 -->
-		    	<c:choose>
-		    		<c:when test="#{field eq 'code'}">
-		    			<p:tooltip for="#{resultsId}_#{field}_editlink"
-							value="#{messages['commons.edit']}" showEffect="slide"
-								hideEffect="slide" />
-						<h:link id="#{resultsId}_#{field}_editlink" outcome="#{editView}"
-							rendered="#{renderEditLink}" value="#{entity[field]}">
-							<f:param name="#{objectIdParamName}" value="#{entity.id}" />
-							<f:param name="edit" value="#{edit}" />
-							<c:if test="${propagateConversation}">
-								<f:param name="cid"
-								value="#{javax.enterprise.context.conversation.id}" />
-							</c:if>
-						</h:link>
-		    		</c:when>
-		    		<c:otherwise>
-		    			<h:outputText value="#{entity[field]}"
-							rendered="#{!isDate and show}" converter="#{converter}">
-						</h:outputText>
-						<h:outputText value="#{entity[field]}" rendered="#{isDate}">
-							<f:convertDateTime pattern="#{datePattern}" />
-						</h:outputText>
-		    		</c:otherwise>
-		    	</c:choose>
-			</c:if>
-            
-            <!-- If its map then run through it and show results. -->
-            <c:if test="#{isMap}">
-                <c:set var="map" value="#{entity[field]}" />
-                <ui:repeat value="#{map.keySet().toArray()}" var="key">
-                    <h:outputText value="#{key}" /> = <h:outputText value="#{map[key]}" /> 
-                    <br />
-                </ui:repeat>
-            </c:if>
+		<c:if test="#{sort}">
+			<f:attribute name="field" value="#{field}" />
+			<f:attribute name="sortable" value="#{true}" />
+			<f:attribute name="sortBy" value="#{null}" />
+		</c:if>
+		<c:set var="valueField" value="#{entity}" />
+		<c:forEach var="valueFieldVar" items="#{field.split('\\.')}">
+			<c:set var="valueField" value="#{valueField[valueFieldVar]}" />
+		</c:forEach>
+
+		<c:if test="#{not empty entityView}">
+			<c:set var="attrId" value="#{field.replaceAll('\\.','\\_')}_#{valueIdField.replaceAll('\\.','\\_')}" />
 		</c:if>
 
-		<!-- If childField parameter is provided that means fieldValue is entity, enum or list. -->
-		<c:if test="#{not empty childField}">
-			<c:if test="#{sort}">
-			   <c:choose>
-			   		<c:when test="${sortByField}">
-						<f:attribute name="field" value="#{field}" />
-                        <f:attribute name="sortable" value="#{true}" />
-                        <f:attribute name="sortBy" value="#{null}" />
-					</c:when>    
-			    	<c:otherwise>
-						<f:attribute name="field" value="#{field}.#{childField}" />
-                        <f:attribute name="sortable" value="#{true}" />
-                        <f:attribute name="sortBy" value="#{null}" />
-					</c:otherwise>
-			   </c:choose>
+		<!-- If field is not list, then it means it is either another entity or enum. -->
+		<c:if test="#{not isList}">
+			<c:if test="#{empty entityView}">
+				<c:if test="#{isMessage}">
+					<h:outputText
+						rendered="#{valueField != null and valueField.toString() == 'true'}"
+						value="#{messages['commons.yes']}" />
+					<h:outputText
+						rendered="#{valueField != null and valueField.toString() == 'false'}"
+						value="#{messages['commons.no']}" />
+					<h:outputText
+						rendered="#{valueField != null and valueField.toString() != 'true' and valueField.toString() != 'false'}"
+						value="#{messages[''.concat(messagePrefix).concat(valueField)]}" />
+				</c:if>
+				<c:if test="#{not isMessage and not isMap}">
+					<!-- If there is date field, show date in specified pattern 
+		    	 If isDate is not set then it basically means it is not a date. Also if time is not set it basically means that time=true
+		    	 -->
+		    	 	<c:set var="converter"
+						value="#{getConverter.forType(valueField, converterParam)}"></c:set>
+					<h:outputText value="#{valueField}" rendered="#{!isDate and show}"
+						converter="#{converter}">
+					</h:outputText>
+					<h:outputText value="#{valueField}" rendered="#{isDate}">
+						<f:convertDateTime pattern="#{datePattern}" />
+					</h:outputText>
+				</c:if>
+				<!-- If its map then run through it and show results. -->
+				<c:if test="#{isMap}">
+					<c:set var="map" value="#{valueField}" />
+					<ui:repeat value="#{map.keySet().toArray()}" var="key">
+						<h:outputText value="#{key}" /> = <h:outputText
+							value="#{map[key]}" />
+						<br />
+					</ui:repeat>
+				</c:if>
 			</c:if>
-			<!-- If field is not list, then it means it is either another entity or enum. -->
-			<c:if test="#{not isList}">
-				<!-- If childField ID is not provided then we dont need link to entity page. -->
+
+			<c:if test="#{not empty entityView}">
+				<c:set var="valueId" value="#{entity}" />
+				<c:forEach var="valueIdVar" items="#{valueIdField.split('\\.')}">
+					<c:set var="valueId" value="#{valueId[valueIdVar]}" />
+				</c:forEach>
+				<h:link id="#{attrId}_message_link" value="#{valueField}"
+					outcome="#{entityView}">
+					<f:param name="#{objectIdParamName}" value="#{valueId}" />
+					<f:param name="edit" value="#{edit}" />
+					<c:if test="${propagateConversation}">
+						<f:param name="cid"
+							value="#{javax.enterprise.context.conversation.id}" />
+					</c:if>
+				</h:link>
+				<p:tooltip rendered="#{not empty popupFields}"
+					for="#{attrId}_message_link" showEffect="slide" hideEffect="slide">
+					<ui:repeat value="#{popupFields.split(',')}" var="popupField">
+						<c:set var="popupFieldValue" value="#{entity}" />
+						<ui:repeat value="#{popupField.split('\\.')}" var="p">
+							<c:set var="popupFieldValue" value="#{popupFieldValue[p]}" />
+						</ui:repeat>
+						<h:outputText style="white-space:nowrap"
+							value="#{popupFieldValue}" />
+						<br />
+					</ui:repeat>
+				</p:tooltip>
+				<!-- 				<p:tooltip rendered="#{empty popupFields and not empty popupValue}" -->
+				<!-- 					for="#{attrId}_message_link" showEffect="slide" hideEffect="slide"> -->
+				<!-- 					<h:outputText style="white-space:nowrap" value="#{popupValue}" /> -->
+				<!-- 				</p:tooltip> -->
+			</c:if>
+		</c:if>
+
+		<!-- If its list then run through it and show results. -->
+		<c:if test="#{isList}">
+			<!-- 			<c:set var="list" value="#{entity[field]}" /> -->
+			<ui:repeat value="#{valueField.toArray()}" var="c">
+				<c:set var="valueLabel" value="#{c}" />
+				<c:forEach var="valueLabelVar"
+					items="#{valueLabelField.split('\\.')}">
+					<c:set var="valueLabel" value="#{valueLabel[valueLabelVar]}" />
+				</c:forEach>
 				<c:if test="#{empty entityView}">
 					<c:if test="#{isMessage}">
 						<h:outputText
-							rendered="#{entity[field][childField] != null and entity[field][childField].toString() == 'true'}"
+							rendered="#{valueLabel != null and valueLabel.toString() == 'true'}"
 							value="#{messages['commons.yes']}" />
 						<h:outputText
-							rendered="#{entity[field][childField] != null and entity[field][childField].toString() == 'false'}"
+							rendered="#{valueLabel != null and valueLabel.toString() == 'false'}"
 							value="#{messages['commons.no']}" />
 						<h:outputText
-							rendered="#{entity[field][childField] != null and entity[field][childField].toString() != 'true' and entity[field][childField].toString() != 'false'}"
-							value="#{messages[entity[field][childField]]}" />
+							rendered="#{valueLabel != null and valueLabel.toString() != 'true' and valueLabel.toString() != 'false'}"
+							value="#{messages[valueLabel]}" />
 					</c:if>
-                    <c:if test="#{!isMessage}">
-    					<h:outputText value="#{entity[field][childField]}" rendered="#{!isDate}"/>
-                        <h:outputText value="#{entity[field][childField]}" rendered="#{isDate}">
-                            <f:convertDateTime pattern="#{datePattern}" />
-                        </h:outputText>
-                    </c:if>
+					<h:outputText rendered="#{not isMessage}" value="#{valueLabel}" />
 				</c:if>
 				<!-- If entityView provided then show link to childField entity page. -->
-				<c:if test="#{not empty entityView and not exportable}">
-					<hf:linkToEntity linkId="#{field}_#{childField}_message_link"
-						rendered="#{isMessage}" entity="#{entity[field]}"
-						popupFields="#{popupFields}"
-						entityId="#{entity[field][childFieldId]}"
-						value="#{messages[entity[field][childField]]}"
-						view="#{entityView}" />
-					<hf:linkToEntity linkId="#{field}_#{childField}_link"
-						rendered="#{not isMessage}" entity="#{entity[field]}"
-						popupFields="#{popupFields}"
-						entityId="#{entity[field][childFieldId]}"
-						value="#{entity[field][childField]}" view="#{entityView}" />
-				</c:if>
-				<!-- Special case workaround for exportable entity column. It needs to be copied from hf:linkToEntity, because Exporter does not recognize 
-					composite component (http://code.google.com/p/primefaces/issues/detail?id=1797) 
-					If in the future this could be fixed somehow, this part could be removed and only normal hf:linkToEntity component could be left-->
-				<c:if test="#{not empty entityView and exportable}">
-					<c:if test="#{isMessage}">
-						<h:link id="#{field}_#{childField}_message_link"
-							value="#{messages[entity[field][childField]]}"
-							outcome="#{entityView}">
-							<f:param name="objectId" value="#{entity[field][childFieldId]}" />
-						</h:link>
-						<p:tooltip rendered="#{not empty popupFields}"
-							for="#{field}_#{childField}_message_link" showEffect="slide"
-							hideEffect="slide">
-							<ui:repeat value="#{popupFields.split(',')}" var="entityFields">
-								<h:outputText style="white-space:nowrap"
-									value="#{entity[field][entityFields]}" />
-								<br />
-							</ui:repeat>
-						</p:tooltip>
-					</c:if>
-					<c:if test="#{not isMessage}">
-						<h:link id="#{field}_#{childField}_message_link"
-							value="#{entity[field][childField]}" outcome="#{entityView}">
-							<f:param name="objectId" value="#{entity[field][childFieldId]}" />
-							<f:param name="cid" value="#{javax.enterprise.context.conversation.id}" />
-							<f:param name="edit" value="#{edit}" />
-						</h:link>
-						<p:tooltip rendered="#{not empty popupFields}"
-							for="#{field}_#{childField}_message_link" showEffect="slide"
-							hideEffect="slide">
-							<ui:repeat value="#{popupFields.split(',')}" var="entityFields">
-								<h:outputText style="white-space:nowrap"
-									value="#{entity[field][entityFields]}" />
-								<br />
-							</ui:repeat>
-						</p:tooltip>
-					</c:if>
-				</c:if>
-			</c:if>
+				<c:if test="#{not empty entityView}">
 
-			<!-- If its list then run through it and show results. -->
-			<c:if test="#{isList}">
-				<c:set var="list" value="#{entity[field]}" />
-				<ui:repeat value="#{entity[field].toArray()}" var="c">
-					<!-- If childField ID is not provided then we dont need link to entity page. -->
-					<c:if test="#{empty entityView}">
-						<c:if test="#{isMessage}">
-							<h:outputText
-								rendered="#{c[childField] != null and c[childField].toString() == 'true'}"
-								value="#{messages['commons.yes']}" />
-							<h:outputText
-								rendered="#{c[childField] != null and c[childField].toString() == 'false'}"
-								value="#{messages['commons.no']}" />
-							<h:outputText
-								rendered="#{c[childField] != null and c[childField].toString() != 'true' and c[childField].toString() != 'false'}"
-								value="#{messages[c[childField]]}" />
-						</c:if>
-						<h:outputText rendered="#{not isMessage}" value="#{c[childField]}" />
-					</c:if>
-					<!-- If entityView provided then show link to childField entity page. -->
-					<c:if test="#{not empty entityView}">
-						<hf:linkToEntity linkId="#{field}_#{childField}_message_link"
-							rendered="#{isMessage}" entityId="#{c[childFieldId]}"
-							entity="#{c}" popupFields="#{popupFields}"
-							value="#{c[childField]}" view="#{entityView}" />
-						<hf:linkToEntity linkId="#{field}_#{childField}_link"
-							rendered="#{not isMessage}" entity="#{c}"
-							popupFields="#{popupFields}" entityId="#{c[childFieldId]}"
-							value="#{c[childField]}" view="#{entityView}" />
-					</c:if>
-					<br />
-				</ui:repeat>
-			</c:if>
+					<c:set var="valueId" value="#{c}" />
+					<c:forEach var="valueIdVar" items="#{valueIdField.split('\\.')}">
+						<c:set var="valueId" value="#{valueId[valueIdVar]}" />
+					</c:forEach>
+					<c:set var="attrId"
+						value="#{field.replaceAll('\\.','\\_')}_#{attrId}" />
+					<hf:linkToEntity linkId="#{attrId}_message_link"
+						rendered="#{isMessage}" entityId="#{valueId}" entity="#{c}"
+						popupFields="#{popupFields}" value="#{valueLabel}"
+						view="#{entityView}" />
+					<hf:linkToEntity linkId="#{attrId}_message_link"
+						rendered="#{not isMessage}" entity="#{c}"
+						popupFields="#{popupFields}" entityId="#{valueId}"
+						value="#{valueLabel}" view="#{entityView}" />
+				</c:if>
+				<br />
+			</ui:repeat>
 		</c:if>
 		<ui:insert />
 	</p:column>
