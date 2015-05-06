@@ -21,6 +21,9 @@ public class CustomerAccountDto extends AccountDto {
 
 	@XmlElement(required = true)
 	private String currency;
+	
+	@XmlElement(required = true)
+	private String language;
 
 	private String status;
 	private String paymentMethod;
@@ -52,6 +55,10 @@ public class CustomerAccountDto extends AccountDto {
 
 		if (e.getTradingCurrency() != null) {
 			currency = e.getTradingCurrency().getCurrencyCode();
+		}
+		
+		if (e.getTradingLanguage() != null) {
+			language = e.getTradingLanguage().getLanguageCode();
 		}
 
 		try {
@@ -169,9 +176,18 @@ public class CustomerAccountDto extends AccountDto {
 		this.currency = currency;
 	}
 
+	
+	public String getLanguage() {
+		return language;
+	}
+
+	public void setLanguage(String language) {
+		this.language = language;
+	}
+
 	@Override
 	public String toString() {
-		return "CustomerAccountDto [customer=" + customer + ", currency=" + currency + ", status=" + status + ", paymentMethod=" + paymentMethod + ", creditCategory="
+		return "CustomerAccountDto [customer=" + customer + ", currency=" + currency + ", language=" + language + ", status=" + status + ", paymentMethod=" + paymentMethod + ", creditCategory="
 				+ creditCategory + ", dateStatus=" + dateStatus + ", dateDunningLevel=" + dateDunningLevel + ", contactInformation=" + contactInformation + ", dunningLevel="
 				+ dunningLevel + ", mandateIdentification=" + mandateIdentification + ", mandateDate=" + mandateDate + ", balance=" + balance + ", terminationDate="
 				+ terminationDate + ", billingAccounts=" + billingAccounts + "]";

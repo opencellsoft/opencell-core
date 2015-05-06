@@ -588,6 +588,10 @@ public class ImportCustomersJobBean {
 			createCustomerAccountError(sell, cust, custAcc, "Currency is null");
 			return true;
 		}
+		if (StringUtils.isBlank(custAcc.getTradingLanguageCode())) {
+			createCustomerAccountError(sell, cust, custAcc, "Language is null");
+			return true;
+		}
 		if (StringUtils.isBlank(custAcc.getCreditCategory())) {
 			createCustomerAccountError(sell, cust, custAcc, "Credit Category is null");
 			return true;

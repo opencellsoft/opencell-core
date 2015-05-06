@@ -212,8 +212,9 @@ public class AccountHierarchyApi extends BaseApi {
 			throw new EntityAlreadyExistsException(Customer.class, postData.getCustomerId());
 		} else {
 			if (!StringUtils.isEmpty(postData.getCustomerId()) && !StringUtils.isEmpty(postData.getCustomerBrandCode()) && !StringUtils.isEmpty(postData.getCustomerCategoryCode())
-					&& !StringUtils.isEmpty(postData.getSellerCode()) && !StringUtils.isEmpty(postData.getCurrencyCode()) && !StringUtils.isEmpty(postData.getBillingCycleCode())
-					&& !StringUtils.isEmpty(postData.getCountryCode()) && !StringUtils.isEmpty(postData.getLastName()) && !StringUtils.isEmpty(postData.getLanguageCode())
+					&& !StringUtils.isEmpty(postData.getSellerCode()) && !StringUtils.isEmpty(postData.getCurrencyCode())
+					&& !StringUtils.isEmpty(postData.getBillingCycleCode())&& !StringUtils.isEmpty(postData.getCountryCode()) 
+					&& !StringUtils.isEmpty(postData.getLastName()) && !StringUtils.isEmpty(postData.getLanguageCode())
 					&& !StringUtils.isEmpty(postData.getEmail())) {
 
 				Seller seller = sellerService.findByCode(postData.getSellerCode(), provider);
@@ -359,6 +360,7 @@ public class AccountHierarchyApi extends BaseApi {
 				customerAccount.setPaymentMethod(PaymentMethodEnum.getValue(caPaymentMethod));
 				customerAccount.setCreditCategory(CreditCategoryEnum.getValue(creditCategory));
 				customerAccount.setTradingCurrency(tradingCurrency);
+				customerAccount.setTradingLanguage(tradingLanguage);
 				customerAccount.setDateDunningLevel(new Date());
 				customerAccountService.create(customerAccount, currentUser, provider);
 
@@ -617,6 +619,7 @@ public class AccountHierarchyApi extends BaseApi {
 			customerAccount.setPaymentMethod(PaymentMethodEnum.getValue(caPaymentMethod));
 			customerAccount.setCreditCategory(CreditCategoryEnum.getValue(creditCategory));
 			customerAccount.setTradingCurrency(tradingCurrency);
+			customerAccount.setTradingLanguage(tradingLanguage);
 
 			if (customerAccount.isTransient()) {
 				customerAccountService.create(customerAccount, currentUser, provider);
@@ -873,6 +876,19 @@ public class AccountHierarchyApi extends BaseApi {
 										missingParameters.add("customerAccount.currency");
 										throw new MissingParameterException(getMissingParametersExceptionMessage());
 									}
+									
+									if (!StringUtils.isBlank(customerAccountDto.getLanguage())) {
+										TradingLanguage tradingLanguage= tradingLanguageService.findByTradingLanguageCode(customerAccountDto.getLanguage(), provider);
+										if (tradingLanguage == null) {
+											throw new EntityDoesNotExistsException(TradingLanguage.class, customerAccountDto.getLanguage());
+										}
+
+										customerAccount.setTradingLanguage(tradingLanguage);
+									} else {
+										missingParameters.add("customerAccount.language");
+										throw new MissingParameterException(getMissingParametersExceptionMessage());
+									}
+								
 
 									try {
 										customerAccount.setStatus(CustomerAccountStatusEnum.valueOf(customerAccountDto.getStatus()));

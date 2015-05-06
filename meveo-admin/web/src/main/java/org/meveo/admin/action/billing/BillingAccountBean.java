@@ -142,6 +142,7 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
 		if (entity.getId() == null && customerAccountId != null) {
 			CustomerAccount customerAccount = customerAccountService.findById(customerAccountId);
 			entity.setCustomerAccount(customerAccount);
+			entity.setTradingLanguage(customerAccount.getTradingLanguage());
 			populateAccounts(customerAccount);
 
 			// check if has default
