@@ -100,7 +100,7 @@
 
 			<p:dataTable id="datatable_#{resultsId}" var="entity"  scrollable="#{scrollable}"
 				value="#{dataModel}" paginator="true" rows="10" editable="#{editable}" editMode="#{editMode}"  widgetVar="cellEntity"
-				selection="#{backingBean.selectedEntities}" sortField="#{sortBy}" sortOrder="#{sortOrder}"
+				selection="#{backingBean.selectedEntities}" sortBy="#{'sortBy'}" sortField="#{sortBy}" sortOrder="#{sortOrder}"
 				paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
 				rowsPerPageTemplate="#{rowsPerPage}" lazy="true"
 				binding="#{backingBean.dataTable}" styleClass="custom-grid"

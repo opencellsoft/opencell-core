@@ -142,7 +142,7 @@
 		<c:if test="#{sort}">
 			<f:attribute name="field" value="#{field}" />
 			<f:attribute name="sortable" value="#{true}" />
-			<f:attribute name="sortBy" value="#{null}" />
+			<f:attribute name="sortBy" value="#{field}" />
 		</c:if>
 		<c:set var="valueField" value="#{entity}" />
 		<c:forEach var="valueFieldVar" items="#{field.split('\\.')}">
