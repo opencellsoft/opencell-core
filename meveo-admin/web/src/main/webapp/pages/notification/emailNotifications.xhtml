@@ -22,7 +22,7 @@
 
 			<hf:searchPanel label="#{messages['menu.emailNotifications']}" columns="3" backingBean="#{emailNotificationListBean}">
 				<hf:searchField label="#{messages['entity.code']}" field="code" />
-				<hf:searchField label="#{messages['entity.notification.classNameFilter']}" field="classNameFilter" size="50" autocompleteMethod="#{notificationBean.autocompleteClassNames}"/>
+				<hf:searchField label="#{messages['entity.notification.classNameFilter']}" field="classNameFilter" size="50" autocompleteMethod="#{notificationBean.autocompleteClassNames}" isAutocomplete="true"/>
 				<hf:searchField label="#{messages['entity.notification.eventTypeFilter']}" field="eventTypeFilter" />
 				<hf:searchField label="#{messages['entity.emailNotification.subject']}" field="subject" />
 				<hf:searchField label="#{messages['entity.emailNotification.emailFrom']}" field="emailFrom" />

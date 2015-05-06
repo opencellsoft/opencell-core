@@ -5,11 +5,12 @@
     xmlns:p="http://primefaces.org/ui" xmlns:c="http://java.sun.com/jsp/jstl/core" xmlns:cc="http://java.sun.com/jsf/composite" xmlns:hftl="http://hftl.org">
 
 <cc:interface>
+    <cc:attribute name="autocompleteMethod" method-signature="java.util.List completeMethod(java.lang.String)"/>
 </cc:interface>
 
 <cc:implementation>
 
-    <hftl:decorateFormField fieldId="#{cc.parent.attrs.fieldIdPrefix}_text#{cc.attrs.autocompleteMethod != null?'_ac':''}#{cc.parent.attrs.listValues != null?'_pick':''}"
+    <hftl:decorateFormField fieldId="#{cc.parent.attrs.fieldIdPrefix}_text#{cc.parent.attrs.isAutocomplete?'_ac':''}#{cc.parent.attrs.listValues != null?'_pick':''}"
         label="#{cc.parent.attrs.label}" componentWidth="#{cc.parent.attrs.componentWidth}" newLine="#{cc.parent.attrs.newLine}" displayOneLine="#{cc.parent.attrs.displayOneLine}"
         styleClass="#{cc.parent.attrs.styleClass}" style="#{cc.parent.attrs.style}" labelStyle="#{cc.parent.attrs.labelStyle}" labelStyleClass="#{cc.parent.attrs.labelStyleClass}"
         inputStyle="#{cc.parent.attrs.inputStyle}" inputStyleClass="#{cc.parent.attrs.inputStyleClass}" labelWidth="#{cc.parent.attrs.labelWidth}"
@@ -17,12 +18,12 @@
 
 
         <!--  Regular text input field -->
-        <p:inputText id="#{cc.parent.attrs.fieldIdPrefix}_text" value="#{cc.parent.filters[cc.parent.attrs.field]}" size="#{cc.parent.attrs.size}" maxlength="#{cc.parent.attrs.maxlength}"
-            disabled="#{cc.parent.attrs.disabled}" rendered="#{cc.parent.attrs.listValues == null and cc.attrs.autocompleteMethod == null}" />
+        <p:inputText id="#{cc.parent.attrs.fieldIdPrefix}_text" value="#{cc.parent.filters[cc.parent.attrs.field]}" size="#{cc.parent.attrs.size}"
+            disabled="#{cc.parent.attrs.disabled}" rendered="#{cc.parent.attrs.listValues == null and !cc.parent.attrs.isAutocomplete}" />
 
         <!--  Autocomplete -->
         <p:autoComplete id="#{cc.parent.attrs.fieldIdPrefix}_text_ac" value="#{cc.parent.filters[cc.parent.attrs.field]}" size="#{cc.parent.attrs.size}"
-            disabled="#{cc.parent.attrs.disabled}" rendered="#{cc.parent.attrs.listValues == null and cc.attrs.autocompleteMethod != null}" dropdown="true"
+            disabled="#{cc.parent.attrs.disabled}" rendered="#{cc.parent.attrs.listValues == null and cc.parent.attrs.isAutocomplete}" dropdown="true"
             completeMethod="#{cc.attrs.autocompleteMethod}" />
 
         <!--  Picklist -->

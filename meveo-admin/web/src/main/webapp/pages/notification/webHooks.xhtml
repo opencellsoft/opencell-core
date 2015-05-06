@@ -22,7 +22,7 @@
 
 			<hf:searchPanel label="#{messages['menu.webHooks']}" columns="3" backingBean="#{webHookListBean}">
 				<hf:searchField label="#{messages['entity.code']}" field="code" />
-				<hf:searchField label="#{messages['entity.notification.classNameFilter']}" field="classNameFilter" size="50" autocompleteMethod="#{notificationBean.autocompleteClassNames}"/>
+				<hf:searchField label="#{messages['entity.notification.classNameFilter']}" field="classNameFilter" size="50" autocompleteMethod="#{notificationBean.autocompleteClassNames}" isAutocomplete="true" />
 				<hf:searchField label="#{messages['entity.notification.eventTypeFilter']}" field="eventTypeFilter" />
 				<hf:searchField label="#{messages['entity.webHook.host']}" field="host" />
 			</hf:searchPanel>

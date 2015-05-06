@@ -42,7 +42,7 @@
         isHtml - text entry as html editor
         textArea - text entry as text area control
         cols and rows - number of columns and rows in text are control 
-        autocomplete - a method for autocomplete
+        isAutocomplete and autocompleteMethod - should autocomplete be used and a method to use
         listValues - a map of value (key) and label (value) pairs for picklist 
         popup and popupId - text entry via a popup and associated popup id 
         useConverter - add string converter
@@ -112,7 +112,7 @@
     <cc:attribute name="cols" default="80" />
     <cc:attribute name="rows" default="5" />
     <cc:attribute name="isHtml" default="false" />
-    <cc:attribute name="autocompleteMethod" method-signature="java.lang.String action(java.lang.String)" />
+    <cc:attribute name="autocompleteMethod" method-signature="java.util.List completeMethod(java.lang.String)"/>
     <cc:attribute name="listValues" />
     <cc:attribute name="useConverter" default="false" />
     <cc:attribute name="validateUnique" default="false" />
@@ -189,9 +189,9 @@
             <!--  Enter text --> 
             <ui:fragment rendered="#{cc.isText(cc.attrs.field, cc.attrs.childField, false) and !cc.attrs.fkToEntity}">
                 <hf:formTextField id="txtFieldSingle" fieldItem="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}" edit="#{cc.attrs.edit}"
-                    rendered="#{cc.attrs.childField==null}" />
+                    rendered="#{cc.attrs.childField==null}" autocompleteMethod="#{cc.attrs.autocompleteMethod}" />
                 <hf:formTextField id="txtFieldWChild" fieldItem="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field][cc.attrs.childField]}" edit="#{cc.attrs.edit}"
-                    rendered="#{cc.attrs.childField!=null}" />
+                    rendered="#{cc.attrs.childField!=null}" autocompleteMethod="#{cc.attrs.autocompleteMethod}" />
             </ui:fragment> 
             
             <!--  Enter map values --> 

@@ -3,7 +3,7 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core"
     xmlns:p="http://primefaces.org/ui" xmlns:hf="http://java.sun.com/jsf/composite/tags" xmlns:c="http://java.sun.com/jsp/jstl/core" xmlns:s="http://jboss.org/seam/faces"
-    xmlns:cc="http://java.sun.com/jsf/composite">
+    xmlns:cc="http://java.sun.com/jsf/composite" xmlns:hftl="http://hftl.org">
 
 <!--
     Makes part of "happy faces" component group.
@@ -12,7 +12,7 @@
     Must be located inside a searchPanel component or have the following attributes provided if used as standalone: backingBean
     
     An applicable input control is determined automatically based on a field, of an entity type associated to a backing bean, type. The following field types are supported:
-        Text - as regular text entry, html editor, textarea, list of values, autocomplete and selection via popup
+        Text - as regular text entry, list of values and autocomplete
         Number -  as regular text entry, as a spinner of numbers and a list of values
         Boolean - as a checkbox
         Entity - as a list of values or selection via popup search
@@ -28,7 +28,8 @@
      Additional attributes applicable to Text type fields
         size - a size attribute of inputText control
         maxlength - a maxlength attribute of inputText control
-        listValues - a map of value (key) and label (value) pairs for picklist          
+        listValues - a map of value (key) and label (value) pairs for picklist   
+        isAutocomplete and autocompleteMethod - should autocomplete be used and a method to use       
         
      Additional attributes applicable to Number type fields
         rangeSearch - search by a range of values
@@ -66,7 +67,8 @@
     <cc:attribute name="popup" default="false" />
     <cc:attribute name="popupId" default="popup" />
     <cc:attribute name="listValues" />
-    <cc:attribute name="autocompleteMethod" method-signature="java.lang.String action(java.lang.String)" />
+    <cc:attribute name="autocompleteMethod" method-signature="java.util.List completeMethod(java.lang.String)"/>
+    <cc:attribute name="isAutocomplete" default="false"/>
     <cc:attribute name="time" default="false" />
     <cc:attribute name="datePattern"
         default="#{cc.attrs.time?paramBean.getProperty('meveo.dateTimeFormat','dd/MM/yyyy HH:mm'):paramBean.getProperty('meveo.dateFormat','dd/MM/yyyy')}" />
@@ -96,7 +98,7 @@
         
         <!-- If value binding is a text field, display a text input field -->
         <ui:fragment rendered="#{cc.isText(cc.attrs.field, true)}">
-            <hf:searchTextField id="txt" />
+            <hf:searchTextField id="txt" autocompleteMethod="#{cc.attrs.autocompleteMethod}" />
         </ui:fragment> 
         
         <!--  If the value binding is a boolean, display a drop down with yes/no choices. --> 
