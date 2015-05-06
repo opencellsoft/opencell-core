@@ -22,8 +22,8 @@
         <hftl:dataList checkMany="false" noClose="false" backingBean="#{customFieldTemplateListBean}" sortBy="code">
             <hftl:column label="#{messages['BusinessEntity.code']}" field="code" />
             <hftl:column label="#{messages['customFieldTemplate.fieldLabel']}" field="description" />
-            <hftl:column label="#{messages['customFieldTemplate.fieldType']}" field="fieldType" childField="label" isMessage="true" />
-            <hftl:column label="#{messages['customFieldTemplate.accountType']}" field="accountLevel" childField="label" isMessage="true" />
+            <hftl:column label="#{messages['customFieldTemplate.fieldType']}" field="fieldType.label" isMessage="true" />
+            <hftl:column label="#{messages['customFieldTemplate.accountType']}" field="accountLevel.label" isMessage="true" />
             <hftl:column label="#{messages['customFieldTemplate.fieldRequired']}" field="valueRequired" isMessage="true" />
             <hftl:column label="#{messages['enableEntity.active']}" field="active" isMessage="true" />
             <hftl:actionsColumn permission="#{identity.hasPermission('administration','administrationManagement')}" renderDeleteLink="false" renderEnableLink="true"/>

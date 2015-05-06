@@ -27,9 +27,9 @@
 			backingBean="#{userListBean}" sortBy="userName">
 			<hftl:column label="#{messages['user.userName']}" field="userName" />
 			<hftl:column label="#{messages['user.roles']}" field="roles"
-				childField="name" isList="true" sort="false" />
+				valueLabelField="name" isList="true" sort="false" />
 			<hftl:column label="#{messages['commons.connectedProvider']}"
-				field="providers" childField="code" isList="true" sort="false"
+				field="providers" valueLabelField="code" isList="true" sort="false"
 				rendered="#{identity.hasPermission('superAdmin','superAdminManagement')}" />
 
 			<hftl:actionsColumn

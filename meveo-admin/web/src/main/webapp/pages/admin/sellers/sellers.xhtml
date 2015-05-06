@@ -30,11 +30,10 @@
 				field="description" />
 			<hftl:column
 				label="#{messages['tradingCurrency.tradingCurrencyPanel']}"
-				field="tradingCurrency" childField="currencyCode" />
+				field="tradingCurrency.currencyCode" />
 			<hftl:column label="#{messages['tradingCountry.title']}"
-				field="tradingCountry" childField="countryCode" />
-			<hftl:column label="#{messages['seller.title']}" field="seller"
-				childField="code" />
+				field="tradingCountry.countryCode" />
+			<hftl:column label="#{messages['seller.title']}" field="seller.code" />
 
 			<hftl:actionsColumn
 				permission="#{identity.hasPermission('administration','administrationManagement')}" />
