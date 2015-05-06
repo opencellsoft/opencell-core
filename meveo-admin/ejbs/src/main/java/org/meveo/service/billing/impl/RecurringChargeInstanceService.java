@@ -27,6 +27,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.util.NumberUtil;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.admin.User;
@@ -114,16 +115,20 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
 		return recurringChargeInstances;
 	}
 
-	public Long recurringChargeApplication(Subscription subscription, RecurringChargeTemplate chargetemplate,
+	public Long recurringChargeApplication(Subscription subscription, RecurringChargeTemplate chargeTemplate,
 			Date effetDate, BigDecimal amoutWithoutTax, BigDecimal amoutWithoutTx2, Integer quantity, String criteria1,
 			String criteria2, String criteria3, User creator) throws BusinessException {
 
 		if (quantity == null) {
 			quantity = 1;
 		}
-		RecurringChargeInstance recurringChargeInstance = new RecurringChargeInstance(chargetemplate.getCode(),
-				chargetemplate.getDescription(), effetDate, amoutWithoutTax, amoutWithoutTx2, subscription,
-				chargetemplate, null);
+		
+		BigDecimal inputQuantity = new BigDecimal(quantity);
+		quantity = NumberUtil.getInChargeUnit(new BigDecimal(quantity), chargeTemplate.getUnitMultiplicator(), chargeTemplate.getUnitNbDecimal()).intValue();
+		
+		RecurringChargeInstance recurringChargeInstance = new RecurringChargeInstance(chargeTemplate.getCode(),
+				chargeTemplate.getDescription(), effetDate, amoutWithoutTax, amoutWithoutTx2, subscription,
+				chargeTemplate, null);
 		recurringChargeInstance.setCriteria1(criteria1);
 		recurringChargeInstance.setCriteria2(criteria2);
 		recurringChargeInstance.setCriteria3(criteria3);
@@ -134,21 +139,15 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
 		recurringChargeInstance.setPrepaid(false);
 		recurringChargeInstance.getWalletInstances().add(subscription.getUserAccount().getWallet());
 
-		create(recurringChargeInstance, creator, chargetemplate.getProvider());
+		create(recurringChargeInstance, creator, chargeTemplate.getProvider());
 
-		chargeApplicationService.recurringWalletOperation(subscription, recurringChargeInstance, quantity, effetDate,
-				creator);
+		chargeApplicationService.recurringWalletOperation(subscription, recurringChargeInstance, inputQuantity, quantity, effetDate, creator);
 		return recurringChargeInstance.getId();
 	}
 
 	public void recurringChargeApplication(RecurringChargeInstance chargeInstance, User creator)
 			throws BusinessException {
-		recurringChargeApplication(getEntityManager(), chargeInstance, creator);
-	}
-
-	public void recurringChargeApplication(EntityManager em, RecurringChargeInstance chargeInstance, User creator)
-			throws BusinessException {
-		chargeApplicationService.chargeSubscription(em, chargeInstance, creator);
+		chargeApplicationService.chargeSubscription(chargeInstance, creator);
 	}
 
 	@SuppressWarnings("unchecked")

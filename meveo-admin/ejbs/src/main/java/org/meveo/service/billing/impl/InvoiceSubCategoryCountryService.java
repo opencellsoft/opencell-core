@@ -41,12 +41,6 @@ public class InvoiceSubCategoryCountryService extends
 				invoiceSubCategoryId, countryId, provider);
 	}
 
-	public InvoiceSubcategoryCountry findInvoiceSubCategoryCountry(
-			Long invoiceSubCategoryId, Long countryId) {
-		return findInvoiceSubCategoryCountry(getEntityManager(),
-				invoiceSubCategoryId, countryId, getCurrentProvider());
-	}
-
 	@SuppressWarnings("unchecked")
 	public InvoiceSubcategoryCountry findInvoiceSubCategoryCountry(
 			EntityManager em, Long invoiceSubCategoryId, Long countryId,
