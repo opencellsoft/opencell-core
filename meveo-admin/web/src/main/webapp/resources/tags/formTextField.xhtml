@@ -47,13 +47,14 @@
                     <f:attribute name="fieldName" value="#{cc.parent.attrs.field}" />
                     <f:attribute name="idValue" value="#{cc.parent.entityFromBackingBeanOrAttribute.getId()}" />
                 </c:if>
-                <c:if test="#{cc.parent.attrs.validateRib}">
-                    <f:validator validatorId="ribValidator" />
-                    <f:attribute name="bankCodeId" value="#{rich:clientId('bankCode')}" />
-                    <f:attribute name="branchCodeId" value="#{rich:clientId('branchCode')}" />
-                    <f:attribute name="accountNumberId" value="#{rich:clientId('accountNumber')}" />
-                    <f:attribute name="keyId" value="#{rich:clientId('key')}" />
-                </c:if>
+<!--  commented out as validateRib is not used anywhere and need to find an equivalent solution for rich:clientId replacement -->                
+<!--                 <c:if test="#{cc.parent.attrs.validateRib}"> -->
+<!--                     <f:validator validatorId="ribValidator" /> -->
+<!--                     <f:attribute name="bankCodeId" value="#{rich:clientId('bankCode')}" /> -->
+<!--                     <f:attribute name="branchCodeId" value="#{rich:clientId('branchCode')}" /> -->
+<!--                     <f:attribute name="accountNumberId" value="#{rich:clientId('accountNumber')}" /> -->
+<!--                     <f:attribute name="keyId" value="#{rich:clientId('key')}" /> -->
+<!--                 </c:if> -->
             </p:inputText>
         </h:panelGroup>
         <h:panelGroup rendered="#{cc.parent.attrs.isAutocomplete and  cc.attrs.edit}">
