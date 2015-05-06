@@ -58,7 +58,7 @@
                 <p:column headerText="#" width="5%">
                     <h:outputText value="#{rowIndex+1}" />
                 </p:column>
-                <p:column headerText="#{messages['cache.value.'.concat(cacheBean.cacheName)]}">
+                <p:column headerText="#{messages['cache.value.detail.'.concat(cacheBean.cacheName)]}">
                     <h:outputText value="#{cacheBean.getShortRepresentationOfCachedValue(cacheItem, true)}" />
                 </p:column>
             </p:dataTable>
@@ -102,10 +102,10 @@
                     <p:dataTable var="cacheItem" value="#{cacheBean.cacheItemContents}" paginator="true" rows="30"
                         paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
                         rowsPerPageTemplate="20,30,50" lazy="true" styleClass="custom-grid" rowIndexVar="rowIndex">
-                        <p:column headerText="#">
+                        <p:column headerText="#" width="5%">
                             <h:outputText value="#{rowIndex+1}" />
                         </p:column>
-                        <p:column headerText="#{messages['cache.map.value.'.concat(cacheBean.cacheName)]}">
+                        <p:column headerText="#{messages['cache.map.value.detail.'.concat(cacheBean.cacheName)]}">
                             <h:outputText value="#{cacheBean.getShortRepresentationOfCachedValue(cacheItem, true)}" />
                         </p:column>
                     </p:dataTable>
