@@ -49,4 +49,13 @@
 			<column name="display_offers" type="BOOL" />
 		</addColumn>
 	</changeSet>
+	
+	<changeSet id="ticket646_20150506" author="SebastienMichea">
+		<addColumn tableName="cat_wallet_template">
+			<column name="low_balance_level" type="numeric(23, 12)" />
+		</addColumn>
+		<addColumn tableName="billing_wallet">
+			<column name="low_balance_level" type="numeric(23, 12)" />
+		</addColumn>
+	</changeSet>
 </databaseChangeLog>

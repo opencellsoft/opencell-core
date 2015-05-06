@@ -12,10 +12,12 @@ import javax.ejb.Asynchronous;
 import javax.ejb.EJB;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
+import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
 import org.infinispan.api.BasicCache;
 import org.infinispan.manager.CacheContainer;
+import org.meveo.event.qualifier.LowBalance;
 import org.meveo.model.billing.BillingWalletTypeEnum;
 import org.meveo.model.billing.UsageChargeInstance;
 import org.meveo.model.billing.WalletInstance;
@@ -44,6 +46,10 @@ public class WalletCacheContainerProvider {
 
     @EJB
     private WalletService walletService;
+    
+    @Inject
+    @LowBalance
+    protected Event<BigDecimal> lowBalanceEventProducer;
 
     /**
      * Contains association between prepaid wallet instance and balance value. Key format:  WalletInstance.id.
@@ -104,7 +110,7 @@ public class WalletCacheContainerProvider {
         log.debug("Wallet cache populated with {} usagecharges and {} wallets", charges.size(), walletIds.size());
     }
 
-    private void updateCache(UsageChargeInstance charge) {
+    public void updateCache(UsageChargeInstance charge) {
         // TODO:: make sure ordering is correct
         List<WalletInstance> wallets = charge.getWalletInstances();
         List<Long> walletIds = new ArrayList<>();
@@ -167,9 +173,14 @@ public class WalletCacheContainerProvider {
         if (balanceCache.containsKey(op.getWallet().getId()) && (!(op instanceof WalletReservation) || (op.getStatus() == WalletOperationStatusEnum.OPEN))) {
             oldValue = balanceCache.get(op.getWallet().getId());
             newValue = oldValue.subtract(op.getAmountWithTax());
-            log.info("Update balance Cache for wallet {} {}->{}", op.getWallet().getId(), oldValue, newValue);
+            log.info("Update balance Cache for wallet {} {}->{} lowBalanceLevel:{}", op.getWallet().getId(), oldValue, newValue,op.getWallet().getLowBalanceLevel());
             balanceCache.put(op.getWallet().getId(), newValue);
-            // FIXME: handle low balance notifications
+            if(op.getWallet().getLowBalanceLevel()!=null){
+                if(op.getWallet().getLowBalanceLevel().compareTo(newValue)>=0 
+                        && op.getWallet().getLowBalanceLevel().compareTo(oldValue)<0){
+                    lowBalanceEventProducer.equals(newValue);
+                }
+            }
 
         } else if (op.getChargeInstance() instanceof UsageChargeInstance) {
             updateCache((UsageChargeInstance) op.getChargeInstance());

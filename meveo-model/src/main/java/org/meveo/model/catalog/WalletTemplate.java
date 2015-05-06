@@ -16,6 +16,8 @@
  */
 package org.meveo.model.catalog;
 
+import java.math.BigDecimal;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -49,6 +51,10 @@ public class WalletTemplate extends BusinessEntity {
 
 	@Column(name = "FAST_RATING_LEVEL")
 	private int fastRatingLevel;
+	
+    @Column(name = "LOW_BALANCE_LEVEL", precision = NB_PRECISION, scale = NB_DECIMALS)
+    private BigDecimal lowBalanceLevel;
+    
 
 	public BillingWalletTypeEnum getWalletType() {
 		return walletType;
@@ -73,5 +79,13 @@ public class WalletTemplate extends BusinessEntity {
 	public void setFastRatingLevel(int fastRatingLevel) {
 		this.fastRatingLevel = fastRatingLevel;
 	}
+
+    public BigDecimal getLowBalanceLevel() {
+        return lowBalanceLevel;
+    }
+
+    public void setLowBalanceLevel(BigDecimal lowBalanceLevel) {
+        this.lowBalanceLevel = lowBalanceLevel;
+    }
 
 }

@@ -206,6 +206,9 @@
 											<hftl:decorateFormField label="#{messages['BusinessEntity.description']}">
 												<h:outputText value="#{wallet.value.description}" />
                                             </hftl:decorateFormField>
+                                            <hftl:decorateFormField label="#{messages['walletTemplate.lowBalanceLevel']}">
+                                            	<h:outputText value="#{wallet.value.lowBalanceLevel}" />
+                                            </hftl:decorateFormField>
                                             <hftl:decorateFormField label="#{messages['chargeTemplate.type']}">
 												<h:outputText
 													value="#{wallet.value.walletTemplate.walletType}" />
