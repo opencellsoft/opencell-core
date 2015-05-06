@@ -9,7 +9,6 @@ import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
-import javax.persistence.EntityManager;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.ParamBean;
@@ -278,13 +277,13 @@ public class SubscriptionImportService {
 		
 	}
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public void activateServices(EntityManager em, CheckedSubscription checkSubscription,
+	public void activateServices(CheckedSubscription checkSubscription,
 			org.meveo.model.jaxb.subscription.Subscription subscrip, User currentUser)
 			throws SubscriptionServiceException {
 		if (checkSubscription.subscription != null && checkSubscription.subscription.getServiceInstances().size() > 0) {
 			for (ServiceInstance serviceInstance : checkSubscription.subscription.getServiceInstances()) {
 				try {
-					serviceInstanceService.serviceActivation(em, serviceInstance, null, null, currentUser);
+					serviceInstanceService.serviceActivation(serviceInstance, null, null, currentUser);
 				} catch (Exception e) {
 					log.error(e.getMessage());
 					throw new SubscriptionServiceException(subscrip, null, e.getMessage());

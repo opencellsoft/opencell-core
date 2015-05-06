@@ -197,19 +197,13 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 	public void serviceActivation(ServiceInstance serviceInstance, BigDecimal amountWithoutTax,
 			BigDecimal amountWithoutTax2, User creator) throws IncorrectSusbcriptionException,
 			IncorrectServiceInstanceException, BusinessException {
-		serviceActivation(getEntityManager(), serviceInstance, amountWithoutTax, amountWithoutTax2, creator);
-	}
-
-	public void serviceActivation(EntityManager em, ServiceInstance serviceInstance, BigDecimal amountWithoutTax,
-			BigDecimal amountWithoutTax2, User creator) throws IncorrectSusbcriptionException,
-			IncorrectServiceInstanceException, BusinessException {
-		serviceActivation(em, serviceInstance, true, amountWithoutTax, amountWithoutTax2, creator);
+		serviceActivation(serviceInstance, true, amountWithoutTax, amountWithoutTax2, creator);
 	}
 
 	/**
 	 * Activate a service, the subscription charges can be applied or not
 	 */
-	public void serviceActivation(EntityManager em, ServiceInstance serviceInstance, boolean applySubscriptionCharges,
+	public void serviceActivation(ServiceInstance serviceInstance, boolean applySubscriptionCharges,
 			BigDecimal amountWithoutTax, BigDecimal amountWithoutTax2, User creator)
 			throws IncorrectSusbcriptionException, IncorrectServiceInstanceException, BusinessException {
 		Subscription subscription = serviceInstance.getSubscription();
@@ -249,7 +243,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 			recurringChargeInstance.setStatusDate(new Date());
 			recurringChargeInstanceService.setProvider(creator.getProvider());
 			recurringChargeInstanceService.update(recurringChargeInstance, creator);
-			recurringChargeInstanceService.recurringChargeApplication(em, recurringChargeInstance, creator);
+			recurringChargeInstanceService.recurringChargeApplication(recurringChargeInstance, creator);
 
 			if (recurringChargeInstance.getRecurringChargeTemplate().getDurationTermInMonth() != null) {
 				if (recurringChargeInstance.getRecurringChargeTemplate().getDurationTermInMonth() > agreementMonthTerm) {
@@ -275,7 +269,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 			log.debug("serviceActivation:serviceInstance.getSubscriptionChargeInstances.size={}", serviceInstance
 					.getSubscriptionChargeInstances().size());
 			for (OneShotChargeInstance oneShotChargeInstance : serviceInstance.getSubscriptionChargeInstances()) {
-				oneShotChargeInstanceService.oneShotChargeApplication(em, subscription, oneShotChargeInstance,
+				oneShotChargeInstanceService.oneShotChargeApplication(subscription, oneShotChargeInstance,
 						serviceInstance.getSubscriptionDate(), serviceInstance.getQuantity(), creator);
 				oneShotChargeInstance.setStatus(InstanceStatusEnum.CLOSED);
 				oneShotChargeInstance.setStatusDate(new Date());
@@ -287,7 +281,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 		}
 
 		for (UsageChargeInstance usageChargeInstance : serviceInstance.getUsageChargeInstances()) {
-			usageChargeInstanceService.activateUsageChargeInstance(em, usageChargeInstance, creator);
+			usageChargeInstanceService.activateUsageChargeInstance(usageChargeInstance, creator);
 		}
 
 		serviceInstance.setStatus(InstanceStatusEnum.ACTIVE);
@@ -305,14 +299,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 		update(serviceInstance, user);
 	}
 
-	public void terminateService(ServiceInstance serviceInstance, Date terminationDate, boolean applyAgreement,
-			boolean applyReimbursment, boolean applyTerminationCharges, User user)
-			throws IncorrectSusbcriptionException, IncorrectServiceInstanceException, BusinessException {
-		terminateService(getEntityManager(), serviceInstance, terminationDate, applyAgreement, applyReimbursment,
-				applyTerminationCharges, user);
-	}
-
-	public void terminateService(EntityManager em, ServiceInstance serviceInstance, Date terminationDate,
+	public void terminateService(ServiceInstance serviceInstance, Date terminationDate,
 			boolean applyAgreement, boolean applyReimbursment, boolean applyTerminationCharges, User user)
 			throws IncorrectSusbcriptionException, IncorrectServiceInstanceException, BusinessException {
 
@@ -348,7 +335,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 				Date endAgrementDate = serviceInstance.getEndAgrementDate();
 				if (endAgrementDate != null && terminationDate.before(endAgrementDate)) {
 					if (endAgrementDate.after(nextChargeDate)) {
-						chargeApplicationService.applyChargeAgreement(em, recurringChargeInstance,
+						chargeApplicationService.applyChargeAgreement(recurringChargeInstance,
 								recurringChargeInstance.getRecurringChargeTemplate(), user);
 					}
 
@@ -360,12 +347,12 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 				if (applyAgreement && endAgrementDate != null && terminationDate.before(endAgrementDate)) {
 					if (endAgrementDate.before(nextChargeDate)) {
 						recurringChargeInstance.setTerminationDate(endAgrementDate);
-						chargeApplicationService.applyReimbursment(em, recurringChargeInstance, user);
+						chargeApplicationService.applyReimbursment(recurringChargeInstance, user);
 					}
 
 				} else if (terminationDate.before(storedNextChargeDate)) {
 					recurringChargeInstance.setTerminationDate(terminationDate);
-					chargeApplicationService.applyReimbursment(em, recurringChargeInstance, user);
+					chargeApplicationService.applyReimbursment(recurringChargeInstance, user);
 				}
 
 			}
@@ -381,7 +368,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 			for (OneShotChargeInstance oneShotChargeInstance : serviceInstance.getTerminationChargeInstances()) {
 				if(oneShotChargeInstance.getStatus()==InstanceStatusEnum.INACTIVE){
 					log.debug("applying the termination charge {}",oneShotChargeInstance.getCode());
-					oneShotChargeInstanceService.oneShotChargeApplication(em, subscription, oneShotChargeInstance,
+					oneShotChargeInstanceService.oneShotChargeApplication(subscription, oneShotChargeInstance,
 							terminationDate, serviceInstance.getQuantity(), user);
 					oneShotChargeInstance.setStatus(InstanceStatusEnum.CLOSED);
 				} else {

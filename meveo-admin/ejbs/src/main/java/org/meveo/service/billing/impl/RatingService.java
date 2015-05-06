@@ -26,7 +26,6 @@ import org.meveo.model.billing.ApplicationTypeEnum;
 import org.meveo.model.billing.ChargeApplicationModeEnum;
 import org.meveo.model.billing.ChargeInstance;
 import org.meveo.model.billing.InvoiceSubCategory;
-import org.meveo.model.billing.OneShotChargeInstance;
 import org.meveo.model.billing.RecurringChargeInstance;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.TradingCurrency;
@@ -81,7 +80,7 @@ public class RatingService extends BusinessService<WalletOperation>{
 	 * chargeDate, recChargeInstance); }
 	 */
 
-	public int getSharedQuantity(EntityManager em, LevelEnum level, Provider provider, String chargeCode,
+	public int getSharedQuantity(LevelEnum level, Provider provider, String chargeCode,
 			Date chargeDate, RecurringChargeInstance recChargeInstance) {
 		int result = 0;
 		try {
@@ -114,7 +113,7 @@ public class RatingService extends BusinessService<WalletOperation>{
 				break;
 
 			}
-			Query query = em.createQuery(strQuery);
+			Query query = entityManager.createQuery(strQuery);
 			query.setParameter("chargeCode", chargeCode);
 			query.setParameter("chargeDate", chargeDate);
 			query.setParameter("provider", provider);
@@ -170,34 +169,19 @@ public class RatingService extends BusinessService<WalletOperation>{
 	 */
 
 	// used to prerate a oneshot or recurring charge
-	public WalletOperation prerateChargeApplication(EntityManager em, String code, Date subscriptionDate,
-			String offerCode, ChargeInstance chargeInstance, ApplicationTypeEnum applicationType, Date applicationDate,
-			BigDecimal amountWithoutTax, BigDecimal amountWithTax, BigDecimal quantity, TradingCurrency tCurrency,
-			Long countryId, BigDecimal taxPercent, BigDecimal discountPercent, Date nextApplicationDate,
-			InvoiceSubCategory invoiceSubCategory, String criteria1, String criteria2, String criteria3,
-			Date startdate, Date endDate, ChargeApplicationModeEnum mode) throws BusinessException {
+	public WalletOperation prerateChargeApplication(String code, Date subscriptionDate, String offerCode, ChargeInstance chargeInstance, ApplicationTypeEnum applicationType,
+			Date applicationDate, BigDecimal amountWithoutTax, BigDecimal amountWithTax, BigDecimal inputQuantity, BigDecimal quantity, TradingCurrency tCurrency, Long countryId,
+			BigDecimal taxPercent, BigDecimal discountPercent, Date nextApplicationDate, InvoiceSubCategory invoiceSubCategory, String criteria1, String criteria2,
+			String criteria3, Date startdate, Date endDate, ChargeApplicationModeEnum mode) throws BusinessException {
 
 		WalletOperation result = new WalletOperation();
 
 		if (chargeInstance instanceof RecurringChargeInstance) {
 			result.setSubscriptionDate(subscriptionDate);
-			result.setInputQuantity(((RecurringChargeInstance) chargeInstance).getServiceInstance().getQuantity());
-			if (result.getInputQuantity() != null && chargeInstance.getChargeTemplate().getUnitMultiplicator() != null) {
-				result.setQuantity(result.getInputQuantity().multiply(chargeInstance.getChargeTemplate().getUnitMultiplicator()));	
-			} else {
-				result.setQuantity(quantity);
-			}
-		} else if (chargeInstance instanceof OneShotChargeInstance) {
-			result.setInputQuantity(((OneShotChargeInstance) chargeInstance).getSubscriptionServiceInstance().getQuantity());
-			if (result.getInputQuantity() != null && chargeInstance.getChargeTemplate().getUnitMultiplicator() != null) {
-				result.setQuantity(result.getInputQuantity().multiply(chargeInstance.getChargeTemplate().getUnitMultiplicator()));
-			} else {
-				result.setQuantity(quantity);
-			}
-		} else {
-			result.setQuantity(quantity);
 		}
 		
+		result.setQuantity(quantity);
+		result.setInputQuantity(inputQuantity);
 		result.setRatingUnitDescription(chargeInstance.getChargeTemplate().getRatingUnitDescription());
 		result.setInputUnitDescription(chargeInstance.getChargeTemplate().getInputUnitDescription());
 
@@ -232,41 +216,26 @@ public class RatingService extends BusinessService<WalletOperation>{
 			unitPriceWithTax = amountWithTax;
 		}
 
-		rateBareWalletOperation(em, result, unitPriceWithoutTax, unitPriceWithTax, countryId, tCurrency, provider);
+		rateBareWalletOperation(result, unitPriceWithoutTax, unitPriceWithTax, countryId, tCurrency, provider);
 
 		return result;
 
 	}
 
-	public WalletOperation rateChargeApplication(String code, Subscription subscription, ChargeInstance chargeInstance,
-			ApplicationTypeEnum applicationType, Date applicationDate, BigDecimal amountWithoutTax,
-			BigDecimal amountWithTax, BigDecimal quantity, TradingCurrency tCurrency, Long countryId,
-			BigDecimal taxPercent, BigDecimal discountPercent, Date nextApplicationDate,
-			InvoiceSubCategory invoiceSubCategory, String criteria1, String criteria2, String criteria3,
-			Date startdate, Date endDate, ChargeApplicationModeEnum mode) throws BusinessException {
-		return rateChargeApplication(entityManager, code, subscription, chargeInstance, applicationType,
-				applicationDate, amountWithoutTax, amountWithTax, quantity, tCurrency, countryId, taxPercent,
-				discountPercent, nextApplicationDate, invoiceSubCategory, criteria1, criteria2, criteria3, startdate,
-				endDate, mode);
-	}
-
 	// used to rate a oneshot or recurring charge and triggerEDR
-	public WalletOperation rateChargeApplication(EntityManager em, String code, Subscription subscription,
-			ChargeInstance chargeInstance, ApplicationTypeEnum applicationType, Date applicationDate,
-			BigDecimal amountWithoutTax, BigDecimal amountWithTax, BigDecimal quantity, TradingCurrency tCurrency,
-			Long countryId, BigDecimal taxPercent, BigDecimal discountPercent, Date nextApplicationDate,
-			InvoiceSubCategory invoiceSubCategory, String criteria1, String criteria2, String criteria3,
-			Date startdate, Date endDate, ChargeApplicationModeEnum mode) throws BusinessException {
+	public WalletOperation rateChargeApplication(String code, Subscription subscription, ChargeInstance chargeInstance, ApplicationTypeEnum applicationType, Date applicationDate,
+			BigDecimal amountWithoutTax, BigDecimal amountWithTax, BigDecimal inputQuantity, BigDecimal quantity, TradingCurrency tCurrency, Long countryId, BigDecimal taxPercent,
+			BigDecimal discountPercent, Date nextApplicationDate, InvoiceSubCategory invoiceSubCategory, String criteria1, String criteria2, String criteria3, Date startdate,
+			Date endDate, ChargeApplicationModeEnum mode) throws BusinessException {
 		Date subscriptionDate = null;
 
 		if (chargeInstance instanceof RecurringChargeInstance) {
 			subscriptionDate = ((RecurringChargeInstance) chargeInstance).getServiceInstance().getSubscriptionDate();
 		}
 
-		WalletOperation result = prerateChargeApplication(em, code, subscriptionDate,
-				subscription.getOffer().getCode(), chargeInstance, applicationType, applicationDate, amountWithoutTax,
-				amountWithTax, quantity, tCurrency, countryId, taxPercent, discountPercent, nextApplicationDate,
-				invoiceSubCategory, criteria1, criteria2, criteria3, startdate, endDate, mode);
+		WalletOperation result = prerateChargeApplication(code, subscriptionDate, subscription.getOffer().getCode(), chargeInstance, applicationType, applicationDate,
+				amountWithoutTax, amountWithTax, inputQuantity, quantity, tCurrency, countryId, taxPercent, discountPercent, nextApplicationDate, invoiceSubCategory, criteria1,
+				criteria2, criteria3, startdate, endDate, mode);
 
 		String chargeInstnceLabel = null;
 		UserAccount ua = subscription.getUserAccount();
@@ -307,7 +276,7 @@ public class RatingService extends BusinessService<WalletOperation>{
 						sub = subscription;
 					} else {
 						String subCode = evaluateStringExpression(triggeredEDRTemplate.getSubscriptionEl(), result, ua);
-						sub = subscriptionService.findByCode(em, subCode, subscription.getProvider());
+						sub = subscriptionService.findByCode(entityManager, subCode, subscription.getProvider());
 						if (sub == null) {
 							log.info("could not find subscription for code =" + subCode + " (EL="
 									+ triggeredEDRTemplate.getSubscriptionEl() + ") in triggered EDR with code "
@@ -320,7 +289,7 @@ public class RatingService extends BusinessService<WalletOperation>{
 						if (chargeInstance.getAuditable() == null) {
 							log.info("trigger EDR from code " + triggeredEDRTemplate.getCode());
 						} else {
-							edrService.create(em, newEdr, chargeInstance.getAuditable().getCreator(),
+							edrService.create(entityManager, newEdr, chargeInstance.getAuditable().getCreator(),
 									chargeInstance.getProvider());
 						}
 					}
@@ -331,15 +300,8 @@ public class RatingService extends BusinessService<WalletOperation>{
 		return result;
 	}
 
-	public void rateBareWalletOperation(WalletOperation bareWalletOperation, BigDecimal unitPriceWithoutTax,
-			BigDecimal unitPriceWithTax, Long countryId, TradingCurrency tcurrency, Provider provider)
-			throws BusinessException {
-		rateBareWalletOperation(entityManager, bareWalletOperation, unitPriceWithoutTax, unitPriceWithTax, countryId,
-				tcurrency, provider);
-	}
-
 	// used to rate or rerate a bareWalletOperation
-	public void rateBareWalletOperation(EntityManager em, WalletOperation bareWalletOperation,
+	public void rateBareWalletOperation(WalletOperation bareWalletOperation,
 			BigDecimal unitPriceWithoutTax, BigDecimal unitPriceWithTax, Long countryId, TradingCurrency tcurrency,
 			Provider provider) throws BusinessException {
 
@@ -374,7 +336,7 @@ public class RatingService extends BusinessService<WalletOperation>{
 			if (recChargeTemplate.getShareLevel() != null) {
 				RecurringChargeInstance recChargeInstance = (RecurringChargeInstance) bareWalletOperation
 						.getChargeInstance();
-				int sharedQuantity = getSharedQuantity(em, recChargeTemplate.getShareLevel(), provider,
+				int sharedQuantity = getSharedQuantity(recChargeTemplate.getShareLevel(), provider,
 						recChargeInstance.getCode(), bareWalletOperation.getOperationDate(), recChargeInstance);
 				if (sharedQuantity > 0) {
 					unitPriceWithoutTax = unitPriceWithoutTax.divide(new BigDecimal(sharedQuantity),
@@ -630,7 +592,7 @@ public class RatingService extends BusinessService<WalletOperation>{
 					operation.setUnitAmountWithTax(null);
 					operation.setUnitAmountTax(null);
 				}
-				rateBareWalletOperation(entityManager, operation, null,
+				rateBareWalletOperation(operation, null,
 							null, operation.getPriceplan().getTradingCountry()==null?null:
 								operation.getPriceplan().getTradingCountry().getId(), operation.getPriceplan()
 									.getTradingCurrency(),

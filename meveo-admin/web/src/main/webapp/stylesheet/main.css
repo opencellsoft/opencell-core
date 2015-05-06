@@ -514,6 +514,8 @@ vertical-align:top !important;
     margin-top: 0px !important;
 }
 
+.formFieldItem2Lines button { margin-left: 2px; }
+
 .clearLeft {
 	clear: left;	
 }

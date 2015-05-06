@@ -122,10 +122,6 @@ public class UsageChargeInstanceService extends BusinessService<UsageChargeInsta
 	}
 
 	public void activateUsageChargeInstance(UsageChargeInstance usageChargeInstance, User currentUser) {
-		activateUsageChargeInstance(getEntityManager(), usageChargeInstance, currentUser);
-	}
-
-	public void activateUsageChargeInstance(EntityManager em, UsageChargeInstance usageChargeInstance, User currentUser) {
 		usageChargeInstance.setStatus(InstanceStatusEnum.ACTIVE);
 		setProvider(currentUser.getProvider());
 		update(usageChargeInstance, currentUser);
