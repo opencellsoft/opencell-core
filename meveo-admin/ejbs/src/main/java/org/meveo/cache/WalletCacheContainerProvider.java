@@ -49,7 +49,7 @@ public class WalletCacheContainerProvider {
     
     @Inject
     @LowBalance
-    protected Event<BigDecimal> lowBalanceEventProducer;
+    protected Event<WalletInstance> lowBalanceEventProducer;
 
     /**
      * Contains association between prepaid wallet instance and balance value. Key format:  WalletInstance.id.
@@ -178,7 +178,7 @@ public class WalletCacheContainerProvider {
             if(op.getWallet().getLowBalanceLevel()!=null){
                 if(op.getWallet().getLowBalanceLevel().compareTo(newValue)>=0 
                         && op.getWallet().getLowBalanceLevel().compareTo(oldValue)<0){
-                    lowBalanceEventProducer.equals(newValue);
+                    lowBalanceEventProducer.fire(op.getWallet());
                 }
             }
 
