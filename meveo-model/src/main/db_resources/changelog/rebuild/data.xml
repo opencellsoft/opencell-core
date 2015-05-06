@@ -7243,7 +7243,7 @@
 			<column name="description" value="One period Calendar" />
 			<column name="nb_periods" valueNumeric="1" />
 			<column name="period_length" valueNumeric="7" />
-			<column name="period_unit" />
+			<column name="period_unit" valueNumeric="5" />
 			<column name="calendar" />
 			<column name="join_type" />
 			<column name="interval_type" />
@@ -7261,7 +7261,7 @@
 			<column name="description" value="Multi period Calendar" />
 			<column name="nb_periods" valueNumeric="6" />
 			<column name="period_length" valueNumeric="7" />
-			<column name="period_unit" />
+			<column name="period_unit" valueNumeric="5" />
 			<column name="calendar" />
 			<column name="join_type" />
 			<column name="interval_type" />
