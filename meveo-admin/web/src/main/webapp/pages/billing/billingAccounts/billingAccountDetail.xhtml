@@ -329,8 +329,7 @@
 																label="#{messages['bankCoordinates.key']}"
 																field="bankCoordinates" childField="key" size="2"
 																maxlength="2"
-																required="#{billingAccountBean.entity.paymentMethod.toString() == 'DIRECTDEBIT'}" />
-														</h:panelGroup>
+																required="#{billingAccountBean.entity.paymentMethod.toString() == 'DIRECTDEBIT'}" />														
 															<hf:formField
 																label="#{messages['bankCoordinates.bic']}"
 																field="bankCoordinates" childField="bic" size="15"
@@ -348,7 +347,7 @@
 																label="#{messages['bankCoordinates.bankName']}"
 																field="bankCoordinates" childField="bankName" size="55"
 																maxlength="50" />
-
+                                                        </h:panelGroup>
 													</h:panelGroup>
 												</p:fieldset>
 
