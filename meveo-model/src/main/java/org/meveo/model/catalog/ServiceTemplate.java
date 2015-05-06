@@ -51,9 +51,16 @@ import org.meveo.model.crm.CustomFieldInstance;
 @NamedQueries({			
 @NamedQuery(name = "serviceTemplate.getNbServiceWithNotOffer", 
 	           query = "select count(*) from ServiceTemplate s where s.id not in (select serv from OfferTemplate o join o.serviceTemplates serv) and s.provider=:provider"),
-	           
 @NamedQuery(name = "serviceTemplate.getServicesWithNotOffer", 
-	           query = "from ServiceTemplate s where s.id not in (select serv from OfferTemplate o join o.serviceTemplates serv) and s.provider=:provider")                     
+	           query = "from ServiceTemplate s where s.id not in (select serv from OfferTemplate o join o.serviceTemplates serv) and s.provider=:provider"),
+@NamedQuery(name = "serviceTemplate.getServicesWithRecurringsByChargeTemplate",
+	           query = "from ServiceTemplate s left join s.serviceRecurringCharges c where c.chargeTemplate=:chargeTemplate"),
+@NamedQuery(name = "serviceTemplate.getServicesWithSubscriptionsByChargeTemplate", 
+				query = "from ServiceTemplate s left join s.serviceSubscriptionCharges c where c.chargeTemplate=:chargeTemplate"),
+@NamedQuery(name = "serviceTemplate.getServicesWithTerminationsByChargeTemplate", 
+				query = "from ServiceTemplate s left join s.serviceTerminationCharges c where c.chargeTemplate=:chargeTemplate"),
+@NamedQuery(name = "serviceTemplate.getServicesWithUsagesByChargeTemplate", 
+				query = "from ServiceTemplate s left join s.serviceUsageCharges c where c.chargeTemplate=:chargeTemplate")
 })
 public class ServiceTemplate extends BusinessEntity implements ICustomFieldEntity {
 

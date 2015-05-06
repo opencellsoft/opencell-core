@@ -22,7 +22,10 @@ import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
+import org.meveo.model.catalog.OneShotChargeTemplate;
+import org.meveo.model.catalog.RecurringChargeTemplate;
 import org.meveo.model.catalog.ServiceTemplate;
+import org.meveo.model.catalog.UsageChargeTemplate;
 import org.meveo.model.crm.Provider;
 import org.meveo.service.base.BusinessService;
 
@@ -49,5 +52,26 @@ public class ServiceTemplateService extends BusinessService<ServiceTemplate> {
 	public  List<ServiceTemplate> getServicesWithNotOffer(Provider provider) { 
 		return (List<ServiceTemplate>)getEntityManager().createNamedQuery("serviceTemplate.getServicesWithNotOffer",ServiceTemplate.class).setParameter("provider", provider).getResultList();
 		}
+	
+	@SuppressWarnings("unchecked")
+	public List<ServiceTemplate> findServivesWithRecurringsByChargeTemplate(RecurringChargeTemplate chargeTemplate){
+		return (List<ServiceTemplate>)getEntityManager().createNamedQuery("serviceTemplate.getServicesWithRecurringsByChargeTemplate").
+				setParameter("chargeTemplate", chargeTemplate).getResultList();
+	}
+	@SuppressWarnings("unchecked")
+	public List<ServiceTemplate> findServivesWithSubscriptionsByChargeTemplate(OneShotChargeTemplate chargeTemplate){
+		return (List<ServiceTemplate>)getEntityManager().createNamedQuery("serviceTemplate.getServicesWithSubscriptionsByChargeTemplate").
+				setParameter("chargeTemplate", chargeTemplate).getResultList();
+	}
+	@SuppressWarnings("unchecked")
+	public List<ServiceTemplate> findServivesWithTerminationsByChargeTemplate(OneShotChargeTemplate chargeTemplate){
+		return (List<ServiceTemplate>)getEntityManager().createNamedQuery("serviceTemplate.getServicesWithTerminationsByChargeTemplate").
+				setParameter("chargeTemplate", chargeTemplate).getResultList();
+	}
+	@SuppressWarnings("unchecked")
+	public List<ServiceTemplate> findServivesWithUsagesByChargeTemplate(UsageChargeTemplate chargeTemplate){
+		return (List<ServiceTemplate>)getEntityManager().createNamedQuery("serviceTemplate.getServicesWithUsagesByChargeTemplate").
+				setParameter("chargeTemplate", chargeTemplate).getResultList();
+	}
 
 }
