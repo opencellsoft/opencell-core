@@ -10,7 +10,7 @@
 
 
         <hf:formPanel label="#{messages['invoice.panel']}" backingBean="#{invoiceBean}" showFormButtons="false" id="headerForm">
-            <h:panelGrid columns="8" styleClass="panelGrid-column">
+            <h:panelGrid columns="2">
 			<p:fieldset legend="#{messages['invoice.header']}">
 				<h:panelGroup>
                 <hf:formField label="#{messages['invoice.billingAccount']}" field="billingAccount" valueLabelField="code" popup="false" popupId="searchBillingAccountPopup"
@@ -18,8 +18,7 @@
                 <hf:formField label="#{messages['invoice.invoiceNumber']}" field="invoiceNumber" validateUnique="true" />
                 <hf:formField label="#{messages['invoice.invoiceDate']}" field="invoiceDate" />
 
-                <hf:formField label="#{messages['invoice.dueDate']}" field="dueDate" />
-                <hf:formField label="#{messages['invoice.discount']}" field="discount" />
+                <hf:formField label="#{messages['invoice.dueDate']}" field="dueDate" /> 
                 <hf:formField label="#{messages['invoice.iban']}" field="iban" />
                 <hf:formField label="#{messages['invoice.alias']}" field="alias" />
                 <hf:formField label="#{messages['invoice.comment']}" field="comment" textArea="true" />
@@ -28,7 +27,6 @@
             </p:fieldset>
 			
 			<p:fieldset legend="#{messages['invoice.attachments']}">
-				
 				<h:panelGroup rendered="#{invoiceBean.entity.pdf!=null}" column="4"> 
                 <h:commandLink action="#{billingAccountBean.generatePDF(invoiceBean.entity.id)}">
                     <h:outputText value="#{invoiceBean.entity.invoiceNumber}.pdf"/> 
@@ -37,10 +35,33 @@
 				<p:commandButton   icon="ui-icon-close" rendered="#{invoiceBean.entity.pdf!=null}"
 				action="#{invoiceBean.deleteInvoicePdf}" update="totalForm:formId:buttonGenerate,@form"/> 
 				</h:panelGroup>
-			
             </p:fieldset>
 			</h:panelGrid>
         </hf:formPanel>
+		 
+          
+			<p:fieldset legend="#{messages['invoice.discounts']}" style="width:60%">
+				
+				<p:dataTable id="invoiceAgregats" var="agregate" value="#{invoiceBean.getDiscountAggregates}">
+				<p:column headerText="#{messages['discountPlan.title']}">
+				<h:outputText value="#{agregate.discountPlanCode}"  />
+				</p:column>
+				<p:column headerText="#{messages['discountPlan.discountAmountWithoutTax']}">
+				<h:outputText value="#{agregate.amountWithoutTax}" converter="#{getConverter.forType(agregate.amountWithoutTax,'4digits')}" />
+				</p:column>
+				<p:column headerText="#{messages['discountPlanItem.percent']}">
+				<h:outputText value="#{agregate.discountPercent}" converter="#{getConverter.forType(agregate.discountPercent,'4digits')}" />
+				</p:column>
+				<p:column headerText="#{messages['discountPlanItem.title']}">
+				<h:outputText value="#{agregate.discountPlanItemCode}" />
+				</p:column>
+				<p:column headerText="#{messages['discountPlanItem.invoiceSubCategory']}">
+				<h:outputText value="#{agregate.invoiceSubCategory.code}" />
+				</p:column>
+				
+				</p:dataTable>
+			
+            </p:fieldset> 
 
         <h:form id="form">
             <p:fieldset legend="#{messages['invoice.details']}">
@@ -49,10 +70,7 @@
                     <p:columnGroup type="header">
                         <p:row>
                             <p:column rowspan="2" headerText="#{messages['invoice.cat.subcat.ratedTransaction']}" />
-                        </p:row>
-                        <p:row>
-                            <p:column headerText="#{messages['invoice.amountWithoutTax']}" />
-                        </p:row>
+                        </p:row> 
                     </p:columnGroup>
 
                     <p:subTable var="subCat" value="#{cat.invoiceSubCategoryDTOList}">
@@ -60,12 +78,12 @@
 							  #{cat.description}   
 							</f:facet>
                         <p:column>
-
                             <p:accordionPanel activeIndex="null">
                                 <p:tab>
                                     <f:facet name="title">
-                                        <h:outputText value="#{subCat.description}" />
-                                    </f:facet>
+                                        <h:outputText value="#{subCat.description}" /> 
+									<h:outputText value="#{messages['invoice.amountWithoutTax']} : #{subCat.amountWithoutTax}"  style="float:right;!important"/> 
+                                    </f:facet> 
                                     <hftl:dataList label="#{messages['wallet.ratedTransactions']}" exportButton="false" resultsId="ratedTransactions_panel" checkMany="false"
                                         backingBean="#{ratedTransactionBean}" dataModel="#{invoiceBean.ratedTransactions}">
                                         <hftl:column label="#{messages['subscription.offer']}" field="offerCode" />
@@ -79,10 +97,7 @@
                                     </hftl:dataList>
                                 </p:tab>
                             </p:accordionPanel>
-                        </p:column>
-                        <p:column>  
-								#{subCat.amountWithoutTax}  
-							</p:column>
+                        </p:column> 
                     </p:subTable>
                 </p:dataTable>
             </p:fieldset>

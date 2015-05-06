@@ -530,3 +530,7 @@ vertical-align:top !important;
 	clear:left;
 	margin-top: 1em;
 }
+
+.ui-accordion .ui-accordion-content{
+   padding:0px !important;
+  }

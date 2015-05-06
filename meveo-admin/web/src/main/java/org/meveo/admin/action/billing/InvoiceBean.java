@@ -46,6 +46,7 @@ import org.meveo.model.billing.SubCategoryInvoiceAgregate;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.BillingAccountService;
+import org.meveo.service.billing.impl.InvoiceAgregateService;
 import org.meveo.service.billing.impl.InvoiceService;
 import org.meveo.service.billing.impl.RatedTransactionService;
 import org.meveo.service.payments.impl.CustomerAccountService;
@@ -80,6 +81,9 @@ public class InvoiceBean extends BaseBean<Invoice> {
 	
 	@Inject
 	RatedTransactionService ratedTransactionService;
+	
+	@Inject
+	InvoiceAgregateService invoiceAgregateService;
 	
 	private List<RatedTransaction> ratedTransactions=new ArrayList<RatedTransaction>();
 	
@@ -237,6 +241,10 @@ public class InvoiceBean extends BaseBean<Invoice> {
 		} catch (Exception e) {
 			log.error(e.getMessage());  
 		}	
+	}
+	
+	public List<SubCategoryInvoiceAgregate> getDiscountAggregates() {
+		return invoiceAgregateService.findDiscountAggregates(entity); 
 	}
 
 	public List<RatedTransaction> getRatedTransactions() {
