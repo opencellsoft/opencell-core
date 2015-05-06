@@ -122,7 +122,7 @@
 			<hftl:column label="#{messages['usageChargeTemplate.filterParam2']}"
 				field="filterParam2" />
 			<hftl:column label="#{messages['menu.triggeredEdrTemplates']}" field="edrTemplates"
-				childField="code" isList="true" sort="false" />
+				valueLabelField="code" isList="true" sort="false" />
 			<hftl:column label="#{messages['usageChargeTemplate.priority']}"
 				field="priority" />
 			<hftl:column label="#{messages['enableEntity.active']}"
@@ -155,11 +155,11 @@
 				label="#{messages['recurringChargeTemplate.applyInAdvance']}"
 				field="applyInAdvance" isMessage="true" />
 			<hftl:column label="#{messages['charge.subCategory']}"
-				field="invoiceSubCategory" childField="code" childFieldId="id"
-				entityView="/pages/catalog/invoiceSubCategories/invoiceSubCategoryDetail.xhtml"
+				field="invoiceSubCategory.code" valueIdField="id"
+				entityView="invoiceSubCategoryDetail" propagateConversaion="false"
 				backView="invoiceCategories" />
 			<hftl:column label="#{messages['menu.triggeredEdrTemplates']}" field="edrTemplates"
-				childField="code" isList="true" sort="false" />
+				valueLabelField="code" isList="true" sort="false" />
 			<hftl:column label="#{messages['enableEntity.active']}"
 				field="active" isMessage="true" />
 			<p:column  width="50px"> 
@@ -185,15 +185,15 @@
 			<hftl:column label="#{messages['chargeTemplate.amountEditable']}"
 				field="amountEditable" isMessage="true" />
 			<hftl:column label="#{messages['chargeTemplate.type']}"
-				field="oneShotChargeTemplateType" childField="label"
+				field="oneShotChargeTemplateType.label"
 				isMessage="true" />
 			<hftl:column label="#{messages['charge.subCategory']}"
-				field="invoiceSubCategory" childField="code" isMessage="false"
-				childFieldId="id"
-				entityView="/pages/catalog/invoiceSubCategories/invoiceSubCategoryDetail.xhtml"
+				field="invoiceSubCategory.code" isMessage="false"
+				valueIdField="invoiceSubCategory.id" propagateConversation="false"
+				entityView="invoiceSubCategoryDetail"
 				backView="invoiceCategories" />
 			<hftl:column label="#{messages['menu.triggeredEdrTemplates']}" field="edrTemplates"
-				childField="code" isList="true" sort="false" />
+				valueLabelField="code" isList="true" sort="false" />
 			<hftl:column label="#{messages['enableEntity.active']}"
 				field="active" isMessage="true" />
 			<hftl:column
@@ -258,7 +258,7 @@
 			<hftl:dataList label="#{messages['comLanguage.title']}" resultsId="languages_panel" checkMany="false"
 			backingBean="#{tradingLanguageListBean}" dataModel="#{configIssuesReportingBean.languagesNotAssociatedList}">
 			<hftl:column label="#{messages['tradingLanguage.languageCode']}"
-				field="language" childField="languageCode" width="10%" />
+				field="language.languageCode" width="10%" />
 			<hftl:column label="#{messages['tradingLanguage.prDescription']}"
 				field="prDescription" />
 			<hftl:column label="#{messages['enableEntity.active']}"
@@ -323,7 +323,7 @@
 				field="code" />
 			<hftl:column
 				label="#{messages['invoiceSubCategory.invoiceCategory']}"
-				field="invoiceCategory" childField="code" />
+				field="invoiceCategory.code" />
 			<hftl:column label="#{messages['invoiceSubCategory.description']}"
 				field="description" />
 			<hftl:column label="#{messages['invoiceSubCategory.accountingCode']}"
@@ -360,26 +360,23 @@
 				field="description" />
 			<hftl:column label="#{messages['serviceTemplate.recurringCharges']}"
 				field="serviceRecurringCharges" isList="true"
-				childField="chargeTemplate" childFieldId="id"
-				view="/pages/catalog/recurringChargeTemplates/recurringChargeTemplateDetail.xhtml"
-				backView="serviceTemplates" />
+				valueLabelField="chargeTemplate.code" valueIdField="chargeTemplate.id"
+				view="recurringChargeTemplateDetail" />
 			<hftl:column
 				label="#{messages['serviceTemplate.subscriptionCharges']}"
 				field="serviceSubscriptionCharges" isList="true"
-				childField="chargeTemplate" childFieldId="id"
-				view="/pages/catalog/oneShotChargeTemplates/oneShotChargeTemplateDetail.xhtml"
-				backView="serviceTemplates" />
+				valueLabelField="chargeTemplate.code" valueIdField="chargeTemplate.id"
+				view="oneShotChargeTemplateDetail"/>
 			<hftl:column
 				label="#{messages['serviceTemplate.terminationCharges']}"
 				field="serviceTerminationCharges" isList="true"
-				childField="chargeTemplate" childFieldId="id"
-				view="/pages/catalog/oneShotChargeTemplates/oneShotChargeTemplateDetail.xhtml"
+				valueLabelField="chargeTemplate.code" valueIdField="chargeTemplate.id"
+				view="oneShotChargeTemplateDetail"
 				backView="serviceTemplates" />
 			<hftl:column label="#{messages['serviceTemplate.usageCharges']}"
 				field="serviceUsageCharges" isList="true"
-				childField="chargeTemplate" childFieldId="id"
-				view="/pages/catalog/usageChargeTemplates/usageChargeTemplateDetail.xhtml"
-				backView="serviceTemplates" />
+				valueLabelField="chargeTemplate.code" valueIdField="chargeTemplate.id"
+				view="usageChargeTemplateDetail" />
 			<hftl:column label="#{messages['enableEntity.active']}"
 				field="active" isMessage="true" />
 			 <p:column style="width:5px"> 
@@ -423,7 +420,7 @@
 			<hftl:column label="#{messages['usageChargeTemplate.filterParam2']}"
 				field="filterParam2" />
 			<hftl:column label="#{messages['menu.triggeredEdrTemplates']}" field="edrTemplates"
-				childField="code" isList="true" sort="false" />
+				valueLabelField="code" isList="true" sort="false" />
 			<hftl:column label="#{messages['usageChargeTemplate.priority']}"
 				field="priority" />
 			<hftl:column label="#{messages['enableEntity.active']}"
@@ -463,11 +460,11 @@
 				label="#{messages['usageChargeTemplate.unityDescription']}"
 				field="unityDescription" />
 			<hftl:column label="#{messages['counterTemplate.counterType']}"
-				field="counterType" childField="label" isMessage="true" />
+				field="counterType.label" isMessage="true" />
 			<hftl:column label="#{messages['counterTemplate.level']}"
 				field="ceiling" converterParam="4digits" />
 			<hftl:column label="#{messages['billingCycle.calendar']}"
-				field="calendar" childField="code" />
+				field="calendar.code" />
 
 			<hftl:column label="#{messages['enableEntity.active']}"
 				field="active" isMessage="true" />
@@ -510,7 +507,7 @@
 				field="applyInAdvance" isMessage="true" />
 			
 			<hftl:column label="#{messages['menu.triggeredEdrTemplates']}" field="edrTemplates"
-				childField="code" isList="true" sort="false" />
+				valueLabelField="code" isList="true" sort="false" />
 			<hftl:column label="#{messages['enableEntity.active']}"
 				field="active" isMessage="true" />
 			<p:column  width="50px"> 
@@ -546,10 +543,10 @@
 			<hftl:column label="#{messages['chargeTemplate.amountEditable']}"
 				field="amountEditable" isMessage="true" />
 			<hftl:column label="#{messages['chargeTemplate.type']}"
-				field="oneShotChargeTemplateType" childField="label"
+				field="oneShotChargeTemplateType.label"
 				isMessage="true" />
 			<hftl:column label="#{messages['menu.triggeredEdrTemplates']}" field="edrTemplates"
-				childField="code" isList="true" sort="false" />
+				valueLabelField="code" isList="true" sort="false" />
 			<hftl:column label="#{messages['enableEntity.active']}"
 				field="active" isMessage="true" />
 			<hftl:column
@@ -588,10 +585,10 @@
 			<hftl:column label="#{messages['chargeTemplate.amountEditable']}"
 				field="amountEditable" isMessage="true" />
 			<hftl:column label="#{messages['chargeTemplate.type']}"
-				field="oneShotChargeTemplateType" childField="label"
+				field="oneShotChargeTemplateType.label"
 				isMessage="true" />
 			<hftl:column label="#{messages['menu.triggeredEdrTemplates']}" field="edrTemplates"
-				childField="code" isList="true" sort="false" />
+				valueLabelField="code" isList="true" sort="false" />
 			<hftl:column label="#{messages['enableEntity.active']}"
 				field="active" isMessage="true" />
 			<hftl:column
