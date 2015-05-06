@@ -28,12 +28,14 @@ import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.action.CustomFieldEnabledBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.catalog.RecurringChargeTemplate;
+import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.catalog.TriggeredEDRTemplate;
 import org.meveo.model.crm.AccountLevelEnum;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.catalog.impl.OneShotChargeTemplateService;
 import org.meveo.service.catalog.impl.RecurringChargeTemplateService;
+import org.meveo.service.catalog.impl.ServiceTemplateService;
 import org.meveo.service.catalog.impl.TriggeredEDRTemplateService;
 import org.meveo.service.catalog.impl.UsageChargeTemplateService;
 import org.omnifaces.cdi.ViewScoped;
@@ -69,6 +71,9 @@ public class RecurringChargeTemplateBean extends
 	private TriggeredEDRTemplateService triggeredEDRTemplateService;
 
 	private DualListModel<TriggeredEDRTemplate> edrTemplates;
+	
+	@Inject
+	private ServiceTemplateService serviceTemplateService;
 
 	/**
 	 * Constructor. Invokes super constructor and provides class type of this
@@ -154,10 +159,10 @@ public class RecurringChargeTemplateBean extends
 	public void setEdrTemplatesModel(DualListModel<TriggeredEDRTemplate> temp) {
 		getEntity().setEdrTemplates(temp.getTarget());
 	}
-
+	
 	@Override
 	protected boolean canDelete(RecurringChargeTemplate entity) {
-		// TODO Auto-generated method stub
-		return true;
+		List<ServiceTemplate> serviceTemplates=serviceTemplateService.findServivesWithRecurringsByChargeTemplate(entity);
+		return serviceTemplates==null||serviceTemplates.size()==0;
 	}
 }

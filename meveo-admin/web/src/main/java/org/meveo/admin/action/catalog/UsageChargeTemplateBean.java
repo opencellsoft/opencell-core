@@ -27,12 +27,14 @@ import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.action.CustomFieldEnabledBean;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.catalog.TriggeredEDRTemplate;
 import org.meveo.model.catalog.UsageChargeTemplate;
 import org.meveo.model.crm.AccountLevelEnum;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.catalog.impl.OneShotChargeTemplateService;
 import org.meveo.service.catalog.impl.RecurringChargeTemplateService;
+import org.meveo.service.catalog.impl.ServiceTemplateService;
 import org.meveo.service.catalog.impl.TriggeredEDRTemplateService;
 import org.meveo.service.catalog.impl.UsageChargeTemplateService;
 import org.omnifaces.cdi.ViewScoped;
@@ -58,6 +60,9 @@ public class UsageChargeTemplateBean extends BaseBean<UsageChargeTemplate> {
 	private TriggeredEDRTemplateService triggeredEDRTemplateService;
 
 	private DualListModel<TriggeredEDRTemplate> edrTemplates;
+	
+	@Inject
+	private ServiceTemplateService serviceTemplateService;
 
 	/**
 	 * Constructor. Invokes super constructor and provides class type of this
@@ -133,8 +138,8 @@ public class UsageChargeTemplateBean extends BaseBean<UsageChargeTemplate> {
 
 	@Override
 	protected boolean canDelete(UsageChargeTemplate entity) {
-		// TODO Auto-generated method stub
-		return true;
+		List<ServiceTemplate> serviceTemplates=serviceTemplateService.findServivesWithUsagesByChargeTemplate(entity);
+		return serviceTemplates==null||serviceTemplates.size()==0;
 	}
 
 }

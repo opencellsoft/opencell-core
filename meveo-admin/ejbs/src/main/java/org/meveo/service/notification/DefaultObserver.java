@@ -19,7 +19,7 @@ import org.meveo.model.BaseEntity;
 import org.meveo.model.IEntity;
 import org.meveo.model.IProvider;
 import org.meveo.model.admin.User;
-import org.meveo.model.billing.WalletOperation;
+import org.meveo.model.billing.WalletInstance;
 import org.meveo.model.notification.EmailNotification;
 import org.meveo.model.notification.InboundRequest;
 import org.meveo.model.notification.InstantMessagingNotification;
@@ -221,7 +221,7 @@ public class DefaultObserver {
     }
     
     
-   public void LowBalance(@Observes @LowBalance WalletOperation e){
+   public void LowBalance(@Observes @LowBalance WalletInstance e){
        log.debug("Defaut observer : low balance on {} ", e.getCode());
        checkEvent(NotificationEventTypeEnum.LOW_BALANCE, e);
        
