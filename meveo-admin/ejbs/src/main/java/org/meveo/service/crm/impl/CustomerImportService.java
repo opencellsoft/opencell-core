@@ -27,6 +27,7 @@ import org.meveo.model.shared.ContactInformation;
 import org.meveo.model.shared.Title;
 import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.admin.impl.TradingCurrencyService;
+import org.meveo.service.billing.impl.TradingLanguageService;
 import org.meveo.service.catalog.impl.TitleService;
 import org.meveo.service.payments.impl.CustomerAccountService;
 import org.slf4j.Logger;
@@ -48,6 +49,9 @@ public class CustomerImportService {
 
 	@Inject
 	private TradingCurrencyService tradingCurrencyService;
+	
+	@Inject
+	private TradingLanguageService tradingLanguageService;
 
 	@Inject
 	private CustomerService customerService;
@@ -193,6 +197,8 @@ public class CustomerImportService {
 
 		customerAccount.setTradingCurrency(tradingCurrencyService.findByTradingCurrencyCode(
 				custAcc.getTradingCurrencyCode(), provider));
+		customerAccount.setTradingLanguage(tradingLanguageService.findByTradingLanguageCode(
+				custAcc.getTradingLanguageCode(), provider));
 		customerAccount.setProvider(provider);
 		customerAccount.setCustomer(customer);
 		customerAccountService.create(customerAccount, currentUser, provider);
@@ -353,6 +359,8 @@ public class CustomerImportService {
 
 		customerAccount.setTradingCurrency(tradingCurrencyService.findByTradingCurrencyCode(
 				custAcc.getTradingCurrencyCode(), provider));
+		customerAccount.setTradingLanguage(tradingLanguageService.findByTradingLanguageCode(
+				custAcc.getTradingLanguageCode(), provider));
 		customerAccount.setCustomer(customer);
 		customerAccount.updateAudit(currentUser);
 		customerAccountService.updateNoCheck(customerAccount);

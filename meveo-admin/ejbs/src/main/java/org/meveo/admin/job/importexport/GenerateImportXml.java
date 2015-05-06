@@ -85,6 +85,7 @@ public class GenerateImportXml {
 				ca.setCreditCategory(creditCategory);
 				ca.setExternalRef1("ORCC25" + i);
 				ca.setTradingCurrencyCode("EUR");
+				ca.setTradingLanguageCode("FRA");
 				Name name = new Name();
 				name.setFirstName("firstName" + i);
 				name.setLastName("lastName" + i);
