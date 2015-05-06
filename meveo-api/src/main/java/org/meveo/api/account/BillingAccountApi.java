@@ -138,6 +138,8 @@ public class BillingAccountApi extends AccountApi {
 			if (StringUtils.isBlank(postData.getPaymentMethod())) {
 				missingParameters.add("paymentMethod");
 			}
+			
+			throw new MissingParameterException(getMissingParametersExceptionMessage());
 		}
 	}
 
@@ -225,6 +227,8 @@ public class BillingAccountApi extends AccountApi {
 			if (StringUtils.isBlank(postData.getPaymentMethod())) {
 				missingParameters.add("paymentMethod");
 			}
+			
+			throw new MissingParameterException(getMissingParametersExceptionMessage());
 		}
 	}
 
