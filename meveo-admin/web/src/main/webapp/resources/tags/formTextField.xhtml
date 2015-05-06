@@ -9,21 +9,21 @@
 
     <cc:attribute name="fieldItem" required="true" />
     <cc:attribute name="edit" default="true" />
-    <cc:attribute name="action" method-signature="java.lang.String action(java.lang.String)" />
+    <cc:attribute name="autocompleteMethod" method-signature="java.util.List completeMethod(java.lang.String)"/>
 
 </cc:interface>
 
 <cc:implementation>
 
     <hftl:decorateFormField
-        fieldId="#{cc.parent.attrs.fieldIdPrefix}_text#{cc.attrs.autocompleteMethod!=null?'_ac':cc.parent.attrs.textArea?'_area':cc.parent.attrs.isHtml?'_html':cc.parent.attrs.listValues != null?'_list':cc.parent.attrs.popup?'_pp':''}#{(cc.parent.attrs.popup and cc.attrs.edit and cc.attrs.fieldItem==null)?'_noValue':''}#{cc.attrs.edit?'':'_view'}"
+        fieldId="#{cc.parent.attrs.fieldIdPrefix}_text#{cc.parent.attrs.isAutocomplete?'_ac':cc.parent.attrs.textArea?'_area':cc.parent.attrs.isHtml?'_html':cc.parent.attrs.listValues != null?'_list':cc.parent.attrs.popup?'_pp':''}#{(cc.parent.attrs.popup and cc.attrs.edit and cc.attrs.fieldItem==null)?'_noValue':''}#{cc.attrs.edit?'':'_view'}"
         label="#{cc.parent.attrs.label}" componentWidth="#{cc.parent.attrs.componentWidth}" newLine="#{cc.parent.attrs.newLine}" displayOneLine="#{cc.parent.attrs.displayOneLine}"
         styleClass="#{cc.parent.attrs.styleClass}" style="#{cc.parent.attrs.style}" labelStyle="#{cc.parent.attrs.labelStyle}" labelStyleClass="#{cc.parent.attrs.labelStyleClass}"
         inputStyle="#{cc.parent.attrs.inputStyle}" inputStyleClass="#{cc.parent.attrs.inputStyleClass}" labelWidth="#{cc.parent.attrs.labelWidth}"
         inputWidth="#{cc.parent.attrs.inputWidth}">
 
         <h:panelGroup
-            rendered="#{not cc.parent.attrs.isHtml and not cc.parent.attrs.textArea and cc.parent.attrs.listValues == null and cc.attrs.autocompleteMethod == null and not cc.parent.attrs.popup and cc.attrs.edit}">
+            rendered="#{not cc.parent.attrs.isHtml and not cc.parent.attrs.textArea and cc.parent.attrs.listValues == null and !cc.parent.attrs.isAutocomplete and not cc.parent.attrs.popup and cc.attrs.edit}">
 
             <p:inputText id="#{cc.parent.attrs.fieldIdPrefix}_text" value="#{cc.attrs.fieldItem}" disabled="#{cc.parent.attrs.disabled}" required="#{cc.parent.attrs.required}"
                 size="#{cc.parent.attrs.size}" maxlength="#{cc.parent.attrs.maxlength}">
@@ -56,7 +56,7 @@
                 </c:if>
             </p:inputText>
         </h:panelGroup>
-        <h:panelGroup rendered="#{cc.attrs.autocompleteMethod!=null and  cc.attrs.edit}">
+        <h:panelGroup rendered="#{cc.parent.attrs.isAutocomplete and  cc.attrs.edit}">
             <p:autoComplete id="#{cc.parent.attrs.fieldIdPrefix}_text_ac" value="#{cc.attrs.fieldItem}" disabled="#{cc.parent.attrs.disabled}"
                 required="#{cc.parent.attrs.required}" size="#{cc.parent.attrs.size}" maxlength="#{cc.parent.attrs.maxlength}" dropdown="true"
                 completeMethod="#{cc.attrs.autocompleteMethod}" />
@@ -85,7 +85,7 @@
         </h:panelGroup>
 
         <h:outputText
-            id="#{cc.parent.attrs.fieldIdPrefix}_text#{cc.attrs.autocompleteMethod!=null?'_ac':cc.parent.attrs.textArea?'_area':cc.parent.attrs.isHtml?'_html':cc.parent.attrs.listValues != null?'_list':cc.parent.attrs.popup?'_pp':''}_view"
+            id="#{cc.parent.attrs.fieldIdPrefix}_text#{cc.parent.attrs.isAutocomplete?'_ac':cc.parent.attrs.textArea?'_area':cc.parent.attrs.isHtml?'_html':cc.parent.attrs.listValues != null?'_list':cc.parent.attrs.popup?'_pp':''}_view"
             value="#{cc.attrs.fieldItem}" styleClass="field-value" rendered="#{!cc.attrs.edit}" />
 
         <cc:insertChildren />
