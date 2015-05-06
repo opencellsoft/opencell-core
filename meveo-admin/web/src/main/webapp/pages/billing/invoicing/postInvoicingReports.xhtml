@@ -136,7 +136,7 @@
 			backingBean="#{invoiceBean}" checkMany="false">
 
 			<hftl:column label="#{messages['businessEntity.code']}"
-				field="billingAccount" childField="code" />
+				field="billingAccount.code" />
 			<p:column width="100">
 				<f:facet name="header">
 					<h:outputText value="#{messages['name.title']}" />
@@ -149,7 +149,7 @@
 			</p:column>
 
 			<hftl:column label="#{messages['billingAccount.name']}"
-				field="billingAccount" childField="name" />
+				field="billingAccount.name" />
 			<hftl:column label="#{messages['invoice.amountWithoutTax']}"
 				field="amountWithoutTax" />
 			<hftl:column label="#{messages['invoice.amountTax']}"
@@ -169,7 +169,7 @@
 			checkMany="false">
 
 			<hftl:column label="#{messages['businessEntity.code']}"
-				field="billingAccount" childField="code" />
+				field="billingAccount.code" />
 
 			<p:column width="100">
 				<f:facet name="header">
@@ -183,7 +183,7 @@
 			</p:column>
 
 			<hftl:column label="#{messages['billingAccount.name']}"
-				field="billingAccount" childField="name" />
+				field="billingAccount.name" />
 
 
 			<hftl:column

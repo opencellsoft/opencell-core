@@ -57,10 +57,10 @@
 		<hftl:dataList label="#{messages['wallet.title']}"
 			backingBean="#{walletListBean}" pdf="true">
 			<hftl:column label="#{messages['wallet.userAccount']}"
-				field="userAccount" childField="code" />
+				field="userAccount.code" />
 			<hftl:column label="#{messages['wallet.name']}" field="name" />
 			<hftl:column label="#{messages['wallet.walletType']}"
-				field="walletType" childField="label" isMessage="true" />
+				field="walletType.label" isMessage="true" />
 
 			<hftl:actionsColumn
 				permission="#{identity.hasPermission('billing','billingManagement')}" />

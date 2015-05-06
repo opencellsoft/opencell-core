@@ -391,7 +391,7 @@
 														field="description" />
 													<hftl:column
 														label="#{messages['counterTemplate.counterType']}"
-														field="counterType" childField="label" isMessage="true" />
+														field="counterType.label" isMessage="true" />
 													<hftl:column
 														label="#{messages['counterPeriod.periodStartDate']}"
 														field="periodStartDate" isDate="true" />
@@ -470,7 +470,7 @@
 								<hftl:column label="#{messages['invoice.amountWithTax']}"
 									field="amountWithTax" />
 								<hftl:column label="#{messages['invoice.paymentMethod']}"
-									field="paymentMethod" childField="label" isMessage="true" />
+									field="paymentMethod.label" isMessage="true" />
 								<p:column width="100">
 									<f:facet name="header">
 										<h:outputText value="#{messages['billingAccount.status']}" />

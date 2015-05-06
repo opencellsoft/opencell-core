@@ -53,9 +53,9 @@
 		<hftl:dataList label="#{messages['invoices.title']}"
 			backingBean="#{invoiceListBean}">
 			<hftl:column label="#{messages['invoice.billingAccount']}"
-				field="billingAccount" childField="code" isMessage="true"
-				childFieldId="id"
-				view="/pages/billing/billingAccounts/billingAccountDetail.xhtml"
+				field="billingAccount" valueLabelField="code" isMessage="false"
+				valueIdField="id"
+				entityView="/pages/billing/billingAccounts/billingAccountDetail.xhtml"
 				backView="invoices" />
 			<hftl:column label="#{messages['invoice.invoiceNumber']}"
 				field="invoiceNumber" />
@@ -64,7 +64,7 @@
 			<hftl:column label="#{messages['invoice.dueDate']}" field="dueDate" />
 			<hftl:column label="#{messages['invoice.amount']}" field="amount" />
 			<hftl:column label="#{messages['invoice.paymentMethod']}"
-				field="paymentMethod" childField="label" isMessage="true" />
+				field="paymentMethod.label" isMessage="true" />
 
 			<hftl:actionsColumn
 				permission="#{identity.hasPermission('billing','billingManagement')}" />

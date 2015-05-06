@@ -84,8 +84,8 @@
                                     <hftl:dataList label="#{messages['wallet.ratedTransactions']}" exportButton="false" resultsId="ratedTransactions_panel" checkMany="false"
                                         backingBean="#{ratedTransactionBean}" dataModel="#{invoiceBean.ratedTransactions}">
                                         <hftl:column label="#{messages['subscription.offer']}" field="offerCode" />
-                                        <hftl:column label="#{messages['billingRun.panel']}" field="billingRun" childField="id" />
-                                        <hftl:column label="#{messages['pricePlan.panel']}" field="priceplan" childField="code" />
+                                        <hftl:column label="#{messages['billingRun.panel']}" field="billingRun.id" />
+                                        <hftl:column label="#{messages['pricePlan.panel']}" field="priceplan.code" />
                                         <hftl:column label="#{messages['pricePlanMatrix.amountWithoutTax']}" field="amountWithoutTax" converterParam="4digits" />
                                         <hftl:column label="#{messages['pricePlanMatrix.amountWithTax']}" field="amountWithTax" converterParam="4digits" />
                                         <hftl:column label="#{messages['walletOperation.amountTax']}" field="amountTax" converterParam="4digits" />

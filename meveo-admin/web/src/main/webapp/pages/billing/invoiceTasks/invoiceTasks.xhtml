@@ -65,9 +65,9 @@
 			<hftl:column label="#{messages['invoiceTask.walletFilter']}"
 				field="walletFilter" />
 			<hftl:column label="#{messages['invoiceTask.taskStatus']}"
-				field="taskStatus" childField="label" isMessage="true" />
+				field="taskStatus.label" isMessage="true" />
 			<hftl:column label="#{messages['invoiceTask.billingCycle']}"
-				field="billingCycle" childField="billingFrequency" />
+				field="billingCycle.billingFrequency" />
 
 			<hftl:actionsColumn
 				permission="#{identity.hasPermission('billing','billingManagement')}" />
