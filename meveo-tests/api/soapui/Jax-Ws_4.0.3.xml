@@ -24864,7 +24864,7 @@ for( testCase in testSuite.getTestCaseList() ) {
             <paymentTerms>4 month</paymentTerms>
             <electronicBilling>true</electronicBilling>
             <email>613@manaty.net</email>
-            
+            <paymentMethod>CHECK</paymentMethod>
          </billingAccount>
       </ws:createBillingAccount>
    </soapenv:Body>
