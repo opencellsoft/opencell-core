@@ -16,8 +16,8 @@
 
 		<hftl:entityPopup id="invSubCatCountryPopup"
 			header="#{messages['tradingCountry.popup.header']}"
-			updateField=":tabView:formPanelTax:formTax:countrySelectedId:countrySelectedId"
-			selection="#{invoiceSubcategoryCountry.tradingCountry}"
+			updateField=":tabView:formPanelTax:formTax:countrySelectedId"
+			selection="#{invoiceSubCategoryBean.invoiceSubcategoryCountry.tradingCountry}"
 			backingBean="#{tradingCountryBean}"
 			searchField1Label="#{messages['businessEntity.code']}"
 			searchField1="countryCode"
@@ -28,7 +28,7 @@
 
 		<hftl:entityPopup id="searchInvoiceCategoryPopup"
 			header="#{messages['invoiceCategory.panel']}"
-			updateField=":tabView:formPanel:formId:categorySelectId:categorySelectId"
+			updateField=":tabView:formPanel:formId:categorySelectId"
 			selection="#{invoiceSubCategoryBean.entity.invoiceCategory}"
 			backingBean="#{invoiceCategoryBean}"
 			searchField1Label="#{messages['invoiceCategory.code']}"
@@ -41,18 +41,15 @@
 
 		<hftl:entityPopup id="invSubCatCountTaxPopup"
 			header="#{messages['tax.panel']}" backingBean="#{taxBean}"
-			updateField=":tabView:formPanelTax:formTax:taxSelectedId:taxSelectedId"
-			selection="#{invoiceSubcategoryCountry.tax}"
+			updateField=":tabView:formPanelTax:formTax:taxSelectedId"
+			selection="#{invoiceSubCategoryBean.invoiceSubcategoryCountry.tax}"
 			searchField1Label="#{messages['tax.code']}" searchField1="code"
 			searchField2Label="#{messages['tax.description']}"
 			searchField2="description" column1Label="#{messages['tax.code']}"
 			column1="code" column2Label="#{messages['tax.description']}"
 			column2="description" />
 
-		<p:panelGrid styleClass="col1-set tab-view-container" columns="1">
-			<f:facet name="header">
-				<h:outputText value="#{messages['invoiceSubCategory.panel']}" />
-			</f:facet>
+		<p:panel header="#{messages['invoiceSubCategory.panel']}">
 
 			<p:tabView id="tabView" binding="#{invoiceSubCategoryBean.tabView}">
 				<p:tab title="#{messages['invoiceSubCategory.tab1']}">
@@ -60,20 +57,21 @@
 					<hf:formPanel id="formPanel" label=""
 						backingBean="#{invoiceSubCategoryBean}">
 
-						<hf:formEntityField id="categorySelectId"
+						<hf:formField id="categorySelectId"
 							label="#{messages['invoiceSubCategory.invoiceCategory']}"
-							field="invoiceCategory" childField="code" required="true"
+							field="invoiceCategory" valueLabelField="code" required="true"
 							popup="true" popupId="searchInvoiceCategoryPopup" />
 
 						<hf:formField label="#{messages['invoiceSubCategory.code']}"
 							field="code" required="true" validateUnique="true"
 							useConverter="false" />
 
+                        <hf:formField
+                            label="#{messages['invoiceSubCategory.accountingCode']}"
+                            field="accountingCode" />
+                            
 						<hf:languageFields />
 
-						<hf:formField
-							label="#{messages['invoiceSubCategory.accountingCode']}"
-							field="accountingCode" />
 					</hf:formPanel>
 
 				</p:tab>
@@ -87,40 +85,33 @@
 						<h:outputText value="#{messages['validation.validationFailure']}"
 							rendered="#{validation.failed}" styleClass="errorMessage" />
 					</p:outputPanel>
-
-					<p:panelGrid columns="2">
-
-						<h:outputText value="#{messages['invoiceSubCategory.code']}" />
-						<p:panelGrid columns="2">
+                        
+                    <p:panel styleClass="form-panel">
+						<hf:formDecorateField fieldId="invoiceSubCategoryCode" label="#{messages['invoiceSubCategory.code']}">
 							<h:outputText id="invoiceSubCategoryCode"
 								value="#{invoiceSubCategoryBean.entity.code}" required="true"
 								disabled="true" style="font-weight:bold;" />
 							<h:inputHidden rendered="#{invoiceSubCategoryBean.edit}" />
-						</p:panelGrid>
+						</hf:formDecorateField>
 
-						<h:outputText
-							value="#{messages['invoiceSubCategory.description']}" />
-						<p:panelGrid columns="2">
-							<h:outputText
+						<hf:formDecorateField fieldId="invoiceSubCategoryDescription" label="#{messages['invoiceSubCategory.description']}" >
+							<h:outputText id="invoiceSubCategoryDescription"
 								value="#{invoiceSubCategoryBean.entity.description}"
 								required="true" disabled="true" style="font-weight:bold;" />
 							<h:inputHidden rendered="#{invoiceSubCategoryBean.edit}" />
-						</p:panelGrid>
+						</hf:formDecorateField>
+                    </p:panel>
 
-					</p:panelGrid>
-
-					<br />
-
-					<p:outputPanel id="invoiceSubCategoryCountries_panel">
+					<h:panelGroup id="invoiceSubCategoryCountries_panel">
 						<hftl:dataList backingBean="#{invoiceSubCategoryCountryBean}"
 							dataModel="#{invoiceSubCategoryBean.entity.invoiceSubcategoryCountries}"
 							resultsId="invoiceSubCategoryCountries_results" checkMany="false">
 							<hftl:column
 								label="#{messages['invoiceSubCategoryCountry.countryCode']}"
-								field="tradingCountry" childField="countryCode" />
+								field="tradingCountry.countryCode" />
 							<hftl:column
 								label="#{messages['invoiceSubCategoryCountry.taxe']}"
-								field="tax" childField="code" />
+								field="tax.code" />
 							<p:column styleClass="actions-column"
 								rendered="#{invoiceSubCategoryBean.edit}">
 								<f:facet name="header">
@@ -143,41 +134,39 @@
 									update=":tabView:invoiceSubCategoryCountries_panel,:tabView:formPanelTax:formTax" />
 							</p:column>
 						</hftl:dataList>
-					</p:outputPanel>
+					</h:panelGroup>
 
-					<p:panel>
-						<p:panel id="subCategoryCountrydiv"
-							rendered="#{invoiceSubCategoryBean.edit}">
-							<p:panel id="subCategoryCountrySdiv">
+
+						<p:panel id="subCategoryCountrydiv" rendered="#{invoiceSubCategoryBean.edit}">
 								<hf:formPanel id="formPanelTax" formId="formTax"
 									edit="#{invoiceSubCategoryBean.edit}"
 									label="#{messages['invoiceSubCategoryCountry.panel']}"
 									backingBean="#{invoiceSubCategoryBean}"
-									entity="#{invoiceSubcategoryCountry}" showFormButtons="false"
+									entity="#{invoiceSubCategoryBean.invoiceSubcategoryCountry}" showFormButtons="false"
 									ajaxSubmit="true">
 
-									<hf:formEntityField id="countrySelectedId"
+									<hf:formField id="countrySelectedId"
 										label="#{messages['address.country']}" field="tradingCountry"
-										childField="countryCode" popup="true"
+										valueLabelField="countryCode" popup="true"
 										popupId="invSubCatCountryPopup" required="true" />
 
-									<hf:formEntityField id="taxSelectedId"
+									<hf:formField id="taxSelectedId"
 										label="#{messages['invoiceSubCategoryCountry.taxe']}"
-										field="tax" childField="code" popup="true"
+										field="tax" valueLabelField="code" popup="true"
 										popupId="invSubCatCountTaxPopup" required="true" />
 										
 									<hf:formField label="#{messages['pricePlanMatrix.criteriaEL']}"
 			        				field="filterEL" textArea="true" maxlength="2000" required="false"/>	
 
-									<p:panelGrid columns="4">
+									<f:facet name="buttons">
 										<p:commandButton
-											rendered="#{invoiceSubcategoryCountry.id==null}"
+											rendered="#{invoiceSubCategoryBean.invoiceSubcategoryCountry.id==null}"
 											action="#{invoiceSubCategoryBean.saveInvoiceSubCategoryCountry}"
 											value="#{messages['invoiceSubCategoryCountry.saveNewtax']}"
 											update=":tabView:invoiceSubCategoryCountries_panel,:tabView:formPanelTax:formTax,:tabView:subCategoryCountrydiv" />
 
 										<p:commandButton
-											rendered="#{invoiceSubcategoryCountry.id!=null}"
+											rendered="#{invoiceSubCategoryBean.invoiceSubcategoryCountry.id!=null}"
 											action="#{invoiceSubCategoryBean.saveInvoiceSubCategoryCountry}"
 											value="#{messages['invoiceSubCategoryCountry.modifyTax']}"
 											ajax="false" />
@@ -195,19 +184,13 @@
 											value="#{messages['action.back']}"
 											action="#{invoiceSubCategoryBean.setIndex()}"
 											update=":tabView" immediate="true"></p:commandButton>
-
-									</p:panelGrid>
-
+									</f:facet>
 								</hf:formPanel>
 							</p:panel>
-
-						</p:panel>
-
-					</p:panel>
 				</p:tab>
 
 			</p:tabView>
-		</p:panelGrid>
+		</p:panel>
 	</ui:define>
 
 </ui:composition>

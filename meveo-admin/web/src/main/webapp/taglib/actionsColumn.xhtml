@@ -8,6 +8,26 @@
 	xmlns:p="http://primefaces.org/ui"
 	xmlns:c="http://java.sun.com/jsp/jstl/core">
 
+<!-- 
+
+    Makes part of "happy faces" component group.
+    A custom tag to create a p:column component containing buttons to manage an entity item  
+        
+    Can be used inside any p:datatable type component including hftl:datalist 
+    
+    Attributes
+        backingbean - backing bean for data action/navigation. If not provided, defaults to #{backingBean} used in hftl:datalist
+        entity - a p:datatable model iteration variable. If not provided, defaults to #{entity} - a default iteration variable of hftl:datalist
+        renderViewLink - should reder a "view" button       
+        renderEditLink - should render "edit" button
+        renderDeleteLink - should render "delete" button
+        renderEnableLink - should render "enable" button
+        editView - specifies view/edit link outcome.
+        propagateConversation - propagate conversation id in a link to an entity view 
+        renderLinkInEdit - should a link to an entity view open edit mode
+        useCustomIdParam and objectIdParamName - should a custom parameter id instead of a default "objectId" be used for navigation 
+        
+-->    
 <ui:composition>
 
 	<c:if test="${empty propagateConversation}">
@@ -37,7 +57,7 @@
 		<c:set var="objectIdParamName" value="#{backingBean.idParameterName}" />
 	</c:if>
 
-	<p:column style="width: #{renderEnableLink?130:100}px;" exportable="false">
+	<p:column style="width: #{renderEnableLink?130:100}px;" exportable="false" toggleable="false">
 		<f:facet name="header">
 			<h:outputText value="#{messages['commons.actions']}" />
 		</f:facet>
@@ -67,36 +87,62 @@
 					value="#{javax.enterprise.context.conversation.id}" />
 			</c:if>
 		</p:button>
-		<p:commandButton id="#{resultsId}enablelink" icon="#{entity.active?'ui-icon-circle-close':'ui-icon-circle-check'}"
-			rendered="#{renderEnableLink}"
+		<p:commandButton id="#{resultsId}enablelink" icon="ui-icon-circle-check"
+			rendered="#{renderEnableLink and entity.disabled}"
 			oncomplete="confirmEnableWidget.show()">
 			<f:setPropertyActionListener target="#{backingBean.entity}"
 				value="#{entity}"/>
 		</p:commandButton>
+		<p:commandButton id="#{resultsId}disablelink" icon="ui-icon-circle-close"
+			rendered="#{renderEnableLink and not entity.disabled}"
+			oncomplete="confirmDisableWidget.show()">
+			<f:setPropertyActionListener target="#{backingBean.entity}"
+				value="#{entity}"/>
+		</p:commandButton>
+		
 
 		<p:tooltip for="#{resultsId}enablelink" rendered="#{renderEnableLink}"
-			value="#{entity.active?messages['commons.disable']:messages['commons.enable']}" showEffect="slide"
+			value="#{messages['commons.enable']}" showEffect="slide"
 			hideEffect="slide"  />
 		<p:confirmDialog id="confirmEnableDialog" styleClass="confirm-dialog"
-			message="#{entity.disabled?messages['commons.confirmEnable']:messages['commons.confirmDisable']}" header=""
+			message="#{messages['commons.confirmEnable']}"
+			header="#{messages['commons.enable']}"
 			rendered="#{renderEnableLink}"
 			severity="alert" widgetVar="confirmEnableWidget">
 			<p:panel styleClass="confirm-dialog-content">
 				<p:commandButton id="enableOk" value="#{messages['commons.yes']}"
-					oncomplete="confirmEnableWidget.hide()" rendered="#{entity.disabled}"
+					oncomplete="confirmEnableWidget.hide()"
 					action="#{backingBean.enable()}" update="@all" />
-				<p:commandButton id="disenableOk" value="#{messages['commons.yes']}"
-					oncomplete="confirmEnableWidget.hide()" rendered="#{entity.active}"
-					action="#{backingBean.disable()}" update="@all" />
 				<p:commandButton id="enableKo" value="#{messages['commons.no']}"
 					onclick="confirmEnableWidget.hide()" type="button" />
 			</p:panel>
 		</p:confirmDialog>
+		<p:tooltip for="#{resultsId}disablelink" rendered="#{renderEnableLink}"
+			value="#{messages['commons.disable']}" showEffect="slide"
+			hideEffect="slide"  />
+		<p:confirmDialog id="confirmDisableDialog" styleClass="confirm-dialog"
+			message="#{messages['commons.confirmDisable']}"
+			header="#{messages['commons.disable']}"
+			rendered="#{renderEnableLink}"
+			severity="alert" widgetVar="confirmDisableWidget">
+			<p:panel styleClass="confirm-dialog-content">
+				<p:commandButton id="disableOk" value="#{messages['commons.yes']}"
+					oncomplete="confirmEnableWidget.hide()"
+					action="#{backingBean.disable()}" update="@all" />
+				<p:commandButton id="disableKo" value="#{messages['commons.no']}"
+					onclick="confirmDisableWidget.hide()" type="button" />
+			</p:panel>
+		</p:confirmDialog>
+		
 		<p:commandButton id="#{resultsId}deletelink" icon="ui-icon-trash"
-			rendered="#{renderDeleteLink}"
-			oncomplete="confirmDeleteWidget.show()">
+			rendered="#{renderDeleteLink and backingBean.canDelete(entity)}"
+			oncomplete="PF('confirmDeleteWidget').show()">
 			<f:setPropertyActionListener target="#{backingBean.entity}"
 				value="#{entity}"></f:setPropertyActionListener>
+		</p:commandButton>
+		<p:commandButton id="#{resultsId}candeletelink" icon="ui-icon-trash"
+			rendered="#{renderDeleteLink and not backingBean.canDelete(entity)}"
+			oncomplete="PF('confirmCanotDeleteWidget').show()">
 		</p:commandButton>
 
 		<p:confirmDialog id="confirmDialog" styleClass="confirm-dialog"
@@ -104,12 +150,21 @@
 			severity="alert" widgetVar="confirmDeleteWidget">
 			<p:panel styleClass="confirm-dialog-content">
 				<p:commandButton id="deleteOk" value="#{messages['commons.yes']}"
-					oncomplete="confirmDeleteWidget.hide()"
+					oncomplete="PF('confirmDeleteWidget').hide()"
 					action="#{backingBean.delete()}" update="@all" />
 				<p:commandButton id="deleteKo" value="#{messages['commons.no']}"
-					onclick="confirmDeleteWidget.hide()" type="button" />
+					onclick="PF('confirmDeleteWidget').hide()" type="button" />
 			</p:panel>
 		</p:confirmDialog>
+		<p:confirmDialog id="confirmCanDeleteDialog" styleClass="confirm-dialog"
+			message="#{messages['commons.confirmCanotDelete']}" header=""
+			severity="alert" widgetVar="confirmCanotDeleteWidget">
+			<p:panel styleClass="confirm-dialog-content">
+				<p:commandButton id="canotdeleteOk" value="#{messages['commons.ok']}"
+					oncomplete="PF('confirmCanotDeleteWidget').hide()" update="@this" />
+			</p:panel>
+		</p:confirmDialog>
+		
 
 	</p:column>
 </ui:composition>

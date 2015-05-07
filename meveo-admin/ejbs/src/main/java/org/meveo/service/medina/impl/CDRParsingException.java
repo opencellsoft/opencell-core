@@ -12,7 +12,7 @@ public class CDRParsingException extends Exception {
 	private CDRRejectionCauseEnum rejectionCause;
 
 	public CDRParsingException(Serializable cdr,CDRRejectionCauseEnum cause) {
-		super();
+        super();
 		setCdr(cdr);
 		setRejectionCause(cause);
 	}
@@ -39,5 +39,8 @@ public class CDRParsingException extends Exception {
 		this.cdr = cdr;
 	}
 
-	
+    @Override
+    public String getMessage() {
+        return "Failed to parse CDR. Reason: " + rejectionCause + " " + super.getMessage();
+	}	
 }

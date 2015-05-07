@@ -79,4 +79,11 @@ public class ProviderContactBean extends BaseBean<ProviderContact> {
 	protected String getDefaultSort() {
 		return "code";
 	}
+
+
+	@Override
+	protected boolean canDelete(ProviderContact entity) {
+		// TODO Auto-generated method stub
+		return true;
+	}
 }

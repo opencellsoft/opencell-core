@@ -50,4 +50,10 @@ public class ServiceChargeTemplateUsageBean extends BaseBean<ServiceChargeTempla
     protected IPersistenceService<ServiceChargeTemplateUsage> getPersistenceService() {
         return serviceChargeTemplateUsageService;
     }
+
+	@Override
+	protected boolean canDelete(ServiceChargeTemplateUsage entity) {
+		// TODO Auto-generated method stub
+		return true;
+	}
 }

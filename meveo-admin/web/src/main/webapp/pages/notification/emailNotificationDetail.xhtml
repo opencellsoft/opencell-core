@@ -17,7 +17,7 @@
 
 		<hftl:entityPopup id="searchCounterTemplatePopup"
 			header="#{messages['counterTemplate.title']}"
-			updateField=":emailNotificationForm:formId:counterTemplateSelectedId:counterTemplateSelectedId"
+			updateField=":emailNotificationForm:formId:counterTemplateSelectedId"
 			selection="#{emailNotificationBean.entity.counterTemplate}"
 			backingBean="#{counterTemplateBean}"
 			searchField1Label="#{messages['businessEntity.code']}"
@@ -33,55 +33,56 @@
 			backingBean="#{emailNotificationBean}" columns="2" showEnableDisableButton="true">
 			<hf:formField label="#{messages['entity.code']}" field="code"
 				required="true" maxLength="60" />
-			<p:separator></p:separator>
+
 			<hf:formField
 				label="#{messages['entity.notification.classNameFilter']}"
-				field="classNameFilter" required="true" size="60" maxlength="255" autocompleteMethod="#{notificationBean.autocompleteClassNames}"/>
+				field="classNameFilter" required="true" size="60" maxlength="255" 
+                autocompleteMethod="#{notificationBean.autocompleteClassNames}" isAutocomplete="true"/>
 			<hf:formField
 				label="#{messages['entity.notification.eventTypeFilter']}"
 				field="eventTypeFilter" required="true" />
 			<hf:formField label="#{messages['entity.notification.elFilter']}"
-				field="elFilter" textArea="true" maxlength="1000" />
-			<hf:formField label="#{messages['enableEntity.disabled']}"
-				field="disabled" isMessage="true" showOnlyOnConsult="true"/>
+				field="elFilter" textArea="true" maxlength="1000" componentWidth="50"/>
 			<hf:formField label="#{messages['entity.notification.elAction']}"
-				field="elAction" textArea="true" maxlength="2000" />
+				field="elAction" textArea="true" maxlength="2000" componentWidth="50"/>
 			<hf:formField
 				label="#{messages['entity.emailNotification.emailFrom']}"
-				field="emailFrom" textArea="true" maxlength="1000" required="true" />
+				field="emailFrom" textArea="true" maxlength="1000" required="true" componentWidth="50"/>
 			<hf:formField
 				label="#{messages['entity.emailNotification.emailToEl']}"
-				field="emailToEl" textArea="true" maxlength="1000" />
+				field="emailToEl" textArea="true" maxlength="1000" componentWidth="50"/>
 			<hf:formField label="#{messages['entity.emailNotification.emails']}"
-				field="emails" />
+				field="emails" showButtonAddNew="true" componentWidth="50"/>
 			<hf:formField label="#{messages['entity.emailNotification.subject']}"
 				field="subject" required="true" size="100" maxlength="500" />
 			<hf:formField label="#{messages['entity.emailNotification.body']}"
-				field="body" textArea="true" maxlength="2000" />
+				field="body" textArea="true" maxlength="2000" componentWidth="50"/>
 			<hf:formField
 				label="#{messages['entity.emailNotification.htmlBody']}"
-				field="htmlBody" textArea="true" maxlength="2000" size="100" />
+				field="htmlBody" textArea="true" maxlength="2000" size="100" componentWidth="50"/>
 			<hf:formField
 				label="#{messages['entity.emailNotification.attachmentExpressions']}"
-				field="attachmentExpressions" />
+				field="attachmentExpressions" showButtonAddNew="true" componentWidth="50"/>
 
-			<hf:formEntityField id="counterTemplateSelectedId"
+			<hf:formField id="counterTemplateSelectedId"
 				label="#{messages['counterTemplate.title']}" field="counterTemplate"
-				childField="code" popup="true" popupId="searchCounterTemplatePopup"
+				valueLabelField="code" popup="true" popupId="searchCounterTemplatePopup"
 				clearButton="true" required="false" />
+             
+            <hf:formField label="#{messages['enableEntity.disabled']}"
+                field="disabled" isMessage="true" showOnlyOnConsult="true"/>
 		</hf:formPanel>
 
 		<p:panel rendered="#{!emailNotificationBean.edit}">
 			<hftl:dataList backingBean="#{notificationHistoryBean}"
 				checkMany="false"
 				dataModel="#{notificationHistoryBean.getLazyDataModel(emailNotificationBean.entity.id)}">
-				<hftl:column label="#{messages['commons.date']}" field="auditable"
-					childField="updated" isDate="true" time="true" />
+				<hftl:column label="#{messages['commons.date']}" field="auditable.updated" isDate="true" time="true" />
 				<hftl:column
 					label="#{messages['entity.notification.notificationType']}"
 					field="entityClassName" />
 				<hftl:column label="#{messages['entity.notification']}"
-					field="notification" childField="code" />
+					field="notification.code" />
 				<hftl:column label="#{messages['entity.notification.retryNr']}"
 					field="nbRetry" />
 				<hftl:column label="#{messages['entity.notification.result']}"
@@ -94,8 +95,7 @@
 						<f:param name="objectId" value="#{entity.inboundRequest.id}" />
 					</h:link>
 				</p:column>
-				<hftl:column label="#{messages['commons.status']}" field="status"
-					childField="label" isMessage="true" />
+				<hftl:column label="#{messages['commons.status']}" field="status.label" isMessage="true" />
 			</hftl:dataList>
 		</p:panel>
 

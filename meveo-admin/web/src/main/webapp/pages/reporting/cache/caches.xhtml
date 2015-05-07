@@ -12,14 +12,9 @@
 
 
     <ui:define name="body">
-        <p:panelGrid columns="1" styleClass="search-panel">
-            <f:facet name="header">
-                <h:outputText value="#{messages['cache.caches']}" />
-            </f:facet>
+        <p:panel styleClass="search-panel" header="#{messages['cache.caches']}" >
             <p:messages />
-        </p:panelGrid>
 
-        <p:panel width="100">
             <h:form>
                 <p:dataTable id="datatable_caches" var="cacheInfo" value="#{cacheBean.summaryOfCaches}" paginator="true" rows="10"
                     paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
@@ -39,14 +34,14 @@
                         </p:button>
 
                         <p:tooltip for="refreshlink" value="#{messages['commons.refresh']}" showEffect="slide" hideEffect="slide" />
-                        <p:commandButton id="refreshlink" icon="ui-icon-refresh" oncomplete="confirmRefreshWidget#{rowIndex}.show()" />
+                        <p:commandButton id="refreshlink" icon="ui-icon-refresh" oncomplete="PF('confirmRefreshWidget#{rowIndex}').show()" />
 
                         <p:confirmDialog styleClass="confirm-dialog" message="#{messages['commons.confirmRefresh']}" header="" severity="alert"
                             widgetVar="confirmRefreshWidget#{rowIndex}">
                             <p:panel styleClass="confirm-dialog-content">
-                                <p:commandButton id="refreshOk" value="#{messages['commons.yes']}" oncomplete="confirmRefreshWidget#{rowIndex}.hide()"
+                                <p:commandButton id="refreshOk" value="#{messages['commons.yes']}" oncomplete="PF('confirmRefreshWidget#{rowIndex}').hide()"
                                     action="#{cacheBean.refresh(cacheInfo['name'])}" update="@all" />
-                                <p:commandButton id="refreshKo" value="#{messages['commons.no']}" onclick="confirmRefreshWidget#{rowIndex}.hide()"
+                                <p:commandButton id="refreshKo" value="#{messages['commons.no']}" onclick="PF('confirmRefreshWidget#{rowIndex}').hide()"
                                     type="button" />
                             </p:panel>
                         </p:confirmDialog>

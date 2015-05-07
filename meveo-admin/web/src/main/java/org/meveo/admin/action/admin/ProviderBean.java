@@ -70,4 +70,10 @@ public class ProviderBean extends BaseBean<Provider> {
 
 	}
 
+	@Override
+	protected boolean canDelete(Provider entity) {
+		// TODO Auto-generated method stub
+		return true;
+	}
+
 }

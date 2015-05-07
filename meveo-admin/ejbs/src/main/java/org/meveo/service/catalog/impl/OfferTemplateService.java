@@ -48,5 +48,18 @@ public class OfferTemplateService extends BusinessService<OfferTemplate> {
 			return null;
 		}
 	}
+	
+	@SuppressWarnings("unchecked")
+	public List<OfferTemplate> findByServiceTemplate(ServiceTemplate serviceTemplate) {
+		Query query = getEntityManager()
+				.createQuery("FROM OfferTemplate t WHERE :serviceTemplate MEMBER OF t.serviceTemplates");
+		query.setParameter("serviceTemplate", serviceTemplate);
+
+		try {
+			return (List<OfferTemplate>) query.getResultList();
+		} catch (NoResultException e) {
+			return null;
+		}
+	}
 
 }

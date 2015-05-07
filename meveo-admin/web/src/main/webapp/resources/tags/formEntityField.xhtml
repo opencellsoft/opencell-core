@@ -1,167 +1,168 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
-<html xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:ui="http://java.sun.com/jsf/facelets"
-	xmlns:h="http://java.sun.com/jsf/html"
-	xmlns:f="http://java.sun.com/jsf/core"
-	xmlns:p="http://primefaces.org/ui"
-	xmlns:s="http://jboss.org/seam/faces"
-	xmlns:c="http://java.sun.com/jsp/jstl/core"
-	xmlns:cc="http://java.sun.com/jsf/composite"
-	xmlns:hf="http://java.sun.com/jsf/composite/tags">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:p="http://primefaces.org/ui" xmlns:s="http://jboss.org/seam/faces" xmlns:c="http://java.sun.com/jsp/jstl/core" xmlns:cc="http://java.sun.com/jsf/composite"
+    xmlns:hf="http://java.sun.com/jsf/composite/tags" xmlns:hftl="http://hftl.org">
 
-<cc:interface componentType="formEntityField">
-	<cc:attribute name="label" required="true" />
-	<cc:attribute name="field" required="true" />
-	<cc:attribute name="backingBean" required="true"
-		type="org.meveo.admin.action.BaseBean" />
-	<cc:attribute name="entity" required="false" type="java.lang.Object" />
-	<cc:attribute name="childField" required="true" />
-	<cc:attribute name="required" default="false" />
-	<cc:attribute name="size" default="20" />
-	<cc:attribute name="popup" default="false" />
-	<cc:attribute name="popupId" default="popup" />
-	<cc:attribute name="disabled" default="false" />
-	<cc:attribute name="listBean" required="false" />
-	<cc:attribute name="maxlength" default="40" />
-	<cc:attribute name="textArea" default="false" />
-	<cc:attribute name="time" default="false" />
-	<cc:attribute name="cols" default="20" />
-	<cc:attribute name="rows" default="5" />
-	<cc:attribute name="useConverter" default="false" />
-	<cc:attribute name="validateUnique" default="false" />
-	<cc:attribute name="validateRib" default="false" />
-	<cc:attribute name="validateEmail" default="false" />
-	<cc:attribute name="showOnlyOnNew" default="false" />
-	<cc:attribute name="showPopupOnlyOnNew" default="false" />
-	<cc:attribute name="showOnlyOnConsult" default="false" />
-	<cc:attribute name="listElements" required="false" />
-	<cc:attribute name="edit"
-		default="#{cc.backingBeanFromParentOrCurrent.edit}" />
-	<cc:attribute name="embedded" required="false" />
-	<cc:attribute name="labelField" required="false" />
-	<cc:attribute name="valueField" required="false" />
+<cc:interface>
+    <cc:attribute name="fieldItem" required="true" />
+    <cc:attribute name="edit" default="true" />
+    <cc:attribute name="newEntity" default="false" />
 
-	<cc:attribute name="show"
-		default="#{((not cc.attrs.showOnlyOnNew) or (cc.attrs.showOnlyOnNew and cc.attrs.edit and cc.entityFromBackingBeanOrAttribute.id==null)) and ((not cc.attrs.showOnlyOnConsult) or (cc.attrs.showOnlyOnConsult and cc.attrs.edit== false))}" />
 </cc:interface>
 
 <cc:implementation>
 
-	<ui:fragment rendered="#{cc.attrs.show}">
-		<p:panelGrid id="#{cc.attrs.id}" columns="2"
-			rendered="#{cc.attrs.popup}">
-			<p:outputLabel for="#{cc.attrs.id}_text" value="#{cc.attrs.label}"
-				rendered="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field]!=null}" />
-			<p:outputLabel for="#{cc.attrs.id}_notext" value="#{cc.attrs.label}"
-				rendered="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field]==null}" />
+    <hftl:decorateFormField fieldId="#{cc.parent.attrs.fieldIdPrefix}_entity#{(cc.parent.attrs.popup and cc.attrs.edit and cc.attrs.fieldItem==null)?'_noValue':''}#{cc.attrs.edit?'':'_view'}" label="#{cc.parent.attrs.label}"
+        componentWidth="#{cc.parent.attrs.componentWidth}" newLine="#{cc.parent.attrs.newLine}" displayOneLine="#{cc.parent.attrs.displayOneLine}"
+        styleClass="#{cc.parent.attrs.styleClass}" style="#{cc.parent.attrs.style}" labelStyle="#{cc.parent.attrs.labelStyle}" labelStyleClass="#{cc.parent.attrs.labelStyleClass}"
+        inputStyle="#{cc.parent.attrs.inputStyle}" inputStyleClass="#{cc.parent.attrs.inputStyleClass}" labelWidth="#{cc.parent.attrs.labelWidth}"
+        inputWidth="#{cc.parent.attrs.inputWidth}">
 
-			<p:panelGrid styleClass="inner-table" columns="3">
-				<p:inputText id="#{cc.attrs.id}_text"
-					rendered="#{cc.attrs.edit and cc.entityFromBackingBeanOrAttribute[cc.attrs.field]!=null}"
-					value="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field][cc.attrs.childField]}"
-					required="#{cc.attrs.required}" size="#{cc.attrs.size}"
-					disabled="true" />
-				<h:inputHidden id="#{cc.attrs.id}_notext"
-					rendered="#{cc.attrs.edit and cc.entityFromBackingBeanOrAttribute[cc.attrs.field]==null}"
-					required="#{cc.attrs.required}" />
-				<p:inputText
-					rendered="#{cc.attrs.edit and cc.entityFromBackingBeanOrAttribute[cc.attrs.field]==null}"
-					value="" size="#{cc.attrs.size}" required="#{cc.attrs.required}"
-					disabled="true" />
 
-				<p:commandButton immediate="true"
-					rendered="#{(cc.attrs.edit and !cc.attrs.showPopupOnlyOnNew) or (cc.attrs.edit and cc.attrs.showPopupOnlyOnNew and cc.entityFromBackingBeanOrAttribute.id==null)}"
-					id="selectLink" onclick="dlg_#{cc.attrs.popupId}.show()"
-					icon="ui-icon-search" />
-				<p:tooltip for="selectLink" value="#{messages['commons.search']}" />
-				<h:outputText rendered="#{!cc.attrs.edit}"
-					value="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field][cc.attrs.childField]}"
-					style="font-weight:bold;" />
-			</p:panelGrid>
-		</p:panelGrid>
+        <!-- Show a popup to select entity from a list -->
+        <c:if test="#{cc.parent.attrs.popup}">
 
-		<ui:fragment
-			rendered="#{not cc.attrs.popup and not cc.attrs.embedded}">
+            <p:inputText id="#{cc.parent.attrs.fieldIdPrefix}_entity" rendered="#{cc.attrs.edit and cc.attrs.fieldItem!=null}"
+                value="#{cc.attrs.fieldItem[cc.parent.attrs.valueLabelField]}" required="#{cc.parent.attrs.required}" size="#{cc.parent.attrs.size}" disabled="true" />
+            <h:inputHidden id="#{cc.parent.attrs.fieldIdPrefix}_entity_noValue" rendered="#{cc.attrs.edit and cc.attrs.fieldItem==null}" required="#{cc.parent.attrs.required}" />
+            <p:inputText rendered="#{cc.attrs.edit and cc.attrs.fieldItem==null}" value="" size="#{cc.parent.attrs.size}" required="#{cc.parent.attrs.required}" disabled="true" />
 
-			<!-- if service is set, then load list of all entities from db and show as drop down list -->
-			<ui:fragment
-				rendered="#{cc.attrs.listBean!=null or cc.attrs.listElements!=null}">
-				<p:panelGrid columns="2">
-					<p:outputLabel for="#{cc.attrs.id}_level" value="#{cc.attrs.label}" />
-					<p:selectOneMenu rendered="#{cc.attrs.edit}"
-						id="#{cc.attrs.id}_level"
-						value="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}"
-						required="#{cc.attrs.required}">
+            <p:commandButton immediate="true"
+                rendered="#{(cc.attrs.edit and !cc.parent.attrs.showPopupOnlyOnNew) or (cc.attrs.edit and cc.parent.attrs.showPopupOnlyOnNew and cc.attrs.newEntity)}"
+                id="selectLink" onclick="PF('dlg_#{cc.parent.attrs.popupId}').show()" icon="ui-icon-search" />
+            <p:tooltip for="selectLink" value="#{messages['commons.search']}" />
 
-						<c:if test="#{cc.attrs.listElements==null}">
-							<c:set var="elements" value="#{cc.attrs.listBean.listAll()}" />
-						</c:if>
-						<c:if test="#{cc.attrs.listElements!=null}">
-							<c:set var="elements" value="#{cc.attrs.listElements}" />
-						</c:if>
-						<f:selectItem itemLabel="" itemValue="" />
-						<f:selectItems value="#{elements}" var="elem"
-							itemLabel="#{elem[cc.attrs.childField]}" itemValue="#{elem}" />
-						<s:objectConverter />
-					</p:selectOneMenu>
-					<h:outputText rendered="#{not cc.attrs.edit}"
-						value="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field][cc.attrs.childField]}"
-						style="font-weight:bold;" />
-				</p:panelGrid>
-			</ui:fragment>
 
-			<!-- if service is not set, then just render fields for embedded entity -->
-			<ui:fragment
-				rendered="#{cc.attrs.listBean==null and cc.attrs.listElements==null}">
-				<hf:formField backingBean="#{cc.backingBeanFromParentOrCurrent}"
-					disabled="#{cc.attrs.disabled}" label="#{cc.attrs.label}"
-					entity="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}"
-					field="#{cc.attrs.childField}" textArea="#{cc.attrs.textArea}"
-					cols="#{cc.attrs.cols}" rows="#{cc.attrs.rows}"
-					maxlength="#{cc.attrs.maxlength}" time="#{cc.attrs.time}"
-					required="#{cc.attrs.required}" edit="#{cc.attrs.edit}"
-					useConverter="#{cc.attrs.useConverter}"
-					validateUnique="#{cc.attrs.validateUnique}"
-					validateRib="#{cc.attrs.validateRib}"
-					validateEmail="#{cc.attrs.validateEmail}" />
-			</ui:fragment>
-		</ui:fragment>
+            <h:outputText id="#{cc.parent.attrs.fieldIdPrefix}_entity_view" rendered="#{not cc.attrs.edit}" value="#{cc.attrs.fieldItem[cc.parent.attrs.valueLabelField]}"
+                styleClass="field-value" />
 
-		<ui:fragment rendered="#{cc.attrs.embedded}">
-			<!-- if service is set, then load list of all entities from db and show as drop down list -->
-			<ui:fragment
-				rendered="#{cc.attrs.listBean!=null or cc.attrs.listElements!=null}">
-				<p:panelGrid columns="2">
-					<p:outputLabel for="#{cc.attrs.id}_embedded_level"
-						value="#{cc.attrs.label}" />
+        </c:if>
 
-					<c:if test="#{cc.attrs.listElements==null}">
-						<c:set var="elements" value="#{cc.attrs.listBean.listAll()}" />
-					</c:if>
-					<p:selectOneMenu rendered="#{cc.attrs.edit}"
-						id="#{cc.attrs.id}_embedded_level"
-						value="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field][cc.attrs.childField]}"
-						required="#{cc.attrs.required}">
+        <!-- Select entity from a picklist and store a entity itself-->
+        <c:if test="#{!cc.parent.attrs.fkToEntity and !cc.parent.attrs.popup}">
 
-						<c:if test="#{cc.attrs.listElements!=null}">
-							<c:set var="elements" value="#{cc.attrs.listElements}" />
-						</c:if>
-						<f:selectItem itemLabel="" itemValue="                   " />
-						<f:selectItems value="#{elements}" var="elem"
-							itemLabel="#{elem[cc.attrs.labelField]}"
-							itemValue="#{elem[cc.attrs.valueField]}" />
-						<s:objectConverter />
-					</p:selectOneMenu>
-					<h:outputText rendered="#{not cc.attrs.edit}"
-						value="#{cc.attrs.listBean.persistenceService.findByCode(cc.entityFromBackingBeanOrAttribute[cc.attrs.field][cc.attrs.childField])[cc.attrs.labelField]}"
-						style="font-weight:bold;" />
-				</p:panelGrid>
-			</ui:fragment>
-		</ui:fragment>
+            <c:if test="#{cc.parent.attrs.listElements==null}">
+                <c:set var="elements" value="#{cc.parent.attrs.listBean.listAll()}" />
+            </c:if>
+            <c:if test="#{cc.parent.attrs.listElements!=null}">
+                <c:set var="elements" value="#{cc.parent.attrs.listElements}" />
+            </c:if>
 
-	</ui:fragment>
+            <p:selectOneMenu rendered="#{cc.attrs.edit}" id="#{cc.parent.attrs.fieldIdPrefix}_entity" value="#{cc.attrs.fieldItem}" required="#{cc.parent.attrs.required}">
+                <f:selectItem itemLabel="" itemValue="" />
+                <f:selectItems value="#{elements}" var="elem" itemLabel="#{elem[cc.parent.attrs.valueLabelField]}" itemValue="#{elem}" />
+                <s:objectConverter />
+                <c:if test="#{not empty cc.parent.attrs.listenerUpdate}">
+                    <p:ajax event="valueChange" update="#{cc.parent.attrs.listenerUpdate}" />
+                </c:if>
+            </p:selectOneMenu>
+
+            <h:outputText id="#{cc.parent.attrs.fieldIdPrefix}_entity_view" rendered="#{not cc.attrs.edit}" value="#{cc.attrs.fieldItem[cc.parent.attrs.valueLabelField]}"
+                styleClass="field-value" />
+        </c:if>
+
+        <!-- Select entity from a picklist but store only a code value-->
+        <c:if test="#{cc.parent.attrs.fkToEntity and !cc.parent.attrs.popup}">
+            <!-- if service is set, then load list of all entities from db and show as drop down list -->
+
+            <c:if test="#{cc.parent.attrs.listElements==null}">
+                <c:set var="elements" value="#{cc.parent.attrs.listBean.listAll()}" />
+            </c:if>
+            <c:if test="#{cc.parent.attrs.listElements!=null}">
+                <c:set var="elements" value="#{cc.parent.attrs.listElements}" />
+            </c:if>
+
+            <p:selectOneMenu rendered="#{cc.attrs.edit}" id="#{cc.parent.attrs.fieldIdPrefix}_entity" value="#{cc.attrs.fieldItem}" required="#{cc.parent.attrs.required}">
+                <f:selectItem itemLabel="" itemValue="                   " />
+                <f:selectItems value="#{elements}" var="elem" itemLabel="#{elem[cc.parent.attrs.valueLabelField]}" itemValue="#{elem[cc.parent.attrs.valueField]}" />
+                <s:objectConverter />
+            </p:selectOneMenu>
+
+            <h:outputText id="#{cc.parent.attrs.fieldIdPrefix}_entity_view" rendered="#{not cc.attrs.edit}"
+                value="#{cc.parent.attrs.listBean.persistenceService.findByCode(cc.attrs.fieldItem)[cc.parent.attrs.valueLabelField]}" styleClass="field-value" />
+
+        </c:if>
+
+        <cc:insertChildren />
+    </hftl:decorateFormField>
+
+    <!--  <h:panelGroup layout="block" styleClass="formFieldGroup #{cc.parent.attrs.styleClass}" style="width:#{cc.parent.attrs.componentWidth}%; #{cc.parent.attrs.style}"> -->
+    <!--         <p:outputLabel for="#{cc.parent.attrs.fieldIdPrefix}_entity#{cc.attrs.edit?'':'_view'}" value="#{cc.parent.attrs.label}" /> -->
+    <!--         <h:panelGroup layout="block" styleClass="#{cc.parent.attrs.fieldStyle}  #{cc.parent.attrs.inputStyleClass}" -->
+    <!--             style="width:#{cc.parent.attrs.inputWidth}%; #{cc.parent.attrs.inputStyle}"> -->
+
+    <!--             Show a popup to select entity from a list -->
+    <!--             <c:if test="#{cc.parent.attrs.popup}"> -->
+
+    <!--                 <p:inputText id="#{cc.parent.attrs.fieldIdPrefix}_entity" rendered="#{cc.attrs.edit and cc.attrs.fieldItem!=null}" -->
+    <!--                     value="#{cc.attrs.fieldItem[cc.parent.attrs.valueLabelField]}" required="#{cc.parent.attrs.required}" size="#{cc.parent.attrs.size}" disabled="true" /> -->
+
+
+    <!--                 <h:inputHidden id="#{cc.parent.attrs.fieldIdPrefix}_entity_noValue" rendered="#{cc.attrs.edit and cc.attrs.fieldItem==null}" required="#{cc.parent.attrs.required}" /> -->
+    <!--                 <p:inputText rendered="#{cc.attrs.edit and cc.attrs.fieldItem==null}" value="" size="#{cc.parent.attrs.size}" required="#{cc.parent.attrs.required}" disabled="true" /> -->
+
+    <!--                 <p:commandButton immediate="true" -->
+    <!--                     rendered="#{(cc.attrs.edit and !cc.parent.attrs.showPopupOnlyOnNew) or (cc.attrs.edit and cc.parent.attrs.showPopupOnlyOnNew and cc.attrs.newEntity)}" -->
+    <!--                     id="selectLink" onclick="PF('dlg_#{cc.parent.attrs.popupId}').show()" icon="ui-icon-search" /> -->
+    <!--                 <p:tooltip for="selectLink" value="#{messages['commons.search']}" /> -->
+
+
+    <!--                 <h:outputText id="#{cc.parent.attrs.fieldIdPrefix}_entity_view" rendered="#{not cc.attrs.edit}" value="#{cc.attrs.fieldItem[cc.parent.attrs.valueLabelField]}" -->
+    <!--                     styleClass="field-value" /> -->
+
+    <!--             </c:if> -->
+
+    <!--             Select entity from a picklist and store a entity itself -->
+    <!--             <c:if test="#{!cc.parent.attrs.fkToEntity and !cc.parent.attrs.popup}"> -->
+
+    <!--                 <c:if test="#{cc.parent.attrs.listElements==null}"> -->
+    <!--                     <c:set var="elements" value="#{cc.parent.attrs.listBean.listAll()}" /> -->
+    <!--                 </c:if> -->
+    <!--                 <c:if test="#{cc.parent.attrs.listElements!=null}"> -->
+    <!--                     <c:set var="elements" value="#{cc.parent.attrs.listElements}" /> -->
+    <!--                 </c:if> -->
+
+    <!--                 <p:selectOneMenu rendered="#{cc.attrs.edit}" id="#{cc.parent.attrs.fieldIdPrefix}_entity" value="#{cc.attrs.fieldItem}" required="#{cc.parent.attrs.required}"> -->
+    <!--                     <f:selectItem itemLabel="" itemValue="" /> -->
+    <!--                     <f:selectItems value="#{elements}" var="elem" itemLabel="#{elem[cc.parent.attrs.valueLabelField]}" itemValue="#{elem}" /> -->
+    <!--                     <s:objectConverter /> -->
+    <!--                     <c:if test="#{not empty cc.parent.attrs.listenerUpdate}"> -->
+    <!--                         <p:ajax event="valueChange" update="#{cc.parent.attrs.listenerUpdate}" /> -->
+    <!--                     </c:if> -->
+    <!--                 </p:selectOneMenu> -->
+
+    <!--                 <h:outputText id="#{cc.parent.attrs.fieldIdPrefix}_entity_view" rendered="#{not cc.attrs.edit}" value="#{cc.attrs.fieldItem[cc.parent.attrs.valueLabelField]}" -->
+    <!--                     styleClass="field-value" /> -->
+    <!--             </c:if> -->
+
+    <!--             Select entity from a picklist but store only a code value -->
+    <!--             <c:if test="#{cc.parent.attrs.fkToEntity and !cc.parent.attrs.popup}"> -->
+    <!--                 if service is set, then load list of all entities from db and show as drop down list -->
+
+    <!--                 <c:if test="#{cc.parent.attrs.listElements==null}"> -->
+    <!--                     <c:set var="elements" value="#{cc.parent.attrs.listBean.listAll()}" /> -->
+    <!--                 </c:if> -->
+    <!--                 <c:if test="#{cc.parent.attrs.listElements!=null}"> -->
+    <!--                     <c:set var="elements" value="#{cc.parent.attrs.listElements}" /> -->
+    <!--                 </c:if> -->
+
+    <!--                 <p:selectOneMenu rendered="#{cc.attrs.edit}" id="#{cc.parent.attrs.fieldIdPrefix}_entity" value="#{cc.attrs.fieldItem}" required="#{cc.parent.attrs.required}"> -->
+    <!--                     <f:selectItem itemLabel="" itemValue="                   " /> -->
+    <!--                     <f:selectItems value="#{elements}" var="elem" itemLabel="#{elem[cc.parent.attrs.valueLabelField]}" itemValue="#{elem[cc.parent.attrs.valueField]}" /> -->
+    <!--                     <s:objectConverter /> -->
+    <!--                 </p:selectOneMenu> -->
+
+    <!--                 <h:outputText id="#{cc.parent.attrs.fieldIdPrefix}_entity_view" rendered="#{not cc.attrs.edit}" -->
+    <!--                     value="#{cc.parent.attrs.listBean.persistenceService.findByCode(cc.attrs.fieldItem)[cc.parent.attrs.valueLabelField]}" styleClass="field-value" /> -->
+
+    <!--             </c:if> -->
+
+    <!--             <cc:insertChildren /> -->
+    <!--         </h:panelGroup> -->
+    <!--     </h:panelGroup>     -->
+
 </cc:implementation>
 
 </html>

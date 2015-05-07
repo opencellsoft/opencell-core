@@ -74,4 +74,10 @@ public class BillingCycleBean extends BaseBean<BillingCycle> {
 		return Arrays.asList("provider");
 	}
 
+	@Override
+	protected boolean canDelete(BillingCycle entity) {
+		// TODO Auto-generated method stub
+		return true;
+	}
+
 }

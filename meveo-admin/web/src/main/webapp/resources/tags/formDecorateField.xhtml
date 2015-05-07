@@ -1,0 +1,56 @@
+<?xml version="1.0"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:p="http://primefaces.org/ui" xmlns:cc="http://java.sun.com/jsf/composite"
+    xmlns:fn="http://java.sun.com/jsp/jstl/functions" xmlns:hftl="http://hftl.org">
+<!-- 
+
+    Makes part of "happy faces" component group.
+    A custom component to wrap child components into a "form field" like component with a label. Identical to decorateFormField tag, only creates an additional component in the component tree that can be references as a whole.
+        
+     Attributes
+        label - a label
+        fieldId - an id of a component to tie the label to 
+ -->
+
+
+<cc:interface componentType="formField">
+    <cc:attribute name="label" />
+    <cc:attribute name="fieldId" />
+    
+    
+    <!--  Component display layout and style attributes. See decorateFormField for description and use -->
+    <cc:attribute name="newLine" />
+    <cc:attribute name="displayOneLine" />
+    <cc:attribute name="styleClass" />
+    <cc:attribute name="labelStyleClass" />
+    <cc:attribute name="inputStyleClass" />
+    <cc:attribute name="style" />
+    <cc:attribute name="labelStyle" />
+    <cc:attribute name="inputStyle" />
+
+    <cc:attribute name="componentWidth" default="25" />
+    <cc:attribute name="labelWidth" />
+    <cc:attribute name="inputWidth" />
+
+</cc:interface>
+
+<cc:implementation>
+    <span id="#{cc.clientId}" style="white-space: nowrap">
+    
+        <hftl:decorateFormField fieldId="#{cc.attrs.fieldId}" label="#{cc.attrs.label}"
+            componentWidth="#{cc.attrs.componentWidth}" newLine="#{cc.attrs.newLine}" displayOneLine="#{cc.attrs.displayOneLine}" styleClass="#{cc.attrs.styleClass}"
+            style="#{cc.attrs.style}" labelStyle="#{cc.attrs.labelStyle}" labelStyleClass="#{cc.attrs.labelStyleClass}" inputStyle="#{cc.attrs.inputStyle}"
+            inputStyleClass="#{cc.attrs.inputStyleClass}" labelWidth="#{cc.attrs.labelWidth}" inputWidth="#{cc.attrs.inputWidth}">
+            <cc:insertChildren />
+        </hftl:decorateFormField> 
+        
+        
+        <!--         <h:panelGroup layout="block" styleClass="formFieldGroup #{cc.attrs.styleClass}" style="width:#{cc.attrs.componentWidth}%; #{cc.attrs.style} #{cc.attrs.newLine?'clearLeft':''}"> -->
+        <!--             <p:outputLabel for="#{cc.attrs.fieldId}" styleClass="#{cc.attrs.labelStyleClass}" style="width:#{cc.attrs.labelWidth}%; #{cc.attrs.labelStyle}" --> <!--                 value="#{cc.attrs.label}" rendered="#{cc.attrs.label!=null and cc.attrs.fieldId!=null}" /> -->
+        <!--             <p:outputLabel styleClass="header-text #{cc.attrs.labelStyleClass}" style="width:#{cc.attrs.labelWidth}%; #{cc.attrs.labelStyle}" --> <!--                 value="#{cc.attrs.label}" rendered="#{cc.attrs.label!=null and cc.attrs.fieldId==null}" /> -->
+        <!--             <h:panelGroup layout="block" styleClass="#{cc.attrs.fieldStyle} #{cc.attrs.inputStyleClass}" style="width:#{cc.attrs.inputWidth}%;  #{cc.attrs.inputStyle}"> -->
+        <!--                 <cc:insertChildren /> --> <!--             </h:panelGroup> --> <!--         </h:panelGroup> -->
+    </span>
+</cc:implementation>
+</html>

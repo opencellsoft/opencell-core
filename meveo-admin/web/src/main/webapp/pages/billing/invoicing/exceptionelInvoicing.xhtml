@@ -29,11 +29,11 @@
 			<hf:searchField
 				label="#{messages['billingAccount.subscriptionDate']}"
 				field="subscriptionDate" />
-			<hf:searchField
-				label="#{messages['billingAccount.electronicBilling']}"
-				field="electronicBilling" />
 			<hf:searchField label="#{messages['billingAccount.nextInvoiceDate']}"
 				field="nextInvoiceDate" />
+            <hf:searchField
+                label="#{messages['billingAccount.electronicBilling']}"
+                field="electronicBilling" />
 		</hf:searchPanel>
 
 		<hftl:dataList label="#{messages['billingRun.exceptionelInvoicing']}"
@@ -42,7 +42,7 @@
 				propagateConversation="false" entityView="billingAccountDetail"
 				objectIdParamName="billingAccountId"/>
 			<hftl:column label="#{messages['billingAccount.status']}"
-				field="status" childField="label" isMessage="true" />
+				field="status.label" isMessage="true" />
 			<hftl:column label="#{messages['billingAccount.subscriptionDate']}" isDate="true"
 				field="subscriptionDate" />
 			<hftl:column label="#{messages['billingAccount.nextInvoiceDate']}" isDate="true"
@@ -57,31 +57,28 @@
 				</e:cell>
 			</p:column>
 			<hftl:column label="#{messages['billingAccount.name']}" field="name" />
-			<hftl:column label="#{messages['address.address1']}" field="address"
-				childField="address1" />
+			<hftl:column label="#{messages['address.address1']}" field="address.address1" />
 
 			<hftl:actionsColumn
 				permission="#{identity.hasPermission('administration','administrationManagement')}"
 				renderEditLink="false" renderDeleteLink="false"
 				editView="billingAccountDetail" />
 			<ui:define name="add-on-buttons">
-			<p:panelGrid columns="2">
-				<p:outputLabel for="invoiceDate" value="#{messages['billingRun.invoiceDate']}" />
-				<p:calendar id="invoiceDate"
-				value="#{billingAccountBean.exceptionalInvoicingDate}"
-				 pattern="#{paramBean.getProperty('meveo.dateFormat','dd/MM/yyyy')}"
-				required="true" />
-			</p:panelGrid>
-			<p:panelGrid columns="2">
-				<p:outputLabel for="lastTransactionDate" value="#{messages['billingRun.lastTransactionDate']}" />
-				<p:calendar id="lastTransactionDate"
-				value="#{billingAccountBean.exceptionalLastTransactionDate}"
-				 pattern="#{paramBean.getProperty('meveo.dateFormat','dd/MM/yyyy')}"
-				required="true" />
-			</p:panelGrid>
-				<p:commandButton
-					action="#{billingAccountBean.launchExceptionalInvoicing}"
-					ajax="false" value="#{messages['button.launchInvoicing']}"/>
+                <hftl:decorateFormField fieldId="invoiceDate" label="#{messages['billingRun.invoiceDate']}" >
+                    <p:calendar id="invoiceDate" value="#{billingAccountBean.exceptionalInvoicingDate}" pattern="#{paramBean.getProperty('meveo.dateFormat','dd/MM/yyyy')}"
+                        required="true" />
+                </hftl:decorateFormField>
+    			<hftl:decorateFormField fieldId="lastTransactionDate" label="#{messages['billingRun.lastTransactionDate']}" >
+    				<p:calendar id="lastTransactionDate"
+    				value="#{billingAccountBean.exceptionalLastTransactionDate}"
+    				 pattern="#{paramBean.getProperty('meveo.dateFormat','dd/MM/yyyy')}"
+    				required="true" />
+    			</hftl:decorateFormField>
+                <h:panelGroup layout="block" styleClass="form-panel-actions">               
+    				<p:commandButton
+    					action="#{billingAccountBean.launchExceptionalInvoicing}"
+    					ajax="false" value="#{messages['button.launchInvoicing']}"/>
+                </h:panelGroup>
 			</ui:define>
 		</hftl:dataList>
 		

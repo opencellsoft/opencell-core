@@ -29,10 +29,10 @@
 			<hftl:column label="#{messages['businessEntity.code']}" field="code" useCustomIdParam="true"/>
 			<hftl:column label="#{messages['businessEntity.description']}" field="description" />
 			<hftl:column label="#{messages['userAccount.name']}" field="name" />
-			<hftl:column label="#{messages['billingAccount.status']}" field="status" childField="label" isMessage="true" />
-			<hftl:column label="#{messages['billingAccount.subscriptionDate']}" field="subscriptionDate" />
-			<hftl:column label="#{messages['billingAccount.terminationDate']}" field="terminationDate" />
-			<hftl:column label="#{messages['address.address1']}" field="address" childField="address1" />
+			<hftl:column label="#{messages['billingAccount.status']}" field="status.label" isMessage="true" />
+			<hftl:column label="#{messages['billingAccount.subscriptionDate']}" field="subscriptionDate" isDate="true"/>
+			<hftl:column label="#{messages['billingAccount.terminationDate']}" field="terminationDate" isDate="true"/>
+			<hftl:column label="#{messages['address.address1']}" field="address.address1" />
 
 			<hftl:actionsColumn useCustomIdParam="true" permission="#{identity.hasPermission('billing','billingManagement')}" />
 		</hftl:dataList>

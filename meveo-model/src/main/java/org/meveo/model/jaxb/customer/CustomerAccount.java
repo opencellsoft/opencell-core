@@ -83,6 +83,7 @@ import org.meveo.model.jaxb.account.Name;
     "tel1",
     "tel2",
     "tradingCurrencyCode",
+    "tradingLanguageCode",
     "customFields"
 })
 @XmlRootElement(name = "customerAccount")
@@ -112,6 +113,8 @@ public class CustomerAccount {
     protected String tel2;
     @XmlElement(required = true)
     protected String tradingCurrencyCode;
+    @XmlElement(required = true)
+    protected String tradingLanguageCode;
     @XmlAttribute(name = "creditCategory")
     protected String creditCategory;
     protected CustomFields customFields;
@@ -127,6 +130,7 @@ public class CustomerAccount {
 	        name=new Name(ca.getName());
 	        address = new Address(ca.getAddress());
 	        tradingCurrencyCode=ca.getTradingCurrency()==null?null:ca.getTradingCurrency().getCurrencyCode();
+	        tradingLanguageCode=ca.getTradingLanguage()==null?null:ca.getTradingLanguage().getLanguageCode();
 	        customFields=new CustomFields(ca.getCustomFields());
 	        paymentMethod=ca.getPaymentMethod()==null?null:ca.getPaymentMethod().name();
 	        creditCategory=ca.getCreditCategory()==null?null:ca.getCreditCategory().name();
@@ -384,6 +388,16 @@ public class CustomerAccount {
 
 	public void setTradingCurrencyCode(String tradingCurrencyCode) {
 		this.tradingCurrencyCode = tradingCurrencyCode;
+	}
+
+	
+	
+	public String getTradingLanguageCode() {
+		return tradingLanguageCode;
+	}
+
+	public void setTradingLanguageCode(String tradingLanguageCode) {
+		this.tradingLanguageCode = tradingLanguageCode;
 	}
 
 	/**

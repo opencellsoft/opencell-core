@@ -16,20 +16,14 @@
  */
 package org.meveo.model.catalog;
 
-import java.math.BigDecimal;
-import java.util.List;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import org.meveo.model.MultilanguageEntity;
-import org.meveo.model.crm.Provider;
 
 @Entity
 @MultilanguageEntity
@@ -57,19 +51,6 @@ public class UsageChargeTemplate extends ChargeTemplate {
 
 	private static final long serialVersionUID = 1L;
 
-	@Column(name = "UNITY_MULTIPLICATOR", precision = 23, scale = 12)
-	private BigDecimal unityMultiplicator = BigDecimal.ONE;
-
-	@Column(name = "UNITY_DESCRIPTION", length = 20)
-	private String unityDescription;
-
-	@Column(name = "UNITY_FORMATTER")
-	@Enumerated(EnumType.STRING)
-	private UsageChgTemplateEnum unityFormatter;
-
-	@Column(name = "UNITY_NB_DECIMAL")
-	private int unityNbDecimal = 2;
-
 	@Column(name = "FILTER_PARAM_1", length = 20)
 	private String filterParam1 = WILCARD;
 
@@ -87,38 +68,6 @@ public class UsageChargeTemplate extends ChargeTemplate {
 
 	@Column(name = "PRIORITY", columnDefinition = "int default 1")
 	private int priority = 1;
-
-	public BigDecimal getUnityMultiplicator() {
-		return unityMultiplicator;
-	}
-
-	public void setUnityMultiplicator(BigDecimal unityMultiplicator) {
-		this.unityMultiplicator = unityMultiplicator;
-	}
-
-	public String getUnityDescription() {
-		return unityDescription;
-	}
-
-	public void setUnityDescription(String unityDescription) {
-		this.unityDescription = unityDescription;
-	}
-
-	public UsageChgTemplateEnum getUnityFormatter() {
-		return unityFormatter;
-	}
-
-	public void setUnityFormatter(UsageChgTemplateEnum unityFormatter) {
-		this.unityFormatter = unityFormatter;
-	}
-
-	public int getUnityNbDecimal() {
-		return unityNbDecimal;
-	}
-
-	public void setUnityNbDecimal(int unityNbDecimal) {
-		this.unityNbDecimal = unityNbDecimal;
-	}
 
 	public String getFilterParam1() {
 		return filterParam1;

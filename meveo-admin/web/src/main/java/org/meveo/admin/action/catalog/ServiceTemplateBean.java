@@ -27,6 +27,7 @@ import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.action.CustomFieldEnabledBean;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.ServiceChargeTemplateRecurring;
 import org.meveo.model.catalog.ServiceChargeTemplateSubscription;
 import org.meveo.model.catalog.ServiceChargeTemplateTermination;
@@ -37,6 +38,7 @@ import org.meveo.model.crm.AccountLevelEnum;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.WalletTemplateService;
+import org.meveo.service.catalog.impl.OfferTemplateService;
 import org.meveo.service.catalog.impl.ServiceChargeTemplateRecurringService;
 import org.meveo.service.catalog.impl.ServiceChargeTemplateSubscriptionService;
 import org.meveo.service.catalog.impl.ServiceChargeTemplateTerminationService;
@@ -52,26 +54,44 @@ public class ServiceTemplateBean extends BaseBean<ServiceTemplate> {
 
 	private static final long serialVersionUID = 1L;
 
-	@Produces
-	@Named
 	private ServiceChargeTemplateRecurring serviceChargeTemplateRecurring = new ServiceChargeTemplateRecurring();
 
+	public ServiceChargeTemplateRecurring getServiceChargeTemplateRecurring() {
+        return serviceChargeTemplateRecurring;
+    }
+	
+	public void setServiceChargeTemplateRecurring(ServiceChargeTemplateRecurring serviceChargeTemplateRecurring) {
+        this.serviceChargeTemplateRecurring = serviceChargeTemplateRecurring;
+    }
+	
 	public void newServiceChargeTemplateRecurring() {
 		this.serviceChargeTemplateRecurring = new ServiceChargeTemplateRecurring();
 	}
 
-	@Produces
-	@Named
 	private ServiceChargeTemplateSubscription serviceChargeTemplateSubscription = new ServiceChargeTemplateSubscription();
 
+	public ServiceChargeTemplateSubscription getServiceChargeTemplateSubscription() {
+        return serviceChargeTemplateSubscription;
+    }
+	
+	public void setServiceChargeTemplateSubscription(ServiceChargeTemplateSubscription serviceChargeTemplateSubscription) {
+        this.serviceChargeTemplateSubscription = serviceChargeTemplateSubscription;
+    }
+	
 	public void newServiceChargeTemplateSubscription() {
 		this.serviceChargeTemplateSubscription = new ServiceChargeTemplateSubscription();
 	}
 
-	@Produces
-	@Named
 	private ServiceChargeTemplateTermination serviceChargeTemplateTermination = new ServiceChargeTemplateTermination();
 
+	public ServiceChargeTemplateTermination getServiceChargeTemplateTermination() {
+        return serviceChargeTemplateTermination;
+    }
+	
+	public void setServiceChargeTemplateTermination(ServiceChargeTemplateTermination serviceChargeTemplateTermination) {
+        this.serviceChargeTemplateTermination = serviceChargeTemplateTermination;
+    }
+	
 	public void newServiceChargeTemplateTermination() {
 		this.serviceChargeTemplateTermination = new ServiceChargeTemplateTermination();
 	}
@@ -79,7 +99,7 @@ public class ServiceTemplateBean extends BaseBean<ServiceTemplate> {
 	@Produces
 	@Named
 	private ServiceChargeTemplateUsage serviceChargeTemplateUsage = new ServiceChargeTemplateUsage();
-
+	
 	public void newServiceChargeTemplateUsage() {
 		this.serviceChargeTemplateUsage = new ServiceChargeTemplateUsage();
 		serviceChargeTemplateUsage.setProvider(getCurrentProvider());
@@ -396,6 +416,15 @@ public class ServiceTemplateBean extends BaseBean<ServiceTemplate> {
 	@Override
 	protected String getDefaultSort() {
 		return "code";
+	}
+	
+	@Inject
+	private OfferTemplateService offerTemplateService;
+
+	@Override
+	protected boolean canDelete(ServiceTemplate entity) {
+		List<OfferTemplate> offers=offerTemplateService.findByServiceTemplate(entity);
+		return offers==null||offers.size()==0;
 	}
 
 }

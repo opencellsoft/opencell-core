@@ -14,21 +14,12 @@ import javax.inject.Inject;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.cache.NotificationCacheContainerProvider;
 import org.meveo.commons.utils.StringUtils;
-import org.meveo.event.qualifier.Created;
-import org.meveo.event.qualifier.Disabled;
-import org.meveo.event.qualifier.Enabled;
-import org.meveo.event.qualifier.InboundRequestReceived;
-import org.meveo.event.qualifier.LoggedIn;
-import org.meveo.event.qualifier.Processed;
-import org.meveo.event.qualifier.Rejected;
-import org.meveo.event.qualifier.RejectedCDR;
-import org.meveo.event.qualifier.Removed;
-import org.meveo.event.qualifier.Terminated;
-import org.meveo.event.qualifier.Updated;
+import org.meveo.event.qualifier.*;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.IEntity;
 import org.meveo.model.IProvider;
 import org.meveo.model.admin.User;
+import org.meveo.model.billing.WalletInstance;
 import org.meveo.model.notification.EmailNotification;
 import org.meveo.model.notification.InboundRequest;
 import org.meveo.model.notification.InstantMessagingNotification;
@@ -37,9 +28,9 @@ import org.meveo.model.notification.NotificationEventTypeEnum;
 import org.meveo.model.notification.NotificationHistory;
 import org.meveo.model.notification.NotificationHistoryStatusEnum;
 import org.meveo.model.notification.WebHook;
+import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.billing.impl.CounterInstanceService;
 import org.meveo.service.billing.impl.CounterValueInsufficientException;
-import org.meveo.service.billing.impl.RatingService;
 import org.slf4j.Logger;
 
 @Singleton
@@ -78,7 +69,7 @@ public class DefaultObserver {
         Map<Object, Object> userMap = new HashMap<Object, Object>();
         userMap.put("event", o);
 
-        Object res = RatingService.evaluateExpression(expression, userMap, Boolean.class);
+        Object res = ValueExpressionWrapper.evaluateExpression(expression, userMap, Boolean.class);
         try {
             result = (Boolean) res;
         } catch (Exception e) {
@@ -95,7 +86,7 @@ public class DefaultObserver {
         Map<Object, Object> userMap = new HashMap<Object, Object>();
         userMap.put("event", o);
         userMap.put("manager", manager);
-        return (String) RatingService.evaluateExpression(expression, userMap, String.class);
+        return (String) ValueExpressionWrapper.evaluateExpression(expression, userMap, String.class);
     }
 
     private void fireNotification(Notification notif, IEntity e) {
@@ -228,4 +219,11 @@ public class DefaultObserver {
         log.debug("Defaut observer : inbound request {} ", e.getCode());
         checkEvent(NotificationEventTypeEnum.INBOUND_REQ, e);
     }
+    
+    
+   public void LowBalance(@Observes @LowBalance WalletInstance e){
+       log.debug("Defaut observer : low balance on {} ", e.getCode());
+       checkEvent(NotificationEventTypeEnum.LOW_BALANCE, e);
+       
+   }
 }

@@ -25,16 +25,14 @@
 			label="#{messages['tradingCountry.search']}"
 			backingBean="#{tradingCountryListBean}">
 
-			<hf:searchField id="country"
-				label="#{messages['tradingCountry.trCountryCode']}" field="country"
-				childField="countryCode"  />
+            <hf:searchField id="country" label="#{messages['tradingCountry.trCountryCode']}" field="country.countryCode" />
 
-		</hf:searchPanel>
+        </hf:searchPanel>
 
 		<hftl:dataList label="#{messages['tradingCountry.title']}"
 			backingBean="#{tradingCountryListBean}">
 			<hftl:column label="#{messages['tradingCountry.trCountryCode']}"
-				field="country" childField="countryCode" width="10%" />
+				field="country.countryCode" width="10%" />
 			<hftl:column label="#{messages['tradingCountry.prDescription']}"
 				width="30%" field="prDescription" />
 			<hftl:column label="#{messages['enableEntity.active']}"

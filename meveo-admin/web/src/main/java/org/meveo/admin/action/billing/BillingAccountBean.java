@@ -142,6 +142,7 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
 		if (entity.getId() == null && customerAccountId != null) {
 			CustomerAccount customerAccount = customerAccountService.findById(customerAccountId);
 			entity.setCustomerAccount(customerAccount);
+			entity.setTradingLanguage(customerAccount.getTradingLanguage());
 			populateAccounts(customerAccount);
 
 			// check if has default
@@ -535,6 +536,12 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
 
 	public void setExceptionalLastTransactionDate(Date exceptionalLastTransactionDate) {
 		this.exceptionalLastTransactionDate = exceptionalLastTransactionDate;
+	}
+
+	@Override
+	protected boolean canDelete(BillingAccount entity) {
+		// TODO Auto-generated method stub
+		return true;
 	}
 
 }

@@ -10,55 +10,79 @@
 	xmlns:c="http://java.sun.com/jsp/jstl/core"
 	xmlns:cc="http://java.sun.com/jsf/composite">
 
+<!--
+    Makes part of "happy faces" component group.
+    A custom component to display a form data entry panel wrapping data entry fields and buttons implementing navigation functionality 
+ 
+    Attributes
+        backingBean - backing bean associated with data entry
+        entity - entity associated to data entry. One, associatated with a backing bean will be used, if not provided.
+        label - a panel header
+        edit - edit or view mode
+        formId - form id value
+        showFormButtons - should default form buttons be displayed
+        Attributes related to a default form buttons:
+            ajaxSubmit - should form submit be done in ajax way
+            killConversationOnSave - should conversation be killed uppon saving
+            killConversationOnBack - should conversation be killed uppon navigating back
+            showBackButton - show a default "navigate back" button
+            showEditButton - show a default "edit" button
+            showEnableDisableButton - show a default "enable/disable" button
+            useCustomIdParam and objectIdParamName - should a custom parameter id instead of a default "objectId" be used for navigation 
+        
+    Facets
+        buttons - additional buttons to include    
+-->
+
+
 <cc:interface componentType="formPanel">
-	<cc:attribute name="label" required="true" />
-	<cc:attribute name="backingBean" required="true"
-		type="org.meveo.admin.action.BaseBean" />
-	<cc:attribute name="entity" required="false" type="java.lang.Object" />
-	<cc:attribute name="edit" default="#{cc.attrs.backingBean.edit}" />
-	<cc:attribute name="formId" default="formId" />
-	<cc:attribute name="columns" default="2" />
-	<cc:attribute name="showFormButtons" default="true" />
-	<cc:attribute name="formButtonsColumns" default="4" />
-	<cc:attribute name="ajaxSubmit" default="false" />
-	<cc:attribute name="killConversationOnSave" default="false" />
-	<cc:attribute name="killConversationOnBack" default="false" />
-	<cc:attribute name="showBackButton" default="true" />
-	<cc:attribute name="showEditButton" default="true" />
+    <cc:attribute name="label" required="true" />
+    <cc:attribute name="backingBean" required="true" type="org.meveo.admin.action.BaseBean" />
+    <cc:attribute name="entity" required="false" type="java.lang.Object" />
+    <cc:attribute name="edit" default="#{cc.attrs.backingBean.edit}" />
+    <cc:attribute name="formId" default="formId" />
+    <cc:attribute name="showFormButtons" default="true" />
+    <cc:attribute name="ajaxSubmit" default="false" />
+    <cc:attribute name="killConversationOnSave" default="false" />
+    <cc:attribute name="killConversationOnBack" default="false" />
+    <cc:attribute name="showBackButton" default="true" />
+    <cc:attribute name="showEditButton" default="true" />
     <cc:attribute name="showEnableDisableButton" default="false" />
-	<cc:attribute name="useCustomIdParam" default="false" />
-	<cc:attribute name="objectIdParamName" />
-	<cc:attribute name="styleClass"
-		default="#{cc.attrs.edit ? 'form-panel-fields' : 'form-panel-fields form-panel-fields-view'}" />
+    <cc:attribute name="useCustomIdParam" default="false" />
+    <cc:attribute name="objectIdParamName" />
+    <cc:facet name="buttons"/>
 </cc:interface>
 
 <cc:implementation>
 
 	<h:form id="#{cc.attrs.formId}">
-		<p:panel styleClass="form-panel">
+		<p:panel>
 			<c:if test="#{not empty(cc.attrs.label)}">
 				<f:facet name="header">
 					<h:outputText value="#{cc.attrs.label}" />
 				</f:facet>
 			</c:if>
-			<p:messages id="messages" />
-			<p:panelGrid columns="#{cc.attrs.columns}"
-				styleClass="#{cc.attrs.styleClass}">
-				<cc:insertChildren />
-			</p:panelGrid>
-
-			<hf:formButtons rendered="#{cc.attrs.showFormButtons}"
-				backingBean="#{cc.attrs.backingBean}" edit="#{cc.attrs.edit}"
-				columns="#{cc.attrs.formButtonsColumns}"
-				ajaxSubmit="#{cc.attrs.ajaxSubmit}"
-				killConversationOnSave="#{cc.attrs.killConversationOnSave}"
-				killConversationOnBack="#{cc.attrs.killConversationOnBack}"
-				useCustomIdParam="#{cc.attrs.useCustomIdParam}"
-				objectIdParamName="#{cc.attrs.objectIdParamName}"
-				showBackButton="#{cc.attrs.showBackButton}"
-				showEditButton="#{cc.attrs.showEditButton}" 
-                showEnableDisableButton="#{cc.attrs.showEnableDisableButton}"/>
-
+            <h:panelGroup layout="block" styleClass="form-panel">
+    			<p:messages id="messages" />
+    			<p:outputPanel styleClass="form-panel-fields #{cc.attrs.edit ? '' : ' form-panel-fields-view'}">
+    				<cc:insertChildren />
+    			</p:outputPanel>
+    
+    			<hf:formButtons rendered="#{cc.attrs.showFormButtons}"
+    				backingBean="#{cc.attrs.backingBean}" edit="#{cc.attrs.edit}"
+    				ajaxSubmit="#{cc.attrs.ajaxSubmit}"
+    				killConversationOnSave="#{cc.attrs.killConversationOnSave}"
+    				killConversationOnBack="#{cc.attrs.killConversationOnBack}"
+    				useCustomIdParam="#{cc.attrs.useCustomIdParam}"
+    				objectIdParamName="#{cc.attrs.objectIdParamName}"
+    				showBackButton="#{cc.attrs.showBackButton}"
+    				showEditButton="#{cc.attrs.showEditButton}" 
+                    showEnableDisableButton="#{cc.attrs.showEnableDisableButton}"/>
+    
+                <h:panelGroup layout="block" styleClass="form-panel-actions" rendered="#{not empty cc.facets.buttons}">
+                    <cc:renderFacet name="buttons"/>
+                </h:panelGroup>
+            </h:panelGroup>
 		</p:panel>
 	</h:form>
 </cc:implementation>

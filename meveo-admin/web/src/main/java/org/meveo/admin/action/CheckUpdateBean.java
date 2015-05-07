@@ -92,7 +92,7 @@ public class CheckUpdateBean implements Serializable {
 
 	public String getVersionOutput() {
 		if(versionOutput==null){
-			checkVersion();
+			//checkVersion();
 		}
 		return versionOutput;
 	}

@@ -25,7 +25,7 @@
 			column2="description" 
 			selection="#{pricePlanMatrixBean.entity.offerTemplate}"
 			lazy="false" dataModel="#{offerTemplateBean.listActive}"
-			updateField=":formPricePlanPanel:formPricePlan:offerSelectId:offerSelectId">
+			updateField=":formPricePlanPanel:formPricePlan:offerSelectId">
 		</hftl:entityPopup>
 		
 		<hftl:entityPopup id="pricPlanMatChargePopup"
@@ -35,7 +35,7 @@
 			column1Label="#{messages['charge.description']}" column1="code"
 			column2Label="#{messages['businessEntity.description']}"
 			column2="description" eventBackingBean="#{pricePlanMatrixBean}"
-			updateField=":formPricePlanPanel:formPricePlan:chargeSelectId:textPanel_popup">
+			updateField=":formPricePlanPanel:formPricePlan:chargeSelectId">
 			<!-- 			selection="#{chargeTemplateBean.entity}" -->
 		</hftl:entityPopup>
 
@@ -49,7 +49,7 @@
 			column2Label="#{messages['businessEntity.description']}"
 			column2="prDescription"
 			selection="#{pricePlanMatrixBean.entity.tradingCurrency}"
-			updateField=":formPricePlanPanel:formPricePlan:customerCurrencySelectId:customerCurrencySelectId">
+			updateField=":formPricePlanPanel:formPricePlan:customerCurrencySelectId">
 		</hftl:entityPopup>
 
 		<hftl:entityPopup id="tradingCountryPopup"
@@ -62,7 +62,7 @@
 			column2Label="#{messages['businessEntity.description']}"
 			column2="prDescription"
 			selection="#{pricePlanMatrixBean.entity.tradingCountry}"
-			updateField=":formPricePlanPanel:formPricePlan:trCountrySelectId:trCountrySelectId">
+			updateField=":formPricePlanPanel:formPricePlan:trCountrySelectId">
 		</hftl:entityPopup>
 
 		<hftl:entityPopup id="sellerParentPopup"
@@ -72,11 +72,11 @@
 			column1="code" selection="#{pricePlanMatrixBean.entity.seller}"
 			column2Label="#{messages['BusinessEntity.description']}"
 			column2="description"
-			updateField=":formPricePlanPanel:formPricePlan:parentSelectId:parentSelectId">
+			updateField=":formPricePlanPanel:formPricePlan:parentSelectId">
 		</hftl:entityPopup>
         
         <hftl:entityPopup id="validityCalendarPopup" header="#{messages['calendar.search']}" backingBean="#{calendarBean}"
-            updateField=":formPricePlanPanel:formPricePlan:validityCalendar:validityCalendar" selection="#{pricePlanMatrixBean.entity.validityCalendar}"
+            updateField=":formPricePlanPanel:formPricePlan:validityCalendar" selection="#{pricePlanMatrixBean.entity.validityCalendar}"
             searchField1Label="#{messages['calendar.name']}" searchField1="code" searchField2Label="#{messages['BusinessEntity.description']}"
             searchField2="description" column1Label="#{messages['calendar.name']}" column1="code"
             column2Label="#{messages['BusinessEntity.description']}" column2="description">
@@ -85,67 +85,69 @@
 		<hf:formPanel id="formPricePlanPanel"
 			label="#{messages['pricePlanMatrix.panel']}"
 			backingBean="#{pricePlanMatrixBean}" formId="formPricePlan">
-			<p:panelGrid columns="2">
                 <hf:formField label="#{messages['BusinessEntity.code']}" field="code" required="true" />
-                <hf:languageFields />
                 <hf:formField id="chargeSelectId" required="true"
 					label="#{messages['pricePlanMatrix.eventCode']}" field="eventCode"
 					popup="true" popupId="pricPlanMatChargePopup" disabled="true" />
-				<hf:formEntityField id="parentSelectId"
+                    
+                <hf:languageFields newLine="false"/>
+                
+				<hf:formField id="parentSelectId"
 					label="#{messages['seller.title']}" field="seller"
-					childField="description" popup="true" popupId="sellerParentPopup" />
-				<hf:formEntityField id="trCountrySelectId"
+					valueLabelField="description" popup="true" popupId="sellerParentPopup" />
+				<hf:formField id="trCountrySelectId"
 					label="#{messages['tradingCountry.tradingCountry']}"
-					field="tradingCountry" childField="countryCode"
+					field="tradingCountry" valueLabelField="countryCode"
 					popup="true" popupId="tradingCountryPopup" />
-				<p:panelGrid columns="1">
-					<hf:formEntityField id="customerCurrencySelectId"
-						label="#{messages['currency.codeCurrency']}"
-						field="tradingCurrency" childField="currencyCode" popup="true"
-						popupId="pricPlanMatCurrencyPopup" />
-				</p:panelGrid>
+                <hf:formField id="offerSelectId" 
+                    label="#{messages['pricePlanMatrix.offerCode']}"
+                    field="offerTemplate" valueLabelField="code"
+                    popup="true" popupId="offerPopup"/>                    
+                <hf:formField id="customerCurrencySelectId"
+                    label="#{messages['currency.codeCurrency']}"
+                    field="tradingCurrency" valueLabelField="currencyCode" popup="true"
+                    popupId="pricPlanMatCurrencyPopup" />
+                <hf:formField id="validityCalendar" label="#{messages['pricePlanMatrix.validityCalendar']}" field="validityCalendar"
+                    valueLabelField="code" popup="true" popupId="validityCalendarPopup" />
+                <hf:formField label="#{messages['pricePlanMatrix.priority']}"
+                    field="priority" />
+                    
+                
 				<hf:formField label="#{messages['pricePlanMatrix.minQuantity']}"
 					field="minQuantity" />
 				<hf:formField label="#{messages['pricePlanMatrix.maxQuantity']}"
 					field="maxQuantity" />
-				<hf:formEntityField id="offerSelectId" 
-				  label="#{messages['pricePlanMatrix.offerCode']}"
-					field="offerTemplate" childField="code"
-					popup="true" popupId="offerPopup"/>
-				<hf:formField label="#{messages['pricePlanMatrix.criteria1Value']}"
-					field="criteria1Value" />
 				<hf:formField
 					label="#{messages['pricePlanMatrix.startSubscriptionDate']}"
 					field="startSubscriptionDate" />
-				<hf:formField label="#{messages['pricePlanMatrix.criteria2Value']}"
-					field="criteria2Value" />
 				<hf:formField
 					label="#{messages['pricePlanMatrix.endSubscriptionDate']}"
 					field="endSubscriptionDate" />
-				<hf:formField label="#{messages['pricePlanMatrix.criteria3Value']}"
-					field="criteria3Value" />
+                <hf:formField label="#{messages['pricePlanMatrix.startRatingDate']}"
+                    field="startRatingDate" />
+                <hf:formField label="#{messages['pricePlanMatrix.endRatingDate']}"
+                    field="endRatingDate" />                    
+                <hf:formField label="#{messages['pricePlanMatrix.criteria1Value']}"
+                    field="criteria1Value" />
+                <hf:formField label="#{messages['pricePlanMatrix.criteria2Value']}"
+                    field="criteria2Value" />
+                <hf:formField label="#{messages['pricePlanMatrix.criteria3Value']}"
+                    field="criteria3Value" />
 				<hf:formField label="#{messages['pricePlanMatrix.criteriaEL']}"
 			        field="criteriaEL" textArea="true" maxlength="2000"/>
-                <hf:formEntityField id="validityCalendar" label="#{messages['pricePlanMatrix.validityCalendar']}" field="validityCalendar"
-                    childField="code" popup="true" popupId="validityCalendarPopup" />
-                <hf:formField label="#{messages['pricePlanMatrix.startRatingDate']}"
-					field="startRatingDate" />
-                    <hf:formField label="#{messages['pricePlanMatrix.endRatingDate']}"
-                    field="endRatingDate" />
+
 				<hf:formField
 					label="#{messages['pricePlanMatrix.amountWithoutTax']}"
-					field="amountWithoutTax" converter="bigDecimal4DigitsConverter" required="true" />
+					field="amountWithoutTax" converter="bigDecimal4DigitsConverter" required="true" newLine="true"/>
+                <hf:formField label="#{messages['pricePlanMatrix.amountWithTax']}"
+                    field="amountWithTax" converter="bigDecimal4DigitsConverter" rendered="#{!pricePlanMatrixBean.entity.provider.entreprise}" required="true" />
+ 
 				<hf:formField
 					label="#{messages['pricePlanMatrix.minSubscriptionAgeInMonth']}"
 					field="minSubscriptionAgeInMonth" maxValue="9999" maxlength="4" />
-				<hf:formField label="#{messages['pricePlanMatrix.amountWithTax']}"
-                    field="amountWithTax" converter="bigDecimal4DigitsConverter" rendered="#{!pricePlanMatrixBean.entity.provider.entreprise}" required="true" />
-                <hf:formField
+               <hf:formField
 					label="#{messages['pricePlanMatrix.maxSubscriptionAgeInMonth']}"
 					field="maxSubscriptionAgeInMonth" maxValue="9999" maxlength="4" />
-				<hf:formField label="#{messages['pricePlanMatrix.priority']}"
-					field="priority" />
-			</p:panelGrid>
 
 		</hf:formPanel>
 

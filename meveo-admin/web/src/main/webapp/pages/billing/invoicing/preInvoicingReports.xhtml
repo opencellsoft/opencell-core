@@ -14,116 +14,102 @@
 		<hf:formPanel formId="form3" edit="false"
 			label="#{messages['preInvoicingReport.title']}"
 			backingBean="#{billingRunBean}" showFormButtons="false">
-			<hftl:panelGroup columns="2">
-				<hf:formEntityField
+
+				<hf:formField
 					label="#{messages['billingAccount.billingCycle']}"
 					field="preInvoicingReports" childField="billingCycleCode"
-					popup="false" />
+					displayOneLine="true" labelWidth="50" />
 
-				<hf:formEntityField
+				<hf:formField
 					label="#{messages['preInvoicingReport.noOfAccounts']} "
 					field="preInvoicingReports" childField="billingAccountNumber"
-					popup="false" />
-			</hftl:panelGroup>
+					displayOneLine="true" labelWidth="50" />
 
-			<hftl:panelGroup columns="2">
-				<hf:formEntityField
+				<hf:formField
 					label="#{messages['billingRun.lastTransactionDate']}"
 					field="preInvoicingReports" childField="lastTransactionDate"
-					popup="false" />
+					displayOneLine="true"  labelWidth="50"/>
 
-				<hf:formEntityField
+				<hf:formField
 					label="#{messages['billingRun.invoiceDate']}"
 					field="preInvoicingReports" childField="invoiceDate" 
-					popup="false" />
-			</hftl:panelGroup>
+					displayOneLine="true" labelWidth="50" />
 
-			<hftl:panelGroup columns="2">
-				<hf:formEntityField
+				<hf:formField
 					label="#{messages['preInvoicingReport.noOfAccountNoCharged']}"
 					field="preInvoicingReports"
-					childField="billableBillingAccountNumber" popup="false" />
+					childField="billableBillingAccountNumber" displayOneLine="true"  labelWidth="70"/>
 
-				<hf:formEntityField
+				<hf:formField
 					label="#{messages['preInvoicingReport.amountHT']}"
 					field="preInvoicingReports" childField="amoutWitountTax"
-					popup="false" />
-			</hftl:panelGroup>
+					displayOneLine="true"  labelWidth="50"/>
 
+            <p:fieldset legend="#{messages['preInvoicingReport.noOfBillingAccountInBillingCyclePerPaymentMode']}" styleClass="clearLeft">
 
-			<b>#{messages['preInvoicingReport.noOfBillingAccountInBillingCyclePerPaymentMode']}</b>
-			<hftl:panelGroup columns="1">
-				<hf:formEntityField label="#{messages['paymentMethod.check']}"
+				<hf:formField label="#{messages['paymentMethod.check']}"
 					field="preInvoicingReports" childField="checkBANumber"
-					popup="false" />
-			</hftl:panelGroup>
-			<hftl:panelGroup columns="1">
-				<hf:formEntityField label="#{messages['paymentMethod.directDebit']}"
+					displayOneLine="true" />
+
+				<hf:formField label="#{messages['paymentMethod.directDebit']}"
 					field="preInvoicingReports" childField="directDebitBANumber"
-					popup="false" />
-			</hftl:panelGroup>
-			<hftl:panelGroup columns="1">
-				<hf:formEntityField label="#{messages['paymentMethod.tip']}"
-					field="preInvoicingReports" childField="tipBANumber" popup="false" />
-			</hftl:panelGroup>
-			<hftl:panelGroup columns="1">
-				<hf:formEntityField
+					displayOneLine="true" />
+
+				<hf:formField label="#{messages['paymentMethod.tip']}"
+					field="preInvoicingReports" childField="tipBANumber" displayOneLine="true" />
+
+				<hf:formField
 					label="#{messages['paymentMethod.wiretransfer']}"
 					field="preInvoicingReports" childField="wiretransferBANumber"
-					popup="false" />
-			</hftl:panelGroup>
-			<b>#{messages['preInvoicingReport.noOfBillingAccountToInvoicePerPaymentMode']}</b>
+					displayOneLine="true" />
+            </p:fieldset>
+			<p:fieldset legend="#{messages['preInvoicingReport.noOfBillingAccountToInvoicePerPaymentMode']}" styleClass="clearLeft">
 
-			<hftl:panelGroup columns="1">
-				<hf:formEntityField label="#{messages['paymentMethod.check']}"
+
+				<hf:formField label="#{messages['paymentMethod.check']}"
 					field="preInvoicingReports" childField="checkBillableBANumber"
-					popup="false" />
-			</hftl:panelGroup>
-			<hftl:panelGroup columns="1">
-				<hf:formEntityField label="#{messages['paymentMethod.directDebit']}"
-					field="preInvoicingReports"
-					childField="directDebitBillableBANumber" popup="false" />
-			</hftl:panelGroup>
-			<hftl:panelGroup columns="1">
-				<hf:formEntityField label="#{messages['paymentMethod.tip']}"
-					field="preInvoicingReports" childField="tipBillableBANumber"
-					popup="false" />
-			</hftl:panelGroup>
-			<hftl:panelGroup columns="1">
-				<hf:formEntityField
-					label="#{messages['paymentMethod.wiretransfer']}"
-					field="preInvoicingReports"
-					childField="wiretransferBillableBANumber" popup="false" />
-			</hftl:panelGroup>
+					displayOneLine="true" />
 
-			<b>#{messages['preInvoicingReport.totalAmountWithoutTaxByPaymentMethod']}</b>
-			<hftl:panelGroup columns="1">
-				<hf:formEntityField label="#{messages['paymentMethod.check']}"
-					field="preInvoicingReports" childField="checkBillableBAAmountHT"
-					popup="false" />
-			</hftl:panelGroup>
-			<hftl:panelGroup columns="1">
-				<hf:formEntityField label="#{messages['paymentMethod.directDebit']}"
+				<hf:formField label="#{messages['paymentMethod.directDebit']}"
 					field="preInvoicingReports"
-					childField="directDebitBillableBAAmountHT" popup="false" />
-			</hftl:panelGroup>
-			<hftl:panelGroup columns="1">
-				<hf:formEntityField label="#{messages['paymentMethod.tip']}"
-					field="preInvoicingReports" childField="tipBillableBAAmountHT"
-					popup="false" />
-			</hftl:panelGroup>
-			<hftl:panelGroup columns="1">
-				<hf:formEntityField
+					childField="directDebitBillableBANumber" displayOneLine="true" />
+
+				<hf:formField label="#{messages['paymentMethod.tip']}"
+					field="preInvoicingReports" childField="tipBillableBANumber"
+					displayOneLine="true" />
+
+				<hf:formField
 					label="#{messages['paymentMethod.wiretransfer']}"
 					field="preInvoicingReports"
-					childField="wiretransferBillableBAAmountHT" popup="false" />
-			</hftl:panelGroup>
-			<br />
+					childField="wiretransferBillableBANumber" displayOneLine="true" />
+            </p:fieldset>
+
+
+			<p:fieldset legend="#{messages['preInvoicingReport.totalAmountWithoutTaxByPaymentMethod']}" styleClass="clearLeft">
+
+				<hf:formField label="#{messages['paymentMethod.check']}"
+					field="preInvoicingReports" childField="checkBillableBAAmountHT"
+					displayOneLine="true" />
+
+				<hf:formField label="#{messages['paymentMethod.directDebit']}"
+					field="preInvoicingReports"
+					childField="directDebitBillableBAAmountHT" displayOneLine="true" />
+
+				<hf:formField label="#{messages['paymentMethod.tip']}"
+					field="preInvoicingReports" childField="tipBillableBAAmountHT"
+					displayOneLine="true" />
+
+				<hf:formField
+					label="#{messages['paymentMethod.wiretransfer']}"
+					field="preInvoicingReports"
+					childField="wiretransferBillableBAAmountHT" displayOneLine="true" />
+            </p:fieldset>
+
 		</hf:formPanel>
 
-		<br />
+
 		<h:form id="operationsForm" rendered="#{!edit}">
-			<p:panelGrid styleClass="form-panel-actions" columns="3">
+			<h:panelGroup layout="block" styleClass="form-panel-actions">
 				<p:commandButton action="#{billingRunBean.confirmInvoicing()}"
 					value="#{messages['action.confirm']}" />
 				<p:commandButton action="#{billingRunBean.cancelInvoicing()}"
@@ -134,9 +120,7 @@
 					<f:param name="cid"
 						value="#{javax.enterprise.context.conversation.id}" />
 				</p:button>
-			</p:panelGrid>
+			</h:panelGroup>
 		</h:form>
-
 	</ui:define>
-
 </ui:composition>

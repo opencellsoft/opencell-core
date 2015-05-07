@@ -36,14 +36,13 @@
 		<hftl:dataList label="#{messages['billingRuns.title']}"
 			backingBean="#{billingRunListBean}" checkMany="false" sortOrder="descending">
 			<hftl:column label="Id" field="id" />
-			<hftl:column label="#{messages['billingRun.status']}" field="status"
-				childField="label" isMessage="true" />
+			<hftl:column label="#{messages['billingRun.status']}" field="status.label" isMessage="true" />
 			<hftl:column label="#{messages['billingRun.processDate']}"
-				field="processDate" />
+				field="processDate" isDate="true"/>
 			<hftl:column label="#{messages['billingRun.processType']}"
 				field="processType" />
 			<hftl:column label="#{messages['billingRun.billingCycle']}"
-				field="billingCycle" childField="code" isMessage="false" />
+				field="billingCycle.code" isMessage="false" />
 			<p:column>
 				<f:facet name="header">
 					<h:outputText value="#{messages['commons.actions']}" />

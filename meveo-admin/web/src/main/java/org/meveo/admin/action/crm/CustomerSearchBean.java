@@ -130,4 +130,10 @@ public class CustomerSearchBean extends BaseBean<AccountEntity> {
 		return "code";
 	}
 
+	@Override
+	protected boolean canDelete(AccountEntity entity) {
+		// TODO Auto-generated method stub
+		return true;
+	}
+
 }

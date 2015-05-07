@@ -363,4 +363,10 @@ public class AccountOperationBean extends BaseBean<AccountOperation> {
 		return Arrays.asList("provider", "customerAccount");
 	}
 
+	@Override
+	protected boolean canDelete(AccountOperation entity) {
+		// TODO Auto-generated method stub
+		return true;
+	}
+
 }

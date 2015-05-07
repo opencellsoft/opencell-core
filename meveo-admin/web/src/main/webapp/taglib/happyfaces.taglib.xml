@@ -17,10 +17,6 @@
 		<source>column.xhtml</source>
 	</tag>
 	<tag>
-		<tag-name>columnList</tag-name>
-		<source>columnList.xhtml</source>
-	</tag>
-	<tag>
 		<tag-name>actionsColumn</tag-name>
 		<source>actionsColumn.xhtml</source>
 	</tag>
@@ -34,10 +30,15 @@
 		<tag-name>panelGroup</tag-name>
 		<source>panelGroup.xhtml</source>
 	</tag>	
-	
+			
 	<tag>
-		<tag-name>fieldset</tag-name>
-		<source>fieldset.xhtml</source>
+		<tag-name>decorateFormPanel</tag-name>
+		<source>decorateFormPanel.xhtml</source>
+	</tag>	
+
+	<tag>
+		<tag-name>decorateFormField</tag-name>
+		<source>decorateFormField.xhtml</source>
 	</tag>		
 
 </facelet-taglib>

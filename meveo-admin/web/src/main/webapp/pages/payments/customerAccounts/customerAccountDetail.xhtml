@@ -32,7 +32,7 @@
 			searchField1Label="#{messages['customer.code']}" searchField1="code"
 			column1Label="#{messages['customer.code']}" column1="code"
 			selection="#{customerAccountBean.entity.customer}"
-			updateField=":parentTab:formCustomerAccountPanel:formCustomerAccount:childTab:customerSelectId:customerSelectId">
+			updateField=":parentTab:formCustomerAccountPanel:formCustomerAccount:childTab:customerSelectId">
 		</hftl:entityPopup>
 
 		<hftl:entityPopup id="customerAccCurrencyPopup"
@@ -45,7 +45,7 @@
 			column2Label="#{messages['businessEntity.description']}"
 			column2="prDescription"
 			selection="#{customerAccountBean.entity.tradingCurrency}"
-			updateField=":parentTab:formCustomerAccountPanel:formCustomerAccount:childTab:currencySelectId:currencySelectId">
+			updateField=":parentTab:formCustomerAccountPanel:formCustomerAccount:childTab:currencySelectId">
 		</hftl:entityPopup>
 		
 		<hftl:entityPopup id="tradingLanguagePopup"
@@ -58,17 +58,16 @@
 				column2Label="#{messages['businessEntity.description']}"
 				column2="prDescription"
 				selection="#{customerAccountBean.entity.tradingLanguage}"
-				updateField=":parentTab:formCustomerAccountPanel:formCustomerAccount:childTab:trLanguageSelectId:trLanguageSelectId">
+				updateField=":parentTab:formCustomerAccountPanel:formCustomerAccount:childTab:trLanguageSelectId">
 		</hftl:entityPopup>
 
-		<p:panelGrid styleClass="col2-set">
-			<p:row>
-				<p:column styleClass="col1">
+        <h:panelGroup styleClass="col2-set">
+            <h:panelGroup styleClass="col1">
 					<hf:hierarchyPanel
 						treeValue="#{customerTreeBean.buildAccountsHierarchy(customerAccountBean.entity)}"
 						entity="#{customerAccountBean.entity}" />
-				</p:column>
-				<p:column styleClass="col2 tab-view-container">
+            </h:panelGroup>
+			<h:panelGroup styleClass="col2">
 
 					<p:tabView id="parentTab"
 						activeIndex="#{customerAccountBean.selectedTab}">
@@ -79,212 +78,150 @@
 								label="#{messages['customerAccount.form']}"
 								backingBean="#{customerAccountBean}" showFormButtons="false"
 								useCustomIdParam="true">
-								<p:panel>
 									<p:tabView id="childTab">
 										<p:tab id="accountTab"
 											title="#{messages['customerAccount.tab.account']}">
-											<hftl:panelGroup columns="1">
-												<hf:formEntityField id="customerSelectId"
+												<hf:formField id="customerSelectId"
 													label="#{messages['customerAccount.customer']}"
-													field="customer" childField="code" required="true"
+													field="customer" valueLabelField="code" required="true"
 													popup="true" popupId="searchCustomerPopup" />
-											</hftl:panelGroup>
-											<hftl:panelGroup columns="2">
+                                              
+                                              <p:fieldset legend="#{messages['customerAccount.form']}" styleClass="clearLeft" >
+                                                    
 												<hf:formField label="#{messages['businessEntity.code']}"
 													field="code" maxlength="35" validateUnique="true"
 													required="true" />
-												<hf:formEntityField
+												<hf:formField
 													label="#{messages['accountEntity.primaryContact']}"
-													field="primaryContact" childField="code"
+													field="primaryContact" valueLabelField="code"
 													listBean="#{providerContactBean}" />
-											</hftl:panelGroup>
-											<hftl:panelGroup columns="1">
 												<hf:formField
 													label="#{messages['businessEntity.description']}"
 													field="description" id="description" maxlength="100"
 													required="true" />
-											</hftl:panelGroup>
-											<hftl:panelGroup columns="3">
 												<hf:formField
 													label="#{messages['customerAccount.externalRef1']}"
 													field="externalRef1" maxlength="50" />
 												<hf:formField
 													label="#{messages['customerAccount.externalRef2']}"
 													field="externalRef2" maxlength="50" />
-												<hf:formEntityField id="currencySelectId"
+												<hf:formField id="currencySelectId"
 													label="#{messages['currency.codeCurrency']}"
 													required="true" field="tradingCurrency"
-													childField="currencyCode" popup="true"
+													valueLabelField="currencyCode" popup="true"
 													popupId="customerAccCurrencyPopup" />
-                                               <hf:formEntityField id="trLanguageSelectId"
+                                               <hf:formField id="trLanguageSelectId"
 														label="#{messages['tradingLanguage.tradingLanguage']}"
-														field="tradingLanguage" childField="languageCode"
+														field="tradingLanguage" valueLabelField="languageCode"
 														required="true" popup="true"
-														popupId="tradingLanguagePopup" />												
-												
-											</hftl:panelGroup>
-											<hftl:panelGroup columns="4">
-												<p:panelGrid columns="2"
-													rendered="#{!customerAccountBean.edit}">
-													<p:outputLabel for="dunning_text"
-														value="#{messages['customerAccount.dunningLevel']}" />
+														popupId="tradingLanguagePopup" />	                                               
+
+
+												<h:panelGroup rendered="#{!customerAccountBean.edit}">
+        											<hf:formDecorateField fieldId="dunning_text" label="#{messages['customerAccount.dunningLevel']}" newLine="true">
 													<h:outputText id="dunning_text"
 														rendered="#{!customerAccountBean.edit}"
 														value="#{customerAccountBean.entity.getDunningLevel()}"
 														style="font-weight:bold;" />
-												</p:panelGrid>
-												<p:panelGrid columns="2"
-													rendered="#{!customerAccountBean.edit}">
-													<p:outputLabel for="dunning_date_text"
-														value="#{messages['customerAccount.dateDunningLevel']}" />
+    												</hf:formDecorateField>
+        											<hf:formDecorateField fieldId="dunning_date_text" label="#{messages['customerAccount.dateDunningLevel']}">
 													<h:outputText id="dunning_date_text"
 														rendered="#{!customerAccountBean.edit}"
 														value="#{customerAccountBean.entity.getDateDunningLevel()}"
 														style="font-weight:bold;" />
-												</p:panelGrid>
-												<hf:emtyFormField />
-												<p:panelGrid columns="2"
-													rendered="#{!customerAccountBean.edit}">
-													<p:outputLabel for="balance_text"
-														value="#{messages['customerAccount.balanceDue']}" />
+    												</hf:formDecorateField>
+    												<hf:formDecorateField fieldId="balance_text" label="#{messages['customerAccount.balanceDue']}">
 													<h:outputText id="balance_text"
 														rendered="#{!customerAccountBean.edit}"
 														value="#{customerAccountBean.getBalanceDue()}"
 														style="font-weight:bold;" converter="bigDecimalConverter" />
-												</p:panelGrid>
-												<p:panelGrid columns="2"
-													rendered="#{!customerAccountBean.edit}">
-													<p:outputLabel for="balanceEx_text"
-														value="#{messages['customerAccount.balanceExigible']}" />
+    												</hf:formDecorateField>
+    												<hf:formDecorateField fieldId="balanceEx_text" label="#{messages['customerAccount.balanceExigible']}">
 													<h:outputText id="balanceEx_text"
 														rendered="#{!customerAccountBean.edit}"
 														value="#{customerAccountBean.getBalanceExigibleWithoutLitigation()}"
 														style="font-weight:bold;" converter="bigDecimalConverter" />
-												</p:panelGrid>
-											</hftl:panelGroup>
-											<hftl:panelGroup columns="2">
-												<p:panelGrid columns="2">
-													<p:outputLabel for="title_text"
-														value="#{messages['name.title']}" />
-													<p:selectOneMenu id="title_text"
-														value="#{customerAccountBean.entity.name.title}"
-														required="false" rendered="#{customerAccountBean.edit}">
-														<f:selectItem itemLabel="" itemValue="" />
-														<f:selectItems value="#{titleBean.listAll()}" var="t"
-															itemLabel="#{t.description}" />
-														<s:objectConverter />
-														<p:ajax event="valueChange"
-															update=":parentTab:formCustomerAccountPanel:formCustomerAccount:childTab:countryPanel :parentTab:formCustomerAccountPanel:formCustomerAccount:childTab:userNamePanel" />
-													</p:selectOneMenu>
-													<h:outputText rendered="#{!customerAccountBean.edit}"
-														value="#{customerAccountBean.entity.name.title.description}"
-														style="font-weight:bold;" />
-												</p:panelGrid>
+    												</hf:formDecorateField>
+												</h:panelGroup>
 
-												<p:panelGrid id="userNamePanel" columns="2"
-													columnClasses="twoColGrid">
-													<hf:formEntityField label="#{messages['name.lastName']}"
-														field="name" childField="lastName" popup="false"
+                                                <hf:formField label="#{messages['name.title']}" field="name" childField="title" valueLabelField="description" required="true"
+                                                    listBean="#{titleBean}" listenerUpdate=":parentTab:formCustomerAccountPanel:formCustomerAccount:childTab:userNamePanel" styleClass="clearLeft"/>
+                
+            									<h:panelGroup id="userNamePanel" layout="block">
+            											<hf:formField label="#{messages['name.lastName']}"
+            												field="name" childField="lastName" 
 														maxlength="50" required="true" />
-													<p:panelGrid columns="2"
-														rendered="#{customerAccountBean.entity.name.title == null or !customerAccountBean.entity.name.title.isCompany}">
-														<p:outputLabel for="firstName_text"
-															value="#{messages['name.firstName']}" />
+                                                        <hf:formField label="#{messages['name.firstName']}"
+                                                            field="name" childField="firstName" 
+                                                            maxlength="50" rendered="#{customerAccountBean.entity.name.title == null or !customerAccountBean.entity.name.title.isCompany}"/>            											
+            									</h:panelGroup>
 
-														<p:inputText id="firstName_text"
-															value="#{customerAccountBean.entity.name.firstName}"
-															rendered="#{(customerAccountBean.entity.name.title == null or !customerAccountBean.entity.name.title.isCompany) and customerAccountBean.edit}" />
-														<h:outputText
-															value="#{customerAccountBean.entity.name.firstName}"
-															rendered="#{(customerAccountBean.entity.name.title == null or !customerAccountBean.entity.name.title.isCompany) and !customerAccountBean.edit}"
-															style="font-weight:bold;" />
-													</p:panelGrid>
-													<hf:emtyFormField
-														show="#{customerAccountBean.entity.name.title == null or !customerAccountBean.entity.name.title.isCompany}" />
-												</p:panelGrid>
-
-											</hftl:panelGroup>
-
-											<hftl:panelGroup columns="2">
 												<hf:formField
 													label="#{messages['customerAccount.paymentMethod']}"
-													field="paymentMethod" childField="label" isMessage="true" />
+													field="paymentMethod" newLine="true"/>
 												<hf:formField
 													label="#{messages['customerAccount.creditCategory']}"
-													field="creditCategory" childField="label" isMessage="true" required="true" />
-											</hftl:panelGroup>
+													field="creditCategory" required="true" />
 
-											<hftl:panelGroup columns="1">
 												<hf:formField label="#{messages['customerAccount.status']}"
-													field="status" childField="label" isMessage="true"
-													disabled="true" />
-											</hftl:panelGroup>
-											<hftl:panelGroup columns="1">
+													field="status" disabled="true" />
+
 												<hf:formField
 													label="#{messages['accountEntity.defaultLevel']}"
 													field="defaultLevel" isMessage="true" />
-											</hftl:panelGroup>
+                                                    
+                                            </p:fieldset>
 										</p:tab>
 
 										<p:tab id="informationTab"
 											title="#{messages['customerAccount.tab.information']}">
-											<hftl:fieldset name="#{messages['commons.contacts']}"
-												columns="1">
-												<hf:formEntityField
+											<p:fieldset legend="#{messages['commons.contacts']}">
+												<hf:formField
 													label="#{messages['contactInformation.email']}"
 													field="contactInformation" childField="email" popup="false"
 													required="false" id="email" maxlength="100"
 													validateEmail="true" />
-												<hftl:panelGroup columns="2">
-													<hf:formEntityField
+                                                    
+													<hf:formField
 														label="#{messages['contactInformation.phone']}"
 														field="contactInformation" childField="phone"
 														popup="false" maxlength="15" />
-													<hf:formEntityField
+													<hf:formField
 														label="#{messages['contactInformation.mobile']}"
 														field="contactInformation" childField="mobile"
 														popup="false" maxlength="15" />
-												</hftl:panelGroup>
-											</hftl:fieldset>
-											<hftl:fieldset name="#{messages['commons.address']}"
-												columns="1">
-												<hftl:panelGroup columns="1">
-													<hf:formEntityField label="#{messages['address.address1']}"
+											</p:fieldset>
+											<p:fieldset legend="#{messages['commons.address']}">
+													<hf:formField label="#{messages['address.address1']}"
 														field="address" id="address1" childField="address1"
 														popup="false" size="80" maxlength="80" />
-													<hf:formEntityField label="#{messages['address.address2']}"
+													<hf:formField label="#{messages['address.address2']}"
 														field="address" id="address2" childField="address2"
 														popup="false" size="80" maxlength="80" />
-													<hf:formEntityField label="#{messages['address.address3']}"
+													<hf:formField label="#{messages['address.address3']}"
 														field="address" id="address3" childField="address3"
 														popup="false" size="80" maxlength="80" />
-												</hftl:panelGroup>
-												<hftl:panelGroup columns="2">
-													<hf:formEntityField label="#{messages['address.zipCode']}"
+													<hf:formField label="#{messages['address.zipCode']}"
 														size="10" id="zipCode" field="address"
 														childField="zipCode" length="10" popup="false"
-														maxlength="10" />
-													<hf:formEntityField label="#{messages['address.city']}"
+														maxlength="10" newLine="true"/>
+													<hf:formField label="#{messages['address.city']}"
 														id="city" field="address" childField="city" popup="false"
 														maxlength="50" />
-												</hftl:panelGroup>
-												<hf:formEntityField id="countryPanel"
-													label="#{messages['address.country']}" embedded="true"
+												<hf:formField id="countryPanel"
+													label="#{messages['address.country']}" fkToEntity="true"
 													field="address" childField="country"
-													labelField="descriptionEn" valueField="countryCode"
-													listBean="#{countryBean}"></hf:formEntityField>
-											</hftl:fieldset>
-											<hftl:fieldset
-												name="#{messages['customerAccount.sepaDebit']}" columns="1">
-												<hftl:panelGroup columns="1">
+													valueLabelField="descriptionEn" valueField="countryCode"
+													listBean="#{countryBean}"/>
+											</p:fieldset>
+											<p:fieldset legend="#{messages['customerAccount.sepaDebit']}">
 													<hf:formField
 														label="#{messages['customerAccount.mandateIdentification']}"
 														field="mandateIdentification" />
 													<hf:formField
 														label="#{messages['customerAccount.mandateDate']}"
 														field="mandateDate" isDate="true" />
-												</hftl:panelGroup>
-											</hftl:fieldset>
+											</p:fieldset>
 										</p:tab>
 
 										<p:tab title="#{messages['customFieldTemplate.panel']}">
@@ -312,7 +249,6 @@
 												value="#{javax.enterprise.context.conversation.id}" />
 										</p:button>
 									</hf:formButtons>
-								</p:panel>
 							</hf:formPanel>
 						</p:tab>
 						<p:tab id="ops" title="#{messages['customerAccount.operations']}">
@@ -320,7 +256,6 @@
 								label="#{messages['accountOperation.search']}" columns="1"
 								backingBean="#{accountOperationBean}" ajax="true"
 								ajaxUpdateIds=":parentTab:results_panel">
-								<hftl:panelGroup columns="2">
 									<hf:searchField
 										label="#{messages['accountOperation.transactionCategory']}"
 										field="transactionCategory" />
@@ -332,16 +267,15 @@
 									<hf:searchField
 										label="#{messages['accountOperation.accountCode']}"
 										field="accountCode" />
-								</hftl:panelGroup>
 								<hf:searchField
 									label="#{messages['accountOperation.transactionDate']}"
 									field="transactionDate" />
 								<hf:searchField label="#{messages['accountOperation.dueDate']}"
 									field="dueDate" />
 							</hf:searchPanel>
-							<br />
+
 							<h:form id="addOperationForm">
-								<p:panelGrid columns="3" styleClass="form-panel-actions">
+								<h:panelGroup layout="block" styleClass="form-panel-actions">
 									<p:button value="#{messages['customerAccount.addOperation']}"
 										outcome="addNewOperation"
 										rendered="#{customerAccountBean.isActiveAccount()}"
@@ -361,15 +295,14 @@
 										<f:param name="cid"
 											value="#{javax.enterprise.context.conversation.id}" />
 									</p:button>
-									
-								</p:panelGrid>
+							     </h:panelGroup>
 							</h:form>
 
 						<hftl:dataList backingBean="#{accountOperationBean}"
 								dataModel="#{accountOperationBean.getAccountOperations(customerAccountBean.entity)}"
 								label="#{messages['accountOperation.title']}" disabled="true"
 								checkMany="false" >
-								<p:column selectionMode="multiple" style="width:2%"  />
+								<p:column selectionMode="multiple" style="width:5%"  />
 							    <p:ajax event="rowSelectCheckbox" update="@form" />
 
 								<p:column style="width:8%">
@@ -411,12 +344,12 @@
 
 								<hftl:column label="#{messages['accountOperation.debit']}"
 									field="amount"
-									show="#{entity.transactionCategory.toString() == 'DEBIT'}"
+									rendered="#{entity.transactionCategory.toString() == 'DEBIT'}"
 									converterParam="4digits" />
 
 								<hftl:column label="#{messages['accountOperation.credit']}"
 									field="amount"
-									show="#{entity.transactionCategory.toString() == 'CREDIT'}"
+									rendered="#{entity.transactionCategory.toString() == 'CREDIT'}"
 									converterParam="4digits" />
 
 								<hftl:column
@@ -425,7 +358,7 @@
 	
 								<hftl:column
 									label="#{messages['accountOperation.matchingStatus']}"
-									field="matchingStatus" childField="label" isMessage="true" />	
+									field="matchingStatus.label" isMessage="true" />	
 									
 									<hftl:column
 									label="#{messages['accountOperation.excludedFromDunning']}"
@@ -434,7 +367,7 @@
 								<hftl:actionsColumn
 									editView="#{accountOperationBean.displayOperation(entity.getId())}" /> 
 								<ui:define name="add-on-buttons"> 
-									<p:panelGrid columns="4" styleClass="form-panel-actions">
+									<h:panelGroup layout="block" styleClass="form-panel-actions">
 										<p:commandButton
 											action="#{accountOperationBean.matching(customerAccountBean.entity.id)}"
 											value="#{messages['customerAccount.buttonLettrage']}"
@@ -454,7 +387,7 @@
 											value="#{messages['customerAccount.includeToDunning']}"
 											rendered="#{customerAccountBean.isActiveAccount()}"
 											disabled="#{accountOperationBean.isSelectedOperationIncluded()}"/>	
-									</p:panelGrid> 
+									</h:panelGroup>
 								</ui:define> 
 							</hftl:dataList>
 
@@ -467,8 +400,7 @@
 						</p:tab>
 					</p:tabView>
 
-				</p:column>
-			</p:row>
-		</p:panelGrid>
+            </h:panelGroup>
+        </h:panelGroup>
 	</ui:define>
 </ui:composition>

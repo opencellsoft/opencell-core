@@ -4,10 +4,10 @@
         <createSequence sequenceName="account_entity_seq"/>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-4.0.3-struct-2">
-        <createSequence sequenceName="adm_country_seq"/>
+        <createSequence sequenceName="adm_country_seq" startValue="238"/>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-4.0.3-struct-3">
-        <createSequence sequenceName="adm_currency_seq"/>
+        <createSequence sequenceName="adm_currency_seq" startValue="169"/>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-4.0.3-struct-4">
         <createSequence sequenceName="adm_inbound_request_seq"/>
@@ -16,7 +16,7 @@
         <createSequence sequenceName="adm_input_history_seq"/>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-4.0.3-struct-6">
-        <createSequence sequenceName="adm_language_seq"/>
+        <createSequence sequenceName="adm_language_seq" startValue="33"/>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-4.0.3-struct-7">
         <createSequence sequenceName="adm_messages_seq"/>
@@ -28,16 +28,16 @@
         <createSequence sequenceName="adm_notification_seq"/>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-4.0.3-struct-10">
-        <createSequence sequenceName="adm_permission_seq"/>
+        <createSequence sequenceName="adm_permission_seq" startValue="13"/>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-4.0.3-struct-11">
-        <createSequence sequenceName="adm_role_seq"/>
+        <createSequence sequenceName="adm_role_seq" startValue="3"/>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-4.0.3-struct-12">
-        <createSequence sequenceName="adm_title_seq"/>
+        <createSequence sequenceName="adm_title_seq" startValue="38"/>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-4.0.3-struct-13">
-        <createSequence sequenceName="adm_user_seq"/>
+        <createSequence sequenceName="adm_user_seq" startValue="3"/>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-4.0.3-struct-14">
         <createSequence sequenceName="ar_account_operation_seq"/>
@@ -79,7 +79,7 @@
         <createSequence sequenceName="ar_matching_code_seq"/>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-4.0.3-struct-27">
-        <createSequence sequenceName="ar_occ_template_seq"/>
+        <createSequence sequenceName="ar_occ_template_seq" startValue="26"/>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-4.0.3-struct-28">
         <createSequence sequenceName="bi_job_history_seq"/>
@@ -106,7 +106,7 @@
         <createSequence sequenceName="billing_counter_period_seq"/>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-4.0.3-struct-36">
-        <createSequence sequenceName="billing_cycle_seq"/>
+        <createSequence sequenceName="billing_cycle_seq" startValue="3"/>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-4.0.3-struct-37">
         <createSequence sequenceName="billing_disc_inst_seq"/>
@@ -118,7 +118,7 @@
         <createSequence sequenceName="billing_discount_seq"/>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-4.0.3-struct-40">
-        <createSequence sequenceName="billing_inv_sub_cat_country_seq"/>
+        <createSequence sequenceName="billing_inv_sub_cat_country_seq" startValue="5"/>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-4.0.3-struct-41">
         <createSequence sequenceName="billing_invoice_agregate_seq"/>
@@ -127,13 +127,13 @@
         <createSequence sequenceName="billing_invoice_cat_lang_seq"/>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-4.0.3-struct-43">
-        <createSequence sequenceName="billing_invoice_cat_seq"/>
+        <createSequence sequenceName="billing_invoice_cat_seq" startValue="3"/>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-4.0.3-struct-44">
         <createSequence sequenceName="billing_invoice_seq"/>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-4.0.3-struct-45">
-        <createSequence sequenceName="billing_invoice_sub_cat_seq"/>
+        <createSequence sequenceName="billing_invoice_sub_cat_seq" startValue="3"/>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-4.0.3-struct-46">
         <createSequence sequenceName="billing_invoice_sub_country_seq"/>
@@ -160,7 +160,7 @@
         <createSequence sequenceName="billing_service_instance_seq"/>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-4.0.3-struct-54">
-        <createSequence sequenceName="billing_sub_term_reason_seq"/>
+        <createSequence sequenceName="billing_sub_term_reason_seq" startValue="4"/>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-4.0.3-struct-55">
         <createSequence sequenceName="billing_subscription_seq"/>
@@ -169,16 +169,16 @@
         <createSequence sequenceName="billing_tax_language_seq"/>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-4.0.3-struct-57">
-        <createSequence sequenceName="billing_tax_seq"/>
+        <createSequence sequenceName="billing_tax_seq" startValue="4"/>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-4.0.3-struct-58">
-        <createSequence sequenceName="billing_trading_country_seq"/>
+        <createSequence sequenceName="billing_trading_country_seq" startValue="3"/>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-4.0.3-struct-59">
-        <createSequence sequenceName="billing_trading_currency_seq"/>
+        <createSequence sequenceName="billing_trading_currency_seq" startValue="3"/>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-4.0.3-struct-60">
-        <createSequence sequenceName="billing_trading_language_seq"/>
+        <createSequence sequenceName="billing_trading_language_seq" startValue="3"/>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-4.0.3-struct-61">
         <createSequence sequenceName="billing_wallet_operation_seq"/>
@@ -190,7 +190,7 @@
         <createSequence sequenceName="cat_calendar_interval_seq"/>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-4.0.3-struct-64">
-        <createSequence sequenceName="cat_calendar_seq"/>
+        <createSequence sequenceName="cat_calendar_seq" startValue="4"/>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-4.0.3-struct-65">
         <createSequence sequenceName="cat_charge_template_seq"/>
@@ -199,7 +199,7 @@
         <createSequence sequenceName="cat_counter_template_seq"/>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-4.0.3-struct-67">
-        <createSequence sequenceName="cat_day_in_year_seq"/>
+        <createSequence sequenceName="cat_day_in_year_seq" startValue="367"/>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-4.0.3-struct-68">
         <createSequence sequenceName="cat_discount_plan_item_seq"/>
@@ -271,10 +271,10 @@
         <createSequence sequenceName="crm_custom_fld_tmp_seq"/>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-4.0.3-struct-91">
-        <createSequence sequenceName="crm_customer_brand_seq"/>
+        <createSequence sequenceName="crm_customer_brand_seq" startValue="2"/>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-4.0.3-struct-92">
-        <createSequence sequenceName="crm_customer_category_seq"/>
+        <createSequence sequenceName="crm_customer_category_seq" startValue="3"/>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-4.0.3-struct-93">
         <createSequence sequenceName="crm_email_seq"/>
@@ -283,13 +283,13 @@
         <createSequence sequenceName="crm_provider_config_seq"/>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-4.0.3-struct-95">
-        <createSequence sequenceName="crm_provider_contact_seq"/>
+        <createSequence sequenceName="crm_provider_contact_seq" startValue="2"/>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-4.0.3-struct-96">
-        <createSequence sequenceName="crm_provider_seq"/>
+        <createSequence sequenceName="crm_provider_seq" startValue="2"/>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-4.0.3-struct-97">
-        <createSequence sequenceName="crm_seller_seq"/>
+        <createSequence sequenceName="crm_seller_seq" startValue="4"/>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-4.0.3-struct-98">
         <createSequence sequenceName="dwh_account_operation_seq"/>
@@ -331,7 +331,7 @@
         <createSequence sequenceName="medina_zonning_plan_seq"/>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-4.0.3-struct-111">
-        <createSequence sequenceName="meveo_timer_seq"/>
+        <createSequence sequenceName="meveo_timer_seq" startValue="9"/>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-4.0.3-struct-112">
         <createSequence sequenceName="rating_edr_seq"/>

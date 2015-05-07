@@ -160,4 +160,10 @@ public class AccessBean extends BaseBean<Access> {
 	protected List<String> getFormFieldsToFetch() {
 		return Arrays.asList("provider");
 	}
+
+	@Override
+	protected boolean canDelete(Access entity) {
+		// TODO Auto-generated method stub
+		return true;
+	}
 }

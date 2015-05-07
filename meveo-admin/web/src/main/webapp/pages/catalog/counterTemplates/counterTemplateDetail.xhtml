@@ -26,18 +26,16 @@
 				label="#{messages['usageChargeTemplate.unityDescription']}"
 				field="unityDescription" />
 			<hf:formField label="#{messages['counterTemplate.counterType']}"
-				field="counterType" childField="label" isMessage="true" />
+				field="counterType"/>
 			<hf:formField label="#{messages['counterTemplate.counterLevel']}"
-				field="counterLevel" childField="label" isMessage="true" />
+				field="counterLevel" />
 			<hf:formField label="#{messages['counterTemplate.level']}"
 				field="ceiling" required="true" />
 			<hf:formField label="#{messages['enableEntity.disabled']}"
 				field="disabled" isMessage="true" showOnlyOnConsult="true"/>
-			<hftl:panelGroup columns="2">
-				<hf:formEntityField label="#{messages['billingCycle.calendar']}"
-					field="calendar" childField="code" required="true" popup="false"
-					listBean="#{calendarBean}" />
-			</hftl:panelGroup>
+			<hf:formField label="#{messages['billingCycle.calendar']}"
+				field="calendar" valueLabelField="code" required="true" 
+				listBean="#{calendarBean}" />
 
 		</hf:formPanel>
 

@@ -245,4 +245,10 @@ public class OtherCreditAndChargeBean extends BaseBean<OtherCreditAndCharge> {
 	public CustomerAccount getCustomerAccount() {
 		return customerAccount;
 	}
+
+	@Override
+	protected boolean canDelete(OtherCreditAndCharge entity) {
+		// TODO Auto-generated method stub
+		return true;
+	}
 }

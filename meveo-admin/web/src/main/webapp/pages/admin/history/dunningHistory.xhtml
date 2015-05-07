@@ -14,12 +14,10 @@
 	<ui:define name="body">	
 	<p:panel>				
 				<hf:formPanel  showFormButtons ="#{false}" edit="#{false}" label="#{messages['dunningHistory.panel']}" backingBean="#{dunningHistoryBean}">
-					<hftl:panelGroup columns="2">
 						<hf:formField label="#{messages['jobHistory.executionDate']}" field="executionDate"  />	  
 						<hf:formField label="#{messages['dunningHistory.loadedCustomerAccounts']}" field="linesRead"  />
 						<hf:formField label="#{messages['dunningHistory.updatedCustomerAccounts']}" field="linesInserted"  />
-						<hf:formField label="#{messages['dunningHistory.errorCustomerAccounts']}" field="linesRejected"  />																		                  																
-					</hftl:panelGroup>												
+						<hf:formField label="#{messages['dunningHistory.errorCustomerAccounts']}" field="linesRejected"  />																		                  																									
 					<h:commandButton value="#{messages['action.back']}"	 onclick="javascript:history.back()"/>											
 				</hf:formPanel>
 				<custom:listPanel label="#{messages['dunningHistory.dunningLot']}">

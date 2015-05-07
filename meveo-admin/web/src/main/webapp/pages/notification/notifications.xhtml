@@ -24,9 +24,9 @@
 			<!-- ===================================== SEARCH CRITERIA ZONE ================================= -->
 
 			<hf:searchPanel label="#{messages['menu.notifications']}" columns="3" backingBean="#{notificationListBean}">
-				<hf:searchField label="#{messages['entity.code']}" field="code" />
-				<hf:searchField label="#{messages['entity.notification.classNameFilter']}" field="classNameFilter" size="50" autocompleteMethod="#{notificationBean.autocompleteClassNames}"/>
-				<hf:searchField label="#{messages['entity.notification.eventTypeFilter']}" field="eventTypeFilter" />
+			<hf:searchField label="#{messages['entity.code']}" field="code" />
+			<hf:searchField label="#{messages['entity.notification.classNameFilter']}" field="classNameFilter" size="50" autocompleteMethod="#{notificationBean.autocompleteClassNames}" isAutocomplete="true"/>
+            <hf:searchField label="#{messages['entity.notification.eventTypeFilter']}" field="eventTypeFilter" />
 			</hf:searchPanel>
 
 			<!-- ===================================== SEARCH USERS RESULTS ================================= -->
@@ -61,7 +61,7 @@
 					</p:button>
 			
 					<p:commandButton id="#{resultsId}deletelink" icon="ui-icon-trash"
-						oncomplete="confirmDeleteWidget.show()">
+						oncomplete="PF('confirmDeleteWidget').show()">
 						<f:setPropertyActionListener target="#{backingBean.entity}"
 							value="#{entity}"></f:setPropertyActionListener>
 					</p:commandButton>
@@ -71,10 +71,10 @@
 						severity="alert" widgetVar="confirmDeleteWidget">
 						<p:panel styleClass="confirm-dialog-content">
 							<p:commandButton id="deleteOk" value="#{messages['commons.yes']}"
-								oncomplete="confirmDeleteWidget.hide()"
+								oncomplete="PF('confirmDeleteWidget').hide()"
 								action="#{backingBean.delete()}" update="@all" />
 							<p:commandButton id="deleteKo" value="#{messages['commons.no']}"
-								onclick="confirmDeleteWidget.hide()" type="button" />
+								onclick="PF('confirmDeleteWidget').hide()" type="button" />
 						</p:panel>
 					</p:confirmDialog> 
 			

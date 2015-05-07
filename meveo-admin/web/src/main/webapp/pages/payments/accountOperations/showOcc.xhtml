@@ -10,27 +10,26 @@
 	<ui:define name="navigation">
 		<ui:include src="/layout/navigation.xhtml" />
 	</ui:define>
-	<ui:define name="body">	
-				<hf:formPanel  showFormButtons ="#{false}" edit="#{false}"  label="#{messages['accountOperation.form']}" backingBean="#{accountOperationBean}" >
-					<hftl:panelGroup columns="3">
-						<hf:formField label="#{messages['accountOperation.transactionDate']}" field="transactionDate"  />
-						<hf:formField label="#{messages['accountOperation.type']}" field="type"  />
-						<hf:formField label="#{messages['accountOperation.occCode']}" field="occCode"  />
-						<hf:formField label="#{messages['accountOperation.reference']}" field="reference"  />	                    
-						<hf:formField label="#{messages['accountOperation.creationDate']}" field="transactionDate"  />
-						<hf:formField label="#{messages['accountOperation.valueDate']}" field="transactionDate"  />													
-					</hftl:panelGroup>					
-					<hftl:panelGroup columns="1">
-						<hf:formField label="#{messages['accountOperation.occDescription']}" field="occDescription"   size="50" maxlength="50"/>													
-					</hftl:panelGroup>	
-					<hftl:panelGroup columns="1">
-						<hf:formField label="#{messages['accountOperation.amount']}" field="amount"   />													
-					</hftl:panelGroup>
-					<p:button  outcome="customerAccountDetail" value="#{messages['action.back']}">
-						<f:param name="customerAccountId" value="#{accountOperationBean.entity.getCustomerAccount().getId()}" />
-						<f:param name="edit" value="false" /> 
-						<f:param name="cid" value="#{javax.enterprise.context.conversation.id}" />
-					</p:button>	
-				</hf:formPanel>				
-	</ui:define>
+    <ui:define name="body">
+        <hf:formPanel showFormButtons="#{false}" edit="#{false}" label="#{messages['accountOperation.form']}" backingBean="#{accountOperationBean}">
+            <hf:formField label="#{messages['accountOperation.transactionDate']}" field="transactionDate" />
+            <hf:formField label="#{messages['accountOperation.type']}" field="type" />
+            <hf:formField label="#{messages['accountOperation.occCode']}" field="occCode" />
+            <hf:formField label="#{messages['accountOperation.reference']}" field="reference" />
+            <hf:formField label="#{messages['accountOperation.creationDate']}" field="transactionDate" />
+            <hf:formField label="#{messages['accountOperation.valueDate']}" field="transactionDate" />
+
+            <hf:formField label="#{messages['accountOperation.occDescription']}" field="occDescription" size="50" maxlength="50" />
+
+            <hf:formField label="#{messages['accountOperation.amount']}" field="amount" />
+
+            <f:facet name="buttons">
+                <p:button outcome="customerAccountDetail" value="#{messages['action.back']}">
+                    <f:param name="customerAccountId" value="#{accountOperationBean.entity.getCustomerAccount().getId()}" />
+                    <f:param name="edit" value="false" />
+                    <f:param name="cid" value="#{javax.enterprise.context.conversation.id}" />
+                </p:button>
+            </f:facet>
+        </hf:formPanel>
+    </ui:define>
 </ui:composition>

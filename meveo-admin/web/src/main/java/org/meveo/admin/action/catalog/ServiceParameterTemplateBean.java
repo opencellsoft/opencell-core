@@ -82,4 +82,10 @@ public class ServiceParameterTemplateBean extends
 		return Arrays.asList("serviceTemplates");
 	}
 
+	@Override
+	protected boolean canDelete(ServiceParameterTemplate entity) {
+		// TODO Auto-generated method stub
+		return true;
+	}
+
 }

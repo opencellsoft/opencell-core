@@ -17,7 +17,7 @@
 
 		<hftl:entityPopup id="searchMeasurableQuantity"
 			header="#{messages['measurableQuantity.popup.header']}"
-			updateField=":chartFormPanel:formChat:measurableQuantityId:measurableQuantityId"
+			updateField=":chartFormPanel:formChat:measurableQuantityId"
 			selection="#{pieChartBean.entity.measurableQuantity}"
 			backingBean="#{measurableQuantityBean}"
 			searchField1Label="#{messages['businessEntity.code']}"
@@ -28,7 +28,7 @@
 
 		<hftl:entityPopup id="searchRole"
 			header="#{messages['role.userRolePanel']}"
-			updateField=":chartFormPanel:formChat:roleId:roleId"
+			updateField=":chartFormPanel:formChat:roleId"
 			selection="#{pieChartBean.entity.role}" backingBean="#{userRoleBean}"
 			searchField1Label="#{messages['commons.name']}" searchField1="name"
 			column1Label="#{messages['commons.name']}" column1="name"
@@ -41,13 +41,13 @@
 
 			<hf:formField label="#{messages['businessEntity.code']}" field="code" />
 
-			<hf:formEntityField id="measurableQuantityId"
+			<hf:formField id="measurableQuantityId"
 				label="#{messages['chart.measurableQuantity']}"
-				field="measurableQuantity" childField="code" required="true"
+				field="measurableQuantity" valueLabelField="code" required="true"
 				popup="true" popupId="searchMeasurableQuantity" />
 
-			<hf:formEntityField id="roleId" label="#{messages['chart.role']}"
-				field="role" childField="name" required="false" popup="true"
+			<hf:formField id="roleId" label="#{messages['chart.role']}"
+				field="role" valueLabelField="name" required="false" popup="true"
 				popupId="searchRole" rendered="#{identity.hasPermission('administration','administrationVisualization')}" />
 
 			<hf:formField label="#{messages['chart.style']}" field="style" />
@@ -60,10 +60,9 @@
 			<!-- <hf:formField label="#{messages['pieChart.seriesColors']}"
 				field="seriesColors" /> -->
 
-			<p:panelGrid columns="2">
-				<p:outputLabel value="#{messages['pieChart.seriesColors']}" />
-				<p:colorPicker value="#{pieChartBean.entity.seriesColors}" />
-			</p:panelGrid>
+			<hftl:decorateFormField fieldId="color" label="#{messages['pieChart.seriesColors']}" >
+				<p:colorPicker id="color" value="#{pieChartBean.entity.seriesColors}" />
+			</hftl:decorateFormField>
 
 			<hf:formField label="#{messages['pieChart.diameter']}"
 				field="diameter" />
@@ -85,7 +84,7 @@
 
 			<p:outputPanel id="chartPreview"
 				rendered="#{pieChartBean.chartEntityModel.model != null}">
-				<p:pieChart value="#{pieChartBean.chartEntityModel.model}"
+				<p:chart type="pie" model="#{pieChartBean.chartEntityModel.model}"
 					legendPosition="#{pieChartBean.chartEntityModel.pieChart.legendPosition}"
 					fill="#{pieChartBean.chartEntityModel.pieChart.filled}"
 					seriesColors="#{pieChartBean.chartEntityModel.pieChart.seriesColors}"

@@ -87,4 +87,10 @@ public class CurrencyBean extends BaseBean<Currency> {
 	protected String getDefaultSort() {
 		return "currencyCode";
 	}
+
+	@Override
+	protected boolean canDelete(Currency entity) {
+		// TODO Auto-generated method stub
+		return true;
+	}
 }

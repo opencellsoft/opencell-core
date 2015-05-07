@@ -410,7 +410,7 @@ public class WalletApi extends BaseApi {
 				log.warn("error in status={}", e.getMessage());
 			}
 			walletOperation.setCounter(null);
-			walletOperation.setUnityDescription(postData.getUnityDescription());
+			walletOperation.setRatingUnitDescription(postData.getRatingUnitDescription());
 			walletOperation.setTaxPercent(postData.getTaxPercent());
 			walletOperation.setUnitAmountTax(postData.getUnitAmountTax());
 			walletOperation.setUnitAmountWithoutTax(postData.getUnitAmountWithoutTax());

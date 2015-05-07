@@ -15,7 +15,7 @@
 		<hftl:entityPopup id="searchInvoiceSubCategoryPopup"
 			header="#{messages['invoiceSubCategory.panel']}"
 			backingBean="#{invoiceSubCategoryBean}"
-			updateField=":formPanel:reccuringChargeId:tabView:invoiceSubCategorySelectedId:invoiceSubCategorySelectedId"
+			updateField=":formPanel:reccuringChargeId:tabView:invoiceSubCategorySelectedId"
 			selection="#{recurringChargeTemplateBean.entity.invoiceSubCategory}"
 			searchField1Label="#{messages['invoiceSubCategory.code']}"
 			searchField1="code"
@@ -33,14 +33,9 @@
 			<p:tabView id="tabView">
 
 				<p:tab title="#{messages['customer.tab.information']}">
-					<p:panelGrid styleClass="form-panel-fields" columns="2">
+
 						<hf:formField label="#{messages['chargeTemplate.code']}"
 							field="code" required="true" validateUnique="true" />
-						<hf:languageFields />
-						<hf:formField label="#{messages['enableEntity.disabled']}"
-							field="disabled" isMessage="true" showOnlyOnConsult="true"/>
-						<hf:formField label="#{messages['chargeTemplate.amountEditable']}"
-							field="amountEditable" />
 						<hf:formField
 							label="#{messages['recurringChargeTemplate.durationTermInMonth']}"
 							field="durationTermInMonth" />
@@ -56,22 +51,39 @@
 						<hf:formField
 							label="#{messages['recurringChargeTemplate.sharedLevel']}"
 							field="shareLevel" />
+						<hf:formField
+							label="#{messages['chargeTemplate.inputUnitDescription']}"
+							field="inputUnitDescription" />
+						<hf:formField
+							label="#{messages['chargeTemplate.ratingUnitDescription']}"
+							field="ratingUnitDescription" />
+						<hf:formField
+							label="#{messages['chargeTemplate.unitMultiplicator']}"
+							field="unitMultiplicator" converter="bigDecimal12DigitsConverter" />
+						<hf:formField label="#{messages['chargeTemplate.unitNbDecimal']}"
+							field="unitNbDecimal" />
 
-						<hf:formField label="#{messages['menu.triggeredEdrTemplates']}"
-							field="edrTemplates" listType="pickUpList" childField="code"
-							dualListModel="#{recurringChargeTemplateBean.edrTemplatesModel}" />
-
-						<hf:formEntityField id="invoiceSubCategorySelectedId"
+                        <hf:languageFields />
+                        
+						<hf:formField id="invoiceSubCategorySelectedId"
 							label="#{messages['charge.subCategory']}"
-							field="invoiceSubCategory" childField="code" required="true"
+							field="invoiceSubCategory" valueLabelField="code" required="true"
 							popup="true" popupId="searchInvoiceSubCategoryPopup" />
-						<hftl:panelGroup columns="2">
-							<hf:formEntityField
-								label="#{messages['recurringChargeTemplate.calendar']}"
-								field="calendar" childField="code" required="true" popup="false"
-								listBean="#{calendarBean}" />
-						</hftl:panelGroup>
-					</p:panelGrid>
+						<hf:formField
+							label="#{messages['recurringChargeTemplate.calendar']}"
+							field="calendar" valueLabelField="code" required="true" popup="false"
+							listBean="#{calendarBean}" />
+                        
+                        <hf:formField label="#{messages['chargeTemplate.amountEditable']}"
+                            field="amountEditable" />
+                        <hf:formField label="#{messages['enableEntity.disabled']}"
+                            field="disabled" isMessage="true" showOnlyOnConsult="true"/>
+                        
+                            
+                        <hf:formField label="#{messages['menu.triggeredEdrTemplates']}"
+                            field="edrTemplates" listType="pickUpList" valueLabelField="code"
+                            dualListModel="#{recurringChargeTemplateBean.edrTemplatesModel}" newLine="true"/>
+
 				</p:tab>
 
 				<p:tab title="#{messages['customFieldTemplate.panel']}">

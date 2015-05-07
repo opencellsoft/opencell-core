@@ -313,4 +313,10 @@ public class CalendarBean extends BaseBean<Calendar> {
     public List<CalendarIntervalTypeEnum> getCalendarIntervalTypeEnumValues() {
         return Arrays.asList(CalendarIntervalTypeEnum.values());
     }
+
+	@Override
+	protected boolean canDelete(Calendar entity) {
+		// TODO Auto-generated method stub
+		return true;
+	}
 }

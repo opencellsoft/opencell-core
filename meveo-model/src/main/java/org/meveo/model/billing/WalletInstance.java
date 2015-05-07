@@ -16,6 +16,7 @@
  */
 package org.meveo.model.billing;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -74,7 +75,9 @@ public class WalletInstance extends BusinessEntity {
 	@Column(name = "NEXT_MATCHING_DATE")
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date nextMatchingDate;
-	
+
+    @Column(name = "LOW_BALANCE_LEVEL", precision = NB_PRECISION, scale = NB_DECIMALS)
+	private BigDecimal lowBalanceLevel;
 	
 	@OneToMany(mappedBy = "wallet", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	private List<WalletOperation> operations;
@@ -91,9 +94,11 @@ public class WalletInstance extends BusinessEntity {
 		if (walletTemplate != null) {
 			this.code = walletTemplate.getCode();
 			this.description = walletTemplate.getDescription();
+			this.lowBalanceLevel=walletTemplate.getLowBalanceLevel();
 		} else {
 			this.code = null;
 			this.description = null;
+			this.lowBalanceLevel = null;
 		}
 	}
 
@@ -153,7 +158,15 @@ public class WalletInstance extends BusinessEntity {
 		this.nextMatchingDate = nextMatchingDate;
 	}
 
-	public boolean equals(WalletInstance w) {
+	public BigDecimal getLowBalanceLevel() {
+        return lowBalanceLevel;
+    }
+
+    public void setLowBalanceLevel(BigDecimal lowBalanceLevel) {
+        this.lowBalanceLevel = lowBalanceLevel;
+    }
+
+    public boolean equals(WalletInstance w) {
 		return (w == null) || (w.getCode().equals(this.code));
 	}
 }

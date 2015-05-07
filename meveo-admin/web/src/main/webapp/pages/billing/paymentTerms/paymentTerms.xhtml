@@ -23,10 +23,9 @@
 			backingBean="#{paymentTermBean}">
 			<hftl:column label="#{messages['paymentTerm.name']}" field="name" />
 			<hftl:column label="#{messages['paymentTerm.lines']}"
-				field="paymentTermLines" isList="true" childField="percentage"
-				childFieldId="id"
-				view="/pages/oudaya/paymentTerm/paymentTermLineDetail.xhtml"
-				backView="/pages/oudaya/paymentTerm/paymentTerms.xhtml" />
+				field="paymentTermLines" isList="true" valueLabelField="percentage"
+				valueIdField="id"
+				entityView="/pages/oudaya/paymentTerm/paymentTermLineDetail.xhtml" />
 
 			<hftl:actionsColumn
 				permission="#{identity.hasPermission('billing','billingManagement')}" />

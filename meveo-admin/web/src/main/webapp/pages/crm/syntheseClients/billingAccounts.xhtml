@@ -25,7 +25,7 @@
 
 		<hftl:dataList backingBean="#{billingAccountBean}" checkMany="false" label="#{messages['billingAccount.title']}">
 			<hftl:column label="#{messages['businessEntity.code']}" field="code" />
-			<hftl:column label="#{messages['billingAccount.status']}" field="status" childField="label" isMessage="true" />
+			<hftl:column label="#{messages['billingAccount.status']}" field="status.label" isMessage="true" />
 			<hftl:column label="#{messages['billingAccount.subscriptionDate']}" field="subscriptionDate" />
 			<hftl:column label="#{messages['billingAccount.nextInvoiceDate']}" field="nextInvoiceDate" />
 			<p:column width="100">
@@ -37,7 +37,7 @@
 				</e:cell>
 			</p:column>
 			<hftl:column label="#{messages['billingAccount.name']}" field="name" />
-			<hftl:column label="#{messages['address.address1']}" field="address" childField="address1" />
+			<hftl:column label="#{messages['address.address1']}" field="address".address1" />
 			<hftl:actionsColumn editView="/pages/crm/syntheseClients/syntheseClientDetail.xhtml"
 				permission="#{identity.hasPermission('account','accountManagement') or identity.hasPermission('customerSummary','customerSummaryVisualization')}" />
 		</hftl:dataList>

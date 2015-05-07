@@ -359,6 +359,7 @@ public class AccountHierarchyApi extends BaseApi {
 				customerAccount.setPaymentMethod(PaymentMethodEnum.getValue(caPaymentMethod));
 				customerAccount.setCreditCategory(CreditCategoryEnum.getValue(creditCategory));
 				customerAccount.setTradingCurrency(tradingCurrency);
+				customerAccount.setTradingLanguage(tradingLanguage);
 				customerAccount.setDateDunningLevel(new Date());
 				customerAccountService.create(customerAccount, currentUser, provider);
 
@@ -617,6 +618,7 @@ public class AccountHierarchyApi extends BaseApi {
 			customerAccount.setPaymentMethod(PaymentMethodEnum.getValue(caPaymentMethod));
 			customerAccount.setCreditCategory(CreditCategoryEnum.getValue(creditCategory));
 			customerAccount.setTradingCurrency(tradingCurrency);
+			customerAccount.setTradingLanguage(tradingLanguage);
 
 			if (customerAccount.isTransient()) {
 				customerAccountService.create(customerAccount, currentUser, provider);
@@ -871,6 +873,18 @@ public class AccountHierarchyApi extends BaseApi {
 										customerAccount.setTradingCurrency(tradingCurrency);
 									} else {
 										missingParameters.add("customerAccount.currency");
+										throw new MissingParameterException(getMissingParametersExceptionMessage());
+									}
+
+									if (!StringUtils.isBlank(customerAccountDto.getLanguage())) {
+										TradingLanguage tradingLanguage = tradingLanguageService.findByTradingLanguageCode(customerAccountDto.getLanguage(), provider);
+										if (tradingLanguage == null) {
+											throw new EntityDoesNotExistsException(TradingLanguage.class, customerAccountDto.getLanguage());
+										}
+
+										customerAccount.setTradingLanguage(tradingLanguage);
+									} else {
+										missingParameters.add("customerAccount.language");
 										throw new MissingParameterException(getMissingParametersExceptionMessage());
 									}
 
@@ -1232,10 +1246,6 @@ public class AccountHierarchyApi extends BaseApi {
 																		if (serviceInstance != null) {
 																			// update
 																			log.debug("update service instance with code={}", serviceInstanceDto.getCode());
-																			serviceInstance.setSubscriptionDate(serviceInstanceDto.getSubscriptionDate());
-																			serviceInstance.setQuantity(serviceInstanceDto.getQuantity() == null ? BigDecimal.ONE
-																					: serviceInstanceDto.getQuantity());
-																			serviceInstance.setDescription(serviceInstanceDto.getDescription());
 
 																			// check
 																			// if
@@ -1246,6 +1256,11 @@ public class AccountHierarchyApi extends BaseApi {
 																				throw new MeveoApiException("ServiceInstance with code=" + serviceInstance.getCode()
 																						+ " must be INACTIVE.");
 																			} else {
+																				serviceInstance.setSubscriptionDate(serviceInstanceDto.getSubscriptionDate());
+																				serviceInstance.setQuantity(serviceInstanceDto.getQuantity() == null ? BigDecimal.ONE
+																						: serviceInstanceDto.getQuantity());
+																				serviceInstance.setDescription(serviceInstanceDto.getDescription());
+
 																				// activate
 																				try {
 																					serviceInstanceService.serviceActivation(serviceInstance, null, null, currentUser);

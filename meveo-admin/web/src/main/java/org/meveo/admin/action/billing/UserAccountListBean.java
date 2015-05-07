@@ -66,4 +66,10 @@ public class UserAccountListBean extends BaseBean<UserAccount> {
 	protected String getDefaultSort() {
 		return "code";
 	}
+
+	@Override
+	protected boolean canDelete(UserAccount entity) {
+		// TODO Auto-generated method stub
+		return true;
+	}
 }

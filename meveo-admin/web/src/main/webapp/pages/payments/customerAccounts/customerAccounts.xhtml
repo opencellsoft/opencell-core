@@ -25,7 +25,7 @@
 			searchField1Label="#{messages['customer.code']}" searchField1="code"
 			column1Label="#{messages['customer.code']}" column1="code"
 			selection="#{customerAccountListBean.filters['customer']}"
-			updateField=":searchPanel:searchForm:customer:customer_child">
+			updateField=":searchPanel:searchForm:customer">
 		</hftl:entityPopup>
 
 		<hf:searchPanel id="searchPanel"
@@ -33,7 +33,7 @@
 			backingBean="#{customerAccountListBean}">
 			<hf:searchField id="customer"
 				label="#{messages['customerAccount.customer']}" field="customer"
-				childField="code" popup="true" popupId="searchCustomerPopup" />
+				valueLabelField="code" popup="true" popupId="searchCustomerPopup" />
 			<hf:searchField label="#{messages['businessEntity.code']}"
 				field="code" />
 			<hf:searchField label="#{messages['businessEntity.description']}"
@@ -46,8 +46,6 @@
 				field="paymentMethod" />
 			<hf:searchField label="#{messages['customerAccount.creditCategory']}"
 				field="creditCategory" />
-			<hf:searchField label="#{messages['customerAccount.customer']}"
-				field="customer" />
 		</hf:searchPanel>
 
 		<hftl:dataList backingBean="#{customerAccountListBean}" sortBy="code">
@@ -57,16 +55,18 @@
 			<hftl:column label="#{messages['customerAccount.name']}" field="name"
 				titleWithMessage="true" />
 			<hftl:column label="#{messages['customerAccount.paymentMethod']}"
-				field="paymentMethod" childField="label" isMessage="true" />
+				field="paymentMethod.label" isMessage="true" />
 			<hftl:column label="#{messages['customerAccount.status']}"
-				field="status" childField="label" isMessage="true" />
+				field="status.label" isMessage="true" />
 			<hftl:column label="#{messages['customerAccount.creditCategory']}"
-				field="creditCategory" childField="label" isMessage="true" />
-			<hftl:columnList label="#{messages['customerAccount.customer']}" 
-				value="#{entity.customer}" field="code" fieldId="id" propagateConversation="false" 
+				field="creditCategory.label" isMessage="true" />
+			<hftl:column label="#{messages['customerAccount.customer']}" 
+				field="customer.code" valueIdField="customer.id" propagateConversation="false" 
 				entityView="customerDetail" objectIdParamName="customerId" />
+			<hftl:column label="#{messages['tradingCountry.languageCode']}"
+				field="tradingLanguage.languageCode" />	
 			<hftl:column label="#{messages['currency.codeCurrency']}"
-				field="tradingCurrency" childField="currencyCode" />
+				field="tradingCurrency.currencyCode" />
 
 			<hftl:actionsColumn useCustomIdParam="true"
 				permission="#{persistentPermissionResolver.hasPermission('account','accountManagement')}" />

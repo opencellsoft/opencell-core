@@ -88,4 +88,10 @@ public class CustomerBrandBean extends BaseBean<CustomerBrand> {
 		return Arrays.asList("provider");
 	}
 
+	@Override
+	protected boolean canDelete(CustomerBrand entity) {
+		// TODO Auto-generated method stub
+		return true;
+	}
+
 }

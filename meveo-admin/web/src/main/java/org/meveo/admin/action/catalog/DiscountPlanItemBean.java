@@ -62,5 +62,11 @@ public class DiscountPlanItemBean extends BaseBean<DiscountPlanItem> {
 			}else{
 	     return null; 
 			}  
-		 }}
+		 }
+
+	@Override
+	protected boolean canDelete(DiscountPlanItem entity) {
+		// TODO Auto-generated method stub
+		return true;
+	}}
 

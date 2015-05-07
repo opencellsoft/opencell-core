@@ -176,4 +176,10 @@ public class TimerEntityBean extends BaseBean<TimerEntity> {
             return true;
         }
     }
+
+	@Override
+	protected boolean canDelete(TimerEntity entity) {
+		// TODO Auto-generated method stub
+		return true;
+	}
 }

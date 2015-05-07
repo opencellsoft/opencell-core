@@ -48,9 +48,9 @@
 				field="accountFilter" />
 			<hf:searchField label="#{messages['invoiceTask.walletFilter']}"
 				field="walletFilter" />
-			<hf:searchField listBean=""
+			<hf:searchField 
 				label="#{messages['invoiceTask.billingCycle']}" field="billingCycle"
-				childField="billingFrequency" popup="true"
+				valueLabelField="billingFrequency" popup="true"
 				popupId="searchBillingCyclePopup" clearButton="true" />
 		</hf:searchPanel>
 
@@ -65,9 +65,9 @@
 			<hftl:column label="#{messages['invoiceTask.walletFilter']}"
 				field="walletFilter" />
 			<hftl:column label="#{messages['invoiceTask.taskStatus']}"
-				field="taskStatus" childField="label" isMessage="true" />
+				field="taskStatus.label" isMessage="true" />
 			<hftl:column label="#{messages['invoiceTask.billingCycle']}"
-				field="billingCycle" childField="billingFrequency" />
+				field="billingCycle.billingFrequency" />
 
 			<hftl:actionsColumn
 				permission="#{identity.hasPermission('billing','billingManagement')}" />

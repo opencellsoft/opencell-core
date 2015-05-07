@@ -111,6 +111,7 @@ public class GenerateImportXmlV2 {
 						customerAccount.setCode("JOB_CA" + i + "_" + j + "_" + k);
 						customerAccount.setDescription("JOB_CA" + i + "_" + j + "_" + k);
 						customerAccount.setTradingCurrencyCode("EUR");
+						customerAccount.setTradingLanguageCode("FRA");
 						customerAccount.setCreditCategory(creditCategory);
 						Name name = new Name();
 						name.setFirstName("JOB_FIRST_NAME" + i + "_" + j + "_" + k);

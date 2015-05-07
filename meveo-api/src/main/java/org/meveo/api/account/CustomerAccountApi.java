@@ -21,6 +21,7 @@ import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.TradingCurrency;
+import org.meveo.model.billing.TradingLanguage;
 import org.meveo.model.crm.AccountLevelEnum;
 import org.meveo.model.crm.CustomFieldInstance;
 import org.meveo.model.crm.Customer;
@@ -34,6 +35,7 @@ import org.meveo.model.payments.MatchingStatusEnum;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.payments.RecordedInvoice;
 import org.meveo.service.admin.impl.TradingCurrencyService;
+import org.meveo.service.billing.impl.TradingLanguageService;
 import org.meveo.service.crm.impl.CustomerService;
 import org.meveo.service.payments.impl.AccountOperationService;
 import org.meveo.service.payments.impl.CustomerAccountService;
@@ -56,10 +58,14 @@ public class CustomerAccountApi extends AccountApi {
 
 	@Inject
 	private TradingCurrencyService tradingCurrencyService;
+	
+	@Inject
+	private TradingLanguageService tradingLanguageService;
 
 	public void create(CustomerAccountDto postData, User currentUser) throws MeveoApiException {
 		if (!StringUtils.isBlank(postData.getCode()) && !StringUtils.isBlank(postData.getDescription()) && !StringUtils.isBlank(postData.getCustomer())
-				&& !StringUtils.isBlank(postData.getCurrency()) && !StringUtils.isBlank(postData.getName()) && !StringUtils.isBlank(postData.getName().getLastName())) {
+				&& !StringUtils.isBlank(postData.getCurrency()) && !StringUtils.isBlank(postData.getLanguage())
+				&& !StringUtils.isBlank(postData.getName()) && !StringUtils.isBlank(postData.getName().getLastName())) {
 			Provider provider = currentUser.getProvider();
 			// check if already exists
 			if (customerAccountService.findByCode(postData.getCode(), currentUser.getProvider()) != null) {
@@ -75,12 +81,18 @@ public class CustomerAccountApi extends AccountApi {
 			if (tradingCurrency == null) {
 				throw new EntityDoesNotExistsException(TradingCurrency.class, postData.getCurrency());
 			}
+			
+			TradingLanguage tradingLanguage = tradingLanguageService.findByTradingLanguageCode(postData.getLanguage(), provider);
+			if (tradingLanguage == null) {
+				throw new EntityDoesNotExistsException(TradingLanguage.class, postData.getLanguage());
+			}
 
 			CustomerAccount customerAccount = new CustomerAccount();
 			populate(postData, customerAccount, currentUser, AccountLevelEnum.CA);
 			customerAccount.setDateDunningLevel(new Date());
 			customerAccount.setCustomer(customer);
 			customerAccount.setTradingCurrency(tradingCurrency);
+			customerAccount.setTradingLanguage(tradingLanguage);
 			try {
 				customerAccount.setPaymentMethod(PaymentMethodEnum.valueOf(postData.getPaymentMethod()));
 			} catch (IllegalArgumentException | NullPointerException e) {
@@ -115,6 +127,9 @@ public class CustomerAccountApi extends AccountApi {
 			if (StringUtils.isBlank(postData.getCurrency())) {
 				missingParameters.add("currency");
 			}
+			if (StringUtils.isBlank(postData.getLanguage())) {
+				missingParameters.add("language");
+			}
 			if (StringUtils.isBlank(postData.getName())) {
 				missingParameters.add("name");
 			}
@@ -129,7 +144,8 @@ public class CustomerAccountApi extends AccountApi {
 
 	public void update(CustomerAccountDto postData, User currentUser) throws MeveoApiException {
 		if (!StringUtils.isBlank(postData.getCode()) && !StringUtils.isBlank(postData.getDescription()) && !StringUtils.isBlank(postData.getCustomer())
-				&& !StringUtils.isBlank(postData.getCurrency()) && !StringUtils.isBlank(postData.getName()) && !StringUtils.isBlank(postData.getName().getLastName())) {
+				&& !StringUtils.isBlank(postData.getCurrency()) && !StringUtils.isBlank(postData.getLanguage())
+				&& !StringUtils.isBlank(postData.getName()) && !StringUtils.isBlank(postData.getName().getLastName())) {
 			Provider provider = currentUser.getProvider();
 			// check if already exists
 			CustomerAccount customerAccount = customerAccountService.findByCode(postData.getCode(), currentUser.getProvider());
@@ -146,6 +162,11 @@ public class CustomerAccountApi extends AccountApi {
 			if (tradingCurrency == null) {
 				throw new EntityDoesNotExistsException(TradingCurrency.class, postData.getCurrency());
 			}
+			
+			TradingLanguage tradingLanguage = tradingLanguageService.findByTradingLanguageCode(postData.getLanguage(), provider);
+			if (tradingLanguage == null) {
+				throw new EntityDoesNotExistsException(TradingLanguage.class, postData.getLanguage());
+			}
 
 			if (postData.getContactInformation() != null) {
 				customerAccount.getContactInformation().setEmail(postData.getContactInformation().getEmail());
@@ -158,6 +179,7 @@ public class CustomerAccountApi extends AccountApi {
 
 			customerAccount.setCustomer(customer);
 			customerAccount.setTradingCurrency(tradingCurrency);
+			customerAccount.setTradingLanguage(tradingLanguage);
 			try {
 				customerAccount.setPaymentMethod(PaymentMethodEnum.valueOf(postData.getPaymentMethod()));
 			} catch (IllegalArgumentException e) {
@@ -184,6 +206,9 @@ public class CustomerAccountApi extends AccountApi {
 			}
 			if (StringUtils.isBlank(postData.getCurrency())) {
 				missingParameters.add("currency");
+			}
+			if (StringUtils.isBlank(postData.getLanguage())) {
+				missingParameters.add("language");
 			}
 			if (StringUtils.isBlank(postData.getName())) {
 				missingParameters.add("name");

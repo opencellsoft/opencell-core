@@ -177,5 +177,11 @@ public class WalletOperationBean extends BaseBean<WalletOperation> {
 		conversation.end();
 		return "walletOperations";
 	}
+
+	@Override
+	protected boolean canDelete(WalletOperation entity) {
+		// TODO Auto-generated method stub
+		return true;
+	}
 } 
 

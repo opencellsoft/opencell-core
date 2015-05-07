@@ -98,13 +98,14 @@ public class ServiceTemplateApi extends BaseApi {
 							serviceChargeTemplateDto.getCode());
 				}
 
-				for (String walletCode : serviceChargeTemplateDto.getWallets().getWallet()) {
-					WalletTemplate walletTemplate = walletTemplateService.findByCode(walletCode, provider);
-					if (walletTemplate == null) {
-						throw new EntityDoesNotExistsException(WalletTemplate.class, walletCode);
+				for (String walletCode : serviceChargeTemplateDto.getWallets().getWallet()) {					
+					if (!walletCode.equals(WalletTemplate.PRINCIPAL)) {
+						WalletTemplate walletTemplate = walletTemplateService.findByCode(walletCode, provider);
+						if (walletTemplate == null) {
+							throw new EntityDoesNotExistsException(WalletTemplate.class, walletCode);
+						}
+						wallets.add(walletTemplate);
 					}
-
-					wallets.add(walletTemplate);
 				}
 
 				ServiceChargeTemplateRecurring serviceChargeTemplate = new ServiceChargeTemplateRecurring();
@@ -133,13 +134,14 @@ public class ServiceTemplateApi extends BaseApi {
 							serviceChargeTemplateDto.getCode());
 				}
 
-				for (String walletCode : serviceChargeTemplateDto.getWallets().getWallet()) {
-					WalletTemplate walletTemplate = walletTemplateService.findByCode(walletCode, provider);
-					if (walletTemplate == null) {
-						throw new EntityDoesNotExistsException(WalletTemplate.class, walletCode);
+				for (String walletCode : serviceChargeTemplateDto.getWallets().getWallet()) {					
+					if (!walletCode.equals(WalletTemplate.PRINCIPAL)) {
+						WalletTemplate walletTemplate = walletTemplateService.findByCode(walletCode, provider);
+						if (walletTemplate == null) {
+							throw new EntityDoesNotExistsException(WalletTemplate.class, walletCode);
+						}
+						wallets.add(walletTemplate);
 					}
-
-					wallets.add(walletTemplate);
 				}
 
 				ServiceChargeTemplateSubscription serviceChargeTemplate = new ServiceChargeTemplateSubscription();
@@ -168,13 +170,14 @@ public class ServiceTemplateApi extends BaseApi {
 							serviceChargeTemplateDto.getCode());
 				}
 
-				for (String walletCode : serviceChargeTemplateDto.getWallets().getWallet()) {
-					WalletTemplate walletTemplate = walletTemplateService.findByCode(walletCode, provider);
-					if (walletTemplate == null) {
-						throw new EntityDoesNotExistsException(WalletTemplate.class, walletCode);
+				for (String walletCode : serviceChargeTemplateDto.getWallets().getWallet()) {					
+					if (!walletCode.equals(WalletTemplate.PRINCIPAL)) {
+						WalletTemplate walletTemplate = walletTemplateService.findByCode(walletCode, provider);
+						if (walletTemplate == null) {
+							throw new EntityDoesNotExistsException(WalletTemplate.class, walletCode);
+						}
+						wallets.add(walletTemplate);
 					}
-
-					wallets.add(walletTemplate);
 				}
 
 				ServiceChargeTemplateTermination serviceChargeTemplate = new ServiceChargeTemplateTermination();
@@ -203,13 +206,14 @@ public class ServiceTemplateApi extends BaseApi {
 							serviceChargeTemplateDto.getCode());
 				}
 
-				for (String walletCode : serviceChargeTemplateDto.getWallets().getWallet()) {
-					WalletTemplate walletTemplate = walletTemplateService.findByCode(walletCode, provider);
-					if (walletTemplate == null) {
-						throw new EntityDoesNotExistsException(WalletTemplate.class, walletCode);
+				for (String walletCode : serviceChargeTemplateDto.getWallets().getWallet()) {					
+					if (!walletCode.equals(WalletTemplate.PRINCIPAL)) {
+						WalletTemplate walletTemplate = walletTemplateService.findByCode(walletCode, provider);
+						if (walletTemplate == null) {
+							throw new EntityDoesNotExistsException(WalletTemplate.class, walletCode);
+						}
+						wallets.add(walletTemplate);
 					}
-
-					wallets.add(walletTemplate);
 				}
 
 				ServiceChargeTemplateUsage serviceChargeTemplate = new ServiceChargeTemplateUsage();

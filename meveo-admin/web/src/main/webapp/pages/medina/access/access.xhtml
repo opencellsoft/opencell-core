@@ -23,7 +23,7 @@
 
 		<hftl:entityPopup id="searchSubscriptionPopup"
 			header="#{messages['access.subscription']}"
-			updateField=":searchPanel:searchForm:subscription:subscription_child"
+			updateField=":searchPanel:searchForm:subscription"
 			selection="#{accessListBean.filters['subscription']}"
 			backingBean="#{subscriptionBean}"
 			searchField1Label="#{messages['subscription.code']}"
@@ -42,16 +42,16 @@
 			<hf:searchField label="#{messages['access.endDate']}" field="endDate" />
 			<hf:searchField id="subscription"
 				label="#{messages['access.subscription']}" field="subscription"
-				childField="code" popup="true" popupId="searchSubscriptionPopup" />
+				valueLabelField="code" popup="true" popupId="searchSubscriptionPopup" />
 		</hf:searchPanel>
 
 		<hftl:dataList label="#{messages['access.title']}"
 			backingBean="#{accessListBean}" sortBy="accessUserId">
-			<hftl:columnList label="#{messages['access.accessUserId']}"
-				value="#{entity}" fieldId="id" propagateConversation="true"
+			<hftl:column label="#{messages['access.accessUserId']}"
+				valueIdField="id" propagateConversation="true"
 				field="accessUserId" entityView="accessDetail"/>
-			<hftl:columnList label="#{messages['access.subscription']}" 
-				value="#{entity.subscription}" field="code" fieldId="id" propagateConversation="false"
+			<hftl:column label="#{messages['access.subscription']}" 
+				field="subscription.code" valueIdField="subscription.id" propagateConversation="false"
 				entityView="subscriptionDetail" objectIdParamName="subscriptionId"/>
 			<hftl:column label="#{messages['access.startDate']}"
 				field="startDate" isDate="true" />

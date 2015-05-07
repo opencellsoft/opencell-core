@@ -30,6 +30,8 @@ import javax.persistence.Query;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.crm.Provider;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Query builder class for building JPA queries.
@@ -522,6 +524,7 @@ public class QueryBuilder {
 	 */
 	public Query getQuery(EntityManager em) {
 		applyPagination(paginationSortAlias);
+		Logger log = LoggerFactory.getLogger(getClass());
 
 		Query result = em.createQuery(q.toString());
 		applyPagination(result);

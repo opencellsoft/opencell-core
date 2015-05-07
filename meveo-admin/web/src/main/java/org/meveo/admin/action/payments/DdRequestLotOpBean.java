@@ -99,4 +99,10 @@ public class DdRequestLotOpBean extends BaseBean<DDRequestLotOp> {
 		return Arrays.asList("provider");
 	}
 
+	@Override
+	protected boolean canDelete(DDRequestLotOp entity) {
+		// TODO Auto-generated method stub
+		return true;
+	}
+
 }

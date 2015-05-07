@@ -18,7 +18,7 @@
 
         <hf:searchPanel label="#{messages['menu.notificationHistories']}" columns="2" backingBean="#{notificationHistoryBean}" renderNewButton="false">
             <hf:searchField label="#{messages['entity.notification.notificationType']}" field="entityClassName" />
-            <hf:searchField label="#{messages['entity.notification']}" field="notification" childField="code" listBean="#{notificationBean}" />
+            <hf:searchField label="#{messages['entity.notification']}" field="notification" valueLabelField="code" listBean="#{notificationBean}" />
             <hf:searchField label="#{messages['commons.status']}" field="status" />
             <hf:searchField label="#{messages['commons.date']}" field="auditable" childField="updated" />
         </hf:searchPanel>
@@ -26,16 +26,16 @@
         <!-- ===================================== SEARCH RESULTS ======================================= -->
 
         <hftl:dataList backingBean="#{notificationHistoryBean}" exportButton="false" exportToCsv="true">
-            <hftl:column label="#{messages['commons.date']}" field="auditable" childField="updated" isDate="true" time="true" />
+            <hftl:column label="#{messages['commons.date']}" field="auditable.updated" isDate="true" time="true" />
             <p:column headerText="#{messages['entity.notification.notificationType']}" width="10%">
                 <h:link value="#{entity.inboundRequest.code}" outcome="inboundRequestDetail" rendered="#{entity.inboundRequest != null}">
                     <f:param name="objectId" value="#{entity.inboundRequest.id}" />
                 </h:link>
             	<h:outputText value="#{entity.entityClassName}" rendered="#{entity.inboundRequest == null}"></h:outputText>
             </p:column>
-            <hftl:column label="#{messages['entity.notification']}" field="notification" childField="code" />
+            <hftl:column label="#{messages['entity.notification']}" field="notification.code" />
             <hftl:column label="#{messages['entity.notification.retryNr']}" field="nbRetry" />
-            <hftl:column label="#{messages['commons.status']}" field="status" childField="label" isMessage="true" />
+            <hftl:column label="#{messages['commons.status']}" field="status.label" isMessage="true" />
             <p:column headerText="#{messages['entity.notification.result']}" width="20%">
             	<h:outputText value="#{entity.result}"></h:outputText>
             </p:column>

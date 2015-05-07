@@ -54,4 +54,10 @@ public class ZoningPlanBean extends BaseBean<ZonningPlan> {
 		return zoningPlanService;
 	}
 
+	@Override
+	protected boolean canDelete(ZonningPlan entity) {
+		// TODO Auto-generated method stub
+		return true;
+	}
+
 }

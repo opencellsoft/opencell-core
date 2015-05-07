@@ -34,17 +34,15 @@
 			<hftl:column label="#{messages['businessEntity.description']}"
 				field="description" />
 			<hftl:column label="#{messages['subscription.status']}"
-				field="status" childField="label" isMessage="true"
-				sortByField="true" />
-			<hftl:columnList label="#{messages['subscription.userAccount']}"
-				value="#{entity.userAccount}" field="code" fieldId="id" objectIdParamName="userAccountId"
+				field="status.label" isMessage="true" />
+			<hftl:column label="#{messages['subscription.userAccount']}"
+				field="userAccount.code" valueIdField="userAccount.id" objectIdParamName="userAccountId"
 				entityView="userAccountDetail" propagateConversation="false"/>
 			<hftl:column label="#{messages['subscription.serviceInstances']}"
-				field="serviceInstances" isList="true" childField="descriptionAndStatus"
-				childFieldId="id" sort="false"
-				view="/pages/resource/serviceInstances/serviceInstanceDetail.xhtml"
+				field="serviceInstances" isList="true" valueLabelField="descriptionAndStatus"
+				valueIdField="id" sort="false"
+				entityView="serviceInstanceDetail"
 				backView="subscriptions" />
-
 			<hftl:actionsColumn useCustomIdParam="true" renderDeleteLink="false"
 				permission="#{identity.hasPermission('billing','billingManagement')}" />
 		</hftl:dataList>

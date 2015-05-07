@@ -26,10 +26,12 @@ import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.annotation.PostConstruct;
 import javax.faces.event.ActionEvent;
@@ -264,7 +266,7 @@ public class UserBean extends BaseBean<User> {
 
     @Override
     protected String getDefaultSort() {
-        return "userName";
+        return null;//"userName";
     }
 
     public String getFilePath() {
@@ -548,5 +550,91 @@ public class UserBean extends BaseBean<User> {
 
         return searchCriteria;
     }
+
+    public Map getFields(){
+        return new Map<String, Object>(){
+
+            @Override
+            public void clear() {
+                // TODO Auto-generated method stub
+                
+            }
+
+            @Override
+            public boolean containsKey(Object key) {
+                // TODO Auto-generated method stub
+                return false;
+            }
+
+            @Override
+            public boolean containsValue(Object value) {
+                // TODO Auto-generated method stub
+                return false;
+            }
+
+            @Override
+            public Set<java.util.Map.Entry<String, Object>> entrySet() {
+                // TODO Auto-generated method stub
+                return null;
+            }
+
+            @Override
+            public Object get(Object key) {
+                log.error("Getting {} ", key); 
+                return entity.getProvider().getCode();
+            
+            }
+
+            @Override
+            public boolean isEmpty() {
+                // TODO Auto-generated method stub
+                return false;
+            }
+
+            @Override
+            public Set<String> keySet() {
+                // TODO Auto-generated method stub
+                return null;
+            }
+
+            @Override
+            public Object put(String key, Object value) {
+                log.error("Setting {} to {}", key, value);
+                return value;
+            }
+
+            @Override
+            public void putAll(Map<? extends String, ? extends Object> m) {
+                // TODO Auto-generated method stub
+                
+            }
+
+            @Override
+            public Object remove(Object key) {
+                // TODO Auto-generated method stub
+                return null;
+            }
+
+            @Override
+            public int size() {
+                // TODO Auto-generated method stub
+                return 0;
+            }
+
+            @Override
+            public Collection<Object> values() {
+                // TODO Auto-generated method stub
+                return null;
+            }
+            
+        };
+        
+        
+    }
+	@Override
+	protected boolean canDelete(User entity) {
+		// TODO Auto-generated method stub
+		return true;
+	}
 
 }

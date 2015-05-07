@@ -225,4 +225,10 @@ public class NotificationBean extends BaseBean<Notification> {
         Collections.sort(classNames);
         return classNames;
     }
+
+	@Override
+	protected boolean canDelete(Notification entity) {
+		// TODO Auto-generated method stub
+		return true;
+	}
 }

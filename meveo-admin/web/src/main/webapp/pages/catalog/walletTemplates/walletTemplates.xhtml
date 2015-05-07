@@ -26,9 +26,10 @@
     		<hftl:dataList label="#{messages['menu.wallets']}" checkMany="false" backingBean="#{walletTemplateListBean}" sortBy="code">
     			<hftl:column label="#{messages['businessEntity.code']}" field="code" />
     			<hftl:column label="#{messages['businessEntity.description']}" field="description" /> 
-    			<hftl:column label="#{messages['wallet.walletType']}" field="walletType" childField="label" isMessage="true" /> 
-    			<hftl:column label="#{messages['walletTemplate.consumptionAlertSet']}" field="consumptionAlertSet" /> 
-    			<hftl:column label="#{messages['walletTemplate.fastRatingLevel']}" field="fastRatingLevel" /> 
+    			<hftl:column label="#{messages['wallet.walletType']}" field="walletType.label" isMessage="true" /> 
+    			<hftl:column label="#{messages['walletTemplate.lowBalanceLevel']}" field="lowBalanceLevel"/>
+    			<!-- <hftl:column label="#{messages['walletTemplate.consumptionAlertSet']}" field="consumptionAlertSet" /> 
+    			<hftl:column label="#{messages['walletTemplate.fastRatingLevel']}" field="fastRatingLevel" />  -->
     			<hftl:actionsColumn permission="#{identity.hasPermission('catalog','catalogManagement')}" />
 		    </hftl:dataList>
 		   		

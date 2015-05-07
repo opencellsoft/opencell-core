@@ -4,8 +4,7 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:p="http://primefaces.org/ui"
-	
-	 xmlns:hftl="http://hftl.org"
+    xmlns:hftl="http://hftl.org"
 	xmlns:hf="http://java.sun.com/jsf/composite/tags"
 	template="/layout/template.xhtml">
 
@@ -40,56 +39,37 @@
 				oncomplete="Richfaces.hideModalPanel('customerAccountPopup')">
 			</a:commandLink> -->
 		</hftl:entityPopup>
-		
 
-		<p:panel styleClass="col1-set">
-			<f:facet name="header">
-				<h:outputText
-					value="#{messages['customerAccount.transferAccountTitle']}" />
-			</f:facet>
-			<h:form id="transferAccountForm">
+        <hftl:decorateFormPanel formId="transferAccountForm" label="#{messages['customerAccount.transferAccountTitle']}">
+            <ui:define name="fields">        
+                    <hf:formDecorateField fieldId="accountTransferFrom" label="#{messages['customerAccount.accountTransferFrom']}">
+                        <p:inputText id="accountTransferFrom" value="#{customerAccountBean.entity.code}" disabled="true" size="30"></p:inputText>
+                    </hf:formDecorateField>
 
-				<p:panelGrid columns="2" styleClass="form-panel-fields">
-					<p:outputLabel for="accountTransferFrom"
-						value="#{messages['customerAccount.accountTransferFrom']}"></p:outputLabel>
-					<p:inputText id="accountTransferFrom"
-						value="#{customerAccountBean.entity.code}" disabled="true" size="30"></p:inputText>
+                    <hf:formDecorateField id="accountTransferCode" fieldId="accountTransferCode" label="#{messages['customerAccount.accountTransferTo']}">
 
-					<p:outputLabel for="accountTransferCode"
-						value="#{messages['customerAccount.accountTransferTo']}"></p:outputLabel>
-					<p:panelGrid columns="2">
-						<p:inputText id="accountTransferCode"
-							value="#{customerAccountBean.getCustomerAccountTransfer().getCode()}"
-							required="true" disabled="true" size="30"></p:inputText>
-						<p:commandLink id="selectLink"
-							onclick="dlg_customerAccountPopup.show()">
-							<h:graphicImage value="/img/search.gif" style="border:0" />
-						</p:commandLink>
-						<p:tooltip for="selectLink" value="#{messages['commons.search']}"></p:tooltip>
-						<ui:insert />
-					</p:panelGrid>
+                        <p:inputText id="accountTransferCode" value="#{customerAccountBean.getCustomerAccountTransfer().getCode()}" required="true" disabled="true" size="30"></p:inputText>
+                        <p:commandLink id="selectLink" onclick="PF('dlg_customerAccountPopup').show()">
+                            <h:graphicImage value="/img/search.gif" style="border:0" />
+                        </p:commandLink>
+                        <p:tooltip for="selectLink" value="#{messages['commons.search']}"></p:tooltip>
+                        <ui:insert />
+                    </hf:formDecorateField>
 
-					<p:outputLabel for="amountToTransfer"
-						value="#{messages['customerAccount.amountToTransfer']}"></p:outputLabel>
-					<p:inputText id="amountToTransfer"
-						value="#{customerAccountBean.amountToTransfer}" required="true"
-						size="5">
-						<f:converter converterId="bigDecimalConverter" />
-					</p:inputText>
+                    <hf:formDecorateField fieldId="amountToTransfer" label="#{messages['customerAccount.amountToTransfer']}">
+                        <p:inputText id="amountToTransfer" value="#{customerAccountBean.amountToTransfer}" required="true" size="5">
+                            <f:converter converterId="bigDecimalConverter" />
+                        </p:inputText>
+                    </hf:formDecorateField>
+             </ui:define>
+             <ui:define name="buttons">
+                    <p:commandButton value="#{messages['customerAccount.buttonTransfert']}" action="#{customerAccountBean.transferAccount()}" />
 
-				</p:panelGrid>
-
-				<p:panelGrid columns="2">
-					<p:commandButton
-						value="#{messages['customerAccount.buttonTransfert']}"
-						action="#{customerAccountBean.transferAccount()}" />
-						
-					<p:button  outcome="customerAccountDetail" value="#{messages['action.back']}">
-									<f:param name="objectId" value="#{customerAccountBean.entity.id}" />
-									<f:param name="cid" value="#{javax.enterprise.context.conversation.id}" />
-					</p:button>	
-				</p:panelGrid>
-			</h:form>
-		</p:panel>
-	</ui:define>
+                    <p:button outcome="customerAccountDetail" value="#{messages['action.back']}">
+                        <f:param name="objectId" value="#{customerAccountBean.entity.id}" />
+                        <f:param name="cid" value="#{javax.enterprise.context.conversation.id}" />
+                    </p:button>
+              </ui:define>
+        </hftl:decorateFormPanel>
+    </ui:define>
 </ui:composition>

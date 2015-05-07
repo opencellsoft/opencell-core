@@ -22,7 +22,7 @@
 				column1Label="#{messages['BusinessEntity.code']}" column1="code"
 				column2Label="#{messages['BusinessEntity.description']}"
 				column2="description"
-				updateField=":#{p:component('discountPlan')}:discountPlan">
+				updateField=":#{p:component('discountPlan')}">
 			</hftl:entityPopup>
 
 			<hftl:entityPopup id="popupOfferTemplates"
@@ -34,7 +34,7 @@
 				column1Label="#{messages['BusinessEntity.code']}" column1="code"
 				column2Label="#{messages['BusinessEntity.description']}"
 				column2="description"
-				updateField=":#{p:component('offerTemplate')}:offerTemplate">
+				updateField=":#{p:component('offerTemplate')}">
 			</hftl:entityPopup>
 
 			<hftl:entityPopup id="popupChargeTemplates"
@@ -46,7 +46,7 @@
 				column1Label="#{messages['BusinessEntity.code']}" column1="code"
 				column2Label="#{messages['BusinessEntity.description']}"
 				column2="description"
-				updateField=":#{p:component('chargeTemplate')}:chargeTemplate">
+				updateField=":#{p:component('chargeTemplate')}">
 			</hftl:entityPopup>
 		</c:if>
 
@@ -62,29 +62,29 @@
 			<hf:formField label="#{messages['BusinessEntity.code']}" field="code"
 				required="true" />
 
-			<hf:formEntityField id="discountPlan"
+			<hf:formField id="discountPlan"
 				label="#{messages['discountPlan.title']}" field="discountPlan"
-				childField="code" required="true" popup="true"
+				valueLabelField="code" required="true" popup="true"
 				popupId="popupDiscountPlans" />
 
-			<hf:formEntityField id="offerTemplate"
+			<hf:formField id="offerTemplate"
 				label="#{messages['discountPlanItem.offerTemplate']}"
-				field="offerTemplate" childField="code" required="false"
+				field="offerTemplate" valueLabelField="code" required="false"
 				popup="true" popupId="popupOfferTemplates" />
 
-			<hf:formEntityField id="invoiceCategory"
+			<hf:formField id="invoiceCategory"
 				label="#{messages['discountPlanItem.invoiceCategory']}"
-				field="invoiceCategory" childField="code" required="false"
-				listBean="#{invoiceCategoryBean}" labelField="description" />
+				field="invoiceCategory" valueLabelField="code" required="false"
+				listBean="#{invoiceCategoryBean}" />
 
-			<hf:formEntityField id="invoiceSubCategory"
+			<hf:formField id="invoiceSubCategory"
 				label="#{messages['discountPlanItem.invoiceSubCategory']}"
-				field="invoiceSubCategory" childField="code" required="false"
+				field="invoiceSubCategory" valueLabelField="code" required="false"
 				listBean="#{invoiceSubCategoryBean}" />
 
-			<hf:formEntityField id="chargeTemplate"
+			<hf:formField id="chargeTemplate"
 				label="#{messages['discountPlanItem.chargeTemplate']}"
-				field="chargeTemplate" childField="code" required="false"
+				field="chargeTemplate" valueLabelField="code" required="false"
 				popup="true" popupId="popupChargeTemplates" />
 
 			<hf:formField label="#{messages['discountPlanItem.percent']}"

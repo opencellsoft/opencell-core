@@ -70,7 +70,7 @@ public class RatedTransactionsJobBean {
 									.getBillingAccount(), walletOperation.getChargeInstance().getChargeTemplate()
 									.getInvoiceSubCategory(), walletOperation.getParameter1(),
 							walletOperation.getParameter2(), walletOperation.getParameter3(),
-							walletOperation.getUnityDescription(), walletOperation.getPriceplan(),
+							walletOperation.getRatingUnitDescription(), walletOperation.getPriceplan(),
 							walletOperation.getOfferCode());
 					ratedTransactionService.create(ratedTransaction, currentUser, currentUser.getProvider());
 

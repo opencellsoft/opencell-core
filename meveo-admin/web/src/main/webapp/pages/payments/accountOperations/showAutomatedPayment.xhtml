@@ -13,31 +13,21 @@
 	</ui:define>
 	<ui:define name="body">	
 				<hf:formPanel  showFormButtons ="#{false}" edit="#{false}"  label="#{messages['accountOperation_AP.form']}" backingBean="#{automatedPaymentBean}">
-					<hftl:panelGroup columns="2">
 						<hf:formField label="#{messages['accountOperation.transactionDate']}" field="transactionDate"  />									
-					</hftl:panelGroup>
-					<hftl:panelGroup columns="3">
 						<hf:formField label="#{messages['accountOperation.reference']}" field="reference"  />
 						<hf:formField label="#{messages['accountOperation.depositDate']}" field="depositDate"  />	                    
 						<hf:formField label="#{messages['accountOperation.dueDate']}" field="dueDate"  />																	
-					</hftl:panelGroup>					
-					<hftl:panelGroup columns="1">
 						<hf:formField label="#{messages['accountOperation.paymentMethod']}" field="paymentMethod"  isMessage="true"/>													
-					</hftl:panelGroup>	
-					<hftl:panelGroup columns="1">
 						<hf:formField label="#{messages['accountOperation.bankLot']}" field="bankLot"  size="50" maxlength="50"  />
-					</hftl:panelGroup>
-					<hftl:panelGroup columns="1">
 						<hf:formField label="#{messages['accountOperation.occDescription']}" field="occDescription"   />
-					</hftl:panelGroup>
-					<hftl:panelGroup columns="1">
 						<hf:formField label="#{messages['accountOperation.amount']}" field="amount"   />													
-					</hftl:panelGroup>				
-					<h:commandButton value="#{messages['action.back']}"	action="/pages/payments/customerAccounts/customerAccountDetail.xhtml">
-						<f:attribute name="objectId" value="#{automatedPayment.getCustomerAccount().getId()}" />
-						<f:attribute name="edit" value="false" />
-						<f:attribute name="tab" value="ops" />
-					</h:commandButton>
+					<f:facet name="buttons">			
+    					<h:commandButton value="#{messages['action.back']}"	action="/pages/payments/customerAccounts/customerAccountDetail.xhtml">
+    						<f:attribute name="objectId" value="#{automatedPayment.getCustomerAccount().getId()}" />
+    						<f:attribute name="edit" value="false" />
+    						<f:attribute name="tab" value="ops" />
+    					</h:commandButton>
+                    </f:facet>
 				</hf:formPanel>				
 	</ui:define>
 </ui:composition>

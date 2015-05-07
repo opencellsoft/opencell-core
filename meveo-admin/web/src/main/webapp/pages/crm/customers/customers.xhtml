@@ -21,7 +21,7 @@
 	<ui:define name="body">
 		<hftl:entityPopup id="searchSellerPopup"
 			header="#{messages['seller.search']}"
-			updateField=":searchPanel:searchForm:seller:seller_child"
+			updateField=":searchPanel:searchForm:seller"
 			selection="#{customerListBean.filters['seller']}"
 			backingBean="#{sellerBean}"
 			searchField1Label="#{messages['BusinessEntity.code']}"
@@ -31,37 +31,27 @@
 			column2="description">
 		</hftl:entityPopup>
 
-		<hf:searchPanel id="searchPanel"
-			label="#{messages['customer.search']}"
-			backingBean="#{customerListBean}">
-			<hf:searchField label="#{messages['businessEntity.code']}"
-				field="code" />
-			<hf:searchField label="#{messages['businessEntity.description']}"
-				id="description" field="description" />
-			<hf:searchField id="customerCategoryField"
-				label="#{messages['customer.customerCategory']}"
-				field="customerCategory" childField="description"
-				listBean="#{customerCategoryBean}" />
-			<hf:searchField id="seller" label="#{messages['seller.parent']}"
-				field="seller" childField="description" popup="true"
-				popupId="searchSellerPopup" clearButton="true" />
+        <hf:searchPanel id="searchPanel" label="#{messages['customer.search']}" backingBean="#{customerListBean}">
+            <hf:searchField label="#{messages['businessEntity.code']}" field="code" />
+            <hf:searchField label="#{messages['businessEntity.description']}" id="description" field="description" componentWidth="75" size="100" />
+            <hf:searchField id="customerCategoryField" label="#{messages['customer.customerCategory']}" field="customerCategory" valueLabelField="description"
+                listBean="#{customerCategoryBean}" />
+            <hf:searchField id="seller" label="#{messages['seller.parent']}" field="seller" valueLabelField="description" popup="true" popupId="searchSellerPopup"
+                clearButton="true" />
+            <hf:searchField id="customerBrandField" label="#{messages['customer.customerBrand']}" field="customerBrand" valueLabelField="description"
+                listBean="#{customerBrandBean}" />
+        </hf:searchPanel>
 
-			<hf:searchField id="customerBrandField"
-				label="#{messages['customer.customerBrand']}" field="customerBrand"
-				childField="description" listBean="#{customerBrandBean}" />
-		</hf:searchPanel>
-
-		<hftl:dataList label="#{messages['customer.search']}" sortBy="code"
+        <hftl:dataList label="#{messages['customer.search']}" sortBy="code"
 			backingBean="#{customerListBean}">
 			<hftl:column label="#{messages['businessEntity.code']}" field="code" useCustomIdParam="true"/>
 			<hftl:column label="#{messages['customer.customerCategory']}"
-				field="customerCategory" childField="description" isMessage="false" />
+				field="customerCategory.description" isMessage="false" />
 			<hftl:column label="#{messages['customer.customerBrand']}"
-				field="customerBrand" childField="description" isMessage="false" />
+				field="customerBrand.description" isMessage="false" />
 			<hftl:column label="#{messages['businessEntity.description']}"
 				field="description" />
-			<hftl:columnList label="#{messages['seller.title']}" value="#{entity.seller}"
-				field="description" fieldId="id" entityView="sellerDetail"/>
+			<hftl:column label="#{messages['seller.title']}" field="seller.description" valueIdField="seller.id" entityView="sellerDetail"/>
 			<hftl:actionsColumn useCustomIdParam="true"
 				permission="#{identity.hasPermission('account','accountManagement')}" />
 		</hftl:dataList>

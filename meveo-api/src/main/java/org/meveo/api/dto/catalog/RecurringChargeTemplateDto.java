@@ -30,11 +30,7 @@ public class RecurringChargeTemplateDto extends ChargeTemplateDto {
 	}
 
 	public RecurringChargeTemplateDto(RecurringChargeTemplate e) {
-		setCode(e.getCode());
-		setDescription(e.getDescription());
-		setInvoiceSubCategory(e.getInvoiceSubCategory().getCode());
-		setAmountEditable(e.getAmountEditable());
-		setDisabled(e.isDisabled());
+		super(e);
 		durationTermInMonth = e.getDurationTermInMonth();
 		subscriptionProrata = e.getSubscriptionProrata();
 		terminationProrata = e.getTerminationProrata();

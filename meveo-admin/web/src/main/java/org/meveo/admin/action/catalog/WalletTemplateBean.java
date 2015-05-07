@@ -78,4 +78,10 @@ public class WalletTemplateBean extends BaseBean<WalletTemplate> {
 	public void test() throws BatchUpdateException {
 		throw new BatchUpdateException();
 	}
+
+	@Override
+	protected boolean canDelete(WalletTemplate entity) {
+		// TODO Auto-generated method stub
+		return true;
+	}
 }

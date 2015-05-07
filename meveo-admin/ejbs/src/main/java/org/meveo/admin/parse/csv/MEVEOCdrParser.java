@@ -36,7 +36,7 @@ public class MEVEOCdrParser implements CSVCDRParser {
 		try {
 			messageDigest = MessageDigest.getInstance("MD5");
 		} catch (NoSuchAlgorithmException e) {
-			log.error(e.getMessage());
+			log.error("No message digest of type MD5", e);
 		}
 	}
 

@@ -17,7 +17,7 @@
 
 		<hftl:entityPopup id="searchMeasurableQuantity"
 			header="#{messages['measurableQuantity.popup.header']}"
-			updateField=":chartFormPanel:formChat:measurableQuantityId:measurableQuantityId"
+			updateField=":chartFormPanel:formChat:measurableQuantityId"
 			selection="#{chartBean.entity.measurableQuantity}"
 			backingBean="#{measurableQuantityBean}"
 			searchField1Label="#{messages['businessEntity.code']}"
@@ -28,7 +28,7 @@
 
 		<hftl:entityPopup id="searchRole"
 			header="#{messages['role.userRolePanel']}"
-			updateField=":chartFormPanel:formChat:roleId:roleId"
+			updateField=":chartFormPanel:formChat:roleId"
 			selection="#{chartBean.entity.role}" backingBean="#{userRoleBean}"
 			searchField1Label="#{messages['commons.name']}" searchField1="name"
 			column1Label="#{messages['commons.name']}" column1="name"
@@ -41,13 +41,13 @@
 
 			<hf:formField label="#{messages['businessEntity.code']}" field="code" />
 
-			<hf:formEntityField id="measurableQuantityId"
+			<hf:formField id="measurableQuantityId"
 				label="#{messages['chart.measurableQuantity']}"
-				field="measurableQuantity" childField="code" required="true"
+				field="measurableQuantity" valueLabelField="code" required="true"
 				popup="true" popupId="searchMeasurableQuantity" />
 
-			<hf:formEntityField id="roleId" label="#{messages['chart.role']}"
-				field="role" childField="name" required="false" popup="true"
+			<hf:formField id="roleId" label="#{messages['chart.role']}"
+				field="role" valueLabelField="name" required="false" popup="true"
 				popupId="searchRole" />
 
 			<hf:formField label="#{messages['chart.style']}" field="style" />
@@ -55,28 +55,24 @@
 				field="styleClass" />
 			<hf:formField label="#{messages['chart.extender']}" field="extender" />
 
-			<p:panelGrid columns="1"
+			<h:panelGroup 
 				rendered="#{not chartBean.entity.isTransient()}"
 				styleClass="form-panel">
-				<p:panelGrid columns="2">
-					<p:outputLabel for="dateSelect"
-						value="#{messages['page.chart.filterDate']}" />
+				<hftl:decorateFormField fieldId="dateSelect" label="#{messages['page.chart.filterDate']}" >
 					<p:calendar id="dateSelect" value="#{chartBean.selectedDate}"
 						pattern="MMMM yyyy">
 						<p:ajax event="dateSelect" listener="#{chartBean.getChartModel()}"
 							update="chartPanel" />
 					</p:calendar>
-				</p:panelGrid>
-
+				</hftl:decorateFormField>
 
 				<p:outputPanel id="chartPanel">
-					<p:barChart id="stats" value="#{chartBean.chartModel}"
+					<p:chart type="bar" id="stats" model="#{chartBean.chartModel}"
 						legendPosition="e" fill="true" widgetVar="lineChart1"
 						rendered="#{chartBean.selectedDate != null}" />
 				</p:outputPanel>
-			</p:panelGrid>
+			</h:panelGroup>
 		</hf:formPanel>
-
 
 	</ui:define>
 

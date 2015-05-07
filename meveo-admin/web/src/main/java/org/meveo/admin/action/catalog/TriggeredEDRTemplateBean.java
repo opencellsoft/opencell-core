@@ -97,4 +97,10 @@ public class TriggeredEDRTemplateBean extends BaseBean<TriggeredEDRTemplate> {
 		ratingCacheContainerProvider.updateUsageChargeTemplateInCache(entity);
 		return result;
 	}
+
+	@Override
+	protected boolean canDelete(TriggeredEDRTemplate entity) {
+		// TODO Auto-generated method stub
+		return true;
+	}
 }

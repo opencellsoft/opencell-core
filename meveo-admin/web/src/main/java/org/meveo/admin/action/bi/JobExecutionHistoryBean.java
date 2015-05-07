@@ -76,4 +76,10 @@ public class JobExecutionHistoryBean extends
 		return jobExecutionHistoryService;
 	}
 
+	@Override
+	protected boolean canDelete(JobExecutionHisto entity) {
+		// TODO Auto-generated method stub
+		return true;
+	}
+
 }

@@ -1,130 +1,99 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
-<html xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:ui="http://java.sun.com/jsf/facelets"
-	xmlns:h="http://java.sun.com/jsf/html"
-	xmlns:f="http://java.sun.com/jsf/core"
-	xmlns:cc="http://java.sun.com/jsf/composite"
-	xmlns:p="http://primefaces.org/ui"
-    xmlns:o="http://omnifaces.org/ui" 
-	xmlns:c="http://java.sun.com/jsp/jstl/core">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:cc="http://java.sun.com/jsf/composite" xmlns:p="http://primefaces.org/ui" xmlns:o="http://omnifaces.org/ui" xmlns:c="http://java.sun.com/jsp/jstl/core"
+    xmlns:hftl="http://hftl.org">
 
 <cc:interface componentType="formField">
-	<cc:attribute name="edit"
-		default="#{cc.backingBeanFromParentOrCurrent.edit}" />
+    <cc:attribute name="edit" default="#{cc.backingBeanFromParentOrCurrent.edit}" />
 </cc:interface>
 
 <cc:implementation>
-    
+
     <o:importConstants type="org.meveo.model.crm.CustomFieldTypeEnum" />
-	
+
     <ui:fragment>
 
-		<p:panelGrid columns="2" id="description">
-			<h:dataTable
-				value="#{cc.backingBeanFromParentOrCurrent.customFieldTemplates}"
-				var="cf">
-				<h:column>                
-                    <h:panelGroup  rendered="#{not cf.disabled or (cf.disabled and not cf.isValueEmpty())}">
-						
-    					<p:outputLabel value="#{cf.description}" for="cfField_string"
-    						rendered="#{cf.fieldType eq CustomFieldTypeEnum.STRING}" />
-    					<p:inputText id="cfField_string"
-    						rendered="#{cc.attrs.edit and cf.fieldType eq CustomFieldTypeEnum.STRING}"
-    						value="#{cf.stringValue}" required="#{cf.valueRequired}" />
-    					<h:outputText
-    						rendered="#{!cc.attrs.edit and cf.fieldType eq CustomFieldTypeEnum.STRING}"
-    						value="#{cf.stringValue}" style="font-weight:bold;" />
-    						
-    				  <c:set var="InheritedStringValue"
-					  value="#{cc.backingBeanFromParentOrCurrent.entity.getICsv(cf.code)}" /> 
-                      <p:outputLabel value="#{messages['customField.inheritedStringValue']}" for="cfField_string"
-					  rendered="#{cf.fieldType eq CustomFieldTypeEnum.STRING and cf.stringValue==null and InheritedStringValue !=null}" style="width:180px;" />
-					 <h:outputText
-					  rendered="#{cf.fieldType eq CustomFieldTypeEnum.STRING and cf.stringValue==null and InheritedStringValue !=null}"
-					  value="#{InheritedStringValue}" style="font-weight:bold;" /> 
-    					<p:outputLabel value="#{cf.description}" for="cfField_double"
-    						rendered="#{cf.fieldType eq CustomFieldTypeEnum.DOUBLE}" />
-    					<p:inputText id="cfField_double"
-    						rendered="#{cc.attrs.edit and cf.fieldType eq CustomFieldTypeEnum.DOUBLE}"
-    						value="#{cf.doubleValue}" required="#{cf.valueRequired}">
-    						<f:convertNumber minFractionDigits="2" />
-    					</p:inputText>
-    					<h:outputText
-    						rendered="#{!cc.attrs.edit and cf.fieldType eq CustomFieldTypeEnum.DOUBLE}"
-    						value="#{cf.doubleValue}" style="font-weight:bold;" />
-							
-						<c:set var="InheritedDoubleValue"
-					  value="#{cc.backingBeanFromParentOrCurrent.entity.getICdov(cf.code)}" /> 
-                      <p:outputLabel value="#{messages['customField.inheritedDoubleValue']}" for="cfField_double"
-					  rendered="#{cf.fieldType eq CustomFieldTypeEnum.DOUBLE and cf.doubleValue==null and InheritedDoubleValue !=null}" style="width:180px;" />
-					 <h:outputText
-					  rendered="#{cf.fieldType eq CustomFieldTypeEnum.DOUBLE and cf.doubleValue==null and InheritedDoubleValue !=null}"
-					  value="#{InheritedDoubleValue}" style="font-weight:bold;" />	
-						 
-    					<p:outputLabel value="#{cf.description}" for="cfField_long"
-    						rendered="#{cf.fieldType eq CustomFieldTypeEnum.LONG}" />
-    					<p:inputText id="cfField_long"
-    						rendered="#{cc.attrs.edit and cf.fieldType eq CustomFieldTypeEnum.LONG}"
-    						value="#{cf.longValue}" required="#{cf.valueRequired}">
-    						<f:convertNumber integerOnly="true" />
-    					</p:inputText>
-    					<h:outputText
-    						rendered="#{!cc.attrs.edit and cf.fieldType eq CustomFieldTypeEnum.LONG}"
-    						value="#{cf.longValue}" style="font-weight:bold;" />
-							
-						<c:set var="InheritedLongValue"
-					  value="#{cc.backingBeanFromParentOrCurrent.entity.getIClv(cf.code)}" /> 
-                      <p:outputLabel value="#{messages['customField.inheritedLongValue']}" for="cfField_long"
-					  rendered="#{cf.fieldType eq CustomFieldTypeEnum.LONG and cf.longValue==null and InheritedLongValue !=null}"  style="width:180px;"/>
-					 <h:outputText
-					  rendered="#{cf.fieldType eq CustomFieldTypeEnum.LONG and cf.longValue==null and InheritedLongValue !=null}"
-					  value="#{InheritedLongValue}" style="font-weight:bold;" />	
-    
-    					<p:outputLabel value="#{cf.description}" for="cfField_date"
-    						rendered="#{cf.fieldType eq CustomFieldTypeEnum.DATE}" />
-    					<p:calendar id="cfField_date" showButtonPanel="true"
-    						rendered="#{cc.attrs.edit and cf.fieldType eq CustomFieldTypeEnum.DATE}"
-    						pattern="#{paramBean.getProperty('meveo.dateFormat', '')}"
-    						value="#{cf.dateValue}" required="#{cf.valueRequired}" />
-    					<h:outputText
-    						rendered="#{!cc.attrs.edit and cf.fieldType eq CustomFieldTypeEnum.DATE}"
-    						value="#{cf.dateValue}" style="font-weight:bold;">
-    						<f:convertDateTime type="date"
-    							pattern="#{paramBean.getProperty('meveo.dateFormat', '')}" />
-    					</h:outputText>
-						
-						<c:set var="InheritedDateValue"
-					  value="#{cc.backingBeanFromParentOrCurrent.entity.getICdav(cf.code)}" /> 
-                      <p:outputLabel  value="#{messages['customField.inheritedDateValue']}" for="cfField_date"
-					  rendered="#{cf.fieldType eq CustomFieldTypeEnum.DATE and cf.dateValue==null and InheritedDateValue !=null}" style="width:180px;"  />
-					 <h:outputText
-					  rendered="#{cf.fieldType eq CustomFieldTypeEnum.DATE and cf.dateValue==null and InheritedDateValue !=null}"
-					  value="#{InheritedDateValue}" style="font-weight:bold;">
-					  <f:convertDateTime type="date"
-    							pattern="#{paramBean.getProperty('meveo.dateFormat', '')}" />
-    					</h:outputText>
-    
-    					<p:outputLabel value="#{cf.description}" for="cfField_list"
-    						rendered="#{cf.fieldType eq CustomFieldTypeEnum.LIST}" />
-    					<p:selectOneMenu id="cfField_list" value="#{cf.stringValue}"
-    						required="#{cf.valueRequired}"
-    						rendered="#{cc.attrs.edit and cf.fieldType eq CustomFieldTypeEnum.LIST}">
-    						<f:selectItem itemValue="#{null}" itemLabel="" />
-    						<f:selectItems value="#{cf.listValues.entrySet()}" var="listVal"
-    							itemValue="#{listVal.key}"
-    							itemLabel="#{listVal.value} (#{listVal.key})" />
-    					</p:selectOneMenu>
-    					<h:outputText
-    						rendered="#{!cc.attrs.edit and cf.fieldType eq CustomFieldTypeEnum.LIST and cf.stringValue!=null}"
-    						value="#{cf.listValues[cf.stringValue]} (#{cf.stringValue})"
-    						style="font-weight:bold;" />
-                    </h:panelGroup>
-				</h:column>
-			</h:dataTable>
-		</p:panelGrid>
-	</ui:fragment>
+        <h:dataTable value="#{cc.backingBeanFromParentOrCurrent.customFieldTemplates}" var="cf" width="100%">
+            <h:column>
+                <h:panelGroup rendered="#{not cf.disabled or (cf.disabled and not cf.isValueEmpty())}">
+
+                    <hftl:decorateFormField fieldId="cfField_string" label="#{cf.description}" componentWidth="50" labelWidth="50" displayOneLine="true"
+                        rendered="#{cf.fieldType eq CustomFieldTypeEnum.STRING}">
+                        <p:inputText id="cfField_string" rendered="#{cc.attrs.edit}" value="#{cf.stringValue}" required="#{cf.valueRequired}" />
+                        <h:outputText rendered="#{!cc.attrs.edit}" value="#{cf.stringValue}" styleClass="field-value" />
+                    </hftl:decorateFormField>
+
+                    <c:set var="InheritedStringValue" value="#{cc.backingBeanFromParentOrCurrent.entity.getICsv(cf.code)}" />
+
+                    <hftl:decorateFormField fieldId="cfField_stringI" label="#{messages['customField.inheritedStringValue']}" componentWidth="50" labelWidth="50"
+                        displayOneLine="true" rendered="#{cf.fieldType eq CustomFieldTypeEnum.STRING and cf.stringValue==null and InheritedStringValue !=null}">
+                        <h:outputText fieldId="cfField_stringI" value="#{InheritedStringValue}" styleClass="field-value" />
+                    </hftl:decorateFormField>
+
+                    <hftl:decorateFormField fieldId="cfField_double" label="#{cf.description}" componentWidth="50" labelWidth="50" displayOneLine="true"
+                        rendered="#{cf.fieldType eq CustomFieldTypeEnum.DOUBLE}">
+                        <p:inputText id="cfField_double" rendered="#{cc.attrs.edit}" value="#{cf.doubleValue}" required="#{cf.valueRequired}">
+                            <f:convertNumber minFractionDigits="2" />
+                        </p:inputText>
+                        <h:outputText rendered="#{!cc.attrs.edit}" value="#{cf.doubleValue}" styleClass="field-value" />
+                    </hftl:decorateFormField>
+
+                    <c:set var="InheritedDoubleValue" value="#{cc.backingBeanFromParentOrCurrent.entity.getICdov(cf.code)}" />
+
+                    <hftl:decorateFormField fieldId="cfField_doubleI" label="#{messages['customField.inheritedDoubleValue']}" componentWidth="50" labelWidth="50"
+                        displayOneLine="true" rendered="#{cf.fieldType eq CustomFieldTypeEnum.DOUBLE and cf.doubleValue==null and InheritedDoubleValue !=null}">
+                        <h:outputText fieldId="cfField_doubleI" value="#{InheritedDoubleValue}" styleClass="field-value" />
+                    </hftl:decorateFormField>
+
+                    <hftl:decorateFormField fieldId="cfField_long" label="#{cf.description}" componentWidth="50" labelWidth="50" displayOneLine="true"
+                        rendered="#{cf.fieldType eq CustomFieldTypeEnum.LONG}">
+                        <p:inputText id="cfField_long" rendered="#{cc.attrs.edit }" value="#{cf.longValue}" required="#{cf.valueRequired}">
+                            <f:convertNumber integerOnly="true" />
+                        </p:inputText>
+                        <h:outputText rendered="#{!cc.attrs.edit}" value="#{cf.longValue}" styleClass="field-value" />
+                    </hftl:decorateFormField>
+
+                    <c:set var="InheritedLongValue" value="#{cc.backingBeanFromParentOrCurrent.entity.getIClv(cf.code)}" />
+
+
+                    <hftl:decorateFormField fieldId="cfField_longI" label="#{messages['customField.inheritedLongValue']}" componentWidth="50" labelWidth="50" displayOneLine="true"
+                        rendered="#{cf.fieldType eq CustomFieldTypeEnum.LONG and cf.longValue==null and InheritedLongValue !=null}">
+                        <h:outputText id="cfField_longI" value="#{InheritedLongValue}" style="font-weight:bold;" styleClass="field-value" />
+                    </hftl:decorateFormField>
+
+                    <hftl:decorateFormField fieldId="cfField_date" label="#{cf.description}" componentWidth="50" labelWidth="50" displayOneLine="true"
+                        rendered="#{cf.fieldType eq CustomFieldTypeEnum.DATE}">
+                        <p:calendar id="cfField_date" showButtonPanel="true" rendered="#{cc.attrs.edit}" pattern="#{paramBean.getProperty('meveo.dateFormat', '')}"
+                            value="#{cf.dateValue}" required="#{cf.valueRequired}" />
+                        <h:outputText rendered="#{!cc.attrs.edit}" value="#{cf.dateValue}" styleClass="field-value">
+                            <f:convertDateTime type="date" pattern="#{paramBean.getProperty('meveo.dateFormat', '')}" />
+                        </h:outputText>
+                    </hftl:decorateFormField>
+
+                    <c:set var="InheritedDateValue" value="#{cc.backingBeanFromParentOrCurrent.entity.getICdav(cf.code)}" />
+
+                    <hftl:decorateFormField fieldId="cfField_dateI" label="#{messages['customField.inheritedDateValue']}" componentWidth="50" labelWidth="50" displayOneLine="true"
+                        rendered="#{cf.fieldType eq CustomFieldTypeEnum.DATE and cf.dateValue==null and InheritedDateValue !=null}">
+                        <h:outputText id="cfField_dateI" value="#{InheritedDateValue}" styleClass="field-value">
+                            <f:convertDateTime type="date" pattern="#{paramBean.getProperty('meveo.dateFormat', '')}" />
+                        </h:outputText>
+                    </hftl:decorateFormField>
+
+                    <hftl:decorateFormField fieldId="cfField_list" label="#{cf.description}" componentWidth="50" labelWidth="50" displayOneLine="true"
+                        rendered="#{cf.fieldType eq CustomFieldTypeEnum.LIST}">
+                        <p:outputLabel value="#{cf.description}" for="cfField_list" rendered="#{cf.fieldType eq CustomFieldTypeEnum.LIST}" />
+                        <p:selectOneMenu id="cfField_list" value="#{cf.stringValue}" required="#{cf.valueRequired}" rendered="#{cc.attrs.edit }">
+                            <f:selectItem itemValue="#{null}" itemLabel="" />
+                            <f:selectItems value="#{cf.listValues.entrySet()}" var="listVal" itemValue="#{listVal.key}" itemLabel="#{listVal.value} (#{listVal.key})" />
+                        </p:selectOneMenu>
+                        <h:outputText rendered="#{!cc.attrs.edit and  cf.stringValue!=null}" value="#{cf.listValues[cf.stringValue]} (#{cf.stringValue})" styleClass="field-value" />
+                    </hftl:decorateFormField>
+                </h:panelGroup>
+            </h:column>
+        </h:dataTable>
+    </ui:fragment>
 
 </cc:implementation>
 </html>

@@ -23,7 +23,7 @@
 			<hftl:column label="#{messages['businessEntity.description']}" field="description" />
 			<hftl:column label="#{messages['occTemplate.accountCode']}" field="accountCode" />
 			<hftl:column label="#{messages['occTemplate.accountCodeClientSide']}" field="accountCodeClientSide" />
-			<hftl:column label="#{messages['occTemplate.occCategory']}" field="occCategory" childField="label" isMessage="true"  />
+			<hftl:column label="#{messages['occTemplate.occCategory']}" field="occCategory.label" isMessage="true"  />
 			<hftl:actionsColumn permission="#{identity.hasPermission('administration','administrationManagement')}" />
 		</hftl:dataList>
 

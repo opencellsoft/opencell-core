@@ -2,7 +2,6 @@ package org.meveo.admin.action.catalog;
 
 import java.util.ArrayList;
 
-import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -56,8 +55,6 @@ public class DiscountPlanBean extends BaseBean<DiscountPlan> {
 		return getListViewName();
 	}
 
-	@Named
-	@Produces
 	public DiscountPlanItem getDiscountPlanItem() {
 		return discountPlanItem;
 	}
@@ -115,6 +112,12 @@ public class DiscountPlanBean extends BaseBean<DiscountPlan> {
 		getEntity().getDiscountPlanItems().remove(discountPlanItem);
 		discountPlanItemService.remove(discountPlanItem);
 		messages.info(new BundleKey("messages", "delete.successful"));
+	}
+
+	@Override
+	protected boolean canDelete(DiscountPlan entity) {
+		// TODO Auto-generated method stub
+		return true;
 	}
 	
 

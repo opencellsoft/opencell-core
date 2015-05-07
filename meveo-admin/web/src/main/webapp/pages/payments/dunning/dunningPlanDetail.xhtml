@@ -14,14 +14,10 @@
 	</ui:define>
 
 	<ui:define name="body">
-		<p:panelGrid styleClass="col1-set tab-view-container" columns="1">
-			<f:facet name="header">
-				<h:outputText value="#{messages['dunningPlan.panel']}" />
-			</f:facet>
+		<p:panel header="#{messages['dunningPlan.panel']}" >
 			<p:tabView id="tabView" dynamic="true" cache="true">
 				<p:tab title="#{messages['dunningPlan.panel']}">
 					<hf:formPanel backingBean="#{dunningPlanBean}">
-						<hftl:panelGroup columns="2">
 							<hf:formField label="#{messages['businessEntity.code']}"
 								field="code" required="true" validateUnique="true" />
 							<hf:formField label="#{messages['businessEntity.description']}"
@@ -31,7 +27,6 @@
 								field="creditCategory" required="true" />
 							<hf:formField label="#{messages['dunningPlan.paymentMethod']}"
 								field="paymentMethod" required="true" />
-						</hftl:panelGroup>
 						<hf:formField label="#{messages['commons.status']}" field="status"
 							required="true" />
 					</hf:formPanel>
@@ -46,25 +41,19 @@
 							rendered="#{validation.failed}" styleClass="errorMessage" />
 					</p:outputPanel>
 
-					<p:panelGrid columns="2">
-
-						<h:outputText value="#{messages['businessEntity.code']}" />
-						<p:panelGrid columns="2">
-							<h:outputText value="#{dunningPlanBean.entity.code}"
+                    <hftl:decorateFormField fieldId="code" label="#{messages['businessEntity.code']}" >
+							<h:outputText id="code" value="#{dunningPlanBean.entity.code}"
 								disabled="true" style="font-weight:bold;" />
 							<h:inputHidden rendered="#{dunningPlanBean.edit}" />
-						</p:panelGrid>
+					</hftl:decorateFormField>
 
-						<h:outputText value="#{messages['businessEntity.description']}" />
-						<p:panelGrid columns="2">
-							<h:outputText value="#{dunningPlanBean.entity.description}"
+                    <hftl:decorateFormField fieldId="description" label="#{messages['businessEntity.description']}" >
+							<h:outputText id="description" value="#{dunningPlanBean.entity.description}"
 								required="true" disabled="true" style="font-weight:bold;" />
 							<h:inputHidden rendered="#{dunningPlanBean.edit}" />
-						</p:panelGrid>
+					</hftl:decorateFormField>
 
-					</p:panelGrid>
-
-					<br />
+					
 					<p:outputPanel id="dunningPlanTransition_panel">
 						<hftl:dataList backingBean="#{dunningPlanTransitionBean}"
 							dataModel="#{dunningPlanBean.entity.transitions}"
@@ -113,11 +102,9 @@
 						</hftl:dataList>
 					</p:outputPanel>
 
-					<p:panel>
 						<p:panel id="dunningPlanTransitiondiv"
 							rendered="#{dunningPlanBean.edit}">
 
-							<p:panel id="dunningPlanTransitiondiv1">
 								<hf:formPanel id="formPanelDunningPlanTransition"
 									formId="formDunningPlanTransition"
 									edit="#{dunningPlanBean.edit}"
@@ -151,7 +138,7 @@
 									<hf:formField label="#{messages['dunningPlan.conditionEl']}"
 							         field="conditionEl"  textArea="true" maxlength="1000"
 									 edit="#{dunningPlanBean.edit}"/>
-									<p:panelGrid columns="3">
+									<f:facet name="buttons">
 										<p:commandButton rendered="#{dunningPlanTransition.id==null}"
 											action="#{dunningPlanBean.saveDunningPlanTransition}"
 											value="#{messages['dunningPlanTransition.saveNewDunningPlanTransition']}"
@@ -170,14 +157,10 @@
 											<f:param name="cid"
 												value="#{javax.enterprise.context.conversation.id}" />
 										</p:button>
-									</p:panelGrid>
+									</f:facet>
 
 								</hf:formPanel>
-							</p:panel>
-
 						</p:panel>
-
-					</p:panel>
 				</p:tab>
 
 				<p:tab title="#{messages['dunningPlan.actions']}" id="tab3"
@@ -189,28 +172,19 @@
 							rendered="#{validation.failed}" styleClass="errorMessage" />
 					</p:outputPanel>
 
-					<p:panelGrid columns="2">
-
-						<h:outputText value="#{messages['businessEntity.code']}" />
-						<p:panelGrid columns="2">
-							<h:outputText value="#{dunningPlanBean.entity.code}"
+                    <hftl:decorateFormField fieldId="codeA" label="#{messages['businessEntity.code']}" >
+							<h:outputText id="codeA" value="#{dunningPlanBean.entity.code}"
 								disabled="true" style="font-weight:bold;" />
 							<h:inputHidden rendered="#{dunningPlanBean.edit}" />
-						</p:panelGrid>
+					</hftl:decorateFormField>
 
-						<h:outputText value="#{messages['businessEntity.description']}" />
-						<p:panelGrid columns="2">
-							<h:outputText value="#{dunningPlanBean.entity.description}"
+                    <hftl:decorateFormField fieldId="descriptionA" label="#{messages['businessEntity.description']}" >
+							<h:outputText id="descriptionA" value="#{dunningPlanBean.entity.description}"
 								required="true" disabled="true" style="font-weight:bold;" />
 							<h:inputHidden rendered="#{dunningPlanBean.edit}" />
-						</p:panelGrid>
-
-					</p:panelGrid>
-
-					<br />
+					</hftl:decorateFormField>
 
 					<p:panel id="actionPlanItems_panel">
-						<p:panel>
 							<h:form id="actionItems_form">
 								<hftl:dataList backingBean="#{actionPlanItemBean}"
 									dataModel="#{dunningPlanBean.entity.actions}"
@@ -255,9 +229,7 @@
 
 								</hftl:dataList>
 							</h:form>
-						</p:panel>
 					</p:panel>
-					<p:panel>
 
 						<p:panel id="actionPlanItemsdiv"
 							rendered="#{dunningPlanBean.edit}">
@@ -287,19 +259,19 @@
 										rendered="#{actionPlanItem.actionType.toString() != 'CHARGE'}">
 										<hf:formField
 											label="#{messages['actionPlanItem.letterTemplate']}"
-											field="letterTemplate" size="50" required="false" />
+											field="letterTemplate" size="50" required="false" edit="#{dunningPlanBean.edit}" />
 									</h:panelGroup>
 									<h:panelGroup style="display:block;"
 										rendered="#{actionPlanItem.actionType.toString() == 'CHARGE'}">
 										<hf:formField
 											label="#{messages['actionPlanItem.chargeAmount']}"
-											field="chargeAmount" required="true" />
+											field="chargeAmount" required="true" edit="#{dunningPlanBean.edit}" />
 									</h:panelGroup>
 								</p:outputPanel>
 								<hf:formField label="#{messages['dunningPlan.conditionEl']}"
 							         field="conditionEl"  textArea="true" maxlength="1000"
 									 edit="#{dunningPlanBean.edit}"/>
-								<p:panelGrid columns="3">
+                                <f:facet name="buttons">
 									<p:commandButton rendered="#{actionPlanItem.id==null}"
 										action="#{dunningPlanBean.saveActionPlanItem}"
 										value="#{messages['actionPlanItem.saveNewActionPlanItem']}"
@@ -318,17 +290,15 @@
 										<f:param name="cid"
 											value="#{javax.enterprise.context.conversation.id}" />
 									</p:button>
-								</p:panelGrid>
+								</f:facet>
 
 							</hf:formPanel>
 
 						</p:panel>
-
-					</p:panel>
 				</p:tab>
 
 			</p:tabView>
-		</p:panelGrid>
+		</p:panel>
 	</ui:define>
 
 </ui:composition>

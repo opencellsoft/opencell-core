@@ -18,16 +18,13 @@ package org.meveo.admin.action.billing;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.apache.commons.lang.StringUtils;
 import org.meveo.admin.action.BaseBean;
-import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.model.billing.BillingCycle;
 import org.meveo.model.billing.CounterInstance;
 import org.meveo.model.billing.CounterPeriod;
@@ -90,7 +87,7 @@ public class CounterPeriodBean extends BaseBean<CounterPeriod> {
 		   private static final long serialVersionUID = 1L;
 		   @Override
 		   public List<CounterPeriod> load(int first, int pageSize, String sortField,
-					SortOrder sortOrder, Map<String, String> loadingFilters) {
+					SortOrder sortOrder, Map<String, Object> loadingFilters) {
 		    return new ArrayList<CounterPeriod>();
 		   }
 		   
@@ -103,6 +100,12 @@ public class CounterPeriodBean extends BaseBean<CounterPeriod> {
 	@Override
 	protected List<String> getFormFieldsToFetch() {
 		return Arrays.asList("provider");
+	}
+
+	@Override
+	protected boolean canDelete(CounterPeriod entity) {
+		// TODO Auto-generated method stub
+		return true;
 	}
 
 }

@@ -20,7 +20,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import javax.enterprise.inject.Instance;
-import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -223,8 +222,6 @@ public class InvoiceSubCategoryBean extends
 		return Arrays.asList("provider", "invoiceSubcategoryCountries");
 	}
 
-	@Named
-	@Produces
 	public InvoiceSubcategoryCountry getInvoiceSubcategoryCountry() {
 		return invoiceSubcategoryCountry;
 	}
@@ -244,5 +241,11 @@ public class InvoiceSubCategoryBean extends
 
 	public void setIndex() {
 		tabView.setActiveIndex(0);
+	}
+
+	@Override
+	protected boolean canDelete(InvoiceSubCategory entity) {
+		// TODO Auto-generated method stub
+		return true;
 	}
 }

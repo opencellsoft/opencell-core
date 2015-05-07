@@ -27,7 +27,7 @@
 			searchField1Label="#{messages['user.userName']}"
 			searchField1="userName" column1Label="#{messages['user.userName']}"
 			column1="userName" 
-			updateField=":searchPanel:searchForm:user:user_child">
+			updateField=":searchPanel:searchForm:user">
 		</hftl:entityPopup> 
 		
 		<hftl:entityPopup id="searchRolePopup"
@@ -41,7 +41,7 @@
 			 searchField1="name" column1Label="#{messages['role.name']}"
 			column1="name"
 			column2="description" 
-			updateField=":searchPanel:searchForm:role:role_child">
+			updateField=":searchPanel:searchForm:role">
 		</hftl:entityPopup> 
 		
 		<hf:searchPanel id="searchPanel" label="#{messages['menu.charts']}" columns="3"
@@ -50,53 +50,52 @@
 				field="code" />
 			
 			<hf:searchField id="user" label="#{messages['user.userPanel']}"
-				field="user" childField="userName" popup="true"
+				field="user" valueLabelField="userName" popup="true"
 				popupId="searchUserPopup" clearButton="true" /> 
 				
-				<hf:searchField id="role" label="#{messages['role.name']}"
-				field="role" childField="description" popup="true"
+			<hf:searchField id="role" label="#{messages['role.name']}"
+				field="role" valueLabelField="description" popup="true"
 				popupId="searchRolePopup" clearButton="true" /> 
 
 			<hf:searchField label="#{messages['role.userRolePanel']}"
 				field="role" />
+                
 			<hf:searchField
 				label="#{messages['entity.measuredvalue.measurableQuantity']}"
 				field="measurableQuantity" />
 
-		</hf:searchPanel>
-		<p:panelGrid columns="3">
-			<p:button id="buttonNewBar"
-				value="#{messages['entity.barChart.new']}" outcome="barChartDetail">
-				<f:param name="cid"
-					value="#{javax.enterprise.context.conversation.id}" />
-				<f:param name="edit" value="true" />
-			</p:button>
-			<p:button id="buttonNewPie"
-				value="#{messages['entity.pieChart.new']}" outcome="pieChartDetail">
-				<f:param name="cid"
-					value="#{javax.enterprise.context.conversation.id}" />
-				<f:param name="edit" value="true" />
-			</p:button>
-			<p:button id="buttonNewLine"
-				value="#{messages['entity.lineChart.new']}"
-				outcome="lineChartDetail">
-				<f:param name="cid"
-					value="#{javax.enterprise.context.conversation.id}" />
-				<f:param name="edit" value="true" />
-			</p:button>
-		</p:panelGrid>
+            <f:facet name="buttons">
+    			<p:button id="buttonNewBar"
+    				value="#{messages['entity.barChart.new']}" outcome="barChartDetail">
+    				<f:param name="cid"
+    					value="#{javax.enterprise.context.conversation.id}" />
+    				<f:param name="edit" value="true" />
+    			</p:button>
+    			<p:button id="buttonNewPie"
+    				value="#{messages['entity.pieChart.new']}" outcome="pieChartDetail">
+    				<f:param name="cid"
+    					value="#{javax.enterprise.context.conversation.id}" />
+    				<f:param name="edit" value="true" />
+    			</p:button>
+    			<p:button id="buttonNewLine"
+    				value="#{messages['entity.lineChart.new']}"
+    				outcome="lineChartDetail">
+    				<f:param name="cid"
+    					value="#{javax.enterprise.context.conversation.id}" />
+    				<f:param name="edit" value="true" />
+    			</p:button>
+			</f:facet>
+        </hf:searchPanel>
 
 		<!-- ===================================== SEARCH USERS RESULTS ================================= -->
 
 		<hftl:dataList backingBean="#{chartListBean}">
 			<hftl:column label="#{messages['BusinessEntity.code']}" field="code" />
-			<hftl:column label="#{messages['user.userPanel']}" field="auditable"
-				childField="creator" />
-			<hftl:column label="#{messages['role.userRolePanel']}" field="role"
-				childField="description" />
+			<hftl:column label="#{messages['user.userPanel']}" field="auditable.creator" />
+			<hftl:column label="#{messages['role.userRolePanel']}" field="role.description" />
 			<hftl:column
 				label="#{messages['entity.measuredvalue.measurableQuantity']}"
-				field="measurableQuantity" childField="code" />
+				field="measurableQuantity.code" />
 
 			<hftl:actionsColumn editView="#{chartListBean.getEditView(entity)}"
 				permission="#{persistentPermissionResolver.hasPermission('reporting','reportingManagement')}" />

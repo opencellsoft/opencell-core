@@ -18,20 +18,19 @@
 			backingBean="#{notificationBean}" columns="2" showEnableDisableButton="true">
 			<hf:formField label="#{messages['entity.code']}" field="code"
 				required="true" maxLength="60" />
-			<p:separator></p:separator>
 			<hf:formField
 				label="#{messages['entity.notification.classNameFilter']}"
 				field="classNameFilter" required="true" size="60" maxlength="255"
-				autocompleteMethod="#{notificationBean.autocompleteClassNames}" />
+				autocompleteMethod="#{notificationBean.autocompleteClassNames}" isAutocomplete="true" />
 			<hf:formField
 				label="#{messages['entity.notification.eventTypeFilter']}"
 				field="eventTypeFilter" required="true" />
 			<hf:formField label="#{messages['entity.notification.elFilter']}"
-				field="elFilter" textArea="true" maxlength="1000" />
-			<hf:formField label="#{messages['enableEntity.disabled']}"
-				field="disabled" isMessage="true" showOnlyOnConsult="true"/>
+				field="elFilter" textArea="true" maxlength="1000" componentWidth="50" newLine="true"/>
 			<hf:formField label="#{messages['entity.notification.elAction']}"
-				field="elAction" textArea="true" maxlength="2000" />
+				field="elAction" textArea="true" maxlength="2000" componentWidth="50"/>
+            <hf:formField label="#{messages['enableEntity.disabled']}"
+                field="disabled" isMessage="true" showOnlyOnConsult="true"/>
 		</hf:formPanel>
 
 	</ui:define>

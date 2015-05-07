@@ -5,6 +5,7 @@ import java.util.List;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
+import org.meveo.api.MeveoApiErrorCode;
 import org.meveo.api.dto.account.BillingAccountDto;
 import org.meveo.api.dto.account.BillingAccountsDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
@@ -92,7 +93,7 @@ public class BillingAccountApi extends AccountApi {
 			try {
 				paymentMethod = PaymentMethodEnum.valueOf(postData.getPaymentMethod());
 			} catch (IllegalArgumentException e) {
-				log.error(e.getMessage());
+				throw new MeveoApiException(MeveoApiErrorCode.BUSINESS_API_EXCEPTION, "Invalid payment method=" + postData.getPaymentMethod());
 			}
 
 			BillingAccount billingAccount = new BillingAccount();
@@ -137,6 +138,8 @@ public class BillingAccountApi extends AccountApi {
 			if (StringUtils.isBlank(postData.getPaymentMethod())) {
 				missingParameters.add("paymentMethod");
 			}
+			
+			throw new MissingParameterException(getMissingParametersExceptionMessage());
 		}
 	}
 
@@ -180,7 +183,7 @@ public class BillingAccountApi extends AccountApi {
 			try {
 				paymentMethod = PaymentMethodEnum.valueOf(postData.getPaymentMethod());
 			} catch (IllegalArgumentException e) {
-				log.error(e.getMessage());
+				throw new MeveoApiException(MeveoApiErrorCode.BUSINESS_API_EXCEPTION, "Invalid payment method=" + postData.getPaymentMethod());
 			}
 
 			updateAccount(billingAccount, postData, currentUser, AccountLevelEnum.BA);
@@ -224,6 +227,8 @@ public class BillingAccountApi extends AccountApi {
 			if (StringUtils.isBlank(postData.getPaymentMethod())) {
 				missingParameters.add("paymentMethod");
 			}
+			
+			throw new MissingParameterException(getMissingParametersExceptionMessage());
 		}
 	}
 

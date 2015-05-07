@@ -20,8 +20,8 @@
 		<hftl:dataList label="#{messages['serviceParameterTemplate.title']}" backingBean="#{serviceParameterTemplateListBean}" sortBy="code">
 			<hftl:column label="#{messages['serviceParameterTemplate.code']}" field="code" />
 			<hftl:column label="#{messages['serviceParameterTemplate.name']}" field="name" />
-			<hftl:column label="#{messages['serviceParameterTemplate.serviceTemplates']}" field="serviceTemplates" isList="true" childField="name"
-				childFieldId="id" view="/pages/crm/serviceTemplates/serviceTemplateDetail.xhtml" backView="serviceParameterTemplates" />
+			<hftl:column label="#{messages['serviceParameterTemplate.serviceTemplates']}" field="serviceTemplates" isList="true" valueLabelField="name"
+				valueIdField="id" entityView="/pages/crm/serviceTemplates/serviceTemplateDetail.xhtml" backView="serviceParameterTemplates" />
 			<hftl:actionsColumn />
 		</hftl:dataList>
 

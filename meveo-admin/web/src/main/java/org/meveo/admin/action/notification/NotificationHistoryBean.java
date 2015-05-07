@@ -114,8 +114,10 @@ public class NotificationHistoryBean extends BaseBean<NotificationHistory> {
 		csv.download(inputStream, "NotificationHistories.csv");
 	}
 
-
-
-
+	@Override
+	protected boolean canDelete(NotificationHistory entity) {
+		// TODO Auto-generated method stub
+		return true;
+	}
 
 }

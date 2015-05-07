@@ -89,7 +89,7 @@ public class ChangePasswordAction implements Serializable {
 				return null;
 			}
 			messages.info(new BundleKey("messages", "changePassword.msg.passwordChanged"));
-			return "/home.xhtml?faces-redirect=true";
+			//return "/home.xhtml?faces-redirect=true";
 		}
 		return null;
 	}

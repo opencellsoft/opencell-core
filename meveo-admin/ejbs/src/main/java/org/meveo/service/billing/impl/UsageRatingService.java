@@ -41,6 +41,7 @@ import org.meveo.model.cache.CachedUsageChargeTemplate;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.rating.EDR;
 import org.meveo.model.rating.EDRStatusEnum;
+import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.util.MeveoJpa;
 import org.slf4j.Logger;
 
@@ -127,6 +128,7 @@ public class UsageRatingService {
 		walletOperation.setParameter1(edr.getParameter1());
 		walletOperation.setParameter2(edr.getParameter2());
 		walletOperation.setParameter3(edr.getParameter3());
+		walletOperation.setInputQuantity(edr.getQuantity());
 
 		walletOperation.setProvider(provider);
 
@@ -148,7 +150,7 @@ public class UsageRatingService {
 		Tax tax = invoiceSubcategoryCountry.getTax();
 
 		walletOperation.setChargeInstance(chargeInstance);
-		walletOperation.setUnityDescription(chargeInstance.getUnityDescription());
+		walletOperation.setRatingUnitDescription(chargeInstance.getRatingUnitDescription());
 		walletOperation.setSeller(chargeInstance.getSubscription().getUserAccount().getBillingAccount().getCustomerAccount()
 				.getCustomer().getSeller());
 		// we set here the wallet to the pricipal wallet but it will later be
@@ -230,8 +232,8 @@ public class UsageRatingService {
 		if (periodCache != null) {
 			synchronized (periodCache) {
 				BigDecimal countedValue = cachedCharge.getInChargeUnit(edr.getQuantity());
-				log.debug("value to deduce {} * {} = {} from current value {}", edr.getQuantity(),
-						cachedCharge.getUnityMultiplicator(), countedValue, periodCache.getValue());
+				log.debug("value to deduce {} * {} = {} from current value {}",
+						new Object[] { edr.getQuantity(), cachedCharge.getUnityMultiplicator(), countedValue, periodCache.getValue() });
 
 				if (periodCache.getLevel() == null) {
 					deducedQuantity = countedValue;
@@ -573,7 +575,7 @@ public class UsageRatingService {
 	private boolean matchExpression(String expression, EDR edr) throws BusinessException {
 		Map<Object, Object> userMap = new HashMap<Object, Object>();
 		userMap.put("edr", edr);
-		return (Boolean) RatingService.evaluateExpression(expression, userMap, Boolean.class);
+		return (Boolean) ValueExpressionWrapper.evaluateExpression(expression, userMap, Boolean.class);
 	}
 
 	private boolean matchExpression(String expression, EDR edr, WalletOperation walletOperation)
@@ -589,7 +591,7 @@ public class UsageRatingService {
 			userMap.put("ua", walletOperation.getWallet().getUserAccount());
 		}
 
-		Object res = RatingService.evaluateExpression(expression, userMap, Boolean.class);
+		Object res = ValueExpressionWrapper.evaluateExpression(expression, userMap, Boolean.class);
 		try {
 			result = (Boolean) res;
 		} catch (Exception e) {
@@ -610,7 +612,7 @@ public class UsageRatingService {
 		if (expression.indexOf("ua") >= 0) {
 			userMap.put("ua", walletOperation.getWallet().getUserAccount());
 		}
-		Object res = RatingService.evaluateExpression(expression, userMap, String.class);
+		Object res = ValueExpressionWrapper.evaluateExpression(expression, userMap, String.class);
 		try {
 			result = (String) res;
 		} catch (Exception e) {
@@ -628,7 +630,7 @@ public class UsageRatingService {
 		if (expression.indexOf("ua") >= 0) {
 			userMap.put("ua", walletOperation.getWallet().getUserAccount());
 		}
-		Object res = RatingService.evaluateExpression(expression, userMap, Double.class);
+		Object res = ValueExpressionWrapper.evaluateExpression(expression, userMap, Double.class);
 		try {
 			result = (Double) res;
 		} catch (Exception e) {

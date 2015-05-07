@@ -17,7 +17,6 @@
 package org.meveo.model.catalog;
 
 import java.math.BigDecimal;
-import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -37,7 +36,6 @@ import javax.validation.constraints.Size;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ObservableEntity;
-import org.meveo.model.crm.Provider;
 
 @Entity
 @ExportIdentifier({ "code", "provider" })

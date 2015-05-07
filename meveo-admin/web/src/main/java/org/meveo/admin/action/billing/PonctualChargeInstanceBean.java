@@ -76,4 +76,10 @@ public class PonctualChargeInstanceBean extends
 		return oneShotChargeInstanceService;
 	}
 
+	@Override
+	protected boolean canDelete(OneShotChargeInstance entity) {
+		// TODO Auto-generated method stub
+		return true;
+	}
+
 }

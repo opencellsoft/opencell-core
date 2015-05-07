@@ -35,9 +35,9 @@
 				label="#{messages['billingAccount.electronicBilling']}"
 				field="electronicBilling" />
 			<hf:searchField label="#{messages['billingAccount.countryCode']}"
-				field="tradingCountry" childField="prDescription" />
+				field="tradingCountry.country.countryCode" />
 			<hf:searchField label="#{messages['billingAccount.languageCode']}"
-				field="tradingLanguage" childField="prDescription" />
+				field="tradingLanguage.language.languageCode" />
 		</hf:searchPanel>
 
 		<hftl:dataList label="#{messages['billingAccount.title']}"
@@ -46,7 +46,7 @@
 			<hftl:column label="#{messages['businessEntity.description']}"
 				field="description" />
 			<hftl:column label="#{messages['billingAccount.status']}"
-				field="status" childField="label" isMessage="true" />
+				field="status.label" isMessage="true" />
 			<hftl:column label="#{messages['billingAccount.nextInvoiceDate']}"
 				field="nextInvoiceDate" isDate="true" />
 			<hftl:column label="#{messages['billingAccount.subscriptionDate']}"
@@ -59,8 +59,7 @@
 					value="#{entity.name.title.description}" />
 			</p:column>
 			<hftl:column label="#{messages['billingAccount.name']}" field="name" />
-			<hftl:column label="#{messages['address.address1']}" field="address"
-				childField="address1" />
+			<hftl:column label="#{messages['address.address1']}" field="address.address1" />
 
 			<hftl:actionsColumn useCustomIdParam="true"
 				permission="#{identity.hasPermission('billing','billingManagement')}" />

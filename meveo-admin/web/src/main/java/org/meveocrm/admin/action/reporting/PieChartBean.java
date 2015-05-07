@@ -189,4 +189,11 @@ public class PieChartBean extends ChartEntityBean<PieChart> {
 		this.pieChartEntityModels = pieChartEntityModels;
 	}
 
+	@Override
+	protected boolean canDelete(PieChart entity) {
+		// TODO Auto-generated method stub
+		return true;
+	}
+
 }
+

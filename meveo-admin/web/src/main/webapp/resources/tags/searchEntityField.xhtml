@@ -1,0 +1,60 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:p="http://primefaces.org/ui" xmlns:cc="http://java.sun.com/jsf/composite" xmlns:s="http://jboss.org/seam/faces" xmlns:hftl="http://hftl.org">
+
+<cc:interface>
+
+</cc:interface>
+
+<cc:implementation>
+
+    <hftl:decorateFormField fieldId="#{cc.parent.attrs.fieldIdPrefix}#{cc.parent.attrs.popup?'_child':'_list'}" label="#{cc.parent.attrs.label}"
+        componentWidth="#{cc.parent.attrs.componentWidth}" newLine="#{cc.parent.attrs.newLine}" displayOneLine="#{cc.parent.attrs.displayOneLine}"
+        styleClass="#{cc.parent.attrs.styleClass}" style="#{cc.parent.attrs.style}" labelStyle="#{cc.parent.attrs.labelStyle}" labelStyleClass="#{cc.parent.attrs.labelStyleClass}"
+        inputStyle="#{cc.parent.attrs.inputStyle}" inputStyleClass="#{cc.parent.attrs.inputStyleClass}" labelWidth="#{cc.parent.attrs.labelWidth}"
+        inputWidth="#{cc.parent.attrs.inputWidth}">
+
+
+        <!-- Entity selection via popup -->
+        <h:panelGroup rendered="#{cc.parent.attrs.popup}">
+            <p:inputText id="#{cc.parent.attrs.fieldIdPrefix}_child" value="#{cc.parent.filters[cc.parent.attrs.field][cc.parent.attrs.valueLabelField]}"
+                required="#{cc.parent.attrs.required}" size="#{cc.parent.attrs.size}" disabled="true" />
+            <p:commandButton id="selectLink" onclick="PF('dlg_#{cc.parent.attrs.popupId}').show()" icon="ui-icon-search" />
+            <p:tooltip for="selectLink" value="#{messages['commons.search']}" />
+        </h:panelGroup>
+
+        <!-- Entity selection from a picklist -->
+        <p:selectOneMenu id="#{cc.parent.attrs.fieldIdPrefix}_list" value="#{cc.parent.filters[cc.parent.attrs.field]}" rendered="#{!cc.parent.attrs.popup and cc.parent.attrs.listBean!=null}">
+            <f:selectItem itemLabel="" itemValue="" />
+            <f:selectItems value="#{cc.parent.attrs.listBean.listAll()}" var="elem" itemLabel="#{elem[cc.parent.attrs.valueLabelField]}" itemValue="#{elem}" />
+            <s:objectConverter />
+        </p:selectOneMenu>
+    </hftl:decorateFormField>
+
+
+    <!--         <h:panelGroup layout="block" styleClass="formFieldGroup #{cc.parent.attrs.styleClass}" style="width:#{cc.parent.attrs.componentWidth}%; #{cc.parent.attrs.style}"> -->
+    <!--         <p:outputLabel for="#{cc.parent.attrs.fieldIdPrefix}#{cc.parent.attrs.popup?'_child':'_list'}" value="#{cc.parent.attrs.label}" /> -->
+    <!--         <h:panelGroup layout="block" styleClass="#{cc.parent.attrs.fieldStyle}  #{cc.parent.attrs.inputStyleClass}" -->
+    <!--             style="width:#{cc.parent.attrs.inputWidth}%; #{cc.parent.attrs.inputStyle}"> -->
+    <!--             Entity selection via popup -->
+    <!--             <h:panelGroup rendered="#{cc.parent.attrs.popup}"> -->
+    <!--                 <p:inputText id="#{cc.parent.attrs.fieldIdPrefix}_child" value="#{cc.parent.filters[cc.parent.attrs.field][cc.parent.attrs.valueLabelField]}" -->
+    <!--                     required="#{cc.parent.attrs.required}" size="#{cc.parent.attrs.size}" disabled="true" /> -->
+    <!--                 <p:commandButton id="selectLink" onclick="PF('dlg_#{cc.parent.attrs.popupId}').show()" icon="ui-icon-search" /> -->
+    <!--                 <p:tooltip for="selectLink" value="#{messages['commons.search']}" /> -->
+    <!--             </h:panelGroup> -->
+
+    <!--             Entity selection from a picklist -->
+    <!--             <p:selectOneMenu id="#{cc.parent.attrs.fieldIdPrefix}_list" value="#{cc.parent.filters[cc.parent.attrs.field]}" rendered="#{cc.parent.attrs.listBean!=null}"> -->
+    <!--                 <f:selectItem itemLabel="" itemValue="" /> -->
+    <!--                 <f:selectItems value="#{cc.parent.attrs.listBean.listAll()}" var="elem" itemLabel="#{elem[cc.parent.attrs.valueLabelField]}" itemValue="#{elem}" /> -->
+    <!--                 <s:objectConverter /> -->
+    <!--             </p:selectOneMenu> -->
+    <!--         </h:panelGroup> -->
+    <!--     </h:panelGroup> -->
+
+</cc:implementation>
+
+</html>

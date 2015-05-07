@@ -99,7 +99,10 @@ import org.meveo.model.crm.Provider;
 				
 	@NamedQuery(name = "RatedTransaction.setStatusToCanceled", 
 		           query = "UPDATE RatedTransaction rt set rt.status=org.meveo.model.billing.RatedTransactionStatusEnum.CANCELED"
-		         + " where rt.walletOperationId IN :notBilledWalletIdList")
+		         + " where rt.walletOperationId IN :notBilledWalletIdList"),
+			
+	@NamedQuery(name = "RatedTransaction.getListByInvoiceAndSubCategory", 
+	           query = "from RatedTransaction t where t.invoice=:invoice and t.invoiceSubCategory=:invoiceSubCategory ")
 		})
 public class RatedTransaction extends BaseEntity {
 

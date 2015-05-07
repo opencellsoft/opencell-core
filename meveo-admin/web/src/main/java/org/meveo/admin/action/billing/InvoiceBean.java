@@ -23,13 +23,16 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.job.PDFParametersConstruction;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.CategoryInvoiceAgregate;
 import org.meveo.model.billing.Invoice;
@@ -38,11 +41,14 @@ import org.meveo.model.billing.InvoiceCategory;
 import org.meveo.model.billing.InvoiceCategoryDTO;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.InvoiceSubCategoryDTO;
+import org.meveo.model.billing.RatedTransaction;
 import org.meveo.model.billing.SubCategoryInvoiceAgregate;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.BillingAccountService;
+import org.meveo.service.billing.impl.InvoiceAgregateService;
 import org.meveo.service.billing.impl.InvoiceService;
+import org.meveo.service.billing.impl.RatedTransactionService;
 import org.meveo.service.payments.impl.CustomerAccountService;
 import org.omnifaces.cdi.ViewScoped;
 import org.primefaces.model.LazyDataModel;
@@ -72,7 +78,18 @@ public class InvoiceBean extends BaseBean<Invoice> {
 
 	@Inject
 	CustomerAccountService customerAccountService;
-
+	
+	@Inject
+	RatedTransactionService ratedTransactionService;
+	
+	@Inject
+	InvoiceAgregateService invoiceAgregateService;
+	
+	private List<RatedTransaction> ratedTransactions=new ArrayList<RatedTransaction>();
+	
+	@Inject
+	private PDFParametersConstruction pDFParametersConstruction;
+ 
 	/**
 	 * Constructor. Invokes super constructor and provides class type of this
 	 * bean for {@link BaseBean}.
@@ -181,7 +198,8 @@ public class InvoiceBean extends BaseBean<Invoice> {
 							.getAmountWithTax());
 					headerSubCategories.put(invoiceSubCategory.getCode(),
 							headerSUbCat);
-				}
+				} 
+				ratedTransactions=ratedTransactionService.getListByInvoiceAndSubCategory(entity, invoiceSubCategory);	
 			}
 		}
 		return new ArrayList<InvoiceCategoryDTO>(headerCategories.values());
@@ -204,5 +222,46 @@ public class InvoiceBean extends BaseBean<Invoice> {
 		}
 		return netToPay.setScale(2, RoundingMode.HALF_UP).toString();
 	}
+	
+	public void deleteInvoicePdf(){
+		try{
+			entity.setPdf(null);
+			invoiceService.update(entity);	
+			messages.info(new BundleKey("messages", "delete.successful"));
+		} catch (Exception e) {
+			log.error(e.getMessage());
+		}}
+	
+	public void generatePdf(){
+		try {
+			Map<String, Object> parameters = pDFParametersConstruction
+			   .constructParameters(entity);
+			invoiceService.producePdf(parameters, getCurrentUser()); 
+			messages.info(new BundleKey("messages", "invoice.pdfGeneration"));
+		} catch (Exception e) {
+			log.error(e.getMessage());  
+		}	
+	}
+	
+	public List<SubCategoryInvoiceAgregate> getDiscountAggregates() {
+		return invoiceAgregateService.findDiscountAggregates(entity); 
+	}
 
+	public List<RatedTransaction> getRatedTransactions() {
+		return ratedTransactions;
+	}
+
+	public void setRatedTransactions(List<RatedTransaction> ratedTransactions) {
+		this.ratedTransactions = ratedTransactions;
+	}
+
+	@Override
+	protected boolean canDelete(Invoice entity) {
+		// TODO Auto-generated method stub
+		return true;
+	}
+
+
+
+	
 }

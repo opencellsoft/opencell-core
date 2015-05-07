@@ -34,9 +34,9 @@
 				field="description" />
 			<!-- <hftl:column label="#{messages['invoiceCategory.discount']}" field="discount" /> -->
 			<hftl:column label="#{messages['invoiceCategory.subcategories']}"
-				field="invoiceSubCategories" childField="code" isList="true"
-				childFieldId="id"
-				entityView="/pages/catalog/invoiceSubCategories/invoiceSubCategoryDetail.xhtml"
+				field="invoiceSubCategories" valueLabelField="code" isList="true"
+				valueIdField="id"
+				entityView="invoiceSubCategoryDetail"
 				backView="invoiceCategories" showPopup="true"
 				popupFields="accountingCode" />
 

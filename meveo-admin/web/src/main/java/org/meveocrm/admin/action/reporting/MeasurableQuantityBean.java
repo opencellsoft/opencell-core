@@ -243,4 +243,10 @@ public void handleFileUpload(FileUploadEvent event) throws Exception {
 	public void setStrategyImportType(StrategyImportTypeEnum strategyImportType) {
 		this.strategyImportType = strategyImportType;
 	}
+
+	@Override
+	protected boolean canDelete(MeasurableQuantity entity) {
+		// TODO Auto-generated method stub
+		return true;
+	}
 }

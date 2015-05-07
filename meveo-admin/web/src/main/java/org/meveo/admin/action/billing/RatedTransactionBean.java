@@ -75,4 +75,10 @@ public class RatedTransactionBean extends BaseBean<RatedTransaction> {
 		return ratedTransactionService;
 	}
 
+	@Override
+	protected boolean canDelete(RatedTransaction entity) {
+		// TODO Auto-generated method stub
+		return true;
+	}
+
 }

@@ -22,7 +22,7 @@
 		<!-- Entity select popup. -->
 		<hftl:entityPopup id="searchInvoiceCategoryPopup"
 			header="#{messages['customer.popup.header']}"
-			updateField=":searchPanel:searchForm:invoiceCategoryField:invoiceCategory_child"
+			updateField=":searchPanel:searchForm:invoiceCategoryField"
 			selection="#{invoiceSubCategoryListBean.filters['invoiceCategory']}"
 			backingBean="#{invoiceCategoryBean}"
 			searchField1Label="#{messages['invoiceCategory.code']}"
@@ -35,7 +35,7 @@
 			backingBean="#{invoiceSubCategoryListBean}">
 			<hf:searchField id="invoiceCategoryField"
 				label="#{messages['invoiceSubCategory.invoiceCategory']}"
-				field="invoiceCategory" childField="code" popup="true"
+				field="invoiceCategory" valueLabelField="code" popup="true"
 				popupId="searchInvoiceCategoryPopup" clearButton="true" />
 			<hf:searchField label="#{messages['invoiceSubCategory.code']}"
 				field="code" />
@@ -53,7 +53,7 @@
 				field="code" />
 			<hftl:column
 				label="#{messages['invoiceSubCategory.invoiceCategory']}"
-				field="invoiceCategory" childField="code" />
+				field="invoiceCategory.code" />
 			<hftl:column label="#{messages['invoiceSubCategory.description']}"
 				field="description" />
 			<hftl:column label="#{messages['invoiceSubCategory.accountingCode']}"

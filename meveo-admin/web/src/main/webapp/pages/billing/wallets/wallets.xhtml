@@ -46,21 +46,21 @@
 		<hf:searchPanel backingBean="#{walletListBean}"
 			label="#{messages['wallet.search']}"
 			newButtonView="/pages/billing/wallets/walletDetail.xhtml">
-			<hf:searchField listBean="" label="#{messages['wallet.userAccount']}"
-				field="userAccount" childField="code" popup="true"
+			<hf:searchField label="#{messages['wallet.userAccount']}"
+				field="userAccount" valueLabelField="code" popup="true"
 				popupId="searchUserAccountPopup" clearButton="true" />
 			<hf:searchField label="#{messages['wallet.name']}" field="name" />
 			<hf:searchField label="#{messages['wallet.walletType']}"
-				field="walletType" childField="label" isMessage="true" />
+				field="walletType" />
 		</hf:searchPanel>
 
 		<hftl:dataList label="#{messages['wallet.title']}"
 			backingBean="#{walletListBean}" pdf="true">
 			<hftl:column label="#{messages['wallet.userAccount']}"
-				field="userAccount" childField="code" />
+				field="userAccount.code" />
 			<hftl:column label="#{messages['wallet.name']}" field="name" />
 			<hftl:column label="#{messages['wallet.walletType']}"
-				field="walletType" childField="label" isMessage="true" />
+				field="walletType.label" isMessage="true" />
 
 			<hftl:actionsColumn
 				permission="#{identity.hasPermission('billing','billingManagement')}" />

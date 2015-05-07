@@ -22,7 +22,7 @@
         <hftl:dataList label="#{messages['role.title']}" backingBean="#{userRoleListBean}" sortBy="name">
             <hftl:column label="#{messages['role.name']}" field="name" />
             <hftl:column label="#{messages['role.description']}" field="description" />
-            <hftl:column label="#{messages['role.permissions']}" field="permissions" childField="name" isList="true" />
+            <hftl:column label="#{messages['role.permissions']}" field="permissions" valueLabelField="name" isList="true" />
 
             <hftl:actionsColumn permission="#{identity.hasPermission('administration','administrationManagement')}" />
 

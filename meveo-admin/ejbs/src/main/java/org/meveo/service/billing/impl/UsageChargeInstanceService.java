@@ -25,6 +25,7 @@ import javax.persistence.EntityManager;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.cache.RatingCacheContainerProvider;
+import org.meveo.cache.WalletCacheContainerProvider;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.admin.User;
@@ -51,6 +52,9 @@ public class UsageChargeInstanceService extends BusinessService<UsageChargeInsta
     @Inject
     private RatingCacheContainerProvider ratingCacheContainerProvider;
 
+    @Inject
+    private WalletCacheContainerProvider walletCacheContainerProvider;
+    
 	public UsageChargeInstance usageChargeInstanciation(Subscription subscription, ServiceInstance serviceInstance,
 			ServiceChargeTemplateUsage serviceUsageChargeTemplate, Date startDate, Seller seller, User creator)
 			throws BusinessException {
@@ -72,7 +76,7 @@ public class UsageChargeInstanceService extends BusinessService<UsageChargeInsta
 		usageChargeInstance.setStatus(InstanceStatusEnum.INACTIVE);
 		usageChargeInstance.setServiceInstance(serviceInstance);
 		usageChargeInstance.setInvoicingCalendar(serviceInstance.getInvoicingCalendar());
-		usageChargeInstance.setUnityDescription(serviceUsageChargeTemplate.getChargeTemplate().getUnityDescription());
+		usageChargeInstance.setRatingUnitDescription(serviceUsageChargeTemplate.getChargeTemplate().getRatingUnitDescription());
 		usageChargeInstance.setSeller(seller);
 		usageChargeInstance.setCountry(subscription.getUserAccount().getBillingAccount().getTradingCountry());
 		usageChargeInstance.setCurrency(subscription.getUserAccount().getBillingAccount().getCustomerAccount()
@@ -102,6 +106,10 @@ public class UsageChargeInstanceService extends BusinessService<UsageChargeInsta
 		}
 		create(usageChargeInstance, creator, serviceInstance.getProvider());
 
+		if(usageChargeInstance.getPrepaid()){
+		    walletCacheContainerProvider.updateCache(usageChargeInstance);
+		}
+		
 		if (serviceUsageChargeTemplate.getCounterTemplate() != null) {
 			CounterInstance counterInstance = counterInstanceService.counterInstanciation(serviceInstance
 					.getSubscription().getUserAccount(), serviceUsageChargeTemplate.getCounterTemplate(), creator);
@@ -114,10 +122,6 @@ public class UsageChargeInstanceService extends BusinessService<UsageChargeInsta
 	}
 
 	public void activateUsageChargeInstance(UsageChargeInstance usageChargeInstance, User currentUser) {
-		activateUsageChargeInstance(getEntityManager(), usageChargeInstance, currentUser);
-	}
-
-	public void activateUsageChargeInstance(EntityManager em, UsageChargeInstance usageChargeInstance, User currentUser) {
 		usageChargeInstance.setStatus(InstanceStatusEnum.ACTIVE);
 		setProvider(currentUser.getProvider());
 		update(usageChargeInstance, currentUser);

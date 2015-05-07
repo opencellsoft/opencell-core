@@ -81,5 +81,11 @@ public class CounterTemplateBean extends BaseBean<CounterTemplate> {
     public LazyDataModel<CounterTemplate> getLazyDataModel(CounterTypeEnum counterType) {
         filters.put("counterType", counterType);
         return getLazyDataModel(filters, false);
-    }	
+    }
+
+	@Override
+	protected boolean canDelete(CounterTemplate entity) {
+		// TODO Auto-generated method stub
+		return true;
+	}	
 }

@@ -20,7 +20,7 @@
 			column1Label="#{messages['charge.description']}" column1="code"
 			column2Label="#{messages['businessEntity.description']}"
 			column2="description" eventBackingBean="#{discountPlanMatrixBean}"
-			updateField=":discountFormPanel:formDiscountPlan:chargeSelectId:textPanel_popup">
+			updateField=":discountFormPanel:formDiscountPlan:chargeSelectId">
 			<!-- 			selection="#{chargeTemplateBean.entity}" -->
 		</hftl:entityPopup>
 
@@ -37,7 +37,7 @@
 			column2="description"
 			selection="#{discountPlanMatrixBean.entity.offerTemplate}"
 			lazy="false" dataModel="#{offerTemplateBean.listActive}"
-			updateField=":discountFormPanel:formDiscountPlan:offerSelectId:offerSelectId">
+			updateField=":discountFormPanel:formDiscountPlan:offerSelectId">
 		</hftl:entityPopup>
 
 		<hftl:entityPopup id="sellerParentPopup"
@@ -47,7 +47,7 @@
 			column1="code" selection="#{discountPlanMatrixBean.entity.seller}"
 			column2Label="#{messages['BusinessEntity.description']}"
 			column2="description"
-			updateField=":discountFormPanel:formDiscountPlan:parentSelectId:parentSelectId">
+			updateField=":discountFormPanel:formDiscountPlan:parentSelectId">
 		</hftl:entityPopup>
 
 		<hf:formPanel edit="#{edit}" id="discountFormPanel"
@@ -58,16 +58,16 @@
 				label="#{messages['discountPlanMatrix.eventCode']}"
 				field="eventCode" popup="true" popupId="discountPlanMatChargePopup"
 				disabled="true" />
-			<hf:formEntityField id="offerSelectId"
+			<hf:formField id="offerSelectId"
 				label="#{messages['pricePlanMatrix.offerCode']}"
-				field="offerTemplate" childField="code" popup="true"
+				field="offerTemplate" valueLabelField="code" popup="true"
 				popupId="offerPopup" />
 			<hf:formField
 				label="#{messages['discountPlanMatrix.startSubscriptionDate']}"
 				field="startSubscriptionDate" />
-			<hf:formEntityField id="parentSelectId"
+			<hf:formField id="parentSelectId"
 				label="#{messages['seller.title']}" field="seller"
-				childField="description" popup="true" popupId="sellerParentPopup" />
+				valueLabelField="description" popup="true" popupId="sellerParentPopup" />
 			<hf:formField
 				label="#{messages['discountPlanMatrix.endSubscriptionDate']}"
 				field="endSubscriptionDate" />

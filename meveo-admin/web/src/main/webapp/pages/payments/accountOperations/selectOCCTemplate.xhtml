@@ -1,55 +1,33 @@
-<ui:composition xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:s="http://jboss.org/seam/faces"
-	xmlns:ui="http://java.sun.com/jsf/facelets"
-	xmlns:p="http://primefaces.org/ui"
-	xmlns:f="http://java.sun.com/jsf/core"
-	xmlns:h="http://java.sun.com/jsf/html"
-	
-	 xmlns:hftl="http://hftl.org"
-	xmlns:hf="http://java.sun.com/jsf/composite/tags"
-	template="/layout/template.xhtml">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:s="http://jboss.org/seam/faces" xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:p="http://primefaces.org/ui"
+    xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html" xmlns:hftl="http://hftl.org" xmlns:hf="http://java.sun.com/jsf/composite/tags"
+    template="/layout/template.xhtml">
 
-	<f:metadata>
-		<f:viewParam name="customerAccountId"
-			value="#{customerAccountBean.objectId}" />
-		<f:viewParam name="customerId" value="#{customerBean.objectId}" />
-	</f:metadata>
+    <f:metadata>
+        <f:viewParam name="customerAccountId" value="#{customerAccountBean.objectId}" />
+        <f:viewParam name="customerId" value="#{customerBean.objectId}" />
+    </f:metadata>
 
-	<ui:define name="navigation">
-		<ui:include src="/layout/navigation.xhtml" />
-	</ui:define>
+    <ui:define name="navigation">
+        <ui:include src="/layout/navigation.xhtml" />
+    </ui:define>
 
-	<ui:define name="body">
+    <ui:define name="body">
 
-		<p:messages />
-		<p:panel header="#{messages['accountOperation.selectionTypeTitle']}">
-			<h:form id="selectionTypeTitle" styleClass="mainForm">
-				<p:panelGrid columns="1">
-					<p:panelGrid columns="2">
-						<p:outputLabel for="codeType"
-							value="#{messages['accountOperation.selectTypeOCC']}" />
-						<p:selectOneMenu id="codeType" required="true"
-							value="#{otherCreditAndChargeBean.occTemplate}">
-							<s:objectConverter />
-							<f:selectItems value="#{occTemplateBean.listOCCTemplate()}"
-								var="occ" itemLabel="#{occ.description}" />
-						</p:selectOneMenu>
-					</p:panelGrid>
-					<p:panelGrid columns="2" styleClass="form-panel-actions">
-						<p:commandButton ajax="false"
-							value="#{messages['accountOperation.buttonSelectionType']}"
-							action="#{otherCreditAndChargeBean.loadFromTemplate()}" />
-						<p:button value="#{messages['action.back']}"
-							outcome="customerAccountDetail" includeViewParams="true">
-							<f:param name="cid" value="#{javax.enterprise.context.conversation.id}" />
-						</p:button>
-					</p:panelGrid>
-				</p:panelGrid>
-			</h:form>
-		</p:panel>
-	</ui:define>
-
-
-
-
+        <hftl:decorateFormPanel formId="selectionTypeTitle" label="#{messages['accountOperation.selectionTypeTitle']}">
+            <ui:define name="fields">
+                <hf:formDecorateField fieldId="codeType" label="#{messages['accountOperation.selectTypeOCC']}">
+                    <p:selectOneMenu id="codeType" required="true" value="#{otherCreditAndChargeBean.occTemplate}">
+                        <s:objectConverter />
+                        <f:selectItems value="#{occTemplateBean.listOCCTemplate()}" var="occ" itemLabel="#{occ.description}" />
+                    </p:selectOneMenu>
+                </hf:formDecorateField>
+            </ui:define>
+            <ui:define name="buttons">
+                <p:commandButton ajax="false" value="#{messages['accountOperation.buttonSelectionType']}" action="#{otherCreditAndChargeBean.loadFromTemplate()}" />
+                <p:button value="#{messages['action.back']}" outcome="customerAccountDetail" includeViewParams="true">
+                    <f:param name="cid" value="#{javax.enterprise.context.conversation.id}" />
+                </p:button>
+            </ui:define>
+        </hftl:decorateFormPanel>
+    </ui:define>
 </ui:composition>

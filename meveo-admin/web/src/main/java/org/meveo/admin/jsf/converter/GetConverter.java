@@ -21,7 +21,13 @@ import java.math.BigDecimal;
 import javax.enterprise.context.spi.CreationalContext;
 import javax.enterprise.inject.spi.Bean;
 import javax.enterprise.inject.spi.BeanManager;
+import javax.faces.convert.ByteConverter;
 import javax.faces.convert.Converter;
+import javax.faces.convert.DoubleConverter;
+import javax.faces.convert.FloatConverter;
+import javax.faces.convert.IntegerConverter;
+import javax.faces.convert.LongConverter;
+import javax.faces.convert.ShortConverter;
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -86,7 +92,7 @@ public class GetConverter {
 	 * 
 	 * @return Converter.
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public Converter forType(Object obj, String param) {
 
 		if (obj == null) {
@@ -96,15 +102,34 @@ public class GetConverter {
 		// log.debug("Getting converter={} for class={}", param,
 		// obj.getClass());
 
-		if (StringUtils.isBlank(param) && obj.getClass() == BigDecimal.class) {
+        if (StringUtils.isBlank(param)) {
 
-			Bean<BigDecimalConverter> bean = (Bean<BigDecimalConverter>) beanManager
-					.getBeans(BigDecimalConverter.class).iterator().next();
-			CreationalContext<BigDecimalConverter> ctx = beanManager
-					.createCreationalContext(bean);
-			return (BigDecimalConverter) beanManager.getReference(bean,
-					BigDecimalConverter.class, ctx);
+            Class type = obj.getClass();
 
+            if (type == BigDecimal.class) {
+                Bean<BigDecimalConverter> bean = (Bean<BigDecimalConverter>) beanManager.getBeans(BigDecimalConverter.class).iterator().next();
+                CreationalContext<BigDecimalConverter> ctx = beanManager.createCreationalContext(bean);
+                return (BigDecimalConverter) beanManager.getReference(bean, BigDecimalConverter.class, ctx);
+
+            } else if (type == Integer.class || (type.isPrimitive() && type.getName().equals("int"))) {
+                return new IntegerConverter();
+
+            } else if (type == Long.class || (type.isPrimitive() && type.getName().equals("long"))) {
+                return new LongConverter();
+
+            } else if (type == Byte.class || (type.isPrimitive() && type.getName().equals("byte"))) {
+                return new ByteConverter();
+
+            } else if (type == Short.class || (type.isPrimitive() && type.getName().equals("short"))) {
+                return new ShortConverter();
+
+            } else if (type == Double.class || (type.isPrimitive() && type.getName().equals("double"))) {
+                return new DoubleConverter();
+
+            } else if (type == Float.class || (type.isPrimitive() && type.getName().equals("float"))) {
+                return new FloatConverter();
+            }
+            
 		} else if ("4digits".equals(param)
 				&& obj.getClass() == BigDecimal.class) {
 

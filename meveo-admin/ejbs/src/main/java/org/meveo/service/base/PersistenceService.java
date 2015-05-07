@@ -657,6 +657,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
             }
         }
         queryBuilder.addPaginationConfiguration(config, "a");
+
         return queryBuilder;
     }
 

@@ -75,4 +75,10 @@ public class DunningHistoryBean extends BaseBean<DunningHistory> {
 		return dunningHistoryService;
 	}
 
+	@Override
+	protected boolean canDelete(DunningHistory entity) {
+		// TODO Auto-generated method stub
+		return true;
+	}
+
 }

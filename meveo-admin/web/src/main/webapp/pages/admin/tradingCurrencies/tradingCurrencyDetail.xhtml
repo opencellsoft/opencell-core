@@ -17,7 +17,7 @@
 		<c:if test="#{tradingCurrencyBean.edit}">
 			<hftl:entityPopup id="currencyPopup"
 				header="#{messages['currency.popup.header']}"
-				updateField=":formPanel:currenciesFormId:currencySelectedId:currencySelectedId,:formPanel:currenciesFormId:prDescription:prDescription_text2"
+				updateField=":formPanel:currenciesFormId:currencySelectedId,:formPanel:currenciesFormId:prDescription"
 				selection="#{tradingCurrencyBean.entity.currency}"
 				backingBean="#{currencyBean}"
 				searchField1Label="#{messages['currency.currencyCode']}"
@@ -34,9 +34,9 @@
 			label="#{messages['tradingCurrency.tradingCurrencyPanel']}"
 			backingBean="#{tradingCurrencyBean}" showEnableDisableButton="true">
 
-			<hf:formEntityField id="currencySelectedId"
+			<hf:formField id="currencySelectedId"
 				label="#{messages['tradingCurrency.currencyCode']}" field="currency"
-				childField="currencyCode" popup="true" popupId="currencyPopup"
+				valueLabelField="currencyCode" popup="true" popupId="currencyPopup"
 				required="true" showPopupOnlyOnNew="true" />
 
 			<hf:formField label="#{messages['tradingCurrency.prDescription']}"

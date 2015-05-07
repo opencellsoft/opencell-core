@@ -74,4 +74,10 @@ public class CustomerCategoryBean extends BaseBean<CustomerCategory> {
 		return Arrays.asList("provider");
 	}
 
+	@Override
+	protected boolean canDelete(CustomerCategory entity) {
+		// TODO Auto-generated method stub
+		return true;
+	}
+
 }
