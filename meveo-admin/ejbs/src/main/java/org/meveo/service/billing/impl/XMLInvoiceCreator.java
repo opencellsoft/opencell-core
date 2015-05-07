@@ -28,11 +28,10 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.Future;
 
-import javax.ejb.AsyncResult;
-import javax.ejb.Asynchronous;
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -75,8 +74,6 @@ import org.meveo.model.payments.CustomerAccountStatusEnum;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.catalog.impl.CatMessagesService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.w3c.dom.Comment;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -98,14 +95,19 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 
 	@Inject
 	private InvoiceAgregateService invoiceAgregateService;
+	
 
-	private static Logger log = LoggerFactory.getLogger(XMLInvoiceCreator.class);
+	TransformerFactory transfac = TransformerFactory.newInstance();
+	
 
-	@Asynchronous
-	public Future<Boolean> createXMLInvoice(Invoice invoice, File billingRundir) throws BusinessException {
-		log.debug("creating xml invoice");
+	//private static Logger log = LoggerFactory.getLogger(XMLInvoiceCreator.class);
+
+	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+	public void createXMLInvoice(Long invoiceId, File billingRundir) throws BusinessException {
+		//log.debug("creating xml invoice...");
 
 		try {
+			Invoice invoice = findById(invoiceId);
 			String billingAccountLanguage = invoice.getBillingAccount().getTradingLanguage().getLanguage().getLanguageCode();
 
 			boolean entreprise = invoice.getProvider().isEntreprise();
@@ -131,7 +133,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 			doc.appendChild(invoiceTag);
 			invoiceTag.appendChild(header);
 
-			log.debug("creating customer");
+			//log.debug("creating customer");
 			Customer customer = invoice.getBillingAccount().getCustomerAccount().getCustomer();
 			Element customerTag = doc.createElement("customer");
 			customerTag.setAttribute("id", customer.getId() + "");
@@ -149,7 +151,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 			header.appendChild(customerTag);
 			addNameAndAdress(customer, doc, customerTag, billingAccountLanguage);
 
-			log.debug("creating ca");
+			//log.debug("creating ca");
 			CustomerAccount customerAccount = invoice.getBillingAccount().getCustomerAccount();
 			Element customerAccountTag = doc.createElement("customerAccount");
 			customerAccountTag.setAttribute("id", customerAccount.getId() + "");
@@ -185,7 +187,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 			addNameAndAdress(customerAccount, doc, customerAccountTag, billingAccountLanguage);
 			addproviderContact(customerAccount, doc, customerAccountTag);
 
-			log.debug("creating ba");
+			//log.debug("creating ba");
 			BillingAccount billingAccount = invoice.getBillingAccount();
 			Element billingAccountTag = doc.createElement("billingAccount");
 			if (billingCycle == null) {
@@ -285,7 +287,6 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 			invoiceTag.appendChild(detail);
 			addUserAccounts(invoice, doc, detail, entreprise, invoiceTag);
 
-			TransformerFactory transfac = TransformerFactory.newInstance();
 			Transformer trans = transfac.newTransformer();
 			// trans.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
 			trans.setOutputProperty(OutputKeys.INDENT, "yes");
@@ -294,20 +295,20 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 			DOMSource source = new DOMSource(doc);
 			StreamResult result = new StreamResult(billingRundir + File.separator
 					+ (invoice.getInvoiceNumber() != null ? invoice.getInvoiceNumber() : invoice.getTemporaryInvoiceNumber()) + ".xml");
-			log.debug("source=" + source.toString());
+			//log.debug("source=" + source.toString());
 
 			trans.transform(source, result);
-			return new AsyncResult<Boolean>(true);
+			
 		} catch (TransformerException e) {
-			log.error("Error occured when creating xml for invoiceID={}. {}", invoice.getId(), e);
+			log.error("Error occured when creating xml for invoiceID={}. {}", invoiceId, e);
 		} catch (ParserConfigurationException e) {
-			log.error("Error occured when creating xml for invoiceID={}. {}", invoice.getId(), e);
+			log.error("Error occured when creating xml for invoiceID={}. {}", invoiceId, e);
 		}
-		return new AsyncResult<Boolean>(false);
+		
 	}
 
 	public void addUserAccounts(Invoice invoice, Document doc, Element parent, boolean enterprise, Element invoiceTag) {
-		log.debug("add user account");
+		//log.debug("add user account");
 
 		Element userAccounts = doc.createElement("userAccounts");
 		parent.appendChild(userAccounts);
@@ -523,7 +524,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 
 	public static void addproviderContact(AccountEntity account, Document doc, Element parent) {
 
-		log.debug("add provider");
+		//log.debug("add provider");
 
 		if (account.getPrimaryContact() != null) {
 			Element providerContactTag = doc.createElement("providerContact");
@@ -574,7 +575,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 
 	public static void addPaymentInfo(BillingAccount billingAccount, Document doc, Element parent) {
 
-		log.debug("add payment info");
+		//log.debug("add payment info");
 
 		Element paymentMethod = doc.createElement("paymentMethod");
 		parent.appendChild(paymentMethod);
@@ -791,7 +792,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 	}
 
 	private void addTaxes(Invoice invoice, Document doc, Element parent) throws BusinessException {
-		log.debug("adding taxes...");
+		//log.debug("adding taxes...");
 		Element taxes = doc.createElement("taxes");
 		int rounding = invoice.getProvider().getRounding() == null ? 2 : invoice.getProvider().getRounding();
 
@@ -829,7 +830,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 
 			String languageCode = "";
 			try {
-				log.debug("ba={}, tradingLanguage={}", invoice.getBillingAccount(), invoice.getBillingAccount().getTradingLanguage());
+				//log.debug("ba={}, tradingLanguage={}", invoice.getBillingAccount(), invoice.getBillingAccount().getTradingLanguage());
 				languageCode = invoice.getBillingAccount().getTradingLanguage().getLanguage().getLanguageCode();
 			} catch (NullPointerException e) {
 				log.error("Billing account must have a trading language.");
@@ -862,7 +863,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 	}
 
 	private void addHeaderCategories(Invoice invoice, Document doc, Element parent) {
-		log.debug("add header categories");
+		//log.debug("add header categories");
 
 		long startDate = System.currentTimeMillis();
 		boolean entreprise = invoice.getProvider().isEntreprise();
@@ -967,14 +968,14 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 		}
 		addHeaderCategories(headerCategories, doc, parent, entreprise, invoice.getProvider());
 
-		log.info("addHeaderCategories time: " + (System.currentTimeMillis() - startDate));
+		//log.info("addHeaderCategories time: " + (System.currentTimeMillis() - startDate));
 	}
 
 	private void addHeaderCategories(LinkedHashMap<String, XMLInvoiceHeaderCategoryDTO> headerCategories, Document doc, Element parent, boolean entreprise, Provider provider) {
 
 		int rounding = provider.getRounding() == null ? 2 : provider.getRounding();
 
-		log.debug("add header categories");
+		//log.debug("add header categories");
 
 		Element categories = doc.createElement("categories");
 		parent.appendChild(categories);
@@ -1012,7 +1013,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 
 					lebel.appendChild(lebelTxt);
 					line.appendChild(lebel);
-					log.info("addHeaderCategories2 headerRatedTransaction amountHT=" + headerTransaction.getAmountWithoutTax());
+					//log.info("addHeaderCategories2 headerRatedTransaction amountHT=" + headerTransaction.getAmountWithoutTax());
 					Element lineUnitAmountWithoutTax = doc.createElement("unitAmountWithoutTax");
 					Text lineUnitAmountWithoutTaxTxt = doc.createTextNode(round(headerTransaction.getUnitAmountWithoutTax(), rounding));
 					lineUnitAmountWithoutTax.appendChild(lineUnitAmountWithoutTaxTxt);

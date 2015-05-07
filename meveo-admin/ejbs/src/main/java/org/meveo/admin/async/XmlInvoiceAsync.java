@@ -35,7 +35,7 @@ public class XmlInvoiceAsync {
 		for (Invoice invoice : invoices) {
 			long startDate = System.currentTimeMillis();
 			try {
-				xmlInvoiceCreator.createXMLInvoice(invoice, billingRundir);
+				xmlInvoiceCreator.createXMLInvoice(invoice.getId(), billingRundir);
 			} catch (BusinessException e) {				
 				e.printStackTrace();
 			}
