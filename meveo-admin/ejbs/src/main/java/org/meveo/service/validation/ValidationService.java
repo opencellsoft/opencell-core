@@ -49,13 +49,15 @@ public class ValidationService {
 			className = className.substring(0, pos);
 		}
 
-		StringBuilder queryStringBuilder = new StringBuilder("select count(*) from ")
-				.append(className).append(" where ").append(fieldName).append(" = '").append(value)
-				.append("' and provider.id = ").append(provider.getId());
-		if (id != null) {
-			queryStringBuilder.append(" and id != ").append(id);
-		}
-		Query query = em.createQuery(queryStringBuilder.toString());
+        String queryString = null;
+        if (id == null) {
+            queryString = String.format("select count(*) from %s where lower(%s)='%s' and provider.id = %s", className, fieldName,
+                (value != null && value instanceof String) ? ((String) value).toLowerCase() : value, provider.getId());
+        } else {
+            queryString = String.format("select count(*) from %s where lower(%s)='%s' and provider.id = %s and id != %s", className, fieldName,
+                (value != null && value instanceof String) ? ((String) value).toLowerCase() : value, provider.getId(), id);
+        }
+        Query query = em.createQuery(queryString);
 		long count = (Long) query.getSingleResult();
 		return count == 0L;
 	}
