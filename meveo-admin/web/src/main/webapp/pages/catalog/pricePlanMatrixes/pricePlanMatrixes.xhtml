@@ -111,9 +111,14 @@
 		</hf:searchPanel>
 
 		<hftl:dataList label="#{messages['pricePlanMatrix.title']}"
-			editable="true" editMode="cell" scrollable="true" exportButton="false" exportXlsxButton="true"
+			editable="true" editMode="cell" scrollable="false" exportButton="false" exportXlsxButton="true"
 			backingBean="#{pricePlanMatrixListBean}" sortBy="code">
-			<p:column exportable="true" sortBy="code">
+			<f:facet name="header">
+				<p:commandButton id="toggler" type="button"
+					style="float:right" icon="ui-icon-calculator" />
+				<p:columnToggler datasource="datatable_results" trigger="toggler" />
+			</f:facet>
+			<p:column exportable="true" sortBy="code" toggleable="false">
 				<f:facet name="header">
 					<h:outputText value="#{messages['BusinessEntity.code']}" />
 				</f:facet>

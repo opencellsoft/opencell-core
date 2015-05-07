@@ -57,7 +57,7 @@
 		<c:set var="objectIdParamName" value="#{backingBean.idParameterName}" />
 	</c:if>
 
-	<p:column style="width: #{renderEnableLink?130:100}px;" exportable="false">
+	<p:column style="width: #{renderEnableLink?130:100}px;" exportable="false" toggleable="false">
 		<f:facet name="header">
 			<h:outputText value="#{messages['commons.actions']}" />
 		</f:facet>
