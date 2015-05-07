@@ -25064,6 +25064,10 @@ for( testCase in testSuite.getTestCaseList() ) {
                <serviceChargeTemplateRecurring>
                   <!--Optional:-->
                   <code>${#TestCase#index}_REC1</code>
+                  <wallets>
+                     <!--Zero or more repetitions:-->
+                     <wallet>PRINCIPAL</wallet>
+                  </wallets>
                </serviceChargeTemplateRecurring>
             </serviceChargeTemplateRecurrings>
             <!--Optional:-->
