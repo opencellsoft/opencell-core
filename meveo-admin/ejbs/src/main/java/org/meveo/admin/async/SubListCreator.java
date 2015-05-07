@@ -43,7 +43,7 @@ public class SubListCreator {
 		from=0;
 		to=blocToRun;
 	}
-
+//TODO repartir  aussi le modulo equitablement possible
 	public List<?> getNextWorkSet(){
 		List<?> toRuns = theBigList.subList(from,to );
 		from = to;
