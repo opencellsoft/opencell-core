@@ -245,12 +245,56 @@ public class BackingBeanBasedCompositeComponent extends UINamingContainer {
 
     }
 
+    public boolean isNumber(String fieldName, String childFieldName, boolean determineFromEntityClass) throws SecurityException, NoSuchFieldException, IllegalArgumentException,
+            IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+
+        if (StringUtils.isEmpty(childFieldName)) {
+            return isNumber(fieldName, determineFromEntityClass);
+        }
+
+        Field entityField = getBeanFieldThrowException(determineFromEntityClass ? getEntityClass() : getEntityFromBackingBeanOrAttribute().getClass(), fieldName);
+
+        Field field = getBeanField(entityField.getType(), childFieldName);
+        if (field != null) {
+            Class<?> type = field.getType();
+            return type == Integer.class
+                    || type == Long.class
+                    || type == Byte.class
+                    || type == Short.class
+                    || type == Double.class
+                    || type == Float.class
+                    || field.getType() == BigDecimal.class
+                    || (type.isPrimitive() && (type.getName().equals("int") || type.getName().equals("long") || type.getName().equals("byte") || type.getName().equals("short")
+                            || type.getName().equals("double") || type.getName().equals("float")));
+        } else {
+            return false;
+        }
+    }
+
     public boolean isInteger(String fieldName, boolean determineFromEntityClass) throws SecurityException, NoSuchFieldException, IllegalArgumentException, IllegalAccessException,
             InvocationTargetException, NoSuchMethodException {
 
         Field field = getBeanFieldThrowException(determineFromEntityClass ? getEntityClass() : getEntityFromBackingBeanOrAttribute().getClass(), fieldName);
         Class<?> type = field.getType();
         return type == Integer.class || (type.isPrimitive() && type.getName().equals("int"));
+    }
+
+    public boolean isInteger(String fieldName, String childFieldName, boolean determineFromEntityClass) throws SecurityException, NoSuchFieldException, IllegalArgumentException,
+            IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+
+        if (StringUtils.isEmpty(childFieldName)) {
+            return isInteger(fieldName, determineFromEntityClass);
+        }
+
+        Field entityField = getBeanFieldThrowException(determineFromEntityClass ? getEntityClass() : getEntityFromBackingBeanOrAttribute().getClass(), fieldName);
+
+        Field field = getBeanField(entityField.getType(), childFieldName);
+        if (field != null) {
+            Class<?> type = field.getType();
+            return type == Integer.class || (type.isPrimitive() && type.getName().equals("int"));
+        } else {
+            return false;
+        }
     }
 
     public boolean isLong(String fieldName, boolean determineFromEntityClass) throws SecurityException, NoSuchFieldException, IllegalArgumentException, IllegalAccessException,
@@ -261,12 +305,48 @@ public class BackingBeanBasedCompositeComponent extends UINamingContainer {
         return type == Long.class || (type.isPrimitive() && type.getName().equals("long"));
     }
 
+    public boolean isLong(String fieldName, String childFieldName, boolean determineFromEntityClass) throws SecurityException, NoSuchFieldException, IllegalArgumentException,
+            IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+
+        if (StringUtils.isEmpty(childFieldName)) {
+            return isLong(fieldName, determineFromEntityClass);
+        }
+
+        Field entityField = getBeanFieldThrowException(determineFromEntityClass ? getEntityClass() : getEntityFromBackingBeanOrAttribute().getClass(), fieldName);
+
+        Field field = getBeanField(entityField.getType(), childFieldName);
+        if (field != null) {
+            Class<?> type = field.getType();
+            return type == Long.class || (type.isPrimitive() && type.getName().equals("long"));
+        } else {
+            return false;
+        }
+    }
+
     public boolean isByte(String fieldName, boolean determineFromEntityClass) throws SecurityException, NoSuchFieldException, IllegalArgumentException, IllegalAccessException,
             InvocationTargetException, NoSuchMethodException {
 
         Field field = getBeanFieldThrowException(determineFromEntityClass ? getEntityClass() : getEntityFromBackingBeanOrAttribute().getClass(), fieldName);
         Class<?> type = field.getType();
         return type == Byte.class || (type.isPrimitive() && type.getName().equals("byte"));
+    }
+
+    public boolean isByte(String fieldName, String childFieldName, boolean determineFromEntityClass) throws SecurityException, NoSuchFieldException, IllegalArgumentException,
+            IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+
+        if (StringUtils.isEmpty(childFieldName)) {
+            return isByte(fieldName, determineFromEntityClass);
+        }
+
+        Field entityField = getBeanFieldThrowException(determineFromEntityClass ? getEntityClass() : getEntityFromBackingBeanOrAttribute().getClass(), fieldName);
+
+        Field field = getBeanField(entityField.getType(), childFieldName);
+        if (field != null) {
+            Class<?> type = field.getType();
+            return type == Byte.class || (type.isPrimitive() && type.getName().equals("byte"));
+        } else {
+            return false;
+        }
     }
 
     public boolean isShort(String fieldName, boolean determineFromEntityClass) throws SecurityException, NoSuchFieldException, IllegalArgumentException, IllegalAccessException,
@@ -277,12 +357,48 @@ public class BackingBeanBasedCompositeComponent extends UINamingContainer {
         return type == Short.class || (type.isPrimitive() && type.getName().equals("short"));
     }
 
+    public boolean isShort(String fieldName, String childFieldName, boolean determineFromEntityClass) throws SecurityException, NoSuchFieldException, IllegalArgumentException,
+            IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+
+        if (StringUtils.isEmpty(childFieldName)) {
+            return isShort(fieldName, determineFromEntityClass);
+        }
+
+        Field entityField = getBeanFieldThrowException(determineFromEntityClass ? getEntityClass() : getEntityFromBackingBeanOrAttribute().getClass(), fieldName);
+
+        Field field = getBeanField(entityField.getType(), childFieldName);
+        if (field != null) {
+            Class<?> type = field.getType();
+            return type == Short.class || (type.isPrimitive() && type.getName().equals("short"));
+        } else {
+            return false;
+        }
+    }
+
     public boolean isDouble(String fieldName, boolean determineFromEntityClass) throws SecurityException, NoSuchFieldException, IllegalArgumentException, IllegalAccessException,
             InvocationTargetException, NoSuchMethodException {
 
         Field field = getBeanFieldThrowException(determineFromEntityClass ? getEntityClass() : getEntityFromBackingBeanOrAttribute().getClass(), fieldName);
         Class<?> type = field.getType();
         return type == Double.class || (type.isPrimitive() && type.getName().equals("double"));
+    }
+
+    public boolean isDouble(String fieldName, String childFieldName, boolean determineFromEntityClass) throws SecurityException, NoSuchFieldException, IllegalArgumentException,
+            IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+
+        if (StringUtils.isEmpty(childFieldName)) {
+            return isDouble(fieldName, determineFromEntityClass);
+        }
+
+        Field entityField = getBeanFieldThrowException(determineFromEntityClass ? getEntityClass() : getEntityFromBackingBeanOrAttribute().getClass(), fieldName);
+
+        Field field = getBeanField(entityField.getType(), childFieldName);
+        if (field != null) {
+            Class<?> type = field.getType();
+            return type == Double.class || (type.isPrimitive() && type.getName().equals("double"));
+        } else {
+            return false;
+        }
     }
 
     public boolean isFloat(String fieldName, boolean determineFromEntityClass) throws SecurityException, NoSuchFieldException, IllegalArgumentException, IllegalAccessException,
@@ -293,11 +409,47 @@ public class BackingBeanBasedCompositeComponent extends UINamingContainer {
         return type == Float.class || (type.isPrimitive() && type.getName().equals("float"));
     }
 
+    public boolean isFloat(String fieldName, String childFieldName, boolean determineFromEntityClass) throws SecurityException, NoSuchFieldException, IllegalArgumentException,
+            IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+
+        if (StringUtils.isEmpty(childFieldName)) {
+            return isFloat(fieldName, determineFromEntityClass);
+        }
+
+        Field entityField = getBeanFieldThrowException(determineFromEntityClass ? getEntityClass() : getEntityFromBackingBeanOrAttribute().getClass(), fieldName);
+
+        Field field = getBeanField(entityField.getType(), childFieldName);
+        if (field != null) {
+            Class<?> type = field.getType();
+            return type == Float.class || (type.isPrimitive() && type.getName().equals("float"));
+        } else {
+            return false;
+        }
+    }
+
     public boolean isBigDecimal(String fieldName, boolean determineFromEntityClass) throws SecurityException, NoSuchFieldException, IllegalArgumentException,
             IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 
         Field field = getBeanFieldThrowException(determineFromEntityClass ? getEntityClass() : getEntityFromBackingBeanOrAttribute().getClass(), fieldName);
         return field.getType() == BigDecimal.class;
+    }
+
+    public boolean isBigDecimal(String fieldName, String childFieldName, boolean determineFromEntityClass) throws SecurityException, NoSuchFieldException,
+            IllegalArgumentException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+
+        if (StringUtils.isEmpty(childFieldName)) {
+            return isBigDecimal(fieldName, determineFromEntityClass);
+        }
+
+        Field entityField = getBeanFieldThrowException(determineFromEntityClass ? getEntityClass() : getEntityFromBackingBeanOrAttribute().getClass(), fieldName);
+
+        Field field = getBeanField(entityField.getType(), childFieldName);
+        if (field != null) {
+            Class<?> type = field.getType();
+            return field.getType() == BigDecimal.class;
+        } else {
+            return false;
+        }
     }
 
     public boolean isEntity(String fieldName, boolean determineFromEntityClass) throws SecurityException, NoSuchFieldException, IllegalArgumentException, IllegalAccessException,
