@@ -20,11 +20,15 @@
         backingbean - backing bean for data action/navigation. If not provided, defaults to #{backingBean} used in hftl:datalist
         entity - a p:datatable model iteration variable. If not provided, defaults to #{entity} - a default iteration variable of hftl:datalist
         field - a name of a field in an entity
-        isList - is field value is a collection - supports both List, Map and Set type fields.
+        isList - is field value is a collection - supports both List and Set type fields.
+        isMap - is field value a map - prints a map's values
         isDate - is entity field or a list value item field is a date
         sort - is column sortable
         rendered - should a column be rendered
         exportable - is value exportable
+        width - column width e.g 20% 
+        style - style to apply to the p:column
+        styleClass - style class to apply to the p:column
         
     Additional attributes for list type fields
         valueLabelField - used along with isList="true". Specifies a name of a field in list value item.
@@ -138,12 +142,21 @@
 		<f:facet name="header">
 			<h:outputText value="#{label}" />
 		</f:facet>
-
+        <c:if test="#{! empty(width)}">
+            <f:attribute name="width" value="#{width}" />
+        </c:if>
 		<c:if test="#{sort}">
 			<f:attribute name="field" value="#{field}" />
 			<f:attribute name="sortable" value="#{true}" />
 			<f:attribute name="sortBy" value="#{field}" />
 		</c:if>
+        <c:if test="#{! empty(styleClasss)}">
+            <f:attribute name="styleClasss" value="#{styleClasss}" />
+        </c:if>
+        <c:if test="#{! empty(style)}">
+            <f:attribute name="style" value="#{style}" />
+        </c:if>        
+        
 		<c:set var="valueField" value="#{entity}" />
 		<c:forEach var="valueFieldVar" items="#{field.split('\\.')}">
 			<c:set var="valueField" value="#{valueField[valueFieldVar]}" />

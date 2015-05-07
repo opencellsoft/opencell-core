@@ -26,6 +26,7 @@
         propagateConversation - propagate conversation id in a link to an entity view 
         renderLinkInEdit - should a link to an entity view open edit mode
         useCustomIdParam and objectIdParamName - should a custom parameter id instead of a default "objectId" be used for navigation 
+        width - p:column width 
         
 -->    
 <ui:composition>
@@ -49,6 +50,10 @@
 		<c:set var="editView" value="#{backingBean.getEditViewName()}" />
 	</c:if>
 
+    <c:if test="${empty width}">
+        <c:set var="width" value="#{renderEnableLink?130:100}" />
+    </c:if>
+    
 	<c:if test="${empty objectIdParamName}">
 		<c:set var="objectIdParamName" value="objectId" />
 	</c:if>
@@ -57,7 +62,7 @@
 		<c:set var="objectIdParamName" value="#{backingBean.idParameterName}" />
 	</c:if>
 
-	<p:column style="width: #{renderEnableLink?130:100}px;" exportable="false" toggleable="false">
+	<p:column exportable="false" toggleable="false" width="#{width}">
 		<f:facet name="header">
 			<h:outputText value="#{messages['commons.actions']}" />
 		</f:facet>
@@ -89,13 +94,13 @@
 		</p:button>
 		<p:commandButton id="#{resultsId}enablelink" icon="ui-icon-circle-check"
 			rendered="#{renderEnableLink and entity.disabled}"
-			oncomplete="confirmEnableWidget.show()">
+			oncomplete="PF('confirmEnableWidget').show()">
 			<f:setPropertyActionListener target="#{backingBean.entity}"
 				value="#{entity}"/>
 		</p:commandButton>
 		<p:commandButton id="#{resultsId}disablelink" icon="ui-icon-circle-close"
 			rendered="#{renderEnableLink and not entity.disabled}"
-			oncomplete="confirmDisableWidget.show()">
+			oncomplete="PF('confirmDisableWidget').show()">
 			<f:setPropertyActionListener target="#{backingBean.entity}"
 				value="#{entity}"/>
 		</p:commandButton>
@@ -108,13 +113,13 @@
 			message="#{messages['commons.confirmEnable']}"
 			header="#{messages['commons.enable']}"
 			rendered="#{renderEnableLink}"
-			severity="alert" widgetVar="confirmEnableWidget">
+			severity="alert" widgetVar="confirmEnableWidget" appendTo="@(body)">
 			<p:panel styleClass="confirm-dialog-content">
 				<p:commandButton id="enableOk" value="#{messages['commons.yes']}"
-					oncomplete="confirmEnableWidget.hide()"
-					action="#{backingBean.enable()}" update="@all" />
+					oncomplete="PF('confirmEnableWidget').hide()"
+					action="#{backingBean.enable()}" update="@form" />
 				<p:commandButton id="enableKo" value="#{messages['commons.no']}"
-					onclick="confirmEnableWidget.hide()" type="button" />
+					onclick="PF('confirmEnableWidget').hide()" type="button" />
 			</p:panel>
 		</p:confirmDialog>
 		<p:tooltip for="#{resultsId}disablelink" rendered="#{renderEnableLink}"
@@ -124,13 +129,13 @@
 			message="#{messages['commons.confirmDisable']}"
 			header="#{messages['commons.disable']}"
 			rendered="#{renderEnableLink}"
-			severity="alert" widgetVar="confirmDisableWidget">
+			severity="alert" widgetVar="confirmDisableWidget" appendTo="@(body)">
 			<p:panel styleClass="confirm-dialog-content">
 				<p:commandButton id="disableOk" value="#{messages['commons.yes']}"
-					oncomplete="confirmEnableWidget.hide()"
-					action="#{backingBean.disable()}" update="@all" />
+					oncomplete="PF('confirmEnableWidget').hide()"
+					action="#{backingBean.disable()}" update="@form" />
 				<p:commandButton id="disableKo" value="#{messages['commons.no']}"
-					onclick="confirmDisableWidget.hide()" type="button" />
+					onclick="PF('confirmDisableWidget').hide()" type="button" />
 			</p:panel>
 		</p:confirmDialog>
 		
@@ -147,18 +152,18 @@
 
 		<p:confirmDialog id="confirmDialog" styleClass="confirm-dialog"
 			message="#{messages['commons.confirmDelete']}" header=""
-			severity="alert" widgetVar="confirmDeleteWidget">
+			severity="alert" widgetVar="confirmDeleteWidget" appendTo="@(body)">
 			<p:panel styleClass="confirm-dialog-content">
 				<p:commandButton id="deleteOk" value="#{messages['commons.yes']}"
 					oncomplete="PF('confirmDeleteWidget').hide()"
-					action="#{backingBean.delete()}" update="@all" />
+					action="#{backingBean.delete()}" update="@form" />
 				<p:commandButton id="deleteKo" value="#{messages['commons.no']}"
 					onclick="PF('confirmDeleteWidget').hide()" type="button" />
 			</p:panel>
 		</p:confirmDialog>
 		<p:confirmDialog id="confirmCanDeleteDialog" styleClass="confirm-dialog"
 			message="#{messages['commons.confirmCanotDelete']}" header=""
-			severity="alert" widgetVar="confirmCanotDeleteWidget">
+			severity="alert" widgetVar="confirmCanotDeleteWidget" appendTo="@(body)">
 			<p:panel styleClass="confirm-dialog-content">
 				<p:commandButton id="canotdeleteOk" value="#{messages['commons.ok']}"
 					oncomplete="PF('confirmCanotDeleteWidget').hide()" update="@this" />

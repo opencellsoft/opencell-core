@@ -305,21 +305,21 @@
 								<p:column selectionMode="multiple" style="width:5%"  />
 							    <p:ajax event="rowSelectCheckbox" update="@form" />
 
-								<p:column style="width:8%">
+								<p:column width="10%">
 									<f:facet name="header">
 										<h:outputText value="#{messages['accountOperation.type']}" />
 									</f:facet>
 									<h:outputText value="#{entity.type}" />
 								</p:column>
 
-								<p:column style="width:10%">
+								<p:column width="10%">
 									<f:facet name="header">
 										<h:outputText value="#{messages['accountOperation.occCode']}" />
 									</f:facet>
 									<h:outputText value="#{entity.occCode}" />
 								</p:column>
 
-								<p:column style="width:20%">
+								<p:column width="20%">
 									<f:facet name="header">
 										<h:outputText
 											value="#{messages['accountOperation.occDescription']}" />
@@ -327,45 +327,46 @@
 									<h:outputText value="#{entity.occDescription}" />
 								</p:column>
 
-								<p:column style="width:20%">
+								<p:column width="10%" styleClass="noWrap">
 									<f:facet name="header">
 										<h:outputText
 											value="#{messages['accountOperation.transactionDate']}" />
 									</f:facet>
-									<h:outputText value="#{entity.transactionDate}" />
+									<h:outputText value="#{entity.transactionDate}" style="text-wrap" />
 								</p:column>
 
-								<p:column style="width:20%">
+								<p:column width="10%" styleClass="noWrap">
 									<f:facet name="header">
 										<h:outputText value="#{messages['accountOperation.dueDate']}" />
 									</f:facet>
 									<h:outputText value="#{entity.dueDate}" />
 								</p:column>
 
-								<hftl:column label="#{messages['accountOperation.debit']}"
-									field="amount"
-									rendered="#{entity.transactionCategory.toString() == 'DEBIT'}"
-									converterParam="4digits" />
-
-								<hftl:column label="#{messages['accountOperation.credit']}"
-									field="amount"
-									rendered="#{entity.transactionCategory.toString() == 'CREDIT'}"
-									converterParam="4digits" />
+                                <p:column headerText="#{messages['accountOperation.debit']}" width="10%">
+                                    <h:outputText value="#{entity.amount}" rendered="#{entity.transactionCategory eq 'DEBIT'}" >
+                                        <f:converter converterId="bigDecimal4DigitsConverter"/>
+                                    </h:outputText>
+                                </p:column>
+                                <p:column headerText="#{messages['accountOperation.credit']}" width="10%">
+                                    <h:outputText value="#{entity.amount}" rendered="#{entity.transactionCategory eq 'CREDIT'}" >
+                                        <f:converter converterId="bigDecimal4DigitsConverter"/>
+                                    </h:outputText>
+                                </p:column>
 
 								<hftl:column
 									label="#{messages['accountOperation.unMatchingAmount']}"
-									field="unMatchingAmount" converterParam="4digits" />
+									field="unMatchingAmount" converterParam="4digits" width="10%"/>
 	
 								<hftl:column
 									label="#{messages['accountOperation.matchingStatus']}"
-									field="matchingStatus.label" isMessage="true" />	
+									field="matchingStatus.label" isMessage="true" width="10%" />	
 									
 									<hftl:column
 									label="#{messages['accountOperation.excludedFromDunning']}"
-									field="excludedFromDunning" isMessage="true" />
+									field="excludedFromDunning" isMessage="true"  width="10%"/>
 
-								<hftl:actionsColumn
-									editView="#{accountOperationBean.displayOperation(entity.getId())}" /> 
+								<hftl:actionsColumn width="15%"
+									editView="#{accountOperationBean.displayOperation(entity.getId())}" renderEditLink="false"/> 
 								<ui:define name="add-on-buttons"> 
 									<h:panelGroup layout="block" styleClass="form-panel-actions">
 										<p:commandButton
