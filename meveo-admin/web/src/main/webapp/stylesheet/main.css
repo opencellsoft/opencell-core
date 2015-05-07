@@ -426,7 +426,13 @@ input[type="submit"],
 vertical-align:top !important;
 }
 
-
+.panelGrid-column50{
+	vertical-align:top !important;
+	width:50% !important;
+}
+.panelGrid-column100{
+	width:100% !important;
+}
 
 
 .search-panel {

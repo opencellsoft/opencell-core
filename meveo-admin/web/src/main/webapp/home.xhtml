@@ -91,8 +91,8 @@
 					</h:form>
 				</ui:repeat>
 			</h:panelGrid>
-			<h:panelGrid columns="2" columnClasses="panelGrid-column,panelGrid-column" >
-			<h:panelGrid>
+			<h:panelGrid columns="2" columnClasses="panelGrid-column50,panelGrid-column50" styleClass="panelGrid-column100">
+			<h:panelGrid styleClass="panelGrid-column100">
 			<p:accordionPanel activeIndex="null" dynamic="true" cache="false">
 			<p:ajax event="tabChange" listener="#{configIssuesReportingBean.constructChargesWithNotPricePlan}" />>
 			<p:tab>  	
@@ -439,7 +439,7 @@
 		    </p:tab>
 			</p:accordionPanel>
 			</h:panelGrid>
-		 <h:panelGrid>
+		 <h:panelGrid styleClass="panelGrid-column100">
 		   <p:accordionPanel activeIndex="null" dynamic="true" cache="false" >
 		   <p:ajax event="tabChange" listener="#{configIssuesReportingBean.constructCounterWithNotService}" />
 			<p:tab> 
