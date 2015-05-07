@@ -31,6 +31,7 @@ import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
@@ -47,6 +48,7 @@ import org.meveo.model.admin.User;
 import org.meveo.model.billing.BankCoordinates;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.Country;
+import org.meveo.model.billing.InvoiceConfiguration;
 import org.meveo.model.billing.Language;
 import org.meveo.model.billing.TradingCountry;
 import org.meveo.model.billing.TradingCurrency;
@@ -186,14 +188,8 @@ public class Provider extends ProviderlessEntity {
     @Column(name = "PREPAID_RESRV_DELAY_MS")
     private Long prepaidReservationExpirationDelayinMillisec = Long.valueOf(60000);
     
-    @Column(name = "DISPLAY_SUBSCRIPTIONS")
-    private Boolean displaySubscriptions = false;
-    
-    @Column(name = "DISPLAY_SERVICES")
-    private Boolean displayServices = false;
-    
-    @Column(name = "DISPLAY_OFFERS")
-    private Boolean displayOffers = false;
+	@OneToOne(mappedBy = "provider")
+	private InvoiceConfiguration invoiceConfiguration;
 
     public String getCode() {
         return code;
@@ -548,27 +544,12 @@ public class Provider extends ProviderlessEntity {
         return String.format("Provider [code=%s]", code);
     }
 
-	public Boolean getDisplaySubscriptions() {
-		return displaySubscriptions;
+	public InvoiceConfiguration getInvoiceConfiguration() {
+		return invoiceConfiguration;
 	}
 
-	public void setDisplaySubscriptions(Boolean displaySubscriptions) {
-		this.displaySubscriptions = displaySubscriptions;
+	public void setInvoiceConfiguration(InvoiceConfiguration invoiceConfiguration) {
+		this.invoiceConfiguration = invoiceConfiguration;
 	}
 
-	public Boolean getDisplayServices() {
-		return displayServices;
-	}
-
-	public void setDisplayServices(Boolean displayServices) {
-		this.displayServices = displayServices;
-	}
-
-	public Boolean getDisplayOffers() {
-		return displayOffers;
-	}
-
-	public void setDisplayOffers(Boolean displayOffers) {
-		this.displayOffers = displayOffers;
-	}   
 }

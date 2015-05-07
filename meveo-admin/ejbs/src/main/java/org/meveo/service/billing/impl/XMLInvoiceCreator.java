@@ -326,67 +326,81 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 			userAccounts.appendChild(userAccountTag);
 			addNameAndAdress(userAccount, doc, userAccountTag, billingAccountLanguage);
 			addCategories(userAccount, invoice, doc, userAccountTag, true, enterprise);
-			if (invoice.getProvider().getDisplaySubscriptions() != null && invoice.getProvider().getDisplaySubscriptions()) {
-				addSubscriptions(userAccount, invoice, doc, invoiceTag);
-			}
+			addSubscriptions(userAccount, invoice, doc, invoiceTag);
 		}
 
 	}
 
 	private void addSubscriptions(UserAccount userAccount, Invoice invoice, Document doc, Element invoiceTag) {
 		if (userAccount.getSubscriptions() != null && userAccount.getSubscriptions().size() > 0) {
-			Element subscriptionsTag = doc.createElement("subscriptions");
-			invoiceTag.appendChild(subscriptionsTag);
-
-			Element offersTag = doc.createElement("offers");
-			invoiceTag.appendChild(offersTag);
+			
+			Element subscriptionsTag = null;
+			if (invoice.getProvider().getInvoiceConfiguration() != null && invoice.getProvider().getInvoiceConfiguration().getDisplaySubscriptions() != null
+					&& invoice.getProvider().getInvoiceConfiguration().getDisplaySubscriptions()) {
+				subscriptionsTag = doc.createElement("subscriptions");
+				invoiceTag.appendChild(subscriptionsTag);
+			}
 
 			for (Subscription subscription : userAccount.getSubscriptions()) {
-				Element subscriptionTag = doc.createElement("subscription");
-				subscriptionTag.setAttribute("id", subscription.getId() + "");
-				subscriptionTag.setAttribute("code", subscription.getCode() != null ? subscription.getCode() : "");
-				subscriptionTag.setAttribute("description", subscription.getDescription() != null ? subscription.getDescription() : "");
+				if (invoice.getProvider().getInvoiceConfiguration() != null && invoice.getProvider().getInvoiceConfiguration().getDisplaySubscriptions() != null
+						&& invoice.getProvider().getInvoiceConfiguration().getDisplaySubscriptions()) {
+					Element subscriptionTag = doc.createElement("subscription");
+					subscriptionTag.setAttribute("id", subscription.getId() + "");
+					subscriptionTag.setAttribute("code", subscription.getCode() != null ? subscription.getCode() : "");
+					subscriptionTag.setAttribute("description", subscription.getDescription() != null ? subscription.getDescription() : "");
 
-				Element subscriptionDateTag = doc.createElement("subscriptionDate");
-				Text subscriptionDateText = null;
-				if (subscription.getSubscriptionDate() != null) {
-					subscriptionDateText = doc.createTextNode(subscription.getSubscriptionDate().toString());
-				} else {
-					subscriptionDateText = doc.createTextNode("");
-				}
-				subscriptionDateTag.appendChild(subscriptionDateText);
-				subscriptionTag.appendChild(subscriptionDateTag);
+					Element subscriptionDateTag = doc.createElement("subscriptionDate");
+					Text subscriptionDateText = null;
+					if (subscription.getSubscriptionDate() != null) {
+						subscriptionDateText = doc.createTextNode(subscription.getSubscriptionDate().toString());
+					} else {
+						subscriptionDateText = doc.createTextNode("");
+					}
+					subscriptionDateTag.appendChild(subscriptionDateText);
+					subscriptionTag.appendChild(subscriptionDateTag);
 
-				Element endAgreementTag = doc.createElement("endAgreementDate");
-				Text endAgreementText = null;
-				if (subscription.getEndAgrementDate() != null) {
-					endAgreementText = doc.createTextNode(subscription.getEndAgrementDate().toString());
-				} else {
-					endAgreementText = doc.createTextNode("");
-				}
-				endAgreementTag.appendChild(endAgreementText);
-				subscriptionTag.appendChild(endAgreementTag);
+					Element endAgreementTag = doc.createElement("endAgreementDate");
+					Text endAgreementText = null;
+					if (subscription.getEndAgrementDate() != null) {
+						endAgreementText = doc.createTextNode(subscription.getEndAgrementDate().toString());
+					} else {
+						endAgreementText = doc.createTextNode("");
+					}
+					endAgreementTag.appendChild(endAgreementText);
+					subscriptionTag.appendChild(endAgreementTag);
 
-				if (subscription.getCustomFields() != null && subscription.getCustomFields().size() > 0) {
-					addCustomFields(subscription, invoice, doc, subscriptionTag);
+					if (subscription.getCustomFields() != null && subscription.getCustomFields().size() > 0) {
+						addCustomFields(subscription, invoice, doc, subscriptionTag);
+					}
+
+					subscriptionsTag.appendChild(subscriptionTag);
 				}
 
 				if (subscription.getOffer() != null) {
 					OfferTemplate offerTemplate = subscription.getOffer();
-					Element offerTag = doc.createElement("offer");
-					offerTag.setAttribute("id", offerTemplate.getId() + "");
-					offerTag.setAttribute("code", offerTemplate.getCode() != null ? offerTemplate.getCode() : "");
-					offerTag.setAttribute("description", offerTemplate.getDescription() != null ? offerTemplate.getDescription() : "");
-					offersTag.appendChild(offerTag);
+					if (invoice.getProvider().getInvoiceConfiguration() != null && invoice.getProvider().getInvoiceConfiguration().getDisplayOffers() != null
+							&& invoice.getProvider().getInvoiceConfiguration().getDisplayOffers()) {
+						addOffers(offerTemplate, invoice, doc, invoiceTag);
+					}
 
-					if (invoice.getProvider().getDisplayServices() != null && invoice.getProvider().getDisplayServices()) {
+					if (invoice.getProvider().getInvoiceConfiguration() != null && invoice.getProvider().getInvoiceConfiguration().getDisplayServices() != null
+							&& invoice.getProvider().getInvoiceConfiguration().getDisplayServices()) {
 						addServices(offerTemplate, invoice, doc, invoiceTag);
 					}
 				}
-
-				subscriptionsTag.appendChild(subscriptionTag);
 			}
 		}
+	}
+
+	private void addOffers(OfferTemplate offerTemplate, Invoice invoice, Document doc, Element invoiceTag) {
+		Element offersTag = doc.createElement("offers");
+		invoiceTag.appendChild(offersTag);
+
+		Element offerTag = doc.createElement("offer");
+		offerTag.setAttribute("id", offerTemplate.getId() + "");
+		offerTag.setAttribute("code", offerTemplate.getCode() != null ? offerTemplate.getCode() : "");
+		offerTag.setAttribute("description", offerTemplate.getDescription() != null ? offerTemplate.getDescription() : "");
+		offersTag.appendChild(offerTag);
 	}
 
 	private void addServices(OfferTemplate offerTemplate, Invoice invoice, Document doc, Element invoiceTag) {
