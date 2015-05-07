@@ -212,9 +212,8 @@ public class AccountHierarchyApi extends BaseApi {
 			throw new EntityAlreadyExistsException(Customer.class, postData.getCustomerId());
 		} else {
 			if (!StringUtils.isEmpty(postData.getCustomerId()) && !StringUtils.isEmpty(postData.getCustomerBrandCode()) && !StringUtils.isEmpty(postData.getCustomerCategoryCode())
-					&& !StringUtils.isEmpty(postData.getSellerCode()) && !StringUtils.isEmpty(postData.getCurrencyCode())
-					&& !StringUtils.isEmpty(postData.getBillingCycleCode())&& !StringUtils.isEmpty(postData.getCountryCode()) 
-					&& !StringUtils.isEmpty(postData.getLastName()) && !StringUtils.isEmpty(postData.getLanguageCode())
+					&& !StringUtils.isEmpty(postData.getSellerCode()) && !StringUtils.isEmpty(postData.getCurrencyCode()) && !StringUtils.isEmpty(postData.getBillingCycleCode())
+					&& !StringUtils.isEmpty(postData.getCountryCode()) && !StringUtils.isEmpty(postData.getLastName()) && !StringUtils.isEmpty(postData.getLanguageCode())
 					&& !StringUtils.isEmpty(postData.getEmail())) {
 
 				Seller seller = sellerService.findByCode(postData.getSellerCode(), provider);
@@ -876,9 +875,9 @@ public class AccountHierarchyApi extends BaseApi {
 										missingParameters.add("customerAccount.currency");
 										throw new MissingParameterException(getMissingParametersExceptionMessage());
 									}
-									
+
 									if (!StringUtils.isBlank(customerAccountDto.getLanguage())) {
-										TradingLanguage tradingLanguage= tradingLanguageService.findByTradingLanguageCode(customerAccountDto.getLanguage(), provider);
+										TradingLanguage tradingLanguage = tradingLanguageService.findByTradingLanguageCode(customerAccountDto.getLanguage(), provider);
 										if (tradingLanguage == null) {
 											throw new EntityDoesNotExistsException(TradingLanguage.class, customerAccountDto.getLanguage());
 										}
@@ -888,7 +887,6 @@ public class AccountHierarchyApi extends BaseApi {
 										missingParameters.add("customerAccount.language");
 										throw new MissingParameterException(getMissingParametersExceptionMessage());
 									}
-								
 
 									try {
 										customerAccount.setStatus(CustomerAccountStatusEnum.valueOf(customerAccountDto.getStatus()));
@@ -1248,10 +1246,6 @@ public class AccountHierarchyApi extends BaseApi {
 																		if (serviceInstance != null) {
 																			// update
 																			log.debug("update service instance with code={}", serviceInstanceDto.getCode());
-																			serviceInstance.setSubscriptionDate(serviceInstanceDto.getSubscriptionDate());
-																			serviceInstance.setQuantity(serviceInstanceDto.getQuantity() == null ? BigDecimal.ONE
-																					: serviceInstanceDto.getQuantity());
-																			serviceInstance.setDescription(serviceInstanceDto.getDescription());
 
 																			// check
 																			// if
@@ -1262,6 +1256,11 @@ public class AccountHierarchyApi extends BaseApi {
 																				throw new MeveoApiException("ServiceInstance with code=" + serviceInstance.getCode()
 																						+ " must be INACTIVE.");
 																			} else {
+																				serviceInstance.setSubscriptionDate(serviceInstanceDto.getSubscriptionDate());
+																				serviceInstance.setQuantity(serviceInstanceDto.getQuantity() == null ? BigDecimal.ONE
+																						: serviceInstanceDto.getQuantity());
+																				serviceInstance.setDescription(serviceInstanceDto.getDescription());
+
 																				// activate
 																				try {
 																					serviceInstanceService.serviceActivation(serviceInstance, null, null, currentUser);

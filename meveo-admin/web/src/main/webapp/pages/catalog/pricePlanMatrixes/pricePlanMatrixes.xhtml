@@ -69,7 +69,8 @@
 
 		<hf:searchPanel id="searchPanel" columns="3"
 			label="#{messages['pricePlanMatrix.search']}"
-			backingBean="#{pricePlanMatrixListBean}" renderAdvancedLink="#{!pricePlanMatrixListBrean.advanced}"
+			backingBean="#{pricePlanMatrixListBean}"
+			renderAdvancedLink="#{!pricePlanMatrixListBrean.advanced}"
 			renderHideAdvancedLink="#{pricePlanMatrixListBean.advanced}">
 			<hf:searchField label="#{messages['BusinessEntity.code']}"
 				field="code" />
@@ -82,21 +83,21 @@
 			<hf:searchField id="seller" label="#{messages['seller.title']}"
 				field="seller" valueLabelField="description" popup="true"
 				popupId="searchSellerPopup" clearButton="true" />
-            <h:panelGroup rendered="#{pricePlanMatrixListBean.advanced}">
-    			<hf:searchField id="tradingCountry"
-    				label="#{messages['tradingCountry.tradingCountry']}"
-    			    field="tradingCountry" valueLabelField="countryCode" popup="true"
-    				popupId="searchTradingCountryPopup" clearButton="true"/>
-    			<hf:searchField id="tradingCurrency"
-    				label="#{messages['currency.codeCurrency']}" field="tradingCurrency"
-    				valueLabelField="currencyCode" popup="true"
-    				popupId="searchTradingCurrencyPopup" clearButton="true"/>
-    			<hf:searchMinMaxField
-    				label="#{messages['pricePlanMatrix.quantity']}"
-    				minField="minQuantity" maxField="maxQuantity" />
+			<h:panelGroup rendered="#{pricePlanMatrixListBean.advanced}">
+				<hf:searchField id="tradingCountry"
+					label="#{messages['tradingCountry.tradingCountry']}"
+					field="tradingCountry" valueLabelField="countryCode" popup="true"
+					popupId="searchTradingCountryPopup" clearButton="true" />
+				<hf:searchField id="tradingCurrency"
+					label="#{messages['currency.codeCurrency']}"
+					field="tradingCurrency" valueLabelField="currencyCode" popup="true"
+					popupId="searchTradingCurrencyPopup" clearButton="true" />
+				<hf:searchMinMaxField
+					label="#{messages['pricePlanMatrix.quantity']}"
+					minField="minQuantity" maxField="maxQuantity" />
 				<hf:searchLikeCriteriasField
 					label="#{messages['pricePlanMatrix.criteriaValue']}"
-					fields="criteria1Value,criteria2Value,criteria3Value"/>
+					fields="criteria1Value,criteria2Value,criteria3Value" />
 				<hf:searchMinMaxField
 					label="#{messages['pricePlanMatrix.subscriptionDate']}"
 					minField="startSubscriptionDate" maxField="endSubscriptionDate" />
@@ -109,11 +110,48 @@
 					maxField="maxSubscriptionAgeInMonth" />
 			</h:panelGroup>
 		</hf:searchPanel>
+		<script>
+			//<![CDATA[
+			PrimeFaces.widget.ColumnToggler.prototype.render = function() {
+				var id = 0;
+				this.columns = this.thead
+						.find("> tr > th:visible:not(.ui-static-column)");
+				this.panel = $("<div></div>")
+						.attr("id", this.cfg.id)
+						.addClass(
+								"ui-columntoggler ui-widget ui-widget-content ui-shadow ui-corner-all")
+						.append('<ul class="ui-columntoggler-items"></ul')
+						.appendTo(document.body);
+				this.itemContainer = this.panel.children("ul");
+				for (var a = 0; a < this.columns.length; a++) {
+					id++;
+					var b = this.columns.eq(a);
+					$(
+							'<li class="ui-columntoggler-item"><div class="ui-chkbox ui-widget"><div id="cb' + id + '" class="ui-chkbox-box ui-widget ui-corner-all ui-state-default ui-state-active"><span class="ui-chkbox-icon ui-icon ui-icon-check"></span></div></div><label>'
+									+ b.children(".ui-column-title").text()
+									+ "</label></li>").data("column",
+							b.attr("id")).appendTo(this.itemContainer);
+
+					if (b.hasClass("dtcolumn-hidden")) {
+						this.uncheck($('#cb' + id));
+					}
+				}
+
+				this.hide();
+			}
+			//]]>
+		</script>
 
 		<hftl:dataList label="#{messages['pricePlanMatrix.title']}"
-			editable="true" editMode="cell" scrollable="true" exportButton="false" exportXlsxButton="true"
+			editable="true" editMode="cell" scrollable="#{pricePlanMatrixListBean.lazyDataModel.size==0?'true':'false'}"
+			exportButton="false" exportXlsxButton="true"
 			backingBean="#{pricePlanMatrixListBean}" sortBy="code">
-			<p:column exportable="true" sortBy="code">
+			<f:facet name="header">
+				<p:commandButton id="toggler" type="button" style="float:right" disabled="#{backingBean.lazyDataModel.size==0?'true':'false'}"
+					icon="ui-icon-calculator"/>
+				<p:columnToggler datasource="datatable_results" trigger="toggler" />
+			</f:facet>
+			<p:column exportable="true" sortBy="code" toggleable="false">
 				<f:facet name="header">
 					<h:outputText value="#{messages['BusinessEntity.code']}" />
 				</f:facet>
@@ -127,7 +165,7 @@
 					</f:facet>
 				</p:cellEditor>
 			</p:column>
-			<p:column exportable="true" sortBy="eventCode">
+			<p:column exportable="true" sortBy="eventCode" toggleable="false">
 				<f:facet name="header">
 					<h:outputText value="#{messages['pricePlanMatrix.eventCode']}" />
 				</f:facet>
@@ -145,7 +183,7 @@
 					</f:facet>
 				</p:cellEditor>
 			</p:column>
-			<p:column exportable="true" sortBy="description">
+			<p:column exportable="true" sortBy="description" toggleable="false">
 				<f:facet name="header">
 					<h:outputText value="#{messages['BusinessEntity.description']}" />
 				</f:facet>
@@ -159,7 +197,8 @@
 					</f:facet>
 				</p:cellEditor>
 			</p:column>
-			<p:column exportable="true" sortBy="offerTemplate.code">
+			<p:column exportable="true" sortBy="offerTemplate.code"
+				toggleable="false">
 				<f:facet name="header">
 					<h:outputText value="#{messages['pricePlanMatrix.offerCode']}" />
 				</f:facet>
@@ -178,7 +217,7 @@
 				</p:cellEditor>
 			</p:column>
 
-			<p:column exportable="true" sortBy="seller.code">
+			<p:column exportable="true" sortBy="seller.code" toggleable="false">
 				<f:facet name="header">
 					<h:outputText value="#{messages['seller.title']}" />
 				</f:facet>
@@ -196,7 +235,7 @@
 					</f:facet>
 				</p:cellEditor>
 			</p:column>
-			<p:column exportable="true" sortBy="amountWithTax"
+			<p:column exportable="true" sortBy="amountWithTax" toggleable="false"
 				rendered="#{!pricePlanMatrixBean.entity.provider.entreprise}">
 				<f:facet name="header">
 					<h:outputText value="#{messages['pricePlanMatrix.amountWithTax']}" />
@@ -208,11 +247,12 @@
 					</f:facet>
 					<f:facet name="input">
 						<p:inputText value="#{entity.amountWithTax}" required="true"
-							converter="bigDecimal4DigitsConverter" size="5" />
+							converter="bigDecimal4DigitsConverter" size="6" />
 					</f:facet>
 				</p:cellEditor>
 			</p:column>
-			<p:column exportable="true" sortBy="amountWithoutTax">
+			<p:column exportable="true" sortBy="amountWithoutTax"
+				toggleable="false">
 				<f:facet name="header">
 					<h:outputText
 						value="#{messages['pricePlanMatrix.amountWithoutTax']}" />
@@ -224,11 +264,11 @@
 					</f:facet>
 					<f:facet name="input">
 						<p:inputText value="#{entity.amountWithoutTax}" required="true"
-							converter="bigDecimal4DigitsConverter" size="5" />
+							converter="bigDecimal4DigitsConverter" size="6" />
 					</f:facet>
 				</p:cellEditor>
 			</p:column>
-			<p:column exportable="true" sortBy="startRatingDate">
+			<p:column exportable="true" sortBy="startRatingDate" styleClass="dtcolumn-hidden">
 				<f:facet name="header">
 					<h:outputText value="#{messages['pricePlanMatrix.ratingDate']}" />
 				</f:facet>
@@ -246,64 +286,206 @@
 						</h:outputText>
 					</f:facet>
 					<f:facet name="input">
-						<p:calendar	value="#{entity.startRatingDate}" pattern="#{paramBean.getProperty('meveo.dateFormat','dd/MM/yyyy')}"
-							size="10" showOn="button"/>
-						<h:outputText value=" - "/>
-						<p:calendar	value="#{entity.endRatingDate}" pattern="#{paramBean.getProperty('meveo.dateFormat','dd/MM/yyyy')}"
-							size="10" showOn="button"/>
+						<p:calendar value="#{entity.startRatingDate}"
+							pattern="#{paramBean.getProperty('meveo.dateFormat','dd/MM/yyyy')}"
+							size="10" showOn="button" />
+						<h:outputText value=" - " />
+						<p:calendar value="#{entity.endRatingDate}"
+							pattern="#{paramBean.getProperty('meveo.dateFormat','dd/MM/yyyy')}"
+							size="10" showOn="button" />
 					</f:facet>
 				</p:cellEditor>
 			</p:column>
 
-<!-- 			<hftl:editColumn label="#{messages['pricePlanMatrix.criteriaEL']}" -->
-<!-- 				fieldValue="#{entity.criteriaEL}" rendered="false" /> -->
-<!-- 			<hftl:editColumn label="#{messages['tradingCountry.tradingCountry']}" -->
-<!-- 				fieldValue="#{entity.tradingCountry}" fieldLabel="countryCode" -->
-<!-- 				listValue="#{tradingCountryBean.listAll}" -->
-<!-- 				itemLabel="#{item.countryCode}" itemValue="#{item}" rendered="false" /> -->
-<!-- 			<hftl:editColumn label="#{messages['currency.codeCurrency']}" -->
-<!-- 				fieldValue="#{entity.tradingCurrency}" fieldLabel="currencyCode" -->
-<!-- 				listValue="#{tradingCurrencyBean.listAll}" -->
-<!-- 				itemLabel="#{item.currencyCode}" itemValue="#{item}" -->
-<!-- 				rendered="false" /> -->
-<!-- 			<hftl:editColumn -->
-<!-- 				label="#{messages['pricePlanMatrix.criteria1Value']}" -->
-<!-- 				fieldValue="#{entity.criteria1Value}" rendered="false" /> -->
-<!-- 			<hftl:editColumn -->
-<!-- 				label="#{messages['pricePlanMatrix.criteria2Value']}" -->
-<!-- 				fieldValue="#{entity.criteria1Value}" rendered="false" /> -->
-<!-- 			<hftl:editColumn -->
-<!-- 				label="#{messages['pricePlanMatrix.criteria3Value']}" -->
-<!-- 				fieldValue="#{entity.criteria1Value}" rendered="false" /> -->
+			<p:column exportable="true" styleClass="dtcolumn-hidden">
+				<f:facet name="header">
+					<h:outputText value="#{messages['pricePlanMatrix.criteriaEL']}" />
+				</f:facet>
+				<p:cellEditor>
+					<f:facet name="output">
+						<h:outputText value="#{entity.criteriaEL}" />
+					</f:facet>
+					<f:facet name="input">
+						<p:inputText value="#{entity.criteriaEL}" size="20"
+							maxlength="255" />
+					</f:facet>
+				</p:cellEditor>
+			</p:column>
+			<p:column exportable="true" styleClass="dtcolumn-hidden">
+				<f:facet name="header">
+					<h:outputText value="#{messages['tradingCountry.tradingCountry']}" />
+				</f:facet>
+				<p:cellEditor>
+					<f:facet name="output">
+						<h:outputText value="#{entity.tradingCountry.countryCode}" />
+					</f:facet>
+					<f:facet name="input">
+						<h:selectOneMenu value="#{entity.tradingCountry}" style="width:75%">
+							<f:selectItem itemLabel="" itemValue="" />
+							<f:selectItems value="#{tradingCountryBean.listAll}" var="item"
+								itemLabel="#{item.countryCode}" itemValue="#{item}" />
+							<s:objectConverter />
+						</h:selectOneMenu>
+					</f:facet>
+				</p:cellEditor>
+			</p:column>
 
-<!-- 			<hftl:editColumn -->
-<!-- 				label="#{messages['pricePlanMatrix.table.startRatingDate']}" -->
-<!-- 				fieldValue="#{entity.startRatingDate}" isDate="true" -->
-<!-- 				rendered="false" /> -->
-<!-- 			<hftl:editColumn -->
-<!-- 				label="#{messages['pricePlanMatrix.table.endRatingDate']}" -->
-<!-- 				fieldValue="#{entity.endRatingDate}" isDate="true" rendered="false" /> -->
-<!-- 			<hftl:editColumn label="#{messages['pricePlanMatrix.priority']}" -->
-<!-- 				fieldValue="#{entity.priority}" rendered="false" /> -->
-<!-- 			<hftl:editColumn label="#{messages['pricePlanMatrix.priority']}" -->
-<!-- 				fieldValue="#{entity.priority}" rendered="false" /> -->
-<!-- 			<hftl:editColumn label="#{messages['pricePlanMatrix.minQuantity']}" -->
-<!-- 				fieldValue="#{entity.minQuantity}" rendered="false" /> -->
-<!-- 			<hftl:editColumn label="#{messages['pricePlanMatrix.maxQuantity']}" -->
-<!-- 				fieldValue="#{entity.maxQuantity}" rendered="false" /> -->
-<!-- 			<hftl:editColumn -->
-<!-- 				label="#{messages['pricePlanMatrix.minSubscriptionAgeInMonth']}" -->
-<!-- 				fieldValue="#{entity.minSubscriptionAgeInMonth}" rendered="false" /> -->
-<!-- 			<hftl:editColumn -->
-<!-- 				label="#{messages['pricePlanMatrix.maxSubscriptionAgeInMonth']}" -->
-<!-- 				fieldValue="#{entity.maxSubscriptionAgeInMonth}" -->
-<!-- 				converter="bigDecimal4DigitsConverter" -->
-<!-- 				rendered="#{!pricePlanMatrixBean.entity.provider.entreprise and false}" -->
-<!-- 				required="true" /> -->
-<!-- 			<hftl:editColumn -->
-<!-- 				label="#{messages['pricePlanMatrix.validityCalendar']}" -->
-<!-- 				rendered="false" fieldValue="#{entity.validityCalendar}" -->
-<!-- 				isDate="true" /> -->
+			<p:column exportable="true" styleClass="dtcolumn-hidden">
+				<f:facet name="header">
+					<h:outputText value="#{messages['currency.codeCurrency']}" />
+				</f:facet>
+				<p:cellEditor>
+					<f:facet name="output">
+						<h:outputText value="#{entity.tradingCurrency.currencyCode}" />
+					</f:facet>
+					<f:facet name="input">
+						<h:selectOneMenu value="#{entity.tradingCurrency}" style="width:75%">
+							<f:selectItem itemLabel="" itemValue="" />
+							<f:selectItems value="#{tradingCurrencyBean.listAll}" var="item"
+								itemLabel="#{item.currencyCode}" itemValue="#{item}" />
+							<s:objectConverter />
+						</h:selectOneMenu>
+					</f:facet>
+				</p:cellEditor>
+			</p:column>
+			<p:column exportable="true" styleClass="dtcolumn-hidden">
+				<f:facet name="header">
+					<h:outputText value="#{messages['pricePlanMatrix.criteria1Value']}" />
+				</f:facet>
+				<p:cellEditor>
+					<f:facet name="output">
+						<h:outputText value="#{entity.criteria1Value}" />
+					</f:facet>
+					<f:facet name="input">
+						<p:inputText value="#{entity.criteria1Value}" size="20"
+							maxlength="255" />
+					</f:facet>
+				</p:cellEditor>
+			</p:column>
+			<p:column exportable="true" styleClass="dtcolumn-hidden">
+				<f:facet name="header">
+					<h:outputText value="#{messages['pricePlanMatrix.criteria2Value']}" />
+				</f:facet>
+				<p:cellEditor>
+					<f:facet name="output">
+						<h:outputText value="#{entity.criteria2Value}" />
+					</f:facet>
+					<f:facet name="input">
+						<p:inputText value="#{entity.criteria2Value}" size="20"
+							maxlength="255" />
+					</f:facet>
+				</p:cellEditor>
+			</p:column>
+			<p:column exportable="true" styleClass="dtcolumn-hidden">
+				<f:facet name="header">
+					<h:outputText value="#{messages['pricePlanMatrix.criteria3Value']}" />
+				</f:facet>
+				<p:cellEditor>
+					<f:facet name="output">
+						<h:outputText value="#{entity.criteria3Value}" />
+					</f:facet>
+					<f:facet name="input">
+						<p:inputText value="#{entity.criteria3Value}" size="20"
+							maxlength="255" />
+					</f:facet>
+				</p:cellEditor>
+			</p:column>
+			<p:column exportable="true" styleClass="dtcolumn-hidden">
+				<f:facet name="header">
+					<h:outputText value="#{messages['pricePlanMatrix.priority']}" />
+				</f:facet>
+				<p:cellEditor>
+					<f:facet name="output">
+						<h:outputText value="#{entity.priority}" />
+					</f:facet>
+					<f:facet name="input">
+						<p:inputText value="#{entity.priority}" size="6" />
+					</f:facet>
+				</p:cellEditor>
+			</p:column>
+			<p:column exportable="true" styleClass="dtcolumn-hidden">
+				<f:facet name="header">
+					<h:outputText value="#{messages['pricePlanMatrix.quantity']}" />
+				</f:facet>
+				<p:cellEditor>
+					<f:facet name="output">
+						<h:outputText value="#{entity.minQuantity}" converter="bigDecimal4DigitsConverter"/>
+						<h:outputText value=" - " />
+						<h:outputText value="#{entity.maxQuantity}" converter="bigDecimal4DigitsConverter"/>
+					</f:facet>
+					<f:facet name="input">
+						<p:inputText value="#{entity.minQuantity}" size="6" converter="bigDecimal4DigitsConverter"/>
+						<h:outputText value=" - " />
+						<p:inputText value="#{entity.maxQuantity}" size="6" converter="bigDecimal4DigitsConverter"/>
+					</f:facet>
+				</p:cellEditor>
+			</p:column>
+			<p:column exportable="true" styleClass="dtcolumn-hidden">
+				<f:facet name="header">
+					<h:outputText
+						value="#{messages['pricePlanMatrix.subscriptionDate']}" />
+				</f:facet>
+				<p:cellEditor>
+					<f:facet name="output">
+						<h:outputText value="#{entity.startSubscriptionDate}">
+							<f:convertDateTime
+								pattern="#{paramBean.getProperty('meveo.dateFormat','dd/MM/yyyy')}" />
+						</h:outputText>
+						<h:outputText value=" - " />
+						<h:outputText value="#{entity.endSubscriptionDate}">
+							<f:convertDateTime
+								pattern="#{paramBean.getProperty('meveo.dateFormat','dd/MM/yyyy')}" />
+						</h:outputText>
+					</f:facet>
+					<f:facet name="input">
+						<p:calendar value="#{entity.startSubscriptionDate}"
+							pattern="#{paramBean.getProperty('meveo.dateFormat','dd/MM/yyyy')}"
+							size="10" showOn="button" />
+						<h:outputText value=" - " />
+						<p:calendar value="#{entity.endSubscriptionDate}"
+							pattern="#{paramBean.getProperty('meveo.dateFormat','dd/MM/yyyy')}"
+							size="10" showOn="button" />
+					</f:facet>
+				</p:cellEditor>
+			</p:column>
+
+			<p:column exportable="true" styleClass="dtcolumn-hidden">
+				<f:facet name="header">
+					<h:outputText
+						value="#{messages['pricePlanMatrix.subscriptionAgeInMonth']}" />
+				</f:facet>
+				<p:cellEditor>
+					<f:facet name="output">
+						<h:outputText value="#{entity.minSubscriptionAgeInMonth} - " />
+						<h:outputText value="#{entity.maxSubscriptionAgeInMonth}" />
+					</f:facet>
+					<f:facet name="input">
+						<p:inputText value="#{entity.minSubscriptionAgeInMonth}" size="6" />
+						<h:outputText value=" - " />
+						<p:inputText value="#{entity.maxSubscriptionAgeInMonth}" size="6" />
+					</f:facet>
+				</p:cellEditor>
+			</p:column>
+			<p:column exportable="true" styleClass="dtcolumn-hidden">
+				<f:facet name="header">
+					<h:outputText
+						value="#{messages['pricePlanMatrix.validityCalendar']}" />
+				</f:facet>
+				<p:cellEditor>
+					<f:facet name="output">
+						<h:outputText value="#{entity.validityCalendar}">
+							<f:convertDateTime
+								pattern="#{paramBean.getProperty('meveo.dateFormat','dd/MM/yyyy')}" />
+						</h:outputText>
+					</f:facet>
+					<f:facet name="input">
+						<p:calendar value="#{entity.validityCalendar}"
+							pattern="#{paramBean.getProperty('meveo.dateFormat','dd/MM/yyyy')}"
+							size="10" showOn="button" />
+					</f:facet>
+				</p:cellEditor>
+			</p:column>
+
 			<hftl:actionsColumn
 				permission="#{identity.hasPermission('catalog','catalogManagement')}" />
 		</hftl:dataList>

@@ -1,5 +1,6 @@
 package org.meveo.model.catalog;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.Column;
@@ -32,7 +33,7 @@ public class DiscountPlan extends BusinessEntity {
     private int maxDuration = 99999;
 
     @OneToMany(mappedBy = "discountPlan")
-    private List<DiscountPlanItem> discountPlanItems;
+    private List<DiscountPlanItem> discountPlanItems=new ArrayList<DiscountPlanItem>();
 
     public int getMinDuration() {
         return minDuration;

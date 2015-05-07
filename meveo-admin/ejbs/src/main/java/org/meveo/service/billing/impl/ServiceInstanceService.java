@@ -327,7 +327,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 			Date nextChargeDate = recurringChargeInstance.getNextChargeDate();
 			Date storedNextChargeDate = recurringChargeInstance.getNextChargeDate();
 
-			if (recurringChargeInstance.getRecurringChargeTemplate().getApplyInAdvance()) {
+			if (recurringChargeInstance.getRecurringChargeTemplate().getApplyInAdvance() != null && recurringChargeInstance.getRecurringChargeTemplate().getApplyInAdvance()) {
 				nextChargeDate = recurringChargeInstance.getChargeDate();
 			}
 

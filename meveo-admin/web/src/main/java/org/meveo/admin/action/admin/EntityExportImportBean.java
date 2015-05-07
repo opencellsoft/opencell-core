@@ -51,6 +51,10 @@ public class EntityExportImportBean implements Serializable {
 
     @Inject
     protected Conversation conversation;
+    
+    @Inject
+    @CurrentProvider
+    private Provider provider;
 
     private ParamBean param = ParamBean.getInstance();
 
@@ -244,9 +248,11 @@ public class EntityExportImportBean implements Serializable {
      * @param exportTemplate Export template
      */
     public void export(ExportTemplate exportTemplate) {
+    	Map<String, Object> parameters = new HashMap<String, Object>();
+    	parameters.put("provider", provider);
 
         try {
-            exportImportStats = entityExportImportService.exportEntities(exportTemplate, null);
+            exportImportStats = entityExportImportService.exportEntities(exportTemplate, parameters);
             messages.info(new BundleKey("messages", "export.exported"), exportTemplate.getName());
 
         } catch (Exception e) {
@@ -265,6 +271,10 @@ public class EntityExportImportBean implements Serializable {
      * @param exportTemplate Export template
      */
     public void export() {
+		if (exportParameters.get("provider") == null) {
+			exportParameters.put("provider", provider);
+		}
+    	
         try {
 
             exportImportStats = entityExportImportService.exportEntities(selectedExportTemplate, exportParameters);

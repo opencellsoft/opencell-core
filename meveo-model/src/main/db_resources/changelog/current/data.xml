@@ -3,4 +3,15 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.2.xsd">
 
+	<changeSet id="ticket684_20150507" author="EdwardLegaspi">
+		<insert tableName="billing_invoice_configuration">
+			<column name="id" valueNumeric="1" />
+			<column name="version" valueNumeric="0" />
+			<column name="provider_id" valueNumeric="1"></column>
+			<column name="display_subscriptions" valueBoolean="true"></column>
+			<column name="display_offers" valueBoolean="true"></column>
+			<column name="display_services" valueBoolean="true"></column>
+		</insert>
+	</changeSet>
+
 </databaseChangeLog>

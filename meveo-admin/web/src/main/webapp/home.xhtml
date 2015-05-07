@@ -91,8 +91,8 @@
 					</h:form>
 				</ui:repeat>
 			</h:panelGrid>
-			<h:panelGrid columns="2" columnClasses="panelGrid-column,panelGrid-column" >
-			<h:panelGrid>
+			<h:panelGrid columns="2" columnClasses="panelGrid-column50,panelGrid-column50" styleClass="panelGrid-column100">
+			<h:panelGrid styleClass="panelGrid-column100">
 			<p:accordionPanel activeIndex="null" dynamic="true" cache="false">
 			<p:ajax event="tabChange" listener="#{configIssuesReportingBean.constructChargesWithNotPricePlan}" />>
 			<p:tab>  	
@@ -113,10 +113,10 @@
 				field="description" />
 			<hftl:column
 				label="#{messages['usageChargeTemplate.unityMultiplicator']}"
-				field="unityMultiplicator" converterParam="12digits" />
-			<hftl:column
-				label="#{messages['usageChargeTemplate.unityDescription']}"
-				field="unityDescription" />
+				field="unitMultiplicator" converterParam="12digits" />
+<!-- 			<hftl:column -->
+<!-- 				label="#{messages['usageChargeTemplate.unityDescription']}" -->
+<!-- 				field="unityDescription" /> -->
 			<hftl:column label="#{messages['usageChargeTemplate.filterParam1']}"
 				field="filterParam1" />
 			<hftl:column label="#{messages['usageChargeTemplate.filterParam2']}"
@@ -127,7 +127,7 @@
 				field="priority" />
 			<hftl:column label="#{messages['enableEntity.active']}"
 				field="active" isMessage="true" /> 	
-			<p:column  width="50px"> 
+			<p:column  width="50"> 
 			<f:facet name="header">
 			<h:outputText value="Actions" />
 		   </f:facet>
@@ -162,7 +162,7 @@
 				valueLabelField="code" isList="true" sort="false" />
 			<hftl:column label="#{messages['enableEntity.active']}"
 				field="active" isMessage="true" />
-			<p:column  width="50px"> 
+			<p:column  width="50"> 
 			<f:facet name="header">
 			<h:outputText value="Actions" />
 		   </f:facet>
@@ -199,7 +199,7 @@
 			<hftl:column
 				label="#{messages['oneShotChargeTemplate.immediateInvoicing']}"
 				field="immediateInvoicing" isMessage="true" />
-			<p:column  width="50px"> 
+			<p:column  width="50"> 
 			<f:facet name="header">
 			<h:outputText value="Actions" />
 		   </f:facet>
@@ -231,7 +231,7 @@
 			<hftl:column label="#{messages['tax.percent']}" field="percent" converterParam="4digits" />
 			<hftl:column label="#{messages['invoiceSubCategory.accountingCode']}"
 				field="accountingCode" />
-			<p:column style="width:5px"> 
+			<p:column width="50"> 
 			<f:facet name="header">
 			<h:outputText value="Actions" />
 		   </f:facet>
@@ -264,7 +264,7 @@
 			<hftl:column label="#{messages['enableEntity.active']}"
 				field="active" isMessage="true"
 				width="10%" />
-			<p:column style="width:5px"> 
+			<p:column style="width:50px"> 
 			<f:facet name="header">
 			<h:outputText value="Actions" />
 		   </f:facet>
@@ -293,7 +293,7 @@
 			<hftl:column label="#{messages['invoiceCategory.code']}" field="code" />
 			<hftl:column label="#{messages['invoiceCategory.description']}"
 				field="description" />
-			<p:column style="width:5px"> 
+			<p:column style="width:50px"> 
 			<f:facet name="header">
 			<h:outputText value="Actions" />
 		   </f:facet>
@@ -328,7 +328,7 @@
 				field="description" />
 			<hftl:column label="#{messages['invoiceSubCategory.accountingCode']}"
 				field="accountingCode" />
-			<p:column style="width:5px"> 
+			<p:column style="width:50px"> 
 			<f:facet name="header">
 			<h:outputText value="Actions" />
 		   </f:facet>
@@ -379,7 +379,7 @@
 				view="usageChargeTemplateDetail" />
 			<hftl:column label="#{messages['enableEntity.active']}"
 				field="active" isMessage="true" />
-			 <p:column style="width:5px"> 
+			 <p:column width="50"> 
 			<f:facet name="header">
 			<h:outputText value="Actions" />
 		   </f:facet>
@@ -411,10 +411,10 @@
 				field="description" />
 			<hftl:column
 				label="#{messages['usageChargeTemplate.unityMultiplicator']}"
-				field="unityMultiplicator" converterParam="12digits" />
-			<hftl:column
-				label="#{messages['usageChargeTemplate.unityDescription']}"
-				field="unityDescription" />
+				field="unitMultiplicator" converterParam="12digits" />
+<!-- 			<hftl:column -->
+<!-- 				label="#{messages['usageChargeTemplate.unityDescription']}" -->
+<!-- 				field="unityDescription" /> -->
 			<hftl:column label="#{messages['usageChargeTemplate.filterParam1']}"
 				field="filterParam1" />
 			<hftl:column label="#{messages['usageChargeTemplate.filterParam2']}"
@@ -425,7 +425,7 @@
 				field="priority" />
 			<hftl:column label="#{messages['enableEntity.active']}"
 				field="active" isMessage="true" /> 	
-			<p:column  width="50px"> 
+			<p:column  width="50"> 
 			<f:facet name="header">
 			<h:outputText value="Actions" />
 		   </f:facet>
@@ -439,7 +439,7 @@
 		    </p:tab>
 			</p:accordionPanel>
 			</h:panelGrid>
-		 <h:panelGrid>
+		 <h:panelGrid styleClass="panelGrid-column100">
 		   <p:accordionPanel activeIndex="null" dynamic="true" cache="false" >
 		   <p:ajax event="tabChange" listener="#{configIssuesReportingBean.constructCounterWithNotService}" />
 			<p:tab> 
@@ -456,9 +456,9 @@
 			<hftl:column label="#{messages['businessEntity.code']}" field="code" />
 			<hftl:column label="#{messages['businessEntity.description']}"
 				field="description" />
-			<hftl:column
-				label="#{messages['usageChargeTemplate.unityDescription']}"
-				field="unityDescription" />
+<!-- 			<hftl:column -->
+<!-- 				label="#{messages['usageChargeTemplate.unityDescription']}" -->
+<!-- 				field="unityDescription" /> -->
 			<hftl:column label="#{messages['counterTemplate.counterType']}"
 				field="counterType.label" isMessage="true" />
 			<hftl:column label="#{messages['counterTemplate.level']}"
@@ -468,7 +468,7 @@
 
 			<hftl:column label="#{messages['enableEntity.active']}"
 				field="active" isMessage="true" />
-			<p:column  width="50px"> 
+			<p:column  width="50"> 
 			<f:facet name="header">
 			<h:outputText value="Actions" />
 		   </f:facet>
@@ -510,7 +510,7 @@
 				valueLabelField="code" isList="true" sort="false" />
 			<hftl:column label="#{messages['enableEntity.active']}"
 				field="active" isMessage="true" />
-			<p:column  width="50px"> 
+			<p:column  width="50"> 
 			<f:facet name="header">
 			<h:outputText value="Actions" />
 		   </f:facet>
@@ -552,7 +552,7 @@
 			<hftl:column
 				label="#{messages['oneShotChargeTemplate.immediateInvoicing']}"
 				field="immediateInvoicing" isMessage="true" />
-			<p:column  width="50px"> 
+			<p:column  width="50"> 
 			<f:facet name="header">
 			<h:outputText value="Actions" />
 		   </f:facet>
@@ -594,7 +594,7 @@
 			<hftl:column
 				label="#{messages['oneShotChargeTemplate.immediateInvoicing']}"
 				field="immediateInvoicing" isMessage="true" />
-			<p:column  width="50px"> 
+			<p:column  width="50"> 
 			<f:facet name="header">
 			<h:outputText value="Actions" />
 		   </f:facet>
