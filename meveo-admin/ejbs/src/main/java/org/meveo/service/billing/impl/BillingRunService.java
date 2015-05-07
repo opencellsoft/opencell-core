@@ -32,7 +32,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
-import org.meveo.admin.async.InvoicingAsync;
+import org.meveo.admin.async.RatedTxInvoicingAsync;
 import org.meveo.admin.async.SubListCreator;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.QueryBuilder;
@@ -66,7 +66,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 	private InvoiceService invoiceService;
 	
 	@Inject
-	private InvoicingAsync invoicingAsync;
+	private RatedTxInvoicingAsync ratedTxInvoicingAsync;
 
 	public PreInvoicingReportsDTO generatePreInvoicingReports(BillingRun billingRun) throws BusinessException {
 		log.debug("start generatePreInvoicingReports.......");
@@ -557,7 +557,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 
     	SubListCreator subListCreator = new SubListCreator(billingAccounts,nbRuns.intValue());
 		while (subListCreator.isHasNext()) {
-			invoicingAsync.launchAndForget((List<BillingAccount>) subListCreator.getNextWorkSet(), billingRunId, currentUser);
+			ratedTxInvoicingAsync.launchAndForget((List<BillingAccount>) subListCreator.getNextWorkSet(), billingRunId, currentUser);
 			try {
 				Thread.sleep(waitingMillis.longValue());
 			} catch (InterruptedException e) {

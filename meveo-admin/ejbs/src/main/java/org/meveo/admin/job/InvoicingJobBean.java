@@ -1,7 +1,9 @@
 package org.meveo.admin.job;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.Future;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
@@ -9,6 +11,8 @@ import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 
+import org.meveo.admin.async.InvoicingAsync;
+import org.meveo.admin.async.SubListCreator;
 import org.meveo.admin.job.logging.JobLoggingInterceptor;
 import org.meveo.interceptor.PerformanceInterceptor;
 import org.meveo.model.admin.User;
@@ -33,6 +37,9 @@ public class InvoicingJobBean {
 
 	@Inject
 	private BillingAccountService billingAccountService;
+	
+	@Inject
+	private InvoicingAsync invoicingAsync;
 
 	@Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
@@ -56,12 +63,28 @@ public class InvoicingJobBean {
 								if (billingAccounts != null && billingAccounts.size() > 0) {
 									int billableBA = 0;
 
+									Long nbRuns = null;//timerEntity.getLongCustomValue("nbRuns").longValue();
+							    	Long waitingMillis = null;//timerEntity.getLongCustomValue("waitingMillis").longValue();
 									
-									for (BillingAccount billingAccount : billingAccounts) {
-										if (billingAccountService.updateBillingAccountTotalAmounts(billingAccount,billingRun,currentUser)) {
-											billableBA++;
-										}
+							    	if(nbRuns == null ){
+							    		nbRuns = new Long(8);
+							    	}
+							    	if(waitingMillis == null ){
+							    		waitingMillis = new Long(0);
+							    	}
+
+							    	SubListCreator subListCreator = new SubListCreator(billingAccounts,nbRuns.intValue());
+							    	List<Future<Integer>> asyncReturns = new ArrayList<Future<Integer>>();
+									while (subListCreator.isHasNext()) {
+										Future<Integer> count = invoicingAsync.launchAndForget((List<BillingAccount>) subListCreator.getNextWorkSet(), billingRun, currentUser);
+										asyncReturns.add(count);
 									}
+									
+									for(Future<Integer> futureItsNow : asyncReturns){
+										billableBA+= futureItsNow.get().intValue();	
+									}
+									
+									log.info("Total billableBA:"+billableBA);
 
 									billingRun.setBillingAccountNumber(billingAccounts.size());
 									billingRun.setBillableBillingAcountNumber(billableBA);
