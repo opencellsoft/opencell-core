@@ -409,14 +409,14 @@
 				</f:facet>
 				<p:cellEditor>
 					<f:facet name="output">
-						<h:outputLabel value="#{entity.minQuantity}" />
+						<h:outputText value="#{entity.minQuantity}" converter="bigDecimal4DigitsConverter"/>
 						<h:outputText value=" - " />
-						<h:outputText value="#{entity.maxQuantity}" />
+						<h:outputText value="#{entity.maxQuantity}" converter="bigDecimal4DigitsConverter"/>
 					</f:facet>
 					<f:facet name="input">
-						<p:inputText value="#{entity.minQuantity}" size="6"/>
+						<p:inputText value="#{entity.minQuantity}" size="6" converter="bigDecimal4DigitsConverter"/>
 						<h:outputText value=" - " />
-						<p:inputText value="#{entity.maxQuantity}" size="6" />
+						<p:inputText value="#{entity.maxQuantity}" size="6" converter="bigDecimal4DigitsConverter"/>
 					</f:facet>
 				</p:cellEditor>
 			</p:column>
