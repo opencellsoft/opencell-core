@@ -56,6 +56,7 @@ public class InvoicingJobBean {
 								if (billingAccounts != null && billingAccounts.size() > 0) {
 									int billableBA = 0;
 
+									
 									for (BillingAccount billingAccount : billingAccounts) {
 										if (billingAccountService.updateBillingAccountTotalAmounts(billingAccount,billingRun,currentUser)) {
 											billableBA++;
@@ -104,6 +105,7 @@ public class InvoicingJobBean {
 			log.error(e.getMessage());
 			e.printStackTrace();
 		}
+		log.info("end Execute");
 	}
 
 }

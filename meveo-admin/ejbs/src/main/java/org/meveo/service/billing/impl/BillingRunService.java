@@ -32,6 +32,8 @@ import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
+import org.meveo.admin.async.InvoicingAsync;
+import org.meveo.admin.async.SubListCreator;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.admin.User;
@@ -45,7 +47,6 @@ import org.meveo.model.billing.PostInvoicingReportsDTO;
 import org.meveo.model.billing.PreInvoicingReportsDTO;
 import org.meveo.model.billing.RatedTransaction;
 import org.meveo.model.billing.RatedTransactionStatusEnum;
-import org.meveo.model.billing.SubCategoryInvoiceAgregate;
 import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.billing.WalletOperationStatusEnum;
 import org.meveo.model.crm.Provider;
@@ -63,6 +64,9 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 
 	@EJB
 	private InvoiceService invoiceService;
+	
+	@Inject
+	private InvoicingAsync invoicingAsync;
 
 	public PreInvoicingReportsDTO generatePreInvoicingReports(BillingRun billingRun) throws BusinessException {
 		log.debug("start generatePreInvoicingReports.......");
@@ -540,14 +544,28 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 				.createNamedQuery("BillingAccount.listByBillingRunId", BillingAccount.class)
 				.setParameter("billingRunId", billingRunId)
                 .getResultList();
+		
+		Long nbRuns = null;//timerEntity.getLongCustomValue("nbRuns").longValue();
+    	Long waitingMillis = null;//timerEntity.getLongCustomValue("waitingMillis").longValue();
+		
+    	if(nbRuns == null ){
+    		nbRuns = new Long(8);
+    	}
+    	if(waitingMillis == null ){
+    		waitingMillis = new Long(0);
+    	}
 
-		for (BillingAccount billingAccount : billingAccounts) {
+    	SubListCreator subListCreator = new SubListCreator(billingAccounts,nbRuns.intValue());
+		while (subListCreator.isHasNext()) {
+			invoicingAsync.launchAndForget((List<BillingAccount>) subListCreator.getNextWorkSet(), billingRunId, currentUser);
 			try {
-				invoiceService.createAgregatesAndInvoice(billingAccount, billingRunId, currentUser);
-			} catch (Exception e) {
-				log.error("Error for BA=" + billingAccount.getCode() + " : " + e.getMessage());
-			}
+				Thread.sleep(waitingMillis.longValue());
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			} 
 		}
+
+		
 	}
 
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)

@@ -10,6 +10,8 @@ import javax.enterprise.event.Event;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 
+import org.meveo.admin.async.SubListCreator;
+import org.meveo.admin.async.UsageRatingAsync;
 import org.meveo.admin.job.logging.JobLoggingInterceptor;
 import org.meveo.event.qualifier.Rejected;
 import org.meveo.interceptor.PerformanceInterceptor;
@@ -28,7 +30,7 @@ public class UsageRatingJobBean {
 	private EdrService edrService;
 
 	@Inject
-	private UnitUsageRatingJobBean unitUsageRatingJobBean;
+	private UsageRatingAsync usageRatingAsync;
 
 	@Inject
 	@Rejected
@@ -40,11 +42,27 @@ public class UsageRatingJobBean {
 	public void execute(JobExecutionResultImpl result, User currentUser) {
 		try {
 			
-			List<Long> ids = edrService.getEDRidsToRate(currentUser.getProvider());			
+			List<Long> ids = edrService.getEDRidsToRate(currentUser.getProvider());		
 			log.debug("edr to rate:" + ids.size());
+			
+			Long nbRuns = null;//timerEntity.getLongCustomValue("nbRuns").longValue();
+	    	Long waitingMillis = null;//timerEntity.getLongCustomValue("waitingMillis").longValue();
+			
+	    	if(nbRuns == null ){
+	    		nbRuns = new Long(8);
+	    	}
+	    	if(waitingMillis == null ){
+	    		waitingMillis = new Long(0);
+	    	}
 
-			for (Long edrId : ids) {				
-				unitUsageRatingJobBean.execute(result, currentUser, edrId);				
+	    	SubListCreator subListCreator = new SubListCreator(ids,nbRuns.intValue());
+			while (subListCreator.isHasNext()) {	
+				usageRatingAsync.launchAndForget((List<Long>) subListCreator.getNextWorkSet(),result, currentUser);
+				try {
+					Thread.sleep(waitingMillis.longValue());
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				} 
 			}
 			
 		} catch (Exception e) {
