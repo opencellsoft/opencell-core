@@ -11,7 +11,7 @@ import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-import javax.enterprise.context.SessionScoped;
+import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Named;
 
 import org.apache.commons.vfs.FileSystemException;
@@ -24,7 +24,7 @@ import org.slf4j.LoggerFactory;
 
 @SuppressWarnings("deprecation")
 @Named
-@SessionScoped
+@ApplicationScoped
 public class CheckUpdateBean implements Serializable {
 
 
@@ -92,7 +92,7 @@ public class CheckUpdateBean implements Serializable {
 
 	public String getVersionOutput() {
 		if(versionOutput==null){
-			//checkVersion();
+			checkVersion();
 		}
 		return versionOutput;
 	}
@@ -103,7 +103,7 @@ public class CheckUpdateBean implements Serializable {
 
 	private String buildJsonRequest(){
 		try{
-			String productVersion = "4.0.2";
+			String productVersion = "4.0.3";
 			String productName = paramBean.getProperty("checkUpdate.productName", "Meveo");
 			String owner = paramBean.getProperty("checkUpdate.owner", "OpenCell");
 			String macAddress = "";
