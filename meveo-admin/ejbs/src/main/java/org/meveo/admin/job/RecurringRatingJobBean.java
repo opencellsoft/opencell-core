@@ -11,6 +11,8 @@ import javax.enterprise.event.Event;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 
+import org.meveo.admin.async.RecurringChargeAsync;
+import org.meveo.admin.async.SubListCreator;
 import org.meveo.admin.job.logging.JobLoggingInterceptor;
 import org.meveo.event.qualifier.Rejected;
 import org.meveo.interceptor.PerformanceInterceptor;
@@ -30,7 +32,7 @@ public class RecurringRatingJobBean implements Serializable {
 	private static final long serialVersionUID = 2226065462536318643L;
 	
 	@Inject
-	UnitRecurringRatingJobBean unitRecurringRatingJobBean;
+	private RecurringChargeAsync recurringChargeAsync;
 
 	@Inject
 	private RecurringChargeInstanceService recurringChargeInstanceService;
@@ -48,16 +50,27 @@ public class RecurringRatingJobBean implements Serializable {
 	public void execute(JobExecutionResultImpl result, User currentUser) {
 		try {
 			Date maxDate = DateUtils.addDaysToDate(new Date(), 1);
-			List<Long> ids = recurringChargeInstanceService.findIdsByStatus(
-					InstanceStatusEnum.ACTIVE, maxDate);
-
-			log.info("charges to rate={}", ids.size());
-
-			for (Long id : ids) {
-				
-				unitRecurringRatingJobBean.execute(result, currentUser,id,maxDate);
-				
+			List<Long> ids = recurringChargeInstanceService.findIdsByStatus(InstanceStatusEnum.ACTIVE, maxDate);
+			int inputSize =  ids.size();
+			log.info("charges to rate={}", inputSize);
+			Long nbRuns = null;//timerEntity.getLongCustomValue("nbRuns").longValue();
+	    	Long waitingMillis = null;//timerEntity.getLongCustomValue("waitingMillis").longValue();
+	    	if(nbRuns == null ){
+	    		nbRuns = new Long(8);
+	    	}
+	    	if(waitingMillis == null ){
+	    		waitingMillis = new Long(0);
+	    	}
+	    	SubListCreator subListCreator = new SubListCreator(ids,nbRuns.intValue());
+			while (subListCreator.isHasNext()) {				
+				recurringChargeAsync.launchAndForget((List<Long>) subListCreator.getNextWorkSet(),result, currentUser,maxDate);	
+				try {
+					Thread.sleep(waitingMillis.longValue());
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				} 
 			}
+
 		} catch (Exception e) {
 			log.error(e.getMessage());
 			e.printStackTrace();

@@ -138,6 +138,8 @@ public class ImportAccountsJobBean {
 		for (File file : listFile) {
 			if (file.isFile()) {
 				files.add(file);
+				// we just process one file
+				return files;
 			}
 		}
 		return files;
