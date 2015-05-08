@@ -29,6 +29,7 @@ import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.catalog.impl.CounterTemplateService;
 import org.omnifaces.cdi.ViewScoped;
+import org.primefaces.context.RequestContext;
 import org.primefaces.model.LazyDataModel;
 
 @Named
@@ -83,9 +84,11 @@ public class CounterTemplateBean extends BaseBean<CounterTemplate> {
         return getLazyDataModel(filters, false);
     }
 
-	@Override
-	protected boolean canDelete(CounterTemplate entity) {
-		// TODO Auto-generated method stub
-		return true;
+    @Override
+	protected void canDelete() {
+		boolean result=true;
+		this.delete();
+		RequestContext requestContext = RequestContext.getCurrentInstance();
+		requestContext.addCallbackParam("result", result);
 	}	
 }

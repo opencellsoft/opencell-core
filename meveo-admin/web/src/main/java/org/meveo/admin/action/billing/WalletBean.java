@@ -27,6 +27,7 @@ import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.WalletService;
 import org.omnifaces.cdi.ViewScoped;
+import org.primefaces.context.RequestContext;
 
 /**
  * Standard backing bean for {@link WalletInstance} (extends {@link BaseBean}
@@ -88,9 +89,11 @@ public class WalletBean extends BaseBean<WalletInstance> {
 	}
 
 	@Override
-	protected boolean canDelete(WalletInstance entity) {
-		// TODO Auto-generated method stub
-		return true;
+	protected void canDelete() {
+		boolean result=true;
+		this.delete();
+		RequestContext requestContext = RequestContext.getCurrentInstance();
+		requestContext.addCallbackParam("result", result);
 	}
 
 }

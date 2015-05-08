@@ -46,6 +46,7 @@ import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.payments.impl.AccountOperationService;
 import org.meveo.service.payments.impl.MatchingCodeService;
 import org.omnifaces.cdi.ViewScoped;
+import org.primefaces.context.RequestContext;
 import org.primefaces.model.LazyDataModel;
 
 /**
@@ -364,9 +365,11 @@ public class AccountOperationBean extends BaseBean<AccountOperation> {
 	}
 
 	@Override
-	protected boolean canDelete(AccountOperation entity) {
-		// TODO Auto-generated method stub
-		return true;
+	protected void canDelete() {
+		boolean result=true;
+		this.delete();
+		RequestContext requestContext = RequestContext.getCurrentInstance();
+		requestContext.addCallbackParam("result", result);
 	}
 
 }

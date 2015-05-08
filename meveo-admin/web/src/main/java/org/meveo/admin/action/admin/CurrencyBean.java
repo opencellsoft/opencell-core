@@ -27,6 +27,7 @@ import org.meveo.model.admin.Currency;
 import org.meveo.service.admin.impl.CurrencyService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.omnifaces.cdi.ViewScoped;
+import org.primefaces.context.RequestContext;
 
 /**
  * Standard backing bean for {@link Currency} (extends {@link BaseBean} that
@@ -89,8 +90,10 @@ public class CurrencyBean extends BaseBean<Currency> {
 	}
 
 	@Override
-	protected boolean canDelete(Currency entity) {
-		// TODO Auto-generated method stub
-		return true;
+	protected void canDelete() {
+		boolean result=true;
+		this.delete();
+		RequestContext requestContext = RequestContext.getCurrentInstance();
+		requestContext.addCallbackParam("result", result);
 	}
 }

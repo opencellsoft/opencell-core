@@ -31,6 +31,7 @@ import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.omnifaces.cdi.ViewScoped;
+import org.primefaces.context.RequestContext;
 
 @Named
 @ViewScoped
@@ -99,9 +100,11 @@ public class SellerBean extends BaseBean<Seller> {
 	}
 
 	@Override
-	protected boolean canDelete(Seller entity) {
-		// TODO Auto-generated method stub
-		return true;
+	protected void canDelete() {
+		boolean result=true;
+		this.delete();
+		RequestContext requestContext = RequestContext.getCurrentInstance();
+		requestContext.addCallbackParam("result", result);
 	}
 
 }

@@ -28,6 +28,7 @@ import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.InvoiceSubCategoryCountryService;
 import org.omnifaces.cdi.ViewScoped;
+import org.primefaces.context.RequestContext;
 
 @Named
 @ViewScoped
@@ -75,9 +76,11 @@ public class InvoiceSubCategoryCountryBean extends
 	}
 
 	@Override
-	protected boolean canDelete(InvoiceSubcategoryCountry entity) {
-		// TODO Auto-generated method stub
-		return true;
+	protected void canDelete() {
+		boolean result=true;
+		this.delete();
+		RequestContext requestContext = RequestContext.getCurrentInstance();
+		requestContext.addCallbackParam("result", result);
 	}
 
 }

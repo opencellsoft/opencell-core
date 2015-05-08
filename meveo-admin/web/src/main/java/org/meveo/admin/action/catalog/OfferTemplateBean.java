@@ -39,6 +39,7 @@ import org.meveo.service.catalog.impl.OfferTemplateService;
 import org.meveo.service.catalog.impl.PricePlanMatrixService;
 import org.meveo.service.catalog.impl.ServiceTemplateService;
 import org.omnifaces.cdi.ViewScoped;
+import org.primefaces.context.RequestContext;
 import org.primefaces.model.DualListModel;
 
 /**
@@ -132,17 +133,22 @@ public class OfferTemplateBean extends BaseBean<OfferTemplate> {
 	protected String getDefaultSort() {
 		return "code";
 	}
-	
+
 	@Override
-	protected boolean canDelete(OfferTemplate entity) {
+	protected void canDelete() {
 		boolean result=true;
-		if(entity==null) return false;
 		List<Subscription> subscriptions=subscriptionService.findByOfferTemplate(entity);
 		result=(subscriptions==null||subscriptions.size()==0)?true:false;
-		if(!result){
-			return result;
+		if(result){
+			List<PricePlanMatrix> prices=pricePlanMatrixService.findByOfferTemplate(entity);
+			result=(prices==null||prices.size()==0)?true:false;
 		}
-		List<PricePlanMatrix> prices=pricePlanMatrixService.findByOfferTemplate(entity);
-		return (prices==null||prices.size()==0)?true:false;
+		if(result){
+			this.delete();
+		}
+		RequestContext requestContext = RequestContext.getCurrentInstance();
+		requestContext.addCallbackParam("result", result);
 	}
+	
+	
 }

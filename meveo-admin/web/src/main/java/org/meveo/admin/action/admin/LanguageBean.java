@@ -26,6 +26,7 @@ import org.meveo.model.billing.Language;
 import org.meveo.service.admin.impl.LanguageService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.omnifaces.cdi.ViewScoped;
+import org.primefaces.context.RequestContext;
 
 @Named
 @ViewScoped
@@ -58,9 +59,11 @@ public class LanguageBean extends BaseBean<Language> {
 	}
 
 	@Override
-	protected boolean canDelete(Language entity) {
-		// TODO Auto-generated method stub
-		return true;
+	protected void canDelete() {
+		boolean result=true;
+		this.delete();
+		RequestContext requestContext = RequestContext.getCurrentInstance();
+		requestContext.addCallbackParam("result", result);
 	}
 
 }

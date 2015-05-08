@@ -26,6 +26,7 @@ import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.RatedTransactionService;
 import org.omnifaces.cdi.ViewScoped;
+import org.primefaces.context.RequestContext;
 
 /**
  * Standard backing bean for {@link RatedTransaction} (extends {@link BaseBean}
@@ -76,9 +77,11 @@ public class RatedTransactionBean extends BaseBean<RatedTransaction> {
 	}
 
 	@Override
-	protected boolean canDelete(RatedTransaction entity) {
-		// TODO Auto-generated method stub
-		return true;
+	protected void canDelete() {
+		boolean result=true;
+		this.delete();
+		RequestContext requestContext = RequestContext.getCurrentInstance();
+		requestContext.addCallbackParam("result", result);
 	}
 
 }

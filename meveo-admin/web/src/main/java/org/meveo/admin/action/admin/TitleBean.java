@@ -27,6 +27,7 @@ import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.catalog.impl.TitleService;
 import org.omnifaces.cdi.ViewScoped;
+import org.primefaces.context.RequestContext;
 
 @Named
 @ViewScoped
@@ -60,9 +61,11 @@ public class TitleBean extends BaseBean<Title> {
         throw new BatchUpdateException();
     }
 
-	@Override
-	protected boolean canDelete(Title entity) {
-		// TODO Auto-generated method stub
-		return true;
+    @Override
+	protected void canDelete() {
+		boolean result=true;
+		this.delete();
+		RequestContext requestContext = RequestContext.getCurrentInstance();
+		requestContext.addCallbackParam("result", result);
 	}
 }

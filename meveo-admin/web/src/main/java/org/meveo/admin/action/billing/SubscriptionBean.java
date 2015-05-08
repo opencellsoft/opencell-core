@@ -61,6 +61,7 @@ import org.meveo.service.billing.impl.WalletOperationService;
 import org.meveo.service.catalog.impl.ServiceChargeTemplateSubscriptionService;
 import org.meveo.service.medina.impl.AccessService;
 import org.omnifaces.cdi.ViewScoped;
+import org.primefaces.context.RequestContext;
 import org.slf4j.Logger;
 
 /**
@@ -734,9 +735,11 @@ public class SubscriptionBean extends BaseBean<Subscription> {
 	}
 
 	@Override
-	protected boolean canDelete(Subscription entity) {
-		// TODO Auto-generated method stub
-		return true;
+	protected void canDelete() {
+		boolean result=true;
+		this.delete();
+		RequestContext requestContext = RequestContext.getCurrentInstance();
+		requestContext.addCallbackParam("result", result);
 	}
 
 }

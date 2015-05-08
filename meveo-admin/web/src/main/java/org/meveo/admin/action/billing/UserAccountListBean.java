@@ -25,6 +25,7 @@ import org.meveo.model.billing.UserAccount;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.UserAccountService;
+import org.primefaces.context.RequestContext;
 
 /**
  * Standard backing bean for {@link UserAccount} (extends {@link BaseBean} that
@@ -68,8 +69,10 @@ public class UserAccountListBean extends BaseBean<UserAccount> {
 	}
 
 	@Override
-	protected boolean canDelete(UserAccount entity) {
-		// TODO Auto-generated method stub
-		return true;
+	protected void canDelete() {
+		boolean result=true;
+		this.delete();
+		RequestContext requestContext = RequestContext.getCurrentInstance();
+		requestContext.addCallbackParam("result", result);
 	}
 }

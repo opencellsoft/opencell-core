@@ -21,6 +21,7 @@ import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.notification.NotificationHistoryService;
 import org.meveo.service.notification.NotificationService;
 import org.omnifaces.cdi.ViewScoped;
+import org.primefaces.context.RequestContext;
 import org.primefaces.model.LazyDataModel;
 
 /**
@@ -115,9 +116,11 @@ public class NotificationHistoryBean extends BaseBean<NotificationHistory> {
 	}
 
 	@Override
-	protected boolean canDelete(NotificationHistory entity) {
-		// TODO Auto-generated method stub
-		return true;
+	protected void canDelete() {
+		boolean result=true;
+		this.delete();
+		RequestContext requestContext = RequestContext.getCurrentInstance();
+		requestContext.addCallbackParam("result", result);
 	}
 
 }

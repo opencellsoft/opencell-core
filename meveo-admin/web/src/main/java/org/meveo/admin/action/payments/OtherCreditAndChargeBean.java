@@ -37,6 +37,7 @@ import org.meveo.service.payments.impl.CustomerAccountService;
 import org.meveo.service.payments.impl.OCCTemplateService;
 import org.meveo.service.payments.impl.OtherCreditAndChargeService;
 import org.omnifaces.cdi.ViewScoped;
+import org.primefaces.context.RequestContext;
 
 /**
  * Standard backing bean for {@link OtherCreditAndCharge} (extends
@@ -247,8 +248,10 @@ public class OtherCreditAndChargeBean extends BaseBean<OtherCreditAndCharge> {
 	}
 
 	@Override
-	protected boolean canDelete(OtherCreditAndCharge entity) {
-		// TODO Auto-generated method stub
-		return true;
+	protected void canDelete() {
+		boolean result=true;
+		this.delete();
+		RequestContext requestContext = RequestContext.getCurrentInstance();
+		requestContext.addCallbackParam("result", result);
 	}
 }

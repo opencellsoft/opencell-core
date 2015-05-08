@@ -28,6 +28,7 @@ import org.meveo.model.billing.TradingCountry;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.catalog.impl.CountryComService;
+import org.primefaces.context.RequestContext;
 
 
 @Named
@@ -79,8 +80,10 @@ public class CountryComBean extends BaseBean<TradingCountry> {
 	}
 
 	@Override
-	protected boolean canDelete(TradingCountry entity) {
-		// TODO Auto-generated method stub
-		return true;
+	protected void canDelete() {
+		boolean result=true;
+		this.delete();
+		RequestContext requestContext = RequestContext.getCurrentInstance();
+		requestContext.addCallbackParam("result", result);
 	}
 }

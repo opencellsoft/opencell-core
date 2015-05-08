@@ -139,24 +139,31 @@
 			</p:panel>
 		</p:confirmDialog>
 		
+		<script type="text/javascript">
+			//<![CDATA[
+		           function doDeleteAction(){
+					doDelete();
+				}
+				function handleDeleteComplete(xhr, status, args) {
+					var result = args.result;
+					if(typeof(result)!="undefined" && !result){
+						PF('confirmCanotDeleteWidget').show();
+					}
+				}
+			//]]>
+		</script>	
+		<p:remoteCommand id="remoteDeleteButton" actionListener="#{backingBean.canDelete}" name="doDelete" oncomplete="handleDeleteComplete(xhr,status,args)" update="@form"/>
 		<p:commandButton id="#{resultsId}deletelink" icon="ui-icon-trash"
-			rendered="#{renderDeleteLink and backingBean.canDelete(entity)}"
 			oncomplete="PF('confirmDeleteWidget').show()">
 			<f:setPropertyActionListener target="#{backingBean.entity}"
 				value="#{entity}"></f:setPropertyActionListener>
 		</p:commandButton>
-		<p:commandButton id="#{resultsId}candeletelink" icon="ui-icon-trash"
-			rendered="#{renderDeleteLink and not backingBean.canDelete(entity)}"
-			oncomplete="PF('confirmCanotDeleteWidget').show()">
-		</p:commandButton>
-
 		<p:confirmDialog id="confirmDialog" styleClass="confirm-dialog"
 			message="#{messages['commons.confirmDelete']}" header=""
 			severity="alert" widgetVar="confirmDeleteWidget" appendTo="@(body)">
 			<p:panel styleClass="confirm-dialog-content">
 				<p:commandButton id="deleteOk" value="#{messages['commons.yes']}"
-					oncomplete="PF('confirmDeleteWidget').hide()"
-					action="#{backingBean.delete()}" update="@form" />
+					oncomplete="doDeleteAction()" onclick="PF('confirmDeleteWidget').hide()"/>
 				<p:commandButton id="deleteKo" value="#{messages['commons.no']}"
 					onclick="PF('confirmDeleteWidget').hide()" type="button" />
 			</p:panel>

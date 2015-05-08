@@ -28,6 +28,7 @@ import org.meveo.model.billing.BillingAccount;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.BillingAccountService;
+import org.primefaces.context.RequestContext;
 
 /**
  * Standard backing bean for {@link BillingAccount} (extends {@link BaseBean}
@@ -76,9 +77,11 @@ public class BillingAccountListBean extends BaseBean<BillingAccount> {
 	}
 
 	@Override
-	protected boolean canDelete(BillingAccount entity) {
-		// TODO Auto-generated method stub
-		return true;
+	protected void canDelete() {
+		boolean result=true;
+		this.delete();
+		RequestContext requestContext = RequestContext.getCurrentInstance();
+		requestContext.addCallbackParam("result", result);
 	}
 
 }

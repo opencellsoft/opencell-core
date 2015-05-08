@@ -40,6 +40,7 @@ import org.meveo.service.catalog.impl.TriggeredEDRTemplateService;
 import org.meveo.service.catalog.impl.UsageChargeTemplateService;
 import org.omnifaces.cdi.ViewScoped;
 import org.primefaces.component.datatable.DataTable;
+import org.primefaces.context.RequestContext;
 import org.primefaces.model.DualListModel;
 
 /**
@@ -178,15 +179,24 @@ public class OneShotChargeTemplateBean extends BaseBean<OneShotChargeTemplate> {
 	protected List<String> getFormFieldsToFetch() {
 		return Arrays.asList("provider");
 	}
-
+	
 	@Override
-	protected boolean canDelete(OneShotChargeTemplate entity) {
-		List<ServiceTemplate> serviceTemplates1=serviceTemplateService.findServivesWithSubscriptionsByChargeTemplate(entity);
-		if(serviceTemplates1!=null&&serviceTemplates1.size()>0){
-			return false;
+	protected void canDelete() {
+		boolean result = true;
+		List<ServiceTemplate> serviceTemplates1 = serviceTemplateService
+				.findServivesWithSubscriptionsByChargeTemplate(entity);
+		result = serviceTemplates1 == null || serviceTemplates1.size() == 0 ? true
+				: false;
+		if (result) {
+			List<ServiceTemplate> serviceTemplates2 = serviceTemplateService
+					.findServivesWithTerminationsByChargeTemplate(entity);
+			result = serviceTemplates2 == null || serviceTemplates2.size() == 0 ? true
+					: false;
 		}
-		List<ServiceTemplate> serviceTemplates2=serviceTemplateService.findServivesWithTerminationsByChargeTemplate(entity);
-		return serviceTemplates2==null||serviceTemplates2.size()==0;
+		if (result) {
+			this.delete();
+		}
+		RequestContext requestContext = RequestContext.getCurrentInstance();
+		requestContext.addCallbackParam("result", result);
 	}
-
 }

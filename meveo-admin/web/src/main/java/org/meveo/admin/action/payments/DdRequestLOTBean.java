@@ -39,6 +39,7 @@ import org.meveo.service.payments.impl.DDRequestLOTService;
 import org.meveo.service.payments.impl.DDRequestLotOpService;
 import org.meveo.service.payments.impl.RecordedInvoiceService;
 import org.omnifaces.cdi.ViewScoped;
+import org.primefaces.context.RequestContext;
 
 /**
  * Standard backing bean for {@link DDRequestLOT} (extends {@link BaseBean} that
@@ -235,8 +236,10 @@ public class DdRequestLOTBean extends BaseBean<DDRequestLOT> {
 	}
 
 	@Override
-	protected boolean canDelete(DDRequestLOT entity) {
-		// TODO Auto-generated method stub
-		return true;
+	protected void canDelete() {
+		boolean result=true;
+		this.delete();
+		RequestContext requestContext = RequestContext.getCurrentInstance();
+		requestContext.addCallbackParam("result", result);
 	}
 }

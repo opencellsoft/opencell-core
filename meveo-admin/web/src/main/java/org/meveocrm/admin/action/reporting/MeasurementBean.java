@@ -55,6 +55,7 @@ import org.meveocrm.services.dwh.MeasurableQuantityService;
 import org.meveocrm.services.dwh.MeasuredValueService;
 import org.omnifaces.cdi.ViewScoped;
 import org.omnifaces.util.Messages;
+import org.primefaces.context.RequestContext;
 import org.primefaces.event.CellEditEvent;
 
 @Named
@@ -611,9 +612,11 @@ public class MeasurementBean extends BaseBean<MeasuredValue> {
 	}
 
 	@Override
-	protected boolean canDelete(MeasuredValue entity) {
-		// TODO Auto-generated method stub
-		return true;
+	protected void canDelete() {
+		boolean result=true;
+		this.delete();
+		RequestContext requestContext = RequestContext.getCurrentInstance();
+		requestContext.addCallbackParam("result", result);
 	}
 
 }

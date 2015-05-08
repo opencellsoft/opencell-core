@@ -26,6 +26,7 @@ import org.meveo.model.billing.SubscriptionTerminationReason;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.crm.impl.SubscriptionTerminationReasonService;
+import org.primefaces.context.RequestContext;
 
 @Named
 @ConversationScoped
@@ -71,9 +72,11 @@ public class SubscriptionTerminationReasonBean extends
 	}
 
 	@Override
-	protected boolean canDelete(SubscriptionTerminationReason entity) {
-		// TODO Auto-generated method stub
-		return true;
+	protected void canDelete() {
+		boolean result=true;
+		this.delete();
+		RequestContext requestContext = RequestContext.getCurrentInstance();
+		requestContext.addCallbackParam("result", result);
 	}
 
 }

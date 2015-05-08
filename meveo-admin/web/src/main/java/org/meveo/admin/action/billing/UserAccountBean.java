@@ -56,6 +56,7 @@ import org.meveo.service.billing.impl.WalletOperationService;
 import org.meveo.service.billing.impl.WalletReservationService;
 import org.omnifaces.cdi.ViewScoped;
 import org.omnifaces.util.Faces;
+import org.primefaces.context.RequestContext;
 import org.primefaces.model.LazyDataModel;
 
 /**
@@ -471,9 +472,11 @@ public class UserAccountBean extends AccountBean<UserAccount> {
 	}
 
 	@Override
-	protected boolean canDelete(UserAccount entity) {
-		// TODO Auto-generated method stub
-		return true;
+	protected void canDelete() {
+		boolean result=true;
+		this.delete();
+		RequestContext requestContext = RequestContext.getCurrentInstance();
+		requestContext.addCallbackParam("result", result);
 	}
 	 
 }

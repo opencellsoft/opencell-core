@@ -44,6 +44,7 @@ import org.meveocrm.model.dwh.MeasurableQuantity;
 import org.meveocrm.model.dwh.MeasurementPeriodEnum;
 import org.meveocrm.services.dwh.MeasurableQuantityService;
 import org.omnifaces.cdi.ViewScoped;
+import org.primefaces.context.RequestContext;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.UploadedFile;
 
@@ -245,8 +246,10 @@ public void handleFileUpload(FileUploadEvent event) throws Exception {
 	}
 
 	@Override
-	protected boolean canDelete(MeasurableQuantity entity) {
-		// TODO Auto-generated method stub
-		return true;
+	protected void canDelete() {
+		boolean result=true;
+		this.delete();
+		RequestContext requestContext = RequestContext.getCurrentInstance();
+		requestContext.addCallbackParam("result", result);
 	}
 }

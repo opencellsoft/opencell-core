@@ -20,6 +20,7 @@ import org.meveo.service.catalog.impl.DiscountPlanItemService;
 import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
 import org.meveo.service.job.TimerEntityService;
 import org.omnifaces.cdi.ViewScoped;
+import org.primefaces.context.RequestContext;
 
 /**
  * @author Edward P. Legaspi
@@ -64,9 +65,11 @@ public class DiscountPlanItemBean extends BaseBean<DiscountPlanItem> {
 			}  
 		 }
 
-	@Override
-	protected boolean canDelete(DiscountPlanItem entity) {
-		// TODO Auto-generated method stub
-		return true;
-	}}
+	  @Override
+		protected void canDelete() {
+			boolean result=true;
+			this.delete();
+			RequestContext requestContext = RequestContext.getCurrentInstance();
+			requestContext.addCallbackParam("result", result);
+		}}
 

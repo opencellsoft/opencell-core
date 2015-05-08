@@ -38,6 +38,7 @@ import org.meveo.service.billing.impl.SubscriptionService;
 import org.meveo.service.medina.impl.AccessService;
 import org.meveo.service.medina.impl.CDRParsingService;
 import org.omnifaces.cdi.ViewScoped;
+import org.primefaces.context.RequestContext;
 
 /**
  * Standard backing bean for {@link Access} (extends {@link BaseBean} that
@@ -160,10 +161,12 @@ public class AccessBean extends BaseBean<Access> {
 	protected List<String> getFormFieldsToFetch() {
 		return Arrays.asList("provider");
 	}
-
+	
 	@Override
-	protected boolean canDelete(Access entity) {
-		// TODO Auto-generated method stub
-		return true;
+	protected void canDelete() {
+		boolean result=true;
+		this.delete();
+		RequestContext requestContext = RequestContext.getCurrentInstance();
+		requestContext.addCallbackParam("result", result);
 	}
 }

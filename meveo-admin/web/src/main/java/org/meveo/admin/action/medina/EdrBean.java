@@ -16,6 +16,7 @@ import org.meveo.model.rating.EDR;
 import org.meveo.model.rating.EDRStatusEnum;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.EdrService;
+import org.primefaces.context.RequestContext;
 
 @Named
 @ConversationScoped
@@ -81,9 +82,11 @@ public class EdrBean extends BaseBean<EDR> {
 	}
 
 	@Override
-	protected boolean canDelete(EDR entity) {
-		// TODO Auto-generated method stub
-		return true;
+	protected void canDelete() {
+		boolean result=true;
+		this.delete();
+		RequestContext requestContext = RequestContext.getCurrentInstance();
+		requestContext.addCallbackParam("result", result);
 	}
 
 }

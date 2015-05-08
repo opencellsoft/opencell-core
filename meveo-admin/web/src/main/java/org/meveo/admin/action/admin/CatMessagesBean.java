@@ -45,6 +45,7 @@ import org.meveo.service.catalog.impl.TaxService;
 import org.meveo.service.catalog.impl.TitleService;
 import org.meveo.service.catalog.impl.UsageChargeTemplateService;
 import org.omnifaces.cdi.ViewScoped;
+import org.primefaces.context.RequestContext;
 
 /**
  * Standard backing bean for {@link CatMessages} (extends {@link BaseBean}
@@ -154,9 +155,11 @@ public class CatMessagesBean extends BaseBean<CatMessages> {
 	}
 
 	@Override
-	protected boolean canDelete(CatMessages entity) {
-		// TODO Auto-generated method stub
-		return true;
+	protected void canDelete() {
+		boolean result=true;
+		this.delete();
+		RequestContext requestContext = RequestContext.getCurrentInstance();
+		requestContext.addCallbackParam("result", result);
 	}
 	
 }

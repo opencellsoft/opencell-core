@@ -20,6 +20,7 @@ import java.io.IOException;
 //import java.math.BigDecimal;
 //import java.util.List;
 
+
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.servlet.ServletOutputStream;
@@ -34,6 +35,7 @@ import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.selfcare.local.SelfcareServiceLocal;
 import org.omnifaces.cdi.ViewScoped;
+import org.primefaces.context.RequestContext;
 
 @Named
 @ViewScoped
@@ -129,8 +131,10 @@ public class SyntheseClientBean extends BaseBean<BillingAccount> {
 	}
 
 	@Override
-	protected boolean canDelete(BillingAccount entity) {
-		// TODO Auto-generated method stub
-		return true;
+	protected void canDelete() {
+		boolean result=true;
+		this.delete();
+		RequestContext requestContext = RequestContext.getCurrentInstance();
+		requestContext.addCallbackParam("result", result);
 	}
 }

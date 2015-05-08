@@ -14,6 +14,7 @@ import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.catalog.impl.DiscountPlanItemService;
 import org.meveo.service.catalog.impl.DiscountPlanService;
 import org.omnifaces.cdi.ViewScoped;
+import org.primefaces.context.RequestContext;
 
 /**
  * @author Edward P. Legaspi
@@ -115,9 +116,11 @@ public class DiscountPlanBean extends BaseBean<DiscountPlan> {
 	}
 
 	@Override
-	protected boolean canDelete(DiscountPlan entity) {
-		// TODO Auto-generated method stub
-		return true;
+	protected void canDelete() {
+		boolean result=true;
+		this.delete();
+		RequestContext requestContext = RequestContext.getCurrentInstance();
+		requestContext.addCallbackParam("result", result);
 	}
 	
 

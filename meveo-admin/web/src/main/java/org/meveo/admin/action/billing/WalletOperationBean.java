@@ -38,6 +38,7 @@ import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.RatedTransactionService;
 import org.meveo.service.billing.impl.WalletOperationService;
+import org.primefaces.context.RequestContext;
 import org.primefaces.model.LazyDataModel;
 
 
@@ -179,9 +180,11 @@ public class WalletOperationBean extends BaseBean<WalletOperation> {
 	}
 
 	@Override
-	protected boolean canDelete(WalletOperation entity) {
-		// TODO Auto-generated method stub
-		return true;
+	protected void canDelete() {
+		boolean result=true;
+		this.delete();
+		RequestContext requestContext = RequestContext.getCurrentInstance();
+		requestContext.addCallbackParam("result", result);
 	}
 } 
 

@@ -39,6 +39,7 @@ import org.meveo.service.catalog.impl.TriggeredEDRTemplateService;
 import org.meveo.service.catalog.impl.UsageChargeTemplateService;
 import org.omnifaces.cdi.ViewScoped;
 import org.primefaces.component.datatable.DataTable;
+import org.primefaces.context.RequestContext;
 import org.primefaces.model.DualListModel;
 
 @Named
@@ -137,9 +138,15 @@ public class UsageChargeTemplateBean extends BaseBean<UsageChargeTemplate> {
 	}
 
 	@Override
-	protected boolean canDelete(UsageChargeTemplate entity) {
+	protected void canDelete() {
+		boolean result=true;
 		List<ServiceTemplate> serviceTemplates=serviceTemplateService.findServivesWithUsagesByChargeTemplate(entity);
-		return serviceTemplates==null||serviceTemplates.size()==0;
+		result=serviceTemplates==null||serviceTemplates.size()==0?true:false;
+		if(result){
+			this.delete();
+		}
+		RequestContext requestContext = RequestContext.getCurrentInstance();
+		requestContext.addCallbackParam("result", result);
 	}
 
 }

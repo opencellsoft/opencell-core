@@ -30,6 +30,7 @@ import org.meveocrm.model.dwh.LineChart;
 import org.meveocrm.model.dwh.PieChart;
 import org.meveocrm.services.dwh.ChartService;
 import org.omnifaces.cdi.ViewScoped;
+import org.primefaces.context.RequestContext;
 import org.primefaces.model.LazyDataModel;
 
 @Named
@@ -92,9 +93,11 @@ public class ChartBean extends BaseBean<Chart> {
 	}
 
 	@Override
-	protected boolean canDelete(Chart entity) {
-		// TODO Auto-generated method stub
-		return true;
+	protected void canDelete() {
+		boolean result=true;
+		this.delete();
+		RequestContext requestContext = RequestContext.getCurrentInstance();
+		requestContext.addCallbackParam("result", result);
 	}
 
 }

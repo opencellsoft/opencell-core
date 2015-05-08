@@ -29,6 +29,7 @@ import org.meveo.model.payments.CustomerAccount;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.crm.impl.AccountEntitySearchService;
+import org.primefaces.context.RequestContext;
 
 /**
  * Standard backing bean for {@link AccountEntity} (extends {@link BaseBean}
@@ -131,9 +132,11 @@ public class CustomerSearchBean extends BaseBean<AccountEntity> {
 	}
 
 	@Override
-	protected boolean canDelete(AccountEntity entity) {
-		// TODO Auto-generated method stub
-		return true;
+	protected void canDelete() {
+		boolean result=true;
+		this.delete();
+		RequestContext requestContext = RequestContext.getCurrentInstance();
+		requestContext.addCallbackParam("result", result);
 	}
 
 }

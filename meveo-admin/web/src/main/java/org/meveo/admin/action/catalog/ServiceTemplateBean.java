@@ -45,6 +45,7 @@ import org.meveo.service.catalog.impl.ServiceChargeTemplateTerminationService;
 import org.meveo.service.catalog.impl.ServiceChargeTemplateUsageService;
 import org.meveo.service.catalog.impl.ServiceTemplateService;
 import org.omnifaces.cdi.ViewScoped;
+import org.primefaces.context.RequestContext;
 import org.primefaces.model.DualListModel;
 
 @Named
@@ -422,9 +423,15 @@ public class ServiceTemplateBean extends BaseBean<ServiceTemplate> {
 	private OfferTemplateService offerTemplateService;
 
 	@Override
-	protected boolean canDelete(ServiceTemplate entity) {
+	protected void canDelete() {
+		boolean result=true;
 		List<OfferTemplate> offers=offerTemplateService.findByServiceTemplate(entity);
-		return offers==null||offers.size()==0;
+		result=offers==null||offers.size()==0?true:false;
+		if(result){
+			this.delete();
+		}
+		RequestContext requestContext = RequestContext.getCurrentInstance();
+		requestContext.addCallbackParam("result", result);
 	}
 
 }
