@@ -116,7 +116,7 @@
 			severity="alert" widgetVar="confirmEnableWidget" appendTo="@(body)">
 			<p:panel styleClass="confirm-dialog-content">
 				<p:commandButton id="enableOk" value="#{messages['commons.yes']}"
-					oncomplete="PF('confirmEnableWidget').hide()"
+					oncomplete="PF('confirmEnableWidget').hide()" process="@this"
 					action="#{backingBean.enable()}" update="@form" />
 				<p:commandButton id="enableKo" value="#{messages['commons.no']}"
 					onclick="PF('confirmEnableWidget').hide()" type="button" />
@@ -132,7 +132,7 @@
 			severity="alert" widgetVar="confirmDisableWidget" appendTo="@(body)">
 			<p:panel styleClass="confirm-dialog-content">
 				<p:commandButton id="disableOk" value="#{messages['commons.yes']}"
-					oncomplete="PF('confirmEnableWidget').hide()"
+					oncomplete="PF('confirmEnableWidget').hide()" process="@this"
 					action="#{backingBean.disable()}" update="@form" />
 				<p:commandButton id="disableKo" value="#{messages['commons.no']}"
 					onclick="PF('confirmDisableWidget').hide()" type="button" />
