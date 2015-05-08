@@ -44,8 +44,9 @@
 						label="#{messages['customer.customerPanel']}"
 						showFormButtons="false" backingBean="#{customerBean}"
 						useCustomIdParam="true">
-						<p:tabView id="tabView">
-							<p:tab title="#{messages['customer.tab.account']}">
+						<p:tabView id="tabView" activeIndex="#{customerBean.activeTab}">
+							<p:ajax event="tabChange" listener="#{customerBean.onTabChange}"/>
+							<p:tab title="#{messages['customer.tab.account']}" id="tab0">
 								
 									<hf:formField label="#{messages['businessEntity.code']}"
 										field="code" validateUnique="true" required="true" displayOneLine="true" componentWidth="50"/>
@@ -87,7 +88,7 @@
 								
 							</p:tab>
 
-							<p:tab title="#{messages['customer.tab.information']}" id="tabContact">
+							<p:tab title="#{messages['customer.tab.information']}" id="tab1">
 								<p:fieldset legend="#{messages['commons.contacts']}">
 									
 										<hf:formField
@@ -127,7 +128,7 @@
 								</p:fieldset>
 							</p:tab>
 
-							<p:tab title="#{messages['customFieldTemplate.panel']}">
+							<p:tab title="#{messages['customFieldTemplate.panel']}" id="tab2">
 								<hf:customFields />
 							</p:tab>
 						</p:tabView>

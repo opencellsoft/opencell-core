@@ -99,9 +99,9 @@
 								label="#{messages['billingAccount.billingAccountPanel']}"
 								backingBean="#{billingAccountBean}" useCustomIdParam="true">
 								
-									<p:tabView id="childTab" styleClass="tab-child">
-										<p:tab title="#{messages['billingAccount.tab.account']}">
-											
+									<p:tabView id="childTab" styleClass="tab-child" activeIndex="#{billingAccountBean.activeTab}">
+										<p:ajax event="tabChange" listener="#{billingAccountBean.onTabChange}"/>
+										<p:tab title="#{messages['billingAccount.tab.account']}" id="tab0">
 													<hf:formField id="customerSelectId"
 														label="#{messages['billingAccount.customerAccount']}"
 														field="customerAccount" valueLabelField="code" required="true"
@@ -233,7 +233,7 @@
 											</p:fieldset>
 										</p:tab>
 
-										<p:tab id="tabInformation"
+										<p:tab id="tab1"
 											title="#{messages['billingAccount.tab.information']}">
 											<p:fieldset legend="#{messages['commons.contacts']}">
 													<hf:formField label="#{messages['address.address1']}"
@@ -353,11 +353,11 @@
 
 										</p:tab>
 
-										<p:tab title="#{messages['customFieldTemplate.panel']}">
+										<p:tab title="#{messages['customFieldTemplate.panel']}" id="tab2">
 											<hf:customFields />
 										</p:tab>
 
-										<p:tab title="#{messages['counterPeriod.title']}"
+										<p:tab title="#{messages['counterPeriod.title']}" id="tab3"
 											rendered="#{!billingAccountBean.edit or billingAccountBean.entity.id!=null}">
 											     <hftl:decorateFormField fieldId="counterPeriod" label="#{messages['counterInstance.title']}" >
 													<p:selectOneMenu id="counterPeriod"

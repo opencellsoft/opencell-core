@@ -126,8 +126,9 @@
 					<hf:formPanel id="userAccountFormPanel"
 						label="#{messages['userAccount.userAccountPanel']}"
 						backingBean="#{userAccountBean}" useCustomIdParam="true">
-						<p:tabView id="userAccountTab">
-							<p:tab title="#{messages['billingAccount.tab.account']}">
+						<p:tabView id="userAccountTab" activeTab="#{userAccountbean.activeTab}">
+							<p:ajax event="tabChange" listener="#{userAccountBean.onTabChange}"/>
+							<p:tab title="#{messages['billingAccount.tab.account']}" id="tab0">
 									<hf:formField id="billingAccountSelectId"
 										label="#{messages['userAccount.billingAccount']}"
 										field="billingAccount" valueLabelField="code" required="true"
@@ -165,8 +166,8 @@
 								</p:fieldset>
 							</p:tab>
 
-							<p:tab title="#{messages['billingAccount.tab.information']}">
-								<p:fieldset legend="#{messages['commons.contacts']}">
+							<p:tab title="#{messages['billingAccount.tab.information']}" id="tab1">
+								<p:fieldset legend="#{messages['commons.contacts']}"> 
 										<hf:formField label="#{messages['address.address1']}"
 											field="address" childField="address1"  size="80"
 											maxlength="80" />
@@ -190,14 +191,14 @@
 								</p:fieldset>
 							</p:tab>
 
-							<p:tab title="#{messages['customFieldTemplate.panel']}">
+							<p:tab title="#{messages['customFieldTemplate.panel']}" id="tab2">
 								<hf:customFields />
 							</p:tab>
 
 							<c:forEach items="#{userAccountBean.entity.prepaidWallets}"
-								var="wallet">
+								var="wallet" varStatus="p">
 								<p:tab title="Wallet #{wallet.key}"
-									id="tab_panelWallet_#{wallet.key}">
+									id="tab#{p+3}">
 									<p:panel id="panelWallet_#{wallet.key}"
 										styleClass="form-panel-fields">
                                             <hftl:decorateFormField label="#{messages['chargeInstance.code']}">
@@ -334,7 +335,7 @@
 								</p:tab>
 							</c:forEach>
 
-							<p:tab title="#{messages['counterPeriod.title']}"
+							<p:tab title="#{messages['counterPeriod.title']}" id="tab#{3+userAccountBean.entity.prepaidWallets.size}"
 								rendered="#{!userAccountBean.edit or userAccountBean.entity.id!=null}">
 									<hftl:decorateFormField fieldId="counterPeriod" label="#{messages['counterInstance.title']}" >
 										<p:selectOneMenu id="counterPeriod"

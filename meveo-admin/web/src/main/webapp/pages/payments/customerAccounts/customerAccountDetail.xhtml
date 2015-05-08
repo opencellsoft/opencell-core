@@ -78,8 +78,9 @@
 								label="#{messages['customerAccount.form']}"
 								backingBean="#{customerAccountBean}" showFormButtons="false"
 								useCustomIdParam="true">
-									<p:tabView id="childTab">
-										<p:tab id="accountTab"
+									<p:tabView id="childTab" activeIndex="#{customerAccountBean.activeTab}">
+										<p:ajax event="tabChange" listener="#{customerAccountBean.onTabChange}"/>
+										<p:tab id="tab0"
 											title="#{messages['customerAccount.tab.account']}">
 												<hf:formField id="customerSelectId"
 													label="#{messages['customerAccount.customer']}"
@@ -173,7 +174,7 @@
                                             </p:fieldset>
 										</p:tab>
 
-										<p:tab id="informationTab"
+										<p:tab id="tab1"
 											title="#{messages['customerAccount.tab.information']}">
 											<p:fieldset legend="#{messages['commons.contacts']}">
 												<hf:formField
@@ -224,7 +225,7 @@
 											</p:fieldset>
 										</p:tab>
 
-										<p:tab title="#{messages['customFieldTemplate.panel']}">
+										<p:tab title="#{messages['customFieldTemplate.panel']}" id="tab2">
 											<hf:customFields />
 										</p:tab>
 
