@@ -27,6 +27,9 @@ public class PricePlanDto implements Serializable {
 	@XmlElement(required = true)
 	private String eventCode;
 
+	@XmlAttribute(required = true)
+	private String description;
+
 	private String seller;
 	private String country;
 	private String currency;
@@ -50,9 +53,10 @@ public class PricePlanDto implements Serializable {
 	private String criteria1;
 	private String criteria2;
 	private String criteria3;
+	private String criteriaEL;
 
 	private String validityCalendarCode;
-	
+
 	public PricePlanDto() {
 
 	}
@@ -85,9 +89,11 @@ public class PricePlanDto implements Serializable {
 		criteria1 = e.getCriteria1Value();
 		criteria2 = e.getCriteria2Value();
 		criteria3 = e.getCriteria3Value();
-        if (e.getValidityCalendar() != null) {
-            validityCalendarCode = e.getValidityCalendar().getCode();
-        }
+		if (e.getValidityCalendar() != null) {
+			validityCalendarCode = e.getValidityCalendar().getCode();
+		}
+		description = e.getDescription();
+		criteriaEL = e.getCriteriaEL();
 	}
 
 	public String getEventCode() {
@@ -244,14 +250,12 @@ public class PricePlanDto implements Serializable {
 
 	@Override
 	public String toString() {
-		return "PricePlanDto [code=" + code + ", eventCode=" + eventCode + ", seller=" + seller + ", country="
-				+ country + ", currency=" + currency + ", minQuantity=" + minQuantity + ", maxQuantity=" + maxQuantity
-				+ ", offerTemplate=" + offerTemplate + ", startSubscriptionDate=" + startSubscriptionDate
-				+ ", endSubscriptionDate=" + endSubscriptionDate + ", startRatingDate=" + startRatingDate
-				+ ", endRatingDate=" + endRatingDate + ", minSubscriptionAgeInMonth=" + minSubscriptionAgeInMonth
-				+ ", maxSubscriptionAgeInMonth=" + maxSubscriptionAgeInMonth + ", amountWithoutTax=" + amountWithoutTax
-				+ ", amountWithTax=" + amountWithTax + ", priority=" + priority + ", criteria1=" + criteria1
-				+ ", criteria2=" + criteria2 + ", criteria3=" + criteria3 + "]";
+		return "PricePlanDto [code=" + code + ", eventCode=" + eventCode + ", description=" + description + ", seller=" + seller + ", country=" + country + ", currency="
+				+ currency + ", minQuantity=" + minQuantity + ", maxQuantity=" + maxQuantity + ", offerTemplate=" + offerTemplate + ", startSubscriptionDate="
+				+ startSubscriptionDate + ", endSubscriptionDate=" + endSubscriptionDate + ", startRatingDate=" + startRatingDate + ", endRatingDate=" + endRatingDate
+				+ ", minSubscriptionAgeInMonth=" + minSubscriptionAgeInMonth + ", maxSubscriptionAgeInMonth=" + maxSubscriptionAgeInMonth + ", amountWithoutTax="
+				+ amountWithoutTax + ", amountWithTax=" + amountWithTax + ", priority=" + priority + ", criteria1=" + criteria1 + ", criteria2=" + criteria2 + ", criteria3="
+				+ criteria3 + ", validityCalendarCode=" + validityCalendarCode + "]";
 	}
 
 	public String getCode() {
@@ -262,12 +266,28 @@ public class PricePlanDto implements Serializable {
 		this.code = code;
 	}
 
-    public String getValidityCalendarCode() {
-        return validityCalendarCode;
-    }
+	public String getValidityCalendarCode() {
+		return validityCalendarCode;
+	}
 
-    public void setValidityCalendarCode(String validityCalendarCode) {
-        this.validityCalendarCode = validityCalendarCode;
-    }
+	public void setValidityCalendarCode(String validityCalendarCode) {
+		this.validityCalendarCode = validityCalendarCode;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public String getCriteriaEL() {
+		return criteriaEL;
+	}
+
+	public void setCriteriaEL(String criteriaEL) {
+		this.criteriaEL = criteriaEL;
+	}
 
 }
