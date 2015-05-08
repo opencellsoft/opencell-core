@@ -21,9 +21,11 @@ import java.util.Date;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.persistence.DiscriminatorValue;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.admin.User;
+import org.meveo.model.crm.Provider;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.CustomerAccountStatusEnum;
 import org.meveo.model.payments.MatchingStatusEnum;
@@ -112,6 +114,16 @@ public class OtherCreditAndChargeService extends
 						amount, dueDate });
 	}
 
+    /**
+     * Set the discriminatorValue value, so it would be available in the list of entities right away
+     */
+    @Override
+    public void create(OtherCreditAndCharge occ, User creator, Provider provider) {
+
+        occ.setType(OtherCreditAndCharge.class.getAnnotation(DiscriminatorValue.class).value());
+        super.create(occ, creator, provider);
+    }
+	
 	// public void addOCCk(String codeOCCTemplate, Long customerAccountId,
 	// String customerAccountCode, BigDecimal amount, Date dueDate, User user)
 	// throws BusinessException, Exception {

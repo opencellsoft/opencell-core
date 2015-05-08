@@ -21,10 +21,12 @@ import java.util.Date;
 import java.util.List;
 
 import javax.ejb.Stateless;
+import javax.persistence.DiscriminatorValue;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
 import org.meveo.commons.utils.QueryBuilder;
+import org.meveo.model.admin.User;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.CustomerAccount;
@@ -82,4 +84,16 @@ public class AccountOperationService extends PersistenceService<AccountOperation
 		}
 	}
 
+    /**
+     * Set the discriminatorValue value, so it would be available in the list of entities right away
+     */	
+    @Override
+    public void create(AccountOperation aop, User creator, Provider provider) {
+
+        if (aop.getClass().isAnnotationPresent(DiscriminatorValue.class)) {
+            aop.setType(aop.getClass().getAnnotation(DiscriminatorValue.class).value());
+        }
+
+        super.create(aop, creator, provider);
+    }
 }
