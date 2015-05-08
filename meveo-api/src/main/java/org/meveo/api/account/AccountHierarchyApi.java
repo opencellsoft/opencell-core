@@ -1250,12 +1250,8 @@ public class AccountHierarchyApi extends BaseApi {
 																			// check
 																			// if
 																			// status=INACTIVE
-																			if (serviceInstance.getStatus() != InstanceStatusEnum.INACTIVE
+																			if (serviceInstance.getStatus() == InstanceStatusEnum.INACTIVE
 																					&& serviceInstanceDto.getSubscriptionDate() == null) {
-																				log.error("serviceInstance with code={} must be INACTIVE", serviceInstance.getCode());
-																				throw new MeveoApiException("ServiceInstance with code=" + serviceInstance.getCode()
-																						+ " must be INACTIVE.");
-																			} else {
 																				serviceInstance.setSubscriptionDate(serviceInstanceDto.getSubscriptionDate());
 																				serviceInstance.setQuantity(serviceInstanceDto.getQuantity() == null ? BigDecimal.ONE
 																						: serviceInstanceDto.getQuantity());
@@ -1267,6 +1263,8 @@ public class AccountHierarchyApi extends BaseApi {
 																				} catch (BusinessException e) {
 																					throw new MeveoApiException(e.getMessage());
 																				}
+																			} else {
+																				log.info("serviceInstance with code={} must be INACTIVE", serviceInstance.getCode());
 																			}
 																		} else {
 																			ServiceTemplate serviceTemplate = serviceTemplateService.findByCode(serviceInstanceDto.getCode(),

@@ -2,13 +2,10 @@ package org.meveo.model.billing;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
-import org.meveo.model.BaseEntity;
-import org.meveo.model.crm.Provider;
+import org.meveo.model.BusinessEntity;
 
 /**
  * @author Edward P. Legaspi
@@ -16,7 +13,7 @@ import org.meveo.model.crm.Provider;
 @Entity
 @Table(name = "BILLING_INVOICE_CONFIGURATION")
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_INVOICE_CONFIGURATION_SEQ")
-public class InvoiceConfiguration extends BaseEntity {
+public class InvoiceConfiguration extends BusinessEntity {
 
 	private static final long serialVersionUID = -735961368678724497L;
 

@@ -431,7 +431,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 					+ File.separator + "xml" + File.separator
 					+ invoice.getBillingRun().getId());
 			String invoiceXmlFileName = billingRundir + File.separator
-					+ invoice.getInvoiceNumber() + ".xml";
+			+ (!StringUtils.isBlank(invoice.getInvoiceNumber()) ? invoice.getInvoiceNumber() : invoice.getTemporaryInvoiceNumber()) + ".xml";
 			File invoiceXmlFile = new File(invoiceXmlFileName);
 			if (!invoiceXmlFile.exists()) {
 				throw new ConfigurationException(
@@ -465,7 +465,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 			JasperPrint jasperPrint = JasperFillManager.fillReport(
 					jasperReport, parameters, dataSource);
 			String pdfFileName = getNameWoutSequence(pdfDirectory,
-					invoice.getInvoiceDate(), invoice.getInvoiceNumber())
+					invoice.getInvoiceDate(), (!StringUtils.isBlank(invoice.getInvoiceNumber()) ? invoice.getInvoiceNumber() : invoice.getTemporaryInvoiceNumber())) 
 					+ ".pdf";
 			JasperExportManager.exportReportToPdfFile(jasperPrint, pdfFileName);
 			log.info(String.format("PDF file '%s' produced", pdfFileName));
