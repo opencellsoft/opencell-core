@@ -2,8 +2,8 @@
 <databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.2.xsd">
-
-	<changeSet id="ticket684_20150507" author="EdwardLegaspi">
+	
+	<changeSet id="ticket684_20150507-update" author="EdwardLegaspi-AndriusKarpavicius">
 		<insert tableName="billing_invoice_configuration">
 			<column name="id" valueNumeric="1" />
 			<column name="version" valueNumeric="0" />
@@ -15,6 +15,6 @@
 			<column name="display_offers" valueBoolean="true"></column>
 			<column name="display_services" valueBoolean="true"></column>
 		</insert>
-	</changeSet>
+	</changeSet>	
 
 </databaseChangeLog>

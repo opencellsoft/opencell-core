@@ -50,13 +50,29 @@
 			<column name="low_balance_level" type="numeric(23, 12)" />
 		</addColumn>
 	</changeSet>
-
+	
 	<changeSet id="ticket684_20150507" author="EdwardLegaspi">
 		<createTable tableName="billing_invoice_configuration">
 			<column name="id" type="BIGINT">
 				<constraints nullable="false" />
 			</column>
 			<column name="version" type="INT4" />
+			<column name="provider_id" type="BIGINT" />
+			<column name="display_subscriptions" type="BOOL" />
+			<column name="display_services" type="BOOL" />
+			<column name="display_offers" type="BOOL" />
+		</createTable>
+		
+		<createSequence sequenceName="billing_invoice_configuration_seq" startValue="2"/>
+
+		<addForeignKeyConstraint constraintName="provider_invoice_configuration_fk"
+			referencedTableName="crm_provider" baseColumnNames="provider_id"
+			baseTableName="billing_invoice_configuration" referencedColumnNames="id"
+			onDelete="CASCADE" onUpdate="CASCADE" />
+	</changeSet>
+	<changeSet id="ticket684_20150507-update" author="EdwardLegaspi-AndriusKarpavicius">
+		<delete tableName="billing_invoice_configuration"/>
+		<addColumn tableName="billing_invoice_configuration">
 			<column name="disabled" type="BOOL">
 				<constraints nullable="false" />
 			</column>
@@ -70,30 +86,13 @@
 				<constraints nullable="false" />
 			</column>
 			<column name="description" type="VARCHAR(100)" />
-			<column name="provider_id" type="BIGINT" />
-			<column name="display_subscriptions" type="BOOL" />
-			<column name="display_services" type="BOOL" />
-			<column name="display_offers" type="BOOL" />
-		</createTable>
-
-		<addPrimaryKey columnNames="id"
-			constraintName="billing_invoice_configuration_pkey" tableName="billing_invoice_configuration" />
-		<createSequence sequenceName="billing_invoice_configuration_seq"
-			startValue="2" />
-
-		<addForeignKeyConstraint baseColumnNames="creator_id"
-			baseTableName="billing_invoice_configuration" constraintName="fk_invoice_configuration_creator"
-			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
-			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_user" />
-		<addForeignKeyConstraint baseColumnNames="updater_id"
-			baseTableName="billing_invoice_configuration" constraintName="fk_invoice_configuration_updater"
-			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
-			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_user" />
-		<addForeignKeyConstraint constraintName="fk_provider_invoice_configuration"
-			referencedTableName="crm_provider" baseColumnNames="provider_id"
-			baseTableName="billing_invoice_configuration" referencedColumnNames="id"
-			onDelete="CASCADE" onUpdate="CASCADE" />
-	</changeSet>
+		</addColumn>
+		<addPrimaryKey columnNames="id" constraintName="billing_invoice_configuration_pkey" tableName="billing_invoice_configuration" />
+		<addForeignKeyConstraint baseColumnNames="creator_id" baseTableName="billing_invoice_configuration" constraintName="fk_invoice_configuration_creator"
+			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_user" />
+		<addForeignKeyConstraint baseColumnNames="updater_id" baseTableName="billing_invoice_configuration" constraintName="fk_invoice_configuration_updater"
+			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_user" />
+	</changeSet>	
 	<changeSet id="ticket599_20150507" author="Mbarek">
 		<sql>update ar_customer_account set trading_language_id=(select trading_language_id from billing_billing_account  where billing_billing_account.customer_account_id=ar_customer_account.id ORDER BY billing_billing_account.id ASC LIMIT 1)</sql>
 	</changeSet>
