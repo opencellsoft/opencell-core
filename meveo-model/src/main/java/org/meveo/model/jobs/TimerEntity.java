@@ -237,13 +237,7 @@ public class TimerEntity extends BaseEntity implements ICustomFieldEntity {
 	}
 
 	public String getTimerSchedule() {
-		String result = "";
-		try {
-			result = getScheduleExpression().toString();
-		} catch (Exception e) {
-			log.error(e.getMessage());
-		}
-		return result;
+        return String.format("Hour %s Minute %s Second %s Year %s Month %s Day of month %s Day of week %s", hour, minute, second, year, month, dayOfMonth, dayOfWeek);    
 	}
 
 	@Override

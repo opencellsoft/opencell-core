@@ -35,7 +35,9 @@
                 </p:column>
                 <hftl:column label="#{messages['timer.jobName']}" field="jobName" />
                 <hftl:column label="#{messages['job.category']}" field="jobCategoryEnum" />
-                <hftl:column label="#{messages['timer.schedule']}" field="timerSchedule" sort="false" />
+                <p:column headerText="#{messages['timer.schedule']}" >
+                    <h:outputText value="#{entity.hour} #{entity.minute} #{entity.second} #{entity.year} #{entity.month} #{entity.dayOfMonth} #{entity.dayOfWeek}" title="#{entity.timerSchedule}"/>
+                </p:column>
                 <hftl:column label="#{messages['timer.active']}" field="timerInfo.active" sort="false" />
                 <p:column headerText="#{messages['timer.isRunning']}">
                     <h:outputText styleClass="ui-icon ui-icon-circle-check" rendered="#{timerEntityListBean.isTimerRunning(entity)}" />
