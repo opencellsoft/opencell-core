@@ -1,5 +1,6 @@
 package org.meveo.admin.job;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -11,6 +12,8 @@ import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 
+import org.meveo.admin.async.PdfInvoiceAsync;
+import org.meveo.admin.async.SubListCreator;
 import org.meveo.admin.job.logging.JobLoggingInterceptor;
 import org.meveo.interceptor.PerformanceInterceptor;
 import org.meveo.model.admin.User;
@@ -38,10 +41,12 @@ public class PDFInvoiceGenerationJobBean {
 	@Inject
 	private BillingRunService billingRunService;
 
+	@Inject
+	private PdfInvoiceAsync pdfInvoiceAsync;
+
 	@Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public void execute(JobExecutionResultImpl result, String parameter,
-			User currentUser) {
+	public void execute(JobExecutionResultImpl result, String parameter,User currentUser) {
 		List<Invoice> invoices = new ArrayList<Invoice>();
 
 		if (parameter != null && parameter.trim().length() > 0) {
@@ -54,29 +59,33 @@ public class PDFInvoiceGenerationJobBean {
 				result.registerError(e.getMessage());
 			}
 		} else {
-			invoices = invoiceService.getValidatedInvoicesWithNoPdf(null,
-					currentUser.getProvider());
+			invoices = invoiceService.getValidatedInvoicesWithNoPdf(null,currentUser.getProvider());
 		}
 
-		log.info("PDFInvoiceGenerationJob number of invoices to process="
-				+ invoices.size());
+		log.info("PDFInvoiceGenerationJob number of invoices to process="+ invoices.size());
+		try{
+			Long nbRuns = null;//timerEntity.getLongCustomValue("nbRuns").longValue();
+			Long waitingMillis = null;//timerEntity.getLongCustomValue("waitingMillis").longValue();
 
-		for (Invoice invoice : invoices) {
-			try {
-				Map<String, Object> parameters = pDFParametersConstruction
-						.constructParameters(invoice);
-
-				log.info("PDFInvoiceGenerationJob parameters=" + parameters);
-
-				Future<Boolean> isPdfgenerated = pDFFilesOutputProducer
-						.producePdf(parameters, result, currentUser);
-				isPdfgenerated.get();
-			} catch (Exception e) {
-				log.error(e.getMessage());
-				result.registerError(e.getMessage());
-				e.printStackTrace();
+			if(nbRuns == null ){
+				nbRuns = new Long(8);
 			}
+			if(waitingMillis == null ){
+				waitingMillis = new Long(0);
+			}
+
+			SubListCreator subListCreator = new SubListCreator(invoices,nbRuns.intValue());
+
+			while (subListCreator.isHasNext()) {
+				pdfInvoiceAsync.launchAndForget((List<Invoice>) subListCreator.getNextWorkSet(),currentUser, result );
+			}
+
+		} catch (Exception e) {
+			log.error(e.getMessage());
+			result.registerError(e.getMessage());
+			e.printStackTrace();
 		}
+
 	}
 
 }

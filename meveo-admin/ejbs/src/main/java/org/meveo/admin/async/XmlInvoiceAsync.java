@@ -10,7 +10,6 @@ import javax.ejb.Asynchronous;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
-import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.billing.Invoice;
 import org.meveo.service.billing.impl.XMLInvoiceCreator;
 import org.slf4j.Logger;
@@ -36,7 +35,7 @@ public class XmlInvoiceAsync {
 			long startDate = System.currentTimeMillis();
 			try {
 				xmlInvoiceCreator.createXMLInvoice(invoice.getId(), billingRundir);
-			} catch (BusinessException e) {				
+			} catch (Exception e) {				
 				e.printStackTrace();
 			}
 			log.info("Invoice creation delay :" + (System.currentTimeMillis() - startDate) );

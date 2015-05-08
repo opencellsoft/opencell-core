@@ -46,6 +46,7 @@ import org.meveo.model.crm.CustomFieldTypeEnum;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.shared.DateUtils;
+import org.meveo.service.billing.impl.InvoiceService;
 import org.meveo.service.catalog.impl.CatMessagesService;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.slf4j.Logger;
@@ -58,6 +59,9 @@ public class PDFParametersConstruction {
 			.getLogger(PDFParametersConstruction.class);
     @Inject
     private CatMessagesService catMessagesService;
+    
+    @Inject
+    private InvoiceService invoiceService;
     
 	@Inject
 	protected CustomFieldTemplateService customFieldTemplateService;
@@ -74,9 +78,14 @@ public class PDFParametersConstruction {
 			new URL[] { PDFParametersConstruction.class.getClassLoader()
 					.getResource("reports/fonts.jar") });
 
-	@SuppressWarnings("deprecation")
 	public Map<String, Object> constructParameters(Invoice invoice) {
+		return constructParameters(invoice.getId());
+	}
+	
+	@SuppressWarnings("deprecation")
+	public Map<String, Object> constructParameters(Long invoiceId) {
 		try {
+			Invoice invoice = invoiceService.findById(invoiceId);
 			Map<String, Object> parameters = new HashMap<String, Object>();
 			parameters.put(JRParameter.REPORT_CLASS_LOADER, cl);
 

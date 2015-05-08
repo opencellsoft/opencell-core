@@ -32,7 +32,7 @@ public class XMLInvoiceGenerationJobBean {
 
 	@Inject
 	private BillingRunService billingRunService;
-	
+
 	@Inject
 	private InvoiceService invoiceService;
 
@@ -65,25 +65,24 @@ public class XMLInvoiceGenerationJobBean {
 			try {
 				File billingRundir = new File(invoicesDir + File.separator + provider.getCode() + File.separator + "invoices" + File.separator + "xml" + File.separator + billingRun.getId());
 				billingRundir.mkdirs();
-				
-				Long nbRuns = null;//timerEntity.getLongCustomValue("nbRuns").longValue();
-		    	Long waitingMillis = null;//timerEntity.getLongCustomValue("waitingMillis").longValue();
-				
-		    	if(nbRuns == null ){
-		    		nbRuns = new Long(8);
-		    	}
-		    	if(waitingMillis == null ){
-		    		waitingMillis = new Long(0);
-		    	}
 
-		    	SubListCreator subListCreator = new SubListCreator(invoiceService.getInvoices(billingRun),nbRuns.intValue());
-		    	
-		    	while (subListCreator.isHasNext()) {
-		    		xmlInvoiceAsync.launchAndForget((List<Invoice>) subListCreator.getNextWorkSet(), billingRundir);
+				Long nbRuns = null;//timerEntity.getLongCustomValue("nbRuns").longValue();
+				Long waitingMillis = null;//timerEntity.getLongCustomValue("waitingMillis").longValue();
+
+				if(nbRuns == null ){
+					nbRuns = new Long(8);
 				}
-				
-				
-		    	updateBillingRun(billingRun.getId(), currentUser);
+				if(waitingMillis == null ){
+					waitingMillis = new Long(0);
+				}
+
+				SubListCreator subListCreator = new SubListCreator(invoiceService.getInvoices(billingRun),nbRuns.intValue());
+
+				while (subListCreator.isHasNext()) {
+					xmlInvoiceAsync.launchAndForget((List<Invoice>) subListCreator.getNextWorkSet(), billingRundir);
+				}
+
+				updateBillingRun(billingRun.getId(), currentUser);
 			} catch (Exception e) {
 				log.error(e.getMessage());
 				result.registerError(e.getMessage());
@@ -91,14 +90,14 @@ public class XMLInvoiceGenerationJobBean {
 			}
 		}
 	}
-	
+
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public void updateBillingRun(Long billingRunId ,User currentUser) {
 		BillingRun billingRun = billingRunService.findById(billingRunId);
 		billingRun.setXmlInvoiceGenerated(true);
 		billingRun.updateAudit(currentUser);
 		billingRunService.update(billingRun);
-		
+
 	}
-	
+
 }
