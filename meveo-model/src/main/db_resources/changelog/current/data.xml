@@ -7,6 +7,9 @@
 		<insert tableName="billing_invoice_configuration">
 			<column name="id" valueNumeric="1" />
 			<column name="version" valueNumeric="0" />
+			<column name="disabled" valueBoolean="false"></column>
+			<column name="created" valueDate="2015-05-07 00:00:00.000"></column>
+			<column name="code" value="DEMO"></column>
 			<column name="provider_id" valueNumeric="1"></column>
 			<column name="display_subscriptions" valueBoolean="true"></column>
 			<column name="display_offers" valueBoolean="true"></column>
