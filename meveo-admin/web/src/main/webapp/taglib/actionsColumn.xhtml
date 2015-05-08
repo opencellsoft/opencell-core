@@ -141,9 +141,6 @@
 		
 		<script type="text/javascript">
 			//<![CDATA[
-		           function doDeleteAction(){
-					doDelete();
-				}
 				function handleDeleteComplete(xhr, status, args) {
 					var result = args.result;
 					if(typeof(result)!="undefined" && !result){
@@ -163,7 +160,7 @@
 			severity="alert" widgetVar="confirmDeleteWidget" appendTo="@(body)">
 			<p:panel styleClass="confirm-dialog-content">
 				<p:commandButton id="deleteOk" value="#{messages['commons.yes']}"
-					oncomplete="doDeleteAction()" onclick="PF('confirmDeleteWidget').hide()"/>
+					oncomplete="doDelete()" onclick="PF('confirmDeleteWidget').hide()"/>
 				<p:commandButton id="deleteKo" value="#{messages['commons.no']}"
 					onclick="PF('confirmDeleteWidget').hide()" type="button" />
 			</p:panel>
