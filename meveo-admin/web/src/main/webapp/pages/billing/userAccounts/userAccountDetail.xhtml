@@ -197,8 +197,9 @@
 
 							<c:forEach items="#{userAccountBean.entity.prepaidWallets}"
 								var="wallet" varStatus="p">
+								<c:set var="pTabStatus" value="${3+p}"/>
 								<p:tab title="Wallet #{wallet.key}"
-									id="tab#{p+3}">
+									id="tab#{pTabstatus}">
 									<p:panel id="panelWallet_#{wallet.key}"
 										styleClass="form-panel-fields">
                                             <hftl:decorateFormField label="#{messages['chargeInstance.code']}">
