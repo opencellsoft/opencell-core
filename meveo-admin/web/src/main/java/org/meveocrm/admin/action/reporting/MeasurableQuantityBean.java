@@ -18,7 +18,6 @@ package org.meveocrm.admin.action.reporting;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
@@ -31,7 +30,6 @@ import javax.inject.Named;
 
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
-import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.RejectedImportException;
 import org.meveo.commons.utils.CsvBuilder;
 import org.meveo.commons.utils.CsvReader;
@@ -135,20 +133,17 @@ public class MeasurableQuantityBean extends BaseBean<MeasurableQuantity> {
 	}
 
 
-public void handleFileUpload(FileUploadEvent event) throws Exception {
-	try {
-		file = event.getFile();
-	    log.info("handleFileUpload " + file);
-	    upload();
-	} catch (BusinessException e) {
-		log.error(e.getMessage(),e);
-		messages.error(e.getMessage());
-	} catch (IOException e) {
-		log.error(e.getMessage(),e);
-		messages.error(e.getMessage());
-	}
-    
-}
+    public void handleFileUpload(FileUploadEvent event) throws Exception {
+        try {
+            file = event.getFile();
+            log.info("File uploaded" + file);
+            upload();
+            messages.info(new BundleKey("messages", "import.csv.successful"));
+        } catch (Exception e) {
+            log.error("Failed to handle uploaded file {}", event.getFile().getFileName(), e);
+            messages.error(new BundleKey("messages", "import.csv.failed"), e.getMessage());
+        }
+    }
 
 	public void upload() throws Exception {
 		if (file != null) {
