@@ -20,6 +20,7 @@ import org.meveo.model.billing.BillingRun;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.jobs.JobExecutionResultImpl;
+import org.meveo.model.jobs.TimerEntity;
 import org.meveo.service.billing.impl.BillingRunService;
 import org.meveo.service.billing.impl.InvoiceService;
 import org.slf4j.Logger;
@@ -41,7 +42,7 @@ public class XMLInvoiceGenerationJobBean {
 
 	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
 	@Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
-	public void execute(JobExecutionResultImpl result, String parameter, User currentUser) {
+	public void execute(JobExecutionResultImpl result, String parameter, User currentUser,TimerEntity timerEntity) {
 		Provider provider = currentUser.getProvider();
 		List<BillingRun> billingRuns = new ArrayList<BillingRun>();
 
@@ -66,11 +67,11 @@ public class XMLInvoiceGenerationJobBean {
 				File billingRundir = new File(invoicesDir + File.separator + provider.getCode() + File.separator + "invoices" + File.separator + "xml" + File.separator + billingRun.getId());
 				billingRundir.mkdirs();
 
-				Long nbRuns = null;//timerEntity.getLongCustomValue("nbRuns").longValue();
-				Long waitingMillis = null;//timerEntity.getLongCustomValue("waitingMillis").longValue();
+				Long nbRuns = timerEntity.getLongCustomValue("nbRuns").longValue();
+				Long waitingMillis = timerEntity.getLongCustomValue("waitingMillis").longValue();
 
 				if(nbRuns == null ){
-					nbRuns = new Long(8);
+					nbRuns = new Long(1);
 				}
 				if(waitingMillis == null ){
 					waitingMillis = new Long(0);

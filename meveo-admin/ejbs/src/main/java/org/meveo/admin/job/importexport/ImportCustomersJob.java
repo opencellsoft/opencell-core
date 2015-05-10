@@ -22,13 +22,15 @@ public class ImportCustomersJob extends Job {
     @Override
     protected void execute(JobExecutionResultImpl result, TimerEntity timerEntity, User currentUser) throws BusinessException {
     	
-    	Long nbRuns = null;//timerEntity.getLongCustomValue("nbRuns").longValue();
-    	Long waitingMillis = null;//timerEntity.getLongCustomValue("waitingMillis").longValue();
+    	Long nbRuns = timerEntity.getLongCustomValue("nbRuns").longValue();
+    	Long waitingMillis = timerEntity.getLongCustomValue("waitingMillis").longValue();
     	
-    	if(nbRuns == null )
-    		nbRuns = new Long(5);
-    	if(waitingMillis == null )
-    		waitingMillis = new Long(500);
+    	if(nbRuns == null ){
+    		nbRuns = new Long(1);
+    	}
+    	if(waitingMillis == null ){
+    		waitingMillis = new Long(0);
+    	}
     	
     	for(int i=0; i< nbRuns.intValue();i++){
     		importCustomersAsync.launchAndForget(result, currentUser);

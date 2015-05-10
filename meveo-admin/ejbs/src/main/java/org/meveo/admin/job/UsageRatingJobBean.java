@@ -17,6 +17,7 @@ import org.meveo.event.qualifier.Rejected;
 import org.meveo.interceptor.PerformanceInterceptor;
 import org.meveo.model.admin.User;
 import org.meveo.model.jobs.JobExecutionResultImpl;
+import org.meveo.model.jobs.TimerEntity;
 import org.meveo.service.billing.impl.EdrService;
 import org.slf4j.Logger;
 
@@ -39,17 +40,17 @@ public class UsageRatingJobBean {
 
 	@Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
 	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
-	public void execute(JobExecutionResultImpl result, User currentUser) {
+	public void execute(JobExecutionResultImpl result, User currentUser,TimerEntity timerEntity) {
 		try {
 			
 			List<Long> ids = edrService.getEDRidsToRate(currentUser.getProvider());		
 			log.debug("edr to rate:" + ids.size());
 			
-			Long nbRuns = null;//timerEntity.getLongCustomValue("nbRuns").longValue();
-	    	Long waitingMillis = null;//timerEntity.getLongCustomValue("waitingMillis").longValue();
+			Long nbRuns = timerEntity.getLongCustomValue("nbRuns").longValue();
+	    	Long waitingMillis = timerEntity.getLongCustomValue("waitingMillis").longValue();
 			
 	    	if(nbRuns == null ){
-	    		nbRuns = new Long(8);
+	    		nbRuns = new Long(1);
 	    	}
 	    	if(waitingMillis == null ){
 	    		waitingMillis = new Long(0);

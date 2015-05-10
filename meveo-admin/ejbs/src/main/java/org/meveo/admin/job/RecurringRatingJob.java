@@ -30,7 +30,7 @@ public class RecurringRatingJob extends Job {
     
     @Override
     protected void execute(JobExecutionResultImpl result, TimerEntity timerEntity, User currentUser) throws BusinessException {
-        recurringRatingJobBean.execute(result, currentUser);
+        recurringRatingJobBean.execute(result, currentUser,timerEntity);
     }
 
     @Override

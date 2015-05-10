@@ -20,7 +20,7 @@ public class PDFInvoiceGenerationJob extends Job {
 
     @Override
     protected void execute(JobExecutionResultImpl result, TimerEntity timerEntity, User currentUser) throws BusinessException {
-        pdfInvoiceGenerationJobBean.execute(result, timerEntity.getTimerInfo().getParametres(), currentUser);
+        pdfInvoiceGenerationJobBean.execute(result, timerEntity.getTimerInfo().getParametres(), currentUser, timerEntity);
     }
 
     @Override

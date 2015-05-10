@@ -20,7 +20,7 @@ public class XMLInvoiceGenerationJob extends Job {
 
     @Override
     protected void execute(JobExecutionResultImpl result, TimerEntity timerEntity, User currentUser) throws BusinessException {
-        xmlInvoiceGenerationJobBean.execute(result, timerEntity.getTimerInfo().getParametres(), currentUser);
+        xmlInvoiceGenerationJobBean.execute(result, timerEntity.getTimerInfo().getParametres(), currentUser, timerEntity);
     }
 
     @Override

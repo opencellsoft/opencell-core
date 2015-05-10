@@ -28,20 +28,23 @@ public class SubListCreator {
 		if(nbRuns < 1){
 			throw new Exception("nbRuns should not be < 1 ");
 		}
-		if(theList == null || theList.isEmpty()){
-			throw new Exception("The list should not be empty");
+		if(theList == null ){
+			throw new Exception("The list should not be null");
 		}
 		this.theBigList = theList;
 		this.nbThreads = nbRuns;
 		
 		listSize = theBigList.size();
-		if(nbThreads > listSize) {
+		if(nbThreads > listSize && listSize >0) {
 			nbThreads = listSize;
 		}
 		blocToRun = listSize/nbThreads;
 		modulo = listSize % nbThreads;
 		from=0;
 		to=blocToRun;
+		if(from == listSize) {
+			this.hasNext=false;
+		}
 	}
 //TODO repartir  aussi le modulo equitablement possible
 	public List<?> getNextWorkSet(){

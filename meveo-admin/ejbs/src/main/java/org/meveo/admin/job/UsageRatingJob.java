@@ -30,7 +30,7 @@ public class UsageRatingJob extends Job {
 
     @Override
     protected void execute(JobExecutionResultImpl result, TimerEntity timerEntity, User currentUser) throws BusinessException {
-        usageRatingJobBean.execute(result, currentUser);
+        usageRatingJobBean.execute(result, currentUser,timerEntity);
     }
 
     @Override
