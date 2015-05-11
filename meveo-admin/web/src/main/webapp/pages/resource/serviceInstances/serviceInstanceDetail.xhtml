@@ -33,7 +33,8 @@
 			column1Label="#{messages['serviceTemplate.code']}" column1="code"
 			column2Label="#{messages['serviceTemplate.description']}"
 			column2="description"
-			selection="#{serviceInstanceDetail.entity.serviceTemplate}">
+			selection="#{serviceInstanceBean.entity.serviceTemplate}"
+            updateField=":formPanel:formId:serviceSelectedId">
 		</hftl:entityPopup>
 
 		<hftl:entityPopup id="subscriptionPopup"
@@ -46,16 +47,17 @@
 			column1Label="#{messages['subscription.code']}" column1="code"
 			column2Label="#{messages['subscription.description']}"
 			column2="description"
-			selection="#{serviceInstanceDetail.entity.subscription}">
+			selection="#{serviceInstanceBean.entity.subscription}"
+            updateField=":formPanel:formId:subscriptionSelectedId">
 		</hftl:entityPopup>
 
-		<hf:formPanel label="#{messages['serviceInstance.panel']}"
+		<hf:formPanel label="#{messages['serviceInstance.panel']}" id="formPanel"
 			backingBean="#{serviceInstanceBean}" columns="2" objectIdParamName="serviceInstanceId" >
 
 			<hf:formField id="serviceSelectedId"
 				label="#{messages['serviceInstance.code']}" field="serviceTemplate"
 				valueLabelField="code" required="true" popup="true"
-				popupId="serviceTemplatePopup" />
+				popupId="serviceTemplatePopup" allowEdit="false"/>
 
 			<hf:formField id="subscriptionSelectedId"
 				label="#{messages['serviceInstance.subscription']}"
@@ -66,17 +68,17 @@
 				field="description" size="40" maxlength="50"
 				showOnlyOnConsult="true" />
 			<hf:formField label="#{messages['serviceInstance.status']}"
-				field="status" show="#{!serviceInstanceBean.edit}" />
+				field="status" rendered="#{!serviceInstanceBean.edit}" />
 			<hf:formField label="#{messages['serviceInstance.statusDate']}"
-				field="statusDate" show="#{!serviceInstanceBean.edit}" />
+				field="statusDate" rendered="#{!serviceInstanceBean.edit}" />
 			<hf:formField label="#{messages['serviceInstance.subscriptionDate']}"
 				field="subscriptionDate"
-				edit="#{serviceInstanceBean.entity.status eq 'INACTIVE'}" />
+				allowEdit="#{serviceInstanceBean.entity.status eq 'INACTIVE'}" />
 			<hf:formField label="#{messages['serviceInstance.endAgrementDate']}"
 				field="endAgrementDate" />
 			<hf:formField
 				label="#{messages[serviceInstanceBean.entity.status=='SUSPENDED'?'serviceInstance.suspensionDate':'serviceInstance.terminationDate']}"
-				field="terminationDate" show="#{!serviceInstanceBean.edit}" />
+				field="terminationDate" rendered="#{!serviceInstanceBean.edit}" />
 			<hf:formField label="#{messages['serviceInstance.quantity']}"
 				field="quantity" showOnlyOnNew="true" />
 			<hf:formField
