@@ -16,7 +16,9 @@
 			<column name="display_services" valueBoolean="true"></column>
 		</insert>
 	</changeSet>  
-	<changeSet author="anasseh" id="rebuild-4.0.3-data-timerDEMO_more">
+	<changeSet author="anassehAndriusKarpavicius" id="rebuild-4.0.3-data-timerDEMO_more3">
+		<sql>delete from crm_custom_field_inst where MEVEO_TIMER_ID in (9,10)</sql>
+		<sql>delete from meveo_timer where id in(9,10)</sql>
 		<insert tableName="meveo_timer">
 			<column name="id" valueNumeric="9" />
 			<column name="version" valueNumeric="0" />
