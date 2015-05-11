@@ -18,53 +18,52 @@
 		<hf:formPanel formId="form3" edit="false"
 			label="#{messages['postInvoicingReport.title']}"
 			backingBean="#{billingRunBean}" showFormButtons="false">
-
 					<hf:formField
 						label="#{messages['postInvoicingReport.globalAmountHT']}"
-						field="postInvoicingReports" valueLabelField="globalAmount"
+						field="postInvoicingReports" childField="globalAmount"
 						popup="false" />
 					<hf:formField
 						label="#{messages['postInvoicingReport.invoicesNumber']}"
-						field="postInvoicingReports" valueLabelField="invoicesNumber"
+						field="postInvoicingReports" childField="invoicesNumber"
 						popup="false" />
 					<hf:formField
 						label="#{messages['postInvoicingReport.positiveInvoicesNumber']}"
-						field="postInvoicingReports" valueLabelField="positiveInvoicesNumber"
+						field="postInvoicingReports" childField="positiveInvoicesNumber"
 						popup="false" />
 					<hf:formField
 						label="#{messages['postInvoicingReport.positiveInvoicesAmountHT']}"
-						field="postInvoicingReports" valueLabelField="positiveInvoicesAmountHT"
+						field="postInvoicingReports" childField="positiveInvoicesAmountHT"
 						popup="false" />
 					<hf:formField
 						label="#{messages['postInvoicingReport.positiveInvoicesAmount']}"
-						field="postInvoicingReports" valueLabelField="positiveInvoicesAmount"
+						field="postInvoicingReports" childField="positiveInvoicesAmount"
 						popup="false" />
 
 					<hf:formField id="emptyInvoicesNumber"
 						label="#{messages['postInvoicingReport.emptyInvoicesNumber']}"
-						field="postInvoicingReports" valueLabelField="emptyInvoicesNumber"
+						field="postInvoicingReports" childField="emptyInvoicesNumber"
 						popup="false" />
 
 
 					<hf:formField
 						label="#{messages['postInvoicingReport.positiveInvoicesTaxAmount']}"
 						field="postInvoicingReports"
-						valueLabelField="positiveInvoicesTaxAmount" popup="false" />
+						childField="positiveInvoicesTaxAmount" popup="false" />
 					<hf:formField
 						label="#{messages['postInvoicingReport.negativeInvoicesAmountHT']}"
-						field="postInvoicingReports" valueLabelField="negativeInvoicesAmountHT"
+						field="postInvoicingReports" childField="negativeInvoicesAmountHT"
 						popup="false" />
 					<hf:formField
 						label="#{messages['postInvoicingReport.negativeInvoicesTaxAmount']}"
 						field="postInvoicingReports"
-						valueLabelField="negativeInvoicesTaxAmount" popup="false" />
+						childField="negativeInvoicesTaxAmount" popup="false" />
 					<hf:formField id="positiveInvoicesAmount"
 						label="#{messages['postInvoicingReport.negativeInvoicesAmount']}"
-						field="postInvoicingReports" valueLabelField="negativeInvoicesAmount"
+						field="postInvoicingReports" childField="negativeInvoicesAmount"
 						popup="false" />
 					<hf:formField id="electronicInvoicesNumber"
 						label="#{messages['postInvoicingReport.electronicInvoicesNumber']}"
-						field="postInvoicingReports" valueLabelField="electronicInvoicesNumber"
+						field="postInvoicingReports" childField="electronicInvoicesNumber"
 						popup="false" />
 
 
@@ -72,39 +71,39 @@
 			<b>#{messages['postInvoicingReport.invoicesNumberPerPaymentMode']}</b>
 
 				<hf:formField label="#{messages['paymentMethod.check']}"
-					field="postInvoicingReports" valueLabelField="checkInvoicesNumber"
+					field="postInvoicingReports" childField="checkInvoicesNumber"
 					popup="false" />
 
 				<hf:formField label="#{messages['paymentMethod.directDebit']}"
-					field="postInvoicingReports" valueLabelField="directDebitInvoicesNumber"
+					field="postInvoicingReports" childField="directDebitInvoicesNumber"
 					popup="false" />
 
 				<hf:formField label="#{messages['paymentMethod.tip']}"
-					field="postInvoicingReports" valueLabelField="tipInvoicesNumber"
+					field="postInvoicingReports" childField="tipInvoicesNumber"
 					popup="false" />
 
 				<hf:formField
 					label="#{messages['paymentMethod.wiretransfer']}"
 					field="postInvoicingReports"
-					valueLabelField="wiretransferInvoicesNumber" popup="false" />
+					childField="wiretransferInvoicesNumber" popup="false" />
 
 
 			<b>#{messages['postInvoicingReport.amoutHtPerPaymentMode']}</b>
 
 				<hf:formField label="#{messages['paymentMethod.check']}"
-					field="postInvoicingReports" valueLabelField="checkAmuontHT"
+					field="postInvoicingReports" childField="checkAmuontHT"
 					popup="false" />
 
 				<hf:formField label="#{messages['paymentMethod.directDebit']}"
-					field="postInvoicingReports" valueLabelField="directDebitAmuontHT"
+					field="postInvoicingReports" childField="directDebitAmuontHT"
 					popup="false" />
 
 				<hf:formField label="#{messages['paymentMethod.tip']}"
-					field="postInvoicingReports" valueLabelField="tipAmuontHT" popup="false" />
+					field="postInvoicingReports" childField="tipAmuontHT" popup="false" />
 
 				<hf:formField
 					label="#{messages['paymentMethod.wiretransfer']}"
-					field="postInvoicingReports" valueLabelField="wiretransferAmuontHT"
+					field="postInvoicingReports" childField="wiretransferAmuontHT"
 					popup="false" />
 
 
@@ -112,18 +111,18 @@
 
 
 				<hf:formField label="#{messages['paymentMethod.check']}"
-					field="postInvoicingReports" valueLabelField="checkAmuont" popup="false" />
+					field="postInvoicingReports" childField="checkAmuont" popup="false" />
 
 				<hf:formField label="#{messages['paymentMethod.directDebit']}"
-					field="postInvoicingReports" valueLabelField="directDebitAmuont"
+					field="postInvoicingReports" childField="directDebitAmuont"
 					popup="false" />
 
 				<hf:formField label="#{messages['paymentMethod.tip']}"
-					field="postInvoicingReports" valueLabelField="tipAmuont" popup="false" />
+					field="postInvoicingReports" childField="tipAmuont" popup="false" />
 
 				<hf:formField
 					label="#{messages['paymentMethod.wiretransfer']}"
-					field="postInvoicingReports" valueLabelField="wiretransferAmuont"
+					field="postInvoicingReports" childField="wiretransferAmuont"
 					popup="false" />
 
 
