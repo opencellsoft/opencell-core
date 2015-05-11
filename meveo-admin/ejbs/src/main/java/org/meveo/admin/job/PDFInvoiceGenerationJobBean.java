@@ -56,20 +56,24 @@ public class PDFInvoiceGenerationJobBean {
 
 		log.info("PDFInvoiceGenerationJob number of invoices to process="+ invoices.size());
 		try{
-			Long nbRuns = timerEntity.getLongCustomValue("nbRuns").longValue();
-			Long waitingMillis = timerEntity.getLongCustomValue("waitingMillis").longValue();
-
-			if(nbRuns == null ){
-				nbRuns = new Long(1);
-			}
-			if(waitingMillis == null ){
-				waitingMillis = new Long(0);
+			Long nbRuns = new Long(1);		
+			Long waitingMillis = new Long(0);
+			try{
+				nbRuns = timerEntity.getLongCustomValue("PDFInvoiceGenerationJob_nbRuns").longValue();  			
+				waitingMillis = timerEntity.getLongCustomValue("PDFInvoiceGenerationJob_waitingMillis").longValue();
+			}catch(Exception e){
+				log.warn("Cant get customFields for "+timerEntity.getJobName());
 			}
 
 			SubListCreator subListCreator = new SubListCreator(invoices,nbRuns.intValue());
 
 			while (subListCreator.isHasNext()) {
 				pdfInvoiceAsync.launchAndForget((List<Invoice>) subListCreator.getNextWorkSet(),currentUser, result );
+				try {
+					Thread.sleep(waitingMillis.longValue());
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
 			}
 
 		} catch (Exception e) {

@@ -22,6 +22,7 @@ import org.meveo.model.billing.BillingRun;
 import org.meveo.model.billing.BillingRunStatusEnum;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.jobs.JobExecutionResultImpl;
+import org.meveo.model.jobs.TimerEntity;
 import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.billing.impl.BillingRunService;
 import org.slf4j.Logger;
@@ -37,13 +38,13 @@ public class InvoicingJobBean {
 
 	@Inject
 	private BillingAccountService billingAccountService;
-	
+
 	@Inject
 	private InvoicingAsync invoicingAsync;
 
 	@Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public void execute(JobExecutionResultImpl result, User currentUser) {
+	public void execute(JobExecutionResultImpl result, User currentUser,TimerEntity timerEntity) {
 		try {
 			try {
 				Provider provider = currentUser.getProvider();
@@ -63,27 +64,31 @@ public class InvoicingJobBean {
 								if (billingAccounts != null && billingAccounts.size() > 0) {
 									int billableBA = 0;
 
-									Long nbRuns = null;//timerEntity.getLongCustomValue("nbRuns").longValue();
-							    	Long waitingMillis = null;//timerEntity.getLongCustomValue("waitingMillis").longValue();
-									
-							    	if(nbRuns == null ){
-							    		nbRuns = new Long(8);
-							    	}
-							    	if(waitingMillis == null ){
-							    		waitingMillis = new Long(0);
-							    	}
+									Long nbRuns = new Long(1);		
+									Long waitingMillis = new Long(0);
+									try{
+										nbRuns = timerEntity.getLongCustomValue("InvoicingJob_nbRuns").longValue();  			
+										waitingMillis = timerEntity.getLongCustomValue("InvoicingJob_waitingMillis").longValue();
+									}catch(Exception e){
+										log.warn("Cant get customFields for "+timerEntity.getJobName());
+									}
 
-							    	SubListCreator subListCreator = new SubListCreator(billingAccounts,nbRuns.intValue());
-							    	List<Future<Integer>> asyncReturns = new ArrayList<Future<Integer>>();
+									SubListCreator subListCreator = new SubListCreator(billingAccounts,nbRuns.intValue());
+									List<Future<Integer>> asyncReturns = new ArrayList<Future<Integer>>();
 									while (subListCreator.isHasNext()) {
 										Future<Integer> count = invoicingAsync.launchAndForget((List<BillingAccount>) subListCreator.getNextWorkSet(), billingRun, currentUser);
 										asyncReturns.add(count);
+										try {
+											Thread.sleep(waitingMillis.longValue());
+										} catch (InterruptedException e) {
+											e.printStackTrace();
+										} 
 									}
-									
+
 									for(Future<Integer> futureItsNow : asyncReturns){
 										billableBA+= futureItsNow.get().intValue();	
 									}
-									
+
 									log.info("Total billableBA:"+billableBA);
 
 									billingRun.setBillingAccountNumber(billingAccounts.size());

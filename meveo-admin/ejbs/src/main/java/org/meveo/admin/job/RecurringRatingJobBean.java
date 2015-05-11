@@ -54,14 +54,16 @@ public class RecurringRatingJobBean implements Serializable {
 			List<Long> ids = recurringChargeInstanceService.findIdsByStatus(InstanceStatusEnum.ACTIVE, maxDate);
 			int inputSize =  ids.size();
 			log.info("charges to rate={}", inputSize);
-			Long nbRuns = timerEntity.getLongCustomValue("nbRuns").longValue();
-	    	Long waitingMillis = timerEntity.getLongCustomValue("waitingMillis").longValue();
-	    	if(nbRuns == null ){
-	    		nbRuns = new Long(1);
-	    	}
-	    	if(waitingMillis == null ){
-	    		waitingMillis = new Long(0);
-	    	}
+			
+			Long nbRuns = new Long(1);		
+			Long waitingMillis = new Long(0);
+			try{
+				nbRuns = timerEntity.getLongCustomValue("RecurringRatingJob_nbRuns").longValue();  			
+				waitingMillis = timerEntity.getLongCustomValue("RecurringRatingJob_waitingMillis").longValue();
+			}catch(Exception e){
+				log.warn("Cant get customFields for "+timerEntity.getJobName());
+			}
+
 	    	SubListCreator subListCreator = new SubListCreator(ids,nbRuns.intValue());
 			while (subListCreator.isHasNext()) {				
 				recurringChargeAsync.launchAndForget((List<Long>) subListCreator.getNextWorkSet(),result, currentUser,maxDate);	

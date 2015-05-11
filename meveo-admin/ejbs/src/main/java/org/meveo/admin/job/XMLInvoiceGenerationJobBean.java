@@ -67,20 +67,25 @@ public class XMLInvoiceGenerationJobBean {
 				File billingRundir = new File(invoicesDir + File.separator + provider.getCode() + File.separator + "invoices" + File.separator + "xml" + File.separator + billingRun.getId());
 				billingRundir.mkdirs();
 
-				Long nbRuns = timerEntity.getLongCustomValue("nbRuns").longValue();
-				Long waitingMillis = timerEntity.getLongCustomValue("waitingMillis").longValue();
+				Long nbRuns = new Long(1);		
+				Long waitingMillis = new Long(0);
+				try{
+					nbRuns = timerEntity.getLongCustomValue("XMLInvoiceGenerationJob_nbRuns").longValue();  			
+					waitingMillis = timerEntity.getLongCustomValue("XMLInvoiceGenerationJob_waitingMillis").longValue();
+				}catch(Exception e){
+					log.warn("Cant get customFields for "+timerEntity.getJobName());
+				}
 
-				if(nbRuns == null ){
-					nbRuns = new Long(1);
-				}
-				if(waitingMillis == null ){
-					waitingMillis = new Long(0);
-				}
 
 				SubListCreator subListCreator = new SubListCreator(invoiceService.getInvoices(billingRun),nbRuns.intValue());
 
 				while (subListCreator.isHasNext()) {
 					xmlInvoiceAsync.launchAndForget((List<Invoice>) subListCreator.getNextWorkSet(), billingRundir);
+					try {
+						Thread.sleep(waitingMillis.longValue());
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					} 
 				}
 
 				updateBillingRun(billingRun.getId(), currentUser);
