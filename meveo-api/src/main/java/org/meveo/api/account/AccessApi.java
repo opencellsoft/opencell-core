@@ -6,6 +6,7 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 
 import org.meveo.api.BaseApi;
+import org.meveo.api.MeveoApiErrorCode;
 import org.meveo.api.dto.account.AccessDto;
 import org.meveo.api.dto.account.AccessesDto;
 import org.meveo.api.exception.EntityDoesNotExistsException;
@@ -45,6 +46,10 @@ public class AccessApi extends BaseApi {
 			access.setEndDate(postData.getEndDate());
 			access.setAccessUserId(postData.getCode());
 			access.setSubscription(subscription);
+
+			if (accessService.isDuplicate(access)) {
+				throw new MeveoApiException(MeveoApiErrorCode.DUPLICATE_ACCESS, "Duplicate subscription / access point pair.");
+			}
 
 			accessService.create(access, currentUser, provider);
 		} else {

@@ -21,6 +21,7 @@ public class MeveoApiErrorCode {
 	 */
 	public static String INVALID_PARAMETER = "INVALID_PARAMETER";
 	public static String INVALID_ENUM_VALUE = "INVALID_ENUM_VALUE";
+	public static String DUPLICATE_ACCESS = "DUPLICATE_ACCESS";
 
 	// Balance error
 	public static String INSUFFICIENT_BALANCE = "INSUFFICIENT_BALANCE";
