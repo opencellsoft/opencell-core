@@ -144,14 +144,14 @@
 
 		<hftl:dataList label="#{messages['pricePlanMatrix.title']}"
 			editable="true" editMode="cell" scrollable="#{pricePlanMatrixListBean.lazyDataModel.size==0?'true':'false'}"
-			exportButton="false" exportXlsxButton="true"
-			backingBean="#{pricePlanMatrixListBean}" sortBy="code">
+			exportButton="false" exportXlsxButton="true" checkMany="false"
+			backingBean="#{pricePlanMatrixListBean}">
 			<f:facet name="header">
 				<p:commandButton id="toggler" type="button" style="float:right" disabled="#{backingBean.lazyDataModel.size==0?'true':'false'}"
 					icon="ui-icon-calculator"/>
 				<p:columnToggler datasource="datatable_results" trigger="toggler" />
 			</f:facet>
-			<p:column exportable="true" sortBy="code" toggleable="false">
+			<p:column exportable="true" toggleable="false">
 				<f:facet name="header">
 					<h:outputText value="#{messages['BusinessEntity.code']}" />
 				</f:facet>
@@ -165,7 +165,7 @@
 					</f:facet>
 				</p:cellEditor>
 			</p:column>
-			<p:column exportable="true" sortBy="eventCode" toggleable="false">
+			<p:column exportable="true" toggleable="false">
 				<f:facet name="header">
 					<h:outputText value="#{messages['pricePlanMatrix.eventCode']}" />
 				</f:facet>
@@ -183,7 +183,7 @@
 					</f:facet>
 				</p:cellEditor>
 			</p:column>
-			<p:column exportable="true" sortBy="description" toggleable="false">
+			<p:column exportable="true" toggleable="false">
 				<f:facet name="header">
 					<h:outputText value="#{messages['BusinessEntity.description']}" />
 				</f:facet>
@@ -197,8 +197,7 @@
 					</f:facet>
 				</p:cellEditor>
 			</p:column>
-			<p:column exportable="true" sortBy="offerTemplate.code"
-				toggleable="false">
+			<p:column exportable="true" >
 				<f:facet name="header">
 					<h:outputText value="#{messages['pricePlanMatrix.offerCode']}" />
 				</f:facet>
@@ -217,7 +216,7 @@
 				</p:cellEditor>
 			</p:column>
 
-			<p:column exportable="true" sortBy="seller.code" toggleable="false">
+			<p:column exportable="true">
 				<f:facet name="header">
 					<h:outputText value="#{messages['seller.title']}" />
 				</f:facet>
@@ -235,7 +234,7 @@
 					</f:facet>
 				</p:cellEditor>
 			</p:column>
-			<p:column exportable="true" sortBy="amountWithTax" toggleable="false"
+			<p:column exportable="true" toggleable="#{pricePlanMatrixBean.entity.provider.entreprise}"
 				rendered="#{!pricePlanMatrixBean.entity.provider.entreprise}">
 				<f:facet name="header">
 					<h:outputText value="#{messages['pricePlanMatrix.amountWithTax']}" />
@@ -251,8 +250,7 @@
 					</f:facet>
 				</p:cellEditor>
 			</p:column>
-			<p:column exportable="true" sortBy="amountWithoutTax"
-				toggleable="false">
+			<p:column exportable="true" toggleable="#{!pricePlanMatrixBean.entity.provider.entreprise}">
 				<f:facet name="header">
 					<h:outputText
 						value="#{messages['pricePlanMatrix.amountWithoutTax']}" />
@@ -268,7 +266,7 @@
 					</f:facet>
 				</p:cellEditor>
 			</p:column>
-			<p:column exportable="true" sortBy="startRatingDate" styleClass="dtcolumn-hidden">
+			<p:column exportable="true" styleClass="dtcolumn-hidden">
 				<f:facet name="header">
 					<h:outputText value="#{messages['pricePlanMatrix.ratingDate']}" />
 				</f:facet>
@@ -473,15 +471,15 @@
 				</f:facet>
 				<p:cellEditor>
 					<f:facet name="output">
-						<h:outputText value="#{entity.validityCalendar}">
-							<f:convertDateTime
-								pattern="#{paramBean.getProperty('meveo.dateFormat','dd/MM/yyyy')}" />
-						</h:outputText>
+						<h:outputText value="#{entity.validityCalendar.code}"/>
 					</f:facet>
 					<f:facet name="input">
-						<p:calendar value="#{entity.validityCalendar}"
-							pattern="#{paramBean.getProperty('meveo.dateFormat','dd/MM/yyyy')}"
-							size="10" showOn="button" />
+						<h:selectOneMenu value="#{entity.validityCalendar}" style="width:75%">
+							<f:selectItem itemLabel="" itemValue="" />
+							<f:selectItems value="#{calendarBean.listAll}" var="item"
+								itemLabel="#{item.code}" itemValue="#{item}" />
+							<s:objectConverter />
+						</h:selectOneMenu>
 					</f:facet>
 				</p:cellEditor>
 			</p:column>
