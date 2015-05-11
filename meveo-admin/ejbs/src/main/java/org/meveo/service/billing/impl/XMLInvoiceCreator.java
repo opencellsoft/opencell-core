@@ -77,6 +77,7 @@ import org.meveo.service.catalog.impl.CatMessagesService;
 import org.w3c.dom.Comment;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
 import org.w3c.dom.Text;
 
 @Stateless
@@ -394,8 +395,15 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 	}
 
 	private void addOffers(OfferTemplate offerTemplate, Invoice invoice, Document doc, Element invoiceTag) {
-		Element offersTag = doc.createElement("offers");
-		invoiceTag.appendChild(offersTag);
+		NodeList offerList = doc.getElementsByTagName("offers");
+
+		Element offersTag = null;
+		if (offerList != null && offerList.getLength() > 0) {
+			offersTag = (Element) offerList.item(0);
+		} else {
+			offersTag = doc.createElement("offers");
+			invoiceTag.appendChild(offersTag);
+		}
 
 		Element offerTag = doc.createElement("offer");
 		offerTag.setAttribute("id", offerTemplate.getId() + "");
@@ -406,8 +414,15 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 
 	private void addServices(OfferTemplate offerTemplate, Invoice invoice, Document doc, Element invoiceTag) {
 		if (offerTemplate.getServiceTemplates() != null && offerTemplate.getServiceTemplates().size() > 0) {
-			Element servicesTag = doc.createElement("services");
-			invoiceTag.appendChild(servicesTag);
+			NodeList serviceList = doc.getElementsByTagName("services");
+
+			Element servicesTag = null;
+			if (serviceList != null && serviceList.getLength() > 0) {
+				servicesTag = (Element) serviceList.item(0);
+			} else {
+				servicesTag = doc.createElement("services");
+				invoiceTag.appendChild(servicesTag);
+			}
 
 			for (ServiceTemplate serviceTemplate : offerTemplate.getServiceTemplates()) {
 				Element serviceTag = doc.createElement("service");
@@ -865,7 +880,6 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 	private void addHeaderCategories(Invoice invoice, Document doc, Element parent) {
 		//log.debug("add header categories");
 
-		long startDate = System.currentTimeMillis();
 		boolean entreprise = invoice.getProvider().isEntreprise();
 		LinkedHashMap<String, XMLInvoiceHeaderCategoryDTO> headerCategories = new LinkedHashMap<String, XMLInvoiceHeaderCategoryDTO>();
 		List<CategoryInvoiceAgregate> categoryInvoiceAgregates = new ArrayList<CategoryInvoiceAgregate>();
