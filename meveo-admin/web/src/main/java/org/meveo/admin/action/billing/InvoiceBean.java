@@ -16,6 +16,11 @@
  */
 package org.meveo.admin.action.billing;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
@@ -26,13 +31,18 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletResponse;
 
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.job.PDFParametersConstruction;
+import org.meveo.commons.utils.ParamBean;
+import org.meveo.model.Document;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.CategoryInvoiceAgregate;
 import org.meveo.model.billing.Invoice;
@@ -49,6 +59,7 @@ import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.billing.impl.InvoiceAgregateService;
 import org.meveo.service.billing.impl.InvoiceService;
 import org.meveo.service.billing.impl.RatedTransactionService;
+import org.meveo.service.billing.impl.XMLInvoiceCreator;
 import org.meveo.service.payments.impl.CustomerAccountService;
 import org.omnifaces.cdi.ViewScoped;
 import org.primefaces.context.RequestContext;
@@ -85,6 +96,11 @@ public class InvoiceBean extends BaseBean<Invoice> {
 	
 	@Inject
 	InvoiceAgregateService invoiceAgregateService;
+	
+	@Inject
+	XMLInvoiceCreator xmlInvoiceCreator;
+	
+
 	
 	private List<RatedTransaction> ratedTransactions=new ArrayList<RatedTransaction>();
 	
@@ -263,5 +279,74 @@ public class InvoiceBean extends BaseBean<Invoice> {
 		RequestContext requestContext = RequestContext.getCurrentInstance();
 		requestContext.addCallbackParam("result", result);
 	}
+	
+	public File getXmlInvoiceDir(){
+		ParamBean param = ParamBean.getInstance();
+		String invoicesDir = param.getProperty("providers.rootDir", "/tmp/meveo"); 
+		File billingRundir = new File(invoicesDir + File.separator + getCurrentProvider().getCode() + File.separator + "invoices" + File.separator + "xml"
+				 + File.separator + entity.getBillingRun().getId());
+		return billingRundir;
+	}
+	
+	public void generateXMLInvoice() throws BusinessException {
+		 try{
+			xmlInvoiceCreator.createXMLInvoice(entity.getId(), getXmlInvoiceDir());
+			messages.info(new BundleKey("messages", "invoice.xmlGeneration")); 
+		 }catch(Exception e){
+				log.error(e.getMessage());
+			}
+		
+	}
+	public String downloadXMLInvoice() {
+		log.info("start to download...");
+		 String fileName=(entity.getInvoiceNumber() != null ? entity.getInvoiceNumber() : entity.getTemporaryInvoiceNumber())+".xml"; 
+		File file = new File(getXmlInvoiceDir().getAbsolutePath()+File.separator+fileName);
+		try {
+			javax.faces.context.FacesContext context = javax.faces.context.FacesContext
+					.getCurrentInstance();
+			HttpServletResponse res = (HttpServletResponse) context
+					.getExternalContext().getResponse();
+			res.setContentType("application/force-download");
+			res.setContentLength((int) file.length());
+			res.addHeader("Content-disposition", "attachment;filename=\""
+					+ fileName + "\"");
+
+			OutputStream out = res.getOutputStream();
+			InputStream fin = new FileInputStream(file);
+
+			byte[] buf = new byte[1024];
+			int sig = 0;
+			while ((sig = fin.read(buf, 0, 1024)) != -1) {
+				out.write(buf, 0, sig);
+			}
+			fin.close();
+			out.flush();
+			out.close();
+			context.responseComplete();
+			log.info("download over!");
+		} catch (Exception e) {
+			log.error("Error:#0, when dowload file: #1", e.getMessage(),
+					file.getAbsolutePath());
+		}
+		log.info("downloaded successfully!");
+		return null;
+	}
+	
+	public void deleteXmlInvoice(){
+		try{
+		File file = new File(getXmlInvoiceDir().getAbsolutePath()+File.separator+entity.getTemporaryInvoiceNumber()+".xml");
+		        if (file.exists()) {
+		            file.delete();
+		         messages.info(new BundleKey("messages", "delete.successful"));
+		            }     
+		}catch(Exception e){
+			log.error(e.getMessage());
+		}}
+	
+	public boolean isXmlInvoiceAlreadyGenerated(){ 
+		 String fileDir = getXmlInvoiceDir().getAbsolutePath()+File.separator + (entity.getInvoiceNumber() != null ? entity.getInvoiceNumber() : entity.getTemporaryInvoiceNumber())+".xml";
+		 File file=new File(fileDir); 
+		 return file.exists();	
+	  }
 	
 }

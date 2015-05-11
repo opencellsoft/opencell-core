@@ -296,6 +296,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 			DOMSource source = new DOMSource(doc);
 			StreamResult result = new StreamResult(billingRundir + File.separator
 					+ (invoice.getInvoiceNumber() != null ? invoice.getInvoiceNumber() : invoice.getTemporaryInvoiceNumber()) + ".xml");
+			billingRundir.mkdirs();
 			//log.debug("source=" + source.toString());
 
 			trans.transform(source, result);

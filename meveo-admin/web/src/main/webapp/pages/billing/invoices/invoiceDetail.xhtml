@@ -25,18 +25,30 @@
 				<hf:formField label="#{messages['invoice.paymentMethod']}" field="paymentMethod" isMessage="true" />
 				</h:panelGroup>
             </p:fieldset> 
-			
-			<p:fieldset legend="#{messages['invoice.attachments']}">
-				<h:panelGroup  column="2"> 
-                <h:commandLink rendered="#{invoiceBean.entity.pdf!=null}" action="#{billingAccountBean.generatePDF(invoiceBean.entity.id)}">
+			<p:outputPanel rendered="#{invoiceBean.entity.pdf!=null or invoiceBean.isXmlInvoiceAlreadyGenerated}">	
+			<p:fieldset legend="#{messages['invoice.attachments']}" >
+				<p:panelGrid  columns="1">
+				<p:outputPanel rendered="#{invoiceBean.entity.pdf!=null}">				
+                <h:commandLink  action="#{billingAccountBean.generatePDF(invoiceBean.entity.id)}">
                     <h:outputText value="#{invoiceBean.entity.invoiceNumber}.pdf" rendered="#{invoiceBean.entity.invoiceNumber!=null}" /> 
-					<h:outputText value="#{invoiceBean.entity.temporaryInvoiceNumber}.pdf" rendered="#{invoiceBean.entity.invoiceNumber==null}" /> 
+					<h:outputText value="unvalidated-invoice.pdf" rendered="#{invoiceBean.entity.invoiceNumber==null}" /> 
                 </h:commandLink> 
-				<p:spacer width="35px"/>
-				<p:commandButton   icon="ui-icon-close" rendered="#{invoiceBean.entity.invoiceNumber==null and invoiceBean.entity.pdf!=null}"
+				<p:spacer width="10"/>
+				<p:commandButton   icon="ui-icon-close" rendered="#{invoiceBean.entity.invoiceNumber==null}"
 				action="#{invoiceBean.deleteInvoicePdf}" update="totalForm:formId:buttonGenerate,@form"/> 
-				</h:panelGroup>
+				</p:outputPanel>
+				<p:outputPanel rendered="#{invoiceBean.isXmlInvoiceAlreadyGenerated}">
+					<h:commandLink  action="#{invoiceBean.downloadXMLInvoice()}"  >
+						<h:outputText value="#{invoiceBean.entity.invoiceNumber}.xml" rendered="#{invoiceBean.entity.invoiceNumber!=null}" /> 
+						<h:outputText value="#{invoiceBean.entity.temporaryInvoiceNumber}.xml" rendered="#{invoiceBean.entity.invoiceNumber==null}" /> 
+					</h:commandLink> 
+					<p:spacer width="10"/>
+					<p:commandButton rendered="#{invoiceBean.entity.invoiceNumber==null}"   icon="ui-icon-close"
+					action="#{invoiceBean.deleteXmlInvoice}" update="totalForm:formId:buttonGenerate,@form"/> 
+				</p:outputPanel>
+				</p:panelGrid>
             </p:fieldset>
+			</p:outputPanel>	
 			</h:panelGrid>  
 			<p:fieldset legend="#{messages['invoice.discounts']}" style="width:60%" rendered="#{invoiceBean.getDiscountAggregates.size()>0}">
 				
@@ -122,6 +134,9 @@
 			<p:commandButton value="#{messages['invoice.generatePdf']}" icon="ui-icon-refresh"
 				disabled="#{invoiceBean.entity.pdf!=null}"
 				action="#{invoiceBean.generatePdf()}" update="headerForm:formId,buttonGenerate" /> 
+				<p:commandButton value="#{messages['invoice.generateXml']}" icon="ui-icon-refresh"
+				disabled="#{invoiceBean.isXmlInvoiceAlreadyGenerated}"
+				action="#{invoiceBean.generateXMLInvoice}" update="headerForm:formId,buttonGenerate" /> 
 			</p:outputPanel> 			
         </hf:formPanel> 
 		
