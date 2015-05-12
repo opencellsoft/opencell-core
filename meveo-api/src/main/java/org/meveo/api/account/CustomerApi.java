@@ -43,22 +43,20 @@ public class CustomerApi extends AccountApi {
 	private SellerService sellerService;
 
 	public void create(CustomerDto postData, User currentUser) throws MeveoApiException {
-		if (!StringUtils.isBlank(postData.getCode()) && !StringUtils.isBlank(postData.getDescription())
-				&& !StringUtils.isBlank(postData.getCustomerCategory())
-				&& !StringUtils.isBlank(postData.getCustomerBrand()) && !StringUtils.isBlank(postData.getSeller())) {
+		if (!StringUtils.isBlank(postData.getCode()) && !StringUtils.isBlank(postData.getDescription()) && !StringUtils.isBlank(postData.getCustomerCategory())
+				&& !StringUtils.isBlank(postData.getCustomerBrand()) && !StringUtils.isBlank(postData.getSeller()) && postData.getName() != null
+				&& !StringUtils.isBlank(postData.getName().getTitle()) && !StringUtils.isBlank(postData.getName().getLastName())) {
 			// check if customer already exists
 			if (customerService.findByCode(postData.getCode(), currentUser.getProvider()) != null) {
 				throw new EntityAlreadyExistsException(Customer.class, postData.getCode());
 			}
 
-			CustomerCategory customerCategory = customerCategoryService.findByCode(postData.getCustomerCategory(),
-					currentUser.getProvider());
+			CustomerCategory customerCategory = customerCategoryService.findByCode(postData.getCustomerCategory(), currentUser.getProvider());
 			if (customerCategory == null) {
 				throw new EntityDoesNotExistsException(CustomerCategory.class, postData.getCustomerCategory());
 			}
 
-			CustomerBrand customerBrand = customerBrandService.findByCode(postData.getCustomerBrand(),
-					currentUser.getProvider());
+			CustomerBrand customerBrand = customerBrandService.findByCode(postData.getCustomerBrand(), currentUser.getProvider());
 			if (customerBrand == null) {
 				throw new EntityDoesNotExistsException(CustomerBrand.class, postData.getCustomerBrand());
 			}
@@ -101,26 +99,35 @@ public class CustomerApi extends AccountApi {
 			if (StringUtils.isBlank(postData.getSeller())) {
 				missingParameters.add("seller");
 			}
+			if (postData.getName() == null) {
+				missingParameters.add("name.title");
+				missingParameters.add("name.lastName");
+			}
+			if (StringUtils.isBlank(postData.getName().getTitle())) {
+				missingParameters.add("name.title");
+			}
+			if (StringUtils.isBlank(postData.getName().getLastName())) {
+				missingParameters.add("name.lastName");
+			}
 
 			throw new MissingParameterException(getMissingParametersExceptionMessage());
 		}
 	}
 
 	public void update(CustomerDto postData, User currentUser) throws MeveoApiException {
-		if (!StringUtils.isBlank(postData.getCode()) && !StringUtils.isBlank(postData.getDescription())) {
+		if (!StringUtils.isBlank(postData.getCode()) && !StringUtils.isBlank(postData.getDescription()) && postData.getName() != null
+				&& !StringUtils.isBlank(postData.getName().getTitle()) && !StringUtils.isBlank(postData.getName().getLastName())) {
 			// check if customer exists
 			if (customerService.findByCode(postData.getCode(), currentUser.getProvider()) == null) {
 				throw new EntityDoesNotExistsException(Customer.class, postData.getCode());
 			}
 
-			CustomerCategory customerCategory = customerCategoryService.findByCode(postData.getCustomerCategory(),
-					currentUser.getProvider());
+			CustomerCategory customerCategory = customerCategoryService.findByCode(postData.getCustomerCategory(), currentUser.getProvider());
 			if (customerCategory == null) {
 				throw new EntityDoesNotExistsException(CustomerCategory.class, postData.getCustomerCategory());
 			}
 
-			CustomerBrand customerBrand = customerBrandService.findByCode(postData.getCustomerBrand(),
-					currentUser.getProvider());
+			CustomerBrand customerBrand = customerBrandService.findByCode(postData.getCustomerBrand(), currentUser.getProvider());
 			if (customerBrand == null) {
 				throw new EntityDoesNotExistsException(CustomerBrand.class, postData.getCustomerBrand());
 			}
@@ -165,6 +172,16 @@ public class CustomerApi extends AccountApi {
 			}
 			if (StringUtils.isBlank(postData.getSeller())) {
 				missingParameters.add("seller");
+			}
+			if (postData.getName() == null) {
+				missingParameters.add("name.title");
+				missingParameters.add("name.lastName");
+			}
+			if (StringUtils.isBlank(postData.getName().getTitle())) {
+				missingParameters.add("name.title");
+			}
+			if (StringUtils.isBlank(postData.getName().getLastName())) {
+				missingParameters.add("name.lastName");
 			}
 
 			throw new MissingParameterException(getMissingParametersExceptionMessage());
@@ -227,8 +244,7 @@ public class CustomerApi extends AccountApi {
 		}
 
 		CustomersDto result = new CustomersDto();
-		List<Customer> customers = customerService.filter(postData.getCode(), customerCategory, seller, customerBrand,
-				provider);
+		List<Customer> customers = customerService.filter(postData.getCode(), customerCategory, seller, customerBrand, provider);
 		if (customers != null) {
 			for (Customer c : customers) {
 				result.getCustomer().add(new CustomerDto(c));
