@@ -32,9 +32,7 @@ public class CdrParserProducer {
 
 	@SuppressWarnings("unchecked")
 	public CSVCDRParser getParser() throws BusinessException {
-		Set<Bean<?>> parsers = beanManager.getBeans(CSVCDRParser.class, new AnnotationLiteral<CdrParser>() {
-			private static final long serialVersionUID = 1149660610296393946L;
-		});
+		Set<Bean<?>> parsers = beanManager.getBeans(CSVCDRParser.class, new AnnotationLiteral<CdrParser>() {});
 
 		if (parsers.size() > 1) {
 			log.error("Multiple custom csv parsers encountered.");
