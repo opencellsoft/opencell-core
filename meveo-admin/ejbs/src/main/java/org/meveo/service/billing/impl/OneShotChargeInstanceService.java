@@ -192,8 +192,12 @@ public class OneShotChargeInstanceService extends BusinessService<OneShotChargeI
 		} else {
 			WalletInstance wallet = subscription.getUserAccount().getWalletInstance(walletCode);
 			oneShotChargeInstance.getWalletInstances().add(wallet);
-			if(wallet.getWalletTemplate().getWalletType()==BillingWalletTypeEnum.PREPAID){
-				oneShotChargeInstance.setPrepaid(true);
+			if (wallet.getWalletTemplate() == null) {
+				oneShotChargeInstance.setPrepaid(false);
+			} else {
+				if (wallet.getWalletTemplate().getWalletType() == BillingWalletTypeEnum.PREPAID) {
+					oneShotChargeInstance.setPrepaid(true);
+				}
 			}
 		}
 
