@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import javax.ejb.Stateless;
+import javax.ejb.Singleton;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
@@ -22,7 +22,7 @@ import org.meveo.model.rating.EDRStatusEnum;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.billing.impl.EdrService;
 
-@Stateless
+@Singleton
 public class CDRParsingService extends PersistenceService<EDR> {
 	
 	private CSVCDRParser cdrParser;
