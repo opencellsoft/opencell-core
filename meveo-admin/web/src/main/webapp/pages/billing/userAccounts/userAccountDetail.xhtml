@@ -250,17 +250,16 @@
     													,userAccountBean.entity.code,null,null)}" />
                                                     </hftl:decorateFormField>
 												</p:fieldset>
-											
-											<h:panelGroup rendered="#{wallet.key!='PRINCIPAL'}" >
-												<hftl:decorateFormField label="#{messages['userAccount.cachedBalance']}" displayOneLine="true">
+											<p:fieldset legend="#{messages['userAccount.cachedBalance']}" rendered="#{wallet.key!='PRINCIPAL'}"  style="float:left;">
+												<hftl:decorateFormField label="#{messages['userAccount.cachedBalance']}" style="width:45%;" displayOneLine="true">
         											<h:outputText
         												value="#{userAccountBean.getBalance(wallet.value)}" />
                                                 </hftl:decorateFormField>
-												<hftl:decorateFormField label="#{messages['cachedReservedBalance']}" displayOneLine="true">
+												<hftl:decorateFormField label="#{messages['userAccount.cachedReservedBalance']}" style="width:55%;" displayOneLine="true">
         											<h:outputText
         												value="#{userAccountBean.getReservedBalance(wallet.value)}" />
-                                                </hftl:decorateFormField>
-											</h:panelGroup>
+                                                </hftl:decorateFormField> 
+											</p:fieldset>
 										
 										<p:dataTable id="wallet#{wallet.key}datatable" var="e"
 											paginator="true"

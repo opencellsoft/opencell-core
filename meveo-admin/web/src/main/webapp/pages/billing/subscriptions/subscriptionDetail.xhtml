@@ -345,9 +345,10 @@
 													</f:facet>
 													<p:commandButton id="editOneShotChgInsLink"
 														action="#{subscriptionBean.editOneShotChargeIns(entity)}"
-														onclick="document.getElementById('oneShotChgDiv').style.display='';"
-														update=":subscriptionTab:oneShotChargeFormPanel:oneShotChgForm1"
+														update=":subscriptionTab:oneShotChargeFormPanel:oneShotChgForm1 :#{p:component('oneShotChgDiv')}"
 														icon="ui-icon-document">
+															<f:setPropertyActionListener value="true"
+																target="#{subscriptionBean.showApplyOneShotForm}" />
 													</p:commandButton>
 													<p:tooltip for="editOneShotChgInsLink"
 														value="#{messages['commons.edit']}" showEffect="slide"
@@ -361,12 +362,14 @@
 											<p:commandButton
 												value="#{messages['subscription.oneShotChgButton']}"
 												actionListener="#{subscriptionBean.newOneShotChargeInstance}"
-												update=":#{p:component('oneShotChargeFormMainPanel')}"
-												onclick="document.getElementById('oneShotChgDiv').style.display='';" />
+												update=":#{p:component('oneShotChgDiv')}">
+												<f:setPropertyActionListener value="true"
+													target="#{subscriptionBean.showApplyOneShotForm}" />
+											</p:commandButton>
 										</h:form>
-										<div id="oneShotChgDiv" style="display: none;">
+										<p:outputPanel id="oneShotChgDiv">
 											<p:panel id="oneShotChargeFormMainPanel"
-												widgetVar="oneShotChgDivWgt">
+												widgetVar="oneShotChgDivWgt" rendered="#{subscriptionBean.showApplyOneShotForm}">
 
 												<hftl:entityPopup id="oneShotChargeTmpPopup"
 													header="#{messages['oneShotChargeTmp.popup.header']}"
@@ -428,18 +431,22 @@
 														label="#{messages['oneShotChargeInstance.chargeDate']}"
 														required="true" field="chargeDate" edit="true" />
 													<h:panelGroup id="chargeWalletSelectId">
-														<hftl:decorateFormField fieldId="chargeWalletSelectId_text" label="#{messages['menu.wallet']}" >
-															<p:inputText id="chargeWalletSelectId_text"
-																required="false" disabled="true"
-																value="#{subscriptionBean.selectedWalletTemplate.code}" />
-															<p:commandButton id="chargeWalletSelectId_selectLink"
-																disabled="#{subscriptionBean.oneShotChargeInstance.code eq null}"
-																onclick="PF('dlg_popupWalletTemplates').show()"
-																icon="ui-icon-search" type="button" />
-    														<p:tooltip for="chargeTemplateSelectId_selectLink"
-    															value="#{messages['commons.search']}" />
-                                                        </hftl:decorateFormField>                                                            
-													</h:panelGroup>
+														<h:panelGroup layout="block" styleClass="formFieldGroup" style="width: 25%;">
+															<p:outputLabel for="chargeWalletSelectId_text" value="#{messages['menu.wallet']}" />															
+															<h:panelGroup layout="block" styleClass="formFieldItem2Lines" style="width: 100%;">
+																<p:inputText id="chargeWalletSelectId_text"
+																	required="false" 
+																	value="#{subscriptionBean.selectedWalletTemplateCode}" />
+																<p:commandButton id="chargeWalletSelectId_selectLink"
+																	disabled="#{subscriptionBean.oneShotChargeInstance.code eq null}"
+																	onclick="PF('dlg_popupWalletTemplates').show()"
+																	icon="ui-icon-search" type="button" />
+																<p:tooltip for="chargeTemplateSelectId_selectLink"
+																	value="#{messages['commons.search']}" />
+															</h:panelGroup>
+														</h:panelGroup>
+													</h:panelGroup>													
+																									
 													<hftl:decorateFormField fieldId="amountWithoutTax2" label="#{messages['oneShotChargeInstance.amountWithoutTax']}" >
 														<p:inputText id="amountWithoutTax2"
 															value="#{subscriptionBean.oneShotChargeInstance.amountWithoutTax}"
@@ -640,15 +647,15 @@
 															action="#{subscriptionBean.saveOneShotChargeIns}"
 															value="#{messages['action.save']}"
 															update=":subscriptionTab:oneShotPanel"
-															oncomplete="document.getElementById('oneShotChgDiv').style.display='none';"
 															rendered="#{!currentProvider.amountValidation}" />
 
-														<p:commandButton value="#{messages['action.cancel']}"
-															onclick="document.getElementById('oneShotChgDiv').style.display='none';return false;" />
+														<p:commandButton value="#{messages['action.cancel']}" update=":#{p:component('oneShotChgDiv')}" immediate="true">
+															<f:setPropertyActionListener value="false" target="#{subscriptionBean.showApplyOneShotForm}" />
+														</p:commandButton>
 													</f:facet>
 												</hf:formPanel>
 											</p:panel>
-										</div>
+										</p:outputPanel>
 									</p:panel>
 								</p:outputPanel>
 							</p:tab>

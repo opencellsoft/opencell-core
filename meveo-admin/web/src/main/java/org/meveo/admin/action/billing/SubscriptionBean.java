@@ -33,6 +33,7 @@ import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.action.CustomFieldEnabledBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.EntityListDataModelPF;
+import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.billing.InstanceStatusEnum;
 import org.meveo.model.billing.OneShotChargeInstance;
 import org.meveo.model.billing.RecurringChargeInstance;
@@ -128,6 +129,10 @@ public class SubscriptionBean extends BaseBean<Subscription> {
 	private BigDecimal oneShotChargeInstanceQuantity = BigDecimal.ONE;
 
 	private WalletTemplate selectedWalletTemplate;
+	
+	private boolean showApplyOneShotForm = false;
+	
+	private String selectedWalletTemplateCode;
 
 	/**
 	 * User Account Id passed as a parameter. Used when creating new
@@ -277,6 +282,12 @@ public class SubscriptionBean extends BaseBean<Subscription> {
 		if (selectedWalletTemplate == null) {
 			messages.error(new BundleKey("messages", "message.subscription.oneshot.wallet.required"));
 			return;
+		} else {
+			if (!StringUtils.isBlank(selectedWalletTemplateCode)) {
+				selectedWalletTemplate.setCode(selectedWalletTemplateCode);
+			} else {
+				selectedWalletTemplate.setCode(WalletTemplate.PRINCIPAL);
+			}
 		}
 
 		try {
@@ -311,6 +322,8 @@ public class SubscriptionBean extends BaseBean<Subscription> {
 			messages.info(new BundleKey("messages", "save.successful"));
 
 			clearObjectId();
+			
+			showApplyOneShotForm = false;
 		} catch (Exception e) {
 			log.error("exception when applying one shot charge!", e.getMessage());
 			messages.error(e.getMessage());
@@ -740,6 +753,22 @@ public class SubscriptionBean extends BaseBean<Subscription> {
 		this.delete();
 		RequestContext requestContext = RequestContext.getCurrentInstance();
 		requestContext.addCallbackParam("result", result);
+	}
+
+	public boolean isShowApplyOneShotForm() {
+		return showApplyOneShotForm;
+	}
+
+	public void setShowApplyOneShotForm(boolean showApplyOneShotForm) {
+		this.showApplyOneShotForm = showApplyOneShotForm;
+	}
+
+	public String getSelectedWalletTemplateCode() {
+		return selectedWalletTemplateCode;
+	}
+
+	public void setSelectedWalletTemplateCode(String selectedWalletTemplateCode) {
+		this.selectedWalletTemplateCode = selectedWalletTemplateCode;
 	}
 
 }
