@@ -64,8 +64,8 @@ public class ServiceChargeTemplateRecurring extends ServiceChargeTemplate<Recurr
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;
-		if (!super.equals(obj))
-			return false;
+//		if (!super.equals(obj))
+//			return false;
 		if (getClass() != obj.getClass())
 			return false;
 		ServiceChargeTemplateRecurring other = (ServiceChargeTemplateRecurring) obj;
