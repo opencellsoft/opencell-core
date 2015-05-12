@@ -449,6 +449,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
         // TODO: Hibernate. org.hibernate.Session session = (Session)
         // getEntityManager().getDelegate();
         // session.evict(entity);
+    	getEntityManager().detach(entity);
     }
 
     /**
