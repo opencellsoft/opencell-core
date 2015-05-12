@@ -7,11 +7,13 @@ import java.math.RoundingMode;
 import java.nio.charset.Charset;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import javax.inject.Named;
 
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.IProvider;
@@ -28,8 +30,8 @@ public class MEVEOCdrParser implements CSVCDRParser {
 
 	private static Logger log = LoggerFactory.getLogger(MEVEOCdrParser.class);
 
-	static SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-	static SimpleDateFormat sdf2 = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+	DateTimeFormatter formatter1 = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+	DateTimeFormatter formatter2 = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss'Z'");
 
 	static MessageDigest messageDigest = null;
 	static {
@@ -49,22 +51,22 @@ public class MEVEOCdrParser implements CSVCDRParser {
 		public String param2;
 		public String param3;
 		public String param4;
-        public transient Provider provider;
+		public transient Provider provider;
 
 		public String toString() {
-			return sdf1.format(new Date(timestamp)) + ";" + quantity + ";" + access_id + ";" + param1 + ";" + param2
+			return (new Date(timestamp)) + ";" + quantity + ";" + access_id + ";" + param1 + ";" + param2
 					+ ";" + param3 + ";" + param4;
 		}
 
-        @Override
-        public Provider getProvider() {
-            return provider;
-        }
+		@Override
+		public Provider getProvider() {
+			return provider;
+		}
 
-        @Override
-        public void setProvider(Provider provider) {
-            this.provider = provider;            
-        }
+		@Override
+		public void setProvider(Provider provider) {
+			this.provider = provider;            
+		}
 	}
 
 	private String batchName;
@@ -102,9 +104,11 @@ public class MEVEOCdrParser implements CSVCDRParser {
 				throw new InvalidFormatException(line, "only " + fields.length + " in the record");
 			} else {
 				try {
-					cdr.timestamp = sdf1.parse(fields[0]).getTime();
+					DateTime dt = formatter1.parseDateTime(fields[0]);
+					cdr.timestamp = dt.getMillis();
 				} catch (Exception e1) {
-					cdr.timestamp = sdf2.parse(fields[0]).getTime();
+					DateTime dt = formatter2.parseDateTime(fields[0]);
+					cdr.timestamp = dt.getMillis();
 				}
 				cdr.quantity = new BigDecimal(fields[1]);
 
