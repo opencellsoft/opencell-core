@@ -132,11 +132,10 @@ public class MeasurableQuantityBean extends BaseBean<MeasurableQuantity> {
 		csv.download(inputStream, "MeasurableQuantity.csv");
 	}
 
-
     public void handleFileUpload(FileUploadEvent event) throws Exception {
         try {
             file = event.getFile();
-            log.info("File uploaded" + file);
+            log.debug("File uploaded " + file.getFileName());
             upload();
             messages.info(new BundleKey("messages", "import.csv.successful"));
         } catch (Exception e) {
