@@ -9,7 +9,6 @@
 
     <cc:attribute name="fieldItem" required="true" />
     <cc:attribute name="edit" default="true" />
-    <cc:attribute name="showFields" default="#{cc.parent.attrs.showFields!=null?cc.parent.attrs.showFields:'Value'}" />
 
 </cc:interface>
 
@@ -23,36 +22,60 @@
 
         <!--  As a list of values -->
         <c:if test="#{cc.parent.attrs.listType == 'simpleList'}">
-            <p:dataTable id="#{cc.parent.attrs.fieldIdPrefix}_list" value="#{cc.attrs.fieldItem}" var="listElement" rendered="#{cc.attrs.edit}">
-                <c:forEach items="#{cc.attrs.showFields.split(';')}" var="fieldToShow">
-                    <c:set var="headerAndValue" value="#{fieldToShow.split(',')}" />
-                    <c:set var="style" value="text-align:left;" />
-                    <c:if test="#{'right'.equals(headerAndValue[2])}">
-                        <c:set var="style" value="text-align:right;" />
-                    </c:if>
-                    <p:column width="100" style="${style}">
-                        <f:facet name="header">
-                            <h:outputText value="#{messages[headerAndValue[0]]}" />
-                        </f:facet>
-                        <c:set var="value" value="#{listElement[headerAndValue[1]]}"></c:set>
-                        <c:if test="#{'msg'.equals(headerAndValue[2])}">
-                            <c:set var="value" value="#{messages[listElement[headerAndValue[1]].label]}" />
+            <p:dataTable id="#{cc.parent.attrs.fieldIdPrefix}_list" value="#{cc.attrs.fieldItem}" var="listElement" rendered="#{cc.attrs.edit}" rowIndexVar="rowIndex">
+                <c:if test="#{cc.parent.attrs.showFields !=null}">
+                    <c:forEach items="#{cc.parent.attrs.showFields.split(';')}" var="fieldToShow">
+                        <c:set var="headerAndValue" value="#{fieldToShow.split(',')}" />
+                        <c:set var="style" value="text-align:left;" />
+                        <c:if test="#{'right'.equals(headerAndValue[2])}">
+                            <c:set var="style" value="text-align:right;" />
                         </c:if>
-                        <h:outputText style="text-align:right;" value="#{value}" converter="#{getConverter.forType(listElement[headerAndValue[1]])}" />
+                        <p:column width="100" style="${style}">
+                            <f:facet name="header">
+                                <h:outputText value="#{messages[headerAndValue[0]]}" />
+                            </f:facet>
+                            <c:set var="value" value="#{listElement[headerAndValue[1]]}"></c:set>
+                            <c:if test="#{'msg'.equals(headerAndValue[2])}">
+                                <c:set var="value" value="#{messages[listElement[headerAndValue[1]].label]}" />
+                            </c:if>
+                            <h:outputText style="text-align:right;" value="#{value}" converter="#{getConverter.forType(listElement[headerAndValue[1]])}" />
+                        </p:column>
+                    </c:forEach>
+                    <p:column rendered="#{cc.parent.attrs.deleteButton and cc.attrs.edit}">
+                        <p:tooltip for="deletelink" value="#{messages['commons.delete']}" showEffect="slide" hideEffect="slide" />
+                        <h:commandLink id="deletelink" action="#{cc.parent.backingBeanFromParentOrCurrent.delete(listElement.id)}"
+                            onclick="if(confirm('#{messages['commons.confirmDelete']}')){return true;}else{return false;}">
+                            <h:graphicImage value="/img/delete.gif" style="border:0" />
+                        </h:commandLink>
                     </p:column>
-                </c:forEach>
-
-                <p:column rendered="#{cc.parent.attrs.deleteButton and cc.attrs.edit}">
-                    <p:tooltip for="deletelink" value="#{messages['commons.delete']}" showEffect="slide" hideEffect="slide" />
-                    <h:commandLink id="deletelink" action="#{cc.parent.backingBeanFromParentOrCurrent.delete(listElement.id)}"
-                        onclick="if(confirm('#{messages['commons.confirmDelete']}')){return true;}else{return false;}">
-                        <h:graphicImage value="/img/delete.gif" style="border:0" />
-                    </h:commandLink>
-                </p:column>
+                </c:if>
+                <c:if test="#{cc.parent.attrs.showFields ==null}">
+                    <p:column width="90%" headerText="#{messages['commons.value']}">
+                        <h:outputText style="text-align:right;" value="#{listElement}" converter="#{getConverter.forType(listElement)}" rendered="#{not cc.attrs.edit}" />
+                        <p:inputText value="#{listElement}" size="50" maxlength="100" rendered="#{cc.attrs.edit}" valueChangeListener="#{cc.parent.updateItemInCollection}">
+                            <f:attribute name="values" value="#{cc.attrs.fieldItem}" />
+                            <f:attribute name="itemIndex" value="#{rowIndex}" />
+                        </p:inputText>
+                    </p:column>
+                    <p:column width="10%" rendered="#{cc.parent.attrs.deleteButton and cc.attrs.edit}">
+                        <p:tooltip for="deletelink" value="#{messages['commons.delete']}" showEffect="slide" hideEffect="slide" />
+                        <p:commandButton id="deletelink" action="#{cc.parent.deleteItemFromCollection(cc.attrs.fieldItem, rowIndex)}"
+                             partialSubmit="true" icon="ui-icon-trash"
+                            process="@this" update="#{cc.parent.attrs.fieldIdPrefix}_list">
+                        </p:commandButton>
+                    </p:column>
+                </c:if>
+                <f:facet name="footer">
+                    <p:commandButton value="#{messages['commons.addNew']}" partialSubmit="true" process="@this #{cc.parent.attrs.fieldIdPrefix}_list" update="#{cc.parent.attrs.fieldIdPrefix}_list"
+                        actionListener="#{cc.parent.addItemToCollection(cc.attrs.fieldItem, cc.parent.attrs.fieldGenericsType)}" rendered="#{cc.parent.attrs.showFields ==null and cc.parent.attrs.showButtonAddNew and cc.attrs.edit}" />
+                    <p:commandButton
+                        rendered="#{cc.parent.attrs.showFields !=null and cc.parent.attrs.showButtonAddNew and cc.attrs.edit and cc.parent.entityFromBackingBeanOrAttribute.getId() != null}"
+                        value="#{messages['commons.addNew']}" onclick="alert('not implemented. formListField.xhtml line 52')" />
+                </f:facet>
             </p:dataTable>
-            <p:commandButton rendered="#{cc.parent.attrs.showButtonAddNew and cc.attrs.edit and cc.parent.entityFromBackingBeanOrAttribute.getId() != null}"
-                value="#{messages['commons.addNew']}" onclick="alert('not implemented. formListField.xhtml line 52')" />
-        </c:if>
+            
+            
+            </c:if>
 
         <!--  As a dual picklist of values -->
         <c:if test="#{cc.parent.attrs.listType=='pickUpList'}">
@@ -100,7 +123,7 @@
 
     <!--             <c:if test="#{cc.parent.attrs.listType == 'simpleList'}"> -->
     <!--                     <p:dataTable id="#{cc.parent.attrs.fieldIdPrefix}_list" value="#{cc.attrs.fieldItem}" var="listElement" rendered="#{cc.attrs.edit}"> -->
-    <!--                         <c:forEach items="#{cc.attrs.showFields.split(';')}" var="fieldToShow"> -->
+    <!--                         <c:forEach items="#{cc.parent.attrs.showFields.split(';')}" var="fieldToShow"> -->
     <!--                             <c:set var="headerAndValue" value="#{fieldToShow.split(',')}" /> -->
     <!--                             <c:set var="style" value="text-align:left;" /> -->
     <!--                             <c:if test="#{'right'.equals(headerAndValue[2])}"> -->
