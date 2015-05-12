@@ -250,7 +250,7 @@
     													,userAccountBean.entity.code,null,null)}" />
                                                     </hftl:decorateFormField>
 												</p:fieldset>
-											<p:fieldset legend="#{messages['userAccount.cachedBalance']}" rendered="#{wallet.key!='PRINCIPAL'}"  style="width:42%; float:left;">
+											<p:fieldset legend="#{messages['userAccount.cachedBalance']}" rendered="#{wallet.key!='PRINCIPAL'}"  style="float:left;">
 												<hftl:decorateFormField label="#{messages['userAccount.cachedBalance']}" style="width:45%;" displayOneLine="true">
         											<h:outputText
         												value="#{userAccountBean.getBalance(wallet.value)}" />
