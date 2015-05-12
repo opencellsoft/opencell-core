@@ -16,13 +16,25 @@
  */
 package org.meveo.admin.action.admin;
 
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.Charset;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
+import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.exception.RejectedImportException;
+import org.meveo.commons.utils.CsvBuilder;
+import org.meveo.commons.utils.CsvReader;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.billing.CatMessages;
 import org.meveo.model.billing.InvoiceCategory;
@@ -32,6 +44,9 @@ import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.model.catalog.RecurringChargeTemplate;
 import org.meveo.model.catalog.UsageChargeTemplate;
+import org.meveo.model.notification.Notification;
+import org.meveo.model.notification.NotificationEventTypeEnum;
+import org.meveo.model.notification.StrategyImportTypeEnum;
 import org.meveo.model.shared.Title;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
@@ -46,6 +61,8 @@ import org.meveo.service.catalog.impl.TitleService;
 import org.meveo.service.catalog.impl.UsageChargeTemplateService;
 import org.omnifaces.cdi.ViewScoped;
 import org.primefaces.context.RequestContext;
+import org.primefaces.event.FileUploadEvent;
+import org.primefaces.model.UploadedFile;
 
 /**
  * Standard backing bean for {@link CatMessages} (extends {@link BaseBean}
@@ -83,6 +100,14 @@ public class CatMessagesBean extends BaseBean<CatMessages> {
 	private RecurringChargeTemplateService recurringChargeTemplateService;
 	@Inject
 	private PricePlanMatrixService pricePlanMatrixService;
+	
+	CsvReader csvReader = null;
+	private UploadedFile file;
+	private static final int OBJECT_TYPE = 0;
+	private static final int CODE = 1;
+	private static final int BASIC_DESCRIPTION = 2;
+	private static final int LANGUAGE_CODE = 3;
+	private static final int DESCRIPTION_TRANSLATION = 4;  
 
 	/**
 	 * Constructor. Invokes super constructor and provides class type of this
@@ -161,5 +186,26 @@ public class CatMessagesBean extends BaseBean<CatMessages> {
 		RequestContext requestContext = RequestContext.getCurrentInstance();
 		requestContext.addCallbackParam("result", result);
 	}
+	
+	public void exportToFile() throws Exception {
+		CsvBuilder csv = new CsvBuilder();
+		csv.appendValue("Object type");
+		csv.appendValue("Code");
+		csv.appendValue("Basic description");
+		csv.appendValue("Language");
+		csv.appendValue("Description translation");
+		csv.startNewLine();
+		for (CatMessages catMessages : (!filters.isEmpty()&& filters.size()>0) ? getLazyDataModel():catMessagesService.list()) {
+			csv.appendValue(catMessages.getObjectType());
+			csv.appendValue(getObject(catMessages).getCode());
+			csv.appendValue(getObject(catMessages).getDescription());
+			csv.appendValue(catMessages.getLanguageCode());
+			csv.appendValue(catMessages.getDescription()); 
+			csv.startNewLine();
+		}
+		InputStream inputStream = new ByteArrayInputStream(csv.toString().getBytes());
+		csv.download(inputStream, "CatMessages.csv");
+	}
+	
 	
 }

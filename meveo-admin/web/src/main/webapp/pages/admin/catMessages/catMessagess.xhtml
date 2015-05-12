@@ -33,7 +33,7 @@
 
 		<hftl:dataList label="#{messages['catMessages.title']}"
 			editable="true" backingBean="#{catMessagesListBean}"
-			rowsPerPage="10,20,50,100" exportButton="false" exportXlsxButton="true">
+			rowsPerPage="10,20,50,100" exportButton="false" exportToCsv="true">
 			<p:column exportable="true">
 				<f:facet name="header">
 					<h:outputText value="#{messages['catMessages.objectType']}" />
