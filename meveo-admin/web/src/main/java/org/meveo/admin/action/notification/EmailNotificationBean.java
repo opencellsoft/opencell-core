@@ -128,8 +128,7 @@ public class EmailNotificationBean extends BaseBean<EmailNotification> {
 		csv.appendValue("Attachments EL");
 		csv.appendValue("Counter template");
 		csv.startNewLine();
-		for (EmailNotification emailNotification : emailNotificationService
-				.list()) {
+		for (EmailNotification emailNotification :(!filters.isEmpty()&& filters.size()>0) ? getLazyDataModel():emailNotificationService.list()) {
 			csv.appendValue(emailNotification.getCode());
 			csv.appendValue(emailNotification.getClassNameFilter());
 			csv.appendValue(emailNotification.getEventTypeFilter() + "");

@@ -90,7 +90,7 @@ public class NotificationBean extends BaseBean<Notification> {
 		csv.appendValue("El action");
 		csv.appendValue("Event type filter");
 		csv.startNewLine();
-		for (Notification notification : notificationService.list()) {
+		for (Notification notification :(!filters.isEmpty()&& filters.size()>0) ? getLazyDataModel():notificationService.list()) {
 			csv.appendValue(notification.getCode());
 			csv.appendValue(notification.getClassNameFilter());
 			csv.appendValue(notification.getElFilter());

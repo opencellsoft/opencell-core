@@ -142,7 +142,7 @@ public class InboundRequestBean extends BaseBean<InboundRequest> {
         csv.appendValue("Update date");
         
         csv.startNewLine();
-        for(InboundRequest  inboundRequest:inboundRequestService.list()){ 
+        for(InboundRequest  inboundRequest:(!filters.isEmpty() && filters.size()>0) ? getLazyDataModel():inboundRequestService.list()){ 
         	 csv.appendValue(inboundRequest.getRemoteAddr());
         	 csv.appendValue(inboundRequest.getRemotePort()+"");
         	 csv.appendValue(inboundRequest.getProtocol());

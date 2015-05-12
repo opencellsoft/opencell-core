@@ -126,7 +126,7 @@ public class WebHookBean extends BaseBean<WebHook> {
 		csv.appendValue("Parameters");
 		csv.appendValue("Counter template");
 		csv.startNewLine();
-		for (WebHook webHook : webHookService.list()) {
+		for (WebHook webHook :(!filters.isEmpty()&& filters.size()>0) ? getLazyDataModel():webHookService.list()) {
 			csv.appendValue(webHook.getCode());
 			csv.appendValue(webHook.getClassNameFilter());
 			csv.appendValue(webHook.getEventTypeFilter() + "");
