@@ -60,7 +60,7 @@
 			<hftl:column label="#{messages['enableEntity.active']}"
 				field="active" isMessage="true" />
 			<hftl:actionsColumn renderEnableLink="true"
-				permission="#{identity.hasPermission('catalog','catalogManagement')}" />
+				permission="#{identity.hasPermission('catalog','catalogManagement')}" renderDuplicateLink="true" width="160"/>
 		</hftl:dataList>
 
 	</ui:define>

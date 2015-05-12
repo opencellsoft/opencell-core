@@ -46,6 +46,9 @@
 	<c:if test="${empty renderEnableLink}">
 		<c:set var="renderEnableLink" value="false" />
 	</c:if>
+	<c:if test="${empty renderDuplicateLink}">
+		<c:set var="renderDuplicateLink" value="false" />
+	</c:if>
 	<c:if test="${empty editView}">
 		<c:set var="editView" value="#{backingBean.getEditViewName()}" />
 	</c:if>
@@ -92,6 +95,31 @@
 					value="#{javax.enterprise.context.conversation.id}" />
 			</c:if>
 		</p:button>
+		<p:tooltip for="#{resultsId}duplicatelink"
+			value="#{messages['commons.duplicate']}" showEffect="slide"
+			hideEffect="slide" />
+		<p:confirmDialog id="confirmDuplicateDialog" styleClass="confirm-dialog"
+			message="#{messages['commons.confirmDuplicate']}"
+			header="#{messages['commons.duplicate']}"
+			rendered="#{renderDuplicateLink}"
+			severity="alert" widgetVar="confirmDuplicateWidget" appendTo="@(body)">
+			<p:panel styleClass="confirm-dialog-content">
+				<p:commandButton id="duplicateOk" value="#{messages['commons.yes']}"
+					oncomplete="PF('confirmDuplicateWidget').hide()" process="@this"
+					action="#{backingBean.duplicate()}" update="@form" />
+				<p:commandButton id="duplicateKo" value="#{messages['commons.no']}"
+					onclick="PF('confirmDuplicateWidget').hide()" type="button" />
+			</p:panel>
+		</p:confirmDialog>
+		<p:commandButton id="#{resultsId}duplicatelink"
+			icon="ui-icon-plus" rendered="#{renderDuplicateLink}" oncomplete="PF('confirmDuplicateWidget').show()">
+			<f:setPropertyActionListener target="#{backingBean.entity}"
+				value="#{entity}"/>
+			<c:if test="${propagateConversation}">
+				<f:param name="cid"
+					value="#{javax.enterprise.context.conversation.id}" />
+			</c:if>
+		</p:commandButton>
 		<p:commandButton id="#{resultsId}enablelink" icon="ui-icon-circle-check"
 			rendered="#{renderEnableLink and entity.disabled}"
 			oncomplete="PF('confirmEnableWidget').show()">

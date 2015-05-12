@@ -18,7 +18,9 @@ package org.meveo.admin.action.catalog;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -27,14 +29,16 @@ import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.action.CustomFieldEnabledBean;
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.model.catalog.ServiceTemplate;
+import org.meveo.model.billing.ChargeInstance;
+import org.meveo.model.catalog.ServiceChargeTemplateUsage;
 import org.meveo.model.catalog.TriggeredEDRTemplate;
 import org.meveo.model.catalog.UsageChargeTemplate;
 import org.meveo.model.crm.AccountLevelEnum;
+import org.meveo.model.crm.CustomFieldInstance;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.catalog.impl.OneShotChargeTemplateService;
 import org.meveo.service.catalog.impl.RecurringChargeTemplateService;
-import org.meveo.service.catalog.impl.ServiceTemplateService;
+import org.meveo.service.catalog.impl.ServiceChargeTemplateUsageService;
 import org.meveo.service.catalog.impl.TriggeredEDRTemplateService;
 import org.meveo.service.catalog.impl.UsageChargeTemplateService;
 import org.omnifaces.cdi.ViewScoped;
@@ -62,9 +66,6 @@ public class UsageChargeTemplateBean extends BaseBean<UsageChargeTemplate> {
 
 	private DualListModel<TriggeredEDRTemplate> edrTemplates;
 	
-	@Inject
-	private ServiceTemplateService serviceTemplateService;
-
 	/**
 	 * Constructor. Invokes super constructor and provides class type of this
 	 * bean for {@link BaseBean}.
@@ -136,12 +137,28 @@ public class UsageChargeTemplateBean extends BaseBean<UsageChargeTemplate> {
 	public void setEdrTemplatesModel(DualListModel<TriggeredEDRTemplate> temp) {
 		getEntity().setEdrTemplates(temp.getTarget());
 	}
+	
+	@Inject
+	private ServiceChargeTemplateUsageService usageService;
 
 	@Override
 	protected void canDelete() {
 		boolean result=true;
-		List<ServiceTemplate> serviceTemplates=serviceTemplateService.findServivesWithUsagesByChargeTemplate(entity);
-		result=serviceTemplates==null||serviceTemplates.size()==0?true:false;
+		if(entity==null){
+			result=false;
+		}else{
+			List<ChargeInstance> instances=entity.getChargeInstances();
+			if(instances!=null&&instances.size()!=0){
+				result=false;
+			}else{
+				List<ServiceChargeTemplateUsage> usages=usageService.findByUsageChargeTemplate(entity, currentProvider);
+				if(usages!=null&&usages.size()!=0){
+					for(ServiceChargeTemplateUsage usage:usages){
+						usageService.remove(usage);
+					}
+				}
+			}
+		}
 		if(result){
 			this.delete();
 		}
@@ -149,4 +166,39 @@ public class UsageChargeTemplateBean extends BaseBean<UsageChargeTemplate> {
 		requestContext.addCallbackParam("result", result);
 	}
 
+	@Inject
+	private TriggeredEDRTemplateService edrTemplateService;
+	
+	public void duplicate() {
+		
+		if(entity!=null&&entity.getId()!=null){
+			entity.getCustomFields().size();
+			entity.getEdrTemplates().size();
+			usageChargeTemplateService.detach(entity);
+			entity.setId(null);
+			Map<String,CustomFieldInstance> customFields= entity.getCustomFields();
+			entity.setCustomFields(new HashMap<String,CustomFieldInstance>());
+			for(String code:customFields.keySet()){
+				CustomFieldInstance instance=customFields.get(code);
+				customFieldInstanceService.detach(instance);
+				instance.setId(null);
+				entity.getCustomFields().put(code, instance);
+			}
+			List<TriggeredEDRTemplate> edrTemplates=entity.getEdrTemplates();
+			entity.setEdrTemplates(new ArrayList<TriggeredEDRTemplate>());
+			if(edrTemplates!=null&edrTemplates.size()!=0){
+				for(TriggeredEDRTemplate edrTemplate:edrTemplates){
+					edrTemplateService.detach(edrTemplate);
+					entity.getEdrTemplates().add(edrTemplate);
+				}
+			}
+			entity.setChargeInstances(null);
+			entity.setCode(entity.getCode()+"_copy");
+			try{
+				usageChargeTemplateService.create(entity);
+			}catch(Exception e){
+				log.error("error when duplicate usageChargeTemplate#{0}:#{1}",entity.getCode(),e.getMessage());
+			}
+		}
+	}
 }

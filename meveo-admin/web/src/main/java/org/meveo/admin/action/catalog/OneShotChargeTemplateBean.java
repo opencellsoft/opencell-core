@@ -18,7 +18,9 @@ package org.meveo.admin.action.catalog;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -27,15 +29,19 @@ import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.action.CustomFieldEnabledBean;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.model.billing.ChargeInstance;
 import org.meveo.model.catalog.OneShotChargeTemplate;
-import org.meveo.model.catalog.ServiceTemplate;
+import org.meveo.model.catalog.ServiceChargeTemplateSubscription;
+import org.meveo.model.catalog.ServiceChargeTemplateTermination;
 import org.meveo.model.catalog.TriggeredEDRTemplate;
 import org.meveo.model.crm.AccountLevelEnum;
+import org.meveo.model.crm.CustomFieldInstance;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.catalog.impl.OneShotChargeTemplateService;
 import org.meveo.service.catalog.impl.RecurringChargeTemplateService;
-import org.meveo.service.catalog.impl.ServiceTemplateService;
+import org.meveo.service.catalog.impl.ServiceChargeTemplateSubscriptionService;
+import org.meveo.service.catalog.impl.ServiceChargeTemplateTerminationService;
 import org.meveo.service.catalog.impl.TriggeredEDRTemplateService;
 import org.meveo.service.catalog.impl.UsageChargeTemplateService;
 import org.omnifaces.cdi.ViewScoped;
@@ -73,9 +79,6 @@ public class OneShotChargeTemplateBean extends BaseBean<OneShotChargeTemplate> {
 
 	private DualListModel<TriggeredEDRTemplate> edrTemplates;
 	
-	@Inject
-	private ServiceTemplateService serviceTemplateService;
-
 	/**
 	 * Constructor. Invokes super constructor and provides class type of this
 	 * bean for {@link BaseBean}.
@@ -180,23 +183,75 @@ public class OneShotChargeTemplateBean extends BaseBean<OneShotChargeTemplate> {
 		return Arrays.asList("provider");
 	}
 	
+	@Inject
+	private ServiceChargeTemplateSubscriptionService subscriptionService;
+	@Inject
+	private ServiceChargeTemplateTerminationService terminationService;
+	
 	@Override
 	protected void canDelete() {
 		boolean result = true;
-		List<ServiceTemplate> serviceTemplates1 = serviceTemplateService
-				.findServivesWithSubscriptionsByChargeTemplate(entity);
-		result = serviceTemplates1 == null || serviceTemplates1.size() == 0 ? true
-				: false;
-		if (result) {
-			List<ServiceTemplate> serviceTemplates2 = serviceTemplateService
-					.findServivesWithTerminationsByChargeTemplate(entity);
-			result = serviceTemplates2 == null || serviceTemplates2.size() == 0 ? true
-					: false;
+		if(entity==null){
+			result=false;
+		}else{
+			List<ChargeInstance> instances=entity.getChargeInstances();
+			if(instances!=null&&instances.size()!=0){
+				result=false;
+			}else{
+				List<ServiceChargeTemplateSubscription> subscriptions=subscriptionService.findBySubscriptionChargeTemplate(entity, currentProvider);
+				if(subscriptions!=null&&subscriptions.size()!=0){
+					for(ServiceChargeTemplateSubscription subscription:subscriptions){
+						subscriptionService.remove(subscription);
+					}
+				}
+				List<ServiceChargeTemplateTermination> terminations=terminationService.findByTerminationChargeTemplate(oneShotChargeTemplateService.getEntityManager(), entity, currentProvider);
+				if(terminations!=null&&terminations.size()!=0){
+					for(ServiceChargeTemplateTermination termination:terminations){
+						terminationService.remove(termination);
+					}
+				}
+				
+			}
 		}
 		if (result) {
 			this.delete();
 		}
 		RequestContext requestContext = RequestContext.getCurrentInstance();
 		requestContext.addCallbackParam("result", result);
+	}
+	@Inject
+	private TriggeredEDRTemplateService edrTemplateService;
+	
+	public void duplicate() {
+		
+		if(entity!=null&&entity.getId()!=null){
+			entity.getCustomFields().size();
+			entity.getEdrTemplates().size();
+			oneShotChargeTemplateService.detach(entity);
+			entity.setId(null);
+			Map<String,CustomFieldInstance> customFields= entity.getCustomFields();
+			entity.setCustomFields(new HashMap<String,CustomFieldInstance>());
+			for(String code:customFields.keySet()){
+				CustomFieldInstance instance=customFields.get(code);
+				customFieldInstanceService.detach(instance);
+				instance.setId(null);
+				entity.getCustomFields().put(code, instance);
+			}
+			List<TriggeredEDRTemplate> edrTemplates=entity.getEdrTemplates();
+			entity.setEdrTemplates(new ArrayList<TriggeredEDRTemplate>());
+			if(edrTemplates!=null&edrTemplates.size()!=0){
+				for(TriggeredEDRTemplate edrTemplate:edrTemplates){
+					edrTemplateService.detach(edrTemplate);
+					entity.getEdrTemplates().add(edrTemplate);
+				}
+			}
+			entity.setChargeInstances(null);
+			entity.setCode(entity.getCode()+"_copy");
+			try{
+				oneShotChargeTemplateService.create(entity);
+			}catch(Exception e){
+				log.error("error when duplicate recurringChargeTemplate#{0}:#{1}",entity.getCode(),e.getMessage());
+			}
+		}
 	}
 }
