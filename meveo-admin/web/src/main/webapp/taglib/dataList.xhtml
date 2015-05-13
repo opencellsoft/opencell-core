@@ -70,6 +70,10 @@
 	<c:if test="${empty importCsv}">
 		<c:set var="importCsv" value="false" />
 	</c:if>
+	
+	<c:if test="${empty importStrategy}">
+		<c:set var="importStrategy" value="false" />
+	</c:if>
 
 	<c:if test="${empty resultsId}">
 		<c:set var="resultsId" value="results" />
@@ -133,13 +137,14 @@
 				rendered="#{exportXlsxButton}">
         		<pe:exporter type="xlsx" target="datatable_#{resultsId}" fileName="data" pageOnly="false" skipComponents="true"/>
 			</p:commandButton>
-            <p:commandButton style="margin-left:4px;" value="Export to CSV" action="#{backingBean.exportToFile()}" rendered="#{exportToCsv}" ajax="false" />
-            <p:commandButton value="Import CSV" rendered="#{importCsv}" type="button" onclick="PF('csvDialog').show();" />
+            <p:commandButton style="margin-left:4px;" value="#{messages['commons.exportCsv']}" action="#{backingBean.exportToFile()}" rendered="#{exportToCsv}"  ajax="false"/>
+            <p:commandButton value="#{messages['commons.importCsv']}" rendered="#{importCsv}" type="button" onclick="PF('csvDialog').show();" />
 
-            <p:dialog header="Import CSV" id="#{formId}_strategyDlg" widgetVar="csvDialog" rendered="#{importCsv}" modal="true" appendTo="@form" closeOnEscape="true">
+            <p:dialog header="#{messages['commons.importCsv']}" id="#{formId}_strategyDlg" widgetVar="csvDialog"  modal="true"  closeOnEscape="true">
                 <p:messages autoUpdate="true"/>
-                <hftl:decorateFormField fieldId="#{formId}_strategy" label="#{messages['notification.strategyImportType']}">
-                    <p:selectOneMenu id="#{formId}_strategy" value="#{backingBean.strategyImportType}" required="true">
+                <hftl:decorateFormField fieldId="#{formId}_strategy" label="#{messages['notification.strategyImportType']}" rendered="#{importStrategy}">
+                    <p:selectOneMenu id="#{formId}_strategy" value="#{backingBean.strategyImportType}">
+						<f:selectItem itemLabel="#{messages['commons.select']}" />
                         <f:selectItem itemLabel="#{messages['enum.strategyImportTypeEnum.UPDATED']}" itemValue="UPDATED" />
                         <f:selectItem itemLabel="#{messages['enum.strategyImportTypeEnum.REJECTE_IMPORT']}" itemValue="REJECTE_IMPORT" />
                         <f:selectItem itemLabel="#{messages['enum.strategyImportTypeEnum.REJECT_EXISTING_RECORDS']}" itemValue="REJECT_EXISTING_RECORDS" />
