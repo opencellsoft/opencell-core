@@ -77,7 +77,7 @@ public class ImportCustomersJobBean {
 
 	@Inject
 	private SellerService sellerService;
-	
+
 	@Inject
 	private TitleService titleService;
 
@@ -571,17 +571,18 @@ public class ImportCustomersJobBean {
 		}
 		if(cust.getName() == null) {
 			createCustomerError(sell, cust, "name.title and name.lastName is null");
-		}
-		if(StringUtils.isBlank(cust.getName().getTitle())) {
-			createCustomerError(sell, cust, "name.title is null");
-		}
-		if(StringUtils.isBlank(cust.getName().getLastName())) {
-			createCustomerError(sell, cust, "name.lastName is null");
-		}
+		}else{
+			if( StringUtils.isBlank(cust.getName().getTitle())) {
+				createCustomerError(sell, cust, "name.title is null");
+			}
+			if(StringUtils.isBlank(cust.getName().getLastName())) {
+				createCustomerError(sell, cust, "name.lastName is null");
+			}
 
-		if (titleService.findByCode(provider, cust.getName().getTitle()) == null) {
-			createCustomerError(sell, cust, "Title with code=" + cust.getName().getTitle() + " does not exists");
-			return true;
+			if (titleService.findByCode(provider, cust.getName().getTitle()) == null) {
+				createCustomerError(sell, cust, "Title with code=" + cust.getName().getTitle() + " does not exists");
+				return true;
+			}
 		}
 		if (cust.getCustomerAccounts().getCustomerAccount() == null || cust.getCustomerAccounts().getCustomerAccount().isEmpty()) {
 			createCustomerError(sell, cust, "No customer account");
