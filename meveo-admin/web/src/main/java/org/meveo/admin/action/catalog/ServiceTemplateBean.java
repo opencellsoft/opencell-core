@@ -17,7 +17,9 @@
 package org.meveo.admin.action.catalog;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
@@ -27,6 +29,7 @@ import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.action.CustomFieldEnabledBean;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.ServiceChargeTemplateRecurring;
 import org.meveo.model.catalog.ServiceChargeTemplateSubscription;
@@ -35,8 +38,10 @@ import org.meveo.model.catalog.ServiceChargeTemplateUsage;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.catalog.WalletTemplate;
 import org.meveo.model.crm.AccountLevelEnum;
+import org.meveo.model.crm.CustomFieldInstance;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
+import org.meveo.service.billing.impl.ServiceInstanceService;
 import org.meveo.service.billing.impl.WalletTemplateService;
 import org.meveo.service.catalog.impl.OfferTemplateService;
 import org.meveo.service.catalog.impl.ServiceChargeTemplateRecurringService;
@@ -421,17 +426,116 @@ public class ServiceTemplateBean extends BaseBean<ServiceTemplate> {
 	
 	@Inject
 	private OfferTemplateService offerTemplateService;
+	@Inject
+	private ServiceInstanceService serviceInstanceService;
 
 	@Override
 	protected void canDelete() {
 		boolean result=true;
-		List<OfferTemplate> offers=offerTemplateService.findByServiceTemplate(entity);
-		result=offers==null||offers.size()==0?true:false;
+		
+		//instance signed into subscription
+		List<ServiceInstance> serviceInstances=serviceInstanceService.findByServiceTemplate(this.serviceTemplateService.getEntityManager(), entity, this.currentProvider);
+		result=serviceInstances==null||serviceInstances.size()==0?true:false;
 		if(result){
+			List<OfferTemplate> offers=offerTemplateService.findByServiceTemplate(entity);
+			if(offers!=null){
+				for(OfferTemplate offer:offers){
+					offer.getServiceTemplates().remove(entity);
+					offerTemplateService.update(offer);
+				}
+			}
+			List<ServiceChargeTemplateRecurring> recurrings=entity.getServiceRecurringCharges();
+			entity.setServiceRecurringCharges(null);
+			for(ServiceChargeTemplateRecurring recurring:recurrings){
+				recurring.setServiceTemplate(null);
+				serviceChargeTemplateRecurringService.update(recurring);
+			}
+			List<ServiceChargeTemplateSubscription> subscriptions=entity.getServiceSubscriptionCharges();
+			entity.setServiceSubscriptionCharges(null);
+			for(ServiceChargeTemplateSubscription subscription:subscriptions){
+				subscription.setServiceTemplate(null);
+				serviceChargeTemplateSubscriptionService.update(subscription);
+			}
+			List<ServiceChargeTemplateTermination> terminations=entity.getServiceTerminationCharges();
+			entity.setServiceTerminationCharges(null);
+			for(ServiceChargeTemplateTermination termination:terminations){
+				termination.setServiceTemplate(null);
+				serviceChargeTemplateTerminationService.update(termination);
+			}
+			List<ServiceChargeTemplateUsage> usages=entity.getServiceUsageCharges();
+			entity.setServiceUsageCharges(null);
+			for(ServiceChargeTemplateUsage usage:usages){
+				usage.setServiceTemplate(null);
+				serviceChargeTemplateUsageService.update(usage);
+			}
 			this.delete();
 		}
+		
 		RequestContext requestContext = RequestContext.getCurrentInstance();
 		requestContext.addCallbackParam("result", result);
+	}
+	
+	public void duplicate() {
+		if(entity!=null&&entity.getId()!=null){
+			entity.getCustomFields().size();
+			entity.getServiceRecurringCharges().size();
+			entity.getServiceSubscriptionCharges().size();
+			entity.getServiceTerminationCharges().size();
+			entity.getServiceUsageCharges().size();
+			serviceTemplateService.detach(entity);
+			entity.setId(null);
+			Map<String,CustomFieldInstance> customFields= entity.getCustomFields();
+			entity.setCustomFields(new HashMap<String,CustomFieldInstance>());
+			for(String code:customFields.keySet()){
+				CustomFieldInstance instance=customFields.get(code);
+				customFieldInstanceService.detach(instance);
+				instance.setId(null);
+				entity.getCustomFields().put(code, instance);
+			}
+			List<ServiceChargeTemplateRecurring> recurrings=entity.getServiceRecurringCharges();
+			entity.setServiceRecurringCharges(new ArrayList<ServiceChargeTemplateRecurring>());
+			for(ServiceChargeTemplateRecurring recurring:recurrings){
+				recurring.getWalletTemplates().size();
+				serviceChargeTemplateRecurringService.detach(recurring);
+				recurring.setId(null);
+				recurring.setServiceTemplate(entity);
+				entity.getServiceRecurringCharges().add(recurring);
+			}
+			List<ServiceChargeTemplateSubscription> subscriptions=entity.getServiceSubscriptionCharges();
+			entity.setServiceSubscriptionCharges(new ArrayList<ServiceChargeTemplateSubscription>());
+			for(ServiceChargeTemplateSubscription subscription:subscriptions){
+				subscription.getWalletTemplates().size();
+				serviceChargeTemplateSubscriptionService.detach(subscription);
+				subscription.setId(null);
+				subscription.setServiceTemplate(entity);
+				entity.getServiceSubscriptionCharges().add(subscription);
+			}
+			List<ServiceChargeTemplateTermination> terminations=entity.getServiceTerminationCharges();
+			entity.setServiceTerminationCharges(new ArrayList<ServiceChargeTemplateTermination>());
+			for(ServiceChargeTemplateTermination termination:terminations){
+				termination.getWalletTemplates().size();
+				serviceChargeTemplateTerminationService.detach(termination);
+				termination.setId(null);
+				termination.setServiceTemplate(entity);
+				entity.getServiceTerminationCharges().add(termination);
+			}
+			List<ServiceChargeTemplateUsage> usages=entity.getServiceUsageCharges();
+			entity.setServiceUsageCharges(new ArrayList<ServiceChargeTemplateUsage>());
+			for(ServiceChargeTemplateUsage usage:usages){
+				usage.getWalletTemplates().size();
+				serviceChargeTemplateUsageService.detach(usage);
+				usage.setId(null);
+				usage.setServiceTemplate(entity);
+				entity.getServiceUsageCharges().add(usage);
+			}
+			entity.setCode(entity.getCode()+"_copy");
+			try {
+				serviceTemplateService.create(entity);
+			} catch (BusinessException e) {
+				log.error("error when duplicate service#{0}:#{1}",entity.getCode(),e.getMessage());
+			}
+		}
+		System.out.println("Entity ID###"+(entity!=null?entity.getId():"null"));
 	}
 
 }

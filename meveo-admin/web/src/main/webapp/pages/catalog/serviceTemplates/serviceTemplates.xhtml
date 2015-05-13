@@ -57,7 +57,8 @@
 				field="active" isMessage="true" />
 
 			<hftl:actionsColumn
-				permission="#{identity.hasPermission('catalog','catalogManagement')}" renderEnableLink="true"/>
+				permission="#{identity.hasPermission('catalog','catalogManagement')}" renderEnableLink="true"
+					renderDuplicateLink="true" width="160"/>
 		</hftl:dataList>
 
 	</ui:define>

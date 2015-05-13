@@ -87,6 +87,7 @@
 
     Additional attributes applicable to List type fields 
         listType - list type - "simpleList" or "pickUpList"
+        showFields - a list of fields to show for a "simpleList" list type. Format: messageKey,field;messageKey,field
         dualListModel - dual list model for "pickUpList" list type.
         deleteButton - should a delete button be displayed to manage "simpleList" list type values
         showButtonAddNew - should a "add new value" button be displayed to manage "simpleList" list type values
@@ -133,6 +134,7 @@
         default="#{cc.attrs.time?paramBean.getProperty('meveo.dateTimeFormat','dd/MM/yyyy HH:mm'):paramBean.getProperty('meveo.dateFormat','dd/MM/yyyy')}" />
     <cc:attribute name="listType" default="simpleList" />
     <cc:attribute name="dualListModel" />
+    <cc:attribute name="showFields" />
     <cc:attribute name="deleteButton" default="true" />
     <cc:attribute name="showButtonAddNew" default="true" />
     <cc:attribute name="valueLabelField" />
@@ -169,7 +171,7 @@
 
     <!--  Internal attribute - don't use -->
     <cc:attribute name="fieldIdPrefix" default="#{cc.attrs.field.concat(cc.attrs.childField!=null?'_'.concat(cc.attrs.childField):'')}" />
-
+    <cc:attribute name="fieldGenericsType" default="#{cc.getFieldGenericsType(cc.attrs.field, cc.attrs.childField)}"/>
 </cc:interface>
 
 <cc:implementation>

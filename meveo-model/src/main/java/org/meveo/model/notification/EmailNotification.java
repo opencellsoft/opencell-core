@@ -1,6 +1,7 @@
 package org.meveo.model.notification;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
@@ -30,7 +31,7 @@ public class EmailNotification extends Notification {
 	
 	@ElementCollection(fetch=FetchType.EAGER)
 	@CollectionTable(name="ADM_NOTIF_EMAIL_LIST")
-	private Set<String> emails;
+	private Set<String> emails = new HashSet<String>();
 	
 	@ElementCollection(fetch=FetchType.EAGER)
 	@CollectionTable(name="ADM_NOTIF_EMAIL_USER")
@@ -48,7 +49,7 @@ public class EmailNotification extends Notification {
 
 	@ElementCollection(fetch=FetchType.EAGER)
 	@CollectionTable(name="ADM_NOTIF_EMAIL_ATTACH")
-	private Set<String> attachmentExpressions;
+    private Set<String> attachmentExpressions = new HashSet<String>();
 
 
 	public String getEmailFrom() {

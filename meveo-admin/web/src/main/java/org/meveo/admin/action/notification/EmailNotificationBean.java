@@ -96,20 +96,17 @@ public class EmailNotificationBean extends BaseBean<EmailNotification> {
 		return Arrays.asList("provider");
 	}
 	
-	public void handleFileUpload(FileUploadEvent event) throws Exception {
-		try {
-			file = event.getFile();
-		    log.info("handleFileUpload " + file);
-		    upload();
-		} catch (BusinessException e) {
-			log.error(e.getMessage(),e);
-			messages.error(e.getMessage());
-		} catch (IOException e) {
-			log.error(e.getMessage(),e);
-			messages.error(e.getMessage());
-		}
-	    
-	}
+    public void handleFileUpload(FileUploadEvent event) throws Exception {
+        try {
+            file = event.getFile();
+            log.debug("File uploaded " + file.getFileName());
+            upload();
+            messages.info(new BundleKey("messages", "import.csv.successful"));
+        } catch (Exception e) {
+            log.error("Failed to handle uploaded file {}", event.getFile().getFileName(), e);
+            messages.error(new BundleKey("messages", "import.csv.failed"), e.getMessage());
+        }
+    }
 	
 	public void exportToFile() throws Exception {
 		CsvBuilder csv = new CsvBuilder();
@@ -128,8 +125,7 @@ public class EmailNotificationBean extends BaseBean<EmailNotification> {
 		csv.appendValue("Attachments EL");
 		csv.appendValue("Counter template");
 		csv.startNewLine();
-		for (EmailNotification emailNotification : emailNotificationService
-				.list()) {
+		for (EmailNotification emailNotification :(!filters.isEmpty()&& filters.size()>0) ? getLazyDataModel():emailNotificationService.list()) {
 			csv.appendValue(emailNotification.getCode());
 			csv.appendValue(emailNotification.getClassNameFilter());
 			csv.appendValue(emailNotification.getEventTypeFilter() + "");

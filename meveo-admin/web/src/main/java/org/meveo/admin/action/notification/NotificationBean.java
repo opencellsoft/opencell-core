@@ -90,7 +90,7 @@ public class NotificationBean extends BaseBean<Notification> {
 		csv.appendValue("El action");
 		csv.appendValue("Event type filter");
 		csv.startNewLine();
-		for (Notification notification : notificationService.list()) {
+		for (Notification notification :(!filters.isEmpty()&& filters.size()>0) ? getLazyDataModel():notificationService.list()) {
 			csv.appendValue(notification.getCode());
 			csv.appendValue(notification.getClassNameFilter());
 			csv.appendValue(notification.getElFilter());
@@ -103,20 +103,17 @@ public class NotificationBean extends BaseBean<Notification> {
 		csv.download(inputStream, "Notifications.csv");
 	}
 
-	public void handleFileUpload(FileUploadEvent event) throws Exception {
-		try {
-			file = event.getFile();
-			log.info("handleFileUpload " + file);
-			upload();
-		} catch (BusinessException e) {
-			log.error(e.getMessage(), e);
-			messages.error(e.getMessage());
-		} catch (IOException e) {
-			log.error(e.getMessage(), e);
-			messages.error(e.getMessage());
-		}
-
-	}
+    public void handleFileUpload(FileUploadEvent event) throws Exception {
+        try {
+            file = event.getFile();
+            log.debug("File uploaded " + file.getFileName());
+            upload();
+            messages.info(new BundleKey("messages", "import.csv.successful"));
+        } catch (Exception e) {
+            log.error("Failed to handle uploaded file {}", event.getFile().getFileName(), e);
+            messages.error(new BundleKey("messages", "import.csv.failed"), e.getMessage());
+        }
+    }
 
 	public void upload() throws Exception {
 		if (file != null) {

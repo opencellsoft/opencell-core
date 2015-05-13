@@ -2,11 +2,15 @@ package org.meveo.util.view.composite;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -14,6 +18,7 @@ import java.util.StringTokenizer;
 
 import javax.faces.component.UIComponent;
 import javax.faces.component.UINamingContainer;
+import javax.faces.event.ValueChangeEvent;
 
 import org.apache.commons.lang3.StringUtils;
 import org.meveo.admin.action.BaseBean;
@@ -446,7 +451,7 @@ public class BackingBeanBasedCompositeComponent extends UINamingContainer {
         Field field = getBeanField(entityField.getType(), childFieldName);
         if (field != null) {
             Class<?> type = field.getType();
-            return field.getType() == BigDecimal.class;
+            return type == BigDecimal.class;
         } else {
             return false;
         }
@@ -507,7 +512,7 @@ public class BackingBeanBasedCompositeComponent extends UINamingContainer {
     }
 
     @SuppressWarnings("rawtypes")
-    private Field getBeanField(Class<?> c, String fieldName) throws SecurityException, NoSuchFieldException {
+    private Field getBeanField(Class<?> c, String fieldName) {
 
         Field field = null;
 
@@ -547,5 +552,96 @@ public class BackingBeanBasedCompositeComponent extends UINamingContainer {
             throw new IllegalStateException("No field with name '" + fieldName + "' was found. EntityClass " + c);
         }
         return field;
+    }
+
+    /**
+     * Delete item from a collection of values
+     * 
+     * @param values Collection of values
+     * @param itemIndex An index of an item to remove
+     * @return True/false if item was removed
+     */
+    @SuppressWarnings("rawtypes")
+    public void deleteItemFromCollection(Collection values, int itemIndex) {
+
+        int index = 0;
+        Iterator iterator = values.iterator();
+        while (iterator.hasNext()) {
+            iterator.next();
+            if (itemIndex == index) {
+                iterator.remove();
+                return;
+            }
+            index++;
+        }
+    }
+
+    /**
+     * Change value in a collection. Collection to update an item index are passed as attributes
+     * 
+     * @param event Value change event
+     */
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+    public final void updateItemInCollection(ValueChangeEvent event) {
+
+        Collection values = (Collection) event.getComponent().getAttributes().get("values");
+
+        values.remove(event.getOldValue());
+        values.add(event.getNewValue());
+
+        // Unpredictable results when changing several values at a time, as Set does not guarantee same value oder - could be used only in Ajax and only with refresh
+        // int itemIndex = (int) event.getComponent().getAttributes().get("itemIndex");
+        // log.error("AKK changing value from {} to {} in index {} values {}", event.getOldValue(), event.getNewValue(), itemIndex, values.toArray());
+        // ArrayList newValues = new ArrayList();
+        // newValues.addAll(values);
+        //
+        // newValues.remove(itemIndex);
+        // newValues.add(itemIndex, event.getNewValue());
+        // values.clear();
+        // values.addAll(newValues);
+        // log.error("AKK end changing value from {} to {} in index {} values {}", event.getOldValue(), event.getNewValue(), itemIndex, values.toArray());
+    }
+
+    /**
+     * Add a new blank item to collection. Instantiate a new item based on parametized collection type.
+     * 
+     * @param values A collection of values
+     */
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+    public void addItemToCollection(Collection values, Class itemClass) {
+
+        try {
+            values.add(itemClass.newInstance());
+        } catch (InstantiationException | IllegalAccessException e) {
+            log.error("Failed to instantiate a new item of {} class", itemClass.getName());
+        }
+    }
+
+    /**
+     * Determine a generics type of a field (eg. for Set<String> field should return String)
+     * 
+     * @param fieldName Field name
+     * @param childFieldName child field name in case of field hierarchy
+     * @return A class
+     */
+    @SuppressWarnings("rawtypes")
+    public Class getFieldGenericsType(String fieldName, String childFieldName) {
+
+        Field field = getBeanField(getEntityClassFromEntity(), fieldName);
+
+        if (childFieldName == null) {
+            field = getBeanField(field.getType(), childFieldName);
+        }
+
+        if (field != null && field.getGenericType() instanceof ParameterizedType) {
+            ParameterizedType aType = (ParameterizedType) field.getGenericType();
+            Type[] fieldArgTypes = aType.getActualTypeArguments();
+            for (Type fieldArgType : fieldArgTypes) {
+                Class fieldArgClass = (Class) fieldArgType;
+                return fieldArgClass;
+            }
+
+        }
+        return null;
     }
 }

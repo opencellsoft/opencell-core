@@ -142,7 +142,7 @@ public class InboundRequestBean extends BaseBean<InboundRequest> {
         csv.appendValue("Update date");
         
         csv.startNewLine();
-        for(InboundRequest  inboundRequest:inboundRequestService.list()){ 
+        for(InboundRequest  inboundRequest:(!filters.isEmpty() && filters.size()>0) ? getLazyDataModel():inboundRequestService.list()){ 
         	 csv.appendValue(inboundRequest.getRemoteAddr());
         	 csv.appendValue(inboundRequest.getRemotePort()+"");
         	 csv.appendValue(inboundRequest.getProtocol());
@@ -219,20 +219,16 @@ public class InboundRequestBean extends BaseBean<InboundRequest> {
         csv.download(inputStream, "InboundRequests.csv");
     }
     
-
     public void handleFileUpload(FileUploadEvent event) throws Exception {
-    	try {
-    		file = event.getFile();
-    	    log.info("handleFileUpload " + file);
-    	    upload();
-    	} catch (BusinessException e) {
-    		log.error(e.getMessage(),e);
-    		messages.error(e.getMessage());
-    	} catch (IOException e) {
-    		log.error(e.getMessage(),e);
-    		messages.error(e.getMessage());
-    	}
-        
+        try {
+            file = event.getFile();
+            log.debug("File uploaded " + file.getFileName());
+            upload();
+            messages.info(new BundleKey("messages", "import.csv.successful"));
+        } catch (Exception e) {
+            log.error("Failed to handle uploaded file {}", event.getFile().getFileName(), e);
+            messages.error(new BundleKey("messages", "import.csv.failed"), e.getMessage());
+        }
     }
 
 	public void upload() throws IOException, BusinessException {

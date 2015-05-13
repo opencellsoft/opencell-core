@@ -95,8 +95,7 @@ public class NotificationHistoryBean extends BaseBean<NotificationHistory> {
 		csv.appendValue("Entity code");
 		csv.appendValue("Serialized entity");
 		csv.startNewLine();
-		for (NotificationHistory notificationHistory : notificationHistoryService
-				.list()) {
+		for (NotificationHistory notificationHistory : (!filters.isEmpty()&& filters.size()>0) ? getLazyDataModel():notificationHistoryService.list()) {
 			csv.appendValue(DateUtils.formatDateWithPattern(notificationHistory
 					.getAuditable().getUpdated(), "dd/MM/yyyy"));
 			csv.appendValue(notificationHistory.getInboundRequest() != null ? notificationHistory

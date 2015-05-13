@@ -18,6 +18,7 @@ package org.meveo.admin.action.catalog;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -26,12 +27,14 @@ import javax.inject.Named;
 
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.action.CustomFieldEnabledBean;
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.crm.AccountLevelEnum;
+import org.meveo.model.crm.CustomFieldInstance;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.SubscriptionService;
@@ -72,7 +75,7 @@ public class OfferTemplateBean extends BaseBean<OfferTemplate> {
 	private SubscriptionService subscriptionService;
 	@Inject
 	private PricePlanMatrixService pricePlanMatrixService;
-
+	
 	/**
 	 * Constructor. Invokes super constructor and provides class type of this
 	 * bean for {@link BaseBean}.
@@ -140,14 +143,46 @@ public class OfferTemplateBean extends BaseBean<OfferTemplate> {
 		List<Subscription> subscriptions=subscriptionService.findByOfferTemplate(entity);
 		result=(subscriptions==null||subscriptions.size()==0)?true:false;
 		if(result){
-			List<PricePlanMatrix> prices=pricePlanMatrixService.findByOfferTemplate(entity);
-			result=(prices==null||prices.size()==0)?true:false;
-		}
-		if(result){
+			List<PricePlanMatrix> pricePlans=pricePlanMatrixService.findByOfferTemplate(entity);
+			for(PricePlanMatrix pricePlan:pricePlans){
+				pricePlan.setOfferTemplate(null);
+				pricePlanMatrixService.update(pricePlan);
+			}
 			this.delete();
 		}
 		RequestContext requestContext = RequestContext.getCurrentInstance();
 		requestContext.addCallbackParam("result", result);
+	}
+
+	public void duplicate() {
+		
+		if(entity!=null&&entity.getId()!=null){
+			entity.getCustomFields().size();
+			entity.getServiceTemplates().size();
+			offerTemplateService.detach(entity);
+			entity.setId(null);
+			Map<String,CustomFieldInstance> customFields= entity.getCustomFields();
+			entity.setCustomFields(new HashMap<String,CustomFieldInstance>());
+			for(String code:customFields.keySet()){
+				CustomFieldInstance instance=customFields.get(code);
+				customFieldInstanceService.detach(instance);
+				instance.setId(null);
+				entity.getCustomFields().put(code, instance);
+			}
+			List<ServiceTemplate> serviceTemplates=entity.getServiceTemplates();
+			entity.setServiceTemplates(new ArrayList<ServiceTemplate>());
+			for(ServiceTemplate serviceTemplate:serviceTemplates){
+				serviceTemplateService.detach(serviceTemplate);
+				entity.getServiceTemplates().add(serviceTemplate);
+			}
+			entity.setCode(entity.getCode()+"_copy");
+			try {
+				offerTemplateService.create(entity);
+			} catch (BusinessException e) {
+				log.error("error when duplicate offer#{0}:#{1}",entity.getCode(),e.getMessage());
+			}
+			
+		}
 	}
 	
 	

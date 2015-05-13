@@ -140,7 +140,6 @@
                 <p:messages autoUpdate="true"/>
                 <hftl:decorateFormField fieldId="#{formId}_strategy" label="#{messages['notification.strategyImportType']}">
                     <p:selectOneMenu id="#{formId}_strategy" value="#{backingBean.strategyImportType}" required="true">
-                        <f:selectItem itemLabel="#{messages['commons.select']}" />
                         <f:selectItem itemLabel="#{messages['enum.strategyImportTypeEnum.UPDATED']}" itemValue="UPDATED" />
                         <f:selectItem itemLabel="#{messages['enum.strategyImportTypeEnum.REJECTE_IMPORT']}" itemValue="REJECTE_IMPORT" />
                         <f:selectItem itemLabel="#{messages['enum.strategyImportTypeEnum.REJECT_EXISTING_RECORDS']}" itemValue="REJECT_EXISTING_RECORDS" />
