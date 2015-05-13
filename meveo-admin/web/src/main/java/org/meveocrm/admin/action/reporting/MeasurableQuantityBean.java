@@ -140,52 +140,49 @@ public class MeasurableQuantityBean extends BaseBean<MeasurableQuantity> {
             messages.info(new BundleKey("messages", "import.csv.successful"));
         } catch (Exception e) {
             log.error("Failed to handle uploaded file {}", event.getFile().getFileName(), e);
-            messages.error(new BundleKey("messages", "import.csv.failed"), e.getMessage());
+            messages.error(new BundleKey("messages", "import.csv.failed"), e.getClass().getSimpleName() + " " + e.getMessage());
         }
     }
 
-	public void upload() throws Exception {
-		if (file != null) {
-			csvReader = new CsvReader(file.getInputstream(), ';',
-					Charset.forName("ISO-8859-1"));
-			csvReader.readHeaders();
-			try {
-				String existingEntitiesCSV=paramBean.getProperty("existingEntities.csv.dir", "existingEntitiesCSV");
-				File dir=new File(providerDir+File.separator+getCurrentProvider().getCode()+File.separator+existingEntitiesCSV);
-				dir.mkdirs();
-				existingEntitiesCsvFile= dir.getAbsolutePath()+File.separator+"MeasurableQuantitys_"+new SimpleDateFormat("ddMMyyyyHHmmSS").format(new Date())+".csv";
-				csv = new CsvBuilder();
-				boolean isEntityAlreadyExist=false;
-				while (csvReader.readRecord()) {
-					String[] values = csvReader.getValues();
-					MeasurableQuantity existingEntity = measurableQuantityService
-							.findByCode(values[CODE], getCurrentProvider());
-					if (existingEntity != null) {
-						checkSelectedStrategy(values, existingEntity,isEntityAlreadyExist);
-						isEntityAlreadyExist=true;
-					} else {
-						
-						MeasurableQuantity measurableQuantity = new MeasurableQuantity();
-						measurableQuantity.setCode(values[CODE]);
-						measurableQuantity.setDimension1(values[DIMENSION_1]);
-						measurableQuantity.setDimension2(values[DIMENSION_2]);
-						measurableQuantity.setDimension3(values[DIMENSION_3]);
-						measurableQuantity.setDimension4(values[DIMENSION_4]);
-						measurableQuantity.setSqlQuery(values[SQL_QUERY]);
-						if(!StringUtils.isBlank(values[MEASUREMENT_PERIOD])){
-							measurableQuantity.setMeasurementPeriod(MeasurementPeriodEnum.valueOf(values[MEASUREMENT_PERIOD]));	
-						}
-						measurableQuantity.setLastMeasureDate(DateUtils.parseDateWithPattern((values[LAST_MEASURE_DATE]),"dd/MM/yyyy"));
-						measurableQuantity.setEditable(Boolean.parseBoolean(values[EDITABLE]));
-						measurableQuantityService.create(measurableQuantity);
-					}}
-				if(isEntityAlreadyExist && strategyImportType.equals(StrategyImportTypeEnum.REJECT_EXISTING_RECORDS)){
-					csv.writeFile(csv.toString().getBytes(), existingEntitiesCsvFile);
-				}
-				messages.info(new BundleKey("messages", "import.csv.successful"));
-			} catch (RejectedImportException e) {
-				messages.error(new BundleKey("messages", e.getMessage()));
-			}}}
+    private void upload() throws Exception {
+        if (file == null) {
+            return;
+        }
+        csvReader = new CsvReader(file.getInputstream(), ';', Charset.forName("ISO-8859-1"));
+        csvReader.readHeaders();
+        String existingEntitiesCSV = paramBean.getProperty("existingEntities.csv.dir", "existingEntitiesCSV");
+        File dir = new File(providerDir + File.separator + getCurrentProvider().getCode() + File.separator + existingEntitiesCSV);
+        dir.mkdirs();
+        existingEntitiesCsvFile = dir.getAbsolutePath() + File.separator + "MeasurableQuantitys_" + new SimpleDateFormat("ddMMyyyyHHmmSS").format(new Date()) + ".csv";
+        csv = new CsvBuilder();
+        boolean isEntityAlreadyExist = false;
+        while (csvReader.readRecord()) {
+            String[] values = csvReader.getValues();
+            MeasurableQuantity existingEntity = measurableQuantityService.findByCode(values[CODE], getCurrentProvider());
+            if (existingEntity != null) {
+                checkSelectedStrategy(values, existingEntity, isEntityAlreadyExist);
+                isEntityAlreadyExist = true;
+            } else {
+
+                MeasurableQuantity measurableQuantity = new MeasurableQuantity();
+                measurableQuantity.setCode(values[CODE]);
+                measurableQuantity.setDimension1(values[DIMENSION_1]);
+                measurableQuantity.setDimension2(values[DIMENSION_2]);
+                measurableQuantity.setDimension3(values[DIMENSION_3]);
+                measurableQuantity.setDimension4(values[DIMENSION_4]);
+                measurableQuantity.setSqlQuery(values[SQL_QUERY]);
+                if (!StringUtils.isBlank(values[MEASUREMENT_PERIOD])) {
+                    measurableQuantity.setMeasurementPeriod(MeasurementPeriodEnum.valueOf(values[MEASUREMENT_PERIOD]));
+                }
+                measurableQuantity.setLastMeasureDate(DateUtils.parseDateWithPattern((values[LAST_MEASURE_DATE]), "dd/MM/yyyy"));
+                measurableQuantity.setEditable(Boolean.parseBoolean(values[EDITABLE]));
+                measurableQuantityService.create(measurableQuantity);
+            }
+        }
+        if (isEntityAlreadyExist && strategyImportType.equals(StrategyImportTypeEnum.REJECT_EXISTING_RECORDS)) {
+            csv.writeFile(csv.toString().getBytes(), existingEntitiesCsvFile);
+        }
+    }
 
 	public void checkSelectedStrategy(String[] values,
 			MeasurableQuantity existingEntity,boolean isEntityAlreadyExist) throws Exception {

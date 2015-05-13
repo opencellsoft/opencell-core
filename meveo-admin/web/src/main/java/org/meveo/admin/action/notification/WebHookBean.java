@@ -176,94 +176,81 @@ public class WebHookBean extends BaseBean<WebHook> {
             messages.info(new BundleKey("messages", "import.csv.successful"));
         } catch (Exception e) {
             log.error("Failed to handle uploaded file {}", event.getFile().getFileName(), e);
-            messages.error(new BundleKey("messages", "import.csv.failed"), e.getMessage());
+            messages.error(new BundleKey("messages", "import.csv.failed"), e.getClass().getSimpleName() + " " + e.getMessage());
         }
     }
-    
-	public void upload() throws IOException, BusinessException {
-		if (file != null) {
-			csvReader = new CsvReader(file.getInputstream(), ';',
-					Charset.forName("ISO-8859-1"));
-			csvReader.readHeaders();
-			try {
-				String existingEntitiesCSV=paramBean.getProperty("existingEntities.csv.dir", "existingEntitiesCSV");
-				File dir=new File(providerDir+File.separator+getCurrentProvider().getCode()+File.separator+existingEntitiesCSV);
-				dir.mkdirs();
-				existingEntitiesCsvFile= dir.getAbsolutePath()+File.separator+"WebHooks_"+new SimpleDateFormat("ddMMyyyyHHmmSS").format(new Date())+".csv";
-				csv = new CsvBuilder();
-				boolean isEntityAlreadyExist=false;
-				while (csvReader.readRecord()) {
-					String[] values = csvReader.getValues();
-					WebHook existingEntity = webHookService.findByCode(
-							values[CODE], getCurrentProvider());
-					if (existingEntity != null) {
-						checkSelectedStrategy(values, existingEntity,isEntityAlreadyExist);
-						isEntityAlreadyExist=true;
-					} else {
-						WebHook webHook = new WebHook();
-						webHook.setCode(values[CODE]);
-						webHook.setClassNameFilter(values[CLASS_NAME_FILTER]);
-						webHook.setEventTypeFilter(NotificationEventTypeEnum
-								.valueOf(values[EVENT_TYPE_FILTER]));
-						webHook.setElFilter(values[EL_FILTER]);
-						webHook.setDisabled(Boolean
-								.parseBoolean(values[ACTIVE]));
-						webHook.setElAction(values[EL_ACTION]);
-						webHook.setHost(values[HOST]);
-						webHook.setPort(Integer.parseInt(values[PORT]));
-						webHook.setPage(values[PAGE]);
-						webHook.setHttpMethod(WebHookMethodEnum
-								.valueOf(values[HTTP_METHOD]));
-						webHook.setUsername(values[USERNAME]);
-						webHook.setPassword(values[PASSWORD]);
-						
-						if(values[HEADERS]!=null && values[HEADERS].length()>0){
-						String[] mapElements=values[HEADERS].split("\\|");
-						if(mapElements!=null && mapElements.length>0){
-							Map<String,String> headers = new HashMap<String, String>();
-							for(String element:mapElements){
-								String[] param=element.split(":");
-								String value=new String(Base64.decodeBase64(param[1]));
-								headers.put(param[0], value);
-							}
-							webHook.setHeaders(headers);
-						  }
-						}
-						if(values[PARAMS]!=null && values[PARAMS].length()>0){
-							String[] mapElements=values[PARAMS].split("\\|");
-							if(mapElements!=null && mapElements.length>0){
-								Map<String,String> params = new HashMap<String, String>();
-								for(String element:mapElements){
-									String[] param=element.split(":");
-									String value=new String(Base64.decodeBase64(param[1]));
-									params.put(param[0], value);
-								}
-								webHook.setParams(params);
-							  }
-							}
-						if (!StringUtils.isBlank(values[COUNTER_TEMPLATE])) {
-							CounterTemplate counterTemplate = counterTemplateService
-									.findByCode(values[COUNTER_TEMPLATE],
-											getCurrentProvider());
-							webHook.setCounterTemplate(counterTemplate != null ? counterTemplate
-									: null);
-						}
-						webHookService.create(webHook);
-					}
-				}
-				if(isEntityAlreadyExist && strategyImportType.equals(StrategyImportTypeEnum.REJECT_EXISTING_RECORDS)){
-					csv.writeFile(csv.toString().getBytes(), existingEntitiesCsvFile);
-				}
-				messages.info(new BundleKey("messages", "import.csv.successful"));
-			} catch (RejectedImportException e) {
-				messages.error(new BundleKey("messages", e.getMessage()));
-			}
-		
-		}
-	}
 
-	public void checkSelectedStrategy(String[] values, WebHook existingEntity,boolean isEntityAlreadyExist)
-			throws RejectedImportException, IOException {
+    private void upload() throws IOException, BusinessException {
+        if (file == null) {
+            return;
+        }
+        csvReader = new CsvReader(file.getInputstream(), ';', Charset.forName("ISO-8859-1"));
+        csvReader.readHeaders();
+
+        String existingEntitiesCSV = paramBean.getProperty("existingEntities.csv.dir", "existingEntitiesCSV");
+        File dir = new File(providerDir + File.separator + getCurrentProvider().getCode() + File.separator + existingEntitiesCSV);
+        dir.mkdirs();
+        existingEntitiesCsvFile = dir.getAbsolutePath() + File.separator + "WebHooks_" + new SimpleDateFormat("ddMMyyyyHHmmSS").format(new Date()) + ".csv";
+        csv = new CsvBuilder();
+        boolean isEntityAlreadyExist = false;
+        while (csvReader.readRecord()) {
+            String[] values = csvReader.getValues();
+            WebHook existingEntity = webHookService.findByCode(values[CODE], getCurrentProvider());
+            if (existingEntity != null) {
+                checkSelectedStrategy(values, existingEntity, isEntityAlreadyExist);
+                isEntityAlreadyExist = true;
+            } else {
+                WebHook webHook = new WebHook();
+                webHook.setCode(values[CODE]);
+                webHook.setClassNameFilter(values[CLASS_NAME_FILTER]);
+                webHook.setEventTypeFilter(NotificationEventTypeEnum.valueOf(values[EVENT_TYPE_FILTER]));
+                webHook.setElFilter(values[EL_FILTER]);
+                webHook.setDisabled(Boolean.parseBoolean(values[ACTIVE]));
+                webHook.setElAction(values[EL_ACTION]);
+                webHook.setHost(values[HOST]);
+                webHook.setPort(Integer.parseInt(values[PORT]));
+                webHook.setPage(values[PAGE]);
+                webHook.setHttpMethod(WebHookMethodEnum.valueOf(values[HTTP_METHOD]));
+                webHook.setUsername(values[USERNAME]);
+                webHook.setPassword(values[PASSWORD]);
+
+                if (values[HEADERS] != null && values[HEADERS].length() > 0) {
+                    String[] mapElements = values[HEADERS].split("\\|");
+                    if (mapElements != null && mapElements.length > 0) {
+                        Map<String, String> headers = new HashMap<String, String>();
+                        for (String element : mapElements) {
+                            String[] param = element.split(":");
+                            String value = new String(Base64.decodeBase64(param[1]));
+                            headers.put(param[0], value);
+                        }
+                        webHook.setHeaders(headers);
+                    }
+                }
+                if (values[PARAMS] != null && values[PARAMS].length() > 0) {
+                    String[] mapElements = values[PARAMS].split("\\|");
+                    if (mapElements != null && mapElements.length > 0) {
+                        Map<String, String> params = new HashMap<String, String>();
+                        for (String element : mapElements) {
+                            String[] param = element.split(":");
+                            String value = new String(Base64.decodeBase64(param[1]));
+                            params.put(param[0], value);
+                        }
+                        webHook.setParams(params);
+                    }
+                }
+                if (!StringUtils.isBlank(values[COUNTER_TEMPLATE])) {
+                    CounterTemplate counterTemplate = counterTemplateService.findByCode(values[COUNTER_TEMPLATE], getCurrentProvider());
+                    webHook.setCounterTemplate(counterTemplate != null ? counterTemplate : null);
+                }
+                webHookService.create(webHook);
+            }
+        }
+        if (isEntityAlreadyExist && strategyImportType.equals(StrategyImportTypeEnum.REJECT_EXISTING_RECORDS)) {
+            csv.writeFile(csv.toString().getBytes(), existingEntitiesCsvFile);
+        }
+    }
+
+    public void checkSelectedStrategy(String[] values, WebHook existingEntity, boolean isEntityAlreadyExist) throws RejectedImportException {
 		if (strategyImportType.equals(StrategyImportTypeEnum.UPDATED)) {
 			existingEntity.setClassNameFilter(values[CLASS_NAME_FILTER]);
 			existingEntity.setEventTypeFilter(NotificationEventTypeEnum

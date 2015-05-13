@@ -443,8 +443,8 @@ public class UserBean extends BaseBean<User> {
 
             messages.info(event.getFile().getFileName() + " is uploaded to " + ((selectedFolder != null) ? selectedFolder : "Home"));
         } catch (IOException e) {
-            log.error(e.getMessage());
-            messages.error("error while uploading " + event.getFile().getFileName());
+            log.error("Failed to upload a file {}", event.getFile().getFileName(), e);
+            messages.error("Error while uploading " + event.getFile().getFileName());
         }
     }
 
@@ -456,8 +456,8 @@ public class UserBean extends BaseBean<User> {
 
                 messages.info(file.getFileName() + " is uploaded to " + ((selectedFolder != null) ? selectedFolder : "Home"));
             } catch (IOException e) {
-                log.error(e.getMessage());
-                messages.error("error while uploading " + file.getFileName());
+                log.error("Failed to upload a file {}", file.getFileName(), e);
+                messages.error("Error while uploading " + file.getFileName());
             }
         } else {
             log.info("upload file is null");

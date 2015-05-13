@@ -227,124 +227,114 @@ public class InboundRequestBean extends BaseBean<InboundRequest> {
             messages.info(new BundleKey("messages", "import.csv.successful"));
         } catch (Exception e) {
             log.error("Failed to handle uploaded file {}", event.getFile().getFileName(), e);
-            messages.error(new BundleKey("messages", "import.csv.failed"), e.getMessage());
+            messages.error(new BundleKey("messages", "import.csv.failed"), e.getClass().getSimpleName() + " " + e.getMessage());
         }
     }
 
-	public void upload() throws IOException, BusinessException {
-		if (file != null) {
-			csvReader = new CsvReader(file.getInputstream(), ';',
-					Charset.forName("ISO-8859-1"));
-			csvReader.readHeaders();
-			try {
-				String existingEntitiesCSV=paramBean.getProperty("existingEntities.csv.dir", "existingEntitiesCSV");
-				File dir=new File(providerDir+File.separator+getCurrentProvider().getCode()+File.separator+existingEntitiesCSV);
-				dir.mkdirs();
-				existingEntitiesCsvFile= dir.getAbsolutePath()+File.separator+"InboundRequests_"+new SimpleDateFormat("ddMMyyyyHHmmSS").format(new Date())+".csv";
-				csv = new CsvBuilder();
-				boolean isEntityAlreadyExist=false;
-				while (csvReader.readRecord()) {
-					String[] values = csvReader.getValues();
-					InboundRequest existingEntity = inboundRequestService
-							.findByCode(values[CODE], getCurrentProvider());
-					if (existingEntity != null) {
-						checkSelectedStrategy(values, existingEntity,isEntityAlreadyExist);
-						isEntityAlreadyExist=true;
-					} else {
-						InboundRequest inboundRequest = new InboundRequest();
-						inboundRequest.setRemoteAddr(values[FROM_IP]);
-						inboundRequest.setRemotePort(!StringUtils
-								.isBlank(values[PORT]) ? Integer
-								.parseInt(values[PORT]) : null);
-						inboundRequest.setProtocol(values[PORTOCOL]);
-						inboundRequest.setPathInfo(values[PATH_INFO]);
-						inboundRequest.setCode(values[CODE]);
-						inboundRequest.setDisabled(Boolean
-								.parseBoolean(values[ACTIVE]));
-						inboundRequest.setScheme(values[SCHEME]);
-						inboundRequest.setContentType(values[CONTENT_TYPE]);
-						inboundRequest.setContentLength(Integer
-								.parseInt(values[CONTENT_LENGHT]));
-						inboundRequest.setMethod(values[METHOD]);
-						inboundRequest
-								.setAuthType(values[AUTHENTIFICATION_TYPE]);
-						inboundRequest.setRequestURI(values[REQUEST_URI]);
-						
-						if(values[PARAMETERS]!=null && values[PARAMETERS].length()>0){
-							String[] mapElements=values[PARAMETERS].split("\\|");
-							if(mapElements!=null && mapElements.length>0){
-								Map<String,String> params = new HashMap<String, String>();
-								for(String element:mapElements){
-									String[] param=element.split(":");
-									String value=new String(Base64.decodeBase64(param[1]));
-									params.put(param[0], value);
-								}
-								inboundRequest.setParameters(params);
-							  }
-							}
-						if(values[COOCKIES]!=null && values[COOCKIES].length()>0){
-							String[] mapElements=values[COOCKIES].split("\\|");
-							if(mapElements!=null && mapElements.length>0){
-								Map<String,String> coockies = new HashMap<String, String>();
-								for(String element:mapElements){
-									String[] param=element.split(":");
-									String value=new String(Base64.decodeBase64(param[1]));
-									coockies.put(param[0], value);
-								}
-								inboundRequest.setCoockies(coockies);
-							  }
-							}
-						if(values[HEADERS]!=null && values[HEADERS].length()>0){
-							String[] mapElements=values[HEADERS].split("\\|");
-							if(mapElements!=null && mapElements.length>0){
-								Map<String,String> headers = new HashMap<String, String>();
-								for(String element:mapElements){
-									String[] param=element.split(":");
-									String value=new String(Base64.decodeBase64(param[1]));
-									headers.put(param[0], value);
-								}
-								inboundRequest.setHeaders(headers);
-							  }
-							}
-						inboundRequest
-								.setResponseContentType(values[RESPONSE_CONTENT_TYPE]);
-						inboundRequest.setResponseEncoding(values[ENCODING]);
-						
-						if(values[RESPONSE_COOCKIES]!=null && values[RESPONSE_COOCKIES].length()>0){
-							String[] mapElements=values[RESPONSE_COOCKIES].split("\\|");
-							if(mapElements!=null && mapElements.length>0){
-								Map<String,String> responseCoockies = new HashMap<String, String>();
-								for(String element:mapElements){
-									String[] param=element.split(":");
-									String value=new String(Base64.decodeBase64(param[1]));
-									responseCoockies.put(param[0], value);
-								}
-								inboundRequest.setResponseCoockies(responseCoockies);
-							  }
-							}
-						if(values[RESPONSE_HEADERS]!=null && values[RESPONSE_HEADERS].length()>0){
-							String[] mapElements=values[RESPONSE_HEADERS].split("\\|");
-							if(mapElements!=null && mapElements.length>0){
-								Map<String,String> responseHeaders = new HashMap<String, String>();
-								for(String element:mapElements){
-									String[] param=element.split(":");
-									String value=new String(Base64.decodeBase64(param[1]));
-									responseHeaders.put(param[0],value);
-								}
-								inboundRequest.setResponseHeaders(responseHeaders);
-							  }
-							}
-						inboundRequestService.create(inboundRequest);
-					}}
-				if(isEntityAlreadyExist && strategyImportType.equals(StrategyImportTypeEnum.REJECT_EXISTING_RECORDS)){
-					csv.writeFile(csv.toString().getBytes(), existingEntitiesCsvFile);
-				}
-				messages.info(new BundleKey("messages", "import.csv.successful"));
-			} catch (RejectedImportException e) {
-				messages.error(new BundleKey("messages", e.getMessage()));
-			}
-		}
-	}
+    private void upload() throws IOException, BusinessException {
+        if (file == null) {
+            return;
+        }
+        csvReader = new CsvReader(file.getInputstream(), ';', Charset.forName("ISO-8859-1"));
+        csvReader.readHeaders();
+
+        String existingEntitiesCSV = paramBean.getProperty("existingEntities.csv.dir", "existingEntitiesCSV");
+        File dir = new File(providerDir + File.separator + getCurrentProvider().getCode() + File.separator + existingEntitiesCSV);
+        dir.mkdirs();
+        existingEntitiesCsvFile = dir.getAbsolutePath() + File.separator + "InboundRequests_" + new SimpleDateFormat("ddMMyyyyHHmmSS").format(new Date()) + ".csv";
+        csv = new CsvBuilder();
+        boolean isEntityAlreadyExist = false;
+        while (csvReader.readRecord()) {
+            String[] values = csvReader.getValues();
+            InboundRequest existingEntity = inboundRequestService.findByCode(values[CODE], getCurrentProvider());
+            if (existingEntity != null) {
+                checkSelectedStrategy(values, existingEntity, isEntityAlreadyExist);
+                isEntityAlreadyExist = true;
+            } else {
+                InboundRequest inboundRequest = new InboundRequest();
+                inboundRequest.setRemoteAddr(values[FROM_IP]);
+                inboundRequest.setRemotePort(!StringUtils.isBlank(values[PORT]) ? Integer.parseInt(values[PORT]) : null);
+                inboundRequest.setProtocol(values[PORTOCOL]);
+                inboundRequest.setPathInfo(values[PATH_INFO]);
+                inboundRequest.setCode(values[CODE]);
+                inboundRequest.setDisabled(Boolean.parseBoolean(values[ACTIVE]));
+                inboundRequest.setScheme(values[SCHEME]);
+                inboundRequest.setContentType(values[CONTENT_TYPE]);
+                inboundRequest.setContentLength(Integer.parseInt(values[CONTENT_LENGHT]));
+                inboundRequest.setMethod(values[METHOD]);
+                inboundRequest.setAuthType(values[AUTHENTIFICATION_TYPE]);
+                inboundRequest.setRequestURI(values[REQUEST_URI]);
+
+                if (values[PARAMETERS] != null && values[PARAMETERS].length() > 0) {
+                    String[] mapElements = values[PARAMETERS].split("\\|");
+                    if (mapElements != null && mapElements.length > 0) {
+                        Map<String, String> params = new HashMap<String, String>();
+                        for (String element : mapElements) {
+                            String[] param = element.split(":");
+                            String value = new String(Base64.decodeBase64(param[1]));
+                            params.put(param[0], value);
+                        }
+                        inboundRequest.setParameters(params);
+                    }
+                }
+                if (values[COOCKIES] != null && values[COOCKIES].length() > 0) {
+                    String[] mapElements = values[COOCKIES].split("\\|");
+                    if (mapElements != null && mapElements.length > 0) {
+                        Map<String, String> coockies = new HashMap<String, String>();
+                        for (String element : mapElements) {
+                            String[] param = element.split(":");
+                            String value = new String(Base64.decodeBase64(param[1]));
+                            coockies.put(param[0], value);
+                        }
+                        inboundRequest.setCoockies(coockies);
+                    }
+                }
+                if (values[HEADERS] != null && values[HEADERS].length() > 0) {
+                    String[] mapElements = values[HEADERS].split("\\|");
+                    if (mapElements != null && mapElements.length > 0) {
+                        Map<String, String> headers = new HashMap<String, String>();
+                        for (String element : mapElements) {
+                            String[] param = element.split(":");
+                            String value = new String(Base64.decodeBase64(param[1]));
+                            headers.put(param[0], value);
+                        }
+                        inboundRequest.setHeaders(headers);
+                    }
+                }
+                inboundRequest.setResponseContentType(values[RESPONSE_CONTENT_TYPE]);
+                inboundRequest.setResponseEncoding(values[ENCODING]);
+
+                if (values[RESPONSE_COOCKIES] != null && values[RESPONSE_COOCKIES].length() > 0) {
+                    String[] mapElements = values[RESPONSE_COOCKIES].split("\\|");
+                    if (mapElements != null && mapElements.length > 0) {
+                        Map<String, String> responseCoockies = new HashMap<String, String>();
+                        for (String element : mapElements) {
+                            String[] param = element.split(":");
+                            String value = new String(Base64.decodeBase64(param[1]));
+                            responseCoockies.put(param[0], value);
+                        }
+                        inboundRequest.setResponseCoockies(responseCoockies);
+                    }
+                }
+                if (values[RESPONSE_HEADERS] != null && values[RESPONSE_HEADERS].length() > 0) {
+                    String[] mapElements = values[RESPONSE_HEADERS].split("\\|");
+                    if (mapElements != null && mapElements.length > 0) {
+                        Map<String, String> responseHeaders = new HashMap<String, String>();
+                        for (String element : mapElements) {
+                            String[] param = element.split(":");
+                            String value = new String(Base64.decodeBase64(param[1]));
+                            responseHeaders.put(param[0], value);
+                        }
+                        inboundRequest.setResponseHeaders(responseHeaders);
+                    }
+                }
+                inboundRequestService.create(inboundRequest);
+            }
+        }
+        if (isEntityAlreadyExist && strategyImportType.equals(StrategyImportTypeEnum.REJECT_EXISTING_RECORDS)) {
+            csv.writeFile(csv.toString().getBytes(), existingEntitiesCsvFile);
+        }
+    }
 
 	public void checkSelectedStrategy(String[] values,
 			InboundRequest existingEntity,boolean isEntityAlreadyExist) throws RejectedImportException {

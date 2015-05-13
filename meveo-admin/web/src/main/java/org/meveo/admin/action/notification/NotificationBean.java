@@ -111,53 +111,46 @@ public class NotificationBean extends BaseBean<Notification> {
             messages.info(new BundleKey("messages", "import.csv.successful"));
         } catch (Exception e) {
             log.error("Failed to handle uploaded file {}", event.getFile().getFileName(), e);
-            messages.error(new BundleKey("messages", "import.csv.failed"), e.getMessage());
+            messages.error(new BundleKey("messages", "import.csv.failed"), e.getClass().getSimpleName() + " " + e.getMessage());
         }
     }
 
-	public void upload() throws Exception {
-		if (file != null) {
-			csvReader = new CsvReader(file.getInputstream(), ';', Charset.forName("ISO-8859-1"));
-			csvReader.readHeaders();
-			try {
-				String existingEntitiesCSV = paramBean.getProperty("existingEntities.csv.dir", "existingEntitiesCSV");
-				File dir = new File(providerDir + File.separator + getCurrentProvider().getCode() + File.separator
-						+ existingEntitiesCSV);
-				dir.mkdirs();
-				existingEntitiesCsvFile = dir.getAbsolutePath() + File.separator + "Notifications_"
-						+ new SimpleDateFormat("ddMMyyyyHHmmSS").format(new Date()) + ".csv";
-				csv = new CsvBuilder();
-				boolean isEntityAlreadyExist = false;
-				while (csvReader.readRecord()) {
-					String[] values = csvReader.getValues();
-					Notification existingEntity = notificationService.findByCode(values[CODE], getCurrentProvider());
-					if (existingEntity != null) {
-						checkSelectedStrategy(values, existingEntity, isEntityAlreadyExist);
-						isEntityAlreadyExist = true;
-					} else {
-						Notification notif = new Notification();
-						notif.setCode(values[CODE]);
-						notif.setClassNameFilter(values[CLASS_NAME_FILTER]);
-						notif.setElFilter(values[EL_FILTER]);
-						notif.setDisabled(Boolean.parseBoolean(values[ACTIVE]));
-						notif.setElAction(values[EL_ACTION]);
-						notif.setEventTypeFilter(NotificationEventTypeEnum.valueOf(values[EVENT_TYPE_FILTER]));
-						notificationService.create(notif);
-					}
-				}
-				if (isEntityAlreadyExist && strategyImportType.equals(StrategyImportTypeEnum.REJECT_EXISTING_RECORDS)) {
-					csv.writeFile(csv.toString().getBytes(), existingEntitiesCsvFile);
-				}
+    private void upload() throws IOException, BusinessException {
+        if (file == null) {
+            return;
+        }
+        csvReader = new CsvReader(file.getInputstream(), ';', Charset.forName("ISO-8859-1"));
+        csvReader.readHeaders();
 
-				messages.info(new BundleKey("messages", "import.csv.successful"));
-			} catch (RejectedImportException e) {
-				messages.error(new BundleKey("messages", e.getMessage()));
-			}
-		}
-	}
+        String existingEntitiesCSV = paramBean.getProperty("existingEntities.csv.dir", "existingEntitiesCSV");
+        File dir = new File(providerDir + File.separator + getCurrentProvider().getCode() + File.separator + existingEntitiesCSV);
+        dir.mkdirs();
+        existingEntitiesCsvFile = dir.getAbsolutePath() + File.separator + "Notifications_" + new SimpleDateFormat("ddMMyyyyHHmmSS").format(new Date()) + ".csv";
+        csv = new CsvBuilder();
+        boolean isEntityAlreadyExist = false;
+        while (csvReader.readRecord()) {
+            String[] values = csvReader.getValues();
+            Notification existingEntity = notificationService.findByCode(values[CODE], getCurrentProvider());
+            if (existingEntity != null) {
+                checkSelectedStrategy(values, existingEntity, isEntityAlreadyExist);
+                isEntityAlreadyExist = true;
+            } else {
+                Notification notif = new Notification();
+                notif.setCode(values[CODE]);
+                notif.setClassNameFilter(values[CLASS_NAME_FILTER]);
+                notif.setElFilter(values[EL_FILTER]);
+                notif.setDisabled(Boolean.parseBoolean(values[ACTIVE]));
+                notif.setElAction(values[EL_ACTION]);
+                notif.setEventTypeFilter(NotificationEventTypeEnum.valueOf(values[EVENT_TYPE_FILTER]));
+                notificationService.create(notif);
+            }
+        }
+        if (isEntityAlreadyExist && strategyImportType.equals(StrategyImportTypeEnum.REJECT_EXISTING_RECORDS)) {
+            csv.writeFile(csv.toString().getBytes(), existingEntitiesCsvFile);
+        }
+    }
 
-	public void checkSelectedStrategy(String[] values, Notification existingEntity, boolean isEntityAlreadyExist)
-			throws Exception {
+    public void checkSelectedStrategy(String[] values, Notification existingEntity, boolean isEntityAlreadyExist) throws RejectedImportException {
 		if (strategyImportType.equals(StrategyImportTypeEnum.UPDATED)) {
 			existingEntity.setClassNameFilter(values[CLASS_NAME_FILTER]);
 			existingEntity.setElFilter(values[EL_FILTER]);
