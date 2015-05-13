@@ -42,6 +42,7 @@ import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.admin.impl.TradingCurrencyService;
 import org.meveo.service.billing.impl.TradingCountryService;
 import org.meveo.service.billing.impl.TradingLanguageService;
+import org.meveo.service.catalog.impl.TitleService;
 import org.meveo.service.crm.impl.CustomerImportService;
 import org.meveo.service.crm.impl.CustomerService;
 import org.meveo.service.payments.impl.CustomerAccountService;
@@ -76,6 +77,9 @@ public class ImportCustomersJobBean {
 
 	@Inject
 	private SellerService sellerService;
+	
+	@Inject
+	private TitleService titleService;
 
 	Sellers sellersWarning;
 	Sellers sellersError;
@@ -238,7 +242,7 @@ public class ImportCustomersJobBean {
 				seller = createSeller(sell, fileName, i, currentUser, provider);
 
 				for (org.meveo.model.jaxb.customer.Customer cust : sell.getCustomers().getCustomer()) {
-					if (customerCheckError(sell, cust)) {
+					if (customerCheckError(sell, cust, currentUser.getProvider())) {
 						nbCustomersError++;
 						log.error("File:" + fileName + ", typeEntity:Customer, index:" + i + ", code:" + cust.getCode() + ", status:Error");
 						continue;
@@ -547,7 +551,7 @@ public class ImportCustomersJobBean {
 		return false;
 	}
 
-	private boolean customerCheckError(org.meveo.model.jaxb.customer.Seller sell, org.meveo.model.jaxb.customer.Customer cust) {
+	private boolean customerCheckError(org.meveo.model.jaxb.customer.Seller sell, org.meveo.model.jaxb.customer.Customer cust, Provider provider) {
 
 		if (StringUtils.isBlank(cust.getCode())) {
 			createCustomerError(sell, cust, "Code is null");
@@ -565,7 +569,20 @@ public class ImportCustomersJobBean {
 			createCustomerError(sell, cust, "CustomerBrand is null");
 			return true;
 		}
+		if(cust.getName() == null) {
+			createCustomerError(sell, cust, "name.title and name.lastName is null");
+		}
+		if(StringUtils.isBlank(cust.getName().getTitle())) {
+			createCustomerError(sell, cust, "name.title is null");
+		}
+		if(StringUtils.isBlank(cust.getName().getLastName())) {
+			createCustomerError(sell, cust, "name.lastName is null");
+		}
 
+		if (titleService.findByCode(provider, cust.getName().getTitle()) == null) {
+			createCustomerError(sell, cust, "Title with code=" + cust.getName().getTitle() + " does not exists");
+			return true;
+		}
 		if (cust.getCustomerAccounts().getCustomerAccount() == null || cust.getCustomerAccounts().getCustomerAccount().isEmpty()) {
 			createCustomerError(sell, cust, "No customer account");
 			return true;

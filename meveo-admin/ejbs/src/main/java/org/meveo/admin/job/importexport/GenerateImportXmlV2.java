@@ -30,7 +30,7 @@ public class GenerateImportXmlV2 {
 	 */
 	/************************** configuration properties ***********************************/
 	private final int MAX_SELLERS = 1;
-	private final int MAX_CUSTOMERS = 5000;
+	private final int MAX_CUSTOMERS = 2;
 	private final int MAX_CUSTOMER_ACCOUNTS = 1;
 
 	private final int MAX_BILLING_ACCOUNTS = 1;
@@ -104,6 +104,13 @@ public class GenerateImportXmlV2 {
 					customer.setDesCustomer("JOB_CUST" + i + "_" + j);
 					customer.setCustomerCategory(customerCategory);
 					customer.setCustomerBrand(customerBrand);
+
+					Name customerName = new Name();
+					customerName.setTitle("M");
+					customerName.setFirstName("Edward_" + i);
+					customerName.setLastName("Legaspi_" + i);
+
+					customer.setName(customerName);
 
 					CustomerAccounts customerAccounts = new CustomerAccounts();
 					for (int k = 0; k < MAX_CUSTOMER_ACCOUNTS; k++) {

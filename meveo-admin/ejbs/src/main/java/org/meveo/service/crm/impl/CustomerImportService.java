@@ -82,6 +82,13 @@ public class CustomerImportService {
 			customer.setCustomerCategory(customerCategoryService.findByCode(cust.getCustomerCategory(), provider));
 			customer.setSeller(seller);
 			customer.setProvider(provider);
+			
+			org.meveo.model.shared.Name name = new org.meveo.model.shared.Name();
+			Title title = titleService.findByCode(provider, cust.getName().getTitle());
+			name.setTitle(title);
+			name.setFirstName(cust.getName().getFirstName());
+			name.setLastName(cust.getName().getLastName());
+			customer.setName(name);
 
 			if (cust.getCustomFields() != null && cust.getCustomFields().getCustomField() != null
 					&& cust.getCustomFields().getCustomField().size() > 0) {
@@ -213,6 +220,13 @@ public class CustomerImportService {
 		customer.setCustomerBrand(customerBrandService.findByCode(cust.getCustomerBrand(), provider));
 		customer.setCustomerCategory(customerCategoryService.findByCode(cust.getCustomerCategory(), provider));
 		customer.setSeller(seller);
+		
+		org.meveo.model.shared.Name name = new org.meveo.model.shared.Name();
+		Title title = titleService.findByCode(provider, cust.getName().getTitle());
+		name.setTitle(title);
+		name.setFirstName(cust.getName().getFirstName());
+		name.setLastName(cust.getName().getLastName());			
+		customer.setName(name);			
 
 		if (cust.getCustomFields() != null && cust.getCustomFields().getCustomField() != null
 				&& cust.getCustomFields().getCustomField().size() > 0) {

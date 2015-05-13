@@ -28,10 +28,12 @@ import java.util.Date;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 import org.meveo.model.jaxb.account.Address;
+import org.meveo.model.jaxb.account.Name;
 
 /**
  * <p>
@@ -66,6 +68,7 @@ import org.meveo.model.jaxb.account.Address;
 		"desCustomer",
 		"customerAccounts",
 		"customFields",
+		"name",
 		"address",
 		"mandateDate",
 		"mandateIdentification"
@@ -80,6 +83,8 @@ public class Customer {
     protected String customerCategory;
     @XmlAttribute(name = "customerBrand")
     protected String customerBrand;
+    @XmlElement(required = true)
+    protected Name name;
 
     protected String desCustomer;
     protected CustomerAccounts customerAccounts;
@@ -240,6 +245,14 @@ public class Customer {
 
 	public void setMandateIdentification(String mandateIdentification) {
 		this.mandateIdentification = mandateIdentification;
+	}
+
+	public Name getName() {
+		return name;
+	}
+
+	public void setName(Name name) {
+		this.name = name;
 	}
 	
 }
