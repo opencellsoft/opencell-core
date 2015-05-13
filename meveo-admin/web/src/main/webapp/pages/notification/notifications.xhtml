@@ -31,7 +31,7 @@
 
 			<!-- ===================================== SEARCH USERS RESULTS ================================= -->
 
-			<hftl:dataList backingBean="#{notificationListBean}" exportButton="false" exportToCsv="true" importCsv="true" sortBy="code">
+			<hftl:dataList backingBean="#{notificationListBean}" exportButton="false" exportToCsv="true" importCsv="true" importStrategy="true" sortBy="code">
 			    <hftl:column label="#{messages['entity.code']}"
 					field="code" />
 				<hftl:column

@@ -18,6 +18,7 @@ package org.meveocrm.admin.action.reporting;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
@@ -30,6 +31,7 @@ import javax.inject.Named;
 
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.RejectedImportException;
 import org.meveo.commons.utils.CsvBuilder;
 import org.meveo.commons.utils.CsvReader;
@@ -144,7 +146,7 @@ public class MeasurableQuantityBean extends BaseBean<MeasurableQuantity> {
         }
     }
 
-    private void upload() throws Exception {
+    private void upload() throws IOException, BusinessException  {
         if (file == null) {
             return;
         }
@@ -185,7 +187,7 @@ public class MeasurableQuantityBean extends BaseBean<MeasurableQuantity> {
     }
 
 	public void checkSelectedStrategy(String[] values,
-			MeasurableQuantity existingEntity,boolean isEntityAlreadyExist) throws Exception {
+			MeasurableQuantity existingEntity,boolean isEntityAlreadyExist) throws RejectedImportException  {
 		if (strategyImportType.equals(StrategyImportTypeEnum.UPDATED)) {
 			
 			existingEntity.setDimension1(values[DIMENSION_1]);
