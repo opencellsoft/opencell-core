@@ -1573,6 +1573,13 @@
 			<column name="description_en" value="turc" />
 			<column name="language_code" value="TUR" />
 		</insert>
+		<insert tableName="adm_language">
+			<column name="id" valueNumeric="33" />
+			<column name="created" valueDate="2015-03-19 00:03:59.872" />
+			<column name="version" valueNumeric="1" />
+			<column name="description_en" value="Croate" />
+			<column name="language_code" value="hrv" />
+		</insert>
 	</changeSet>
 	<changeSet author="AndriusKarpavicius" id="rebuild-4.0.3-data-countries">
 		<insert tableName="adm_country">
