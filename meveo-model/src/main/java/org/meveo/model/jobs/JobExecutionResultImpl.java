@@ -60,6 +60,7 @@ public class JobExecutionResultImpl extends BaseEntity implements
 		nbItemsCorrectlyProcessed++;
 	}
 
+	
 	public void registerWarning(String warning) {
 		warnings.add(warning);
 		nbItemsProcessedWithWarning++;
@@ -68,6 +69,7 @@ public class JobExecutionResultImpl extends BaseEntity implements
 	public void registerError(String error) {
 		errors.add(error);
 		nbItemsProcessedWithError++;
+		setReport(getErrorsAString()==null?"":getErrorsAString().substring(0, getErrorsAString().length()<256?getErrorsAString().length():255));
 	}
 
 	public void close(String report) {

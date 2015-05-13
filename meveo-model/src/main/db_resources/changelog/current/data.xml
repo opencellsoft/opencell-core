@@ -64,5 +64,28 @@
 			<column name="provider_id" valueNumeric="1" />
 		</insert>		
 	</changeSet>	
-
+	<changeSet author="anasseh" id="2015-05-13.728.addInvoicingJob">
+	    <insert tableName="meveo_timer">
+			<column name="id" valueNumeric="11" />
+			<column name="version" valueNumeric="0" />
+			<column name="sc_d_o_month" value="*" />
+			<column name="sc_d_o_week" value="*" />
+			<column name="sc_end" />
+			<column name="sc_hour" value="*" />
+			<column name="job_category" value="INVOICING" />
+			<column name="job_name" value="InvoicingJob" />
+			<column name="sc_min" value="0" />
+			<column name="sc_month" value="*" />
+			<column name="name" value="Inv_Job" />
+			<column name="sc_sec" value="0" />
+			<column name="sc_start" />
+			<column name="active" valueBoolean="false" />
+			<column name="followingtimerid" />
+			<column name="jobname" value="InvoicingJob" />
+			<column name="parametres" />
+			<column name="userid" valueNumeric="1" />
+			<column name="sc_year" value="*" />
+			<column name="provider_id" valueNumeric="1" />
+		</insert>		
+	</changeSet>
 </databaseChangeLog>
