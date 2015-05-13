@@ -88,4 +88,13 @@
 			<column name="provider_id" valueNumeric="1" />
 		</insert>		
 	</changeSet>
+	<changeSet author="Mbarek" id="2015-05-13.addAdmLanguage">
+	  <insert tableName="adm_language">
+			<column name="id" valueNumeric="33" />
+			<column name="created" valueDate="2015-03-19 00:03:59.872" />
+			<column name="version" valueNumeric="1" />
+			<column name="description_en" value="Croate" />
+			<column name="language_code" value="hrv" />
+		</insert>		
+	</changeSet>
 </databaseChangeLog>
