@@ -29,7 +29,6 @@ import javax.inject.Named;
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.admin.exception.RejectedImportException;
 import org.meveo.commons.utils.CsvBuilder;
 import org.meveo.commons.utils.CsvReader;
 import org.meveo.model.BusinessEntity;
@@ -198,100 +197,100 @@ public class CatMessagesBean extends BaseBean<CatMessages> {
 		csv.download(inputStream, "CatMessages.csv");
 	}
 	
-	public void handleFileUpload(FileUploadEvent event) throws Exception {
-		try {
-			file = event.getFile();
-			log.info("handleFileUpload " + file);
-			upload();
-		} catch (BusinessException e) {
-			log.error(e.getMessage(), e);
-			messages.error(e.getMessage());
-		} catch (IOException e) {
-			log.error(e.getMessage(), e);
-			messages.error(e.getMessage());
-		}
-		}
+    public void handleFileUpload(FileUploadEvent event) throws Exception {
+        try {
+            file = event.getFile();
+            log.debug("File uploaded " + file.getFileName());
+            upload();
+            messages.info(new BundleKey("messages", "import.csv.successful"));
+        } catch (Exception e) {
+            log.error("Failed to handle uploaded file {}", event.getFile().getFileName(), e);
+            messages.error(new BundleKey("messages", "import.csv.failed"), e.getClass().getSimpleName() + " " + e.getMessage());
+        }
+    }
 	
-	public String getCatMessagesCode() throws IOException{
-	  csvReader = new CsvReader(file.getInputstream(), ';', Charset.forName("ISO-8859-1"));
-	  csvReader.readHeaders();
-		while (csvReader.readRecord()) {
-		String[] values = csvReader.getValues();
-	     if(values[OBJECT_TYPE].equals("Price plans")){
-	     PricePlanMatrix pricePlanMatrix=pricePlanMatrixService.findByCode(values[CODE],getCurrentProvider());
-	     return pricePlanMatrix.getClass().getSimpleName()+"_"+pricePlanMatrix.getId();
-	     }         
-			}
-		return null;
-		}
+    public String getCatMessagesCode() throws IOException {
+        csvReader = new CsvReader(file.getInputstream(), ';', Charset.forName("ISO-8859-1"));
+        csvReader.readHeaders();
+        while (csvReader.readRecord()) {
+            String[] values = csvReader.getValues();
+            if (values[OBJECT_TYPE].equals("Price plans")) {
+                PricePlanMatrix pricePlanMatrix = pricePlanMatrixService.findByCode(values[CODE], getCurrentProvider());
+                return pricePlanMatrix.getClass().getSimpleName() + "_" + pricePlanMatrix.getId();
+            }
+        }
+        return null;
+    }
 
-	public void upload() throws Exception {
-		
-		if (file != null) {
-			csvReader = new CsvReader(file.getInputstream(), ';', Charset.forName("ISO-8859-1"));
-			csvReader.readHeaders();
-			try {
-				while (csvReader.readRecord()) {
-					String messageCode=null;
-					String[] values = csvReader.getValues();
-					if(values[OBJECT_TYPE].equals("Price plans")){
-					     PricePlanMatrix pricePlanMatrix=pricePlanMatrixService.findByCode(values[CODE],getCurrentProvider());
-					     if(pricePlanMatrix!=null){
-						  messageCode= pricePlanMatrix.getClass().getSimpleName()+"_"+pricePlanMatrix.getId(); 
-					     }}
-					     if(values[OBJECT_TYPE].equals("Charges")){
-						     UsageChargeTemplate usageChargeTemplate=usageChargeTemplateService.findByCode(values[CODE],getCurrentProvider());
-						     if(usageChargeTemplate!=null){
-							 messageCode= usageChargeTemplate.getClass().getSimpleName()+"_"+usageChargeTemplate.getId(); 
-						     }
-						     RecurringChargeTemplate recurringChargeTemplate=recurringChargeTemplateService.findByCode(values[CODE],getCurrentProvider());
-						     if(recurringChargeTemplate!=null){
-						    	 messageCode= recurringChargeTemplate.getClass().getSimpleName()+"_"+recurringChargeTemplate.getId();
-							     }
-						     OneShotChargeTemplate oneShotChargeTemplate=oneShotChargeTemplateService.findByCode(values[CODE],getCurrentProvider());
-						     if(oneShotChargeTemplate!=null){
-						       messageCode= oneShotChargeTemplate.getClass().getSimpleName()+"_"+oneShotChargeTemplate.getId(); 
-							     }
-						   }
-					 if(values[OBJECT_TYPE].equals("Titles and civilities")){
-						     Title title=titleService.findByCode(getCurrentProvider(),values[CODE]);
-						     if(title!=null){
-							  messageCode= title.getClass().getSimpleName()+"_"+title.getId(); 
-						     }}
-					 if(values[OBJECT_TYPE].equals("Taxes")){
-					     Tax tax=taxService.findByCode(values[CODE],getCurrentProvider());
-					     if(tax!=null){
-						  messageCode= tax.getClass().getSimpleName()+"_"+tax.getId(); 
-					     }}
-					 if(values[OBJECT_TYPE].equals("Invoice categories")){
-					     InvoiceCategory invoiceCategory=invoiceCategoryService.findByCode(values[CODE],getCurrentProvider());
-					     if(invoiceCategory!=null){
-						  messageCode= invoiceCategory.getClass().getSimpleName()+"_"+invoiceCategory.getId(); 
-					     }}
-					 if(values[OBJECT_TYPE].equals("Invoice subcategories")){
-					     InvoiceSubCategory invoiceSubCategory=invoiceSubCategoryService.findByCode(values[CODE],getCurrentProvider());
-					     if(invoiceSubCategory!=null){
-						  messageCode= invoiceSubCategory.getClass().getSimpleName()+"_"+invoiceSubCategory.getId(); 
-					     }}
-					 
-			     if(messageCode!=null){
-			    	 CatMessages existingEntity = catMessagesService.findByCodeAndLanguage(messageCode,values[LANGUAGE_CODE] ,getCurrentProvider());
-						if (existingEntity != null) {
-							existingEntity.setDescription(values[DESCRIPTION_TRANSLATION]);
-							catMessagesService.update(existingEntity);
-						} else {
-							CatMessages catMessages = new CatMessages();
-							catMessages.setMessageCode(messageCode);
-							catMessages.setLanguageCode(values[LANGUAGE_CODE]);
-							catMessages.setDescription(values[DESCRIPTION_TRANSLATION]);
-							catMessagesService.create(catMessages);
-						}}
-			     } 	 
-				messages.info(new BundleKey("messages", "import.csv.successful"));
-			} catch (RejectedImportException e) {
-				messages.error(new BundleKey("messages", e.getMessage()));
-			}
-		}
-	}
+    private void upload() throws IOException, BusinessException {
+        if (file == null) {
+            return;
+        }
+        csvReader = new CsvReader(file.getInputstream(), ';', Charset.forName("ISO-8859-1"));
+        csvReader.readHeaders();
+        while (csvReader.readRecord()) {
+            String messageCode = null;
+            String[] values = csvReader.getValues();
+            if (values[OBJECT_TYPE].equals("Price plans")) {
+                PricePlanMatrix pricePlanMatrix = pricePlanMatrixService.findByCode(values[CODE], getCurrentProvider());
+                if (pricePlanMatrix != null) {
+                    messageCode = pricePlanMatrix.getClass().getSimpleName() + "_" + pricePlanMatrix.getId();
+                }
+            }
+            if (values[OBJECT_TYPE].equals("Charges")) {
+                UsageChargeTemplate usageChargeTemplate = usageChargeTemplateService.findByCode(values[CODE], getCurrentProvider());
+                if (usageChargeTemplate != null) {
+                    messageCode = usageChargeTemplate.getClass().getSimpleName() + "_" + usageChargeTemplate.getId();
+                }
+                RecurringChargeTemplate recurringChargeTemplate = recurringChargeTemplateService.findByCode(values[CODE], getCurrentProvider());
+                if (recurringChargeTemplate != null) {
+                    messageCode = recurringChargeTemplate.getClass().getSimpleName() + "_" + recurringChargeTemplate.getId();
+                }
+                OneShotChargeTemplate oneShotChargeTemplate = oneShotChargeTemplateService.findByCode(values[CODE], getCurrentProvider());
+                if (oneShotChargeTemplate != null) {
+                    messageCode = oneShotChargeTemplate.getClass().getSimpleName() + "_" + oneShotChargeTemplate.getId();
+                }
+            }
+            if (values[OBJECT_TYPE].equals("Titles and civilities")) {
+                Title title = titleService.findByCode(getCurrentProvider(), values[CODE]);
+                if (title != null) {
+                    messageCode = title.getClass().getSimpleName() + "_" + title.getId();
+                }
+            }
+            if (values[OBJECT_TYPE].equals("Taxes")) {
+                Tax tax = taxService.findByCode(values[CODE], getCurrentProvider());
+                if (tax != null) {
+                    messageCode = tax.getClass().getSimpleName() + "_" + tax.getId();
+                }
+            }
+            if (values[OBJECT_TYPE].equals("Invoice categories")) {
+                InvoiceCategory invoiceCategory = invoiceCategoryService.findByCode(values[CODE], getCurrentProvider());
+                if (invoiceCategory != null) {
+                    messageCode = invoiceCategory.getClass().getSimpleName() + "_" + invoiceCategory.getId();
+                }
+            }
+            if (values[OBJECT_TYPE].equals("Invoice subcategories")) {
+                InvoiceSubCategory invoiceSubCategory = invoiceSubCategoryService.findByCode(values[CODE], getCurrentProvider());
+                if (invoiceSubCategory != null) {
+                    messageCode = invoiceSubCategory.getClass().getSimpleName() + "_" + invoiceSubCategory.getId();
+                }
+            }
+
+            if (messageCode != null) {
+                CatMessages existingEntity = catMessagesService.findByCodeAndLanguage(messageCode, values[LANGUAGE_CODE], getCurrentProvider());
+                if (existingEntity != null) {
+                    existingEntity.setDescription(values[DESCRIPTION_TRANSLATION]);
+                    catMessagesService.update(existingEntity);
+                } else {
+                    CatMessages catMessages = new CatMessages();
+                    catMessages.setMessageCode(messageCode);
+                    catMessages.setLanguageCode(values[LANGUAGE_CODE]);
+                    catMessages.setDescription(values[DESCRIPTION_TRANSLATION]);
+                    catMessagesService.create(catMessages);
+                }
+            }
+        }
+
+    }
 	
 }

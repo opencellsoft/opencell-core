@@ -104,7 +104,7 @@ public class EmailNotificationBean extends BaseBean<EmailNotification> {
             messages.info(new BundleKey("messages", "import.csv.successful"));
         } catch (Exception e) {
             log.error("Failed to handle uploaded file {}", event.getFile().getFileName(), e);
-            messages.error(new BundleKey("messages", "import.csv.failed"), e.getMessage());
+            messages.error(new BundleKey("messages", "import.csv.failed"), e.getClass().getSimpleName() + " " + e.getMessage());
         }
     }
 	
@@ -153,69 +153,61 @@ public class EmailNotificationBean extends BaseBean<EmailNotification> {
         csv.download(inputStream, "EmailNotifications.csv");
     }
 
-	
-	public void upload() throws IOException, BusinessException {
-		if (file != null) {
-			csvReader = new CsvReader(file.getInputstream(), ';',
-					Charset.forName("ISO-8859-1"));
-			csvReader.readHeaders();
-			try {
-				String existingEntitiesCSV=paramBean.getProperty("existingEntities.csv.dir", "existingEntitiesCSV");
-				File dir=new File(providerDir+File.separator+getCurrentProvider().getCode()+File.separator+existingEntitiesCSV);
-				dir.mkdirs();
-				existingEntitiesCsvFile= dir.getAbsolutePath()+File.separator+"EmailNotifications_"+new SimpleDateFormat("ddMMyyyyHHmmSS").format(new Date())+".csv";
-				csv = new CsvBuilder();
-				boolean isEntityAlreadyExist=false;
-				while (csvReader.readRecord()) {
-					String[] values = csvReader.getValues();
-					EmailNotification existingEntity=emailNotificationService.findByCode(values[CODE], getCurrentProvider());
-						if(existingEntity!=null){
-							checkSelectedStrategy(values,existingEntity,isEntityAlreadyExist);
-							isEntityAlreadyExist=true;
-						}else{
-							EmailNotification emailNotif=new EmailNotification();
-							emailNotif.setCode(values[CODE]);
-							emailNotif.setClassNameFilter(values[CLASS_NAME_FILTER]);
-							emailNotif.setEventTypeFilter(NotificationEventTypeEnum
-									.valueOf(values[EVENT_TYPE_FILTER]));
-							emailNotif.setElFilter(values[EL_FILTER]);
-							emailNotif.setDisabled(Boolean
-									.parseBoolean(values[ACTIVE]));
-							emailNotif.setElAction(values[EL_ACTION]);
-							emailNotif.setEmailFrom(values[SENT_FROM]);
-							emailNotif.setEmailToEl(values[SEND_TO_EL]);
-							String emails = values[SEND_TO_MAILING_LIST];
-							if (!StringUtils.isBlank(emails)) {
-								String[] emailList = emails.split(",");
-								List<String> listMail = Arrays.asList(emailList);
-								for (String email : listMail) {
-									if (emailNotif.getEmails() == null) {
-										emailNotif
-												.setEmails(new HashSet<String>());
-									}
-									emailNotif.getEmails().add(email);
-								}
-							}
-							emailNotif.setSubject(values[SUBJECT]);
-							emailNotif.setBody(values[TEXT_BODY]);
-							emailNotif.setElAction(values[HTML_BODY]);
-							if(!StringUtils.isBlank(values[COUNTER_TEMPLATE])){
-								CounterTemplate counterTemplate=counterTemplateService.findByCode(values[COUNTER_TEMPLATE], getCurrentProvider());
-								emailNotif.setCounterTemplate(counterTemplate!=null ?counterTemplate: null);
-							}
-						
-							emailNotificationService.create(emailNotif);
-						}}
-				if(isEntityAlreadyExist && strategyImportType.equals(StrategyImportTypeEnum.REJECT_EXISTING_RECORDS)){
-					csv.writeFile(csv.toString().getBytes(), existingEntitiesCsvFile);
-				}
-				messages.info(new BundleKey("messages", "import.csv.successful"));
-			} catch (RejectedImportException e) {
-				messages.error(new BundleKey("messages", e.getMessage()));
-			}
-		}
-       }
-	
+    private void upload() throws IOException, BusinessException  {
+        if (file == null) {
+            return;
+        }
+        csvReader = new CsvReader(file.getInputstream(), ';', Charset.forName("ISO-8859-1"));
+        csvReader.readHeaders();
+        String existingEntitiesCSV = paramBean.getProperty("existingEntities.csv.dir", "existingEntitiesCSV");
+        File dir = new File(providerDir + File.separator + getCurrentProvider().getCode() + File.separator + existingEntitiesCSV);
+        dir.mkdirs();
+        existingEntitiesCsvFile = dir.getAbsolutePath() + File.separator + "EmailNotifications_" + new SimpleDateFormat("ddMMyyyyHHmmSS").format(new Date()) + ".csv";
+        csv = new CsvBuilder();
+        boolean isEntityAlreadyExist = false;
+        while (csvReader.readRecord()) {
+            String[] values = csvReader.getValues();
+            EmailNotification existingEntity = emailNotificationService.findByCode(values[CODE], getCurrentProvider());
+            if (existingEntity != null) {
+                checkSelectedStrategy(values, existingEntity, isEntityAlreadyExist);
+                isEntityAlreadyExist = true;
+            } else {
+                EmailNotification emailNotif = new EmailNotification();
+                emailNotif.setCode(values[CODE]);
+                emailNotif.setClassNameFilter(values[CLASS_NAME_FILTER]);
+                emailNotif.setEventTypeFilter(NotificationEventTypeEnum.valueOf(values[EVENT_TYPE_FILTER]));
+                emailNotif.setElFilter(values[EL_FILTER]);
+                emailNotif.setDisabled(Boolean.parseBoolean(values[ACTIVE]));
+                emailNotif.setElAction(values[EL_ACTION]);
+                emailNotif.setEmailFrom(values[SENT_FROM]);
+                emailNotif.setEmailToEl(values[SEND_TO_EL]);
+                String emails = values[SEND_TO_MAILING_LIST];
+                if (!StringUtils.isBlank(emails)) {
+                    String[] emailList = emails.split(",");
+                    List<String> listMail = Arrays.asList(emailList);
+                    for (String email : listMail) {
+                        if (emailNotif.getEmails() == null) {
+                            emailNotif.setEmails(new HashSet<String>());
+                        }
+                        emailNotif.getEmails().add(email);
+                    }
+                }
+                emailNotif.setSubject(values[SUBJECT]);
+                emailNotif.setBody(values[TEXT_BODY]);
+                emailNotif.setElAction(values[HTML_BODY]);
+                if (!StringUtils.isBlank(values[COUNTER_TEMPLATE])) {
+                    CounterTemplate counterTemplate = counterTemplateService.findByCode(values[COUNTER_TEMPLATE], getCurrentProvider());
+                    emailNotif.setCounterTemplate(counterTemplate != null ? counterTemplate : null);
+                }
+
+                emailNotificationService.create(emailNotif);
+            }
+        }
+        if (isEntityAlreadyExist && strategyImportType.equals(StrategyImportTypeEnum.REJECT_EXISTING_RECORDS)) {
+            csv.writeFile(csv.toString().getBytes(), existingEntitiesCsvFile);
+        }
+    }
+
 	public void checkSelectedStrategy(String[] values,EmailNotification existingEntity,boolean isEntityAlreadyExist) throws RejectedImportException, IOException{
 		if(strategyImportType.equals(StrategyImportTypeEnum.UPDATED)){
 			existingEntity.setClassNameFilter(values[CLASS_NAME_FILTER]);

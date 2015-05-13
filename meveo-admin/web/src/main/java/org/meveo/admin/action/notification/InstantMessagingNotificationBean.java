@@ -164,92 +164,79 @@ public class InstantMessagingNotificationBean extends BaseBean<InstantMessagingN
             messages.info(new BundleKey("messages", "import.csv.successful"));
         } catch (Exception e) {
             log.error("Failed to handle uploaded file {}", event.getFile().getFileName(), e);
-            messages.error(new BundleKey("messages", "import.csv.failed"), e.getMessage());
+            messages.error(new BundleKey("messages", "import.csv.failed"), e.getClass().getSimpleName() + " " + e.getMessage());
         }
     }
 
-	public void upload() throws IOException, BusinessException {
-		if (file != null) {
-			csvReader = new CsvReader(file.getInputstream(), ';',
-					Charset.forName("ISO-8859-1"));
-			csvReader.readHeaders();
-			try {
-				String existingEntitiesCSV=paramBean.getProperty("existingEntities.csv.dir", "existingEntitiesCSV");
-				File dir=new File(providerDir+File.separator+getCurrentProvider().getCode()+File.separator+existingEntitiesCSV);
-				dir.mkdirs();
-				existingEntitiesCsvFile= dir.getAbsolutePath()+File.separator+"InstantMessagingNotifications_"+new SimpleDateFormat("ddMMyyyyHHmmSS").format(new Date())+".csv";
-				csv = new CsvBuilder();
-				boolean isEntityAlreadyExist=false;
-				while (csvReader.readRecord()) {
-					String[] values = csvReader.getValues();
-					InstantMessagingNotification existingEntity = imNotificationService
-							.findByCode(values[CODE], getCurrentProvider());
-					if (existingEntity != null) {
-						checkSelectedStrategy(values, existingEntity,isEntityAlreadyExist);
-						isEntityAlreadyExist=true;
-					} else {
-						InstantMessagingNotification instMessNotif = new InstantMessagingNotification();
-						instMessNotif.setCode(values[CODE]);
-						instMessNotif
-								.setClassNameFilter(values[CLASS_NAME_FILTER]);
-						instMessNotif
-								.setEventTypeFilter(NotificationEventTypeEnum
-										.valueOf(values[EVENT_TYPE_FILTER]));
-						instMessNotif.setElFilter(values[EL_FILTER]);
-						instMessNotif.setElAction(values[EL_ACTION]);
-						instMessNotif.setDisabled(Boolean
-								.parseBoolean(values[ACTIVE]));
-						instMessNotif
-								.setImProvider(InstantMessagingProviderEnum
-										.valueOf(values[IM_PROVIDER]));
-						instMessNotif.setIdEl(values[IM_IDENTIFIER_EL]);
-						String identifiers = values[IM_IDENTIFIER_LIST];
-						if (!StringUtils.isBlank(identifiers)) {
-							String[] ids = identifiers.split(",");
-							List<String> idList = Arrays.asList(ids);
-							for (String id : idList) {
-								if (instMessNotif.getIds() == null) {
-									instMessNotif.setIds(new HashSet<String>());
-								}
-								instMessNotif.getIds().add(id);
-							}
-						}
-						String users = values[USERS_LIST];
-						if (!StringUtils.isBlank(users)) {
+    private void upload() throws IOException, BusinessException {
+        if (file == null) {
+            return;
+        }
+        csvReader = new CsvReader(file.getInputstream(), ';', Charset.forName("ISO-8859-1"));
+        csvReader.readHeaders();
 
-							String[] userIds = users.split(",");
-							List<String> userIdList = Arrays.asList(userIds);
-							User user = null;
-							for (String id : userIdList) {
-								user = userService.findById(Long.valueOf(id));
-								if (user != null) {
-									if (instMessNotif.getUsers() == null) {
-										instMessNotif
-												.setUsers(new HashSet<User>());
-									}
-									instMessNotif.getUsers().add(user);
-								}}}
-						instMessNotif.setMessage(values[MESSAGE]);
-						if (!StringUtils.isBlank(values[COUNTER_TEMPLATE])) {
-							CounterTemplate counterTemplate = counterTemplateService
-									.findByCode(values[COUNTER_TEMPLATE],
-											getCurrentProvider());
-							instMessNotif
-									.setCounterTemplate(counterTemplate != null ? counterTemplate
-											: null);
-						}
-						imNotificationService.create(instMessNotif);
-					}}
-				if(isEntityAlreadyExist && strategyImportType.equals(StrategyImportTypeEnum.REJECT_EXISTING_RECORDS)){
-					csv.writeFile(csv.toString().getBytes(), existingEntitiesCsvFile);
-				}
-				messages.info(new BundleKey("messages", "import.csv.successful"));
-			} catch (RejectedImportException e) {
-				messages.error(new BundleKey("messages", e.getMessage()));
-			}
-		}
-	}
-	
+        String existingEntitiesCSV = paramBean.getProperty("existingEntities.csv.dir", "existingEntitiesCSV");
+        File dir = new File(providerDir + File.separator + getCurrentProvider().getCode() + File.separator + existingEntitiesCSV);
+        dir.mkdirs();
+        existingEntitiesCsvFile = dir.getAbsolutePath() + File.separator + "InstantMessagingNotifications_" + new SimpleDateFormat("ddMMyyyyHHmmSS").format(new Date()) + ".csv";
+        csv = new CsvBuilder();
+        boolean isEntityAlreadyExist = false;
+        while (csvReader.readRecord()) {
+            String[] values = csvReader.getValues();
+            InstantMessagingNotification existingEntity = imNotificationService.findByCode(values[CODE], getCurrentProvider());
+            if (existingEntity != null) {
+                checkSelectedStrategy(values, existingEntity, isEntityAlreadyExist);
+                isEntityAlreadyExist = true;
+            } else {
+                InstantMessagingNotification instMessNotif = new InstantMessagingNotification();
+                instMessNotif.setCode(values[CODE]);
+                instMessNotif.setClassNameFilter(values[CLASS_NAME_FILTER]);
+                instMessNotif.setEventTypeFilter(NotificationEventTypeEnum.valueOf(values[EVENT_TYPE_FILTER]));
+                instMessNotif.setElFilter(values[EL_FILTER]);
+                instMessNotif.setElAction(values[EL_ACTION]);
+                instMessNotif.setDisabled(Boolean.parseBoolean(values[ACTIVE]));
+                instMessNotif.setImProvider(InstantMessagingProviderEnum.valueOf(values[IM_PROVIDER]));
+                instMessNotif.setIdEl(values[IM_IDENTIFIER_EL]);
+                String identifiers = values[IM_IDENTIFIER_LIST];
+                if (!StringUtils.isBlank(identifiers)) {
+                    String[] ids = identifiers.split(",");
+                    List<String> idList = Arrays.asList(ids);
+                    for (String id : idList) {
+                        if (instMessNotif.getIds() == null) {
+                            instMessNotif.setIds(new HashSet<String>());
+                        }
+                        instMessNotif.getIds().add(id);
+                    }
+                }
+                String users = values[USERS_LIST];
+                if (!StringUtils.isBlank(users)) {
+
+                    String[] userIds = users.split(",");
+                    List<String> userIdList = Arrays.asList(userIds);
+                    User user = null;
+                    for (String id : userIdList) {
+                        user = userService.findById(Long.valueOf(id));
+                        if (user != null) {
+                            if (instMessNotif.getUsers() == null) {
+                                instMessNotif.setUsers(new HashSet<User>());
+                            }
+                            instMessNotif.getUsers().add(user);
+                        }
+                    }
+                }
+                instMessNotif.setMessage(values[MESSAGE]);
+                if (!StringUtils.isBlank(values[COUNTER_TEMPLATE])) {
+                    CounterTemplate counterTemplate = counterTemplateService.findByCode(values[COUNTER_TEMPLATE], getCurrentProvider());
+                    instMessNotif.setCounterTemplate(counterTemplate != null ? counterTemplate : null);
+                }
+                imNotificationService.create(instMessNotif);
+            }
+        }
+        if (isEntityAlreadyExist && strategyImportType.equals(StrategyImportTypeEnum.REJECT_EXISTING_RECORDS)) {
+            csv.writeFile(csv.toString().getBytes(), existingEntitiesCsvFile);
+        }
+    }
+
 	public void checkSelectedStrategy(String[] values,
 			InstantMessagingNotification existingEntity,boolean isEntityAlreadyExist)
 			throws RejectedImportException {
