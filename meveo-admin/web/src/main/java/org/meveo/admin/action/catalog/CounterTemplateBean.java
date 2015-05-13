@@ -23,11 +23,15 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.meveo.admin.action.BaseBean;
+import org.meveo.model.billing.CounterInstance;
 import org.meveo.model.catalog.CounterTemplate;
 import org.meveo.model.catalog.CounterTypeEnum;
+import org.meveo.model.catalog.ServiceChargeTemplateUsage;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
+import org.meveo.service.billing.impl.CounterInstanceService;
 import org.meveo.service.catalog.impl.CounterTemplateService;
+import org.meveo.service.catalog.impl.ServiceChargeTemplateUsageService;
 import org.omnifaces.cdi.ViewScoped;
 import org.primefaces.context.RequestContext;
 import org.primefaces.model.LazyDataModel;
@@ -83,11 +87,31 @@ public class CounterTemplateBean extends BaseBean<CounterTemplate> {
         filters.put("counterType", counterType);
         return getLazyDataModel(filters, false);
     }
+    @Inject
+    private CounterInstanceService counterInstanceService;
+    @Inject
+    private ServiceChargeTemplateUsageService usageService;
 
     @Override
 	protected void canDelete() {
 		boolean result=true;
-		this.delete();
+		if(entity==null){
+			result=false;
+		}else{
+			List<CounterInstance> instances=counterInstanceService.findByCounterTemplate(entity);
+			if(instances!=null&&instances.size()!=0){
+				result=false;
+			}else{
+				//if used, then required
+				List<ServiceChargeTemplateUsage> usages=usageService.findByCounterTemplate(entity);
+				if(usages!=null&&usages.size()!=0){
+					result=false;
+				}
+			}
+		}
+		if(result){
+			this.delete();
+		}
 		RequestContext requestContext = RequestContext.getCurrentInstance();
 		requestContext.addCallbackParam("result", result);
 	}	

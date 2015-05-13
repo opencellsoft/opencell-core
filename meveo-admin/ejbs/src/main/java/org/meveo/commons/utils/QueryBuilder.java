@@ -49,6 +49,8 @@ import org.slf4j.LoggerFactory;
  * @author Richard Hallier
  */
 public class QueryBuilder {
+	
+	private static final Logger log = LoggerFactory.getLogger(QueryBuilder.class);
 
 	private StringBuffer q;
 	private Map<String, Object> params;
@@ -227,6 +229,15 @@ public class QueryBuilder {
 			nvalue = ((String) value).toLowerCase();
 
 		return addSqlCriterion(sql.toString(), param, nvalue);
+	}
+	
+	public QueryBuilder addCriterionEntityInList(String field,Object entity){
+		if (entity == null)
+			return this;
+
+		String param = convertFieldToParam(field);
+
+		return addSqlCriterion(" :"+param+" member of "+field, field,entity);
 	}
 	
 	   /**
@@ -524,7 +535,6 @@ public class QueryBuilder {
 	 */
 	public Query getQuery(EntityManager em) {
 		applyPagination(paginationSortAlias);
-		Logger log = LoggerFactory.getLogger(getClass());
 
 		Query result = em.createQuery(q.toString());
 		applyPagination(result);
@@ -638,4 +648,5 @@ public class QueryBuilder {
 		}
 		return result;
 	}
+	
 }
