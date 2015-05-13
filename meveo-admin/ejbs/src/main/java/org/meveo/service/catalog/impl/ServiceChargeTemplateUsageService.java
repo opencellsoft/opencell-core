@@ -24,9 +24,11 @@ import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
 import org.meveo.commons.utils.QueryBuilder;
+import org.meveo.model.catalog.CounterTemplate;
 import org.meveo.model.catalog.ServiceChargeTemplateUsage;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.catalog.UsageChargeTemplate;
+import org.meveo.model.catalog.WalletTemplate;
 import org.meveo.model.crm.Provider;
 import org.meveo.service.base.PersistenceService;
 
@@ -76,6 +78,20 @@ public class ServiceChargeTemplateUsageService extends PersistenceService<Servic
 			log.warn(e.getMessage());
 			return null;
 		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<ServiceChargeTemplateUsage> findByWalletTemplate(WalletTemplate walletTemplate){
+		QueryBuilder qb=new QueryBuilder(ServiceChargeTemplateUsage.class,"u");
+		qb.addCriterionEntity("walletTemplate", walletTemplate);
+		return qb.find(getEntityManager());
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<ServiceChargeTemplateUsage> findByCounterTemplate(CounterTemplate counterTemplate){
+		QueryBuilder qb=new QueryBuilder(ServiceChargeTemplateUsage.class,"u");
+		qb.addCriterionEntity("counterTemplate", counterTemplate);
+		return qb.find(getEntityManager());
 	}
 
 }

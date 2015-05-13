@@ -26,6 +26,7 @@ import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.ServiceChargeTemplateSubscription;
 import org.meveo.model.catalog.ServiceTemplate;
+import org.meveo.model.catalog.WalletTemplate;
 import org.meveo.model.crm.Provider;
 import org.meveo.service.base.PersistenceService;
 
@@ -61,6 +62,12 @@ public class ServiceChargeTemplateSubscriptionService extends PersistenceService
 		query.setParameter("serviceTemplate", serviceTemplate);
 		query.setParameter("provider", provider);
 		query.executeUpdate();
+	}
+	@SuppressWarnings("unchecked")
+	public List<ServiceChargeTemplateSubscription> findByWalletTemplate(WalletTemplate walletTemplate){
+		QueryBuilder qb=new QueryBuilder(ServiceChargeTemplateSubscription.class,"s");
+		qb.addCriterionEntity("walletTemplate", walletTemplate);
+		return qb.find(getEntityManager());
 	}
 
 }

@@ -135,4 +135,11 @@ public class WalletService extends PersistenceService<WalletInstance> {
 	public BigDecimal getWalletReservedBalance(Long walletInstanceId) {
 		return getEntityManager().createNamedQuery("WalletOperation.getReservedBalance", BigDecimal.class).setParameter("walletId", walletInstanceId).getSingleResult();
 	}
+	
+	@SuppressWarnings("unchecked")
+	public List<WalletInstance> findByWalletTemplate(WalletTemplate walletTemplate){
+		QueryBuilder qb=new QueryBuilder(WalletInstance.class,"w");
+		qb.addCriterionEntity("walletTemplate", walletTemplate);
+		return qb.find(getEntityManager());
+	}
 }

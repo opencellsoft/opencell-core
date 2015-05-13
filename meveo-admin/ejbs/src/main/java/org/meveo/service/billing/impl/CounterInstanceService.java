@@ -18,6 +18,7 @@ package org.meveo.service.billing.impl;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -27,6 +28,7 @@ import javax.persistence.Query;
 import javax.persistence.TemporalType;
 
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.Auditable;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.BillingAccount;
@@ -254,5 +256,12 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
 			counterPeriod.updateAudit(currentUser);
 			return counterPeriod.getValue();
 		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<CounterInstance> findByCounterTemplate(CounterTemplate counterTemplate){
+		QueryBuilder qb=new QueryBuilder(CounterInstance.class,"c");
+		qb.addCriterionEntity("counterTemplate", counterTemplate);
+		return qb.find(getEntityManager());
 	}
 }
