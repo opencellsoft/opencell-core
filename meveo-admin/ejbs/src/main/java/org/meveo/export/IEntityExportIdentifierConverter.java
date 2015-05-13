@@ -1,5 +1,6 @@
 package org.meveo.export;
 
+import java.lang.reflect.Modifier;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -7,6 +8,7 @@ import java.util.Map.Entry;
 import java.util.StringTokenizer;
 
 import javax.persistence.EntityManager;
+import javax.persistence.Inheritance;
 import javax.persistence.NoResultException;
 import javax.persistence.NonUniqueResultException;
 import javax.persistence.Parameter;
@@ -84,7 +86,7 @@ public class IEntityExportIdentifierConverter implements Converter {
 
         boolean willConvert = isIEntity && !exportImportConfig.isExportFull(clazz);
         if (willConvert) {
-            log.trace("Will be using " + this.getClass().getSimpleName() + " for " + clazz);
+            log.debug("Will be using " + this.getClass().getSimpleName() + " for " + clazz);
         }
         return willConvert;
     }
@@ -102,6 +104,11 @@ public class IEntityExportIdentifierConverter implements Converter {
         String[] exportIdentifiers = exportImportConfig.getExportIdsForClass(baseClass);
 
         writer.addAttribute("id", ((IEntity) object).getId().toString());
+        // Append class name when serialising an abstract or inheritance class' implementation
+        if (Modifier.isAbstract(baseClass.getModifiers()) || baseClass.isAnnotationPresent(Inheritance.class) || baseClass.getSuperclass().isAnnotationPresent(Inheritance.class)) {
+            writer.addAttribute("class", baseClass.getCanonicalName());
+        }
+
         for (String attributeName : exportIdentifiers) {
             try {
                 Object attributeValue = getAttributeValue(object, attributeName);
