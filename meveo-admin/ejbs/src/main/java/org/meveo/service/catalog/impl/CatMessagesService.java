@@ -22,6 +22,7 @@ import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.QueryBuilder.QueryLikeStyleEnum;
@@ -29,6 +30,7 @@ import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.IEntity;
 import org.meveo.model.billing.CatMessages;
+import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.model.crm.Provider;
 import org.meveo.service.base.PersistenceService;
 
@@ -167,4 +169,17 @@ public class CatMessagesService extends PersistenceService<CatMessages> {
         }
         return className + "_";
     }
+    
+   
+	 public CatMessages findByCodeAndLanguage(String messageCode,String languageCode, Provider provider) {
+		QueryBuilder qb = new QueryBuilder(CatMessages.class, "c");
+		qb.addCriterionWildcard("c.messageCode", messageCode, true);
+		qb.addCriterionWildcard("c.languageCode", languageCode, true);
+		qb.addCriterionEntity("provider", provider);
+		try {
+            return (CatMessages) qb.getQuery(getEntityManager()).getSingleResult();
+        } catch (NoResultException e) {
+            return null;
+        }
+	}
 }
