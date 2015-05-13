@@ -31,7 +31,7 @@
 
 			<!-- ===================================== SEARCH USERS RESULTS ================================= -->
 
-			<hftl:dataList backingBean="#{measurableQuantityListBean}" exportButton="false" exportToCsv="true" importCsv="true" sortBy="code">
+			<hftl:dataList backingBean="#{measurableQuantityListBean}" exportButton="false" exportToCsv="true" importCsv="true" importStrategy="true" sortBy="code">
 			    <hftl:column label="#{messages['entity.measurablequantity.code']}"
 					field="code" />
 				<hftl:column

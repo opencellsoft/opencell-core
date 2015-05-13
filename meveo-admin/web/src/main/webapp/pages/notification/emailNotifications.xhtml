@@ -30,7 +30,7 @@
 
 			<!-- ===================================== SEARCH USERS RESULTS ================================= -->
 
-			<hftl:dataList backingBean="#{emailNotificationListBean}" exportButton="false" exportToCsv="true" importCsv="true" sortBy="code">
+			<hftl:dataList backingBean="#{emailNotificationListBean}" exportButton="false" exportToCsv="true" importCsv="true" importStrategy="true" sortBy="code">
 			   	<hftl:actionsColumn editView="/pages/notification/emailNotificationDetail.xhtml" permission="#{persistentPermissionResolver.hasPermission('reporting','reportingManagement')}"  />
 				<hftl:column label="#{messages['entity.code']}"
 					field="code" />
