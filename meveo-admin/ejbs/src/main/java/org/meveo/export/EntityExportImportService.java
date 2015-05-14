@@ -5,6 +5,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
+import java.io.Writer;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
@@ -62,6 +63,10 @@ import com.thoughtworks.xstream.hibernate.converter.HibernatePersistentMapConver
 import com.thoughtworks.xstream.hibernate.converter.HibernatePersistentSortedMapConverter;
 import com.thoughtworks.xstream.hibernate.converter.HibernatePersistentSortedSetConverter;
 import com.thoughtworks.xstream.hibernate.mapper.HibernateMapper;
+import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
+import com.thoughtworks.xstream.io.naming.NameCoder;
+import com.thoughtworks.xstream.io.xml.PrettyPrintWriter;
+import com.thoughtworks.xstream.io.xml.XppDriver;
 import com.thoughtworks.xstream.mapper.MapperWrapper;
 
 @Lock(LockType.READ)
@@ -173,7 +178,7 @@ public class EntityExportImportService implements Serializable {
         filename = filename + "exports";
         try {
             FileUtils.forceMkdir(new File(filename));
-            filename = filename + File.separator + exportTemplate.getName() + DateUtils.formatDateWithPattern(new Date(), "yyyy-MM-DD_HH_mm_ss") + ".xml";
+            filename = filename + File.separator + exportTemplate.getName() + DateUtils.formatDateWithPattern(new Date(), "_yyyy-MM-dd_HH-mm-ss") + ".xml";
 
             fos = new FileOutputStream(filename);
             xstream.toXML(exportInfos, fos);
@@ -236,7 +241,7 @@ public class EntityExportImportService implements Serializable {
     @SuppressWarnings("unchecked")
     private String serializeEntities(ExportTemplate exportTemplate, Map<String, Object> parameters, ExportImportStatistics exportStats) {
 
-        XStream xstream = new XStream() {
+        XStream xstream = new XStream(new ExtityExportXppDriver()) {
             @Override
             protected MapperWrapper wrapMapper(MapperWrapper next) {
                 return new HibernateMapper(next);
@@ -307,6 +312,7 @@ public class EntityExportImportService implements Serializable {
         }
         List<IEntity> entities = query.getResultList();
 
+        // Serialize entities to XML
         String xml = null;
         if (!entities.isEmpty()) {
             xml = xstream.toXML(entities);
@@ -376,10 +382,10 @@ public class EntityExportImportService implements Serializable {
 
         ExportImportStatistics importStats = null;
         XStream xstream = new XStream() {
-            @Override
-            protected MapperWrapper wrapMapper(MapperWrapper next) {
-                return new HibernateMapper(next);
-            }
+            // @Override
+            // protected MapperWrapper wrapMapper(MapperWrapper next) {
+            // return new HibernateMapper(next);
+            // }
         };
 
         ExportImportConfig exportImportConfig = new ExportImportConfig(exportTemplate, exportIdMapping);
@@ -1099,5 +1105,53 @@ public class EntityExportImportService implements Serializable {
 
         ExportTemplate exportTemplate;
         String serializedData;
+    }
+
+    /**
+     * Extend a defualt XppWriter just to extend PrettyPrintWriter
+     * 
+     * @author Andrius Karpavicius
+     * 
+     */
+    private class ExtityExportXppDriver extends XppDriver {
+
+        @Override
+        public HierarchicalStreamWriter createWriter(Writer out) {
+            return new EntityExportWriter(out, getNameCoder());
+        }
+
+    }
+
+    /**
+     * A writer extending PrettyPrintWriter to handle issue when "class" attribute is added twice - once by Xstream's AbstractReflectionConverter.doMarshal() and second time by
+     * IEntityExportIdentifierConverter
+     * 
+     * @author Andrius Karpavicius
+     * 
+     */
+    private class EntityExportWriter extends PrettyPrintWriter {
+
+        private boolean attributeClassAdded = false;
+
+        public EntityExportWriter(Writer out, NameCoder nameCoder) {
+            super(out, nameCoder);
+        }
+
+        @Override
+        public void addAttribute(String key, String value) {
+            if (key.equals("class")) {
+                if (attributeClassAdded) {
+                    return;
+                }
+                attributeClassAdded = true;
+            }
+            super.addAttribute(key, value);
+        }
+
+        @Override
+        public void endNode() {
+            super.endNode();
+            attributeClassAdded = false;
+        }
     }
 }

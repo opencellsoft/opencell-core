@@ -29,7 +29,7 @@
                         <p:ajax event="change" />
                     </p:selectOneMenu>
                 </hftl:decorateFormField>
-                <hftl:decorateFormField fieldId="import_file" label="#{messages['export.importFile']}" newLine="true">
+                <hftl:decorateFormField fieldId="import_file" label="#{messages['export.importFile']}" newLine="true" componentWidth="100" labelWidth="10" displayOneLine="true">
                     <p:fileUpload id="import_file" mode="advanced" fileUploadListener="#{entityExportImportBean.uploadImportFile}" allowTypes="/(\.|\/)(xml)$/" auto="false"
                         update=":importSummary" />
                 </hftl:decorateFormField>
