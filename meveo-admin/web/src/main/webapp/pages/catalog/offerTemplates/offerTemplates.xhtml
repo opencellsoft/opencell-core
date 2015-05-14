@@ -24,7 +24,7 @@
 
 		</hf:searchPanel>
 
-		<hftl:dataList label="#{messages['offerTemplate.title']}" checkMany="false" noClose="false" backingBean="#{offerTemplateListBean}">
+		<hftl:dataList label="#{messages['offerTemplate.title']}" checkMany="true" noClose="false" backingBean="#{offerTemplateListBean}">
 			<hftl:column label="#{messages['offerTemplate.code']}" field="code" />
 			<hftl:column label="#{messages['offerTemplate.description']}" field="description" />
 			<hftl:column label="#{messages['offerTemplate.serviceTemplates']}" field="serviceTemplates" isList="true" valueLabelField="code" valueIdField="id"
