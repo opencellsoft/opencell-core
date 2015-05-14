@@ -48,6 +48,7 @@
     <cc:attribute name="showBackButton" default="true" />
     <cc:attribute name="showEditButton" default="true" />
     <cc:attribute name="showEnableDisableButton" default="false" />
+    <cc:attribute name="showDeleteButton" default="true" />
     <cc:attribute name="useCustomIdParam" default="false" />
     <cc:attribute name="objectIdParamName" />
     <cc:facet name="buttons"/>
@@ -77,7 +78,8 @@
     				objectIdParamName="#{cc.attrs.objectIdParamName}"
     				showBackButton="#{cc.attrs.showBackButton}"
     				showEditButton="#{cc.attrs.showEditButton}" 
-                    showEnableDisableButton="#{cc.attrs.showEnableDisableButton}"/>
+                    showEnableDisableButton="#{cc.attrs.showEnableDisableButton}"
+                    showDeleteButton="#{cc.attrs.showDeleteButton}"/>
     
                 <h:panelGroup layout="block" styleClass="form-panel-actions" rendered="#{not empty cc.facets.buttons}">
                     <cc:renderFacet name="buttons"/>

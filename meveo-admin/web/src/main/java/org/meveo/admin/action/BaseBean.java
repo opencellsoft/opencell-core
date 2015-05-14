@@ -498,7 +498,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 			}
 		}
 
-		initEntity();
+//		initEntity();
 	}
 
 	public void delete() {
@@ -517,7 +517,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 			}
 		}
 
-		initEntity();
+//		initEntity();
 	}
 
 	/**
@@ -1181,5 +1181,18 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 		}
 		RequestContext requestContext = RequestContext.getCurrentInstance();
 		requestContext.addCallbackParam("result", result);
+	}
+	protected String canDeleteWithBack(){
+		boolean result=true;
+		try{
+			this.delete();
+			getPersistenceService().commit();
+			return back();
+		}catch(Exception e){
+			result=false;
+		}
+		RequestContext requestContext = RequestContext.getCurrentInstance();
+		requestContext.addCallbackParam("result", result);
+		return null;
 	}
 }
