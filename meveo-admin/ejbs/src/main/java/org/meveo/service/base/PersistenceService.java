@@ -733,5 +733,9 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
             ((IAuditable) e).updateAudit(currentUser);
         }
     }
+    
+    public void commit(){
+    	getEntityManager().flush();
+    }
 
 }
