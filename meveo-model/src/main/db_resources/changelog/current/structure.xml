@@ -96,12 +96,4 @@
 	<changeSet id="ticket599_20150507" author="Mbarek">
 		<sql>update ar_customer_account set trading_language_id=(select trading_language_id from billing_billing_account  where billing_billing_account.customer_account_id=ar_customer_account.id ORDER BY billing_billing_account.id ASC LIMIT 1)</sql>
 	</changeSet>
-
-	<changeSet author="EdwardLegaspi" id="Edward1-20150514">
-		<dropSequence sequenceName="adm_language_seq"/>
-		<dropSequence sequenceName="meveo_timer_seq"/>
-		
-		<createSequence sequenceName="adm_language_seq" startValue="34"/>
-		<createSequence sequenceName="meveo_timer_seq" startValue="12"/>
-	</changeSet>
 </databaseChangeLog>

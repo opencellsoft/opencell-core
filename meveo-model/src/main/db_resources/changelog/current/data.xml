@@ -64,9 +64,11 @@
 			<column name="provider_id" valueNumeric="1" />
 		</insert>		
 	</changeSet>	
-	<changeSet author="anasseh" id="2015-05-13.728.addInvoicingJob">
+	<changeSet author="anasseh-AndriusKarpavicius" id="2015-05-13.728.addInvoicingJob2">
+		<sql>delete from crm_custom_field_inst where MEVEO_TIMER_ID in (11)</sql>
+		<sql>delete from meveo_timer where id in(11)</sql>
 	    <insert tableName="meveo_timer">
-			<column name="id" valueNumeric="11" />
+			<column name="id" valueSequenceNext="meveo_timer_seq" />
 			<column name="version" valueNumeric="0" />
 			<column name="sc_d_o_month" value="*" />
 			<column name="sc_d_o_week" value="*" />
@@ -88,9 +90,10 @@
 			<column name="provider_id" valueNumeric="1" />
 		</insert>		
 	</changeSet>
-	<changeSet author="Mbarek" id="2015-05-13.addAdmLanguage">
+	<changeSet author="Mbarek-AndriusKarpavicius" id="2015-05-13.addAdmLanguage2">
+	  <sql>delete from adm_language where id in(33)</sql>
 	  <insert tableName="adm_language">
-			<column name="id" valueNumeric="33" />
+			<column name="id" valueSequenceNext="adm_language_seq" />
 			<column name="created" valueDate="2015-03-19 00:03:59.872" />
 			<column name="version" valueNumeric="1" />
 			<column name="description_en" value="Croate" />
