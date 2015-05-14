@@ -1,6 +1,7 @@
 package org.meveo.export;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -15,14 +16,28 @@ import org.meveo.model.IEntity;
  */
 public class ExportImportStatistics {
 
+    /**
+     * Summary of entities imported/exported per entity class
+     */
     @SuppressWarnings("rawtypes")
     private Map<Class, Integer> summary = new HashMap<Class, Integer>();
 
+    /**
+     * Summary of entities deleted per entity class
+     */
     @SuppressWarnings("rawtypes")
     private Map<Class, Integer> deleteSummary = new HashMap<Class, Integer>();
 
+    /**
+     * Intermediate storage of entities (ids) that should be removed after export is completed
+     */
     @SuppressWarnings("rawtypes")
     private Map<Class, List<Long>> entitiesToRemove = new HashMap<Class, List<Long>>();
+
+    /**
+     * Stores a list of field names that were not imported because of differences between original and current model - field does not exist in current model
+     */
+    private Map<String, Collection<String>> fieldsNotImported = new HashMap<String, Collection<String>>();
 
     @SuppressWarnings("rawtypes")
     public Map<Class, Integer> getSummary() {
@@ -56,18 +71,22 @@ public class ExportImportStatistics {
     }
 
     /**
-     * Add to statistics
+     * Merge statistics from two
      * 
      * @param stats
      */
     @SuppressWarnings("rawtypes")
-    public void updateSummary(ExportImportStatistics stats) {
+    public void mergeStatistics(ExportImportStatistics stats) {
         if (stats == null) {
             return;
         }
 
         for (Entry<Class, Integer> statInfo : stats.getSummary().entrySet()) {
             updateSummary(statInfo.getKey(), statInfo.getValue());
+        }
+
+        for (Entry<String, Collection<String>> fieldInfo : stats.getFieldsNotImported().entrySet()) {
+            addFieldsNotImported(fieldInfo.getKey(), fieldInfo.getValue());
         }
     }
 
@@ -117,5 +136,25 @@ public class ExportImportStatistics {
             }
             entitiesToRemove.get(iEntity.getClass()).add((Long) iEntity.getId());
         }
+    }
+
+    /**
+     * Store a collection of fields that were not imported because of difference in model - field no longer exists in current model
+     * 
+     * @param exportTemplate Export template used
+     * @param fields A collection of field names
+     */
+    public void addFieldsNotImported(String exportTemplateName, Collection<String> fields) {
+
+        if (fieldsNotImported.containsKey(exportTemplateName)) {
+            fieldsNotImported.get(exportTemplateName).addAll(fields);
+            
+        } else {
+            fieldsNotImported.put(exportTemplateName, fields);
+        }
+    }
+
+    public Map<String, Collection<String>> getFieldsNotImported() {
+        return fieldsNotImported;
     }
 }
