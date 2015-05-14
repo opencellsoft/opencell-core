@@ -26,7 +26,6 @@ import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.catalog.impl.OneShotChargeTemplateService;
 import org.omnifaces.cdi.ViewScoped;
 import org.primefaces.component.datatable.DataTable;
-import org.primefaces.context.RequestContext;
 
 @Named
 @ViewScoped
@@ -64,11 +63,4 @@ public class SubscriptionChargeTemplateBean extends BaseBean<OneShotChargeTempla
 		return "code";
 	}
 
-	@Override
-	protected void canDelete() {
-		boolean result=true;
-		this.delete();
-		RequestContext requestContext = RequestContext.getCurrentInstance();
-		requestContext.addCallbackParam("result", result);
-	}
 }

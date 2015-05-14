@@ -29,9 +29,7 @@ import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.action.CustomFieldEnabledBean;
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.model.billing.ChargeInstance;
 import org.meveo.model.catalog.RecurringChargeTemplate;
-import org.meveo.model.catalog.ServiceChargeTemplateRecurring;
 import org.meveo.model.catalog.TriggeredEDRTemplate;
 import org.meveo.model.crm.AccountLevelEnum;
 import org.meveo.model.crm.CustomFieldInstance;
@@ -39,12 +37,10 @@ import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.catalog.impl.OneShotChargeTemplateService;
 import org.meveo.service.catalog.impl.RecurringChargeTemplateService;
-import org.meveo.service.catalog.impl.ServiceChargeTemplateRecurringService;
 import org.meveo.service.catalog.impl.TriggeredEDRTemplateService;
 import org.meveo.service.catalog.impl.UsageChargeTemplateService;
 import org.omnifaces.cdi.ViewScoped;
 import org.primefaces.component.datatable.DataTable;
-import org.primefaces.context.RequestContext;
 import org.primefaces.model.DualListModel;
 
 /**
@@ -161,34 +157,7 @@ public class RecurringChargeTemplateBean extends
 	public void setEdrTemplatesModel(DualListModel<TriggeredEDRTemplate> temp) {
 		getEntity().setEdrTemplates(temp.getTarget());
 	}
-	@Inject
-	private ServiceChargeTemplateRecurringService serviceRecurringService;
 	
-	@Override
-	protected void canDelete() {
-		boolean result=true;
-		if(entity==null){
-			result=false;
-		}else{
-			List<ChargeInstance> chargeInstances=entity.getChargeInstances();
-			if(chargeInstances!=null&&chargeInstances.size()!=0){
-				result=false;
-			}else{
-				List<ServiceChargeTemplateRecurring> serviceRecurrings=serviceRecurringService.findByRecurringChargeTemplate(recurringChargeTemplateService.getEntityManager(), entity, this.currentProvider);
-				if(serviceRecurrings!=null&&serviceRecurrings.size()>0){
-					for(ServiceChargeTemplateRecurring serviceRecurring:serviceRecurrings){
-						serviceRecurringService.remove(serviceRecurring);
-					}
-				}
-			}
-		}
-		
-		if(result){
-			this.delete();
-		}
-		RequestContext requestContext = RequestContext.getCurrentInstance();
-		requestContext.addCallbackParam("result", result);
-	}
 	@Inject
 	private TriggeredEDRTemplateService edrTemplateService;
 	

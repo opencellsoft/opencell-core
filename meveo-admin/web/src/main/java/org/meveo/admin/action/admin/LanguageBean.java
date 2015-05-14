@@ -58,12 +58,4 @@ public class LanguageBean extends BaseBean<Language> {
 		return "languageCode";
 	}
 
-	@Override
-	protected void canDelete() {
-		boolean result=true;
-		this.delete();
-		RequestContext requestContext = RequestContext.getCurrentInstance();
-		requestContext.addCallbackParam("result", result);
-	}
-
 }

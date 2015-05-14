@@ -55,7 +55,6 @@ import org.meveocrm.services.dwh.MeasurableQuantityService;
 import org.meveocrm.services.dwh.MeasuredValueService;
 import org.omnifaces.cdi.ViewScoped;
 import org.omnifaces.util.Messages;
-import org.primefaces.context.RequestContext;
 import org.primefaces.event.CellEditEvent;
 
 @Named
@@ -609,14 +608,6 @@ public class MeasurementBean extends BaseBean<MeasuredValue> {
 	@Override
 	protected List<String> getListFieldsToFetch() {
 		return Arrays.asList("provider");
-	}
-
-	@Override
-	protected void canDelete() {
-		boolean result=true;
-		this.delete();
-		RequestContext requestContext = RequestContext.getCurrentInstance();
-		requestContext.addCallbackParam("result", result);
 	}
 
 }

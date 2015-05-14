@@ -50,7 +50,6 @@ import org.meveo.service.catalog.impl.CalendarService;
 import org.meveo.service.catalog.impl.DayInYearService;
 import org.meveo.service.catalog.impl.HourInDayService;
 import org.omnifaces.cdi.ViewScoped;
-import org.primefaces.context.RequestContext;
 import org.primefaces.model.DualListModel;
 
 @Named
@@ -315,11 +314,4 @@ public class CalendarBean extends BaseBean<Calendar> {
         return Arrays.asList(CalendarIntervalTypeEnum.values());
     }
 
-    @Override
-	protected void canDelete() {
-		boolean result=true;
-		this.delete();
-		RequestContext requestContext = RequestContext.getCurrentInstance();
-		requestContext.addCallbackParam("result", result);
-	}
 }

@@ -15,7 +15,6 @@ import org.meveocrm.model.dwh.MeasuredValue;
 import org.meveocrm.model.dwh.PieChart;
 import org.meveocrm.services.dwh.MeasuredValueService;
 import org.meveocrm.services.dwh.PieChartService;
-import org.primefaces.context.RequestContext;
 import org.primefaces.model.chart.ChartSeries;
 import org.primefaces.model.chart.PieChartModel;
 
@@ -188,14 +187,6 @@ public class PieChartBean extends ChartEntityBean<PieChart> {
 	public void setPieChartEntityModels(
 			List<PieChartEntityModel> pieChartEntityModels) {
 		this.pieChartEntityModels = pieChartEntityModels;
-	}
-
-	@Override
-	protected void canDelete() {
-		boolean result=true;
-		this.delete();
-		RequestContext requestContext = RequestContext.getCurrentInstance();
-		requestContext.addCallbackParam("result", result);
 	}
 
 }

@@ -28,7 +28,6 @@ import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.crm.impl.CustomerCategoryService;
 import org.omnifaces.cdi.ViewScoped;
-import org.primefaces.context.RequestContext;
 
 /**
  * Standard backing bean for {@link CustomerCategory} (extends {@link BaseBean}
@@ -73,14 +72,6 @@ public class CustomerCategoryBean extends BaseBean<CustomerCategory> {
 	@Override
 	protected List<String> getFormFieldsToFetch() {
 		return Arrays.asList("provider");
-	}
-
-	@Override
-	protected void canDelete() {
-		boolean result=true;
-		this.delete();
-		RequestContext requestContext = RequestContext.getCurrentInstance();
-		requestContext.addCallbackParam("result", result);
 	}
 
 }

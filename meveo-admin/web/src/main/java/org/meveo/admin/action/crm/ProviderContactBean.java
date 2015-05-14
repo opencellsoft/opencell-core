@@ -28,7 +28,6 @@ import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.crm.impl.ProviderContactService;
 import org.omnifaces.cdi.ViewScoped;
-import org.primefaces.context.RequestContext;
 
 /**
  * Standard backing bean for {@link ProviderContact} (extends {@link BaseBean}
@@ -80,13 +79,5 @@ public class ProviderContactBean extends BaseBean<ProviderContact> {
 	protected String getDefaultSort() {
 		return "code";
 	}
-	
-	@Override
-	protected void canDelete() {
-		boolean result=true;
-		this.delete();
-		RequestContext requestContext = RequestContext.getCurrentInstance();
-		requestContext.addCallbackParam("result", result);
-	}
-	
+
 }

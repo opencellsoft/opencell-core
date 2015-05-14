@@ -66,13 +66,5 @@ public class CountryBean extends BaseBean<Country> {
 	protected String getDefaultSort() {
 		return "descriptionEn";
 	}
-
-	@Override
-	protected void canDelete() {
-		boolean result=true;
-		this.delete();
-		RequestContext requestContext = RequestContext.getCurrentInstance();
-		requestContext.addCallbackParam("result", result);
-	}
 	
 }

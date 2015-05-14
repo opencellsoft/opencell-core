@@ -25,14 +25,11 @@ import javax.inject.Named;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.cache.RatingCacheContainerProvider;
-import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.TriggeredEDRTemplate;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
-import org.meveo.service.catalog.impl.ChargeTemplateServiceAll;
 import org.meveo.service.catalog.impl.TriggeredEDRTemplateService;
 import org.omnifaces.cdi.ViewScoped;
-import org.primefaces.context.RequestContext;
 
 @Named
 @ViewScoped
@@ -101,24 +98,4 @@ public class TriggeredEDRTemplateBean extends BaseBean<TriggeredEDRTemplate> {
 		return result;
 	}
 	
-	@Inject
-	private ChargeTemplateServiceAll chargeTemplateServiceAll;
-
-	@Override
-	protected void canDelete() {
-		boolean result=true;
-		List<ChargeTemplate> chargeTemplates=chargeTemplateServiceAll.findByEDRTemplate(entity);
-		if(chargeTemplates!=null&&chargeTemplates.size()!=0){
-			for(ChargeTemplate chargeTemplate:chargeTemplates){
-				chargeTemplate.getEdrTemplates().remove(entity);
-				chargeTemplateServiceAll.update(chargeTemplate);
-			}
-		}
-		
-		if(result){
-			this.delete();
-		}
-		RequestContext requestContext = RequestContext.getCurrentInstance();
-		requestContext.addCallbackParam("result", result);
-	}
 }

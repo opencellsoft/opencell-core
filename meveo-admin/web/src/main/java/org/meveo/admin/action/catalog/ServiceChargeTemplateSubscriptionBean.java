@@ -24,7 +24,6 @@ import org.meveo.model.catalog.ServiceChargeTemplateSubscription;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.catalog.impl.ServiceChargeTemplateSubscriptionService;
 import org.omnifaces.cdi.ViewScoped;
-import org.primefaces.context.RequestContext;
 
 @Named
 @ViewScoped
@@ -49,13 +48,5 @@ public class ServiceChargeTemplateSubscriptionBean extends BaseBean<ServiceCharg
 	@Override
 	protected IPersistenceService<ServiceChargeTemplateSubscription> getPersistenceService() {
 		return serviceChargeTemplateSubscriptionService;
-	}
-
-	@Override
-	protected void canDelete() {
-		boolean result=true;
-		this.delete();
-		RequestContext requestContext = RequestContext.getCurrentInstance();
-		requestContext.addCallbackParam("result", result);
 	}
 }

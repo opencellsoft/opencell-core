@@ -24,7 +24,6 @@ import org.meveo.model.catalog.ServiceChargeTemplateRecurring;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.catalog.impl.ServiceChargeTemplateRecurringService;
 import org.omnifaces.cdi.ViewScoped;
-import org.primefaces.context.RequestContext;
 
 
 @Named
@@ -52,11 +51,4 @@ public class ServiceChargeTemplateRecurringBean extends BaseBean<ServiceChargeTe
         return serviceChargeTemplateRecurringService;
     }
 
-    @Override
-	protected void canDelete() {
-		boolean result=true;
-		this.delete();
-		RequestContext requestContext = RequestContext.getCurrentInstance();
-		requestContext.addCallbackParam("result", result);
-	}
 }

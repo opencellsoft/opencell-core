@@ -89,11 +89,4 @@ public class CurrencyBean extends BaseBean<Currency> {
 		return "currencyCode";
 	}
 
-	@Override
-	protected void canDelete() {
-		boolean result=true;
-		this.delete();
-		RequestContext requestContext = RequestContext.getCurrentInstance();
-		requestContext.addCallbackParam("result", result);
-	}
 }

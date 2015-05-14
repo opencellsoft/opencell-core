@@ -31,7 +31,6 @@ import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.catalog.impl.PricePlanMatrixService;
 import org.omnifaces.cdi.ViewScoped;
-import org.primefaces.context.RequestContext;
 import org.primefaces.event.SelectEvent;
 
 /**
@@ -115,14 +114,6 @@ public class PricePlanMatrixBean extends BaseBean<PricePlanMatrix> {
 		return Arrays.asList("provider");
 	}
 
-	@Override
-	protected void canDelete() {
-		boolean result=true;
-		this.delete();
-		RequestContext requestContext = RequestContext.getCurrentInstance();
-		requestContext.addCallbackParam("result", result);
-	}
-	
 	//show advanced button in search panel
 	private boolean advanced=false;
 	public boolean getAdvanced(){

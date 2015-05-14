@@ -28,7 +28,6 @@ import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.communication.impl.EmailTemplateService;
 import org.omnifaces.cdi.ViewScoped;
-import org.primefaces.context.RequestContext;
 
 /**
  * Standard backing bean for {@link EmailTemplate} (extends {@link BaseBean}
@@ -75,11 +74,4 @@ public class EmailTemplateBean extends BaseBean<EmailTemplate> {
 		return Arrays.asList("provider");
 	}
 
-	@Override
-	protected void canDelete() {
-		boolean result=true;
-		this.delete();
-		RequestContext requestContext = RequestContext.getCurrentInstance();
-		requestContext.addCallbackParam("result", result);
-	}
 }

@@ -29,8 +29,6 @@ import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.action.CustomFieldEnabledBean;
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.model.billing.ChargeInstance;
-import org.meveo.model.catalog.ServiceChargeTemplateUsage;
 import org.meveo.model.catalog.TriggeredEDRTemplate;
 import org.meveo.model.catalog.UsageChargeTemplate;
 import org.meveo.model.crm.AccountLevelEnum;
@@ -38,12 +36,10 @@ import org.meveo.model.crm.CustomFieldInstance;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.catalog.impl.OneShotChargeTemplateService;
 import org.meveo.service.catalog.impl.RecurringChargeTemplateService;
-import org.meveo.service.catalog.impl.ServiceChargeTemplateUsageService;
 import org.meveo.service.catalog.impl.TriggeredEDRTemplateService;
 import org.meveo.service.catalog.impl.UsageChargeTemplateService;
 import org.omnifaces.cdi.ViewScoped;
 import org.primefaces.component.datatable.DataTable;
-import org.primefaces.context.RequestContext;
 import org.primefaces.model.DualListModel;
 
 @Named
@@ -138,33 +134,6 @@ public class UsageChargeTemplateBean extends BaseBean<UsageChargeTemplate> {
 		getEntity().setEdrTemplates(temp.getTarget());
 	}
 	
-	@Inject
-	private ServiceChargeTemplateUsageService usageService;
-
-	@Override
-	protected void canDelete() {
-		boolean result=true;
-		if(entity==null){
-			result=false;
-		}else{
-			List<ChargeInstance> instances=entity.getChargeInstances();
-			if(instances!=null&&instances.size()!=0){
-				result=false;
-			}else{
-				List<ServiceChargeTemplateUsage> usages=usageService.findByUsageChargeTemplate(entity, currentProvider);
-				if(usages!=null&&usages.size()!=0){
-					for(ServiceChargeTemplateUsage usage:usages){
-						usageService.remove(usage);
-					}
-				}
-			}
-		}
-		if(result){
-			this.delete();
-		}
-		RequestContext requestContext = RequestContext.getCurrentInstance();
-		requestContext.addCallbackParam("result", result);
-	}
 
 	@Inject
 	private TriggeredEDRTemplateService edrTemplateService;

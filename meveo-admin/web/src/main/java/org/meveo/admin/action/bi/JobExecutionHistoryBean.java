@@ -27,7 +27,6 @@ import org.meveo.model.bi.JobExecutionHisto;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.bi.impl.JobExecutionHistoryService;
-import org.primefaces.context.RequestContext;
 
 /**
  * Standard backing bean for {@link JobExecutionHisto} (extends {@link BaseBean} that
@@ -75,14 +74,6 @@ public class JobExecutionHistoryBean extends
 	@Override
 	protected IPersistenceService<JobExecutionHisto> getPersistenceService() {
 		return jobExecutionHistoryService;
-	}
-
-	@Override
-	protected void canDelete() {
-		boolean result=true;
-		this.delete();
-		RequestContext requestContext = RequestContext.getCurrentInstance();
-		requestContext.addCallbackParam("result", result);
 	}
 
 }

@@ -29,10 +29,7 @@ import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.action.CustomFieldEnabledBean;
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.model.billing.ChargeInstance;
 import org.meveo.model.catalog.OneShotChargeTemplate;
-import org.meveo.model.catalog.ServiceChargeTemplateSubscription;
-import org.meveo.model.catalog.ServiceChargeTemplateTermination;
 import org.meveo.model.catalog.TriggeredEDRTemplate;
 import org.meveo.model.crm.AccountLevelEnum;
 import org.meveo.model.crm.CustomFieldInstance;
@@ -40,13 +37,10 @@ import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.catalog.impl.OneShotChargeTemplateService;
 import org.meveo.service.catalog.impl.RecurringChargeTemplateService;
-import org.meveo.service.catalog.impl.ServiceChargeTemplateSubscriptionService;
-import org.meveo.service.catalog.impl.ServiceChargeTemplateTerminationService;
 import org.meveo.service.catalog.impl.TriggeredEDRTemplateService;
 import org.meveo.service.catalog.impl.UsageChargeTemplateService;
 import org.omnifaces.cdi.ViewScoped;
 import org.primefaces.component.datatable.DataTable;
-import org.primefaces.context.RequestContext;
 import org.primefaces.model.DualListModel;
 
 /**
@@ -183,42 +177,6 @@ public class OneShotChargeTemplateBean extends BaseBean<OneShotChargeTemplate> {
 		return Arrays.asList("provider");
 	}
 	
-	@Inject
-	private ServiceChargeTemplateSubscriptionService subscriptionService;
-	@Inject
-	private ServiceChargeTemplateTerminationService terminationService;
-	
-	@Override
-	protected void canDelete() {
-		boolean result = true;
-		if(entity==null){
-			result=false;
-		}else{
-			List<ChargeInstance> instances=entity.getChargeInstances();
-			if(instances!=null&&instances.size()!=0){
-				result=false;
-			}else{
-				List<ServiceChargeTemplateSubscription> subscriptions=subscriptionService.findBySubscriptionChargeTemplate(entity, currentProvider);
-				if(subscriptions!=null&&subscriptions.size()!=0){
-					for(ServiceChargeTemplateSubscription subscription:subscriptions){
-						subscriptionService.remove(subscription);
-					}
-				}
-				List<ServiceChargeTemplateTermination> terminations=terminationService.findByTerminationChargeTemplate(oneShotChargeTemplateService.getEntityManager(), entity, currentProvider);
-				if(terminations!=null&&terminations.size()!=0){
-					for(ServiceChargeTemplateTermination termination:terminations){
-						terminationService.remove(termination);
-					}
-				}
-				
-			}
-		}
-		if (result) {
-			this.delete();
-		}
-		RequestContext requestContext = RequestContext.getCurrentInstance();
-		requestContext.addCallbackParam("result", result);
-	}
 	@Inject
 	private TriggeredEDRTemplateService edrTemplateService;
 	

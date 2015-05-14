@@ -25,7 +25,6 @@ import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.ServiceParameterInstanceService;
 import org.omnifaces.cdi.ViewScoped;
-import org.primefaces.context.RequestContext;
 
 /**
  * Standard backing bean for {@link ServiceParameterInstance} (extends
@@ -61,14 +60,6 @@ public class ServiceParameterInstanceBean extends
 	@Override
 	protected IPersistenceService<ServiceParameterInstance> getPersistenceService() {
 		return serviceParameterService;
-	}
-
-	@Override
-	protected void canDelete() {
-		boolean result=true;
-		this.delete();
-		RequestContext requestContext = RequestContext.getCurrentInstance();
-		requestContext.addCallbackParam("result", result);
 	}
 
 }

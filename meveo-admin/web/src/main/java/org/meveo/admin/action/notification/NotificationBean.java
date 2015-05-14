@@ -31,7 +31,6 @@ import org.meveo.model.notification.StrategyImportTypeEnum;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.notification.NotificationService;
 import org.omnifaces.cdi.ViewScoped;
-import org.primefaces.context.RequestContext;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.UploadedFile;
 
@@ -217,11 +216,4 @@ public class NotificationBean extends BaseBean<Notification> {
         return classNames;
     }
 
-    @Override
-	protected void canDelete() {
-		boolean result=true;
-		this.delete();
-		RequestContext requestContext = RequestContext.getCurrentInstance();
-		requestContext.addCallbackParam("result", result);
-	}
 }

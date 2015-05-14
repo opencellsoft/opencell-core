@@ -41,7 +41,6 @@ import org.meveo.service.billing.impl.UserAccountService;
 import org.meveo.service.crm.impl.AccountEntitySearchService;
 import org.meveo.service.medina.impl.AccessService;
 import org.meveo.service.payments.impl.CustomerAccountService;
-import org.primefaces.context.RequestContext;
 import org.primefaces.model.DefaultTreeNode;
 import org.primefaces.model.TreeNode;
 
@@ -442,14 +441,6 @@ public class CustomerTreeBean extends BaseBean<AccountEntity> {
 		public boolean isSelected() {
 			return selected;
 		}
-	}
-
-	@Override
-	protected void canDelete() {
-		boolean result=true;
-		this.delete();
-		RequestContext requestContext = RequestContext.getCurrentInstance();
-		requestContext.addCallbackParam("result", result);
 	}
 
 }

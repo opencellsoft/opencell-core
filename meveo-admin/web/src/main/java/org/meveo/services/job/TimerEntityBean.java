@@ -26,7 +26,6 @@ import org.meveo.service.job.Job;
 import org.meveo.service.job.JobExecutionService;
 import org.meveo.service.job.TimerEntityService;
 import org.omnifaces.cdi.ViewScoped;
-import org.primefaces.context.RequestContext;
 
 @Named
 @ViewScoped
@@ -178,11 +177,4 @@ public class TimerEntityBean extends BaseBean<TimerEntity> {
         }
     }
 
-    @Override
-	protected void canDelete() {
-		boolean result=true;
-		this.delete();
-		RequestContext requestContext = RequestContext.getCurrentInstance();
-		requestContext.addCallbackParam("result", result);
-	}
 }

@@ -160,11 +160,4 @@ public class TradingCountryBean extends BaseBean<TradingCountry> {
 		return "country.countryCode";
 	}
 
-	@Override
-	protected void canDelete() {
-		boolean result=true;
-		this.delete();
-		RequestContext requestContext = RequestContext.getCurrentInstance();
-		requestContext.addCallbackParam("result", result);
-	}
 }

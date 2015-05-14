@@ -169,14 +169,6 @@ public class CatMessagesBean extends BaseBean<CatMessages> {
 		return result;
 	}
 
-	@Override
-	protected void canDelete() {
-		boolean result=true;
-		this.delete();
-		RequestContext requestContext = RequestContext.getCurrentInstance();
-		requestContext.addCallbackParam("result", result);
-	}
-	
 	public void exportToFile() throws Exception {
 		CsvBuilder csv = new CsvBuilder();
 		csv.appendValue("Object type");

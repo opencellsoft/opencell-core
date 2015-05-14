@@ -59,7 +59,6 @@ import org.meveo.service.billing.impl.InvoiceService;
 import org.meveo.service.billing.impl.RatedTransactionService;
 import org.meveo.service.payments.impl.CustomerAccountService;
 import org.omnifaces.cdi.ViewScoped;
-import org.primefaces.context.RequestContext;
 
 import com.lowagie.text.Document;
 import com.lowagie.text.DocumentException;
@@ -537,14 +536,6 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
 
 	public void setExceptionalLastTransactionDate(Date exceptionalLastTransactionDate) {
 		this.exceptionalLastTransactionDate = exceptionalLastTransactionDate;
-	}
-
-	@Override
-	protected void canDelete() {
-		boolean result=true;
-		this.delete();
-		RequestContext requestContext = RequestContext.getCurrentInstance();
-		requestContext.addCallbackParam("result", result);
 	}
 
 }

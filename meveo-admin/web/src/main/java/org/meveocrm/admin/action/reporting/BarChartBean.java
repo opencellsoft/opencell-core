@@ -15,7 +15,6 @@ import org.meveocrm.model.dwh.MeasuredValue;
 import org.meveocrm.services.dwh.BarChartService;
 import org.meveocrm.services.dwh.MeasuredValueService;
 import org.omnifaces.cdi.ViewScoped;
-import org.primefaces.context.RequestContext;
 import org.primefaces.model.chart.CartesianChartModel;
 import org.primefaces.model.chart.ChartSeries;
 
@@ -194,14 +193,6 @@ public class BarChartBean extends ChartEntityBean<BarChart> {
 	public void setBarChartEntityModels(
 			List<BarChartEntityModel> barChartEntityModels) {
 		this.barChartEntityModels = barChartEntityModels;
-	}
-
-	@Override
-	protected void canDelete() {
-		boolean result=true;
-		this.delete();
-		RequestContext requestContext = RequestContext.getCurrentInstance();
-		requestContext.addCallbackParam("result", result);
 	}
 
 }

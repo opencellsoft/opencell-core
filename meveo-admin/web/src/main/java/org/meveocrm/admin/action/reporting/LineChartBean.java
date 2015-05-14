@@ -15,7 +15,6 @@ import org.meveocrm.model.dwh.MeasuredValue;
 import org.meveocrm.services.dwh.LineChartService;
 import org.meveocrm.services.dwh.MeasuredValueService;
 import org.omnifaces.cdi.ViewScoped;
-import org.primefaces.context.RequestContext;
 import org.primefaces.model.chart.CartesianChartModel;
 import org.primefaces.model.chart.ChartSeries;
 
@@ -191,14 +190,6 @@ public class LineChartBean extends ChartEntityBean<LineChart> {
 	public void setLineChartEntityModels(
 			List<LineChartEntityModel> lineChartEntityModels) {
 		this.lineChartEntityModels = lineChartEntityModels;
-	}
-
-	@Override
-	protected void canDelete() {
-		boolean result=true;
-		this.delete();
-		RequestContext requestContext = RequestContext.getCurrentInstance();
-		requestContext.addCallbackParam("result", result);
 	}
 
 }

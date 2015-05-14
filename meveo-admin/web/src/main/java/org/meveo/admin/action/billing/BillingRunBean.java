@@ -442,12 +442,4 @@ public class BillingRunBean extends BaseBean<BillingRun> {
 		return Arrays.asList("provider");
 	}
 
-	@Override
-	protected void canDelete() {
-		boolean result=true;
-		this.delete();
-		RequestContext requestContext = RequestContext.getCurrentInstance();
-		requestContext.addCallbackParam("result", result);
-	}
-
 }

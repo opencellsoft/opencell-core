@@ -18,7 +18,6 @@ package org.meveo.admin.action.billing;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.math.BigDecimal;
@@ -31,10 +30,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.inject.Named;
-import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
 import org.jboss.seam.international.status.builder.BundleKey;
@@ -42,7 +39,6 @@ import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.job.PDFParametersConstruction;
 import org.meveo.commons.utils.ParamBean;
-import org.meveo.model.Document;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.CategoryInvoiceAgregate;
 import org.meveo.model.billing.Invoice;
@@ -62,7 +58,6 @@ import org.meveo.service.billing.impl.RatedTransactionService;
 import org.meveo.service.billing.impl.XMLInvoiceCreator;
 import org.meveo.service.payments.impl.CustomerAccountService;
 import org.omnifaces.cdi.ViewScoped;
-import org.primefaces.context.RequestContext;
 import org.primefaces.model.LazyDataModel;
 
 /**
@@ -272,14 +267,6 @@ public class InvoiceBean extends BaseBean<Invoice> {
 		this.ratedTransactions = ratedTransactions;
 	}
 
-	@Override
-	protected void canDelete() {
-		boolean result=true;
-		this.delete();
-		RequestContext requestContext = RequestContext.getCurrentInstance();
-		requestContext.addCallbackParam("result", result);
-	}
-	
 	public File getXmlInvoiceDir(){
 		ParamBean param = ParamBean.getInstance();
 		String invoicesDir = param.getProperty("providers.rootDir", "/tmp/meveo"); 

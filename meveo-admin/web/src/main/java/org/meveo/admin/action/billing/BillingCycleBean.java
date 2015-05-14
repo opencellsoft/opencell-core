@@ -28,7 +28,6 @@ import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.BillingCycleService;
 import org.omnifaces.cdi.ViewScoped;
-import org.primefaces.context.RequestContext;
 
 /**
  * Standard backing bean for {@link BillingCycle} (extends {@link BaseBean} that
@@ -73,14 +72,6 @@ public class BillingCycleBean extends BaseBean<BillingCycle> {
 	@Override
 	protected List<String> getFormFieldsToFetch() {
 		return Arrays.asList("provider");
-	}
-
-	@Override
-	protected void canDelete() {
-		boolean result=true;
-		this.delete();
-		RequestContext requestContext = RequestContext.getCurrentInstance();
-		requestContext.addCallbackParam("result", result);
 	}
 
 }

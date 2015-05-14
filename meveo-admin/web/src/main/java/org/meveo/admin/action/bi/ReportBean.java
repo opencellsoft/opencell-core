@@ -30,7 +30,6 @@ import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.bi.impl.ReportService;
 import org.omnifaces.cdi.ViewScoped;
-import org.primefaces.context.RequestContext;
 
 /**
  * Standard backing bean for {@link Report} (extends {@link BaseBean} that
@@ -94,14 +93,6 @@ public class ReportBean extends BaseBean<Report> {
 		reportExecution.executeReport(entity);
 		log.info("executeReport : result = {}", save);
 		return save;
-	}
-
-	@Override
-	protected void canDelete() {
-		boolean result=true;
-		this.delete();
-		RequestContext requestContext = RequestContext.getCurrentInstance();
-		requestContext.addCallbackParam("result", result);
 	}
 
 }

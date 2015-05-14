@@ -1,13 +1,9 @@
 package org.meveo.admin.action.catalog;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
 
 import javax.inject.Inject;
 import javax.inject.Named;
-import javax.persistence.NoResultException;
 
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
@@ -18,9 +14,7 @@ import org.meveo.model.catalog.DiscountPlanItem;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.catalog.impl.DiscountPlanItemService;
 import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
-import org.meveo.service.job.TimerEntityService;
 import org.omnifaces.cdi.ViewScoped;
-import org.primefaces.context.RequestContext;
 
 /**
  * @author Edward P. Legaspi
@@ -63,13 +57,6 @@ public class DiscountPlanItemBean extends BaseBean<DiscountPlanItem> {
 			}else{
 	     return null; 
 			}  
-		 }
-
-	  @Override
-		protected void canDelete() {
-			boolean result=true;
-			this.delete();
-			RequestContext requestContext = RequestContext.getCurrentInstance();
-			requestContext.addCallbackParam("result", result);
-		}}
+	}
+}
 

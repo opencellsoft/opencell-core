@@ -29,8 +29,6 @@ import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.action.CustomFieldEnabledBean;
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.model.billing.ServiceInstance;
-import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.ServiceChargeTemplateRecurring;
 import org.meveo.model.catalog.ServiceChargeTemplateSubscription;
 import org.meveo.model.catalog.ServiceChargeTemplateTermination;
@@ -41,16 +39,13 @@ import org.meveo.model.crm.AccountLevelEnum;
 import org.meveo.model.crm.CustomFieldInstance;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
-import org.meveo.service.billing.impl.ServiceInstanceService;
 import org.meveo.service.billing.impl.WalletTemplateService;
-import org.meveo.service.catalog.impl.OfferTemplateService;
 import org.meveo.service.catalog.impl.ServiceChargeTemplateRecurringService;
 import org.meveo.service.catalog.impl.ServiceChargeTemplateSubscriptionService;
 import org.meveo.service.catalog.impl.ServiceChargeTemplateTerminationService;
 import org.meveo.service.catalog.impl.ServiceChargeTemplateUsageService;
 import org.meveo.service.catalog.impl.ServiceTemplateService;
 import org.omnifaces.cdi.ViewScoped;
-import org.primefaces.context.RequestContext;
 import org.primefaces.model.DualListModel;
 
 @Named
@@ -423,58 +418,7 @@ public class ServiceTemplateBean extends BaseBean<ServiceTemplate> {
 	protected String getDefaultSort() {
 		return "code";
 	}
-	
-	@Inject
-	private OfferTemplateService offerTemplateService;
-	@Inject
-	private ServiceInstanceService serviceInstanceService;
 
-	@Override
-	protected void canDelete() {
-		boolean result=true;
-		
-		//instance signed into subscription
-		List<ServiceInstance> serviceInstances=serviceInstanceService.findByServiceTemplate(this.serviceTemplateService.getEntityManager(), entity, this.currentProvider);
-		result=serviceInstances==null||serviceInstances.size()==0?true:false;
-		if(result){
-			List<OfferTemplate> offers=offerTemplateService.findByServiceTemplate(entity);
-			if(offers!=null){
-				for(OfferTemplate offer:offers){
-					offer.getServiceTemplates().remove(entity);
-					offerTemplateService.update(offer);
-				}
-			}
-			List<ServiceChargeTemplateRecurring> recurrings=entity.getServiceRecurringCharges();
-			entity.setServiceRecurringCharges(null);
-			for(ServiceChargeTemplateRecurring recurring:recurrings){
-				recurring.setServiceTemplate(null);
-				serviceChargeTemplateRecurringService.update(recurring);
-			}
-			List<ServiceChargeTemplateSubscription> subscriptions=entity.getServiceSubscriptionCharges();
-			entity.setServiceSubscriptionCharges(null);
-			for(ServiceChargeTemplateSubscription subscription:subscriptions){
-				subscription.setServiceTemplate(null);
-				serviceChargeTemplateSubscriptionService.update(subscription);
-			}
-			List<ServiceChargeTemplateTermination> terminations=entity.getServiceTerminationCharges();
-			entity.setServiceTerminationCharges(null);
-			for(ServiceChargeTemplateTermination termination:terminations){
-				termination.setServiceTemplate(null);
-				serviceChargeTemplateTerminationService.update(termination);
-			}
-			List<ServiceChargeTemplateUsage> usages=entity.getServiceUsageCharges();
-			entity.setServiceUsageCharges(null);
-			for(ServiceChargeTemplateUsage usage:usages){
-				usage.setServiceTemplate(null);
-				serviceChargeTemplateUsageService.update(usage);
-			}
-			this.delete();
-		}
-		
-		RequestContext requestContext = RequestContext.getCurrentInstance();
-		requestContext.addCallbackParam("result", result);
-	}
-	
 	public void duplicate() {
 		if(entity!=null&&entity.getId()!=null){
 			entity.getCustomFields().size();

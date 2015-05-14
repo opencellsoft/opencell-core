@@ -33,7 +33,6 @@ import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.catalog.impl.CounterTemplateService;
 import org.meveo.service.notification.InstantMessagingNotificationService;
 import org.omnifaces.cdi.ViewScoped;
-import org.primefaces.context.RequestContext;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.UploadedFile;
 
@@ -328,13 +327,4 @@ public class InstantMessagingNotificationBean extends BaseBean<InstantMessagingN
 	public void setStrategyImportType(StrategyImportTypeEnum strategyImportType) {
 		this.strategyImportType = strategyImportType;
 	}
-
-	@Override
-	protected void canDelete() {
-		boolean result=true;
-		this.delete();
-		RequestContext requestContext = RequestContext.getCurrentInstance();
-		requestContext.addCallbackParam("result", result);
-	}
-
 }

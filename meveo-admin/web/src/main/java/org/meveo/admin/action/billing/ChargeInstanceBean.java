@@ -82,13 +82,4 @@ public class ChargeInstanceBean extends BaseBean<ChargeInstance> {
 	protected IPersistenceService<ChargeInstance> getPersistenceService() {
 		return chargeInstanceService;
 	}
-
-	@Override
-	protected void canDelete() {
-		boolean result=true;
-		this.delete();
-		RequestContext requestContext = RequestContext.getCurrentInstance();
-		requestContext.addCallbackParam("result", result);
-	}
-
 }

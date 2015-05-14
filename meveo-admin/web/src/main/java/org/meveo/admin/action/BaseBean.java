@@ -44,7 +44,6 @@ import org.meveo.model.AccountEntity;
 import org.meveo.model.AuditableEntity;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.BusinessEntity;
-import org.meveo.model.EnableEntity;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.IEntity;
 import org.meveo.model.MultilanguageEntity;
@@ -69,6 +68,7 @@ import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.meveo.service.crm.impl.ProviderService;
 import org.primefaces.component.datatable.DataTable;
+import org.primefaces.context.RequestContext;
 import org.primefaces.event.SelectEvent;
 import org.primefaces.event.data.PageEvent;
 import org.primefaces.model.LazyDataModel;
@@ -1171,5 +1171,15 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 	protected Locale getCurrentLocale() {
 		return FacesContext.getCurrentInstance().getViewRoot().getLocale();
 	}
-	protected abstract void canDelete(); 
+	protected void canDelete(){
+		boolean result=true;
+		try{
+			this.delete();
+			getPersistenceService().commit();
+		}catch(Exception e){
+			result=false;
+		}
+		RequestContext requestContext = RequestContext.getCurrentInstance();
+		requestContext.addCallbackParam("result", result);
+	}
 }

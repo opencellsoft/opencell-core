@@ -25,7 +25,6 @@ import org.meveo.model.crm.Customer;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.crm.impl.CustomerService;
-import org.primefaces.context.RequestContext;
 
 /**
  * Standard backing bean for {@link Customer} (extends {@link BaseBean} that
@@ -90,11 +89,4 @@ public class CustomerListBean extends BaseBean<Customer> {
 		return "code";
 	}
 
-	@Override
-	protected void canDelete() {
-		boolean result=true;
-		this.delete();
-		RequestContext requestContext = RequestContext.getCurrentInstance();
-		requestContext.addCallbackParam("result", result);
-	}
 }

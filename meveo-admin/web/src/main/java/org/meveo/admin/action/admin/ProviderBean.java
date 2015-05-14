@@ -25,7 +25,6 @@ import org.meveo.model.crm.Provider;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.crm.impl.ProviderService;
 import org.omnifaces.cdi.ViewScoped;
-import org.primefaces.context.RequestContext;
 import org.primefaces.event.SelectEvent;
 
 @Named
@@ -69,14 +68,6 @@ public class ProviderBean extends BaseBean<Provider> {
 			}
 		}
 
-	}
-
-	@Override
-	protected void canDelete() {
-		boolean result=true;
-		this.delete();
-		RequestContext requestContext = RequestContext.getCurrentInstance();
-		requestContext.addCallbackParam("result", result);
 	}
 
 }

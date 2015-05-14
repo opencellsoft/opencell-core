@@ -37,7 +37,6 @@ import org.meveo.service.catalog.impl.InvoiceCategoryService;
 import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
 import org.omnifaces.cdi.ViewScoped;
 import org.primefaces.component.tabview.TabView;
-import org.primefaces.context.RequestContext;
 
 /**
  * Standard backing bean for {@link InvoiceSubCategory} (extends
@@ -242,13 +241,5 @@ public class InvoiceSubCategoryBean extends
 
 	public void setIndex() {
 		tabView.setActiveIndex(0);
-	}
-
-	@Override
-	protected void canDelete() {
-		boolean result=true;
-		this.delete();
-		RequestContext requestContext = RequestContext.getCurrentInstance();
-		requestContext.addCallbackParam("result", result);
 	}
 }

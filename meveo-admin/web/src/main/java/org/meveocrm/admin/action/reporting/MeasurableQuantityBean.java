@@ -44,7 +44,6 @@ import org.meveocrm.model.dwh.MeasurableQuantity;
 import org.meveocrm.model.dwh.MeasurementPeriodEnum;
 import org.meveocrm.services.dwh.MeasurableQuantityService;
 import org.omnifaces.cdi.ViewScoped;
-import org.primefaces.context.RequestContext;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.UploadedFile;
 
@@ -238,11 +237,4 @@ public class MeasurableQuantityBean extends BaseBean<MeasurableQuantity> {
 		this.strategyImportType = strategyImportType;
 	}
 
-	@Override
-	protected void canDelete() {
-		boolean result=true;
-		this.delete();
-		RequestContext requestContext = RequestContext.getCurrentInstance();
-		requestContext.addCallbackParam("result", result);
-	}
 }
