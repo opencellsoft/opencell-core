@@ -201,18 +201,6 @@ public class CatMessagesBean extends BaseBean<CatMessages> {
         }
     }
 	
-    public String getCatMessagesCode() throws IOException {
-        csvReader = new CsvReader(file.getInputstream(), ';', Charset.forName("ISO-8859-1"));
-        csvReader.readHeaders();
-        while (csvReader.readRecord()) {
-            String[] values = csvReader.getValues();
-            if (values[OBJECT_TYPE].equals("Price plans")) {
-                PricePlanMatrix pricePlanMatrix = pricePlanMatrixService.findByCode(values[CODE], getCurrentProvider());
-                return pricePlanMatrix.getClass().getSimpleName() + "_" + pricePlanMatrix.getId();
-            }
-        }
-        return null;
-    }
 
     private void upload() throws IOException, BusinessException {
         if (file == null) {
