@@ -40,6 +40,7 @@
 	<cc:attribute name="showBackButton" default="true" />
     <cc:attribute name="showEditButton" default="true" />
     <cc:attribute name="showEnableDisableButton" default="false" />
+    <cc:attribute name="showDeleteButton" default="true"/>
 	<cc:attribute name="useCustomIdParam" default="false" />
 	<cc:attribute name="objectIdParamName"
 		default="#{cc.attrs.useCustomIdParam?cc.attrs.backingBean.idParameterName:'objectId'}" />
@@ -99,6 +100,40 @@
 					value="#{javax.enterprise.context.conversation.id}" />
 			</c:if>
 		</p:button>
+		<script type="text/javascript">
+			//<![CDATA[
+				function handleDeleteComplete(xhr, status, args) {
+					var result = args.result;
+					if(typeof(result)!="undefined" && !result){
+						PF('confirmCanotDeleteWidget').show();
+					}
+				}
+			//]]>
+		</script>	
+		<p:remoteCommand id="remoteDeleteButton" action="#{cc.attrs.backingBean.canDeleteWithBack}" name="doDelete" oncomplete="handleDeleteComplete(xhr,status,args)" />
+		<p:commandButton id="#{resultsId}deletelink" icon="ui-icon-trash" value="#{messages['commons.delete']}"
+			oncomplete="PF('confirmDeleteWidget').show()" rendered="#{cc.attrs.showDeleteButton and cc.attrs.backingBean.entity.id!=null}">
+			<f:setPropertyActionListener target="#{cc.attrs.backingBean.entity}"
+				value="#{entity}"></f:setPropertyActionListener>
+		</p:commandButton>
+		<p:confirmDialog id="confirmDeleteDialog" styleClass="confirm-dialog"
+			message="#{messages['commons.confirmDelete']}" header=""
+			severity="alert" widgetVar="confirmDeleteWidget" appendTo="@(body)">
+			<p:panel styleClass="confirm-dialog-content">
+				<p:commandButton id="deleteOk" value="#{messages['commons.yes']}"
+					oncomplete="doDelete()" onclick="PF('confirmDeleteWidget').hide()"/>
+				<p:commandButton id="deleteKo" value="#{messages['commons.no']}"
+					onclick="PF('confirmDeleteWidget').hide()" type="button" />
+			</p:panel>
+		</p:confirmDialog>
+		<p:confirmDialog id="confirmCanDeleteDialog" styleClass="confirm-dialog"
+			message="#{messages['commons.confirmCanotDelete']}" header=""
+			severity="alert" widgetVar="confirmCanotDeleteWidget" appendTo="@(body)">
+			<p:panel styleClass="confirm-dialog-content">
+				<p:commandButton id="canotdeleteOk" value="#{messages['commons.ok']}"
+					oncomplete="PF('confirmCanotDeleteWidget').hide()" update="@this" />
+			</p:panel>
+		</p:confirmDialog>
 
 	</h:panelGroup>
 
