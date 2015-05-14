@@ -183,7 +183,7 @@
 			<f:setPropertyActionListener target="#{backingBean.entity}"
 				value="#{entity}"></f:setPropertyActionListener>
 		</p:commandButton>
-		<p:confirmDialog id="confirmDialog" styleClass="confirm-dialog"
+		<p:confirmDialog id="confirmDeleteDialog" styleClass="confirm-dialog"
 			message="#{messages['commons.confirmDelete']}" header=""
 			severity="alert" widgetVar="confirmDeleteWidget" appendTo="@(body)">
 			<p:panel styleClass="confirm-dialog-content">

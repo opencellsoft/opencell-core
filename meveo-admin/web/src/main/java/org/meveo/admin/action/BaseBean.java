@@ -31,6 +31,7 @@ import javax.enterprise.inject.Instance;
 import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.persistence.EntityExistsException;
+import javax.persistence.EntityTransaction;
 
 import org.apache.commons.lang.StringUtils;
 import org.jboss.seam.international.status.Messages;
@@ -171,7 +172,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 	 * Selected Entities in multiselect datatable.
 	 */
 	private List<T> selectedEntities;
-
+	
 	/**
 	 * Constructor
 	 */
@@ -1194,5 +1195,16 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 		RequestContext requestContext = RequestContext.getCurrentInstance();
 		requestContext.addCallbackParam("result", result);
 		return null;
+	}
+	protected void canDeleteMany(){
+		boolean result=true;
+		try{
+			this.deleteMany();
+			this.getPersistenceService().commit();
+		}catch(Exception e){
+			result=false;
+		}
+		RequestContext requestContext = RequestContext.getCurrentInstance();
+		requestContext.addCallbackParam("result", result);
 	}
 }
