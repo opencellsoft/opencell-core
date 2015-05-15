@@ -1,8 +1,11 @@
 package org.meveo.api.rest.impl;
 
 import javax.inject.Inject;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+import javax.ws.rs.core.Context;
 
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
@@ -29,13 +32,19 @@ public abstract class BaseRs implements IBaseRs {
 	@RSUser
 	private User currentUser;
 
+	@Context
+	protected HttpServletRequest httpServletRequest;
+
+	// one way to get HttpServletResponse
+	@Context
+	protected HttpServletResponse httpServletResponse;
+
 	protected final String RESPONSE_DELIMITER = " - ";
 
 	@GET
 	@Path("/version")
 	public ActionStatus index() {
-		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS,
-				"MEVEO API Rest Web Service V1.0");
+		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "MEVEO API Rest Web Service V1.0");
 
 		return result;
 	}
@@ -43,8 +52,7 @@ public abstract class BaseRs implements IBaseRs {
 	@GET
 	@Path("/user")
 	public ActionStatus user() {
-		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS,
-				"WS User is=" + getCurrentUser().toString());
+		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "WS User is=" + getCurrentUser().toString());
 
 		return result;
 	}

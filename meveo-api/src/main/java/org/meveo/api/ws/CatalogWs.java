@@ -12,6 +12,7 @@ import org.meveo.api.dto.catalog.OneShotChargeTemplateWithPriceListDto;
 import org.meveo.api.dto.catalog.PricePlanDto;
 import org.meveo.api.dto.catalog.RecurringChargeTemplateDto;
 import org.meveo.api.dto.catalog.ServiceTemplateDto;
+import org.meveo.api.dto.catalog.TriggeredEdrTemplateDto;
 import org.meveo.api.dto.catalog.UsageChargeTemplateDto;
 import org.meveo.api.dto.response.catalog.GetChargeTemplateResponseDto;
 import org.meveo.api.dto.response.catalog.GetCounterTemplateResponse;
@@ -20,6 +21,7 @@ import org.meveo.api.dto.response.catalog.GetOneShotChargeTemplateResponse;
 import org.meveo.api.dto.response.catalog.GetPricePlanResponse;
 import org.meveo.api.dto.response.catalog.GetRecurringChargeTemplateResponse;
 import org.meveo.api.dto.response.catalog.GetServiceTemplateResponse;
+import org.meveo.api.dto.response.catalog.GetTriggeredEdrResponseDto;
 import org.meveo.api.dto.response.catalog.GetUsageChargeTemplateResponse;
 
 /**
@@ -43,7 +45,7 @@ public interface CatalogWs extends IBaseWs {
 	ActionStatus removeCounterTemplate(@WebParam(name = "counterTemplateCode") String counterTemplateCode);
 
 	// charges
-	
+
 	@WebMethod
 	GetChargeTemplateResponseDto findChargeTemplate(@WebParam(name = "chargeTemplateCode") String chargeTemplateCode);
 
@@ -129,5 +131,19 @@ public interface CatalogWs extends IBaseWs {
 
 	@WebMethod
 	ActionStatus removePricePlan(@WebParam(name = "pricePlanCode") String pricePlanCode);
+
+	// triggered Edr
+
+	@WebMethod
+	ActionStatus createTriggeredEdr(@WebParam(name = "triggeredEdrTemplate") TriggeredEdrTemplateDto postData);
+
+	@WebMethod
+	ActionStatus updateTriggeredEdr(@WebParam(name = "triggeredEdrTemplate") TriggeredEdrTemplateDto postData);
+
+	@WebMethod
+	GetTriggeredEdrResponseDto findTriggeredEdr(@WebParam(name = "triggeredEdrCode") String triggeredEdrCode);
+
+	@WebMethod
+	ActionStatus removeTriggeredEdr(@WebParam(name = "triggeredEdrCode") String triggeredEdrCode);
 
 }

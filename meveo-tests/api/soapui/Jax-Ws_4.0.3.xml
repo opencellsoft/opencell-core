@@ -33,6 +33,15 @@
   <wsdl:import location="http://localhost:8080/meveo/CatalogWs?wsdl=CatalogWs.wsdl" namespace="http://ws.api.meveo.org/"></wsdl:import>
   <wsdl:binding name="CatalogWsSoapBinding" type="ns1:CatalogWs">
     <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <wsdl:operation name="removeTriggeredEdr">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="removeTriggeredEdr">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="removeTriggeredEdrResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
     <wsdl:operation name="removeUsageChargeTemplate">
       <soap:operation soapAction="" style="document"/>
       <wsdl:input name="removeUsageChargeTemplate">
@@ -87,6 +96,15 @@
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
+    <wsdl:operation name="updateTriggeredEdr">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="updateTriggeredEdr">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="updateTriggeredEdrResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
     <wsdl:operation name="findServiceTemplate">
       <soap:operation soapAction="" style="document"/>
       <wsdl:input name="findServiceTemplate">
@@ -111,6 +129,15 @@
         <soap:body use="literal"/>
       </wsdl:input>
       <wsdl:output name="removeServiceTemplateResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="createTriggeredEdr">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="createTriggeredEdr">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="createTriggeredEdrResponse">
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
@@ -276,6 +303,15 @@
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
+    <wsdl:operation name="findTriggeredEdr">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="findTriggeredEdr">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="findTriggeredEdrResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
     <wsdl:operation name="removeOfferTemplate">
       <soap:operation soapAction="" style="document"/>
       <wsdl:input name="removeOfferTemplate">
@@ -331,6 +367,7 @@
       <xs:element name="GetPricePlanResponse" type="tns:getPricePlanResponse"/>
       <xs:element name="GetRecurringChargeTemplateResponse" type="tns:getRecurringChargeTemplateResponse"/>
       <xs:element name="GetServiceTemplateResponse" type="tns:getServiceTemplateResponse"/>
+      <xs:element name="GetTriggeredEdrResponse" type="tns:getTriggeredEdrResponseDto"/>
       <xs:element name="GetUsageChargeTemplateResponse" type="tns:getUsageChargeTemplateResponse"/>
       <xs:element name="LanguageDescription" type="tns:languageDescriptionDto"/>
       <xs:element name="OfferTemplate" type="tns:offerTemplateDto"/>
@@ -356,6 +393,8 @@
       <xs:element name="createRecurringChargeTemplateResponse" type="tns:createRecurringChargeTemplateResponse"/>
       <xs:element name="createServiceTemplate" type="tns:createServiceTemplate"/>
       <xs:element name="createServiceTemplateResponse" type="tns:createServiceTemplateResponse"/>
+      <xs:element name="createTriggeredEdr" type="tns:createTriggeredEdr"/>
+      <xs:element name="createTriggeredEdrResponse" type="tns:createTriggeredEdrResponse"/>
       <xs:element name="createUsageChargeTemplate" type="tns:createUsageChargeTemplate"/>
       <xs:element name="createUsageChargeTemplateResponse" type="tns:createUsageChargeTemplateResponse"/>
       <xs:element name="findChargeTemplate" type="tns:findChargeTemplate"/>
@@ -372,6 +411,8 @@
       <xs:element name="findRecurringChargeTemplateResponse" type="tns:findRecurringChargeTemplateResponse"/>
       <xs:element name="findServiceTemplate" type="tns:findServiceTemplate"/>
       <xs:element name="findServiceTemplateResponse" type="tns:findServiceTemplateResponse"/>
+      <xs:element name="findTriggeredEdr" type="tns:findTriggeredEdr"/>
+      <xs:element name="findTriggeredEdrResponse" type="tns:findTriggeredEdrResponse"/>
       <xs:element name="findUsageChargeTemplate" type="tns:findUsageChargeTemplate"/>
       <xs:element name="findUsageChargeTemplateResponse" type="tns:findUsageChargeTemplateResponse"/>
       <xs:element name="index" type="tns:index"/>
@@ -390,6 +431,8 @@
       <xs:element name="removeRecurringChargeTemplateResponse" type="tns:removeRecurringChargeTemplateResponse"/>
       <xs:element name="removeServiceTemplate" type="tns:removeServiceTemplate"/>
       <xs:element name="removeServiceTemplateResponse" type="tns:removeServiceTemplateResponse"/>
+      <xs:element name="removeTriggeredEdr" type="tns:removeTriggeredEdr"/>
+      <xs:element name="removeTriggeredEdrResponse" type="tns:removeTriggeredEdrResponse"/>
       <xs:element name="removeUsageChargeTemplate" type="tns:removeUsageChargeTemplate"/>
       <xs:element name="removeUsageChargeTemplateResponse" type="tns:removeUsageChargeTemplateResponse"/>
       <xs:element name="updateCounterTemplate" type="tns:updateCounterTemplate"/>
@@ -404,14 +447,16 @@
       <xs:element name="updateRecurringChargeTemplateResponse" type="tns:updateRecurringChargeTemplateResponse"/>
       <xs:element name="updateServiceTemplate" type="tns:updateServiceTemplate"/>
       <xs:element name="updateServiceTemplateResponse" type="tns:updateServiceTemplateResponse"/>
+      <xs:element name="updateTriggeredEdr" type="tns:updateTriggeredEdr"/>
+      <xs:element name="updateTriggeredEdrResponse" type="tns:updateTriggeredEdrResponse"/>
       <xs:element name="updateUsageChargeTemplate" type="tns:updateUsageChargeTemplate"/>
       <xs:element name="updateUsageChargeTemplateResponse" type="tns:updateUsageChargeTemplateResponse"/>
-      <xs:complexType name="removeUsageChargeTemplate">
+      <xs:complexType name="removeTriggeredEdr">
         <xs:sequence>
-          <xs:element minOccurs="0" name="usageChargeTemplateCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="triggeredEdrCode" type="xs:string"/>
         </xs:sequence>
       </xs:complexType>
-      <xs:complexType name="removeUsageChargeTemplateResponse">
+      <xs:complexType name="removeTriggeredEdrResponse">
         <xs:sequence>
           <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
         </xs:sequence>
@@ -421,6 +466,16 @@
           <xs:element name="status" type="tns:actionStatusEnum"/>
           <xs:element minOccurs="0" name="errorCode" type="xs:string"/>
           <xs:element name="message" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="removeUsageChargeTemplate">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="usageChargeTemplateCode" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="removeUsageChargeTemplateResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="removeOneShotChargeTemplate">
@@ -488,7 +543,7 @@
         <xs:sequence>
           <xs:element minOccurs="0" name="subscriptionEl" type="xs:string"/>
           <xs:element minOccurs="0" name="conditionEl" type="xs:string"/>
-          <xs:element minOccurs="0" name="quantityEl" type="xs:string"/>
+          <xs:element name="quantityEl" type="xs:string"/>
           <xs:element minOccurs="0" name="param1El" type="xs:string"/>
           <xs:element minOccurs="0" name="param2El" type="xs:string"/>
           <xs:element minOccurs="0" name="param3El" type="xs:string"/>
@@ -634,6 +689,16 @@
           <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
         </xs:sequence>
       </xs:complexType>
+      <xs:complexType name="updateTriggeredEdr">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="triggeredEdrTemplate" type="tns:triggeredEdrTemplateDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="updateTriggeredEdrResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
       <xs:complexType name="findServiceTemplate">
         <xs:sequence>
           <xs:element minOccurs="0" name="serviceTemplateCode" type="xs:string"/>
@@ -674,6 +739,16 @@
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="removeServiceTemplateResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="createTriggeredEdr">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="triggeredEdrTemplate" type="tns:triggeredEdrTemplateDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="createTriggeredEdrResponse">
         <xs:sequence>
           <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
         </xs:sequence>
@@ -969,6 +1044,25 @@
           </xs:extension>
         </xs:complexContent>
       </xs:complexType>
+      <xs:complexType name="findTriggeredEdr">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="triggeredEdrCode" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="findTriggeredEdrResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:getTriggeredEdrResponseDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="getTriggeredEdrResponseDto">
+        <xs:complexContent>
+          <xs:extension base="tns:baseResponse">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="triggeredEdrTemplate" type="tns:triggeredEdrTemplateDto"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
       <xs:complexType name="updateRecurringChargeTemplate">
         <xs:sequence>
           <xs:element minOccurs="0" name="recurringChargeTemplate" type="tns:recurringChargeTemplateDto"/>
@@ -1026,6 +1120,9 @@
       </xs:simpleType>
     </xs:schema>
   </wsdl:types>
+  <wsdl:message name="findTriggeredEdr">
+    <wsdl:part element="ns1:findTriggeredEdr" name="parameters"></wsdl:part>
+  </wsdl:message>
   <wsdl:message name="removeServiceTemplateResponse">
     <wsdl:part element="ns1:removeServiceTemplateResponse" name="parameters"></wsdl:part>
   </wsdl:message>
@@ -1044,6 +1141,9 @@
   <wsdl:message name="updatePricePlanResponse">
     <wsdl:part element="ns1:updatePricePlanResponse" name="parameters"></wsdl:part>
   </wsdl:message>
+  <wsdl:message name="findTriggeredEdrResponse">
+    <wsdl:part element="ns1:findTriggeredEdrResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
   <wsdl:message name="removeRecurringChargeTemplateResponse">
     <wsdl:part element="ns1:removeRecurringChargeTemplateResponse" name="parameters"></wsdl:part>
   </wsdl:message>
@@ -1056,6 +1156,9 @@
   <wsdl:message name="findOfferTemplateResponse">
     <wsdl:part element="ns1:findOfferTemplateResponse" name="parameters"></wsdl:part>
   </wsdl:message>
+  <wsdl:message name="updateTriggeredEdrResponse">
+    <wsdl:part element="ns1:updateTriggeredEdrResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
   <wsdl:message name="updateUsageChargeTemplateResponse">
     <wsdl:part element="ns1:updateUsageChargeTemplateResponse" name="parameters"></wsdl:part>
   </wsdl:message>
@@ -1065,11 +1168,11 @@
   <wsdl:message name="updateCounterTemplateResponse">
     <wsdl:part element="ns1:updateCounterTemplateResponse" name="parameters"></wsdl:part>
   </wsdl:message>
-  <wsdl:message name="createRecurringChargeTemplate">
-    <wsdl:part element="ns1:createRecurringChargeTemplate" name="parameters"></wsdl:part>
-  </wsdl:message>
   <wsdl:message name="createOfferTemplateResponse">
     <wsdl:part element="ns1:createOfferTemplateResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="createRecurringChargeTemplate">
+    <wsdl:part element="ns1:createRecurringChargeTemplate" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="updateRecurringChargeTemplateResponse">
     <wsdl:part element="ns1:updateRecurringChargeTemplateResponse" name="parameters"></wsdl:part>
@@ -1089,17 +1192,20 @@
   <wsdl:message name="removeOneShotChargeTemplateResponse">
     <wsdl:part element="ns1:removeOneShotChargeTemplateResponse" name="parameters"></wsdl:part>
   </wsdl:message>
+  <wsdl:message name="createTriggeredEdr">
+    <wsdl:part element="ns1:createTriggeredEdr" name="parameters"></wsdl:part>
+  </wsdl:message>
   <wsdl:message name="findChargeTemplate">
     <wsdl:part element="ns1:findChargeTemplate" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="createPricePlanResponse">
     <wsdl:part element="ns1:createPricePlanResponse" name="parameters"></wsdl:part>
   </wsdl:message>
-  <wsdl:message name="createRecurringChargeTemplateResponse">
-    <wsdl:part element="ns1:createRecurringChargeTemplateResponse" name="parameters"></wsdl:part>
-  </wsdl:message>
   <wsdl:message name="removeRecurringChargeTemplate">
     <wsdl:part element="ns1:removeRecurringChargeTemplate" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="createRecurringChargeTemplateResponse">
+    <wsdl:part element="ns1:createRecurringChargeTemplateResponse" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="removeUsageChargeTemplate">
     <wsdl:part element="ns1:removeUsageChargeTemplate" name="parameters"></wsdl:part>
@@ -1146,6 +1252,9 @@
   <wsdl:message name="createUsageChargeTemplate">
     <wsdl:part element="ns1:createUsageChargeTemplate" name="parameters"></wsdl:part>
   </wsdl:message>
+  <wsdl:message name="updateTriggeredEdr">
+    <wsdl:part element="ns1:updateTriggeredEdr" name="parameters"></wsdl:part>
+  </wsdl:message>
   <wsdl:message name="updateCounterTemplate">
     <wsdl:part element="ns1:updateCounterTemplate" name="parameters"></wsdl:part>
   </wsdl:message>
@@ -1166,6 +1275,9 @@
   </wsdl:message>
   <wsdl:message name="createServiceTemplate">
     <wsdl:part element="ns1:createServiceTemplate" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="removeTriggeredEdr">
+    <wsdl:part element="ns1:removeTriggeredEdr" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="findCounterTemplate">
     <wsdl:part element="ns1:findCounterTemplate" name="parameters"></wsdl:part>
@@ -1197,6 +1309,9 @@
   <wsdl:message name="updateServiceTemplateResponse">
     <wsdl:part element="ns1:updateServiceTemplateResponse" name="parameters"></wsdl:part>
   </wsdl:message>
+  <wsdl:message name="removeTriggeredEdrResponse">
+    <wsdl:part element="ns1:removeTriggeredEdrResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
   <wsdl:message name="removeOfferTemplate">
     <wsdl:part element="ns1:removeOfferTemplate" name="parameters"></wsdl:part>
   </wsdl:message>
@@ -1209,10 +1324,17 @@
   <wsdl:message name="findOneShotChargeTemplate">
     <wsdl:part element="ns1:findOneShotChargeTemplate" name="parameters"></wsdl:part>
   </wsdl:message>
+  <wsdl:message name="createTriggeredEdrResponse">
+    <wsdl:part element="ns1:createTriggeredEdrResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
   <wsdl:message name="updatePricePlan">
     <wsdl:part element="ns1:updatePricePlan" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:portType name="CatalogWs">
+    <wsdl:operation name="removeTriggeredEdr">
+      <wsdl:input message="ns1:removeTriggeredEdr" name="removeTriggeredEdr"></wsdl:input>
+      <wsdl:output message="ns1:removeTriggeredEdrResponse" name="removeTriggeredEdrResponse"></wsdl:output>
+    </wsdl:operation>
     <wsdl:operation name="removeUsageChargeTemplate">
       <wsdl:input message="ns1:removeUsageChargeTemplate" name="removeUsageChargeTemplate"></wsdl:input>
       <wsdl:output message="ns1:removeUsageChargeTemplateResponse" name="removeUsageChargeTemplateResponse"></wsdl:output>
@@ -1237,6 +1359,10 @@
       <wsdl:input message="ns1:updatePricePlan" name="updatePricePlan"></wsdl:input>
       <wsdl:output message="ns1:updatePricePlanResponse" name="updatePricePlanResponse"></wsdl:output>
     </wsdl:operation>
+    <wsdl:operation name="updateTriggeredEdr">
+      <wsdl:input message="ns1:updateTriggeredEdr" name="updateTriggeredEdr"></wsdl:input>
+      <wsdl:output message="ns1:updateTriggeredEdrResponse" name="updateTriggeredEdrResponse"></wsdl:output>
+    </wsdl:operation>
     <wsdl:operation name="findServiceTemplate">
       <wsdl:input message="ns1:findServiceTemplate" name="findServiceTemplate"></wsdl:input>
       <wsdl:output message="ns1:findServiceTemplateResponse" name="findServiceTemplateResponse"></wsdl:output>
@@ -1248,6 +1374,10 @@
     <wsdl:operation name="removeServiceTemplate">
       <wsdl:input message="ns1:removeServiceTemplate" name="removeServiceTemplate"></wsdl:input>
       <wsdl:output message="ns1:removeServiceTemplateResponse" name="removeServiceTemplateResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="createTriggeredEdr">
+      <wsdl:input message="ns1:createTriggeredEdr" name="createTriggeredEdr"></wsdl:input>
+      <wsdl:output message="ns1:createTriggeredEdrResponse" name="createTriggeredEdrResponse"></wsdl:output>
     </wsdl:operation>
     <wsdl:operation name="findRecurringChargeTemplate">
       <wsdl:input message="ns1:findRecurringChargeTemplate" name="findRecurringChargeTemplate"></wsdl:input>
@@ -1320,6 +1450,10 @@
     <wsdl:operation name="findChargeTemplate">
       <wsdl:input message="ns1:findChargeTemplate" name="findChargeTemplate"></wsdl:input>
       <wsdl:output message="ns1:findChargeTemplateResponse" name="findChargeTemplateResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="findTriggeredEdr">
+      <wsdl:input message="ns1:findTriggeredEdr" name="findTriggeredEdr"></wsdl:input>
+      <wsdl:output message="ns1:findTriggeredEdrResponse" name="findTriggeredEdrResponse"></wsdl:output>
     </wsdl:operation>
     <wsdl:operation name="updateRecurringChargeTemplate">
       <wsdl:input message="ns1:updateRecurringChargeTemplate" name="updateRecurringChargeTemplate"></wsdl:input>
@@ -2065,7 +2199,67 @@
          <chargeTemplateCode>?</chargeTemplateCode>
       </ws:findChargeTemplate>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/CatalogWs/findChargeTemplate"/></con:call></con:operation></con:interface><con:interface xsi:type="con:WsdlInterface" wsaVersion="NONE" name="AccountWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}AccountWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="http://${#Project#meveoEndpoint}/AccountWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache type="TEXT" rootPart="http://localhost:8080/meveo/AccountWs?wsdl"><con:part><con:url>http://localhost:8080/meveo/AccountWs?wsdl</con:url><con:content><![CDATA[<wsdl:definitions name="AccountWs" targetNamespace="http://impl.ws.api.meveo.org/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://impl.ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns2="http://schemas.xmlsoap.org/soap/http" xmlns:ns1="http://ws.api.meveo.org/">
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/CatalogWs/findChargeTemplate"/></con:call></con:operation><con:operation isOneWay="false" action="" name="removeTriggeredEdr" bindingOperationName="removeTriggeredEdr" type="Request-Response" outputName="removeTriggeredEdrResponse" inputName="removeTriggeredEdr" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://i.meveo.info/meveo/CatalogWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:removeTriggeredEdr>
+         <!--Optional:-->
+         <triggeredEdrCode>?</triggeredEdrCode>
+      </ws:removeTriggeredEdr>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/CatalogWs/removeTriggeredEdr"/></con:call></con:operation><con:operation isOneWay="false" action="" name="updateTriggeredEdr" bindingOperationName="updateTriggeredEdr" type="Request-Response" outputName="updateTriggeredEdrResponse" inputName="updateTriggeredEdr" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://i.meveo.info/meveo/CatalogWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:updateTriggeredEdr>
+         <!--Optional:-->
+         <triggeredEdrTemplate code="?" description="?">
+            <!--Optional:-->
+            <subscriptionEl>?</subscriptionEl>
+            <!--Optional:-->
+            <conditionEl>?</conditionEl>
+            <quantityEl>?</quantityEl>
+            <!--Optional:-->
+            <param1El>?</param1El>
+            <!--Optional:-->
+            <param2El>?</param2El>
+            <!--Optional:-->
+            <param3El>?</param3El>
+            <!--Optional:-->
+            <param4El>?</param4El>
+         </triggeredEdrTemplate>
+      </ws:updateTriggeredEdr>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/CatalogWs/updateTriggeredEdr"/></con:call></con:operation><con:operation isOneWay="false" action="" name="createTriggeredEdr" bindingOperationName="createTriggeredEdr" type="Request-Response" outputName="createTriggeredEdrResponse" inputName="createTriggeredEdr" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://i.meveo.info/meveo/CatalogWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createTriggeredEdr>
+         <!--Optional:-->
+         <triggeredEdrTemplate code="?" description="?">
+            <!--Optional:-->
+            <subscriptionEl>?</subscriptionEl>
+            <!--Optional:-->
+            <conditionEl>?</conditionEl>
+            <quantityEl>?</quantityEl>
+            <!--Optional:-->
+            <param1El>?</param1El>
+            <!--Optional:-->
+            <param2El>?</param2El>
+            <!--Optional:-->
+            <param3El>?</param3El>
+            <!--Optional:-->
+            <param4El>?</param4El>
+         </triggeredEdrTemplate>
+      </ws:createTriggeredEdr>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/CatalogWs/createTriggeredEdr"/></con:call></con:operation><con:operation isOneWay="false" action="" name="findTriggeredEdr" bindingOperationName="findTriggeredEdr" type="Request-Response" outputName="findTriggeredEdrResponse" inputName="findTriggeredEdr" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://i.meveo.info/meveo/CatalogWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:findTriggeredEdr>
+         <!--Optional:-->
+         <triggeredEdrCode>?</triggeredEdrCode>
+      </ws:findTriggeredEdr>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/CatalogWs/findTriggeredEdr"/></con:call></con:operation></con:interface><con:interface xsi:type="con:WsdlInterface" wsaVersion="NONE" name="AccountWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}AccountWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="http://${#Project#meveoEndpoint}/AccountWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache type="TEXT" rootPart="http://localhost:8080/meveo/AccountWs?wsdl"><con:part><con:url>http://localhost:8080/meveo/AccountWs?wsdl</con:url><con:content><![CDATA[<wsdl:definitions name="AccountWs" targetNamespace="http://impl.ws.api.meveo.org/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://impl.ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns2="http://schemas.xmlsoap.org/soap/http" xmlns:ns1="http://ws.api.meveo.org/">
   <wsdl:import location="http://localhost:8080/meveo/AccountWs?wsdl=AccountWs.wsdl" namespace="http://ws.api.meveo.org/"></wsdl:import>
   <wsdl:binding name="AccountWsSoapBinding" type="ns1:AccountWs">
     <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
@@ -26508,7 +26702,43 @@ for( testCase in testSuite.getTestCaseList() ) {
          </customer>
       </ws:updateCustomer>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response"/><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:authType>Global HTTP Settings</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties><con:property><con:name>index</con:name><con:value>777</con:value></con:property></con:properties></con:testCase><con:properties/></con:testSuite><con:testSuite name="#783_triggered_edr"><con:settings/><con:runType>SEQUENTIAL</con:runType><con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Catalog creation" searchProperties="true" id="d68c83ff-1919-4de3-a1ec-0782294d0e01"><con:settings/><con:testStep type="request" name="Create recurring"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>CatalogWsSoapBinding</con:interface><con:operation>createRecurringChargeTemplate</con:operation><con:request name="Create recurring"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/CatalogWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response"/><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:authType>Global HTTP Settings</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties><con:property><con:name>index</con:name><con:value>777</con:value></con:property></con:properties></con:testCase><con:properties/></con:testSuite><con:testSuite name="#783_786_triggered_edr"><con:settings/><con:runType>SEQUENTIAL</con:runType><con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Catalog creation" searchProperties="true" id="d68c83ff-1919-4de3-a1ec-0782294d0e01"><con:settings/><con:testStep type="request" name="Create triggered edr"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>CatalogWsSoapBinding</con:interface><con:operation>createTriggeredEdr</con:operation><con:request name="Create triggered edr"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/CatalogWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createTriggeredEdr>
+         <!--Optional:-->
+         <triggeredEdrTemplate code="${#TestCase#index}_TE1" description="${#TestCase#index}_TE1">
+            <!--Optional:-->
+            <subscriptionEl>1</subscriptionEl>
+            <!--Optional:-->
+            <conditionEl>1</conditionEl>
+            <quantityEl>1</quantityEl>
+         </triggeredEdrTemplate>
+      </ws:createTriggeredEdr>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response"/><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:authType>Global HTTP Settings</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Update triggered edr"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>CatalogWsSoapBinding</con:interface><con:operation>updateTriggeredEdr</con:operation><con:request name="Update triggered edr"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/CatalogWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:updateTriggeredEdr>
+          <!--Optional:-->
+         <triggeredEdrTemplate code="${#TestCase#index}_TE1" description="${#TestCase#index}_TE1">
+            <!--Optional:-->
+            <subscriptionEl>1</subscriptionEl>
+            <!--Optional:-->
+            <conditionEl>1</conditionEl>
+            <quantityEl>2</quantityEl>
+         </triggeredEdrTemplate>
+      </ws:updateTriggeredEdr>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response"/><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:authType>Global HTTP Settings</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Find triggered edr"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>CatalogWsSoapBinding</con:interface><con:operation>findTriggeredEdr</con:operation><con:request name="Find triggered edr"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/CatalogWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:findTriggeredEdr>
+         <!--Optional:-->
+         <triggeredEdrCode>${#TestCase#index}_TE1</triggeredEdrCode>
+      </ws:findTriggeredEdr>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response"/><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:authType>Global HTTP Settings</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Create recurring"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>CatalogWsSoapBinding</con:interface><con:operation>createRecurringChargeTemplate</con:operation><con:request name="Create recurring"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/CatalogWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createRecurringChargeTemplate>
@@ -26535,7 +26765,7 @@ for( testCase in testSuite.getTestCaseList() ) {
             <unitNbDecimal>2</unitNbDecimal>
             <triggeredEdrs>
                <!--Zero or more repetitions:-->
-               <triggeredEdr code="TEST_EDR">
+               <triggeredEdr code="${#TestCase#index}_TE1">
                </triggeredEdr>
             </triggeredEdrs>
          </recurringChargeTemplate>
@@ -26568,7 +26798,7 @@ for( testCase in testSuite.getTestCaseList() ) {
             <immediateInvoicing>false</immediateInvoicing>
             <triggeredEdrs>
                <!--Zero or more repetitions:-->
-               <triggeredEdr code="TEST_EDR">
+               <triggeredEdr code="${#TestCase#index}_TE1">
                </triggeredEdr>
             </triggeredEdrs>
          </oneShotChargeTemplate>
@@ -26609,7 +26839,7 @@ for( testCase in testSuite.getTestCaseList() ) {
             <priority>1</priority>
             <triggeredEdrs>
                <!--Zero or more repetitions:-->
-               <triggeredEdr code="TEST_EDR">
+               <triggeredEdr code="${#TestCase#index}_TE1">
                </triggeredEdr>
             </triggeredEdrs>
          </usageChargeTemplate>
@@ -26639,7 +26869,29 @@ for( testCase in testSuite.getTestCaseList() ) {
          <usageChargeTemplateCode>${#TestCase#index}_USAGE1</usageChargeTemplateCode>
       </ws:findUsageChargeTemplate>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response"/><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:preemptive>true</con:preemptive><con:authType>Preemptive</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties><con:property><con:name>index</con:name><con:value>783</con:value></con:property></con:properties></con:testCase><con:properties><con:property><con:name>index</con:name><con:value>783</con:value></con:property></con:properties><con:setupScript>import com.eviware.soapui.impl.wsdl.teststeps.*
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response"/><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:preemptive>true</con:preemptive><con:authType>Preemptive</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Create triggered edr 2"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>CatalogWsSoapBinding</con:interface><con:operation>createTriggeredEdr</con:operation><con:request name="Create triggered edr 2"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/CatalogWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createTriggeredEdr>
+         <!--Optional:-->
+         <triggeredEdrTemplate code="${#TestCase#index}_TE2" description="${#TestCase#index}_TE2">
+            <!--Optional:-->
+            <subscriptionEl>1</subscriptionEl>
+            <!--Optional:-->
+            <conditionEl>1</conditionEl>
+            <quantityEl>1</quantityEl>
+         </triggeredEdrTemplate>
+      </ws:createTriggeredEdr>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response"/><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:authType>Global HTTP Settings</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Delete triggered edr"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>CatalogWsSoapBinding</con:interface><con:operation>removeTriggeredEdr</con:operation><con:request name="Delete triggered edr"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/CatalogWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:removeTriggeredEdr>
+         <!--Optional:-->
+         <triggeredEdrCode>${#TestCase#index}_TE2</triggeredEdrCode>
+      </ws:removeTriggeredEdr>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response"/><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:authType>Global HTTP Settings</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties><con:property><con:name>index</con:name><con:value>783</con:value></con:property></con:properties></con:testCase><con:properties><con:property><con:name>index</con:name><con:value>783</con:value></con:property></con:properties><con:setupScript>import com.eviware.soapui.impl.wsdl.teststeps.*
 import com.eviware.soapui.support.types.*;
 
 StringToStringMap headers = new StringToStringMap();

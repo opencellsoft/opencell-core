@@ -14,6 +14,7 @@ import org.meveo.api.catalog.OneShotChargeTemplateApi;
 import org.meveo.api.catalog.PricePlanApi;
 import org.meveo.api.catalog.RecurringChargeTemplateApi;
 import org.meveo.api.catalog.ServiceTemplateApi;
+import org.meveo.api.catalog.TriggeredEdrApi;
 import org.meveo.api.catalog.UsageChargeTemplateApi;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
@@ -24,6 +25,7 @@ import org.meveo.api.dto.catalog.OneShotChargeTemplateWithPriceListDto;
 import org.meveo.api.dto.catalog.PricePlanDto;
 import org.meveo.api.dto.catalog.RecurringChargeTemplateDto;
 import org.meveo.api.dto.catalog.ServiceTemplateDto;
+import org.meveo.api.dto.catalog.TriggeredEdrTemplateDto;
 import org.meveo.api.dto.catalog.UsageChargeTemplateDto;
 import org.meveo.api.dto.response.catalog.GetChargeTemplateResponseDto;
 import org.meveo.api.dto.response.catalog.GetCounterTemplateResponse;
@@ -32,6 +34,7 @@ import org.meveo.api.dto.response.catalog.GetOneShotChargeTemplateResponse;
 import org.meveo.api.dto.response.catalog.GetPricePlanResponse;
 import org.meveo.api.dto.response.catalog.GetRecurringChargeTemplateResponse;
 import org.meveo.api.dto.response.catalog.GetServiceTemplateResponse;
+import org.meveo.api.dto.response.catalog.GetTriggeredEdrResponseDto;
 import org.meveo.api.dto.response.catalog.GetUsageChargeTemplateResponse;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.LoggingInterceptor;
@@ -48,6 +51,9 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 
 	@Inject
 	private Logger log;
+
+	@Inject
+	private TriggeredEdrApi triggeredEdrApi;
 
 	@Inject
 	private ChargeTemplateApi chargeTemplateApi;
@@ -651,6 +657,86 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 
 		try {
 			usageChargeTemplateApi.remove(usageChargeTemplateCode, getCurrentUser().getProvider());
+		} catch (MeveoApiException e) {
+			result.setErrorCode(e.getErrorCode());
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
+		} catch (Exception e) {
+			result.setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
+		}
+
+		log.debug("RESPONSE={}", result);
+		return result;
+	}
+
+	@Override
+	public ActionStatus createTriggeredEdr(TriggeredEdrTemplateDto postData) {
+		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+
+		try {
+			triggeredEdrApi.create(postData, getCurrentUser());
+		} catch (MeveoApiException e) {
+			result.setErrorCode(e.getErrorCode());
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
+		} catch (Exception e) {
+			result.setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
+		}
+
+		log.debug("RESPONSE={}", result);
+		return result;
+	}
+
+	@Override
+	public ActionStatus updateTriggeredEdr(TriggeredEdrTemplateDto postData) {
+		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+
+		try {
+			triggeredEdrApi.update(postData, getCurrentUser());
+		} catch (MeveoApiException e) {
+			result.setErrorCode(e.getErrorCode());
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
+		} catch (Exception e) {
+			result.setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
+		}
+
+		log.debug("RESPONSE={}", result);
+		return result;
+	}
+
+	@Override
+	public GetTriggeredEdrResponseDto findTriggeredEdr(String triggeredEdrCode) {
+		GetTriggeredEdrResponseDto result = new GetTriggeredEdrResponseDto();
+
+		try {
+			result.setTriggeredEdrTemplate(triggeredEdrApi.find(triggeredEdrCode, getCurrentUser().getProvider()));
+		} catch (MeveoApiException e) {
+			result.getActionStatus().setErrorCode(e.getErrorCode());
+			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
+			result.getActionStatus().setMessage(e.getMessage());
+		} catch (Exception e) {
+			result.getActionStatus().setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
+			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
+			result.getActionStatus().setMessage(e.getMessage());
+		}
+
+		log.debug("RESPONSE={}", result);
+		return result;
+	}
+
+	@Override
+	public ActionStatus removeTriggeredEdr(String triggeredEdrCode) {
+		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+
+		try {
+			triggeredEdrApi.remove(triggeredEdrCode, getCurrentUser().getProvider());
 		} catch (MeveoApiException e) {
 			result.setErrorCode(e.getErrorCode());
 			result.setStatus(ActionStatusEnum.FAIL);
