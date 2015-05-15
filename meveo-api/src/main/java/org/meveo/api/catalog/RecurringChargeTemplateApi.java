@@ -11,6 +11,7 @@ import org.meveo.api.BaseApi;
 import org.meveo.api.MeveoApiErrorCode;
 import org.meveo.api.dto.LanguageDescriptionDto;
 import org.meveo.api.dto.catalog.RecurringChargeTemplateDto;
+import org.meveo.api.dto.catalog.TriggeredEdrTemplateDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
@@ -23,11 +24,13 @@ import org.meveo.model.billing.TradingLanguage;
 import org.meveo.model.catalog.Calendar;
 import org.meveo.model.catalog.LevelEnum;
 import org.meveo.model.catalog.RecurringChargeTemplate;
+import org.meveo.model.catalog.TriggeredEDRTemplate;
 import org.meveo.model.crm.Provider;
 import org.meveo.service.catalog.impl.CalendarService;
 import org.meveo.service.catalog.impl.CatMessagesService;
 import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
 import org.meveo.service.catalog.impl.RecurringChargeTemplateService;
+import org.meveo.service.catalog.impl.TriggeredEDRTemplateService;
 
 /**
  * @author Edward P. Legaspi
@@ -46,6 +49,9 @@ public class RecurringChargeTemplateApi extends BaseApi {
 
 	@Inject
 	private CatMessagesService catMessagesService;
+	
+	@Inject
+	private TriggeredEDRTemplateService triggeredEDRTemplateService;
 
 	public void create(RecurringChargeTemplateDto postData, User currentUser) throws MeveoApiException {
 		if (!StringUtils.isBlank(postData.getCode()) && !StringUtils.isBlank(postData.getDescription()) && !StringUtils.isBlank(postData.getInvoiceSubCategory())
@@ -101,6 +107,21 @@ public class RecurringChargeTemplateApi extends BaseApi {
 			chargeTemplate.setRatingUnitDescription(postData.getRatingUnitDescription());
 			chargeTemplate.setUnitNbDecimal(postData.getUnitNbDecimal());
 			chargeTemplate.setInputUnitDescription(postData.getInputUnitDescription());
+			
+			if (postData.getTriggeredEdrs() != null) {
+				List<TriggeredEDRTemplate> edrTemplates = new ArrayList<TriggeredEDRTemplate>();
+
+				for (TriggeredEdrTemplateDto triggeredEdrTemplateDto : postData.getTriggeredEdrs().getTriggeredEdr()) {
+					TriggeredEDRTemplate triggeredEdrTemplate = triggeredEDRTemplateService.findByCode(triggeredEdrTemplateDto.getCode(), provider);
+					if (triggeredEdrTemplate == null) {
+						throw new EntityDoesNotExistsException(TriggeredEDRTemplate.class, triggeredEdrTemplateDto.getCode());
+					}
+
+					edrTemplates.add(triggeredEdrTemplate);
+				}
+
+				chargeTemplate.setEdrTemplates(edrTemplates);
+			}
 
 			recurringChargeTemplateService.create(chargeTemplate, currentUser, provider);
 
@@ -196,6 +217,21 @@ public class RecurringChargeTemplateApi extends BaseApi {
 						}
 					}
 				}
+			}
+			
+			if (postData.getTriggeredEdrs() != null) {
+				List<TriggeredEDRTemplate> edrTemplates = new ArrayList<TriggeredEDRTemplate>();
+
+				for (TriggeredEdrTemplateDto triggeredEdrTemplateDto : postData.getTriggeredEdrs().getTriggeredEdr()) {
+					TriggeredEDRTemplate triggeredEdrTemplate = triggeredEDRTemplateService.findByCode(triggeredEdrTemplateDto.getCode(), provider);
+					if (triggeredEdrTemplate == null) {
+						throw new EntityDoesNotExistsException(TriggeredEDRTemplate.class, triggeredEdrTemplateDto.getCode());
+					}
+
+					edrTemplates.add(triggeredEdrTemplate);
+				}
+
+				chargeTemplate.setEdrTemplates(edrTemplates);
 			}
 
 			recurringChargeTemplateService.update(chargeTemplate, currentUser);

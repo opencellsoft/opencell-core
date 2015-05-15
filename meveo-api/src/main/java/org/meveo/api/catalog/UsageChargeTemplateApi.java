@@ -10,6 +10,7 @@ import javax.inject.Inject;
 import org.meveo.api.BaseApi;
 import org.meveo.api.MeveoApiErrorCode;
 import org.meveo.api.dto.LanguageDescriptionDto;
+import org.meveo.api.dto.catalog.TriggeredEdrTemplateDto;
 import org.meveo.api.dto.catalog.UsageChargeTemplateDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
@@ -20,10 +21,12 @@ import org.meveo.model.admin.User;
 import org.meveo.model.billing.CatMessages;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.TradingLanguage;
+import org.meveo.model.catalog.TriggeredEDRTemplate;
 import org.meveo.model.catalog.UsageChargeTemplate;
 import org.meveo.model.crm.Provider;
 import org.meveo.service.catalog.impl.CatMessagesService;
 import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
+import org.meveo.service.catalog.impl.TriggeredEDRTemplateService;
 import org.meveo.service.catalog.impl.UsageChargeTemplateService;
 
 /**
@@ -40,6 +43,9 @@ public class UsageChargeTemplateApi extends BaseApi {
 
 	@Inject
 	private CatMessagesService catMessagesService;
+
+	@Inject
+	private TriggeredEDRTemplateService triggeredEDRTemplateService;
 
 	public void create(UsageChargeTemplateDto postData, User currentUser) throws MeveoApiException {
 		if (!StringUtils.isBlank(postData.getCode()) && !StringUtils.isBlank(postData.getDescription()) && !StringUtils.isBlank(postData.getInvoiceSubCategory())) {
@@ -94,6 +100,21 @@ public class UsageChargeTemplateApi extends BaseApi {
 			chargeTemplate.setRatingUnitDescription(postData.getRatingUnitDescription());
 			chargeTemplate.setUnitNbDecimal(postData.getUnitNbDecimal());
 			chargeTemplate.setInputUnitDescription(postData.getInputUnitDescription());
+
+			if (postData.getTriggeredEdrs() != null) {
+				List<TriggeredEDRTemplate> edrTemplates = new ArrayList<TriggeredEDRTemplate>();
+
+				for (TriggeredEdrTemplateDto triggeredEdrTemplateDto : postData.getTriggeredEdrs().getTriggeredEdr()) {
+					TriggeredEDRTemplate triggeredEdrTemplate = triggeredEDRTemplateService.findByCode(triggeredEdrTemplateDto.getCode(), provider);
+					if (triggeredEdrTemplate == null) {
+						throw new EntityDoesNotExistsException(TriggeredEDRTemplate.class, triggeredEdrTemplateDto.getCode());
+					}
+
+					edrTemplates.add(triggeredEdrTemplate);
+				}
+
+				chargeTemplate.setEdrTemplates(edrTemplates);
+			}
 
 			usageChargeTemplateService.create(chargeTemplate, currentUser, provider);
 
@@ -204,6 +225,21 @@ public class UsageChargeTemplateApi extends BaseApi {
 						}
 					}
 				}
+			}
+
+			if (postData.getTriggeredEdrs() != null) {
+				List<TriggeredEDRTemplate> edrTemplates = new ArrayList<TriggeredEDRTemplate>();
+
+				for (TriggeredEdrTemplateDto triggeredEdrTemplateDto : postData.getTriggeredEdrs().getTriggeredEdr()) {
+					TriggeredEDRTemplate triggeredEdrTemplate = triggeredEDRTemplateService.findByCode(triggeredEdrTemplateDto.getCode(), provider);
+					if (triggeredEdrTemplate == null) {
+						throw new EntityDoesNotExistsException(TriggeredEDRTemplate.class, triggeredEdrTemplateDto.getCode());
+					}
+
+					edrTemplates.add(triggeredEdrTemplate);
+				}
+
+				chargeTemplate.setEdrTemplates(edrTemplates);
 			}
 
 			usageChargeTemplateService.update(chargeTemplate, currentUser);

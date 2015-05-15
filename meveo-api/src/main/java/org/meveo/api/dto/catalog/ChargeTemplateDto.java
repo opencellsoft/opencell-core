@@ -12,6 +12,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.LanguageDescriptionDto;
 import org.meveo.model.catalog.ChargeTemplate;
+import org.meveo.model.catalog.TriggeredEDRTemplate;
 
 /**
  * @author Edward P. Legaspi
@@ -36,11 +37,13 @@ public class ChargeTemplateDto implements Serializable {
 
 	private Boolean amountEditable;
 	private List<LanguageDescriptionDto> languageDescriptions;
-	
+
 	private String inputUnitDescription;
 	private String ratingUnitDescription;
 	private BigDecimal unitMultiplicator;
 	private int unitNbDecimal;
+
+	private TriggeredEdrTemplatesDto triggeredEdrs = new TriggeredEdrTemplatesDto();
 
 	public ChargeTemplateDto() {
 
@@ -54,6 +57,12 @@ public class ChargeTemplateDto implements Serializable {
 		}
 		disabled = e.isDisabled();
 		amountEditable = e.getAmountEditable();
+		if (e.getEdrTemplates() != null) {
+			triggeredEdrs = new TriggeredEdrTemplatesDto();
+			for (TriggeredEDRTemplate edrTemplate : e.getEdrTemplates()) {
+				triggeredEdrs.getTriggeredEdr().add(new TriggeredEdrTemplateDto(edrTemplate));
+			}
+		}
 	}
 
 	public String getCode() {
@@ -84,7 +93,7 @@ public class ChargeTemplateDto implements Serializable {
 	public String toString() {
 		return "ChargeTemplateDto [code=" + code + ", description=" + description + ", invoiceSubCategory=" + invoiceSubCategory + ", disabled=" + disabled + ", amountEditable="
 				+ amountEditable + ", languageDescriptions=" + languageDescriptions + ", inputUnitDescription=" + inputUnitDescription + ", ratingUnitDescription="
-				+ ratingUnitDescription + ", unitNbDecimal=" + unitNbDecimal + "]";
+				+ ratingUnitDescription + ", unitMultiplicator=" + unitMultiplicator + ", unitNbDecimal=" + unitNbDecimal + ", triggeredEdrs=" + triggeredEdrs + "]";
 	}
 
 	public Boolean getAmountEditable() {
@@ -141,6 +150,14 @@ public class ChargeTemplateDto implements Serializable {
 
 	public void setUnitNbDecimal(int unitNbDecimal) {
 		this.unitNbDecimal = unitNbDecimal;
+	}
+
+	public TriggeredEdrTemplatesDto getTriggeredEdrs() {
+		return triggeredEdrs;
+	}
+
+	public void setTriggeredEdrs(TriggeredEdrTemplatesDto triggeredEdrs) {
+		this.triggeredEdrs = triggeredEdrs;
 	}
 
 }

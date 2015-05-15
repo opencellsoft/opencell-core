@@ -16,6 +16,7 @@ import org.meveo.api.dto.LanguageDescriptionDto;
 import org.meveo.api.dto.catalog.OneShotChargeTemplateDto;
 import org.meveo.api.dto.catalog.OneShotChargeTemplateWithPriceDto;
 import org.meveo.api.dto.catalog.OneShotChargeTemplateWithPriceListDto;
+import org.meveo.api.dto.catalog.TriggeredEdrTemplateDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
@@ -32,6 +33,7 @@ import org.meveo.model.billing.TradingCurrency;
 import org.meveo.model.billing.TradingLanguage;
 import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.OneShotChargeTemplateTypeEnum;
+import org.meveo.model.catalog.TriggeredEDRTemplate;
 import org.meveo.model.crm.Provider;
 import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.admin.impl.TradingCurrencyService;
@@ -41,6 +43,7 @@ import org.meveo.service.billing.impl.TradingCountryService;
 import org.meveo.service.catalog.impl.CatMessagesService;
 import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
 import org.meveo.service.catalog.impl.OneShotChargeTemplateService;
+import org.meveo.service.catalog.impl.TriggeredEDRTemplateService;
 import org.slf4j.Logger;
 
 /**
@@ -75,6 +78,9 @@ public class OneShotChargeTemplateApi extends BaseApi {
 
 	@Inject
 	private CatMessagesService catMessagesService;
+
+	@Inject
+	private TriggeredEDRTemplateService triggeredEDRTemplateService;
 
 	public void create(OneShotChargeTemplateDto postData, User currentUser) throws MeveoApiException {
 		if (!StringUtils.isBlank(postData.getCode()) && !StringUtils.isBlank(postData.getDescription()) && !StringUtils.isBlank(postData.getInvoiceSubCategory())
@@ -122,6 +128,22 @@ public class OneShotChargeTemplateApi extends BaseApi {
 			chargeTemplate.setRatingUnitDescription(postData.getRatingUnitDescription());
 			chargeTemplate.setUnitNbDecimal(postData.getUnitNbDecimal());
 			chargeTemplate.setInputUnitDescription(postData.getInputUnitDescription());
+
+			if (postData.getTriggeredEdrs() != null) {
+				List<TriggeredEDRTemplate> edrTemplates = new ArrayList<TriggeredEDRTemplate>();
+
+				for (TriggeredEdrTemplateDto triggeredEdrTemplateDto : postData.getTriggeredEdrs().getTriggeredEdr()) {
+					TriggeredEDRTemplate triggeredEdrTemplate = triggeredEDRTemplateService.findByCode(triggeredEdrTemplateDto.getCode(), provider);
+					if (triggeredEdrTemplate == null) {
+						throw new EntityDoesNotExistsException(TriggeredEDRTemplate.class, triggeredEdrTemplateDto.getCode());
+					}
+
+					edrTemplates.add(triggeredEdrTemplate);
+				}
+
+				chargeTemplate.setEdrTemplates(edrTemplates);
+			}
+
 			oneShotChargeTemplateService.create(chargeTemplate, currentUser, provider);
 
 			// create cat messages
@@ -209,6 +231,22 @@ public class OneShotChargeTemplateApi extends BaseApi {
 			chargeTemplate.setRatingUnitDescription(postData.getRatingUnitDescription());
 			chargeTemplate.setUnitNbDecimal(postData.getUnitNbDecimal());
 			chargeTemplate.setInputUnitDescription(postData.getInputUnitDescription());
+			
+			if (postData.getTriggeredEdrs() != null) {
+				List<TriggeredEDRTemplate> edrTemplates = new ArrayList<TriggeredEDRTemplate>();
+
+				for (TriggeredEdrTemplateDto triggeredEdrTemplateDto : postData.getTriggeredEdrs().getTriggeredEdr()) {
+					TriggeredEDRTemplate triggeredEdrTemplate = triggeredEDRTemplateService.findByCode(triggeredEdrTemplateDto.getCode(), provider);
+					if (triggeredEdrTemplate == null) {
+						throw new EntityDoesNotExistsException(TriggeredEDRTemplate.class, triggeredEdrTemplateDto.getCode());
+					}
+
+					edrTemplates.add(triggeredEdrTemplate);
+				}
+
+				chargeTemplate.setEdrTemplates(edrTemplates);
+			}
+			
 			oneShotChargeTemplateService.update(chargeTemplate, currentUser);
 		} else {
 			if (StringUtils.isBlank(postData.getCode())) {
