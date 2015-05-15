@@ -16,11 +16,11 @@
 			<column name="display_services" valueBoolean="true"></column>
 		</insert>
 	</changeSet>  
-	<changeSet author="anassehAndriusKarpavicius" id="rebuild-4.0.3-data-timerDEMO_more3">
-		<sql>delete from crm_custom_field_inst where MEVEO_TIMER_ID in (9,10)</sql>
-		<sql>delete from meveo_timer where id in(9,10)</sql>
+	<changeSet author="anassehAndriusKarpavicius" id="rebuild-4.0.3-data-timerDEMO_more4">
+		<sql>delete from crm_custom_field_inst where MEVEO_TIMER_ID in (select id from meveo_timer where job_name in('ImportAccountsJob','ImportSubscriptionsJob'))</sql>
+		<sql>delete from meveo_timer where job_name in('ImportAccountsJob','ImportSubscriptionsJob')</sql>
 		<insert tableName="meveo_timer">
-			<column name="id" valueNumeric="9" />
+			<column name="id" valueSequenceNext="meveo_timer_seq"  />
 			<column name="version" valueNumeric="0" />
 			<column name="sc_d_o_month" value="*" />
 			<column name="sc_d_o_week" value="*" />
@@ -42,7 +42,7 @@
 			<column name="provider_id" valueNumeric="1" />
 		</insert>
 		<insert tableName="meveo_timer">
-			<column name="id" valueNumeric="10" />
+			<column name="id" valueSequenceNext="meveo_timer_seq"  />
 			<column name="version" valueNumeric="0" />
 			<column name="sc_d_o_month" value="*" />
 			<column name="sc_d_o_week" value="*" />
@@ -64,9 +64,9 @@
 			<column name="provider_id" valueNumeric="1" />
 		</insert>		
 	</changeSet>	
-	<changeSet author="anasseh-AndriusKarpavicius" id="2015-05-13.728.addInvoicingJob2">
-		<sql>delete from crm_custom_field_inst where MEVEO_TIMER_ID in (11)</sql>
-		<sql>delete from meveo_timer where id in(11)</sql>
+	<changeSet author="anasseh-AndriusKarpavicius" id="2015-05-13.728.addInvoicingJob3">
+		<sql>delete from crm_custom_field_inst where MEVEO_TIMER_ID in (select id from meveo_timer where job_name in('job_name'))</sql>
+		<sql>delete from meveo_timer where job_name in('job_name')</sql>
 	    <insert tableName="meveo_timer">
 			<column name="id" valueSequenceNext="meveo_timer_seq" />
 			<column name="version" valueNumeric="0" />

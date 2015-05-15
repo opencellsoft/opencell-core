@@ -331,7 +331,7 @@
         <createSequence sequenceName="medina_zonning_plan_seq"/>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-4.0.3-struct-111">
-        <createSequence sequenceName="meveo_timer_seq" startValue="9"/>
+        <createSequence sequenceName="meveo_timer_seq"/>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-4.0.3-struct-112">
         <createSequence sequenceName="rating_edr_seq"/>

@@ -7658,7 +7658,7 @@
 	</changeSet>
 	<changeSet author="AndriusKarpavicius" id="rebuild-4.0.3-data-timerDEMO">
 		<insert tableName="meveo_timer">
-			<column name="id" valueNumeric="1" />
+			<column name="id" valueSequenceNext="meveo_timer_seq" />
 			<column name="version" valueNumeric="0" />
 			<column name="sc_d_o_month" value="*" />
 			<column name="sc_d_o_week" value="*" />
@@ -7680,7 +7680,7 @@
 			<column name="provider_id" valueNumeric="1" />
 		</insert>
 		<insert tableName="meveo_timer">
-			<column name="id" valueNumeric="2" />
+			<column name="id" valueSequenceNext="meveo_timer_seq" />
 			<column name="version" valueNumeric="0" />
 			<column name="sc_d_o_month" value="*" />
 			<column name="sc_d_o_week" value="*" />
@@ -7702,7 +7702,7 @@
 			<column name="provider_id" valueNumeric="1" />
 		</insert>
 		<insert tableName="meveo_timer">
-			<column name="id" valueNumeric="3" />
+			<column name="id" valueSequenceNext="meveo_timer_seq"/>
 			<column name="version" valueNumeric="0" />
 			<column name="sc_d_o_month" value="*" />
 			<column name="sc_d_o_week" value="*" />
@@ -7724,7 +7724,7 @@
 			<column name="provider_id" valueNumeric="1" />
 		</insert>
 		<insert tableName="meveo_timer">
-			<column name="id" valueNumeric="4" />
+			<column name="id" valueSequenceNext="meveo_timer_seq" />
 			<column name="version" valueNumeric="0" />
 			<column name="sc_d_o_month" value="*" />
 			<column name="sc_d_o_week" value="*" />
@@ -7746,7 +7746,7 @@
 			<column name="provider_id" valueNumeric="1" />
 		</insert>
 		<insert tableName="meveo_timer">
-			<column name="id" valueNumeric="5" />
+			<column name="id" valueSequenceNext="meveo_timer_seq"/>
 			<column name="version" valueNumeric="0" />
 			<column name="sc_d_o_month" value="*" />
 			<column name="sc_d_o_week" value="*" />
@@ -7768,7 +7768,7 @@
 			<column name="provider_id" valueNumeric="1" />
 		</insert>
 		<insert tableName="meveo_timer">
-			<column name="id" valueNumeric="6" />
+			<column name="id" valueSequenceNext="meveo_timer_seq"/>
 			<column name="version" valueNumeric="0" />
 			<column name="sc_d_o_month" value="*" />
 			<column name="sc_d_o_week" value="*" />
@@ -7790,7 +7790,7 @@
 			<column name="provider_id" valueNumeric="1" />
 		</insert>
 		<insert tableName="meveo_timer">
-			<column name="id" valueNumeric="7" />
+			<column name="id" valueSequenceNext="meveo_timer_seq" />
 			<column name="version" valueNumeric="0" />
 			<column name="sc_d_o_month" value="*" />
 			<column name="sc_d_o_week" value="*" />
@@ -7812,7 +7812,7 @@
 			<column name="provider_id" valueNumeric="1" />
 		</insert>
 		<insert tableName="meveo_timer">
-			<column name="id" valueNumeric="8" />
+			<column name="id" valueSequenceNext="meveo_timer_seq"/>
 			<column name="version" valueNumeric="0" />
 			<column name="sc_d_o_month" value="*" />
 			<column name="sc_d_o_week" value="*" />
