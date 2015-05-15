@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -131,7 +132,7 @@ public class EntityExportImportService implements Serializable {
         ExportImportStatistics exportStats = new ExportImportStatistics();
         for (ExportTemplate exportTemplate : exportTemplates) {
             ExportImportStatistics exportStatsSingle = exportEntities(exportTemplate, parameters);
-            exportStats.updateSummary(exportStatsSingle);
+            exportStats.mergeStatistics(exportStatsSingle);
         }
         return exportStats;
     }
@@ -354,7 +355,7 @@ public class EntityExportImportService implements Serializable {
         ExportImportStatistics importStatsTotal = new ExportImportStatistics();
         for (ExportInfo exportInfo : exportInfos) {
             ExportImportStatistics importStats = importEntities(exportInfo.exportTemplate, exportInfo.serializedData, preserveId, ignoreNotFoundFK, forceToProvider);
-            importStatsTotal.updateSummary(importStats);
+            importStatsTotal.mergeStatistics(importStats);
         }
         return importStatsTotal;
     }
@@ -381,11 +382,27 @@ public class EntityExportImportService implements Serializable {
         log.trace("Importing entities from xml {}", serializedData);
 
         ExportImportStatistics importStats = null;
+        final Set<String> ignoredFields = new HashSet<String>();
         XStream xstream = new XStream() {
-            // @Override
-            // protected MapperWrapper wrapMapper(MapperWrapper next) {
-            // return new HibernateMapper(next);
-            // }
+            protected MapperWrapper wrapMapper(MapperWrapper next) {
+                return new MapperWrapper(next) {
+
+                    @SuppressWarnings("rawtypes")
+                    public boolean shouldSerializeMember(Class definedIn, String fieldName) {
+                        if (getImplicitCollectionDefForFieldName(definedIn, fieldName) != null) {
+                            return true;
+                        }
+                        if (definedIn != Object.class) {
+                            return super.shouldSerializeMember(definedIn, fieldName);
+                        } else {
+                            // Remember what field was not processed as no corresponding definition was found
+                            ignoredFields.add(fieldName);
+                            return false;
+                        }
+                    }
+                };
+            }
+
         };
 
         ExportImportConfig exportImportConfig = new ExportImportConfig(exportTemplate, exportIdMapping);
@@ -396,6 +413,9 @@ public class EntityExportImportService implements Serializable {
         try {
             entities = (List<? extends IEntity>) xstream.fromXML(serializedData);
             importStats = saveEntitiesToTarget(entities, preserveId, forceToProvider);
+            if (!ignoredFields.isEmpty()) {
+                importStats.addFieldsNotImported(exportTemplate.getName(), ignoredFields);
+            }
 
         } catch (Exception e) {
             log.error("Failed to import XML contents. Template {}, serialized data {}: ", exportTemplate.getName(), serializedData, e);
@@ -479,7 +499,7 @@ public class EntityExportImportService implements Serializable {
         List extractedRelatedEntities = extractNonCascadedEntities(entityToSave);
         if (extractedRelatedEntities != null && !extractedRelatedEntities.isEmpty()) {
             ExportImportStatistics importStatsRelated = saveEntitiesToTarget(extractedRelatedEntities, lookupById, null);
-            importStats.updateSummary(importStatsRelated);
+            importStats.mergeStatistics(importStatsRelated);
         }
 
         // Update statistics

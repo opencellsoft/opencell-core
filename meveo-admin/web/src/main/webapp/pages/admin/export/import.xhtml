@@ -1,6 +1,6 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:s="http://jboss.com/products/seam/taglib" xmlns:ui="http://java.sun.com/jsf/facelets"
     xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html" xmlns:hftl="http://hftl.org" xmlns:hf="http://java.sun.com/jsf/composite/tags"
-    xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
+    xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml" xmlns:of="http://omnifaces.org/functions">
 
     <f:metadata>
         <f:event type="preRenderView" listener="#{entityExportImportBean.preRenderView}" />
@@ -36,25 +36,37 @@
             </p:panel>
         </h:form>
 
-
-        <p:panel id="importSummary" styleClass="search-panel">
-            <f:facet name="header">
-                <h:outputText value="#{messages['export.importResults']}" rendered="#{entityExportImportBean.exportImportStats!=null}" />
-            </f:facet>
-            <h:form id="form">
-                <p:dataTable id="datatable" var="stat" value="#{entityExportImportBean.exportImportStats.summary.entrySet().toArray()}" paginator="true" rows="20"
-                    paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}" rowsPerPageTemplate="20,30,50"
-                    lazy="false" styleClass="custom-grid" rowIndexVar="rowIndex" rendered="#{entityExportImportBean.exportImportStats!=null}">
-                    <p:column headerText="#{messages['export.entityClass']}" sortBy="#{stat.key}">
-                        <h:outputText value="#{stat.key.name}" />
-                    </p:column>
-                    <p:column headerText="#{messages['export.numberImported']}">
-                        <h:outputText value="#{stat.value}" />
-                    </p:column>
-                </p:dataTable>
-            </h:form>
-        </p:panel>
-
+        <h:panelGroup id="importSummary">
+            <p:panel styleClass="search-panel" header="#{messages['export.importResults']}" rendered="#{entityExportImportBean.exportImportStats!=null}">
+                <h:form id="form">
+                    <p:dataTable id="datatable" var="stat" value="#{entityExportImportBean.exportImportStats.summary.entrySet().toArray()}" paginator="true" rows="20"
+                        paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
+                        rowsPerPageTemplate="20,30,50" lazy="false" styleClass="custom-grid" rowIndexVar="rowIndex">
+                        <p:column headerText="#{messages['export.entityClass']}" sortBy="#{stat.key}">
+                            <h:outputText value="#{stat.key.name}" />
+                        </p:column>
+                        <p:column headerText="#{messages['export.numberImported']}">
+                            <h:outputText value="#{stat.value}" />
+                        </p:column>
+                    </p:dataTable>
+                </h:form>
+            </p:panel>
+            <p:panel styleClass="search-panel" header="#{messages['export.fieldsNotImported']}"
+                rendered="#{entityExportImportBean.exportImportStats!=null and !entityExportImportBean.exportImportStats.fieldsNotImported.isEmpty()}">
+                <h:form id="fiForm">
+                    <p:dataTable id="fiDatatable" var="stat" value="#{entityExportImportBean.exportImportStats.fieldsNotImported.entrySet().toArray()}" paginator="true" rows="20"
+                        paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
+                        rowsPerPageTemplate="20,30,50" lazy="false" styleClass="custom-grid" rowIndexVar="rowIndex">
+                        <p:column headerText="#{messages['export.exportTemplate']}" sortBy="#{stat.key}">
+                            <h:outputText value="#{stat.key}" />
+                        </p:column>
+                        <p:column headerText="#{messages['export.fields']}">
+                            <h:outputText value="#{of:joinCollection(stat.value, ',')}" />
+                        </p:column>
+                    </p:dataTable>
+                </h:form>
+            </p:panel>
+        </h:panelGroup>
     </ui:define>
 
 </ui:composition>
