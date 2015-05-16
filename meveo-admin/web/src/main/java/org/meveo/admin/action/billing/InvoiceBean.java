@@ -253,11 +253,11 @@ public class InvoiceBean extends BaseBean<Invoice> {
 			invoiceService.producePdf(parameters, getCurrentUser()); 
 			messages.info(new BundleKey("messages", "invoice.pdfGeneration"));
 		}catch(InvoiceXmlNotFoundException e){
-			 messages.info(new BundleKey("messages", "invoice.xmlNotFound"));
+			 messages.error(new BundleKey("messages", "invoice.xmlNotFound"));
 			 log.error(e.getMessage());
 			}
 		catch(InvoiceJasperNotFoundException e){
-			messages.info(new BundleKey("messages", "invoice.jasperNotFound"));
+			messages.error(new BundleKey("messages", "invoice.jasperNotFound"));
 			log.error(e.getMessage());
 			}
 		catch (Exception e) {
