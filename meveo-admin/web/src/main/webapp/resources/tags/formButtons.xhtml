@@ -110,7 +110,7 @@
 				}
 			//]]>
 		</script>	
-		<p:remoteCommand id="remoteDeleteButton" action="#{cc.attrs.backingBean.canDeleteWithBack}" name="doDelete" oncomplete="handleDeleteComplete(xhr,status,args)" />
+		<p:remoteCommand id="remoteDeleteButton" action="#{cc.attrs.backingBean.deleteWithBack}" name="doDelete" oncomplete="handleDeleteComplete(xhr,status,args)" />
 		<p:commandButton id="#{resultsId}deletelink" icon="ui-icon-trash" value="#{messages['commons.delete']}"
 			oncomplete="PF('confirmDeleteWidget').show()" rendered="#{cc.attrs.showDeleteButton and cc.attrs.backingBean.entity.id!=null}">
 			<f:setPropertyActionListener target="#{cc.attrs.backingBean.entity}"
