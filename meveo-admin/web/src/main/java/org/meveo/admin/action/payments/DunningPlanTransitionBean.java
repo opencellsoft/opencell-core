@@ -30,7 +30,6 @@ import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.payments.impl.DunningPlanService;
 import org.meveo.service.payments.impl.DunningPlanTransitionService;
 import org.omnifaces.cdi.ViewScoped;
-import org.primefaces.context.RequestContext;
 
 /**
  * Standard backing bean for {@link DunningPlanTransition} (extends
@@ -136,12 +135,5 @@ public class DunningPlanTransitionBean extends BaseBean<DunningPlanTransition> {
 		}
 	}
 
-	@Override
-	protected void canDelete() {
-		boolean result=true;
-		this.delete();
-		RequestContext requestContext = RequestContext.getCurrentInstance();
-		requestContext.addCallbackParam("result", result);
-	}
 }
 

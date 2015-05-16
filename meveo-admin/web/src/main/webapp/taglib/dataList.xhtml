@@ -123,49 +123,12 @@
 				<ui:insert />
 			</p:dataTable>
 
-			<!-- <p:commandButton id="#{formId}deleteEntitieslink" rendered="#{checkMany}"
+			<p:commandButton id="#{formId}deleteEntitieslink" rendered="#{checkMany}"
 					value="#{messages['commons.deleteMultiple']}"
 					action="#{backingBean.deleteMany()}" icon="ui-icon-trash"
 					onclick="if(confirm('#{messages['commons.confirmDelete']}')){return true;}else{return false;}"
-					ajax="false" /> -->
-			<script type="text/javascript">
-			//<![CDATA[
-				function #{formId}handleDeleteManyComplete(xhr, status, args) {
-					var result = args.result;
-					if(typeof(result)!="undefined" && !result){
-						PF('#{formId}confirmCanotDeleteManyWidget').show();
-					}
-				}
-			//]]>
-			</script>
-			<p:remoteCommand id="#{formId}remoteDeleteManyButton" rendered="#{deleteManyButton}"
-				actionListener="#{backingBean.canDeleteMany}" name="#{formId}doDeleteMany"
-				oncomplete="#{formId}handleDeleteManyComplete(xhr,status,args)" update="@form" />
-			<p:confirmDialog id="#{formId}confirmDeleteManyDialog" styleClass="confirm-dialog"
-				message="#{messages['commons.confirmDeleteMultiple']}" header="" rendered="#{deleteManyButton and checkMany}"
-				severity="alert" widgetVar="#{formId}confirmDeleteManyWidget" appendTo="@(body)">
-				<p:panel styleClass="confirm-dialog-content">
-					<p:commandButton id="#{formId}deleteManyOk" value="#{messages['commons.yes']}"
-						oncomplete="#{formId}doDeleteMany()" onclick="PF('#{formId}confirmDeleteManyWidget').hide()" />
-					<p:commandButton id="#{formId}deleteManyKo" value="#{messages['commons.no']}"
-						onclick="PF('#{formId}confirmDeleteManyWidget').hide()" type="button" />
-				</p:panel>
-			</p:confirmDialog>
-			<p:confirmDialog id="#{formId}confirmCanotDeleteManyDialog" rendered="#{deleteManyButton and checkMany}"
-				styleClass="confirm-dialog"
-				message="#{messages['commons.confirmCanotDeleteMultiple']}" header=""
-				severity="alert" widgetVar="#{formId}confirmCanotDeleteManyWidget"
-				appendTo="@(body)">
-				<p:panel styleClass="confirm-dialog-content">
-					<p:commandButton id="#{formId}canotdeleteManyOk"
-						value="#{messages['commons.ok']}"
-						oncomplete="PF('#{formId}confirmCanotDeleteManyWidget').hide()" update="@this" />
-				</p:panel>
-			</p:confirmDialog>
-			<p:commandButton id="#{formId}buttonDeleteMany" icon="ui-icon-trash" onclick="PF('#{formId}confirmDeleteManyWidget').show()"
-				value="#{messages['commons.deleteMultiple']}" rendered="#{deleteManyButton and checkMany}">
-			</p:commandButton>
-
+					ajax="false" />
+			
 			<p:commandButton id="#{formId}buttonExport" icon="ui-icon-xls"
 				value="#{messages['commons.exportExcel']}" ajax="false"
 				rendered="#{exportButton}">

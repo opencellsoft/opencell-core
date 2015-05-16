@@ -32,7 +32,6 @@ import org.meveo.model.payments.DDRequestOpStatusEnum;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.payments.impl.DDRequestLotOpService;
 import org.omnifaces.cdi.ViewScoped;
-import org.primefaces.context.RequestContext;
 
 /**
  * Standard backing bean for {@link ActionPlanItem} (extends {@link BaseBean}
@@ -99,13 +98,4 @@ public class DdRequestLotOpBean extends BaseBean<DDRequestLotOp> {
 	protected List<String> getListFieldsToFetch() {
 		return Arrays.asList("provider");
 	}
-
-	@Override
-	protected void canDelete() {
-		boolean result=true;
-		this.delete();
-		RequestContext requestContext = RequestContext.getCurrentInstance();
-		requestContext.addCallbackParam("result", result);
-	}
-
 }

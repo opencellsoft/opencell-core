@@ -27,7 +27,6 @@ import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.payments.impl.MatchingCodeService;
 import org.omnifaces.cdi.ViewScoped;
-import org.primefaces.context.RequestContext;
 
 /**
  * Standard backing bean for {@link MatchingCode} (extends {@link BaseBean} that
@@ -89,13 +88,5 @@ public class MatchingCodeBean extends BaseBean<MatchingCode> {
 			log.error(e.getMessage());
 		}
 		return returnPage;
-	}
-
-	@Override
-	protected void canDelete() {
-		boolean result=true;
-		this.delete();
-		RequestContext requestContext = RequestContext.getCurrentInstance();
-		requestContext.addCallbackParam("result", result);
 	}
 }

@@ -36,7 +36,6 @@ import org.meveo.service.payments.impl.ActionPlanItemService;
 import org.meveo.service.payments.impl.DunningPlanService;
 import org.meveo.service.payments.impl.DunningPlanTransitionService;
 import org.omnifaces.cdi.ViewScoped;
-import org.primefaces.context.RequestContext;
 
 /**
  * Standard backing bean for {@link DunningPlan} (extends {@link BaseBean} that
@@ -196,14 +195,6 @@ public class DunningPlanBean extends BaseBean<DunningPlan> {
 	@Override
 	protected List<String> getListFieldsToFetch() {
 		return Arrays.asList("provider");
-	}
-
-	@Override
-	protected void canDelete() {
-		boolean result=true;
-		this.delete();
-		RequestContext requestContext = RequestContext.getCurrentInstance();
-		requestContext.addCallbackParam("result", result);
 	}
 
 }

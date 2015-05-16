@@ -31,7 +31,6 @@ import javax.enterprise.inject.Instance;
 import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.persistence.EntityExistsException;
-import javax.persistence.EntityTransaction;
 
 import org.apache.commons.lang.StringUtils;
 import org.jboss.seam.international.status.Messages;
@@ -526,6 +525,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 	 * unsuccessful.
 	 */
 	public void deleteMany() {
+		System.out.println("delete Many#########");
 		try {
 			if (selectedEntities != null && selectedEntities.size() > 0) {
 				Set<Long> idsToDelete = new HashSet<Long>();
@@ -538,6 +538,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 						idsString.toString()));
 
 				getPersistenceService().remove(idsToDelete);
+				getPersistenceService().commit();
 				messages.info(new BundleKey("messages", "delete.entitities.successful"));
 			} else {
 				messages.info(new BundleKey("messages", "delete.entitities.noSelection"));
@@ -553,7 +554,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 			}
 		}
 
-		initEntity();
+//		initEntity();
 	}
 
 	/**
@@ -1172,7 +1173,10 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 	protected Locale getCurrentLocale() {
 		return FacesContext.getCurrentInstance().getViewRoot().getLocale();
 	}
-	protected void canDelete(){
+	/**
+	 * delete current entity from list, return a callback result to UI for validate
+	 */
+	public void deleteInlist(){
 		boolean result=true;
 		try{
 			this.delete();
@@ -1183,7 +1187,11 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 		RequestContext requestContext = RequestContext.getCurrentInstance();
 		requestContext.addCallbackParam("result", result);
 	}
-	protected String canDeleteWithBack(){
+	/**
+	 * delete current entity from detail page
+	 * @return  back() page if deleted success, if not, return a callback result to UI for validate
+	 */
+	public String deleteWithBack(){
 		boolean result=true;
 		try{
 			this.delete();
@@ -1195,16 +1203,5 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 		RequestContext requestContext = RequestContext.getCurrentInstance();
 		requestContext.addCallbackParam("result", result);
 		return null;
-	}
-	protected void canDeleteMany(){
-		boolean result=true;
-		try{
-			this.deleteMany();
-			this.getPersistenceService().commit();
-		}catch(Exception e){
-			result=false;
-		}
-		RequestContext requestContext = RequestContext.getCurrentInstance();
-		requestContext.addCallbackParam("result", result);
 	}
 }

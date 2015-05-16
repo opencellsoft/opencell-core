@@ -25,7 +25,6 @@ import org.meveo.model.payments.CustomerAccount;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.payments.impl.CustomerAccountService;
-import org.primefaces.context.RequestContext;
 
 /**
  * Standard backing bean for {@link CustomerAccount} (extends {@link BaseBean}
@@ -67,11 +66,4 @@ public class CustomerAccountListBean extends BaseBean<CustomerAccount> {
 		return "code";
 	}
 
-	@Override
-	protected void canDelete() {
-		boolean result=true;
-		this.delete();
-		RequestContext requestContext = RequestContext.getCurrentInstance();
-		requestContext.addCallbackParam("result", result);
-	}
 }

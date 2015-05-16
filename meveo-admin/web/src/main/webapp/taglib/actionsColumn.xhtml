@@ -177,7 +177,7 @@
 				}
 			//]]>
 		</script>	
-		<p:remoteCommand id="remoteDeleteButton" actionListener="#{backingBean.canDelete}" name="doDelete" oncomplete="handleDeleteComplete(xhr,status,args)" update="@form"/>
+		<p:remoteCommand id="remoteDeleteButton" actionListener="#{backingBean.deleteInlist}" name="doDelete" oncomplete="handleDeleteComplete(xhr,status,args)" update="@form"/>
 		<p:commandButton id="#{resultsId}deletelink" icon="ui-icon-trash"
 			oncomplete="PF('confirmDeleteWidget').show()">
 			<f:setPropertyActionListener target="#{backingBean.entity}"
