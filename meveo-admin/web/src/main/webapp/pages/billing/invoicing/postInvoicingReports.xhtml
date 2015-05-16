@@ -135,7 +135,7 @@
 			backingBean="#{invoiceBean}" checkMany="false">
 
 			<hftl:column label="#{messages['businessEntity.code']}"
-				field="billingAccount.code" />
+				field="billingAccount.code" entityView="billingAccountDetail" valueIdField="billingAccount.id"/>
 			<p:column width="100">
 				<f:facet name="header">
 					<h:outputText value="#{messages['name.title']}" />
