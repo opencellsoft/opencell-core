@@ -52,6 +52,8 @@ import net.sf.jasperreports.engine.data.JRXmlDataSource;
 import net.sf.jasperreports.engine.util.JRLoader;
 
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.exception.InvoiceJasperNotFoundException;
+import org.meveo.admin.exception.InvoiceXmlNotFoundException;
 import org.meveo.admin.job.PdfGeneratorConstants;
 import org.meveo.commons.exceptions.ConfigurationException;
 import org.meveo.commons.utils.ParamBean;
@@ -434,7 +436,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 			+ (!StringUtils.isBlank(invoice.getInvoiceNumber()) ? invoice.getInvoiceNumber() : invoice.getTemporaryInvoiceNumber()) + ".xml";
 			File invoiceXmlFile = new File(invoiceXmlFileName);
 			if (!invoiceXmlFile.exists()) {
-				throw new ConfigurationException(
+				throw new InvoiceXmlNotFoundException(
 						"The xml invoice file doesn't exist.");
 			}
 			BillingCycle billingCycle = invoice.getBillingRun()
@@ -446,6 +448,10 @@ public class InvoiceService extends PersistenceService<Invoice> {
 			String resDir = meveoDir + "jasper";
 			File jasperFile = getJasperTemplateFile(resDir, billingTemplate,
 					billingAccount.getPaymentMethod());
+			if(!jasperFile.exists()){
+				throw new InvoiceJasperNotFoundException(
+						"The jasper file doesn't exist.");
+			  }
 			log.info(String.format("Jasper template used: %s",
 					jasperFile.getCanonicalPath()));
 

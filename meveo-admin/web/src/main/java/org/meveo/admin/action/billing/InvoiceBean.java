@@ -37,6 +37,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.exception.InvoiceJasperNotFoundException;
+import org.meveo.admin.exception.InvoiceXmlNotFoundException;
 import org.meveo.admin.job.PDFParametersConstruction;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.billing.BillingAccount;
@@ -250,7 +252,15 @@ public class InvoiceBean extends BaseBean<Invoice> {
 			   .constructParameters(entity);
 			invoiceService.producePdf(parameters, getCurrentUser()); 
 			messages.info(new BundleKey("messages", "invoice.pdfGeneration"));
-		} catch (Exception e) {
+		}catch(InvoiceXmlNotFoundException e){
+			 messages.info(new BundleKey("messages", "invoice.xmlNotFound"));
+			 log.error(e.getMessage());
+			}
+		catch(InvoiceJasperNotFoundException e){
+			messages.info(new BundleKey("messages", "invoice.jasperNotFound"));
+			log.error(e.getMessage());
+			}
+		catch (Exception e) {
 			log.error(e.getMessage());  
 		}	
 	}
