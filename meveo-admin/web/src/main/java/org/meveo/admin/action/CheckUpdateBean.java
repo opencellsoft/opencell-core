@@ -103,7 +103,7 @@ public class CheckUpdateBean implements Serializable {
 
 	private String buildJsonRequest(){
 		try{
-			String productVersion = "4.0.3";
+			String productVersion = "4.0.2";
 			String productName = paramBean.getProperty("checkUpdate.productName", "Meveo");
 			String owner = paramBean.getProperty("checkUpdate.owner", "OpenCell");
 			String macAddress = "";
