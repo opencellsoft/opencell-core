@@ -73,7 +73,8 @@ public class ImportAccountsJob extends Job {
 		jobName.setProvider(currentUser.getProvider());
 		jobName.setDescription(resourceMessages.getString("jobExecution.nbRuns"));
 		jobName.setFieldType(CustomFieldTypeEnum.LONG);
-		jobName.setValueRequired(true);
+		jobName.setLongValue(new Long(1));
+		jobName.setValueRequired(false);
 		result.add(jobName);
 
 		CustomFieldTemplate nbDays = new CustomFieldTemplate();
@@ -87,7 +88,8 @@ public class ImportAccountsJob extends Job {
 		nbDays.setProvider(currentUser.getProvider());
 		nbDays.setDescription(resourceMessages.getString("jobExecution.waitingMillis"));
 		nbDays.setFieldType(CustomFieldTypeEnum.LONG);
-		nbDays.setValueRequired(true);
+		nbDays.setLongValue(new Long(0));
+		nbDays.setValueRequired(false);
 		result.add(nbDays);
 
 		return result;

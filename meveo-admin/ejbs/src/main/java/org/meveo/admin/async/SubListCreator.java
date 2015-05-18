@@ -67,6 +67,12 @@ public class SubListCreator {
 	public boolean isHasNext() {
 		return hasNext;
 	}
+	/**
+	 * @return the blocToRun
+	 */
+	public int getBlocToRun() {
+		return blocToRun;
+	}
 
 	
 }

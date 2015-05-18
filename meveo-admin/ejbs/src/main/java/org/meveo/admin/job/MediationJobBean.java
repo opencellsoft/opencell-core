@@ -57,25 +57,17 @@ public class MediationJobBean {
 
 	@Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
 	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
-	public void execute(JobExecutionResultImpl result, String parameter, User currentUser) {
+	public void execute(JobExecutionResultImpl result, String parameter, User currentUser,File file) {
 		Provider provider = currentUser.getProvider();
 
 		ParamBean parambean = ParamBean.getInstance();
 		String meteringDir = parambean.getProperty("providers.rootDir", "/tmp/meveo/") + File.separator + provider.getCode() + File.separator + "imports" + File.separator
 				+ "metering" + File.separator;
 
-		inputDir = meteringDir + "input";
-		String cdrExtension = parambean.getProperty("mediation.extensions", "csv");
-		ArrayList<String> cdrExtensions = new ArrayList<String>();
-		cdrExtensions.add(cdrExtension);
 		outputDir = meteringDir + "output";
 		rejectDir = meteringDir + "reject";
-		// TODO creer les reps
-		File f = new File(inputDir);
-		if (!f.exists()) {
-			f.mkdirs();
-		}
-		f = new File(outputDir);
+		
+		File f = new File(outputDir);
 		if (!f.exists()) {
 			f.mkdirs();
 		}
@@ -84,11 +76,9 @@ public class MediationJobBean {
 			f.mkdirs();
 		}
 		report = "";
-		cdrFile = FileUtils.getFileForParsing(inputDir, cdrExtensions);
-
-		File file = FileUtils.getFileForParsing(inputDir, cdrExtensions);
 
 		if (file != null) {
+			cdrFileName = file.getAbsolutePath();
 			result.setNbItemsToProcess(1);
 
 			log.info("InputFiles job {} in progress...", file.getName());
@@ -145,7 +135,7 @@ public class MediationJobBean {
 						currentFile.delete();
 					}
 				} catch (Exception e) {
-					report += "\r\n cannot delete " + cdrFile.getAbsolutePath();
+					report += "\r\n cannot delete " + cdrFileName;
 				}
 
 				try {

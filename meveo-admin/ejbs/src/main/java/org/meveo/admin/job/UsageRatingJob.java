@@ -41,6 +41,7 @@ public class UsageRatingJob extends Job {
     }
 
     @Override
+    @TransactionAttribute(TransactionAttributeType.NEVER)
     protected void execute(JobExecutionResultImpl result, TimerEntity timerEntity, User currentUser) throws BusinessException {
         usageRatingJobBean.execute(result, currentUser,timerEntity);
     }
@@ -54,33 +55,35 @@ public class UsageRatingJob extends Job {
 	public List<CustomFieldTemplate> getCustomFields(User currentUser) {
 		List<CustomFieldTemplate> result = new ArrayList<CustomFieldTemplate>();
 
-		CustomFieldTemplate jobName = new CustomFieldTemplate();
-		jobName.setCode("UsageRatingJob_nbRuns");
-		jobName.setAccountLevel(AccountLevelEnum.TIMER);
-		jobName.setActive(true);
+		CustomFieldTemplate nbRuns = new CustomFieldTemplate();
+		nbRuns.setCode("UsageRatingJob_nbRuns");
+		nbRuns.setAccountLevel(AccountLevelEnum.TIMER);
+		nbRuns.setActive(true);
 		Auditable audit = new Auditable();
 		audit.setCreated(new Date());
 		audit.setCreator(currentUser);
-		jobName.setAuditable(audit);
-		jobName.setProvider(currentUser.getProvider());
-		jobName.setDescription(resourceMessages.getString("jobExecution.nbRuns"));
-		jobName.setFieldType(CustomFieldTypeEnum.LONG);
-		jobName.setValueRequired(true);
-		result.add(jobName);
+		nbRuns.setAuditable(audit);
+		nbRuns.setProvider(currentUser.getProvider());
+		nbRuns.setDescription(resourceMessages.getString("jobExecution.nbRuns"));
+		nbRuns.setFieldType(CustomFieldTypeEnum.LONG);
+		nbRuns.setValueRequired(false);
+		nbRuns.setLongValue(new Long(1));
+		result.add(nbRuns);
 
-		CustomFieldTemplate nbDays = new CustomFieldTemplate();
-		nbDays.setCode("UsageRatingJob_waitingMillis");
-		nbDays.setAccountLevel(AccountLevelEnum.TIMER);
-		nbDays.setActive(true);
+		CustomFieldTemplate waitingMillis = new CustomFieldTemplate();
+		waitingMillis.setCode("UsageRatingJob_waitingMillis");
+		waitingMillis.setAccountLevel(AccountLevelEnum.TIMER);
+		waitingMillis.setActive(true);
 		Auditable audit2 = new Auditable();
 		audit2.setCreated(new Date());
 		audit2.setCreator(currentUser);
-		nbDays.setAuditable(audit2);
-		nbDays.setProvider(currentUser.getProvider());
-		nbDays.setDescription(resourceMessages.getString("jobExecution.waitingMillis"));
-		nbDays.setFieldType(CustomFieldTypeEnum.LONG);
-		nbDays.setValueRequired(true);
-		result.add(nbDays);
+		waitingMillis.setAuditable(audit2);
+		waitingMillis.setProvider(currentUser.getProvider());
+		waitingMillis.setDescription(resourceMessages.getString("jobExecution.waitingMillis"));
+		waitingMillis.setFieldType(CustomFieldTypeEnum.LONG);
+		waitingMillis.setValueRequired(false);
+		waitingMillis.setLongValue(new Long(0));
+		result.add(waitingMillis);
 
 		return result;
 	}
