@@ -39,6 +39,9 @@ public class ImportAccountsJob extends Job {
 		try{
 			nbRuns = timerEntity.getLongCustomValue("ImportAccountsJob_nbRuns").longValue();  			
 			waitingMillis = timerEntity.getLongCustomValue("ImportAccountsJob_waitingMillis").longValue();
+			if(nbRuns == -1){
+				nbRuns  = (long) Runtime.getRuntime().availableProcessors();
+			}
 		}catch(Exception e){
 			log.warn("Cant get customFields for "+timerEntity.getJobName());
 		}
@@ -62,35 +65,35 @@ public class ImportAccountsJob extends Job {
 	public List<CustomFieldTemplate> getCustomFields(User currentUser) {
 		List<CustomFieldTemplate> result = new ArrayList<CustomFieldTemplate>();
 
-		CustomFieldTemplate jobName = new CustomFieldTemplate();
-		jobName.setCode("ImportAccountsJob_nbRuns");
-		jobName.setAccountLevel(AccountLevelEnum.TIMER);
-		jobName.setActive(true);
+		CustomFieldTemplate customFieldNbRuns = new CustomFieldTemplate();
+		customFieldNbRuns.setCode("ImportAccountsJob_nbRuns");
+		customFieldNbRuns.setAccountLevel(AccountLevelEnum.TIMER);
+		customFieldNbRuns.setActive(true);
 		Auditable audit = new Auditable();
 		audit.setCreated(new Date());
 		audit.setCreator(currentUser);
-		jobName.setAuditable(audit);
-		jobName.setProvider(currentUser.getProvider());
-		jobName.setDescription(resourceMessages.getString("jobExecution.nbRuns"));
-		jobName.setFieldType(CustomFieldTypeEnum.LONG);
-		jobName.setLongValue(new Long(1));
-		jobName.setValueRequired(false);
-		result.add(jobName);
+		customFieldNbRuns.setAuditable(audit);
+		customFieldNbRuns.setProvider(currentUser.getProvider());
+		customFieldNbRuns.setDescription(resourceMessages.getString("jobExecution.nbRuns"));
+		customFieldNbRuns.setFieldType(CustomFieldTypeEnum.LONG);
+		customFieldNbRuns.setLongValue(new Long(1));
+		customFieldNbRuns.setValueRequired(false);
+		result.add(customFieldNbRuns);
 
-		CustomFieldTemplate nbDays = new CustomFieldTemplate();
-		nbDays.setCode("ImportAccountsJob_waitingMillis");
-		nbDays.setAccountLevel(AccountLevelEnum.TIMER);
-		nbDays.setActive(true);
+		CustomFieldTemplate customFieldNbWaiting = new CustomFieldTemplate();
+		customFieldNbWaiting.setCode("ImportAccountsJob_waitingMillis");
+		customFieldNbWaiting.setAccountLevel(AccountLevelEnum.TIMER);
+		customFieldNbWaiting.setActive(true);
 		Auditable audit2 = new Auditable();
 		audit2.setCreated(new Date());
 		audit2.setCreator(currentUser);
-		nbDays.setAuditable(audit2);
-		nbDays.setProvider(currentUser.getProvider());
-		nbDays.setDescription(resourceMessages.getString("jobExecution.waitingMillis"));
-		nbDays.setFieldType(CustomFieldTypeEnum.LONG);
-		nbDays.setLongValue(new Long(0));
-		nbDays.setValueRequired(false);
-		result.add(nbDays);
+		customFieldNbWaiting.setAuditable(audit2);
+		customFieldNbWaiting.setProvider(currentUser.getProvider());
+		customFieldNbWaiting.setDescription(resourceMessages.getString("jobExecution.waitingMillis"));
+		customFieldNbWaiting.setFieldType(CustomFieldTypeEnum.LONG);
+		customFieldNbWaiting.setLongValue(new Long(0));
+		customFieldNbWaiting.setValueRequired(false);
+		result.add(customFieldNbWaiting);
 
 		return result;
 	}

@@ -62,6 +62,9 @@ public class PDFInvoiceGenerationJobBean {
 			try{
 				nbRuns = timerEntity.getLongCustomValue("PDFInvoiceGenerationJob_nbRuns").longValue();  			
 				waitingMillis = timerEntity.getLongCustomValue("PDFInvoiceGenerationJob_waitingMillis").longValue();
+				if(nbRuns == -1){
+					nbRuns = (long) Runtime.getRuntime().availableProcessors();
+				}
 			}catch(Exception e){
 				log.warn("Cant get customFields for "+timerEntity.getJobName());
 			}

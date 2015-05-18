@@ -60,6 +60,9 @@ public class RecurringRatingJobBean implements Serializable {
 			try{
 				nbRuns = timerEntity.getLongCustomValue("RecurringRatingJob_nbRuns").longValue();  			
 				waitingMillis = timerEntity.getLongCustomValue("RecurringRatingJob_waitingMillis").longValue();
+				if(nbRuns == -1){
+					nbRuns = (long) Runtime.getRuntime().availableProcessors();
+				}
 			}catch(Exception e){
 				log.warn("Cant get customFields for "+timerEntity.getJobName());
 			}

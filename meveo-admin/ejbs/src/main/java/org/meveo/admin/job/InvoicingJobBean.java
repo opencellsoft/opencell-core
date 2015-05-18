@@ -69,6 +69,9 @@ public class InvoicingJobBean {
 									try{
 										nbRuns = timerEntity.getLongCustomValue("InvoicingJob_nbRuns").longValue();  			
 										waitingMillis = timerEntity.getLongCustomValue("InvoicingJob_waitingMillis").longValue();
+										if(nbRuns == -1){
+											nbRuns  = (long) Runtime.getRuntime().availableProcessors();
+										}
 									}catch(Exception e){
 										log.warn("Cant get customFields for "+timerEntity.getJobName());
 									}

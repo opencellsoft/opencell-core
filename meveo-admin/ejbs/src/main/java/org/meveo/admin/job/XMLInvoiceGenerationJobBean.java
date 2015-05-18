@@ -72,6 +72,9 @@ public class XMLInvoiceGenerationJobBean {
 				try{
 					nbRuns = timerEntity.getLongCustomValue("XMLInvoiceGenerationJob_nbRuns").longValue();  			
 					waitingMillis = timerEntity.getLongCustomValue("XMLInvoiceGenerationJob_waitingMillis").longValue();
+					if(nbRuns == -1){
+						nbRuns = (long) Runtime.getRuntime().availableProcessors();
+					}
 				}catch(Exception e){
 					log.warn("Cant get customFields for "+timerEntity.getJobName());
 				}

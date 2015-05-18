@@ -44,33 +44,35 @@ public class XMLInvoiceGenerationJob extends Job {
    	public List<CustomFieldTemplate> getCustomFields(User currentUser) {
    		List<CustomFieldTemplate> result = new ArrayList<CustomFieldTemplate>();
 
-   		CustomFieldTemplate jobName = new CustomFieldTemplate();
-   		jobName.setCode("XMLInvoiceGenerationJob_nbRuns");
-   		jobName.setAccountLevel(AccountLevelEnum.TIMER);
-   		jobName.setActive(true);
+   		CustomFieldTemplate customFieldNbRuns = new CustomFieldTemplate();
+   		customFieldNbRuns.setCode("XMLInvoiceGenerationJob_nbRuns");
+   		customFieldNbRuns.setAccountLevel(AccountLevelEnum.TIMER);
+   		customFieldNbRuns.setActive(true);
    		Auditable audit = new Auditable();
    		audit.setCreated(new Date());
    		audit.setCreator(currentUser);
-   		jobName.setAuditable(audit);
-   		jobName.setProvider(currentUser.getProvider());
-   		jobName.setDescription(resourceMessages.getString("jobExecution.nbRuns"));
-   		jobName.setFieldType(CustomFieldTypeEnum.LONG);
-   		jobName.setValueRequired(true);
-   		result.add(jobName);
+   		customFieldNbRuns.setAuditable(audit);
+   		customFieldNbRuns.setProvider(currentUser.getProvider());
+   		customFieldNbRuns.setDescription(resourceMessages.getString("jobExecution.nbRuns"));
+   		customFieldNbRuns.setFieldType(CustomFieldTypeEnum.LONG);
+   		customFieldNbRuns.setValueRequired(false);
+   		customFieldNbRuns.setLongValue(new Long(1));
+   		result.add(customFieldNbRuns);
 
-   		CustomFieldTemplate nbDays = new CustomFieldTemplate();
-   		nbDays.setCode("XMLInvoiceGenerationJob_waitingMillis");
-   		nbDays.setAccountLevel(AccountLevelEnum.TIMER);
-   		nbDays.setActive(true);
+   		CustomFieldTemplate customFieldNbWaiting = new CustomFieldTemplate();
+   		customFieldNbWaiting.setCode("XMLInvoiceGenerationJob_waitingMillis");
+   		customFieldNbWaiting.setAccountLevel(AccountLevelEnum.TIMER);
+   		customFieldNbWaiting.setActive(true);
    		Auditable audit2 = new Auditable();
    		audit2.setCreated(new Date());
    		audit2.setCreator(currentUser);
-   		nbDays.setAuditable(audit2);
-   		nbDays.setProvider(currentUser.getProvider());
-   		nbDays.setDescription(resourceMessages.getString("jobExecution.waitingMillis"));
-   		nbDays.setFieldType(CustomFieldTypeEnum.LONG);
-   		nbDays.setValueRequired(true);
-   		result.add(nbDays);
+   		customFieldNbWaiting.setAuditable(audit2);
+   		customFieldNbWaiting.setProvider(currentUser.getProvider());
+   		customFieldNbWaiting.setDescription(resourceMessages.getString("jobExecution.waitingMillis"));
+   		customFieldNbWaiting.setFieldType(CustomFieldTypeEnum.LONG);
+   		customFieldNbWaiting.setValueRequired(false);
+   		customFieldNbWaiting.setLongValue(new Long(0));
+   		result.add(customFieldNbWaiting);
 
    		return result;
    	}

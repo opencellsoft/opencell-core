@@ -51,6 +51,9 @@ public class UsageRatingJobBean {
 			try{
 				nbRuns = timerEntity.getLongCustomValue("UsageRatingJob_nbRuns").longValue();  			
 				waitingMillis = timerEntity.getLongCustomValue("UsageRatingJob_waitingMillis").longValue();
+				if(nbRuns == -1){
+					nbRuns  = (long) Runtime.getRuntime().availableProcessors();
+				}
 			}catch(Exception e){
 				log.warn("Cant get customFields for "+timerEntity.getJobName());
 			}
@@ -60,6 +63,11 @@ public class UsageRatingJobBean {
 	    	log.debug("nbThreads:" + nbRuns);
 			while (subListCreator.isHasNext()) {	
 				usageRatingAsync.launchAndForget((List<Long>) subListCreator.getNextWorkSet(),result, currentUser);
+				try {
+					Thread.sleep(waitingMillis.longValue());
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				} 
 			}
 			
 		} catch (Exception e) {

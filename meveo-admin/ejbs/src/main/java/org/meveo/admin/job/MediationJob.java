@@ -44,12 +44,13 @@ public class MediationJob extends Job {
 		try{
 			nbRuns = timerEntity.getLongCustomValue("MediationJob_nbRuns").longValue();  			
 			waitingMillis = timerEntity.getLongCustomValue("MediationJob_waitingMillis").longValue();
+			if(nbRuns == -1){
+				nbRuns  = (long) Runtime.getRuntime().availableProcessors();
+			}
 		}catch(Exception e){
 			log.warn("Cant get customFields for "+timerEntity.getJobName());
 		}
-		if(nbRuns == -1){
-			nbRuns  = (long) Runtime.getRuntime().availableProcessors();
-		}
+
 		Provider provider = currentUser.getProvider();
 
 		ParamBean parambean = ParamBean.getInstance();
@@ -65,17 +66,12 @@ public class MediationJob extends Job {
 		if (!f.exists()) {
 			f.mkdirs();
 		}
-
-
-
-
 		File[] files = FileUtils.getFilesForParsing(inputDir, cdrExtensions);
-
 		SubListCreator subListCreator =null;
+
 		try {
 			subListCreator = new SubListCreator(Arrays.asList(files),nbRuns.intValue());
-		} catch (Exception e1) {
-			// TODO Auto-generated catch block
+		} catch (Exception e1) {			
 			e1.printStackTrace();
 		}
 
@@ -88,9 +84,7 @@ public class MediationJob extends Job {
 			} 
 		}
 
-
 		for(int i=0; i< nbRuns.intValue();i++){
-
 			try {
 				Thread.sleep(waitingMillis.longValue());
 			} catch (InterruptedException e) {
