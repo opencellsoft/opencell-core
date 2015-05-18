@@ -63,11 +63,11 @@ public class SepaRejectedTransactionsJob extends Job {
                     FileUtils.moveFile(dirOK, currentFile, file.getName());
                     log.info("InputFiles job " + file.getName() + " done");
                     result.registerSucces();
+                    
                 } catch (Exception e) {
                     result.registerError(e.getMessage());
-                    log.info("InputFiles job " + file.getName() + " failed");
+                    log.error("InputFiles job " + file.getName() + " failed", e);
                     FileUtils.moveFile(dirKO, currentFile, file.getName());
-                    log.error(e.getMessage());
                 } finally {
                     if (currentFile != null) {
                         currentFile.delete();
@@ -76,8 +76,7 @@ public class SepaRejectedTransactionsJob extends Job {
             }
 
         } catch (Exception e) {
-            log.error(e.getMessage());
-
+            log.error("Failed to sepa reject transaction", e);
         }
     }
 

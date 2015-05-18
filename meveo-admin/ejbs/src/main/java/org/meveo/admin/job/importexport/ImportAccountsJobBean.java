@@ -118,12 +118,13 @@ public class ImportAccountsJobBean {
 				result.registerSucces();
 			} catch (Exception e) {
 				result.registerError(e.getMessage());
-				log.info("InputFiles job " + file.getName() + " failed");
+				log.error("InputFiles job " + file.getName() + " failed", e);
 				FileUtils.moveFile(dirKO, currentFile, file.getName());
-				log.error(e.getMessage());
+				
 			} finally {
-				if (currentFile != null)
+				if (currentFile != null){
 					currentFile.delete();
+				}
 			}
 		}
 	}

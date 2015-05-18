@@ -3,6 +3,8 @@ package org.meveo.admin.job;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
@@ -40,7 +42,8 @@ public class XMLInvoiceGenerationJobBean {
 	@Inject
 	private XmlInvoiceAsync xmlInvoiceAsync;
 
-	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
+	@SuppressWarnings("unchecked")
+    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
 	@Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
 	public void execute(JobExecutionResultImpl result, String parameter, User currentUser,TimerEntity timerEntity) {
 		Provider provider = currentUser.getProvider();
@@ -80,22 +83,39 @@ public class XMLInvoiceGenerationJobBean {
 				}
 
 
+				List<Future<String>> futures = new ArrayList<Future<String>>();
 				SubListCreator subListCreator = new SubListCreator(invoiceService.getInvoices(billingRun),nbRuns.intValue());
 
 				while (subListCreator.isHasNext()) {
-					xmlInvoiceAsync.launchAndForget((List<Invoice>) subListCreator.getNextWorkSet(), billingRundir);
-					try {
-						Thread.sleep(waitingMillis.longValue());
-					} catch (InterruptedException e) {
-						e.printStackTrace();
-					} 
+					futures.add(xmlInvoiceAsync.launchAndForget((List<Invoice>) subListCreator.getNextWorkSet(), billingRundir));
+	                if (subListCreator.isHasNext()) {
+	                    try {
+	                        Thread.sleep(waitingMillis.longValue());
+	                    } catch (InterruptedException e) {
+	                        log.error("", e);
+	                    }
+	                }
 				}
 
+	            // Wait for all async methods to finish
+	            for (Future<String> future : futures) {
+	                try {
+	                    future.get();
+
+	                } catch (InterruptedException e) {
+	                    // It was cancelled from outside - no interest
+	                    
+	                } catch (ExecutionException e) {
+	                    Throwable cause = e.getCause();
+	                    result.registerError(cause.getMessage());
+	                    log.error("Failed to execute async method", cause);
+	                }
+	            }
+	            
 				updateBillingRun(billingRun.getId(), currentUser);
 			} catch (Exception e) {
-				log.error(e.getMessage());
-				result.registerError(e.getMessage());
-				e.printStackTrace();
+	            log.error("Failed to generate XML invoices",e);
+	            result.registerError(e.getMessage());
 			}
 		}
 	}

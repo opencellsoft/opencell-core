@@ -93,7 +93,7 @@ public class UsageRatingJobBean {
             }
 
         } catch (Exception e) {
-            log.error("Failed to generate PDF invoices",e);
+            log.error("Failed to run usage rating job",e);
             result.registerError(e.getMessage());
         }
 	}

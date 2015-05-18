@@ -45,15 +45,12 @@ public class PrepaidWalletMatchJobBean {
 					oneShotChargeInstanceService.matchPrepaidWallet(wallet, matchingChargeCode, currentUser);
 					result.registerSucces();
 				} catch (Exception e) {
-					log.error(e.getMessage());
+				    log.error("Failed to match prepaid wallet {}", wallet.getId(), e);
 					result.registerError(e.getMessage());
-					e.printStackTrace();
 				}
 			}
 		} catch (Exception e) {
-			log.error(e.getMessage());
-			e.printStackTrace();
+			log.error("Failed to match prepaid wallet ",e);
 		}
 	}
-
 }

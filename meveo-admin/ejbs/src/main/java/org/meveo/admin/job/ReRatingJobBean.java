@@ -15,7 +15,6 @@ import org.meveo.event.qualifier.Rejected;
 import org.meveo.interceptor.PerformanceInterceptor;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.WalletOperation;
-import org.meveo.model.billing.WalletOperationStatusEnum;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.service.billing.impl.RatingService;
 import org.meveo.service.billing.impl.WalletOperationService;
@@ -56,14 +55,12 @@ public class ReRatingJobBean implements Serializable {
 					result.registerSucces();
 				} catch (Exception e) {
 					//rejectededOperationProducer.fire(walletOperationId);
-					e.printStackTrace();
-					log.error(e.getMessage());
+				    log.error("Failed to rerate operation {}", walletOperationId, e);
 					result.registerError(e.getMessage());
 				}
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
-			log.error(e.getMessage());
+			log.error("Failed to rerate operations", e);
 		}
 	}
 }

@@ -91,8 +91,7 @@ public class DunningProcessJob extends Job {
                     }
                 } catch (Exception e) {
                     errorCustomerAccounts++;
-                    log.error(e.getMessage());
-                    e.printStackTrace();
+                    log.error("Failed to process dunning", e);
                 }
             }
 

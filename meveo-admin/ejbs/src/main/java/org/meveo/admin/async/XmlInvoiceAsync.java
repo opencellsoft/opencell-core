@@ -5,7 +5,9 @@ package org.meveo.admin.async;
 
 import java.io.File;
 import java.util.List;
+import java.util.concurrent.Future;
 
+import javax.ejb.AsyncResult;
 import javax.ejb.Asynchronous;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -29,16 +31,18 @@ public class XmlInvoiceAsync {
 	protected Logger log;
 
 	@Asynchronous
-	public void launchAndForget(List<Invoice> invoices,File billingRundir) {
+	public Future<String> launchAndForget(List<Invoice> invoices,File billingRundir) {
 		
 		for (Invoice invoice : invoices) {
 			long startDate = System.currentTimeMillis();
 			try {
 				xmlInvoiceCreator.createXMLInvoice(invoice.getId(), billingRundir);
 			} catch (Exception e) {				
-				e.printStackTrace();
+				log.error("Failed to create XML invoice", e);
 			}
 			log.info("Invoice creation delay :" + (System.currentTimeMillis() - startDate) );
 		}
+		
+		return new AsyncResult<String>("OK");
 	}
 }

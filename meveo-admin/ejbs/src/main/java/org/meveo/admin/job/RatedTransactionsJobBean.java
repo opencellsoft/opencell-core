@@ -77,14 +77,12 @@ public class RatedTransactionsJobBean {
 					walletOperation.setStatus(WalletOperationStatusEnum.TREATED);
 					walletOperation.updateAudit(currentUser);
 				} catch (Exception e) {
-					e.printStackTrace();
-					log.error(e.getMessage());
+					log.error("Failed to rate transaction for wallet operation {}", walletOperation.getId(), e);
 					result.registerError(e.getMessage());
 				}
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
-			log.error(e.getMessage());
+		    log.error("Failed to rate transactions", e);
 		}
 
 		result.close("");

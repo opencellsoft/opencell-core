@@ -169,7 +169,7 @@ public class AccountOperationsGenerationJobBean {
 				invoiceService.update(invoice);
 
 			} catch (Exception e) {
-				log.error(e.getMessage());
+				log.error("Failed to generate acount operations", e);
 				result.registerError(e.getMessage());
 			}
 		}

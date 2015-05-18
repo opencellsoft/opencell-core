@@ -42,10 +42,11 @@ public class InvoicingJobBean {
 	@Inject
 	private InvoicingAsync invoicingAsync;
 
-	@Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
+	@SuppressWarnings("unchecked")
+    @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public void execute(JobExecutionResultImpl result, User currentUser,TimerEntity timerEntity) {
-		try {
+
 			try {
 				Provider provider = currentUser.getProvider();
 				List<BillingRun> billingRuns = billingRunService.getbillingRuns(provider, BillingRunStatusEnum.NEW,
@@ -54,7 +55,6 @@ public class InvoicingJobBean {
 				log.info("billingRuns to process={}", billingRuns.size());
 
 				for (BillingRun billingRun : billingRuns) {
-					try {
 						try {
 							if (BillingRunStatusEnum.NEW.equals(billingRun.getStatus())) {
 								List<BillingAccount> billingAccounts = billingRunService.getBillingAccounts(billingRun);
@@ -84,7 +84,7 @@ public class InvoicingJobBean {
 										try {
 											Thread.sleep(waitingMillis.longValue());
 										} catch (InterruptedException e) {
-											e.printStackTrace();
+										    log.error("", e);
 										} 
 									}
 
@@ -118,24 +118,14 @@ public class InvoicingJobBean {
 								billingRunService.validate(billingRun, currentUser);
 							}
 						} catch (Exception e) {
-							log.error("Error: {}", e.getMessage());
+							log.error("Failed to run invoicing", e);
 							result.registerError(e.getMessage());
-							e.printStackTrace();
 						}
-					} catch (Exception e) {
-						log.error("Error: {}", e.getMessage());
-						result.registerError(e.getMessage());
-						e.printStackTrace();
-					}
 				}
 			} catch (Exception e) {
-				log.error(e.getMessage());
-				e.printStackTrace();
+			    log.error("Failed to run invoicing", e);
 			}
-		} catch (Exception e) {
-			log.error(e.getMessage());
-			e.printStackTrace();
-		}
+
 		log.info("end Execute");
 	}
 
