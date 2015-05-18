@@ -73,7 +73,8 @@ public class ImportSubscriptionsJob extends Job {
 		jobName.setProvider(currentUser.getProvider());
 		jobName.setDescription(resourceMessages.getString("jobExecution.nbRuns"));
 		jobName.setFieldType(CustomFieldTypeEnum.LONG);
-		jobName.setValueRequired(true);
+		jobName.setValueRequired(false);
+		jobName.setLongValue(new Long(1));
 		result.add(jobName);
 
 		CustomFieldTemplate nbDays = new CustomFieldTemplate();
@@ -87,7 +88,8 @@ public class ImportSubscriptionsJob extends Job {
 		nbDays.setProvider(currentUser.getProvider());
 		nbDays.setDescription(resourceMessages.getString("jobExecution.waitingMillis"));
 		nbDays.setFieldType(CustomFieldTypeEnum.LONG);
-		nbDays.setValueRequired(true);
+		nbDays.setValueRequired(false);
+		nbDays.setLongValue(new Long(0));
 		result.add(nbDays);
 
 		return result;

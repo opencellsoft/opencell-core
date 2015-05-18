@@ -39,7 +39,7 @@ public class UsageRatingJobBean {
 
 
 	@Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
-	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
+	@TransactionAttribute(TransactionAttributeType.NEVER)
 	public void execute(JobExecutionResultImpl result, User currentUser,TimerEntity timerEntity) {
 		try {
 			
@@ -56,13 +56,10 @@ public class UsageRatingJobBean {
 			}
 
 	    	SubListCreator subListCreator = new SubListCreator(ids,nbRuns.intValue());
+	    	log.debug("block to run:" + subListCreator.getBlocToRun());
+	    	log.debug("nbThreads:" + nbRuns);
 			while (subListCreator.isHasNext()) {	
 				usageRatingAsync.launchAndForget((List<Long>) subListCreator.getNextWorkSet(),result, currentUser);
-				try {
-					Thread.sleep(waitingMillis.longValue());
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				} 
 			}
 			
 		} catch (Exception e) {
