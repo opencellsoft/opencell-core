@@ -131,7 +131,7 @@
 
 		<h:outputText value="#{messages['postInvoicingReport.billableBA']}"
 			style="font-weight: bold;font-size=14;" />
-		<hftl:dataList dataModel="#{billingRunBean.entity.invoices}"
+		<hftl:dataList id="chargedBA" dataModel="#{billingRunBean.entity.invoices}"
 			backingBean="#{invoiceBean}" checkMany="false">
 
 			<hftl:column label="#{messages['businessEntity.code']}"
@@ -162,36 +162,48 @@
 		<h:outputText
 			value="#{messages['postInvoicingReport.rejectedBillingAccounts']}"
 			style="font-weight: bold;font-size=14;" />
-		<hftl:dataList resultsId="rejectedBA_results"
-			backingBean="#{billingAccountBean}"
-			dataModel="#{billingRunBean.entity.rejectedBillingAccounts}"
-			checkMany="false">
+		<p:panel id="rejectedBA_panel" width="100">
+			<h:form id="rejectedBA_formId" prependId="false">
+				<p:dataTable id="dataTable_rejectedBA" var="entity"
+					value="#{billingRunBean.entity.rejectedBillingAccounts}"
+					paginator="true" rows="10"
+					binding="#{billingAccountBean.dataTable}"
+					paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
+					rowsPerPageTemplate="5,10,15" lazy="true" styleClass="custom-grid"
+					rowKey="#{entity.id}" checkMany="false">
 
-			<hftl:column label="#{messages['businessEntity.code']}"
-				field="billingAccount.code" />
+					<hftl:column label="#{messages['businessEntity.code']}"
+						field="billingAccount.code" />
 
-			<p:column width="100">
-				<f:facet name="header">
-					<h:outputText value="#{messages['name.title']}" />
-				</f:facet>
-				<e:cell>
-					<h:outputText
-						rendered="#{entity.billingAccount.name.title != null}"
-						value="#{entity.billingAccount.name.title.description}" />
-				</e:cell>
-			</p:column>
+					<p:column width="100">
+						<f:facet name="header">
+							<h:outputText value="#{messages['name.title']}" />
+						</f:facet>
+						<e:cell>
+							<h:outputText
+								rendered="#{entity.billingAccount.name.title != null}"
+								value="#{entity.billingAccount.name.title.description}" />
+						</e:cell>
+					</p:column>
 
-			<hftl:column label="#{messages['billingAccount.name']}"
-				field="billingAccount.name" />
+					<hftl:column label="#{messages['billingAccount.name']}"
+						field="billingAccount.name" />
 
+					<hftl:column
+						label="#{messages['RejectedBillingAccounts.rejectCause']}"
+						field="rejectCause" />
 
-			<hftl:column
-				label="#{messages['RejectedBillingAccounts.rejectCause']}"
-				field="rejectCause" />
+				</p:dataTable>
 
-		</hftl:dataList>
+				<p:blockUI block="dataTable_rejectedBA"
+					trigger="dataTable_rejectedBA">
+        		LOADING<br />
+					<p:graphicImage name="ajax-loader1.gif" library="img" />
+				</p:blockUI>
+			</h:form>
+		</p:panel>
 
-        <hftl:decorateFormField label="#{messages['billingRuns.launchInvoicing']}" displayOneLine="true" componentWidth="50">
+		<hftl:decorateFormField label="#{messages['billingRuns.launchInvoicing']}" displayOneLine="true" componentWidth="50">
 			<p:selectBooleanCheckbox
 				value="#{billingRunBean.launchInvoicingRejectedBA}" />
 		</hftl:decorateFormField>
