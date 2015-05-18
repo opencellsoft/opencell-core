@@ -1,5 +1,6 @@
 package org.meveo.model.jobs;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -56,21 +57,29 @@ public class JobExecutionResultImpl extends BaseEntity implements
 	@Column(name = "REPORT")
 	private String report;
 
-	public void registerSucces() {
+	public synchronized void registerSucces() {
 		nbItemsCorrectlyProcessed++;
 	}
-
 	
-	public void registerWarning(String warning) {
-		warnings.add(warning);
-		nbItemsProcessedWithWarning++;
-	}
+    public synchronized void registerWarning(Serializable identifier, String warning) {
+        registerWarning(identifier + ": " + warning);
+    }
 
-	public void registerError(String error) {
-		errors.add(error);
-		nbItemsProcessedWithError++;
-		setReport(getErrorsAString()==null?"":getErrorsAString().substring(0, getErrorsAString().length()<256?getErrorsAString().length():255));
-	}
+    public synchronized void registerWarning(String warning) {
+        warnings.add(warning);
+        nbItemsProcessedWithWarning++;
+    }
+
+    public synchronized void registerError(Serializable identifier, String error) {
+        registerError(identifier + ": " + error);
+    }
+    
+    public synchronized void registerError(String error) {
+        errors.add(error);
+        nbItemsProcessedWithError++;
+        String errorTxt = getErrorsAString();
+        setReport(errorTxt == null ? "" : errorTxt.substring(0, errorTxt.length() < 256 ? errorTxt.length() : 255));
+    }
 
 	public void close(String report) {
 		this.report = report;

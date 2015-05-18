@@ -1,7 +1,10 @@
 package org.meveo.admin.job;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
@@ -38,7 +41,8 @@ public class UsageRatingJobBean {
 	Event<Serializable> rejectededEdrProducer;
 
 
-	@Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
+	@SuppressWarnings("unchecked")
+    @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
 	@TransactionAttribute(TransactionAttributeType.NEVER)
 	public void execute(JobExecutionResultImpl result, User currentUser,TimerEntity timerEntity) {
 		try {
@@ -58,22 +62,40 @@ public class UsageRatingJobBean {
 				log.warn("Cant get customFields for "+timerEntity.getJobName());
 			}
 
+			List<Future<String>> futures = new ArrayList<Future<String>>();
 	    	SubListCreator subListCreator = new SubListCreator(ids,nbRuns.intValue());
 	    	log.debug("block to run:" + subListCreator.getBlocToRun());
 	    	log.debug("nbThreads:" + nbRuns);
 			while (subListCreator.isHasNext()) {	
-				usageRatingAsync.launchAndForget((List<Long>) subListCreator.getNextWorkSet(),result, currentUser);
-				try {
-					Thread.sleep(waitingMillis.longValue());
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				} 
-			}
-			
-		} catch (Exception e) {
-			log.error(e.getMessage());
-			e.printStackTrace();
-		}
+				futures.add(usageRatingAsync.launchAndForget((List<Long>) subListCreator.getNextWorkSet(),result, currentUser));
+
+                if (subListCreator.isHasNext()) {
+                    try {
+                        Thread.sleep(waitingMillis.longValue());
+                    } catch (InterruptedException e) {
+                        log.error("", e);
+                    }
+                }
+            }
+            // Wait for all async methods to finish
+            for (Future<String> future : futures) {
+                try {
+                    future.get();
+
+                } catch (InterruptedException e) {
+                    // It was cancelled from outside - no interest
+                    
+                } catch (ExecutionException e) {
+                    Throwable cause = e.getCause();
+                    result.registerError(cause.getMessage());
+                    log.error("Failed to execute async method", cause);
+                }
+            }
+
+        } catch (Exception e) {
+            log.error("Failed to generate PDF invoices",e);
+            result.registerError(e.getMessage());
+        }
 	}
 
 

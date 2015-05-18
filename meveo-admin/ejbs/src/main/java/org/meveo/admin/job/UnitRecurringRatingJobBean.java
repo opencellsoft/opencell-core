@@ -64,7 +64,7 @@ public class UnitRecurringRatingJobBean implements Serializable {
 				rejectededChargeProducer.fire(recurringChargeTemplate);
 				log.error("Recurring charge template has no calendar: code="
 						+ recurringChargeTemplate.getCode());
-				result.registerError("Recurring charge template has no calendar: code="
+				result.registerError(ID_activeRecurringChargeInstance, "Recurring charge template has no calendar: code="
 						+ recurringChargeTemplate.getCode());
 				return;
 			}
@@ -95,11 +95,9 @@ public class UnitRecurringRatingJobBean implements Serializable {
 						applicationDate, maxDate);
 			}
 		} catch (Exception e) {
-			rejectededChargeProducer.fire("RecurringCharge "
-					+ ID_activeRecurringChargeInstance);
-			log.error(e.getMessage());
-			result.registerError(e.getMessage());
-			e.printStackTrace();
-		}
+            rejectededChargeProducer.fire("RecurringCharge " + ID_activeRecurringChargeInstance);
+            log.error("Failed to run recurring rating for {}", ID_activeRecurringChargeInstance,e);
+            result.registerError(ID_activeRecurringChargeInstance, e.getMessage());
+        }
 	}
 }

@@ -1,8 +1,11 @@
 package org.meveo.admin.job;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
@@ -46,7 +49,8 @@ public class RecurringRatingJobBean implements Serializable {
 	@Rejected
 	Event<Serializable> rejectededChargeProducer;
 
-	@Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
+	@SuppressWarnings("unchecked")
+    @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
 	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
 	public void execute(JobExecutionResultImpl result, User currentUser,TimerEntity timerEntity) {
 		try {
@@ -67,19 +71,38 @@ public class RecurringRatingJobBean implements Serializable {
 				log.warn("Cant get customFields for "+timerEntity.getJobName());
 			}
 
+			List<Future<String>> futures = new ArrayList<Future<String>>();
 	    	SubListCreator subListCreator = new SubListCreator(ids,nbRuns.intValue());
 			while (subListCreator.isHasNext()) {				
-				recurringChargeAsync.launchAndForget((List<Long>) subListCreator.getNextWorkSet(),result, currentUser,maxDate);	
-				try {
-					Thread.sleep(waitingMillis.longValue());
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				} 
-			}
+				futures.add(recurringChargeAsync.launchAndForget((List<Long>) subListCreator.getNextWorkSet(),result, currentUser,maxDate));	
 
-		} catch (Exception e) {
-			log.error(e.getMessage());
-			e.printStackTrace();
-		}
+                if (subListCreator.isHasNext()) {
+                    try {
+                        Thread.sleep(waitingMillis.longValue());
+                    } catch (InterruptedException e) {
+                        log.error("", e);
+                    }
+                }
+            }
+
+            // Wait for all async methods to finish
+            for (Future<String> future : futures) {
+                try {
+                    future.get();
+
+                } catch (InterruptedException e) {
+                    // It was cancelled from outside - no interest
+                    
+                } catch (ExecutionException e) {
+                    Throwable cause = e.getCause();
+                    result.registerError(cause.getMessage());
+                    log.error("Failed to execute async method", cause);
+                }
+            }
+
+        } catch (Exception e) {
+            log.error("Failed to run recurring rating job", e);
+            result.registerError(e.getMessage());
+        }
 	}
 }

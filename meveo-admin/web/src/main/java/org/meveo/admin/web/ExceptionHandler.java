@@ -29,7 +29,7 @@ public class ExceptionHandler {
 			response.sendRedirect(response.encodeRedirectURL(request
 					.getContextPath() + "/errors/403.jsf"));
 		} catch (Exception e) {
-			log.error(e.getMessage());
+			log.error("Caught exception {}",e.getMessage());
 		}
 	}
 
@@ -45,7 +45,7 @@ public class ExceptionHandler {
 			response.sendRedirect(response.encodeRedirectURL(request
 					.getContextPath() + "/errors/expired.jsf"));
 		} catch (Exception e) {
-			log.error(e.getMessage());
+		    log.error("Caught exception {}",e.getMessage());
 		}
 	}
 

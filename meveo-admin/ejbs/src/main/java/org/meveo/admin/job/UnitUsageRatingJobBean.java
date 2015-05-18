@@ -25,48 +25,43 @@ import org.slf4j.Logger;
  * @author anasseh
  */
 
-
 @Stateless
 public class UnitUsageRatingJobBean {
 
-	@Inject
-	private Logger log;
+    @Inject
+    private Logger log;
 
-	@Inject
-	private EdrService edrService;
+    @Inject
+    private EdrService edrService;
 
-	@Inject
-	private UsageRatingService usageRatingService;
+    @Inject
+    private UsageRatingService usageRatingService;
 
-	@Inject
-	@Rejected
-	Event<Serializable> rejectededEdrProducer;
-	
-	
-	@Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
-	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public void execute(JobExecutionResultImpl result, User currentUser,Long edrId) {
-			
-			try {
-				EDR edr = edrService.findById(edrId);
-				usageRatingService.ratePostpaidUsage(edr, currentUser);
+    @Inject
+    @Rejected
+    Event<Serializable> rejectededEdrProducer;
 
-				edrService.setProvider(currentUser.getProvider());
-				edrService.update(edr, currentUser);
+    @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public void execute(JobExecutionResultImpl result, User currentUser, Long edrId) {
 
-				if (edr.getStatus() == EDRStatusEnum.RATED) {
-					result.registerSucces();
-				} else {
-					rejectededEdrProducer.fire(edr);
-					result.registerError(edr.getRejectReason());
-				}
-			} catch (Exception e) {
-				log.error(e.getMessage());
-				rejectededEdrProducer.fire(""+edrId);
-				result.registerError(e.getMessage());
-				e.printStackTrace();
-			}
-		
-	}
+        try {
+            EDR edr = edrService.findById(edrId);
+            usageRatingService.ratePostpaidUsage(edr, currentUser);
 
+            edrService.setProvider(currentUser.getProvider());
+            edrService.update(edr, currentUser);
+
+            if (edr.getStatus() == EDRStatusEnum.RATED) {
+                result.registerSucces();
+            } else {
+                rejectededEdrProducer.fire(edr);
+                result.registerError(edrId, edr.getRejectReason());
+            }
+        } catch (Exception e) {
+            log.error("Failed to unit usage rate for {}", edrId, e);
+            rejectededEdrProducer.fire("" + edrId);
+            result.registerError(edrId, e.getMessage());
+        }
+    }
 }
