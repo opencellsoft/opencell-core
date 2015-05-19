@@ -39,27 +39,28 @@ public class PDFInvoiceGenerationJobBean {
 	private PdfInvoiceAsync pdfInvoiceAsync;
 
 	@SuppressWarnings("unchecked")
-    @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
-	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public void execute(JobExecutionResultImpl result, String parameter,User currentUser,TimerEntity timerEntity) {
-		List<Invoice> invoices = new ArrayList<Invoice>();
-
-		if (parameter != null && parameter.trim().length() > 0) {
-			try {
-				invoices = invoiceService.getInvoices(billingRunService
-						.getBillingRunById(Long.parseLong(parameter),
-								currentUser.getProvider()));
-			} catch (Exception e) {
-				log.error(e.getMessage());
-				result.registerError(e.getMessage());
-			}
-		} else {
-			invoices = invoiceService.getValidatedInvoicesWithNoPdf(null,currentUser.getProvider());
-		}
-
-		result.setNbItemsToProcess(invoices.size());
-		log.info("PDFInvoiceGenerationJob number of invoices to process="+ invoices.size());
+	@Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
+	@TransactionAttribute(TransactionAttributeType.NEVER)
+	public void execute(JobExecutionResultImpl result, User currentUser,TimerEntity timerEntity) {
 		try{
+			List<Invoice> invoices = new ArrayList<Invoice>();
+			String parameter = timerEntity.getTimerInfo().getParametres();
+			if (parameter != null && parameter.trim().length() > 0) {			
+				try {
+					invoices = invoiceService.getInvoices(billingRunService
+							.getBillingRunById(Long.parseLong(parameter),
+									currentUser.getProvider()));
+				} catch (Exception e) {
+					log.error(e.getMessage());
+					result.registerError(e.getMessage());
+				}
+			} else {
+				invoices = invoiceService.getValidatedInvoicesWithNoPdf(null,currentUser.getProvider());
+			}
+
+			result.setNbItemsToProcess(invoices.size());
+			log.info("PDFInvoiceGenerationJob number of invoices to process="+ invoices.size());
+
 			Long nbRuns = new Long(1);		
 			Long waitingMillis = new Long(0);
 			try{
@@ -71,34 +72,34 @@ public class PDFInvoiceGenerationJobBean {
 			}catch(Exception e){
 				log.warn("Cant get customFields for "+timerEntity.getJobName());
 			}
-			
+
 			List<Future<String>> futures = new ArrayList<Future<String>>();
 			SubListCreator subListCreator = new SubListCreator(invoices,nbRuns.intValue());
-            while (subListCreator.isHasNext()) {
-                futures.add(pdfInvoiceAsync.launchAndForget((List<Invoice>) subListCreator.getNextWorkSet(), currentUser, result));
+			while (subListCreator.isHasNext()) {
+				futures.add(pdfInvoiceAsync.launchAndForget((List<Invoice>) subListCreator.getNextWorkSet(), currentUser, result));
 
-                if (subListCreator.isHasNext()) {
-                    try {
-                        Thread.sleep(waitingMillis.longValue());
-                    } catch (InterruptedException e) {
-                        log.error("", e);
-                    }
-                }
-            }
-            // Wait for all async methods to finish
-            for (Future<String> future : futures) {
-                try {
-                    future.get();
+				if (subListCreator.isHasNext()) {
+					try {
+						Thread.sleep(waitingMillis.longValue());
+					} catch (InterruptedException e) {
+						log.error("", e);
+					}
+				}
+			}
+			// Wait for all async methods to finish
+			for (Future<String> future : futures) {
+				try {
+					future.get();
 
-                } catch (InterruptedException e) {
-                    // It was cancelled from outside - no interest
-                    
-                } catch (ExecutionException e) {
-                    Throwable cause = e.getCause();
-                    result.registerError(cause.getMessage());
-                    log.error("Failed to execute async method", cause);
-                }
-            }
+				} catch (InterruptedException e) {
+					// It was cancelled from outside - no interest
+
+				} catch (ExecutionException e) {
+					Throwable cause = e.getCause();
+					result.registerError(cause.getMessage());
+					log.error("Failed to execute async method", cause);
+				}
+			}
 
 		} catch (Exception e) {
 			log.error("Failed to generate PDF invoices",e);

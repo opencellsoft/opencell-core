@@ -66,13 +66,10 @@ public class PDFParametersConstruction {
 	@Inject
 	protected CustomFieldTemplateService customFieldTemplateService;
     
-	private static final String TIP_PAYMENT_METHOD = "TIP";
-	private static final String PDF_DIR_NAME = "pdf";
-	private static NumberFormat currencyFormat = NumberFormat
-			.getInstance(new Locale("FR"));
-	static {
-		currencyFormat.setMinimumFractionDigits(2);
-	}
+	private  String TIP_PAYMENT_METHOD = "TIP";
+	private  String PDF_DIR_NAME = "pdf";
+	private NumberFormat currencyFormat = NumberFormat.getInstance(new Locale("FR"));
+	
 
 	private ClassLoader cl = new URLClassLoader(
 			new URL[] { PDFParametersConstruction.class.getClassLoader()
@@ -85,6 +82,7 @@ public class PDFParametersConstruction {
 	@SuppressWarnings("deprecation")
 	public Map<String, Object> constructParameters(Long invoiceId) {
 		try {
+			currencyFormat.setMinimumFractionDigits(2);
 			Invoice invoice = invoiceService.findById(invoiceId);
 			Map<String, Object> parameters = new HashMap<String, Object>();
 			parameters.put(JRParameter.REPORT_CLASS_LOADER, cl);
