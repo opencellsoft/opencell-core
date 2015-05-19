@@ -88,9 +88,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
 	@Inject
 	private RejectedBillingAccountService rejectedBillingAccountService;
 	
-	private static final String PDF_DIR_NAME = "pdf";
-	private static final String INVOICE_TEMPLATE_FILENAME = "invoice.jasper";
-	private static String DATE_PATERN = "yyyy.MM.dd";
+	private String PDF_DIR_NAME = "pdf";
+	private  String INVOICE_TEMPLATE_FILENAME = "invoice.jasper";
+	private  String DATE_PATERN = "yyyy.MM.dd";
 
 
 	public Invoice getInvoiceByNumber(String invoiceNumber, String providerCode) throws BusinessException {
@@ -408,7 +408,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 	}
 	
 
-	
+	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public void producePdf(Map<String, Object> parameters, User currentUser) throws Exception {
 		 
 			ParamBean paramBean = ParamBean.getInstance();
@@ -538,14 +538,14 @@ public class InvoiceService extends PersistenceService<Invoice> {
 		}
 	}
 	
-	public static String getNameWoutSequence(String tempDir, Date invoiceDate,
+	public  String getNameWoutSequence(String tempDir, Date invoiceDate,
 			String invoiceNumber) {
 		return new StringBuilder(tempDir).append(File.separator)
 				.append(formatInvoiceDate(invoiceDate)).append("_")
 				.append(invoiceNumber).toString();
 	}
 	
-	public static String formatInvoiceDate(Date invoiceDate) {
+	public  String formatInvoiceDate(Date invoiceDate) {
 		DateFormat dateFormat = new SimpleDateFormat(DATE_PATERN);
 		return dateFormat.format(invoiceDate);
 	}

@@ -43,90 +43,98 @@ public class InvoicingJobBean {
 	private InvoicingAsync invoicingAsync;
 
 	@SuppressWarnings("unchecked")
-    @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
-	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+	@Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
+	@TransactionAttribute(TransactionAttributeType.NEVER)
 	public void execute(JobExecutionResultImpl result, User currentUser,TimerEntity timerEntity) {
 
-			try {
-				Provider provider = currentUser.getProvider();
-				List<BillingRun> billingRuns = billingRunService.getbillingRuns(provider, BillingRunStatusEnum.NEW,
-						BillingRunStatusEnum.ON_GOING, BillingRunStatusEnum.CONFIRMED);
+		try {
+			Provider provider = currentUser.getProvider();
+			List<BillingRun> billingRuns = billingRunService.getbillingRuns(provider, BillingRunStatusEnum.NEW,
+					BillingRunStatusEnum.ON_GOING, BillingRunStatusEnum.CONFIRMED);
 
-				log.info("billingRuns to process={}", billingRuns.size());
-
-				for (BillingRun billingRun : billingRuns) {
-						try {
-							if (BillingRunStatusEnum.NEW.equals(billingRun.getStatus())) {
-								List<BillingAccount> billingAccounts = billingRunService.getBillingAccounts(billingRun);
-								log.info("Nb billingAccounts to process={}",
-										(billingAccounts != null ? billingAccounts.size() : 0));
-
-								if (billingAccounts != null && billingAccounts.size() > 0) {
-									int billableBA = 0;
-
-									Long nbRuns = new Long(1);		
-									Long waitingMillis = new Long(0);
-									try{
-										nbRuns = timerEntity.getLongCustomValue("InvoicingJob_nbRuns").longValue();  			
-										waitingMillis = timerEntity.getLongCustomValue("InvoicingJob_waitingMillis").longValue();
-										if(nbRuns == -1){
-											nbRuns  = (long) Runtime.getRuntime().availableProcessors();
-										}
-									}catch(Exception e){
-										log.warn("Cant get customFields for "+timerEntity.getJobName());
-									}
-
-									SubListCreator subListCreator = new SubListCreator(billingAccounts,nbRuns.intValue());
-									List<Future<Integer>> asyncReturns = new ArrayList<Future<Integer>>();
-									while (subListCreator.isHasNext()) {
-										Future<Integer> count = invoicingAsync.launchAndForget((List<BillingAccount>) subListCreator.getNextWorkSet(), billingRun, currentUser);
-										asyncReturns.add(count);
-										try {
-											Thread.sleep(waitingMillis.longValue());
-										} catch (InterruptedException e) {
-										    log.error("", e);
-										} 
-									}
-
-									for(Future<Integer> futureItsNow : asyncReturns){
-										billableBA+= futureItsNow.get().intValue();	
-									}
-
-									log.info("Total billableBA:"+billableBA);
-
-									billingRun.setBillingAccountNumber(billingAccounts.size());
-									billingRun.setBillableBillingAcountNumber(billableBA);
-									billingRun.setProcessDate(new Date());
-									billingRun.setStatus(BillingRunStatusEnum.WAITING);
-									billingRun.updateAudit(currentUser);
-									billingRunService.updateNoCheck(billingRun);
-
-									if (billingRun.getProcessType() == BillingProcessTypesEnum.AUTOMATIC
-											|| currentUser.getProvider().isAutomaticInvoicing()) {
-										billingRunService.createAgregatesAndInvoice(billingRun.getId(),billingRun.getLastTransactionDate(), currentUser);
-										billingRun = billingRunService.findById(billingRun.getId());
-										billingRun.setStatus(BillingRunStatusEnum.TERMINATED);
-										billingRunService.updateNoCheck(billingRun);
-									}
-								}
-							} else if (BillingRunStatusEnum.ON_GOING.equals(billingRun.getStatus())) {
-								billingRunService.createAgregatesAndInvoice(billingRun.getId(),billingRun.getLastTransactionDate(), currentUser);
-								billingRun = billingRunService.findById(billingRun.getId());
-								billingRun.setStatus(BillingRunStatusEnum.TERMINATED);
-								billingRunService.updateNoCheck(billingRun);
-							} else if (BillingRunStatusEnum.CONFIRMED.equals(billingRun.getStatus())) {
-								billingRunService.validate(billingRun, currentUser);
-							}
-						} catch (Exception e) {
-							log.error("Failed to run invoicing", e);
-							result.registerError(e.getMessage());
-						}
+			log.info("billingRuns to process={}", billingRuns.size());
+			Long nbRuns = new Long(1);		
+			Long waitingMillis = new Long(0);
+			try{
+				nbRuns = timerEntity.getLongCustomValue("InvoicingJob_nbRuns").longValue();  			
+				waitingMillis = timerEntity.getLongCustomValue("InvoicingJob_waitingMillis").longValue();
+				if(nbRuns == -1){
+					nbRuns  = (long) Runtime.getRuntime().availableProcessors();
 				}
-			} catch (Exception e) {
-			    log.error("Failed to run invoicing", e);
+			}catch(Exception e){
+				log.warn("Cant get customFields for "+timerEntity.getJobName());
 			}
 
+			for (BillingRun billingRun : billingRuns) {
+				try {
+					if (BillingRunStatusEnum.NEW.equals(billingRun.getStatus())) {
+						List<BillingAccount> billingAccounts = billingRunService.getBillingAccounts(billingRun);
+						log.info("Nb billingAccounts to process={}",
+								(billingAccounts != null ? billingAccounts.size() : 0));
+
+						if (billingAccounts != null && billingAccounts.size() > 0) {
+							int billableBA = 0;
+							SubListCreator subListCreator = new SubListCreator(billingAccounts,nbRuns.intValue());
+							List<Future<Integer>> asyncReturns = new ArrayList<Future<Integer>>();
+							while (subListCreator.isHasNext()) {
+								Future<Integer> count = invoicingAsync.launchAndForget((List<BillingAccount>) subListCreator.getNextWorkSet(), billingRun, currentUser);
+								asyncReturns.add(count);
+								try {
+									Thread.sleep(waitingMillis.longValue());
+								} catch (InterruptedException e) {
+									log.error("", e);
+								} 
+							}
+
+							for(Future<Integer> futureItsNow : asyncReturns){
+								billableBA+= futureItsNow.get().intValue();	
+							}
+
+							log.info("Total billableBA:"+billableBA);
+
+							updateBillingRun(billingRun.getId(),currentUser,billingAccounts.size(),billableBA,BillingRunStatusEnum.WAITING,new Date());
+
+							if (billingRun.getProcessType() == BillingProcessTypesEnum.AUTOMATIC
+									|| currentUser.getProvider().isAutomaticInvoicing()) {
+								billingRunService.createAgregatesAndInvoice(billingRun.getId(),billingRun.getLastTransactionDate(), currentUser,nbRuns.longValue(),waitingMillis.longValue());										
+								updateBillingRun(billingRun.getId(),currentUser,null,null,BillingRunStatusEnum.TERMINATED,null);
+							}
+						}
+					} else if (BillingRunStatusEnum.ON_GOING.equals(billingRun.getStatus())) {
+						billingRunService.createAgregatesAndInvoice(billingRun.getId(),billingRun.getLastTransactionDate(), currentUser,nbRuns.longValue(),waitingMillis.longValue());								
+						updateBillingRun(billingRun.getId(),currentUser,null,null,BillingRunStatusEnum.TERMINATED,null);
+					} else if (BillingRunStatusEnum.CONFIRMED.equals(billingRun.getStatus())) {
+						billingRunService.validate(billingRun, currentUser);
+					}
+				} catch (Exception e) {
+					log.error("Failed to run invoicing", e);
+					result.registerError(e.getMessage());
+				}
+			}
+		} catch (Exception e) {
+			log.error("Failed to run invoicing", e);
+		}
+
 		log.info("end Execute");
+	}
+
+	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+	public void updateBillingRun(Long billingRunId ,User currentUser,Integer sizeBA,Integer billableBA,BillingRunStatusEnum status,Date dateStatus) {
+		BillingRun billingRun = billingRunService.findById(billingRunId);
+
+		if(sizeBA != null){
+			billingRun.setBillingAccountNumber(sizeBA);
+		}
+		if(billableBA != null){
+			billingRun.setBillableBillingAcountNumber(billableBA);
+		}
+		if(dateStatus != null){
+			billingRun.setProcessDate(dateStatus);
+		}
+		billingRun.setStatus(status);
+		billingRun.updateAudit(currentUser);
+		billingRunService.update(billingRun);
+
 	}
 
 }

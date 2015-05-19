@@ -20,8 +20,11 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.ejb.Asynchronous;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
@@ -45,8 +48,16 @@ public class InvoicingJob extends Job {
 
 	@Inject
 	private ResourceBundle resourceMessages;
+	
+	@Override
+	@Asynchronous
+	@TransactionAttribute(TransactionAttributeType.NEVER)
+	public void execute(TimerEntity timerEntity, User currentUser) {
+		super.execute(timerEntity, currentUser);
+	}
 
 	@Override
+	@TransactionAttribute(TransactionAttributeType.NEVER)
 	protected void execute(JobExecutionResultImpl result, TimerEntity timerEntity, User currentUser) throws BusinessException {
 		invoicingJobBean.execute(result, currentUser,timerEntity);
 
