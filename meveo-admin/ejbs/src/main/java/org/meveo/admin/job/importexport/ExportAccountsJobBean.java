@@ -62,7 +62,7 @@ public class ExportAccountsJobBean {
 		try {
 			JAXBUtils.marshaller(billingAccounts, new File(dir + File.separator + "ACCOUNT_" + timestamp + ".xml"));
 		} catch (JAXBException e) {
-			e.printStackTrace();
+			log.error("Failed to export accounts job",e);
 		}
 
 	}

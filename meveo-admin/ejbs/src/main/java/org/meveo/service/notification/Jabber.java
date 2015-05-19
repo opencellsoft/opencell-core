@@ -2,6 +2,8 @@ package org.meveo.service.notification;
 
 import java.util.Collection;
 
+import javax.inject.Inject;
+
 import org.jivesoftware.smack.Chat;
 import org.jivesoftware.smack.ConnectionConfiguration;
 import org.jivesoftware.smack.Roster;
@@ -10,9 +12,11 @@ import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.packet.Presence;
+import org.slf4j.Logger;
 
 public class Jabber {
 
+	
 public static String username="abc@mydomain.com";
 public static String password="password";
 public static String id="";
@@ -21,6 +25,8 @@ XMPPConnection conn;
 public static Chat chat;
 public static XMPPConnection connection = new XMPPConnection("gmail.com");
 public static boolean free=false;
+@Inject
+private static Logger log;
 static {
 
 	  try {
@@ -38,7 +44,7 @@ static {
 
 	    }
 	    catch (Exception e) {
-	        e.printStackTrace();
+	    log.error("connection failed",e);
 	    }
 }
 

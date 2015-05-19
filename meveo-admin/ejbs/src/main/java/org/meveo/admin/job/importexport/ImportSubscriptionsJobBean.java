@@ -115,7 +115,7 @@ public class ImportSubscriptionsJobBean {
 				result.registerError(e.getMessage());
 				log.info("InputFiles job {} failed.", file.getName());
 				FileUtils.moveFile(dirKO, currentFile, file.getName());
-				e.printStackTrace();
+				log.error("Failed to import subscriptions job",e);
 			} finally {
 				if (currentFile != null)
 					currentFile.delete();
@@ -187,8 +187,6 @@ public class ImportSubscriptionsJobBean {
 				nbSubscriptionsError++;
 				log.info("File:" + fileName + ", typeEntity:Subscription, index:" + i + ", code:"
 						+ jaxbSubscription.getCode() + ", status:Error");
-				log.error(e.getMessage());
-				e.printStackTrace();
 			}
 		}
 

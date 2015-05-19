@@ -108,8 +108,7 @@ public class MediationApi extends BaseApi {
 							throw new MeveoApiException(edr.getRejectReason());
 						}
 					} catch (BusinessException e) {
-						log.error("Exception rating edr={}", e.getMessage());
-						e.printStackTrace();
+						log.error("Exception rating edr={}",e);
 						if ("INSUFFICIENT_BALANCE".equals(e.getMessage())) {
 							throw new MeveoApiException(MeveoApiErrorCode.INSUFFICIENT_BALANCE, e.getMessage());
 						} else {
@@ -135,7 +134,7 @@ public class MediationApi extends BaseApi {
 			Reservation reservation = reservationService.findById((Long) objs[0]);
 			reservationService.cancelPrepaidReservationInNewTransaction(reservation);
 		} catch (BusinessException e) {
-			e.printStackTrace();
+			log.error("Failed to cancel Prepaid Reservation In New Transaction",e);
 		}
 	}
 
@@ -269,7 +268,7 @@ public class MediationApi extends BaseApi {
 				}
 				reservationService.cancelPrepaidReservation(reservation);
 			} catch (BusinessException e) {
-				e.printStackTrace();
+				log.error("Failed to cancel reservation ",e);
 				throw new MeveoApiException(e.getMessage());
 			}
 		} else {

@@ -560,7 +560,6 @@ public class UsageRatingService {
 			} catch (Exception e) {
 				edr.setStatus(EDRStatusEnum.REJECTED);
 				edr.setRejectReason(e.getMessage());
-				// e.printStackTrace();
 				throw new BusinessException(e.getMessage());
 			}
 		}

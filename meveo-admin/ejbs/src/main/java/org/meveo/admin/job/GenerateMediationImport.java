@@ -7,7 +7,10 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
 
+import javax.inject.Inject;
+
 import org.meveo.commons.utils.StringUtils;
+import org.slf4j.Logger;
 
 /**
  * @author Edward P. Legaspi
@@ -27,6 +30,9 @@ public class GenerateMediationImport {
 	public static void main(String args[]) {
 		new GenerateMediationImport();
 	}
+	
+	@Inject
+	private Logger log;
 
 	public GenerateMediationImport() {
 		System.out.println("start creating mediation file...");
@@ -63,7 +69,7 @@ public class GenerateMediationImport {
 
 			out.flush();
 		} catch (Exception e) {
-			e.printStackTrace();
+			log.error("Failed to generate mediation import",e);
 		} finally {
 			if (out != null) {
 				out.close();

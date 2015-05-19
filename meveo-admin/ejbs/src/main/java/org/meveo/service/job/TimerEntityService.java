@@ -131,7 +131,7 @@ public class TimerEntityService extends PersistenceService<TimerEntity> {
             InitialContext ic=new InitialContext();
             result = (Job) ic.lookup("java:global/"+paramBean.getProperty("meveo.moduleName", "meveo")+"/"+jobName);
         } catch (NamingException e) {
-            e.printStackTrace();
+        	log.error("Failed to get job by name",e);
         }
 	    return result;
 	}
@@ -201,7 +201,7 @@ public class TimerEntityService extends PersistenceService<TimerEntity> {
 				}
 			}
 		} catch (NamingException e) {
-			e.printStackTrace();
+			log.error("Failed to update job",e);
 		}
 
 		return entity;
@@ -241,7 +241,7 @@ public class TimerEntityService extends PersistenceService<TimerEntity> {
 				}
 			}
 		} catch (NamingException e) {
-			e.printStackTrace();
+			log.error("Failed to execute timerEntity job",e);
 		}
 	}
 

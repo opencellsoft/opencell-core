@@ -139,7 +139,7 @@ public class DefaultObserver {
                     ((InboundRequest) e).add(notificationHistory);
                 }
             } catch (BusinessException e2) {
-                e2.printStackTrace();
+            	log.error("Failed to firing notification",e);
             }
         }
     }

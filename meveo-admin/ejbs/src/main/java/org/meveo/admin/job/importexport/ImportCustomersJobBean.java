@@ -254,8 +254,7 @@ public class ImportCustomersJobBean {
 				createSellerError(sell, ExceptionUtils.getRootCause(e).getMessage());
 				nbSellersError++;
 				log.error("File:" + fileName + ", typeEntity:Seller, index:" + i + ", code:" + sell.getCode() + ", status:Error");
-				log.error(e.getMessage());
-				e.printStackTrace();
+				log.error("Failed to import customers job",e);
 			}
 		}
 

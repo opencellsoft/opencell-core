@@ -553,7 +553,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 			try {
 				Thread.sleep(waitingMillis);
 			} catch (InterruptedException e) {
-				e.printStackTrace();
+				log.error("Failed to create agregates and invoice",e);
 			} 
 		}
 		for(Future<String> futureItsNow : asyncReturns){

@@ -1048,8 +1048,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 			walletOperations = getEntityManager().createNamedQuery("WalletOperation.listToInvoice").setParameter("invoicingDate", invoicingDate).setParameter("provider", provider)
 					.getResultList();
 		} catch (Exception e) {
-			e.printStackTrace();
-			log.error("listToInvoice error={} ", e.getMessage());
+			log.error("listToInvoice error ",e);
 		}
 		return walletOperations;
 	}

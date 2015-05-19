@@ -56,7 +56,7 @@ public class ExportSubscriptionsJobBean {
 		try {
 			JAXBUtils.marshaller(subscriptions, new File(dir + File.separator + "SUB_" + timestamp + ".xml"));
 		} catch (JAXBException e) {
-			e.printStackTrace();
+			log.error("Failed to export subscriptions job",e);
 		}
 
 	}

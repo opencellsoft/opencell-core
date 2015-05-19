@@ -82,7 +82,7 @@ public class InboundServlet extends HttpServlet {
 			readInputStreamWithTimeout(req.getInputStream(),charBuffer,2000);
 			body = new String(charBuffer);
 		} catch (IOException e2) {
-			e2.printStackTrace();
+			log.error("Failed to read InputStream With Timeout",e2);
 		}
 		inReq.setBody(body);
 		
@@ -127,7 +127,7 @@ public class InboundServlet extends HttpServlet {
 					res.setContentLength(bout.size());
 					bout.writeTo(res.getOutputStream());
 				} catch (IOException e) {
-					e.printStackTrace();
+					log.error("Failed to produce the response",e);
 					res.setStatus(500);
 				}
 			}
@@ -137,7 +137,7 @@ public class InboundServlet extends HttpServlet {
 		try {
 			inboundRequestService.create(inReq);
 		} catch (BusinessException e1) {
-			e1.printStackTrace();
+			log.error("Failed to create InboundRequest ",e1);
 		}
 		log.debug("exit with status {}",res.getStatus());
 	}

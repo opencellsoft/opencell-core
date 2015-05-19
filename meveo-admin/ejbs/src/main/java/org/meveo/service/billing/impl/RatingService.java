@@ -603,7 +603,7 @@ public class RatingService extends BusinessService<WalletOperation>{
 			log.debug("updated wallet operation");
 		} catch (UnrolledbackBusinessException e) {
 			log.info(e.getMessage());
-			e.printStackTrace();
+			log.error("Failed to reRate",e);
 			operationToRerate.setStatus(WalletOperationStatusEnum.TREATED);
 			operationToRerate.setReratedWalletOperation(null);
 		}

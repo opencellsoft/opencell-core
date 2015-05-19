@@ -144,8 +144,7 @@ public class WebHookNotifier {
 					notificationHistoryService.create(webHook, e,"http error status="+responseCode +" response="+result,
 							NotificationHistoryStatusEnum.FAILED);
 				} catch (BusinessException e2) {
-					log.debug("webhook history error : " + e2.getMessage());
-					e2.printStackTrace();
+					log.error("Failed to create webhook ",e);
 				}
 			} else {
 				HashMap<Object, Object> userMap = new HashMap<Object, Object>();
@@ -157,7 +156,7 @@ public class WebHookNotifier {
 						json = new JSONObject(result);
 						userMap.put("jsObj",json);
 					} catch (JSONException e1) {
-						e1.printStackTrace();
+						log.error("Fail in json ",e);
 					}
 				} else if(webHook.getElAction()!=null && webHook.getElAction().indexOf("xmlDoc.")>=0){
 					try {
@@ -166,14 +165,14 @@ public class WebHookNotifier {
 						Document doc = builder.parse(result);
 						userMap.put("xmlDoc",doc);
 					} catch (Exception e1) {
-						e1.printStackTrace();
+						log.error("Fail in xmlDoc ",e);
 					}
 				}
 				
 				try {
 				    ValueExpressionWrapper.evaluateExpression(webHook.getElAction(), userMap, String.class);
 				} catch(Exception e1){
-					e1.printStackTrace();
+					log.error("Failed to evaluate expression webhook ",e);
 				}
 				
 				notificationHistoryService.create(webHook, e, result, NotificationHistoryStatusEnum.SENT);
@@ -184,17 +183,15 @@ public class WebHookNotifier {
 				log.debug("webhook business error : " + e1.getMessage());
 				notificationHistoryService.create(webHook, e, e1.getMessage(), NotificationHistoryStatusEnum.FAILED);
 			} catch (BusinessException e2) {
-				log.debug("webhook history error : " + e2.getMessage());
-				e2.printStackTrace();
+				log.error("Failed to create webhook business ",e2);
+				 
 			}
 		} catch (IOException e1) {
-			try {
-				e1.printStackTrace();
+			try { 
 				log.debug("webhook io error : " + e1.getMessage());
 				notificationHistoryService.create(webHook, e, e1.getMessage(), NotificationHistoryStatusEnum.TO_RETRY);
 			} catch (BusinessException e2) {
-				log.debug("webhook history error : " + e2.getMessage());
-				e2.printStackTrace();
+				log.error("Failed to create webhook io ",e2);
 			}
 		}
 	}
@@ -210,7 +207,7 @@ public class WebHookNotifier {
 			System.out.println(json.getString("sid"));
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			e.printStackTrace(); 
 		}
 	}
 }

@@ -72,14 +72,14 @@ public class InstantMessagingNotifier {
 			try {
 				notificationHistoryService.create(notification, e, e1.getMessage(), NotificationHistoryStatusEnum.FAILED);
 			} catch (BusinessException e2) {
-				e2.printStackTrace();
+				log.error("Failed to create notification history business",e);
 			}
 			
 		} catch (Exception e1) {
 			try {
 				notificationHistoryService.create(notification, e, e1.getMessage(), NotificationHistoryStatusEnum.FAILED);
 			} catch (BusinessException e2) {
-				e2.printStackTrace();
+				log.error("Failed to create notification history exception",e);
 			}
 		} 
 	}

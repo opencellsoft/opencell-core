@@ -127,8 +127,7 @@ public class ImportCatalogJobBean {
 					}
 
 				} catch (Exception e) {
-					e.printStackTrace();
-					log.error(e.getMessage());
+					log.error("Failed to import catalog job",e);
 					File fi = FileUtils.replaceFileExtension(file, "");
 					FileUtils.moveFile(rejectDir, fi, null);
 					try {

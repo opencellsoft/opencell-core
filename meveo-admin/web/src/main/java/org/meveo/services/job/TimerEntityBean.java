@@ -125,7 +125,7 @@ public class TimerEntityBean extends BaseBean<TimerEntity> {
                                 customFieldTemplateService.create(cf);
                                 customFieldTemplates.add(cf);
                             } catch (BusinessException e) {
-                                e.printStackTrace();
+                                log.error("Failed  to init custom fields",e);
                             }
                         }
                     }

@@ -67,7 +67,7 @@ public class ExportCustomersJobBean {
 		try {
 			JAXBUtils.marshaller(sellers, new File(dir + File.separator + "CUSTOMER_" + timestamp + ".xml"));
 		} catch (JAXBException e) {
-			e.printStackTrace();
+			log.error("Failed to export customers job",e);
 		}
 
 	}

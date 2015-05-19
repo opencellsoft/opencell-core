@@ -23,6 +23,7 @@ import org.meveo.model.IEntity;
 import org.meveo.model.notification.EmailNotification;
 import org.meveo.model.notification.NotificationHistoryStatusEnum;
 import org.meveo.service.base.ValueExpressionWrapper;
+import org.slf4j.Logger;
 
 //TODO : transform that into MDB to correctly handle retries
 @Stateless
@@ -33,6 +34,9 @@ public class EmailNotifier {
 
 	@Inject 
 	NotificationHistoryService notificationHistoryService;
+	
+	@Inject
+    private Logger log;
 	
 	@Asynchronous
 	public void sendEmail(EmailNotification notification, IEntity e){
@@ -80,20 +84,20 @@ public class EmailNotifier {
 			try {
 				notificationHistoryService.create(notification, e, e1.getMessage(), NotificationHistoryStatusEnum.FAILED);
 			} catch (BusinessException e2) {
-				e2.printStackTrace();
+				log.error("Failed to create notification history business",e);
 			}
 			
 		} catch (AddressException e1) {
 			try {
 				notificationHistoryService.create(notification, e, e1.getMessage(), NotificationHistoryStatusEnum.FAILED);
 			} catch (BusinessException e2) {
-				e2.printStackTrace();
+				log.error("Failed to create notification history address",e);
 			}
 		} catch (MessagingException e1) {
 			try {
 				notificationHistoryService.create(notification, e, e1.getMessage(), NotificationHistoryStatusEnum.TO_RETRY);
 			} catch (BusinessException e2) {
-				e2.printStackTrace();
+				log.error("Failed to create notification history messaging ",e);
 			}
 		}
 	}
