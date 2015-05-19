@@ -30,10 +30,10 @@ public class GenerateImportXmlV2 {
 	 */
 	/************************** configuration properties ***********************************/
 	private final int MAX_SELLERS = 1;
-	private final int MAX_CUSTOMERS = 2;
+	private final int MAX_CUSTOMERS = 1;
 	private final int MAX_CUSTOMER_ACCOUNTS = 1;
 
-	private final int MAX_BILLING_ACCOUNTS = 1;
+	private final int MAX_BILLING_ACCOUNTS = 12;
 	private final int MAX_USER_ACCOUNTS = 1;
 
 	private final int MAX_SUBSCRIPTIONS = 1;
