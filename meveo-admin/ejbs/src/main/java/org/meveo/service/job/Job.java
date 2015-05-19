@@ -59,7 +59,6 @@ public abstract class Job {
      * @param provider the provider for which the job must apply.
      * @return the result of execute(parameter,false) method
      */
-    @Asynchronous
     public void execute(TimerEntity timerEntity, User currentUser) {
         JobExecutionResultImpl result = new JobExecutionResultImpl();
         TimerInfo info = timerEntity.getTimerInfo();

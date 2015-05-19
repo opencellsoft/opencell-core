@@ -9,6 +9,8 @@ import java.util.concurrent.Future;
 import javax.ejb.AsyncResult;
 import javax.ejb.Asynchronous;
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
 import org.meveo.admin.job.UnitUsageRatingJobBean;
@@ -27,12 +29,11 @@ public class UsageRatingAsync {
     UnitUsageRatingJobBean unitUsageRatingJobBean;
 
     @Asynchronous
+	@TransactionAttribute(TransactionAttributeType.NEVER)
     public Future<String> launchAndForget(List<Long> ids, JobExecutionResultImpl result, User currentUser) {
-
         for (Long id : ids) {
             unitUsageRatingJobBean.execute(result, currentUser, id);
         }
-
         return new AsyncResult<String>("OK");
     }
 }

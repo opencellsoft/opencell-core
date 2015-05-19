@@ -73,6 +73,12 @@ public class SubListCreator {
 	public int getBlocToRun() {
 		return blocToRun;
 	}
+	/**
+	 * @return the listSize
+	 */
+	public int getListSize() {
+		return listSize;
+	}
 
 	
 }

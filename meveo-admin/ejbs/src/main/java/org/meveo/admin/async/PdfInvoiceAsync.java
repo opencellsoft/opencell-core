@@ -45,8 +45,7 @@ public class PdfInvoiceAsync {
             try {
                 Map<String, Object> parameters = pDFParametersConstruction.constructParameters(invoice.getId());
                 invoiceService.producePdf(parameters, currentUser);
-                result.registerSucces();
-                
+                result.registerSucces();                              
             } catch (Exception e) {
                 result.registerError(invoice.getInvoiceNumber(), e.getMessage());
                 log.error("Failed to process invoice {}", invoice, e);

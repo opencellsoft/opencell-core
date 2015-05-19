@@ -15,6 +15,7 @@ import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
 import org.meveo.model.billing.Invoice;
+import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.service.billing.impl.XMLInvoiceCreator;
 import org.slf4j.Logger;
 
@@ -34,13 +35,15 @@ public class XmlInvoiceAsync {
 
 	@Asynchronous
 	@TransactionAttribute(TransactionAttributeType.NEVER)
-	public Future<String> launchAndForget(List<Invoice> invoices,File billingRundir) {
+	public Future<String> launchAndForget(List<Invoice> invoices,File billingRundir, JobExecutionResultImpl result) {
 		
 		for (Invoice invoice : invoices) {
 			long startDate = System.currentTimeMillis();
 			try {
 				xmlInvoiceCreator.createXMLInvoice(invoice.getId(), billingRundir);
-			} catch (Exception e) {				
+				result.registerSucces();
+			} catch (Exception e) {		
+				result.registerError(e.getMessage());
 				log.error("Failed to create XML invoice", e);
 			}
 			log.info("Invoice creation delay :" + (System.currentTimeMillis() - startDate) );

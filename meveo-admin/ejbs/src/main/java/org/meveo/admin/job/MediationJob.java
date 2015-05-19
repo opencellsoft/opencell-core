@@ -8,8 +8,11 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
+import javax.ejb.Asynchronous;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
 import org.meveo.admin.async.MediationAsync;
@@ -39,8 +42,16 @@ public class MediationJob extends Job {
     @Inject
     private ResourceBundle resourceMessages;
 
-    @SuppressWarnings("unchecked")
+
     @Override
+    @Asynchronous
+    @TransactionAttribute(TransactionAttributeType.NEVER)
+    public void execute(TimerEntity timerEntity, User currentUser) {
+        super.execute(timerEntity, currentUser);
+    }
+
+    @Override
+    @TransactionAttribute(TransactionAttributeType.NEVER)
     protected void execute(JobExecutionResultImpl result, TimerEntity timerEntity, User currentUser) throws BusinessException {
         try {
             Long nbRuns = new Long(1);

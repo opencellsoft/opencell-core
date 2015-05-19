@@ -43,7 +43,7 @@ public class JobExecutionService extends PersistenceService<JobExecutionResultIm
 	@Inject
 	private TimerEntityService timerEntityService;
 
-	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+	@TransactionAttribute(TransactionAttributeType.NEVER)
 	public void executeJob(String jobName, TimerEntity timerEntity, User currentUser, JobCategoryEnum jobCategory) {
 		try {
 			HashMap<String, String> jobs = TimerEntityService.jobEntries.get(jobCategory);
@@ -55,10 +55,10 @@ public class JobExecutionService extends PersistenceService<JobExecutionResultIm
 		}
 	}
 
-	@TransactionAttribute(TransactionAttributeType.REQUIRED)
+	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public void persistResult(Job job, JobExecutionResult result, TimerEntity timerEntity, User currentUser, JobCategoryEnum jobCategory) {
 		try {
-			log.info("JobExecutionService persistResult...");
+			log.info(" \n \n JobExecutionService persistResult...");
 
 			TimerInfo info = timerEntity.getTimerInfo();
 			JobExecutionResultImpl entity = JobExecutionResultImpl.createFromInterface(job.getClass().getSimpleName(), result);
@@ -93,6 +93,7 @@ public class JobExecutionService extends PersistenceService<JobExecutionResultIm
 		} catch (Exception e) {// FIXME:BusinessException e) {
 			log.error(e.getMessage());
 		}
+		log.info(" \n \n JobExecutionService persistResult End");
 	}
 
 	private QueryBuilder getFindQuery(String jobName, PaginationConfiguration configuration) {

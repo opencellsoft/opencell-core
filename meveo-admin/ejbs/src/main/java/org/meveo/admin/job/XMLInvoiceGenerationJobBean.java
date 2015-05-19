@@ -43,8 +43,8 @@ public class XMLInvoiceGenerationJobBean {
 	private XmlInvoiceAsync xmlInvoiceAsync;
 
 	@SuppressWarnings("unchecked")
-    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
 	@Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
+	@TransactionAttribute(TransactionAttributeType.NEVER)
 	public void execute(JobExecutionResultImpl result, String parameter, User currentUser,TimerEntity timerEntity) {
 		Provider provider = currentUser.getProvider();
 		List<BillingRun> billingRuns = new ArrayList<BillingRun>();
@@ -85,9 +85,10 @@ public class XMLInvoiceGenerationJobBean {
 
 				List<Future<String>> futures = new ArrayList<Future<String>>();
 				SubListCreator subListCreator = new SubListCreator(invoiceService.getInvoices(billingRun),nbRuns.intValue());
+				result.setNbItemsToProcess(subListCreator.getListSize());
 
 				while (subListCreator.isHasNext()) {
-					futures.add(xmlInvoiceAsync.launchAndForget((List<Invoice>) subListCreator.getNextWorkSet(), billingRundir));
+					futures.add(xmlInvoiceAsync.launchAndForget((List<Invoice>) subListCreator.getNextWorkSet(), billingRundir,result));
 	                if (subListCreator.isHasNext()) {
 	                    try {
 	                        Thread.sleep(waitingMillis.longValue());
@@ -113,6 +114,7 @@ public class XMLInvoiceGenerationJobBean {
 	            }
 	            
 				updateBillingRun(billingRun.getId(), currentUser);
+				result.setDone(true);
 			} catch (Exception e) {
 	            log.error("Failed to generate XML invoices",e);
 	            result.registerError(e.getMessage());

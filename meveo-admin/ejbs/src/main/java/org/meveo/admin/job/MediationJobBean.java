@@ -56,7 +56,7 @@ public class MediationJobBean {
 	String report;
 
 	@Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
-	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
+	@TransactionAttribute(TransactionAttributeType.NEVER)
 	public void execute(JobExecutionResultImpl result, String parameter, User currentUser,File file) {
 		Provider provider = currentUser.getProvider();
 
@@ -115,6 +115,7 @@ public class MediationJobBean {
 
 				log.info("InputFiles job {} done.", file.getName());
 				result.registerSucces();
+				result.setDone(true);
 			} catch (Exception e) {
 				log.error("Failed to process CDR file {}", file.getName(), e);
 				result.registerError(e.getMessage());

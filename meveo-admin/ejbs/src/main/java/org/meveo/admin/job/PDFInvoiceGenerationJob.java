@@ -35,7 +35,7 @@ public class PDFInvoiceGenerationJob extends Job {
 
     @Override
     @Asynchronous
-    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
+    @TransactionAttribute(TransactionAttributeType.NEVER)
     public void execute(TimerEntity timerEntity, User currentUser) {
         super.execute(timerEntity, currentUser);
     }

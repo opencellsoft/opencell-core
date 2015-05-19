@@ -51,7 +51,7 @@ public class RecurringRatingJobBean implements Serializable {
 
 	@SuppressWarnings("unchecked")
     @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
-	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
+	@TransactionAttribute(TransactionAttributeType.NEVER)
 	public void execute(JobExecutionResultImpl result, User currentUser,TimerEntity timerEntity) {
 		try {
 			Date maxDate = DateUtils.addDaysToDate(new Date(), 1);
@@ -98,11 +98,11 @@ public class RecurringRatingJobBean implements Serializable {
                     result.registerError(cause.getMessage());
                     log.error("Failed to execute async method", cause);
                 }
-            }
-
+            }       
         } catch (Exception e) {
             log.error("Failed to run recurring rating job", e);
             result.registerError(e.getMessage());
         }
+		result.setDone(true);
 	}
 }

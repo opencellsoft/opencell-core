@@ -10,6 +10,8 @@ import java.util.concurrent.Future;
 import javax.ejb.AsyncResult;
 import javax.ejb.Asynchronous;
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
 import org.meveo.admin.job.UnitRecurringRatingJobBean;
@@ -28,6 +30,7 @@ public class RecurringChargeAsync {
     UnitRecurringRatingJobBean unitRecurringRatingJobBean;
 
     @Asynchronous
+    @TransactionAttribute(TransactionAttributeType.NEVER)
     public Future<String> launchAndForget(List<Long> ids, JobExecutionResultImpl result, User currentUser, Date maxDate) {
 
         for (Long id : ids) {
