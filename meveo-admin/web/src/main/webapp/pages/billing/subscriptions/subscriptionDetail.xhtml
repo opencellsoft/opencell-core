@@ -210,9 +210,18 @@
 										<p:panel styleClass="action-buttons">
                                                 <p:commandButton action="#{subscriptionBean.activateService}"
                                                     value="#{messages['button.activateButton']}" ajax="true"
-                                                    onclick="if(confirm('#{messages['confirmationMessage.confirmActivation']}')){return true;}else{return false;}"
-												update=":#{p:component('srvInstansFrm')} :#{p:component('operationFrm')} :subscriptionTab:headerInfo1Form:headerInfo1:messages"
-                                                    disabled="#{subscriptionBean.selectedServiceInstance==null || subscriptionBean.selectedServiceInstance.status!='INACTIVE'}" />
+													update=":#{p:component('srvInstansFrm')} :#{p:component('operationFrm')} :subscriptionTab:headerInfo1Form:headerInfo1:messages"
+                                                    disabled="#{subscriptionBean.selectedServiceInstance==null || subscriptionBean.selectedServiceInstance.status!='INACTIVE'}">
+													<p:confirm header="#{messages['message.confirmation']}"
+													message="#{messages['confirmationMessage.confirmActivation']}"
+													icon="ui-icon-alert" />
+													</p:commandButton>
+													<p:confirmDialog global="true" showEffect="fade" hideEffect="explode">
+													<p:commandButton value="#{messages['commons.yes']}" type="button"
+													styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+													<p:commandButton value="#{messages['commons.no']}" type="button"
+													styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+													</p:confirmDialog>
                                                 <p:commandButton
                                                     value="#{messages['button.terminateButton']}"
                                                     oncomplete="PF('dlg_serviceTerminationPopup').show()"
