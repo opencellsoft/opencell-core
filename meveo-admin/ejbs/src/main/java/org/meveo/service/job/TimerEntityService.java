@@ -31,12 +31,14 @@ import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
+import javax.persistence.NoResultException;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.admin.User;
+import org.meveo.model.crm.Provider;
 import org.meveo.model.jobs.JobCategoryEnum;
 import org.meveo.model.jobs.TimerEntity;
 import org.meveo.model.jobs.TimerInfoDto;
@@ -356,4 +358,15 @@ public class TimerEntityService extends PersistenceService<TimerEntity> {
         }
         return false;
     }
+    
+    public TimerEntity findByName(String name,Provider provider) {
+		QueryBuilder qb = new QueryBuilder(TimerEntity.class, "t");
+		qb.addCriterionWildcard("t.name", name, true); 
+		qb.addCriterionEntity("provider", provider);
+		try {
+            return (TimerEntity) qb.getQuery(getEntityManager()).getSingleResult();
+        } catch (NoResultException e) {
+            return null;
+        }
+	}
 }

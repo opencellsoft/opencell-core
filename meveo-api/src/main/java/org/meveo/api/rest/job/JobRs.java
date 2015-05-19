@@ -7,6 +7,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import org.meveo.api.dto.ActionStatus;
+import org.meveo.api.dto.job.TimerEntityDto;
 import org.meveo.api.rest.IBaseRs;
 import org.meveo.api.rest.security.RSSecured;
 import org.meveo.model.jobs.TimerInfoDto;
@@ -23,5 +24,9 @@ public interface JobRs extends IBaseRs {
 	@POST
 	@Path("/executeTimer")
 	ActionStatus executeTimer(TimerInfoDto postData);
+	
+	@Path("/create")
+	@POST
+	ActionStatus create(TimerEntityDto postData);
 
 }
