@@ -81,6 +81,15 @@
             searchField2="description" column1Label="#{messages['calendar.name']}" column1="code"
             column2Label="#{messages['BusinessEntity.description']}" column2="description">
         </hftl:entityPopup>        
+        <p:panel>
+			<h:form id="crumbmenuForm">
+				<p:breadCrumb homeDisplay="text" id="crumbmenu">
+					<p:menuitem value="#{messages['menu.rating']}" disabled="true" />
+					<p:menuitem outcome="pricePlanMatrixes"
+						value="#{messages['menu.pricePlanMatrixes']}" />
+				</p:breadCrumb>
+			</h:form>
+		</p:panel>
 
 		<hf:formPanel id="formPricePlanPanel"
 			label="#{messages['pricePlanMatrix.panel']}"

@@ -14,6 +14,15 @@
 	</ui:define>
 
 	<ui:define name="body">
+		<p:panel>
+			<h:form id="crumbmenuForm">
+				<p:breadCrumb homeDisplay="text" id="crumbmenu">
+					<p:menuitem value="#{messages['menu.payments']}" disabled="true" />
+					<p:menuitem outcome="dunningPlans"
+						value="#{messages['menu.dunningPlan']}" />
+				</p:breadCrumb>
+			</h:form>
+		</p:panel>
 		<p:panel header="#{messages['dunningPlan.panel']}" >
 			<p:tabView id="tabView" dynamic="true" cache="true">
 				<p:tab title="#{messages['dunningPlan.panel']}">

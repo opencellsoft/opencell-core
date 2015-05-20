@@ -9,7 +9,15 @@
 	</ui:define>
 
 	<ui:define name="body">
-
+		<p:panel>
+			<h:form id="crumbmenuForm">
+				<p:breadCrumb homeDisplay="text" id="crumbmenu">
+					<p:menuitem value="#{messages['menu.admin']}" disabled="true" />
+					<p:menuitem outcome="customFieldTemplates"
+						value="#{messages['menu.customFieldTemplates']}" />
+				</p:breadCrumb>
+			</h:form>
+		</p:panel>
 		<hf:formPanel id="formPanel"
 			label="#{messages['customFieldTemplate.panel']}"
 			backingBean="#{customFieldTemplateBean}" showEnableDisableButton="true">

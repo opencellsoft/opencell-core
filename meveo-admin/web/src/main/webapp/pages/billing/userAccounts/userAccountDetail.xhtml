@@ -35,7 +35,15 @@
 	</ui:define>
 
 	<ui:define name="body">
-
+		<p:panel>
+			<h:form id="crumbmenuForm">
+				<p:breadCrumb homeDisplay="text" id="crumbmenu">
+					<p:menuitem value="#{messages['menu.crm']}" disabled="true" />
+					<p:menuitem outcome="userAccounts"
+						value="#{messages['menu.userAccounts']}" />
+				</p:breadCrumb>
+			</h:form>
+		</p:panel>
 		<hftl:entityPopup id="billingAccountPopup"
 			header="#{messages['billingAccount.popup.header']}"
 			backingBean="#{billingAccountBean}"

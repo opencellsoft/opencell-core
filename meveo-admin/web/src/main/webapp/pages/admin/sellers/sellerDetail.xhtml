@@ -63,8 +63,15 @@
 				updateField=":sellerFormPanel:sellerFormId:sellerTab:parentSelectId">
 			</hftl:entityPopup>
 		</c:if>
-
-			<hf:formPanel id="sellerFormPanel" formId="sellerFormId"
+		<p:panel>
+			<h:form id="crumbmenuForm">
+				<p:breadCrumb homeDisplay="text" id="crumbmenu">
+					<p:menuitem value="#{messages['menu.admin']}" disabled="true" />
+					<p:menuitem outcome="sellers" value="#{messages['menu.sellers']}" />
+				</p:breadCrumb>
+			</h:form>
+		</p:panel>
+		<hf:formPanel id="sellerFormPanel" formId="sellerFormId"
 				label="#{messages['seller.title']}" backingBean="#{sellerBean}">
 
 				<p:tabView id="sellerTab">

@@ -12,7 +12,15 @@
 
 
     <ui:define name="body">
-
+    	<p:panel>
+			<h:form id="crumbmenuForm">
+				<p:breadCrumb homeDisplay="text" id="crumbmenu">
+					<p:menuitem value="#{messages['menu.reporting']}" disabled="true" />
+					<p:menuitem outcome="caches"
+						value="#{messages['menu.cacheInfo']}" />
+				</p:breadCrumb>
+			</h:form>
+		</p:panel>
         <p:panel styleClass="search-panel" header="#{messages['cache.cacheDetail.cacheName'].concat(cacheBean.cacheName)}" escape="false">
 
             <h:form>

@@ -548,3 +548,10 @@ vertical-align:top !important;
 .dtcolumn-hidden{
 	
 }
+.ui-widget-header{
+	border: none !important;
+}
+#crumbmenuForm{
+	border:none !important;
+	padding-bottom:0 !important;
+}

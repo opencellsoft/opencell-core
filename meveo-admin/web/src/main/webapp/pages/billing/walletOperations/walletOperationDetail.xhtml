@@ -7,6 +7,15 @@
     </ui:define>
 
     <ui:define name="body">
+    	<p:panel>
+			<h:form id="crumbmenuForm">
+				<p:breadCrumb homeDisplay="text" id="crumbmenu">
+					<p:menuitem value="#{messages['menu.rating']}" disabled="true" />
+					<p:menuitem outcome="walletOperations"
+						value="#{messages['menu.walletOperations']}" />
+				</p:breadCrumb>
+			</h:form>
+		</p:panel>
 
         <hf:formPanel id="formPanel" label="#{messages['walletOperation.panel']}" backingBean="#{walletOperationBean}" renderNewButton="false" showFormButtons="false">
 

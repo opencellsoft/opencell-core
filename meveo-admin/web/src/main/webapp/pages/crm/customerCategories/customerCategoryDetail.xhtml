@@ -1,17 +1,35 @@
-<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:f="http://java.sun.com/jsf/core"
-	xmlns:h="http://java.sun.com/jsf/html"   xmlns:hftl="http://hftl.org"
-	xmlns:hf="http://java.sun.com/jsf/composite/tags" template="/layout/template.xhtml">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:h="http://java.sun.com/jsf/html" xmlns:hftl="http://hftl.org"
+	xmlns:hf="http://java.sun.com/jsf/composite/tags"
+	template="/layout/template.xhtml">
 
 	<ui:define name="navigation">
 		<ui:include src="/layout/navigation.xhtml" />
 	</ui:define>
 
 	<ui:define name="body">
+		<p:panel>
+			<h:form id="crumbmenuForm">
+				<p:breadCrumb homeDisplay="text" id="crumbmenu">
+					<p:menuitem value="#{messages['menu.admin']}" disabled="true" />
+					<p:menuitem outcome="customerCategories" value="#{messages['menu.customerCategories']}" />
+				</p:breadCrumb>
+			</h:form>
+		</p:panel>
 
-		<hf:formPanel label="#{messages['customerCategory.panel']}" backingBean="#{customerCategoryBean}">
-			<hf:formField label="#{messages['businessEntity.code']}" field="code" validateUnique="true" required="true" />
-			<hf:formField label="#{messages['businessEntity.description']}" field="description" useConverter="false" id="description" maxlength="50" required="true" />
-			<hf:formField label="#{messages['customerCategory.exoneratedFromTaxes']}" field="exoneratedFromTaxes"/>
+		<hf:formPanel label="#{messages['customerCategory.panel']}"
+			backingBean="#{customerCategoryBean}">
+			<hf:formField label="#{messages['businessEntity.code']}" field="code"
+				validateUnique="true" required="true" />
+			<hf:formField label="#{messages['businessEntity.description']}"
+				field="description" useConverter="false" id="description"
+				maxlength="50" required="true" />
+			<hf:formField
+				label="#{messages['customerCategory.exoneratedFromTaxes']}"
+				field="exoneratedFromTaxes" />
 		</hf:formPanel>
 	</ui:define>
 

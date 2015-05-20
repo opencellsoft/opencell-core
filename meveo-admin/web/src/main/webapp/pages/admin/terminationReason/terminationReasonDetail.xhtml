@@ -12,6 +12,15 @@
 	</ui:define>
 
 	<ui:define name="body">
+		<p:panel>
+			<h:form id="crumbmenuForm">
+				<p:breadCrumb homeDisplay="text" id="crumbmenu">
+					<p:menuitem value="#{messages['menu.admin']}" disabled="true" />
+					<p:menuitem outcome="terminationReasons"
+						value="#{messages['menu.terminationReason']}" />
+				</p:breadCrumb>
+			</h:form>
+		</p:panel>
 		<hf:formPanel label="#{messages['terminationReason.title']}"
 			backingBean="#{terminationReasonBean}" columns="2">
 			<hf:formField label="#{messages['BusinessEntity.code']}" field="code"

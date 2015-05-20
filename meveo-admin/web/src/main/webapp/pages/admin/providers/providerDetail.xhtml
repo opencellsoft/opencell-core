@@ -22,8 +22,17 @@
 				column2="descriptionEn" eventBackingBean="#{providerBean}">
 			</hftl:entityPopup>
 		</c:if>
-		
-			<hf:formPanel id="providerFormPanel" formId="providerFormId"
+		<p:panel>
+			<h:form id="crumbmenuForm">
+				<p:breadCrumb homeDisplay="text" id="crumbmenu">
+					<p:menuitem value="#{messages['menu.admin']}" disabled="true" />
+					<p:menuitem outcome="providers"
+						value="#{messages['menu.providers']}" />
+				</p:breadCrumb>
+			</h:form>
+		</p:panel>
+
+		<hf:formPanel id="providerFormPanel" formId="providerFormId"
 				label="#{messages['provider.title']}" backingBean="#{providerBean}">
 
 							<hf:formField label="#{messages['businessEntity.code']}"
