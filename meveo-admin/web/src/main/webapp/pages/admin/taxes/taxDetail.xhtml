@@ -1,18 +1,35 @@
-<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:s="http://jboss.com/products/seam/taglib" xmlns:ui="http://java.sun.com/jsf/facelets"
-	xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html"
-	xmlns:hftl="http://hftl.org" xmlns:hf="http://java.sun.com/jsf/composite/tags" xmlns:p="http://primefaces.org/ui"
-	template="/layout/template.xhtml">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html" xmlns:hftl="http://hftl.org"
+	xmlns:hf="http://java.sun.com/jsf/composite/tags"
+	xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
 
 	<ui:define name="navigation">
 		<ui:include src="/layout/navigation.xhtml" />
 	</ui:define>
 
 	<ui:define name="body">
-		<hf:formPanel label="#{messages['tax.panel']}" backingBean="#{taxBean}" columns="1">
-			<hf:formField label="#{messages['tax.code']}" field="code" required="true" />
+		<p:panel>
+			<h:form id="crumbmenuForm">
+				<p:breadCrumb homeDisplay="text" id="crumbmenu">
+					<p:menuitem value="#{messages['menu.admin']}" disabled="true" />
+					<p:menuitem outcome="taxes"
+						value="#{messages['menu.taxes']}" />
+				</p:breadCrumb>
+			</h:form>
+		</p:panel>
+		<hf:formPanel label="#{messages['tax.panel']}"
+			backingBean="#{taxBean}" columns="1">
+			<hf:formField label="#{messages['tax.code']}" field="code"
+				required="true" />
 			<hf:languageFields />
-			<hf:formField label="#{messages['tax.percent']}" field="percent" required="true" />
-			<hf:formField label="#{messages['invoiceSubCategory.accountingCode']}" field="accountingCode" />
+			<hf:formField label="#{messages['tax.percent']}" field="percent"
+				required="true" />
+			<hf:formField
+				label="#{messages['invoiceSubCategory.accountingCode']}"
+				field="accountingCode" />
 		</hf:formPanel>
 
 	</ui:define>

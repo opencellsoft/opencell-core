@@ -27,7 +27,15 @@
 			column2="description"
 			dataModel="#{counterTemplateBean.getLazyDataModel('NOTIFICATION')}">
 		</hftl:entityPopup>
-
+		<p:panel>
+			<h:form id="crumbmenuForm">
+				<p:breadCrumb homeDisplay="text" id="crumbmenu">
+					<p:menuitem value="#{messages['menu.reporting']}" disabled="true" />
+					<p:menuitem outcome="webHooks"
+						value="#{messages['menu.webHooks']}" />
+				</p:breadCrumb>
+			</h:form>
+		</p:panel>
 		<hf:formPanel id="webHookForm" label="#{messages['menu.webHook']}"
 			backingBean="#{webHookBean}" columns="4" showEnableDisableButton="true">
 

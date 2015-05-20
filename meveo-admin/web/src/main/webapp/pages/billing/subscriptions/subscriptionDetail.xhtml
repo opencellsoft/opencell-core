@@ -102,6 +102,15 @@
 			selection="#{subscriptionBean.recurringChargeInstance.chargeTemplate}"
 			updateField=":recurringChgForm1Panel:recurringChgForm1:RCchargeTemplateSelectId">
 		</hftl:entityPopup>
+		<p:panel>
+			<h:form id="crumbmenuForm">
+				<p:breadCrumb homeDisplay="text" id="crumbmenu">
+					<p:menuitem value="#{messages['menu.crm']}" disabled="true" />
+					<p:menuitem outcome="subscriptions"
+						value="#{messages['menu.subscriptions']}" />
+				</p:breadCrumb>
+			</h:form>
+		</p:panel>
 
 		<p:dialog id="serviceTerminationPopup"
 			header="#{messages['serviceTerminationPopup.title']}"
@@ -201,7 +210,7 @@
 											label="#{messages['serviceInstance.endAgrementDate']}"
 											field="endAgrementDate" showSortLinks="false" isDate="true" />
 										<hftl:actionsColumn editView="serviceInstanceDetail"
-											renderDeleteLink="false"
+											renderDeleteLink="false" backView="subscriptionDetailWithNavigation"
 											objectIdParamName="serviceInstanceId" />
 									</p:dataTable>
 								</h:form>

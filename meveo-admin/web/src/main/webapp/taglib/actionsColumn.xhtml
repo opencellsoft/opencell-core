@@ -23,6 +23,7 @@
         renderDeleteLink - should render "delete" button
         renderEnableLink - should render "enable" button
         editView - specifies view/edit link outcome.
+        backView - specifies back link outcome
         propagateConversation - propagate conversation id in a link to an entity view 
         renderLinkInEdit - should a link to an entity view open edit mode
         useCustomIdParam and objectIdParamName - should a custom parameter id instead of a default "objectId" be used for navigation 
@@ -81,6 +82,10 @@
 				<f:param name="cid"
 					value="#{javax.enterprise.context.conversation.id}" />
 			</c:if>
+			<c:if test="${not empty backView}">
+				<f:param name="backView"
+					value="#{backView}" />
+			</c:if>
 		</p:button>
 
 		<p:tooltip for="#{resultsId}editlink"
@@ -93,6 +98,10 @@
 			<c:if test="${propagateConversation}">
 				<f:param name="cid"
 					value="#{javax.enterprise.context.conversation.id}" />
+			</c:if>
+			<c:if test="${not empty backView}">
+				<f:param name="backView"
+					value="#{backView}" />
 			</c:if>
 		</p:button>
 		<p:tooltip for="#{resultsId}duplicatelink"

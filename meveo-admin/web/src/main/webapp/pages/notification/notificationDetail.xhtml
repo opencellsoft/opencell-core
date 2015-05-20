@@ -12,7 +12,15 @@
 	</ui:define>
 
 	<ui:define name="body">
-
+		<p:panel>
+			<h:form id="crumbmenuForm">
+				<p:breadCrumb homeDisplay="text" id="crumbmenu">
+					<p:menuitem value="#{messages['menu.reporting']}" disabled="true" />
+					<p:menuitem outcome="notifications"
+						value="#{messages['menu.notifications']}" />
+				</p:breadCrumb>
+			</h:form>
+		</p:panel>
 		<hf:formPanel id="notificationForm"
 			label="#{messages['menu.notification']}"
 			backingBean="#{notificationBean}" columns="2" showEnableDisableButton="true">

@@ -3,18 +3,23 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html"
-	
-	
+	xmlns:p="http://primefaces.org/ui"
 	xmlns:hftl="http://hftl.org" xmlns:hf="http://java.sun.com/jsf/composite/tags"
 	template="/layout/template.xhtml">
 
 	<ui:define name="navigation">
 		<ui:include src="/layout/navigation.xhtml" />
 	</ui:define>
-
- 
-	
 	<ui:define name="body"> 
+		<p:panel>
+			<h:form id="crumbmenuForm">
+				<p:breadCrumb homeDisplay="text" id="crumbmenu">
+					<p:menuitem value="#{messages['menu.payments']}" disabled="true" />
+					<p:menuitem outcome="ddrequestLotOps"
+						value="#{messages['menu.ddrequestLotOp']}" />
+				</p:breadCrumb>
+			</h:form>
+		</p:panel>
 		<hf:formPanel  formId="FormId"  label="#{messages['menu.ddrequestLotOp']}" backingBean="#{ddRequestLotOpBean}">
 		 
 			<hf:formField label="#{messages['ddrequestLotOp.fromDueDate']}"  field="fromDueDate" required="true" isMessage="true"/>

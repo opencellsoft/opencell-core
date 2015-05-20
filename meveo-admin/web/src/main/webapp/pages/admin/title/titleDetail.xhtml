@@ -1,16 +1,33 @@
-<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:hf="http://java.sun.com/jsf/composite/tags"
-    template="/layout/template.xhtml">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:hf="http://java.sun.com/jsf/composite/tags"
+	template="/layout/template.xhtml">
 
-    <ui:define name="navigation">
-        <ui:include src="/layout/navigation.xhtml" />
-    </ui:define>
+	<ui:define name="navigation">
+		<ui:include src="/layout/navigation.xhtml" />
+	</ui:define>
 
-    <ui:define name="body">
+	<ui:define name="body">
+		<p:panel>
+			<h:form id="crumbmenuForm">
+				<p:breadCrumb homeDisplay="text" id="crumbmenu">
+					<p:menuitem value="#{messages['menu.admin']}" disabled="true" />
+					<p:menuitem outcome="titles" value="#{messages['menu.titles']}" />
+				</p:breadCrumb>
+			</h:form>
+		</p:panel>
 
-        <hf:formPanel label="#{messages['title.panel']}" backingBean="#{titleBean}">
-            <hf:formField label="#{messages['title.code']}" field="code" required="true" validateUnique="true" />
-            <hf:formField label="#{messages['title.isCompany']}" field="isCompany" />
-            <hf:languageFields />
-        </hf:formPanel>
-    </ui:define>
+		<hf:formPanel label="#{messages['title.panel']}"
+			backingBean="#{titleBean}">
+			<hf:formField label="#{messages['title.code']}" field="code"
+				required="true" validateUnique="true" />
+			<hf:formField label="#{messages['title.isCompany']}"
+				field="isCompany" />
+			<hf:languageFields />
+		</hf:formPanel>
+	</ui:define>
 </ui:composition>

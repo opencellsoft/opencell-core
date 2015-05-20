@@ -6,6 +6,7 @@
 	xmlns:hftl="http://hftl.org"
 	xmlns:hf="http://java.sun.com/jsf/composite/tags"
 	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:p="http://primefaces.org/ui"
 	template="/layout/template.xhtml">
 
 	<ui:define name="navigation">
@@ -24,6 +25,15 @@
 			column2Label="#{messages['tradingLanguage.prDescription']}"
 			column2="descriptionEn" eventBackingBean="#{tradingCountryBean}">
 		</hftl:entityPopup>
+		<p:panel>
+			<h:form id="crumbmenuForm">
+				<p:breadCrumb homeDisplay="text" id="crumbmenu">
+					<p:menuitem value="#{messages['menu.admin']}" disabled="true" />
+					<p:menuitem outcome="tradingCountries"
+						value="#{messages['menu.tradingCountries']}" />
+				</p:breadCrumb>
+			</h:form>
+		</p:panel>
 
 		<hf:formPanel id="formPanel" 
 			label="#{messages['tradingCountry.tradingCountryPanel']}"

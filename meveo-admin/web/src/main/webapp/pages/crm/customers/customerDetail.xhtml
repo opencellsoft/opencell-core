@@ -21,8 +21,15 @@
 	</ui:define>
 
 	<ui:define name="body">
-
-
+		<p:panel>
+			<h:form id="crumbmenuForm">
+				<p:breadCrumb homeDisplay="text" id="crumbmenu">
+					<p:menuitem value="#{messages['menu.crm']}" disabled="true" />
+					<p:menuitem outcome="customers"
+						value="#{messages['menu.customers']}" />
+				</p:breadCrumb>
+			</h:form>
+		</p:panel>
 		<hftl:entityPopup id="sellerParentPopup"
 			header="#{messages['seller.title']}" backingBean="#{sellerBean}"
 			searchField1Label="#{messages['BusinessEntity.code']}"

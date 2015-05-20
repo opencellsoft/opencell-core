@@ -24,6 +24,15 @@
 			column2Label="#{messages['invoiceSubCategory.description']}"
 			column2="description" filtersMap="#{invoiceSubCategoryBean.filters}">
 		</hftl:entityPopup>
+		<p:panel>
+			<h:form id="crumbmenuForm">
+				<p:breadCrumb homeDisplay="text" id="crumbmenu">
+					<p:menuitem value="#{messages['menu.catalog']}" disabled="true" />
+					<p:menuitem outcome="oneShotChargeTemplates"
+						value="#{messages['menu.oneShotChargeTemplates']}" />
+				</p:breadCrumb>
+			</h:form>
+		</p:panel>
 
 		<hf:formPanel id="formPanel"
 			label="#{messages['oneShotChargeTemplate.chargeTemplatePanel']}"

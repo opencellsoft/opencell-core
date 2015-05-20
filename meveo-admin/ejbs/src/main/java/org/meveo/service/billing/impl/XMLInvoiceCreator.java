@@ -83,7 +83,7 @@ import org.w3c.dom.Text;
 @Stateless
 public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 
-	private static final String dueDateFormat = "yyyy-MM-dd";
+	private  String dueDateFormat = "yyyy-MM-dd";
 
 	@Inject
 	private InvoiceService invoiceService;
@@ -538,7 +538,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 		parent.appendChild(addressTag);
 	}
 
-	public static void addproviderContact(AccountEntity account, Document doc, Element parent) {
+	public  void addproviderContact(AccountEntity account, Document doc, Element parent) {
 
 		//log.debug("add provider");
 
@@ -589,7 +589,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 
 	}
 
-	public static void addPaymentInfo(BillingAccount billingAccount, Document doc, Element parent) {
+	public  void addPaymentInfo(BillingAccount billingAccount, Document doc, Element parent) {
 
 		//log.debug("add payment info");
 
@@ -1065,7 +1065,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 
 	}
 
-	private static String round(BigDecimal amount, Integer scale) {
+	private  String round(BigDecimal amount, Integer scale) {
 		if (amount == null) {
 			amount = BigDecimal.ZERO;
 		}

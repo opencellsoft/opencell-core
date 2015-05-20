@@ -13,8 +13,15 @@
 	</ui:define>
 
 	<ui:define name="body">
-
-
+		<p:panel>
+			<h:form id="crumbmenuForm">
+				<p:breadCrumb homeDisplay="text" id="crumbmenu">
+					<p:menuitem value="#{messages['menu.reporting']}" disabled="true" />
+					<p:menuitem outcome="charts"
+						value="#{messages['menu.charts']}" />
+				</p:breadCrumb>
+			</h:form>
+		</p:panel>
 		<hftl:entityPopup id="searchMeasurableQuantity"
 			header="#{messages['measurableQuantity.popup.header']}"
 			updateField=":chartFormPanel:formChat:measurableQuantityId"

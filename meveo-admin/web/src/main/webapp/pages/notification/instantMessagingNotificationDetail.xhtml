@@ -8,6 +8,15 @@
     </ui:define>
 
     <ui:define name="body">
+    	<p:panel>
+			<h:form id="crumbmenuForm">
+				<p:breadCrumb homeDisplay="text" id="crumbmenu">
+					<p:menuitem value="#{messages['menu.reporting']}" disabled="true" />
+					<p:menuitem outcome="inboundRequests"
+						value="#{messages['menu.inboundRequests']}" />
+				</p:breadCrumb>
+			</h:form>
+		</p:panel>
 
         <hftl:entityPopup id="searchCounterTemplatePopup" header="#{messages['counterTemplate.title']}"
             updateField=":instantMessagingNotificationForm:formId:counterTemplateSelectedId"

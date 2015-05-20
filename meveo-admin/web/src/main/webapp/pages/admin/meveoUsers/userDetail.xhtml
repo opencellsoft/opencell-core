@@ -14,6 +14,14 @@
 
 	<ui:define name="body">
 	
+		<p:panel>
+			<h:form id="crumbmenuForm">
+			<p:breadCrumb homeDisplay="text" id="crumbmenu">
+				<p:menuitem value="#{messages['menu.admin']}" disabled="true"/>
+				<p:menuitem outcome="users" value="#{messages['menu.users']}"/>
+			</p:breadCrumb>
+			</h:form>
+		</p:panel>
 		<hf:formPanel id="formPanel" label="#{messages['user.userPanel']}"
 			backingBean="#{userBean}" columns="1">
 			<hf:formField label="#{messages['user.userName']}" field="userName"

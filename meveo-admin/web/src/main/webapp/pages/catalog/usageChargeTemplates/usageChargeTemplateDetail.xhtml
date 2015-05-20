@@ -25,6 +25,15 @@
 			column2Label="#{messages['invoiceSubCategory.description']}"
 			column2="description">
 		</hftl:entityPopup>
+		<p:panel>
+			<h:form id="crumbmenuForm">
+				<p:breadCrumb homeDisplay="text" id="crumbmenu">
+					<p:menuitem value="#{messages['menu.catalog']}" disabled="true" />
+					<p:menuitem outcome="usageChargeTemplates"
+						value="#{messages['menu.usageChargeTemplates']}" />
+				</p:breadCrumb>
+			</h:form>
+		</p:panel>
 
 		<hf:formPanel id="panelUsage" formId="usageChargeId"
 			label="#{messages['usageChargeTemplate.title']}"

@@ -12,6 +12,15 @@
 	</ui:define>
 
 	<ui:define name="body">
+		<p:panel>
+			<h:form id="crumbmenuForm">
+				<p:breadCrumb homeDisplay="text" id="crumbmenu">
+					<p:menuitem value="#{messages['menu.catalog']}" disabled="true" />
+					<p:menuitem outcome="offerTemplates"
+						value="#{messages['menu.offerTemplates']}" />
+				</p:breadCrumb>
+			</h:form>
+		</p:panel>
 
 		<hf:formPanel label="#{messages['offerTemplate.offerTemplatePanel']}"
 			backingBean="#{offerTemplateBean}" showEnableDisableButton="true">

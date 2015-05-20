@@ -1,10 +1,8 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
-	
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html"
-	
-	
+	xmlns:p="http://primefaces.org/ui"
 	xmlns:hftl="http://hftl.org" xmlns:hf="http://java.sun.com/jsf/composite/tags"
 	template="/layout/template.xhtml">
 
@@ -13,7 +11,15 @@
 	</ui:define>
 
 	<ui:define name="body">
-	
+		<p:panel>
+			<h:form id="crumbmenuForm">
+				<p:breadCrumb homeDisplay="text" id="crumbmenu">
+					<p:menuitem value="#{messages['menu.payments']}" disabled="true" />
+					<p:menuitem outcome="occTemplates"
+						value="#{messages['menu.occTemplates']}" />
+				</p:breadCrumb>
+			</h:form>
+		</p:panel>
 		<hf:formPanel label="#{messages['occTemplate.title']}" backingBean="#{occTemplateBean}" >
 			<hf:formField label="#{messages['businessEntity.code']}" field="code" validateUnique="true" required="true"/>
 			<hf:formField label="#{messages['businessEntity.description']}" field="description" required="true"/>

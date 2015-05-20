@@ -28,7 +28,15 @@
 	</ui:define>
 
 	<ui:define name="body">
-
+		<p:panel>
+			<h:form id="crumbmenuForm">
+				<p:breadCrumb homeDisplay="text" id="crumbmenu">
+					<p:menuitem value="#{messages['menu.crm']}" disabled="true" />
+					<p:menuitem outcome="billingAccounts"
+						value="#{messages['menu.billingAccounts']}" />
+				</p:breadCrumb>
+			</h:form>
+		</p:panel>
 		<c:if test="${billingAccountBean.edit}">
 
 			<hftl:entityPopup id="customerAccountPopup"
@@ -85,6 +93,7 @@
 			</hftl:entityPopup>
 
 		</c:if>
+		
 
         <h:panelGroup styleClass="col2-set">
             <h:panelGroup styleClass="col1">

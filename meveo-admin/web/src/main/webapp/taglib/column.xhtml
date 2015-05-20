@@ -165,7 +165,7 @@
 		<c:if test="#{not empty entityView}">
 			<c:set var="attrId" value="#{field.replaceAll('\\.','\\_')}_#{valueIdField.replaceAll('\\.','\\_')}" />
 		</c:if>
-
+		
 		<!-- If field is not list, then it means it is either another entity or enum. -->
 		<c:if test="#{not isList}">
 			<c:if test="#{empty entityView}">
@@ -216,6 +216,10 @@
 					<c:if test="${propagateConversation}">
 						<f:param name="cid"
 							value="#{javax.enterprise.context.conversation.id}" />
+					</c:if>
+					<c:if test="${not empty backView}">
+						<f:param name="backView"
+							value="#{backView}" />
 					</c:if>
 				</h:link>
 				<p:tooltip rendered="#{not empty popupFields}"
@@ -269,14 +273,14 @@
 					</c:forEach>
 					<c:set var="attrId"
 						value="#{field.replaceAll('\\.','\\_')}_#{attrId}" />
-					<hf:linkToEntity linkId="#{attrId}_message_link"
+					<hf:linkToEntity linkId="#{attrId}_message_link" objectIdParamName="#{objectIdParamName}"
 						rendered="#{isMessage}" entityId="#{valueId}" entity="#{c}"
 						popupFields="#{popupFields}" value="#{valueLabel}"
-						view="#{entityView}" />
+						view="#{entityView}" backView="#{backView}"/>
 					<hf:linkToEntity linkId="#{attrId}_message_link"
-						rendered="#{not isMessage}" entity="#{c}"
+						rendered="#{not isMessage}" entity="#{c}" objectIdParamName="#{objectIdParamName}"
 						popupFields="#{popupFields}" entityId="#{valueId}"
-						value="#{valueLabel}" view="#{entityView}" />
+						value="#{valueLabel}" view="#{entityView}" backView="#{backView}"/>
 				</c:if>
 				<br />
 			</ui:repeat>

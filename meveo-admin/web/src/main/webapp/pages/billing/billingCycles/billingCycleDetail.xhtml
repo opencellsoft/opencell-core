@@ -5,6 +5,7 @@
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:hftl="http://hftl.org"
 	xmlns:hf="http://java.sun.com/jsf/composite/tags"
+	xmlns:p="http://primefaces.org/ui"
 	template="/layout/template.xhtml">
 
 	<ui:define name="navigation">
@@ -12,6 +13,15 @@
 	</ui:define>
 
 	<ui:define name="body">
+		<p:panel>
+			<h:form id="crumbmenuForm">
+				<p:breadCrumb homeDisplay="text" id="crumbmenu">
+					<p:menuitem value="#{messages['menu.admin']}" disabled="true" />
+					<p:menuitem outcome="billingCycles"
+						value="#{messages['menu.billingCycles']}" />
+				</p:breadCrumb>
+			</h:form>
+		</p:panel>
 
 		<hf:formPanel edit="#{billingCycleBean.edit}"
 			label="#{messages['billingCycle.panel']}"

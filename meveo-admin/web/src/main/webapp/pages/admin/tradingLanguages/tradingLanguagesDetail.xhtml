@@ -4,6 +4,7 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:hftl="http://hftl.org"
+	xmlns:p="http://primefaces.org/ui"
 	xmlns:hf="http://java.sun.com/jsf/composite/tags"
 	xmlns:c="http://java.sun.com/jstl/core"
 	template="/layout/template.xhtml">
@@ -27,7 +28,15 @@
 				column2="descriptionEn" eventBackingBean="#{tradingLanguageBean}">
 			</hftl:entityPopup>
 		</c:if>
-
+		<p:panel>
+			<h:form id="crumbmenuForm">
+				<p:breadCrumb homeDisplay="text" id="crumbmenu">
+					<p:menuitem value="#{messages['menu.admin']}" disabled="true" />
+					<p:menuitem outcome="tradingLanguages"
+						value="#{messages['menu.comLanguages']}" />
+				</p:breadCrumb>
+			</h:form>
+		</p:panel>
 		<hf:formPanel id="formPanel" formId="languagesFormId"
 			label="#{messages['tradingLanguage.tradingLanguagePanel']}"
 			backingBean="#{tradingLanguageBean}" showEnableDisableButton="true">

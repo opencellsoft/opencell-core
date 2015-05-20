@@ -23,6 +23,15 @@
 	</ui:define>
 
 	<ui:define name="body">
+		<p:panel>
+			<h:form id="crumbmenuForm">
+				<p:breadCrumb homeDisplay="text" id="crumbmenu">
+					<p:menuitem value="#{messages['menu.reporting']}" disabled="true" />
+					<p:menuitem outcome="measurableQuantities"
+						value="#{messages['menu.measurableQuantities']}" />
+				</p:breadCrumb>
+			</h:form>
+		</p:panel>
 
 		<hf:formPanel id="measurableQuantityForm"
 			backingBean="#{measurableQuantityBean}" columns="1">
