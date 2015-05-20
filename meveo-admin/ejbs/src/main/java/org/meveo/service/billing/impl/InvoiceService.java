@@ -413,9 +413,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
 		 
 			ParamBean paramBean = ParamBean.getInstance();
 			log.info("PDFInvoiceGenerationJob is invoice key exists="
-					+ parameters != null ? parameters
+					+ ((parameters != null) ? parameters
 					.containsKey(PdfGeneratorConstants.INVOICE) + ""
-					: "parameters is null");
+					: "parameters is null"));
 
 			Invoice invoice = (Invoice) parameters
 					.get(PdfGeneratorConstants.INVOICE);
@@ -442,8 +442,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
 			BillingCycle billingCycle = invoice.getBillingRun()
 					.getBillingCycle();
 			BillingAccount billingAccount = invoice.getBillingAccount();
-			String billingTemplate = billingCycle != null
-					&& billingCycle.getBillingTemplateName() != null ? billingCycle
+			String billingTemplate = (billingCycle != null
+					&& billingCycle.getBillingTemplateName() != null) ? billingCycle
 					.getBillingTemplateName() : "default";
 			String resDir = meveoDir + "jasper";
 			File jasperFile = getJasperTemplateFile(resDir, billingTemplate,
