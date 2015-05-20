@@ -1097,12 +1097,13 @@
 			<from-outcome>serviceInstanceDetail</from-outcome>
 			<to-view-id>/pages/resource/serviceInstances/serviceInstanceDetail.xhtml
 			</to-view-id>
-			<redirect include-view-params="true">
-				<view-param>
-					<name>backView</name>
-					<value>subscriptionDetailWithNavigation</value>
-				</view-param>
-			</redirect>
+			<redirect include-view-params="true"/>
+<!-- 			<redirect include-view-params="true"> -->
+<!-- 				<view-param> -->
+<!-- 					<name>backView</name> -->
+<!-- 					<value>subscriptionDetailWithNavigation</value> -->
+<!-- 				</view-param> -->
+<!-- 			</redirect> -->
 		</navigation-case>
 		<navigation-case>
 			<from-outcome>serviceParameterInstances</from-outcome>
