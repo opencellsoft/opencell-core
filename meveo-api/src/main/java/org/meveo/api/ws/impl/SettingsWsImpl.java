@@ -47,8 +47,8 @@ import org.meveo.api.dto.response.GetSellerResponse;
 import org.meveo.api.dto.response.GetTaxResponse;
 import org.meveo.api.dto.response.GetTradingConfigurationResponseDto;
 import org.meveo.api.dto.response.GetUserResponse;
-import org.meveo.api.dto.response.ListSellerCodesResponseDto;
-import org.meveo.api.dto.response.ListSellerResponseDto;
+import org.meveo.api.dto.response.SellerCodesResponseDto;
+import org.meveo.api.dto.response.SellerResponseDto;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.LoggingInterceptor;
 import org.meveo.api.ws.SettingsWs;
@@ -722,8 +722,8 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
 	}
 
 	@Override
-	public ListSellerCodesResponseDto listSellerCodes() {
-		ListSellerCodesResponseDto result = new ListSellerCodesResponseDto();
+	public SellerCodesResponseDto listSellerCodes() {
+		SellerCodesResponseDto result = new SellerCodesResponseDto();
 
 		try {
 			result = sellerApi.listSellerCodes(getCurrentUser().getProvider());
@@ -1060,8 +1060,8 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
 	}
 
 	@Override
-	public ListSellerResponseDto listSeller() {
-		ListSellerResponseDto result = new ListSellerResponseDto();
+	public SellerResponseDto listSeller() {
+		SellerResponseDto result = new SellerResponseDto();
 
 		try {
 			result.setSellers(sellerApi.list(getCurrentUser().getProvider()));
@@ -1076,7 +1076,7 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
 	}
 
 	@Override
-	public GetTradingConfigurationResponseDto getTradingConfiguration() {
+	public GetTradingConfigurationResponseDto findTradingConfiguration() {
 		GetTradingConfigurationResponseDto result = new GetTradingConfigurationResponseDto();
 
 		try {
@@ -1096,7 +1096,7 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
 	}
 
 	@Override
-	public GetInvoicingConfigurationResponseDto getInvoicingConfiguration() {
+	public GetInvoicingConfigurationResponseDto findInvoicingConfiguration() {
 		GetInvoicingConfigurationResponseDto result = new GetInvoicingConfigurationResponseDto();
 
 		try {
@@ -1116,7 +1116,7 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
 	}
 
 	@Override
-	public GetCustomerConfigurationResponseDto getCustomerConfiguration() {
+	public GetCustomerConfigurationResponseDto findCustomerConfiguration() {
 		GetCustomerConfigurationResponseDto result = new GetCustomerConfigurationResponseDto();
 
 		try {
@@ -1136,7 +1136,7 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
 	}
 
 	@Override
-	public GetCustomerAccountConfigurationResponseDto getCustomerAccountConfiguration() {
+	public GetCustomerAccountConfigurationResponseDto findCustomerAccountConfiguration() {
 		GetCustomerAccountConfigurationResponseDto result = new GetCustomerAccountConfigurationResponseDto();
 
 		try {

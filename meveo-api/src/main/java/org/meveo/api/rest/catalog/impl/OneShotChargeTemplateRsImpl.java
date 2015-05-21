@@ -14,7 +14,7 @@ import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.catalog.OneShotChargeTemplateDto;
 import org.meveo.api.dto.catalog.OneShotChargeTemplateWithPriceListDto;
-import org.meveo.api.dto.response.catalog.GetOneShotChargeTemplateResponse;
+import org.meveo.api.dto.response.catalog.GetOneShotChargeTemplateResponseDto;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.LoggingInterceptor;
 import org.meveo.api.rest.catalog.OneShotChargeTemplateRs;
@@ -88,8 +88,8 @@ public class OneShotChargeTemplateRsImpl extends BaseRs implements OneShotCharge
 	}
 
 	@Override
-	public GetOneShotChargeTemplateResponse find(String oneShotChargeTemplateCode) {
-		GetOneShotChargeTemplateResponse result = new GetOneShotChargeTemplateResponse();
+	public GetOneShotChargeTemplateResponseDto find(String oneShotChargeTemplateCode) {
+		GetOneShotChargeTemplateResponseDto result = new GetOneShotChargeTemplateResponseDto();
 
 		try {
 			result.setOneShotChargeTemplate(oneShotChargeTemplateApi.find(oneShotChargeTemplateCode, getCurrentUser()

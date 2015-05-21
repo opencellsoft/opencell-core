@@ -33,8 +33,8 @@ import org.meveo.api.dto.response.GetSellerResponse;
 import org.meveo.api.dto.response.GetTaxResponse;
 import org.meveo.api.dto.response.GetTradingConfigurationResponseDto;
 import org.meveo.api.dto.response.GetUserResponse;
-import org.meveo.api.dto.response.ListSellerCodesResponseDto;
-import org.meveo.api.dto.response.ListSellerResponseDto;
+import org.meveo.api.dto.response.SellerCodesResponseDto;
+import org.meveo.api.dto.response.SellerResponseDto;
 
 /**
  * @author Edward P. Legaspi
@@ -82,10 +82,10 @@ public interface SettingsWs extends IBaseWs {
 	public ActionStatus removeSeller(@WebParam(name = "sellerCode") String sellerCode);
 
 	@WebMethod
-	public ListSellerResponseDto listSeller();
+	public SellerResponseDto listSeller();
 
 	@WebMethod
-	ListSellerCodesResponseDto listSellerCodes();
+	SellerCodesResponseDto listSellerCodes();
 
 	// language
 
@@ -217,15 +217,15 @@ public interface SettingsWs extends IBaseWs {
 	// configuration
 
 	@WebMethod
-	GetTradingConfigurationResponseDto getTradingConfiguration();
+	GetTradingConfigurationResponseDto findTradingConfiguration();
 
 	@WebMethod
-	GetInvoicingConfigurationResponseDto getInvoicingConfiguration();
+	GetInvoicingConfigurationResponseDto findInvoicingConfiguration();
 
 	@WebMethod
-	GetCustomerConfigurationResponseDto getCustomerConfiguration();
+	GetCustomerConfigurationResponseDto findCustomerConfiguration();
 
 	@WebMethod
-	GetCustomerAccountConfigurationResponseDto getCustomerAccountConfiguration();
+	GetCustomerAccountConfigurationResponseDto findCustomerAccountConfiguration();
 
 }

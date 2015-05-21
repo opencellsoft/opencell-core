@@ -10,14 +10,14 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 import org.meveo.api.dto.ActionStatus;
-import org.meveo.api.dto.account.ApplyOneShotChargeInstanceDto;
-import org.meveo.api.dto.billing.ActivateServicesDto;
-import org.meveo.api.dto.billing.InstantiateServicesDto;
+import org.meveo.api.dto.account.ApplyOneShotChargeInstanceRequestDto;
+import org.meveo.api.dto.billing.ActivateServicesRequestDto;
+import org.meveo.api.dto.billing.InstantiateServicesRequestDto;
 import org.meveo.api.dto.billing.SubscriptionDto;
-import org.meveo.api.dto.billing.TerminateSubscriptionDto;
-import org.meveo.api.dto.billing.TerminateSubscriptionServicesDto;
+import org.meveo.api.dto.billing.TerminateSubscriptionRequestDto;
+import org.meveo.api.dto.billing.TerminateSubscriptionServicesRequestDto;
 import org.meveo.api.dto.response.billing.GetSubscriptionResponseDto;
-import org.meveo.api.dto.response.billing.ListSubscriptionResponseDto;
+import org.meveo.api.dto.response.billing.SubscriptionsResponseDto;
 import org.meveo.api.rest.IBaseRs;
 import org.meveo.api.rest.security.RSSecured;
 
@@ -40,23 +40,23 @@ public interface SubscriptionRs extends IBaseRs {
 
 	@POST
 	@Path("/instantiateServices")
-	ActionStatus instantiateServices(InstantiateServicesDto postData);
+	ActionStatus instantiateServices(InstantiateServicesRequestDto postData);
 
 	@POST
 	@Path("/activateServices")
-	ActionStatus activateServices(ActivateServicesDto postData);
+	ActionStatus activateServices(ActivateServicesRequestDto postData);
 
 	@POST
 	@Path("/applyOneShotChargeInstance")
-	ActionStatus applyOneShotChargeInstance(ApplyOneShotChargeInstanceDto postData);
+	ActionStatus applyOneShotChargeInstance(ApplyOneShotChargeInstanceRequestDto postData);
 
 	@POST
 	@Path("/terminate")
-	ActionStatus terminateSubscription(TerminateSubscriptionDto postData);
+	ActionStatus terminateSubscription(TerminateSubscriptionRequestDto postData);
 
 	@POST
 	@Path("/terminateServices")
-	ActionStatus terminateServices(TerminateSubscriptionServicesDto postData);
+	ActionStatus terminateServices(TerminateSubscriptionServicesRequestDto postData);
 
 	/**
 	 * List Subscription filter by userAccountCode.
@@ -66,7 +66,7 @@ public interface SubscriptionRs extends IBaseRs {
 	 */
 	@GET
 	@Path("/list")
-	ListSubscriptionResponseDto listByUserAccount(@QueryParam("userAccountCode") String userAccountCode);
+	SubscriptionsResponseDto listByUserAccount(@QueryParam("userAccountCode") String userAccountCode);
 
 	@GET
 	@Path("/")

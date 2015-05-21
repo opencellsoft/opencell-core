@@ -28,6 +28,7 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.annotation.Resource;
+import javax.ejb.SessionContext;
 import javax.enterprise.context.Conversation;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
@@ -103,6 +104,9 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
     protected Event<E> entityRemovedEventProducer;
 
     private Provider provider;
+    
+    @Resource
+    private SessionContext sessionContext;
 
     /**
      * Constructor.
@@ -292,9 +296,15 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
     public void remove(E e) {
         log.debug("start of remove {} entity (id={}) ..", getEntityClass().getSimpleName(), e.getId());
         checkProvider(e);
-        getEntityManager().remove(e);
-        if (e.getClass().isAnnotationPresent(ObservableEntity.class)) {
-            entityRemovedEventProducer.fire(e);
+        try{
+        	sessionContext.setRollbackOnly();
+        	getEntityManager().remove(e);
+        	getEntityManager().flush();
+        	if (e.getClass().isAnnotationPresent(ObservableEntity.class)) {
+        		entityRemovedEventProducer.fire(e);
+        	}
+        }catch(Exception ex){
+        	log.error("failed to remove {}",e,ex);
         }
         // getEntityManager().flush();
         log.debug("end of remove {} entity (id={}).", getEntityClass().getSimpleName(), e.getId());
@@ -315,11 +325,18 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
      */
     @Override
     public void remove(Set<Long> ids) {
-		Query query = getEntityManager().createQuery(
-				"delete from " + getEntityClass().getName() + " where id in (:ids) and provider.id = :providerId");
-        query.setParameter("ids", ids);
-        query.setParameter("providerId", getCurrentProvider() != null ? getCurrentProvider().getId() : null);
-        query.executeUpdate();
+    	try{
+			sessionContext.setRollbackOnly();
+			Query query = getEntityManager().createQuery("delete from "
+							+ getEntityClass().getName() + " where id in (:ids) and provider.id = :providerId");
+			query.setParameter("ids", ids);
+			query.setParameter("providerId",getCurrentProvider() != null ? getCurrentProvider().getId()	: null);
+			query.executeUpdate();
+			getEntityManager().flush();
+		} catch (Exception e) {
+			log.error("failed to remove many",e);
+		}
+    	log.info("end of remove many entity");
     }
 
     /**
@@ -579,10 +596,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
                             // if searching elements from list
                             String parsedKey = key.substring(12);
                             String[] kss=parsedKey.split("-");
-                            System.out.println("#####minmaxRange ####"+kss.length);
                             if(kss.length==2){
-                            	System.out.println("#####minmaxRange ####"+kss[0]);
-                            	System.out.println("#####minmaxRange ####"+kss[1]);
                             	if (filter instanceof Double) {
                                     BigDecimal rationalNumber = new BigDecimal((Double) filter);
                                     queryBuilder.addCriterion("a." + kss[0], " <= ", rationalNumber, false);
@@ -607,7 +621,6 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
                             // if searching elements from list
                             String parsedKey = key.substring(14);
                             String[] fields=parsedKey.split("-");
-                            System.out.println("#####likeCriterias ####"+fields.length);
                             queryBuilder.startOrClause();
                             for(String field:fields){
                             	if(filter instanceof String){

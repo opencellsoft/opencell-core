@@ -9,8 +9,8 @@ import org.meveo.api.account.UserAccountApi;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.account.UserAccountDto;
-import org.meveo.api.dto.response.account.GetUserAccountResponse;
-import org.meveo.api.dto.response.account.ListUserAccountResponseDto;
+import org.meveo.api.dto.response.account.GetUserAccountResponseDto;
+import org.meveo.api.dto.response.account.UserAccountsResponseDto;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.LoggingInterceptor;
 import org.meveo.api.rest.account.UserAccountRs;
@@ -71,8 +71,8 @@ public class UserAccountRsImpl extends BaseRs implements UserAccountRs {
 	}
 
 	@Override
-	public GetUserAccountResponse find(String userAccountCode) {
-		GetUserAccountResponse result = new GetUserAccountResponse();
+	public GetUserAccountResponseDto find(String userAccountCode) {
+		GetUserAccountResponseDto result = new GetUserAccountResponseDto();
 
 		try {
 			result.setUserAccount(userAccountApi.find(userAccountCode, getCurrentUser().getProvider()));
@@ -111,8 +111,8 @@ public class UserAccountRsImpl extends BaseRs implements UserAccountRs {
 	}
 
 	@Override
-	public ListUserAccountResponseDto listByBillingAccount(String billingAccountCode) {
-		ListUserAccountResponseDto result = new ListUserAccountResponseDto();
+	public UserAccountsResponseDto listByBillingAccount(String billingAccountCode) {
+		UserAccountsResponseDto result = new UserAccountsResponseDto();
 
 		try {
 			result.setUserAccounts(userAccountApi.listByBillingAccount(billingAccountCode, getCurrentUser()

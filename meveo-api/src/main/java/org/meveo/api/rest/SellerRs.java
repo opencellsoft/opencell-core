@@ -14,8 +14,8 @@ import javax.ws.rs.core.MediaType;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.SellerDto;
 import org.meveo.api.dto.response.GetSellerResponse;
-import org.meveo.api.dto.response.ListSellerCodesResponseDto;
-import org.meveo.api.dto.response.ListSellerResponseDto;
+import org.meveo.api.dto.response.SellerCodesResponseDto;
+import org.meveo.api.dto.response.SellerResponseDto;
 import org.meveo.api.rest.security.RSSecured;
 
 /**
@@ -77,10 +77,10 @@ public interface SellerRs extends IBaseRs {
 	 */
 	@Path("/list")
 	@GET
-	ListSellerResponseDto list();
+	SellerResponseDto list();
 
 	@Path("/listSellerCodes")
 	@GET
-	ListSellerCodesResponseDto listSellerCodes();
+	SellerCodesResponseDto listSellerCodes();
 
 }

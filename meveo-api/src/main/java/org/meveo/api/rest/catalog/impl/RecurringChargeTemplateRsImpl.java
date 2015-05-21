@@ -9,7 +9,7 @@ import org.meveo.api.catalog.RecurringChargeTemplateApi;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.catalog.RecurringChargeTemplateDto;
-import org.meveo.api.dto.response.catalog.GetRecurringChargeTemplateResponse;
+import org.meveo.api.dto.response.catalog.GetRecurringChargeTemplateResponseDto;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.LoggingInterceptor;
 import org.meveo.api.rest.catalog.RecurringChargeTemplateRs;
@@ -50,8 +50,8 @@ public class RecurringChargeTemplateRsImpl extends BaseRs implements RecurringCh
 	}
 
 	@Override
-	public GetRecurringChargeTemplateResponse find(String recurringChargeTemplateCode) {
-		GetRecurringChargeTemplateResponse result = new GetRecurringChargeTemplateResponse();
+	public GetRecurringChargeTemplateResponseDto find(String recurringChargeTemplateCode) {
+		GetRecurringChargeTemplateResponseDto result = new GetRecurringChargeTemplateResponseDto();
 
 		try {
 			result.setRecurringChargeTemplate(recurringChargeTemplateApi.find(recurringChargeTemplateCode,

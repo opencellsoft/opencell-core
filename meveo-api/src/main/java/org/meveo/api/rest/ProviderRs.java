@@ -61,18 +61,18 @@ public interface ProviderRs extends IBaseRs {
 
 	@GET
 	@Path("/getTradingConfiguration")
-	GetTradingConfigurationResponseDto getTradingConfiguration();
+	GetTradingConfigurationResponseDto findTradingConfiguration();
 
 	@GET
 	@Path("/getInvoicingConfiguration")
-	GetInvoicingConfigurationResponseDto getInvoicingConfiguration();
+	GetInvoicingConfigurationResponseDto findInvoicingConfiguration();
 
 	@GET
 	@Path("/getCustomerConfiguration")
-	GetCustomerConfigurationResponseDto getCustomerConfiguration();
+	GetCustomerConfigurationResponseDto findCustomerConfiguration();
 
 	@GET
 	@Path("/getCustomerAccountConfiguration")
-	GetCustomerAccountConfigurationResponseDto getCustomerAccountConfiguration();
+	GetCustomerAccountConfigurationResponseDto findCustomerAccountConfiguration();
 
 }

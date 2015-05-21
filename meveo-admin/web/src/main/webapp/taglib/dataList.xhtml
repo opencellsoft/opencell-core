@@ -109,7 +109,7 @@
 				value="#{dataModel}" paginator="true" rows="10" editable="#{editable}" editMode="#{editMode}"  widgetVar="cellEntity"
 				selection="#{backingBean.selectedEntities}" sortBy="#{'sortBy'}" sortField="#{sortBy}" sortOrder="#{sortOrder}"
 				paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
-				rowsPerPageTemplate="#{rowsPerPage}" lazy="true"
+				rowsPerPageTemplate="#{rowsPerPage}" lazy="true" resizableColumns="true"
 				binding="#{backingBean.dataTable}" styleClass="custom-grid"
 				rowKey="#{entity.id}" first="#{backingBean.dataTableFirstAttribute}" reflow="true">
 				<p:ajax event="page" listener="#{backingBean.onPageChange}" />

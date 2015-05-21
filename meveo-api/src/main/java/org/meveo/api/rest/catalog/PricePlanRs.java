@@ -13,7 +13,7 @@ import javax.ws.rs.core.MediaType;
 
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.catalog.PricePlanDto;
-import org.meveo.api.dto.response.catalog.GetPricePlanResponse;
+import org.meveo.api.dto.response.catalog.GetPricePlanResponseDto;
 import org.meveo.api.rest.IBaseRs;
 import org.meveo.api.rest.security.RSSecured;
 
@@ -56,7 +56,7 @@ public interface PricePlanRs extends IBaseRs {
 	 */
 	@Path("/")
 	@GET
-	GetPricePlanResponse find(@QueryParam("pricePlanCode") String pricePlanCode);
+	GetPricePlanResponseDto find(@QueryParam("pricePlanCode") String pricePlanCode);
 
 	/**
 	 * Remove price plan with a given id.

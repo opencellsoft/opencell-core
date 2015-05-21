@@ -9,25 +9,23 @@ import org.meveo.api.dto.account.AccessDto;
 import org.meveo.api.dto.account.AccountHierarchyDto;
 import org.meveo.api.dto.account.BillingAccountDto;
 import org.meveo.api.dto.account.CustomerAccountDto;
-import org.meveo.api.dto.account.CustomerBrandDto;
-import org.meveo.api.dto.account.CustomerCategoryDto;
 import org.meveo.api.dto.account.CustomerDto;
 import org.meveo.api.dto.account.CustomerHierarchyDto;
 import org.meveo.api.dto.account.UserAccountDto;
 import org.meveo.api.dto.payment.AccountOperationDto;
 import org.meveo.api.dto.payment.DunningInclusionExclusionDto;
 import org.meveo.api.dto.response.CustomerListResponse;
-import org.meveo.api.dto.response.account.GetAccessResponse;
-import org.meveo.api.dto.response.account.GetBillingAccountResponse;
-import org.meveo.api.dto.response.account.GetCustomerAccountResponse;
-import org.meveo.api.dto.response.account.GetCustomerResponse;
-import org.meveo.api.dto.response.account.GetUserAccountResponse;
-import org.meveo.api.dto.response.account.ListAccessResponseDto;
-import org.meveo.api.dto.response.account.ListBillingAccountResponseDto;
-import org.meveo.api.dto.response.account.ListCustomerAccountResponseDto;
-import org.meveo.api.dto.response.account.ListCustomerResponseDto;
-import org.meveo.api.dto.response.account.ListUserAccountResponseDto;
-import org.meveo.api.dto.response.payment.ListAccountOperationsResponseDto;
+import org.meveo.api.dto.response.account.AccessesResponseDto;
+import org.meveo.api.dto.response.account.BillingAccountsResponseDto;
+import org.meveo.api.dto.response.account.CustomerAccountsResponseDto;
+import org.meveo.api.dto.response.account.CustomersResponseDto;
+import org.meveo.api.dto.response.account.GetAccessResponseDto;
+import org.meveo.api.dto.response.account.GetBillingAccountResponseDto;
+import org.meveo.api.dto.response.account.GetCustomerAccountResponseDto;
+import org.meveo.api.dto.response.account.GetCustomerResponseDto;
+import org.meveo.api.dto.response.account.GetUserAccountResponseDto;
+import org.meveo.api.dto.response.account.UserAccountsResponseDto;
+import org.meveo.api.dto.response.payment.AccountOperationsResponseDto;
 
 /**
  * @author Edward P. Legaspi
@@ -44,25 +42,13 @@ public interface AccountWs extends IBaseWs {
 	ActionStatus updateCustomer(@WebParam(name = "customer") CustomerDto postData);
 
 	@WebMethod
-	GetCustomerResponse findCustomer(@WebParam(name = "customerCode") String customerCode);
+	GetCustomerResponseDto findCustomer(@WebParam(name = "customerCode") String customerCode);
 
 	@WebMethod
 	ActionStatus removeCustomer(@WebParam(name = "customerCode") String customerCode);
 
 	@WebMethod
-	ListCustomerResponseDto listCustomerWithFilter(@WebParam(name = "customer") CustomerDto postData);
-
-	@WebMethod
-	ActionStatus createCustomerBrand(@WebParam(name = "customerBrand") CustomerBrandDto postData);
-
-	@WebMethod
-	ActionStatus createCustomerCategory(@WebParam(name = "customerCategory") CustomerCategoryDto postData);
-
-	@WebMethod
-	ActionStatus removeCustomerBrand(@WebParam(name = "brandCode") String brandCode);
-
-	@WebMethod
-	ActionStatus removeCustomerCategory(@WebParam(name = "categoryCode") String categoryCode);
+	CustomersResponseDto listCustomerWithFilter(@WebParam(name = "customer") CustomerDto postData);
 
 	// customer account
 
@@ -73,13 +59,13 @@ public interface AccountWs extends IBaseWs {
 	ActionStatus updateCustomerAccount(@WebParam(name = "customerAccount") CustomerAccountDto postData);
 
 	@WebMethod
-	GetCustomerAccountResponse findCustomerAccount(@WebParam(name = "customerAccountCode") String customerAccountCode);
+	GetCustomerAccountResponseDto findCustomerAccount(@WebParam(name = "customerAccountCode") String customerAccountCode);
 
 	@WebMethod
 	ActionStatus removeCustomerAccount(@WebParam(name = "customerAccountCode") String customerAccountCode);
 
 	@WebMethod
-	ListCustomerAccountResponseDto listByCustomer(@WebParam(name = "customerCode") String customerCode);
+	CustomerAccountsResponseDto listByCustomer(@WebParam(name = "customerCode") String customerCode);
 
 	// billing account
 
@@ -90,13 +76,13 @@ public interface AccountWs extends IBaseWs {
 	ActionStatus updateBillingAccount(@WebParam(name = "billingAccount") BillingAccountDto postData);
 
 	@WebMethod
-	GetBillingAccountResponse findBillingAccount(@WebParam(name = "billingAccountCode") String billingAccountCode);
+	GetBillingAccountResponseDto findBillingAccount(@WebParam(name = "billingAccountCode") String billingAccountCode);
 
 	@WebMethod
 	ActionStatus removeBillingAccount(@WebParam(name = "billingAccountCode") String billingAccountCode);
 
 	@WebMethod
-	ListBillingAccountResponseDto listByCustomerAccount(@WebParam(name = "customerAccountCode") String customerAccountCode);
+	BillingAccountsResponseDto listByCustomerAccount(@WebParam(name = "customerAccountCode") String customerAccountCode);
 
 	// user account
 
@@ -107,13 +93,13 @@ public interface AccountWs extends IBaseWs {
 	ActionStatus updateUserAccount(@WebParam(name = "userAccount") UserAccountDto postData);
 
 	@WebMethod
-	GetUserAccountResponse findUserAccount(@WebParam(name = "userAccountCode") String userAccountCode);
+	GetUserAccountResponseDto findUserAccount(@WebParam(name = "userAccountCode") String userAccountCode);
 
 	@WebMethod
 	ActionStatus removeUserAccount(@WebParam(name = "userAccountCode") String userAccountCode);
 
 	@WebMethod
-	ListUserAccountResponseDto listByBillingAccount(@WebParam(name = "billingAccountCode") String billingAccountCode);
+	UserAccountsResponseDto listByBillingAccount(@WebParam(name = "billingAccountCode") String billingAccountCode);
 
 	// access
 
@@ -124,13 +110,13 @@ public interface AccountWs extends IBaseWs {
 	ActionStatus updateAccess(@WebParam(name = "access") AccessDto postData);
 
 	@WebMethod
-	GetAccessResponse findAccess(@WebParam(name = "accessCode") String accessCode, @WebParam(name = "subscriptionCode") String subscriptionCode);
+	GetAccessResponseDto findAccess(@WebParam(name = "accessCode") String accessCode, @WebParam(name = "subscriptionCode") String subscriptionCode);
 
 	@WebMethod
 	ActionStatus removeAccess(@WebParam(name = "accessCode") String accessCode, @WebParam(name = "subscriptionCode") String subscriptionCode);
 
 	@WebMethod
-	ListAccessResponseDto listAccess(@WebParam(name = "subscriptionCode") String subscriptionCode);
+	AccessesResponseDto listAccess(@WebParam(name = "subscriptionCode") String subscriptionCode);
 
 	// account hierarchy
 
@@ -154,7 +140,7 @@ public interface AccountWs extends IBaseWs {
 	ActionStatus createAccountOperation(@WebParam(name = "accountOperation") AccountOperationDto postData);
 
 	@WebMethod
-	ListAccountOperationsResponseDto listAccountOperations(@WebParam(name = "customerAccountCode") String customerAccountCode);
+	AccountOperationsResponseDto listAccountOperations(@WebParam(name = "customerAccountCode") String customerAccountCode);
 
 	// dunning
 

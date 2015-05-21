@@ -28,14 +28,14 @@ import org.meveo.api.dto.catalog.ServiceTemplateDto;
 import org.meveo.api.dto.catalog.TriggeredEdrTemplateDto;
 import org.meveo.api.dto.catalog.UsageChargeTemplateDto;
 import org.meveo.api.dto.response.catalog.GetChargeTemplateResponseDto;
-import org.meveo.api.dto.response.catalog.GetCounterTemplateResponse;
-import org.meveo.api.dto.response.catalog.GetOfferTemplateResponse;
-import org.meveo.api.dto.response.catalog.GetOneShotChargeTemplateResponse;
-import org.meveo.api.dto.response.catalog.GetPricePlanResponse;
-import org.meveo.api.dto.response.catalog.GetRecurringChargeTemplateResponse;
-import org.meveo.api.dto.response.catalog.GetServiceTemplateResponse;
+import org.meveo.api.dto.response.catalog.GetCounterTemplateResponseDto;
+import org.meveo.api.dto.response.catalog.GetOfferTemplateResponseDto;
+import org.meveo.api.dto.response.catalog.GetOneShotChargeTemplateResponseDto;
+import org.meveo.api.dto.response.catalog.GetPricePlanResponseDto;
+import org.meveo.api.dto.response.catalog.GetRecurringChargeTemplateResponseDto;
+import org.meveo.api.dto.response.catalog.GetServiceTemplateResponseDto;
 import org.meveo.api.dto.response.catalog.GetTriggeredEdrResponseDto;
-import org.meveo.api.dto.response.catalog.GetUsageChargeTemplateResponse;
+import org.meveo.api.dto.response.catalog.GetUsageChargeTemplateResponseDto;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.LoggingInterceptor;
 import org.meveo.api.ws.CatalogWs;
@@ -120,8 +120,8 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 	}
 
 	@Override
-	public GetCounterTemplateResponse findCounterTemplate(String counterTemplateCode) {
-		GetCounterTemplateResponse result = new GetCounterTemplateResponse();
+	public GetCounterTemplateResponseDto findCounterTemplate(String counterTemplateCode) {
+		GetCounterTemplateResponseDto result = new GetCounterTemplateResponseDto();
 
 		try {
 			result.setCounterTemplate(counterTemplateApi.find(counterTemplateCode, getCurrentUser().getProvider()));
@@ -200,8 +200,8 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 	}
 
 	@Override
-	public GetOfferTemplateResponse findOfferTemplate(String offerTemplateCode) {
-		GetOfferTemplateResponse result = new GetOfferTemplateResponse();
+	public GetOfferTemplateResponseDto findOfferTemplate(String offerTemplateCode) {
+		GetOfferTemplateResponseDto result = new GetOfferTemplateResponseDto();
 
 		try {
 			result.setOfferTemplate(offerTemplateApi.find(offerTemplateCode, getCurrentUser().getProvider()));
@@ -280,8 +280,8 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 	}
 
 	@Override
-	public GetOneShotChargeTemplateResponse findOneShotChargeTemplate(String oneShotChargeTemplateCode) {
-		GetOneShotChargeTemplateResponse result = new GetOneShotChargeTemplateResponse();
+	public GetOneShotChargeTemplateResponseDto findOneShotChargeTemplate(String oneShotChargeTemplateCode) {
+		GetOneShotChargeTemplateResponseDto result = new GetOneShotChargeTemplateResponseDto();
 
 		try {
 			result.setOneShotChargeTemplate(oneShotChargeTemplateApi.find(oneShotChargeTemplateCode, getCurrentUser().getProvider()));
@@ -372,8 +372,8 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 	}
 
 	@Override
-	public GetPricePlanResponse findPricePlan(String pricePlanCode) {
-		GetPricePlanResponse result = new GetPricePlanResponse();
+	public GetPricePlanResponseDto findPricePlan(String pricePlanCode) {
+		GetPricePlanResponseDto result = new GetPricePlanResponseDto();
 
 		try {
 			result.setPricePlan(pricePlanApi.find(pricePlanCode, getCurrentUser().getProvider()));
@@ -452,8 +452,8 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 	}
 
 	@Override
-	public GetRecurringChargeTemplateResponse findRecurringChargeTemplate(String recurringChargeTemplateCode) {
-		GetRecurringChargeTemplateResponse result = new GetRecurringChargeTemplateResponse();
+	public GetRecurringChargeTemplateResponseDto findRecurringChargeTemplate(String recurringChargeTemplateCode) {
+		GetRecurringChargeTemplateResponseDto result = new GetRecurringChargeTemplateResponseDto();
 
 		try {
 			result.setRecurringChargeTemplate(recurringChargeTemplateApi.find(recurringChargeTemplateCode, getCurrentUser().getProvider()));
@@ -552,8 +552,8 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 	}
 
 	@Override
-	public GetServiceTemplateResponse findServiceTemplate(String serviceTemplateCode) {
-		GetServiceTemplateResponse result = new GetServiceTemplateResponse();
+	public GetServiceTemplateResponseDto findServiceTemplate(String serviceTemplateCode) {
+		GetServiceTemplateResponseDto result = new GetServiceTemplateResponseDto();
 
 		try {
 			result.setServiceTemplate(serviceTemplateApi.find(serviceTemplateCode, getCurrentUser().getProvider()));
@@ -632,8 +632,8 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 	}
 
 	@Override
-	public GetUsageChargeTemplateResponse findUsageChargeTemplate(String usageChargeTemplateCode) {
-		GetUsageChargeTemplateResponse result = new GetUsageChargeTemplateResponse();
+	public GetUsageChargeTemplateResponseDto findUsageChargeTemplate(String usageChargeTemplateCode) {
+		GetUsageChargeTemplateResponseDto result = new GetUsageChargeTemplateResponseDto();
 
 		try {
 			result.setUsageChargeTemplate(usageChargeTemplateApi.find(usageChargeTemplateCode, getCurrentUser().getProvider()));

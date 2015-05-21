@@ -41,7 +41,6 @@ public class UnitUsageRatingJobBean {
     @Rejected
     Event<Serializable> rejectededEdrProducer;
 
-    @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void execute(JobExecutionResultImpl result, User currentUser, Long edrId) {
 

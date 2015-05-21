@@ -13,7 +13,7 @@ import javax.ws.rs.core.MediaType;
 
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.catalog.CounterTemplateDto;
-import org.meveo.api.dto.response.catalog.GetCounterTemplateResponse;
+import org.meveo.api.dto.response.catalog.GetCounterTemplateResponseDto;
 import org.meveo.api.rest.IBaseRs;
 import org.meveo.api.rest.security.RSSecured;
 
@@ -54,7 +54,7 @@ public interface CounterTemplateRs extends IBaseRs {
 	 */
 	@Path("/")
 	@GET
-	GetCounterTemplateResponse find(
+	GetCounterTemplateResponseDto find(
 			@QueryParam("counterTemplateCode") String counterTemplateCode);
 
 	/**

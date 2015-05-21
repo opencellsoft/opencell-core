@@ -94,7 +94,7 @@ public class ProviderRsImpl extends BaseRs implements ProviderRs {
 	}
 
 	@Override
-	public GetTradingConfigurationResponseDto getTradingConfiguration() {
+	public GetTradingConfigurationResponseDto findTradingConfiguration() {
 		GetTradingConfigurationResponseDto result = new GetTradingConfigurationResponseDto();
 
 		try {
@@ -114,7 +114,7 @@ public class ProviderRsImpl extends BaseRs implements ProviderRs {
 	}
 
 	@Override
-	public GetInvoicingConfigurationResponseDto getInvoicingConfiguration() {
+	public GetInvoicingConfigurationResponseDto findInvoicingConfiguration() {
 		GetInvoicingConfigurationResponseDto result = new GetInvoicingConfigurationResponseDto();
 
 		try {
@@ -134,7 +134,7 @@ public class ProviderRsImpl extends BaseRs implements ProviderRs {
 	}
 
 	@Override
-	public GetCustomerConfigurationResponseDto getCustomerConfiguration() {
+	public GetCustomerConfigurationResponseDto findCustomerConfiguration() {
 		GetCustomerConfigurationResponseDto result = new GetCustomerConfigurationResponseDto();
 
 		try {
@@ -154,7 +154,7 @@ public class ProviderRsImpl extends BaseRs implements ProviderRs {
 	}
 
 	@Override
-	public GetCustomerAccountConfigurationResponseDto getCustomerAccountConfiguration() {
+	public GetCustomerAccountConfigurationResponseDto findCustomerAccountConfiguration() {
 		GetCustomerAccountConfigurationResponseDto result = new GetCustomerAccountConfigurationResponseDto();
 
 		try {

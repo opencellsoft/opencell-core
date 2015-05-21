@@ -12,8 +12,8 @@ import org.meveo.api.dto.notification.WebhookNotificationDto;
 import org.meveo.api.dto.response.notification.GetEmailNotificationResponseDto;
 import org.meveo.api.dto.response.notification.GetNotificationResponseDto;
 import org.meveo.api.dto.response.notification.GetWebHookNotificationResponseDto;
-import org.meveo.api.dto.response.notification.ListInboundRequestResponseDto;
-import org.meveo.api.dto.response.notification.ListNotificationHistoryResponseDto;
+import org.meveo.api.dto.response.notification.InboundRequestsResponseDto;
+import org.meveo.api.dto.response.notification.NotificationHistoriesResponseDto;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.LoggingInterceptor;
 import org.meveo.api.notification.EmailNotificationApi;
@@ -294,8 +294,8 @@ public class NotificationWsImpl extends BaseWs implements NotificationWs {
 	}
 
 	@Override
-	public ListNotificationHistoryResponseDto listNotificationHistory() {
-		ListNotificationHistoryResponseDto result = new ListNotificationHistoryResponseDto();
+	public NotificationHistoriesResponseDto listNotificationHistory() {
+		NotificationHistoriesResponseDto result = new NotificationHistoriesResponseDto();
 
 		try {
 			result.setNotificationHistories(notificationApi.listNotificationHistory(getCurrentUser().getProvider()));
@@ -315,8 +315,8 @@ public class NotificationWsImpl extends BaseWs implements NotificationWs {
 	}
 
 	@Override
-	public ListInboundRequestResponseDto listInboundRequest() {
-		ListInboundRequestResponseDto result = new ListInboundRequestResponseDto();
+	public InboundRequestsResponseDto listInboundRequest() {
+		InboundRequestsResponseDto result = new InboundRequestsResponseDto();
 
 		try {
 			result.setInboundRequests(notificationApi.listInboundRequest(getCurrentUser().getProvider()));

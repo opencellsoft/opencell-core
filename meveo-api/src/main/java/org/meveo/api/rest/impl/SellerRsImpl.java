@@ -10,8 +10,8 @@ import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.SellerDto;
 import org.meveo.api.dto.response.GetSellerResponse;
-import org.meveo.api.dto.response.ListSellerCodesResponseDto;
-import org.meveo.api.dto.response.ListSellerResponseDto;
+import org.meveo.api.dto.response.SellerCodesResponseDto;
+import org.meveo.api.dto.response.SellerResponseDto;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.LoggingInterceptor;
 import org.meveo.api.rest.SellerRs;
@@ -111,8 +111,8 @@ public class SellerRsImpl extends BaseRs implements SellerRs {
 	}
 
 	@Override
-	public ListSellerResponseDto list() {
-		ListSellerResponseDto result = new ListSellerResponseDto();
+	public SellerResponseDto list() {
+		SellerResponseDto result = new SellerResponseDto();
 
 		try {
 			result.setSellers(sellerApi.list(getCurrentUser().getProvider()));
@@ -127,8 +127,8 @@ public class SellerRsImpl extends BaseRs implements SellerRs {
 	}
 
 	@Override
-	public ListSellerCodesResponseDto listSellerCodes() {
-		ListSellerCodesResponseDto result = new ListSellerCodesResponseDto();
+	public SellerCodesResponseDto listSellerCodes() {
+		SellerCodesResponseDto result = new SellerCodesResponseDto();
 
 		try {
 			result = sellerApi.listSellerCodes(getCurrentUser().getProvider());

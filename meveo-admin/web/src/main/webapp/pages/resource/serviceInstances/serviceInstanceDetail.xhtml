@@ -13,7 +13,7 @@
 				value="#{serviceInstanceBean.objectId}"></f:viewParam>
 			<f:viewParam name="subscriptionId"
 				value="#{subscriptionBean.objectId}" />
-            <f:viewParam name="backView"/>
+<!--             <f:viewParam name="backView"/> -->
 		</f:metadata>
 	</ui:define>
 
@@ -22,7 +22,15 @@
 	</ui:define>
 
 	<ui:define name="body">
-
+		<p:panel>
+			<h:form id="crumbmenuForm">
+				<p:breadCrumb homeDisplay="text" id="crumbmenu">
+					<p:menuitem value="#{messages['menu.crm']}" disabled="true" />
+					<p:menuitem outcome="subscriptions"
+						value="#{messages['menu.subscriptions']}" />
+				</p:breadCrumb>
+			</h:form>
+		</p:panel>
 		<hftl:entityPopup id="serviceTemplatePopup"
 			header="#{messages['serviceTemplate.popup.header']}"
 			backingBean="#{serviceTemplateBean}"
@@ -51,8 +59,8 @@
             updateField=":formPanel:formId:subscriptionSelectedId">
 		</hftl:entityPopup>
 
-		<hf:formPanel label="#{messages['serviceInstance.panel']}" id="formPanel"
-			backingBean="#{serviceInstanceBean}" columns="2" objectIdParamName="serviceInstanceId" >
+		<hf:formPanel label="#{messages['serviceInstance.panel']}" id="formPanel" killConversationOnBack="false" killConversationOnSave="false"
+			backingBean="#{serviceInstanceBean}" columns="2" objectIdParamName="serviceInstanceId">
 
 			<hf:formField id="serviceSelectedId"
 				label="#{messages['serviceInstance.code']}" field="serviceTemplate"

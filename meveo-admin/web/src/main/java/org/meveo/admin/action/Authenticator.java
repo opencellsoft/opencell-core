@@ -50,6 +50,9 @@ public class Authenticator extends BaseAuthenticator {
 	@Inject @LoggedIn
 	protected Event<User> userEventProducer;
 	
+	@Inject
+	private CheckUpdateBean checkUpdateBean;
+	
 	private static final Logger log = LoggerFactory.getLogger(Authenticator.class);
 
 	//
@@ -162,7 +165,6 @@ public class Authenticator extends BaseAuthenticator {
 				messages.info(new BundleKey("messages", "user.error.login"));
 			}
 		}
-
 		if (user == null) {
 			setStatus(AuthenticationStatus.FAILURE);
 		} else {
@@ -187,6 +189,7 @@ public class Authenticator extends BaseAuthenticator {
 
             setUser(meveoUser);
             userEventProducer.fire(user);
+            checkUpdateBean.checkVersion();
             log.debug("End of authenticating");
 		}
 	}
