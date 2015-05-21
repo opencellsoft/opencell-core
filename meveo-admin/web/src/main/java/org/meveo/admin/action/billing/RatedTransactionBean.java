@@ -22,9 +22,11 @@ import javax.inject.Named;
 
 import org.meveo.admin.action.BaseBean;
 import org.meveo.model.billing.RatedTransaction;
+import org.meveo.model.billing.WalletOperation;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.RatedTransactionService;
+import org.meveo.service.billing.impl.WalletOperationService;
 import org.omnifaces.cdi.ViewScoped;
 
 /**
@@ -45,6 +47,9 @@ public class RatedTransactionBean extends BaseBean<RatedTransaction> {
 	 */
 	@Inject
 	private RatedTransactionService ratedTransactionService;
+	
+	@Inject
+	private WalletOperationService walletOperationService;
 
 	/**
 	 * Constructor. Invokes super constructor and provides class type of this
@@ -73,6 +78,11 @@ public class RatedTransactionBean extends BaseBean<RatedTransaction> {
 	@Override
 	protected IPersistenceService<RatedTransaction> getPersistenceService() {
 		return ratedTransactionService;
+	}
+	
+	public String getWalletOperationCode(Long walletOperationId){
+	WalletOperation walletOperation = walletOperationService.findById(walletOperationId);
+    return walletOperation!=null?walletOperation.getCode():null;
 	}
 
 }
