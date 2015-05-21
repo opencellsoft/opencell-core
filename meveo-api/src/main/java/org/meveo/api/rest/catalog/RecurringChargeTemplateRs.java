@@ -13,7 +13,7 @@ import javax.ws.rs.core.MediaType;
 
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.catalog.RecurringChargeTemplateDto;
-import org.meveo.api.dto.response.catalog.GetRecurringChargeTemplateResponse;
+import org.meveo.api.dto.response.catalog.GetRecurringChargeTemplateResponseDto;
 import org.meveo.api.rest.IBaseRs;
 import org.meveo.api.rest.security.RSSecured;
 
@@ -47,7 +47,7 @@ public interface RecurringChargeTemplateRs extends IBaseRs {
 	 */
 	@GET
 	@Path("/")
-	public GetRecurringChargeTemplateResponse find(
+	public GetRecurringChargeTemplateResponseDto find(
 			@QueryParam("recurringChargeTemplateCode") String recurringChargeTemplateCode);
 
 	/**

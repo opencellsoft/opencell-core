@@ -9,8 +9,8 @@ import org.meveo.api.account.CustomerApi;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.account.CustomerDto;
-import org.meveo.api.dto.response.account.GetCustomerResponse;
-import org.meveo.api.dto.response.account.ListCustomerResponseDto;
+import org.meveo.api.dto.response.account.GetCustomerResponseDto;
+import org.meveo.api.dto.response.account.CustomersResponseDto;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.LoggingInterceptor;
 import org.meveo.api.rest.account.CustomerRs;
@@ -71,8 +71,8 @@ public class CustomerRsImpl extends BaseRs implements CustomerRs {
 	}
 
 	@Override
-	public GetCustomerResponse find(String customerCode) {
-		GetCustomerResponse result = new GetCustomerResponse();
+	public GetCustomerResponseDto find(String customerCode) {
+		GetCustomerResponseDto result = new GetCustomerResponseDto();
 
 		try {
 			result.setCustomer(customerApi.find(customerCode, getCurrentUser().getProvider()));
@@ -111,8 +111,8 @@ public class CustomerRsImpl extends BaseRs implements CustomerRs {
 	}
 
 	@Override
-	public ListCustomerResponseDto list(CustomerDto postData) {
-		ListCustomerResponseDto result = new ListCustomerResponseDto();
+	public CustomersResponseDto list(CustomerDto postData) {
+		CustomersResponseDto result = new CustomersResponseDto();
 
 		try {
 			result.setCustomers(customerApi.filterCustomer(postData, getCurrentUser().getProvider()));

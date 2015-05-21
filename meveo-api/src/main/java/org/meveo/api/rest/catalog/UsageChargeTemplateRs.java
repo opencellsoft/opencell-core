@@ -13,7 +13,7 @@ import javax.ws.rs.core.MediaType;
 
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.catalog.UsageChargeTemplateDto;
-import org.meveo.api.dto.response.catalog.GetUsageChargeTemplateResponse;
+import org.meveo.api.dto.response.catalog.GetUsageChargeTemplateResponseDto;
 import org.meveo.api.rest.IBaseRs;
 import org.meveo.api.rest.security.RSSecured;
 
@@ -56,7 +56,7 @@ public interface UsageChargeTemplateRs extends IBaseRs {
 	 */
 	@GET
 	@Path("/")
-	public GetUsageChargeTemplateResponse find(
+	public GetUsageChargeTemplateResponseDto find(
 			@QueryParam("usageChargeTemplateCode") String usageChargeTemplateCode);
 
 	/**

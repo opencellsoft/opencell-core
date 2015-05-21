@@ -11,8 +11,8 @@ import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.account.CustomerAccountDto;
 import org.meveo.api.dto.payment.DunningInclusionExclusionDto;
-import org.meveo.api.dto.response.account.GetCustomerAccountResponse;
-import org.meveo.api.dto.response.account.ListCustomerAccountResponseDto;
+import org.meveo.api.dto.response.account.GetCustomerAccountResponseDto;
+import org.meveo.api.dto.response.account.CustomerAccountsResponseDto;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.LoggingInterceptor;
 import org.meveo.api.rest.account.CustomerAccountRs;
@@ -74,8 +74,8 @@ public class CustomerAccountRsImpl extends BaseRs implements CustomerAccountRs {
 	}
 
 	@Override
-	public GetCustomerAccountResponse find(@QueryParam("customerAccountCode") String customerAccountCode) {
-		GetCustomerAccountResponse result = new GetCustomerAccountResponse();
+	public GetCustomerAccountResponseDto find(@QueryParam("customerAccountCode") String customerAccountCode) {
+		GetCustomerAccountResponseDto result = new GetCustomerAccountResponseDto();
 
 		try {
 			result.setCustomerAccount(customerAccountApi.find(customerAccountCode, getCurrentUser()));
@@ -114,8 +114,8 @@ public class CustomerAccountRsImpl extends BaseRs implements CustomerAccountRs {
 	}
 
 	@Override
-	public ListCustomerAccountResponseDto listByCustomer(String customerCode) {
-		ListCustomerAccountResponseDto result = new ListCustomerAccountResponseDto();
+	public CustomerAccountsResponseDto listByCustomer(String customerCode) {
+		CustomerAccountsResponseDto result = new CustomerAccountsResponseDto();
 
 		try {
 			result.setCustomerAccounts(customerAccountApi.listByCustomer(customerCode, getCurrentUser().getProvider()));

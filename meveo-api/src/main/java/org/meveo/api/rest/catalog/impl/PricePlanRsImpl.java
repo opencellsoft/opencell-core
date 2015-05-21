@@ -9,7 +9,7 @@ import org.meveo.api.catalog.PricePlanApi;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.catalog.PricePlanDto;
-import org.meveo.api.dto.response.catalog.GetPricePlanResponse;
+import org.meveo.api.dto.response.catalog.GetPricePlanResponseDto;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.LoggingInterceptor;
 import org.meveo.api.rest.catalog.PricePlanRs;
@@ -70,8 +70,8 @@ public class PricePlanRsImpl extends BaseRs implements PricePlanRs {
 	}
 
 	@Override
-	public GetPricePlanResponse find(String pricePlanCode) {
-		GetPricePlanResponse result = new GetPricePlanResponse();
+	public GetPricePlanResponseDto find(String pricePlanCode) {
+		GetPricePlanResponseDto result = new GetPricePlanResponseDto();
 
 		try {
 			result.setPricePlan(pricePlanApi.find(pricePlanCode, getCurrentUser().getProvider()));

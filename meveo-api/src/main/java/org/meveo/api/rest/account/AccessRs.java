@@ -13,8 +13,8 @@ import javax.ws.rs.core.MediaType;
 
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.account.AccessDto;
-import org.meveo.api.dto.response.account.GetAccessResponse;
-import org.meveo.api.dto.response.account.ListAccessResponseDto;
+import org.meveo.api.dto.response.account.GetAccessResponseDto;
+import org.meveo.api.dto.response.account.AccessesResponseDto;
 import org.meveo.api.rest.IBaseRs;
 import org.meveo.api.rest.security.RSSecured;
 
@@ -43,7 +43,7 @@ public interface AccessRs extends IBaseRs {
 	 */
 	@GET
 	@Path("/")
-	GetAccessResponse find(@QueryParam("accessCode") String accessCode,
+	GetAccessResponseDto find(@QueryParam("accessCode") String accessCode,
 			@QueryParam("subscriptionCode") String subscriptionCode);
 
 	@DELETE
@@ -59,6 +59,6 @@ public interface AccessRs extends IBaseRs {
 	 */
 	@GET
 	@Path("/list")
-	ListAccessResponseDto listBySubscription(@QueryParam("subscriptionCode") String subscriptionCode);
+	AccessesResponseDto listBySubscription(@QueryParam("subscriptionCode") String subscriptionCode);
 
 }

@@ -13,8 +13,8 @@ import javax.ws.rs.core.MediaType;
 
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.account.UserAccountDto;
-import org.meveo.api.dto.response.account.GetUserAccountResponse;
-import org.meveo.api.dto.response.account.ListUserAccountResponseDto;
+import org.meveo.api.dto.response.account.GetUserAccountResponseDto;
+import org.meveo.api.dto.response.account.UserAccountsResponseDto;
 import org.meveo.api.rest.IBaseRs;
 import org.meveo.api.rest.security.RSSecured;
 
@@ -43,7 +43,7 @@ public interface UserAccountRs extends IBaseRs {
 	 */
 	@GET
 	@Path("/")
-	GetUserAccountResponse find(@QueryParam("userAccountCode") String userAccountCode);
+	GetUserAccountResponseDto find(@QueryParam("userAccountCode") String userAccountCode);
 
 	@DELETE
 	@Path("/{userAccountCode}")
@@ -57,6 +57,6 @@ public interface UserAccountRs extends IBaseRs {
 	 */
 	@GET
 	@Path("/list")
-	ListUserAccountResponseDto listByBillingAccount(@QueryParam("billingAccountCode") String billingAccountCode);
+	UserAccountsResponseDto listByBillingAccount(@QueryParam("billingAccountCode") String billingAccountCode);
 
 }

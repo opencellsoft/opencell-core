@@ -14,8 +14,8 @@ import javax.ws.rs.core.MediaType;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.notification.NotificationDto;
 import org.meveo.api.dto.response.notification.GetNotificationResponseDto;
-import org.meveo.api.dto.response.notification.ListInboundRequestResponseDto;
-import org.meveo.api.dto.response.notification.ListNotificationHistoryResponseDto;
+import org.meveo.api.dto.response.notification.InboundRequestsResponseDto;
+import org.meveo.api.dto.response.notification.NotificationHistoriesResponseDto;
 import org.meveo.api.rest.IBaseRs;
 import org.meveo.api.rest.security.RSSecured;
 
@@ -46,10 +46,10 @@ public interface NotificationRs extends IBaseRs {
 
 	@GET
 	@Path("/listNotificationHistory")
-	ListNotificationHistoryResponseDto listNotificationHistory();
-	
+	NotificationHistoriesResponseDto listNotificationHistory();
+
 	@GET
 	@Path("/listInboundRequest")
-	ListInboundRequestResponseDto listInboundRequest();
+	InboundRequestsResponseDto listInboundRequest();
 
 }

@@ -8,8 +8,8 @@ import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.notification.NotificationDto;
 import org.meveo.api.dto.response.notification.GetNotificationResponseDto;
-import org.meveo.api.dto.response.notification.ListInboundRequestResponseDto;
-import org.meveo.api.dto.response.notification.ListNotificationHistoryResponseDto;
+import org.meveo.api.dto.response.notification.InboundRequestsResponseDto;
+import org.meveo.api.dto.response.notification.NotificationHistoriesResponseDto;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.LoggingInterceptor;
 import org.meveo.api.notification.NotificationApi;
@@ -115,8 +115,8 @@ public class NotificationRsImpl extends BaseRs implements NotificationRs {
 	}
 
 	@Override
-	public ListNotificationHistoryResponseDto listNotificationHistory() {
-		ListNotificationHistoryResponseDto result = new ListNotificationHistoryResponseDto();
+	public NotificationHistoriesResponseDto listNotificationHistory() {
+		NotificationHistoriesResponseDto result = new NotificationHistoriesResponseDto();
 
 		try {
 			result.setNotificationHistories(notificationApi.listNotificationHistory(getCurrentUser().getProvider()));
@@ -136,8 +136,8 @@ public class NotificationRsImpl extends BaseRs implements NotificationRs {
 	}
 
 	@Override
-	public ListInboundRequestResponseDto listInboundRequest() {
-		ListInboundRequestResponseDto result = new ListInboundRequestResponseDto();
+	public InboundRequestsResponseDto listInboundRequest() {
+		InboundRequestsResponseDto result = new InboundRequestsResponseDto();
 
 		try {
 			result.setInboundRequests(notificationApi.listInboundRequest(getCurrentUser().getProvider()));

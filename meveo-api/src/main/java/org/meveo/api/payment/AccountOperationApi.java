@@ -9,7 +9,7 @@ import org.meveo.api.BaseApi;
 import org.meveo.api.dto.payment.AccountOperationDto;
 import org.meveo.api.dto.payment.MatchingAmountDto;
 import org.meveo.api.dto.payment.MatchingCodeDto;
-import org.meveo.api.dto.response.payment.ListAccountOperationsResponseDto;
+import org.meveo.api.dto.response.payment.AccountOperationsResponseDto;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
@@ -201,9 +201,9 @@ public class AccountOperationApi extends BaseApi {
 		}
 	}
 
-	public ListAccountOperationsResponseDto list(String customerAccountCode, Provider provider) throws MeveoApiException {
+	public AccountOperationsResponseDto list(String customerAccountCode, Provider provider) throws MeveoApiException {
 		if (!StringUtils.isBlank(customerAccountCode)) {
-			ListAccountOperationsResponseDto result = new ListAccountOperationsResponseDto();
+			AccountOperationsResponseDto result = new AccountOperationsResponseDto();
 
 			CustomerAccount customerAccount = customerAccountService.findByCode(customerAccountCode, provider);
 			if (customerAccount == null) {

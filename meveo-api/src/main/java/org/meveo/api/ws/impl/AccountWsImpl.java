@@ -23,17 +23,17 @@ import org.meveo.api.dto.account.UserAccountDto;
 import org.meveo.api.dto.payment.AccountOperationDto;
 import org.meveo.api.dto.payment.DunningInclusionExclusionDto;
 import org.meveo.api.dto.response.CustomerListResponse;
-import org.meveo.api.dto.response.account.GetAccessResponse;
-import org.meveo.api.dto.response.account.GetBillingAccountResponse;
-import org.meveo.api.dto.response.account.GetCustomerAccountResponse;
-import org.meveo.api.dto.response.account.GetCustomerResponse;
-import org.meveo.api.dto.response.account.GetUserAccountResponse;
-import org.meveo.api.dto.response.account.ListAccessResponseDto;
-import org.meveo.api.dto.response.account.ListBillingAccountResponseDto;
-import org.meveo.api.dto.response.account.ListCustomerAccountResponseDto;
-import org.meveo.api.dto.response.account.ListCustomerResponseDto;
-import org.meveo.api.dto.response.account.ListUserAccountResponseDto;
-import org.meveo.api.dto.response.payment.ListAccountOperationsResponseDto;
+import org.meveo.api.dto.response.account.GetAccessResponseDto;
+import org.meveo.api.dto.response.account.GetBillingAccountResponseDto;
+import org.meveo.api.dto.response.account.GetCustomerAccountResponseDto;
+import org.meveo.api.dto.response.account.GetCustomerResponseDto;
+import org.meveo.api.dto.response.account.GetUserAccountResponseDto;
+import org.meveo.api.dto.response.account.AccessesResponseDto;
+import org.meveo.api.dto.response.account.BillingAccountsResponseDto;
+import org.meveo.api.dto.response.account.CustomerAccountsResponseDto;
+import org.meveo.api.dto.response.account.CustomersResponseDto;
+import org.meveo.api.dto.response.account.UserAccountsResponseDto;
+import org.meveo.api.dto.response.payment.AccountOperationsResponseDto;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.LoggingInterceptor;
 import org.meveo.api.payment.AccountOperationApi;
@@ -112,8 +112,8 @@ public class AccountWsImpl extends BaseWs implements AccountWs {
 	}
 
 	@Override
-	public GetCustomerResponse findCustomer(String customerCode) {
-		GetCustomerResponse result = new GetCustomerResponse();
+	public GetCustomerResponseDto findCustomer(String customerCode) {
+		GetCustomerResponseDto result = new GetCustomerResponseDto();
 
 		try {
 			result.setCustomer(customerApi.find(customerCode, getCurrentUser().getProvider()));
@@ -192,8 +192,8 @@ public class AccountWsImpl extends BaseWs implements AccountWs {
 	}
 
 	@Override
-	public GetCustomerAccountResponse findCustomerAccount(String customerAccountCode) {
-		GetCustomerAccountResponse result = new GetCustomerAccountResponse();
+	public GetCustomerAccountResponseDto findCustomerAccount(String customerAccountCode) {
+		GetCustomerAccountResponseDto result = new GetCustomerAccountResponseDto();
 
 		try {
 			result.setCustomerAccount(customerAccountApi.find(customerAccountCode, getCurrentUser()));
@@ -272,8 +272,8 @@ public class AccountWsImpl extends BaseWs implements AccountWs {
 	}
 
 	@Override
-	public GetBillingAccountResponse findBillingAccount(String billingAccountCode) {
-		GetBillingAccountResponse result = new GetBillingAccountResponse();
+	public GetBillingAccountResponseDto findBillingAccount(String billingAccountCode) {
+		GetBillingAccountResponseDto result = new GetBillingAccountResponseDto();
 
 		try {
 			result.setBillingAccount(billingAccountApi.find(billingAccountCode, getCurrentUser().getProvider()));
@@ -352,8 +352,8 @@ public class AccountWsImpl extends BaseWs implements AccountWs {
 	}
 
 	@Override
-	public GetUserAccountResponse findUserAccount(String userAccountCode) {
-		GetUserAccountResponse result = new GetUserAccountResponse();
+	public GetUserAccountResponseDto findUserAccount(String userAccountCode) {
+		GetUserAccountResponseDto result = new GetUserAccountResponseDto();
 
 		try {
 			result.setUserAccount(userAccountApi.find(userAccountCode, getCurrentUser().getProvider()));
@@ -432,8 +432,8 @@ public class AccountWsImpl extends BaseWs implements AccountWs {
 	}
 
 	@Override
-	public GetAccessResponse findAccess(String accessCode, String subscriptionCode) {
-		GetAccessResponse result = new GetAccessResponse();
+	public GetAccessResponseDto findAccess(String accessCode, String subscriptionCode) {
+		GetAccessResponseDto result = new GetAccessResponseDto();
 
 		try {
 			result.setAccess(accessApi.find(accessCode, subscriptionCode, getCurrentUser().getProvider()));
@@ -532,8 +532,8 @@ public class AccountWsImpl extends BaseWs implements AccountWs {
 	}
 
 	@Override
-	public ListAccessResponseDto listAccess(String subscriptionCode) {
-		ListAccessResponseDto result = new ListAccessResponseDto();
+	public AccessesResponseDto listAccess(String subscriptionCode) {
+		AccessesResponseDto result = new AccessesResponseDto();
 
 		try {
 			result.setAccesses(accessApi.listBySubscription(subscriptionCode, getCurrentUser().getProvider()));
@@ -572,8 +572,8 @@ public class AccountWsImpl extends BaseWs implements AccountWs {
 	}
 
 	@Override
-	public ListCustomerResponseDto listCustomerWithFilter(CustomerDto postData) {
-		ListCustomerResponseDto result = new ListCustomerResponseDto();
+	public CustomersResponseDto listCustomerWithFilter(CustomerDto postData) {
+		CustomersResponseDto result = new CustomersResponseDto();
 
 		try {
 			result.setCustomers(customerApi.filterCustomer(postData, getCurrentUser().getProvider()));
@@ -592,8 +592,8 @@ public class AccountWsImpl extends BaseWs implements AccountWs {
 	}
 
 	@Override
-	public ListCustomerAccountResponseDto listByCustomer(String customerCode) {
-		ListCustomerAccountResponseDto result = new ListCustomerAccountResponseDto();
+	public CustomerAccountsResponseDto listByCustomer(String customerCode) {
+		CustomerAccountsResponseDto result = new CustomerAccountsResponseDto();
 
 		try {
 			result.setCustomerAccounts(customerAccountApi.listByCustomer(customerCode, getCurrentUser().getProvider()));
@@ -612,8 +612,8 @@ public class AccountWsImpl extends BaseWs implements AccountWs {
 	}
 
 	@Override
-	public ListBillingAccountResponseDto listByCustomerAccount(String customerAccountCode) {
-		ListBillingAccountResponseDto result = new ListBillingAccountResponseDto();
+	public BillingAccountsResponseDto listByCustomerAccount(String customerAccountCode) {
+		BillingAccountsResponseDto result = new BillingAccountsResponseDto();
 
 		try {
 			result.setBillingAccounts(billingAccountApi.listByCustomerAccount(customerAccountCode, getCurrentUser().getProvider()));
@@ -632,8 +632,8 @@ public class AccountWsImpl extends BaseWs implements AccountWs {
 	}
 
 	@Override
-	public ListUserAccountResponseDto listByBillingAccount(String billingAccountCode) {
-		ListUserAccountResponseDto result = new ListUserAccountResponseDto();
+	public UserAccountsResponseDto listByBillingAccount(String billingAccountCode) {
+		UserAccountsResponseDto result = new UserAccountsResponseDto();
 
 		try {
 			result.setUserAccounts(userAccountApi.listByBillingAccount(billingAccountCode, getCurrentUser().getProvider()));
@@ -670,8 +670,8 @@ public class AccountWsImpl extends BaseWs implements AccountWs {
 	}
 
 	@Override
-	public ListAccountOperationsResponseDto listAccountOperations(String customerAccountCode) {
-		ListAccountOperationsResponseDto result = new ListAccountOperationsResponseDto();
+	public AccountOperationsResponseDto listAccountOperations(String customerAccountCode) {
+		AccountOperationsResponseDto result = new AccountOperationsResponseDto();
 
 		try {
 			result = accountOperationApi.list(customerAccountCode, getCurrentUser().getProvider());

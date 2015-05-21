@@ -13,7 +13,7 @@ import javax.ws.rs.core.MediaType;
 
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.catalog.ServiceTemplateDto;
-import org.meveo.api.dto.response.catalog.GetServiceTemplateResponse;
+import org.meveo.api.dto.response.catalog.GetServiceTemplateResponseDto;
 import org.meveo.api.rest.IBaseRs;
 import org.meveo.api.rest.security.RSSecured;
 
@@ -53,7 +53,7 @@ public interface ServiceTemplateRs extends IBaseRs {
 	 */
 	@Path("/")
 	@GET
-	GetServiceTemplateResponse find(
+	GetServiceTemplateResponseDto find(
 			@QueryParam("serviceTemplateCode") String serviceTemplateCode);
 
 	/**

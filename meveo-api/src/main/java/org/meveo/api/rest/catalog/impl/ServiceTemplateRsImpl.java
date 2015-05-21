@@ -9,7 +9,7 @@ import org.meveo.api.catalog.ServiceTemplateApi;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.catalog.ServiceTemplateDto;
-import org.meveo.api.dto.response.catalog.GetServiceTemplateResponse;
+import org.meveo.api.dto.response.catalog.GetServiceTemplateResponseDto;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.LoggingInterceptor;
 import org.meveo.api.rest.catalog.ServiceTemplateRs;
@@ -70,8 +70,8 @@ public class ServiceTemplateRsImpl extends BaseRs implements ServiceTemplateRs {
 	}
 
 	@Override
-	public GetServiceTemplateResponse find(String serviceTemplateCode) {
-		GetServiceTemplateResponse result = new GetServiceTemplateResponse();
+	public GetServiceTemplateResponseDto find(String serviceTemplateCode) {
+		GetServiceTemplateResponseDto result = new GetServiceTemplateResponseDto();
 
 		try {
 			result.setServiceTemplate(serviceTemplateApi.find(serviceTemplateCode, getCurrentUser().getProvider()));

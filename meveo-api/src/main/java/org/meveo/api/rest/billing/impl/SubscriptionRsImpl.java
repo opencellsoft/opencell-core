@@ -8,14 +8,14 @@ import org.meveo.api.MeveoApiErrorCode;
 import org.meveo.api.billing.SubscriptionApi;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
-import org.meveo.api.dto.account.ApplyOneShotChargeInstanceDto;
-import org.meveo.api.dto.billing.ActivateServicesDto;
-import org.meveo.api.dto.billing.InstantiateServicesDto;
+import org.meveo.api.dto.account.ApplyOneShotChargeInstanceRequestDto;
+import org.meveo.api.dto.billing.ActivateServicesRequestDto;
+import org.meveo.api.dto.billing.InstantiateServicesRequestDto;
 import org.meveo.api.dto.billing.SubscriptionDto;
-import org.meveo.api.dto.billing.TerminateSubscriptionDto;
-import org.meveo.api.dto.billing.TerminateSubscriptionServicesDto;
+import org.meveo.api.dto.billing.TerminateSubscriptionRequestDto;
+import org.meveo.api.dto.billing.TerminateSubscriptionServicesRequestDto;
 import org.meveo.api.dto.response.billing.GetSubscriptionResponseDto;
-import org.meveo.api.dto.response.billing.ListSubscriptionResponseDto;
+import org.meveo.api.dto.response.billing.SubscriptionsResponseDto;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.LoggingInterceptor;
 import org.meveo.api.rest.billing.SubscriptionRs;
@@ -76,7 +76,7 @@ public class SubscriptionRsImpl extends BaseRs implements SubscriptionRs {
 	}
 
 	@Override
-	public ActionStatus instantiateServices(InstantiateServicesDto postData) {
+	public ActionStatus instantiateServices(InstantiateServicesRequestDto postData) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 		try {
@@ -96,7 +96,7 @@ public class SubscriptionRsImpl extends BaseRs implements SubscriptionRs {
 	}
 
 	@Override
-	public ActionStatus activateServices(ActivateServicesDto postData) {
+	public ActionStatus activateServices(ActivateServicesRequestDto postData) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 		try {
@@ -116,7 +116,7 @@ public class SubscriptionRsImpl extends BaseRs implements SubscriptionRs {
 	}
 
 	@Override
-	public ActionStatus applyOneShotChargeInstance(ApplyOneShotChargeInstanceDto postData) {
+	public ActionStatus applyOneShotChargeInstance(ApplyOneShotChargeInstanceRequestDto postData) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 		try {
@@ -136,7 +136,7 @@ public class SubscriptionRsImpl extends BaseRs implements SubscriptionRs {
 	}
 
 	@Override
-	public ActionStatus terminateSubscription(TerminateSubscriptionDto postData) {
+	public ActionStatus terminateSubscription(TerminateSubscriptionRequestDto postData) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 		try {
@@ -156,7 +156,7 @@ public class SubscriptionRsImpl extends BaseRs implements SubscriptionRs {
 	}
 
 	@Override
-	public ActionStatus terminateServices(TerminateSubscriptionServicesDto postData) {
+	public ActionStatus terminateServices(TerminateSubscriptionServicesRequestDto postData) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 		try {
@@ -176,8 +176,8 @@ public class SubscriptionRsImpl extends BaseRs implements SubscriptionRs {
 	}
 
 	@Override
-	public ListSubscriptionResponseDto listByUserAccount(String userAccountCode) {
-		ListSubscriptionResponseDto result = new ListSubscriptionResponseDto();
+	public SubscriptionsResponseDto listByUserAccount(String userAccountCode) {
+		SubscriptionsResponseDto result = new SubscriptionsResponseDto();
 
 		try {
 			result.setSubscriptions(subscriptionApi.listByUserAccount(userAccountCode, getCurrentUser().getProvider()));

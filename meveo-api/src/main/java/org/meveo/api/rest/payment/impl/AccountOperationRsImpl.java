@@ -7,7 +7,7 @@ import javax.interceptor.Interceptors;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.payment.AccountOperationDto;
-import org.meveo.api.dto.response.payment.ListAccountOperationsResponseDto;
+import org.meveo.api.dto.response.payment.AccountOperationsResponseDto;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.LoggingInterceptor;
 import org.meveo.api.payment.AccountOperationApi;
@@ -49,8 +49,8 @@ public class AccountOperationRsImpl extends BaseRs implements AccountOperationRs
 	}
 
 	@Override
-	public ListAccountOperationsResponseDto list(String customerAccountCode) {
-		ListAccountOperationsResponseDto result = new ListAccountOperationsResponseDto();
+	public AccountOperationsResponseDto list(String customerAccountCode) {
+		AccountOperationsResponseDto result = new AccountOperationsResponseDto();
 
 		try {
 			result = accountOperationApi.list(customerAccountCode, getCurrentUser().getProvider());

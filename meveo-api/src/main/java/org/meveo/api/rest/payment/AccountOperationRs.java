@@ -10,7 +10,7 @@ import javax.ws.rs.core.MediaType;
 
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.payment.AccountOperationDto;
-import org.meveo.api.dto.response.payment.ListAccountOperationsResponseDto;
+import org.meveo.api.dto.response.payment.AccountOperationsResponseDto;
 import org.meveo.api.rest.IBaseRs;
 import org.meveo.api.rest.security.RSSecured;
 
@@ -29,6 +29,6 @@ public interface AccountOperationRs extends IBaseRs {
 
 	@GET
 	@Path("/list")
-	ListAccountOperationsResponseDto list(@QueryParam("customerAccountCode") String customerAccountCode);
+	AccountOperationsResponseDto list(@QueryParam("customerAccountCode") String customerAccountCode);
 
 }

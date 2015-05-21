@@ -9,7 +9,7 @@ import org.meveo.api.catalog.OfferTemplateApi;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.catalog.OfferTemplateDto;
-import org.meveo.api.dto.response.catalog.GetOfferTemplateResponse;
+import org.meveo.api.dto.response.catalog.GetOfferTemplateResponseDto;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.LoggingInterceptor;
 import org.meveo.api.rest.catalog.OfferTemplateRs;
@@ -70,8 +70,8 @@ public class OfferTemplateRsImpl extends BaseRs implements OfferTemplateRs {
 	}
 
 	@Override
-	public GetOfferTemplateResponse find(String offerTemplateCode) {
-		GetOfferTemplateResponse result = new GetOfferTemplateResponse();
+	public GetOfferTemplateResponseDto find(String offerTemplateCode) {
+		GetOfferTemplateResponseDto result = new GetOfferTemplateResponseDto();
 
 		try {
 			result.setOfferTemplate(offerTemplateApi.find(offerTemplateCode, getCurrentUser().getProvider()));
