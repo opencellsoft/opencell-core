@@ -49,14 +49,18 @@
 <cc:implementation>
 
 	<h:panelGroup layout="block" styleClass="form-panel-actions">
-		<p:button value="#{messages['commons.edit']}" 
+		<p:button value="#{messages['commons.edit']}" includeViewParams="true"
 			rendered="#{!cc.attrs.edit and cc.attrs.showEditButton}">
 			<f:param name="edit" value="true" />
-			<f:param name="#{cc.attrs.objectIdParamName}"
-				value="#{cc.attrs.backingBean.objectId}" />
-			<f:param name="cid"
-				value="#{javax.enterprise.context.conversation.id}" />
+ 			<f:param name="#{cc.attrs.objectIdParamName}"
+ 				value="#{cc.attrs.backingBean.objectId}" />
+ 			<f:param name="cid"
+ 				value="#{javax.enterprise.context.conversation.id}" />
+			<c:if test="#{not empty cc.attrs.backingBean.backView}">
+				<f:param name="backView" value="#{cc.attrs.backingBean.backView}"/>
+			</c:if>
 		</p:button>
+		<h:outputText value="#{cc.attrs.backingBean.backView}" />
 
         <p:commandButton value="#{messages['commons.disable']}"
             rendered="#{!cc.attrs.edit and cc.attrs.showEnableDisableButton and cc.attrs.backingBean.entity.active}"
