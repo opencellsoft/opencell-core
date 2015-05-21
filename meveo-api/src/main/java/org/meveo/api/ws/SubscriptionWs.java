@@ -5,14 +5,14 @@ import javax.jws.WebParam;
 import javax.jws.WebService;
 
 import org.meveo.api.dto.ActionStatus;
-import org.meveo.api.dto.account.ApplyOneShotChargeInstanceDto;
-import org.meveo.api.dto.billing.ActivateServicesDto;
-import org.meveo.api.dto.billing.InstantiateServicesDto;
+import org.meveo.api.dto.account.ApplyOneShotChargeInstanceRequestDto;
+import org.meveo.api.dto.billing.ActivateServicesRequestDto;
+import org.meveo.api.dto.billing.InstantiateServicesRequestDto;
 import org.meveo.api.dto.billing.SubscriptionDto;
-import org.meveo.api.dto.billing.TerminateSubscriptionDto;
-import org.meveo.api.dto.billing.TerminateSubscriptionServicesDto;
+import org.meveo.api.dto.billing.TerminateSubscriptionRequestDto;
+import org.meveo.api.dto.billing.TerminateSubscriptionServicesRequestDto;
 import org.meveo.api.dto.response.billing.GetSubscriptionResponseDto;
-import org.meveo.api.dto.response.billing.ListSubscriptionResponseDto;
+import org.meveo.api.dto.response.billing.SubscriptionsResponseDto;
 
 /**
  * @author Edward P. Legaspi
@@ -27,22 +27,22 @@ public interface SubscriptionWs extends IBaseWs {
 	ActionStatus update(@WebParam(name = "subscription") SubscriptionDto postData);
 
 	@WebMethod
-	ActionStatus instantiateServices(@WebParam(name = "instantiateServices") InstantiateServicesDto postData);
+	ActionStatus instantiateServices(@WebParam(name = "instantiateServices") InstantiateServicesRequestDto postData);
 
 	@WebMethod
-	ActionStatus activateServices(@WebParam(name = "activateServices") ActivateServicesDto postData);
+	ActionStatus activateServices(@WebParam(name = "activateServices") ActivateServicesRequestDto postData);
 
 	@WebMethod
-	ActionStatus applyOneShotChargeInstance(@WebParam(name = "applyOneShotChargeInstance") ApplyOneShotChargeInstanceDto postData);
+	ActionStatus applyOneShotChargeInstance(@WebParam(name = "applyOneShotChargeInstance") ApplyOneShotChargeInstanceRequestDto postData);
 
 	@WebMethod
-	ActionStatus terminateSubscription(@WebParam(name = "terminateSubscription") TerminateSubscriptionDto postData);
+	ActionStatus terminateSubscription(@WebParam(name = "terminateSubscription") TerminateSubscriptionRequestDto postData);
 
 	@WebMethod
-	ActionStatus terminateServices(@WebParam(name = "terminateSubscriptionServices") TerminateSubscriptionServicesDto postData);
+	ActionStatus terminateServices(@WebParam(name = "terminateSubscriptionServices") TerminateSubscriptionServicesRequestDto postData);
 
 	@WebMethod
-	ListSubscriptionResponseDto listSubscriptionByUserAccount(@WebParam(name = "userAccountCode") String userAccountCode);
+	SubscriptionsResponseDto listSubscriptionByUserAccount(@WebParam(name = "userAccountCode") String userAccountCode);
 
 	@WebMethod
 	GetSubscriptionResponseDto findSubscription(@WebParam(name = "subscriptionCode") String subscriptionCode);

@@ -13,7 +13,7 @@ import javax.ws.rs.core.MediaType;
 
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.catalog.OfferTemplateDto;
-import org.meveo.api.dto.response.catalog.GetOfferTemplateResponse;
+import org.meveo.api.dto.response.catalog.GetOfferTemplateResponseDto;
 import org.meveo.api.rest.IBaseRs;
 import org.meveo.api.rest.security.RSSecured;
 
@@ -56,7 +56,7 @@ public interface OfferTemplateRs extends IBaseRs {
 	 */
 	@Path("/")
 	@GET
-	GetOfferTemplateResponse find(
+	GetOfferTemplateResponseDto find(
 			@QueryParam("offerTemplateCode") String offerTemplateCode);
 
 	/**

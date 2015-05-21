@@ -12,16 +12,16 @@ import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.BaseApi;
 import org.meveo.api.dto.CustomFieldDto;
-import org.meveo.api.dto.account.ApplyOneShotChargeInstanceDto;
-import org.meveo.api.dto.billing.ActivateServicesDto;
+import org.meveo.api.dto.account.ApplyOneShotChargeInstanceRequestDto;
+import org.meveo.api.dto.billing.ActivateServicesRequestDto;
 import org.meveo.api.dto.billing.ChargeInstanceOverrideDto;
-import org.meveo.api.dto.billing.InstantiateServicesDto;
+import org.meveo.api.dto.billing.InstantiateServicesRequestDto;
 import org.meveo.api.dto.billing.ServiceToActivateDto;
 import org.meveo.api.dto.billing.ServiceToInstantiateDto;
 import org.meveo.api.dto.billing.SubscriptionDto;
 import org.meveo.api.dto.billing.SubscriptionsDto;
-import org.meveo.api.dto.billing.TerminateSubscriptionDto;
-import org.meveo.api.dto.billing.TerminateSubscriptionServicesDto;
+import org.meveo.api.dto.billing.TerminateSubscriptionRequestDto;
+import org.meveo.api.dto.billing.TerminateSubscriptionServicesRequestDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
@@ -277,7 +277,7 @@ public class SubscriptionApi extends BaseApi {
 		}
 	}
 
-	public void activateServices(ActivateServicesDto postData, User currentUser) throws MeveoApiException {
+	public void activateServices(ActivateServicesRequestDto postData, User currentUser) throws MeveoApiException {
 		if (!StringUtils.isBlank(postData.getSubscription()) && postData.getServicesToActivateDto().getService() != null
 				&& postData.getServicesToActivateDto().getService().size() > 0) {
 			Provider provider = currentUser.getProvider();
@@ -405,7 +405,7 @@ public class SubscriptionApi extends BaseApi {
 		}
 	}
 
-	public void instantiateServices(InstantiateServicesDto postData, User currentUser) throws MeveoApiException {
+	public void instantiateServices(InstantiateServicesRequestDto postData, User currentUser) throws MeveoApiException {
 		if (!StringUtils.isBlank(postData.getSubscription()) && postData.getServicesToInstantiate().getService() != null
 				&& postData.getServicesToInstantiate().getService().size() > 0) {
 			Provider provider = currentUser.getProvider();
@@ -496,7 +496,7 @@ public class SubscriptionApi extends BaseApi {
 		}
 	}
 
-	public void applyOneShotChargeInstance(ApplyOneShotChargeInstanceDto postData, User currentUser) throws MeveoApiException {
+	public void applyOneShotChargeInstance(ApplyOneShotChargeInstanceRequestDto postData, User currentUser) throws MeveoApiException {
 		if (!StringUtils.isBlank(postData.getOneShotCharge()) && !StringUtils.isBlank(postData.getSubscription()) && postData.getOperationDate() != null) {
 			Provider provider = currentUser.getProvider();
 
@@ -551,7 +551,7 @@ public class SubscriptionApi extends BaseApi {
 		}
 	}
 
-	public void terminateSubscription(TerminateSubscriptionDto postData, User currentUser) throws MeveoApiException {
+	public void terminateSubscription(TerminateSubscriptionRequestDto postData, User currentUser) throws MeveoApiException {
 		if (!StringUtils.isBlank(postData.getSubscriptionCode()) && !StringUtils.isBlank(postData.getTerminationReason()) && postData.getTerminationDate() != null) {
 			Provider provider = currentUser.getProvider();
 
@@ -590,7 +590,7 @@ public class SubscriptionApi extends BaseApi {
 		}
 	}
 
-	public void terminateServices(TerminateSubscriptionServicesDto postData, User currentUser) throws MeveoApiException {
+	public void terminateServices(TerminateSubscriptionServicesRequestDto postData, User currentUser) throws MeveoApiException {
 		if (!StringUtils.isBlank(postData.getSubscriptionCode()) && (postData.getServices() != null || postData.getServices().size() != 0)
 				&& !StringUtils.isBlank(postData.getTerminationReason()) && postData.getTerminationDate() != null) {
 			Provider provider = currentUser.getProvider();

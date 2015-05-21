@@ -9,7 +9,7 @@ import org.meveo.api.catalog.UsageChargeTemplateApi;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.catalog.UsageChargeTemplateDto;
-import org.meveo.api.dto.response.catalog.GetUsageChargeTemplateResponse;
+import org.meveo.api.dto.response.catalog.GetUsageChargeTemplateResponseDto;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.LoggingInterceptor;
 import org.meveo.api.rest.catalog.UsageChargeTemplateRs;
@@ -70,8 +70,8 @@ public class UsageChargeTemplateRsImpl extends BaseRs implements UsageChargeTemp
 	}
 
 	@Override
-	public GetUsageChargeTemplateResponse find(String usageChargeTemplateCode) {
-		GetUsageChargeTemplateResponse result = new GetUsageChargeTemplateResponse();
+	public GetUsageChargeTemplateResponseDto find(String usageChargeTemplateCode) {
+		GetUsageChargeTemplateResponseDto result = new GetUsageChargeTemplateResponseDto();
 
 		try {
 			result.setUsageChargeTemplate(usageChargeTemplateApi.find(usageChargeTemplateCode, getCurrentUser()

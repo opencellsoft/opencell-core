@@ -11,8 +11,8 @@ import org.meveo.api.dto.notification.WebhookNotificationDto;
 import org.meveo.api.dto.response.notification.GetEmailNotificationResponseDto;
 import org.meveo.api.dto.response.notification.GetNotificationResponseDto;
 import org.meveo.api.dto.response.notification.GetWebHookNotificationResponseDto;
-import org.meveo.api.dto.response.notification.ListInboundRequestResponseDto;
-import org.meveo.api.dto.response.notification.ListNotificationHistoryResponseDto;
+import org.meveo.api.dto.response.notification.InboundRequestsResponseDto;
+import org.meveo.api.dto.response.notification.NotificationHistoriesResponseDto;
 
 /**
  * @author Edward P. Legaspi
@@ -65,9 +65,9 @@ public interface NotificationWs extends IBaseWs {
 	// history
 
 	@WebMethod
-	ListNotificationHistoryResponseDto listNotificationHistory();
+	NotificationHistoriesResponseDto listNotificationHistory();
 
 	@WebMethod
-	ListInboundRequestResponseDto listInboundRequest();
+	InboundRequestsResponseDto listInboundRequest();
 
 }

@@ -8,7 +8,7 @@ import javax.inject.Inject;
 
 import org.meveo.api.dto.SellerDto;
 import org.meveo.api.dto.SellersDto;
-import org.meveo.api.dto.response.ListSellerCodesResponseDto;
+import org.meveo.api.dto.response.SellerCodesResponseDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
@@ -222,8 +222,8 @@ public class SellerApi extends BaseApi {
 		return result;
 	}
 
-	public ListSellerCodesResponseDto listSellerCodes(Provider provider) {
-		ListSellerCodesResponseDto result = new ListSellerCodesResponseDto();
+	public SellerCodesResponseDto listSellerCodes(Provider provider) {
+		SellerCodesResponseDto result = new SellerCodesResponseDto();
 
 		List<Seller> sellers = sellerService.list(provider);
 		if (sellers != null) {

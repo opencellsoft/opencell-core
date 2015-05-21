@@ -8,11 +8,9 @@ import org.meveo.api.MeveoApiErrorCode;
 import org.meveo.api.account.CustomerApi;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
-import org.meveo.api.dto.account.CustomerBrandDto;
-import org.meveo.api.dto.account.CustomerCategoryDto;
 import org.meveo.api.dto.account.CustomerDto;
-import org.meveo.api.dto.response.account.GetCustomerResponse;
-import org.meveo.api.dto.response.account.ListCustomerResponseDto;
+import org.meveo.api.dto.response.account.CustomersResponseDto;
+import org.meveo.api.dto.response.account.GetCustomerResponseDto;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.LoggingInterceptor;
 import org.meveo.api.rest.account.CustomerRs;
@@ -73,8 +71,8 @@ public class CustomerRsImpl extends BaseRs implements CustomerRs {
 	}
 
 	@Override
-	public GetCustomerResponse find(String customerCode) {
-		GetCustomerResponse result = new GetCustomerResponse();
+	public GetCustomerResponseDto find(String customerCode) {
+		GetCustomerResponseDto result = new GetCustomerResponseDto();
 
 		try {
 			result.setCustomer(customerApi.find(customerCode, getCurrentUser().getProvider()));
@@ -113,8 +111,8 @@ public class CustomerRsImpl extends BaseRs implements CustomerRs {
 	}
 
 	@Override
-	public ListCustomerResponseDto list(CustomerDto postData) {
-		ListCustomerResponseDto result = new ListCustomerResponseDto();
+	public CustomersResponseDto list(CustomerDto postData) {
+		CustomersResponseDto result = new CustomersResponseDto();
 
 		try {
 			result.setCustomers(customerApi.filterCustomer(postData, getCurrentUser().getProvider()));
@@ -132,84 +130,4 @@ public class CustomerRsImpl extends BaseRs implements CustomerRs {
 		return result;
 	}
 
-	@Override
-	public ActionStatus createBrand(CustomerBrandDto postData) {
-		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
-
-		try {
-			customerApi.createBrand(postData, getCurrentUser());
-		} catch (MeveoApiException e) {
-			result.setErrorCode(e.getErrorCode());
-			result.setStatus(ActionStatusEnum.FAIL);
-			result.setMessage(e.getMessage());
-		} catch (Exception e) {
-			result.setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
-			result.setStatus(ActionStatusEnum.FAIL);
-			result.setMessage(e.getMessage());
-		}
-
-		log.debug("RESPONSE={}", result);
-		return result;
-	}
-
-	@Override
-	public ActionStatus createCategory(CustomerCategoryDto postData) {
-		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
-
-		try {
-			customerApi.createCategory(postData, getCurrentUser());
-		} catch (MeveoApiException e) {
-			result.setErrorCode(e.getErrorCode());
-			result.setStatus(ActionStatusEnum.FAIL);
-			result.setMessage(e.getMessage());
-		} catch (Exception e) {
-			result.setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
-			result.setStatus(ActionStatusEnum.FAIL);
-			result.setMessage(e.getMessage());
-		}
-
-		log.debug("RESPONSE={}", result);
-		return result;
-	}
-
-	@Override
-	public ActionStatus removeBrand(String brandCode) {
-		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
-
-		try {
-			customerApi.removeBrand(brandCode, getCurrentUser().getProvider());
-		} catch (MeveoApiException e) {
-			result.setErrorCode(e.getErrorCode());
-			result.setStatus(ActionStatusEnum.FAIL);
-			result.setMessage(e.getMessage());
-		} catch (Exception e) {
-			result.setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
-			result.setStatus(ActionStatusEnum.FAIL);
-			result.setMessage(e.getMessage());
-		}
-
-		log.debug("RESPONSE={}", result);
-		return result;
-	}
-
-	@Override
-	public ActionStatus removeCategory(String categoryCode) {
-		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
-
-		try {
-			customerApi.removeCategory(categoryCode, getCurrentUser().getProvider());
-		} catch (MeveoApiException e) {
-			result.setErrorCode(e.getErrorCode());
-			result.setStatus(ActionStatusEnum.FAIL);
-			result.setMessage(e.getMessage());
-		} catch (Exception e) {
-			result.setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
-			result.setStatus(ActionStatusEnum.FAIL);
-			result.setMessage(e.getMessage());
-		}
-
-		log.debug("RESPONSE={}", result);
-		return result;
-	}
-	
 }

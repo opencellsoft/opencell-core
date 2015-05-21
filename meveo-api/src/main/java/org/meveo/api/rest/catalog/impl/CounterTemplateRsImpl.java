@@ -9,7 +9,7 @@ import org.meveo.api.catalog.CounterTemplateApi;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.catalog.CounterTemplateDto;
-import org.meveo.api.dto.response.catalog.GetCounterTemplateResponse;
+import org.meveo.api.dto.response.catalog.GetCounterTemplateResponseDto;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.LoggingInterceptor;
 import org.meveo.api.rest.catalog.CounterTemplateRs;
@@ -70,8 +70,8 @@ public class CounterTemplateRsImpl extends BaseRs implements CounterTemplateRs {
 	}
 
 	@Override
-	public GetCounterTemplateResponse find(String counterTemplateCode) {
-		GetCounterTemplateResponse result = new GetCounterTemplateResponse();
+	public GetCounterTemplateResponseDto find(String counterTemplateCode) {
+		GetCounterTemplateResponseDto result = new GetCounterTemplateResponseDto();
 
 		try {
 			result.setCounterTemplate(counterTemplateApi.find(counterTemplateCode, getCurrentUser().getProvider()));

@@ -9,8 +9,8 @@ import org.meveo.api.account.AccessApi;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.account.AccessDto;
-import org.meveo.api.dto.response.account.GetAccessResponse;
-import org.meveo.api.dto.response.account.ListAccessResponseDto;
+import org.meveo.api.dto.response.account.GetAccessResponseDto;
+import org.meveo.api.dto.response.account.AccessesResponseDto;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.LoggingInterceptor;
 import org.meveo.api.rest.account.AccessRs;
@@ -71,8 +71,8 @@ public class AccessRsImpl extends BaseRs implements AccessRs {
 	}
 
 	@Override
-	public GetAccessResponse find(String accessCode, String subscriptionCode) {
-		GetAccessResponse result = new GetAccessResponse();
+	public GetAccessResponseDto find(String accessCode, String subscriptionCode) {
+		GetAccessResponseDto result = new GetAccessResponseDto();
 
 		try {
 			result.setAccess(accessApi.find(accessCode, subscriptionCode, getCurrentUser().getProvider()));
@@ -111,8 +111,8 @@ public class AccessRsImpl extends BaseRs implements AccessRs {
 	}
 
 	@Override
-	public ListAccessResponseDto listBySubscription(String subscriptionCode) {
-		ListAccessResponseDto result = new ListAccessResponseDto();
+	public AccessesResponseDto listBySubscription(String subscriptionCode) {
+		AccessesResponseDto result = new AccessesResponseDto();
 
 		try {
 			result.setAccesses(accessApi.listBySubscription(subscriptionCode, getCurrentUser().getProvider()));

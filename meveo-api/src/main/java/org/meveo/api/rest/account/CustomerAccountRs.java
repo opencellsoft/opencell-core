@@ -14,8 +14,8 @@ import javax.ws.rs.core.MediaType;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.account.CustomerAccountDto;
 import org.meveo.api.dto.payment.DunningInclusionExclusionDto;
-import org.meveo.api.dto.response.account.GetCustomerAccountResponse;
-import org.meveo.api.dto.response.account.ListCustomerAccountResponseDto;
+import org.meveo.api.dto.response.account.GetCustomerAccountResponseDto;
+import org.meveo.api.dto.response.account.CustomerAccountsResponseDto;
 import org.meveo.api.rest.IBaseRs;
 import org.meveo.api.rest.security.RSSecured;
 
@@ -46,7 +46,7 @@ public interface CustomerAccountRs extends IBaseRs {
 	 */
 	@GET
 	@Path("/")
-	GetCustomerAccountResponse find(@QueryParam("customerAccountCode") String customerAccountCode);
+	GetCustomerAccountResponseDto find(@QueryParam("customerAccountCode") String customerAccountCode);
 
 	@DELETE
 	@Path("/{customerAccountCode}")
@@ -60,7 +60,7 @@ public interface CustomerAccountRs extends IBaseRs {
 	 */
 	@GET
 	@Path("/list")
-	ListCustomerAccountResponseDto listByCustomer(@QueryParam("customerCode") String customerCode);
+	CustomerAccountsResponseDto listByCustomer(@QueryParam("customerCode") String customerCode);
 	
 
 	@PUT

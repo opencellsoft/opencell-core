@@ -15,14 +15,14 @@ import org.meveo.api.dto.catalog.ServiceTemplateDto;
 import org.meveo.api.dto.catalog.TriggeredEdrTemplateDto;
 import org.meveo.api.dto.catalog.UsageChargeTemplateDto;
 import org.meveo.api.dto.response.catalog.GetChargeTemplateResponseDto;
-import org.meveo.api.dto.response.catalog.GetCounterTemplateResponse;
-import org.meveo.api.dto.response.catalog.GetOfferTemplateResponse;
-import org.meveo.api.dto.response.catalog.GetOneShotChargeTemplateResponse;
-import org.meveo.api.dto.response.catalog.GetPricePlanResponse;
-import org.meveo.api.dto.response.catalog.GetRecurringChargeTemplateResponse;
-import org.meveo.api.dto.response.catalog.GetServiceTemplateResponse;
+import org.meveo.api.dto.response.catalog.GetCounterTemplateResponseDto;
+import org.meveo.api.dto.response.catalog.GetOfferTemplateResponseDto;
+import org.meveo.api.dto.response.catalog.GetOneShotChargeTemplateResponseDto;
+import org.meveo.api.dto.response.catalog.GetPricePlanResponseDto;
+import org.meveo.api.dto.response.catalog.GetRecurringChargeTemplateResponseDto;
+import org.meveo.api.dto.response.catalog.GetServiceTemplateResponseDto;
 import org.meveo.api.dto.response.catalog.GetTriggeredEdrResponseDto;
-import org.meveo.api.dto.response.catalog.GetUsageChargeTemplateResponse;
+import org.meveo.api.dto.response.catalog.GetUsageChargeTemplateResponseDto;
 
 /**
  * @author Edward P. Legaspi
@@ -39,7 +39,7 @@ public interface CatalogWs extends IBaseWs {
 	ActionStatus updateCounterTemplate(@WebParam(name = "counterTemplate") CounterTemplateDto postData);
 
 	@WebMethod
-	GetCounterTemplateResponse findCounterTemplate(@WebParam(name = "counterTemplateCode") String counterTemplateCode);
+	GetCounterTemplateResponseDto findCounterTemplate(@WebParam(name = "counterTemplateCode") String counterTemplateCode);
 
 	@WebMethod
 	ActionStatus removeCounterTemplate(@WebParam(name = "counterTemplateCode") String counterTemplateCode);
@@ -53,7 +53,7 @@ public interface CatalogWs extends IBaseWs {
 	public ActionStatus createRecurringChargeTemplate(@WebParam(name = "recurringChargeTemplate") RecurringChargeTemplateDto postData);
 
 	@WebMethod
-	public GetRecurringChargeTemplateResponse findRecurringChargeTemplate(@WebParam(name = "recurringChargeTemplateCode") String recurringChargeTemplateCode);
+	public GetRecurringChargeTemplateResponseDto findRecurringChargeTemplate(@WebParam(name = "recurringChargeTemplateCode") String recurringChargeTemplateCode);
 
 	@WebMethod
 	public ActionStatus updateRecurringChargeTemplate(@WebParam(name = "recurringChargeTemplate") RecurringChargeTemplateDto postData);
@@ -68,7 +68,7 @@ public interface CatalogWs extends IBaseWs {
 	public ActionStatus updateOneShotChargeTemplate(@WebParam(name = "oneShotChargeTemplate") OneShotChargeTemplateDto postData);
 
 	@WebMethod
-	public GetOneShotChargeTemplateResponse findOneShotChargeTemplate(@WebParam(name = "oneShotChargeTemplateCode") String oneShotChargeTemplateCode);
+	public GetOneShotChargeTemplateResponseDto findOneShotChargeTemplate(@WebParam(name = "oneShotChargeTemplateCode") String oneShotChargeTemplateCode);
 
 	@WebMethod
 	public OneShotChargeTemplateWithPriceListDto listOneShotChargeTemplate(@WebParam(name = "languageCode") String languageCode,
@@ -85,7 +85,7 @@ public interface CatalogWs extends IBaseWs {
 	public ActionStatus updateUsageChargeTemplate(@WebParam(name = "usageChargeTemplate") UsageChargeTemplateDto postData);
 
 	@WebMethod
-	public GetUsageChargeTemplateResponse findUsageChargeTemplate(@WebParam(name = "usageChargeTemplateCode") String usageChargeTemplateCode);
+	public GetUsageChargeTemplateResponseDto findUsageChargeTemplate(@WebParam(name = "usageChargeTemplateCode") String usageChargeTemplateCode);
 
 	@WebMethod
 	public ActionStatus removeUsageChargeTemplate(@WebParam(name = "usageChargeTemplateCode") String usageChargeTemplateCode);
@@ -99,7 +99,7 @@ public interface CatalogWs extends IBaseWs {
 	ActionStatus updateServiceTemplate(@WebParam(name = "serviceTemplate") ServiceTemplateDto postData);
 
 	@WebMethod
-	GetServiceTemplateResponse findServiceTemplate(@WebParam(name = "serviceTemplateCode") String serviceTemplateCode);
+	GetServiceTemplateResponseDto findServiceTemplate(@WebParam(name = "serviceTemplateCode") String serviceTemplateCode);
 
 	@WebMethod
 	ActionStatus removeServiceTemplate(@WebParam(name = "serviceTemplateCode") String serviceTemplateCode);
@@ -113,7 +113,7 @@ public interface CatalogWs extends IBaseWs {
 	ActionStatus updateOfferTemplate(@WebParam(name = "offerTemplate") OfferTemplateDto postData);
 
 	@WebMethod
-	GetOfferTemplateResponse findOfferTemplate(@WebParam(name = "offerTemplateCode") String offerTemplateCode);
+	GetOfferTemplateResponseDto findOfferTemplate(@WebParam(name = "offerTemplateCode") String offerTemplateCode);
 
 	@WebMethod
 	ActionStatus removeOfferTemplate(@WebParam(name = "offerTemplateCode") String offerTemplateCode);
@@ -127,7 +127,7 @@ public interface CatalogWs extends IBaseWs {
 	ActionStatus updatePricePlan(@WebParam(name = "pricePlan") PricePlanDto postData);
 
 	@WebMethod
-	GetPricePlanResponse findPricePlan(@WebParam(name = "pricePlanCode") String pricePlanCode);
+	GetPricePlanResponseDto findPricePlan(@WebParam(name = "pricePlanCode") String pricePlanCode);
 
 	@WebMethod
 	ActionStatus removePricePlan(@WebParam(name = "pricePlanCode") String pricePlanCode);

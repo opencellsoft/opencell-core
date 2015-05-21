@@ -14,7 +14,7 @@ import javax.ws.rs.core.MediaType;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.catalog.OneShotChargeTemplateDto;
 import org.meveo.api.dto.catalog.OneShotChargeTemplateWithPriceListDto;
-import org.meveo.api.dto.response.catalog.GetOneShotChargeTemplateResponse;
+import org.meveo.api.dto.response.catalog.GetOneShotChargeTemplateResponseDto;
 import org.meveo.api.rest.IBaseRs;
 import org.meveo.api.rest.security.RSSecured;
 
@@ -58,7 +58,7 @@ public interface OneShotChargeTemplateRs extends IBaseRs {
 	 */
 	@GET
 	@Path("/")
-	public GetOneShotChargeTemplateResponse find(
+	public GetOneShotChargeTemplateResponseDto find(
 			@QueryParam("oneShotChargeTemplateCode") String oneShotChargeTemplateCode);
 
 	/**
