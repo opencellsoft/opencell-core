@@ -7333,7 +7333,6 @@
 			<column name="created" valueDate="2015-03-19 00:04:19.85" />
 			<column name="code" value="CYC_INV_MT_1" />
 			<column name="description" value="Monthly Invoice Cycle 1" />
-			<column name="billing_template_name" value="1" />
 			<column name="due_date_delay" valueNumeric="2" />
 			<column name="invoice_date_delay" valueNumeric="4" />
 			<column name="provider_id" valueNumeric="1" />
@@ -7346,7 +7345,6 @@
 			<column name="created" valueDate="2015-03-19 00:04:19.871" />
 			<column name="code" value="CYC_INV_MT_2" />
 			<column name="description" value="Monthly Invoice Cycle 2" />
-			<column name="billing_template_name" value="1" />
 			<column name="due_date_delay" valueNumeric="2" />
 			<column name="invoice_date_delay" valueNumeric="4" />
 			<column name="provider_id" valueNumeric="1" />
