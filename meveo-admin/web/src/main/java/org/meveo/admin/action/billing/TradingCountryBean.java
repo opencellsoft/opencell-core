@@ -119,8 +119,7 @@ public class TradingCountryBean extends BaseBean<TradingCountry> {
 			messages.error(new BundleKey("messages",
 					"tradingCountry.uniqueField"));
 		} catch (Exception e) {
-			log.error(e.getMessage());
-
+			log.error("failed to save or update trading country",e);
 			messages.error(new BundleKey("messages",
 					"tradingCountry.uniqueField"));
 		}

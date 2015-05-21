@@ -156,7 +156,7 @@ public class WalletOperationBean extends BaseBean<WalletOperation> {
 			 messages.info(new BundleKey("messages","walletOperation.alreadyBilled"));
 			 }
 			  }catch (Exception e) {
-			   log.error(e.getMessage()); 
+			   log.error("failed to updated to rerate ",e); 
 			    messages.error(new BundleKey("messages","update.failed"));
 			  }}
 	
@@ -171,7 +171,7 @@ public class WalletOperationBean extends BaseBean<WalletOperation> {
 			int count=walletOperationService.updateToRerate(walletIdList); 
 			messages.info(new BundleKey("messages", "walletOperation.updateToRerate"),count);
 		}catch (Exception e) {
-			log.error(e.getMessage());
+			log.error("error while updating to rerate",e);
 			messages.error(new BundleKey("messages","update.failed"));
 		}
 		conversation.end();

@@ -81,7 +81,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 		} catch (NoResultException nre) {
 			log.debug("findByCodeAndSubscription : no service has been found");
 		} catch (Exception e) {
-			log.error("findByCodeAndSubscription error={} ", e.getMessage());
+			log.error("findByCodeAndSubscription error={} ", e);
 		}
 
 		return chargeInstance;
@@ -110,7 +110,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 		} catch (NoResultException nre) {
 			log.debug("findByCodeAndSubscription : no service has been found");
 		} catch (Exception e) {
-			log.error("findByCodeAndSubscription error={} ", e.getMessage());
+			log.error("findByCodeAndSubscription error={} ", e);
 		}
 
 		return chargeInstances;

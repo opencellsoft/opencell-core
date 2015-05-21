@@ -58,7 +58,7 @@ public class InvoiceSubCategoryCountryService extends
 			return invoiceSubcategoryiountries.size() > 0 ? invoiceSubcategoryiountries
 					.get(0) : null;
 		} catch (NoResultException ex) {
-			log.warn(ex.getMessage());
+			log.warn("failed to find invoice SubCategory Country",ex);
 		}
 
 		return null;

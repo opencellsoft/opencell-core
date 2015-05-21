@@ -132,7 +132,7 @@ public class DefaultObserver {
             }
 
         } catch (BusinessException e1) {
-            log.error("Error while firing notification {} for provider {}: {} ", notif.getCode(), notif.getProvider().getCode(), e1.getMessage());
+            log.error("Error while firing notification {} for provider {}: {} ", notif.getCode(), notif.getProvider().getCode(), e1);
             try {
                 NotificationHistory notificationHistory = notificationHistoryService.create(notif, e, e1.getMessage(), NotificationHistoryStatusEnum.FAILED);
                 if (e instanceof InboundRequest) {
@@ -151,7 +151,7 @@ public class DefaultObserver {
                 executeAction(notif.getElAction(), cdr);
             }
         } catch (BusinessException e1) {
-            log.error("Error while firing notification {} for provider {}: {} ", notif.getCode(), notif.getProvider().getCode(), e1.getMessage());
+            log.error("Error while firing notification {} for provider {}: {} ", notif.getCode(), notif.getProvider().getCode(), e1);
         }
 
     }

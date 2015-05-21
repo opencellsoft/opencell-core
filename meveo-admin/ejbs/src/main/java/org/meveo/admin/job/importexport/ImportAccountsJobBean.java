@@ -271,7 +271,7 @@ public class ImportAccountsJobBean {
 			nbBillingAccountsError++;
 			log.error("file7:" + fileName + ", typeEntity:BillingAccount, index:" + i + ", code:"
 					+ billingAccountDto.getCode() + ", status:Error");
-			log.error(e.getMessage());
+			log.error("failed to create billing account",e);
 		}
 
 		if (billingAccount == null) {
@@ -317,7 +317,7 @@ public class ImportAccountsJobBean {
 		try {
 			userAccount = userAccountService.findByCode(uAccount.getCode(), provider);
 		} catch (Exception e) {
-			log.error(e.getMessage());
+			log.error("error while getting user account",e);
 		}
 
 		if (userAccount != null) {

@@ -404,7 +404,7 @@ public class ReservationService extends PersistenceService<Reservation> {
 					.setParameter("openStatus", ReservationStatus.OPEN).setParameter("expiryDate", new Date())
 					.executeUpdate();
 		} catch (Exception e) {
-			log.error(e.getMessage());
+			log.error("failed to update expired reservation",e);
 			return 0;
 		}
 	}

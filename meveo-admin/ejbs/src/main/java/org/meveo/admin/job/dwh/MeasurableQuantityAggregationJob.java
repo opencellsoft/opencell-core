@@ -55,13 +55,13 @@ public class MeasurableQuantityAggregationJob extends Job {
                 mvService.create(mv);
             }
         } catch (IllegalArgumentException e) {
-            log.error(e.getMessage());
+            log.error("Illegal argument exception in create measured values",e);
         } catch (SecurityException e) {
-            log.error(e.getMessage());
+        	 log.error("security exception in create measured values ",e);
         } catch (ParseException e) {
-            log.error(e.getMessage());
+        	 log.error("parse exception in create measured values",e);
         } catch (BusinessException e) {
-            log.error(e.getMessage());
+        	 log.error("failed to create measured values",e);
         }
     }
 

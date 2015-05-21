@@ -74,7 +74,7 @@ public class CalendarApi extends BaseApi {
                                 days.add(dayInYear);
                             }
                         } catch (IllegalArgumentException e) {
-                            log.warn("month={}", e.getMessage());
+                            log.warn("failed to find by month and day", e);
                         }
                     }
 
@@ -178,7 +178,7 @@ public class CalendarApi extends BaseApi {
                                 days.add(dayInYear);
                             }
                         } catch (IllegalArgumentException e) {
-                            log.warn("month={}", e.getMessage());
+                            log.warn("failed to find by month and day", e);
                         }
                     }
 

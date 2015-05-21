@@ -81,7 +81,7 @@ public class SubscriptionImportService {
 		try {
 			offerTemplate = offerTemplateService.findByCode(jaxbSubscription.getOfferCode().toUpperCase(), provider);
 		} catch (Exception e) {
-			log.warn(e.getMessage());
+			log.warn("failed to find offerTemplate ",e);
 		}
 		checkSubscription.offerTemplate = offerTemplate;
 
@@ -89,14 +89,14 @@ public class SubscriptionImportService {
 		try {
 			userAccount = userAccountService.findByCode(jaxbSubscription.getUserAccountId(), provider);
 		} catch (Exception e) {
-			log.error(e.getMessage());
+			log.error("failed to find userAccount",e);
 		}
 		checkSubscription.userAccount = userAccount;
 
 		try {
 			checkSubscription.subscription = subscriptionService.findByCode(jaxbSubscription.getCode(), provider);
 		} catch (Exception e) {
-			log.error(e.getMessage());
+			log.error("failed to find checkSubscription",e);
 		}
 
 		Subscription subscription = checkSubscription.subscription;
@@ -111,7 +111,7 @@ public class SubscriptionImportService {
 					subscriptionTerminationType = subscriptionTerminationReasonService.findByCodeReason(
 							jaxbSubscription.getStatus().getReason(), provider);
 				} catch (Exception e) {
-					log.error(e.getMessage());
+					log.error("failed to find subscriptionTerminationType ",e);
 				}
 
 				if (subscriptionTerminationType == null) {
@@ -219,7 +219,7 @@ public class SubscriptionImportService {
 
 				serviceInstanceService.serviceActivation(serviceInstance, null, null, currentUser);
 			} catch (Exception e) {
-				log.error(e.getMessage());
+				log.error("failed to importSubscription",e);
 				throw new SubscriptionServiceException(jaxbSubscription, serviceInst, e.getMessage());
 			}
 
@@ -285,7 +285,7 @@ public class SubscriptionImportService {
 				try {
 					serviceInstanceService.serviceActivation(serviceInstance, null, null, currentUser);
 				} catch (Exception e) {
-					log.error(e.getMessage());
+					log.error("failed to activate service",e);
 					throw new SubscriptionServiceException(subscrip, null, e.getMessage());
 				}
 			}

@@ -178,7 +178,7 @@ public class AccountOperationBean extends BaseBean<AccountOperation> {
 		} catch (BusinessException ee) {
 			messages.error(new BundleKey("messages", ee.getMessage()));
 		} catch (Exception e) {
-			log.error(e.getMessage());
+			log.error("failed to matching ",e);
 			messages.error(e.getMessage());
 		}
 		return "/pages/payments/customerAccounts/customerAccountDetail.xhtml?objectId="
@@ -209,7 +209,7 @@ public class AccountOperationBean extends BaseBean<AccountOperation> {
 			messages.error(new BundleKey("messages",
 					"customerAccount.noAllOperationUnmatched"));
 		} catch (Exception e) {
-			log.error(e.getMessage());
+			log.error("failed to partial matching",e);
 			messages.error(e.getMessage());
 		}
 		return "/pages/payments/customerAccounts/customerAccountDetail.xhtml?objectId="

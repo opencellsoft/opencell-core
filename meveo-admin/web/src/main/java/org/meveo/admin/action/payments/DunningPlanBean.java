@@ -127,7 +127,7 @@ public class DunningPlanBean extends BaseBean<DunningPlan> {
 				messages.error(new BundleKey("messages",
 						"dunningPlanTransition.uniqueField"));
 			} catch (Exception e) {
-				log.error(e.getMessage());
+				log.error("failed to save dunning plan transition",e);
 
 				messages.error(new BundleKey("messages",
 						"dunningPlanTransition.uniqueField"));

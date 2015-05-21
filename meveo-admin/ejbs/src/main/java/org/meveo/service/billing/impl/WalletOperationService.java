@@ -195,7 +195,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 
 			result = (BigDecimal) query.getSingleResult();
 		} catch (Exception e) {
-			log.error(e.getMessage());
+			log.error("failed to get Rated Amount",e);
 		}
 
 		if (result == null)
@@ -329,7 +329,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 
 			result = (BigDecimal) query.getSingleResult();
 		} catch (Exception e) {
-			log.error(e.getMessage());
+			log.error("failed to get balance amount ",e);
 		}
 
 		if (result == null)
@@ -1036,7 +1036,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 					walletOperations != null ? walletOperations.size() : 0 });
 
 		} catch (Exception e) {
-			log.error("findByStatus error={} ", e.getMessage());
+			log.error("findByStatus error={} ", e);
 		}
 		return walletOperations;
 	}
@@ -1061,7 +1061,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 		try {
 			return (List<WalletOperation>) qb.getQuery(getEntityManager()).getResultList();
 		} catch (NoResultException e) {
-			log.warn(e.getMessage());
+			log.warn("failed to get walletOperation list by ChargeInstance",e);
 			return null;
 		}
 	}
@@ -1075,7 +1075,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 		try {
 			return (WalletOperation) qb.getQuery(getEntityManager()).getSingleResult();
 		} catch (NoResultException e) {
-			log.warn(e.getMessage());
+			log.warn("failed to find walletOperation by user account and code",e);
 			return null;
 		}
 	}
@@ -1093,7 +1093,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 		try {
 			return (List<WalletOperation>) qb.getQuery(getEntityManager()).getResultList();
 		} catch (NoResultException e) {
-			log.warn(e.getMessage());
+			log.warn("failed to find by user account and wallet",e);
 			return null;
 		}
 	}

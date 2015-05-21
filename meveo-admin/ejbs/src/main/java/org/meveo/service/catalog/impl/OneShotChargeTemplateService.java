@@ -86,7 +86,7 @@ public class OneShotChargeTemplateService extends
 			return (List<OneShotChargeTemplate>) qb.getQuery(em)
 					.getResultList();
 		} catch (NoResultException e) {
-			log.warn(e.getMessage());
+			log.warn("failed to get subscriptionChargeTemplates",e);
 			return null;
 		}
 	}

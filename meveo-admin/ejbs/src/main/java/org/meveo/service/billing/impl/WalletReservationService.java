@@ -156,7 +156,7 @@ public class WalletReservationService extends PersistenceService<WalletReservati
 			getEntityManager().createQuery(sb.toString()).setParameter("updated", new Date())
 					.setParameter("status", status).setParameter("reservationId", reservationId).executeUpdate();
 		} catch (Exception e) {
-			log.error(e.getMessage());
+			log.error("failed to update reservation status",e);
 		}
 	}
 
@@ -217,7 +217,7 @@ public class WalletReservationService extends PersistenceService<WalletReservati
 			getEntityManager().createQuery(sb.toString()).setParameter("updated", new Date())
 					.setParameter("amount", amount).setParameter("reservationId", reservationId).executeUpdate();
 		} catch (Exception e) {
-			log.error(e.getMessage());
+			log.error("failed to updateSpendCredit",e);
 		}
 	}
 

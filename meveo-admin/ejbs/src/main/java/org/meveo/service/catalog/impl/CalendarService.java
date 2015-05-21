@@ -45,7 +45,7 @@ public class CalendarService extends PersistenceService<Calendar> {
 
 			return (Calendar) qb.getQuery(em).getSingleResult();
 		} catch (NoResultException e) {
-			log.warn(e.getMessage());
+			log.warn("failed to find calendar",e);
 			return null;
 		}
 	}
@@ -57,7 +57,7 @@ public class CalendarService extends PersistenceService<Calendar> {
 
 			return (Calendar) qb.getQuery(em).getSingleResult();
 		} catch (NoResultException e) {
-			log.warn(e.getMessage());
+			log.warn("error while getting calendar",e);
 			return null;
 		}
 	}

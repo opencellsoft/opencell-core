@@ -152,7 +152,7 @@ public class OfferTemplateBean extends BaseBean<OfferTemplate> {
 			try {
 				offerTemplateService.create(entity);
 			} catch (BusinessException e) {
-				log.error("error when duplicate offer#{0}:#{1}",entity.getCode(),e.getMessage());
+				log.error("error when duplicate offer#{0}:#{1}",entity.getCode(),e);
 			}
 			
 		}

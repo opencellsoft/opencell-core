@@ -59,7 +59,7 @@ public abstract class InputFiles {
 			} catch (Exception e) {
 				log.info("InputFiles job " + file.getName() + " failed");
 				FileUtils.moveFile(dirKO, currentFile, file.getName());
-				log.error(e.getMessage());
+				log.error("failed to handle files",e);
 			}
 		}
 
@@ -77,7 +77,7 @@ public abstract class InputFiles {
 				return fields[1];
 			}
 		} catch (Exception e) {
-			log.error(e.getMessage());
+			log.error("error on get provider ",e);
 		}
 		return null;
 	}

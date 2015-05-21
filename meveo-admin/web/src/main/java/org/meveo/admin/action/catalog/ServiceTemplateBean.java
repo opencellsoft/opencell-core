@@ -476,7 +476,7 @@ public class ServiceTemplateBean extends BaseBean<ServiceTemplate> {
 			try {
 				serviceTemplateService.create(entity);
 			} catch (BusinessException e) {
-				log.error("error when duplicate service#{0}:#{1}",entity.getCode(),e.getMessage());
+				log.error("error when duplicate service#{0}:#{1}",entity.getCode(),e);
 			}
 		}
 		System.out.println("Entity ID###"+(entity!=null?entity.getId():"null"));

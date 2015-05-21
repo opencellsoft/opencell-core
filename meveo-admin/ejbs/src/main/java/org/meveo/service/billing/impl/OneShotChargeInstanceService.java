@@ -77,7 +77,7 @@ public class OneShotChargeInstanceService extends BusinessService<OneShotChargeI
 		} catch (NoResultException nre) {
 			log.debug("findByCodeAndSubsription : aucune charge ponctuelle n'a ete trouvee");
 		} catch (Exception e) {
-			log.error(e.getMessage());
+			log.error("failed to find oneShotChargeInstance by Code and subsription",e);
 		}
 		return oneShotChargeInstance;
 	}

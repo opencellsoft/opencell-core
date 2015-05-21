@@ -74,7 +74,7 @@ public class XLSFile implements Serializable {
 				contexts.add(strs);
 			}
 		} catch (InvalidFormatException e) {
-			log.error(e.getMessage());
+			log.error("invalid file format ",e);
 		}
 	}
 

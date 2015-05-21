@@ -85,7 +85,7 @@ public class MatchingCodeBean extends BaseBean<MatchingCode> {
 		} catch (BusinessException e) {
 			messages.error(new BundleKey("messages",
 					"matchingCode.unmatchingKO"));
-			log.error(e.getMessage());
+			log.error("failed to unmatching ",e);
 		}
 		return returnPage;
 	}

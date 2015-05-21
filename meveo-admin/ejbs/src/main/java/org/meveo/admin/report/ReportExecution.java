@@ -108,9 +108,9 @@ public class ReportExecution implements Serializable{
 					generateFileName(reportName, executionDate));
 			log.info("Created file: " + generateFileName(reportName, executionDate));
 		} catch (JRException e) {
-			log.error(e.getMessage());
+			log.error("failed to generatePDF,JR exception",e);
 		} catch (UnsupportedEncodingException e) {
-			log.error(e.getMessage());
+			log.error("failed to generatePDF,unsupported encoding exception",e);
 		}
 	}
 
@@ -138,7 +138,7 @@ public class ReportExecution implements Serializable{
 					generateFileName(exportFileName, executionDate));
 			log.info("Created file: " + generateFileName(exportFileName, executionDate));
 		} catch (JRException e) {
-			log.error(e.getMessage());
+			log.error("error on generate PDF",e);
 		}
 	}
 
@@ -196,12 +196,12 @@ public class ReportExecution implements Serializable{
 				reportService.update(report);
 			}
 		} catch (ClassNotFoundException e) {
-			log.error(e.getMessage());
+			log.error("failed to executeReport,class not found exception",e);
 		} catch (InstantiationException e) {
-			log.error(e.getMessage());
+			log.error("failed to executeReport,instantiation exception",e);
 
 		} catch (IllegalAccessException e) {
-			log.error(e.getMessage());
+			log.error("failed to executeReport,Illegala access exception",e);
 
 		}
 
@@ -227,7 +227,7 @@ public class ReportExecution implements Serializable{
 					report.getSchedule(), exportFileName);
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
-			log.error(e.getMessage());
+			log.error("failed to execute report , file not found Exception",e);
 		}
 	}
 

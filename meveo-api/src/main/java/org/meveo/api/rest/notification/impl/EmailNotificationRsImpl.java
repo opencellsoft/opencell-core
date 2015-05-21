@@ -38,11 +38,11 @@ public class EmailNotificationRsImpl extends BaseRs implements EmailNotification
 			result.setErrorCode(e.getErrorCode());
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
-			log.error(e.getMessage());
+			log.error("error occurred while creating email notification ",e);
 		} catch (Exception e) {
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
-			log.error(e.getMessage());
+			log.error("error generated while creating  email notification ",e);
 		}
 
 		log.debug("RESPONSE={}", result);
@@ -59,11 +59,11 @@ public class EmailNotificationRsImpl extends BaseRs implements EmailNotification
 			result.setErrorCode(e.getErrorCode());
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
-			log.error(e.getMessage());
+			log.error("error occurred while updating email notification ",e);
 		} catch (Exception e) {
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
-			log.error(e.getMessage());
+			log.error("error generated while updating email notification ",e);
 		}
 
 		log.debug("RESPONSE={}", result);
@@ -80,11 +80,11 @@ public class EmailNotificationRsImpl extends BaseRs implements EmailNotification
 			result.getActionStatus().setErrorCode(e.getErrorCode());
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
 			result.getActionStatus().setMessage(e.getMessage());
-			log.error(e.getMessage());
+			log.error("error occurred while getting email notification ",e);
 		} catch (Exception e) {
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
 			result.getActionStatus().setMessage(e.getMessage());
-			log.error(e.getMessage());
+			log.error("error generated while getting email notification ",e);
 		}
 
 		log.debug("RESPONSE={}", result);
@@ -101,11 +101,11 @@ public class EmailNotificationRsImpl extends BaseRs implements EmailNotification
 			result.setErrorCode(e.getErrorCode());
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
-			log.error(e.getMessage());
+			log.error("error occurred while removing email notification ",e);
 		} catch (Exception e) {
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
-			log.error(e.getMessage());
+			log.error("error generated while removing email notification ",e);
 		}
 
 		log.debug("RESPONSE={}", result);

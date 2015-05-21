@@ -464,7 +464,7 @@ public class UsageRatingService {
 					edr.setRejectReason("subscription has no usage charge");
 				}
 			} catch (Exception e) {
-				log.error(e.getMessage());
+				log.error("failed to rate usage Within Transaction",e);
 				edr.setStatus(EDRStatusEnum.REJECTED);
 				edr.setRejectReason(e.getMessage());
 				throw new BusinessException(e);

@@ -38,11 +38,11 @@ public class WebHookNotificationRsImpl extends BaseRs implements WebHookNotifica
 			result.setErrorCode(e.getErrorCode());
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
-			log.error(e.getMessage());
+			log.error("error occured while creating webhook notification ",e);
 		} catch (Exception e) {
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
-			log.error(e.getMessage());
+			log.error("error generated while creating webhook notification ",e);
 		}
 
 		log.debug("RESPONSE={}", result);
@@ -59,11 +59,11 @@ public class WebHookNotificationRsImpl extends BaseRs implements WebHookNotifica
 			result.setErrorCode(e.getErrorCode());
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
-			log.error(e.getMessage());
+			log.error("error occured while updating webhook notification ",e);
 		} catch (Exception e) {
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
-			log.error(e.getMessage());
+			log.error("error generated while updating webhook notification ",e);
 		}
 
 		log.debug("RESPONSE={}", result);
@@ -80,11 +80,11 @@ public class WebHookNotificationRsImpl extends BaseRs implements WebHookNotifica
 			result.getActionStatus().setErrorCode(e.getErrorCode());
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
 			result.getActionStatus().setMessage(e.getMessage());
-			log.error(e.getMessage());
+			log.error("error occurred while getting webhook notification ",e);
 		} catch (Exception e) {
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
 			result.getActionStatus().setMessage(e.getMessage());
-			log.error(e.getMessage());
+			log.error("error generated while getting webhook notification ",e);
 		}
 
 		log.debug("RESPONSE={}", result);
@@ -101,11 +101,11 @@ public class WebHookNotificationRsImpl extends BaseRs implements WebHookNotifica
 			result.setErrorCode(e.getErrorCode());
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
-			log.error(e.getMessage());
+			log.error("error occurred while removing webhook notification ",e);
 		} catch (Exception e) {
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
-			log.error(e.getMessage());
+			log.error("error generated while removing webhook notification ",e);
 		}
 
 		log.debug("RESPONSE={}", result);

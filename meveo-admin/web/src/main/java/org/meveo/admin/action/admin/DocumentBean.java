@@ -159,7 +159,7 @@ public class DocumentBean implements Serializable {
 			}
 			tmpFile.renameTo(createdFile);
 		} catch (Exception e) {
-			log.error("Error:#0, when compress file:#1", e.getMessage(),
+			log.error("Error:#0, when compress file:#1", e,
 					document.getAbsolutePath());
 		}
 		list();
@@ -195,7 +195,7 @@ public class DocumentBean implements Serializable {
 			context.responseComplete();
 			log.info("download over!");
 		} catch (Exception e) {
-			log.error("Error:#0, when dowload file: #1", e.getMessage(),
+			log.error("Error:#0, when dowload file: #1", e,
 					document.getAbsolutePath());
 		}
 		log.info("downloaded successfully!");

@@ -29,7 +29,7 @@ public class JobApi extends BaseApi {
 			try {
 				timerEntityService.executeAPITimer(postData,currentUser);
 			} catch (Exception e) {
-				log.error(e.getMessage());
+				log.error("Failed to execute api timer ",e);
 			}
 		} else {
 			if (StringUtils.isBlank(postData.getTimerName())) {

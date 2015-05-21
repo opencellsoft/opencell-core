@@ -127,7 +127,7 @@ public class ImportCatalogJobBean {
 					}
 
 				} catch (Exception e) {
-					log.error("Failed to import catalog job",e);
+					log.error("failed to create excel file",e);
 					File fi = FileUtils.replaceFileExtension(file, "");
 					FileUtils.moveFile(rejectDir, fi, null);
 					try {
@@ -135,7 +135,7 @@ public class ImportCatalogJobBean {
 							excelInputStream.close();
 						}
 					} catch (Exception ex) {
-						log.error(ex.getMessage());
+						log.error("excel error ",ex);
 					} finally {
 						fi.delete();
 					}
@@ -155,7 +155,7 @@ public class ImportCatalogJobBean {
 							excelInputStream.close();
 						}
 					} catch (Exception e) {
-						log.error(e.getMessage());
+						log.error("excel exception ",e);
 					}
 				} else {
 					File fi = FileUtils.replaceFileExtension(file, "");
@@ -165,7 +165,7 @@ public class ImportCatalogJobBean {
 							excelInputStream.close();
 						}
 					} catch (Exception e) {
-						log.error(e.getMessage());
+						log.error("excel error ",e);
 					} finally {
 						fi.delete();
 					}
@@ -176,7 +176,7 @@ public class ImportCatalogJobBean {
 				log.info("No file to process.");
 			}
 		} catch (Exception e) {
-			log.error(e.getMessage());
+			log.error("Failed to import catalog job",e);
 		}
 	}
 

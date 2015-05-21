@@ -92,13 +92,13 @@ public class CsvBuilder {
 			fw.write(sb.toString());
 			fw.close();
 		} catch (Exception e) {
-			log.error(e.getMessage());
+			log.error("error on toFile",e);
 		} finally {
 			if (fw != null) {
 				try {
 					fw.close();
 				} catch (IOException e) {
-					log.error(e.getMessage());
+					log.error("exception on toFile",e);;
 				}
 			}
 		}

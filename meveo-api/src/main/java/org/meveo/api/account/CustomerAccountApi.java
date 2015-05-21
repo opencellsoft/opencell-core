@@ -96,12 +96,12 @@ public class CustomerAccountApi extends AccountApi {
 			try {
 				customerAccount.setPaymentMethod(PaymentMethodEnum.valueOf(postData.getPaymentMethod()));
 			} catch (IllegalArgumentException | NullPointerException e) {
-				log.warn(e.getMessage());
+				log.warn("error generated while setting payment method",e);
 			}
 			try {
 				customerAccount.setCreditCategory(CreditCategoryEnum.valueOf(postData.getCreditCategory()));
 			} catch (IllegalArgumentException | NullPointerException e) {
-				log.warn(e.getMessage());
+				log.warn("error generated while setting credit category",e);
 			}
 			customerAccount.setMandateDate(postData.getMandateDate());
 			customerAccount.setMandateIdentification(postData.getMandateIdentification());
@@ -183,12 +183,12 @@ public class CustomerAccountApi extends AccountApi {
 			try {
 				customerAccount.setPaymentMethod(PaymentMethodEnum.valueOf(postData.getPaymentMethod()));
 			} catch (IllegalArgumentException e) {
-				log.warn(e.getMessage());
+				log.warn("error generated while setting payment method ",e);
 			}
 			try {
 				customerAccount.setCreditCategory(CreditCategoryEnum.valueOf(postData.getCreditCategory()));
 			} catch (IllegalArgumentException e) {
-				log.warn(e.getMessage());
+				log.warn("error generated while setting credit category ",e);
 			}
 			customerAccount.setMandateDate(postData.getMandateDate());
 			customerAccount.setMandateIdentification(postData.getMandateIdentification());

@@ -97,7 +97,7 @@ public class TradingLanguageBean extends BaseBean<TradingLanguage> {
 			messages.error(new BundleKey("messages",
 					"tradingLanguage.uniqueField"));
 		} catch (Exception e) {
-			log.error(e.getMessage());
+			log.error("failed to save or update trading language ",e);
 
 			messages.error(new BundleKey("messages",
 					"tradingLanguage.uniqueField"));

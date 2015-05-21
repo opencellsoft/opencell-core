@@ -857,7 +857,7 @@ public class AccountHierarchyApi extends BaseApi {
 													}
 												}
 											} catch (IllegalStateException e) {
-												log.warn("customerAccountStatus={}", e.getMessage());
+												log.warn("error generated while getting customer account status ", e);
 											}
 										}
 									}
@@ -891,22 +891,22 @@ public class AccountHierarchyApi extends BaseApi {
 									try {
 										customerAccount.setStatus(CustomerAccountStatusEnum.valueOf(customerAccountDto.getStatus()));
 									} catch (IllegalArgumentException | NullPointerException e) {
-										log.warn("customerAccount.status={}", e.getMessage());
+										log.warn("error while setting customer account status", e);
 									}
 									try {
 										customerAccount.setPaymentMethod(PaymentMethodEnum.valueOf(customerAccountDto.getPaymentMethod()));
 									} catch (IllegalArgumentException | NullPointerException e) {
-										log.warn("customerAccount.paymentMethod={}", e.getMessage());
+										log.warn("error while setting customerAccount.paymentMethod", e);
 									}
 									try {
 										customerAccount.setCreditCategory(CreditCategoryEnum.valueOf(customerAccountDto.getCreditCategory()));
 									} catch (IllegalArgumentException | NullPointerException e) {
-										log.warn("customerAccount.creditCategory={}", e.getMessage());
+										log.warn("customerAccount.creditCategory={}", e);
 									}
 									try {
 										customerAccount.setDunningLevel(DunningLevelEnum.valueOf(customerAccountDto.getDunningLevel()));
 									} catch (IllegalArgumentException | NullPointerException e) {
-										log.warn("customerAccount.dunningLevel={}", e.getMessage());
+										log.warn("error while setting customerAccount.dunningLevel ",e);
 									}
 
 									customerAccount.setDateStatus(customerAccountDto.getDateStatus());
@@ -1012,12 +1012,12 @@ public class AccountHierarchyApi extends BaseApi {
 											try {
 												billingAccount.setPaymentMethod(PaymentMethodEnum.valueOf(billingAccountDto.getPaymentMethod()));
 											} catch (IllegalArgumentException | NullPointerException e) {
-												log.warn("billingAccount.paymentMethod={}", e.getMessage());
+												log.warn("error while setting billingAccount.paymentMethod",e);
 											}
 											try {
 												billingAccount.setPaymentTerm(PaymentTermEnum.valueOf(billingAccountDto.getPaymentTerms()));
 											} catch (IllegalArgumentException | NullPointerException e) {
-												log.warn("billingAccount.paymentTerms={}", e.getMessage());
+												log.warn("error while setting billingAccount.paymentTerms ",e);
 											}
 
 											billingAccount.setNextInvoiceDate(billingAccountDto.getNextInvoiceDate());
@@ -1080,7 +1080,7 @@ public class AccountHierarchyApi extends BaseApi {
 													try {
 														userAccount.setStatus(AccountStatusEnum.valueOf(userAccountDto.getStatus()));
 													} catch (IllegalArgumentException | NullPointerException e) {
-														log.warn("userAccountDto.status={}", e.getMessage());
+														log.warn("error while setting userAccountDto.status ",e);
 													}
 
 													userAccount.setSubscriptionDate(userAccountDto.getSubscriptionDate());
@@ -1225,7 +1225,7 @@ public class AccountHierarchyApi extends BaseApi {
 																				serviceInstanceService.terminateService(serviceInstance, serviceInstanceDto.getTerminationDate(),
 																						serviceTerminationReason, currentUser);
 																			} catch (BusinessException e) {
-																				log.error("service termination={}", e.getMessage());
+																				log.error("service termination={}", e);
 																				throw new MeveoApiException(e.getMessage());
 																			}
 																		} else {

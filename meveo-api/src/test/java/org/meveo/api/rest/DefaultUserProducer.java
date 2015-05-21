@@ -33,7 +33,7 @@ public class DefaultUserProducer {
 			currentUser = userService.loginChecks("meveo.admin", "meveo.admin",
 					false);
 		} catch (LoginException e) {
-			log.error("Failed to login. {}", e.getMessage());
+			log.error("Failed to login. {}", e);
 		}
 	}
 

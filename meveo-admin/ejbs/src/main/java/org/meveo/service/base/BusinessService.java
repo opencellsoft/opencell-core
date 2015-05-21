@@ -43,7 +43,7 @@ public abstract class BusinessService<P extends BusinessEntity> extends
 		try {
 			return (P) qb.getQuery(getEntityManager()).getSingleResult();
 		} catch (NoResultException e) {
-			log.warn(e.getMessage());
+			log.warn("error while getting entity by code",e);
 			return null;
 		}
 	}

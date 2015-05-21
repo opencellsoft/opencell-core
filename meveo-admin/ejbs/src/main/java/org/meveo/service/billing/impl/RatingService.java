@@ -146,7 +146,7 @@ public class RatingService extends BusinessService<WalletOperation>{
 			Number sharedQuantity = (Number) query.getSingleResult();
 			result = sharedQuantity.intValue();
 		} catch (Exception e) {
-			log.error(e.getMessage());
+			log.error("faile to get shared quantity",e);
 		}
 		return result;
 	}
@@ -243,7 +243,7 @@ public class RatingService extends BusinessService<WalletOperation>{
 			String languageCode = ua.getBillingAccount().getTradingLanguage().getLanguage().getLanguageCode();
 			chargeInstnceLabel = catMessagesService.getMessageDescription(chargeInstance, languageCode);
 		} catch (Exception e) {
-			log.error(e.getMessage());
+			log.error("failed to rate charge application",e);
 		}
 
 		result.setDescription(chargeInstnceLabel != null ? chargeInstnceLabel : chargeInstance.getDescription());
@@ -601,8 +601,7 @@ public class RatingService extends BusinessService<WalletOperation>{
 			create(operation);
 			update(operationToRerate);
 			log.debug("updated wallet operation");
-		} catch (UnrolledbackBusinessException e) {
-			log.info(e.getMessage());
+		} catch (UnrolledbackBusinessException e) { 
 			log.error("Failed to reRate",e);
 			operationToRerate.setStatus(WalletOperationStatusEnum.TREATED);
 			operationToRerate.setReratedWalletOperation(null);

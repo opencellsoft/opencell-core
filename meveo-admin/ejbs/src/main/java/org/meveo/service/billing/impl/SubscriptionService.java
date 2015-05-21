@@ -275,7 +275,7 @@ public class SubscriptionService extends BusinessService<Subscription> {
 			return (List<Subscription>) qb.getQuery(getEntityManager())
 					.getResultList();
 		} catch (NoResultException e) {
-			log.warn(e.getMessage());
+			log.warn("failed to find subscription by offer template",e);
 			return null;
 		}
 	}
@@ -304,7 +304,7 @@ public class SubscriptionService extends BusinessService<Subscription> {
 			return (List<Subscription>) qb.getQuery(getEntityManager())
 					.getResultList();
 		} catch (NoResultException e) {
-			log.warn(e.getMessage());
+			log.warn("error while getting list subscription by user account",e);
 			return null;
 		}
 	}

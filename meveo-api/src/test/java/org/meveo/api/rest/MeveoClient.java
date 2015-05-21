@@ -76,7 +76,7 @@ public class MeveoClient {
 
 			return response.getEntity(String.class);
 		} catch (Exception e) {
-			log.error(e.getMessage());
+			log.error("error occurred while executing ",e);
 			return "";
 		}
 	}

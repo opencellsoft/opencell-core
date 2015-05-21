@@ -40,7 +40,7 @@ public class RatedTxInvoicingAsync {
 			try {
 				invoiceService.createAgregatesAndInvoice(billingAccount, billingRunId, currentUser);
 			} catch (Exception e) {
-				log.error("Error for BA=" + billingAccount.getCode() + " : " + e.getMessage());
+				log.error("Error for BA=" + billingAccount.getCode() + " : " + e);
 			}
 		}
 		return new AsyncResult<String>("OK");

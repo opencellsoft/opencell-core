@@ -35,7 +35,7 @@ public class RunCallable implements Runnable {
 		try {
 			callable.call();
 		} catch (Exception e) {
-			log.error(e.getMessage());
+			log.error("error on run",e);
 		}
 	}
 }

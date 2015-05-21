@@ -39,11 +39,11 @@ public class PaymentRsImpl extends BaseRs implements PaymentRs {
 		} catch (BusinessException e) {
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
-			log.error(e.getMessage());
+			log.error("error occurred while creating payment ",e);
 		} catch (Exception e) {
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
-			log.error(e.getMessage());
+			log.error("error generated while creating payment ",e);
 		}
 
 		log.debug("RESPONSE={}", result);

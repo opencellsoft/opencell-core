@@ -37,11 +37,11 @@ public class AccountOperationRsImpl extends BaseRs implements AccountOperationRs
 		} catch (MeveoApiException e) {
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
-			log.error(e.getMessage());
+			log.error("error occurred while creating account operation ",e);
 		} catch (Exception e) {
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
-			log.error(e.getMessage());
+			log.error("error generated while creating account operation ",e);
 		}
 
 		log.debug("RESPONSE={}", result);
@@ -57,11 +57,11 @@ public class AccountOperationRsImpl extends BaseRs implements AccountOperationRs
 		} catch (MeveoApiException e) {
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
 			result.getActionStatus().setMessage(e.getMessage());
-			log.error(e.getMessage());
+			log.error("error occurred while getting list account operation ",e);
 		} catch (Exception e) {
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
 			result.getActionStatus().setMessage(e.getMessage());
-			log.error(e.getMessage());
+			log.error("error generated while getting list account operation ",e);
 		}
 
 		log.debug("RESPONSE={}", result);

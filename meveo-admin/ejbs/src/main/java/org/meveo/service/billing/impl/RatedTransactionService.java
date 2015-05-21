@@ -574,7 +574,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 			return (List<RatedTransaction>) qb.getQuery(getEntityManager())
 					.getResultList();
 		} catch (NoResultException e) {
-			log.warn(e.getMessage());
+			log.warn("error on get not billed rated transactions ",e);
 			return null;
 		}
 
@@ -590,7 +590,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 			return (List<RatedTransaction>) qb.getQuery(getEntityManager())
 					.getResultList();
 		} catch (NoResultException e) {
-			log.warn(e.getMessage());
+			log.warn("failed to get ratedTransactions ny nillingRun",e);
 			return null;
 		}
 

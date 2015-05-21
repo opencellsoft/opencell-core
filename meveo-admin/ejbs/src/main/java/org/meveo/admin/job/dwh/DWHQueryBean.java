@@ -151,7 +151,7 @@ public class DWHQueryBean {
 				result.registerError("Measurable quantity with code " + measurableQuantityCode
 						+ " contain invalid SQL query: " + e.getMessage());
 				log.info("Measurable quantity with code " + measurableQuantityCode + " contain invalid SQL query: "
-						+ e.getMessage());
+						+ e);
 			}
 		}
 	}

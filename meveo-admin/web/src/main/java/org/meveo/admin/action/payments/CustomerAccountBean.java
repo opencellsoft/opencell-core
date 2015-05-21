@@ -150,7 +150,7 @@ public class CustomerAccountBean extends AccountBean<CustomerAccount> {
 		} catch (DuplicateDefaultAccountException e1) {
 			messages.error(new BundleKey("messages", "error.account.duplicateDefautlLevel"));
 		} catch (Exception e) {
-			log.error(e.getMessage());
+			log.error("failed to save or update customer account",e);
 			messages.error(new BundleKey("messages", "javax.el.ELException"));
 
 		}
@@ -174,7 +174,7 @@ public class CustomerAccountBean extends AccountBean<CustomerAccount> {
 			setAmountToTransfer(BigDecimal.ZERO);
 
 		} catch (Exception e) {
-			log.error(e.getMessage());
+			log.error("failed to transfer account ",e);
 			messages.error(new BundleKey("messages", "customerAccount.transfertKO"));
 		}
 
@@ -243,10 +243,10 @@ public class CustomerAccountBean extends AccountBean<CustomerAccount> {
 			customerAccountService.closeCustomerAccount(entity, getCurrentUser());
 			messages.info(new BundleKey("messages", "customerAccount.closeSuccessful"));
 		} catch (BusinessException e) {
-			log.error(e.getMessage());
+			log.error("failed to close customer account",e);
 			messages.error(e.getMessage());
 		} catch (Exception e) {
-			log.error(e.getMessage());
+			log.error("error while closing customer account",e);
 			messages.error(e.getMessage());
 		}
 		return null;

@@ -174,7 +174,7 @@ public class UserAccountService extends AccountService<UserAccount> {
 		try {
 			return (List<UserAccount>) qb.getQuery(getEntityManager()).getResultList();
 		} catch (NoResultException e) {
-			log.warn(e.getMessage());
+			log.warn("error while getting user account list by billing account",e);
 			return null;
 		}
 	}

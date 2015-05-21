@@ -106,10 +106,10 @@ public class ServiceInstanceBean extends BaseBean<ServiceInstance> {
 			serviceInstanceService.serviceInstanciation(serviceInstance, getCurrentUser());
 			
 		} catch (BusinessException e) {
-			log.error(e.getMessage());
+			log.error("error occurred in service instanciation ",e);
 			messages.error(e.getMessage());
 		} catch (Exception e) {
-			log.error(e.getMessage());
+			log.error("error generated in service instanciation ",e);
 			messages.error(e.getMessage());
 		}
 		return null;
@@ -123,11 +123,11 @@ public class ServiceInstanceBean extends BaseBean<ServiceInstance> {
 			messages.info(new BundleKey("messages", "activation.activateSuccessful"));
 			
 		} catch (BusinessException e) {
-			log.error(e.getMessage());
+			log.error("error in service activation ",e);
 			messages.error(e.getMessage());
 			
 		} catch (Exception e) {
-			log.error(e.getMessage());
+			log.error("error generated in service activation ",e);
             messages.error(e.getMessage() == null ? e.getClass().getSimpleName() : e.getMessage());
 		}
 		return null;
@@ -142,7 +142,7 @@ public class ServiceInstanceBean extends BaseBean<ServiceInstance> {
 			messages.info(new BundleKey("messages", "resiliation.resiliateSuccessful"));
 			
 		} catch (Exception e) {
-			log.error(e.getMessage());
+			log.error("error in resiliate service",e);
             messages.error(e.getMessage() == null ? e.getClass().getSimpleName() : e.getMessage());
 		}
 		return null;
@@ -157,7 +157,7 @@ public class ServiceInstanceBean extends BaseBean<ServiceInstance> {
 			messages.info(new BundleKey("messages", "cancellation.cancelSuccessful"));
 		
 		} catch (Exception e) {
-			log.error(e.getMessage());
+			log.error("failed to resiliate without fee service",e);
             messages.error(e.getMessage() == null ? e.getClass().getSimpleName() : e.getMessage());
 		}
 		return null;
@@ -172,7 +172,7 @@ public class ServiceInstanceBean extends BaseBean<ServiceInstance> {
 			messages.info(new BundleKey("messages", "resiliation.resiliateSuccessful"));
 
 		} catch (Exception e) {
-			log.error(e.getMessage());
+			log.error("failed to cancel service ",e);
             messages.error(e.getMessage() == null ? e.getClass().getSimpleName() : e.getMessage());
 		}
 		return null;
@@ -186,10 +186,10 @@ public class ServiceInstanceBean extends BaseBean<ServiceInstance> {
 			messages.info(new BundleKey("messages", "suspension.suspendSuccessful"));
 
 		} catch (BusinessException e) {
-			log.error(e.getMessage());
+			log.error("failed to suspend service",e);
 			messages.error(e.getMessage());
 		} catch (Exception e) {
-			log.error(e.getMessage());
+			log.error("error generated in suspend service ",e);
             messages.error(e.getMessage() == null ? e.getClass().getSimpleName() : e.getMessage());
 		}
 		return null;

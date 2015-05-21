@@ -51,11 +51,11 @@ public class NotificationWsImpl extends BaseWs implements NotificationWs {
 			result.setErrorCode(e.getErrorCode());
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
-			log.error(e.getMessage());
+			log.error("error occurred while creating notification ",e);
 		} catch (Exception e) {
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
-			log.error(e.getMessage());
+			log.error("error generated while creating notification ",e);
 		}
 
 		log.debug("RESPONSE={}", result);
@@ -72,11 +72,11 @@ public class NotificationWsImpl extends BaseWs implements NotificationWs {
 			result.setErrorCode(e.getErrorCode());
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
-			log.error(e.getMessage());
+			log.error("error occurred while updating notification ",e);
 		} catch (Exception e) {
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
-			log.error(e.getMessage());
+			log.error("error generated while updating notification ",e);
 		}
 
 		log.debug("RESPONSE={}", result);
@@ -93,11 +93,11 @@ public class NotificationWsImpl extends BaseWs implements NotificationWs {
 			result.getActionStatus().setErrorCode(e.getErrorCode());
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
 			result.getActionStatus().setMessage(e.getMessage());
-			log.error(e.getMessage());
+			log.error("error occurred while getting notification ",e);
 		} catch (Exception e) {
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
 			result.getActionStatus().setMessage(e.getMessage());
-			log.error(e.getMessage());
+			log.error("error generated while getting notification ",e);
 		}
 
 		log.debug("RESPONSE={}", result);
@@ -114,11 +114,11 @@ public class NotificationWsImpl extends BaseWs implements NotificationWs {
 			result.setErrorCode(e.getErrorCode());
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
-			log.error(e.getMessage());
+			log.error("error occurred while removing notification ",e);
 		} catch (Exception e) {
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
-			log.error(e.getMessage());
+			log.error("error generated while removing notification ",e);
 		}
 
 		log.debug("RESPONSE={}", result);
@@ -135,11 +135,11 @@ public class NotificationWsImpl extends BaseWs implements NotificationWs {
 			result.setErrorCode(e.getErrorCode());
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
-			log.error(e.getMessage());
+			log.error("error occurred while creating webHook notification ",e);
 		} catch (Exception e) {
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
-			log.error(e.getMessage());
+			log.error("error generated while creating webHook notification ",e);
 		}
 
 		log.debug("RESPONSE={}", result);
@@ -156,11 +156,11 @@ public class NotificationWsImpl extends BaseWs implements NotificationWs {
 			result.setErrorCode(e.getErrorCode());
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
-			log.error(e.getMessage());
+			log.error("error occurred while updating webHook notification ",e);
 		} catch (Exception e) {
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
-			log.error(e.getMessage());
+			log.error("error generated while updating webHook notification ",e);
 		}
 
 		log.debug("RESPONSE={}", result);
@@ -177,11 +177,11 @@ public class NotificationWsImpl extends BaseWs implements NotificationWs {
 			result.getActionStatus().setErrorCode(e.getErrorCode());
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
 			result.getActionStatus().setMessage(e.getMessage());
-			log.error(e.getMessage());
+			log.error("error occurred while getting webHook notification ",e);
 		} catch (Exception e) {
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
 			result.getActionStatus().setMessage(e.getMessage());
-			log.error(e.getMessage());
+			log.error("error generated while getting webHook notification ",e);
 		}
 
 		log.debug("RESPONSE={}", result);
@@ -198,11 +198,11 @@ public class NotificationWsImpl extends BaseWs implements NotificationWs {
 			result.setErrorCode(e.getErrorCode());
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
-			log.error(e.getMessage());
+			log.error("error occurred while removing webHook notification ",e);
 		} catch (Exception e) {
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
-			log.error(e.getMessage());
+			log.error("error generated while removing webHook notification ",e);
 		}
 
 		log.debug("RESPONSE={}", result);
@@ -219,11 +219,11 @@ public class NotificationWsImpl extends BaseWs implements NotificationWs {
 			result.setErrorCode(e.getErrorCode());
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
-			log.error(e.getMessage());
+			log.error("error occurred while creating email notification ",e);
 		} catch (Exception e) {
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
-			log.error(e.getMessage());
+			log.error("error generated while creating email notification ",e);
 		}
 
 		log.debug("RESPONSE={}", result);
@@ -240,11 +240,11 @@ public class NotificationWsImpl extends BaseWs implements NotificationWs {
 			result.setErrorCode(e.getErrorCode());
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
-			log.error(e.getMessage());
+			log.error("error occurred while updating email notification ",e);
 		} catch (Exception e) {
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
-			log.error(e.getMessage());
+			log.error("error generated while updating email notification ",e);
 		}
 
 		log.debug("RESPONSE={}", result);
@@ -261,11 +261,11 @@ public class NotificationWsImpl extends BaseWs implements NotificationWs {
 			result.getActionStatus().setErrorCode(e.getErrorCode());
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
 			result.getActionStatus().setMessage(e.getMessage());
-			log.error(e.getMessage());
+			log.error("error occurred while getting email notification ",e);
 		} catch (Exception e) {
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
 			result.getActionStatus().setMessage(e.getMessage());
-			log.error(e.getMessage());
+			log.error("error generated while getting email notification ",e);
 		}
 
 		log.debug("RESPONSE={}", result);
@@ -282,11 +282,11 @@ public class NotificationWsImpl extends BaseWs implements NotificationWs {
 			result.setErrorCode(e.getErrorCode());
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
-			log.error(e.getMessage());
+			log.error("error occurred while removing email notification ",e);
 		} catch (Exception e) {
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
-			log.error(e.getMessage());
+			log.error("error generated while removing email notification ",e);
 		}
 
 		log.debug("RESPONSE={}", result);
@@ -303,11 +303,11 @@ public class NotificationWsImpl extends BaseWs implements NotificationWs {
 			result.getActionStatus().setErrorCode(e.getErrorCode());
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
 			result.getActionStatus().setMessage(e.getMessage());
-			log.error(e.getMessage());
+			log.error("error occurred while getting list notification history ",e);
 		} catch (Exception e) {
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
 			result.getActionStatus().setMessage(e.getMessage());
-			log.error(e.getMessage());
+			log.error("error generated while getting list notification history ",e);
 		}
 
 		log.debug("RESPONSE={}", result);
@@ -324,11 +324,11 @@ public class NotificationWsImpl extends BaseWs implements NotificationWs {
 			result.getActionStatus().setErrorCode(e.getErrorCode());
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
 			result.getActionStatus().setMessage(e.getMessage());
-			log.error(e.getMessage());
+			log.error("error occurred while getting list inbound request ",e);
 		} catch (Exception e) {
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
 			result.getActionStatus().setMessage(e.getMessage());
-			log.error(e.getMessage());
+			log.error("error generated while getting list inbound request ",e);
 		}
 
 		log.debug("RESPONSE={}", result);

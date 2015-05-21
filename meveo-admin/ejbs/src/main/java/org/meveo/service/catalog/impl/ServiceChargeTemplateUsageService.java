@@ -75,7 +75,7 @@ public class ServiceChargeTemplateUsageService extends PersistenceService<Servic
 		try {
 			return (List<ServiceChargeTemplateUsage>) qb.getQuery(getEntityManager()).getResultList();
 		} catch (NoResultException e) {
-			log.warn(e.getMessage());
+			log.warn("failed to find ServiceChargeTemplateUsage by ServiceTemplate ",e);
 			return null;
 		}
 	}

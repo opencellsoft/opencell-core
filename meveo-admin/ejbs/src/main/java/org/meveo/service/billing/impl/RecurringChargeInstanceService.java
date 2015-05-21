@@ -71,7 +71,7 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
 		} catch (NoResultException nre) {
 			log.warn("findByCodeAndService : no charges have been found");
 		} catch (Exception e) {
-			log.error("findByCodeAndService error={} ", e.getMessage());
+			log.error("findByCodeAndService error={} ", e);
 		}
 		return chargeInstance;
 	}
@@ -91,7 +91,7 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
 					ids != null ? ids.size() : 0 });
 
 		} catch (Exception e) {
-			log.error("findIdsByStatus error={} ", e.getMessage());
+			log.error("findIdsByStatus error={} ", e);
 		}
 		return ids;
 	}
@@ -110,7 +110,7 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
 							recurringChargeInstances != null ? recurringChargeInstances.size() : 0 });
 
 		} catch (Exception e) {
-			log.error("findByStatus error={} ", e.getMessage());
+			log.error("findByStatus error={} ", e);
 		}
 		return recurringChargeInstances;
 	}

@@ -25,7 +25,7 @@ public class WalletTemplateService extends PersistenceService<WalletTemplate> {
 			return (List<WalletTemplate>) qb.getQuery(getEntityManager())
 					.getResultList();
 		} catch (NoResultException e) {
-			log.warn(e.getMessage());
+			log.warn("failed to get walletTemplate list by Provider",e);
 			return null;
 		}
 	}

@@ -40,7 +40,7 @@ public class TerminationReasonService extends PersistenceService<SubscriptionTer
 		try {
 			return (SubscriptionTerminationReason) qb.getQuery(getEntityManager()).getSingleResult();
 		} catch (NoResultException e) {
-			log.warn(e.getMessage());
+			log.warn("failed to find subscription ",e);
 			return null;
 		}
 	}

@@ -79,7 +79,7 @@ public class WebhookNotificationApi extends BaseApi {
 			try {
 				webHook.setHttpMethod(WebHookMethodEnum.valueOf(postData.getHttpMethod()));
 			} catch (IllegalArgumentException e) {
-				log.error("enum: {}", e.getMessage());
+				log.error("error while setting httpMethod ",e);
 				throw new InvalidEnumValue(WebHookMethodEnum.class.getName(), postData.getHttpMethod());
 			}
 			webHook.setUsername(postData.getUsername());
@@ -176,7 +176,7 @@ public class WebhookNotificationApi extends BaseApi {
 			try {
 				webHook.setHttpMethod(WebHookMethodEnum.valueOf(postData.getHttpMethod()));
 			} catch (IllegalArgumentException e) {
-				log.error("enum: {}", e.getMessage());
+				log.error("error generated while setting http method",e);
 				throw new InvalidEnumValue(WebHookMethodEnum.class.getName(), postData.getHttpMethod());
 			}
 			webHook.setUsername(postData.getUsername());

@@ -285,7 +285,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 			}
 			return (List<Invoice>) qb.getQuery(em).getResultList();
 		} catch (Exception ex) {
-			log.error(ex.getMessage());
+			log.error("failed to get validated invoices with no pdf",ex);
 		}
 		return null;
 	}
@@ -301,7 +301,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 			}
 			return (List<Invoice>) qb.getQuery(getEntityManager()).getResultList();
 		} catch (Exception ex) {
-			log.error(ex.getMessage());
+			log.error("failed to get invoices with no account operation",ex);
 		}
 		return null;
 	}
@@ -387,7 +387,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 			log.info("createAgregatesAndInvoice BR_ID=" + billingRun.getId() + ", BA_ID=" + billingAccount.getId()
 					+ ", Time en ms=" + (endDate - startDate));
 		} catch (Exception e) {
-			log.error("Error for BA=" + billingAccount.getCode() + " : " + e.getMessage());
+			log.error("Error for BA=" + billingAccount.getCode() + " : " + e);
 
 			RejectedBillingAccount rejectedBA = new RejectedBillingAccount(billingAccount, billingRun, e.getMessage());
 			rejectedBillingAccountService.create(rejectedBA, currentUser, currentUser.getProvider());
@@ -402,7 +402,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 		try {
 			return (List<Invoice>) qb.getQuery(getEntityManager()).getResultList();
 		} catch (NoResultException e) {
-			log.warn(e.getMessage());
+			log.warn("failed to find by billingRun",e);
 			return null;
 		}
 	}
@@ -490,7 +490,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 				invoice.setPdf(fileBytes);
 				invoice.updateAudit(currentUser);
 			} catch (Exception e) {
-				log.error("Error saving file to DB as blob. {}", e.getMessage());
+				log.error("Error saving file to DB as blob. {}", e);
 			} finally {
 				if (fileInputStream != null) {
 					try {
@@ -533,7 +533,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 		} catch (Exception e) {
 			log.error(
 					"Error converting xml node to its string representation. {}",
-					e.getMessage());
+					e);
 			throw new ConfigurationException();
 		}
 	}

@@ -572,7 +572,7 @@ public class SubscriptionApi extends BaseApi {
 			try {
 				subscriptionService.terminateSubscription(subscription, postData.getTerminationDate(), subscriptionTerminationReason, currentUser);
 			} catch (BusinessException e) {
-				log.error("subscription termination={}", e.getMessage());
+				log.error("error while setting subscription termination",e);
 				throw new MeveoApiException(e.getMessage());
 			}
 		} else {
@@ -619,7 +619,7 @@ public class SubscriptionApi extends BaseApi {
 				try {
 					serviceInstanceService.terminateService(serviceInstance, postData.getTerminationDate(), serviceTerminationReason, currentUser);
 				} catch (BusinessException e) {
-					log.error("service termination={}", e.getMessage());
+					log.error("service termination={}", e);
 					throw new MeveoApiException(e.getMessage());
 				}
 			}

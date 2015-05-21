@@ -760,11 +760,11 @@ public class AccountWsImpl extends BaseWs implements AccountWs {
 		} catch (MeveoApiException e) {
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
 			result.getActionStatus().setMessage(e.getMessage());
-			log.error(e.getMessage());
+			log.error("error occured while getting list account operations ",e);
 		} catch (Exception e) {
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
 			result.getActionStatus().setMessage(e.getMessage());
-			log.error(e.getMessage());
+			log.error("error generated while getting list account operations  ",e);
 		}
 
 		log.debug("RESPONSE={}", result);

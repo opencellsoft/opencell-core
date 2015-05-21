@@ -135,7 +135,7 @@ public class CatMessagesService extends PersistenceService<CatMessages> {
 					.setParameter("messageCode", entityName + "_" + id)
 					.setParameter("provider", provider).executeUpdate();
 		} catch (Exception e) {
-			log.error(e.getMessage());
+			log.error("failed to batch remove",e);
 		}
 	}
 

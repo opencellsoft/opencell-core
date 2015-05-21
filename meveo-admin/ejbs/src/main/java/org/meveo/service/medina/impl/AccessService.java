@@ -87,7 +87,7 @@ public class AccessService extends PersistenceService<Access> {
 		try {
 			return (List<Access>) qb.getQuery(getEntityManager()).getResultList();
 		} catch (NoResultException e) {
-			log.warn(e.getMessage());
+			log.warn("failed to get list Access by subscription",e);
 			return null;
 		}
 	}

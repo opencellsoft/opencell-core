@@ -350,7 +350,7 @@ public class UserBean extends BaseBean<User> {
             result = new DefaultStreamedContent(new FileInputStream(new File(folder + File.separator + selectedFileName)), null, selectedFileName);
         } catch (FileNotFoundException e) {
             // TODO Auto-generated catch block
-            log.error(e.getMessage());
+            log.error("error generated while getting seleceted file",e);
         }
         return result;
     }
@@ -529,7 +529,7 @@ public class UserBean extends BaseBean<User> {
             log.debug("New file created!");
             buildFileList();
         } catch (IOException e) {
-            log.error("Failed saving file. " + e.getMessage());
+            log.error("Failed saving file. ", e);
         }
     }
     

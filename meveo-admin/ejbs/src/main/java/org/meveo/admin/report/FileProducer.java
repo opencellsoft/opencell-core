@@ -77,7 +77,7 @@ public class FileProducer {
             }
         } catch (JRException e) {
             // TODO Auto-generated catch block
-            log.error(e.getMessage());
+            log.error("failed to generate PDF file",e);
         } catch (FileNotFoundException e) {
             throw new NoTemplateException();
         }

@@ -80,9 +80,9 @@ public class AccountOperationApi extends BaseApi {
 			try {
 				recordedInvoice.setPaymentMethod(PaymentMethodEnum.valueOf(postData.getRecordedInvoice().getPaymentMethod()));
 			} catch (IllegalStateException e) {
-				log.warn("paymentMethod={}", e.getMessage());
+				log.warn("error occurred while setting payment methode",e);
 			} catch (NullPointerException e) {
-				log.warn("paymentMethod={}", e.getMessage());
+				log.warn("error generated while setting payment methode",e);
 			}
 
 			recordedInvoice.setPaymentInfo(postData.getRecordedInvoice().getPaymentInfo());
@@ -105,9 +105,9 @@ public class AccountOperationApi extends BaseApi {
 			try {
 				rejectedPayment.setRejectedType(RejectedType.valueOf(postData.getRejectedPayment().getRejectedType()));
 			} catch (IllegalStateException e) {
-				log.warn("rejectedType={}", e.getMessage());
+				log.warn("error occurred while setting rejected type", e);
 			} catch (NullPointerException e) {
-				log.warn("rejectedType={}", e.getMessage());
+				log.warn("error generated while setting rejected type", e);
 			}
 
 			rejectedPayment.setBankLot(postData.getRejectedPayment().getBankLot());
@@ -129,9 +129,9 @@ public class AccountOperationApi extends BaseApi {
 		try {
 			accountOperation.setTransactionCategory(OperationCategoryEnum.valueOf(postData.getTransactionCategory()));
 		} catch (IllegalStateException e) {
-			log.warn("rejectedType={}", e.getMessage());
+			log.warn("error occurred while setting transaction category", e);
 		} catch (NullPointerException e) {
-			log.warn("rejectedType={}", e.getMessage());
+			log.warn("error generated while setting transaction category", e);
 		}
 		accountOperation.setReference(postData.getReference());
 		accountOperation.setAccountCode(postData.getAccountCode());
@@ -144,9 +144,9 @@ public class AccountOperationApi extends BaseApi {
 		try {
 			accountOperation.setMatchingStatus(MatchingStatusEnum.valueOf(postData.getMatchingStatus()));
 		} catch (IllegalStateException e) {
-			log.warn("rejectedType={}", e.getMessage());
+			log.warn("error occurred while setting matching status", e);
 		} catch (NullPointerException e) {
-			log.warn("rejectedType={}", e.getMessage());
+			log.warn("error generated while setting matching status", e);
 		}
 
 		accountOperation.setOccCode(postData.getOccCode());
@@ -171,9 +171,9 @@ public class AccountOperationApi extends BaseApi {
 						try {
 							matchingCode.setMatchingType(MatchingTypeEnum.valueOf(matchingCodeDto.getMatchingType()));
 						} catch (IllegalStateException e) {
-							log.warn("matchingType={}", e.getMessage());
+							log.warn("error occurred while setting matching type",e);
 						} catch (NullPointerException e) {
-							log.warn("matchingType={}", e.getMessage());
+							log.warn("error generated while setting matching type",e);
 						}
 
 						matchingCode.setMatchingDate(matchingCodeDto.getMatchingDate());

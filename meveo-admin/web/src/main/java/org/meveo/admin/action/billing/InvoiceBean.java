@@ -243,7 +243,7 @@ public class InvoiceBean extends BaseBean<Invoice> {
 			invoiceService.update(entity);	
 			messages.info(new BundleKey("messages", "delete.successful"));
 		} catch (Exception e) {
-			log.error(e.getMessage());
+			log.error("failed to generate PDF ",e);
 		}}
 	
 	public void generatePdf(){
@@ -253,15 +253,13 @@ public class InvoiceBean extends BaseBean<Invoice> {
 			invoiceService.producePdf(parameters, getCurrentUser()); 
 			messages.info(new BundleKey("messages", "invoice.pdfGeneration"));
 		}catch(InvoiceXmlNotFoundException e){
-			 messages.error(new BundleKey("messages", "invoice.xmlNotFound"));
-			 log.error(e.getMessage());
+			 messages.error(new BundleKey("messages", "invoice.xmlNotFound")); 
 			}
 		catch(InvoiceJasperNotFoundException e){
-			messages.error(new BundleKey("messages", "invoice.jasperNotFound"));
-			log.error(e.getMessage());
+			messages.error(new BundleKey("messages", "invoice.jasperNotFound")); 
 			}
 		catch (Exception e) {
-			log.error(e.getMessage());  
+			log.error("failed to generate PDF ",e);  
 		}	
 	}
 	
@@ -290,7 +288,7 @@ public class InvoiceBean extends BaseBean<Invoice> {
 			xmlInvoiceCreator.createXMLInvoice(entity.getId(), getXmlInvoiceDir());
 			messages.info(new BundleKey("messages", "invoice.xmlGeneration")); 
 		 }catch(Exception e){
-				log.error(e.getMessage());
+				log.error("failed to generate xml invoice",e);
 			}
 		
 	}
@@ -337,7 +335,7 @@ public class InvoiceBean extends BaseBean<Invoice> {
 		         messages.info(new BundleKey("messages", "delete.successful"));
 		            }     
 		}catch(Exception e){
-			log.error(e.getMessage());
+			log.error("failed to delete xml invoice ",e);
 		}}
 	
 	public boolean isXmlInvoiceAlreadyGenerated(){ 

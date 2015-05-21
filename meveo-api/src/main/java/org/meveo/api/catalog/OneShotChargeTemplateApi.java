@@ -349,7 +349,7 @@ public class OneShotChargeTemplateApi extends BaseApi {
 						oneShotChargeDto.setUnitPriceWithoutTax(unitPrice.doubleValue());
 					}
 				} catch (BusinessException e) {
-					log.warn(e.getMessage());
+					log.warn("error occurred while getting application price",e);
 				}
 			}
 

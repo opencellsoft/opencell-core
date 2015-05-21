@@ -79,7 +79,7 @@ public class AccountOperationsGenerationJobBean {
 						providerForHistory = customerAccount.getProvider();
 					}
 				} catch (Exception e) {
-					log.error("customerAccount={}", e.getMessage());
+					log.error("error while getting customer account ", e);
 					throw new ImportInvoiceException("Cannot found customerAccount");
 				}
 
@@ -88,7 +88,7 @@ public class AccountOperationsGenerationJobBean {
 							"accountOperationsGenerationJob.occCode", "FA_FACT"), customerAccount.getProvider()
 							.getCode());
 				} catch (Exception e) {
-					log.error("occTemplate={}", e.getMessage());
+					log.error("error while getting occ template ", e);
 					throw new ImportInvoiceException("Cannot found OCC Template for invoice");
 				}
 
@@ -104,28 +104,28 @@ public class AccountOperationsGenerationJobBean {
 					recordedInvoice.setUnMatchingAmount(invoice.getAmountWithTax());
 					recordedInvoice.setMatchingAmount(BigDecimal.ZERO);
 				} catch (Exception e) {
-					log.error("amountWithTax={}", e.getMessage());
+					log.error("error with amount with tax", e);
 					throw new ImportInvoiceException("Error on amountWithTax");
 				}
 
 				try {
 					recordedInvoice.setAmountWithoutTax(invoice.getAmountWithoutTax());
 				} catch (Exception e) {
-					log.error("amountWithoutTax={}", e.getMessage());
+					log.error("error with amount without tax", e);
 					throw new ImportInvoiceException("Error on amountWithoutTax");
 				}
 
 				try {
 					recordedInvoice.setNetToPay(invoice.getNetToPay());
 				} catch (Exception e) {
-					log.error("netToPay={}", e.getMessage());
+					log.error("error with netToPay", e);
 					throw new ImportInvoiceException("Error on netToPay");
 				}
 
 				try {
 					recordedInvoice.setDueDate(DateUtils.setTimeToZero(invoice.getDueDate()));
 				} catch (Exception e) {
-					log.error("dueDate={}", e.getMessage());
+					log.error("error with due date ",e);
 					throw new ImportInvoiceException("Error on DueDate");
 				}
 
@@ -133,21 +133,21 @@ public class AccountOperationsGenerationJobBean {
 					recordedInvoice.setInvoiceDate(DateUtils.setTimeToZero(invoice.getInvoiceDate()));
 					recordedInvoice.setTransactionDate(DateUtils.setTimeToZero(invoice.getInvoiceDate()));
 				} catch (Exception e) {
-					log.error("invoiceDate={}", e.getMessage());
+					log.error("error with invoice date", e);
 					throw new ImportInvoiceException("Error on invoiceDate");
 				}
 
 				try {
 					recordedInvoice.setPaymentMethod(billingAccount.getPaymentMethod());
 				} catch (Exception e) {
-					log.error("paymentMethod={}", e.getMessage());
+					log.error("erro with payment method", e);
 					throw new ImportInvoiceException("Error on paymentMethod");
 				}
 
 				try {
 					recordedInvoice.setTaxAmount(invoice.getAmountTax());
 				} catch (Exception e) {
-					log.error("totalTax={}", e.getMessage());
+					log.error("error with total tax", e);
 					throw new ImportInvoiceException("Error on total tax");
 				}
 

@@ -148,7 +148,7 @@ public class ImportCustomersJobBean {
 				result.registerError(e.getMessage());
 				log.info("InputFiles job " + file.getName() + " failed");
 				FileUtils.moveFile(dirKO, currentFile, file.getName());
-				log.error(e.getMessage());
+				log.error("failed to import file",e);
 			} finally {
 				if (currentFile != null)
 					currentFile.delete();
@@ -269,7 +269,7 @@ public class ImportCustomersJobBean {
 		try {
 			seller = sellerService.findByCode(sell.getCode(), provider);
 		} catch (Exception e) {
-			log.warn(e.getMessage());
+			log.warn("error while getting seller ",e);
 		}
 
 		if (seller != null) {
@@ -312,7 +312,7 @@ public class ImportCustomersJobBean {
 			try {
 				customer = customerService.findByCodeAndFetch(cust.getCode(), Arrays.asList("seller"), provider);
 			} catch (Exception e) {
-				log.warn(e.getMessage());
+				log.warn("failed to find custom by code and fetch ",e);
 			}
 
 			if (customer != null) {
@@ -352,7 +352,7 @@ public class ImportCustomersJobBean {
 			createCustomerError(sell, cust, ExceptionUtils.getRootCause(e).getMessage());
 			nbCustomersError++;
 			log.error("File:" + fileName + ", typeEntity:Customer, index:" + i + ", code:" + cust.getCode() + ", status:Error");
-			log.error(e.getMessage());
+			log.error("failed to create customer",e);
 		}
 	}
 
@@ -365,7 +365,7 @@ public class ImportCustomersJobBean {
 		try {
 			customerAccountTmp = customerAccountService.findByCode(custAcc.getCode(), currentUser.getProvider(), Arrays.asList("customer"));
 		} catch (Exception e) {
-			log.warn(e.getMessage());
+			log.error("failed to create customer account",e);
 		}
 
 		if (customerAccountTmp != null) {

@@ -62,7 +62,7 @@ public class MediationApi extends BaseApi {
 			try {
 				cdrParsingService.initByApi(currentUser.getUserName(), postData.getIpAddress());
 			} catch (BusinessException e1) {
-				log.error(e1.getMessage());
+				log.error("failed to init by api ");
 				throw new MeveoApiException(e1.getMessage());
 			}
 
@@ -75,7 +75,7 @@ public class MediationApi extends BaseApi {
 					}
 				}
 			} catch (CDRParsingException e) {
-				log.error("Error parsing cdr={}", e.getMessage());
+				log.error("Error parsing cdr={}",e);
 				throw new MeveoApiException(e.getMessage());
 			}
 		} else {
@@ -92,7 +92,7 @@ public class MediationApi extends BaseApi {
 			try {
 				cdrParsingService.initByApi(user.getUserName(), ip);
 			} catch (BusinessException e1) {
-				log.error(e1.getMessage());
+				log.error("failed to init by api");
 				throw new MeveoApiException(e1.getMessage());
 			}
 			List<EDR> edrs;
@@ -148,7 +148,7 @@ public class MediationApi extends BaseApi {
 			try {
 				cdrParsingService.initByApi(user.getUserName(), ip);
 			} catch (BusinessException e1) {
-				log.error(e1.getMessage());
+				log.error("failed to init by api");
 				throw new MeveoApiException(e1.getMessage());
 			}
 			List<EDR> edrs;
@@ -172,7 +172,7 @@ public class MediationApi extends BaseApi {
 								.getPrepaidReservationExpirationDelayinMillisec(), timerConfig);
 						timers.put(reservation.getId(), timer);
 					} catch (BusinessException e) {
-						log.error("Exception rating edr={}", e.getMessage());
+						log.error("Exception rating edr={}", e);
 						if ("INSUFFICIENT_BALANCE".equals(e.getMessage())) {
 							throw new MeveoApiException(MeveoApiErrorCode.INSUFFICIENT_BALANCE, e.getMessage());
 						} else {
@@ -221,7 +221,7 @@ public class MediationApi extends BaseApi {
 							throw new MeveoApiException(edr.getRejectReason());
 						}
 					} catch (BusinessException e) {
-						log.error("Exception rating edr={}", e.getMessage());
+						log.error("Exception rating edr={}",e);
 						if ("INSUFFICIENT_BALANCE".equals(e.getMessage())) {
 							throw new MeveoApiException(MeveoApiErrorCode.INSUFFICIENT_BALANCE, e.getMessage());
 						} else {
@@ -243,7 +243,7 @@ public class MediationApi extends BaseApi {
 				} catch (Exception e1) {
 				}
 			} catch (BusinessException e) {
-				log.error(e.getMessage());
+				log.error("Failed to confirm reservation ",e);
 				throw new MeveoApiException(e.getMessage());
 			}
 		} else {

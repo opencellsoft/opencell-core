@@ -93,7 +93,7 @@ public class TradingCurrencyBean extends BaseBean<TradingCurrency> {
 			messages.error(new BundleKey("messages",
 					"tradingCurrency.uniqueField"));
 		} catch (Exception e) {
-			log.error(e.getMessage());
+			log.error("failed to save or update trading currency");
 			messages.error(new BundleKey("messages",
 					"tradingCurrency.uniqueField"));
 		}

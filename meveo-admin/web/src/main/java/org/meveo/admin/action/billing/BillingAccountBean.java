@@ -225,7 +225,7 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
 		} catch (DuplicateDefaultAccountException e1) {
 			messages.error(new BundleKey("messages", "error.account.duplicateDefautlLevel"));
 		} catch (Exception e) {
-			log.error(e.getMessage());
+			log.error("failed to save or update billing account",e);
 			messages.error(new BundleKey("messages", "javax.el.ELException"));
 		}
 		return null;
@@ -245,10 +245,10 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
 			billingAccountService.billingAccountTermination(entity, entity.getTerminationDate(), entity.getTerminationReason(), getCurrentUser());
 			messages.info(new BundleKey("messages", "resiliation.resiliateSuccessful"));
 		} catch (BusinessException e) {
-			log.error(e.getMessage());
+			log.error("error occured while terminating account ",e);
 			messages.error(e.getMessage());
 		} catch (Exception e) {
-			log.error(e.getMessage());
+			log.error("error generated while terminating account ",e);
 			messages.error(e.getMessage());
 		}
 	}
@@ -260,10 +260,10 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
 			messages.info(new BundleKey("messages", "cancellation.cancelSuccessful"));
 			return "/pages/billing/billingAccounts/billingAccountDetail.xhtml?objectId=" + entity.getId() + "&edit=false";
 		} catch (BusinessException e) {
-			log.error(e.getMessage());
+			log.error("error occured while canceling account ",e);
 			messages.error(e.getMessage());
 		} catch (Exception e) {
-			log.error(e.getMessage());
+			log.error("error g while canceling account ",e);
 			messages.error(e.getMessage());
 		}
 		return null;
@@ -276,10 +276,10 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
 			messages.info(new BundleKey("messages", "close.closeSuccessful"));
 			return "/pages/billing/billingAccounts/billingAccountDetail.xhtml?objectId=" + entity.getId() + "&edit=false";
 		} catch (BusinessException e) {
-			log.error(e.getMessage());
+			log.error("error occured while closing account ",e);
 			messages.error(e.getMessage());
 		} catch (Exception e) {
-			log.error(e.getMessage());
+			log.error("error generated while closing account ",e);
 			messages.error(e.getMessage());
 		}
 		return null;
@@ -342,9 +342,9 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
 			os.close();
 			context.responseComplete();
 		} catch (IOException e) {
-			log.error(e.getMessage());
+			log.error("failed to generate PDF ",e);
 		} catch (DocumentException e) {
-			log.error(e.getMessage());
+			log.error("error in generation PDF ",e);
 		}
 	}
 

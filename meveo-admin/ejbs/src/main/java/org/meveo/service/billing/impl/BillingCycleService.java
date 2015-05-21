@@ -51,7 +51,7 @@ public class BillingCycleService extends PersistenceService<BillingCycle> {
 			return (BillingCycle) qb.getQuery(getEntityManager())
 					.getSingleResult();
 		} catch (NoResultException e) {
-			log.warn(e.getMessage());
+			log.warn("failed to find billing cycle",e);
 			return null;
 		}
 	}

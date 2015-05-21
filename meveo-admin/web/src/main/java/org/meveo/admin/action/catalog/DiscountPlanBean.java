@@ -93,7 +93,7 @@ public class DiscountPlanBean extends BaseBean<DiscountPlan> {
 					messages.info(new BundleKey("messages", "save.successful"));
 				} 
 				}catch (BusinessException e) {
-					log.error(e.getMessage());
+					log.error("failed to save or update discount plan",e);
 					messages.error(new BundleKey("messages", e.getMessage()));
 				}
 				 

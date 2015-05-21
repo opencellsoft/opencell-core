@@ -180,7 +180,7 @@ public class WebHookNotifier {
 			}
 		} catch (BusinessException e1) {
 			try {
-				log.debug("webhook business error : " + e1.getMessage());
+				log.debug("webhook business error : ",e1);
 				notificationHistoryService.create(webHook, e, e1.getMessage(), NotificationHistoryStatusEnum.FAILED);
 			} catch (BusinessException e2) {
 				log.error("Failed to create webhook business ",e2);
@@ -188,7 +188,7 @@ public class WebHookNotifier {
 			}
 		} catch (IOException e1) {
 			try { 
-				log.debug("webhook io error : " + e1.getMessage());
+				log.debug("webhook io error : ",e1);
 				notificationHistoryService.create(webHook, e, e1.getMessage(), NotificationHistoryStatusEnum.TO_RETRY);
 			} catch (BusinessException e2) {
 				log.error("Failed to create webhook io ",e2);

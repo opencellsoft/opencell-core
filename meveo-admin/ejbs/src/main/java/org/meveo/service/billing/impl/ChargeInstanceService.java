@@ -67,7 +67,7 @@ public class ChargeInstanceService<P extends ChargeInstance> extends BusinessSer
 		} catch (NoResultException nre) {
 			log.warn("findByCodeAndService : no charges have been found");
 		} catch (Exception e) {
-			log.error("findByCodeAndService error={} ", e.getMessage());
+			log.error("findByCodeAndService error={} ", e);
 		}
 		return chargeInstance;
 	}
@@ -212,7 +212,7 @@ public class ChargeInstanceService<P extends ChargeInstance> extends BusinessSer
 		try {
 			return (P) qb.getQuery(getEntityManager()).getSingleResult();
 		} catch (NoResultException e) {
-			log.warn(e.getMessage());
+			log.warn("failed to find By code and subscription",e);
 			return null;
 		}
 	}

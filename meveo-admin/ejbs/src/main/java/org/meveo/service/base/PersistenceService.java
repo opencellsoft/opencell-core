@@ -687,7 +687,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
                 result = ((MeveoUser) identity.getUser()).getCurrentProvider();
             }
         } catch (Exception e) {
-            log.error(e.getMessage());
+            log.error("failed to get current provider",e);
         }
 
         if (result == null && getCurrentUser() != null) {

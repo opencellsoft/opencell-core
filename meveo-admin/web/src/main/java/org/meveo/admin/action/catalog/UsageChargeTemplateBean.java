@@ -166,7 +166,7 @@ public class UsageChargeTemplateBean extends BaseBean<UsageChargeTemplate> {
 			try{
 				usageChargeTemplateService.create(entity);
 			}catch(Exception e){
-				log.error("error when duplicate usageChargeTemplate#{0}:#{1}",entity.getCode(),e.getMessage());
+				log.error("error when duplicate usageChargeTemplate#{0}:#{1}",entity.getCode(),e);
 			}
 		}
 	}

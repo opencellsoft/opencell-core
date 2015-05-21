@@ -168,7 +168,7 @@ public class UserAccountBean extends AccountBean<UserAccount> {
 		} catch (DuplicateDefaultAccountException e1) {
 			messages.error(new BundleKey("messages", "error.account.duplicateDefautlLevel"));
 		} catch (Exception e) {
-			log.error(e.getMessage());
+			log.error("failed to save or update user account ",e);
 			messages.error(new BundleKey("messages", "javax.el.ELException"));
 
 		}
@@ -201,7 +201,7 @@ public class UserAccountBean extends AccountBean<UserAccount> {
 				messages.info(new BundleKey("messages", "update.successful"));
 			}
 		} catch (Exception e) {
-			log.error(e.getMessage());
+			log.error("error generated while saving or updating user account ",e);
 			messages.error(e.getMessage());
 		}
 
@@ -215,10 +215,10 @@ public class UserAccountBean extends AccountBean<UserAccount> {
 					entity.getTerminationReason(), getCurrentUser());
 			messages.info(new BundleKey("messages", "resiliation.resiliateSuccessful"));
 		} catch (BusinessException e) {
-			log.error(e.getMessage());
+			log.error("error generated while terminating account ",e);
 			messages.error(e.getMessage());
 		} catch (Exception e) {
-			log.error(e.getMessage());
+			log.error("failed terminating account ",e);
 			messages.error(e.getMessage());
 		}
 	}
@@ -230,10 +230,10 @@ public class UserAccountBean extends AccountBean<UserAccount> {
 			messages.info(new BundleKey("messages", "cancellation.cancelSuccessful"));
 			return "/pages/billing/userAccounts/userAccountDetail.xhtml?objectId=" + entity.getId() + "&edit=false";
 		} catch (BusinessException e) {
-			log.error(e.getMessage());
+			log.error("error generated while canceling account ",e);
 			messages.error(e.getMessage());
 		} catch (Exception e) {
-			log.error(e.getMessage());
+			log.error("failed to cancel account ",e);
 			messages.error(e.getMessage());
 		}
 		return null;
@@ -246,10 +246,10 @@ public class UserAccountBean extends AccountBean<UserAccount> {
 			messages.info(new BundleKey("messages", "reactivation.reactivateSuccessful"));
 			return "/pages/billing/userAccounts/userAccountDetail.xhtml?objectId=" + entity.getId() + "&edit=false";
 		} catch (BusinessException e) {
-			log.error(e.getMessage());
+			log.error("failed to reactivate account ",e);
 			messages.error(e.getMessage());
 		} catch (Exception e) {
-			log.error(e.getMessage());
+			log.error("error occurred while reactivating account ",e);
 			messages.error(e.getMessage());
 		}
 		return null;

@@ -86,7 +86,7 @@ public class DunningLOTService extends PersistenceService<DunningLOT> {
 						dunningLOT.setDunningHistory(dunningHistory);
 						update(dunningLOT);
 					} catch (Exception e) {
-						log.error(e.getMessage());
+						log.error("failed to update Dunning LOT and CsvFile",e);
 					}
 				}
 			}

@@ -525,7 +525,7 @@ public class PricePlanMatrixService extends PersistenceService<PricePlanMatrix> 
 			return (List<PricePlanMatrix>) qb.getQuery(getEntityManager())
 					.getResultList();
 		} catch (NoResultException e) {
-			log.warn(e.getMessage());
+			log.warn("failed to find pricePlanMatrix By offerTemplate",e);
 			return null;
 		}
 	}

@@ -107,7 +107,7 @@ public class BillingAccountApi extends AccountApi {
 			try {
 				billingAccount.setPaymentTerm(PaymentTermEnum.valueOf(postData.getPaymentTerms()));
 			} catch (IllegalArgumentException e) {
-				log.warn(e.getMessage());
+				log.warn("error generated while setting payment term",e);
 			}
 			billingAccount.setNextInvoiceDate(postData.getNextInvoiceDate());
 			billingAccount.setSubscriptionDate(postData.getSubscriptionDate());
@@ -196,7 +196,7 @@ public class BillingAccountApi extends AccountApi {
 			try {
 				billingAccount.setPaymentTerm(PaymentTermEnum.valueOf(postData.getPaymentTerms()));
 			} catch (IllegalArgumentException e) {
-				log.warn(e.getMessage());
+				log.warn("error generated while setting payment term",e);
 			}
 			billingAccount.setNextInvoiceDate(postData.getNextInvoiceDate());
 			billingAccount.setSubscriptionDate(postData.getSubscriptionDate());

@@ -88,7 +88,7 @@ public class AccountImportService {
 		try {
 			billingCycle = billingCycleService.findByBillingCycleCode(billAccount.getBillingCycle(), provider);
 		} catch (Exception e) {
-			log.warn(e.getMessage());
+			log.warn("failed to find billingCycle",e);
 		}
 
 		if (billingCycle == null) {
@@ -98,7 +98,7 @@ public class AccountImportService {
 		try {
 			customerAccount = customerAccountService.findByCode(billAccount.getCustomerAccountId(), provider);
 		} catch (Exception e) {
-			log.warn(e.getMessage());
+			log.warn("failed to find customer account",e);
 		}
 
 		if (customerAccount == null) {
@@ -122,7 +122,7 @@ public class AccountImportService {
 		try {
 			billingAccount.setPaymentMethod(PaymentMethodEnum.valueOf(billAccount.getPaymentMethod()));
 		} catch (NullPointerException | IllegalArgumentException e) {
-			log.warn("paymentMethod={}", e.getMessage());
+			log.warn("paymentMethod={}", e);
 		}
 
 		if (billAccount.getBankCoordinates() != null
@@ -221,7 +221,7 @@ public class AccountImportService {
 		try {
 			billingCycle = billingCycleService.findByBillingCycleCode(billingAccountDto.getBillingCycle(), provider);
 		} catch (Exception e) {
-			log.warn(e.getMessage());
+			log.warn("failed to find billingCycle",e);
 		}
 
 		if (billingCycle == null) {
@@ -231,7 +231,7 @@ public class AccountImportService {
 		try {
 			customerAccount = customerAccountService.findByCode(billingAccountDto.getCustomerAccountId(), provider);
 		} catch (Exception e) {
-			log.warn(e.getMessage());
+			log.warn("failed to find customerAccount",e);
 		}
 
 		if (customerAccount == null) {

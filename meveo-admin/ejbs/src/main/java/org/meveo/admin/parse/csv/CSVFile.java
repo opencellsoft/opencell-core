@@ -86,10 +86,10 @@ public abstract class CSVFile<T extends CSVLineData> {
 
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
-			log.error(e.getMessage());
+			log.error("file not found exception",e);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
-			log.error(e.getMessage());
+			log.error("error parsing file ",e);
 		}
 	}
 

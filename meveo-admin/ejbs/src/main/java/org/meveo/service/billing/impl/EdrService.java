@@ -126,7 +126,7 @@ public class EdrService extends PersistenceService<EDR> {
 					.setParameter("provider", provider).setParameter("lastUpdate", new Date()).executeUpdate();
 			
 		} catch (Exception e) {
-			log.error(e.getMessage());
+			log.error("error while updating edr",e);
 		}
 	}
 
@@ -144,7 +144,7 @@ public class EdrService extends PersistenceService<EDR> {
 							.setParameter("selectedIds", selectedIds).setParameter("oldStatus", EDRStatusEnum.REJECTED)
 							.setParameter("provider", provider).setParameter("lastUpdate", new Date()).executeUpdate());
 		} catch (Exception e) {
-			log.error(e.getMessage());
+			log.error("failed to updating edr",e);
 		}
 	}
 

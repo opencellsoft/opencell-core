@@ -169,7 +169,7 @@ public class ParamBean {
 				try {
 					propertyFile.close();
 				} catch (Exception e) {
-					log.error(e.getMessage());
+					log.error("FileInputStream error",e);
 				}
 			}
 		}
@@ -277,20 +277,20 @@ public class ParamBean {
 			bw.flush();
 			result = true;
 		} catch (Exception e) {
-			log.error(e.getMessage());
+			log.error("failed to save properties ",e);
 		} finally {
 			if (propertyFile != null) {
 				try {
 					propertyFile.close();
 				} catch (Exception e) {
-					log.error(e.getMessage());
+					log.error("outputStream error ",e);
 				}
 			}
 			if (bw != null) {
 				try {
 					bw.close();
 				} catch (Exception e) {
-					log.error(e.getMessage());
+					log.error("BufferedWriter error",e);
 				}
 			}
 		}

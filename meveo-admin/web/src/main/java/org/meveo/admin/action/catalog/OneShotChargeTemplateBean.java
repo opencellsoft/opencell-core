@@ -208,7 +208,7 @@ public class OneShotChargeTemplateBean extends BaseBean<OneShotChargeTemplate> {
 			try{
 				oneShotChargeTemplateService.create(entity);
 			}catch(Exception e){
-				log.error("error when duplicate recurringChargeTemplate#{0}:#{1}",entity.getCode(),e.getMessage());
+				log.error("error when duplicate recurringChargeTemplate#{0}:#{1}",entity.getCode(),e);
 			}
 		}
 	}

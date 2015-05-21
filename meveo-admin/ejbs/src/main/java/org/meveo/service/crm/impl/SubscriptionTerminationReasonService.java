@@ -54,7 +54,7 @@ public class SubscriptionTerminationReasonService extends
 			return (SubscriptionTerminationReason) qb.getQuery(em)
 					.getSingleResult();
 		} catch (NoResultException e) {
-			log.warn(e.getMessage());
+			log.warn("failed to subscription termination reason service",e);
 			return null;
 		}
 	}

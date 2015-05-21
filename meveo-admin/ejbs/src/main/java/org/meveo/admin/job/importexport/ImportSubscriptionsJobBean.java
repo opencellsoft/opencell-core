@@ -111,7 +111,7 @@ public class ImportSubscriptionsJobBean {
 				log.info("InputFiles job {} done.", file.getName());
 				result.registerSucces();
 			} catch (Exception e) {
-				log.error(e.getMessage());
+				log.error("failed to import subscriptions",e);
 				result.registerError(e.getMessage());
 				log.info("InputFiles job {} failed.", file.getName());
 				FileUtils.moveFile(dirKO, currentFile, file.getName());
@@ -288,7 +288,7 @@ public class ImportSubscriptionsJobBean {
 		try {
 			offerTemplate = offerTemplateService.findByCode(jaxbSubscription.getOfferCode().toUpperCase(), provider);
 		} catch (Exception e) {
-			log.warn(e.getMessage());
+			log.warn("failed to find offerTemplate",e);
 		}
 
 		if (offerTemplate == null) {
@@ -302,7 +302,7 @@ public class ImportSubscriptionsJobBean {
 		try {
 			userAccount = userAccountService.findByCode(jaxbSubscription.getUserAccountId(), provider);
 		} catch (Exception e) {
-			log.error(e.getMessage());
+			log.error("error generated while getting user account",e);
 		}
 
 		if (userAccount == null) {
@@ -315,7 +315,7 @@ public class ImportSubscriptionsJobBean {
 		try {
 			checkSubscription.subscription = subscriptionService.findByCode(jaxbSubscription.getCode(), provider);
 		} catch (Exception e) {
-			log.error(e.getMessage());
+			log.error("failed to find subscription",e);
 		}
 
 		if (!"ACTIVE".equals(jaxbSubscription.getStatus().getValue()) && checkSubscription.subscription == null) {

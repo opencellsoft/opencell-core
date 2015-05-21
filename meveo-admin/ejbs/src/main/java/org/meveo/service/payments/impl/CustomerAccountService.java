@@ -576,7 +576,7 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
 			customerAccount = (CustomerAccount) em.createQuery("from CustomerAccount where id=:id or code=:code ")
 					.setParameter("id", id).setParameter("code", code).getSingleResult();
 		} catch (Exception e) {
-			log.warn(e.getMessage());
+			log.warn("failed to fin customer account ",e);
 		}
 
 		if (customerAccount == null) {
@@ -646,7 +646,7 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
 		try {
 			return (List<CustomerAccount>) qb.getQuery(getEntityManager()).getResultList();
 		} catch (NoResultException e) {
-			log.warn(e.getMessage());
+			log.warn("failed to get customerAccount list by customer",e);
 			return null;
 		}
 	}

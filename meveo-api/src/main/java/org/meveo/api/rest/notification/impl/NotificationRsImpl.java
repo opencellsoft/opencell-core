@@ -40,11 +40,11 @@ public class NotificationRsImpl extends BaseRs implements NotificationRs {
 			result.setErrorCode(e.getErrorCode());
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
-			log.error(e.getMessage());
+			log.error("error occurred while creating notification ",e);
 		} catch (Exception e) {
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
-			log.error(e.getMessage());
+			log.error("error generated while creating notification ",e);
 		}
 
 		log.debug("RESPONSE={}", result);
@@ -61,11 +61,11 @@ public class NotificationRsImpl extends BaseRs implements NotificationRs {
 			result.setErrorCode(e.getErrorCode());
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
-			log.error(e.getMessage());
+			log.error("error occurred while updating notification ",e);
 		} catch (Exception e) {
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
-			log.error(e.getMessage());
+			log.error("error generated while updating notification ",e);
 		}
 
 		log.debug("RESPONSE={}", result);
@@ -82,11 +82,11 @@ public class NotificationRsImpl extends BaseRs implements NotificationRs {
 			result.getActionStatus().setErrorCode(e.getErrorCode());
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
 			result.getActionStatus().setMessage(e.getMessage());
-			log.error(e.getMessage());
+			log.error("error occurred while getting notification ",e);
 		} catch (Exception e) {
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
 			result.getActionStatus().setMessage(e.getMessage());
-			log.error(e.getMessage());
+			log.error("error generated while getting notification ",e);
 		}
 
 		log.debug("RESPONSE={}", result);
@@ -103,11 +103,11 @@ public class NotificationRsImpl extends BaseRs implements NotificationRs {
 			result.setErrorCode(e.getErrorCode());
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
-			log.error(e.getMessage());
+			log.error("error occurred while removing notification ",e);
 		} catch (Exception e) {
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
-			log.error(e.getMessage());
+			log.error("error generated while removing notification ",e);
 		}
 
 		log.debug("RESPONSE={}", result);
@@ -124,11 +124,11 @@ public class NotificationRsImpl extends BaseRs implements NotificationRs {
 			result.getActionStatus().setErrorCode(e.getErrorCode());
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
 			result.getActionStatus().setMessage(e.getMessage());
-			log.error(e.getMessage());
+			log.error("error occurred while getting list notification history",e);
 		} catch (Exception e) {
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
 			result.getActionStatus().setMessage(e.getMessage());
-			log.error(e.getMessage());
+			log.error("error generated while getting list notification history ",e);
 		}
 
 		log.debug("RESPONSE={}", result);
@@ -145,11 +145,11 @@ public class NotificationRsImpl extends BaseRs implements NotificationRs {
 			result.getActionStatus().setErrorCode(e.getErrorCode());
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
 			result.getActionStatus().setMessage(e.getMessage());
-			log.error(e.getMessage());
+			log.error("error occured while getting list inbound request response ",e);
 		} catch (Exception e) {
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
 			result.getActionStatus().setMessage(e.getMessage());
-			log.error(e.getMessage());
+			log.error("error generated while getting list inbound request response ",e);
 		}
 
 		log.debug("RESPONSE={}", result);

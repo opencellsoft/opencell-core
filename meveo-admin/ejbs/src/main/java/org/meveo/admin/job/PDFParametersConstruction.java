@@ -180,7 +180,7 @@ public class PDFParametersConstruction {
 
 			return parameters;
 		} catch (Exception e) {
-			log.error(e.getMessage());
+			log.error("failed to construct parameters ",e);
 			return null;
 		}
 	}

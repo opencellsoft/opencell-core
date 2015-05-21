@@ -51,7 +51,7 @@ public class JobExecutionService extends PersistenceService<JobExecutionResultIm
 			Job jobInstance = (Job) ic.lookup(jobs.get(jobName));
 			jobInstance.execute(timerEntity, currentUser);
 		} catch (Exception e) {
-			log.error(e.getMessage());
+			log.error("failed to execute timer job",e);
 		}
 	}
 
@@ -91,7 +91,7 @@ public class JobExecutionService extends PersistenceService<JobExecutionResultIm
 				}
 			}
 		} catch (Exception e) {// FIXME:BusinessException e) {
-			log.error(e.getMessage());
+			log.error("error on persistResult",e);
 		}
 		log.info(" \n \n JobExecutionService persistResult End");
 	}

@@ -402,12 +402,12 @@ public class WalletApi extends BaseApi {
 			try {
 				walletOperation.setType(OperationTypeEnum.valueOf(postData.getType()));
 			} catch (IllegalArgumentException e) {
-				log.warn("error in type={}", e.getMessage());
+				log.warn("error in type={}", e);
 			}
 			try {
 				walletOperation.setStatus(WalletOperationStatusEnum.valueOf(postData.getStatus()));
 			} catch (IllegalArgumentException e) {
-				log.warn("error in status={}", e.getMessage());
+				log.warn("error in status={}", e);
 			}
 			walletOperation.setCounter(null);
 			walletOperation.setRatingUnitDescription(postData.getRatingUnitDescription());

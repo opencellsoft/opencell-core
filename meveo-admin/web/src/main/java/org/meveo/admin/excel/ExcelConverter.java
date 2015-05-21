@@ -109,16 +109,16 @@ public class ExcelConverter {
 			workbook.write();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
-			log.error(e.getMessage());
+			log.error("io exception in export ",e);
 		} catch (IllegalArgumentException e) {
 			// TODO Auto-generated catch block
-			log.error(e.getMessage());
+			log.error("illegal argument exception in export ",e);
 		} catch (IllegalAccessException e) {
 			// TODO Auto-generated catch block
-			log.error(e.getMessage());
+			log.error("illegal access exception in export ",e);
 		} catch (InvocationTargetException e) {
 			// TODO Auto-generated catch block
-			log.error(e.getMessage());
+			log.error("invocation target exception in export ",e);
 		} finally {
 			try {
 				workbook.close();

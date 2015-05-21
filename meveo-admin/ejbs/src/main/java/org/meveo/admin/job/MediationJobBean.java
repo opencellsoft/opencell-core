@@ -99,11 +99,11 @@ public class MediationJobBean {
 						outputCDR(line);
 						result.registerSucces();
 					} catch (CDRParsingException e) {
-						log.warn(e.getMessage());
+						log.warn("error while parsing cdr ",e);
 						result.registerError("file=" + file.getName() + ", line=" + processed + ": " + e.getRejectionCause().name());
 						rejectCDR(e.getCdr(), e.getRejectionCause());
 					} catch (Exception e) {
-						log.error(e.getMessage());
+						log.warn("error on reject cdr ",e);
 						result.registerError("file=" + file.getName() + ", line=" + processed + ": " + e.getMessage());
 						rejectCDR(line, CDRRejectionCauseEnum.TECH_ERR);
 					}

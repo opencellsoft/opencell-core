@@ -144,7 +144,7 @@ public class AccountingDetail extends FileProducer implements Reporting {
 			}
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
-			log.error(e.getMessage());
+			log.error("failed to generate accounting detail File",e);
 		}
 
 	}

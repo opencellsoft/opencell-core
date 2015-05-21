@@ -182,7 +182,7 @@ public class TimerEntityService extends PersistenceService<TimerEntity> {
                             jobTimers.remove(entity.getId());
                             log.info("cancelled timer {} , id=", entity.getJobName(),entity.getId());
                         } catch (Exception ex) {
-                            log.info("cannot cancel timer {}", ex.getMessage());
+                            log.info("cannot cancel timer {}", ex);
                         }
                         
                     }
@@ -216,7 +216,7 @@ public class TimerEntityService extends PersistenceService<TimerEntity> {
                 Timer timer = jobTimers.get(entity.getId());
                 timer.cancel();
             } catch (Exception ex) {
-                log.info("cannot cancel timer " + ex.getMessage());
+                log.info("cannot cancel timer " + ex);
             }
             jobTimers.remove(entity.getId());
         } else {
@@ -271,7 +271,7 @@ public class TimerEntityService extends PersistenceService<TimerEntity> {
 				throw new BusinessException("Cannot find job category " + entity.getJobCategoryEnum());
 			}
 		} catch (NamingException e) {
-			log.error(e.getMessage());
+			log.error("failed to manually execute ",e);
 		
 		} catch (Exception e){
 		    log.error("Failed to manually execute a job {} of type {}", entity.getName(), entity.getJobName(),e);
@@ -306,7 +306,7 @@ public class TimerEntityService extends PersistenceService<TimerEntity> {
                 throw new BusinessException("cannot find job category " + entity.getJobCategoryEnum());
             }
         } catch (NamingException e) {
-            log.error(e.getMessage());
+            log.error("failed to execute API timer",e);
         }
 	}
 
@@ -353,7 +353,7 @@ public class TimerEntityService extends PersistenceService<TimerEntity> {
             try {
                 return ((TimerEntity) timer.getInfo()).isRunning();
             } catch (Exception e) {
-                log.error("Failed to access timer status {}", e.getMessage());
+                log.error("Failed to access timer status {}", e);
             }
         }
         return false;

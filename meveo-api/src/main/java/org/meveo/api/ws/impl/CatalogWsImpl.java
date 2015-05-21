@@ -306,7 +306,7 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 		try {
 			return oneShotChargeTemplateApi.listWithPrice(languageCode, countryCode, currencyCode, sellerCode, subscriptionDate, getCurrentUser());
 		} catch (Exception e) {
-			log.error(e.getMessage());
+			log.error("error occurred while getting list oneShotCharge with price ",e);
 			return null;
 		}
 	}

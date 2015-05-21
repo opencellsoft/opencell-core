@@ -61,7 +61,7 @@ public class WalletService extends PersistenceService<WalletInstance> {
 
 			return (WalletInstance) qb.getQuery(em).getSingleResult();
 		} catch (NoResultException e) {
-			log.warn(e.getMessage());
+			log.warn("failed to find walletInstance by user account",e);
 			return null;
 		}
 	}
@@ -74,7 +74,7 @@ public class WalletService extends PersistenceService<WalletInstance> {
 
 			return (WalletInstance) qb.getQuery(getEntityManager()).getSingleResult();
 		} catch (NoResultException e) {
-			log.warn(e.getMessage());
+			log.warn("failed to find walletInstance by user account And code",e);
 			return null;
 		}
 	}

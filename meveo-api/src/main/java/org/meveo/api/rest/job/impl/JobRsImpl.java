@@ -41,11 +41,11 @@ public class JobRsImpl extends BaseRs implements JobRs {
 		} catch (MeveoApiException e) {
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
-			log.error(e.getMessage());
+			log.error("error occurred while executing timer ",e);
 		} catch (Exception e) {
 			result.setStatus(ActionStatusEnum.FAIL);
-			result.setMessage(e.getMessage());
-			log.error(e.getMessage());
+			result.setMessage(e.getMessage()); 
+			log.error("error generated while executing timer ",e);
 		}
 
 		log.debug("RESPONSE={}", result);

@@ -51,7 +51,7 @@ public class PDFInvoiceGenerationJobBean {
 							.getBillingRunById(Long.parseLong(parameter),
 									currentUser.getProvider()));
 				} catch (Exception e) {
-					log.error(e.getMessage());
+					log.error("error while getting invoices ",e);
 					result.registerError(e.getMessage());
 				}
 			} else {

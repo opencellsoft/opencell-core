@@ -108,7 +108,7 @@ public abstract class Job {
             try {
                 timer.cancel();
             } catch (Exception e) {
-                log.error(e.getMessage());
+                log.error("failed to clean all timers ",e);
             }
         }
     }

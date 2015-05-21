@@ -324,7 +324,7 @@ public class SubscriptionBean extends BaseBean<Subscription> {
 			
 			showApplyOneShotForm = false;
 		} catch (Exception e) {
-			log.error("exception when applying one shot charge!", e.getMessage());
+			log.error("exception when applying one shot charge!",e);
 			messages.error(e.getMessage());
 		}
 	}
@@ -704,7 +704,7 @@ public class SubscriptionBean extends BaseBean<Subscription> {
 				}
 			}
 		} catch (Exception e) {
-			log.error("Failed saving usage charge!", e.getMessage());
+			log.error("Failed saving usage charge!",e);
 			messages.error(e.getMessage());
 		}
 	}

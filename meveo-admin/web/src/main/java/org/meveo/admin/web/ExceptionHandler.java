@@ -61,7 +61,7 @@ public class ExceptionHandler {
 			response.sendRedirect(response.encodeRedirectURL(request
 					.getContextPath() + "/errors/expired.jsf"));
 		} catch (Exception e) {
-			log.error(e.getMessage());
+			log.error("handle view expired exception ",e);
 		}
 	}
 
@@ -77,7 +77,7 @@ public class ExceptionHandler {
 			response.sendRedirect(response.encodeRedirectURL(request
 					.getContextPath() + "/errors/database.jsf"));
 		} catch (Exception e) {
-			log.error(e.getMessage());
+			log.error("handle sql exception",e);
 		}
 	}
 
