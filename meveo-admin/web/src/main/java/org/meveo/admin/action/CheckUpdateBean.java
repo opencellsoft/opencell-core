@@ -36,7 +36,7 @@ public class CheckUpdateBean implements Serializable {
 
 	private ParamBean paramBean = ParamBean.getInstance();
 
-	private String versionOutput=null;
+	private String versionOutput="";
 
 	public void checkVersion() {
 		try {

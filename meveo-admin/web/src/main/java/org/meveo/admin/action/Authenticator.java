@@ -165,7 +165,6 @@ public class Authenticator extends BaseAuthenticator {
 				messages.info(new BundleKey("messages", "user.error.login"));
 			}
 		}
-
 		if (user == null) {
 			setStatus(AuthenticationStatus.FAILURE);
 		} else {
