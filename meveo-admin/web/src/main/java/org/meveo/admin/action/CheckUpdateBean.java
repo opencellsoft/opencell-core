@@ -11,7 +11,7 @@ import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.context.SessionScoped;
 import javax.inject.Named;
 
 import org.apache.commons.vfs.FileSystemException;
@@ -24,7 +24,7 @@ import org.slf4j.LoggerFactory;
 
 @SuppressWarnings("deprecation")
 @Named
-@ApplicationScoped
+@SessionScoped
 public class CheckUpdateBean implements Serializable {
 
 
@@ -91,9 +91,6 @@ public class CheckUpdateBean implements Serializable {
 	}
 
 	public String getVersionOutput() {
-		if(versionOutput==null){
-			checkVersion();
-		}
 		return versionOutput;
 	}
 
