@@ -525,7 +525,6 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 	 * unsuccessful.
 	 */
 	public void deleteMany() {
-		System.out.println("delete Many#########");
 		try {
 			if (selectedEntities != null && selectedEntities.size() > 0) {
 				Set<Long> idsToDelete = new HashSet<Long>();
