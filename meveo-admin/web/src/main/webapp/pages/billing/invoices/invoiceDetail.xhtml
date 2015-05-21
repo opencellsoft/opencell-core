@@ -92,19 +92,39 @@
                                 <p:tab>
                                     <f:facet name="title">
                                         <h:outputText value="#{subCat.description}" /> 
-									<h:outputText value="#{messages['invoice.amountWithoutTax']} : #{subCat.amountWithoutTax}"  style="float:right;!important"/> 
                                     </f:facet> 
-                                    <hftl:dataList label="#{messages['wallet.ratedTransactions']}" exportButton="false" resultsId="ratedTransactions_panel" checkMany="false"
-                                        backingBean="#{ratedTransactionBean}" dataModel="#{invoiceBean.ratedTransactions}">
-                                        <hftl:column label="#{messages['subscription.offer']}" field="offerCode" />
-                                        <hftl:column label="#{messages['billingRun.panel']}" field="billingRun.id" />
-                                        <hftl:column label="#{messages['pricePlan.panel']}" field="priceplan.code" />
-                                        <hftl:column label="#{messages['pricePlanMatrix.amountWithoutTax']}" field="amountWithoutTax" converterParam="4digits" />
-                                        <hftl:column label="#{messages['pricePlanMatrix.amountWithTax']}" field="amountWithTax" converterParam="4digits" />
-                                        <hftl:column label="#{messages['walletOperation.amountTax']}" field="amountTax" converterParam="4digits" />
-                                        <hftl:column label="#{messages['serviceInstance.quantity']}" field="quantity" converterParam="4digits" />
-                                        <hftl:column label="#{messages['ratedTransaction.status']}" field="status" />
-                                    </hftl:dataList>
+                                    <p:dataTable var="rated"  
+                                     value="#{subCat.ratedTransactions}"  paginator="true" rows="30"
+									 paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"> 
+									<p:column headerText="#{messages['subscription.offer']}" >
+										<h:outputText value="#{rated.offerCode}" />
+									</p:column>
+									<p:column headerText="#{messages['discountPlan.eventCode']}" >
+										<h:outputText value="#{ratedTransactionBean.getWalletOperationCode(rated.getWalletOperationId())}" />
+									</p:column>
+									<p:column headerText="#{messages['billingRun.panel']}" >
+										<h:outputText value="#{rated.billingRun.id}" />
+									</p:column>
+									<p:column headerText="#{messages['pricePlan.panel']}" >
+										<h:outputText value="#{rated.priceplan.code}" />
+									</p:column>
+									<p:column headerText="#{messages['pricePlanMatrix.amountWithoutTax']}" >
+										<h:outputText value="#{rated.amountWithoutTax}" converter="bigDecimal4DigitsConverter" />
+									</p:column>
+									<p:column headerText="#{messages['pricePlanMatrix.amountWithTax']}" >
+										<h:outputText value="#{rated.amountWithTax}" converter="bigDecimal4DigitsConverter" />
+									</p:column>
+									<p:column headerText="#{messages['walletOperation.amountTax']}" >
+										<h:outputText value="#{rated.amountTax}" converter="bigDecimal4DigitsConverter" />
+									</p:column>
+									<p:column headerText="#{messages['serviceInstance.quantity']}" >
+										<h:outputText value="#{rated.quantity}" converter="bigDecimal4DigitsConverter" />
+									</p:column>
+									<p:column headerText="#{messages['ratedTransaction.status']}" >
+										<h:outputText value="#{rated.status}" />
+									</p:column>
+									
+                                    </p:dataTable> 
                                 </p:tab>
                             </p:accordionPanel>
                         </p:column> 

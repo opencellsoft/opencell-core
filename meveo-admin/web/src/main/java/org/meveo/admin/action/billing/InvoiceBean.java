@@ -97,10 +97,6 @@ public class InvoiceBean extends BaseBean<Invoice> {
 	@Inject
 	XMLInvoiceCreator xmlInvoiceCreator;
 	
-
-	
-	private List<RatedTransaction> ratedTransactions=new ArrayList<RatedTransaction>();
-	
 	@Inject
 	private PDFParametersConstruction pDFParametersConstruction;
  
@@ -210,14 +206,20 @@ public class InvoiceBean extends BaseBean<Invoice> {
 							.getAmountWithoutTax());
 					headerSUbCat.setAmountWithTax(subCatInvoiceAgregate
 							.getAmountWithTax());
+					headerSUbCat.setRatedTransactions(ratedTransactionService.getListByInvoiceAndSubCategory(entity, invoiceSubCategory));	
 					headerSubCategories.put(invoiceSubCategory.getCode(),
 							headerSUbCat);
 				} 
-				ratedTransactions=ratedTransactionService.getListByInvoiceAndSubCategory(entity, invoiceSubCategory);	
+				
+				
 			}
 		}
 		return new ArrayList<InvoiceCategoryDTO>(headerCategories.values());
 	}
+	
+	
+	
+
 
 	public String getNetToPay() throws BusinessException {
 		BigDecimal balance = customerAccountService.customerAccountBalanceDue(
@@ -269,13 +271,6 @@ public class InvoiceBean extends BaseBean<Invoice> {
 		return invoiceAgregateService.findDiscountAggregates(entity); 
 	}
 
-	public List<RatedTransaction> getRatedTransactions() {
-		return ratedTransactions;
-	}
-
-	public void setRatedTransactions(List<RatedTransaction> ratedTransactions) {
-		this.ratedTransactions = ratedTransactions;
-	}
 
 	public File getXmlInvoiceDir(){
 		ParamBean param = ParamBean.getInstance();
