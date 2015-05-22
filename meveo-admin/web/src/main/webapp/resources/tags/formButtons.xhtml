@@ -60,7 +60,6 @@
 				<f:param name="backView" value="#{cc.attrs.backingBean.backView}"/>
 			</c:if>
 		</p:button>
-		<h:outputText value="#{cc.attrs.backingBean.backView}" />
 
         <p:commandButton value="#{messages['commons.disable']}"
             rendered="#{!cc.attrs.edit and cc.attrs.showEnableDisableButton and cc.attrs.backingBean.entity.active}"
