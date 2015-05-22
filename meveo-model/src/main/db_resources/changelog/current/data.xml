@@ -2,5 +2,55 @@
 <databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.2.xsd">
-	
+
+	<property name="now" value="now()" dbms="postgresql" />
+
+	<changeSet id="EdwardLegaspi" author="#655_20150522">
+		<insert tableName="ar_credit_category">
+			<column name="id" valueNumeric="1" />
+			<column name="version" valueNumeric="0" />
+			<column name="disabled" valueBoolean="false" />
+			<column name="created" valueDate="${now}" />
+			<column name="code" value="PART_C" />
+			<column name="description" value="Part C" />
+			<column name="provider_id" valueNumeric="1" />
+		</insert>
+		<insert tableName="ar_credit_category">
+			<column name="id" valueNumeric="2" />
+			<column name="version" valueNumeric="0" />
+			<column name="disabled" valueBoolean="false" />
+			<column name="created" valueDate="${now}" />
+			<column name="code" value="PART_M" />
+			<column name="description" value="Part M" />
+			<column name="provider_id" valueNumeric="1" />
+		</insert>
+		<insert tableName="ar_credit_category">
+			<column name="id" valueNumeric="3" />
+			<column name="version" valueNumeric="0" />
+			<column name="disabled" valueBoolean="false" />
+			<column name="created" valueDate="${now}" />
+			<column name="code" value="PRO" />
+			<column name="description" value="PRO" />
+			<column name="provider_id" valueNumeric="1" />
+		</insert>
+		<insert tableName="ar_credit_category">
+			<column name="id" valueNumeric="4" />
+			<column name="version" valueNumeric="0" />
+			<column name="disabled" valueBoolean="false" />
+			<column name="created" valueDate="${now}" />
+			<column name="code" value="VIP" />
+			<column name="description" value="VIP" />
+			<column name="provider_id" valueNumeric="1" />
+		</insert>
+		<insert tableName="ar_credit_category">
+			<column name="id" valueNumeric="5" />
+			<column name="version" valueNumeric="0" />
+			<column name="disabled" valueBoolean="false" />
+			<column name="created" valueDate="${now}" />
+			<column name="code" value="NEWCUSTOMER" />
+			<column name="description" value="New Customer" />
+			<column name="provider_id" valueNumeric="1" />
+		</insert>
+	</changeSet>
+
 </databaseChangeLog>

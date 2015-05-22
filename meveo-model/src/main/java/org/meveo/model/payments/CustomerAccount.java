@@ -68,9 +68,9 @@ public class CustomerAccount extends AccountEntity {
 	@Enumerated(EnumType.STRING)
 	private PaymentMethodEnum paymentMethod;
 
-	@Column(name = "CREDIT_CATEGORY")
-	@Enumerated(EnumType.STRING)
-	private CreditCategoryEnum creditCategory;
+	@ManyToOne
+	@JoinColumn(name = "CREDIT_CATEGORY_ID")
+	private CreditCategory creditCategory;
 
 	@OneToMany(mappedBy = "customerAccount", cascade = CascadeType.ALL)
 	// TODO : Add orphanRemoval annotation.
@@ -159,14 +159,6 @@ public class CustomerAccount extends AccountEntity {
 
 	public void setPaymentMethod(PaymentMethodEnum paymentMethod) {
 		this.paymentMethod = paymentMethod;
-	}
-
-	public CreditCategoryEnum getCreditCategory() {
-		return creditCategory;
-	}
-
-	public void setCreditCategory(CreditCategoryEnum creditCategory) {
-		this.creditCategory = creditCategory;
 	}
 
 	public Date getDateStatus() {
@@ -276,7 +268,13 @@ public class CustomerAccount extends AccountEntity {
 	public void setTradingLanguage(TradingLanguage tradingLanguage) {
 		this.tradingLanguage = tradingLanguage;
 	}
-	
-	
 
+	public CreditCategory getCreditCategory() {
+		return creditCategory;
+	}
+
+	public void setCreditCategory(CreditCategory creditCategory) {
+		this.creditCategory = creditCategory;
+	}
+	
 }

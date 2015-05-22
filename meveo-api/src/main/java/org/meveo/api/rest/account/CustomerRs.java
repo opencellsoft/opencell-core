@@ -12,6 +12,8 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 import org.meveo.api.dto.ActionStatus;
+import org.meveo.api.dto.account.CustomerBrandDto;
+import org.meveo.api.dto.account.CustomerCategoryDto;
 import org.meveo.api.dto.account.CustomerDto;
 import org.meveo.api.dto.response.account.CustomersResponseDto;
 import org.meveo.api.dto.response.account.GetCustomerResponseDto;
@@ -52,5 +54,21 @@ public interface CustomerRs extends IBaseRs {
 	@POST
 	@Path("/list")
 	CustomersResponseDto list(CustomerDto postData);
+	
+	@POST
+	@Path("/createBrand")
+	ActionStatus createBrand(CustomerBrandDto postData);
+
+	@POST
+	@Path("/createCategory")
+	ActionStatus createCategory(CustomerCategoryDto postData);
+
+	@DELETE
+	@Path("/removeBrand/{brandCode}")
+	ActionStatus removeBrand(@PathParam("brandCode") String brandCode);
+
+	@DELETE
+	@Path("/removeCategory/{categoryCode}")
+	ActionStatus removeCategory(@PathParam("categoryCode") String categoryCode);
 
 }

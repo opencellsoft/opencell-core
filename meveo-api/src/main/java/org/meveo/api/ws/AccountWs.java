@@ -8,7 +8,10 @@ import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.account.AccessDto;
 import org.meveo.api.dto.account.AccountHierarchyDto;
 import org.meveo.api.dto.account.BillingAccountDto;
+import org.meveo.api.dto.account.CreditCategoryDto;
 import org.meveo.api.dto.account.CustomerAccountDto;
+import org.meveo.api.dto.account.CustomerBrandDto;
+import org.meveo.api.dto.account.CustomerCategoryDto;
 import org.meveo.api.dto.account.CustomerDto;
 import org.meveo.api.dto.account.CustomerHierarchyDto;
 import org.meveo.api.dto.account.UserAccountDto;
@@ -49,6 +52,18 @@ public interface AccountWs extends IBaseWs {
 
 	@WebMethod
 	CustomersResponseDto listCustomerWithFilter(@WebParam(name = "customer") CustomerDto postData);
+	
+	@WebMethod
+	ActionStatus createCustomerBrand(@WebParam(name = "customerBrand") CustomerBrandDto postData);
+
+	@WebMethod
+	ActionStatus createCustomerCategory(@WebParam(name = "customerCategory") CustomerCategoryDto postData);
+
+	@WebMethod
+	ActionStatus removeCustomerBrand(@WebParam(name = "brandCode") String brandCode);
+
+	@WebMethod
+	ActionStatus removeCustomerCategory(@WebParam(name = "categoryCode") String categoryCode);
 
 	// customer account
 
@@ -66,6 +81,12 @@ public interface AccountWs extends IBaseWs {
 
 	@WebMethod
 	CustomerAccountsResponseDto listByCustomer(@WebParam(name = "customerCode") String customerCode);
+	
+	@WebMethod
+	ActionStatus createCreditCategory(@WebParam(name = "creditCategory") CreditCategoryDto postData);
+
+	@WebMethod
+	ActionStatus removeCreditCategory(@WebParam(name = "creditCategoryCode") String creditCategoryCode);
 
 	// billing account
 

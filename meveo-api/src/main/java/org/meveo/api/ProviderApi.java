@@ -16,6 +16,7 @@ import org.meveo.api.dto.LanguageDto;
 import org.meveo.api.dto.ProviderDto;
 import org.meveo.api.dto.TaxDto;
 import org.meveo.api.dto.TerminationReasonDto;
+import org.meveo.api.dto.account.CreditCategoryDto;
 import org.meveo.api.dto.account.CustomerBrandDto;
 import org.meveo.api.dto.account.CustomerCategoryDto;
 import org.meveo.api.dto.response.GetCustomerAccountConfigurationResponseDto;
@@ -45,7 +46,7 @@ import org.meveo.model.catalog.Calendar;
 import org.meveo.model.crm.CustomerBrand;
 import org.meveo.model.crm.CustomerCategory;
 import org.meveo.model.crm.Provider;
-import org.meveo.model.payments.CreditCategoryEnum;
+import org.meveo.model.payments.CreditCategory;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.shared.Title;
 import org.meveo.service.admin.impl.CountryService;
@@ -65,6 +66,7 @@ import org.meveo.service.catalog.impl.TitleService;
 import org.meveo.service.crm.impl.CustomerBrandService;
 import org.meveo.service.crm.impl.CustomerCategoryService;
 import org.meveo.service.crm.impl.ProviderService;
+import org.meveo.service.payments.impl.CreditCategoryService;
 
 /**
  * @author Edward P. Legaspi
@@ -74,6 +76,9 @@ public class ProviderApi extends BaseApi {
 
 	@Inject
 	private ProviderService providerService;
+	
+	@Inject
+	private CreditCategoryService creditCategoryService;
 
 	@Inject
 	private CountryService countryService;
@@ -388,9 +393,10 @@ public class ProviderApi extends BaseApi {
 		for (PaymentMethodEnum e : PaymentMethodEnum.values()) {
 			result.getPaymentMethods().add(e.name());
 		}
-
-		for (CreditCategoryEnum e : CreditCategoryEnum.values()) {
-			result.getCreditCategories().add(e.name());
+		
+		List<CreditCategory> creditCategories = creditCategoryService.list();
+		for(CreditCategory cc : creditCategories) {
+			result.getCreditCategories().getCreditCategory().add(new CreditCategoryDto(cc));
 		}
 
 		return result;

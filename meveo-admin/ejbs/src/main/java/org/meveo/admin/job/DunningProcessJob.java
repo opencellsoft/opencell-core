@@ -68,7 +68,7 @@ public class DunningProcessJob extends Job {
             List<ActionDunning> listActionDunning = new ArrayList<ActionDunning>();
             List<OtherCreditAndCharge> listOCC = new ArrayList<OtherCreditAndCharge>();
 
-            List<CustomerAccount> customerAccounts = customerAccountService.getCustomerAccounts(dunningPlan.getCreditCategory(), dunningPlan.getPaymentMethod(), dunningPlan
+            List<CustomerAccount> customerAccounts = customerAccountService.getCustomerAccounts(dunningPlan.getCreditCategory().getCode(), dunningPlan.getPaymentMethod(), dunningPlan
                 .getProvider().getCode());
             log.info(String.format("Found %s CustomerAccounts to check", (customerAccounts == null ? "null" : customerAccounts.size())));
 

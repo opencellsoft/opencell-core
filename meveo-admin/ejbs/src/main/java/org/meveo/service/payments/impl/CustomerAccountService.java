@@ -32,12 +32,12 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.ResourceBundle;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.QueryBuilder;
+import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.InstanceStatusEnum;
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.payments.AccountOperation;
-import org.meveo.model.payments.CreditCategoryEnum;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.CustomerAccountStatusEnum;
 import org.meveo.model.payments.DunningLevelEnum;
@@ -55,6 +55,9 @@ import org.meveo.service.crm.impl.CustomerService;
  */
 @Stateless
 public class CustomerAccountService extends AccountService<CustomerAccount> {
+	
+	@Inject
+	private CreditCategoryService creditCategoryService;
 
 	@Inject
 	private CustomerService customerService;
@@ -233,7 +236,7 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
 
 	public void createCustomerAccount(String code, String title, String firstName, String lastName, String address1,
 			String address2, String zipCode, String city, String state, String email, Long customerId,
-			CreditCategoryEnum creditCategory, PaymentMethodEnum paymentMethod, User user) throws BusinessException {
+			String creditCategory, PaymentMethodEnum paymentMethod, User user) throws BusinessException {
 		log.info("start createCustomerAccount with code:" + code + ",customerId:" + customerId);
 		if (code == null || code.trim().equals("") || customerId == null || user == null) {
 			log.warn("Error: requried value(s) is null with code:#0,customerId:#1,creator:#2", code, customerId,
@@ -274,7 +277,9 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
 		customerAccount.setDateStatus(new Date());
 		customerAccount.setDateDunningLevel(new Date());
 		customerAccount.setPaymentMethod(paymentMethod);
-		customerAccount.setCreditCategory(creditCategory);
+		if (!StringUtils.isBlank(creditCategory)) {
+			customerAccount.setCreditCategory(creditCategoryService.findByCode(creditCategory, user.getProvider()));
+		}
 		customerAccount.setProvider(customer.getProvider());
 
 		try {
@@ -300,7 +305,7 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
 	 */
 	public void updateCustomerAccount(Long id, String code, String title, String firstName, String lastName,
 			String address1, String address2, String zipCode, String city, String state, String email,
-			CreditCategoryEnum creditCategory, PaymentMethodEnum paymentMethod, User user) throws BusinessException {
+			String creditCategory, PaymentMethodEnum paymentMethod, User user) throws BusinessException {
 		log.info("start updateCustomerAccount with code:#0,id:#1,updator=#2", code, id,
 				(user != null ? user.getUserName() : "NULL"));
 		if ((code == null || code.trim().equals("")) || user == null) {
@@ -322,7 +327,10 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
 		customerAccount.getAddress().setCity(city);
 		customerAccount.getAddress().setState(state);
 		customerAccount.setPaymentMethod(paymentMethod);
-		customerAccount.setCreditCategory(creditCategory);
+		if (!StringUtils.isBlank(creditCategory)) {
+			customerAccount.setCreditCategory(creditCategoryService.findByCode(creditCategory, user.getProvider()));
+		}
+		
 		if (customerAccount.getContactInformation() == null) {
 			customerAccount.setContactInformation(new ContactInformation());
 		}
@@ -459,7 +467,7 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
 	 *      java.lang.String, org.meveo.model.payments.CreditCategoryEnum,
 	 *      org.meveo.model.admin.User)
 	 */
-	public void updateCreditCategory(Long id, String code, CreditCategoryEnum creditCategory, User updator)
+	public void updateCreditCategory(Long id, String code, String creditCategory, User updator)
 			throws BusinessException {
 		log.info("start updateCreditCategory with id:" + id + ",code:" + code);
 		if (creditCategory == null) {
@@ -470,7 +478,10 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
 			throw new BusinessException("Error when user is null!");
 		}
 		CustomerAccount customerAccount = findCustomerAccount(id, code);
-		customerAccount.setCreditCategory(creditCategory);
+		if (!StringUtils.isBlank(creditCategory)) {
+			customerAccount.setCreditCategory(creditCategoryService.findByCode(creditCategory, updator.getProvider()));
+		}
+		
 		update(customerAccount, updator);
 		log.info("successfully end updateCreditCategory!");
 	}
@@ -625,14 +636,14 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<CustomerAccount> getCustomerAccounts(CreditCategoryEnum creditCategory,
+	public List<CustomerAccount> getCustomerAccounts(String creditCategory,
 			PaymentMethodEnum paymentMethod, String providerCode) {
 		List<CustomerAccount> customerAccounts = getEntityManager()
 				.createQuery(
 						"from "
 								+ CustomerAccount.class.getSimpleName()
-								+ " where paymentMethod=:paymentMethod and creditCategory=:creditCategory and status=:status and provider.code=:providerCode ")
-				.setParameter("paymentMethod", paymentMethod).setParameter("creditCategory", creditCategory)
+								+ " where paymentMethod=:paymentMethod and creditCategory.code=:creditCategoryCode and status=:status and provider.code=:providerCode ")
+				.setParameter("paymentMethod", paymentMethod).setParameter("creditCategoryCode", creditCategory)
 				.setParameter("status", CustomerAccountStatusEnum.ACTIVE).setParameter("providerCode", providerCode)
 				.getResultList();
 		return customerAccounts;

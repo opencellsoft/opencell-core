@@ -11,6 +11,7 @@ import javax.inject.Inject;
 import org.meveo.admin.exception.BusinessEntityException;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.CustomFieldDto;
+import org.meveo.api.dto.account.CreditCategoryDto;
 import org.meveo.api.dto.account.CustomerAccountDto;
 import org.meveo.api.dto.account.CustomerAccountsDto;
 import org.meveo.api.dto.payment.DunningInclusionExclusionDto;
@@ -27,7 +28,7 @@ import org.meveo.model.crm.CustomFieldInstance;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.payments.AccountOperation;
-import org.meveo.model.payments.CreditCategoryEnum;
+import org.meveo.model.payments.CreditCategory;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.MatchingAmount;
 import org.meveo.model.payments.MatchingCode;
@@ -38,6 +39,7 @@ import org.meveo.service.admin.impl.TradingCurrencyService;
 import org.meveo.service.billing.impl.TradingLanguageService;
 import org.meveo.service.crm.impl.CustomerService;
 import org.meveo.service.payments.impl.AccountOperationService;
+import org.meveo.service.payments.impl.CreditCategoryService;
 import org.meveo.service.payments.impl.CustomerAccountService;
 import org.slf4j.Logger;
 
@@ -46,6 +48,9 @@ public class CustomerAccountApi extends AccountApi {
 
 	@Inject
 	private Logger log;
+
+	@Inject
+	private CreditCategoryService creditCategoryService;
 
 	@Inject
 	private CustomerAccountService customerAccountService;
@@ -58,14 +63,14 @@ public class CustomerAccountApi extends AccountApi {
 
 	@Inject
 	private TradingCurrencyService tradingCurrencyService;
-	
+
 	@Inject
 	private TradingLanguageService tradingLanguageService;
 
 	public void create(CustomerAccountDto postData, User currentUser) throws MeveoApiException {
 		if (!StringUtils.isBlank(postData.getCode()) && !StringUtils.isBlank(postData.getDescription()) && !StringUtils.isBlank(postData.getCustomer())
-				&& !StringUtils.isBlank(postData.getCurrency()) && !StringUtils.isBlank(postData.getLanguage())
-				&& !StringUtils.isBlank(postData.getName()) && !StringUtils.isBlank(postData.getName().getLastName())) {
+				&& !StringUtils.isBlank(postData.getCurrency()) && !StringUtils.isBlank(postData.getLanguage()) && !StringUtils.isBlank(postData.getName())
+				&& !StringUtils.isBlank(postData.getName().getLastName())) {
 			Provider provider = currentUser.getProvider();
 			// check if already exists
 			if (customerAccountService.findByCode(postData.getCode(), currentUser.getProvider()) != null) {
@@ -81,7 +86,7 @@ public class CustomerAccountApi extends AccountApi {
 			if (tradingCurrency == null) {
 				throw new EntityDoesNotExistsException(TradingCurrency.class, postData.getCurrency());
 			}
-			
+
 			TradingLanguage tradingLanguage = tradingLanguageService.findByTradingLanguageCode(postData.getLanguage(), provider);
 			if (tradingLanguage == null) {
 				throw new EntityDoesNotExistsException(TradingLanguage.class, postData.getLanguage());
@@ -96,12 +101,10 @@ public class CustomerAccountApi extends AccountApi {
 			try {
 				customerAccount.setPaymentMethod(PaymentMethodEnum.valueOf(postData.getPaymentMethod()));
 			} catch (IllegalArgumentException | NullPointerException e) {
-				log.warn("error generated while setting payment method",e);
+				log.warn("error generated while setting payment method", e);
 			}
-			try {
-				customerAccount.setCreditCategory(CreditCategoryEnum.valueOf(postData.getCreditCategory()));
-			} catch (IllegalArgumentException | NullPointerException e) {
-				log.warn("error generated while setting credit category",e);
+			if (!StringUtils.isBlank(postData.getCreditCategory())) {
+				customerAccount.setCreditCategory(creditCategoryService.findByCode(postData.getCreditCategory(), provider));
 			}
 			customerAccount.setMandateDate(postData.getMandateDate());
 			customerAccount.setMandateIdentification(postData.getMandateIdentification());
@@ -144,8 +147,8 @@ public class CustomerAccountApi extends AccountApi {
 
 	public void update(CustomerAccountDto postData, User currentUser) throws MeveoApiException {
 		if (!StringUtils.isBlank(postData.getCode()) && !StringUtils.isBlank(postData.getDescription()) && !StringUtils.isBlank(postData.getCustomer())
-				&& !StringUtils.isBlank(postData.getCurrency()) && !StringUtils.isBlank(postData.getLanguage())
-				&& !StringUtils.isBlank(postData.getName()) && !StringUtils.isBlank(postData.getName().getLastName())) {
+				&& !StringUtils.isBlank(postData.getCurrency()) && !StringUtils.isBlank(postData.getLanguage()) && !StringUtils.isBlank(postData.getName())
+				&& !StringUtils.isBlank(postData.getName().getLastName())) {
 			Provider provider = currentUser.getProvider();
 			// check if already exists
 			CustomerAccount customerAccount = customerAccountService.findByCode(postData.getCode(), currentUser.getProvider());
@@ -162,7 +165,7 @@ public class CustomerAccountApi extends AccountApi {
 			if (tradingCurrency == null) {
 				throw new EntityDoesNotExistsException(TradingCurrency.class, postData.getCurrency());
 			}
-			
+
 			TradingLanguage tradingLanguage = tradingLanguageService.findByTradingLanguageCode(postData.getLanguage(), provider);
 			if (tradingLanguage == null) {
 				throw new EntityDoesNotExistsException(TradingLanguage.class, postData.getLanguage());
@@ -183,12 +186,10 @@ public class CustomerAccountApi extends AccountApi {
 			try {
 				customerAccount.setPaymentMethod(PaymentMethodEnum.valueOf(postData.getPaymentMethod()));
 			} catch (IllegalArgumentException e) {
-				log.warn("error generated while setting payment method ",e);
+				log.warn("error generated while setting payment method ", e);
 			}
-			try {
-				customerAccount.setCreditCategory(CreditCategoryEnum.valueOf(postData.getCreditCategory()));
-			} catch (IllegalArgumentException e) {
-				log.warn("error generated while setting credit category ",e);
+			if (!StringUtils.isBlank(postData.getCreditCategory())) {
+				customerAccount.setCreditCategory(creditCategoryService.findByCode(postData.getCreditCategory(), provider));
 			}
 			customerAccount.setMandateDate(postData.getMandateDate());
 			customerAccount.setMandateIdentification(postData.getMandateIdentification());
@@ -361,6 +362,44 @@ public class CustomerAccountApi extends AccountApi {
 			}
 		} catch (EntityDoesNotExistsException | BusinessEntityException e) {
 			throw new MeveoApiException(e.getMessage());
+		}
+	}
+
+	public void createCreditCategory(CreditCategoryDto postData, User currentUser) throws MeveoApiException {
+		if (!StringUtils.isBlank(postData.getCode()) && !StringUtils.isBlank(postData.getDescription())) {
+			if (creditCategoryService.findByCode(postData.getCode(), currentUser.getProvider()) != null) {
+				throw new EntityAlreadyExistsException(CreditCategory.class, postData.getCode());
+			}
+
+			CreditCategory creditCategory = new CreditCategory();
+			creditCategory.setCode(postData.getCode());
+			creditCategory.setDescription(postData.getDescription());
+
+			creditCategoryService.create(creditCategory, currentUser, currentUser.getProvider());
+		} else {
+			if (StringUtils.isBlank(postData.getCode())) {
+				missingParameters.add("code");
+			}
+			if (StringUtils.isBlank(postData.getDescription())) {
+				missingParameters.add("description");
+			}
+
+			throw new MissingParameterException(getMissingParametersExceptionMessage());
+		}
+	}
+
+	public void removeCreditCategory(String code, Provider provider) throws MeveoApiException {
+		if (!StringUtils.isBlank(code)) {
+			CreditCategory creditCategory = creditCategoryService.findByCode(code, provider);
+			if (creditCategory == null) {
+				throw new EntityDoesNotExistsException(CreditCategory.class, code);
+			}
+
+			creditCategoryService.remove(creditCategory);
+		} else {
+			missingParameters.add("creditCategoryCode");
+
+			throw new MissingParameterException(getMissingParametersExceptionMessage());
 		}
 	}
 

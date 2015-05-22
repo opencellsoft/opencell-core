@@ -23,7 +23,6 @@ import java.util.List;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.admin.User;
 import org.meveo.model.payments.AccountOperation;
-import org.meveo.model.payments.CreditCategoryEnum;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.DunningLevelEnum;
 import org.meveo.model.payments.PaymentMethodEnum;
@@ -165,7 +164,7 @@ public interface ICustomerAccountService {
      * @throws BusinessException
      */
     public void createCustomerAccount(String code, String title, String firstName, String lastName, String address1, String address2, String zipCode,
-            String city, String state, String email, Long customerId, CreditCategoryEnum creditCategory, PaymentMethodEnum paymentMethod, User creator)
+            String city, String state, String email, Long customerId, String creditCategory, PaymentMethodEnum paymentMethod, User creator)
             throws BusinessException;
 
     /**
@@ -188,7 +187,7 @@ public interface ICustomerAccountService {
      * @throws BusinessException
      */
     public void updateCustomerAccount(Long id, String code, String title, String firstName, String lastName, String address1, String address2, String zipCode,
-            String city, String state, String email, CreditCategoryEnum creditCategory, PaymentMethodEnum paymentMethod, User updateor)
+            String city, String state, String email, String creditCategory, PaymentMethodEnum paymentMethod, User updateor)
             throws BusinessException;
 
     /**
@@ -230,7 +229,7 @@ public interface ICustomerAccountService {
      * @param updator
      * @throws BusinessException
      */
-    public void updateCreditCategory(Long customerAccountId, String customerAccountCode, CreditCategoryEnum creditCategory, User updator)
+    public void updateCreditCategory(Long customerAccountId, String customerAccountCode, String creditCategory, User updator)
             throws BusinessException;
 
     /**

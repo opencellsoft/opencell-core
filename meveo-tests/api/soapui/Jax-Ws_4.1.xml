@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<con:soapui-project activeEnvironment="Default" name="Test4.0.4" resourceRoot="${projectDir}" soapui-version="5.0.0" abortOnError="false" runType="SEQUENTIAL" xmlns:con="http://eviware.com/soapui/config"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.actions.iface.tools.soapui.TestRunnerAction@values-local"><![CDATA[<xml-fragment xmlns:con="http://eviware.com/soapui/config">
+<con:soapui-project activeEnvironment="Default" name="Test4.1" resourceRoot="${projectDir}" soapui-version="5.0.0" abortOnError="false" runType="SEQUENTIAL" xmlns:con="http://eviware.com/soapui/config"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.actions.iface.tools.soapui.TestRunnerAction@values-local"><![CDATA[<xml-fragment xmlns:con="http://eviware.com/soapui/config">
   <con:entry key="Environment" value="Default"/>
   <con:entry key="Global Properties" value=""/>
   <con:entry key="TestSuite" value="#613_wo_find_create_api"/>
@@ -2299,6 +2299,15 @@
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
+    <wsdl:operation name="removeCreditCategory">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="removeCreditCategory">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="removeCreditCategoryResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
     <wsdl:operation name="findCustomerAccount">
       <soap:operation soapAction="" style="document"/>
       <wsdl:input name="findCustomerAccount">
@@ -2359,6 +2368,15 @@
         <soap:body use="literal"/>
       </wsdl:input>
       <wsdl:output name="removeUserAccountResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="createCreditCategory">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="createCreditCategory">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="createCreditCategoryResponse">
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
@@ -2605,34 +2623,35 @@
 </wsdl:definitions>]]></con:content><con:type>http://schemas.xmlsoap.org/wsdl/</con:type></con:part><con:part><con:url>http://localhost:8080/meveo/AccountWs?wsdl=AccountWs.wsdl</con:url><con:content><![CDATA[<wsdl:definitions name="AccountWs" targetNamespace="http://ws.api.meveo.org/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ns1="http://ws.api.meveo.org/">
   <wsdl:types>
     <xs:schema elementFormDefault="unqualified" targetNamespace="http://ws.api.meveo.org/" version="1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://ws.api.meveo.org/">
+      <xs:element name="AccessesResponse" type="tns:accessesResponseDto"/>
       <xs:element name="Account" type="tns:accountDto"/>
       <xs:element name="AccountHierarchy" type="tns:accountHierarchyDto"/>
       <xs:element name="AccountOperation" type="tns:accountOperationDto"/>
       <xs:element name="AccountOperationsDto" type="tns:accountOperationsDto"/>
+      <xs:element name="AccountOperationsResponse" type="tns:accountOperationsResponseDto"/>
       <xs:element name="ActionStatus" type="tns:actionStatus"/>
       <xs:element name="Address" type="tns:addressDto"/>
+      <xs:element name="BillingAccountsResponse" type="tns:billingAccountsResponseDto"/>
+      <xs:element name="CreditCategory" type="tns:creditCategoryDto"/>
       <xs:element name="CustomField" type="tns:customFieldDto"/>
       <xs:element name="CustomFields" type="tns:customFieldsDto"/>
+      <xs:element name="CustomerAccountsResponse" type="tns:customerAccountsResponseDto"/>
       <xs:element name="CustomerBrand" type="tns:customerBrandDto"/>
       <xs:element name="CustomerCategory" type="tns:customerCategoryDto"/>
       <xs:element name="CustomerHierarchy" type="tns:customerHierarchyDto"/>
       <xs:element name="CustomerListResponse" type="tns:customerListResponse"/>
-      <xs:element name="GetAccessResponse" type="tns:getAccessResponse"/>
-      <xs:element name="GetBillingAccountResponse" type="tns:getBillingAccountResponse"/>
-      <xs:element name="GetCustomerAccountResponse" type="tns:getCustomerAccountResponse"/>
-      <xs:element name="GetCustomerResponse" type="tns:getCustomerResponse"/>
-      <xs:element name="GetUserAccountResponse" type="tns:getUserAccountResponse"/>
-      <xs:element name="ListAccessResponse" type="tns:listAccessResponseDto"/>
-      <xs:element name="ListAccountOperationsResponse" type="tns:listAccountOperationsResponseDto"/>
-      <xs:element name="ListBillingAccountResponse" type="tns:listBillingAccountResponseDto"/>
-      <xs:element name="ListCustomerAccountResponse" type="tns:listCustomerAccountResponseDto"/>
-      <xs:element name="ListCustomerResponse" type="tns:listCustomerResponseDto"/>
-      <xs:element name="ListUserAccountResponse" type="tns:listUserAccountResponseDto"/>
+      <xs:element name="CustomersResponse" type="tns:customersResponseDto"/>
+      <xs:element name="GetAccessResponse" type="tns:getAccessResponseDto"/>
+      <xs:element name="GetBillingAccountResponse" type="tns:getBillingAccountResponseDto"/>
+      <xs:element name="GetCustomerAccountResponse" type="tns:getCustomerAccountResponseDto"/>
+      <xs:element name="GetCustomerResponse" type="tns:getCustomerResponseDto"/>
+      <xs:element name="GetUserAccountResponse" type="tns:getUserAccountResponseDto"/>
       <xs:element name="MatchingAmount" type="tns:matchingAmountDto"/>
       <xs:element name="MatchingAmounts" type="tns:matchingAmountsDto"/>
       <xs:element name="MatchingCode" type="tns:matchingCodeDto"/>
       <xs:element name="MatchingCodes" type="tns:matchingCodesDto"/>
       <xs:element name="Name" type="tns:nameDto"/>
+      <xs:element name="UserAccountsResponse" type="tns:userAccountsResponseDto"/>
       <xs:element name="createAccess" type="tns:createAccess"/>
       <xs:element name="createAccessResponse" type="tns:createAccessResponse"/>
       <xs:element name="createAccountHierarchy" type="tns:createAccountHierarchy"/>
@@ -2641,6 +2660,8 @@
       <xs:element name="createAccountOperationResponse" type="tns:createAccountOperationResponse"/>
       <xs:element name="createBillingAccount" type="tns:createBillingAccount"/>
       <xs:element name="createBillingAccountResponse" type="tns:createBillingAccountResponse"/>
+      <xs:element name="createCreditCategory" type="tns:createCreditCategory"/>
+      <xs:element name="createCreditCategoryResponse" type="tns:createCreditCategoryResponse"/>
       <xs:element name="createCustomer" type="tns:createCustomer"/>
       <xs:element name="createCustomerAccount" type="tns:createCustomerAccount"/>
       <xs:element name="createCustomerAccountResponse" type="tns:createCustomerAccountResponse"/>
@@ -2685,6 +2706,8 @@
       <xs:element name="removeAccessResponse" type="tns:removeAccessResponse"/>
       <xs:element name="removeBillingAccount" type="tns:removeBillingAccount"/>
       <xs:element name="removeBillingAccountResponse" type="tns:removeBillingAccountResponse"/>
+      <xs:element name="removeCreditCategory" type="tns:removeCreditCategory"/>
+      <xs:element name="removeCreditCategoryResponse" type="tns:removeCreditCategoryResponse"/>
       <xs:element name="removeCustomer" type="tns:removeCustomer"/>
       <xs:element name="removeCustomerAccount" type="tns:removeCustomerAccount"/>
       <xs:element name="removeCustomerAccountResponse" type="tns:removeCustomerAccountResponse"/>
@@ -2719,6 +2742,7 @@
               <xs:element name="subscription" type="xs:string"/>
               <xs:element minOccurs="0" name="startDate" type="xs:dateTime"/>
               <xs:element minOccurs="0" name="endDate" type="xs:dateTime"/>
+              <xs:element minOccurs="0" name="customFields" type="tns:customFieldsDto"/>
             </xs:sequence>
             <xs:attribute name="code" type="xs:string"/>
           </xs:extension>
@@ -2726,6 +2750,21 @@
       </xs:complexType>
       <xs:complexType abstract="true" name="baseDto">
         <xs:sequence/>
+      </xs:complexType>
+      <xs:complexType name="customFieldsDto">
+        <xs:sequence>
+          <xs:element maxOccurs="unbounded" minOccurs="0" name="customField" nillable="true" type="tns:customFieldDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="customFieldDto">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="stringValue" type="xs:string"/>
+          <xs:element minOccurs="0" name="dateValue" type="xs:dateTime"/>
+          <xs:element minOccurs="0" name="longValue" type="xs:long"/>
+          <xs:element minOccurs="0" name="doubleValue" type="xs:double"/>
+        </xs:sequence>
+        <xs:attribute name="code" type="xs:string" use="required"/>
+        <xs:attribute name="description" type="xs:string"/>
       </xs:complexType>
       <xs:complexType name="updateAccessResponse">
         <xs:sequence>
@@ -2782,6 +2821,16 @@
           <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
         </xs:sequence>
       </xs:complexType>
+      <xs:complexType name="removeCreditCategory">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="creditCategoryCode" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="removeCreditCategoryResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
       <xs:complexType name="findUserAccount">
         <xs:sequence>
           <xs:element minOccurs="0" name="userAccountCode" type="xs:string"/>
@@ -2789,10 +2838,10 @@
       </xs:complexType>
       <xs:complexType name="findUserAccountResponse">
         <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:getUserAccountResponse"/>
+          <xs:element minOccurs="0" name="return" type="tns:getUserAccountResponseDto"/>
         </xs:sequence>
       </xs:complexType>
-      <xs:complexType name="getUserAccountResponse">
+      <xs:complexType name="getUserAccountResponseDto">
         <xs:complexContent>
           <xs:extension base="tns:baseResponse">
             <xs:sequence>
@@ -2854,21 +2903,6 @@
             <xs:attribute name="description" type="xs:string" use="required"/>
           </xs:extension>
         </xs:complexContent>
-      </xs:complexType>
-      <xs:complexType name="customFieldsDto">
-        <xs:sequence>
-          <xs:element maxOccurs="unbounded" minOccurs="0" name="customField" nillable="true" type="tns:customFieldDto"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="customFieldDto">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="stringValue" type="xs:string"/>
-          <xs:element minOccurs="0" name="dateValue" type="xs:dateTime"/>
-          <xs:element minOccurs="0" name="longValue" type="xs:long"/>
-          <xs:element minOccurs="0" name="doubleValue" type="xs:double"/>
-        </xs:sequence>
-        <xs:attribute name="code" type="xs:string" use="required"/>
-        <xs:attribute name="description" type="xs:string"/>
       </xs:complexType>
       <xs:complexType name="Accesses">
         <xs:sequence>
@@ -2974,10 +3008,10 @@
       </xs:complexType>
       <xs:complexType name="findCustomerAccountResponse">
         <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:getCustomerAccountResponse"/>
+          <xs:element minOccurs="0" name="return" type="tns:getCustomerAccountResponseDto"/>
         </xs:sequence>
       </xs:complexType>
-      <xs:complexType name="getCustomerAccountResponse">
+      <xs:complexType name="getCustomerAccountResponseDto">
         <xs:complexContent>
           <xs:extension base="tns:baseResponse">
             <xs:sequence>
@@ -3085,10 +3119,10 @@
       </xs:complexType>
       <xs:complexType name="listCustomerWithFilterResponse">
         <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:listCustomerResponseDto"/>
+          <xs:element minOccurs="0" name="return" type="tns:customersResponseDto"/>
         </xs:sequence>
       </xs:complexType>
-      <xs:complexType name="listCustomerResponseDto">
+      <xs:complexType name="customersResponseDto">
         <xs:complexContent>
           <xs:extension base="tns:baseResponse">
             <xs:sequence>
@@ -3121,6 +3155,22 @@
           </xs:extension>
         </xs:complexContent>
       </xs:complexType>
+      <xs:complexType name="createCreditCategory">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="creditCategory" type="tns:creditCategoryDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="creditCategoryDto">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="code" type="xs:string"/>
+          <xs:element minOccurs="0" name="description" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="createCreditCategoryResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
       <xs:complexType name="listAccountOperations">
         <xs:sequence>
           <xs:element minOccurs="0" name="customerAccountCode" type="xs:string"/>
@@ -3128,10 +3178,10 @@
       </xs:complexType>
       <xs:complexType name="listAccountOperationsResponse">
         <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:listAccountOperationsResponseDto"/>
+          <xs:element minOccurs="0" name="return" type="tns:accountOperationsResponseDto"/>
         </xs:sequence>
       </xs:complexType>
-      <xs:complexType name="listAccountOperationsResponseDto">
+      <xs:complexType name="accountOperationsResponseDto">
         <xs:complexContent>
           <xs:extension base="tns:baseResponse">
             <xs:sequence>
@@ -3260,10 +3310,10 @@
       </xs:complexType>
       <xs:complexType name="findBillingAccountResponse">
         <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:getBillingAccountResponse"/>
+          <xs:element minOccurs="0" name="return" type="tns:getBillingAccountResponseDto"/>
         </xs:sequence>
       </xs:complexType>
-      <xs:complexType name="getBillingAccountResponse">
+      <xs:complexType name="getBillingAccountResponseDto">
         <xs:complexContent>
           <xs:extension base="tns:baseResponse">
             <xs:sequence>
@@ -3280,10 +3330,10 @@
       </xs:complexType>
       <xs:complexType name="findAccessResponse">
         <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:getAccessResponse"/>
+          <xs:element minOccurs="0" name="return" type="tns:getAccessResponseDto"/>
         </xs:sequence>
       </xs:complexType>
-      <xs:complexType name="getAccessResponse">
+      <xs:complexType name="getAccessResponseDto">
         <xs:complexContent>
           <xs:extension base="tns:baseResponse">
             <xs:sequence>
@@ -3367,10 +3417,10 @@
       </xs:complexType>
       <xs:complexType name="listAccessResponse">
         <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:listAccessResponseDto"/>
+          <xs:element minOccurs="0" name="return" type="tns:accessesResponseDto"/>
         </xs:sequence>
       </xs:complexType>
-      <xs:complexType name="listAccessResponseDto">
+      <xs:complexType name="accessesResponseDto">
         <xs:complexContent>
           <xs:extension base="tns:baseResponse">
             <xs:sequence>
@@ -3454,10 +3504,10 @@
       </xs:complexType>
       <xs:complexType name="listByCustomerResponse">
         <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:listCustomerAccountResponseDto"/>
+          <xs:element minOccurs="0" name="return" type="tns:customerAccountsResponseDto"/>
         </xs:sequence>
       </xs:complexType>
-      <xs:complexType name="listCustomerAccountResponseDto">
+      <xs:complexType name="customerAccountsResponseDto">
         <xs:complexContent>
           <xs:extension base="tns:baseResponse">
             <xs:sequence>
@@ -3534,10 +3584,10 @@
       </xs:complexType>
       <xs:complexType name="listByBillingAccountResponse">
         <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:listUserAccountResponseDto"/>
+          <xs:element minOccurs="0" name="return" type="tns:userAccountsResponseDto"/>
         </xs:sequence>
       </xs:complexType>
-      <xs:complexType name="listUserAccountResponseDto">
+      <xs:complexType name="userAccountsResponseDto">
         <xs:complexContent>
           <xs:extension base="tns:baseResponse">
             <xs:sequence>
@@ -3573,10 +3623,10 @@
       </xs:complexType>
       <xs:complexType name="findCustomerResponse">
         <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:getCustomerResponse"/>
+          <xs:element minOccurs="0" name="return" type="tns:getCustomerResponseDto"/>
         </xs:sequence>
       </xs:complexType>
-      <xs:complexType name="getCustomerResponse">
+      <xs:complexType name="getCustomerResponseDto">
         <xs:complexContent>
           <xs:extension base="tns:baseResponse">
             <xs:sequence>
@@ -3592,10 +3642,10 @@
       </xs:complexType>
       <xs:complexType name="listByCustomerAccountResponse">
         <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:listBillingAccountResponseDto"/>
+          <xs:element minOccurs="0" name="return" type="tns:billingAccountsResponseDto"/>
         </xs:sequence>
       </xs:complexType>
-      <xs:complexType name="listBillingAccountResponseDto">
+      <xs:complexType name="billingAccountsResponseDto">
         <xs:complexContent>
           <xs:extension base="tns:baseResponse">
             <xs:sequence>
@@ -3630,6 +3680,9 @@
   <wsdl:message name="createAccountHierarchyResponse">
     <wsdl:part element="ns1:createAccountHierarchyResponse" name="parameters"></wsdl:part>
   </wsdl:message>
+  <wsdl:message name="createCreditCategoryResponse">
+    <wsdl:part element="ns1:createCreditCategoryResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
   <wsdl:message name="removeBillingAccountResponse">
     <wsdl:part element="ns1:removeBillingAccountResponse" name="parameters"></wsdl:part>
   </wsdl:message>
@@ -3639,6 +3692,9 @@
   <wsdl:message name="removeAccess">
     <wsdl:part element="ns1:removeAccess" name="parameters"></wsdl:part>
   </wsdl:message>
+  <wsdl:message name="removeCreditCategoryResponse">
+    <wsdl:part element="ns1:removeCreditCategoryResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
   <wsdl:message name="createUserAccount">
     <wsdl:part element="ns1:createUserAccount" name="parameters"></wsdl:part>
   </wsdl:message>
@@ -3647,6 +3703,9 @@
   </wsdl:message>
   <wsdl:message name="listCustomerWithFilter">
     <wsdl:part element="ns1:listCustomerWithFilter" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="removeCreditCategory">
+    <wsdl:part element="ns1:removeCreditCategory" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="updateAccess">
     <wsdl:part element="ns1:updateAccess" name="parameters"></wsdl:part>
@@ -3666,14 +3725,17 @@
   <wsdl:message name="listByCustomer">
     <wsdl:part element="ns1:listByCustomer" name="parameters"></wsdl:part>
   </wsdl:message>
-  <wsdl:message name="listAccountOperationsResponse">
-    <wsdl:part element="ns1:listAccountOperationsResponse" name="parameters"></wsdl:part>
-  </wsdl:message>
   <wsdl:message name="findUserAccount">
     <wsdl:part element="ns1:findUserAccount" name="parameters"></wsdl:part>
   </wsdl:message>
+  <wsdl:message name="listAccountOperationsResponse">
+    <wsdl:part element="ns1:listAccountOperationsResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
   <wsdl:message name="listByCustomerAccount">
     <wsdl:part element="ns1:listByCustomerAccount" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="createCreditCategory">
+    <wsdl:part element="ns1:createCreditCategory" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="findCustomerAccountResponse">
     <wsdl:part element="ns1:findCustomerAccountResponse" name="parameters"></wsdl:part>
@@ -3847,6 +3909,10 @@
       <wsdl:input message="ns1:updateAccountHierarchy" name="updateAccountHierarchy"></wsdl:input>
       <wsdl:output message="ns1:updateAccountHierarchyResponse" name="updateAccountHierarchyResponse"></wsdl:output>
     </wsdl:operation>
+    <wsdl:operation name="removeCreditCategory">
+      <wsdl:input message="ns1:removeCreditCategory" name="removeCreditCategory"></wsdl:input>
+      <wsdl:output message="ns1:removeCreditCategoryResponse" name="removeCreditCategoryResponse"></wsdl:output>
+    </wsdl:operation>
     <wsdl:operation name="findUserAccount">
       <wsdl:input message="ns1:findUserAccount" name="findUserAccount"></wsdl:input>
       <wsdl:output message="ns1:findUserAccountResponse" name="findUserAccountResponse"></wsdl:output>
@@ -3878,6 +3944,10 @@
     <wsdl:operation name="findAccountHierarchy">
       <wsdl:input message="ns1:findAccountHierarchy" name="findAccountHierarchy"></wsdl:input>
       <wsdl:output message="ns1:findAccountHierarchyResponse" name="findAccountHierarchyResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="createCreditCategory">
+      <wsdl:input message="ns1:createCreditCategory" name="createCreditCategory"></wsdl:input>
+      <wsdl:output message="ns1:createCreditCategoryResponse" name="createCreditCategoryResponse"></wsdl:output>
     </wsdl:operation>
     <wsdl:operation name="listAccountOperations">
       <wsdl:input message="ns1:listAccountOperations" name="listAccountOperations"></wsdl:input>
@@ -15386,7 +15456,28 @@
          <categoryCode>?</categoryCode>
       </ws:removeCustomerCategory>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/removeCustomerCategory"/></con:call></con:operation></con:interface><con:interface xsi:type="con:WsdlInterface" wsaVersion="NONE" name="SubscriptionWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}SubscriptionWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="http://${#Project#meveoEndpoint}/SubscriptionWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache type="TEXT" rootPart="http://localhost:8080/meveo/SubscriptionWs?wsdl"><con:part><con:url>http://localhost:8080/meveo/SubscriptionWs?wsdl</con:url><con:content><![CDATA[<wsdl:definitions name="SubscriptionWs" targetNamespace="http://impl.ws.api.meveo.org/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://impl.ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns2="http://schemas.xmlsoap.org/soap/http" xmlns:ns1="http://ws.api.meveo.org/">
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/removeCustomerCategory"/></con:call></con:operation><con:operation isOneWay="false" action="" name="removeCreditCategory" bindingOperationName="removeCreditCategory" type="Request-Response" outputName="removeCreditCategoryResponse" inputName="removeCreditCategory" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:removeCreditCategory>
+         <!--Optional:-->
+         <creditCategoryCode>?</creditCategoryCode>
+      </ws:removeCreditCategory>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/removeCreditCategory"/></con:call></con:operation><con:operation isOneWay="false" action="" name="createCreditCategory" bindingOperationName="createCreditCategory" type="Request-Response" outputName="createCreditCategoryResponse" inputName="createCreditCategory" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createCreditCategory>
+         <!--Optional:-->
+         <creditCategory>
+            <!--Optional:-->
+            <code>?</code>
+            <!--Optional:-->
+            <description>?</description>
+         </creditCategory>
+      </ws:createCreditCategory>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/createCreditCategory"/></con:call></con:operation></con:interface><con:interface xsi:type="con:WsdlInterface" wsaVersion="NONE" name="SubscriptionWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}SubscriptionWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="http://${#Project#meveoEndpoint}/SubscriptionWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache type="TEXT" rootPart="http://localhost:8080/meveo/SubscriptionWs?wsdl"><con:part><con:url>http://localhost:8080/meveo/SubscriptionWs?wsdl</con:url><con:content><![CDATA[<wsdl:definitions name="SubscriptionWs" targetNamespace="http://impl.ws.api.meveo.org/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://impl.ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns2="http://schemas.xmlsoap.org/soap/http" xmlns:ns1="http://ws.api.meveo.org/">
   <wsdl:import location="http://localhost:8080/meveo/SubscriptionWs?wsdl=SubscriptionWs.wsdl" namespace="http://ws.api.meveo.org/"></wsdl:import>
   <wsdl:binding name="SubscriptionWsSoapBinding" type="ns1:SubscriptionWs">
     <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
@@ -24693,7 +24784,7 @@ for( testCase in testSuite.getTestCaseList() ) {
         testStep.getTestRequest().setPreemptive(true);
         testStep.getTestRequest().setRequestHeaders(headers);
     }
-}</con:setupScript></con:testSuite><con:testSuite name="#788_create_customer_brand_category"><con:settings/><con:runType>SEQUENTIAL</con:runType><con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Customer brand" searchProperties="true" id="ffbf3199-df0d-4c89-bf4e-5f4f8b416c4f"><con:settings/><con:testStep type="request" name="Create"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>createCustomerBrand</con:operation><con:request name="Create"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+}</con:setupScript></con:testSuite><con:testSuite name="#788_create_customer_brand_category"><con:settings/><con:runType>SEQUENTIAL</con:runType><con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Customer brand" searchProperties="true" id="ffbf3199-df0d-4c89-bf4e-5f4f8b416c4f"><con:settings/><con:testStep type="request" name="Create"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>createCustomerBrand</con:operation><con:request name="Create"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createCustomerBrand>
@@ -24706,7 +24797,7 @@ for( testCase in testSuite.getTestCaseList() ) {
          </customerBrand>
       </ws:createCustomerBrand>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response"/><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:authType>Global HTTP Settings</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Create - already exists"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>createCustomerBrand</con:operation><con:request name="Create - already exists"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response"/><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:preemptive>true</con:preemptive><con:authType>Global HTTP Settings</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Create - already exists"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>createCustomerBrand</con:operation><con:request name="Create - already exists"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createCustomerBrand>
@@ -24719,7 +24810,7 @@ for( testCase in testSuite.getTestCaseList() ) {
          </customerBrand>
       </ws:createCustomerBrand>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response"/><con:assertion type="Simple Contains" name="Contains"><con:configuration><token>ENTITY_ALREADY_EXISTS_EXCEPTION</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:authType>Global HTTP Settings</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Remove"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>removeCustomerBrand</con:operation><con:request name="Remove"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response"/><con:assertion type="Simple Contains" name="Contains"><con:configuration><token>ENTITY_ALREADY_EXISTS_EXCEPTION</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:preemptive>true</con:preemptive><con:authType>Preemptive</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Remove"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>removeCustomerBrand</con:operation><con:request name="Remove"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
       <ws:removeCustomerBrand>
@@ -24727,7 +24818,7 @@ for( testCase in testSuite.getTestCaseList() ) {
          <brandCode>${#TestSuite#ticket}_BRAND</brandCode>
       </ws:removeCustomerBrand>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response"/><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:authType>Global HTTP Settings</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Remove - does not exists"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>removeCustomerBrand</con:operation><con:request name="Remove - does not exists"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response"/><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:preemptive>true</con:preemptive><con:authType>Preemptive</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Remove - does not exists"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>removeCustomerBrand</con:operation><con:request name="Remove - does not exists"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
       <ws:removeCustomerBrand>
@@ -24735,7 +24826,7 @@ for( testCase in testSuite.getTestCaseList() ) {
          <brandCode>${#TestSuite#ticket}_BRAND-X</brandCode>
       </ws:removeCustomerBrand>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response"/><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:authType>Global HTTP Settings</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Customer category" searchProperties="true" id="15c697fb-917d-4e05-b642-085b5643cf24"><con:settings/><con:testStep type="request" name="Create"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>createCustomerCategory</con:operation><con:request name="Create"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response"/><con:assertion type="Simple Contains" name="Contains"><con:configuration><token>ENTITY_DOES_NOT_EXISTS_EXCEPTION</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:preemptive>true</con:preemptive><con:authType>Preemptive</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Customer category" searchProperties="true" id="15c697fb-917d-4e05-b642-085b5643cf24"><con:settings/><con:testStep type="request" name="Create"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>createCustomerCategory</con:operation><con:request name="Create"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createCustomerCategory>
@@ -24749,7 +24840,7 @@ for( testCase in testSuite.getTestCaseList() ) {
          </customerCategory>
       </ws:createCustomerCategory>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response"/><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:authType>Global HTTP Settings</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Create - already exists"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>createCustomerCategory</con:operation><con:request name="Create - already exists"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response"/><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:preemptive>true</con:preemptive><con:authType>Global HTTP Settings</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Create - already exists"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>createCustomerCategory</con:operation><con:request name="Create - already exists"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createCustomerCategory>
@@ -24763,7 +24854,7 @@ for( testCase in testSuite.getTestCaseList() ) {
          </customerCategory>
       </ws:createCustomerCategory>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response"/><con:assertion type="Simple Contains" name="Contains"><con:configuration><token>ENTITY_ALREADY_EXISTS_EXCEPTION</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:authType>Global HTTP Settings</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Remove"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>removeCustomerCategory</con:operation><con:request name="Remove"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response"/><con:assertion type="Simple Contains" name="Contains"><con:configuration><token>ENTITY_ALREADY_EXISTS_EXCEPTION</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:preemptive>true</con:preemptive><con:authType>Global HTTP Settings</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Remove"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>removeCustomerCategory</con:operation><con:request name="Remove"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
       <ws:removeCustomerCategory>
@@ -24771,7 +24862,7 @@ for( testCase in testSuite.getTestCaseList() ) {
          <categoryCode>${#TestSuite#ticket}_CATEGORY</categoryCode>
       </ws:removeCustomerCategory>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response"/><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:authType>Global HTTP Settings</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Remove - does not exists"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>removeCustomerCategory</con:operation><con:request name="Remove - does not exists"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response"/><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:preemptive>true</con:preemptive><con:authType>Preemptive</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Remove - does not exists"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>removeCustomerCategory</con:operation><con:request name="Remove - does not exists"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
       <ws:removeCustomerCategory>
@@ -24779,7 +24870,7 @@ for( testCase in testSuite.getTestCaseList() ) {
          <categoryCode>${#TestSuite#ticket}_CATEGORY</categoryCode>
       </ws:removeCustomerCategory>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response"/><con:assertion type="Simple Contains" name="Contains"><con:configuration><token>ENTITY_DOES_NOT_EXISTS_EXCEPTION</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:authType>Global HTTP Settings</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:properties><con:property><con:name>ticket</con:name><con:value>788</con:value></con:property></con:properties><con:setupScript>import com.eviware.soapui.impl.wsdl.teststeps.*
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response"/><con:assertion type="Simple Contains" name="Contains"><con:configuration><token>ENTITY_DOES_NOT_EXISTS_EXCEPTION</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:preemptive>true</con:preemptive><con:authType>Preemptive</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:properties><con:property><con:name>ticket</con:name><con:value>788</con:value></con:property></con:properties><con:setupScript>import com.eviware.soapui.impl.wsdl.teststeps.*
 import com.eviware.soapui.support.types.*;
 
 StringToStringMap headers = new StringToStringMap();
@@ -24791,4 +24882,25 @@ for( testCase in testSuite.getTestCaseList() ) {
         testStep.getTestRequest().setPreemptive(true);
         testStep.getTestRequest().setRequestHeaders(headers);
     }
-}</con:setupScript></con:testSuite><con:endpointStrategy xsi:type="con:DefaultEndpointStrategy" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:endpoint mode="COMPLEMENT" username="meveo.admin" password="meveo.admin">http://localhost:8080/meveo/CatalogWs</con:endpoint></con:endpointStrategy><con:properties><con:property><con:name>meveoEndpoint</con:name><con:value>localhost:8080/meveo</con:value></con:property><con:property><con:name>meveoUsername</con:name><con:value>meveo.admin</con:value></con:property><con:property><con:name>meveoPassword</con:name><con:value>meveo.admin</con:value></con:property></con:properties><con:wssContainer/><con:oAuth2ProfileContainer/><con:sensitiveInformation/></con:soapui-project>
+}</con:setupScript></con:testSuite><con:testSuite name="#655_create_credit_category"><con:settings/><con:runType>SEQUENTIAL</con:runType><con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Test" searchProperties="true"><con:settings/><con:testStep type="request" name="Create"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>createCreditCategory</con:operation><con:request name="Create"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createCreditCategory>
+         <!--Optional:-->
+         <creditCategory>
+            <!--Optional:-->
+            <code>${#TestSuite#ticket}_CREDIT</code>
+            <!--Optional:-->
+            <description>${#TestSuite#ticket}_CREDIT</description>
+         </creditCategory>
+      </ws:createCreditCategory>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response"/><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:authType>Global HTTP Settings</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Remove"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>removeCreditCategory</con:operation><con:request name="Remove"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:removeCreditCategory>
+         <!--Optional:-->
+         <creditCategoryCode>${#TestSuite#ticket}_CREDIT</creditCategoryCode>
+      </ws:removeCreditCategory>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response"/><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:authType>Global HTTP Settings</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:properties><con:property><con:name>ticket</con:name><con:value>655</con:value></con:property></con:properties></con:testSuite><con:endpointStrategy xsi:type="con:DefaultEndpointStrategy" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:endpoint mode="COMPLEMENT" username="meveo.admin" password="meveo.admin">http://localhost:8080/meveo/CatalogWs</con:endpoint></con:endpointStrategy><con:properties><con:property><con:name>meveoEndpoint</con:name><con:value>localhost:8080/meveo</con:value></con:property><con:property><con:name>meveoUsername</con:name><con:value>meveo.admin</con:value></con:property><con:property><con:name>meveoPassword</con:name><con:value>meveo.admin</con:value></con:property></con:properties><con:wssContainer/><con:oAuth2ProfileContainer/><con:sensitiveInformation/></con:soapui-project>

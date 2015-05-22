@@ -61,7 +61,6 @@ import org.meveo.model.crm.CustomerBrand;
 import org.meveo.model.crm.CustomerCategory;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.mediation.Access;
-import org.meveo.model.payments.CreditCategoryEnum;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.CustomerAccountStatusEnum;
 import org.meveo.model.payments.DunningLevelEnum;
@@ -92,6 +91,7 @@ import org.meveo.service.crm.impl.CustomerBrandService;
 import org.meveo.service.crm.impl.CustomerCategoryService;
 import org.meveo.service.crm.impl.CustomerService;
 import org.meveo.service.medina.impl.AccessService;
+import org.meveo.service.payments.impl.CreditCategoryService;
 import org.meveo.service.payments.impl.CustomerAccountService;
 import org.meveo.util.MeveoParamBean;
 import org.slf4j.Logger;
@@ -101,6 +101,9 @@ public class AccountHierarchyApi extends BaseApi {
 
 	@Inject
 	private Logger log;
+	
+	@Inject
+	private CreditCategoryService creditCategoryService;
 
 	@Inject
 	private CustomFieldTemplateService customFieldTemplateService;
@@ -297,7 +300,7 @@ public class AccountHierarchyApi extends BaseApi {
 				}
 
 				int caPaymentMethod = Integer.parseInt(paramBean.getProperty("api.default.customerAccount.paymentMethod", "1"));
-				int creditCategory = Integer.parseInt(paramBean.getProperty("api.default.customerAccount.creditCategory", "5"));
+				String creditCategory = paramBean.getProperty("api.default.customerAccount.creditCategory", "NEWCUSTOMER");
 				int baPaymentMethod = Integer.parseInt(paramBean.getProperty("api.default.customerAccount.paymentMethod", "1"));
 
 				Auditable auditable = new Auditable();
@@ -357,7 +360,9 @@ public class AccountHierarchyApi extends BaseApi {
 				customerAccount.setCode(CUSTOMER_ACCOUNT_PREFIX + enleverAccent(postData.getCustomerId()));
 				customerAccount.setStatus(CustomerAccountStatusEnum.ACTIVE);
 				customerAccount.setPaymentMethod(PaymentMethodEnum.getValue(caPaymentMethod));
-				customerAccount.setCreditCategory(CreditCategoryEnum.getValue(creditCategory));
+				if (!StringUtils.isBlank(creditCategory)) {
+					customerAccount.setCreditCategory(creditCategoryService.findByCode(creditCategory, provider));
+				}
 				customerAccount.setTradingCurrency(tradingCurrency);
 				customerAccount.setTradingLanguage(tradingLanguage);
 				customerAccount.setDateDunningLevel(new Date());
@@ -558,7 +563,7 @@ public class AccountHierarchyApi extends BaseApi {
 			}
 
 			int caPaymentMethod = Integer.parseInt(paramBean.getProperty("api.default.customerAccount.paymentMethod", "1"));
-			int creditCategory = Integer.parseInt(paramBean.getProperty("api.default.customerAccount.creditCategory", "5"));
+			String creditCategory = paramBean.getProperty("api.default.customerAccount.creditCategory", "NEWCUSTOMER");
 
 			int baPaymentMethod = Integer.parseInt(paramBean.getProperty("api.default.customerAccount.paymentMethod", "1"));
 
@@ -616,7 +621,9 @@ public class AccountHierarchyApi extends BaseApi {
 			customerAccount.getName().setTitle(title);
 			customerAccount.setStatus(CustomerAccountStatusEnum.ACTIVE);
 			customerAccount.setPaymentMethod(PaymentMethodEnum.getValue(caPaymentMethod));
-			customerAccount.setCreditCategory(CreditCategoryEnum.getValue(creditCategory));
+			if (!StringUtils.isBlank(creditCategory)) {
+				customerAccount.setCreditCategory(creditCategoryService.findByCode(creditCategory, provider));
+			}
 			customerAccount.setTradingCurrency(tradingCurrency);
 			customerAccount.setTradingLanguage(tradingLanguage);
 
@@ -898,10 +905,8 @@ public class AccountHierarchyApi extends BaseApi {
 									} catch (IllegalArgumentException | NullPointerException e) {
 										log.warn("error while setting customerAccount.paymentMethod", e);
 									}
-									try {
-										customerAccount.setCreditCategory(CreditCategoryEnum.valueOf(customerAccountDto.getCreditCategory()));
-									} catch (IllegalArgumentException | NullPointerException e) {
-										log.warn("customerAccount.creditCategory={}", e);
+									if (!StringUtils.isBlank(customerAccountDto.getCreditCategory())) {
+										customerAccount.setCreditCategory(creditCategoryService.findByCode(customerAccountDto.getCreditCategory(), provider));
 									}
 									try {
 										customerAccount.setDunningLevel(DunningLevelEnum.valueOf(customerAccountDto.getDunningLevel()));

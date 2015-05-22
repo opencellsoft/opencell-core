@@ -133,7 +133,7 @@ public class CustomerAccount {
 	        tradingLanguageCode=ca.getTradingLanguage()==null?null:ca.getTradingLanguage().getLanguageCode();
 	        customFields=new CustomFields(ca.getCustomFields());
 	        paymentMethod=ca.getPaymentMethod()==null?null:ca.getPaymentMethod().name();
-	        creditCategory=ca.getCreditCategory()==null?null:ca.getCreditCategory().name();
+			creditCategory = ca.getCreditCategory() == null ? null : ca.getCreditCategory().getCode();
 	        if(ca.getContactInformation()!=null){
 	        	email=ca.getContactInformation().getEmail();
 	        	tel1=ca.getContactInformation().getPhone();

@@ -24,6 +24,8 @@ import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
@@ -34,16 +36,16 @@ import org.meveo.model.ExportIdentifier;
 
 @Entity
 @ExportIdentifier({ "code", "provider", "creditCategory", "paymentMethod" })
-@Table(name = "AR_DUNNING_PLAN", uniqueConstraints = @UniqueConstraint(columnNames = { "CREDIT_CATEGORY",
+@Table(name = "AR_DUNNING_PLAN", uniqueConstraints = @UniqueConstraint(columnNames = { "CREDIT_CATEGORY_ID",
 		"PAYMENT_METHOD", "PROVIDER_ID", "CODE" }))
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "AR_DUNNING_PLAN_SEQ")
 public class DunningPlan extends BusinessEntity {
 
 	private static final long serialVersionUID = 1L;
 
-	@Enumerated(EnumType.STRING)
-	@Column(name = "CREDIT_CATEGORY")
-	private CreditCategoryEnum creditCategory;
+	@ManyToOne
+	@JoinColumn(name = "CREDIT_CATEGORY_ID")
+	private CreditCategory creditCategory;
 
 	@Enumerated(EnumType.STRING)
 	@Column(name = "PAYMENT_METHOD")
@@ -58,14 +60,6 @@ public class DunningPlan extends BusinessEntity {
 	@Enumerated(EnumType.STRING)
 	@Column(name = "STATUS")
 	private DunningPlanStatusEnum status;
-
-	public CreditCategoryEnum getCreditCategory() {
-		return creditCategory;
-	}
-
-	public void setCreditCategory(CreditCategoryEnum creditCategory) {
-		this.creditCategory = creditCategory;
-	}
 
 	public PaymentMethodEnum getPaymentMethod() {
 		return paymentMethod;
@@ -97,6 +91,14 @@ public class DunningPlan extends BusinessEntity {
 
 	public void setStatus(DunningPlanStatusEnum status) {
 		this.status = status;
+	}
+
+	public CreditCategory getCreditCategory() {
+		return creditCategory;
+	}
+
+	public void setCreditCategory(CreditCategory creditCategory) {
+		this.creditCategory = creditCategory;
 	}
 
 }

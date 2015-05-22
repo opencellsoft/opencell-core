@@ -17,7 +17,6 @@ import org.meveo.model.crm.CustomFieldInstance;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.jaxb.customer.CustomField;
-import org.meveo.model.payments.CreditCategoryEnum;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.CustomerAccountStatusEnum;
 import org.meveo.model.payments.DunningLevelEnum;
@@ -29,6 +28,7 @@ import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.admin.impl.TradingCurrencyService;
 import org.meveo.service.billing.impl.TradingLanguageService;
 import org.meveo.service.catalog.impl.TitleService;
+import org.meveo.service.payments.impl.CreditCategoryService;
 import org.meveo.service.payments.impl.CustomerAccountService;
 import org.slf4j.Logger;
 
@@ -37,6 +37,9 @@ public class CustomerImportService {
 
 	@Inject
 	private Logger log;
+	
+	@Inject
+	private CreditCategoryService creditCategoryService;
 
 	@Inject
 	private SellerService sellerService;
@@ -156,7 +159,9 @@ public class CustomerImportService {
 		contactInformation.setPhone(custAcc.getTel1());
 		contactInformation.setMobile(custAcc.getTel2());
 		customerAccount.setContactInformation(contactInformation);
-		customerAccount.setCreditCategory(CreditCategoryEnum.valueOf(custAcc.getCreditCategory()));
+		if (!StringUtils.isBlank(custAcc.getCreditCategory())) {
+			customerAccount.setCreditCategory(creditCategoryService.findByCode(custAcc.getCreditCategory(), provider));
+		}
 		customerAccount.setExternalRef1(custAcc.getExternalRef1());
 		customerAccount.setExternalRef2(custAcc.getExternalRef2());
 		if (!StringUtils.isBlank(custAcc.getPaymentMethod())) {
@@ -312,7 +317,9 @@ public class CustomerImportService {
 		contactInformation.setPhone(custAcc.getTel1());
 		contactInformation.setMobile(custAcc.getTel2());
 		customerAccount.setContactInformation(contactInformation);
-		customerAccount.setCreditCategory(CreditCategoryEnum.valueOf(custAcc.getCreditCategory()));
+		if (!StringUtils.isBlank(custAcc.getCreditCategory())) {
+			customerAccount.setCreditCategory(creditCategoryService.findByCode(custAcc.getCreditCategory(), provider));
+		}
 		customerAccount.setExternalRef1(custAcc.getExternalRef1());
 		customerAccount.setExternalRef2(custAcc.getExternalRef2());
 		if (!StringUtils.isBlank(custAcc.getPaymentMethod())) {

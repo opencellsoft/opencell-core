@@ -70,7 +70,7 @@ public class CustomerAccountDto extends AccountDto {
 		} catch (NullPointerException ex) {
 		}
 		try {
-			creditCategory = e.getCreditCategory().name();
+			creditCategory = e.getCreditCategory().getCode();
 		} catch (NullPointerException ex) {
 		}
 		try {
