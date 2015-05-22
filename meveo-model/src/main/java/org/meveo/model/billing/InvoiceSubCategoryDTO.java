@@ -2,6 +2,8 @@ package org.meveo.model.billing;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.ArrayList;
+import java.util.List;
 
 public class InvoiceSubCategoryDTO
 {
@@ -9,6 +11,7 @@ public class InvoiceSubCategoryDTO
   private String code;
   private BigDecimal amountWithoutTax = BigDecimal.ZERO;
   private BigDecimal amountWithTax = BigDecimal.ZERO;
+  private List<RatedTransaction> ratedTransactions=new ArrayList<RatedTransaction>();
   
   public String getDescription()
   {
@@ -68,4 +71,14 @@ public class InvoiceSubCategoryDTO
     }
     this.amountWithoutTax = this.amountWithoutTax.add(amountToAdd);
   }
+
+public List<RatedTransaction> getRatedTransactions() {
+	return ratedTransactions;
+}
+
+public void setRatedTransactions(List<RatedTransaction> ratedTransactions) {
+	this.ratedTransactions = ratedTransactions;
+}
+  
+  
 }
