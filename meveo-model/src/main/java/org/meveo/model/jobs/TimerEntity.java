@@ -36,6 +36,7 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
+import javax.persistence.UniqueConstraint;
 
 import org.apache.commons.lang.StringUtils;
 import org.meveo.model.Auditable;
@@ -48,7 +49,7 @@ import org.slf4j.LoggerFactory;
 
 @Entity
 @ExportIdentifier({ "name", "provider" })
-@Table(name = "MEVEO_TIMER")
+@Table(name = "MEVEO_TIMER", uniqueConstraints = @UniqueConstraint(columnNames = { "NAME", "PROVIDER_ID" }))
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "MEVEO_TIMER_SEQ")
 public class TimerEntity extends BaseEntity implements ICustomFieldEntity {
 

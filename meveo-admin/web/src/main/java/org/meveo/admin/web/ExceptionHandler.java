@@ -1,6 +1,8 @@
 package org.meveo.admin.web;
 
 import javax.enterprise.context.NonexistentConversationException;
+import javax.faces.context.ExternalContext;
+import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -15,7 +17,7 @@ import org.slf4j.LoggerFactory;
 @HandlesExceptions
 public class ExceptionHandler {
 
-	private Logger log = LoggerFactory.getLogger(ExceptionHandler.class);
+	private static final Logger log = LoggerFactory.getLogger(ExceptionHandler.class);
 
 	public void handleAuthorizationException(
 			@Handles CaughtException<AuthorizationException> evt,
@@ -23,13 +25,15 @@ public class ExceptionHandler {
 
 		evt.handled();
 		
-		log.error("Caught exception={}", evt.getException());
+		log.error("Caught in handleAuthorizationException exception={}",evt.getException()!=null?evt.getException().getMessage():null, evt.getException());
 
 		try {
-			response.sendRedirect(response.encodeRedirectURL(request
+			if(!response.isCommitted()){
+				response.sendRedirect(response.encodeRedirectURL(request
 					.getContextPath() + "/errors/403.jsf"));
+			}
 		} catch (Exception e) {
-			log.error("Caught exception {}",e.getMessage());
+			log.error("failed to redirect in handleAuthorizationException exception={}",e.getMessage(),e);
 		}
 	}
 
@@ -39,13 +43,15 @@ public class ExceptionHandler {
 
 		evt.handled();
 		
-		log.error("Caught exception={}", evt.getException());
+		log.error("Caught in handleInvalidConversationException exception={}", evt.getException()!=null?evt.getException().getMessage():null,evt.getException());
 
 		try {
-			response.sendRedirect(response.encodeRedirectURL(request
+			if(!response.isCommitted()){
+				response.sendRedirect(response.encodeRedirectURL(request
 					.getContextPath() + "/errors/expired.jsf"));
+			}
 		} catch (Exception e) {
-		    log.error("Caught exception {}",e.getMessage());
+		    log.error("failed to redirect in handleInvalidConversationException exception {}",e.getMessage(),e);
 		}
 	}
 
@@ -55,13 +61,15 @@ public class ExceptionHandler {
 
 		evt.handled();
 		
-		log.error("Caught exception={}", evt.getException());
+		log.error("Caught in handleViewExpiredException exception={}", evt.getException()!=null?evt.getException().getMessage():null,evt.getException());
 
 		try {
-			response.sendRedirect(response.encodeRedirectURL(request
-					.getContextPath() + "/errors/expired.jsf"));
+			if(!response.isCommitted()){
+				response.sendRedirect(response.encodeRedirectURL(request
+						.getContextPath() + "/errors/expired.jsf"));
+			}
 		} catch (Exception e) {
-			log.error("handle view expired exception ",e);
+			log.error("failed to redirect in handleViewExpiredException exception={}",e.getMessage(),e);
 		}
 	}
 
@@ -71,13 +79,15 @@ public class ExceptionHandler {
 
 		evt.handled();
 		
-		log.error("Caught exception={}", evt.getException());
+		log.error("Caught in handleSqlException exception={}", evt.getException()!=null?evt.getException().getMessage():null,evt.getException());
 
 		try {
-			response.sendRedirect(response.encodeRedirectURL(request
+			if(!response.isCommitted()){
+				response.sendRedirect(response.encodeRedirectURL(request
 					.getContextPath() + "/errors/database.jsf"));
+			}
 		} catch (Exception e) {
-			log.error("handle sql exception",e);
+			log.error("failed to redirect in handleSqlException exception={}",e.getMessage(),e);
 		}
 	}
 
@@ -87,13 +97,15 @@ public class ExceptionHandler {
 
 		evt.handled();
 		
-		log.error("Caught exception={}", evt.getException());
+		log.error("Caught in handleRuntimeException exception={}", evt.getException()!=null?evt.getException().getMessage():null,evt.getException());
 
 		try {
-			response.sendRedirect(response.encodeRedirectURL(request
-					.getContextPath() + "/errors/bug.jsf"));
+			if(!response.isCommitted()){
+				response.sendRedirect(response.encodeRedirectURL(request
+						.getContextPath() + "/errors/bug.jsf"));
+			}
 		} catch (Exception e) {
-			log.error(e.getMessage());
+			log.error("failed to redirect in handleRuntimeException exception={}",e.getMessage(),e);
 		}
 	}
 
@@ -103,13 +115,15 @@ public class ExceptionHandler {
 
 		evt.handled();
 		
-		log.error("Caught exception={}", evt.getException());
+		log.error("Caught in handleBusinessException exception={}", evt.getException()!=null?evt.getException().getMessage():null,evt.getException());
 
 		try {
-			response.sendRedirect(response.encodeRedirectURL(request
-					.getContextPath() + "/errors/bug.jsf"));
+			if(!response.isCommitted()){
+				response.sendRedirect(response.encodeRedirectURL(request
+						.getContextPath() + "/errors/bug.jsf"));
+			}
 		} catch (Exception e) {
-			log.error(e.getMessage());
+			log.error("failed to redirect in handleBusinessException exception={}",e.getMessage(),e);
 		}
 	}
 

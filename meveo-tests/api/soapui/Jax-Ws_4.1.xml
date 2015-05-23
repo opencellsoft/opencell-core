@@ -24523,7 +24523,7 @@
       <wsdl:output message="ns1:createResponse" name="createResponse"></wsdl:output>
     </wsdl:operation>
   </wsdl:portType>
-</wsdl:definitions>]]></con:content><con:type>http://schemas.xmlsoap.org/wsdl/</con:type></con:part></con:definitionCache><con:endpoints><con:endpoint>http://localhost:8080/meveo/JobWs</con:endpoint></con:endpoints><con:operation isOneWay="false" action="" name="create" bindingOperationName="create" type="Request-Response" outputName="createResponse" inputName="create" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/JobWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+</wsdl:definitions>]]></con:content><con:type>http://schemas.xmlsoap.org/wsdl/</con:type></con:part></con:definitionCache><con:endpoints><con:endpoint>http://localhost:8080/meveo/JobWs</con:endpoint></con:endpoints><con:operation isOneWay="false" action="" name="create" bindingOperationName="create" type="Request-Response" outputName="createResponse" inputName="create" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/JobWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
       <ws:create>
@@ -24531,22 +24531,8 @@
          <timer jobName="?" name="?" followingTimer="?" hour="?" minute="?" second="?" year="?" month="?" dayOfMonth="?" dayOfWeek="?">
             <jobCategory>?</jobCategory>
             <!--Optional:-->
-            <parametres>?</parametres>
+            <parameter>?</parameter>
             <active>?</active>
-            <!--Optional:-->
-            <customFields>
-               <!--Zero or more repetitions:-->
-               <customField code="?" description="?">
-                  <!--Optional:-->
-                  <stringValue>?</stringValue>
-                  <!--Optional:-->
-                  <dateValue>?</dateValue>
-                  <!--Optional:-->
-                  <longValue>?</longValue>
-                  <!--Optional:-->
-                  <doubleValue>?</doubleValue>
-               </customField>
-            </customFields>
          </timer>
       </ws:create>
    </soapenv:Body>
@@ -24574,16 +24560,16 @@
 </soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/JobWs/index"/></con:call></con:operation></con:interface><con:testSuite name="#787_timerEntity_api"><con:settings/><con:runType>SEQUENTIAL</con:runType><con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="create" searchProperties="true"><con:settings/><con:testStep type="request" name="create"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>JobWsSoapBinding</con:interface><con:operation>create</con:operation><con:request name="create"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/JobWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
-      <ws:create>
+       <ws:create>
          <!--Optional:-->
-        <timer jobName="BillingRunJob" name="BR_787_test" followingTimer="" hour="*" minute="0" second="0" year="*" month="*" dayOfMonth="*" dayOfWeek="*">
+        <timer jobName="RatedTransactionsJob" name="RatedTransaction_787" followingTimer="" hour="*" minute="0" second="0" year="*" month="*" dayOfMonth="*" dayOfWeek="*">
            <jobCategory>invoicing</jobCategory>
             <!--Optional:-->
-            <parametres></parametres>
+            <parameter></parameter>
             <active></active>
             <!--Optional:-->
          </timer>
-      </ws:create>
+      </ws:create>>
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" name="SOAP Response"/><con:assertion type="SOAP Fault Assertion" name="Not SOAP Fault"/><con:assertion type="Simple Contains" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig action="http://impl.ws.api.meveo.org/JobWs/create" mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:properties/></con:testSuite><con:testSuite name="#747_access_api"><con:settings/><con:runType>SEQUENTIAL</con:runType><con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Catalog creation" searchProperties="true" id="b97c2768-a82e-4718-bf57-321e94a62662"><con:settings/><con:testStep type="request" name="Create offer"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>CatalogWsSoapBinding</con:interface><con:operation>createOfferTemplate</con:operation><con:request name="Create offer"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/CatalogWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>

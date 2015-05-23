@@ -56,7 +56,7 @@ public class TimerEntityDto extends BaseDto {
 	private String dayOfWeek = "*";
 	
 	@XmlElement(required = false)
-	private String parametres;
+	private String parameter;
 	
 	@XmlElement(required = true)
 	private boolean active = false;
@@ -78,7 +78,7 @@ public class TimerEntityDto extends BaseDto {
 		hour=t.getHour();
 		minute=t.getMinute();
 		second=t.getSecond(); 
-		parametres=t.getTimerInfo().getParametres();
+		parameter=t.getTimerInfo().getParametres();
 		active=t.getTimerInfo().isActive();
 		
 		if(t.getJobCategoryEnum()!=null){
@@ -237,12 +237,14 @@ public class TimerEntityDto extends BaseDto {
 		this.followingTimer = followingTimer;
 	}
 
-	public String getParametres() {
-		return parametres;
+	
+
+	public String getParameter() {
+		return parameter;
 	}
 
-	public void setParametres(String parametres) {
-		this.parametres = parametres;
+	public void setParameter(String parameter) {
+		this.parameter = parameter;
 	}
 
 	public boolean isActive() {
@@ -257,7 +259,7 @@ public class TimerEntityDto extends BaseDto {
 	public String toString() {
 		return "TimerEntityDto [name=" + name + ", jobName=" + jobName + ", year=" + year + ", month=" + month + ", dayOfMonth="
 				+ dayOfMonth + ", dayOfWeek=" + dayOfWeek + ", hour=" + hour + ", minute=" + minute + ", second="
-				+ second + ", jobCategory=" + jobCategory + ", active=" + active +",followingTimer=" + followingTimer +",parametre=" + parametres +",customFields=" + customFields + "]";
+				+ second + ", jobCategory=" + jobCategory + ", active=" + active +",followingTimer=" + followingTimer +",parameter =" + parameter  +",customFields=" + customFields + "]";
 	}
 
 }
