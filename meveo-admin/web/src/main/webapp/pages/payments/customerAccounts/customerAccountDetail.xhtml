@@ -170,7 +170,8 @@
 													field="paymentMethod" newLine="true"/>
 												<hf:formField
 													label="#{messages['customerAccount.creditCategory']}"
-													field="creditCategory" required="true" />
+													field="creditCategory" valueLabelField="code"
+													listBean="#{creditCategoryBean}" />
 
 												<hf:formField label="#{messages['customerAccount.status']}"
 													field="status" disabled="true" />

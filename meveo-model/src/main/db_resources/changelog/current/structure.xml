@@ -3,7 +3,7 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.2.xsd">
 
-	<changeSet id="EdwardLegaspi" author="#655_20150522">
+	<changeSet id="#655_20150522" author="EdwardLegaspi">
 		<createTable tableName="ar_credit_category">
 			<column name="id" type="BIGINT">
 				<constraints nullable="false" />
@@ -36,7 +36,6 @@
 		<createSequence sequenceName="ar_credit_category_seq"
 			startValue="6" />
 
-		<dropColumn tableName="ar_customer_account" columnName="credit_category" />
 		<addColumn tableName="ar_customer_account">
 			<column name="credit_category_id" type="BIGINT" />
 		</addColumn>
@@ -44,13 +43,14 @@
 			referencedTableName="ar_credit_category" baseColumnNames="credit_category_id"
 			baseTableName="ar_customer_account" referencedColumnNames="id" />
 
-		<dropColumn tableName="ar_dunning_plan" columnName="credit_category" />
 		<addColumn tableName="ar_dunning_plan">
 			<column name="credit_category_id" type="BIGINT" />
 		</addColumn>
 		<addForeignKeyConstraint constraintName="fk_ar_credit_category_ar_dunning_plan"
 			referencedTableName="ar_credit_category" baseColumnNames="credit_category_id"
 			baseTableName="ar_dunning_plan" referencedColumnNames="id" />
+		<dropUniqueConstraint tableName="ar_dunning_plan"
+			constraintName="uk_qn6vfgeg5g2y4pb9y6qb8ogjo" />
 		<addUniqueConstraint
 			columnNames="credit_category_id, payment_method, provider_id, code"
 			constraintName="uk_qn6vfgeg5g2y4pb9y6qb8ogjo" deferrable="false"
