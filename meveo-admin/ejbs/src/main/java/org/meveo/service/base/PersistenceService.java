@@ -28,7 +28,6 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.annotation.Resource;
-import javax.ejb.SessionContext;
 import javax.enterprise.context.Conversation;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
@@ -104,9 +103,6 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
     protected Event<E> entityRemovedEventProducer;
 
     private Provider provider;
-    
-    @Resource
-    private SessionContext sessionContext;
 
     /**
      * Constructor.
@@ -296,15 +292,9 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
     public void remove(E e) {
         log.debug("start of remove {} entity (id={}) ..", getEntityClass().getSimpleName(), e.getId());
         checkProvider(e);
-        try{
-			sessionContext.setRollbackOnly();
-        	getEntityManager().remove(e);
-        	getEntityManager().flush();
-        	if (e.getClass().isAnnotationPresent(ObservableEntity.class)) {
-        		entityRemovedEventProducer.fire(e);
-        	}
-        }catch(Exception ex){
-        	log.error("failed to remove {}",e,ex);
+        getEntityManager().remove(e);
+        if (e.getClass().isAnnotationPresent(ObservableEntity.class)) {
+            entityRemovedEventProducer.fire(e);
         }
         // getEntityManager().flush();
         log.debug("end of remove {} entity (id={}).", getEntityClass().getSimpleName(), e.getId());
@@ -325,18 +315,11 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
      */
     @Override
     public void remove(Set<Long> ids) {
-    	try{
-			sessionContext.setRollbackOnly();
-			Query query = getEntityManager().createQuery("delete from "
-							+ getEntityClass().getName() + " where id in (:ids) and provider.id = :providerId");
-			query.setParameter("ids", ids);
-			query.setParameter("providerId",getCurrentProvider() != null ? getCurrentProvider().getId()	: null);
-			query.executeUpdate();
-			getEntityManager().flush();
-		} catch (Exception e) {
-			log.error("failed to remove many",e);
-		}
-    	log.info("end of remove many entity");
+		Query query = getEntityManager().createQuery(
+				"delete from " + getEntityClass().getName() + " where id in (:ids) and provider.id = :providerId");
+        query.setParameter("ids", ids);
+        query.setParameter("providerId", getCurrentProvider() != null ? getCurrentProvider().getId() : null);
+        query.executeUpdate();
     }
 
     /**
