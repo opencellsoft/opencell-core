@@ -297,8 +297,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
         log.debug("start of remove {} entity (id={}) ..", getEntityClass().getSimpleName(), e.getId());
         checkProvider(e);
         try{
-			// TODO: Is this really intended?
-			// sessionContext.setRollbackOnly();
+			sessionContext.setRollbackOnly();
         	getEntityManager().remove(e);
         	getEntityManager().flush();
         	if (e.getClass().isAnnotationPresent(ObservableEntity.class)) {
