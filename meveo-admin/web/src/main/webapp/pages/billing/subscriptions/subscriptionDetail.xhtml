@@ -186,7 +186,7 @@
 									value="#{messages['subscription.subscribedServices']}:" />
 								<h:form id="srvInstansFrm" prependId="false">
 									<p:dataTable value="#{subscriptionBean.serviceInstances}"
-										var="entity"
+										var="entity" resizableColumns="true"
 										selection="#{subscriptionBean.selectedServiceInstance}"
 										rowKey="#{entity.id}">
 										<p:ajax event="rowSelectRadio"
