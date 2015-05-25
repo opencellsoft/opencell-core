@@ -454,6 +454,8 @@ vertical-align:top !important;
 	clear: both;
 }
 
+.search-panel-actions button { margin-right: 3px; }
+
 .form-panel {
     clear: both;
     margin-left: 1em;
@@ -467,6 +469,8 @@ vertical-align:top !important;
 	padding-top: 1em;
 	clear: both;
 }
+
+.form-panel-actions button { margin-right: 3px; }
 
 
 .formFieldGroup {

@@ -11,5 +11,10 @@ import javax.inject.Named;
 public class CreditCategoryListBean extends CreditCategoryBean {
 
 	private static final long serialVersionUID = 8109076594426859889L;
+	
+	@Override
+	public String getEditViewName() {
+		return "creditCategory";
+	}
 
 }

@@ -1566,6 +1566,22 @@
 			</redirect>
 		</navigation-case>
 	</navigation-rule>
+	
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>creditCategories</from-outcome>
+			<to-view-id>/pages/admin/creditCategories/creditCategories.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+	</navigation-rule>
+	
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>creditCategory</from-outcome>
+			<to-view-id>/pages/admin/creditCategories/creditCategoryDetail.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+	</navigation-rule>
 
 
 	<!-- Exception handling -->
