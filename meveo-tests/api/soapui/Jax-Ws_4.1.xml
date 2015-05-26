@@ -24716,7 +24716,7 @@
    <soapenv:Body>
       <ws:createAccess>
          <!--Optional:-->
-         <access code="access_747_3">
+         <access code="access_747">
             <subscription>${#TestCase#index}_SUB</subscription>
             <!--Optional:-->
             <startDate>2015-05-19</startDate>
@@ -24724,12 +24724,18 @@
             <endDate>2015-06-18</endDate>
             <customFields>
                <!--Zero or more repetitions:-->
-               <customField code="string_747" description="string_747">
+               <customField code="CF_String_747" description="string_747">
                   <!--Optional:-->
                   <stringValue>valueString_747</stringValue>
                </customField>
-               <customField code="double_747" description="double_747">
+               <customField code="CF_double_747" description="double_747">
                   <doubleValue>747</doubleValue>
+               </customField>
+               <customField code="CF_long_747" description="double_747">
+                  <longValue>74</longValue>
+               </customField>
+               <customField code="CF_date_747" description="date_747">
+                  <dateValue>2015-05-05</dateValue>
                </customField>
             </customFields>
          </access>
@@ -24740,7 +24746,7 @@
    <soapenv:Body>
       <ws:updateAccess>
          <!--Optional:-->
-         <access code="access_747_3">
+         <access code="access_747">
             <subscription>${#TestCase#index}_SUB</subscription>
             <!--Optional:-->
             <startDate>2015-05-19</startDate>
@@ -24748,11 +24754,18 @@
             <endDate>2015-06-18</endDate>
             <customFields>
                <!--Zero or more repetitions:-->
-               <customField code="string_747" description="string_747_updated">
+               <customField code="CF_string_747" description="string_747">
+                  <!--Optional:-->
                   <stringValue>valueString_747_updated</stringValue>
                </customField>
-               <customField code="double_747" description="double_747">
-                  <doubleValue>7471</doubleValue>
+               <customField code="CF_double_747" description="double_747">
+                  <doubleValue>77</doubleValue>
+               </customField>
+               <customField code="CF_long_747" description="double_747">
+                  <longValue>747</longValue>
+               </customField>
+               <customField code="CF_date_747" description="date_747">
+                  <dateValue>2015-06-07</dateValue>
                </customField>
             </customFields>
          </access>
