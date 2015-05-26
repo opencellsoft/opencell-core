@@ -25763,7 +25763,7 @@ for( testCase in testSuite.getTestCaseList() ) {
    <soapenv:Body>
       <ws:createRecurringChargeTemplate>
          <!--Optional:-->
-         <recurringChargeTemplate code="${#TestCase#index}_REC1" description="${#TestCase#index}_REC1">
+         <recurringChargeTemplate code="${#TestSuite#index}_REC1" description="${#TestSuite#index}_REC1">
             <invoiceSubCategory>SUB_DATA</invoiceSubCategory>
             <disabled>false</disabled>
             <!--Optional:-->
@@ -25791,7 +25791,7 @@ for( testCase in testSuite.getTestCaseList() ) {
    <soapenv:Body>
       <ws:createOneShotChargeTemplate>
          <!--Optional:-->
-         <oneShotChargeTemplate code="${#TestCase#index}_OS1" description="${#TestCase#index}_OS1">
+         <oneShotChargeTemplate code="${#TestSuite#index}_OS1" description="${#TestSuite#index}_OS1">
             <invoiceSubCategory>SUB_DATA</invoiceSubCategory>
             <disabled>false</disabled>
             <!--Optional:-->
@@ -25819,7 +25819,7 @@ for( testCase in testSuite.getTestCaseList() ) {
    <soapenv:Body>
       <ws:createUsageChargeTemplate>
          <!--Optional:-->
-         <usageChargeTemplate code="${#TestCase#index}_USAGE1" description="${#TestCase#index}_USAGE1">
+         <usageChargeTemplate code="${#TestSuite#index}_USAGE1" description="${#TestSuite#index}_USAGE1">
             <invoiceSubCategory>SUB_DATA</invoiceSubCategory>
             <disabled>false</disabled>
             <!--Optional:-->
@@ -25855,7 +25855,7 @@ for( testCase in testSuite.getTestCaseList() ) {
    <soapenv:Body>
       <ws:createServiceTemplate>
          <!--Optional:-->
-         <serviceTemplate code="${#TestCase#index}_SERVICE1" description="${#TestCase#index}_SERVICE1">
+         <serviceTemplate code="${#TestSuite#index}_SERVICE1" description="${#TestSuite#index}_SERVICE1">
             <!--Optional:-->
             <invoicingCalendar>MONTHLY</invoicingCalendar>
             <!--Optional:-->
@@ -25863,7 +25863,7 @@ for( testCase in testSuite.getTestCaseList() ) {
                <!--Zero or more repetitions:-->
                <serviceChargeTemplateRecurring>
                   <!--Optional:-->
-                  <code>${#TestCase#index}_REC1</code>
+                  <code>${#TestSuite#index}_REC1</code>
                   <!--Optional:-->
                </serviceChargeTemplateRecurring>
             </serviceChargeTemplateRecurrings>
@@ -25872,7 +25872,7 @@ for( testCase in testSuite.getTestCaseList() ) {
                <!--Zero or more repetitions:-->
                <serviceChargeTemplateSubscription>
                   <!--Optional:-->
-                  <code>${#TestCase#index}_OS1</code>
+                  <code>${#TestSuite#index}_OS1</code>
                </serviceChargeTemplateSubscription>
             </serviceChargeTemplateSubscriptions>
             <!--Optional:-->
@@ -25880,7 +25880,7 @@ for( testCase in testSuite.getTestCaseList() ) {
                <!--Zero or more repetitions:-->
                <serviceChargeTemplateUsage>
                   <!--Optional:-->
-                  <code>${#TestCase#index}_USAGE1</code>
+                  <code>${#TestSuite#index}_USAGE1</code>
                   <!--Optional:-->
                   <counterTemplate></counterTemplate>
                </serviceChargeTemplateUsage>
@@ -25893,12 +25893,12 @@ for( testCase in testSuite.getTestCaseList() ) {
    <soapenv:Body>
       <ws:createOfferTemplate>
          <!--Optional:-->
-         <offerTemplate code="${#TestCase#index}_OFFER1" description="${#TestCase#index}_OFFER1">
+         <offerTemplate code="${#TestSuite#index}_OFFER1" description="${#TestSuite#index}_OFFER1">
             <disabled>false</disabled>
             <!--Optional:-->
             <serviceTemplates>
                <!--Zero or more repetitions:-->
-               <serviceTemplate code="${#TestCase#index}_SERVICE1" description="">
+               <serviceTemplate code="${#TestSuite#index}_SERVICE1" description="">
                   <!--Optional:-->
                   <invoicingCalendar>MONTHLY</invoicingCalendar>
                   <!--Optional:-->
@@ -25906,7 +25906,7 @@ for( testCase in testSuite.getTestCaseList() ) {
                      <!--Zero or more repetitions:-->
                      <serviceChargeTemplateRecurring>
                         <!--Optional:-->
-                        <code>${#TestCase#index}_REC1</code>
+                        <code>${#TestSuite#index}_REC1</code>
                      </serviceChargeTemplateRecurring>
                   </serviceChargeTemplateRecurrings>
                   <!--Optional:-->
@@ -25914,7 +25914,7 @@ for( testCase in testSuite.getTestCaseList() ) {
                      <!--Zero or more repetitions:-->
                      <serviceChargeTemplateSubscription>
                         <!--Optional:-->
-                        <code>${#TestCase#index}_OS1</code>
+                        <code>${#TestSuite#index}_OS1</code>
                      </serviceChargeTemplateSubscription>
                   </serviceChargeTemplateSubscriptions>
                   <!--Optional:-->
@@ -25922,7 +25922,7 @@ for( testCase in testSuite.getTestCaseList() ) {
                      <!--Zero or more repetitions:-->
                      <serviceChargeTemplateUsage>
                         <!--Optional:-->
-                        <code>${#TestCase#index}_USAGE1</code>
+                        <code>${#TestSuite#index}_USAGE1</code>
                         <!--Optional:-->
                         <counterTemplate></counterTemplate>
                      </serviceChargeTemplateUsage>
@@ -25936,8 +25936,8 @@ for( testCase in testSuite.getTestCaseList() ) {
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createPricePlan>
-         <pricePlan code="${#TestCase#index}_REC1" description="${#TestCase#index}_REC1">
-            <eventCode>${#TestCase#index}_REC1</eventCode>
+         <pricePlan code="${#TestSuite#index}_REC1" description="${#TestSuitease#index}_REC1">
+            <eventCode>${#TestSuite#index}_REC1</eventCode>
             <amountWithoutTax>10</amountWithoutTax>
             <amountWithTax>12</amountWithTax>
             <priority>1</priority>
@@ -25948,8 +25948,8 @@ for( testCase in testSuite.getTestCaseList() ) {
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createPricePlan>
-         <pricePlan code="${#TestCase#index}_OS1" description="${#TestCase#index}_OS1">
-            <eventCode>${#TestCase#index}_OS1</eventCode>
+         <pricePlan code="${#TestSuite#index}_OS1" description="${#TestSuite#index}_OS1">
+            <eventCode>${#TestSuite#index}_OS1</eventCode>
             <amountWithoutTax>10</amountWithoutTax>
             <amountWithTax>12</amountWithTax>
             <priority>1</priority>
@@ -25960,8 +25960,8 @@ for( testCase in testSuite.getTestCaseList() ) {
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createPricePlan>
-         <pricePlan code="${#TestCase#index}_USAGE1" description="${#TestCase#index}_USAGE1">
-            <eventCode>${#TestCase#index}_USAGE1</eventCode>
+         <pricePlan code="${#TestSuite#index}_USAGE1" description="${#TestSuite#index}_USAGE1">
+            <eventCode>${#TestSuite#index}_USAGE1</eventCode>
             <amountWithoutTax>10</amountWithoutTax>
             <amountWithTax>12</amountWithTax>
             <priority>1</priority>
@@ -25973,7 +25973,7 @@ for( testCase in testSuite.getTestCaseList() ) {
    <soapenv:Body>
       <ws:createCustomer>
          <!--Optional:-->
-         <customer code="${#TestCase#index}_CUST" description="${#TestCase#index}_CUST">
+         <customer code="${#TestSuite#index}_CUST" description="${#TestCase#index}_CUST">
             <name>
                <title>M</title>
                <firstName>Vincent</firstName>
@@ -26003,7 +26003,7 @@ for( testCase in testSuite.getTestCaseList() ) {
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createCustomerAccount>
-         <customerAccount code="${#TestCase#index}_CA" description="${#TestCase#index}_CA">
+         <customerAccount code="${#TestSuite#index}_CA" description="${#TestCase#index}_CA">
             <externalRef1>EXTREF1</externalRef1>
             <externalRef2>EXTREF2</externalRef2>
             <name>
@@ -26019,7 +26019,7 @@ for( testCase in testSuite.getTestCaseList() ) {
                <city>Dijon</city>
                <country>FR</country>
             </address>
-            <customer>${#TestCase#index}_CUST</customer>
+            <customer>${#TestSuite#index}_CUST</customer>
             <currency>EUR</currency>
             <paymentMethod>CHECK</paymentMethod>
             <creditCategory>Pro</creditCategory>
@@ -26031,7 +26031,7 @@ for( testCase in testSuite.getTestCaseList() ) {
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createBillingAccount>
-         <billingAccount code="${#TestCase#index}_BA" description="${#TestCase#index}_BA">
+         <billingAccount code="${#TestSuite#index}_BA" description="${#TestCase#index}_BA">
             <externalRef1>EXTREF1</externalRef1>
             <externalRef2>EXTREF2</externalRef2>
             <name>
@@ -26047,7 +26047,7 @@ for( testCase in testSuite.getTestCaseList() ) {
                <city>Dijon</city>
                <country>FR</country>
             </address>
-            <customerAccount>${#TestCase#index}_CA</customerAccount>
+            <customerAccount>${#TestSuite#index}_CA</customerAccount>
             <billingCycle>CYC_INV_MT_1</billingCycle>
             <country>FR</country>
             <language>FRA</language>
@@ -26065,8 +26065,8 @@ for( testCase in testSuite.getTestCaseList() ) {
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createUserAccount>
-         <userAccount code="${#TestCase#index}_UA" description="${#TestCase#index}_UA">
-         	<billingAccount>${#TestCase#index}_BA</billingAccount>
+         <userAccount code="${#TestSuite#index}_UA" description="${#TestCase#index}_UA">
+         	<billingAccount>${#TestSuite#index}_BA</billingAccount>
             <externalRef1>EXTREF1</externalRef1>
             <externalRef2>EXTREF2</externalRef2>
             <name>
@@ -26086,13 +26086,13 @@ for( testCase in testSuite.getTestCaseList() ) {
          </userAccount>
       </ws:createUserAccount>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response"/><con:assertion type="Simple Contains" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties><con:property><con:name>index</con:name><con:value>684</con:value></con:property></con:properties></con:testCase><con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Create subscription" searchProperties="true" id="d907e942-10c3-4787-91b7-c49d5f0f9d2b"><con:settings/><con:testStep type="request" name="Create subscription"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>createCustomer</con:operation><con:request name="Create subscription"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/SubscriptionWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response"/><con:assertion type="Simple Contains" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties><con:property><con:name>index</con:name><con:value>684a</con:value></con:property></con:properties></con:testCase><con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Create subscription" searchProperties="true" id="d907e942-10c3-4787-91b7-c49d5f0f9d2b"><con:settings/><con:testStep type="request" name="Create subscription"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>createCustomer</con:operation><con:request name="Create subscription"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/SubscriptionWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
       <ws:create>
-         <subscription code="${#TestCase#index}_SUB" description="${#TestCase#index}_SUB">
-            <userAccount>${#TestCase#index}_UA</userAccount>
-            <offerTemplate>${#TestCase#index}_OFFER1</offerTemplate>
+         <subscription code="${#TestSuite#index}_SUB" description="${#TestSuite#index}_SUB">
+            <userAccount>${#TestSuite#index}_UA</userAccount>
+            <offerTemplate>${#TestSuite#index}_OFFER1</offerTemplate>
             <subscriptionDate>2015-02-01</subscriptionDate>
          </subscription>
       </ws:create>
@@ -26102,9 +26102,9 @@ for( testCase in testSuite.getTestCaseList() ) {
    <soapenv:Body>
       <ws:activateServices>
          <activateServices>
-         	  <subscription>${#TestCase#index}_SUB</subscription>
+         	  <subscription>${#TestSuite#index}_SUB</subscription>
             <servicesToActivate>
-            	<service code ='${#TestCase#index}_SERVICE1'>
+            	<service code ='${#TestSuite#index}_SERVICE1'>
                   <quantity>1</quantity>
                   <subscriptionDate>2015-02-01</subscriptionDate>
             	</service>
@@ -26116,9 +26116,9 @@ for( testCase in testSuite.getTestCaseList() ) {
    <soapenv:Header/>
    <soapenv:Body>
       <ws:create>
-         <subscription code="${#TestCase#index}_SUB2" description="${#TestCase#index}_SUB2">
-            <userAccount>${#TestCase#index}_UA</userAccount>
-            <offerTemplate>${#TestCase#index}_OFFER1</offerTemplate>
+         <subscription code="${#TestSuite#index}_SUB2" description="${#TestSuite#index}_SUB2">
+            <userAccount>${#TestSuite#index}_UA</userAccount>
+            <offerTemplate>${#TestSuite#index}_OFFER1</offerTemplate>
             <subscriptionDate>2015-02-01</subscriptionDate>
          </subscription>
       </ws:create>
@@ -26128,9 +26128,9 @@ for( testCase in testSuite.getTestCaseList() ) {
    <soapenv:Body>
       <ws:activateServices>
          <activateServices>
-         	  <subscription>${#TestCase#index}_SUB2</subscription>
+         	  <subscription>${#TestSuite#index}_SUB2</subscription>
             <servicesToActivate>
-            	<service code ='${#TestCase#index}_SERVICE1'>
+            	<service code ='${#TestSuite#index}_SERVICE1'>
                   <quantity>1</quantity>
                   <subscriptionDate>2015-02-01</subscriptionDate>
             	</service>
@@ -26142,9 +26142,9 @@ for( testCase in testSuite.getTestCaseList() ) {
    <soapenv:Header/>
    <soapenv:Body>
       <ws:create>
-         <subscription code="${#TestCase#index}_SUB3" description="${#TestCase#index}_SUB3">
-            <userAccount>${#TestCase#index}_UA</userAccount>
-            <offerTemplate>${#TestCase#index}_OFFER1</offerTemplate>
+         <subscription code="${#TestSuite#index}_SUB3" description="${#TestSuite#index}_SUB3">
+            <userAccount>${#TestSuite#index}_UA</userAccount>
+            <offerTemplate>${#TestSuite#index}_OFFER1</offerTemplate>
             <subscriptionDate>2015-02-01</subscriptionDate>
          </subscription>
       </ws:create>
@@ -26154,9 +26154,9 @@ for( testCase in testSuite.getTestCaseList() ) {
    <soapenv:Body>
       <ws:activateServices>
          <activateServices>
-         	  <subscription>${#TestCase#index}_SUB3</subscription>
+         	  <subscription>${#TestSuite#index}_SUB3</subscription>
             <servicesToActivate>
-            	<service code ='${#TestCase#index}_SERVICE1'>
+            	<service code ='${#TestSuite#index}_SERVICE1'>
                   <quantity>1</quantity>
                   <subscriptionDate>2015-02-01</subscriptionDate>
             	</service>
@@ -26164,7 +26164,7 @@ for( testCase in testSuite.getTestCaseList() ) {
          </activateServices>
       </ws:activateServices>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response"/><con:assertion type="Simple Contains" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties><con:property><con:name>index</con:name><con:value>684</con:value></con:property></con:properties></con:testCase><con:properties><con:property><con:name>index</con:name><con:value>684</con:value></con:property></con:properties><con:setupScript>import com.eviware.soapui.impl.wsdl.teststeps.*
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response"/><con:assertion type="Simple Contains" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties><con:property><con:name>index</con:name><con:value>684a</con:value></con:property></con:properties></con:testCase><con:properties><con:property><con:name>index</con:name><con:value>684a</con:value></con:property></con:properties><con:setupScript>import com.eviware.soapui.impl.wsdl.teststeps.*
 import com.eviware.soapui.support.types.*;
 
 StringToStringMap headers = new StringToStringMap();

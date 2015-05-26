@@ -16,8 +16,6 @@ import org.meveo.admin.async.SubListCreator;
 import org.meveo.admin.job.logging.JobLoggingInterceptor;
 import org.meveo.interceptor.PerformanceInterceptor;
 import org.meveo.model.admin.User;
-import org.meveo.model.billing.WalletOperation;
-import org.meveo.model.crm.Provider;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.TimerEntity;
 import org.meveo.service.billing.impl.WalletOperationService;
@@ -35,6 +33,7 @@ public class RatedTransactionsJobBean {
 	@Inject
 	private RatedTransactionAsync ratedTransactionAsync;
 
+	@SuppressWarnings("unchecked")
 	@Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
 	@TransactionAttribute(TransactionAttributeType.NEVER)
 	public void execute(JobExecutionResultImpl result, User currentUser,TimerEntity timerEntity) {

@@ -23,7 +23,6 @@ import org.meveo.model.billing.BillingRunStatusEnum;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.TimerEntity;
-import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.billing.impl.BillingRunService;
 import org.slf4j.Logger;
 
@@ -35,9 +34,6 @@ public class InvoicingJobBean {
 
 	@Inject
 	private BillingRunService billingRunService;
-
-	@Inject
-	private BillingAccountService billingAccountService;
 
 	@Inject
 	private InvoicingAsync invoicingAsync;
@@ -105,6 +101,7 @@ public class InvoicingJobBean {
 						updateBillingRun(billingRun.getId(),currentUser,null,null,BillingRunStatusEnum.TERMINATED,null);
 					} else if (BillingRunStatusEnum.CONFIRMED.equals(billingRun.getStatus())) {
 						billingRunService.validate(billingRun, currentUser);
+						result.registerSucces();
 					}
 				} catch (Exception e) {
 					log.error("Failed to run invoicing", e);
@@ -133,7 +130,7 @@ public class InvoicingJobBean {
 		}
 		billingRun.setStatus(status);
 		billingRun.updateAudit(currentUser);
-		billingRunService.update(billingRun);
+		billingRunService.updateNoCheck(billingRun);
 
 	}
 
