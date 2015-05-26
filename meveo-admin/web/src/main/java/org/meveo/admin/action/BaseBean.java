@@ -818,10 +818,12 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 	}
 
 	public boolean isEdit() {
-		if (edit != null && edit.get() != null && !edit.get().equals("" + editSaved)) {
-			editSaved = Boolean.valueOf(edit.get());
-		}
-		return editSaved;
+		//Edit mode always
+//		if (edit != null && edit.get() != null && !edit.get().equals("" + editSaved)) {
+//			editSaved = Boolean.valueOf(edit.get());
+//		}
+//		return editSaved;
+		return true;
 	}
 
 	protected void clearObjectId() {

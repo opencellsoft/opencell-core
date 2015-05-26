@@ -158,8 +158,8 @@
 						<p:tabView id="subscriptionTab">
 							<p:tab id="serviceTab"
 								title="#{messages['subscription.tab.services']}"
-								rendered="#{!subscriptionBean.edit}">
-								<hf:formPanel id="headerInfo1Form" formId="headerInfo1"
+								rendered="#{not empty subscriptionBean.entity.id}">
+								<hf:formPanel id="headerInfo1Form" formId="headerInfo1" edit="false"
 									backingBean="#{subscriptionBean}" showFormButtons="false">
 									
 										<hf:formField label="#{messages['businessEntity.code']}"
@@ -247,7 +247,7 @@
 								<h:form id="ST_results2_form" prependId="false">
 									<p:outputPanel id="ST_results2_formPanel">
 										<p:dataTable value="#{subscriptionBean.serviceTemplates}"
-											var="entity" rowKey="#{entity.id}"
+											var="entity" rowKey="#{entity.id}" resizableColumns="true"
 											selection="#{subscriptionBean.serviceTemplates.selectedItems}">
 											<p:column selectionMode="multiple" width="4%" />
 											<hftl:column label="#{messages['serviceTemplate.code']}"
@@ -297,7 +297,7 @@
 											field="subscriptionDate" required="true" />
 										<hf:formField
 											label="#{messages[subscriptionBean.entity.status=='SUSPENDED'?'billingAccount.suspensionDate': 'billingAccount.terminationDate']}"
-											field="terminationDate" rendered="#{!subscriptionBean.edit}" />
+											field="terminationDate" rendered="#{not empty subscriptionBean.entity.id}" />
 										<hf:formField
 											label="#{messages['subscription.endAgrementDate']}"
 											field="endAgrementDate" />
@@ -314,10 +314,10 @@
 							</p:tab>
 							<p:tab id="oneShotChgTab"
 								title="#{messages['subscription.tab.oneShotChg']}"
-								rendered="#{!subscriptionBean.edit}">
+								rendered="#{not empty subscriptionBean.entity.id}">
 								<p:outputPanel id="oneShotPanel">
 									<hf:formPanel formId="form3" backingBean="#{subscriptionBean}"
-										showFormButtons="false">
+										showFormButtons="false" edit="false">
 											<hf:formField label="#{messages['businessEntity.code']}"
 												field="code" />
 											<hf:formField label="#{messages['serviceInstance.status']}"
@@ -337,7 +337,7 @@
 									</hf:formPanel>
 									<p:outputPanel id="oneShotDataPanel">
 										<h:form id="OS_oneShot_results_form" prependId="false">
-											<p:dataTable
+											<p:dataTable resizableColumns="true"
 												value="#{subscriptionBean.oneShotChargeInstances}"
 												var="entity">
 												<hftl:column label="#{messages['chargeInstance.code']}"
@@ -420,7 +420,7 @@
 													updateField=":#{p:component('chargeWalletSelectId_text')}">
 												</hftl:entityPopup>
 
-												<hf:formPanel id="oneShotChargeFormPanel" edit="true"
+												<hf:formPanel id="oneShotChargeFormPanel" edit="false"
 													label="#{messages['subscription.tab.oneShotChg']}"
 													backingBean="#{subscriptionBean}"
 													entity="#{subscriptionBean.oneShotChargeInstance}"
@@ -492,14 +492,14 @@
 														field="criteria3" edit="true" />
 
 													<hftl:decorateFormField fieldId="quantity" label="#{messages['serviceInstance.quantity']}" >
-														<h:inputText rendered="#{subscriptionBean.edit}"
+														<h:inputText 
 															id="quantity"
 															value="#{subscriptionBean.oneShotChargeInstanceQuantity}"
 															size="5" maxlength="3">
 														</h:inputText>
-														<h:outputText rendered="#{!subscriptionBean.edit}"
-															value="#{subscriptionBean.oneShotChargeInstanceQuantity}">
-														</h:outputText>
+<!-- 														<h:outputText rendered="#{!subscriptionBean.edit}" -->
+<!-- 															value="#{subscriptionBean.oneShotChargeInstanceQuantity}"> -->
+<!-- 														</h:outputText> -->
 													</hftl:decorateFormField>
 													<p:outputPanel id="oneShotWalletOperationsPanel"
 														rendered="#{subscriptionBean.oneShotChargeInstance.id!=null}">
@@ -509,7 +509,7 @@
 														<h:panelGroup rendered="#{not empty subscriptionBean.oneShotWalletOperations}">
 															<h:outputText
 																value="#{subscriptionBean.oneShotWalletOperations.size()} #{messages['commons.itemsFound']}" />
-															<p:dataTable id="oneShotWalletOperationTable"
+															<p:dataTable id="oneShotWalletOperationTable" resizableColumns="true"
 																value="#{subscriptionBean.oneShotWalletOperations}"
 																var="oneShotWalletOp" rows="10" styleClass="custom-grid">
 																<!-- <hftl:column label="#{messages['chargeApplication.applicationDate']}" isDate="true" showSortLinks="false" field="operationDate" /> -->
@@ -680,10 +680,10 @@
 							<!-- recurring charge instance -->
 							<p:tab id="recurringShotChgTab"
 								title="#{messages['subscription.tab.recurringShotChg']}"
-								rendered="#{!subscriptionBean.edit}">
+								rendered="#{not empty subscriptionBean.entity.id}">
 
 								<hf:formPanel formId="form4" backingBean="#{subscriptionBean}"
-									showFormButtons="false">
+									showFormButtons="false" edit="false">
 										<hf:formField label="#{messages['businessEntity.code']}"
 											field="code" />
 										<hf:formField label="#{messages['serviceInstance.status']}"
@@ -703,7 +703,7 @@
 								</hf:formPanel>
 								<p:outputPanel id="recurringChargeDataPanel" autoUpdate="true">
 									<h:form id="OS_recurring_results_form" prependId="false">
-										<p:dataTable
+										<p:dataTable resizableColumns="true"
 											value="#{subscriptionBean.recurringChargeInstances}"
 											var="entity">
 											<hftl:column label="#{messages['chargeInstance.code']}"
@@ -741,10 +741,10 @@
 								</p:outputPanel>
 							</p:tab>
 							<p:tab id="usageTab" title="#{messages['subscription.usage']}"
-								rendered="#{!subscriptionBean.edit}">
+								rendered="#{not empty subscriptionBean.entity.id}">
 
 								<hf:formPanel formId="form4" backingBean="#{subscriptionBean}"
-									showFormButtons="false">
+									showFormButtons="false" edit="false">
 										<hf:formField label="#{messages['businessEntity.code']}"
 											field="code" />
 										<hf:formField label="#{messages['serviceInstance.status']}"
@@ -764,7 +764,7 @@
 								</hf:formPanel>
 								<h:form id="OS_usage_results_form" prependId="false">
 									<p:dataTable value="#{subscriptionBean.usageChargeInstances}"
-										var="entity">
+										var="entity" resizableColumns="true">
 										<hftl:column label="#{messages['chargeInstance.code']}"
 											field="code" />
 										<hftl:column label="#{messages['BusinessEntity.description']}"
@@ -808,10 +808,10 @@
 							<!-- Access -->
 							<p:tab id="medinaAccessTab"
 								title="#{messages['menu.accessPoints']}"
-								rendered="#{!subscriptionBean.edit}">
+								rendered="#{not empty subscriptionBean.entity.id}">
 
 								<hf:formPanel formId="form4" backingBean="#{subscriptionBean}"
-									showFormButtons="false">
+									showFormButtons="false" edit="false">
 										<hf:formField label="#{messages['businessEntity.code']}"
 											field="code" />
 										<hf:formField label="#{messages['serviceInstance.status']}"
@@ -831,7 +831,7 @@
 								</hf:formPanel>
 								<h:form>
 									<p:outputPanel id="medinaAccessPanel">
-										<p:dataTable value="#{subscriptionBean.access}" var="entity">
+										<p:dataTable value="#{subscriptionBean.access}" var="entity" resizableColumns="true">
 											<hftl:column label="#{messages['access.accessUserId']}"
 												field="accessUserId" />
 											<hftl:column label="#{messages['access.startDate']}"
@@ -1142,7 +1142,7 @@
 							value="#{subscriptionBean.recurringWalletOperations.size()} #{messages['commons.itemsFound']}" />
 						<p:dataTable id="recurringWalletOperationTable"
 							value="#{subscriptionBean.recurringWalletOperations}"
-							var="shotApplication" paginator="true" rows="10"
+							var="shotApplication" paginator="true" rows="10" resizableColumns="true"
 							paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
 							rowsPerPageTemplate="10,20,30" styleClass="custom-grid">
 							<p:column>
