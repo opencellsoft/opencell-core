@@ -269,7 +269,7 @@
 											</p:fieldset>
 										
 										<p:dataTable id="wallet#{wallet.key}datatable" var="e"
-											paginator="true"
+											paginator="true" resizableColumns="true"
 											value="#{userAccountBean.getWalletOperations(wallet.key)}"
 											rows="10" rowKey="#{e.id}" widget="walletOperationsTable" styleClass="verticalSpaceSmall">
 											<p:column>

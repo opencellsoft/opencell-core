@@ -21,7 +21,7 @@
 			</f:facet>
 			<h:form id="form">
 				<p:growl id="messages" showDetail="true"/>  
-				<p:dataTable id="properties" var="property"
+				<p:dataTable id="properties" var="property" resizableColumns="true"
 					value="#{paramActionBean.properties}" editable="true"
 					editMode="cell" widgetVar="propertiesTable">
 					 <p:ajax event="cellEdit" listener="#{paramActionBean.onCellEdit}" update=":form:messages" />  

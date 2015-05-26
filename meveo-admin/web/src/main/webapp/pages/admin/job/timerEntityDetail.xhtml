@@ -119,7 +119,7 @@
 
             <p:outputPanel id="jobExecutions">
                 <p:dataTable id="jobExecutionsDatatable" var="entity" paginator="true" value="#{timerEntityBean.getJobExecutionList()}" rows="10"
-                    rowKey="#{entity.id}" widget="jobExecutionsTable">
+                    rowKey="#{entity.id}" widget="jobExecutionsTable" resizableColumns="true">
                     <p:column sortBy="startDate">
                         <f:facet name="header">
                             <h:outputText value="#{messages['jobExecution.startDate']}" />
