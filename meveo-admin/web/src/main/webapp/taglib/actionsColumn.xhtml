@@ -36,10 +36,10 @@
 		<c:set var="propagateConversation" value="true" />
 	</c:if>
 	<c:if test="${empty renderViewLink}">
-		<c:set var="renderViewLink" value="true" />
+		<c:set var="renderViewLink" value="false" />
 	</c:if>
 	<c:if test="${empty renderEditLink}">
-		<c:set var="renderEditLink" value="true" />
+		<c:set var="renderEditLink" value="false" />
 	</c:if>
 	<c:if test="${empty renderDeleteLink}">
 		<c:set var="renderDeleteLink" value="true" />
@@ -55,7 +55,7 @@
 	</c:if>
 
     <c:if test="${empty width}">
-        <c:set var="width" value="#{renderEnableLink?130:100}" />
+        <c:set var="width" value="#{(renderEnableLink or renderDuplicateLink)?100:60}" />
     </c:if>
     
 	<c:if test="${empty objectIdParamName}">
@@ -187,6 +187,9 @@
 			//]]>
 		</script>	
 		<p:remoteCommand id="remoteDeleteButton" actionListener="#{backingBean.deleteInlist}" name="doDelete" oncomplete="handleDeleteComplete(xhr,status,args)" update="@form"/>
+		<p:tooltip for="#{resultsId}deletelink" rendered="#{renderDeleteLink}"
+			value="#{messages['commons.delete']}" showEffect="slide"
+			hideEffect="slide"  />
 		<p:commandButton id="#{resultsId}deletelink" icon="ui-icon-trash"
 			oncomplete="PF('confirmDeleteWidget').show()">
 			<f:setPropertyActionListener target="#{backingBean.entity}"
