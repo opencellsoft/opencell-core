@@ -45,7 +45,7 @@
 			<hf:searchField label="#{messages['customerAccount.paymentMethod']}"
 				field="paymentMethod" />
 			<hf:searchField label="#{messages['customerAccount.creditCategory']}"
-				field="creditCategory" />
+				field="creditCategory.code" />
 		</hf:searchPanel>
 
 		<hftl:dataList backingBean="#{customerAccountListBean}" sortBy="code">
@@ -59,7 +59,7 @@
 			<hftl:column label="#{messages['customerAccount.status']}"
 				field="status.label" isMessage="true" />
 			<hftl:column label="#{messages['customerAccount.creditCategory']}"
-				field="creditCategory.label" isMessage="true" />
+				field="creditCategory.code" />
 			<hftl:column label="#{messages['customerAccount.customer']}" 
 				field="customer.code" valueIdField="customer.id" propagateConversation="false" 
 				entityView="customerDetail" objectIdParamName="customerId" />
