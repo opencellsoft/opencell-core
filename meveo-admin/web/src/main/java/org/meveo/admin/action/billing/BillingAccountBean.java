@@ -221,7 +221,7 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
 
 			log.debug("isAttached={}", getPersistenceService().getEntityManager().contains(entity));
 
-			return "/pages/billing/billingAccounts/billingAccountDetail.xhtml?edit=false&billingAccountId=" + entity.getId() + "&faces-redirect=true&includeViewParams=true";
+			return "/pages/billing/billingAccounts/billingAccountDetail.xhtml?edit=true&billingAccountId=" + entity.getId() + "&faces-redirect=true&includeViewParams=true";
 		} catch (DuplicateDefaultAccountException e1) {
 			messages.error(new BundleKey("messages", "error.account.duplicateDefautlLevel"));
 		} catch (Exception e) {
@@ -258,7 +258,7 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
 		try {
 			billingAccountService.billingAccountCancellation(entity, new Date(), getCurrentUser());
 			messages.info(new BundleKey("messages", "cancellation.cancelSuccessful"));
-			return "/pages/billing/billingAccounts/billingAccountDetail.xhtml?objectId=" + entity.getId() + "&edit=false";
+			return "/pages/billing/billingAccounts/billingAccountDetail.xhtml?objectId=" + entity.getId() + "&edit=true";
 		} catch (BusinessException e) {
 			log.error("error occured while canceling account ",e);
 			messages.error(e.getMessage());
@@ -274,7 +274,7 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
 		try {
 			billingAccountService.closeBillingAccount(entity, getCurrentUser());
 			messages.info(new BundleKey("messages", "close.closeSuccessful"));
-			return "/pages/billing/billingAccounts/billingAccountDetail.xhtml?objectId=" + entity.getId() + "&edit=false";
+			return "/pages/billing/billingAccounts/billingAccountDetail.xhtml?objectId=" + entity.getId() + "&edit=true";
 		} catch (BusinessException e) {
 			log.error("error occured while closing account ",e);
 			messages.error(e.getMessage());
@@ -394,7 +394,7 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
 			billingRun.setInvoiceDate(exceptionalInvoicingDate);
 			billingRun.setLastTransactionDate(exceptionalLastTransactionDate);
 			billingRunService.create(billingRun);
-			return "/pages/billing/invoicing/billingRuns.xhtml?edit=false";
+			return "/pages/billing/invoicing/billingRuns.xhtml?edit=true";
 		} catch (Exception e) {
 			log.error("launchExceptionelInvoicing", e);
 			messages.error(e.getMessage());

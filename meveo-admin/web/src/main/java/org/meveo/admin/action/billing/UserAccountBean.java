@@ -163,7 +163,7 @@ public class UserAccountBean extends AccountBean<UserAccount> {
 			
 			super.saveOrUpdate(killConversation);
 
-			return "/pages/billing/userAccounts/userAccountDetail.xhtml?edit=false&userAccountId=" + entity.getId()
+			return "/pages/billing/userAccounts/userAccountDetail.xhtml?edit=true&userAccountId=" + entity.getId()
 					+ "&faces-redirect=true&includeViewParams=true";
 		} catch (DuplicateDefaultAccountException e1) {
 			messages.error(new BundleKey("messages", "error.account.duplicateDefautlLevel"));
@@ -228,7 +228,7 @@ public class UserAccountBean extends AccountBean<UserAccount> {
 		try {
 			userAccountService.userAccountCancellation(entity, new Date(), getCurrentUser());
 			messages.info(new BundleKey("messages", "cancellation.cancelSuccessful"));
-			return "/pages/billing/userAccounts/userAccountDetail.xhtml?objectId=" + entity.getId() + "&edit=false";
+			return "/pages/billing/userAccounts/userAccountDetail.xhtml?objectId=" + entity.getId() + "&edit=true";
 		} catch (BusinessException e) {
 			log.error("error generated while canceling account ",e);
 			messages.error(e.getMessage());
@@ -244,7 +244,7 @@ public class UserAccountBean extends AccountBean<UserAccount> {
 		try {
 			userAccountService.userAccountReactivation(entity, new Date(), getCurrentUser());
 			messages.info(new BundleKey("messages", "reactivation.reactivateSuccessful"));
-			return "/pages/billing/userAccounts/userAccountDetail.xhtml?objectId=" + entity.getId() + "&edit=false";
+			return "/pages/billing/userAccounts/userAccountDetail.xhtml?objectId=" + entity.getId() + "&edit=true";
 		} catch (BusinessException e) {
 			log.error("failed to reactivate account ",e);
 			messages.error(e.getMessage());

@@ -22,7 +22,8 @@
 
         <!--  As a list of values -->
         <c:if test="#{cc.parent.attrs.listType == 'simpleList'}">
-            <p:dataTable id="#{cc.parent.attrs.fieldIdPrefix}_list" value="#{cc.attrs.fieldItem}" var="listElement" rendered="#{cc.attrs.edit}" rowIndexVar="rowIndex">
+            <p:dataTable id="#{cc.parent.attrs.fieldIdPrefix}_list"
+            	resizableColumns="true" value="#{cc.attrs.fieldItem}" var="listElement" rendered="#{cc.attrs.edit}" rowIndexVar="rowIndex">
                 <c:if test="#{cc.parent.attrs.showFields !=null}">
                     <c:forEach items="#{cc.parent.attrs.showFields.split(';')}" var="fieldToShow">
                         <c:set var="headerAndValue" value="#{fieldToShow.split(',')}" />

@@ -96,7 +96,7 @@
 							update=":calendarPanel:formId:date, :calendarPanel:formId:calendarHours"
 							rendered="#{calendarBean.edit}" />
 					</h:panelGrid>
-					<p:dataTable id="calendarHours"
+					<p:dataTable id="calendarHours" resizableColumns="true"
 						value="#{calendarBean.entity.hours}" var="hourMin"
 						paginator="false" styleClass="paginated" style="width:25%">
 						<f:facet name="header">#{messages['calendar.time']}</f:facet>
@@ -189,7 +189,7 @@
 								update=":calendarPanel:formId:hourIntervalToAdd, :calendarPanel:formId:intervalHours"
 								rendered="#{calendarBean.edit}" />
 						</h:panelGrid>
-						<p:dataTable id="intervalHours"
+						<p:dataTable id="intervalHours" resizableColumns="true"
 							value="#{calendarBean.entity.intervals}" var="interval"
 							paginator="false" styleClass="paginated" style="width:25%">
 							<f:facet name="header">#{messages['calendar.hourIntervals']}</f:facet>
@@ -225,7 +225,7 @@
 								update=":calendarPanel:formId:dayIntervalToAdd, :calendarPanel:formId:intervalDays"
 								rendered="#{calendarBean.edit}" />
 						</h:panelGrid>
-						<p:dataTable id="intervalDays"
+						<p:dataTable id="intervalDays" resizableColumns="true"
 							value="#{calendarBean.entity.intervals}" var="interval"
 							paginator="false" styleClass="paginated" style="width:25%">
 							<f:facet name="header">#{messages['calendar.dayIntervals']}</f:facet>
@@ -296,7 +296,7 @@
 								update=":calendarPanel:formId:weekdayIntervalFrom, :calendarPanel:formId:weekdayIntervalTo, :calendarPanel:formId:intervalWeekdays"
 								rendered="#{calendarBean.edit}" />
 						</h:panelGrid>
-						<p:dataTable id="intervalWeekdays"
+						<p:dataTable id="intervalWeekdays" resizableColumns="true"
 							value="#{calendarBean.entity.intervals}" var="interval"
 							paginator="false" styleClass="paginated" style="width:25%">
 							<f:facet name="header">#{messages['calendar.weekdayIntervals']}</f:facet>

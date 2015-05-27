@@ -56,7 +56,7 @@
                 <h:form id="fiForm">
                     <p:dataTable id="fiDatatable" var="stat" value="#{entityExportImportBean.exportImportStats.fieldsNotImported.entrySet().toArray()}" paginator="true" rows="20"
                         paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
-                        rowsPerPageTemplate="20,30,50" lazy="false" styleClass="custom-grid" rowIndexVar="rowIndex">
+                        rowsPerPageTemplate="20,30,50" lazy="false" styleClass="custom-grid" rowIndexVar="rowIndex" resizableColumns="true">
                         <p:column headerText="#{messages['export.exportTemplate']}" sortBy="#{stat.key}">
                             <h:outputText value="#{stat.key}" />
                         </p:column>

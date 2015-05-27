@@ -15,7 +15,7 @@
 			header="#{messages['invoiceSubCategory.panel']}"
 			backingBean="#{invoiceSubCategoryBean}"
 			selection="#{oneShotChargeTemplateBean.entity.invoiceSubCategory}"
-			updateField=":formPanel:formId:tabView:invoiceSubCategorySelectedId"
+			updateField=":formPanel:formId:tabView:invoiceSubCategorySelectedId, :formPanel:formId:tabView:invoiceSubCategoryId"
 			searchField1Label="#{messages['invoiceSubCategory.code']}"
 			searchField1="code"
 			searchField2Label="#{messages['invoiceSubCategory.description']}"
@@ -65,7 +65,7 @@
 						<hf:formField id="invoiceSubCategoryId"
 								label="#{messages['invoiceSubCategory.description']}"
 							field="invoiceSubCategory" valueLabelField="description"
-								rendered="#{!invoiceSubCategoryBean.edit}" />
+								edit="false" />
 
                         <hf:languageFields />
                         

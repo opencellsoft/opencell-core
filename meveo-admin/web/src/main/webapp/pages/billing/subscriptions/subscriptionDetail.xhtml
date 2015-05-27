@@ -493,7 +493,7 @@
 
 													<hftl:decorateFormField fieldId="quantity" label="#{messages['serviceInstance.quantity']}" >
 														<h:inputText 
-															id="quantity"
+															id="quantity" rendered="#{subscriptionBean.edit}"
 															value="#{subscriptionBean.oneShotChargeInstanceQuantity}"
 															size="5" maxlength="3">
 														</h:inputText>
