@@ -145,7 +145,7 @@ public class CustomerAccountBean extends AccountBean<CustomerAccount> {
 
 			log.debug("isAttached={}", getPersistenceService().getEntityManager().contains(entity));
 
-			return "/pages/payments/customerAccounts/customerAccountDetail.xhtml?edit=false&customerAccountId="
+			return "/pages/payments/customerAccounts/customerAccountDetail.xhtml?edit=true&customerAccountId="
 					+ entity.getId() + "&faces-redirect=true&includeViewParams=true";
 		} catch (DuplicateDefaultAccountException e1) {
 			messages.error(new BundleKey("messages", "error.account.duplicateDefautlLevel"));
@@ -179,13 +179,13 @@ public class CustomerAccountBean extends AccountBean<CustomerAccount> {
 		}
 
 		return "/pages/payments/customerAccounts/customerAccountDetail.xhtml?objectId=" + entity.getId()
-				+ "&edit=false&tab=ops&faces-redirect=true";
+				+ "&edit=true&tab=ops&faces-redirect=true";
 	}
 
 	public String backCA() {
 
 		return "/pages/payments/customerAccounts/customerAccountDetail.xhtml?objectId=" + entity.getId()
-				+ "&edit=false&tab=ops&faces-redirect=true";
+				+ "&edit=true&tab=ops&faces-redirect=true";
 	}
 
 	/**

@@ -67,35 +67,39 @@ public class AccessApi extends BaseApi {
 				throw new MeveoApiException(MeveoApiErrorCode.DUPLICATE_ACCESS, "Duplicate subscription / access point pair.");
 			}
 			
-			// populate customFields
 			if (postData.getCustomFields() != null) {
-				for (CustomFieldDto cf : postData.getCustomFields().getCustomField()) {
-					// check if custom field exists has a template
-					List<CustomFieldTemplate> customFieldTemplates = customFieldTemplateService.findByAccountLevel(AccountLevelEnum.ACC, provider);
-				if (customFieldTemplates != null && customFieldTemplates.size() > 0) {
-					for (CustomFieldTemplate cft : customFieldTemplates) {
-						if (cf.getCode().equals(cft.getCode())) {
-							// create
-							CustomFieldInstance cfiNew = new CustomFieldInstance();
-							cfiNew.setAccess(access);
-							cfiNew.setActive(true);
-							cfiNew.setCode(cf.getCode());
-							cfiNew.setDateValue(cf.getDateValue());
-							cfiNew.setDescription(cf.getDescription());
-							cfiNew.setDoubleValue(cf.getDoubleValue());
-							cfiNew.setLongValue(cf.getLongValue());
-							cfiNew.setProvider(currentUser.getProvider());
-							cfiNew.setStringValue(cf.getStringValue());
-							cfiNew.updateAudit(currentUser);
-							access.getCustomFields().put(cfiNew.getCode(), cfiNew);
-						}
+                // check if custom field exists has a template
+                List<CustomFieldTemplate> customFieldTemplates = customFieldTemplateService.findByAccountLevel(AccountLevelEnum.ACC, provider);
+                if (customFieldTemplates != null && customFieldTemplates.size() > 0) {
+               for (CustomFieldDto cf : postData.getCustomFields().getCustomField()) {
+               boolean found=false;
+               for (CustomFieldTemplate cft : customFieldTemplates) {
+	                    if (cf.getCode().equals(cft.getCode())) {
+	                    	found=true;
+	                            // create
+	                            CustomFieldInstance cfiNew = new CustomFieldInstance();
+	                            cfiNew.setAccess(access);
+	                            cfiNew.setActive(true);
+	                            cfiNew.setCode(cf.getCode());
+	                            cfiNew.setDateValue(cf.getDateValue());
+	                            cfiNew.setDescription(cf.getDescription());
+	                            cfiNew.setDoubleValue(cf.getDoubleValue());
+	                            cfiNew.setLongValue(cf.getLongValue());
+	                            cfiNew.setProvider(currentUser.getProvider());
+	                            cfiNew.setStringValue(cf.getStringValue());
+	                            cfiNew.updateAudit(currentUser);
+	                            access.getCustomFields().put(cfiNew.getCode(), cfiNew);
+	                            break;
+                            }
+                          }
+                    if (!found) {
+						log.warn("No custom field template with code={}", cf.getCode());
 					}
-					} else {
-						log.warn("No custom field template defined.");
-					}
-				}
-			}
-
+                        } 	
+                      }else {
+                      log.warn("No custom field template defined.");
+                        }
+                }
 					accessService.create(access, currentUser, provider);
 				} else {
 					if (StringUtils.isBlank(postData.getCode())) {
@@ -127,12 +131,12 @@ public class AccessApi extends BaseApi {
 			access.setEndDate(postData.getEndDate());
 			// populate customFields
 			if (postData.getCustomFields() != null) {
-				for (CustomFieldDto cf : postData.getCustomFields().getCustomField()) {
-					// check if custom field exists has a template
-					List<CustomFieldTemplate> customFieldTemplates = customFieldTemplateService.findByAccountLevel(AccountLevelEnum.ACC, provider);
-					boolean found = false;
-					if (customFieldTemplates != null && customFieldTemplates.size() > 0) {
-					  for (CustomFieldTemplate cft : customFieldTemplates) {
+				// check if custom field exists has a template
+				List<CustomFieldTemplate> customFieldTemplates = customFieldTemplateService.findByAccountLevel(AccountLevelEnum.ACC, provider);
+				if (customFieldTemplates != null && customFieldTemplates.size() > 0) {
+			    for (CustomFieldDto cf : postData.getCustomFields().getCustomField()) {
+				 boolean found = false;
+				for (CustomFieldTemplate cft : customFieldTemplates) {
 					    if (cf.getCode().equals(cft.getCode())) {
 						found = true;
 						CustomFieldInstance cfi = customFieldInstanceService.findByCodeAndAccount(cf.getCode(), access, currentUser.getProvider());
@@ -145,6 +149,7 @@ public class AccessApi extends BaseApi {
 							cfi.setLongValue(cf.getLongValue());
 							cfi.setStringValue(cf.getStringValue());
 							cfi.updateAudit(currentUser);
+							break;
 						} else {
 							// create
 							CustomFieldInstance cfiNew = new CustomFieldInstance();
@@ -159,18 +164,21 @@ public class AccessApi extends BaseApi {
 							cfiNew.setStringValue(cf.getStringValue());
 							cfiNew.updateAudit(currentUser);
 							access.getCustomFields().put(cfiNew.getCode(), cfiNew);
+							break;
+						}
 						}
 					}
-				}
-					} else {
-						log.warn("No custom field template defined.");
-					}
-
 					if (!found) {
 						log.warn("No custom field template with code={}", cf.getCode());
 					}
 				}
 			}
+			else {
+			log.warn("No custom field template defined.");
+				}
+			}
+			
+
 			accessService.update(access, currentUser);
 		} else {
 			if (postData.getCode() == null) {

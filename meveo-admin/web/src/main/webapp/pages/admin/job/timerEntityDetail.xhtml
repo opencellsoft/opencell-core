@@ -61,8 +61,8 @@
                         <f:selectItem itemLabel="#{messages['commons.select']}" />
                         <f:selectItems value="#{timerEntityBean.getTimerEntityList()}" var="t_" itemLabel="#{t_.name}" itemValue="#{t_.id}" />
                     </p:selectOneMenu>
-                    <h:outputText value="#{timerEntityBean.translateToTimerName(timerEntityBean.entity.timerInfo.followingTimerId)}"
-                        rendered="#{!timerEntityBean.edit}" />
+<!--                     <h:outputText value="#{timerEntityBean.translateToTimerName(timerEntityBean.entity.timerInfo.followingTimerId)}" -->
+<!--                         rendered="#{!timerEntityBean.edit}" /> -->
                 </hf:formDecorateField>
                 
                 <p:fieldset legend="#{messages['timer.schedule']}" layout="block" rendered="#{timerEntityBean.entity.id!=null or timerEntityBean.entity.jobName!=null}" styleClass="clearLeft">

@@ -9,6 +9,7 @@ import javax.xml.bind.annotation.XmlType;
 
 import org.meveo.model.AccountEntity;
 import org.meveo.model.billing.BillingAccount;
+import org.meveo.model.billing.UserAccount;
 
 /**
  * @author Edward P. Legaspi
@@ -85,6 +86,14 @@ public class BillingAccountDto extends AccountDto {
 
 		if (e.getBankCoordinates() != null) {
 			bankCoordinates = new BankCoordinatesDto(e.getBankCoordinates());
+		}
+		
+		if (e.getUsersAccounts() != null) {
+			userAccounts = new UserAccountsDto();
+
+			for (UserAccount ua : e.getUsersAccounts()) {
+				userAccounts.getUserAccount().add(new UserAccountDto(ua));
+			}
 		}
 	}
 

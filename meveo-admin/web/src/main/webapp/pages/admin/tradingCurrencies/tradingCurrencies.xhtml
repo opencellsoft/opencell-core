@@ -30,7 +30,7 @@
 		<hftl:dataList label="#{messages['tradingCurrency.title']}"
 			backingBean="#{tradingCurrencyListBean}">
 			<hftl:column label="#{messages['tradingCurrency.trCurrencyCode']}"
-				field="currency.currencyCode" width="10%" />
+				field="currency.currencyCode" width="10%" entityView="tradingCurrencyDetail" labelIdField="id"/>
 			<hftl:column label="#{messages['tradingCurrency.prDescription']}"
 				field="prDescription" />
 			<hftl:column label="#{messages['enableEntity.active']}"

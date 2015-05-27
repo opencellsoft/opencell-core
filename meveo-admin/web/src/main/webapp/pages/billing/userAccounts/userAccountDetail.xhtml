@@ -343,7 +343,7 @@
 							</c:forEach>
 
 							<p:tab title="#{messages['counterPeriod.title']}" id="tab#{3+userAccountBean.entity.prepaidWallets.size}"
-								rendered="#{!userAccountBean.edit or userAccountBean.entity.id!=null}">
+								rendered="#{userAccountBean.entity.id!=null}">
 									<hftl:decorateFormField fieldId="counterPeriod" label="#{messages['counterInstance.title']}" >
 										<p:selectOneMenu id="counterPeriod"
 											converter="omnifaces.SelectItemsConverter"
@@ -392,7 +392,7 @@
 
 					</hf:formPanel>
 
-					<h:form id="operationsForm" rendered="#{!userAccountBean.edit}">
+					<h:form id="operationsForm" rendered="#{not empty userAccountBean.entity.id}">
 						<!-- 							<custom:listPanel label="#{messages['customerAccount.operations']}"> -->
 						<div class="action-buttons">
 							<p:button outcome="addNewSubscription"

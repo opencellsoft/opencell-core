@@ -24,7 +24,7 @@
         <p:panel styleClass="search-panel" header="#{messages['cache.cacheDetail.cacheName'].concat(cacheBean.cacheName)}" escape="false">
 
             <h:form>
-                <p:dataTable id="datatable_caches" var="cacheItem" value="#{cacheBean.cacheContents}" paginator="true" rows="30"
+                <p:dataTable id="datatable_caches" var="cacheItem" value="#{cacheBean.cacheContents}" paginator="true" rows="30" resizableColumns="true"
                     paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}" rowsPerPageTemplate="20,30,50"
                     lazy="true" styleClass="custom-grid" rowIndexVar="rowIndex">
                     <p:column headerText="#" width="5%">
@@ -60,7 +60,7 @@
             header="#{messages['cache.cacheDetail.cacheName'].concat(cacheBean.cacheName)} / #{messages['cache.key.'.concat(cacheBean.cacheName)].concat(': ').concat(cacheBean.selectedCacheItem.key)}"
             modal="true" closeOnEscape="true" maximizable="true" widgetVar="listDialog" width="90%">
 
-            <p:dataTable var="cacheItem" value="#{cacheBean.cacheItemContents}" paginator="true" rows="30"
+            <p:dataTable var="cacheItem" value="#{cacheBean.cacheItemContents}" paginator="true" rows="30" resizableColumns="true"
                 paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}" rowsPerPageTemplate="20,30,50"
                 lazy="true" styleClass="custom-grid" rowIndexVar="rowIndex">
                 <p:column headerText="#" width="5%">
@@ -77,7 +77,7 @@
             header="#{messages['cache.cacheDetail.cacheName'].concat(cacheBean.cacheName)} / #{messages['cache.key.'.concat(cacheBean.cacheName)].concat(': ').concat(cacheBean.selectedCacheMapItem.key)}"
             modal="true" closeOnEscape="true" maximizable="true" widgetVar="mapDialog" width="90%">
 
-            <p:dataTable var="cacheItem" value="#{cacheBean.cacheMapContents}" paginator="true" rows="30"
+            <p:dataTable var="cacheItem" value="#{cacheBean.cacheMapContents}" paginator="true" rows="30" resizableColumns="true"
                 paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}" rowsPerPageTemplate="20,30,50"
                 lazy="true" styleClass="custom-grid" rowIndexVar="rowIndex" reflow="true">
                 <p:column headerText="#" width="5%">
@@ -107,7 +107,7 @@
                 <p:panel styleClass="search-panel" header="#{messages['cache.map.key.'.concat(cacheBean.cacheName)].concat(': ').concat(cacheBean.selectedCacheItem.key)}"
                     rendered="#{cacheBean.selectedCacheItem!=null}">
 
-                    <p:dataTable var="cacheItem" value="#{cacheBean.cacheItemContents}" paginator="true" rows="30"
+                    <p:dataTable var="cacheItem" value="#{cacheBean.cacheItemContents}" paginator="true" rows="30" resizableColumns="true"
                         paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
                         rowsPerPageTemplate="20,30,50" lazy="true" styleClass="custom-grid" rowIndexVar="rowIndex">
                         <p:column headerText="#" width="5%">

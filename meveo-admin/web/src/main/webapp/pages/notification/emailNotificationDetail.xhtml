@@ -82,7 +82,7 @@
                 field="disabled" isMessage="true" showOnlyOnConsult="true"/>
 		</hf:formPanel>
 
-		<p:panel rendered="#{!emailNotificationBean.edit}">
+		<p:panel rendered="#{not empty emailNotificationBean.entity.id}">
 			<hftl:dataList backingBean="#{notificationHistoryBean}"
 				checkMany="false"
 				dataModel="#{notificationHistoryBean.getLazyDataModel(emailNotificationBean.entity.id)}">

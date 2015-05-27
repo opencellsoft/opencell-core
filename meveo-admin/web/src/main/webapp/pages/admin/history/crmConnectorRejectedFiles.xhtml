@@ -69,7 +69,7 @@
 						value="#{crmConnectorRejectedFiles.size} #{messages['commons.itemsFound']}" />
 				</h:panelGrid>
 				<p:dataTable id="documentsDatatable" value="#{crmConnectorRejectedFiles}"
-					var="_document"
+					var="_document" resizableColumns="true"
 					reRender="documentsScroller" rows="10">
 					<p:column width="50%">
 						<f:facet name="header">

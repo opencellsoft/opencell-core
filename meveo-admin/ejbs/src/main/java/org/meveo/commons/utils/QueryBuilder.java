@@ -30,8 +30,6 @@ import javax.persistence.Query;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.crm.Provider;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Query builder class for building JPA queries.
@@ -49,8 +47,6 @@ import org.slf4j.LoggerFactory;
  * @author Richard Hallier
  */
 public class QueryBuilder {
-	
-	private static final Logger log = LoggerFactory.getLogger(QueryBuilder.class);
 
 	private StringBuffer q;
 	private Map<String, Object> params;
@@ -102,16 +98,39 @@ public class QueryBuilder {
 	 * @param alias
 	 *            Alias in query.
 	 */
-	public QueryBuilder(Class<?> clazz, String alias, List<String> fetchFields,
-			Provider provider) {
+	public QueryBuilder(Class<?> clazz, String alias, List<String> fetchFields, Provider provider) {
 		this(getInitQuery(clazz, alias, fetchFields));
 		if (provider != null && BaseEntity.class.isAssignableFrom(clazz)) {
 			addCriterionEntity(alias + ".provider", provider);
 		}
 	}
+	
+	public QueryBuilder(Class<?> clazz, String alias, List<String> fetchFields, List<String> joinFields, Provider provider) {
+		this(getInitJoinQuery(clazz, alias, fetchFields, joinFields));
+		if (provider != null && BaseEntity.class.isAssignableFrom(clazz)) {
+			addCriterionEntity(alias + ".provider", provider);
+		}
+	}
+	
+	private static String getInitJoinQuery(Class<?> clazz, String alias, List<String> fetchFields, List<String> joinFields) {
+		StringBuilder query = new StringBuilder("from " + clazz.getName() + " "
+				+ alias);
+		if (fetchFields != null && !fetchFields.isEmpty()) {
+			for (String fetchField : fetchFields) {
+				query.append(" left join fetch " + alias + "." + fetchField);
+			}
+		}
+		
+		if (joinFields != null && !joinFields.isEmpty()) {
+			for (String joinField : joinFields) {
+				query.append(" inner join " + alias + "." + joinField + " " + joinField);
+			}
+		}
 
-	private static String getInitQuery(Class<?> clazz, String alias,
-			List<String> fetchFields) {
+		return query.toString();
+	}
+
+	private static String getInitQuery(Class<?> clazz, String alias, List<String> fetchFields) {
 		StringBuilder query = new StringBuilder("from " + clazz.getName() + " "
 				+ alias);
 		if (fetchFields != null && !fetchFields.isEmpty()) {
@@ -270,6 +289,7 @@ public class QueryBuilder {
      * @param enumValue
      * @return
      */
+	@SuppressWarnings("rawtypes")
 	public QueryBuilder addCriterionEnum(String field, Enum enumValue){
 	    return addCriterionEnum(field, enumValue, "=");
 	}

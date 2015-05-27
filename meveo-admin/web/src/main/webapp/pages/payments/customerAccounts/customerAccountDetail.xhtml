@@ -126,28 +126,28 @@
 														popupId="tradingLanguagePopup" />	                                               
 
 
-												<h:panelGroup rendered="#{!customerAccountBean.edit}">
+												<h:panelGroup rendered="#{not empty customerAccountBean.entity.id}">
         											<hf:formDecorateField fieldId="dunning_text" label="#{messages['customerAccount.dunningLevel']}" newLine="true">
 													<h:outputText id="dunning_text"
-														rendered="#{!customerAccountBean.edit}"
+														rendered="#{true or !customerAccountBean.edit}"
 														value="#{customerAccountBean.entity.getDunningLevel()}"
 														style="font-weight:bold;" />
     												</hf:formDecorateField>
         											<hf:formDecorateField fieldId="dunning_date_text" label="#{messages['customerAccount.dateDunningLevel']}">
 													<h:outputText id="dunning_date_text"
-														rendered="#{!customerAccountBean.edit}"
+														rendered="#{true or !customerAccountBean.edit}"
 														value="#{customerAccountBean.entity.getDateDunningLevel()}"
 														style="font-weight:bold;" />
     												</hf:formDecorateField>
     												<hf:formDecorateField fieldId="balance_text" label="#{messages['customerAccount.balanceDue']}">
 													<h:outputText id="balance_text"
-														rendered="#{!customerAccountBean.edit}"
+														rendered="#{true or !customerAccountBean.edit}"
 														value="#{customerAccountBean.getBalanceDue()}"
 														style="font-weight:bold;" converter="bigDecimalConverter" />
     												</hf:formDecorateField>
     												<hf:formDecorateField fieldId="balanceEx_text" label="#{messages['customerAccount.balanceExigible']}">
 													<h:outputText id="balanceEx_text"
-														rendered="#{!customerAccountBean.edit}"
+														rendered="#{true or !customerAccountBean.edit}"
 														value="#{customerAccountBean.getBalanceExigibleWithoutLitigation()}"
 														style="font-weight:bold;" converter="bigDecimalConverter" />
     												</hf:formDecorateField>
@@ -245,14 +245,14 @@
 										edit="#{customerAccountBean.edit}" ajaxSubmit="false"
 										useCustomIdParam="true">
 										<p:commandButton
-											rendered="#{customerAccountBean.isActiveAccount() and !customerAccountBean.edit}"
+											rendered="#{customerAccountBean.isActiveAccount() and not empty customerAccountBean.entity.id}"
 											action="#{customerAccountBean.closeCustomerAccount}"
 											value="#{messages['customerAccount.buttonCloseAccount']}"
 											onclick="if(confirm('#{messages['customerAccount.confirmCloseAccount']}')){return true;}else{return false;}">
 											<!-- 										<f:attribute name="backView" value="#{backView}" /> -->
 										</p:commandButton>
 										<p:button
-											rendered="#{customerAccountBean.isActiveAccount() and !customerAccountBean.edit}"
+											rendered="#{customerAccountBean.isActiveAccount() and not empty customerAccountBean.entity.id}"
 											outcome="addBillingAccount"
 											value="#{messages['customerAccount.buttonAddBillingAccount']}">
 											<f:param name="cid"
@@ -261,7 +261,7 @@
 									</hf:formButtons>
 							</hf:formPanel>
 						</p:tab>
-						<p:tab id="ops" title="#{messages['customerAccount.operations']}">
+						<p:tab id="ops" title="#{messages['customerAccount.operations']}" rendered="#{not empty customerAccountBean.entity.id}">
 							<hf:searchPanel renderNewButton="false"
 								label="#{messages['accountOperation.search']}" columns="1"
 								backingBean="#{accountOperationBean}" ajax="true"

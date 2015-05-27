@@ -30,7 +30,7 @@
 		<hftl:dataList label="#{messages['comLanguage.title']}"
 			backingBean="#{tradingLanguageListBean}">
 			<hftl:column label="#{messages['tradingLanguage.languageCode']}"
-				field="language.languageCode" width="10%" />
+				field="language.languageCode" width="10%" entityView="tradingLanguagesDetail" valueIdField="id"/>
 			<hftl:column label="#{messages['tradingLanguage.prDescription']}"
 				field="prDescription" />
 			<hftl:column label="#{messages['enableEntity.active']}"

@@ -127,12 +127,15 @@ public class SubscriptionApi extends BaseApi {
 
 			// populate customFields
 			if (postData.getCustomFields() != null) {
-				for (CustomFieldDto cf : postData.getCustomFields().getCustomField()) {
-					// check if custom field exists has a template
-					List<CustomFieldTemplate> customFieldTemplates = customFieldTemplateService.findByAccountLevel(AccountLevelEnum.SUB, provider);
+				// check if custom field exists has a template
+				List<CustomFieldTemplate> customFieldTemplates = customFieldTemplateService.findByAccountLevel(AccountLevelEnum.SUB, provider);
+					
 					if (customFieldTemplates != null && customFieldTemplates.size() > 0) {
+					for (CustomFieldDto cf : postData.getCustomFields().getCustomField()) {
+							boolean found=false;
 						for (CustomFieldTemplate cft : customFieldTemplates) {
 							if (cf.getCode().equals(cft.getCode())) {
+								found=true;
 								// create
 								CustomFieldInstance cfiNew = new CustomFieldInstance();
 								cfiNew.setSubscription(subscription);
@@ -146,14 +149,17 @@ public class SubscriptionApi extends BaseApi {
 								cfiNew.setStringValue(cf.getStringValue());
 								cfiNew.updateAudit(currentUser);
 								subscription.getCustomFields().put(cfiNew.getCode(), cfiNew);
-							}
+						          break;
+                            }
+                          }
+					if (!found) {
+					log.warn("No custom field template with code={}", cf.getCode());
 						}
-					} else {
-						log.warn("No custom field template defined.");
+					}         
+                }else {
+                      log.warn("No custom field template defined.");
+                      }
 					}
-				}
-			}
-
 			subscription.setSubscriptionDate(postData.getSubscriptionDate());
 			subscription.setTerminationDate(postData.getTerminationDate());
 
@@ -211,14 +217,14 @@ public class SubscriptionApi extends BaseApi {
 
 			// populate customFields
 			if (postData.getCustomFields() != null) {
-				for (CustomFieldDto cf : postData.getCustomFields().getCustomField()) {
-					// check if custom field exists has a template
-					List<CustomFieldTemplate> customFieldTemplates = customFieldTemplateService.findByAccountLevel(AccountLevelEnum.SUB, provider);
-					boolean found = false;
+				// check if custom field exists has a template
+				List<CustomFieldTemplate> customFieldTemplates = customFieldTemplateService.findByAccountLevel(AccountLevelEnum.SUB, provider);
 					if (customFieldTemplates != null && customFieldTemplates.size() > 0) {
-						for (CustomFieldTemplate cft : customFieldTemplates) {
+				for (CustomFieldDto cf : postData.getCustomFields().getCustomField()) {
+					 boolean found=false;
+				  for (CustomFieldTemplate cft : customFieldTemplates) {
 							if (cf.getCode().equals(cft.getCode())) {
-								found = true;
+								found=true;
 								CustomFieldInstance cfi = customFieldInstanceService.findByCodeAndAccount(cf.getCode(), subscription, currentUser.getProvider());
 								if (cfi != null) {
 									// update
@@ -229,6 +235,7 @@ public class SubscriptionApi extends BaseApi {
 									cfi.setLongValue(cf.getLongValue());
 									cfi.setStringValue(cf.getStringValue());
 									cfi.updateAudit(currentUser);
+									break;
 								} else {
 									// create
 									CustomFieldInstance cfiNew = new CustomFieldInstance();
@@ -243,17 +250,20 @@ public class SubscriptionApi extends BaseApi {
 									cfiNew.setStringValue(cf.getStringValue());
 									cfiNew.updateAudit(currentUser);
 									subscription.getCustomFields().put(cfiNew.getCode(), cfiNew);
+									break;
 								}
 							}
+							 
 						}
-					} else {
+						if (!found) {
+							log.warn("No custom field template with code={}", cf.getCode());
+						}
+					} 
+					}
+					else {
 						log.warn("No custom field template defined.");
 					}
-
-					if (!found) {
-						log.warn("No custom field template with code={}", cf.getCode());
-					}
-				}
+				
 			}
 			subscriptionService.update(subscription, currentUser);
 		} else {

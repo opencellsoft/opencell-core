@@ -44,14 +44,14 @@
 
                     <p:panel styleClass="search-panel" header="#{messages['export.importResults']}">
 
-                            <div class="ui-messages ui-widget">
-                                <div class="ui-messages-warn ui-corner-all">
-                                    <span class="ui-messages-warn-icon"></span>
-                                    <ul>
-                                        <li><h:outputText value="#{messages['export.import.inProgress2']}" styleClass="ui-messages-warn-summary" /></li>
-                                    </ul>
-                                </div>
+                        <div class="ui-messages ui-widget">
+                            <div class="ui-messages-warn ui-corner-all">
+                                <span class="ui-messages-warn-icon"></span>
+                                <ul>
+                                    <li><h:outputText value="#{messages['export.import.inProgress2']}" styleClass="ui-messages-warn-summary" /></li>
+                                </ul>
                             </div>
+                        </div>
 
                     </p:panel>
                 </h:panelGroup>
@@ -99,7 +99,7 @@
 
                         <p:dataTable id="fiDatatable" var="stat" value="#{entityExportImportBean.exportImportFuture.get().fieldsNotImported.entrySet().toArray()}" paginator="true"
                             rows="20" paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
-                            rowsPerPageTemplate="20,30,50" lazy="false" styleClass="custom-grid" rowIndexVar="rowIndex">
+                            rowsPerPageTemplate="20,30,50" lazy="false" styleClass="custom-grid" rowIndexVar="rowIndex" resizableColumns="true">
                             <p:column headerText="#{messages['export.exportTemplate']}" sortBy="#{stat.key}">
                                 <h:outputText value="#{stat.key}" />
                             </p:column>

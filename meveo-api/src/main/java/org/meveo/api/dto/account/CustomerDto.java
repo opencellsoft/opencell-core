@@ -9,6 +9,7 @@ import javax.xml.bind.annotation.XmlType;
 
 import org.meveo.model.AccountEntity;
 import org.meveo.model.crm.Customer;
+import org.meveo.model.payments.CustomerAccount;
 
 /**
  * @author Edward P. Legaspi
@@ -55,6 +56,14 @@ public class CustomerDto extends AccountDto {
 
 		if (e.getContactInformation() != null) {
 			contactInformation = new ContactInformationDto(e.getContactInformation());
+		}
+		
+		if (e.getCustomerAccounts() != null) {
+			customerAccounts = new CustomerAccountsDto();
+
+			for (CustomerAccount ca : e.getCustomerAccounts()) {
+				customerAccounts.getCustomerAccount().add(new CustomerAccountDto(ca));
+			}
 		}
 	}
 

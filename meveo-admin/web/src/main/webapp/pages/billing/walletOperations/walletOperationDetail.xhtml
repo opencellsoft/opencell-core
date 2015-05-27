@@ -17,7 +17,7 @@
 			</h:form>
 		</p:panel>
 
-        <hf:formPanel id="formPanel" label="#{messages['walletOperation.panel']}" backingBean="#{walletOperationBean}" renderNewButton="false" showFormButtons="false">
+        <hf:formPanel id="formPanel" edit="false" label="#{messages['walletOperation.panel']}" backingBean="#{walletOperationBean}" renderNewButton="false" showFormButtons="false">
 
             <hf:formField label="#{messages['BusinessEntity.code']}" field="code" />
             <hf:formField label="#{messages['BusinessEntity.description']}" field="description" />
@@ -32,7 +32,7 @@
             <hf:formField label="#{messages['walletOperation.quantity']}" field="quantity" converter="bigDecimal4DigitsConverter" />
             <hf:formField label="#{messages['invoice.amountWithoutTax']}" field="amountWithoutTax" converter="bigDecimal4DigitsConverter" />
             <hf:formField label="#{messages['accountOperation.type']}" field="type" isMessage="true" />
-            <hf:formField label="#{messages['walletOperation.unityDescription']}" field="unityDescription" />
+            <hf:formField label="#{messages['walletOperation.ratingUnitDescription']}" field="ratingUnitDescription" maxlength="20"/>
             <hf:formField label="#{messages['walletOperation.taxPercent']}" field="taxPercent" converter="bigDecimal4DigitsConverter" />
             <hf:formField label="#{messages['walletOperation.unitAmountWithTax']}" field="unitAmountWithTax" converter="bigDecimal4DigitsConverter" />
             <hf:formField label="#{messages['invoice.amountWithTax']}" field="amountWithTax" converter="bigDecimal4DigitsConverter" />

@@ -49,7 +49,7 @@
 				field="status.label" isMessage="true" />
 			<hftl:column label="#{messages['ddrequestLotOp.errorCause']}"
 				field="errorCause" />
-			<hftl:actionsColumn
+			<hftl:actionsColumn renderEditLink="true"
 				permission="#{identity.hasPermission('billing','billingManagement')}" />
 		</hftl:dataList>
 
