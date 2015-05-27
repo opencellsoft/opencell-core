@@ -146,7 +146,7 @@
                         </h:panelGroup>
                         <p:dataTable var="stat" value="#{entityExportImportBean.exportImportFuture.get().summary.entrySet().toArray()}" paginator="true" rows="20"
                             paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
-                            rowsPerPageTemplate="20,30,50" lazy="false" styleClass="custom-grid" rowIndexVar="rowIndex" emptyMessage="#{messages['export.nothingExported']}">
+                            rowsPerPageTemplate="20,30,50" lazy="false" styleClass="custom-grid" rowIndexVar="rowIndex" emptyMessage="#{messages['export.nothingExported']}" resizableColumns="true">
                             <p:column headerText="#{messages['export.entityClass']}">
                                 <h:outputText value="#{stat.key.name}" />
                             </p:column>
