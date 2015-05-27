@@ -48,149 +48,147 @@ public class AccessApi extends BaseApi {
 	@Inject
 	private Logger log;
 
-	public void create(AccessDto postData, User currentUser) throws MeveoApiException {
-		if (!StringUtils.isBlank(postData.getCode()) && !StringUtils.isBlank(postData.getSubscription())) {
-			Provider provider = currentUser.getProvider();
+    public void create(AccessDto postData, User currentUser) throws MeveoApiException {
+        if (!StringUtils.isBlank(postData.getCode()) && !StringUtils.isBlank(postData.getSubscription())) {
+            Provider provider = currentUser.getProvider();
 
-			Subscription subscription = subscriptionService.findByCode(postData.getSubscription(), provider);
-			if (subscription == null) {
-				throw new EntityDoesNotExistsException(Subscription.class, postData.getSubscription());
-			}
+            Subscription subscription = subscriptionService.findByCode(postData.getSubscription(), provider);
+            if (subscription == null) {
+                throw new EntityDoesNotExistsException(Subscription.class, postData.getSubscription());
+            }
 
-			Access access = new Access();
-			access.setStartDate(postData.getStartDate());
-			access.setEndDate(postData.getEndDate());
-			access.setAccessUserId(postData.getCode());
-			access.setSubscription(subscription);
+            Access access = new Access();
+            access.setStartDate(postData.getStartDate());
+            access.setEndDate(postData.getEndDate());
+            access.setAccessUserId(postData.getCode());
+            access.setSubscription(subscription);
 
-			if (accessService.isDuplicate(access)) {
-				throw new MeveoApiException(MeveoApiErrorCode.DUPLICATE_ACCESS, "Duplicate subscription / access point pair.");
-			}
-			
-			if (postData.getCustomFields() != null) {
+            if (accessService.isDuplicate(access)) {
+                throw new MeveoApiException(MeveoApiErrorCode.DUPLICATE_ACCESS, "Duplicate subscription / access point pair.");
+            }
+
+            if (postData.getCustomFields() != null) {
                 // check if custom field exists has a template
                 List<CustomFieldTemplate> customFieldTemplates = customFieldTemplateService.findByAccountLevel(AccountLevelEnum.ACC, provider);
                 if (customFieldTemplates != null && customFieldTemplates.size() > 0) {
-               for (CustomFieldDto cf : postData.getCustomFields().getCustomField()) {
-               boolean found=false;
-               for (CustomFieldTemplate cft : customFieldTemplates) {
-	                    if (cf.getCode().equals(cft.getCode())) {
-	                    	found=true;
-	                            // create
-	                            CustomFieldInstance cfiNew = new CustomFieldInstance();
-	                            cfiNew.setAccess(access);
-	                            cfiNew.setActive(true);
-	                            cfiNew.setCode(cf.getCode());
-	                            cfiNew.setDateValue(cf.getDateValue());
-	                            cfiNew.setDescription(cf.getDescription());
-	                            cfiNew.setDoubleValue(cf.getDoubleValue());
-	                            cfiNew.setLongValue(cf.getLongValue());
-	                            cfiNew.setProvider(currentUser.getProvider());
-	                            cfiNew.setStringValue(cf.getStringValue());
-	                            cfiNew.updateAudit(currentUser);
-	                            access.getCustomFields().put(cfiNew.getCode(), cfiNew);
-	                            break;
+                    for (CustomFieldDto cf : postData.getCustomFields().getCustomField()) {
+                        boolean found = false;
+                        for (CustomFieldTemplate cft : customFieldTemplates) {
+                            if (cf.getCode().equals(cft.getCode())) {
+                                found = true;
+                                // create
+                                CustomFieldInstance cfiNew = new CustomFieldInstance();
+                                cfiNew.setAccess(access);
+                                cfiNew.setActive(true);
+                                cfiNew.setCode(cf.getCode());
+                                cfiNew.setDateValue(cf.getDateValue());
+                                cfiNew.setDescription(cf.getDescription());
+                                cfiNew.setDoubleValue(cf.getDoubleValue());
+                                cfiNew.setLongValue(cf.getLongValue());
+                                cfiNew.setProvider(currentUser.getProvider());
+                                cfiNew.setStringValue(cf.getStringValue());
+                                cfiNew.updateAudit(currentUser);
+                                access.getCustomFields().put(cfiNew.getCode(), cfiNew);
+                                break;
                             }
-                          }
-                    if (!found) {
-						log.warn("No custom field template with code={}", cf.getCode());
-					}
-                        } 	
-                      }else {
-                      log.warn("No custom field template defined.");
                         }
+                        if (!found) {
+                            log.warn("No custom field template with code={}", cf.getCode());
+                        }
+                    }
+                } else {
+                    log.warn("No custom field template defined.");
                 }
-					accessService.create(access, currentUser, provider);
-				} else {
-					if (StringUtils.isBlank(postData.getCode())) {
-						missingParameters.add("code");
-					}
-					if (postData.getSubscription() == null) {
-						missingParameters.add("subscription");
-					}
-		
-					throw new MissingParameterException(getMissingParametersExceptionMessage());
-				}
-	}
+            }
+            accessService.create(access, currentUser, provider);
+        } else {
+            if (StringUtils.isBlank(postData.getCode())) {
+                missingParameters.add("code");
+            }
+            if (postData.getSubscription() == null) {
+                missingParameters.add("subscription");
+            }
 
-	public void update(AccessDto postData, User currentUser) throws MeveoApiException {
-		if (postData.getCode() != null && !StringUtils.isBlank(postData.getSubscription())) {
-			Provider provider = currentUser.getProvider();
+            throw new MissingParameterException(getMissingParametersExceptionMessage());
+        }
+    }
 
-			Subscription subscription = subscriptionService.findByCode(postData.getSubscription(), provider);
-			if (subscription == null) {
-				throw new EntityDoesNotExistsException(Subscription.class, postData.getSubscription());
-			}
+    public void update(AccessDto postData, User currentUser) throws MeveoApiException {
+        if (postData.getCode() != null && !StringUtils.isBlank(postData.getSubscription())) {
+            Provider provider = currentUser.getProvider();
 
-			Access access = accessService.findByUserIdAndSubscription(postData.getCode(), subscription);
-			if (access == null) {
-				throw new EntityDoesNotExistsException(Access.class, postData.getCode());
-			}
+            Subscription subscription = subscriptionService.findByCode(postData.getSubscription(), provider);
+            if (subscription == null) {
+                throw new EntityDoesNotExistsException(Subscription.class, postData.getSubscription());
+            }
 
-			access.setStartDate(postData.getStartDate());
-			access.setEndDate(postData.getEndDate());
-			// populate customFields
-			if (postData.getCustomFields() != null) {
-				// check if custom field exists has a template
-				List<CustomFieldTemplate> customFieldTemplates = customFieldTemplateService.findByAccountLevel(AccountLevelEnum.ACC, provider);
-				if (customFieldTemplates != null && customFieldTemplates.size() > 0) {
-			    for (CustomFieldDto cf : postData.getCustomFields().getCustomField()) {
-				 boolean found = false;
-				for (CustomFieldTemplate cft : customFieldTemplates) {
-					    if (cf.getCode().equals(cft.getCode())) {
-						found = true;
-						CustomFieldInstance cfi = customFieldInstanceService.findByCodeAndAccount(cf.getCode(), access, currentUser.getProvider());
-						if (cfi != null) {
-							// update
-							cfi.setActive(true);
-							cfi.setDateValue(cf.getDateValue());
-							cfi.setDescription(cf.getDescription());
-							cfi.setDoubleValue(cf.getDoubleValue());
-							cfi.setLongValue(cf.getLongValue());
-							cfi.setStringValue(cf.getStringValue());
-							cfi.updateAudit(currentUser);
-							break;
-						} else {
-							// create
-							CustomFieldInstance cfiNew = new CustomFieldInstance();
-							cfiNew.setAccess(access);
-							cfiNew.setActive(true);
-							cfiNew.setCode(cf.getCode());
-							cfiNew.setDateValue(cf.getDateValue());
-							cfiNew.setDescription(cf.getDescription());
-							cfiNew.setDoubleValue(cf.getDoubleValue());
-							cfiNew.setLongValue(cf.getLongValue());
-							cfiNew.setProvider(currentUser.getProvider());
-							cfiNew.setStringValue(cf.getStringValue());
-							cfiNew.updateAudit(currentUser);
-							access.getCustomFields().put(cfiNew.getCode(), cfiNew);
-							break;
-						}
-						}
-					}
-					if (!found) {
-						log.warn("No custom field template with code={}", cf.getCode());
-					}
-				}
-			}
-			else {
-			log.warn("No custom field template defined.");
-				}
-			}
-			
+            Access access = accessService.findByUserIdAndSubscription(postData.getCode(), subscription);
+            if (access == null) {
+                throw new EntityDoesNotExistsException(Access.class, postData.getCode());
+            }
 
-			accessService.update(access, currentUser);
-		} else {
-			if (postData.getCode() == null) {
-				missingParameters.add("code");
-			}
-			if (postData.getSubscription() == null) {
-				missingParameters.add("subscription");
-			}
+            access.setStartDate(postData.getStartDate());
+            access.setEndDate(postData.getEndDate());
+            // populate customFields
+            if (postData.getCustomFields() != null) {
+                // check if custom field exists has a template
+                List<CustomFieldTemplate> customFieldTemplates = customFieldTemplateService.findByAccountLevel(AccountLevelEnum.ACC, provider);
+                if (customFieldTemplates != null && customFieldTemplates.size() > 0) {
+                    for (CustomFieldDto cf : postData.getCustomFields().getCustomField()) {
+                        boolean found = false;
+                        for (CustomFieldTemplate cft : customFieldTemplates) {
+                            if (cf.getCode().equals(cft.getCode())) {
+                                found = true;
+                                CustomFieldInstance cfi = customFieldInstanceService.findByCodeAndAccount(cf.getCode(), access, currentUser.getProvider());
+                                if (cfi != null) {
+                                    // update
+                                    cfi.setActive(true);
+                                    cfi.setDateValue(cf.getDateValue());
+                                    cfi.setDescription(cf.getDescription());
+                                    cfi.setDoubleValue(cf.getDoubleValue());
+                                    cfi.setLongValue(cf.getLongValue());
+                                    cfi.setStringValue(cf.getStringValue());
+                                    cfi.updateAudit(currentUser);
+                                    break;
+                                } else {
+                                    // create
+                                    CustomFieldInstance cfiNew = new CustomFieldInstance();
+                                    cfiNew.setAccess(access);
+                                    cfiNew.setActive(true);
+                                    cfiNew.setCode(cf.getCode());
+                                    cfiNew.setDateValue(cf.getDateValue());
+                                    cfiNew.setDescription(cf.getDescription());
+                                    cfiNew.setDoubleValue(cf.getDoubleValue());
+                                    cfiNew.setLongValue(cf.getLongValue());
+                                    cfiNew.setProvider(currentUser.getProvider());
+                                    cfiNew.setStringValue(cf.getStringValue());
+                                    cfiNew.updateAudit(currentUser);
+                                    access.getCustomFields().put(cfiNew.getCode(), cfiNew);
+                                    break;
+                                }
+                            }
+                        }
+                        if (!found) {
+                            log.warn("No custom field template with code={}", cf.getCode());
+                        }
+                    }
+                } else {
+                    log.warn("No custom field template defined.");
+                }
+            }
 
-			throw new MissingParameterException(getMissingParametersExceptionMessage());
-		}
-	}
+            accessService.update(access, currentUser);
+        } else {
+            if (postData.getCode() == null) {
+                missingParameters.add("code");
+            }
+            if (postData.getSubscription() == null) {
+                missingParameters.add("subscription");
+            }
+
+            throw new MissingParameterException(getMissingParametersExceptionMessage());
+        }
+    }
 
 	public AccessDto find(String accessCode, String subscriptionCode, Provider provider) throws MeveoApiException {
 		if (!StringUtils.isBlank(accessCode) && !StringUtils.isBlank(subscriptionCode)) {
