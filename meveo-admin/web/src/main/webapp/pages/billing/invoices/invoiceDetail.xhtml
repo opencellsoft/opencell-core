@@ -52,7 +52,7 @@
 			</h:panelGrid>  
 			<p:fieldset legend="#{messages['invoice.discounts']}" style="width:60%" rendered="#{invoiceBean.getDiscountAggregates.size()>0}">
 				
-				<p:dataTable id="invoiceAgregats" var="agregate" value="#{invoiceBean.getDiscountAggregates}">
+				<p:dataTable id="invoiceAgregats" var="agregate" value="#{invoiceBean.getDiscountAggregates}" resizableColumns="true">
 				<p:column headerText="#{messages['discountPlan.title']}">
 				<h:outputText value="#{agregate.discountPlanCode}"  />
 				</p:column>
@@ -75,7 +75,7 @@
 			</hf:formPanel>
         <h:form id="form">
             <p:fieldset legend="#{messages['invoice.details']}">
-                <p:dataTable id="catTable" var="cat" value="#{invoiceBean.invoiceCategories}">
+                <p:dataTable id="catTable" var="cat" value="#{invoiceBean.invoiceCategories}" resizableColumns="true">
 
                     <p:columnGroup type="header">
                         <p:row>
@@ -93,7 +93,7 @@
                                     <f:facet name="title">
                                         <h:outputText value="#{subCat.description}" /> 
                                     </f:facet> 
-                                    <p:dataTable var="rated"  
+                                    <p:dataTable var="rated"  resizableColumns="true"
                                      value="#{subCat.ratedTransactions}"  paginator="true" rows="30"
 									 paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"> 
 									<p:column headerText="#{messages['subscription.offer']}" >

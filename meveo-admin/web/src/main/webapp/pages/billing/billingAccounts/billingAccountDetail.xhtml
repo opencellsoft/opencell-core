@@ -154,19 +154,19 @@
 
 														<hftl:decorateFormField>
 															<h:outputText
-																rendered="#{fieldValueRA != null and fieldValueRA.toString() == 'true' and !billingAccountBean.edit}"
+																rendered="#{fieldValueRA != null and fieldValueRA.toString() == 'true' and not empty billingAccountBean.entity.id}"
 																value="#{messages['commons.yes']}"
 																style="font-weight:bold;" />
                                                         </hftl:decorateFormField>
                                                         <hftl:decorateFormField>
 															<h:outputText
-																rendered="#{fieldValueRA != null and fieldValueRA.toString() == 'false' and !billingAccountBean.edit}"
+																rendered="#{fieldValueRA != null and fieldValueRA.toString() == 'false' and not empty billingAccountBean.entity.id}"
 																value="#{messages['commons.no']}"
 																style="font-weight:bold;" />
                                                         </hftl:decorateFormField>
                                                         <hftl:decorateFormField>
 															<h:outputText
-																rendered="#{fieldValueRA != null and fieldValueRA.toString() != 'true' and fieldValueRA.toString() != 'false' and !billingAccountBean.edit}"
+																rendered="#{fieldValueRA != null and fieldValueRA.toString() != 'true' and fieldValueRA.toString() != 'false' and not empty billingAccountBean.entity.id}"
 																value="#{messages[entity[field]]}"
 																style="font-weight:bold;" />
 														</hftl:decorateFormField>
@@ -189,10 +189,10 @@
 															valueChangeListener="#{billingAccountBean.processValueChange}">
 															<p:ajax event="valueChange" update="invoicePrefixPanel" />
 														</p:inputText>
-														<h:outputText
-															value="#{billingAccountBean.entity.externalRef2}"
-															rendered="#{!billingAccountBean.edit}"
-															style="font-weight:bold;" />
+<!-- 														<h:outputText -->
+<!-- 															value="#{billingAccountBean.entity.externalRef2}" -->
+<!-- 															rendered="#{!billingAccountBean.edit}" -->
+<!-- 															style="font-weight:bold;" /> -->
                                                     </hftl:decorateFormField>
 
 													<hf:formField id="trCountrySelectId"
@@ -283,9 +283,9 @@
 															<p:ajax event="valueChange" immediate="false"
 																update=":parentTab:formBillingAccountPanel:formId:childTab:bankCoordinatesPanel" />
 														</p:selectOneMenu>
-														<h:outputText rendered="#{!billingAccountBean.edit}"
-															value="#{billingAccountBean.entity.paymentMethod}"
-															styleClass="field-value"></h:outputText>
+<!-- 														<h:outputText rendered="#{!billingAccountBean.edit}" -->
+<!-- 															value="#{billingAccountBean.entity.paymentMethod}" -->
+<!-- 															styleClass="field-value"></h:outputText> -->
 													</hftl:decorateFormField>
 
 													<hf:formField id="paymentTerm"
@@ -310,10 +310,10 @@
 																	pattern="([^.@]+)(\.[^.@]+)*@([^.@]+\.)+([^.@]+)"
 																	message="#{messages['validator.email.invalid']}" />
 															</p:inputText>
-															<h:outputText rendered="#{!billingAccountBean.edit}"
-																id="emailText"
-																value="#{billingAccountBean.entity.email}"
-																required="#{billingAccountBean.entity.electronicBilling}" />
+<!-- 															<h:outputText rendered="#{!billingAccountBean.edit}" -->
+<!-- 																id="emailText" -->
+<!-- 																value="#{billingAccountBean.entity.email}" -->
+<!-- 																required="#{billingAccountBean.entity.electronicBilling}" /> -->
                                                             </hftl:decorateFormField>
 														</h:panelGroup>
 													<h:panelGroup id="bankCoordinatesPanel" >
@@ -367,7 +367,7 @@
 										</p:tab>
 
 										<p:tab title="#{messages['counterPeriod.title']}" id="tab3"
-											rendered="#{!billingAccountBean.edit or billingAccountBean.entity.id!=null}">
+											rendered="#{billingAccountBean.entity.id!=null}">
 											     <hftl:decorateFormField fieldId="counterPeriod" label="#{messages['counterInstance.title']}" >
 													<p:selectOneMenu id="counterPeriod"
 														converter="omnifaces.SelectItemsConverter"
@@ -418,7 +418,7 @@
 							</hf:formPanel>
 
 							<h:form id="operationsForm"
-								rendered="#{!billingAccountBean.edit}">
+								rendered="#{not empt billingAccountBean.entity.id}">
 								<div class="action-buttons">
 									<p:commandButton
 										value="#{messages['account.buttonResiliateAccount']}"
@@ -445,9 +445,9 @@
 						</p:tab>
 
 						<p:tab title="#{messages['billingAccount.tab.invoices']}"
-							rendered="#{!billingAccountBean.edit}">
+							rendered="#{not empty billingAccountBean.entity.id}">
 							<hf:formPanel formId="form3" backingBean="#{billingAccountBean}"
-								showFormButtons="false">
+								showFormButtons="false" edit="false">
 									<hf:formField label="#{messages['businessEntity.code']}"
 										field="code" />
 									<hf:formField label="#{messages['billingAccount.status']}"

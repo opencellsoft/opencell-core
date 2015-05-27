@@ -16,7 +16,7 @@
             <p:messages />
 
             <h:form>
-                <p:dataTable id="datatable_caches" var="cacheInfo" value="#{cacheBean.summaryOfCaches}" paginator="true" rows="10"
+                <p:dataTable id="datatable_caches" var="cacheInfo" value="#{cacheBean.summaryOfCaches}" paginator="true" rows="10" resizableColumns="true"
                     paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
                     rowsPerPageTemplate="5,10,15" lazy="false" styleClass="custom-grid" rowIndexVar="rowIndex">
                     <p:column headerText="#{messages['cache.name']}" sortBy="#{cacheInfo['name']}">
@@ -28,10 +28,10 @@
                         <h:outputText value="#{cacheInfo['count']}" />
                     </p:column>
                     <p:column style="width: 100px;" headerText="#{messages['commons.actions']}">
-                        <p:tooltip for="viewlink" value="#{messages['commons.view']}" showEffect="slide" hideEffect="slide" />
-                        <p:button id="viewlink" outcome="cacheDetail" icon="ui-icon-search">
-                            <f:param name="cacheName" value="#{cacheInfo['name']}" />
-                        </p:button>
+<!--                         <p:tooltip for="viewlink" value="#{messages['commons.view']}" showEffect="slide" hideEffect="slide" /> -->
+<!--                         <p:button id="viewlink" outcome="cacheDetail" icon="ui-icon-search"> -->
+<!--                             <f:param name="cacheName" value="#{cacheInfo['name']}" /> -->
+<!--                         </p:button> -->
 
                         <p:tooltip for="refreshlink" value="#{messages['commons.refresh']}" showEffect="slide" hideEffect="slide" />
                         <p:commandButton id="refreshlink" icon="ui-icon-refresh" oncomplete="PF('confirmRefreshWidget#{rowIndex}').show()" />

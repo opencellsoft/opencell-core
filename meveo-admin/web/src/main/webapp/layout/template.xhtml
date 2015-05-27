@@ -115,7 +115,7 @@
 		<h:form id="providerSelectPopupForm">
 
 
-			<p:dataTable var="provider" value="#{identity.user.user.providers.toArray()}" reflow="true">
+			<p:dataTable var="provider" value="#{identity.user.user.providers.toArray()}" reflow="true" resizableColumns="true">
 
 				<p:column headerText="#{messages['businessEntity.code']}">
 					<h:outputText value="#{provider.code}" />

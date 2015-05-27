@@ -166,7 +166,7 @@
 			<h:form id="rejectedBA_formId" prependId="false">
 				<p:dataTable id="dataTable_rejectedBA" var="entity"
 					value="#{billingRunBean.entity.rejectedBillingAccounts}"
-					paginator="true" rows="10"
+					paginator="true" rows="10" resizableColumns="true"
 					binding="#{billingAccountBean.dataTable}"
 					paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
 					rowsPerPageTemplate="5,10,15" lazy="true" styleClass="custom-grid"

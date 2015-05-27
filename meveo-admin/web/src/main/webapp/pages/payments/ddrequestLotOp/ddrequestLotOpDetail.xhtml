@@ -24,8 +24,8 @@
 		 
 			<hf:formField label="#{messages['ddrequestLotOp.fromDueDate']}"  field="fromDueDate" required="true" isMessage="true"/>
 			<hf:formField label="#{messages['ddrequestLotOp.toDueDate']}"  field="toDueDate" required="true" isMessage="true"/> 
-			<hf:formField label="#{messages['ddrequestLotOp.status']}" field="status"  isMessage="true" rendered="#{!ddRequestLotOpBean.edit}"/>
-			<hf:formField label="#{messages['ddrequestLotOp.errorCause']}" field="errorCause" rendered="#{!ddRequestLotOpBean.edit}" />
+			<hf:formField label="#{messages['ddrequestLotOp.status']}" field="status"  isMessage="true" rendered="#{not empty ddRequestLotOpBean.entity.id}" edit="false"/>
+			<hf:formField label="#{messages['ddrequestLotOp.errorCause']}" field="errorCause" rendered="#{not empty ddRequestLotOpBean.entity.id}" edit="false"/>
 			 
 		</hf:formPanel>
 	</ui:define>  

@@ -144,7 +144,7 @@
 							edit="#{customerBean.edit}" ajaxSubmit="false"
 							useCustomIdParam="true">
 							<p:button outcome="addCustomerAccount"
-								rendered="#{!customerBean.edit}"
+								rendered="#{not empty customerBean.entity.id}"
 								value="#{messages['customer.buttonAddCustomerAccount']}">
 								<f:param name="cid"
 									value="#{javax.enterprise.context.conversation.id}" />

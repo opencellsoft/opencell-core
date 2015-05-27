@@ -68,7 +68,7 @@ public class CustomerBean extends AccountBean<Customer> {
 
 		super.saveOrUpdate(killConversation);
 
-		return "/pages/crm/customers/customerDetail.xhtml?edit=false&customerId=" + entity.getId()
+		return "/pages/crm/customers/customerDetail.xhtml?edit=true&customerId=" + entity.getId()
 				+ "&faces-redirect=true";
 	}
 

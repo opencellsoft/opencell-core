@@ -84,7 +84,7 @@
                 </h:panelGroup>
             </c:if>
 
-            <p:dataTable id="#{id}datatable" var="e" paginator="true"
+            <p:dataTable id="#{id}datatable" var="e" paginator="true" resizableColumns="true"
 				value="#{dataModel}" rows="10" selection="#{selection}"
 				selectionMode="single" rowKey="#{e.id}" lazy="#{lazy}">
 				<p:ajax event="rowSelect" listener="#{eventBackingBean.onRowSelect}"

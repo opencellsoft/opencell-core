@@ -124,7 +124,7 @@
 
 				<h:form id="mqTableForm">
 					<p:dataTable id="mqTable" value="#{measurementBean.mainMVModel}"
-						var="meas" rendered="#{measurementBean.mainMVModel != null}"
+						var="meas" rendered="#{measurementBean.mainMVModel != null}" resizableColumns="true"
 						editable="true" editMode="cell">
 
 						<p:ajax event="cellEdit" listener="#{measurementBean.onCellEdit}" />
@@ -161,13 +161,13 @@
 
 					<p:panel styleClass="form-panel-actions">
 
-						<p:button value="#{messages['action.edit']}"
-							rendered="#{!measurementBean.edit and measurementBean.objectId != null}"
-							includeViewParams="true">
-							<f:param name="edit" value="true" />
-							<f:param name="#{measurementBean.objectId}"
-								value="#{measurementBean.objectId}" />
-						</p:button>
+<!-- 						<p:button value="#{messages['action.edit']}" -->
+<!-- 							rendered="#{!measurementBean.edit and measurementBean.objectId != null}" -->
+<!-- 							includeViewParams="true"> -->
+<!-- 							<f:param name="edit" value="true" /> -->
+<!-- 							<f:param name="#{measurementBean.objectId}" -->
+<!-- 								value="#{measurementBean.objectId}" /> -->
+<!-- 						</p:button> -->
 
 						<h:commandLink rendered="#{measurementBean.mainMVModel != null}">
 							<h:outputText

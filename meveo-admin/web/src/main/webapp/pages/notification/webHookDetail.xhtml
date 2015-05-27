@@ -79,7 +79,7 @@
                 field="disabled" isMessage="true" showOnlyOnConsult="true"/>
 		</hf:formPanel>
 
-		<p:panel rendered="#{!webHookBean.edit}">
+		<p:panel rendered="#{not empty webHookBean.entity.id}">
 			<hftl:dataList backingBean="#{notificationHistoryBean}" checkMany="false"
 				dataModel="#{notificationHistoryBean.getLazyDataModel(webHookBean.entity.id)}">
 				<hftl:column label="#{messages['commons.date']}" field="auditable.updated" isDate="true" time="true" />

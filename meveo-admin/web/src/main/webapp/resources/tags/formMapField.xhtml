@@ -19,7 +19,8 @@
         labelWidth="#{cc.parent.attrs.labelWidth}" inputWidth="#{cc.parent.attrs.inputWidth}">
 
 
-        <p:dataTable id="mapValueList" value="#{cc.attrs.fieldItem}" var="mapValues" paginator="false" styleClass="custom-grid" reflow="true">
+        <p:dataTable id="mapValueList" value="#{cc.attrs.fieldItem}"
+        	resizableColumns="true" var="mapValues" paginator="false" styleClass="custom-grid" reflow="true">
             <p:column headerText="#{cc.parent.attrs.mapKeyLabel}">
                 <p:inputText value="#{mapValues['key']}" size="50" maxlength="100" rendered="#{cc.attrs.edit}" />
                 <h:outputText value="#{mapValues['key']}" styleClass="field-value" rendered="#{not cc.attrs.edit}" />
