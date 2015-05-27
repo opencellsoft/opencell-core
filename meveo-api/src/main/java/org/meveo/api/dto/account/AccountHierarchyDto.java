@@ -2,6 +2,8 @@ package org.meveo.api.dto.account;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.Iterator;
+import java.util.Set;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -9,6 +11,9 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
+import org.meveo.api.dto.CustomFieldDto;
+import org.meveo.api.dto.CustomFieldsDto;
+import org.meveo.model.crm.CustomFieldInstance;
 import org.meveo.model.crm.Customer;
 
 @XmlRootElement(name = "AccountHierarchy")
@@ -43,6 +48,8 @@ public class AccountHierarchyDto implements Serializable {
 	private String address2;
 	private String zipCode;
 	private String city;
+	
+	private CustomFieldsDto customFields;
 
 	@XmlTransient
 	private int limit;
@@ -79,6 +86,18 @@ public class AccountHierarchyDto implements Serializable {
 			}
 			this.setLastName(customer.getName().getLastName());
 			this.setFirstName(customer.getName().getFirstName());
+		}
+		
+		if (customer.getCustomFields() != null) {
+			customFields = new CustomFieldsDto();
+
+			Set<String> keys = customer.getCustomFields().keySet();
+			Iterator<String> key = keys.iterator();
+			while (key.hasNext()) {
+				CustomFieldInstance cfi = customer.getCustomFields().get(key.next());
+				CustomFieldDto cf = new CustomFieldDto(cfi);
+				customFields.getCustomField().add(cf);
+			}
 		}
 	}
 
@@ -268,6 +287,14 @@ public class AccountHierarchyDto implements Serializable {
 
 	public void setPaymentMethod(int paymentMethod) {
 		this.paymentMethod = paymentMethod;
+	}
+
+	public CustomFieldsDto getCustomFields() {
+		return customFields;
+	}
+
+	public void setCustomFields(CustomFieldsDto customFields) {
+		this.customFields = customFields;
 	}
 
 }

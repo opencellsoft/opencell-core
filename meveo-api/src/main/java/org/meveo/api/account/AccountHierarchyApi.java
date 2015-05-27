@@ -2,14 +2,12 @@ package org.meveo.api.account;
 
 import java.math.BigDecimal;
 import java.text.Normalizer;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
-import org.apache.commons.lang.StringUtils;
 import org.meveo.admin.exception.AccountAlreadyExistsException;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
@@ -23,6 +21,7 @@ import org.meveo.api.dto.account.BillingAccountDto;
 import org.meveo.api.dto.account.CustomerAccountDto;
 import org.meveo.api.dto.account.CustomerDto;
 import org.meveo.api.dto.account.CustomerHierarchyDto;
+import org.meveo.api.dto.account.CustomersDto;
 import org.meveo.api.dto.account.UserAccountDto;
 import org.meveo.api.dto.billing.ServiceInstanceDto;
 import org.meveo.api.dto.billing.SubscriptionDto;
@@ -30,8 +29,9 @@ import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
-import org.meveo.api.util.CustomerUtil;
 import org.meveo.commons.utils.ParamBean;
+import org.meveo.commons.utils.QueryBuilder;
+import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.AccountEntity;
 import org.meveo.model.Auditable;
 import org.meveo.model.admin.Currency;
@@ -101,7 +101,7 @@ public class AccountHierarchyApi extends BaseApi {
 
 	@Inject
 	private Logger log;
-	
+
 	@Inject
 	private CreditCategoryService creditCategoryService;
 
@@ -160,9 +160,6 @@ public class AccountHierarchyApi extends BaseApi {
 	private TitleService titleService;
 
 	@Inject
-	private CustomerUtil customerUtil;
-
-	@Inject
 	private SubscriptionService subscriptionService;
 
 	@Inject
@@ -214,10 +211,10 @@ public class AccountHierarchyApi extends BaseApi {
 		if (customerService.findByCode(postData.getCustomerId(), provider) != null) {
 			throw new EntityAlreadyExistsException(Customer.class, postData.getCustomerId());
 		} else {
-			if (!StringUtils.isEmpty(postData.getCustomerId()) && !StringUtils.isEmpty(postData.getCustomerBrandCode()) && !StringUtils.isEmpty(postData.getCustomerCategoryCode())
-					&& !StringUtils.isEmpty(postData.getSellerCode()) && !StringUtils.isEmpty(postData.getCurrencyCode()) && !StringUtils.isEmpty(postData.getBillingCycleCode())
-					&& !StringUtils.isEmpty(postData.getCountryCode()) && !StringUtils.isEmpty(postData.getLastName()) && !StringUtils.isEmpty(postData.getLanguageCode())
-					&& !StringUtils.isEmpty(postData.getEmail())) {
+			if (!StringUtils.isBlank(postData.getCustomerId()) && !StringUtils.isBlank(postData.getCustomerBrandCode()) && !StringUtils.isBlank(postData.getCustomerCategoryCode())
+					&& !StringUtils.isBlank(postData.getSellerCode()) && !StringUtils.isBlank(postData.getCurrencyCode()) && !StringUtils.isBlank(postData.getBillingCycleCode())
+					&& !StringUtils.isBlank(postData.getCountryCode()) && !StringUtils.isBlank(postData.getLastName()) && !StringUtils.isBlank(postData.getLanguageCode())
+					&& !StringUtils.isBlank(postData.getEmail())) {
 
 				Seller seller = sellerService.findByCode(postData.getSellerCode(), provider);
 
@@ -400,34 +397,34 @@ public class AccountHierarchyApi extends BaseApi {
 					throw new EntityAlreadyExistsException(UserAccount.class, userAccountCode);
 				}
 			} else {
-				if (StringUtils.isEmpty(postData.getCustomerId())) {
+				if (StringUtils.isBlank(postData.getCustomerId())) {
 					missingParameters.add("customerId");
 				}
-				if (StringUtils.isEmpty(postData.getCustomerBrandCode())) {
+				if (StringUtils.isBlank(postData.getCustomerBrandCode())) {
 					missingParameters.add("customerBrandCode");
 				}
-				if (StringUtils.isEmpty(postData.getCustomerCategoryCode())) {
+				if (StringUtils.isBlank(postData.getCustomerCategoryCode())) {
 					missingParameters.add("customerCategoryCode");
 				}
-				if (StringUtils.isEmpty(postData.getSellerCode())) {
+				if (StringUtils.isBlank(postData.getSellerCode())) {
 					missingParameters.add("sellerCode");
 				}
-				if (StringUtils.isEmpty(postData.getCurrencyCode())) {
+				if (StringUtils.isBlank(postData.getCurrencyCode())) {
 					missingParameters.add("currencyCode");
 				}
-				if (StringUtils.isEmpty(postData.getCountryCode())) {
+				if (StringUtils.isBlank(postData.getCountryCode())) {
 					missingParameters.add("countryCode");
 				}
-				if (StringUtils.isEmpty(postData.getLastName())) {
+				if (StringUtils.isBlank(postData.getLastName())) {
 					missingParameters.add("lastName");
 				}
-				if (StringUtils.isEmpty(postData.getBillingCycleCode())) {
+				if (StringUtils.isBlank(postData.getBillingCycleCode())) {
 					missingParameters.add("billingCycleCode");
 				}
-				if (StringUtils.isEmpty(postData.getLanguageCode())) {
+				if (StringUtils.isBlank(postData.getLanguageCode())) {
 					missingParameters.add("languageCode");
 				}
-				if (StringUtils.isEmpty(postData.getEmail())) {
+				if (StringUtils.isBlank(postData.getEmail())) {
 					missingParameters.add("email");
 				}
 
@@ -446,10 +443,10 @@ public class AccountHierarchyApi extends BaseApi {
 			throw new EntityDoesNotExistsException(Customer.class, postData.getCustomerId());
 		}
 
-		if (!StringUtils.isEmpty(postData.getCustomerId()) && !StringUtils.isEmpty(postData.getCustomerBrandCode()) && !StringUtils.isEmpty(postData.getCustomerCategoryCode())
-				&& !StringUtils.isEmpty(postData.getSellerCode()) && !StringUtils.isEmpty(postData.getCurrencyCode()) && !StringUtils.isEmpty(postData.getBillingCycleCode())
-				&& !StringUtils.isEmpty(postData.getCountryCode()) && !StringUtils.isEmpty(postData.getLastName()) && !StringUtils.isEmpty(postData.getLanguageCode())
-				&& !StringUtils.isEmpty(postData.getEmail())) {
+		if (!StringUtils.isBlank(postData.getCustomerId()) && !StringUtils.isBlank(postData.getCustomerBrandCode()) && !StringUtils.isBlank(postData.getCustomerCategoryCode())
+				&& !StringUtils.isBlank(postData.getSellerCode()) && !StringUtils.isBlank(postData.getCurrencyCode()) && !StringUtils.isBlank(postData.getBillingCycleCode())
+				&& !StringUtils.isBlank(postData.getCountryCode()) && !StringUtils.isBlank(postData.getLastName()) && !StringUtils.isBlank(postData.getLanguageCode())
+				&& !StringUtils.isBlank(postData.getEmail())) {
 
 			Seller seller = sellerService.findByCode(postData.getSellerCode(), provider);
 
@@ -682,34 +679,34 @@ public class AccountHierarchyApi extends BaseApi {
 				userAccountService.update(userAccount, currentUser);
 			}
 		} else {
-			if (StringUtils.isEmpty(postData.getCustomerId())) {
+			if (StringUtils.isBlank(postData.getCustomerId())) {
 				missingParameters.add("customerId");
 			}
-			if (StringUtils.isEmpty(postData.getCustomerBrandCode())) {
+			if (StringUtils.isBlank(postData.getCustomerBrandCode())) {
 				missingParameters.add("customerBrandCode");
 			}
-			if (StringUtils.isEmpty(postData.getCustomerCategoryCode())) {
+			if (StringUtils.isBlank(postData.getCustomerCategoryCode())) {
 				missingParameters.add("customerCategoryCode");
 			}
-			if (StringUtils.isEmpty(postData.getSellerCode())) {
+			if (StringUtils.isBlank(postData.getSellerCode())) {
 				missingParameters.add("sellerCode");
 			}
-			if (StringUtils.isEmpty(postData.getCurrencyCode())) {
+			if (StringUtils.isBlank(postData.getCurrencyCode())) {
 				missingParameters.add("currencyCode");
 			}
-			if (StringUtils.isEmpty(postData.getCountryCode())) {
+			if (StringUtils.isBlank(postData.getCountryCode())) {
 				missingParameters.add("countryCode");
 			}
-			if (StringUtils.isEmpty(postData.getLastName())) {
+			if (StringUtils.isBlank(postData.getLastName())) {
 				missingParameters.add("lastName");
 			}
-			if (StringUtils.isEmpty(postData.getBillingCycleCode())) {
+			if (StringUtils.isBlank(postData.getBillingCycleCode())) {
 				missingParameters.add("billingCycleCode");
 			}
-			if (StringUtils.isEmpty(postData.getLanguageCode())) {
+			if (StringUtils.isBlank(postData.getLanguageCode())) {
 				missingParameters.add("languageCode");
 			}
-			if (StringUtils.isEmpty(postData.getEmail())) {
+			if (StringUtils.isBlank(postData.getEmail())) {
 				missingParameters.add("email");
 			}
 
@@ -717,17 +714,87 @@ public class AccountHierarchyApi extends BaseApi {
 		}
 	}
 
-	public List<AccountHierarchyDto> find(AccountHierarchyDto customerDto, User currentUser) throws MeveoApiException {
-		List<AccountHierarchyDto> result = new ArrayList<AccountHierarchyDto>();
-		Customer customerFilter;
+	@SuppressWarnings("unchecked")
+	public CustomersDto find(AccountHierarchyDto postData, User currentUser) throws MeveoApiException {
+		CustomersDto result = new CustomersDto();
 
-		customerFilter = customerUtil.getCustomer(customerDto, currentUser.getProvider());
+		PaginationConfiguration paginationConfiguration = new PaginationConfiguration(postData.getIndex(), postData.getLimit(), null, null, postData.getSortField(), null);
+		QueryBuilder qb = new QueryBuilder(Customer.class, "c", null, currentUser.getProvider());
 
-		PaginationConfiguration paginationConfiguration = new PaginationConfiguration(customerDto.getIndex(), customerDto.getLimit(), null, null, customerDto.getSortField(), null);
+		if (!StringUtils.isBlank(postData.getCustomerId())) {
+			qb.addCriterion("c.code", "=", postData.getCustomerId(), true);
+		}
+		if (!StringUtils.isBlank(postData.getSellerCode())) {
+			Seller seller = sellerService.findByCode(postData.getSellerCode(), currentUser.getProvider());
+			if (seller == null) {
+				throw new EntityDoesNotExistsException(Seller.class, postData.getSellerCode());
+			}
+			qb.addCriterionEntity("c.seller", seller);
+		}
+		if (!StringUtils.isBlank(postData.getCustomerBrandCode())) {
+			CustomerBrand customerBrand = customerBrandService.findByCode(postData.getCustomerBrandCode(), currentUser.getProvider());
+			if (customerBrand == null) {
+				throw new EntityDoesNotExistsException(CustomerBrand.class, postData.getCustomerBrandCode());
+			}
+			qb.addCriterionEntity("c.customerBrand", customerBrand);
+		}
+		if (!StringUtils.isBlank(postData.getCustomerCategoryCode())) {
+			CustomerCategory customerCategory = customerCategoryService.findByCode(postData.getCustomerCategoryCode(), currentUser.getProvider());
+			if (customerCategory == null) {
+				throw new EntityDoesNotExistsException(CustomerCategory.class, postData.getCustomerCategoryCode());
+			}
+			qb.addCriterionEntity("c.customerCategory", customerCategory);
+		}
+		if (!StringUtils.isBlank(postData.getCountryCode())) {
+			TradingCountry tradingCountry = tradingCountryService.findByTradingCountryCode(postData.getCountryCode(), currentUser.getProvider());
+			if (tradingCountry == null) {
+				throw new EntityDoesNotExistsException(TradingCountry.class, postData.getCountryCode());
+			}
+			qb.addCriterion("c.address.country", "=", postData.getCountryCode(), true);
+		}
+		if (!StringUtils.isBlank(postData.getFirstName())) {
+			qb.addCriterion("c.name.firstName", "=", postData.getFirstName(), true);
+		}
+		if (!StringUtils.isBlank(postData.getLastName())) {
+			qb.addCriterion("c.name.lastName", "=", postData.getLastName(), true);
+		}
+		if (!StringUtils.isBlank(postData.getAddress1())) {
+			qb.addCriterion("c.address.address1", "=", postData.getAddress1(), true);
+		}
+		if (!StringUtils.isBlank(postData.getAddress2())) {
+			qb.addCriterion("c.address.address2", "=", postData.getAddress2(), true);
+		}
+		if (!StringUtils.isBlank(postData.getCity())) {
+			qb.addCriterion("c.address.city", "=", postData.getCity(), true);
+		}
+		if (!StringUtils.isBlank(postData.getZipCode())) {
+			qb.addCriterion("c.address.zipCode", "=", postData.getZipCode(), true);
+		}
+		
+		// custom fields
+		if (!StringUtils.isBlank(postData.getCustomerId())) {
+			Customer customer = customerService.findByCode(postData.getCustomerId(), currentUser.getProvider());
+			if (customer == null) {
+				throw new EntityDoesNotExistsException(Customer.class, postData.getCustomerId());
+			}
+			if (postData.getCustomFields() != null) {
+				for (CustomFieldDto cfDto : postData.getCustomFields().getCustomField()) {
+					CustomFieldInstance cfi = customFieldInstanceService.findByCodeAndAccountAndValue(cfDto.getCode(), customer, cfDto.getStringValue(), cfDto.getDateValue(),
+							cfDto.getLongValue(), cfDto.getDoubleValue(), currentUser.getProvider());
+					if (cfi != null) {
+						qb.addCriterion("VALUE(c.customFields)", "=", cfi, true);
+					}
+				}
+			}
+		}
 
-		List<Customer> customers = customerService.findByValues(customerFilter, paginationConfiguration);
-		for (Customer customer : customers) {
-			result.add(new AccountHierarchyDto(customer));
+		qb.addPaginationConfiguration(paginationConfiguration);
+		List<Customer> customers = qb.getQuery(customerService.getEntityManager()).getResultList();
+
+		if (customers != null) {
+			for (Customer cust : customers) {
+				result.getCustomer().add(new CustomerDto(cust));
+			}
 		}
 
 		return result;
@@ -911,7 +978,7 @@ public class AccountHierarchyApi extends BaseApi {
 									try {
 										customerAccount.setDunningLevel(DunningLevelEnum.valueOf(customerAccountDto.getDunningLevel()));
 									} catch (IllegalArgumentException | NullPointerException e) {
-										log.warn("error while setting customerAccount.dunningLevel ",e);
+										log.warn("error while setting customerAccount.dunningLevel ", e);
 									}
 
 									customerAccount.setDateStatus(customerAccountDto.getDateStatus());
@@ -1017,12 +1084,12 @@ public class AccountHierarchyApi extends BaseApi {
 											try {
 												billingAccount.setPaymentMethod(PaymentMethodEnum.valueOf(billingAccountDto.getPaymentMethod()));
 											} catch (IllegalArgumentException | NullPointerException e) {
-												log.warn("error while setting billingAccount.paymentMethod",e);
+												log.warn("error while setting billingAccount.paymentMethod", e);
 											}
 											try {
 												billingAccount.setPaymentTerm(PaymentTermEnum.valueOf(billingAccountDto.getPaymentTerms()));
 											} catch (IllegalArgumentException | NullPointerException e) {
-												log.warn("error while setting billingAccount.paymentTerms ",e);
+												log.warn("error while setting billingAccount.paymentTerms ", e);
 											}
 
 											billingAccount.setNextInvoiceDate(billingAccountDto.getNextInvoiceDate());
@@ -1085,7 +1152,7 @@ public class AccountHierarchyApi extends BaseApi {
 													try {
 														userAccount.setStatus(AccountStatusEnum.valueOf(userAccountDto.getStatus()));
 													} catch (IllegalArgumentException | NullPointerException e) {
-														log.warn("error while setting userAccountDto.status ",e);
+														log.warn("error while setting userAccountDto.status ", e);
 													}
 
 													userAccount.setSubscriptionDate(userAccountDto.getSubscriptionDate());

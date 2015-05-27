@@ -46,7 +46,7 @@ public class AccountHierarchyRsImpl extends BaseRs implements AccountHierarchyRs
 		CustomerListResponse result = new CustomerListResponse();
 
 		try {
-			result.setCustomerDtoList(accountHierarchyApi.find(accountHierarchyDto, getCurrentUser()));
+			result.setCustomers(accountHierarchyApi.find(accountHierarchyDto, getCurrentUser()));
 		} catch (MeveoApiException e) {
 			result.getActionStatus().setErrorCode(e.getErrorCode());
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
