@@ -9,6 +9,7 @@ public class ImportFKNotFoundException extends RuntimeException {
     private Class fkEntity;
     private String fkId;
     private Map<String, Object> parameters;
+    @SuppressWarnings("rawtypes")
     private Class reason;
 
     @SuppressWarnings("rawtypes")

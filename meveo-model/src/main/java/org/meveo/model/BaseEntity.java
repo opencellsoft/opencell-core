@@ -44,7 +44,7 @@ public abstract class BaseEntity implements Serializable, IEntity, IVersionedEnt
 	@Id
 	@GeneratedValue(generator = "ID_GENERATOR")
 	@Column(name = "ID")
-	private Long id;
+	protected Long id;
 
 	@Version
 	@Column(name = "VERSION")

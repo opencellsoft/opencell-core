@@ -61,7 +61,8 @@
             </h:form>
         </p:panel>
 
-        <p:dialog id="exportParametersDialog" styleClass="confirm-dialog" header="#{messages['export.exportCriteria']}" severity="alert" widgetVar="exportParametersDialog" width="700" modal="true" closeOnEscape="true">
+        <p:dialog id="exportParametersDialog" styleClass="confirm-dialog" header="#{messages['export.exportCriteria']}" severity="alert" widgetVar="exportParametersDialog"
+            width="700" modal="true" closeOnEscape="true" dynamic="true">
 
             <hftl:decorateFormPanel formId="parameterForm">
                 <ui:define name="fields">
@@ -102,22 +103,63 @@
 
         <p:dialog id="exportResults" dynamic="true" header="#{messages['export.exportResults']}" modal="true" closeOnEscape="true" maximizable="true"
             widgetVar="exportResultsDialog" width="900">
+            <h:panelGroup id="exportSummary">
+                <h:form rendered="#{entityExportImportBean.exportImportFuture!=null}">
+                    <p:poll interval="5" update="exportSummary" stop="#{entityExportImportBean.exportImportFuture!=null and entityExportImportBean.exportImportFuture.isDone()}" />
 
-            <p:dataTable var="stat" value="#{entityExportImportBean.exportImportStats.summary.entrySet().toArray()}" paginator="true" rows="20"
-                paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}" rowsPerPageTemplate="20,30,50"
-                lazy="false" styleClass="custom-grid" rowIndexVar="rowIndex" rendered="#{entityExportImportBean.exportImportStats!=null}"
-                emptyMessage="#{messages['export.nothingExported']}">
-                <p:column headerText="#{messages['export.entityClass']}">
-                    <h:outputText value="#{stat.key.name}" />
-                </p:column>
-                <p:column headerText="#{messages['export.numberExported']}">
-                    <h:outputText value="#{stat.value}" />
-                </p:column>
-                <p:column headerText="#{messages['export.numberDeleted']}" rendered="#{! entityExportImportBean.exportImportStats.deleteSummary.isEmpty()}">
-                    <h:outputText value="#{entityExportImportBean.exportImportStats.getDeleteCount(stat.key)}" />
-                </p:column>
-            </p:dataTable>
+                    <h:panelGroup rendered="#{entityExportImportBean.exportImportFuture!=null and !entityExportImportBean.exportImportFuture.isDone()}">
 
+                        <div class="ui-messages ui-widget">
+                            <div class="ui-messages-warn ui-corner-all">
+                                <span class="ui-messages-warn-icon"></span>
+                                <ul>
+                                    <li><h:outputText value="#{messages['export.export.inProgress2']}" styleClass="ui-messages-warn-summary" /></li>
+                                </ul>
+                            </div>
+                        </div>
+
+                    </h:panelGroup>
+
+                    <h:panelGroup rendered="#{entityExportImportBean.exportImportFuture!=null and entityExportImportBean.exportImportFuture.isDone()}">
+
+                        <h:panelGroup rendered="#{entityExportImportBean.exportImportFuture.get().exception!=null}">
+                            <div class="ui-messages ui-widget">
+                                <div class="ui-messages-error ui-corner-all">
+                                    <span class="ui-messages-error-icon"></span>
+                                    <ul>
+                                        <li><h:outputText value="#{messages['export.exportFailed.partial']}" styleClass="ui-messages-error-summary" /></li>
+                                        <li><h:outputText value="&amp;nbsp;" escape="false" /></li>
+                                        <li><h:outputText value="#{entityExportImportBean.exportImportFuture.get().exception.message}" /></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </h:panelGroup>
+                        <h:panelGroup rendered="#{entityExportImportBean.exportImportFuture.get().exception==null}">
+                            <div class="ui-messages ui-widget">
+                                <div class="ui-messages-info ui-corner-all">
+                                    <span class="ui-messages-info-icon"></span>
+                                    <ul>
+                                        <li><h:outputText value="#{messages['export.exported']}" styleClass="ui-messages-info-summary" /></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </h:panelGroup>
+                        <p:dataTable var="stat" value="#{entityExportImportBean.exportImportFuture.get().summary.entrySet().toArray()}" paginator="true" rows="20"
+                            paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
+                            rowsPerPageTemplate="20,30,50" lazy="false" styleClass="custom-grid" rowIndexVar="rowIndex" emptyMessage="#{messages['export.nothingExported']}">
+                            <p:column headerText="#{messages['export.entityClass']}">
+                                <h:outputText value="#{stat.key.name}" />
+                            </p:column>
+                            <p:column headerText="#{messages['export.numberExported']}">
+                                <h:outputText value="#{stat.value}" />
+                            </p:column>
+                            <p:column headerText="#{messages['export.numberDeleted']}" rendered="#{! entityExportImportBean.exportImportFuture.get().deleteSummary.isEmpty()}">
+                                <h:outputText value="#{entityExportImportBean.exportImportFuture.get().getDeleteCount(stat.key)}" />
+                            </p:column>
+                        </p:dataTable>
+                    </h:panelGroup>
+                </h:form>
+            </h:panelGroup>
         </p:dialog>
 
     </ui:define>

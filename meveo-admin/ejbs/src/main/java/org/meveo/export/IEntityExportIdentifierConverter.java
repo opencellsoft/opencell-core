@@ -195,8 +195,8 @@ public class IEntityExportIdentifierConverter implements Converter {
                 if ("id".equals(attrName)) {
                     continue;
 
-                    // Ignore class attribute
-                } else if ("class".equals(attrName)) {
+                    // Ignore system attributes
+                } else if ("class".equals(attrName) || EntityExportImportService.REFERENCE_ID_ATTRIBUTE.equals(attrName)) {
                     continue;
 
                     // Look up a provider by code or force it to a value provided

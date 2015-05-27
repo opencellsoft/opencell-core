@@ -98,6 +98,6 @@ public class TradingCurrency extends AuditableEntity {
 
     @Override
     public String toString() {
-        return String.format("TradingCurrency [currency=%s, id=%s]", currency, getId());
+        return String.format("TradingCurrency [currency=%s, id=%s]", currency, id);
     }
 }

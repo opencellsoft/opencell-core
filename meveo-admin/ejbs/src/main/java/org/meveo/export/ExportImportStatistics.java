@@ -39,6 +39,11 @@ public class ExportImportStatistics {
      */
     private Map<String, Collection<String>> fieldsNotImported = new HashMap<String, Collection<String>>();
 
+    /**
+     * Occured exception
+     */
+    private Throwable exception;
+
     @SuppressWarnings("rawtypes")
     public Map<Class, Integer> getSummary() {
         return summary;
@@ -148,7 +153,7 @@ public class ExportImportStatistics {
 
         if (fieldsNotImported.containsKey(exportTemplateName)) {
             fieldsNotImported.get(exportTemplateName).addAll(fields);
-            
+
         } else {
             fieldsNotImported.put(exportTemplateName, fields);
         }
@@ -156,5 +161,13 @@ public class ExportImportStatistics {
 
     public Map<String, Collection<String>> getFieldsNotImported() {
         return fieldsNotImported;
+    }
+
+    public Throwable getException() {
+        return exception;
+    }
+
+    public void setException(Throwable exception) {
+        this.exception = exception;
     }
 }

@@ -7,6 +7,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.concurrent.Future;
 
 import javax.enterprise.context.Conversation;
 import javax.faces.bean.ViewScoped;
@@ -51,7 +52,7 @@ public class EntityExportImportBean implements Serializable {
 
     @Inject
     protected Conversation conversation;
-    
+
     @Inject
     @CurrentProvider
     private Provider provider;
@@ -73,11 +74,7 @@ public class EntityExportImportBean implements Serializable {
     @SuppressWarnings("rawtypes")
     protected LazyDataModel exportTemplates;
 
-    private ExportImportStatistics exportImportStats;
-
-    public ExportImportStatistics getExportImportStats() {
-        return exportImportStats;
-    }
+    private Future<ExportImportStatistics> exportImportFuture;
 
     public boolean isRequireFK() {
         return requireFK;
@@ -248,20 +245,22 @@ public class EntityExportImportBean implements Serializable {
      * @param exportTemplate Export template
      */
     public void export(ExportTemplate exportTemplate) {
-    	Map<String, Object> parameters = new HashMap<String, Object>();
-    	parameters.put("provider", provider);
+
+        exportImportFuture = null;
+        Map<String, Object> parameters = new HashMap<String, Object>();
+        parameters.put("provider", provider);
 
         try {
-            exportImportStats = entityExportImportService.exportEntities(exportTemplate, parameters);
+            exportImportFuture = entityExportImportService.exportEntities(exportTemplate, parameters);
             messages.info(new BundleKey("messages", "export.exported"), exportTemplate.getName());
 
         } catch (Exception e) {
-            exportImportStats = null;
+            exportImportFuture = null;
             log.error("Failed to export entities for {} template", selectedExportTemplate, e);
             messages.info(new BundleKey("messages", "export.exportFailed"), exportTemplate.getName(), e.getMessage() == null ? e.getClass().getSimpleName() : e.getMessage());
         }
 
-        exportParameters.clear();
+        exportParameters = new HashMap<String, Object>();
 
     }
 
@@ -271,32 +270,34 @@ public class EntityExportImportBean implements Serializable {
      * @param exportTemplate Export template
      */
     public void export() {
-		if (exportParameters.get("provider") == null) {
-			exportParameters.put("provider", provider);
-		}
-    	
+
+        exportImportFuture = null;
+
+        if (exportParameters.get("provider") == null) {
+            exportParameters.put("provider", provider);
+        }
+
         try {
 
-            exportImportStats = entityExportImportService.exportEntities(selectedExportTemplate, exportParameters);
+            exportImportFuture = entityExportImportService.exportEntities(selectedExportTemplate, exportParameters);
             messages.info(new BundleKey("messages", "export.exported"), selectedExportTemplate.getName());
 
         } catch (Exception e) {
-            exportImportStats = null;
+            exportImportFuture = null;
             log.error("Failed to export entities for {} template with parameters {}", selectedExportTemplate, exportParameters, e);
             messages.info(new BundleKey("messages", "export.exportFailed"), selectedExportTemplate.getName(),
                 e.getMessage() == null ? e.getClass().getSimpleName() : e.getMessage());
         }
 
-        exportParameters.clear();
+        exportParameters = new HashMap<String, Object>();
     }
 
     public void uploadImportFile(FileUploadEvent event) {
-        exportImportStats = null;
+        exportImportFuture = null;
         if (event.getFile() != null) {
             try {
-                log.error("Provider to force is " + forceToProvider);
-                exportImportStats = entityExportImportService.importEntities(event.getFile().getInputstream(), false, !requireFK, forceToProvider);
-                messages.info(new BundleKey("messages", "export.imported"), event.getFile().getFileName());
+                exportImportFuture = entityExportImportService.importEntities(event.getFile().getInputstream(), event.getFile().getFileName(), false, !requireFK, forceToProvider);
+                messages.info(new BundleKey("messages", "export.import.inProgress"), event.getFile().getFileName());
 
             } catch (Exception e) {
                 log.error("Failed to import file " + event.getFile().getFileName(), e);
@@ -324,5 +325,9 @@ public class EntityExportImportBean implements Serializable {
 
     public void preRenderView() {
         beginConversation();
+    }
+
+    public Future<ExportImportStatistics> getExportImportFuture() {
+        return exportImportFuture;
     }
 }
