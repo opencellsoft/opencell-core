@@ -8,6 +8,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
+import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.payments.CustomerAccount;
 
 @XmlType(name = "CustomerAccount")
@@ -86,6 +87,14 @@ public class CustomerAccountDto extends AccountDto {
 
 		mandateIdentification = e.getMandateIdentification();
 		mandateDate = e.getMandateDate();
+		
+		if (e.getBillingAccounts() != null) {
+			billingAccounts = new BillingAccountsDto();
+
+			for (BillingAccount ba : e.getBillingAccounts()) {
+				billingAccounts.getBillingAccount().add(new BillingAccountDto(ba));
+			}
+		}
 	}
 
 	public String getStatus() {

@@ -599,7 +599,7 @@ public class AccountWsImpl extends BaseWs implements AccountWs {
 		CustomerListResponse result = new CustomerListResponse();
 
 		try {
-			result.setCustomerDtoList(accountHierarchyApi.find(postData, getCurrentUser()));
+			result.setCustomers(accountHierarchyApi.find(postData, getCurrentUser()));
 		} catch (MeveoApiException e) {
 			result.getActionStatus().setErrorCode(e.getErrorCode());
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);

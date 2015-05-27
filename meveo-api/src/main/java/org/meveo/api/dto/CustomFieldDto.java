@@ -8,6 +8,8 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.meveo.model.crm.CustomFieldInstance;
+
 @XmlRootElement(name = "CustomField")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CustomFieldDto {
@@ -29,6 +31,18 @@ public class CustomFieldDto {
 
 	@XmlElement
 	protected Double doubleValue;
+	
+	public CustomFieldDto() {
+	}
+
+	public CustomFieldDto(CustomFieldInstance cfi) {
+		code = cfi.getCode();
+		description = cfi.getDescription();
+		stringValue = cfi.getStringValue();
+		dateValue = cfi.getDateValue();
+		longValue = cfi.getLongValue();
+		doubleValue = cfi.getDoubleValue();
+	}
 
 	public String getCode() {
 		return code;

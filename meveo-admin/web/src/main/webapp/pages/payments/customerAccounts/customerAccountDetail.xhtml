@@ -261,7 +261,7 @@
 									</hf:formButtons>
 							</hf:formPanel>
 						</p:tab>
-						<p:tab id="ops" title="#{messages['customerAccount.operations']}">
+						<p:tab id="ops" title="#{messages['customerAccount.operations']}" rendered="#{not empty customerAccountBean.entity.id}">
 							<hf:searchPanel renderNewButton="false"
 								label="#{messages['accountOperation.search']}" columns="1"
 								backingBean="#{accountOperationBean}" ajax="true"

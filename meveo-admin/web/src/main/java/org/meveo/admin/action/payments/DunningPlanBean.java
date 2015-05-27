@@ -102,6 +102,20 @@ public class DunningPlanBean extends BaseBean<DunningPlan> {
 		this.actionPlanItem = new ActionPlanItem();
 	}
 
+	@Override
+	public String saveOrUpdate(boolean killConversation, String objectName,
+			Long objectId) throws BusinessException {
+		super.saveOrUpdate(killConversation, objectName, objectId);
+		return "/pages/payments/dunning/dunningPlanDetail?objectId="+entity.getId()+"&faces-redirect=true&includeViewParams=true";
+	}
+
+	@Override
+	public String saveOrUpdate(boolean killConversation)
+			throws BusinessException {
+		super.saveOrUpdate(killConversation);
+		return "/pages/payments/dunning/dunningPlanDetail?objectId="+entity.getId()+"&faces-redirect=true&includeViewParams=true";
+	}
+
 	public void saveDunningPlanTransition() {
 
 		if (dunningPlanTransition.getId() != null) {

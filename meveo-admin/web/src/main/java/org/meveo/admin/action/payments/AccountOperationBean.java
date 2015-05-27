@@ -215,7 +215,7 @@ public class AccountOperationBean extends BaseBean<AccountOperation> {
 		return "/pages/payments/customerAccounts/customerAccountDetail.xhtml?objectId="
 				+ partialMatchingOccSelected.getAccountOperation()
 						.getCustomerAccount().getId()
-				+ "&edit=false&tab=ops&faces-redirect=true";
+				+ "&edit=true&tab=ops&faces-redirect=true";
 	}
 
 	/**
@@ -266,7 +266,7 @@ public class AccountOperationBean extends BaseBean<AccountOperation> {
 		}
 
 		return "/pages/payments/customerAccounts/customerAccountDetail.xhtml?objectId="
-				+ customerAccountId + "&edit=false&tab=ops&faces-redirect=true";
+				+ customerAccountId + "&edit=true&tab=ops&faces-redirect=true";
 	}
 	
 	public boolean isSelectedOperationIncluded(){

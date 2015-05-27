@@ -16,7 +16,6 @@
  */
 package org.meveo.service.crm.impl;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.ejb.Stateless;
@@ -24,9 +23,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
-import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.commons.utils.QueryBuilder;
-import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.crm.CustomerBrand;
@@ -73,72 +70,7 @@ public class CustomerService extends PersistenceService<Customer> {
 		} catch (NoResultException e) {
 			return null;
 		}
-	}
-
-	public List<Customer> findByValues(Customer c, PaginationConfiguration paginationConfiguration) {
-		return findByValues(getEntityManager(), c, paginationConfiguration);
-	}
-
-	@SuppressWarnings("unchecked")
-	public List<Customer> findByValues(EntityManager em, Customer c, PaginationConfiguration paginationConfiguration) {
-		// TODO: edward move this method in PersistenceService, use reflection
-		// to determine the filters with fields that are set
-		List<Customer> result = new ArrayList<Customer>();
-		QueryBuilder qb = new QueryBuilder(Customer.class, "c");
-
-		if (c.getAddress() != null) {
-			if (!StringUtils.isBlank(c.getAddress().getAddress1())) {
-				qb.addCriterion("c.address.address1", "=", c.getAddress().getAddress1(), true);
-			}
-			if (!StringUtils.isBlank(c.getAddress().getAddress2())) {
-				qb.addCriterion("c.address.address2", "=", c.getAddress().getAddress2(), true);
-			}
-			if (!StringUtils.isBlank(c.getAddress().getAddress3())) {
-				qb.addCriterion("c.address.address3", "=", c.getAddress().getAddress3(), true);
-			}
-			if (!StringUtils.isBlank(c.getAddress().getCity())) {
-				qb.addCriterion("c.address.city", "=", c.getAddress().getCity(), true);
-			}
-			if (!StringUtils.isBlank(c.getAddress().getCountry())) {
-				qb.addCriterion("c.address.country", "=", c.getAddress().getCountry(), true);
-			}
-			if (!StringUtils.isBlank(c.getAddress().getState())) {
-				qb.addCriterion("c.address.state", "=", c.getAddress().getState(), true);
-			}
-			if (!StringUtils.isBlank(c.getAddress().getZipCode())) {
-				qb.addCriterion("c.address.zipCode", "=", c.getAddress().getZipCode(), true);
-			}
-		}
-
-		if (c.getSeller() != null) {
-			qb.addCriterionEntity("c.seller", c.getSeller());
-		}
-
-		if (c.getCustomerCategory() != null && !StringUtils.isBlank(c.getCustomerCategory().getCode())) {
-			qb.addCriterion("c.customerCategory.code", "=", c.getCustomerCategory().getCode(), false);
-		}
-		// if (!StringUtils.isBlank(c.getContactInformation().getEmail())) {
-		// qb.addCriterion("c.email", "=", c.getContactInformation()
-		// .getEmail(), true);
-		// }
-		if (!StringUtils.isBlank(c.getCode())) {
-			qb.addCriterion("c.code", "=", c.getCode(), false);
-		}
-		if (c.getName() != null) {
-			if (!StringUtils.isBlank(c.getName().getFirstName())) {
-				qb.addCriterion("c.name.firstName", "=", c.getName().getFirstName(), true);
-			}
-			if (!StringUtils.isBlank(c.getName().getLastName())) {
-				qb.addCriterion("c.name.lastName", "=", c.getName().getLastName(), true);
-			}
-		}
-
-		qb.addCriterionEntity("c.provider", c.getProvider());
-		qb.addPaginationConfiguration(paginationConfiguration);
-		result = qb.getQuery(em).getResultList();
-
-		return result;
-	}
+	}	
 
 	@SuppressWarnings("unchecked")
 	public List<Customer> filter(String customerCode, CustomerCategory customerCategory, Seller seller,
