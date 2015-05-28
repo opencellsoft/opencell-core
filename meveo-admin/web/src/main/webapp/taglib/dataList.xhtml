@@ -106,7 +106,7 @@
 		<h:form id="#{formId}" prependId="false">
 
 			<p:dataTable id="datatable_#{resultsId}" var="entity"  scrollable="#{scrollable}"
-				value="#{dataModel}" paginator="true" rows="10" editable="#{editable}" editMode="#{editMode}"  widgetVar="cellEntity"
+				value="#{dataModel}" paginator="true" rows="10" editable="#{editable}" editMode="#{editMode}"  widgetVar="cellEntity_#{resultsId}"
 				selection="#{backingBean.selectedEntities}" sortBy="#{'sortBy'}" sortField="#{sortBy}" sortOrder="#{sortOrder}"
 				paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
 				rowsPerPageTemplate="#{rowsPerPage}" lazy="true" resizableColumns="true"
