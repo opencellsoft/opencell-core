@@ -1,5 +1,8 @@
 package org.meveo.api.dto.job;
 
+
+
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -9,9 +12,6 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.BaseDto;
-import org.meveo.api.dto.CustomFieldDto;
-import org.meveo.api.dto.CustomFieldsDto;
-import org.meveo.model.crm.CustomFieldInstance;
 import org.meveo.model.jobs.TimerEntity;
 
  
@@ -21,7 +21,7 @@ public class TimerEntityDto extends BaseDto {
 
 	private static final long serialVersionUID = 5166093858617578774L;
  
-
+	
 	@XmlElement(required = true)
 	private String jobCategory; 
 	
@@ -59,16 +59,14 @@ public class TimerEntityDto extends BaseDto {
 	private String parameter;
 	
 	@XmlElement(required = true)
-	private boolean active = false;
-	
-	@XmlElement(required = false)
-	private CustomFieldsDto customFields = new CustomFieldsDto();
-	
+	private boolean active = false; 
+	  
+	private Map<String,String> customFields = new HashMap<String,String>();
 	
 	public TimerEntityDto() {	
-	}
-	
-	public TimerEntityDto(TimerEntity t) {
+	} 
+	 
+	public TimerEntityDto(TimerEntity t) { 
 		name = t.getName();
 		jobName=t.getJobName();
 		year=t.getYear();
@@ -84,21 +82,7 @@ public class TimerEntityDto extends BaseDto {
 		if(t.getJobCategoryEnum()!=null){
 			jobCategory=t.getJobCategoryEnum().name();
 			}
-	
-		if (t.getCustomFields() != null) {
-			for (Map.Entry<String, CustomFieldInstance> entry : t.getCustomFields().entrySet()) {
-				CustomFieldDto cfDto = new CustomFieldDto();
-				cfDto.setCode(entry.getValue().getCode());
-				cfDto.setDateValue(entry.getValue().getDateValue());
-				cfDto.setDescription(entry.getValue().getDescription());
-				cfDto.setDoubleValue(entry.getValue().getDoubleValue());
-				cfDto.setLongValue(entry.getValue().getLongValue());
-				cfDto.setStringValue(entry.getValue().getStringValue());
-				customFields.getCustomField().add(cfDto);
-			}
 		}
-	}
-
 	
 	public String getName() {
 		return name;
@@ -216,18 +200,7 @@ public class TimerEntityDto extends BaseDto {
 	public void setJobCategory(String jobCategory) {
 		this.jobCategory = jobCategory;
 	}
-
-
-
-	public CustomFieldsDto getCustomFields() {
-		return customFields;
-	}
-
-
-
-	public void setCustomFields(CustomFieldsDto customFields) {
-		this.customFields = customFields;
-	}
+ 
 
 	public String getFollowingTimer() {
 		return followingTimer;
@@ -254,12 +227,25 @@ public class TimerEntityDto extends BaseDto {
 	public void setActive(boolean active) {
 		this.active = active;
 	}
+	
+  
+	 
+
+
+	public Map<String, String> getCustomFields() {
+		return customFields;
+	}
+
+	public void setCustomFields(Map<String, String> customFields) {
+		this.customFields = customFields;
+	}
 
 	@Override
 	public String toString() {
 		return "TimerEntityDto [name=" + name + ", jobName=" + jobName + ", year=" + year + ", month=" + month + ", dayOfMonth="
 				+ dayOfMonth + ", dayOfWeek=" + dayOfWeek + ", hour=" + hour + ", minute=" + minute + ", second="
-				+ second + ", jobCategory=" + jobCategory + ", active=" + active +",followingTimer=" + followingTimer +",parameter =" + parameter  +",customFields=" + customFields + "]";
+				+ second + ", jobCategory=" + jobCategory + ", active=" + active +",followingTimer=" + followingTimer +",parameter =" + parameter  +",customFields=" + customFields + ",customFields="
+				+ customFields + "]";
 	}
 
 }
