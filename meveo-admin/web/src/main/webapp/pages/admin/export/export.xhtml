@@ -47,12 +47,8 @@
                         <h:outputText value="#{templateInfo.value.classesToExportAsFullTxt}" />
                     </p:column>
                     <p:column style="width: 100px;" headerText="#{messages['commons.actions']}">
-                        <p:tooltip for="exportLink" value="#{messages['export.export']}" showEffect="slide" hideEffect="slide" rendered="#{! templateInfo.value.hasParameters}" />
-                        <p:commandButton id="exportLink" icon="ui-icon-play" action="#{entityExportImportBean.export(templateInfo.value)}"
-                            update=":searchForm:messages, :exportResults" oncomplete="PF('exportResultsDialog').show()" rendered="#{! templateInfo.value.hasParameters}" />
                         <p:tooltip for="exportLinkDialog" value="#{messages['export.export']}" showEffect="slide" hideEffect="slide" rendered="#{ templateInfo.value.hasParameters}" />
-                        <p:commandButton id="exportLinkDialog" icon="ui-icon-play" update=":exportParametersDialog" oncomplete="PF('exportParametersDialog').show()"
-                            rendered="#{ templateInfo.value.hasParameters}">
+                        <p:commandButton id="exportLinkDialog" icon="ui-icon-play" update=":exportParametersDialog" oncomplete="PF('exportParametersDialog').show()">
                             <f:setPropertyActionListener target="#{entityExportImportBean.selectedExportTemplate}" value="#{templateInfo.value}" />
                         </p:commandButton>
                     </p:column>
@@ -92,6 +88,9 @@
                         rendered="#{entityExportImportBean.selectedExportTemplate.canDeleteAfterExport}">
                         <p:selectBooleanCheckbox id="param_delete" value="#{entityExportImportBean.exportParameters['delete']}" />
                     </hftl:decorateFormField>
+                    <hftl:decorateFormField fieldId="param_zip" label="#{messages['export.zip']}">
+                        <p:selectBooleanCheckbox id="param_zip" value="#{entityExportImportBean.exportParameters['zip']}" />
+                    </hftl:decorateFormField>                    
                 </ui:define>
                 <ui:define name="buttons">
                     <p:commandButton value="#{messages['export.export']}" action="#{entityExportImportBean.export()}"

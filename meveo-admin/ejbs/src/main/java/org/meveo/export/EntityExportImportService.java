@@ -1,10 +1,13 @@
 package org.meveo.export;
 
+import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.io.Serializable;
 import java.io.Writer;
 import java.lang.reflect.Field;
@@ -22,6 +25,9 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.concurrent.Future;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
+import java.util.zip.ZipOutputStream;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.AsyncResult;
@@ -198,24 +204,35 @@ public class EntityExportImportService implements Serializable {
 
         ExportImportStatistics exportStats = new ExportImportStatistics();
 
-        FileWriter fileWriter = null;
-        String filename = param.getProperty("providers.rootDir", "/tmp/meveo/");
-        if (!filename.endsWith(File.separator)) {
-            filename = filename + File.separator;
+        String shortFilename = exportTemplate.getName() + DateUtils.formatDateWithPattern(new Date(), "_yyyy-MM-dd_HH-mm-ss");
+        boolean asZip = (parameters.get("zip") != null && ((boolean) parameters.get("zip")));
+
+        String path = param.getProperty("providers.rootDir", "/tmp/meveo/");
+        if (!path.endsWith(File.separator)) {
+            path = path + File.separator;
         }
 
         if (parameters.get("provider") != null) {
-            filename = filename + ((Provider) parameters.get("provider")).getCode() + File.separator;
+            path = path + ((Provider) parameters.get("provider")).getCode() + File.separator;
         }
 
-        filename = filename + "exports";
+        path = path + "exports";
+        String filename = path + File.separator + shortFilename + (asZip ? ".zip" : ".xml");
+        Writer fileWriter = null;
+        ZipOutputStream zos = null;
         try {
-            FileUtils.forceMkdir(new File(filename));
-            filename = filename + File.separator + exportTemplate.getName() + DateUtils.formatDateWithPattern(new Date(), "_yyyy-MM-dd_HH-mm-ss") + ".xml";
-
             log.info("Exporting data to a file {}", filename);
+            FileUtils.forceMkdir(new File(path));
 
-            fileWriter = new FileWriter(filename);
+            if (asZip) {
+                zos = new ZipOutputStream(new BufferedOutputStream(new FileOutputStream(filename)));
+                zos.putNextEntry(new ZipEntry(shortFilename + ".xml"));
+                fileWriter = new OutputStreamWriter(zos);
+
+            } else {
+                fileWriter = new FileWriter(filename);
+            }
+
             HierarchicalStreamWriter writer = new EntityExportWriter(fileWriter);
             // Open root node
             writer.startNode("meveoExport");
@@ -231,10 +248,15 @@ public class EntityExportImportService implements Serializable {
 
             // Close root node
             writer.endNode();
+            writer.flush();
+            if (asZip) {
+                zos.closeEntry();
+            }
             writer.close();
 
         } catch (Exception e) {
             log.error("Failed to export data to a file {}", filename, e);
+            exportStats.setException(e);
 
         } finally {
             if (fileWriter != null) {
@@ -381,69 +403,83 @@ public class EntityExportImportService implements Serializable {
     public Future<ExportImportStatistics> importEntities(InputStream inputStream, String filename, boolean preserveId, boolean ignoreNotFoundFK, Provider forceToProvider) {
 
         log.info("Importing file {} and forcing to provider {}", filename, forceToProvider);
-
-        if (forceToProvider != null) {
-            forceToProvider = getEntityManagerForImport().createQuery("select p from Provider p where p.code=:code", Provider.class)
-                .setParameter("code", forceToProvider.getCode()).getSingleResult();
-        }
-
         ExportImportStatistics importStatsTotal = new ExportImportStatistics();
 
-        XStream xstream = new XStream();
-        xstream.alias("exportInfo", ExportInfo.class);
-        xstream.alias("exportTemplate", ExportTemplate.class);
-        xstream.useAttributeFor(ExportTemplate.class, "name");
-        xstream.useAttributeFor(ExportTemplate.class, "entityToExport");
-        xstream.useAttributeFor(ExportTemplate.class, "canDeleteAfterExport");
+        try {
 
-        HierarchicalStreamReader reader = new XppReader(new InputStreamReader(inputStream));
+            // Handle zip file
+            ZipInputStream zis = null;
+            if (filename.toLowerCase().endsWith(".zip")) {
+                zis = new ZipInputStream(inputStream);
+                zis.getNextEntry();
+            }
 
-        // Determine if it is a new or old format
-        String rootNode = reader.getNodeName();
+            if (forceToProvider != null) {
+                forceToProvider = getEntityManagerForImport().createQuery("select p from Provider p where p.code=:code", Provider.class)
+                    .setParameter("code", forceToProvider.getCode()).getSingleResult();
+            }
 
-        // If it is a new format
-        if (rootNode.equals("meveoExport")) {
-            log.debug("Importing a file from a {} version export", reader.getAttribute("version"));
+            XStream xstream = new XStream();
+            xstream.alias("exportInfo", ExportInfo.class);
+            xstream.alias("exportTemplate", ExportTemplate.class);
+            xstream.useAttributeFor(ExportTemplate.class, "name");
+            xstream.useAttributeFor(ExportTemplate.class, "entityToExport");
+            xstream.useAttributeFor(ExportTemplate.class, "canDeleteAfterExport");
 
-            while (reader.hasMoreChildren()) {
-                reader.moveDown();
-                String nodeName = reader.getNodeName();
-                if (nodeName.equals("exportTemplate")) {
-                    ExportTemplate importTemplate = (ExportTemplate) xstream.unmarshal(reader);
-                    reader.moveUp();
+            HierarchicalStreamReader reader = new XppReader(new InputStreamReader(zis != null ? zis : inputStream));
+
+            // Determine if it is a new or old format
+            String rootNode = reader.getNodeName();
+
+            // If it is a new format
+            if (rootNode.equals("meveoExport")) {
+                log.debug("Importing a file from a {} version export", reader.getAttribute("version"));
+
+                while (reader.hasMoreChildren()) {
                     reader.moveDown();
-                    nodeName = reader.getNodeName();
-                    if (nodeName.equals("data")) {
+                    String nodeName = reader.getNodeName();
+                    if (nodeName.equals("exportTemplate")) {
+                        ExportTemplate importTemplate = (ExportTemplate) xstream.unmarshal(reader);
+                        reader.moveUp();
+                        reader.moveDown();
+                        nodeName = reader.getNodeName();
+                        if (nodeName.equals("data")) {
 
-                        try {
-                            ExportImportStatistics importStats = importEntities(importTemplate, reader, preserveId, ignoreNotFoundFK, forceToProvider);
-                            importStatsTotal.mergeStatistics(importStats);
-                        } catch (Exception e) {
-                            importStatsTotal.setException(e);
-                            break;
+                            try {
+                                ExportImportStatistics importStats = importEntities(importTemplate, reader, preserveId, ignoreNotFoundFK, forceToProvider);
+                                importStatsTotal.mergeStatistics(importStats);
+                            } catch (Exception e) {
+                                importStatsTotal.setException(e);
+                                break;
+                            }
+
                         }
-
+                        reader.moveUp();
                     }
+                }
+
+                // If it is an old, 4.0.3 format
+            } else {
+
+                log.debug("Importing a file from a 4.0.3 or older version export");
+
+                while (reader.hasMoreChildren()) {
+                    reader.moveDown();
+                    ExportInfo exportInfo = (ExportInfo) xstream.unmarshal(reader);
+                    ExportImportStatistics importStats = entityExportImportService.importEntities403FileVersion(exportInfo.exportTemplate, exportInfo.serializedData, preserveId,
+                        ignoreNotFoundFK, forceToProvider);
+                    importStatsTotal.mergeStatistics(importStats);
                     reader.moveUp();
                 }
             }
 
-            // If it is an old, 4.0.3 format
-        } else {
+            log.info("Finished importing file {} ", filename);
 
-            log.debug("Importing a file from a 4.0.3 or older version export");
-
-            while (reader.hasMoreChildren()) {
-                reader.moveDown();
-                ExportInfo exportInfo = (ExportInfo) xstream.unmarshal(reader);
-                ExportImportStatistics importStats = entityExportImportService.importEntities403FileVersion(exportInfo.exportTemplate, exportInfo.serializedData, preserveId,
-                    ignoreNotFoundFK, forceToProvider);
-                importStatsTotal.mergeStatistics(importStats);
-                reader.moveUp();
-            }
+        } catch (Exception e) {
+            log.error("Failed to import a file {} ", filename, e);
+            importStatsTotal.setException(e);
         }
 
-        log.info("Finished importing file {} ", filename);
         return new AsyncResult<ExportImportStatistics>(importStatsTotal);
     }
 

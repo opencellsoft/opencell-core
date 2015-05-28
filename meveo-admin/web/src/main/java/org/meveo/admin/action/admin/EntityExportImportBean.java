@@ -66,7 +66,7 @@ public class EntityExportImportBean implements Serializable {
     private ExportTemplate selectedExportTemplate;
 
     /** Entity selection for export search criteria. */
-    protected Map<String, Object> exportParameters = new HashMap<String, Object>();
+    protected Map<String, Object> exportParameters = initExportParameters();
 
     /**
      * Datamodel for lazy dataloading in export templates.
@@ -289,7 +289,7 @@ public class EntityExportImportBean implements Serializable {
                 e.getMessage() == null ? e.getClass().getSimpleName() : e.getMessage());
         }
 
-        exportParameters = new HashMap<String, Object>();
+        exportParameters = initExportParameters();
     }
 
     public void uploadImportFile(FileUploadEvent event) {
@@ -329,5 +329,11 @@ public class EntityExportImportBean implements Serializable {
 
     public Future<ExportImportStatistics> getExportImportFuture() {
         return exportImportFuture;
+    }
+
+    private HashMap<String, Object> initExportParameters() {
+        HashMap<String, Object> params = new HashMap<String, Object>();
+        params.put("zip", true);
+        return params;
     }
 }
