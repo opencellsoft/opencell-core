@@ -1232,14 +1232,15 @@ public class AccountHierarchyApi extends BaseApi {
 													if (StringUtils.isBlank(userAccountDto.getCode())) {
 														log.warn("code is null={}", userAccountDto);
 														continue;
-													}
-													if (StringUtils.isBlank(userAccountDto.getDescription())) {
-														missingParameters.add("userAccountDto.description");
-														throw new MissingParameterException(getMissingParametersExceptionMessage());
-													}
+													}													
 
 													UserAccount userAccount = userAccountService.findByCode(userAccountDto.getCode(), provider);
 													if (userAccount == null) {
+														if (StringUtils.isBlank(userAccountDto.getDescription())) {
+															missingParameters.add("userAccountDto.description");
+															throw new MissingParameterException(getMissingParametersExceptionMessage());
+														}
+														
 														userAccount = new UserAccount();
 														userAccount.setStatus(AccountStatusEnum.ACTIVE);
 														userAccount.setCode(userAccountDto.getCode());
