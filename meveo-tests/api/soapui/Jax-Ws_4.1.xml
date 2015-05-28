@@ -24563,12 +24563,34 @@
    <soapenv:Body>
        <ws:create>
          <!--Optional:-->
-        <timer jobName="RatedTransactionsJob" name="RatedTransaction_787" followingTimer="" hour="*" minute="0" second="0" year="*" month="*" dayOfMonth="*" dayOfWeek="*">
+        <timer jobName="BillingRunJob" name="BR_787" followingTimer="" hour="*" minute="0" second="0" year="*" month="*" dayOfMonth="*" dayOfWeek="*">
            <jobCategory>invoicing</jobCategory>
             <!--Optional:-->
             <parameter></parameter>
             <active></active>
             <!--Optional:-->
+            <customFields>
+               <!--Zero or more repetitions:-->
+               <entry>
+                  <!--Optional:-->
+                  <key>BillingRunJob_billingCycle</key>
+                  <!--Optional:-->
+                  <value>BC1</value>
+               </entry>
+               <entry>
+                  <!--Optional:-->
+                  <key>BillingRunJob_invoiceDate</key>
+                  <!--Optional:-->
+                  <value>05-01-2015</value>
+               </entry>
+               <entry>
+                  <!--Optional:-->
+                  <key>BillingRunJob_lastTransactionDate</key>
+                  <!--Optional:-->
+                  <value>06-08-2015</value>
+               </entry>
+            </customFields>
+
          </timer>
       </ws:create>>
    </soapenv:Body>

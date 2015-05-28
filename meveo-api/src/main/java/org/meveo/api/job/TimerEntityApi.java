@@ -1,13 +1,18 @@
 package org.meveo.api.job;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
-import org.apache.commons.lang.StringUtils;
+import liquibase.exception.DateParseException;
+
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.BaseApi;
 import org.meveo.api.MeveoApiErrorCode;
@@ -15,11 +20,16 @@ import org.meveo.api.dto.job.TimerEntityDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
+import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.User;
+import org.meveo.model.crm.CustomFieldInstance;
 import org.meveo.model.crm.CustomFieldTemplate;
+import org.meveo.model.crm.CustomFieldTypeEnum;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.jobs.JobCategoryEnum;
 import org.meveo.model.jobs.TimerEntity;
+import org.meveo.model.shared.DateUtils;
+import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.meveo.service.job.Job;
 import org.meveo.service.job.TimerEntityService;
@@ -33,6 +43,9 @@ public class TimerEntityApi extends BaseApi {
 
 	@Inject
 	private TimerEntityService timerEntityService;
+	
+	@Inject
+	private CustomFieldInstanceService customFieldInstanceService;
 	
 	@Inject
 	private CustomFieldTemplateService customFieldTemplateService;
@@ -67,24 +80,24 @@ public class TimerEntityApi extends BaseApi {
 	            if (job.getCustomFields(currentUser) != null) {
 	              customFieldTemplates = customFieldTemplateService.findByJobName(postData.getJobName());
 	              if (customFieldTemplates != null && customFieldTemplates.size() != job.getCustomFields(currentUser).size()) {
-	                    for (CustomFieldTemplate cf : job.getCustomFields(currentUser)) {
-	                        if (!customFieldTemplates.contains(cf)) {
-	                            try {
-	                                customFieldTemplateService.create(cf);
-	                                customFieldTemplates.add(cf);
-	                            } catch (BusinessException e) {
-	                                log.error("Failed  to init custom fields",e);
-	                            }
-	                        }
-		                    }
-		                }
+                    for (CustomFieldTemplate cf : job.getCustomFields(currentUser)) {
+                        if (!customFieldTemplates.contains(cf)) {
+                            try {
+                                customFieldTemplateService.create(cf);
+                                customFieldTemplates.add(cf);
+                            } catch (BusinessException e) {
+                                log.error("Failed  to init custom fields",e);
+                            }}
+		                    }}
 	            			}
 						   }
-		   				}else{   
-						 throw new MeveoApiException(MeveoApiErrorCode.BUSINESS_API_EXCEPTION, "Invalid job name=" + postData.getJobName());
-						  }
-			
+						else{   
+						throw new MeveoApiException(MeveoApiErrorCode.BUSINESS_API_EXCEPTION, "Invalid job name=" + postData.getJobName());
+		   				}
+						  }	
 			TimerEntity timerEntity = new TimerEntity(); 
+			
+			
 			timerEntity.getTimerInfo().setUserId(currentUser.getId());
 			timerEntity.getTimerInfo().setActive(postData.isActive());
 			timerEntity.getTimerInfo().setParametres(postData.getParameter());
@@ -105,9 +118,49 @@ public class TimerEntityApi extends BaseApi {
 			timerEntity.setMonth(postData.getMonth());
 			timerEntity.setDayOfMonth(postData.getDayOfMonth());
 			timerEntity.setDayOfWeek(postData.getDayOfWeek());
-				
-	
 			timerEntityService.create(timerEntity, currentUser, provider);
+			  if (postData.getCustomFields() != null) {
+				  Job job = timerEntityService.getJobByName(postData.getJobName());
+				  if(job!=null){
+				  for (Map.Entry<String, String> entry : postData.getCustomFields().entrySet()) {
+					  if(!StringUtils.isBlank(entry.getKey()) &&!StringUtils.isBlank(entry.getValue())) {
+                            CustomFieldTemplate cf = customFieldTemplateService.findByCode(entry.getKey(), currentUser.getProvider());
+							if(job.getCustomFields(currentUser).contains(cf)){
+						    CustomFieldInstance cfi = new CustomFieldInstance();
+							cfi.setTimerEntity(timerEntity);
+							cfi.setActive(true);
+							cfi.setCode(cf.getCode()); 
+							cfi.setProvider(currentUser.getProvider());
+							try{
+						    if (cf.getFieldType() == CustomFieldTypeEnum.DATE) {
+						   SimpleDateFormat format=new SimpleDateFormat("dd-MM-yyyy");
+							try { 
+							 Date dateValue= format.parse(entry.getValue());
+							 cfi.setDateValue(dateValue); 
+							} catch (ParseException e) {
+							  throw new MeveoApiException(MeveoApiErrorCode.BUSINESS_API_EXCEPTION, " Custom field "+entry.getKey()+" must be have the pattern dd-MM-yyyy");
+					          } 
+						  } else if (cf.getFieldType() == CustomFieldTypeEnum.DOUBLE) {
+								  cfi.setDoubleValue(Double.valueOf(entry.getValue()));
+						  } else if (cf.getFieldType() == CustomFieldTypeEnum.LONG) {
+								  cfi.setLongValue(Long.valueOf(entry.getValue()));
+						  } else if (cf.getFieldType() == CustomFieldTypeEnum.STRING || cf.getFieldType() == CustomFieldTypeEnum.LIST) {
+								  cfi.setStringValue(entry.getValue());
+						  }
+						}catch (NumberFormatException e ){
+								 throw new MeveoApiException(MeveoApiErrorCode.BUSINESS_API_EXCEPTION, " Custom field "+entry.getKey()+" must be a number");   
+						} 
+							
+					      customFieldInstanceService.create(cfi, currentUser); 
+						}
+						else{
+						throw new MeveoApiException(MeveoApiErrorCode.BUSINESS_API_EXCEPTION, "No custom field template with code="+entry.getKey());
+						}
+							}
+						  }
+						  }
+								}
+			
 		} else {
 				
 			if (StringUtils.isBlank(postData.getJobName())) {
