@@ -14,6 +14,7 @@ import javax.inject.Inject;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.cache.NotificationCacheContainerProvider;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.event.monitoring.BusinessExceptionEvent;
 import org.meveo.event.qualifier.*;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.IEntity;
@@ -225,5 +226,9 @@ public class DefaultObserver {
        log.debug("Defaut observer : low balance on {} ", e.getCode());
        checkEvent(NotificationEventTypeEnum.LOW_BALANCE, e);
        
+   }
+   
+   public void businesException(@Observes  BusinessExceptionEvent bee){
+       log.info("Defaut observer : BusinessExceptionEvent {} ", bee);
    }
 }

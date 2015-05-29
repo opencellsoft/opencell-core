@@ -17,6 +17,11 @@
 package org.meveo.admin.exception;
 
 import javax.ejb.ApplicationException;
+import javax.naming.InitialContext;
+
+import org.meveo.commons.utils.ParamBean;
+import org.meveo.event.monitoring.CreateEventHelper;
+
 
 @ApplicationException(rollback = true)
 public class BusinessException extends Exception {
@@ -24,18 +29,32 @@ public class BusinessException extends Exception {
 
 	public BusinessException() {
 		super();
+		registerEvent();
 	}
 
 	public BusinessException(String message, Throwable cause) {
 		super(message, cause);
+		registerEvent();
 	}
 
 	public BusinessException(String message) {
 		super(message);
+		registerEvent();
 	}
 
 	public BusinessException(Throwable cause) {
 		super(cause);
+		registerEvent();
 	}
 
+	public void registerEvent(){
+		CreateEventHelper createEventHelper = null;
+		try {
+			InitialContext ic = new InitialContext();
+			createEventHelper = (CreateEventHelper) ic.lookup("java:global/"+ParamBean.getInstance().getProperty("meveo.moduleName", "meveo")+"/CreateEventHelper");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		createEventHelper.register(this);
+	}
 }
