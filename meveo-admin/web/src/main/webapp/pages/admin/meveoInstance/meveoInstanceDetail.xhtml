@@ -17,13 +17,9 @@
 			backingBean="#{userBean}"
 			updateField=":formPanel:meveoInstanceForm:userSelectedId"
 			selection="#{meveoInstanceBean.entity.user}"
-			searchField1Label="#{messages['meveoInstance.code']}"
-			searchField1="code"
-			searchField2Label="#{messages['meveoInstance.description']}"
-			searchField2="description"
-			column1Label="#{messages['meveoInstance.code']}" column1="code"
-			column2Label="#{messages['meveoInstance.description']}"
-			column2="description">
+			searchField1Label="#{messages['user.userName']}"
+			searchField1="userName"
+			column1Label="#{messages['user.userName']}" column1="userName">
 		</hftl:entityPopup>
 		<hftl:entityPopup id="searchCustomerPopup"
 			header="#{messages['meveoInstance.panel']}"
@@ -73,7 +69,7 @@
 			<hf:formField label="#{messages['meveoInstance.asVersion']}" field="asVersion" />
 			<hf:formField id="userSelectedId"
 							label="#{messages['meveoInstance.user']}"
-							field="user" valueLabelField="code" 
+							field="user" valueLabelField="userName" 
 							popup="true" popupId="searchUserPopup" />
 			<hf:formField id="customerSelectedId"
 							label="#{messages['meveoInstance.customer']}"
