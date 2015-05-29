@@ -1436,6 +1436,13 @@
 			</to-view-id>
 			<redirect />
 		</navigation-case>
+		
+		<navigation-case>
+			<from-outcome>meveoInstances</from-outcome>
+			<to-view-id>/pages/admin/meveoInstance/meveoInstances.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+		
 	</navigation-rule>
 
 	<navigation-rule>

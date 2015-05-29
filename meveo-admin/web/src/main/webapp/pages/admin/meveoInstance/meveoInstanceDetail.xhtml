@@ -1,0 +1,87 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html" xmlns:hftl="http://hftl.org"
+	xmlns:hf="http://java.sun.com/jsf/composite/tags"
+	xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
+
+	<ui:define name="navigation">
+		<ui:include src="/layout/navigation.xhtml" />
+	</ui:define>
+
+	<ui:define name="body">
+	
+		<hftl:entityPopup id="searchUserPopup"
+			header="#{messages['meveoInstance.panel']}"
+			backingBean="#{userBean}"
+			updateField=":formPanel:meveoInstanceForm:userSelectedId"
+			selection="#{meveoInstanceBean.entity.user}"
+			searchField1Label="#{messages['meveoInstance.code']}"
+			searchField1="code"
+			searchField2Label="#{messages['meveoInstance.description']}"
+			searchField2="description"
+			column1Label="#{messages['meveoInstance.code']}" column1="code"
+			column2Label="#{messages['meveoInstance.description']}"
+			column2="description">
+		</hftl:entityPopup>
+		<hftl:entityPopup id="searchCustomerPopup"
+			header="#{messages['meveoInstance.panel']}"
+			backingBean="#{customerBean}"
+			updateField=":formPanel:meveoInstanceForm:customerSelectedId"
+			selection="#{meveoInstanceBean.entity.customer}"
+			searchField1Label="#{messages['meveoInstance.code']}"
+			searchField1="code"
+			searchField2Label="#{messages['meveoInstance.description']}"
+			searchField2="description"
+			column1Label="#{messages['meveoInstance.code']}" column1="code"
+			column2Label="#{messages['meveoInstance.description']}"
+			column2="description">
+		</hftl:entityPopup>		
+		<p:panel>
+			<h:form id="crumbmenuForm">
+				<p:breadCrumb homeDisplay="text" id="crumbmenu">
+					<p:menuitem value="#{messages['menu.admin']}" disabled="true" />
+					<p:menuitem outcome="meveoInstances"
+						value="#{messages['menu.meveoInstance']}" />
+				</p:breadCrumb>
+			</h:form>
+		</p:panel>
+		<hf:formPanel id="formPanel" label="#{messages['meveoInstance.panel']}" formId="meveoInstanceForm" backingBean="#{meveoInstanceBean}" columns="1">
+			<hf:formField label="#{messages['meveoInstance.code']}" field="code" required="true" />
+			<hf:languageFields />
+			<hf:formField label="#{messages['meveoInstance.productVersion']}" field="productVersion" required="true" />
+			<hf:formField label="#{messages['meveoInstance.owner']}" field="owner" required="true" />
+			<hf:formField label="#{messages['meveoInstance.status']}" field="status" required="true" />
+			<hf:formField label="#{messages['meveoInstance.md5']}" field="md5" />
+			<hf:formField label="#{messages['meveoInstance.creationDate']}" field="creationDate" />
+			<hf:formField label="#{messages['meveoInstance.updateDate']}" field="updateDate" />
+			<hf:formField label="#{messages['meveoInstance.keyEntreprise']}" field="keyEntreprise" />
+			<hf:formField label="#{messages['meveoInstance.macAddress']}" field="macAddress" required="true" />
+			<hf:formField label="#{messages['meveoInstance.machineVendor']}" field="machineVendor" />
+			<hf:formField label="#{messages['meveoInstance.nbCores']}" field="nbCores" />
+			<hf:formField label="#{messages['meveoInstance.memory']}" field="memory" />
+			<hf:formField label="#{messages['meveoInstance.hdSize']}" field="hdSize" />
+			<hf:formField label="#{messages['meveoInstance.osName']}" field="osName" />
+			<hf:formField label="#{messages['meveoInstance.osVersion']}" field="osVersion" />
+			<hf:formField label="#{messages['meveoInstance.osArch']}" field="osArch" />
+			<hf:formField label="#{messages['meveoInstance.javaVmVersion']}" field="javaVmVersion" />
+			<hf:formField label="#{messages['meveoInstance.javaVmName']}" field="javaVmName" />
+			<hf:formField label="#{messages['meveoInstance.javaVendor']}" field="javaVendor" />
+			<hf:formField label="#{messages['meveoInstance.javaVersion']}" field="javaVersion" />
+			<hf:formField label="#{messages['meveoInstance.asVendor']}" field="asVendor" />
+			<hf:formField label="#{messages['meveoInstance.asVersion']}" field="asVersion" />
+			<hf:formField id="userSelectedId"
+							label="#{messages['meveoInstance.user']}"
+							field="user" valueLabelField="code" 
+							popup="true" popupId="searchUserPopup" />
+			<hf:formField id="customerSelectedId"
+							label="#{messages['meveoInstance.customer']}"
+							field="customer" valueLabelField="code" 
+							popup="true" popupId="searchCustomerPopup" />							
+			
+		</hf:formPanel>
+
+	</ui:define>
+
+</ui:composition>
