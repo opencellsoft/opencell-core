@@ -9,7 +9,7 @@
     <ui:define name="body">
 
 
-        <hf:formPanel label="#{messages['invoice.panel']}" backingBean="#{invoiceBean}" showFormButtons="false" id="headerForm">
+        <hf:formPanel label="#{messages['invoice.panel']}" backingBean="#{invoiceBean}" showFormButtons="false" id="headerForm" edit="false">
             <h:panelGrid columns="2">
 			<p:fieldset legend="#{messages['invoice.header']}">
 				<h:panelGroup>
@@ -133,7 +133,7 @@
             </p:fieldset>
         </h:form>
 
-       <hf:formPanel backingBean="#{invoiceBean}" showFormButtons="false" id="totalForm">
+       <hf:formPanel backingBean="#{invoiceBean}" showFormButtons="false" id="totalForm" edit="false">
 	   
           
             <p:fieldset legend="#{messages['invoice.totals']}">

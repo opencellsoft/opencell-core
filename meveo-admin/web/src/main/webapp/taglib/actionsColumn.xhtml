@@ -186,17 +186,19 @@
 				}
 			//]]>
 		</script>	
-		<p:remoteCommand id="remoteDeleteButton" actionListener="#{backingBean.deleteInlist}" name="doDelete" oncomplete="handleDeleteComplete(xhr,status,args)" update="@form"/>
+		<p:remoteCommand id="remoteDeleteButton" actionListener="#{backingBean.deleteInlist}"
+			 name="doDelete" oncomplete="handleDeleteComplete(xhr,status,args)" update="@form"
+			 rendered="#{renderDeleteLink}"/>
 		<p:tooltip for="#{resultsId}deletelink" rendered="#{renderDeleteLink}"
 			value="#{messages['commons.delete']}" showEffect="slide"
 			hideEffect="slide"  />
 		<p:commandButton id="#{resultsId}deletelink" icon="ui-icon-trash"
-			oncomplete="PF('confirmDeleteWidget').show()">
+			oncomplete="PF('confirmDeleteWidget').show()" rendered="#{renderDeleteLink}">
 			<f:setPropertyActionListener target="#{backingBean.entity}"
 				value="#{entity}"></f:setPropertyActionListener>
 		</p:commandButton>
 		<p:confirmDialog id="confirmDeleteDialog" styleClass="confirm-dialog"
-			message="#{messages['commons.confirmDelete']}" header=""
+			message="#{messages['commons.confirmDelete']}" header="" rendered="#{renderDeleteLink}"
 			severity="alert" widgetVar="confirmDeleteWidget" appendTo="@(body)">
 			<p:panel styleClass="confirm-dialog-content">
 				<p:commandButton id="deleteOk" value="#{messages['commons.yes']}"
@@ -206,7 +208,7 @@
 			</p:panel>
 		</p:confirmDialog>
 		<p:confirmDialog id="confirmCanDeleteDialog" styleClass="confirm-dialog"
-			message="#{messages['commons.confirmCanotDelete']}" header=""
+			message="#{messages['commons.confirmCanotDelete']}" header="" rendered="#{renderDeleteLink}"
 			severity="alert" widgetVar="confirmCanotDeleteWidget" appendTo="@(body)">
 			<p:panel styleClass="confirm-dialog-content">
 				<p:commandButton id="canotdeleteOk" value="#{messages['commons.ok']}"

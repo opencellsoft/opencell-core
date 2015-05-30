@@ -40,7 +40,7 @@
 				field="invoicesAmount" />
 			<hftl:column label="#{messages['ddrequestLot.paymentCreated']}"
 				field="paymentCreated" isMessage="true" />
-			<hftl:actionsColumn renderDeleteLink="false" renderEditLink="false"
+			<hftl:actionsColumn renderDeleteLink="false" renderViewLink="true"
 				permission="#{identity.hasPermission('billing','billingManagement')}" />
 		</hftl:dataList>
 

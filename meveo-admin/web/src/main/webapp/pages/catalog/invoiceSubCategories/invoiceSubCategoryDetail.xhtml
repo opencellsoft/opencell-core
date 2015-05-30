@@ -175,7 +175,7 @@
 											rendered="#{invoiceSubCategoryBean.invoiceSubcategoryCountry.id!=null}"
 											action="#{invoiceSubCategoryBean.saveInvoiceSubCategoryCountry}"
 											value="#{messages['invoiceSubCategoryCountry.modifyTax']}"
-											ajax="false" />
+											update=":tabView:invoiceSubCategoryCountries_panel,:tabView:formPanelTax:formTax,:tabView:subCategoryCountrydiv" />
 
 										<p:commandButton value="#{messages['action.cancel']}"
 											action="#{invoiceSubCategoryBean.newInvoiceSubcategoryCountryInstance}"

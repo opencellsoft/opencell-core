@@ -62,11 +62,11 @@
 		</p:button>
 
         <p:commandButton value="#{messages['commons.disable']}"
-            rendered="#{!cc.attrs.edit and cc.attrs.showEnableDisableButton and cc.attrs.backingBean.entity.active}"
+            rendered="#{not empty cc.attrs.backingBean.objectId and cc.attrs.showEnableDisableButton and cc.attrs.backingBean.entity.active}"
             action="#{cc.attrs.backingBean.disable}" update="@form"/>
             
         <p:commandButton value="#{messages['commons.enable']}"
-            rendered="#{!cc.attrs.edit and cc.attrs.showEnableDisableButton and cc.attrs.backingBean.entity.disabled}"
+            rendered="#{not empty cc.attrs.backingBean.objectId and cc.attrs.showEnableDisableButton and cc.attrs.backingBean.entity.disabled}"
             action="#{cc.attrs.backingBean.enable}" update="@form"/>
 
         <p:commandButton id="saveButtonWithObjectId"

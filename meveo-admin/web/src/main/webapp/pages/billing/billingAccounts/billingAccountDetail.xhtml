@@ -228,13 +228,13 @@
                                                         label="#{messages['billingAccount.subscriptionDate']}"
                                                         field="subscriptionDate" />
 													<hf:formField label="#{messages['billingAccount.status']}"
-														field="status" showOnlyOnConsult="true" />
+														field="status" hidden="#{empty billingAccountBean.entity.id}" edit="false"/>
 													<hf:formField
 														label="#{messages['billingAccount.statusDate']}"
-														field="statusDate" showOnlyOnConsult="true" />
+														field="statusDate" hidden="#{empty billingAccountBean.entity.id}" edit="false" />
 													<hf:formField
 														label="#{messages['billingAccount.terminationDate']}"
-														field="terminationDate" showOnlyOnConsult="true" />
+														field="terminationDate" hidden="#{empty billingAccountBean.entity.id}" edit="false"/>
 
 													<hf:formField
 														label="#{messages['accountEntity.defaultLevel']}"
@@ -471,9 +471,9 @@
 								backingBean="#{invoiceBean}">
 								<hftl:column label="#{messages['invoice.invoiceNumber']}"
 									field="invoiceNumber" />
-								<hftl:column label="#{messages['invoice.invoiceDate']}"
+								<hftl:column label="#{messages['invoice.invoiceDate']}" isDate="true"
 									field="invoiceDate" />
-								<hftl:column label="#{messages['invoice.dueDate']}"
+								<hftl:column label="#{messages['invoice.dueDate']}" isDate="true"
 									field="dueDate" />
 								<hftl:column label="#{messages['invoice.amountWithTax']}"
 									field="amountWithTax" />
@@ -496,7 +496,7 @@
 										<h:graphicImage value="/img/pdf.gif" style="border:0" />
 									</h:commandLink>
 								</p:column>
-								<hftl:actionsColumn
+								<hftl:actionsColumn renderViewLink="true"
 									editView="/pages/billing/invoices/invoiceDetail.xhtml"
 									renderEditLink="false" renderDeleteLink="false" />
 							</hftl:dataList>

@@ -29,7 +29,7 @@
             <hftl:column label="#{messages['inboundRequest.remotePort']}" field="remotePort" />
             <hftl:column label="#{messages['inboundRequest.protocol']}" field="protocol" />
             <hftl:column label="#{messages['inboundRequest.pathInfo']}" field="pathInfo" />
-            <hftl:actionsColumn renderEditLink="false" permission="#{persistentPermissionResolver.hasPermission('reporting','reportingManagement')}" />
+            <hftl:actionsColumn renderViewLink="true" permission="#{persistentPermissionResolver.hasPermission('reporting','reportingManagement')}" />
         </hftl:dataList>
     </ui:define>
 </ui:composition>

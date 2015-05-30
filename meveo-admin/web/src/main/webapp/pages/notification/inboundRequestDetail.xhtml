@@ -10,11 +10,11 @@
     <ui:define name="body">
 
         <hf:formPanel id="inboundRequestForm" label="#{messages['menu.inboundRequest']}" backingBean="#{inboundRequestBean}" columns="2"
-            showEditButton="false">
+            showEditButton="false" edit="false">
 
             <hf:formField label="#{messages['entity.code']}" field="code" />
 			<hf:formField label="#{messages['enableEntity.disabled']}"
-				field="disabled" isMessage="true" showOnlyOnConsult="true"/>
+				field="disabled" isMessage="true" />
             <hf:formField label="#{messages['inboundRequest.remoteAddress']}" field="remoteAddr" />
             <hf:formField label="#{messages['inboundRequest.remotePort']}" field="remotePort" />
             <hf:formField label="#{messages['inboundRequest.protocol']}" field="protocol" />

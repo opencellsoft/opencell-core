@@ -58,10 +58,10 @@
 			<hftl:column label="#{messages['customerSearch.type']}"
 				field="accountType" isMessage="true" />
 
-			<hftl:actionsColumn renderDeleteLink="false"
-				objectIdParamName="#{customerSearchBean.getIdParameterName(entity['accountType'])}"
-				editView="#{customerSearchBean.getView(entity['accountType'])}"
-				permission="#{identity.hasPermission('account','accountManagement')}" />
+<!-- 			<hftl:actionsColumn renderDeleteLink="false" -->
+<!-- 				objectIdParamName="#{customerSearchBean.getIdParameterName(entity['accountType'])}" -->
+<!-- 				editView="#{customerSearchBean.getView(entity['accountType'])}" -->
+<!-- 				permission="#{identity.hasPermission('account','accountManagement')}" /> -->
 		</hftl:dataList>
 
 	</ui:define>

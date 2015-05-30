@@ -137,7 +137,9 @@
 													<h:outputText id="dunning_date_text"
 														rendered="#{true or !customerAccountBean.edit}"
 														value="#{customerAccountBean.entity.getDateDunningLevel()}"
-														style="font-weight:bold;" />
+														style="font-weight:bold;" >
+														<f:convertDateTime  pattern="#{paramBean.getProperty('meveo.dateTimeFormat','dd/MM/yyyy HH:mm')}"/>
+													</h:outputText>
     												</hf:formDecorateField>
     												<hf:formDecorateField fieldId="balance_text" label="#{messages['customerAccount.balanceDue']}">
 													<h:outputText id="balance_text"
@@ -336,22 +338,8 @@
 									</f:facet>
 									<h:outputText value="#{entity.occDescription}" />
 								</p:column>
-
-								<p:column width="10%" styleClass="noWrap">
-									<f:facet name="header">
-										<h:outputText
-											value="#{messages['accountOperation.transactionDate']}" />
-									</f:facet>
-									<h:outputText value="#{entity.transactionDate}" style="text-wrap" />
-								</p:column>
-
-								<p:column width="10%" styleClass="noWrap">
-									<f:facet name="header">
-										<h:outputText value="#{messages['accountOperation.dueDate']}" />
-									</f:facet>
-									<h:outputText value="#{entity.dueDate}" />
-								</p:column>
-
+								<hftl:column label="#{messages['accountOperation.transactionDate']}" field="transactionDate" isDate="true" width="10%"/>
+								<hftl:column label="#{messages['accountOperation.dueDate']}" field="dueDate" isDate="true" width="10%"/>
                                 <p:column headerText="#{messages['accountOperation.debit']}" width="10%">
                                     <h:outputText value="#{entity.amount}" rendered="#{entity.transactionCategory eq 'DEBIT'}" >
                                         <f:converter converterId="bigDecimal4DigitsConverter"/>
@@ -376,7 +364,7 @@
 									field="excludedFromDunning" isMessage="true"  width="10%"/>
 
 								<hftl:actionsColumn width="15%"
-									editView="#{accountOperationBean.displayOperation(entity.getId())}" renderEditLink="false"/> 
+									editView="#{accountOperationBean.displayOperation(entity.getId())}" renderViewLink="true"/> 
 								<ui:define name="add-on-buttons"> 
 									<h:panelGroup layout="block" styleClass="form-panel-actions">
 										<p:commandButton

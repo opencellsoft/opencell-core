@@ -42,14 +42,14 @@
 
 				<p:tab title="#{messages['commons.information']}">
 					<hf:formPanel id="discountFormPanel" formId="formDiscountPlan"
-						backingBean="#{discountPlanBean}">
+						backingBean="#{discountPlanBean}" showEnableDisableButton="true">
 						<hf:formField id="chargeSelectId" required="true"
 							label="#{messages['discountPlanMatrix.eventCode']}" field="code" />
 						<hf:formField label="#{messages['BusinessEntity.description']}"
 							field="description" required="true" useConverter="false"
 							id="description" maxlength="50" />
 						<hf:formField label="#{messages['enableEntity.disabled']}"
-							field="disabled" isMessage="true" showOnlyOnConsult="true" />
+							field="disabled" isMessage="true" />
 							<!-- 
 							<hf:formField
 							label="#{messages['pricePlanMatrix.minSubscriptionAgeInMonth']}"

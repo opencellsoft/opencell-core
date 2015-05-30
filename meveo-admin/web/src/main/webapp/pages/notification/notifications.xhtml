@@ -31,7 +31,7 @@
 
 			<!-- ===================================== SEARCH USERS RESULTS ================================= -->
 
-			<hftl:dataList backingBean="#{notificationListBean}" exportButton="false" exportToCsv="true" importCsv="true" importStrategy="true" sortBy="code">
+			<hftl:dataList resultsId="notifications" backingBean="#{notificationListBean}" exportButton="false" exportToCsv="true" importCsv="true" importStrategy="true" sortBy="code">
 			    <hftl:column label="#{messages['entity.code']}"
 					field="code" />
 				<hftl:column
@@ -41,44 +41,7 @@
 					label="#{messages['entity.notification.eventTypeFilter']}"
 					field="eventTypeFilter" />
 				<hftl:column label="#{messages['enableEntity.active']}" field="active" isMessage="true" />
-				<p:column style="width: 100px;" exportable="false">
-					<f:facet name="header">
-						<h:outputText value="#{messages['commons.actions']}" />
-					</f:facet>
-
-					<p:button id="#{resultsId}viewlink" outcome="#{entity.class.simpleName.substring(0,1).toLowerCase()}#{entity.class.simpleName.substring(1)}Detail"
-						icon="ui-icon-search">
-						 <f:param name="objectId" value="#{entity.id}" />
-						<f:param name="edit" value="false" />
-						<f:param name="cid" value="#{javax.enterprise.context.conversation.id}" />
-					</p:button>
-			
-					<p:button id="#{resultsId}editlink" outcome="#{entity.class.simpleName.substring(0,1).toLowerCase()}#{entity.class.simpleName.substring(1)}Detail"
-						icon="ui-icon-document">
-						<f:param name="objectId" value="#{entity.id}" />
-						<f:param name="edit" value="true" />
-                        <f:param name="cid" value="#{javax.enterprise.context.conversation.id}" />
-					</p:button>
-			
-					<p:commandButton id="#{resultsId}deletelink" icon="ui-icon-trash"
-						oncomplete="PF('confirmDeleteWidget').show()">
-						<f:setPropertyActionListener target="#{backingBean.entity}"
-							value="#{entity}"></f:setPropertyActionListener>
-					</p:commandButton>
-			
-					<p:confirmDialog id="confirmDialog" styleClass="confirm-dialog"
-						message="#{messages['commons.confirmDelete']}" header=""
-						severity="alert" widgetVar="confirmDeleteWidget">
-						<p:panel styleClass="confirm-dialog-content">
-							<p:commandButton id="deleteOk" value="#{messages['commons.yes']}"
-								oncomplete="PF('confirmDeleteWidget').hide()"
-								action="#{backingBean.delete()}" update="@all" />
-							<p:commandButton id="deleteKo" value="#{messages['commons.no']}"
-								onclick="PF('confirmDeleteWidget').hide()" type="button" />
-						</p:panel>
-					</p:confirmDialog> 
-			
-				</p:column>
+				<hftl:actionsColumn  permission="#{persistentPermissionResolver.hasPermission('reporting','reportingManagement')}"/>
 			</hftl:dataList>
 	</ui:define>
 </ui:composition>

@@ -209,7 +209,7 @@
 										<hftl:column
 											label="#{messages['serviceInstance.endAgrementDate']}"
 											field="endAgrementDate" showSortLinks="false" isDate="true" />
-										<hftl:actionsColumn editView="serviceInstanceDetail"
+										<hftl:actionsColumn editView="serviceInstanceDetail" renderEditLink="true"
 											renderDeleteLink="false" backView="subscriptionDetailWithNavigation"
 											objectIdParamName="serviceInstanceId" />
 									</p:dataTable>
@@ -275,7 +275,7 @@
 							<p:tab id="accInfoTab"
 								title="#{messages['billingAccount.tab.information']}">
 
-								<hf:formPanel id="subscriptionFormPanel"
+								<hf:formPanel id="subscriptionFormPanel" showDeleteButton="false"
 									backingBean="#{subscriptionBean}" useCustomIdParam="true">
 									<!--Creation window fields-->
 									<hf:formField id="userSelectId"
@@ -307,7 +307,7 @@
 								</hf:formPanel>
 							</p:tab>
 							<p:tab title="#{messages['customFieldTemplate.panel']}">
-								<hf:formPanel id="subscriptionCustomFormPanel"
+								<hf:formPanel id="subscriptionCustomFormPanel" showDeleteButton="false"
 									backingBean="#{subscriptionBean}" useCustomIdParam="true">
 									<hf:customFields />
 								</hf:formPanel>
@@ -459,7 +459,7 @@
 																	disabled="#{subscriptionBean.oneShotChargeInstance.code eq null}"
 																	onclick="PF('dlg_popupWalletTemplates').show()"
 																	icon="ui-icon-search" type="button" />
-																<p:tooltip for="chargeTemplateSelectId_selectLink"
+																<p:tooltip for="chargeWalletSelectId_selectLink"
 																	value="#{messages['commons.search']}" />
 															</h:panelGroup>
 														</h:panelGroup>
@@ -718,10 +718,10 @@
 												field="criteria1" isMessage="true" />
 											<hftl:column
 												label="#{messages['oneShotChargeInstance.chargeDate']}"
-												field="chargeDate" />
+												field="chargeDate" isDate="true"/>
 											<hftl:column
 												label="#{messages['recurringChargeInstance.nextChargeDate']}"
-												field="nextChargeDate" />
+												field="nextChargeDate" isDate="true"/>
 
 											<p:column styleClass="actions-column">
 												<f:facet name="header">

@@ -28,9 +28,8 @@
 		           
 		<hftl:dataList backingBean="#{emailTemplateListBean}" sortBy="subject">
 			<hftl:column label="#{messages['emailTemplate.subject']}"
-				field="subject" />
-			<hftl:actionsColumn
-				editView="/pages/admin/communication/emailTemplateDetail.xhtml" />           
+				field="subject" entityView="emailTemplateDetail" valueIdField="id"/>
+			<hftl:actionsColumn permission="#{identity.hasPermission('administration','administrationManagement')}"/>           
 		</hftl:dataList>                    
                 
     </ui:define>

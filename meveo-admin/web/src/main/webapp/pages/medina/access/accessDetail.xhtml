@@ -36,7 +36,7 @@
 		</hftl:entityPopup>
 
 
-			<hf:formPanel id="formPanel" backingBean="#{accessBean}" label="#{messages['access.accessPanel']}">
+			<hf:formPanel id="formPanel" backingBean="#{accessBean}" label="#{messages['access.accessPanel']}" showEnableDisableButton="true">
 
 				<p:tabView id="tabView">
 
@@ -51,6 +51,8 @@
 								field="startDate" />
 							<hf:formField label="#{messages['access.endDate']}"
 								field="endDate" />
+							<hf:formField label="#{messages['enableEntity.disabled']}"
+								field="disabled" isMessage="true"/>
 					</p:tab>
 
 					<p:tab title="#{messages['customFieldTemplate.panel']}">
