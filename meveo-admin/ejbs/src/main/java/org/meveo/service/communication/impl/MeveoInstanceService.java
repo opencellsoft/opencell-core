@@ -17,7 +17,9 @@
 package org.meveo.service.communication.impl;
 
 import javax.ejb.Stateless;
+import javax.persistence.NoResultException;
 
+import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.communication.MeveoInstance;
 import org.meveo.service.base.PersistenceService;
 
@@ -26,4 +28,15 @@ import org.meveo.service.base.PersistenceService;
  */
 @Stateless
 public class MeveoInstanceService extends PersistenceService<MeveoInstance> {
+
+	public MeveoInstance findByCode(String meveoInstanceCode) {
+		try {
+			QueryBuilder qb = new QueryBuilder(MeveoInstance.class, "c");
+			qb.addCriterion("code", "=", meveoInstanceCode, true);
+			return (MeveoInstance) qb.getQuery(getEntityManager()).getSingleResult();
+		} catch (NoResultException e) {
+			log.warn("failed to find MeveoInstance",e);
+			return null;
+		}
+	}
 }

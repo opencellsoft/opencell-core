@@ -11,6 +11,7 @@ import javax.inject.Inject;
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.BaseApi;
+import org.meveo.api.MeveoApiErrorCode;
 import org.meveo.api.dto.CustomFieldDto;
 import org.meveo.api.dto.account.ApplyOneShotChargeInstanceRequestDto;
 import org.meveo.api.dto.billing.ActivateServicesRequestDto;
@@ -307,6 +308,12 @@ public class SubscriptionApi extends BaseApi {
 				ServiceTemplate serviceTemplate = serviceTemplateService.findByCode(serviceToActivateDto.getCode(), provider);
 				if (serviceTemplate == null) {
 					throw new EntityDoesNotExistsException(ServiceTemplate.class, serviceToActivateDto.getCode());
+				}
+				
+				// check if service belongs to offer
+				if (!subscription.getOffer().getServiceTemplates().contains(serviceTemplate)) {
+					throw new MeveoApiException(MeveoApiErrorCode.BUSINESS_API_EXCEPTION, "Service template with code=" + serviceTemplate.getCode()
+							+ " does not belong to subscription offer with code=" + subscription.getOffer().getCode() + ".");
 				}
 
 				serviceToActivateDto.setServiceTemplate(serviceTemplate);
