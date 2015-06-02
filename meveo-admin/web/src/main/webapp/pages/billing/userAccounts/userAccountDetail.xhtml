@@ -348,7 +348,8 @@
 										<p:selectOneMenu id="counterPeriod"
 											converter="omnifaces.SelectItemsConverter"
 											value="#{userAccountBean.selectedCounterInstance}">
-											<f:selectItems value="#{userAccountBean.entity.counters}" />
+											<f:selectItem itemLabel="#{messages['commons.select']}" />
+											<f:selectItems value="#{userAccountBean.entity.counters.keySet().toArray()}" var="c" itemLabel="#{c}" itemValue="#{userAccountBean.entity.counters.get(c)}"/>
 											<p:ajax event="valueChange"
 												update=":userAccountFormPanel:formId:userAccountTab:counters" />
 										</p:selectOneMenu>
