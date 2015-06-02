@@ -35,7 +35,7 @@
         allowEdit - allow to edit a field when in edit mode       
         showOnlyOnNew - show field only in new entity creation mode
         showOnlyOnConsult - show field only in entity view mode
-        hidden - close the visibility if yes
+        doNotShowOnNew - show field NOT in new entity creation mode
         
      Additional attributes applicable to Text type fields
         size - a size attribute of inputText control
@@ -147,15 +147,15 @@
     <cc:attribute name="negativeValue" default="false" />
         
     <cc:attribute name="showOnlyOnNew" default="false" />
+     <cc:attribute name="doNotShowOnNew" default="false" />
     <cc:attribute name="showOnlyOnConsult" default="false" />
     <cc:attribute name="allowEdit" default="true" />
-    <cc:attribute name="hidden" default="false" />
     <cc:attribute name="edit"
         default="#{cc.fieldEdit and (cc.entityFromBackingBeanOrAttribute.id==null or (cc.entityFromBackingBeanOrAttribute.id!=null and cc.attrs.allowEdit))}" />
 
     <!--  Internal attribute - don't use -->
     <cc:attribute name="show"
-        default="#{(not cc.attrs.hidden) and ((not cc.attrs.showOnlyOnNew) or (cc.attrs.showOnlyOnNew and cc.attrs.edit and cc.entityFromBackingBeanOrAttribute.id==null)) and ((not cc.attrs.showOnlyOnConsult) or (cc.attrs.showOnlyOnConsult and cc.attrs.edit== false))}" />
+        default="#{((not cc.attrs.doNotShowOnNew) or (cc.attrs.doNotShowOnNew and cc.entityFromBackingBeanOrAttribute.id!=null)) and ((not cc.attrs.showOnlyOnNew) or (cc.attrs.showOnlyOnNew and cc.attrs.edit and cc.entityFromBackingBeanOrAttribute.id==null)) and ((not cc.attrs.showOnlyOnConsult) or (cc.attrs.showOnlyOnConsult and cc.attrs.edit== false))}" />
 
     <!--  Component display layout and style attributes. See decorateFormField for description and use -->
     <cc:attribute name="newLine" />
