@@ -96,9 +96,11 @@ public class InvoicingJobBean {
 								updateBillingRun(billingRun.getId(),currentUser,null,null,BillingRunStatusEnum.TERMINATED,null);
 							}
 						}
+						result.registerSucces();
 					} else if (BillingRunStatusEnum.ON_GOING.equals(billingRun.getStatus())) {
 						billingRunService.createAgregatesAndInvoice(billingRun.getId(),billingRun.getLastTransactionDate(), currentUser,nbRuns.longValue(),waitingMillis.longValue());								
 						updateBillingRun(billingRun.getId(),currentUser,null,null,BillingRunStatusEnum.TERMINATED,null);
+						result.registerSucces();
 					} else if (BillingRunStatusEnum.CONFIRMED.equals(billingRun.getStatus())) {
 						billingRunService.validate(billingRun, currentUser);
 						result.registerSucces();
