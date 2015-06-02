@@ -40,12 +40,12 @@ import org.meveo.model.MultilanguageEntity;
 	           query = "from RecurringChargeTemplate r where r.code not in (select p.eventCode from  PricePlanMatrix p where p.eventCode is not null) and r.provider=:provider"),
 	           
 @NamedQuery(name = "recurringChargeTemplate.getNbrRecurringChrgNotAssociated", 
-	           query = "select count(*) from RecurringChargeTemplate r where r.id not in (select serv.chargeTemplate from ServiceChargeTemplateRecurring serv) "
-	           		+ " OR r.code not in (select p.eventCode from  PricePlanMatrix p where p.eventCode is not null) and r.provider=:provider  "),
+	           query = "select count(*) from RecurringChargeTemplate r where (r.id not in (select serv.chargeTemplate from ServiceChargeTemplateRecurring serv) "
+	           		+ " OR r.code not in (select p.eventCode from  PricePlanMatrix p where p.eventCode is not null)) and r.provider=:provider  "),
 	           		
 @NamedQuery(name = "recurringChargeTemplate.getRecurringChrgNotAssociated", 
-	 	           query = "from RecurringChargeTemplate r where r.id not in (select serv.chargeTemplate from ServiceChargeTemplateRecurring serv) "
-	 	           		+ " OR r.code not in (select p.eventCode from  PricePlanMatrix p where p.eventCode is not null) and r.provider=:provider ")	                
+	 	           query = "from RecurringChargeTemplate r where (r.id not in (select serv.chargeTemplate from ServiceChargeTemplateRecurring serv) "
+	 	           		+ " OR r.code not in (select p.eventCode from  PricePlanMatrix p where p.eventCode is not null)) and r.provider=:provider ")	                
 	       })
 public class RecurringChargeTemplate extends ChargeTemplate {
 
