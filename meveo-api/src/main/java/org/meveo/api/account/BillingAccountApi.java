@@ -106,8 +106,9 @@ public class BillingAccountApi extends AccountApi {
 			billingAccount.setPaymentMethod(paymentMethod);
 			try {
 				billingAccount.setPaymentTerm(PaymentTermEnum.valueOf(postData.getPaymentTerms()));
-			} catch (IllegalArgumentException e) {
-				log.warn("error generated while setting payment term",e);
+			} catch (IllegalArgumentException e) {				
+				log.error("InvalidEnum for paymentTerm with name={}", postData.getPaymentTerms());
+				throw new MeveoApiException(MeveoApiErrorCode.INVALID_ENUM_VALUE, "Enum for PaymentTerm with name=" + postData.getPaymentTerms() + " does not exists.");
 			}
 			billingAccount.setNextInvoiceDate(postData.getNextInvoiceDate());
 			billingAccount.setSubscriptionDate(postData.getSubscriptionDate());
@@ -183,7 +184,8 @@ public class BillingAccountApi extends AccountApi {
 			try {
 				paymentMethod = PaymentMethodEnum.valueOf(postData.getPaymentMethod());
 			} catch (IllegalArgumentException e) {
-				throw new MeveoApiException(MeveoApiErrorCode.BUSINESS_API_EXCEPTION, "Invalid payment method=" + postData.getPaymentMethod());
+				log.error("InvalidEnum for paymentTerm with name={}", postData.getPaymentTerms());
+				throw new MeveoApiException(MeveoApiErrorCode.INVALID_ENUM_VALUE, "Enum for PaymentTerm with name=" + postData.getPaymentTerms() + " does not exists.");
 			}
 
 			updateAccount(billingAccount, postData, currentUser, AccountLevelEnum.BA);
