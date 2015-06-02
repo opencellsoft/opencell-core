@@ -18,8 +18,17 @@
 				<directory>src/main/resources</directory>
 				<excludes>
 					<exclude>**/import-*.sql</exclude>
+					<exclude>**/jasper/*</exclude>
 				</excludes>
 				<filtering>true</filtering>
+			</resource>
+			<resource>
+				<directory>src/main/resources/jasper</directory>
+				<includes>
+					<include>**/*</include>
+				</includes>
+				<targetPath>./jasper</targetPath>
+				<filtering>false</filtering>
 			</resource>
 		</resources>
 
@@ -112,6 +121,14 @@
 						</goals>
 					</execution>
 				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-resources-plugin</artifactId>
+				<version>2.3</version>
+				<configuration>  
+        			<encoding>${project.build.sourceEncoding}</encoding>  
+    			</configuration>  
 			</plugin>
 		</plugins>
 

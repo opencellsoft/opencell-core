@@ -51,6 +51,7 @@ import net.sf.jasperreports.engine.JasperReport;
 import net.sf.jasperreports.engine.data.JRXmlDataSource;
 import net.sf.jasperreports.engine.util.JRLoader;
 
+import org.apache.commons.io.FileUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.InvoiceJasperNotFoundException;
 import org.meveo.admin.exception.InvoiceXmlNotFoundException;
@@ -446,6 +447,16 @@ public class InvoiceService extends PersistenceService<Invoice> {
 					&& billingCycle.getBillingTemplateName() != null) ? billingCycle
 					.getBillingTemplateName() : "default";
 			String resDir = meveoDir + "jasper";
+			//copy embedded japer report
+			File destDir=new File(resDir+File.separator+billingTemplate+File.separator+"pdf");
+			if(!destDir.exists()){
+				destDir.mkdirs();
+				String sourcePath=Thread.currentThread().getContextClassLoader().getResource("./jasper").toURI().getPath();
+				File sourceFile=new File(sourcePath);
+				FileUtils.copyDirectory(sourceFile, destDir);
+			}
+			//end copy jasper report
+			
 			File jasperFile = getJasperTemplateFile(resDir, billingTemplate,
 					billingAccount.getPaymentMethod());
 			if(!jasperFile.exists()){
