@@ -38,12 +38,12 @@ query = "select count (*) from UsageChargeTemplate u where u.code not in (select
 query = "from UsageChargeTemplate u where u.code not in (select p.eventCode from  PricePlanMatrix p where p.eventCode is not null) and u.provider=:provider "),
 
 @NamedQuery(name = "usageChargeTemplate.getNbrUsagesChrgNotAssociated", 
-query = "select count(*) from UsageChargeTemplate u where u.id not in (select serv.chargeTemplate from ServiceChargeTemplateUsage serv) "
-		+ " OR u.code not in (select p.eventCode from  PricePlanMatrix p where p.eventCode is not null) and u.provider=:provider"),
+query = "select count(*) from UsageChargeTemplate u where (u.id not in (select serv.chargeTemplate from ServiceChargeTemplateUsage serv) "
+		+ " OR u.code not in (select p.eventCode from  PricePlanMatrix p where p.eventCode is not null)) and u.provider=:provider"),
 		
 @NamedQuery(name = "usageChargeTemplate.getUsagesChrgNotAssociated", 
-		query = "from UsageChargeTemplate u where u.id not in (select serv.chargeTemplate from ServiceChargeTemplateUsage serv) "
-				+ " OR u.code not in (select p.eventCode from  PricePlanMatrix p where p.eventCode is not null) and u.provider=:provider")
+		query = "from UsageChargeTemplate u where (u.id not in (select serv.chargeTemplate from ServiceChargeTemplateUsage serv) "
+				+ " OR u.code not in (select p.eventCode from  PricePlanMatrix p where p.eventCode is not null)) and u.provider=:provider")
 })
 
 public class UsageChargeTemplate extends ChargeTemplate {
