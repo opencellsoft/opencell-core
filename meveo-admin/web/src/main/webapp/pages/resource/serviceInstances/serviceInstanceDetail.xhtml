@@ -65,20 +65,20 @@
 			<hf:formField id="serviceSelectedId"
 				label="#{messages['serviceInstance.code']}" field="serviceTemplate"
 				valueLabelField="code" required="true" popup="true"
-				popupId="serviceTemplatePopup" edit="false"/>
+				popupId="serviceTemplatePopup" allowEdit="false"/>
 
 			<hf:formField id="subscriptionSelectedId"
 				label="#{messages['serviceInstance.subscription']}"
 				field="subscription" valueLabelField="code" required="true" popup="true"
-				popupId="subscriptionPopup" edit="false"/>
+				popupId="subscriptionPopup" allowEdit="false"/>
 
 			<hf:formField label="#{messages['serviceInstance.description']}"
 				field="description" size="40" maxlength="50"
-				edit="false" />
+				allowEdit="false" />
 			<hf:formField label="#{messages['serviceInstance.status']}"
-				field="status" edit="false"/>
+				field="status" allowEdit="false"/>
 			<hf:formField label="#{messages['serviceInstance.statusDate']}"
-				field="statusDate" edit="false"/>
+				field="statusDate" allowEdit="false"/>
 			<hf:formField label="#{messages['serviceInstance.subscriptionDate']}"
 				field="subscriptionDate"
 				allowEdit="#{serviceInstanceBean.entity.status eq 'INACTIVE'}" />
@@ -86,13 +86,13 @@
 				field="endAgrementDate" />
 			<hf:formField
 				label="#{messages[serviceInstanceBean.entity.status=='SUSPENDED'?'serviceInstance.suspensionDate':'serviceInstance.terminationDate']}"
-				field="terminationDate" rendered="#{not empty serviceInstanceBean.entity.id}" edit="false"/>
+				field="terminationDate" allowEdit="false"/>
 			<hf:formField label="#{messages['serviceInstance.quantity']}"
-				field="quantity" edit="false" />
+				field="quantity" allowEdit="false" />
 			<hf:formField
-				label="#{messages['serviceInstance.terminationReason']}" edit="false"
+				label="#{messages['serviceInstance.terminationReason']}" allowEdit="false"
 				field="subscriptionTerminationReason" valueLabelField="description"
-				hidden="#{empty serviceInstanceBean.entity.id or empty serviceInstanceBean.entity.subscriptionTerminationReason}" />
+				rendered="#{not empty serviceInstanceBean.entity.subscriptionTerminationReason}" />
 		</hf:formPanel>
 
 		<h:form id="operationsForm" rendered="#{not empty serviceInstanceBean.entity.id}">

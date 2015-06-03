@@ -18,7 +18,7 @@ public class CreateEventHelper {
 		BusinessExceptionEvent bee = new BusinessExceptionEvent();
 		bee.setBusinessException(be);
 		bee.setDateTime(new Date());
-		//TODO set meveoInstance code
+		//TODO set meveoInstance code.
 		bee.setMeveoInstanceCode("meveoInstanceCode");
 		event.fire(bee);
 	}

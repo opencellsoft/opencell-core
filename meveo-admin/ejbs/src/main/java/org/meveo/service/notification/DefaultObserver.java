@@ -1,6 +1,12 @@
 package org.meveo.service.notification;
 
 import java.math.BigDecimal;
+import java.net.InetAddress;
+import java.net.NetworkInterface;
+import java.nio.file.FileStore;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -11,11 +17,23 @@ import javax.enterprise.event.Observes;
 import javax.enterprise.inject.spi.BeanManager;
 import javax.inject.Inject;
 
+import org.apache.commons.vfs.FileSystemException;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.cache.NotificationCacheContainerProvider;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.event.monitoring.BusinessExceptionEvent;
-import org.meveo.event.qualifier.*;
+import org.meveo.event.qualifier.Created;
+import org.meveo.event.qualifier.Disabled;
+import org.meveo.event.qualifier.Enabled;
+import org.meveo.event.qualifier.InboundRequestReceived;
+import org.meveo.event.qualifier.LoggedIn;
+import org.meveo.event.qualifier.LowBalance;
+import org.meveo.event.qualifier.Processed;
+import org.meveo.event.qualifier.Rejected;
+import org.meveo.event.qualifier.RejectedCDR;
+import org.meveo.event.qualifier.Removed;
+import org.meveo.event.qualifier.Terminated;
+import org.meveo.event.qualifier.Updated;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.IEntity;
 import org.meveo.model.IProvider;
@@ -49,6 +67,7 @@ public class DefaultObserver {
 
     @Inject
     private EmailNotifier emailNotifier;
+   
 
     @Inject
     private WebHookNotifier webHookNotifier;
@@ -61,6 +80,9 @@ public class DefaultObserver {
 
     @Inject
     private NotificationCacheContainerProvider notificationCacheContainerProvider;
+    
+    @Inject
+    private RestNotifier restNotifier;
 
     private boolean matchExpression(String expression, Object o) throws BusinessException {
         Boolean result = true;
@@ -230,5 +252,44 @@ public class DefaultObserver {
    
    public void businesException(@Observes  BusinessExceptionEvent bee){
        log.info("Defaut observer : BusinessExceptionEvent {} ", bee);
+       String input = buildJsonIncidentRequest();
+       log.info("Defaut observer : input {} ", input);
+       restNotifier.checkVersion(input, "http://127.0.0.1:8080/meveo-moni/api/rest/setIncident");
+      
    }
+   
+   private String buildJsonIncidentRequest(){
+		try{
+			long currentTime = System.currentTimeMillis();
+			String meveoInstanceCode = "myMeveo";
+			String body = LogContent.getLogs(new Date(currentTime-20000) , new Date());
+			String subject = "A Exception";
+			String info1 = "";
+			String info2="";
+			String info3="";
+			String info4="";
+			
+			/*
+			 * Dont add any fields in this json object
+			 * if needed , so add idd it first in the remote service
+			 */
+			String input = "{"+
+					"	  #meveoInstanceCode#: #"+meveoInstanceCode+"#,"+
+					"	  #subject#: #"+subject+"#,"+
+					"	  #body#: #"+body+"#,"+
+					"	  #additionnalInfo1#: #"+info1+"#,"+
+					"	  #additionnalInfo2#: #"+info2+"#,"+
+					"	  #additionnalInfo3#: #"+info3+"#,"+
+					"	  #additionnalInfo4#: #"+info4+"#"+
+					"}";
+					
+			input = input.replaceAll("#", "\"");
+			return input;
+
+		}catch(Exception e){
+			log.error("Exception on buildJsonRequest: ",e);
+		}
+		return null;
+
+	}
 }

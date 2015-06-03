@@ -228,13 +228,13 @@
                                                         label="#{messages['billingAccount.subscriptionDate']}"
                                                         field="subscriptionDate" />
 													<hf:formField label="#{messages['billingAccount.status']}"
-														field="status" hidden="#{empty billingAccountBean.entity.id}" edit="false"/>
+														field="status" doNotShowOnNew="true" edit="false"/>
 													<hf:formField
 														label="#{messages['billingAccount.statusDate']}"
-														field="statusDate" hidden="#{empty billingAccountBean.entity.id}" edit="false" />
+														field="statusDate" doNotShowOnNew="true" edit="false" />
 													<hf:formField
 														label="#{messages['billingAccount.terminationDate']}"
-														field="terminationDate" hidden="#{empty billingAccountBean.entity.id}" edit="false"/>
+														field="terminationDate" doNotShowOnNew="true" edit="false"/>
 
 													<hf:formField
 														label="#{messages['accountEntity.defaultLevel']}"
