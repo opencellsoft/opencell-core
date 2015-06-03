@@ -48,13 +48,13 @@ public class BusinessException extends Exception {
 	}
 
 	public void registerEvent(){
-		CreateEventHelper createEventHelper = null;
 		try {
 			InitialContext ic = new InitialContext();
-			createEventHelper = (CreateEventHelper) ic.lookup("java:global/"+ParamBean.getInstance().getProperty("meveo.moduleName", "meveo")+"/CreateEventHelper");
+			CreateEventHelper createEventHelper = (CreateEventHelper) ic.lookup("java:global/"+ParamBean.getInstance().getProperty("meveo.moduleName", "meveo")+"/CreateEventHelper");
+			createEventHelper.register(this);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		createEventHelper.register(this);
+		
 	}
 }
