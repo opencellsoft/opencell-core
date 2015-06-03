@@ -9,6 +9,7 @@ import javax.xml.bind.annotation.XmlType;
 
 import org.meveo.model.AccountEntity;
 import org.meveo.model.billing.BillingAccount;
+import org.meveo.model.billing.UserAccount;
 
 /**
  * @author Edward P. Legaspi
@@ -44,7 +45,7 @@ public class BillingAccountDto extends AccountDto {
 	private String email;
 	private BankCoordinatesDto bankCoordinates = new BankCoordinatesDto();
 
-	private UserAccountsDto userAccounts;
+	private UserAccountsDto userAccounts=new UserAccountsDto();
 
 	public BillingAccountDto() {
 
@@ -85,6 +86,12 @@ public class BillingAccountDto extends AccountDto {
 
 		if (e.getBankCoordinates() != null) {
 			bankCoordinates = new BankCoordinatesDto(e.getBankCoordinates());
+		}
+		
+		if (e.getUsersAccounts() != null) {
+			for (UserAccount userAccount : e.getUsersAccounts()) {
+				userAccounts.getUserAccount().add(new UserAccountDto(userAccount));
+			}
 		}
 	}
 
