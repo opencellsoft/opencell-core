@@ -57,7 +57,7 @@ public class CounterTemplate extends BusinessEntity {
 
 	@Enumerated(EnumType.STRING)
 	@Column(name = "COUNTER_TYPE")
-	private CounterTypeEnum counterType;
+	private CounterTypeEnum counterType=CounterTypeEnum.USAGE;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "CALENDAR_ID")
@@ -73,7 +73,7 @@ public class CounterTemplate extends BusinessEntity {
 
 	@Enumerated(EnumType.STRING)
 	@Column(name = "COUNTER_LEVEL")
-	private CounterTemplateLevel counterLevel;
+	private CounterTemplateLevel counterLevel=CounterTemplateLevel.UA;
 
 	public CounterTypeEnum getCounterType() {
 		return counterType;
