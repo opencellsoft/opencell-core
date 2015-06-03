@@ -194,6 +194,8 @@ public class RatingService extends BusinessService<WalletOperation>{
 		result.setProvider(provider);
 		result.setChargeInstance(chargeInstance);
 		if(chargeInstance.getInvoicingCalendar()!=null){
+			chargeInstance.getInvoicingCalendar().setInitDate(subscriptionDate);
+			
 			result.setInvoicingDate(
 					chargeInstance.getInvoicingCalendar().nextCalendarDate(
 							result.getOperationDate()));
