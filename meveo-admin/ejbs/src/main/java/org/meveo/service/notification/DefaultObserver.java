@@ -254,7 +254,7 @@ public class DefaultObserver {
        log.info("Defaut observer : BusinessExceptionEvent {} ", bee);
        String input = buildJsonIncidentRequest();
        log.info("Defaut observer : input {} ", input);
-       restNotifier.checkVersion(input, "http://127.0.0.1:8080/meveo-moni/api/rest/setIncident");
+       restNotifier.invoke(input, "http://127.0.0.1:8080/meveo-moni/api/rest/setIncident");
       
    }
    
