@@ -13,7 +13,6 @@ import org.meveo.api.dto.response.GetInvoiceCategoryResponse;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.LoggingInterceptor;
 import org.meveo.api.rest.InvoiceCategoryRs;
-import org.slf4j.Logger;
 
 /**
  * @author Edward P. Legaspi
@@ -21,9 +20,6 @@ import org.slf4j.Logger;
 @RequestScoped
 @Interceptors({ LoggingInterceptor.class })
 public class InvoiceCategoryRsImpl extends BaseRs implements InvoiceCategoryRs {
-
-	@Inject
-	private Logger log;
 
 	@Inject
 	private InvoiceCategoryApi invoiceCategoryApi;

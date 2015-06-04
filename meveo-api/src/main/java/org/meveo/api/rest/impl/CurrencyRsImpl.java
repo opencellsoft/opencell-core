@@ -13,7 +13,6 @@ import org.meveo.api.dto.response.GetCurrencyResponse;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.LoggingInterceptor;
 import org.meveo.api.rest.CurrencyRs;
-import org.slf4j.Logger;
 
 /**
  * @author Edward P. Legaspi
@@ -21,9 +20,6 @@ import org.slf4j.Logger;
 @RequestScoped
 @Interceptors({ LoggingInterceptor.class })
 public class CurrencyRsImpl extends BaseRs implements CurrencyRs {
-
-	@Inject
-	private Logger log;
 
 	@Inject
 	private CurrencyApi currencyApi;

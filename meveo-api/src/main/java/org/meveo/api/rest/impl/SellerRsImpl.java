@@ -15,7 +15,6 @@ import org.meveo.api.dto.response.SellerResponseDto;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.LoggingInterceptor;
 import org.meveo.api.rest.SellerRs;
-import org.slf4j.Logger;
 
 /**
  * @author Edward P. Legaspi
@@ -23,9 +22,6 @@ import org.slf4j.Logger;
 @RequestScoped
 @Interceptors({ LoggingInterceptor.class })
 public class SellerRsImpl extends BaseRs implements SellerRs {
-
-	@Inject
-	private Logger log;
 
 	@Inject
 	private SellerApi sellerApi;

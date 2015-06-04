@@ -15,7 +15,6 @@ import org.meveo.api.invoice.InvoiceApi;
 import org.meveo.api.logging.LoggingInterceptor;
 import org.meveo.api.rest.impl.BaseRs;
 import org.meveo.api.rest.invoice.InvoiceRs;
-import org.slf4j.Logger;
 
 /**
  * @author R.AITYAAZZA
@@ -24,9 +23,6 @@ import org.slf4j.Logger;
 @RequestScoped
 @Interceptors({ LoggingInterceptor.class })
 public class InvoiceRsImpl extends BaseRs implements InvoiceRs {
-
-	@Inject
-	private Logger log;
 
 	@Inject
 	private InvoiceApi invoiceApi;

@@ -17,7 +17,6 @@ import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.LoggingInterceptor;
 import org.meveo.api.rest.billing.WalletRs;
 import org.meveo.api.rest.impl.BaseRs;
-import org.slf4j.Logger;
 
 /**
  * @author Edward P. Legaspi
@@ -25,9 +24,6 @@ import org.slf4j.Logger;
 @RequestScoped
 @Interceptors({ LoggingInterceptor.class })
 public class WalletRsImpl extends BaseRs implements WalletRs {
-
-	@Inject
-	private Logger log;
 
 	@Inject
 	private WalletApi walletApi;

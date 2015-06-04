@@ -13,7 +13,6 @@ import org.meveo.api.logging.LoggingInterceptor;
 import org.meveo.api.notification.WebhookNotificationApi;
 import org.meveo.api.rest.impl.BaseRs;
 import org.meveo.api.rest.notification.WebHookNotificationRs;
-import org.slf4j.Logger;
 
 /**
  * @author Edward P. Legaspi
@@ -21,9 +20,6 @@ import org.slf4j.Logger;
 @RequestScoped
 @Interceptors({ LoggingInterceptor.class })
 public class WebHookNotificationRsImpl extends BaseRs implements WebHookNotificationRs {
-
-	@Inject
-	private Logger log;
 
 	@Inject
 	private WebhookNotificationApi webhookNotificationApi;

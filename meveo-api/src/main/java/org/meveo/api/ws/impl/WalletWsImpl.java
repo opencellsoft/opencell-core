@@ -16,7 +16,6 @@ import org.meveo.api.dto.response.billing.FindWalletOperationsResponseDto;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.LoggingInterceptor;
 import org.meveo.api.ws.WalletWs;
-import org.slf4j.Logger;
 
 /**
  * @author Edward P. Legaspi
@@ -24,9 +23,6 @@ import org.slf4j.Logger;
 @WebService(serviceName = "WalletWs", endpointInterface = "org.meveo.api.ws.WalletWs")
 @Interceptors({ LoggingInterceptor.class })
 public class WalletWsImpl extends BaseWs implements WalletWs {
-
-	@Inject
-	private Logger log;
 
 	@Inject
 	private WalletApi walletApi;

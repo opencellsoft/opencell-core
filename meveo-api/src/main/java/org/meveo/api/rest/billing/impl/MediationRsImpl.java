@@ -17,14 +17,10 @@ import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.LoggingInterceptor;
 import org.meveo.api.rest.billing.MediationRs;
 import org.meveo.api.rest.impl.BaseRs;
-import org.slf4j.Logger;
 
 @RequestScoped
 @Interceptors({ LoggingInterceptor.class })
 public class MediationRsImpl extends BaseRs implements MediationRs {
-
-	@Inject
-	private Logger log;
 
 	@Inject
 	private MediationApi mediationApi;

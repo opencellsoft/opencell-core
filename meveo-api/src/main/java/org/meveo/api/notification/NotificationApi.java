@@ -28,16 +28,12 @@ import org.meveo.service.catalog.impl.CounterTemplateService;
 import org.meveo.service.notification.InboundRequestService;
 import org.meveo.service.notification.NotificationHistoryService;
 import org.meveo.service.notification.NotificationService;
-import org.slf4j.Logger;
 
 /**
  * @author Edward P. Legaspi
  **/
 @Stateless
 public class NotificationApi extends BaseApi {
-
-	@Inject
-	private Logger log;
 
 	@Inject
 	private NotificationService notificationService;

@@ -18,16 +18,12 @@ import org.meveo.model.notification.EmailNotification;
 import org.meveo.model.notification.NotificationEventTypeEnum;
 import org.meveo.service.catalog.impl.CounterTemplateService;
 import org.meveo.service.notification.EmailNotificationService;
-import org.slf4j.Logger;
 
 /**
  * @author Edward P. Legaspi
  **/
 @Stateless
 public class EmailNotificationApi extends BaseApi {
-
-	@Inject
-	private Logger log;
 
 	@Inject
 	private EmailNotificationService emailNotificationService;

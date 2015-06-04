@@ -15,7 +15,6 @@ import org.meveo.api.logging.LoggingInterceptor;
 import org.meveo.api.rest.impl.BaseRs;
 import org.meveo.api.rest.job.JobRs;
 import org.meveo.model.jobs.TimerInfoDto;
-import org.slf4j.Logger;
 
 /**
  * @author Edward P. Legaspi
@@ -23,9 +22,6 @@ import org.slf4j.Logger;
 @RequestScoped
 @Interceptors({ LoggingInterceptor.class })
 public class JobRsImpl extends BaseRs implements JobRs {
-
-	@Inject
-	private Logger log;
 
 	@Inject
 	private JobApi jobApi;

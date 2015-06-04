@@ -31,13 +31,9 @@ import org.meveo.service.billing.impl.ReservationService;
 import org.meveo.service.billing.impl.UsageRatingService;
 import org.meveo.service.medina.impl.CDRParsingException;
 import org.meveo.service.medina.impl.CDRParsingService;
-import org.slf4j.Logger;
 
 @Stateless
 public class MediationApi extends BaseApi {
-
-	@Inject
-	private Logger log;
 
 	@Resource
 	private TimerService timerService;

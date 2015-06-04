@@ -32,16 +32,12 @@ import org.meveo.service.payments.impl.AccountOperationService;
 import org.meveo.service.payments.impl.CustomerAccountService;
 import org.meveo.service.payments.impl.MatchingAmountService;
 import org.meveo.service.payments.impl.MatchingCodeService;
-import org.slf4j.Logger;
 
 /**
  * @author Edward P. Legaspi
  **/
 @Stateless
 public class AccountOperationApi extends BaseApi {
-
-	@Inject
-	private Logger log;
 
 	@Inject
 	private CustomerAccountService customerAccountService;

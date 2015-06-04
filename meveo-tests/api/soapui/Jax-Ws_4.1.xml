@@ -24350,8 +24350,8 @@
          </notification>
       </ws:updateWebHookNotification>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/NotificationWs/updateWebHookNotification"/></con:call></con:operation></con:interface><con:interface xsi:type="con:WsdlInterface" wsaVersion="NONE" name="JobWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}JobWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="http://${#Project#meveoEndpoint}/JobWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache type="TEXT" rootPart="file:\C:\Users\Mbarek\Desktop\JobWs.xml"><con:part><con:url>file:\C:\Users\Mbarek\Desktop\JobWs.xml</con:url><con:content><![CDATA[<wsdl:definitions name="JobWs" targetNamespace="http://impl.ws.api.meveo.org/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://impl.ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns2="http://schemas.xmlsoap.org/soap/http" xmlns:ns1="http://ws.api.meveo.org/">
-  <wsdl:import location="http://localhost:8080/meveo/JobWs?wsdl=JobWs.wsdl" namespace="http://ws.api.meveo.org/"/>
+</soapenv:Envelope>]]></con:request><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/NotificationWs/updateWebHookNotification"/></con:call></con:operation></con:interface><con:interface xsi:type="con:WsdlInterface" wsaVersion="NONE" name="JobWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}JobWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="http://${#Project#meveoEndpoint}/JobWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache type="TEXT" rootPart="http://localhost:8080/meveo/JobWs?wsdl"><con:part><con:url>http://localhost:8080/meveo/JobWs?wsdl</con:url><con:content><![CDATA[<wsdl:definitions name="JobWs" targetNamespace="http://impl.ws.api.meveo.org/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://impl.ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns2="http://schemas.xmlsoap.org/soap/http" xmlns:ns1="http://ws.api.meveo.org/">
+  <wsdl:import location="http://localhost:8080/meveo/JobWs?wsdl=JobWs.wsdl" namespace="http://ws.api.meveo.org/"></wsdl:import>
   <wsdl:binding name="JobWsSoapBinding" type="ns1:JobWs">
     <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
     <wsdl:operation name="index">
@@ -24444,7 +24444,7 @@
           <xs:extension base="tns:baseDto">
             <xs:sequence>
               <xs:element name="jobCategory" type="xs:string"/>
-              <xs:element minOccurs="0" name="parametres" type="xs:string"/>
+              <xs:element minOccurs="0" name="parameter" type="xs:string"/>
               <xs:element name="active" type="xs:boolean"/>
               <xs:element minOccurs="0" name="customFields" type="tns:customFieldsDto"/>
             </xs:sequence>
@@ -24534,6 +24534,20 @@
             <!--Optional:-->
             <parameter>?</parameter>
             <active>?</active>
+            <!--Optional:-->
+            <customFields>
+               <!--Zero or more repetitions:-->
+               <customField code="?" description="?">
+                  <!--Optional:-->
+                  <stringValue>?</stringValue>
+                  <!--Optional:-->
+                  <dateValue>?</dateValue>
+                  <!--Optional:-->
+                  <longValue>?</longValue>
+                  <!--Optional:-->
+                  <doubleValue>?</doubleValue>
+               </customField>
+            </customFields>
          </timer>
       </ws:create>
    </soapenv:Body>
@@ -24558,7 +24572,7 @@
    <soapenv:Body>
       <ws:index/>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/JobWs/index"/></con:call></con:operation></con:interface><con:testSuite name="#787_timerEntity_api"><con:settings/><con:runType>SEQUENTIAL</con:runType><con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="create" searchProperties="true"><con:settings/><con:testStep type="request" name="create"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>JobWsSoapBinding</con:interface><con:operation>create</con:operation><con:request name="create"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/JobWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/JobWs/index"/></con:call></con:operation></con:interface><con:testSuite name="#787_timerEntity_api"><con:settings/><con:runType>SEQUENTIAL</con:runType><con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="create" searchProperties="true" id="90cd59b9-38c6-42be-9fe8-0e4dc37251ec"><con:settings/><con:testStep type="request" name="create"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>JobWsSoapBinding</con:interface><con:operation>create</con:operation><con:request name="create"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/JobWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
        <ws:create>
@@ -24568,29 +24582,17 @@
             <!--Optional:-->
             <parameter></parameter>
             <active></active>
-            <!--Optional:-->
             <customFields>
-               <!--Zero or more repetitions:-->
-               <entry>
-                  <!--Optional:-->
-                  <key>BillingRunJob_billingCycle</key>
-                  <!--Optional:-->
-                  <value>BC1</value>
-               </entry>
-               <entry>
-                  <!--Optional:-->
-                  <key>BillingRunJob_invoiceDate</key>
-                  <!--Optional:-->
-                  <value>05-01-2015</value>
-               </entry>
-               <entry>
-                  <!--Optional:-->
-                  <key>BillingRunJob_lastTransactionDate</key>
-                  <!--Optional:-->
-                  <value>06-08-2015</value>
-               </entry>
-            </customFields>
-
+               <customField code="BillingRunJob_billingCycle">
+                  <stringValue>BC1</stringValue>
+               </customField>
+               <customField code="BillingRunJob_invoiceDate">
+                  <dateValue>2015-05-01</dateValue>
+               </customField>
+               <customField code="BillingRunJob_lastTransactionDate">
+                  <dateValue>2015-06-08</dateValue>
+               </customField>
+            <customFields>
          </timer>
       </ws:create>>
    </soapenv:Body>
@@ -24691,7 +24693,7 @@
             <paymentMethod>CHECK</paymentMethod>
             <nextInvoiceDate>2015-04-01</nextInvoiceDate>
             <subscriptionDate>2015-01-01</subscriptionDate>
-            <paymentTerms>4 month</paymentTerms>
+            <paymentTerms>CASH</paymentTerms>
             <electronicBilling>true</electronicBilling>
             <email>613@manaty.net</email>
             

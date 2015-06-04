@@ -20,7 +20,6 @@ import org.meveo.api.notification.EmailNotificationApi;
 import org.meveo.api.notification.NotificationApi;
 import org.meveo.api.notification.WebhookNotificationApi;
 import org.meveo.api.ws.NotificationWs;
-import org.slf4j.Logger;
 
 /**
  * @author Edward P. Legaspi
@@ -28,9 +27,6 @@ import org.slf4j.Logger;
 @WebService(serviceName = "NotificationWs", endpointInterface = "org.meveo.api.ws.NotificationWs")
 @Interceptors({ LoggingInterceptor.class })
 public class NotificationWsImpl extends BaseWs implements NotificationWs {
-
-	@Inject
-	private Logger log;
 
 	@Inject
 	private NotificationApi notificationApi;

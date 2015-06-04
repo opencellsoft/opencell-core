@@ -41,13 +41,9 @@ import org.meveo.service.crm.impl.CustomerService;
 import org.meveo.service.payments.impl.AccountOperationService;
 import org.meveo.service.payments.impl.CreditCategoryService;
 import org.meveo.service.payments.impl.CustomerAccountService;
-import org.slf4j.Logger;
 
 @Stateless
 public class CustomerAccountApi extends AccountApi {
-
-	@Inject
-	private Logger log;
 
 	@Inject
 	private CreditCategoryService creditCategoryService;
