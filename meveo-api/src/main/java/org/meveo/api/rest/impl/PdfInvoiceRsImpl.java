@@ -10,7 +10,6 @@ import org.meveo.api.dto.response.PdfInvoiceResponse;
 import org.meveo.api.invoice.PdfInvoiceApi;
 import org.meveo.api.logging.LoggingInterceptor;
 import org.meveo.api.rest.PdfInvoiceRs;
-import org.slf4j.Logger;
 
 /**
  * @author R.AITYAAZZA
@@ -19,9 +18,6 @@ import org.slf4j.Logger;
 @RequestScoped
 @Interceptors({ LoggingInterceptor.class })
 public class PdfInvoiceRsImpl extends BaseRs implements PdfInvoiceRs {
-
-	@Inject
-	private Logger log;
 
 	@Inject
 	private PdfInvoiceApi pdfInvoiceApi;

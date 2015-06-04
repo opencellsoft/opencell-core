@@ -52,7 +52,6 @@ import org.meveo.api.dto.response.SellerResponseDto;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.LoggingInterceptor;
 import org.meveo.api.ws.SettingsWs;
-import org.slf4j.Logger;
 
 /**
  * @author Edward P. Legaspi
@@ -60,9 +59,6 @@ import org.slf4j.Logger;
 @WebService(serviceName = "SettingsWs", endpointInterface = "org.meveo.api.ws.SettingsWs")
 @Interceptors({ LoggingInterceptor.class })
 public class SettingsWsImpl extends BaseWs implements SettingsWs {
-
-	@Inject
-	private Logger log;
 
 	@Inject
 	private CountryApi countryApi;

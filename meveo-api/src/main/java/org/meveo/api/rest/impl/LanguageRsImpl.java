@@ -13,7 +13,6 @@ import org.meveo.api.dto.response.GetLanguageResponse;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.LoggingInterceptor;
 import org.meveo.api.rest.LanguageRs;
-import org.slf4j.Logger;
 
 /**
  * @author Edward P. Legaspi
@@ -21,9 +20,6 @@ import org.slf4j.Logger;
 @RequestScoped
 @Interceptors({ LoggingInterceptor.class })
 public class LanguageRsImpl extends BaseRs implements LanguageRs {
-
-	@Inject
-	private Logger log;
 
 	@Inject
 	private LanguageApi languageApi;

@@ -24,9 +24,6 @@ import org.slf4j.Logger;
 public class PricePlanRsImpl extends BaseRs implements PricePlanRs {
 
 	@Inject
-	private Logger log;
-
-	@Inject
 	private PricePlanApi pricePlanApi;
 
 	@Override

@@ -13,7 +13,6 @@ import org.meveo.api.logging.LoggingInterceptor;
 import org.meveo.api.payment.AccountOperationApi;
 import org.meveo.api.rest.impl.BaseRs;
 import org.meveo.api.rest.payment.AccountOperationRs;
-import org.slf4j.Logger;
 
 /**
  * @author Edward P. Legaspi
@@ -21,9 +20,6 @@ import org.slf4j.Logger;
 @RequestScoped
 @Interceptors({ LoggingInterceptor.class })
 public class AccountOperationRsImpl extends BaseRs implements AccountOperationRs {
-
-	@Inject
-	private Logger log;
 
 	@Inject
 	private AccountOperationApi accountOperationApi;

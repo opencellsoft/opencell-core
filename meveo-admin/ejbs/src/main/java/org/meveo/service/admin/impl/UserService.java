@@ -70,7 +70,7 @@ public class UserService extends PersistenceService<User> {
 		user.setPassword(Sha1Encrypt.encodePassword(user.getPassword()));
 		user.setLastPasswordModification(new Date());
 		// Set provider to the first provider from a user related provider list
-		user.setProvider(user.getProviders().iterator().next());
+//		user.setProvider(user.getProviders().iterator().next());
 
 		super.create(user);
 	}
@@ -137,7 +137,7 @@ public class UserService extends PersistenceService<User> {
 	}
 
 	public User findByUsernameAndPassword(EntityManager em, String username, String password) {
-		return findByUsernameAndPassword(em, username, password, Arrays.asList("roles", "provider", "providers"));
+		return findByUsernameAndPassword(em, username, password, Arrays.asList("roles", "provider"));
 	}
 
 	public User findByUsernameAndPassword(EntityManager em, String username, String password, List<String> fetchFields) {
@@ -257,17 +257,16 @@ public class UserService extends PersistenceService<User> {
 			}
 		}
 
-		for (Provider provider : user.getProviders()) {
-			provider.getCode();
-			if (provider.getLanguage() != null) {
-				provider.getLanguage().getLanguageCode();
-				for (TradingLanguage language : provider.getTradingLanguages()) {
-					language.getLanguageCode();
-				}
+		Provider provider =user.getProvider();
+		provider.getCode();
+		if (provider.getLanguage() != null) {
+			provider.getLanguage().getLanguageCode();
+			for (TradingLanguage language : provider.getTradingLanguages()) {
+				language.getLanguageCode();
 			}
-			for (WalletTemplate template : provider.getPrepaidWalletTemplates()) {
-				template.getCode();
-			}
+		}
+		for (WalletTemplate template : provider.getPrepaidWalletTemplates()) {
+			template.getCode();
 		}
 
 		// End lazy loading issue

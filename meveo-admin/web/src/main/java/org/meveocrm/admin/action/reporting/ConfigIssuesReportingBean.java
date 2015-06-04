@@ -8,7 +8,7 @@ import javax.faces.bean.RequestScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.meveo.admin.action.admin.CurrentProvider;
+import org.jboss.seam.security.Identity;
 import org.meveo.model.billing.InvoiceCategory;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.Tax;
@@ -21,6 +21,7 @@ import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.catalog.UsageChargeTemplate;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.rating.EDRStatusEnum;
+import org.meveo.security.MeveoUser;
 import org.meveo.service.billing.impl.TradingLanguageService;
 import org.meveo.service.billing.impl.WalletOperationService;
 import org.meveo.service.catalog.impl.CounterTemplateService;
@@ -67,10 +68,10 @@ public class ConfigIssuesReportingBean{
 		@Inject
 		private CounterTemplateService counterTemplateService;
 		
-		
 		@Inject
-		@CurrentProvider
-		protected Provider currentProvider;
+		private Identity identity;
+		
+		private Provider currentProvider;
 		
 		List<Tax> taxesNotAssociatedList=new ArrayList<Tax>();
 		List<UsageChargeTemplate> usagesWithNotPricePlList = new ArrayList<UsageChargeTemplate>();
@@ -91,57 +92,57 @@ public class ConfigIssuesReportingBean{
 		
 	 
 	public int getNbrUsagesWithNotPricePlan(){ 
-		   return usageChargeTemplateService.getNbrUsagesChrgWithNotPricePlan(currentProvider);
+		   return usageChargeTemplateService.getNbrUsagesChrgWithNotPricePlan(getCurrentProvider());
 		     }
     public int getNbrRecurringWithNotPricePlan(){ 
-		    return recurringChargeTemplateService.getNbrRecurringChrgWithNotPricePlan(currentProvider);
+		    return recurringChargeTemplateService.getNbrRecurringChrgWithNotPricePlan(getCurrentProvider());
 		     }
 	public int getNbrOneShotWithNotPricePlan(){ 
-		   return oneShotChargeTemplateService.getNbrOneShotWithNotPricePlan(currentProvider);
+		   return oneShotChargeTemplateService.getNbrOneShotWithNotPricePlan(getCurrentProvider());
 		     }	
 	
 	
      
      public void constructChargesWithNotPricePlan(TabChangeEvent event){
-    	 usagesWithNotPricePlList= usageChargeTemplateService.getUsagesChrgWithNotPricePlan(currentProvider);
-    	 recurringWithNotPricePlanList= recurringChargeTemplateService.getRecurringChrgWithNotPricePlan(currentProvider);
-    	 oneShotChrgWithNotPricePlanList= oneShotChargeTemplateService.getOneShotChrgWithNotPricePlan(currentProvider);
+    	 usagesWithNotPricePlList= usageChargeTemplateService.getUsagesChrgWithNotPricePlan(getCurrentProvider());
+    	 recurringWithNotPricePlanList= recurringChargeTemplateService.getRecurringChrgWithNotPricePlan(getCurrentProvider());
+    	 oneShotChrgWithNotPricePlanList= oneShotChargeTemplateService.getOneShotChrgWithNotPricePlan(getCurrentProvider());
      }
      
      public void constructTaxesNotAssociated(TabChangeEvent event){
-    	 taxesNotAssociatedList=taxService.getTaxesNotAssociated(currentProvider);
+    	 taxesNotAssociatedList=taxService.getTaxesNotAssociated(getCurrentProvider());
      }
      public void constructLanguagesNotAssociated(TabChangeEvent event){
-    	 languagesNotAssociatedList= tradingLanguageService.getLanguagesNotAssociated(currentProvider);
+    	 languagesNotAssociatedList= tradingLanguageService.getLanguagesNotAssociated(getCurrentProvider());
      }
      
      public void constructInvoiceCatNotAssociated(TabChangeEvent event){
-    	 invoiceCatNotAssociatedList= invoiceCategoryService.getInvoiceCatNotAssociated(currentProvider);
+    	 invoiceCatNotAssociatedList= invoiceCategoryService.getInvoiceCatNotAssociated(getCurrentProvider());
      }
      
      public void constructInvoiceSubCatNotAssociated(TabChangeEvent event){
-    	 invoiceSubCatNotAssociatedList= invoiceSubCategoryService.getInvoiceSubCatNotAssociated(currentProvider);
+    	 invoiceSubCatNotAssociatedList= invoiceSubCategoryService.getInvoiceSubCatNotAssociated(getCurrentProvider());
      }
 
      public void constructServicesWithNotOffer(TabChangeEvent event){
-    	 servicesWithNotOfferList=serviceTemplateService.getServicesWithNotOffer(currentProvider);
+    	 servicesWithNotOfferList=serviceTemplateService.getServicesWithNotOffer(getCurrentProvider());
      }
      
      public void constructUsagesChrgNotAssociated(TabChangeEvent event){
-    	 usagesChrgNotAssociatedList= usageChargeTemplateService.getUsagesChrgNotAssociated(currentProvider);
+    	 usagesChrgNotAssociatedList= usageChargeTemplateService.getUsagesChrgNotAssociated(getCurrentProvider());
      }
      
      public void constructCounterWithNotService(TabChangeEvent event){
-    	 counterWithNotServicList= counterTemplateService.getCounterWithNotService(currentProvider);	 
+    	 counterWithNotServicList= counterTemplateService.getCounterWithNotService(getCurrentProvider());	 
      } 
      public void constructRecurringNotAssociated(TabChangeEvent event){
-    	 recurringNotAssociatedList= recurringChargeTemplateService.getRecurringChrgNotAssociated(currentProvider);
+    	 recurringNotAssociatedList= recurringChargeTemplateService.getRecurringChrgNotAssociated(getCurrentProvider());
      }
      public void constructTermChrgNotAssociated(TabChangeEvent event){
-    	 terminationNotAssociatedList= oneShotChargeTemplateService.getTerminationChrgNotAssociated(currentProvider);
+    	 terminationNotAssociatedList= oneShotChargeTemplateService.getTerminationChrgNotAssociated(getCurrentProvider());
      }
      public void constructSubChrgNotAssociated(TabChangeEvent event){
-    	 subNotAssociatedList= oneShotChargeTemplateService.getSubscriptionChrgNotAssociated(currentProvider);
+    	 subNotAssociatedList= oneShotChargeTemplateService.getSubscriptionChrgNotAssociated(getCurrentProvider());
      }
      
   
@@ -152,30 +153,30 @@ public class ConfigIssuesReportingBean{
 		    reportConfigDto = new ConfigIssuesReportingDTO();
 		    reportConfigDto.setNbrChargesWithNotPricePlan(getNbrRecurringWithNotPricePlan()+getNbrUsagesWithNotPricePlan()+getNbrOneShotWithNotPricePlan());
 		    
-		    reportConfigDto.setNbrWalletOpOpen(walletOperationService.getNbrWalletOperationByStatus(WalletOperationStatusEnum.OPEN, currentProvider).intValue());
-		    reportConfigDto.setNbrWalletOpRerated(walletOperationService.getNbrWalletOperationByStatus(WalletOperationStatusEnum.RERATED, currentProvider).intValue());
-		    reportConfigDto.setNbrWalletOpReserved(walletOperationService.getNbrWalletOperationByStatus(WalletOperationStatusEnum.RESERVED, currentProvider).intValue());
-		    reportConfigDto.setNbrWalletOpCancled(walletOperationService.getNbrWalletOperationByStatus(WalletOperationStatusEnum.CANCELED, currentProvider).intValue());
-		    reportConfigDto.setNbrWalletOpTorerate(walletOperationService.getNbrWalletOperationByStatus(WalletOperationStatusEnum.TO_RERATE, currentProvider).intValue()); 
-		    reportConfigDto.setNbrWalletOpTreated(walletOperationService.getNbrWalletOperationByStatus(WalletOperationStatusEnum.TREATED, currentProvider).intValue());
-		    reportConfigDto.setNbrEdrOpen(walletOperationService.getNbrEdrByStatus(EDRStatusEnum.OPEN, currentProvider).intValue());
-		    reportConfigDto.setNbrEdrRated(walletOperationService.getNbrEdrByStatus(EDRStatusEnum.RATED, currentProvider).intValue());
-		    reportConfigDto.setNbrEdrRejected(walletOperationService.getNbrEdrByStatus(EDRStatusEnum.REJECTED, currentProvider).intValue());
+		    reportConfigDto.setNbrWalletOpOpen(walletOperationService.getNbrWalletOperationByStatus(WalletOperationStatusEnum.OPEN, getCurrentProvider()).intValue());
+		    reportConfigDto.setNbrWalletOpRerated(walletOperationService.getNbrWalletOperationByStatus(WalletOperationStatusEnum.RERATED, getCurrentProvider()).intValue());
+		    reportConfigDto.setNbrWalletOpReserved(walletOperationService.getNbrWalletOperationByStatus(WalletOperationStatusEnum.RESERVED, getCurrentProvider()).intValue());
+		    reportConfigDto.setNbrWalletOpCancled(walletOperationService.getNbrWalletOperationByStatus(WalletOperationStatusEnum.CANCELED, getCurrentProvider()).intValue());
+		    reportConfigDto.setNbrWalletOpTorerate(walletOperationService.getNbrWalletOperationByStatus(WalletOperationStatusEnum.TO_RERATE, getCurrentProvider()).intValue()); 
+		    reportConfigDto.setNbrWalletOpTreated(walletOperationService.getNbrWalletOperationByStatus(WalletOperationStatusEnum.TREATED, getCurrentProvider()).intValue());
+		    reportConfigDto.setNbrEdrOpen(walletOperationService.getNbrEdrByStatus(EDRStatusEnum.OPEN, getCurrentProvider()).intValue());
+		    reportConfigDto.setNbrEdrRated(walletOperationService.getNbrEdrByStatus(EDRStatusEnum.RATED, getCurrentProvider()).intValue());
+		    reportConfigDto.setNbrEdrRejected(walletOperationService.getNbrEdrByStatus(EDRStatusEnum.REJECTED, getCurrentProvider()).intValue());
 		    
-		    reportConfigDto.setNbrTaxesNotAssociated(taxService.getNbTaxesNotAssociated(currentProvider));
-		    reportConfigDto.setNbrLanguagesNotAssociated(tradingLanguageService.getNbLanguageNotAssociated(currentProvider));
-		    reportConfigDto.setNbrInvoiceCatNotAssociated(invoiceCategoryService.getNbInvCatNotAssociated(currentProvider));
-		    reportConfigDto.setNbrInvoiceSubCatNotAssociated(invoiceSubCategoryService.getNbInvSubCatNotAssociated(currentProvider));
+		    reportConfigDto.setNbrTaxesNotAssociated(taxService.getNbTaxesNotAssociated(getCurrentProvider()));
+		    reportConfigDto.setNbrLanguagesNotAssociated(tradingLanguageService.getNbLanguageNotAssociated(getCurrentProvider()));
+		    reportConfigDto.setNbrInvoiceCatNotAssociated(invoiceCategoryService.getNbInvCatNotAssociated(getCurrentProvider()));
+		    reportConfigDto.setNbrInvoiceSubCatNotAssociated(invoiceSubCategoryService.getNbInvSubCatNotAssociated(getCurrentProvider()));
 		    
-		    reportConfigDto.setNbrServicesWithNotOffer(serviceTemplateService.getNbServiceWithNotOffer(currentProvider));
+		    reportConfigDto.setNbrServicesWithNotOffer(serviceTemplateService.getNbServiceWithNotOffer(getCurrentProvider()));
 		    
-		    reportConfigDto.setNbrUsagesChrgNotAssociated(usageChargeTemplateService.getNbrUsagesChrgNotAssociated(currentProvider));
-		    reportConfigDto.setNbrCountersNotAssociated(counterTemplateService.getNbrCounterWithNotService(currentProvider));
+		    reportConfigDto.setNbrUsagesChrgNotAssociated(usageChargeTemplateService.getNbrUsagesChrgNotAssociated(getCurrentProvider()));
+		    reportConfigDto.setNbrCountersNotAssociated(counterTemplateService.getNbrCounterWithNotService(getCurrentProvider()));
 		    
-		    reportConfigDto.setNbrRecurringChrgNotAssociated(recurringChargeTemplateService.getNbrRecurringChrgNotAssociated(currentProvider));
+		    reportConfigDto.setNbrRecurringChrgNotAssociated(recurringChargeTemplateService.getNbrRecurringChrgNotAssociated(getCurrentProvider()));
 
-		    reportConfigDto.setNbrTerminationChrgNotAssociated(oneShotChargeTemplateService.getNbrTerminationChrgNotAssociated(currentProvider));
-		    reportConfigDto.setNbrSubChrgNotAssociated(oneShotChargeTemplateService.getNbrSubscriptionChrgNotAssociated(currentProvider));
+		    reportConfigDto.setNbrTerminationChrgNotAssociated(oneShotChargeTemplateService.getNbrTerminationChrgNotAssociated(getCurrentProvider()));
+		    reportConfigDto.setNbrSubChrgNotAssociated(oneShotChargeTemplateService.getNbrSubscriptionChrgNotAssociated(getCurrentProvider()));
 	        }
 	        
 	   
@@ -221,5 +222,12 @@ public class ConfigIssuesReportingBean{
 			}
 			public List<OneShotChargeTemplate> getSubNotAssociatedList() {
 				return subNotAssociatedList;
+			}
+			
+			public Provider getCurrentProvider(){
+				if(currentProvider==null){
+					currentProvider=((MeveoUser)identity.getUser()).getCurrentProvider();
+				}
+				return currentProvider;
 			}
 }

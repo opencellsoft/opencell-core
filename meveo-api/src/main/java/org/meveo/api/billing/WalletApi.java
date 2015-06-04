@@ -44,16 +44,12 @@ import org.meveo.service.billing.impl.WalletOperationService;
 import org.meveo.service.billing.impl.WalletReservationService;
 import org.meveo.service.billing.impl.WalletService;
 import org.meveo.service.billing.impl.WalletTemplateService;
-import org.slf4j.Logger;
 
 /**
  * @author Edward P. Legaspi
  **/
 @Stateless
 public class WalletApi extends BaseApi {
-
-	@Inject
-	private Logger log;
 
 	@SuppressWarnings("rawtypes")
 	@Inject

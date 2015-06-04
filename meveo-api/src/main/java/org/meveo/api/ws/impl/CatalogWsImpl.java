@@ -40,7 +40,6 @@ import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.LoggingInterceptor;
 import org.meveo.api.ws.CatalogWs;
 import org.meveo.model.shared.DateUtils;
-import org.slf4j.Logger;
 
 /**
  * @author Edward P. Legaspi
@@ -48,9 +47,6 @@ import org.slf4j.Logger;
 @WebService(serviceName = "CatalogWs", endpointInterface = "org.meveo.api.ws.CatalogWs")
 @Interceptors({ LoggingInterceptor.class })
 public class CatalogWsImpl extends BaseWs implements CatalogWs {
-
-	@Inject
-	private Logger log;
 
 	@Inject
 	private TriggeredEdrApi triggeredEdrApi;

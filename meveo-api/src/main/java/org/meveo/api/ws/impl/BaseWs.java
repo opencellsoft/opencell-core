@@ -17,12 +17,16 @@ import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.User;
 import org.meveo.service.admin.impl.UserService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author Edward P. Legaspi
  **/
 public abstract class BaseWs {
 
+    protected Logger log = LoggerFactory.getLogger(this.getClass());
+    
 	@Resource
 	private WebServiceContext webServiceContext;
 

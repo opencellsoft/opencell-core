@@ -120,7 +120,9 @@ public class CachedUsageChargeInstance implements Comparable<CachedUsageChargeIn
 
         if (unityNbDecimal > 0) {
             result = result.setScale(roundingUnityNbDecimal, RoundingMode.HALF_UP);
-        }
+        }else{
+			result=result.setScale(BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP);
+		}
 
         return result;
     }

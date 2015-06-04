@@ -21,40 +21,42 @@ import javax.naming.InitialContext;
 
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.event.monitoring.CreateEventHelper;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @ApplicationException(rollback = true)
 public class BusinessException extends Exception {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	public BusinessException() {
-		super();
-		registerEvent();
-	}
+    public BusinessException() {
+        super();
+        registerEvent();
+    }
 
-	public BusinessException(String message, Throwable cause) {
-		super(message, cause);
-		registerEvent();
-	}
+    public BusinessException(String message, Throwable cause) {
+        super(message, cause);
+        registerEvent();
+    }
 
-	public BusinessException(String message) {
-		super(message);
-		registerEvent();
-	}
+    public BusinessException(String message) {
+        super(message);
+        registerEvent();
+    }
 
-	public BusinessException(Throwable cause) {
-		super(cause);
-		registerEvent();
-	}
+    public BusinessException(Throwable cause) {
+        super(cause);
+        registerEvent();
+    }
 
-	public void registerEvent(){
-		try {
-			InitialContext ic = new InitialContext();
+    public void registerEvent() {
+        try {
+            InitialContext ic = new InitialContext();
 			CreateEventHelper createEventHelper = (CreateEventHelper) ic.lookup("java:global/"+ParamBean.getInstance().getProperty("meveo.moduleName", "meveo")+"/CreateEventHelper");
 			createEventHelper.register(this);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+        } catch (Exception e) {
+            Logger log = LoggerFactory.getLogger(this.getClass());
+            log.error("Failed to access event helper", e);
+        }
 		
-	}
+    }
 }

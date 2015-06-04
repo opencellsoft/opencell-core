@@ -26,9 +26,7 @@ import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
 import javax.persistence.Lob;
-import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
@@ -44,7 +42,6 @@ import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ObservableEntity;
 import org.meveo.model.ProviderlessEntity;
 import org.meveo.model.admin.Currency;
-import org.meveo.model.admin.User;
 import org.meveo.model.billing.BankCoordinates;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.Country;
@@ -124,9 +121,9 @@ public class Provider extends ProviderlessEntity {
     @OneToMany(mappedBy = "provider", fetch = FetchType.LAZY)
     private List<TradingCountry> tradingCountries;
 
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "ADM_USER_PROVIDER", joinColumns = @JoinColumn(name = "PROVIDER_ID"), inverseJoinColumns = @JoinColumn(name = "USER_ID"))
-    private List<User> users = new ArrayList<User>();
+//    @ManyToMany(fetch = FetchType.LAZY)
+//    @JoinTable(name = "ADM_USER_PROVIDER", joinColumns = @JoinColumn(name = "PROVIDER_ID"), inverseJoinColumns = @JoinColumn(name = "USER_ID"))
+//    private List<User> users = new ArrayList<User>();
 
     private static final String PM_SEP = ",";
 
@@ -339,13 +336,13 @@ public class Provider extends ProviderlessEntity {
         }
     }
 
-    public List<User> getUsers() {
-        return users;
-    }
-
-    public void setUsers(List<User> users) {
-        this.users = users;
-    }
+//    public List<User> getUsers() {
+//        return users;
+//    }
+//
+//    public void setUsers(List<User> users) {
+//        this.users = users;
+//    }
 
     public Blob getLogo() {
         return logo;

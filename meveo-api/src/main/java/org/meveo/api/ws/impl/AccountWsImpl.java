@@ -41,7 +41,6 @@ import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.LoggingInterceptor;
 import org.meveo.api.payment.AccountOperationApi;
 import org.meveo.api.ws.AccountWs;
-import org.slf4j.Logger;
 
 /**
  * @author Edward P. Legaspi
@@ -49,9 +48,6 @@ import org.slf4j.Logger;
 @WebService(serviceName = "AccountWs", endpointInterface = "org.meveo.api.ws.AccountWs")
 @Interceptors({ LoggingInterceptor.class })
 public class AccountWsImpl extends BaseWs implements AccountWs {
-
-	@Inject
-	private Logger log;
 
 	@Inject
 	private AccountOperationApi accountOperationApi;

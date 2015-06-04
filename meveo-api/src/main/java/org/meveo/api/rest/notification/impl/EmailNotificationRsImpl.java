@@ -13,7 +13,6 @@ import org.meveo.api.logging.LoggingInterceptor;
 import org.meveo.api.notification.EmailNotificationApi;
 import org.meveo.api.rest.impl.BaseRs;
 import org.meveo.api.rest.notification.EmailNotificationRs;
-import org.slf4j.Logger;
 
 /**
  * @author Edward P. Legaspi
@@ -21,9 +20,6 @@ import org.slf4j.Logger;
 @RequestScoped
 @Interceptors({ LoggingInterceptor.class })
 public class EmailNotificationRsImpl extends BaseRs implements EmailNotificationRs {
-
-	@Inject
-	private Logger log;
 
 	@Inject
 	private EmailNotificationApi emailNotificationApi;

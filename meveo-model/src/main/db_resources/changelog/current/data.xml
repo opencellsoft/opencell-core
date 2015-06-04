@@ -59,5 +59,10 @@
 		<dropColumn tableName="ar_customer_account" columnName="credit_category" />
 		<dropColumn tableName="ar_dunning_plan" columnName="credit_category" />
 	</changeSet>
+	
+	<changeSet id="846-2015604-1" author="TyshanShi">
+		<dropAllForeignKeyConstraints baseTableName="adm_user_provider"/>
+		<dropTable tableName="adm_user_provider"/>
+	</changeSet>
 
 </databaseChangeLog>

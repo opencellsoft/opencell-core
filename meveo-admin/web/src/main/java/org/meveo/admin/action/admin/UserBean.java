@@ -89,7 +89,7 @@ public class UserBean extends BaseBean<User> {
 
     private DualListModel<Role> perks;
 
-    private DualListModel<Provider> providerPerks;
+    private List<Provider> providerPerks;
 
     /**
      * Password set by user which is later encoded and set to user before saving to db.
@@ -165,14 +165,6 @@ public class UserBean extends BaseBean<User> {
                 entity.setPassword(password);
             }
 
-            // Add current provider to a list of user related providers
-            if (entity.getProviders().isEmpty()) {
-                entity.getProviders().add(currentProvider);
-            }
-
-            // Set provider to the first provider from a user related provider list
-            entity.setProvider(entity.getProviders().iterator().next());
-
             return super.saveOrUpdate(killConversation);
         }
     }
@@ -189,14 +181,14 @@ public class UserBean extends BaseBean<User> {
      * @see org.meveo.admin.action.BaseBean#getFormFieldsToFetch()
      */
     protected List<String> getFormFieldsToFetch() {
-        return Arrays.asList("provider", "roles", "providers");
+        return Arrays.asList("provider", "roles");
     }
 
     /**
      * @see org.meveo.admin.action.BaseBean#getListFieldsToFetch()
      */
     protected List<String> getListFieldsToFetch() {
-        return Arrays.asList("providers", "roles", "provider");
+        return Arrays.asList("roles", "provider");
     }
 
     /**
@@ -219,21 +211,8 @@ public class UserBean extends BaseBean<User> {
         getEntity().setRoles(new HashSet<Role>((List<Role>) perks.getTarget()));
     }
 
-    public DualListModel<Provider> getProvidersDualListModel() {
-        if (providerPerks == null) {
-            List<Provider> perksSource = providerService.list();
-            List<Provider> perksTarget = new ArrayList<Provider>();
-            if (getEntity().getProviders() != null) {
-                perksTarget.addAll(getEntity().getProviders());
-            }
-            perksSource.removeAll(perksTarget);
-            providerPerks = new DualListModel<Provider>(perksSource, perksTarget);
-        }
-        return providerPerks;
-    }
-
-    public void setProvidersDualListModel(DualListModel<Provider> providerPerks) {
-        getEntity().setProviders(new HashSet<Provider>((List<Provider>) providerPerks.getTarget()));
+    public List<Provider> getProviders() {
+        return providerService.list();
     }
 
     public String getPassword() {
@@ -545,7 +524,7 @@ public class UserBean extends BaseBean<User> {
         boolean isSuperAdmin = identity.hasPermission("superAdmin", "superAdminManagement");
 
         if (!isSuperAdmin) {            
-            searchCriteria.put("list-providers", currentProvider);            
+            searchCriteria.put("provider", getCurrentProvider());            
         }
 
         return searchCriteria;

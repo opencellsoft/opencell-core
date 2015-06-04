@@ -44,16 +44,12 @@ import org.meveo.service.catalog.impl.CatMessagesService;
 import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
 import org.meveo.service.catalog.impl.OneShotChargeTemplateService;
 import org.meveo.service.catalog.impl.TriggeredEDRTemplateService;
-import org.slf4j.Logger;
 
 /**
  * @author Edward P. Legaspi
  **/
 @Stateless
 public class OneShotChargeTemplateApi extends BaseApi {
-
-	@Inject
-	private Logger log;
 
 	@Inject
 	private OneShotChargeTemplateService oneShotChargeTemplateService;

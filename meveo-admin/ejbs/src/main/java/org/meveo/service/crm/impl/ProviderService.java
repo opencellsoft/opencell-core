@@ -65,13 +65,12 @@ public class ProviderService extends PersistenceService<Provider> {
 		}
 	}
 
-	public Set<Provider> findUsersProviders(String userName) {
+	public Provider findUsersProvider(String userName) {
 		User user = userService.findByUsername(userName);
 		if (user != null) {
-			return user.getProviders();
-		} else {
-			return null;
+			return user.getProvider();
 		}
+		return null;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -90,9 +89,6 @@ public class ProviderService extends PersistenceService<Provider> {
         
         User user = new User();
         user.setProvider(e);
-        Set<Provider> providers = new HashSet<Provider>();
-        providers.add(e);
-        user.setProviders(providers);
         user.setPassword(e.getCode() + ".password");
         user.setUserName(e.getCode() + ".ADMIN");
         Role role = roleService.findById(Long.parseLong(paramBean.getProperty("systgetEntityManager().adminRoleid", "1")));

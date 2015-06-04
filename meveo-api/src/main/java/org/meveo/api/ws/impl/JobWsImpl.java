@@ -14,14 +14,10 @@ import org.meveo.api.job.TimerEntityApi;
 import org.meveo.api.logging.LoggingInterceptor;
 import org.meveo.api.ws.JobWs;
 import org.meveo.model.jobs.TimerInfoDto;
-import org.slf4j.Logger;
 
 @WebService(serviceName = "JobWs", endpointInterface = "org.meveo.api.ws.JobWs")
 @Interceptors({ LoggingInterceptor.class })
 public class JobWsImpl extends BaseWs implements JobWs {
-
-	@Inject
-	private Logger log;
 
 	@Inject
 	private JobApi jobApi;

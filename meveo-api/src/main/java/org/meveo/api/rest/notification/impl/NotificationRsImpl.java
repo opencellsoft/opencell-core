@@ -15,7 +15,6 @@ import org.meveo.api.logging.LoggingInterceptor;
 import org.meveo.api.notification.NotificationApi;
 import org.meveo.api.rest.impl.BaseRs;
 import org.meveo.api.rest.notification.NotificationRs;
-import org.slf4j.Logger;
 
 /**
  * @author Edward P. Legaspi
@@ -23,9 +22,6 @@ import org.slf4j.Logger;
 @RequestScoped
 @Interceptors({ LoggingInterceptor.class })
 public class NotificationRsImpl extends BaseRs implements NotificationRs {
-
-	@Inject
-	private Logger log;
 
 	@Inject
 	private NotificationApi notificationApi;

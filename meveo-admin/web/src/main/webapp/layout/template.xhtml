@@ -61,13 +61,8 @@
 						rendered="#{identity.loggedIn}" />
 				</li>
 				<li><h:outputText
-						value="#{messages['commons.connectedProvider']} : #{currentProvider.code}"
-						rendered="#{identity.loggedIn and identity.user.user.onlyOneProvider}" />
-
-					<h:link
-						value="#{messages['commons.connectedProvider']} : #{currentProvider.code}"
-						onclick="PF('dlg_providerSelectPopup').show(); return false;"
-						rendered="#{identity.loggedIn and !identity.user.user.onlyOneProvider}" />
+						value="#{messages['commons.connectedProvider']} : #{identity.user.currentProvider.code}"
+						rendered="#{identity.loggedIn}" />
 				</li>
 
 
@@ -107,32 +102,32 @@
 
 
 
-	<p:dialog id="providerSelectPopup"
-		rendered="#{identity.loggedIn and ! identity.user.user.onlyOneProvider}"
-		header="#{messages['provider.popup.header']}"
-		widgetVar="dlg_providerSelectPopup"  modal="true"
-		styleClass="form-dialog" width="500" closeOnEscape="true" visible="#{param['chooseProvider']!=null}">
-		<h:form id="providerSelectPopupForm">
+<!-- 	<p:dialog id="providerSelectPopup" -->
+<!-- 		rendered="#{identity.loggedIn and ! identity.user.user.onlyOneProvider}" -->
+<!-- 		header="#{messages['provider.popup.header']}" -->
+<!-- 		widgetVar="dlg_providerSelectPopup"  modal="true" -->
+<!-- 		styleClass="form-dialog" width="500" closeOnEscape="true" visible="#{param['chooseProvider']!=null}"> -->
+<!-- 		<h:form id="providerSelectPopupForm"> -->
 
 
-			<p:dataTable var="provider" value="#{identity.user.user.providers.toArray()}" reflow="true" resizableColumns="true">
+<!-- 			<p:dataTable var="provider" value="#{identity.user.user.providers.toArray()}" reflow="true" resizableColumns="true"> -->
 
-				<p:column headerText="#{messages['businessEntity.code']}">
-					<h:outputText value="#{provider.code}" />
-				</p:column>
+<!-- 				<p:column headerText="#{messages['businessEntity.code']}"> -->
+<!-- 					<h:outputText value="#{provider.code}" /> -->
+<!-- 				</p:column> -->
 
-				<p:column headerText="#{messages['businessEntity.description']}">
-					<h:outputText value="#{provider.description}" />
-				</p:column>
-				<p:column>
-					<p:commandLink value="#{messages['commons.select']}"
-						action="#{currentProviderBean.setCurrentProvider(provider)}"
-						oncomplete="PF('dlg_providerSelectPopup').hide()">
-					</p:commandLink>
-				</p:column>
-			</p:dataTable>
-		</h:form>
-	</p:dialog>
+<!-- 				<p:column headerText="#{messages['businessEntity.description']}"> -->
+<!-- 					<h:outputText value="#{provider.description}" /> -->
+<!-- 				</p:column> -->
+<!-- 				<p:column> -->
+<!-- 					<p:commandLink value="#{messages['commons.select']}" -->
+<!-- 						action="#{currentProviderBean.setCurrentProvider(provider)}" -->
+<!-- 						oncomplete="PF('dlg_providerSelectPopup').hide()"> -->
+<!-- 					</p:commandLink> -->
+<!-- 				</p:column> -->
+<!-- 			</p:dataTable> -->
+<!-- 		</h:form> -->
+<!-- 	</p:dialog> -->
 
 </h:body>
 	</html>

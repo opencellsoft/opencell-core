@@ -37,7 +37,6 @@ import org.jboss.seam.international.status.Messages;
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.jboss.seam.security.Identity;
 import org.jboss.solder.servlet.http.RequestParam;
-import org.meveo.admin.action.admin.CurrentProvider;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.model.AccountEntity;
@@ -93,10 +92,6 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 	protected Identity identity;
 
 	@Inject
-	@CurrentProvider
-	protected Provider currentProvider;
-
-	@Inject
 	ProviderService providerService;
 
 	@Inject
@@ -129,7 +124,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 	@RequestParam()
 	private Instance<String> edit;
 
-	private boolean editSaved;
+//	private boolean editSaved;
 
 	protected int dataTableFirstAttribute;
 
@@ -817,12 +812,11 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 		objectIdFromSet = objectId;
 	}
 
+	/**
+	 * true in edit mode
+	 * @return
+	 */
 	public boolean isEdit() {
-		//Edit mode always
-//		if (edit != null && edit.get() != null && !edit.get().equals("" + editSaved)) {
-//			editSaved = Boolean.valueOf(edit.get());
-//		}
-//		return editSaved;
 		return true;
 	}
 
@@ -840,14 +834,13 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 	}
 
 	public List<TradingLanguage> getProviderLanguages() {
-		Provider provider = providerService.findById(currentProvider.getId(), true);
+		Provider provider = providerService.findById(getCurrentProvider().getId(), true);
 		return provider.getTradingLanguages();
 	}
 
 	public String getProviderLanguageCode() {
 		if (getCurrentProvider() != null) {
-
-			Provider provider = providerService.findById(currentProvider.getId(), true);
+			Provider provider = providerService.findById(getCurrentProvider().getId(), true);
 			return provider.getLanguage().getLanguageCode();
 		}
 		return "";
@@ -862,7 +855,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 	}
 
 	protected Provider getCurrentProvider() {
-		return currentProvider;
+		return getCurrentUser().getProvider();
 	}
 
 	protected String getDefaultSort() {

@@ -19,7 +19,6 @@ import org.meveo.api.dto.response.billing.SubscriptionsResponseDto;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.LoggingInterceptor;
 import org.meveo.api.ws.SubscriptionWs;
-import org.slf4j.Logger;
 
 /**
  * @author Edward P. Legaspi
@@ -27,9 +26,6 @@ import org.slf4j.Logger;
 @WebService(serviceName = "SubscriptionWs", endpointInterface = "org.meveo.api.ws.SubscriptionWs")
 @Interceptors({ LoggingInterceptor.class })
 public class SubscriptionWsImpl extends BaseWs implements SubscriptionWs {
-
-	@Inject
-	private Logger log;
 
 	@Inject
 	private SubscriptionApi subscriptionApi;

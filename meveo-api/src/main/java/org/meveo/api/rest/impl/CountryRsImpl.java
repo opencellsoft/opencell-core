@@ -15,7 +15,6 @@ import org.meveo.api.dto.response.GetCountryResponse;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.LoggingInterceptor;
 import org.meveo.api.rest.CountryRs;
-import org.slf4j.Logger;
 
 /**
  * @see {@link org.meveo.api.rest.CountryWs}.
@@ -25,9 +24,6 @@ import org.slf4j.Logger;
 @RequestScoped
 @Interceptors({ LoggingInterceptor.class })
 public class CountryRsImpl extends BaseRs implements CountryRs {
-
-	@Inject
-	private Logger log;
 
 	@Inject
 	private CountryApi countryApi;

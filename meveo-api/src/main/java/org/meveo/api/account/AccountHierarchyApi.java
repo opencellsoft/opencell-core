@@ -55,7 +55,6 @@ import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.crm.AccountLevelEnum;
 import org.meveo.model.crm.CustomFieldInstance;
-import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.crm.CustomerBrand;
 import org.meveo.model.crm.CustomerCategory;
@@ -86,7 +85,6 @@ import org.meveo.service.catalog.impl.OfferTemplateService;
 import org.meveo.service.catalog.impl.ServiceTemplateService;
 import org.meveo.service.catalog.impl.TitleService;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
-import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.meveo.service.crm.impl.CustomerBrandService;
 import org.meveo.service.crm.impl.CustomerCategoryService;
 import org.meveo.service.crm.impl.CustomerService;
@@ -94,19 +92,12 @@ import org.meveo.service.medina.impl.AccessService;
 import org.meveo.service.payments.impl.CreditCategoryService;
 import org.meveo.service.payments.impl.CustomerAccountService;
 import org.meveo.util.MeveoParamBean;
-import org.slf4j.Logger;
 
 @Stateless
 public class AccountHierarchyApi extends BaseApi {
 
 	@Inject
-	private Logger log;
-
-	@Inject
 	private CreditCategoryService creditCategoryService;
-
-	@Inject
-	private CustomFieldTemplateService customFieldTemplateService;
 
 	@Inject
 	private CustomFieldInstanceService customFieldInstanceService;
@@ -772,18 +763,12 @@ public class AccountHierarchyApi extends BaseApi {
 		}
 
 		// custom fields
-		if (!StringUtils.isBlank(postData.getCustomerId())) {
-			Customer customer = customerService.findByCode(postData.getCustomerId(), currentUser.getProvider());
-			if (customer == null) {
-				throw new EntityDoesNotExistsException(Customer.class, postData.getCustomerId());
-			}
-			if (postData.getCustomFields() != null) {
-				for (CustomFieldDto cfDto : postData.getCustomFields().getCustomField()) {
-					CustomFieldInstance cfi = customFieldInstanceService.findByCodeAndAccountAndValue(cfDto.getCode(), customer, cfDto.getStringValue(), cfDto.getDateValue(),
-							cfDto.getLongValue(), cfDto.getDoubleValue(), currentUser.getProvider());
-					if (cfi != null) {
-						qb.addCriterion("VALUE(c.customFields)", "=", cfi, true);
-					}
+		if (postData.getCustomFields() != null) {
+			for (CustomFieldDto cfDto : postData.getCustomFields().getCustomField()) {
+				CustomFieldInstance cfi = customFieldInstanceService.findByCodeAndAccountAndValue(cfDto.getCode(), Customer.ACCOUNT_TYPE, cfDto.getStringValue(),
+						cfDto.getDateValue(), cfDto.getLongValue(), cfDto.getDoubleValue(), currentUser.getProvider());
+				if (cfi != null) {
+					qb.addCriterion("VALUE(c.customFields)", "=", cfi, true);
 				}
 			}
 		}
@@ -1555,7 +1540,7 @@ public class AccountHierarchyApi extends BaseApi {
 		}
 	}
 
-	private void populateNameAndAddress(AccountEntity accountEntity, AccountDto accountDto, AccountLevelEnum accountLevel, User currentUser) {
+	private void populateNameAndAddress(AccountEntity accountEntity, AccountDto accountDto, AccountLevelEnum accountLevel, User currentUser) throws MeveoApiException {
 
 		if (!StringUtils.isBlank(accountDto.getDescription())) {
 			accountEntity.setDescription(accountDto.getDescription());
@@ -1606,50 +1591,14 @@ public class AccountHierarchyApi extends BaseApi {
 			}
 		}
 
-		if (accountDto.getCustomFields() != null) {
-			for (CustomFieldDto cf : accountDto.getCustomFields().getCustomField()) {
-				// check if custom field exists has a template
-				List<CustomFieldTemplate> customFieldTemplates = customFieldTemplateService.findByAccountLevel(accountLevel);
-				boolean found = false;
-				if (customFieldTemplates != null && customFieldTemplates.size() > 0) {
-					for (CustomFieldTemplate cft : customFieldTemplates) {
-						if (cf.getCode().equals(cft.getCode())) {
-							found = true;
-							CustomFieldInstance cfi = customFieldInstanceService.findByCodeAndAccount(cf.getCode(), accountEntity, currentUser.getProvider());
-							if (cfi != null) {
-								// update
-								cfi.setActive(true);
-								cfi.setDateValue(cf.getDateValue());
-								cfi.setDescription(cf.getDescription());
-								cfi.setDoubleValue(cf.getDoubleValue());
-								cfi.setLongValue(cf.getLongValue());
-								cfi.setStringValue(cf.getStringValue());
-								cfi.updateAudit(currentUser);
-							} else {
-								// create
-								CustomFieldInstance cfiNew = new CustomFieldInstance();
-								cfiNew.setAccount(accountEntity);
-								cfiNew.setActive(true);
-								cfiNew.setCode(cf.getCode());
-								cfiNew.setDateValue(cf.getDateValue());
-								cfiNew.setDescription(cf.getDescription());
-								cfiNew.setDoubleValue(cf.getDoubleValue());
-								cfiNew.setLongValue(cf.getLongValue());
-								cfiNew.setProvider(currentUser.getProvider());
-								cfiNew.setStringValue(cf.getStringValue());
-								cfiNew.updateAudit(currentUser);
-								accountEntity.getCustomFields().put(cfiNew.getCode(), cfiNew);
-							}
-						}
-					}
-				} else {
-					log.warn("No custom field template defined.");
-				}
-
-				if (!found) {
-					log.warn("No custom field template with code={}", cf.getCode());
-				}
-			}
-		}
-	}
+        // populate customFields
+        if (accountDto.getCustomFields() != null) {
+            try {
+                populateCustomFields(accountLevel, accountDto.getCustomFields().getCustomField(), accountEntity, "account", currentUser);
+            } catch (IllegalArgumentException | IllegalAccessException e) {
+                log.error("Failed to associate custom field instance to an entity", e);
+                throw new MeveoApiException("Failed to associate custom field instance to an entity");
+            }
+        }
+    }
 }

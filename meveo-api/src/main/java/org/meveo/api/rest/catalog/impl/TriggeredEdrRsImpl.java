@@ -14,7 +14,6 @@ import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.LoggingInterceptor;
 import org.meveo.api.rest.catalog.TriggeredEdrRs;
 import org.meveo.api.rest.impl.BaseRs;
-import org.slf4j.Logger;
 
 /**
  * @author Edward P. Legaspi
@@ -22,9 +21,6 @@ import org.slf4j.Logger;
 @RequestScoped
 @Interceptors({ LoggingInterceptor.class })
 public class TriggeredEdrRsImpl extends BaseRs implements TriggeredEdrRs {
-
-	@Inject
-	private Logger log;
 
 	@Inject
 	private TriggeredEdrApi triggeredEdrApi;

@@ -12,7 +12,6 @@ import org.meveo.api.ws.CommunicationWs;
 import org.meveo.model.communication.MeveoInstance;
 import org.meveo.model.communication.MeveoInstanceStatusEnum;
 import org.meveo.service.communication.impl.MeveoInstanceService;
-import org.slf4j.Logger;
 
 /**
  * @author Nasseh
@@ -20,9 +19,6 @@ import org.slf4j.Logger;
 @WebService(serviceName = "CommunicationWs", endpointInterface = "org.meveo.api.ws.CommunicationWs")
 @Interceptors({ LoggingInterceptor.class })
 public class CommunicationWsImpl extends BaseWs implements CommunicationWs {
-
-	@Inject
-	private Logger log;
 
 	@Inject
 	private MeveoInstanceService meveoInstanceService;
