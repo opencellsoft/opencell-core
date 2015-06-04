@@ -20,6 +20,7 @@ import javax.inject.Inject;
 import org.apache.commons.vfs.FileSystemException;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.cache.NotificationCacheContainerProvider;
+import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.event.monitoring.BusinessExceptionEvent;
 import org.meveo.event.qualifier.Created;
@@ -252,44 +253,20 @@ public class DefaultObserver {
    
    public void businesException(@Observes  BusinessExceptionEvent bee){
        log.info("Defaut observer : BusinessExceptionEvent {} ", bee);
-       String input = buildJsonIncidentRequest();
+       String input = "{"+
+				"	  #meveoInstanceCode#: #myMeveo#,"+
+				"	  #subject#: #A Exception#,"+
+				"	  #body#: #"+LogContent.getLogs(new Date(System.currentTimeMillis()-20000) , new Date())+"#,"+
+				"	  #additionnalInfo1#: ##,"+
+				"	  #additionnalInfo2#: ##,"+
+				"	  #additionnalInfo3#: ##,"+
+				"	  #additionnalInfo4#: ##"+
+				"}";
        log.info("Defaut observer : input {} ", input);
-       restNotifier.invoke(input, "http://127.0.0.1:8080/meveo-moni/api/rest/setIncident");
+       restNotifier.invoke(input.replaceAll("#", "\""),ParamBean.getInstance().getProperty("inboundCommunication.url", "http://version.meveo.info/meveo-moni/api/rest/inboundCommunication"));
+       
+		//TODO handel reponse
+		//if pertinent, if need logs
       
    }
-   
-   private String buildJsonIncidentRequest(){
-		try{
-			long currentTime = System.currentTimeMillis();
-			String meveoInstanceCode = "myMeveo";
-			String body = LogContent.getLogs(new Date(currentTime-20000) , new Date());
-			String subject = "A Exception";
-			String info1 = "";
-			String info2="";
-			String info3="";
-			String info4="";
-			
-			/*
-			 * Dont add any fields in this json object
-			 * if needed , so add idd it first in the remote service
-			 */
-			String input = "{"+
-					"	  #meveoInstanceCode#: #"+meveoInstanceCode+"#,"+
-					"	  #subject#: #"+subject+"#,"+
-					"	  #body#: #"+body+"#,"+
-					"	  #additionnalInfo1#: #"+info1+"#,"+
-					"	  #additionnalInfo2#: #"+info2+"#,"+
-					"	  #additionnalInfo3#: #"+info3+"#,"+
-					"	  #additionnalInfo4#: #"+info4+"#"+
-					"}";
-					
-			input = input.replaceAll("#", "\"");
-			return input;
-
-		}catch(Exception e){
-			log.error("Exception on buildJsonRequest: ",e);
-		}
-		return null;
-
-	}
 }
