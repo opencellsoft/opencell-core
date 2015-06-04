@@ -39,7 +39,7 @@ public class BusinessExceptionEvent {
 	}
 
 	/**
-	 * @param meveoInstanceCode the meveoInstanceCode to set
+	 * @param meveoInstanceCode th meveoInstanceCode to set
 	 */
 	public void setMeveoInstanceCode(String meveoInstanceCode) {
 		this.meveoInstanceCode = meveoInstanceCode;
