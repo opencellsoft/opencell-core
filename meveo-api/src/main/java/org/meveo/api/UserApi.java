@@ -80,10 +80,6 @@ public class UserApi extends BaseApi {
 			roles.add(role);
 			user.setRoles(roles);
 
-			Set<Provider> providers = new HashSet<Provider>();
-			providers.add(provider);
-			user.setProviders(providers);
-
 			userService.create(user, currentUser, provider);
 		} else {
 			if (StringUtils.isBlank(postData.getUsername())) {

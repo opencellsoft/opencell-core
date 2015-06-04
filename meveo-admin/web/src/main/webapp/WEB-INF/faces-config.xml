@@ -31,12 +31,12 @@
 			<from-action>#{identity.login}</from-action>
 			<if>#{identity.loggedIn}</if>
 			<to-view-id>/home.xhtml</to-view-id>
-			<redirect>
-				<view-param>
-					<name>chooseProvider</name>
-					<value>true</value>
-				</view-param>
-			</redirect>
+<!-- 			<redirect> -->
+<!-- 				<view-param> -->
+<!-- 					<name>chooseProvider</name> -->
+<!-- 					<value>true</value> -->
+<!-- 				</view-param> -->
+<!-- 			</redirect> -->
 		</navigation-case>
 
 		<navigation-case>

@@ -174,14 +174,8 @@ public class Authenticator extends BaseAuthenticator {
             setStatus(AuthenticationStatus.SUCCESS);
             MeveoUser meveoUser = new MeveoUser(user);
             
-            // Choose the first provider as a current provider
-            Provider currentProvider = null;
-
-            if (user.getProviders().isEmpty()) {
-                currentProvider = user.getProvider();
-            } else {
-                currentProvider = user.getProviders().iterator().next();
-            }
+            // Choose user's provider as the current provider
+            Provider currentProvider = user.getProvider();
             if(currentProvider.getLanguage()!=null){
             	currentProvider.getLanguage().getLanguageCode(); // Lazy loading issue
             }

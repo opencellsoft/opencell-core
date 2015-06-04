@@ -40,10 +40,12 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.servlet.http.HttpServletResponse;
 
+import org.jboss.seam.security.Identity;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.Document;
 import org.meveo.model.crm.Provider;
+import org.meveo.security.MeveoUser;
 import org.slf4j.Logger;
 
 @Named
@@ -59,8 +61,7 @@ public class DocumentBean implements Serializable {
 	private List<Document> documents;
 
 	@Inject
-	@CurrentProvider
-	private Provider currentProvider;
+	private Identity identity;
 
 	private String filename;
 	private Date fromDate;
@@ -296,6 +297,7 @@ public class DocumentBean implements Serializable {
 			if (name == null) {
 				result = false;
 			}
+			Provider currentProvider=((MeveoUser)identity.getUser()).getCurrentProvider();
 			if (currentProvider != null
 					&& !name.startsWith(currentProvider.getCode())) {
 				result = false;

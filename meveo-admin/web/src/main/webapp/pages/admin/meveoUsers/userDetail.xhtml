@@ -50,10 +50,15 @@
 				listType="pickUpList" valueLabelField="name" required="true"
 				dualListModel="#{userBean.dualListModel}" newLine="true"/>
 
-			<hf:formField label="#{messages['user.providers']}"
-				rendered="#{identity.hasPermission('superAdmin','superAdminManagement')}"
-				field="providers" listType="pickUpList" valueLabelField="code"
-				required="true" dualListModel="#{userBean.providersDualListModel}" newLine="true" />                
+			 <hftl:decorateFormField fieldId="provider" label="#{messages['commons.connectedProvider']}"
+			 	rendered="#{identity.hasPermission('superAdmin','superAdminManagement')}" styleClass="clearLeft">
+				<p:selectOneMenu id="provider" required="true"
+					converter="omnifaces.SelectItemsConverter"
+					value="#{userBean.entity.provider}">
+					<f:selectItem itemLabel="#{messages['commons.select']}" />
+					<f:selectItems value="#{userBean.providers}" var="p" itemLabel="#{p.code}" itemValue="#{p}"/>
+				</p:selectOneMenu>             
+			</hftl:decorateFormField>
 		</hf:formPanel>
 		
 	</ui:define>

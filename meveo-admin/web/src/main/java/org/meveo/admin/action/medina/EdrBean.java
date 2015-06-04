@@ -59,7 +59,7 @@ public class EdrBean extends BaseBean<EDR> {
 				selectedIds.add(edr.getId());
 			}
 
-			edrService.massUpdate(EDRStatusEnum.OPEN, selectedIds, currentProvider);
+			edrService.massUpdate(EDRStatusEnum.OPEN, selectedIds, getCurrentProvider());
 
 			messages.info(new BundleKey("messages", "update.successful"));
 		}

@@ -18,11 +18,11 @@ package org.meveo.admin.action.admin;
 
 import java.io.Serializable;
 
-import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.jboss.seam.security.Identity;
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.crm.Provider;
 import org.meveo.security.MeveoUser;
 import org.slf4j.Logger;
@@ -51,14 +51,7 @@ public class CurrentProviderBean implements Serializable {
         return "/home.xhtml?faces-redirect=true";
     }
 
-    @Produces
-    @Named("currentProvider")
-    @CurrentProvider
-    public Provider getCurrentProvider() {
-        if (identity.isLoggedIn()) {
-            return ((MeveoUser) identity.getUser()).getCurrentProvider();
-        }
-
-        return null;
+    public Provider getCurrentProvider(){
+    	return ((MeveoUser) identity.getUser()).getCurrentProvider();
     }
 }

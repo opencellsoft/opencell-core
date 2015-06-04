@@ -40,10 +40,13 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.servlet.http.HttpServletResponse;
 
+import org.jboss.seam.security.Identity;
 import org.meveo.admin.action.BaseBean;
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.Document;
 import org.meveo.model.crm.Provider;
+import org.meveo.security.MeveoUser;
 import org.slf4j.Logger;
 
 @Named
@@ -59,8 +62,7 @@ public class CRMConnectorRejectedFileBean implements Serializable {
 	private List<Document> crmConnectorRejectedFiles;
 
 	@Inject
-	@CurrentProvider
-	protected Provider currentProvider;
+	private Identity identity;
 
 	private String filename;
 	private Date fromDate;
@@ -273,6 +275,7 @@ public class CRMConnectorRejectedFileBean implements Serializable {
 				result = false;
 			}
 
+			Provider currentProvider=((MeveoUser)identity.getUser()).getCurrentProvider();
 			if (currentProvider != null
 					&& !name.contains("_" + currentProvider.getCode() + "_")) {
 				result = false;

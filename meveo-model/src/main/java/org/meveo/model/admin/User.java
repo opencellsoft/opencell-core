@@ -68,9 +68,9 @@ public class User extends AuditableEntity {
 	@JoinTable(name = "ADM_USER_ROLE", joinColumns = @JoinColumn(name = "USER_ID"), inverseJoinColumns = @JoinColumn(name = "ROLE_ID"))
 	private Set<Role> roles = new HashSet<Role>();
 
-	@ManyToMany(fetch = FetchType.LAZY)
-	@JoinTable(name = "ADM_USER_PROVIDER", joinColumns = @JoinColumn(name = "USER_ID"), inverseJoinColumns = @JoinColumn(name = "PROVIDER_ID"))
-	private Set<Provider> providers = new HashSet<Provider>();
+//	@ManyToMany(fetch = FetchType.LAZY)
+//	@JoinTable(name = "ADM_USER_PROVIDER", joinColumns = @JoinColumn(name = "USER_ID"), inverseJoinColumns = @JoinColumn(name = "PROVIDER_ID"))
+//	private Set<Provider> providers = new HashSet<Provider>();
 
 	@Temporal(TemporalType.DATE)
 	@Column(name = "LAST_PASSWORD_MODIFICATION")
@@ -85,13 +85,13 @@ public class User extends AuditableEntity {
 	public User() {
 	}
 
-	public Set<Provider> getProviders() {
-		return providers;
-	}
-
-	public void setProviders(Set<Provider> providers) {
-		this.providers = providers;
-	}
+//	public Set<Provider> getProviders() {
+//		return providers;
+//	}
+//
+//	public void setProviders(Set<Provider> providers) {
+//		this.providers = providers;
+//	}
 
 	public Set<Role> getRoles() {
 		return roles;
@@ -220,11 +220,12 @@ public class User extends AuditableEntity {
 	 * @return True if user is bound to a single provider
 	 */
 	public boolean isOnlyOneProvider() {
-		if (getProviders().size() == 1) {
-			return true;
-		} else {
-			return false;
-		}
+//		if (getProviders().size() == 1) {
+//			return true;
+//		} else {
+//			return false;
+//		}
+		return true;
 	}
 
 	public String getEmail() {
@@ -236,30 +237,32 @@ public class User extends AuditableEntity {
 	}
 
 	/**
-	 * Check if [current] provider match any of the providers user is attached to 
+	 * Check if [current] provider match the provider user is attached to 
 	 */
     @Override
     public boolean doesProviderMatch(Provider providerToMatch) {
 
-        for (Provider providerItem : providers) {
+//        for (Provider providerItem : providers) {
+    	Provider p=getProvider();
 
-            if (providerItem.getId().longValue() == providerToMatch.getId().longValue()) {
+            if (p!=null&&p.getId().longValue() == providerToMatch.getId().longValue()) {
                 return true;
             }
-        }
+//        }
         return false;
     }
     
     /**
-     * Check if [current] provider match any of the providers user is attached to 
+     * Check if [current] provider match the provider user is attached to 
      */
     @Override
     public boolean doesProviderMatch(Long providerToMatch) {
-        for (Provider providerItem : providers) {
-            if (providerItem.getId().equals(providerToMatch)) {
+//        for (Provider providerItem : providers) {
+    	Provider p=getProvider();
+            if (p!=null&&p.getId().equals(providerToMatch)) {
                 return true;
             }
-        }
+//        }
         return false;
     }
 }
