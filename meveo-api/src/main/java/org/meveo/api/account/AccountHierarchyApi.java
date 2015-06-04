@@ -763,18 +763,12 @@ public class AccountHierarchyApi extends BaseApi {
 		}
 
 		// custom fields
-		if (!StringUtils.isBlank(postData.getCustomerId())) {
-			Customer customer = customerService.findByCode(postData.getCustomerId(), currentUser.getProvider());
-			if (customer == null) {
-				throw new EntityDoesNotExistsException(Customer.class, postData.getCustomerId());
-			}
-			if (postData.getCustomFields() != null) {
-				for (CustomFieldDto cfDto : postData.getCustomFields().getCustomField()) {
-					CustomFieldInstance cfi = customFieldInstanceService.findByCodeAndAccountAndValue(cfDto.getCode(), customer, cfDto.getStringValue(), cfDto.getDateValue(),
-							cfDto.getLongValue(), cfDto.getDoubleValue(), currentUser.getProvider());
-					if (cfi != null) {
-						qb.addCriterion("VALUE(c.customFields)", "=", cfi, true);
-					}
+		if (postData.getCustomFields() != null) {
+			for (CustomFieldDto cfDto : postData.getCustomFields().getCustomField()) {
+				CustomFieldInstance cfi = customFieldInstanceService.findByCodeAndAccountAndValue(cfDto.getCode(), Customer.ACCOUNT_TYPE, cfDto.getStringValue(),
+						cfDto.getDateValue(), cfDto.getLongValue(), cfDto.getDoubleValue(), currentUser.getProvider());
+				if (cfi != null) {
+					qb.addCriterion("VALUE(c.customFields)", "=", cfi, true);
 				}
 			}
 		}
