@@ -45,7 +45,7 @@ public class BillingAccountDto extends AccountDto {
 	private String email;
 	private BankCoordinatesDto bankCoordinates = new BankCoordinatesDto();
 
-	private UserAccountsDto userAccounts;
+	private UserAccountsDto userAccounts=new UserAccountsDto();
 
 	public BillingAccountDto() {
 
@@ -93,6 +93,11 @@ public class BillingAccountDto extends AccountDto {
 
 			for (UserAccount ua : e.getUsersAccounts()) {
 				userAccounts.getUserAccount().add(new UserAccountDto(ua));
+			}
+		}
+		if (e.getUsersAccounts() != null) {
+			for (UserAccount userAccount : e.getUsersAccounts()) {
+				userAccounts.getUserAccount().add(new UserAccountDto(userAccount));
 			}
 		}
 	}

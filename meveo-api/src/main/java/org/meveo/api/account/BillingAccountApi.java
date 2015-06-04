@@ -111,6 +111,18 @@ public class BillingAccountApi extends AccountApi {
 			billingAccount.setTerminationDate(postData.getTerminationDate());
 			billingAccount.setElectronicBilling(postData.getElectronicBilling());
 			billingAccount.setEmail(postData.getEmail());
+			billingAccount.getBankCoordinates().setBankCode(postData.getBankCoordinates().getBankCode());
+			billingAccount.getBankCoordinates().setBranchCode(postData.getBankCoordinates().getBranchCode());
+			billingAccount.getBankCoordinates().setAccountNumber(postData.getBankCoordinates().getAccountNumber());
+			billingAccount.getBankCoordinates().setKey(postData.getBankCoordinates().getKey());
+			billingAccount.getBankCoordinates().setIban(postData.getBankCoordinates().getIban());
+			billingAccount.getBankCoordinates().setBic(postData.getBankCoordinates().getBic());
+			billingAccount.getBankCoordinates().setAccountOwner(postData.getBankCoordinates().getAccountOwner());
+			billingAccount.getBankCoordinates().setBankName(postData.getBankCoordinates().getBankName());
+			billingAccount.getBankCoordinates().setBankId(postData.getBankCoordinates().getBankId());
+			billingAccount.getBankCoordinates().setIssuerNumber(postData.getBankCoordinates().getIssuerNumber());
+			billingAccount.getBankCoordinates().setIssuerName(postData.getBankCoordinates().getIssuerName());
+			billingAccount.getBankCoordinates().setIcs(postData.getBankCoordinates().getIcs());
 
 			billingAccountService.createBillingAccount(billingAccount, currentUser, provider);
 		} else {
@@ -201,6 +213,18 @@ public class BillingAccountApi extends AccountApi {
 			billingAccount.setTerminationDate(postData.getTerminationDate());
 			billingAccount.setElectronicBilling(postData.getElectronicBilling());
 			billingAccount.setEmail(postData.getEmail());
+			billingAccount.getBankCoordinates().setBankCode(postData.getBankCoordinates().getBankCode());
+			billingAccount.getBankCoordinates().setBranchCode(postData.getBankCoordinates().getBranchCode());
+			billingAccount.getBankCoordinates().setAccountNumber(postData.getBankCoordinates().getAccountNumber());
+			billingAccount.getBankCoordinates().setKey(postData.getBankCoordinates().getKey());
+			billingAccount.getBankCoordinates().setIban(postData.getBankCoordinates().getIban());
+			billingAccount.getBankCoordinates().setBic(postData.getBankCoordinates().getBic());
+			billingAccount.getBankCoordinates().setAccountOwner(postData.getBankCoordinates().getAccountOwner());
+			billingAccount.getBankCoordinates().setBankName(postData.getBankCoordinates().getBankName());
+			billingAccount.getBankCoordinates().setBankId(postData.getBankCoordinates().getBankId());
+			billingAccount.getBankCoordinates().setIssuerNumber(postData.getBankCoordinates().getIssuerNumber());
+			billingAccount.getBankCoordinates().setIssuerName(postData.getBankCoordinates().getIssuerName());
+			billingAccount.getBankCoordinates().setIcs(postData.getBankCoordinates().getIcs());
 
 			billingAccountService.update(billingAccount, currentUser);
 		} else {
