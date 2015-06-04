@@ -32,16 +32,12 @@ import org.meveo.model.crm.Provider;
 import org.meveo.service.catalog.impl.CalendarService;
 import org.meveo.service.catalog.impl.DayInYearService;
 import org.meveo.service.catalog.impl.HourInDayService;
-import org.slf4j.Logger;
 
 /**
  * @author Edward P. Legaspi
  **/
 @Stateless
 public class CalendarApi extends BaseApi {
-
-    @Inject
-    private Logger log;
 
     @Inject
     private CalendarService calendarService;

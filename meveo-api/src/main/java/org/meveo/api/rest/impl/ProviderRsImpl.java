@@ -18,7 +18,6 @@ import org.meveo.api.dto.response.GetTradingConfigurationResponseDto;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.LoggingInterceptor;
 import org.meveo.api.rest.ProviderRs;
-import org.slf4j.Logger;
 
 /**
  * @author Edward P. Legaspi
@@ -26,9 +25,6 @@ import org.slf4j.Logger;
 @RequestScoped
 @Interceptors({ LoggingInterceptor.class })
 public class ProviderRsImpl extends BaseRs implements ProviderRs {
-
-	@Inject
-	private Logger log;
 
 	@Inject
 	private ProviderApi providerApi;

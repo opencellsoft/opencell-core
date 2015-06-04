@@ -14,7 +14,6 @@ import org.meveo.api.logging.LoggingInterceptor;
 import org.meveo.api.payment.PaymentApi;
 import org.meveo.api.rest.impl.BaseRs;
 import org.meveo.api.rest.payment.PaymentRs;
-import org.slf4j.Logger;
 
 /**
  * @author R.AITYAAZZA
@@ -26,9 +25,6 @@ public class PaymentRsImpl extends BaseRs implements PaymentRs {
 
 	@Inject
 	private PaymentApi paymentApi;
-
-	@Inject
-	private Logger log;
 
 	@Override
 	public ActionStatus create(PaymentDto postData) {

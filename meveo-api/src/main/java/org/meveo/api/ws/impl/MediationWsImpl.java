@@ -18,7 +18,6 @@ import org.meveo.api.dto.response.billing.CdrReservationResponseDto;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.LoggingInterceptor;
 import org.meveo.api.ws.MediationWs;
-import org.slf4j.Logger;
 
 /**
  * @author Edward P. Legaspi
@@ -26,9 +25,6 @@ import org.slf4j.Logger;
 @WebService(serviceName = "MediationWs", endpointInterface = "org.meveo.api.ws.MediationWs")
 @Interceptors({ LoggingInterceptor.class })
 public class MediationWsImpl extends BaseWs implements MediationWs {
-
-	@Inject
-	private Logger log;
 
 	@Inject
 	private MediationApi mediationApi;

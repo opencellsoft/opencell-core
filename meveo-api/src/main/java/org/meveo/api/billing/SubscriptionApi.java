@@ -12,7 +12,6 @@ import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.BaseApi;
 import org.meveo.api.MeveoApiErrorCode;
-import org.meveo.api.dto.CustomFieldDto;
 import org.meveo.api.dto.account.ApplyOneShotChargeInstanceRequestDto;
 import org.meveo.api.dto.billing.ActivateServicesRequestDto;
 import org.meveo.api.dto.billing.ChargeInstanceOverrideDto;
@@ -41,8 +40,6 @@ import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.catalog.WalletTemplate;
 import org.meveo.model.crm.AccountLevelEnum;
-import org.meveo.model.crm.CustomFieldInstance;
-import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.Provider;
 import org.meveo.service.billing.impl.ChargeInstanceService;
 import org.meveo.service.billing.impl.OneShotChargeInstanceService;
@@ -54,15 +51,9 @@ import org.meveo.service.billing.impl.WalletTemplateService;
 import org.meveo.service.catalog.impl.OfferTemplateService;
 import org.meveo.service.catalog.impl.OneShotChargeTemplateService;
 import org.meveo.service.catalog.impl.ServiceTemplateService;
-import org.meveo.service.crm.impl.CustomFieldInstanceService;
-import org.meveo.service.crm.impl.CustomFieldTemplateService;
-import org.slf4j.Logger;
 
 @Stateless
 public class SubscriptionApi extends BaseApi {
-
-	@Inject
-	private Logger log;
 
 	@Inject
 	private SubscriptionService subscriptionService;
@@ -90,12 +81,6 @@ public class SubscriptionApi extends BaseApi {
 
 	@Inject
 	private WalletTemplateService walletTemplateService;
-
-	@Inject
-	private CustomFieldInstanceService customFieldInstanceService;
-
-	@Inject
-	private CustomFieldTemplateService customFieldTemplateService;
 
 	@SuppressWarnings("rawtypes")
 	@Inject
@@ -126,42 +111,17 @@ public class SubscriptionApi extends BaseApi {
 			subscription.setUserAccount(userAccount);
 			subscription.setOffer(offerTemplate);
 
-			// populate customFields
-			if (postData.getCustomFields() != null) {
-				// check if custom field exists has a template
-				List<CustomFieldTemplate> customFieldTemplates = customFieldTemplateService.findByAccountLevel(AccountLevelEnum.SUB, provider);
-					
-					if (customFieldTemplates != null && customFieldTemplates.size() > 0) {
-					for (CustomFieldDto cf : postData.getCustomFields().getCustomField()) {
-							boolean found=false;
-						for (CustomFieldTemplate cft : customFieldTemplates) {
-							if (cf.getCode().equals(cft.getCode())) {
-								found=true;
-								// create
-								CustomFieldInstance cfiNew = new CustomFieldInstance();
-								cfiNew.setSubscription(subscription);
-								cfiNew.setActive(true);
-								cfiNew.setCode(cf.getCode());
-								cfiNew.setDateValue(cf.getDateValue());
-								cfiNew.setDescription(cf.getDescription());
-								cfiNew.setDoubleValue(cf.getDoubleValue());
-								cfiNew.setLongValue(cf.getLongValue());
-								cfiNew.setProvider(currentUser.getProvider());
-								cfiNew.setStringValue(cf.getStringValue());
-								cfiNew.updateAudit(currentUser);
-								subscription.getCustomFields().put(cfiNew.getCode(), cfiNew);
-						          break;
-                            }
-                          }
-					if (!found) {
-					log.warn("No custom field template with code={}", cf.getCode());
-						}
-					}         
-                }else {
-                      log.warn("No custom field template defined.");
-                      }
-					}
-			subscription.setSubscriptionDate(postData.getSubscriptionDate());
+            // populate customFields
+            if (postData.getCustomFields() != null) {
+                try {
+                    populateCustomFields(AccountLevelEnum.SUB, postData.getCustomFields().getCustomField(), subscription, "subscription", currentUser);
+                } catch (IllegalArgumentException | IllegalAccessException e) {
+                    log.error("Failed to associate custom field instance to an entity", e);
+                    throw new MeveoApiException("Failed to associate custom field instance to an entity");
+                }
+            }
+            
+            subscription.setSubscriptionDate(postData.getSubscriptionDate());
 			subscription.setTerminationDate(postData.getTerminationDate());
 
 			subscriptionService.create(subscription, currentUser, provider);
@@ -216,57 +176,18 @@ public class SubscriptionApi extends BaseApi {
 			subscription.setSubscriptionDate(postData.getSubscriptionDate());
 			subscription.setTerminationDate(postData.getTerminationDate());
 
-			// populate customFields
-			if (postData.getCustomFields() != null) {
-				// check if custom field exists has a template
-				List<CustomFieldTemplate> customFieldTemplates = customFieldTemplateService.findByAccountLevel(AccountLevelEnum.SUB, provider);
-					if (customFieldTemplates != null && customFieldTemplates.size() > 0) {
-				for (CustomFieldDto cf : postData.getCustomFields().getCustomField()) {
-					 boolean found=false;
-				  for (CustomFieldTemplate cft : customFieldTemplates) {
-							if (cf.getCode().equals(cft.getCode())) {
-								found=true;
-								CustomFieldInstance cfi = customFieldInstanceService.findByCodeAndAccount(cf.getCode(), subscription, currentUser.getProvider());
-								if (cfi != null) {
-									// update
-									cfi.setActive(true);
-									cfi.setDateValue(cf.getDateValue());
-									cfi.setDescription(cf.getDescription());
-									cfi.setDoubleValue(cf.getDoubleValue());
-									cfi.setLongValue(cf.getLongValue());
-									cfi.setStringValue(cf.getStringValue());
-									cfi.updateAudit(currentUser);
-									break;
-								} else {
-									// create
-									CustomFieldInstance cfiNew = new CustomFieldInstance();
-									cfiNew.setSubscription(subscription);
-									cfiNew.setActive(true);
-									cfiNew.setCode(cf.getCode());
-									cfiNew.setDateValue(cf.getDateValue());
-									cfiNew.setDescription(cf.getDescription());
-									cfiNew.setDoubleValue(cf.getDoubleValue());
-									cfiNew.setLongValue(cf.getLongValue());
-									cfiNew.setProvider(currentUser.getProvider());
-									cfiNew.setStringValue(cf.getStringValue());
-									cfiNew.updateAudit(currentUser);
-									subscription.getCustomFields().put(cfiNew.getCode(), cfiNew);
-									break;
-								}
-							}
-							 
-						}
-						if (!found) {
-							log.warn("No custom field template with code={}", cf.getCode());
-						}
-					} 
-					}
-					else {
-						log.warn("No custom field template defined.");
-					}
-				
-			}
+            // populate customFields
+            if (postData.getCustomFields() != null) {
+                try {
+                    populateCustomFields(AccountLevelEnum.SUB, postData.getCustomFields().getCustomField(), subscription, "subscription", currentUser);
+                } catch (IllegalArgumentException | IllegalAccessException e) {
+                    log.error("Failed to associate custom field instance to an entity", e);
+                    throw new MeveoApiException("Failed to associate custom field instance to an entity");
+                }
+            }
+
 			subscriptionService.update(subscription, currentUser);
+			
 		} else {
 			if (StringUtils.isBlank(postData.getUserAccount())) {
 				missingParameters.add("userAccount");

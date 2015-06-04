@@ -10,16 +10,12 @@ import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.User;
 import org.meveo.model.jobs.TimerInfoDto;
 import org.meveo.service.job.TimerEntityService;
-import org.slf4j.Logger;
 
 /**
  * @author Edward P. Legaspi
  **/
 @Stateless
 public class JobApi extends BaseApi {
-
-	@Inject
-	private Logger log;
 
 	@Inject
 	private TimerEntityService timerEntityService;

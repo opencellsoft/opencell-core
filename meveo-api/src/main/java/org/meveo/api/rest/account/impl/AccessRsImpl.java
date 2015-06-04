@@ -9,13 +9,12 @@ import org.meveo.api.account.AccessApi;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.account.AccessDto;
-import org.meveo.api.dto.response.account.GetAccessResponseDto;
 import org.meveo.api.dto.response.account.AccessesResponseDto;
+import org.meveo.api.dto.response.account.GetAccessResponseDto;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.LoggingInterceptor;
 import org.meveo.api.rest.account.AccessRs;
 import org.meveo.api.rest.impl.BaseRs;
-import org.slf4j.Logger;
 
 /**
  * @author Edward P. Legaspi
@@ -23,9 +22,6 @@ import org.slf4j.Logger;
 @RequestScoped
 @Interceptors({ LoggingInterceptor.class })
 public class AccessRsImpl extends BaseRs implements AccessRs {
-
-	@Inject
-	private Logger log;
 
 	@Inject
 	private AccessApi accessApi;

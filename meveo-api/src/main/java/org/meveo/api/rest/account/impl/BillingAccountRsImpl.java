@@ -9,13 +9,12 @@ import org.meveo.api.account.BillingAccountApi;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.account.BillingAccountDto;
-import org.meveo.api.dto.response.account.GetBillingAccountResponseDto;
 import org.meveo.api.dto.response.account.BillingAccountsResponseDto;
+import org.meveo.api.dto.response.account.GetBillingAccountResponseDto;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.LoggingInterceptor;
 import org.meveo.api.rest.account.BillingAccountRs;
 import org.meveo.api.rest.impl.BaseRs;
-import org.slf4j.Logger;
 
 /**
  * @author Edward P. Legaspi
@@ -23,9 +22,6 @@ import org.slf4j.Logger;
 @RequestScoped
 @Interceptors({ LoggingInterceptor.class })
 public class BillingAccountRsImpl extends BaseRs implements BillingAccountRs {
-
-	@Inject
-	private Logger log;
 
 	@Inject
 	private BillingAccountApi billingAccountApi;

@@ -147,5 +147,32 @@ public class CustomFieldInstanceService extends BusinessService<CustomFieldInsta
 			return null;
 		}
 	}
+	
+	public CustomFieldInstance findByCodeAndAccountAndValue(String code, String accountType, String stringValue, Date dateValue, Long longValue, Double doubleValue, Provider provider) {
+		QueryBuilder qb = new QueryBuilder(CustomFieldInstance.class, "c");
+		qb.addCriterion("code", "=", code, true);
+		qb.addCriterionEntity("provider", provider);
+		if (!StringUtils.isBlank(stringValue)) {
+			qb.addCriterion("stringValue", "=", stringValue, true);
+		}
+		if (dateValue != null) {
+			qb.addCriterionDate("dateValue", dateValue);
+		}
+		if (longValue != null) {
+			qb.addCriterion("longValue", "=", longValue, true);
+		}
+		if (doubleValue != null) {
+			qb.addCriterion("doubleValue", "=", doubleValue, true);
+		}
+		if (!StringUtils.isBlank(accountType)) {
+			qb.addCriterion("account.accountType", "=", accountType, true);
+		}
+
+		try {
+			return (CustomFieldInstance) qb.getQuery(getEntityManager()).getSingleResult();
+		} catch (NoResultException e) {
+			return null;
+		}
+	}
 
 }

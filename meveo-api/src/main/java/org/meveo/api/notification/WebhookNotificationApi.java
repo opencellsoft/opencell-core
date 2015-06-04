@@ -19,16 +19,12 @@ import org.meveo.model.notification.WebHook;
 import org.meveo.model.notification.WebHookMethodEnum;
 import org.meveo.service.catalog.impl.CounterTemplateService;
 import org.meveo.service.notification.WebHookService;
-import org.slf4j.Logger;
 
 /**
  * @author Edward P. Legaspi
  **/
 @Stateless
 public class WebhookNotificationApi extends BaseApi {
-
-	@Inject
-	private Logger log;
 
 	@Inject
 	private WebHookService webHookService;

@@ -28,16 +28,12 @@ import org.meveo.service.billing.impl.BillingCycleService;
 import org.meveo.service.billing.impl.TradingCountryService;
 import org.meveo.service.billing.impl.TradingLanguageService;
 import org.meveo.service.payments.impl.CustomerAccountService;
-import org.slf4j.Logger;
 
 /**
  * @author Edward P. Legaspi
  **/
 @Stateless
 public class BillingAccountApi extends AccountApi {
-
-	@Inject
-	private Logger log;
 
 	@Inject
 	private BillingAccountService billingAccountService;

@@ -13,7 +13,6 @@ import org.meveo.api.dto.response.GetCalendarResponse;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.LoggingInterceptor;
 import org.meveo.api.rest.CalendarRs;
-import org.slf4j.Logger;
 
 /**
  * @author Edward P. Legaspi
@@ -21,9 +20,6 @@ import org.slf4j.Logger;
 @RequestScoped
 @Interceptors({ LoggingInterceptor.class })
 public class CalendarRsImpl extends BaseRs implements CalendarRs {
-
-	@Inject
-	private Logger log;
 
 	@Inject
 	private CalendarApi calendarApi;

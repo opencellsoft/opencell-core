@@ -29,7 +29,7 @@
 
                     <hftl:decorateFormField fieldId="cfField_stringI" label="#{messages['customField.inheritedStringValue']}" componentWidth="50" labelWidth="50"
                         displayOneLine="true" rendered="#{cf.fieldType eq CustomFieldTypeEnum.STRING and cf.stringValue==null and InheritedStringValue !=null}">
-                        <h:outputText fieldId="cfField_stringI" value="#{InheritedStringValue}" styleClass="field-value" />
+                        <h:outputText id="cfField_stringI" value="#{InheritedStringValue}" styleClass="field-value" />
                     </hftl:decorateFormField>
 
                     <hftl:decorateFormField fieldId="cfField_double" label="#{cf.description}" componentWidth="50" labelWidth="50" displayOneLine="true"
@@ -44,7 +44,7 @@
 
                     <hftl:decorateFormField fieldId="cfField_doubleI" label="#{messages['customField.inheritedDoubleValue']}" componentWidth="50" labelWidth="50"
                         displayOneLine="true" rendered="#{cf.fieldType eq CustomFieldTypeEnum.DOUBLE and cf.doubleValue==null and InheritedDoubleValue !=null}">
-                        <h:outputText fieldId="cfField_doubleI" value="#{InheritedDoubleValue}" styleClass="field-value" />
+                        <h:outputText id="cfField_doubleI" value="#{InheritedDoubleValue}" styleClass="field-value" />
                     </hftl:decorateFormField>
 
                     <hftl:decorateFormField fieldId="cfField_long" label="#{cf.description}" componentWidth="50" labelWidth="50" displayOneLine="true"

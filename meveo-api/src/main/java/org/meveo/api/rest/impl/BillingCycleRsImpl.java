@@ -13,7 +13,6 @@ import org.meveo.api.dto.response.GetBillingCycleResponse;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.LoggingInterceptor;
 import org.meveo.api.rest.BillingCycleRs;
-import org.slf4j.Logger;
 
 /**
  * @author Edward P. Legaspi
@@ -21,9 +20,6 @@ import org.slf4j.Logger;
 @RequestScoped
 @Interceptors({ LoggingInterceptor.class })
 public class BillingCycleRsImpl extends BaseRs implements BillingCycleRs {
-
-	@Inject
-	private Logger log;
 
 	@Inject
 	private BillingCycleApi billingCycleApi;
