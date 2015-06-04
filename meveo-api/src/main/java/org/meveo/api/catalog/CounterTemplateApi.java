@@ -4,6 +4,7 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 
 import org.meveo.api.BaseApi;
+import org.meveo.api.MeveoApiErrorCode;
 import org.meveo.api.dto.catalog.CounterTemplateDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
@@ -18,12 +19,16 @@ import org.meveo.model.catalog.CounterTypeEnum;
 import org.meveo.model.crm.Provider;
 import org.meveo.service.catalog.impl.CalendarService;
 import org.meveo.service.catalog.impl.CounterTemplateService;
+import org.slf4j.Logger;
 
 /**
  * @author Edward P. Legaspi
  **/
 @Stateless
 public class CounterTemplateApi extends BaseApi {
+	
+	@Inject
+	private Logger log;
 
 	@Inject
 	private CounterTemplateService<CounterTemplate> counterTemplateService;
@@ -33,10 +38,8 @@ public class CounterTemplateApi extends BaseApi {
 
 	public void create(CounterTemplateDto postData, User currentUser)
 			throws MeveoApiException {
-		if (!StringUtils.isBlank(postData.getCode())
-				&& !StringUtils.isBlank(postData.getDescription())
-				&& !StringUtils.isBlank(postData.getCeiling())
-				&& !StringUtils.isBlank(postData.getCalendar())) {
+		if (!StringUtils.isBlank(postData.getCode()) && !StringUtils.isBlank(postData.getDescription()) && !StringUtils.isBlank(postData.getCeiling())
+				&& !StringUtils.isBlank(postData.getCalendar()) && !StringUtils.isBlank(postData.getCounterLevel()) && !StringUtils.isBlank(postData.getType())) {
 			Provider provider = currentUser.getProvider();
 
 			if (counterTemplateService.findByCode(postData.getCode(), provider) != null) {
@@ -55,13 +58,21 @@ public class CounterTemplateApi extends BaseApi {
 			counterTemplate.setCode(postData.getCode());
 			counterTemplate.setDescription(postData.getDescription());
 			counterTemplate.setUnityDescription(postData.getUnity());
-			counterTemplate.setCounterType(CounterTypeEnum.valueOf(postData
-					.getType()));
+			try {
+				counterTemplate.setCounterType(CounterTypeEnum.valueOf(postData.getType()));
+			} catch (IllegalArgumentException e) {
+				log.error("InvalidEnum for type with name={}", postData.getType());
+				throw new MeveoApiException(MeveoApiErrorCode.INVALID_ENUM_VALUE, "Enum for CounterTypeEnum with name=" + postData.getType() + " does not exists.");
+			}
 			counterTemplate.setCeiling(postData.getCeiling());
 			counterTemplate.setDisabled(postData.isDisabled());
 			counterTemplate.setCalendar(calendar);
-			counterTemplate.setCounterLevel(CounterTemplateLevel.valueOf(postData
-					.getCounterLevel()));
+			try {
+				counterTemplate.setCounterLevel(CounterTemplateLevel.valueOf(postData.getCounterLevel()));
+			} catch (IllegalArgumentException e) {
+				log.error("InvalidEnum for counterLevel with name={}", postData.getCounterLevel());
+				throw new MeveoApiException(MeveoApiErrorCode.INVALID_ENUM_VALUE, "Enum for CounterLevelEnum with name=" + postData.getCounterLevel() + " does not exists.");
+			}
 
 			counterTemplateService.create(counterTemplate, currentUser,
 					provider);
@@ -78,6 +89,12 @@ public class CounterTemplateApi extends BaseApi {
 			if (StringUtils.isBlank(postData.getCalendar())) {
 				missingParameters.add("calendar");
 			}
+			if (StringUtils.isBlank(postData.getCounterLevel())) {
+				missingParameters.add("counterLevel");
+			}
+			if (StringUtils.isBlank(postData.getType())) {
+				missingParameters.add("type");
+			}
 			
 			throw new MissingParameterException(
 					getMissingParametersExceptionMessage());
@@ -86,10 +103,8 @@ public class CounterTemplateApi extends BaseApi {
 
 	public void update(CounterTemplateDto postData, User currentUser)
 			throws MeveoApiException {
-		if (!StringUtils.isBlank(postData.getCode())
-				&& !StringUtils.isBlank(postData.getDescription())
-				&& !StringUtils.isBlank(postData.getCeiling())
-				&& !StringUtils.isBlank(postData.getCalendar())) {
+		if (!StringUtils.isBlank(postData.getCode()) && !StringUtils.isBlank(postData.getDescription()) && !StringUtils.isBlank(postData.getCeiling())
+				&& !StringUtils.isBlank(postData.getCalendar()) && !StringUtils.isBlank(postData.getCounterLevel()) && !StringUtils.isBlank(postData.getType())) {
 			Provider provider = currentUser.getProvider();
 
 			CounterTemplate counterTemplate = counterTemplateService
@@ -107,13 +122,21 @@ public class CounterTemplateApi extends BaseApi {
 
 			counterTemplate.setDescription(postData.getDescription());
 			counterTemplate.setUnityDescription(postData.getUnity());
-			counterTemplate.setCounterType(CounterTypeEnum.valueOf(postData
-					.getType()));
+			try {
+				counterTemplate.setCounterType(CounterTypeEnum.valueOf(postData.getType()));
+			} catch (IllegalArgumentException e) {
+				log.error("InvalidEnum for type with name={}", postData.getType());
+				throw new MeveoApiException(MeveoApiErrorCode.INVALID_ENUM_VALUE, "Enum for CounterTypeEnum with name=" + postData.getType() + " does not exists.");
+			}
 			counterTemplate.setCeiling(postData.getCeiling());
 			counterTemplate.setDisabled(postData.isDisabled());
 			counterTemplate.setCalendar(calendar);
-			counterTemplate.setCounterLevel(CounterTemplateLevel.valueOf(postData
-					.getCounterLevel()));
+			try {
+				counterTemplate.setCounterLevel(CounterTemplateLevel.valueOf(postData.getCounterLevel()));
+			} catch (IllegalArgumentException e) {
+				log.error("InvalidEnum for counterLevel with name={}", postData.getCounterLevel());
+				throw new MeveoApiException(MeveoApiErrorCode.INVALID_ENUM_VALUE, "Enum for CounterLevelEnum with name=" + postData.getCounterLevel() + " does not exists.");
+			}
 
 			counterTemplateService.update(counterTemplate, currentUser);
 		} else {
@@ -128,6 +151,12 @@ public class CounterTemplateApi extends BaseApi {
 			}
 			if (StringUtils.isBlank(postData.getCalendar())) {
 				missingParameters.add("calendar");
+			}
+			if (StringUtils.isBlank(postData.getCounterLevel())) {
+				missingParameters.add("counterLevel");
+			}
+			if (StringUtils.isBlank(postData.getType())) {
+				missingParameters.add("type");
 			}
 
 			throw new MissingParameterException(
