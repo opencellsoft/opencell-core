@@ -41,7 +41,7 @@ public class CheckUpdateBean implements Serializable {
 			String input = buildJsonRequest();
 			log.debug("Request Check Update ={}",input);
 
-			String urlMoni = paramBean.getProperty("checkUpdate.url", "http://version.meveo.info/meveo-moni/api/rest/getVersion");
+			String urlMoni = paramBean.getProperty("checkUpdate.url","http://version.meveo.info/meveo-moni/api/rest/getVersion");
 			log.debug("Request Check Update url={}",urlMoni);
 
 			//FIXME : deprecated
