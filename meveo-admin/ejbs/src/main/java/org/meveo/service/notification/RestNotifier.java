@@ -34,15 +34,8 @@ public class RestNotifier {
 			if (response.getStatus() != 201) {
 				log.debug("invoke Failed : HTTP error code : "+ response.getStatus());
 			} else {    
-				String tmp=null;
-				try(BufferedReader br = new BufferedReader(new InputStreamReader(new ByteArrayInputStream(response.getEntity().getBytes()))))
-				{  
-					while ((tmp = br.readLine())!= null) {
-						jsonResponse+=tmp ;
-					}
-				} 
+				jsonResponse=response.getEntity();
 			}
-
 			log.info("Response jsonResponse ={}",jsonResponse);
 			JSONParser jsonParser = new JSONParser();
 			JSONObject jsonResponseObject = (JSONObject) jsonParser.parse(jsonResponse);
