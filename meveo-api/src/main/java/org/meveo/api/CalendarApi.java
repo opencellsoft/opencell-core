@@ -106,6 +106,7 @@ public class CalendarApi extends BaseApi {
                 calendar.setDescription(postData.getDescription());
                 calendar.setPeriodLength(postData.getPeriodLength());
                 calendar.setNbPeriods(postData.getNbPeriods());
+                calendar.setPeriodUnit(postData.getPeriodUnit());
 
                 calendarService.create(calendar, currentUser, provider);
                             
@@ -198,6 +199,7 @@ public class CalendarApi extends BaseApi {
 
                 ((CalendarPeriod) calendar).setPeriodLength(postData.getPeriodLength());
                 ((CalendarPeriod) calendar).setNbPeriods(postData.getNbPeriods());
+                ((CalendarPeriod) calendar).setPeriodUnit(postData.getPeriodUnit());
             
             } else if (calendar instanceof CalendarInterval) {
 
