@@ -29,12 +29,18 @@
 			<hf:formField label="#{messages['customFieldTemplate.fieldType']}"
 				field="fieldType" required="true"
 				listenerUpdate=":formPanel:formId:listValuesField" allowEdit="false" newLine="true" />
-
-			<hf:formField label="#{messages['customFieldTemplate.accountType']}"
+            <hf:formField label="#{messages['customFieldTemplate.accountType']}"
 				field="accountLevel" required="true" allowEdit="false" listValues="#{customFieldTemplateBean.accountLevelsNoTimer}"/>
 			<hf:formField
                 label="#{messages['customFieldTemplate.fieldRequired']}"
                 field="valueRequired" isMessage="true" />
+            <hf:formField
+                label="#{messages['customFieldTemplate.versionable']}"
+                field="versionable" isMessage="true" listenerUpdate=":formPanel:formId:calendar"  />
+            <h:panelGroup id="calendar">
+                <hf:formField label="#{messages['customFieldTemplate.calendar']}"
+                    field="calendar" valueLabelField="code" listBean="#{calendarBean}" rendered="#{customFieldTemplateBean.entity.versionable}" />
+            </h:panelGroup>
             <h:panelGroup id="listValuesField">
 				<hf:formField label="#{messages['customFieldTemplate.listValues']}"
 					field="listValues"

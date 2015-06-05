@@ -136,4 +136,40 @@
     <changeSet author="anasseh (generated)" id="1432229915728-20">
         <createSequence sequenceName="com_meveo_instance_seq"/>
     </changeSet>
+	<changeSet id="#791_20150602-3" author="AndriusKarpavicius">
+		<addColumn tableName="CRM_CUSTOM_FIELD_TMPL">
+			<column name="versionable" type="BOOL" defaultValue="false">
+                <constraints nullable="false"/>
+            </column>
+			<column name="calendar_id" type="BIGINT"/>
+		</addColumn>
+		
+		<addColumn tableName="CRM_CUSTOM_FIELD_INST">
+			<column name="versionable" type="BOOL" defaultValue="false">
+                <constraints nullable="false"/>
+            </column>
+			<column name="calendar_id" type="BIGINT"/>
+		</addColumn>
+				
+		<createTable tableName="CRM_CUSTOM_FIELD_PERIOD">
+            <column name="id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="version" type="INT4"/>
+            <column name="PRIORITY" type="INT4" defaultValue="0"/>
+            <column name="period_end_date" type="TIMESTAMP WITHOUT TIME ZONE"/>
+            <column name="period_start_date" type="TIMESTAMP WITHOUT TIME ZONE"/>
+            <column name="CF_INSTANCE_ID" type="BIGINT"/>
+            <column name="date_value" type="TIMESTAMP WITHOUT TIME ZONE"/>
+            <column name="double_value" type="FLOAT8"/>
+            <column name="long_value" type="BIGINT"/>
+            <column name="string_value" type="VARCHAR(255)"/>
+        </createTable>	
+        
+        <addForeignKeyConstraint baseColumnNames="calendar_id" baseTableName="CRM_CUSTOM_FIELD_INST" constraintName="fk_CFI_CALENDAR" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="CAT_CALENDAR"/>
+        
+        <addForeignKeyConstraint baseColumnNames="CF_INSTANCE_ID" baseTableName="CRM_CUSTOM_FIELD_PERIOD" constraintName="fk_CFP_CFI" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="CRM_CUSTOM_FIELD_INST"/>
+        <addForeignKeyConstraint baseColumnNames="calendar_id" baseTableName="CRM_CUSTOM_FIELD_TMPL" constraintName="fk_CFT_CALENDAR" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="CAT_CALENDAR"/>
+        <createSequence sequenceName="CRM_CUSTOM_FIELD_PERIOD_seq"/>
+	</changeSet>
 </databaseChangeLog>

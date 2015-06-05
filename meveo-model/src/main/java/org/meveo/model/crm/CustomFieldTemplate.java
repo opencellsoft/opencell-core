@@ -11,6 +11,8 @@ import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
@@ -18,14 +20,15 @@ import javax.persistence.UniqueConstraint;
 
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.ExportIdentifier;
+import org.meveo.model.catalog.Calendar;
 
 @Entity
 @ExportIdentifier({ "code", "accountLevel", "provider" })
-@Table(name = "CRM_CUSTOM_FIELD_TMPL", uniqueConstraints = @UniqueConstraint(columnNames = {"CODE","ACCOUNT_TYPE","PROVIDER_ID"}))
+@Table(name = "CRM_CUSTOM_FIELD_TMPL", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE", "ACCOUNT_TYPE", "PROVIDER_ID" }))
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "CRM_CUSTOM_FLD_TMP_SEQ")
 public class CustomFieldTemplate extends BusinessEntity {
 
-	private static final long serialVersionUID = -1403961759495272885L;
+    private static final long serialVersionUID = -1403961759495272885L;
 
     @Column(name = "FIELD_TYPE")
     @Enumerated(EnumType.STRING)
@@ -35,89 +38,112 @@ public class CustomFieldTemplate extends BusinessEntity {
     @Enumerated(EnumType.STRING)
     private AccountLevelEnum accountLevel;
 
-	@Column(name = "VALUE_REQUIRED")
-	private boolean valueRequired;
+    @Column(name = "VALUE_REQUIRED")
+    private boolean valueRequired;
 
-	@ElementCollection(fetch = FetchType.EAGER)
-	@CollectionTable(name = "CRM_CUSTOM_FIELD_TMPL_VAL")
-	private Map<String, String> listValues = new HashMap<String, String>();
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "CRM_CUSTOM_FIELD_TMPL_VAL")
+    private Map<String, String> listValues = new HashMap<String, String>();
 
-	@Transient
-	private String stringValue;
+    @Column(name = "VERSIONABLE")
+    private boolean versionable;
 
-	@Transient
-	private Double doubleValue;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "CALENDAR_ID")
+    private Calendar calendar;
 
-	@Transient
-	private Long longValue;
+    @Transient
+    private String stringValue;
 
-	@Transient
-	private Date dateValue;
+    @Transient
+    private Double doubleValue;
 
-	public CustomFieldTypeEnum getFieldType() {
-		return fieldType;
-	}
+    @Transient
+    private Long longValue;
 
-	public void setFieldType(CustomFieldTypeEnum fieldType) {
-		this.fieldType = fieldType;
-	}
+    @Transient
+    private Date dateValue;
 
-	public AccountLevelEnum getAccountLevel() {
-		return accountLevel;
-	}
+    public CustomFieldTypeEnum getFieldType() {
+        return fieldType;
+    }
 
-	public void setAccountLevel(AccountLevelEnum accountLevel) {
-		this.accountLevel = accountLevel;
-	}
+    public void setFieldType(CustomFieldTypeEnum fieldType) {
+        this.fieldType = fieldType;
+    }
 
-	public boolean isValueRequired() {
-		return valueRequired;
-	}
+    public AccountLevelEnum getAccountLevel() {
+        return accountLevel;
+    }
 
-	public void setValueRequired(boolean valueRequired) {
-		this.valueRequired = valueRequired;
-	}
+    public void setAccountLevel(AccountLevelEnum accountLevel) {
+        this.accountLevel = accountLevel;
+    }
 
-	public Map<String, String> getListValues() {
-		return listValues;
-	}
+    public boolean isValueRequired() {
+        return valueRequired;
+    }
 
-	public void setListValues(Map<String, String> listValues) {
-		this.listValues = listValues;
-	}
+    public void setValueRequired(boolean valueRequired) {
+        this.valueRequired = valueRequired;
+    }
 
-	public String getStringValue() {
-		return stringValue;
-	}
+    public Map<String, String> getListValues() {
+        return listValues;
+    }
 
-	public void setStringValue(String stringValue) {
-		this.stringValue = stringValue;
-	}
+    public void setListValues(Map<String, String> listValues) {
+        this.listValues = listValues;
+    }
 
-	public Double getDoubleValue() {
-		return doubleValue;
-	}
+    public void setVersionable(boolean versionable) {
+        this.versionable = versionable;
+    }
 
-	public void setDoubleValue(Double doubleValue) {
-		this.doubleValue = doubleValue;
-	}
+    public boolean isVersionable() {
+        return versionable;
+    }
 
-	public Long getLongValue() {
-		return longValue;
-	}
+    public Calendar getCalendar() {
+        return calendar;
+    }
 
-	public void setLongValue(Long longValue) {
-		this.longValue = longValue;
-	}
+    public void setCalendar(Calendar calendar) {
+        this.calendar = calendar;
+    }
 
-	public Date getDateValue() {
-		return dateValue;
-	}
+    public String getStringValue() {
+        return stringValue;
+    }
+
+    public void setStringValue(String stringValue) {
+        this.stringValue = stringValue;
+    }
+
+    public Double getDoubleValue() {
+        return doubleValue;
+    }
+
+    public void setDoubleValue(Double doubleValue) {
+        this.doubleValue = doubleValue;
+    }
+
+    public Long getLongValue() {
+        return longValue;
+    }
+
+    public void setLongValue(Long longValue) {
+        this.longValue = longValue;
+    }
+
+    public Date getDateValue() {
+        return dateValue;
+    }
 
     public void setDateValue(Date dateValue) {
         this.dateValue = dateValue;
     }
-    
+
     /**
      * Check if value is set
      * 
