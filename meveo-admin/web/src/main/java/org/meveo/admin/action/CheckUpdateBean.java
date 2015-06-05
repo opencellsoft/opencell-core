@@ -1,6 +1,5 @@
 package org.meveo.admin.action;
 
-import java.io.BufferedReader;
 import java.io.Serializable;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
@@ -109,7 +108,7 @@ public class CheckUpdateBean implements Serializable {
 				}
 				macAddress = sb.toString() ;
 			}catch(Exception e){
-				macAddress="error:"+e.getMessage();
+				macAddress="error:"+e;
 			}
 
 			Runtime runtime = Runtime.getRuntime();
@@ -126,7 +125,7 @@ public class CheckUpdateBean implements Serializable {
 				}
 				catch (FileSystemException e)
 				{
-					hdSize="error:"+e.getMessage();
+					hdSize="error:"+e;
 				}
 			}
 
