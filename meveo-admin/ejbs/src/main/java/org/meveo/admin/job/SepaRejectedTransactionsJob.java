@@ -18,7 +18,7 @@ import org.meveo.model.admin.User;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.jobs.JobCategoryEnum;
 import org.meveo.model.jobs.JobExecutionResultImpl;
-import org.meveo.model.jobs.TimerEntity;
+import org.meveo.model.jobs.JobInstance;
 import org.meveo.service.job.Job;
 
 @Startup
@@ -34,7 +34,7 @@ public class SepaRejectedTransactionsJob extends Job {
 
     @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
     @Override
-    protected void execute(JobExecutionResultImpl result, TimerEntity timerEntity, User currentUser) throws BusinessException {
+    protected void execute(JobExecutionResultImpl result, JobInstance jobInstance, User currentUser) throws BusinessException {
         Provider provider = currentUser.getProvider();
 
         String dirIN = importDir + File.separator + provider.getCode() + File.separator + "rejectedSepaTransactions" + File.separator + "input";

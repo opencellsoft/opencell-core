@@ -7,13 +7,15 @@ import javax.jws.WebService;
 import org.meveo.api.MeveoApiErrorCode;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
+import org.meveo.api.dto.job.JobInstanceDto;
 import org.meveo.api.dto.job.TimerEntityDto;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.job.JobApi;
+import org.meveo.api.job.JobInstanceApi;
 import org.meveo.api.job.TimerEntityApi;
 import org.meveo.api.logging.LoggingInterceptor;
 import org.meveo.api.ws.JobWs;
-import org.meveo.model.jobs.TimerInfoDto;
+import org.meveo.model.jobs.JobInstanceInfoDto;
 
 @WebService(serviceName = "JobWs", endpointInterface = "org.meveo.api.ws.JobWs")
 @Interceptors({ LoggingInterceptor.class })
@@ -24,13 +26,16 @@ public class JobWsImpl extends BaseWs implements JobWs {
 	
 	@Inject
 	private TimerEntityApi timerEntityApi;
+	
+	@Inject
+	private JobInstanceApi jobInstanceApi;
 
 	@Override
-	public ActionStatus executeTimer(TimerInfoDto postData) {
+	public ActionStatus execute(JobInstanceInfoDto jobInstanceInfoDto) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 		try {
-			jobApi.executeTimer(postData, getCurrentUser());
+			jobApi.executeJob(jobInstanceInfoDto, getCurrentUser());
 		} catch (MeveoApiException e) {
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
@@ -46,7 +51,26 @@ public class JobWsImpl extends BaseWs implements JobWs {
 	}
 	
 	@Override
-	public ActionStatus create(TimerEntityDto postData) {
+	public ActionStatus create(JobInstanceDto jobInstanceDto) {
+		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+		try {
+			jobInstanceApi.create(jobInstanceDto, getCurrentUser());
+		} catch (MeveoApiException e) {
+			result.setErrorCode(e.getErrorCode());
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
+		} catch (Exception e) {
+			result.setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
+		}
+
+		log.debug("RESPONSE={}", result);
+		return result;
+	}
+	
+	@Override
+	public ActionStatus createTimer(TimerEntityDto postData) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 		try {

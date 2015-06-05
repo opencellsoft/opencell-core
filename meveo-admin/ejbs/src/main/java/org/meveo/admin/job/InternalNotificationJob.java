@@ -32,7 +32,7 @@ import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.CustomFieldTypeEnum;
 import org.meveo.model.jobs.JobCategoryEnum;
 import org.meveo.model.jobs.JobExecutionResultImpl;
-import org.meveo.model.jobs.TimerEntity;
+import org.meveo.model.jobs.JobInstance;
 import org.meveo.service.job.Job;
 
 @Startup
@@ -43,10 +43,10 @@ public class InternalNotificationJob extends Job {
     private InternalNotificationJobBean internalNotificationJobBean;
 
     @Override
-    protected void execute(JobExecutionResultImpl result, TimerEntity timerEntity, User currentUser) throws BusinessException {
-        String filterCode = timerEntity.getStringCustomValue("InternalNotificationJob_filterCode");
-        String notificationCode = timerEntity.getStringCustomValue("InternalNotificationJob_notificationCode");
-        internalNotificationJobBean.execute(filterCode,notificationCode,result, currentUser,timerEntity.getProvider());
+    protected void execute(JobExecutionResultImpl result, JobInstance jobInstance, User currentUser) throws BusinessException {
+        String filterCode = jobInstance.getStringCustomValue("InternalNotificationJob_filterCode");
+        String notificationCode = jobInstance.getStringCustomValue("InternalNotificationJob_notificationCode");
+        internalNotificationJobBean.execute(filterCode,notificationCode,result, currentUser,jobInstance.getProvider());
     }
 
     @Override

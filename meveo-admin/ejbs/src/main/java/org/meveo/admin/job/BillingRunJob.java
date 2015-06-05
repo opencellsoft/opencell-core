@@ -16,7 +16,7 @@ import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.CustomFieldTypeEnum;
 import org.meveo.model.jobs.JobCategoryEnum;
 import org.meveo.model.jobs.JobExecutionResultImpl;
-import org.meveo.model.jobs.TimerEntity;
+import org.meveo.model.jobs.JobInstance;
 import org.meveo.service.job.Job;
 
 @Startup
@@ -27,21 +27,21 @@ public class BillingRunJob extends Job {
     private BillingRunJobBean billingRunJobBean;
 
     @Override
-    protected void execute(JobExecutionResultImpl result, TimerEntity timerEntity, User currentUser) throws BusinessException {
+    protected void execute(JobExecutionResultImpl result, JobInstance jobInstance, User currentUser) throws BusinessException {
         String billingCycle = null;
-        if (timerEntity.getStringCustomValue("BillingRunJob_billingCycle") != null) {
-            billingCycle = timerEntity.getStringCustomValue("BillingRunJob_billingCycle");
+        if (jobInstance.getStringCustomValue("BillingRunJob_billingCycle") != null) {
+            billingCycle = jobInstance.getStringCustomValue("BillingRunJob_billingCycle");
         }
         Date lastTransactionDate = null;
-        if (timerEntity.getDateCustomValue("BillingRunJob_lastTransactionDate") != null) {
-            lastTransactionDate = timerEntity.getDateCustomValue("BillingRunJob_lastTransactionDate");
+        if (jobInstance.getDateCustomValue("BillingRunJob_lastTransactionDate") != null) {
+            lastTransactionDate = jobInstance.getDateCustomValue("BillingRunJob_lastTransactionDate");
         }
         Date invoiceDate = null;
-        if (timerEntity.getDateCustomValue("BillingRunJob_invoiceDate") != null) {
-            invoiceDate = timerEntity.getDateCustomValue("BillingRunJob_invoiceDate");
+        if (jobInstance.getDateCustomValue("BillingRunJob_invoiceDate") != null) {
+            invoiceDate = jobInstance.getDateCustomValue("BillingRunJob_invoiceDate");
         }
 
-        billingRunJobBean.execute(result, timerEntity.getTimerInfo().getParametres(), billingCycle, invoiceDate, lastTransactionDate, currentUser);
+        billingRunJobBean.execute(result, jobInstance.getParametres(), billingCycle, invoiceDate, lastTransactionDate, currentUser);
     }
 
     @Override

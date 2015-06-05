@@ -1,8 +1,5 @@
 package org.meveo.api.dto.job;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -10,8 +7,6 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.BaseDto;
-import org.meveo.api.dto.CustomFieldsDto;
-import org.meveo.model.jobs.TimerEntity;
 
 @XmlRootElement(name = "TimerEntity")
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -20,16 +15,10 @@ public class TimerEntityDto extends BaseDto {
     private static final long serialVersionUID = 5166093858617578774L;
 
     @XmlElement(required = true)
-    private String jobCategory;
-
-    @XmlAttribute(required = true)
-    private String jobName;
-
-    @XmlAttribute(required = true)
-    private String name;
+    private String code;
 
     @XmlAttribute(required = false)
-    private String followingTimer;
+    private String description;
 
     @XmlAttribute(required = true)
     private String hour = "*";
@@ -52,53 +41,53 @@ public class TimerEntityDto extends BaseDto {
     @XmlAttribute(required = true)
     private String dayOfWeek = "*";
 
-    @XmlElement(required = false)
-    private String parameter;
-
-    @XmlElement(required = true)
-    private boolean active = false;
-
-    @XmlElement(required = false)
-    private CustomFieldsDto customFields = new CustomFieldsDto();
-
     public TimerEntityDto() {
     }
 
-    public TimerEntityDto(TimerEntity t) {
-        name = t.getName();
-        jobName = t.getJobName();
-        year = t.getYear();
-        month = t.getMonth();
-        dayOfMonth = t.getDayOfMonth();
-        dayOfWeek = t.getDayOfWeek();
-        hour = t.getHour();
-        minute = t.getMinute();
-        second = t.getSecond();
-        parameter = t.getTimerInfo().getParametres();
-        active = t.getTimerInfo().isActive();
+   
 
-        if (t.getJobCategoryEnum() != null) {
-            jobCategory = t.getJobCategoryEnum().name();
-        }
-    }
 
-    public String getName() {
-        return name;
-    }
+    /**
+	 * @return the code
+	 */
+	public String getCode() {
+		return code;
+	}
 
-    public void setName(String name) {
-        this.name = name;
-    }
 
-    public String getJobName() {
-        return jobName;
-    }
 
-    public void setJobName(String jobName) {
-        this.jobName = jobName;
-    }
 
-    public String getYear() {
+	/**
+	 * @param code the code to set
+	 */
+	public void setCode(String code) {
+		this.code = code;
+	}
+
+
+
+
+	/**
+	 * @return the description
+	 */
+	public String getDescription() {
+		return description;
+	}
+
+
+
+
+	/**
+	 * @param description the description to set
+	 */
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+
+
+
+	public String getYear() {
         return year;
     }
 
@@ -154,51 +143,12 @@ public class TimerEntityDto extends BaseDto {
         this.second = second;
     }
 
-    public String getJobCategory() {
-        return jobCategory;
-    }
-
-    public void setJobCategory(String jobCategory) {
-        this.jobCategory = jobCategory;
-    }
-
-    public String getFollowingTimer() {
-        return followingTimer;
-    }
-
-    public void setFollowingTimer(String followingTimer) {
-        this.followingTimer = followingTimer;
-    }
-
-    public String getParameter() {
-        return parameter;
-    }
-
-    public void setParameter(String parameter) {
-        this.parameter = parameter;
-    }
-
-    public boolean isActive() {
-        return active;
-    }
-
-    public void setActive(boolean active) {
-        this.active = active;
-    }
-
-    public CustomFieldsDto getCustomFields() {
-        return customFields;
-    }
-
-    public void setCustomFields(CustomFieldsDto customFields) {
-        this.customFields = customFields;
-    }
-
-    @Override
-    public String toString() {
-        return "TimerEntityDto [name=" + name + ", jobName=" + jobName + ", year=" + year + ", month=" + month + ", dayOfMonth=" + dayOfMonth + ", dayOfWeek=" + dayOfWeek
-                + ", hour=" + hour + ", minute=" + minute + ", second=" + second + ", jobCategory=" + jobCategory + ", active=" + active + ",followingTimer=" + followingTimer
-                + ",parameter =" + parameter + ",customFields=" + customFields + ",customFields=" + customFields + "]";
-    }
-
+	@Override
+	public String toString() {
+		return "TimerEntityDto [code=" + code + ", description=" + description
+				+ ", hour=" + hour + ", minute=" + minute + ", second="
+				+ second + ", year=" + year + ", month=" + month
+				+ ", dayOfMonth=" + dayOfMonth + ", dayOfWeek=" + dayOfWeek
+				+ "]";
+	}   
 }

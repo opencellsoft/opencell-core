@@ -18,7 +18,7 @@ import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.CustomFieldTypeEnum;
 import org.meveo.model.jobs.JobCategoryEnum;
 import org.meveo.model.jobs.JobExecutionResultImpl;
-import org.meveo.model.jobs.TimerEntity;
+import org.meveo.model.jobs.JobInstance;
 import org.meveo.model.shared.DateUtils;
 
 @Startup
@@ -27,12 +27,12 @@ public class JobPurge extends Job {
 
     @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
     @Override
-    protected void execute(JobExecutionResultImpl result, TimerEntity timerEntity, User currentUser) throws BusinessException {
+    protected void execute(JobExecutionResultImpl result, JobInstance jobInstance, User currentUser) throws BusinessException {
 
-        String jobname = timerEntity.getStringCustomValue("JobPurge_jobName");
+        String jobname = jobInstance.getStringCustomValue("JobPurge_jobName");
         int nbDays = 30;
-        if (timerEntity.getLongCustomValue("JobPurge_nbDays") != null) {
-            nbDays = timerEntity.getLongCustomValue("JobPurge_nbDays").intValue();
+        if (jobInstance.getLongCustomValue("JobPurge_nbDays") != null) {
+            nbDays = jobInstance.getLongCustomValue("JobPurge_nbDays").intValue();
         }
         Date date = DateUtils.addDaysToDate(new Date(), nbDays * (-1));
         long nbItemsToProcess = jobExecutionService.countJobsToDelete(jobname, date);

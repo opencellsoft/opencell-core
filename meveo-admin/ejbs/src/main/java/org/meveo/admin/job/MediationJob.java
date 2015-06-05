@@ -29,7 +29,7 @@ import org.meveo.model.crm.CustomFieldTypeEnum;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.jobs.JobCategoryEnum;
 import org.meveo.model.jobs.JobExecutionResultImpl;
-import org.meveo.model.jobs.TimerEntity;
+import org.meveo.model.jobs.JobInstance;
 import org.meveo.service.job.Job;
 
 @Startup
@@ -46,24 +46,24 @@ public class MediationJob extends Job {
     @Override
     @Asynchronous
     @TransactionAttribute(TransactionAttributeType.NEVER)
-    public void execute(TimerEntity timerEntity, User currentUser) {
-        super.execute(timerEntity, currentUser);
+    public void execute(JobInstance jobInstance, User currentUser) {
+        super.execute(jobInstance, currentUser);
     }
 
     @Override
     @TransactionAttribute(TransactionAttributeType.NEVER)
-    protected void execute(JobExecutionResultImpl result, TimerEntity timerEntity, User currentUser) throws BusinessException {
+    protected void execute(JobExecutionResultImpl result, JobInstance jobInstance, User currentUser) throws BusinessException {
         try {
             Long nbRuns = new Long(1);
             Long waitingMillis = new Long(0);
             try {
-                nbRuns = timerEntity.getLongCustomValue("MediationJob_nbRuns").longValue();
-                waitingMillis = timerEntity.getLongCustomValue("MediationJob_waitingMillis").longValue();
+                nbRuns = jobInstance.getLongCustomValue("MediationJob_nbRuns").longValue();
+                waitingMillis = jobInstance.getLongCustomValue("MediationJob_waitingMillis").longValue();
                 if (nbRuns == -1) {
                     nbRuns = (long) Runtime.getRuntime().availableProcessors();
                 }
             } catch (Exception e) {
-                log.warn("Cant get customFields for " + timerEntity.getJobName());
+                log.warn("Cant get customFields for " + jobInstance.getJobTemplate());
             }
 
             Provider provider = currentUser.getProvider();
@@ -89,7 +89,7 @@ public class MediationJob extends Job {
 
             List<Future<String>> futures = new ArrayList<Future<String>>();
             while (subListCreator.isHasNext()) {
-                futures.add(mediationAsync.launchAndForget((List<File>) subListCreator.getNextWorkSet(), result, timerEntity.getTimerInfo().getParametres(), currentUser));
+                futures.add(mediationAsync.launchAndForget((List<File>) subListCreator.getNextWorkSet(), result, jobInstance.getParametres(), currentUser));
                 if (subListCreator.isHasNext()) {
                     try {
                         Thread.sleep(waitingMillis.longValue());

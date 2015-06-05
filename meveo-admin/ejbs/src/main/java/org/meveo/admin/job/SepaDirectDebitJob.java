@@ -8,7 +8,7 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.admin.User;
 import org.meveo.model.jobs.JobCategoryEnum;
 import org.meveo.model.jobs.JobExecutionResultImpl;
-import org.meveo.model.jobs.TimerEntity;
+import org.meveo.model.jobs.JobInstance;
 import org.meveo.service.job.Job;
 
 @Startup
@@ -19,8 +19,8 @@ public class SepaDirectDebitJob extends Job {
     private SepaDirectDebitJobBean sepaDirectDebitJobBean;
 
     @Override
-    protected void execute(JobExecutionResultImpl result, TimerEntity timerEntity, User currentUser) throws BusinessException {
-        sepaDirectDebitJobBean.execute(result, timerEntity.getTimerInfo().getParametres(), currentUser);
+    protected void execute(JobExecutionResultImpl result, JobInstance jobInstance, User currentUser) throws BusinessException {
+        sepaDirectDebitJobBean.execute(result, jobInstance.getParametres(), currentUser);
     }
 
     // public Collection<Timer> getTimers() {

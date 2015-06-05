@@ -16,59 +16,31 @@
  */
 package org.meveo.model.jobs;
 
+import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Map.Entry;
+import java.util.List;
 
 import javax.ejb.ScheduleExpression;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
-import javax.persistence.Embedded;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
-import javax.persistence.MapKeyColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 
-import org.apache.commons.lang.StringUtils;
-import org.meveo.model.Auditable;
-import org.meveo.model.BaseEntity;
+import org.meveo.model.BusinessEntity;
 import org.meveo.model.ExportIdentifier;
-import org.meveo.model.ICustomFieldEntity;
-import org.meveo.model.crm.CustomFieldInstance;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @Entity
 @ExportIdentifier({ "name", "provider" })
 @Table(name = "MEVEO_TIMER", uniqueConstraints = @UniqueConstraint(columnNames = { "NAME", "PROVIDER_ID" }))
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "MEVEO_TIMER_SEQ")
-public class TimerEntity extends BaseEntity implements ICustomFieldEntity {
+public class TimerEntity extends BusinessEntity{
 
 	private static final long serialVersionUID = -3764934334462355788L;
-
-	@Transient
-	private Logger log = LoggerFactory.getLogger(TimerEntity.class);
-
-	@Column(name = "NAME", nullable = false, unique=true)
-	private String name;
-
-	@Column(name = "JOB_NAME", nullable = false)
-	private String jobName;
-
-	@Embedded
-	private TimerInfo timerInfo = new TimerInfo();
-
-	@Transient
-	private TimerEntity followingTimer;
 
 	@Column(name = "SC_YEAR", nullable = false)
 	private String year = "*";
@@ -99,57 +71,13 @@ public class TimerEntity extends BaseEntity implements ICustomFieldEntity {
 	@Column(name = "SC_END", nullable = true)
 	private Date end;
 	
-	@Enumerated(EnumType.STRING)
-	@Column(name = "JOB_CATEGORY")
-	JobCategoryEnum jobCategoryEnum;
-	
-	@OneToMany(mappedBy = "timerEntity", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
-	@MapKeyColumn(name = "code")
-	private Map<String, CustomFieldInstance> customFields = new HashMap<String, CustomFieldInstance>();
+	@OneToMany(mappedBy = "timerEntity", fetch = FetchType.LAZY)
+	private List<JobInstance> jobInstances = new ArrayList<JobInstance>();
 
-    /**
-     * A flag to tag that timer is running
-     */
-	@Transient
-	private boolean running;
+	public TimerEntity(){
 
-	public String getName() {
-		return (name == null) ? (getId() == null ? null : jobName + "_"
-				+ getId()) : name;
 	}
 
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public String getJobName() {
-		return jobName;
-	}
-
-	public void setJobName(String jobName) {
-		System.out.println("setJobName(" + jobName + ")");
-		this.jobName = jobName;
-		timerInfo.setJobName(jobName);
-	}
-
-	public TimerInfo getTimerInfo() {
-		return timerInfo;
-	}
-
-	public void setTimerInfo(TimerInfo timerInfo) {
-		this.timerInfo = timerInfo;
-	}
-
-	public TimerEntity getFollowingTimer() {
-		return followingTimer;
-	}
-
-	public void setFollowingTimer(TimerEntity followingTimer) {
-		this.followingTimer = followingTimer;
-		if (followingTimer != null) {
-			this.timerInfo.setFollowingTimerId(followingTimer.getId());
-		}
-	}
 
 	public String getYear() {
 		return year;
@@ -222,6 +150,23 @@ public class TimerEntity extends BaseEntity implements ICustomFieldEntity {
 	public void setEnd(Date end) {
 		this.end = end;
 	}
+	
+
+	/**
+	 * @return the jobInstances
+	 */
+	public List<JobInstance> getJobInstances() {
+		return jobInstances;
+	}
+
+
+	/**
+	 * @param jobInstances the jobInstances to set
+	 */
+	public void setJobInstances(List<JobInstance> jobInstances) {
+		this.jobInstances = jobInstances;
+	}
+
 
 	public ScheduleExpression getScheduleExpression() {
 		ScheduleExpression expression = new ScheduleExpression();
@@ -238,7 +183,7 @@ public class TimerEntity extends BaseEntity implements ICustomFieldEntity {
 	}
 
 	public String getTimerSchedule() {
-        return String.format("Hour %s Minute %s Second %s Year %s Month %s Day of month %s Day of week %s", hour, minute, second, year, month, dayOfMonth, dayOfWeek);    
+		return String.format("Hour %s Minute %s Second %s Year %s Month %s Day of month %s Day of week %s", hour, minute, second, year, month, dayOfMonth, dayOfWeek);    
 	}
 
 	@Override
@@ -252,170 +197,27 @@ public class TimerEntity extends BaseEntity implements ICustomFieldEntity {
 			if (this.getId() == timer.getId()) {
 				return true;
 			}
-			if (StringUtils.equals(jobName, timer.getJobName())
-					&& StringUtils.equals(name, timer.getName())
-					&& StringUtils.equals(getScheduleExpression().toString(),
-							timer.getScheduleExpression().toString())
-					&& timerInfo.equals(timer.getTimerInfo())) {
+			
+			if (this.getCode() == timer.getCode()) {
 				return true;
 			}
+			
 		}
 		return false;
 	}
 
-	public JobCategoryEnum getJobCategoryEnum() {
-		return jobCategoryEnum;
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return "TimerEntity [year=" + year + ", month=" + month
+				+ ", dayOfMonth=" + dayOfMonth + ", dayOfWeek=" + dayOfWeek
+				+ ", hour=" + hour + ", minute=" + minute + ", second="
+				+ second + ", start=" + start + ", end=" + end
+				+ "]";
 	}
-
-	public void setJobCategoryEnum(JobCategoryEnum jobCategoryEnum) {
-		this.jobCategoryEnum = jobCategoryEnum;
-	}
-
-    public Map<String, CustomFieldInstance> getCustomFields() {
-        return customFields;
-    }
-
-    public void setCustomFields(Map<String, CustomFieldInstance> customFields) {
-        this.customFields = customFields;
-    }
-    private CustomFieldInstance getOrCreateCustomFieldInstance(String code) {
-        CustomFieldInstance cfi = null;
-
-        if (customFields.containsKey(code)) {
-            cfi = customFields.get(code);
-        } else {
-            cfi = new CustomFieldInstance();
-            Auditable au = new Auditable();
-            au.setCreated(new Date());
-            cfi.setAuditable(au);
-            cfi.setCode(code);
-            cfi.setTimerEntity(this);
-            cfi.setProvider(this.getProvider());
-            customFields.put(code, cfi);
-        }
-
-        return cfi;
-    }
-
-    public String getStringCustomValue(String code) {
-        String result = null;
-        if (customFields.containsKey(code)) {
-            result = customFields.get(code).getStringValue();
-        }
-
-        return result;
-    }
-
-    public void setStringCustomValue(String code, String value) {
-        getOrCreateCustomFieldInstance(code).setStringValue(value);
-    }
-
-    public Date getDateCustomValue(String code) {
-        Date result = null;
-        if (customFields.containsKey(code)) {
-            result = customFields.get(code).getDateValue();
-        }
-
-        return result;
-    }
-
-    public void setDateCustomValue(String code, Date value) {
-        getOrCreateCustomFieldInstance(code).setDateValue(value);
-    }
-
-    public Long getLongCustomValue(String code) {
-        Long result = null;
-        if (customFields.containsKey(code)) {
-            result = customFields.get(code).getLongValue();
-        }
-        return result;
-    }
-
-    public void setLongCustomValue(String code, Long value) {
-        getOrCreateCustomFieldInstance(code).setLongValue(value);
-    }
-
-    public Double getDoubleCustomValue(String code) {
-        Double result = null;
-
-        if (customFields.containsKey(code)) {
-            result = customFields.get(code).getDoubleValue();
-        }
-
-        return result;
-    }
-
-    public void setDoubleCustomValue(String code, Double value) {
-        getOrCreateCustomFieldInstance(code).setDoubleValue(value);
-    }
-
-    public String getCustomFieldsAsJson() {
-        String result = "";
-        String sep = "";
-
-        for (Entry<String, CustomFieldInstance> cf : customFields.entrySet()) {
-            result += sep + cf.getValue().toJson();
-            sep = ";";
-        }
-
-        return result;
-    }
-    
-
-    public String getInheritedCustomStringValue(String code) {
-        String result = null;
-        if (getCustomFields().containsKey(code) && getCustomFields().get(code).getStringValue() != null) {
-            result = getCustomFields().get(code).getStringValue();
-        } 
-        return result;
-    }
-
-    public Long getInheritedCustomLongValue(String code) {
-        Long result = null;
-        if (getCustomFields().containsKey(code) && getCustomFields().get(code).getLongValue() != null) {
-            result = getCustomFields().get(code).getLongValue();
-        } 
-        return result;
-    }
-
-    public Date getInheritedCustomDateValue(String code) {
-        Date result = null;
-        if (getCustomFields().containsKey(code) && getCustomFields().get(code).getDateValue() != null) {
-            result = getCustomFields().get(code).getDateValue();
-        } 
-        return result;
-    }
-
-    public Double getInheritedCustomDoubleValue(String code) {
-        Double result = null;
-        if (getCustomFields().containsKey(code) && getCustomFields().get(code).getDoubleValue() != null) {
-            result = getCustomFields().get(code).getDoubleValue();
-            
-        }
-        return result;
-    }
-
-    public String getICsv(String code) {
-        return getInheritedCustomStringValue(code);
-    }
-
-    public Long getIClv(String code) {
-        return getInheritedCustomLongValue(code);
-    }
-
-    public Date getICdav(String code) {
-        return getInheritedCustomDateValue(code);
-    }
-
-    public Double getICdov(String code) {
-        return getInheritedCustomDoubleValue(code);
-    }
-
-    public boolean isRunning() {
-        return running;
-    }
-    
-    public void setRunning(boolean running) {
-        this.running = running;
-    }
+	
+	
 }

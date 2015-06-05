@@ -8,7 +8,7 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.admin.User;
 import org.meveo.model.jobs.JobCategoryEnum;
 import org.meveo.model.jobs.JobExecutionResultImpl;
-import org.meveo.model.jobs.TimerEntity;
+import org.meveo.model.jobs.JobInstance;
 import org.meveo.service.job.Job;
 
 @Startup
@@ -25,9 +25,9 @@ public class DWHQueryJob extends Job {
     private DWHQueryBean queryBean;
 
     @Override
-    protected void execute(JobExecutionResultImpl result, TimerEntity timerEntity, User currentUser) throws BusinessException {
+    protected void execute(JobExecutionResultImpl result, JobInstance jobInstance, User currentUser) throws BusinessException {
 
-        queryBean.executeQuery(result, timerEntity.getTimerInfo().getParametres(), currentUser.getProvider());
+        queryBean.executeQuery(result, jobInstance.getParametres(), currentUser.getProvider());
         result.setDone(true); // TODO why is here DONE and other places is close()?
     }
 
