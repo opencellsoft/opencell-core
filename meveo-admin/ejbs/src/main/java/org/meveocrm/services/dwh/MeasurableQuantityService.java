@@ -9,6 +9,7 @@ import javax.persistence.Query;
 
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.crm.Provider;
 import org.meveo.service.base.BusinessService;
 import org.meveocrm.model.dwh.MeasurableQuantity;
 
@@ -49,16 +50,16 @@ public class MeasurableQuantityService extends
 		return query.getResultList();
 	}
 
-	public List<MeasurableQuantity> listByCode(String code) {
-		return listByCode(getEntityManager(), code);
-	}
-
+    public List<MeasurableQuantity> listByCode(String code) {
+        return listByCode(code, getCurrentProvider());
+    }
+    
 	@SuppressWarnings("unchecked")
-	public List<MeasurableQuantity> listByCode(EntityManager em, String code) {
+    public List<MeasurableQuantity> listByCode(String code, Provider provider) {
 		QueryBuilder queryBuilder = new QueryBuilder(MeasurableQuantity.class,
-				"a", null, getCurrentProvider());
+				"a", null, provider);
 		queryBuilder.addCriterion("code", "=", code, false);
-		Query query = queryBuilder.getQuery(em);
+		Query query = queryBuilder.getQuery(getEntityManager());
 		return query.getResultList();
 	}
 

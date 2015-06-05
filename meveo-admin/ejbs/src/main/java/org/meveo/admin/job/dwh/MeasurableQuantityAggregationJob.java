@@ -80,12 +80,12 @@ public class MeasurableQuantityAggregationJob extends Job {
         StringBuilder report = new StringBuilder();
         if (timerEntity.getTimerInfo().getParametres() != null && !timerEntity.getTimerInfo().getParametres().isEmpty()) {
 
-            MeasurableQuantity mq = mqService.listByCode(timerEntity.getTimerInfo().getParametres()).get(0);
+            MeasurableQuantity mq = mqService.listByCode(timerEntity.getTimerInfo().getParametres(), currentUser.getProvider()).get(0);
             aggregateMeasuredValues(result, report, mq);
             result.setReport(report.toString());
 
         } else {
-            aggregateMeasuredValues(result, report, mqService.list());
+            aggregateMeasuredValues(result, report, mqService.list(currentUser.getProvider()));
             result.setReport(report.toString());
         }
 
