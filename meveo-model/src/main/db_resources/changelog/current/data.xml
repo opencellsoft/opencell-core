@@ -64,5 +64,10 @@
 		<dropAllForeignKeyConstraints baseTableName="adm_user_provider"/>
 		<dropTable tableName="adm_user_provider"/>
 	</changeSet>
+	
+	<changeSet id="#852_20150605-1" author="EdwardLegaspi">
+		<sql><![CDATA[ UPDATE CAT_COUNTER_TEMPLATE set COUNTER_TYPE='USAGE' WHERE COUNTER_TYPE IS NULL ]]></sql>
+		<sql><![CDATA[ UPDATE CAT_COUNTER_TEMPLATE set COUNTER_LEVEL='UA' WHERE COUNTER_LEVEL IS NULL ]]></sql>
+	</changeSet>
 
 </databaseChangeLog>

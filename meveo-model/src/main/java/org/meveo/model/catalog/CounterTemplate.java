@@ -56,8 +56,8 @@ public class CounterTemplate extends BusinessEntity {
 	private static final long serialVersionUID = -1246995971618884001L;
 
 	@Enumerated(EnumType.STRING)
-	@Column(name = "COUNTER_TYPE")
-	private CounterTypeEnum counterType=CounterTypeEnum.USAGE;
+	@Column(name = "COUNTER_TYPE", nullable = false)
+	private CounterTypeEnum counterType = CounterTypeEnum.USAGE;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "CALENDAR_ID")
@@ -72,8 +72,8 @@ public class CounterTemplate extends BusinessEntity {
 	private String unityDescription;
 
 	@Enumerated(EnumType.STRING)
-	@Column(name = "COUNTER_LEVEL")
-	private CounterTemplateLevel counterLevel=CounterTemplateLevel.UA;
+	@Column(name = "COUNTER_LEVEL", nullable = false)
+	private CounterTemplateLevel counterLevel = CounterTemplateLevel.UA;
 
 	public CounterTypeEnum getCounterType() {
 		return counterType;

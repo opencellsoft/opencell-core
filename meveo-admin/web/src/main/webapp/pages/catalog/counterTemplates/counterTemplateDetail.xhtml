@@ -34,29 +34,27 @@
 			<hf:formField
 				label="#{messages['usageChargeTemplate.unityDescription']}"
 				field="unityDescription" />
-			<hftl:decorateFormField fieldId="counterType" label="#{messages['counterTemplate.counterType']}">
-			<p:selectOneMenu id="counterType"
-				value="#{counterTemplateBean.entity.counterType}"
-				rendered="#{counterTemplateBean.edit}"> 
-				<f:selectItems
-					value="#{cc.getEnumConstants('counterType')}"
-					var="enumElement"
-					itemValue="#{enumElement}"
-					itemLabel="#{messages[enumElement.label]}" /> 
+			<hftl:decorateFormField fieldId="counterType"
+				label="#{messages['counterTemplate.counterType']}">
+				<p:selectOneMenu id="counterType" required="true"
+					value="#{counterTemplateBean.entity.counterType}"
+					rendered="#{counterTemplateBean.edit}">
+					<f:selectItems value="#{cc.getEnumConstants('counterType')}"
+						var="enumElement" itemValue="#{enumElement}"
+						itemLabel="#{messages[enumElement.label]}" />
 				</p:selectOneMenu>
 				<h:outputText rendered="#{!counterTemplateBean.edit}"
 					value="#{counterTemplateBean.entity.counterType}"
 					styleClass="field-value"></h:outputText>
 			</hftl:decorateFormField>
-			<hftl:decorateFormField fieldId="counterLevel" label="#{messages['counterTemplate.counterLevel']}">
-			<p:selectOneMenu id="counterLevel"
-				value="#{counterTemplateBean.entity.counterLevel}"
-				rendered="#{counterTemplateBean.edit}"> 
-				<f:selectItems
-					value="#{cc.getEnumConstants('counterLevel')}"
-					var="enumElement"
-					itemValue="#{enumElement}"
-					itemLabel="#{messages[enumElement.label]}" /> 
+			<hftl:decorateFormField fieldId="counterLevel"
+				label="#{messages['counterTemplate.counterLevel']}">
+				<p:selectOneMenu id="counterLevel" required="true"
+					value="#{counterTemplateBean.entity.counterLevel}"
+					rendered="#{counterTemplateBean.edit}">
+					<f:selectItems value="#{cc.getEnumConstants('counterLevel')}"
+						var="enumElement" itemValue="#{enumElement}"
+						itemLabel="#{messages[enumElement.label]}" />
 				</p:selectOneMenu>
 				<h:outputText rendered="#{!counterTemplateBean.edit}"
 					value="#{counterTemplateBean.entity.counterLevel}"

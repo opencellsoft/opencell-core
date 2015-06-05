@@ -172,4 +172,11 @@
         <addForeignKeyConstraint baseColumnNames="calendar_id" baseTableName="CRM_CUSTOM_FIELD_TMPL" constraintName="fk_CFT_CALENDAR" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="CAT_CALENDAR"/>
         <createSequence sequenceName="CRM_CUSTOM_FIELD_PERIOD_seq"/>
 	</changeSet>
+
+	<changeSet id="#852_20150605-2" author="EdwardLegaspi">
+		<addNotNullConstraint columnDataType="VARCHAR(255)"
+			columnName="COUNTER_TYPE" defaultNullValue="USAGE" tableName="CAT_COUNTER_TEMPLATE" />
+		<addNotNullConstraint columnDataType="VARCHAR(255)"
+			columnName="COUNTER_LEVEL" defaultNullValue="UA" tableName="CAT_COUNTER_TEMPLATE" />
+	</changeSet>	
 </databaseChangeLog>
