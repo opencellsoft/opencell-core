@@ -24993,7 +24993,7 @@
                <customField code="BillingRunJob_lastTransactionDate">
                   <dateValue>2015-06-08</dateValue>
                </customField>
-            <customFields>
+            </customFields>
          </timer>
       </ws:create>>
    </soapenv:Body>
