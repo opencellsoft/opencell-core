@@ -1,8 +1,6 @@
 package org.meveo.admin.action;
 
 import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
-import java.io.InputStreamReader;
 import java.io.Serializable;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
@@ -43,7 +41,7 @@ public class CheckUpdateBean implements Serializable {
 			String input = buildJsonRequest();
 			log.debug("Request Check Update ={}",input);
 
-			String urlMoni = paramBean.getProperty("checkUpdate.url", "http://version.meveo.info/meveo-moni/api/rest/getVersion");
+			String urlMoni = paramBean.getProperty("checkUpdate.url","http://version.meveo.info/meveo-moni/api/rest/getVersion");
 			log.debug("Request Check Update url={}",urlMoni);
 
 			//FIXME : deprecated
@@ -56,16 +54,9 @@ public class CheckUpdateBean implements Serializable {
 			if (response.getStatus() != 201) {
 				log.debug("ChekUpdate Failed : HTTP error code : "+ response.getStatus());
 			} else {    
-				String tmp=null;
-				try(BufferedReader br = new BufferedReader(new InputStreamReader(new ByteArrayInputStream(response.getEntity().getBytes()))))
-				{  
-					while ((tmp = br.readLine())!= null) {
-						jsonResponse+=tmp ;
-					}
-				} 
+				jsonResponse=response.getEntity();
+				log.debug("ChekUpdate reponse : "+ jsonResponse);
 			}
-
-			log.debug("Response jsonResponse ={}",jsonResponse);
 			JSONParser jsonParser = new JSONParser();
 			JSONObject jsonResponseObject = (JSONObject) jsonParser.parse(jsonResponse);
 			JSONObject jsonActionStatus =  (JSONObject) jsonResponseObject.get("actionStatus");
@@ -82,7 +73,6 @@ public class CheckUpdateBean implements Serializable {
 			}else{
 				log.debug("checkVersion remote service fail");
 			}
-
 
 		} catch (Exception e) {
 			log.error("Exception on getVersionOutput : ",e);

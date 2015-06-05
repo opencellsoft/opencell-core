@@ -20,16 +20,11 @@ public class RestNotifier {
 	@Inject
 	private Logger log;
 	
-	
-	
 	public void invoke(String input,String url) {
 		try {
 			
 			log.debug("Request  ={}",input);
-
 			log.debug("Url ={}",url);
-
-			
 			ClientRequest request = new ClientRequest(url);
 			request.body("application/json", input);
 			request.accept("application/json");
@@ -39,15 +34,8 @@ public class RestNotifier {
 			if (response.getStatus() != 201) {
 				log.debug("invoke Failed : HTTP error code : "+ response.getStatus());
 			} else {    
-				String tmp=null;
-				try(BufferedReader br = new BufferedReader(new InputStreamReader(new ByteArrayInputStream(response.getEntity().getBytes()))))
-				{  
-					while ((tmp = br.readLine())!= null) {
-						jsonResponse+=tmp ;
-					}
-				} 
+				jsonResponse=response.getEntity();
 			}
-
 			log.info("Response jsonResponse ={}",jsonResponse);
 			JSONParser jsonParser = new JSONParser();
 			JSONObject jsonResponseObject = (JSONObject) jsonParser.parse(jsonResponse);
@@ -56,11 +44,9 @@ public class RestNotifier {
 			
 			if("SUCCESS".equals(responseStatus)){
 				log.debug("invoke remote service ok");
-				//TODO handel reponse
 			}else{
 				log.debug("invoke remote service fail");
 			}
-
 
 		} catch (Exception e) {
 			log.error("Exception on invoke : ",e);
@@ -68,7 +54,7 @@ public class RestNotifier {
 		}
 	}
 	
-	//TODO use this  (no deprecation )
+	//TODO use this  (no deprecation ), also for checkUpdate
 //	public void invoke(String input,String url) {
 //		Response response =null;
 //		try {		
