@@ -29,10 +29,10 @@
 			<hf:formField label="#{messages['contactInformation.email']}"
 				field="email" required="true" useConverter="false"
 				validatorId="emailValidator" />
-			<p:commandLink value="#{messages['menutop.changePassword']}"
-				action="#{userBean.change()}" update="passwordPanel"
-				rendered="#{!(userBean.entity.id==null) and userBean.edit}"
-				style="text-align:right;" />
+			<p:commandLink value="#{messages['menutop.changePassword']}" 
+				action="#{userBean.showHidePassword}" update="passwordPanel"
+				rendered="#{!(userBean.entity.id==null) and userBean.edit}" partialSubmit="true" process="@this"
+				style="text-align:right;"  />
 
 
             <p:outputPanel id="passwordPanel" styleClass="clearLeft">

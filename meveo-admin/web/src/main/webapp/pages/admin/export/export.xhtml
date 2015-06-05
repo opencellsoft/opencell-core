@@ -64,13 +64,13 @@
                 <ui:define name="fields">
                     <ui:repeat var="parameter" value="#{entityExportImportBean.selectedExportTemplate.parameters.entrySet().toArray()}">
                         <hftl:decorateFormField label="#{messages['export.exportCriteria.'.concat(parameter.key)]}" rendered="#{parameter.value eq 'provider'}">
-                            <p:selectOneMenu value="#{entityExportImportBean.exportParameters[parameter.key]}" rendered="#{identity.user.user.onlyOneProvider}">
-                                <f:selectItems value="#{identity.user.user.providers.toArray()}" var="listVal" itemLabel="#{listVal.code}" itemValue="#{listVal}" />
+                            <p:selectOneMenu value="#{entityExportImportBean.exportParameters[parameter.key]}" rendered="#{!identity.hasPermission('superAdmin','superAdminManagement')}">
+                                <f:selectItem itemValue="#{identity.user.currentProvider}" itemLabel="#{identity.user.currentProvider.code}"/>
                                 <s:objectConverter />
                             </p:selectOneMenu>
-                            <p:selectOneMenu value="#{entityExportImportBean.exportParameters[parameter.key]}" rendered="#{!identity.user.user.onlyOneProvider}">
+                            <p:selectOneMenu value="#{entityExportImportBean.exportParameters[parameter.key]}" rendered="#{identity.hasPermission('superAdmin','superAdminManagement')}">
                                 <f:selectItem />
-                                <f:selectItems value="#{identity.user.user.providers.toArray()}" var="listVal" itemLabel="#{listVal.code}" itemValue="#{listVal}" />
+                                <f:selectItems value="#{providerBean.listAll}" var="listVal" itemLabel="#{listVal.code}" itemValue="#{listVal}" />
                                 <s:objectConverter />
                             </p:selectOneMenu>
                         </hftl:decorateFormField>

@@ -76,7 +76,6 @@ public class MeasurableQuantityAggregationJob extends Job {
     @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
     @Override
     protected void execute(JobExecutionResultImpl result, TimerEntity timerEntity, User currentUser) throws BusinessException {
-        mqService.setProvider(currentUser.getProvider());
 
         StringBuilder report = new StringBuilder();
         if (timerEntity.getTimerInfo().getParametres() != null && !timerEntity.getTimerInfo().getParametres().isEmpty()) {

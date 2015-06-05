@@ -114,7 +114,6 @@ public class UsageChargeInstanceService extends BusinessService<UsageChargeInsta
 			CounterInstance counterInstance = counterInstanceService.counterInstanciation(serviceInstance
 					.getSubscription().getUserAccount(), serviceUsageChargeTemplate.getCounterTemplate(), creator);
 			usageChargeInstance.setCounter(counterInstance);
-			setProvider(creator.getProvider());
 			update(usageChargeInstance, creator);
 		}
 
@@ -123,7 +122,6 @@ public class UsageChargeInstanceService extends BusinessService<UsageChargeInsta
 
 	public void activateUsageChargeInstance(UsageChargeInstance usageChargeInstance, User currentUser) {
 		usageChargeInstance.setStatus(InstanceStatusEnum.ACTIVE);
-		setProvider(currentUser.getProvider());
 		update(usageChargeInstance, currentUser);
 		ratingCacheContainerProvider.updateUsageChargeInstanceInCache(usageChargeInstance);
 	}

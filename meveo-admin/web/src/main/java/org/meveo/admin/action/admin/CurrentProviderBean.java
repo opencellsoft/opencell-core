@@ -18,14 +18,13 @@ package org.meveo.admin.action.admin;
 
 import java.io.Serializable;
 
+import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.jboss.seam.security.Identity;
-import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.crm.Provider;
 import org.meveo.security.MeveoUser;
-import org.slf4j.Logger;
 
 /**
  * Class used to set current system provider
@@ -34,8 +33,6 @@ import org.slf4j.Logger;
 public class CurrentProviderBean implements Serializable {
 
     private static final long serialVersionUID = 224598087195379100L;
-
-    protected Logger log;
 
     @Inject
     private Identity identity;
@@ -51,7 +48,13 @@ public class CurrentProviderBean implements Serializable {
         return "/home.xhtml?faces-redirect=true";
     }
 
-    public Provider getCurrentProvider(){
-    	return ((MeveoUser) identity.getUser()).getCurrentProvider();
+    @Produces
+    @Named("currentProvider")
+    @CurrentProvider
+    public Provider getCurrentProvider() {
+        if (identity != null && identity.isLoggedIn()) {
+            return ((MeveoUser) identity.getUser()).getCurrentProvider();
+        }
+        return null;
     }
 }

@@ -239,7 +239,7 @@ public class UserBean extends BaseBean<User> {
         this.show = show;
     }
 
-    public void change() {
+    public void showHidePassword() {        
         this.show = !this.show;
     }
 

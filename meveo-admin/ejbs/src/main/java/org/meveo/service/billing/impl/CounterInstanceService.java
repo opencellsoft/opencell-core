@@ -81,7 +81,6 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
 				create(result, creator, billingAccount.getProvider());
 
 				billingAccount.getCounters().put(counterTemplate.getCode(), result);
-				billingAccountService.setProvider(creator.getProvider());
 				billingAccountService.update(billingAccount, creator);
 			} else {
 				result = userAccount.getBillingAccount().getCounters().get(counterTemplate.getCode());
@@ -94,7 +93,6 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
 				create(result, creator, userAccount.getProvider());
 
 				userAccount.getCounters().put(counterTemplate.getCode(), result);
-				userAccountService.setProvider(creator.getProvider());
 				userAccountService.update(userAccount, creator);
 			} else {
 				result = userAccount.getCounters().get(counterTemplate.getCode());

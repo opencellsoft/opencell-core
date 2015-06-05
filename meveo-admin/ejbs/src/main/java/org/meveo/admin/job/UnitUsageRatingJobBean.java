@@ -48,7 +48,6 @@ public class UnitUsageRatingJobBean {
             EDR edr = edrService.findById(edrId);
             usageRatingService.ratePostpaidUsage(edr, currentUser);
 
-            edrService.setProvider(currentUser.getProvider());
             edrService.update(edr, currentUser);
 
             if (edr.getStatus() == EDRStatusEnum.RATED) {

@@ -37,6 +37,7 @@ import org.jboss.seam.international.status.Messages;
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.jboss.seam.security.Identity;
 import org.jboss.solder.servlet.http.RequestParam;
+import org.meveo.admin.action.admin.CurrentProvider;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.model.AccountEntity;
@@ -65,7 +66,6 @@ import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.catalog.impl.CatMessagesService;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
-import org.meveo.service.crm.impl.ProviderService;
 import org.primefaces.component.datatable.DataTable;
 import org.primefaces.context.RequestContext;
 import org.primefaces.event.SelectEvent;
@@ -91,8 +91,9 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 	@Inject
 	protected Identity identity;
 
-	@Inject
-	ProviderService providerService;
+    @Inject
+    @CurrentProvider
+    protected Provider currentProvider;
 
 	@Inject
 	protected Conversation conversation;
@@ -834,14 +835,12 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 	}
 
 	public List<TradingLanguage> getProviderLanguages() {
-		Provider provider = providerService.findById(getCurrentProvider().getId(), true);
-		return provider.getTradingLanguages();
+		return getCurrentProvider().getTradingLanguages();
 	}
 
 	public String getProviderLanguageCode() {
 		if (getCurrentProvider() != null) {
-			Provider provider = providerService.findById(getCurrentProvider().getId(), true);
-			return provider.getLanguage().getLanguageCode();
+			return getCurrentProvider().getLanguage().getLanguageCode();
 		}
 		return "";
 	}
@@ -855,7 +854,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 	}
 
 	protected Provider getCurrentProvider() {
-		return getCurrentUser().getProvider();
+		return currentProvider;
 	}
 
 	protected String getDefaultSort() {

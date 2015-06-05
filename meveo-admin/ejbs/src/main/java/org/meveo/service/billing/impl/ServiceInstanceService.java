@@ -241,7 +241,6 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 					.getCustomer().getSeller());
 			recurringChargeInstance.setStatus(InstanceStatusEnum.ACTIVE);
 			recurringChargeInstance.setStatusDate(new Date());
-			recurringChargeInstanceService.setProvider(creator.getProvider());
 			recurringChargeInstanceService.update(recurringChargeInstance, creator);
 			recurringChargeInstanceService.recurringChargeApplication(recurringChargeInstance, creator);
 
@@ -273,7 +272,6 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 						serviceInstance.getSubscriptionDate(), serviceInstance.getQuantity(), creator);
 				oneShotChargeInstance.setStatus(InstanceStatusEnum.CLOSED);
 				oneShotChargeInstance.setStatusDate(new Date());
-				oneShotChargeInstanceService.setProvider(creator.getProvider());
 				oneShotChargeInstanceService.update(oneShotChargeInstance, creator);
 			}
 		} else {
@@ -286,7 +284,6 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 
 		serviceInstance.setStatus(InstanceStatusEnum.ACTIVE);
 		serviceInstance.setStatusDate(new Date());
-		setProvider(creator.getProvider());
 		update(serviceInstance, creator);
 	}
 

@@ -102,8 +102,6 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
     @Removed
     protected Event<E> entityRemovedEventProducer;
 
-    private Provider provider;
-
     /**
      * Constructor.
      */
@@ -491,7 +489,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
         if (filters != null && filters.containsKey(SEARCH_SKIP_PROVIDER_CONSTRAINT)) {
             provider = null;
         }
-
+        
         QueryBuilder queryBuilder = new QueryBuilder(entityClass, "a", config.getFetchFields(), provider);
 
         if (filters != null) {
@@ -677,28 +675,20 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
     }
 
     public Provider getCurrentProvider() {
-        Provider result = provider;
+
+        Provider result = null;
         try {
             if (result == null && identity.isLoggedIn() && identity.getUser() != null) {
                 result = ((MeveoUser) identity.getUser()).getCurrentProvider();
             }
         } catch (Exception e) {
-            log.error("failed to get current provider",e);
+            log.error("failed to get current provider", e);
         }
-
+        
         if (result == null && getCurrentUser() != null) {
             result = getCurrentUser().getProvider();
         }
-
         return result;
-    }
-
-    public Provider getProvider() {
-        return provider;
-    }
-
-    public void setProvider(Provider provider) {
-        this.provider = provider;
     }
 
     public BaseEntity attach(BaseEntity e) {

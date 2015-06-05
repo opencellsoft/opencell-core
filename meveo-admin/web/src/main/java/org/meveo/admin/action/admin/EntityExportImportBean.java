@@ -17,7 +17,6 @@ import javax.persistence.Entity;
 
 import org.jboss.seam.international.status.Messages;
 import org.jboss.seam.international.status.builder.BundleKey;
-import org.jboss.seam.security.Identity;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.export.EntityExportImportService;
@@ -26,7 +25,6 @@ import org.meveo.export.ExportTemplate;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.IEntity;
 import org.meveo.model.crm.Provider;
-import org.meveo.security.MeveoUser;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.LazyDataModel;
 import org.primefaces.model.SortOrder;
@@ -56,7 +54,8 @@ public class EntityExportImportBean implements Serializable {
     protected Conversation conversation;
 
     @Inject
-    private Identity identity;
+    @CurrentProvider
+    private Provider currentProvider;
 
     private ParamBean param = ParamBean.getInstance();
 
@@ -249,7 +248,7 @@ public class EntityExportImportBean implements Serializable {
 
         exportImportFuture = null;
         Map<String, Object> parameters = new HashMap<String, Object>();
-        parameters.put("provider", getCurrentProvider());
+        parameters.put("provider", currentProvider);
 
         try {
             exportImportFuture = entityExportImportService.exportEntities(exportTemplate, parameters);
@@ -275,7 +274,7 @@ public class EntityExportImportBean implements Serializable {
         exportImportFuture = null;
 
         if (exportParameters.get("provider") == null) {
-            exportParameters.put("provider", getCurrentProvider());
+            exportParameters.put("provider", currentProvider);
         }
 
         try {
@@ -336,8 +335,5 @@ public class EntityExportImportBean implements Serializable {
         HashMap<String, Object> params = new HashMap<String, Object>();
         params.put("zip", true);
         return params;
-    }
-    private Provider getCurrentProvider(){
-    	return ((MeveoUser)identity.getUser()).getCurrentProvider();
     }
 }
