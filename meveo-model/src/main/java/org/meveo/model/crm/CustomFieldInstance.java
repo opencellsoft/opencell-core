@@ -30,7 +30,7 @@ import org.meveo.model.mediation.Access;
 @ExportIdentifier({ "code", "subscription.code", "account.code", "chargeTemplate.code", "serviceTemplate.code", "offerTemplate.code", "access.accessUserId",
         "access.subscription.code", "jobInstance.code", "provider" })
 @Table(name = "CRM_CUSTOM_FIELD_INST", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE", "SUBSCRIPTION_ID", "ACCOUNT_ID", "CHARGE_TEMPLATE_ID", "SERVICE_TEMPLATE_ID",
-        "OFFER_TEMPLATE_ID", "ACCESS_ID", "MEVEO_JOB_INSTANCE_ID", "PROVIDER_ID" }))
+        "OFFER_TEMPLATE_ID", "ACCESS_ID", "JOB_INSTANCE_ID", "PROVIDER_ID" }))
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "CRM_CUSTOM_FIELD_INST_SEQ")
 public class CustomFieldInstance extends BusinessEntity {
 
@@ -61,7 +61,7 @@ public class CustomFieldInstance extends BusinessEntity {
     private Access access;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "MEVEO_JOB_INSTANCE_ID")
+    @JoinColumn(name = "JOB_INSTANCE_ID")
     private JobInstance jobInstance;
 
     @Column(name = "STRING_VALUE")

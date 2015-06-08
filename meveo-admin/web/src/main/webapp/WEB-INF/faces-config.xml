@@ -141,8 +141,8 @@
 		</navigation-case>
 
 		<navigation-case>
-			<from-outcome>jobTimers</from-outcome>
-			<to-view-id>/pages/admin/job/timerEntitys.xhtml</to-view-id>
+			<from-outcome>timerEntities</from-outcome>
+			<to-view-id>/pages/admin/job/timerEntities.xhtml</to-view-id>
 			<redirect />
 		</navigation-case>
 		<navigation-case>
@@ -150,6 +150,17 @@
 			<to-view-id>/pages/admin/job/timerEntityDetail.xhtml</to-view-id>
 			<redirect />
 		</navigation-case>
+		
+		<navigation-case>
+			<from-outcome>jobInstances</from-outcome>
+			<to-view-id>/pages/admin/job/jobInstances.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>jobInstanceDetail</from-outcome>
+			<to-view-id>/pages/admin/job/jobInstanceDetail.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>		
 
 		<navigation-case>
 			<from-outcome>timers</from-outcome>

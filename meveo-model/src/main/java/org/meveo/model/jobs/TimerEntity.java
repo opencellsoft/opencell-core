@@ -35,8 +35,8 @@ import org.meveo.model.BusinessEntity;
 import org.meveo.model.ExportIdentifier;
 
 @Entity
-@ExportIdentifier({ "name", "provider" })
-@Table(name = "MEVEO_TIMER", uniqueConstraints = @UniqueConstraint(columnNames = { "NAME", "PROVIDER_ID" }))
+@ExportIdentifier({ "code", "provider" })
+@Table(name = "MEVEO_TIMER", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE", "PROVIDER_ID" }))
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "MEVEO_TIMER_SEQ")
 public class TimerEntity extends BusinessEntity{
 
