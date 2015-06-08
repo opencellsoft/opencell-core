@@ -92,8 +92,16 @@ public class ProviderService extends PersistenceService<Provider> {
         user.setPassword(e.getCode() + ".password");
         user.setUserName(e.getCode() + ".ADMIN");
         Role role = roleService.findById(Long.parseLong(paramBean.getProperty("systgetEntityManager().adminRoleid", "1")));
+        
+        Role o=new Role();
+        o.setName(role.getName());
+        o.setDescription(role.getDescription());
+        o.getPermissions().addAll(role.getPermissions());
+        
+        o.setProvider(e);
+        roleService.create(o);
         Set<Role> roles = new HashSet<Role>();
-        roles.add(role);
+        roles.add(o);
         user.setRoles(roles);
         userService.create(user);
         
