@@ -62,6 +62,7 @@ public class WalletOperationDto extends BaseDto {
 	private Date endDate;
 	private Date operationDate;
 	private Date subscriptionDate;
+	private String offerCode;
 
 	public WalletOperationDto() {
 
@@ -98,6 +99,8 @@ public class WalletOperationDto extends BaseDto {
 		subscriptionDate = wo.getSubscriptionDate();
 		walletTemplate = wo.getWallet().getCode();
 		userAccount = wo.getWallet().getUserAccount().getCode();
+		offerCode=wo.getOfferCode();
+		chargeInstance=wo.getChargeInstance().getCode();
 	}
 
 	public String getCode() {
@@ -272,9 +275,9 @@ public class WalletOperationDto extends BaseDto {
 	public String toString() {
 		return "WalletOperationDto [code=" + code + ", description=" + description + ", userAccount=" + userAccount + ", subscription=" + subscription + ", walletTemplate="
 				+ walletTemplate + ", seller=" + seller + ", chargeInstance=" + chargeInstance + ", currency=" + currency + ", type=" + type + ", status=" + status
-				+ ", ratingUnitDescription=" + ratingUnitDescription + ", taxPercent=" + taxPercent + ", unitAmountWithoutTax=" + unitAmountWithoutTax + ", unitAmountWithTax="
+				+ ", ratingUnitDescription=" + ratingUnitDescription + ", taxPercent=" + taxPercent + ", unitAmountWithTax="
 				+ unitAmountWithTax + ", unitAmountTax=" + unitAmountTax + ", quantity=" + quantity + ", amountWithoutTax=" + amountWithoutTax + ", amountWithTax=" + amountWithTax
-				+ ", amountTax=" + amountTax + ", parameter1=" + parameter1 + ", parameter2=" + parameter2 + ", parameter3=" + parameter3 + ", startDate=" + startDate
+				+ ", amountTax=" + amountTax + ", parameter1=" + parameter1 + ", parameter2=" + parameter2 + ", parameter3=" + parameter3 + ", offer=" + offerCode + ", startDate=" + startDate
 				+ ", endDate=" + endDate + ", operationDate=" + operationDate + ", subscriptionDate=" + subscriptionDate + "]";
 	}
 
@@ -317,5 +320,14 @@ public class WalletOperationDto extends BaseDto {
 	public void setRatingUnitDescription(String ratingUnitDescription) {
 		this.ratingUnitDescription = ratingUnitDescription;
 	}
+
+	public String getOfferCode() {
+		return offerCode;
+	}
+
+	public void setOfferCode(String offerCode) {
+		this.offerCode = offerCode;
+	}
+	
 
 }
