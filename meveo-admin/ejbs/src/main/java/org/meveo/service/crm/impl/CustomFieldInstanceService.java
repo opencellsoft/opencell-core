@@ -1,6 +1,7 @@
 package org.meveo.service.crm.impl;
 
 import java.util.Date;
+import java.util.List;
 
 import javax.ejb.Stateless;
 import javax.persistence.NoResultException;
@@ -148,7 +149,8 @@ public class CustomFieldInstanceService extends BusinessService<CustomFieldInsta
 		}
 	}
 	
-	public CustomFieldInstance findByCodeAndAccountAndValue(String code, String accountType, String stringValue, Date dateValue, Long longValue, Double doubleValue, Provider provider) {
+	@SuppressWarnings("unchecked")
+	public List<CustomFieldInstance> findByCodeAndAccountAndValue(String code, String accountType, String stringValue, Date dateValue, Long longValue, Double doubleValue, Provider provider) {
 		QueryBuilder qb = new QueryBuilder(CustomFieldInstance.class, "c");
 		qb.addCriterion("code", "=", code, true);
 		qb.addCriterionEntity("provider", provider);
@@ -169,7 +171,7 @@ public class CustomFieldInstanceService extends BusinessService<CustomFieldInsta
 		}
 
 		try {
-			return (CustomFieldInstance) qb.getQuery(getEntityManager()).getSingleResult();
+			return (List<CustomFieldInstance>) qb.getQuery(getEntityManager()).getResultList();
 		} catch (NoResultException e) {
 			return null;
 		}

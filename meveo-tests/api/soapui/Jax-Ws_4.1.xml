@@ -7083,7 +7083,385 @@
          </customer>
       </ws:createCustomer>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/createCustomer"/></con:call></con:operation><con:operation isOneWay="false" action="" name="createCustomerAccount" bindingOperationName="createCustomerAccount" type="Request-Response" outputName="createCustomerAccountResponse" inputName="createCustomerAccount" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+</soapenv:Envelope>]]></con:request><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/createCustomer"/></con:call><con:call name="Request 2"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createCustomer>
+         <!--Optional:-->
+         <customer code="?" description="?">
+            <!--Optional:-->
+            <externalRef1>?</externalRef1>
+            <!--Optional:-->
+            <externalRef2>?</externalRef2>
+            <!--Optional:-->
+            <name>
+               <!--Optional:-->
+               <title>?</title>
+               <!--Optional:-->
+               <firstName>?</firstName>
+               <lastName>?</lastName>
+            </name>
+            <!--Optional:-->
+            <address>
+               <!--Optional:-->
+               <address1>?</address1>
+               <!--Optional:-->
+               <address2>?</address2>
+               <!--Optional:-->
+               <address3>?</address3>
+               <!--Optional:-->
+               <zipCode>?</zipCode>
+               <!--Optional:-->
+               <city>?</city>
+               <!--Optional:-->
+               <country>?</country>
+               <!--Optional:-->
+               <state>?</state>
+            </address>
+            <!--Optional:-->
+            <customFields>
+               <!--Zero or more repetitions:-->
+               <customField code="?" description="?">
+                  <!--Optional:-->
+                  <stringValue>?</stringValue>
+                  <!--Optional:-->
+                  <dateValue>?</dateValue>
+                  <!--Optional:-->
+                  <longValue>?</longValue>
+                  <!--Optional:-->
+                  <doubleValue>?</doubleValue>
+               </customField>
+            </customFields>
+            <customerCategory>?</customerCategory>
+            <customerBrand>?</customerBrand>
+            <seller>?</seller>
+            <!--Optional:-->
+            <mandateIdentification>?</mandateIdentification>
+            <!--Optional:-->
+            <mandateDate>?</mandateDate>
+            <!--Optional:-->
+            <contactInformation>
+               <!--Optional:-->
+               <email>?</email>
+               <!--Optional:-->
+               <phone>?</phone>
+               <!--Optional:-->
+               <mobile>?</mobile>
+               <!--Optional:-->
+               <fax>?</fax>
+            </contactInformation>
+            <!--Optional:-->
+            <customerAccounts>
+               <!--Zero or more repetitions:-->
+               <customerAccount code="?" description="?">
+                  <!--Optional:-->
+                  <externalRef1>?</externalRef1>
+                  <!--Optional:-->
+                  <externalRef2>?</externalRef2>
+                  <!--Optional:-->
+                  <name>
+                     <!--Optional:-->
+                     <title>?</title>
+                     <!--Optional:-->
+                     <firstName>?</firstName>
+                     <lastName>?</lastName>
+                  </name>
+                  <!--Optional:-->
+                  <address>
+                     <!--Optional:-->
+                     <address1>?</address1>
+                     <!--Optional:-->
+                     <address2>?</address2>
+                     <!--Optional:-->
+                     <address3>?</address3>
+                     <!--Optional:-->
+                     <zipCode>?</zipCode>
+                     <!--Optional:-->
+                     <city>?</city>
+                     <!--Optional:-->
+                     <country>?</country>
+                     <!--Optional:-->
+                     <state>?</state>
+                  </address>
+                  <!--Optional:-->
+                  <customFields>
+                     <!--Zero or more repetitions:-->
+                     <customField code="?" description="?">
+                        <!--Optional:-->
+                        <stringValue>?</stringValue>
+                        <!--Optional:-->
+                        <dateValue>?</dateValue>
+                        <!--Optional:-->
+                        <longValue>?</longValue>
+                        <!--Optional:-->
+                        <doubleValue>?</doubleValue>
+                     </customField>
+                  </customFields>
+                  <customer>?</customer>
+                  <currency>?</currency>
+                  <language>?</language>
+                  <!--Optional:-->
+                  <status>?</status>
+                  <!--Optional:-->
+                  <paymentMethod>?</paymentMethod>
+                  <!--Optional:-->
+                  <creditCategory>?</creditCategory>
+                  <!--Optional:-->
+                  <dateStatus>?</dateStatus>
+                  <!--Optional:-->
+                  <dateDunningLevel>?</dateDunningLevel>
+                  <!--Optional:-->
+                  <contactInformation>
+                     <!--Optional:-->
+                     <email>?</email>
+                     <!--Optional:-->
+                     <phone>?</phone>
+                     <!--Optional:-->
+                     <mobile>?</mobile>
+                     <!--Optional:-->
+                     <fax>?</fax>
+                  </contactInformation>
+                  <!--Optional:-->
+                  <dunningLevel>?</dunningLevel>
+                  <!--Optional:-->
+                  <mandateIdentification>?</mandateIdentification>
+                  <!--Optional:-->
+                  <mandateDate>?</mandateDate>
+                  <!--Optional:-->
+                  <balance>?</balance>
+                  <!--Optional:-->
+                  <terminationDate>?</terminationDate>
+                  <!--Optional:-->
+                  <billingAccounts>
+                     <!--Zero or more repetitions:-->
+                     <billingAccount code="?" description="?">
+                        <!--Optional:-->
+                        <externalRef1>?</externalRef1>
+                        <!--Optional:-->
+                        <externalRef2>?</externalRef2>
+                        <!--Optional:-->
+                        <name>
+                           <!--Optional:-->
+                           <title>?</title>
+                           <!--Optional:-->
+                           <firstName>?</firstName>
+                           <lastName>?</lastName>
+                        </name>
+                        <!--Optional:-->
+                        <address>
+                           <!--Optional:-->
+                           <address1>?</address1>
+                           <!--Optional:-->
+                           <address2>?</address2>
+                           <!--Optional:-->
+                           <address3>?</address3>
+                           <!--Optional:-->
+                           <zipCode>?</zipCode>
+                           <!--Optional:-->
+                           <city>?</city>
+                           <!--Optional:-->
+                           <country>?</country>
+                           <!--Optional:-->
+                           <state>?</state>
+                        </address>
+                        <!--Optional:-->
+                        <customFields>
+                           <!--Zero or more repetitions:-->
+                           <customField code="?" description="?">
+                              <!--Optional:-->
+                              <stringValue>?</stringValue>
+                              <!--Optional:-->
+                              <dateValue>?</dateValue>
+                              <!--Optional:-->
+                              <longValue>?</longValue>
+                              <!--Optional:-->
+                              <doubleValue>?</doubleValue>
+                           </customField>
+                        </customFields>
+                        <customerAccount>?</customerAccount>
+                        <billingCycle>?</billingCycle>
+                        <country>?</country>
+                        <language>?</language>
+                        <paymentMethod>?</paymentMethod>
+                        <!--Optional:-->
+                        <nextInvoiceDate>?</nextInvoiceDate>
+                        <!--Optional:-->
+                        <subscriptionDate>?</subscriptionDate>
+                        <!--Optional:-->
+                        <terminationDate>?</terminationDate>
+                        <!--Optional:-->
+                        <paymentTerms>?</paymentTerms>
+                        <!--Optional:-->
+                        <electronicBilling>?</electronicBilling>
+                        <!--Optional:-->
+                        <status>?</status>
+                        <!--Optional:-->
+                        <terminationReason>?</terminationReason>
+                        <!--Optional:-->
+                        <email>?</email>
+                        <!--Optional:-->
+                        <bankCoordinates>
+                           <!--Optional:-->
+                           <bankCode>?</bankCode>
+                           <!--Optional:-->
+                           <branchCode>?</branchCode>
+                           <!--Optional:-->
+                           <accountNumber>?</accountNumber>
+                           <!--Optional:-->
+                           <key>?</key>
+                           <!--Optional:-->
+                           <iban>?</iban>
+                           <!--Optional:-->
+                           <bic>?</bic>
+                           <!--Optional:-->
+                           <accountOwner>?</accountOwner>
+                           <!--Optional:-->
+                           <bankName>?</bankName>
+                           <!--Optional:-->
+                           <bankId>?</bankId>
+                           <!--Optional:-->
+                           <issuerNumber>?</issuerNumber>
+                           <!--Optional:-->
+                           <issuerName>?</issuerName>
+                           <!--Optional:-->
+                           <ics>?</ics>
+                        </bankCoordinates>
+                        <!--Optional:-->
+                        <userAccounts>
+                           <!--Zero or more repetitions:-->
+                           <userAccount code="?" description="?">
+                              <!--Optional:-->
+                              <externalRef1>?</externalRef1>
+                              <!--Optional:-->
+                              <externalRef2>?</externalRef2>
+                              <!--Optional:-->
+                              <name>
+                                 <!--Optional:-->
+                                 <title>?</title>
+                                 <!--Optional:-->
+                                 <firstName>?</firstName>
+                                 <lastName>?</lastName>
+                              </name>
+                              <!--Optional:-->
+                              <address>
+                                 <!--Optional:-->
+                                 <address1>?</address1>
+                                 <!--Optional:-->
+                                 <address2>?</address2>
+                                 <!--Optional:-->
+                                 <address3>?</address3>
+                                 <!--Optional:-->
+                                 <zipCode>?</zipCode>
+                                 <!--Optional:-->
+                                 <city>?</city>
+                                 <!--Optional:-->
+                                 <country>?</country>
+                                 <!--Optional:-->
+                                 <state>?</state>
+                              </address>
+                              <!--Optional:-->
+                              <customFields>
+                                 <!--Zero or more repetitions:-->
+                                 <customField code="?" description="?">
+                                    <!--Optional:-->
+                                    <stringValue>?</stringValue>
+                                    <!--Optional:-->
+                                    <dateValue>?</dateValue>
+                                    <!--Optional:-->
+                                    <longValue>?</longValue>
+                                    <!--Optional:-->
+                                    <doubleValue>?</doubleValue>
+                                 </customField>
+                              </customFields>
+                              <billingAccount>?</billingAccount>
+                              <!--Optional:-->
+                              <subscriptionDate>?</subscriptionDate>
+                              <!--Optional:-->
+                              <terminationDate>?</terminationDate>
+                              <!--Optional:-->
+                              <status>?</status>
+                              <!--Optional:-->
+                              <terminationReason>?</terminationReason>
+                              <!--Optional:-->
+                              <subscriptions>
+                                 <!--Zero or more repetitions:-->
+                                 <subscription code="?" description="?">
+                                    <userAccount>?</userAccount>
+                                    <offerTemplate>?</offerTemplate>
+                                    <subscriptionDate>?</subscriptionDate>
+                                    <!--Optional:-->
+                                    <terminationDate>?</terminationDate>
+                                    <!--Optional:-->
+                                    <status>?</status>
+                                    <!--Optional:-->
+                                    <customFields>
+                                       <!--Zero or more repetitions:-->
+                                       <customField code="?" description="?">
+                                          <!--Optional:-->
+                                          <stringValue>?</stringValue>
+                                          <!--Optional:-->
+                                          <dateValue>?</dateValue>
+                                          <!--Optional:-->
+                                          <longValue>?</longValue>
+                                          <!--Optional:-->
+                                          <doubleValue>?</doubleValue>
+                                       </customField>
+                                    </customFields>
+                                    <!--Optional:-->
+                                    <accesses>
+                                       <!--Zero or more repetitions:-->
+                                       <access code="?">
+                                          <subscription>?</subscription>
+                                          <!--Optional:-->
+                                          <startDate>?</startDate>
+                                          <!--Optional:-->
+                                          <endDate>?</endDate>
+                                          <!--Optional:-->
+                                          <customFields>
+                                             <!--Zero or more repetitions:-->
+                                             <customField code="?" description="?">
+                                                <!--Optional:-->
+                                                <stringValue>?</stringValue>
+                                                <!--Optional:-->
+                                                <dateValue>?</dateValue>
+                                                <!--Optional:-->
+                                                <longValue>?</longValue>
+                                                <!--Optional:-->
+                                                <doubleValue>?</doubleValue>
+                                             </customField>
+                                          </customFields>
+                                       </access>
+                                    </accesses>
+                                    <!--Optional:-->
+                                    <services>
+                                       <!--Zero or more repetitions:-->
+                                       <serviceInstance code="?" description="?">
+                                          <!--Optional:-->
+                                          <status>?</status>
+                                          <!--Optional:-->
+                                          <subscriptionDate>?</subscriptionDate>
+                                          <!--Optional:-->
+                                          <terminationDate>?</terminationDate>
+                                          <!--Optional:-->
+                                          <quantity>?</quantity>
+                                          <!--Optional:-->
+                                          <terminationReason>?</terminationReason>
+                                       </serviceInstance>
+                                    </services>
+                                    <!--Optional:-->
+                                    <terminationReason>?</terminationReason>
+                                 </subscription>
+                              </subscriptions>
+                           </userAccount>
+                        </userAccounts>
+                     </billingAccount>
+                  </billingAccounts>
+               </customerAccount>
+            </customerAccounts>
+         </customer>
+      </ws:createCustomer>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/createCustomer"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation isOneWay="false" action="" name="createCustomerAccount" bindingOperationName="createCustomerAccount" type="Request-Response" outputName="createCustomerAccountResponse" inputName="createCustomerAccount" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createCustomerAccount>
@@ -25368,6 +25746,120 @@ for( testCase in testSuite.getTestCaseList() ) {
                <phone>+33100000000</phone>
                <mobile>+33666666666</mobile>
             </contactInformation>
+             <customFields>
+               <!--Zero or more repetitions:-->
+               <customField code="FB_ID" description="FB_ID">
+                  <!--Optional:-->
+                  <stringValue>edward</stringValue>
+               </customField>
+            </customFields>
+         </customer>
+      </ws:createCustomer>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response"/><con:assertion type="Simple Contains" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Create customer 2"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>createCustomer</con:operation><con:request name="Create customer 2"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createCustomer>
+         <!--Optional:-->
+         <customer code="${#TestSuite#ticket}_CUST2" description="${#TestSuite#ticket}_CUST2">
+            <name>
+               <title>M</title>
+               <firstName>Edward</firstName>
+               <lastName>Legaspi</lastName>
+            </name>
+            <address>
+               <address1>adresse 1</address1>
+               <address2></address2>
+               <address3>adresse 3</address3>
+               <zipCode>21000</zipCode>
+               <city>Dijon</city>
+               <country>FR</country>
+            </address>
+            
+            <customerCategory>CLIENT</customerCategory>
+            <customerBrand>DEFAULT</customerBrand>
+            <seller>SELLER_FR</seller>
+            <contactInformation>
+               <email>613@manaty.net</email>
+               <phone>+33100000000</phone>
+               <mobile>+33666666666</mobile>
+            </contactInformation>
+            <customFields>
+               <!--Zero or more repetitions:-->
+               <customField code="FB_ID" description="FB_ID">
+                  <!--Optional:-->
+                  <stringValue>edward</stringValue>
+               </customField>
+            </customFields>
+         </customer>
+      </ws:createCustomer>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response"/><con:assertion type="Simple Contains" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Create customer 3"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>createCustomer</con:operation><con:request name="Create customer 3"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createCustomer>
+         <!--Optional:-->
+         <customer code="${#TestSuite#ticket}_CUST3" description="${#TestSuite#ticket}_CUST3">
+            <name>
+               <title>M</title>
+               <firstName>Edward</firstName>
+               <lastName>Legaspi</lastName>
+            </name>
+            <address>
+               <address1>adresse 1</address1>
+               <address2></address2>
+               <address3>adresse 3</address3>
+               <zipCode>21000</zipCode>
+               <city>Dijon</city>
+               <country>FR</country>
+            </address>
+            
+            <customerCategory>CLIENT</customerCategory>
+            <customerBrand>DEFAULT</customerBrand>
+            <seller>SELLER_FR</seller>
+            <contactInformation>
+               <email>613@manaty.net</email>
+               <phone>+33100000000</phone>
+               <mobile>+33666666666</mobile>
+            </contactInformation>
+            <customFields>
+               <!--Zero or more repetitions:-->
+               <customField code="FB_ID" description="FB_ID">
+                  <!--Optional:-->
+                  <stringValue>edward1</stringValue>
+               </customField>
+            </customFields>
+         </customer>
+      </ws:createCustomer>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response"/><con:assertion type="Simple Contains" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Create customer 4"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>createCustomer</con:operation><con:request name="Create customer 4"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createCustomer>
+         <!--Optional:-->
+         <customer code="${#TestSuite#ticket}_CUST4" description="${#TestSuite#ticket}_CUST4">
+            <name>
+               <title>M</title>
+               <firstName>Edward</firstName>
+               <lastName>Legaspi</lastName>
+            </name>
+            <address>
+               <address1>adresse 1</address1>
+               <address2></address2>
+               <address3>adresse 3</address3>
+               <zipCode>21000</zipCode>
+               <city>Dijon</city>
+               <country>FR</country>
+            </address>
+            
+            <customerCategory>CLIENT</customerCategory>
+            <customerBrand>DEFAULT</customerBrand>
+            <seller>SELLER_FR</seller>
+            <contactInformation>
+               <email>613@manaty.net</email>
+               <phone>+33100000000</phone>
+               <mobile>+33666666666</mobile>
+            </contactInformation>
          </customer>
       </ws:createCustomer>
    </soapenv:Body>
@@ -25426,7 +25918,7 @@ for( testCase in testSuite.getTestCaseList() ) {
             <paymentMethod>CHECK</paymentMethod>
             <nextInvoiceDate>2015-04-01</nextInvoiceDate>
             <subscriptionDate>2015-01-01</subscriptionDate>
-            <paymentTerms>4 month</paymentTerms>
+            <paymentTerms>CASH</paymentTerms>
             <electronicBilling>true</electronicBilling>
             <email>613@manaty.net</email>
             
@@ -25458,7 +25950,7 @@ for( testCase in testSuite.getTestCaseList() ) {
          </userAccount>
       </ws:createUserAccount>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response"/><con:assertion type="Simple Contains" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties><con:property><con:name>index</con:name><con:value>769</con:value></con:property></con:properties></con:testCase><con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Find account hierarchy" searchProperties="true"><con:settings/><con:testStep type="request" name="Find"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>findAccountHierarchy</con:operation><con:request name="Find"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response"/><con:assertion type="Simple Contains" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties><con:property><con:name>index</con:name><con:value>769</con:value></con:property></con:properties></con:testCase><con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Find account hierarchy" searchProperties="true" id="d81ca6cd-6a98-404f-9b43-64f571be96fc"><con:settings/><con:testStep type="request" name="Find"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>findAccountHierarchy</con:operation><con:request name="Find"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
       <ws:findAccountHierarchy>
