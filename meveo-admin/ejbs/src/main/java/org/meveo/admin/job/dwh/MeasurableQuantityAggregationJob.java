@@ -18,7 +18,7 @@ import org.meveo.interceptor.PerformanceInterceptor;
 import org.meveo.model.admin.User;
 import org.meveo.model.jobs.JobCategoryEnum;
 import org.meveo.model.jobs.JobExecutionResultImpl;
-import org.meveo.model.jobs.TimerEntity;
+import org.meveo.model.jobs.JobInstance;
 import org.meveo.service.job.Job;
 import org.meveocrm.model.dwh.MeasurableQuantity;
 import org.meveocrm.model.dwh.MeasuredValue;
@@ -75,12 +75,12 @@ public class MeasurableQuantityAggregationJob extends Job {
 
     @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
     @Override
-    protected void execute(JobExecutionResultImpl result, TimerEntity timerEntity, User currentUser) throws BusinessException {
+    protected void execute(JobExecutionResultImpl result, JobInstance jobInstance, User currentUser) throws BusinessException {
 
         StringBuilder report = new StringBuilder();
-        if (timerEntity.getTimerInfo().getParametres() != null && !timerEntity.getTimerInfo().getParametres().isEmpty()) {
+        if (jobInstance.getParametres() != null && !jobInstance.getParametres().isEmpty()) {
 
-            MeasurableQuantity mq = mqService.listByCode(timerEntity.getTimerInfo().getParametres(), currentUser.getProvider()).get(0);
+            MeasurableQuantity mq = mqService.listByCode(jobInstance.getParametres(), currentUser.getProvider()).get(0);
             aggregateMeasuredValues(result, report, mq);
             result.setReport(report.toString());
 

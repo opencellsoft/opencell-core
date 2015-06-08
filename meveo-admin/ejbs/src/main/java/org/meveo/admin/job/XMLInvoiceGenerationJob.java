@@ -20,6 +20,7 @@ import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.CustomFieldTypeEnum;
 import org.meveo.model.jobs.JobCategoryEnum;
 import org.meveo.model.jobs.JobExecutionResultImpl;
+import org.meveo.model.jobs.JobInstance;
 import org.meveo.model.jobs.TimerEntity;
 import org.meveo.service.job.Job;
 
@@ -37,14 +38,14 @@ public class XMLInvoiceGenerationJob extends Job {
 	@Override
 	@Asynchronous
 	@TransactionAttribute(TransactionAttributeType.NEVER)
-	public void execute(TimerEntity timerEntity, User currentUser) {
-		super.execute(timerEntity, currentUser);
+	public void execute(JobInstance jobInstance, User currentUser) {
+		super.execute(jobInstance, currentUser);
 	}
 
 	@Override
 	@TransactionAttribute(TransactionAttributeType.NEVER)
-	protected void execute(JobExecutionResultImpl result, TimerEntity timerEntity, User currentUser) throws BusinessException {
-		xmlInvoiceGenerationJobBean.execute(result, timerEntity.getTimerInfo().getParametres(), currentUser, timerEntity);
+	protected void execute(JobExecutionResultImpl result, JobInstance jobInstance, User currentUser) throws BusinessException {
+		xmlInvoiceGenerationJobBean.execute(result, jobInstance.getParametres(), currentUser, jobInstance);
 	}
 
 	@Override

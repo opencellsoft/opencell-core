@@ -18,7 +18,7 @@ import org.meveo.interceptor.PerformanceInterceptor;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.jobs.JobExecutionResultImpl;
-import org.meveo.model.jobs.TimerEntity;
+import org.meveo.model.jobs.JobInstance;
 import org.meveo.service.billing.impl.BillingRunService;
 import org.meveo.service.billing.impl.InvoiceService;
 import org.slf4j.Logger;
@@ -41,10 +41,10 @@ public class PDFInvoiceGenerationJobBean {
 	@SuppressWarnings("unchecked")
 	@Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
 	@TransactionAttribute(TransactionAttributeType.NEVER)
-	public void execute(JobExecutionResultImpl result, User currentUser,TimerEntity timerEntity) {
+	public void execute(JobExecutionResultImpl result, User currentUser,JobInstance jobInstance) {
 		try{
 			List<Invoice> invoices = new ArrayList<Invoice>();
-			String parameter = timerEntity.getTimerInfo().getParametres();
+			String parameter = jobInstance.getParametres();
 			if (parameter != null && parameter.trim().length() > 0) {			
 				try {
 					invoices = invoiceService.getInvoices(billingRunService
@@ -64,13 +64,13 @@ public class PDFInvoiceGenerationJobBean {
 			Long nbRuns = new Long(1);		
 			Long waitingMillis = new Long(0);
 			try{
-				nbRuns = timerEntity.getLongCustomValue("PDFInvoiceGenerationJob_nbRuns").longValue();  			
-				waitingMillis = timerEntity.getLongCustomValue("PDFInvoiceGenerationJob_waitingMillis").longValue();
+				nbRuns = jobInstance.getLongCustomValue("PDFInvoiceGenerationJob_nbRuns").longValue();  			
+				waitingMillis = jobInstance.getLongCustomValue("PDFInvoiceGenerationJob_waitingMillis").longValue();
 				if(nbRuns == -1){
 					nbRuns = (long) Runtime.getRuntime().availableProcessors();
 				}
 			}catch(Exception e){
-				log.warn("Cant get customFields for "+timerEntity.getJobName());
+				log.warn("Cant get customFields for "+jobInstance.getJobTemplate());
 			}
 
 			List<Future<String>> futures = new ArrayList<Future<String>>();

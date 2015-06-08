@@ -22,7 +22,7 @@ import org.meveo.model.billing.BillingRun;
 import org.meveo.model.billing.BillingRunStatusEnum;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.jobs.JobExecutionResultImpl;
-import org.meveo.model.jobs.TimerEntity;
+import org.meveo.model.jobs.JobInstance;
 import org.meveo.service.billing.impl.BillingRunService;
 import org.slf4j.Logger;
 
@@ -41,7 +41,7 @@ public class InvoicingJobBean {
 	@SuppressWarnings("unchecked")
 	@Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
 	@TransactionAttribute(TransactionAttributeType.NEVER)
-	public void execute(JobExecutionResultImpl result, User currentUser,TimerEntity timerEntity) {
+	public void execute(JobExecutionResultImpl result, User currentUser,JobInstance jobInstance) {
 
 		try {
 			Provider provider = currentUser.getProvider();
@@ -52,13 +52,13 @@ public class InvoicingJobBean {
 			Long nbRuns = new Long(1);		
 			Long waitingMillis = new Long(0);
 			try{
-				nbRuns = timerEntity.getLongCustomValue("InvoicingJob_nbRuns").longValue();  			
-				waitingMillis = timerEntity.getLongCustomValue("InvoicingJob_waitingMillis").longValue();
+				nbRuns = jobInstance.getLongCustomValue("InvoicingJob_nbRuns").longValue();  			
+				waitingMillis = jobInstance.getLongCustomValue("InvoicingJob_waitingMillis").longValue();
 				if(nbRuns == -1){
 					nbRuns  = (long) Runtime.getRuntime().availableProcessors();
 				}
 			}catch(Exception e){
-				log.warn("Cant get customFields for "+timerEntity.getJobName());
+				log.warn("Cant get customFields for "+jobInstance.getJobTemplate());
 			}
 
 			for (BillingRun billingRun : billingRuns) {

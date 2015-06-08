@@ -8,7 +8,7 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.admin.User;
 import org.meveo.model.jobs.JobCategoryEnum;
 import org.meveo.model.jobs.JobExecutionResultImpl;
-import org.meveo.model.jobs.TimerEntity;
+import org.meveo.model.jobs.JobInstance;
 import org.meveo.service.job.Job;
 
 @Startup
@@ -19,8 +19,8 @@ public class PrepaidWalletMatchJob extends Job {
     private PrepaidWalletMatchJobBean prepaidWalletMatchJobBean;
 
     @Override
-    protected void execute(JobExecutionResultImpl result, TimerEntity timerEntity, User currentUser) throws BusinessException {
-        prepaidWalletMatchJobBean.execute(timerEntity.getTimerInfo().getParametres(), result, currentUser);
+    protected void execute(JobExecutionResultImpl result, JobInstance jobInstance, User currentUser) throws BusinessException {
+        prepaidWalletMatchJobBean.execute(jobInstance.getParametres(), result, currentUser);
 
     }
 

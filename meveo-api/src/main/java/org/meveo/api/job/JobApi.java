@@ -8,8 +8,8 @@ import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.User;
-import org.meveo.model.jobs.TimerInfoDto;
-import org.meveo.service.job.TimerEntityService;
+import org.meveo.model.jobs.JobInstanceInfoDto;
+import org.meveo.service.job.JobInstanceService;
 
 /**
  * @author Edward P. Legaspi
@@ -18,21 +18,26 @@ import org.meveo.service.job.TimerEntityService;
 public class JobApi extends BaseApi {
 
 	@Inject
-	private TimerEntityService timerEntityService;
+	private JobInstanceService jobInstanceService;
+	
+	/**
+	 * 
+	 * @param timerInfoDTO, timerInfoDTO.getTimerName() contains the code of JobInstance
+	 * @param currentUser
+	 * @throws MeveoApiException
+	 */
 
-	public void executeTimer(TimerInfoDto postData, User currentUser) throws MeveoApiException {
-		if (!StringUtils.isBlank(postData.getTimerName())) {
+	public void executeJob(JobInstanceInfoDto timerInfoDTO, User currentUser) throws MeveoApiException {
+		if (StringUtils.isBlank(timerInfoDTO.getTimerName())) {
+			missingParameters.add("timerName");
+			throw new MissingParameterException(getMissingParametersExceptionMessage());
+		}else{
 			try {
-				timerEntityService.executeAPITimer(postData,currentUser);
+				jobInstanceService.executeAPITimer(timerInfoDTO, currentUser);
 			} catch (Exception e) {
 				log.error("Failed to execute api timer ",e);
 			}
-		} else {
-			if (StringUtils.isBlank(postData.getTimerName())) {
-				missingParameters.add("timerName");
-			}
-
-			throw new MissingParameterException(getMissingParametersExceptionMessage());
-		}
+		} 
 	}
 }
+

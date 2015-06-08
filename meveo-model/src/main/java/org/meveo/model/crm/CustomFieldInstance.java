@@ -23,14 +23,14 @@ import org.meveo.model.catalog.Calendar;
 import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.ServiceTemplate;
-import org.meveo.model.jobs.TimerEntity;
+import org.meveo.model.jobs.JobInstance;
 import org.meveo.model.mediation.Access;
 
 @Entity
 @ExportIdentifier({ "code", "subscription.code", "account.code", "chargeTemplate.code", "serviceTemplate.code", "offerTemplate.code", "access.accessUserId",
-        "access.subscription.code", "timerEntity.name", "provider" })
+        "access.subscription.code", "jobInstance.code", "provider" })
 @Table(name = "CRM_CUSTOM_FIELD_INST", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE", "SUBSCRIPTION_ID", "ACCOUNT_ID", "CHARGE_TEMPLATE_ID", "SERVICE_TEMPLATE_ID",
-        "OFFER_TEMPLATE_ID", "ACCESS_ID", "MEVEO_TIMER_ID", "PROVIDER_ID" }))
+        "OFFER_TEMPLATE_ID", "ACCESS_ID", "JOB_INSTANCE_ID", "PROVIDER_ID" }))
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "CRM_CUSTOM_FIELD_INST_SEQ")
 public class CustomFieldInstance extends BusinessEntity {
 
@@ -61,8 +61,8 @@ public class CustomFieldInstance extends BusinessEntity {
     private Access access;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "MEVEO_TIMER_ID")
-    private TimerEntity timerEntity;
+    @JoinColumn(name = "JOB_INSTANCE_ID")
+    private JobInstance jobInstance;
 
     @Column(name = "STRING_VALUE")
     private String stringValue;
@@ -166,15 +166,23 @@ public class CustomFieldInstance extends BusinessEntity {
         this.offerTemplate = offerTemplate;
     }
 
-    public TimerEntity getTimerEntity() {
-        return timerEntity;
-    }
+   
 
-    public void setTimerEntity(TimerEntity timerEntity) {
-        this.timerEntity = timerEntity;
-    }
+    /**
+	 * @return the jobInstance
+	 */
+	public JobInstance getJobInstance() {
+		return jobInstance;
+	}
 
-    public List<CustomFieldPeriod> getCustomFieldPeriods() {
+	/**
+	 * @param jobInstance the jobInstance to set
+	 */
+	public void setJobInstance(JobInstance jobInstance) {
+		this.jobInstance = jobInstance;
+	}
+
+	public List<CustomFieldPeriod> getCustomFieldPeriods() {
         return customFieldPeriods;
     }
 
@@ -531,7 +539,7 @@ public class CustomFieldInstance extends BusinessEntity {
     @Override
     public String toString() {
         return "CustomFieldInstance [account=" + account + ", subscription=" + subscription + ", chargeTemplate=" + chargeTemplate + ", serviceTemplate=" + serviceTemplate
-                + ", offerTemplate=" + offerTemplate + ", access=" + access + ", timerEntity=" + timerEntity + ", stringValue=" + stringValue + ", " + "dateValue=" + dateValue
+                + ", offerTemplate=" + offerTemplate + ", access=" + access + ", JobInstance=" + jobInstance + ", stringValue=" + stringValue + ", " + "dateValue=" + dateValue
                 + ", longValue=" + longValue + ", doubleValue=" + doubleValue + "]";
     }
 }

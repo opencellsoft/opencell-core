@@ -33,60 +33,59 @@ import org.meveo.model.admin.User;
 import org.meveo.model.jobs.JobCategoryEnum;
 import org.meveo.model.jobs.JobExecutionResult;
 import org.meveo.model.jobs.JobExecutionResultImpl;
-import org.meveo.model.jobs.TimerEntity;
-import org.meveo.model.jobs.TimerInfo;
+import org.meveo.model.jobs.JobInstance;
 import org.meveo.service.base.PersistenceService;
 
 @Stateless
 public class JobExecutionService extends PersistenceService<JobExecutionResultImpl> {
 
 	@Inject
-	private TimerEntityService timerEntityService;
+	private JobInstanceService jobInstanceService;
 
 	@TransactionAttribute(TransactionAttributeType.NEVER)
-	public void executeJob(String jobName, TimerEntity timerEntity, User currentUser, JobCategoryEnum jobCategory) {
+	public void executeJob(String jobName, JobInstance jobInstance, User currentUser, JobCategoryEnum jobCategory) {
 		try {
-			HashMap<String, String> jobs = TimerEntityService.jobEntries.get(jobCategory);
+			HashMap<String, String> jobs = JobInstanceService.jobEntries.get(jobCategory);
 			InitialContext ic = new InitialContext();
-			Job jobInstance = (Job) ic.lookup(jobs.get(jobName));
-			jobInstance.execute(timerEntity, currentUser);
+			Job job = (Job) ic.lookup(jobs.get(jobName));
+			job.execute(jobInstance, currentUser);
 		} catch (Exception e) {
 			log.error("failed to execute timer job",e);
 		}
 	}
 
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public void persistResult(Job job, JobExecutionResult result, TimerEntity timerEntity, User currentUser, JobCategoryEnum jobCategory) {
+	public void persistResult(Job job, JobExecutionResult result, JobInstance jobInstance, User currentUser, JobCategoryEnum jobCategory) {
 		try {
 			log.info("JobExecutionService persistResult...");
-
-			TimerInfo info = timerEntity.getTimerInfo();
 			JobExecutionResultImpl entity = JobExecutionResultImpl.createFromInterface(job.getClass().getSimpleName(), result);
 			if (!entity.isDone() || (entity.getNbItemsCorrectlyProcessed() + entity.getNbItemsProcessedWithError() + entity.getNbItemsProcessedWithWarning()) > 0) {
 
 				create(entity, currentUser, currentUser.getProvider());
 				log.info("PersistResult entity.isDone()=" + entity.isDone());
 				if (!entity.isDone()) {
-					executeJob(job.getClass().getSimpleName(), timerEntity, currentUser, jobCategory);
-				} else if (info.getFollowingTimerId() != null && info.getFollowingTimerId() > 0) {
+					executeJob(job.getClass().getSimpleName(), jobInstance, currentUser, jobCategory);
+				} else if (jobInstance.getFollowingJobs() != null && ! jobInstance.getFollowingJobs().isEmpty()) {
 					try {
-						TimerEntity followingTimerEntity = timerEntityService.findById(info.getFollowingTimerId());
+						//TODO evaluate EL and fire if true
+						///TimerEntity followingTimerEntity = timerEntityService.findById(info.getFollowingTimerId());
 
-						log.info("execute following timer " + followingTimerEntity.getJobName());
-						executeJob(followingTimerEntity.getJobName(), followingTimerEntity, currentUser, followingTimerEntity.getJobCategoryEnum());
+						//log.info("execute following timer " + followingTimerEntity.getJobName());
+						//executeJob(followingTimerEntity.getJobName(), followingTimerEntity, currentUser, followingTimerEntity.getJobCategoryEnum());
 					} catch (Exception e) {
-						log.warn("PersistResult cannot excute the following job.=" + info.getFollowingTimerId());
+						log.warn("PersistResult cannot excute the following jobs.");
 					}
 				}
 			} else {
 				log.info(job.getClass().getName() + ": nothing to do");
 
-				if (info.getFollowingTimerId() != null && info.getFollowingTimerId() > 0) {
+				if (jobInstance.getFollowingJobs() != null && ! jobInstance.getFollowingJobs().isEmpty()) {
 					try {
-						TimerEntity followingTimerEntity = timerEntityService.findById(info.getFollowingTimerId());
-						executeJob(followingTimerEntity.getJobName(), followingTimerEntity, currentUser, followingTimerEntity.getJobCategoryEnum());
+						//TODO evaluate EL and fire if true
+						//TimerEntity followingTimerEntity = timerEntityService.findById(info.getFollowingTimerId());
+						//executeJob(followingTimerEntity.getJobName(), followingTimerEntity, currentUser, followingTimerEntity.getJobCategoryEnum());
 					} catch (Exception e) {
-						log.warn("PersistResult cannot excute the following job.=" + info.getFollowingTimerId());
+						log.warn("PersistResult cannot excute the following jobs.");
 					}
 				}
 			}
@@ -141,8 +140,8 @@ public class JobExecutionService extends PersistenceService<JobExecutionResultIm
 		return getFindQuery(jobName, configuration).count(getEntityManager());
 	}
 
-	public TimerEntityService getTimerEntityService() {
-		return timerEntityService;
+	public JobInstanceService getJobInstanceService() {
+		return jobInstanceService;
 	}
 
 }

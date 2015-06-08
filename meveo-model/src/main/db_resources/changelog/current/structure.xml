@@ -58,119 +58,147 @@
 	</changeSet>
 
 
-<changeSet id="ticket787_20150522" author="Mbarek">
-		<addUniqueConstraint columnNames="NAME,PROVIDER_ID" tableName="MEVEO_TIMER" constraintName="UK_MEVEO_TIMER"/>
+	<changeSet id="ticket787_20150522" author="Mbarek">
+		<addUniqueConstraint columnNames="NAME,PROVIDER_ID"
+			tableName="MEVEO_TIMER" constraintName="UK_MEVEO_TIMER" />
 	</changeSet>
-	
-	   <changeSet author="anasseh (generated)" id="1432229915728-1">
-        <createTable tableName="com_meveo_instance">
-            <column name="id" type="BIGINT">
-                <constraints nullable="false"/>
-            </column>
-            <column name="version" type="INT4"/>
-            <column name="disabled" type="BOOL">
-                <constraints nullable="false"/>
-            </column>
-            <column name="created" type="TIMESTAMP WITHOUT TIME ZONE">
-                <constraints nullable="false"/>
-            </column>
-            <column name="updated" type="TIMESTAMP WITHOUT TIME ZONE"/>
-            <column name="code" type="VARCHAR(60)">
-                <constraints nullable="false"/>
-            </column>
-            <column name="description" type="VARCHAR(100)"/>
-            <column name="as_vendor" type="VARCHAR(255)"/>
-            <column name="as_version" type="VARCHAR(255)"/>
-            <column name="creation_date" type="TIMESTAMP WITHOUT TIME ZONE"/>
-            <column name="hd_size" type="VARCHAR(255)"/>
-            <column name="installation_mode" type="VARCHAR(255)"/>
-            <column name="java_vendor" type="VARCHAR(255)"/>
-            <column name="java_version" type="VARCHAR(255)"/>
-            <column name="java_vm_name" type="VARCHAR(255)"/>
-            <column name="java_vm_version" type="VARCHAR(255)"/>
-            <column name="key_entreprise" type="VARCHAR(255)"/>
-            <column name="mac_address" type="VARCHAR(255)"/>
-            <column name="machine_vendor" type="VARCHAR(255)"/>
-            <column name="md5" type="VARCHAR(255)"/>
-            <column name="memory" type="VARCHAR(255)"/>
-            <column name="nb_cores" type="VARCHAR(255)"/>
-            <column name="os_arch" type="VARCHAR(255)"/>
-            <column name="os_name" type="VARCHAR(255)"/>
-            <column name="ps_version" type="VARCHAR(255)"/>
-            <column name="owner" type="VARCHAR(255)"/>
-            <column name="product_name" type="VARCHAR(255)"/>
-            <column name="product_version" type="VARCHAR(255)"/>
-            <column name="status" type="VARCHAR(255)"/>
-            <column name="update_date" type="TIMESTAMP WITHOUT TIME ZONE"/>
-            <column name="provider_id" type="BIGINT"/>
-            <column name="creator_id" type="BIGINT"/>
-            <column name="updater_id" type="BIGINT"/>
-             <column name="user_id" type="BIGINT"/>
-             <column name="customer_id" type="BIGINT"/>
-        </createTable>
-    </changeSet>
-    <changeSet author="anasseh (generated)" id="1432229915728-3">
-        <addPrimaryKey columnNames="id" constraintName="com_meveo_instance_pkey" tableName="com_meveo_instance"/>
-    </changeSet>
 
-    <changeSet author="anasseh (generated)" id="1432229915728-5">
-        <addUniqueConstraint columnNames="code" constraintName="uk_p7r8cy3d1w7g8pir7rxq17071" deferrable="false" disabled="false" initiallyDeferred="false" tableName="com_meveo_instance"/>
-    </changeSet>
-    
-     <changeSet author="anasseh (generated)" id="1432229915728-6">
-        <addForeignKeyConstraint baseColumnNames="customer_id" baseTableName="com_meveo_instance" constraintName="fk_398jtw7cvvcjmyalvke9iwoqw" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_customer"/>
-    </changeSet>
-        <changeSet author="anasseh (generated)" id="1432229915728-4">
-        <addForeignKeyConstraint baseColumnNames="user_id" baseTableName="com_meveo_instance" constraintName="fk_userid" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_user"/>
-    </changeSet>
-    <changeSet author="anasseh (generated)" id="1432229915728-7">
-        <addForeignKeyConstraint baseColumnNames="creator_id" baseTableName="com_meveo_instance" constraintName="fk_2kqwodw5jh9dju2f2m3853y0c" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_user"/>
-    </changeSet>
-    <changeSet author="anasseh (generated)" id="1432229915728-8">
-        <addForeignKeyConstraint baseColumnNames="updater_id" baseTableName="com_meveo_instance" constraintName="fk_6mn1jku9a27nleamaqyke2c63" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_user"/>
-    </changeSet>
+	<changeSet author="anasseh (generated)" id="1432229915728-1">
+		<createTable tableName="com_meveo_instance">
+			<column name="id" type="BIGINT">
+				<constraints nullable="false" />
+			</column>
+			<column name="version" type="INT4" />
+			<column name="disabled" type="BOOL">
+				<constraints nullable="false" />
+			</column>
+			<column name="created" type="TIMESTAMP WITHOUT TIME ZONE">
+				<constraints nullable="false" />
+			</column>
+			<column name="updated" type="TIMESTAMP WITHOUT TIME ZONE" />
+			<column name="code" type="VARCHAR(60)">
+				<constraints nullable="false" />
+			</column>
+			<column name="description" type="VARCHAR(100)" />
+			<column name="as_vendor" type="VARCHAR(255)" />
+			<column name="as_version" type="VARCHAR(255)" />
+			<column name="creation_date" type="TIMESTAMP WITHOUT TIME ZONE" />
+			<column name="hd_size" type="VARCHAR(255)" />
+			<column name="installation_mode" type="VARCHAR(255)" />
+			<column name="java_vendor" type="VARCHAR(255)" />
+			<column name="java_version" type="VARCHAR(255)" />
+			<column name="java_vm_name" type="VARCHAR(255)" />
+			<column name="java_vm_version" type="VARCHAR(255)" />
+			<column name="key_entreprise" type="VARCHAR(255)" />
+			<column name="mac_address" type="VARCHAR(255)" />
+			<column name="machine_vendor" type="VARCHAR(255)" />
+			<column name="md5" type="VARCHAR(255)" />
+			<column name="memory" type="VARCHAR(255)" />
+			<column name="nb_cores" type="VARCHAR(255)" />
+			<column name="os_arch" type="VARCHAR(255)" />
+			<column name="os_name" type="VARCHAR(255)" />
+			<column name="ps_version" type="VARCHAR(255)" />
+			<column name="owner" type="VARCHAR(255)" />
+			<column name="product_name" type="VARCHAR(255)" />
+			<column name="product_version" type="VARCHAR(255)" />
+			<column name="status" type="VARCHAR(255)" />
+			<column name="update_date" type="TIMESTAMP WITHOUT TIME ZONE" />
+			<column name="provider_id" type="BIGINT" />
+			<column name="creator_id" type="BIGINT" />
+			<column name="updater_id" type="BIGINT" />
+			<column name="user_id" type="BIGINT" />
+			<column name="customer_id" type="BIGINT" />
+		</createTable>
+	</changeSet>
+	<changeSet author="anasseh (generated)" id="1432229915728-3">
+		<addPrimaryKey columnNames="id" constraintName="com_meveo_instance_pkey"
+			tableName="com_meveo_instance" />
+	</changeSet>
 
-    <changeSet author="anasseh (generated)" id="1432229915728-13">
-        <addForeignKeyConstraint baseColumnNames="provider_id" baseTableName="com_meveo_instance" constraintName="fk_simrfknulxj9dfm6v03k4ejmh" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_provider"/>
-    </changeSet>
-    <changeSet author="anasseh (generated)" id="1432229915728-20">
-        <createSequence sequenceName="com_meveo_instance_seq"/>
-    </changeSet>
+	<changeSet author="anasseh (generated)" id="1432229915728-5">
+		<addUniqueConstraint columnNames="code"
+			constraintName="uk_p7r8cy3d1w7g8pir7rxq17071" deferrable="false"
+			disabled="false" initiallyDeferred="false" tableName="com_meveo_instance" />
+	</changeSet>
+
+	<changeSet author="anasseh (generated)" id="1432229915728-6">
+		<addForeignKeyConstraint baseColumnNames="customer_id"
+			baseTableName="com_meveo_instance" constraintName="fk_398jtw7cvvcjmyalvke9iwoqw"
+			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_customer" />
+	</changeSet>
+	<changeSet author="anasseh (generated)" id="1432229915728-4">
+		<addForeignKeyConstraint baseColumnNames="user_id"
+			baseTableName="com_meveo_instance" constraintName="fk_userid"
+			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_user" />
+	</changeSet>
+	<changeSet author="anasseh (generated)" id="1432229915728-7">
+		<addForeignKeyConstraint baseColumnNames="creator_id"
+			baseTableName="com_meveo_instance" constraintName="fk_2kqwodw5jh9dju2f2m3853y0c"
+			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_user" />
+	</changeSet>
+	<changeSet author="anasseh (generated)" id="1432229915728-8">
+		<addForeignKeyConstraint baseColumnNames="updater_id"
+			baseTableName="com_meveo_instance" constraintName="fk_6mn1jku9a27nleamaqyke2c63"
+			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_user" />
+	</changeSet>
+
+	<changeSet author="anasseh (generated)" id="1432229915728-13">
+		<addForeignKeyConstraint baseColumnNames="provider_id"
+			baseTableName="com_meveo_instance" constraintName="fk_simrfknulxj9dfm6v03k4ejmh"
+			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_provider" />
+	</changeSet>
+	<changeSet author="anasseh (generated)" id="1432229915728-20">
+		<createSequence sequenceName="com_meveo_instance_seq" />
+	</changeSet>
 	<changeSet id="#791_20150602-3" author="AndriusKarpavicius">
 		<addColumn tableName="CRM_CUSTOM_FIELD_TMPL">
 			<column name="versionable" type="BOOL" defaultValue="false">
-                <constraints nullable="false"/>
-            </column>
-			<column name="calendar_id" type="BIGINT"/>
+				<constraints nullable="false" />
+			</column>
+			<column name="calendar_id" type="BIGINT" />
 		</addColumn>
-		
+
 		<addColumn tableName="CRM_CUSTOM_FIELD_INST">
 			<column name="versionable" type="BOOL" defaultValue="false">
-                <constraints nullable="false"/>
-            </column>
-			<column name="calendar_id" type="BIGINT"/>
+				<constraints nullable="false" />
+			</column>
+			<column name="calendar_id" type="BIGINT" />
 		</addColumn>
-				
+
 		<createTable tableName="CRM_CUSTOM_FIELD_PERIOD">
-            <column name="id" type="BIGINT">
-                <constraints nullable="false"/>
-            </column>
-            <column name="version" type="INT4"/>
-            <column name="PRIORITY" type="INT4" defaultValue="0"/>
-            <column name="period_end_date" type="TIMESTAMP WITHOUT TIME ZONE"/>
-            <column name="period_start_date" type="TIMESTAMP WITHOUT TIME ZONE"/>
-            <column name="CF_INSTANCE_ID" type="BIGINT"/>
-            <column name="date_value" type="TIMESTAMP WITHOUT TIME ZONE"/>
-            <column name="double_value" type="FLOAT8"/>
-            <column name="long_value" type="BIGINT"/>
-            <column name="string_value" type="VARCHAR(255)"/>
-        </createTable>	
-        
-        <addForeignKeyConstraint baseColumnNames="calendar_id" baseTableName="CRM_CUSTOM_FIELD_INST" constraintName="fk_CFI_CALENDAR" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="CAT_CALENDAR"/>
-        
-        <addForeignKeyConstraint baseColumnNames="CF_INSTANCE_ID" baseTableName="CRM_CUSTOM_FIELD_PERIOD" constraintName="fk_CFP_CFI" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="CRM_CUSTOM_FIELD_INST"/>
-        <addForeignKeyConstraint baseColumnNames="calendar_id" baseTableName="CRM_CUSTOM_FIELD_TMPL" constraintName="fk_CFT_CALENDAR" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="CAT_CALENDAR"/>
-        <createSequence sequenceName="CRM_CUSTOM_FIELD_PERIOD_seq"/>
+			<column name="id" type="BIGINT">
+				<constraints nullable="false" />
+			</column>
+			<column name="version" type="INT4" />
+			<column name="PRIORITY" type="INT4" defaultValue="0" />
+			<column name="period_end_date" type="TIMESTAMP WITHOUT TIME ZONE" />
+			<column name="period_start_date" type="TIMESTAMP WITHOUT TIME ZONE" />
+			<column name="CF_INSTANCE_ID" type="BIGINT" />
+			<column name="date_value" type="TIMESTAMP WITHOUT TIME ZONE" />
+			<column name="double_value" type="FLOAT8" />
+			<column name="long_value" type="BIGINT" />
+			<column name="string_value" type="VARCHAR(255)" />
+		</createTable>
+
+		<addForeignKeyConstraint baseColumnNames="calendar_id"
+			baseTableName="CRM_CUSTOM_FIELD_INST" constraintName="fk_CFI_CALENDAR"
+			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="CAT_CALENDAR" />
+
+		<addForeignKeyConstraint baseColumnNames="CF_INSTANCE_ID"
+			baseTableName="CRM_CUSTOM_FIELD_PERIOD" constraintName="fk_CFP_CFI"
+			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="CRM_CUSTOM_FIELD_INST" />
+		<addForeignKeyConstraint baseColumnNames="calendar_id"
+			baseTableName="CRM_CUSTOM_FIELD_TMPL" constraintName="fk_CFT_CALENDAR"
+			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="CAT_CALENDAR" />
+		<createSequence sequenceName="CRM_CUSTOM_FIELD_PERIOD_seq" />
 	</changeSet>
 
 	<changeSet id="#852_20150605-2" author="EdwardLegaspi">
@@ -178,5 +206,233 @@
 			columnName="COUNTER_TYPE" defaultNullValue="USAGE" tableName="CAT_COUNTER_TEMPLATE" />
 		<addNotNullConstraint columnDataType="VARCHAR(255)"
 			columnName="COUNTER_LEVEL" defaultNullValue="UA" tableName="CAT_COUNTER_TEMPLATE" />
-	</changeSet>	
+	</changeSet>
+
+	<!-- #855 begin -->
+	
+	<changeSet author="anasseh" id="1433614968312-1">
+    <sqlFile 
+            endDelimiter=""
+            path="migrationJobs_beforeLiquibase.sql"
+            relativeToChangelogFile="true"
+            splitStatements="false"/>
+</changeSet>
+
+
+	<changeSet author="anasseh (generated)" id="1433614968312-2">
+		<createSequence sequenceName="meveo_job_instance_seq" />
+	</changeSet>
+
+	<changeSet author="anasseh (generated)" id="1433614968312-4">
+		<createTable tableName="meveo_job_instance">
+			<column name="id" type="BIGINT">
+				<constraints nullable="false" />
+			</column>
+			<column name="version" type="INT4" />
+			<column name="disabled" type="BOOL">
+				<constraints nullable="false" />
+			</column>
+			<column name="created" type="TIMESTAMP WITHOUT TIME ZONE">
+				<constraints nullable="false" />
+			</column>
+			<column name="updated" type="TIMESTAMP WITHOUT TIME ZONE" />
+			<column name="code" type="VARCHAR(60)">
+				<constraints nullable="false" />
+			</column>
+			<column name="description" type="VARCHAR(100)" />
+			<column name="active" type="BOOL">
+				<constraints nullable="false" />
+			</column>
+			<column name="job_category" type="VARCHAR(255)" />
+			<column name="job_template" type="VARCHAR(255)">
+				<constraints nullable="false" />
+			</column>
+			<column name="parametres" type="VARCHAR(255)" />
+			<column name="user_id" type="BIGINT">
+				<constraints nullable="false" />
+			</column>
+			<column name="provider_id" type="BIGINT" />
+			<column name="creator_id" type="BIGINT" />
+			<column name="updater_id" type="BIGINT" />
+			<column name="timerentity_id" type="BIGINT" />
+		</createTable>
+	</changeSet>
+
+
+	<changeSet author="anasseh (generated)" id="1433614968312-7">
+		<addColumn tableName="meveo_timer">
+			<column name="code" type="varchar(60)">
+				<constraints nullable="false" />
+			</column>
+		</addColumn>
+	</changeSet>
+	<changeSet author="anasseh (generated)" id="1433614968312-8">
+		<addColumn tableName="meveo_timer">
+			<column name="created" type="timestamp(29, 6)">
+				<constraints nullable="false" />
+			</column>
+		</addColumn>
+	</changeSet>
+	<changeSet author="anasseh (generated)" id="1433614968312-9">
+		<addColumn tableName="meveo_timer">
+			<column name="creator_id" type="int8" />
+		</addColumn>
+	</changeSet>
+	<changeSet author="anasseh (generated)" id="1433614968312-10">
+		<addColumn tableName="meveo_timer">
+			<column name="description" type="varchar(100)" />
+		</addColumn>
+	</changeSet>
+	<changeSet author="anasseh (generated)" id="1433614968312-11">
+		<addColumn tableName="meveo_timer">
+			<column name="disabled" type="bool">
+				<constraints nullable="false" />
+			</column>
+		</addColumn>
+	</changeSet>
+	<changeSet author="anasseh (generated)" id="1433614968312-12">
+		<addColumn tableName="crm_custom_field_inst">
+			<column name="job_instance_id" type="int8" />
+		</addColumn>
+	</changeSet>
+	<changeSet author="anasseh (generated)" id="1433614968312-13">
+		<addColumn tableName="job_execution">
+			<column name="job_launcher" type="varchar(255)" />
+		</addColumn>
+	</changeSet>
+	<changeSet author="anasseh (generated)" id="1433614968312-14">
+		<addColumn tableName="meveo_timer">
+			<column name="updated" type="timestamp(29, 6)" />
+		</addColumn>
+	</changeSet>
+	<changeSet author="anasseh (generated)" id="1433614968312-15">
+		<addColumn tableName="meveo_timer">
+			<column name="updater_id" type="int8" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet author="anasseh (generated)" id="1433614968312-21">
+		<addPrimaryKey columnNames="id" constraintName="meveo_job_instance_pkey"
+			tableName="meveo_job_instance" />
+	</changeSet>
+
+
+	<changeSet author="anasseh (generated)" id="1433614968312-24">
+		<addUniqueConstraint columnNames="job_template, provider_id"
+			constraintName="uk_ljs744oets15tnlf4i6ehe7l6" deferrable="false"
+			disabled="false" initiallyDeferred="false" tableName="meveo_job_instance" />
+	</changeSet>
+	<changeSet author="anasseh (generated)" id="1433614968312-25">
+		<addUniqueConstraint columnNames="code, provider_id"
+			constraintName="uk_q4ys10jgsw0px36rcvwdajh47" deferrable="false"
+			disabled="false" initiallyDeferred="false" tableName="meveo_timer" />
+	</changeSet>
+	<changeSet author="anasseh (generated)" id="1433614968312-26">
+		<addUniqueConstraint
+			columnNames="code, subscription_id, account_id, charge_template_id, service_template_id, offer_template_id, access_id, job_instance_id, provider_id"
+			constraintName="uk_t8760asnmoo8x2t0k6m0my7mq" deferrable="false"
+			disabled="false" initiallyDeferred="false" tableName="crm_custom_field_inst" />
+	</changeSet>
+
+	<changeSet author="anasseh (generated)" id="1433614968312-28">
+		<addForeignKeyConstraint baseColumnNames="job_instance_id"
+			baseTableName="crm_custom_field_inst" constraintName="fk_35l2eaa4jvweujsta65d2ott"
+			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="meveo_job_instance" />
+	</changeSet>
+	<changeSet author="anasseh (generated)" id="1433614968312-29">
+		<addForeignKeyConstraint baseColumnNames="timerentity_id"
+			baseTableName="meveo_job_instance" constraintName="fk_4hgoocwc77rh6ne8fct0f2y2h"
+			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="meveo_timer" />
+	</changeSet>
+
+
+	<changeSet author="anasseh (generated)" id="1433614968312-32">
+		<addForeignKeyConstraint baseColumnNames="creator_id"
+			baseTableName="meveo_job_instance" constraintName="fk_878td2111duoa64gifhuhymhl"
+			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_user" />
+	</changeSet>
+
+
+	<changeSet author="anasseh (generated)" id="1433614968312-35">
+		<addForeignKeyConstraint baseColumnNames="updater_id"
+			baseTableName="meveo_job_instance" constraintName="fk_bupocciymjlmb23huxxftyqtg"
+			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_user" />
+	</changeSet>
+	<changeSet author="anasseh (generated)" id="1433614968312-36">
+		<addForeignKeyConstraint baseColumnNames="creator_id"
+			baseTableName="meveo_timer" constraintName="fk_dnqwct997aixcp36wuvmxgy12"
+			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_user" />
+	</changeSet>
+
+	<changeSet author="anasseh (generated)" id="1433614968312-39">
+		<addForeignKeyConstraint baseColumnNames="updater_id"
+			baseTableName="meveo_timer" constraintName="fk_liim1csjv7v194u77ddt1dqdp"
+			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_user" />
+	</changeSet>
+
+	<changeSet author="anasseh (generated)" id="1433614968312-41">
+		<addForeignKeyConstraint baseColumnNames="provider_id"
+			baseTableName="meveo_job_instance" constraintName="fk_pwc74fn35sffdnmean6swyxha"
+			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_provider" />
+	</changeSet>
+
+	<changeSet author="anasseh (generated)" id="1433614968312-45">
+		<dropForeignKeyConstraint baseTableName="crm_custom_field_inst"
+			constraintName="fk_customfieldinstmeveotimer" />
+	</changeSet>
+
+	<changeSet author="anasseh (generated)" id="1433614968312-48">
+		<dropUniqueConstraint constraintName="uk_customfieldinst"
+			tableName="crm_custom_field_inst" />
+	</changeSet>
+	<changeSet author="anasseh (generated)" id="1433614968312-49">
+		<dropUniqueConstraint constraintName="uk_meveo_timer"
+			tableName="meveo_timer" />
+	</changeSet>
+
+	<changeSet author="anasseh (generated)" id="1433614968312-51">
+		<dropColumn columnName="active" tableName="meveo_timer" />
+	</changeSet>
+
+	<changeSet author="anasseh (generated)" id="1433614968312-53">
+		<dropColumn columnName="followingtimerid" tableName="meveo_timer" />
+	</changeSet>
+	<changeSet author="anasseh (generated)" id="1433614968312-54">
+		<dropColumn columnName="job_category" tableName="meveo_timer" />
+	</changeSet>
+	<changeSet author="anasseh (generated)" id="1433614968312-55">
+		<dropColumn columnName="job_name" tableName="meveo_timer" />
+	</changeSet>
+	<changeSet author="anasseh (generated)" id="1433614968312-56">
+		<dropColumn columnName="jobname" tableName="meveo_timer" />
+	</changeSet>
+	<changeSet author="anasseh (generated)" id="1433614968312-57">
+		<dropColumn columnName="meveo_timer_id" tableName="crm_custom_field_inst" />
+	</changeSet>
+	<changeSet author="anasseh (generated)" id="1433614968312-58">
+		<dropColumn columnName="name" tableName="meveo_timer" />
+	</changeSet>
+	<changeSet author="anasseh (generated)" id="1433614968312-59">
+		<dropColumn columnName="parametres" tableName="meveo_timer" />
+	</changeSet>
+
+	<changeSet author="anasseh (generated)" id="1433614968312-62">
+		<dropColumn columnName="userid" tableName="meveo_timer" />
+	</changeSet>
+	
+		<changeSet author="anasseh" id="1433614968312-63">
+    <sqlFile 
+            endDelimiter=""
+            path="migrationJobs_afterLiquibase.sql"
+            relativeToChangelogFile="true"
+            splitStatements="false"/>
+</changeSet>
+	<!-- #855 end -->
 </databaseChangeLog>

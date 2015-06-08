@@ -17,7 +17,7 @@ import org.meveo.admin.job.logging.JobLoggingInterceptor;
 import org.meveo.interceptor.PerformanceInterceptor;
 import org.meveo.model.admin.User;
 import org.meveo.model.jobs.JobExecutionResultImpl;
-import org.meveo.model.jobs.TimerEntity;
+import org.meveo.model.jobs.JobInstance;
 import org.meveo.service.billing.impl.WalletOperationService;
 import org.slf4j.Logger;
 
@@ -36,7 +36,7 @@ public class RatedTransactionsJobBean {
 	@SuppressWarnings("unchecked")
 	@Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
 	@TransactionAttribute(TransactionAttributeType.NEVER)
-	public void execute(JobExecutionResultImpl result, User currentUser,TimerEntity timerEntity) {
+	public void execute(JobExecutionResultImpl result, User currentUser,JobInstance jobInstance) {
 		try {			
 			List<Long> walletOperationIds = walletOperationService.listToInvoiceIds(new Date(), currentUser.getProvider());
 			log.info("WalletOperations to convert into rateTransactions={}", walletOperationIds.size());
@@ -44,13 +44,13 @@ public class RatedTransactionsJobBean {
 			Long nbRuns = new Long(1);		
 			Long waitingMillis = new Long(0);
 			try{
-				nbRuns = timerEntity.getLongCustomValue("RatedTransactionsJob_nbRuns").longValue();  			
-				waitingMillis = timerEntity.getLongCustomValue("RatedTransactionsJob_waitingMillis").longValue();
+				nbRuns = jobInstance.getLongCustomValue("RatedTransactionsJob_nbRuns").longValue();  			
+				waitingMillis = jobInstance.getLongCustomValue("RatedTransactionsJob_waitingMillis").longValue();
 				if(nbRuns == -1){
 					nbRuns  = (long) Runtime.getRuntime().availableProcessors();
 				}
 			}catch(Exception e){
-				log.warn("Cant get customFields for "+timerEntity.getJobName());
+				log.warn("Cant get customFields for "+jobInstance.getJobTemplate());
 			}
 
 			SubListCreator subListCreator = new SubListCreator(walletOperationIds,nbRuns.intValue());

@@ -7,6 +7,8 @@ import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -47,6 +49,10 @@ public class JobExecutionResultImpl extends BaseEntity implements
 
 	@Column(name = "JOB_DONE")
 	private boolean done = true;
+	
+	@Enumerated(EnumType.STRING)
+	@Column(name = "JOB_LAUNCHER")
+	JobLauncherEnum jobLauncherEnum;
 
 	@Transient
 	private List<String> warnings = new ArrayList<String>();
@@ -197,6 +203,21 @@ public class JobExecutionResultImpl extends BaseEntity implements
 
 	public void setDone(boolean done) {
 		this.done = done;
+	}
+
+	
+	/**
+	 * @return the jobLauncherEnum
+	 */
+	public JobLauncherEnum getJobLauncherEnum() {
+		return jobLauncherEnum;
+	}
+
+	/**
+	 * @param jobLauncherEnum the jobLauncherEnum to set
+	 */
+	public void setJobLauncherEnum(JobLauncherEnum jobLauncherEnum) {
+		this.jobLauncherEnum = jobLauncherEnum;
 	}
 
 	public String getErrorsAString() {

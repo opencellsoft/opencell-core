@@ -3,7 +3,7 @@
     xmlns:e="http://jboss.com/products/seam/excel" xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
 
     <f:metadata>
-        <f:event type="preRenderView" listener="#{timerEntityListBean.preRenderView}" />
+        <f:event type="preRenderView" listener="#{jobInstanceListBean.preRenderView}" />
     </f:metadata>
 
     <ui:define name="navigation">
@@ -12,12 +12,12 @@
 
 
     <ui:define name="body">
-        <hf:searchPanel label="#{messages['timers.page.title']}" backingBean="#{timerEntityListBean}" newButtonView="jobTimerDetail">
+        <hf:searchPanel label="#{messages['timers.page.title']}" backingBean="#{jobInstanceListBean}" newButtonView="jobInstanceDetail">
             <h:panelGrid columns="2">
                 <p:outputLabel for="jobCategory" value="#{messages['timer.jobCategory']}" />
-                <p:selectOneMenu id="jobCategory" value="#{timerEntityListBean.filters['jobCategoryEnum']}">
+                <p:selectOneMenu id="jobCategory" value="#{jobInstanceListBean.filters['jobCategoryEnum']}">
                     <f:selectItem itemLabel="" />
-                    <f:selectItems value="#{timerEntityListBean.jobCategoryEnumValues}" var="enumElement" itemValue="#{enumElement}"
+                    <f:selectItems value="#{jobInstanceListBean.jobCategoryEnumValues}" var="enumElement" itemValue="#{enumElement}"
                         itemLabel="#{messages[enumElement.label]}" />
                     <f:converter converterId="enumConverter" />
                 </p:selectOneMenu>
@@ -25,22 +25,20 @@
         </hf:searchPanel>
 
         <h:panelGroup id="resultsDatatable">
-            <hftl:dataList backingBean="#{timerEntityListBean}" resultsId="timersBean_results" checkMany="false">
+            <hftl:dataList backingBean="#{jobInstanceListBean}" resultsId="timersBean_results" checkMany="false">
                 <p:column headerText="#{messages['timer.name']}">
-                    <h:link outcome="jobTimerDetail" value="#{entity.name}">
+                    <h:link outcome="jobInstanceDetail" value="#{entity.code}">
                         <f:param name="objectId" value="#{entity.id}" />
                         <f:param name="edit" value="true"/>
                         <f:param name="cid" value="#{javax.enterprise.context.conversation.id}"/>
                     </h:link>
                 </p:column>
-                <hftl:column label="#{messages['timer.jobName']}" field="jobName" />
-                <hftl:column label="#{messages['job.category']}" field="jobCategoryEnum" />
-                <p:column headerText="#{messages['timer.schedule']}" >
-                    <h:outputText value="#{entity.hour} #{entity.minute} #{entity.second} #{entity.year} #{entity.month} #{entity.dayOfMonth} #{entity.dayOfWeek}" title="#{entity.timerSchedule}"/>
-                </p:column>
-                <hftl:column label="#{messages['timer.active']}" field="timerInfo.active" sort="false" />
+                <hftl:column label="#{messages['timer.jobName']}" field="jobTemplate" />
+                <hftl:column label="#{messages['job.category']}" field="jobCategoryEnum" />                
+                <hftl:column label="#{messages['timer.schedule']}" field="timerEntity."  />
+                <hftl:column label="#{messages['timer.active']}" field="active" />
                 <p:column headerText="#{messages['timer.isRunning']}">
-                    <h:outputText styleClass="ui-icon ui-icon-circle-check" rendered="#{timerEntityListBean.isTimerRunning(entity)}" />
+                    <h:outputText styleClass="ui-icon ui-icon-circle-check" rendered="#{jobInstanceListBean.isTimerRunning(entity)}" />
                 </p:column>
                 <hftl:actionsColumn permission="#{identity.hasPermission('administration','administrationManagement')}" />
             </hftl:dataList>

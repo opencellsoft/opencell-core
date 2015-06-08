@@ -55,24 +55,23 @@ public class CheckUpdateBean implements Serializable {
 			} else {    
 				jsonResponse=response.getEntity();
 				log.debug("ChekUpdate reponse : "+ jsonResponse);
-			}
-			JSONParser jsonParser = new JSONParser();
-			JSONObject jsonResponseObject = (JSONObject) jsonParser.parse(jsonResponse);
-			JSONObject jsonActionStatus =  (JSONObject) jsonResponseObject.get("actionStatus");
-			String responseStatus  =(String) jsonActionStatus.get("status");
-			Boolean newVersion  =(Boolean) jsonResponseObject.get("newVersion");
-			if("SUCCESS".equals(responseStatus)){
-				if(newVersion.booleanValue()){ 
-					JSONObject jsonVersionObjectDto =  (JSONObject) jsonResponseObject.get("versionObjectDto");
-					versionOutput = (String)jsonVersionObjectDto.get("htmlContent");
-					log.debug("there's a NEW version  ={}",versionOutput);
+				JSONParser jsonParser = new JSONParser();
+				JSONObject jsonResponseObject = (JSONObject) jsonParser.parse(jsonResponse);
+				JSONObject jsonActionStatus =  (JSONObject) jsonResponseObject.get("actionStatus");
+				String responseStatus  =(String) jsonActionStatus.get("status");
+				Boolean newVersion  =(Boolean) jsonResponseObject.get("newVersion");
+				if("SUCCESS".equals(responseStatus)){
+					if(newVersion.booleanValue()){ 
+						JSONObject jsonVersionObjectDto =  (JSONObject) jsonResponseObject.get("versionObjectDto");
+						versionOutput = (String)jsonVersionObjectDto.get("htmlContent");
+						log.debug("there's a NEW version  ={}",versionOutput);
+					}else{
+						log.debug("there is NO new version");
+					}
 				}else{
-					log.debug("there is NO new version");
+					log.debug("checkVersion remote service fail");
 				}
-			}else{
-				log.debug("checkVersion remote service fail");
 			}
-
 		} catch (Exception e) {
 			log.error("Exception on getVersionOutput : ",e);
 			versionOutput="-";

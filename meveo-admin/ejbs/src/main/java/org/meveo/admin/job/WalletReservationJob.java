@@ -11,7 +11,7 @@ import org.meveo.interceptor.PerformanceInterceptor;
 import org.meveo.model.admin.User;
 import org.meveo.model.jobs.JobCategoryEnum;
 import org.meveo.model.jobs.JobExecutionResultImpl;
-import org.meveo.model.jobs.TimerEntity;
+import org.meveo.model.jobs.JobInstance;
 import org.meveo.service.billing.impl.ReservationService;
 import org.meveo.service.job.Job;
 
@@ -24,7 +24,7 @@ public class WalletReservationJob extends Job {
 
     @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
     @Override
-    protected void execute(JobExecutionResultImpl result, TimerEntity timerEntity, User currentUser) throws BusinessException {
+    protected void execute(JobExecutionResultImpl result, JobInstance jobInstance, User currentUser) throws BusinessException {
         int rowsUpdated = reservationService.updateExpiredReservation(currentUser.getProvider());
         if (rowsUpdated != 0) {
             log.info(rowsUpdated + " rows updated.");

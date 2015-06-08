@@ -20,7 +20,7 @@ import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.CustomFieldTypeEnum;
 import org.meveo.model.jobs.JobCategoryEnum;
 import org.meveo.model.jobs.JobExecutionResultImpl;
-import org.meveo.model.jobs.TimerEntity;
+import org.meveo.model.jobs.JobInstance;
 import org.meveo.service.job.Job;
 
 @Startup
@@ -34,18 +34,18 @@ public class ImportCustomersJob extends Job {
     private ResourceBundle resourceMessages;
 
     @Override
-    protected void execute(JobExecutionResultImpl result, TimerEntity timerEntity, User currentUser) throws BusinessException {
+    protected void execute(JobExecutionResultImpl result, JobInstance jobInstance, User currentUser) throws BusinessException {
         try {
             Long nbRuns = new Long(1);
             Long waitingMillis = new Long(0);
             try {
-                nbRuns = timerEntity.getLongCustomValue("ImportCustomersJob_nbRuns").longValue();
-                waitingMillis = timerEntity.getLongCustomValue("ImportCustomersJob_waitingMillis").longValue();
+                nbRuns = jobInstance.getLongCustomValue("ImportCustomersJob_nbRuns").longValue();
+                waitingMillis = jobInstance.getLongCustomValue("ImportCustomersJob_waitingMillis").longValue();
                 if (nbRuns == -1) {
                     nbRuns = (long) Runtime.getRuntime().availableProcessors();
                 }
             } catch (Exception e) {
-                log.warn("Cant get customFields for " + timerEntity.getJobName());
+                log.warn("Cant get customFields for " + jobInstance.getJobTemplate());
             }
             List<Future<String>> futures = new ArrayList<Future<String>>();
             for (int i = 0; i < nbRuns.intValue(); i++) {

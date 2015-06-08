@@ -19,8 +19,8 @@ import org.meveo.model.admin.User;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.jobs.JobCategoryEnum;
 import org.meveo.model.jobs.JobExecutionResultImpl;
+import org.meveo.model.jobs.JobInstance;
 import org.meveo.model.jobs.TimerEntity;
-import org.meveo.model.jobs.TimerInfo;
 import org.meveo.service.admin.impl.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,7 +48,7 @@ public abstract class Job {
 
     @PostConstruct
     public void init() {
-        TimerEntityService.registerJob(this);
+        JobInstanceService.registerJob(this);
     }
 
     /**
@@ -58,43 +58,42 @@ public abstract class Job {
      * @param provider the provider for which the job must apply.
      * @return the result of execute(parameter,false) method
      */
-    public void execute(TimerEntity timerEntity, User currentUser) {
+    public void execute(JobInstance jobInstance, User currentUser) {
         JobExecutionResultImpl result = new JobExecutionResultImpl();
-        TimerInfo info = timerEntity.getTimerInfo();
-
-        if (!timerEntity.isRunning() && (info.isActive() || currentUser != null)) {
-            log.debug("Job {} of type {} execution start, info={}, currentUser={}", timerEntity.getName(), timerEntity.getJobName(), info, currentUser);
+    
+        if (!jobInstance.isRunning() && (jobInstance.isActive() || currentUser != null)) {
+            log.debug("Job {} of type {} execution start, info={}, currentUser={}", jobInstance.getCode(), jobInstance.getJobTemplate(), jobInstance, currentUser);
 
             try {
-                timerEntity.setRunning(true);
+            	jobInstance.setRunning(true);
                 if (currentUser == null) {
-                    currentUser = userService.findByIdLoadProvider(info.getUserId());
+                    currentUser = userService.findByIdLoadProvider(jobInstance.getUserId());
                 }
-                execute(result, timerEntity, currentUser);
+                execute(result, jobInstance, currentUser);
                 result.close();
 
-                log.trace("Job {} of type {} executed. Persisting job execution results", timerEntity.getName(), timerEntity.getJobName());
-                jobExecutionService.persistResult(this, result, timerEntity, currentUser, getJobCategory());
+                log.trace("Job {} of type {} executed. Persisting job execution results", jobInstance.getCode(), jobInstance.getJobTemplate());
+                jobExecutionService.persistResult(this, result, jobInstance, currentUser, getJobCategory());
 
-                log.debug("Job {} of type {} execution finished", timerEntity.getName(), timerEntity.getJobName());
+                log.debug("Job {} of type {} execution finished", jobInstance.getCode(), jobInstance.getJobTemplate());
 
             } catch (Exception e) {
-                log.error("Failed to execute a job {} of type {}", timerEntity.getJobName(), timerEntity.getJobName(), e);
+                log.error("Failed to execute a job {} of type {}", jobInstance.getJobTemplate(), jobInstance.getJobTemplate(), e);
 
             } finally {
-                timerEntity.setRunning(false);
+                jobInstance.setRunning(false);
             }
         } else {
-            log.trace("Job {} of type {} execution will be skipped. Reason: isRunning={}, isActive={}, currentUser={}", timerEntity.getName(), timerEntity.getJobName(),
-                timerEntity.isRunning(), info.isActive(), currentUser != null);
+            log.trace("Job {} of type {} execution will be skipped. Reason: isRunning={}, isActive={}, currentUser={}", jobInstance.getCode(), jobInstance.getJobTemplate(),
+            		jobInstance.isRunning(), jobInstance.isActive(), currentUser != null);
         }
     }
 
-    protected abstract void execute(JobExecutionResultImpl result, TimerEntity timerEntity, User currentUser) throws BusinessException;
+    protected abstract void execute(JobExecutionResultImpl result, JobInstance jobInstance, User currentUser) throws BusinessException;
 
-    public Timer createTimer(ScheduleExpression scheduleExpression, TimerEntity timerEntity) {
+    public Timer createTimer(ScheduleExpression scheduleExpression, JobInstance jobInstance) {
         TimerConfig timerConfig = new TimerConfig();
-        timerConfig.setInfo(timerEntity);
+        timerConfig.setInfo(jobInstance);
         timerConfig.setPersistent(false);
         return timerService.createCalendarTimer(scheduleExpression, timerConfig);
     }
@@ -120,7 +119,7 @@ public abstract class Job {
     @Timeout
     @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
     public void trigger(Timer timer) {
-        execute((TimerEntity) timer.getInfo(), null);
+        execute((JobInstance) timer.getInfo(), null);
     }
 
     public JobExecutionService getJobExecutionService() {

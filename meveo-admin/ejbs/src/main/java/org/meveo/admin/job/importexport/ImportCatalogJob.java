@@ -24,7 +24,7 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.admin.User;
 import org.meveo.model.jobs.JobCategoryEnum;
 import org.meveo.model.jobs.JobExecutionResultImpl;
-import org.meveo.model.jobs.TimerEntity;
+import org.meveo.model.jobs.JobInstance;
 import org.meveo.service.job.Job;
 
 @Startup
@@ -35,8 +35,8 @@ public class ImportCatalogJob extends Job {
     private ImportCatalogJobBean importCatalogJobBean;
 
     @Override
-    protected void execute(JobExecutionResultImpl result, TimerEntity timerEntity, User currentUser) throws BusinessException {
-        importCatalogJobBean.execute(result, timerEntity.getTimerInfo().getParametres(), currentUser);
+    protected void execute(JobExecutionResultImpl result, JobInstance jobInstance, User currentUser) throws BusinessException {
+        importCatalogJobBean.execute(result, jobInstance.getParametres(), currentUser);
     }
 
     @Override

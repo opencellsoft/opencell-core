@@ -14,9 +14,9 @@ import org.meveo.model.admin.User;
 /**
  * @author Edward P. Legaspi
  **/
-@XmlRootElement(name = "TimerInfo")
+@XmlRootElement(name = "JobInstanceInfo")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class TimerInfoDto implements Serializable {
+public class JobInstanceInfoDto implements Serializable {
 
 	private static final long serialVersionUID = -7091372162470026030L;
     
