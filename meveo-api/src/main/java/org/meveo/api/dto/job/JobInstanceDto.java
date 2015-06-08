@@ -34,7 +34,7 @@ public class JobInstanceDto extends BaseDto {
      * the key is an EL , the value is a JobInstance code
      * 
      */
-    @XmlAttribute(required = false)
+    @XmlElement(required = false)
     private Map<String, String> followingJobs = new HashMap<String, String>();
 
      @XmlElement(required = false)

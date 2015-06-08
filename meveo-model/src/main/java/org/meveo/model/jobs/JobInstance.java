@@ -42,8 +42,8 @@ import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.crm.CustomFieldInstance;
 
 @Entity
-@ExportIdentifier({ "name", "provider" })
-@Table(name = "MEVEO_JOB_INSTANCE", uniqueConstraints = @UniqueConstraint(columnNames = { "NAME", "PROVIDER_ID" }))
+@ExportIdentifier({ "jobTemplate", "provider" })
+@Table(name = "MEVEO_JOB_INSTANCE", uniqueConstraints = @UniqueConstraint(columnNames = { "JOB_TEMPLATE", "PROVIDER_ID" }))
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "MEVEO_JOB_INSTANCE_SEQ")
 public class JobInstance extends BusinessEntity implements ICustomFieldEntity {
 
@@ -385,9 +385,9 @@ public class JobInstance extends BusinessEntity implements ICustomFieldEntity {
 	 public String toString() {
 		return "JobInstance [jobTemplate=" + jobTemplate + ", parametres="
 				+ parametres + ", active=" + active + ", jobCategoryEnum="
-				+ jobCategoryEnum + ", customFields=" + customFields
-				+ ", timerEntity=" + timerEntity + ", running=" + running
-				+ ", followingJobs=" + followingJobs + "]";
+				+ jobCategoryEnum + ", customFields=" + "customFields"
+				+ ", timerEntity=" + "timerEntity" + ", running=" + running
+				+ ", followingJobs=" + "followingJobs" + "]";
 	 }
 
 

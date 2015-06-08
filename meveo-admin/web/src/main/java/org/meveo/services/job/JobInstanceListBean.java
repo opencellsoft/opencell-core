@@ -5,7 +5,7 @@ import javax.inject.Named;
 
 @Named
 @ConversationScoped
-public class JobInstanceListBean extends TimerEntityBean {
+public class JobInstanceListBean extends JobInstanceBean {
 
     /**
      * 

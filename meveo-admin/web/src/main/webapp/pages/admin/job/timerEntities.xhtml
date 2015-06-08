@@ -1,0 +1,49 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.org/seam/faces"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:hftl="http://hftl.org"
+	xmlns:hf="http://java.sun.com/jsf/composite/tags"
+	template="/layout/template.xhtml">
+
+	<ui:define name="metadata">
+		<f:metadata>
+			<f:event type="preRenderView" listener="#{timerEntityListBean.preRenderView}" />
+		</f:metadata>
+	</ui:define>
+
+	<ui:define name="navigation">
+		<ui:include src="/layout/navigation.xhtml" />
+	</ui:define>
+
+	<ui:define name="body">
+
+		<hf:searchPanel columns="3" label="#{messages['timers.page.title']}"
+			backingBean="#{timerEntityListBean}">
+
+			<hf:searchField label="#{messages['tax.code']}" field="code" />
+			<hf:searchField label="#{messages['tax.description']}"
+				id="description" field="description" />
+		</hf:searchPanel>
+
+		<hftl:dataList label="#{messages['timers.page.title']}"
+			backingBean="#{timerEntityListBean}" sortBy="code">
+			<hftl:column label="#{messages['tax.code']}" field="code" />
+			<hftl:column label="#{messages['tax.description']}" field="description" />
+            <hftl:column label="#{messages['timer.hour']}" field="hour" />
+            <hftl:column label="#{messages['timer.minute']}" field="minute"  />
+            <hftl:column label="#{messages['timer.second']}" field="second"  />
+            <hftl:column label="#{messages['timer.year']}" field="year"  />
+            <hftl:column label="#{messages['timer.month']}" field="month" />
+            <hftl:column label="#{messages['timer.dayOfMonth']}" field="dayOfMonth"  />
+            <hftl:column label="#{messages['timer.dayOfWeek']}" field="dayOfWeek"  />
+
+			<hftl:actionsColumn
+				permission="#{identity.hasPermission('administration','administrationManagement')}" />
+		</hftl:dataList>
+
+	</ui:define>
+
+</ui:composition>
+
