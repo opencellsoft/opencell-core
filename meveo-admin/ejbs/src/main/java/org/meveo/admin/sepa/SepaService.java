@@ -129,7 +129,7 @@ public class SepaService extends PersistenceService<DDRequestItem> {
 		DDRequestLOT ddRequestLOT = new DDRequestLOT();
 		ddRequestLOT.setProvider(provider);
 		ddRequestLOT.setInvoicesNumber(Integer.valueOf(invoices.size()));
-		dDRequestLOTService.create(ddRequestLOT, user);
+		dDRequestLOTService.create(ddRequestLOT, user, provider);
 		List<DDRequestItem> ddrequestItems = new ArrayList<DDRequestItem>();
 		Map<CustomerAccount, List<RecordedInvoice>> customerAccountInvoices = new HashMap<CustomerAccount, List<RecordedInvoice>>();
 		for (RecordedInvoice invoice : invoices) {
@@ -194,7 +194,7 @@ public class SepaService extends PersistenceService<DDRequestItem> {
 			}
 			ddrequestItem.setAmountInvoices(totalInvoices);
 			ddrequestItems.add(ddrequestItem);
-			sepaService.create(ddrequestItem, user);
+			sepaService.create(ddrequestItem, user, provider);
 			totalAmount = totalAmount.add(ddrequestItem.getAmountInvoices());
 		}
 		if (!ddrequestItems.isEmpty()) {

@@ -39,7 +39,6 @@ public class SepaDirectDebitJobBean {
 	@Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public void execute(JobExecutionResultImpl result, String parameter, User currentUser) {
-		User user = null;
 		try {
 			List<DDRequestLotOp> ddrequestOps = dDRequestLotOpService.getDDRequestOps();
 
@@ -51,7 +50,7 @@ public class SepaDirectDebitJobBean {
 				try {
 					if (ddrequestLotOp.getDdrequestOp() == DDRequestOpEnum.CREATE) {
 						SepaService.createDDRquestLot(ddrequestLotOp.getFromDueDate(), ddrequestLotOp.getToDueDate(),
-								user, ddrequestLotOp.getProvider());
+								currentUser, ddrequestLotOp.getProvider());
 					} else if (ddrequestLotOp.getDdrequestOp() == DDRequestOpEnum.FILE) {
 						SepaService.exportDDRequestLot(ddrequestLotOp.getDdrequestLOT().getId());
 					}
