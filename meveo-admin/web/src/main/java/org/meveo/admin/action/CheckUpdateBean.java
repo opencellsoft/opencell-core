@@ -38,7 +38,7 @@ public class CheckUpdateBean implements Serializable {
 	public void checkVersion() {
 		try {
 			String input = buildJsonRequest();
-			log.info("Request Check Update ={}",input);
+			log.debug("Request Check Update ={}",input);
 
 			String urlMoni = paramBean.getProperty("checkUpdate.url","http://version.meveo.info/meveo-moni/api/rest/getVersion");
 			log.debug("Request Check Update url={}",urlMoni);
