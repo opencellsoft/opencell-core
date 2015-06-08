@@ -34,6 +34,7 @@
 			<template name="InvoiceCategory" entityToExport="org.meveo.model.billing.InvoiceCategory">
 				<classesToExportAsFull>
 					<java-class>org.meveo.model.billing.InvoiceSubCategory</java-class>
+					<java-class>org.meveo.model.billing.InvoiceSubcategoryCountry</java-class>
 				</classesToExportAsFull>
 			</template>
 			<template name="BillingCycle" entityToExport="org.meveo.model.billing.BillingCycle" />
