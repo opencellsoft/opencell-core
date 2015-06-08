@@ -765,10 +765,14 @@ public class AccountHierarchyApi extends BaseApi {
 		// custom fields
 		if (postData.getCustomFields() != null) {
 			for (CustomFieldDto cfDto : postData.getCustomFields().getCustomField()) {
-				CustomFieldInstance cfi = customFieldInstanceService.findByCodeAndAccountAndValue(cfDto.getCode(), Customer.ACCOUNT_TYPE, cfDto.getStringValue(),
+				List<CustomFieldInstance> cfis = customFieldInstanceService.findByCodeAndAccountAndValue(cfDto.getCode(), Customer.ACCOUNT_TYPE, cfDto.getStringValue(),
 						cfDto.getDateValue(), cfDto.getLongValue(), cfDto.getDoubleValue(), currentUser.getProvider());
-				if (cfi != null) {
-					qb.addCriterion("VALUE(c.customFields)", "=", cfi, true);
+				if (cfis != null) {
+					qb.startOrClause();
+					for (CustomFieldInstance cfi : cfis) {
+						qb.addCriterion("VALUE(c.customFields)", "=", cfi, true);
+					}
+					qb.endOrClause();
 				}
 			}
 		}
