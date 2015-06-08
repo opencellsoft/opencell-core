@@ -43,7 +43,7 @@ import org.meveo.model.crm.CustomFieldInstance;
 
 @Entity
 @ExportIdentifier({ "jobTemplate", "provider" })
-@Table(name = "MEVEO_JOB_INSTANCE", uniqueConstraints = @UniqueConstraint(columnNames = { "JOB_TEMPLATE", "PROVIDER_ID" }))
+@Table(name = "MEVEO_JOB_INSTANCE", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE", "PROVIDER_ID" }))
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "MEVEO_JOB_INSTANCE_SEQ")
 public class JobInstance extends BusinessEntity implements ICustomFieldEntity {
 

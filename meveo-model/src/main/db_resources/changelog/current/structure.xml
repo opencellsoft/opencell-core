@@ -322,6 +322,12 @@
 			constraintName="uk_ljs744oets15tnlf4i6ehe7l6" deferrable="false"
 			disabled="false" initiallyDeferred="false" tableName="meveo_job_instance" />
 	</changeSet>
+	<changeSet author="AndriusKarpavicius" id="1433614968312-24-1">
+		<dropUniqueConstraint tableName="meveo_job_instance" constraintName="uk_ljs744oets15tnlf4i6ehe7l6"/>
+		<addUniqueConstraint columnNames="code, provider_id"
+			constraintName="uk_meveo_job_instance" deferrable="false"
+			disabled="false" initiallyDeferred="false" tableName="meveo_job_instance" />
+	</changeSet>	
 	<changeSet author="anasseh (generated)" id="1433614968312-25">
 		<addUniqueConstraint columnNames="code, provider_id"
 			constraintName="uk_q4ys10jgsw0px36rcvwdajh47" deferrable="false"
