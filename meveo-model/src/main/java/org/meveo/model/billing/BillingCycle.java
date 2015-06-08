@@ -127,13 +127,13 @@ public class BillingCycle extends BusinessEntity {
 		this.billingAccounts = billingAccounts;
 	}
 
-	public Date getNextCalendarDate(Date date) {
+	public Date getNextCalendarDate(Date subscriptionDate, Date date) {
 
 		return calendar != null ? calendar.nextCalendarDate(date) : null;
 	}
 
-	public Date getNextCalendarDate() {
-
+	public Date getNextCalendarDate(Date subscriptionDate) {
+		calendar.setInitDate(subscriptionDate);
 		return calendar != null ? calendar.nextCalendarDate(new Date()) : null;
 	}
 
