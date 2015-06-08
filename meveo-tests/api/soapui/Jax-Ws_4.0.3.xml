@@ -27380,7 +27380,6 @@ for( testCase in testSuite.getTestCaseList() ) {
             <paymentMethod>CHECK</paymentMethod>
             <nextInvoiceDate>2015-04-01</nextInvoiceDate>
             <subscriptionDate>2015-01-01</subscriptionDate>
-            <paymentTerms>4 month</paymentTerms>
             <electronicBilling>true</electronicBilling>
             <email>613@manaty.net</email>
             
