@@ -209,14 +209,11 @@
 	</changeSet>
 
 	<!-- #855 begin -->
-	
-	<changeSet author="anasseh" id="1433614968312-1">
-    <sqlFile 
-            endDelimiter=""
-            path="migrationJobs_beforeLiquibase.sql"
-            relativeToChangelogFile="true"
-            splitStatements="false"/>
-</changeSet>
+
+<!-- 	<changeSet author="anasseh" id="1433614968312-1"> -->
+<!-- 		<sqlFile endDelimiter="" path="migrationJobs_beforeLiquibase.sql" -->
+<!-- 			relativeToChangelogFile="true" splitStatements="false" /> -->
+<!-- 	</changeSet> -->
 
 
 	<changeSet author="anasseh (generated)" id="1433614968312-2">
@@ -323,11 +320,12 @@
 			disabled="false" initiallyDeferred="false" tableName="meveo_job_instance" />
 	</changeSet>
 	<changeSet author="AndriusKarpavicius" id="1433614968312-24-1">
-		<dropUniqueConstraint tableName="meveo_job_instance" constraintName="uk_ljs744oets15tnlf4i6ehe7l6"/>
+		<dropUniqueConstraint tableName="meveo_job_instance"
+			constraintName="uk_ljs744oets15tnlf4i6ehe7l6" />
 		<addUniqueConstraint columnNames="code, provider_id"
-			constraintName="uk_meveo_job_instance" deferrable="false"
-			disabled="false" initiallyDeferred="false" tableName="meveo_job_instance" />
-	</changeSet>	
+			constraintName="uk_meveo_job_instance" deferrable="false" disabled="false"
+			initiallyDeferred="false" tableName="meveo_job_instance" />
+	</changeSet>
 	<changeSet author="anasseh (generated)" id="1433614968312-25">
 		<addUniqueConstraint columnNames="code, provider_id"
 			constraintName="uk_q4ys10jgsw0px36rcvwdajh47" deferrable="false"
@@ -432,13 +430,21 @@
 	<changeSet author="anasseh (generated)" id="1433614968312-62">
 		<dropColumn columnName="userid" tableName="meveo_timer" />
 	</changeSet>
-	
-		<changeSet author="anasseh" id="1433614968312-63">
-    <sqlFile 
-            endDelimiter=""
-            path="migrationJobs_afterLiquibase.sql"
-            relativeToChangelogFile="true"
-            splitStatements="false"/>
-</changeSet>
+
+<!-- 	<changeSet author="anasseh" id="1433614968312-63"> -->
+<!-- 		<sqlFile endDelimiter="" path="migrationJobs_afterLiquibase.sql" -->
+<!-- 			relativeToChangelogFile="true" splitStatements="false" /> -->
+<!-- 	</changeSet> -->
+
+
+	<changeSet author="anasseh (generated)" id="855_2015-06-09">
+		<addColumn tableName="MEVEO_JOB_INSTANCE">
+			<column name="FOLLOWING_JOB_ID" type="BIGINT" />
+		</addColumn>
+		<addForeignKeyConstraint baseColumnNames="FOLLOWING_JOB_ID"
+			baseTableName="meveo_job_instance" constraintName="fk_following_job_id"
+			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="MEVEO_JOB_INSTANCE" />
+	</changeSet>
 	<!-- #855 end -->
 </databaseChangeLog>

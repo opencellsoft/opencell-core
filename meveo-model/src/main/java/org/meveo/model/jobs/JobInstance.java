@@ -27,6 +27,7 @@ import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.MapKeyColumn;
 import javax.persistence.OneToMany;
@@ -76,8 +77,9 @@ public class JobInstance extends BusinessEntity implements ICustomFieldEntity {
 	@Transient
 	private boolean running;
 
-	@Transient
-	private Map<String,JobInstance> followingJobs;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "FOLLOWING_JOB_ID")
+	private JobInstance followingJob;
 
 
 	public JobInstance(){
@@ -166,23 +168,22 @@ public class JobInstance extends BusinessEntity implements ICustomFieldEntity {
 
 
 
+
 	/**
-	 * @return the followingJobs
+	 * @return the followingJob
 	 */
-	public Map<String, JobInstance> getFollowingJobs() {
-		return followingJobs;
+	public JobInstance getFollowingJob() {
+		return followingJob;
 	}
 
 
 
-
 	/**
-	 * @param followingJobs the followingJobs to set
+	 * @param followingJob the followingJob to set
 	 */
-	public void setFollowingJobs(Map<String, JobInstance> followingJobs) {
-		this.followingJobs = followingJobs;
+	public void setFollowingJob(JobInstance followingJob) {
+		this.followingJob = followingJob;
 	}
-
 
 
 

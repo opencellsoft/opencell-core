@@ -1,81 +1,78 @@
-<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:f="http://java.sun.com/jsf/core"
-    xmlns:h="http://java.sun.com/jsf/html" xmlns:hftl="http://hftl.org"
-    xmlns:hf="http://java.sun.com/jsf/composite/tags" xmlns:s="http://jboss.org/seam/faces"
-    xmlns:sc="http://java.sun.com/jsf/composite/components/seamfaces" xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml"
-    xmlns:e="http://primefaces.org/extension">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html" xmlns:hftl="http://hftl.org"
+	xmlns:hf="http://java.sun.com/jsf/composite/tags"
+	xmlns:s="http://jboss.org/seam/faces"
+	xmlns:sc="http://java.sun.com/jsf/composite/components/seamfaces"
+	xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml"
+	xmlns:e="http://primefaces.org/extension">
 
-    <ui:define name="navigation">
-        <ui:include src="/layout/navigation.xhtml" />
-    </ui:define>
+	<ui:define name="navigation">
+		<ui:include src="/layout/navigation.xhtml" />
+	</ui:define>
 
-    <f:metadata>
-        <f:event type="preRenderView" listener="#{jobInstanceBean.preRenderView}" />
-    </f:metadata>
+	<f:metadata>
+		<f:event type="preRenderView"
+			listener="#{jobInstanceBean.preRenderView}" />
+	</f:metadata>
 
-    <ui:param name="pageTitle" value="#{messages['job.page.title']}" />
-    <ui:define name="body">
-    	<p:panel>
+	<ui:param name="pageTitle" value="#{messages['job.page.title']}" />
+	<ui:define name="body">
+		<p:panel>
 			<h:form id="crumbmenuForm">
 				<p:breadCrumb homeDisplay="text" id="crumbmenu">
 					<p:menuitem value="#{messages['menu.admin']}" disabled="true" />
-					<p:menuitem outcome="jobInstances"
-						value="#{messages['menu.jobs']}" />
+					<p:menuitem outcome="jobInstances" value="#{messages['menu.jobs']}" />
 				</p:breadCrumb>
 			</h:form>
 		</p:panel>
 
-        <p:panel>
-            <f:facet name="header">
-                <h:outputText value="#{messages['job.page.title']}" />
-            </f:facet>
+		<p:panel>
+			<f:facet name="header">
+				<h:outputText value="#{messages['job.page.title']}" />
+			</f:facet>
 
-            <hf:formPanel formId="timerBeanFormId" backingBean="#{jobInstanceBean}">
+			<hf:formPanel formId="timerBeanFormId" backingBean="#{jobInstanceBean}">
 
+				<hf:formField label="#{messages['BusinessEntity.code']}" field="code" />
+				<hf:formField label="#{messages['BusinessEntity.description']}" field="description" />
 
-                <hf:formDecorateField fieldId="jobCategory" label="#{messages['timer.jobCategory']}" >
-                    <p:selectOneMenu id="jobCategory" value="#{jobInstanceBean.entity.jobCategoryEnum}" required="true"
-                        rendered="#{jobInstanceBean.entity.id==null}">
-                        <f:selectItem itemLabel="#{messages['commons.select']}" />
-                        <f:selectItems value="#{jobInstanceBean.jobCategoryEnumValues}" var="jobCat" itemLabel="#{messages[jobCat.label]}" />
-                        <p:ajax event="valueChange" update="@form"></p:ajax>
-                    </p:selectOneMenu>
-                    <h:outputText value="#{messages[jobInstanceBean.entity.jobCategoryEnum.label]}" rendered="#{jobInstanceBean.entity.id!=null}" />
-                </hf:formDecorateField>
+				<hf:formDecorateField fieldId="jobCategory" label="#{messages['timer.jobCategory']}">
+					<p:selectOneMenu id="jobCategory"  value="#{jobInstanceBean.entity.jobCategoryEnum}" required="true" rendered="#{jobInstanceBean.edit}">
+						<f:selectItem itemLabel="#{messages['commons.select']}" />
+						<f:selectItems value="#{jobInstanceBean.jobCategoryEnumValues}" var="jobCat" itemLabel="#{messages[jobCat.label]}" />	
+					</p:selectOneMenu>
+				</hf:formDecorateField>
 
+				<hf:formField label="#{messages['jobInstance.jobTemplate']}" field="jobTemplate" required="true" />
+			
+				<hf:formDecorateField fieldId="timerFollowingJob" label="#{messages['timer.followingJob']}">
+					<p:selectOneMenu id="timerFollowingJob" value="#{jobInstanceBean.entity.followingJob}"
+						rendered="#{jobInstanceBean.edit}">
+						    <s:objectConverter />
+						<f:selectItem itemLabel="#{messages['commons.select']}" />
+						<f:selectItems value="#{jobInstanceBean.getTimerEntityList()}" var="t_" itemLabel="#{t_.code}" itemValue="#{t_}" />						
+					</p:selectOneMenu>
+				</hf:formDecorateField>
+				
+				<hf:formDecorateField fieldId="timer" label="#{messages['jobInstance.timer']}">
+					<p:selectOneMenu id="timer" value="#{jobInstanceBean.entity.timerEntity}" rendered="#{jobInstanceBean.edit}">
+						    <s:objectConverter />
+						<f:selectItem itemLabel="#{messages['commons.select']}" />
+						<f:selectItems value="#{timerEntityBean.getTimerEntityList()}" var="t_" itemLabel="#{t_.code}" itemValue="#{t_}" />		
+					</p:selectOneMenu>
+				</hf:formDecorateField>
+				
+				<hf:formField label="#{messages['timer.active']}" field="active" />
+				<hf:formField label="#{messages['jobInstance.parametres']}" field="parametres" />
 
-                <hf:formDecorateField fieldId="timerJobName" label="#{messages['timer.jobName']}" >
-                    <p:selectOneMenu id="timerJobName" value="#{jobInstanceBean.entity.jobTemplate}" rendered="#{jobInstanceBean.entity.id == null}"
-                        required="true">
-                        <f:selectItem itemLabel="#{messages['commons.select']}" />
-                        <f:selectItems value="#{jobInstanceBean.jobNames}" />
-                        <p:ajax event="valueChange" listener="#{jobInstanceBean.initCustomFields}" update="@form"></p:ajax>
-                    </p:selectOneMenu>
-                    <h:outputText value="#{jobInstanceBean.entity.jobTemplate}" rendered="#{jobInstanceBean.entity.id!=null}" />
-                </hf:formDecorateField>
+				<p:fieldset legend="#{messages['customFieldTemplate.panel']}" styleClass="clearLeft" rendered="#{! empty(jobInstanceBean.customFieldTemplates)}">
+					<hf:customFields />
+				</p:fieldset>
 
-                <hf:formField label="#{messages['timer.name']}" field="code" required="true" />
-<!-- 
-                <hf:formDecorateField fieldId="timerFollowingJob" label="#{messages['timer.followingJob']}" >
-                    <p:selectOneMenu id="timerFollowingJob" value="#{jobInstanceBean.entity.timerInfo.followingTimerId}"
-                        rendered="#{jobInstanceBean.edit}">
-                        <f:selectItem itemLabel="#{messages['commons.select']}" />
-                        <f:selectItems value="#{jobInstanceBean.getTimerEntityList()}" var="t_" itemLabel="#{t_.code}" itemValue="#{t_.id}" />
-                    </p:selectOneMenu>
-                </hf:formDecorateField>
-  -->               
-               
-                
-                <hf:formField label="#{messages['timer.parametres']}" field="parametres"  />
-                
-                <hf:formField label="#{messages['timer.active']}" field="active"  />
-
-
-                <p:fieldset legend="#{messages['customFieldTemplate.panel']}" styleClass="clearLeft" rendered="#{! empty(jobInstanceBean.customFieldTemplates)}">
-                    <hf:customFields />
-                </p:fieldset>
-
-                <h:panelGroup layout="block" styleClass="form-panel-actions">
-                    <!--  <div class="action-buttons">
+				<h:panelGroup layout="block" styleClass="form-panel-actions">
+					<!--  <div class="action-buttons">
                             <p:commandButton ajax="false" id="button_create"
                                 value="#{messages['action.save']}"
                                 action="#{jobInstanceBean.create()}"
@@ -97,69 +94,73 @@
                                 outcome="jobTimers" />
                         </div>
                         -->
-                    <p:commandButton ajax="false" id="button_execute" value="#{messages['job.executeJobNow']}"
-                        action="#{jobInstanceBean.executeTimer()}" rendered="#{jobInstanceBean.entity.id!=null}" />
-                </h:panelGroup>
-            </hf:formPanel>
+					<p:commandButton ajax="false" id="button_execute"
+						value="#{messages['job.executeJobNow']}"
+						action="#{jobInstanceBean.executeTimer()}"
+						rendered="#{jobInstanceBean.entity.id!=null}" />
+				</h:panelGroup>
+			</hf:formPanel>
 
 
-            <!-- ===================================== JOB EXECUTION RESULTS ===================================== -->
+			<!-- ===================================== JOB EXECUTION RESULTS ===================================== -->
 
-            <p:outputPanel id="jobExecutions">
-                <p:dataTable id="jobExecutionsDatatable" var="entity" paginator="true" value="#{jobInstanceBean.getJobExecutionList()}" rows="10"
-                    rowKey="#{entity.id}" widget="jobExecutionsTable" resizableColumns="true">
-                    <p:column sortBy="startDate">
-                        <f:facet name="header">
-                            <h:outputText value="#{messages['jobExecution.startDate']}" />
-                        </f:facet>
-                        <h:outputText value="#{entity.startDate}">
-                            <f:convertDateTime pattern="dd/MM/yyyyy hh:mm:ss" />
-                        </h:outputText>
-                    </p:column>
+			<p:outputPanel id="jobExecutions">
+				<p:dataTable id="jobExecutionsDatatable" var="entity"
+					paginator="true" value="#{jobInstanceBean.getJobExecutionList()}"
+					rows="10" rowKey="#{entity.id}" widget="jobExecutionsTable"
+					resizableColumns="true">
+					<p:column sortBy="startDate">
+						<f:facet name="header">
+							<h:outputText value="#{messages['jobExecution.startDate']}" />
+						</f:facet>
+						<h:outputText value="#{entity.startDate}">
+							<f:convertDateTime pattern="dd/MM/yyyyy hh:mm:ss" />
+						</h:outputText>
+					</p:column>
 
-                    <p:column>
-                        <f:facet name="header">
-                            <h:outputText value="#{messages['jobExecution.endDate']}" />
-                        </f:facet>
-                        <h:outputText value="#{entity.endDate}">
-                            <f:convertDateTime pattern="dd/MM/yyyyy hh:mm:ss" />
-                        </h:outputText>
-                    </p:column>
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="#{messages['jobExecution.endDate']}" />
+						</f:facet>
+						<h:outputText value="#{entity.endDate}">
+							<f:convertDateTime pattern="dd/MM/yyyyy hh:mm:ss" />
+						</h:outputText>
+					</p:column>
 
-                    <p:column>
-                        <f:facet name="header">
-                            <h:outputText value="#{messages['jobExecution.nbOk']}" />
-                        </f:facet>
-                        <h:outputText value="#{entity.nbItemsCorrectlyProcessed}">
-                        </h:outputText>
-                    </p:column>
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="#{messages['jobExecution.nbOk']}" />
+						</f:facet>
+						<h:outputText value="#{entity.nbItemsCorrectlyProcessed}">
+						</h:outputText>
+					</p:column>
 
-                    <p:column>
-                        <f:facet name="header">
-                            <h:outputText value="#{messages['jobExecution.nbWarn']}" />
-                        </f:facet>
-                        <h:outputText value="#{entity.nbItemsProcessedWithWarning}">
-                        </h:outputText>
-                    </p:column>
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="#{messages['jobExecution.nbWarn']}" />
+						</f:facet>
+						<h:outputText value="#{entity.nbItemsProcessedWithWarning}">
+						</h:outputText>
+					</p:column>
 
-                    <p:column>
-                        <f:facet name="header">
-                            <h:outputText value="#{messages['jobExecution.nbKo']}" />
-                        </f:facet>
-                        <h:outputText value="#{entity.nbItemsProcessedWithError}">
-                        </h:outputText>
-                    </p:column>
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="#{messages['jobExecution.nbKo']}" />
+						</f:facet>
+						<h:outputText value="#{entity.nbItemsProcessedWithError}">
+						</h:outputText>
+					</p:column>
 
-                    <p:column>
-                        <f:facet name="header">
-                            <h:outputText value="#{messages['jobExecution.report']}" />
-                        </f:facet>
-                        <h:outputText value="#{entity.report}">
-                        </h:outputText>
-                    </p:column>
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="#{messages['jobExecution.report']}" />
+						</f:facet>
+						<h:outputText value="#{entity.report}">
+						</h:outputText>
+					</p:column>
 
-                </p:dataTable>
-            </p:outputPanel>
-        </p:panel>
-    </ui:define>
+				</p:dataTable>
+			</p:outputPanel>
+		</p:panel>
+	</ui:define>
 </ui:composition>

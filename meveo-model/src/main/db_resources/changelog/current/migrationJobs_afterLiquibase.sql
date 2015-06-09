@@ -35,8 +35,14 @@ SELECT   id, version ,disabled ,created ,updated ,code ,description ,
   
   drop table temp_meveo_timer;
   drop table temp_crm_custom_field_inst;
+
+  
+  ALTER SEQUENCE meveo_timer_seq RESTART WITH 20;
+  ALTER SEQUENCE meveo_job_instance_seq RESTART WITH 20;
+ ALTER SEQUENCE CRM_CUSTOM_FIELD_INST_SEQ RESTART WITH 30;
+ 
   
   --ALTER SEQUENCE meveo_timer_seq RESTART WITH select max(id)+1 from meveo_timer ;
-  --ALTER SEQUENCE meveo_instance_job_seq RESTART WITH (select max(id)+1 from meveo_instance_job );
+  --ALTER SEQUENCE meveo_instance_job_seq RESTART WITH (select max(id)+1 from meveo_job_instance);
  -- ALTER SEQUENCE CRM_CUSTOM_FIELD_INST_SEQ RESTART WITH select max(id)+1 from crm_custom_field_inst ;
 
