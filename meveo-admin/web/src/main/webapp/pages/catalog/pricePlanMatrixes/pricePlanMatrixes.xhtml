@@ -458,9 +458,9 @@
 						<h:outputText value="#{entity.maxSubscriptionAgeInMonth}" />
 					</f:facet>
 					<f:facet name="input">
-						<p:inputText value="#{entity.minSubscriptionAgeInMonth}" size="6" />
+						<p:inputText value="#{entity.minSubscriptionAgeInMonth}" size="4" maxlength="4"/>
 						<h:outputText value=" - " />
-						<p:inputText value="#{entity.maxSubscriptionAgeInMonth}" size="6" />
+						<p:inputText value="#{entity.maxSubscriptionAgeInMonth}" size="4" maxlength="4"/>
 					</f:facet>
 				</p:cellEditor>
 			</p:column>
@@ -484,7 +484,7 @@
 				</p:cellEditor>
 			</p:column>
 
-			<hftl:actionsColumn
+			<hftl:actionsColumn renderEditLink="true"
 				permission="#{identity.hasPermission('catalog','catalogManagement')}" />
 		</hftl:dataList>
 	</ui:define>
