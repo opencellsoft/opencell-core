@@ -301,11 +301,8 @@
 
 						<hftl:dataList backingBean="#{accountOperationBean}"
 								dataModel="#{accountOperationBean.getAccountOperations(customerAccountBean.entity)}"
-								label="#{messages['accountOperation.title']}" disabled="true"
-								checkMany="false" >
-								<p:column selectionMode="multiple" style="width:5%"  />
-							    <p:ajax event="rowSelectCheckbox" update="@form" />
-
+								label="#{messages['accountOperation.title']}" disabled="true">
+								
 								<p:column width="10%">
 									<f:facet name="header">
 										<h:outputText value="#{messages['accountOperation.type']}" />
