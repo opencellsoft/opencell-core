@@ -64,6 +64,7 @@ public class UserAccountApi extends AccountApi {
 			if (StringUtils.isBlank(postData.getBillingAccount())) {
 				missingParameters.add("billingAccount");
 			}
+			throw new MissingParameterException(getMissingParametersExceptionMessage());
 		}
 	}
 
@@ -97,6 +98,7 @@ public class UserAccountApi extends AccountApi {
 			if (StringUtils.isBlank(postData.getBillingAccount())) {
 				missingParameters.add("billingAccount");
 			}
+			throw new MissingParameterException(getMissingParametersExceptionMessage());
 		}
 	}
 
