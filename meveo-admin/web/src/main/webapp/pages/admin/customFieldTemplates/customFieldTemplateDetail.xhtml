@@ -17,11 +17,14 @@
         <hf:formPanel id="formPanel" label="#{messages['customFieldTemplate.panel']}" backingBean="#{customFieldTemplateBean}" showEnableDisableButton="true">
             <hf:formField label="#{messages['BusinessEntity.code']}" field="code" required="true" allowEdit="false" />
             <hf:formField label="#{messages['customFieldTemplate.fieldLabel']}" field="description" required="true" useConverter="false" id="description" maxlength="50" />
-            <hf:formField label="#{messages['customFieldTemplate.fieldType']}" field="fieldType" required="true" listenerUpdate=":formPanel:formId:listValuesField"
-                allowEdit="false" newLine="true" componentWidth="20"/>
+            <hf:formField label="#{messages['customFieldTemplate.fieldType']}" field="fieldType" required="true"
+                listenerUpdate=":formPanel:formId:listValuesField :formPanel:formId:defaultValueField" allowEdit="false" componentWidth="20" />
             <hf:formField label="#{messages['customFieldTemplate.accountType']}" field="accountLevel" required="true" allowEdit="false"
-                listValues="#{customFieldTemplateBean.accountLevelsNoTimer}" componentWidth="20"/>
-            <hf:formField label="#{messages['customFieldTemplate.defaultValue']}" field="defaultValue" maxlength="50" />
+                listValues="#{customFieldTemplateBean.accountLevelsNoTimer}" componentWidth="20" newLine="true" />
+            <h:panelGroup id="defaultValueField">
+                <hf:formField label="#{messages['customFieldTemplate.defaultValue']}" field="defaultValue" maxlength="50" componentWidth="20"
+                    rendered="#{customFieldTemplateBean.entity.fieldType != 'DATE'}" />
+            </h:panelGroup>
             <hf:formField label="#{messages['customFieldTemplate.fieldRequired']}" field="valueRequired" isMessage="true" componentWidth="15" />
             <hf:formField label="#{messages['customFieldTemplate.versionable']}" field="versionable" isMessage="true" allowEdit="false" listenerUpdate=":formPanel:formId:calendar"
                 componentWidth="15" />
