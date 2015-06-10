@@ -106,7 +106,7 @@
 						<p:tab title="#{messages['billingAccount.tab.account']}">
 							<hf:formPanel id="formBillingAccountPanel"
 								label="#{messages['billingAccount.billingAccountPanel']}"
-								backingBean="#{billingAccountBean}" useCustomIdParam="true">
+								backingBean="#{billingAccountBean}" useCustomIdParam="true" addCustomFieldDialog="true">
 								
 									<p:tabView id="childTab" styleClass="tab-child" activeIndex="#{billingAccountBean.activeTab}">
 										<p:ajax event="tabChange" listener="#{billingAccountBean.onTabChange}"/>
@@ -363,7 +363,7 @@
 										</p:tab>
 
 										<p:tab title="#{messages['customFieldTemplate.panel']}" id="tab2">
-											<hf:customFields />
+											<hf:customFields id="customFields" messagesId=":parentTab:formBillingAccountPanel:formId:messages" periodDialogIdPrefix=":parentTab:formBillingAccountPanel"/>
 										</p:tab>
 
 										<p:tab title="#{messages['counterPeriod.title']}" id="tab3"

@@ -29,7 +29,7 @@
                 <h:outputText value="#{messages['job.page.title']}" />
             </f:facet>
 
-            <hf:formPanel formId="timerBeanFormId" backingBean="#{jobInstanceBean}">
+            <hf:formPanel id="formPanel" backingBean="#{jobInstanceBean}" addCustomFieldDialog="true">
 
 
                 <hf:formDecorateField fieldId="jobCategory" label="#{messages['timer.jobCategory']}" >
@@ -65,13 +65,13 @@
   -->               
                
                 
-                <hf:formField label="#{messages['timer.parametres']}" field="parametres"  />
+                <hf:formField label="#{messages['timer.parameter']}" field="parametres"  />
                 
                 <hf:formField label="#{messages['timer.active']}" field="active"  />
 
 
                 <p:fieldset legend="#{messages['customFieldTemplate.panel']}" styleClass="clearLeft" rendered="#{! empty(jobInstanceBean.customFieldTemplates)}">
-                    <hf:customFields />
+                    <hf:customFields id="customFields" messagesId=":formPanel:formId:messages"/>
                 </p:fieldset>
 
                 <h:panelGroup layout="block" styleClass="form-panel-actions">
@@ -161,5 +161,6 @@
                 </p:dataTable>
             </p:outputPanel>
         </p:panel>
+        
     </ui:define>
 </ui:composition>

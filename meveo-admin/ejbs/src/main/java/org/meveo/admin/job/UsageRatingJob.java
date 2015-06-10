@@ -1,7 +1,6 @@
 package org.meveo.admin.job;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import javax.ejb.Asynchronous;
@@ -13,7 +12,6 @@ import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.ResourceBundle;
-import org.meveo.model.Auditable;
 import org.meveo.model.admin.User;
 import org.meveo.model.crm.AccountLevelEnum;
 import org.meveo.model.crm.CustomFieldTemplate;
@@ -52,37 +50,27 @@ public class UsageRatingJob extends Job {
     }
     
     @Override
-	public List<CustomFieldTemplate> getCustomFields(User currentUser) {
+	public List<CustomFieldTemplate> getCustomFields() {
 		List<CustomFieldTemplate> result = new ArrayList<CustomFieldTemplate>();
 
 		CustomFieldTemplate nbRuns = new CustomFieldTemplate();
 		nbRuns.setCode("UsageRatingJob_nbRuns");
 		nbRuns.setAccountLevel(AccountLevelEnum.TIMER);
 		nbRuns.setActive(true);
-		Auditable audit = new Auditable();
-		audit.setCreated(new Date());
-		audit.setCreator(currentUser);
-		nbRuns.setAuditable(audit);
-		nbRuns.setProvider(currentUser.getProvider());
 		nbRuns.setDescription(resourceMessages.getString("jobExecution.nbRuns"));
 		nbRuns.setFieldType(CustomFieldTypeEnum.LONG);
 		nbRuns.setValueRequired(false);
-		nbRuns.setLongValue(new Long(1));
+		nbRuns.setDefaultValue("1");
 		result.add(nbRuns);
 
 		CustomFieldTemplate waitingMillis = new CustomFieldTemplate();
 		waitingMillis.setCode("UsageRatingJob_waitingMillis");
 		waitingMillis.setAccountLevel(AccountLevelEnum.TIMER);
 		waitingMillis.setActive(true);
-		Auditable audit2 = new Auditable();
-		audit2.setCreated(new Date());
-		audit2.setCreator(currentUser);
-		waitingMillis.setAuditable(audit2);
-		waitingMillis.setProvider(currentUser.getProvider());
 		waitingMillis.setDescription(resourceMessages.getString("jobExecution.waitingMillis"));
 		waitingMillis.setFieldType(CustomFieldTypeEnum.LONG);
 		waitingMillis.setValueRequired(false);
-		waitingMillis.setLongValue(new Long(0));
+		waitingMillis.setDefaultValue("0");
 		result.add(waitingMillis);
 
 		return result;

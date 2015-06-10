@@ -1,6 +1,5 @@
 package org.meveo.model.crm;
 
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -52,17 +51,11 @@ public class CustomFieldTemplate extends BusinessEntity {
     @JoinColumn(name = "CALENDAR_ID")
     private Calendar calendar;
 
-    @Transient
-    private String stringValue;
+    @Column(name = "DEFAULT_VALUE", length = 50)
+    private String defaultValue;
 
     @Transient
-    private Double doubleValue;
-
-    @Transient
-    private Long longValue;
-
-    @Transient
-    private Date dateValue;
+    private CustomFieldInstance instance;
 
     public CustomFieldTypeEnum getFieldType() {
         return fieldType;
@@ -112,36 +105,33 @@ public class CustomFieldTemplate extends BusinessEntity {
         this.calendar = calendar;
     }
 
-    public String getStringValue() {
-        return stringValue;
+    public String getDefaultValue() {
+        return defaultValue;
     }
 
-    public void setStringValue(String stringValue) {
-        this.stringValue = stringValue;
+    public void setDefaultValue(String defaultValue) {
+        this.defaultValue = defaultValue;
     }
 
-    public Double getDoubleValue() {
-        return doubleValue;
+    public Object getDefaultValueConverted() {
+        if (defaultValue != null) {
+            if (fieldType == CustomFieldTypeEnum.DOUBLE) {
+                return Double.parseDouble(defaultValue);
+            } else if (fieldType == CustomFieldTypeEnum.LONG) {
+                return Long.parseLong(defaultValue);
+            } else if (fieldType == CustomFieldTypeEnum.DATE) {
+                return null; // TODO implement deserialization from a date
+            }
+        }
+        return defaultValue;
     }
 
-    public void setDoubleValue(Double doubleValue) {
-        this.doubleValue = doubleValue;
+    public void setInstance(CustomFieldInstance instance) {
+        this.instance = instance;
     }
 
-    public Long getLongValue() {
-        return longValue;
-    }
-
-    public void setLongValue(Long longValue) {
-        this.longValue = longValue;
-    }
-
-    public Date getDateValue() {
-        return dateValue;
-    }
-
-    public void setDateValue(Date dateValue) {
-        this.dateValue = dateValue;
+    public CustomFieldInstance getInstance() {
+        return instance;
     }
 
     /**
@@ -149,9 +139,5 @@ public class CustomFieldTemplate extends BusinessEntity {
      * 
      * @return True if no value is set
      */
-    public boolean isValueEmpty() {
-        return (stringValue == null && (fieldType == CustomFieldTypeEnum.STRING || fieldType == CustomFieldTypeEnum.LIST))
-                || (dateValue == null && fieldType == CustomFieldTypeEnum.DATE) || (longValue == null && fieldType == CustomFieldTypeEnum.LONG)
-                || (doubleValue == null && fieldType == CustomFieldTypeEnum.DOUBLE);
-    }
+
 }

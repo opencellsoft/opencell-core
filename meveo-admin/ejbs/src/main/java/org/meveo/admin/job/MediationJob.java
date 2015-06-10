@@ -3,7 +3,6 @@ package org.meveo.admin.job;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
@@ -21,7 +20,6 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.ResourceBundle;
 import org.meveo.commons.utils.FileUtils;
 import org.meveo.commons.utils.ParamBean;
-import org.meveo.model.Auditable;
 import org.meveo.model.admin.User;
 import org.meveo.model.crm.AccountLevelEnum;
 import org.meveo.model.crm.CustomFieldTemplate;
@@ -50,6 +48,7 @@ public class MediationJob extends Job {
         super.execute(jobInstance, currentUser);
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     @TransactionAttribute(TransactionAttributeType.NEVER)
     protected void execute(JobExecutionResultImpl result, JobInstance jobInstance, User currentUser) throws BusinessException {
@@ -125,21 +124,16 @@ public class MediationJob extends Job {
     }
 
     @Override
-    public List<CustomFieldTemplate> getCustomFields(User currentUser) {
+    public List<CustomFieldTemplate> getCustomFields() {
         List<CustomFieldTemplate> result = new ArrayList<CustomFieldTemplate>();
 
         CustomFieldTemplate nbRuns = new CustomFieldTemplate();
         nbRuns.setCode("MediationJob_nbRuns");
         nbRuns.setAccountLevel(AccountLevelEnum.TIMER);
         nbRuns.setActive(true);
-        Auditable audit = new Auditable();
-        audit.setCreated(new Date());
-        audit.setCreator(currentUser);
-        nbRuns.setAuditable(audit);
-        nbRuns.setProvider(currentUser.getProvider());
         nbRuns.setDescription(resourceMessages.getString("jobExecution.nbRuns"));
         nbRuns.setFieldType(CustomFieldTypeEnum.LONG);
-        nbRuns.setLongValue(new Long(1));
+        nbRuns.setDefaultValue("1");
         nbRuns.setValueRequired(false);
         result.add(nbRuns);
 
@@ -147,14 +141,9 @@ public class MediationJob extends Job {
         waitingMillis.setCode("MediationJob_waitingMillis");
         waitingMillis.setAccountLevel(AccountLevelEnum.TIMER);
         waitingMillis.setActive(true);
-        Auditable audit2 = new Auditable();
-        audit2.setCreated(new Date());
-        audit2.setCreator(currentUser);
-        waitingMillis.setAuditable(audit2);
-        waitingMillis.setProvider(currentUser.getProvider());
         waitingMillis.setDescription(resourceMessages.getString("jobExecution.waitingMillis"));
         waitingMillis.setFieldType(CustomFieldTypeEnum.LONG);
-        waitingMillis.setLongValue(new Long(0));
+        waitingMillis.setDefaultValue("0");
         waitingMillis.setValueRequired(false);
         result.add(waitingMillis);
 

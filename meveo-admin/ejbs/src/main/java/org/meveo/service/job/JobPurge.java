@@ -11,7 +11,6 @@ import javax.interceptor.Interceptors;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.job.logging.JobLoggingInterceptor;
 import org.meveo.interceptor.PerformanceInterceptor;
-import org.meveo.model.Auditable;
 import org.meveo.model.admin.User;
 import org.meveo.model.crm.AccountLevelEnum;
 import org.meveo.model.crm.CustomFieldTemplate;
@@ -49,18 +48,13 @@ public class JobPurge extends Job {
     }
 
     @Override
-    public List<CustomFieldTemplate> getCustomFields(User currentUser) {
+    public List<CustomFieldTemplate> getCustomFields() {
         List<CustomFieldTemplate> result = new ArrayList<CustomFieldTemplate>();
 
         CustomFieldTemplate jobName = new CustomFieldTemplate();
         jobName.setCode("JobPurge_jobName");
         jobName.setAccountLevel(AccountLevelEnum.TIMER);
         jobName.setActive(true);
-        Auditable audit = new Auditable();
-        audit.setCreated(new Date());
-        audit.setCreator(currentUser);
-        jobName.setAuditable(audit);
-        jobName.setProvider(currentUser.getProvider());
         jobName.setDescription("Job Name (to purge)");
         jobName.setFieldType(CustomFieldTypeEnum.STRING);
         jobName.setValueRequired(true);
@@ -70,11 +64,6 @@ public class JobPurge extends Job {
         nbDays.setCode("JobPurge_nbDays");
         nbDays.setAccountLevel(AccountLevelEnum.TIMER);
         nbDays.setActive(true);
-        Auditable audit2 = new Auditable();
-        audit2.setCreated(new Date());
-        audit2.setCreator(currentUser);
-        nbDays.setAuditable(audit2);
-        nbDays.setProvider(currentUser.getProvider());
         nbDays.setDescription("older that (in days)");
         nbDays.setFieldType(CustomFieldTypeEnum.LONG);
         nbDays.setValueRequired(true);

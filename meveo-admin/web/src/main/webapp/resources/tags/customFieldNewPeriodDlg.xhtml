@@ -1,0 +1,70 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:cc="http://java.sun.com/jsf/composite" xmlns:p="http://primefaces.org/ui" xmlns:o="http://omnifaces.org/ui" xmlns:c="http://java.sun.com/jsp/jstl/core"
+    xmlns:hftl="http://hftl.org" xmlns:hf="http://java.sun.com/jsf/composite/tags">
+
+<!-- 
+    A tag to show a new custom field period creation popup dialog
+    Makes part of custom field management tag group 
+
+    Attributes
+        edit - should values be displayed, or edit controls be shown
+        datePattern - date pattern for date entry/display
+        cft - internal attribute, custom field template 
+        cfi - internal attribute, custom field instance to which a new period should be added 
+        periodDialogWidget - internal attribute, "a new custom field period" dialog widget name
+ -->
+
+
+<cc:interface componentType="formField">
+    <cc:attribute name="edit" default="#{cc.backingBeanFromParentOrCurrent.edit}" />
+    <cc:attribute name="datePattern" value="#{paramBean.getProperty('meveo.dateFormat','dd/MM/yyyy')}" />
+    <cc:attribute name="cft" default="#{cc.backingBeanFromParentOrCurrent.customFieldSelectedTemplate}" />
+    <cc:attribute name="cfi" default="#{cc.attrs.cft.instance}" />
+    <cc:attribute name="periodDialogWidget" default="dlg_newPeriod_#{cc.entityClass.simpleName}" />
+</cc:interface>
+
+<cc:implementation>
+    <span id="#{cc.clientId}" style="white-space: nowrap"> <p:dialog id="dlg_newPeriod" widgetVar="#{cc.attrs.periodDialogWidget}"
+            header="#{messages['customFieldTemplate.newPeriod']}" closeOnEscape="true" modal="true" appendTo="@(body)" rendered="#{cc.attrs.edit}" width="700">
+            <h:form id="form">
+                <p:panel>
+                    <h:panelGroup id="newPeriodFields" layout="block" styleClass="form-panel">
+                        <p:messages id="cf_period_messages" />
+                        <p:outputPanel styleClass="form-panel-fields">
+                            <hf:formDecorateField fieldId="period_date" label="#{messages['customFieldTemplate.periodDate']}" rendered="#{cc.attrs.cfi.calendar!=null}">
+                                <p:calendar id="period_date" showButtonPanel="true" pattern="#{cc.attrs.datePattern}"
+                                    value="#{cc.backingBeanFromParentOrCurrent.customFieldNewPeriod.periodStartDate}" required="true">
+                                </p:calendar>
+                            </hf:formDecorateField>
+                            <hf:formDecorateField fieldId="period_start_date" label="#{messages['customFieldTemplate.periodStartDate']}" rendered="#{cc.attrs.cfi.calendar==null}">
+                                <p:calendar id="period_start_date" showButtonPanel="true" pattern="#{cc.attrs.datePattern}"
+                                    value="#{cc.backingBeanFromParentOrCurrent.customFieldNewPeriod.periodStartDate}">
+                                </p:calendar>
+                            </hf:formDecorateField>
+                            <hf:formDecorateField fieldId="period_end_date" label="#{messages['customFieldTemplate.periodEndDate']}" rendered="#{cc.attrs.cfi.calendar==null}">
+                                <p:calendar id="period_end_date" showButtonPanel="true" rendered="#{cc.attrs.cfi.calendar==null}" pattern="#{cc.attrs.datePattern}"
+                                    value="#{cc.backingBeanFromParentOrCurrent.customFieldNewPeriod.periodEndDate}">
+                                </p:calendar>
+                            </hf:formDecorateField>
+
+                            <hftl:decorateFormField label="#{messages['customFieldTemplate.periodValue']}#{cc.attrs.cft.valueRequired?' *':''}">
+                                <hftl:customFieldValueField edit="#{cc.attrs.edit}" cft="#{cc.attrs.cft}" field="#{cc.backingBeanFromParentOrCurrent.customFieldNewPeriod}" />
+                            </hftl:decorateFormField>
+
+                        </p:outputPanel>
+                        <h:panelGroup layout="block" styleClass="form-panel-actions">
+                            <p:commandButton value="#{messages['commons.add']}" ajax="true" partialSubmit="true" process="@form" update="@form @([id$='periodTable'])"
+                                action="#{cc.backingBeanFromParentOrCurrent.addNewCustomFieldPeriod}"
+                                disabled="#{cc.backingBeanFromParentOrCurrent.customFieldPeriodMatched and cc.attrs.cfi.calendar!=null}"
+                                oncomplete="if (args &amp;&amp; !args.validationFailed) PF('#{cc.attrs.periodDialogWidget}').hide()" />
+                        </h:panelGroup>
+                    </h:panelGroup>
+                </p:panel>
+            </h:form>
+        </p:dialog>
+    </span>
+</cc:implementation>
+</html>

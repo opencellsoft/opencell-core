@@ -36,7 +36,7 @@
 
 		<hf:formPanel id="formPanel"
 			label="#{messages['oneShotChargeTemplate.chargeTemplatePanel']}"
-			backingBean="#{oneShotChargeTemplateBean}" columns="2" showEnableDisableButton="true">
+			backingBean="#{oneShotChargeTemplateBean}" columns="2" showEnableDisableButton="true" addCustomFieldDialog="true">
 
 			<p:tabView id="tabView">
 
@@ -88,7 +88,7 @@
 				</p:tab>
 
 				<p:tab title="#{messages['customFieldTemplate.panel']}">
-					<hf:customFields />
+					<hf:customFields id="customFields" messagesId=":formPanel:formId:messages"/>
 				</p:tab>
 			</p:tabView>
 

@@ -22,8 +22,8 @@
 			</h:form>
 		</p:panel>
 
-		<hf:formPanel label="#{messages['offerTemplate.offerTemplatePanel']}"
-			backingBean="#{offerTemplateBean}" showEnableDisableButton="true">
+		<hf:formPanel id="formPanel" label="#{messages['offerTemplate.offerTemplatePanel']}"
+			backingBean="#{offerTemplateBean}" showEnableDisableButton="true" addCustomFieldDialog="true">
 
 			<p:tabView id="tabView">
 
@@ -41,12 +41,11 @@
 				</p:tab>
 
 				<p:tab title="#{messages['customFieldTemplate.panel']}">
-					<hf:customFields />
+					<hf:customFields id="customFields" messagesId=":formPanel:formId:messages"/>
 				</p:tab>
 
 			</p:tabView>
 		</hf:formPanel>
-
 	</ui:define>
 
 </ui:composition>

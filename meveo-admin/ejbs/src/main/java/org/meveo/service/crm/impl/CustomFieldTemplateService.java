@@ -18,48 +18,34 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
     public List<CustomFieldTemplate> findByJobName(String jobName) {
         QueryBuilder qb = new QueryBuilder(CustomFieldTemplate.class, "c", null, getCurrentProvider());
         qb.addCriterion("accountLevel", "=", AccountLevelEnum.TIMER, true);
-        qb.addCriterionWildcard("code", jobName+"_*", false);
+        qb.addCriterionWildcard("code", jobName + "_*", false);
+        return (List<CustomFieldTemplate>) qb.getQuery(getEntityManager()).getResultList();
+    }
+
+    @SuppressWarnings("unchecked")
+    public List<CustomFieldTemplate> findByAccountLevel(AccountLevelEnum accountLevel) {
+        QueryBuilder qb = new QueryBuilder(CustomFieldTemplate.class, "c", null, getCurrentProvider());
+        qb.addCriterion("accountLevel", "=", accountLevel, true);
+        return (List<CustomFieldTemplate>) qb.getQuery(getEntityManager()).getResultList();
+    }
+
+    @SuppressWarnings("unchecked")
+    public List<CustomFieldTemplate> findByAccountLevel(AccountLevelEnum accountLevel, Provider provider) {
+        QueryBuilder qb = new QueryBuilder(CustomFieldTemplate.class, "c");
+        qb.addCriterion("c.accountLevel", "=", accountLevel, true);
+        qb.addCriterionEntity("c.provider", provider);
+        return (List<CustomFieldTemplate>) qb.getQuery(getEntityManager()).getResultList();
+    }
+
+    public CustomFieldTemplate findByCodeAndAccountLevel(String code, AccountLevelEnum accountLevel, Provider provider) {
+        QueryBuilder qb = new QueryBuilder(CustomFieldTemplate.class, "c", null, provider);
+        qb.addCriterion("code", "=", code, true);
+        qb.addCriterion("accountLevel", "=", accountLevel, true);
+
         try {
-            return (List<CustomFieldTemplate>) qb.getQuery(getEntityManager()).getResultList();
+            return (CustomFieldTemplate) qb.getQuery(getEntityManager()).getSingleResult();
         } catch (NoResultException e) {
             return null;
         }
     }
-
-	@SuppressWarnings("unchecked")
-	public List<CustomFieldTemplate> findByAccountLevel(AccountLevelEnum accountLevel) {
-		QueryBuilder qb = new QueryBuilder(CustomFieldTemplate.class, "c", null, getCurrentProvider());
-		qb.addCriterion("accountLevel", "=", accountLevel, true);
-		try {
-			return (List<CustomFieldTemplate>) qb.getQuery(getEntityManager()).getResultList();
-		} catch (NoResultException e) {
-			return null;
-		}
-	}
-
-	@SuppressWarnings("unchecked")
-	public List<CustomFieldTemplate> findByAccountLevel(AccountLevelEnum accountLevel, Provider provider) {
-		QueryBuilder qb = new QueryBuilder(CustomFieldTemplate.class, "c");
-		qb.addCriterion("c.accountLevel", "=", accountLevel, true);
-		qb.addCriterionEntity("c.provider", provider);
-		try {
-			return (List<CustomFieldTemplate>) qb.getQuery(getEntityManager()).getResultList();
-		} catch (NoResultException e) {
-			return null;
-		}
-	}
-
-	public CustomFieldTemplate findByCodeAndAccountLevel(String code, AccountLevelEnum accountLevel, Provider provider) {
-		QueryBuilder qb = new QueryBuilder(CustomFieldTemplate.class, "c", null, provider);
-		qb.addCriterion("code", "=", code, true);
-		qb.addCriterion("accountLevel", "=", accountLevel, true);
-
-		try {
-			return (CustomFieldTemplate) qb.getQuery(getEntityManager()).getSingleResult();
-		} catch (NoResultException e) {
-			return null;
-		}
-
-	}
-
 }

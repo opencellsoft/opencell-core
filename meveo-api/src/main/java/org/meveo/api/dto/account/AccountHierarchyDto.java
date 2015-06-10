@@ -95,8 +95,7 @@ public class AccountHierarchyDto implements Serializable {
 			Iterator<String> key = keys.iterator();
 			while (key.hasNext()) {
 				CustomFieldInstance cfi = customer.getCustomFields().get(key.next());
-				CustomFieldDto cf = new CustomFieldDto(cfi);
-				customFields.getCustomField().add(cf);
+				customFields.getCustomField().addAll(CustomFieldDto.toDTO(cfi));
 			}
 		}
 	}

@@ -1079,11 +1079,12 @@ public class EntityExportImportService implements Serializable {
             return entity;
 
         } catch (NoResultException | NonUniqueResultException e) {
-            log.debug("Entity {} not found matching attributes: {}. Entity will be inserted.", entityToSave.getClass().getName(), parameters);
+            log.debug("Entity {} not found matching attributes: {}, sql {}. Reason:{} Entity will be inserted.", entityToSave.getClass().getName(), parameters, sql, e.getClass()
+                .getName());
             return null;
 
         } catch (Exception e) {
-            log.error("Failed to search for entity {} with attributes: {} sql {}", entityToSave.getClass().getName(), parameters, sql, e);
+            log.error("Failed to search for entity {} with attributes: {}, sql {}", entityToSave.getClass().getName(), parameters, sql, e);
             throw new RuntimeException(e);
         }
     }
@@ -1396,7 +1397,6 @@ public class EntityExportImportService implements Serializable {
             }
         }
         List<IEntity> entities = query.getResultList();
-
         return entities;
     }
 

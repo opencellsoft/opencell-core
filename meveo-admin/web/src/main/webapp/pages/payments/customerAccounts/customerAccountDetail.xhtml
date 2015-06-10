@@ -85,7 +85,7 @@
 								formId="formCustomerAccount"
 								label="#{messages['customerAccount.form']}"
 								backingBean="#{customerAccountBean}" showFormButtons="false"
-								useCustomIdParam="true">
+								useCustomIdParam="true" addCustomFieldDialog="true">
 									<p:tabView id="childTab" activeIndex="#{customerAccountBean.activeTab}">
 										<p:ajax event="tabChange" listener="#{customerAccountBean.onTabChange}"/>
 										<p:tab id="tab0"
@@ -237,7 +237,7 @@
 										</p:tab>
 
 										<p:tab title="#{messages['customFieldTemplate.panel']}" id="tab2">
-											<hf:customFields />
+											<hf:customFields id="customFields" messagesId=":parentTab:formCustomerAccountPanel:formCustomerAccount:messages" periodDialogIdPrefix=":parentTab:formCustomerAccountPanel"/>
 										</p:tab>
 
 									</p:tabView>

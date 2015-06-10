@@ -17,7 +17,6 @@
 package org.meveo.admin.job;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import javax.ejb.Singleton;
@@ -25,7 +24,6 @@ import javax.ejb.Startup;
 import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.model.Auditable;
 import org.meveo.model.admin.User;
 import org.meveo.model.crm.AccountLevelEnum;
 import org.meveo.model.crm.CustomFieldTemplate;
@@ -55,18 +53,13 @@ public class InternalNotificationJob extends Job {
     }
     
     @Override
-    public List<CustomFieldTemplate> getCustomFields(User currentUser) {
+    public List<CustomFieldTemplate> getCustomFields() {
         List<CustomFieldTemplate> result = new ArrayList<CustomFieldTemplate>();
 
         CustomFieldTemplate filterCode = new CustomFieldTemplate();
         filterCode.setCode("InternalNotificationJob_filterCode");
         filterCode.setAccountLevel(AccountLevelEnum.TIMER);
         filterCode.setActive(true);
-        Auditable audit = new Auditable();
-        audit.setCreated(new Date());
-        audit.setCreator(currentUser);
-        filterCode.setAuditable(audit);
-        filterCode.setProvider(currentUser.getProvider());
         filterCode.setDescription("Filter (sql query)");
         filterCode.setFieldType(CustomFieldTypeEnum.STRING);
         filterCode.setValueRequired(true);
@@ -76,11 +69,6 @@ public class InternalNotificationJob extends Job {
         notificationCode.setCode("InternalNotificationJob_notificationCode");
         notificationCode.setAccountLevel(AccountLevelEnum.TIMER);
         notificationCode.setActive(true);
-        Auditable audit2 = new Auditable();
-        audit2.setCreated(new Date());
-        audit2.setCreator(currentUser);
-        notificationCode.setAuditable(audit2);
-        notificationCode.setProvider(currentUser.getProvider());
         notificationCode.setDescription("Notification code");
         notificationCode.setFieldType(CustomFieldTypeEnum.STRING);
         notificationCode.setValueRequired(true);

@@ -11,12 +11,8 @@ import javax.inject.Named;
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.action.CustomFieldEnabledBean;
-import org.meveo.admin.exception.BusinessException;
-import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.crm.AccountLevelEnum;
-import org.meveo.model.crm.CustomFieldInstance;
 import org.meveo.model.crm.CustomFieldTemplate;
-import org.meveo.model.crm.CustomFieldTypeEnum;
 import org.meveo.model.jobs.JobCategoryEnum;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
@@ -80,21 +76,20 @@ public class JobInstanceBean extends BaseBean<JobInstance> {
 
     public String executeTimer() {
         try {
-        	jobInstanceService.manualExecute(entity);
+            jobInstanceService.manualExecute(entity);
             messages.info(new BundleKey("messages", "info.entity.executed"), entity.getJobTemplate());
         } catch (Exception e) {
             messages.error(new BundleKey("messages", "error.execution"));
             return null;
         }
 
-        return  getListViewName();
+        return getListViewName();
     }
 
     protected String getListViewName() {
         return "jobInstances";
     }
 
-    
     /**
      * Get JobInstance name from a jobId
      * 
@@ -103,63 +98,41 @@ public class JobInstanceBean extends BaseBean<JobInstance> {
      */
     public String translateToTimerName(Long jobId) {
         if (jobId != null) {
-        	JobInstance jobInstance = jobInstanceService.findById(jobId);
+            JobInstance jobInstance = jobInstanceService.findById(jobId);
             if (jobInstance != null) {
                 return jobInstance.getCode();
             }
         }
         return null;
     }
-    
-    public void initCustomFields() {
-        customFieldTemplates.clear();
-        if (entity.getJobTemplate() != null) {
-            Job job = jobInstanceService.getJobByName(entity.getJobTemplate());
-            if (job.getCustomFields(getCurrentUser()) != null) {
-                customFieldTemplates = customFieldTemplateService.findByJobName(entity.getJobTemplate());
 
-                if (customFieldTemplates != null && customFieldTemplates.size() != job.getCustomFields(getCurrentUser()).size()) {
-                    for (CustomFieldTemplate cf : job.getCustomFields(getCurrentUser())) {
-                        if (!customFieldTemplates.contains(cf)) {
-                            try {
-                                customFieldTemplateService.create(cf);
-                                customFieldTemplates.add(cf);
-                            } catch (BusinessException e) {
-                                log.error("Failed  to init custom fields",e);
-                            }
-                        }
-                    }
-                }
-                if (customFieldTemplates != null && customFieldTemplates.size() > 0) {
-                    for (CustomFieldTemplate cf : customFieldTemplates) {
-                        CustomFieldInstance cfi = ((ICustomFieldEntity) entity).getCustomFields().get(cf.getCode());
-                        if (cfi != null) {
-                            if (cf.getFieldType() == CustomFieldTypeEnum.DATE) {
-                                cf.setDateValue(cfi.getDateValue());
-                            } else if (cf.getFieldType() == CustomFieldTypeEnum.DOUBLE) {
-                                cf.setDoubleValue(cfi.getDoubleValue());
-                            } else if (cf.getFieldType() == CustomFieldTypeEnum.LONG) {
-                                cf.setLongValue(cfi.getLongValue());
-                            } else if (cf.getFieldType() == CustomFieldTypeEnum.STRING || cf.getFieldType() == CustomFieldTypeEnum.LIST) {
-                                cf.setStringValue(cfi.getStringValue());
-                            }
-                            // Clear existing transient values
-                        } else {
-                            if (cf.getFieldType() == CustomFieldTypeEnum.DATE) {
-                                cf.setDateValue(null);
-                            } else if (cf.getFieldType() == CustomFieldTypeEnum.DOUBLE) {
-                                cf.setDoubleValue(null);
-                            } else if (cf.getFieldType() == CustomFieldTypeEnum.LONG) {
-                                cf.setLongValue(null);
-                            } else if (cf.getFieldType() == CustomFieldTypeEnum.STRING || cf.getFieldType() == CustomFieldTypeEnum.LIST) {
-                                cf.setStringValue(null);
-                            }
-                        }
+    /**
+     * Get a list of templates matching job template name. Create new ones if job template defines new ones in code.
+     * 
+     * @return A list of custom field templates
+     */
+    @Override
+    protected List<CustomFieldTemplate> getApplicateCustomFieldTemplates() {
 
-                    }
+        if (entity.getJobTemplate() == null) {
+            return null;
+        }
+        // Get templates matching a job template name
+        List<CustomFieldTemplate> jobTemplates = customFieldTemplateService.findByJobName(entity.getJobTemplate());
+
+        // In case when job template has new custom fields defined in code, create them.
+        Job job = jobInstanceService.getJobByName(entity.getJobTemplate());
+        List<CustomFieldTemplate> jobCustomFields = job.getCustomFields();
+
+        if (jobCustomFields != null && (jobTemplates.size() != jobCustomFields.size())) {
+            for (CustomFieldTemplate cf : jobCustomFields) {
+                if (!jobTemplates.contains(cf)) {
+                    customFieldTemplateService.create(cf, getCurrentUser(), entity.getProvider());
+                    jobTemplates.add(cf);
                 }
             }
         }
+        return jobTemplates;
     }
 
     /**

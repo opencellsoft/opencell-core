@@ -1,7 +1,6 @@
 package org.meveo.admin.job.importexport;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
@@ -13,7 +12,6 @@ import javax.inject.Inject;
 import org.meveo.admin.async.ImportAccountsAsync;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.ResourceBundle;
-import org.meveo.model.Auditable;
 import org.meveo.model.admin.User;
 import org.meveo.model.crm.AccountLevelEnum;
 import org.meveo.model.crm.CustomFieldTemplate;
@@ -87,21 +85,16 @@ public class ImportAccountsJob extends Job {
     }
 
     @Override
-    public List<CustomFieldTemplate> getCustomFields(User currentUser) {
+    public List<CustomFieldTemplate> getCustomFields() {
         List<CustomFieldTemplate> result = new ArrayList<CustomFieldTemplate>();
 
         CustomFieldTemplate customFieldNbRuns = new CustomFieldTemplate();
         customFieldNbRuns.setCode("ImportAccountsJob_nbRuns");
         customFieldNbRuns.setAccountLevel(AccountLevelEnum.TIMER);
         customFieldNbRuns.setActive(true);
-        Auditable audit = new Auditable();
-        audit.setCreated(new Date());
-        audit.setCreator(currentUser);
-        customFieldNbRuns.setAuditable(audit);
-        customFieldNbRuns.setProvider(currentUser.getProvider());
         customFieldNbRuns.setDescription(resourceMessages.getString("jobExecution.nbRuns"));
         customFieldNbRuns.setFieldType(CustomFieldTypeEnum.LONG);
-        customFieldNbRuns.setLongValue(new Long(1));
+        customFieldNbRuns.setDefaultValue("1");
         customFieldNbRuns.setValueRequired(false);
         result.add(customFieldNbRuns);
 
@@ -109,14 +102,9 @@ public class ImportAccountsJob extends Job {
         customFieldNbWaiting.setCode("ImportAccountsJob_waitingMillis");
         customFieldNbWaiting.setAccountLevel(AccountLevelEnum.TIMER);
         customFieldNbWaiting.setActive(true);
-        Auditable audit2 = new Auditable();
-        audit2.setCreated(new Date());
-        audit2.setCreator(currentUser);
-        customFieldNbWaiting.setAuditable(audit2);
-        customFieldNbWaiting.setProvider(currentUser.getProvider());
         customFieldNbWaiting.setDescription(resourceMessages.getString("jobExecution.waitingMillis"));
         customFieldNbWaiting.setFieldType(CustomFieldTypeEnum.LONG);
-        customFieldNbWaiting.setLongValue(new Long(0));
+        customFieldNbWaiting.setDefaultValue("0");
         customFieldNbWaiting.setValueRequired(false);
         result.add(customFieldNbWaiting);
 

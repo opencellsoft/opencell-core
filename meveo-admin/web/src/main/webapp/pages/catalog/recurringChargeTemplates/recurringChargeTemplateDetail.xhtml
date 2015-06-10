@@ -37,7 +37,7 @@
 
 		<hf:formPanel id="formPanel" formId="reccuringChargeId"
 			label="#{messages['recurringChargeTemplate.chargeTemplatePanel']}"
-			backingBean="#{recurringChargeTemplateBean}" showEnableDisableButton="true">
+			backingBean="#{recurringChargeTemplateBean}" showEnableDisableButton="true" addCustomFieldDialog="true">
 
 			<p:tabView id="tabView">
 
@@ -96,7 +96,7 @@
 				</p:tab>
 
 				<p:tab title="#{messages['customFieldTemplate.panel']}">
-					<hf:customFields />
+					<hf:customFields id="customFields" messagesId=":formPanel:reccuringChargeId:messages"/>
 				</p:tab>
 
 			</p:tabView>
