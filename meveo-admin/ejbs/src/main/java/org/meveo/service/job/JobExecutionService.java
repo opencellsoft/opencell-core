@@ -65,13 +65,10 @@ public class JobExecutionService extends PersistenceService<JobExecutionResultIm
 				log.info("PersistResult entity.isDone()=" + entity.isDone());
 				if (!entity.isDone()) {
 					executeJob(job.getClass().getSimpleName(), jobInstance, currentUser, jobCategory);
-				} else if (jobInstance.getFollowingJobs() != null && ! jobInstance.getFollowingJobs().isEmpty()) {
+				} else if (jobInstance.getFollowingJob() != null) {
 					try {
-						//TODO evaluate EL and fire if true
-						///TimerEntity followingTimerEntity = timerEntityService.findById(info.getFollowingTimerId());
-
-						//log.info("execute following timer " + followingTimerEntity.getJobName());
-						//executeJob(followingTimerEntity.getJobName(), followingTimerEntity, currentUser, followingTimerEntity.getJobCategoryEnum());
+							executeJob(jobInstance.getFollowingJob().getJobTemplate(), jobInstance.getFollowingJob(), currentUser, jobInstance.getFollowingJob().getJobCategoryEnum());
+						
 					} catch (Exception e) {
 						log.warn("PersistResult cannot excute the following jobs.");
 					}
@@ -79,14 +76,13 @@ public class JobExecutionService extends PersistenceService<JobExecutionResultIm
 			} else {
 				log.info(job.getClass().getName() + ": nothing to do");
 
-				if (jobInstance.getFollowingJobs() != null && ! jobInstance.getFollowingJobs().isEmpty()) {
+				if (jobInstance.getFollowingJob() != null ) {
 					try {
-						//TODO evaluate EL and fire if true
-						//TimerEntity followingTimerEntity = timerEntityService.findById(info.getFollowingTimerId());
-						//executeJob(followingTimerEntity.getJobName(), followingTimerEntity, currentUser, followingTimerEntity.getJobCategoryEnum());
-					} catch (Exception e) {
-						log.warn("PersistResult cannot excute the following jobs.");
-					}
+						executeJob(jobInstance.getFollowingJob().getJobTemplate(), jobInstance.getFollowingJob(), currentUser, jobInstance.getFollowingJob().getJobCategoryEnum());
+					
+				} catch (Exception e) {
+					log.warn("PersistResult cannot excute the following jobs.");
+				}
 				}
 			}
 		} catch (Exception e) {// FIXME:BusinessException e) {

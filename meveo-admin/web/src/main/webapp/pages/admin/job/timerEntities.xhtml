@@ -31,14 +31,13 @@
 			backingBean="#{timerEntityListBean}" sortBy="code">
 			<hftl:column label="#{messages['tax.code']}" field="code" />
 			<hftl:column label="#{messages['tax.description']}" field="description" />
+			<hftl:column label="#{messages['timer.second']}" field="second"  />
+			<hftl:column label="#{messages['timer.minute']}" field="minute"  />
             <hftl:column label="#{messages['timer.hour']}" field="hour" />
-            <hftl:column label="#{messages['timer.minute']}" field="minute"  />
-            <hftl:column label="#{messages['timer.second']}" field="second"  />
-            <hftl:column label="#{messages['timer.year']}" field="year"  />
-            <hftl:column label="#{messages['timer.month']}" field="month" />
             <hftl:column label="#{messages['timer.dayOfMonth']}" field="dayOfMonth"  />
+            <hftl:column label="#{messages['timer.month']}" field="month" />
             <hftl:column label="#{messages['timer.dayOfWeek']}" field="dayOfWeek"  />
-
+            <hftl:column label="#{messages['timer.year']}" field="year"  />
 			<hftl:actionsColumn
 				permission="#{identity.hasPermission('administration','administrationManagement')}" />
 		</hftl:dataList>

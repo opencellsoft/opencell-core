@@ -62,12 +62,6 @@ public class CurrencyBean extends BaseBean<Currency> {
 	@Override
 	public Currency initEntity() {
 		Currency currency = super.initEntity();
-
-		Auditable auditable = new Auditable();
-		auditable.setCreated(new Date());
-		auditable.setCreator(getCurrentUser());
-		currency.setAuditable(auditable);
-
 		return currency;
 	}
 

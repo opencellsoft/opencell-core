@@ -739,14 +739,18 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 		Date applicationDate = chargeInstance.getNextChargeDate();
 
 		if (reimbursement) {
-			applicationDate = recurringChargeTemplate.getCalendar().nextCalendarDate(chargeInstance.getTerminationDate());
+			Calendar cal = recurringChargeTemplate.getCalendar();
+			cal.setInitDate(chargeInstance.getServiceInstance().getSubscriptionDate());
+			applicationDate = cal.nextCalendarDate(chargeInstance.getTerminationDate());
 		}
 
 		if (applicationDate == null) {
 			throw new IncorrectChargeInstanceException("nextChargeDate is null.");
 		}
 
-		Date nextApplicationDate = reimbursement ? chargeInstance.getNextChargeDate() : recurringChargeTemplate.getCalendar().nextCalendarDate(applicationDate);
+		Calendar cal = recurringChargeTemplate.getCalendar();
+		cal.setInitDate(chargeInstance.getServiceInstance().getSubscriptionDate());
+		Date nextApplicationDate = reimbursement ? chargeInstance.getNextChargeDate() : cal.nextCalendarDate(applicationDate);
 
 		log.debug("reimbursement={}, applicationDate={}", reimbursement, applicationDate);
 
@@ -779,9 +783,11 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 			throw new IncorrectChargeTemplateException("no tax exists for invoiceSubcategoryCountry id=" + invoiceSubcategoryCountry.getId());
 		}
 
+		log.debug("next step for {}, applicationDate={}, nextApplicationDate={}, nextApplicationDate={}", chargeInstance.getId(), applicationDate, nextApplicationDate,
+				nextApplicationDate);
 		while (applicationDate.getTime() < nextApplicationDate.getTime()) {
-			Date nextapplicationDate = recurringChargeTemplate.getCalendar().nextCalendarDate(applicationDate);
-			log.debug("next step for {}, applicationDate={}, nextApplicationDate={},nextApplicationDate={}", chargeInstance.getId(), applicationDate, nextapplicationDate,
+			Date nextapplicationDate = cal.nextCalendarDate(applicationDate);
+			log.debug("next step for {}, applicationDate={}, nextApplicationDate={}, nextApplicationDate={}", chargeInstance.getId(), applicationDate, nextapplicationDate,
 					nextApplicationDate);
 
 			String param2 = (reimbursement ? str_tooPerceived + " " : " ") + sdf.format(applicationDate) + (reimbursement ? " / " : " au ")
@@ -928,7 +934,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 			applicationDate = nextapplicationDate;
 		}
 
-		Date nextapplicationDate = recurringChargeTemplate.getCalendar().nextCalendarDate(applicationDate);
+		Date nextapplicationDate = cal.nextCalendarDate(applicationDate);
 		chargeInstance.setNextChargeDate(nextapplicationDate);
 		chargeInstance.setChargeDate(applicationDate);
 	}
@@ -976,8 +982,11 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 		if (tax == null) {
 			throw new IncorrectChargeTemplateException("tax is null for invoiceSubcategoryCountry id=" + invoiceSubcategoryCountry.getId());
 		}
+		
+		Calendar cal = recurringChargeTemplate.getCalendar();
+		cal.setInitDate(chargeInstance.getServiceInstance().getSubscriptionDate());
 		while (applicationDate.getTime() < endAgreementDate.getTime()) {
-			Date nextapplicationDate = recurringChargeTemplate.getCalendar().nextCalendarDate(applicationDate);
+			Date nextapplicationDate = cal.nextCalendarDate(applicationDate);
 			log.debug("agreement next step for {}, applicationDate={}, nextApplicationDate={}", recurringChargeTemplate.getCode(), applicationDate, nextapplicationDate);
 			Double prorataRatio = null;
 			ApplicationTypeEnum type = ApplicationTypeEnum.RECURRENT;
