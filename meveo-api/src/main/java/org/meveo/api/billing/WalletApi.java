@@ -32,6 +32,7 @@ import org.meveo.model.billing.UserAccount;
 import org.meveo.model.billing.WalletInstance;
 import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.billing.WalletOperationStatusEnum;
+import org.meveo.model.catalog.Calendar;
 import org.meveo.model.catalog.WalletTemplate;
 import org.meveo.model.crm.Provider;
 import org.meveo.service.admin.impl.CurrencyService;
@@ -423,7 +424,9 @@ public class WalletApi extends BaseApi {
 			walletOperation.setSubscriptionDate(postData.getSubscriptionDate());
 			walletOperation.setOperationDate(postData.getOperationDate() == null ? new Date() : postData.getOperationDate());
 			if (chargeInstance.getInvoicingCalendar() != null) {
-				walletOperation.setInvoicingDate(chargeInstance.getInvoicingCalendar().nextCalendarDate(walletOperation.getOperationDate()));
+				Calendar cal = chargeInstance.getInvoicingCalendar();
+				cal.setInitDate(postData.getSubscriptionDate());
+				walletOperation.setInvoicingDate(cal.nextCalendarDate(walletOperation.getOperationDate()));
 			}
 
 			walletOperationService.create(walletOperation, currentUser, provider);
