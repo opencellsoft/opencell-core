@@ -70,9 +70,10 @@ public class PricePlanMatrixBean extends BaseBean<PricePlanMatrix> {
 
 	public PricePlanMatrix initEntity() {
 		PricePlanMatrix obj = super.initEntity();
-		obj.setMinSubscriptionAgeInMonth(0L);
-		obj.setMaxSubscriptionAgeInMonth(9999L);
-
+		if(obj.isTransient()){
+			obj.setMinSubscriptionAgeInMonth(0L);
+			obj.setMaxSubscriptionAgeInMonth(9999L);
+		}
 		return obj;
 	}
 
