@@ -5,6 +5,7 @@
 	xmlns:h="http://java.sun.com/jsf/html" xmlns:hftl="http://hftl.org"
 	xmlns:hf="http://java.sun.com/jsf/composite/tags"
 	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:p="http://primefaces.org/ui"
 	template="/layout/template.xhtml">
 
 	<ui:define name="metadata">
@@ -19,6 +20,55 @@
 	</ui:define>
 
 	<ui:define name="body">
+		<p:panel>
+			<h:form id="crumbmenuForm">
+				<p:breadCrumb homeDisplay="text" id="crumbmenu">
+					<p:menuitem value="#{messages['menu.admin']}" disabled="true" />
+					<p:menuitem outcome="catMessagess"
+						value="#{messages['menu.catMessages']}" />
+				</p:breadCrumb>
+			</h:form>
+		</p:panel>
+		<hftl:entityPopup id="offerPopup"
+			header="#{messages['offer.popup.header']}"
+			backingBean="#{offerTemplateBean}"
+			eventBackingBean="#{subscriptionBean}"
+			searchField1Label="#{messages['offerTemplate.code']}"
+			searchField1="code"
+			searchField2Label="#{messages['offerTemplate.description']}"
+			searchField2="description"
+			column1Label="#{messages['offerTemplate.code']}" column1="code"
+			column2Label="#{messages['offerTemplate.description']}"
+			column2="description" selection="#{subscriptionBean.entity.offer}"
+			lazy="false" dataModel="#{offerTemplateBean.listActive}"
+			updateField=":subscriptionTab:subscriptionFormPanel:formId:offerSelectId">
+		</hftl:entityPopup>
+		
+		<hf:formPanel id="formPanel" formId="catMessageFormId"
+				label="#{messages['catMessages.title']}"
+				backingBean="#{catMessagesBean}" >
+				<p:fieldset styleClass="clearLeft" >
+					<hf:formDecorateField fieldId="catMessagesType_text" label="#{messages['catMessages.objectType']}">
+						<p:selectOneMenu id="catMessagesType_text" value="#{catMessagesBean.entity.messageCode}" required="true">
+							<f:selectItem itemLabel=""/>
+							<f:selectItems value="#{catMessagesBean.objectTypes.keySet().toArray()}" var="t" itemLabel="#{catMessagesBean.objectTypes.get(t)}" itemValue="#{t}"/>
+						</p:selectOneMenu>
+					</hf:formDecorateField>
+					<h:panelGroup id="entityPanel" layout="block">
+						
+					</h:panelGroup>
+					<hf:formDecorateField fieldId="trLanguageCode_text" label="#{messages['catMessages.languageCode']}">
+						<p:selectOneMenu id="trLanguageCode_text" value="#{catMessagesBean.entity.languageCode}" required="true">
+							<f:selectItem itemLabel=""/>
+							<f:selectItems value="#{tradingLanguageBean.listAll}" var="l" itemLabel="#{l.languageCode}" itemDescription="#{l.prDescription}" itemValue="#{l.languageCode}"/>
+						</p:selectOneMenu>
+					</hf:formDecorateField>
+					<hf:formField field="description" size="100" label="#{messages['catMessages.descriptionTranslation']}" required="true" newLine="true"/>
+					
+				</p:fieldset>
+					
+						
+		</hf:formPanel>
 	</ui:define>
 
 </ui:composition>

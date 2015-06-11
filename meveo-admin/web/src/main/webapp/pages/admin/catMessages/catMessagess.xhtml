@@ -21,7 +21,7 @@
 	<ui:define name="body">
 
 		<hf:searchPanel id="searchPanel" backingBean="#{catMessagesListBean}" columns="3"
-			label="#{messages['catMessages.search']}" renderNewButton="false">
+			label="#{messages['catMessages.search']}" renderNewButton="true">
 			<hf:searchField label="#{messages['catMessages.objectType']}"
 				field="messageCode" listValues="#{catMessagesListBean.objectTypes}" />
 			<hf:searchField label="#{messages['catMessages.languageCode']}"
