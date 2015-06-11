@@ -219,10 +219,7 @@
 
 	<!-- #855 begin -->
 
-	<changeSet author="anasseh" id="1433614968312-1">
-		<sqlFile endDelimiter="" path="migrationJobs_beforeLiquibase.sql"
-			relativeToChangelogFile="true" splitStatements="false" />
-	</changeSet>
+
 
 
 	<changeSet author="anasseh (generated)" id="1433614968312-2">
@@ -440,10 +437,6 @@
 		<dropColumn columnName="userid" tableName="meveo_timer" />
 	</changeSet>
 
-	<changeSet author="anasseh" id="1433614968312-63">
-		<sqlFile endDelimiter="" path="migrationJobs_afterLiquibase.sql"
-			relativeToChangelogFile="true" splitStatements="false" />
-	</changeSet>
 
 
 	<changeSet author="anasseh (generated)" id="855_2015-06-09">
