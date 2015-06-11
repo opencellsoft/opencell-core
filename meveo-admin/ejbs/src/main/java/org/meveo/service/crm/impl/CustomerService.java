@@ -29,13 +29,13 @@ import org.meveo.model.crm.Customer;
 import org.meveo.model.crm.CustomerBrand;
 import org.meveo.model.crm.CustomerCategory;
 import org.meveo.model.crm.Provider;
-import org.meveo.service.base.PersistenceService;
+import org.meveo.service.base.AccountService;
 
 /**
  * Customer service implementation.
  */
 @Stateless
-public class CustomerService extends PersistenceService<Customer> {
+public class CustomerService extends AccountService<Customer> {
 
 	public Customer findByCode(String code, Provider provider) {
 		Query query = getEntityManager()

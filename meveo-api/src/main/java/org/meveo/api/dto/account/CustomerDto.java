@@ -7,7 +7,6 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
-import org.meveo.model.AccountEntity;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.payments.CustomerAccount;
 
@@ -33,15 +32,19 @@ public class CustomerDto extends AccountDto {
 	private Date mandateDate;
 
 	private ContactInformationDto contactInformation = new ContactInformationDto();
-	private CustomerAccountsDto customerAccounts;
+	private CustomerAccountsDto customerAccounts = new CustomerAccountsDto();
 
 	public CustomerDto() {
 		super();
 	}
 
 	public CustomerDto(Customer e) {
-		super((AccountEntity) e);
+		initFromEntity(e);
+	}
 
+	public void initFromEntity(Customer e) {
+		super.initFromEntity(e);
+		
 		if (e.getCustomerCategory() != null) {
 			customerCategory = e.getCustomerCategory().getCode();
 		}
@@ -57,14 +60,16 @@ public class CustomerDto extends AccountDto {
 		if (e.getContactInformation() != null) {
 			contactInformation = new ContactInformationDto(e.getContactInformation());
 		}
-		
-		if (e.getCustomerAccounts() != null) {
+
+		if (!isLoaded() && e.getCustomerAccounts() != null) {
 			customerAccounts = new CustomerAccountsDto();
 
 			for (CustomerAccount ca : e.getCustomerAccounts()) {
 				customerAccounts.getCustomerAccount().add(new CustomerAccountDto(ca));
 			}
 		}
+		
+		loaded = true;
 	}
 
 	public String getCustomerCategory() {
@@ -93,9 +98,8 @@ public class CustomerDto extends AccountDto {
 
 	@Override
 	public String toString() {
-		return "CustomerDto [customerCategory=" + customerCategory + ", customerBrand=" + customerBrand + ", seller="
-				+ seller + ", mandateIdentification=" + mandateIdentification + ", mandateDate=" + mandateDate
-				+ ", contactInformation=" + contactInformation + ", customerAccounts=" + customerAccounts + "]";
+		return "CustomerDto [customerCategory=" + customerCategory + ", customerBrand=" + customerBrand + ", seller=" + seller + ", mandateIdentification=" + mandateIdentification
+				+ ", mandateDate=" + mandateDate + ", contactInformation=" + contactInformation + ", customerAccounts=" + customerAccounts + "]";
 	}
 
 	public CustomerAccountsDto getCustomerAccounts() {
