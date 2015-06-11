@@ -29,42 +29,113 @@
 				</p:breadCrumb>
 			</h:form>
 		</p:panel>
-		<hftl:entityPopup id="offerPopup"
-			header="#{messages['offer.popup.header']}"
-			backingBean="#{offerTemplateBean}"
-			eventBackingBean="#{subscriptionBean}"
-			searchField1Label="#{messages['offerTemplate.code']}"
+		<hftl:entityPopup id="Title_"
+			header="#{messages['title.search']}"
+			backingBean="#{titleBean}"
+			eventBackingBean="#{catMessagesBean}"
+			searchField1Label="#{messages['catMessages.code']}"
 			searchField1="code"
-			searchField2Label="#{messages['offerTemplate.description']}"
+			searchField2Label="#{messages['catMessages.description']}"
 			searchField2="description"
-			column1Label="#{messages['offerTemplate.code']}" column1="code"
-			column2Label="#{messages['offerTemplate.description']}"
-			column2="description" selection="#{subscriptionBean.entity.offer}"
-			lazy="false" dataModel="#{offerTemplateBean.listActive}"
-			updateField=":subscriptionTab:subscriptionFormPanel:formId:offerSelectId">
+			column1Label="#{messages['catMessages.code']}" column1="code"
+			column2Label="#{messages['catMessages.description']}"
+			column2="description" selection="#{catMessagesBean.businessEntity}"
+			updateField=":formPanel:catMessageFormId">
 		</hftl:entityPopup>
-		
+		<hftl:entityPopup id="Tax_"
+			header="#{messages['tax.search']}"
+			backingBean="#{taxBean}"
+			eventBackingBean="#{catMessagesBean}"
+			searchField1Label="#{messages['catMessages.code']}"
+			searchField1="code"
+			searchField2Label="#{messages['catMessages.description']}"
+			searchField2="description"
+			column1Label="#{messages['catMessages.code']}" column1="code"
+			column2Label="#{messages['catMessages.description']}"
+			column2="description" selection="#{catMessagesBean.businessEntity}"
+			updateField=":formPanel:catMessageFormId">
+		</hftl:entityPopup>
+		<hftl:entityPopup id="InvoiceCategory_"
+			header="#{messages['invoiceCategory.search']}"
+			backingBean="#{invoiceCategoryBean}"
+			eventBackingBean="#{catMessagesBean}"
+			searchField1Label="#{messages['catMessages.code']}"
+			searchField1="code"
+			searchField2Label="#{messages['catMessages.description']}"
+			searchField2="description"
+			column1Label="#{messages['catMessages.code']}" column1="code"
+			column2Label="#{messages['catMessages.description']}"
+			column2="description" selection="#{catMessagesBean.businessEntity}"
+			updateField=":formPanel:catMessageFormId">
+		</hftl:entityPopup>
+		<hftl:entityPopup id="InvoiceSubCategory_"
+			header="#{messages['invoiceSubCategory.search']}"
+			backingBean="#{invoiceSubCategoryBean}"
+			eventBackingBean="#{catMessagesBean}"
+			searchField1Label="#{messages['catMessages.code']}"
+			searchField1="code"
+			searchField2Label="#{messages['catMessages.description']}"
+			searchField2="description"
+			column1Label="#{messages['catMessages.code']}" column1="code"
+			column2Label="#{messages['catMessages.description']}"
+			column2="description" selection="#{catMessagesBean.businessEntity}"
+			updateField=":formPanel:catMessageFormId">
+		</hftl:entityPopup>
+		<hftl:entityPopup id="ChargeTemplate_"
+			header="#{messages['chargeTemplate.search']}"
+			backingBean="#{chargeTemplateBean}"
+			eventBackingBean="#{catMessagesBean}"
+			searchField1Label="#{messages['catMessages.code']}"
+			searchField1="code"
+			searchField2Label="#{messages['catMessages.description']}"
+			searchField2="description"
+			column1Label="#{messages['catMessages.code']}" column1="code"
+			column2Label="#{messages['catMessages.description']}"
+			column2="description" selection="#{catMessagesBean.businessEntity}"
+			updateField=":formPanel:catMessageFormId">
+		</hftl:entityPopup>
+		<hftl:entityPopup id="PricePlanMatrix_"
+			header="#{messages['pricePlanMatrix.search']}"
+			backingBean="#{pricePlanMatrixBean}"
+			eventBackingBean="#{catMessagesBean}"
+			searchField1Label="#{messages['catMessages.code']}"
+			searchField1="code"
+			searchField2Label="#{messages['catMessages.description']}"
+			searchField2="description"
+			column1Label="#{messages['catMessages.code']}" column1="code"
+			column2Label="#{messages['catMessages.description']}"
+			column2="description" selection="#{catMessagesBean.businessEntity}"
+			updateField=":formPanel:catMessageFormId">
+		</hftl:entityPopup>
 		<hf:formPanel id="formPanel" formId="catMessageFormId"
-				label="#{messages['catMessages.title']}"
+				label="#{messages['catMessages.descriptionTranslation']}"
 				backingBean="#{catMessagesBean}" >
 				<p:fieldset styleClass="clearLeft" >
 					<hf:formDecorateField fieldId="catMessagesType_text" label="#{messages['catMessages.objectType']}">
-						<p:selectOneMenu id="catMessagesType_text" value="#{catMessagesBean.entity.messageCode}" required="true">
+						<p:selectOneMenu id="catMessagesType_text" value="#{catMessagesBean.objectType}" required="true" valueChangeListener="#{catMessagesBean.updateBusinessEntity()}">
 							<f:selectItem itemLabel=""/>
 							<f:selectItems value="#{catMessagesBean.objectTypes.keySet().toArray()}" var="t" itemLabel="#{catMessagesBean.objectTypes.get(t)}" itemValue="#{t}"/>
+							<p:ajax update=":formPanel:catMessageFormId:entityPanel" event="change" />
 						</p:selectOneMenu>
 					</hf:formDecorateField>
-					<h:panelGroup id="entityPanel" layout="block">
-						
-					</h:panelGroup>
-					<hf:formDecorateField fieldId="trLanguageCode_text" label="#{messages['catMessages.languageCode']}">
+					<hf:formDecorateField fieldId="trLanguageCode_text" label="#{messages['catMessages.languageCode']}" >
 						<p:selectOneMenu id="trLanguageCode_text" value="#{catMessagesBean.entity.languageCode}" required="true">
 							<f:selectItem itemLabel=""/>
 							<f:selectItems value="#{tradingLanguageBean.listAll}" var="l" itemLabel="#{l.languageCode}" itemDescription="#{l.prDescription}" itemValue="#{l.languageCode}"/>
+							<p:ajax update=":formPanel:catMessageFormId:entityPanel" event="change" />
 						</p:selectOneMenu>
 					</hf:formDecorateField>
-					<hf:formField field="description" size="100" label="#{messages['catMessages.descriptionTranslation']}" required="true" newLine="true"/>
-					
+					<h:panelGroup id="entityPanel" layout="block">
+						<hf:formDecorateField id="businessField" fieldId="businessEntity_code" label="#{messages['catMessages.code']}" rendered="#{not empty catMessagesBean.objectType and not empty catMessagesBean.entity.languageCode}">
+							<p:inputText id="businessEntity_code" value="#{catMessagesBean.businessEntity.code}" required="true" disabled="true" />
+							<p:commandButton id="selectLink" immediate="true" onclick="PF('dlg_#{catMessagesBean.popupId}').show()" icon="ui-icon-search" />
+            				<p:tooltip for="selectLink" value="#{messages['commons.search']}" />
+						</hf:formDecorateField>
+					</h:panelGroup>
+					<hf:formDecorateField id="basicdescriptionDecorate" fieldId="basicdescriptionField" label="#{messages['catMessages.basicDescription']}" newLine="true">
+						<p:inputText id="basicdescriptionField" value="#{catMessagesBean.businessEntity.description}" size="100" disabled="true"/>
+					</hf:formDecorateField>
+					<hf:formField id="trandescriptionField" field="description" size="100" maxlength="100" label="#{messages['catMessages.descriptionTranslation']}" required="true" newLine="true"/>
 				</p:fieldset>
 					
 						

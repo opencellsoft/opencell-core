@@ -32,31 +32,31 @@
 		<hftl:dataList label="#{messages['catMessages.title']}"
 			editable="true" backingBean="#{catMessagesListBean}"
 			rowsPerPage="10,20,50,100" exportButton="false" exportToCsv="true" importCsv="true">
-			<p:column exportable="true">
+			<p:column exportable="true" width="15%">
 				<f:facet name="header">
 					<h:outputText value="#{messages['catMessages.objectType']}" />
 				</f:facet>
 				<h:outputText value="#{entity.objectType}" />
 			</p:column>
-			<p:column exportable="false">
+			<p:column exportable="false" width="15%">
 				<f:facet name="header">
 					<h:outputText value="#{messages['catMessages.messageCode']}" />
 				</f:facet>
 				<h:outputText value="#{backingBean.getObject(entity).code}" />
 			</p:column>
-			<p:column exportable="false">
+			<p:column exportable="false" width="30%">
 				<f:facet name="header">
 					<h:outputText value="#{messages['catMessages.basicDescription']}" />
 				</f:facet>
 				<h:outputText value="#{backingBean.getObject(entity).description}" />
 			</p:column>
-			<p:column exportable="true" sortBy="languageCode">
+			<p:column exportable="true" sortBy="languageCode" width="10%">
 				<f:facet name="header">
 					<h:outputText value="#{messages['catMessages.languageCode']}" />
 				</f:facet>
 				<h:outputText value="#{entity.languageCode}" />
 			</p:column>
-			<p:column exportable="true">
+			<p:column exportable="true" width="30%">
 				<f:facet name="header">
 					<h:outputText
 						value="#{messages['catMessages.descriptionTranslation']}" />

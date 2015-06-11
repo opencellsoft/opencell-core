@@ -53,7 +53,6 @@ import org.meveo.service.catalog.impl.TaxService;
 import org.meveo.service.catalog.impl.TitleService;
 import org.meveo.service.catalog.impl.UsageChargeTemplateService;
 import org.omnifaces.cdi.ViewScoped;
-import org.primefaces.context.RequestContext;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.UploadedFile;
 
@@ -93,6 +92,11 @@ public class CatMessagesBean extends BaseBean<CatMessages> {
 	private RecurringChargeTemplateService recurringChargeTemplateService;
 	@Inject
 	private PricePlanMatrixService pricePlanMatrixService;
+	
+	private BusinessEntity businessEntity;
+	private String popupId;
+	private final String MESSAGE_CODE="%s_%d";
+	private String objectType;
 	
 	CsvReader csvReader = null;
 	private UploadedFile file;
@@ -272,5 +276,73 @@ public class CatMessagesBean extends BaseBean<CatMessages> {
         }
 
     }
+
+	public BusinessEntity getBusinessEntity() {
+		return businessEntity;
+	}
+
+	public void setBusinessEntity(BusinessEntity businessEntity) throws BusinessException{
+		this.businessEntity = businessEntity;
+		if(businessEntity!=null){
+			CatMessages temp=catMessagesService.findByCodeAndLanguage(String.format(MESSAGE_CODE, getEntityClass().getSimpleName(),businessEntity.getId()), entity.getLanguageCode(), getCurrentProvider());
+			if(temp!=null){
+				this.setObjectId(temp.getId());
+				initEntity();
+			}
+		}
+	}
+
+	public String getPopupId() {
+		if(this.getObjectType()!=null&&this.getObjectType()!=""){
+			String type=getObjectType();
+			popupId=type.replaceAll("\\*", "");
+		}
+		return popupId;
+	}
+
+	 public void updateBusinessEntity(){
+		 this.businessEntity=null;
+	 }
+
+	public String getObjectType() {
+		return objectType;
+	}
+
+	public void setObjectType(String objectType) {
+		this.objectType = objectType;
+	}
+	@Override
+	public String saveOrUpdate(boolean killConversation)
+			throws BusinessException {
+		if(entity.isTransient()){
+			entity.setMessageCode(String.format(MESSAGE_CODE,getEntityClass().getSimpleName(),businessEntity.getId()));
+		}
+		return super.saveOrUpdate(killConversation);
+	}
 	
+	@SuppressWarnings("rawtypes")
+	private Class getEntityClass() throws BusinessException{
+		Class clazz=null;
+		if(businessEntity instanceof Title){
+			clazz=Title.class;
+		}else if(businessEntity instanceof RecurringChargeTemplate){
+			clazz=RecurringChargeTemplate.class;
+		}else if(businessEntity instanceof OneShotChargeTemplate){
+			clazz=OneShotChargeTemplate.class;
+		}else if(businessEntity instanceof UsageChargeTemplate){
+			clazz=UsageChargeTemplate.class;
+		}else if(businessEntity instanceof PricePlanMatrix){
+			clazz=PricePlanMatrix.class;
+		}else if(businessEntity instanceof InvoiceCategory){
+			clazz=InvoiceCategory.class;
+		}else if(businessEntity instanceof InvoiceSubCategory){
+			clazz=InvoiceSubCategory.class;
+		}else if(businessEntity instanceof Tax){
+			clazz=Tax.class;
+		}
+		if(clazz==null){
+			throw new BusinessException("Wrong class type!");
+		}
+		return clazz;
+	}
 }
