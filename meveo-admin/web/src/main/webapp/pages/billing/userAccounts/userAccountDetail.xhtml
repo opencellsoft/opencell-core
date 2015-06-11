@@ -155,6 +155,10 @@
 											field="description" id="description" showOnlyOnNew="true"
 											useConverter="false" size="70" maxlength="100"
 											required="true" />
+										<hf:formField label="#{messages['accountEntity.externalRef1']}"
+											field="externalRef1" validateUnique="false" newLine="true"/>
+										<hf:formField label="#{messages['accountEntity.externalRef2']}"
+											field="externalRef2" />
 
                                     <hf:formField label="#{messages['name.title']}" field="name" childField="title" valueLabelField="description" required="true"
                                         listBean="#{titleBean}" listenerUpdate=":userAccountFormPanel:formId:userAccountTab:userNamePanel" styleClass="clearLeft"/>
