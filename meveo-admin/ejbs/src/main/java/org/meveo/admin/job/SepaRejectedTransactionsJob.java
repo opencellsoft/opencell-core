@@ -59,7 +59,7 @@ public class SepaRejectedTransactionsJob extends Job {
                 try {
                     log.info("InputFiles job " + file.getName() + " in progres");
                     currentFile = FileUtils.addExtension(file, ".processing");
-                    sepaService.processRejectFile(currentFile, file.getName(), provider);
+                    sepaService.processRejectFile(currentFile, file.getName(), currentUser);
                     FileUtils.moveFile(dirOK, currentFile, file.getName());
                     log.info("InputFiles job " + file.getName() + " done");
                     result.registerSucces();

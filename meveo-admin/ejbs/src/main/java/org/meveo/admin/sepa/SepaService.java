@@ -40,7 +40,6 @@ import org.meveo.model.payments.OCCTemplate;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.payments.RecordedInvoice;
 import org.meveo.model.shared.DateUtils;
-import org.meveo.service.admin.impl.UserService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.payments.impl.AccountOperationService;
 import org.meveo.service.payments.impl.AutomatedPaymentService;
@@ -69,9 +68,6 @@ public class SepaService extends PersistenceService<DDRequestItem> {
 
 	@Inject
 	private OCCTemplateService oCCTemplateService;
-
-	@Inject
-	private UserService userService;
 
 	@Inject
 	private AutomatedPaymentService automatedPaymentService;
@@ -187,7 +183,7 @@ public class SepaService extends PersistenceService<DDRequestItem> {
 				totalInvoices = totalInvoices.add(invoice.getAmount());
 				invoice.setDdRequestLOT(ddRequestLOT);
 				invoice.setDdRequestItem(ddrequestItem);
-				recordedInvoiceService.update(invoice);
+				recordedInvoiceService.updateNoCheck(invoice);
 				ddRequestLOT.getInvoices().add(invoice);
 				logger.info("invoice reference : " + invoice.getReference()
 						+ " processed");
@@ -209,7 +205,8 @@ public class SepaService extends PersistenceService<DDRequestItem> {
 			exportDDRequestLot(ddRequestLOT, ddrequestItems, totalAmount,
 					provider, ddFileName);
 			ddRequestLOT.setSendDate(new Date());
-			dDRequestLOTService.update(ddRequestLOT, user);
+			dDRequestLOTService.updateAudit(ddRequestLOT, user);
+			dDRequestLOTService.updateNoCheck(ddRequestLOT);
 
 			logger.info("ddRequestLOT created , totalAmount:"
 					+ ddRequestLOT.getInvoicesAmount());
@@ -226,9 +223,8 @@ public class SepaService extends PersistenceService<DDRequestItem> {
 		String fileName = ArConfig.getDDRequestFileNamePrefix()
 				+ ddRequestLot.getId();
 		fileName = fileName + "_" + ddRequestLot.getProvider().getCode();
-		fileName = fileName
-				+ DateUtils.formatDateWithPattern(new Date(),
-						ArConfig.getDDRequestFileNameExtension());
+		fileName = fileName + "_" + DateUtils.formatDateWithPattern(new Date(), "yyyyMMdd")
+				+ ArConfig.getDDRequestFileNameExtension();
 		String outputDir = ArConfig.getDDRequestOutputDirectory();
 		File dir = new File(outputDir);
 		if (!dir.exists()) {
@@ -310,14 +306,16 @@ public class SepaService extends PersistenceService<DDRequestItem> {
 								ArConfig.getDateValueAfter()),
 						ddRequestLOT.getSendDate(), ddRequestLOT.getSendDate(),
 						invoicesList, addMatching,
-						MatchingTypeEnum.A_DERICT_DEBIT);
+						MatchingTypeEnum.A_DERICT_DEBIT, user);
 				ddrequestItem.setAutomatedPayment(automatedPayment);
-				sepaService.update(ddrequestItem, user);
+				sepaService.updateAudit(ddrequestItem, user);
+				sepaService.updateNoCheck(ddrequestItem);
 
 			}
 		}
 		ddRequestLOT.setPaymentCreated(true);
-		dDRequestLOTService.update(ddRequestLOT, user);
+		dDRequestLOTService.updateAudit(ddRequestLOT, user);
+		dDRequestLOTService.updateNoCheck(ddRequestLOT);
 
 		logger.info("Successful createPaymentsForDDRequestLot ddRequestLotId:"
 				+ ddRequestLOT.getId());
@@ -330,12 +328,11 @@ public class SepaService extends PersistenceService<DDRequestItem> {
 			String reference, String bankLot, Date depositDate,
 			Date bankCollectionDate, Date dueDate, Date transactionDate,
 			List<RecordedInvoice> listOCCforMatching, boolean isToMatching,
-			MatchingTypeEnum matchingTypeEnum) throws BusinessException {
+			MatchingTypeEnum matchingTypeEnum, User currentUser) throws BusinessException {
 		log.info("create payment for amount:" + amount + " paymentMethodEnum:"
 				+ paymentMethodEnum + " isToMatching:" + isToMatching
 				+ "  customerAccount:" + customerAccount.getCode() + "...");
-
-		User user = userService.getSystemUser();
+		
 		AutomatedPayment automatedPayment = new AutomatedPayment();
 		automatedPayment.setProvider(provider);
 		automatedPayment.setPaymentMethod(paymentMethodEnum);
@@ -365,7 +362,7 @@ public class SepaService extends PersistenceService<DDRequestItem> {
 			automatedPayment.setMatchingAmount(BigDecimal.ZERO);
 		}
 
-		automatedPaymentService.create(automatedPayment, user);
+		automatedPaymentService.create(automatedPayment, currentUser);
 		if (isToMatching) {
 			MatchingCode matchingCode = new MatchingCode();
 			BigDecimal amountToMatch = BigDecimal.ZERO;
@@ -379,11 +376,11 @@ public class SepaService extends PersistenceService<DDRequestItem> {
 						.getUnMatchingAmount().subtract(amountToMatch));
 				accountOperation.setMatchingStatus(MatchingStatusEnum.L);
 				accountOperation.getAuditable().setUpdated(new Date());
-				accountOperation.getAuditable().setUpdater(user);
-				accountOperationService.update(accountOperation);
+				accountOperation.getAuditable().setUpdater(currentUser);
+				accountOperationService.updateNoCheck(accountOperation);
 				MatchingAmount matchingAmount = new MatchingAmount();
 				matchingAmount.setProvider(accountOperation.getProvider());
-				matchingAmount.updateAudit(user);
+				matchingAmount.updateAudit(currentUser);
 				matchingAmount.setAccountOperation(accountOperation);
 				matchingAmount.setMatchingCode(matchingCode);
 				matchingAmount.setMatchingAmount(amountToMatch);
@@ -395,7 +392,7 @@ public class SepaService extends PersistenceService<DDRequestItem> {
 			matchingCode.setMatchingDate(new Date());
 			matchingCode.setMatchingType(matchingTypeEnum);
 			matchingCode.setProvider(provider);
-			matchingCodeService.create(matchingCode, user);
+			matchingCodeService.create(matchingCode, currentUser);
 			log.info("matching created  for 1 automatedPayment and "
 					+ listOCCforMatching.size() + " occ");
 		} else {
@@ -421,7 +418,7 @@ public class SepaService extends PersistenceService<DDRequestItem> {
 		return files;
 	}
 
-	public void processRejectFile(File file, String fileName, Provider provider)
+	public void processRejectFile(File file, String fileName, User currentUser)
 			throws JAXBException, Exception {
 		Pain002 pain002 = (Pain002) JAXBUtils.unmarshaller(Pain002.class, file);
 
@@ -451,7 +448,7 @@ public class SepaService extends PersistenceService<DDRequestItem> {
 				for (MatchingAmount matchingAmount : recordedInvoice
 						.getMatchingAmounts()) {
 					matchingAmountService.unmatching(matchingAmount.getId(),
-							userService.getSystemUser());
+							currentUser);
 				}
 				AutomatedPayment automatedPayment = recordedInvoice
 						.getDdRequestItem().getAutomatedPayment();
@@ -460,7 +457,8 @@ public class SepaService extends PersistenceService<DDRequestItem> {
 							.getMatchingAmount());
 					automatedPayment.setMatchingAmount(BigDecimal.ZERO);
 					automatedPayment.setMatchingStatus(MatchingStatusEnum.R);
-					automatedPaymentService.update(automatedPayment);
+					automatedPayment.updateAudit(currentUser);
+					automatedPaymentService.updateNoCheck(automatedPayment);
 				}
 			}
 
@@ -474,13 +472,13 @@ public class SepaService extends PersistenceService<DDRequestItem> {
 				if ("RJCT".equals(txInfAndSts.getTxSts())) {
 					RecordedInvoice invoice = recordedInvoiceService
 							.getRecordedInvoice(
-									txInfAndSts.getOrgnlEndToEndId(), provider);
+									txInfAndSts.getOrgnlEndToEndId(), currentUser.getProvider());
 					for (MatchingAmount matchingAmount : invoice
 							.getMatchingAmounts()) {
 						unmatchingAmount.add(invoice.getMatchingAmount());
 						matchingAmountService.unmatching(
 								matchingAmount.getId(),
-								userService.getSystemUser());
+								currentUser);
 					}
 					DDRequestItem ddrequestItem = invoice.getDdRequestItem();
 					AutomatedPayment automatedPayment = ddrequestItem
@@ -494,7 +492,8 @@ public class SepaService extends PersistenceService<DDRequestItem> {
 								BigDecimal.ZERO) == 0) {
 							automatedPayment
 									.setMatchingStatus(MatchingStatusEnum.R);
-							automatedPaymentService.update(automatedPayment);
+							automatedPayment.updateAudit(currentUser);
+							automatedPaymentService.updateNoCheck(automatedPayment);
 						}
 
 					}
@@ -504,6 +503,7 @@ public class SepaService extends PersistenceService<DDRequestItem> {
 
 		}
 		dDRequestLOT.setReturnFileName(file.getName());
-		dDRequestLOTService.update(dDRequestLOT);
+		dDRequestLOT.updateAudit(currentUser);
+		dDRequestLOTService.updateNoCheck(dDRequestLOT);
 	}
 }
