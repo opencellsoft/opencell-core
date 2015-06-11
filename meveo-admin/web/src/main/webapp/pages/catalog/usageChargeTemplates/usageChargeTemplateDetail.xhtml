@@ -37,7 +37,7 @@
 
 		<hf:formPanel id="panelUsage" formId="usageChargeId"
 			label="#{messages['usageChargeTemplate.title']}"
-			backingBean="#{usageChargeTemplateBean}" showEnableDisableButton="true">
+			backingBean="#{usageChargeTemplateBean}" showEnableDisableButton="true" addCustomFieldDialog="true">
 
 			<p:tabView id="tabView">
 
@@ -93,7 +93,7 @@
 				</p:tab>
 
 				<p:tab title="#{messages['customFieldTemplate.panel']}">
-					<hf:customFields />
+					<hf:customFields id="customFields" messagesId=":panelUsage:usageChargeId:messages" periodDialogIdPrefix=":panelUsage"/>
 				</p:tab>
 			</p:tabView>
 

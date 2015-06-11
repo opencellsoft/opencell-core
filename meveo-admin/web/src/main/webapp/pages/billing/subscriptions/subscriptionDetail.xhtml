@@ -308,8 +308,8 @@
 							</p:tab>
 							<p:tab title="#{messages['customFieldTemplate.panel']}">
 								<hf:formPanel id="subscriptionCustomFormPanel" showDeleteButton="false"
-									backingBean="#{subscriptionBean}" useCustomIdParam="true">
-									<hf:customFields />
+									backingBean="#{subscriptionBean}" useCustomIdParam="true" addCustomFieldDialog="true">
+									<hf:customFields id="customFields" messagesId=":subscriptionTab:subscriptionCustomFormPanel:formId:messages" periodDialogIdPrefix=":subscriptionTab:subscriptionCustomFormPanel"/>
 								</hf:formPanel>
 							</p:tab>
 							<p:tab id="oneShotChgTab"
@@ -869,12 +869,12 @@
         </h:panelGroup>
 
 		<p:dialog id="accessDialog" widgetVar="accessWidget" dynamic="true"
-			width="900" modal="true">
+			width="900" modal="false" >
 			<p:messages id="medinaAccessMessage"></p:messages>
 
 
 				<hf:formPanel id="formPanel" backingBean="#{accessBean}"
-					showFormButtons="false" label="#{messages['access.accessPanel']}">
+					showFormButtons="false" label="#{messages['access.accessPanel']}" addCustomFieldDialog="true">
 
 					<p:tabView id="accessTabView">
 						<p:tab title="#{messages['customer.tab.information']}">
@@ -887,7 +887,7 @@
 						</p:tab>
 
 						<p:tab title="#{messages['customFieldTemplate.panel']}">
-							<hf:customFields edit="true" />
+                            <hf:customFields id="customFields" edit="true" messagesId=":formPanel:formId:messages" periodDialogIdPrefix=":formPanel"/>                            
 						</p:tab>
 					</p:tabView>
 					<f:facet name="buttons">

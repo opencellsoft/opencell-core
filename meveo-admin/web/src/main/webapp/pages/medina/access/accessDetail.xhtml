@@ -36,7 +36,7 @@
 		</hftl:entityPopup>
 
 
-			<hf:formPanel id="formPanel" backingBean="#{accessBean}" label="#{messages['access.accessPanel']}" showEnableDisableButton="true">
+			<hf:formPanel id="formPanel" backingBean="#{accessBean}" label="#{messages['access.accessPanel']}" showEnableDisableButton="true" addCustomFieldDialog="true">
 
 				<p:tabView id="tabView">
 
@@ -56,11 +56,12 @@
 					</p:tab>
 
 					<p:tab title="#{messages['customFieldTemplate.panel']}">
-						<hf:customFields />
+						<hf:customFields id="customFields" messagesId=":formPanel:formId:messages"/>
 					</p:tab>
 				</p:tabView>
 
 			</hf:formPanel>
+            
 
 	</ui:define>
 

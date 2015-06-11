@@ -200,6 +200,15 @@
 			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="CAT_CALENDAR" />
 		<createSequence sequenceName="CRM_CUSTOM_FIELD_PERIOD_seq" />
 	</changeSet>
+	
+	<changeSet id="#791_20150602-4" author="AndriusKarpavicius">
+		<dropSequence sequenceName="CRM_CUSTOM_FIELD_PERIOD_seq"/>
+		<createSequence sequenceName="crm_custom_field_period_seq" />
+	</changeSet>
+	
+	<changeSet id="#791_20150602-5" author="AndriusKarpavicius">
+		<addUniqueConstraint columnNames="CF_INSTANCE_ID, period_start_date, period_end_date" tableName="crm_custom_field_period" constraintName="uk_crm_custom_field_period"/>
+	</changeSet>
 
 	<changeSet id="#852_20150605-2" author="EdwardLegaspi">
 		<addNotNullConstraint columnDataType="VARCHAR(255)"
@@ -210,10 +219,10 @@
 
 	<!-- #855 begin -->
 
-<!-- 	<changeSet author="anasseh" id="1433614968312-1"> -->
-<!-- 		<sqlFile endDelimiter="" path="migrationJobs_beforeLiquibase.sql" -->
-<!-- 			relativeToChangelogFile="true" splitStatements="false" /> -->
-<!-- 	</changeSet> -->
+	<changeSet author="anasseh" id="1433614968312-1">
+		<sqlFile endDelimiter="" path="migrationJobs_beforeLiquibase.sql"
+			relativeToChangelogFile="true" splitStatements="false" />
+	</changeSet>
 
 
 	<changeSet author="anasseh (generated)" id="1433614968312-2">
@@ -431,10 +440,10 @@
 		<dropColumn columnName="userid" tableName="meveo_timer" />
 	</changeSet>
 
-<!-- 	<changeSet author="anasseh" id="1433614968312-63"> -->
-<!-- 		<sqlFile endDelimiter="" path="migrationJobs_afterLiquibase.sql" -->
-<!-- 			relativeToChangelogFile="true" splitStatements="false" /> -->
-<!-- 	</changeSet> -->
+	<changeSet author="anasseh" id="1433614968312-63">
+		<sqlFile endDelimiter="" path="migrationJobs_afterLiquibase.sql"
+			relativeToChangelogFile="true" splitStatements="false" />
+	</changeSet>
 
 
 	<changeSet author="anasseh (generated)" id="855_2015-06-09">
@@ -447,4 +456,10 @@
 			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="MEVEO_JOB_INSTANCE" />
 	</changeSet>
 	<!-- #855 end -->
+	
+	<changeSet id="790-20150610" author="AndriusKarpavicius">
+		<addColumn tableName="CRM_CUSTOM_FIELD_TMPL">
+			<column name="DEFAULT_VALUE" type="VARCHAR(50)"/>
+		</addColumn>
+	</changeSet>
 </databaseChangeLog>

@@ -83,8 +83,8 @@ public class CustomFieldInstance extends BusinessEntity {
     @JoinColumn(name = "CALENDAR_ID")
     private Calendar calendar;
 
-    @OneToMany(mappedBy = "customFieldInstance", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    private List<CustomFieldPeriod> customFieldPeriods = new ArrayList<CustomFieldPeriod>();
+    @OneToMany(mappedBy = "customFieldInstance", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
+    private List<CustomFieldPeriod> valuePeriods = new ArrayList<CustomFieldPeriod>();
 
     public String getStringValue() {
         return stringValue;
@@ -166,28 +166,26 @@ public class CustomFieldInstance extends BusinessEntity {
         this.offerTemplate = offerTemplate;
     }
 
-   
-
     /**
-	 * @return the jobInstance
-	 */
-	public JobInstance getJobInstance() {
-		return jobInstance;
-	}
-
-	/**
-	 * @param jobInstance the jobInstance to set
-	 */
-	public void setJobInstance(JobInstance jobInstance) {
-		this.jobInstance = jobInstance;
-	}
-
-	public List<CustomFieldPeriod> getCustomFieldPeriods() {
-        return customFieldPeriods;
+     * @return the jobInstance
+     */
+    public JobInstance getJobInstance() {
+        return jobInstance;
     }
 
-    public void setCustomFieldPeriods(List<CustomFieldPeriod> customFieldPeriods) {
-        this.customFieldPeriods = customFieldPeriods;
+    /**
+     * @param jobInstance the jobInstance to set
+     */
+    public void setJobInstance(JobInstance jobInstance) {
+        this.jobInstance = jobInstance;
+    }
+
+    public List<CustomFieldPeriod> getValuePeriods() {
+        return valuePeriods;
+    }
+
+    public void setValuePeriods(List<CustomFieldPeriod> valuePeriods) {
+        this.valuePeriods = valuePeriods;
     }
 
     /**
@@ -198,7 +196,7 @@ public class CustomFieldInstance extends BusinessEntity {
      */
     public String getStringValue(Date valueDate) {
         if (versionable) {
-            CustomFieldPeriod period = getPeriod(valueDate, false);
+            CustomFieldPeriod period = getValuePeriod(valueDate, false);
             if (period != null) {
                 return period.getStringValue();
             }
@@ -224,8 +222,11 @@ public class CustomFieldInstance extends BusinessEntity {
             throw new RuntimeException("Can not determine a period for Custom Field value if no calendar is provided");
 
         } else {
-            CustomFieldPeriod period = getPeriod(valueDate, true);
-            period.setStringValue(value);
+            // If value is null, don't create a new period -just nullify existing value if period exists already
+            CustomFieldPeriod period = getValuePeriod(valueDate, value != null);
+            if (period != null) {
+                period.setStringValue(value);
+            }
         }
     }
 
@@ -241,8 +242,11 @@ public class CustomFieldInstance extends BusinessEntity {
             setStringValue(value);
 
         } else {
-            CustomFieldPeriod period = getPeriod(valueDateFrom, valueDateTo, true);
-            period.setStringValue(value);
+            // If value is null, don't create a new period -just nullify existing value if period exists already
+            CustomFieldPeriod period = getValuePeriod(valueDateFrom, valueDateTo, true, value != null);
+            if (period != null) {
+                period.setStringValue(value);
+            }
         }
     }
 
@@ -254,7 +258,7 @@ public class CustomFieldInstance extends BusinessEntity {
      */
     public Date getDateValue(Date valueDate) {
         if (versionable) {
-            CustomFieldPeriod period = getPeriod(valueDate, false);
+            CustomFieldPeriod period = getValuePeriod(valueDate, false);
             if (period != null) {
                 return period.getDateValue();
             }
@@ -280,8 +284,11 @@ public class CustomFieldInstance extends BusinessEntity {
             throw new RuntimeException("Can not determine a period for Custom Field value if no calendar is provided");
 
         } else {
-            CustomFieldPeriod period = getPeriod(valueDate, true);
-            period.setDateValue(value);
+            // If value is null, don't create a new period -just nullify existing value if period exists already
+            CustomFieldPeriod period = getValuePeriod(valueDate, value != null);
+            if (period != null) {
+                period.setDateValue(value);
+            }
         }
     }
 
@@ -297,8 +304,11 @@ public class CustomFieldInstance extends BusinessEntity {
             setDateValue(value);
 
         } else {
-            CustomFieldPeriod period = getPeriod(valueDateFrom, valueDateTo, true);
-            period.setDateValue(value);
+            // If value is null, don't create a new period -just nullify existing value if period exists already
+            CustomFieldPeriod period = getValuePeriod(valueDateFrom, valueDateTo, true, value != null);
+            if (period != null) {
+                period.setDateValue(value);
+            }
         }
     }
 
@@ -310,7 +320,7 @@ public class CustomFieldInstance extends BusinessEntity {
      */
     public Long getLongValue(Date valueDate) {
         if (versionable) {
-            CustomFieldPeriod period = getPeriod(valueDate, false);
+            CustomFieldPeriod period = getValuePeriod(valueDate, false);
             if (period != null) {
                 return period.getLongValue();
             }
@@ -336,8 +346,11 @@ public class CustomFieldInstance extends BusinessEntity {
             throw new RuntimeException("Can not determine a period for Custom Field value if no calendar is provided");
 
         } else {
-            CustomFieldPeriod period = getPeriod(valueDate, true);
-            period.setLongValue(value);
+            // If value is null, don't create a new period -just nullify existing value if period exists already
+            CustomFieldPeriod period = getValuePeriod(valueDate, value != null);
+            if (period != null) {
+                period.setLongValue(value);
+            }
         }
     }
 
@@ -353,8 +366,11 @@ public class CustomFieldInstance extends BusinessEntity {
             setLongValue(value);
 
         } else {
-            CustomFieldPeriod period = getPeriod(valueDateFrom, valueDateTo, true);
-            period.setLongValue(value);
+            // If value is null, don't create a new period -just nullify existing value if period exists already
+            CustomFieldPeriod period = getValuePeriod(valueDateFrom, valueDateTo, true, value != null);
+            if (period != null) {
+                period.setLongValue(value);
+            }
         }
     }
 
@@ -366,7 +382,7 @@ public class CustomFieldInstance extends BusinessEntity {
      */
     public Double getDoubleValue(Date valueDate) {
         if (versionable) {
-            CustomFieldPeriod period = getPeriod(valueDate, false);
+            CustomFieldPeriod period = getValuePeriod(valueDate, false);
             if (period != null) {
                 return period.getDoubleValue();
             }
@@ -392,8 +408,11 @@ public class CustomFieldInstance extends BusinessEntity {
             throw new RuntimeException("Can not determine a period for Custom Field value if no calendar is provided");
 
         } else {
-            CustomFieldPeriod period = getPeriod(valueDate, true);
-            period.setDoubleValue(value);
+            // If value is null, don't create a new period -just nullify existing value if period exists already
+            CustomFieldPeriod period = getValuePeriod(valueDate, value != null);
+            if (period != null) {
+                period.setDoubleValue(value);
+            }
         }
     }
 
@@ -409,8 +428,11 @@ public class CustomFieldInstance extends BusinessEntity {
             setDoubleValue(value);
 
         } else {
-            CustomFieldPeriod period = getPeriod(valueDateFrom, valueDateTo, true);
-            period.setDoubleValue(value);
+            // If value is null, don't create a new period -just nullify existing value if period exists already
+            CustomFieldPeriod period = getValuePeriod(valueDateFrom, valueDateTo, true,value != null);
+            if (period != null) {
+                period.setDoubleValue(value);
+            }
         }
     }
 
@@ -450,6 +472,18 @@ public class CustomFieldInstance extends BusinessEntity {
         return result;
     }
 
+    public CustomFieldPeriod addValuePeriod(Date date, Object value, CustomFieldTypeEnum fieldType) {
+        CustomFieldPeriod period = getValuePeriod(date, true);
+        period.setValue(value, fieldType);
+        return period;
+    }
+
+    public CustomFieldPeriod addValuePeriod(Date startDate, Date endDate, Object value, CustomFieldTypeEnum fieldType) {
+        CustomFieldPeriod period = getValuePeriod(startDate, endDate, true, true);
+        period.setValue(value, fieldType);
+        return period;
+    }
+
     /**
      * Get a period corresponding to a given date. Calendar is used to determine period start/end dates if requested to create one if not found
      * 
@@ -457,9 +491,9 @@ public class CustomFieldInstance extends BusinessEntity {
      * @param createIfNotFound Should period be created if not found
      * @return Custom field period
      */
-    private CustomFieldPeriod getPeriod(Date date, Boolean createIfNotFound) {
+    public CustomFieldPeriod getValuePeriod(Date date, Boolean createIfNotFound) {
         CustomFieldPeriod periodFound = null;
-        for (CustomFieldPeriod period : customFieldPeriods) {
+        for (CustomFieldPeriod period : valuePeriods) {
             if (period.isCorrespondsToPeriod(date)) {
                 // If calendar is used for versioning, then no periods can overlap
                 if (calendar != null) {
@@ -477,7 +511,7 @@ public class CustomFieldInstance extends BusinessEntity {
             periodFound.setCustomFieldInstance(this);
             periodFound.setPeriodEndDate(calendar.nextCalendarDate(date));
             periodFound.setPeriodStartDate(calendar.previousCalendarDate(date));
-            customFieldPeriods.add(periodFound);
+            valuePeriods.add(periodFound);
 
         }
         return periodFound;
@@ -489,12 +523,13 @@ public class CustomFieldInstance extends BusinessEntity {
      * @param date Date
      * @param createIfNotFound Should period be created if not found
      * @param calendar Calendar to determine period start/end dates when creating a new period
+     * @param strictMatch Should a match occur only if start and end dates match. Non-strict match would match when dates overlap
      * @return Custom field period
      */
-    private CustomFieldPeriod getPeriod(Date startDate, Date endDate, Boolean createIfNotFound) {
+    public CustomFieldPeriod getValuePeriod(Date startDate, Date endDate, boolean strictMatch, Boolean createIfNotFound) {
         CustomFieldPeriod periodFound = null;
-        for (CustomFieldPeriod period : customFieldPeriods) {
-            if (period.isCorrespondsToPeriod(startDate, endDate)) {
+        for (CustomFieldPeriod period : valuePeriods) {
+            if (period.isCorrespondsToPeriod(startDate, endDate, strictMatch)) {
                 periodFound = period;
                 break;
             }
@@ -506,7 +541,7 @@ public class CustomFieldInstance extends BusinessEntity {
             periodFound.setPeriodEndDate(endDate);
             periodFound.setPeriodStartDate(startDate);
             periodFound.setPriority(getNextPriority());
-            customFieldPeriods.add(periodFound);
+            valuePeriods.add(periodFound);
 
         }
         return periodFound;
@@ -530,16 +565,90 @@ public class CustomFieldInstance extends BusinessEntity {
 
     private int getNextPriority() {
         int maxPriority = 0;
-        for (CustomFieldPeriod period : customFieldPeriods) {
+        for (CustomFieldPeriod period : valuePeriods) {
             maxPriority = (period.getPriority() > maxPriority ? period.getPriority() : maxPriority);
         }
         return maxPriority + 1;
     }
 
+    public void removeValuePeriod(CustomFieldPeriod period) {
+        valuePeriods.remove(period);
+    }
+
+    public static CustomFieldInstance fromTemplate(CustomFieldTemplate template) {
+        CustomFieldInstance cfi = new CustomFieldInstance();
+        cfi.setCode(template.getCode());
+        cfi.setDescription(template.getDescription());
+        cfi.setVersionable(template.isVersionable());
+        cfi.setCalendar(template.getCalendar());
+        // Set a default value
+        if (!template.isVersionable()) {
+            cfi.setValue(template.getDefaultValueConverted(), template.getFieldType());
+        }
+
+        return cfi;
+    }
+
+    /**
+     * Get a value
+     * 
+     * @return
+     */
+    public Object getValue() {
+        if (stringValue != null) {
+            return stringValue;
+        } else if (doubleValue != null) {
+            return doubleValue;
+        } else if (dateValue != null) {
+            return dateValue;
+        } else if (longValue != null) {
+            return longValue;
+        }
+        return null;
+    }
+
+    /**
+     * Set value of a given type
+     * 
+     * @param value
+     * @param fieldType
+     */
+    public void setValue(Object value, CustomFieldTypeEnum fieldType) {
+
+        switch (fieldType) {
+        case DATE:
+            dateValue = (Date) value;
+            break;
+
+        case DOUBLE:
+            doubleValue = (Double) value;
+            break;
+
+        case LONG:
+            longValue = (Long) value;
+            break;
+
+        case STRING:
+        case LIST:
+            stringValue = (String) value;
+        }
+    }
+
+    public boolean isValueEmpty() {
+        return (!isVersionable() && (stringValue == null && dateValue == null && longValue == null && doubleValue == null)) || (isVersionable() && valuePeriods.isEmpty());
+        // TODO check that period values are empty
+    }
+
     @Override
     public String toString() {
-        return "CustomFieldInstance [account=" + account + ", subscription=" + subscription + ", chargeTemplate=" + chargeTemplate + ", serviceTemplate=" + serviceTemplate
-                + ", offerTemplate=" + offerTemplate + ", access=" + access + ", JobInstance=" + jobInstance + ", stringValue=" + stringValue + ", " + "dateValue=" + dateValue
-                + ", longValue=" + longValue + ", doubleValue=" + doubleValue + "]";
+        final int maxLen = 10;
+        return String
+            .format(
+                "CustomFieldInstance [%s, account=%s, subscription=%s, chargeTemplate=%s, serviceTemplate=%s, offerTemplate=%s, access=%s, jobInstance=%s, stringValue=%s, dateValue=%s, longValue=%s, doubleValue=%s, versionable=%s, calendar=%s, valuePeriods=%s]",
+                super.toString(), account != null ? account.getId() : null, subscription != null ? subscription.getId() : null, chargeTemplate != null ? chargeTemplate.getId()
+                        : null, serviceTemplate != null ? serviceTemplate.getId() : null, offerTemplate != null ? offerTemplate.getId() : null, access != null ? access.getId()
+                        : null, jobInstance != null ? jobInstance.getId() : null, stringValue, dateValue, longValue, doubleValue, versionable,
+                calendar != null ? calendar.getCode() : null, valuePeriods != null ? valuePeriods.subList(0, Math.min(valuePeriods.size(), maxLen)) : null);
     }
+
 }

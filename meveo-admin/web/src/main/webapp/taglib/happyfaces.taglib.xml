@@ -39,6 +39,11 @@
 	<tag>
 		<tag-name>decorateFormField</tag-name>
 		<source>decorateFormField.xhtml</source>
-	</tag>		
+	</tag>	
+	
+	<tag>
+		<tag-name>customFieldValueField</tag-name>
+		<source>customFieldValueField.xhtml</source>
+	</tag>	
 
 </facelet-taglib>

@@ -8,6 +8,7 @@ import javax.inject.Inject;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.meveo.api.dto.CustomFieldDto;
+import org.meveo.api.exception.MissingParameterException;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.admin.User;
 import org.meveo.model.crm.AccountLevelEnum;
@@ -67,9 +68,10 @@ public abstract class BaseApi {
      * @param currentUser User that authenticated for API
      * @throws IllegalArgumentException
      * @throws IllegalAccessException
+     * @throws MissingParameterException 
      */
     protected void populateCustomFields(AccountLevelEnum cfType, List<CustomFieldDto> customFieldDtos, ICustomFieldEntity entity, String cfiFieldName, User currentUser)
-            throws IllegalArgumentException, IllegalAccessException {
+            throws IllegalArgumentException, IllegalAccessException, MissingParameterException {
 
         List<CustomFieldTemplate> customFieldTemplates = customFieldTemplateService.findByAccountLevel(cfType, currentUser.getProvider());
 
@@ -86,9 +88,10 @@ public abstract class BaseApi {
      * @param currentUser User that authenticated for API
      * @throws IllegalArgumentException
      * @throws IllegalAccessException
+     * @throws MissingParameterException
      */
     protected void populateCustomFields(List<CustomFieldTemplate> customFieldTemplates, List<CustomFieldDto> customFieldDtos, ICustomFieldEntity entity, String cfiFieldName,
-            User currentUser) throws IllegalArgumentException, IllegalAccessException {
+            User currentUser) throws IllegalArgumentException, IllegalAccessException, MissingParameterException {
 
         // check if any templates are applicable
         if (customFieldTemplates == null || customFieldTemplates.isEmpty()) {
@@ -99,23 +102,89 @@ public abstract class BaseApi {
             boolean found = false;
             for (CustomFieldTemplate cft : customFieldTemplates) {
                 if (cf.getCode().equals(cft.getCode())) {
+
+                    // Validate parameters
+                    if (cft.isVersionable()) {
+
+                        if ((cf.getValueDate() == null && cft.getCalendar() != null)) {
+                            throw new MissingParameterException("Custom field is versionable by calendar. Missing valueDate parameter.");
+
+                        } else if (cft.getCalendar() == null && (cf.getValuePeriodStartDate() == null || cf.getValuePeriodEndDate() == null)) {
+                            throw new MissingParameterException("Custom field is versionable by periods. Missing valuePeriodStartDate and/or valuePeriodEndDate parameters.");
+                        }
+                    }
+
                     found = true;
                     CustomFieldInstance cfi = entity.getCustomFields().get(cf.getCode());
+                    // Create an instance if does not exist yet
                     if (cfi == null) {
                         cfi = new CustomFieldInstance();
                         FieldUtils.getField(CustomFieldInstance.class, cfiFieldName, true).set(cfi, entity);
                         cfi.setCode(cf.getCode());
                         cfi.setDescription(StringUtils.isBlank(cfi.getDescription()) ? cft.getDescription() : cfi.getDescription());
                         cfi.setProvider(currentUser.getProvider());
+                        cfi.setVersionable(cft.isVersionable());
+                        if (cft.isVersionable()) {
+                            cfi.setCalendar(cft.getCalendar());
+                        }
                         entity.getCustomFields().put(cfi.getCode(), cfi);
                     }
-                    // update
+
+                    // Update
                     cfi.setActive(true);
-                    cfi.setDateValue(cf.getDateValue());
-                    cfi.setDoubleValue(cf.getDoubleValue());
-                    cfi.setLongValue(cf.getLongValue());
-                    cfi.setStringValue(cf.getStringValue());
                     cfi.updateAudit(currentUser);
+
+                    if (cfi.isVersionable()) {
+
+                        if (cfi.getCalendar() != null) {
+
+                            switch (cft.getFieldType()) {
+                            case DATE:
+                                cfi.setDateValue(cf.getDateValue(), cf.getDateValue());
+                                break;
+                            case DOUBLE:
+                                cfi.setDoubleValue(cf.getDoubleValue(), cf.getDateValue());
+                                break;
+                            case LONG:
+                                cfi.setLongValue(cf.getLongValue(), cf.getDateValue());
+                                break;
+                            case LIST:
+                            case STRING:
+                                cfi.setStringValue(cf.getStringValue(), cf.getDateValue());
+                            }
+
+                        } else {
+                            switch (cft.getFieldType()) {
+                            case DATE:
+                                cfi.setDateValue(cf.getDateValue(), cf.getValuePeriodStartDate(), cf.getValuePeriodEndDate());
+                                break;
+                            case DOUBLE:
+                                cfi.setDoubleValue(cf.getDoubleValue(), cf.getValuePeriodStartDate(), cf.getValuePeriodEndDate());
+                                break;
+                            case LONG:
+                                cfi.setLongValue(cf.getLongValue(), cf.getValuePeriodStartDate(), cf.getValuePeriodEndDate());
+                                break;
+                            case LIST:
+                            case STRING:
+                                cfi.setStringValue(cf.getStringValue(), cf.getValuePeriodStartDate(), cf.getValuePeriodEndDate());
+                            }
+                        }
+                    } else {
+                        switch (cft.getFieldType()) {
+                        case DATE:
+                            cfi.setDateValue(cf.getDateValue());
+                            break;
+                        case DOUBLE:
+                            cfi.setDoubleValue(cf.getDoubleValue());
+                            break;
+                        case LONG:
+                            cfi.setLongValue(cf.getLongValue());
+                            break;
+                        case LIST:
+                        case STRING:
+                            cfi.setStringValue(cf.getStringValue());
+                        }
+                    }
 
                     break;
                 }

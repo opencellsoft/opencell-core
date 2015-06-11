@@ -20,7 +20,6 @@ import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.jobs.JobCategoryEnum;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
-import org.meveo.model.jobs.TimerEntity;
 import org.meveo.service.admin.impl.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -128,7 +127,7 @@ public abstract class Job {
 
     public abstract JobCategoryEnum getJobCategory();
 
-    public List<CustomFieldTemplate> getCustomFields(User currentUser) {
+    public List<CustomFieldTemplate> getCustomFields() {
 
         return null;
     }

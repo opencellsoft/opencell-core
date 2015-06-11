@@ -40,8 +40,8 @@ import org.jboss.solder.servlet.http.RequestParam;
 import org.meveo.admin.action.admin.CurrentProvider;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
+import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.AccountEntity;
-import org.meveo.model.AuditableEntity;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.ICustomFieldEntity;
@@ -56,11 +56,12 @@ import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.crm.AccountLevelEnum;
 import org.meveo.model.crm.CustomFieldInstance;
+import org.meveo.model.crm.CustomFieldPeriod;
 import org.meveo.model.crm.CustomFieldTemplate;
-import org.meveo.model.crm.CustomFieldTypeEnum;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.model.mediation.Access;
+import org.meveo.model.shared.DateUtils;
 import org.meveo.security.MeveoUser;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.catalog.impl.CatMessagesService;
@@ -75,556 +76,544 @@ import org.primefaces.model.SortOrder;
 import org.slf4j.LoggerFactory;
 
 /**
- * Base bean class. Other seam backing beans extends this class if they need
- * functionality it provides.
+ * Base bean class. Other seam backing beans extends this class if they need functionality it provides.
  */
 public abstract class BaseBean<T extends IEntity> implements Serializable {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	/** Logger. */
-	protected org.slf4j.Logger log = LoggerFactory.getLogger(this.getClass());
+    /** Logger. */
+    protected org.slf4j.Logger log = LoggerFactory.getLogger(this.getClass());
 
-	@Inject
-	protected Messages messages;
+    @Inject
+    protected Messages messages;
 
-	@Inject
-	protected Identity identity;
+    @Inject
+    protected Identity identity;
 
     @Inject
     @CurrentProvider
     protected Provider currentProvider;
 
-	@Inject
-	protected Conversation conversation;
-
-	@Inject
-	protected CustomFieldTemplateService customFieldTemplateService;
-
-	@Inject
-	protected CustomFieldInstanceService customFieldInstanceService;
-
-	@Inject
-	private CatMessagesService catMessagesService;
-
-	/** Search filters. */
-	protected Map<String, Object> filters = new HashMap<String, Object>();
-
-	/** Entity to edit/view. */
-	protected T entity;
-
-	/** Class of backing bean. */
-	private Class<T> clazz;
-
-	protected List<CustomFieldTemplate> customFieldTemplates = new ArrayList<CustomFieldTemplate>();
-
-	/**
-	 * Request parameter. Should form be displayed in create/edit or view mode
-	 */
-	@Inject
-	@RequestParam()
-	private Instance<String> edit;
-
-//	private boolean editSaved;
-
-	protected int dataTableFirstAttribute;
-
-	/**
-	 * Request parameter. A custom back view page instead of a regular list page
-	 */
-	@Inject
-	@RequestParam()
-	private Instance<String> backView;
-
-	private String backViewSave;
-
-	/**
-	 * Request parameter. Used for loading in object by its id.
-	 */
-	@Inject
-	@RequestParam("objectId")
-	private Instance<Long> objectIdFromParam;
-
-	private Long objectIdFromSet;
-
-	/** Helper field to enter language related field values. */
-	protected Map<String, String> languageMessagesMap = new HashMap<String, String>();
-
-	/** Helper field to enter values for HashMap<String,String> type fields */
-	protected Map<String, List<HashMap<String, String>>> mapTypeFieldValues = new HashMap<String, List<HashMap<String, String>>>();
-
-	/**
-	 * Datamodel for lazy dataloading in datatable.
-	 */
-	protected LazyDataModel<T> dataModel;
-
-	/**
-	 * Bind datatable for search results.
-	 */
-	private DataTable dataTable;
-
-	/**
-	 * Selected Entities in multiselect datatable.
-	 */
-	private List<T> selectedEntities;
-	
-	/**
-	 * Constructor
-	 */
-	public BaseBean() {
-		super();
-	}
-
-	/**
-	 * Constructor.
-	 * 
-	 * @param clazz
-	 *            Class.
-	 */
-	public BaseBean(Class<T> clazz) {
-		super();
-		this.clazz = clazz;
-	}
-
-	/**
-	 * Returns entity class
-	 * 
-	 * @return Class
-	 */
-	public Class<T> getClazz() {
-		return clazz;
-	}
-
-	protected void beginConversation() {
-		if (conversation.isTransient()) {
-			conversation.begin();
-		}
-	}
-
-	protected void endConversation() {
-		if (!conversation.isTransient()) {
-			conversation.end();
-		}
-	}
-
-	public void preRenderView() {
-		beginConversation();
-	}
-
-	/**
-	 * Initiates entity from request parameter id.
-	 * 
-	 * @param objectClass
-	 *            Class of the object.
-	 * @return Entity from database.
-	 */
-	public T initEntity() {
-		log.debug("instantiating " + this.getClass());
-		if (getObjectId() != null) {
-			if (getFormFieldsToFetch() == null) {
-				entity = (T) getPersistenceService().findById(getObjectId());
-			} else {
-				entity = (T) getPersistenceService().findById(getObjectId(), getFormFieldsToFetch());
-			}
-
-			loadMultiLanguageFields();
-
-			// getPersistenceService().detach(entity);
-		} else {
-			try {
-				entity = getInstance();
-				if (entity instanceof BaseEntity) {
-					((BaseEntity) entity).setProvider(getCurrentProvider());
-				}
-				// FIXME: If entity is Auditable, set here the creator and
-				// creation time
-			} catch (InstantiationException e) {
-				log.error("Unexpected error!", e);
-				throw new IllegalStateException("could not instantiate a class, abstract class");
-			} catch (IllegalAccessException e) {
-				log.error("Unexpected error!", e);
-				throw new IllegalStateException("could not instantiate a class, constructor not accessible");
-			}
-		}
-
-		initCustomFields();
-
-		return entity;
-	}
-
-	/**
-	 * Load multi-language fields if applicable for a class (class contains
-	 * annotation MultilanguageEntity)
-	 * 
-	 * @param entity
-	 *            Entity lo load fields for
-	 */
-	private void loadMultiLanguageFields() {
-
-		if (!isMultilanguageEntity()) {
-			return;
-		}
-
-		languageMessagesMap.clear();
-
-		for (CatMessages msg : catMessagesService.getCatMessagesList(clazz.getSimpleName() + "_" + entity.getId())) {
-			languageMessagesMap.put(msg.getLanguageCode(), msg.getDescription());
-		}
-	}
-
-	/**
-	 * When opened to view or edit entity - this getter method returns it. In
-	 * case entity is not loaded it will initialize it.
-	 *
-	 * @return Entity in current view state.
-	 */
-	public T getEntity() {
-		return entity != null ? entity : initEntity();
-	}
-
-	public void setEntity(T entity) {
-		this.entity = entity;
-	}
-
-	// /**
-	// * Refresh entities data model and removes search filters.
-	// */
-	// public void clean() {
-	// if (entities == null) {
-	// entities = new PaginationDataModel<T>(getPersistenceService());
-	// }
-	// filters.clear();
-	// filters.put("provider", getCurrentProvider());
-	// entities.addFilters(filters);
-	// entities.addFetchFields(getListFieldsToFetch());
-	// entities.forceRefresh();
-	// }
-
-	public String saveOrUpdate(boolean killConversation, String objectName, Long objectId) throws BusinessException {
-		String outcome = saveOrUpdate(killConversation);
-
-		if (killConversation) {
-			endConversation();
-		}
-
-		// return objectId == null ? outcome : (outcome + "&" + objectName + "="
-		// + objectId + "&cid=" + conversation.getId());
-		return outcome;
-	}
-
-	public String saveOrUpdate(boolean killConversation) throws BusinessException {
-		String outcome = null;
-
-		updateCustomFieldsInEntity();
-
-		if (!isMultilanguageEntity()) {
-			outcome = saveOrUpdate(entity);
-
-		} else {
-			if (entity.getId() != null) {
-
-				for (String msgKey : languageMessagesMap.keySet()) {
-					String description = languageMessagesMap.get(msgKey);
-					CatMessages catMsg = catMessagesService.getCatMessages(entity, msgKey);
-					if (catMsg != null) {
-						catMsg.setDescription(description);
-						catMessagesService.update(catMsg);
-					} else {
-						CatMessages catMessages = new CatMessages(entity, msgKey, description);
-						catMessagesService.create(catMessages);
-					}
-				}
-
-				outcome = saveOrUpdate(entity);
-
-			} else {
-				outcome = saveOrUpdate(entity);
-
-				for (String msgKey : languageMessagesMap.keySet()) {
-					String description = languageMessagesMap.get(msgKey);
-					CatMessages catMessages = new CatMessages(entity, msgKey, description);
-					catMessagesService.create(catMessages);
-				}
-			}
-		}
-
-		if (killConversation) {
-			endConversation();
-		}
-
-		return outcome;
-	}
-
-	/**
-	 * Save or update entity depending on if entity is transient.
-	 * 
-	 * @param entity
-	 *            Entity to save.
-	 * @throws BusinessException
-	 */
-	protected String saveOrUpdate(T entity) throws BusinessException {
-		if (entity.isTransient()) {
-			getPersistenceService().create(entity);
-			messages.info(new BundleKey("messages", "save.successful"));
-		} else {
-			getPersistenceService().update(entity);
-			messages.info(new BundleKey("messages", "update.successful"));
-		}
-
-		return back();
-	}
-
-	/**
-	 * Lists all entities, sorted by description if bean is related to
-	 * BusinessEntity type
-	 */
-	public List<T> listAll() {
-		if (clazz != null && BusinessEntity.class.isAssignableFrom(clazz)) {
-			return getPersistenceService().list(new PaginationConfiguration("description", SortOrder.ASCENDING));
-		} else {
-			return getPersistenceService().list();
-		}
-	}
-
-	/**
-	 * Returns view after save() operation. By default it goes back to list
-	 * view. Override if need different logic (for example return to one view
-	 * for save and another for update operations)
-	 */
-	public String getViewAfterSave() {
-		return getListViewName();
-	}
-
-	/**
-	 * Method to get Back link. If default view name is different than override
-	 * the method. Default name: entity's name + s;
-	 * 
-	 * @return string for navigation
-	 */
-	public String back() {
-		if (backView != null && backView.get() != null) {
-			// log.debug("backview parameter is " + backView.get());
-			backViewSave = backView.get();
-		} else if (backViewSave == null) {
-			return getListViewName();
-		}
-		return backViewSave;
-	}
-
-	/**
-	 * Go back and end conversation. BeforeRedirect flag is set to true, so
-	 * conversation is first ended and then redirect is proceeded, that means
-	 * that after redirect new conversation will have to be created (temp or
-	 * long running) so that view will have all most up to date info because it
-	 * will load everything from db when starting new conversation.
-	 * 
-	 * @return string for navigation
-	 */
-	// TODO: @End(beforeRedirect = true, root = false)
-	public String backAndEndConversation() {
-		String outcome = back();
-		endConversation();
-		return outcome;
-	}
-
-	/**
-	 * Generating action name to get to entity creation page. Override this
-	 * method if its view name does not fit.
-	 */
-	public String getNewViewName() {
-		return getEditViewName();
-	}
-
-	/**
-	 * TODO
-	 */
-	public String getEditViewName() {
-		String className = clazz.getSimpleName();
-		StringBuilder sb = new StringBuilder(className);
-		sb.append("Detail");
-		char[] dst = new char[1];
-		sb.getChars(0, 1, dst, 0);
-		sb.replace(0, 1, new String(dst).toLowerCase());
-		return sb.toString();
-	}
-
-	/**
-	 * Generating back link.
-	 */
-	protected String getListViewName() {
-		String className = clazz.getSimpleName();
-		StringBuilder sb = new StringBuilder(className);
-		char[] dst = new char[1];
-		sb.getChars(0, 1, dst, 0);
-		sb.replace(0, 1, new String(dst).toLowerCase());
-		sb.append("s");
-		return sb.toString();
-	}
-
-	public String getIdParameterName() {
-		String className = clazz.getSimpleName();
-		StringBuilder sb = new StringBuilder(className);
-		sb.append("Id");
-		char[] dst = new char[1];
-		sb.getChars(0, 1, dst, 0);
-		sb.replace(0, 1, new String(dst).toLowerCase());
-		return sb.toString();
-	}
-
-	/**
-	 * Delete Entity using it's ID. Add error message to {@link statusMessages}
-	 * if unsuccessful.
-	 * 
-	 * @param id
-	 *            Entity id to delete
-	 */
-	public void delete(Long id) {
-		try {
-			log.info(String.format("Deleting entity %s with id = %s", clazz.getName(), id));
-			getPersistenceService().remove(id);
-			messages.info(new BundleKey("messages", "delete.successful"));
-		} catch (Throwable t) {
-			if (t.getCause() instanceof EntityExistsException) {
-				log.info("delete was unsuccessful because entity is used in the system", t);
-				messages.error(new BundleKey("messages", "error.delete.entityUsed"));
-
-			} else {
-				log.info("unexpected exception when deleting!", t);
-				messages.error(new BundleKey("messages", "error.delete.unexpected"));
-			}
-		}
-
-//		initEntity();
-	}
-
-	public void delete() {
-		try {
-			log.info(String.format("Deleting entity %s with id = %s", clazz.getName(), getEntity().getId()));
-			getPersistenceService().remove((Long) getEntity().getId());
-			messages.info(new BundleKey("messages", "delete.successful"));
-		} catch (Throwable t) {
-			if (t.getCause() instanceof EntityExistsException) {
-				log.info("delete was unsuccessful because entity is used in the system", t);
-				messages.error(new BundleKey("messages", "error.delete.entityUsed"));
-
-			} else {
-				log.info("unexpected exception when deleting!", t);
-				messages.error(new BundleKey("messages", "error.delete.unexpected"));
-			}
-		}
-
-//		initEntity();
-	}
-
-	/**
-	 * Delete checked entities. Add error message to {@link statusMessages} if
-	 * unsuccessful.
-	 */
-	public void deleteMany() {
-		try {
-			if (selectedEntities != null && selectedEntities.size() > 0) {
-				Set<Long> idsToDelete = new HashSet<Long>();
-				StringBuilder idsString = new StringBuilder();
-				for (IEntity entity : selectedEntities) {
-					idsToDelete.add((Long) entity.getId());
-					idsString.append(entity.getId()).append(" ");
-				}
-				log.info(String.format("Deleting multiple entities %s with ids = %s", clazz.getName(),
-						idsString.toString()));
-
-				getPersistenceService().remove(idsToDelete);
-				getPersistenceService().commit();
-				messages.info(new BundleKey("messages", "delete.entitities.successful"));
-			} else {
-				messages.info(new BundleKey("messages", "delete.entitities.noSelection"));
-			}
-		} catch (Throwable t) {
-			if (t.getCause() instanceof EntityExistsException) {
-				log.info("delete was unsuccessful because entity is used in the system", t);
-				messages.error(new BundleKey("messages", "error.delete.entityUsed"));
-
-			} else {
-				log.info("unexpected exception when deleting!", t);
-				messages.error(new BundleKey("messages", "error.delete.unexpected"));
-			}
-		}
-
-//		initEntity();
-	}
-
-	/**
-	 * Gets search filters map.
-	 * 
-	 * @return Filters map.
-	 */
-	public Map<String, Object> getFilters() {
-		if (filters == null)
-			filters = new HashMap<String, Object>();
-		return filters;
-	}
-
-	/**
-	 * Clean search fields in datatable.
-	 */
-	public void clean() {
-		dataModel = null;
-		filters = new HashMap<String, Object>();
-	}
-
-	/**
-	 * Reset values to the last state.
-	 */
-	public void resetFormEntity() {
-		entity = null;
-		entity = getEntity();
-	}
-
-	/**
-	 * Get new instance for backing bean class.
-	 * 
-	 * @return New instance.
-	 * 
-	 * @throws IllegalAccessException
-	 * @throws InstantiationException
-	 */
-	public T getInstance() throws InstantiationException, IllegalAccessException {
-		return clazz.newInstance();
-	}
-
-	/**
-	 * Method that returns concrete PersistenceService. That service is then
-	 * used for operations on concrete entities (eg. save, delete etc).
-	 * 
-	 * @return Persistence service
-	 */
-	protected abstract IPersistenceService<T> getPersistenceService();
-
-	/**
-	 * Override this method if you need to fetch any fields when selecting list
-	 * of entities in data table. Return list of field names that has to be
-	 * fetched.
-	 */
-	protected List<String> getListFieldsToFetch() {
-		return null;
-	}
-
-	/**
-	 * Override this method if you need to fetch any fields when selecting one
-	 * entity to show it a form. Return list of field names that has to be
-	 * fetched.
-	 */
-	protected List<String> getFormFieldsToFetch() {
-		return null;
-	}
-	
-	/**
-	 * Override this method when pop up with additional entity information is
-	 * needed.
-	 */
-	protected String getPopupInfo() {
-		return "No popup information. Override BaseBean.getPopupInfo() method.";
-	}
-	
+    @Inject
+    protected Conversation conversation;
+
+    @Inject
+    protected CustomFieldTemplateService customFieldTemplateService;
+
+    @Inject
+    protected CustomFieldInstanceService customFieldInstanceService;
+
+    @Inject
+    private CatMessagesService catMessagesService;
+
+    /** Search filters. */
+    protected Map<String, Object> filters = new HashMap<String, Object>();
+
+    /** Entity to edit/view. */
+    protected T entity;
+
+    /** Class of backing bean. */
+    private Class<T> clazz;
+
+    private CustomFieldTemplate customFieldSelectedTemplate;
+    /**
+     * New custom field period
+     */
+    private CustomFieldPeriod customFieldNewPeriod;
+
+    private boolean customFieldPeriodMatched;
+
+    /**
+     * Custom field templates
+     */
+    protected List<CustomFieldTemplate> customFieldTemplates = new ArrayList<CustomFieldTemplate>();
+
+    /**
+     * Request parameter. Should form be displayed in create/edit or view mode
+     */
+    @Inject
+    @RequestParam()
+    private Instance<String> edit;
+
+    // private boolean editSaved;
+
+    protected int dataTableFirstAttribute;
+
+    /**
+     * Request parameter. A custom back view page instead of a regular list page
+     */
+    @Inject
+    @RequestParam()
+    private Instance<String> backView;
+
+    private String backViewSave;
+
+    /**
+     * Request parameter. Used for loading in object by its id.
+     */
+    @Inject
+    @RequestParam("objectId")
+    private Instance<Long> objectIdFromParam;
+
+    private Long objectIdFromSet;
+
+    /** Helper field to enter language related field values. */
+    protected Map<String, String> languageMessagesMap = new HashMap<String, String>();
+
+    /** Helper field to enter values for HashMap<String,String> type fields */
+    protected Map<String, List<HashMap<String, String>>> mapTypeFieldValues = new HashMap<String, List<HashMap<String, String>>>();
+
+    /**
+     * Datamodel for lazy dataloading in datatable.
+     */
+    protected LazyDataModel<T> dataModel;
+
+    /**
+     * Bind datatable for search results.
+     */
+    private DataTable dataTable;
+
+    /**
+     * Selected Entities in multiselect datatable.
+     */
+    private List<T> selectedEntities;
+
+    /**
+     * Constructor
+     */
+    public BaseBean() {
+        super();
+    }
+
+    /**
+     * Constructor.
+     * 
+     * @param clazz Class.
+     */
+    public BaseBean(Class<T> clazz) {
+        super();
+        this.clazz = clazz;
+    }
+
+    /**
+     * Returns entity class
+     * 
+     * @return Class
+     */
+    public Class<T> getClazz() {
+        return clazz;
+    }
+
+    protected void beginConversation() {
+        if (conversation.isTransient()) {
+            conversation.begin();
+        }
+    }
+
+    protected void endConversation() {
+        if (!conversation.isTransient()) {
+            conversation.end();
+        }
+    }
+
+    public void preRenderView() {
+        beginConversation();
+    }
+
+    /**
+     * Initiates entity from request parameter id.
+     * 
+     * @param objectClass Class of the object.
+     * @return Entity from database.
+     */
+    public T initEntity() {
+        log.debug("instantiating " + this.getClass());
+        if (getObjectId() != null) {
+            if (getFormFieldsToFetch() == null) {
+                entity = (T) getPersistenceService().findById(getObjectId());
+            } else {
+                entity = (T) getPersistenceService().findById(getObjectId(), getFormFieldsToFetch());
+            }
+
+            loadMultiLanguageFields();
+
+            // getPersistenceService().detach(entity);
+        } else {
+            try {
+                entity = getInstance();
+                if (entity instanceof BaseEntity) {
+                    ((BaseEntity) entity).setProvider(getCurrentProvider());
+                }
+                // FIXME: If entity is Auditable, set here the creator and
+                // creation time
+            } catch (InstantiationException e) {
+                log.error("Unexpected error!", e);
+                throw new IllegalStateException("could not instantiate a class, abstract class");
+            } catch (IllegalAccessException e) {
+                log.error("Unexpected error!", e);
+                throw new IllegalStateException("could not instantiate a class, constructor not accessible");
+            }
+        }
+
+        initCustomFields();
+
+        return entity;
+    }
+
+    /**
+     * Load multi-language fields if applicable for a class (class contains annotation MultilanguageEntity)
+     * 
+     * @param entity Entity lo load fields for
+     */
+    private void loadMultiLanguageFields() {
+
+        if (!isMultilanguageEntity()) {
+            return;
+        }
+
+        languageMessagesMap.clear();
+
+        for (CatMessages msg : catMessagesService.getCatMessagesList(clazz.getSimpleName() + "_" + entity.getId())) {
+            languageMessagesMap.put(msg.getLanguageCode(), msg.getDescription());
+        }
+    }
+
+    /**
+     * When opened to view or edit entity - this getter method returns it. In case entity is not loaded it will initialize it.
+     * 
+     * @return Entity in current view state.
+     */
+    public T getEntity() {
+        return entity != null ? entity : initEntity();
+    }
+
+    public void setEntity(T entity) {
+        this.entity = entity;
+    }
+
+    // /**
+    // * Refresh entities data model and removes search filters.
+    // */
+    // public void clean() {
+    // if (entities == null) {
+    // entities = new PaginationDataModel<T>(getPersistenceService());
+    // }
+    // filters.clear();
+    // filters.put("provider", getCurrentProvider());
+    // entities.addFilters(filters);
+    // entities.addFetchFields(getListFieldsToFetch());
+    // entities.forceRefresh();
+    // }
+
+    public String saveOrUpdate(boolean killConversation, String objectName, Long objectId) throws BusinessException {
+        String outcome = saveOrUpdate(killConversation);
+
+        if (killConversation) {
+            endConversation();
+        }
+
+        // return objectId == null ? outcome : (outcome + "&" + objectName + "="
+        // + objectId + "&cid=" + conversation.getId());
+        return outcome;
+    }
+
+    public String saveOrUpdate(boolean killConversation) throws BusinessException {
+        String outcome = null;
+
+        updateCustomFieldsInEntity();
+
+        if (!isMultilanguageEntity()) {
+            outcome = saveOrUpdate(entity);
+
+        } else {
+            if (entity.getId() != null) {
+
+                for (String msgKey : languageMessagesMap.keySet()) {
+                    String description = languageMessagesMap.get(msgKey);
+                    CatMessages catMsg = catMessagesService.getCatMessages(entity, msgKey);
+                    if (catMsg != null) {
+                        catMsg.setDescription(description);
+                        catMessagesService.update(catMsg);
+                    } else {
+                        CatMessages catMessages = new CatMessages(entity, msgKey, description);
+                        catMessagesService.create(catMessages);
+                    }
+                }
+
+                outcome = saveOrUpdate(entity);
+
+            } else {
+                outcome = saveOrUpdate(entity);
+
+                for (String msgKey : languageMessagesMap.keySet()) {
+                    String description = languageMessagesMap.get(msgKey);
+                    CatMessages catMessages = new CatMessages(entity, msgKey, description);
+                    catMessagesService.create(catMessages);
+                }
+            }
+        }
+
+        if (killConversation) {
+            endConversation();
+        }
+
+        return outcome;
+    }
+
+    /**
+     * Save or update entity depending on if entity is transient.
+     * 
+     * @param entity Entity to save.
+     * @throws BusinessException
+     */
+    protected String saveOrUpdate(T entity) throws BusinessException {
+        if (entity.isTransient()) {
+            getPersistenceService().create(entity);
+            messages.info(new BundleKey("messages", "save.successful"));
+        } else {
+            getPersistenceService().update(entity);
+            messages.info(new BundleKey("messages", "update.successful"));
+        }
+
+        return back();
+    }
+
+    /**
+     * Lists all entities, sorted by description if bean is related to BusinessEntity type
+     */
+    public List<T> listAll() {
+        if (clazz != null && BusinessEntity.class.isAssignableFrom(clazz)) {
+            return getPersistenceService().list(new PaginationConfiguration("description", SortOrder.ASCENDING));
+        } else {
+            return getPersistenceService().list();
+        }
+    }
+
+    /**
+     * Returns view after save() operation. By default it goes back to list view. Override if need different logic (for example return to one view for save and another for update
+     * operations)
+     */
+    public String getViewAfterSave() {
+        return getListViewName();
+    }
+
+    /**
+     * Method to get Back link. If default view name is different than override the method. Default name: entity's name + s;
+     * 
+     * @return string for navigation
+     */
+    public String back() {
+        if (backView != null && backView.get() != null) {
+            // log.debug("backview parameter is " + backView.get());
+            backViewSave = backView.get();
+        } else if (backViewSave == null) {
+            return getListViewName();
+        }
+        return backViewSave;
+    }
+
+    /**
+     * Go back and end conversation. BeforeRedirect flag is set to true, so conversation is first ended and then redirect is proceeded, that means that after redirect new
+     * conversation will have to be created (temp or long running) so that view will have all most up to date info because it will load everything from db when starting new
+     * conversation.
+     * 
+     * @return string for navigation
+     */
+    // TODO: @End(beforeRedirect = true, root = false)
+    public String backAndEndConversation() {
+        String outcome = back();
+        endConversation();
+        return outcome;
+    }
+
+    /**
+     * Generating action name to get to entity creation page. Override this method if its view name does not fit.
+     */
+    public String getNewViewName() {
+        return getEditViewName();
+    }
+
+    /**
+     * TODO
+     */
+    public String getEditViewName() {
+        String className = clazz.getSimpleName();
+        StringBuilder sb = new StringBuilder(className);
+        sb.append("Detail");
+        char[] dst = new char[1];
+        sb.getChars(0, 1, dst, 0);
+        sb.replace(0, 1, new String(dst).toLowerCase());
+        return sb.toString();
+    }
+
+    /**
+     * Generating back link.
+     */
+    protected String getListViewName() {
+        String className = clazz.getSimpleName();
+        StringBuilder sb = new StringBuilder(className);
+        char[] dst = new char[1];
+        sb.getChars(0, 1, dst, 0);
+        sb.replace(0, 1, new String(dst).toLowerCase());
+        sb.append("s");
+        return sb.toString();
+    }
+
+    public String getIdParameterName() {
+        String className = clazz.getSimpleName();
+        StringBuilder sb = new StringBuilder(className);
+        sb.append("Id");
+        char[] dst = new char[1];
+        sb.getChars(0, 1, dst, 0);
+        sb.replace(0, 1, new String(dst).toLowerCase());
+        return sb.toString();
+    }
+
+    /**
+     * Delete Entity using it's ID. Add error message to {@link statusMessages} if unsuccessful.
+     * 
+     * @param id Entity id to delete
+     */
+    public void delete(Long id) {
+        try {
+            log.info(String.format("Deleting entity %s with id = %s", clazz.getName(), id));
+            getPersistenceService().remove(id);
+            messages.info(new BundleKey("messages", "delete.successful"));
+        } catch (Throwable t) {
+            if (t.getCause() instanceof EntityExistsException) {
+                log.info("delete was unsuccessful because entity is used in the system", t);
+                messages.error(new BundleKey("messages", "error.delete.entityUsed"));
+
+            } else {
+                log.info("unexpected exception when deleting!", t);
+                messages.error(new BundleKey("messages", "error.delete.unexpected"));
+            }
+        }
+
+        // initEntity();
+    }
+
+    public void delete() {
+        try {
+            log.info(String.format("Deleting entity %s with id = %s", clazz.getName(), getEntity().getId()));
+            getPersistenceService().remove((Long) getEntity().getId());
+            messages.info(new BundleKey("messages", "delete.successful"));
+        } catch (Throwable t) {
+            if (t.getCause() instanceof EntityExistsException) {
+                log.info("delete was unsuccessful because entity is used in the system", t);
+                messages.error(new BundleKey("messages", "error.delete.entityUsed"));
+
+            } else {
+                log.info("unexpected exception when deleting!", t);
+                messages.error(new BundleKey("messages", "error.delete.unexpected"));
+            }
+        }
+
+        // initEntity();
+    }
+
+    /**
+     * Delete checked entities. Add error message to {@link statusMessages} if unsuccessful.
+     */
+    public void deleteMany() {
+        try {
+            if (selectedEntities != null && selectedEntities.size() > 0) {
+                Set<Long> idsToDelete = new HashSet<Long>();
+                StringBuilder idsString = new StringBuilder();
+                for (IEntity entity : selectedEntities) {
+                    idsToDelete.add((Long) entity.getId());
+                    idsString.append(entity.getId()).append(" ");
+                }
+                log.info(String.format("Deleting multiple entities %s with ids = %s", clazz.getName(), idsString.toString()));
+
+                getPersistenceService().remove(idsToDelete);
+                getPersistenceService().commit();
+                messages.info(new BundleKey("messages", "delete.entitities.successful"));
+            } else {
+                messages.info(new BundleKey("messages", "delete.entitities.noSelection"));
+            }
+        } catch (Throwable t) {
+            if (t.getCause() instanceof EntityExistsException) {
+                log.info("delete was unsuccessful because entity is used in the system", t);
+                messages.error(new BundleKey("messages", "error.delete.entityUsed"));
+
+            } else {
+                log.info("unexpected exception when deleting!", t);
+                messages.error(new BundleKey("messages", "error.delete.unexpected"));
+            }
+        }
+
+        // initEntity();
+    }
+
+    /**
+     * Gets search filters map.
+     * 
+     * @return Filters map.
+     */
+    public Map<String, Object> getFilters() {
+        if (filters == null)
+            filters = new HashMap<String, Object>();
+        return filters;
+    }
+
+    /**
+     * Clean search fields in datatable.
+     */
+    public void clean() {
+        dataModel = null;
+        filters = new HashMap<String, Object>();
+    }
+
+    /**
+     * Reset values to the last state.
+     */
+    public void resetFormEntity() {
+        entity = null;
+        entity = getEntity();
+    }
+
+    /**
+     * Get new instance for backing bean class.
+     * 
+     * @return New instance.
+     * 
+     * @throws IllegalAccessException
+     * @throws InstantiationException
+     */
+    public T getInstance() throws InstantiationException, IllegalAccessException {
+        return clazz.newInstance();
+    }
+
+    /**
+     * Method that returns concrete PersistenceService. That service is then used for operations on concrete entities (eg. save, delete etc).
+     * 
+     * @return Persistence service
+     */
+    protected abstract IPersistenceService<T> getPersistenceService();
+
+    /**
+     * Override this method if you need to fetch any fields when selecting list of entities in data table. Return list of field names that has to be fetched.
+     */
+    protected List<String> getListFieldsToFetch() {
+        return null;
+    }
+
+    /**
+     * Override this method if you need to fetch any fields when selecting one entity to show it a form. Return list of field names that has to be fetched.
+     */
+    protected List<String> getFormFieldsToFetch() {
+        return null;
+    }
+
+    /**
+     * Override this method when pop up with additional entity information is needed.
+     */
+    protected String getPopupInfo() {
+        return "No popup information. Override BaseBean.getPopupInfo() method.";
+    }
+
     /**
      * Disable current entity. Add error message to {@link statusMessages} if unsuccessful.
      * 
@@ -692,509 +681,539 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
             messages.error(new BundleKey("messages", "error.unexpected"));
         }
     }
-    
-	/**
-	 * DataModel for primefaces lazy loading datatable component.
-	 * 
-	 * @return LazyDataModel implementation.
-	 */
-	public LazyDataModel<T> getLazyDataModel() {
-		return getLazyDataModel(filters, false);
-	}
 
-	public LazyDataModel<T> getLazyDataModel(Map<String, Object> inputFilters, boolean forceReload) {
-		if (dataModel == null || forceReload) {
+    /**
+     * DataModel for primefaces lazy loading datatable component.
+     * 
+     * @return LazyDataModel implementation.
+     */
+    public LazyDataModel<T> getLazyDataModel() {
+        return getLazyDataModel(filters, false);
+    }
 
-			final Map<String, Object> filters = inputFilters;
+    public LazyDataModel<T> getLazyDataModel(Map<String, Object> inputFilters, boolean forceReload) {
+        if (dataModel == null || forceReload) {
 
-			dataModel = new ServiceBasedLazyDataModel<T>() {
+            final Map<String, Object> filters = inputFilters;
 
-				private static final long serialVersionUID = 1736191234466041033L;
+            dataModel = new ServiceBasedLazyDataModel<T>() {
 
-				@Override
-				protected IPersistenceService<T> getPersistenceServiceImpl() {
-					return getPersistenceService();
-				}
+                private static final long serialVersionUID = 1736191234466041033L;
 
-				@Override
-				protected Map<String, Object> getSearchCriteria() {
+                @Override
+                protected IPersistenceService<T> getPersistenceServiceImpl() {
+                    return getPersistenceService();
+                }
 
-					// Omit empty or null values
-					Map<String, Object> cleanFilters = new HashMap<String, Object>();
+                @Override
+                protected Map<String, Object> getSearchCriteria() {
 
-					for (Map.Entry<String, Object> filterEntry : filters.entrySet()) {
-						if (filterEntry.getValue() == null) {
-							continue;
-						}
-						if (filterEntry.getValue() instanceof String) {
-							if (StringUtils.isBlank((String) filterEntry.getValue())) {
-								continue;
-							}
-						}
-						cleanFilters.put(filterEntry.getKey(), filterEntry.getValue());
-					}
+                    // Omit empty or null values
+                    Map<String, Object> cleanFilters = new HashMap<String, Object>();
 
-					return BaseBean.this.supplementSearchCriteria(cleanFilters);
-				}
+                    for (Map.Entry<String, Object> filterEntry : filters.entrySet()) {
+                        if (filterEntry.getValue() == null) {
+                            continue;
+                        }
+                        if (filterEntry.getValue() instanceof String) {
+                            if (StringUtils.isBlank((String) filterEntry.getValue())) {
+                                continue;
+                            }
+                        }
+                        cleanFilters.put(filterEntry.getKey(), filterEntry.getValue());
+                    }
 
-				@Override
-				protected String getDefaultSortImpl() {
-					return getDefaultSort();
-				}
+                    return BaseBean.this.supplementSearchCriteria(cleanFilters);
+                }
 
-				@Override
-				protected SortOrder getDefaultSortOrderImpl() {
-					return getDefaultSortOrder();
-				}
+                @Override
+                protected String getDefaultSortImpl() {
+                    return getDefaultSort();
+                }
 
-				@Override
-				protected List<String> getListFieldsToFetchImpl() {
-					return getListFieldsToFetch();
-				}
-			};
-		}
-		return dataModel;
-	}
+                @Override
+                protected SortOrder getDefaultSortOrderImpl() {
+                    return getDefaultSortOrder();
+                }
 
-	public Map<String, List<HashMap<String, String>>> getMapTypeFieldValues() {
-		return mapTypeFieldValues;
-	}
+                @Override
+                protected List<String> getListFieldsToFetchImpl() {
+                    return getListFieldsToFetch();
+                }
+            };
+        }
+        return dataModel;
+    }
 
-	public void setMapTypeFieldValues(Map<String, List<HashMap<String, String>>> mapTypeFieldValues) {
-		this.mapTypeFieldValues = mapTypeFieldValues;
-	}
+    public Map<String, List<HashMap<String, String>>> getMapTypeFieldValues() {
+        return mapTypeFieldValues;
+    }
 
-	/**
-	 * Allows to overwrite, or add additional search criteria for filtering a
-	 * list. Search criteria is a map with filter criteria name as a key and
-	 * value as a value. <br/>
-	 * Criteria name consist of [<condition> ]<field name> (e.g.
-	 * "like firstName") where <condition> is a condition to apply to field
-	 * value comparison and <field name> is an entit attribute name.
-	 * 
-	 * @param searchCriteria
-	 *            Search criteria - should be same as filters attribute
-	 * @return HashMap with filter criteria name as a key and value as a value
-	 */
-	protected Map<String, Object> supplementSearchCriteria(Map<String, Object> searchCriteria) {
-		return searchCriteria;
-	}
+    public void setMapTypeFieldValues(Map<String, List<HashMap<String, String>>> mapTypeFieldValues) {
+        this.mapTypeFieldValues = mapTypeFieldValues;
+    }
 
-	public DataTable search() {
-		dataTable.reset();
-		return dataTable;
-	}
+    /**
+     * Allows to overwrite, or add additional search criteria for filtering a list. Search criteria is a map with filter criteria name as a key and value as a value. <br/>
+     * Criteria name consist of [<condition> ]<field name> (e.g. "like firstName") where <condition> is a condition to apply to field value comparison and <field name> is an entit
+     * attribute name.
+     * 
+     * @param searchCriteria Search criteria - should be same as filters attribute
+     * @return HashMap with filter criteria name as a key and value as a value
+     */
+    protected Map<String, Object> supplementSearchCriteria(Map<String, Object> searchCriteria) {
+        return searchCriteria;
+    }
 
-	public DataTable getDataTable() {
-		return dataTable;
-	}
+    public DataTable search() {
+        dataTable.reset();
+        return dataTable;
+    }
 
-	public void setDataTable(DataTable dataTable) {
-		this.dataTable = dataTable;
-	}
+    public DataTable getDataTable() {
+        return dataTable;
+    }
 
-	public List<T> getSelectedEntities() {
-		return selectedEntities;
-	}
+    public void setDataTable(DataTable dataTable) {
+        this.dataTable = dataTable;
+    }
 
-	public void setSelectedEntities(List<T> selectedEntities) {
-		this.selectedEntities = selectedEntities;
-	}
+    public List<T> getSelectedEntities() {
+        return selectedEntities;
+    }
 
-	public Long getObjectId() {
-		if (objectIdFromParam != null && objectIdFromParam.get() != null) {
-			objectIdFromSet = objectIdFromParam.get();
-		}
+    public void setSelectedEntities(List<T> selectedEntities) {
+        this.selectedEntities = selectedEntities;
+    }
 
-		return objectIdFromSet;
-	}
+    public Long getObjectId() {
+        if (objectIdFromParam != null && objectIdFromParam.get() != null) {
+            objectIdFromSet = objectIdFromParam.get();
+        }
 
-	public void setObjectId(Long objectId) {
-		objectIdFromSet = objectId;
-	}
+        return objectIdFromSet;
+    }
 
-	/**
-	 * true in edit mode
-	 * @return
-	 */
-	public boolean isEdit() {
-		return true;
-	}
+    public void setObjectId(Long objectId) {
+        objectIdFromSet = objectId;
+    }
 
-	protected void clearObjectId() {
-		objectIdFromParam = null;
-		objectIdFromSet = null;
-	}
+    /**
+     * true in edit mode
+     * 
+     * @return
+     */
+    public boolean isEdit() {
+        return true;
+    }
 
-	public void onRowSelect(SelectEvent event) {
+    protected void clearObjectId() {
+        objectIdFromParam = null;
+        objectIdFromSet = null;
+    }
 
-	}
+    public void onRowSelect(SelectEvent event) {
 
-	protected User getCurrentUser() {
-		return ((MeveoUser) identity.getUser()).getUser();
-	}
+    }
 
-	public List<TradingLanguage> getProviderLanguages() {
-		return getCurrentProvider().getTradingLanguages();
-	}
+    protected User getCurrentUser() {
+        return ((MeveoUser) identity.getUser()).getUser();
+    }
 
-	public String getProviderLanguageCode() {
-		if (getCurrentProvider() != null) {
-			return getCurrentProvider().getLanguage().getLanguageCode();
-		}
-		return "";
-	}
+    public List<TradingLanguage> getProviderLanguages() {
+        return getCurrentProvider().getTradingLanguages();
+    }
 
-	public Map<String, String> getLanguageMessagesMap() {
-		return languageMessagesMap;
-	}
+    public String getProviderLanguageCode() {
+        if (getCurrentProvider() != null) {
+            return getCurrentProvider().getLanguage().getLanguageCode();
+        }
+        return "";
+    }
 
-	public void setLanguageMessagesMap(Map<String, String> languageMessagesMap) {
-		this.languageMessagesMap = languageMessagesMap;
-	}
+    public Map<String, String> getLanguageMessagesMap() {
+        return languageMessagesMap;
+    }
 
-	protected Provider getCurrentProvider() {
-		return currentProvider;
-	}
+    public void setLanguageMessagesMap(Map<String, String> languageMessagesMap) {
+        this.languageMessagesMap = languageMessagesMap;
+    }
 
-	protected String getDefaultSort() {
-		return "id";
-	}
+    protected Provider getCurrentProvider() {
+        return currentProvider;
+    }
 
-	protected SortOrder getDefaultSortOrder() {
-		return SortOrder.DESCENDING;
-	}
+    protected String getDefaultSort() {
+        return "id";
+    }
 
-	public String getBackView() {
-		return backView.get();
-	}
+    protected SortOrder getDefaultSortOrder() {
+        return SortOrder.DESCENDING;
+    }
 
-	public String getBackViewSave() {
-		return backViewSave;
-	}
+    public String getBackView() {
+        return backView.get();
+    }
 
-	public void setBackViewSave(String backViewSave) {
-		this.backViewSave = backViewSave;
-	}
+    public String getBackViewSave() {
+        return backViewSave;
+    }
 
-	/**
-	 * Remove a value from a map type field attribute used to gather field
-	 * values in GUI
-	 * 
-	 * @param fieldName
-	 *            Field name
-	 * @param valueInfo
-	 *            Value to remove
-	 */
-	public void removeMapTypeFieldValue(String fieldName, Map<String, String> valueInfo) {
-		mapTypeFieldValues.get(fieldName).remove(valueInfo);
-	}
+    public void setBackViewSave(String backViewSave) {
+        this.backViewSave = backViewSave;
+    }
 
-	/**
-	 * Add a value to a map type field attribute used to gather field values in
-	 * GUI
-	 * 
-	 * @param fieldName
-	 *            Field name
-	 */
-	public void addMapTypeFieldValue(String fieldName) {
-		if (!mapTypeFieldValues.containsKey(fieldName)) {
-			mapTypeFieldValues.put(fieldName, new ArrayList<HashMap<String, String>>());
-		}
-		mapTypeFieldValues.get(fieldName).add(new HashMap<String, String>());
-	}
+    /**
+     * Remove a value from a map type field attribute used to gather field values in GUI
+     * 
+     * @param fieldName Field name
+     * @param valueInfo Value to remove
+     */
+    public void removeMapTypeFieldValue(String fieldName, Map<String, String> valueInfo) {
+        mapTypeFieldValues.get(fieldName).remove(valueInfo);
+    }
 
-	/**
-	 * Extract values from a Map type field in an entity to mapTypeFieldValues
-	 * attribute used to gather field values in GUI
-	 * 
-	 * @param entityField
-	 *            Entity field
-	 * @param fieldName
-	 *            Field name
-	 */
-	public void extractMapTypeFieldFromEntity(Map<String, String> entityField, String fieldName) {
+    /**
+     * Add a value to a map type field attribute used to gather field values in GUI
+     * 
+     * @param fieldName Field name
+     */
+    public void addMapTypeFieldValue(String fieldName) {
+        if (!mapTypeFieldValues.containsKey(fieldName)) {
+            mapTypeFieldValues.put(fieldName, new ArrayList<HashMap<String, String>>());
+        }
+        mapTypeFieldValues.get(fieldName).add(new HashMap<String, String>());
+    }
 
-		mapTypeFieldValues.remove(fieldName);
+    /**
+     * Extract values from a Map type field in an entity to mapTypeFieldValues attribute used to gather field values in GUI
+     * 
+     * @param entityField Entity field
+     * @param fieldName Field name
+     */
+    public void extractMapTypeFieldFromEntity(Map<String, String> entityField, String fieldName) {
 
-		if (entityField != null) {
-			List<HashMap<String, String>> fieldValues = new ArrayList<HashMap<String, String>>();
-			mapTypeFieldValues.put(fieldName, fieldValues);
-			for (Entry<String, String> setInfo : entityField.entrySet()) {
-				HashMap<String, String> value = new HashMap<String, String>();
-				value.put("key", setInfo.getKey());
-				value.put("value", setInfo.getValue());
-				fieldValues.add(value);
-			}
-		}
-	}
+        mapTypeFieldValues.remove(fieldName);
 
-	/**
-	 * Update Map type field in an entity from mapTypeFieldValues attribute used
-	 * to gather field values in GUI
-	 * 
-	 * @param entityField
-	 *            Entity field
-	 * @param fieldName
-	 *            Field name
-	 */
-	public void updateMapTypeFieldInEntity(Map<String, String> entityField, String fieldName) {
-		entityField.clear();
+        if (entityField != null) {
+            List<HashMap<String, String>> fieldValues = new ArrayList<HashMap<String, String>>();
+            mapTypeFieldValues.put(fieldName, fieldValues);
+            for (Entry<String, String> setInfo : entityField.entrySet()) {
+                HashMap<String, String> value = new HashMap<String, String>();
+                value.put("key", setInfo.getKey());
+                value.put("value", setInfo.getValue());
+                fieldValues.add(value);
+            }
+        }
+    }
 
-		if (mapTypeFieldValues.get(fieldName) != null) {
-			for (HashMap<String, String> valueInfo : mapTypeFieldValues.get(fieldName)) {
-				if (valueInfo.get("key") != null && !valueInfo.get("key").isEmpty()) {
-					entityField.put(valueInfo.get("key"), valueInfo.get("value") == null ? "" : valueInfo.get("value"));
-				}
-			}
-		}
-	}
+    /**
+     * Update Map type field in an entity from mapTypeFieldValues attribute used to gather field values in GUI
+     * 
+     * @param entityField Entity field
+     * @param fieldName Field name
+     */
+    public void updateMapTypeFieldInEntity(Map<String, String> entityField, String fieldName) {
+        entityField.clear();
 
-	/**
-	 * Load available custom fields (templates) and their values
-	 */
-	protected void initCustomFields() {
-	    //BEWARE this function is overriden in TimerEntityBean to filter custom fields based on their name
-	    
-		if (!this.getClass().isAnnotationPresent(CustomFieldEnabledBean.class)) {
-			return;
-		}
+        if (mapTypeFieldValues.get(fieldName) != null) {
+            for (HashMap<String, String> valueInfo : mapTypeFieldValues.get(fieldName)) {
+                if (valueInfo.get("key") != null && !valueInfo.get("key").isEmpty()) {
+                    entityField.put(valueInfo.get("key"), valueInfo.get("value") == null ? "" : valueInfo.get("value"));
+                }
+            }
+        }
+    }
 
-		AccountLevelEnum accountLevel = this.getClass().getAnnotation(CustomFieldEnabledBean.class).accountLevel();
-		customFieldTemplates = customFieldTemplateService.findByAccountLevel(accountLevel);
+    /**
+     * Load available custom fields (templates) and their values
+     */
+    protected void initCustomFields() {
 
-		if (customFieldTemplates != null && customFieldTemplates.size() > 0) {
-			for (CustomFieldTemplate cf : customFieldTemplates) {
+        if (!this.getClass().isAnnotationPresent(CustomFieldEnabledBean.class)) {
+            return;
+        }
 
-				CustomFieldInstance cfi = ((ICustomFieldEntity) entity).getCustomFields().get(cf.getCode());
-				if (cfi != null) {
-					if (cf.getFieldType() == CustomFieldTypeEnum.DATE) {
-						cf.setDateValue(cfi.getDateValue());
-					} else if (cf.getFieldType() == CustomFieldTypeEnum.DOUBLE) {
-						cf.setDoubleValue(cfi.getDoubleValue());
-					} else if (cf.getFieldType() == CustomFieldTypeEnum.LONG) {
-						cf.setLongValue(cfi.getLongValue());
-					} else if (cf.getFieldType() == CustomFieldTypeEnum.STRING
-							|| cf.getFieldType() == CustomFieldTypeEnum.LIST) {
-						cf.setStringValue(cfi.getStringValue());
-					}
-					// Clear existing transient values
-				} else {
-					if (cf.getFieldType() == CustomFieldTypeEnum.DATE) {
-						cf.setDateValue(null);
-					} else if (cf.getFieldType() == CustomFieldTypeEnum.DOUBLE) {
-						cf.setDoubleValue(null);
-					} else if (cf.getFieldType() == CustomFieldTypeEnum.LONG) {
-						cf.setLongValue(null);
-					} else if (cf.getFieldType() == CustomFieldTypeEnum.STRING
-							|| cf.getFieldType() == CustomFieldTypeEnum.LIST) {
-						cf.setStringValue(null);
-					}
-				}
-			}
-		}
-	}
+        customFieldTemplates = getApplicateCustomFieldTemplates();
 
-	private void updateCustomFieldsInEntity() {
+        if (customFieldTemplates != null && customFieldTemplates.size() > 0) {
+            for (CustomFieldTemplate cf : customFieldTemplates) {
 
-		if (!this.getClass().isAnnotationPresent(CustomFieldEnabledBean.class) || customFieldTemplates == null
-				|| customFieldTemplates.isEmpty()) {
-			return;
-		}
+                CustomFieldInstance cfi = ((ICustomFieldEntity) entity).getCustomFields().get(cf.getCode());
+                if (cfi == null) {
+                    cf.setInstance(CustomFieldInstance.fromTemplate(cf));
+                } else {
+                    cf.setInstance(cfi);
+                }
+            }
+        }
+    }
 
-		for (CustomFieldTemplate cf : customFieldTemplates) {
+    private void updateCustomFieldsInEntity() {
 
-			CustomFieldInstance cfi = ((ICustomFieldEntity) entity).getCustomFields().get(cf.getCode());
-			// Not saving empty values
-			if (cfi != null && cf.isValueEmpty()) {
-				((ICustomFieldEntity) entity).getCustomFields().remove(cf.getCode());
+        if (!this.getClass().isAnnotationPresent(CustomFieldEnabledBean.class) || customFieldTemplates == null || customFieldTemplates.isEmpty()) {
+            return;
+        }
 
-				// Update existing value
-			} else if (cfi != null) {
-				if (cf.getFieldType() == CustomFieldTypeEnum.DATE) {
-					cfi.setDateValue(cf.getDateValue());
-				} else if (cf.getFieldType() == CustomFieldTypeEnum.DOUBLE) {
-					cfi.setDoubleValue(cf.getDoubleValue());
-				} else if (cf.getFieldType() == CustomFieldTypeEnum.LONG) {
-					cfi.setLongValue(cf.getLongValue());
-				} else if (cf.getFieldType() == CustomFieldTypeEnum.STRING
-						|| cf.getFieldType() == CustomFieldTypeEnum.LIST) {
-					cfi.setStringValue(cf.getStringValue());
-				}
-				cfi.updateAudit(getCurrentUser());
+        for (CustomFieldTemplate cf : customFieldTemplates) {
 
-				// Create a new value
-			} else if (!cf.isValueEmpty()) {
+            CustomFieldInstance cfi = cf.getInstance();
+            // Not saving empty values
+            if (cfi.isValueEmpty()) {
+                if (!cfi.isTransient()) {
+                    ((ICustomFieldEntity) entity).getCustomFields().remove(cfi.getCode());
+                }
+                // Existing value update
+            } else if (!cfi.isTransient()) {
+                cfi.updateAudit(getCurrentUser());
 
-				cfi = new CustomFieldInstance();
-				cfi.setCode(cf.getCode());
-				((AuditableEntity) cfi).updateAudit(getCurrentUser());
-				((BaseEntity) cfi).setProvider(getCurrentProvider());
+                // Create a new instance from a template value
+            } else {
+                cfi.updateAudit(getCurrentUser());
+                cfi.setProvider(((BaseEntity) entity).getProvider());
 
-				IEntity entity = getEntity();
-				if (entity instanceof AccountEntity) {
-					cfi.setAccount((AccountEntity) getEntity());
-				} else if (entity instanceof Subscription) {
-					cfi.setSubscription((Subscription) entity);
-				} else if (entity instanceof Access) {
-					cfi.setAccess((Access) entity);
-				} else if (entity instanceof ChargeTemplate) {
-					cfi.setChargeTemplate((ChargeTemplate) entity);
-				} else if (entity instanceof ServiceTemplate) {
-					cfi.setServiceTemplate((ServiceTemplate) entity);
-				} else if (entity instanceof OfferTemplate) {
+                IEntity entity = getEntity();
+                if (entity instanceof AccountEntity) {
+                    cfi.setAccount((AccountEntity) getEntity());
+                } else if (entity instanceof Subscription) {
+                    cfi.setSubscription((Subscription) entity);
+                } else if (entity instanceof Access) {
+                    cfi.setAccess((Access) entity);
+                } else if (entity instanceof ChargeTemplate) {
+                    cfi.setChargeTemplate((ChargeTemplate) entity);
+                } else if (entity instanceof ServiceTemplate) {
+                    cfi.setServiceTemplate((ServiceTemplate) entity);
+                } else if (entity instanceof OfferTemplate) {
                     cfi.setOfferTemplate((OfferTemplate) entity);
-                }else if (entity instanceof JobInstance) {
+                } else if (entity instanceof JobInstance) {
                     cfi.setJobInstance((JobInstance) entity);
                 }
 
-				if (cf.getFieldType() == CustomFieldTypeEnum.DATE) {
-					cfi.setDateValue(cf.getDateValue());
-				} else if (cf.getFieldType() == CustomFieldTypeEnum.DOUBLE) {
-					cfi.setDoubleValue(cf.getDoubleValue());
-				} else if (cf.getFieldType() == CustomFieldTypeEnum.LONG) {
-					cfi.setLongValue(cf.getLongValue());
-				} else if (cf.getFieldType() == CustomFieldTypeEnum.STRING
-						|| cf.getFieldType() == CustomFieldTypeEnum.LIST) {
-					cfi.setStringValue(cf.getStringValue());
-				}
+                ((ICustomFieldEntity) entity).getCustomFields().put(cfi.getCode(), cfi);
+            }
+        }
+    }
 
-				((ICustomFieldEntity) entity).getCustomFields().put(cfi.getCode(), cfi);
-			}
-		}
-	}
+    // protected void setAndSaveCustomFields() {
+    // if (customFieldTemplates != null && customFieldTemplates.size() > 0) {
+    // for (CustomFieldTemplate cf : customFieldTemplates) {
+    // CustomFieldInstance cfi = customFieldInstanceService.findByCodeAndAccount(cf.getCode(), getEntity(),getCurrentProvider());
+    // if (cfi != null) {
+    // if (cf.isValueEmpty()) {
+    // customFieldInstanceService.remove(cfi);
+    //
+    // } else {
+    // if (cf.getFieldType() == CustomFieldTypeEnum.DATE) {
+    // cfi.setDateValue(cf.getDateValue());
+    // } else if (cf.getFieldType() == CustomFieldTypeEnum.DOUBLE) {
+    // cfi.setDoubleValue(cf.getDoubleValue());
+    // } else if (cf.getFieldType() == CustomFieldTypeEnum.LONG) {
+    // cfi.setLongValue(cf.getLongValue());
+    // } else if (cf.getFieldType() == CustomFieldTypeEnum.STRING
+    // || cf.getFieldType() == CustomFieldTypeEnum.LIST) {
+    // cfi.setStringValue(cf.getStringValue());
+    // }
+    // }
+    //
+    // } else if (!cf.isValueEmpty()) {
+    // // create
+    // cfi = new CustomFieldInstance();
+    // cfi.setCode(cf.getCode());
+    // IEntity entity = getEntity();
+    // if (entity instanceof AccountEntity) {
+    // cfi.setAccount((AccountEntity) getEntity());
+    // } else if (entity instanceof Subscription) {
+    // cfi.setSubscription((Subscription) entity);
+    // } else if (entity instanceof Access) {
+    // cfi.setAccess((Access) entity);
+    // }else if (entity instanceof ChargeTemplate) {
+    // cfi.setChargeTemplate((ChargeTemplate) entity);
+    // } else if (entity instanceof ServiceTemplate) {
+    // cfi.setServiceTemplate((ServiceTemplate) entity);
+    // } else if (entity instanceof OfferTemplate) {
+    // cfi.setOfferTemplate((OfferTemplate) entity);
+    // }else if (entity instanceof JobInstance) {
+    // cfi.setJobInstance((JobInstance) entity);
+    // }
+    //
+    // if (cf.getFieldType() == CustomFieldTypeEnum.DATE) {
+    // cfi.setDateValue(cf.getDateValue());
+    // } else if (cf.getFieldType() == CustomFieldTypeEnum.DOUBLE) {
+    // cfi.setDoubleValue(cf.getDoubleValue());
+    // } else if (cf.getFieldType() == CustomFieldTypeEnum.LONG) {
+    // cfi.setLongValue(cf.getLongValue());
+    // } else if (cf.getFieldType() == CustomFieldTypeEnum.STRING
+    // || cf.getFieldType() == CustomFieldTypeEnum.LIST) {
+    // cfi.setStringValue(cf.getStringValue());
+    // }
+    //
+    // customFieldInstanceService.create(cfi, getCurrentUser(), getCurrentProvider());
+    // }
+    // }
+    // }
+    // }
+    //
+    // protected void deleteCustomFields() {
+    // if (customFieldTemplates != null && customFieldTemplates.size() > 0) {
+    // for (CustomFieldTemplate cf : customFieldTemplates) {
+    // CustomFieldInstance cfi = customFieldInstanceService.findByCodeAndAccount(cf.getCode(), getEntity(),getCurrentProvider());
+    // if (cfi != null) {
+    // customFieldInstanceService.remove(cfi);
+    // }
+    // }
+    // }
+    // }
 
-	protected void setAndSaveCustomFields() {
-		if (customFieldTemplates != null && customFieldTemplates.size() > 0) {
-			for (CustomFieldTemplate cf : customFieldTemplates) {
-				CustomFieldInstance cfi = customFieldInstanceService.findByCodeAndAccount(cf.getCode(), getEntity(),getCurrentProvider());
-				if (cfi != null) {
-					if (cf.isValueEmpty()) {
-						customFieldInstanceService.remove(cfi);
+    public List<CustomFieldTemplate> getCustomFieldTemplates() {
+        return customFieldTemplates;
+    }
 
-					} else {
-						if (cf.getFieldType() == CustomFieldTypeEnum.DATE) {
-							cfi.setDateValue(cf.getDateValue());
-						} else if (cf.getFieldType() == CustomFieldTypeEnum.DOUBLE) {
-							cfi.setDoubleValue(cf.getDoubleValue());
-						} else if (cf.getFieldType() == CustomFieldTypeEnum.LONG) {
-							cfi.setLongValue(cf.getLongValue());
-						} else if (cf.getFieldType() == CustomFieldTypeEnum.STRING
-								|| cf.getFieldType() == CustomFieldTypeEnum.LIST) {
-							cfi.setStringValue(cf.getStringValue());
-						}
-					}
+    public void setCustomFieldTemplates(List<CustomFieldTemplate> customFieldTemplates) {
+        this.customFieldTemplates = customFieldTemplates;
+    }
 
-				} else if (!cf.isValueEmpty()) {
-					// create
-					cfi = new CustomFieldInstance();
-					cfi.setCode(cf.getCode());
-					IEntity entity = getEntity();
-					if (entity instanceof AccountEntity) {
-						cfi.setAccount((AccountEntity) getEntity());
-					} else if (entity instanceof Subscription) {
-						cfi.setSubscription((Subscription) entity);
-					} else if (entity instanceof Access) {
-						cfi.setAccess((Access) entity);
-					}else if (entity instanceof ChargeTemplate) {
-	                    cfi.setChargeTemplate((ChargeTemplate) entity);
-	                } else if (entity instanceof ServiceTemplate) {
-	                    cfi.setServiceTemplate((ServiceTemplate) entity);
-	                } else if (entity instanceof OfferTemplate) {
-	                    cfi.setOfferTemplate((OfferTemplate) entity);
-	                }else if (entity instanceof JobInstance) {
-	                    cfi.setJobInstance((JobInstance) entity);
-	                }
+    public CustomFieldPeriod getCustomFieldNewPeriod() {
+        return customFieldNewPeriod;
+    }
 
-					if (cf.getFieldType() == CustomFieldTypeEnum.DATE) {
-						cfi.setDateValue(cf.getDateValue());
-					} else if (cf.getFieldType() == CustomFieldTypeEnum.DOUBLE) {
-						cfi.setDoubleValue(cf.getDoubleValue());
-					} else if (cf.getFieldType() == CustomFieldTypeEnum.LONG) {
-						cfi.setLongValue(cf.getLongValue());
-					} else if (cf.getFieldType() == CustomFieldTypeEnum.STRING
-							|| cf.getFieldType() == CustomFieldTypeEnum.LIST) {
-						cfi.setStringValue(cf.getStringValue());
-					}
+    public void setCustomFieldNewPeriod(CustomFieldPeriod customFieldNewPeriod) {
+        this.customFieldNewPeriod = customFieldNewPeriod;
+    }
 
-					customFieldInstanceService.create(cfi, getCurrentUser(), getCurrentProvider());
-				}
-			}
-		}
-	}
+    public void setCustomFieldSelectedTemplate(CustomFieldTemplate customFieldSelectedTemplate) {
+        this.customFieldSelectedTemplate = customFieldSelectedTemplate;
+        this.customFieldPeriodMatched = false;
+        // Set a default value for new period data entry
+        this.customFieldNewPeriod = new CustomFieldPeriod();
+        this.customFieldNewPeriod.setValue(customFieldSelectedTemplate.getDefaultValueConverted(), customFieldSelectedTemplate.getFieldType());
+    }
 
-	protected void deleteCustomFields() {
-		if (customFieldTemplates != null && customFieldTemplates.size() > 0) {
-			for (CustomFieldTemplate cf : customFieldTemplates) {
-				CustomFieldInstance cfi = customFieldInstanceService.findByCodeAndAccount(cf.getCode(), getEntity(),getCurrentProvider());
-				if (cfi != null) {
-					customFieldInstanceService.remove(cfi);
-				}
-			}
-		}
-	}
+    public CustomFieldTemplate getCustomFieldSelectedTemplate() {
+        return customFieldSelectedTemplate;
+    }
 
-	public List<CustomFieldTemplate> getCustomFieldTemplates() {
-		return customFieldTemplates;
-	}
+    public boolean isCustomFieldPeriodMatched() {
+        return customFieldPeriodMatched;
+    }
 
-	public void setCustomFieldTemplates(List<CustomFieldTemplate> customFieldTemplates) {
-		this.customFieldTemplates = customFieldTemplates;
-	}
+    public int getDataTableFirstAttribute() {
+        return dataTableFirstAttribute;
+    }
 
-	public int getDataTableFirstAttribute() {
-		return dataTableFirstAttribute;
-	}
+    public void setDataTableFirstAttribute(int dataTableFirstAttribute) {
+        this.dataTableFirstAttribute = dataTableFirstAttribute;
+    }
 
-	public void setDataTableFirstAttribute(int dataTableFirstAttribute) {
-		this.dataTableFirstAttribute = dataTableFirstAttribute;
-	}
+    public void onPageChange(PageEvent event) {
+        this.setDataTableFirstAttribute(((DataTable) event.getSource()).getFirst());
+    }
 
-	public void onPageChange(PageEvent event) {
-		this.setDataTableFirstAttribute(((DataTable) event.getSource()).getFirst());
-	}
+    private boolean isMultilanguageEntity() {
+        return clazz.isAnnotationPresent(MultilanguageEntity.class);
+    }
 
-	private boolean isMultilanguageEntity() {
-		return clazz.isAnnotationPresent(MultilanguageEntity.class);
-	}
+    /**
+     * Get currently active locale
+     * 
+     * @return Currently active locale
+     */
+    protected Locale getCurrentLocale() {
+        return FacesContext.getCurrentInstance().getViewRoot().getLocale();
+    }
 
-	/**
-	 * Get currently active locale
-	 * 
-	 * @return Currently active locale
-	 */
-	protected Locale getCurrentLocale() {
-		return FacesContext.getCurrentInstance().getViewRoot().getLocale();
-	}
-	/**
-	 * delete current entity from list, return a callback result to UI for validate
-	 */
-	public void deleteInlist(){
-		boolean result=true;
-		try{
-			this.delete();
-			getPersistenceService().commit();
-		}catch(Exception e){
-			result=false;
-		}
-		RequestContext requestContext = RequestContext.getCurrentInstance();
-		requestContext.addCallbackParam("result", result);
-	}
-	/**
-	 * delete current entity from detail page
-	 * @return  back() page if deleted success, if not, return a callback result to UI for validate
-	 */
-	public String deleteWithBack(){
-		boolean result=true;
-		try{
-			this.delete();
-			getPersistenceService().commit();
-			return back();
-		}catch(Exception e){
-			result=false;
-		}
-		RequestContext requestContext = RequestContext.getCurrentInstance();
-		requestContext.addCallbackParam("result", result);
-		return null;
-	}
+    /**
+     * delete current entity from list, return a callback result to UI for validate
+     */
+    public void deleteInlist() {
+        boolean result = true;
+        try {
+            this.delete();
+            getPersistenceService().commit();
+        } catch (Exception e) {
+            result = false;
+        }
+        RequestContext requestContext = RequestContext.getCurrentInstance();
+        requestContext.addCallbackParam("result", result);
+    }
+
+    /**
+     * delete current entity from detail page
+     * 
+     * @return back() page if deleted success, if not, return a callback result to UI for validate
+     */
+    public String deleteWithBack() {
+        boolean result = true;
+        try {
+            this.delete();
+            getPersistenceService().commit();
+            return back();
+        } catch (Exception e) {
+            result = false;
+        }
+        RequestContext requestContext = RequestContext.getCurrentInstance();
+        requestContext.addCallbackParam("result", result);
+        return null;
+    }
+
+    /**
+     * Add a new customField period with a previous validation that matching period does not exists
+     */
+    public void addNewCustomFieldPeriod() {
+
+        // Check that two dates are one after another
+        if (customFieldNewPeriod.getPeriodStartDate() != null && customFieldNewPeriod.getPeriodEndDate() != null
+                && customFieldNewPeriod.getPeriodStartDate().compareTo(customFieldNewPeriod.getPeriodEndDate()) >= 0) {
+            messages.error(new BundleKey("messages", "customFieldTemplate.periodIntervalIncorrect"));
+            FacesContext.getCurrentInstance().validationFailed();
+            return;
+        }
+
+        CustomFieldPeriod period = null;
+        // First check if any period matches the dates
+        if (!customFieldPeriodMatched) {
+            if (customFieldSelectedTemplate.getInstance().getCalendar() != null) {
+                period = customFieldSelectedTemplate.getInstance().getValuePeriod(customFieldNewPeriod.getPeriodStartDate(), false);
+            } else {
+                period = customFieldSelectedTemplate.getInstance().getValuePeriod(customFieldNewPeriod.getPeriodStartDate(), customFieldNewPeriod.getPeriodEndDate(), false, false);
+            }
+
+            if (period != null) {
+                customFieldPeriodMatched = true;
+                ParamBean paramBean = ParamBean.getInstance();
+                String datePattern = paramBean.getProperty("meveo.dateFormat", "dd/MM/yyyy");
+
+                if (customFieldSelectedTemplate.getInstance().getCalendar() != null) {
+                    messages.error(new BundleKey("messages", "customFieldTemplate.matchingPeriodFound.noNew"),
+                        DateUtils.formatDateWithPattern(period.getPeriodStartDate(), datePattern), DateUtils.formatDateWithPattern(period.getPeriodEndDate(), datePattern));
+                } else {
+                    messages.warn(new BundleKey("messages", "customFieldTemplate.matchingPeriodFound"), DateUtils.formatDateWithPattern(period.getPeriodStartDate(), datePattern),
+                        DateUtils.formatDateWithPattern(period.getPeriodEndDate(), datePattern));
+                }
+                FacesContext.getCurrentInstance().validationFailed();
+                customFieldPeriodMatched = true;
+                return;
+            }
+        }
+
+        // Create period if passed period check or if user decided to create it anyway
+        if (customFieldSelectedTemplate.getInstance().getCalendar() != null) {
+            period = customFieldSelectedTemplate.getInstance().addValuePeriod(customFieldNewPeriod.getPeriodStartDate(), customFieldNewPeriod.getValue(),
+                customFieldSelectedTemplate.getFieldType());
+        } else {
+            period = customFieldSelectedTemplate.getInstance().addValuePeriod(customFieldNewPeriod.getPeriodStartDate(), customFieldNewPeriod.getPeriodEndDate(),
+                customFieldNewPeriod.getValue(), customFieldSelectedTemplate.getFieldType());
+        }
+        customFieldNewPeriod = null;
+        customFieldPeriodMatched = false;
+    }
+
+    /**
+     * Get a list of custom field templates applicable to an entity.
+     * 
+     * @return A list of custom field templates
+     */
+    protected List<CustomFieldTemplate> getApplicateCustomFieldTemplates() {
+        AccountLevelEnum accountLevel = this.getClass().getAnnotation(CustomFieldEnabledBean.class).accountLevel();
+        return customFieldTemplateService.findByAccountLevel(accountLevel);
+    }
 }

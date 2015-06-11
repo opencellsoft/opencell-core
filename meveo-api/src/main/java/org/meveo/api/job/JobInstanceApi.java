@@ -7,7 +7,6 @@ import java.util.List;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
-import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.BaseApi;
 import org.meveo.api.MeveoApiErrorCode;
 import org.meveo.api.dto.job.JobInstanceDto;
@@ -75,15 +74,16 @@ public class JobInstanceApi extends BaseApi {
 		if (jobs.containsKey(jobInstanceDto.getJobTemplate())) {
 			customFieldTemplates.clear();
 			Job job = jobInstanceService.getJobByName(jobInstanceDto.getJobTemplate());
-			if (job.getCustomFields(currentUser) != null) {
+			List<CustomFieldTemplate> jobCustomFields = job.getCustomFields();
+			if (jobCustomFields != null) {
 				customFieldTemplates = customFieldTemplateService.findByJobName(jobInstanceDto.getJobTemplate());
-				if (customFieldTemplates != null && customFieldTemplates.size() != job.getCustomFields(currentUser).size()) {
-					for (CustomFieldTemplate cf : job.getCustomFields(currentUser)) {
+				if (customFieldTemplates != null && customFieldTemplates.size() != jobCustomFields.size()) {
+					for (CustomFieldTemplate cf : jobCustomFields) {
 						if (!customFieldTemplates.contains(cf)) {
 							try {
-								customFieldTemplateService.create(cf);
+								customFieldTemplateService.create(cf, currentUser);
 								customFieldTemplates.add(cf);
-							} catch (BusinessException e) {
+							} catch (Exception e) {
 								log.error("Failed  to init custom fields", e);
 							}
 						}

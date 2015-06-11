@@ -1,6 +1,8 @@
 package org.meveo.api.dto;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -9,93 +11,160 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.model.crm.CustomFieldInstance;
+import org.meveo.model.crm.CustomFieldPeriod;
 
 @XmlRootElement(name = "CustomField")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CustomFieldDto {
 
-	@XmlAttribute(required = true)
-	protected String code;
+    @XmlAttribute(required = true)
+    protected String code;
 
-	@XmlAttribute
-	protected String description;
+    @XmlAttribute
+    protected String description;
 
-	@XmlElement
-	protected String stringValue;
+    @XmlAttribute
+    protected Date valueDate;
 
-	@XmlElement
-	protected Date dateValue;
+    @XmlAttribute
+    protected Date valuePeriodStartDate;
 
-	@XmlElement
-	protected Long longValue;
+    @XmlAttribute
+    protected Date valuePeriodEndDate;
 
-	@XmlElement
-	protected Double doubleValue;
-	
-	public CustomFieldDto() {
-	}
+    @XmlAttribute
+    protected Integer valuePeriodPriority;
 
-	public CustomFieldDto(CustomFieldInstance cfi) {
-		code = cfi.getCode();
-		description = cfi.getDescription();
-		stringValue = cfi.getStringValue();
-		dateValue = cfi.getDateValue();
-		longValue = cfi.getLongValue();
-		doubleValue = cfi.getDoubleValue();
-	}
+    @XmlElement
+    protected String stringValue;
 
-	public String getCode() {
-		return code;
-	}
+    @XmlElement
+    protected Date dateValue;
 
-	public void setCode(String code) {
-		this.code = code;
-	}
+    @XmlElement
+    protected Long longValue;
 
-	public String getDescription() {
-		return description;
-	}
+    @XmlElement
+    protected Double doubleValue;
 
-	public void setDescription(String description) {
-		this.description = description;
-	}
+    public CustomFieldDto() {
+    }
 
-	public String getStringValue() {
-		return stringValue;
-	}
+    public static List<CustomFieldDto> toDTO(CustomFieldInstance cfi) {
+        List<CustomFieldDto> dtos = new ArrayList<CustomFieldDto>();
+        if (!cfi.isVersionable()) {
+            CustomFieldDto dto = new CustomFieldDto();
+            dto.setCode(cfi.getCode());
+            dto.setDescription(cfi.getDescription());
+            dto.setStringValue(cfi.getStringValue());
+            dto.setDateValue(cfi.getDateValue());
+            dto.setLongValue(cfi.getLongValue());
+            dto.setDoubleValue(cfi.getDoubleValue());
+            dtos.add(dto);
 
-	public void setStringValue(String stringValue) {
-		this.stringValue = stringValue;
-	}
+        } else {
 
-	public Date getDateValue() {
-		return dateValue;
-	}
+            for (CustomFieldPeriod period : cfi.getValuePeriods()) {
+                CustomFieldDto dto = new CustomFieldDto();
+                dto.setCode(cfi.getCode());
+                dto.setDescription(cfi.getDescription());
+                dto.setValuePeriodStartDate(period.getPeriodStartDate());
+                dto.setValuePeriodEndDate(period.getPeriodEndDate());
+                if (period.getPriority() > 0) {
+                    dto.setValuePeriodPriority(period.getPriority());
+                }
+                dto.setStringValue(period.getStringValue());
+                dto.setDateValue(period.getDateValue());
+                dto.setLongValue(period.getLongValue());
+                dto.setDoubleValue(period.getDoubleValue());
+                dtos.add(dto);
+            }
+        }
 
-	public void setDateValue(Date dateValue) {
-		this.dateValue = dateValue;
-	}
+        return dtos;
+    }
 
-	public Long getLongValue() {
-		return longValue;
-	}
+    public String getCode() {
+        return code;
+    }
 
-	public void setLongValue(Long longValue) {
-		this.longValue = longValue;
-	}
+    public void setCode(String code) {
+        this.code = code;
+    }
 
-	public Double getDoubleValue() {
-		return doubleValue;
-	}
+    public String getDescription() {
+        return description;
+    }
 
-	public void setDoubleValue(Double doubleValue) {
-		this.doubleValue = doubleValue;
-	}
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
-	@Override
-	public String toString() {
-		return "CustomFieldDto [code=" + code + ", description=" + description + ", stringValue=" + stringValue
-				+ ", dateValue=" + dateValue + ", longValue=" + longValue + ", doubleValue=" + doubleValue + "]";
-	}
+    public String getStringValue() {
+        return stringValue;
+    }
 
+    public void setStringValue(String stringValue) {
+        this.stringValue = stringValue;
+    }
+
+    public Date getDateValue() {
+        return dateValue;
+    }
+
+    public void setDateValue(Date dateValue) {
+        this.dateValue = dateValue;
+    }
+
+    public Long getLongValue() {
+        return longValue;
+    }
+
+    public void setLongValue(Long longValue) {
+        this.longValue = longValue;
+    }
+
+    public Double getDoubleValue() {
+        return doubleValue;
+    }
+
+    public void setDoubleValue(Double doubleValue) {
+        this.doubleValue = doubleValue;
+    }
+
+    public Date getValueDate() {
+        return valueDate;
+    }
+
+    public void setValueDate(Date valueDate) {
+        this.valueDate = valueDate;
+    }
+
+    public Date getValuePeriodStartDate() {
+        return valuePeriodStartDate;
+    }
+
+    public void setValuePeriodStartDate(Date valuePeriodStartDate) {
+        this.valuePeriodStartDate = valuePeriodStartDate;
+    }
+
+    public Date getValuePeriodEndDate() {
+        return valuePeriodEndDate;
+    }
+
+    public void setValuePeriodEndDate(Date valuePeriodEndDate) {
+        this.valuePeriodEndDate = valuePeriodEndDate;
+    }
+
+    public void setValuePeriodPriority(Integer valuePeriodPriority) {
+        this.valuePeriodPriority = valuePeriodPriority;
+    }
+
+    @Override
+    public String toString() {
+        return String
+            .format(
+                "CustomFieldDto [code=%s, description=%s, valueDate=%s, valuePeriodStartDate=%s, valuePeriodEndDate=%s, valuePeriodPriority=%s, stringValue=%s, dateValue=%s, longValue=%s, doubleValue=%s]",
+                code, description, valueDate, valuePeriodStartDate, valuePeriodEndDate, valuePeriodPriority, stringValue, dateValue, longValue, doubleValue);
+    }
 }

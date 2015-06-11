@@ -12,9 +12,6 @@ import org.meveo.model.BaseEntity;
 @MappedSuperclass
 public abstract class ServiceChargeTemplate<T extends ChargeTemplate> extends BaseEntity {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -1872859127097329926L;
 
 	@ManyToOne(fetch = FetchType.LAZY)

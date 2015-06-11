@@ -51,6 +51,7 @@
     <cc:attribute name="showDeleteButton" default="true" />
     <cc:attribute name="useCustomIdParam" default="false" />
     <cc:attribute name="objectIdParamName" />
+    <cc:attribute name="addCustomFieldDialog" default="false" />
     <cc:facet name="buttons"/>
 </cc:interface>
 
@@ -87,6 +88,9 @@
             </h:panelGroup>
 		</p:panel>
 	</h:form>
+    
+    
+    <hf:customFieldNewPeriodDlg id="customFieldNewPeriodDlg" rendered="#{cc.attrs.addCustomFieldDialog and cc.attrs.edit}" />
 </cc:implementation>
 
 </html>

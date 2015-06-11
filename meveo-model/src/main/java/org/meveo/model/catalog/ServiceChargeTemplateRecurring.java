@@ -27,15 +27,15 @@ import javax.persistence.OrderColumn;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import org.meveo.model.ExportIdentifier;
+
 
 @Entity
+@ExportIdentifier({ "chargeTemplate.code", "serviceTemplate.code", "provider" })
 @Table(name = "CAT_SERV_REC_CHARGE_TEMPLATE")
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "CAT_SERV_RECCHRG_TEMPLT_SEQ")
 public class ServiceChargeTemplateRecurring extends ServiceChargeTemplate<RecurringChargeTemplate> {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -5599952620149127436L;
 	
 	@ManyToMany(fetch = FetchType.LAZY)

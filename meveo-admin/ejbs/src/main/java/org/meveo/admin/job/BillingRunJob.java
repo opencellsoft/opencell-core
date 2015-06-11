@@ -9,7 +9,6 @@ import javax.ejb.Startup;
 import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.model.Auditable;
 import org.meveo.model.admin.User;
 import org.meveo.model.crm.AccountLevelEnum;
 import org.meveo.model.crm.CustomFieldTemplate;
@@ -50,18 +49,13 @@ public class BillingRunJob extends Job {
     }
 
     @Override
-    public List<CustomFieldTemplate> getCustomFields(User currentUser) {
+    public List<CustomFieldTemplate> getCustomFields() {
         List<CustomFieldTemplate> result = new ArrayList<CustomFieldTemplate>();
-        Auditable audit = new Auditable();
-
+        
         CustomFieldTemplate lastTransactionDate = new CustomFieldTemplate();
         lastTransactionDate.setCode("BillingRunJob_lastTransactionDate");
         lastTransactionDate.setAccountLevel(AccountLevelEnum.TIMER);
         lastTransactionDate.setActive(true);
-        audit.setCreated(new Date());
-        audit.setCreator(currentUser);
-        lastTransactionDate.setAuditable(audit);
-        lastTransactionDate.setProvider(currentUser.getProvider());
         lastTransactionDate.setDescription("last transaction date");
         lastTransactionDate.setFieldType(CustomFieldTypeEnum.DATE);
         lastTransactionDate.setValueRequired(true);
@@ -71,10 +65,6 @@ public class BillingRunJob extends Job {
         invoiceDate.setCode("BillingRunJob_invoiceDate");
         invoiceDate.setAccountLevel(AccountLevelEnum.TIMER);
         invoiceDate.setActive(true);
-        audit.setCreated(new Date());
-        audit.setCreator(currentUser);
-        invoiceDate.setAuditable(audit);
-        invoiceDate.setProvider(currentUser.getProvider());
         invoiceDate.setDescription("invoice date");
         invoiceDate.setFieldType(CustomFieldTypeEnum.DATE);
         invoiceDate.setValueRequired(true);
@@ -84,10 +74,6 @@ public class BillingRunJob extends Job {
         billingCycle.setCode("BillingRunJob_billingCycle");
         billingCycle.setAccountLevel(AccountLevelEnum.TIMER);
         billingCycle.setActive(true);
-        audit.setCreated(new Date());
-        audit.setCreator(currentUser);
-        billingCycle.setAuditable(audit);
-        billingCycle.setProvider(currentUser.getProvider());
         billingCycle.setDescription("billing cycle");
         billingCycle.setFieldType(CustomFieldTypeEnum.STRING);
         billingCycle.setValueRequired(true);

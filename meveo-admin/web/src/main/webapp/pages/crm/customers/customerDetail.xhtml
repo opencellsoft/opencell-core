@@ -50,7 +50,7 @@
             		<hf:formPanel id="formCustomerPanel" formId="formCustomer"
 						label="#{messages['customer.customerPanel']}"
 						showFormButtons="false" backingBean="#{customerBean}"
-						useCustomIdParam="true">
+						useCustomIdParam="true" addCustomFieldDialog="true">
 						<p:tabView id="tabView" activeIndex="#{customerBean.activeTab}">
 							<p:ajax event="tabChange" listener="#{customerBean.onTabChange}"/>
 							<p:tab title="#{messages['customer.tab.account']}" id="tab0">
@@ -136,7 +136,7 @@
 							</p:tab>
 
 							<p:tab title="#{messages['customFieldTemplate.panel']}" id="tab2">
-								<hf:customFields />
+								<hf:customFields id="customFields" messagesId=":formCustomerPanel:formCustomer:messages" periodDialogIdPrefix=":formCustomerPanel"/>
 							</p:tab>
 						</p:tabView>
 

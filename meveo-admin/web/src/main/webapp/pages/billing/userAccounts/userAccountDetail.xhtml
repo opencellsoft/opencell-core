@@ -133,7 +133,7 @@
 			<h:panelGroup styleClass="col2">
 					<hf:formPanel id="userAccountFormPanel"
 						label="#{messages['userAccount.userAccountPanel']}"
-						backingBean="#{userAccountBean}" useCustomIdParam="true">
+						backingBean="#{userAccountBean}" useCustomIdParam="true" addCustomFieldDialog="true">
 						<p:tabView id="userAccountTab" activeTab="#{userAccountbean.activeTab}">
 							<p:ajax event="tabChange" listener="#{userAccountBean.onTabChange}"/>
 							<p:tab title="#{messages['billingAccount.tab.account']}" id="tab0">
@@ -204,7 +204,7 @@
 							</p:tab>
 
 							<p:tab title="#{messages['customFieldTemplate.panel']}" id="tab2">
-								<hf:customFields />
+								<hf:customFields id="customFields" messagesId=":userAccountFormPanel:formId:messages" periodDialogIdPrefix=":userAccountFormPanel"/>
 							</p:tab>
 
 							<c:forEach items="#{userAccountBean.entity.prepaidWallets}"
@@ -456,7 +456,7 @@
 					</f:facet>
 			</hf:formPanel>
 		</p:dialog>
-
+        
 	</ui:define>
 
 </ui:composition>
