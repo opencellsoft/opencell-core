@@ -8,7 +8,6 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
 import org.meveo.api.dto.billing.SubscriptionsDto;
-import org.meveo.model.AccountEntity;
 import org.meveo.model.billing.UserAccount;
 
 /**
@@ -28,14 +27,18 @@ public class UserAccountDto extends AccountDto {
 	private String status;
 	private String terminationReason;
 
-	private SubscriptionsDto subscriptions;
+	private SubscriptionsDto subscriptions = new SubscriptionsDto();
 
 	public UserAccountDto() {
 		super();
 	}
 
 	public UserAccountDto(UserAccount e) {
-		super((AccountEntity) e);
+		initFromEntity(e);
+	}
+
+	public void initFromEntity(UserAccount e) {
+		super.initFromEntity(e);
 
 		if (e.getBillingAccount() != null) {
 			billingAccount = e.getBillingAccount().getCode();
@@ -47,13 +50,14 @@ public class UserAccountDto extends AccountDto {
 			status = e.getStatus().name();
 		} catch (NullPointerException ex) {
 		}
+		
+		loaded = true;
 	}
 
 	@Override
 	public String toString() {
-		return "UserAccountDto [billingAccount=" + billingAccount + ", subscriptionDate=" + subscriptionDate
-				+ ", terminationDate=" + terminationDate + ", status=" + status + ", terminationReason="
-				+ terminationReason + ", subscriptions=" + subscriptions + "]";
+		return "UserAccountDto [billingAccount=" + billingAccount + ", subscriptionDate=" + subscriptionDate + ", terminationDate=" + terminationDate + ", status=" + status
+				+ ", terminationReason=" + terminationReason + ", subscriptions=" + subscriptions + "]";
 	}
 
 	public String getBillingAccount() {

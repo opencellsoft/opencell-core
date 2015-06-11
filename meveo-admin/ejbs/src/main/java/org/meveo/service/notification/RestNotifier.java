@@ -35,19 +35,19 @@ public class RestNotifier {
 				log.debug("invoke Failed : HTTP error code : "+ response.getStatus());
 			} else {    
 				jsonResponse=response.getEntity();
+				log.info("Response jsonResponse ={}",jsonResponse);
+				JSONParser jsonParser = new JSONParser();
+				JSONObject jsonResponseObject = (JSONObject) jsonParser.parse(jsonResponse);
+				JSONObject jsonActionStatus =  (JSONObject) jsonResponseObject.get("actionStatus");
+				String responseStatus  =(String) jsonActionStatus.get("status");
+				
+				if("SUCCESS".equals(responseStatus)){
+					log.debug("invoke remote service ok");
+				}else{
+					log.debug("invoke remote service fail");
+				}
 			}
-			log.info("Response jsonResponse ={}",jsonResponse);
-			JSONParser jsonParser = new JSONParser();
-			JSONObject jsonResponseObject = (JSONObject) jsonParser.parse(jsonResponse);
-			JSONObject jsonActionStatus =  (JSONObject) jsonResponseObject.get("actionStatus");
-			String responseStatus  =(String) jsonActionStatus.get("status");
 			
-			if("SUCCESS".equals(responseStatus)){
-				log.debug("invoke remote service ok");
-			}else{
-				log.debug("invoke remote service fail");
-			}
-
 		} catch (Exception e) {
 			log.error("Exception on invoke : ",e);
 			

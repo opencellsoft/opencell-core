@@ -7,7 +7,6 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
-import org.meveo.model.AccountEntity;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.UserAccount;
 
@@ -45,14 +44,18 @@ public class BillingAccountDto extends AccountDto {
 	private String email;
 	private BankCoordinatesDto bankCoordinates = new BankCoordinatesDto();
 
-	private UserAccountsDto userAccounts=new UserAccountsDto();
+	private UserAccountsDto userAccounts = new UserAccountsDto();
 
 	public BillingAccountDto() {
 
 	}
 
 	public BillingAccountDto(BillingAccount e) {
-		super((AccountEntity) e);
+		initFromEntity(e);
+	}
+
+	public void initFromEntity(BillingAccount e) {
+		super.initFromEntity(e);
 
 		if (e.getCustomerAccount() != null) {
 			customerAccount = e.getCustomerAccount().getCode();
@@ -88,18 +91,13 @@ public class BillingAccountDto extends AccountDto {
 			bankCoordinates = new BankCoordinatesDto(e.getBankCoordinates());
 		}
 		
-		if (e.getUsersAccounts() != null) {
-			userAccounts = new UserAccountsDto();
-
-			for (UserAccount ua : e.getUsersAccounts()) {
-				userAccounts.getUserAccount().add(new UserAccountDto(ua));
-			}
-		}
-		if (e.getUsersAccounts() != null) {
+		if (!isLoaded() && e.getUsersAccounts() != null) {
 			for (UserAccount userAccount : e.getUsersAccounts()) {
 				userAccounts.getUserAccount().add(new UserAccountDto(userAccount));
 			}
 		}
+		
+		loaded = true;
 	}
 
 	public String getCustomerAccount() {

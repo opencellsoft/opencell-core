@@ -22,9 +22,11 @@ import org.meveo.api.dto.account.CustomerAccountDto;
 import org.meveo.api.dto.account.CustomerDto;
 import org.meveo.api.dto.account.CustomerHierarchyDto;
 import org.meveo.api.dto.account.CustomersDto;
+import org.meveo.api.dto.account.FindAccountHierachyRequestDto;
 import org.meveo.api.dto.account.UserAccountDto;
 import org.meveo.api.dto.billing.ServiceInstanceDto;
 import org.meveo.api.dto.billing.SubscriptionDto;
+import org.meveo.api.dto.response.account.FindAccountHierarchyResponseDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
@@ -67,6 +69,7 @@ import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.payments.PaymentTermEnum;
 import org.meveo.model.shared.Address;
 import org.meveo.model.shared.ContactInformation;
+import org.meveo.model.shared.Name;
 import org.meveo.model.shared.Title;
 import org.meveo.service.admin.impl.CountryService;
 import org.meveo.service.admin.impl.CurrencyService;
@@ -173,6 +176,11 @@ public class AccountHierarchyApi extends BaseApi {
 	public final String CUSTOMER_ACCOUNT_PREFIX = "CA_";
 	public final String BILLING_ACCOUNT_PREFIX = "BA_";
 	public final String USER_ACCOUNT_PREFIX = "UA_";
+
+	public final int CUST = 1;
+	public final int CA = 2;
+	public final int BA = 4;
+	public final int UA = 8;
 
 	/*
 	 * Creates the customer heirarchy including : - Trading Country - Trading
@@ -1221,7 +1229,7 @@ public class AccountHierarchyApi extends BaseApi {
 													if (StringUtils.isBlank(userAccountDto.getCode())) {
 														log.warn("code is null={}", userAccountDto);
 														continue;
-													}													
+													}
 
 													UserAccount userAccount = userAccountService.findByCode(userAccountDto.getCode(), provider);
 													if (userAccount == null) {
@@ -1229,7 +1237,7 @@ public class AccountHierarchyApi extends BaseApi {
 															missingParameters.add("userAccountDto.description");
 															throw new MissingParameterException(getMissingParametersExceptionMessage());
 														}
-														
+
 														userAccount = new UserAccount();
 														userAccount.setStatus(AccountStatusEnum.ACTIVE);
 														userAccount.setCode(userAccountDto.getCode());
@@ -1595,14 +1603,179 @@ public class AccountHierarchyApi extends BaseApi {
 			}
 		}
 
-        // populate customFields
-        if (accountDto.getCustomFields() != null) {
-            try {
-                populateCustomFields(accountLevel, accountDto.getCustomFields().getCustomField(), accountEntity, "account", currentUser);
-            } catch (IllegalArgumentException | IllegalAccessException e) {
-                log.error("Failed to associate custom field instance to an entity", e);
-                throw new MeveoApiException("Failed to associate custom field instance to an entity");
-            }
-        }
-    }
+		// populate customFields
+		if (accountDto.getCustomFields() != null) {
+			try {
+				populateCustomFields(accountLevel, accountDto.getCustomFields().getCustomField(), accountEntity, "account", currentUser);
+			} catch (IllegalArgumentException | IllegalAccessException e) {
+				log.error("Failed to associate custom field instance to an entity", e);
+				throw new MeveoApiException("Failed to associate custom field instance to an entity");
+			}
+		}
+	}
+
+	public FindAccountHierarchyResponseDto findAccountHierarchy2(FindAccountHierachyRequestDto postData, User currentUser) throws MeveoApiException {
+		FindAccountHierarchyResponseDto result = new FindAccountHierarchyResponseDto();
+		Name name = null;
+
+		if (postData.getName() == null && postData.getAddress() == null) {
+			throw new MeveoApiException("At least name or address must not be null.");
+		}
+
+		if (postData.getName() != null) {
+			name = new Name();
+			name.setFirstName(postData.getName().getFirstName());
+			name.setLastName(postData.getName().getLastName());
+		}
+
+		Address address = null;
+		if (postData.getAddress() != null) {
+			address = new Address();
+			address.setAddress1(postData.getAddress().getAddress1());
+			address.setAddress2(postData.getAddress().getAddress2());
+			address.setAddress3(postData.getAddress().getAddress3());
+			address.setCity(postData.getAddress().getCity());
+			address.setCountry(postData.getAddress().getCountry());
+			address.setState(postData.getAddress().getState());
+			address.setZipCode(postData.getAddress().getZipCode());
+		}
+
+		// check each level
+		if ((postData.getLevel() & CUST) != 0) {
+			List<Customer> customers = customerService.findByNameAndAddress(name, address, currentUser.getProvider());
+			if (customers != null) {
+				for (Customer customer : customers) {
+					result.getCustomers().getCustomer().add(new CustomerDto(customer));
+				}
+			}
+		}
+
+		if ((postData.getLevel() & CA) != 0) {
+			List<CustomerAccount> customerAccounts = customerAccountService.findByNameAndAddress(name, address, currentUser.getProvider());
+			if (customerAccounts != null) {
+				for (CustomerAccount customerAccount : customerAccounts) {
+					addCustomerAccount(result, customerAccount);
+				}
+			}
+		}
+		if ((postData.getLevel() & BA) != 0) {
+			List<BillingAccount> billingAccounts = billingAccountService.findByNameAndAddress(name, address, currentUser.getProvider());
+			if (billingAccounts != null) {
+				for (BillingAccount billingAccount : billingAccounts) {
+					addBillingAccount(result, billingAccount);
+				}
+			}
+		}
+		if ((postData.getLevel() & UA) != 0) {
+			List<UserAccount> userAccounts = userAccountService.findByNameAndAddress(name, address, currentUser.getProvider());
+			if (userAccounts != null) {
+				for (UserAccount userAccount : userAccounts) {
+					addUserAccount(result, userAccount);
+				}
+			}
+		}
+
+		return result;
+	}
+
+	private void addUserAccount(FindAccountHierarchyResponseDto result, UserAccount userAccount) {
+		BillingAccount billingAccount = userAccount.getBillingAccount();
+
+		addBillingAccount(result, billingAccount);
+
+		for (CustomerDto customerDto : result.getCustomers().getCustomer()) {
+			for (CustomerAccountDto customerAccountDto : customerDto.getCustomerAccounts().getCustomerAccount()) {
+				for (BillingAccountDto billingAccountDto : customerAccountDto.getBillingAccounts().getBillingAccount()) {
+					if (billingAccountDto.getUserAccounts() != null && billingAccountDto.getUserAccounts().getUserAccount().size() > 0) {
+						for (UserAccountDto userAccountDto : billingAccountDto.getUserAccounts().getUserAccount()) {
+							if (userAccountDto.getCode().equals(userAccount.getCode())) {
+								if (!userAccountDto.isLoaded()) {
+									userAccountDto.initFromEntity(userAccount);
+								} else {
+									billingAccountDto.getUserAccounts().getUserAccount().add(new UserAccountDto(userAccount));
+								}
+
+								break;
+							}
+						}
+					} else {
+						billingAccountDto.getUserAccounts().getUserAccount().add(new UserAccountDto(userAccount));
+					}
+				}
+			}
+		}
+	}
+
+	private void addBillingAccount(FindAccountHierarchyResponseDto result, BillingAccount billingAccount) {
+		CustomerAccount customerAccount = billingAccount.getCustomerAccount();
+		Customer customer = customerAccount.getCustomer();
+
+		addCustomer(result, customer);
+		addCustomerAccount(result, customerAccount);
+
+		for (CustomerDto customerDto : result.getCustomers().getCustomer()) {
+			for (CustomerAccountDto customerAccountDto : customerDto.getCustomerAccounts().getCustomerAccount()) {
+				if (customerAccountDto.getBillingAccounts() != null && customerAccountDto.getBillingAccounts().getBillingAccount().size() > 0) {
+					for (BillingAccountDto billingAccountDto : customerAccountDto.getBillingAccounts().getBillingAccount()) {
+						if (billingAccountDto.getCode().equals(billingAccount.getCode())) {
+							if (!billingAccountDto.isLoaded()) {
+								billingAccountDto.initFromEntity(billingAccount);
+							} else {
+								customerAccountDto.getBillingAccounts().getBillingAccount().add(new BillingAccountDto(billingAccount));
+							}
+
+							break;
+						}
+					}
+				} else {
+					customerAccountDto.getBillingAccounts().getBillingAccount().add(new BillingAccountDto(billingAccount));
+				}
+			}
+		}
+	}
+
+	private void addCustomerAccount(FindAccountHierarchyResponseDto result, CustomerAccount customerAccount) {
+		Customer customer = customerAccount.getCustomer();
+		CustomerAccountDto customerAccountDto = new CustomerAccountDto(customerAccount);
+
+		if (result.getCustomers() == null || result.getCustomers().getCustomer().size() == 0) {
+			CustomerDto customerDto = new CustomerDto(customer);
+			customerDto.getCustomerAccounts().getCustomerAccount().add(customerAccountDto);
+			result.getCustomers().getCustomer().add(customerDto);
+		} else {
+			boolean found = false;
+			for (CustomerDto customerDtoLoop : result.getCustomers().getCustomer()) {
+				if (customerDtoLoop.getCode().equals(customer.getCode())) {
+					customerDtoLoop.getCustomerAccounts().getCustomerAccount().add(customerAccountDto);
+					found = true;
+					break;
+				}
+			}
+
+			if (!found) {
+				CustomerDto customerDto = new CustomerDto(customer);
+				customerDto.getCustomerAccounts().getCustomerAccount().add(customerAccountDto);
+				result.getCustomers().getCustomer().add(customerDto);
+			}
+		}
+	}
+
+	private void addCustomer(FindAccountHierarchyResponseDto result, Customer customer) {
+		if (result.getCustomers() == null || result.getCustomers().getCustomer().size() == 0) {
+			result.getCustomers().getCustomer().add(new CustomerDto(customer));
+		} else {
+			for (CustomerDto customerDto : result.getCustomers().getCustomer()) {
+				if (customerDto.getCode().equals(customer.getCode())) {
+					if (!customerDto.isLoaded()) {
+						customerDto.initFromEntity(customer);
+					} else {
+						result.getCustomers().getCustomer().add(new CustomerDto(customer));
+					}
+
+					break;
+				}
+			}
+		}
+	}
+
 }

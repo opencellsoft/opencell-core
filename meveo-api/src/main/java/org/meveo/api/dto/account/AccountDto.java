@@ -33,12 +33,17 @@ public abstract class AccountDto implements Serializable {
 	private NameDto name = new NameDto();
 	private AddressDto address = new AddressDto();
 	private CustomFieldsDto customFields = new CustomFieldsDto();
+	protected boolean loaded = false;
 
 	public AccountDto() {
 		super();
 	}
 
 	public AccountDto(AccountEntity e) {
+		initFromEntity(e);
+	}
+
+	public void initFromEntity(AccountEntity e) {
 		setCode(e.getCode());
 		setDescription(e.getDescription());
 		setExternalRef1(e.getExternalRef1());
@@ -58,6 +63,8 @@ public abstract class AccountDto implements Serializable {
 				customFields.getCustomField().add(cfDto);
 			}
 		}
+
+		loaded = true;
 	}
 
 	public String getCode() {
@@ -110,9 +117,8 @@ public abstract class AccountDto implements Serializable {
 
 	@Override
 	public String toString() {
-		return "BaseAccountDto [code=" + code + ", description=" + description + ", externalRef1=" + externalRef1
-				+ ", externalRef2=" + externalRef2 + ", name=" + name + ", address=" + address + ", customFields="
-				+ customFields + "]";
+		return "BaseAccountDto [code=" + code + ", description=" + description + ", externalRef1=" + externalRef1 + ", externalRef2=" + externalRef2 + ", name=" + name
+				+ ", address=" + address + ", customFields=" + customFields + "]";
 	}
 
 	public CustomFieldsDto getCustomFields() {
@@ -121,6 +127,14 @@ public abstract class AccountDto implements Serializable {
 
 	public void setCustomFields(CustomFieldsDto customFields) {
 		this.customFields = customFields;
+	}
+
+	public boolean isLoaded() {
+		return loaded;
+	}
+
+	public void setLoaded(boolean loaded) {
+		this.loaded = loaded;
 	}
 
 }
