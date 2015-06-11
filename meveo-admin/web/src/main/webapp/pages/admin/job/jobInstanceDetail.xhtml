@@ -35,17 +35,25 @@
 
             <hf:formPanel id="formPanel" backingBean="#{jobInstanceBean}" addCustomFieldDialog="true">
 
-				<hf:formField label="#{messages['BusinessEntity.code']}" field="code" />
-				<hf:formField label="#{messages['BusinessEntity.description']}" field="description" />
-				<hf:formField label="#{messages['jobInstance.jobTemplate']}" field="jobTemplate" required="true" />
-
                 <hf:formDecorateField fieldId="jobCategory" label="#{messages['timer.jobCategory']}" >
 					<p:selectOneMenu id="jobCategory"  value="#{jobInstanceBean.entity.jobCategoryEnum}" required="true" rendered="#{jobInstanceBean.edit}">
                         <f:selectItem itemLabel="#{messages['commons.select']}" />
                         <f:selectItems value="#{jobInstanceBean.jobCategoryEnumValues}" var="jobCat" itemLabel="#{messages[jobCat.label]}" />
+                         <p:ajax event="valueChange" update="@form"></p:ajax>
                     </p:selectOneMenu>
                 </hf:formDecorateField>
-
+				<hf:formField label="#{messages['BusinessEntity.code']}" field="code" />
+				<hf:formField label="#{messages['BusinessEntity.description']}" field="description" />
+				<hf:formDecorateField fieldId="timerJobName" label="#{messages['timer.jobName']}" >
+                    <p:selectOneMenu id="timerJobName" value="#{jobInstanceBean.entity.jobTemplate}" rendered="#{jobInstanceBean.entity.id == null}"
+                        required="true">
+                        <f:selectItem itemLabel="#{messages['commons.select']}" />
+                        <f:selectItems value="#{jobInstanceBean.jobNames}" />
+                        <p:ajax event="valueChange" listener="#{jobInstanceBean.initCustomFields}" update="@form"></p:ajax>
+                    </p:selectOneMenu>
+                    <h:outputText value="#{jobInstanceBean.entity.jobTemplate}" rendered="#{jobInstanceBean.entity.id!=null}" />
+                </hf:formDecorateField>
+                
 				<hf:formDecorateField fieldId="timer" label="#{messages['jobInstance.timer']}">
 					<p:selectOneMenu id="timer" value="#{jobInstanceBean.entity.timerEntity}" rendered="#{jobInstanceBean.edit}">
 						    <s:objectConverter />
