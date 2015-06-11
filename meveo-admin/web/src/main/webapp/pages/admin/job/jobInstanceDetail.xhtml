@@ -42,8 +42,6 @@
                          <p:ajax event="valueChange" update="@form"></p:ajax>
                     </p:selectOneMenu>
                 </hf:formDecorateField>
-				<hf:formField label="#{messages['BusinessEntity.code']}" field="code" />
-				<hf:formField label="#{messages['BusinessEntity.description']}" field="description" />
 				<hf:formDecorateField fieldId="timerJobName" label="#{messages['timer.jobName']}" >
                     <p:selectOneMenu id="timerJobName" value="#{jobInstanceBean.entity.jobTemplate}" rendered="#{jobInstanceBean.entity.id == null}"
                         required="true">
@@ -52,7 +50,10 @@
                         <p:ajax event="valueChange" listener="#{jobInstanceBean.initCustomFields}" update="@form"></p:ajax>
                     </p:selectOneMenu>
                     <h:outputText value="#{jobInstanceBean.entity.jobTemplate}" rendered="#{jobInstanceBean.entity.id!=null}" />
-                </hf:formDecorateField>
+                </hf:formDecorateField>                
+				<hf:formField label="#{messages['BusinessEntity.code']}" field="code" />
+				<hf:formField label="#{messages['BusinessEntity.description']}" field="description" />
+
                 
 				<hf:formDecorateField fieldId="timer" label="#{messages['jobInstance.timer']}">
 					<p:selectOneMenu id="timer" value="#{jobInstanceBean.entity.timerEntity}" rendered="#{jobInstanceBean.edit}">
