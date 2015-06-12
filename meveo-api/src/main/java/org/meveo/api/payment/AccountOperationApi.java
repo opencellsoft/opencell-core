@@ -147,8 +147,12 @@ public class AccountOperationApi extends BaseApi {
 
 		accountOperation.setOccCode(postData.getOccCode());
 		accountOperation.setOccDescription(postData.getOccDescription());
-		accountOperation.setExcludedFromDunning(postData.getExcludedFromDunning());
-
+		if(!StringUtils.isBlank(postData.getExcludedFromDunning())){
+			accountOperation.setExcludedFromDunning(postData.getExcludedFromDunning());	
+		}else{
+			accountOperation.setExcludedFromDunning(false);	
+		}
+		
 		accountOperationService.create(accountOperation, currentUser, currentUser.getProvider());
 
 		if (postData.getMatchingAmounts() != null) {
