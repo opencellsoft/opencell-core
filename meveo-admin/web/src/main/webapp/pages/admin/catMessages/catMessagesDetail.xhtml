@@ -115,14 +115,14 @@
 						<p:selectOneMenu id="catMessagesType_text" value="#{catMessagesBean.objectType}" required="true" valueChangeListener="#{catMessagesBean.updateBusinessEntity()}">
 							<f:selectItem itemLabel=""/>
 							<f:selectItems value="#{catMessagesBean.objectTypes.keySet().toArray()}" var="t" itemLabel="#{catMessagesBean.objectTypes.get(t)}" itemValue="#{t}"/>
-							<p:ajax update=":formPanel:catMessageFormId:entityPanel" event="change" />
+							<p:ajax update=":formPanel:catMessageFormId" event="change" />
 						</p:selectOneMenu>
 					</hf:formDecorateField>
 					<hf:formDecorateField fieldId="trLanguageCode_text" label="#{messages['catMessages.languageCode']}" >
-						<p:selectOneMenu id="trLanguageCode_text" value="#{catMessagesBean.entity.languageCode}" required="true">
+						<p:selectOneMenu id="trLanguageCode_text" value="#{catMessagesBean.entity.languageCode}" required="true" valueChangeListener="#{catMessagesBean.updateBusinessEntity()}">
 							<f:selectItem itemLabel=""/>
 							<f:selectItems value="#{tradingLanguageBean.listAll}" var="l" itemLabel="#{l.languageCode}" itemDescription="#{l.prDescription}" itemValue="#{l.languageCode}"/>
-							<p:ajax update=":formPanel:catMessageFormId:entityPanel" event="change" />
+							<p:ajax update=":formPanel:catMessageFormId" event="change" />
 						</p:selectOneMenu>
 					</hf:formDecorateField>
 					<h:panelGroup id="entityPanel" layout="block">
