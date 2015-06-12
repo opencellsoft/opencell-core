@@ -302,6 +302,8 @@ public class CatMessagesBean extends BaseBean<CatMessages> {
 
 	 public void updateBusinessEntity(){
 		 this.businessEntity=null;
+		 this.setObjectId(null);
+		 initEntity();
 	 }
 
 	public String getObjectType() {
