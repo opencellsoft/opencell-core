@@ -100,11 +100,11 @@
 						value="#{calendarBean.entity.hours}" var="hourMin"
 						paginator="false" styleClass="paginated" style="width:25%">
 						<f:facet name="header">#{messages['calendar.time']}</f:facet>
-						<p:column>
+						<p:column width="90%">
 							<h:outputText value="#{hourMin.hourAsString}"
 								style="display:inline-block" />
 						</p:column>
-						<p:column>
+						<p:column width="10%">
 							<p:commandLink styleClass="ui-icon ui-icon-trash"
 								style="float:right;margin-right:10px"
 								action="#{calendarBean.removeTime(hourMin)}"
@@ -178,7 +178,7 @@
 					rendered="#{calendarBean.entity.intervalType=='HOUR'}"
 					styleClass="clearLeft">
 					<p:outputLabel value="#{messages['calendar.hourInterval']}" />
-					<h:panelGrid>
+					<h:panelGrid width="20%">
 						<h:panelGrid columns="2">
 							<p:inputMask id="hourIntervalToAdd"
 								value="#{calendarBean.timeToAdd}" mask="99:99 - 99:99"
@@ -191,13 +191,13 @@
 						</h:panelGrid>
 						<p:dataTable id="intervalHours" resizableColumns="true"
 							value="#{calendarBean.entity.intervals}" var="interval"
-							paginator="false" styleClass="paginated" style="width:25%">
+							paginator="false" styleClass="paginated">
 							<f:facet name="header">#{messages['calendar.hourIntervals']}</f:facet>
-							<p:column>
+							<p:column width="70%">
 								<h:outputText value="#{interval.intervalAsString}"
 									style="display:inline-block" />
 							</p:column>
-							<p:column>
+							<p:column width="30%">
 								<p:commandLink styleClass="ui-icon ui-icon-trash"
 									style="float:right;margin-right:10px"
 									action="#{calendarBean.removeInterval(interval)}"
@@ -214,7 +214,7 @@
 					rendered="#{calendarBean.entity.intervalType=='DAY'}"
 					styleClass="clearLeft">
 					<p:outputLabel value="#{messages['calendar.dayInterval']}" />
-					<h:panelGrid>
+					<h:panelGrid width="20%">
 						<h:panelGrid columns="2">
 							<p:inputMask id="dayIntervalToAdd"
 								value="#{calendarBean.timeToAdd}" mask="99/99 - 99/99"
@@ -227,13 +227,13 @@
 						</h:panelGrid>
 						<p:dataTable id="intervalDays" resizableColumns="true"
 							value="#{calendarBean.entity.intervals}" var="interval"
-							paginator="false" styleClass="paginated" style="width:25%">
+							paginator="false" styleClass="paginated" reflow="true">
 							<f:facet name="header">#{messages['calendar.dayIntervals']}</f:facet>
-							<p:column>
+							<p:column width="70%">
 								<h:outputText value="#{interval.intervalAsString}"
 									style="display:inline-block" />
 							</p:column>
-							<p:column>
+							<p:column width="30%">
 								<p:commandLink styleClass="ui-icon ui-icon-trash"
 									style="float:right;margin-right:10px"
 									action="#{calendarBean.removeInterval(interval)}"
@@ -250,7 +250,7 @@
 					rendered="#{calendarBean.entity.intervalType=='WDAY'}"
 					styleClass="clearLeft">
 					<p:outputLabel value="#{messages['calendar.weekdayInterval']}" />
-					<h:panelGrid>
+					<h:panelGrid width="30%">
 						<h:panelGrid columns="3">
 							<p:selectOneMenu id="weekdayIntervalFrom"
 								value="#{calendarBean.weekdayIntervalFrom}"
@@ -298,14 +298,14 @@
 						</h:panelGrid>
 						<p:dataTable id="intervalWeekdays" resizableColumns="true"
 							value="#{calendarBean.entity.intervals}" var="interval"
-							paginator="false" styleClass="paginated" style="width:25%">
+							paginator="false" styleClass="paginated">
 							<f:facet name="header">#{messages['calendar.weekdayIntervals']}</f:facet>
-							<p:column width="80%">
+							<p:column width="70%">
 								<h:outputText
 									value="#{messages['calendar.weekday.'.concat(interval.intervalBegin)]} - #{messages['calendar.weekday.'.concat(interval.intervalEnd)]}"
 									style="display:inline-block" />
 							</p:column>
-							<p:column width="20%">
+							<p:column width="30%">
 								<p:commandLink styleClass="ui-icon ui-icon-trash"
 									style="float:right;margin-right:10px"
 									action="#{calendarBean.removeInterval(interval)}"
