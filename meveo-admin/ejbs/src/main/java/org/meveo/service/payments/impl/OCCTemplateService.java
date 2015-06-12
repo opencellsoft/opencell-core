@@ -22,6 +22,7 @@ import javax.ejb.Stateless;
 
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.QueryBuilder;
+import org.meveo.model.crm.Provider;
 import org.meveo.model.payments.OCCTemplate;
 import org.meveo.service.base.PersistenceService;
 
@@ -103,5 +104,9 @@ public class OCCTemplateService extends PersistenceService<OCCTemplate> {
 
 		return null;
 
+	}
+	
+	public OCCTemplate findByCode(String code, Provider provider) {
+		return findByCode(code, provider.getCode());
 	}
 }
