@@ -193,6 +193,7 @@ public class EntityExportImportBean implements Serializable {
             inputFilters.put("templateName", ((String) inputFilters.get("templateName")).toLowerCase());
         }
 
+        // Don't loop through classes when only "complex" templates are of interest
         if (!inputFilters.containsKey("complex") || !(boolean) inputFilters.get("complex")) {
             for (Class clazz : classes) {
 

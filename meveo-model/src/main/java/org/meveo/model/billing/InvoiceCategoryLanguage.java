@@ -25,11 +25,13 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import org.meveo.model.AuditableEntity;
+import org.meveo.model.ExportIdentifier;
 
 /**
  * InvoiceCategoryLanguage entity.
  */
 @Entity
+@ExportIdentifier({ "invoiceCategory.code", "tradingLanguage.language.languageCode", "provider" })
 @Table(name = "BILLING_INVOICE_CAT_LANG")
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_INVOICE_CAT_LANG_SEQ")
 public class InvoiceCategoryLanguage extends AuditableEntity {
