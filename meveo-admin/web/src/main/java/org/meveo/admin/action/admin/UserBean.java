@@ -26,12 +26,10 @@ import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.annotation.PostConstruct;
 import javax.faces.event.ActionEvent;
@@ -86,10 +84,6 @@ public class UserBean extends BaseBean<User> {
     private Messages messages;
 
     private static final Logger log = LoggerFactory.getLogger(UserBean.class);
-
-    private DualListModel<Role> perks;
-
-    private List<Provider> providerPerks;
 
     /**
      * Password set by user which is later encoded and set to user before saving to db.
@@ -195,15 +189,18 @@ public class UserBean extends BaseBean<User> {
      * Standard method for custom component with listType="pickList".
      */
     public DualListModel<Role> getDualListModel() {
-        if (perks == null) {
-            List<Role> perksSource = roleService.list();
-            List<Role> perksTarget = new ArrayList<Role>();
-            if (getEntity().getRoles() != null) {
-                perksTarget.addAll(getEntity().getRoles());
-            }
-            perksSource.removeAll(perksTarget);
-            perks = new DualListModel<Role>(perksSource, perksTarget);
+        List<Role> perksSource = null;
+        if (entity != null && entity.getProvider() != null) {
+            perksSource = roleService.list(entity.getProvider());
+        } else {
+            perksSource = roleService.list();
         }
+        List<Role> perksTarget = new ArrayList<Role>();
+        if (getEntity().getRoles() != null) {
+            perksTarget.addAll(getEntity().getRoles());
+        }
+        perksSource.removeAll(perksTarget);
+        DualListModel<Role> perks = new DualListModel<Role>(perksSource, perksTarget);
         return perks;
     }
 
@@ -239,13 +236,13 @@ public class UserBean extends BaseBean<User> {
         this.show = show;
     }
 
-    public void showHidePassword() {        
+    public void showHidePassword() {
         this.show = !this.show;
     }
 
     @Override
     protected String getDefaultSort() {
-        return null;//"userName";
+        return null;// "userName";
     }
 
     public String getFilePath() {
@@ -329,7 +326,7 @@ public class UserBean extends BaseBean<User> {
             result = new DefaultStreamedContent(new FileInputStream(new File(folder + File.separator + selectedFileName)), null, selectedFileName);
         } catch (FileNotFoundException e) {
             // TODO Auto-generated catch block
-            log.error("error generated while getting seleceted file",e);
+            log.error("error generated while getting seleceted file", e);
         }
         return result;
     }
@@ -511,7 +508,7 @@ public class UserBean extends BaseBean<User> {
             log.error("Failed saving file. ", e);
         }
     }
-    
+
     /**
      * Add additional criteria for searching by provider
      */
@@ -519,92 +516,10 @@ public class UserBean extends BaseBean<User> {
     protected Map<String, Object> supplementSearchCriteria(Map<String, Object> searchCriteria) {
 
         // Do not user a check against user.provider as it contains only one value, while user can be linked to various providers
-    	 boolean isSuperAdmin = identity.hasPermission("superAdmin", "superAdminManagement");
-         if (isSuperAdmin) {            
-         	searchCriteria.put(PersistenceService.SEARCH_SKIP_PROVIDER_CONSTRAINT, true);
-         }
+        boolean isSuperAdmin = identity.hasPermission("superAdmin", "superAdminManagement");
+        if (isSuperAdmin) {
+            searchCriteria.put(PersistenceService.SEARCH_SKIP_PROVIDER_CONSTRAINT, true);
+        }
         return searchCriteria;
     }
-
-    public Map getFields(){
-        return new Map<String, Object>(){
-
-            @Override
-            public void clear() {
-                // TODO Auto-generated method stub
-                
-            }
-
-            @Override
-            public boolean containsKey(Object key) {
-                // TODO Auto-generated method stub
-                return false;
-            }
-
-            @Override
-            public boolean containsValue(Object value) {
-                // TODO Auto-generated method stub
-                return false;
-            }
-
-            @Override
-            public Set<java.util.Map.Entry<String, Object>> entrySet() {
-                // TODO Auto-generated method stub
-                return null;
-            }
-
-            @Override
-            public Object get(Object key) {
-                log.error("Getting {} ", key); 
-                return entity.getProvider().getCode();
-            
-            }
-
-            @Override
-            public boolean isEmpty() {
-                // TODO Auto-generated method stub
-                return false;
-            }
-
-            @Override
-            public Set<String> keySet() {
-                // TODO Auto-generated method stub
-                return null;
-            }
-
-            @Override
-            public Object put(String key, Object value) {
-                log.error("Setting {} to {}", key, value);
-                return value;
-            }
-
-            @Override
-            public void putAll(Map<? extends String, ? extends Object> m) {
-                // TODO Auto-generated method stub
-                
-            }
-
-            @Override
-            public Object remove(Object key) {
-                // TODO Auto-generated method stub
-                return null;
-            }
-
-            @Override
-            public int size() {
-                // TODO Auto-generated method stub
-                return 0;
-            }
-
-            @Override
-            public Collection<Object> values() {
-                // TODO Auto-generated method stub
-                return null;
-            }
-            
-        };
-        
-        
-    }
-	
 }

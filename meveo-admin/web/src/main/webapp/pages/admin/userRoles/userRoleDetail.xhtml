@@ -26,6 +26,7 @@
 			<hf:formField label="#{messages['role.name']}" field="name" required="true" />
 			<hf:formField label="#{messages['role.description']}" required="true"
 				field="description" size="50" maxlength="50" />
+            <hf:formField label="#{messages['commons.provider']}" field="provider" listBean="#{providerBean}" valueLabelField="code" required="true" allowEdit="false" rendered="#{identity.hasPermission('superAdmin', 'superAdminManagement')}" />                
 			<hf:formField label="#{messages['role.permission']}" required="true"
 				field="permissions" listType="pickUpList"
 				valueLabelField="name" styleClass="clearLeft" />

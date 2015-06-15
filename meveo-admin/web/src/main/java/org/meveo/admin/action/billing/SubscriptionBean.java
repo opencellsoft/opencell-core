@@ -538,10 +538,10 @@ public class SubscriptionBean extends BaseBean<Subscription> {
 			messages.info(new BundleKey("messages", "activation.activateSuccessful"));
 
 		} catch (BusinessException e1) {
-			messages.error(e1.getMessage());
+		    messages.error(new BundleKey("messages", "activation.activateUnsuccessful"), e1.getMessage());
 		} catch (Exception e) {
 			log.error("unexpected exception when activating service!", e);
-			messages.error(e.getMessage());
+			messages.error(new BundleKey("messages", "activation.activateUnsuccessful"), e.getMessage());
 		}
 	}
 
