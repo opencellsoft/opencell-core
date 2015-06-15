@@ -32,6 +32,13 @@ public class CalendarPeriod extends Calendar {
     @Column(name = "PERIOD_LENGTH")
     private Integer periodLength = 30;
 
+    /**
+     * month = 2
+	 * day of month = 5
+	 * second = 13
+	 * hour = 9
+	 * minute = 12
+     */
     @Column(name = "PERIOD_UNIT")
     private Integer periodUnit = java.util.Calendar.DAY_OF_MONTH;
 

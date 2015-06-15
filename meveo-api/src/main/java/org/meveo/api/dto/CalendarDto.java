@@ -42,6 +42,13 @@ public class CalendarDto extends BaseDto {
 
 	private Integer periodLength;
 
+	 /**
+     * month = 2
+	 * day of month = 5
+	 * second = 13
+	 * hour = 9
+	 * minute = 12
+     */
 	private Integer periodUnit;
 
 	private Integer nbPeriods;
