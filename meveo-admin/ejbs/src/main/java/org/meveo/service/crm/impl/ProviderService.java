@@ -16,23 +16,16 @@
  */
 package org.meveo.service.crm.impl;
 
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 
-import org.meveo.admin.exception.BusinessException;
-import org.meveo.admin.exception.UsernameAlreadyExistsException;
-import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.admin.User;
 import org.meveo.model.crm.Provider;
-import org.meveo.model.security.Role;
-import org.meveo.service.admin.impl.RoleService;
 import org.meveo.service.admin.impl.UserService;
 import org.meveo.service.base.PersistenceService;
 
@@ -43,11 +36,6 @@ import org.meveo.service.base.PersistenceService;
 public class ProviderService extends PersistenceService<Provider> {
 	@Inject
 	private UserService userService;
-
-	@Inject
-	private RoleService roleService;
-
-	private static ParamBean paramBean = ParamBean.getInstance();
 
 	public Provider findByCode(String code) {
 		return findByCode(getEntityManager(), code);
@@ -81,33 +69,6 @@ public class ProviderService extends PersistenceService<Provider> {
 		return providers;
 	}
 
-
-    public void create(Provider e) throws UsernameAlreadyExistsException, BusinessException {
-        log.info("start of create provider");
-        super.create(e);
-        log.info("created provider id={}. creating default user", e.getId());
-        
-        User user = new User();
-        user.setProvider(e);
-        user.setPassword(e.getCode() + ".password");
-        user.setUserName(e.getCode() + ".ADMIN");
-        Role role = roleService.findById(Long.parseLong(paramBean.getProperty("systgetEntityManager().adminRoleid", "1")));
-        
-        Role o=new Role();
-        o.setName(role.getName());
-        o.setDescription(role.getDescription());
-        o.getPermissions().addAll(role.getPermissions());
-        
-        o.setProvider(e);
-        roleService.create(o);
-        Set<Role> roles = new HashSet<Role>();
-        roles.add(o);
-        user.setRoles(roles);
-        userService.create(user);
-        
-        log.info("created default user id={}.", user.getId());
-    }
-
 	public Provider findByCodeWithFetch(String code, List<String> fetchFields) {
 		QueryBuilder qb = new QueryBuilder(Provider.class, "p", fetchFields,
 				null);
@@ -120,5 +81,4 @@ public class ProviderService extends PersistenceService<Provider> {
 			return null;
 		}
 	}
-
 }
