@@ -248,7 +248,7 @@ public class DefaultObserver {
        String input = "{"+
 				"	  #meveoInstanceCode#: #myMeveo#,"+
 				"	  #subject#: #A Exception#,"+
-				"	  #body#: #"+LogContent.getLogs(new Date(System.currentTimeMillis()-20000) , new Date())+"#,"+
+				"	  #body#: #"+LogExtractionService.getLogs(new Date(System.currentTimeMillis()-20000) , new Date())+"#,"+
 				"	  #additionnalInfo1#: ##,"+
 				"	  #additionnalInfo2#: ##,"+
 				"	  #additionnalInfo3#: ##,"+
