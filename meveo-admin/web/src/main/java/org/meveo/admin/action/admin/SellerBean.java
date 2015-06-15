@@ -79,7 +79,7 @@ public class SellerBean extends BaseBean<Seller> {
 	@Override
 	public String saveOrUpdate(boolean killConversation, String objectName, Long objectId) throws BusinessException {
 		// prefix must be set
-		if ((entity.getCurrentInvoiceNb() != null && entity.getCurrentInvoiceNb()!=0) && StringUtils.isBlank(entity.getInvoicePrefix())) {
+		if (entity.getCurrentInvoiceNb() != null && StringUtils.isBlank(entity.getInvoicePrefix())) {
 			messages.error(new BundleKey("messages", "message.error.seller.invoicePrefix.required"));
 			return null;
 		} else {
@@ -90,7 +90,7 @@ public class SellerBean extends BaseBean<Seller> {
 	@Override
 	public String saveOrUpdate(boolean killConversation) throws BusinessException {
 		// prefix must be set
-		if ((entity.getCurrentInvoiceNb() != null && entity.getCurrentInvoiceNb()!=0) && StringUtils.isBlank(entity.getInvoicePrefix())) {
+		if (entity.getCurrentInvoiceNb() != null && StringUtils.isBlank(entity.getInvoicePrefix())) {
 			messages.error(new BundleKey("messages", "message.error.seller.invoicePrefix.required"));
 			return null;
 		} else {

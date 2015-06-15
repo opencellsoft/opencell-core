@@ -86,9 +86,11 @@
 
 							<hf:formField label="#{messages['seller.invoicePrefix']}"
 								field="invoicePrefix" id="invoicePrefix" maxlength="50" />
-
-							<hf:formField label="#{messages['seller.currentInvoiceNb']}"
-								field="currentInvoiceNb" id="currentInvoiceNb" />
+							
+							<hftl:decorateFormField fieldId="currentInvoiceNb" label="#{messages['seller.currentInvoiceNb']}">
+							<p:inputText id="currentInvoiceNb" 
+							   value="#{sellerBean.entity.currentInvoiceNb}" />
+							</hftl:decorateFormField>	
 
 							<hf:formField id="trCurrencySelectId"
 								label="#{messages['currency.codeCurrency']}"
