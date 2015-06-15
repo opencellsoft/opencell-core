@@ -69,5 +69,33 @@
 		<sql><![CDATA[ UPDATE CAT_COUNTER_TEMPLATE set COUNTER_TYPE='USAGE' WHERE COUNTER_TYPE IS NULL ]]></sql>
 		<sql><![CDATA[ UPDATE CAT_COUNTER_TEMPLATE set COUNTER_LEVEL='UA' WHERE COUNTER_LEVEL IS NULL ]]></sql>
 	</changeSet>
+	
+	<changeSet author="anasseh (generated)" id="878_2015-06-11">
+
+		<insert tableName="meveo_script_instance">
+			<column name="id" valueSequenceNext="meveo_script_instance_seq"  />
+			<column name="version" valueNumeric="0" />
+			<column name="disabled" valueBoolean="false" />
+			<column name="created" valueDate="${now}" />
+			<column name="code" value="Test_1" />
+			<column name="description" value="first script" />
+			<column name="script" value="here"/>
+			<column name="provider_id" valueNumeric="1" />
+			<column name="creator_id" valueNumeric="1" />
+		</insert>
+		
+		<insert tableName="meveo_script_instance">
+			<column name="id" valueSequenceNext="meveo_script_instance_seq"  />
+			<column name="version" valueNumeric="0" />
+			<column name="disabled" valueBoolean="false" />
+			<column name="created" valueDate="${now}" />
+			<column name="code" value="Test_2" />
+			<column name="description" value="second script" />
+			<column name="script" value="here"/>
+			<column name="provider_id" valueNumeric="1" />
+			<column name="creator_id" valueNumeric="1" />
+		</insert>
+		
+		</changeSet>
 
 </databaseChangeLog>
