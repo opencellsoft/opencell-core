@@ -1,12 +1,6 @@
 package org.meveo.service.notification;
 
 import java.math.BigDecimal;
-import java.net.InetAddress;
-import java.net.NetworkInterface;
-import java.nio.file.FileStore;
-import java.nio.file.FileSystems;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -17,7 +11,6 @@ import javax.enterprise.event.Observes;
 import javax.enterprise.inject.spi.BeanManager;
 import javax.inject.Inject;
 
-import org.apache.commons.vfs.FileSystemException;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.cache.NotificationCacheContainerProvider;
 import org.meveo.commons.utils.ParamBean;
@@ -69,7 +62,6 @@ public class DefaultObserver {
     @Inject
     private EmailNotifier emailNotifier;
    
-
     @Inject
     private WebHookNotifier webHookNotifier;
 
@@ -83,7 +75,7 @@ public class DefaultObserver {
     private NotificationCacheContainerProvider notificationCacheContainerProvider;
     
     @Inject
-    private RestNotifier restNotifier;
+    private RemoteInstanceNotifier remoteInstanceNotifier;
 
     private boolean matchExpression(String expression, Object o) throws BusinessException {
         Boolean result = true;
@@ -263,7 +255,7 @@ public class DefaultObserver {
 				"	  #additionnalInfo4#: ##"+
 				"}";
        log.info("Defaut observer : input {} ", input);
-       restNotifier.invoke(input.replaceAll("#", "\""),ParamBean.getInstance().getProperty("inboundCommunication.url", "http://version.meveo.info/meveo-moni/api/rest/inboundCommunication"));
+       remoteInstanceNotifier.invoke(input.replaceAll("#", "\""),ParamBean.getInstance().getProperty("inboundCommunication.url", "http://version.meveo.info/meveo-moni/api/rest/inboundCommunication"));
        
 		//TODO handel reponse
 		//if pertinent, if need logs

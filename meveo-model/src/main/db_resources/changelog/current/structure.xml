@@ -200,14 +200,16 @@
 			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="CAT_CALENDAR" />
 		<createSequence sequenceName="CRM_CUSTOM_FIELD_PERIOD_seq" />
 	</changeSet>
-	
+
 	<changeSet id="#791_20150602-4" author="AndriusKarpavicius">
-		<dropSequence sequenceName="CRM_CUSTOM_FIELD_PERIOD_seq"/>
+		<dropSequence sequenceName="CRM_CUSTOM_FIELD_PERIOD_seq" />
 		<createSequence sequenceName="crm_custom_field_period_seq" />
 	</changeSet>
-	
+
 	<changeSet id="#791_20150602-5" author="AndriusKarpavicius">
-		<addUniqueConstraint columnNames="CF_INSTANCE_ID, period_start_date, period_end_date" tableName="crm_custom_field_period" constraintName="uk_crm_custom_field_period"/>
+		<addUniqueConstraint
+			columnNames="CF_INSTANCE_ID, period_start_date, period_end_date"
+			tableName="crm_custom_field_period" constraintName="uk_crm_custom_field_period" />
 	</changeSet>
 
 	<changeSet id="#852_20150605-2" author="EdwardLegaspi">
@@ -219,7 +221,10 @@
 
 	<!-- #855 begin -->
 
-
+	<changeSet author="anasseh" id="1433614968312-1">
+		<sqlFile endDelimiter="" path="migrationJobs_beforeLiquibase.sql"
+			relativeToChangelogFile="true" splitStatements="false" />
+	</changeSet>
 
 
 	<changeSet author="anasseh (generated)" id="1433614968312-2">
@@ -437,6 +442,10 @@
 		<dropColumn columnName="userid" tableName="meveo_timer" />
 	</changeSet>
 
+	<changeSet author="anasseh" id="1433614968312-63">
+		<sqlFile endDelimiter="" path="migrationJobs_afterLiquibase.sql"
+			relativeToChangelogFile="true" splitStatements="false" />
+	</changeSet>
 
 
 	<changeSet author="anasseh (generated)" id="855_2015-06-09">
@@ -449,10 +458,84 @@
 			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="MEVEO_JOB_INSTANCE" />
 	</changeSet>
 	<!-- #855 end -->
-	
+
 	<changeSet id="790-20150610" author="AndriusKarpavicius">
 		<addColumn tableName="CRM_CUSTOM_FIELD_TMPL">
-			<column name="DEFAULT_VALUE" type="VARCHAR(50)"/>
+			<column name="DEFAULT_VALUE" type="VARCHAR(50)" />
 		</addColumn>
+	</changeSet>
+
+	<changeSet author="anasseh (generated)" id="878_2015-06-11">
+		<createSequence sequenceName="meveo_script_instance_seq" />
+		<createTable tableName="meveo_script_instance">
+			<column name="id" type="BIGINT">
+				<constraints nullable="false" />
+			</column>
+			<column name="version" type="INT4" />
+			<column name="disabled" type="BOOL">
+				<constraints nullable="false" />
+			</column>
+			<column name="created" type="TIMESTAMP WITHOUT TIME ZONE">
+				<constraints nullable="false" />
+			</column>
+			<column name="updated" type="TIMESTAMP WITHOUT TIME ZONE" />
+			<column name="code" type="VARCHAR(60)">
+				<constraints nullable="false" />
+			</column>
+			<column name="description" type="VARCHAR(100)" />
+			<column name="script" type="VARCHAR(10000)">
+				<constraints nullable="false" />
+			</column>
+			<column name="provider_id" type="BIGINT" />
+			<column name="creator_id" type="BIGINT" />
+			<column name="updater_id" type="BIGINT" />
+		</createTable>
+
+		<addPrimaryKey columnNames="id" constraintName="meveo_script_instance_pkey"
+			tableName="meveo_script_instance" />
+		<addUniqueConstraint columnNames="code, provider_id"
+			constraintName="uk_meveo_script_instance" deferrable="false"
+			disabled="false" initiallyDeferred="false" tableName="meveo_script_instance"/>
+		<addForeignKeyConstraint baseColumnNames="creator_id"
+			baseTableName="meveo_script_instance" constraintName="fk_meveoscript_creator"
+			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_user" />
+
+		<addForeignKeyConstraint baseColumnNames="updater_id"
+			baseTableName="meveo_script_instance" constraintName="fk_meveoscript_updater"
+			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_user" />
+
+		<addForeignKeyConstraint baseColumnNames="provider_id"
+			baseTableName="meveo_script_instance" constraintName="fk_meveoscript_provider"
+			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_provider" />
+
+		<addColumn tableName="ADM_NOTIFICATION">
+			<column name="SCRIPT_INSTANCE_ID" type="int8" />
+		</addColumn>
+
+		<createTable tableName="MEVEO_SCRIPT_INSTANCE_PARAMS">
+			<column name="ScriptInstance_ID" type="BIGINT">
+				<constraints nullable="false" />
+			</column>
+			<column name="params" type="VARCHAR(255)" />
+			<column name="params_key" type="VARCHAR(255)">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+
+		<addPrimaryKey columnNames="ScriptInstance_ID, params_key"
+			constraintName="PK_MEVEO_SCRIPT_INSTANCE_PARAMS" tableName="MEVEO_SCRIPT_INSTANCE_PARAMS" />
+
+		<addForeignKeyConstraint baseColumnNames="ScriptInstance_ID"
+			baseTableName="MEVEO_SCRIPT_INSTANCE_PARAMS" constraintName="fk_params_script_instance"
+			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="meveo_script_instance" />
+
+		<addForeignKeyConstraint baseColumnNames="SCRIPT_INSTANCE_ID"
+			baseTableName="ADM_NOTIFICATION" constraintName="fk_notif_script_instance"
+			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="meveo_script_instance" />
 	</changeSet>
 </databaseChangeLog>
