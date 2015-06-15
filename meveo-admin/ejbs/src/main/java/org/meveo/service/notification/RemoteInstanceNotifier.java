@@ -15,7 +15,7 @@ import org.slf4j.Logger;
 
 @SuppressWarnings("deprecation")
 @Stateless
-public class RestNotifier {
+public class RemoteInstanceNotifier {
 
 	@Inject
 	private Logger log;
