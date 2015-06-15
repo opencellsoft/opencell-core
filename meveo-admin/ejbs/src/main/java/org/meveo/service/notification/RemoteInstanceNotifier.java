@@ -1,9 +1,5 @@
 package org.meveo.service.notification;
 
-import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
-import java.io.InputStreamReader;
-
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 

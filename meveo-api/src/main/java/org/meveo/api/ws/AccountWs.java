@@ -18,7 +18,6 @@ import org.meveo.api.dto.account.FindAccountHierachyRequestDto;
 import org.meveo.api.dto.account.UserAccountDto;
 import org.meveo.api.dto.payment.AccountOperationDto;
 import org.meveo.api.dto.payment.DunningInclusionExclusionDto;
-import org.meveo.api.dto.payment.OccTemplateDto;
 import org.meveo.api.dto.response.CustomerListResponse;
 import org.meveo.api.dto.response.account.AccessesResponseDto;
 import org.meveo.api.dto.response.account.BillingAccountsResponseDto;
@@ -32,7 +31,6 @@ import org.meveo.api.dto.response.account.GetCustomerResponseDto;
 import org.meveo.api.dto.response.account.GetUserAccountResponseDto;
 import org.meveo.api.dto.response.account.UserAccountsResponseDto;
 import org.meveo.api.dto.response.payment.AccountOperationsResponseDto;
-import org.meveo.api.dto.response.payment.GetOccTemplateResponseDto;
 
 /**
  * @author Edward P. Legaspi
@@ -175,19 +173,6 @@ public interface AccountWs extends IBaseWs {
 	@WebMethod
 	FindAccountHierarchyResponseDto findAccountHierarchy2(@WebParam(name = "findAccountHierachyRequest") FindAccountHierachyRequestDto postData);
 	
-	// OccTemplate
-
-		@WebMethod
-		ActionStatus createOccTemplate(@WebParam(name = "occTemplate") OccTemplateDto postData);
-
-		@WebMethod
-		ActionStatus updateOccTemplate(@WebParam(name = "occTemplate") OccTemplateDto postData);
-
-		@WebMethod
-		GetOccTemplateResponseDto findOccTemplate(@WebParam(name = "occTemplateCode") String occTemplateCode);
-
-		@WebMethod
-		ActionStatus removeOccTemplate(@WebParam(name = "occTemplateCode") String occTemplateCode);
-
+	
 
 }

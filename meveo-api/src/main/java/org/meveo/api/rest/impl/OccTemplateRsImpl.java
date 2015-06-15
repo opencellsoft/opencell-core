@@ -1,19 +1,18 @@
-package org.meveo.api.rest.payment.impl;
+package org.meveo.api.rest.impl;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 
 import org.meveo.api.MeveoApiErrorCode;
+import org.meveo.api.OccTemplateApi;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
-import org.meveo.api.dto.payment.OccTemplateDto;
-import org.meveo.api.dto.response.payment.GetOccTemplateResponseDto;
+import org.meveo.api.dto.OccTemplateDto;
+import org.meveo.api.dto.response.GetOccTemplateResponseDto;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.LoggingInterceptor;
-import org.meveo.api.payment.OccTemplateApi;
-import org.meveo.api.rest.impl.BaseRs;
-import org.meveo.api.rest.payment.OccTemplateRs;
+import org.meveo.api.rest.OccTemplateRs;
 import org.slf4j.Logger;
 
 
