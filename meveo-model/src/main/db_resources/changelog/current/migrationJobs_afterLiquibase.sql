@@ -38,7 +38,7 @@ SELECT   id, version ,disabled ,created ,updated ,code ,description ,
 
   
   ALTER SEQUENCE meveo_timer_seq RESTART WITH 20;
-  ALTER SEQUENCE meveo_job_instance_seq RESTART WITH 20;
+  ALTER SEQUENCE meveo_job_instance_seq RESTART WITH 30;
  ALTER SEQUENCE CRM_CUSTOM_FIELD_INST_SEQ RESTART WITH 30;
  
   
