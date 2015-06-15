@@ -1,11 +1,9 @@
-package org.meveo.api.payment;
+package org.meveo.api;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
-import org.meveo.api.BaseApi;
-import org.meveo.api.MeveoApiErrorCode;
-import org.meveo.api.dto.payment.OccTemplateDto;
+import org.meveo.api.dto.OccTemplateDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;

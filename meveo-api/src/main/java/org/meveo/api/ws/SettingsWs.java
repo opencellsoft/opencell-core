@@ -13,6 +13,7 @@ import org.meveo.api.dto.InvoiceCategoryDto;
 import org.meveo.api.dto.InvoiceSubCategoryCountryDto;
 import org.meveo.api.dto.InvoiceSubCategoryDto;
 import org.meveo.api.dto.LanguageDto;
+import org.meveo.api.dto.OccTemplateDto;
 import org.meveo.api.dto.ProviderDto;
 import org.meveo.api.dto.SellerDto;
 import org.meveo.api.dto.TaxDto;
@@ -28,6 +29,7 @@ import org.meveo.api.dto.response.GetInvoiceSubCategoryCountryResponse;
 import org.meveo.api.dto.response.GetInvoiceSubCategoryResponse;
 import org.meveo.api.dto.response.GetInvoicingConfigurationResponseDto;
 import org.meveo.api.dto.response.GetLanguageResponse;
+import org.meveo.api.dto.response.GetOccTemplateResponseDto;
 import org.meveo.api.dto.response.GetProviderResponse;
 import org.meveo.api.dto.response.GetSellerResponse;
 import org.meveo.api.dto.response.GetTaxResponse;
@@ -227,5 +229,20 @@ public interface SettingsWs extends IBaseWs {
 
 	@WebMethod
 	GetCustomerAccountConfigurationResponseDto findCustomerAccountConfiguration();
+	
+	// OccTemplate
+
+	@WebMethod
+	ActionStatus createOccTemplate(@WebParam(name = "occTemplate") OccTemplateDto postData);
+
+	@WebMethod
+	ActionStatus updateOccTemplate(@WebParam(name = "occTemplate") OccTemplateDto postData);
+
+	@WebMethod
+	GetOccTemplateResponseDto findOccTemplate(@WebParam(name = "occTemplateCode") String occTemplateCode);
+
+	@WebMethod
+	ActionStatus removeOccTemplate(@WebParam(name = "occTemplateCode") String occTemplateCode);
+
 
 }

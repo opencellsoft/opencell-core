@@ -1,4 +1,4 @@
-package org.meveo.api.dto.payment;
+package org.meveo.api.dto;
 
 import java.io.Serializable;
 
