@@ -54,8 +54,7 @@ public class JavaCompilerManager  {
 	@PostConstruct
 	void compileAll() {
 		try {						
-			//VirtualFile virtualLibDir = VFS.getChild("/content/"+ParamBean.getInstance().getProperty("meveo.moduleName", "meveo")+".war/WEB-INF/lib");  
-			VirtualFile virtualLibDir = VFS.getChild("/content/meveo.war/WEB-INF/lib");  
+			VirtualFile virtualLibDir = VFS.getChild("/content/"+ParamBean.getInstance().getProperty("meveo.moduleName", "meveo")+".war/WEB-INF/lib");  			
 			String classpath="";
 			File physicalLibDir = virtualLibDir.getPhysicalFile();
 			for(File f : FileUtils.getFilesToProcess(physicalLibDir, "*", "jar")){
