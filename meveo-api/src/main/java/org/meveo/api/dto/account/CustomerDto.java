@@ -32,6 +32,10 @@ public class CustomerDto extends AccountDto {
 	private Date mandateDate;
 
 	private ContactInformationDto contactInformation = new ContactInformationDto();
+	
+	/**
+	 * Use for GET / LIST only.
+	 */
 	private CustomerAccountsDto customerAccounts = new CustomerAccountsDto();
 
 	public CustomerDto() {

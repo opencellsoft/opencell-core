@@ -27,6 +27,9 @@ public class UserAccountDto extends AccountDto {
 	private String status;
 	private String terminationReason;
 
+	/**
+	 * Use for GET / LIST only.
+	 */
 	private SubscriptionsDto subscriptions = new SubscriptionsDto();
 
 	public UserAccountDto() {

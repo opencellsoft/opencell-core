@@ -41,6 +41,9 @@ public class CustomerAccountDto extends AccountDto {
 	// currently not use
 	private Date terminationDate;
 
+	/**
+	 * Use for GET / LIST only.
+	 */
 	private BillingAccountsDto billingAccounts = new BillingAccountsDto();
 
 	public CustomerAccountDto() {

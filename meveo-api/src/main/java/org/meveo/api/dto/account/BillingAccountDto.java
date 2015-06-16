@@ -44,6 +44,9 @@ public class BillingAccountDto extends AccountDto {
 	private String email;
 	private BankCoordinatesDto bankCoordinates = new BankCoordinatesDto();
 
+	/**
+	 * Use for GET / LIST only.
+	 */
 	private UserAccountsDto userAccounts = new UserAccountsDto();
 
 	public BillingAccountDto() {
