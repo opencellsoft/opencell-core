@@ -16,8 +16,10 @@
  */
 package org.meveo.model.catalog;
 
+import java.util.Arrays;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
@@ -41,6 +43,8 @@ public class CalendarPeriod extends Calendar {
      */
     @Column(name = "PERIOD_UNIT")
     private Integer periodUnit = java.util.Calendar.DAY_OF_MONTH;
+    
+	public static List<Integer> VALID_PERIOD_UNITS = Arrays.asList(2, 5, 9, 12, 13);
 
     @Column(name = "NB_PERIODS")
     private Integer nbPeriods = 0;
@@ -159,4 +163,9 @@ public class CalendarPeriod extends Calendar {
     public Date nextPeriodStartDate(Date date) {
         return null;
     }
+    
+	public static boolean isValidPeriodUnit(Integer unit) {
+		return VALID_PERIOD_UNITS.contains(unit);
+	}
+	
 }

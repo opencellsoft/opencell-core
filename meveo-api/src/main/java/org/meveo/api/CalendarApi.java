@@ -100,6 +100,16 @@ public class CalendarApi extends BaseApi {
                 calendarService.create(calendar, currentUser, provider);
 
             } else if ("PERIOD".equalsIgnoreCase(postData.getCalendarType())) {
+            	
+				if (StringUtils.isBlank(postData.getPeriodUnit())) {
+					missingParameters.add("periodUnit");
+					throw new MissingParameterException(getMissingParametersExceptionMessage());
+				}
+				
+				if(!CalendarPeriod.isValidPeriodUnit(postData.getPeriodUnit())) {
+					throw new MeveoApiException(MeveoApiErrorCode.BUSINESS_API_EXCEPTION, "Invalid periodUnit value. Must be =[" + CalendarPeriod.VALID_PERIOD_UNITS.toArray()
+							+ "]");
+				}
 
                 CalendarPeriod calendar = new CalendarPeriod();
                 calendar.setCode(postData.getCode());
@@ -196,10 +206,17 @@ public class CalendarApi extends BaseApi {
                 }
 
             } else if (calendar instanceof CalendarPeriod) {
+				
+				if(!StringUtils.isBlank(postData.getPeriodUnit()) && !CalendarPeriod.isValidPeriodUnit(postData.getPeriodUnit())) {
+					throw new MeveoApiException(MeveoApiErrorCode.BUSINESS_API_EXCEPTION, "Invalid periodUnit value. Must be =[" + CalendarPeriod.VALID_PERIOD_UNITS.toArray()
+							+ "]");
+				}
 
                 ((CalendarPeriod) calendar).setPeriodLength(postData.getPeriodLength());
                 ((CalendarPeriod) calendar).setNbPeriods(postData.getNbPeriods());
-                ((CalendarPeriod) calendar).setPeriodUnit(postData.getPeriodUnit());
+				if (!StringUtils.isBlank(postData.getPeriodUnit())) {
+					((CalendarPeriod) calendar).setPeriodUnit(postData.getPeriodUnit());
+				}
             
             } else if (calendar instanceof CalendarInterval) {
 
