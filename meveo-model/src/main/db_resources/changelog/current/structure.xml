@@ -482,8 +482,7 @@
 			<column name="code" type="VARCHAR(60)">
 				<constraints nullable="false" />
 			</column>
-			<column name="description" type="VARCHAR(100)" />
-				<column name="SRC_TYPE" type="VARCHAR(100)" />
+			<column name="description" type="VARCHAR(100)" />				
 			<column name="script" type="VARCHAR(10000)">
 				<constraints nullable="false" />
 			</column>
@@ -548,4 +547,10 @@
 			constraintName="uk_meveo_script_instance" deferrable="false"
 			disabled="false" initiallyDeferred="false" tableName="meveo_script_instance"/>
 	</changeSet>
+	
+	<changeSet author="anasseh (generated)" id="878_2015-06-11_2">
+			<addColumn tableName="meveo_script_instance">
+			<column name="SRC_TYPE" type="VARCHAR(100)" />
+		</addColumn>
+		</changeSet>
 </databaseChangeLog>
