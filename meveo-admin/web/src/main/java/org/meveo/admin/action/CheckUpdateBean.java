@@ -17,6 +17,8 @@ import org.jboss.resteasy.client.ClientResponse;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.meveo.commons.utils.ParamBean;
+import org.meveo.script.JavaCompilerManager;
+import org.meveo.script.ScriptInterface;
 import org.slf4j.LoggerFactory;
 
 @SuppressWarnings("deprecation")

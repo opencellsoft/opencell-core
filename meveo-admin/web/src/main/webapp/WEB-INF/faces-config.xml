@@ -163,6 +163,17 @@
 		</navigation-case>		
 
 		<navigation-case>
+			<from-outcome>scriptInstances</from-outcome>
+			<to-view-id>/pages/admin/scriptInstances/scriptInstances.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>jobInstanceDetail</from-outcome>
+			<to-view-id>/pages/admin/scriptInstances/scriptInstanceDetail.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>	
+		
+		<navigation-case>
 			<from-outcome>timers</from-outcome>
 			<to-view-id>/pages/admin/job/ejbTimers.xhtml</to-view-id>
 			<redirect />

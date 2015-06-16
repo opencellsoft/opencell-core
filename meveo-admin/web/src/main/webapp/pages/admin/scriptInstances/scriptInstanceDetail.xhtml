@@ -1,0 +1,37 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html" xmlns:hftl="http://hftl.org"
+	xmlns:hf="http://java.sun.com/jsf/composite/tags"
+	xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
+
+	<ui:define name="navigation">
+		<ui:include src="/layout/navigation.xhtml" />
+	</ui:define>
+
+	<ui:define name="body">
+	
+		<p:panel>
+			<h:form id="crumbmenuForm">
+				<p:breadCrumb homeDisplay="text" id="crumbmenu">
+					<p:menuitem value="#{messages['menu.admin']}" disabled="true" />
+					<p:menuitem outcome="scriptInstances"
+						value="#{messages['menu.scriptInstance']}" />
+				</p:breadCrumb>
+			</h:form>
+		</p:panel>
+		<hf:formPanel id="formPanel" label="#{messages['scriptInstance.panel']}" formId="scriptInstanceForm" backingBean="#{scriptInstanceBean}" columns="1">
+			<hf:formField label="#{messages['businessEntity.code']}" field="code" required="true" />
+			
+			<hf:formField label="#{messages['businessEntity.description']}" field="description" />
+	
+<!-- 	       <h:outputText value="#{messages['scriptInstance.script']}" /> -->
+			<h:inputTextarea value="#{scriptInstanceBean.entity.script}" cols="120" rows="50" />
+			
+			
+		</hf:formPanel>
+
+	</ui:define>
+
+</ui:composition>
