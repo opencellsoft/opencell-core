@@ -12,6 +12,7 @@ import org.meveo.admin.exception.AccountAlreadyExistsException;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.BaseApi;
+import org.meveo.api.MeveoApiErrorCode;
 import org.meveo.api.dto.CustomFieldDto;
 import org.meveo.api.dto.SellerDto;
 import org.meveo.api.dto.account.AccessDto;
@@ -1620,6 +1621,10 @@ public class AccountHierarchyApi extends BaseApi {
 
 		if (postData.getName() == null && postData.getAddress() == null) {
 			throw new MeveoApiException("At least name or address must not be null.");
+		}
+		
+		if(!FindAccountHierachyRequestDto.isValidLevel(postData.getLevel())) {
+			throw new MeveoApiException(MeveoApiErrorCode.BUSINESS_API_EXCEPTION, "INVALID_LEVEL_TYPE");
 		}
 
 		if (postData.getName() != null) {

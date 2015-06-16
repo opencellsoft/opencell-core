@@ -30062,7 +30062,7 @@ for( testCase in testSuite.getTestCaseList() ) {
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createCustomerAccount>
-         <customerAccount code="${#TestSuite#ticket}_CA" description="${#TestCase#ticket}_CA">
+         <customerAccount code="${#TestSuite#ticket}_CA2" description="${#TestCase#ticket}_CA">
             <externalRef1>EXTREF1</externalRef1>
             <externalRef2>EXTREF2</externalRef2>
             <name>
@@ -30078,7 +30078,7 @@ for( testCase in testSuite.getTestCaseList() ) {
                <city>Dijon</city>
                <country>FR</country>
             </address>
-            <customer>${#TestSuite#ticket}_CUST</customer>
+            <customer>${#TestSuite#ticket}_CUST2</customer>
             <currency>EUR</currency>
             <paymentMethod>CHECK</paymentMethod>
             <creditCategory>Pro</creditCategory>
@@ -30090,7 +30090,7 @@ for( testCase in testSuite.getTestCaseList() ) {
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createBillingAccount>
-         <billingAccount code="${#TestSuite#ticket}_BA" description="${#TestCase#ticket}_BA">
+         <billingAccount code="${#TestSuite#ticket}_BA2" description="${#TestCase#ticket}_BA">
             <externalRef1>EXTREF1</externalRef1>
             <externalRef2>EXTREF2</externalRef2>
             <name>
@@ -30106,7 +30106,7 @@ for( testCase in testSuite.getTestCaseList() ) {
                <city>Dijon</city>
                <country>FR</country>
             </address>
-            <customerAccount>${#TestSuite#ticket}_CA</customerAccount>
+            <customerAccount>${#TestSuite#ticket}_CA2</customerAccount>
             <billingCycle>CYC_INV_MT_1</billingCycle>
             <country>FR</country>
             <language>FRA</language>
@@ -30124,8 +30124,8 @@ for( testCase in testSuite.getTestCaseList() ) {
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createUserAccount>
-         <userAccount code="${#TestSuite#ticket}_UA" description="${#TestCase#ticket}_UA">
-         	<billingAccount>${#TestSuite#ticket}_BA</billingAccount>
+         <userAccount code="${#TestSuite#ticket}_UA2" description="${#TestCase#ticket}_UA">
+         	<billingAccount>${#TestSuite#ticket}_BA2</billingAccount>
             <externalRef1>EXTREF1</externalRef1>
             <externalRef2>EXTREF2</externalRef2>
             <name>
@@ -30517,6 +30517,21 @@ for( testCase in testSuite.getTestCaseList() ) {
                <state>?</state>
 -->
             </address>
+         </findAccountHierachyRequest>
+      </ws:findAccountHierarchy2>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response"/><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:preemptive>true</con:preemptive><con:authType>Preemptive</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="find - invalid label"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>findAccountHierarchy2</con:operation><con:request name="find - invalid label"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:findAccountHierarchy2>
+         <!--Optional:-->
+         <findAccountHierachyRequest>
+            <level>100</level>
+            <!--Optional:-->
+            <name>
+               <lastName>Legaspi2</lastName>
+            </name>
+           
          </findAccountHierachyRequest>
       </ws:findAccountHierarchy2>
    </soapenv:Body>

@@ -1,6 +1,8 @@
 package org.meveo.api.dto.account;
 
 import java.io.Serializable;
+import java.util.Arrays;
+import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -15,7 +17,15 @@ public class FindAccountHierachyRequestDto implements Serializable {
 
 	private static final long serialVersionUID = 9110625442489443755L;
 
+	/**
+	 * Possible values.
+	 * CUST = 1;
+	 * CA = 2;
+	 * BA = 4;
+	 * UA = 8;
+	**/
 	private int level;
+	public static List<Integer> VALID_LEVEL_VALUES = Arrays.asList(1, 2, 4, 8); 
 	private NameDto name;
 	private AddressDto address;
 
@@ -41,6 +51,10 @@ public class FindAccountHierachyRequestDto implements Serializable {
 
 	public void setAddress(AddressDto address) {
 		this.address = address;
+	}
+	
+	public static boolean isValidLevel(Integer l) {
+		return VALID_LEVEL_VALUES.contains(l);
 	}
 
 }
