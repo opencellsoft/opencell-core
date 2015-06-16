@@ -18,12 +18,17 @@ import org.meveo.api.dto.SellerDto;
 import org.meveo.api.dto.account.AccessDto;
 import org.meveo.api.dto.account.AccountDto;
 import org.meveo.api.dto.account.AccountHierarchyDto;
+import org.meveo.api.dto.account.AddressDto;
+import org.meveo.api.dto.account.BankCoordinatesDto;
 import org.meveo.api.dto.account.BillingAccountDto;
+import org.meveo.api.dto.account.CRMAccountHierarchyDto;
+import org.meveo.api.dto.account.ContactInformationDto;
 import org.meveo.api.dto.account.CustomerAccountDto;
 import org.meveo.api.dto.account.CustomerDto;
 import org.meveo.api.dto.account.CustomerHierarchyDto;
 import org.meveo.api.dto.account.CustomersDto;
 import org.meveo.api.dto.account.FindAccountHierachyRequestDto;
+import org.meveo.api.dto.account.NameDto;
 import org.meveo.api.dto.account.UserAccountDto;
 import org.meveo.api.dto.billing.ServiceInstanceDto;
 import org.meveo.api.dto.billing.SubscriptionDto;
@@ -173,15 +178,18 @@ public class AccountHierarchyApi extends BaseApi {
 	@MeveoParamBean
 	private ParamBean paramBean;
 
-	public final String CUSTOMER_PREFIX = "CUST_";
-	public final String CUSTOMER_ACCOUNT_PREFIX = "CA_";
-	public final String BILLING_ACCOUNT_PREFIX = "BA_";
-	public final String USER_ACCOUNT_PREFIX = "UA_";
+	public static final String CUSTOMER_PREFIX = "CUST_";
+	public static final String CUSTOMER_ACCOUNT_PREFIX = "CA_";
+	public static final String BILLING_ACCOUNT_PREFIX = "BA_";
+	public static final String USER_ACCOUNT_PREFIX = "UA_";
 
-	public final int CUST = 1;
-	public final int CA = 2;
-	public final int BA = 4;
-	public final int UA = 8;
+	public static final int CUST = 1;
+	public static final int CA = 2;
+	public static final int BA = 4;
+	public static final int UA = 8;
+
+	public static final String CRM_ACCOUNT_HIERARCHY_PARENT = "CRM_ACCOUNT_PARENT";
+	public static final String CRM_ACCOUNT_HIERARCHY_TYPE = "CRM_ACCOUNT_TYPE";
 
 	/*
 	 * Creates the customer heirarchy including : - Trading Country - Trading
@@ -1622,8 +1630,8 @@ public class AccountHierarchyApi extends BaseApi {
 		if (postData.getName() == null && postData.getAddress() == null) {
 			throw new MeveoApiException("At least name or address must not be null.");
 		}
-		
-		if(!FindAccountHierachyRequestDto.isValidLevel(postData.getLevel())) {
+
+		if (!FindAccountHierachyRequestDto.isValidLevel(postData.getLevel())) {
 			throw new MeveoApiException(MeveoApiErrorCode.BUSINESS_API_EXCEPTION, "INVALID_LEVEL_TYPE");
 		}
 
@@ -1781,6 +1789,288 @@ public class AccountHierarchyApi extends BaseApi {
 				}
 			}
 		}
+	}
+
+	@Inject
+	private CustomerApi customerApi;
+
+	@Inject
+	private CustomerAccountApi customerAccountApi;
+
+	@Inject
+	private BillingAccountApi billingAccountApi;
+
+	@Inject
+	private UserAccountApi userAccountApi;
+
+	public void createCRMAccountHierarchy(CRMAccountHierarchyDto postData, User currentUser) throws MeveoApiException {
+		if (postData.getCrmAccountType().equals(CRMAccountHierarchyDto.ACCOUNT_TYPE_BASIC)) {
+			NameDto name = new NameDto();
+			name.setFirstName(postData.getName().getFirstName());
+			name.setLastName(postData.getName().getLastName());
+			name.setTitle(postData.getName().getTitle());
+
+			AddressDto address = new AddressDto();
+			if (postData.getAddress() != null) {
+				address.setAddress1(postData.getAddress().getAddress1());
+				address.setAddress2(postData.getAddress().getAddress2());
+				address.setAddress3(postData.getAddress().getAddress3());
+				address.setCity(postData.getAddress().getCity());
+				address.setCountry(postData.getAddress().getCountry());
+				address.setState(postData.getAddress().getState());
+				address.setZipCode(postData.getAddress().getZipCode());
+			}
+
+			ContactInformationDto contactInformation = new ContactInformationDto();
+			if (postData.getContactInformation() != null) {
+				contactInformation.setEmail(postData.getContactInformation().getEmail());
+				contactInformation.setFax(postData.getContactInformation().getFax());
+				contactInformation.setMobile(postData.getContactInformation().getMobile());
+				contactInformation.setPhone(postData.getContactInformation().getPhone());
+			}
+
+			CustomerDto customerDto = new CustomerDto();
+			customerDto.setCode(CUSTOMER_PREFIX + postData.getCode());
+			customerDto.setDescription(postData.getDescription());
+			customerDto.setCustomerCategory(postData.getCustomerCategory());
+			customerDto.setCustomerBrand(postData.getCustomerBrand());
+			customerDto.setSeller(postData.getSeller());
+			customerDto.setMandateDate(postData.getMandateDate());
+			customerDto.setMandateIdentification(postData.getMandateIdentification());
+			customerDto.setName(name);
+			customerDto.setAddress(address);
+			customerDto.setContactInformation(contactInformation);
+			setCRMAccountType(customerDto, CRMAccountHierarchyDto.ACCOUNT_TYPE_BASIC, null);
+
+			customerApi.create(customerDto, currentUser);
+
+			CustomerAccountDto customerAccountDto = new CustomerAccountDto();
+			customerAccountDto.setCode(CUSTOMER_ACCOUNT_PREFIX + postData.getCode());
+			customerAccountDto.setDescription(postData.getDescription());
+			customerAccountDto.setCustomer(CUSTOMER_PREFIX + postData.getCode());
+			customerAccountDto.setCurrency(postData.getCurrency());
+			customerAccountDto.setLanguage(postData.getLanguage());
+			customerAccountDto.setStatus(postData.getCaStatus());
+			customerAccountDto.setPaymentMethod(postData.getPaymentMethod());
+			customerAccountDto.setCreditCategory(postData.getCreditCategory());
+			customerAccountDto.setDateStatus(postData.getDateStatus());
+			customerAccountDto.setDateDunningLevel(postData.getDateDunningLevel());
+			customerAccountDto.setContactInformation(contactInformation);
+			customerAccountDto.setDunningLevel(postData.getDunningLevel());
+			customerAccountDto.setMandateDate(postData.getMandateDate());
+			customerAccountDto.setMandateIdentification(postData.getMandateIdentification());
+			customerAccountDto.setName(name);
+			customerAccountDto.setAddress(address);
+			customerAccountDto.setContactInformation(contactInformation);
+			setCRMAccountType(customerAccountDto, CRMAccountHierarchyDto.ACCOUNT_TYPE_BASIC, null);
+
+			customerAccountApi.create(customerAccountDto, currentUser);
+
+			BillingAccountDto billingAccountDto = new BillingAccountDto();
+			billingAccountDto.setCode(BILLING_ACCOUNT_PREFIX + postData.getCode());
+			billingAccountDto.setDescription(postData.getDescription());
+			billingAccountDto.setCustomerAccount(CUSTOMER_ACCOUNT_PREFIX + postData.getCode());
+			billingAccountDto.setBillingCycle(postData.getBillingCycle());
+			billingAccountDto.setCountry(postData.getCountry());
+			billingAccountDto.setLanguage(postData.getLanguage());
+			billingAccountDto.setPaymentMethod(postData.getPaymentMethod());
+			billingAccountDto.setNextInvoiceDate(postData.getNextInvoiceDate());
+			billingAccountDto.setSubscriptionDate(postData.getSubscriptionDate());
+			billingAccountDto.setTerminationDate(postData.getTerminationDate());
+			billingAccountDto.setPaymentTerms(postData.getPaymentTerms());
+			billingAccountDto.setElectronicBilling(postData.getElectronicBilling());
+			billingAccountDto.setStatus(postData.getBaStatus());
+			billingAccountDto.setTerminationReason(postData.getTerminationReason());
+			billingAccountDto.setEmail(postData.getEmail());
+			if (postData.getBankCoordinates() != null) {
+				BankCoordinatesDto bankCoordinatesDto = new BankCoordinatesDto();
+				bankCoordinatesDto.setAccountNumber(postData.getBankCoordinates().getAccountNumber());
+				bankCoordinatesDto.setAccountOwner(postData.getBankCoordinates().getAccountOwner());
+				bankCoordinatesDto.setBankCode(postData.getBankCoordinates().getBankCode());
+				bankCoordinatesDto.setBankId(postData.getBankCoordinates().getBankId());
+				bankCoordinatesDto.setBankName(postData.getBankCoordinates().getBankName());
+				bankCoordinatesDto.setBic(postData.getBankCoordinates().getBic());
+				bankCoordinatesDto.setBranchCode(postData.getBankCoordinates().getBranchCode());
+				bankCoordinatesDto.setIban(postData.getBankCoordinates().getIban());
+				bankCoordinatesDto.setIcs(postData.getBankCoordinates().getIcs());
+				bankCoordinatesDto.setIssuerName(postData.getBankCoordinates().getIssuerName());
+				bankCoordinatesDto.setIssuerNumber(postData.getBankCoordinates().getIssuerNumber());
+				bankCoordinatesDto.setKey(postData.getBankCoordinates().getKey());
+				billingAccountDto.setBankCoordinates(bankCoordinatesDto);
+			}
+			billingAccountDto.setName(name);
+			billingAccountDto.setAddress(address);
+			setCRMAccountType(billingAccountDto, CRMAccountHierarchyDto.ACCOUNT_TYPE_BASIC, null);
+
+			billingAccountApi.create(billingAccountDto, currentUser);
+
+			UserAccountDto userAccountDto = new UserAccountDto();
+			userAccountDto.setCode(USER_ACCOUNT_PREFIX + postData.getCode());
+			userAccountDto.setDescription(postData.getDescription());
+			userAccountDto.setBillingAccount(BILLING_ACCOUNT_PREFIX + postData.getCode());
+			userAccountDto.setSubscriptionDate(postData.getSubscriptionDate());
+			userAccountDto.setTerminationDate(postData.getTerminationDate());
+			userAccountDto.setTerminationReason(postData.getTerminationReason());
+			userAccountDto.setStatus(postData.getUaStatus());
+			userAccountDto.setName(name);
+			userAccountDto.setAddress(address);
+			setCRMAccountType(userAccountDto, CRMAccountHierarchyDto.ACCOUNT_TYPE_BASIC, null);
+
+			userAccountApi.create(userAccountDto, currentUser);
+		} else if (postData.getCrmAccountType().equals(CRMAccountHierarchyDto.ACCOUNT_TYPE_CORP)) {
+			NameDto name = new NameDto();
+			name.setFirstName(postData.getName().getFirstName());
+			name.setLastName(postData.getName().getLastName());
+			name.setTitle(postData.getName().getTitle());
+
+			AddressDto address = new AddressDto();
+			if (postData.getAddress() != null) {
+				address.setAddress1(postData.getAddress().getAddress1());
+				address.setAddress2(postData.getAddress().getAddress2());
+				address.setAddress3(postData.getAddress().getAddress3());
+				address.setCity(postData.getAddress().getCity());
+				address.setCountry(postData.getAddress().getCountry());
+				address.setState(postData.getAddress().getState());
+				address.setZipCode(postData.getAddress().getZipCode());
+			}
+
+			ContactInformationDto contactInformation = new ContactInformationDto();
+			if (postData.getContactInformation() != null) {
+				contactInformation.setEmail(postData.getContactInformation().getEmail());
+				contactInformation.setFax(postData.getContactInformation().getFax());
+				contactInformation.setMobile(postData.getContactInformation().getMobile());
+				contactInformation.setPhone(postData.getContactInformation().getPhone());
+			}
+
+			CustomerDto customerDto = new CustomerDto();
+			customerDto.setCode(CUSTOMER_PREFIX + postData.getCode());
+			customerDto.setDescription(postData.getDescription());
+			customerDto.setCustomerCategory(postData.getCustomerCategory());
+			customerDto.setCustomerBrand(postData.getCustomerBrand());
+			customerDto.setSeller(postData.getSeller());
+			customerDto.setMandateDate(postData.getMandateDate());
+			customerDto.setMandateIdentification(postData.getMandateIdentification());
+			customerDto.setName(name);
+			customerDto.setAddress(address);
+			customerDto.setContactInformation(contactInformation);
+			setCRMAccountType(customerDto, CRMAccountHierarchyDto.ACCOUNT_TYPE_BASIC, null);
+
+			customerApi.create(customerDto, currentUser);
+
+			CustomerAccountDto customerAccountDto = new CustomerAccountDto();
+			customerAccountDto.setCode(CUSTOMER_ACCOUNT_PREFIX + postData.getCode());
+			customerAccountDto.setDescription(postData.getDescription());
+			customerAccountDto.setCustomer(CUSTOMER_PREFIX + postData.getCode());
+			customerAccountDto.setCurrency(postData.getCurrency());
+			customerAccountDto.setLanguage(postData.getLanguage());
+			customerAccountDto.setStatus(postData.getCaStatus());
+			customerAccountDto.setPaymentMethod(postData.getPaymentMethod());
+			customerAccountDto.setCreditCategory(postData.getCreditCategory());
+			customerAccountDto.setDateStatus(postData.getDateStatus());
+			customerAccountDto.setDateDunningLevel(postData.getDateDunningLevel());
+			customerAccountDto.setContactInformation(contactInformation);
+			customerAccountDto.setDunningLevel(postData.getDunningLevel());
+			customerAccountDto.setMandateDate(postData.getMandateDate());
+			customerAccountDto.setMandateIdentification(postData.getMandateIdentification());
+			customerAccountDto.setName(name);
+			customerAccountDto.setAddress(address);
+			customerAccountDto.setContactInformation(contactInformation);
+			setCRMAccountType(customerAccountDto, CRMAccountHierarchyDto.ACCOUNT_TYPE_CORP, null);
+
+			customerAccountApi.create(customerAccountDto, currentUser);
+		} else if (postData.getCrmAccountType().equals(CRMAccountHierarchyDto.ACCOUNT_TYPE_BRANCH)) {
+			String crmParentAccountCode = StringUtils.isBlank(postData.getCrmParentCode()) ? postData.getCode() : postData.getCrmParentCode();
+
+			NameDto name = new NameDto();
+			name.setFirstName(postData.getName().getFirstName());
+			name.setLastName(postData.getName().getLastName());
+			name.setTitle(postData.getName().getTitle());
+
+			AddressDto address = new AddressDto();
+			if (postData.getAddress() != null) {
+				address.setAddress1(postData.getAddress().getAddress1());
+				address.setAddress2(postData.getAddress().getAddress2());
+				address.setAddress3(postData.getAddress().getAddress3());
+				address.setCity(postData.getAddress().getCity());
+				address.setCountry(postData.getAddress().getCountry());
+				address.setState(postData.getAddress().getState());
+				address.setZipCode(postData.getAddress().getZipCode());
+			}
+
+			ContactInformationDto contactInformation = new ContactInformationDto();
+			if (postData.getContactInformation() != null) {
+				contactInformation.setEmail(postData.getContactInformation().getEmail());
+				contactInformation.setFax(postData.getContactInformation().getFax());
+				contactInformation.setMobile(postData.getContactInformation().getMobile());
+				contactInformation.setPhone(postData.getContactInformation().getPhone());
+			}
+
+			BillingAccountDto billingAccountDto = new BillingAccountDto();
+			billingAccountDto.setCode(BILLING_ACCOUNT_PREFIX + postData.getCode());
+			billingAccountDto.setDescription(postData.getDescription());
+			billingAccountDto.setCustomerAccount(CUSTOMER_ACCOUNT_PREFIX + crmParentAccountCode);
+			billingAccountDto.setBillingCycle(postData.getBillingCycle());
+			billingAccountDto.setCountry(postData.getCountry());
+			billingAccountDto.setLanguage(postData.getLanguage());
+			billingAccountDto.setPaymentMethod(postData.getPaymentMethod());
+			billingAccountDto.setNextInvoiceDate(postData.getNextInvoiceDate());
+			billingAccountDto.setSubscriptionDate(postData.getSubscriptionDate());
+			billingAccountDto.setTerminationDate(postData.getTerminationDate());
+			billingAccountDto.setPaymentTerms(postData.getPaymentTerms());
+			billingAccountDto.setElectronicBilling(postData.getElectronicBilling());
+			billingAccountDto.setStatus(postData.getBaStatus());
+			billingAccountDto.setTerminationReason(postData.getTerminationReason());
+			billingAccountDto.setEmail(postData.getEmail());
+			if (postData.getBankCoordinates() != null) {
+				BankCoordinatesDto bankCoordinatesDto = new BankCoordinatesDto();
+				bankCoordinatesDto.setAccountNumber(postData.getBankCoordinates().getAccountNumber());
+				bankCoordinatesDto.setAccountOwner(postData.getBankCoordinates().getAccountOwner());
+				bankCoordinatesDto.setBankCode(postData.getBankCoordinates().getBankCode());
+				bankCoordinatesDto.setBankId(postData.getBankCoordinates().getBankId());
+				bankCoordinatesDto.setBankName(postData.getBankCoordinates().getBankName());
+				bankCoordinatesDto.setBic(postData.getBankCoordinates().getBic());
+				bankCoordinatesDto.setBranchCode(postData.getBankCoordinates().getBranchCode());
+				bankCoordinatesDto.setIban(postData.getBankCoordinates().getIban());
+				bankCoordinatesDto.setIcs(postData.getBankCoordinates().getIcs());
+				bankCoordinatesDto.setIssuerName(postData.getBankCoordinates().getIssuerName());
+				bankCoordinatesDto.setIssuerNumber(postData.getBankCoordinates().getIssuerNumber());
+				bankCoordinatesDto.setKey(postData.getBankCoordinates().getKey());
+				billingAccountDto.setBankCoordinates(bankCoordinatesDto);
+			}
+			billingAccountDto.setName(name);
+			billingAccountDto.setAddress(address);
+			setCRMAccountType(billingAccountDto, CRMAccountHierarchyDto.ACCOUNT_TYPE_BRANCH, CUSTOMER_ACCOUNT_PREFIX + crmParentAccountCode);
+
+			billingAccountApi.create(billingAccountDto, currentUser);
+
+			UserAccountDto userAccountDto = new UserAccountDto();
+			userAccountDto.setCode(USER_ACCOUNT_PREFIX + postData.getCode());
+			userAccountDto.setDescription(postData.getDescription());
+			userAccountDto.setBillingAccount(BILLING_ACCOUNT_PREFIX + postData.getCode());
+			userAccountDto.setSubscriptionDate(postData.getSubscriptionDate());
+			userAccountDto.setTerminationDate(postData.getTerminationDate());
+			userAccountDto.setTerminationReason(postData.getTerminationReason());
+			userAccountDto.setStatus(postData.getUaStatus());
+			userAccountDto.setName(name);
+			userAccountDto.setAddress(address);
+			setCRMAccountType(userAccountDto, CRMAccountHierarchyDto.ACCOUNT_TYPE_BRANCH, CUSTOMER_ACCOUNT_PREFIX + postData.getCode());
+
+			userAccountApi.create(userAccountDto, currentUser);
+		} else {
+			throw new MeveoApiException(MeveoApiErrorCode.BUSINESS_API_EXCEPTION, "INVALID_ACCOUNT_TYPE");
+		}
+	}
+
+	private void setCRMAccountType(AccountDto accountDto, String crmAccountType, String parentCode) {
+		CustomFieldDto cfAccountType = new CustomFieldDto();
+		cfAccountType.setCode(AccountHierarchyApi.CRM_ACCOUNT_HIERARCHY_TYPE);
+		cfAccountType.setStringValue(crmAccountType);
+		accountDto.getCustomFields().getCustomField().add(cfAccountType);
+
+		CustomFieldDto cfAccountParent = new CustomFieldDto();
+		cfAccountParent.setCode(AccountHierarchyApi.CRM_ACCOUNT_HIERARCHY_PARENT);
+		cfAccountParent.setStringValue(parentCode);
+		accountDto.getCustomFields().getCustomField().add(cfAccountParent);
 	}
 
 }

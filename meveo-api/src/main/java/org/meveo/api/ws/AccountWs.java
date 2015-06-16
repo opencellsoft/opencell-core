@@ -8,6 +8,7 @@ import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.account.AccessDto;
 import org.meveo.api.dto.account.AccountHierarchyDto;
 import org.meveo.api.dto.account.BillingAccountDto;
+import org.meveo.api.dto.account.CRMAccountHierarchyDto;
 import org.meveo.api.dto.account.CreditCategoryDto;
 import org.meveo.api.dto.account.CustomerAccountDto;
 import org.meveo.api.dto.account.CustomerBrandDto;
@@ -54,7 +55,7 @@ public interface AccountWs extends IBaseWs {
 
 	@WebMethod
 	CustomersResponseDto listCustomerWithFilter(@WebParam(name = "customer") CustomerDto postData);
-	
+
 	@WebMethod
 	ActionStatus createCustomerBrand(@WebParam(name = "customerBrand") CustomerBrandDto postData);
 
@@ -83,7 +84,7 @@ public interface AccountWs extends IBaseWs {
 
 	@WebMethod
 	CustomerAccountsResponseDto listByCustomer(@WebParam(name = "customerCode") String customerCode);
-	
+
 	@WebMethod
 	ActionStatus createCreditCategory(@WebParam(name = "creditCategory") CreditCategoryDto postData);
 
@@ -157,6 +158,9 @@ public interface AccountWs extends IBaseWs {
 	@WebMethod
 	ActionStatus customerHierarchyUpdate(@WebParam(name = "customerHierarchy") CustomerHierarchyDto postData);
 
+	@WebMethod
+	ActionStatus createCRMAccountHierarchy(@WebParam(name = "crmAccountHierarchy") CRMAccountHierarchyDto postData);
+
 	// account operation
 
 	@WebMethod
@@ -169,10 +173,8 @@ public interface AccountWs extends IBaseWs {
 
 	@WebMethod
 	ActionStatus dunningInclusionExclusion(@WebParam(name = "dunningInclusionExclusion") DunningInclusionExclusionDto dunningDto);
-	
+
 	@WebMethod
 	FindAccountHierarchyResponseDto findAccountHierarchy2(@WebParam(name = "findAccountHierachyRequest") FindAccountHierachyRequestDto postData);
-	
-	
 
 }

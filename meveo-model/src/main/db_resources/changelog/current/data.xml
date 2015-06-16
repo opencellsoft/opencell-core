@@ -98,4 +98,95 @@
 		
 		</changeSet>
 
+	<changeSet id="#879_20150616" author="EdwardLegaspi">
+		<insert tableName="CRM_CUSTOM_FIELD_TMPL">
+			<column name="ID" valueSequenceNext="CRM_CUSTOM_FLD_TMP_SEQ" />
+			<column name="PROVIDER_ID" valueNumeric="1" />
+			<column name="CREATED" valueDate="${now}" />			
+			<column name="DISABLED" valueBoolean="false" />
+			<column name="CODE" value="CRM_ACCOUNT_TYPE" />
+			<column name="DESCRIPTION" value="CRM Account Type" />
+			<column name="ACCOUNT_TYPE" value="CUST" />
+			<column name="VALUE_REQUIRED" valueBoolean="false" />
+			<column name="FIELD_TYPE" value="STRING" />			
+		</insert>
+		<insert tableName="CRM_CUSTOM_FIELD_TMPL">
+			<column name="ID" valueSequenceNext="CRM_CUSTOM_FLD_TMP_SEQ" />
+			<column name="PROVIDER_ID" valueNumeric="1" />
+			<column name="CREATED" valueDate="${now}" />			
+			<column name="DISABLED" valueBoolean="false" />
+			<column name="CODE" value="CRM_ACCOUNT_TYPE" />
+			<column name="DESCRIPTION" value="CRM Account Type" />
+			<column name="ACCOUNT_TYPE" value="CA" />
+			<column name="VALUE_REQUIRED" valueBoolean="false" />
+			<column name="FIELD_TYPE" value="STRING" />
+		</insert>
+		<insert tableName="CRM_CUSTOM_FIELD_TMPL">
+			<column name="ID" valueSequenceNext="CRM_CUSTOM_FLD_TMP_SEQ" />
+			<column name="PROVIDER_ID" valueNumeric="1" />
+			<column name="CREATED" valueDate="${now}" />			
+			<column name="DISABLED" valueBoolean="false" />
+			<column name="CODE" value="CRM_ACCOUNT_TYPE" />
+			<column name="DESCRIPTION" value="CRM Account Type" />
+			<column name="ACCOUNT_TYPE" value="BA" />
+			<column name="VALUE_REQUIRED" valueBoolean="false" />
+			<column name="FIELD_TYPE" value="STRING" />
+		</insert>
+		<insert tableName="CRM_CUSTOM_FIELD_TMPL">
+			<column name="ID" valueSequenceNext="CRM_CUSTOM_FLD_TMP_SEQ" />
+			<column name="PROVIDER_ID" valueNumeric="1" />
+			<column name="CREATED" valueDate="${now}" />			
+			<column name="DISABLED" valueBoolean="false" />
+			<column name="CODE" value="CRM_ACCOUNT_TYPE" />
+			<column name="DESCRIPTION" value="CRM Account Type" />
+			<column name="ACCOUNT_TYPE" value="UA" />
+			<column name="VALUE_REQUIRED" valueBoolean="false" />
+			<column name="FIELD_TYPE" value="STRING" />
+		</insert>
+		<insert tableName="CRM_CUSTOM_FIELD_TMPL">
+			<column name="ID" valueSequenceNext="CRM_CUSTOM_FLD_TMP_SEQ" />
+			<column name="PROVIDER_ID" valueNumeric="1" />
+			<column name="CREATED" valueDate="${now}" />			
+			<column name="DISABLED" valueBoolean="false" />
+			<column name="CODE" value="CRM_ACCOUNT_PARENT" />
+			<column name="DESCRIPTION" value="CRM Parent Account Code" />
+			<column name="ACCOUNT_TYPE" value="CUST" />
+			<column name="VALUE_REQUIRED" valueBoolean="false" />
+			<column name="FIELD_TYPE" value="STRING" />
+		</insert>
+		<insert tableName="CRM_CUSTOM_FIELD_TMPL">
+			<column name="ID" valueSequenceNext="CRM_CUSTOM_FLD_TMP_SEQ" />
+			<column name="PROVIDER_ID" valueNumeric="1" />
+			<column name="CREATED" valueDate="${now}" />			
+			<column name="DISABLED" valueBoolean="false" />
+			<column name="CODE" value="CRM_ACCOUNT_PARENT" />
+			<column name="DESCRIPTION" value="CRM Parent Account Code" />
+			<column name="ACCOUNT_TYPE" value="CA" />
+			<column name="VALUE_REQUIRED" valueBoolean="false" />
+			<column name="FIELD_TYPE" value="STRING" />
+		</insert>
+		<insert tableName="CRM_CUSTOM_FIELD_TMPL">
+			<column name="ID" valueSequenceNext="CRM_CUSTOM_FLD_TMP_SEQ" />
+			<column name="PROVIDER_ID" valueNumeric="1" />
+			<column name="CREATED" valueDate="${now}" />			
+			<column name="DISABLED" valueBoolean="false" />
+			<column name="CODE" value="CRM_ACCOUNT_PARENT" />
+			<column name="DESCRIPTION" value="CRM Parent Account Code" />
+			<column name="ACCOUNT_TYPE" value="BA" />
+			<column name="VALUE_REQUIRED" valueBoolean="false" />
+			<column name="FIELD_TYPE" value="STRING" />
+		</insert>
+		<insert tableName="CRM_CUSTOM_FIELD_TMPL">
+			<column name="ID" valueSequenceNext="CRM_CUSTOM_FLD_TMP_SEQ" />
+			<column name="PROVIDER_ID" valueNumeric="1" />
+			<column name="CREATED" valueDate="${now}" />			
+			<column name="DISABLED" valueBoolean="false" />
+			<column name="CODE" value="CRM_ACCOUNT_PARENT" />
+			<column name="DESCRIPTION" value="CRM Parent Account Code" />
+			<column name="ACCOUNT_TYPE" value="UA" />
+			<column name="VALUE_REQUIRED" valueBoolean="false" />
+			<column name="FIELD_TYPE" value="STRING" />
+		</insert>
+	</changeSet>
+
 </databaseChangeLog>
