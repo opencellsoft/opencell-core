@@ -74,6 +74,10 @@ public class CounterTemplate extends BusinessEntity {
 	@Enumerated(EnumType.STRING)
 	@Column(name = "COUNTER_LEVEL", nullable = false)
 	private CounterTemplateLevel counterLevel = CounterTemplateLevel.UA;
+	
+	@Column(name = "CEILING_EXPRESSION_EL", length = 1000)
+	@Size(max = 1000)
+	private String ceilingExpressionEl;
 
 	public CounterTypeEnum getCounterType() {
 		return counterType;
@@ -114,5 +118,15 @@ public class CounterTemplate extends BusinessEntity {
 	public void setCounterLevel(CounterTemplateLevel counterLevel) {
 		this.counterLevel = counterLevel;
 	}
+
+	public String getCeilingExpressionEl() {
+		return ceilingExpressionEl;
+	}
+
+	public void setCeilingExpressionEl(String ceilingExpressionEl) {
+		this.ceilingExpressionEl = ceilingExpressionEl;
+	}
+	
+	
 
 }

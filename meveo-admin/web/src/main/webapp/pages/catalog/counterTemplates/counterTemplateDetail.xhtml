@@ -25,7 +25,14 @@
 		<hf:formPanel id="formPanel" formId="counterTemplatId"
 			label="#{messages['menu.counterTemplates']}"
 			backingBean="#{counterTemplateBean}" showEnableDisableButton="true">
-
+             
+              <h:panelGrid columns="3" cellpadding="5">
+			<h:outputLink id="exprEl" value="#">
+				<h:outputText value="#{messages['counterTemplate.elExpressionVariables']}" />
+			</h:outputLink>
+			<p:tooltip  for="exprEl" value="#{messages['counterTemplate.elExpressionUsed']}" />
+			  </h:panelGrid>
+             
 			<hf:formField label="#{messages['businessEntity.code']}" field="code"
 				required="true" validateUnique="true" />
 			<hf:formField label="#{messages['businessEntity.description']}"
@@ -61,12 +68,14 @@
 					styleClass="field-value"></h:outputText>
 			</hftl:decorateFormField>
 			<hf:formField label="#{messages['counterTemplate.level']}"
-				field="ceiling" required="true" />
+				field="ceiling" converter="bigDecimal4DigitsConverter"  />
 			<hf:formField label="#{messages['enableEntity.disabled']}" doNotShowOnNew="true" allowEdit="false"
 				field="disabled" isMessage="true" />
 			<hf:formField label="#{messages['billingCycle.calendar']}"
 				field="calendar" valueLabelField="code" required="true" 
 				listBean="#{calendarBean}" />
+			<hf:formField label="#{messages['counterTemplate.ceilingExpressionEl']}"
+			   field="ceilingExpressionEl"  textArea="true" maxlength="1000"/>	
 
 		</hf:formPanel>
 

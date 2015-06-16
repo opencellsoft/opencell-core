@@ -538,4 +538,9 @@
 			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
 			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="meveo_script_instance" />
 	</changeSet>
+	<changeSet id="ticket794_20150616" author="Mbarek">
+		<addColumn tableName="CAT_COUNTER_TEMPLATE">
+			<column name="CEILING_EXPRESSION_EL" type="VARCHAR(1000)"/>
+		</addColumn>
+	</changeSet>
 </databaseChangeLog>
