@@ -11,7 +11,7 @@
 			<column name="version" type="INT4" />
 			<column name="disabled" type="BOOL">
 				<constraints nullable="false" />
-			</column>
+				</column>
 			<column name="created" type="TIMESTAMP WITHOUT TIME ZONE">
 				<constraints nullable="false" />
 			</column>
@@ -538,5 +538,14 @@
 			baseTableName="ADM_NOTIFICATION" constraintName="fk_notif_script_instance"
 			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
 			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="meveo_script_instance" />
+	</changeSet>
+	
+	<changeSet author="anasseh (generated)" id="878_2015-06-11_1">
+			<dropUniqueConstraint tableName="meveo_script_instance"
+			constraintName="uk_meveo_script_instance" />
+	
+			<addUniqueConstraint columnNames="code"
+			constraintName="uk_meveo_script_instance" deferrable="false"
+			disabled="false" initiallyDeferred="false" tableName="meveo_script_instance"/>
 	</changeSet>
 </databaseChangeLog>
