@@ -9,6 +9,7 @@ import javax.ws.rs.core.MediaType;
 
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.account.AccountHierarchyDto;
+import org.meveo.api.dto.account.CRMAccountHierarchyDto;
 import org.meveo.api.dto.account.CustomerHierarchyDto;
 import org.meveo.api.dto.account.FindAccountHierachyRequestDto;
 import org.meveo.api.dto.response.CustomerListResponse;
@@ -62,9 +63,13 @@ public interface AccountHierarchyRs extends IBaseRs {
 	@POST
 	@Path("/customerHierarchyUpdate")
 	ActionStatus customerHierarchyUpdate(CustomerHierarchyDto postData);
-		
+
 	@POST
 	@Path("/findAccountHierarchy")
 	FindAccountHierarchyResponseDto findAccountHierarchy2(FindAccountHierachyRequestDto postData);
+
+	@POST
+	@Path("/createCRMAccountHierarchy")
+	ActionStatus createCRMAccountHierarchy(CRMAccountHierarchyDto postData);
 
 }

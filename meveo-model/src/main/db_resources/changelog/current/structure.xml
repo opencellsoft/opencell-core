@@ -11,7 +11,7 @@
 			<column name="version" type="INT4" />
 			<column name="disabled" type="BOOL">
 				<constraints nullable="false" />
-			</column>
+				</column>
 			<column name="created" type="TIMESTAMP WITHOUT TIME ZONE">
 				<constraints nullable="false" />
 			</column>
@@ -482,7 +482,7 @@
 			<column name="code" type="VARCHAR(60)">
 				<constraints nullable="false" />
 			</column>
-			<column name="description" type="VARCHAR(100)" />
+			<column name="description" type="VARCHAR(100)" />				
 			<column name="script" type="VARCHAR(10000)">
 				<constraints nullable="false" />
 			</column>
@@ -538,9 +538,56 @@
 			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
 			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="meveo_script_instance" />
 	</changeSet>
+<changeSet id="ticket794_20150616" author="Mbarek">
+		<addColumn tableName="CAT_COUNTER_TEMPLATE">
+			<column name="CEILING_EXPRESSION_EL" type="VARCHAR(1000)"/>
+		</addColumn>
+	</changeSet>
+
+<changeSet author="anasseh (generated)" id="878_2015-06-11_1">
+			<dropUniqueConstraint tableName="meveo_script_instance"
+			constraintName="uk_meveo_script_instance" />
+	
+			<addUniqueConstraint columnNames="code"
+			constraintName="uk_meveo_script_instance" deferrable="false"
+			disabled="false" initiallyDeferred="false" tableName="meveo_script_instance"/>
+	</changeSet>
+	
+	<changeSet author="anasseh (generated)" id="878_2015-06-11_2">
+			<addColumn tableName="meveo_script_instance">
+			<column name="SRC_TYPE" type="VARCHAR(100)" />
+		</addColumn>
+		</changeSet><<<<<<< .mine
 	<changeSet id="ticket794_20150616" author="Mbarek">
 		<addColumn tableName="CAT_COUNTER_TEMPLATE">
 			<column name="CEILING_EXPRESSION_EL" type="VARCHAR(1000)"/>
 		</addColumn>
 	</changeSet>
+
+
+
+
+
+
+
+
+
+
+=======
+	
+	<changeSet author="anasseh (generated)" id="878_2015-06-11_1">
+			<dropUniqueConstraint tableName="meveo_script_instance"
+			constraintName="uk_meveo_script_instance" />
+	
+			<addUniqueConstraint columnNames="code"
+			constraintName="uk_meveo_script_instance" deferrable="false"
+			disabled="false" initiallyDeferred="false" tableName="meveo_script_instance"/>
+	</changeSet>
+	
+	<changeSet author="anasseh (generated)" id="878_2015-06-11_2">
+			<addColumn tableName="meveo_script_instance">
+			<column name="SRC_TYPE" type="VARCHAR(100)" />
+		</addColumn>
+		</changeSet>
+>>>>>>> .theirs
 </databaseChangeLog>

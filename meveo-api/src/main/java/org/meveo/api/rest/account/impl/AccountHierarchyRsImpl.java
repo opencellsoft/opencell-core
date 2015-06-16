@@ -8,6 +8,7 @@ import org.meveo.api.account.AccountHierarchyApi;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.account.AccountHierarchyDto;
+import org.meveo.api.dto.account.CRMAccountHierarchyDto;
 import org.meveo.api.dto.account.CustomerHierarchyDto;
 import org.meveo.api.dto.account.FindAccountHierachyRequestDto;
 import org.meveo.api.dto.response.CustomerListResponse;
@@ -111,7 +112,7 @@ public class AccountHierarchyRsImpl extends BaseRs implements AccountHierarchyRs
 		log.debug("RESPONSE={}", result);
 		return result;
 	}
-	
+
 	@Override
 	public FindAccountHierarchyResponseDto findAccountHierarchy2(FindAccountHierachyRequestDto postData) {
 		FindAccountHierarchyResponseDto result = new FindAccountHierarchyResponseDto();
@@ -123,6 +124,23 @@ public class AccountHierarchyRsImpl extends BaseRs implements AccountHierarchyRs
 		} catch (Exception e) {
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
 			result.getActionStatus().setMessage(e.getMessage());
+		}
+
+		log.debug("RESPONSE={}", result);
+		return result;
+	}
+
+	@Override
+	public ActionStatus createCRMAccountHierarchy(CRMAccountHierarchyDto postData) {
+		ActionStatus result = new ActionStatus();
+		try {
+			accountHierarchyApi.createCRMAccountHierarchy(postData, getCurrentUser());
+		} catch (MeveoApiException e) {
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
+		} catch (Exception e) {
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
 		}
 
 		log.debug("RESPONSE={}", result);
