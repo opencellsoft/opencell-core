@@ -560,4 +560,28 @@
 		</addColumn>
 	</changeSet>	
 	
+	<changeSet author="anasseh (generated)" id="878_2015-06-11_3">
+		<dropTable cascadeConstraints="true"
+            tableName="MEVEO_SCRIPT_INSTANCE_PARAMS"/>
+            
+		<createTable tableName="MEVEO_SCRIPT_INSTANCE_PARAMS">
+			<column name="scriptinstance_id" type="BIGINT">
+				<constraints nullable="false" />
+			</column>
+			<column name="params" type="VARCHAR(255)" />
+			<column name="params_key" type="VARCHAR(255)">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+
+		<addPrimaryKey columnNames="scriptinstance_id, params_key"
+			constraintName="PK_MEVEO_SCRIPT_INSTANCE_PARAMS" tableName="MEVEO_SCRIPT_INSTANCE_PARAMS" />
+
+		<addForeignKeyConstraint baseColumnNames="scriptinstance_id"
+			baseTableName="MEVEO_SCRIPT_INSTANCE_PARAMS" constraintName="fk_params_script_instance"
+			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="meveo_script_instance" />
+
+	</changeSet>            
+	
 </databaseChangeLog>
