@@ -1,8 +1,6 @@
 package org.meveo.admin.web;
 
 import javax.enterprise.context.NonexistentConversationException;
-import javax.faces.context.ExternalContext;
-import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -25,7 +23,7 @@ public class ExceptionHandler {
 
 		evt.handled();
 		
-		log.error("Caught in handleAuthorizationException exception={}",evt.getException()!=null?evt.getException().getMessage():null, evt.getException());
+		log.error("Caught in handleAuthorizationException exception={}",evt.getException()!=null?evt.getException().getMessage():null);
 
 		try {
 			if(!response.isCommitted()){
@@ -43,7 +41,7 @@ public class ExceptionHandler {
 
 		evt.handled();
 		
-		log.error("Caught in handleInvalidConversationException exception={}", evt.getException()!=null?evt.getException().getMessage():null,evt.getException());
+		log.error("Caught in handleInvalidConversationException exception={}", evt.getException()!=null?evt.getException().getMessage():null);
 
 		try {
 			if(!response.isCommitted()){
@@ -61,7 +59,7 @@ public class ExceptionHandler {
 
 		evt.handled();
 		
-		log.error("Caught in handleViewExpiredException exception={}", evt.getException()!=null?evt.getException().getMessage():null,evt.getException());
+		log.error("Caught in handleViewExpiredException exception={}", evt.getException()!=null?evt.getException().getMessage():null);
 
 		try {
 			if(!response.isCommitted()){
@@ -79,7 +77,7 @@ public class ExceptionHandler {
 
 		evt.handled();
 		
-		log.error("Caught in handleSqlException exception={}", evt.getException()!=null?evt.getException().getMessage():null,evt.getException());
+		log.error("Caught in handleSqlException exception={}", evt.getException()!=null?evt.getException().getMessage():null);
 
 		try {
 			if(!response.isCommitted()){
@@ -97,7 +95,7 @@ public class ExceptionHandler {
 
 		evt.handled();
 		
-		log.error("Caught in handleRuntimeException exception={}", evt.getException()!=null?evt.getException().getMessage():null,evt.getException());
+		log.error("Caught in handleRuntimeException exception={}", evt.getException()!=null?evt.getException().getMessage():null);
 
 		try {
 			if(!response.isCommitted()){
@@ -115,7 +113,7 @@ public class ExceptionHandler {
 
 		evt.handled();
 		
-		log.error("Caught in handleBusinessException exception={}", evt.getException()!=null?evt.getException().getMessage():null,evt.getException());
+		log.error("Caught in handleBusinessException exception={}", evt.getException()!=null?evt.getException().getMessage():null);
 
 		try {
 			if(!response.isCommitted()){
