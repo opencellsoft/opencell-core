@@ -18,12 +18,44 @@ package org.meveo.model.jobs;
 
 
 public enum ScriptTypeEnum {	
-        JAVA,
-	    GROOVY,
-	    JAVA_SCRIPT,
-	    BEAN_SHELL,
-	    SQL,
-	    PERL;
-}
-	  
+        JAVA(1, "scriptTypeEnum.JAVA");
+//	    GROOVY(2, "scriptTypeEnum.GROOVY"),
+//	    JAVA_SCRIPT(3, "scriptTypeEnum.JAVA_SCRIPT"),
+//	    BEAN_SHELL(4, "scriptTypeEnum.BEAN_SHELL"),
+//	    SQL(5, "scriptTypeEnum.SQL"),
+//	    PERL(6, "scriptTypeEnum.PERL");
 	    
+
+	    private Integer id;
+	    private String label;
+	    
+
+
+		private ScriptTypeEnum(Integer id, String label) {
+	        this.id = id;
+	        this.label = label;
+	    }
+
+	    public String getLabel() {
+	        return label;
+	    }
+
+	    public Integer getId() {
+	        return id;
+	    }
+
+	    public static ScriptTypeEnum getValue(Integer id) {
+	        if (id != null) {
+	            for (ScriptTypeEnum status : values()) {
+	                if (id.equals(status.getId())) {
+	                    return status;
+	                }
+	            }
+	        }
+	        return null;
+	    }
+
+	    public String toString() {
+	        return label.toString();
+	    }
+	}

@@ -17,7 +17,7 @@
 				<p:breadCrumb homeDisplay="text" id="crumbmenu">
 					<p:menuitem value="#{messages['menu.admin']}" disabled="true" />
 					<p:menuitem outcome="scriptInstances"
-						value="#{messages['menu.scriptInstance']}" />
+						value="#{messages['menu.scriptInstances']}" />
 				</p:breadCrumb>
 			</h:form>
 		</p:panel>
@@ -25,9 +25,10 @@
 			<hf:formField label="#{messages['businessEntity.code']}" field="code" required="true" />
 			
 			<hf:formField label="#{messages['businessEntity.description']}" field="description" />
+			<hf:formField label="#{messages['scriptInstance.scriptTypeEnum']}" field="scriptTypeEnum" />
 	
 <!-- 	       <h:outputText value="#{messages['scriptInstance.script']}" /> -->
-			<h:inputTextarea value="#{scriptInstanceBean.entity.script}" cols="120" rows="50" />
+			<h:inputTextarea value="#{scriptInstanceBean.entity.script}" cols="100" rows="50" />
 			
 			
 		</hf:formPanel>
