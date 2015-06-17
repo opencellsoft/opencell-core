@@ -861,5 +861,22 @@ public class AccountWsImpl extends BaseWs implements AccountWs {
 		log.debug("RESPONSE={}", result);
 		return result;
 	}
+	
+	@Override
+	public ActionStatus updateCRMAccountHierarchy(CRMAccountHierarchyDto postData) {
+		ActionStatus result = new ActionStatus();
+		try {
+			accountHierarchyApi.updateCRMAccountHierarchy(postData, getCurrentUser());
+		} catch (MeveoApiException e) {
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
+		} catch (Exception e) {
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
+		}
+
+		log.debug("RESPONSE={}", result);
+		return result;
+	}
 
 }

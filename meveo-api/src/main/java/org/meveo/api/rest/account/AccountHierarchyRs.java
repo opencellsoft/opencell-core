@@ -71,5 +71,9 @@ public interface AccountHierarchyRs extends IBaseRs {
 	@POST
 	@Path("/createCRMAccountHierarchy")
 	ActionStatus createCRMAccountHierarchy(CRMAccountHierarchyDto postData);
+	
+	@POST
+	@Path("/updateCRMAccountHierarchy")
+	ActionStatus updateCRMAccountHierarchy(CRMAccountHierarchyDto postData);
 
 }

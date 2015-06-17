@@ -124,38 +124,56 @@ public class CustomerApi extends AccountApi {
 				throw new EntityDoesNotExistsException(Customer.class, postData.getCode());
 			}
 
-			CustomerCategory customerCategory = customerCategoryService.findByCode(postData.getCustomerCategory(), currentUser.getProvider());
-			if (customerCategory == null) {
-				throw new EntityDoesNotExistsException(CustomerCategory.class, postData.getCustomerCategory());
-			}
-
-			CustomerBrand customerBrand = customerBrandService.findByCode(postData.getCustomerBrand(), currentUser.getProvider());
-			if (customerBrand == null) {
-				throw new EntityDoesNotExistsException(CustomerBrand.class, postData.getCustomerBrand());
-			}
-
-			Seller seller = sellerService.findByCode(postData.getSeller(), currentUser.getProvider());
-			if (seller == null) {
-				throw new EntityDoesNotExistsException(Seller.class, postData.getSeller());
-			}
-
 			Customer customer = customerService.findByCode(postData.getCode(), currentUser.getProvider());
 			if (customer == null) {
 				throw new EntityDoesNotExistsException(Customer.class, postData.getCode());
 			}
+			
+			if (!StringUtils.isBlank(postData.getCustomerCategory())) {
+				CustomerCategory customerCategory = customerCategoryService.findByCode(postData.getCustomerCategory(), currentUser.getProvider());
+				if (customerCategory == null) {
+					throw new EntityDoesNotExistsException(CustomerCategory.class, postData.getCustomerCategory());
+				}
+				customer.setCustomerCategory(customerCategory);
+			}
+			
+			if (!StringUtils.isBlank(postData.getCustomerBrand())) {
+				CustomerBrand customerBrand = customerBrandService.findByCode(postData.getCustomerBrand(), currentUser.getProvider());
+				if (customerBrand == null) {
+					throw new EntityDoesNotExistsException(CustomerBrand.class, postData.getCustomerBrand());
+				}
+				customer.setCustomerBrand(customerBrand);
+			}
+
+			if (!StringUtils.isBlank(postData.getSeller())) {
+				Seller seller = sellerService.findByCode(postData.getSeller(), currentUser.getProvider());
+				if (seller == null) {
+					throw new EntityDoesNotExistsException(Seller.class, postData.getSeller());
+				}
+				customer.setSeller(seller);
+			}
 
 			updateAccount(customer, postData, currentUser, AccountLevelEnum.CUST);
-			customer.setCustomerCategory(customerCategory);
-			customer.setCustomerBrand(customerBrand);
-			customer.setSeller(seller);
-			customer.setMandateDate(postData.getMandateDate());
-			customer.setMandateIdentification(postData.getMandateIdentification());
+			if (!StringUtils.isBlank(postData.getMandateDate())) {
+				customer.setMandateDate(postData.getMandateDate());
+			}
+			if (!StringUtils.isBlank(postData.getMandateIdentification())) {
+				customer.setMandateIdentification(postData.getMandateIdentification());
+			}
 
 			if (postData.getContactInformation() != null) {
-				customer.getContactInformation().setEmail(postData.getContactInformation().getEmail());
-				customer.getContactInformation().setPhone(postData.getContactInformation().getPhone());
-				customer.getContactInformation().setMobile(postData.getContactInformation().getMobile());
-				customer.getContactInformation().setFax(postData.getContactInformation().getFax());
+				if (!StringUtils.isBlank(postData.getContactInformation().getEmail())) {
+					customer.getContactInformation().setEmail(postData.getContactInformation().getEmail());
+				}
+				if (!StringUtils.isBlank(postData.getContactInformation().getPhone())) {
+					customer.getContactInformation().setPhone(postData.getContactInformation().getPhone());
+				}
+				if (!StringUtils.isBlank(postData.getContactInformation().getMobile())) {
+					customer.getContactInformation().setMobile(postData.getContactInformation().getMobile());
+				}
+				if (!StringUtils.isBlank(postData.getContactInformation().getFax())) {
+					customer.getContactInformation().setFax(postData.getContactInformation().getFax());
+				}
 			}
 
 			customerService.updateAudit(customer, currentUser);

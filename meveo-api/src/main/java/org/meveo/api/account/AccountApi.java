@@ -87,19 +87,39 @@ public class AccountApi extends BaseApi {
                 throw new EntityDoesNotExistsException(Country.class, postData.getAddress().getCountry());
             }
 
-            address.setAddress1(postData.getAddress().getAddress1());
-            address.setAddress2(postData.getAddress().getAddress2());
-            address.setAddress3(postData.getAddress().getAddress3());
-            address.setZipCode(postData.getAddress().getZipCode());
-            address.setCity(postData.getAddress().getCity());
-            address.setCountry(postData.getAddress().getCountry());
-            address.setState(postData.getAddress().getState());
+            if (!StringUtils.isBlank(postData.getAddress().getAddress1())) {
+				address.setAddress1(postData.getAddress().getAddress1());
+			}
+			if (!StringUtils.isBlank(postData.getAddress().getAddress2())) {
+				address.setAddress2(postData.getAddress().getAddress2());
+			}
+			if (!StringUtils.isBlank(postData.getAddress().getAddress3())) {
+				address.setAddress3(postData.getAddress().getAddress3());
+			}
+			if (!StringUtils.isBlank(postData.getAddress().getZipCode())) {
+				address.setZipCode(postData.getAddress().getZipCode());
+			}
+			if (!StringUtils.isBlank(postData.getAddress().getCity())) {
+				address.setCity(postData.getAddress().getCity());
+			}
+			if (!StringUtils.isBlank(postData.getAddress().getCountry())) {
+				address.setCountry(postData.getAddress().getCountry());
+			}
+			if (!StringUtils.isBlank(postData.getAddress().getState())) {
+				address.setState(postData.getAddress().getState());
+			}
+			
+			accountEntity.setAddress(address);
         }
 
         Name name = accountEntity.getName() == null ? new Name() : accountEntity.getName();
         if (postData.getName() != null) {
-            name.setFirstName(postData.getName().getFirstName());
-            name.setLastName(postData.getName().getLastName());
+			if (!StringUtils.isBlank(postData.getName().getFirstName())) {
+				name.setFirstName(postData.getName().getFirstName());
+			}
+			if (!StringUtils.isBlank(postData.getName().getLastName())) {
+				name.setLastName(postData.getName().getLastName());
+			}
             if (!StringUtils.isBlank(postData.getName().getTitle())) {
                 Title title = titleService.findByCode(currentUser.getProvider(), postData.getName().getTitle());
                 if (title == null) {
@@ -108,13 +128,19 @@ public class AccountApi extends BaseApi {
                     name.setTitle(title);
                 }
             }
+            
+            accountEntity.setName(name);
         }
 
-        accountEntity.setDescription(postData.getDescription());
-        accountEntity.setExternalRef1(postData.getExternalRef1());
-        accountEntity.setExternalRef2(postData.getExternalRef2());
-        accountEntity.setAddress(address);
-        accountEntity.setName(name);
+        if (!StringUtils.isBlank(postData.getDescription())) {
+			accountEntity.setDescription(postData.getDescription());
+		}
+		if (!StringUtils.isBlank(postData.getExternalRef1())) {
+			accountEntity.setExternalRef1(postData.getExternalRef1());
+		}
+		if (!StringUtils.isBlank(postData.getExternalRef2())) {
+			accountEntity.setExternalRef2(postData.getExternalRef2());
+		}
 
         // populate customFields
         if (postData.getCustomFields() != null) {
@@ -126,4 +152,5 @@ public class AccountApi extends BaseApi {
             }
         }
     }
+    
 }

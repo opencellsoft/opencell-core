@@ -10,6 +10,7 @@ import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessEntityException;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.api.MeveoApiErrorCode;
 import org.meveo.api.dto.CustomFieldDto;
 import org.meveo.api.dto.account.CreditCategoryDto;
 import org.meveo.api.dto.account.CustomerAccountDto;
@@ -152,45 +153,65 @@ public class CustomerAccountApi extends AccountApi {
 				throw new EntityDoesNotExistsException(CustomerAccount.class, postData.getCode());
 			}
 
-			Customer customer = customerService.findByCode(postData.getCustomer(), provider);
-			if (customer == null) {
-				throw new EntityDoesNotExistsException(Customer.class, postData.getCustomer());
+			if (!StringUtils.isBlank(postData.getCustomer())) {
+				Customer customer = customerService.findByCode(postData.getCustomer(), provider);
+				if (customer == null) {
+					throw new EntityDoesNotExistsException(Customer.class, postData.getCustomer());
+				}
+				customerAccount.setCustomer(customer);
+			}
+			
+			if (!StringUtils.isBlank(postData.getCurrency())) {
+				TradingCurrency tradingCurrency = tradingCurrencyService.findByTradingCurrencyCode(postData.getCurrency(), provider);
+				if (tradingCurrency == null) {
+					throw new EntityDoesNotExistsException(TradingCurrency.class, postData.getCurrency());
+				}
+				customerAccount.setTradingCurrency(tradingCurrency);
 			}
 
-			TradingCurrency tradingCurrency = tradingCurrencyService.findByTradingCurrencyCode(postData.getCurrency(), provider);
-			if (tradingCurrency == null) {
-				throw new EntityDoesNotExistsException(TradingCurrency.class, postData.getCurrency());
-			}
-
-			TradingLanguage tradingLanguage = tradingLanguageService.findByTradingLanguageCode(postData.getLanguage(), provider);
-			if (tradingLanguage == null) {
-				throw new EntityDoesNotExistsException(TradingLanguage.class, postData.getLanguage());
+			if (!StringUtils.isBlank(postData.getLanguage())) {
+				TradingLanguage tradingLanguage = tradingLanguageService.findByTradingLanguageCode(postData.getLanguage(), provider);
+				if (tradingLanguage == null) {
+					throw new EntityDoesNotExistsException(TradingLanguage.class, postData.getLanguage());
+				}
+				customerAccount.setTradingLanguage(tradingLanguage);
 			}
 
 			if (postData.getContactInformation() != null) {
-				customerAccount.getContactInformation().setEmail(postData.getContactInformation().getEmail());
-				customerAccount.getContactInformation().setPhone(postData.getContactInformation().getPhone());
-				customerAccount.getContactInformation().setMobile(postData.getContactInformation().getMobile());
-				customerAccount.getContactInformation().setFax(postData.getContactInformation().getFax());
+				if (!StringUtils.isBlank(postData.getContactInformation().getEmail())) {
+					customerAccount.getContactInformation().setEmail(postData.getContactInformation().getEmail());
+				}
+				if (!StringUtils.isBlank(postData.getContactInformation().getPhone())) {
+					customerAccount.getContactInformation().setPhone(postData.getContactInformation().getPhone());
+				}
+				if (!StringUtils.isBlank(postData.getContactInformation().getMobile())) {
+					customerAccount.getContactInformation().setMobile(postData.getContactInformation().getMobile());
+				}
+				if (!StringUtils.isBlank(postData.getContactInformation().getFax())) {
+					customerAccount.getContactInformation().setFax(postData.getContactInformation().getFax());
+				}
 			}
 
 			updateAccount(customerAccount, postData, currentUser, AccountLevelEnum.CA);
 
-			customerAccount.setCustomer(customer);
-			customerAccount.setTradingCurrency(tradingCurrency);
-			customerAccount.setTradingLanguage(tradingLanguage);
-			try {
-				customerAccount.setPaymentMethod(PaymentMethodEnum.valueOf(postData.getPaymentMethod()));
-			} catch (IllegalArgumentException e) {
-				log.warn("error generated while setting payment method ", e);
+			if (!StringUtils.isBlank(postData.getPaymentMethod())) {
+				try {
+					customerAccount.setPaymentMethod(PaymentMethodEnum.valueOf(postData.getPaymentMethod()));
+				} catch (IllegalArgumentException e) {
+					log.warn("PaymentMethodEnum={}", MeveoApiErrorCode.INVALID_ENUM_VALUE);
+				}
 			}
 			if (!StringUtils.isBlank(postData.getCreditCategory())) {
 				customerAccount.setCreditCategory(creditCategoryService.findByCode(postData.getCreditCategory(), provider));
 			}
-			customerAccount.setMandateDate(postData.getMandateDate());
-			customerAccount.setMandateIdentification(postData.getMandateIdentification());
+			if (!StringUtils.isBlank(postData.getMandateDate())) {
+				customerAccount.setMandateDate(postData.getMandateDate());
+			}
+			if (!StringUtils.isBlank(postData.getMandateIdentification())) {
+				customerAccount.setMandateIdentification(postData.getMandateIdentification());
+			}
 
-			customerAccountService.update(customerAccount, currentUser);
+			customerAccountService.updateAudit(customerAccount, currentUser);
 		} else {
 			if (StringUtils.isBlank(postData.getCode())) {
 				missingParameters.add("code");

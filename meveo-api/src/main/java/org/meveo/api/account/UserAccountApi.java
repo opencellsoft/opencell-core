@@ -77,16 +77,17 @@ public class UserAccountApi extends AccountApi {
 				throw new EntityDoesNotExistsException(UserAccount.class, postData.getCode());
 			}
 
-			BillingAccount billingAccount = billingAccountService.findByCode(postData.getBillingAccount(), provider);
-			if (billingAccount == null) {
-				throw new EntityDoesNotExistsException(BillingAccount.class, postData.getBillingAccount());
+			if (!StringUtils.isBlank(postData.getBillingAccount())) {
+				BillingAccount billingAccount = billingAccountService.findByCode(postData.getBillingAccount(), provider);
+				if (billingAccount == null) {
+					throw new EntityDoesNotExistsException(BillingAccount.class, postData.getBillingAccount());
+				}
+				userAccount.setBillingAccount(billingAccount);
 			}
 
-			updateAccount(userAccount, postData, currentUser, AccountLevelEnum.UA);
+			updateAccount(userAccount, postData, currentUser, AccountLevelEnum.UA);			
 
-			userAccount.setBillingAccount(billingAccount);
-
-			userAccountService.update(userAccount, currentUser);
+			userAccountService.updateAudit(userAccount, currentUser);
 		} else {
 			if (StringUtils.isBlank(postData.getCode())) {
 				missingParameters.add("code");

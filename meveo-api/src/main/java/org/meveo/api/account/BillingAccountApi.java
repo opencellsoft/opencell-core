@@ -101,13 +101,14 @@ public class BillingAccountApi extends AccountApi {
 			billingAccount.setTradingCountry(tradingCountry);
 			billingAccount.setTradingLanguage(tradingLanguage);
 			billingAccount.setPaymentMethod(paymentMethod);
-			if(!StringUtils.isBlank(postData.getPaymentTerms())){	
-			try {
-				billingAccount.setPaymentTerm(PaymentTermEnum.valueOf(postData.getPaymentTerms()));
-			} catch (IllegalArgumentException e) {				
-				log.error("InvalidEnum for paymentTerm with name={}", postData.getPaymentTerms());
-			       throw new MeveoApiException(MeveoApiErrorCode.INVALID_ENUM_VALUE, "Enum for PaymentTerm with name=" + postData.getPaymentTerms() + " does not exists.");
-			}}
+			if (!StringUtils.isBlank(postData.getPaymentTerms())) {
+				try {
+					billingAccount.setPaymentTerm(PaymentTermEnum.valueOf(postData.getPaymentTerms()));
+				} catch (IllegalArgumentException e) {
+					log.error("InvalidEnum for paymentTerm with name={}", postData.getPaymentTerms());
+					throw new MeveoApiException(MeveoApiErrorCode.INVALID_ENUM_VALUE, "Enum for PaymentTerm with name=" + postData.getPaymentTerms() + " does not exists.");
+				}
+			}
 			billingAccount.setNextInvoiceDate(postData.getNextInvoiceDate());
 			billingAccount.setSubscriptionDate(postData.getSubscriptionDate());
 			billingAccount.setTerminationDate(postData.getTerminationDate());
@@ -166,70 +167,112 @@ public class BillingAccountApi extends AccountApi {
 				throw new EntityDoesNotExistsException(BillingAccount.class, postData.getCode());
 			}
 
-			CustomerAccount customerAccount = customerAccountService
-					.findByCode(postData.getCustomerAccount(), provider);
-			if (customerAccount == null) {
-				throw new EntityDoesNotExistsException(CustomerAccount.class, postData.getCustomerAccount());
+			if (!StringUtils.isBlank(postData.getCustomerAccount())) {
+				CustomerAccount customerAccount = customerAccountService.findByCode(postData.getCustomerAccount(), provider);
+				if (customerAccount == null) {
+					throw new EntityDoesNotExistsException(CustomerAccount.class, postData.getCustomerAccount());
+				}
+				billingAccount.setCustomerAccount(customerAccount);
 			}
 
-			BillingCycle billingCycle = billingCycleService
-					.findByBillingCycleCode(postData.getBillingCycle(), provider);
-			if (billingCycle == null) {
-				throw new EntityDoesNotExistsException(BillingCycle.class, postData.getBillingCycle());
+			if (!StringUtils.isBlank(postData.getBillingCycle())) {
+				BillingCycle billingCycle = billingCycleService.findByBillingCycleCode(postData.getBillingCycle(), provider);
+				if (billingCycle == null) {
+					throw new EntityDoesNotExistsException(BillingCycle.class, postData.getBillingCycle());
+				}
+				billingAccount.setBillingCycle(billingCycle);
 			}
 
-			TradingCountry tradingCountry = tradingCountryService.findByTradingCountryCode(postData.getCountry(),
-					provider);
-			if (tradingCountry == null) {
-				throw new EntityDoesNotExistsException(TradingCountry.class, postData.getCountry());
+			if (!StringUtils.isBlank(postData.getCountry())) {
+				TradingCountry tradingCountry = tradingCountryService.findByTradingCountryCode(postData.getCountry(), provider);
+				if (tradingCountry == null) {
+					throw new EntityDoesNotExistsException(TradingCountry.class, postData.getCountry());
+				}
+				billingAccount.setTradingCountry(tradingCountry);
 			}
 
-			TradingLanguage tradingLanguage = tradingLanguageService.findByTradingLanguageCode(postData.getLanguage(),
-					provider);
-			if (tradingLanguage == null) {
-				throw new EntityDoesNotExistsException(TradingLanguage.class, postData.getLanguage());
+			if (!StringUtils.isBlank(postData.getLanguage())) {
+				TradingLanguage tradingLanguage = tradingLanguageService.findByTradingLanguageCode(postData.getLanguage(), provider);
+				if (tradingLanguage == null) {
+					throw new EntityDoesNotExistsException(TradingLanguage.class, postData.getLanguage());
+				}
+				billingAccount.setTradingLanguage(tradingLanguage);
+			}
+			
+			if (!StringUtils.isBlank(postData.getPaymentMethod())) {
+				try {
+					billingAccount.setPaymentMethod(PaymentMethodEnum.valueOf(postData.getPaymentMethod()));
+				} catch (IllegalArgumentException e) {
+					log.error("InvalidEnum for paymentMethod with name={}", postData.getPaymentMethod());
+					throw new MeveoApiException(MeveoApiErrorCode.INVALID_ENUM_VALUE, "Enum for PaymentMethod with name=" + postData.getPaymentMethod() + " does not exists.");
+				}
+			}
+			
+			if (!StringUtils.isBlank(postData.getPaymentTerms())) {
+				try {
+					billingAccount.setPaymentTerm(PaymentTermEnum.valueOf(postData.getPaymentTerms()));
+				} catch (IllegalArgumentException e) {
+					log.warn("InvalidEnum for paymentTerm with name={}", postData.getPaymentTerms());
+				}
 			}
 
-			PaymentMethodEnum paymentMethod = null;
-			try {
-				paymentMethod = PaymentMethodEnum.valueOf(postData.getPaymentMethod());
-			} catch (IllegalArgumentException e) {
-				log.error("InvalidEnum for paymentTerm with name={}", postData.getPaymentTerms());
-				throw new MeveoApiException(MeveoApiErrorCode.INVALID_ENUM_VALUE, "Enum for PaymentTerm with name=" + postData.getPaymentTerms() + " does not exists.");
+			updateAccount(billingAccount, postData, currentUser, AccountLevelEnum.BA);			
+			
+			if (!StringUtils.isBlank(postData.getNextInvoiceDate())) {
+				billingAccount.setNextInvoiceDate(postData.getNextInvoiceDate());
+			}
+			if (!StringUtils.isBlank(postData.getSubscriptionDate())) {
+				billingAccount.setSubscriptionDate(postData.getSubscriptionDate());
+			}
+			if (!StringUtils.isBlank(postData.getTerminationDate())) {
+				billingAccount.setTerminationDate(postData.getTerminationDate());
+			}
+			if (!StringUtils.isBlank(postData.getElectronicBilling())) {
+				billingAccount.setElectronicBilling(postData.getElectronicBilling());
+			}
+			if (!StringUtils.isBlank(postData.getEmail())) {
+				billingAccount.setEmail(postData.getEmail());
+			}
+			if (postData.getBankCoordinates() != null) {
+				if (!StringUtils.isBlank(postData.getBankCoordinates().getBankCode())) {
+					billingAccount.getBankCoordinates().setBankCode(postData.getBankCoordinates().getBankCode());
+				}
+				if (!StringUtils.isBlank(postData.getBankCoordinates().getBranchCode())) {
+					billingAccount.getBankCoordinates().setBranchCode(postData.getBankCoordinates().getBranchCode());
+				}
+				if (!StringUtils.isBlank(postData.getBankCoordinates().getAccountNumber())) {
+					billingAccount.getBankCoordinates().setAccountNumber(postData.getBankCoordinates().getAccountNumber());
+				}
+				if (!StringUtils.isBlank(postData.getBankCoordinates().getKey())) {
+					billingAccount.getBankCoordinates().setKey(postData.getBankCoordinates().getKey());
+				}
+				if (!StringUtils.isBlank(postData.getBankCoordinates().getIban())) {
+					billingAccount.getBankCoordinates().setIban(postData.getBankCoordinates().getIban());
+				}
+				if (!StringUtils.isBlank(postData.getBankCoordinates().getBic())) {
+					billingAccount.getBankCoordinates().setBic(postData.getBankCoordinates().getBic());
+				}
+				if (!StringUtils.isBlank(postData.getBankCoordinates().getAccountOwner())) {
+					billingAccount.getBankCoordinates().setAccountOwner(postData.getBankCoordinates().getAccountOwner());
+				}
+				if (!StringUtils.isBlank(postData.getBankCoordinates().getBankName())) {
+					billingAccount.getBankCoordinates().setBankName(postData.getBankCoordinates().getBankName());
+				}
+				if (!StringUtils.isBlank(postData.getBankCoordinates().getBankId())) {
+					billingAccount.getBankCoordinates().setBankId(postData.getBankCoordinates().getBankId());
+				}
+				if (!StringUtils.isBlank(postData.getBankCoordinates().getIssuerNumber())) {
+					billingAccount.getBankCoordinates().setIssuerNumber(postData.getBankCoordinates().getIssuerNumber());
+				}
+				if (!StringUtils.isBlank(postData.getBankCoordinates().getIssuerName())) {
+					billingAccount.getBankCoordinates().setIssuerName(postData.getBankCoordinates().getIssuerName());
+				}
+				if (!StringUtils.isBlank(postData.getBankCoordinates().getIcs())) {
+					billingAccount.getBankCoordinates().setIcs(postData.getBankCoordinates().getIcs());
+				}
 			}
 
-			updateAccount(billingAccount, postData, currentUser, AccountLevelEnum.BA);
-
-			billingAccount.setCustomerAccount(customerAccount);
-			billingAccount.setBillingCycle(billingCycle);
-			billingAccount.setTradingCountry(tradingCountry);
-			billingAccount.setTradingLanguage(tradingLanguage);
-			billingAccount.setPaymentMethod(paymentMethod);
-			if(!StringUtils.isBlank(postData.getPaymentTerms())){
-			try {
-				billingAccount.setPaymentTerm(PaymentTermEnum.valueOf(postData.getPaymentTerms()));
-			} catch (IllegalArgumentException e) {
-				log.warn("error generated while setting payment term",e);
-			}}
-			billingAccount.setNextInvoiceDate(postData.getNextInvoiceDate());
-			billingAccount.setSubscriptionDate(postData.getSubscriptionDate());
-			billingAccount.setTerminationDate(postData.getTerminationDate());
-			billingAccount.setElectronicBilling(postData.getElectronicBilling());
-			billingAccount.setEmail(postData.getEmail());
-			billingAccount.getBankCoordinates().setBankCode(postData.getBankCoordinates().getBankCode());
-			billingAccount.getBankCoordinates().setBranchCode(postData.getBankCoordinates().getBranchCode());
-			billingAccount.getBankCoordinates().setAccountNumber(postData.getBankCoordinates().getAccountNumber());
-			billingAccount.getBankCoordinates().setKey(postData.getBankCoordinates().getKey());
-			billingAccount.getBankCoordinates().setIban(postData.getBankCoordinates().getIban());
-			billingAccount.getBankCoordinates().setBic(postData.getBankCoordinates().getBic());
-			billingAccount.getBankCoordinates().setAccountOwner(postData.getBankCoordinates().getAccountOwner());
-			billingAccount.getBankCoordinates().setBankName(postData.getBankCoordinates().getBankName());
-			billingAccount.getBankCoordinates().setBankId(postData.getBankCoordinates().getBankId());
-			billingAccount.getBankCoordinates().setIssuerNumber(postData.getBankCoordinates().getIssuerNumber());
-			billingAccount.getBankCoordinates().setIssuerName(postData.getBankCoordinates().getIssuerName());
-			billingAccount.getBankCoordinates().setIcs(postData.getBankCoordinates().getIcs());
-
-			billingAccountService.update(billingAccount, currentUser);
+			billingAccountService.updateAudit(billingAccount, currentUser);
 		} else {
 			if (StringUtils.isBlank(postData.getCode())) {
 				missingParameters.add("code");
