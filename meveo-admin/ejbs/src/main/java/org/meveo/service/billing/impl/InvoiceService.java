@@ -22,6 +22,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
+import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -52,6 +53,9 @@ import net.sf.jasperreports.engine.data.JRXmlDataSource;
 import net.sf.jasperreports.engine.util.JRLoader;
 
 import org.apache.commons.io.FileUtils;
+import org.jboss.vfs.VFS;
+import org.jboss.vfs.VFSUtils;
+import org.jboss.vfs.VirtualFile;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.InvoiceJasperNotFoundException;
 import org.meveo.admin.exception.InvoiceXmlNotFoundException;
@@ -447,15 +451,22 @@ public class InvoiceService extends PersistenceService<Invoice> {
 					&& billingCycle.getBillingTemplateName() != null) ? billingCycle
 					.getBillingTemplateName() : "default";
 			String resDir = meveoDir + "jasper";
-			//copy embedded japer report
+			
 			File destDir=new File(resDir+File.separator+billingTemplate+File.separator+"pdf");
 			if(!destDir.exists()){
 				destDir.mkdirs();
-				String sourcePath=Thread.currentThread().getContextClassLoader().getResource("./jasper").toURI().getPath();
+				String sourcePath=Thread.currentThread().getContextClassLoader().getResource("./jasper").getPath();
 				File sourceFile=new File(sourcePath);
+				if(!sourceFile.exists()){
+					VirtualFile vfDir = VFS.getChild("/content/"+ParamBean.getInstance().getProperty("meveo.moduleName", "meveo")+".war/WEB-INF/classes/jasper");
+					URL vfPath=VFSUtils.getPhysicalURL(vfDir);
+					sourceFile=new File(vfPath.getPath());
+					if(!sourceFile.exists()){
+						throw new BusinessException("embedded jasper report for invoice isn't existed!");
+					}
+				}
 				FileUtils.copyDirectory(sourceFile, destDir);
 			}
-			//end copy jasper report
 			
 			File jasperFile = getJasperTemplateFile(resDir, billingTemplate,
 					billingAccount.getPaymentMethod());
