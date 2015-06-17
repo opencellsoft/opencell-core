@@ -40,6 +40,8 @@ public class BillingRunJobBean {
 	@Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public void execute(JobExecutionResultImpl result, String parameter,String billingCycleCode,Date invoiceDate,Date lastTransactionDate, User currentUser) {
+		log.debug("Running for user={}, parameter={}", currentUser, parameter);
+		
 		Provider provider = currentUser.getProvider();
 		if(!StringUtils.isBlank(billingCycleCode)){
 			parameter=billingCycleCode;

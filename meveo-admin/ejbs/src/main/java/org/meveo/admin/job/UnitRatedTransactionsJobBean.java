@@ -31,6 +31,8 @@ public class UnitRatedTransactionsJobBean {
 
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public void execute(JobExecutionResultImpl result, User currentUser,Long walletOperationId ) {
+		log.debug("Running for user={}, walletOperationId={}", currentUser, walletOperationId);
+		
 		try {
 			WalletOperation walletOperation = walletOperationService.findById(walletOperationId) ;
 

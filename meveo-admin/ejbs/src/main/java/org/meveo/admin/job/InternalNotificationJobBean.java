@@ -51,6 +51,8 @@ public class InternalNotificationJobBean {
 	@Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public void execute(String filterCode, String notificationCode, JobExecutionResultImpl result, User currentUser,Provider provider) {
+		log.debug("Running for user={}, filterCode={}", currentUser, filterCode);
+		
 	    if (StringUtils.isBlank(filterCode)) {
             result.registerError("filterCode has no SQL query set.");
             return;

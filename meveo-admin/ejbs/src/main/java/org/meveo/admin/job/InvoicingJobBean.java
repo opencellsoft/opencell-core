@@ -42,6 +42,7 @@ public class InvoicingJobBean {
 	@Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
 	@TransactionAttribute(TransactionAttributeType.NEVER)
 	public void execute(JobExecutionResultImpl result, User currentUser,JobInstance jobInstance) {
+		log.debug("Running for user={}, parameter={}", currentUser, jobInstance.getParametres());
 
 		try {
 			Provider provider = currentUser.getProvider();

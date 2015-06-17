@@ -44,6 +44,8 @@ public class ReRatingJobBean implements Serializable {
 	@Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
 	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
 	public void execute(JobExecutionResultImpl result, User currentUser, boolean useSamePricePlan) {
+		log.debug("Running for user={}, useSamePricePlan={}", currentUser, useSamePricePlan);
+		
 		try {
 			List<Long> walletOperationIds = walletOperationService.listToRerate(currentUser.getProvider());
 

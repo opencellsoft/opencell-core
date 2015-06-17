@@ -57,6 +57,8 @@ public class MediationJobBean {
 	@Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
 	@TransactionAttribute(TransactionAttributeType.NEVER)
 	public void execute(JobExecutionResultImpl result, String parameter, User currentUser,File file) {
+		log.debug("Running for user={}, parameter={}", currentUser, parameter);
+		
 		Provider provider = currentUser.getProvider();
 
 		ParamBean parambean = ParamBean.getInstance();

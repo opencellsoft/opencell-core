@@ -42,6 +42,8 @@ public class PDFInvoiceGenerationJobBean {
 	@Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
 	@TransactionAttribute(TransactionAttributeType.NEVER)
 	public void execute(JobExecutionResultImpl result, User currentUser,JobInstance jobInstance) {
+		log.debug("Running for user={}, parameter={}", currentUser, jobInstance.getParametres());
+		
 		try{
 			List<Invoice> invoices = new ArrayList<Invoice>();
 			String parameter = jobInstance.getParametres();

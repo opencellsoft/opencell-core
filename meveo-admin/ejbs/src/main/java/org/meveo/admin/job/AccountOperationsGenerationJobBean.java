@@ -50,6 +50,8 @@ public class AccountOperationsGenerationJobBean {
 	@Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public void execute(JobExecutionResultImpl result, String parameter, User currentUser) {
+		log.debug("Running for user={}, parameter={}", currentUser, parameter);
+		
 		ParamBean paramBean = ParamBean.getInstance();
 		List<Invoice> invoices = invoiceService.getInvoicesWithNoAccountOperation(null);
 		Provider providerForHistory = null;

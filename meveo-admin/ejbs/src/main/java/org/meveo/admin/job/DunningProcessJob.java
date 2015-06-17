@@ -22,7 +22,6 @@ import org.meveo.model.crm.Provider;
 import org.meveo.model.jobs.JobCategoryEnum;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
-import org.meveo.model.jobs.TimerEntity;
 import org.meveo.model.payments.ActionDunning;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.DunningLevelEnum;
@@ -60,6 +59,8 @@ public class DunningProcessJob extends Job {
     @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
     @Override
     protected void execute(JobExecutionResultImpl result, JobInstance jobInstance, User currentUser) throws BusinessException {
+    	log.debug("Running for user={}, parameter={}", currentUser, jobInstance.getParametres());
+    	
         Provider provider = currentUser.getProvider();
 
         for (DunningPlan dunningPlan : dunningPlanService.getDunningPlans()) {

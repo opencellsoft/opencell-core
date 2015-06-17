@@ -45,7 +45,9 @@ public class XMLInvoiceGenerationJobBean {
 	@SuppressWarnings("unchecked")
 	@Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
 	@TransactionAttribute(TransactionAttributeType.NEVER)
-	public void execute(JobExecutionResultImpl result, String parameter, User currentUser,JobInstance jobInstance) {
+	public void execute(JobExecutionResultImpl result, String parameter, User currentUser, JobInstance jobInstance) {
+		log.debug("Running for user={}, parameter={}", currentUser, parameter);
+		
 		Provider provider = currentUser.getProvider();
 		List<BillingRun> billingRuns = new ArrayList<BillingRun>();
 

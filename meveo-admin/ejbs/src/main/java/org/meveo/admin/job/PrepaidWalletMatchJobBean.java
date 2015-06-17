@@ -33,6 +33,8 @@ public class PrepaidWalletMatchJobBean {
 	@Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public void execute(String matchingChargeCode, JobExecutionResultImpl result, User currentUser) {
+		log.debug("Running for user={}, matchingChargeCode={}", currentUser, matchingChargeCode);
+		
 		try {
 			List<WalletInstance> wallets = walletService.getWalletsToMatch(new Date());
 

@@ -39,6 +39,8 @@ public class SepaDirectDebitJobBean {
 	@Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public void execute(JobExecutionResultImpl result, String parameter, User currentUser) {
+		log.debug("Running for user={}, parameter={}", currentUser, parameter);
+		
 		try {
 			List<DDRequestLotOp> ddrequestOps = dDRequestLotOpService.getDDRequestOps();
 
