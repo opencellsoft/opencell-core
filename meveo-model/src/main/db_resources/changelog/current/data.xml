@@ -188,5 +188,18 @@
 			<column name="FIELD_TYPE" value="STRING" />
 		</insert>
 	</changeSet>
+	
+	<changeSet id="878_2015-06-11_2" author="anasseh">
+	    <update tableName="meveo_script_instance">	        
+	        <column name="code" value='TestScript' />
+	        <column name="src_type" value='JAVA' />
+	        <where>id=1</where>
+        </update>
+         <update tableName="meveo_script_instance">
+	        <column name="code" value='TestScript_2' />
+	        <column name="src_type" value='JAVA' />
+	        <where>id=2</where>
+        </update>
+	</changeSet>
 
 </databaseChangeLog>

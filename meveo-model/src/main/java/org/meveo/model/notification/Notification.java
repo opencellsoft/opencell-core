@@ -21,6 +21,7 @@ import org.meveo.model.BusinessEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.billing.CounterInstance;
 import org.meveo.model.catalog.CounterTemplate;
+import org.meveo.model.jobs.ScriptInstance;
 import org.meveo.validation.constraint.ClassName;
 
 @Entity
@@ -59,6 +60,10 @@ public class Notification extends BusinessEntity {
     @OneToOne()
     @JoinColumn(name = "COUNTER_INSTANCE_ID")
     private CounterInstance counterInstance;
+    
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "SCRIPT_INSTANCE_ID")
+    private ScriptInstance scriptInstance;
 
     public String getClassNameFilter() {
         return classNameFilter;
@@ -107,8 +112,23 @@ public class Notification extends BusinessEntity {
     public void setCounterInstance(CounterInstance counterInstance) {
         this.counterInstance = counterInstance;
     }
+    
 
-    @Override
+    /**
+	 * @return the scriptInstance
+	 */
+	public ScriptInstance getScriptInstance() {
+		return scriptInstance;
+	}
+
+	/**
+	 * @param scriptInstance the scriptInstance to set
+	 */
+	public void setScriptInstance(ScriptInstance scriptInstance) {
+		this.scriptInstance = scriptInstance;
+	}
+
+	@Override
     public String toString() {
         return String.format("Notification [%s, classNameFilter=%s, eventTypeFilter=%s, elFilter=%s, elAction=%s, counterTemplate=%s, counterInstance=%s]", super.toString(),
             classNameFilter, eventTypeFilter, elFilter, elAction, counterTemplate != null ? counterTemplate.getId() : null, counterInstance != null ? counterInstance.getId()
