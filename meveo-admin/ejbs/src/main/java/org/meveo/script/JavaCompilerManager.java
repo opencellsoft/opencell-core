@@ -41,7 +41,7 @@ import org.slf4j.Logger;
 @Singleton
 public class JavaCompilerManager  {
 
-	public static Map<String, ScriptInterface> allScriptInterfaces = new HashMap<String, ScriptInterface>();
+	private Map<String, ScriptInterface> allScriptInterfaces = new HashMap<String, ScriptInterface>();
 
 	@Inject
 	protected Logger log;
@@ -86,7 +86,7 @@ public class JavaCompilerManager  {
 			final String className = scriptInstance.getCode() ;
 			final String qName = packageName + '.' + className;
 			final String codeSource =scriptInstance.getScript();
-			log.debug("codeSource to compile:"+codeSource);
+			log.info("codeSource to compile:"+codeSource);
 			final DiagnosticCollector<JavaFileObject> errs = new DiagnosticCollector<JavaFileObject>();
 			Class<ScriptInterface> compiledFunction = compiler.compile(qName, codeSource, errs,new Class<?>[] { ScriptInterface.class });
 			allScriptInterfaces.put(scriptInstance.getCode(),compiledFunction.newInstance());
@@ -104,4 +104,19 @@ public class JavaCompilerManager  {
 			log.error("",e);
 		} 
 	}
+
+	/**
+	 * @return the allScriptInterfaces
+	 */
+	public Map<String, ScriptInterface> getAllScriptInterfaces() {
+		return allScriptInterfaces;
+	}
+
+	/**
+	 * @param allScriptInterfaces the allScriptInterfaces to set
+	 */
+	public void setAllScriptInterfaces(Map<String, ScriptInterface> allScriptInterfaces) {
+		this.allScriptInterfaces = allScriptInterfaces;
+	}
+	
 }

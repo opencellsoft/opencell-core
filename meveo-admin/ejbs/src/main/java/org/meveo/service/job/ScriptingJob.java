@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
+import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 
 import org.meveo.admin.exception.BusinessException;
@@ -23,13 +24,16 @@ import org.meveo.script.ScriptInterface;
 @Startup
 @Singleton
 public class ScriptingJob extends Job {
+	
+	@Inject
+	JavaCompilerManager javaCompilerManager;
 
     @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
     @Override
     protected void execute(JobExecutionResultImpl result, JobInstance jobInstance, User currentUser) throws BusinessException {
 
         String scriptCode = jobInstance.getStringCustomValue("ScriptingJob_scriptCode");
-    	ScriptInterface scriptInterface = JavaCompilerManager.allScriptInterfaces.get(scriptCode);
+    	ScriptInterface scriptInterface = javaCompilerManager.getAllScriptInterfaces().get(scriptCode);
     	scriptInterface.setup(null);
     	scriptInterface.execute(null);
     	scriptInterface.teardown(null);
