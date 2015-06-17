@@ -1,6 +1,7 @@
 package org.meveo.api;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.ejb.Stateless;
@@ -107,8 +108,8 @@ public class CalendarApi extends BaseApi {
 				}
 				
 				if(!CalendarPeriod.isValidPeriodUnit(postData.getPeriodUnit())) {
-					throw new MeveoApiException(MeveoApiErrorCode.BUSINESS_API_EXCEPTION, "Invalid periodUnit value. Must be =[" + CalendarPeriod.VALID_PERIOD_UNITS.toArray()
-							+ "]");
+					throw new MeveoApiException(MeveoApiErrorCode.BUSINESS_API_EXCEPTION, "Invalid periodUnit value. Must be="
+							+ Arrays.toString(CalendarPeriod.VALID_PERIOD_UNITS.toArray()));
 				}
 
                 CalendarPeriod calendar = new CalendarPeriod();
