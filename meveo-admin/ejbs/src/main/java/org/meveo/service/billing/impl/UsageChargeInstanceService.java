@@ -119,8 +119,9 @@ public class UsageChargeInstanceService extends BusinessService<UsageChargeInsta
 		
 		if (serviceUsageChargeTemplate.getCounterTemplate() != null) {
             CounterTemplate counterTemplate=serviceUsageChargeTemplate.getCounterTemplate();
-            counterTemplate.setCeiling((new BigDecimal(evaluateDoubleExpression(counterTemplate.getCeilingExpressionEl()
-					,usageChargeInstance,serviceInstance,usageChargeInstance.getSubscription()))));
+			Double dCeiling = evaluateDoubleExpression(counterTemplate.getCeilingExpressionEl(), usageChargeInstance, serviceInstance, usageChargeInstance.getSubscription());
+			BigDecimal ceiling = dCeiling == null ? new BigDecimal(0) : new BigDecimal(dCeiling);
+			counterTemplate.setCeiling((ceiling));
 			CounterInstance counterInstance = counterInstanceService.counterInstanciation(serviceInstance
 					.getSubscription().getUserAccount(),counterTemplate, creator);
 			usageChargeInstance.setCounter(counterInstance);
