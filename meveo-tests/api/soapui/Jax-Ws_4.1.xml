@@ -361,14 +361,14 @@
       <xs:element name="ChargeTemplate" type="tns:chargeTemplateDto"/>
       <xs:element name="CounterTemplate" type="tns:counterTemplateDto"/>
       <xs:element name="GetChargeTemplateResponse" type="tns:getChargeTemplateResponseDto"/>
-      <xs:element name="GetCounterTemplateResponse" type="tns:getCounterTemplateResponse"/>
-      <xs:element name="GetOfferTemplateResponse" type="tns:getOfferTemplateResponse"/>
-      <xs:element name="GetOneShotChargeTemplateResponse" type="tns:getOneShotChargeTemplateResponse"/>
-      <xs:element name="GetPricePlanResponse" type="tns:getPricePlanResponse"/>
-      <xs:element name="GetRecurringChargeTemplateResponse" type="tns:getRecurringChargeTemplateResponse"/>
-      <xs:element name="GetServiceTemplateResponse" type="tns:getServiceTemplateResponse"/>
+      <xs:element name="GetCounterTemplateResponse" type="tns:getCounterTemplateResponseDto"/>
+      <xs:element name="GetOfferTemplateResponse" type="tns:getOfferTemplateResponseDto"/>
+      <xs:element name="GetOneShotChargeTemplateResponse" type="tns:getOneShotChargeTemplateResponseDto"/>
+      <xs:element name="GetPricePlanResponse" type="tns:getPricePlanResponseDto"/>
+      <xs:element name="GetRecurringChargeTemplateResponse" type="tns:getRecurringChargeTemplateResponseDto"/>
+      <xs:element name="GetServiceTemplateResponse" type="tns:getServiceTemplateResponseDto"/>
       <xs:element name="GetTriggeredEdrResponse" type="tns:getTriggeredEdrResponseDto"/>
-      <xs:element name="GetUsageChargeTemplateResponse" type="tns:getUsageChargeTemplateResponse"/>
+      <xs:element name="GetUsageChargeTemplateResponse" type="tns:getUsageChargeTemplateResponseDto"/>
       <xs:element name="LanguageDescription" type="tns:languageDescriptionDto"/>
       <xs:element name="OfferTemplate" type="tns:offerTemplateDto"/>
       <xs:element name="OneShotChargeTemplate" nillable="true" type="xs:anyType"/>
@@ -706,10 +706,10 @@
       </xs:complexType>
       <xs:complexType name="findServiceTemplateResponse">
         <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:getServiceTemplateResponse"/>
+          <xs:element minOccurs="0" name="return" type="tns:getServiceTemplateResponseDto"/>
         </xs:sequence>
       </xs:complexType>
-      <xs:complexType name="getServiceTemplateResponse">
+      <xs:complexType name="getServiceTemplateResponseDto">
         <xs:complexContent>
           <xs:extension base="tns:baseResponse">
             <xs:sequence>
@@ -760,10 +760,10 @@
       </xs:complexType>
       <xs:complexType name="findRecurringChargeTemplateResponse">
         <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:getRecurringChargeTemplateResponse"/>
+          <xs:element minOccurs="0" name="return" type="tns:getRecurringChargeTemplateResponseDto"/>
         </xs:sequence>
       </xs:complexType>
-      <xs:complexType name="getRecurringChargeTemplateResponse">
+      <xs:complexType name="getRecurringChargeTemplateResponseDto">
         <xs:complexContent>
           <xs:extension base="tns:baseResponse">
             <xs:sequence>
@@ -835,10 +835,10 @@
       </xs:complexType>
       <xs:complexType name="findOneShotChargeTemplateResponse">
         <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:getOneShotChargeTemplateResponse"/>
+          <xs:element minOccurs="0" name="return" type="tns:getOneShotChargeTemplateResponseDto"/>
         </xs:sequence>
       </xs:complexType>
-      <xs:complexType name="getOneShotChargeTemplateResponse">
+      <xs:complexType name="getOneShotChargeTemplateResponseDto">
         <xs:complexContent>
           <xs:extension base="tns:baseResponse">
             <xs:sequence>
@@ -869,6 +869,7 @@
           <xs:element minOccurs="0" name="ceiling" type="xs:decimal"/>
           <xs:element name="disabled" type="xs:boolean"/>
           <xs:element minOccurs="0" name="counterLevel" type="xs:string"/>
+          <xs:element minOccurs="0" name="ceilingExpressionEl" type="xs:string"/>
         </xs:sequence>
         <xs:attribute name="code" type="xs:string" use="required"/>
         <xs:attribute name="description" type="xs:string" use="required"/>
@@ -896,10 +897,10 @@
       </xs:complexType>
       <xs:complexType name="findUsageChargeTemplateResponse">
         <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:getUsageChargeTemplateResponse"/>
+          <xs:element minOccurs="0" name="return" type="tns:getUsageChargeTemplateResponseDto"/>
         </xs:sequence>
       </xs:complexType>
-      <xs:complexType name="getUsageChargeTemplateResponse">
+      <xs:complexType name="getUsageChargeTemplateResponseDto">
         <xs:complexContent>
           <xs:extension base="tns:baseResponse">
             <xs:sequence>
@@ -954,10 +955,10 @@
       </xs:complexType>
       <xs:complexType name="findOfferTemplateResponse">
         <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:getOfferTemplateResponse"/>
+          <xs:element minOccurs="0" name="return" type="tns:getOfferTemplateResponseDto"/>
         </xs:sequence>
       </xs:complexType>
-      <xs:complexType name="getOfferTemplateResponse">
+      <xs:complexType name="getOfferTemplateResponseDto">
         <xs:complexContent>
           <xs:extension base="tns:baseResponse">
             <xs:sequence>
@@ -1003,10 +1004,10 @@
       </xs:complexType>
       <xs:complexType name="findCounterTemplateResponse">
         <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:getCounterTemplateResponse"/>
+          <xs:element minOccurs="0" name="return" type="tns:getCounterTemplateResponseDto"/>
         </xs:sequence>
       </xs:complexType>
-      <xs:complexType name="getCounterTemplateResponse">
+      <xs:complexType name="getCounterTemplateResponseDto">
         <xs:complexContent>
           <xs:extension base="tns:baseResponse">
             <xs:sequence>
@@ -1090,10 +1091,10 @@
       </xs:complexType>
       <xs:complexType name="findPricePlanResponse">
         <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:getPricePlanResponse"/>
+          <xs:element minOccurs="0" name="return" type="tns:getPricePlanResponseDto"/>
         </xs:sequence>
       </xs:complexType>
-      <xs:complexType name="getPricePlanResponse">
+      <xs:complexType name="getPricePlanResponseDto">
         <xs:complexContent>
           <xs:extension base="tns:baseResponse">
             <xs:sequence>
@@ -1477,7 +1478,7 @@
    <soapenv:Body>
       <ws:createCounterTemplate>
          <!--Optional:-->
-          <counterTemplate code="CT1" description="CT1" calendar="MONTHLY">
+          <counterTemplate code="CT3" description="CT1" calendar="MONTHLY">
             <!--Optional:-->
             <unity>Quantity</unity>
             <type>USAGE</type>
@@ -1486,6 +1487,7 @@
             <disabled>false</disabled>
             <!--Optional:-->
             <counterLevel>BA</counterLevel>
+            <ceilingExpressionEl></ceilingExpressionEl>
          </counterTemplate>
       </ws:createCounterTemplate>
    </soapenv:Body>
@@ -1912,6 +1914,7 @@
             <disabled>false</disabled>
             <!--Optional:-->
             <counterLevel>UA</counterLevel>
+            <ceilingExpressionEl></ceilingExpressionEl>
          </counterTemplate>
       </ws:updateCounterTemplate>
    </soapenv:Body>
@@ -18235,7 +18238,7 @@
          </reservation>
       </ws:cancelReservation>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/MediationWs/cancelReservation"/></con:call></con:operation><con:operation isOneWay="false" action="" name="chargeCdr" bindingOperationName="chargeCdr" type="Request-Response" outputName="chargeCdrResponse" inputName="chargeCdr" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/MediationWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+</soapenv:Envelope>]]></con:request><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/MediationWs/cancelReservation"/></con:call></con:operation><con:operation isOneWay="false" action="" name="chargeCdr" bindingOperationName="chargeCdr" type="Request-Response" outputName="chargeCdrResponse" inputName="chargeCdr" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/MediationWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
       <ws:chargeCdr>

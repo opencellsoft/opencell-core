@@ -34,8 +34,7 @@ public class CounterTemplateApi extends BaseApi {
 	public void create(CounterTemplateDto postData, User currentUser)
 			throws MeveoApiException {
 		if (!StringUtils.isBlank(postData.getCode())
-				&& !StringUtils.isBlank(postData.getDescription())
-				&& !StringUtils.isBlank(postData.getCeiling())
+				&& !StringUtils.isBlank(postData.getDescription()) 
 				&& !StringUtils.isBlank(postData.getCalendar())) {
 			Provider provider = currentUser.getProvider();
 
@@ -62,6 +61,7 @@ public class CounterTemplateApi extends BaseApi {
 			counterTemplate.setCalendar(calendar);
 			counterTemplate.setCounterLevel(CounterTemplateLevel.valueOf(postData
 					.getCounterLevel()));
+			counterTemplate.setCeilingExpressionEl(postData.getCeilingExpressionEl());
 
 			counterTemplateService.create(counterTemplate, currentUser,
 					provider);
@@ -71,10 +71,7 @@ public class CounterTemplateApi extends BaseApi {
 			}
 			if (StringUtils.isBlank(postData.getDescription())) {
 				missingParameters.add("description");
-			}
-			if (StringUtils.isBlank(postData.getCeiling())) {
-				missingParameters.add("level");
-			}
+			} 
 			if (StringUtils.isBlank(postData.getCalendar())) {
 				missingParameters.add("calendar");
 			}
@@ -87,8 +84,7 @@ public class CounterTemplateApi extends BaseApi {
 	public void update(CounterTemplateDto postData, User currentUser)
 			throws MeveoApiException {
 		if (!StringUtils.isBlank(postData.getCode())
-				&& !StringUtils.isBlank(postData.getDescription())
-				&& !StringUtils.isBlank(postData.getCeiling())
+				&& !StringUtils.isBlank(postData.getDescription()) 
 				&& !StringUtils.isBlank(postData.getCalendar())) {
 			Provider provider = currentUser.getProvider();
 
@@ -114,6 +110,7 @@ public class CounterTemplateApi extends BaseApi {
 			counterTemplate.setCalendar(calendar);
 			counterTemplate.setCounterLevel(CounterTemplateLevel.valueOf(postData
 					.getCounterLevel()));
+			counterTemplate.setCeilingExpressionEl(postData.getCeilingExpressionEl());
 
 			counterTemplateService.update(counterTemplate, currentUser);
 		} else {
@@ -122,10 +119,7 @@ public class CounterTemplateApi extends BaseApi {
 			}
 			if (StringUtils.isBlank(postData.getDescription())) {
 				missingParameters.add("description");
-			}
-			if (StringUtils.isBlank(postData.getCeiling())) {
-				missingParameters.add("level");
-			}
+			} 
 			if (StringUtils.isBlank(postData.getCalendar())) {
 				missingParameters.add("calendar");
 			}
