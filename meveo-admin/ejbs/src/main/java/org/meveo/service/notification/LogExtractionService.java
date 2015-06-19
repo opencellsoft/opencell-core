@@ -4,10 +4,12 @@ import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Properties;
 
+import org.joda.time.DateTimeComparator;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.shared.DateUtils;
 
@@ -24,11 +26,13 @@ public class LogExtractionService {
 		String result="";
 		BufferedReader logReader = null;
 		try {
+
 			Properties props = new Properties();
 			props.load(new FileInputStream(System.getProperty("logging.configuration").substring(5)));
 			String logFile = props.getProperty("handler.FILE.fileName");			
 			String dateFormat = props.getProperty("formatter.FILE.pattern").substring(props.getProperty("formatter.FILE.pattern").indexOf("{")+1, props.getProperty("formatter.FILE.pattern").indexOf("}"));			
 			int length=0,maxLength=Integer.parseInt(ParamBean.getInstance().getProperty("meveo.notifier.log.lenght", "100000"));
+			DateTimeComparator comparator = DateTimeComparator.getTimeOnlyInstance();
 			boolean mustBeInToo=false;
 			Date dateCurrentLine =null;
 			String line=null;
@@ -37,7 +41,7 @@ public class LogExtractionService {
 			while((line = logReader.readLine()) != null && length < maxLength && !isAfterToDate){				
 				dateCurrentLine = getDateTime(line,dateFormat);			
 				if(( dateCurrentLine ==null && mustBeInToo) || //include the line that not start by a date but it is in the period
-						(dateCurrentLine !=null && DateUtils.isDateTimeWithinPeriod(dateCurrentLine, fromDate, toDate))){
+						(dateCurrentLine !=null && comparator.compare(dateCurrentLine, fromDate) >= 0 &&  comparator.compare(dateCurrentLine, toDate) <= 0)){
 					result+=line+"\n";
 					length += line.length();
 					mustBeInToo=true;
@@ -64,7 +68,6 @@ public class LogExtractionService {
 		return result;
 	}
 
-//TODO  Add the date also in the log files
 	private static Date getDateTime(String line, String dateFormat){
 		Date result = null;
 		if(line == null){

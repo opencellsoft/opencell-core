@@ -1,5 +1,7 @@
 package org.meveo.service.notification;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashMap;
@@ -271,17 +273,21 @@ public class DefaultObserver {
    
    public void businesException(@Observes  BusinessExceptionEvent bee){
        log.info("Defaut observer : BusinessExceptionEvent {} ", bee);
+       StringWriter errors = new StringWriter();
+       bee.getBusinessException().printStackTrace(new PrintWriter(errors));
        String input = "{"+
 				"	  #meveoInstanceCode#: #myMeveo#,"+
-				"	  #subject#: #A Exception#,"+
-				"	  #body#: #"+LogExtractionService.getLogs(new Date(System.currentTimeMillis()-20000) , new Date())+"#,"+
-				"	  #additionnalInfo1#: ##,"+
+				"	  #subject#: #"+bee.getBusinessException().getMessage()+"#,"+
+				"	  #body#: #"+errors.toString()+"#,"+
+				"	  #additionnalInfo1#: #"+LogExtractionService.getLogs(new Date(System.currentTimeMillis()-Integer.parseInt(ParamBean.getInstance().
+						getProperty("meveo.notifier.log.timeBefore", "5000"))) , new Date())+"#,"+
 				"	  #additionnalInfo2#: ##,"+
 				"	  #additionnalInfo3#: ##,"+
 				"	  #additionnalInfo4#: ##"+
 				"}";
-       log.info("Defaut observer : input {} ", input);
-       remoteInstanceNotifier.invoke(input.replaceAll("#", "\""),ParamBean.getInstance().getProperty("inboundCommunication.url", "http://version.meveo.info/meveo-moni/api/rest/inboundCommunication"));
+       log.info("Defaut observer : input {} ", input.replaceAll("#", "\""));
+       //TODO send a jsonObject
+       remoteInstanceNotifier.invoke(input.replaceAll("\"","'").replaceAll("#", "\""),ParamBean.getInstance().getProperty("inboundCommunication.url", "http://version.meveo.info/meveo-moni/api/rest/inboundCommunication"));
        
 		//TODO handel reponse
 		//if pertinent, if need logs
