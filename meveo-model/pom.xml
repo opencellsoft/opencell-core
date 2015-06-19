@@ -115,13 +115,14 @@
 		<dependency>
 			<groupId>commons-lang</groupId>
 			<artifactId>commons-lang</artifactId>
-			<version>2.3</version>
+			<version>2.3</version> 
 		</dependency>
 
 		<dependency>
 			<groupId>cn.guoyukun.jdbc</groupId>
 			<artifactId>oracle-ojdbc6</artifactId>
 			<version>11.2.0.3.0</version>
+			<scope>provided</scope>
 		</dependency>
 
 		<dependency>
@@ -172,6 +173,7 @@
 		<dependency>
 			<groupId>joda-time</groupId>
 			<artifactId>joda-time</artifactId>
+			<scope>provided</scope>
 		</dependency>
 		
 		<!-- TESTING dependencies -->
