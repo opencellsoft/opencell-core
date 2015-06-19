@@ -59,7 +59,7 @@ public class EntityExportImportBean implements Serializable {
 
     private ParamBean param = ParamBean.getInstance();
 
-    private boolean requireFK;
+    private boolean requireFK = true;
 
     private Provider forceToProvider;
 
