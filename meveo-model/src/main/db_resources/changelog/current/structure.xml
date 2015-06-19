@@ -582,6 +582,42 @@
 			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
 			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="meveo_script_instance" />
 
-	</changeSet>            
+	</changeSet>       
+	
+	<changeSet author="anasseh (generated)" id="887_2015-06-19">
+	
+	    <createTable tableName="ADM_NOTIF_JOB">
+            <column name="JOB_INSTANCE_ID" type="BIGINT"/>           
+            <column name="id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        
+        <addPrimaryKey columnNames="id" constraintName="ADM_NOTIF_JOB_pkey" tableName="ADM_NOTIF_JOB"/>
+
+		<addForeignKeyConstraint baseColumnNames="JOB_INSTANCE_ID"
+			baseTableName="ADM_NOTIF_JOB" constraintName="fk_job_trigger_notif"
+			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="MEVEO_JOB_INSTANCE" />
+            
+		<createTable tableName="ADM_NOTIF_JOB_PARAMS">
+			<column name="jobtrigger_id" type="BIGINT">
+				<constraints nullable="false" />
+			</column>
+			<column name="params" type="VARCHAR(255)" />
+			<column name="params_key" type="VARCHAR(255)">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+
+		<addPrimaryKey columnNames="jobtrigger_id, params_key"
+			constraintName="PK_ADM_NOTIF_JOB_PARAMS" tableName="ADM_NOTIF_JOB_PARAMS" />
+
+		<addForeignKeyConstraint baseColumnNames="jobtrigger_id"
+			baseTableName="ADM_NOTIF_JOB_PARAMS" constraintName="fk_params_job_trigger"
+			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="ADM_NOTIF_JOB" />
+
+	</changeSet>       
 	
 </databaseChangeLog>

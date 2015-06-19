@@ -33,14 +33,18 @@ import org.meveo.model.IEntity;
 import org.meveo.model.IProvider;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.WalletInstance;
+import org.meveo.model.jobs.ScriptInstance;
 import org.meveo.model.notification.EmailNotification;
 import org.meveo.model.notification.InboundRequest;
 import org.meveo.model.notification.InstantMessagingNotification;
+import org.meveo.model.notification.JobTrigger;
 import org.meveo.model.notification.Notification;
 import org.meveo.model.notification.NotificationEventTypeEnum;
 import org.meveo.model.notification.NotificationHistory;
 import org.meveo.model.notification.NotificationHistoryStatusEnum;
 import org.meveo.model.notification.WebHook;
+import org.meveo.script.JavaCompilerManager;
+import org.meveo.script.ScriptInterface;
 import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.billing.impl.CounterInstanceService;
 import org.meveo.service.billing.impl.CounterValueInsufficientException;
@@ -76,6 +80,12 @@ public class DefaultObserver {
     
     @Inject
     private RemoteInstanceNotifier remoteInstanceNotifier;
+    
+    @Inject
+    private JavaCompilerManager javaCompilerManager;
+    
+    @Inject
+    private JobTriggerLauncher jobTriggerLauncher;
 
     private boolean matchExpression(String expression, Object o) throws BusinessException {
         Boolean result = true;
@@ -104,6 +114,15 @@ public class DefaultObserver {
         userMap.put("manager", manager);
         return (String) ValueExpressionWrapper.evaluateExpression(expression, userMap, String.class);
     }
+    
+    
+    private void executeScript(ScriptInstance scriptInstance, Object o) throws BusinessException {
+        log.debug("execute notification script: {}", scriptInstance.getScript());
+        ScriptInterface scriptInterface = javaCompilerManager.getAllScriptInterfaces().get(scriptInstance.getCode());
+        Map<String, Object> userMap = new HashMap<String, Object>();
+        userMap.put("event", o);
+    	scriptInterface.execute(userMap);
+    }    
 
     private void fireNotification(Notification notif, IEntity e) {
         log.debug("Fire Notification for notif with {} and entity with id={}", notif, e.getId());
@@ -115,6 +134,10 @@ public class DefaultObserver {
             // we first perform the EL actions
             if (!(notif instanceof WebHook)) {
                 executeAction(notif.getElAction(), e);
+            }
+            
+            if(notif.getScriptInstance() != null){
+            	executeScript(notif.getScriptInstance(), e);
             }
 
             boolean sendNotify = true;
@@ -145,6 +168,9 @@ public class DefaultObserver {
             if (notif.getEventTypeFilter() == NotificationEventTypeEnum.INBOUND_REQ) {
                 NotificationHistory histo = notificationHistoryService.create(notif, e, "", NotificationHistoryStatusEnum.SENT);
                 ((InboundRequest) e).add(histo);
+            }
+            if(notif instanceof JobTrigger){
+            	jobTriggerLauncher.launch((JobTrigger) notif, e);
             }
 
         } catch (BusinessException e1) {
