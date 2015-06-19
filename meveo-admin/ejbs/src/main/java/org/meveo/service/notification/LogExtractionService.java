@@ -1,44 +1,84 @@
 package org.meveo.service.notification;
 
+import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.ArrayList;
+import java.io.InputStreamReader;
+import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.List;
 import java.util.Properties;
 
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.shared.DateUtils;
 
+/**
+ * Lauch a jobInstance and create a notificationHistory
+ * 
+ * @author anasseh
+ * @created 19.06.2015
+ * 
+ */
 public class LogExtractionService {
-	
+
 	public static String  getLogs(Date fromDate,Date toDate){
 		String result="";
-//		try {
-//			Properties props = new Properties();
-//			props.load(new FileInputStream(System.getProperty("logging.configuration").substring(5)));
-//			String logFile = props.getProperty("handler.FILE.fileName");
-//			String dateFormat = props.getProperty("formatter.FILE.pattern").substring(props.getProperty("formatter.FILE.pattern").indexOf("{")+1, props.getProperty("formatter.FILE.pattern").indexOf("}"));
-//			List<String>  allLines = Files.readAllLines(Paths.get(logFile), StandardCharsets.UTF_8);
-//			List<String>  foundedLines = new ArrayList<String>();
-//			int length=0;
-//			for(String line : allLines){
-//				if(DateUtils.isDateTimeWithinPeriod(DateUtils.parseDateWithPattern(line.substring(0, dateFormat.length()), dateFormat), fromDate, toDate)){
-//					foundedLines.add(line);
-//					length += line.length();
-//				}
-//				if(length > Integer.parseInt(ParamBean.getInstance().getProperty("meveo.notifier.log.lenght", "100000"))){
-//					break;
-//				}
-//			}
-//		} catch (IOException e) {
-	//		e.printStackTrace();
-		//}
+		BufferedReader logReader = null;
+		try {
+			Properties props = new Properties();
+			props.load(new FileInputStream(System.getProperty("logging.configuration").substring(5)));
+			String logFile = props.getProperty("handler.FILE.fileName");			
+			String dateFormat = props.getProperty("formatter.FILE.pattern").substring(props.getProperty("formatter.FILE.pattern").indexOf("{")+1, props.getProperty("formatter.FILE.pattern").indexOf("}"));			
+			int length=0,maxLength=Integer.parseInt(ParamBean.getInstance().getProperty("meveo.notifier.log.lenght", "100000"));
+			boolean mustBeInToo=false;
+			Date dateCurrentLine =null;
+			String line=null;
+			boolean isAfterToDate = false;
+			logReader = new BufferedReader(new InputStreamReader(new FileInputStream(logFile)));
+			while((line = logReader.readLine()) != null && length < maxLength && !isAfterToDate){				
+				dateCurrentLine = getDateTime(line,dateFormat);			
+				if(( dateCurrentLine ==null && mustBeInToo) || //include the line that not start by a date but it is in the period
+						(dateCurrentLine !=null && DateUtils.isDateTimeWithinPeriod(dateCurrentLine, fromDate, toDate))){
+					result+=line+"\n";
+					length += line.length();
+					mustBeInToo=true;
+				}else{
+					mustBeInToo=false;
+				}
+				if(dateCurrentLine != null){
+					if(dateCurrentLine.after(toDate)){
+						isAfterToDate = true;
+					}
+				}				
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}finally{			
+			if(logReader != null){
+				try {
+					logReader.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		}
 		return result;
 	}
-	
 
+//TODO  Add the date also in the log files
+	private static Date getDateTime(String line, String dateFormat){
+		Date result = null;
+		if(line == null){
+			return null;
+		}
+		if(line.length() < dateFormat.length()){
+			return null;
+		}
+		SimpleDateFormat sdf = new SimpleDateFormat(dateFormat);
+
+		try {
+			result = sdf.parse(line.substring(0, dateFormat.length()));
+		} catch (Exception e) {
+		}
+		return result;
+	}
 }
