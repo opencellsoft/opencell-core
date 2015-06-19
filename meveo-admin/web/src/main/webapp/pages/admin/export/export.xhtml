@@ -104,7 +104,7 @@
             widgetVar="exportResultsDialog" width="900">
             <h:panelGroup id="exportSummary">
                 <h:form rendered="#{entityExportImportBean.exportImportFuture!=null}">
-                    <p:poll interval="5" update="exportSummary" stop="#{entityExportImportBean.exportImportFuture!=null and entityExportImportBean.exportImportFuture.isDone()}" />
+                    <p:poll interval="5" update="exportSummary" stop="#{entityExportImportBean.exportImportFuture!=null and entityExportImportBean.exportImportFuture.isDone()}" widgetVar="expStatusPoll" onerror="PF('expStatusPoll').stop()"/>
 
                     <h:panelGroup rendered="#{entityExportImportBean.exportImportFuture!=null and !entityExportImportBean.exportImportFuture.isDone()}">
 

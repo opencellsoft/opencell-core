@@ -43,7 +43,7 @@
 
         <h:panelGroup id="importSummary">
             <h:form rendered="#{entityExportImportBean.exportImportFuture!=null}">
-                <p:poll interval="5" update="importSummary" stop="#{entityExportImportBean.exportImportFuture!=null and entityExportImportBean.exportImportFuture.isDone()}" />
+                <p:poll interval="5" update="importSummary" stop="#{entityExportImportBean.exportImportFuture!=null and entityExportImportBean.exportImportFuture.isDone()}"  widgetVar="impStatusPoll" onerror="PF('impStatusPoll').stop()"/>
 
                 <h:panelGroup rendered="#{entityExportImportBean.exportImportFuture!=null and !entityExportImportBean.exportImportFuture.isDone()}">
 

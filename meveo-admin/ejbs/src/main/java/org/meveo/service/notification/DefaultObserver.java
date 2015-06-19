@@ -1,5 +1,7 @@
 package org.meveo.service.notification;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashMap;
@@ -33,14 +35,18 @@ import org.meveo.model.IEntity;
 import org.meveo.model.IProvider;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.WalletInstance;
+import org.meveo.model.jobs.ScriptInstance;
 import org.meveo.model.notification.EmailNotification;
 import org.meveo.model.notification.InboundRequest;
 import org.meveo.model.notification.InstantMessagingNotification;
+import org.meveo.model.notification.JobTrigger;
 import org.meveo.model.notification.Notification;
 import org.meveo.model.notification.NotificationEventTypeEnum;
 import org.meveo.model.notification.NotificationHistory;
 import org.meveo.model.notification.NotificationHistoryStatusEnum;
 import org.meveo.model.notification.WebHook;
+import org.meveo.script.JavaCompilerManager;
+import org.meveo.script.ScriptInterface;
 import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.billing.impl.CounterInstanceService;
 import org.meveo.service.billing.impl.CounterValueInsufficientException;
@@ -76,6 +82,12 @@ public class DefaultObserver {
     
     @Inject
     private RemoteInstanceNotifier remoteInstanceNotifier;
+    
+    @Inject
+    private JavaCompilerManager javaCompilerManager;
+    
+    @Inject
+    private JobTriggerLauncher jobTriggerLauncher;
 
     private boolean matchExpression(String expression, Object o) throws BusinessException {
         Boolean result = true;
@@ -104,6 +116,15 @@ public class DefaultObserver {
         userMap.put("manager", manager);
         return (String) ValueExpressionWrapper.evaluateExpression(expression, userMap, String.class);
     }
+    
+    
+    private void executeScript(ScriptInstance scriptInstance, Object o) throws BusinessException {
+        log.debug("execute notification script: {}", scriptInstance.getScript());
+        ScriptInterface scriptInterface = javaCompilerManager.getAllScriptInterfaces().get(scriptInstance.getCode());
+        Map<String, Object> userMap = new HashMap<String, Object>();
+        userMap.put("event", o);
+    	scriptInterface.execute(userMap);
+    }    
 
     private void fireNotification(Notification notif, IEntity e) {
         log.debug("Fire Notification for notif with {} and entity with id={}", notif, e.getId());
@@ -115,6 +136,10 @@ public class DefaultObserver {
             // we first perform the EL actions
             if (!(notif instanceof WebHook)) {
                 executeAction(notif.getElAction(), e);
+            }
+            
+            if(notif.getScriptInstance() != null){
+            	executeScript(notif.getScriptInstance(), e);
             }
 
             boolean sendNotify = true;
@@ -145,6 +170,9 @@ public class DefaultObserver {
             if (notif.getEventTypeFilter() == NotificationEventTypeEnum.INBOUND_REQ) {
                 NotificationHistory histo = notificationHistoryService.create(notif, e, "", NotificationHistoryStatusEnum.SENT);
                 ((InboundRequest) e).add(histo);
+            }
+            if(notif instanceof JobTrigger){
+            	jobTriggerLauncher.launch((JobTrigger) notif, e);
             }
 
         } catch (BusinessException e1) {
@@ -245,17 +273,21 @@ public class DefaultObserver {
    
    public void businesException(@Observes  BusinessExceptionEvent bee){
        log.info("Defaut observer : BusinessExceptionEvent {} ", bee);
+       StringWriter errors = new StringWriter();
+       bee.getBusinessException().printStackTrace(new PrintWriter(errors));
        String input = "{"+
 				"	  #meveoInstanceCode#: #myMeveo#,"+
-				"	  #subject#: #A Exception#,"+
-				"	  #body#: #"+LogExtractionService.getLogs(new Date(System.currentTimeMillis()-20000) , new Date())+"#,"+
-				"	  #additionnalInfo1#: ##,"+
+				"	  #subject#: #"+bee.getBusinessException().getMessage()+"#,"+
+				"	  #body#: #"+errors.toString()+"#,"+
+				"	  #additionnalInfo1#: #"+LogExtractionService.getLogs(new Date(System.currentTimeMillis()-Integer.parseInt(ParamBean.getInstance().
+						getProperty("meveo.notifier.log.timeBefore", "5000"))) , new Date())+"#,"+
 				"	  #additionnalInfo2#: ##,"+
 				"	  #additionnalInfo3#: ##,"+
 				"	  #additionnalInfo4#: ##"+
 				"}";
-       log.info("Defaut observer : input {} ", input);
-       remoteInstanceNotifier.invoke(input.replaceAll("#", "\""),ParamBean.getInstance().getProperty("inboundCommunication.url", "http://version.meveo.info/meveo-moni/api/rest/inboundCommunication"));
+       log.info("Defaut observer : input {} ", input.replaceAll("#", "\""));
+       //TODO send a jsonObject
+       remoteInstanceNotifier.invoke(input.replaceAll("\"","'").replaceAll("#", "\""),ParamBean.getInstance().getProperty("inboundCommunication.url", "http://version.meveo.info/meveo-moni/api/rest/inboundCommunication"));
        
 		//TODO handel reponse
 		//if pertinent, if need logs

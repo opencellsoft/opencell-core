@@ -110,29 +110,29 @@ public class JobInstanceService extends PersistenceService<JobInstance> {
 		// job.cleanAllTimers();
 		@SuppressWarnings("unchecked")
 		List<JobInstance> jobInstances = getEntityManager().createQuery("from JobInstance ji where ji.jobTemplate=:jobName")
-				.setParameter("jobName", job.getClass().getSimpleName()).getResultList();
+		.setParameter("jobName", job.getClass().getSimpleName()).getResultList();
 
 		if (jobInstances != null) {
 			int started=0;
 			for (JobInstance jobInstance : jobInstances) {
-			    if(jobInstance.isActive()){
-			        jobTimers.put(jobInstance.getId(),job.createTimer(jobInstance.getTimerEntity().getScheduleExpression(), jobInstance));
-			        started++;
-			    }
+				if(jobInstance.isActive()){
+					jobTimers.put(jobInstance.getId(),job.createTimer(jobInstance.getTimerEntity().getScheduleExpression(), jobInstance));
+					started++;
+				}
 			}
-            log.debug("Found {} timers for {}, started {}",jobInstances.size(),job.getClass().getSimpleName(),started);
+			log.debug("Found {} timers for {}, started {}",jobInstances.size(),job.getClass().getSimpleName(),started);
 		}
 	}
-	
+
 	public Job getJobByName(String jobName){
-	    Job result=null;
-	    try {
-            InitialContext ic=new InitialContext();
-            result = (Job) ic.lookup("java:global/"+paramBean.getProperty("meveo.moduleName", "meveo")+"/"+jobName);
-        } catch (NamingException e) {
-        	log.error("Failed to get job by name",e);
-        }
-	    return result;
+		Job result=null;
+		try {
+			InitialContext ic=new InitialContext();
+			result = (Job) ic.lookup("java:global/"+paramBean.getProperty("meveo.moduleName", "meveo")+"/"+jobName);
+		} catch (NamingException e) {
+			log.error("Failed to get job by name",e);
+		}
+		return result;
 	}
 
 	public void create(JobInstance jobInstance) throws BusinessException {
@@ -140,20 +140,20 @@ public class JobInstanceService extends PersistenceService<JobInstance> {
 		try {
 			ic = new InitialContext();
 			if (jobEntries.containsKey(jobInstance.getJobCategoryEnum())) {
-               
-                if (getCurrentUser() == null) {
-                    throw new BusinessException("User must be logged in to perform this action.");
-                }
-                jobInstance.setUserId(getCurrentUser().getId());
-              
-                super.create(jobInstance);
+
+				if (getCurrentUser() == null) {
+					throw new BusinessException("User must be logged in to perform this action.");
+				}
+				jobInstance.setUserId(getCurrentUser().getId());
+
+				super.create(jobInstance);
 				HashMap<String, String> jobs = jobEntries.get(jobInstance.getJobCategoryEnum());
 				if (jobs.containsKey(jobInstance.getJobTemplate()) && jobInstance.isActive()) {
-				    log.debug("job created active, we schedule it and store it with id {}",jobInstance.getId());
+					log.debug("job created active, we schedule it and store it with id {}",jobInstance.getId());
 					Job job = (Job) ic.lookup(jobs.get(jobInstance.getJobTemplate()));
 					jobTimers.put(jobInstance.getId(),job.createTimer(jobInstance.getTimerEntity().getScheduleExpression(), jobInstance));
 				} else {
-				    log.debug("job created inactive, we do not schedule it");
+					log.debug("job created inactive, we do not schedule it");
 				}
 			}
 		} catch (NamingException e) {
@@ -169,29 +169,29 @@ public class JobInstanceService extends PersistenceService<JobInstance> {
 			if (jobEntries.containsKey(entity.getJobCategoryEnum())) {
 				HashMap<String, String> jobs = jobEntries.get(entity.getJobCategoryEnum());
 				if (jobs.containsKey(entity.getJobTemplate())) {
-                    if (entity.getId() == null) {
-                        log.info("updating timer entity with null id, something is wrong");
-                    } else if (jobTimers.containsKey(entity.getId())) {
-                        try {
-                            Timer timer = jobTimers.get(entity.getId());
-                            timer.cancel();
-                            jobTimers.remove(entity.getId());
-                            log.info("cancelled timer {} , id=", entity.getJobTemplate(),entity.getId());
-                        } catch (Exception ex) {
-                            log.info("cannot cancel timer {}", ex);
-                        }
-                        
-                    }
-                   
-                    super.update(entity);
-				    if(entity.isActive()){
-    				    Job job = (Job) ic.lookup(jobs.get(entity.getJobTemplate()));
-    				    log.info("Scheduling job {} : timer {}",job,entity.getId());
-    					jobTimers.put(entity.getId(),
-    							job.createTimer(entity.getTimerEntity().getScheduleExpression(), entity));
-				    }
+					if (entity.getId() == null) {
+						log.info("updating timer entity with null id, something is wrong");
+					} else if (jobTimers.containsKey(entity.getId())) {
+						try {
+							Timer timer = jobTimers.get(entity.getId());
+							timer.cancel();
+							jobTimers.remove(entity.getId());
+							log.info("cancelled timer {} , id=", entity.getJobTemplate(),entity.getId());
+						} catch (Exception ex) {
+							log.info("cannot cancel timer {}", ex);
+						}
+
+					}
+
+					super.update(entity);
+					if(entity.isActive()){
+						Job job = (Job) ic.lookup(jobs.get(entity.getJobTemplate()));
+						log.info("Scheduling job {} : timer {}",job,entity.getId());
+						jobTimers.put(entity.getId(),
+								job.createTimer(entity.getTimerEntity().getScheduleExpression(), entity));
+					}
 				} else {
-				    throw new RuntimeException("cannot find job "+entity.getJobTemplate());
+					throw new RuntimeException("cannot find job "+entity.getJobTemplate());
 				}
 			}
 		} catch (NamingException e) {
@@ -202,20 +202,20 @@ public class JobInstanceService extends PersistenceService<JobInstance> {
 	}
 
 	public void remove(JobInstance entity) {// FIXME: throws BusinessException{
-        log.info("remove timer {} , id=", entity.getJobTemplate(),entity.getId());
-	    if (entity.getId() == null) {
-            log.info("removing timer entity with null id, something is wrong");
-        } else if (jobTimers.containsKey(entity.getId())) {
-            try {
-                Timer timer = jobTimers.get(entity.getId());
-                timer.cancel();
-            } catch (Exception ex) {
-                log.info("cannot cancel timer " + ex);
-            }
-            jobTimers.remove(entity.getId());
-        } else {
-            log.info("timer not found, cannot remove it");
-        }
+		log.info("remove timer {} , id=", entity.getJobTemplate(),entity.getId());
+		if (entity.getId() == null) {
+			log.info("removing timer entity with null id, something is wrong");
+		} else if (jobTimers.containsKey(entity.getId())) {
+			try {
+				Timer timer = jobTimers.get(entity.getId());
+				timer.cancel();
+			} catch (Exception ex) {
+				log.info("cannot cancel timer " + ex);
+			}
+			jobTimers.remove(entity.getId());
+		} else {
+			log.info("timer not found, cannot remove it");
+		}
 		super.remove(entity);
 	}
 
@@ -239,17 +239,23 @@ public class JobInstanceService extends PersistenceService<JobInstance> {
 		}
 	}
 
+	public void triggerExecution(JobInstance entity, Map<String, String> params) throws BusinessException {
+		log.info("triggerExecution jobInstance={} via api", entity.getJobTemplate());
+		//TODO customize CF
+		manualExecute( entity);
+	}
+
 	public void manualExecute(JobInstance entity) throws BusinessException {
 		log.info("Manual execute a job {} of type {}", entity.getCode(), entity.getJobTemplate());
-		
+
 		try {
-		    
-		    // Retrieve a timer entity from registered job timers, so if job is launched manually and automatically at the same time, only one will run 
-		    if (jobTimers.containsKey(entity.getId())){
-		        entity = (JobInstance) jobTimers.get(entity.getId()).getInfo();
-		    }
-		    		    
-		    InitialContext ic = new InitialContext();
+
+			// Retrieve a timer entity from registered job timers, so if job is launched manually and automatically at the same time, only one will run 
+			if (jobTimers.containsKey(entity.getId())){
+				entity = (JobInstance) jobTimers.get(entity.getId()).getInfo();
+			}
+
+			InitialContext ic = new InitialContext();
 			User currentUser = userService.findById(entity.getUserId());
 			if ( !currentUser.doesProviderMatch(getCurrentProvider())) {
 				throw new BusinessException("Not authorized to execute this job");
@@ -266,42 +272,42 @@ public class JobInstanceService extends PersistenceService<JobInstance> {
 			}
 		} catch (NamingException e) {
 			log.error("failed to manually execute ",e);
-		
+
 		} catch (Exception e){
-		    log.error("Failed to manually execute a job {} of type {}", entity.getCode(), entity.getJobTemplate(),e);
-		    throw e;
+			log.error("Failed to manually execute a job {} of type {}", entity.getCode(), entity.getJobTemplate(),e);
+			throw e;
 		}
 	}
 
 	public void executeAPITimer(JobInstanceInfoDto jobInstanceInfoDTO, User currentUser) throws Exception {
 		log.info("execute timer={} via api", jobInstanceInfoDTO.getTimerName());
 		JobInstance entity=(JobInstance) getEntityManager().createQuery("FROM JobInstance where code=:codeIN and provider=:providerIN")
-		.setParameter("codeIN", jobInstanceInfoDTO.getTimerName()).setParameter("providerIN", currentUser.getProvider()).getSingleResult();
+				.setParameter("codeIN", jobInstanceInfoDTO.getTimerName()).setParameter("providerIN", currentUser.getProvider()).getSingleResult();
 		InitialContext ic;
-        try {
-            ic = new InitialContext();
-            if (jobEntries.containsKey(entity.getJobCategoryEnum())) {
-                HashMap<String, String> jobs = jobEntries.get(entity.getJobCategoryEnum());
-                if (jobs.containsKey(entity.getJobTemplate())) {
-                    Job job = (Job) ic.lookup(jobs.get(entity.getJobTemplate()));
-                    
-                    if(jobInstanceInfoDTO.getInvoiceDate()!=null){
-                    	entity.setDateCustomValue("BillingRunJob_invoiceDate",jobInstanceInfoDTO.getInvoiceDate());
-                    }
-                    if(jobInstanceInfoDTO.getLastTransactionDate()!=null){
-                    	entity.setDateCustomValue("BillingRunJob_lastTransactionDate",jobInstanceInfoDTO.getLastTransactionDate());
-                    }
-                    if(jobInstanceInfoDTO.getBillingCycle()!=null){
-                    	entity.setStringCustomValue("BillingRunJob_billingCycle",jobInstanceInfoDTO.getBillingCycle());
-                    }
-                    job.execute(entity, currentUser);
-                }
-            } else {
-                throw new BusinessException("cannot find job category " + entity.getJobCategoryEnum());
-            }
-        } catch (NamingException e) {
-            log.error("failed to execute API timer",e);
-        }
+		try {
+			ic = new InitialContext();
+			if (jobEntries.containsKey(entity.getJobCategoryEnum())) {
+				HashMap<String, String> jobs = jobEntries.get(entity.getJobCategoryEnum());
+				if (jobs.containsKey(entity.getJobTemplate())) {
+					Job job = (Job) ic.lookup(jobs.get(entity.getJobTemplate()));
+
+					if(jobInstanceInfoDTO.getInvoiceDate()!=null){
+						entity.setDateCustomValue("BillingRunJob_invoiceDate",jobInstanceInfoDTO.getInvoiceDate());
+					}
+					if(jobInstanceInfoDTO.getLastTransactionDate()!=null){
+						entity.setDateCustomValue("BillingRunJob_lastTransactionDate",jobInstanceInfoDTO.getLastTransactionDate());
+					}
+					if(jobInstanceInfoDTO.getBillingCycle()!=null){
+						entity.setStringCustomValue("BillingRunJob_billingCycle",jobInstanceInfoDTO.getBillingCycle());
+					}
+					job.execute(entity, currentUser);
+				}
+			} else {
+				throw new BusinessException("cannot find job category " + entity.getJobCategoryEnum());
+			}
+		} catch (NamingException e) {
+			log.error("failed to execute API timer",e);
+		}
 	}
 
 	public JobInstance getByTimer(Timer timer) {
@@ -318,8 +324,8 @@ public class JobInstanceService extends PersistenceService<JobInstance> {
 	private QueryBuilder getFindQuery(PaginationConfiguration configuration) {
 		String sql = "select distinct t from JobInstance t";
 		QueryBuilder qb = new QueryBuilder(sql);// FIXME: .cacheable(); there is
-												// no cacheable in MEVEO
-												// QueryBuilder
+		// no cacheable in MEVEO
+		// QueryBuilder
 		qb.addCriterionEntity("provider", getCurrentProvider());
 		qb.addPaginationConfiguration(configuration);
 		return qb;
@@ -334,33 +340,33 @@ public class JobInstanceService extends PersistenceService<JobInstance> {
 		return getFindQuery(configuration).count(getEntityManager());
 	}
 
-    /**
-     * Check if a timer, identifier by a timer id, is running
-     * 
-     * @param timerEntityId Timer entity id
-     * @return True if running
-     */
-    public boolean isTimerRunning(Long timerEntityId) {
-        Timer timer = jobTimers.get(timerEntityId);
+	/**
+	 * Check if a timer, identifier by a timer id, is running
+	 * 
+	 * @param timerEntityId Timer entity id
+	 * @return True if running
+	 */
+	public boolean isTimerRunning(Long timerEntityId) {
+		Timer timer = jobTimers.get(timerEntityId);
 
-        if (timer != null) {
-            try {
-                return ((JobInstance) timer.getInfo()).isRunning();
-            } catch (Exception e) {
-                log.error("Failed to access timer status {}", e);
-            }
-        }
-        return false;
-    }
-    
-    public JobInstance findByCode(String code,Provider provider) {
+		if (timer != null) {
+			try {
+				return ((JobInstance) timer.getInfo()).isRunning();
+			} catch (Exception e) {
+				log.error("Failed to access timer status {}", e);
+			}
+		}
+		return false;
+	}
+
+	public JobInstance findByCode(String code,Provider provider) {
 		QueryBuilder qb = new QueryBuilder(JobInstance.class, "t");
 		qb.addCriterionWildcard("t.code", code, true); 
 		qb.addCriterionEntity("provider", provider);
 		try {
-            return (JobInstance) qb.getQuery(getEntityManager()).getSingleResult();
-        } catch (NoResultException e) {
-            return null;
-        }
+			return (JobInstance) qb.getQuery(getEntityManager()).getSingleResult();
+		} catch (NoResultException e) {
+			return null;
+		}
 	}
 }

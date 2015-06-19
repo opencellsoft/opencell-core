@@ -56,6 +56,10 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.hibernate.proxy.HibernateProxy;
+import org.meveo.cache.CdrEdrProcessingCacheContainerProvider;
+import org.meveo.cache.NotificationCacheContainerProvider;
+import org.meveo.cache.RatingCacheContainerProvider;
+import org.meveo.cache.WalletCacheContainerProvider;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.model.Auditable;
@@ -111,6 +115,18 @@ public class EntityExportImportService implements Serializable {
 
     @Inject
     private Logger log;
+
+    @Inject
+    private WalletCacheContainerProvider walletCacheContainerProvider;
+
+    @Inject
+    private CdrEdrProcessingCacheContainerProvider cdrEdrProcessingCacheContainerProvider;
+
+    @Inject
+    private NotificationCacheContainerProvider notificationCacheContainerProvider;
+
+    @Inject
+    private RatingCacheContainerProvider ratingCacheContainerProvider;
 
     private Map<Class<? extends IEntity>, String[]> exportIdMapping;
     private Map<String, Object[]> attributesToOmit;
@@ -472,6 +488,8 @@ public class EntityExportImportService implements Serializable {
                     reader.moveUp();
                 }
             }
+
+            refreshCaches();
 
             log.info("Finished importing file {} ", filename);
 
@@ -1481,5 +1499,13 @@ public class EntityExportImportService implements Serializable {
             }
             return unmarshaller.start(dataHolder);
         }
+    }
+
+    private void refreshCaches() {
+        log.info("Initiating cache reload after import ");
+        walletCacheContainerProvider.refreshCache(null);
+        cdrEdrProcessingCacheContainerProvider.refreshCache(null);
+        notificationCacheContainerProvider.refreshCache(null);
+        ratingCacheContainerProvider.refreshCache(null);
     }
 }

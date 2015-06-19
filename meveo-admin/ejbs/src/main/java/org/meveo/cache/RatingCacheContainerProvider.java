@@ -485,14 +485,16 @@ public class RatingCacheContainerProvider {
     /**
      * Refresh cache by name
      * 
-     * @param cacheName Name of cache to refresh
+     * @param cacheName Name of cache to refresh or null to refresh all caches
      */
     @Asynchronous
     public void refreshCache(String cacheName) {
 
-        if (cacheName.equals(pricePlanCache.getName())) {
+        if (cacheName == null || cacheName.equals(pricePlanCache.getName())) {
             populatePricePlanCache();
-        } else if (cacheName.equals(usageChargeTemplateCacheCache.getName()) || cacheName.equals(usageChargeInstanceCache.getName()) || cacheName.equals(counterCache.getName())) {
+        }
+        if (cacheName == null || cacheName.equals(usageChargeTemplateCacheCache.getName()) || cacheName.equals(usageChargeInstanceCache.getName())
+                || cacheName.equals(counterCache.getName())) {
             populateUsageChargeCache();
         }
     }

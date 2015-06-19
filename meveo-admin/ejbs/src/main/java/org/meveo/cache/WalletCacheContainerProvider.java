@@ -46,13 +46,13 @@ public class WalletCacheContainerProvider {
 
     @EJB
     private WalletService walletService;
-    
+
     @Inject
     @LowBalance
     protected Event<WalletInstance> lowBalanceEventProducer;
 
     /**
-     * Contains association between prepaid wallet instance and balance value. Key format:  WalletInstance.id.
+     * Contains association between prepaid wallet instance and balance value. Key format: WalletInstance.id.
      */
     // @Resource(lookup = "java:jboss/infinispan/cache/meveo/meveo-balance")
     private BasicCache<Long, BigDecimal> balanceCache;
@@ -173,11 +173,10 @@ public class WalletCacheContainerProvider {
         if (balanceCache.containsKey(op.getWallet().getId()) && (!(op instanceof WalletReservation) || (op.getStatus() == WalletOperationStatusEnum.OPEN))) {
             oldValue = balanceCache.get(op.getWallet().getId());
             newValue = oldValue.subtract(op.getAmountWithTax());
-            log.info("Update balance Cache for wallet {} {}->{} lowBalanceLevel:{}", op.getWallet().getId(), oldValue, newValue,op.getWallet().getLowBalanceLevel());
+            log.info("Update balance Cache for wallet {} {}->{} lowBalanceLevel:{}", op.getWallet().getId(), oldValue, newValue, op.getWallet().getLowBalanceLevel());
             balanceCache.put(op.getWallet().getId(), newValue);
-            if(op.getWallet().getLowBalanceLevel()!=null){
-                if(op.getWallet().getLowBalanceLevel().compareTo(newValue)>=0 
-                        && op.getWallet().getLowBalanceLevel().compareTo(oldValue)<0){
+            if (op.getWallet().getLowBalanceLevel() != null) {
+                if (op.getWallet().getLowBalanceLevel().compareTo(newValue) >= 0 && op.getWallet().getLowBalanceLevel().compareTo(oldValue) < 0) {
                     lowBalanceEventProducer.fire(op.getWallet());
                 }
             }
@@ -279,12 +278,13 @@ public class WalletCacheContainerProvider {
     /**
      * Refresh cache by name
      * 
-     * @param cacheName Name of cache to refresh
+     * @param cacheName Name of cache to refresh or null to refresh all caches
      */
     @Asynchronous
     public void refreshCache(String cacheName) {
 
-        if (cacheName.equals(balanceCache.getName()) || cacheName.equals(reservedBalanceCache.getName()) || cacheName.equals(usageChargeInstanceWalletCache.getName())) {
+        if (cacheName == null || cacheName.equals(balanceCache.getName()) || cacheName.equals(reservedBalanceCache.getName())
+                || cacheName.equals(usageChargeInstanceWalletCache.getName())) {
             populateWalletCache();
         }
     }

@@ -164,6 +164,14 @@ public class CacheBean implements Serializable {
         messages.info(new BundleKey("messages", "cache.refreshInitiated"));
     }
 
+    public void refreshCaches() {
+        walletCacheContainerProvider.refreshCache(null);
+        cdrEdrProcessingCacheContainerProvider.refreshCache(null);
+        notificationCacheContainerProvider.refreshCache(null);
+        ratingCacheContainerProvider.refreshCache(null);
+        messages.info(new BundleKey("messages", "cache.refreshInitiated"));
+    }
+
     @SuppressWarnings("rawtypes")
     public LazyDataModel getCacheContents() {
         return getCacheContents(null, false);
