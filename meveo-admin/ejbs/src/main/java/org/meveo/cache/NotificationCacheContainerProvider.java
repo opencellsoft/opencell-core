@@ -85,7 +85,7 @@ public class NotificationCacheContainerProvider {
 
         try {
             String cacheKey = notif.getProvider().getId() + "_" + notif.getEventTypeFilter().name();
-           
+
             Class<BusinessEntity> c = (Class<BusinessEntity>) Class.forName(notif.getClassNameFilter());
             eventNotificationCache.putIfAbsent(cacheKey, new HashMap<Class<BusinessEntity>, List<Notification>>());
             if (!eventNotificationCache.get(cacheKey).containsKey(c)) {
@@ -106,7 +106,7 @@ public class NotificationCacheContainerProvider {
      * @param notif Notification to remove
      */
     public void removeNotificationFromCache(Notification notif) {
-        String cacheKey =  notif.getProvider().getId() + "_" + notif.getEventTypeFilter().name();
+        String cacheKey = notif.getProvider().getId() + "_" + notif.getEventTypeFilter().name();
         if (eventNotificationCache.containsKey(cacheKey)) {
             for (Class<BusinessEntity> c : eventNotificationCache.get(cacheKey).keySet()) {
                 eventNotificationCache.get(cacheKey).get(c).remove(notif);
@@ -162,12 +162,12 @@ public class NotificationCacheContainerProvider {
     /**
      * Refresh cache by name
      * 
-     * @param cacheName Name of cache to refresh
+     * @param cacheName Name of cache to refresh or null to refresh all caches
      */
     @Asynchronous
     public void refreshCache(String cacheName) {
 
-        if (cacheName.equals(eventNotificationCache.getName())) {
+        if (cacheName == null || cacheName.equals(eventNotificationCache.getName())) {
             populateNotificationCache();
         }
     }

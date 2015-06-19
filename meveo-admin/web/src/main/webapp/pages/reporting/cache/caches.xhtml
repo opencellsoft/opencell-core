@@ -1,6 +1,6 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:s="http://jboss.com/products/seam/taglib" xmlns:ui="http://java.sun.com/jsf/facelets"
-    xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html" xmlns:hftl="http://hftl.org"
-    xmlns:hf="http://java.sun.com/jsf/composite/tags" xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
+    xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html" xmlns:hftl="http://hftl.org" xmlns:hf="http://java.sun.com/jsf/composite/tags"
+    xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
 
     <f:metadata>
         <!-- 		<f:event type="preRenderView" listener="#{cacheBean.preRenderView}" /> -->
@@ -12,13 +12,13 @@
 
 
     <ui:define name="body">
-        <p:panel styleClass="search-panel" header="#{messages['cache.caches']}" >
+        <p:panel styleClass="search-panel" header="#{messages['cache.caches']}">
             <p:messages />
 
             <h:form>
                 <p:dataTable id="datatable_caches" var="cacheInfo" value="#{cacheBean.summaryOfCaches}" paginator="true" rows="10" resizableColumns="true"
-                    paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
-                    rowsPerPageTemplate="5,10,15" lazy="false" styleClass="custom-grid" rowIndexVar="rowIndex">
+                    paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}" rowsPerPageTemplate="5,10,15"
+                    lazy="false" styleClass="custom-grid" rowIndexVar="rowIndex">
                     <p:column headerText="#{messages['cache.name']}" sortBy="#{cacheInfo['name']}">
                         <h:link outcome="cacheDetail" value="#{cacheInfo['name']}">
                             <f:param name="cacheName" value="#{cacheInfo['name']}" />
@@ -28,27 +28,36 @@
                         <h:outputText value="#{cacheInfo['count']}" />
                     </p:column>
                     <p:column style="width: 100px;" headerText="#{messages['commons.actions']}">
-<!--                         <p:tooltip for="viewlink" value="#{messages['commons.view']}" showEffect="slide" hideEffect="slide" /> -->
-<!--                         <p:button id="viewlink" outcome="cacheDetail" icon="ui-icon-search"> -->
-<!--                             <f:param name="cacheName" value="#{cacheInfo['name']}" /> -->
-<!--                         </p:button> -->
+                        <!--                         <p:tooltip for="viewlink" value="#{messages['commons.view']}" showEffect="slide" hideEffect="slide" /> -->
+                        <!--                         <p:button id="viewlink" outcome="cacheDetail" icon="ui-icon-search"> -->
+                        <!--                             <f:param name="cacheName" value="#{cacheInfo['name']}" /> -->
+                        <!--                         </p:button> -->
 
-                        <p:tooltip for="refreshlink" value="#{messages['commons.refresh']}" showEffect="slide" hideEffect="slide" />
+                        <p:tooltip for="refreshlink" value="#{messages['cache.reload']}" showEffect="slide" hideEffect="slide" />
                         <p:commandButton id="refreshlink" icon="ui-icon-refresh" oncomplete="PF('confirmRefreshWidget#{rowIndex}').show()" />
 
-                        <p:confirmDialog styleClass="confirm-dialog" message="#{messages['commons.confirmRefresh']}" header="" severity="alert"
+                        <p:confirmDialog styleClass="confirm-dialog" message="#{messages['cache.confirmReload']}" header="" severity="alert"
                             widgetVar="confirmRefreshWidget#{rowIndex}">
                             <p:panel styleClass="confirm-dialog-content">
                                 <p:commandButton id="refreshOk" value="#{messages['commons.yes']}" oncomplete="PF('confirmRefreshWidget#{rowIndex}').hide()"
                                     action="#{cacheBean.refresh(cacheInfo['name'])}" update="@all" />
-                                <p:commandButton id="refreshKo" value="#{messages['commons.no']}" onclick="PF('confirmRefreshWidget#{rowIndex}').hide()"
-                                    type="button" />
+                                <p:commandButton id="refreshKo" value="#{messages['commons.no']}" onclick="PF('confirmRefreshWidget#{rowIndex}').hide()" type="button" />
                             </p:panel>
                         </p:confirmDialog>
                     </p:column>
                 </p:dataTable>
 
-                <p:button value="#{messages['commons.refresh']}" outcome="caches" />
+                <p:commandButton value="#{messages['commons.refresh']}" update="@all" />
+
+                <p:commandButton value="#{messages['cache.reload']}" oncomplete="PF('confirmRefreshAllWidget').show()" />
+
+                <p:confirmDialog styleClass="confirm-dialog" message="#{messages['cache.confirmReloadAll']}" header="" severity="alert" widgetVar="confirmRefreshAllWidget">
+                    <p:panel styleClass="confirm-dialog-content">
+                        <p:commandButton id="refreshOk" value="#{messages['commons.yes']}" oncomplete="PF('confirmRefreshAllWidget').hide()"
+                            action="#{cacheBean.refresh(null)}" update="@all" />
+                        <p:commandButton id="refreshKo" value="#{messages['commons.no']}" onclick="PF('confirmRefreshAllWidget').hide()" type="button" />
+                    </p:panel>
+                </p:confirmDialog>
             </h:form>
         </p:panel>
     </ui:define>

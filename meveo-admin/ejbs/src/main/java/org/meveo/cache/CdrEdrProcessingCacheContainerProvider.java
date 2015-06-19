@@ -99,7 +99,7 @@ public class CdrEdrProcessingCacheContainerProvider {
     public void addAccessToCache(Access access) {
         String cacheKey = access.getProvider().getId() + "_" + access.getAccessUserId();
         accessCache.putIfAbsent(cacheKey, new ArrayList<Access>());
-        //because acccessed later, to avoid lazy init
+        // because acccessed later, to avoid lazy init
         access.getSubscription().getId();
         accessCache.get(cacheKey).add(access);
         log.info("Added access {} to access cache", access);
@@ -111,23 +111,23 @@ public class CdrEdrProcessingCacheContainerProvider {
      * @param access Access to remove
      */
     public void removeAccessFromCache(Access access) {
-        
+
         // Case when AccessUserId value has not changed
         if (accessCache.containsKey(access.getProvider().getId() + "_" + access.getAccessUserId())
                 && accessCache.get(access.getProvider().getId() + "_" + access.getAccessUserId()).contains(access)) {
             accessCache.get(access.getProvider().getId() + "_" + access.getAccessUserId()).remove(access);
             log.info("Removed access {} from access cache", access);
             return;
-        
-        // Case when AccessUserId values has changed
+
+            // Case when AccessUserId values has changed
         } else {
             for (List<Access> accesses : accessCache.values()) {
-                if (accesses.contains(access)){
+                if (accesses.contains(access)) {
                     accesses.remove(access);
                     log.info("Removed access {} from access cache", access);
                     return;
                 }
-            }                                  
+            }
         }
         log.error("Failed to find and remove access {} from access cache", access);
     }
@@ -215,15 +215,16 @@ public class CdrEdrProcessingCacheContainerProvider {
     /**
      * Refresh cache by name
      * 
-     * @param cacheName Name of cache to refresh
+     * @param cacheName Name of cache to refresh or null to refresh all caches
      */
     @Asynchronous
     public void refreshCache(String cacheName) {
 
-        if (cacheName.equals(accessCache.getName())) {
+        if (cacheName == null || cacheName.equals(accessCache.getName())) {
             populateAccessCache();
 
-        } else if (cacheName.equals(edrCache.getName())) {
+        }
+        if (cacheName == null || cacheName.equals(edrCache.getName())) {
             populateEdrCache();
         }
     }
