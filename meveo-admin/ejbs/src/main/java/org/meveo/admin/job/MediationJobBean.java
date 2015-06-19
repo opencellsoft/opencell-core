@@ -115,7 +115,6 @@ public class MediationJobBean {
 				}
 
 				log.info("InputFiles job {} done.", file.getName());
-				result.registerSucces();
 				result.setDone(true);
 			} catch (Exception e) {
 				log.error("Failed to process CDR file {}", file.getName(), e);
