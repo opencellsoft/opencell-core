@@ -86,7 +86,7 @@ public class JavaCompilerManager  {
 			final String className = scriptInstance.getCode() ;
 			final String qName = packageName + '.' + className;
 			final String codeSource =scriptInstance.getScript();
-			log.info("codeSource to compile:"+codeSource);
+			log.debug("codeSource to compile:"+codeSource);
 			final DiagnosticCollector<JavaFileObject> errs = new DiagnosticCollector<JavaFileObject>();
 			Class<ScriptInterface> compiledFunction = compiler.compile(qName, codeSource, errs,new Class<?>[] { ScriptInterface.class });
 			allScriptInterfaces.put(scriptInstance.getCode(),compiledFunction.newInstance());
