@@ -18,7 +18,9 @@ package org.meveo.service.billing.impl;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -29,17 +31,23 @@ import javax.persistence.TemporalType;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.QueryBuilder;
+import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.Auditable;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.BillingAccount;
+import org.meveo.model.billing.ChargeInstance;
 import org.meveo.model.billing.CounterInstance;
 import org.meveo.model.billing.CounterPeriod;
+import org.meveo.model.billing.ServiceInstance;
+import org.meveo.model.billing.Subscription;
+import org.meveo.model.billing.UsageChargeInstance;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.catalog.Calendar;
 import org.meveo.model.catalog.CounterTemplate;
 import org.meveo.model.catalog.CounterTemplateLevel;
 import org.meveo.model.notification.Notification;
 import org.meveo.service.base.PersistenceService;
+import org.meveo.service.base.ValueExpressionWrapper;
 
 @Stateless
 public class CounterInstanceService extends PersistenceService<CounterInstance> {
@@ -52,6 +60,7 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
 
 	@Inject
 	private CounterPeriodService counterPeriodService;
+	 
 
 	public CounterInstance counterInstanciation(UserAccount userAccount, CounterTemplate counterTemplate, User creator)
 			throws BusinessException {
@@ -146,7 +155,7 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
 		return counterInstance;
 	}
 
-	public CounterPeriod createPeriod(CounterInstance counterInstance, Date chargeDate, Date initDate, User currentUser) {
+	public CounterPeriod createPeriod(CounterInstance counterInstance, Date chargeDate,Date initDate,UsageChargeInstance usageChargeInstance,  User currentUser) throws BusinessException {
 		refresh(counterInstance);
 		counterInstance = (CounterInstance) attach(counterInstance);
 		CounterPeriod counterPeriod = new CounterPeriod();
@@ -159,15 +168,19 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
 			return null;
 		}
 		Date endDate = cal.nextCalendarDate(startDate);
+		BigDecimal initialValue=counterInstance.getCounterTemplate().getCeiling();
 		log.info("create counter period from {} to {}", startDate, endDate);
-
+		if(!StringUtils.isBlank(counterInstance.getCounterTemplate().getCeilingExpressionEl()) && usageChargeInstance!=null){
+		    initialValue=evaluateCeilingElExpression(counterInstance.getCounterTemplate().getCeilingExpressionEl(), 
+		    	usageChargeInstance, usageChargeInstance.getServiceInstance(), usageChargeInstance.getSubscription());
+			}
 		counterPeriod.setPeriodStartDate(startDate);
 		counterPeriod.setPeriodEndDate(endDate);
 		counterPeriod.setProvider(counterInstance.getProvider());
-		counterPeriod.setValue(counterInstance.getCounterTemplate().getCeiling());
+		counterPeriod.setValue(initialValue);
 		counterPeriod.setCode(counterInstance.getCode());
 		counterPeriod.setDescription(counterInstance.getDescription());
-		counterPeriod.setLevel(counterInstance.getCounterTemplate().getCeiling());
+		counterPeriod.setLevel(initialValue);
 		counterPeriod.setCounterType(counterInstance.getCounterTemplate().getCounterType());
 		Auditable auditable = new Auditable();
 		auditable.setCreated(new Date());
@@ -192,8 +205,9 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
 	 * @param currentUser
 	 *            User performing operation
 	 * @return Found or created counter period
+	 * @throws BusinessException 
 	 */
-	public CounterPeriod getCounterPeriod(CounterInstance counterInstance, Date date, Date initDate, User currentUser) {
+	public CounterPeriod getCounterPeriod(CounterInstance counterInstance, Date date, Date initDate, User currentUser) throws BusinessException {
 		Query query = getEntityManager().createNamedQuery("CounterPeriod.findByPeriodDate");
 		query.setParameter("counterInstance", counterInstance);
 		query.setParameter("date", date, TemporalType.TIMESTAMP);
@@ -201,7 +215,7 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
 		try {
 			return (CounterPeriod) query.getSingleResult();
 		} catch (NoResultException e) {
-			return createPeriod(counterInstance, date, initDate, currentUser);
+			return createPeriod(counterInstance, date, initDate,null, currentUser);
 		}
 	}
 
@@ -240,9 +254,10 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
 	 *            User performing an action
 	 * @return
 	 * @throws CounterValueInsufficientException
+	 * @throws BusinessException 
 	 */
 	public BigDecimal deduceCounterValue(CounterInstance counterInstance, Date date, Date initDate, BigDecimal value,
-			User currentUser) throws CounterValueInsufficientException {
+			User currentUser) throws CounterValueInsufficientException, BusinessException {
 
 		CounterPeriod counterPeriod = getCounterPeriod(counterInstance, date, initDate, currentUser);
 
@@ -262,4 +277,32 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
 		qb.addCriterionEntity("counterTemplate", counterTemplate);
 		return qb.find(getEntityManager());
 	}
+	
+    public BigDecimal evaluateCeilingElExpression(String expression, ChargeInstance charge, ServiceInstance serviceInstance,Subscription subscription)
+			throws BusinessException {
+    	BigDecimal result = null;
+		if (StringUtils.isBlank(expression)) {
+			return result;
+		}
+		Map<Object, Object> userMap = new HashMap<Object, Object>();
+		userMap.put("charge", charge);
+		if(expression.indexOf("charge.") >= 0){
+			userMap.put("charge",charge); 
+		}
+		if(expression.indexOf("service.") >= 0){ 
+			userMap.put("service",serviceInstance); 
+		} 
+		if(expression.indexOf("sub.") >= 0){ 
+			userMap.put("sub",subscription); ;
+		}
+
+		Object res = ValueExpressionWrapper.evaluateExpression(expression, userMap, BigDecimal.class);
+		try {
+			result = (BigDecimal) res;
+		} catch (Exception e) {
+			throw new BusinessException("Expression " + expression + " do not evaluate to BigDecimal but " + res);
+		}
+		return result;
+	}
+	
 }

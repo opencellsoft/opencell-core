@@ -23,7 +23,9 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.meveo.admin.action.BaseBean;
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.jobs.ScriptInstance;
+import org.meveo.script.JavaCompilerManager;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.job.ScriptInstanceService;
@@ -44,6 +46,9 @@ public class ScriptInstanceBean extends BaseBean<ScriptInstance> {
 	 */
 	@Inject
 	private ScriptInstanceService scriptInstanceService;
+	
+	@Inject
+	private JavaCompilerManager javaCompilerManager;
 
 	
 	/**
@@ -101,5 +106,12 @@ public class ScriptInstanceBean extends BaseBean<ScriptInstance> {
 	protected String getDefaultSort() {
 		return "code";
 	}
-
+	
+	@Override
+	public String saveOrUpdate(ScriptInstance entity) throws BusinessException {		
+		String result = super.saveOrUpdate(entity);		
+		javaCompilerManager.compileScript(entity);		
+		return result;
+		
+	}
 }

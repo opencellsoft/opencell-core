@@ -219,8 +219,9 @@ public class UsageRatingService {
 		CounterInstance counterInstance = null;
 		if (periodCache == null) {
 			counterInstance = counterInstanceService.findById(counterInstanceCache.getCounterInstanceId());
+		    UsageChargeInstance UsageChargeInstance =usageChargeInstanceService.findById(cachedCharge.getId());
 			CounterPeriod counterPeriod = counterInstanceService.createPeriod(counterInstance, edr.getEventDate(),
-					cachedCharge.getSubscriptionDate(), currentUser);
+					cachedCharge.getSubscriptionDate(),UsageChargeInstance,currentUser);
 			if (counterPeriod != null) {
 				periodCache = new CachedCounterPeriod(counterPeriod, counterInstance.getCounterTemplate());
 				counterInstanceCache.getCounterPeriods().add(periodCache);

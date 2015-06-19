@@ -16,11 +16,8 @@
  */
 package org.meveo.service.billing.impl;
 
-import java.math.BigDecimal;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -30,22 +27,18 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.cache.RatingCacheContainerProvider;
 import org.meveo.cache.WalletCacheContainerProvider;
 import org.meveo.commons.utils.QueryBuilder;
-import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.BillingWalletTypeEnum;
-import org.meveo.model.billing.ChargeInstance;
 import org.meveo.model.billing.CounterInstance;
 import org.meveo.model.billing.InstanceStatusEnum;
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.UsageChargeInstance;
 import org.meveo.model.billing.WalletInstance;
-import org.meveo.model.catalog.CounterTemplate;
 import org.meveo.model.catalog.ServiceChargeTemplateUsage;
 import org.meveo.model.catalog.WalletTemplate;
 import org.meveo.service.base.BusinessService;
-import org.meveo.service.base.ValueExpressionWrapper;
 
 @Stateless
 public class UsageChargeInstanceService extends BusinessService<UsageChargeInstance> {
@@ -118,11 +111,8 @@ public class UsageChargeInstanceService extends BusinessService<UsageChargeInsta
 		}
 		
 		if (serviceUsageChargeTemplate.getCounterTemplate() != null) {
-            CounterTemplate counterTemplate=serviceUsageChargeTemplate.getCounterTemplate();
-            counterTemplate.setCeiling((new BigDecimal(evaluateDoubleExpression(counterTemplate.getCeilingExpressionEl()
-					,usageChargeInstance,serviceInstance,usageChargeInstance.getSubscription()))));
 			CounterInstance counterInstance = counterInstanceService.counterInstanciation(serviceInstance
-					.getSubscription().getUserAccount(),counterTemplate, creator);
+					.getSubscription().getUserAccount(), serviceUsageChargeTemplate.getCounterTemplate(), creator);
 			usageChargeInstance.setCounter(counterInstance);
 			update(usageChargeInstance, creator);
 		}
@@ -192,31 +182,4 @@ public class UsageChargeInstanceService extends BusinessService<UsageChargeInsta
     public List<UsageChargeInstance> getAllUsageChargeInstancesForCache() {
         return getEntityManager().createNamedQuery("UsageChargeInstance.listActive", UsageChargeInstance.class).getResultList();
     }
-    
-    public Double evaluateDoubleExpression(String expression, ChargeInstance charge, ServiceInstance serviceInstance,Subscription subscription)
-			throws BusinessException {
-    	Double result = null;
-		if (StringUtils.isBlank(expression)) {
-			return result;
-		}
-		Map<Object, Object> userMap = new HashMap<Object, Object>();
-		userMap.put("charge", charge);
-		if(expression.indexOf("charge.") >= 0){
-			userMap.put("charge",charge); 
-		}
-		if(expression.indexOf("service.") >= 0){ 
-			userMap.put("service",serviceInstance); 
-		} 
-		if(expression.indexOf("sub.") >= 0){ 
-			userMap.put("sub",subscription); ;
-		}
-
-		Object res = ValueExpressionWrapper.evaluateExpression(expression, userMap, Double.class);
-		try {
-			result = (Double) res;
-		} catch (Exception e) {
-			throw new BusinessException("Expression " + expression + " do not evaluate to double but " + res);
-		}
-		return result;
-	}
 }

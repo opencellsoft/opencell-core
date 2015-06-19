@@ -33,6 +33,7 @@ public class CounterTemplateDto implements Serializable {
 	private BigDecimal ceiling;
 	private boolean disabled;
 	private String counterLevel;
+	private String ceilingExpressionEl;
 	
 
 	public CounterTemplateDto() {
@@ -47,6 +48,7 @@ public class CounterTemplateDto implements Serializable {
 		disabled = e.isDisabled();
 		calendar = e.getCalendar().getCode();
 		counterLevel=String.valueOf(e.getCounterLevel());
+		ceilingExpressionEl=e.getCeilingExpressionEl();
 	}
 
 	public String getCode() {
@@ -112,11 +114,20 @@ public class CounterTemplateDto implements Serializable {
 	public void setCounterLevel(String counterLevel) {
 		this.counterLevel = counterLevel;
 	}
+	
+
+	public String getCeilingExpressionEl() {
+		return ceilingExpressionEl;
+	}
+
+	public void setCeilingExpressionEl(String ceilingExpressionEl) {
+		this.ceilingExpressionEl = ceilingExpressionEl;
+	}
 
 	@Override
 	public String toString() {
 		return "CounterTemplateDto [code=" + code + ", description=" + description + ", unity=" + unity + ", type="
-				+ type + ", ceiling=" + ceiling + ", counterLevel=" + counterLevel + ", disabled=" + disabled + ", calendar=" + calendar + "]";
+				+ type + ", ceiling=" + ceiling + ", counterLevel=" + counterLevel + ", disabled=" + disabled + ", calendar=" + calendar + ", ceilingExpressionEl="+ ceilingExpressionEl +"]";
 	}
 
 }
