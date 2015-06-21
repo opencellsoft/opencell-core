@@ -33,7 +33,7 @@ public class LogExtractionService {
 			props.load(new FileInputStream(System.getProperty("logging.configuration").substring(5)));
 			String logFile = props.getProperty("handler.FILE.fileName");			
 			String dateFormat = props.getProperty("formatter.FILE.pattern").substring(props.getProperty("formatter.FILE.pattern").indexOf("{")+1, props.getProperty("formatter.FILE.pattern").indexOf("}"));			
-			int length=0,maxLength=Integer.parseInt(ParamBean.getInstance().getProperty("meveo.notifier.log.lenght", "100000"));
+			int length=0,maxLength=Integer.parseInt(ParamBean.getInstance().getProperty("meveo.notifier.log.lengthInBytes", "100000"));
 			DateTimeComparator comparator = DateTimeComparator.getTimeOnlyInstance();
 			boolean mustBeInToo=false;
 			Date dateCurrentLine =null;
