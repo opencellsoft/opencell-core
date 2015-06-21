@@ -9,6 +9,7 @@ import javax.inject.Qualifier;
 
 /**
  * @author Edward P. Legaspi
+ * 
  **/
 @Qualifier
 @Retention(RetentionPolicy.RUNTIME)
