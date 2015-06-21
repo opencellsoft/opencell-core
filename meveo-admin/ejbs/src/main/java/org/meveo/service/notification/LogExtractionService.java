@@ -4,14 +4,14 @@ import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Properties;
 
 import org.joda.time.DateTimeComparator;
 import org.meveo.commons.utils.ParamBean;
-import org.meveo.model.shared.DateUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Lauch a jobInstance and create a notificationHistory
@@ -20,13 +20,15 @@ import org.meveo.model.shared.DateUtils;
  * @created 19.06.2015
  * 
  */
+
 public class LogExtractionService {
+	
+	private static Logger log = LoggerFactory.getLogger(LogExtractionService.class);
 
 	public static String  getLogs(Date fromDate,Date toDate){
 		String result="";
 		BufferedReader logReader = null;
 		try {
-
 			Properties props = new Properties();
 			props.load(new FileInputStream(System.getProperty("logging.configuration").substring(5)));
 			String logFile = props.getProperty("handler.FILE.fileName");			
@@ -55,13 +57,13 @@ public class LogExtractionService {
 				}				
 			}
 		} catch (IOException e) {
-			e.printStackTrace();
+			log.warn("",e);			
 		}finally{			
 			if(logReader != null){
 				try {
 					logReader.close();
 				} catch (IOException e) {
-					e.printStackTrace();
+					log.warn("",e);
 				}
 			}
 		}
