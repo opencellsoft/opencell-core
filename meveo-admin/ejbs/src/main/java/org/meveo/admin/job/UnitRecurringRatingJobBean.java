@@ -90,6 +90,10 @@ public class UnitRecurringRatingJobBean implements Serializable {
 					walletOperationService.applyReccuringCharge(activeRecurringChargeInstance, false,recurringChargeTemplate, currentUser);
 					result.registerSucces();
 				}
+				log.debug("nextChargeDate####{}",activeRecurringChargeInstance.getNextChargeDate());
+				log.debug("chargeDate#####{}",activeRecurringChargeInstance.getChargeDate());
+				activeRecurringChargeInstance.updateAudit(currentUser);
+				recurringChargeInstanceService.updateNoCheck(activeRecurringChargeInstance);
 			} else {
 				log.info(
 						"applicationDate={} is posterior to maxdate={} 2nd level cache is probably in cause",
@@ -100,5 +104,6 @@ public class UnitRecurringRatingJobBean implements Serializable {
             log.error("Failed to run recurring rating for {}", ID_activeRecurringChargeInstance,e);
             result.registerError(ID_activeRecurringChargeInstance, e.getMessage());
         }
+		log.debug("end executed!");
 	}
 }

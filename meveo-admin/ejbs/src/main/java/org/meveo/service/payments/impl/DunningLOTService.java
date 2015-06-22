@@ -52,8 +52,9 @@ public class DunningLOTService extends PersistenceService<DunningLOT> {
 
 	public void createDunningLOTAndCsvFile(
 			List<ActionDunning> listActionDunning,
-			DunningHistory dunningHistory, Provider provider) throws BusinessException {
+			DunningHistory dunningHistory, User currentUser) throws BusinessException {
 		log.info("createDunningLOTAndCsvFile ...");
+		Provider provider=currentUser.getProvider();
 
 		User systemUser = userService.findById(Long.valueOf(ParamBean
 				.getInstance().getProperty(USER_SYSTEM_ID, "1")));
@@ -66,25 +67,28 @@ public class DunningLOTService extends PersistenceService<DunningLOT> {
 				dunningLOT.setAuditable(getAuditable(systemUser));
 				dunningLOT.setProvider(provider);
 
-				create(dunningLOT);
+				create(dunningLOT,currentUser,provider);
 				log.info("createDunningLOTAndCsvFile persist dunningLOT ok");
 				for (ActionDunning actionDunning : listActionDunning) {
 					if (actionDunning.getTypeAction() == actionType) {
 						actionDunning.setDunningLOT(dunningLOT);
 						actionDunning.setAuditable(getAuditable(systemUser));
-						actionDunningService.create(actionDunning);
+						actionDunningService.create(actionDunning,currentUser,provider);
 						dunningLOT.getActions().add(actionDunning);
-						update(dunningLOT);
+						dunningLOT.updateAudit(currentUser);
+						updateNoCheck(dunningLOT);
 					}
 				}
 				if (dunningLOT.getActions().isEmpty()) {
-					remove(dunningLOT);
+//					remove(dunningLOT);
+					getEntityManager().remove(dunningLOT);
 				} else {
 					try {
 						dunningLOT.setFileName(buildFile(dunningLOT));
 						log.info("doCommit dunningLOT.setFileName ok");
 						dunningLOT.setDunningHistory(dunningHistory);
-						update(dunningLOT);
+						dunningLOT.updateAudit(currentUser);
+						updateNoCheck(dunningLOT);
 					} catch (Exception e) {
 						log.error("failed to update Dunning LOT and CsvFile",e);
 					}

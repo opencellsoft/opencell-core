@@ -63,15 +63,14 @@ public class DunningProcessJob extends Job {
     	
         Provider provider = currentUser.getProvider();
 
-        for (DunningPlan dunningPlan : dunningPlanService.getDunningPlans()) {
+        for (DunningPlan dunningPlan : dunningPlanService.getDunningPlans(provider)) {
             int loadedCustomerAccounts = 0;
             int errorCustomerAccounts = 0;
             int updatedCustomerAccounts = 0;
             List<ActionDunning> listActionDunning = new ArrayList<ActionDunning>();
             List<OtherCreditAndCharge> listOCC = new ArrayList<OtherCreditAndCharge>();
 
-            List<CustomerAccount> customerAccounts = customerAccountService.getCustomerAccounts(dunningPlan.getCreditCategory().getCode(), dunningPlan.getPaymentMethod(), dunningPlan
-                .getProvider().getCode());
+            List<CustomerAccount> customerAccounts = customerAccountService.getCustomerAccounts(dunningPlan.getCreditCategory().getCode(), dunningPlan.getPaymentMethod(), provider.getCode());
             log.info(String.format("Found %s CustomerAccounts to check", (customerAccounts == null ? "null" : customerAccounts.size())));
 
             for (CustomerAccount customerAccount : customerAccounts) {
@@ -81,10 +80,11 @@ public class DunningProcessJob extends Job {
                     BigDecimal balanceExigible = customerAccountService.customerAccountBalanceExigibleWithoutLitigation(customerAccount.getId(), null, new Date());
                     log.info("balanceExigible " + balanceExigible);
 
+                    customerAccount.updateAudit(currentUser);
                     if (DowngradeDunningLevel(customerAccount, balanceExigible)) {
                         updatedCustomerAccounts++;
                     } else {
-                        UpgradeDunningReturn upgradeDunningReturn = upgradeDunning.execute(customerAccount, balanceExigible, dunningPlan);
+                        UpgradeDunningReturn upgradeDunningReturn = upgradeDunning.execute(customerAccount, balanceExigible, dunningPlan,currentUser);
                         if (upgradeDunningReturn.isUpgraded()) {
                             updatedCustomerAccounts++;
                             listActionDunning.addAll(upgradeDunningReturn.getListActionDunning());
@@ -103,11 +103,11 @@ public class DunningProcessJob extends Job {
             dunningHistory.setLinesRejected(errorCustomerAccounts);
             dunningHistory.setLinesInserted(updatedCustomerAccounts);
             dunningHistory.setProvider(dunningPlan.getProvider());
-            dunningHistoryService.create(dunningHistory);
+            dunningHistoryService.create(dunningHistory,currentUser,provider);
             BayadDunningInputHistory bayadDunningInputHistory = createNewInputHistory(loadedCustomerAccounts, updatedCustomerAccounts, errorCustomerAccounts, new Date(),
                 dunningPlan.getProvider());
-            bayadDunningInputHistoryService.create(bayadDunningInputHistory);
-            dunningLOTService.createDunningLOTAndCsvFile(listActionDunning, dunningHistory, provider);
+            bayadDunningInputHistoryService.create(bayadDunningInputHistory,currentUser,provider);
+            dunningLOTService.createDunningLOTAndCsvFile(listActionDunning, dunningHistory, currentUser);
         }
     }
 
@@ -118,7 +118,7 @@ public class DunningProcessJob extends Job {
             customerAccount.setDunningLevel(DunningLevelEnum.R0);
             customerAccount.setDateDunningLevel(new Date());
             isDowngradelevel = true;
-            customerAccountService.update(customerAccount);
+            customerAccountService.updateNoCheck(customerAccount);
             log.info("customerAccount code:" + customerAccount.getCode() + " updated to R0");
         }
         // attente besoin pour par exp : R3--> R2 avec actions

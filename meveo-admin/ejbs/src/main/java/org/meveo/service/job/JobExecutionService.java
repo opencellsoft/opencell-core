@@ -30,6 +30,7 @@ import org.apache.commons.lang.StringUtils;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.admin.User;
+import org.meveo.model.crm.Provider;
 import org.meveo.model.jobs.JobCategoryEnum;
 import org.meveo.model.jobs.JobExecutionResult;
 import org.meveo.model.jobs.JobExecutionResultImpl;
@@ -103,7 +104,7 @@ public class JobExecutionService extends PersistenceService<JobExecutionResultIm
 		return qb;
 	}
 
-	public long countJobsToDelete(String jobName, Date date) {
+	public long countJobsToDelete(String jobName, Date date,Provider currentProvider) {
 		long result = 0;
 		if (date != null) {
 			String sql = "select t from JobExecutionResultImpl t";
@@ -112,17 +113,19 @@ public class JobExecutionService extends PersistenceService<JobExecutionResultIm
 				qb.addCriterion("t.jobName", "=", jobName, false);
 			}
 			qb.addCriterion("t.startDate", "<", date, false);
+			qb.addCriterionEntity("t.provider", currentProvider);
 			result = qb.count(getEntityManager());
 		}
 
 		return result;
 	}
 
-	public int delete(String jobName, Date date) {
+	public int delete(String jobName, Date date,Provider provider) {
 		String sql = "delete from JobExecutionResultImpl t";
 		QueryBuilder qb = new QueryBuilder(sql);// FIXME:.cacheable();
 		qb.addCriterion("t.jobName", "=", jobName, false);
 		qb.addCriterion("t.startDate", "<", date, false);
+		qb.addCriterionEntity("t.provider", provider);
 
 		return qb.getQuery(getEntityManager()).executeUpdate();
 	}

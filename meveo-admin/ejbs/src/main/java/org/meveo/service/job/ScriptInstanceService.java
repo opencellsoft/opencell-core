@@ -31,6 +31,7 @@ import org.meveo.service.base.PersistenceService;
 public class ScriptInstanceService extends PersistenceService<ScriptInstance> {
 
 
+	@SuppressWarnings("unchecked")
 	public List<ScriptInstance> findByType(ScriptTypeEnum type) {
 		List<ScriptInstance> result = new ArrayList<ScriptInstance>();
 		QueryBuilder qb = new QueryBuilder(ScriptInstance.class, "t");

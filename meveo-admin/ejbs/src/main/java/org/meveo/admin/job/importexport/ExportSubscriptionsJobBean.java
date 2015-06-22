@@ -51,7 +51,7 @@ public class ExportSubscriptionsJobBean {
 		}
 
 		String timestamp = sdf.format(new Date());
-		List<org.meveo.model.billing.Subscription> subs = subscriptionService.list();
+		List<org.meveo.model.billing.Subscription> subs = subscriptionService.list(provider);
 		subscriptions = new Subscriptions(subs, param.getProperty("connectorCRM.dateFormat", "yyyy-MM-dd"));
 		try {
 			JAXBUtils.marshaller(subscriptions, new File(dir + File.separator + "SUB_" + timestamp + ".xml"));

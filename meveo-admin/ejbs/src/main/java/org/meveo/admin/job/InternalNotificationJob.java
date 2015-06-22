@@ -44,7 +44,7 @@ public class InternalNotificationJob extends Job {
     protected void execute(JobExecutionResultImpl result, JobInstance jobInstance, User currentUser) throws BusinessException {
         String filterCode = jobInstance.getStringCustomValue("InternalNotificationJob_filterCode");
         String notificationCode = jobInstance.getStringCustomValue("InternalNotificationJob_notificationCode");
-        internalNotificationJobBean.execute(filterCode,notificationCode,result, currentUser,jobInstance.getProvider());
+        internalNotificationJobBean.execute(filterCode,notificationCode,result, currentUser);
     }
 
     @Override

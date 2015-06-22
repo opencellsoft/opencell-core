@@ -15,6 +15,7 @@ import org.meveo.event.qualifier.Rejected;
 import org.meveo.interceptor.PerformanceInterceptor;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.WalletOperation;
+import org.meveo.model.crm.Provider;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.service.billing.impl.RatingService;
 import org.meveo.service.billing.impl.WalletOperationService;
@@ -44,16 +45,17 @@ public class ReRatingJobBean implements Serializable {
 	@Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
 	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
 	public void execute(JobExecutionResultImpl result, User currentUser, boolean useSamePricePlan) {
+		Provider currentProvider=currentUser.getProvider();
 		log.debug("Running for user={}, useSamePricePlan={}", currentUser, useSamePricePlan);
 		
 		try {
-			List<Long> walletOperationIds = walletOperationService.listToRerate(currentUser.getProvider());
+			List<Long> walletOperationIds = walletOperationService.listToRerate(currentProvider);
 
 			log.info("rerate with useSamePricePlan={} ,#operations={}", useSamePricePlan,walletOperationIds.size());
 			result.setNbItemsToProcess(walletOperationIds.size());
 			for (Long walletOperationId : walletOperationIds) {
 				try {
-					ratingService.reRate(walletOperationId, useSamePricePlan);
+					ratingService.reRate(walletOperationId, useSamePricePlan,currentUser);
 					result.registerSucces();
 				} catch (Exception e) {
 					//rejectededOperationProducer.fire(walletOperationId);

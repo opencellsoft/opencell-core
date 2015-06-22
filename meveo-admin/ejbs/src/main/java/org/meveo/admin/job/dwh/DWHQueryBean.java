@@ -21,6 +21,7 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.job.logging.JobLoggingInterceptor;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.interceptor.PerformanceInterceptor;
+import org.meveo.model.admin.User;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveocrm.model.dwh.MeasurableQuantity;
@@ -51,8 +52,9 @@ public class DWHQueryBean {
 
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	@Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
-	public void executeQuery(JobExecutionResultImpl result, String parameter, Provider provider)
+	public void executeQuery(JobExecutionResultImpl result, String parameter, User currentUser)
 			throws BusinessException {
+		Provider provider=currentUser.getProvider();
 		String measurableQuantityCode = parameter;
 		Date toDate = new Date();
 
@@ -81,7 +83,7 @@ public class DWHQueryBean {
 		// provider
 		List<MeasurableQuantity> mqList = new ArrayList<>();
 		if (StringUtils.isBlank(measurableQuantityCode)) {
-			mqList = mqService.listToBeExecuted(new Date());
+			mqList = mqService.listToBeExecuted(new Date(),provider);
 		} else {
 			MeasurableQuantity mq = mqService.findByCode(em, measurableQuantityCode, provider);
 			if (mq == null) {
@@ -141,7 +143,7 @@ public class DWHQueryBean {
 						mv.setValue(value);
 						mv.setDate(date);
 						if (mv.getId() == null) {
-							mvService.create(mv, null, provider);
+							mvService.create(mv, currentUser, provider);
 						}
 					}
 					mq.increaseMeasureDate();

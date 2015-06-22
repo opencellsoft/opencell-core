@@ -24,7 +24,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.concurrent.Future;
 
-import javax.ejb.AsyncResult;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
@@ -91,7 +90,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 		List<BillingAccount> billingAccounts = new ArrayList<BillingAccount>();
 
 		if (billingCycle != null) {
-			billingAccounts = billingAccountService.findBillingAccounts(billingCycle, startDate, endDate);
+			billingAccounts = billingAccountService.findBillingAccounts(billingCycle, startDate, endDate,billingRun.getProvider());
 		} else {
 			String[] baIds = billingRun.getSelectedBillingAccounts().split(",");
 			for (String id : Arrays.asList(baIds)) {
@@ -396,31 +395,19 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 		}
 	}
 
-	public List<BillingRun> getbillingRuns(Provider provider, String code) {
-		return getbillingRuns(getEntityManager(), provider, code);
-	}
-
-	@SuppressWarnings("unchecked")
-	public List<BillingRun> getbillingRuns(EntityManager em, Provider provider, String code) {
-		QueryBuilder qb = new QueryBuilder(BillingRun.class, "c", null, provider);
-
-		qb.startOrClause();
-		if (code != null) {
-			qb.addCriterion("c.billingCycle.code", "=", code, false);
-		}
-		qb.endOrClause();
-
-		List<BillingRun> billingRuns = qb.getQuery(em).getResultList();
-
-		return billingRuns;
-
-	}
-
-	@SuppressWarnings("unchecked")
 	public List<BillingRun> getbillingRuns(Provider provider, BillingRunStatusEnum... status) {
+		return getBillingRuns(provider,null,status);
+	}
+	@SuppressWarnings("unchecked")
+	public List<BillingRun> getBillingRuns(Provider provider,String code, BillingRunStatusEnum... status){
+		
 		BillingRunStatusEnum bRStatus;
 		log.debug("getbillingRuns for provider " + provider == null ? "null" : provider.getCode());
 		QueryBuilder qb = new QueryBuilder(BillingRun.class, "c", null, provider);
+		
+		if (code != null) {
+			qb.addCriterion("c.billingCycle.code", "=", code, false);
+		}
 
 		qb.startOrClause();
 		if (status != null) {
@@ -497,6 +484,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 						.setParameter("billingCycle", billingCycle).setParameter("startDate", startDate)
 						.setParameter("endDate", endDate)
 						.setParameter("lastTransactionDate", billingRun.getLastTransactionDate())
+						.setParameter("provider", billingRun.getProvider())
 						.getSingleResult();
 			} else {
 				ratedTransactionsAmounts = (Object[]) getEntityManager()
@@ -504,10 +492,11 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 						.setParameter("status", RatedTransactionStatusEnum.OPEN)
 						.setParameter("billingCycle", billingCycle)
                         .setParameter("lastTransactionDate", billingRun.getLastTransactionDate())
+                        .setParameter("provider", billingRun.getProvider())
                         .getSingleResult();
 			}
 
-			result = billingAccountService.findBillingAccounts(billingCycle, startDate, endDate);
+			result = billingAccountService.findBillingAccounts(billingCycle, startDate, endDate,billingRun.getProvider());
 		} else {
 			result = new ArrayList<BillingAccount>();
 			String[] baIds = billingRun.getSelectedBillingAccounts().split(",");

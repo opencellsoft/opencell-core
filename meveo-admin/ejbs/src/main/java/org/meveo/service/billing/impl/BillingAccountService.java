@@ -212,9 +212,9 @@ public class BillingAccountService extends AccountService<BillingAccount> {
 	}
 
 	@SuppressWarnings("unchecked")
-    public List<BillingAccount> findBillingAccounts(BillingCycle billingCycle, Date startdate, Date endDate) {
+    public List<BillingAccount> findBillingAccounts(BillingCycle billingCycle, Date startdate, Date endDate,Provider currentProvider) {
 		try {
-			QueryBuilder qb = new QueryBuilder(BillingAccount.class, "b");
+			QueryBuilder qb = new QueryBuilder(BillingAccount.class, "b",null,currentProvider);
 			qb.addCriterionEntity("b.billingCycle", billingCycle);
 
 			if (startdate != null) {

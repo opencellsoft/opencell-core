@@ -13,6 +13,7 @@ import org.meveo.admin.job.logging.JobLoggingInterceptor;
 import org.meveo.interceptor.PerformanceInterceptor;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.WalletInstance;
+import org.meveo.model.crm.Provider;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.service.billing.impl.OneShotChargeInstanceService;
 import org.meveo.service.billing.impl.WalletService;
@@ -35,8 +36,9 @@ public class PrepaidWalletMatchJobBean {
 	public void execute(String matchingChargeCode, JobExecutionResultImpl result, User currentUser) {
 		log.debug("Running for user={}, matchingChargeCode={}", currentUser, matchingChargeCode);
 		
+		Provider currentProvider=currentUser.getProvider();
 		try {
-			List<WalletInstance> wallets = walletService.getWalletsToMatch(new Date());
+			List<WalletInstance> wallets = walletService.getWalletsToMatch(new Date(),currentProvider);
 
 			log.debug("wallets to match {}", wallets.size());
 			result.setNbItemsToProcess(wallets.size());

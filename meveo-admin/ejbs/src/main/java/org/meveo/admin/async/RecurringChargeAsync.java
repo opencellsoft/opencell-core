@@ -17,6 +17,7 @@ import javax.inject.Inject;
 import org.meveo.admin.job.UnitRecurringRatingJobBean;
 import org.meveo.model.admin.User;
 import org.meveo.model.jobs.JobExecutionResultImpl;
+import org.slf4j.Logger;
 
 /**
  * @author anasseh
@@ -25,6 +26,9 @@ import org.meveo.model.jobs.JobExecutionResultImpl;
 
 @Stateless
 public class RecurringChargeAsync {
+	
+	@Inject
+	private Logger log;
 
     @Inject
     UnitRecurringRatingJobBean unitRecurringRatingJobBean;
@@ -34,8 +38,10 @@ public class RecurringChargeAsync {
     public Future<String> launchAndForget(List<Long> ids, JobExecutionResultImpl result, User currentUser, Date maxDate) {
 
         for (Long id : ids) {
+        	log.debug("run recurringChargeInstace ID {}",id);
             unitRecurringRatingJobBean.execute(result, currentUser, id, maxDate);
         }
+        log.debug("End launchAndForget!");
 
         return new AsyncResult<String>("OK");
     }

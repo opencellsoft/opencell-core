@@ -28,6 +28,8 @@ import javax.inject.Named;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.admin.User;
+import org.meveo.model.crm.Provider;
 import org.meveo.model.payments.ActionDunning;
 import org.meveo.model.payments.ActionPlanItem;
 import org.meveo.model.payments.CustomerAccount;
@@ -98,7 +100,7 @@ public class UpgradeDunningLevel {
 	
 
 	public UpgradeDunningReturn execute(CustomerAccount customerAccount,
-			BigDecimal balanceExigible, DunningPlan dunningPlan)
+			BigDecimal balanceExigible, DunningPlan dunningPlan,User currentUser)
 			throws Exception {
 		logger.info("UpgradeDunningLevelStep ...");
 		UpgradeDunningReturn upgradeDunningReturn = new UpgradeDunningReturn();
@@ -180,7 +182,7 @@ public class UpgradeDunningLevel {
 									if (actionPlanItem.getActionType() == DunningActionTypeEnum.CHARGE) {
 										addOCC(customerAccount,
 												actionPlanItem
-														.getChargeAmount());
+														.getChargeAmount(),currentUser);
 										amoutDue = amoutDue.add(actionPlanItem
 												.getChargeAmount());
 									}
@@ -196,7 +198,8 @@ public class UpgradeDunningLevel {
 												.getDunningLevelTo());
 								customerAccount.setDateDunningLevel(new Date());
 								upgradeDunningReturn.setUpgraded(true);
-								customerAccountService.update(customerAccount);
+								customerAccount.updateAudit(currentUser);
+								customerAccountService.updateNoCheck(customerAccount);
 								logger.info("UpgradeDunningLevelStep   upgrade ok");
 							} 
 							}else {
@@ -218,8 +221,8 @@ public class UpgradeDunningLevel {
 	}
 
 	private OtherCreditAndCharge addOCC(CustomerAccount customerAccount,
-			BigDecimal chargeAmount) throws Exception {
-
+			BigDecimal chargeAmount,User currentUser) throws Exception {
+		Provider provider=currentUser.getProvider();
 		OCCTemplate dunningOccTemplate = oCCTemplateService
 				.getDunningOCCTemplate(customerAccount.getProvider().getCode());
 		OtherCreditAndCharge occ = new OtherCreditAndCharge();
@@ -239,7 +242,7 @@ public class UpgradeDunningLevel {
 		occ.setDueDate(new Date());
 		occ.setProvider(customerAccount.getProvider());
 		occ.setAuditable(DunningUtils.getAuditable(userService.getSystemUser()));
-		otherCreditAndChargeService.create(occ);
+		otherCreditAndChargeService.create(occ,currentUser,provider);
 		return occ;
 
 	}

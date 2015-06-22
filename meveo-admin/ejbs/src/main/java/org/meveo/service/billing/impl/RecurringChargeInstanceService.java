@@ -42,6 +42,7 @@ import org.meveo.model.billing.WalletInstance;
 import org.meveo.model.catalog.RecurringChargeTemplate;
 import org.meveo.model.catalog.ServiceChargeTemplateRecurring;
 import org.meveo.model.catalog.WalletTemplate;
+import org.meveo.model.crm.Provider;
 import org.meveo.service.base.BusinessService;
 
 @Stateless
@@ -77,21 +78,22 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<Long> findIdsByStatus(InstanceStatusEnum status, Date maxChargeDate) {
+	public List<Long> findIdsByStatus(InstanceStatusEnum status, Date maxChargeDate,Provider currentProvider) {
 		List<Long> ids = new ArrayList<Long>();
 		try {
 			log.debug("start of find RecurringChargeInstance --IDS---  by status {} and date {}", status, maxChargeDate);
+			log.debug("find by provider {}",currentProvider.getCode());
 			
 			QueryBuilder qb = new QueryBuilder("SELECT c.id FROM "+RecurringChargeInstance.class.getName()+" c");
-			qb.addCriterion("c.status", "=", status, true);
+			qb.addCriterionEnum("c.status", status);
 			qb.addCriterionDateRangeToTruncatedToDay("c.nextChargeDate", maxChargeDate);
+			qb.addCriterionEntity("c.provider", currentProvider);
 			ids = qb.getQuery(getEntityManager()).getResultList();
 			log.debug("end of find {} by status (status={}). Result size found={}.",
 					new Object[] { "RecurringChargeInstance", status,
-					ids != null ? ids.size() : 0 });
-
+					(ids != null ? ids.size() : "NULL") });
 		} catch (Exception e) {
-			log.error("findIdsByStatus error={} ", e);
+			log.error("findIdsByStatus error={} ", e.getMessage(),e);
 		}
 		return ids;
 	}
