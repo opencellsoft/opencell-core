@@ -5,6 +5,7 @@ import java.io.StringWriter;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.ejb.Singleton;
@@ -35,6 +36,7 @@ import org.meveo.model.IEntity;
 import org.meveo.model.IProvider;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.WalletInstance;
+import org.meveo.model.communication.MeveoInstance;
 import org.meveo.model.jobs.ScriptInstance;
 import org.meveo.model.notification.EmailNotification;
 import org.meveo.model.notification.InboundRequest;
@@ -50,6 +52,7 @@ import org.meveo.script.ScriptInterface;
 import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.billing.impl.CounterInstanceService;
 import org.meveo.service.billing.impl.CounterValueInsufficientException;
+import org.meveo.service.communication.impl.MeveoInstanceService;
 import org.slf4j.Logger;
 
 @Singleton
@@ -88,6 +91,9 @@ public class DefaultObserver {
     
     @Inject
     private JobTriggerLauncher jobTriggerLauncher;
+    
+    @Inject
+    private MeveoInstanceService meveoInstanceService;
 
     private boolean matchExpression(String expression, Object o) throws BusinessException {
         Boolean result = true;
@@ -275,8 +281,9 @@ public class DefaultObserver {
        log.info("Defaut observer : BusinessExceptionEvent {} ", bee);
        StringWriter errors = new StringWriter();
        bee.getBusinessException().printStackTrace(new PrintWriter(errors));
+       List<MeveoInstance> meveoInstances = meveoInstanceService.list();
        String input = "{"+
-				"	  #meveoInstanceCode#: #myMeveo#,"+
+				"	  #meveoInstanceCode#: #"+((meveoInstances==null || meveoInstances.isEmpty())?"-":meveoInstances.get(0).getCode())+"#,"+
 				"	  #subject#: #"+bee.getBusinessException().getMessage()+"#,"+
 				"	  #body#: #"+errors.toString()+"#,"+
 				"	  #additionnalInfo1#: #"+LogExtractionService.getLogs(new Date(System.currentTimeMillis()-Integer.parseInt(ParamBean.getInstance().
@@ -285,8 +292,7 @@ public class DefaultObserver {
 				"	  #additionnalInfo3#: ##,"+
 				"	  #additionnalInfo4#: ##"+
 				"}";
-       log.info("Defaut observer : input {} ", input.replaceAll("#", "\""));
-       //TODO send a jsonObject
+       log.info("Defaut observer : input {} ", input.replaceAll("#", "\""));       
        remoteInstanceNotifier.invoke(input.replaceAll("\"","'").replaceAll("#", "\""),ParamBean.getInstance().getProperty("inboundCommunication.url", "http://version.meveo.info/meveo-moni/api/rest/inboundCommunication"));
        
 		//TODO handel reponse

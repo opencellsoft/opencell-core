@@ -21,8 +21,9 @@ public class RemoteInstanceNotifier {
 			
 			log.debug("Request  ={}",input);
 			log.debug("Url ={}",url);
-			ClientRequest request = new ClientRequest(url);
-			request.body("application/json", input);
+			ClientRequest request = new ClientRequest(url);			
+			JSONParser jsonParser =  new JSONParser();		
+			request.body("application/json", jsonParser.parse(input));
 			request.accept("application/json");
 
 			ClientResponse<String> response = request.post(String.class);
@@ -31,11 +32,10 @@ public class RemoteInstanceNotifier {
 				log.debug("invoke Failed : HTTP error code : "+ response.getStatus());
 			} else {    
 				jsonResponse=response.getEntity();
-				log.info("Response jsonResponse ={}",jsonResponse);
-				JSONParser jsonParser = new JSONParser();
+				log.info("Response jsonResponse ={}",jsonResponse);				
 				JSONObject jsonResponseObject = (JSONObject) jsonParser.parse(jsonResponse);
 				JSONObject jsonActionStatus =  (JSONObject) jsonResponseObject.get("actionStatus");
-				String responseStatus  =(String) jsonActionStatus.get("status");
+				String responseStatus  = (String) jsonActionStatus.get("status");
 				
 				if("SUCCESS".equals(responseStatus)){
 					log.debug("invoke remote service ok");

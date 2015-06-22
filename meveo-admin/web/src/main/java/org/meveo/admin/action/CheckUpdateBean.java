@@ -17,8 +17,6 @@ import org.jboss.resteasy.client.ClientResponse;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.meveo.commons.utils.ParamBean;
-import org.meveo.script.JavaCompilerManager;
-import org.meveo.script.ScriptInterface;
 import org.slf4j.LoggerFactory;
 
 @SuppressWarnings("deprecation")
@@ -38,16 +36,16 @@ public class CheckUpdateBean implements Serializable {
 	private String versionOutput="";
 
 	public void checkVersion() {
-		try {
+		try {			
 			String input = buildJsonRequest();
 			log.debug("Request Check Update ={}",input);
 
 			String urlMoni = paramBean.getProperty("checkUpdate.url","http://version.meveo.info/meveo-moni/api/rest/getVersion");
 			log.debug("Request Check Update url={}",urlMoni);
-
+			JSONParser jsonParser = new JSONParser();
 			//FIXME : deprecated
 			ClientRequest request = new ClientRequest(urlMoni);
-			request.body("application/json", input);
+			request.body("application/json", jsonParser.parse(input));
 			request.accept("application/json");
 
 			ClientResponse<String> response = request.post(String.class);
@@ -56,8 +54,7 @@ public class CheckUpdateBean implements Serializable {
 				log.debug("ChekUpdate Failed : HTTP error code : "+ response.getStatus());
 			} else {    
 				jsonResponse=response.getEntity();
-				log.debug("ChekUpdate reponse : "+ jsonResponse);
-				JSONParser jsonParser = new JSONParser();
+				log.debug("ChekUpdate reponse : "+ jsonResponse);				
 				JSONObject jsonResponseObject = (JSONObject) jsonParser.parse(jsonResponse);
 				JSONObject jsonActionStatus =  (JSONObject) jsonResponseObject.get("actionStatus");
 				String responseStatus  =(String) jsonActionStatus.get("status");
@@ -90,7 +87,7 @@ public class CheckUpdateBean implements Serializable {
 
 	private String buildJsonRequest(){
 		try{
-			String productVersion = "4.0.2";
+			String productVersion = "@VERSION_NUMBER@";
 			String productName = paramBean.getProperty("checkUpdate.productName", "Meveo");
 			String owner = paramBean.getProperty("checkUpdate.owner", "OpenCell");
 			String macAddress = "";
