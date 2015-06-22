@@ -281,9 +281,9 @@ public class DefaultObserver {
        log.info("Defaut observer : BusinessExceptionEvent {} ", bee);
        StringWriter errors = new StringWriter();
        bee.getBusinessException().printStackTrace(new PrintWriter(errors));
-       List<MeveoInstance> meveoInstances = meveoInstanceService.list();
+       MeveoInstance meveoInstance = meveoInstanceService.getThis();
        String input = "{"+
-				"	  #meveoInstanceCode#: #"+((meveoInstances==null || meveoInstances.isEmpty())?"-":meveoInstances.get(0).getCode())+"#,"+
+				"	  #meveoInstanceCode#: #"+(meveoInstance == null?"-":meveoInstance.getCode())+"#,"+
 				"	  #subject#: #"+bee.getBusinessException().getMessage()+"#,"+
 				"	  #body#: #"+errors.toString()+"#,"+
 				"	  #additionnalInfo1#: #"+LogExtractionService.getLogs(new Date(System.currentTimeMillis()-Integer.parseInt(ParamBean.getInstance().

@@ -16,6 +16,8 @@
  */
 package org.meveo.service.communication.impl;
 
+import java.util.List;
+
 import javax.ejb.Stateless;
 import javax.persistence.NoResultException;
 
@@ -38,5 +40,13 @@ public class MeveoInstanceService extends PersistenceService<MeveoInstance> {
 			log.warn("failed to find MeveoInstance",e);
 			return null;
 		}
+	}
+
+	public MeveoInstance getThis() {		
+		List<MeveoInstance> meveoInstances = list();
+		if(meveoInstances==null || meveoInstances.isEmpty()){
+			return null;
+		}
+		return meveoInstances.get(0);
 	}
 }
