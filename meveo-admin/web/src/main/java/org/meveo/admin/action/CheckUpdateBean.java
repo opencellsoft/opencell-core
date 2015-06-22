@@ -9,6 +9,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 import javax.enterprise.context.SessionScoped;
+import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.apache.commons.vfs.FileSystemException;
@@ -17,6 +18,8 @@ import org.jboss.resteasy.client.ClientResponse;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.meveo.commons.utils.ParamBean;
+import org.meveo.model.communication.MeveoInstance;
+import org.meveo.service.communication.impl.MeveoInstanceService;
 import org.slf4j.LoggerFactory;
 
 @SuppressWarnings("deprecation")
@@ -32,6 +35,9 @@ public class CheckUpdateBean implements Serializable {
 
 
 	private ParamBean paramBean = ParamBean.getInstance();
+	
+	@Inject
+	private MeveoInstanceService meveoInstanceService;
 
 	private String versionOutput="";
 
@@ -87,7 +93,11 @@ public class CheckUpdateBean implements Serializable {
 
 	private String buildJsonRequest(){
 		try{
-			String productVersion = "@VERSION_NUMBER@";
+			
+			MeveoInstance meveoInstance = meveoInstanceService.getThis();
+			String  meveoInstanceCode = (meveoInstance==null )?null:meveoInstance.getCode();
+			 		
+			String productVersion = "4.1";			
 			String productName = paramBean.getProperty("checkUpdate.productName", "Meveo");
 			String owner = paramBean.getProperty("checkUpdate.owner", "OpenCell");
 			String macAddress = "";
@@ -130,11 +140,11 @@ public class CheckUpdateBean implements Serializable {
 			String osName = System.getProperty("os.name");
 			String osVersion = System.getProperty("os.version");
 			String osArch = System.getProperty("os.arch");
-			String javaVendor = System.getProperty("java.vendor");
-			String  javaVmVersion = System.getProperty("java.vm.version");
-			String  javaVmName = System.getProperty("java.vm.name");
-			String  javaSpecVersion = System.getProperty("java.runtime.version");
-			String  asName = System.getProperty("program.name");
+			String javaVendor = System.getProperty("java.vendor"); 
+			String javaVmVersion = System.getProperty("java.vm.version");
+			String javaVmName = System.getProperty("java.vm.name");
+			String javaSpecVersion = System.getProperty("java.runtime.version");
+			String asName = System.getProperty("program.name");
 			String asVersion = System.getProperty("program.name");
 
 
@@ -143,6 +153,7 @@ public class CheckUpdateBean implements Serializable {
 			 * if needed , so add idd it first in the remote service
 			 */
 			String input = "{"+
+					"	  #meveoInstanceCode#: #"+meveoInstanceCode+"#,"+
 					"	  #productName#: #"+productName+"#,"+
 					"	  #productVersion#: #"+productVersion+"#,"+
 					"	  #owner#: #"+owner+"#,"+
