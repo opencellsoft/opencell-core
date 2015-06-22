@@ -14,6 +14,7 @@ import org.meveo.admin.sepa.SepaService;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.interceptor.PerformanceInterceptor;
 import org.meveo.model.admin.User;
+import org.meveo.model.crm.Provider;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.payments.DDRequestLotOp;
 import org.meveo.model.payments.DDRequestOpEnum;
@@ -34,15 +35,15 @@ public class SepaDirectDebitJobBean {
 	private DDRequestLotOpService dDRequestLotOpService;
 
 	@Inject
-	private SepaService SepaService;
+	private SepaService sepaService;
 
 	@Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public void execute(JobExecutionResultImpl result, String parameter, User currentUser) {
 		log.debug("Running for user={}, parameter={}", currentUser, parameter);
-		
+		Provider currentProvider=currentUser.getProvider();
 		try {
-			List<DDRequestLotOp> ddrequestOps = dDRequestLotOpService.getDDRequestOps();
+			List<DDRequestLotOp> ddrequestOps = dDRequestLotOpService.getDDRequestOps(currentProvider);
 
 			if (ddrequestOps != null) {
 				log.info("ddrequestOps found:" + ddrequestOps.size());
@@ -51,10 +52,10 @@ public class SepaDirectDebitJobBean {
 			for (DDRequestLotOp ddrequestLotOp : ddrequestOps) {
 				try {
 					if (ddrequestLotOp.getDdrequestOp() == DDRequestOpEnum.CREATE) {
-						SepaService.createDDRquestLot(ddrequestLotOp.getFromDueDate(), ddrequestLotOp.getToDueDate(),
-								currentUser, ddrequestLotOp.getProvider());
+						sepaService.createDDRquestLot(ddrequestLotOp.getFromDueDate(), ddrequestLotOp.getToDueDate(),
+								currentUser, currentProvider);
 					} else if (ddrequestLotOp.getDdrequestOp() == DDRequestOpEnum.FILE) {
-						SepaService.exportDDRequestLot(ddrequestLotOp.getDdrequestLOT().getId());
+						sepaService.exportDDRequestLot(ddrequestLotOp.getDdrequestLOT().getId());
 					}
 
 					ddrequestLotOp.setStatus(DDRequestOpStatusEnum.PROCESSED);

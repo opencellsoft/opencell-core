@@ -396,12 +396,13 @@ public class ReservationService extends PersistenceService<Reservation> {
 		StringBuilder sb = new StringBuilder();
 
 		sb.append("UPDATE " + Reservation.class.getName()
-				+ " r SET r.status=:expiredStatus WHERE r.status=:openStatus AND r.expiryDate<:expiryDate");
+				+ " r SET r.status=:expiredStatus WHERE r.status=:openStatus AND r.expiryDate<:expiryDate and r.provider=:provider");
 
 		try {
 			return getEntityManager().createQuery(sb.toString())
 					.setParameter("expiredStatus", ReservationStatus.EXPIRED)
 					.setParameter("openStatus", ReservationStatus.OPEN).setParameter("expiryDate", new Date())
+					.setParameter("provider", provider)
 					.executeUpdate();
 		} catch (Exception e) {
 			log.error("failed to update expired reservation",e);

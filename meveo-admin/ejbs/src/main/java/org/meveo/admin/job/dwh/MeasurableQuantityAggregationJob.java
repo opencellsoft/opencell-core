@@ -36,7 +36,7 @@ public class MeasurableQuantityAggregationJob extends Job {
     private MeasuredValueService mvService;
 
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    private void aggregateMeasuredValues(JobExecutionResultImpl result, StringBuilder report, MeasurableQuantity mq) {
+    private void aggregateMeasuredValues(JobExecutionResultImpl result, StringBuilder report, MeasurableQuantity mq,User currentUser) {
         if (report.length() == 0) {
             report.append("Generate Measured Value for : " + mq.getCode());
         } else {
@@ -45,14 +45,14 @@ public class MeasurableQuantityAggregationJob extends Job {
         Object[] mvObject = mqService.executeMeasurableQuantitySQL(mq);
 
         try {
-            if (mvObject.length > 0) {
+            if (mvObject!=null&&mvObject.length > 0) {
                 SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
                 MeasuredValue mv = new MeasuredValue();
                 mv.setMeasurableQuantity(mq);
                 mv.setMeasurementPeriod(mq.getMeasurementPeriod());
                 mv.setDate(sdf.parse(mvObject[0] + ""));
                 mv.setValue(new BigDecimal(mvObject[1] + ""));
-                mvService.create(mv);
+                mvService.create(mv,currentUser,currentUser.getProvider());
             }
         } catch (IllegalArgumentException e) {
             log.error("Illegal argument exception in create measured values",e);
@@ -60,15 +60,13 @@ public class MeasurableQuantityAggregationJob extends Job {
         	 log.error("security exception in create measured values ",e);
         } catch (ParseException e) {
         	 log.error("parse exception in create measured values",e);
-        } catch (BusinessException e) {
-        	 log.error("failed to create measured values",e);
-        }
+        } 
     }
 
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    private void aggregateMeasuredValues(JobExecutionResultImpl result, StringBuilder report, List<MeasurableQuantity> mq) {
+    private void aggregateMeasuredValues(JobExecutionResultImpl result, StringBuilder report, List<MeasurableQuantity> mq,User currentUser) {
         for (MeasurableQuantity measurableQuantity : mq) {
-            aggregateMeasuredValues(result, report, measurableQuantity);
+            aggregateMeasuredValues(result, report, measurableQuantity,currentUser);
         }
 
     }
@@ -81,11 +79,11 @@ public class MeasurableQuantityAggregationJob extends Job {
         if (jobInstance.getParametres() != null && !jobInstance.getParametres().isEmpty()) {
 
             MeasurableQuantity mq = mqService.listByCode(jobInstance.getParametres(), currentUser.getProvider()).get(0);
-            aggregateMeasuredValues(result, report, mq);
+            aggregateMeasuredValues(result, report, mq,currentUser);
             result.setReport(report.toString());
 
         } else {
-            aggregateMeasuredValues(result, report, mqService.list(currentUser.getProvider()));
+            aggregateMeasuredValues(result, report, mqService.list(currentUser.getProvider()),currentUser);
             result.setReport(report.toString());
         }
 

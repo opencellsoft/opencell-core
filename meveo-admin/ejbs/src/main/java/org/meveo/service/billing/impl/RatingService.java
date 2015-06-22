@@ -22,6 +22,7 @@ import org.meveo.cache.RatingCacheContainerProvider;
 import org.meveo.commons.utils.NumberUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.BaseEntity;
+import org.meveo.model.admin.User;
 import org.meveo.model.billing.ApplicationTypeEnum;
 import org.meveo.model.billing.ChargeApplicationModeEnum;
 import org.meveo.model.billing.ChargeInstance;
@@ -144,7 +145,9 @@ public class RatingService extends BusinessService<WalletOperation>{
 
 			}
 			Number sharedQuantity = (Number) query.getSingleResult();
-			result = sharedQuantity.intValue();
+			if(sharedQuantity!=null){
+				result = sharedQuantity.intValue();
+			}
 		} catch (Exception e) {
 			log.error("faile to get shared quantity",e);
 		}
@@ -552,7 +555,8 @@ public class RatingService extends BusinessService<WalletOperation>{
 	//rerate
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public void reRate(Long operationToRerateId,
-			boolean useSamePricePlan) throws BusinessException {
+			boolean useSamePricePlan,User currentUser) throws BusinessException {
+		Provider currentProvider=currentUser.getProvider();
 		WalletOperation operationToRerate=getEntityManager().find(WalletOperation.class,operationToRerateId);
 		try {
 			ratedTransactionService
@@ -600,8 +604,9 @@ public class RatingService extends BusinessService<WalletOperation>{
 									.getTradingCurrency(),
 							operation.getProvider());
 			}
-			create(operation);
-			update(operationToRerate);
+			create(operation,currentUser,currentProvider);
+			operationToRerate.updateAudit(currentUser);
+			updateNoCheck(operationToRerate);
 			log.debug("updated wallet operation");
 		} catch (UnrolledbackBusinessException e) { 
 			log.error("Failed to reRate",e);

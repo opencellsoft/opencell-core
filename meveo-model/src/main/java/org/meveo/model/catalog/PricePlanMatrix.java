@@ -48,7 +48,7 @@ import org.meveo.model.billing.TradingCurrency;
 @ExportIdentifier({ "code", "provider" })
 @Table(name = "CAT_PRICE_PLAN_MATRIX", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE", "PROVIDER_ID" }))
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "CAT_PRICE_PLAN_MATRIX_SEQ")
-@NamedQueries({ @NamedQuery(name = "PricePlanMatrix.getPricePlansForCache", query = "SELECT ppm from PricePlanMatrix ppm left join ppm.offerTemplate ot left join ppm.validityCalendar vc where ppm.disabled=false order by ppm.priority ASC") })
+@NamedQueries({ @NamedQuery(name = "PricePlanMatrix.getPricePlansForCache", query = "SELECT ppm from PricePlanMatrix ppm left join ppm.offerTemplate ot left join ppm.validityCalendar vc where ppm.disabled is false order by ppm.priority ASC") })
 public class PricePlanMatrix extends BusinessEntity implements Comparable<PricePlanMatrix> {
     private static final long serialVersionUID = 1L;
 

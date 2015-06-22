@@ -129,7 +129,7 @@ public class XMLInvoiceGenerationJobBean {
 		BillingRun billingRun = billingRunService.findById(billingRunId);
 		billingRun.setXmlInvoiceGenerated(true);
 		billingRun.updateAudit(currentUser);
-		billingRunService.update(billingRun);
+		billingRunService.updateNoCheck(billingRun);
 
 	}
 

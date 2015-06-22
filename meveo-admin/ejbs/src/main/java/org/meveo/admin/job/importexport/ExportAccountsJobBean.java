@@ -57,7 +57,7 @@ public class ExportAccountsJobBean {
 		}
 
 		String timestamp = sdf.format(new Date());
-		List<org.meveo.model.billing.BillingAccount> bas = billingAccountService.list();
+		List<org.meveo.model.billing.BillingAccount> bas = billingAccountService.list(provider);
 		billingAccounts = new BillingAccounts(bas, param.getProperty("connectorCRM.dateFormat", "yyyy-MM-dd"));
 		try {
 			JAXBUtils.marshaller(billingAccounts, new File(dir + File.separator + "ACCOUNT_" + timestamp + ".xml"));

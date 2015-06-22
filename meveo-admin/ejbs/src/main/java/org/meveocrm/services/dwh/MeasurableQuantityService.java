@@ -18,16 +18,19 @@ public class MeasurableQuantityService extends
 		BusinessService<MeasurableQuantity> {
 
 	public Object[] executeMeasurableQuantitySQL(MeasurableQuantity mq) {
-		Query q = getEntityManager().createNativeQuery(mq.getSqlQuery());
-		Object[] mvObject = (Object[]) q.getSingleResult();
-
-		return mvObject;
+		try{
+			Query q = getEntityManager().createNativeQuery(mq.getSqlQuery());
+			return (Object[]) q.getSingleResult();
+		}catch(Exception e){
+			log.error("failed run {} - {}",mq.getSqlQuery(),e.getMessage());
+		}
+		return null;
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<MeasurableQuantity> listToBeExecuted(Date date) {
+	public List<MeasurableQuantity> listToBeExecuted(Date date,Provider provider) {
 		QueryBuilder queryBuilder = new QueryBuilder(MeasurableQuantity.class,
-				"a", null, getCurrentProvider());
+				"a", null, provider);
 		queryBuilder.addCriterionDateRangeToTruncatedToDay("last_measure_date",date);
 		Query query = queryBuilder.getQuery(getEntityManager());
 		return query.getResultList();
