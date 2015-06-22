@@ -490,7 +490,8 @@ public class PricePlanMatrixService extends PersistenceService<PricePlanMatrix> 
         if (pricePlan.getId() == null) {
             create(pricePlan, user, provider);
         } else {
-            update(pricePlan, user);
+        	pricePlan.updateAudit(user);
+            updateNoCheck(pricePlan);
         }
     }
     

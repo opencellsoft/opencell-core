@@ -34,9 +34,9 @@ public class JobPurge extends Job {
             nbDays = jobInstance.getLongCustomValue("JobPurge_nbDays").intValue();
         }
         Date date = DateUtils.addDaysToDate(new Date(), nbDays * (-1));
-        long nbItemsToProcess = jobExecutionService.countJobsToDelete(jobname, date);
+        long nbItemsToProcess = jobExecutionService.countJobsToDelete(jobname, date,currentUser.getProvider());
         result.setNbItemsToProcess(nbItemsToProcess); // it might well happen we dont know in advance how many items we have to process,in that case comment this method
-        int nbSuccess = jobExecutionService.delete(jobname, date);
+        int nbSuccess = jobExecutionService.delete(jobname, date,currentUser.getProvider());
         result.setNbItemsCorrectlyProcessed(nbSuccess);
         result.setNbItemsProcessedWithError(nbItemsToProcess - nbSuccess);
         result.setReport(nbSuccess > 0 ? ("purged " + jobname) : "");

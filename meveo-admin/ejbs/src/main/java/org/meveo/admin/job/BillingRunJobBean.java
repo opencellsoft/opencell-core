@@ -1,5 +1,10 @@
 package org.meveo.admin.job;
 
+import static org.meveo.model.billing.BillingRunStatusEnum.CONFIRMED;
+import static org.meveo.model.billing.BillingRunStatusEnum.NEW;
+import static org.meveo.model.billing.BillingRunStatusEnum.ON_GOING;
+import static org.meveo.model.billing.BillingRunStatusEnum.WAITING;
+
 import java.util.Date;
 import java.util.List;
 
@@ -47,19 +52,10 @@ public class BillingRunJobBean {
 			parameter=billingCycleCode;
 		}
 		try {
-			List<BillingRun> billruns = billingRunService.getbillingRuns(provider, parameter);
-
+			List<BillingRun> billruns = billingRunService.getBillingRuns(provider,parameter, CONFIRMED,NEW,ON_GOING,WAITING);
 			boolean notTerminatedBillRun = false;
-			if (billruns != null) {
-				for (BillingRun billrun : billruns) {
-					if (billrun.getStatus() == BillingRunStatusEnum.CONFIRMED
-							|| billrun.getStatus() == BillingRunStatusEnum.NEW
-							|| billrun.getStatus() == BillingRunStatusEnum.ON_GOING
-							|| billrun.getStatus() == BillingRunStatusEnum.WAITING) {
-						notTerminatedBillRun = true;
-						break;
-					}
-				}
+			if (billruns != null&&billruns.size()>0) {
+				notTerminatedBillRun = true;
 			}
 
 			if (!notTerminatedBillRun && !StringUtils.isEmpty(parameter)) {
@@ -67,12 +63,8 @@ public class BillingRunJobBean {
 
 				if (billingCycle != null) {
 					BillingRun billingRun = new BillingRun();
-					Auditable auditable = new Auditable();
-					auditable.setCreated(new Date());
-					auditable.setCreator(currentUser);
-					billingRun.setAuditable(auditable);
 					billingRun.setBillingCycle(billingCycle);
-					billingRun.setProcessDate(auditable.getCreated());
+					billingRun.setProcessDate(new Date());
 					if(invoiceDate!=null){
 						billingRun.setInvoiceDate(invoiceDate);
 					}else if(billingCycle.getInvoiceDateProductionDelay()!=null){

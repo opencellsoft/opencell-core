@@ -101,8 +101,8 @@ public class WalletService extends PersistenceService<WalletInstance> {
 		}
 	}
 
-	public List<WalletInstance> getWalletsToMatch(Date date) {
-		return getEntityManager().createNamedQuery("WalletInstance.listPrepaidWalletsToMatch", WalletInstance.class).setParameter("matchingDate", date).getResultList();
+	public List<WalletInstance> getWalletsToMatch(Date date,Provider currentProvider) {
+		return getEntityManager().createNamedQuery("WalletInstance.listPrepaidWalletsToMatch", WalletInstance.class).setParameter("matchingDate", date).setParameter("currentProvider", currentProvider).getResultList();
 	}
 
 	/**

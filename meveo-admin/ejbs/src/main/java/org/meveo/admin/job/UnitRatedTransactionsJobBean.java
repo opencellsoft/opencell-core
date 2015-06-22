@@ -63,6 +63,7 @@ public class UnitRatedTransactionsJobBean {
 
 			walletOperation.setStatus(WalletOperationStatusEnum.TREATED);
 			walletOperation.updateAudit(currentUser);
+			walletOperationService.updateNoCheck(walletOperation);
 			result.registerSucces();
 		} catch (Exception e) {
 			log.error("Failed to rate transaction for wallet operation {}", walletOperationId, e);

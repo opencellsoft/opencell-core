@@ -20,6 +20,7 @@ import java.util.List;
 
 import javax.ejb.Stateless;
 
+import org.meveo.model.crm.Provider;
 import org.meveo.model.payments.DunningPlan;
 import org.meveo.model.payments.DunningPlanStatusEnum;
 import org.meveo.service.base.PersistenceService;
@@ -28,12 +29,13 @@ import org.meveo.service.base.PersistenceService;
 public class DunningPlanService extends PersistenceService<DunningPlan> {
 
 	@SuppressWarnings("unchecked")
-	public List<DunningPlan> getDunningPlans() {
+	public List<DunningPlan> getDunningPlans(Provider provider) {
 		return (List<DunningPlan>) getEntityManager()
 				.createQuery(
 						"from " + DunningPlan.class.getSimpleName()
-								+ " where status=:status")
+								+ " where status=:status and provider=:provider")
 				.setParameter("status", DunningPlanStatusEnum.ACTIVE)
+				.setParameter("provider", provider)
 				.getResultList();
 	}
 

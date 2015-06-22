@@ -63,7 +63,8 @@ public class MatchingAmountService extends PersistenceService<MatchingAmount> {
 			operation.setMatchingStatus(MatchingStatusEnum.P);
 		}
 		operation.getMatchingAmounts().remove(matchingAmount);
-		accountOperationService.update(operation, user);
+		operation.updateAudit(user);
+		accountOperationService.updateNoCheck(operation);
 		log.info("cancel one accountOperation!");
 
 		log.info("successfully end cancelMatching!");

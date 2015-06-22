@@ -42,11 +42,11 @@ public class UnitUsageRatingJobBean {
     public void execute(JobExecutionResultImpl result, User currentUser, Long edrId) {
     	log.debug("Running for user={}, edrId={}", currentUser, edrId);
 
-        try {
+    	try {
             EDR edr = edrService.findById(edrId);
             usageRatingService.ratePostpaidUsage(edr, currentUser);
-
-            edrService.update(edr, currentUser);
+            
+            edrService.updateNoCheck(edr);
 
             if (edr.getStatus() == EDRStatusEnum.RATED) {
                 result.registerSucces();

@@ -54,7 +54,7 @@ import org.meveo.model.catalog.WalletTemplate;
 	@NamedQuery(name = "WalletInstance.listPrepaidWalletsToMatch", 
 			query = "SELECT c FROM WalletInstance c where c.walletTemplate.walletType=org.meveo.model.billing.BillingWalletTypeEnum.PREPAID and "
 							+ "c.userAccount.status=org.meveo.model.billing.AccountStatusEnum.ACTIVE "
-							+ " AND (c.nextMatchingDate IS NULL OR nextMatchingDate <= :matchingDate)"),
+							+ " AND (c.nextMatchingDate IS NULL OR nextMatchingDate <= :matchingDate) and c.provider=:currentProvider"),
 })
 public class WalletInstance extends BusinessEntity {
 

@@ -50,15 +50,14 @@ public class AccountOperationsGenerationJobBean {
 	@Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public void execute(JobExecutionResultImpl result, String parameter, User currentUser) {
-		log.debug("Running for user={}, parameter={}", currentUser, parameter);
+		Provider currentProvider=currentUser.getProvider();
+		log.info("Running for user={}, parameter={}, provider={}", currentUser, parameter,currentProvider.getCode());
 		
 		ParamBean paramBean = ParamBean.getInstance();
-		List<Invoice> invoices = invoiceService.getInvoicesWithNoAccountOperation(null);
-		Provider providerForHistory = null;
-
-		if (invoices != null) {
-			log.debug("processing {} invoice", invoices.size());
-		}
+		List<Invoice> invoices = invoiceService.getInvoicesWithNoAccountOperation(null,currentProvider);
+//		Provider providerForHistory = null;
+		
+		log.info("processing {} invoice", invoices.size());
 
 		for (Invoice invoice : invoices) {
 			try {
@@ -75,11 +74,6 @@ public class AccountOperationsGenerationJobBean {
 					customerAccount = invoice.getBillingAccount().getCustomerAccount();
 					recordedInvoice.setCustomerAccount(customerAccount);
 					recordedInvoice.setProvider(customerAccount.getProvider());
-
-					// set first provider from first customer account
-					if (providerForHistory != null) {
-						providerForHistory = customerAccount.getProvider();
-					}
 				} catch (Exception e) {
 					log.error("error while getting customer account ", e);
 					throw new ImportInvoiceException("Cannot found customerAccount");
@@ -165,11 +159,12 @@ public class AccountOperationsGenerationJobBean {
 				}
 
 				recordedInvoice.setMatchingStatus(MatchingStatusEnum.O);
-				recordedInvoiceService.create(recordedInvoice);
+				recordedInvoiceService.create(recordedInvoice,currentUser,currentProvider);
 
 				invoice.setRecordedInvoice(recordedInvoice);
-				invoiceService.update(invoice);
-
+				invoice.updateAudit(currentUser);
+				invoiceService.updateNoCheck(invoice);
+				
 			} catch (Exception e) {
 				log.error("Failed to generate acount operations", e);
 				result.registerError(e.getMessage());

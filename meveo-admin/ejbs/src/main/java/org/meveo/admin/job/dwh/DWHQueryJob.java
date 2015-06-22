@@ -27,7 +27,7 @@ public class DWHQueryJob extends Job {
     @Override
     protected void execute(JobExecutionResultImpl result, JobInstance jobInstance, User currentUser) throws BusinessException {
 
-        queryBean.executeQuery(result, jobInstance.getParametres(), currentUser.getProvider());
+        queryBean.executeQuery(result, jobInstance.getParametres(), currentUser);
         result.setDone(true); // TODO why is here DONE and other places is close()?
     }
 
