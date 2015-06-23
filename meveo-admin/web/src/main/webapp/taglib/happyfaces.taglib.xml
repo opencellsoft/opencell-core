@@ -45,5 +45,9 @@
 		<tag-name>customFieldValueField</tag-name>
 		<source>customFieldValueField.xhtml</source>
 	</tag>	
+	<tag>
+		<tag-name>customFieldEntityPopups</tag-name>
+		<source>customFieldEntityPopups.xhtml</source>
+	</tag>	
 
 </facelet-taglib>

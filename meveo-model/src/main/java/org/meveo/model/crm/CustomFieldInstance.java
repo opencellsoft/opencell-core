@@ -13,6 +13,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 
 import org.meveo.model.AccountEntity;
@@ -78,6 +79,12 @@ public class CustomFieldInstance extends BusinessEntity {
 
     @Column(name = "VERSIONABLE")
     private boolean versionable;
+    
+    @Column(name="ENTITY_VALUE")
+    private String entityValue;
+    
+    @Transient
+    private BusinessEntity customEntity;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "CALENDAR_ID")
@@ -589,7 +596,15 @@ public class CustomFieldInstance extends BusinessEntity {
         return cfi;
     }
 
-    /**
+    public String getEntityValue() {
+		return entityValue;
+	}
+
+	public void setEntityValue(String entityValue) {
+		this.entityValue = entityValue;
+	}
+
+	/**
      * Get a value
      * 
      * @return
@@ -631,11 +646,15 @@ public class CustomFieldInstance extends BusinessEntity {
         case STRING:
         case LIST:
             stringValue = (String) value;
+            break;
+        case ENTITY:
+        	this.entityValue=(String)value;
+        	break;
         }
     }
 
     public boolean isValueEmpty() {
-        return (!isVersionable() && (stringValue == null && dateValue == null && longValue == null && doubleValue == null)) || (isVersionable() && valuePeriods.isEmpty());
+        return (!isVersionable() && (stringValue == null && dateValue == null && longValue == null && doubleValue == null&&entityValue==null)) || (isVersionable() && valuePeriods.isEmpty());
         // TODO check that period values are empty
     }
 
@@ -650,5 +669,13 @@ public class CustomFieldInstance extends BusinessEntity {
                         : null, jobInstance != null ? jobInstance.getId() : null, stringValue, dateValue, longValue, doubleValue, versionable,
                 calendar != null ? calendar.getCode() : null, valuePeriods != null ? valuePeriods.subList(0, Math.min(valuePeriods.size(), maxLen)) : null);
     }
+
+	public BusinessEntity getCustomEntity() {
+		return customEntity;
+	}
+
+	public void setCustomEntity(BusinessEntity customEntity) {
+		this.customEntity = customEntity;
+	}
 
 }

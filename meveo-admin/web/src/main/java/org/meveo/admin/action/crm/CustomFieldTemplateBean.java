@@ -91,5 +91,38 @@ public class CustomFieldTemplateBean extends BaseBean<CustomFieldTemplate> {
         }
         return super.supplementSearchCriteria(searchCriteria);
     }
+    
+    public List<String> autocompleteClassNames(String query) {
+    	String qLower=query.toLowerCase();
+    	 List<String> clazzNames = new ArrayList<String>();
+         for (String clazz : clazzes) {
+             if (clazz.toLowerCase().contains(qLower)) {
+                 clazzNames.add(clazz);
+             }
+         }
+         return clazzNames;
+    }
+    // business and observable
+    private static final List<String> clazzes= Arrays.asList("org.meveo.model.billing.Tax",
+			"org.meveo.model.admin.Seller",
+			"org.meveo.model.catalog.OfferTemplate",
+			"org.meveo.model.billing.UserAccount",
+			"org.meveo.model.catalog.PricePlanMatrix",
+			"org.meveo.model.billing.BillingAccount",
+			"org.meveo.model.payments.CustomerAccount",
+			"org.meveo.model.catalog.OneShotChargeTemplate",
+			"org.meveo.model.catalog.ServiceTemplate",
+			"org.meveo.model.catalog.WalletTemplate",
+			"org.meveo.model.billing.Subscription",
+			"org.meveo.model.catalog.RecurringChargeTemplate",
+			"org.meveo.model.billing.ServiceInstance",
+			"org.meveo.model.crm.Customer",
+			"org.meveo.model.catalog.UsageChargeTemplate",
+			"org.meveo.model.catalog.TriggeredEDRTemplate",
+			"org.meveo.model.catalog.CounterTemplate",
+			"org.meveo.model.catalog.Calendar",
+			"org.meveo.model.crm.ProviderContact",
+			"org.meveo.model.catalog.DiscountPlan",
+			"org.meveo.model.communication.email.EmailTemplate");
 
 }
