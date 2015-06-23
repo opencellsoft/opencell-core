@@ -96,4 +96,10 @@
 	<changeSet id="ticket599_20150507" author="Mbarek">
 		<sql>update ar_customer_account set trading_language_id=(select trading_language_id from billing_billing_account  where billing_billing_account.customer_account_id=ar_customer_account.id ORDER BY billing_billing_account.id ASC LIMIT 1)</sql>
 	</changeSet>
+	
+	<changeSet id="ticket685_20150623" author="EdwardLegaspi">
+		<sql>UPDATE billing_wallet_operation set rating_unit_description=unity_description;</sql>
+		<sql>UPDATE cat_charge_template a SET rating_unit_description=(SELECT b.unity_description from cat_usage_charge_template b where b.id=a.id);</sql>
+		<sql>UPDATE billing_usage_charge_inst set rating_unit_description=unity_description;</sql>
+	</changeSet>
 </databaseChangeLog>
