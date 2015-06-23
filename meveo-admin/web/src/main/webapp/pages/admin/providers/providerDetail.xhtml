@@ -70,6 +70,15 @@
 								
 							<hf:formField label="#{messages['provider.email']}"
 								field="email" id="email"/>
+							
+							<hf:formField label="#{messages['invoiceConfiguration.displaySubscriptions']}"
+								field="invoiceConfiguration" childField="displaySubscriptions" id="displaySubscriptions" rendered="#{providerBean.entity.invoiceConfiguration!=null}"/>
+								
+							<hf:formField label="#{messages['invoiceConfiguration.displayServices']}"
+								field="invoiceConfiguration" childField="displayServices" id="displayServices" rendered="#{providerBean.entity.invoiceConfiguration!=null}" />
+								
+							<hf:formField label="#{messages['invoiceConfiguration.displayOffers']}"
+								field="invoiceConfiguration" childField="displayOffers" id="displayOffers" rendered="#{providerBean.entity.invoiceConfiguration!=null}" />	
 
 			</hf:formPanel>
 	</ui:define>

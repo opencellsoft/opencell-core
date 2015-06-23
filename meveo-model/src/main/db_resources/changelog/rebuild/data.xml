@@ -6880,7 +6880,7 @@
 			<column name="disabled" valueBoolean="false" />
 			<column name="created" valueDate="2015-03-19 00:04:09.745" />
 			<column name="email" />
-			<column name="last_password_modification" valueDate="2015-03-19" />
+			<column name="last_password_modification" valueDate="current_date" />
 			<column name="firstname" />
 			<column name="lastname" />
 			<column name="password" value="fb93a3221422999ba49eb103977a6d736376505b" />
@@ -6894,7 +6894,7 @@
 			<column name="disabled" valueBoolean="false" />
 			<column name="created" valueDate="2015-03-19 00:04:09.787" />
 			<column name="email" />
-			<column name="last_password_modification" valueDate="2015-03-19" />
+			<column name="last_password_modification" valueDate="current_date" />
 			<column name="firstname" />
 			<column name="lastname" />
 			<column name="password" value="6170b9cb8d9d2ef00787ffd326bf60f81a5b30c2" />

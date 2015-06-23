@@ -237,7 +237,7 @@ public class UserService extends PersistenceService<User> {
 		}
 
 		// Check if the user password has expired
-		String passwordExpiracy = paramBean.getProperty("password.Expiracy", "90");
+		String passwordExpiracy = paramBean.getProperty("password.Expiracy", "180");
 
 		if (!skipPasswordExpiracy && user.isPasswordExpired(Integer.parseInt(passwordExpiracy))) {
 			log.info("The password of user with id=" + user.getId() + " has expired.");
