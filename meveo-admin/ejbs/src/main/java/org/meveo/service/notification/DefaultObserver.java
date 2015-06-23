@@ -282,13 +282,14 @@ public class DefaultObserver {
        StringWriter errors = new StringWriter();
        bee.getBusinessException().printStackTrace(new PrintWriter(errors));
        MeveoInstance meveoInstance = meveoInstanceService.getThis();
+       int bodyMaxLegthByte = Integer.parseInt(ParamBean.getInstance().getProperty("meveo.notifier.stackTrace.lengthInBytes", "9999"));
        String stackTrace = errors.toString();
        String input = "{"+
 				"	  #meveoInstanceCode#: #"+(meveoInstance == null?"-":meveoInstance.getCode())+"#,"+
 				"	  #subject#: #"+bee.getBusinessException().getMessage()+"#,"+
-				"	  #body#: #"+stackTrace.substring(0, (stackTrace.length()>9999)?9999:stackTrace.length())+"#,"+
+				"	  #body#: #"+StringUtils.truncate(stackTrace, bodyMaxLegthByte, true)+"#,"+
 				"	  #additionnalInfo1#: #"+LogExtractionService.getLogs(new Date(System.currentTimeMillis()-Integer.parseInt(ParamBean.getInstance().
-						getProperty("meveo.notifier.log.timeBefore", "5000"))) , new Date())+"#,"+
+						getProperty("meveo.notifier.log.timeBefore_ms", "5000"))) , new Date())+"#,"+
 				"	  #additionnalInfo2#: ##,"+
 				"	  #additionnalInfo3#: ##,"+
 				"	  #additionnalInfo4#: ##"+
