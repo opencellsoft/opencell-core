@@ -14,18 +14,20 @@ import org.meveo.api.dto.account.CustomerHierarchyDto;
 import org.meveo.api.dto.account.UserAccountDto;
 import org.meveo.api.dto.payment.AccountOperationDto;
 import org.meveo.api.dto.payment.DunningInclusionExclusionDto;
+import org.meveo.api.dto.payment.OccTemplateDto;
 import org.meveo.api.dto.response.CustomerListResponse;
+import org.meveo.api.dto.response.account.AccessesResponseDto;
+import org.meveo.api.dto.response.account.BillingAccountsResponseDto;
+import org.meveo.api.dto.response.account.CustomerAccountsResponseDto;
+import org.meveo.api.dto.response.account.CustomersResponseDto;
 import org.meveo.api.dto.response.account.GetAccessResponseDto;
 import org.meveo.api.dto.response.account.GetBillingAccountResponseDto;
 import org.meveo.api.dto.response.account.GetCustomerAccountResponseDto;
 import org.meveo.api.dto.response.account.GetCustomerResponseDto;
 import org.meveo.api.dto.response.account.GetUserAccountResponseDto;
-import org.meveo.api.dto.response.account.AccessesResponseDto;
-import org.meveo.api.dto.response.account.BillingAccountsResponseDto;
-import org.meveo.api.dto.response.account.CustomerAccountsResponseDto;
-import org.meveo.api.dto.response.account.CustomersResponseDto;
 import org.meveo.api.dto.response.account.UserAccountsResponseDto;
 import org.meveo.api.dto.response.payment.AccountOperationsResponseDto;
+import org.meveo.api.dto.response.payment.GetOccTemplateResponseDto;
 
 /**
  * @author Edward P. Legaspi
@@ -146,5 +148,19 @@ public interface AccountWs extends IBaseWs {
 
 	@WebMethod
 	ActionStatus dunningInclusionExclusion(@WebParam(name = "dunningInclusionExclusion") DunningInclusionExclusionDto dunningDto);
+	
+	// OccTemplate
+
+	@WebMethod
+	ActionStatus createOccTemplate(@WebParam(name = "occTemplate") OccTemplateDto postData);
+
+	@WebMethod
+	ActionStatus updateOccTemplate(@WebParam(name = "occTemplate") OccTemplateDto postData);
+
+	@WebMethod
+	GetOccTemplateResponseDto findOccTemplate(@WebParam(name = "occTemplateCode") String occTemplateCode);
+
+	@WebMethod
+	ActionStatus removeOccTemplate(@WebParam(name = "occTemplateCode") String occTemplateCode);
 
 }
