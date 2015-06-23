@@ -632,6 +632,26 @@
         <addColumn tableName="CRM_CUSTOM_FIELD_INST">
             <column name="ENTITY_VALUE" type="varchar(255)"/>
         </addColumn>
+	</changeSet>
+	
+	<changeSet id="ticket895_20150623" author="Mbarek">
+		<addColumn tableName="RATING_EDR">
+		<column name="PARAMETER_5" type="VARCHAR(255)"/>
+		<column name="PARAMETER_6" type="VARCHAR(255)"/>
+		<column name="PARAMETER_7" type="VARCHAR(255)"/>
+		<column name="PARAMETER_8" type="VARCHAR(255)"/>
+		<column name="PARAMETER_9" type="VARCHAR(255)"/>
+		<column name="DATE_PARAMETER_1" type="TIMESTAMP WITHOUT TIME ZONE"/>
+		<column name="DATE_PARAMETER_2" type="TIMESTAMP WITHOUT TIME ZONE"/>
+		<column name="DATE_PARAMETER_3" type="TIMESTAMP WITHOUT TIME ZONE"/>
+		<column name="DATE_PARAMETER_4" type="TIMESTAMP WITHOUT TIME ZONE"/>
+		<column name="DATE_PARAMETER_5" type="TIMESTAMP WITHOUT TIME ZONE"/>
+		<column name="DECIMAL_PARAMETER_1" type="numeric(23, 12)"/>
+		<column name="DECIMAL_PARAMETER_2" type="numeric(23, 12)"/>
+		<column name="DECIMAL_PARAMETER_3" type="numeric(23, 12)"/>
+		<column name="DECIMAL_PARAMETER_4" type="numeric(23, 12)"/>
+		<column name="DECIMAL_PARAMETER_5" type="numeric(23, 12)"/>
+		</addColumn>
 	</changeSet>      
 	
 </databaseChangeLog>

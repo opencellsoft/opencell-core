@@ -80,10 +80,60 @@ public class EDR extends BaseEntity {
 
 	@Column(name = "PARAMETER_3")
 	private String parameter3;
-
+	
 	@Column(name = "PARAMETER_4")
 	private String parameter4;
 
+	@Column(name = "PARAMETER_5")
+	private String parameter5;
+	
+	@Column(name = "PARAMETER_6")
+	private String parameter6;
+	
+	@Column(name = "PARAMETER_7")
+	private String parameter7;
+	
+	@Column(name = "PARAMETER_8")
+	private String parameter8;
+	
+	@Column(name = "PARAMETER_9")
+	private String parameter9;
+	
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column(name = "DATE_PARAMETER_1")
+	private Date dateParam1;
+	
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column(name = "DATE_PARAMETER_2")
+	private Date dateParam2;
+	
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column(name = "DATE_PARAMETER_3")
+	private Date dateParam3;
+	
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column(name = "DATE_PARAMETER_4")
+	private Date dateParam4;
+	
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column(name = "DATE_PARAMETER_5")
+	private Date dateParam5;
+	
+	@Column(name = "DECIMAL_PARAMETER_1", precision = NB_PRECISION, scale = NB_DECIMALS)
+	private BigDecimal decimalParam1;
+	
+	@Column(name = "DECIMAL_PARAMETER_2", precision = NB_PRECISION, scale = NB_DECIMALS)
+	private BigDecimal decimalParam2;
+	
+	@Column(name = "DECIMAL_PARAMETER_3", precision = NB_PRECISION, scale = NB_DECIMALS)
+	private BigDecimal decimalParam3;
+	
+	@Column(name = "DECIMAL_PARAMETER_4", precision = NB_PRECISION, scale = NB_DECIMALS)
+	private BigDecimal decimalParam4;
+	
+	@Column(name = "DECIMAL_PARAMETER_5", precision = NB_PRECISION, scale = NB_DECIMALS)
+	private BigDecimal decimalParam5;
+	 
 	@Enumerated(EnumType.STRING)
 	@Column(name = "STATUS")
 	private EDRStatusEnum status;
@@ -202,6 +252,128 @@ public class EDR extends BaseEntity {
 	public void setLastUpdate(Date lastUpdate) {
 		this.lastUpdate = lastUpdate;
 	}
+	
+	
+
+	public String getParameter5() {
+		return parameter5;
+	}
+
+	public void setParameter5(String parameter5) {
+		this.parameter5 = parameter5;
+	}
+
+	public String getParameter6() {
+		return parameter6;
+	}
+
+	public void setParameter6(String parameter6) {
+		this.parameter6 = parameter6;
+	}
+
+	public String getParameter7() {
+		return parameter7;
+	}
+
+	public void setParameter7(String parameter7) {
+		this.parameter7 = parameter7;
+	}
+
+	public String getParameter8() {
+		return parameter8;
+	}
+
+	public void setParameter8(String parameter8) {
+		this.parameter8 = parameter8;
+	}
+
+	public String getParameter9() {
+		return parameter9;
+	}
+
+	public void setParameter9(String parameter9) {
+		this.parameter9 = parameter9;
+	}
+
+	public Date getDateParam1() {
+		return dateParam1;
+	}
+
+	public void setDateParam1(Date dateParam1) {
+		this.dateParam1 = dateParam1;
+	}
+
+	public Date getDateParam2() {
+		return dateParam2;
+	}
+
+	public void setDateParam2(Date dateParam2) {
+		this.dateParam2 = dateParam2;
+	}
+
+	public Date getDateParam3() {
+		return dateParam3;
+	}
+
+	public void setDateParam3(Date dateParam3) {
+		this.dateParam3 = dateParam3;
+	}
+
+	public Date getDateParam4() {
+		return dateParam4;
+	}
+
+	public void setDateParam4(Date dateParam4) {
+		this.dateParam4 = dateParam4;
+	}
+
+	public Date getDateParam5() {
+		return dateParam5;
+	}
+
+	public void setDateParam5(Date dateParam5) {
+		this.dateParam5 = dateParam5;
+	}
+
+	public BigDecimal getDecimalParam1() {
+		return decimalParam1;
+	}
+
+	public void setDecimalParam1(BigDecimal decimalParam1) {
+		this.decimalParam1 = decimalParam1;
+	}
+
+	public BigDecimal getDecimalParam2() {
+		return decimalParam2;
+	}
+
+	public void setDecimalParam2(BigDecimal decimalParam2) {
+		this.decimalParam2 = decimalParam2;
+	}
+
+	public BigDecimal getDecimalParam3() {
+		return decimalParam3;
+	}
+
+	public void setDecimalParam3(BigDecimal decimalParam3) {
+		this.decimalParam3 = decimalParam3;
+	}
+
+	public BigDecimal getDecimalParam4() {
+		return decimalParam4;
+	}
+
+	public void setDecimalParam4(BigDecimal decimalParam4) {
+		this.decimalParam4 = decimalParam4;
+	}
+
+	public BigDecimal getDecimalParam5() {
+		return decimalParam5;
+	}
+
+	public void setDecimalParam5(BigDecimal decimalParam5) {
+		this.decimalParam5 = decimalParam5;
+	}
 
 	@Override
 	public String toString() {
@@ -210,6 +382,14 @@ public class EDR extends BaseEntity {
 				+ ", eventDate=" + eventDate + ", quantity=" + quantity
 				+ ", parameter1=" + parameter1 + ", parameter2=" + parameter2
 				+ ", parameter3=" + parameter3 + ", parameter4=" + parameter4
+				+ ", parameter5=" + parameter5 + ", parameter6=" + parameter6
+				+ ", parameter7=" + parameter7+ ", parameter8=" + parameter8 
+				+ ", parameter9=" + parameter9
+				+ ", dateParam1=" + dateParam1+ ", dateParam2=" + dateParam2
+				+ ", dateParam3=" + dateParam3+ ", dateParam4=" + dateParam4
+				+ ", dateParam5=" + dateParam5+ ", decimalParam1=" + decimalParam1
+				+ ", dateParam2=" + dateParam2+ ", decimalParam3=" + decimalParam3
+				+ ", dateParam4=" + dateParam4+ ", decimalParam5=" + decimalParam5
 				+ ", status=" + status + ", rejectReason=" + rejectReason
 				+ ", created=" + created + ", lastUpdate=" + lastUpdate + "]";
 	}
