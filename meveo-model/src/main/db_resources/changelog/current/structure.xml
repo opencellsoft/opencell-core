@@ -13,11 +13,16 @@
 	</changeSet>
 
 	<changeSet id="ticket685_20150430" author="EdwardLegaspi">
+		<validCheckSum>7:668fdc1cfd06732a26ba11882dbd29fc</validCheckSum>
+	
 		<addColumn tableName="billing_wallet_operation">
 			<column name="input_quantity" type="numeric(23, 12)" />
 			<column name="input_unit_description" type="varchar(20)" />
 			<column name="rating_unit_description" type="varchar(20)" />
 		</addColumn>
+		
+		<sql>UPDATE billing_wallet_operation set rating_unit_description=unity_description;</sql>
+		
 		<dropColumn columnName="unity_description" tableName="billing_wallet_operation" />
 
 		<addColumn tableName="cat_charge_template">
@@ -26,6 +31,13 @@
 			<column name="unit_multiplicator" type="numeric(23, 12)" />
 			<column name="unit_nb_decimal" type="int4" />
 		</addColumn>
+		
+		<addColumn tableName="billing_usage_charge_inst">
+			<column name="rating_unit_description" type="varchar(20)" />
+		</addColumn>
+		
+		<sql>UPDATE cat_charge_template a SET rating_unit_description=(SELECT b.unity_description from cat_usage_charge_template b where b.id=a.id);</sql>
+		<sql>UPDATE billing_usage_charge_inst set rating_unit_description=unity_description;</sql>
 
 		<dropColumn columnName="unity_description" tableName="cat_usage_charge_template" />
 		<dropColumn columnName="unity_multiplicator" tableName="cat_usage_charge_template" />
@@ -33,10 +45,6 @@
 		<dropColumn columnName="unity_formatter" tableName="cat_usage_charge_template" />
 
 		<dropColumn columnName="unity_description" tableName="billing_usage_charge_inst" />
-		
-		<addColumn tableName="billing_usage_charge_inst">
-			<column name="rating_unit_description" type="varchar(20)" />
-		</addColumn>
 	</changeSet>
 	<changeSet id="ticket685_20150430" author="AndriusKarpavicius">
 		<sql>update cat_charge_template set unit_nb_decimal=0 where unit_nb_decimal is null</sql>
@@ -95,11 +103,5 @@
 	</changeSet>	
 	<changeSet id="ticket599_20150507" author="Mbarek">
 		<sql>update ar_customer_account set trading_language_id=(select trading_language_id from billing_billing_account  where billing_billing_account.customer_account_id=ar_customer_account.id ORDER BY billing_billing_account.id ASC LIMIT 1)</sql>
-	</changeSet>
-	
-	<changeSet id="ticket685_20150623" author="EdwardLegaspi">
-		<sql>UPDATE billing_wallet_operation set rating_unit_description=unity_description;</sql>
-		<sql>UPDATE cat_charge_template a SET rating_unit_description=(SELECT b.unity_description from cat_usage_charge_template b where b.id=a.id);</sql>
-		<sql>UPDATE billing_usage_charge_inst set rating_unit_description=unity_description;</sql>
 	</changeSet>
 </databaseChangeLog>
