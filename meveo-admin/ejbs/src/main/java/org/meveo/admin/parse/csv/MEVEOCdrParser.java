@@ -175,8 +175,8 @@ public class MEVEOCdrParser implements CSVCDRParser {
 					cdr.param9 = fields[11];
 				}
 				
-				if (fields.length <= 12) {
-					cdr.dateParam1=0L;
+				if (fields.length <= 12 ||"".equals(fields[12])) {
+					cdr.dateParam1=0;
 				}else{
 				try {
 					DateTime dt = formatter1.parseDateTime(fields[12]);
@@ -185,8 +185,8 @@ public class MEVEOCdrParser implements CSVCDRParser {
 					DateTime dt = formatter2.parseDateTime(fields[12]);
 					cdr.dateParam1 = dt.getMillis();
 				}}
-				if (fields.length <= 13) {
-					cdr.dateParam1=0L;
+				if (fields.length <= 13||"".equals(fields[13])) {
+					cdr.dateParam2=0;
 				}else{
 				try {
 					DateTime dt = formatter1.parseDateTime(fields[13]);
@@ -195,8 +195,8 @@ public class MEVEOCdrParser implements CSVCDRParser {
 					DateTime dt = formatter2.parseDateTime(fields[13]);
 					cdr.dateParam2 = dt.getMillis();
 				}}
-				if (fields.length <= 14) {
-					cdr.dateParam3=0L;
+				if (fields.length <= 14||"".equals(fields[14])) {
+					cdr.dateParam3=0;
 				}else{
 				try {
 					DateTime dt = formatter1.parseDateTime(fields[14]);
@@ -205,8 +205,8 @@ public class MEVEOCdrParser implements CSVCDRParser {
 					DateTime dt = formatter2.parseDateTime(fields[14]);
 					cdr.dateParam3 = dt.getMillis();
 				}}
-				if (fields.length <= 15) {
-					cdr.dateParam4=0L;
+				if (fields.length <= 15||"".equals(fields[15])) {
+					cdr.dateParam4=0;
 				}else{
 				try {
 					DateTime dt = formatter1.parseDateTime(fields[15]);
@@ -215,8 +215,8 @@ public class MEVEOCdrParser implements CSVCDRParser {
 					DateTime dt = formatter2.parseDateTime(fields[15]);
 					cdr.dateParam4 = dt.getMillis();
 				}}
-				if (fields.length <= 16) {
-					cdr.dateParam5=0L;
+				if (fields.length <= 16 || "".equals(fields[16])) {
+					cdr.dateParam5=0;
 				}else{
 				try {
 					DateTime dt = formatter1.parseDateTime(fields[16]);
@@ -225,23 +225,23 @@ public class MEVEOCdrParser implements CSVCDRParser {
 					DateTime dt = formatter2.parseDateTime(fields[16]);
 					cdr.dateParam5 = dt.getMillis();
 				}}
-				if (fields.length <= 17) {
+				if (fields.length <= 17 || "".equals(fields[17])) {
 					cdr.decimalParam1=null;
 				}else{
 				   cdr.decimalParam1 = new BigDecimal(fields[17]);
-				}if (fields.length <= 18) {
+				}if (fields.length <= 18 || "".equals(fields[18])) {
 					cdr.decimalParam2=null;
 				}else{
 					cdr.decimalParam2 = new BigDecimal(fields[18]);
-				}if (fields.length <= 19) {
+				}if (fields.length <= 19 || "".equals(fields[19])) {
 					cdr.decimalParam3=null;
 				}else{
 					cdr.decimalParam3 = new BigDecimal(fields[19]);
-				}if (fields.length <= 20) {
+				}if (fields.length <= 20 || "".equals(fields[20])) {
 					cdr.decimalParam4=null;
 				}else{
 					cdr.decimalParam4 = new BigDecimal(fields[20]);
-				}if (fields.length <= 21) {
+				}if (fields.length <= 21 || "".equals(fields[21])) {
 					cdr.decimalParam5=null;
 				}else{
 				cdr.decimalParam5 = new BigDecimal(fields[21]);
@@ -309,11 +309,11 @@ public class MEVEOCdrParser implements CSVCDRParser {
 		result.setParameter7(cdr.param7);
 		result.setParameter8(cdr.param8);
 		result.setParameter9(cdr.param9);
-		result.setDateParam1(new Date(cdr.dateParam1));
-		result.setDateParam2(new Date(cdr.dateParam2));
-		result.setDateParam3(new Date(cdr.dateParam3));
-		result.setDateParam4(new Date(cdr.dateParam4));
-		result.setDateParam5(new Date(cdr.dateParam5));
+		result.setDateParam1(cdr.dateParam1!=0?new Date(cdr.dateParam1):null);
+		result.setDateParam2(cdr.dateParam2!=0?new Date(cdr.dateParam2):null);
+		result.setDateParam3(cdr.dateParam3!=0?new Date(cdr.dateParam3):null);
+		result.setDateParam4(cdr.dateParam4!=0?new Date(cdr.dateParam4):null);
+		result.setDateParam5(cdr.dateParam5!=0?new Date(cdr.dateParam5):null);
 		result.setDecimalParam1(cdr.decimalParam1!=null ? cdr.decimalParam1.setScale(BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP):null);
 		result.setDecimalParam2(cdr.decimalParam2!=null ? cdr.decimalParam2.setScale(BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP):null);
 		result.setDecimalParam3(cdr.decimalParam3!=null ? cdr.decimalParam3.setScale(BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP):null);
