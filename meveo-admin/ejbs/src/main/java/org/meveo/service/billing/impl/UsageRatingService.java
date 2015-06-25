@@ -281,7 +281,7 @@ public class UsageRatingService {
 	 * @return
 	 * @throws BusinessException
 	 */
-	public boolean rateEDRonChargeAndCounters(EDR edr, CachedUsageChargeInstance charge, User currentUser)
+	public boolean rateEDRonChargeAndCounters(WalletOperation walletOperation, EDR edr, CachedUsageChargeInstance charge, User currentUser)
 			throws BusinessException {
 		boolean stopEDRRating = false;
 		BigDecimal deducedQuantity = null;
@@ -302,16 +302,13 @@ public class UsageRatingService {
 		if (deducedQuantity == null || deducedQuantity.compareTo(BigDecimal.ZERO) > 0) {
 			Provider provider = charge.getProvider();
 			UsageChargeInstance chargeInstance = usageChargeInstanceService.findById(charge.getId());
-			WalletOperation walletOperation = null;
 			if (deducedQuantity == null) {
-				walletOperation = rateEDRwithMatchingCharge(edr, charge.getInChargeUnit(edr.getQuantity()), charge,
-						chargeInstance, provider, false);
-
+				walletOperation = rateEDRwithMatchingCharge(edr, charge.getInChargeUnit(edr.getQuantity()), charge, chargeInstance, provider, false);
 			} else {
 				edr.setQuantity(edr.getQuantity().subtract(deducedQuantity));
-				walletOperation = rateEDRwithMatchingCharge(edr, charge.getInChargeUnit(deducedQuantity), charge,
-						chargeInstance, provider, false);
+				walletOperation = rateEDRwithMatchingCharge(edr, charge.getInChargeUnit(deducedQuantity), charge, chargeInstance, provider, false);
 			}
+			
 			walletOperationService.chargeWalletOperation(walletOperation, currentUser, provider);
 
 			// handle associated edr creation
@@ -404,13 +401,19 @@ public class UsageRatingService {
 	public void ratePostpaidUsage(EDR edr, User currentUser) throws BusinessException {
 		rateUsageWithinTransaction(edr, currentUser);
 	}
+	
+	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+	public WalletOperation rateUsageWithinNewTransaction(EDR edr, User currentUser) throws BusinessException {
+		return rateUsageWithinTransaction(edr, currentUser);
+	}
 
 	@TransactionAttribute(TransactionAttributeType.MANDATORY)
-	public void rateUsageWithinTransaction(EDR edr, User currentUser) throws BusinessException {
+	public WalletOperation rateUsageWithinTransaction(EDR edr, User currentUser) throws BusinessException {
 		BigDecimal originalQuantity = edr.getQuantity();
 
 		log.info("Rating EDR={}", edr);
 
+		WalletOperation walletOperation = null;
 		if (edr.getSubscription() == null) {
 			edr.setStatus(EDRStatusEnum.REJECTED);
 			edr.setRejectReason("Subscription is null");
@@ -444,7 +447,7 @@ public class UsageRatingService {
 											// rate
 											// it we exit the look
 											log.debug("found matchig charge inst : id=" + charge.getId());
-											edrIsRated = rateEDRonChargeAndCounters(edr, charge, currentUser);
+											edrIsRated = rateEDRonChargeAndCounters(walletOperation, edr, charge, currentUser);
 											if (edrIsRated) {
 												edr.setStatus(EDRStatusEnum.RATED);
 												break;
@@ -458,11 +461,11 @@ public class UsageRatingService {
 
 					if (!edrIsRated) {
 						edr.setStatus(EDRStatusEnum.REJECTED);
-						edr.setRejectReason("no matching charge");
+						edr.setRejectReason("NO_MATCHING_CHARGE");
 					}
 				} else {
 					edr.setStatus(EDRStatusEnum.REJECTED);
-					edr.setRejectReason("subscription has no usage charge");
+					edr.setRejectReason("SUBSCRIPTION_HAS_NO_CHARGE");
 				}
 			} catch (Exception e) {
 				log.error("failed to rate usage Within Transaction",e);
@@ -476,6 +479,8 @@ public class UsageRatingService {
 		// counters)
 		edr.setQuantity(originalQuantity);
 		edr.setLastUpdate(new Date());
+		
+		return walletOperation;
 	}
 
 	@TransactionAttribute(TransactionAttributeType.MANDATORY)
@@ -490,7 +495,7 @@ public class UsageRatingService {
 
 		if (edr.getSubscription() == null) {
 			edr.setStatus(EDRStatusEnum.REJECTED);
-			edr.setRejectReason("Subscription is null");
+			edr.setRejectReason("SUBSCRIPTION_IS_NULL");
 		} else {
 			boolean edrIsRated = false;
 
@@ -552,11 +557,11 @@ public class UsageRatingService {
 
 					if (!edrIsRated) {
 						edr.setStatus(EDRStatusEnum.REJECTED);
-						edr.setRejectReason("no matching charge");
+						edr.setRejectReason("NO_MATCHING_CHARGE");
 					}
 				} else {
 					edr.setStatus(EDRStatusEnum.REJECTED);
-					edr.setRejectReason("subscription has no usage charge");
+					edr.setRejectReason("SUBSCRIPTION_HAS_NO_CHARGE");
 				}
 			} catch (Exception e) {
 				edr.setStatus(EDRStatusEnum.REJECTED);
