@@ -16,13 +16,19 @@
  */
 package org.meveo.admin.action.admin;
 
+import java.util.Date;
+
 import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.meveo.admin.action.BaseBean;
+import org.meveo.admin.exception.BusinessException;
+import org.meveo.model.Auditable;
+import org.meveo.model.billing.InvoiceConfiguration;
 import org.meveo.model.billing.Language;
 import org.meveo.model.crm.Provider;
 import org.meveo.service.base.local.IPersistenceService;
+import org.meveo.service.billing.impl.InvoiceConfigurationService;
 import org.meveo.service.crm.impl.ProviderService;
 import org.omnifaces.cdi.ViewScoped;
 import org.primefaces.event.SelectEvent;
@@ -35,6 +41,9 @@ public class ProviderBean extends BaseBean<Provider> {
 
 	@Inject
 	private ProviderService providerService;
+	
+	 @Inject
+	 private InvoiceConfigurationService invoiceConfigurationService;
 
 	public ProviderBean() {
 		super(Provider.class);
@@ -68,6 +77,23 @@ public class ProviderBean extends BaseBean<Provider> {
 			}
 		}
 
+	}
+	
+	@Override
+	public String saveOrUpdate(boolean killConversation)
+			throws BusinessException {
+		if (entity.getId()== null) {
+			  InvoiceConfiguration invoiceConfiguration =entity.getInvoiceConfiguration();
+				invoiceConfiguration.setCode(entity.getCode()); 
+				invoiceConfiguration.setDescription(entity.getDescription());   
+		   		invoiceConfiguration.setProvider(entity);
+		   		invoiceConfigurationService.create(invoiceConfiguration);
+		   	    log.info("created invoiceConfiguration id={} for provider {}", invoiceConfiguration.getId(), entity.getCode());
+			super.saveOrUpdate(killConversation);    
+		}else{
+		    super.saveOrUpdate(killConversation); 
+		  }
+		 return getListViewName();
 	}
 
 }
