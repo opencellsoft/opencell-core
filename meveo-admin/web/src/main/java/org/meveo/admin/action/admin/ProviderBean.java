@@ -77,6 +77,25 @@ public class ProviderBean extends BaseBean<Provider> {
     protected String getDefaultSort() {
         return "code";
     }
+    
+    @Override
+	public Provider initEntity() {
+		 super.initEntity();
+	   try{
+		if(entity.getId()!=null && entity.getInvoiceConfiguration()==null){ 
+		   InvoiceConfiguration invoiceConfiguration =new InvoiceConfiguration();
+			invoiceConfiguration.setCode(entity.getCode()); 
+			invoiceConfiguration.setDescription(entity.getDescription());   
+	   		invoiceConfiguration.setProvider(entity);
+	   		invoiceConfigurationService.create(invoiceConfiguration);
+	   	    entity.setInvoiceConfiguration(invoiceConfiguration);
+	   	    log.info("created invoiceConfiguration id={} for provider {}", invoiceConfiguration.getId(), entity.getCode());
+			}
+		}catch(BusinessException e){
+		  log.error("error while saving invoiceConfiguration "+e);	
+		 }
+		return entity;
+	}
 
     public void onRowSelect(SelectEvent event) {
         if (event.getObject() instanceof Language) {
@@ -121,16 +140,16 @@ public class ProviderBean extends BaseBean<Provider> {
             user.getRoles().add(role);
             userService.create(user);
             log.info("created default user id={} for provider {}", user.getId(), entity.getCode());
-            
-            InvoiceConfiguration invoiceConfiguration =entity.getInvoiceConfiguration();
+             
+            InvoiceConfiguration invoiceConfiguration =new InvoiceConfiguration();
 			invoiceConfiguration.setCode(entity.getCode()); 
 			invoiceConfiguration.setDescription(entity.getDescription());   
 	   		invoiceConfiguration.setProvider(entity);
 	   		invoiceConfigurationService.create(invoiceConfiguration);
+			entity.setInvoiceConfiguration(invoiceConfiguration);
 	   	    log.info("created invoiceConfiguration id={} for provider {}", invoiceConfiguration.getId(), entity.getCode());
-	   	    
             messages.info(new BundleKey("messages", "provider.createdWithDefaultUser"), entity.getCode() + ".ADMIN", entity.getCode() + ".password");
-        }
+         }
 
         return back;
     }
