@@ -45,7 +45,7 @@ import org.meveo.model.shared.Name;
  */
 @Entity
 @ObservableEntity
-@ExportIdentifier({ "userName" })
+@ExportIdentifier({ "userName", "provider" })
 @Table(name = "ADM_USER")
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "ADM_USER_SEQ")
 public class User extends AuditableEntity {

@@ -1,11 +1,13 @@
 package org.meveo.admin.action.admin;
 
+import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 import java.util.concurrent.Future;
 
@@ -15,10 +17,11 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.persistence.Entity;
 
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
 import org.jboss.seam.international.status.Messages;
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.commons.utils.ParamBean;
-import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.export.EntityExportImportService;
 import org.meveo.export.ExportImportStatistics;
 import org.meveo.export.ExportTemplate;
@@ -28,6 +31,7 @@ import org.meveo.model.crm.Provider;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.LazyDataModel;
 import org.primefaces.model.SortOrder;
+import org.reflections.Reflections;
 import org.slf4j.Logger;
 
 import com.thoughtworks.xstream.XStream;
@@ -182,12 +186,8 @@ public class EntityExportImportBean implements Serializable {
 
         Map<String, ExportTemplate> templates = new TreeMap<String, ExportTemplate>();
 
-        List<Class> classes = null;
-        try {
-            classes = ReflectionUtils.getClasses("org.meveo.model");
-        } catch (Exception e) {
-            log.error("Failed to get a list of classes for a model package", e);
-        }
+        Reflections reflections = new Reflections("org.meveo.model");
+        Set<Class<? extends IEntity>> classes = reflections.getSubTypesOf(IEntity.class);
 
         if (inputFilters.get("templateName") != null) {
             inputFilters.put("templateName", ((String) inputFilters.get("templateName")).toLowerCase());
@@ -297,7 +297,12 @@ public class EntityExportImportBean implements Serializable {
         exportImportFuture = null;
         if (event.getFile() != null) {
             try {
-                exportImportFuture = entityExportImportService.importEntities(event.getFile().getInputstream(), event.getFile().getFileName(), false, !requireFK, forceToProvider);
+
+                File tempFile = File.createTempFile(FilenameUtils.getBaseName(event.getFile().getFileName()).replaceAll(" ", "_"),
+                    "." + FilenameUtils.getExtension(event.getFile().getFileName()));
+                FileUtils.copyInputStreamToFile(event.getFile().getInputstream(), tempFile);
+
+                exportImportFuture = entityExportImportService.importEntities(tempFile, event.getFile().getFileName().replaceAll(" ", "_"), false, !requireFK, forceToProvider);
                 messages.info(new BundleKey("messages", "export.import.inProgress"), event.getFile().getFileName());
 
             } catch (Exception e) {

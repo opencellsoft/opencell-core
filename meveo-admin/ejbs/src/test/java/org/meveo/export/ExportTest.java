@@ -8,7 +8,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.junit.Test;
 import org.meveo.export.EntityExportImportService.ReusingReferenceByIdMarshallingStrategy;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.payments.CustomerAccount;
@@ -25,7 +24,7 @@ public class ExportTest {
 
     private Customer customer1 = null;
 
-    @Test
+    // @Test
     public void testExport() throws ClassNotFoundException, IOException {
 
         StringWriter buffer = new StringWriter();
@@ -87,7 +86,7 @@ public class ExportTest {
                 reader.moveUp();
                 reader.moveDown();
                 nodeName = reader.getNodeName();
-                if (nodeName.equals("data")){
+                if (nodeName.equals("data")) {
                     importEntities(importTemplate, reader);
                 }
                 reader.moveUp();
@@ -96,7 +95,7 @@ public class ExportTest {
     }
 
     private void importEntities(ExportTemplate template, HierarchicalStreamReader reader) {
-        
+
         XStream xstream = xstreams.get(template);
 
         if (xstream == null) {
@@ -104,20 +103,19 @@ public class ExportTest {
             xstream.setMarshallingStrategy(new ReusingReferenceByIdMarshallingStrategy());
             xstream.aliasSystemAttribute("xsId", "id");
         }
-        
+
         while (reader.hasMoreChildren()) {
             reader.moveDown();
-            
+
             Object obj = xstream.unmarshal(reader);
             if (obj instanceof CustomerAccount) {
                 System.out.println("Object is " + obj.toString() + " cust is " + ((CustomerAccount) obj).getCustomer());
-            
-            } else if (obj instanceof Customer){
-                if (((Customer)obj).getCode().equals("Customer_1")){
-                    ((Customer)obj).setCode("KUKU");
+
+            } else if (obj instanceof Customer) {
+                if (((Customer) obj).getCode().equals("Customer_1")) {
+                    ((Customer) obj).setCode("KUKU");
                 }
-                
-                
+
             } else {
                 System.out.println("Object is " + obj.toString());
             }
@@ -161,6 +159,5 @@ public class ExportTest {
         }
 
         xstream.marshal(objects, writer);
-
     }
 }

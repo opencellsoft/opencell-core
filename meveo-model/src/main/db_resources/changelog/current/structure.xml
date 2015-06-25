@@ -618,6 +618,9 @@
 			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
 			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="ADM_NOTIF_JOB" />
 
-	</changeSet>       
-	
+	</changeSet>
+    <changeSet id="684" author="AndriusKarpavicius">
+        <addUniqueConstraint columnNames="code, provider_id" constraintName="uk_billing_invoice_configuration" deferrable="false" disabled="false"
+            initiallyDeferred="false" tableName="billing_invoice_configuration" />
+    </changeSet>
 </databaseChangeLog>

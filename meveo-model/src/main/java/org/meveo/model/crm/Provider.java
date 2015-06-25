@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -185,7 +186,7 @@ public class Provider extends ProviderlessEntity {
     @Column(name = "PREPAID_RESRV_DELAY_MS")
     private Long prepaidReservationExpirationDelayinMillisec = Long.valueOf(60000);
     
-	@OneToOne(mappedBy = "provider")
+	@OneToOne(mappedBy = "provider", cascade={CascadeType.PERSIST})
 	private InvoiceConfiguration invoiceConfiguration;
 
     public String getCode() {

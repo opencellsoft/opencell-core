@@ -18,7 +18,7 @@ import org.meveo.model.BaseEntity;
 import org.meveo.model.ExportIdentifier;
 
 @Entity
-@ExportIdentifier("name")
+@ExportIdentifier({ "name", "provider" })
 @Table(name = "ADM_ROLE")
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "ADM_ROLE_SEQ")
 // @org.hibernate.annotations.Cache(usage =
@@ -116,5 +116,10 @@ public class Role extends BaseEntity {
 			return false;
 		return true;
 	}
+
+    @Override
+    public String toString() {
+        return String.format("Role [name=%s]", name);
+    }
 
 }
