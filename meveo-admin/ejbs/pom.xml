@@ -15,6 +15,8 @@
 
 	<properties>
 		<manaty.seam.version>3.1.0.Final</manaty.seam.version>
+		<version.template.file>src/main/java/org/meveo/util/Version.java.template</version.template.file>
+        <version.file>src/main/java/org/meveo/util/Version.java</version.file>
 	</properties>
 
 	<build>
@@ -67,6 +69,35 @@
 					</execution>
 				</executions>
 			</plugin>
+			
+      <plugin>
+        <groupId>com.google.code.maven-replacer-plugin</groupId>
+            <artifactId>maven-replacer-plugin</artifactId>
+            <version>1.4.0</version>
+            <executions>                
+                <execution>
+                    <phase>process-sources</phase>
+                    <goals>
+                        <goal>replace</goal>
+                    </goals>
+                </execution>
+            </executions>
+            <configuration>
+                <file>${version.template.file}</file>
+                <outputFile>${version.file}</outputFile>
+                <replacements>
+                    <replacement>
+                        <token>@buildtime@</token>
+                        <value>${maven.build.timestamp}</value>
+                    </replacement>
+                    <replacement>
+                        <token>@appVersion@</token>
+                        <value>${project.version}</value>
+                    </replacement>
+                </replacements>                        
+            </configuration>
+      </plugin>
+      			
 		</plugins>
 	</build>
 
