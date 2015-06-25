@@ -114,15 +114,22 @@ public class UsageRatingService {
 	 * @return
 	 * @throws BusinessException
 	 */
-	public WalletOperation rateEDRwithMatchingCharge(EDR edr, BigDecimal deducedQuantity,
-			CachedUsageChargeInstance chargeCache, UsageChargeInstance chargeInstance, Provider provider,
-			boolean isReservation) throws BusinessException {
+	public WalletOperation rateEDRwithMatchingCharge(EDR edr, BigDecimal deducedQuantity, CachedUsageChargeInstance chargeCache, UsageChargeInstance chargeInstance,
+			Provider provider, boolean isReservation) throws BusinessException {
 		WalletOperation walletOperation = null;
 		if (isReservation) {
 			walletOperation = new WalletReservation();
 		} else {
 			walletOperation = new WalletOperation();
 		}
+
+		rateEDRwithMatchingCharge(walletOperation, edr, deducedQuantity, chargeCache, chargeInstance, provider);
+		
+		return walletOperation;
+	}
+    
+	public void rateEDRwithMatchingCharge(WalletOperation walletOperation, EDR edr, BigDecimal deducedQuantity, CachedUsageChargeInstance chargeCache,
+			UsageChargeInstance chargeInstance, Provider provider) throws BusinessException {		
 		walletOperation.setSubscriptionDate(null);
 		walletOperation.setOperationDate(edr.getEventDate());
 		walletOperation.setParameter1(edr.getParameter1());
@@ -180,8 +187,6 @@ public class UsageRatingService {
 		// log.info("provider code:" + provider.getCode());
 		ratingService.rateBareWalletOperation(walletOperation, chargeInstance.getAmountWithoutTax(),
 				chargeInstance.getAmountWithTax(), countryId, currency, provider);
-
-		return walletOperation;
 	}
 
 	/**
@@ -303,10 +308,10 @@ public class UsageRatingService {
 			Provider provider = charge.getProvider();
 			UsageChargeInstance chargeInstance = usageChargeInstanceService.findById(charge.getId());
 			if (deducedQuantity == null) {
-				walletOperation = rateEDRwithMatchingCharge(edr, charge.getInChargeUnit(edr.getQuantity()), charge, chargeInstance, provider, false);
+				rateEDRwithMatchingCharge(walletOperation, edr, charge.getInChargeUnit(edr.getQuantity()), charge, chargeInstance, provider);
 			} else {
 				edr.setQuantity(edr.getQuantity().subtract(deducedQuantity));
-				walletOperation = rateEDRwithMatchingCharge(edr, charge.getInChargeUnit(deducedQuantity), charge, chargeInstance, provider, false);
+				rateEDRwithMatchingCharge(walletOperation, edr, charge.getInChargeUnit(deducedQuantity), charge, chargeInstance, provider);
 			}
 			
 			walletOperationService.chargeWalletOperation(walletOperation, currentUser, provider);
@@ -413,7 +418,7 @@ public class UsageRatingService {
 
 		log.info("Rating EDR={}", edr);
 
-		WalletOperation walletOperation = null;
+		WalletOperation walletOperation = new WalletOperation();
 		if (edr.getSubscription() == null) {
 			edr.setStatus(EDRStatusEnum.REJECTED);
 			edr.setRejectReason("Subscription is null");
