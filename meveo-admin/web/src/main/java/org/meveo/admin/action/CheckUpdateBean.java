@@ -20,6 +20,7 @@ import org.json.simple.parser.JSONParser;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.communication.MeveoInstance;
 import org.meveo.service.communication.impl.MeveoInstanceService;
+import org.meveo.util.Version;
 import org.slf4j.LoggerFactory;
 
 @SuppressWarnings("deprecation")
@@ -97,12 +98,12 @@ public class CheckUpdateBean implements Serializable {
 			MeveoInstance meveoInstance = meveoInstanceService.getThis();
 			String  meveoInstanceCode = (meveoInstance==null )?null:meveoInstance.getCode();
 			 		
-			String productVersion = "4.1";			
+			String productVersion = Version.appVersion;			
 			String productName = paramBean.getProperty("checkUpdate.productName", "Meveo");
 			String owner = paramBean.getProperty("checkUpdate.owner", "OpenCell");
 			String macAddress = "";
 			String md5="";
-			String creationDate="";
+			String creationDate= Version.build_time;
 			String updateDate="";
 			String keyEntreprise="";
 			String machineVendor= "";
