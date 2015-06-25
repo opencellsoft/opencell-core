@@ -94,7 +94,6 @@ public class CDRParsingService extends PersistenceService<EDR> {
 				edr.setEventDate(edrDAO.getEventDate());
 				edr.setOriginBatch(edrDAO.getOriginBatch());
 				edr.setOriginRecord(edrDAO.getOriginRecord());
-				
 				edr.setParameter1(edrDAO.getParameter1());
 				edr.setParameter2(edrDAO.getParameter2());
 				edr.setParameter3(edrDAO.getParameter3());
@@ -104,19 +103,17 @@ public class CDRParsingService extends PersistenceService<EDR> {
 				edr.setParameter7(edrDAO.getParameter7());
 				edr.setParameter8(edrDAO.getParameter8());
 				edr.setParameter9(edrDAO.getParameter9());
-				
 				edr.setDateParam1(edrDAO.getDateParam1());
 				edr.setDateParam2(edrDAO.getDateParam2());
 				edr.setDateParam3(edrDAO.getDateParam3());
 				edr.setDateParam4(edrDAO.getDateParam4());
 				edr.setDateParam5(edrDAO.getDateParam5());
-				
 				edr.setDecimalParam1(edrDAO.getDecimalParam1());
 				edr.setDecimalParam2(edrDAO.getDecimalParam2());
 				edr.setDecimalParam3(edrDAO.getDecimalParam3());
 				edr.setDecimalParam4(edrDAO.getDecimalParam4());
 				edr.setDecimalParam5(edrDAO.getDecimalParam5());
-				
+				edr.setAccessCode(accessPoint.getAccessUserId());
 				edr.setProvider(accessPoint.getProvider());
 				edr.setQuantity(edrDAO.getQuantity());
 				edr.setStatus(EDRStatusEnum.OPEN);

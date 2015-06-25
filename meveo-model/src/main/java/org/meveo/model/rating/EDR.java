@@ -148,6 +148,9 @@ public class EDR extends BaseEntity {
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "LAST_UPDATED")
 	private Date lastUpdate;
+	
+	@Column(name = "ACCESS_CODE")
+	private String accessCode;
 
 	public Subscription getSubscription() {
 		return subscription;
@@ -374,12 +377,20 @@ public class EDR extends BaseEntity {
 	public void setDecimalParam5(BigDecimal decimalParam5) {
 		this.decimalParam5 = decimalParam5;
 	}
+	
+	public String getAccessCode() {
+		return accessCode;
+	}
+
+	public void setAccessCode(String accessCode) {
+		this.accessCode = accessCode;
+	}
 
 	@Override
 	public String toString() {
 		return "EDR [subscription=" + subscription + ", originBatch="
 				+ originBatch + ", originRecord=" + originRecord
-				+ ", eventDate=" + eventDate + ", quantity=" + quantity
+				+ ", eventDate=" + eventDate + ", quantity=" + quantity+ ", access=" + accessCode
 				+ ", parameter1=" + parameter1 + ", parameter2=" + parameter2
 				+ ", parameter3=" + parameter3 + ", parameter4=" + parameter4
 				+ ", parameter5=" + parameter5 + ", parameter6=" + parameter6

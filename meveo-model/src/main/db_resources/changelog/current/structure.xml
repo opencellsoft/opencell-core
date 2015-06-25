@@ -647,6 +647,12 @@
 		<column name="DECIMAL_PARAMETER_4" type="numeric(23, 12)"/>
 		<column name="DECIMAL_PARAMETER_5" type="numeric(23, 12)"/>
 		</addColumn>
-	</changeSet>      
+	</changeSet> 
+	
+	<changeSet id="ticket903_20150625" author="Mbarek">
+		<addColumn tableName="RATING_EDR">
+		<column name="ACCESS_CODE" type="VARCHAR(255)"/>
+		</addColumn>
+	</changeSet>     
 	
 </databaseChangeLog>
