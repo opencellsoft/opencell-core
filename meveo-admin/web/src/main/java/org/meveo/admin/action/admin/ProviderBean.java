@@ -24,12 +24,14 @@ import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.admin.User;
+import org.meveo.model.billing.InvoiceConfiguration;
 import org.meveo.model.billing.Language;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.security.Role;
 import org.meveo.service.admin.impl.RoleService;
 import org.meveo.service.admin.impl.UserService;
 import org.meveo.service.base.local.IPersistenceService;
+import org.meveo.service.billing.impl.InvoiceConfigurationService;
 import org.meveo.service.crm.impl.ProviderService;
 import org.omnifaces.cdi.ViewScoped;
 import org.primefaces.event.SelectEvent;
@@ -44,10 +46,13 @@ public class ProviderBean extends BaseBean<Provider> {
     private ProviderService providerService;
 
     @Inject
-    private UserService userService;
+    private UserService userService; 
 
     @Inject
     private RoleService roleService;
+    
+    @Inject
+    private InvoiceConfigurationService invoiceConfigurationService;
 
     private static ParamBean paramBean = ParamBean.getInstance();
 
@@ -72,6 +77,25 @@ public class ProviderBean extends BaseBean<Provider> {
     protected String getDefaultSort() {
         return "code";
     }
+    
+    @Override
+	public Provider initEntity() {
+		 super.initEntity();
+	   try{
+		if(entity.getId()!=null && entity.getInvoiceConfiguration()==null){ 
+		   InvoiceConfiguration invoiceConfiguration =new InvoiceConfiguration();
+			invoiceConfiguration.setCode(entity.getCode()); 
+			invoiceConfiguration.setDescription(entity.getDescription());   
+	   		invoiceConfiguration.setProvider(entity);
+	   		invoiceConfigurationService.create(invoiceConfiguration);
+	   	    entity.setInvoiceConfiguration(invoiceConfiguration);
+	   	    log.info("created invoiceConfiguration id={} for provider {}", invoiceConfiguration.getId(), entity.getCode());
+			}
+		}catch(BusinessException e){
+		  log.error("error while saving invoiceConfiguration "+e);	
+		 }
+		return entity;
+	}
 
     public void onRowSelect(SelectEvent event) {
         if (event.getObject() instanceof Language) {
@@ -115,11 +139,17 @@ public class ProviderBean extends BaseBean<Provider> {
             user.setUserName(entity.getCode() + ".ADMIN");
             user.getRoles().add(role);
             userService.create(user);
-
             log.info("created default user id={} for provider {}", user.getId(), entity.getCode());
-
+             
+            InvoiceConfiguration invoiceConfiguration =new InvoiceConfiguration();
+			invoiceConfiguration.setCode(entity.getCode()); 
+			invoiceConfiguration.setDescription(entity.getDescription());   
+	   		invoiceConfiguration.setProvider(entity);
+	   		invoiceConfigurationService.create(invoiceConfiguration);
+			entity.setInvoiceConfiguration(invoiceConfiguration);
+	   	    log.info("created invoiceConfiguration id={} for provider {}", invoiceConfiguration.getId(), entity.getCode());
             messages.info(new BundleKey("messages", "provider.createdWithDefaultUser"), entity.getCode() + ".ADMIN", entity.getCode() + ".password");
-        }
+         }
 
         return back;
     }

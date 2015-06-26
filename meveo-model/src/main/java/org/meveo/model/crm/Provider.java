@@ -187,7 +187,7 @@ public class Provider extends ProviderlessEntity {
     private Long prepaidReservationExpirationDelayinMillisec = Long.valueOf(60000);
     
 	@OneToOne(mappedBy = "provider", cascade={CascadeType.PERSIST})
-	private InvoiceConfiguration invoiceConfiguration;
+	private InvoiceConfiguration invoiceConfiguration=new InvoiceConfiguration();
 
     public String getCode() {
         return code;

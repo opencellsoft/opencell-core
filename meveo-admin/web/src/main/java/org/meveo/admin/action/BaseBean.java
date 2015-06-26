@@ -58,6 +58,7 @@ import org.meveo.model.crm.AccountLevelEnum;
 import org.meveo.model.crm.CustomFieldInstance;
 import org.meveo.model.crm.CustomFieldPeriod;
 import org.meveo.model.crm.CustomFieldTemplate;
+import org.meveo.model.crm.CustomFieldTypeEnum;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.model.mediation.Access;
@@ -65,6 +66,7 @@ import org.meveo.model.shared.DateUtils;
 import org.meveo.security.MeveoUser;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.catalog.impl.CatMessagesService;
+import org.meveo.service.crm.impl.CustomEntitySearchService;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.primefaces.component.datatable.DataTable;
@@ -128,6 +130,9 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
      * Custom field templates
      */
     protected List<CustomFieldTemplate> customFieldTemplates = new ArrayList<CustomFieldTemplate>();
+    
+    private static final String CUSTOM_ENTITY_VALUE_SEPERATOR="|";
+    private static final String CUSTOM_ENTITY_VALUE_SPLIT="\\|";
 
     /**
      * Request parameter. Should form be displayed in create/edit or view mode
@@ -178,6 +183,9 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
      * Selected Entities in multiselect datatable.
      */
     private List<T> selectedEntities;
+    
+    @Inject
+    private CustomEntitySearchService customEntityFindService;
 
     /**
      * Constructor
@@ -943,6 +951,17 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
                 if (cfi == null) {
                     cf.setInstance(CustomFieldInstance.fromTemplate(cf));
                 } else {
+                	if(CustomFieldTypeEnum.ENTITY.equals(cf.getFieldType())){
+                    	String entityValue=cfi.getEntityValue();
+                    	if(entityValue!=null&&entityValue.indexOf(CUSTOM_ENTITY_VALUE_SEPERATOR)>0){
+                    		String[] values=entityValue.split((CUSTOM_ENTITY_VALUE_SPLIT));
+                    		BusinessEntity customEntity=customEntityFindService.findCustomEntity(values[0], values[1]);
+                    		cfi.setCustomEntity(customEntity);
+                    		log.debug("found cfi entity {}",customEntity);
+                    	}else{
+                    		log.debug("no cfi entity");
+                    	}
+                    }
                     cf.setInstance(cfi);
                 }
             }
@@ -958,6 +977,14 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
         for (CustomFieldTemplate cf : customFieldTemplates) {
 
             CustomFieldInstance cfi = cf.getInstance();
+            if(CustomFieldTypeEnum.ENTITY.equals(cf.getFieldType())){
+            	BusinessEntity customEntity=cfi.getCustomEntity();
+            	if(customEntity!=null){
+            		cfi.setEntityValue(String.format("%s"+CUSTOM_ENTITY_VALUE_SEPERATOR+"%d", customEntity.getClass().getSimpleName(),customEntity.getId()));
+            		log.debug("save cfi value {}",String.format("%s"+CUSTOM_ENTITY_VALUE_SEPERATOR+"%d", customEntity.getClass().getSimpleName(),customEntity.getId()));
+            	}
+            	log.debug("found custom entity {}", customEntity);
+            }
             // Not saving empty values
             if (cfi.isValueEmpty()) {
                 if (!cfi.isTransient()) {
@@ -1065,6 +1092,14 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     // }
 
     public List<CustomFieldTemplate> getCustomFieldTemplates() {
+    	log.debug("read customFieldTempaltes {}",customFieldTemplates.size());
+    	if(customFieldTemplates==null||customFieldTemplates.size()==0){
+    		if(entity!=null){
+    			initCustomFields();
+    		}else{
+    			initEntity();
+    		}
+    	}
         return customFieldTemplates;
     }
 
@@ -1214,6 +1249,8 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
      */
     protected List<CustomFieldTemplate> getApplicateCustomFieldTemplates() {
         AccountLevelEnum accountLevel = this.getClass().getAnnotation(CustomFieldEnabledBean.class).accountLevel();
-        return customFieldTemplateService.findByAccountLevel(accountLevel);
+        List<CustomFieldTemplate> result= customFieldTemplateService.findByAccountLevel(accountLevel);
+        log.debug("find {} by fieldType={} for {}",result.size(),accountLevel,this.getClass());
+        return result;
     }
 }

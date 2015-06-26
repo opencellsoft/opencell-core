@@ -53,6 +53,9 @@ public class CustomFieldTemplate extends BusinessEntity {
 
     @Column(name = "DEFAULT_VALUE", length = 50)
     private String defaultValue;
+    
+    @Column(name="ENTITY_CLAZZ")
+    private String entityClazz;
 
     @Transient
     private CustomFieldInstance instance;
@@ -113,7 +116,15 @@ public class CustomFieldTemplate extends BusinessEntity {
         this.defaultValue = defaultValue;
     }
 
-    public Object getDefaultValueConverted() {
+	public String getEntityClazz() {
+		return entityClazz;
+	}
+
+	public void setEntityClazz(String entityClazz) {
+		this.entityClazz = entityClazz;
+	}
+
+	public Object getDefaultValueConverted() {
         if (defaultValue != null) {
             if (fieldType == CustomFieldTypeEnum.DOUBLE) {
                 return Double.parseDouble(defaultValue);
