@@ -145,6 +145,9 @@ public class ProviderBean extends BaseBean<Provider> {
 			invoiceConfiguration.setCode(entity.getCode()); 
 			invoiceConfiguration.setDescription(entity.getDescription());   
 	   		invoiceConfiguration.setProvider(entity);
+	   		invoiceConfiguration.setDisplayOffers(entity.getInvoiceConfiguration().getDisplayOffers());
+	   		invoiceConfiguration.setDisplayServices(entity.getInvoiceConfiguration().getDisplayServices());
+	   		invoiceConfiguration.setDisplaySubscriptions(entity.getInvoiceConfiguration().getDisplaySubscriptions());
 	   		invoiceConfigurationService.create(invoiceConfiguration);
 			entity.setInvoiceConfiguration(invoiceConfiguration);
 	   	    log.info("created invoiceConfiguration id={} for provider {}", invoiceConfiguration.getId(), entity.getCode());
