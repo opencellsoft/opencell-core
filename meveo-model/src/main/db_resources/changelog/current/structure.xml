@@ -619,7 +619,10 @@
 			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="ADM_NOTIF_JOB" />
 
 	</changeSet>	
-	
+    <changeSet id="684" author="AndriusKarpavicius">
+        <addUniqueConstraint columnNames="code, provider_id" constraintName="uk_billing_invoice_configuration" deferrable="false" disabled="false"
+            initiallyDeferred="false" tableName="billing_invoice_configuration" />
+    </changeSet>
 	<changeSet id="789-2015623-1" author="TyshanShi">
 		<addColumn tableName="CRM_CUSTOM_FIELD_TMPL">
             <column name="ENTITY_CLAZZ" type="varchar(255)"/>

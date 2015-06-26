@@ -37,6 +37,11 @@ public class CustomFieldInstance extends BusinessEntity {
 
     private static final long serialVersionUID = 8691447585410651639L;
 
+    public CustomFieldInstance() {
+        super();
+        valuePeriods = new ArrayList<CustomFieldPeriod>();
+    }
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ACCOUNT_ID")
     private AccountEntity account;
@@ -91,7 +96,7 @@ public class CustomFieldInstance extends BusinessEntity {
     private Calendar calendar;
 
     @OneToMany(mappedBy = "customFieldInstance", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
-    private List<CustomFieldPeriod> valuePeriods = new ArrayList<CustomFieldPeriod>();
+    private List<CustomFieldPeriod> valuePeriods;
 
     public String getStringValue() {
         return stringValue;
@@ -436,7 +441,7 @@ public class CustomFieldInstance extends BusinessEntity {
 
         } else {
             // If value is null, don't create a new period -just nullify existing value if period exists already
-            CustomFieldPeriod period = getValuePeriod(valueDateFrom, valueDateTo, true,value != null);
+            CustomFieldPeriod period = getValuePeriod(valueDateFrom, valueDateTo, true, value != null);
             if (period != null) {
                 period.setDoubleValue(value);
             }

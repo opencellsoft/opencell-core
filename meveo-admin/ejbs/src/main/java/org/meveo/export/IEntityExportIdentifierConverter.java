@@ -47,7 +47,7 @@ public class IEntityExportIdentifierConverter implements Converter {
     private boolean ignoreNotFoundFK;
     private Provider forceToProvider;
     private Map<String, Long> providerMap = new HashMap<String, Long>();
-
+    private IEntityClassConverter iEntityClassConverter;
     private Logger log = LoggerFactory.getLogger(this.getClass());
 
     /**
@@ -66,13 +66,16 @@ public class IEntityExportIdentifierConverter implements Converter {
      *        DB)
      * @param ignoreNotFoundFK Ignore if entity was not found. Otherwise a runtime exception will be thrown
      * @param forceToProvider
+     * @param iEntityClassConverter A converter for full entity conversion
      */
-    public IEntityExportIdentifierConverter(ExportImportConfig exportImportConfig, EntityManager em, boolean referenceFKById, boolean ignoreNotFoundFK, Provider forceToProvider) {
+    public IEntityExportIdentifierConverter(ExportImportConfig exportImportConfig, EntityManager em, boolean referenceFKById, boolean ignoreNotFoundFK, Provider forceToProvider,
+            IEntityClassConverter iEntityClassConverter) {
         this.exportImportConfig = exportImportConfig;
         this.em = em;
         this.referenceFKById = referenceFKById;
         this.ignoreNotFoundFK = ignoreNotFoundFK;
         this.forceToProvider = forceToProvider;
+        this.iEntityClassConverter = iEntityClassConverter;
     }
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
@@ -166,6 +169,9 @@ public class IEntityExportIdentifierConverter implements Converter {
             return forceToProvider;
         }
 
+        // // This was a solution to large data amount processing with JPA transaction on each entity deserialisation, but it gives issues with references between the objects
+        // EntityManager em = (EntityManager) context.get("em");
+
         String idValue = reader.getAttribute("id");
 
         // Obtain a reference to an entity by ID
@@ -230,6 +236,11 @@ public class IEntityExportIdentifierConverter implements Converter {
                 }
             }
 
+            // Probably the entity was exported as full in older versions and now trying to import as a reference
+            if (parameters.isEmpty()) {
+                log.debug("Entity {} not found. Reason: no parameters were found to query with. id={}. Will be passed to iEntityClassConverter.", expectedType.getName(), idValue);
+                return context.convertAnother(context.currentObject(), expectedType, iEntityClassConverter);
+            }
             // Construct a query to retrieve an entity by the attributes
             StringBuilder sql = new StringBuilder("select o from " + expectedType.getName() + " o where ");
             boolean firstWhere = true;
@@ -260,9 +271,14 @@ public class IEntityExportIdentifierConverter implements Converter {
                 }
                 query.setParameter(param.getKey().replace('.', '_'), param.getValue());
             }
+
             try {
                 IEntity entity = (IEntity) query.getSingleResult();
                 log.trace("Found entity {} id={} with attributes {}", entity.getClass().getName(), entity.getId(), parameters);
+                // if (!em.contains(entity)) { // Should not be happening as entity manager is passed in unmarshal call instead of converter constructor
+                // log.trace("Entity {} id={} is detached. Will be refreshed", entity.getClass().getName(), entity.getId());
+                // entity = em.merge(entity);
+                // }
                 return entity;
 
             } catch (NoResultException | NonUniqueResultException e) {
