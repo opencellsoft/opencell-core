@@ -222,6 +222,8 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 		if (serviceInstance.getStatus() == InstanceStatusEnum.ACTIVE) {
 			throw new IncorrectServiceInstanceException("ServiceInstance is " + serviceInstance.getStatus());
 		}
+		
+		subscription.setStatus(SubscriptionStatusEnum.ACTIVE);
 
 		if (serviceInstance.getSubscriptionDate() == null) {
 			serviceInstance.setSubscriptionDate(new Date());
