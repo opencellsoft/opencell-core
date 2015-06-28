@@ -51,11 +51,28 @@ public class MEVEOCdrParser implements CSVCDRParser {
 		public String param2;
 		public String param3;
 		public String param4;
+		private String param5;
+		private String param6;
+		private String param7;
+		private String param8;
+		private String param9;
+		private long dateParam1;
+		private long dateParam2;
+		private long dateParam3; 
+		private long dateParam4; 
+		private long dateParam5; 
+		private BigDecimal decimalParam1; 
+		private BigDecimal decimalParam2; 
+		private BigDecimal decimalParam3; 
+		private BigDecimal decimalParam4; 
+		private BigDecimal decimalParam5;
 		public transient Provider provider;
 
 		public String toString() {
 			return (new Date(timestamp)) + ";" + quantity + ";" + access_id + ";" + param1 + ";" + param2
-					+ ";" + param3 + ";" + param4;
+					+ ";" + param3 + ";" + param4+ ";" +param5+ ";"+ param6+ ";" + param7+ ";" + param8+ ";" + param9 +";"
+					 + dateParam1+ ";" + dateParam2+ ";" + dateParam3+ ";" + dateParam4+ ";" + dateParam5+ ";" + decimalParam1
+					 +";" + decimalParam2+";" + decimalParam3+";" + decimalParam4+";" + decimalParam5;
 		}
 
 		@Override
@@ -132,6 +149,103 @@ public class MEVEOCdrParser implements CSVCDRParser {
 				} else {
 					cdr.param4 = fields[6];
 				}
+				if (fields.length <= 7) {
+					cdr.param5 = null;
+				} else {
+					cdr.param5 = fields[7];
+				}
+				if (fields.length <= 8) {
+					cdr.param6 = null;
+				} else {
+					cdr.param6 = fields[8];
+				}
+				if (fields.length <= 9) {
+					cdr.param7 = null;
+				} else {
+					cdr.param7 = fields[9];
+				}
+				if (fields.length <= 10) {
+					cdr.param8 = null;
+				} else {
+					cdr.param8 = fields[10];
+				}
+				if (fields.length <= 11) {
+					cdr.param9 = null;
+				} else {
+					cdr.param9 = fields[11];
+				}
+				
+				if (fields.length <= 12 ||"".equals(fields[12])) {
+					cdr.dateParam1=0;
+				}else{
+				try {
+					DateTime dt = formatter1.parseDateTime(fields[12]);
+					cdr.dateParam1 = dt.getMillis();
+				} catch (Exception e1) {
+					DateTime dt = formatter2.parseDateTime(fields[12]);
+					cdr.dateParam1 = dt.getMillis();
+				}}
+				if (fields.length <= 13||"".equals(fields[13])) {
+					cdr.dateParam2=0;
+				}else{
+				try {
+					DateTime dt = formatter1.parseDateTime(fields[13]);
+					cdr.dateParam2 = dt.getMillis();
+				} catch (Exception e1) {
+					DateTime dt = formatter2.parseDateTime(fields[13]);
+					cdr.dateParam2 = dt.getMillis();
+				}}
+				if (fields.length <= 14||"".equals(fields[14])) {
+					cdr.dateParam3=0;
+				}else{
+				try {
+					DateTime dt = formatter1.parseDateTime(fields[14]);
+					cdr.dateParam3 = dt.getMillis();
+				} catch (Exception e1) {
+					DateTime dt = formatter2.parseDateTime(fields[14]);
+					cdr.dateParam3 = dt.getMillis();
+				}}
+				if (fields.length <= 15||"".equals(fields[15])) {
+					cdr.dateParam4=0;
+				}else{
+				try {
+					DateTime dt = formatter1.parseDateTime(fields[15]);
+					cdr.dateParam4 = dt.getMillis();
+				} catch (Exception e1) {
+					DateTime dt = formatter2.parseDateTime(fields[15]);
+					cdr.dateParam4 = dt.getMillis();
+				}}
+				if (fields.length <= 16 || "".equals(fields[16])) {
+					cdr.dateParam5=0;
+				}else{
+				try {
+					DateTime dt = formatter1.parseDateTime(fields[16]);
+					cdr.dateParam5 = dt.getMillis();
+				} catch (Exception e1) {
+					DateTime dt = formatter2.parseDateTime(fields[16]);
+					cdr.dateParam5 = dt.getMillis();
+				}}
+				if (fields.length <= 17 || "".equals(fields[17])) {
+					cdr.decimalParam1=null;
+				}else{
+				   cdr.decimalParam1 = new BigDecimal(fields[17]);
+				}if (fields.length <= 18 || "".equals(fields[18])) {
+					cdr.decimalParam2=null;
+				}else{
+					cdr.decimalParam2 = new BigDecimal(fields[18]);
+				}if (fields.length <= 19 || "".equals(fields[19])) {
+					cdr.decimalParam3=null;
+				}else{
+					cdr.decimalParam3 = new BigDecimal(fields[19]);
+				}if (fields.length <= 20 || "".equals(fields[20])) {
+					cdr.decimalParam4=null;
+				}else{
+					cdr.decimalParam4 = new BigDecimal(fields[20]);
+				}if (fields.length <= 21 || "".equals(fields[21])) {
+					cdr.decimalParam5=null;
+				}else{
+				cdr.decimalParam5 = new BigDecimal(fields[21]);
+				}
 			}
 		} catch (Exception e) {
 			throw new InvalidFormatException(line, e.getMessage());
@@ -190,6 +304,22 @@ public class MEVEOCdrParser implements CSVCDRParser {
 		result.setParameter2(cdr.param2);
 		result.setParameter3(cdr.param3);
 		result.setParameter4(cdr.param4);
+		result.setParameter5(cdr.param5);
+		result.setParameter6(cdr.param6);
+		result.setParameter7(cdr.param7);
+		result.setParameter8(cdr.param8);
+		result.setParameter9(cdr.param9);
+		result.setDateParam1(cdr.dateParam1!=0?new Date(cdr.dateParam1):null);
+		result.setDateParam2(cdr.dateParam2!=0?new Date(cdr.dateParam2):null);
+		result.setDateParam3(cdr.dateParam3!=0?new Date(cdr.dateParam3):null);
+		result.setDateParam4(cdr.dateParam4!=0?new Date(cdr.dateParam4):null);
+		result.setDateParam5(cdr.dateParam5!=0?new Date(cdr.dateParam5):null);
+		result.setDecimalParam1(cdr.decimalParam1!=null ? cdr.decimalParam1.setScale(BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP):null);
+		result.setDecimalParam2(cdr.decimalParam2!=null ? cdr.decimalParam2.setScale(BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP):null);
+		result.setDecimalParam3(cdr.decimalParam3!=null ? cdr.decimalParam3.setScale(BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP):null);
+		result.setDecimalParam4(cdr.decimalParam4!=null ? cdr.decimalParam4.setScale(BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP):null);
+		result.setDecimalParam5(cdr.decimalParam5!=null ? cdr.decimalParam5.setScale(BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP):null);
+		
 		return result;
 	}
 

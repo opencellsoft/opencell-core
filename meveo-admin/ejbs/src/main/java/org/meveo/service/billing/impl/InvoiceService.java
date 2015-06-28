@@ -489,6 +489,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 				fileInputStream.read(fileBytes);
 				invoice.setPdf(fileBytes);
 				invoice.updateAudit(currentUser);
+				updateNoCheck(invoice);
 			} catch (Exception e) {
 				log.error("Error saving file to DB as blob. {}", e.getMessage());
 			} finally {

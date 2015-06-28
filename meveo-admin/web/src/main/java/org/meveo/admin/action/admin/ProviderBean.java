@@ -16,14 +16,12 @@
  */
 package org.meveo.admin.action.admin;
 
-import java.util.Date;
-
 import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.model.Auditable;
+import org.meveo.model.billing.BillingRun;
 import org.meveo.model.billing.InvoiceConfiguration;
 import org.meveo.model.billing.Language;
 import org.meveo.model.crm.Provider;
@@ -79,21 +77,41 @@ public class ProviderBean extends BaseBean<Provider> {
 
 	}
 	
+    @Override
+	public Provider initEntity() {
+		 super.initEntity();
+	   try{
+		if(entity.getId()!=null && entity.getInvoiceConfiguration()==null){ 
+		   InvoiceConfiguration invoiceConfiguration =new InvoiceConfiguration();
+			invoiceConfiguration.setCode(entity.getCode()); 
+			invoiceConfiguration.setDescription(entity.getDescription());   
+	   		invoiceConfiguration.setProvider(entity);
+	   		invoiceConfigurationService.create(invoiceConfiguration);
+	   	    entity.setInvoiceConfiguration(invoiceConfiguration);
+	   	    log.info("created invoiceConfiguration id={} for provider {}", invoiceConfiguration.getId(), entity.getCode());
+			}
+		}catch(BusinessException e){
+		  log.error("error while saving invoiceConfiguration "+e);	
+		 }
+		return entity;
+	}
+	
 	@Override
 	public String saveOrUpdate(boolean killConversation)
-			throws BusinessException {
-		if (entity.getId()== null) {
-			  InvoiceConfiguration invoiceConfiguration =entity.getInvoiceConfiguration();
-				invoiceConfiguration.setCode(entity.getCode()); 
-				invoiceConfiguration.setDescription(entity.getDescription());   
-		   		invoiceConfiguration.setProvider(entity);
-		   		invoiceConfigurationService.create(invoiceConfiguration);
-		   	    log.info("created invoiceConfiguration id={} for provider {}", invoiceConfiguration.getId(), entity.getCode());
-			super.saveOrUpdate(killConversation);    
-		}else{
-		    super.saveOrUpdate(killConversation); 
-		  }
-		 return getListViewName();
+			throws BusinessException { 
+		if (entity.isTransient()) {  
+			InvoiceConfiguration invoiceConfiguration =new InvoiceConfiguration();
+			invoiceConfiguration.setCode(entity.getCode()); 
+			invoiceConfiguration.setDescription(entity.getDescription());   
+	   		invoiceConfiguration.setProvider(entity);
+	   		invoiceConfiguration.setDisplayOffers(entity.getInvoiceConfiguration().getDisplayOffers());
+	   		invoiceConfiguration.setDisplayServices(entity.getInvoiceConfiguration().getDisplayServices());
+	   		invoiceConfiguration.setDisplaySubscriptions(entity.getInvoiceConfiguration().getDisplaySubscriptions());
+	   		invoiceConfigurationService.create(invoiceConfiguration);
+			entity.setInvoiceConfiguration(invoiceConfiguration);
+		   	log.info("created invoiceConfiguration id={} for provider {}", invoiceConfiguration.getId(), entity.getCode());
+		  } 
+		return super.saveOrUpdate(killConversation);  
 	}
 
 }
