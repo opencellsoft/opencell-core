@@ -284,8 +284,7 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
 		if (StringUtils.isBlank(expression)) {
 			return result;
 		}
-		Map<Object, Object> userMap = new HashMap<Object, Object>();
-		userMap.put("charge", charge);
+		Map<Object, Object> userMap = new HashMap<Object, Object>(); 
 		if(expression.indexOf("charge.") >= 0){
 			userMap.put("charge",charge); 
 		}
