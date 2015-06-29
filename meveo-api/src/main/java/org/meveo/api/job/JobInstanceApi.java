@@ -3,6 +3,7 @@ package org.meveo.api.job;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -65,7 +66,14 @@ public class JobInstanceApi extends BaseApi {
 		if (jobCategory == null) {
 			throw new MeveoApiException(MeveoApiErrorCode.BUSINESS_API_EXCEPTION, "Invalid job name=" + jobInstanceDto.getJobTemplate());
 		}
-
+		
+		 if (jobCategory!= null) {
+			 HashMap<String, String> jobs = new HashMap<String, String>(); 
+			 jobs = jobInstanceService.jobEntries.get(jobCategory);
+			 if (!jobs.containsKey(jobInstanceDto.getJobTemplate())) {
+				 throw new MeveoApiException(MeveoApiErrorCode.BUSINESS_API_EXCEPTION, "Invalid job template=" + jobInstanceDto.getJobTemplate());
+			 }}
+		 
 		List<CustomFieldTemplate> customFieldTemplates = new ArrayList<CustomFieldTemplate>();
 		HashMap<String, String> jobs = new HashMap<String, String>();
 		jobs = JobInstanceService.jobEntries.get(jobCategory);
@@ -91,8 +99,7 @@ public class JobInstanceApi extends BaseApi {
 				}
 			}
 		}
-		
-		TimerEntity timerEntity = timerEntityService.findByCode(jobInstanceDto.getTimerCode(), provider);
+		 
 		JobInstance jobInstance = new JobInstance();
 		jobInstance.setUserId(currentUser.getId());
 		jobInstance.setActive(jobInstanceDto.isActive());
@@ -101,22 +108,21 @@ public class JobInstanceApi extends BaseApi {
 		jobInstance.setJobTemplate(jobInstanceDto.getJobTemplate());
 		jobInstance.setCode(jobInstanceDto.getCode());
 		jobInstance.setDescription(jobInstanceDto.getDescription());
-		jobInstance.setTimerEntity(timerEntity);
 		
+		 if (!StringUtils.isBlank(jobInstanceDto.getTimerCode())) {
+			 TimerEntity timerEntity = timerEntityService.findByCode(jobInstanceDto.getTimerCode(),provider); 
+			 jobInstance.setTimerEntity(timerEntity);
+			  if(timerEntity==null ){
+			 throw new MeveoApiException(MeveoApiErrorCode.BUSINESS_API_EXCEPTION, "Invalid timer entity=" + jobInstanceDto.getTimerCode());
+			 }}
 		
-		
-		if (jobInstanceDto.getFollowingJobs() != null &&  jobInstanceDto.getFollowingJobs().isEmpty()) {
-			for(String s : jobInstanceDto.getFollowingJobs().keySet() ){
-				jobInstanceDto.getFollowingJobs().get(s);
-				//JobInstance nextJob = jobInstanceService.findByCode(postData.getFollowingJobs().get(s), provider);
-				//TODO
-				// JobInstance nextJob = jobInstanceService.findByName(postData.getFollowingTimer(), provider);
-				// jobInstance.setFollowingTimer(jobInstanceService.findByName(postData.getFollowingTimer(), provider));
-				//if (nextJob == null) {
-				//  throw new MeveoApiException(MeveoApiErrorCode.BUSINESS_API_EXCEPTION, "Invalid next job=" + postData.getFollowingTimer());
-				//}
-			}
-		}
+		 if (!StringUtils.isBlank(jobInstanceDto.getFollowingJob())) {
+			 JobInstance nextJob = jobInstanceService.findByCode(jobInstanceDto.getFollowingJob(),provider);
+			 jobInstance.setFollowingJob(nextJob);
+			  if(nextJob==null ){
+			 throw new MeveoApiException(MeveoApiErrorCode.BUSINESS_API_EXCEPTION, "Invalid next job=" + jobInstanceDto.getFollowingJob());
+			 }
+			 } 
 
 		if (jobInstanceDto.getCustomFields() != null) {
 			// populate customFields

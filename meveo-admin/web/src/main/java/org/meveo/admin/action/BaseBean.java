@@ -1092,7 +1092,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     // }
 
     public List<CustomFieldTemplate> getCustomFieldTemplates() {
-    	log.debug("read customFieldTempaltes {}",customFieldTemplates.size());
+    	log.debug("read customFieldTempaltes {}",customFieldTemplates!=null ? customFieldTemplates.size() : "null");
     	if(customFieldTemplates==null||customFieldTemplates.size()==0){
     		if(entity!=null){
     			initCustomFields();

@@ -1,8 +1,5 @@
 package org.meveo.api.dto.job;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -29,13 +26,9 @@ public class JobInstanceDto extends BaseDto {
     
     @XmlAttribute(required = false)
     private String description;
-
-    /**
-     * the key is an EL , the value is a JobInstance code
-     * 
-     */
-    @XmlElement(required = false)
-    private Map<String, String> followingJobs = new HashMap<String, String>();
+ 
+    @XmlElement(required = false) 
+    private String followingJob;;
 
      @XmlElement(required = false)
     private String parameter;
@@ -114,22 +107,22 @@ public class JobInstanceDto extends BaseDto {
 	/**
 	 * @return the followingJobs
 	 */
-	public Map<String, String> getFollowingJobs() {
-		return followingJobs;
-	}
-
-	/**
-	 * @param followingJobs the followingJobs to set
-	 */
-	public void setFollowingJobs(Map<String, String> followingJobs) {
-		this.followingJobs = followingJobs;
-	}
+ 
 
 	/**
 	 * @return the parameter
 	 */
 	public String getParameter() {
 		return parameter;
+	}
+
+
+	public String getFollowingJob() {
+		return followingJob;
+	}
+
+	public void setFollowingJob(String followingJob) {
+		this.followingJob = followingJob;
 	}
 
 	/**
@@ -200,7 +193,7 @@ public class JobInstanceDto extends BaseDto {
 	public String toString() {
 		return "JobInstanceDto [jobCategory=" + jobCategory + ", jobTemplate="
 				+ jobTemplate + ", code=" + code + ", description="
-				+ description + ", followingJobs=" + followingJobs
+				+ description + ", followingJob=" + followingJob
 				+ ", parameter=" + parameter + ", active=" + active
 				+ ", userId=" + userId + ", customFields=" + customFields
 				+ ", timerCode=" + timerCode + "]";
