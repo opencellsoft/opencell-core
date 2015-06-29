@@ -24,7 +24,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
-				<version>2.9</version>
+				<version>2.18.1</version>
 				<configuration>
 					<skip>true</skip>
 				</configuration>
@@ -33,7 +33,7 @@
 			<!-- Copy files from other projects for testing -->
 			<plugin>
 				<artifactId>maven-resources-plugin</artifactId>
-				<version>2.5</version>
+				<version>2.7</version>
 				<executions>
 					<!-- Copy message, authentication and other configuration files from 
 						configuration module for testing -->
@@ -73,7 +73,7 @@
       <plugin>
         <groupId>com.google.code.maven-replacer-plugin</groupId>
             <artifactId>maven-replacer-plugin</artifactId>
-            <version>1.4.0</version>
+            <version>1.4.1</version>
             <executions>                
                 <execution>
                     <phase>process-sources</phase>
@@ -112,7 +112,6 @@
 			<artifactId>mail</artifactId>
 		</dependency>
 		
-		
 		<dependency>
 			<groupId>javax.enterprise</groupId>
 			<artifactId>cdi-api</artifactId>
@@ -149,22 +148,6 @@
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-lang3</artifactId>
 		</dependency>
-		
-<!-- 		<dependency> -->
-<!-- 			<groupId>org.richfaces.ui</groupId> -->
-<!-- 			<artifactId>richfaces-components-ui</artifactId> -->
-<!-- 			<version>${manaty.richfaces.version}</version> -->
-<!-- 		</dependency> -->
-<!-- 		<dependency> -->
-<!-- 			<groupId>org.richfaces.ui</groupId> -->
-<!-- 			<artifactId>richfaces-components-api</artifactId> -->
-<!-- 			<version>${manaty.richfaces.version}</version> -->
-<!-- 		</dependency> -->
-<!-- 		<dependency> -->
-<!-- 			<groupId>org.richfaces.core</groupId> -->
-<!-- 			<artifactId>richfaces-core-impl</artifactId> -->
-<!-- 			<version>${manaty.richfaces.version}</version> -->
-<!-- 		</dependency> -->
 
 		<dependency>
 			<groupId>org.primefaces</groupId>
@@ -188,61 +171,28 @@
 			<artifactId>seam-faces</artifactId>
 		</dependency>
 
-		<!-- <dependency> -->
-		<!-- <groupId>com.google.gwt</groupId> -->
-		<!-- <artifactId>gwt-servlet</artifactId> -->
-		<!-- <version>2.0.3</version> -->
-		<!-- <scope>compile</scope> -->
-		<!-- </dependency> -->
-
 		<dependency>
 			<groupId>org.jboss.spec.javax.el</groupId>
 			<artifactId>jboss-el-api_2.2_spec</artifactId>
 			<scope>provided</scope>
 		</dependency>
 
-		<!-- <dependency> <groupId>pentaho-kettle</groupId> <artifactId>kettle-engine</artifactId> 
-			<version>4.2.0-GA</version> <scope>compile</scope> <exclusions> <exclusion> 
-			<groupId>xerces</groupId> <artifactId>xercesImpl</artifactId> </exclusion> 
-			</exclusions> </dependency> <dependency> <groupId>pentaho-kettle</groupId> 
-			<artifactId>kettle-core</artifactId> <version>4.2.0-GA</version> <scope>compile</scope> 
-			<exclusions> <exclusion> <groupId>xerces</groupId> <artifactId>xercesImpl</artifactId> 
-			</exclusion> </exclusions> </dependency> <dependency> <groupId>pentaho-kettle</groupId> 
-			<artifactId>kettle-db</artifactId> <version>4.2.0-GA</version> <scope>compile</scope> 
-			<exclusions> <exclusion> <groupId>xerces</groupId> <artifactId>xercesImpl</artifactId> 
-			</exclusion> </exclusions> </dependency> -->
-
 		<dependency>
 			<groupId>rhino</groupId>
 			<artifactId>js</artifactId>
 			<version>1.7R1</version>
-			<scope>compile</scope>
 		</dependency>
 
 		<dependency>
 			<groupId>org.apache.poi</groupId>
 			<artifactId>poi</artifactId>
-			<version>3.10-FINAL</version>
+			<version>3.12</version>
 		</dependency>
 
 		<dependency>
 			<groupId>org.apache.poi</groupId>
 			<artifactId>poi-ooxml</artifactId>
-			<version>3.10-FINAL</version>
-<!-- 			<exclusions> -->
-<!-- 				<exclusion> -->
-<!-- 					<groupId>org.apache.xmlbeans</groupId> -->
-<!-- 					<artifactId>xmlbeans</artifactId> -->
-<!-- 				</exclusion> -->
-<!-- 				<exclusion> -->
-<!-- 					<groupId>org.apache.geronimo.specs</groupId> -->
-<!-- 					<artifactId>geronimo-stax-api_1.0_spec</artifactId> -->
-<!-- 				</exclusion> -->
-<!-- 				<exclusion> -->
-<!-- 					<groupId>org.apache.poi</groupId> -->
-<!-- 					<artifactId>poi-ooxml-schemas</artifactId> -->
-<!-- 				</exclusion> -->
-<!-- 			</exclusions> -->
+			<version>3.12</version>
 		</dependency>
 
 		<dependency>
@@ -269,21 +219,23 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
-<dependency>
-  <groupId>joda-time</groupId>
-  <artifactId>joda-time</artifactId>
-  <version>2.7</version>
-</dependency>
+		
+		<dependency>
+			<groupId>joda-time</groupId>
+			<artifactId>joda-time</artifactId>
+			<version>2.7</version>
+		</dependency>
+		
 		<dependency>
 			<groupId>xalan</groupId>
 			<artifactId>xalan</artifactId>
-			<version>2.7.1</version>
+			<version>2.7.2</version>
 		</dependency>
 
 		<dependency>
 			<groupId>commons-lang</groupId>
 			<artifactId>commons-lang</artifactId>
-			<version>2.3</version>
+			<version>2.6</version> 
 		</dependency>
 
 		<dependency>
@@ -325,12 +277,12 @@
 		<dependency>
 			<groupId>com.thoughtworks.xstream</groupId>
 			<artifactId>xstream</artifactId>
-			<version>1.4.7</version>
+			<version>1.4.8</version>
 		</dependency>
 		<dependency>
 			<groupId>com.thoughtworks.xstream</groupId>
 			<artifactId>xstream-hibernate</artifactId>
-			<version>1.4.7</version>
+			<version>1.4.8</version>
 		</dependency>
 	
 		<!-- For testing -->
@@ -344,7 +296,7 @@
 		<dependency>
 			<groupId>org.dbunit</groupId>
 			<artifactId>dbunit</artifactId>
-			<version>2.4.9</version>
+			<version>2.5.1</version>
 			<scope>test</scope>
 			<exclusions>
 				<exclusion>
@@ -354,33 +306,28 @@
 			</exclusions>
 		</dependency>
 
-		<dependency>
-			<groupId>dom4j</groupId>
-			<artifactId>dom4j</artifactId>
-		</dependency>
-
-		<dependency>
-			<groupId>xalan</groupId>
-			<artifactId>serializer</artifactId>
-			<version>2.7.1</version>
-		</dependency>
+<!-- 		<dependency> -->
+<!-- 			<groupId>dom4j</groupId> -->
+<!-- 			<artifactId>dom4j</artifactId> -->
+<!-- 		</dependency> -->
 
 		<dependency>
 			<groupId>commons-collections</groupId>
 			<artifactId>commons-collections</artifactId>
-			<version>3.2</version>
+			<version>3.2.1</version>
 		</dependency>
 
-		<dependency>
-			<groupId>org.codehaus.groovy</groupId>
-			<artifactId>groovy-all</artifactId>
-			<version>2.3.7</version>
-		</dependency>
-		
+<!-- 		<dependency> -->
+<!-- 			<groupId>org.codehaus.groovy</groupId> -->
+<!-- 			<artifactId>groovy-all</artifactId> -->
+<!-- 			<version>2.3.7</version> -->
+<!-- 			<scope>test</scope> -->
+<!-- 		</dependency>	 -->
+
 		<dependency>
 			<groupId>net.sourceforge.jexcelapi</groupId>
 			<artifactId>jxl</artifactId>
-			<version>2.6.8-seam</version>
+			<version>2.6.12</version>
 			<scope>compile</scope>
 			<exclusions>
 				<exclusion>
@@ -390,31 +337,6 @@
 			</exclusions>
 		</dependency>
 		
-				<!-- rest core library -->
-<dependency>
-	<groupId>org.jboss.resteasy</groupId>
-	<artifactId>resteasy-jaxrs</artifactId>
-	<version>3.0.6.Final</version>
-</dependency>
-
-		<!-- JAXB support -->
-		<dependency>
-			<groupId>org.jboss.resteasy</groupId>
-			<artifactId>resteasy-jaxb-provider</artifactId>
-			<scope>provided</scope>
-			<version>3.0.6.Final</version>
-		</dependency>
-
-		<dependency>
-			<groupId>org.jboss.resteasy</groupId>
-			<artifactId>jaxrs-api</artifactId>
-			<version>3.0.6.Final</version>
-		</dependency>
-				<dependency>
-			<groupId>com.googlecode.json-simple</groupId>
-			<artifactId>json-simple</artifactId>
-			<version>1.1</version>
-		</dependency>
 		<dependency>
 			<groupId>com.github.taksan</groupId>
 			<artifactId>skype-java-api</artifactId>
@@ -430,45 +352,35 @@
 			<artifactId>smack</artifactId>
 			<version>3.1.0</version>
 		</dependency>
-		<!-- <dependency> -->
-		<!-- <groupId>batik</groupId> -->
-		<!-- <artifactId>batik</artifactId> -->
-		<!-- <version>1.1.1</version> -->
-		<!-- </dependency> -->
+
+		<!-- rest core library -->
+		<dependency>
+			<groupId>org.jboss.resteasy</groupId>
+			<artifactId>resteasy-jaxrs</artifactId>
+			<version>3.0.6.Final</version>
+		</dependency>
+	
+		<!-- JAXB support -->
+		<dependency>
+			<groupId>org.jboss.resteasy</groupId>
+			<artifactId>resteasy-jaxb-provider</artifactId>
+			<scope>provided</scope>
+			<version>3.0.6.Final</version>
+		</dependency>
+	
+		<dependency>
+			<groupId>org.jboss.resteasy</groupId>
+			<artifactId>jaxrs-api</artifactId>
+			<version>3.0.6.Final</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>com.googlecode.json-simple</groupId>
+			<artifactId>json-simple</artifactId>
+			<version>1.1</version>
+		</dependency>
 
 	</dependencies>
 
-<!-- 	<profiles> -->
-<!-- 		<profile> -->
-<!-- 			<id>development</id> -->
-<!-- 			<activation> -->
-<!-- 				<activeByDefault>true</activeByDefault> -->
-<!-- 				<property> -->
-<!-- 					<name>env</name> -->
-<!-- 					<value>dev</value> -->
-<!-- 				</property> -->
-<!-- 			</activation> -->
-<!-- 		</profile> -->
-
-<!-- 		<profile> -->
-<!-- 			<id>integration</id> -->
-<!-- 			<activation> -->
-<!-- 				<property> -->
-<!-- 					<name>env</name> -->
-<!-- 					<value>integr</value> -->
-<!-- 				</property> -->
-<!-- 			</activation> -->
-<!-- 		</profile> -->
-
-<!-- 		<profile> -->
-<!-- 			<id>production</id> -->
-<!-- 			<activation> -->
-<!-- 				<property> -->
-<!-- 					<name>env</name> -->
-<!-- 					<value>prod</value> -->
-<!-- 				</property> -->
-<!-- 			</activation> -->
-<!-- 		</profile> -->
-<!-- 	</profiles> -->
 </project>
 

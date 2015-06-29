@@ -27,11 +27,11 @@
 					<target>1.6</target>
 				</configuration>
 			</plugin>
-			<plugin>
-				<artifactId>maven-jar-plugin</artifactId>
-				<groupId>org.apache.maven.plugins</groupId>
-				<version>2.4</version>
-			</plugin>
+<!-- 			<plugin> -->
+<!-- 				<artifactId>maven-jar-plugin</artifactId> -->
+<!-- 				<groupId>org.apache.maven.plugins</groupId> -->
+<!-- 				<version>2.4</version> -->
+<!-- 			</plugin> -->
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>jaxb2-maven-plugin</artifactId>
@@ -118,11 +118,11 @@
 			<version>2.3</version>
 		</dependency>
 
-		<dependency>
-			<groupId>cn.guoyukun.jdbc</groupId>
-			<artifactId>oracle-ojdbc6</artifactId>
-			<version>11.2.0.3.0</version>
-		</dependency>
+<!-- 		<dependency> -->
+<!-- 			<groupId>cn.guoyukun.jdbc</groupId> -->
+<!-- 			<artifactId>oracle-ojdbc6</artifactId> -->
+<!-- 			<version>11.2.0.3.0</version> -->
+<!-- 		</dependency> -->
 
 		<dependency>
 			<groupId>org.slf4j</groupId>
@@ -172,6 +172,7 @@
 		<dependency>
 			<groupId>joda-time</groupId>
 			<artifactId>joda-time</artifactId>
+			<version>2.7</version>
 		</dependency>
 		
 		<!-- TESTING dependencies -->
