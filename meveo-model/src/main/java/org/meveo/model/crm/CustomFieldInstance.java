@@ -2,10 +2,16 @@ package org.meveo.model.crm;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
@@ -89,14 +95,52 @@ public class CustomFieldInstance extends BusinessEntity {
     private String entityValue;
     
     @Transient
-    private BusinessEntity customEntity;
+    private String label;
+    @Transient
+    private BusinessEntity businessEntity;
+    @Transient
+    private List<BusinessEntity> entityList=new ArrayList<BusinessEntity>();
+    @Transient
+    private Map<String,BusinessEntity> entityMap=new HashMap<String,BusinessEntity>();
+    
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "CRM_CUSTOM_FIELD_INST_STR_MAP")
+    private Map<String, String> stringMap = new HashMap<String, String>();
+    
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "CRM_CUSTOM_FIELD_INST_STR_LIST")
+    private Set<String> stringList=new HashSet<String>();
+
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "CRM_CUSTOM_FIELD_INST_DATE_LIST")
+    private Set<Date> dateList=new HashSet<Date>();
+    
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "CRM_CUSTOM_FIELD_INST_DATE_MAP")
+    private Map<String,Date> dateMap=new HashMap<String, Date>();
+
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "CRM_CUSTOM_FIELD_INST_LONG_LIST")
+    private Set<Long> longList=new HashSet<Long>();
+    
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "CRM_CUSTOM_FIELD_INST_LONG_MAP")
+    private Map<String,Long> longMap=new HashMap<String, Long>();
+
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "CRM_CUSTOM_FIELD_INST_DOUB_LIST")
+    private Set<Double> doubleList=new HashSet<Double>();
+    
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "CRM_CUSTOM_FIELD_INST_DOUB_MAP")
+    private Map<String,Double> doubleMap=new HashMap<String, Double>();
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "CALENDAR_ID")
     private Calendar calendar;
 
     @OneToMany(mappedBy = "customFieldInstance", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
-    private List<CustomFieldPeriod> valuePeriods;
+    private List<CustomFieldPeriod> valuePeriods = new ArrayList<CustomFieldPeriod>();
 
     public String getStringValue() {
         return stringValue;
@@ -441,7 +485,7 @@ public class CustomFieldInstance extends BusinessEntity {
 
         } else {
             // If value is null, don't create a new period -just nullify existing value if period exists already
-            CustomFieldPeriod period = getValuePeriod(valueDateFrom, valueDateTo, true, value != null);
+            CustomFieldPeriod period = getValuePeriod(valueDateFrom, valueDateTo, true,value != null);
             if (period != null) {
                 period.setDoubleValue(value);
             }
@@ -659,7 +703,10 @@ public class CustomFieldInstance extends BusinessEntity {
     }
 
     public boolean isValueEmpty() {
-        return (!isVersionable() && (stringValue == null && dateValue == null && longValue == null && doubleValue == null&&entityValue==null)) || (isVersionable() && valuePeriods.isEmpty());
+        return (!isVersionable() && (stringValue == null && dateValue == null && longValue == null && doubleValue == null&&entityValue==null
+        		&&(stringList==null||stringList.size()==0)&&(dateList==null||dateList.size()==0)&&(longList==null||longList.size()==0)&&(doubleList==null||doubleList.size()==0)
+        		&&(entityList==null||entityList.size()==0)&&(stringMap==null||stringMap.size()==0)&&(dateMap==null||dateMap.size()==0)&&(longMap==null||longMap.size()==0)
+        		&&(doubleMap==null||doubleMap.size()==0)&&(entityMap==null||entityMap.size()==0))) || (isVersionable() && valuePeriods.isEmpty());
         // TODO check that period values are empty
     }
 
@@ -675,12 +722,180 @@ public class CustomFieldInstance extends BusinessEntity {
                 calendar != null ? calendar.getCode() : null, valuePeriods != null ? valuePeriods.subList(0, Math.min(valuePeriods.size(), maxLen)) : null);
     }
 
-	public BusinessEntity getCustomEntity() {
-		return customEntity;
+	public List<BusinessEntity> getEntityList() {
+		return entityList;
 	}
 
-	public void setCustomEntity(BusinessEntity customEntity) {
-		this.customEntity = customEntity;
+	public void setEntityList(List<BusinessEntity> entityList) {
+		this.entityList = entityList;
 	}
 
+	public Map<String, BusinessEntity> getEntityMap() {
+		return entityMap;
+	}
+
+	public void setEntityMap(Map<String, BusinessEntity> entityMap) {
+		this.entityMap = entityMap;
+	}
+
+	public Map<String, String> getStringMap() {
+		return stringMap;
+	}
+
+	public void setStringMap(Map<String, String> stringMap) {
+		this.stringMap = stringMap;
+	}
+
+	public Set<String> getStringList() {
+		return stringList;
+	}
+
+	public void setStringList(Set<String> stringList) {
+		this.stringList = stringList;
+	}
+	
+	public Set<Date> getDateList() {
+		return dateList;
+	}
+
+	public void setDateList(Set<Date> dateList) {
+		this.dateList = dateList;
+	}
+
+	public Map<String, Date> getDateMap() {
+		return dateMap;
+	}
+
+	public void setDateMap(Map<String, Date> dateMap) {
+		this.dateMap = dateMap;
+	}
+
+	public Set<Long> getLongList() {
+		return longList;
+	}
+
+	public void setLongList(Set<Long> longList) {
+		this.longList = longList;
+	}
+
+	public Map<String, Long> getLongMap() {
+		return longMap;
+	}
+
+	public void setLongMap(Map<String, Long> longMap) {
+		this.longMap = longMap;
+	}
+
+	public Set<Double> getDoubleList() {
+		return doubleList;
+	}
+
+	public void setDoubleList(Set<Double> doubleList) {
+		this.doubleList = doubleList;
+	}
+
+	public Map<String, Double> getDoubleMap() {
+		return doubleMap;
+	}
+
+	public void setDoubleMap(Map<String, Double> doubleMap) {
+		this.doubleMap = doubleMap;
+	}
+
+	public void setBusinessEntity(BusinessEntity businessEntity) {
+		this.businessEntity = businessEntity;
+	}
+
+	public BusinessEntity getBusinessEntity() {
+		return businessEntity;
+	}
+	
+	//entity for list or map
+	public void addEntityTolist(){
+		this.entityList.add(businessEntity);
+		this.businessEntity=null;
+	}
+	public void addEntityTolists(BusinessEntity entity){
+		this.entityList.add(entity);
+	}
+	public void removeEntityFromlist(BusinessEntity businessEntity){
+		this.entityList.remove(businessEntity);
+	}
+	public void addEntityTomap(){
+		this.entityMap.put(label, this.businessEntity);
+		this.label=null;
+		this.businessEntity=null;
+	}
+	public void addEntityTomaps(String label,BusinessEntity businessEntity){
+		this.entityMap.put(label, businessEntity);
+	}
+	public void removeEntityFrommap(String key){
+		this.entityMap.remove(key);
+	}
+	//string for list or map
+	public void addStringTolist(){
+		this.stringList.add(stringValue);
+		this.stringValue=null;
+	}
+	public void removeStringFromlist(String value){
+		this.stringList.remove(value);
+	}
+	public void addStringTomap(){
+		this.stringMap.put(label, this.stringValue);
+		this.label=null;
+		this.stringValue=null;
+	}
+	public void removeStringFrommap(String key){
+		this.stringMap.remove(key);
+	}
+
+	public String getLabel() {
+		return label;
+	}
+
+	public void setLabel(String label) {
+		this.label = label;
+	}
+	public void addDateTolist(){
+		this.dateList.add(dateValue);
+		dateValue=null;
+	}
+	public void removeDateFromlist(Date value){
+		this.dateList.remove(value);
+	}
+	public void addDateTomap(){
+		this.dateMap.put(label, dateValue);
+		label=null;
+		dateValue=null;
+	}
+	public void removeDateFrommap(String key){
+		this.dateMap.remove(key);
+	}
+	public void addLongTolist(){
+		this.longList.add(longValue);
+		longValue=null;
+	}
+	public void removeLongFromlist(Long value){
+		this.longList.remove(value);
+	}
+	public void addLongTomap(){
+		this.longMap.put(label, longValue);
+		this.label=null;
+		this.longValue=null;
+	}
+	public void addDoubleTolist(){
+		this.doubleList.add(doubleValue);
+		this.doubleValue=null;
+	}
+	public void removeDoubleTolist(Double value){
+		this.doubleList.remove(value);
+	}
+	public void addDoubleTomap(){
+		this.doubleMap.put(label, doubleValue);
+		this.label=null;
+		this.doubleValue=null;
+	}
+	public void removeDoubleFrommap(String key){
+		this.doubleMap.remove(key);
+	}
 }

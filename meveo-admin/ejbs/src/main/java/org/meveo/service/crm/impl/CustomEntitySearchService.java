@@ -75,15 +75,8 @@ public class CustomEntitySearchService {
 	@Inject
 	private EmailTemplateService emailTemplateService;
 	
-	public BusinessEntity findCustomEntity(String clazzName,String ids){
-		log.debug("find customEntity by class {} - id {}",clazzName,ids);
-		Long id=null;
-		try {
-			id = Long.parseLong(ids);
-		} catch (NumberFormatException e) {
-			e.printStackTrace();
-			return null;
-		}
+	public BusinessEntity findCustomEntity(String clazzName,Long id){
+		log.debug("find customEntity by class {} - id {}",clazzName,id);
 		if(clazzName.indexOf("Tax")>=0){
 			return taxService.findById(id);
 		}else if(clazzName.indexOf("Seller")>=0){

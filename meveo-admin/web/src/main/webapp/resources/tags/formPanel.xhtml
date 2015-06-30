@@ -7,6 +7,7 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:p="http://primefaces.org/ui"
 	xmlns:hf="http://java.sun.com/jsf/composite/tags"
+	xmlns:hftl="http://hftl.org"
 	xmlns:c="http://java.sun.com/jsp/jstl/core"
 	xmlns:cc="http://java.sun.com/jsf/composite">
 
@@ -89,8 +90,10 @@
 		</p:panel>
 	</h:form>
     
-    
     <hf:customFieldNewPeriodDlg id="customFieldNewPeriodDlg" rendered="#{cc.attrs.addCustomFieldDialog and cc.attrs.edit}" />
+    <h:panelGroup>
+    	<hftl:customFieldsPopups id="customFieldsPopupsId" rendered="#{cc.attrs.addCustomFieldDialog and cc.attrs.edit}" customFieldTemplates="#{cc.attrs.backingBean.customFieldTemplates}" />
+    </h:panelGroup>
 </cc:implementation>
 
 </html>

@@ -95,7 +95,7 @@ public class ExceptionHandler {
 
 		evt.handled();
 		
-		log.error("Caught in handleRuntimeException exception={}", evt.getException()!=null?evt.getException().getMessage():null);
+		log.error("Caught in handleRuntimeException exception={}", (evt.getException()!=null?evt.getException().getMessage():null),evt.getException());
 
 		try {
 			if(!response.isCommitted()){

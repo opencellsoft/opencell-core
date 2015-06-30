@@ -201,4 +201,7 @@
         <dropAllForeignKeyConstraints baseTableName="adm_user_provider"/>
         <dropTable tableName="adm_user_provider"/>
     </changeSet>
+    <changeSet id="789-2015630-1" author="TyshanShi">
+    	<sql><![CDATA[update crm_custom_field_tmpl set storage_type='SINGLE' where storage_type is null]]></sql>
+    </changeSet>
 </databaseChangeLog>

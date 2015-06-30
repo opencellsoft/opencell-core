@@ -1,0 +1,56 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui" xmlns:o="http://omnifaces.org/ui"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:hftl="http://hftl.org"
+	xmlns:hf="http://java.sun.com/jsf/composite/tags">
+
+
+<!-- 
+    A tag diplaying or editing a single custom field [period] value
+    Makes part of custom field management tag group 
+
+    Attributes
+        cft - custom field template containing field definition
+        edit - should value be displayed, or edit control be shown
+        field - a field value
+        datePattern - date pattern for date entry/display
+ -->
+
+<ui:composition>
+	<h:outputText value="#{''}" />
+    <c:if test="${empty(datePattern)}">
+        <c:set var="datePattern" value="#{paramBean.getProperty('meveo.dateFormat','dd/MM/yyyy')}" />
+    </c:if>
+    <o:importConstants type="org.meveo.model.crm.CustomFieldTypeEnum" />
+    <h:panelGroup rendered="#{cft.fieldType eq CustomFieldTypeEnum.STRING}">
+        <h:outputText value="#{field}" rendered="#{! edit}"></h:outputText>
+        <p:inputText value="#{field}" required="#{cft.valueRequired}" rendered="#{edit}" label="#{cft.description}" />
+    </h:panelGroup>
+    <h:panelGroup rendered="#{cft.fieldType eq CustomFieldTypeEnum.DATE}">
+        <h:outputText value="#{field}" rendered="#{! edit}">
+            <f:convertDateTime type="date" pattern="#{datePattern}" />
+        </h:outputText>
+        <p:calendar showButtonPanel="true" pattern="#{datePattern}" value="#{field}" required="#{cft.valueRequired}" rendered="#{edit}" label="#{cft.description}" />
+    </h:panelGroup>
+    <h:panelGroup rendered="#{cft.fieldType eq CustomFieldTypeEnum.DOUBLE}">
+        <h:outputText value="#{field}" rendered="#{! edit}"></h:outputText>
+        <p:inputText value="#{field}" required="#{cft.valueRequired}" rendered="#{edit}" label="#{cft.description}">
+            <f:convertNumber minFractionDigits="2" />
+        </p:inputText>
+    </h:panelGroup>
+    <h:panelGroup rendered="#{cft.fieldType eq CustomFieldTypeEnum.LONG}">
+        <h:outputText value="#{field}" rendered="#{! edit}"></h:outputText>
+        <p:inputText value="#{field}" required="#{cft.valueRequired}" rendered="#{edit}" label="#{cft.description}">
+            <f:convertNumber integerOnly="true" />
+        </p:inputText>
+    </h:panelGroup>
+
+</ui:composition>
+
+</html>

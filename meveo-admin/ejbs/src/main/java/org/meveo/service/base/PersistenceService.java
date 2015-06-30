@@ -404,6 +404,16 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
         Query query = queryBuilder.getQuery(getEntityManager());
         return query.getResultList();
     }
+    @SuppressWarnings("unchecked")
+    public List<E> findByCodeLike(String wildcode,Provider provider){
+         final Class<? extends E> entityClass = getEntityClass();
+         QueryBuilder queryBuilder = new QueryBuilder(entityClass, "a", null, provider);
+         if (EnableEntity.class.isAssignableFrom(entityClass)){
+             queryBuilder.addBooleanCriterion("disabled", false);
+         }
+         queryBuilder.addCriterion("code", "like", "%"+wildcode+"%", true);
+         return queryBuilder.getQuery(getEntityManager()).getResultList();
+    }
 
 	/**
 	 * @see org.meveo.service.base.local.IPersistenceService#list(org.meveo.admin.util.pagination.PaginationConfiguration)
