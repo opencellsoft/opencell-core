@@ -1,6 +1,7 @@
 package org.meveo.admin.action;
 
 import java.io.Serializable;
+import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.nio.file.FileStore;
@@ -102,6 +103,7 @@ public class CheckUpdateBean implements Serializable {
 			String productName = paramBean.getProperty("checkUpdate.productName", "Meveo");
 			String owner = paramBean.getProperty("checkUpdate.owner", "OpenCell");
 			String macAddress = "";
+			String ipAddress = "";
 			String md5="";
 			String creationDate= Version.build_time;
 			String updateDate="";
@@ -109,6 +111,7 @@ public class CheckUpdateBean implements Serializable {
 			String machineVendor= "";
 			String installationMode="";
 			try{
+				ipAddress = Inet4Address.getLocalHost().getHostAddress();
 				byte[] mac  = NetworkInterface.getByInetAddress(InetAddress.getLocalHost()).getHardwareAddress();
 
 				StringBuilder sb = new StringBuilder();
@@ -116,6 +119,7 @@ public class CheckUpdateBean implements Serializable {
 					sb.append(String.format("%02X%s", mac[i], (i < mac.length - 1) ? "-" : ""));        
 				}
 				macAddress = sb.toString() ;
+				
 			}catch(Exception e){
 				macAddress="error:"+e;
 			}
@@ -166,6 +170,7 @@ public class CheckUpdateBean implements Serializable {
 					"	  				},"+
 					"	  #machineInfo#: {"+
 					"					    #macAddress#: #"+macAddress+"#,"+
+					"					    #ipAddress#: #"+ipAddress+"#,"+					
 					"					    #vendor#: #"+machineVendor+"#,"+
 					"					    #installationMode#:#"+installationMode+"#"+
 					"	  				},"+

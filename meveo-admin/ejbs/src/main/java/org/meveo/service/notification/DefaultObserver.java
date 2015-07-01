@@ -3,6 +3,7 @@ package org.meveo.service.notification;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.math.BigDecimal;
+import java.net.Inet4Address;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -284,13 +285,19 @@ public class DefaultObserver {
        MeveoInstance meveoInstance = meveoInstanceService.getThis();
        int bodyMaxLegthByte = Integer.parseInt(ParamBean.getInstance().getProperty("meveo.notifier.stackTrace.lengthInBytes", "9999"));
        String stackTrace = errors.toString();
+       String ipAdress = null;
+       try{
+    	   ipAdress =  Inet4Address.getLocalHost().getHostAddress();
+       }catch(Exception e){
+    	   ipAdress="-";
+       }
        String input = "{"+
 				"	  #meveoInstanceCode#: #"+(meveoInstance == null?"-":meveoInstance.getCode())+"#,"+
 				"	  #subject#: #"+bee.getBusinessException().getMessage()+"#,"+
 				"	  #body#: #"+StringUtils.truncate(stackTrace, bodyMaxLegthByte, true)+"#,"+
 				"	  #additionnalInfo1#: #"+LogExtractionService.getLogs(new Date(System.currentTimeMillis()-Integer.parseInt(ParamBean.getInstance().
 						getProperty("meveo.notifier.log.timeBefore_ms", "5000"))) , new Date())+"#,"+
-				"	  #additionnalInfo2#: ##,"+
+				"	  #additionnalInfo2#: #"+ipAdress+"#,"+
 				"	  #additionnalInfo3#: ##,"+
 				"	  #additionnalInfo4#: ##"+
 				"}";
