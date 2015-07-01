@@ -1080,9 +1080,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
             		cfi.updateAudit(getCurrentUser());
             		if (entity instanceof Provider) {
             			cfi.setProvider((Provider)entity);
-            		}else{
-            		cfi.setProvider(((BaseEntity) entity).getProvider());
-
+            		} 
             		IEntity entity = getEntity();
             		if (entity instanceof AccountEntity) {
             			cfi.setAccount((AccountEntity) getEntity());
@@ -1104,7 +1102,6 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
             }
         }
         }
-    }
 
     // protected void setAndSaveCustomFields() {
     // if (customFieldTemplates != null && customFieldTemplates.size() > 0) {
