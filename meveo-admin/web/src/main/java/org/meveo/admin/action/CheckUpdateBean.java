@@ -110,8 +110,7 @@ public class CheckUpdateBean implements Serializable {
 			String keyEntreprise="";
 			String machineVendor= "";
 			String installationMode="";
-			try{
-				ipAddress = Inet4Address.getLocalHost().getHostAddress();
+			try{				
 				byte[] mac  = NetworkInterface.getByInetAddress(InetAddress.getLocalHost()).getHardwareAddress();
 
 				StringBuilder sb = new StringBuilder();
@@ -170,7 +169,7 @@ public class CheckUpdateBean implements Serializable {
 					"	  				},"+
 					"	  #machineInfo#: {"+
 					"					    #macAddress#: #"+macAddress+"#,"+
-					"					    #ipAddress#: #"+ipAddress+"#,"+					
+					"					    #ipAddress#: ##,"+					
 					"					    #vendor#: #"+machineVendor+"#,"+
 					"					    #installationMode#:#"+installationMode+"#"+
 					"	  				},"+
