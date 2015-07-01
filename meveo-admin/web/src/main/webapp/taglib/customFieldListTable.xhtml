@@ -1,0 +1,265 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:cc="http://java.sun.com/jsf/composite"
+	xmlns:o="http://omnifaces.org/ui" xmlns:hftl="http://hftl.org">
+
+<ui:composition>
+	<h:outputText value="#{''}" />
+	<o:importConstants
+		type="org.meveo.model.crm.CustomFieldStorageTypeEnum" />
+	<o:importConstants type="org.meveo.model.crm.CustomFieldTypeEnum" />
+	<hftl:decorateFormField
+		label="#{cft.description}#{cft.valueRequired?' *':''}"
+		componentWidth="100" displayOneLine="true">
+		<!-- entity list -->
+		<p:dataTable id="customFields_entitylist" lazy="false"
+			rendered="#{cft.storageType== CustomFieldStorageTypeEnum.LIST and cft.fieldType==CustomFieldTypeEnum.ENTITY}"
+			editable="true" editMode="cell" value="#{cft.instance.entityList}"
+			var="e" resizableColumns="true" reflow="true">
+			<p:column headerText="#{messages['businessEntity.code']}">
+				 <h:outputText value="#{e.code}" />
+			</p:column>
+			<p:column headerText="#{messages['commons.actions']}" width="10%">
+				<p:commandButton id="deleteEntitylink"
+					action="#{cft.instance.removeEntityFromlist(e)}"
+					partialSubmit="true" icon="ui-icon-trash" ajax="true"
+					update="customFields_entitylist" process="@this customFields_entitylist">
+				</p:commandButton>
+			</p:column>
+			<f:facet name="footer">
+				<p:commandButton value="#{messages['commons.addNew']}"
+					immediate="true" update="@this"
+					onclick="PF('dlg_cft_entitylist_#{cft.id}').show()">
+				</p:commandButton>
+			</f:facet>
+		</p:dataTable>
+		<!-- string list -->
+		<p:dataTable id="customFields_stringlist" lazy="false"
+			rendered="#{cft.storageType== CustomFieldStorageTypeEnum.LIST and cft.fieldType==CustomFieldTypeEnum.STRING}"
+			editable="true" editMode="cell" value="#{cft.instance.stringList}"
+			var="e" resizableColumns="true" reflow="true">
+			<p:column headerText="#{messages['commons.value']}">
+				<hftl:customFieldValueMuteField edit="false" cft="#{cft}" field="#{e}"/>
+			</p:column>
+			<p:column headerText="#{messages['commons.actions']}" width="10%">
+				<p:commandButton id="deleteStringlink"
+					action="#{cft.instance.removeStringFromlist(e)}"
+					partialSubmit="true" icon="ui-icon-trash"
+					update="customFields_stringlist" process="@this customFields_stringlist">
+				</p:commandButton>
+			</p:column>
+			<f:facet name="footer">
+				<p:commandButton value="#{messages['commons.addNew']}"
+					immediate="true"
+					onclick="PF('dlg_cft_stringlist_#{cft.id}').show()">
+				</p:commandButton>
+			</f:facet>
+		</p:dataTable>
+		<!-- date list -->
+		<p:dataTable id="customFields_datelist" lazy="false"
+			rendered="#{cft.storageType== CustomFieldStorageTypeEnum.LIST and cft.fieldType==CustomFieldTypeEnum.DATE}"
+			editable="true" editMode="cell"
+			value="#{cft.instance.dateList.toArray()}" var="e"
+			resizableColumns="true" reflow="true">
+			<p:column headerText="#{messages['commons.value']}">
+				<hftl:customFieldValueMuteField edit="false" cft="#{cft}" field="#{e}"/>
+			</p:column>
+			<p:column headerText="#{messages['commons.actions']}" width="10%">
+				<p:commandButton id="deleteDatelink"
+					action="#{cft.instance.removeDateFromlist(e)}" partialSubmit="true"
+					icon="ui-icon-trash"
+					update="customFields_datelist" process="@this customFields_datelist">
+				</p:commandButton>
+			</p:column>
+			<f:facet name="footer">
+				<p:commandButton value="#{messages['commons.addNew']}"
+					immediate="true" update="@this"
+					onclick="PF('dlg_cft_datelist_#{cft.id}').show()">
+				</p:commandButton>
+			</f:facet>
+		</p:dataTable>
+		<!-- long list -->
+		<p:dataTable id="customFields_longlist" lazy="false"
+			rendered="#{cft.storageType==CustomFieldStorageTypeEnum.LIST and cft.fieldType==CustomFieldTypeEnum.LONG}"
+			editable="true" editMode="cell" value="#{cft.instance.longList}"
+			var="e" resizableColumns="true" reflow="true">
+			<p:column headerText="#{messages['commons.value']}">
+				<hftl:customFieldValueMuteField edit="false" cft="#{cft}" field="#{e}"/>
+			</p:column>
+			<p:column headerText="#{messages['commons.actions']}" width="10%">
+				<p:commandButton id="deleteLonglink"
+					action="#{cft.instance.removeLongFromlist(e)}" partialSubmit="true"
+					icon="ui-icon-trash"
+					update="customFields_longlist" process="@this customFields_longlist">
+				</p:commandButton>
+			</p:column>
+			<f:facet name="footer">
+				<p:commandButton value="#{messages['commons.addNew']}"
+					immediate="true" update="@this"
+					onclick="PF('dlg_cft_longlist_#{cft.id}').show()">
+				</p:commandButton>
+			</f:facet>
+		</p:dataTable>
+		<!-- double list -->
+		<p:dataTable id="customFields_doublelist" lazy="false"
+			rendered="#{cft.storageType== CustomFieldStorageTypeEnum.LIST and cft.fieldType==CustomFieldTypeEnum.DOUBLE}"
+			editable="true" editMode="cell" value="#{cft.instance.doubleList}"
+			var="e" resizableColumns="true" reflow="true">
+			<p:column headerText="#{messages['commons.value']}">
+				<hftl:customFieldValueMuteField edit="false" cft="#{cft}" field="#{e}"/>
+			</p:column>
+			<p:column headerText="#{messages['commons.actions']}" width="10%">
+				<p:commandButton id="deleteDoublelink"
+					action="#{cft.instance.removeDoubleFromlist(e)}"
+					partialSubmit="true" icon="ui-icon-trash"
+					update="customFields_doublelist" process="@this customFields_doublelist">
+				</p:commandButton>
+			</p:column>
+			<f:facet name="footer">
+				<p:commandButton value="#{messages['commons.addNew']}"
+					immediate="true" update="@this"
+					onclick="PF('dlg_cft_doublelist_#{cft.id}').show()">
+				</p:commandButton>
+			</f:facet>
+		</p:dataTable>
+		<!--map  -->
+		<!-- entity map -->
+		<p:dataTable id="customFields_entitymap" lazy="false"
+			rendered="#{cft.storageType== CustomFieldStorageTypeEnum.MAP and cft.fieldType==CustomFieldTypeEnum.ENTITY}"
+			editable="true" editMode="cell"
+			value="#{cft.instance.entityMap.keySet.toArray()}" var="e"
+			resizableColumns="true" reflow="true">
+			<p:column headerText="#{messages['commons.label']}">
+				<h:outputText value="#{e}" />
+			</p:column>
+			<p:column headerText="#{messages['businessEntity.code']}">
+				<h:outputText value="#{cft.instance.entityMap.get(e).code}" />
+			</p:column>
+			<p:column headerText="#{messages['commons.actions']}" width="10%">
+				<p:commandButton id="deleteEntitylink"
+					action="#{cft.instance.removeEntityFrommap(e)}"
+					partialSubmit="true" icon="ui-icon-trash"
+					update="customFields_entitymap" process="@this customFields_entitymap">
+				</p:commandButton>
+			</p:column>
+			<f:facet name="footer">
+				<p:commandButton value="#{messages['commons.addNew']}"
+					immediate="true" update="@this"
+					onclick="PF('dlg_cft_entitylist_#{cft.id}').show()">
+				</p:commandButton>
+			</f:facet>
+		</p:dataTable>
+		<!-- string map -->
+		<p:dataTable id="customFields_stringmap" lazy="false"
+			rendered="#{cft.storageType== CustomFieldStorageTypeEnum.MAP and cft.fieldType==CustomFieldTypeEnum.STRING}"
+			editable="true" editMode="cell"
+			value="#{cft.instance.stringMap.keySet.toArray()}" var="e"
+			resizableColumns="true" reflow="true">
+			<p:column headerText="#{messages['commons.label']}">
+				<h:outputText value="#{e}" />
+			</p:column>
+			<p:column headerText="#{messages['commons.value']}">
+				<hftl:customFieldValueMuteField edit="false" cft="#{cft}" field="#{cft.instance.stringMap.get(e)}"/>
+			</p:column>
+			<p:column headerText="#{messages['commons.actions']}" width="10%">
+				<p:commandButton id="deleteStringlink"
+					action="#{cft.instance.removeStringFrommap(e)}"
+					partialSubmit="true" icon="ui-icon-trash"
+					update="customFields_stringmap" process="@this customFields_stringmap">
+				</p:commandButton>
+			</p:column>
+			<f:facet name="footer">
+				<p:commandButton value="#{messages['commons.addNew']}"
+					immediate="true" update="@this"
+					onclick="PF('dlg_cft_stringlist_#{cft.id}').show()">
+				</p:commandButton>
+			</f:facet>
+		</p:dataTable>
+		<!-- date map -->
+		<p:dataTable id="customFields_datemap" lazy="false"
+			rendered="#{cft.storageType== CustomFieldStorageTypeEnum.MAP and cft.fieldType==CustomFieldTypeEnum.DATE}"
+			editable="true" editMode="cell"
+			value="#{cft.instance.dateMap.keySet.toArray()}" var="e"
+			resizableColumns="true" reflow="true">
+			<p:column headerText="#{messages['commons.label']}">
+				<h:outputText value="#{e}" />
+			</p:column>
+			<p:column headerText="#{messages['commons.value']}">
+				<hftl:customFieldValueMuteField edit="false" cft="#{cft}" field="#{cft.instance.dateMap.get(e)}"/>
+			</p:column>
+			<p:column headerText="#{messages['commons.actions']}" width="10%">
+				<p:commandButton id="deleteDatelink"
+					action="#{cft.instance.removeDateFrommap(e)}" partialSubmit="true"
+					icon="ui-icon-trash" update="customFields_datemap"
+					process="@this customFields_datemap">
+				</p:commandButton>
+			</p:column>
+			<f:facet name="footer">
+				<p:commandButton value="#{messages['commons.addNew']}"
+					immediate="true" update="@form @([id$='customFields_datemap'])"
+					onclick="PF('dlg_cft_datelist_#{cft.id}').show()">
+				</p:commandButton>
+			</f:facet>
+		</p:dataTable>
+		<!-- long map -->
+		<p:dataTable id="customFields_longmap" lazy="false"
+			rendered="#{cft.storageType== CustomFieldStorageTypeEnum.MAP and cft.fieldType==CustomFieldTypeEnum.LONG}"
+			editable="true" editMode="cell"
+			value="#{cft.instance.longMap.keySet.toArray()}" var="e"
+			resizableColumns="true" reflow="true">
+			<p:column headerText="#{messages['commons.label']}">
+				<h:outputText value="#{e}" />
+			</p:column>
+			<p:column headerText="#{messages['commons.value']}">
+				<hftl:customFieldValueMuteField edit="false" cft="#{cft}" field="#{cft.instance.longMap.get(e)}"/>
+			</p:column>
+			<p:column headerText="#{messages['commons.actions']}" width="10%">
+				<p:commandButton id="deleteLonglink"
+					action="#{cft.instance.removeLongFrommap(e)}" partialSubmit="true"
+					icon="ui-icon-trash" update="customFields_longmap"
+					process="@this customFields_longmap">
+				</p:commandButton>
+			</p:column>
+			<f:facet name="footer">
+				<p:commandButton value="#{messages['commons.addNew']}"
+					immediate="true" update="@this"
+					onclick="PF('dlg_cft_longlist_#{cft.id}').show()">
+				</p:commandButton>
+			</f:facet>
+		</p:dataTable>
+		<!-- double list -->
+		<p:dataTable id="customFields_doublemap" lazy="false"
+			rendered="#{cft.storageType== CustomFieldStorageTypeEnum.MAP and cft.fieldType==CustomFieldTypeEnum.DOUBLE}"
+			editable="true" editMode="cell"
+			value="#{cft.instance.doubleMap.keySet.toArray()}" var="e"
+			resizableColumns="true" reflow="true">
+			<p:column headerText="#{messages['commons.label']}">
+				<h:outputText value="#{e}" />
+			</p:column>
+			<p:column headerText="#{messages['commons.value']}">
+				<hftl:customFieldValueMuteField edit="false" cft="#{cft}" field="#{cft.instance.doubleMap.get(e)}"/>
+			</p:column>
+			<p:column headerText="#{messages['commons.actions']}" width="10%">
+				<p:commandButton id="deleteDoublelink"
+					action="#{cft.instance.removeDoubleFrommap(e)}"
+					partialSubmit="true" icon="ui-icon-trash"
+					update="customFields_doublemap" process="@this customFields_doublemap">
+				</p:commandButton>
+			</p:column>
+			<f:facet name="footer">
+				<p:commandButton value="#{messages['commons.addNew']}"
+					immediate="true" update="@this"
+					onclick="PF('dlg_cft_doublelist_#{cft.id}').show()">
+				</p:commandButton>
+			</f:facet>
+		</p:dataTable>
+	</hftl:decorateFormField>
+</ui:composition>
+</html>

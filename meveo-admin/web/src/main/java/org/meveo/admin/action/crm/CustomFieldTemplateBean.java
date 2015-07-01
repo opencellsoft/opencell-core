@@ -103,7 +103,7 @@ public class CustomFieldTemplateBean extends BaseBean<CustomFieldTemplate> {
          return clazzNames;
     }
     // business and observable
-    private static final List<String> clazzes= Arrays.asList("org.meveo.model.billing.Tax",
+    public static final List<String> clazzes= Arrays.asList("org.meveo.model.billing.Tax",
 			"org.meveo.model.admin.Seller",
 			"org.meveo.model.catalog.OfferTemplate",
 			"org.meveo.model.billing.UserAccount",
@@ -115,7 +115,7 @@ public class CustomFieldTemplateBean extends BaseBean<CustomFieldTemplate> {
 			"org.meveo.model.catalog.WalletTemplate",
 			"org.meveo.model.billing.Subscription",
 			"org.meveo.model.catalog.RecurringChargeTemplate",
-			"org.meveo.model.billing.ServiceInstance",
+//			"org.meveo.model.billing.ServiceInstance",
 			"org.meveo.model.crm.Customer",
 			"org.meveo.model.catalog.UsageChargeTemplate",
 			"org.meveo.model.catalog.TriggeredEDRTemplate",

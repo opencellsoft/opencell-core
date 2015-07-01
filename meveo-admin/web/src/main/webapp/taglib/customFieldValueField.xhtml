@@ -23,13 +23,11 @@
  -->
 
 <ui:composition>
-    &nbsp;
+	<h:outputText value="#{''}" />
     <c:if test="${empty(datePattern)}">
         <c:set var="datePattern" value="#{paramBean.getProperty('meveo.dateFormat','dd/MM/yyyy')}" />
     </c:if>
-    
     <o:importConstants type="org.meveo.model.crm.CustomFieldTypeEnum" />
-
     <h:panelGroup rendered="#{cft.fieldType eq CustomFieldTypeEnum.STRING}">
         <h:outputText value="#{field.stringValue}" rendered="#{! edit}"></h:outputText>
         <p:inputText value="#{field.stringValue}" required="#{cft.valueRequired}" rendered="#{edit}" label="#{cft.description}" />
@@ -59,14 +57,21 @@
             <f:selectItems value="#{cft.listValues.entrySet()}" var="listVal" itemValue="#{listVal.key}" itemLabel="#{listVal.value} (#{listVal.key})" />
         </p:selectOneMenu>
     </h:panelGroup>
-    <h:panelGroup rendered="#{cft.fieldType eq CustomFieldTypeEnum.ENTITY}">
-		<p:inputText rendered="#{edit}" value="#{field.customEntity.code}"
+    <h:panelGroup rendered="#{cft.fieldType eq CustomFieldTypeEnum.ENTITY and (cft.storageType==CustomFieldStorageTypeEnum.SINGLE and !cft.versionable)}">
+		<p:inputText rendered="#{edit}" value="#{field.businessEntity.code}"
 			required="#{cft.valueRequired}" disabled="true"></p:inputText>
 		<p:commandButton immediate="true" rendered="#{edit}"
-			onclick="PF('dlg_cft_#{cft.id}').show()" icon="ui-icon-search" />
-		<h:outputText rendered="#{!edit}" value="#{field.customEntity.code}"
+			onclick="PF('dlg_cft_entity_#{cft.id}').show()" icon="ui-icon-search" />
+		<h:outputText rendered="#{!edit}" value="#{field.businessEntity.code}"
 			styleClass="field-value" />
 	</h:panelGroup>
+	<h:panelGroup rendered="#{cft.fieldType eq CustomFieldTypeEnum.ENTITY and (cft.storageType!= CustomFieldStorageTypeEnum.SINGLE and !cft.versionable)}">
+		<hftl:autocompleteCustomFieldEntity cft="#{cft}" field="#{field}" edit="#{edit}" />
+		<h:outputText value="#{field.businessEntity.code}" rendered="#{!edit}"/>
+	 </h:panelGroup>
+	 <h:panelGroup rendered="#{cft.fieldType eq CustomFieldTypeEnum.ENTITY and (cft.storageType== CustomFieldStorageTypeEnum.LIST and cft.versionable)}">
+		<hftl:autocompleteCustomFieldEntity cft="#{cft}" field="#{field.businessEntity}" edit="#{edit}" />
+		<h:outputText value="#{field.businessEntity.code}" rendered="#{!edit}"/>
+	 </h:panelGroup>
 </ui:composition>
-
 </html>

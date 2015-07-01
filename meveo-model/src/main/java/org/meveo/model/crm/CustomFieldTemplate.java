@@ -56,6 +56,10 @@ public class CustomFieldTemplate extends BusinessEntity {
     
     @Column(name="ENTITY_CLAZZ")
     private String entityClazz;
+    
+    @Column(name="STORAGE_TYPE")
+    @Enumerated(EnumType.STRING)
+    private CustomFieldStorageTypeEnum storageType=CustomFieldStorageTypeEnum.SINGLE;
 
     @Transient
     private CustomFieldInstance instance;
@@ -94,6 +98,8 @@ public class CustomFieldTemplate extends BusinessEntity {
 
     public void setVersionable(boolean versionable) {
         this.versionable = versionable;
+        if(versionable)
+        	this.storageType=CustomFieldStorageTypeEnum.LIST;
     }
 
     public boolean isVersionable() {
@@ -145,10 +151,15 @@ public class CustomFieldTemplate extends BusinessEntity {
         return instance;
     }
 
-    /**
-     * Check if value is set
-     * 
-     * @return True if no value is set
-     */
+	public CustomFieldStorageTypeEnum getStorageType() {
+		return storageType;
+	}
 
+	public void setStorageType(CustomFieldStorageTypeEnum storageType) {
+		this.storageType = storageType;
+		if(storageType==CustomFieldStorageTypeEnum.LIST){
+			valueRequired=true;
+		}
+	}
+    
 }

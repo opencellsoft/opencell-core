@@ -18,15 +18,18 @@
             <hf:formField label="#{messages['BusinessEntity.code']}" field="code" required="true" allowEdit="false" />
             <hf:formField label="#{messages['customFieldTemplate.fieldLabel']}" field="description" required="true" useConverter="false" id="description" maxlength="50" />
             <hf:formField label="#{messages['customFieldTemplate.fieldType']}" field="fieldType" required="true"
-                listenerUpdate=":formPanel:formId:listValuesField :formPanel:formId:defaultValueField :formPanel:formId:entityClassField" allowEdit="false" componentWidth="20" />
-            <hf:formField label="#{messages['customFieldTemplate.accountType']}" field="accountLevel" required="true" allowEdit="false"
+                listenerUpdate=":formPanel:formId:listValuesField :formPanel:formId:defaultValueField :formPanel:formId:entityClazzField :formPanel:formId:storageTypeField" allowEdit="true" componentWidth="20" />
+            <hf:formField label="#{messages['customFieldTemplate.accountType']}" field="accountLevel" required="true" allowEdit="true"
                 listValues="#{customFieldTemplateBean.accountLevelsNoTimer}" componentWidth="20" newLine="true" />
             <h:panelGroup id="defaultValueField">
                 <hf:formField label="#{messages['customFieldTemplate.defaultValue']}" field="defaultValue" maxlength="50" componentWidth="20"
                     rendered="#{customFieldTemplateBean.entity.fieldType != 'DATE' and customFieldTemplateBean.entity.fieldType != 'ENTITY'}" />
             </h:panelGroup>
-            <hf:formField label="#{messages['customFieldTemplate.fieldRequired']}" field="valueRequired" isMessage="true" componentWidth="15" />
-            <hf:formField label="#{messages['customFieldTemplate.versionable']}" field="versionable" isMessage="true" allowEdit="false" listenerUpdate=":formPanel:formId:calendar"
+            <h:panelGroup id="valueRequiredField">
+            	<hf:formField label="#{messages['customFieldTemplate.fieldRequired']}" field="valueRequired" isMessage="true" componentWidth="15" 
+            		allowEdit="#{customFieldTemplateBean.entity.storageType!='LIST'}"/>
+            </h:panelGroup>
+            <hf:formField label="#{messages['customFieldTemplate.versionable']}" field="versionable" isMessage="true" allowEdit="true" listenerUpdate=":formPanel:formId:calendar :formPanel:formId:storageTypeField"
                 componentWidth="15" />
             <h:panelGroup id="calendar">
                 <hf:formField label="#{messages['customFieldTemplate.calendar']}" field="calendar" valueLabelField="code" listBean="#{calendarBean}"
@@ -36,9 +39,14 @@
                 <hf:formField label="#{messages['customFieldTemplate.listValues']}" field="listValues" rendered="#{customFieldTemplateBean.entity.fieldType == 'LIST'}"
                     mapKeyLabel="#{messages['commons.value']}" mapValueLabel="#{messages['commons.label']}" componentWidth="75" newLine="true" />
             </h:panelGroup>
-             <h:panelGroup id="entityClassField">
-				<hf:formField label="#{messages['entity.notification.classNameFilter']}" field="entityClazz" required="true" size="60" maxlength="255"
-					autocompleteMethod="#{customFieldTemplateBean.autocompleteClassNames}" isAutocomplete="true" newLine="true"
+            <h:panelGroup id="storageTypeField">
+            	<hf:formField label="#{messages['customFieldTemplate.storageType']}" field="storageType" required="true" newLine="true"
+            		rendered="#{customFieldTemplateBean.entity.fieldType != 'LIST'}"  disabled="#{customFieldTemplateBean.entity.versionable}"
+            		listenerUpdate=":formPanel:formId:valueRequiredField"/>
+            </h:panelGroup>
+            <h:panelGroup id="entityClazzField">
+            	<hf:formField label="#{messages['entity.notification.classNameFilter']}" field="entityClazz" required="true" size="60" maxlength="255"
+					autocompleteMethod="#{customFieldTemplateBean.autocompleteClassNames}" isAutocomplete="true"
 					rendered="#{customFieldTemplateBean.entity.fieldType == 'ENTITY'}" allowEdit="true"/>
 			</h:panelGroup>
             <hf:formField label="#{messages['enableEntity.disabled']}" doNotShowOnNew="true" allowEdit="false" field="disabled" isMessage="true" newLine="true" />

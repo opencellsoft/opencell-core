@@ -11,9 +11,11 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 
 import org.meveo.model.BaseProviderlessEntity;
+import org.meveo.model.BusinessEntity;
 import org.meveo.model.ExportIdentifier;
 
 @Entity
@@ -52,6 +54,12 @@ public class CustomFieldPeriod extends BaseProviderlessEntity {
 
     @Column(name = "PRIORITY")
     private int priority;
+    
+    @Column(name="ENTITY_VALUE")
+    private String entityValue;
+    
+    @Transient
+    private BusinessEntity businessEntity;
 
     public CustomFieldInstance getCustomFieldInstance() {
         return customFieldInstance;
@@ -116,8 +124,26 @@ public class CustomFieldPeriod extends BaseProviderlessEntity {
     public void setPriority(int priority) {
         this.priority = priority;
     }
+    
+    
 
-    /**
+    public String getEntityValue() {
+		return entityValue;
+	}
+
+	public void setEntityValue(String entityValue) {
+		this.entityValue = entityValue;
+	}
+
+	public BusinessEntity getBusinessEntity() {
+		return businessEntity;
+	}
+
+	public void setBusinessEntity(BusinessEntity businessEntity) {
+		this.businessEntity = businessEntity;
+	}
+
+	/**
      * Check if date falls within period start and end dates
      * 
      * @param date Date to check
@@ -194,6 +220,8 @@ public class CustomFieldPeriod extends BaseProviderlessEntity {
             return dateValue;
         } else if (longValue != null) {
             return longValue;
+        }else if(businessEntity!=null){
+        	return businessEntity;
         }
         return null;
     }
@@ -222,6 +250,9 @@ public class CustomFieldPeriod extends BaseProviderlessEntity {
         case STRING:
         case LIST:
             stringValue = (String) value;
+            break;
+        case ENTITY:
+        	businessEntity=(BusinessEntity)value;
         }
     }
 

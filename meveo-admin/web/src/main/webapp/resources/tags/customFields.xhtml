@@ -30,14 +30,20 @@
 <cc:implementation>
 
     <o:importConstants type="org.meveo.model.crm.CustomFieldTypeEnum" />
+    <o:importConstants type="org.meveo.model.crm.CustomFieldStorageTypeEnum" />
 
     <ui:fragment>
         <span id="#{cc.clientId}" style="white-space: nowrap"> <ui:repeat value="#{cc.backingBeanFromParentOrCurrent.customFieldTemplates}" var="cft">
-                <h:panelGroup rendered="#{!cft.instance.versionable and (not cft.disabled or (cft.disabled and not cft.instance.isValueEmpty()))}">
-
+        
+           <h:panelGroup rendered="#{!cft.versionable and (not cft.disabled or (cft.disabled and not cft.instance.isValueEmpty()))}">
+				<h:panelGroup rendered="#{cft.storageType eq CustomFieldStorageTypeEnum.SINGLE}">
                     <hftl:decorateFormField label="#{cft.description}#{cft.valueRequired?' *':''}" componentWidth="50" labelWidth="40" displayOneLine="true">
                         <hftl:customFieldValueField edit="#{cc.attrs.edit}" cft="#{cft}" field="#{cft.instance}" />
                     </hftl:decorateFormField>
+                </h:panelGroup>
+                <h:panelGroup rendered="#{cft.storageType eq CustomFieldStorageTypeEnum.MAP or cft.storageType eq CustomFieldStorageTypeEnum.LIST}">
+                	<hftl:customFieldListTable cft="#{cft}" />
+                </h:panelGroup>
 
                     <c:set var="InheritedStringValue" value="#{cc.backingBeanFromParentOrCurrent.entity.getICsv(cft.code)}" />
 
@@ -69,15 +75,14 @@
                         </h:outputText>
                     </hftl:decorateFormField>
 
-                </h:panelGroup>
+             </h:panelGroup>
+            
 
-                <h:panelGroup rendered="#{cft.instance.versionable and (not cft.disabled or (cft.disabled and not cft.instance.isValueEmpty()))}">
-                    <hftl:decorateFormField label="#{cft.description}#{cft.valueRequired?' *':''}" componentWidth="100" displayOneLine="true">
+                <h:panelGroup rendered="#{cft.versionable and (not cft.disabled or (cft.disabled and not cft.instance.isValueEmpty()))}">
+                	<hftl:decorateFormField label="#{cft.description}#{cft.valueRequired?' *':''}" componentWidth="100" displayOneLine="true">
                         <p:dataTable id="periodTable" lazy="false" value="#{cft.instance.valuePeriods}" var="period" sortField="#{cft.instance.calendar!=null?period.periodStartDate:period.priority}" editable="true" editMode="cell"
                             resizableColumns="true" reflow="true">
-
                             <p:ajax event="cellEdit" update="#{cc.attrs.messagesId}" />
-
                             <p:column headerText="#{messages['customFieldTemplate.priority']}" width="10%" sortBy="#{period.priority}" rendered="#{cft.instance.calendar==null}">
                                 <h:outputText value="#{period.priority}"></h:outputText>
                             </p:column>
@@ -91,16 +96,20 @@
                                     <f:convertDateTime type="date" pattern="#{cc.attrs.datePattern}" />
                                 </h:outputText>
                             </p:column>
-                            <p:column headerText="#{messages['customFieldTemplate.periodValue']}">
+                            <p:column headerText="#{messages['customFieldTemplate.periodValue']}" rendered="#{cft.fieldType!='ENTITY'}">
                                 <p:cellEditor>
                                     <f:facet name="output">
-                                        <hftl:customFieldValueField edit="false" cft="#{cft}" field="#{period}" />
+                                        <hftl:customFieldValueField edit="false" cft="#{cft}" field="#{period}"/>
                                     </f:facet>
                                     <f:facet name="input">
-                                        <hftl:customFieldValueField edit="true" cft="#{cft}" field="#{period}" />
+                                        <hftl:customFieldValueField edit="true" cft="#{cft}" field="#{period}"/>
                                     </f:facet>
                                 </p:cellEditor>
                             </p:column>
+                            <p:column headerText="#{messages['customFieldTemplate.periodValue']}"  rendered="#{cft.fieldType=='ENTITY'}">
+                                <h:outputText value="#{period.businessEntity.code}" />
+                            </p:column>
+                            
                             <p:column headerText="#{messages['commons.actions']}" width="10%">
                                 <p:commandButton id="deletelink" action="#{cft.instance.removeValuePeriod(period)}" partialSubmit="true" icon="ui-icon-trash" update="periodTable"
                                     process="@this periodTable" />

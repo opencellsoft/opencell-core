@@ -60,7 +60,8 @@
         <h:panelGroup rendered="#{cc.parent.attrs.isAutocomplete and  cc.attrs.edit}">
             <p:autoComplete id="#{cc.parent.attrs.fieldIdPrefix}_text_ac" value="#{cc.attrs.fieldItem}" disabled="#{cc.parent.attrs.disabled}"
                 required="#{cc.parent.attrs.required}" size="#{cc.parent.attrs.size}" maxlength="#{cc.parent.attrs.maxlength}" dropdown="true"
-                completeMethod="#{cc.attrs.autocompleteMethod}" />
+                completeMethod="#{cc.attrs.autocompleteMethod}" var="e"  itemLabel="#{e}" itemValue="#{e}">
+            </p:autoComplete>
         </h:panelGroup>
         <h:panelGroup rendered="#{cc.parent.attrs.textArea and cc.attrs.edit}">
             <p:inputTextarea id="#{cc.parent.attrs.fieldIdPrefix}_text_area" disabled="#{cc.parent.attrs.disabled}" value="#{cc.attrs.fieldItem}"

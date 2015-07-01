@@ -1,0 +1,309 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui" xmlns:o="http://omnifaces.org/ui"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:hftl="http://hftl.org"
+	xmlns:hf="http://java.sun.com/jsf/composite/tags">
+
+
+<!-- 
+    A tag diplaying or editing a single custom field [period] value
+    Makes part of custom field management tag group 
+
+    Attributes
+        cft - custom field template containing field definition
+        edit - should value be displayed, or edit control be shown
+        field - field storing a value
+        datePattern - date pattern for date entry/display
+ -->
+
+<ui:composition>
+	<h:outputText value="#{''}" />
+	<p:autoComplete value="#{field}"
+		rendered="#{cft.entityClazz == 'org.meveo.model.billing.Tax' and edit}"
+		required="#{cft.valueRequired}" size="40" maxlength="60"
+		dropdown="true"
+		converter="org.jboss.seam.faces.conversion.ObjectConverter"
+		completeMethod="#{customFieldGenericBean.autocompleteCustomEntityTax}"
+		var="e" itemLabel="#{e.code}" itemValue="#{e}">
+		<p:column width="50">
+			<h:outputText value="#{e.code}" />
+		</p:column>
+		<p:column width="50">
+			<h:outputText value="#{e.description}" />
+		</p:column>
+	</p:autoComplete>
+	<p:autoComplete value="#{field}"
+		rendered="#{cft.entityClazz == 'org.meveo.model.admin.Seller' and edit}"
+		required="#{cft.valueRequired}" size="40" maxlength="60"
+		dropdown="true"
+		converter="org.jboss.seam.faces.conversion.ObjectConverter"
+		completeMethod="#{customFieldGenericBean.autocompleteCustomEntitySeller}"
+		var="e" itemLabel="#{e.code}" itemValue="#{e}">
+		<p:column width="50">
+			<h:outputText value="#{e.code}" />
+		</p:column>
+		<p:column width="50">
+			<h:outputText value="#{e.description}" />
+		</p:column>
+	</p:autoComplete>
+	<p:autoComplete value="#{field}"
+		rendered="#{cft.entityClazz == 'org.meveo.model.catalog.OfferTemplate' and edit}"
+		required="#{cft.valueRequired}" size="40" maxlength="60"
+		dropdown="true"
+		converter="org.jboss.seam.faces.conversion.ObjectConverter"
+		completeMethod="#{customFieldGenericBean.autocompleteCustomEntityOfferTemplate}"
+		var="e" itemLabel="#{e.code}" itemValue="#{e}">
+		<p:column width="50">
+			<h:outputText value="#{e.code}" />
+		</p:column>
+		<p:column width="50">
+			<h:outputText value="#{e.description}" />
+		</p:column>
+	</p:autoComplete>
+	<p:autoComplete value="#{field}"
+		rendered="#{cft.entityClazz == 'org.meveo.model.billing.UserAccount' and edit}"
+		required="#{cft.valueRequired}" size="40" maxlength="60"
+		dropdown="true"
+		converter="org.jboss.seam.faces.conversion.ObjectConverter"
+		completeMethod="#{customFieldGenericBean.autocompleteCustomEntityUserAccount}"
+		var="e" itemLabel="#{e.code}" itemValue="#{e}">
+		<p:column width="50">
+			<h:outputText value="#{e.code}" />
+		</p:column>
+		<p:column width="50">
+			<h:outputText value="#{e.description}" />
+		</p:column>
+	</p:autoComplete>
+	<p:autoComplete value="#{field}"
+		rendered="#{cft.entityClazz == 'org.meveo.model.catalog.PricePlanMatrix' and edit}"
+		required="#{cft.valueRequired}" size="40" maxlength="60"
+		dropdown="true"
+		converter="org.jboss.seam.faces.conversion.ObjectConverter"
+		completeMethod="#{customFieldGenericBean.autocompleteCustomEntityPricePlanMatrix}"
+		var="e" itemLabel="#{e.code}" itemValue="#{e}">
+		<p:column width="50">
+			<h:outputText value="#{e.code}" />
+		</p:column>
+		<p:column width="50">
+			<h:outputText value="#{e.description}" />
+		</p:column>
+	</p:autoComplete>
+	<p:autoComplete value="#{field}"
+		rendered="#{cft.entityClazz == 'org.meveo.model.billing.BillingAccount' and edit}"
+		required="#{cft.valueRequired}" size="40" maxlength="60"
+		dropdown="true"
+		converter="org.jboss.seam.faces.conversion.ObjectConverter"
+		completeMethod="#{customFieldGenericBean.autocompleteCustomEntityBillingAccount}"
+		var="e" itemLabel="#{e.code}" itemValue="#{e}">
+		<p:column width="50">
+			<h:outputText value="#{e.code}" />
+		</p:column>
+		<p:column width="50">
+			<h:outputText value="#{e.description}" />
+		</p:column>
+	</p:autoComplete>
+	<p:autoComplete value="#{field}"
+		rendered="#{cft.entityClazz == 'org.meveo.model.payments.CustomerAccount' and edit}"
+		required="#{cft.valueRequired}" size="40" maxlength="60"
+		dropdown="true"
+		converter="org.jboss.seam.faces.conversion.ObjectConverter"
+		completeMethod="#{customFieldGenericBean.autocompleteCustomEntityCustomerAccount}"
+		var="e" itemLabel="#{e.code}" itemValue="#{e}">
+		<p:column width="50">
+			<h:outputText value="#{e.code}" />
+		</p:column>
+		<p:column width="50">
+			<h:outputText value="#{e.description}" />
+		</p:column>
+	</p:autoComplete>
+	<p:autoComplete value="#{field}"
+		rendered="#{cft.entityClazz == 'org.meveo.model.catalog.OneShotChargeTemplate' and edit}"
+		required="#{cft.valueRequired}" size="40" maxlength="60"
+		dropdown="true"
+		converter="org.jboss.seam.faces.conversion.ObjectConverter"
+		completeMethod="#{customFieldGenericBean.autocompleteCustomEntityOneShotChargeTemplate}"
+		var="e" itemLabel="#{e.code}" itemValue="#{e}">
+		<p:column width="50">
+			<h:outputText value="#{e.code}" />
+		</p:column>
+		<p:column width="50">
+			<h:outputText value="#{e.description}" />
+		</p:column>
+	</p:autoComplete>
+	<p:autoComplete value="#{field}"
+		rendered="#{cft.entityClazz == 'org.meveo.model.catalog.ServiceTemplate' and edit}"
+		required="#{cft.valueRequired}" size="40" maxlength="60"
+		dropdown="true"
+		converter="org.jboss.seam.faces.conversion.ObjectConverter"
+		completeMethod="#{customFieldGenericBean.autocompleteCustomEntityServiceTemplate}"
+		var="e" itemLabel="#{e.code}" itemValue="#{e}">
+		<p:column width="50">
+			<h:outputText value="#{e.code}" />
+		</p:column>
+		<p:column width="50">
+			<h:outputText value="#{e.description}" />
+		</p:column>
+	</p:autoComplete>
+	<p:autoComplete value="#{field}"
+		rendered="#{cft.entityClazz == 'org.meveo.model.catalog.WalletTemplate' and edit}"
+		required="#{cft.valueRequired}" size="40" maxlength="60"
+		dropdown="true"
+		converter="org.jboss.seam.faces.conversion.ObjectConverter"
+		completeMethod="#{customFieldGenericBean.autocompleteCustomEntityWalletTemplate}"
+		var="e" itemLabel="#{e.code}" itemValue="#{e}">
+		<p:column width="50">
+			<h:outputText value="#{e.code}" />
+		</p:column>
+		<p:column width="50">
+			<h:outputText value="#{e.description}" />
+		</p:column>
+	</p:autoComplete>
+	<p:autoComplete value="#{field}"
+		rendered="#{cft.entityClazz == 'org.meveo.model.billing.Subscription' and edit}"
+		required="#{cft.valueRequired}" size="40" maxlength="60"
+		dropdown="true"
+		converter="org.jboss.seam.faces.conversion.ObjectConverter"
+		completeMethod="#{customFieldGenericBean.autocompleteCustomEntitySubscription}"
+		var="e" itemLabel="#{e.code}" itemValue="#{e}">
+		<p:column width="50">
+			<h:outputText value="#{e.code}" />
+		</p:column>
+		<p:column width="50">
+			<h:outputText value="#{e.description}" />
+		</p:column>
+	</p:autoComplete>
+	<p:autoComplete value="#{field}"
+		rendered="#{cft.entityClazz == 'org.meveo.model.catalog.RecurringChargeTemplate' and edit}"
+		required="#{cft.valueRequired}" size="40" maxlength="60"
+		dropdown="true"
+		converter="org.jboss.seam.faces.conversion.ObjectConverter"
+		completeMethod="#{customFieldGenericBean.autocompleteCustomEntityRecurringChargeTemplate}"
+		var="e" itemLabel="#{e.code}" itemValue="#{e}">
+		<p:column width="50">
+			<h:outputText value="#{e.code}" />
+		</p:column>
+		<p:column width="50">
+			<h:outputText value="#{e.description}" />
+		</p:column>
+	</p:autoComplete>
+	<p:autoComplete value="#{field}"
+		rendered="#{cft.entityClazz == 'org.meveo.model.crm.Customer' and edit}"
+		required="#{cft.valueRequired}" size="40" maxlength="60"
+		dropdown="true"
+		converter="org.jboss.seam.faces.conversion.ObjectConverter"
+		completeMethod="#{customFieldGenericBean.autocompleteCustomEntityCustomer}"
+		var="e" itemLabel="#{e.code}" itemValue="#{e}">
+		<p:column width="50">
+			<h:outputText value="#{e.code}" />
+		</p:column>
+		<p:column width="50">
+			<h:outputText value="#{e.description}" />
+		</p:column>
+	</p:autoComplete>
+	<p:autoComplete value="#{field}"
+		rendered="#{cft.entityClazz == 'org.meveo.model.catalog.UsageChargeTemplate' and edit}"
+		required="#{cft.valueRequired}" size="40" maxlength="60"
+		dropdown="true"
+		converter="org.jboss.seam.faces.conversion.ObjectConverter"
+		completeMethod="#{customFieldGenericBean.autocompleteCustomEntityUsageChargeTemplate}"
+		var="e" itemLabel="#{e.code}" itemValue="#{e}">
+		<p:column width="50">
+			<h:outputText value="#{e.code}" />
+		</p:column>
+		<p:column width="50">
+			<h:outputText value="#{e.description}" />
+		</p:column>
+	</p:autoComplete>
+	<p:autoComplete value="#{field}"
+		rendered="#{cft.entityClazz == 'org.meveo.model.catalog.TriggeredEDRTemplate' and edit}"
+		required="#{cft.valueRequired}" size="40" maxlength="60"
+		dropdown="true"
+		converter="org.jboss.seam.faces.conversion.ObjectConverter"
+		completeMethod="#{customFieldGenericBean.autocompleteCustomEntityTriggeredEDRTemplate}"
+		var="e" itemLabel="#{e.code}" itemValue="#{e}">
+		<p:column width="50">
+			<h:outputText value="#{e.code}" />
+		</p:column>
+		<p:column width="50">
+			<h:outputText value="#{e.description}" />
+		</p:column>
+	</p:autoComplete>
+	<p:autoComplete value="#{field}"
+		rendered="#{cft.entityClazz == 'org.meveo.model.catalog.CounterTemplate' and edit}"
+		required="#{cft.valueRequired}" size="40" maxlength="60"
+		dropdown="true"
+		converter="org.jboss.seam.faces.conversion.ObjectConverter"
+		completeMethod="#{customFieldGenericBean.autocompleteCustomEntityCounterTemplate}"
+		var="e" itemLabel="#{e.code}" itemValue="#{e}">
+		<p:column width="50">
+			<h:outputText value="#{e.code}" />
+		</p:column>
+		<p:column width="50">
+			<h:outputText value="#{e.description}" />
+		</p:column>
+	</p:autoComplete>
+	<p:autoComplete value="#{field}"
+		rendered="#{cft.entityClazz == 'org.meveo.model.catalog.Calendar' and edit}"
+		required="#{cft.valueRequired}" size="40" maxlength="60"
+		dropdown="true"
+		converter="org.jboss.seam.faces.conversion.ObjectConverter"
+		completeMethod="#{customFieldGenericBean.autocompleteCustomEntityCalendar}"
+		var="e" itemLabel="#{e.code}" itemValue="#{e}">
+		<p:column width="50">
+			<h:outputText value="#{e.code}" />
+		</p:column>
+		<p:column width="50">
+			<h:outputText value="#{e.description}" />
+		</p:column>
+	</p:autoComplete>
+	<p:autoComplete value="#{field}"
+		rendered="#{cft.entityClazz == 'org.meveo.model.crm.ProviderContact' and edit}"
+		required="#{cft.valueRequired}" size="40" maxlength="60"
+		dropdown="true"
+		converter="org.jboss.seam.faces.conversion.ObjectConverter"
+		completeMethod="#{customFieldGenericBean.autocompleteCustomEntityProviderContact}"
+		var="e" itemLabel="#{e.code}" itemValue="#{e}">
+		<p:column width="50">
+			<h:outputText value="#{e.code}" />
+		</p:column>
+		<p:column width="50">
+			<h:outputText value="#{e.description}" />
+		</p:column>
+	</p:autoComplete>
+	<p:autoComplete value="#{field}"
+		rendered="#{cft.entityClazz == 'org.meveo.model.catalog.DiscountPlan' and edit}"
+		required="#{cft.valueRequired}" size="40" maxlength="60"
+		dropdown="true"
+		converter="org.jboss.seam.faces.conversion.ObjectConverter"
+		completeMethod="#{customFieldGenericBean.autocompleteCustomEntityDiscountPlan}"
+		var="e" itemLabel="#{e.code}" itemValue="#{e}">
+		<p:column width="50">
+			<h:outputText value="#{e.code}" />
+		</p:column>
+		<p:column width="50">
+			<h:outputText value="#{e.description}" />
+		</p:column>
+	</p:autoComplete>
+	<p:autoComplete value="#{field}"
+		rendered="#{cft.entityClazz == 'org.meveo.model.communication.email.EmailTemplate' and edit}"
+		required="#{cft.valueRequired}" size="40" maxlength="60"
+		dropdown="true"
+		converter="org.jboss.seam.faces.conversion.ObjectConverter"
+		completeMethod="#{customFieldGenericBean.autocompleteCustomEntityEmailTemplate}"
+		var="e" itemLabel="#{e.code}" itemValue="#{e}">
+		<p:column width="50">
+			<h:outputText value="#{e.code}" />
+		</p:column>
+		<p:column width="50">
+			<h:outputText value="#{e.description}" />
+		</p:column>
+	</p:autoComplete>
+	<h:outputText value="#{field.code}" rendered="#{!edit}"/>
+</ui:composition>
+</html>
