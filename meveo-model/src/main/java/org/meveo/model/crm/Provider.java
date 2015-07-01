@@ -18,7 +18,11 @@ package org.meveo.model.crm;
 
 import java.sql.Blob;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
@@ -29,6 +33,7 @@ import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
+import javax.persistence.MapKeyColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
@@ -39,7 +44,9 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
+import org.meveo.model.Auditable;
 import org.meveo.model.ExportIdentifier;
+import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.ObservableEntity;
 import org.meveo.model.ProviderlessEntity;
 import org.meveo.model.admin.Currency;
@@ -62,7 +69,7 @@ import org.meveo.model.shared.InterBankTitle;
 @ExportIdentifier("code")
 @Table(name = "CRM_PROVIDER", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE" }))
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "CRM_PROVIDER_SEQ")
-public class Provider extends ProviderlessEntity {
+public class Provider extends ProviderlessEntity implements ICustomFieldEntity {
 
     private static final long serialVersionUID = 1L;
 
@@ -186,8 +193,12 @@ public class Provider extends ProviderlessEntity {
     @Column(name = "PREPAID_RESRV_DELAY_MS")
     private Long prepaidReservationExpirationDelayinMillisec = Long.valueOf(60000);
     
-	@OneToOne(mappedBy = "provider", cascade={CascadeType.PERSIST})
+	@OneToOne(mappedBy = "provider")
 	private InvoiceConfiguration invoiceConfiguration=new InvoiceConfiguration();
+	
+	@OneToMany(mappedBy = "provider", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+	@MapKeyColumn(name = "code")
+	private Map<String, CustomFieldInstance> customFields = new HashMap<String, CustomFieldInstance>();
 
     public String getCode() {
         return code;
@@ -549,5 +560,63 @@ public class Provider extends ProviderlessEntity {
 	public void setInvoiceConfiguration(InvoiceConfiguration invoiceConfiguration) {
 		this.invoiceConfiguration = invoiceConfiguration;
 	}
+	
+	public Map<String, CustomFieldInstance> getCustomFields() {
+		return customFields;
+	}
+
+	public void setCustomFields(Map<String, CustomFieldInstance> customFields) {
+		this.customFields = customFields;
+	}
+
+	 
+    public String getInheritedCustomStringValue(String code){
+		String stringValue=null;
+		if (getCustomFields().containsKey(code)&& getCustomFields().get(code).getStringValue()!=null) {
+			stringValue=getCustomFields().get(code).getStringValue();}
+		return stringValue;
+		}
+	
+	public Long getInheritedCustomLongValue(String code){
+		Long result=null; 
+		if (getCustomFields().containsKey(code)&& getCustomFields().get(code).getLongValue()!=null) {
+			result=getCustomFields().get(code).getLongValue();
+		}
+		return result;
+		}
+	
+	public Date getInheritedCustomDateValue(String code){
+		Date result=null; 
+		if (getCustomFields().containsKey(code)&& getCustomFields().get(code).getDateValue()!=null) {
+			result=getCustomFields().get(code).getDateValue();
+		}
+		return result;
+		}
+	
+
+	public Double getInheritedCustomDoubleValue(String code){
+		Double result=null; 
+		if (getCustomFields().containsKey(code)&& getCustomFields().get(code).getDoubleValue()!=null) {
+			result=getCustomFields().get(code).getDoubleValue();
+		}
+		return result;
+		}
+	
+	public String getICsv(String code){
+		return getInheritedCustomStringValue(code);
+	}
+	
+	public Long getIClv(String code){
+		return getInheritedCustomLongValue(code);
+	}
+	
+	public Date getICdav(String code){
+		return getInheritedCustomDateValue(code);
+	}
+	
+	public Double getICdov(String code){
+		return getInheritedCustomDoubleValue(code);
+	}
+
 
 }

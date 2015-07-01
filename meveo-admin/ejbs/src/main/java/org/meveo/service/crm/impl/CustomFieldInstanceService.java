@@ -14,10 +14,10 @@ import org.meveo.model.billing.Subscription;
 import org.meveo.model.crm.CustomFieldInstance;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.mediation.Access;
-import org.meveo.service.base.BusinessService;
+import org.meveo.service.base.PersistenceService;
 
 @Stateless
-public class CustomFieldInstanceService extends BusinessService<CustomFieldInstance> {
+public class CustomFieldInstanceService extends PersistenceService<CustomFieldInstance> {
 
 	public CustomFieldInstance findByCodeAndAccount(String code, IEntity t,Provider provider) {
 		QueryBuilder qb = new QueryBuilder(CustomFieldInstance.class, "c");

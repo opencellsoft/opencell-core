@@ -34,7 +34,8 @@
 
 		<hf:formPanel id="providerFormPanel" formId="providerFormId"
 				label="#{messages['provider.title']}" backingBean="#{providerBean}">
-
+				<p:tabView id="tabView">
+			<p:tab title="#{messages['customer.tab.information']}">
 							<hf:formField label="#{messages['businessEntity.code']}"
 								field="code" maxlength="35" required="true" />
 
@@ -78,8 +79,13 @@
 								field="invoiceConfiguration" childField="displayServices" id="displayServices"/>
 								
 							<hf:formField label="#{messages['invoiceConfiguration.displayOffers']}"
-								field="invoiceConfiguration" childField="displayOffers" id="displayOffers"/>	
-
+								field="invoiceConfiguration" childField="displayOffers" id="displayOffers"/>
+				</p:tab>
+				
+				<p:tab title="#{messages['customFieldTemplate.panel']}">
+					<hf:customFields id="customFields" messagesId=":formPanel:formId:messages"/>
+				</p:tab>
+				</p:tabView>
 			</hf:formPanel>
 	</ui:define>
 </ui:composition>

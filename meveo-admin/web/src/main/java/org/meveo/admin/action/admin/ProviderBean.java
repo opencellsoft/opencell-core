@@ -21,11 +21,13 @@ import javax.inject.Named;
 
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
+import org.meveo.admin.action.CustomFieldEnabledBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.InvoiceConfiguration;
 import org.meveo.model.billing.Language;
+import org.meveo.model.crm.AccountLevelEnum;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.security.Role;
 import org.meveo.service.admin.impl.RoleService;
@@ -38,6 +40,7 @@ import org.primefaces.event.SelectEvent;
 
 @Named
 @ViewScoped
+@CustomFieldEnabledBean(accountLevel=AccountLevelEnum.PROVIDER)
 public class ProviderBean extends BaseBean<Provider> {
 
     private static final long serialVersionUID = 1L;
@@ -149,7 +152,7 @@ public class ProviderBean extends BaseBean<Provider> {
 	   		invoiceConfiguration.setDisplayServices(entity.getInvoiceConfiguration().getDisplayServices());
 	   		invoiceConfiguration.setDisplaySubscriptions(entity.getInvoiceConfiguration().getDisplaySubscriptions());
 	   		invoiceConfigurationService.create(invoiceConfiguration);
-			entity.setInvoiceConfiguration(invoiceConfiguration);
+			entity.setInvoiceConfiguration(invoiceConfiguration); 
 	   	    log.info("created invoiceConfiguration id={} for provider {}", invoiceConfiguration.getId(), entity.getCode());
             messages.info(new BundleKey("messages", "provider.createdWithDefaultUser"), entity.getCode() + ".ADMIN", entity.getCode() + ".password");
          }

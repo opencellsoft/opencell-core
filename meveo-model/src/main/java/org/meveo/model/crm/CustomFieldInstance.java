@@ -1,5 +1,6 @@
 package org.meveo.model.crm;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -21,10 +22,14 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 import org.meveo.model.AccountEntity;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.ExportIdentifier;
+import org.meveo.model.ProviderlessEntity;
+import org.meveo.model.billing.InvoiceSubcategoryCountry;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.catalog.Calendar;
 import org.meveo.model.catalog.ChargeTemplate;
@@ -39,14 +44,28 @@ import org.meveo.model.mediation.Access;
 @Table(name = "CRM_CUSTOM_FIELD_INST", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE", "SUBSCRIPTION_ID", "ACCOUNT_ID", "CHARGE_TEMPLATE_ID", "SERVICE_TEMPLATE_ID",
         "OFFER_TEMPLATE_ID", "ACCESS_ID", "JOB_INSTANCE_ID", "PROVIDER_ID" }))
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "CRM_CUSTOM_FIELD_INST_SEQ")
-public class CustomFieldInstance extends BusinessEntity {
+public class CustomFieldInstance extends ProviderlessEntity {
 
     private static final long serialVersionUID = 8691447585410651639L;
+    public static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
     public CustomFieldInstance() {
         super();
         valuePeriods = new ArrayList<CustomFieldPeriod>();
     }
+    
+    @Column(name = "CODE", nullable = false, length = 60) 
+	@Size(max = 60, min = 1)
+	@NotNull
+	private String code;
+
+	@Column(name = "DESCRIPTION", nullable = true, length = 100)
+	@Size(max = 100)
+	private String description;
+	
+	@ManyToOne(optional = true, fetch = FetchType.LAZY)
+	@JoinColumn(name = "PROVIDER_ID")
+	private Provider provider;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ACCOUNT_ID")
@@ -141,6 +160,25 @@ public class CustomFieldInstance extends BusinessEntity {
 
     @OneToMany(mappedBy = "customFieldInstance", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
     private List<CustomFieldPeriod> valuePeriods = new ArrayList<CustomFieldPeriod>();
+    
+    @Column(name = "DISABLED", nullable = false)
+	private boolean disabled;
+
+	public boolean isDisabled() {
+		return disabled;
+	}
+
+	public void setDisabled(boolean disabled) {
+		this.disabled = disabled;
+	}
+
+	public boolean isActive() {
+		return !disabled;
+	}
+
+	public void setActive(boolean active) {
+		setDisabled(!active);
+	}
 
     public String getStringValue() {
         return stringValue;
@@ -527,6 +565,21 @@ public class CustomFieldInstance extends BusinessEntity {
 
         return result;
     }
+     
+    @Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (getClass() != obj.getClass())
+			return false;
+		CustomFieldInstance other = (CustomFieldInstance) obj;
+		if (getId() == null) {
+			if (other.getId() != null)
+				return false;
+		} else if (!getId().equals(other.getId()))
+			return false;
+		return true;
+	}
 
     public CustomFieldPeriod addValuePeriod(Date date, Object value, CustomFieldTypeEnum fieldType) {
         CustomFieldPeriod period = getValuePeriod(date, true);
@@ -898,4 +951,30 @@ public class CustomFieldInstance extends BusinessEntity {
 	public void removeDoubleFrommap(String key){
 		this.doubleMap.remove(key);
 	}
+
+	public String getCode() {
+		return code;
+	}
+
+	public void setCode(String code) {
+		this.code = code;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public Provider getProvider() {
+		return provider;
+	}
+
+	public void setProvider(Provider provider) {
+		this.provider = provider;
+	}
+	
+	
 }
