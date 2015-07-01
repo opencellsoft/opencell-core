@@ -249,7 +249,8 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 			invoiceTag.appendChild(amount);
 
 			Element currency = doc.createElement("currency");
-			Text currencyTxt = doc.createTextNode("EUR");
+			Text currencyTxt = doc.createTextNode(invoice.getBillingAccount().getCustomerAccount().getTradingCurrency()
+					.getCurrencyCode());
 			currency.appendChild(currencyTxt);
 			amount.appendChild(currency);
 
