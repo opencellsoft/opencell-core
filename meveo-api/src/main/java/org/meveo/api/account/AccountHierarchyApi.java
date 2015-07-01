@@ -107,6 +107,18 @@ import org.meveo.util.MeveoParamBean;
 public class AccountHierarchyApi extends BaseApi {
 
 	@Inject
+	private CustomerApi customerApi;
+
+	@Inject
+	private CustomerAccountApi customerAccountApi;
+
+	@Inject
+	private BillingAccountApi billingAccountApi;
+
+	@Inject
+	private UserAccountApi userAccountApi;
+
+	@Inject
 	private SellerApi sellerApi;
 
 	@Inject
@@ -1867,10 +1879,6 @@ public class AccountHierarchyApi extends BaseApi {
 			throw new MeveoApiException("At least name or address must not be null.");
 		}
 
-		if (!FindAccountHierachyRequestDto.isValidLevel(postData.getLevel())) {
-			throw new MeveoApiException(MeveoApiErrorCode.BUSINESS_API_EXCEPTION, "INVALID_LEVEL_TYPE");
-		}
-
 		if (postData.getName() != null) {
 			name = new Name();
 			name.setFirstName(postData.getName().getFirstName());
@@ -1889,8 +1897,11 @@ public class AccountHierarchyApi extends BaseApi {
 			address.setZipCode(postData.getAddress().getZipCode());
 		}
 
+		boolean validLevel = false;
+
 		// check each level
 		if ((postData.getLevel() & CUST) != 0) {
+			validLevel = true;
 			List<Customer> customers = customerService.findByNameAndAddress(name, address, currentUser.getProvider());
 			if (customers != null) {
 				for (Customer customer : customers) {
@@ -1900,6 +1911,7 @@ public class AccountHierarchyApi extends BaseApi {
 		}
 
 		if ((postData.getLevel() & CA) != 0) {
+			validLevel = true;
 			List<CustomerAccount> customerAccounts = customerAccountService.findByNameAndAddress(name, address,
 					currentUser.getProvider());
 			if (customerAccounts != null) {
@@ -1909,6 +1921,7 @@ public class AccountHierarchyApi extends BaseApi {
 			}
 		}
 		if ((postData.getLevel() & BA) != 0) {
+			validLevel = true;
 			List<BillingAccount> billingAccounts = billingAccountService.findByNameAndAddress(name, address,
 					currentUser.getProvider());
 			if (billingAccounts != null) {
@@ -1918,6 +1931,7 @@ public class AccountHierarchyApi extends BaseApi {
 			}
 		}
 		if ((postData.getLevel() & UA) != 0) {
+			validLevel = true;
 			List<UserAccount> userAccounts = userAccountService.findByNameAndAddress(name, address,
 					currentUser.getProvider());
 			if (userAccounts != null) {
@@ -1925,6 +1939,10 @@ public class AccountHierarchyApi extends BaseApi {
 					addUserAccount(result, userAccount);
 				}
 			}
+		}
+
+		if (!validLevel) {
+			throw new MeveoApiException(MeveoApiErrorCode.BUSINESS_API_EXCEPTION, "INVALID_LEVEL_TYPE");
 		}
 
 		return result;
@@ -1938,22 +1956,16 @@ public class AccountHierarchyApi extends BaseApi {
 		for (CustomerDto customerDto : result.getCustomers().getCustomer()) {
 			for (CustomerAccountDto customerAccountDto : customerDto.getCustomerAccounts().getCustomerAccount()) {
 				for (BillingAccountDto billingAccountDto : customerAccountDto.getBillingAccounts().getBillingAccount()) {
-					if (billingAccountDto.getUserAccounts() != null
-							&& billingAccountDto.getUserAccounts().getUserAccount().size() > 0) {
-						for (UserAccountDto userAccountDto : billingAccountDto.getUserAccounts().getUserAccount()) {
-							if (userAccountDto.getCode().equals(userAccount.getCode())) {
-								if (!userAccountDto.isLoaded()) {
-									userAccountDto.initFromEntity(userAccount);
-								} else {
-									billingAccountDto.getUserAccounts().getUserAccount()
-											.add(new UserAccountDto(userAccount));
-								}
-
-								break;
+					if (billingAccountDto.getCode().equals(billingAccount.getCode())) {
+						if (billingAccountDto.getUserAccounts() != null
+								&& billingAccountDto.getUserAccounts().getUserAccount().size() > 0) {
+							UserAccountDto userAccountDto = new UserAccountDto(userAccount);
+							if (!billingAccountDto.getUserAccounts().getUserAccount().contains(userAccountDto)) {
+								billingAccountDto.getUserAccounts().getUserAccount().add(userAccountDto);
 							}
+						} else {
+							billingAccountDto.getUserAccounts().getUserAccount().add(new UserAccountDto(userAccount));
 						}
-					} else {
-						billingAccountDto.getUserAccounts().getUserAccount().add(new UserAccountDto(userAccount));
 					}
 				}
 			}
@@ -1969,24 +1981,17 @@ public class AccountHierarchyApi extends BaseApi {
 
 		for (CustomerDto customerDto : result.getCustomers().getCustomer()) {
 			for (CustomerAccountDto customerAccountDto : customerDto.getCustomerAccounts().getCustomerAccount()) {
-				if (customerAccountDto.getBillingAccounts() != null
-						&& customerAccountDto.getBillingAccounts().getBillingAccount().size() > 0) {
-					for (BillingAccountDto billingAccountDto : customerAccountDto.getBillingAccounts()
-							.getBillingAccount()) {
-						if (billingAccountDto.getCode().equals(billingAccount.getCode())) {
-							if (!billingAccountDto.isLoaded()) {
-								billingAccountDto.initFromEntity(billingAccount);
-							} else {
-								customerAccountDto.getBillingAccounts().getBillingAccount()
-										.add(new BillingAccountDto(billingAccount));
-							}
-
-							break;
+				if (customerAccountDto.getCode().equals(customerAccount.getCode())) {
+					if (customerAccountDto.getBillingAccounts() != null
+							&& customerAccountDto.getBillingAccounts().getBillingAccount().size() > 0) {
+						BillingAccountDto billingAccountDto = new BillingAccountDto(billingAccount);
+						if (!customerAccountDto.getBillingAccounts().getBillingAccount().contains(billingAccountDto)) {
+							customerAccountDto.getBillingAccounts().getBillingAccount().add(billingAccountDto);
 						}
+					} else {
+						customerAccountDto.getBillingAccounts().getBillingAccount()
+								.add(new BillingAccountDto(billingAccount));
 					}
-				} else {
-					customerAccountDto.getBillingAccounts().getBillingAccount()
-							.add(new BillingAccountDto(billingAccount));
 				}
 			}
 		}
@@ -2001,19 +2006,12 @@ public class AccountHierarchyApi extends BaseApi {
 			customerDto.getCustomerAccounts().getCustomerAccount().add(customerAccountDto);
 			result.getCustomers().getCustomer().add(customerDto);
 		} else {
-			boolean found = false;
 			for (CustomerDto customerDtoLoop : result.getCustomers().getCustomer()) {
 				if (customerDtoLoop.getCode().equals(customer.getCode())) {
-					customerDtoLoop.getCustomerAccounts().getCustomerAccount().add(customerAccountDto);
-					found = true;
-					break;
+					if (!customerDtoLoop.getCustomerAccounts().getCustomerAccount().contains(customerAccountDto)) {
+						customerDtoLoop.getCustomerAccounts().getCustomerAccount().add(customerAccountDto);
+					}
 				}
-			}
-
-			if (!found) {
-				CustomerDto customerDto = new CustomerDto(customer);
-				customerDto.getCustomerAccounts().getCustomerAccount().add(customerAccountDto);
-				result.getCustomers().getCustomer().add(customerDto);
 			}
 		}
 	}
@@ -2022,31 +2020,23 @@ public class AccountHierarchyApi extends BaseApi {
 		if (result.getCustomers() == null || result.getCustomers().getCustomer().size() == 0) {
 			result.getCustomers().getCustomer().add(new CustomerDto(customer));
 		} else {
+			boolean found = false;
 			for (CustomerDto customerDto : result.getCustomers().getCustomer()) {
 				if (customerDto.getCode().equals(customer.getCode())) {
 					if (!customerDto.isLoaded()) {
 						customerDto.initFromEntity(customer);
-					} else {
-						result.getCustomers().getCustomer().add(new CustomerDto(customer));
 					}
 
+					found = true;
 					break;
 				}
 			}
+
+			if (!found) {
+				result.getCustomers().getCustomer().add(new CustomerDto(customer));
+			}
 		}
 	}
-
-	@Inject
-	private CustomerApi customerApi;
-
-	@Inject
-	private CustomerAccountApi customerAccountApi;
-
-	@Inject
-	private BillingAccountApi billingAccountApi;
-
-	@Inject
-	private UserAccountApi userAccountApi;
 
 	public void createCRMAccountHierarchy(CRMAccountHierarchyDto postData, User currentUser) throws MeveoApiException {
 		if (postData.getCrmAccountType().equals(CRMAccountHierarchyDto.ACCOUNT_TYPE_BASIC)) {

@@ -117,8 +117,9 @@ public abstract class AccountDto implements Serializable {
 
 	@Override
 	public String toString() {
-		return "BaseAccountDto [code=" + code + ", description=" + description + ", externalRef1=" + externalRef1 + ", externalRef2=" + externalRef2 + ", name=" + name
-				+ ", address=" + address + ", customFields=" + customFields + "]";
+		return "BaseAccountDto [code=" + code + ", description=" + description + ", externalRef1=" + externalRef1
+				+ ", externalRef2=" + externalRef2 + ", name=" + name + ", address=" + address + ", customFields="
+				+ customFields + "]";
 	}
 
 	public CustomFieldsDto getCustomFields() {
@@ -135,6 +136,31 @@ public abstract class AccountDto implements Serializable {
 
 	public void setLoaded(boolean loaded) {
 		this.loaded = loaded;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((code == null) ? 0 : code.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		AccountDto other = (AccountDto) obj;
+		if (code == null) {
+			if (other.code != null)
+				return false;
+		} else if (!code.equals(other.code))
+			return false;
+		return true;
 	}
 
 }

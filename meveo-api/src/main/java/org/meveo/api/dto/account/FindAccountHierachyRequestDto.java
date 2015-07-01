@@ -52,9 +52,5 @@ public class FindAccountHierachyRequestDto implements Serializable {
 	public void setAddress(AddressDto address) {
 		this.address = address;
 	}
-	
-	public static boolean isValidLevel(Integer l) {
-		return VALID_LEVEL_VALUES.contains(l);
-	}
 
 }

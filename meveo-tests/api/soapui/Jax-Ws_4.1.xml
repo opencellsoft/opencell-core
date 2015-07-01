@@ -30194,7 +30194,7 @@ for( testCase in testSuite.getTestCaseList() ) {
    <soapenv:Body>
       <ws:createCustomer>
          <!--Optional:-->
-         <customer code="${#TestSuite#ticket}_CUST" description="${#TestCase#ticket}_CUST">
+         <customer code="${#TestSuite#ticket}_CUST" description="${#TestSuite#ticket}_CUST">
             <name>
                <title>M</title>
                <firstName>Edward</firstName>
@@ -30224,7 +30224,7 @@ for( testCase in testSuite.getTestCaseList() ) {
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createCustomerAccount>
-         <customerAccount code="${#TestSuite#ticket}_CA" description="${#TestCase#ticket}_CA">
+         <customerAccount code="${#TestSuite#ticket}_CA" description="${#TestSuite#ticket}_CA">
             <externalRef1>EXTREF1</externalRef1>
             <externalRef2>EXTREF2</externalRef2>
             <name>
@@ -30252,7 +30252,7 @@ for( testCase in testSuite.getTestCaseList() ) {
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createBillingAccount>
-         <billingAccount code="${#TestSuite#ticket}_BA" description="${#TestCase#ticket}_BA">
+         <billingAccount code="${#TestSuite#ticket}_BA" description="${#TestSuite#ticket}_BA">
             <externalRef1>EXTREF1</externalRef1>
             <externalRef2>EXTREF2</externalRef2>
             <name>
@@ -30286,7 +30286,7 @@ for( testCase in testSuite.getTestCaseList() ) {
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createUserAccount>
-         <userAccount code="${#TestSuite#ticket}_UA" description="${#TestCase#ticket}_UA">
+         <userAccount code="${#TestSuite#ticket}_UA" description="${#TestSuite#ticket}_UA">
          	<billingAccount>${#TestSuite#ticket}_BA</billingAccount>
             <externalRef1>EXTREF1</externalRef1>
             <externalRef2>EXTREF2</externalRef2>
@@ -30312,7 +30312,7 @@ for( testCase in testSuite.getTestCaseList() ) {
    <soapenv:Body>
       <ws:createCustomer>
          <!--Optional:-->
-         <customer code="${#TestSuite#ticket}_CUST2" description="${#TestCase#ticket}_CUST">
+         <customer code="${#TestSuite#ticket}_CUST2" description="${#TestSuite#ticket}_CUST">
             <name>
                <title>M</title>
                <firstName>Edward</firstName>
@@ -30342,7 +30342,7 @@ for( testCase in testSuite.getTestCaseList() ) {
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createCustomerAccount>
-         <customerAccount code="${#TestSuite#ticket}_CA2" description="${#TestCase#ticket}_CA">
+         <customerAccount code="${#TestSuite#ticket}_CA2" description="${#TestSuite#ticket}_CA">
             <externalRef1>EXTREF1</externalRef1>
             <externalRef2>EXTREF2</externalRef2>
             <name>
@@ -30370,7 +30370,7 @@ for( testCase in testSuite.getTestCaseList() ) {
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createBillingAccount>
-         <billingAccount code="${#TestSuite#ticket}_BA2" description="${#TestCase#ticket}_BA">
+         <billingAccount code="${#TestSuite#ticket}_BA2" description="${#TestSuite#ticket}_BA">
             <externalRef1>EXTREF1</externalRef1>
             <externalRef2>EXTREF2</externalRef2>
             <name>
@@ -30404,7 +30404,7 @@ for( testCase in testSuite.getTestCaseList() ) {
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createUserAccount>
-         <userAccount code="${#TestSuite#ticket}_UA2" description="${#TestCase#ticket}_UA">
+         <userAccount code="${#TestSuite#ticket}_UA2" description="${#TestSuite#ticket}_UA">
          	<billingAccount>${#TestSuite#ticket}_BA2</billingAccount>
             <externalRef1>EXTREF1</externalRef1>
             <externalRef2>EXTREF2</externalRef2>
@@ -30430,7 +30430,7 @@ for( testCase in testSuite.getTestCaseList() ) {
    <soapenv:Body>
       <ws:createCustomer>
          <!--Optional:-->
-         <customer code="${#TestSuite#ticket}_CUST3" description="${#TestCase#ticket}_CUST">
+         <customer code="${#TestSuite#ticket}_CUST3" description="${#TestSuite#ticket}_CUST">
             <name>
                <title>M</title>
                <firstName>Edward2</firstName>
@@ -30460,7 +30460,7 @@ for( testCase in testSuite.getTestCaseList() ) {
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createCustomerAccount>
-         <customerAccount code="${#TestSuite#ticket}_CA3" description="${#TestCase#ticket}_CA">
+         <customerAccount code="${#TestSuite#ticket}_CA3" description="${#TestSuite#ticket}_CA">
             <externalRef1>EXTREF1</externalRef1>
             <externalRef2>EXTREF2</externalRef2>
             <name>
@@ -30488,7 +30488,7 @@ for( testCase in testSuite.getTestCaseList() ) {
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createBillingAccount>
-         <billingAccount code="${#TestSuite#ticket}_BA3" description="${#TestCase#ticket}_BA">
+         <billingAccount code="${#TestSuite#ticket}_BA3" description="${#TestSuite#ticket}_BA">
             <externalRef1>EXTREF1</externalRef1>
             <externalRef2>EXTREF2</externalRef2>
             <name>
@@ -30522,7 +30522,7 @@ for( testCase in testSuite.getTestCaseList() ) {
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createBillingAccount>
-         <billingAccount code="${#TestSuite#ticket}_BA3a" description="${#TestCase#ticket}_BAa">
+         <billingAccount code="${#TestSuite#ticket}_BA3a" description="${#TestSuite#ticket}_BAa">
             <externalRef1>EXTREF1</externalRef1>
             <externalRef2>EXTREF2</externalRef2>
             <name>
@@ -30532,7 +30532,7 @@ for( testCase in testSuite.getTestCaseList() ) {
             </name>
             <address>
                <address1>ba_address_diff_cust</address1>
-               <address2></address2>
+               <address2>ba_ua_diff_ba</address2>
                <address3>adresse 3</address3>
                <zipCode>21000</zipCode>
                <city>Dijon</city>
@@ -30556,7 +30556,7 @@ for( testCase in testSuite.getTestCaseList() ) {
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createUserAccount>
-         <userAccount code="${#TestSuite#ticket}_UA3" description="${#TestCase#ticket}_UA">
+         <userAccount code="${#TestSuite#ticket}_UA3" description="${#TestSuite#ticket}_UA">
          	<billingAccount>${#TestSuite#ticket}_BA3</billingAccount>
             <externalRef1>EXTREF1</externalRef1>
             <externalRef2>EXTREF2</externalRef2>
@@ -30567,7 +30567,7 @@ for( testCase in testSuite.getTestCaseList() ) {
             </name>
             <address>
                <address1>ua_diff_ba</address1>
-               <address2></address2>
+               <address2>ba_ua_diff_ba</address2>
                <address3>adress 3</address3>
                <zipCode>21000</zipCode>
                <city>Dijon</city>
@@ -30582,7 +30582,7 @@ for( testCase in testSuite.getTestCaseList() ) {
    <soapenv:Body>
       <ws:createCustomer>
          <!--Optional:-->
-         <customer code="${#TestSuite#ticket}_CUST4" description="${#TestCase#ticket}_CUST">
+         <customer code="${#TestSuite#ticket}_CUST4" description="${#TestSuite#ticket}_CUST">
             <name>
                <title>M</title>
                <firstName>Edward2</firstName>
@@ -30612,7 +30612,7 @@ for( testCase in testSuite.getTestCaseList() ) {
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createCustomerAccount>
-         <customerAccount code="${#TestSuite#ticket}_CA4" description="${#TestCase#ticket}_CA">
+         <customerAccount code="${#TestSuite#ticket}_CA4" description="${#TestSuite#ticket}_CA">
             <externalRef1>EXTREF1</externalRef1>
             <externalRef2>EXTREF2</externalRef2>
             <name>
@@ -30640,7 +30640,7 @@ for( testCase in testSuite.getTestCaseList() ) {
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createBillingAccount>
-         <billingAccount code="${#TestSuite#ticket}_BA4" description="${#TestCase#ticket}_BA">
+         <billingAccount code="${#TestSuite#ticket}_BA4" description="${#TestSuite#ticket}_BA">
             <externalRef1>EXTREF1</externalRef1>
             <externalRef2>EXTREF2</externalRef2>
             <name>
@@ -30674,7 +30674,7 @@ for( testCase in testSuite.getTestCaseList() ) {
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createBillingAccount>
-         <billingAccount code="${#TestSuite#ticket}_BA4a" description="${#TestCase#ticket}_BAa">
+         <billingAccount code="${#TestSuite#ticket}_BA4a" description="${#TestSuite#ticket}_BAa">
             <externalRef1>EXTREF1</externalRef1>
             <externalRef2>EXTREF2</externalRef2>
             <name>
@@ -30708,7 +30708,7 @@ for( testCase in testSuite.getTestCaseList() ) {
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createUserAccount>
-         <userAccount code="${#TestSuite#ticket}_UA4" description="${#TestCase#ticket}_UA">
+         <userAccount code="${#TestSuite#ticket}_UA4" description="${#TestSuite#ticket}_UA">
          	<billingAccount>${#TestSuite#ticket}_BA4a</billingAccount>
             <externalRef1>EXTREF1</externalRef1>
             <externalRef2>EXTREF2</externalRef2>
@@ -30796,6 +30796,47 @@ for( testCase in testSuite.getTestCaseList() ) {
                <country>?</country>
                <state>?</state>
 -->
+            </address>
+         </findAccountHierachyRequest>
+      </ws:findAccountHierarchy2>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response"/><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:preemptive>true</con:preemptive><con:authType>Preemptive</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="find ba ua address"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>findAccountHierarchy2</con:operation><con:request name="find ba ua address"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:findAccountHierarchy2>
+         <!--Optional:-->
+         <findAccountHierachyRequest>
+            <level>12</level>
+           
+            <!--<name>
+               <title>?</title>
+               <firstName>?</firstName>
+               <lastName>?</lastName>
+            </name>
+-->
+            <!--Optional:-->
+            <address>
+               <!--<address1>ba_address_diff_cust</address1>-->
+               <address2>ba_ua_diff_ba</address2>
+               <!--<address3>?</address3>
+               <zipCode>?</zipCode>
+               <city>?</city>
+               <country>?</country>
+               <state>?</state>
+-->
+            </address>
+         </findAccountHierachyRequest>
+      </ws:findAccountHierarchy2>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response"/><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:preemptive>true</con:preemptive><con:authType>Preemptive</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="find all"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>findAccountHierarchy2</con:operation><con:request name="find all"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:findAccountHierarchy2>
+         <!--Optional:-->
+         <findAccountHierachyRequest>
+            <level>15</level>
+            <address>
+            	<zipCode>21000</zipCode>
             </address>
          </findAccountHierachyRequest>
       </ws:findAccountHierarchy2>
