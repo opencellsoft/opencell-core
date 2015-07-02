@@ -206,7 +206,7 @@ public class IEntityExportIdentifierConverter implements Converter {
                     continue;
 
                     // Look up a provider by code or force it to a value provided
-                } else if ("provider".equals(attrName)) {// TODO A check by field type would be better
+                } else if ("provider".equals(attrName) || attrName.endsWith(".provider")) {// TODO A check by field type would be better
                     Provider provider = forceToProvider;
                     if (provider == null) {
                         if (providerMap.containsKey(attrValue)) {

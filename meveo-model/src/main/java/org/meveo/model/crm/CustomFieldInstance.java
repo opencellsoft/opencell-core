@@ -39,8 +39,9 @@ import org.meveo.model.jobs.JobInstance;
 import org.meveo.model.mediation.Access;
 
 @Entity
-@ExportIdentifier({ "code", "subscription.code", "account.code", "chargeTemplate.code", "serviceTemplate.code", "offerTemplate.code", "access.accessUserId",
-        "access.subscription.code", "jobInstance.code", "provider" })
+@ExportIdentifier({ "code", "subscription.code", "subscription.provider", "account.code", "account.provider", "chargeTemplate.code", "chargeTemplate.provider",
+        "serviceTemplate.code", "serviceTemplate.provider", "offerTemplate.code", "offerTemplate.provider", "access.accessUserId", "access.subscription.code", "access.provider",
+        "jobInstance.code", "jobInstance.provider", "provider" })
 @Table(name = "CRM_CUSTOM_FIELD_INST", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE", "SUBSCRIPTION_ID", "ACCOUNT_ID", "CHARGE_TEMPLATE_ID", "SERVICE_TEMPLATE_ID",
         "OFFER_TEMPLATE_ID", "ACCESS_ID", "JOB_INSTANCE_ID", "PROVIDER_ID" }))
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "CRM_CUSTOM_FIELD_INST_SEQ")
@@ -868,36 +869,45 @@ public class CustomFieldInstance extends ProviderlessEntity {
 		this.entityList.add(businessEntity);
 		this.businessEntity=null;
 	}
+
 	public void addEntityTolists(BusinessEntity entity){
 		this.entityList.add(entity);
 	}
+
 	public void removeEntityFromlist(BusinessEntity businessEntity){
 		this.entityList.remove(businessEntity);
 	}
+
 	public void addEntityTomap(){
 		this.entityMap.put(label, this.businessEntity);
 		this.label=null;
 		this.businessEntity=null;
 	}
+
 	public void addEntityTomaps(String label,BusinessEntity businessEntity){
 		this.entityMap.put(label, businessEntity);
 	}
+
 	public void removeEntityFrommap(String key){
 		this.entityMap.remove(key);
 	}
+
 	//string for list or map
 	public void addStringTolist(){
 		this.stringList.add(stringValue);
 		this.stringValue=null;
 	}
+
 	public void removeStringFromlist(String value){
 		this.stringList.remove(value);
 	}
+
 	public void addStringTomap(){
 		this.stringMap.put(label, this.stringValue);
 		this.label=null;
 		this.stringValue=null;
 	}
+
 	public void removeStringFrommap(String key){
 		this.stringMap.remove(key);
 	}
@@ -909,45 +919,56 @@ public class CustomFieldInstance extends ProviderlessEntity {
 	public void setLabel(String label) {
 		this.label = label;
 	}
+
 	public void addDateTolist(){
 		this.dateList.add(dateValue);
 		dateValue=null;
 	}
+
 	public void removeDateFromlist(Date value){
 		this.dateList.remove(value);
 	}
+
 	public void addDateTomap(){
 		this.dateMap.put(label, dateValue);
 		label=null;
 		dateValue=null;
 	}
+
 	public void removeDateFrommap(String key){
 		this.dateMap.remove(key);
 	}
+
 	public void addLongTolist(){
 		this.longList.add(longValue);
 		longValue=null;
 	}
+
 	public void removeLongFromlist(Long value){
 		this.longList.remove(value);
 	}
+
 	public void addLongTomap(){
 		this.longMap.put(label, longValue);
 		this.label=null;
 		this.longValue=null;
 	}
+
 	public void addDoubleTolist(){
 		this.doubleList.add(doubleValue);
 		this.doubleValue=null;
 	}
+
 	public void removeDoubleTolist(Double value){
 		this.doubleList.remove(value);
 	}
+
 	public void addDoubleTomap(){
 		this.doubleMap.put(label, doubleValue);
 		this.label=null;
 		this.doubleValue=null;
 	}
+
 	public void removeDoubleFrommap(String key){
 		this.doubleMap.remove(key);
 	}
