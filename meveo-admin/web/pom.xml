@@ -33,6 +33,7 @@
 		</resources>
 
 		<plugins>
+		       
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-war-plugin</artifactId>
@@ -54,7 +55,23 @@
 					</execution>
 				</executions>
 			</plugin>
-
+		       
+		     <plugin>
+	            <artifactId>maven-antrun-plugin</artifactId>
+	            <configuration>
+	                <tasks>
+	                    <copy file="../lib/flatworm-3.0.2.jar" tofile="${project.build.directory}/meveo/WEB-INF/lib/flatworm-3.0.2.jar"/>
+	                </tasks>
+	            </configuration>
+	            <executions>
+	                <execution>
+	                    <phase>install</phase>
+	                    <goals>
+	                        <goal>run</goal>
+	                    </goals>
+	                </execution>
+	            </executions>
+        </plugin>
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>buildnumber-maven-plugin</artifactId>
@@ -88,7 +105,7 @@
 				</executions>
 				<configuration>
 					<includes>
-						<!-- <include>${project.build.directory}/**/persistence.xml</include> -->
+<!-- 						<include>${project.build.directory}/**/persistence.xml</include> -->
 						<include>${project.build.directory}/**/layout/*.xhtml</include>
 					</includes>
 					<replacements>
@@ -139,12 +156,12 @@
 			<groupId>org.jboss.spec.javax.servlet</groupId>
 			<artifactId>jboss-servlet-api_3.0_spec</artifactId>
 		</dependency>
-	
-		<dependency>
-			<groupId>commons-codec</groupId>
-			<artifactId>commons-codec</artifactId>
-			<version>1.10</version>
-		</dependency>
+		
+		    <dependency>
+			    <groupId>commons-codec</groupId>
+			    <artifactId>commons-codec</artifactId>
+			    <version>1.10</version>
+			</dependency>
 
 		<!-- Import the CDI API, we use provided scope as the API is included in 
 			JBoss AS 7 -->
@@ -184,6 +201,7 @@
 			<artifactId>omnifaces</artifactId>
 			<version>1.8.1</version>
 		</dependency>
+
 		<dependency>
 			<groupId>org.primefaces.extensions</groupId>
 			<artifactId>primefaces-extensions</artifactId>
@@ -282,6 +300,28 @@
 			<artifactId>json-simple</artifactId>
 			<version>1.1</version>
 		</dependency>
+		
+				<dependency>
+			<groupId>commons-collections</groupId>
+			<artifactId>commons-collections</artifactId>
+			<version>3.2.1</version>
+        </dependency>
+		<dependency>
+			<groupId>commons-beanutils</groupId>
+			<artifactId>commons-beanutils</artifactId>
+			<version>1.9.2</version>
+		</dependency>
+		<dependency>
+			<groupId>commons-logging</groupId>
+			<artifactId>commons-logging</artifactId>
+			<version>1.2</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-lang3</artifactId>
+			<version>3.4</version>
+		</dependency>
+		
 
 	</dependencies>
 

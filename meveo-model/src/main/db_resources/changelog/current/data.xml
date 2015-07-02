@@ -204,4 +204,33 @@
     <changeSet id="789-2015630-1" author="TyshanShi">
     	<sql><![CDATA[update crm_custom_field_tmpl set storage_type='SINGLE' where storage_type is null]]></sql>
     </changeSet>
+        <changeSet id="#907_01072015_1" author="anasseh">
+    	<sql><![CDATA[
+    	INSERT INTO crm_custom_field_inst VALUES ( nextval('crm_custom_field_inst_seq'), 1, false, '2015-06-30 10:48:10.751', '2015-06-30 15:06:38.01', 'MediationJob_mappingConf', 'Mapping Conf', NULL, NULL, NULL, '<?xml version="1.0" encoding="ISO-8859-1"?>
+<file-format>
+    <converter name="char" class="com.blackbear.flatworm.converters.CoreConverters" method="convertChar" return-type="java.lang.String"/>
+    <converter name="date" class="com.blackbear.flatworm.converters.CoreConverters" method="convertDate" return-type="java.util.Date"/>
+    <converter name="bigDecimal" class="com.blackbear.flatworm.converters.CoreConverters" method="convertBigDecimal" return-type="java.math.BigDecimal"/>
+    <record name="cdrRecord">
+        <record-ident>
+        </record-ident>
+        <record-definition>
+            <bean name="cdr" class="org.meveo.admin.parse.csv.CDR"/>
+           <line delimit=";">
+                <record-element length="0" beanref="cdr.timestamp" type="date">
+                    <conversion-option name="format" value="yyyy-MM-dd''T''HH:mm:ss.SSS''Z''"/>                  
+                </record-element>
+                <record-element length="0" beanref="cdr.quantity" type="decimal">                 
+                </record-element>
+                <record-element length="0" beanref="cdr.access_id" type="char"/>
+                <record-element length="0" beanref="cdr.param1" type="char" />
+                <record-element length="0" beanref="cdr.param2" type="char" />
+                <record-element length="0" beanref="cdr.param3" type="char" />
+                <record-element length="0" beanref="cdr.param4" type="char" />
+            </line>
+        </record-definition>
+    </record>
+</file-format>', 1, 1, 1, NULL, NULL, NULL, NULL, NULL, NULL, false, NULL, 3, NULL);
+    	]]></sql>
+    </changeSet>
 </databaseChangeLog>

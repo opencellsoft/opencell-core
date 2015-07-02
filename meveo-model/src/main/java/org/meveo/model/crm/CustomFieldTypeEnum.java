@@ -7,7 +7,8 @@ public enum CustomFieldTypeEnum {
   LONG(3, "customFieldTypeEnum.long"),
   DOUBLE(4, "customFieldTypeEnum.double"),
   LIST(5, "customFieldTypeEnum.list"),
-  ENTITY(6,"customFieldTypeEnum.entity");
+  ENTITY(6,"customFieldTypeEnum.entity"),
+  TEXT_AREA(7,"customFieldTypeEnum.textArea");
   
 
   private Integer id;

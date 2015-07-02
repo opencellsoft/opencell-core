@@ -32,6 +32,10 @@
         <h:outputText value="#{field.stringValue}" rendered="#{! edit}"></h:outputText>
         <p:inputText value="#{field.stringValue}" required="#{cft.valueRequired}" rendered="#{edit}" label="#{cft.description}" />
     </h:panelGroup>
+    <h:panelGroup rendered="#{cft.fieldType eq CustomFieldTypeEnum.TEXT_AREA}">
+        <h:outputText value="#{field.stringValue}" rendered="#{! edit}"></h:outputText>
+        <h:inputTextarea value="#{field.stringValue}" cols="#{paramBean.getProperty('meveo.textArea.cols','80')}" rows="#{paramBean.getProperty('meveo.textArea.rows','20')}"  required="#{cft.valueRequired}" rendered="#{edit}" label="#{cft.description}" />
+    </h:panelGroup>    
     <h:panelGroup rendered="#{cft.fieldType eq CustomFieldTypeEnum.DATE}">
         <h:outputText value="#{field.dateValue}" rendered="#{! edit}">
             <f:convertDateTime type="date" pattern="#{datePattern}" />

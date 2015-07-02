@@ -34,119 +34,131 @@ import org.meveo.service.job.Job;
 @Singleton
 public class MediationJob extends Job {
 
-    @Inject
-    private MediationAsync mediationAsync;
+	@Inject
+	private MediationAsync mediationAsync;
 
-    @Inject
-    private ResourceBundle resourceMessages;
+	@Inject
+	private ResourceBundle resourceMessages;
 
 
-    @Override
-    @Asynchronous
-    @TransactionAttribute(TransactionAttributeType.NEVER)
-    public void execute(JobInstance jobInstance, User currentUser) {
-        super.execute(jobInstance, currentUser);
-    }
+	@Override
+	@Asynchronous
+	@TransactionAttribute(TransactionAttributeType.NEVER)
+	public void execute(JobInstance jobInstance, User currentUser) {
+		super.execute(jobInstance, currentUser);
+	}
 
-    @SuppressWarnings("unchecked")
-    @Override
-    @TransactionAttribute(TransactionAttributeType.NEVER)
-    protected void execute(JobExecutionResultImpl result, JobInstance jobInstance, User currentUser) throws BusinessException {
-        try {
-            Long nbRuns = new Long(1);
-            Long waitingMillis = new Long(0);
-            try {
-                nbRuns = jobInstance.getLongCustomValue("MediationJob_nbRuns").longValue();
-                waitingMillis = jobInstance.getLongCustomValue("MediationJob_waitingMillis").longValue();
-                if (nbRuns == -1) {
-                    nbRuns = (long) Runtime.getRuntime().availableProcessors();
-                }
-            } catch (Exception e) {
-                log.warn("Cant get customFields for " + jobInstance.getJobTemplate());
-            }
+	@SuppressWarnings("unchecked")
+	@Override
+	@TransactionAttribute(TransactionAttributeType.NEVER)
+	protected void execute(JobExecutionResultImpl result, JobInstance jobInstance, User currentUser) throws BusinessException {
+		try {
+			Long nbRuns = new Long(1);
+			Long waitingMillis = new Long(0);
+			String mappingConf = null;
+			try {
+				nbRuns = jobInstance.getLongCustomValue("MediationJob_nbRuns").longValue();
+				waitingMillis = jobInstance.getLongCustomValue("MediationJob_waitingMillis").longValue();
+				mappingConf = jobInstance.getStringCustomValue("MediationJob_mappingConf");
+				if (nbRuns == -1) {
+					nbRuns = (long) Runtime.getRuntime().availableProcessors();
+				}
+			} catch (Exception e) {
+				log.warn("Cant get customFields for " + jobInstance.getJobTemplate());
+			}
 
-            Provider provider = currentUser.getProvider();
+			Provider provider = currentUser.getProvider();
 
-            ParamBean parambean = ParamBean.getInstance();
-            String meteringDir = parambean.getProperty("providers.rootDir", "/tmp/meveo/") + File.separator + provider.getCode() + File.separator + "imports" + File.separator
-                    + "metering" + File.separator;
+			ParamBean parambean = ParamBean.getInstance();
+			String meteringDir = parambean.getProperty("providers.rootDir", "/tmp/meveo/") + File.separator + provider.getCode() + File.separator + "imports" + File.separator
+					+ "metering" + File.separator;
 
-            String inputDir = meteringDir + "input";
-            String cdrExtension = parambean.getProperty("mediation.extensions", "csv");
-            ArrayList<String> cdrExtensions = new ArrayList<String>();
-            cdrExtensions.add(cdrExtension);
+			String inputDir = meteringDir + "input";
+			String cdrExtension = parambean.getProperty("mediation.extensions", "csv");
+			ArrayList<String> cdrExtensions = new ArrayList<String>();
+			cdrExtensions.add(cdrExtension);
 
-            File f = new File(inputDir);
-            if (!f.exists()) {
-                f.mkdirs();
-            }
-            File[] files = FileUtils.getFilesForParsing(inputDir, cdrExtensions);
-            if (files == null || files.length == 0) {
-                return;
-            }
-            SubListCreator subListCreator = new SubListCreator(Arrays.asList(files), nbRuns.intValue());
+			File f = new File(inputDir);
+			if (!f.exists()) {
+				f.mkdirs();
+			}
+			File[] files = FileUtils.getFilesForParsing(inputDir, cdrExtensions);
+			if (files == null || files.length == 0) {
+				return;
+			}
+			SubListCreator subListCreator = new SubListCreator(Arrays.asList(files), nbRuns.intValue());
 
-            List<Future<String>> futures = new ArrayList<Future<String>>();
-            while (subListCreator.isHasNext()) {
-                futures.add(mediationAsync.launchAndForget((List<File>) subListCreator.getNextWorkSet(), result, jobInstance.getParametres(), currentUser));
-                if (subListCreator.isHasNext()) {
-                    try {
-                        Thread.sleep(waitingMillis.longValue());
-                    } catch (InterruptedException e) {
-                        log.error("", e);
-                    }
-                }
-            }
-            // Wait for all async methods to finish
-            for (Future<String> future : futures) {
-                try {
-                    future.get();
+			List<Future<String>> futures = new ArrayList<Future<String>>();
+			while (subListCreator.isHasNext()) {
+				futures.add(mediationAsync.launchAndForget((List<File>) subListCreator.getNextWorkSet(), result, jobInstance.getParametres(), currentUser, mappingConf));
+				if (subListCreator.isHasNext()) {
+					try {
+						Thread.sleep(waitingMillis.longValue());
+					} catch (InterruptedException e) {
+						log.error("", e);
+					}
+				}
+			}
+			// Wait for all async methods to finish
+			for (Future<String> future : futures) {
+				try {
+					future.get();
 
-                } catch (InterruptedException e) {
-                    // It was cancelled from outside - no interest
+				} catch (InterruptedException e) {
+					// It was cancelled from outside - no interest
 
-                } catch (ExecutionException e) {
-                    Throwable cause = e.getCause();
-                    result.registerError(cause.getMessage());
-                    log.error("Failed to execute async method", cause);
-                }
-            }
+				} catch (ExecutionException e) {
+					Throwable cause = e.getCause();
+					result.registerError(cause.getMessage());
+					log.error("Failed to execute async method", cause);
+				}
+			}
 
-        } catch (Exception e) {
-            log.error("Failed to run mediation", e);
-            result.registerError(e.getMessage());
-        }
-    }
+		} catch (Exception e) {
+			log.error("Failed to run mediation", e);
+			result.registerError(e.getMessage());
+		}
+	}
 
-    @Override
-    public JobCategoryEnum getJobCategory() {
-        return JobCategoryEnum.MEDIATION;
-    }
+	@Override
+	public JobCategoryEnum getJobCategory() {
+		return JobCategoryEnum.MEDIATION;
+	}
 
-    @Override
-    public List<CustomFieldTemplate> getCustomFields() {
-        List<CustomFieldTemplate> result = new ArrayList<CustomFieldTemplate>();
+	@Override
+	public List<CustomFieldTemplate> getCustomFields() {
+		List<CustomFieldTemplate> result = new ArrayList<CustomFieldTemplate>();
 
-        CustomFieldTemplate nbRuns = new CustomFieldTemplate();
-        nbRuns.setCode("MediationJob_nbRuns");
-        nbRuns.setAccountLevel(AccountLevelEnum.TIMER);
-        nbRuns.setActive(true);
-        nbRuns.setDescription(resourceMessages.getString("jobExecution.nbRuns"));
-        nbRuns.setFieldType(CustomFieldTypeEnum.LONG);
-        nbRuns.setDefaultValue("1");
-        nbRuns.setValueRequired(false);
-        result.add(nbRuns);
+		CustomFieldTemplate nbRuns = new CustomFieldTemplate();
+		nbRuns.setCode("MediationJob_nbRuns");
+		nbRuns.setAccountLevel(AccountLevelEnum.TIMER);
+		nbRuns.setActive(true);
+		nbRuns.setDescription(resourceMessages.getString("jobExecution.nbRuns"));
+		nbRuns.setFieldType(CustomFieldTypeEnum.LONG);
+		nbRuns.setDefaultValue("1");
+		nbRuns.setValueRequired(false);
+		result.add(nbRuns);
 
-        CustomFieldTemplate waitingMillis = new CustomFieldTemplate();
-        waitingMillis.setCode("MediationJob_waitingMillis");
-        waitingMillis.setAccountLevel(AccountLevelEnum.TIMER);
-        waitingMillis.setActive(true);
-        waitingMillis.setDescription(resourceMessages.getString("jobExecution.waitingMillis"));
-        waitingMillis.setFieldType(CustomFieldTypeEnum.LONG);
-        waitingMillis.setDefaultValue("0");
-        waitingMillis.setValueRequired(false);
-        result.add(waitingMillis);
+		CustomFieldTemplate waitingMillis = new CustomFieldTemplate();
+		waitingMillis.setCode("MediationJob_waitingMillis");
+		waitingMillis.setAccountLevel(AccountLevelEnum.TIMER);
+		waitingMillis.setActive(true);
+		waitingMillis.setDescription(resourceMessages.getString("jobExecution.waitingMillis"));
+		waitingMillis.setFieldType(CustomFieldTypeEnum.LONG);
+		waitingMillis.setDefaultValue("0");
+		waitingMillis.setValueRequired(false);
+		result.add(waitingMillis);
 
-        return result;
-    }
+		CustomFieldTemplate mappingConf = new CustomFieldTemplate();
+		mappingConf.setCode("MediationJob_mappingConf");
+		mappingConf.setAccountLevel(AccountLevelEnum.TIMER);
+		mappingConf.setActive(true);
+		mappingConf.setDescription(resourceMessages.getString("mediation.mappingConfiguration"));
+		mappingConf.setFieldType(CustomFieldTypeEnum.TEXT_AREA);
+		mappingConf.setDefaultValue("");
+		mappingConf.setValueRequired(true);
+		result.add(mappingConf);
+
+		return result;
+	}
 }
