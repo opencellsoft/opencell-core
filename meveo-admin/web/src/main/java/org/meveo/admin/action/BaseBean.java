@@ -1077,10 +1077,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
             		cfi.updateAudit(getCurrentUser());
                 // Create a new instance from a template value
             	} else {
-            		cfi.updateAudit(getCurrentUser());
-            		if (entity instanceof Provider) {
-            			cfi.setProvider((Provider)entity);
-            		} 
+            		cfi.updateAudit(getCurrentUser()); 
             		IEntity entity = getEntity();
             		if (entity instanceof AccountEntity) {
             			cfi.setAccount((AccountEntity) getEntity());
@@ -1096,6 +1093,8 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
             			cfi.setOfferTemplate((OfferTemplate) entity);
             		} else if (entity instanceof JobInstance) {
             			cfi.setJobInstance((JobInstance) entity);
+            		}else if (entity instanceof Provider) {
+            			cfi.setProvider((Provider)entity);
             		}
             	}
             	((ICustomFieldEntity) entity).getCustomFields().put(cfi.getCode(), cfi);

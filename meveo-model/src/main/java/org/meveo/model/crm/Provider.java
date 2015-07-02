@@ -569,54 +569,138 @@ public class Provider extends ProviderlessEntity implements ICustomFieldEntity {
 		this.customFields = customFields;
 	}
 
-	 
-    public String getInheritedCustomStringValue(String code){
-		String stringValue=null;
-		if (getCustomFields().containsKey(code)&& getCustomFields().get(code).getStringValue()!=null) {
-			stringValue=getCustomFields().get(code).getStringValue();}
-		return stringValue;
-		}
-	
-	public Long getInheritedCustomLongValue(String code){
-		Long result=null; 
-		if (getCustomFields().containsKey(code)&& getCustomFields().get(code).getLongValue()!=null) {
-			result=getCustomFields().get(code).getLongValue();
-		}
-		return result;
-		}
-	
-	public Date getInheritedCustomDateValue(String code){
-		Date result=null; 
-		if (getCustomFields().containsKey(code)&& getCustomFields().get(code).getDateValue()!=null) {
-			result=getCustomFields().get(code).getDateValue();
-		}
-		return result;
-		}
-	
+	private CustomFieldInstance getOrCreateCustomFieldInstance(String code) {
+	        CustomFieldInstance cfi = null;
 
-	public Double getInheritedCustomDoubleValue(String code){
-		Double result=null; 
-		if (getCustomFields().containsKey(code)&& getCustomFields().get(code).getDoubleValue()!=null) {
-			result=getCustomFields().get(code).getDoubleValue();
+	        if (customFields.containsKey(code)) {
+	            cfi = customFields.get(code);
+	        } else {
+	            cfi = new CustomFieldInstance();
+	            Auditable au = new Auditable();
+	            au.setCreated(new Date());
+	            if (this.getAuditable() != null) {
+	                au.setCreator(this.getAuditable().getCreator());
+	            }
+	            cfi.setAuditable(au);
+	            cfi.setCode(code);
+	            cfi.setProvider(this); 
+	            customFields.put(code, cfi);
+	        }
+
+	        return cfi;
+	    }
+
+	    public String getStringCustomValue(String code) {
+	        String result = null;
+	        if (customFields.containsKey(code)) {
+	            result = customFields.get(code).getStringValue();
+	        }
+
+	        return result;
+	    }
+
+	    public void setStringCustomValue(String code, String value) {
+	        getOrCreateCustomFieldInstance(code).setStringValue(value);
+	    }
+
+	    public Date getDateCustomValue(String code) {
+	        Date result = null;
+	        if (customFields.containsKey(code)) {
+	            result = customFields.get(code).getDateValue();
+	        }
+
+	        return result;
+	    }
+
+	    public void setDateCustomValue(String code, Date value) {
+	        getOrCreateCustomFieldInstance(code).setDateValue(value);
+	    }
+
+	    public Long getLongCustomValue(String code) {
+	        Long result = null;
+	        if (customFields.containsKey(code)) {
+	            result = customFields.get(code).getLongValue();
+	        }
+	        return result;
+	    }
+
+	    public void setLongCustomValue(String code, Long value) {
+	        getOrCreateCustomFieldInstance(code).setLongValue(value);
+	    }
+
+	    public Double getDoubleCustomValue(String code) {
+	        Double result = null;
+
+	        if (customFields.containsKey(code)) {
+	            result = customFields.get(code).getDoubleValue();
+	        }
+
+	        return result;
+	    }
+
+	    public void setDoubleCustomValue(String code, Double value) {
+	        getOrCreateCustomFieldInstance(code).setDoubleValue(value);
+	    }
+
+	    public String getCustomFieldsAsJson() {
+	        String result = "";
+	        String sep = "";
+
+	        for (Entry<String, CustomFieldInstance> cf : customFields.entrySet()) {
+	            result += sep + cf.getValue().toJson();
+	            sep = ";";
+	        }
+
+	        return result;
+	    }
+	    
+	    public String getInheritedCustomStringValue(String code){
+			String stringValue=null;
+			if (getCustomFields().containsKey(code)&& getCustomFields().get(code).getStringValue()!=null) {
+				stringValue=getCustomFields().get(code).getStringValue();}
+			return stringValue;
+			}
+		
+		public Long getInheritedCustomLongValue(String code){
+			Long result=null; 
+			if (getCustomFields().containsKey(code)&& getCustomFields().get(code).getLongValue()!=null) {
+				result=getCustomFields().get(code).getLongValue();
+			}
+			return result;
+			}
+		
+		public Date getInheritedCustomDateValue(String code){
+			Date result=null; 
+			if (getCustomFields().containsKey(code)&& getCustomFields().get(code).getDateValue()!=null) {
+				result=getCustomFields().get(code).getDateValue();
+			}
+			return result;
+			}
+		
+
+		public Double getInheritedCustomDoubleValue(String code){
+			Double result=null; 
+			if (getCustomFields().containsKey(code)&& getCustomFields().get(code).getDoubleValue()!=null) {
+				result=getCustomFields().get(code).getDoubleValue();
+			}
+			return result;
+			}
+		
+		public String getICsv(String code){
+			return getInheritedCustomStringValue(code);
 		}
-		return result;
+		
+		public Long getIClv(String code){
+			return getInheritedCustomLongValue(code);
 		}
-	
-	public String getICsv(String code){
-		return getInheritedCustomStringValue(code);
-	}
-	
-	public Long getIClv(String code){
-		return getInheritedCustomLongValue(code);
-	}
-	
-	public Date getICdav(String code){
-		return getInheritedCustomDateValue(code);
-	}
-	
-	public Double getICdov(String code){
-		return getInheritedCustomDoubleValue(code);
-	}
+		
+		public Date getICdav(String code){
+			return getInheritedCustomDateValue(code);
+		}
+		
+		public Double getICdov(String code){
+			return getInheritedCustomDoubleValue(code);
+		}
 
 
 }
