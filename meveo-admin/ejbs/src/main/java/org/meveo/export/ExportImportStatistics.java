@@ -40,9 +40,14 @@ public class ExportImportStatistics {
     private Map<String, Collection<String>> fieldsNotImported = new HashMap<String, Collection<String>>();
 
     /**
-     * Occured exception
+     * Occurred exception
      */
     private Throwable exception;
+
+    /**
+     * Execution id of remote meveo instance import call
+     */
+    private String remoteImportExecutionId;
 
     @SuppressWarnings("rawtypes")
     public Map<Class, Integer> getSummary() {
@@ -169,5 +174,13 @@ public class ExportImportStatistics {
 
     public void setException(Throwable exception) {
         this.exception = exception;
+    }
+
+    public String getRemoteImportExecutionId() {
+        return remoteImportExecutionId;
+    }
+
+    public void setRemoteImportExecutionId(String remoteImportExecutionId) {
+        this.remoteImportExecutionId = remoteImportExecutionId;
     }
 }

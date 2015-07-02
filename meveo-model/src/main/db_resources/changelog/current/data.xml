@@ -233,4 +233,18 @@
 </file-format>', 1, 1, 1, NULL, NULL, NULL, NULL, NULL, NULL, false, NULL, 3, NULL);
     	]]></sql>
     </changeSet>
+
+    <changeSet id="805_20150701-1" author="AndriusKarpavicius">
+
+        <insert tableName="adm_permission">
+            <column name="id" valueNumeric="13" />
+            <column name="name" value="Remote import" />
+            <column name="permission" value="remoteImport" />
+            <column name="ressource" value="utilities" />
+        </insert>
+        <insert tableName="adm_role_permission">
+            <column name="role_id" valueNumeric="2" />
+            <column name="permission_id" valueNumeric="13" />
+        </insert>
+    </changeSet>
 </databaseChangeLog>

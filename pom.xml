@@ -32,7 +32,6 @@
 		<version.org.infinispan>5.1.7.Final</version.org.infinispan>
 		<version.jboss.bom>1.0.7.Final</version.jboss.bom>
 		<version.shrinkwrap.resolvers>2.1.1</version.shrinkwrap.resolvers>
-		<version.resteasy>3.0.10.Final</version.resteasy>
 
 		<sonar.host.url>http://localhost:9000</sonar.host.url>
 
@@ -157,6 +156,40 @@
 		        <artifactId>reflections</artifactId>
 	        	<version>0.9.9-RC1</version>	
 	        </dependency>		
+            
+            <!-- rest core library -->
+            <dependency>
+                <groupId>org.jboss.resteasy</groupId>
+                <artifactId>resteasy-jaxrs</artifactId>
+                <scope>provided</scope>
+                <version>3.0.6.Final</version>
+            </dependency>
+    
+            <!-- JAXB support -->
+            <dependency>
+                <groupId>org.jboss.resteasy</groupId>
+                <artifactId>resteasy-jaxb-provider</artifactId>
+                <version>3.0.6.Final</version>
+            </dependency>
+    
+            <dependency>
+                <groupId>org.jboss.resteasy</groupId>
+                <artifactId>jaxrs-api</artifactId>
+                <version>3.0.6.Final</version>
+            </dependency>   
+
+            <dependency>
+                <groupId>org.jboss.resteasy</groupId>
+                <artifactId>resteasy-multipart-provider</artifactId>
+                <version>3.0.6.Final</version>
+            </dependency>             
+             
+            <dependency>
+                <groupId>org.jboss.resteasy</groupId>
+                <artifactId>resteasy-jackson-provider</artifactId>
+                <version>3.0.10.Final</version>
+                <scope>test</scope>
+            </dependency>                    
 		</dependencies>
 	</dependencyManagement>
 

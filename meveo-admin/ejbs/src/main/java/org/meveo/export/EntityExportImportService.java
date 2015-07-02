@@ -57,6 +57,10 @@ import javax.persistence.Query;
 import javax.persistence.Transient;
 import javax.persistence.TypedQuery;
 import javax.persistence.Version;
+import javax.ws.rs.client.Entity;
+import javax.ws.rs.core.GenericEntity;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
@@ -69,6 +73,12 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.hibernate.proxy.HibernateProxy;
+import org.jboss.resteasy.client.jaxrs.BasicAuthentication;
+import org.jboss.resteasy.client.jaxrs.ResteasyClient;
+import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
+import org.jboss.resteasy.client.jaxrs.ResteasyWebTarget;
+import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataOutput;
+import org.meveo.api.dto.response.utilities.ImportExportResponseDto;
 import org.meveo.cache.CdrEdrProcessingCacheContainerProvider;
 import org.meveo.cache.NotificationCacheContainerProvider;
 import org.meveo.cache.RatingCacheContainerProvider;
@@ -78,6 +88,7 @@ import org.meveo.model.Auditable;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.IEntity;
 import org.meveo.model.IVersionedEntity;
+import org.meveo.model.communication.MeveoInstance;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.util.MeveoJpa;
@@ -110,6 +121,10 @@ import com.thoughtworks.xstream.mapper.MapperWrapper;
 public class EntityExportImportService implements Serializable {
 
     private static final long serialVersionUID = 5141462881249084547L;
+
+    public static String EXPORT_PARAM_DELETE = "delete";
+    public static String EXPORT_PARAM_ZIP = "zip";
+    public static String EXPORT_PARAM_REMOTE_INSTANCE = "remoteInstance";
 
     // How may records to retrieve from DB at a time
     private static final int PAGE_SIZE = 200;
@@ -241,10 +256,15 @@ public class EntityExportImportService implements Serializable {
             parameters = new HashMap<String, Object>();
         }
 
+        // When exporting to a remote meveo instance - always export to zip
+        if (parameters.get(EXPORT_PARAM_REMOTE_INSTANCE) != null) {
+            parameters.put(EXPORT_PARAM_ZIP, true);
+        }
+
         ExportImportStatistics exportStats = new ExportImportStatistics();
 
         String shortFilename = exportTemplate.getName() + DateUtils.formatDateWithPattern(new Date(), "_yyyy-MM-dd_HH-mm-ss");
-        boolean asZip = (parameters.get("zip") != null && ((boolean) parameters.get("zip")));
+        boolean asZip = (parameters.get(EXPORT_PARAM_ZIP) != null && ((boolean) parameters.get(EXPORT_PARAM_ZIP)));
 
         String path = param.getProperty("providers.rootDir", "/tmp/meveo/");
         if (!path.endsWith(File.separator)) {
@@ -293,6 +313,12 @@ public class EntityExportImportService implements Serializable {
             }
             writer.close();
 
+            // Upload file to a remote meveo instance if was requested so
+            if (parameters.get(EXPORT_PARAM_REMOTE_INSTANCE) != null) {
+                String remoteExecutionId = uploadFileToRemoteMeveoInstance(filename, (MeveoInstance) parameters.get(EXPORT_PARAM_REMOTE_INSTANCE));
+                exportStats.setRemoteImportExecutionId(remoteExecutionId);
+            }
+
         } catch (Exception e) {
             log.error("Failed to export data to a file {}", filename, e);
             exportStats.setException(e);
@@ -309,7 +335,7 @@ public class EntityExportImportService implements Serializable {
         log.info("Entities for export template {} saved to a file {}", exportTemplate.getName(), filename);
 
         // Remove entities if was requested so
-        if (parameters.containsKey("delete") && (Boolean) parameters.get("delete")) {
+        if (parameters.containsKey(EXPORT_PARAM_DELETE) && (Boolean) parameters.get(EXPORT_PARAM_DELETE)) {
             entityExportImportService.removeEntitiesAfterExport(exportStats);
         }
 
@@ -418,7 +444,7 @@ public class EntityExportImportService implements Serializable {
                 xstream.marshal(entity, writer);
             }
             exportStats.updateSummary(exportTemplate.getEntityToExport(), entities.size());
-            if (parameters.containsKey("delete") && (Boolean) parameters.get("delete")) {
+            if (parameters.containsKey(EXPORT_PARAM_DELETE) && (Boolean) parameters.get(EXPORT_PARAM_DELETE)) {
                 exportStats.trackEntitiesToDelete(entities);
             }
             totalEntityCount += entities.size();
@@ -1617,10 +1643,10 @@ public class EntityExportImportService implements Serializable {
 
     private void refreshCaches() {
         log.info("Initiating cache reload after import ");
-        walletCacheContainerProvider.refreshCache(null);
-        cdrEdrProcessingCacheContainerProvider.refreshCache(null);
-        notificationCacheContainerProvider.refreshCache(null);
-        ratingCacheContainerProvider.refreshCache(null);
+         walletCacheContainerProvider.refreshCache(null);
+         cdrEdrProcessingCacheContainerProvider.refreshCache(null);
+         notificationCacheContainerProvider.refreshCache(null);
+         ratingCacheContainerProvider.refreshCache(null);
     }
 
     /**
@@ -1754,5 +1780,69 @@ public class EntityExportImportService implements Serializable {
             exportModelVersionChangesets.put(version, changesetFile);
             currentExportModelVersionChangeset = version;
         }
+    }
+
+    /**
+     * Upload file to a remote meveo instance
+     * 
+     * @param filename Path to a file to upload
+     * @param remoteInstance Remote meveo instance
+     * @throws Exception
+     */
+    private String uploadFileToRemoteMeveoInstance(String filename, MeveoInstance remoteInstance) throws Exception {
+        try {
+
+            log.debug("Uplading {} file to a remote meveo instance {}", filename, remoteInstance.getCode());
+
+            ResteasyClient client = new ResteasyClientBuilder().build();
+            ResteasyWebTarget target = client.target(remoteInstance.getUrl() + (remoteInstance.getUrl().endsWith("/") ? "" : "/") + "api/rest/importExport/importData");
+
+            BasicAuthentication basicAuthentication = new BasicAuthentication("meveo.admin", "meveo.admin");
+            target.register(basicAuthentication);
+
+            MultipartFormDataOutput mdo = new MultipartFormDataOutput();
+            mdo.addFormData("file", new FileInputStream(new File(filename)), MediaType.APPLICATION_OCTET_STREAM_TYPE, filename);
+            GenericEntity<MultipartFormDataOutput> entity = new GenericEntity<MultipartFormDataOutput>(mdo) {
+            };
+
+            Response response = target.request().post(Entity.entity(entity, MediaType.MULTIPART_FORM_DATA_TYPE));
+            ImportExportResponseDto resultDto = response.readEntity(ImportExportResponseDto.class);
+
+            String executionId = resultDto.getExecutionId();
+            log.info("Export file {} uploaded to a remote meveo instance {} with execution id {}", filename, remoteInstance.getCode(), executionId);
+
+            return executionId;
+
+        } catch (Exception e) {
+            log.error("Failed to upload a file {} to a remote meveo instance {}", filename, remoteInstance.getUrl());
+            throw e;
+        }
+    }
+
+    /**
+     * Check status and get results of file upload to a remote meveo instance
+     * 
+     * @param executionId Import in remote meveo instance execution id
+     * @param remoteInstance Remote meveo instance
+     * @throws Exception
+     */
+    public ImportExportResponseDto checkRemoteMeveoInstanceImportStatus(String executionId, MeveoInstance remoteInstance) {
+
+        log.debug("Checking status of import in remote meveo instance {} with execution id {}", remoteInstance.getCode(), executionId);
+
+        ResteasyClient client = new ResteasyClientBuilder().build();
+        ResteasyWebTarget target = client.target(remoteInstance.getUrl() + (remoteInstance.getUrl().endsWith("/") ? "" : "/")
+                + "api/rest/importExport/checkImportDataResult?executionId=" + executionId);
+
+        BasicAuthentication basicAuthentication = new BasicAuthentication("meveo.admin", "meveo.admin");
+        target.register(basicAuthentication);
+
+        Response response = target.request().get();// post(Entity.entity(entity, MediaType.MULTIPART_FORM_DATA_TYPE));
+
+        ImportExportResponseDto resultDto = response.readEntity(ImportExportResponseDto.class);
+        log.debug("The status of import in remote meveo instance {} with execution id {} is {}", remoteInstance.getCode(), executionId, resultDto);
+
+        return resultDto;
+
     }
 }

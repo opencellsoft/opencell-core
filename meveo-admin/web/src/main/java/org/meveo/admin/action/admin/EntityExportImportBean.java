@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
 import javax.enterprise.context.Conversation;
@@ -21,12 +22,14 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.jboss.seam.international.status.Messages;
 import org.jboss.seam.international.status.builder.BundleKey;
+import org.meveo.api.dto.response.utilities.ImportExportResponseDto;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.export.EntityExportImportService;
 import org.meveo.export.ExportImportStatistics;
 import org.meveo.export.ExportTemplate;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.IEntity;
+import org.meveo.model.communication.MeveoInstance;
 import org.meveo.model.crm.Provider;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.LazyDataModel;
@@ -79,6 +82,10 @@ public class EntityExportImportBean implements Serializable {
     protected LazyDataModel exportTemplates;
 
     private Future<ExportImportStatistics> exportImportFuture;
+
+    private MeveoInstance remoteMeveoInstance;
+
+    private ImportExportResponseDto remoteImportResult;
 
     public boolean isRequireFK() {
         return requireFK;
@@ -248,6 +255,9 @@ public class EntityExportImportBean implements Serializable {
     public void export(ExportTemplate exportTemplate) {
 
         exportImportFuture = null;
+        remoteImportResult = null;
+        remoteMeveoInstance = null;
+
         Map<String, Object> parameters = new HashMap<String, Object>();
         parameters.put("provider", currentProvider);
 
@@ -273,6 +283,8 @@ public class EntityExportImportBean implements Serializable {
     public void export() {
 
         exportImportFuture = null;
+        remoteImportResult = null;
+        remoteMeveoInstance = (MeveoInstance) exportParameters.get(EntityExportImportService.EXPORT_PARAM_REMOTE_INSTANCE);
 
         if (exportParameters.get("provider") == null) {
             exportParameters.put("provider", currentProvider);
@@ -337,9 +349,31 @@ public class EntityExportImportBean implements Serializable {
         return exportImportFuture;
     }
 
+    public ImportExportResponseDto getRemoteImportResult() {
+        return remoteImportResult;
+    }
+
     private HashMap<String, Object> initExportParameters() {
         HashMap<String, Object> params = new HashMap<String, Object>();
         params.put("zip", true);
         return params;
+    }
+
+    public void checkRemoteImportStatus() {
+        if (!exportImportFuture.isDone()) {
+            return;
+        }
+        try {
+            String executionId = exportImportFuture.get().getRemoteImportExecutionId();
+            if (executionId != null) {
+
+                ImportExportResponseDto checkStatusResult = entityExportImportService.checkRemoteMeveoInstanceImportStatus(executionId, remoteMeveoInstance);
+                if (checkStatusResult.isDone()) {
+                    remoteImportResult = checkStatusResult;
+                }
+            }
+        } catch (InterruptedException | ExecutionException e) {
+            log.error("Failed to access export execution result", e);
+        }
     }
 }

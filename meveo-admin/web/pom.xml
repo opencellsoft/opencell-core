@@ -256,25 +256,22 @@
 		</dependency>
 
 		<!-- rest core library -->
-<dependency>
-	<groupId>org.jboss.resteasy</groupId>
-	<artifactId>resteasy-jaxrs</artifactId>
-	<version>3.0.6.Final</version>
-</dependency>
+        <dependency>
+        	<groupId>org.jboss.resteasy</groupId>
+        	<artifactId>resteasy-jaxrs</artifactId>
+        </dependency>
 
 		<!-- JAXB support -->
 		<dependency>
 			<groupId>org.jboss.resteasy</groupId>
 			<artifactId>resteasy-jaxb-provider</artifactId>
 			<scope>provided</scope>
-			<version>3.0.6.Final</version>
 		</dependency>
 
 		<dependency>
 			<groupId>org.jboss.resteasy</groupId>
 			<artifactId>jaxrs-api</artifactId>
 			<scope>provided</scope>
-			<version>3.0.6.Final</version>
 		</dependency>
 
 		<dependency>

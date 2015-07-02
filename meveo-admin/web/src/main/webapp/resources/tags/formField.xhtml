@@ -109,7 +109,7 @@
     <cc:attribute name="disabled" default="false" />
     
     <cc:attribute name="size" default="#{cc.attrs.field =='description'?80:20}" />
-    <cc:attribute name="maxlength" default="#{cc.attrs.field =='description'?100:40}" />
+    <cc:attribute name="maxlength" default="#{cc.attrs.field =='description'?100:(cc.attrs.size&lt;=40?40:cc.attrs.size)}" />
     <cc:attribute name="textArea" default="false" />
     <cc:attribute name="cols" default="80" />
     <cc:attribute name="rows" default="5" />

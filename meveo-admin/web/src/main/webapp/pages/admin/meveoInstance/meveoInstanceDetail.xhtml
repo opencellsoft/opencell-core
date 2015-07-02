@@ -45,6 +45,8 @@
 		</p:panel>
 		<hf:formPanel id="formPanel" label="#{messages['meveoInstance.panel']}" formId="meveoInstanceForm" backingBean="#{meveoInstanceBean}" columns="1">
 			<hf:formField label="#{messages['meveoInstance.code']}" field="code" required="true" />
+            <hf:formField label="#{messages['meveoInstance.url']}" field="url" required="true" size="60" componentWidth="75"/>
+            
 			<hf:languageFields />
 			<hf:formField label="#{messages['meveoInstance.productVersion']}" field="productVersion" required="true" />
 			<hf:formField label="#{messages['meveoInstance.owner']}" field="owner" required="true" />

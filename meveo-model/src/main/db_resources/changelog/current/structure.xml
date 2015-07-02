@@ -759,4 +759,10 @@
         <modifyDataType columnName="string_value" newDataType="varchar(4000)"   tableName="crm_custom_field_inst"/>
     </changeSet>
 	
+    <changeSet id="805_20150701" author="AndriusKarpavicius">
+        <addColumn tableName="COM_MEVEO_INSTANCE">
+            <column name="URL" type="VARCHAR(60)" defaultValue="http://"/>            
+        </addColumn>
+        <addNotNullConstraint tableName="COM_MEVEO_INSTANCE" columnName="URL"/>    
+    </changeSet>
 </databaseChangeLog>

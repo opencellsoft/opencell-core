@@ -34,441 +34,450 @@ import org.meveo.model.admin.User;
 import org.meveo.model.crm.Customer;
 
 @Entity
-@Table(name = "COM_MEVEO_INSTANCE", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE"}))
+@Table(name = "COM_MEVEO_INSTANCE", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE" }))
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "COM_MEVEO_INSTANCE_SEQ")
 public class MeveoInstance extends BusinessEntity {
-	
-	@OneToOne
-	@JoinColumn(name = "USER_ID")
-	private User user;
-	
-	@ManyToOne
-	@JoinColumn(name = "CUSTOMER_ID")
-	private Customer customer;
 
-	@Column(name = "PRODUCT_NAME")
-	private String productName;
+    @OneToOne
+    @JoinColumn(name = "USER_ID")
+    private User user;
 
-	@Column(name = "PRODUCT_VERSION")
-	private String productVersion;
-	
-	@Column(name = "OWNER")
-	private String owner;
-	
-	@Column(name = "MD5")
-	private String md5;
-	
-	@Enumerated(EnumType.STRING)
-	@Column(name = "STATUS")
-	private MeveoInstanceStatusEnum status;
-	
-	@Column(name = "CREATION_DATE")
-	private Date creationDate;
-	
-	@Column(name = "UPDATE_DATE")
-	private Date updateDate;
-	
-	@Column(name = "KEY_ENTREPRISE")
-	private String keyEntreprise;
-	
-	@Column(name = "MAC_ADDRESS")
-	private String macAddress;
-	
-	@Column(name = "MACHINE_VENDOR")
-	private String machineVendor;
+    @ManyToOne
+    @JoinColumn(name = "CUSTOMER_ID")
+    private Customer customer;
 
-	@Column(name = "INSTALLATION_MODE")
-	private String installationMode;
-	
-	@Column(name = "NB_CORES")
-	private  String nbCores;
-	
-	@Column(name = "MEMORY")
-	private String memory;
-	
-	@Column(name = "HD_SIZE")
-	private String hdSize;
-	
-	@Column(name = "OS_NAME")
-	private String osName;
-	
-	@Column(name = "PS_VERSION")
-	private String osVersion;
-	
-	@Column(name = "OS_ARCH")
-	private String osArch;
+    @Column(name = "PRODUCT_NAME")
+    private String productName;
 
-	@Column(name = "JAVA_VM_VERSION")
-	private String javaVmVersion;
-	
-	@Column(name = "JAVA_VM_NAME")
-	private String javaVmName;
-	
-	@Column(name = "JAVA_VENDOR")
-	private String javaVendor;
-	
-	@Column(name = "JAVA_VERSION")
-	private String javaVersion;
-	
-	@Column(name = "AS_VENDOR")
-	private String asVendor;
-	
-	@Column(name = "AS_VERSION")
-	private String asVersion;
-	
-public MeveoInstance (){
-	
-}
+    @Column(name = "PRODUCT_VERSION")
+    private String productVersion;
 
-/**
- * @return the productName
- */
-public String getProductName() {
-	return productName;
-}
+    @Column(name = "OWNER")
+    private String owner;
 
-/**
- * @param productName the productName to set
- */
-public void setProductName(String productName) {
-	this.productName = productName;
-}
+    @Column(name = "MD5")
+    private String md5;
 
-/**
- * @return the productVersion
- */
-public String getProductVersion() {
-	return productVersion;
-}
+    @Enumerated(EnumType.STRING)
+    @Column(name = "STATUS")
+    private MeveoInstanceStatusEnum status;
 
-/**
- * @param productVersion the productVersion to set
- */
-public void setProductVersion(String productVersion) {
-	this.productVersion = productVersion;
-}
+    @Column(name = "CREATION_DATE")
+    private Date creationDate;
 
-/**
- * @return the owner
- */
-public String getOwner() {
-	return owner;
-}
+    @Column(name = "UPDATE_DATE")
+    private Date updateDate;
 
-/**
- * @param owner the owner to set
- */
-public void setOwner(String owner) {
-	this.owner = owner;
-}
+    @Column(name = "KEY_ENTREPRISE")
+    private String keyEntreprise;
 
-/**
- * @return the md5
- */
-public String getMd5() {
-	return md5;
-}
+    @Column(name = "MAC_ADDRESS")
+    private String macAddress;
 
-/**
- * @param md5 the md5 to set
- */
-public void setMd5(String md5) {
-	this.md5 = md5;
-}
+    @Column(name = "MACHINE_VENDOR")
+    private String machineVendor;
 
-/**
- * @return the creationDate
- */
-public Date getCreationDate() {
-	return creationDate;
-}
+    @Column(name = "INSTALLATION_MODE")
+    private String installationMode;
 
-/**
- * @param creationDate the creationDate to set
- */
-public void setCreationDate(Date creationDate) {
-	this.creationDate = creationDate;
-}
+    @Column(name = "NB_CORES")
+    private String nbCores;
 
-/**
- * @return the updateDate
- */
-public Date getUpdateDate() {
-	return updateDate;
-}
+    @Column(name = "MEMORY")
+    private String memory;
 
-/**
- * @param updateDate the updateDate to set
- */
-public void setUpdateDate(Date updateDate) {
-	this.updateDate = updateDate;
-}
+    @Column(name = "HD_SIZE")
+    private String hdSize;
 
-/**
- * @return the keyEntreprise
- */
-public String getKeyEntreprise() {
-	return keyEntreprise;
-}
+    @Column(name = "OS_NAME")
+    private String osName;
 
-/**
- * @param keyEntreprise the keyEntreprise to set
- */
-public void setKeyEntreprise(String keyEntreprise) {
-	this.keyEntreprise = keyEntreprise;
-}
+    @Column(name = "PS_VERSION")
+    private String osVersion;
 
-/**
- * @return the macAddress
- */
-public String getMacAddress() {
-	return macAddress;
-}
+    @Column(name = "OS_ARCH")
+    private String osArch;
 
-/**
- * @param macAddress the macAddress to set
- */
-public void setMacAddress(String macAddress) {
-	this.macAddress = macAddress;
-}
+    @Column(name = "JAVA_VM_VERSION")
+    private String javaVmVersion;
 
-/**
- * @return the machineVendor
- */
-public String getMachineVendor() {
-	return machineVendor;
-}
+    @Column(name = "JAVA_VM_NAME")
+    private String javaVmName;
 
-/**
- * @param machineVendor the machineVendor to set
- */
-public void setMachineVendor(String machineVendor) {
-	this.machineVendor = machineVendor;
-}
+    @Column(name = "JAVA_VENDOR")
+    private String javaVendor;
 
-/**
- * @return the installationMode
- */
-public String getInstallationMode() {
-	return installationMode;
-}
+    @Column(name = "JAVA_VERSION")
+    private String javaVersion;
 
-/**
- * @param installationMode the installationMode to set
- */
-public void setInstallationMode(String installationMode) {
-	this.installationMode = installationMode;
-}
+    @Column(name = "AS_VENDOR")
+    private String asVendor;
 
-/**
- * @return the nbCores
- */
-public String getNbCores() {
-	return nbCores;
-}
+    @Column(name = "AS_VERSION")
+    private String asVersion;
 
-/**
- * @param nbCores the nbCores to set
- */
-public void setNbCores(String nbCores) {
-	this.nbCores = nbCores;
-}
+    @Column(name = "URL", nullable = false)
+    private String url;
 
-/**
- * @return the memory
- */
-public String getMemory() {
-	return memory;
-}
+    public MeveoInstance() {
 
-/**
- * @param memory the memory to set
- */
-public void setMemory(String memory) {
-	this.memory = memory;
-}
+    }
 
-/**
- * @return the hdSize
- */
-public String getHdSize() {
-	return hdSize;
-}
+    /**
+     * @return the productName
+     */
+    public String getProductName() {
+        return productName;
+    }
 
-/**
- * @param hdSize the hdSize to set
- */
-public void setHdSize(String hdSize) {
-	this.hdSize = hdSize;
-}
+    /**
+     * @param productName the productName to set
+     */
+    public void setProductName(String productName) {
+        this.productName = productName;
+    }
 
-/**
- * @return the osName
- */
-public String getOsName() {
-	return osName;
-}
+    /**
+     * @return the productVersion
+     */
+    public String getProductVersion() {
+        return productVersion;
+    }
 
-/**
- * @param osName the osName to set
- */
-public void setOsName(String osName) {
-	this.osName = osName;
-}
+    /**
+     * @param productVersion the productVersion to set
+     */
+    public void setProductVersion(String productVersion) {
+        this.productVersion = productVersion;
+    }
 
-/**
- * @return the osVersion
- */
-public String getOsVersion() {
-	return osVersion;
-}
+    /**
+     * @return the owner
+     */
+    public String getOwner() {
+        return owner;
+    }
 
-/**
- * @param osVersion the osVersion to set
- */
-public void setOsVersion(String osVersion) {
-	this.osVersion = osVersion;
-}
+    /**
+     * @param owner the owner to set
+     */
+    public void setOwner(String owner) {
+        this.owner = owner;
+    }
 
-/**
- * @return the osArch
- */
-public String getOsArch() {
-	return osArch;
-}
+    /**
+     * @return the md5
+     */
+    public String getMd5() {
+        return md5;
+    }
 
-/**
- * @param osArch the osArch to set
- */
-public void setOsArch(String osArch) {
-	this.osArch = osArch;
-}
+    /**
+     * @param md5 the md5 to set
+     */
+    public void setMd5(String md5) {
+        this.md5 = md5;
+    }
 
-/**
- * @return the javaVmVersion
- */
-public String getJavaVmVersion() {
-	return javaVmVersion;
-}
+    /**
+     * @return the creationDate
+     */
+    public Date getCreationDate() {
+        return creationDate;
+    }
 
-/**
- * @param javaVmVersion the javaVmVersion to set
- */
-public void setJavaVmVersion(String javaVmVersion) {
-	this.javaVmVersion = javaVmVersion;
-}
+    /**
+     * @param creationDate the creationDate to set
+     */
+    public void setCreationDate(Date creationDate) {
+        this.creationDate = creationDate;
+    }
 
-/**
- * @return the javaVmName
- */
-public String getJavaVmName() {
-	return javaVmName;
-}
+    /**
+     * @return the updateDate
+     */
+    public Date getUpdateDate() {
+        return updateDate;
+    }
 
-/**
- * @param javaVmName the javaVmName to set
- */
-public void setJavaVmName(String javaVmName) {
-	this.javaVmName = javaVmName;
-}
+    /**
+     * @param updateDate the updateDate to set
+     */
+    public void setUpdateDate(Date updateDate) {
+        this.updateDate = updateDate;
+    }
 
-/**
- * @return the javaVendor
- */
-public String getJavaVendor() {
-	return javaVendor;
-}
+    /**
+     * @return the keyEntreprise
+     */
+    public String getKeyEntreprise() {
+        return keyEntreprise;
+    }
 
-/**
- * @param javaVendor the javaVendor to set
- */
-public void setJavaVendor(String javaVendor) {
-	this.javaVendor = javaVendor;
-}
+    /**
+     * @param keyEntreprise the keyEntreprise to set
+     */
+    public void setKeyEntreprise(String keyEntreprise) {
+        this.keyEntreprise = keyEntreprise;
+    }
 
-/**
- * @return the javaVersion
- */
-public String getJavaVersion() {
-	return javaVersion;
-}
+    /**
+     * @return the macAddress
+     */
+    public String getMacAddress() {
+        return macAddress;
+    }
 
-/**
- * @param javaVersion the javaVersion to set
- */
-public void setJavaVersion(String javaVersion) {
-	this.javaVersion = javaVersion;
-}
+    /**
+     * @param macAddress the macAddress to set
+     */
+    public void setMacAddress(String macAddress) {
+        this.macAddress = macAddress;
+    }
 
-/**
- * @return the asVendor
- */
-public String getAsVendor() {
-	return asVendor;
-}
+    /**
+     * @return the machineVendor
+     */
+    public String getMachineVendor() {
+        return machineVendor;
+    }
 
-/**
- * @param asVendor the asVendor to set
- */
-public void setAsVendor(String asVendor) {
-	this.asVendor = asVendor;
-}
+    /**
+     * @param machineVendor the machineVendor to set
+     */
+    public void setMachineVendor(String machineVendor) {
+        this.machineVendor = machineVendor;
+    }
 
-/**
- * @return the asVersion
- */
-public String getAsVersion() {
-	return asVersion;
-}
+    /**
+     * @return the installationMode
+     */
+    public String getInstallationMode() {
+        return installationMode;
+    }
 
-/**
- * @param asVersion the asVersion to set
- */
-public void setAsVersion(String asVersion) {
-	this.asVersion = asVersion;
-}
+    /**
+     * @param installationMode the installationMode to set
+     */
+    public void setInstallationMode(String installationMode) {
+        this.installationMode = installationMode;
+    }
 
-/**
- * @return the status
- */
-public MeveoInstanceStatusEnum getStatus() {
-	return status;
-}
+    /**
+     * @return the nbCores
+     */
+    public String getNbCores() {
+        return nbCores;
+    }
 
-/**
- * @param status the status to set
- */
-public void setStatus(MeveoInstanceStatusEnum status) {
-	this.status = status;
-}
+    /**
+     * @param nbCores the nbCores to set
+     */
+    public void setNbCores(String nbCores) {
+        this.nbCores = nbCores;
+    }
 
-/**
- * @return the user
- */
-public User getUser() {
-	return user;
-}
+    /**
+     * @return the memory
+     */
+    public String getMemory() {
+        return memory;
+    }
 
-/**
- * @param user the user to set
- */
-public void setUser(User user) {
-	this.user = user;
-}
+    /**
+     * @param memory the memory to set
+     */
+    public void setMemory(String memory) {
+        this.memory = memory;
+    }
 
-/**
- * @return the customer
- */
-public Customer getCustomer() {
-	return customer;
-}
+    /**
+     * @return the hdSize
+     */
+    public String getHdSize() {
+        return hdSize;
+    }
 
-/**
- * @param customer the customer to set
- */
-public void setCustomer(Customer customer) {
-	this.customer = customer;
-}
+    /**
+     * @param hdSize the hdSize to set
+     */
+    public void setHdSize(String hdSize) {
+        this.hdSize = hdSize;
+    }
 
+    /**
+     * @return the osName
+     */
+    public String getOsName() {
+        return osName;
+    }
 
+    /**
+     * @param osName the osName to set
+     */
+    public void setOsName(String osName) {
+        this.osName = osName;
+    }
+
+    /**
+     * @return the osVersion
+     */
+    public String getOsVersion() {
+        return osVersion;
+    }
+
+    /**
+     * @param osVersion the osVersion to set
+     */
+    public void setOsVersion(String osVersion) {
+        this.osVersion = osVersion;
+    }
+
+    /**
+     * @return the osArch
+     */
+    public String getOsArch() {
+        return osArch;
+    }
+
+    /**
+     * @param osArch the osArch to set
+     */
+    public void setOsArch(String osArch) {
+        this.osArch = osArch;
+    }
+
+    /**
+     * @return the javaVmVersion
+     */
+    public String getJavaVmVersion() {
+        return javaVmVersion;
+    }
+
+    /**
+     * @param javaVmVersion the javaVmVersion to set
+     */
+    public void setJavaVmVersion(String javaVmVersion) {
+        this.javaVmVersion = javaVmVersion;
+    }
+
+    /**
+     * @return the javaVmName
+     */
+    public String getJavaVmName() {
+        return javaVmName;
+    }
+
+    /**
+     * @param javaVmName the javaVmName to set
+     */
+    public void setJavaVmName(String javaVmName) {
+        this.javaVmName = javaVmName;
+    }
+
+    /**
+     * @return the javaVendor
+     */
+    public String getJavaVendor() {
+        return javaVendor;
+    }
+
+    /**
+     * @param javaVendor the javaVendor to set
+     */
+    public void setJavaVendor(String javaVendor) {
+        this.javaVendor = javaVendor;
+    }
+
+    /**
+     * @return the javaVersion
+     */
+    public String getJavaVersion() {
+        return javaVersion;
+    }
+
+    /**
+     * @param javaVersion the javaVersion to set
+     */
+    public void setJavaVersion(String javaVersion) {
+        this.javaVersion = javaVersion;
+    }
+
+    /**
+     * @return the asVendor
+     */
+    public String getAsVendor() {
+        return asVendor;
+    }
+
+    /**
+     * @param asVendor the asVendor to set
+     */
+    public void setAsVendor(String asVendor) {
+        this.asVendor = asVendor;
+    }
+
+    /**
+     * @return the asVersion
+     */
+    public String getAsVersion() {
+        return asVersion;
+    }
+
+    /**
+     * @param asVersion the asVersion to set
+     */
+    public void setAsVersion(String asVersion) {
+        this.asVersion = asVersion;
+    }
+
+    /**
+     * @return the status
+     */
+    public MeveoInstanceStatusEnum getStatus() {
+        return status;
+    }
+
+    /**
+     * @param status the status to set
+     */
+    public void setStatus(MeveoInstanceStatusEnum status) {
+        this.status = status;
+    }
+
+    /**
+     * @return the user
+     */
+    public User getUser() {
+        return user;
+    }
+
+    /**
+     * @param user the user to set
+     */
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    /**
+     * @return the customer
+     */
+    public Customer getCustomer() {
+        return customer;
+    }
+
+    /**
+     * @param customer the customer to set
+     */
+    public void setCustomer(Customer customer) {
+        this.customer = customer;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
+    }
 }
