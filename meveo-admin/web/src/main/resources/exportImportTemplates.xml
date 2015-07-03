@@ -12,6 +12,8 @@
                     <java-class>org.meveo.model.billing.TradingLanguage</java-class>
                     <java-class>org.meveo.model.billing.TradingCurrency</java-class>
                     <java-class>org.meveo.model.billing.TradingCountry</java-class>
+                    <java-class>org.meveo.model.crm.CustomFieldInstance</java-class>
+                    <java-class>org.meveo.model.crm.CustomFieldPeriod</java-class>                    
                 </classesToExportAsFull>
                 <classesToIgnoreFKNotFound>
                     <java-class>org.meveo.model.admin.User</java-class>
@@ -212,6 +214,8 @@
                     <java-class>org.meveo.model.billing.TradingLanguage</java-class>
                     <java-class>org.meveo.model.billing.TradingCurrency</java-class>
                     <java-class>org.meveo.model.billing.TradingCountry</java-class>
+                    <java-class>org.meveo.model.crm.CustomFieldInstance</java-class>
+                    <java-class>org.meveo.model.crm.CustomFieldPeriod</java-class>
                 </classesToExportAsFull>
                 <classesToIgnoreFKNotFound>
                     <java-class>org.meveo.model.admin.User</java-class>
