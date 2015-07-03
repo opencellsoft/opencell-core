@@ -954,10 +954,12 @@
 					entity="#{subscriptionBean.recurringChargeInstance}"
 					formId="recurringChgForm1" showFormButtons="false"
 					ajaxSubmit="true">
+<!-- 						<hf:formField id="RCchargeTemplateSelectId" -->
+<!-- 							label="#{messages['businessEntity.code']}" field="chargeTemplate" -->
+<!-- 							valueLabelField="code" popup="true" popupId="recurringChargeTmpPopup" -->
+<!-- 							edit="true" /> -->
 						<hf:formField id="RCchargeTemplateSelectId"
-							label="#{messages['businessEntity.code']}" field="chargeTemplate"
-							valueLabelField="code" popup="true" popupId="recurringChargeTmpPopup"
-							edit="true" />
+							label="#{messages['businessEntity.code']}" field="code" disabled="true" />
 						<hf:formField label="#{messages['businessEntity.description']}"
 							field="description" size="50" maxlength="50" disabled="true" />
 						<hf:formField
