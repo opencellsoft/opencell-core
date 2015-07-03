@@ -283,26 +283,26 @@ public class CustomerTreeBean extends BaseBean<AccountEntity> {
 				expandTreeNode(treeNode);
 			}
 
-			List<Access> accesses = accessService.listBySubscription(subscription);
-			if (accesses != null) {
-				if (accesses != null) {
-					for (int i = 0; i < accesses.size(); i++) {
-						build(accesses.get(i), treeNode);
-					}
-				}
-			}
+//			List<Access> accesses = accessService.listBySubscription(subscription);
+//			if (accesses != null) {
+//				if (accesses != null) {
+//					for (int i = 0; i < accesses.size(); i++) {
+//						build(accesses.get(i), treeNode);
+//					}
+//				}
+//			}
 
 			return parent;
 		} else if (entity instanceof Access) {
-			Access access = (Access) entity;
-			TreeNodeData treeNodeData = new TreeNodeData(access.getId(), access.getAccessUserId(),
-					null, null, false, ACCESS_KEY, access.getSubscription().getId().equals(subscriptionId.get()));
-			TreeNode treeNode = new DefaultTreeNode(ACCESS_KEY, treeNodeData, parent);
-
-			if (treeNodeData.isSelected()) {
-				expandTreeNode(treeNode);
-			}
-
+//			Access access = (Access) entity;
+//			TreeNodeData treeNodeData = new TreeNodeData(access.getId(), access.getAccessUserId(),
+//					null, null, false, ACCESS_KEY, access.getSubscription().getId().equals(subscriptionId.get()));
+//			TreeNode treeNode = new DefaultTreeNode(ACCESS_KEY, treeNodeData, parent);
+//
+//			if (treeNodeData.isSelected()) {
+//				expandTreeNode(treeNode);
+//			}
+//
 			return parent;
 		}
 

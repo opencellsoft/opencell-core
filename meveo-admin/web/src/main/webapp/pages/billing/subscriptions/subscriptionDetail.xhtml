@@ -815,7 +815,7 @@
 									<p:outputPanel id="medinaAccessPanel">
 										<p:dataTable value="#{subscriptionBean.access}" var="entity">
 											<hftl:column label="#{messages['access.accessUserId']}"
-												field="accessUserId" />
+												field="accessUserId" entityView="accessDetail" valueIdField="id"/>
 											<hftl:column label="#{messages['access.startDate']}"
 												field="startDate" isDate="true" />
 											<hftl:column label="#{messages['access.endDate']}"
