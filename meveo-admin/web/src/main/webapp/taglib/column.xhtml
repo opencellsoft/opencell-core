@@ -155,7 +155,7 @@
         <c:if test="#{! empty(width)}">
             <f:attribute name="width" value="#{width}" />
         </c:if>
-		<c:if test="#{sort}">
+		<c:if test="#{sort and showSortLinks}">
 			<f:attribute name="field" value="#{field}" />
 			<f:attribute name="sortable" value="#{true}" />
 			<f:attribute name="sortBy" value="#{valueField}" />

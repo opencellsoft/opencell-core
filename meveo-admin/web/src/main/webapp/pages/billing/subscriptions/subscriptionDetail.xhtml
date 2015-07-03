@@ -814,11 +814,11 @@
 								<h:form>
 									<p:outputPanel id="medinaAccessPanel">
 										<p:dataTable value="#{subscriptionBean.access}" var="entity">
-											<hftl:column label="#{messages['access.accessUserId']}"
+											<hftl:column label="#{messages['access.accessUserId']}" showSortLinks="false"
 												field="accessUserId" entityView="accessDetail" valueIdField="id"/>
-											<hftl:column label="#{messages['access.startDate']}"
+											<hftl:column label="#{messages['access.startDate']}" showSortLinks="false"
 												field="startDate" isDate="true" />
-											<hftl:column label="#{messages['access.endDate']}"
+											<hftl:column label="#{messages['access.endDate']}" showSortLinks="false"
 												field="endDate" isDate="true" />
 											<p:column styleClass="actions-column">
 												<f:facet name="header">
