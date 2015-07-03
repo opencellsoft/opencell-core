@@ -69,6 +69,7 @@ import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.payments.PaymentTermEnum;
 import org.meveo.model.shared.Address;
 import org.meveo.model.shared.ContactInformation;
+import org.meveo.model.shared.Name;
 import org.meveo.model.shared.Title;
 import org.meveo.service.admin.impl.CountryService;
 import org.meveo.service.admin.impl.CurrencyService;
@@ -1723,6 +1724,9 @@ public class AccountHierarchyApi extends BaseApi {
 		}
 
 		if (accountDto.getName() != null) {
+			if (accountEntity.isNameNull()) {
+				accountEntity.setName(new Name());
+			}
 			if (!StringUtils.isBlank(accountDto.getName().getFirstName())) {
 				accountEntity.getName().setFirstName(accountDto.getName().getFirstName());
 			}
@@ -1738,6 +1742,9 @@ public class AccountHierarchyApi extends BaseApi {
 		}
 
 		if (accountDto.getAddress() != null) {
+			if (accountEntity.isAddressNull()) {
+				accountEntity.setAddress(new Address());
+			}
 			if (!StringUtils.isBlank(accountDto.getAddress().getAddress1())) {
 				accountEntity.getAddress().setAddress1(accountDto.getAddress().getAddress1());
 			}
