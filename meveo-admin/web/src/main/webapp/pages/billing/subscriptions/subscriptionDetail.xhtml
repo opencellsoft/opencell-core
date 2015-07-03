@@ -770,7 +770,7 @@
 											label="#{messages['oneShotChargeInstance.criteria3']}"
 											field="criteria3" isMessage="false" />
 										<hftl:column label="#{messages['counterTemplate.title']}"
-											field="counter" valueLabelField="description" />
+											field="counter.code" />
 										<p:column styleClass="actions-column">
 											<f:facet name="header">
 												<h:outputText value="#{messages['commons.actions']}" />
@@ -909,7 +909,7 @@
 					formId="usageChgForm1" showFormButtons="false" ajaxSubmit="true">
 
 						<hf:formField label="#{messages['businessEntity.code']}"
-							field="chargeTemplate" valueLabelField="code" disabled="true" />
+							field="code" disabled="true" />
 						<hf:formField label="#{messages['businessEntity.description']}"
 							field="description" disabled="true" />
                             
