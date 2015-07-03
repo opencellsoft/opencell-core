@@ -122,12 +122,9 @@ public class PDFParametersConstruction {
 					BankCoordinates bankCoordinates = billingAccount
 							.getBankCoordinates();
 					if (bankCoordinates == null
-							|| bankCoordinates.getBankCode() == null) {
+							|| bankCoordinates.getAccountIdentifier() == null) {
 						BankCoordinates bankCoordinatesEmpty = new BankCoordinates();
-						bankCoordinatesEmpty.setAccountNumber("           ");
-						bankCoordinatesEmpty.setBankCode("     ");
-						bankCoordinatesEmpty.setBranchCode("     ");
-						bankCoordinatesEmpty.setKey("  ");
+						bankCoordinatesEmpty.setAccountIdentifier("                       ");
 						TIP tip = new TIP(provider.getInterBankTitle()
 								.getCodeCreancier(), provider
 								.getInterBankTitle()

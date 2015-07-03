@@ -184,13 +184,7 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
 			// validate RIB
 			if ((getEntity().getPaymentMethod() != null && (getEntity().getPaymentMethod() == PaymentMethodEnum.DIRECTDEBIT || getEntity().getPaymentMethod() == PaymentMethodEnum.TIP))
 					&& getEntity().getBankCoordinates() != null) {
-				StringBuilder rib = new StringBuilder();
-				rib.append(getEntity().getBankCoordinates().getBankCode());
-				rib.append(getEntity().getBankCoordinates().getBranchCode());
-				rib.append(getEntity().getBankCoordinates().getAccountNumber());
-				rib.append(getEntity().getBankCoordinates().getKey());
-
-				if (!RibValidator.checkRib(rib.toString())) {
+				if (!RibValidator.checkRib(getEntity().getBankCoordinates().getAccountIdentifier())) {
 					messages.error(new BundleKey("messages", "commons.ribValidation"));
 					return "";
 				}
