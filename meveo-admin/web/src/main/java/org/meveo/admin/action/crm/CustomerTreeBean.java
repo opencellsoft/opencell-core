@@ -295,7 +295,7 @@ public class CustomerTreeBean extends BaseBean<AccountEntity> {
 			return parent;
 		} else if (entity instanceof Access) {
 			Access access = (Access) entity;
-			TreeNodeData treeNodeData = new TreeNodeData(access.getSubscription().getId(), access.getAccessUserId(),
+			TreeNodeData treeNodeData = new TreeNodeData(access.getId(), access.getAccessUserId(),
 					null, null, false, ACCESS_KEY, access.getSubscription().getId().equals(subscriptionId.get()));
 			TreeNode treeNode = new DefaultTreeNode(ACCESS_KEY, treeNodeData, parent);
 
@@ -432,7 +432,7 @@ public class CustomerTreeBean extends BaseBean<AccountEntity> {
 			} else if (type.equals(SUBSCRIPTION_KEY)) {
 				return "subscriptionDetail";
 			} else if (type.equals(ACCESS_KEY)) {
-				return "access";
+				return "accessDetail";
 			} else {
 				throw new IllegalStateException("Wrong customer type " + type + " provided in EL in .xhtml");
 			}
