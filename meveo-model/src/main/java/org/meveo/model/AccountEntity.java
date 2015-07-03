@@ -50,10 +50,13 @@ import org.meveo.model.shared.Name;
 
 @Entity
 @ObservableEntity
-@Table(name = "ACCOUNT_ENTITY", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE", "ACCOUNT_TYPE", "PROVIDER_ID" }))
+@Table(name = "ACCOUNT_ENTITY", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE", "ACCOUNT_TYPE",
+		"PROVIDER_ID" }))
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "ACCOUNT_ENTITY_SEQ")
 @Inheritance(strategy = InheritanceType.JOINED)
-@DiscriminatorColumn(name = "ACCOUNT_TYPE") // Hibernate does not support of discriminator column with Joined strategy, so need to set it manually
+@DiscriminatorColumn(name = "ACCOUNT_TYPE")
+// Hibernate does not support of discriminator column with Joined strategy, so
+// need to set it manually
 @EntityListeners({ AccountCodeGenerationListener.class })
 public abstract class AccountEntity extends BusinessEntity implements ICustomFieldEntity {
 
@@ -87,10 +90,10 @@ public abstract class AccountEntity extends BusinessEntity implements ICustomFie
 	@MapKeyColumn(name = "code")
 	private Map<String, CustomFieldInstance> customFields = new HashMap<String, CustomFieldInstance>();
 
-    @Column(name = "ACCOUNT_TYPE", insertable = true, updatable = false)
-    protected String accountType;
-        
-    public String getExternalRef1() {
+	@Column(name = "ACCOUNT_TYPE", insertable = true, updatable = false)
+	protected String accountType;
+
+	public String getExternalRef1() {
 		return externalRef1;
 	}
 
@@ -112,6 +115,14 @@ public abstract class AccountEntity extends BusinessEntity implements ICustomFie
 		}
 
 		return new Name();
+	}
+
+	public boolean isNameNull() {
+		return name == null ? true : false;
+	}
+
+	public boolean isAddressNull() {
+		return address == null ? true : false;
 	}
 
 	public void setName(Name name) {
@@ -154,9 +165,9 @@ public abstract class AccountEntity extends BusinessEntity implements ICustomFie
 		this.primaryContact = primaryContact;
 	}
 
-    public String getAccountType() {
-        return accountType;
-    }
+	public String getAccountType() {
+		return accountType;
+	}
 
 	public Map<String, CustomFieldInstance> getCustomFields() {
 		return customFields;
