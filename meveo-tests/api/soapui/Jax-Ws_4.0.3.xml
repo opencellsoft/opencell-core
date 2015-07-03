@@ -31706,4 +31706,2617 @@ for( testCase in testSuite.getTestCaseList() ) {
         testStep.getTestRequest().setPreemptive(true);
         testStep.getTestRequest().setRequestHeaders(headers);
     }
+}</con:setupScript></con:testSuite><con:testSuite name="#827_customer_update_hierarchy"><con:settings/><con:runType>SEQUENTIAL</con:runType><con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Catalog creation" searchProperties="true"><con:settings/><con:testStep type="request" name="Create recurring"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>CatalogWsSoapBinding</con:interface><con:operation>createRecurringChargeTemplate</con:operation><con:request name="Create recurring"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/CatalogWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createRecurringChargeTemplate>
+         <!--Optional:-->
+         <recurringChargeTemplate code="${#TestSuite#ticket}_REC1" description="${#TestSuite#ticket}_REC1">
+            <invoiceSubCategory>SUB_DATA</invoiceSubCategory>
+            <disabled>false</disabled>
+            <!--Optional:-->
+            <amountEditable>false</amountEditable>
+            <!--Zero or more repetitions:-->
+            <languageDescriptions>
+               <languageCode>FRA</languageCode>
+               <description>Forfait test ${#index}</description>
+            </languageDescriptions>
+            <calendar>MONTHLY</calendar>
+            <subscriptionProrata>true</subscriptionProrata>
+            <terminationProrata>true</terminationProrata>
+            <applyInAdvance>true</applyInAdvance>
+            <inputUnitDescription>1</inputUnitDescription>
+            <!--Optional:-->
+            <ratingUnitDescription>1</ratingUnitDescription>
+            <!--Optional:-->
+            <unitMultiplicator>1</unitMultiplicator>
+            <unitNbDecimal>2</unitNbDecimal>
+         </recurringChargeTemplate>
+      </ws:createRecurringChargeTemplate>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response"/><con:assertion type="SOAP Fault Assertion"/><con:assertion type="Simple Contains" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:preemptive>true</con:preemptive><con:authType>Preemptive</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Create subscription"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>CatalogWsSoapBinding</con:interface><con:operation>createOneShotChargeTemplate</con:operation><con:request name="Create subscription"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/CatalogWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createOneShotChargeTemplate>
+         <!--Optional:-->
+         <oneShotChargeTemplate code="${#TestSuite#ticket}_OS1" description="${#TestSuite#ticket}_OS1">
+            <invoiceSubCategory>SUB_DATA</invoiceSubCategory>
+            <disabled>false</disabled>
+            <!--Optional:-->
+            <amountEditable>false</amountEditable>
+            <!--Zero or more repetitions:-->
+            <languageDescriptions>
+               <languageCode>FRA</languageCode>
+               <description>Forfait test 685</description>
+            </languageDescriptions>
+            <!--Optional:-->
+            <inputUnitDescription>1</inputUnitDescription>
+            <!--Optional:-->
+            <ratingUnitDescription>1</ratingUnitDescription>
+            <!--Optional:-->
+            <unitMultiplicator>1</unitMultiplicator>
+            <unitNbDecimal>2</unitNbDecimal>
+            <oneShotChargeTemplateType>1</oneShotChargeTemplateType>
+            <!--Optional:-->
+            <immediateInvoicing>false</immediateInvoicing>
+         </oneShotChargeTemplate>
+      </ws:createOneShotChargeTemplate>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response"/><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:preemptive>true</con:preemptive><con:authType>Preemptive</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Create usage"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>CatalogWsSoapBinding</con:interface><con:operation>createUsageChargeTemplate</con:operation><con:request name="Create usage"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/CatalogWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createUsageChargeTemplate>
+         <!--Optional:-->
+         <usageChargeTemplate code="${#TestSuite#ticket}_USAGE1" description="${#TestSuite#ticket}_USAGE1">
+            <invoiceSubCategory>SUB_DATA</invoiceSubCategory>
+            <disabled>false</disabled>
+            <!--Optional:-->
+            <amountEditable>false</amountEditable>
+            <!--Zero or more repetitions:-->
+            <languageDescriptions>
+               <languageCode>FRA</languageCode>
+               <description>Forfait test 685</description>
+            </languageDescriptions>
+            <!--Optional:-->
+            <inputUnitDescription>1</inputUnitDescription>
+            <!--Optional:-->
+            <ratingUnitDescription>1</ratingUnitDescription>
+            <!--Optional:-->
+            <unitMultiplicator>1</unitMultiplicator>
+            <unitNbDecimal>2</unitNbDecimal>
+            <!--Optional:-->
+            <filterParam1></filterParam1>
+            <!--Optional:-->
+            <filterParam2></filterParam2>
+            <!--Optional:-->
+            <filterParam3></filterParam3>
+            <!--Optional:-->
+            <filterParam4></filterParam4>
+            <!--Optional:-->
+            <filterExpression></filterExpression>
+            <priority>1</priority>
+         </usageChargeTemplate>
+      </ws:createUsageChargeTemplate>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response"/><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:preemptive>true</con:preemptive><con:authType>Preemptive</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Create service"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>CatalogWsSoapBinding</con:interface><con:operation>createServiceTemplate</con:operation><con:request name="Create service"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/CatalogWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createServiceTemplate>
+         <!--Optional:-->
+         <serviceTemplate code="${#TestSuite#ticket}_SERVICE1" description="${#TestSuite#ticket}_SERVICE1">
+            <!--Optional:-->
+            <invoicingCalendar>MONTHLY</invoicingCalendar>
+            <!--Optional:-->
+            <serviceChargeTemplateRecurrings>
+               <!--Zero or more repetitions:-->
+               <serviceChargeTemplateRecurring>
+                  <!--Optional:-->
+                  <code>${#TestSuite#ticket}_REC1</code>
+                  <!--Optional:-->
+               </serviceChargeTemplateRecurring>
+            </serviceChargeTemplateRecurrings>
+            <!--Optional:-->
+            <serviceChargeTemplateSubscriptions>
+               <!--Zero or more repetitions:-->
+               <serviceChargeTemplateSubscription>
+                  <!--Optional:-->
+                  <code>${#TestSuite#ticket}_OS1</code>
+               </serviceChargeTemplateSubscription>
+            </serviceChargeTemplateSubscriptions>
+            <!--Optional:-->
+            <serviceChargeTemplateUsages>
+               <!--Zero or more repetitions:-->
+               <serviceChargeTemplateUsage>
+                  <!--Optional:-->
+                  <code>${#TestSuite#ticket}_USAGE1</code>
+                  <!--Optional:-->
+                  <counterTemplate></counterTemplate>
+               </serviceChargeTemplateUsage>
+            </serviceChargeTemplateUsages>
+         </serviceTemplate>
+      </ws:createServiceTemplate>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response"/><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:preemptive>true</con:preemptive><con:authType>Preemptive</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Create offer"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>CatalogWsSoapBinding</con:interface><con:operation>createOfferTemplate</con:operation><con:request name="Create offer"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/CatalogWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createOfferTemplate>
+         <!--Optional:-->
+         <offerTemplate code="${#TestSuite#ticket}_OFFER1" description="${#TestSuite#ticket}_OFFER1">
+            <disabled>false</disabled>
+            <!--Optional:-->
+            <serviceTemplates>
+               <!--Zero or more repetitions:-->
+               <serviceTemplate code="${#TestSuite#ticket}_SERVICE1" description="">
+                  <!--Optional:-->
+                  <invoicingCalendar>MONTHLY</invoicingCalendar>
+                  <!--Optional:-->
+                  <serviceChargeTemplateRecurrings>
+                     <!--Zero or more repetitions:-->
+                     <serviceChargeTemplateRecurring>
+                        <!--Optional:-->
+                        <code>${#TestSuite#ticket}_REC1</code>
+                     </serviceChargeTemplateRecurring>
+                  </serviceChargeTemplateRecurrings>
+                  <!--Optional:-->
+                  <serviceChargeTemplateSubscriptions>
+                     <!--Zero or more repetitions:-->
+                     <serviceChargeTemplateSubscription>
+                        <!--Optional:-->
+                        <code>${#TestSuite#ticket}_OS1</code>
+                     </serviceChargeTemplateSubscription>
+                  </serviceChargeTemplateSubscriptions>
+                  <!--Optional:-->
+                  <serviceChargeTemplateUsages>
+                     <!--Zero or more repetitions:-->
+                     <serviceChargeTemplateUsage>
+                        <!--Optional:-->
+                        <code>${#TestSuite#ticket}_USAGE1</code>
+                        <!--Optional:-->
+                        <counterTemplate></counterTemplate>
+                     </serviceChargeTemplateUsage>
+                  </serviceChargeTemplateUsages>
+               </serviceTemplate>
+            </serviceTemplates>
+         </offerTemplate>
+      </ws:createOfferTemplate>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response"/><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:preemptive>true</con:preemptive><con:authType>Preemptive</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Create priceplan recurring"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>CatalogWsSoapBinding</con:interface><con:operation>createUsageChargeTemplate</con:operation><con:request name="Create priceplan recurring"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/CatalogWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createPricePlan>
+         <pricePlan code="${#TestSuite#ticket}_REC1" description="${#TestSuitease#index}_REC1">
+            <eventCode>${#TestSuite#ticket}_REC1</eventCode>
+            <amountWithoutTax>10</amountWithoutTax>
+            <amountWithTax>12</amountWithTax>
+            <priority>1</priority>
+         </pricePlan>
+      </ws:createPricePlan>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response"/><con:assertion type="Simple Contains" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:selectedAuthProfile>No Authorization</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Create priceplan subscription"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>CatalogWsSoapBinding</con:interface><con:operation>createUsageChargeTemplate</con:operation><con:request name="Create priceplan subscription"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/CatalogWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createPricePlan>
+         <pricePlan code="${#TestSuite#ticket}_OS1" description="${#TestSuite#ticket}_OS1">
+            <eventCode>${#TestSuite#ticket}_OS1</eventCode>
+            <amountWithoutTax>10</amountWithoutTax>
+            <amountWithTax>12</amountWithTax>
+            <priority>1</priority>
+         </pricePlan>
+      </ws:createPricePlan>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response"/><con:assertion type="Simple Contains" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:selectedAuthProfile>No Authorization</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Create priceplan usage"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>CatalogWsSoapBinding</con:interface><con:operation>createUsageChargeTemplate</con:operation><con:request name="Create priceplan usage"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/CatalogWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createPricePlan>
+         <pricePlan code="${#TestSuite#ticket}_USAGE1" description="${#TestSuite#ticket}_USAGE1">
+            <eventCode>${#TestSuite#ticket}_USAGE1</eventCode>
+            <amountWithoutTax>10</amountWithoutTax>
+            <amountWithTax>12</amountWithTax>
+            <priority>1</priority>
+         </pricePlan>
+      </ws:createPricePlan>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response"/><con:assertion type="Simple Contains" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:selectedAuthProfile>No Authorization</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties><con:property><con:name>index</con:name><con:value>684</con:value></con:property></con:properties></con:testCase><con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="1 - Update ca, ba, ua" searchProperties="true"><con:settings/><con:testStep type="request" name="Hierarchy update"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>customerHierarchyUpdate</con:operation><con:request name="Hierarchy update"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:customerHierarchyUpdate>
+         <!--Optional:-->
+         <customerHierarchy>
+            <sellers>
+               <!--Zero or more repetitions:-->
+               <seller code="${#TestSuite#ticket}_${#TestCase#index}_SELLER" description="${#TestSuite#ticket}_${#TestCase#index}_SELLER">
+                  <!--Optional:-->
+                  <invoicePrefix>E_</invoicePrefix>
+                  <!--Optional:-->
+                  <currencyCode>USD</currencyCode>
+                  <!--Optional:-->
+                  <countryCode>USD</countryCode>
+                  <!--Optional:-->
+                  <languageCode>ENG</languageCode>
+                  <!--Optional:-->
+                  <parentSeller></parentSeller>
+                  <!--Optional:-->
+                  <customers>
+                     <!--Zero or more repetitions:-->
+                     <customer code="${#TestSuite#ticket}_${#TestCase#index}_CUST" description="${#TestSuite#ticket}_${#TestCase#index}_CUST">
+                        <!--Optional:-->
+                        <externalRef1>1</externalRef1>
+                        <!--Optional:-->
+                        <externalRef2>1</externalRef2>
+                        <!--Optional:-->
+                        <name>
+                           <!--Optional:-->
+                           <title>M</title>
+                           <!--Optional:-->
+                           <firstName>EDWARD</firstName>
+                           <lastName>LEGASPI</lastName>
+                        </name>
+                        <!--Optional:-->
+                        <address>
+                           <!--Optional:-->
+                           <address1>BAYBAYIN LOS BANOS</address1>
+                           <!--Optional:-->
+                           <address2>BAYBAYIN LOS BANOS</address2>
+                           <!--Optional:-->
+                           <address3>BAYBAYIN LOS BANOS</address3>
+                           <!--Optional:-->
+                           <zipCode>4030</zipCode>
+                           <!--Optional:-->
+                           <city>LAGUNA</city>
+                           <!--Optional:-->
+                           <country>PHILIPPINES</country>
+                           <!--Optional:-->
+                           <state>LOS BANOS</state>
+                        </address>
+                        <!--Optional:-->
+                        <customFields>
+                           <!--Zero or more repetitions:-->
+                           <customField code="CF_CUST" description="${#TestSuite#ticket}_${#TestCase#index}_CUST">
+                              <!--Optional:-->
+                              <stringValue>${#TestSuite#ticket}_${#TestCase#index}_VAL</stringValue>
+                           </customField>
+                        </customFields>
+                        <customerCategory>CLIENT</customerCategory>
+                        <customerBrand>DEFAULT</customerBrand>
+                        <!--Optional:-->
+                        <mandateIdentification>M1</mandateIdentification>
+                        <!--Optional:-->
+                        <mandateDate>${#TestSuite#date}</mandateDate>
+                        <!--Optional:-->
+                        <contactInformation>
+                           <!--Optional:-->
+                           <email>edward.legaspi@manaty.net</email>
+                           <!--Optional:-->
+                           <phone>1234</phone>
+                           <!--Optional:-->
+                           <mobile>092152154716</mobile>
+                           <!--Optional:-->
+                           <fax>1234</fax>
+                        </contactInformation>
+                        <!--Optional:-->
+                        <customerAccounts>
+                           <!--Zero or more repetitions:-->
+                           <customerAccount code="${#TestSuite#ticket}_${#TestCase#index}_CA" description="${#TestSuite#ticket}_${#TestCase#index}_CA">
+                              <!--Optional:-->
+                              <externalRef1>1</externalRef1>
+                              <!--Optional:-->
+                              <externalRef2>1</externalRef2>
+                              <!--Optional:-->
+                              <name>
+	                           <!--Optional:-->
+	                           <title>M</title>
+	                           <!--Optional:-->
+	                           <firstName>EDWARD</firstName>
+	                           <lastName>LEGASPI</lastName>
+	                        </name>
+	                        <!--Optional:-->
+	                        <address>
+	                           <!--Optional:-->
+	                           <address1>BAYBAYIN LOS BANOS</address1>
+	                           <!--Optional:-->
+	                           <address2>BAYBAYIN LOS BANOS</address2>
+	                           <!--Optional:-->
+	                           <address3>BAYBAYIN LOS BANOS</address3>
+	                           <!--Optional:-->
+	                           <zipCode>4030</zipCode>
+	                           <!--Optional:-->
+	                           <city>LAGUNA</city>
+	                           <!--Optional:-->
+	                           <country>PHILIPPINES</country>
+	                           <!--Optional:-->
+	                           <state>LOS BANOS</state>
+	                        </address>
+                              <!--Optional:-->
+                              <customFields>
+                                 <!--Zero or more repetitions:-->
+                                 <customField code="CF_CA" description="CF_CA">
+                                    <!--Optional:-->
+                                    <stringValue>CA</stringValue>
+                                 </customField>
+                              </customFields>
+                              <currency>USD</currency>
+                              <language>ENG</language>
+                              <!--Optional:-->
+                              <paymentMethod>CHECK</paymentMethod>
+                              <!--Optional:-->
+                              <creditCategory>NEWCUSTOMER</creditCategory>
+                              <!--Optional:-->
+                              <dateStatus>${#TestSuite#date}</dateStatus>
+                              <!--Optional:-->
+                              <dateDunningLevel>${#TestSuite#date}</dateDunningLevel>
+                              <!--Optional:-->
+                              <contactInformation>
+		                      <!--Optional:-->
+		                      <email>edward.legaspi@manaty.net</email>
+		                      <!--Optional:-->
+		                      <phone>1234</phone>
+		                      <!--Optional:-->
+		                      <mobile>092152154716</mobile>
+		                      <!--Optional:-->
+		                      <fax>1234</fax>
+		                   </contactInformation>
+                              <!--Optional:-->
+                              <dunningLevel>R0</dunningLevel>
+                              <!--Optional:-->
+                              <mandateIdentification>1234</mandateIdentification>
+                              <!--Optional:-->
+                              <mandateDate>${#TestSuite#date}</mandateDate>
+                              <!--Optional:-->
+                              <billingAccounts>
+                                 <!--Zero or more repetitions:-->
+                                 <billingAccount code="${#TestSuite#ticket}_${#TestCase#index}_BA" description="${#TestSuite#ticket}_${#TestCase#index}_BA">
+                                    <!--Optional:-->
+                                    <externalRef1>1</externalRef1>
+                                    <!--Optional:-->
+                                    <externalRef2>1</externalRef2>
+                                    <!--Optional:-->
+                                    <name>
+		                           <!--Optional:-->
+		                           <title>M</title>
+		                           <!--Optional:-->
+		                           <firstName>EDWARD</firstName>
+		                           <lastName>LEGASPI</lastName>
+		                        </name>
+		                        <!--Optional:-->
+		                        <address>
+		                           <!--Optional:-->
+		                           <address1>BAYBAYIN LOS BANOS</address1>
+		                           <!--Optional:-->
+		                           <address2>BAYBAYIN LOS BANOS</address2>
+		                           <!--Optional:-->
+		                           <address3>BAYBAYIN LOS BANOS</address3>
+		                           <!--Optional:-->
+		                           <zipCode>4030</zipCode>
+		                           <!--Optional:-->
+		                           <city>LAGUNA</city>
+		                           <!--Optional:-->
+		                           <country>PHILIPPINES</country>
+		                           <!--Optional:-->
+		                           <state>LOS BANOS</state>
+		                        </address>
+                                    <!--Optional:-->
+                                    <customFields>
+                                       <!--Zero or more repetitions:-->
+                                       <customField code="CF_BA" description="?">
+                                          <!--Optional:-->
+                                          <stringValue>BA</stringValue>
+                                       </customField>
+                                    </customFields>
+                                    <billingCycle>CYC_INV_MT_1</billingCycle>
+                                    <country>US</country>
+                                    <language>ENG</language>
+                                    <paymentMethod>CHECK</paymentMethod>
+                                    <!--Optional:-->
+                                    <nextInvoiceDate>${#TestSuite#date}</nextInvoiceDate>
+                                    <!--Optional:-->
+                                    <subscriptionDate>${#TestSuite#date}</subscriptionDate>
+                                    <!--Optional:-->
+                                    <paymentTerms>CASH</paymentTerms>
+                                    <!--Optional:-->
+                                    <electronicBilling>true</electronicBilling>
+                                    <!--Optional:-->
+                                    <email>edward.legaspi@manaty.net</email>
+                                    <!--Optional:-->
+                                    <bankCoordinates>
+                                       <!--Optional:-->
+                                       <bankCode>BPI</bankCode>
+                                       <!--Optional:-->
+                                       <branchCode>LB</branchCode>
+                                       <!--Optional:-->
+                                       <accountNumber>1234</accountNumber>
+                                       <!--Optional:-->
+                                       <key>1234</key>
+                                       <!--Optional:-->
+                                       <iban>1234</iban>
+                                       <!--Optional:-->
+                                       <bic>1234</bic>
+                                       <!--Optional:-->
+                                       <accountOwner>Edward P. Legaspi</accountOwner>
+                                       <!--Optional:-->
+                                       <bankName>Bank of the Philippine Islands</bankName>
+                                       <!--Optional:-->
+                                       <bankId>BPI</bankId>
+                                       <!--Optional:-->
+                                       <issuerNumber>1</issuerNumber>
+                                       <!--Optional:-->
+                                       <issuerName>BPI</issuerName>
+                                       <!--Optional:-->
+                                       <ics>NA</ics>
+                                    </bankCoordinates>
+                                    <!--Optional:-->
+                                    <userAccounts>
+                                       <!--Zero or more repetitions:-->
+                                       <userAccount code="${#TestSuite#ticket}_${#TestCase#index}_UA" description="${#TestSuite#ticket}_${#TestCase#index}_UA">
+                                          <!--Optional:-->
+                                          <externalRef1>1</externalRef1>
+                                          <!--Optional:-->
+                                          <externalRef2>1</externalRef2>
+                                          <!--Optional:-->
+                                          <name>
+				                           <!--Optional:-->
+				                           <title>M</title>
+				                           <!--Optional:-->
+				                           <firstName>EDWARD</firstName>
+				                           <lastName>LEGASPI</lastName>
+				                        </name>
+				                        <!--Optional:-->
+				                        <address>
+				                           <!--Optional:-->
+				                           <address1>BAYBAYIN LOS BANOS</address1>
+				                           <!--Optional:-->
+				                           <address2>BAYBAYIN LOS BANOS</address2>
+				                           <!--Optional:-->
+				                           <address3>BAYBAYIN LOS BANOS</address3>
+				                           <!--Optional:-->
+				                           <zipCode>4030</zipCode>
+				                           <!--Optional:-->
+				                           <city>LAGUNA</city>
+				                           <!--Optional:-->
+				                           <country>PHILIPPINES</country>
+				                           <!--Optional:-->
+				                           <state>LOS BANOS</state>
+				                        </address>
+                                          <!--Optional:-->
+                                          <customFields>
+                                             <!--Zero or more repetitions:-->
+                                             <customField code="CF_UA" description="CF_UA">
+                                                <!--Optional:-->
+                                                <stringValue>UA</stringValue>
+                                             </customField>
+                                          </customFields>
+                                          <!--Optional:-->
+                                          <subscriptionDate>${#TestSuite#date}</subscriptionDate>
+                                          
+                                          <!--Optional:-->
+                                          <subscriptions>
+                                             <!--Zero or more repetitions:-->
+                                             <subscription code="${#TestSuite#ticket}_${#TestCase#index}_SUB" description="${#TestSuite#ticket}_${#TestCase#index}_SUB">
+                                                <userAccount>?</userAccount>
+                                                <offerTemplate>${#TestSuite#ticket}_OFFER1</offerTemplate>
+                                                <subscriptionDate>${#TestSuite#date}</subscriptionDate>
+                                                <!--Optional:-->
+                                                <customFields>
+                                                   <!--Zero or more repetitions:-->
+                                                   <customField code="CF_SUB" description="CF_SUB">
+                                                      <!--Optional:-->
+                                                      <stringValue>SUB</stringValue>
+                                                   </customField>
+                                                </customFields>
+                                                <!--Optional:-->
+                                                <accesses>
+                                                   <!--Zero or more repetitions:-->
+                                                   <access code="?">
+                                                      <subscription>${#TestSuite#ticket}_${#TestCase#index}_SUB</subscription>
+                                                      <!--Optional:-->
+                                                      <startDate>${#TestSuite#date}</startDate>
+                                                   </access>
+                                                </accesses>
+                                                <!--Optional:-->
+                                                <services>
+                                                   <!--Zero or more repetitions:-->
+                                                   <serviceInstance code="${#TestSuite#ticket}_SERVICE1">
+                                                      <subscriptionDate>${#TestSuite#date}</subscriptionDate>
+                                                      <!--Optional:-->
+                                                      <quantity>1</quantity>
+                                                   </serviceInstance>
+                                                </services>
+                                             </subscription>
+                                          </subscriptions>
+                                       </userAccount>
+                                    </userAccounts>
+                                 </billingAccount>
+                              </billingAccounts>
+                           </customerAccount>
+                        </customerAccounts>
+                     </customer>
+                  </customers>
+               </seller>
+            </sellers>
+         </customerHierarchy>
+      </ws:customerHierarchyUpdate>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response"/><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:preemptive>true</con:preemptive><con:authType>Preemptive</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Update cust"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>customerHierarchyUpdate</con:operation><con:request name="Update cust"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:customerHierarchyUpdate>
+         <!--Optional:-->
+         <customerHierarchy>
+            <sellers>
+               <!--Zero or more repetitions:-->
+               <seller code="${#TestSuite#ticket}_${#TestCase#index}_SELLER" description="${#TestSuite#ticket}_${#TestCase#index}_SELLER">                 
+                  <!--Optional:-->
+                  <customers>
+                     <!--Zero or more repetitions:-->
+                     <customer code="${#TestSuite#ticket}_${#TestCase#index}_CUST">                                                
+					<externalRef1>11</externalRef1>
+                        	<!--Optional:-->
+                        	<externalRef2>11</externalRef2>                     
+                     </customer>
+                  </customers>
+               </seller>
+            </sellers>
+         </customerHierarchy>
+      </ws:customerHierarchyUpdate>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response"/><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:preemptive>true</con:preemptive><con:authType>Preemptive</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Update ca"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>customerHierarchyUpdate</con:operation><con:request name="Update ca"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:customerHierarchyUpdate>
+         <!--Optional:-->
+         <customerHierarchy>
+            <sellers>
+               <!--Zero or more repetitions:-->
+               <seller code="${#TestSuite#ticket}_${#TestCase#index}_SELLER">                 
+                  <!--Optional:-->
+                  <customers>
+                     <!--Zero or more repetitions:-->
+                     <customer code="${#TestSuite#ticket}_${#TestCase#index}_CUST">                        
+                        <!--Optional:-->
+                        <customerAccounts>
+                           <!--Zero or more repetitions:-->
+                           <customerAccount code="${#TestSuite#ticket}_${#TestCase#index}_CA">
+                              <!--Optional:-->
+                              <externalRef1>11</externalRef1>
+                              <!--Optional:-->
+                              <externalRef2>11</externalRef2>
+                              <!--Optional:-->
+                              <name>
+	                           <!--Optional:-->
+	                           <title>M</title>
+	                           <!--Optional:-->
+	                           <firstName>EDWARD1</firstName>
+	                           <lastName>LEGASPI1</lastName>
+	                        </name>
+	                        <!--Optional:-->
+	                        <address>
+	                           <!--Optional:-->
+	                           <address1>BAYBAYIN LOS BANOS1</address1>
+	                           <!--Optional:-->
+	                           <address2>BAYBAYIN LOS BANOS1</address2>
+	                           <!--Optional:-->
+	                           <address3>BAYBAYIN LOS BANOS1</address3>
+	                           <!--Optional:-->
+	                           <zipCode>40301</zipCode>
+	                           <!--Optional:-->
+	                           <city>LAGUNA1</city>
+	                           <!--Optional:-->
+	                           <country>PHILIPPINES1</country>
+	                           <!--Optional:-->
+	                           <state>LOS BANOS1</state>
+	                        </address>
+                              <!--Optional:-->
+                              <customFields>
+                                 <!--Zero or more repetitions:-->
+                                 <customField code="CF_CA" description="CF_CA">
+                                    <!--Optional:-->
+                                    <stringValue>CA</stringValue>
+                                 </customField>
+                              </customFields>
+                              <currency>EUR</currency>
+                              <language>FRA</language>
+                              <!--Optional:-->
+                              <paymentMethod>TIP</paymentMethod>
+                              <!--Optional:-->
+                              <creditCategory>VIP</creditCategory>
+                              <!--Optional:-->
+                              <dateStatus>${#TestSuite#date}</dateStatus>
+                              <!--Optional:-->
+                              <dateDunningLevel>${#TestSuite#date}</dateDunningLevel>
+                              <!--Optional:-->
+                              <contactInformation>
+		                      <!--Optional:-->
+		                      <email>edward.legaspi@manaty.net1</email>
+		                      <!--Optional:-->
+		                      <phone>12341</phone>
+		                      <!--Optional:-->
+		                      <mobile>0921521547161</mobile>
+		                      <!--Optional:-->
+		                      <fax>12341</fax>
+		                   </contactInformation>
+                              <!--Optional:-->
+                              <dunningLevel>R1</dunningLevel>
+                              <!--Optional:-->
+                              <mandateIdentification>12341</mandateIdentification>
+                              <!--Optional:-->
+                              <mandateDate>${#TestSuite#date}</mandateDate>                              
+                           </customerAccount>
+                        </customerAccounts>
+                     </customer>
+                  </customers>
+               </seller>
+            </sellers>
+         </customerHierarchy>
+      </ws:customerHierarchyUpdate>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response"/><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:preemptive>true</con:preemptive><con:authType>Preemptive</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Update ba"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>customerHierarchyUpdate</con:operation><con:request name="Update ba"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:customerHierarchyUpdate>
+         <!--Optional:-->
+         <customerHierarchy>
+            <sellers>
+               <!--Zero or more repetitions:-->
+               <seller code="${#TestSuite#ticket}_${#TestCase#index}_SELLER">              
+                  <customers>
+                     <!--Zero or more repetitions:-->
+                     <customer code="${#TestSuite#ticket}_${#TestCase#index}_CUST">                        
+                        <customerAccounts>
+                           <!--Zero or more repetitions:-->
+                           <customerAccount code="${#TestSuite#ticket}_${#TestCase#index}_CA">                              
+                              <billingAccounts>
+                                 <!--Zero or more repetitions:-->
+                                 <billingAccount code="${#TestSuite#ticket}_${#TestCase#index}_BA">
+                                    <!--Optional:-->
+                                    <externalRef1>11</externalRef1>
+                                    <!--Optional:-->
+                                    <externalRef2>11</externalRef2>
+                                    <!--Optional:-->
+                                    <name>
+		                           <!--Optional:-->
+		                           <title>Mm</title>
+		                           <!--Optional:-->
+		                           <firstName>EDWARD1</firstName>
+		                           <lastName>LEGASPI1</lastName>
+		                        </name>
+		                        <!--Optional:-->
+		                        <address>
+		                           <!--Optional:-->
+		                           <address1>BAYBAYIN LOS BANOS1</address1>
+		                           <!--Optional:-->
+		                           <address2>BAYBAYIN LOS BANOS1</address2>
+		                           <!--Optional:-->
+		                           <address3>BAYBAYIN LOS BANOS1</address3>
+		                           <!--Optional:-->
+		                           <zipCode>40301</zipCode>
+		                           <!--Optional:-->
+		                           <city>LAGUNA1</city>
+		                           <!--Optional:-->
+		                           <country>PHILIPPINES1</country>
+		                           <!--Optional:-->
+		                           <state>LOS BANOS1</state>
+		                        </address>
+                                    <!--Optional:-->
+                                    <customFields>
+                                       <!--Zero or more repetitions:-->
+                                       <customField code="CF_BA" description="?">
+                                          <!--Optional:-->
+                                          <stringValue>BA</stringValue>
+                                       </customField>
+                                    </customFields>
+                                    <billingCycle>CYC_INV_MT_1</billingCycle>
+                                    <country>FR</country>
+                                    <language>FRA</language>
+                                    <paymentMethod>TIP</paymentMethod>
+                                    <!--Optional:-->
+                                    <nextInvoiceDate>${#TestSuite#date}</nextInvoiceDate>
+                                    <!--Optional:-->
+                                    <subscriptionDate>${#TestSuite#date}</subscriptionDate>
+                                    <!--Optional:-->
+                                    <paymentTerms>THREE_X</paymentTerms>
+                                    <!--Optional:-->
+                                    <electronicBilling>false</electronicBilling>
+                                    <!--Optional:-->
+                                    <email>edward.legaspi@manaty.net</email>
+                                    <!--Optional:-->
+                                    <bankCoordinates>
+                                       <!--Optional:-->
+                                       <bankCode>BPI1</bankCode>
+                                       <!--Optional:-->
+                                       <branchCode>LB1</branchCode>
+                                       <!--Optional:-->
+                                       <accountNumber>12341</accountNumber>
+                                       <!--Optional:-->
+                                       <key>12341</key>
+                                       <!--Optional:-->
+                                       <iban>12341</iban>
+                                       <!--Optional:-->
+                                       <bic>12341</bic>
+                                       <!--Optional:-->
+                                       <accountOwner>Edward P. Legaspi1</accountOwner>
+                                       <!--Optional:-->
+                                       <bankName>Bank of the Philippine Islands1</bankName>
+                                       <!--Optional:-->
+                                       <bankId>BPI1</bankId>
+                                       <!--Optional:-->
+                                       <issuerNumber>11</issuerNumber>
+                                       <!--Optional:-->
+                                       <issuerName>BPI1</issuerName>
+                                       <!--Optional:-->
+                                       <ics>NA1</ics>
+                                    </bankCoordinates>                                    
+                                 </billingAccount>
+                              </billingAccounts>
+                           </customerAccount>
+                        </customerAccounts>
+                     </customer>
+                  </customers>
+               </seller>
+            </sellers>
+         </customerHierarchy>
+      </ws:customerHierarchyUpdate>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response"/><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:preemptive>true</con:preemptive><con:authType>Preemptive</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Update ua"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>customerHierarchyUpdate</con:operation><con:request name="Update ua"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:customerHierarchyUpdate>
+         <!--Optional:-->
+         <customerHierarchy>
+            <sellers>
+               <!--Zero or more repetitions:-->
+               <seller code="${#TestSuite#ticket}_${#TestCase#index}_SELLER">                 
+                  <customers>
+                     <!--Zero or more repetitions:-->
+                     <customer code="${#TestSuite#ticket}_${#TestCase#index}_CUST">                        
+                        <customerAccounts>
+                           <!--Zero or more repetitions:-->
+                           <customerAccount code="${#TestSuite#ticket}_${#TestCase#index}_CA">                          
+                              <billingAccounts>
+                                 <!--Zero or more repetitions:-->
+                                 <billingAccount code="${#TestSuite#ticket}_${#TestCase#index}_BA">                                   
+                                    <userAccounts>
+                                       <!--Zero or more repetitions:-->
+                                       <userAccount code="${#TestSuite#ticket}_${#TestCase#index}_UA">
+                                          <!--Optional:-->
+                                          <externalRef1>11</externalRef1>
+                                          <!--Optional:-->
+                                          <externalRef2>11</externalRef2>
+                                          <!--Optional:-->
+                                          <name>
+				                           <!--Optional:-->
+				                           <title>MM</title>
+				                           <!--Optional:-->
+				                           <firstName>EDWARD1</firstName>
+				                           <lastName>LEGASPI1</lastName>
+				                        </name>
+				                        <!--Optional:-->
+				                        <address>
+				                           <!--Optional:-->
+				                           <address1>BAYBAYIN LOS BANOS1</address1>
+				                           <!--Optional:-->
+				                           <address2>BAYBAYIN LOS BANOS1</address2>
+				                           <!--Optional:-->
+				                           <address3>BAYBAYIN LOS BANOS1</address3>
+				                           <!--Optional:-->
+				                           <zipCode>40301</zipCode>
+				                           <!--Optional:-->
+				                           <city>LAGUNA1</city>
+				                           <!--Optional:-->
+				                           <country>PHILIPPINES1</country>
+				                           <!--Optional:-->
+				                           <state>LOS BANOS1</state>
+				                        </address>
+                                          <!--Optional:-->
+                                          <customFields>
+                                             <!--Zero or more repetitions:-->
+                                             <customField code="CF_UA" description="CF_UA">
+                                                <!--Optional:-->
+                                                <stringValue>UA</stringValue>
+                                             </customField>
+                                          </customFields>
+                                          <!--Optional:-->
+                                          <subscriptionDate>${#TestSuite#date}</subscriptionDate>                                          
+                                       </userAccount>
+                                    </userAccounts>
+                                 </billingAccount>
+                              </billingAccounts>
+                           </customerAccount>
+                        </customerAccounts>
+                     </customer>
+                  </customers>
+               </seller>
+            </sellers>
+         </customerHierarchy>
+      </ws:customerHierarchyUpdate>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response"/><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:preemptive>true</con:preemptive><con:authType>Preemptive</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties><con:property><con:name>index</con:name><con:value>1</con:value></con:property></con:properties></con:testCase><con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="2 - Close ca" searchProperties="true"><con:settings/><con:testStep type="request" name="Hierarchy update"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>customerHierarchyUpdate</con:operation><con:request name="Hierarchy update"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:customerHierarchyUpdate>
+         <!--Optional:-->
+         <customerHierarchy>
+            <sellers>
+               <!--Zero or more repetitions:-->
+               <seller code="${#TestSuite#ticket}_${#TestCase#index}_SELLER" description="${#TestSuite#ticket}_${#TestCase#index}_SELLER">
+                  <!--Optional:-->
+                  <invoicePrefix>E_</invoicePrefix>
+                  <!--Optional:-->
+                  <currencyCode>USD</currencyCode>
+                  <!--Optional:-->
+                  <countryCode>USD</countryCode>
+                  <!--Optional:-->
+                  <languageCode>ENG</languageCode>
+                  <!--Optional:-->
+                  <parentSeller></parentSeller>
+                  <!--Optional:-->
+                  <customers>
+                     <!--Zero or more repetitions:-->
+                     <customer code="${#TestSuite#ticket}_${#TestCase#index}_CUST" description="${#TestSuite#ticket}_${#TestCase#index}_CUST">
+                        <!--Optional:-->
+                        <externalRef1>1</externalRef1>
+                        <!--Optional:-->
+                        <externalRef2>1</externalRef2>
+                        <!--Optional:-->
+                        <name>
+                           <!--Optional:-->
+                           <title>M</title>
+                           <!--Optional:-->
+                           <firstName>EDWARD</firstName>
+                           <lastName>LEGASPI</lastName>
+                        </name>
+                        <!--Optional:-->
+                        <address>
+                           <!--Optional:-->
+                           <address1>BAYBAYIN LOS BANOS</address1>
+                           <!--Optional:-->
+                           <address2>BAYBAYIN LOS BANOS</address2>
+                           <!--Optional:-->
+                           <address3>BAYBAYIN LOS BANOS</address3>
+                           <!--Optional:-->
+                           <zipCode>4030</zipCode>
+                           <!--Optional:-->
+                           <city>LAGUNA</city>
+                           <!--Optional:-->
+                           <country>PHILIPPINES</country>
+                           <!--Optional:-->
+                           <state>LOS BANOS</state>
+                        </address>
+                        <!--Optional:-->
+                        <customFields>
+                           <!--Zero or more repetitions:-->
+                           <customField code="CF_CUST" description="${#TestSuite#ticket}_${#TestCase#index}_CUST">
+                              <!--Optional:-->
+                              <stringValue>${#TestSuite#ticket}_${#TestCase#index}_VAL</stringValue>
+                           </customField>
+                        </customFields>
+                        <customerCategory>CLIENT</customerCategory>
+                        <customerBrand>DEFAULT</customerBrand>
+                        <!--Optional:-->
+                        <mandateIdentification>M1</mandateIdentification>
+                        <!--Optional:-->
+                        <mandateDate>${#TestSuite#date}</mandateDate>
+                        <!--Optional:-->
+                        <contactInformation>
+                           <!--Optional:-->
+                           <email>edward.legaspi@manaty.net</email>
+                           <!--Optional:-->
+                           <phone>1234</phone>
+                           <!--Optional:-->
+                           <mobile>092152154716</mobile>
+                           <!--Optional:-->
+                           <fax>1234</fax>
+                        </contactInformation>
+                        <!--Optional:-->
+                        <customerAccounts>
+                           <!--Zero or more repetitions:-->
+                           <customerAccount code="${#TestSuite#ticket}_${#TestCase#index}_CA" description="${#TestSuite#ticket}_${#TestCase#index}_CA">
+                              <!--Optional:-->
+                              <externalRef1>1</externalRef1>
+                              <!--Optional:-->
+                              <externalRef2>1</externalRef2>
+                              <!--Optional:-->
+                              <name>
+	                           <!--Optional:-->
+	                           <title>M</title>
+	                           <!--Optional:-->
+	                           <firstName>EDWARD</firstName>
+	                           <lastName>LEGASPI</lastName>
+	                        </name>
+	                        <!--Optional:-->
+	                        <address>
+	                           <!--Optional:-->
+	                           <address1>BAYBAYIN LOS BANOS</address1>
+	                           <!--Optional:-->
+	                           <address2>BAYBAYIN LOS BANOS</address2>
+	                           <!--Optional:-->
+	                           <address3>BAYBAYIN LOS BANOS</address3>
+	                           <!--Optional:-->
+	                           <zipCode>4030</zipCode>
+	                           <!--Optional:-->
+	                           <city>LAGUNA</city>
+	                           <!--Optional:-->
+	                           <country>PHILIPPINES</country>
+	                           <!--Optional:-->
+	                           <state>LOS BANOS</state>
+	                        </address>
+                              <!--Optional:-->
+                              <customFields>
+                                 <!--Zero or more repetitions:-->
+                                 <customField code="CF_CA" description="CF_CA">
+                                    <!--Optional:-->
+                                    <stringValue>CA</stringValue>
+                                 </customField>
+                              </customFields>
+                              <currency>USD</currency>
+                              <language>ENG</language>
+                              <!--Optional:-->
+                              <paymentMethod>CHECK</paymentMethod>
+                              <!--Optional:-->
+                              <creditCategory>NEWCUSTOMER</creditCategory>
+                              <!--Optional:-->
+                              <dateStatus>${#TestSuite#date}</dateStatus>
+                              <!--Optional:-->
+                              <dateDunningLevel>${#TestSuite#date}</dateDunningLevel>
+                              <!--Optional:-->
+                              <contactInformation>
+		                      <!--Optional:-->
+		                      <email>edward.legaspi@manaty.net</email>
+		                      <!--Optional:-->
+		                      <phone>1234</phone>
+		                      <!--Optional:-->
+		                      <mobile>092152154716</mobile>
+		                      <!--Optional:-->
+		                      <fax>1234</fax>
+		                   </contactInformation>
+                              <!--Optional:-->
+                              <dunningLevel>R0</dunningLevel>
+                              <!--Optional:-->
+                              <mandateIdentification>1234</mandateIdentification>
+                              <!--Optional:-->
+                              <mandateDate>${#TestSuite#date}</mandateDate>
+                              <!--Optional:-->
+                              <billingAccounts>
+                                 <!--Zero or more repetitions:-->
+                                 <billingAccount code="${#TestSuite#ticket}_${#TestCase#index}_BA" description="${#TestSuite#ticket}_${#TestCase#index}_BA">
+                                    <!--Optional:-->
+                                    <externalRef1>1</externalRef1>
+                                    <!--Optional:-->
+                                    <externalRef2>1</externalRef2>
+                                    <!--Optional:-->
+                                    <name>
+		                           <!--Optional:-->
+		                           <title>M</title>
+		                           <!--Optional:-->
+		                           <firstName>EDWARD</firstName>
+		                           <lastName>LEGASPI</lastName>
+		                        </name>
+		                        <!--Optional:-->
+		                        <address>
+		                           <!--Optional:-->
+		                           <address1>BAYBAYIN LOS BANOS</address1>
+		                           <!--Optional:-->
+		                           <address2>BAYBAYIN LOS BANOS</address2>
+		                           <!--Optional:-->
+		                           <address3>BAYBAYIN LOS BANOS</address3>
+		                           <!--Optional:-->
+		                           <zipCode>4030</zipCode>
+		                           <!--Optional:-->
+		                           <city>LAGUNA</city>
+		                           <!--Optional:-->
+		                           <country>PHILIPPINES</country>
+		                           <!--Optional:-->
+		                           <state>LOS BANOS</state>
+		                        </address>
+                                    <!--Optional:-->
+                                    <customFields>
+                                       <!--Zero or more repetitions:-->
+                                       <customField code="CF_BA" description="?">
+                                          <!--Optional:-->
+                                          <stringValue>BA</stringValue>
+                                       </customField>
+                                    </customFields>
+                                    <billingCycle>CYC_INV_MT_1</billingCycle>
+                                    <country>US</country>
+                                    <language>ENG</language>
+                                    <paymentMethod>CHECK</paymentMethod>
+                                    <!--Optional:-->
+                                    <nextInvoiceDate>${#TestSuite#date}</nextInvoiceDate>
+                                    <!--Optional:-->
+                                    <subscriptionDate>${#TestSuite#date}</subscriptionDate>
+                                    <!--Optional:-->
+                                    <paymentTerms>CASH</paymentTerms>
+                                    <!--Optional:-->
+                                    <electronicBilling>true</electronicBilling>
+                                    <!--Optional:-->
+                                    <email>edward.legaspi@manaty.net</email>
+                                    <!--Optional:-->
+                                    <bankCoordinates>
+                                       <!--Optional:-->
+                                       <bankCode>BPI</bankCode>
+                                       <!--Optional:-->
+                                       <branchCode>LB</branchCode>
+                                       <!--Optional:-->
+                                       <accountNumber>1234</accountNumber>
+                                       <!--Optional:-->
+                                       <key>1234</key>
+                                       <!--Optional:-->
+                                       <iban>1234</iban>
+                                       <!--Optional:-->
+                                       <bic>1234</bic>
+                                       <!--Optional:-->
+                                       <accountOwner>Edward P. Legaspi</accountOwner>
+                                       <!--Optional:-->
+                                       <bankName>Bank of the Philippine Islands</bankName>
+                                       <!--Optional:-->
+                                       <bankId>BPI</bankId>
+                                       <!--Optional:-->
+                                       <issuerNumber>1</issuerNumber>
+                                       <!--Optional:-->
+                                       <issuerName>BPI</issuerName>
+                                       <!--Optional:-->
+                                       <ics>NA</ics>
+                                    </bankCoordinates>
+                                    <!--Optional:-->
+                                    <userAccounts>
+                                       <!--Zero or more repetitions:-->
+                                       <userAccount code="${#TestSuite#ticket}_${#TestCase#index}_UA" description="${#TestSuite#ticket}_${#TestCase#index}_UA">
+                                          <!--Optional:-->
+                                          <externalRef1>1</externalRef1>
+                                          <!--Optional:-->
+                                          <externalRef2>1</externalRef2>
+                                          <!--Optional:-->
+                                          <name>
+				                           <!--Optional:-->
+				                           <title>M</title>
+				                           <!--Optional:-->
+				                           <firstName>EDWARD</firstName>
+				                           <lastName>LEGASPI</lastName>
+				                        </name>
+				                        <!--Optional:-->
+				                        <address>
+				                           <!--Optional:-->
+				                           <address1>BAYBAYIN LOS BANOS</address1>
+				                           <!--Optional:-->
+				                           <address2>BAYBAYIN LOS BANOS</address2>
+				                           <!--Optional:-->
+				                           <address3>BAYBAYIN LOS BANOS</address3>
+				                           <!--Optional:-->
+				                           <zipCode>4030</zipCode>
+				                           <!--Optional:-->
+				                           <city>LAGUNA</city>
+				                           <!--Optional:-->
+				                           <country>PHILIPPINES</country>
+				                           <!--Optional:-->
+				                           <state>LOS BANOS</state>
+				                        </address>
+                                          <!--Optional:-->
+                                          <customFields>
+                                             <!--Zero or more repetitions:-->
+                                             <customField code="CF_UA" description="CF_UA">
+                                                <!--Optional:-->
+                                                <stringValue>UA</stringValue>
+                                             </customField>
+                                          </customFields>
+                                          <!--Optional:-->
+                                          <subscriptionDate>${#TestSuite#date}</subscriptionDate>
+                                          
+                                          <!--Optional:-->
+                                          <subscriptions>
+                                             <!--Zero or more repetitions:-->
+                                             <subscription code="${#TestSuite#ticket}_${#TestCase#index}_SUB" description="${#TestSuite#ticket}_${#TestCase#index}_SUB">
+                                                <userAccount>?</userAccount>
+                                                <offerTemplate>${#TestSuite#ticket}_OFFER1</offerTemplate>
+                                                <subscriptionDate>${#TestSuite#date}</subscriptionDate>
+                                                <!--Optional:-->
+                                                <customFields>
+                                                   <!--Zero or more repetitions:-->
+                                                   <customField code="CF_SUB" description="CF_SUB">
+                                                      <!--Optional:-->
+                                                      <stringValue>SUB</stringValue>
+                                                   </customField>
+                                                </customFields>
+                                                <!--Optional:-->
+                                                <accesses>
+                                                   <!--Zero or more repetitions:-->
+                                                   <access code="?">
+                                                      <subscription>${#TestSuite#ticket}_${#TestCase#index}_SUB</subscription>
+                                                      <!--Optional:-->
+                                                      <startDate>${#TestSuite#date}</startDate>                                                      
+                                                   </access>
+                                                </accesses>
+                                                <!--Optional:-->
+                                                <services>
+                                                   <!--Zero or more repetitions:-->
+                                                   <serviceInstance code="${#TestSuite#ticket}_SERVICE1">
+                                                      <subscriptionDate>${#TestSuite#date}</subscriptionDate>
+                                                      <!--Optional:-->
+                                                      <quantity>1</quantity>
+                                                   </serviceInstance>
+                                                </services>
+                                             </subscription>
+                                          </subscriptions>
+                                       </userAccount>
+                                    </userAccounts>
+                                 </billingAccount>
+                              </billingAccounts>
+                           </customerAccount>
+                        </customerAccounts>
+                     </customer>
+                  </customers>
+               </seller>
+            </sellers>
+         </customerHierarchy>
+      </ws:customerHierarchyUpdate>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response"/><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:preemptive>true</con:preemptive><con:authType>Preemptive</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Close ca"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>customerHierarchyUpdate</con:operation><con:request name="Close ca"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:customerHierarchyUpdate>
+         <!--Optional:-->
+         <customerHierarchy>
+            <sellers>
+               <!--Zero or more repetitions:-->
+               <seller code="${#TestSuite#ticket}_${#TestCase#index}_SELLER" description="${#TestSuite#ticket}_${#TestCase#index}_SELLER">                 
+                  <!--Optional:-->
+                  <customers>
+                     <!--Zero or more repetitions:-->
+                     <customer code="${#TestSuite#ticket}_${#TestCase#index}_CUST" description="${#TestSuite#ticket}_${#TestCase#index}_CUST">                        
+                        <!--Optional:-->
+                        <customerAccounts>
+                           <!--Zero or more repetitions:-->
+                           <customerAccount code="${#TestSuite#ticket}_${#TestCase#index}_CA" description="${#TestSuite#ticket}_${#TestCase#index}_CA">                             
+                           	<status>CLOSE</status>
+                           </customerAccount>
+                        </customerAccounts>
+                     </customer>
+                  </customers>
+               </seller>
+            </sellers>
+         </customerHierarchy>
+      </ws:customerHierarchyUpdate>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response"/><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:preemptive>true</con:preemptive><con:authType>Preemptive</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties><con:property><con:name>index</con:name><con:value>2</con:value></con:property></con:properties></con:testCase><con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="3 - Terminate ba" searchProperties="true"><con:settings/><con:testStep type="request" name="Hierarchy update"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>customerHierarchyUpdate</con:operation><con:request name="Hierarchy update"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:customerHierarchyUpdate>
+         <!--Optional:-->
+         <customerHierarchy>
+            <sellers>
+               <!--Zero or more repetitions:-->
+               <seller code="${#TestSuite#ticket}_${#TestCase#index}_SELLER" description="${#TestSuite#ticket}_${#TestCase#index}_SELLER">
+                  <!--Optional:-->
+                  <invoicePrefix>E_</invoicePrefix>
+                  <!--Optional:-->
+                  <currencyCode>USD</currencyCode>
+                  <!--Optional:-->
+                  <countryCode>USD</countryCode>
+                  <!--Optional:-->
+                  <languageCode>ENG</languageCode>
+                  <!--Optional:-->
+                  <parentSeller></parentSeller>
+                  <!--Optional:-->
+                  <customers>
+                     <!--Zero or more repetitions:-->
+                     <customer code="${#TestSuite#ticket}_${#TestCase#index}_CUST" description="${#TestSuite#ticket}_${#TestCase#index}_CUST">
+                        <!--Optional:-->
+                        <externalRef1>1</externalRef1>
+                        <!--Optional:-->
+                        <externalRef2>1</externalRef2>
+                        <!--Optional:-->
+                        <name>
+                           <!--Optional:-->
+                           <title>M</title>
+                           <!--Optional:-->
+                           <firstName>EDWARD</firstName>
+                           <lastName>LEGASPI</lastName>
+                        </name>
+                        <!--Optional:-->
+                        <address>
+                           <!--Optional:-->
+                           <address1>BAYBAYIN LOS BANOS</address1>
+                           <!--Optional:-->
+                           <address2>BAYBAYIN LOS BANOS</address2>
+                           <!--Optional:-->
+                           <address3>BAYBAYIN LOS BANOS</address3>
+                           <!--Optional:-->
+                           <zipCode>4030</zipCode>
+                           <!--Optional:-->
+                           <city>LAGUNA</city>
+                           <!--Optional:-->
+                           <country>PHILIPPINES</country>
+                           <!--Optional:-->
+                           <state>LOS BANOS</state>
+                        </address>
+                        <!--Optional:-->
+                        <customFields>
+                           <!--Zero or more repetitions:-->
+                           <customField code="CF_CUST" description="${#TestSuite#ticket}_${#TestCase#index}_CUST">
+                              <!--Optional:-->
+                              <stringValue>${#TestSuite#ticket}_${#TestCase#index}_VAL</stringValue>
+                           </customField>
+                        </customFields>
+                        <customerCategory>CLIENT</customerCategory>
+                        <customerBrand>DEFAULT</customerBrand>
+                        <!--Optional:-->
+                        <mandateIdentification>M1</mandateIdentification>
+                        <!--Optional:-->
+                        <mandateDate>${#TestSuite#date}</mandateDate>
+                        <!--Optional:-->
+                        <contactInformation>
+                           <!--Optional:-->
+                           <email>edward.legaspi@manaty.net</email>
+                           <!--Optional:-->
+                           <phone>1234</phone>
+                           <!--Optional:-->
+                           <mobile>092152154716</mobile>
+                           <!--Optional:-->
+                           <fax>1234</fax>
+                        </contactInformation>
+                        <!--Optional:-->
+                        <customerAccounts>
+                           <!--Zero or more repetitions:-->
+                           <customerAccount code="${#TestSuite#ticket}_${#TestCase#index}_CA" description="${#TestSuite#ticket}_${#TestCase#index}_CA">
+                              <!--Optional:-->
+                              <externalRef1>1</externalRef1>
+                              <!--Optional:-->
+                              <externalRef2>1</externalRef2>
+                              <!--Optional:-->
+                              <name>
+	                           <!--Optional:-->
+	                           <title>M</title>
+	                           <!--Optional:-->
+	                           <firstName>EDWARD</firstName>
+	                           <lastName>LEGASPI</lastName>
+	                        </name>
+	                        <!--Optional:-->
+	                        <address>
+	                           <!--Optional:-->
+	                           <address1>BAYBAYIN LOS BANOS</address1>
+	                           <!--Optional:-->
+	                           <address2>BAYBAYIN LOS BANOS</address2>
+	                           <!--Optional:-->
+	                           <address3>BAYBAYIN LOS BANOS</address3>
+	                           <!--Optional:-->
+	                           <zipCode>4030</zipCode>
+	                           <!--Optional:-->
+	                           <city>LAGUNA</city>
+	                           <!--Optional:-->
+	                           <country>PHILIPPINES</country>
+	                           <!--Optional:-->
+	                           <state>LOS BANOS</state>
+	                        </address>
+                              <!--Optional:-->
+                              <customFields>
+                                 <!--Zero or more repetitions:-->
+                                 <customField code="CF_CA" description="CF_CA">
+                                    <!--Optional:-->
+                                    <stringValue>CA</stringValue>
+                                 </customField>
+                              </customFields>
+                              <currency>USD</currency>
+                              <language>ENG</language>
+                              <!--Optional:-->
+                              <paymentMethod>CHECK</paymentMethod>
+                              <!--Optional:-->
+                              <creditCategory>NEWCUSTOMER</creditCategory>
+                              <!--Optional:-->
+                              <dateStatus>${#TestSuite#date}</dateStatus>
+                              <!--Optional:-->
+                              <dateDunningLevel>${#TestSuite#date}</dateDunningLevel>
+                              <!--Optional:-->
+                              <contactInformation>
+		                      <!--Optional:-->
+		                      <email>edward.legaspi@manaty.net</email>
+		                      <!--Optional:-->
+		                      <phone>1234</phone>
+		                      <!--Optional:-->
+		                      <mobile>092152154716</mobile>
+		                      <!--Optional:-->
+		                      <fax>1234</fax>
+		                   </contactInformation>
+                              <!--Optional:-->
+                              <dunningLevel>R0</dunningLevel>
+                              <!--Optional:-->
+                              <mandateIdentification>1234</mandateIdentification>
+                              <!--Optional:-->
+                              <mandateDate>${#TestSuite#date}</mandateDate>
+                              <!--Optional:-->
+                              <billingAccounts>
+                                 <!--Zero or more repetitions:-->
+                                 <billingAccount code="${#TestSuite#ticket}_${#TestCase#index}_BA" description="${#TestSuite#ticket}_${#TestCase#index}_BA">
+                                    <!--Optional:-->
+                                    <externalRef1>1</externalRef1>
+                                    <!--Optional:-->
+                                    <externalRef2>1</externalRef2>
+                                    <!--Optional:-->
+                                    <name>
+		                           <!--Optional:-->
+		                           <title>M</title>
+		                           <!--Optional:-->
+		                           <firstName>EDWARD</firstName>
+		                           <lastName>LEGASPI</lastName>
+		                        </name>
+		                        <!--Optional:-->
+		                        <address>
+		                           <!--Optional:-->
+		                           <address1>BAYBAYIN LOS BANOS</address1>
+		                           <!--Optional:-->
+		                           <address2>BAYBAYIN LOS BANOS</address2>
+		                           <!--Optional:-->
+		                           <address3>BAYBAYIN LOS BANOS</address3>
+		                           <!--Optional:-->
+		                           <zipCode>4030</zipCode>
+		                           <!--Optional:-->
+		                           <city>LAGUNA</city>
+		                           <!--Optional:-->
+		                           <country>PHILIPPINES</country>
+		                           <!--Optional:-->
+		                           <state>LOS BANOS</state>
+		                        </address>
+                                    <!--Optional:-->
+                                    <customFields>
+                                       <!--Zero or more repetitions:-->
+                                       <customField code="CF_BA" description="?">
+                                          <!--Optional:-->
+                                          <stringValue>BA</stringValue>
+                                       </customField>
+                                    </customFields>
+                                    <billingCycle>CYC_INV_MT_1</billingCycle>
+                                    <country>US</country>
+                                    <language>ENG</language>
+                                    <paymentMethod>CHECK</paymentMethod>
+                                    <!--Optional:-->
+                                    <nextInvoiceDate>${#TestSuite#date}</nextInvoiceDate>
+                                    <!--Optional:-->
+                                    <subscriptionDate>${#TestSuite#date}</subscriptionDate>
+                                    <!--Optional:-->
+                                    <paymentTerms>CASH</paymentTerms>
+                                    <!--Optional:-->
+                                    <electronicBilling>true</electronicBilling>
+                                    <!--Optional:-->
+                                    <email>edward.legaspi@manaty.net</email>
+                                    <!--Optional:-->
+                                    <bankCoordinates>
+                                       <!--Optional:-->
+                                       <bankCode>BPI</bankCode>
+                                       <!--Optional:-->
+                                       <branchCode>LB</branchCode>
+                                       <!--Optional:-->
+                                       <accountNumber>1234</accountNumber>
+                                       <!--Optional:-->
+                                       <key>1234</key>
+                                       <!--Optional:-->
+                                       <iban>1234</iban>
+                                       <!--Optional:-->
+                                       <bic>1234</bic>
+                                       <!--Optional:-->
+                                       <accountOwner>Edward P. Legaspi</accountOwner>
+                                       <!--Optional:-->
+                                       <bankName>Bank of the Philippine Islands</bankName>
+                                       <!--Optional:-->
+                                       <bankId>BPI</bankId>
+                                       <!--Optional:-->
+                                       <issuerNumber>1</issuerNumber>
+                                       <!--Optional:-->
+                                       <issuerName>BPI</issuerName>
+                                       <!--Optional:-->
+                                       <ics>NA</ics>
+                                    </bankCoordinates>
+                                    <!--Optional:-->
+                                    <userAccounts>
+                                       <!--Zero or more repetitions:-->
+                                       <userAccount code="${#TestSuite#ticket}_${#TestCase#index}_UA" description="${#TestSuite#ticket}_${#TestCase#index}_UA">
+                                          <!--Optional:-->
+                                          <externalRef1>1</externalRef1>
+                                          <!--Optional:-->
+                                          <externalRef2>1</externalRef2>
+                                          <!--Optional:-->
+                                          <name>
+				                           <!--Optional:-->
+				                           <title>M</title>
+				                           <!--Optional:-->
+				                           <firstName>EDWARD</firstName>
+				                           <lastName>LEGASPI</lastName>
+				                        </name>
+				                        <!--Optional:-->
+				                        <address>
+				                           <!--Optional:-->
+				                           <address1>BAYBAYIN LOS BANOS</address1>
+				                           <!--Optional:-->
+				                           <address2>BAYBAYIN LOS BANOS</address2>
+				                           <!--Optional:-->
+				                           <address3>BAYBAYIN LOS BANOS</address3>
+				                           <!--Optional:-->
+				                           <zipCode>4030</zipCode>
+				                           <!--Optional:-->
+				                           <city>LAGUNA</city>
+				                           <!--Optional:-->
+				                           <country>PHILIPPINES</country>
+				                           <!--Optional:-->
+				                           <state>LOS BANOS</state>
+				                        </address>
+                                          <!--Optional:-->
+                                          <customFields>
+                                             <!--Zero or more repetitions:-->
+                                             <customField code="CF_UA" description="CF_UA">
+                                                <!--Optional:-->
+                                                <stringValue>UA</stringValue>
+                                             </customField>
+                                          </customFields>
+                                          <!--Optional:-->
+                                          <subscriptionDate>${#TestSuite#date}</subscriptionDate>
+                                          
+                                          <!--Optional:-->
+                                          <subscriptions>
+                                             <!--Zero or more repetitions:-->
+                                             <subscription code="${#TestSuite#ticket}_${#TestCase#index}_SUB" description="${#TestSuite#ticket}_${#TestCase#index}_SUB">
+                                                <userAccount>?</userAccount>
+                                                <offerTemplate>${#TestSuite#ticket}_OFFER1</offerTemplate>
+                                                <subscriptionDate>${#TestSuite#date}</subscriptionDate>
+                                                <!--Optional:-->
+                                                <customFields>
+                                                   <!--Zero or more repetitions:-->
+                                                   <customField code="CF_SUB" description="CF_SUB">
+                                                      <!--Optional:-->
+                                                      <stringValue>SUB</stringValue>
+                                                   </customField>
+                                                </customFields>
+                                                <!--Optional:-->
+                                                <accesses>
+                                                   <!--Zero or more repetitions:-->
+                                                   <access code="?">
+                                                      <subscription>${#TestSuite#ticket}_${#TestCase#index}_SUB</subscription>
+                                                      <!--Optional:-->
+                                                      <startDate>${#TestSuite#date}</startDate>                                                    
+                                                   </access>
+                                                </accesses>
+                                                <!--Optional:-->
+                                                <services>
+                                                   <!--Zero or more repetitions:-->
+                                                   <serviceInstance code="${#TestSuite#ticket}_SERVICE1">
+                                                      <subscriptionDate>${#TestSuite#date}</subscriptionDate>
+                                                      <!--Optional:-->
+                                                      <quantity>1</quantity>
+                                                   </serviceInstance>
+                                                </services>
+                                             </subscription>
+                                          </subscriptions>
+                                       </userAccount>
+                                    </userAccounts>
+                                 </billingAccount>
+                              </billingAccounts>
+                           </customerAccount>
+                        </customerAccounts>
+                     </customer>
+                  </customers>
+               </seller>
+            </sellers>
+         </customerHierarchy>
+      </ws:customerHierarchyUpdate>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response"/><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:preemptive>true</con:preemptive><con:authType>Preemptive</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Terminate ba"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>customerHierarchyUpdate</con:operation><con:request name="Terminate ba"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:customerHierarchyUpdate>
+         <!--Optional:-->
+         <customerHierarchy>
+            <sellers>
+               <!--Zero or more repetitions:-->
+               <seller code="${#TestSuite#ticket}_${#TestCase#index}_SELLER" description="${#TestSuite#ticket}_${#TestCase#index}_SELLER">              
+                  <customers>
+                     <!--Zero or more repetitions:-->
+                     <customer code="${#TestSuite#ticket}_${#TestCase#index}_CUST" description="${#TestSuite#ticket}_${#TestCase#index}_CUST">                        
+                        <customerAccounts>
+                           <!--Zero or more repetitions:-->
+                           <customerAccount code="${#TestSuite#ticket}_${#TestCase#index}_CA" description="${#TestSuite#ticket}_${#TestCase#index}_CA">                              
+                              <billingAccounts>
+                                 <!--Zero or more repetitions:-->
+                                 <billingAccount code="${#TestSuite#ticket}_${#TestCase#index}_BA" description="${#TestSuite#ticket}_${#TestCase#index}_BA">                                                                   
+                                 	<terminationReason>${#TestSuite#terminationReason}</terminationReason>
+                                 	<terminationDate>${#TestSuite#date}</terminationDate>
+                                 </billingAccount>
+                              </billingAccounts>
+                           </customerAccount>
+                        </customerAccounts>
+                     </customer>
+                  </customers>
+               </seller>
+            </sellers>
+         </customerHierarchy>
+      </ws:customerHierarchyUpdate>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response"/><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:preemptive>true</con:preemptive><con:authType>Preemptive</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties><con:property><con:name>index</con:name><con:value>3</con:value></con:property></con:properties></con:testCase><con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="4 - Terminate ua" searchProperties="true"><con:settings/><con:testStep type="request" name="Hierarchy update"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>customerHierarchyUpdate</con:operation><con:request name="Hierarchy update"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:customerHierarchyUpdate>
+         <!--Optional:-->
+         <customerHierarchy>
+            <sellers>
+               <!--Zero or more repetitions:-->
+               <seller code="${#TestSuite#ticket}_${#TestCase#index}_SELLER" description="${#TestSuite#ticket}_${#TestCase#index}_SELLER">
+                  <!--Optional:-->
+                  <invoicePrefix>E_</invoicePrefix>
+                  <!--Optional:-->
+                  <currencyCode>USD</currencyCode>
+                  <!--Optional:-->
+                  <countryCode>USD</countryCode>
+                  <!--Optional:-->
+                  <languageCode>ENG</languageCode>
+                  <!--Optional:-->
+                  <parentSeller></parentSeller>
+                  <!--Optional:-->
+                  <customers>
+                     <!--Zero or more repetitions:-->
+                     <customer code="${#TestSuite#ticket}_${#TestCase#index}_CUST" description="${#TestSuite#ticket}_${#TestCase#index}_CUST">
+                        <!--Optional:-->
+                        <externalRef1>1</externalRef1>
+                        <!--Optional:-->
+                        <externalRef2>1</externalRef2>
+                        <!--Optional:-->
+                        <name>
+                           <!--Optional:-->
+                           <title>M</title>
+                           <!--Optional:-->
+                           <firstName>EDWARD</firstName>
+                           <lastName>LEGASPI</lastName>
+                        </name>
+                        <!--Optional:-->
+                        <address>
+                           <!--Optional:-->
+                           <address1>BAYBAYIN LOS BANOS</address1>
+                           <!--Optional:-->
+                           <address2>BAYBAYIN LOS BANOS</address2>
+                           <!--Optional:-->
+                           <address3>BAYBAYIN LOS BANOS</address3>
+                           <!--Optional:-->
+                           <zipCode>4030</zipCode>
+                           <!--Optional:-->
+                           <city>LAGUNA</city>
+                           <!--Optional:-->
+                           <country>PHILIPPINES</country>
+                           <!--Optional:-->
+                           <state>LOS BANOS</state>
+                        </address>
+                        <!--Optional:-->
+                        <customFields>
+                           <!--Zero or more repetitions:-->
+                           <customField code="CF_CUST" description="${#TestSuite#ticket}_${#TestCase#index}_CUST">
+                              <!--Optional:-->
+                              <stringValue>${#TestSuite#ticket}_${#TestCase#index}_VAL</stringValue>
+                           </customField>
+                        </customFields>
+                        <customerCategory>CLIENT</customerCategory>
+                        <customerBrand>DEFAULT</customerBrand>
+                        <!--Optional:-->
+                        <mandateIdentification>M1</mandateIdentification>
+                        <!--Optional:-->
+                        <mandateDate>${#TestSuite#date}</mandateDate>
+                        <!--Optional:-->
+                        <contactInformation>
+                           <!--Optional:-->
+                           <email>edward.legaspi@manaty.net</email>
+                           <!--Optional:-->
+                           <phone>1234</phone>
+                           <!--Optional:-->
+                           <mobile>092152154716</mobile>
+                           <!--Optional:-->
+                           <fax>1234</fax>
+                        </contactInformation>
+                        <!--Optional:-->
+                        <customerAccounts>
+                           <!--Zero or more repetitions:-->
+                           <customerAccount code="${#TestSuite#ticket}_${#TestCase#index}_CA" description="${#TestSuite#ticket}_${#TestCase#index}_CA">
+                              <!--Optional:-->
+                              <externalRef1>1</externalRef1>
+                              <!--Optional:-->
+                              <externalRef2>1</externalRef2>
+                              <!--Optional:-->
+                              <name>
+	                           <!--Optional:-->
+	                           <title>M</title>
+	                           <!--Optional:-->
+	                           <firstName>EDWARD</firstName>
+	                           <lastName>LEGASPI</lastName>
+	                        </name>
+	                        <!--Optional:-->
+	                        <address>
+	                           <!--Optional:-->
+	                           <address1>BAYBAYIN LOS BANOS</address1>
+	                           <!--Optional:-->
+	                           <address2>BAYBAYIN LOS BANOS</address2>
+	                           <!--Optional:-->
+	                           <address3>BAYBAYIN LOS BANOS</address3>
+	                           <!--Optional:-->
+	                           <zipCode>4030</zipCode>
+	                           <!--Optional:-->
+	                           <city>LAGUNA</city>
+	                           <!--Optional:-->
+	                           <country>PHILIPPINES</country>
+	                           <!--Optional:-->
+	                           <state>LOS BANOS</state>
+	                        </address>
+                              <!--Optional:-->
+                              <customFields>
+                                 <!--Zero or more repetitions:-->
+                                 <customField code="CF_CA" description="CF_CA">
+                                    <!--Optional:-->
+                                    <stringValue>CA</stringValue>
+                                 </customField>
+                              </customFields>
+                              <currency>USD</currency>
+                              <language>ENG</language>
+                              <!--Optional:-->
+                              <paymentMethod>CHECK</paymentMethod>
+                              <!--Optional:-->
+                              <creditCategory>NEWCUSTOMER</creditCategory>
+                              <!--Optional:-->
+                              <dateStatus>${#TestSuite#date}</dateStatus>
+                              <!--Optional:-->
+                              <dateDunningLevel>${#TestSuite#date}</dateDunningLevel>
+                              <!--Optional:-->
+                              <contactInformation>
+		                      <!--Optional:-->
+		                      <email>edward.legaspi@manaty.net</email>
+		                      <!--Optional:-->
+		                      <phone>1234</phone>
+		                      <!--Optional:-->
+		                      <mobile>092152154716</mobile>
+		                      <!--Optional:-->
+		                      <fax>1234</fax>
+		                   </contactInformation>
+                              <!--Optional:-->
+                              <dunningLevel>R0</dunningLevel>
+                              <!--Optional:-->
+                              <mandateIdentification>1234</mandateIdentification>
+                              <!--Optional:-->
+                              <mandateDate>${#TestSuite#date}</mandateDate>
+                              <!--Optional:-->
+                              <billingAccounts>
+                                 <!--Zero or more repetitions:-->
+                                 <billingAccount code="${#TestSuite#ticket}_${#TestCase#index}_BA" description="${#TestSuite#ticket}_${#TestCase#index}_BA">
+                                    <!--Optional:-->
+                                    <externalRef1>1</externalRef1>
+                                    <!--Optional:-->
+                                    <externalRef2>1</externalRef2>
+                                    <!--Optional:-->
+                                    <name>
+		                           <!--Optional:-->
+		                           <title>M</title>
+		                           <!--Optional:-->
+		                           <firstName>EDWARD</firstName>
+		                           <lastName>LEGASPI</lastName>
+		                        </name>
+		                        <!--Optional:-->
+		                        <address>
+		                           <!--Optional:-->
+		                           <address1>BAYBAYIN LOS BANOS</address1>
+		                           <!--Optional:-->
+		                           <address2>BAYBAYIN LOS BANOS</address2>
+		                           <!--Optional:-->
+		                           <address3>BAYBAYIN LOS BANOS</address3>
+		                           <!--Optional:-->
+		                           <zipCode>4030</zipCode>
+		                           <!--Optional:-->
+		                           <city>LAGUNA</city>
+		                           <!--Optional:-->
+		                           <country>PHILIPPINES</country>
+		                           <!--Optional:-->
+		                           <state>LOS BANOS</state>
+		                        </address>
+                                    <!--Optional:-->
+                                    <customFields>
+                                       <!--Zero or more repetitions:-->
+                                       <customField code="CF_BA" description="?">
+                                          <!--Optional:-->
+                                          <stringValue>BA</stringValue>
+                                       </customField>
+                                    </customFields>
+                                    <billingCycle>CYC_INV_MT_1</billingCycle>
+                                    <country>US</country>
+                                    <language>ENG</language>
+                                    <paymentMethod>CHECK</paymentMethod>
+                                    <!--Optional:-->
+                                    <nextInvoiceDate>${#TestSuite#date}</nextInvoiceDate>
+                                    <!--Optional:-->
+                                    <subscriptionDate>${#TestSuite#date}</subscriptionDate>
+                                    <!--Optional:-->
+                                    <paymentTerms>CASH</paymentTerms>
+                                    <!--Optional:-->
+                                    <electronicBilling>true</electronicBilling>
+                                    <!--Optional:-->
+                                    <email>edward.legaspi@manaty.net</email>
+                                    <!--Optional:-->
+                                    <bankCoordinates>
+                                       <!--Optional:-->
+                                       <bankCode>BPI</bankCode>
+                                       <!--Optional:-->
+                                       <branchCode>LB</branchCode>
+                                       <!--Optional:-->
+                                       <accountNumber>1234</accountNumber>
+                                       <!--Optional:-->
+                                       <key>1234</key>
+                                       <!--Optional:-->
+                                       <iban>1234</iban>
+                                       <!--Optional:-->
+                                       <bic>1234</bic>
+                                       <!--Optional:-->
+                                       <accountOwner>Edward P. Legaspi</accountOwner>
+                                       <!--Optional:-->
+                                       <bankName>Bank of the Philippine Islands</bankName>
+                                       <!--Optional:-->
+                                       <bankId>BPI</bankId>
+                                       <!--Optional:-->
+                                       <issuerNumber>1</issuerNumber>
+                                       <!--Optional:-->
+                                       <issuerName>BPI</issuerName>
+                                       <!--Optional:-->
+                                       <ics>NA</ics>
+                                    </bankCoordinates>
+                                    <!--Optional:-->
+                                    <userAccounts>
+                                       <!--Zero or more repetitions:-->
+                                       <userAccount code="${#TestSuite#ticket}_${#TestCase#index}_UA" description="${#TestSuite#ticket}_${#TestCase#index}_UA">
+                                          <!--Optional:-->
+                                          <externalRef1>1</externalRef1>
+                                          <!--Optional:-->
+                                          <externalRef2>1</externalRef2>
+                                          <!--Optional:-->
+                                          <name>
+				                           <!--Optional:-->
+				                           <title>M</title>
+				                           <!--Optional:-->
+				                           <firstName>EDWARD</firstName>
+				                           <lastName>LEGASPI</lastName>
+				                        </name>
+				                        <!--Optional:-->
+				                        <address>
+				                           <!--Optional:-->
+				                           <address1>BAYBAYIN LOS BANOS</address1>
+				                           <!--Optional:-->
+				                           <address2>BAYBAYIN LOS BANOS</address2>
+				                           <!--Optional:-->
+				                           <address3>BAYBAYIN LOS BANOS</address3>
+				                           <!--Optional:-->
+				                           <zipCode>4030</zipCode>
+				                           <!--Optional:-->
+				                           <city>LAGUNA</city>
+				                           <!--Optional:-->
+				                           <country>PHILIPPINES</country>
+				                           <!--Optional:-->
+				                           <state>LOS BANOS</state>
+				                        </address>
+                                          <!--Optional:-->
+                                          <customFields>
+                                             <!--Zero or more repetitions:-->
+                                             <customField code="CF_UA" description="CF_UA">
+                                                <!--Optional:-->
+                                                <stringValue>UA</stringValue>
+                                             </customField>
+                                          </customFields>
+                                          <!--Optional:-->
+                                          <subscriptionDate>${#TestSuite#date}</subscriptionDate>
+                                          
+                                          <!--Optional:-->
+                                          <subscriptions>
+                                             <!--Zero or more repetitions:-->
+                                             <subscription code="${#TestSuite#ticket}_${#TestCase#index}_SUB" description="${#TestSuite#ticket}_${#TestCase#index}_SUB">
+                                                <userAccount>?</userAccount>
+                                                <offerTemplate>${#TestSuite#ticket}_OFFER1</offerTemplate>
+                                                <subscriptionDate>${#TestSuite#date}</subscriptionDate>
+                                                <!--Optional:-->
+                                                <customFields>
+                                                   <!--Zero or more repetitions:-->
+                                                   <customField code="CF_SUB" description="CF_SUB">
+                                                      <!--Optional:-->
+                                                      <stringValue>SUB</stringValue>
+                                                   </customField>
+                                                </customFields>
+                                                <!--Optional:-->
+                                                <accesses>
+                                                   <!--Zero or more repetitions:-->
+                                                   <access code="?">
+                                                      <subscription>${#TestSuite#ticket}_${#TestCase#index}_SUB</subscription>
+                                                      <!--Optional:-->
+                                                      <startDate>${#TestSuite#date}</startDate>
+                                                   </access>
+                                                </accesses>
+                                                <!--Optional:-->
+                                                <services>
+                                                   <!--Zero or more repetitions:-->
+                                                   <serviceInstance code="${#TestSuite#ticket}_SERVICE1">
+                                                      <subscriptionDate>${#TestSuite#date}</subscriptionDate>
+                                                      <!--Optional:-->
+                                                      <quantity>1</quantity>
+                                                   </serviceInstance>
+                                                </services>
+                                             </subscription>
+                                          </subscriptions>
+                                       </userAccount>
+                                    </userAccounts>
+                                 </billingAccount>
+                              </billingAccounts>
+                           </customerAccount>
+                        </customerAccounts>
+                     </customer>
+                  </customers>
+               </seller>
+            </sellers>
+         </customerHierarchy>
+      </ws:customerHierarchyUpdate>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response"/><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:preemptive>true</con:preemptive><con:authType>Preemptive</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Terminate ua"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>customerHierarchyUpdate</con:operation><con:request name="Terminate ua"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:customerHierarchyUpdate>
+         <!--Optional:-->
+         <customerHierarchy>
+            <sellers>
+               <!--Zero or more repetitions:-->
+               <seller code="${#TestSuite#ticket}_${#TestCase#index}_SELLER" description="${#TestSuite#ticket}_${#TestCase#index}_SELLER">                 
+                  <customers>
+                     <!--Zero or more repetitions:-->
+                     <customer code="${#TestSuite#ticket}_${#TestCase#index}_CUST" description="${#TestSuite#ticket}_${#TestCase#index}_CUST">                        
+                        <customerAccounts>
+                           <!--Zero or more repetitions:-->
+                           <customerAccount code="${#TestSuite#ticket}_${#TestCase#index}_CA" description="${#TestSuite#ticket}_${#TestCase#index}_CA">                          
+                              <billingAccounts>
+                                 <!--Zero or more repetitions:-->
+                                 <billingAccount code="${#TestSuite#ticket}_${#TestCase#index}_BA" description="${#TestSuite#ticket}_${#TestCase#index}_BA">                                   
+                                    <userAccounts>
+                                       <!--Zero or more repetitions:-->
+                                       <userAccount code="${#TestSuite#ticket}_${#TestCase#index}_UA" description="${#TestSuite#ticket}_${#TestCase#index}_UA">
+                                          <terminationReason>${#TestSuite#terminationReason}</terminationReason>
+                                          <terminationDate>${#TestSuite#date}</terminationDate>
+                                       </userAccount>
+                                    </userAccounts>
+                                 </billingAccount>
+                              </billingAccounts>
+                           </customerAccount>
+                        </customerAccounts>
+                     </customer>
+                  </customers>
+               </seller>
+            </sellers>
+         </customerHierarchy>
+      </ws:customerHierarchyUpdate>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response"/><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:preemptive>true</con:preemptive><con:authType>Preemptive</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties><con:property><con:name>index</con:name><con:value>4</con:value></con:property></con:properties></con:testCase><con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="5 - Terminate subscription" searchProperties="true"><con:settings/><con:testStep type="request" name="Hierarchy update"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>customerHierarchyUpdate</con:operation><con:request name="Hierarchy update"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:customerHierarchyUpdate>
+         <!--Optional:-->
+         <customerHierarchy>
+            <sellers>
+               <!--Zero or more repetitions:-->
+               <seller code="${#TestSuite#ticket}_${#TestCase#index}_SELLER" description="${#TestSuite#ticket}_${#TestCase#index}_SELLER">
+                  <!--Optional:-->
+                  <invoicePrefix>E_</invoicePrefix>
+                  <!--Optional:-->
+                  <currencyCode>USD</currencyCode>
+                  <!--Optional:-->
+                  <countryCode>USD</countryCode>
+                  <!--Optional:-->
+                  <languageCode>ENG</languageCode>
+                  <!--Optional:-->
+                  <parentSeller></parentSeller>
+                  <!--Optional:-->
+                  <customers>
+                     <!--Zero or more repetitions:-->
+                     <customer code="${#TestSuite#ticket}_${#TestCase#index}_CUST" description="${#TestSuite#ticket}_${#TestCase#index}_CUST">
+                        <!--Optional:-->
+                        <externalRef1>1</externalRef1>
+                        <!--Optional:-->
+                        <externalRef2>1</externalRef2>
+                        <!--Optional:-->
+                        <name>
+                           <!--Optional:-->
+                           <title>M</title>
+                           <!--Optional:-->
+                           <firstName>EDWARD</firstName>
+                           <lastName>LEGASPI</lastName>
+                        </name>
+                        <!--Optional:-->
+                        <address>
+                           <!--Optional:-->
+                           <address1>BAYBAYIN LOS BANOS</address1>
+                           <!--Optional:-->
+                           <address2>BAYBAYIN LOS BANOS</address2>
+                           <!--Optional:-->
+                           <address3>BAYBAYIN LOS BANOS</address3>
+                           <!--Optional:-->
+                           <zipCode>4030</zipCode>
+                           <!--Optional:-->
+                           <city>LAGUNA</city>
+                           <!--Optional:-->
+                           <country>PHILIPPINES</country>
+                           <!--Optional:-->
+                           <state>LOS BANOS</state>
+                        </address>
+                        <!--Optional:-->
+                        <customFields>
+                           <!--Zero or more repetitions:-->
+                           <customField code="CF_CUST" description="${#TestSuite#ticket}_${#TestCase#index}_CUST">
+                              <!--Optional:-->
+                              <stringValue>${#TestSuite#ticket}_${#TestCase#index}_VAL</stringValue>
+                           </customField>
+                        </customFields>
+                        <customerCategory>CLIENT</customerCategory>
+                        <customerBrand>DEFAULT</customerBrand>
+                        <!--Optional:-->
+                        <mandateIdentification>M1</mandateIdentification>
+                        <!--Optional:-->
+                        <mandateDate>${#TestSuite#date}</mandateDate>
+                        <!--Optional:-->
+                        <contactInformation>
+                           <!--Optional:-->
+                           <email>edward.legaspi@manaty.net</email>
+                           <!--Optional:-->
+                           <phone>1234</phone>
+                           <!--Optional:-->
+                           <mobile>092152154716</mobile>
+                           <!--Optional:-->
+                           <fax>1234</fax>
+                        </contactInformation>
+                        <!--Optional:-->
+                        <customerAccounts>
+                           <!--Zero or more repetitions:-->
+                           <customerAccount code="${#TestSuite#ticket}_${#TestCase#index}_CA" description="${#TestSuite#ticket}_${#TestCase#index}_CA">
+                              <!--Optional:-->
+                              <externalRef1>1</externalRef1>
+                              <!--Optional:-->
+                              <externalRef2>1</externalRef2>
+                              <!--Optional:-->
+                              <name>
+	                           <!--Optional:-->
+	                           <title>M</title>
+	                           <!--Optional:-->
+	                           <firstName>EDWARD</firstName>
+	                           <lastName>LEGASPI</lastName>
+	                        </name>
+	                        <!--Optional:-->
+	                        <address>
+	                           <!--Optional:-->
+	                           <address1>BAYBAYIN LOS BANOS</address1>
+	                           <!--Optional:-->
+	                           <address2>BAYBAYIN LOS BANOS</address2>
+	                           <!--Optional:-->
+	                           <address3>BAYBAYIN LOS BANOS</address3>
+	                           <!--Optional:-->
+	                           <zipCode>4030</zipCode>
+	                           <!--Optional:-->
+	                           <city>LAGUNA</city>
+	                           <!--Optional:-->
+	                           <country>PHILIPPINES</country>
+	                           <!--Optional:-->
+	                           <state>LOS BANOS</state>
+	                        </address>
+                              <!--Optional:-->
+                              <customFields>
+                                 <!--Zero or more repetitions:-->
+                                 <customField code="CF_CA" description="CF_CA">
+                                    <!--Optional:-->
+                                    <stringValue>CA</stringValue>
+                                 </customField>
+                              </customFields>
+                              <currency>USD</currency>
+                              <language>ENG</language>
+                              <!--Optional:-->
+                              <paymentMethod>CHECK</paymentMethod>
+                              <!--Optional:-->
+                              <creditCategory>NEWCUSTOMER</creditCategory>
+                              <!--Optional:-->
+                              <dateStatus>${#TestSuite#date}</dateStatus>
+                              <!--Optional:-->
+                              <dateDunningLevel>${#TestSuite#date}</dateDunningLevel>
+                              <!--Optional:-->
+                              <contactInformation>
+		                      <!--Optional:-->
+		                      <email>edward.legaspi@manaty.net</email>
+		                      <!--Optional:-->
+		                      <phone>1234</phone>
+		                      <!--Optional:-->
+		                      <mobile>092152154716</mobile>
+		                      <!--Optional:-->
+		                      <fax>1234</fax>
+		                   </contactInformation>
+                              <!--Optional:-->
+                              <dunningLevel>R0</dunningLevel>
+                              <!--Optional:-->
+                              <mandateIdentification>1234</mandateIdentification>
+                              <!--Optional:-->
+                              <mandateDate>${#TestSuite#date}</mandateDate>
+                              <!--Optional:-->
+                              <billingAccounts>
+                                 <!--Zero or more repetitions:-->
+                                 <billingAccount code="${#TestSuite#ticket}_${#TestCase#index}_BA" description="${#TestSuite#ticket}_${#TestCase#index}_BA">
+                                    <!--Optional:-->
+                                    <externalRef1>1</externalRef1>
+                                    <!--Optional:-->
+                                    <externalRef2>1</externalRef2>
+                                    <!--Optional:-->
+                                    <name>
+		                           <!--Optional:-->
+		                           <title>M</title>
+		                           <!--Optional:-->
+		                           <firstName>EDWARD</firstName>
+		                           <lastName>LEGASPI</lastName>
+		                        </name>
+		                        <!--Optional:-->
+		                        <address>
+		                           <!--Optional:-->
+		                           <address1>BAYBAYIN LOS BANOS</address1>
+		                           <!--Optional:-->
+		                           <address2>BAYBAYIN LOS BANOS</address2>
+		                           <!--Optional:-->
+		                           <address3>BAYBAYIN LOS BANOS</address3>
+		                           <!--Optional:-->
+		                           <zipCode>4030</zipCode>
+		                           <!--Optional:-->
+		                           <city>LAGUNA</city>
+		                           <!--Optional:-->
+		                           <country>PHILIPPINES</country>
+		                           <!--Optional:-->
+		                           <state>LOS BANOS</state>
+		                        </address>
+                                    <!--Optional:-->
+                                    <customFields>
+                                       <!--Zero or more repetitions:-->
+                                       <customField code="CF_BA" description="?">
+                                          <!--Optional:-->
+                                          <stringValue>BA</stringValue>
+                                       </customField>
+                                    </customFields>
+                                    <billingCycle>CYC_INV_MT_1</billingCycle>
+                                    <country>US</country>
+                                    <language>ENG</language>
+                                    <paymentMethod>CHECK</paymentMethod>
+                                    <!--Optional:-->
+                                    <nextInvoiceDate>${#TestSuite#date}</nextInvoiceDate>
+                                    <!--Optional:-->
+                                    <subscriptionDate>${#TestSuite#date}</subscriptionDate>
+                                    <!--Optional:-->
+                                    <paymentTerms>CASH</paymentTerms>
+                                    <!--Optional:-->
+                                    <electronicBilling>true</electronicBilling>
+                                    <!--Optional:-->
+                                    <email>edward.legaspi@manaty.net</email>
+                                    <!--Optional:-->
+                                    <bankCoordinates>
+                                       <!--Optional:-->
+                                       <bankCode>BPI</bankCode>
+                                       <!--Optional:-->
+                                       <branchCode>LB</branchCode>
+                                       <!--Optional:-->
+                                       <accountNumber>1234</accountNumber>
+                                       <!--Optional:-->
+                                       <key>1234</key>
+                                       <!--Optional:-->
+                                       <iban>1234</iban>
+                                       <!--Optional:-->
+                                       <bic>1234</bic>
+                                       <!--Optional:-->
+                                       <accountOwner>Edward P. Legaspi</accountOwner>
+                                       <!--Optional:-->
+                                       <bankName>Bank of the Philippine Islands</bankName>
+                                       <!--Optional:-->
+                                       <bankId>BPI</bankId>
+                                       <!--Optional:-->
+                                       <issuerNumber>1</issuerNumber>
+                                       <!--Optional:-->
+                                       <issuerName>BPI</issuerName>
+                                       <!--Optional:-->
+                                       <ics>NA</ics>
+                                    </bankCoordinates>
+                                    <!--Optional:-->
+                                    <userAccounts>
+                                       <!--Zero or more repetitions:-->
+                                       <userAccount code="${#TestSuite#ticket}_${#TestCase#index}_UA" description="${#TestSuite#ticket}_${#TestCase#index}_UA">
+                                          <!--Optional:-->
+                                          <externalRef1>1</externalRef1>
+                                          <!--Optional:-->
+                                          <externalRef2>1</externalRef2>
+                                          <!--Optional:-->
+                                          <name>
+				                           <!--Optional:-->
+				                           <title>M</title>
+				                           <!--Optional:-->
+				                           <firstName>EDWARD</firstName>
+				                           <lastName>LEGASPI</lastName>
+				                        </name>
+				                        <!--Optional:-->
+				                        <address>
+				                           <!--Optional:-->
+				                           <address1>BAYBAYIN LOS BANOS</address1>
+				                           <!--Optional:-->
+				                           <address2>BAYBAYIN LOS BANOS</address2>
+				                           <!--Optional:-->
+				                           <address3>BAYBAYIN LOS BANOS</address3>
+				                           <!--Optional:-->
+				                           <zipCode>4030</zipCode>
+				                           <!--Optional:-->
+				                           <city>LAGUNA</city>
+				                           <!--Optional:-->
+				                           <country>PHILIPPINES</country>
+				                           <!--Optional:-->
+				                           <state>LOS BANOS</state>
+				                        </address>
+                                          <!--Optional:-->
+                                          <customFields>
+                                             <!--Zero or more repetitions:-->
+                                             <customField code="CF_UA" description="CF_UA">
+                                                <!--Optional:-->
+                                                <stringValue>UA</stringValue>
+                                             </customField>
+                                          </customFields>
+                                          <!--Optional:-->
+                                          <subscriptionDate>${#TestSuite#date}</subscriptionDate>
+                                          
+                                          <!--Optional:-->
+                                          <subscriptions>
+                                             <!--Zero or more repetitions:-->
+                                             <subscription code="${#TestSuite#ticket}_${#TestCase#index}_SUB" description="${#TestSuite#ticket}_${#TestCase#index}_SUB">
+                                                <userAccount>?</userAccount>
+                                                <offerTemplate>${#TestSuite#ticket}_OFFER1</offerTemplate>
+                                                <subscriptionDate>${#TestSuite#date}</subscriptionDate>
+                                                <!--Optional:-->
+                                                <customFields>
+                                                   <!--Zero or more repetitions:-->
+                                                   <customField code="CF_SUB" description="CF_SUB">
+                                                      <!--Optional:-->
+                                                      <stringValue>SUB</stringValue>
+                                                   </customField>
+                                                </customFields>
+                                                <!--Optional:-->
+                                                <accesses>
+                                                   <!--Zero or more repetitions:-->
+                                                   <access code="?">
+                                                      <subscription>${#TestSuite#ticket}_${#TestCase#index}_SUB</subscription>
+                                                      <!--Optional:-->
+                                                      <startDate>${#TestSuite#date}</startDate>
+                                                   </access>
+                                                </accesses>
+                                                <!--Optional:-->
+                                                <services>
+                                                   <!--Zero or more repetitions:-->
+                                                   <serviceInstance code="${#TestSuite#ticket}_SERVICE1">
+                                                      <subscriptionDate>${#TestSuite#date}</subscriptionDate>
+                                                      <!--Optional:-->
+                                                      <quantity>1</quantity>
+                                                   </serviceInstance>
+                                                </services>
+                                             </subscription>
+                                          </subscriptions>
+                                       </userAccount>
+                                    </userAccounts>
+                                 </billingAccount>
+                              </billingAccounts>
+                           </customerAccount>
+                        </customerAccounts>
+                     </customer>
+                  </customers>
+               </seller>
+            </sellers>
+         </customerHierarchy>
+      </ws:customerHierarchyUpdate>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response"/><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:preemptive>true</con:preemptive><con:authType>Preemptive</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Terminate subscription"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>customerHierarchyUpdate</con:operation><con:request name="Terminate subscription"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:customerHierarchyUpdate>
+         <!--Optional:-->
+         <customerHierarchy>
+            <sellers>
+               <!--Zero or more repetitions:-->
+               <seller code="${#TestSuite#ticket}_${#TestCase#index}_SELLER" description="${#TestSuite#ticket}_${#TestCase#index}_SELLER">                 
+                  <customers>
+                     <!--Zero or more repetitions:-->
+                     <customer code="${#TestSuite#ticket}_${#TestCase#index}_CUST" description="${#TestSuite#ticket}_${#TestCase#index}_CUST">                        
+                        <customerAccounts>
+                           <!--Zero or more repetitions:-->
+                           <customerAccount code="${#TestSuite#ticket}_${#TestCase#index}_CA" description="${#TestSuite#ticket}_${#TestCase#index}_CA">                          
+                              <billingAccounts>
+                                 <!--Zero or more repetitions:-->
+                                 <billingAccount code="${#TestSuite#ticket}_${#TestCase#index}_BA" description="${#TestSuite#ticket}_${#TestCase#index}_BA">                                   
+                                    <userAccounts>
+                                       <!--Zero or more repetitions:-->
+                                       <userAccount code="${#TestSuite#ticket}_${#TestCase#index}_UA" description="${#TestSuite#ticket}_${#TestCase#index}_UA">
+                                       	  <!--Optional:-->
+                                          <subscriptions>
+                                             <!--Zero or more repetitions:-->
+                                             <subscription code="${#TestSuite#ticket}_${#TestCase#index}_SUB" description="${#TestSuite#ticket}_${#TestCase#index}_SUB">
+                                          		<terminationReason>${#TestSuite#terminationReason}</terminationReason>
+                                          		<terminationDate>${#TestSuite#date}</terminationDate>
+                                          	</subscription>
+                                          </subscriptions>
+                                       </userAccount>
+                                    </userAccounts>
+                                 </billingAccount>
+                              </billingAccounts>
+                           </customerAccount>
+                        </customerAccounts>
+                     </customer>
+                  </customers>
+               </seller>
+            </sellers>
+         </customerHierarchy>
+      </ws:customerHierarchyUpdate>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response"/><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:preemptive>true</con:preemptive><con:authType>Preemptive</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties><con:property><con:name>index</con:name><con:value>5</con:value></con:property></con:properties></con:testCase><con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="6 - Terminate service" searchProperties="true"><con:settings/><con:testStep type="request" name="Hierarchy update"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>customerHierarchyUpdate</con:operation><con:request name="Hierarchy update"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:customerHierarchyUpdate>
+         <!--Optional:-->
+         <customerHierarchy>
+            <sellers>
+               <!--Zero or more repetitions:-->
+               <seller code="${#TestSuite#ticket}_${#TestCase#index}_SELLER" description="${#TestSuite#ticket}_${#TestCase#index}_SELLER">
+                  <!--Optional:-->
+                  <invoicePrefix>E_</invoicePrefix>
+                  <!--Optional:-->
+                  <currencyCode>USD</currencyCode>
+                  <!--Optional:-->
+                  <countryCode>USD</countryCode>
+                  <!--Optional:-->
+                  <languageCode>ENG</languageCode>
+                  <!--Optional:-->
+                  <parentSeller></parentSeller>
+                  <!--Optional:-->
+                  <customers>
+                     <!--Zero or more repetitions:-->
+                     <customer code="${#TestSuite#ticket}_${#TestCase#index}_CUST" description="${#TestSuite#ticket}_${#TestCase#index}_CUST">
+                        <!--Optional:-->
+                        <externalRef1>1</externalRef1>
+                        <!--Optional:-->
+                        <externalRef2>1</externalRef2>
+                        <!--Optional:-->
+                        <name>
+                           <!--Optional:-->
+                           <title>M</title>
+                           <!--Optional:-->
+                           <firstName>EDWARD</firstName>
+                           <lastName>LEGASPI</lastName>
+                        </name>
+                        <!--Optional:-->
+                        <address>
+                           <!--Optional:-->
+                           <address1>BAYBAYIN LOS BANOS</address1>
+                           <!--Optional:-->
+                           <address2>BAYBAYIN LOS BANOS</address2>
+                           <!--Optional:-->
+                           <address3>BAYBAYIN LOS BANOS</address3>
+                           <!--Optional:-->
+                           <zipCode>4030</zipCode>
+                           <!--Optional:-->
+                           <city>LAGUNA</city>
+                           <!--Optional:-->
+                           <country>PHILIPPINES</country>
+                           <!--Optional:-->
+                           <state>LOS BANOS</state>
+                        </address>
+                        <!--Optional:-->
+                        <customFields>
+                           <!--Zero or more repetitions:-->
+                           <customField code="CF_CUST" description="${#TestSuite#ticket}_${#TestCase#index}_CUST">
+                              <!--Optional:-->
+                              <stringValue>${#TestSuite#ticket}_${#TestCase#index}_VAL</stringValue>
+                           </customField>
+                        </customFields>
+                        <customerCategory>CLIENT</customerCategory>
+                        <customerBrand>DEFAULT</customerBrand>
+                        <!--Optional:-->
+                        <mandateIdentification>M1</mandateIdentification>
+                        <!--Optional:-->
+                        <mandateDate>${#TestSuite#date}</mandateDate>
+                        <!--Optional:-->
+                        <contactInformation>
+                           <!--Optional:-->
+                           <email>edward.legaspi@manaty.net</email>
+                           <!--Optional:-->
+                           <phone>1234</phone>
+                           <!--Optional:-->
+                           <mobile>092152154716</mobile>
+                           <!--Optional:-->
+                           <fax>1234</fax>
+                        </contactInformation>
+                        <!--Optional:-->
+                        <customerAccounts>
+                           <!--Zero or more repetitions:-->
+                           <customerAccount code="${#TestSuite#ticket}_${#TestCase#index}_CA" description="${#TestSuite#ticket}_${#TestCase#index}_CA">
+                              <!--Optional:-->
+                              <externalRef1>1</externalRef1>
+                              <!--Optional:-->
+                              <externalRef2>1</externalRef2>
+                              <!--Optional:-->
+                              <name>
+	                           <!--Optional:-->
+	                           <title>M</title>
+	                           <!--Optional:-->
+	                           <firstName>EDWARD</firstName>
+	                           <lastName>LEGASPI</lastName>
+	                        </name>
+	                        <!--Optional:-->
+	                        <address>
+	                           <!--Optional:-->
+	                           <address1>BAYBAYIN LOS BANOS</address1>
+	                           <!--Optional:-->
+	                           <address2>BAYBAYIN LOS BANOS</address2>
+	                           <!--Optional:-->
+	                           <address3>BAYBAYIN LOS BANOS</address3>
+	                           <!--Optional:-->
+	                           <zipCode>4030</zipCode>
+	                           <!--Optional:-->
+	                           <city>LAGUNA</city>
+	                           <!--Optional:-->
+	                           <country>PHILIPPINES</country>
+	                           <!--Optional:-->
+	                           <state>LOS BANOS</state>
+	                        </address>
+                              <!--Optional:-->
+                              <customFields>
+                                 <!--Zero or more repetitions:-->
+                                 <customField code="CF_CA" description="CF_CA">
+                                    <!--Optional:-->
+                                    <stringValue>CA</stringValue>
+                                 </customField>
+                              </customFields>
+                              <currency>USD</currency>
+                              <language>ENG</language>
+                              <!--Optional:-->
+                              <paymentMethod>CHECK</paymentMethod>
+                              <!--Optional:-->
+                              <creditCategory>NEWCUSTOMER</creditCategory>
+                              <!--Optional:-->
+                              <dateStatus>${#TestSuite#date}</dateStatus>
+                              <!--Optional:-->
+                              <dateDunningLevel>${#TestSuite#date}</dateDunningLevel>
+                              <!--Optional:-->
+                              <contactInformation>
+		                      <!--Optional:-->
+		                      <email>edward.legaspi@manaty.net</email>
+		                      <!--Optional:-->
+		                      <phone>1234</phone>
+		                      <!--Optional:-->
+		                      <mobile>092152154716</mobile>
+		                      <!--Optional:-->
+		                      <fax>1234</fax>
+		                   </contactInformation>
+                              <!--Optional:-->
+                              <dunningLevel>R0</dunningLevel>
+                              <!--Optional:-->
+                              <mandateIdentification>1234</mandateIdentification>
+                              <!--Optional:-->
+                              <mandateDate>${#TestSuite#date}</mandateDate>
+                              <!--Optional:-->
+                              <billingAccounts>
+                                 <!--Zero or more repetitions:-->
+                                 <billingAccount code="${#TestSuite#ticket}_${#TestCase#index}_BA" description="${#TestSuite#ticket}_${#TestCase#index}_BA">
+                                    <!--Optional:-->
+                                    <externalRef1>1</externalRef1>
+                                    <!--Optional:-->
+                                    <externalRef2>1</externalRef2>
+                                    <!--Optional:-->
+                                    <name>
+		                           <!--Optional:-->
+		                           <title>M</title>
+		                           <!--Optional:-->
+		                           <firstName>EDWARD</firstName>
+		                           <lastName>LEGASPI</lastName>
+		                        </name>
+		                        <!--Optional:-->
+		                        <address>
+		                           <!--Optional:-->
+		                           <address1>BAYBAYIN LOS BANOS</address1>
+		                           <!--Optional:-->
+		                           <address2>BAYBAYIN LOS BANOS</address2>
+		                           <!--Optional:-->
+		                           <address3>BAYBAYIN LOS BANOS</address3>
+		                           <!--Optional:-->
+		                           <zipCode>4030</zipCode>
+		                           <!--Optional:-->
+		                           <city>LAGUNA</city>
+		                           <!--Optional:-->
+		                           <country>PHILIPPINES</country>
+		                           <!--Optional:-->
+		                           <state>LOS BANOS</state>
+		                        </address>
+                                    <!--Optional:-->
+                                    <customFields>
+                                       <!--Zero or more repetitions:-->
+                                       <customField code="CF_BA" description="?">
+                                          <!--Optional:-->
+                                          <stringValue>BA</stringValue>
+                                       </customField>
+                                    </customFields>
+                                    <billingCycle>CYC_INV_MT_1</billingCycle>
+                                    <country>US</country>
+                                    <language>ENG</language>
+                                    <paymentMethod>CHECK</paymentMethod>
+                                    <!--Optional:-->
+                                    <nextInvoiceDate>${#TestSuite#date}</nextInvoiceDate>
+                                    <!--Optional:-->
+                                    <subscriptionDate>${#TestSuite#date}</subscriptionDate>
+                                    <!--Optional:-->
+                                    <paymentTerms>CASH</paymentTerms>
+                                    <!--Optional:-->
+                                    <electronicBilling>true</electronicBilling>
+                                    <!--Optional:-->
+                                    <email>edward.legaspi@manaty.net</email>
+                                    <!--Optional:-->
+                                    <bankCoordinates>
+                                       <!--Optional:-->
+                                       <bankCode>BPI</bankCode>
+                                       <!--Optional:-->
+                                       <branchCode>LB</branchCode>
+                                       <!--Optional:-->
+                                       <accountNumber>1234</accountNumber>
+                                       <!--Optional:-->
+                                       <key>1234</key>
+                                       <!--Optional:-->
+                                       <iban>1234</iban>
+                                       <!--Optional:-->
+                                       <bic>1234</bic>
+                                       <!--Optional:-->
+                                       <accountOwner>Edward P. Legaspi</accountOwner>
+                                       <!--Optional:-->
+                                       <bankName>Bank of the Philippine Islands</bankName>
+                                       <!--Optional:-->
+                                       <bankId>BPI</bankId>
+                                       <!--Optional:-->
+                                       <issuerNumber>1</issuerNumber>
+                                       <!--Optional:-->
+                                       <issuerName>BPI</issuerName>
+                                       <!--Optional:-->
+                                       <ics>NA</ics>
+                                    </bankCoordinates>
+                                    <!--Optional:-->
+                                    <userAccounts>
+                                       <!--Zero or more repetitions:-->
+                                       <userAccount code="${#TestSuite#ticket}_${#TestCase#index}_UA" description="${#TestSuite#ticket}_${#TestCase#index}_UA">
+                                          <!--Optional:-->
+                                          <externalRef1>1</externalRef1>
+                                          <!--Optional:-->
+                                          <externalRef2>1</externalRef2>
+                                          <!--Optional:-->
+                                          <name>
+				                           <!--Optional:-->
+				                           <title>M</title>
+				                           <!--Optional:-->
+				                           <firstName>EDWARD</firstName>
+				                           <lastName>LEGASPI</lastName>
+				                        </name>
+				                        <!--Optional:-->
+				                        <address>
+				                           <!--Optional:-->
+				                           <address1>BAYBAYIN LOS BANOS</address1>
+				                           <!--Optional:-->
+				                           <address2>BAYBAYIN LOS BANOS</address2>
+				                           <!--Optional:-->
+				                           <address3>BAYBAYIN LOS BANOS</address3>
+				                           <!--Optional:-->
+				                           <zipCode>4030</zipCode>
+				                           <!--Optional:-->
+				                           <city>LAGUNA</city>
+				                           <!--Optional:-->
+				                           <country>PHILIPPINES</country>
+				                           <!--Optional:-->
+				                           <state>LOS BANOS</state>
+				                        </address>
+                                          <!--Optional:-->
+                                          <customFields>
+                                             <!--Zero or more repetitions:-->
+                                             <customField code="CF_UA" description="CF_UA">
+                                                <!--Optional:-->
+                                                <stringValue>UA</stringValue>
+                                             </customField>
+                                          </customFields>
+                                          <!--Optional:-->
+                                          <subscriptionDate>${#TestSuite#date}</subscriptionDate>
+                                          
+                                          <!--Optional:-->
+                                          <subscriptions>
+                                             <!--Zero or more repetitions:-->
+                                             <subscription code="${#TestSuite#ticket}_${#TestCase#index}_SUB" description="${#TestSuite#ticket}_${#TestCase#index}_SUB">
+                                                <userAccount>?</userAccount>
+                                                <offerTemplate>${#TestSuite#ticket}_OFFER1</offerTemplate>
+                                                <subscriptionDate>${#TestSuite#date}</subscriptionDate>
+                                                <!--Optional:-->
+                                                <customFields>
+                                                   <!--Zero or more repetitions:-->
+                                                   <customField code="CF_SUB" description="CF_SUB">
+                                                      <!--Optional:-->
+                                                      <stringValue>SUB</stringValue>
+                                                   </customField>
+                                                </customFields>
+                                                <!--Optional:-->
+                                                <accesses>
+                                                   <!--Zero or more repetitions:-->
+                                                   <access code="?">
+                                                      <subscription>${#TestSuite#ticket}_${#TestCase#index}_SUB</subscription>
+                                                      <!--Optional:-->
+                                                      <startDate>${#TestSuite#date}</startDate>
+                                                   </access>
+                                                </accesses>
+                                                <!--Optional:-->
+                                                <services>
+                                                   <!--Zero or more repetitions:-->
+                                                   <serviceInstance code="${#TestSuite#ticket}_SERVICE1">
+                                                      <subscriptionDate>${#TestSuite#date}</subscriptionDate>
+                                                      <!--Optional:-->
+                                                      <quantity>1</quantity>
+                                                   </serviceInstance>
+                                                </services>
+                                             </subscription>
+                                          </subscriptions>
+                                       </userAccount>
+                                    </userAccounts>
+                                 </billingAccount>
+                              </billingAccounts>
+                           </customerAccount>
+                        </customerAccounts>
+                     </customer>
+                  </customers>
+               </seller>
+            </sellers>
+         </customerHierarchy>
+      </ws:customerHierarchyUpdate>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response"/><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:preemptive>true</con:preemptive><con:authType>Preemptive</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Terminate service"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>customerHierarchyUpdate</con:operation><con:request name="Terminate service"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:customerHierarchyUpdate>
+         <!--Optional:-->
+         <customerHierarchy>
+            <sellers>
+               <!--Zero or more repetitions:-->
+               <seller code="${#TestSuite#ticket}_${#TestCase#index}_SELLER" description="${#TestSuite#ticket}_${#TestCase#index}_SELLER">                 
+                  <customers>
+                     <!--Zero or more repetitions:-->
+                     <customer code="${#TestSuite#ticket}_${#TestCase#index}_CUST" description="${#TestSuite#ticket}_${#TestCase#index}_CUST">                        
+                        <customerAccounts>
+                           <!--Zero or more repetitions:-->
+                           <customerAccount code="${#TestSuite#ticket}_${#TestCase#index}_CA" description="${#TestSuite#ticket}_${#TestCase#index}_CA">                          
+                              <billingAccounts>
+                                 <!--Zero or more repetitions:-->
+                                 <billingAccount code="${#TestSuite#ticket}_${#TestCase#index}_BA" description="${#TestSuite#ticket}_${#TestCase#index}_BA">                                   
+                                    <userAccounts>
+                                       <!--Zero or more repetitions:-->
+                                       <userAccount code="${#TestSuite#ticket}_${#TestCase#index}_UA" description="${#TestSuite#ticket}_${#TestCase#index}_UA">
+                                       	  <!--Optional:-->
+                                          <subscriptions>
+                                             <!--Zero or more repetitions:-->
+                                             <subscription code="${#TestSuite#ticket}_${#TestCase#index}_SUB" description="${#TestSuite#ticket}_${#TestCase#index}_SUB">
+                                             	 <!--Optional:-->
+                                                <services>
+                                                   <!--Zero or more repetitions:-->
+                                                   <serviceInstance code="${#TestSuite#ticket}_SERVICE1">
+                                                      <terminationReason>${#TestSuite#terminationReason}</terminationReason>
+                                                      <terminationDate>${#TestSuite#date}</terminationDate>
+                                                   </serviceInstance>
+                                                </services>                                          		
+                                          	</subscription>
+                                          </subscriptions>
+                                       </userAccount>
+                                    </userAccounts>
+                                 </billingAccount>
+                              </billingAccounts>
+                           </customerAccount>
+                        </customerAccounts>
+                     </customer>
+                  </customers>
+               </seller>
+            </sellers>
+         </customerHierarchy>
+      </ws:customerHierarchyUpdate>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response"/><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:preemptive>true</con:preemptive><con:authType>Preemptive</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties><con:property><con:name>index</con:name><con:value>6</con:value></con:property></con:properties></con:testCase><con:properties><con:property><con:name>ticket</con:name><con:value>827</con:value></con:property><con:property><con:name>date</con:name><con:value>2015-02-28</con:value></con:property><con:property><con:name>terminationReason</con:name><con:value>TERM_REASON_1</con:value></con:property></con:properties><con:setupScript>import com.eviware.soapui.impl.wsdl.teststeps.*
+import com.eviware.soapui.support.types.*;
+
+StringToStringMap headers = new StringToStringMap();
+headers.put("Authorization","Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=");
+
+for( testCase in testSuite.getTestCaseList() ) {
+    log.info("Setting basic auth for all WSDL test requests in test case ["+testCase.getLabel()+"]")
+    for( testStep in testCase.getTestStepList() ) {
+        testStep.getTestRequest().setPreemptive(true);
+        testStep.getTestRequest().setRequestHeaders(headers);
+    }
 }</con:setupScript></con:testSuite><con:endpointStrategy xsi:type="con:DefaultEndpointStrategy" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:endpoint mode="COMPLEMENT" username="meveo.admin" password="meveo.admin">http://localhost:8080/meveo/CatalogWs</con:endpoint></con:endpointStrategy><con:properties><con:property><con:name>meveoEndpoint</con:name><con:value>localhost:8080/meveo</con:value></con:property><con:property><con:name>meveoUsername</con:name><con:value>meveo.admin</con:value></con:property><con:property><con:name>meveoPassword</con:name><con:value>meveo.admin</con:value></con:property></con:properties><con:wssContainer/><con:oAuth2ProfileContainer/><con:sensitiveInformation/></con:soapui-project>
