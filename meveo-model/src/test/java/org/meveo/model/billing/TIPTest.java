@@ -44,11 +44,8 @@ public class TIPTest {
 
 	// @Test(groups = { "unit" })
 	public void testTIP() {
-		coordonneesBancaires.setAccountOwner("Sebastien Michea");
-		coordonneesBancaires.setBankCode("12345");
-		coordonneesBancaires.setBranchCode("12345");
-		coordonneesBancaires.setAccountNumber("1234567890A");
-		coordonneesBancaires.setKey("46");
+		coordonneesBancaires.setAccountOwner("Sebastien Michea"); 
+		coordonneesBancaires.setAccountIdentifier("12345123451234567890A46");
 		try {
 			invoiceDate = sdf.parse("20110520");
 		} catch (ParseException e1) {

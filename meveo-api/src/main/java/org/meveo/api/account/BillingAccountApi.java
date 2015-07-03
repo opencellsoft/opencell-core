@@ -114,10 +114,7 @@ public class BillingAccountApi extends AccountApi {
 			billingAccount.setTerminationDate(postData.getTerminationDate());
 			billingAccount.setElectronicBilling(postData.getElectronicBilling());
 			billingAccount.setEmail(postData.getEmail());
-			billingAccount.getBankCoordinates().setBankCode(postData.getBankCoordinates().getBankCode());
-			billingAccount.getBankCoordinates().setBranchCode(postData.getBankCoordinates().getBranchCode());
-			billingAccount.getBankCoordinates().setAccountNumber(postData.getBankCoordinates().getAccountNumber());
-			billingAccount.getBankCoordinates().setKey(postData.getBankCoordinates().getKey());
+			billingAccount.getBankCoordinates().setAccountIdentifier(postData.getBankCoordinates().getAccountIdentifier());
 			billingAccount.getBankCoordinates().setIban(postData.getBankCoordinates().getIban());
 			billingAccount.getBankCoordinates().setBic(postData.getBankCoordinates().getBic());
 			billingAccount.getBankCoordinates().setAccountOwner(postData.getBankCoordinates().getAccountOwner());
@@ -234,17 +231,8 @@ public class BillingAccountApi extends AccountApi {
 				billingAccount.setEmail(postData.getEmail());
 			}
 			if (postData.getBankCoordinates() != null) {
-				if (!StringUtils.isBlank(postData.getBankCoordinates().getBankCode())) {
-					billingAccount.getBankCoordinates().setBankCode(postData.getBankCoordinates().getBankCode());
-				}
-				if (!StringUtils.isBlank(postData.getBankCoordinates().getBranchCode())) {
-					billingAccount.getBankCoordinates().setBranchCode(postData.getBankCoordinates().getBranchCode());
-				}
-				if (!StringUtils.isBlank(postData.getBankCoordinates().getAccountNumber())) {
-					billingAccount.getBankCoordinates().setAccountNumber(postData.getBankCoordinates().getAccountNumber());
-				}
-				if (!StringUtils.isBlank(postData.getBankCoordinates().getKey())) {
-					billingAccount.getBankCoordinates().setKey(postData.getBankCoordinates().getKey());
+				if (!StringUtils.isBlank(postData.getBankCoordinates().getAccountIdentifier())) {
+					billingAccount.getBankCoordinates().setAccountIdentifier(postData.getBankCoordinates().getAccountIdentifier());
 				}
 				if (!StringUtils.isBlank(postData.getBankCoordinates().getIban())) {
 					billingAccount.getBankCoordinates().setIban(postData.getBankCoordinates().getIban());

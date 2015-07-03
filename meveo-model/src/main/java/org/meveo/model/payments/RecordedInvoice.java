@@ -60,7 +60,7 @@ public class RecordedInvoice extends AccountOperation {
 	private String paymentInfo;// IBAN for direct debit
 
 	@Column(name = "PAYMENT_INFO1")
-	private String paymentInfo1;// bank code
+	private String paymentInfo1;// RIB
 
 	@Column(name = "PAYMENT_INFO2")
 	private String paymentInfo2;// code guichet
@@ -69,7 +69,7 @@ public class RecordedInvoice extends AccountOperation {
 	private String paymentInfo3;// Num compte
 
 	@Column(name = "PAYMENT_INFO4")
-	private String paymentInfo4;// RIB
+	private String paymentInfo4;
 
 	@Column(name = "PAYMENT_INFO5")
 	private String paymentInfo5;// bankName

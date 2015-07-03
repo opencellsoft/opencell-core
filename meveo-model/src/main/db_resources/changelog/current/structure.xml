@@ -786,4 +786,25 @@
         <modifyDataType columnName="entity_value" newDataType="text"   tableName="CRM_CUSTOM_FIELD_INST"/>
         <modifyDataType columnName="entity_value" newDataType="text"   tableName="CRM_CUSTOM_FIELD_PERIOD"/>
     </changeSet>
+    
+     <changeSet id="891_20150702" author="Mbarek">
+     <addColumn tableName="BILLING_BILLING_ACCOUNT">
+     <column name="ACCOUNT_IDENTIFIER" type="VARCHAR(255)"/>            
+     </addColumn>
+     <addColumn tableName="CRM_PROVIDER">
+     <column name="ACCOUNT_IDENTIFIER" type="VARCHAR(255)"/>            
+     </addColumn>
+     <sql>update BILLING_BILLING_ACCOUNT set ACCOUNT_IDENTIFIER=BANK_CODE || BRANCH_CODE || ACCOUNT_NUMBER || HASH_KEY where ACCOUNT_NUMBER is not null </sql>
+     <sql>update CRM_PROVIDER set ACCOUNT_IDENTIFIER=BANK_CODE || BRANCH_CODE || ACCOUNT_NUMBER || HASH_KEY where ACCOUNT_NUMBER is not null </sql>
+     
+   	 <dropColumn columnName="BANK_CODE" tableName="BILLING_BILLING_ACCOUNT"/>   
+   	 <dropColumn columnName="BRANCH_CODE" tableName="BILLING_BILLING_ACCOUNT"/> 
+   	 <dropColumn columnName="ACCOUNT_NUMBER" tableName="BILLING_BILLING_ACCOUNT"/> 
+   	 <dropColumn columnName="HASH_KEY" tableName="BILLING_BILLING_ACCOUNT"/> 
+   	 
+   	 <dropColumn columnName="BANK_CODE" tableName="CRM_PROVIDER"/>   
+   	 <dropColumn columnName="BRANCH_CODE" tableName="CRM_PROVIDER"/> 
+   	 <dropColumn columnName="ACCOUNT_NUMBER" tableName="CRM_PROVIDER"/> 
+   	 <dropColumn columnName="HASH_KEY" tableName="CRM_PROVIDER"/>
+    </changeSet>
 </databaseChangeLog>

@@ -34,6 +34,7 @@ import org.meveo.api.dto.account.UserAccountDto;
 import org.meveo.api.dto.billing.ServiceInstanceDto;
 import org.meveo.api.dto.billing.SubscriptionDto;
 import org.meveo.api.dto.response.account.FindAccountHierarchyResponseDto;
+import org.meveo.api.dto.response.account.GetAccessResponseDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
@@ -2155,18 +2156,15 @@ public class AccountHierarchyApi extends BaseApi {
 			billingAccountDto.setEmail(postData.getEmail());
 			if (postData.getBankCoordinates() != null) {
 				BankCoordinatesDto bankCoordinatesDto = new BankCoordinatesDto();
-				bankCoordinatesDto.setAccountNumber(postData.getBankCoordinates().getAccountNumber());
-				bankCoordinatesDto.setAccountOwner(postData.getBankCoordinates().getAccountOwner());
-				bankCoordinatesDto.setBankCode(postData.getBankCoordinates().getBankCode());
+				bankCoordinatesDto.setAccountIdentifier(postData.getBankCoordinates().getAccountIdentifier());
+				bankCoordinatesDto.setAccountOwner(postData.getBankCoordinates().getAccountOwner()); 
 				bankCoordinatesDto.setBankId(postData.getBankCoordinates().getBankId());
 				bankCoordinatesDto.setBankName(postData.getBankCoordinates().getBankName());
-				bankCoordinatesDto.setBic(postData.getBankCoordinates().getBic());
-				bankCoordinatesDto.setBranchCode(postData.getBankCoordinates().getBranchCode());
+				bankCoordinatesDto.setBic(postData.getBankCoordinates().getBic()); 
 				bankCoordinatesDto.setIban(postData.getBankCoordinates().getIban());
 				bankCoordinatesDto.setIcs(postData.getBankCoordinates().getIcs());
 				bankCoordinatesDto.setIssuerName(postData.getBankCoordinates().getIssuerName());
-				bankCoordinatesDto.setIssuerNumber(postData.getBankCoordinates().getIssuerNumber());
-				bankCoordinatesDto.setKey(postData.getBankCoordinates().getKey());
+				bankCoordinatesDto.setIssuerNumber(postData.getBankCoordinates().getIssuerNumber()); 
 				billingAccountDto.setBankCoordinates(bankCoordinatesDto);
 			}
 			billingAccountDto.setName(name);
@@ -2308,18 +2306,15 @@ public class AccountHierarchyApi extends BaseApi {
 			billingAccountDto.setEmail(postData.getEmail());
 			if (postData.getBankCoordinates() != null) {
 				BankCoordinatesDto bankCoordinatesDto = new BankCoordinatesDto();
-				bankCoordinatesDto.setAccountNumber(postData.getBankCoordinates().getAccountNumber());
-				bankCoordinatesDto.setAccountOwner(postData.getBankCoordinates().getAccountOwner());
-				bankCoordinatesDto.setBankCode(postData.getBankCoordinates().getBankCode());
+				bankCoordinatesDto.setAccountIdentifier(postData.getBankCoordinates().getAccountIdentifier());
+				bankCoordinatesDto.setAccountOwner(postData.getBankCoordinates().getAccountOwner()); 
 				bankCoordinatesDto.setBankId(postData.getBankCoordinates().getBankId());
 				bankCoordinatesDto.setBankName(postData.getBankCoordinates().getBankName());
-				bankCoordinatesDto.setBic(postData.getBankCoordinates().getBic());
-				bankCoordinatesDto.setBranchCode(postData.getBankCoordinates().getBranchCode());
+				bankCoordinatesDto.setBic(postData.getBankCoordinates().getBic()); 
 				bankCoordinatesDto.setIban(postData.getBankCoordinates().getIban());
 				bankCoordinatesDto.setIcs(postData.getBankCoordinates().getIcs());
 				bankCoordinatesDto.setIssuerName(postData.getBankCoordinates().getIssuerName());
-				bankCoordinatesDto.setIssuerNumber(postData.getBankCoordinates().getIssuerNumber());
-				bankCoordinatesDto.setKey(postData.getBankCoordinates().getKey());
+				bankCoordinatesDto.setIssuerNumber(postData.getBankCoordinates().getIssuerNumber()); 
 				billingAccountDto.setBankCoordinates(bankCoordinatesDto);
 			}
 			billingAccountDto.setName(name);
@@ -2442,18 +2437,15 @@ public class AccountHierarchyApi extends BaseApi {
 			billingAccountDto.setEmail(postData.getEmail());
 			if (postData.getBankCoordinates() != null) {
 				BankCoordinatesDto bankCoordinatesDto = new BankCoordinatesDto();
-				bankCoordinatesDto.setAccountNumber(postData.getBankCoordinates().getAccountNumber());
-				bankCoordinatesDto.setAccountOwner(postData.getBankCoordinates().getAccountOwner());
-				bankCoordinatesDto.setBankCode(postData.getBankCoordinates().getBankCode());
+				bankCoordinatesDto.setAccountIdentifier(postData.getBankCoordinates().getAccountIdentifier());
+				bankCoordinatesDto.setAccountOwner(postData.getBankCoordinates().getAccountOwner()); 
 				bankCoordinatesDto.setBankId(postData.getBankCoordinates().getBankId());
 				bankCoordinatesDto.setBankName(postData.getBankCoordinates().getBankName());
-				bankCoordinatesDto.setBic(postData.getBankCoordinates().getBic());
-				bankCoordinatesDto.setBranchCode(postData.getBankCoordinates().getBranchCode());
+				bankCoordinatesDto.setBic(postData.getBankCoordinates().getBic()); 
 				bankCoordinatesDto.setIban(postData.getBankCoordinates().getIban());
 				bankCoordinatesDto.setIcs(postData.getBankCoordinates().getIcs());
 				bankCoordinatesDto.setIssuerName(postData.getBankCoordinates().getIssuerName());
-				bankCoordinatesDto.setIssuerNumber(postData.getBankCoordinates().getIssuerNumber());
-				bankCoordinatesDto.setKey(postData.getBankCoordinates().getKey());
+				bankCoordinatesDto.setIssuerNumber(postData.getBankCoordinates().getIssuerNumber()); 
 				billingAccountDto.setBankCoordinates(bankCoordinatesDto);
 			}
 			billingAccountDto.setName(name);
@@ -2595,18 +2587,15 @@ public class AccountHierarchyApi extends BaseApi {
 			billingAccountDto.setEmail(postData.getEmail());
 			if (postData.getBankCoordinates() != null) {
 				BankCoordinatesDto bankCoordinatesDto = new BankCoordinatesDto();
-				bankCoordinatesDto.setAccountNumber(postData.getBankCoordinates().getAccountNumber());
-				bankCoordinatesDto.setAccountOwner(postData.getBankCoordinates().getAccountOwner());
-				bankCoordinatesDto.setBankCode(postData.getBankCoordinates().getBankCode());
+				bankCoordinatesDto.setAccountIdentifier(postData.getBankCoordinates().getAccountIdentifier());
+				bankCoordinatesDto.setAccountOwner(postData.getBankCoordinates().getAccountOwner()); 
 				bankCoordinatesDto.setBankId(postData.getBankCoordinates().getBankId());
 				bankCoordinatesDto.setBankName(postData.getBankCoordinates().getBankName());
-				bankCoordinatesDto.setBic(postData.getBankCoordinates().getBic());
-				bankCoordinatesDto.setBranchCode(postData.getBankCoordinates().getBranchCode());
+				bankCoordinatesDto.setBic(postData.getBankCoordinates().getBic()); 
 				bankCoordinatesDto.setIban(postData.getBankCoordinates().getIban());
 				bankCoordinatesDto.setIcs(postData.getBankCoordinates().getIcs());
 				bankCoordinatesDto.setIssuerName(postData.getBankCoordinates().getIssuerName());
-				bankCoordinatesDto.setIssuerNumber(postData.getBankCoordinates().getIssuerNumber());
-				bankCoordinatesDto.setKey(postData.getBankCoordinates().getKey());
+				bankCoordinatesDto.setIssuerNumber(postData.getBankCoordinates().getIssuerNumber()); 
 				billingAccountDto.setBankCoordinates(bankCoordinatesDto);
 			}
 			billingAccountDto.setName(name);

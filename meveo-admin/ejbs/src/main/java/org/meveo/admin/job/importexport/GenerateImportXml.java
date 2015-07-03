@@ -123,8 +123,7 @@ public class GenerateImportXml {
 				addressBa.setCountry("France");
 				ba.setAddress(addressBa);
 				ba.setElectronicBilling("0");
-				BankCoordinates bankCoordinate = new BankCoordinates();
-				bankCoordinate.setKey("");
+				BankCoordinates bankCoordinate = new BankCoordinates(); 
 				ba.setBankCoordinates(bankCoordinate);
 				billingAccounts.getBillingAccount().add(ba);
 

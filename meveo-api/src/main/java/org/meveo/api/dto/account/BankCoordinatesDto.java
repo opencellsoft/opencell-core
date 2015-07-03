@@ -17,10 +17,7 @@ public class BankCoordinatesDto implements Serializable {
 
 	private static final long serialVersionUID = 4452076136683484895L;
 
-	private String bankCode;
-	private String branchCode;
-	private String accountNumber;
-	private String key;
+	private String accountIdentifier; 
 	private String iban;
 	private String bic;
 	private String accountOwner;
@@ -35,10 +32,7 @@ public class BankCoordinatesDto implements Serializable {
 	}
 
 	public BankCoordinatesDto(BankCoordinates e) {
-		bankCode = e.getBankCode();
-		branchCode = e.getBranchCode();
-		accountNumber = e.getAccountNumber();
-		key = e.getKey();
+		accountIdentifier = e.getAccountIdentifier();
 		iban = e.getIban();
 		bic = e.getBic();
 		accountOwner = e.getAccountOwner();
@@ -49,36 +43,13 @@ public class BankCoordinatesDto implements Serializable {
 		ics = e.getIcs();
 	}
 
-	public String getBankCode() {
-		return bankCode;
+	
+	public String getAccountIdentifier() {
+		return accountIdentifier;
 	}
 
-	public void setBankCode(String bankCode) {
-		this.bankCode = bankCode;
-	}
-
-	public String getBranchCode() {
-		return branchCode;
-	}
-
-	public void setBranchCode(String branchCode) {
-		this.branchCode = branchCode;
-	}
-
-	public String getAccountNumber() {
-		return accountNumber;
-	}
-
-	public void setAccountNumber(String accountNumber) {
-		this.accountNumber = accountNumber;
-	}
-
-	public String getKey() {
-		return key;
-	}
-
-	public void setKey(String key) {
-		this.key = key;
+	public void setAccountIdentifier(String accountIdentifier) {
+		this.accountIdentifier = accountIdentifier;
 	}
 
 	public String getIban() {
@@ -147,7 +118,7 @@ public class BankCoordinatesDto implements Serializable {
 
 	@Override
 	public String toString() {
-		return "BankCoordinatesDto [bankCode=" + bankCode + ", branchCode=" + branchCode + ", accountNumber=" + accountNumber + ", key=" + key + ", iban=" + iban + ", bic=" + bic
+		return "BankCoordinatesDto [accountIdentifier=" + accountIdentifier + ", iban=" + iban + ", bic=" + bic
 				+ ", accountOwner=" + accountOwner + ", bankName=" + bankName + ", bankId=" + bankId + ", issuerNumber=" + issuerNumber + ", issuerName=" + issuerName + ", ics="
 				+ ics + "]";
 	}

@@ -319,26 +319,10 @@
 													<h:panelGroup id="bankCoordinatesPanel" >
 														<h:panelGroup rendered="#{billingAccountBean.entity.paymentMethod.toString() == 'DIRECTDEBIT' or billingAccountBean.entity.paymentMethod.toString() == 'TIP'}">
 															<hf:formField
-																label="#{messages['bankCoordinates.bankCode']}"
-																id="bankCode" field="bankCoordinates"
-																childField="bankCode" size="5" maxlength="5"
-																required="#{billingAccountBean.entity.paymentMethod.toString() == 'DIRECTDEBIT'}"
-																validateRib="false" />
-															<hf:formField
-																label="#{messages['bankCoordinates.branchCode']}"
-																field="bankCoordinates" childField="branchCode" size="5"
-																maxlength="5"
-																required="#{billingAccountBean.entity.paymentMethod.toString() == 'DIRECTDEBIT'}" />
-															<hf:formField
-																label="#{messages['bankCoordinates.accountNumber']}"
-																field="bankCoordinates" childField="accountNumber"
-																size="11" maxlength="11"
-																required="#{billingAccountBean.entity.paymentMethod.toString() == 'DIRECTDEBIT'}" />
-															<hf:formField
-																label="#{messages['bankCoordinates.key']}"
-																field="bankCoordinates" childField="key" size="2"
-																maxlength="2"
-																required="#{billingAccountBean.entity.paymentMethod.toString() == 'DIRECTDEBIT'}" />														
+																label="#{messages['bankCoordinates.accountIdentifier']}"
+																id="accountIdentifier" field="bankCoordinates"
+																childField="accountIdentifier" size="50" maxlength="255"
+																required="#{billingAccountBean.entity.paymentMethod.toString() == 'DIRECTDEBIT'}" /> 														
 															<hf:formField
 																label="#{messages['bankCoordinates.bic']}"
 																field="bankCoordinates" childField="bic" size="15"
