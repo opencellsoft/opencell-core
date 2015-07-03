@@ -26482,7 +26482,7 @@ for( testCase in testSuite.getTestCaseList() ) {
          </userAccount>
       </ws:createUserAccount>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response"/><con:assertion type="Simple Contains" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties><con:property><con:name>index</con:name><con:value>769</con:value></con:property></con:properties></con:testCase><con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Find account hierarchy" searchProperties="true" id="d81ca6cd-6a98-404f-9b43-64f571be96fc"><con:settings/><con:testStep type="request" name="Find"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>findAccountHierarchy</con:operation><con:request name="Find"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response"/><con:assertion type="Simple Contains" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties><con:property><con:name>index</con:name><con:value>769</con:value></con:property></con:properties></con:testCase><con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Find account hierarchy" searchProperties="true" id="d81ca6cd-6a98-404f-9b43-64f571be96fc"><con:settings/><con:testStep type="request" name="Find"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>findAccountHierarchy</con:operation><con:request name="Find"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
       <ws:findAccountHierarchy>
@@ -31647,6 +31647,685 @@ for( testCase in testSuite.getTestCaseList() ) {
       </ws:registerCdrList>
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response"/><con:assertion type="Simple Contains" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="SOAP Fault Assertion" name="Not SOAP Fault"/><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:properties><con:property><con:name>ticket</con:name><con:value>895</con:value></con:property></con:properties><con:setupScript>import com.eviware.soapui.impl.wsdl.teststeps.*
+import com.eviware.soapui.support.types.*;
+
+StringToStringMap headers = new StringToStringMap();
+headers.put("Authorization","Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=");
+
+for( testCase in testSuite.getTestCaseList() ) {
+    log.info("Setting basic auth for all WSDL test requests in test case ["+testCase.getLabel()+"]")
+    for( testStep in testCase.getTestStepList() ) {
+        testStep.getTestRequest().setPreemptive(true);
+        testStep.getTestRequest().setRequestHeaders(headers);
+    }
+}</con:setupScript></con:testSuite><con:testSuite name="#733_search_multiple_account_level"><con:settings/><con:runType>SEQUENTIAL</con:runType><con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Customer creation" searchProperties="true" id="87f9ab88-5904-472a-b0a7-bd91a396ddd7"><con:settings/><con:testStep type="request" name="Create customer"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>createCustomer</con:operation><con:request name="Create customer"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createCustomer>
+         <!--Optional:-->
+         <customer code="${#TestSuite#ticket}_CUST" description="${#TestSuite#ticket}_CUST">
+            <name>
+               <title>M</title>
+               <firstName>Edward</firstName>
+               <lastName>Legaspi2</lastName>
+            </name>
+            <address>
+               <address1>adresse 1</address1>
+               <address2></address2>
+               <address3>adresse 3</address3>
+               <zipCode>21000</zipCode>
+               <city>Dijon</city>
+               <country>FR</country>
+            </address>
+            
+            <customerCategory>CLIENT</customerCategory>
+            <customerBrand>DEFAULT</customerBrand>
+            <seller>SELLER_FR</seller>
+            <contactInformation>
+               <email>613@manaty.net</email>
+               <phone>+33100000000</phone>
+               <mobile>+33666666666</mobile>
+            </contactInformation>
+         </customer>
+      </ws:createCustomer>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response"/><con:assertion type="Simple Contains" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Create customer account"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>createCustomer</con:operation><con:request name="Create customer account"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createCustomerAccount>
+         <customerAccount code="${#TestSuite#ticket}_CA" description="${#TestSuite#ticket}_CA">
+            <externalRef1>EXTREF1</externalRef1>
+            <externalRef2>EXTREF2</externalRef2>
+            <name>
+               <title>M</title>
+               <firstName>Edward</firstName>
+               <lastName>Legaspi2</lastName>
+            </name>
+            <address>
+               <address1>adresse 1</address1>
+               <address2></address2>
+               <address3>adresse 3</address3>
+               <zipCode>21000</zipCode>
+               <city>Dijon</city>
+               <country>FR</country>
+            </address>
+            <customer>${#TestSuite#ticket}_CUST</customer>
+            <currency>EUR</currency>
+            <paymentMethod>CHECK</paymentMethod>
+            <creditCategory>Pro</creditCategory>
+            <language>FRA</language>
+         </customerAccount>
+      </ws:createCustomerAccount>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response"/><con:assertion type="Simple Contains" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Create billing account"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>createCustomer</con:operation><con:request name="Create billing account"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createBillingAccount>
+         <billingAccount code="${#TestSuite#ticket}_BA" description="${#TestSuite#ticket}_BA">
+            <externalRef1>EXTREF1</externalRef1>
+            <externalRef2>EXTREF2</externalRef2>
+            <name>
+               <title>M</title>
+               <firstName>Edward</firstName>
+               <lastName>Legaspi2</lastName>
+            </name>
+            <address>
+               <address1>adresse 1</address1>
+               <address2></address2>
+               <address3>adresse 3</address3>
+               <zipCode>21000</zipCode>
+               <city>Dijon</city>
+               <country>FR</country>
+            </address>
+            <customerAccount>${#TestSuite#ticket}_CA</customerAccount>
+            <billingCycle>CYC_INV_MT_1</billingCycle>
+            <country>FR</country>
+            <language>FRA</language>
+            <paymentMethod>DIRECTDEBIT</paymentMethod>
+            <nextInvoiceDate>2015-04-01</nextInvoiceDate>
+            <subscriptionDate>2015-01-01</subscriptionDate>
+            <paymentTerms>CASH</paymentTerms>
+            <electronicBilling>true</electronicBilling>
+            <email>613@manaty.net</email>
+            
+         </billingAccount>
+      </ws:createBillingAccount>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response"/><con:assertion type="Simple Contains" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Create user account"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>createCustomer</con:operation><con:request name="Create user account"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createUserAccount>
+         <userAccount code="${#TestSuite#ticket}_UA" description="${#TestSuite#ticket}_UA">
+         	<billingAccount>${#TestSuite#ticket}_BA</billingAccount>
+            <externalRef1>EXTREF1</externalRef1>
+            <externalRef2>EXTREF2</externalRef2>
+            <name>
+               <title>M</title>
+               <firstName>Edward</firstName>
+               <lastName>Legaspi2</lastName>
+            </name>
+            <address>
+               <address1>adress 1</address1>
+               <address2></address2>
+               <address3>adress 3</address3>
+               <zipCode>21000</zipCode>
+               <city>Dijon</city>
+               <country>FR</country>
+            </address>
+            
+         </userAccount>
+      </ws:createUserAccount>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response"/><con:assertion type="Simple Contains" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Create customer 2"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>createCustomer</con:operation><con:request name="Create customer 2"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createCustomer>
+         <!--Optional:-->
+         <customer code="${#TestSuite#ticket}_CUST2" description="${#TestSuite#ticket}_CUST">
+            <name>
+               <title>M</title>
+               <firstName>Edward</firstName>
+               <lastName>Legaspi2</lastName>
+            </name>
+            <address>
+               <address1>adresse 1</address1>
+               <address2></address2>
+               <address3>adresse 3</address3>
+               <zipCode>21000</zipCode>
+               <city>Dijon</city>
+               <country>FR</country>
+            </address>
+            
+            <customerCategory>CLIENT</customerCategory>
+            <customerBrand>DEFAULT</customerBrand>
+            <seller>SELLER_FR</seller>
+            <contactInformation>
+               <email>613@manaty.net</email>
+               <phone>+33100000000</phone>
+               <mobile>+33666666666</mobile>
+            </contactInformation>
+         </customer>
+      </ws:createCustomer>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response"/><con:assertion type="Simple Contains" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Copy of Create customer account"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>createCustomer</con:operation><con:request name="Copy of Create customer account"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createCustomerAccount>
+         <customerAccount code="${#TestSuite#ticket}_CA2" description="${#TestSuite#ticket}_CA">
+            <externalRef1>EXTREF1</externalRef1>
+            <externalRef2>EXTREF2</externalRef2>
+            <name>
+               <title>M</title>
+               <firstName>Edward</firstName>
+               <lastName>Legaspi2</lastName>
+            </name>
+            <address>
+               <address1>adresse 1</address1>
+               <address2></address2>
+               <address3>adresse 3</address3>
+               <zipCode>21000</zipCode>
+               <city>Dijon</city>
+               <country>FR</country>
+            </address>
+            <customer>${#TestSuite#ticket}_CUST2</customer>
+            <currency>EUR</currency>
+            <paymentMethod>CHECK</paymentMethod>
+            <creditCategory>Pro</creditCategory>
+            <language>FRA</language>
+         </customerAccount>
+      </ws:createCustomerAccount>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response"/><con:assertion type="Simple Contains" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Copy of Create billing account"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>createCustomer</con:operation><con:request name="Copy of Create billing account"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createBillingAccount>
+         <billingAccount code="${#TestSuite#ticket}_BA2" description="${#TestSuite#ticket}_BA">
+            <externalRef1>EXTREF1</externalRef1>
+            <externalRef2>EXTREF2</externalRef2>
+            <name>
+               <title>M</title>
+               <firstName>Edward</firstName>
+               <lastName>Legaspi2</lastName>
+            </name>
+            <address>
+               <address1>adresse 1</address1>
+               <address2></address2>
+               <address3>adresse 3</address3>
+               <zipCode>21000</zipCode>
+               <city>Dijon</city>
+               <country>FR</country>
+            </address>
+            <customerAccount>${#TestSuite#ticket}_CA2</customerAccount>
+            <billingCycle>CYC_INV_MT_1</billingCycle>
+            <country>FR</country>
+            <language>FRA</language>
+            <paymentMethod>DIRECTDEBIT</paymentMethod>
+            <nextInvoiceDate>2015-04-01</nextInvoiceDate>
+            <subscriptionDate>2015-01-01</subscriptionDate>
+            <paymentTerms>CASH</paymentTerms>
+            <electronicBilling>true</electronicBilling>
+            <email>613@manaty.net</email>
+            
+         </billingAccount>
+      </ws:createBillingAccount>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response"/><con:assertion type="Simple Contains" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Copy of Create user account"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>createCustomer</con:operation><con:request name="Copy of Create user account"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createUserAccount>
+         <userAccount code="${#TestSuite#ticket}_UA2" description="${#TestSuite#ticket}_UA">
+         	<billingAccount>${#TestSuite#ticket}_BA2</billingAccount>
+            <externalRef1>EXTREF1</externalRef1>
+            <externalRef2>EXTREF2</externalRef2>
+            <name>
+               <title>M</title>
+               <firstName>Edward</firstName>
+               <lastName>Legaspi2</lastName>
+            </name>
+            <address>
+               <address1>adress 1</address1>
+               <address2></address2>
+               <address3>adress 3</address3>
+               <zipCode>21000</zipCode>
+               <city>Dijon</city>
+               <country>FR</country>
+            </address>
+            
+         </userAccount>
+      </ws:createUserAccount>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response"/><con:assertion type="Simple Contains" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties><con:property><con:name>index</con:name><con:value>684a</con:value></con:property></con:properties></con:testCase><con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Customer creation 2" searchProperties="true" id="34df901f-e7b5-47e4-a9fc-7390e150a748"><con:settings/><con:testStep type="request" name="Create customer"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>createCustomer</con:operation><con:request name="Create customer"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createCustomer>
+         <!--Optional:-->
+         <customer code="${#TestSuite#ticket}_CUST3" description="${#TestSuite#ticket}_CUST">
+            <name>
+               <title>M</title>
+               <firstName>Edward2</firstName>
+               <lastName>Legaspi2</lastName>
+            </name>
+            <address>
+               <address1>adresse 12</address1>
+               <address2></address2>
+               <address3>adresse 3</address3>
+               <zipCode>21000</zipCode>
+               <city>Dijon</city>
+               <country>FR</country>
+            </address>
+            
+            <customerCategory>CLIENT</customerCategory>
+            <customerBrand>DEFAULT</customerBrand>
+            <seller>SELLER_FR</seller>
+            <contactInformation>
+               <email>613@manaty.net</email>
+               <phone>+33100000000</phone>
+               <mobile>+33666666666</mobile>
+            </contactInformation>
+         </customer>
+      </ws:createCustomer>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response"/><con:assertion type="Simple Contains" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Create customer account"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>createCustomer</con:operation><con:request name="Create customer account"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createCustomerAccount>
+         <customerAccount code="${#TestSuite#ticket}_CA3" description="${#TestSuite#ticket}_CA">
+            <externalRef1>EXTREF1</externalRef1>
+            <externalRef2>EXTREF2</externalRef2>
+            <name>
+               <title>M</title>
+               <firstName>Edward2</firstName>
+               <lastName>Legaspi2</lastName>
+            </name>
+            <address>
+               <address1>adresse 12</address1>
+               <address2></address2>
+               <address3>adresse 3</address3>
+               <zipCode>21000</zipCode>
+               <city>Dijon</city>
+               <country>FR</country>
+            </address>
+            <customer>${#TestSuite#ticket}_CUST3</customer>
+            <currency>EUR</currency>
+            <paymentMethod>CHECK</paymentMethod>
+            <creditCategory>Pro</creditCategory>
+            <language>FRA</language>
+         </customerAccount>
+      </ws:createCustomerAccount>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response"/><con:assertion type="Simple Contains" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Create billing account"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>createCustomer</con:operation><con:request name="Create billing account"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createBillingAccount>
+         <billingAccount code="${#TestSuite#ticket}_BA3" description="${#TestSuite#ticket}_BA">
+            <externalRef1>EXTREF1</externalRef1>
+            <externalRef2>EXTREF2</externalRef2>
+            <name>
+               <title>M</title>
+               <firstName>Edward2</firstName>
+               <lastName>Legaspi2</lastName>
+            </name>
+            <address>
+               <address1>adresse 12</address1>
+               <address2></address2>
+               <address3>adresse 3</address3>
+               <zipCode>21000</zipCode>
+               <city>Dijon</city>
+               <country>FR</country>
+            </address>
+            <customerAccount>${#TestSuite#ticket}_CA3</customerAccount>
+            <billingCycle>CYC_INV_MT_1</billingCycle>
+            <country>FR</country>
+            <language>FRA</language>
+            <paymentMethod>DIRECTDEBIT</paymentMethod>
+            <nextInvoiceDate>2015-04-01</nextInvoiceDate>
+            <subscriptionDate>2015-01-01</subscriptionDate>
+            <paymentTerms>CASH</paymentTerms>
+            <electronicBilling>true</electronicBilling>
+            <email>613@manaty.net</email>
+            
+         </billingAccount>
+      </ws:createBillingAccount>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response"/><con:assertion type="Simple Contains" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Create billing account 2"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>createCustomer</con:operation><con:request name="Create billing account 2"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createBillingAccount>
+         <billingAccount code="${#TestSuite#ticket}_BA3a" description="${#TestSuite#ticket}_BAa">
+            <externalRef1>EXTREF1</externalRef1>
+            <externalRef2>EXTREF2</externalRef2>
+            <name>
+               <title>M</title>
+               <firstName>Edward2</firstName>
+               <lastName>Legaspi2</lastName>
+            </name>
+            <address>
+               <address1>ba_address_diff_cust</address1>
+               <address2>ba_ua_diff_ba</address2>
+               <address3>adresse 3</address3>
+               <zipCode>21000</zipCode>
+               <city>Dijon</city>
+               <country>FR</country>
+            </address>
+            <customerAccount>${#TestSuite#ticket}_CA3</customerAccount>
+            <billingCycle>CYC_INV_MT_1</billingCycle>
+            <country>FR</country>
+            <language>FRA</language>
+            <paymentMethod>DIRECTDEBIT</paymentMethod>
+            <nextInvoiceDate>2015-04-01</nextInvoiceDate>
+            <subscriptionDate>2015-01-01</subscriptionDate>
+            <paymentTerms>CASH</paymentTerms>
+            <electronicBilling>true</electronicBilling>
+            <email>613@manaty.net</email>
+            
+         </billingAccount>
+      </ws:createBillingAccount>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response"/><con:assertion type="Simple Contains" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Create user account"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>createCustomer</con:operation><con:request name="Create user account"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createUserAccount>
+         <userAccount code="${#TestSuite#ticket}_UA3" description="${#TestSuite#ticket}_UA">
+         	<billingAccount>${#TestSuite#ticket}_BA3</billingAccount>
+            <externalRef1>EXTREF1</externalRef1>
+            <externalRef2>EXTREF2</externalRef2>
+            <name>
+               <title>M</title>
+               <firstName>Edward2</firstName>
+               <lastName>Legaspi2</lastName>
+            </name>
+            <address>
+               <address1>ua_diff_ba</address1>
+               <address2>ba_ua_diff_ba</address2>
+               <address3>adress 3</address3>
+               <zipCode>21000</zipCode>
+               <city>Dijon</city>
+               <country>FR</country>
+            </address>
+            
+         </userAccount>
+      </ws:createUserAccount>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response"/><con:assertion type="Simple Contains" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties><con:property><con:name>index</con:name><con:value>684a</con:value></con:property></con:properties></con:testCase><con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Customer creation 3" searchProperties="true" id="1a0ebd03-3be5-4d92-869e-73c0a8f1a0d4"><con:settings/><con:testStep type="request" name="Create customer"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>createCustomer</con:operation><con:request name="Create customer"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createCustomer>
+         <!--Optional:-->
+         <customer code="${#TestSuite#ticket}_CUST4" description="${#TestSuite#ticket}_CUST">
+            <name>
+               <title>M</title>
+               <firstName>Edward2</firstName>
+               <lastName>Legaspi2</lastName>
+            </name>
+            <address>
+               <address1>adresse 12</address1>
+               <address2></address2>
+               <address3>adresse 3</address3>
+               <zipCode>21000</zipCode>
+               <city>Dijon</city>
+               <country>FR</country>
+            </address>
+            
+            <customerCategory>CLIENT</customerCategory>
+            <customerBrand>DEFAULT</customerBrand>
+            <seller>SELLER_FR</seller>
+            <contactInformation>
+               <email>613@manaty.net</email>
+               <phone>+33100000000</phone>
+               <mobile>+33666666666</mobile>
+            </contactInformation>
+         </customer>
+      </ws:createCustomer>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response"/><con:assertion type="Simple Contains" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Create customer account"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>createCustomer</con:operation><con:request name="Create customer account"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createCustomerAccount>
+         <customerAccount code="${#TestSuite#ticket}_CA4" description="${#TestSuite#ticket}_CA">
+            <externalRef1>EXTREF1</externalRef1>
+            <externalRef2>EXTREF2</externalRef2>
+            <name>
+               <title>M</title>
+               <firstName>Edward2</firstName>
+               <lastName>Legaspi2</lastName>
+            </name>
+            <address>
+               <address1>adresse 12</address1>
+               <address2></address2>
+               <address3>adresse 3</address3>
+               <zipCode>21000</zipCode>
+               <city>Dijon</city>
+               <country>FR</country>
+            </address>
+            <customer>${#TestSuite#ticket}_CUST4</customer>
+            <currency>EUR</currency>
+            <paymentMethod>CHECK</paymentMethod>
+            <creditCategory>Pro</creditCategory>
+            <language>FRA</language>
+         </customerAccount>
+      </ws:createCustomerAccount>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response"/><con:assertion type="Simple Contains" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Create billing account"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>createCustomer</con:operation><con:request name="Create billing account"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createBillingAccount>
+         <billingAccount code="${#TestSuite#ticket}_BA4" description="${#TestSuite#ticket}_BA">
+            <externalRef1>EXTREF1</externalRef1>
+            <externalRef2>EXTREF2</externalRef2>
+            <name>
+               <title>M</title>
+               <firstName>Edward2</firstName>
+               <lastName>Legaspi2</lastName>
+            </name>
+            <address>
+               <address1>adresse 12</address1>
+               <address2></address2>
+               <address3>adresse 3</address3>
+               <zipCode>21000</zipCode>
+               <city>Dijon</city>
+               <country>FR</country>
+            </address>
+            <customerAccount>${#TestSuite#ticket}_CA4</customerAccount>
+            <billingCycle>CYC_INV_MT_1</billingCycle>
+            <country>FR</country>
+            <language>FRA</language>
+            <paymentMethod>DIRECTDEBIT</paymentMethod>
+            <nextInvoiceDate>2015-04-01</nextInvoiceDate>
+            <subscriptionDate>2015-01-01</subscriptionDate>
+            <paymentTerms>CASH</paymentTerms>
+            <electronicBilling>true</electronicBilling>
+            <email>613@manaty.net</email>
+            
+         </billingAccount>
+      </ws:createBillingAccount>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response"/><con:assertion type="Simple Contains" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Create billing account 2"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>createCustomer</con:operation><con:request name="Create billing account 2"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createBillingAccount>
+         <billingAccount code="${#TestSuite#ticket}_BA4a" description="${#TestSuite#ticket}_BAa">
+            <externalRef1>EXTREF1</externalRef1>
+            <externalRef2>EXTREF2</externalRef2>
+            <name>
+               <title>M</title>
+               <firstName>Edward2</firstName>
+               <lastName>Legaspi2</lastName>
+            </name>
+            <address>
+               <address1>ba_address_diff_cust</address1>
+               <address2></address2>
+               <address3>adresse 3</address3>
+               <zipCode>21000</zipCode>
+               <city>Dijon</city>
+               <country>FR</country>
+            </address>
+            <customerAccount>${#TestSuite#ticket}_CA4</customerAccount>
+            <billingCycle>CYC_INV_MT_1</billingCycle>
+            <country>FR</country>
+            <language>FRA</language>
+            <paymentMethod>DIRECTDEBIT</paymentMethod>
+            <nextInvoiceDate>2015-04-01</nextInvoiceDate>
+            <subscriptionDate>2015-01-01</subscriptionDate>
+            <paymentTerms>CASH</paymentTerms>
+            <electronicBilling>true</electronicBilling>
+            <email>613@manaty.net</email>
+            
+         </billingAccount>
+      </ws:createBillingAccount>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response"/><con:assertion type="Simple Contains" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Create user account"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>createCustomer</con:operation><con:request name="Create user account"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createUserAccount>
+         <userAccount code="${#TestSuite#ticket}_UA4" description="${#TestSuite#ticket}_UA">
+         	<billingAccount>${#TestSuite#ticket}_BA4a</billingAccount>
+            <externalRef1>EXTREF1</externalRef1>
+            <externalRef2>EXTREF2</externalRef2>
+            <name>
+               <title>M</title>
+               <firstName>Edward2</firstName>
+               <lastName>Legaspi2</lastName>
+            </name>
+            <address>
+               <address1>ua_diff_ba</address1>
+               <address2></address2>
+               <address3>adress 3</address3>
+               <zipCode>21000</zipCode>
+               <city>Dijon</city>
+               <country>FR</country>
+            </address>
+            
+         </userAccount>
+      </ws:createUserAccount>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response"/><con:assertion type="Simple Contains" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties><con:property><con:name>index</con:name><con:value>684a</con:value></con:property></con:properties></con:testCase><con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Search" searchProperties="true" id="e64d71c8-a114-449c-bcaa-281cb28d2d9d"><con:settings/><con:testStep type="request" name="find"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>findAccountHierarchy2</con:operation><con:request name="find"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:findAccountHierarchy2>
+         <!--Optional:-->
+         <findAccountHierachyRequest>
+            <level>1</level>
+            <!--Optional:-->
+            <name>
+               <lastName>Legaspi2</lastName>
+            </name>
+           
+         </findAccountHierachyRequest>
+      </ws:findAccountHierarchy2>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response"/><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:preemptive>true</con:preemptive><con:authType>Preemptive</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="find ba address"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>findAccountHierarchy2</con:operation><con:request name="find ba address"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:findAccountHierarchy2>
+         <!--Optional:-->
+         <findAccountHierachyRequest>
+            <level>4</level>
+           
+            <!--<name>
+               <title>?</title>
+               <firstName>?</firstName>
+               <lastName>?</lastName>
+            </name>
+-->
+            <!--Optional:-->
+            <address>
+               <address1>address_diff_cust</address1>
+               <!--<address2>?</address2>
+               <address3>?</address3>
+               <zipCode>?</zipCode>
+               <city>?</city>
+               <country>?</country>
+               <state>?</state>
+-->
+            </address>
+         </findAccountHierachyRequest>
+      </ws:findAccountHierarchy2>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response"/><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:preemptive>true</con:preemptive><con:authType>Preemptive</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="find ua address"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>findAccountHierarchy2</con:operation><con:request name="find ua address"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:findAccountHierarchy2>
+         <!--Optional:-->
+         <findAccountHierachyRequest>
+            <level>8</level>
+           
+            <!--<name>
+               <title>?</title>
+               <firstName>?</firstName>
+               <lastName>?</lastName>
+            </name>
+-->
+            <!--Optional:-->
+            <address>
+               <address1>ua_diff_ba</address1>
+               <!--<address2>?</address2>
+               <address3>?</address3>
+               <zipCode>?</zipCode>
+               <city>?</city>
+               <country>?</country>
+               <state>?</state>
+-->
+            </address>
+         </findAccountHierachyRequest>
+      </ws:findAccountHierarchy2>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response"/><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:preemptive>true</con:preemptive><con:authType>Preemptive</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="find ba ua address"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>findAccountHierarchy2</con:operation><con:request name="find ba ua address"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:findAccountHierarchy2>
+         <!--Optional:-->
+         <findAccountHierachyRequest>
+            <level>12</level>
+           
+            <!--<name>
+               <title>?</title>
+               <firstName>?</firstName>
+               <lastName>?</lastName>
+            </name>
+-->
+            <!--Optional:-->
+            <address>
+               <!--<address1>ba_address_diff_cust</address1>-->
+               <address2>ba_ua_diff_ba</address2>
+               <!--<address3>?</address3>
+               <zipCode>?</zipCode>
+               <city>?</city>
+               <country>?</country>
+               <state>?</state>
+-->
+            </address>
+         </findAccountHierachyRequest>
+      </ws:findAccountHierarchy2>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response"/><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:preemptive>true</con:preemptive><con:authType>Preemptive</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="find all"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>findAccountHierarchy2</con:operation><con:request name="find all"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:findAccountHierarchy2>
+         <!--Optional:-->
+         <findAccountHierachyRequest>
+            <level>15</level>
+            <address>
+            	<zipCode>21000</zipCode>
+            </address>
+         </findAccountHierachyRequest>
+      </ws:findAccountHierarchy2>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response"/><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:preemptive>true</con:preemptive><con:authType>Preemptive</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="find - invalid label"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>findAccountHierarchy2</con:operation><con:request name="find - invalid label"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:findAccountHierarchy2>
+         <!--Optional:-->
+         <findAccountHierachyRequest>
+            <level>100</level>
+            <!--Optional:-->
+            <name>
+               <lastName>Legaspi2</lastName>
+            </name>
+           
+         </findAccountHierachyRequest>
+      </ws:findAccountHierarchy2>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response"/><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:preemptive>true</con:preemptive><con:authType>Preemptive</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:properties><con:property><con:name>ticket</con:name><con:value>733</con:value></con:property></con:properties><con:setupScript>import com.eviware.soapui.impl.wsdl.teststeps.*
 import com.eviware.soapui.support.types.*;
 
 StringToStringMap headers = new StringToStringMap();

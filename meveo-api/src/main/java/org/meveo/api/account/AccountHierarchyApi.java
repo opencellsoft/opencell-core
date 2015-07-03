@@ -63,7 +63,6 @@ import org.meveo.model.billing.UserAccount;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.crm.AccountLevelEnum;
-import org.meveo.model.crm.CustomFieldInstance;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.crm.CustomerBrand;
 import org.meveo.model.crm.CustomerCategory;
@@ -829,16 +828,19 @@ public class AccountHierarchyApi extends BaseApi {
 		// custom fields
 		if (postData.getCustomFields() != null) {
 			for (CustomFieldDto cfDto : postData.getCustomFields().getCustomField()) {
-				List<CustomFieldInstance> cfis = customFieldInstanceService.findByCodeAndAccountAndValue(
-						cfDto.getCode(), Customer.ACCOUNT_TYPE, cfDto.getStringValue(), cfDto.getDateValue(),
-						cfDto.getLongValue(), cfDto.getDoubleValue(), currentUser.getProvider());
-				if (cfis != null) {
-					qb.startOrClause();
-					for (CustomFieldInstance cfi : cfis) {
-						qb.addCriterion("VALUE(c.customFields)", "=", cfi, true);
-					}
-					qb.endOrClause();
-				}
+				qb.addCriterion("KEY(c.customFields)", "=", cfDto.getCode(), true);
+				// problem with multiple result
+				// List<CustomFieldInstance> cfis =
+				// customFieldInstanceService.findByCodeAndAccountAndValue(
+				// cfDto.getCode(), Customer.ACCOUNT_TYPE,
+				// cfDto.getStringValue(), cfDto.getDateValue(),
+				// cfDto.getLongValue(), cfDto.getDoubleValue(),
+				// currentUser.getProvider());
+				// if (cfis != null) {
+				// for (CustomFieldInstance cfi : cfis) {
+				// qb.addCriterion("VALUE(c.customFields)", "=", cfi, true);
+				// }
+				// }
 			}
 		}
 
@@ -847,7 +849,28 @@ public class AccountHierarchyApi extends BaseApi {
 
 		if (customers != null) {
 			for (Customer cust : customers) {
-				result.getCustomer().add(new CustomerDto(cust));
+				for (CustomFieldDto cfDto : postData.getCustomFields().getCustomField()) {
+					if (!StringUtils.isBlank(cfDto.getStringValue())) {
+						if (cust.getStringCustomValue(cfDto.getCode()).equals(cfDto.getStringValue())) {
+							result.getCustomer().add(new CustomerDto(cust));
+						}
+					}
+					if (!StringUtils.isBlank(cfDto.getDateValue())) {
+						if (cust.getDateCustomValue(cfDto.getCode()).equals(cfDto.getDateValue())) {
+							result.getCustomer().add(new CustomerDto(cust));
+						}
+					}
+					if (!StringUtils.isBlank(cfDto.getDoubleValue())) {
+						if (cust.getDoubleCustomValue(cfDto.getCode()).equals(cfDto.getDoubleValue())) {
+							result.getCustomer().add(new CustomerDto(cust));
+						}
+					}
+					if (!StringUtils.isBlank(cfDto.getLongValue())) {
+						if (cust.getLongCustomValue(cfDto.getCode()).equals(cfDto.getLongValue())) {
+							result.getCustomer().add(new CustomerDto(cust));
+						}
+					}
+				}
 			}
 		}
 
