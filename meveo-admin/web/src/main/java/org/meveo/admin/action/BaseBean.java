@@ -68,7 +68,6 @@ import org.meveo.model.shared.DateUtils;
 import org.meveo.security.MeveoUser;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.catalog.impl.CatMessagesService;
-import org.meveo.service.crm.impl.CustomEntitySearchService;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.meveo.util.serializable.SerializableUtil;
@@ -1007,7 +1006,11 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
             
        	 	if(CustomFieldStorageTypeEnum.SINGLE.equals(cf.getStorageType())){
        	 		if(CustomFieldTypeEnum.ENTITY.equals(cf.getFieldType())){
-       	 			cfi.setEntityValue(SerializableUtil.encode(cfi.getBusinessEntity()));
+       	 			BusinessEntity temp=cfi.getBusinessEntity();
+       	 			BusinessEntity b=new BusinessEntity();
+       	 			b.setId(temp.getId());
+       	 			b.setCode(temp.getCode());
+       	 			cfi.setEntityValue(SerializableUtil.encode(b));
        	 		}
        	 	}else if(CustomFieldStorageTypeEnum.LIST.equals(cf.getStorageType())){
        	 		if(cf.isVersionable()){
@@ -1016,7 +1019,15 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 	 				}
 	 			}else{
 	 				if(CustomFieldTypeEnum.ENTITY.equals(cf.getFieldType())){
-	 					cfi.setEntityValue(SerializableUtil.encode(cfi.getEntityList()));
+	 					List<BusinessEntity> lists=new ArrayList<BusinessEntity>();
+	 					BusinessEntity temp=null;
+	 					for(BusinessEntity b:cfi.getEntityList()){
+	 						temp=new BusinessEntity();
+	 						temp.setId(b.getId());
+	 						temp.setCode(b.getCode());
+	 						lists.add(temp);
+	 					}
+	 					cfi.setEntityValue(SerializableUtil.encode(lists));
 	 				}else if(CustomFieldTypeEnum.STRING.equals(cf.getFieldType())){
 	 					cfi.setEntityValue(SerializableUtil.encode(cfi.getStringList()));
 	 				}else if(CustomFieldTypeEnum.LONG.equals(cf.getFieldType())){
@@ -1029,7 +1040,16 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 	 			}
        	 	}else if(CustomFieldStorageTypeEnum.MAP.equals(cf.getStorageType())){
        	 		if(CustomFieldTypeEnum.ENTITY.equals(cf.getFieldType())){
-       	 			cfi.setEntityValue(SerializableUtil.encode(cfi.getEntityMap()));
+       	 			Map<String,BusinessEntity> maps=new HashMap<String,BusinessEntity>();
+					BusinessEntity temp=null;
+					for(String key:cfi.getEntityMap().keySet()){
+						temp=new BusinessEntity();
+						BusinessEntity b=cfi.getEntityMap().get(key);
+						temp.setId(b.getId());
+						temp.setCode(b.getCode());
+						maps.put(key,temp);
+					}
+       	 			cfi.setEntityValue(SerializableUtil.encode(maps));
          	    }else if(CustomFieldTypeEnum.STRING.equals(cf.getFieldType())){
          	    	cfi.setEntityValue(SerializableUtil.encode(cfi.getStringMap()));
          	    }else if(CustomFieldTypeEnum.LONG.equals(cf.getFieldType())){
