@@ -432,7 +432,7 @@ public class CustomerTreeBean extends BaseBean<AccountEntity> {
 			} else if (type.equals(SUBSCRIPTION_KEY)) {
 				return "subscriptionDetail";
 			} else if (type.equals(ACCESS_KEY)) {
-				return "access";
+				return "accessDetail";
 			} else {
 				throw new IllegalStateException("Wrong customer type " + type + " provided in EL in .xhtml");
 			}
