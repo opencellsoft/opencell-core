@@ -18,6 +18,7 @@ package org.meveo.admin.action;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -70,7 +71,7 @@ import org.meveo.service.catalog.impl.CatMessagesService;
 import org.meveo.service.crm.impl.CustomEntitySearchService;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
-import org.meveo.util.xstream.XstreamUtil;
+import org.meveo.util.serializable.SerializableUtil;
 import org.primefaces.component.datatable.DataTable;
 import org.primefaces.context.RequestContext;
 import org.primefaces.event.SelectEvent;
@@ -183,8 +184,8 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
      */
     private List<T> selectedEntities;
     
-    @Inject
-    private CustomEntitySearchService customEntityFindService;
+//    @Inject
+//    private CustomEntitySearchService customEntityFindService;
 
     /**
      * Constructor
@@ -935,7 +936,8 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     /**
      * Load available custom fields (templates) and their values
      */
-    protected void initCustomFields() {
+    @SuppressWarnings("unchecked")
+	protected void initCustomFields() {
 
         if (!this.getClass().isAnnotationPresent(CustomFieldEnabledBean.class)) {
             return;
@@ -950,78 +952,49 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
                 if (cfi == null) {
                     cf.setInstance(CustomFieldInstance.fromTemplate(cf));
                 } else {
-                    	String entityValue=cfi.getEntityValue();
-                    	String entityClazz=cf.getEntityClazz();
-                    	if(CustomFieldStorageTypeEnum.SINGLE.equals(cf.getStorageType())){
-                    		if(CustomFieldTypeEnum.ENTITY.equals(cf.getFieldType())){
-                    			if(entityValue!=null&&entityClazz!=null){
-                    				BusinessEntity xstreamEntity=(BusinessEntity) XstreamUtil.unmarshalBusinessEntity(cfi.getEntityValue());
-                        			if(xstreamEntity!=null){
-                        				Long xstreamId=xstreamEntity.getId();
-                            			BusinessEntity foundEntity=customEntityFindService.findCustomEntity(entityClazz, xstreamId);
-                            			cfi.setBusinessEntity(foundEntity);
-                            			log.debug("found cfi custom entity {} in storage single",foundEntity);
-                        			}
-                    			}
-                        	}
-                    	}else if(CustomFieldStorageTypeEnum.LIST.equals(cf.getStorageType())){
-                    		cfi.setEntityList(new ArrayList<BusinessEntity>());
-                    		if(CustomFieldTypeEnum.ENTITY.equals(cf.getFieldType())){
-                    			if(entityClazz!=null){
-                    				log.debug("found in list entity {}",cfi.getEntityValue());
-                    				if(cf.isVersionable()){
-                        				List<CustomFieldPeriod> cfps=cfi.getValuePeriods();
-                        				if(cfps!=null){
-                        					for(CustomFieldPeriod cfp:cfps){
-                        						String periodEntityValue=cfp.getEntityValue();
-                        						if(periodEntityValue!=null){
-                        							BusinessEntity xstreamEntity=(BusinessEntity)XstreamUtil.unmarshalBusinessEntity(periodEntityValue);
-                        							if(xstreamEntity!=null&&xstreamEntity.getId()!=null){
-                        								cfp.setBusinessEntity(customEntityFindService.findCustomEntity(cf.getEntityClazz(),xstreamEntity.getId()));
-                        							}
-                        						}
-                        					}
-                        				}
-                        			}else{
-                        				@SuppressWarnings("unchecked")
-                        				List<BusinessEntity> xstreamEntities=(List<BusinessEntity>) XstreamUtil.unmarshalBusinessEntity(cfi.getEntityValue());
-                        				for(BusinessEntity xstreamEntity:xstreamEntities){
-                        					BusinessEntity searchEntity=customEntityFindService.findCustomEntity(entityClazz, xstreamEntity.getId());
-                        					if(searchEntity!=null){
-                        						cfi.addEntityTolists(searchEntity);
-                        					}
-                        					log.debug("found cfi custom entity {} in storage List with {}",searchEntity,xstreamEntity.getId());
-                        				}
-                        			}
-                    			}
-                    		}
-                		}else if(CustomFieldStorageTypeEnum.MAP.equals(cf.getStorageType())){//cf
-                			if(CustomFieldTypeEnum.ENTITY.equals(cf.getFieldType())){
-                				cfi.setEntityMap(new HashMap<String,BusinessEntity>());
-                    			if(entityValue!=null&&entityClazz!=null){
-                    				log.debug("found in map entity {}",cfi.getEntityValue());
-                    				@SuppressWarnings("unchecked")
-									Map<String,BusinessEntity> xstreamEntities=(Map<String,BusinessEntity>) XstreamUtil.unmarshalBusinessEntity(cfi.getEntityValue());
-                        			for(String key:xstreamEntities.keySet()){
-                        				BusinessEntity xstreamEntity=xstreamEntities.get(key);
-                        				if(xstreamEntity!=null){
-                        					BusinessEntity searchEntity=customEntityFindService.findCustomEntity(entityClazz, xstreamEntity.getId());
-                            				if(searchEntity!=null){
-                            					cfi.addEntityTomaps(key,searchEntity);
-                            					log.debug("found cfi custom entity {} in storage MAP with {}",searchEntity,xstreamEntity.getId());
-                            				}
-                        				}
-                        			}
-                    			}
-                    		}
-                		}
+                    if(CustomFieldStorageTypeEnum.SINGLE.equals(cf.getStorageType())){
+               	 		if(CustomFieldTypeEnum.ENTITY.equals(cf.getFieldType())){
+               	 			cfi.setBusinessEntity((BusinessEntity)SerializableUtil.decode(cfi.getEntityValue()));
+               	 		}
+               	 	}else if(CustomFieldStorageTypeEnum.LIST.equals(cf.getStorageType())){
+               	 		if(cf.isVersionable()){
+               	 			for(CustomFieldPeriod cfp: cfi.getValuePeriods()){
+               	 				cfp.setBusinessEntity((BusinessEntity)SerializableUtil.decode(cfp.getEntityValue()));
+               	 			}
+               	 		}else{
+               	 			if(CustomFieldTypeEnum.ENTITY.equals(cf.getFieldType())){
+               	 				cfi.setEntityList((List<BusinessEntity>)SerializableUtil.decode(cfi.getEntityValue()));
+               	 			}else if(CustomFieldTypeEnum.STRING.equals(cf.getFieldType())){
+               	 				cfi.setStringList((Set<String>)SerializableUtil.decode(cfi.getEntityValue()));
+               	 			}else if(CustomFieldTypeEnum.LONG.equals(cf.getFieldType())){
+               	 				cfi.setLongList((Set<Long>)SerializableUtil.decode(cfi.getEntityValue()));
+               	 			}else if(CustomFieldTypeEnum.DOUBLE.equals(cf.getFieldType())){
+               	 				cfi.setDoubleList((Set<Double>)SerializableUtil.decode(cfi.getEntityValue()));
+               	 			}else if(CustomFieldTypeEnum.DATE.equals(cf.getFieldType())){
+               	 				cfi.setDateList((Set<Date>)SerializableUtil.decode(cfi.getEntityValue()));
+               	 			}
+               	 		}
+               	 	}else if(CustomFieldStorageTypeEnum.MAP.equals(cf.getStorageType())){
+               	 		if(CustomFieldTypeEnum.ENTITY.equals(cf.getFieldType())){
+               	 			cfi.setEntityMap((Map<String,BusinessEntity>)SerializableUtil.decode(cfi.getEntityValue()));
+               	 		}else if(CustomFieldTypeEnum.STRING.equals(cf.getFieldType())){
+               	 			cfi.setStringMap((Map<String,String>)SerializableUtil.decode(cfi.getEntityValue()));
+               	 		}else if(CustomFieldTypeEnum.LONG.equals(cf.getFieldType())){
+               	 			cfi.setLongMap((Map<String,Long>)SerializableUtil.decode(cfi.getEntityValue()));
+               	 		}else if(CustomFieldTypeEnum.DOUBLE.equals(cf.getFieldType())){
+               	 			cfi.setDoubleMap((Map<String,Double>)SerializableUtil.decode(cfi.getEntityValue()));
+               	 		}else if(CustomFieldTypeEnum.DATE.equals(cf.getFieldType())){
+               	 			cfi.setDateMap((Map<String,Date>)SerializableUtil.decode(cfi.getEntityValue()));
+               	 		}
+               	 	}
+                    
                     cf.setInstance(cfi);
                 }
             }
         }
     }
 
-    private void updateCustomFieldsInEntity() {
+    private void updateCustomFieldsInEntity(){
     	
 
         if (!this.getClass().isAnnotationPresent(CustomFieldEnabledBean.class) || customFieldTemplates == null || customFieldTemplates.isEmpty()) {
@@ -1029,44 +1002,45 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
         }
 
         for (CustomFieldTemplate cf : customFieldTemplates) {
-
+        	
             CustomFieldInstance cfi = cf.getInstance();
-            if(CustomFieldStorageTypeEnum.SINGLE.equals(cf.getStorageType())){
-            	if(CustomFieldTypeEnum.ENTITY.equals(cf.getFieldType())){
-            		BusinessEntity customEntity=cfi.getBusinessEntity();
-            		cfi.setEntityValue(XstreamUtil.marshalBusinessEntity(customEntity));
-                	log.debug("in entity single mode, set cfi entity value {}",customEntity);
-            	}
-            }else if(CustomFieldStorageTypeEnum.LIST.equals(cf.getStorageType())){
-            	if(CustomFieldTypeEnum.ENTITY.equals(cf.getFieldType())){
-            		if(cf.isVersionable()){
-            			for(CustomFieldPeriod cfp: cfi.getValuePeriods()){
-            				cfp.setEntityValue(XstreamUtil.marshalBusinessEntity(cfp.getBusinessEntity()));
-            			}
-            		}else{
-            			List<BusinessEntity> entities=cfi.getEntityList();
-                    	if(entities!=null&&entities.size()>0){
-                    		cfi.setEntityValue(XstreamUtil.marshalBusinessEntity(entities));
-                    	}else{
-                    		cfi.setEntityValue(null);
-                    	}
-            		}
-                	log.debug("in entity List mode, set cfi entities value {}",cfi.getEntityValue());
-            	}
-            }else if(CustomFieldStorageTypeEnum.MAP.equals(cf.getStorageType())){
-            	if(CustomFieldTypeEnum.ENTITY.equals(cf.getFieldType())){
-            		Map<String,BusinessEntity> entities=cfi.getEntityMap();
-                	if(entities!=null&&entities.size()>0){
-                		cfi.setEntityValue(XstreamUtil.marshalBusinessEntity(entities));
-                	}else{
-                		cfi.setEntityValue(null);
-                	}
-                	log.debug("in entity List mode, set cfi entities value {}",cfi.getEntityValue());
-            	}
-            }else{
-            	log.debug("unimplemented storage type {}",cf.getStorageType());
-            }
-            // Not saving empty values
+            
+       	 	if(CustomFieldStorageTypeEnum.SINGLE.equals(cf.getStorageType())){
+       	 		if(CustomFieldTypeEnum.ENTITY.equals(cf.getFieldType())){
+       	 			cfi.setEntityValue(SerializableUtil.encode(cfi.getBusinessEntity()));
+       	 		}
+       	 	}else if(CustomFieldStorageTypeEnum.LIST.equals(cf.getStorageType())){
+       	 		if(cf.isVersionable()){
+       	 			for(CustomFieldPeriod cfp: cfi.getValuePeriods()){
+	 					cfp.setEntityValue(SerializableUtil.encode(cfp.getBusinessEntity()));
+	 				}
+	 			}else{
+	 				if(CustomFieldTypeEnum.ENTITY.equals(cf.getFieldType())){
+	 					cfi.setEntityValue(SerializableUtil.encode(cfi.getEntityList()));
+	 				}else if(CustomFieldTypeEnum.STRING.equals(cf.getFieldType())){
+	 					cfi.setEntityValue(SerializableUtil.encode(cfi.getStringList()));
+	 				}else if(CustomFieldTypeEnum.LONG.equals(cf.getFieldType())){
+	 					cfi.setEntityValue(SerializableUtil.encode(cfi.getLongList()));
+	 				}else if(CustomFieldTypeEnum.DOUBLE.equals(cf.getFieldType())){
+	 					cfi.setEntityValue(SerializableUtil.encode(cfi.getDoubleList()));
+	 				}else if(CustomFieldTypeEnum.DATE.equals(cf.getFieldType())){
+	 					cfi.setEntityValue(SerializableUtil.encode(cfi.getDateList()));
+	 				}
+	 			}
+       	 	}else if(CustomFieldStorageTypeEnum.MAP.equals(cf.getStorageType())){
+       	 		if(CustomFieldTypeEnum.ENTITY.equals(cf.getFieldType())){
+       	 			cfi.setEntityValue(SerializableUtil.encode(cfi.getEntityMap()));
+         	    }else if(CustomFieldTypeEnum.STRING.equals(cf.getFieldType())){
+         	    	cfi.setEntityValue(SerializableUtil.encode(cfi.getStringMap()));
+         	    }else if(CustomFieldTypeEnum.LONG.equals(cf.getFieldType())){
+         	    	cfi.setEntityValue(SerializableUtil.encode(cfi.getLongMap()));
+         	    }else if(CustomFieldTypeEnum.DOUBLE.equals(cf.getFieldType())){
+         	    	cfi.setEntityValue(SerializableUtil.encode(cfi.getDoubleMap()));
+         	    }else if(CustomFieldTypeEnum.DATE.equals(cf.getFieldType())){
+         	    	cfi.setEntityValue(SerializableUtil.encode(cfi.getDateMap()));
+         	    }
+       	 	}
+       	     // Not saving empty values
             if (cfi.isValueEmpty()) {
                 if (!cfi.isTransient()) {
                     ((ICustomFieldEntity) entity).getCustomFields().remove(cfi.getCode());

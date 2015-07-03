@@ -661,97 +661,15 @@
 		<addColumn tableName="CRM_CUSTOM_FIELD_TMPL">
 			<column name="STORAGE_TYPE" type="varchar(255)"/>
 		</addColumn>
-		<!-- date -->
-		<createTable tableName="CRM_CUSTOM_FIELD_INST_DATE_LIST">
-			<column name="CUSTOMFIELDINSTANCE_ID" type="BIGINT">
-				<constraints nullable="false" />
-			</column>
-			<column name="DATELIST" type="TIMESTAMP WITHOUT TIME ZONE"/>
-		</createTable>
-		<addForeignKeyConstraint baseColumnNames="CUSTOMFIELDINSTANCE_ID"
-			baseTableName="CRM_CUSTOM_FIELD_INST_DATE_LIST" constraintName="fk_17rhtrdn4ejg92v2r0kqb1rn6"
-			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
-			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="CRM_CUSTOM_FIELD_INST" />
-		<createTable tableName="CRM_CUSTOM_FIELD_INST_DATE_MAP">
-			<column name="CUSTOMFIELDINSTANCE_ID" type="BIGINT">
-				<constraints nullable="false" />
-			</column>
-			<column name="DATEMAP_KEY" type="VARCHAR(255)"/>
-			<column name="DATEMAP" type="TIMESTAMP WITHOUT TIME ZONE"/>
-		</createTable>
-		<addForeignKeyConstraint baseColumnNames="CUSTOMFIELDINSTANCE_ID"
-			baseTableName="CRM_CUSTOM_FIELD_INST_DATE_MAP" constraintName="fk_f4ng0tdoqvn52hpdr1lpedj5a"
-			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
-			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="CRM_CUSTOM_FIELD_INST" />
-		<!-- long -->
-		<createTable tableName="CRM_CUSTOM_FIELD_INST_LONG_LIST">
-			<column name="CUSTOMFIELDINSTANCE_ID" type="BIGINT">
-				<constraints nullable="false" />
-			</column>
-			<column name="LONGLIST" type="BIGINT"/>
-		</createTable>
-		<addForeignKeyConstraint baseColumnNames="CUSTOMFIELDINSTANCE_ID"
-			baseTableName="CRM_CUSTOM_FIELD_INST_LONG_LIST" constraintName="fk_1gvv6bnuh584j4fiq4jq5wjbj"
-			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
-			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="CRM_CUSTOM_FIELD_INST" />
-		<createTable tableName="CRM_CUSTOM_FIELD_INST_LONG_MAP">
-			<column name="CUSTOMFIELDINSTANCE_ID" type="BIGINT">
-				<constraints nullable="false" />
-			</column>
-			<column name="LONGMAP_KEY" type="VARCHAR(255)"/>
-			<column name="LONGMAP" type="BIGINT"/>
-		</createTable>
-		<addForeignKeyConstraint baseColumnNames="CUSTOMFIELDINSTANCE_ID"
-			baseTableName="CRM_CUSTOM_FIELD_INST_LONG_MAP" constraintName="fk_14kjq164eqf0s0lf9hj9ph3yf"
-			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
-			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="CRM_CUSTOM_FIELD_INST" />
 		
-		<!-- double -->
-		<createTable tableName="CRM_CUSTOM_FIELD_INST_DOUB_LIST">
-			<column name="CUSTOMFIELDINSTANCE_ID" type="BIGINT">
-				<constraints nullable="false" />
-			</column>
-			<column name="DOUBLELIST" type="float8"/>
-		</createTable>
-		<addForeignKeyConstraint baseColumnNames="CUSTOMFIELDINSTANCE_ID"
-			baseTableName="CRM_CUSTOM_FIELD_INST_DOUB_LIST" constraintName="fk_t7qdueeagl42j4ol5jhe9347f"
-			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
-			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="CRM_CUSTOM_FIELD_INST" />
-		<createTable tableName="CRM_CUSTOM_FIELD_INST_DOUB_MAP">
-			<column name="CUSTOMFIELDINSTANCE_ID" type="BIGINT">
-				<constraints nullable="false" />
-			</column>
-			<column name="DOUBLEMAP_KEY" type="VARCHAR(255)"/>
-			<column name="DOUBLEMAP" type="float8"/>
-		</createTable>
-		<addForeignKeyConstraint baseColumnNames="CUSTOMFIELDINSTANCE_ID"
-			baseTableName="CRM_CUSTOM_FIELD_INST_DOUB_MAP" constraintName="fk_m2ebwk97gh5mxvfmic66k0j0y"
-			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
-			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="CRM_CUSTOM_FIELD_INST" />
-		<!-- string -->
-		<createTable tableName="CRM_CUSTOM_FIELD_INST_STR_LIST">
-			<column name="CUSTOMFIELDINSTANCE_ID" type="BIGINT">
-				<constraints nullable="false" />
-			</column>
-			<column name="STRINGLIST" type="varchar(255)"/>
-		</createTable>
-		<addForeignKeyConstraint baseColumnNames="CUSTOMFIELDINSTANCE_ID"
-			baseTableName="CRM_CUSTOM_FIELD_INST_STR_LIST" constraintName="fk_ivjnwp66uktesnuxjcs4xaewu"
-			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
-			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="CRM_CUSTOM_FIELD_INST" />
-		<createTable tableName="CRM_CUSTOM_FIELD_INST_STR_MAP">
-			<column name="CUSTOMFIELDINSTANCE_ID" type="BIGINT">
-				<constraints nullable="false" />
-			</column>
-			<column name="STRINGMAP_KEY" type="VARCHAR(255)"/>
-			<column name="STRINGMAP" type="VARCHAR(255)"/>
-		</createTable>
-		<addForeignKeyConstraint baseColumnNames="CUSTOMFIELDINSTANCE_ID"
-			baseTableName="CRM_CUSTOM_FIELD_INST_STR_MAP" constraintName="fk_hqkd0t9i2xw7jvi2d5v36fc2q"
-			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
-			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="CRM_CUSTOM_FIELD_INST" />
+	</changeSet>
+	<changeSet id="789_20150702_1" author="TyshanShi">
 		<addColumn tableName="CRM_CUSTOM_FIELD_PERIOD">
-			<column name="ENTITY_VALUE" type="varchar(255)"></column>
+			<column name="ENTITY_VALUE" type="text"></column>
+		</addColumn>
+		<dropColumn columnName="ENTITY_VALUE" tableName="CRM_CUSTOM_FIELD_INST" />
+		<addColumn tableName="CRM_CUSTOM_FIELD_INST">
+			<column name="ENTITY_VALUE" type="text"></column>
 		</addColumn>
 	</changeSet>
 	

@@ -9,13 +9,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.persistence.Basic;
 import javax.persistence.CascadeType;
-import javax.persistence.CollectionTable;
 import javax.persistence.Column;
-import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
@@ -29,7 +29,6 @@ import org.meveo.model.AccountEntity;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ProviderlessEntity;
-import org.meveo.model.billing.InvoiceSubcategoryCountry;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.catalog.Calendar;
 import org.meveo.model.catalog.ChargeTemplate;
@@ -111,48 +110,43 @@ public class CustomFieldInstance extends ProviderlessEntity {
     @Column(name = "VERSIONABLE")
     private boolean versionable;
     
-    @Column(name="ENTITY_VALUE")
+    @Lob
+    @Basic(fetch=FetchType.LAZY)
+    @Column(name="ENTITY_VALUE",nullable=true)
     private String entityValue;
     
     @Transient
     private String label;
     @Transient
     private BusinessEntity businessEntity;
+    
     @Transient
     private List<BusinessEntity> entityList=new ArrayList<BusinessEntity>();
     @Transient
     private Map<String,BusinessEntity> entityMap=new HashMap<String,BusinessEntity>();
     
-    @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(name = "CRM_CUSTOM_FIELD_INST_STR_MAP")
+    @Transient
     private Map<String, String> stringMap = new HashMap<String, String>();
     
-    @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(name = "CRM_CUSTOM_FIELD_INST_STR_LIST")
+    @Transient
     private Set<String> stringList=new HashSet<String>();
 
-    @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(name = "CRM_CUSTOM_FIELD_INST_DATE_LIST")
+    @Transient
     private Set<Date> dateList=new HashSet<Date>();
     
-    @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(name = "CRM_CUSTOM_FIELD_INST_DATE_MAP")
+    @Transient
     private Map<String,Date> dateMap=new HashMap<String, Date>();
 
-    @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(name = "CRM_CUSTOM_FIELD_INST_LONG_LIST")
+    @Transient
     private Set<Long> longList=new HashSet<Long>();
     
-    @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(name = "CRM_CUSTOM_FIELD_INST_LONG_MAP")
+    @Transient
     private Map<String,Long> longMap=new HashMap<String, Long>();
 
-    @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(name = "CRM_CUSTOM_FIELD_INST_DOUB_LIST")
+    @Transient
     private Set<Double> doubleList=new HashSet<Double>();
     
-    @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(name = "CRM_CUSTOM_FIELD_INST_DOUB_MAP")
+    @Transient
     private Map<String,Double> doubleMap=new HashMap<String, Double>();
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -757,10 +751,8 @@ public class CustomFieldInstance extends ProviderlessEntity {
     }
 
     public boolean isValueEmpty() {
-        return (!isVersionable() && (stringValue == null && dateValue == null && longValue == null && doubleValue == null&&entityValue==null
-        		&&(stringList==null||stringList.size()==0)&&(dateList==null||dateList.size()==0)&&(longList==null||longList.size()==0)&&(doubleList==null||doubleList.size()==0)
-        		&&(entityList==null||entityList.size()==0)&&(stringMap==null||stringMap.size()==0)&&(dateMap==null||dateMap.size()==0)&&(longMap==null||longMap.size()==0)
-        		&&(doubleMap==null||doubleMap.size()==0)&&(entityMap==null||entityMap.size()==0))) || (isVersionable() && valuePeriods.isEmpty());
+        return (!isVersionable() && (stringValue == null && dateValue == null && longValue == null && doubleValue == null&&entityValue==null))
+        		|| (isVersionable() && valuePeriods.isEmpty());
         // TODO check that period values are empty
     }
 

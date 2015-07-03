@@ -2,10 +2,12 @@ package org.meveo.model.crm;
 
 import java.util.Date;
 
+import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
@@ -55,7 +57,9 @@ public class CustomFieldPeriod extends BaseProviderlessEntity {
     @Column(name = "PRIORITY")
     private int priority;
     
-    @Column(name="ENTITY_VALUE")
+    @Lob
+    @Basic(fetch=FetchType.LAZY)
+    @Column(name="ENTITY_VALUE",nullable=true)
     private String entityValue;
     
     @Transient
