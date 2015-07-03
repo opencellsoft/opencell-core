@@ -116,7 +116,7 @@
 					paginator="true" value="#{jobInstanceBean.getJobExecutionList()}"
 					rows="10" rowKey="#{entity.id}" widget="jobExecutionsTable"
 					resizableColumns="true">
-                    <p:column sortBy="startDate">
+                    <p:column sortBy="#{entity.startDate}">
                         <f:facet name="header">
                             <h:outputText value="#{messages['jobExecution.startDate']}" />
                         </f:facet>
@@ -125,7 +125,7 @@
                         </h:outputText>
                     </p:column>
 
-                    <p:column>
+                    <p:column sortBy="#{entity.endDate}">
                         <f:facet name="header">
                             <h:outputText value="#{messages['jobExecution.endDate']}" />
                         </f:facet>
@@ -134,7 +134,7 @@
                         </h:outputText>
                     </p:column>
 
-                    <p:column>
+                    <p:column sortBy="#{entity.nbItemsCorrectlyProcessed}">
                         <f:facet name="header">
                             <h:outputText value="#{messages['jobExecution.nbOk']}" />
                         </f:facet>
@@ -142,7 +142,7 @@
                         </h:outputText>
                     </p:column>
 
-                    <p:column>
+                    <p:column sortBy="#{entity.nbItemsProcessedWithWarning}">
                         <f:facet name="header">
                             <h:outputText value="#{messages['jobExecution.nbWarn']}" />
                         </f:facet>
@@ -150,7 +150,7 @@
                         </h:outputText>
                     </p:column>
 
-                    <p:column>
+                    <p:column sortBy="#{entity.nbItemsProcessedWithError}">
                         <f:facet name="header">
                             <h:outputText value="#{messages['jobExecution.nbKo']}" />
                         </f:facet>
@@ -158,7 +158,7 @@
                         </h:outputText>
                     </p:column>
 
-                    <p:column>
+                    <p:column sortBy="#{entity.report}">
                         <f:facet name="header">
                             <h:outputText value="#{messages['jobExecution.report']}" />
                         </f:facet>
