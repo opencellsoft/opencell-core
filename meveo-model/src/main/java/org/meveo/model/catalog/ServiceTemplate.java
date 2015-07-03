@@ -66,16 +66,16 @@ public class ServiceTemplate extends BusinessEntity implements ICustomFieldEntit
 
 	private static final long serialVersionUID = 1L;
 
-	@OneToMany(mappedBy = "serviceTemplate", fetch = FetchType.LAZY)
+	@OneToMany(mappedBy = "serviceTemplate", fetch = FetchType.LAZY,cascade=CascadeType.PERSIST)
 	private List<ServiceChargeTemplateRecurring> serviceRecurringCharges = new ArrayList<ServiceChargeTemplateRecurring>();
 
-	@OneToMany(mappedBy = "serviceTemplate", fetch = FetchType.LAZY)
+	@OneToMany(mappedBy = "serviceTemplate", fetch = FetchType.LAZY,cascade=CascadeType.PERSIST)
 	private List<ServiceChargeTemplateSubscription> serviceSubscriptionCharges = new ArrayList<ServiceChargeTemplateSubscription>();
 
-	@OneToMany(mappedBy = "serviceTemplate", fetch = FetchType.LAZY)
+	@OneToMany(mappedBy = "serviceTemplate", fetch = FetchType.LAZY,cascade=CascadeType.PERSIST)
 	private List<ServiceChargeTemplateTermination> serviceTerminationCharges = new ArrayList<ServiceChargeTemplateTermination>();
 
-	@OneToMany(mappedBy = "serviceTemplate", fetch = FetchType.LAZY)
+	@OneToMany(mappedBy = "serviceTemplate", fetch = FetchType.LAZY,cascade=CascadeType.PERSIST)
 	private List<ServiceChargeTemplateUsage> serviceUsageCharges = new ArrayList<ServiceChargeTemplateUsage>();
 
 	@OneToMany(mappedBy = "serviceTemplate", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
