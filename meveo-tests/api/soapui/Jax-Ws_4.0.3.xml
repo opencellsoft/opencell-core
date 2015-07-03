@@ -31118,7 +31118,451 @@ for( testCase in testSuite.getTestCaseList() ) {
          </customerHierarchy>
       </ws:customerHierarchyUpdate>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response"/><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:authType>Global HTTP Settings</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties><con:property><con:name>index</con:name><con:value>6</con:value></con:property></con:properties></con:testCase><con:properties><con:property><con:name>ticket</con:name><con:value>827a1</con:value></con:property><con:property><con:name>date</con:name><con:value>2015-02-28</con:value></con:property><con:property><con:name>terminationReason</con:name><con:value>TERM_REASON_1</con:value></con:property></con:properties></con:testSuite><con:testSuite name="#895_mediation"><con:settings/><con:runType>SEQUENTIAL</con:runType><con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Customer creation" searchProperties="true"><con:settings/><con:testStep type="request" name="Create offer"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>CatalogWsSoapBinding</con:interface><con:operation>createServiceTemplate</con:operation><con:request name="Create offer"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/CatalogWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response"/><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:authType>Global HTTP Settings</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties><con:property><con:name>index</con:name><con:value>6</con:value></con:property></con:properties></con:testCase><con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Orange" searchProperties="true"><con:settings/><con:testStep type="request" name="addCustomer"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>customerHierarchyUpdate</con:operation><con:request name="addCustomer"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://orange.env-integration.com/meveo/AccountWs</con:endpoint><con:request><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:customerHierarchyUpdate>
+         <!--Optional:-->
+         <customerHierarchy>
+            <sellers>
+               <seller code="SELLER_FR">
+                  <customers>
+                     <customer code="000000000" description="ETUDE CORP">
+                        <customerCategory>CLIENT</customerCategory>
+                        <customerBrand>OCfB</customerBrand>
+                        <!--Optional:-->
+                        <customerAccounts>
+                           <!--Zero or more repetitions:-->
+                           <customerAccount code="I682VFWQ15" description="ETUDE CORP">
+                              <name>
+                                 <title>Mr</title>
+                                 <firstName>Thoms</firstName>
+                                 <lastName>MARTIN</lastName>
+                              </name>
+                              <address>
+                                 <address1>6 rue du test</address1>
+                                 <address2>Batiment 667</address2>
+                                 <zipCode>35000</zipCode>
+                                 <city>RENNES</city>
+                              </address>
+                              <customFields>
+                                 <!--Zero or more repetitions:-->
+                                 <customField code="NUM_CLIENT_AGRESSO">
+                                    <stringValue>61000016</stringValue>
+                                 </customField>
+                                <!--  <customField code="NUM_COMPTE_SATIN">
+                                    <stringValue>1234567</stringValue>
+                                 </customField>
+                                 -->
+                              </customFields>
+                              <customer>000000000</customer>
+                              <currency>EUR</currency>
+                              <!--Optional:-->
+                              <!--<creditCategory>?</creditCategory>
+-->
+                               <!--<dateStatus>?</dateStatus>
+-->
+						 <language>FRA</language>
+                              <contactInformation>
+                                 <email>thommartin.ext@orange.com</email>
+                                 <phone>0123456789</phone>
+                                 <mobile>0612121212</mobile>
+                              </contactInformation>
+
+
+                           </customerAccount>
+                        </customerAccounts>
+                     </customer>
+                  </customers>
+               </seller>
+            </sellers>
+         </customerHierarchy>
+      </ws:customerHierarchyUpdate>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response"/><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:authType>Global HTTP Settings</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="addBillingAccount"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>customerHierarchyUpdate</con:operation><con:request name="addBillingAccount"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://orange.env-integration.com/meveo/AccountWs</con:endpoint><con:request><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:customerHierarchyUpdate>
+         <!--Optional:-->
+         <customerHierarchy>
+            <sellers>
+               <seller code="SELLER_FR">
+                  <customers>
+                     <customer code="000000000">
+                        <customerAccounts>
+                           <!--Zero or more repetitions:-->
+                           <customerAccount code="I682VFWQ15">
+                        		<billingAccounts>
+		                        <billingAccount code="OCB0001599" description="FCA_V1_ETUDE CORP">
+					            <customFields>
+					               <customField code="ENGAGEMENT">
+					                  <longValue>37</longValue>
+					               </customField>
+					
+					           <!--    <customField code="CACONTRIBUTIF">
+					                  <longValue>36</longValue>
+					               </customField>
+					            
+					
+					               <customField code="INTERCO">
+					                  <longValue>36</longValue>
+					               </customField>
+					   -->
+					               <customField code="OFFRE">
+					                  <stringValue>FCA_V1</stringValue>
+					               </customField>
+					
+					            </customFields>
+					            <customerAccount>I682VFWQ15</customerAccount>
+					            <billingCycle>CYC_INV_MT_1</billingCycle>
+					            <country>FR</country>
+					            <language>FRA</language>
+					            <paymentMethod>CHECK</paymentMethod>
+					            <paymentTerms>CASH</paymentTerms>
+					            <subscriptionDate>2015-05-20</subscriptionDate>
+					            <userAccounts>
+					
+					
+					            	<!-- Organisation -->
+					               <userAccount code="FCA_ETUDE_CORP_ORGA123" description="FCA_ETUDE_CORP_ORGA123">
+					                   <!--  
+					                  <customFields>
+					
+					                     <customField code="NUM_SERVICE_SATIN">
+					                        <stringValue>1234567</stringValue>
+					                     </customField>
+					
+					                    
+					                     <customField code="ORGA">
+					                        <stringValue>FCA_ETUDE_CORP_ORGA</stringValue>
+					                     </customField>
+					
+					                     <customField code="BPINT_FCAV1">
+					                        <longValue>50</longValue>
+					                     </customField>
+					                     <customField code="BPVPN_FCAV1">
+					                        <longValue>150</longValue>
+					                     </customField>
+					
+					                  </customFields>
+					                  -->
+					                  <billingAccount>OCB0001599</billingAccount>
+					                  <subscriptionDate>2015-05-20</subscriptionDate>
+					                  <subscriptions>
+					                     <subscription code="FCA_ETUDE_CORP_ORGA123" description="Organisation">
+					                        <userAccount>FCA_ETUDE_CORP_ORGA123</userAccount>
+					                        <offerTemplate>FCA_V1</offerTemplate>
+					                        <subscriptionDate>2015-05-20</subscriptionDate>
+					                        <accesses>
+					                           <!--Zero or more repetitions:-->
+					                           <access code="FCA_ETUDE_CORP_ORGA123">
+					                              <subscription>FCA_ETUDE_CORP_ORGA</subscription>
+					                           </access>
+					                        </accesses>
+					                        <services>
+					                           <serviceInstance code="FCAV1_ORGA">
+					                              <subscriptionDate>2015-05-20</subscriptionDate>
+					                              <quantity>1</quantity>
+					                           </serviceInstance>
+					                           <serviceInstance code="FCAV1_SUPPORT_SILVER">
+					                              <subscriptionDate>2015-05-20</subscriptionDate>
+					                              <quantity>1</quantity>
+					                           </serviceInstance>
+					                        </services>
+					                     </subscription>
+					                  </subscriptions>
+					               </userAccount>
+					
+					            	<!-- VDC -->
+					               <userAccount code="FCA_ETUDE_CORP_ORGA123_VDC_1" description="FCA_ETUDE_CORP_ORGA123_VDC_1">
+					
+					                  <customFields>
+					                   <!--  
+					                     <customField code="NUM_SERVICE_SATIN">
+					                        <stringValue>1234567</stringValue>
+					                     </customField>
+					                    -->
+					                    
+					                     <customField code="ORGA">
+					                        <stringValue>FCA_ETUDE_CORP_ORGA123</stringValue>
+					                     </customField>
+					                     <customField code="BPINT_FCAV1">
+					                        <longValue>50</longValue>
+					                     </customField>
+					                     <customField code="BPVPN_FCAV1">
+					                        <longValue>150</longValue>
+					                     </customField>
+					                  </customFields>
+					                  
+					                  <billingAccount>OCB0001599</billingAccount>
+					                  <subscriptionDate>2015-05-20</subscriptionDate>
+					                  <subscriptions>
+					                     <subscription code="FCA_ETUDE_CORP_ORGA123_VDC_1" description="Vdc">
+					                        <userAccount>FCA_ETUDE_CORP_ORGA123_VDC_1</userAccount>
+					                        <offerTemplate>FCA_V1</offerTemplate>
+					                        <subscriptionDate>2015-05-20</subscriptionDate>
+					                        <accesses>
+					                           <access code="FCA_ETUDE_CORP_ORGA123_VDC_1">
+					                              <subscription>FCA_ETUDE_CORP_ORGA123_VDC_1</subscription>
+					                           </access>
+					                        </accesses>
+					                        <services>
+					                           <serviceInstance code="FCAV1_VDC">
+					                              <subscriptionDate>2015-05-20</subscriptionDate>
+					                              <quantity>1</quantity>
+					                           </serviceInstance>
+					                           
+					                           <!--<serviceInstance code="FCAV1_VDC_BANDWIDTH_INT">
+					                              <subscriptionDate>2015-05-20</subscriptionDate>
+					                              <quantity>50</quantity>
+					                           </serviceInstance>
+					                           <serviceInstance code="FCAV1_VDC_BANDWIDTH_VPN">
+					                              <subscriptionDate>2015-05-20</subscriptionDate>
+					                              <quantity>150</quantity>
+					                           </serviceInstance>-->
+					                        </services>
+					                     </subscription>
+					                  </subscriptions>
+					               </userAccount>
+					
+					            </userAccounts>
+					         </billingAccount>
+                        		</billingAccounts>
+						</customerAccount>
+                        </customerAccounts>
+                        
+                     </customer>
+                  </customers>
+               </seller>
+            </sellers>
+         </customerHierarchy>
+      </ws:customerHierarchyUpdate>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response"/><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:authType>Global HTTP Settings</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Orange - local" searchProperties="true"><con:settings/><con:testStep type="request" name="addCustomer"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>customerHierarchyUpdate</con:operation><con:request name="addCustomer"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/AccountWs</con:endpoint><con:request><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:customerHierarchyUpdate>
+         <!--Optional:-->
+         <customerHierarchy>
+            <sellers>
+               <seller code="SELLER_FR">
+                  <customers>
+                     <customer code="000000000" description="ETUDE CORP">
+                        <customerCategory>CLIENT</customerCategory>
+                        <customerBrand>OCfB</customerBrand>
+                        <!--Optional:-->
+                        <customerAccounts>
+                           <!--Zero or more repetitions:-->
+                           <customerAccount code="I682VFWQ15" description="ETUDE CORP">
+                              <name>
+                                 <title>Mr</title>
+                                 <firstName>Thoms</firstName>
+                                 <lastName>MARTIN</lastName>
+                              </name>
+                              <address>
+                                 <address1>6 rue du test</address1>
+                                 <address2>Batiment 667</address2>
+                                 <zipCode>35000</zipCode>
+                                 <city>RENNES</city>
+                              </address>
+                              <customFields>
+                                 <!--Zero or more repetitions:-->
+                                 <customField code="NUM_CLIENT_AGRESSO">
+                                    <stringValue>61000016</stringValue>
+                                 </customField>
+                                <!--  <customField code="NUM_COMPTE_SATIN">
+                                    <stringValue>1234567</stringValue>
+                                 </customField>
+                                 -->
+                              </customFields>
+                              <customer>000000000</customer>
+                              <currency>EUR</currency>
+                              <!--Optional:-->
+                              <!--<creditCategory>?</creditCategory>
+-->
+                               <!--<dateStatus>?</dateStatus>
+-->
+						 <language>FRA</language>
+                              <contactInformation>
+                                 <email>thommartin.ext@orange.com</email>
+                                 <phone>0123456789</phone>
+                                 <mobile>0612121212</mobile>
+                              </contactInformation>
+
+
+                           </customerAccount>
+                        </customerAccounts>
+                     </customer>
+                  </customers>
+               </seller>
+            </sellers>
+         </customerHierarchy>
+      </ws:customerHierarchyUpdate>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response"/><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:authType>Global HTTP Settings</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="addBillingAccount"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>customerHierarchyUpdate</con:operation><con:request name="addBillingAccount"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/AccountWs</con:endpoint><con:request><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:customerHierarchyUpdate>
+         <!--Optional:-->
+         <customerHierarchy>
+            <sellers>
+               <seller code="SELLER_FR">
+                  <customers>
+                     <customer code="000000000">
+                        <customerAccounts>
+                           <!--Zero or more repetitions:-->
+                           <customerAccount code="I682VFWQ15">
+                        		<billingAccounts>
+		                        <billingAccount code="OCB0001599" description="FCA_V1_ETUDE CORP">
+					            <customFields>
+					               <customField code="ENGAGEMENT">
+					                  <longValue>37</longValue>
+					               </customField>
+					
+					           <!--    <customField code="CACONTRIBUTIF">
+					                  <longValue>36</longValue>
+					               </customField>
+					            
+					
+					               <customField code="INTERCO">
+					                  <longValue>36</longValue>
+					               </customField>
+					   -->
+					               <customField code="OFFRE">
+					                  <stringValue>FCA_V1</stringValue>
+					               </customField>
+					
+					            </customFields>
+					            <customerAccount>I682VFWQ15</customerAccount>
+					            <billingCycle>CYC_INV_MT_1</billingCycle>
+					            <country>FR</country>
+					            <language>FRA</language>
+					            <paymentMethod>CHECK</paymentMethod>
+					            <paymentTerms>CASH</paymentTerms>
+					            <subscriptionDate>2015-05-20</subscriptionDate>
+					            <userAccounts>
+					
+					
+					            	<!-- Organisation -->
+					               <userAccount code="FCA_ETUDE_CORP_ORGA123" description="FCA_ETUDE_CORP_ORGA123">
+					                   <!--  
+					                  <customFields>
+					
+					                     <customField code="NUM_SERVICE_SATIN">
+					                        <stringValue>1234567</stringValue>
+					                     </customField>
+					
+					                    
+					                     <customField code="ORGA">
+					                        <stringValue>FCA_ETUDE_CORP_ORGA</stringValue>
+					                     </customField>
+					
+					                     <customField code="BPINT_FCAV1">
+					                        <longValue>50</longValue>
+					                     </customField>
+					                     <customField code="BPVPN_FCAV1">
+					                        <longValue>150</longValue>
+					                     </customField>
+					
+					                  </customFields>
+					                  -->
+					                  <billingAccount>OCB0001599</billingAccount>
+					                  <subscriptionDate>2015-05-20</subscriptionDate>
+					                  <subscriptions>
+					                     <subscription code="FCA_ETUDE_CORP_ORGA123" description="Organisation">
+					                        <userAccount>FCA_ETUDE_CORP_ORGA123</userAccount>
+					                        <offerTemplate>FCA_V1</offerTemplate>
+					                        <subscriptionDate>2015-05-20</subscriptionDate>
+					                        <accesses>
+					                           <!--Zero or more repetitions:-->
+					                           <access code="FCA_ETUDE_CORP_ORGA123">
+					                              <subscription>FCA_ETUDE_CORP_ORGA</subscription>
+					                           </access>
+					                        </accesses>
+					                        <services>
+					                           <serviceInstance code="FCAV1_ORGA">
+					                              <subscriptionDate>2015-05-20</subscriptionDate>
+					                              <quantity>1</quantity>
+					                           </serviceInstance>
+					                           <serviceInstance code="FCAV1_SUPPORT_SILVER">
+					                              <subscriptionDate>2015-05-20</subscriptionDate>
+					                              <quantity>1</quantity>
+					                           </serviceInstance>
+					                        </services>
+					                     </subscription>
+					                  </subscriptions>
+					               </userAccount>
+					
+					            	<!-- VDC -->
+					               <userAccount code="FCA_ETUDE_CORP_ORGA123_VDC_1" description="FCA_ETUDE_CORP_ORGA123_VDC_1">
+					
+					                  <customFields>
+					                   <!--  
+					                     <customField code="NUM_SERVICE_SATIN">
+					                        <stringValue>1234567</stringValue>
+					                     </customField>
+					                    -->
+					                    
+					                     <customField code="ORGA">
+					                        <stringValue>FCA_ETUDE_CORP_ORGA123</stringValue>
+					                     </customField>
+					                     <customField code="BPINT_FCAV1">
+					                        <longValue>50</longValue>
+					                     </customField>
+					                     <customField code="BPVPN_FCAV1">
+					                        <longValue>150</longValue>
+					                     </customField>
+					                  </customFields>
+					                  
+					                  <billingAccount>OCB0001599</billingAccount>
+					                  <subscriptionDate>2015-05-20</subscriptionDate>
+					                  <subscriptions>
+					                     <subscription code="FCA_ETUDE_CORP_ORGA123_VDC_1" description="Vdc">
+					                        <userAccount>FCA_ETUDE_CORP_ORGA123_VDC_1</userAccount>
+					                        <offerTemplate>FCA_V1</offerTemplate>
+					                        <subscriptionDate>2015-05-20</subscriptionDate>
+					                        <accesses>
+					                           <access code="FCA_ETUDE_CORP_ORGA123_VDC_1">
+					                              <subscription>FCA_ETUDE_CORP_ORGA123_VDC_1</subscription>
+					                           </access>
+					                        </accesses>
+					                        <services>
+					                           <serviceInstance code="FCAV1_VDC">
+					                              <subscriptionDate>2015-05-20</subscriptionDate>
+					                              <quantity>1</quantity>
+					                           </serviceInstance>
+					                           
+					                           <!--<serviceInstance code="FCAV1_VDC_BANDWIDTH_INT">
+					                              <subscriptionDate>2015-05-20</subscriptionDate>
+					                              <quantity>50</quantity>
+					                           </serviceInstance>
+					                           <serviceInstance code="FCAV1_VDC_BANDWIDTH_VPN">
+					                              <subscriptionDate>2015-05-20</subscriptionDate>
+					                              <quantity>150</quantity>
+					                           </serviceInstance>-->
+					                        </services>
+					                     </subscription>
+					                  </subscriptions>
+					               </userAccount>
+					
+					            </userAccounts>
+					         </billingAccount>
+                        		</billingAccounts>
+						</customerAccount>
+                        </customerAccounts>
+                        
+                     </customer>
+                  </customers>
+               </seller>
+            </sellers>
+         </customerHierarchy>
+      </ws:customerHierarchyUpdate>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response"/><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:authType>Global HTTP Settings</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:properties><con:property><con:name>ticket</con:name><con:value>827a1</con:value></con:property><con:property><con:name>date</con:name><con:value>2015-02-28</con:value></con:property><con:property><con:name>terminationReason</con:name><con:value>TERM_REASON_1</con:value></con:property></con:properties></con:testSuite><con:testSuite name="#895_mediation"><con:settings/><con:runType>SEQUENTIAL</con:runType><con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Customer creation" searchProperties="true"><con:settings/><con:testStep type="request" name="Create offer"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>CatalogWsSoapBinding</con:interface><con:operation>createServiceTemplate</con:operation><con:request name="Create offer"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/CatalogWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createOfferTemplate>
@@ -31706,7 +32150,7 @@ for( testCase in testSuite.getTestCaseList() ) {
         testStep.getTestRequest().setPreemptive(true);
         testStep.getTestRequest().setRequestHeaders(headers);
     }
-}</con:setupScript></con:testSuite><con:testSuite name="#827_customer_update_hierarchy"><con:settings/><con:runType>SEQUENTIAL</con:runType><con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Catalog creation" searchProperties="true"><con:settings/><con:testStep type="request" name="Create recurring"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>CatalogWsSoapBinding</con:interface><con:operation>createRecurringChargeTemplate</con:operation><con:request name="Create recurring"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/CatalogWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+}</con:setupScript></con:testSuite><con:testSuite name="#827_customer_update_hierarchy"><con:settings/><con:runType>SEQUENTIAL</con:runType><con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Catalog creation" searchProperties="true" id="8a8749d2-6798-4e2a-9f11-21b144081cdc"><con:settings/><con:testStep type="request" name="Create recurring"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>CatalogWsSoapBinding</con:interface><con:operation>createRecurringChargeTemplate</con:operation><con:request name="Create recurring"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/CatalogWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createRecurringChargeTemplate>
@@ -31916,7 +32360,7 @@ for( testCase in testSuite.getTestCaseList() ) {
          </pricePlan>
       </ws:createPricePlan>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response"/><con:assertion type="Simple Contains" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:selectedAuthProfile>No Authorization</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties><con:property><con:name>index</con:name><con:value>684</con:value></con:property></con:properties></con:testCase><con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="1 - Update ca, ba, ua" searchProperties="true"><con:settings/><con:testStep type="request" name="Hierarchy update"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>customerHierarchyUpdate</con:operation><con:request name="Hierarchy update"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response"/><con:assertion type="Simple Contains" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:selectedAuthProfile>No Authorization</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties><con:property><con:name>index</con:name><con:value>684</con:value></con:property></con:properties></con:testCase><con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="1 - Update ca, ba, ua" searchProperties="true" id="fab1bedb-bcaf-4c7c-b30f-c462a23a0e11"><con:settings/><con:testStep type="request" name="Hierarchy update"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>customerHierarchyUpdate</con:operation><con:request name="Hierarchy update"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
       <ws:customerHierarchyUpdate>
@@ -32251,6 +32695,13 @@ for( testCase in testSuite.getTestCaseList() ) {
 					<externalRef1>11</externalRef1>
                         	<!--Optional:-->
                         	<externalRef2>11</externalRef2>                     
+                        	<name>
+                           <!--Optional:-->
+                           <title>M</title>
+                           <!--Optional:-->
+                           <firstName>EDWARD1</firstName>
+                           <lastName>LEGASPI1</lastName>
+                        </name>
                      </customer>
                   </customers>
                </seller>
@@ -32528,7 +32979,7 @@ for( testCase in testSuite.getTestCaseList() ) {
          </customerHierarchy>
       </ws:customerHierarchyUpdate>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response"/><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:preemptive>true</con:preemptive><con:authType>Preemptive</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties><con:property><con:name>index</con:name><con:value>1</con:value></con:property></con:properties></con:testCase><con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="2 - Close ca" searchProperties="true"><con:settings/><con:testStep type="request" name="Hierarchy update"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>customerHierarchyUpdate</con:operation><con:request name="Hierarchy update"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response"/><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:preemptive>true</con:preemptive><con:authType>Preemptive</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties><con:property><con:name>index</con:name><con:value>1</con:value></con:property></con:properties></con:testCase><con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="2 - Close ca" searchProperties="true" id="7301a9b9-0b2d-48b4-bad5-d774ca651c17"><con:settings/><con:testStep type="request" name="Hierarchy update"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>customerHierarchyUpdate</con:operation><con:request name="Hierarchy update"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
       <ws:customerHierarchyUpdate>
@@ -32874,7 +33325,7 @@ for( testCase in testSuite.getTestCaseList() ) {
          </customerHierarchy>
       </ws:customerHierarchyUpdate>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response"/><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:preemptive>true</con:preemptive><con:authType>Preemptive</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties><con:property><con:name>index</con:name><con:value>2</con:value></con:property></con:properties></con:testCase><con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="3 - Terminate ba" searchProperties="true"><con:settings/><con:testStep type="request" name="Hierarchy update"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>customerHierarchyUpdate</con:operation><con:request name="Hierarchy update"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response"/><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:preemptive>true</con:preemptive><con:authType>Preemptive</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties><con:property><con:name>index</con:name><con:value>2</con:value></con:property></con:properties></con:testCase><con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="3 - Terminate ba" searchProperties="true" id="60ce09f9-00f3-4dea-829d-4337519078d1"><con:settings/><con:testStep type="request" name="Hierarchy update"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>customerHierarchyUpdate</con:operation><con:request name="Hierarchy update"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
       <ws:customerHierarchyUpdate>
@@ -33224,7 +33675,7 @@ for( testCase in testSuite.getTestCaseList() ) {
          </customerHierarchy>
       </ws:customerHierarchyUpdate>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response"/><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:preemptive>true</con:preemptive><con:authType>Preemptive</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties><con:property><con:name>index</con:name><con:value>3</con:value></con:property></con:properties></con:testCase><con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="4 - Terminate ua" searchProperties="true"><con:settings/><con:testStep type="request" name="Hierarchy update"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>customerHierarchyUpdate</con:operation><con:request name="Hierarchy update"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response"/><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:preemptive>true</con:preemptive><con:authType>Preemptive</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties><con:property><con:name>index</con:name><con:value>3</con:value></con:property></con:properties></con:testCase><con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="4 - Terminate ua" searchProperties="true" id="0668d67f-1959-47b4-9672-b6e0698929ad"><con:settings/><con:testStep type="request" name="Hierarchy update"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>customerHierarchyUpdate</con:operation><con:request name="Hierarchy update"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
       <ws:customerHierarchyUpdate>
@@ -33579,7 +34030,7 @@ for( testCase in testSuite.getTestCaseList() ) {
          </customerHierarchy>
       </ws:customerHierarchyUpdate>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response"/><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:preemptive>true</con:preemptive><con:authType>Preemptive</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties><con:property><con:name>index</con:name><con:value>4</con:value></con:property></con:properties></con:testCase><con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="5 - Terminate subscription" searchProperties="true"><con:settings/><con:testStep type="request" name="Hierarchy update"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>customerHierarchyUpdate</con:operation><con:request name="Hierarchy update"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response"/><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:preemptive>true</con:preemptive><con:authType>Preemptive</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties><con:property><con:name>index</con:name><con:value>4</con:value></con:property></con:properties></con:testCase><con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="5 - Terminate subscription" searchProperties="true" id="b4761f10-7bef-44af-a254-a55203f5ca77"><con:settings/><con:testStep type="request" name="Hierarchy update"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>customerHierarchyUpdate</con:operation><con:request name="Hierarchy update"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
       <ws:customerHierarchyUpdate>
@@ -33940,7 +34391,7 @@ for( testCase in testSuite.getTestCaseList() ) {
          </customerHierarchy>
       </ws:customerHierarchyUpdate>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response"/><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:preemptive>true</con:preemptive><con:authType>Preemptive</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties><con:property><con:name>index</con:name><con:value>5</con:value></con:property></con:properties></con:testCase><con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="6 - Terminate service" searchProperties="true"><con:settings/><con:testStep type="request" name="Hierarchy update"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>customerHierarchyUpdate</con:operation><con:request name="Hierarchy update"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response"/><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:preemptive>true</con:preemptive><con:authType>Preemptive</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties><con:property><con:name>index</con:name><con:value>5</con:value></con:property></con:properties></con:testCase><con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="6 - Terminate service" searchProperties="true" id="22e6e132-7a4e-4fdc-ad77-cda39f15dbc8"><con:settings/><con:testStep type="request" name="Hierarchy update"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>customerHierarchyUpdate</con:operation><con:request name="Hierarchy update"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
       <ws:customerHierarchyUpdate>
