@@ -137,28 +137,18 @@
 		<c:set var="entityView" value="#{editView}"/>
 		<c:set var="valueIdField" value="id"/>
 	</c:if>
-	
-	<c:if test="#{empty showSortLinks}">
-		<c:set var="showSortLinks" value="true"/>
-	</c:if>
 
 	<p:column exportable="#{exportable}" rendered="#{rendered}">
 		<f:facet name="header">
 			<h:outputText value="#{label}" />
 		</f:facet>
-		
-		<c:set var="valueField" value="#{entity}" />
-		<c:forEach var="valueFieldVar" items="#{field.split('\\.')}">
-			<c:set var="valueField" value="#{valueField[valueFieldVar]}" />
-		</c:forEach>
-        
         <c:if test="#{! empty(width)}">
             <f:attribute name="width" value="#{width}" />
         </c:if>
-		<c:if test="#{sort and showSortLinks}">
+		<c:if test="#{sort}">
 			<f:attribute name="field" value="#{field}" />
 			<f:attribute name="sortable" value="#{true}" />
-			<f:attribute name="sortBy" value="#{valueField}" />
+			<f:attribute name="sortBy" value="#{field}" />
 		</c:if>
         <c:if test="#{! empty(styleClasss)}">
             <f:attribute name="styleClasss" value="#{styleClasss}" />
@@ -166,6 +156,11 @@
         <c:if test="#{! empty(style)}">
             <f:attribute name="style" value="#{style}" />
         </c:if>        
+        
+		<c:set var="valueField" value="#{entity}" />
+		<c:forEach var="valueFieldVar" items="#{field.split('\\.')}">
+			<c:set var="valueField" value="#{valueField[valueFieldVar]}" />
+		</c:forEach>
 
 		<c:if test="#{not empty entityView}">
 			<c:set var="attrId" value="#{field.replaceAll('\\.','\\_')}_#{valueIdField.replaceAll('\\.','\\_')}" />
