@@ -689,7 +689,7 @@
 											label="#{messages[subscriptionBean.entity.status=='SUSPENDED'?'billingAccount.suspensionDate': 'billingAccount.terminationDate']}"
 											field="terminationDate" />
 								</hf:formPanel>
-								<p:outputPanel id="recurringChargeDataPanel" autoUpdate="true">
+								<p:outputPanel id="recurringChargeDataPanel">
 									<h:form id="OS_recurring_results_form" prependId="false">
 										<p:dataTable
 											value="#{subscriptionBean.recurringChargeInstances}"
