@@ -183,8 +183,11 @@
 										<p:ajax event="rowSelectRadio"
 											update=":#{p:component('terminationPanel')} :#{p:component('serviceInstOperations')}" />
 										<p:column selectionMode="single" width="4%"/>
-										<hftl:column label="#{messages['serviceInstance.code']}"
-											field="code" />
+<!-- 										<hftl:column label="#{messages['serviceInstance.code']}" -->
+<!-- 											field="code" /> -->
+										<p:column sortBy="#{entity.code}" headerText="#{messages['serviceInstance.code']}">
+											<h:outputText value="#{entity.code}" />
+										</p:column>
 										<hftl:column label="#{messages['serviceInstance.status']}"
 											field="status" showSortLinks="false" />
 										<hftl:column label="#{messages['serviceInstance.quantity']}"
@@ -232,9 +235,12 @@
 											var="entity" rowKey="#{entity.id}"
 											selection="#{subscriptionBean.serviceTemplates.selectedItems}">
 											<p:column selectionMode="multiple" width="4%" />
-											<hftl:column label="#{messages['serviceTemplate.code']}"
-												field="code" />
-											<hftl:column
+<!-- 											<hftl:column label="#{messages['serviceTemplate.code']}" -->
+<!-- 												field="code" /> -->
+											<p:column sortBy="#{entity.code}" headerText="#{messages['serviceTemplate.code']}">
+												<h:outputText value="#{entity.code}" />
+											</p:column>
+											<hftl:column showSortLinks="false"
 												label="#{messages['serviceTemplate.description']}"
 												field="description" />
 										</p:dataTable>

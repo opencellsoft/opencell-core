@@ -137,6 +137,9 @@
 		<c:set var="entityView" value="#{editView}"/>
 		<c:set var="valueIdField" value="id"/>
 	</c:if>
+	<c:if test="#{empty showSortLinks}">
+		<c:set var="showSortLinks" value="true"/>
+	</c:if>
 
 	<p:column exportable="#{exportable}" rendered="#{rendered}">
 		<f:facet name="header">
@@ -145,7 +148,7 @@
         <c:if test="#{! empty(width)}">
             <f:attribute name="width" value="#{width}" />
         </c:if>
-		<c:if test="#{sort}">
+		<c:if test="#{sort and showSortLinks}">
 			<f:attribute name="field" value="#{field}" />
 			<f:attribute name="sortable" value="#{true}" />
 			<f:attribute name="sortBy" value="#{field}" />
