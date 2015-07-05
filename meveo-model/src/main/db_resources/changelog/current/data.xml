@@ -247,4 +247,33 @@
             <column name="permission_id" valueNumeric="13" />
         </insert>
     </changeSet>
+           <changeSet id="#907_01072015_2" author="anasseh">
+    	<sql><![CDATA[
+    	update crm_custom_field_inst VALUES  set string_value = '<?xml version="1.0" encoding="ISO-8859-1"?>
+<file-format>
+    <converter name="char" class="com.blackbear.flatworm.converters.CoreConverters" method="convertChar" return-type="java.lang.String"/>
+    <converter name="date" class="com.blackbear.flatworm.converters.CoreConverters" method="convertDate" return-type="java.util.Date"/>
+    <converter name="bigDecimal" class="com.blackbear.flatworm.converters.CoreConverters" method="convertBigDecimal" return-type="java.math.BigDecimal"/>
+    <record name="cdrRecord">
+        <record-ident>
+        </record-ident>
+        <record-definition>
+            <bean name="cdr" class="org.meveo.admin.parse.csv.CDR"/>
+           <line delimit=";">
+                <record-element length="0" beanref="cdr.timestamp" type="date">
+                    <conversion-option name="format" value="yyyy-MM-dd''T''HH:mm:ss.SSS''Z''"/>                  
+                </record-element>
+                <record-element length="0" beanref="cdr.quantity" type="bigDecimal">                 
+                </record-element>
+                <record-element length="0" beanref="cdr.access_id" type="char"/>
+                <record-element length="0" beanref="cdr.param1" type="char" />
+                <record-element length="0" beanref="cdr.param2" type="char" />
+                <record-element length="0" beanref="cdr.param3" type="char" />
+                <record-element length="0" beanref="cdr.param4" type="char" />
+            </line>
+        </record-definition>
+    </record>
+</file-format>' where string_value like '<?xml%' ;
+    	]]></sql>
+    </changeSet>
 </databaseChangeLog>
