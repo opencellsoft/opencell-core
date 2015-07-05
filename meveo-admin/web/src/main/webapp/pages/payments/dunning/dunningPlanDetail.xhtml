@@ -56,7 +56,7 @@
 					
 					<p:outputPanel id="dunningPlanTransition_panel">
 						<hftl:dataList backingBean="#{dunningPlanTransitionBean}"
-							dataModel="#{dunningPlanBean.entity.transitions}"
+							dataModel="#{dunningPlanTransitionBean.getTransitions(dunningPlanBean.entity)}"
 							resultsId="dunningPlanTransitions_results" checkMany="false">
 							<hftl:column
 								label="#{messages['dunningPlanTransition.dunningLevelFrom']}"
@@ -82,7 +82,6 @@
 								<f:facet name="header">
 									<h:outputText value="#{messages['commons.actions']}" />
 								</f:facet>
-
 								<p:tooltip for="editDunningPlanTransitionLink"
 									value="#{messages['commons.edit']}" showEffect="slide"
 									hideEffect="slide" />
@@ -187,7 +186,7 @@
 					<p:panel id="actionPlanItems_panel">
 							<h:form id="actionItems_form">
 								<hftl:dataList backingBean="#{actionPlanItemBean}"
-									dataModel="#{dunningPlanBean.entity.actions}"
+									dataModel="#{actionPlanItemBean.getActions(dunningPlanBean.entity)}"
 									resultsId="dunningPlanActions_results" checkMany="false">
 									<hftl:column label="#{messages['actionPlanItem.dunningLevel']}"
 										field="dunningLevel" />

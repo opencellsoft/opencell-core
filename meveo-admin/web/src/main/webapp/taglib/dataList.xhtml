@@ -29,6 +29,7 @@
         importCsv - show "import from Csv" button
         sortBy and sortOrder - a default field to sort by and a default sort order
         rowsPerPage - possible paging sizes separated by a comma
+        showSortLinks -  show sort of the columns in data table
          
 -->
 
@@ -100,13 +101,16 @@
     <c:if test="${empty rowsPerPage}">
         <c:set var="rowsPerPage" value="5,10,15" />
     </c:if>
+    <c:if test="${empty showSortLinks}">
+        <c:set var="showSortLinks" value="true" />
+    </c:if>
 
 	<p:panel id="#{resultsId}_panel" width="100">
 
 		<h:form id="#{formId}" prependId="false">
 
 			<p:dataTable id="datatable_#{resultsId}" var="entity"  scrollable="#{scrollable}"
-				value="#{dataModel}" paginator="true" rows="10" editable="#{editable}" editMode="#{editMode}"  widgetVar="cellEntity"
+				value="#{dataModel}" paginator="true" rows="10" editable="#{editable}" editMode="#{editMode}"  widgetVar="cellEntity_#{resultsId}"
 				selection="#{backingBean.selectedEntities}" sortBy="#{'sortBy'}" sortField="#{sortBy}" sortOrder="#{sortOrder}"
 				paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
 				rowsPerPageTemplate="#{rowsPerPage}" lazy="true" resizableColumns="true"

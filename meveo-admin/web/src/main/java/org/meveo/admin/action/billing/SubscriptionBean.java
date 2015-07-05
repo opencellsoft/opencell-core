@@ -150,6 +150,14 @@ public class SubscriptionBean extends BaseBean<Subscription> {
 
 	private EntityListDataModelPF<ServiceInstance> serviceInstances = new EntityListDataModelPF<ServiceInstance>(
 			new ArrayList<ServiceInstance>());
+	private EntityListDataModelPF<OneShotChargeInstance> oneShotCharges = new EntityListDataModelPF<OneShotChargeInstance>(
+			new ArrayList<OneShotChargeInstance>());
+	private EntityListDataModelPF<RecurringChargeInstance> recurringCharges = new EntityListDataModelPF<RecurringChargeInstance>(
+			new ArrayList<RecurringChargeInstance>());
+	private EntityListDataModelPF<UsageChargeInstance> usageCharges = new EntityListDataModelPF<UsageChargeInstance>(
+			new ArrayList<UsageChargeInstance>());
+	private EntityListDataModelPF<Access> accesses = new EntityListDataModelPF<Access>(
+			new ArrayList<Access>());
 
 	public SubscriptionBean() {
 		super(Subscription.class);
@@ -409,9 +417,19 @@ public class SubscriptionBean extends BaseBean<Subscription> {
 		return recurringChargeInstance;
 	}
 
-	public List<OneShotChargeInstance> getOneShotChargeInstances() {
-		return (entity == null || entity.getId() == null) ? null : oneShotChargeInstanceService
-				.findOneShotChargeInstancesBySubscriptionId(entity.getId());
+	public EntityListDataModelPF<OneShotChargeInstance> getOneShotChargeInstances() {
+		if(entity==null){
+			entity=initEntity();
+		}
+		if(!entity.isTransient()){
+			List<OneShotChargeInstance> temps=oneShotChargeInstanceService.findOneShotChargeInstancesBySubscriptionId(entity.getId());
+			if(temps.size()!=oneShotCharges.getSize()){
+				oneShotCharges = new EntityListDataModelPF<OneShotChargeInstance>(
+						new ArrayList<OneShotChargeInstance>());
+				oneShotCharges.addAll(temps);
+			}
+		}
+		return oneShotCharges;
 	}
 
 	public List<WalletOperation> getOneShotWalletOperations() {
@@ -453,14 +471,40 @@ public class SubscriptionBean extends BaseBean<Subscription> {
 	}
 
 	// @Factory("recurringChargeInstances")
-	public List<RecurringChargeInstance> getRecurringChargeInstances() {
-		return (entity == null || entity.getId() == null) ? null : recurringChargeInstanceService
-				.findRecurringChargeInstanceBySubscriptionId(entity.getId());
+	public EntityListDataModelPF<RecurringChargeInstance> getRecurringChargeInstances() {
+		if(entity==null){
+			entity=initEntity();
+		}
+		if(!entity.isTransient()){
+			List<RecurringChargeInstance> temps=recurringChargeInstanceService
+					.findRecurringChargeInstanceBySubscriptionId(entity.getId());
+			if(temps.size()!=recurringCharges.getSize()){
+				recurringCharges = new EntityListDataModelPF<RecurringChargeInstance>(
+						new ArrayList<RecurringChargeInstance>());
+				recurringCharges.addAll(temps);
+			}
+		}
+		return recurringCharges;
+//		return (entity == null || entity.getId() == null) ? null : recurringChargeInstanceService
+//				.findRecurringChargeInstanceBySubscriptionId(entity.getId());
 	}
 
-	public List<UsageChargeInstance> getUsageChargeInstances() {
-		return (entity == null || entity.getId() == null) ? null : usageChargeInstanceService
-				.findUsageChargeInstanceBySubscriptionId(entity.getId());
+	public EntityListDataModelPF<UsageChargeInstance> getUsageChargeInstances() {
+		if(entity==null){
+			entity=initEntity();
+		}
+		if(!entity.isTransient()){
+			List<UsageChargeInstance> temps=usageChargeInstanceService
+					.findUsageChargeInstanceBySubscriptionId(entity.getId());
+			if(temps.size()!=usageCharges.getSize()){
+				usageCharges = new EntityListDataModelPF<UsageChargeInstance>(
+						new ArrayList<UsageChargeInstance>());
+				usageCharges.addAll(temps);
+			}
+		}
+		return usageCharges;
+//		return (entity == null || entity.getId() == null) ? null : usageChargeInstanceService
+//				.findUsageChargeInstanceBySubscriptionId(entity.getId());
 	}
 
 	public void instanciateManyServices() {
@@ -662,8 +706,20 @@ public class SubscriptionBean extends BaseBean<Subscription> {
 		return (new Date()).toString();
 	}
 
-	public List<Access> getAccess() {
-		return accessService.listBySubscription(entity);
+	public EntityListDataModelPF<Access> getAccess() {
+		if(entity==null){
+			entity=initEntity();
+		}
+		if(!entity.isTransient()){
+			List<Access> temps=accessService.listBySubscription(entity);
+			if(temps.size()!=accesses.getSize()){
+				accesses = new EntityListDataModelPF<Access>(
+						new ArrayList<Access>());
+				accesses.addAll(temps);
+			}
+		}
+		return accesses;
+//		return accessService.listBySubscription(entity);
 	}
 
 	@Override

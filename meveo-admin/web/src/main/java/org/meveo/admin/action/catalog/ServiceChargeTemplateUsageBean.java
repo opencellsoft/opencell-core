@@ -16,14 +16,21 @@
  */
 package org.meveo.admin.action.catalog;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
 import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.meveo.admin.action.BaseBean;
 import org.meveo.model.catalog.ServiceChargeTemplateUsage;
+import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.catalog.impl.ServiceChargeTemplateUsageService;
 import org.omnifaces.cdi.ViewScoped;
+import org.primefaces.model.LazyDataModel;
+import org.primefaces.model.SortOrder;
 
 
 @Named
@@ -50,5 +57,19 @@ public class ServiceChargeTemplateUsageBean extends BaseBean<ServiceChargeTempla
     protected IPersistenceService<ServiceChargeTemplateUsage> getPersistenceService() {
         return serviceChargeTemplateUsageService;
     }
+    public LazyDataModel<ServiceChargeTemplateUsage> getUsageCharges(ServiceTemplate serviceTemplate) {
+		if (serviceTemplate != null&&!serviceTemplate.isTransient()) {
+			filters.put("serviceTemplate", serviceTemplate);
+			return getLazyDataModel();
+		}
+		return new LazyDataModel<ServiceChargeTemplateUsage>() {
+			private static final long serialVersionUID = 1L;
+			@Override
+			public List<ServiceChargeTemplateUsage> load(int first, int pageSize, String sortField,
+					SortOrder sortOrder, Map<String, Object> loadingFilters) {
+				return new ArrayList<ServiceChargeTemplateUsage>();
+			}
+		};
+	}
 
 }
