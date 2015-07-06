@@ -37,7 +37,7 @@ public class JobPurge extends Job {
         Date date = DateUtils.addDaysToDate(new Date(), nbDays * (-1));
         long nbItemsToProcess = jobExecutionService.countJobsToDelete(jobname, date);
         result.setNbItemsToProcess(nbItemsToProcess); // it might well happen we dont know in advance how many items we have to process,in that case comment this method
-        int nbSuccess = jobExecutionService.delete(jobname, date);
+        int nbSuccess = jobExecutionService.delete(jobname, date, currentUser.getProvider());
         result.setNbItemsCorrectlyProcessed(nbSuccess);
         result.setNbItemsProcessedWithError(nbItemsToProcess - nbSuccess);
         result.setReport(nbSuccess > 0 ? ("purged " + jobname) : "");

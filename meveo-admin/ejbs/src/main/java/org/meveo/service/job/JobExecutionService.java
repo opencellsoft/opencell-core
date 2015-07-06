@@ -30,6 +30,7 @@ import org.apache.commons.lang.StringUtils;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.admin.User;
+import org.meveo.model.crm.Provider;
 import org.meveo.model.jobs.JobCategoryEnum;
 import org.meveo.model.jobs.JobExecutionResult;
 import org.meveo.model.jobs.JobExecutionResultImpl;
@@ -56,13 +57,17 @@ public class JobExecutionService extends PersistenceService<JobExecutionResultIm
 	}
 
 	@TransactionAttribute(TransactionAttributeType.REQUIRED)
-	public void persistResult(Job job, JobExecutionResult result, TimerEntity timerEntity, User currentUser, JobCategoryEnum jobCategory) {
+	public void persistResult(Job job, JobExecutionResult result, TimerEntity timerEntity, User currentUser,
+			JobCategoryEnum jobCategory) {
 		try {
 			log.info("JobExecutionService persistResult...");
 
 			TimerInfo info = timerEntity.getTimerInfo();
-			JobExecutionResultImpl entity = JobExecutionResultImpl.createFromInterface(job.getClass().getSimpleName(), result);
-			if (!entity.isDone() || (entity.getNbItemsCorrectlyProcessed() + entity.getNbItemsProcessedWithError() + entity.getNbItemsProcessedWithWarning()) > 0) {
+			JobExecutionResultImpl entity = JobExecutionResultImpl.createFromInterface(job.getClass().getSimpleName(),
+					result);
+			if (!entity.isDone()
+					|| (entity.getNbItemsCorrectlyProcessed() + entity.getNbItemsProcessedWithError() + entity
+							.getNbItemsProcessedWithWarning()) > 0) {
 
 				create(entity, currentUser, currentUser.getProvider());
 				log.info("PersistResult entity.isDone()=" + entity.isDone());
@@ -73,7 +78,8 @@ public class JobExecutionService extends PersistenceService<JobExecutionResultIm
 						TimerEntity followingTimerEntity = timerEntityService.findById(info.getFollowingTimerId());
 
 						log.info("execute following timer " + followingTimerEntity.getJobName());
-						executeJob(followingTimerEntity.getJobName(), followingTimerEntity, currentUser, followingTimerEntity.getJobCategoryEnum());
+						executeJob(followingTimerEntity.getJobName(), followingTimerEntity, currentUser,
+								followingTimerEntity.getJobCategoryEnum());
 					} catch (Exception e) {
 						log.warn("PersistResult cannot excute the following job.=" + info.getFollowingTimerId());
 					}
@@ -84,7 +90,8 @@ public class JobExecutionService extends PersistenceService<JobExecutionResultIm
 				if (info.getFollowingTimerId() != null && info.getFollowingTimerId() > 0) {
 					try {
 						TimerEntity followingTimerEntity = timerEntityService.findById(info.getFollowingTimerId());
-						executeJob(followingTimerEntity.getJobName(), followingTimerEntity, currentUser, followingTimerEntity.getJobCategoryEnum());
+						executeJob(followingTimerEntity.getJobName(), followingTimerEntity, currentUser,
+								followingTimerEntity.getJobCategoryEnum());
 					} catch (Exception e) {
 						log.warn("PersistResult cannot excute the following job.=" + info.getFollowingTimerId());
 					}
@@ -122,11 +129,12 @@ public class JobExecutionService extends PersistenceService<JobExecutionResultIm
 		return result;
 	}
 
-	public int delete(String jobName, Date date) {
+	public int delete(String jobName, Date date, Provider provider) {
 		String sql = "delete from JobExecutionResultImpl t";
 		QueryBuilder qb = new QueryBuilder(sql);// FIXME:.cacheable();
 		qb.addCriterion("t.jobName", "=", jobName, false);
 		qb.addCriterionDateRangeToTruncatedToDay("t.startDate", date);
+		qb.addCriterionEntity("t.provider", provider);
 
 		return qb.getQuery(getEntityManager()).executeUpdate();
 	}
