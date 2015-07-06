@@ -110,37 +110,6 @@
 					maxField="maxSubscriptionAgeInMonth" />
 			</h:panelGroup>
 		</hf:searchPanel>
-		<script>
-			//<![CDATA[
-			PrimeFaces.widget.ColumnToggler.prototype.render = function() {
-				var id = 0;
-				this.columns = this.thead
-						.find("> tr > th:visible:not(.ui-static-column)");
-				this.panel = $("<div></div>")
-						.attr("id", this.cfg.id)
-						.addClass(
-								"ui-columntoggler ui-widget ui-widget-content ui-shadow ui-corner-all")
-						.append('<ul class="ui-columntoggler-items"></ul')
-						.appendTo(document.body);
-				this.itemContainer = this.panel.children("ul");
-				for (var a = 0; a < this.columns.length; a++) {
-					id++;
-					var b = this.columns.eq(a);
-					$(
-							'<li class="ui-columntoggler-item"><div class="ui-chkbox ui-widget"><div id="cb' + id + '" class="ui-chkbox-box ui-widget ui-corner-all ui-state-default ui-state-active"><span class="ui-chkbox-icon ui-icon ui-icon-check"></span></div></div><label>'
-									+ b.children(".ui-column-title").text()
-									+ "</label></li>").data("column",
-							b.attr("id")).appendTo(this.itemContainer);
-
-					if (b.hasClass("dtcolumn-hidden")) {
-						this.uncheck($('#cb' + id));
-					}
-				}
-
-				this.hide();
-			}
-			//]]>
-		</script>
 
 		<hftl:dataList label="#{messages['pricePlanMatrix.title']}"
 			editable="true" editMode="cell" scrollable="#{pricePlanMatrixListBean.lazyDataModel.size==0?'true':'false'}"
@@ -266,7 +235,7 @@
 					</f:facet>
 				</p:cellEditor>
 			</p:column>
-			<p:column exportable="true" styleClass="dtcolumn-hidden">
+			<p:column exportable="true" visible="false">
 				<f:facet name="header">
 					<h:outputText value="#{messages['pricePlanMatrix.ratingDate']}" />
 				</f:facet>
@@ -295,7 +264,7 @@
 				</p:cellEditor>
 			</p:column>
 
-			<p:column exportable="true" styleClass="dtcolumn-hidden">
+			<p:column exportable="true" visible="false">
 				<f:facet name="header">
 					<h:outputText value="#{messages['pricePlanMatrix.criteriaEL']}" />
 				</f:facet>
@@ -309,7 +278,7 @@
 					</f:facet>
 				</p:cellEditor>
 			</p:column>
-			<p:column exportable="true" styleClass="dtcolumn-hidden">
+			<p:column exportable="true" visible="false">
 				<f:facet name="header">
 					<h:outputText value="#{messages['tradingCountry.tradingCountry']}" />
 				</f:facet>
@@ -328,7 +297,7 @@
 				</p:cellEditor>
 			</p:column>
 
-			<p:column exportable="true" styleClass="dtcolumn-hidden">
+			<p:column exportable="true" visible="false">
 				<f:facet name="header">
 					<h:outputText value="#{messages['currency.codeCurrency']}" />
 				</f:facet>
@@ -346,7 +315,7 @@
 					</f:facet>
 				</p:cellEditor>
 			</p:column>
-			<p:column exportable="true" styleClass="dtcolumn-hidden">
+			<p:column exportable="true" visible="false">
 				<f:facet name="header">
 					<h:outputText value="#{messages['pricePlanMatrix.criteria1Value']}" />
 				</f:facet>
@@ -360,7 +329,7 @@
 					</f:facet>
 				</p:cellEditor>
 			</p:column>
-			<p:column exportable="true" styleClass="dtcolumn-hidden">
+			<p:column exportable="true" visible="false">
 				<f:facet name="header">
 					<h:outputText value="#{messages['pricePlanMatrix.criteria2Value']}" />
 				</f:facet>
@@ -374,7 +343,7 @@
 					</f:facet>
 				</p:cellEditor>
 			</p:column>
-			<p:column exportable="true" styleClass="dtcolumn-hidden">
+			<p:column exportable="true" visible="false">
 				<f:facet name="header">
 					<h:outputText value="#{messages['pricePlanMatrix.criteria3Value']}" />
 				</f:facet>
@@ -388,7 +357,7 @@
 					</f:facet>
 				</p:cellEditor>
 			</p:column>
-			<p:column exportable="true" styleClass="dtcolumn-hidden">
+			<p:column exportable="true" visible="false">
 				<f:facet name="header">
 					<h:outputText value="#{messages['pricePlanMatrix.priority']}" />
 				</f:facet>
@@ -401,7 +370,7 @@
 					</f:facet>
 				</p:cellEditor>
 			</p:column>
-			<p:column exportable="true" styleClass="dtcolumn-hidden">
+			<p:column exportable="true" visible="false">
 				<f:facet name="header">
 					<h:outputText value="#{messages['pricePlanMatrix.quantity']}" />
 				</f:facet>
@@ -418,7 +387,7 @@
 					</f:facet>
 				</p:cellEditor>
 			</p:column>
-			<p:column exportable="true" styleClass="dtcolumn-hidden">
+			<p:column exportable="true" visible="false">
 				<f:facet name="header">
 					<h:outputText
 						value="#{messages['pricePlanMatrix.subscriptionDate']}" />
@@ -447,7 +416,7 @@
 				</p:cellEditor>
 			</p:column>
 
-			<p:column exportable="true" styleClass="dtcolumn-hidden">
+			<p:column exportable="true" visible="false">
 				<f:facet name="header">
 					<h:outputText
 						value="#{messages['pricePlanMatrix.subscriptionAgeInMonth']}" />
@@ -464,7 +433,7 @@
 					</f:facet>
 				</p:cellEditor>
 			</p:column>
-			<p:column exportable="true" styleClass="dtcolumn-hidden">
+			<p:column exportable="true" visible="false">
 				<f:facet name="header">
 					<h:outputText
 						value="#{messages['pricePlanMatrix.validityCalendar']}" />
