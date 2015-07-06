@@ -423,9 +423,11 @@ public class SubscriptionBean extends BaseBean<Subscription> {
 		}
 		if(!entity.isTransient()){
 			List<OneShotChargeInstance> temps=oneShotChargeInstanceService.findOneShotChargeInstancesBySubscriptionId(entity.getId());
-			oneShotCharges = new EntityListDataModelPF<OneShotChargeInstance>(
-					new ArrayList<OneShotChargeInstance>());
-			oneShotCharges.addAll(temps);
+			if(temps.size()!=oneShotCharges.getSize()){
+				oneShotCharges = new EntityListDataModelPF<OneShotChargeInstance>(
+						new ArrayList<OneShotChargeInstance>());
+				oneShotCharges.addAll(temps);
+			}
 		}
 		return oneShotCharges;
 	}
@@ -476,9 +478,11 @@ public class SubscriptionBean extends BaseBean<Subscription> {
 		if(!entity.isTransient()){
 			List<RecurringChargeInstance> temps=recurringChargeInstanceService
 					.findRecurringChargeInstanceBySubscriptionId(entity.getId());
-			recurringCharges = new EntityListDataModelPF<RecurringChargeInstance>(
-					new ArrayList<RecurringChargeInstance>());
-			recurringCharges.addAll(temps);
+			if(temps.size()!=recurringCharges.getSize()){
+				recurringCharges = new EntityListDataModelPF<RecurringChargeInstance>(
+						new ArrayList<RecurringChargeInstance>());
+				recurringCharges.addAll(temps);
+			}
 		}
 		return recurringCharges;
 //		return (entity == null || entity.getId() == null) ? null : recurringChargeInstanceService
@@ -492,9 +496,11 @@ public class SubscriptionBean extends BaseBean<Subscription> {
 		if(!entity.isTransient()){
 			List<UsageChargeInstance> temps=usageChargeInstanceService
 					.findUsageChargeInstanceBySubscriptionId(entity.getId());
-			usageCharges = new EntityListDataModelPF<UsageChargeInstance>(
-					new ArrayList<UsageChargeInstance>());
-			usageCharges.addAll(temps);
+			if(temps.size()!=usageCharges.getSize()){
+				usageCharges = new EntityListDataModelPF<UsageChargeInstance>(
+						new ArrayList<UsageChargeInstance>());
+				usageCharges.addAll(temps);
+			}
 		}
 		return usageCharges;
 //		return (entity == null || entity.getId() == null) ? null : usageChargeInstanceService
@@ -706,9 +712,11 @@ public class SubscriptionBean extends BaseBean<Subscription> {
 		}
 		if(!entity.isTransient()){
 			List<Access> temps=accessService.listBySubscription(entity);
-			accesses = new EntityListDataModelPF<Access>(
-					new ArrayList<Access>());
-			accesses.addAll(temps);
+			if(temps.size()!=accesses.getSize()){
+				accesses = new EntityListDataModelPF<Access>(
+						new ArrayList<Access>());
+				accesses.addAll(temps);
+			}
 		}
 		return accesses;
 //		return accessService.listBySubscription(entity);
