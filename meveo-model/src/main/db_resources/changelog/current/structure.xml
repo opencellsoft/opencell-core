@@ -807,4 +807,8 @@
    	 <dropColumn columnName="ACCOUNT_NUMBER" tableName="CRM_PROVIDER"/> 
    	 <dropColumn columnName="HASH_KEY" tableName="CRM_PROVIDER"/>
     </changeSet>
+    
+     <changeSet id="797_20150706" author="Mbarek"> 
+     <sql>update CRM_CUSTOM_FIELD_INST set PROVIDER_ID=null</sql> 
+    </changeSet>
 </databaseChangeLog>
