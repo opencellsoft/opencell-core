@@ -325,7 +325,7 @@
 									</hf:formPanel>
 									<p:outputPanel id="oneShotDataPanel">
 										<h:form id="OS_oneShot_results_form" prependId="false">
-											<p:dataTable
+											<p:dataTable resizableColumns="true"
 												value="#{subscriptionBean.oneShotChargeInstances}"
 												var="entity">
 <!-- 												<hftl:column label="#{messages['chargeInstance.code']}" -->
@@ -499,7 +499,7 @@
 														<h:panelGroup rendered="#{not empty subscriptionBean.oneShotWalletOperations}">
 															<h:outputText
 																value="#{subscriptionBean.oneShotWalletOperations.size()} #{messages['commons.itemsFound']}" />
-															<p:dataTable id="oneShotWalletOperationTable"
+															<p:dataTable id="oneShotWalletOperationTable" resizableColumns="true"
 																value="#{subscriptionBean.oneShotWalletOperations}"
 																var="oneShotWalletOp" rows="10" styleClass="custom-grid">
 																<!-- <hftl:column label="#{messages['chargeApplication.applicationDate']}" isDate="true" showSortLinks="false" field="operationDate" /> -->
@@ -693,7 +693,7 @@
 								</hf:formPanel>
 								<p:outputPanel id="recurringChargeDataPanel">
 									<h:form id="OS_recurring_results_form" prependId="false">
-										<p:dataTable
+										<p:dataTable resizableColumns="true"
 											value="#{subscriptionBean.recurringChargeInstances}"
 											var="entity">
 <!-- 											<hftl:column label="#{messages['chargeInstance.code']}" -->
@@ -755,7 +755,7 @@
 								</hf:formPanel>
 								<h:form id="OS_usage_results_form" prependId="false">
 									<p:dataTable value="#{subscriptionBean.usageChargeInstances}"
-										var="entity">
+										var="entity" resizableColumns="true">
 <!-- 										<hftl:column label="#{messages['chargeInstance.code']}" -->
 <!-- 											field="code" /> -->
 										<p:column sortBy="#{entity.code}" headerText="#{messages['chargeInstance.code']}">
@@ -825,7 +825,7 @@
 								</hf:formPanel>
 								<h:form>
 									<p:outputPanel id="medinaAccessPanel">
-										<p:dataTable value="#{subscriptionBean.access}" var="entity">
+										<p:dataTable value="#{subscriptionBean.access}" var="entity" resizableColumns="true">
 <!-- 											<hftl:column label="#{messages['access.accessUserId']}" showSortLinks="false" -->
 <!-- 												field="accessUserId" entityView="accessDetail" valueIdField="id"/> -->
 											<p:column sortBy="#{entity.accessUserId}" headerText="#{messages['access.accessUserId']}">
