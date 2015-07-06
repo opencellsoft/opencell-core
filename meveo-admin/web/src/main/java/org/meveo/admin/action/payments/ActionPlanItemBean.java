@@ -16,6 +16,10 @@
  */
 package org.meveo.admin.action.payments;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.persistence.EntityExistsException;
@@ -30,6 +34,8 @@ import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.payments.impl.ActionPlanItemService;
 import org.meveo.service.payments.impl.DunningPlanService;
 import org.omnifaces.cdi.ViewScoped;
+import org.primefaces.model.LazyDataModel;
+import org.primefaces.model.SortOrder;
 
 /**
  * Standard backing bean for {@link ActionPlanItem} (extends {@link BaseBean}
@@ -132,6 +138,20 @@ public class ActionPlanItemBean extends BaseBean<ActionPlanItem> {
 						"error.delete.unexpected"));
 			}
 		}
+	}
+	public LazyDataModel<ActionPlanItem> getActions(DunningPlan plan){
+		if(plan!=null){
+			filters.put("dunningPlan", plan);
+			return getLazyDataModel();
+		}
+		return new LazyDataModel<ActionPlanItem>() {  
+			   private static final long serialVersionUID = 1L;
+			   @Override
+			   public List<ActionPlanItem> load(int first, int pageSize, String sortField,
+						SortOrder sortOrder, Map<String, Object> loadingFilters) {
+			    return new ArrayList<ActionPlanItem>();
+			   }
+		};
 	}
 
 }

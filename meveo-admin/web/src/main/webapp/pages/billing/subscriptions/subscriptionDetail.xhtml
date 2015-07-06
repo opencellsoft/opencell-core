@@ -325,26 +325,28 @@
 									</hf:formPanel>
 									<p:outputPanel id="oneShotDataPanel">
 										<h:form id="OS_oneShot_results_form" prependId="false">
-											<p:dataTable
+											<p:dataTable resizableColumns="true"
 												value="#{subscriptionBean.oneShotChargeInstances}"
 												var="entity">
-												<hftl:column label="#{messages['chargeInstance.code']}"
-													field="code" />
-												<hftl:column
+<!-- 												<hftl:column label="#{messages['chargeInstance.code']}" -->
+<!-- 													field="code" /> -->
+												<p:column sortBy="#{entity.code}" headerText="#{messages['chargeInstance.code']}">
+													<h:outputText value="#{entity.code}" />
+												</p:column>
+												<hftl:column sort="false"
 													label="#{messages['chargeInstance.description']}"
 													field="description" />
 												<hftl:column label="#{messages['chargeApplication.status']}"
-													field="status" />
-												<hftl:column
+													field="status" sort="false"/>
+												<hftl:column sort="false"
 													label="#{messages['oneShotChargeInstance.criteria1']}"
 													field="criteria1" />
-												<hftl:column
+												<hftl:column sort="false"
 													label="#{messages['oneShotChargeInstance.criteria2']}"
 													field="criteria2" />
-												<hftl:column
+												<hftl:column sort="false"
 													label="#{messages['oneShotChargeInstance.criteria3']}"
 													field="criteria3" />
-
 												<p:column styleClass="actions-column">
 													<f:facet name="header">
 														<h:outputText value="#{messages['commons.actions']}" />
@@ -497,7 +499,7 @@
 														<h:panelGroup rendered="#{not empty subscriptionBean.oneShotWalletOperations}">
 															<h:outputText
 																value="#{subscriptionBean.oneShotWalletOperations.size()} #{messages['commons.itemsFound']}" />
-															<p:dataTable id="oneShotWalletOperationTable"
+															<p:dataTable id="oneShotWalletOperationTable" resizableColumns="true"
 																value="#{subscriptionBean.oneShotWalletOperations}"
 																var="oneShotWalletOp" rows="10" styleClass="custom-grid">
 																<!-- <hftl:column label="#{messages['chargeApplication.applicationDate']}" isDate="true" showSortLinks="false" field="operationDate" /> -->
@@ -691,26 +693,28 @@
 								</hf:formPanel>
 								<p:outputPanel id="recurringChargeDataPanel">
 									<h:form id="OS_recurring_results_form" prependId="false">
-										<p:dataTable
+										<p:dataTable resizableColumns="true"
 											value="#{subscriptionBean.recurringChargeInstances}"
 											var="entity">
-											<hftl:column label="#{messages['chargeInstance.code']}"
-												field="code" />
-											<hftl:column
+<!-- 											<hftl:column label="#{messages['chargeInstance.code']}" -->
+<!-- 												field="code" /> -->
+											<p:column sortBy="#{entity.code}" headerText="#{messages['chargeInstance.code']}">
+												<h:outputText value="#{entity.code}" />
+											</p:column>
+											<hftl:column sort="false"
 												label="#{messages['chargeInstance.description']}"
 												field="description" isMessage="false" />
 											<hftl:column label="#{messages['chargeApplication.status']}"
-												field="status" />
-											<hftl:column
+												field="status" sort="false"/>
+											<hftl:column sort="false"
 												label="#{messages['oneShotChargeInstance.criteria1']}"
 												field="criteria1" isMessage="true" />
-											<hftl:column
+											<hftl:column sort="false"
 												label="#{messages['oneShotChargeInstance.chargeDate']}"
 												field="chargeDate" isDate="true"/>
-											<hftl:column
+											<hftl:column sort="false"
 												label="#{messages['recurringChargeInstance.nextChargeDate']}"
 												field="nextChargeDate" isDate="true"/>
-
 											<p:column styleClass="actions-column">
 												<f:facet name="header">
 													<h:outputText value="#{messages['commons.actions']}" />
@@ -730,7 +734,6 @@
 							</p:tab>
 							<p:tab id="usageTab" title="#{messages['subscription.usage']}"
 								rendered="#{!subscriptionBean.edit}">
-
 								<hf:formPanel formId="form4" backingBean="#{subscriptionBean}"
 									showFormButtons="false">
 										<hf:formField label="#{messages['businessEntity.code']}"
@@ -752,31 +755,34 @@
 								</hf:formPanel>
 								<h:form id="OS_usage_results_form" prependId="false">
 									<p:dataTable value="#{subscriptionBean.usageChargeInstances}"
-										var="entity">
-										<hftl:column label="#{messages['chargeInstance.code']}"
-											field="code" />
+										var="entity" resizableColumns="true">
+<!-- 										<hftl:column label="#{messages['chargeInstance.code']}" -->
+<!-- 											field="code" /> -->
+										<p:column sortBy="#{entity.code}" headerText="#{messages['chargeInstance.code']}">
+											<h:outputText value="#{entity.code}" />
+										</p:column>
 										<hftl:column label="#{messages['BusinessEntity.description']}"
-											field="description" isMessage="false" />
+											field="description" isMessage="false" sort="false"/>
 										<hftl:column label="#{messages['chargeApplication.status']}"
-											field="status" />
-										<hftl:column
+											field="status" sort="false"/>
+										<hftl:column sort="false"
 											label="#{messages['pricePlanMatrix.amountWithoutTax']}"
 											field="amountWithoutTax" isMessage="false" />
 											<p:column headerText="#{messages['pricePlanMatrix.amountWithTax']}" rendered="#{!subscriptionBean.entity.provider.entreprise}" >
 											 <h:outputText value="#{entity.amountWithTax}"
 											 converter="#{getConverter.forType(entity.amountWithTax,'4digits')}" />
 											</p:column>
-										<hftl:column
+										<hftl:column sort="false"
 											label="#{messages['oneShotChargeInstance.criteria1']}"
 											field="criteria1" isMessage="false" />
-										<hftl:column
+										<hftl:column sort="false"
 											label="#{messages['oneShotChargeInstance.criteria2']}"
 											field="criteria2" isMessage="false" />
-										<hftl:column
+										<hftl:column sort="false"
 											label="#{messages['oneShotChargeInstance.criteria3']}"
 											field="criteria3" isMessage="false" />
 										<hftl:column label="#{messages['counterTemplate.title']}"
-											field="counter.code" />
+											field="counter.code" sort="false"/>
 										<p:column styleClass="actions-column">
 											<f:facet name="header">
 												<h:outputText value="#{messages['commons.actions']}" />
@@ -819,9 +825,16 @@
 								</hf:formPanel>
 								<h:form>
 									<p:outputPanel id="medinaAccessPanel">
-										<p:dataTable value="#{subscriptionBean.access}" var="entity">
-											<hftl:column label="#{messages['access.accessUserId']}" showSortLinks="false"
-												field="accessUserId" entityView="accessDetail" valueIdField="id"/>
+										<p:dataTable value="#{subscriptionBean.access}" var="entity" resizableColumns="true">
+<!-- 											<hftl:column label="#{messages['access.accessUserId']}" showSortLinks="false" -->
+<!-- 												field="accessUserId" entityView="accessDetail" valueIdField="id"/> -->
+											<p:column sortBy="#{entity.accessUserId}" headerText="#{messages['access.accessUserId']}">
+												<h:link value="#{entity.accessUserId}" outcome="accessDetail">
+													<f:param name="objectId" value="#{entity.id}" />
+													<f:param name="cid"
+														value="#{javax.enterprise.context.conversation.id}" />
+												</h:link>
+											</p:column>
 											<hftl:column label="#{messages['access.startDate']}" showSortLinks="false"
 												field="startDate" isDate="true" />
 											<hftl:column label="#{messages['access.endDate']}" showSortLinks="false"

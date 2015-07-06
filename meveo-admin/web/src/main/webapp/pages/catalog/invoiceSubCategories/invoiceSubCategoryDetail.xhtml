@@ -104,9 +104,9 @@
 
 					<h:panelGroup id="invoiceSubCategoryCountries_panel">
 						<hftl:dataList backingBean="#{invoiceSubCategoryCountryBean}"
-							dataModel="#{invoiceSubCategoryBean.entity.invoiceSubcategoryCountries}"
+							dataModel="#{invoiceSubCategoryCountryBean.getInvoiceSubcategoryCountries(invoiceSubCategoryBean.entity)}"
 							resultsId="invoiceSubCategoryCountries_results" checkMany="false">
-							<hftl:column
+							<hftl:column sort="false"
 								label="#{messages['invoiceSubCategoryCountry.countryCode']}"
 								field="tradingCountry.countryCode" />
 							<hftl:column
@@ -169,7 +169,7 @@
 											rendered="#{invoiceSubCategoryBean.invoiceSubcategoryCountry.id!=null}"
 											action="#{invoiceSubCategoryBean.saveInvoiceSubCategoryCountry}"
 											value="#{messages['invoiceSubCategoryCountry.modifyTax']}"
-											ajax="false" />
+											update=":tabView:invoiceSubCategoryCountries_panel,:tabView:formPanelTax:formTax,:tabView:subCategoryCountrydiv" />
 
 										<p:commandButton value="#{messages['action.cancel']}"
 											action="#{invoiceSubCategoryBean.newInvoiceSubcategoryCountryInstance}"
