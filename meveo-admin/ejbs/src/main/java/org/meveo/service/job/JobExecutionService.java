@@ -124,7 +124,7 @@ public class JobExecutionService extends PersistenceService<JobExecutionResultIm
 		String sql = "delete from JobExecutionResultImpl t";
 		QueryBuilder qb = new QueryBuilder(sql);// FIXME:.cacheable();
 		qb.addCriterion("t.jobName", "=", jobName, false);
-		qb.addCriterion("t.startDate", "<", date, false);
+		qb.addCriterionDateRangeToTruncatedToDay("t.startDate", date);
 		qb.addCriterionEntity("t.provider", provider);
 
 		return qb.getQuery(getEntityManager()).executeUpdate();
