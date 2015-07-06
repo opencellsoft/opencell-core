@@ -273,13 +273,14 @@
 					<c:set var="attrId"
 						value="#{field.replaceAll('\\.','\\_')}_#{attrId}" />
 					<hf:linkToEntity linkId="#{attrId}_message_link"
-						rendered="#{isMessage}" entityId="#{valueId}" entity="#{c}"
-						popupFields="#{popupFields}" value="#{valueLabel}"
-						view="#{entityView}" />
+						objectIdParamName="#{objectIdParamName}" rendered="#{isMessage}"
+						entityId="#{valueId}" entity="#{c}" popupFields="#{popupFields}"
+						value="#{valueLabel}" view="#{entityView}" backView="#{backView}" />
 					<hf:linkToEntity linkId="#{attrId}_message_link"
+						objectIdParamName="#{objectIdParamName}"
 						rendered="#{not isMessage}" entity="#{c}"
 						popupFields="#{popupFields}" entityId="#{valueId}"
-						value="#{valueLabel}" view="#{entityView}" />
+						value="#{valueLabel}" view="#{entityView}" backView="#{backView}" />
 				</c:if>
 				<br />
 			</ui:repeat>

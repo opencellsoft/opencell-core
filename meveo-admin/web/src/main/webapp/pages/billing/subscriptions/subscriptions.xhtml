@@ -39,10 +39,10 @@
 				field="userAccount.code" valueIdField="userAccount.id" objectIdParamName="userAccountId"
 				entityView="userAccountDetail" propagateConversation="false"/>
 			<hftl:column label="#{messages['subscription.serviceInstances']}"
-				field="serviceInstances" isList="true" valueLabelField="descriptionAndStatus"
-				valueIdField="id" sort="false"
-				entityView="serviceInstanceDetail"
-				backView="subscriptions" />
+				field="serviceInstances" isList="true"
+				valueLabelField="descriptionAndStatus" valueIdField="id"
+				objectIdParamName="serviceInstanceId"
+				entityView="serviceInstanceDetail" backView="subscriptions" />
 			<hftl:actionsColumn useCustomIdParam="true" renderDeleteLink="false"
 				permission="#{identity.hasPermission('billing','billingManagement')}" />
 		</hftl:dataList>

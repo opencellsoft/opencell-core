@@ -31,22 +31,24 @@
 	<cc:attribute name="linkId" required="true" />
 	<cc:attribute name="value" required="true" />
 	<cc:attribute name="view" required="true" />
+	<cc:attribute name="backView" required="false" />
 	<cc:attribute name="entityId" required="true" />
 	<cc:attribute name="entity" required="true" />
 	<cc:attribute name="popupFields" />
 	<cc:attribute name="edit" default="true"/>
+	<cc:attribute name="objectIdParamName" default="objectId"/>
 </cc:interface>
 
 
 <cc:implementation>
-	<c:if test="${empty objectIdParamName}">
-		<c:set var="objectIdParamName" value="objectId" />
-	</c:if>
 	<h:link id="#{cc.attrs.linkId}" value="#{cc.attrs.value}"
 		outcome="#{cc.attrs.view}">
-		<f:param name="#{objectIdParamName}" value="#{cc.attrs.entityId}" />
+		<f:param name="#{cc.attrs.objectIdParamName}" value="#{cc.attrs.entityId}" />
 		<f:param name="cid" value="#{javax.enterprise.context.conversation.id}" />
 		<f:param name="edit" value="#{cc.attrs.edit}" />
+		<c:if test="${not empty cc.attrs.backView}">
+            <f:param name="backView" value="#{cc.attrs.backView}"/>
+        </c:if>
 	</h:link>
 	<cc:insertChildren />
 
