@@ -34,7 +34,6 @@ import org.meveo.api.dto.account.UserAccountDto;
 import org.meveo.api.dto.billing.ServiceInstanceDto;
 import org.meveo.api.dto.billing.SubscriptionDto;
 import org.meveo.api.dto.response.account.FindAccountHierarchyResponseDto;
-import org.meveo.api.dto.response.account.GetAccessResponseDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
@@ -94,7 +93,6 @@ import org.meveo.service.billing.impl.UserAccountService;
 import org.meveo.service.catalog.impl.OfferTemplateService;
 import org.meveo.service.catalog.impl.ServiceTemplateService;
 import org.meveo.service.catalog.impl.TitleService;
-import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.service.crm.impl.CustomerBrandService;
 import org.meveo.service.crm.impl.CustomerCategoryService;
 import org.meveo.service.crm.impl.CustomerService;
@@ -123,9 +121,6 @@ public class AccountHierarchyApi extends BaseApi {
 
 	@Inject
 	private CreditCategoryService creditCategoryService;
-
-	@Inject
-	private CustomFieldInstanceService customFieldInstanceService;
 
 	@Inject
 	private ServiceTemplateService serviceTemplateService;

@@ -7,6 +7,7 @@ import org.meveo.api.BaseApi;
 import org.meveo.api.dto.catalog.CounterTemplateDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
+import org.meveo.api.exception.InvalidEnumValue;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
@@ -54,13 +55,23 @@ public class CounterTemplateApi extends BaseApi {
 			counterTemplate.setCode(postData.getCode());
 			counterTemplate.setDescription(postData.getDescription());
 			counterTemplate.setUnityDescription(postData.getUnity());
-			counterTemplate.setCounterType(CounterTypeEnum.valueOf(postData
-					.getType()));
+			if (!StringUtils.isBlank(postData.getType())) {
+				try {
+					counterTemplate.setCounterType(CounterTypeEnum.valueOf(postData.getType()));
+				} catch (IllegalArgumentException e) {
+					throw new InvalidEnumValue(CounterTypeEnum.class.getName(), postData.getType());
+				}
+			}
 			counterTemplate.setCeiling(postData.getCeiling());
 			counterTemplate.setDisabled(postData.isDisabled());
 			counterTemplate.setCalendar(calendar);
-			counterTemplate.setCounterLevel(CounterTemplateLevel.valueOf(postData
-					.getCounterLevel()));
+			if (!StringUtils.isBlank(postData.getCounterLevel())) {
+				try {
+					counterTemplate.setCounterLevel(CounterTemplateLevel.valueOf(postData.getCounterLevel()));
+				} catch (IllegalArgumentException e) {
+					throw new InvalidEnumValue(CounterTemplateLevel.class.getName(), postData.getCounterLevel());
+				}
+			}
 			counterTemplate.setCeilingExpressionEl(postData.getCeilingExpressionEl());
 
 			counterTemplateService.create(counterTemplate, currentUser,
@@ -103,13 +114,23 @@ public class CounterTemplateApi extends BaseApi {
 
 			counterTemplate.setDescription(postData.getDescription());
 			counterTemplate.setUnityDescription(postData.getUnity());
-			counterTemplate.setCounterType(CounterTypeEnum.valueOf(postData
-					.getType()));
+			if (!StringUtils.isBlank(postData.getType())) {
+				try {
+					counterTemplate.setCounterType(CounterTypeEnum.valueOf(postData.getType()));
+				} catch (IllegalArgumentException e) {
+					throw new InvalidEnumValue(CounterTypeEnum.class.getName(), postData.getType());
+				}
+			}
 			counterTemplate.setCeiling(postData.getCeiling());
 			counterTemplate.setDisabled(postData.isDisabled());
 			counterTemplate.setCalendar(calendar);
-			counterTemplate.setCounterLevel(CounterTemplateLevel.valueOf(postData
-					.getCounterLevel()));
+			if (!StringUtils.isBlank(postData.getCounterLevel())) {
+				try {
+					counterTemplate.setCounterLevel(CounterTemplateLevel.valueOf(postData.getCounterLevel()));
+				} catch (IllegalArgumentException e) {
+					throw new InvalidEnumValue(CounterTemplateLevel.class.getName(), postData.getCounterLevel());
+				}
+			}
 			counterTemplate.setCeilingExpressionEl(postData.getCeilingExpressionEl());
 
 			counterTemplateService.update(counterTemplate, currentUser);
