@@ -149,6 +149,7 @@ public class GenerateImportXml {
 				ba.setAddress(addressBa);
 				ba.setElectronicBilling("0");
 				BankCoordinates bankCoordinate = new BankCoordinates(); 
+				bankCoordinate.setKey("");
 				bankCoordinate.setAccountName("xx");
 				ba.setBankCoordinates(bankCoordinate);
 				billingAccounts.getBillingAccount().add(ba);

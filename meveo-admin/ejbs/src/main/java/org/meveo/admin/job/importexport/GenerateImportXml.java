@@ -124,6 +124,7 @@ public class GenerateImportXml {
 				ba.setAddress(addressBa);
 				ba.setElectronicBilling("0");
 				BankCoordinates bankCoordinate = new BankCoordinates(); 
+				bankCoordinate.setKey("");
 				ba.setBankCoordinates(bankCoordinate);
 				billingAccounts.getBillingAccount().add(ba);
 

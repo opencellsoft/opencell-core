@@ -7432,7 +7432,13 @@
                         <!--Optional:-->
                        <bankCoordinates>
 				   <!--Optional:-->
-				   <accountIdentifier>?</accountIdentifier>
+				   <bankCode>?</bankCode>
+				   <!--Optional:-->
+				   <branchCode>?</branchCode>
+				   <!--Optional:-->
+				   <accountNumber>?</accountNumber>
+				   <!--Optional:-->
+				   <key>?</key>
 				   <!--Optional:-->
 				   <iban>?</iban>
 				   <!--Optional:-->
@@ -11010,7 +11016,13 @@
                                     <!--Optional:-->
                                     <bankCoordinates>
 								   <!--Optional:-->
-								   <accountIdentifier>?</accountIdentifier>
+								   <bankCode>?</bankCode>
+								   <!--Optional:-->
+								   <branchCode>?</branchCode>
+								   <!--Optional:-->
+								   <accountNumber>?</accountNumber>
+								   <!--Optional:-->
+								   <key>?</key>
 								   <!--Optional:-->
 								   <iban>?</iban>
 								   <!--Optional:-->
@@ -16511,7 +16523,13 @@
             <!--Optional:-->
              <bankCoordinates>
                <!--Optional:-->
-               <accountIdentifier>?</accountIdentifier>
+               <bankCode>?</bankCode>
+			   <!--Optional:-->
+			   <branchCode>?</branchCode>
+			   <!--Optional:-->
+			   <accountNumber>?</accountNumber>
+			   <!--Optional:-->
+			   <key>?</key>
                <!--Optional:-->
                <iban>?</iban>
                <!--Optional:-->
@@ -26904,9 +26922,15 @@ for( testCase in testSuite.getTestCaseList() ) {
                                     <!--Optional:-->
                                     <bankCoordinates>
                                        <!--Optional:--> 
-									  <accountIdentifier>11111111111111111111148</accountIdentifier>
-                                       <!--Optional:-->
-                                       <iban>1234</iban>
+									<bankCode>BPI</bankCode>
+								   <!--Optional:-->
+								   <branchCode>LB</branchCode>
+								   <!--Optional:-->
+								   <accountNumber>1234</accountNumber>
+								   <!--Optional:-->
+								   <key>1234</key>
+								   <!--Optional:-->
+								   <iban>1234</iban>
                                        <!--Optional:-->
                                        <bic>1234</bic>
                                        <!--Optional:-->
@@ -27207,7 +27231,13 @@ for( testCase in testSuite.getTestCaseList() ) {
                                     <!--Optional:-->
                                     <bankCoordinates>
                                        <!--Optional:--> 
-									  <accountIdentifier>11111111111111111111148</accountIdentifier>
+									  <bankCode>BPI</bankCode>
+                                       <!--Optional:-->
+                                       <branchCode>LB</branchCode>
+                                       <!--Optional:-->
+                                       <accountNumber>1234</accountNumber>
+                                       <!--Optional:-->
+                                       <key>1234</key>
                                        <!--Optional:-->
                                        <iban>1234</iban>
                                        <!--Optional:-->
@@ -27512,7 +27542,13 @@ for( testCase in testSuite.getTestCaseList() ) {
                                     <!--Optional:-->
                                     <bankCoordinates>
                                        <!--Optional:--> 
-									  <accountIdentifier>11111111111111111111148</accountIdentifier>
+									 <bankCode>BPI</bankCode>
+                                       <!--Optional:-->
+                                       <branchCode>LB</branchCode>
+                                       <!--Optional:-->
+                                       <accountNumber>1234</accountNumber>
+                                       <!--Optional:-->
+                                       <key>1234</key>
                                        <!--Optional:-->
                                        <iban>1234</iban>
                                        <!--Optional:-->
@@ -27860,7 +27896,13 @@ for( testCase in testSuite.getTestCaseList() ) {
                                     <!--Optional:-->
                                      <bankCoordinates>
                                        <!--Optional:--> 
-									  <accountIdentifier>11111111111111111111148</accountIdentifier>
+									 <bankCode>BPI</bankCode>
+                                       <!--Optional:-->
+                                       <branchCode>LB</branchCode>
+                                       <!--Optional:-->
+                                       <accountNumber>1234</accountNumber>
+                                       <!--Optional:-->
+                                       <key>1234</key>
                                        <!--Optional:-->
                                        <iban>1234</iban>
                                        <!--Optional:-->
@@ -28212,7 +28254,13 @@ for( testCase in testSuite.getTestCaseList() ) {
                                     <!--Optional:-->
                                     <bankCoordinates>
                                        <!--Optional:--> 
-									  <accountIdentifier>11111111111111111111148</accountIdentifier>
+									 <bankCode>BPI</bankCode>
+                                       <!--Optional:-->
+                                       <branchCode>LB</branchCode>
+                                       <!--Optional:-->
+                                       <accountNumber>1234</accountNumber>
+                                       <!--Optional:-->
+                                       <key>1234</key>
                                        <!--Optional:-->
                                        <iban>1234</iban>
                                        <!--Optional:-->
@@ -28569,7 +28617,13 @@ for( testCase in testSuite.getTestCaseList() ) {
                                     <!--Optional:-->
                                      <bankCoordinates>
                                        <!--Optional:--> 
-									  <accountIdentifier>11111111111111111111148</accountIdentifier>
+									 <bankCode>BPI</bankCode>
+                                       <!--Optional:-->
+                                       <branchCode>LB</branchCode>
+                                       <!--Optional:-->
+                                       <accountNumber>1234</accountNumber>
+                                       <!--Optional:-->
+                                       <key>1234</key>
                                        <!--Optional:-->
                                        <iban>1234</iban>
                                        <!--Optional:-->
@@ -28932,7 +28986,13 @@ for( testCase in testSuite.getTestCaseList() ) {
                                     <!--Optional:-->
                                     <bankCoordinates>
                                        <!--Optional:--> 
-									  <accountIdentifier>11111111111111111111148</accountIdentifier>
+									<bankCode>BPI</bankCode>
+                                       <!--Optional:-->
+                                       <branchCode>LB</branchCode>
+                                       <!--Optional:-->
+                                       <accountNumber>1234</accountNumber>
+                                       <!--Optional:-->
+                                       <key>1234</key>
                                        <!--Optional:-->
                                        <iban>1234</iban>
                                        <!--Optional:-->

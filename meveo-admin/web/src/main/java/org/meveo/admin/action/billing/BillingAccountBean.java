@@ -181,14 +181,6 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
 	@Override
 	public String saveOrUpdate(boolean killConversation) {
 		try {
-			// validate RIB
-			if ((getEntity().getPaymentMethod() != null && (getEntity().getPaymentMethod() == PaymentMethodEnum.DIRECTDEBIT || getEntity().getPaymentMethod() == PaymentMethodEnum.TIP))
-					&& getEntity().getBankCoordinates() != null) {
-				if (!RibValidator.checkRib(getEntity().getBankCoordinates().getAccountIdentifier())) {
-					messages.error(new BundleKey("messages", "commons.ribValidation"));
-					return "";
-				}
-			}
 
 			if (entity.getDefaultLevel() != null && entity.getDefaultLevel()) {
 				if (billingAccountService.isDuplicationExist(entity)) {

@@ -133,17 +133,41 @@ public class TIP {
 		}
 		intituleCompteDebiteur = temp + "                  ".substring(temp.length());
 
-		if (coordonneesBancaires.getAccountIdentifier() == null) {
+		if (coordonneesBancaires.getBankCode() == null
+				|| coordonneesBancaires.getBankCode().length() != 5) {
 			throw new InvalidAttributeValueException(
-					"coordonneesBancaires.getAccountIdentifier() cannot be null");
+					"coordonneesBancaires.getBankCode must be 5 characters");
 		}
-		accountIdentifier = coordonneesBancaires.getAccountIdentifier(); 
+		codeEtablissement = coordonneesBancaires.getBankCode();
+
+		if (coordonneesBancaires.getBranchCode() == null
+				|| coordonneesBancaires.getBranchCode().length() != 5) {
+			throw new InvalidAttributeValueException(
+					"coordonneesBancaires.getBranchCode must be 5 characters");
+		}
+		codeGuichet = coordonneesBancaires.getBranchCode();
+
+		if (coordonneesBancaires.getAccountNumber() == null
+				|| coordonneesBancaires.getAccountNumber().length() != 11) {
+			throw new InvalidAttributeValueException(
+					"coordonneesBancaires.getAccountNumber must be 11 characters");
+		}
+		numeroCompte = coordonneesBancaires.getAccountNumber();
+
+		if (coordonneesBancaires.getKey() == null || coordonneesBancaires.getKey().length() != 2) {
+			throw new InvalidAttributeValueException(
+					"coordonneesBancaires.getKey must be 2 characters");
+		}
+		cleRib = coordonneesBancaires.getKey();
 
 	}
 
 	String numeroFormule;
 	String intituleCompteDebiteur;
-	String accountIdentifier;
+	String codeEtablissement;
+	String codeGuichet;
+	String numeroCompte;
+	String cleRib;
 
 	private static String[] CONVERT = new String[4];
 
@@ -155,7 +179,7 @@ public class TIP {
 	}
 
 	public String getLigneOptiqueHaute() {
-		return getEnsemble6() + getEnsemble5() + accountIdentifier;
+		return getEnsemble6() + getEnsemble5() + getEnsemble4();
 	}
 
 	String getEnsemble6() {
@@ -196,7 +220,10 @@ public class TIP {
 		return intituleCompteDebiteur + "  ";// FIXME : SHOULD BE ON DEFINITE
 												// LENGTH
 	}
- 
+
+	String getEnsemble4() {
+		return codeEtablissement + codeGuichet + numeroCompte + cleRib;
+	}
 
 	private static final byte ZERO = "0".getBytes()[0];
 

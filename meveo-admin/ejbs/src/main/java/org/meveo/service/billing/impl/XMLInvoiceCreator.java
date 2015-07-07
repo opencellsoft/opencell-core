@@ -601,11 +601,17 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 		}
 
 		Element bankCoordinates = doc.createElement("bankCoordinates");
-		Element accountIdentifier = doc.createElement("accountIdentifier"); 
-		Element accountOwner = doc.createElement("accountOwner"); 
+		Element bankCode = doc.createElement("bankCode");
+		Element branchCode = doc.createElement("branchCode");
+		Element accountNumber = doc.createElement("accountNumber");
+		Element accountOwner = doc.createElement("accountOwner");
+		Element key = doc.createElement("key");
 		Element iban = doc.createElement("IBAN");
-		bankCoordinates.appendChild(accountIdentifier); 
-		bankCoordinates.appendChild(accountOwner); 
+		bankCoordinates.appendChild(bankCode);
+		bankCoordinates.appendChild(branchCode);
+		bankCoordinates.appendChild(accountNumber);
+		bankCoordinates.appendChild(accountOwner);
+		bankCoordinates.appendChild(key);
 		bankCoordinates.appendChild(iban);
 		paymentMethod.appendChild(bankCoordinates);
 
@@ -613,11 +619,22 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 		parent.appendChild(paymentTerm);
 		paymentTerm.setAttribute("type", billingAccount.getPaymentTerm() != null ? billingAccount.getPaymentTerm().toString() : "");
 
-		if (billingAccount.getBankCoordinates() != null) {
-			Text accountIdentifierTxt = doc.createTextNode(billingAccount.getBankCoordinates().getAccountIdentifier() != null ? billingAccount.getBankCoordinates().getAccountIdentifier() : "");
-			accountIdentifier.appendChild(accountIdentifierTxt); 
+		if (billingAccount.getBankCoordinates() != null && billingAccount.getBankCoordinates().getBankCode() != null) {
+			Text bankCodeTxt = doc.createTextNode(billingAccount.getBankCoordinates().getBankCode() != null ? billingAccount.getBankCoordinates().getBankCode() : "");
+			bankCode.appendChild(bankCodeTxt);
+
+			Text branchCodeTxt = doc.createTextNode(billingAccount.getBankCoordinates().getBranchCode() != null ? billingAccount.getBankCoordinates().getBranchCode() : "");
+			branchCode.appendChild(branchCodeTxt);
+
+			Text accountNumberTxt = doc
+					.createTextNode(billingAccount.getBankCoordinates().getAccountNumber() != null ? billingAccount.getBankCoordinates().getAccountNumber() : "");
+			accountNumber.appendChild(accountNumberTxt);
+
 			Text accountOwnerTxt = doc.createTextNode(billingAccount.getBankCoordinates().getAccountOwner() != null ? billingAccount.getBankCoordinates().getAccountOwner() : "");
 			accountOwner.appendChild(accountOwnerTxt);
+
+			Text keyTxt = doc.createTextNode(billingAccount.getBankCoordinates().getKey() != null ? billingAccount.getBankCoordinates().getKey() : "");
+			key.appendChild(keyTxt);
 			if (billingAccount.getBankCoordinates().getIban() != null) {
 				Text ibanTxt = doc.createTextNode(billingAccount.getBankCoordinates().getIban() != null ? billingAccount.getBankCoordinates().getIban() : "");
 				iban.appendChild(ibanTxt);

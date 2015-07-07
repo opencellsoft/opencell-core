@@ -61,7 +61,10 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "", propOrder = {
     "accountName",
     "bankName",
-    "accountIdentifier",
+    "bankCode",
+    "branchCode",
+    "accountNumber",
+    "key",
     "iban",
     "bic"
 })
@@ -73,7 +76,13 @@ public class BankCoordinates {
     @XmlElement(required = true)
     protected String bankName;
     @XmlElement(required = true)
-    protected String accountIdentifier; 
+    protected String bankCode;
+    @XmlElement(required = true)
+    protected String branchCode;
+    @XmlElement(required = true)
+    protected String accountNumber;
+    @XmlElement(required = true)
+    protected String key;
     @XmlElement(name = "IBAN", required = true)
     protected String iban;
     @XmlElement(name = "BIC", required = true)
@@ -86,7 +95,10 @@ public class BankCoordinates {
     	if(bankCoordinates!=null){
 			accountName=bankCoordinates.getAccountOwner();
 			bankName=bankCoordinates.getBankName();
-			accountIdentifier=bankCoordinates.getAccountIdentifier(); 
+			bankCode=bankCoordinates.getBankCode();
+			branchCode=bankCoordinates.getBranchCode();
+			accountNumber=bankCoordinates.getAccountNumber();
+			key=bankCoordinates.getKey();
 			iban=bankCoordinates.getIban();
     	}
 	}
@@ -138,17 +150,104 @@ public class BankCoordinates {
     public void setBankName(String value) {
         this.bankName = value;
     }
-    
-  
-    public String getAccountIdentifier() {
-		return accountIdentifier;
-	}
 
-	public void setAccountIdentifier(String accountIdentifier) {
-		this.accountIdentifier = accountIdentifier;
-	}
+    /**
+     * Gets the value of the bankCode property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getBankCode() {
+        return bankCode;
+    }
 
-	/**
+    /**
+     * Sets the value of the bankCode property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setBankCode(String value) {
+        this.bankCode = value;
+    }
+
+    /**
+     * Gets the value of the branchCode property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getBranchCode() {
+        return branchCode;
+    }
+
+    /**
+     * Sets the value of the branchCode property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setBranchCode(String value) {
+        this.branchCode = value;
+    }
+
+    /**
+     * Gets the value of the accountNumber property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getAccountNumber() {
+        return accountNumber;
+    }
+
+    /**
+     * Sets the value of the accountNumber property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setAccountNumber(String value) {
+        this.accountNumber = value;
+    }
+
+    /**
+     * Gets the value of the key property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getKey() {
+        return key;
+    }
+
+    /**
+     * Sets the value of the key property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setKey(String value) {
+        this.key = value;
+    }
+
+    /**
      * Gets the value of the iban property.
      * 
      * @return

@@ -80,9 +80,12 @@ public class AccountOperationApi extends BaseApi {
 			} catch (NullPointerException e) {
 				log.warn("error generated while setting payment methode",e);
 			}
-
+            
 			recordedInvoice.setPaymentInfo(postData.getRecordedInvoice().getPaymentInfo());
-			recordedInvoice.setPaymentInfo1(postData.getRecordedInvoice().getPaymentInfo1()); 
+			recordedInvoice.setPaymentInfo1(postData.getRecordedInvoice().getPaymentInfo1());
+			recordedInvoice.setPaymentInfo2(postData.getRecordedInvoice().getPaymentInfo2());
+			recordedInvoice.setPaymentInfo3(postData.getRecordedInvoice().getPaymentInfo3());
+			recordedInvoice.setPaymentInfo4(postData.getRecordedInvoice().getPaymentInfo4()); 
 			recordedInvoice.setPaymentInfo5(postData.getRecordedInvoice().getPaymentInfo5());
 			recordedInvoice.setPaymentInfo6(postData.getRecordedInvoice().getPaymentInfo6());
 

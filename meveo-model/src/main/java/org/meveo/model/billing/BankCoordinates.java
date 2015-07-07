@@ -26,10 +26,22 @@ import javax.validation.constraints.Size;
 public class BankCoordinates implements Serializable, Cloneable {
 
 	private static final long serialVersionUID = 1L;
-	
-	@Column(name = "ACCOUNT_IDENTIFIER",length = 255)
-	@Size(max = 255)
-	private String accountIdentifier; 
+
+	@Column(name = "BANK_CODE", nullable = true, length = 5)
+	@Size(max = 5)
+	private String bankCode;
+
+	@Column(name = "BRANCH_CODE", nullable = true, length = 5)
+	@Size(max = 5)
+	private String branchCode;
+
+	@Column(name = "ACCOUNT_NUMBER", nullable = true, length = 11)
+	@Size(max = 11)
+	private String accountNumber;
+
+	@Column(name = "HASH_KEY", nullable = true, length = 2)
+	@Size(max = 2)
+	private String key;
 
 	@Column(name = "IBAN", length = 34)
 	@Size(max = 34)
@@ -68,25 +80,54 @@ public class BankCoordinates implements Serializable, Cloneable {
 	}
 
 	public BankCoordinates(BankCoordinates bankCoordinates) {
-		this(bankCoordinates.accountIdentifier,bankCoordinates.iban, bankCoordinates.bic,
+		this(bankCoordinates.bankCode, bankCoordinates.branchCode, bankCoordinates.accountNumber,
+				bankCoordinates.key, bankCoordinates.iban, bankCoordinates.bic,
 				bankCoordinates.accountOwner, bankCoordinates.bankName);
 	}
 
-	public BankCoordinates(String accountIdentifier,String iban, String bic, String accountOwner, String bankName) {
+	public BankCoordinates(String bankCode, String branchCode, String accountNumber, String key,
+			String iban, String bic, String accountOwner, String bankName) {
 		super();
-		this.accountIdentifier = accountIdentifier;  
+		this.bankCode = bankCode;
+		this.branchCode = branchCode;
+		this.accountNumber = accountNumber;
+		this.key = key;
 		this.iban = iban;
 		this.bic = bic;
 		this.accountOwner = accountOwner;
 		this.bankName = bankName;
 	}
 
-	public String getAccountIdentifier() {
-		return accountIdentifier;
+	public String getBankCode() {
+		return bankCode;
 	}
 
-	public void setAccountIdentifier(String accountIdentifier) {
-		this.accountIdentifier = accountIdentifier;
+	public void setBankCode(String bankCode) {
+		this.bankCode = bankCode;
+	}
+
+	public String getBranchCode() {
+		return branchCode;
+	}
+
+	public void setBranchCode(String branchCode) {
+		this.branchCode = branchCode;
+	}
+
+	public String getAccountNumber() {
+		return accountNumber;
+	}
+
+	public void setAccountNumber(String accountNumber) {
+		this.accountNumber = accountNumber;
+	}
+
+	public String getKey() {
+		return key;
+	}
+
+	public void setKey(String key) {
+		this.key = key;
 	}
 
 	public String getIban() {

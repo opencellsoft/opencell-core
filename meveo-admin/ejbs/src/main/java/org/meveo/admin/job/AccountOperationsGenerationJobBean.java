@@ -149,7 +149,10 @@ public class AccountOperationsGenerationJobBean {
 
 				if (billingAccount.getBankCoordinates() != null) {
 					recordedInvoice.setPaymentInfo(billingAccount.getBankCoordinates().getIban());
-					recordedInvoice.setPaymentInfo1(billingAccount.getBankCoordinates().getAccountIdentifier()); 
+					recordedInvoice.setPaymentInfo1(billingAccount.getBankCoordinates().getBankCode());
+					recordedInvoice.setPaymentInfo2(billingAccount.getBankCoordinates().getBranchCode());
+					recordedInvoice.setPaymentInfo3(billingAccount.getBankCoordinates().getAccountNumber());
+					recordedInvoice.setPaymentInfo4(billingAccount.getBankCoordinates().getKey());
 					recordedInvoice.setPaymentInfo5(billingAccount.getBankCoordinates().getBankName());
 					recordedInvoice.setPaymentInfo6(billingAccount.getBankCoordinates().getBic());
 					recordedInvoice.setBillingAccountName(billingAccount.getBankCoordinates().getAccountOwner());

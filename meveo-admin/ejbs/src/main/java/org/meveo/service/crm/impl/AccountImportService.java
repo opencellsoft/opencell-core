@@ -128,13 +128,19 @@ public class AccountImportService {
 		if (billAccount.getBankCoordinates() != null
 				&& ("DIRECTDEBIT".equalsIgnoreCase(billAccount.getPaymentMethod()) || "TIP"
 						.equalsIgnoreCase(billAccount.getPaymentMethod()))) {
-			BankCoordinates bankCoordinates = new BankCoordinates(); 
-			bankCoordinates.setAccountIdentifier(billAccount.getBankCoordinates().getAccountIdentifier() == null ? "" : billAccount
-					.getBankCoordinates().getAccountIdentifier());
+			BankCoordinates bankCoordinates = new BankCoordinates();
+			bankCoordinates.setAccountNumber(billAccount.getBankCoordinates().getAccountNumber() == null ? ""
+					: billAccount.getBankCoordinates().getAccountNumber());
 			bankCoordinates.setAccountOwner(billAccount.getBankCoordinates().getAccountName() == null ? ""
-					: billAccount.getBankCoordinates().getAccountName());  
+					: billAccount.getBankCoordinates().getAccountName());
+			bankCoordinates.setBankCode(billAccount.getBankCoordinates().getBankCode() == null ? "" : billAccount
+					.getBankCoordinates().getBankCode());
+			bankCoordinates.setBranchCode(billAccount.getBankCoordinates().getBranchCode() == null ? "" : billAccount
+					.getBankCoordinates().getBranchCode());
 			bankCoordinates.setIban(billAccount.getBankCoordinates().getIBAN() == null ? "" : billAccount
 					.getBankCoordinates().getIBAN());
+			bankCoordinates.setKey(billAccount.getBankCoordinates().getKey() == null ? "" : billAccount
+					.getBankCoordinates().getKey());
 			billingAccount.setBankCoordinates(bankCoordinates);
 		}
 
@@ -256,13 +262,19 @@ public class AccountImportService {
 		if (billingAccountDto.getBankCoordinates() != null
 				&& ("DIRECTDEBIT".equalsIgnoreCase(billingAccountDto.getPaymentMethod()) || "TIP"
 						.equalsIgnoreCase(billingAccountDto.getPaymentMethod()))) {
-			BankCoordinates bankCoordinates = new BankCoordinates(); 
-			bankCoordinates.setAccountIdentifier(billingAccountDto.getBankCoordinates().getAccountIdentifier() == null ? "" : billingAccountDto
-					.getBankCoordinates().getAccountIdentifier());
+			BankCoordinates bankCoordinates = new BankCoordinates();
+			bankCoordinates.setAccountNumber(billingAccountDto.getBankCoordinates().getAccountNumber() == null ? ""
+					: billingAccountDto.getBankCoordinates().getAccountNumber());
 			bankCoordinates.setAccountOwner(billingAccountDto.getBankCoordinates().getAccountName() == null ? ""
-					: billingAccountDto.getBankCoordinates().getAccountName()); 
+					: billingAccountDto.getBankCoordinates().getAccountName());
+			bankCoordinates.setBankCode(billingAccountDto.getBankCoordinates().getBankCode() == null ? ""
+					: billingAccountDto.getBankCoordinates().getBankCode());
+			bankCoordinates.setBranchCode(billingAccountDto.getBankCoordinates().getBranchCode() == null ? ""
+					: billingAccountDto.getBankCoordinates().getBranchCode());
 			bankCoordinates.setIban(billingAccountDto.getBankCoordinates().getIBAN() == null ? "" : billingAccountDto
-					.getBankCoordinates().getIBAN()); 
+					.getBankCoordinates().getIBAN());
+			bankCoordinates.setKey(billingAccountDto.getBankCoordinates().getKey() == null ? "" : billingAccountDto
+					.getBankCoordinates().getKey());
 			billingAccount.setBankCoordinates(bankCoordinates);
 		}
 
@@ -532,9 +544,17 @@ public class AccountImportService {
 				throw new BusinessException("BankCoordinates.AccountName is null.");
 			}
 
-			if (StringUtils.isBlank(billAccount.getBankCoordinates().getAccountIdentifier())) {
-				throw new BusinessException("BankCoordinates.AccountIdentifier is null.");
-			} 
+			if (StringUtils.isBlank(billAccount.getBankCoordinates().getAccountNumber())) {
+				throw new BusinessException("BankCoordinates.AccountNumber is null.");
+			}
+
+			if (StringUtils.isBlank(billAccount.getBankCoordinates().getBankCode())) {
+				throw new BusinessException("BankCoordinates.BankCode is null.");
+			}
+
+			if (StringUtils.isBlank(billAccount.getBankCoordinates().getBranchCode())) {
+				throw new BusinessException("BankCoordinates.BranchCode is null.");
+			}
 		}
 		/*
 		 * if (billAccount.getAddress() == null ||
@@ -601,10 +621,28 @@ public class AccountImportService {
 
 		if (("DIRECTDEBIT".equalsIgnoreCase(billAccount.getPaymentMethod()))
 				&& billAccount.getBankCoordinates() != null
-				&& StringUtils.isBlank(billAccount.getBankCoordinates().getAccountIdentifier())) {
-			throw new ImportWarningException("BankCoordinates.AccountIdentifier is null");
-		} 
-	}
+				&& StringUtils.isBlank(billAccount.getBankCoordinates().getBranchCode())) {
+			throw new ImportWarningException("BankCoordinates.BranchCode is null");
+		}
+
+		if (("DIRECTDEBIT".equalsIgnoreCase(billAccount.getPaymentMethod()))
+				&& billAccount.getBankCoordinates() != null
+				&& StringUtils.isBlank(billAccount.getBankCoordinates().getAccountNumber())) {
+			throw new ImportWarningException("BankCoordinates.AccountNumber is null");
+		}
+
+		if (("DIRECTDEBIT".equalsIgnoreCase(billAccount.getPaymentMethod()))
+				&& billAccount.getBankCoordinates() != null
+				&& StringUtils.isBlank(billAccount.getBankCoordinates().getBankCode())) {
+			throw new ImportWarningException("BankCoordinates.BankCode is null");
+		}
+
+		if (("DIRECTDEBIT".equalsIgnoreCase(billAccount.getPaymentMethod()))
+				&& billAccount.getBankCoordinates() != null
+				&& StringUtils.isBlank(billAccount.getBankCoordinates().getKey())) {
+			throw new ImportWarningException("BankCoordinates.Key is null");
+		}
+	} 
 
 	private boolean userAccountCheckWarning(org.meveo.model.jaxb.account.BillingAccount billAccount,
 			org.meveo.model.jaxb.account.UserAccount uAccount) {
