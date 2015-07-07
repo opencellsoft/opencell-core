@@ -3,6 +3,7 @@ package org.meveo.api.job;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.BaseApi;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
@@ -19,25 +20,26 @@ public class JobApi extends BaseApi {
 
 	@Inject
 	private JobInstanceService jobInstanceService;
-	
+
 	/**
 	 * 
-	 * @param timerInfoDTO, timerInfoDTO.getTimerName() contains the code of JobInstance
+	 * @param timerInfoDTO
+	 *            , timerInfoDTO.getTimerName() contains the code of JobInstance
 	 * @param currentUser
-	 * @throws MeveoApiException
+	 * @throws Exception
 	 */
 
 	public void executeJob(JobInstanceInfoDto timerInfoDTO, User currentUser) throws MeveoApiException {
 		if (StringUtils.isBlank(timerInfoDTO.getTimerName())) {
 			missingParameters.add("timerName");
 			throw new MissingParameterException(getMissingParametersExceptionMessage());
-		}else{
+		} else {
 			try {
 				jobInstanceService.executeAPITimer(timerInfoDTO, currentUser);
-			} catch (Exception e) {
-				log.error("Failed to execute api timer ",e);
+			} catch (BusinessException e) {
+				throw new MeveoApiException(e.getMessage());
 			}
-		} 
+		}
 	}
-}
 
+}
