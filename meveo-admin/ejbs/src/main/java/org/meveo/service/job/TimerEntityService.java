@@ -31,8 +31,10 @@ import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
+import javax.persistence.NoResultException;
 
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.exception.JobDoesNotExistsException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.QueryBuilder;
@@ -279,8 +281,21 @@ public class TimerEntityService extends PersistenceService<TimerEntity> {
 
 	public void executeAPITimer(TimerInfoDto timerInfoDTO, User currentUser) throws Exception {
 		log.info("execute timer={} via api", timerInfoDTO.getTimerName());
-		TimerEntity entity=(TimerEntity) getEntityManager().createQuery("FROM TimerEntity where name=:name and provider=:provider")
-		.setParameter("name", timerInfoDTO.getTimerName()).setParameter("provider", currentUser.getProvider()).getSingleResult();
+		TimerEntity entity=null;
+		try {
+			entity = (TimerEntity) getEntityManager()
+					.createQuery("FROM TimerEntity where name=:name and provider=:provider")
+					.setParameter("name", timerInfoDTO.getTimerName())
+					.setParameter("provider", currentUser.getProvider()).getSingleResult();
+		} catch (NoResultException e) {
+			log.warn("No job with name={} was found.", timerInfoDTO.getTimerName());
+			entity = null;
+		}
+		
+		if (entity == null) {
+			throw new JobDoesNotExistsException(timerInfoDTO.getTimerName());
+		}
+		
 		InitialContext ic;
         try {
             ic = new InitialContext();
