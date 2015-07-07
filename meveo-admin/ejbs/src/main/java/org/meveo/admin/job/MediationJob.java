@@ -59,7 +59,7 @@ public class MediationJob extends Job {
 			try {
 				nbRuns = jobInstance.getLongCustomValue("MediationJob_nbRuns").longValue();
 				waitingMillis = jobInstance.getLongCustomValue("MediationJob_waitingMillis").longValue();
-				mappingConf = jobInstance.getStringCustomValue("MediationJob_mappingConf");
+				//mappingConf = jobInstance.getStringCustomValue("MediationJob_mappingConf");
 				if (nbRuns == -1) {
 					nbRuns = (long) Runtime.getRuntime().availableProcessors();
 				}
@@ -90,7 +90,7 @@ public class MediationJob extends Job {
 
 			List<Future<String>> futures = new ArrayList<Future<String>>();
 			while (subListCreator.isHasNext()) {
-				futures.add(mediationAsync.launchAndForget((List<File>) subListCreator.getNextWorkSet(), result, jobInstance.getParametres(), currentUser, mappingConf));
+				futures.add(mediationAsync.launchAndForget((List<File>) subListCreator.getNextWorkSet(), result, jobInstance.getParametres(), currentUser));
 				if (subListCreator.isHasNext()) {
 					try {
 						Thread.sleep(waitingMillis.longValue());
@@ -149,15 +149,15 @@ public class MediationJob extends Job {
 		waitingMillis.setValueRequired(false);
 		result.add(waitingMillis);
 
-		CustomFieldTemplate mappingConf = new CustomFieldTemplate();
-		mappingConf.setCode("MediationJob_mappingConf");
-		mappingConf.setAccountLevel(AccountLevelEnum.TIMER);
-		mappingConf.setActive(true);
-		mappingConf.setDescription(resourceMessages.getString("mediation.mappingConfiguration"));
-		mappingConf.setFieldType(CustomFieldTypeEnum.TEXT_AREA);
-		mappingConf.setDefaultValue("");
-		mappingConf.setValueRequired(true);
-		result.add(mappingConf);
+//		CustomFieldTemplate mappingConf = new CustomFieldTemplate();
+//		mappingConf.setCode("MediationJob_mappingConf");
+//		mappingConf.setAccountLevel(AccountLevelEnum.TIMER);
+//		mappingConf.setActive(true);
+//		mappingConf.setDescription(resourceMessages.getString("mediation.mappingConfiguration"));
+//		mappingConf.setFieldType(CustomFieldTypeEnum.TEXT_AREA);
+//		mappingConf.setDefaultValue("");
+//		mappingConf.setValueRequired(true);
+//		result.add(mappingConf);
 
 		return result;
 	}

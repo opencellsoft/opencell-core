@@ -1,15 +1,12 @@
 package org.meveo.admin.job;
 
 import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.io.Serializable;
-import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 import javax.ejb.Stateless;
@@ -20,7 +17,6 @@ import javax.interceptor.Interceptors;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.job.logging.JobLoggingInterceptor;
-import org.meveo.admin.parse.csv.CDR;
 import org.meveo.commons.utils.FileUtils;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.interceptor.PerformanceInterceptor;
@@ -33,10 +29,6 @@ import org.meveo.service.billing.impl.EdrService;
 import org.meveo.service.medina.impl.CDRParsingException;
 import org.meveo.service.medina.impl.CDRParsingService;
 import org.slf4j.Logger;
-
-import com.blackbear.flatworm.ConfigurationReader;
-import com.blackbear.flatworm.FileFormat;
-import com.blackbear.flatworm.MatchedRecord;
 
 /**
  * @author Edward P. Legaspi
@@ -64,9 +56,9 @@ public class MediationJobBean {
 
 	@Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
 	@TransactionAttribute(TransactionAttributeType.NEVER)
-	public void execute(JobExecutionResultImpl result, String parameter, User currentUser,File file,String mappingConf) {
+	public void execute(JobExecutionResultImpl result, String parameter, User currentUser,File file) {
 		log.debug("Running for user={}, parameter={}", currentUser, parameter);
-
+		
 		Provider provider = currentUser.getProvider();
 
 		ParamBean parambean = ParamBean.getInstance();
@@ -75,7 +67,7 @@ public class MediationJobBean {
 
 		outputDir = meteringDir + "output";
 		rejectDir = meteringDir + "reject";
-
+		
 		File f = new File(outputDir);
 		if (!f.exists()) {
 			f.mkdirs();
@@ -89,24 +81,23 @@ public class MediationJobBean {
 		if (file != null) {
 			cdrFileName = file.getAbsolutePath();
 			result.setNbItemsToProcess(1);
+
 			log.info("InputFiles job {} in progress...", file.getName());
+
 			cdrFileName = file.getName();
-			File currentFile = FileUtils.addExtension(file, ".processing");			
-			try {								
-				ConfigurationReader parser = new ConfigurationReader();
-				FileFormat ff = parser.loadConfigurationFile( new ByteArrayInputStream(mappingConf.getBytes(StandardCharsets.UTF_8)));
-				InputStream in = new FileInputStream(currentFile);
-				BufferedReader bufIn = new BufferedReader(new InputStreamReader(in));
-				MatchedRecord results = null;
+			File currentFile = FileUtils.addExtension(file, ".processing");
+			BufferedReader cdrReader = null;
+			try {
+				cdrReader = new BufferedReader(new InputStreamReader(new FileInputStream(currentFile)));
 				cdrParser.init(file);
 				String line = null;
 				int processed = 0;
-				while ((results = ff.getNextRecord(bufIn)) != null) {	
-					CDR cdr = (CDR) results.getBean("cdr");											
+
+				while ((line = cdrReader.readLine()) != null) {
+					processed++;
 					try {
-						createEdr(cdr, currentUser);
-						outputCDR(cdr);
-						processed++;
+						createEdr(line, currentUser);
+						outputCDR(line);
 						result.registerSucces();
 					} catch (CDRParsingException e) {
 						log.warn("error while parsing cdr ",e);
@@ -131,7 +122,15 @@ public class MediationJobBean {
 				FileUtils.moveFile(rejectDir, currentFile, file.getName());
 
 			} finally {
-				
+
+				try {
+					if (cdrReader != null) {
+						cdrReader.close();
+					}
+				} catch (Exception e) {
+					log.error("Failed to close CDR reader for file {}", file.getName(), e);
+				}
+
 				try {
 					if (currentFile != null) {
 						currentFile.delete();
@@ -168,8 +167,8 @@ public class MediationJobBean {
 	}
 
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	private void createEdr(Serializable cdr, User currentUser) throws CDRParsingException, BusinessException {
-		List<EDR> edrs = cdrParser.getEDRList(cdr, currentUser.getProvider());
+	private void createEdr(String line, User currentUser) throws CDRParsingException, BusinessException {
+		List<EDR> edrs = cdrParser.getEDRList(line, currentUser.getProvider());
 		if (edrs != null && edrs.size() > 0) {
 			for (EDR edr : edrs) {
 				createEdr(edr, currentUser);
@@ -177,12 +176,12 @@ public class MediationJobBean {
 		}
 	}
 
-	private void outputCDR(CDR line) throws FileNotFoundException {
+	private void outputCDR(String line) throws FileNotFoundException {
 		if (outputFileWriter == null) {
 			File outputFile = new File(outputDir + File.separator + cdrFileName + ".processed");
 			outputFileWriter = new PrintWriter(outputFile);
 		}
-		outputFileWriter.println(line.toString());
+		outputFileWriter.println(line);
 	}
 
 	private void rejectCDR(Serializable cdr, CDRRejectionCauseEnum reason) {

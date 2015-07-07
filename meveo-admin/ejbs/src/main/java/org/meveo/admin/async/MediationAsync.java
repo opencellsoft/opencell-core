@@ -35,9 +35,9 @@ public class MediationAsync {
 
     @Asynchronous
 	@TransactionAttribute(TransactionAttributeType.NEVER)
-    public Future<String> launchAndForget(List<File> files, JobExecutionResultImpl result, String parameter, User currentUser,String mapping) {
+    public Future<String> launchAndForget(List<File> files, JobExecutionResultImpl result, String parameter, User currentUser) {
         for (File file : files) {
-            mediationJobBean.execute(result, parameter, currentUser, file,mapping);
+            mediationJobBean.execute(result, parameter, currentUser, file);
         }
 
         return new AsyncResult<String>("OK");
