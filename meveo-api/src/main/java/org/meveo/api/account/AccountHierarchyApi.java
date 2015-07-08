@@ -357,7 +357,10 @@ public class AccountHierarchyApi extends BaseApi {
 				contactInformation.setEmail(postData.getEmail());
 				contactInformation.setPhone(postData.getPhoneNumber());
 
-				Title title = titleService.findByCode(provider, enleverAccent(postData.getTitleCode()));
+				Title title = null;
+				if (!StringUtils.isBlank(postData.getTitleCode())) {
+					title = titleService.findByCode(provider, enleverAccent(postData.getTitleCode()));
+				}
 
 				String customerCode = CUSTOMER_PREFIX + enleverAccent(postData.getCustomerId());
 				Customer customer = customerService.findByCode(customerCode, provider);
@@ -631,7 +634,10 @@ public class AccountHierarchyApi extends BaseApi {
 			contactInformation.setEmail(postData.getEmail());
 			contactInformation.setPhone(postData.getPhoneNumber());
 
-			Title title = titleService.findByCode(provider, postData.getTitleCode());
+			Title title = null;
+			if (!StringUtils.isBlank(postData.getTitleCode())) {
+				title = titleService.findByCode(provider, enleverAccent(postData.getTitleCode()));
+			}
 
 			customer.getName().setLastName(postData.getLastName());
 			customer.getName().setFirstName(postData.getFirstName());
