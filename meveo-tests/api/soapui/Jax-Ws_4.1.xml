@@ -2293,6 +2293,15 @@
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
+    <wsdl:operation name="updateCRMAccountHierarchy">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="updateCRMAccountHierarchy">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="updateCRMAccountHierarchyResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
     <wsdl:operation name="updateAccountHierarchy">
       <soap:operation soapAction="" style="document"/>
       <wsdl:input name="updateAccountHierarchy">
@@ -2302,21 +2311,21 @@
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
-    <wsdl:operation name="removeCreditCategory">
-      <soap:operation soapAction="" style="document"/>
-      <wsdl:input name="removeCreditCategory">
-        <soap:body use="literal"/>
-      </wsdl:input>
-      <wsdl:output name="removeCreditCategoryResponse">
-        <soap:body use="literal"/>
-      </wsdl:output>
-    </wsdl:operation>
     <wsdl:operation name="findUserAccount">
       <soap:operation soapAction="" style="document"/>
       <wsdl:input name="findUserAccount">
         <soap:body use="literal"/>
       </wsdl:input>
       <wsdl:output name="findUserAccountResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="removeCreditCategory">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="removeCreditCategory">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="removeCreditCategoryResponse">
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
@@ -2652,6 +2661,7 @@
       <xs:element name="AccountOperationsResponse" type="tns:accountOperationsResponseDto"/>
       <xs:element name="ActionStatus" type="tns:actionStatus"/>
       <xs:element name="Address" type="tns:addressDto"/>
+      <xs:element name="BankCoordinates" type="tns:bankCoordinatesDto"/>
       <xs:element name="BillingAccountsResponse" type="tns:billingAccountsResponseDto"/>
       <xs:element name="CRMAccountHierarchy" type="tns:crmAccountHierarchyDto"/>
       <xs:element name="CreditCategory" type="tns:creditCategoryDto"/>
@@ -2751,6 +2761,8 @@
       <xs:element name="updateAccountHierarchyResponse" type="tns:updateAccountHierarchyResponse"/>
       <xs:element name="updateBillingAccount" type="tns:updateBillingAccount"/>
       <xs:element name="updateBillingAccountResponse" type="tns:updateBillingAccountResponse"/>
+      <xs:element name="updateCRMAccountHierarchy" type="tns:updateCRMAccountHierarchy"/>
+      <xs:element name="updateCRMAccountHierarchyResponse" type="tns:updateCRMAccountHierarchyResponse"/>
       <xs:element name="updateCustomer" type="tns:updateCustomer"/>
       <xs:element name="updateCustomerAccount" type="tns:updateCustomerAccount"/>
       <xs:element name="updateCustomerAccountResponse" type="tns:updateCustomerAccountResponse"/>
@@ -2819,7 +2831,7 @@
           <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
         </xs:sequence>
       </xs:complexType>
-      <xs:complexType name="createCRMAccountHierarchy">
+      <xs:complexType name="updateCRMAccountHierarchy">
         <xs:sequence>
           <xs:element minOccurs="0" name="crmAccountHierarchy" type="tns:crmAccountHierarchyDto"/>
         </xs:sequence>
@@ -2860,7 +2872,7 @@
               <xs:element minOccurs="0" name="electronicBilling" type="xs:boolean"/>
               <xs:element minOccurs="0" name="baStatus" type="xs:string"/>
               <xs:element minOccurs="0" name="email" type="xs:string"/>
-              <xs:element minOccurs="0" name="bankCoordinates" type="tns:BankCoordinates"/>
+              <xs:element minOccurs="0" name="bankCoordinates" type="tns:bankCoordinatesDto"/>
               <xs:element minOccurs="0" name="uaStatus" type="xs:string"/>
             </xs:sequence>
           </xs:extension>
@@ -2892,7 +2904,7 @@
           <xs:element minOccurs="0" name="fax" type="xs:string"/>
         </xs:sequence>
       </xs:complexType>
-      <xs:complexType name="BankCoordinates">
+      <xs:complexType name="bankCoordinatesDto">
         <xs:sequence>
           <xs:element minOccurs="0" name="bankCode" type="xs:string"/>
           <xs:element minOccurs="0" name="branchCode" type="xs:string"/>
@@ -2906,6 +2918,16 @@
           <xs:element minOccurs="0" name="issuerNumber" type="xs:string"/>
           <xs:element minOccurs="0" name="issuerName" type="xs:string"/>
           <xs:element minOccurs="0" name="ics" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="updateCRMAccountHierarchyResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="createCRMAccountHierarchy">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="crmAccountHierarchy" type="tns:crmAccountHierarchyDto"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="createCRMAccountHierarchyResponse">
@@ -3078,7 +3100,7 @@
               <xs:element minOccurs="0" name="status" type="xs:string"/>
               <xs:element minOccurs="0" name="terminationReason" type="xs:string"/>
               <xs:element minOccurs="0" name="email" type="xs:string"/>
-              <xs:element minOccurs="0" name="bankCoordinates" type="tns:BankCoordinates"/>
+              <xs:element minOccurs="0" name="bankCoordinates" type="tns:bankCoordinatesDto"/>
               <xs:element minOccurs="0" name="userAccounts" type="tns:UserAccounts"/>
             </xs:sequence>
           </xs:extension>
@@ -3857,6 +3879,9 @@
   <wsdl:message name="createCreditCategory">
     <wsdl:part element="ns1:createCreditCategory" name="parameters"></wsdl:part>
   </wsdl:message>
+  <wsdl:message name="updateCRMAccountHierarchyResponse">
+    <wsdl:part element="ns1:updateCRMAccountHierarchyResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
   <wsdl:message name="findCustomerAccountResponse">
     <wsdl:part element="ns1:findCustomerAccountResponse" name="parameters"></wsdl:part>
   </wsdl:message>
@@ -3886,6 +3911,9 @@
   </wsdl:message>
   <wsdl:message name="createBillingAccount">
     <wsdl:part element="ns1:createBillingAccount" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="updateCRMAccountHierarchy">
+    <wsdl:part element="ns1:updateCRMAccountHierarchy" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="listByCustomerAccountResponse">
     <wsdl:part element="ns1:listByCustomerAccountResponse" name="parameters"></wsdl:part>
@@ -4004,14 +4032,14 @@
   <wsdl:message name="removeBillingAccount">
     <wsdl:part element="ns1:removeBillingAccount" name="parameters"></wsdl:part>
   </wsdl:message>
-  <wsdl:message name="listCustomerWithFilterResponse">
-    <wsdl:part element="ns1:listCustomerWithFilterResponse" name="parameters"></wsdl:part>
-  </wsdl:message>
   <wsdl:message name="createCustomerResponse">
     <wsdl:part element="ns1:createCustomerResponse" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="updateAccountHierarchyResponse">
     <wsdl:part element="ns1:updateAccountHierarchyResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="listCustomerWithFilterResponse">
+    <wsdl:part element="ns1:listCustomerWithFilterResponse" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="findAccessResponse">
     <wsdl:part element="ns1:findAccessResponse" name="parameters"></wsdl:part>
@@ -4027,6 +4055,10 @@
     <wsdl:operation name="removeBillingAccount">
       <wsdl:input message="ns1:removeBillingAccount" name="removeBillingAccount"></wsdl:input>
       <wsdl:output message="ns1:removeBillingAccountResponse" name="removeBillingAccountResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="updateCRMAccountHierarchy">
+      <wsdl:input message="ns1:updateCRMAccountHierarchy" name="updateCRMAccountHierarchy"></wsdl:input>
+      <wsdl:output message="ns1:updateCRMAccountHierarchyResponse" name="updateCRMAccountHierarchyResponse"></wsdl:output>
     </wsdl:operation>
     <wsdl:operation name="createCRMAccountHierarchy">
       <wsdl:input message="ns1:createCRMAccountHierarchy" name="createCRMAccountHierarchy"></wsdl:input>
@@ -11239,15 +11271,15 @@
          </accountHierarchy>
       </ws:findAccountHierarchy>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/findAccountHierarchy"/></con:call></con:operation><con:operation isOneWay="false" action="" name="findBillingAccount" bindingOperationName="findBillingAccount" type="Request-Response" outputName="findBillingAccountResponse" inputName="findBillingAccount" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+</soapenv:Envelope>]]></con:request><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/findAccountHierarchy"/></con:call></con:operation><con:operation isOneWay="false" action="" name="findBillingAccount" bindingOperationName="findBillingAccount" type="Request-Response" outputName="findBillingAccountResponse" inputName="findBillingAccount" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
       <ws:findBillingAccount>
          <!--Optional:-->
-         <billingAccountCode>?</billingAccountCode>
+         <billingAccountCode>884_BA</billingAccountCode>
       </ws:findBillingAccount>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/findBillingAccount"/></con:call></con:operation><con:operation isOneWay="false" action="" name="findCustomer" bindingOperationName="findCustomer" type="Request-Response" outputName="findCustomerResponse" inputName="findCustomer" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+</soapenv:Envelope>]]></con:request><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:authType>Global HTTP Settings</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/findBillingAccount"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation isOneWay="false" action="" name="findCustomer" bindingOperationName="findCustomer" type="Request-Response" outputName="findCustomerResponse" inputName="findCustomer" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
       <ws:findCustomer>
@@ -16552,7 +16584,139 @@
          </crmAccountHierarchy>
       </ws:createCRMAccountHierarchy>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/createCRMAccountHierarchy"/><con:wsrmConfig version="1.2"/></con:call></con:operation></con:interface><con:interface xsi:type="con:WsdlInterface" wsaVersion="NONE" name="SubscriptionWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}SubscriptionWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="http://${#Project#meveoEndpoint}/SubscriptionWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache type="TEXT" rootPart="http://localhost:8080/meveo/SubscriptionWs?wsdl"><con:part><con:url>http://localhost:8080/meveo/SubscriptionWs?wsdl</con:url><con:content><![CDATA[<wsdl:definitions name="SubscriptionWs" targetNamespace="http://impl.ws.api.meveo.org/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://impl.ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns2="http://schemas.xmlsoap.org/soap/http" xmlns:ns1="http://ws.api.meveo.org/">
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/createCRMAccountHierarchy"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation isOneWay="false" action="" name="updateCRMAccountHierarchy" bindingOperationName="updateCRMAccountHierarchy" type="Request-Response" outputName="updateCRMAccountHierarchyResponse" inputName="updateCRMAccountHierarchy" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:updateCRMAccountHierarchy>
+         <!--Optional:-->
+         <crmAccountHierarchy>
+            <!--Optional:-->
+            <crmAccountType>?</crmAccountType>
+            <!--Optional:-->
+            <crmParentCode>?</crmParentCode>
+            <!--Optional:-->
+            <code>?</code>
+            <!--Optional:-->
+            <description>?</description>
+            <!--Optional:-->
+            <externalRef1>?</externalRef1>
+            <!--Optional:-->
+            <externalRef2>?</externalRef2>
+            <!--Optional:-->
+            <name>
+               <!--Optional:-->
+               <title>?</title>
+               <!--Optional:-->
+               <firstName>?</firstName>
+               <lastName>?</lastName>
+            </name>
+            <!--Optional:-->
+            <address>
+               <!--Optional:-->
+               <address1>?</address1>
+               <!--Optional:-->
+               <address2>?</address2>
+               <!--Optional:-->
+               <address3>?</address3>
+               <!--Optional:-->
+               <zipCode>?</zipCode>
+               <!--Optional:-->
+               <city>?</city>
+               <!--Optional:-->
+               <country>?</country>
+               <!--Optional:-->
+               <state>?</state>
+            </address>
+            <!--Optional:-->
+            <contactInformation>
+               <!--Optional:-->
+               <email>?</email>
+               <!--Optional:-->
+               <phone>?</phone>
+               <!--Optional:-->
+               <mobile>?</mobile>
+               <!--Optional:-->
+               <fax>?</fax>
+            </contactInformation>
+            <!--Optional:-->
+            <language>?</language>
+            <!--Optional:-->
+            <paymentMethod>?</paymentMethod>
+            <!--Optional:-->
+            <terminationReason>?</terminationReason>
+            <!--Optional:-->
+            <subscriptionDate>?</subscriptionDate>
+            <!--Optional:-->
+            <terminationDate>?</terminationDate>
+            <!--Optional:-->
+            <customerCategory>?</customerCategory>
+            <!--Optional:-->
+            <customerBrand>?</customerBrand>
+            <!--Optional:-->
+            <seller>?</seller>
+            <!--Optional:-->
+            <mandateIdentification>?</mandateIdentification>
+            <!--Optional:-->
+            <mandateDate>?</mandateDate>
+            <!--Optional:-->
+            <currency>?</currency>
+            <!--Optional:-->
+            <caStatus>?</caStatus>
+            <!--Optional:-->
+            <creditCategory>?</creditCategory>
+            <!--Optional:-->
+            <dateStatus>?</dateStatus>
+            <!--Optional:-->
+            <dateDunningLevel>?</dateDunningLevel>
+            <!--Optional:-->
+            <dunningLevel>?</dunningLevel>
+            <!--Optional:-->
+            <billingCycle>?</billingCycle>
+            <!--Optional:-->
+            <country>?</country>
+            <!--Optional:-->
+            <nextInvoiceDate>?</nextInvoiceDate>
+            <!--Optional:-->
+            <paymentTerms>?</paymentTerms>
+            <!--Optional:-->
+            <electronicBilling>?</electronicBilling>
+            <!--Optional:-->
+            <baStatus>?</baStatus>
+            <!--Optional:-->
+            <email>?</email>
+            <!--Optional:-->
+            <bankCoordinates>
+               <!--Optional:-->
+               <bankCode>?</bankCode>
+               <!--Optional:-->
+               <branchCode>?</branchCode>
+               <!--Optional:-->
+               <accountNumber>?</accountNumber>
+               <!--Optional:-->
+               <key>?</key>
+               <!--Optional:-->
+               <iban>?</iban>
+               <!--Optional:-->
+               <bic>?</bic>
+               <!--Optional:-->
+               <accountOwner>?</accountOwner>
+               <!--Optional:-->
+               <bankName>?</bankName>
+               <!--Optional:-->
+               <bankId>?</bankId>
+               <!--Optional:-->
+               <issuerNumber>?</issuerNumber>
+               <!--Optional:-->
+               <issuerName>?</issuerName>
+               <!--Optional:-->
+               <ics>?</ics>
+            </bankCoordinates>
+            <!--Optional:-->
+            <uaStatus>?</uaStatus>
+         </crmAccountHierarchy>
+      </ws:updateCRMAccountHierarchy>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/updateCRMAccountHierarchy"/></con:call></con:operation></con:interface><con:interface xsi:type="con:WsdlInterface" wsaVersion="NONE" name="SubscriptionWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}SubscriptionWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="http://${#Project#meveoEndpoint}/SubscriptionWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache type="TEXT" rootPart="http://localhost:8080/meveo/SubscriptionWs?wsdl"><con:part><con:url>http://localhost:8080/meveo/SubscriptionWs?wsdl</con:url><con:content><![CDATA[<wsdl:definitions name="SubscriptionWs" targetNamespace="http://impl.ws.api.meveo.org/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://impl.ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns2="http://schemas.xmlsoap.org/soap/http" xmlns:ns1="http://ws.api.meveo.org/">
   <wsdl:import location="http://localhost:8080/meveo/SubscriptionWs?wsdl=SubscriptionWs.wsdl" namespace="http://ws.api.meveo.org/"></wsdl:import>
   <wsdl:binding name="SubscriptionWsSoapBinding" type="ns1:SubscriptionWs">
     <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
@@ -32892,4 +33056,314 @@ Execute mediationJob manually. Need to set custom fields.</con:description><con:
          </customerHierarchy>
       </ws:customerHierarchyUpdate>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response"/><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:preemptive>true</con:preemptive><con:authType>Preemptive</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties><con:property><con:name>index</con:name><con:value>1</con:value></con:property></con:properties></con:testCase><con:properties><con:property><con:name>ticket</con:name><con:value>850</con:value></con:property><con:property><con:name>terminationReason</con:name><con:value>TERM_REASON_1</con:value></con:property><con:property><con:name>date</con:name><con:value>2015-07-08</con:value></con:property></con:properties></con:testSuite><con:endpointStrategy xsi:type="con:DefaultEndpointStrategy" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:endpoint mode="COMPLEMENT" username="meveo.admin" password="meveo.admin">http://localhost:8080/meveo/CatalogWs</con:endpoint></con:endpointStrategy><con:properties><con:property><con:name>meveoEndpoint</con:name><con:value>localhost:8080/meveo</con:value></con:property><con:property><con:name>meveoUsername</con:name><con:value>meveo.admin</con:value></con:property><con:property><con:name>meveoPassword</con:name><con:value>meveo.admin</con:value></con:property><con:property><con:name>authorization</con:name><con:value>Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=</con:value></con:property></con:properties><con:wssContainer/><con:oAuth2ProfileContainer/><con:sensitiveInformation/></con:soapui-project>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response"/><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:preemptive>true</con:preemptive><con:authType>Preemptive</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties><con:property><con:name>index</con:name><con:value>1</con:value></con:property></con:properties></con:testCase><con:properties><con:property><con:name>ticket</con:name><con:value>850</con:value></con:property><con:property><con:name>terminationReason</con:name><con:value>TERM_REASON_1</con:value></con:property><con:property><con:name>date</con:name><con:value>2015-07-08</con:value></con:property></con:properties></con:testSuite><con:testSuite name="#884_billingaccount_payment_method"><con:settings/><con:runType>SEQUENTIAL</con:runType><con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Customer creation" searchProperties="true" id="b966808e-ce9b-4764-b869-5affdb60b36c"><con:settings/><con:testStep type="request" name="Create customer"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>createCustomer</con:operation><con:request name="Create customer"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createCustomer>
+         <!--Optional:-->
+         <customer code="${#TestSuite#ticket}_CUST" description="${#TestSuite#ticket}_CUST">
+            <name>
+               <firstName>Edward</firstName>
+               <lastName>Legaspi</lastName>
+            </name>
+            <address>
+               <address1>adresse 1</address1>
+               <address2></address2>
+               <address3>adresse 3</address3>
+               <zipCode>21000</zipCode>
+               <city>Dijon</city>
+               <country>FR</country>
+            </address>
+            
+            <customerCategory>CLIENT</customerCategory>
+            <customerBrand>DEFAULT</customerBrand>
+            <seller>SELLER_FR</seller>
+            <contactInformation>
+               <email>613@manaty.net</email>
+               <phone>+33100000000</phone>
+               <mobile>+33666666666</mobile>
+            </contactInformation>
+         </customer>
+      </ws:createCustomer>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response"/><con:assertion type="Simple Contains" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Create customer account"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>createCustomer</con:operation><con:request name="Create customer account"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createCustomerAccount>
+         <customerAccount code="${#TestSuite#ticket}_CA" description="${#TestSuite#ticket}_CA">
+            <externalRef1>EXTREF1</externalRef1>
+            <externalRef2>EXTREF2</externalRef2>
+            <name>
+               <firstName>Edward</firstName>
+               <lastName>Legaspi</lastName>
+            </name>
+            <address>
+               <address1>adresse 1</address1>
+               <address2></address2>
+               <address3>adresse 3</address3>
+               <zipCode>21000</zipCode>
+               <city>Dijon</city>
+               <country>FR</country>
+            </address>
+            <customer>${#TestSuite#ticket}_CUST</customer>
+            <currency>EUR</currency>
+            <paymentMethod>CHECK</paymentMethod>
+            <creditCategory>Pro</creditCategory>
+            <language>FRA</language>
+         </customerAccount>
+      </ws:createCustomerAccount>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response"/><con:assertion type="Simple Contains" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Create billing account - not direct debit"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>createCustomer</con:operation><con:request name="Create billing account - not direct debit"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createBillingAccount>
+         <billingAccount code="${#TestSuite#ticket}_BA" description="${#TestSuite#ticket}_BA">
+            <externalRef1>EXTREF1</externalRef1>
+            <externalRef2>EXTREF2</externalRef2>
+            <name>
+               <firstName>Edward</firstName>
+               <lastName>Legaspi</lastName>
+            </name>
+            <address>
+               <address1>adresse 1</address1>
+               <address2></address2>
+               <address3>adresse 3</address3>
+               <zipCode>21000</zipCode>
+               <city>Dijon</city>
+               <country>FR</country>
+            </address>
+            <customerAccount>${#TestSuite#ticket}_CA</customerAccount>
+            <billingCycle>CYC_INV_MT_1</billingCycle>
+            <country>FR</country>
+            <language>FRA</language>
+            <paymentMethod>CHECK</paymentMethod>
+            <nextInvoiceDate>2015-04-01</nextInvoiceDate>
+            <subscriptionDate>2015-01-01</subscriptionDate>
+            <paymentTerms>CASH</paymentTerms>
+            <electronicBilling>true</electronicBilling>
+            <email>613@manaty.net</email>
+            
+         </billingAccount>
+      </ws:createBillingAccount>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response"/><con:assertion type="Simple Contains" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Create billing account - direct debit - fail"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>createCustomer</con:operation><con:request name="Create billing account - direct debit - fail"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createBillingAccount>
+         <billingAccount code="${#TestSuite#ticket}_BA1" description="${#TestSuite#ticket}_BA1">
+            <externalRef1>EXTREF1</externalRef1>
+            <externalRef2>EXTREF2</externalRef2>
+            <name>
+               <firstName>Edward</firstName>
+               <lastName>Legaspi</lastName>
+            </name>
+            <address>
+               <address1>adresse 1</address1>
+               <address2></address2>
+               <address3>adresse 3</address3>
+               <zipCode>21000</zipCode>
+               <city>Dijon</city>
+               <country>FR</country>
+            </address>
+            <customerAccount>${#TestSuite#ticket}_CA</customerAccount>
+            <billingCycle>CYC_INV_MT_1</billingCycle>
+            <country>FR</country>
+            <language>FRA</language>
+            <paymentMethod>DIRECTDEBIT</paymentMethod>
+            <nextInvoiceDate>2015-04-01</nextInvoiceDate>
+            <subscriptionDate>2015-01-01</subscriptionDate>
+            <paymentTerms>CASH</paymentTerms>
+            <electronicBilling>true</electronicBilling>
+            <email>613@manaty.net</email>
+            
+         </billingAccount>
+      </ws:createBillingAccount>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response"/><con:assertion type="Simple Contains" name="FAIL"><con:configuration><token>FAIL</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Create billing account - direct debit - ok"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>createCustomer</con:operation><con:request name="Create billing account - direct debit - ok"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createBillingAccount>
+         <billingAccount code="${#TestSuite#ticket}_BA2" description="${#TestSuite#ticket}_BA2">
+            <externalRef1>EXTREF1</externalRef1>
+            <externalRef2>EXTREF2</externalRef2>
+            <name>
+               <firstName>Edward</firstName>
+               <lastName>Legaspi</lastName>
+            </name>
+            <address>
+               <address1>adresse 1</address1>
+               <address2></address2>
+               <address3>adresse 3</address3>
+               <zipCode>21000</zipCode>
+               <city>Dijon</city>
+               <country>FR</country>
+            </address>
+            <customerAccount>${#TestSuite#ticket}_CA</customerAccount>
+            <billingCycle>CYC_INV_MT_1</billingCycle>
+            <country>FR</country>
+            <language>FRA</language>
+            <paymentMethod>DIRECTDEBIT</paymentMethod>
+            <nextInvoiceDate>2015-04-01</nextInvoiceDate>
+            <subscriptionDate>2015-01-01</subscriptionDate>
+            <paymentTerms>CASH</paymentTerms>
+            <electronicBilling>true</electronicBilling>
+            <email>613@manaty.net</email>
+            <bankCoordinates>
+                  <bankCode>bpi</bankCode>
+                  <branchCode>bpi</branchCode>
+                  <accountNumber>1234</accountNumber>
+                  <key>12</key>
+            </bankCoordinates>
+         </billingAccount>
+      </ws:createBillingAccount>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response"/><con:assertion type="Simple Contains" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Create user account"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>createCustomer</con:operation><con:request name="Create user account"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createUserAccount>
+         <userAccount code="${#TestSuite#ticket}_UA" description="${#TestSuite#ticket}_UA">
+         	<billingAccount>${#TestSuite#ticket}_BA</billingAccount>
+            <externalRef1>EXTREF1</externalRef1>
+            <externalRef2>EXTREF2</externalRef2>
+            <name>
+               <firstName>Edward</firstName>
+               <lastName>Legaspi</lastName>
+            </name>
+            <address>
+               <address1>adress 1</address1>
+               <address2></address2>
+               <address3>adress 3</address3>
+               <zipCode>21000</zipCode>
+               <city>Dijon</city>
+               <country>FR</country>
+            </address>
+            
+         </userAccount>
+      </ws:createUserAccount>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response"/><con:assertion type="Simple Contains" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties><con:property><con:name>index</con:name><con:value>684a</con:value></con:property></con:properties></con:testCase><con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Update" searchProperties="true" id="266632bc-9999-4688-8e27-9029613ffb26"><con:settings/><con:testStep type="request" name="Billing account - not direct debit"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>updateBillingAccount</con:operation><con:request name="Billing account - not direct debit"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:updateBillingAccount>
+         <!--Optional:-->
+         <billingAccount code="${#TestSuite#ticket}_BA" description="${#TestSuite#ticket}_BA">
+            <externalRef1>EXTREF1</externalRef1>
+            <externalRef2>EXTREF2</externalRef2>
+            <name>
+               <firstName>Edward1</firstName>
+               <lastName>Legaspi1</lastName>
+            </name>
+            <address>
+               <address1>adresse 1</address1>
+               <address2></address2>
+               <address3>adresse 3</address3>
+               <zipCode>21000</zipCode>
+               <city>Dijon</city>
+               <country>FR</country>
+            </address>
+            <customerAccount>${#TestSuite#ticket}_CA</customerAccount>
+            <billingCycle>CYC_INV_MT_1</billingCycle>
+            <country>FR</country>
+            <language>FRA</language>
+            <paymentMethod>CHECK</paymentMethod>
+            <nextInvoiceDate>2015-04-01</nextInvoiceDate>
+            <subscriptionDate>2015-01-01</subscriptionDate>
+            <paymentTerms>CASH</paymentTerms>
+            <electronicBilling>true</electronicBilling>
+            <email>613@manaty.net</email>            
+         </billingAccount>
+      </ws:updateBillingAccount>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response"/><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:authType>Global HTTP Settings</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Billing account - direct debit - fail"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>updateBillingAccount</con:operation><con:request name="Billing account - direct debit - fail"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:updateBillingAccount>
+         <!--Optional:-->
+         <billingAccount code="${#TestSuite#ticket}_BA" description="${#TestSuite#ticket}_BA">
+            <externalRef1>EXTREF1</externalRef1>
+            <externalRef2>EXTREF2</externalRef2>
+            <name>
+               <firstName>Edward1</firstName>
+               <lastName>Legaspi1</lastName>
+            </name>
+            <address>
+               <address1>adresse 1</address1>
+               <address2></address2>
+               <address3>adresse 3</address3>
+               <zipCode>21000</zipCode>
+               <city>Dijon</city>
+               <country>FR</country>
+            </address>
+            <customerAccount>${#TestSuite#ticket}_CA</customerAccount>
+            <billingCycle>CYC_INV_MT_1</billingCycle>
+            <country>FR</country>
+            <language>FRA</language>
+            <paymentMethod>DIRECTDEBIT</paymentMethod>
+            <nextInvoiceDate>2015-04-01</nextInvoiceDate>
+            <subscriptionDate>2015-01-01</subscriptionDate>
+            <paymentTerms>CASH</paymentTerms>
+            <electronicBilling>true</electronicBilling>
+            <email>613@manaty.net</email>            
+         </billingAccount>
+      </ws:updateBillingAccount>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response"/><con:assertion type="Simple Contains" name="Contains"><con:configuration><token>FAIL</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:authType>Global HTTP Settings</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Billing account - direct debit - ok"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>updateBillingAccount</con:operation><con:request name="Billing account - direct debit - ok"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:updateBillingAccount>
+         <!--Optional:-->
+         <billingAccount code="${#TestSuite#ticket}_BA2" description="${#TestSuite#ticket}_BA2">
+            <externalRef1>EXTREF1</externalRef1>
+            <externalRef2>EXTREF2</externalRef2>
+            <name>
+               <firstName>Edward1</firstName>
+               <lastName>Legaspi1</lastName>
+            </name>
+            <address>
+               <address1>adresse 1</address1>
+               <address2></address2>
+               <address3>adresse 3</address3>
+               <zipCode>21000</zipCode>
+               <city>Dijon</city>
+               <country>FR</country>
+            </address>
+            <customerAccount>${#TestSuite#ticket}_CA</customerAccount>
+            <billingCycle>CYC_INV_MT_1</billingCycle>
+            <country>FR</country>
+            <language>FRA</language>
+            <paymentMethod>DIRECTDEBIT</paymentMethod>
+            <nextInvoiceDate>2015-04-01</nextInvoiceDate>
+            <subscriptionDate>2015-01-01</subscriptionDate>
+            <paymentTerms>CASH</paymentTerms>
+            <electronicBilling>true</electronicBilling>
+            <email>613@manaty.net</email>            
+            <bankCoordinates>
+			<!--Optional:-->
+			<bankCode>codex</bankCode>
+			<!--Optional:-->
+			<branchCode>codex</branchCode>
+			<!--Optional:-->
+			<accountNumber>1234</accountNumber>
+			<!--Optional:-->
+			<key>12</key>
+			<!--Optional:-->
+			<iban>1234</iban>
+			<!--Optional:-->
+			<bic>1234</bic>
+			<!--Optional:-->
+			<accountOwner>Edward Legaspi</accountOwner>
+			<!--Optional:-->
+			<bankName>BPI</bankName>
+			<!--Optional:-->
+			<bankId>BPI</bankId>
+			<!--Optional:-->
+			<issuerNumber>1234</issuerNumber>
+			<!--Optional:-->
+			<issuerName>BPI</issuerName>
+			<!--Optional:-->
+			<ics>BPI</ics>
+		</bankCoordinates>
+         </billingAccount>
+      </ws:updateBillingAccount>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response"/><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:authType>Global HTTP Settings</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:properties><con:property><con:name>ticket</con:name><con:value>884</con:value></con:property></con:properties></con:testSuite><con:endpointStrategy xsi:type="con:DefaultEndpointStrategy" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:endpoint mode="COMPLEMENT" username="meveo.admin" password="meveo.admin">http://localhost:8080/meveo/CatalogWs</con:endpoint></con:endpointStrategy><con:properties><con:property><con:name>meveoEndpoint</con:name><con:value>localhost:8080/meveo</con:value></con:property><con:property><con:name>meveoUsername</con:name><con:value>meveo.admin</con:value></con:property><con:property><con:name>meveoPassword</con:name><con:value>meveo.admin</con:value></con:property><con:property><con:name>authorization</con:name><con:value>Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=</con:value></con:property></con:properties><con:wssContainer/><con:oAuth2ProfileContainer/><con:sensitiveInformation/></con:soapui-project>
