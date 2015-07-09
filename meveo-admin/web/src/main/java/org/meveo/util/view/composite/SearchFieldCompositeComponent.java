@@ -27,14 +27,10 @@ public class SearchFieldCompositeComponent extends
 	}
 
 	public String getFromRangeSearchFilterNameFromParent() {
-		return "fromRange-"
-				+ getCompositeComponentParent(this).getAttributes()
-						.get("field");
+		return "fromRange-"+getAttributes().get("field");
 	}
 
 	public String getToRangeSearchFilterNameFromParent() {
-		return "toRange-"
-				+ getCompositeComponentParent(this).getAttributes()
-						.get("field");
+		return "toRange-"+getAttributes().get("field");
 	}
 }

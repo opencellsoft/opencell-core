@@ -105,6 +105,19 @@ public class WalletOperationBean extends BaseBean<WalletOperation> {
 	@Override
 	public LazyDataModel<WalletOperation> getLazyDataModel() {
 		getFilters();
+		
+		if (filters.containsKey("chargeInstance")) {
+			filters.put("chargeInstance.chargeTemplate", filters.get("chargeInstance")); 
+			filters.remove("chargeInstance");
+		}
+		if (filters.containsKey("wallet")) {
+			filters.put("wallet.walletTemplate", filters.get("wallet")); 
+			filters.remove("wallet");
+		}
+		if (filters.containsKey("counter")) {
+			filters.put("counter.counterTemplate", filters.get("counter"));
+			filters.remove("counter");
+		}
 		if (filters.containsKey("billingAccount")) {
 			filters.put("wallet.userAccount.billingAccount", filters.get("billingAccount"));
 			filters.remove("billingAccount");
