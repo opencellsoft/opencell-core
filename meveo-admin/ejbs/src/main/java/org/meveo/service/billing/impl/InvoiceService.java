@@ -92,7 +92,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
 	@Inject
 	private RejectedBillingAccountService rejectedBillingAccountService;
-	
+
 	private String PDF_DIR_NAME = "pdf";
 	private  String INVOICE_TEMPLATE_FILENAME = "invoice.jasper";
 	private  String DATE_PATERN = "yyyy.MM.dd";
@@ -202,25 +202,25 @@ public class InvoiceService extends PersistenceService<Invoice> {
 	public String getInvoiceNumber(Invoice invoice, User currentUser) {
 		Seller seller = invoice.getBillingAccount().getCustomerAccount().getCustomer().getSeller();
 		String prefix = seller.getInvoicePrefix();
-        
+
 		if (prefix == null) {
 			prefix = seller.getProvider().getInvoicePrefix();
 		}
 		if (prefix == null) {
 			prefix = "";
 		}
-		
+
 		if(prefix!=null && !StringUtils.isBlank(prefix)){
-			  if(prefix.indexOf("%")>=0){
-	              int startIndex=prefix.indexOf("%")+1;
-	              int endIndex=prefix.indexOf("%",startIndex);
-	              if(endIndex>0){
-	                String datePattern=prefix.substring(startIndex,endIndex); 
-	                String invioceDate=DateUtils.formatDateWithPattern(new Date(), datePattern);
-	                prefix=prefix.replace("%"+datePattern+"%", invioceDate);
-	              }       
-	             } 
-		    }
+			if(prefix.indexOf("%")>=0){
+				int startIndex=prefix.indexOf("%")+1;
+				int endIndex=prefix.indexOf("%",startIndex);
+				if(endIndex>0){
+					String datePattern=prefix.substring(startIndex,endIndex); 
+					String invioceDate=DateUtils.formatDateWithPattern(new Date(), datePattern);
+					prefix=prefix.replace("%"+datePattern+"%", invioceDate);
+				}       
+			} 
+		}
 		if (currentUser != null) {
 			seller.updateAudit(currentUser);
 		} else {
@@ -348,10 +348,10 @@ public class InvoiceService extends PersistenceService<Invoice> {
 			}
 			invoice.setDueDate(dueDate);
 
-            PaymentMethodEnum paymentMethod= billingAccount.getPaymentMethod();
-            if(paymentMethod==null){
-                paymentMethod=billingAccount.getCustomerAccount().getPaymentMethod();
-            }
+			PaymentMethodEnum paymentMethod= billingAccount.getPaymentMethod();
+			if(paymentMethod==null){
+				paymentMethod=billingAccount.getCustomerAccount().getPaymentMethod();
+			}
 			invoice.setPaymentMethod(paymentMethod);
 			invoice.setProvider(billingRun.getProvider());
 			em.persist(invoice);
@@ -361,20 +361,20 @@ public class InvoiceService extends PersistenceService<Invoice> {
 			ratedTransactionService.createInvoiceAndAgregates(billingAccount, invoice,billingRun.getLastTransactionDate(), currentUser);
 			log.debug("created aggregates tx status={}, em open={}", txReg.getTransactionStatus(), em.isOpen());
 			em.joinTransaction();
-
+			
 			if (billingRun.getProvider().isDisplayFreeTransacInInvoice()) {
 				em.createNamedQuery("RatedTransaction.updateInvoicedDisplayFree")
-						.setParameter("billingAccount", billingAccount)
-						.setParameter("lastTransactionDate", billingRun.getLastTransactionDate())
-						.setParameter("billingRun", billingRun)
-						.setParameter("invoice", invoice).executeUpdate();
+				.setParameter("billingAccount", billingAccount)
+				.setParameter("lastTransactionDate", billingRun.getLastTransactionDate())
+				.setParameter("billingRun", billingRun)
+				.setParameter("invoice", invoice).executeUpdate();
 			} else {
 				em.createNamedQuery("RatedTransaction.updateInvoiced")
-				        .setParameter("billingAccount", billingAccount)
-				        .setParameter("lastTransactionDate", billingRun.getLastTransactionDate())
-						.setParameter("billingRun", billingRun)
-						.setParameter("invoice", invoice)
-						.executeUpdate();
+				.setParameter("billingAccount", billingAccount)
+				.setParameter("lastTransactionDate", billingRun.getLastTransactionDate())
+				.setParameter("billingRun", billingRun)
+				.setParameter("invoice", invoice)
+				.executeUpdate();
 
 			}
 
@@ -394,7 +394,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 			log.info("createAgregatesAndInvoice BR_ID=" + billingRun.getId() + ", BA_ID=" + billingAccount.getId()
 					+ ", Time en ms=" + (endDate - startDate));
 		} catch (Exception e) {
-			log.error("Error for BA=" + billingAccount.getCode() + " : " + e);
+			log.error("Error for BA=" + billingAccount.getCode() + " : " , e);
 
 			RejectedBillingAccount rejectedBA = new RejectedBillingAccount(billingAccount, billingRun, e.getMessage());
 			rejectedBillingAccountService.create(rejectedBA, currentUser, currentUser.getProvider());
@@ -413,120 +413,120 @@ public class InvoiceService extends PersistenceService<Invoice> {
 			return null;
 		}
 	}
-	
+
 
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public void producePdf(Map<String, Object> parameters, User currentUser) throws Exception {
-		 
-			ParamBean paramBean = ParamBean.getInstance();
-			log.info("PDFInvoiceGenerationJob is invoice key exists="
-					+ ((parameters != null) ? parameters
-					.containsKey(PdfGeneratorConstants.INVOICE) + ""
-					: "parameters is null"));
-			
-			Invoice invoice = (Invoice) parameters
-					.get(PdfGeneratorConstants.INVOICE);
-			String meveoDir = paramBean.getProperty("providers.rootDir",
-					"/tmp/meveo/")
-					+ File.separator
-					+ invoice.getProvider().getCode() + File.separator;
-			String pdfDirectory = meveoDir + "invoices" + File.separator
-					+ "pdf" + File.separator;
 
-			(new File(pdfDirectory)).mkdirs();
-			String INVOICE_TAG_NAME = "invoice";
+		ParamBean paramBean = ParamBean.getInstance();
+		log.info("PDFInvoiceGenerationJob is invoice key exists="
+				+ ((parameters != null) ? parameters
+						.containsKey(PdfGeneratorConstants.INVOICE) + ""
+						: "parameters is null"));
 
-			File billingRundir = new File(meveoDir + "invoices"
-					+ File.separator + "xml" + File.separator
-					+ invoice.getBillingRun().getId());
-			String invoiceXmlFileName = billingRundir + File.separator
-			+ (!StringUtils.isBlank(invoice.getInvoiceNumber()) ? invoice.getInvoiceNumber() : invoice.getTemporaryInvoiceNumber()) + ".xml";
-			File invoiceXmlFile = new File(invoiceXmlFileName);
-			if (!invoiceXmlFile.exists()) {
-				throw new InvoiceXmlNotFoundException(
-						"The xml invoice file doesn't exist.");
-			}
-			BillingCycle billingCycle = invoice.getBillingRun()
-					.getBillingCycle();
-			BillingAccount billingAccount = invoice.getBillingAccount();
-			String billingTemplate = (billingCycle != null
-					&& billingCycle.getBillingTemplateName() != null) ? billingCycle
-					.getBillingTemplateName() : "default";
-			String resDir = meveoDir + "jasper";
-			
-			File destDir=new File(resDir+File.separator+billingTemplate+File.separator+"pdf");
-			if(!destDir.exists()){
-				destDir.mkdirs();
-				String sourcePath=Thread.currentThread().getContextClassLoader().getResource("./jasper").getPath();
-				File sourceFile=new File(sourcePath);
-				if(!sourceFile.exists()){
-					VirtualFile vfDir = VFS.getChild("/content/"+ParamBean.getInstance().getProperty("meveo.moduleName", "meveo")+".war/WEB-INF/classes/jasper");
-					URL vfPath=VFSUtils.getPhysicalURL(vfDir);
-					sourceFile=new File(vfPath.getPath());
-					if(!sourceFile.exists()){
-						throw new BusinessException("embedded jasper report for invoice isn't existed!");
-					}
-				}
-				FileUtils.copyDirectory(sourceFile, destDir);
-			}
-			
-			File jasperFile = getJasperTemplateFile(resDir, billingTemplate,
-					billingAccount.getPaymentMethod());
-			if(!jasperFile.exists()){
-				throw new InvoiceJasperNotFoundException(
-						"The jasper file doesn't exist.");
-			  }
-			log.info(String.format("Jasper template used: %s",
-					jasperFile.getCanonicalPath()));
+		Invoice invoice = (Invoice) parameters
+				.get(PdfGeneratorConstants.INVOICE);
+		String meveoDir = paramBean.getProperty("providers.rootDir",
+				"/tmp/meveo/")
+				+ File.separator
+				+ invoice.getProvider().getCode() + File.separator;
+		String pdfDirectory = meveoDir + "invoices" + File.separator
+				+ "pdf" + File.separator;
 
-			InputStream reportTemplate = new FileInputStream(jasperFile);
-			DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-			DocumentBuilder db = dbf.newDocumentBuilder();
-			Document xmlDocument = db.parse(invoiceXmlFile);
-			xmlDocument.getDocumentElement().normalize(); // TODO check this out
-			Node invoiceNode = xmlDocument.getElementsByTagName(
-					INVOICE_TAG_NAME).item(0);
-			JRXmlDataSource dataSource = new JRXmlDataSource(
-					new ByteArrayInputStream(getNodeXmlString(invoiceNode)
-							.getBytes()),
-					"/invoice/detail/userAccounts/userAccount/categories/category/subCategories/subCategory/line");
-			JasperReport jasperReport = (JasperReport) JRLoader
-					.loadObject(reportTemplate);
-			JasperPrint jasperPrint = JasperFillManager.fillReport(
-					jasperReport, parameters, dataSource);
-			String pdfFileName = getNameWoutSequence(pdfDirectory,
-					invoice.getInvoiceDate(), (!StringUtils.isBlank(invoice.getInvoiceNumber()) ? invoice.getInvoiceNumber() : invoice.getTemporaryInvoiceNumber())) 
-					+ ".pdf";
-			JasperExportManager.exportReportToPdfFile(jasperPrint, pdfFileName);
-			log.info(String.format("PDF file '%s' produced", pdfFileName));
+		(new File(pdfDirectory)).mkdirs();
+		String INVOICE_TAG_NAME = "invoice";
 
-			FileInputStream fileInputStream = null;
-			try {
-				File file = new File(pdfFileName);
-				long fileSize = file.length();
-				if (fileSize > Integer.MAX_VALUE) {
-					throw new IllegalArgumentException(
-							"File is too big to put it to buffer in memory.");
-				}
-				byte[] fileBytes = new byte[(int) file.length()];
-				fileInputStream = new FileInputStream(file);
-				fileInputStream.read(fileBytes);
-				invoice.setPdf(fileBytes); 
-			    invoice.updateAudit(currentUser);
-			    updateNoCheck(invoice);
-			} catch (Exception e) {
-				log.error("Error saving file to DB as blob. {}", e);
-			} finally {
-				if (fileInputStream != null) {
-					try {
-						fileInputStream.close();
-					} catch (IOException e) {
-						log.error("Error closing file input stream.");
-					}
-				}
-			}
+		File billingRundir = new File(meveoDir + "invoices"
+				+ File.separator + "xml" + File.separator
+				+ invoice.getBillingRun().getId());
+		String invoiceXmlFileName = billingRundir + File.separator
+				+ (!StringUtils.isBlank(invoice.getInvoiceNumber()) ? invoice.getInvoiceNumber() : invoice.getTemporaryInvoiceNumber()) + ".xml";
+		File invoiceXmlFile = new File(invoiceXmlFileName);
+		if (!invoiceXmlFile.exists()) {
+			throw new InvoiceXmlNotFoundException(
+					"The xml invoice file doesn't exist.");
+		}
+		BillingCycle billingCycle = invoice.getBillingRun()
+				.getBillingCycle();
+		BillingAccount billingAccount = invoice.getBillingAccount();
+		String billingTemplate = (billingCycle != null
+				&& billingCycle.getBillingTemplateName() != null) ? billingCycle
+						.getBillingTemplateName() : "default";
+						String resDir = meveoDir + "jasper";
+
+						File destDir=new File(resDir+File.separator+billingTemplate+File.separator+"pdf");
+						if(!destDir.exists()){
+							destDir.mkdirs();
+							String sourcePath=Thread.currentThread().getContextClassLoader().getResource("./jasper").getPath();
+							File sourceFile=new File(sourcePath);
+							if(!sourceFile.exists()){
+								VirtualFile vfDir = VFS.getChild("/content/"+ParamBean.getInstance().getProperty("meveo.moduleName", "meveo")+".war/WEB-INF/classes/jasper");
+								URL vfPath=VFSUtils.getPhysicalURL(vfDir);
+								sourceFile=new File(vfPath.getPath());
+								if(!sourceFile.exists()){
+									throw new BusinessException("embedded jasper report for invoice isn't existed!");
+								}
+							}
+							FileUtils.copyDirectory(sourceFile, destDir);
+						}
+
+						File jasperFile = getJasperTemplateFile(resDir, billingTemplate,
+								billingAccount.getPaymentMethod());
+						if(!jasperFile.exists()){
+							throw new InvoiceJasperNotFoundException(
+									"The jasper file doesn't exist.");
+						}
+						log.info(String.format("Jasper template used: %s",
+								jasperFile.getCanonicalPath()));
+
+						InputStream reportTemplate = new FileInputStream(jasperFile);
+						DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+						DocumentBuilder db = dbf.newDocumentBuilder();
+						Document xmlDocument = db.parse(invoiceXmlFile);
+						xmlDocument.getDocumentElement().normalize(); // TODO check this out
+						Node invoiceNode = xmlDocument.getElementsByTagName(
+								INVOICE_TAG_NAME).item(0);
+						JRXmlDataSource dataSource = new JRXmlDataSource(
+								new ByteArrayInputStream(getNodeXmlString(invoiceNode)
+										.getBytes()),
+								"/invoice/detail/userAccounts/userAccount/categories/category/subCategories/subCategory/line");
+						JasperReport jasperReport = (JasperReport) JRLoader
+								.loadObject(reportTemplate);
+						JasperPrint jasperPrint = JasperFillManager.fillReport(
+								jasperReport, parameters, dataSource);
+						String pdfFileName = getNameWoutSequence(pdfDirectory,
+								invoice.getInvoiceDate(), (!StringUtils.isBlank(invoice.getInvoiceNumber()) ? invoice.getInvoiceNumber() : invoice.getTemporaryInvoiceNumber())) 
+								+ ".pdf";
+						JasperExportManager.exportReportToPdfFile(jasperPrint, pdfFileName);
+						log.info(String.format("PDF file '%s' produced", pdfFileName));
+
+						FileInputStream fileInputStream = null;
+						try {
+							File file = new File(pdfFileName);
+							long fileSize = file.length();
+							if (fileSize > Integer.MAX_VALUE) {
+								throw new IllegalArgumentException(
+										"File is too big to put it to buffer in memory.");
+							}
+							byte[] fileBytes = new byte[(int) file.length()];
+							fileInputStream = new FileInputStream(file);
+							fileInputStream.read(fileBytes);
+							invoice.setPdf(fileBytes); 
+							invoice.updateAudit(currentUser);
+							updateNoCheck(invoice);
+						} catch (Exception e) {
+							log.error("Error saving file to DB as blob. {}", e);
+						} finally {
+							if (fileInputStream != null) {
+								try {
+									fileInputStream.close();
+								} catch (IOException e) {
+									log.error("Error closing file input stream.");
+								}
+							}
+						}
 	}
-	
+
 	private File getJasperTemplateFile(String resDir, String billingTemplate,
 			PaymentMethodEnum paymentMethod) {
 		String pdfDirName = new StringBuilder(resDir).append(File.separator)
@@ -534,7 +534,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 				.append(PDF_DIR_NAME).toString();
 		File pdfDir = new File(pdfDirName);
 		String paymentMethodFileName = new StringBuilder("invoice_")
-				.append(paymentMethod).append(".jasper").toString();
+		.append(paymentMethod).append(".jasper").toString();
 		File paymentMethodFile = new File(pdfDir, paymentMethodFileName);
 
 		if (paymentMethodFile.exists()) {
@@ -544,7 +544,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 			return defaultTemplate;
 		}
 	}
-	
+
 	protected String getNodeXmlString(Node node) {
 		try {
 			TransformerFactory transFactory = TransformerFactory.newInstance();
@@ -553,7 +553,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 			transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION,
 					"yes");
 			transformer
-					.transform(new DOMSource(node), new StreamResult(buffer));
+			.transform(new DOMSource(node), new StreamResult(buffer));
 			return buffer.toString();
 		} catch (Exception e) {
 			log.error(
@@ -562,16 +562,20 @@ public class InvoiceService extends PersistenceService<Invoice> {
 			throw new ConfigurationException();
 		}
 	}
-	
+
 	public  String getNameWoutSequence(String tempDir, Date invoiceDate,
 			String invoiceNumber) {
 		return new StringBuilder(tempDir).append(File.separator)
 				.append(formatInvoiceDate(invoiceDate)).append("_")
 				.append(invoiceNumber).toString();
 	}
-	
+
 	public  String formatInvoiceDate(Date invoiceDate) {
 		DateFormat dateFormat = new SimpleDateFormat(DATE_PATERN);
 		return dateFormat.format(invoiceDate);
 	}
+
+	
+	
+	
 }

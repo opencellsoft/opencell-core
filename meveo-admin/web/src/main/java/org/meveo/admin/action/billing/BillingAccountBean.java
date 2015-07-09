@@ -19,6 +19,7 @@ package org.meveo.admin.action.billing;
 import java.awt.Color;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -39,11 +40,9 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.DuplicateDefaultAccountException;
 import org.meveo.admin.jsf.validator.RibValidator;
 import org.meveo.admin.util.ListItemsSelector;
-import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.billing.BankCoordinates;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingProcessTypesEnum;
-import org.meveo.model.billing.BillingRun;
 import org.meveo.model.billing.BillingRunStatusEnum;
 import org.meveo.model.billing.CounterInstance;
 import org.meveo.model.billing.Invoice;
@@ -56,7 +55,6 @@ import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.billing.impl.BillingRunService;
 import org.meveo.service.billing.impl.InvoiceService;
-import org.meveo.service.billing.impl.RatedTransactionService;
 import org.meveo.service.payments.impl.CustomerAccountService;
 import org.omnifaces.cdi.ViewScoped;
 
@@ -102,13 +100,13 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
 	@Inject
 	private Messages messages;
 
-	@Inject
-	private RatedTransactionService ratedTransactionService;
-
+	
 	private boolean returnToAgency;
 
 	@Inject
 	private CustomerAccountService customerAccountService;
+
+
 
 	/** Selected billing account in exceptionelInvoicing page. */
 	private ListItemsSelector<BillingAccount> itemSelector;
@@ -343,43 +341,12 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
 	}
 
 	public String launchExceptionalInvoicing() {
-		log.info("launchExceptionelInvoicing...");
-		try {
-			ParamBean param = ParamBean.getInstance();
-			String allowManyInvoicing = param.getProperty("billingRun.allowManyInvoicing", "true");
-			boolean isAllowed = Boolean.parseBoolean(allowManyInvoicing);
-			log.info("launchInvoicing allowManyInvoicing=#", isAllowed);
-			if (billingRunService.isActiveBillingRunsExist(getCurrentProvider()) && !isAllowed) {
-				messages.error(new BundleKey("messages", "error.invoicing.alreadyLunched"));
-				return null;
-			}
-
-			BillingRun billingRun = new BillingRun();
-			billingRun.setStatus(BillingRunStatusEnum.NEW);
-			billingRun.setProcessDate(new Date());
-			billingRun.setProcessType(BillingProcessTypesEnum.MANUAL);
-			billingRun.setProvider(getCurrentProvider());
-			String selectedBillingAccounts = "";
-			String sep = "";
-			boolean isBillable = false;
-			Date lastTransactionDate = new Date();
+		try{
+			List<Long> baIds = new ArrayList<Long>();
 			for (BillingAccount ba : getSelectedEntities()) {
-				selectedBillingAccounts = selectedBillingAccounts + sep + ba.getId();
-				sep = ",";
-				if (!isBillable && ratedTransactionService.isBillingAccountBillable(ba, lastTransactionDate)) {
-					isBillable = true;
-				}
+				baIds.add(ba.getId());
 			}
-			if (!isBillable) {
-				messages.error(new BundleKey("messages", "error.invoicing.noTransactions"));
-				return null;
-			}
-			log.info("selectedBillingAccounts=" + selectedBillingAccounts);
-			billingRun.setSelectedBillingAccounts(selectedBillingAccounts);
-
-			billingRun.setInvoiceDate(exceptionalInvoicingDate);
-			billingRun.setLastTransactionDate(exceptionalLastTransactionDate);
-			billingRunService.create(billingRun);
+			billingRunService.launchExceptionalInvoicing(baIds, exceptionalInvoicingDate, exceptionalLastTransactionDate,BillingProcessTypesEnum.MANUAL,getCurrentUser()); 
 			return "/pages/billing/invoicing/billingRuns.xhtml?edit=true";
 		} catch (Exception e) {
 			log.error("launchExceptionelInvoicing", e);

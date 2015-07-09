@@ -62,6 +62,8 @@ import org.meveo.model.billing.Tax;
 import org.meveo.model.billing.TaxInvoiceAgregate;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.billing.WalletInstance;
+import org.meveo.model.billing.WalletOperation;
+import org.meveo.model.billing.WalletOperationStatusEnum;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.catalog.DiscountPlanItem;
 import org.meveo.model.payments.CustomerAccount;
@@ -86,7 +88,10 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 
 	@Inject
 	private CustomerAccountService customerAccountService;
-	
+
+	@Inject
+	private WalletOperationService walletOperationService;
+
 	private static final BigDecimal HUNDRED = new BigDecimal("100");
 
 	public List<RatedTransaction> getRatedTransactionsInvoiced(UserAccount userAccount) {
@@ -280,7 +285,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 							.getInvoiceSubcategoryCountries()) {
 						if (invoicesubcatCountry.getTradingCountry().getCountryCode()
 								.equalsIgnoreCase(invoice.getBillingAccount().getTradingCountry().getCountryCode()) 
-									&& matchInvoicesubcatCountryExpression(invoicesubcatCountry.getFilterEL(),billingAccount, invoice)) {
+								&& matchInvoicesubcatCountryExpression(invoicesubcatCountry.getFilterEL(),billingAccount, invoice)) {
 							taxes.add(invoicesubcatCountry.getTax());
 						}
 					}
@@ -331,7 +336,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 							invoiceAgregateTax.addAmountWithoutTax(invoiceAgregateSubcat.getAmountWithoutTax());
 							invoiceAgregateTax.addAmountTax(invoiceAgregateSubcat.getAmountWithoutTax().multiply(tax.getPercent()).divide(new BigDecimal("100")));
 							//invoiceAgregateTax.addAmountWithTax(invoiceAgregateSubcat.getAmountWithTax());
-							
+
 							invoiceAgregateTax.setTaxPercent(BigDecimal.ZERO);
 						}
 
@@ -347,9 +352,9 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 						invoiceAgregateSubcat.addSubCategoryTax(tax);
 						invoiceAgregateSubcat.addTaxInvoiceAggregate(invoiceAgregateTax);
 					}
-				
 
-					
+
+
 					invoiceAgregateSubcat.setInvoiceSubCategory(invoiceSubCategory);
 
 					// start agregate R
@@ -374,7 +379,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 					invoiceAgregateCat.setInvoiceCategory(invoiceSubCategory.getInvoiceCategory());
 					invoiceAgregateCat.setProvider(billingAccount.getProvider());
 					invoiceAgregateSubcat.setCategoryInvoiceAgregate(invoiceAgregateCat);
-					
+
 					// end agregate R
 
 					// round the amount without Tax
@@ -395,9 +400,9 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 							log.info("  tax " + tax.getPercent() + " ht ->"
 									+ taxInvoiceAgregate.getAmountWithoutTax());
 						}
-					
+
 					}
-					
+
 					invoiceAgregateSubcat.getCategoryInvoiceAgregate().addAmountWithoutTax(
 							invoiceAgregateSubcat.getAmountWithoutTax());
 					log.debug("  cat " + invoiceAgregateSubcat.getCategoryInvoiceAgregate().getId() + " ht ->"
@@ -409,7 +414,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 					}
 
 					invoiceAgregateService.create(invoiceAgregateSubcat, currentUser, currentUser.getProvider());
-					
+
 				}
 
 				// compute the tax
@@ -431,7 +436,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 
 					}
 				}
-				
+
 				for (Map.Entry<Long, CategoryInvoiceAgregate> cat : catInvoiceAgregateMap.entrySet()) {
 					CategoryInvoiceAgregate categoryInvoiceAgregate = cat.getValue();
 					invoice.addAmountWithoutTax(categoryInvoiceAgregate.getAmountWithoutTax().setScale(rounding, RoundingMode.HALF_UP));
@@ -458,7 +463,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 						invoiceAgregateT.setAmountWithoutTax(invoiceAgregateT.getAmountWithoutTax().add(delta)
 								.setScale(rounding, RoundingMode.HALF_UP));
 						log.debug("  tax4 ht ->" + invoiceAgregateT.getAmountWithoutTax());
-						
+
 					}
 					CategoryInvoiceAgregate invoiceAgregateR = biggestSubCat.getCategoryInvoiceAgregate();
 					invoiceAgregateR.setAmountWithoutTax(invoiceAgregateR.getAmountWithoutTax().add(delta)
@@ -466,24 +471,24 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 
 					invoice.setAmountWithoutTax(invoice.getAmountWithoutTax().add(delta).setScale(rounding, RoundingMode.HALF_UP));
 					invoice.setAmountWithTax(nonEnterprisePriceWithTax.setScale(rounding, RoundingMode.HALF_UP));
-					
-				
+
+
 				}
-	            createInvoiceDiscountAggregates(currentUser,userAccount, invoice,taxInvoiceAgregateMap);
-				
-				
+				createInvoiceDiscountAggregates(currentUser,userAccount, invoice,taxInvoiceAgregateMap);
+
+
 			}
 
 		}
 		Object[] object=invoiceAgregateService.findTotalAmountsForDiscountAggregates(invoice);
-		
+
 		BigDecimal discountAmountWithoutTax=(BigDecimal)object[0];
 		BigDecimal discountAmountTax=(BigDecimal)object[1];
 		BigDecimal discountAmountWithTax=(BigDecimal)object[2];
-		
+
 
 		log.info("discountAmountWithoutTax= {},discountAmountTax={},discountAmountWithTax={}" ,object[0],object[1], object[2]);
-		
+
 		invoice.addAmountWithoutTax(discountAmountWithoutTax);
 		invoice.addAmountTax(discountAmountTax);
 		invoice.addAmountWithTax(discountAmountWithTax);
@@ -519,9 +524,9 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 		}
 
 		long count = q.setParameter("billingAccount", billingAccount)
-		        .setParameter("lastTransactionDate", lastTransactionDate).getSingleResult();
+				.setParameter("lastTransactionDate", lastTransactionDate).getSingleResult();
 		log.debug("isBillingAccountBillable code={},lastTransactionDate={}, displayFreeTransac={}) : {}"
-		    ,billingAccount.getCode(),lastTransactionDate,billingAccount.getProvider().isDisplayFreeTransacInInvoice(),count);
+				,billingAccount.getCode(),lastTransactionDate,billingAccount.getProvider().isDisplayFreeTransacInInvoice(),count);
 		return count > 0 ? true : false;
 	}
 
@@ -552,8 +557,8 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 	public int reratedByWalletOperationId(Long id) throws UnrolledbackBusinessException {
 		int result = 0;
 		List<RatedTransaction> ratedTransactions =  (List<RatedTransaction>) getEntityManager()
-		.createNamedQuery("RatedTransaction.listByWalletOperationId", RatedTransaction.class)
-		.setParameter("walletOperationId", id).getResultList();
+				.createNamedQuery("RatedTransaction.listByWalletOperationId", RatedTransaction.class)
+				.setParameter("walletOperationId", id).getResultList();
 		for(RatedTransaction ratedTransaction:ratedTransactions){
 			if(ratedTransaction.getBillingRun()!=null && ratedTransaction.getBillingRun().getStatus()!=BillingRunStatusEnum.CANCELED){
 				throw new UnrolledbackBusinessException("A rated transaction "+ratedTransaction.getId()+" forbid rerating of wallet operation "+id);
@@ -563,8 +568,8 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 		}
 		return result;
 	}
-	
-	
+
+
 	@SuppressWarnings("unchecked")
 	public List<RatedTransaction> getNotBilledRatedTransactions(Long walletOperationId) { 
 		QueryBuilder qb = new QueryBuilder("from RatedTransaction c");
@@ -579,9 +584,9 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 		}
 
 	}
-	
- 
-	
+
+
+
 	@SuppressWarnings("unchecked")
 	public List<RatedTransaction> getRatedTransactionsByBillingRun(BillingRun BillingRun) { 
 		QueryBuilder qb = new QueryBuilder("from RatedTransaction c");
@@ -597,91 +602,91 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 	}
 	private void createInvoiceDiscountAggregates(User currentUser,UserAccount userAccount,Invoice invoice,Map<Long, TaxInvoiceAgregate> taxInvoiceAgregateMap){
 		try {
-			
+
 			BillingAccount billingAccount=userAccount.getBillingAccount();
 			DiscountPlan discountPlan=billingAccount.getDiscountPlan();
 			CustomerAccount customerAccount=billingAccount.getCustomerAccount();
 			if(discountPlan!=null && discountPlan.isActive()){
-						List<DiscountPlanItem> discountPlanItems =discountPlan.getDiscountPlanItems();
-						for(DiscountPlanItem discountPlanItem:discountPlanItems){
-							if(discountPlanItem.isActive() && matchDiscountPlanItemExpression(discountPlanItem.getExpressionEl(),customerAccount, billingAccount, invoice)){
-								if(discountPlanItem.getInvoiceSubCategory()!=null){
-									createDiscountAggregate(currentUser,userAccount,userAccount.getWallet(), invoice, discountPlanItem.getInvoiceSubCategory(),discountPlanItem,taxInvoiceAgregateMap);
-								}else if(discountPlanItem.getInvoiceCategory()!=null){
-									InvoiceCategory invoiceCat=discountPlanItem.getInvoiceCategory();
-									for(InvoiceSubCategory invoiceSubCat:invoiceCat.getInvoiceSubCategories()){
-										createDiscountAggregate(currentUser,userAccount,userAccount.getWallet(), invoice, invoiceSubCat,discountPlanItem,taxInvoiceAgregateMap);
-									}
-								}
+				List<DiscountPlanItem> discountPlanItems =discountPlan.getDiscountPlanItems();
+				for(DiscountPlanItem discountPlanItem:discountPlanItems){
+					if(discountPlanItem.isActive() && matchDiscountPlanItemExpression(discountPlanItem.getExpressionEl(),customerAccount, billingAccount, invoice)){
+						if(discountPlanItem.getInvoiceSubCategory()!=null){
+							createDiscountAggregate(currentUser,userAccount,userAccount.getWallet(), invoice, discountPlanItem.getInvoiceSubCategory(),discountPlanItem,taxInvoiceAgregateMap);
+						}else if(discountPlanItem.getInvoiceCategory()!=null){
+							InvoiceCategory invoiceCat=discountPlanItem.getInvoiceCategory();
+							for(InvoiceSubCategory invoiceSubCat:invoiceCat.getInvoiceSubCategories()){
+								createDiscountAggregate(currentUser,userAccount,userAccount.getWallet(), invoice, invoiceSubCat,discountPlanItem,taxInvoiceAgregateMap);
 							}
+						}
 					}
+				}
 			}
-			
+
 		} catch (BusinessException e) {
 			log.error("Error when trying to create discount aggregates",e);
 		}
-		
+
 	}
-	
+
 	private void createDiscountAggregate(User currentUser,UserAccount userAccount,WalletInstance wallet,Invoice invoice,InvoiceSubCategory invoiceSubCat,DiscountPlanItem discountPlanItem,Map<Long, TaxInvoiceAgregate> taxInvoiceAgregateMap) throws BusinessException{
 		BillingAccount billingAccount=userAccount.getBillingAccount();
 		BigDecimal amount=invoiceAgregateService.findTotalAmountByWalletSubCat(wallet, invoiceSubCat, wallet.getProvider(),invoice);
 		if (amount!=null && !BigDecimal.ZERO.equals(amount)){
 			BigDecimal discountAmountWithoutTax=amount.multiply(discountPlanItem.getPercent().divide(HUNDRED)).negate();
-		List<Tax> taxes = new ArrayList<Tax>();
-		for (InvoiceSubcategoryCountry invoicesubcatCountry : invoiceSubCat
-				.getInvoiceSubcategoryCountries()) {
-			if (invoicesubcatCountry.getTradingCountry().getCountryCode()
-					.equalsIgnoreCase(invoice.getBillingAccount().getTradingCountry().getCountryCode()) 
+			List<Tax> taxes = new ArrayList<Tax>();
+			for (InvoiceSubcategoryCountry invoicesubcatCountry : invoiceSubCat
+					.getInvoiceSubcategoryCountries()) {
+				if (invoicesubcatCountry.getTradingCountry().getCountryCode()
+						.equalsIgnoreCase(invoice.getBillingAccount().getTradingCountry().getCountryCode()) 
 						&& matchInvoicesubcatCountryExpression(invoicesubcatCountry.getFilterEL(),billingAccount, invoice)) {
-				taxes.add(invoicesubcatCountry.getTax());
+					taxes.add(invoicesubcatCountry.getTax());
+				}
 			}
-		}
-		SubCategoryInvoiceAgregate invoiceAgregateSubcat = new SubCategoryInvoiceAgregate();
-		BigDecimal discountAmountTax=BigDecimal.ZERO;
-		for (Tax tax:taxes) {
-			BigDecimal amountTax=discountAmountWithoutTax.multiply(tax.getPercent().divide(HUNDRED));
-			 discountAmountTax=discountAmountTax.add(amountTax);
-			 invoiceAgregateSubcat.addSubCategoryTax(tax);
-			  TaxInvoiceAgregate 	taxInvoiceAgregate= taxInvoiceAgregateMap.get(tax.getId());
-			  if(taxInvoiceAgregate!=null){
-			   taxInvoiceAgregate.addAmountTax(amountTax);
-				  taxInvoiceAgregate.addAmountWithoutTax(discountAmountWithoutTax);
-				  invoiceAgregateService.update(taxInvoiceAgregate,currentUser);
-			  }
-			 }
-		
-		
-		BigDecimal discountAmountWithTax=discountAmountWithoutTax.add(discountAmountTax);
-		
-		invoiceAgregateSubcat.setAuditable(billingAccount.getAuditable());
-		invoiceAgregateSubcat.setProvider(billingAccount.getProvider());
-		invoiceAgregateSubcat.setInvoice(invoice);
-		invoiceAgregateSubcat.setBillingRun(billingAccount.getBillingRun());
-		invoiceAgregateSubcat.setWallet(userAccount.getWallet());
-		invoiceAgregateSubcat.setAccountingCode(invoiceSubCat.getAccountingCode());
-		fillAgregates(invoiceAgregateSubcat, userAccount.getWallet());
-		invoiceAgregateSubcat.setAmountWithoutTax(discountAmountWithoutTax);
-		invoiceAgregateSubcat.setAmountWithTax(discountAmountWithTax);
-		invoiceAgregateSubcat.setAmountTax(discountAmountTax);
-		invoiceAgregateSubcat.setProvider(billingAccount.getProvider());
-		invoiceAgregateSubcat.setInvoiceSubCategory(invoiceSubCat);
-		
-		invoiceAgregateSubcat.setDiscountAggregate(true);
-		invoiceAgregateSubcat.setDiscountPercent(discountPlanItem.getPercent());
-		invoiceAgregateSubcat.setDiscountPlanCode(discountPlanItem.getDiscountPlan().getCode());
-		invoiceAgregateSubcat.setDiscountPlanItemCode(discountPlanItem.getCode());
-		invoiceAgregateService.create(invoiceAgregateSubcat,currentUser);
+			SubCategoryInvoiceAgregate invoiceAgregateSubcat = new SubCategoryInvoiceAgregate();
+			BigDecimal discountAmountTax=BigDecimal.ZERO;
+			for (Tax tax:taxes) {
+				BigDecimal amountTax=discountAmountWithoutTax.multiply(tax.getPercent().divide(HUNDRED));
+				discountAmountTax=discountAmountTax.add(amountTax);
+				invoiceAgregateSubcat.addSubCategoryTax(tax);
+				TaxInvoiceAgregate 	taxInvoiceAgregate= taxInvoiceAgregateMap.get(tax.getId());
+				if(taxInvoiceAgregate!=null){
+					taxInvoiceAgregate.addAmountTax(amountTax);
+					taxInvoiceAgregate.addAmountWithoutTax(discountAmountWithoutTax);
+					invoiceAgregateService.update(taxInvoiceAgregate,currentUser);
+				}
+			}
 
-	}}
+
+			BigDecimal discountAmountWithTax=discountAmountWithoutTax.add(discountAmountTax);
+
+			invoiceAgregateSubcat.setAuditable(billingAccount.getAuditable());
+			invoiceAgregateSubcat.setProvider(billingAccount.getProvider());
+			invoiceAgregateSubcat.setInvoice(invoice);
+			invoiceAgregateSubcat.setBillingRun(billingAccount.getBillingRun());
+			invoiceAgregateSubcat.setWallet(userAccount.getWallet());
+			invoiceAgregateSubcat.setAccountingCode(invoiceSubCat.getAccountingCode());
+			fillAgregates(invoiceAgregateSubcat, userAccount.getWallet());
+			invoiceAgregateSubcat.setAmountWithoutTax(discountAmountWithoutTax);
+			invoiceAgregateSubcat.setAmountWithTax(discountAmountWithTax);
+			invoiceAgregateSubcat.setAmountTax(discountAmountTax);
+			invoiceAgregateSubcat.setProvider(billingAccount.getProvider());
+			invoiceAgregateSubcat.setInvoiceSubCategory(invoiceSubCat);
+
+			invoiceAgregateSubcat.setDiscountAggregate(true);
+			invoiceAgregateSubcat.setDiscountPercent(discountPlanItem.getPercent());
+			invoiceAgregateSubcat.setDiscountPlanCode(discountPlanItem.getDiscountPlan().getCode());
+			invoiceAgregateSubcat.setDiscountPlanItemCode(discountPlanItem.getCode());
+			invoiceAgregateService.create(invoiceAgregateSubcat,currentUser);
+
+		}}
 	private boolean matchInvoicesubcatCountryExpression(String expression,BillingAccount billingAccount,Invoice invoice) throws BusinessException {
 		Boolean result = true;
 		if (StringUtils.isBlank(expression)) {
 			return result;
 		}
 		Map<Object, Object> userMap = new HashMap<Object, Object>();
-		
-		
+
+
 		if (expression.indexOf("ca.") >= 0) {
 			userMap.put("ca", billingAccount.getCustomerAccount());
 		}
@@ -689,8 +694,8 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 			userMap.put("ba", billingAccount);
 		}
 		if (expression.indexOf("iv.") >= 0) {
-				userMap.put("iv", invoice);
-			
+			userMap.put("iv", invoice);
+
 		}
 		Object res = ValueExpressionWrapper.evaluateExpression(expression, userMap,
 				Boolean.class);
@@ -702,17 +707,17 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 		}
 		return result;
 	}
-	
+
 	private boolean matchDiscountPlanItemExpression(String expression,CustomerAccount customerAccount,BillingAccount billingAccount,Invoice invoice) throws BusinessException {
 		Boolean result = true;
-		
-		
+
+
 		if (StringUtils.isBlank(expression) ) {
 			return result;
 		}
 		Map<Object, Object> userMap = new HashMap<Object, Object>();
-		
-		
+
+
 		if (expression.indexOf("ca.") >= 0) {
 			userMap.put("ca",customerAccount);
 		}
@@ -720,8 +725,8 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 			userMap.put("ba", billingAccount);
 		}
 		if (expression.indexOf("iv.") >= 0) {
-				userMap.put("iv", invoice);
-			
+			userMap.put("iv", invoice);
+
 		}
 		Object res = ValueExpressionWrapper.evaluateExpression(expression, userMap,
 				Boolean.class);
@@ -733,7 +738,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 		}
 		return result;
 	}
-	
+
 	public List<RatedTransaction> getListByInvoiceAndSubCategory(Invoice invoice,InvoiceSubCategory invoiceSubCategory) {
 		if (invoice == null || invoiceSubCategory == null) {
 			return null;
@@ -741,5 +746,51 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 		return (List<RatedTransaction>)getEntityManager().createNamedQuery("RatedTransaction.getListByInvoiceAndSubCategory",RatedTransaction.class)
 				.setParameter("invoice", invoice).setParameter("invoiceSubCategory", invoiceSubCategory).getResultList();
 	}
+
+
+	public void createRatedTransaction(Long walletOperationId,User currentUser )throws Exception{
+		WalletOperation walletOperation = walletOperationService.findById(walletOperationId) ;
+
+		BigDecimal amountWithTAx = walletOperation.getAmountWithTax();
+		BigDecimal amountTax = walletOperation.getAmountTax();
+		BigDecimal unitAmountWithTax = walletOperation.getUnitAmountWithTax();
+		BigDecimal unitAmountTax = walletOperation.getUnitAmountTax();
+
+		/*if (walletOperation.getChargeInstance().getSubscription().getUserAccount().getBillingAccount()
+						.getCustomerAccount().getCustomer().getCustomerCategory().getExoneratedFromTaxes()) {
+					amountWithTAx = walletOperation.getAmountWithoutTax();
+					amountTax = BigDecimal.ZERO;
+					unitAmountWithTax = walletOperation.getUnitAmountWithoutTax();
+					unitAmountTax = BigDecimal.ZERO;
+				}*/
+		RatedTransaction ratedTransaction = new RatedTransaction(walletOperation.getId(),
+				walletOperation.getOperationDate(), walletOperation.getUnitAmountWithoutTax(),
+				unitAmountWithTax, unitAmountTax, walletOperation.getQuantity(),
+				walletOperation.getAmountWithoutTax(), amountWithTAx, amountTax,
+				RatedTransactionStatusEnum.OPEN, walletOperation.getProvider(),
+				walletOperation.getWallet(), walletOperation.getWallet().getUserAccount()
+				.getBillingAccount(), walletOperation.getChargeInstance().getChargeTemplate()
+				.getInvoiceSubCategory(), walletOperation.getParameter1(),
+				walletOperation.getParameter2(), walletOperation.getParameter3(),
+				walletOperation.getRatingUnitDescription(), walletOperation.getPriceplan(),
+				walletOperation.getOfferCode());
+		create(ratedTransaction, currentUser, currentUser.getProvider());
+
+		walletOperation.setStatus(WalletOperationStatusEnum.TREATED);
+		walletOperation.updateAudit(currentUser);
+		walletOperationService.updateNoCheck(walletOperation);
 	}
-	
+
+	public void createRatedTransaction(BillingAccount billingAccount,User currentUser )throws Exception{
+		List<UserAccount> userAccounts = billingAccount.getUsersAccounts();
+		List<WalletOperation> walletOps = new ArrayList<WalletOperation>();
+		for(UserAccount ua:userAccounts){
+			walletOps.addAll(ua.getWallet().getOperations());
+		}
+		for(WalletOperation walletOp:walletOps){
+			createRatedTransaction(walletOp.getId(),currentUser);
+		}
+	}
+
+}
+
