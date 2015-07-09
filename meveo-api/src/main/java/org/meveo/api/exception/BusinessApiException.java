@@ -11,7 +11,11 @@ public class BusinessApiException extends MeveoApiException {
 
 	public BusinessApiException() {
 		super("Business exception");
-
+		setErrorCode(MeveoApiErrorCode.BUSINESS_API_EXCEPTION);
+	}
+	
+	public BusinessApiException(String message) {
+		super(message);
 		setErrorCode(MeveoApiErrorCode.BUSINESS_API_EXCEPTION);
 	}
 
