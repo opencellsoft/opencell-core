@@ -11,6 +11,7 @@ import org.meveo.api.dto.billing.FindWalletOperationsDto;
 import org.meveo.api.dto.billing.WalletBalanceDto;
 import org.meveo.api.dto.billing.WalletOperationDto;
 import org.meveo.api.dto.billing.WalletReservationDto;
+import org.meveo.api.dto.billing.WalletTemplateDto;
 import org.meveo.api.dto.response.billing.FindWalletOperationsResponseDto;
 
 /**
@@ -18,6 +19,9 @@ import org.meveo.api.dto.response.billing.FindWalletOperationsResponseDto;
  **/
 @WebService
 public interface WalletWs extends IBaseWs {
+	
+	@WebMethod
+	ActionStatus createWalletTemplate(@WebParam(name = "walletTemplate") WalletTemplateDto postData);
 
 	@WebMethod
 	ActionStatus currentBalance(@WebParam(name = "walletBalance") WalletBalanceDto postData);
