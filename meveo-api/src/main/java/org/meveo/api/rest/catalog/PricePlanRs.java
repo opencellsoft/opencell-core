@@ -14,6 +14,7 @@ import javax.ws.rs.core.MediaType;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.catalog.PricePlanDto;
 import org.meveo.api.dto.response.catalog.GetPricePlanResponseDto;
+import org.meveo.api.dto.response.catalog.PricePlanMatrixesResponseDto;
 import org.meveo.api.rest.IBaseRs;
 import org.meveo.api.rest.security.RSSecured;
 
@@ -67,5 +68,9 @@ public interface PricePlanRs extends IBaseRs {
 	@Path("/{pricePlanCode}")
 	@DELETE
 	ActionStatus remove(@PathParam("pricePlanCode") String pricePlanCode);
+	
+	@Path("/")
+	@GET
+	PricePlanMatrixesResponseDto listPricePlanByEventCode(@QueryParam("eventCode") String eventCode);
 
 }

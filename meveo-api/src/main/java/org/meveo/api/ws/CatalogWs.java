@@ -23,6 +23,7 @@ import org.meveo.api.dto.response.catalog.GetRecurringChargeTemplateResponseDto;
 import org.meveo.api.dto.response.catalog.GetServiceTemplateResponseDto;
 import org.meveo.api.dto.response.catalog.GetTriggeredEdrResponseDto;
 import org.meveo.api.dto.response.catalog.GetUsageChargeTemplateResponseDto;
+import org.meveo.api.dto.response.catalog.PricePlanMatrixesResponseDto;
 
 /**
  * @author Edward P. Legaspi
@@ -50,45 +51,58 @@ public interface CatalogWs extends IBaseWs {
 	GetChargeTemplateResponseDto findChargeTemplate(@WebParam(name = "chargeTemplateCode") String chargeTemplateCode);
 
 	@WebMethod
-	public ActionStatus createRecurringChargeTemplate(@WebParam(name = "recurringChargeTemplate") RecurringChargeTemplateDto postData);
+	public ActionStatus createRecurringChargeTemplate(
+			@WebParam(name = "recurringChargeTemplate") RecurringChargeTemplateDto postData);
 
 	@WebMethod
-	public GetRecurringChargeTemplateResponseDto findRecurringChargeTemplate(@WebParam(name = "recurringChargeTemplateCode") String recurringChargeTemplateCode);
+	public GetRecurringChargeTemplateResponseDto findRecurringChargeTemplate(
+			@WebParam(name = "recurringChargeTemplateCode") String recurringChargeTemplateCode);
 
 	@WebMethod
-	public ActionStatus updateRecurringChargeTemplate(@WebParam(name = "recurringChargeTemplate") RecurringChargeTemplateDto postData);
+	public ActionStatus updateRecurringChargeTemplate(
+			@WebParam(name = "recurringChargeTemplate") RecurringChargeTemplateDto postData);
 
 	@WebMethod
-	public ActionStatus removeRecurringChargeTemplate(@WebParam(name = "recurringChargeTemplateCode") String recurringChargeTemplateCode);
+	public ActionStatus removeRecurringChargeTemplate(
+			@WebParam(name = "recurringChargeTemplateCode") String recurringChargeTemplateCode);
 
 	@WebMethod
-	public ActionStatus createOneShotChargeTemplate(@WebParam(name = "oneShotChargeTemplate") OneShotChargeTemplateDto postData);
+	public ActionStatus createOneShotChargeTemplate(
+			@WebParam(name = "oneShotChargeTemplate") OneShotChargeTemplateDto postData);
 
 	@WebMethod
-	public ActionStatus updateOneShotChargeTemplate(@WebParam(name = "oneShotChargeTemplate") OneShotChargeTemplateDto postData);
+	public ActionStatus updateOneShotChargeTemplate(
+			@WebParam(name = "oneShotChargeTemplate") OneShotChargeTemplateDto postData);
 
 	@WebMethod
-	public GetOneShotChargeTemplateResponseDto findOneShotChargeTemplate(@WebParam(name = "oneShotChargeTemplateCode") String oneShotChargeTemplateCode);
+	public GetOneShotChargeTemplateResponseDto findOneShotChargeTemplate(
+			@WebParam(name = "oneShotChargeTemplateCode") String oneShotChargeTemplateCode);
 
 	@WebMethod
-	public OneShotChargeTemplateWithPriceListDto listOneShotChargeTemplate(@WebParam(name = "languageCode") String languageCode,
-			@WebParam(name = "countryCode") String countryCode, @WebParam(name = "currencyCode") String currencyCode, @WebParam(name = "sellerCode") String sellerCode,
+	public OneShotChargeTemplateWithPriceListDto listOneShotChargeTemplate(
+			@WebParam(name = "languageCode") String languageCode, @WebParam(name = "countryCode") String countryCode,
+			@WebParam(name = "currencyCode") String currencyCode, @WebParam(name = "sellerCode") String sellerCode,
 			@WebParam(name = "date") String date);
 
 	@WebMethod
-	public ActionStatus removeOneShotChargeTemplate(@WebParam(name = "oneShotChargeTemplateCode") String oneShotChargeTemplateCode);
+	public ActionStatus removeOneShotChargeTemplate(
+			@WebParam(name = "oneShotChargeTemplateCode") String oneShotChargeTemplateCode);
 
 	@WebMethod
-	public ActionStatus createUsageChargeTemplate(@WebParam(name = "usageChargeTemplate") UsageChargeTemplateDto postData);
+	public ActionStatus createUsageChargeTemplate(
+			@WebParam(name = "usageChargeTemplate") UsageChargeTemplateDto postData);
 
 	@WebMethod
-	public ActionStatus updateUsageChargeTemplate(@WebParam(name = "usageChargeTemplate") UsageChargeTemplateDto postData);
+	public ActionStatus updateUsageChargeTemplate(
+			@WebParam(name = "usageChargeTemplate") UsageChargeTemplateDto postData);
 
 	@WebMethod
-	public GetUsageChargeTemplateResponseDto findUsageChargeTemplate(@WebParam(name = "usageChargeTemplateCode") String usageChargeTemplateCode);
+	public GetUsageChargeTemplateResponseDto findUsageChargeTemplate(
+			@WebParam(name = "usageChargeTemplateCode") String usageChargeTemplateCode);
 
 	@WebMethod
-	public ActionStatus removeUsageChargeTemplate(@WebParam(name = "usageChargeTemplateCode") String usageChargeTemplateCode);
+	public ActionStatus removeUsageChargeTemplate(
+			@WebParam(name = "usageChargeTemplateCode") String usageChargeTemplateCode);
 
 	// service
 
@@ -131,6 +145,9 @@ public interface CatalogWs extends IBaseWs {
 
 	@WebMethod
 	ActionStatus removePricePlan(@WebParam(name = "pricePlanCode") String pricePlanCode);
+
+	@WebMethod
+	PricePlanMatrixesResponseDto listPricePlanByEventCode(@WebParam(name = "eventCode") String eventCode);
 
 	// triggered Edr
 

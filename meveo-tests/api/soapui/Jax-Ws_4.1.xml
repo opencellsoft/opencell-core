@@ -249,6 +249,15 @@
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
+    <wsdl:operation name="listPricePlanByEventCode">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="listPricePlanByEventCode">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="listPricePlanByEventCodeResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
     <wsdl:operation name="updateOfferTemplate">
       <soap:operation soapAction="" style="document"/>
       <wsdl:input name="updateOfferTemplate">
@@ -374,6 +383,7 @@
       <xs:element name="OneShotChargeTemplate" nillable="true" type="xs:anyType"/>
       <xs:element name="OneShotChargeTemplateList" type="tns:oneShotChargeTemplateWithPriceListDto"/>
       <xs:element name="PricePlan" type="tns:pricePlanDto"/>
+      <xs:element name="PricePlanMatrixesResponse" type="tns:pricePlanMatrixesResponseDto"/>
       <xs:element name="RecurringChargeTemplate" type="tns:recurringChargeTemplateDto"/>
       <xs:element name="ServiceTemplate" type="tns:serviceTemplateDto"/>
       <xs:element name="ServiceTemplates" type="tns:serviceTemplatesDto"/>
@@ -419,6 +429,8 @@
       <xs:element name="indexResponse" type="tns:indexResponse"/>
       <xs:element name="listOneShotChargeTemplate" type="tns:listOneShotChargeTemplate"/>
       <xs:element name="listOneShotChargeTemplateResponse" type="tns:listOneShotChargeTemplateResponse"/>
+      <xs:element name="listPricePlanByEventCode" type="tns:listPricePlanByEventCode"/>
+      <xs:element name="listPricePlanByEventCodeResponse" type="tns:listPricePlanByEventCodeResponse"/>
       <xs:element name="removeCounterTemplate" type="tns:removeCounterTemplate"/>
       <xs:element name="removeCounterTemplateResponse" type="tns:removeCounterTemplateResponse"/>
       <xs:element name="removeOfferTemplate" type="tns:removeOfferTemplate"/>
@@ -919,6 +931,30 @@
           <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
         </xs:sequence>
       </xs:complexType>
+      <xs:complexType name="listPricePlanByEventCode">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="eventCode" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="listPricePlanByEventCodeResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:pricePlanMatrixesResponseDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="pricePlanMatrixesResponseDto">
+        <xs:complexContent>
+          <xs:extension base="tns:baseResponse">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="pricePlanMatrixes" type="tns:PricePlans"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="PricePlans">
+        <xs:sequence>
+          <xs:element maxOccurs="unbounded" minOccurs="0" name="pricePlanMatrixes" nillable="true" type="tns:pricePlanDto"/>
+        </xs:sequence>
+      </xs:complexType>
       <xs:complexType name="listOneShotChargeTemplate">
         <xs:sequence>
           <xs:element minOccurs="0" name="languageCode" type="xs:string"/>
@@ -1151,11 +1187,11 @@
   <wsdl:message name="findPricePlanResponse">
     <wsdl:part element="ns1:findPricePlanResponse" name="parameters"></wsdl:part>
   </wsdl:message>
-  <wsdl:message name="createOfferTemplate">
-    <wsdl:part element="ns1:createOfferTemplate" name="parameters"></wsdl:part>
-  </wsdl:message>
   <wsdl:message name="findOfferTemplateResponse">
     <wsdl:part element="ns1:findOfferTemplateResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="createOfferTemplate">
+    <wsdl:part element="ns1:createOfferTemplate" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="updateTriggeredEdrResponse">
     <wsdl:part element="ns1:updateTriggeredEdrResponse" name="parameters"></wsdl:part>
@@ -1192,6 +1228,9 @@
   </wsdl:message>
   <wsdl:message name="removeOneShotChargeTemplateResponse">
     <wsdl:part element="ns1:removeOneShotChargeTemplateResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="listPricePlanByEventCodeResponse">
+    <wsdl:part element="ns1:listPricePlanByEventCodeResponse" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="createTriggeredEdr">
     <wsdl:part element="ns1:createTriggeredEdr" name="parameters"></wsdl:part>
@@ -1265,11 +1304,14 @@
   <wsdl:message name="updateOneShotChargeTemplateResponse">
     <wsdl:part element="ns1:updateOneShotChargeTemplateResponse" name="parameters"></wsdl:part>
   </wsdl:message>
-  <wsdl:message name="updateOneShotChargeTemplate">
-    <wsdl:part element="ns1:updateOneShotChargeTemplate" name="parameters"></wsdl:part>
+  <wsdl:message name="listPricePlanByEventCode">
+    <wsdl:part element="ns1:listPricePlanByEventCode" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="findOfferTemplate">
     <wsdl:part element="ns1:findOfferTemplate" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="updateOneShotChargeTemplate">
+    <wsdl:part element="ns1:updateOneShotChargeTemplate" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="updateUsageChargeTemplate">
     <wsdl:part element="ns1:updateUsageChargeTemplate" name="parameters"></wsdl:part>
@@ -1419,6 +1461,10 @@
     <wsdl:operation name="updateOfferTemplate">
       <wsdl:input message="ns1:updateOfferTemplate" name="updateOfferTemplate"></wsdl:input>
       <wsdl:output message="ns1:updateOfferTemplateResponse" name="updateOfferTemplateResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="listPricePlanByEventCode">
+      <wsdl:input message="ns1:listPricePlanByEventCode" name="listPricePlanByEventCode"></wsdl:input>
+      <wsdl:output message="ns1:listPricePlanByEventCodeResponse" name="listPricePlanByEventCodeResponse"></wsdl:output>
     </wsdl:operation>
     <wsdl:operation name="listOneShotChargeTemplate">
       <wsdl:input message="ns1:listOneShotChargeTemplate" name="listOneShotChargeTemplate"></wsdl:input>
@@ -2262,7 +2308,15 @@
          <triggeredEdrCode>?</triggeredEdrCode>
       </ws:findTriggeredEdr>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/CatalogWs/findTriggeredEdr"/></con:call></con:operation></con:interface><con:interface xsi:type="con:WsdlInterface" wsaVersion="NONE" name="AccountWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}AccountWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="http://${#Project#meveoEndpoint}/AccountWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache type="TEXT" rootPart="http://localhost:8080/meveo/AccountWs?wsdl"><con:part><con:url>http://localhost:8080/meveo/AccountWs?wsdl</con:url><con:content><![CDATA[<wsdl:definitions name="AccountWs" targetNamespace="http://impl.ws.api.meveo.org/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://impl.ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns2="http://schemas.xmlsoap.org/soap/http" xmlns:ns1="http://ws.api.meveo.org/">
+</soapenv:Envelope>]]></con:request><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/CatalogWs/findTriggeredEdr"/></con:call></con:operation><con:operation isOneWay="false" action="" name="listPricePlanByEventCode" bindingOperationName="listPricePlanByEventCode" type="Request-Response" outputName="listPricePlanByEventCodeResponse" inputName="listPricePlanByEventCode" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://i.meveo.info/meveo/CatalogWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:listPricePlanByEventCode>
+         <!--Optional:-->
+         <eventCode>?</eventCode>
+      </ws:listPricePlanByEventCode>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/CatalogWs/listPricePlanByEventCode"/></con:call></con:operation></con:interface><con:interface xsi:type="con:WsdlInterface" wsaVersion="NONE" name="AccountWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}AccountWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="http://${#Project#meveoEndpoint}/AccountWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache type="TEXT" rootPart="http://localhost:8080/meveo/AccountWs?wsdl"><con:part><con:url>http://localhost:8080/meveo/AccountWs?wsdl</con:url><con:content><![CDATA[<wsdl:definitions name="AccountWs" targetNamespace="http://impl.ws.api.meveo.org/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://impl.ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns2="http://schemas.xmlsoap.org/soap/http" xmlns:ns1="http://ws.api.meveo.org/">
   <wsdl:import location="http://localhost:8080/meveo/AccountWs?wsdl=AccountWs.wsdl" namespace="http://ws.api.meveo.org/"></wsdl:import>
   <wsdl:binding name="AccountWsSoapBinding" type="ns1:AccountWs">
     <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
@@ -33679,4 +33733,84 @@ Execute mediationJob manually. Need to set custom fields.</con:description><con:
          <cdr>2010-04-01T00:00:00Z;22;791_access;SUPPORT;1;2;3;4;5;8;7;9;2012-04-01T00:00:00Z;2013-04-01T00:00:00Z;2014-04-01T00:00:00Z;2015-04-01T00:00:00Z;2016-04-01T00:00:00Z;44;10.8;666.2;77.91;12.8</cdr>
       </ws:chargeCdr>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response"/><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:authType>Global HTTP Settings</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:properties><con:property><con:name>ticket</con:name><con:value>794</con:value></con:property><con:property><con:name>authorization</con:name><con:value>Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=</con:value></con:property></con:properties></con:testSuite><con:endpointStrategy xsi:type="con:DefaultEndpointStrategy" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:endpoint mode="COMPLEMENT" username="meveo.admin" password="meveo.admin">http://localhost:8080/meveo/CatalogWs</con:endpoint></con:endpointStrategy><con:properties><con:property><con:name>meveoEndpoint</con:name><con:value>localhost:8080/meveo</con:value></con:property><con:property><con:name>meveoUsername</con:name><con:value>meveo.admin</con:value></con:property><con:property><con:name>meveoPassword</con:name><con:value>meveo.admin</con:value></con:property><con:property><con:name>authorization</con:name><con:value>Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=</con:value></con:property></con:properties><con:wssContainer/><con:oAuth2ProfileContainer/><con:sensitiveInformation/></con:soapui-project>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response"/><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:authType>Global HTTP Settings</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:properties><con:property><con:name>ticket</con:name><con:value>794</con:value></con:property><con:property><con:name>authorization</con:name><con:value>Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=</con:value></con:property></con:properties></con:testSuite><con:testSuite name="#892_price_plan_list"><con:settings/><con:runType>SEQUENTIAL</con:runType><con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Catalog creation" searchProperties="true" id="df23f555-2557-4cd7-bbe7-ae38c52eed6a"><con:settings/><con:testStep type="request" name="Create usage"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>CatalogWsSoapBinding</con:interface><con:operation>createUsageChargeTemplate</con:operation><con:request name="Create usage"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/CatalogWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createUsageChargeTemplate>
+         <!--Optional:-->
+         <usageChargeTemplate code="${#TestSuite#ticket}_USAGE1" description="${#TestSuite#ticket}_USAGE1">
+            <invoiceSubCategory>SUB_DATA</invoiceSubCategory>
+            <disabled>false</disabled>
+            <!--Optional:-->
+            <amountEditable>false</amountEditable>
+            <!--Zero or more repetitions:-->
+            <languageDescriptions>
+               <languageCode>FRA</languageCode>
+               <description>Forfait test 685</description>
+            </languageDescriptions>
+            <!--Optional:-->
+            <inputUnitDescription>1</inputUnitDescription>
+            <!--Optional:-->
+            <ratingUnitDescription>1</ratingUnitDescription>
+            <!--Optional:-->
+            <unitMultiplicator>1</unitMultiplicator>
+            <unitNbDecimal>2</unitNbDecimal>
+            <!--Optional:-->
+            <filterParam1></filterParam1>
+            <!--Optional:-->
+            <filterParam2></filterParam2>
+            <!--Optional:-->
+            <filterParam3></filterParam3>
+            <!--Optional:-->
+            <filterParam4></filterParam4>
+            <!--Optional:-->
+            <filterExpression></filterExpression>
+            <priority>1</priority>
+         </usageChargeTemplate>
+      </ws:createUsageChargeTemplate>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response"/><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:preemptive>true</con:preemptive><con:authType>Preemptive</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Create priceplan usage 1"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>CatalogWsSoapBinding</con:interface><con:operation>createUsageChargeTemplate</con:operation><con:request name="Create priceplan usage 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/CatalogWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createPricePlan>
+         <pricePlan code="${#TestSuite#ticket}_USAGE1" description="${#TestSuite#ticket}_USAGE1">
+            <eventCode>${#TestSuite#ticket}_USAGE1</eventCode>
+            <amountWithoutTax>10</amountWithoutTax>
+            <amountWithTax>12</amountWithTax>
+            <priority>1</priority>
+         </pricePlan>
+      </ws:createPricePlan>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response"/><con:assertion type="Simple Contains" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:selectedAuthProfile>No Authorization</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Create priceplan usage 2"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>CatalogWsSoapBinding</con:interface><con:operation>createUsageChargeTemplate</con:operation><con:request name="Create priceplan usage 2"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/CatalogWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createPricePlan>
+         <pricePlan code="${#TestSuite#ticket}_USAGE2" description="${#TestSuite#ticket}_USAGE2">
+            <eventCode>${#TestSuite#ticket}_USAGE1</eventCode>
+            <amountWithoutTax>10</amountWithoutTax>
+            <amountWithTax>12</amountWithTax>
+            <priority>1</priority>
+         </pricePlan>
+      </ws:createPricePlan>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response"/><con:assertion type="Simple Contains" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:selectedAuthProfile>No Authorization</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Create priceplan usage 3"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>CatalogWsSoapBinding</con:interface><con:operation>createUsageChargeTemplate</con:operation><con:request name="Create priceplan usage 3"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/CatalogWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createPricePlan>
+         <pricePlan code="${#TestSuite#ticket}_USAGE3" description="${#TestSuite#ticket}_USAGE3">
+            <eventCode>${#TestSuite#ticket}_USAGE1</eventCode>
+            <amountWithoutTax>10</amountWithoutTax>
+            <amountWithTax>12</amountWithTax>
+            <priority>1</priority>
+         </pricePlan>
+      </ws:createPricePlan>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response"/><con:assertion type="Simple Contains" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:selectedAuthProfile>No Authorization</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties><con:property><con:name>index</con:name><con:value>684</con:value></con:property></con:properties></con:testCase><con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Priceplan" searchProperties="true" id="6cd3360e-016d-4b74-8887-a2f6cecff4d7"><con:settings/><con:testStep type="request" name="list"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>CatalogWsSoapBinding</con:interface><con:operation>listPricePlanByEventCode</con:operation><con:request name="list"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/CatalogWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:listPricePlanByEventCode>
+         <!--Optional:-->
+         <eventCode>${#TestSuite#ticket}_USAGE1</eventCode>
+      </ws:listPricePlanByEventCode>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response"/><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:authType>Global HTTP Settings</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:properties><con:property><con:name>ticket</con:name><con:value>892</con:value></con:property></con:properties></con:testSuite><con:endpointStrategy xsi:type="con:DefaultEndpointStrategy" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:endpoint mode="COMPLEMENT" username="meveo.admin" password="meveo.admin">http://localhost:8080/meveo/CatalogWs</con:endpoint></con:endpointStrategy><con:properties><con:property><con:name>meveoEndpoint</con:name><con:value>localhost:8080/meveo</con:value></con:property><con:property><con:name>meveoUsername</con:name><con:value>meveo.admin</con:value></con:property><con:property><con:name>meveoPassword</con:name><con:value>meveo.admin</con:value></con:property><con:property><con:name>authorization</con:name><con:value>Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=</con:value></con:property></con:properties><con:wssContainer/><con:oAuth2ProfileContainer/><con:sensitiveInformation/></con:soapui-project>
