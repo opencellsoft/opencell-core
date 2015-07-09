@@ -15,15 +15,18 @@ import org.meveo.api.dto.billing.FindWalletOperationsDto;
 import org.meveo.api.dto.billing.WalletBalanceDto;
 import org.meveo.api.dto.billing.WalletOperationDto;
 import org.meveo.api.dto.billing.WalletReservationDto;
+import org.meveo.api.dto.billing.WalletTemplateDto;
 import org.meveo.api.dto.response.billing.FindWalletOperationsResponseDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
+import org.meveo.api.exception.InvalidEnumValue;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.Currency;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.admin.User;
+import org.meveo.model.billing.BillingWalletTypeEnum;
 import org.meveo.model.billing.ChargeInstance;
 import org.meveo.model.billing.OperationTypeEnum;
 import org.meveo.model.billing.Reservation;
@@ -84,13 +87,16 @@ public class WalletApi extends BaseApi {
 	private CurrencyService currencyService;
 
 	public BigDecimal getCurrentAmount(WalletBalanceDto walletBalance, Provider provider) throws MeveoApiException {
-		if (!StringUtils.isBlank(walletBalance.getSellerCode()) && !StringUtils.isBlank(walletBalance.getUserAccountCode())) {
+		if (!StringUtils.isBlank(walletBalance.getSellerCode())
+				&& !StringUtils.isBlank(walletBalance.getUserAccountCode())) {
 			try {
 				if (walletBalance.isAmountWithTax()) {
-					return walletReservationService.getCurrentBalanceWithTax(provider, walletBalance.getSellerCode(), walletBalance.getUserAccountCode(),
-							walletBalance.getStartDate(), walletBalance.getEndDate());
+					return walletReservationService.getCurrentBalanceWithTax(provider, walletBalance.getSellerCode(),
+							walletBalance.getUserAccountCode(), walletBalance.getStartDate(),
+							walletBalance.getEndDate());
 				} else {
-					return walletReservationService.getCurrentBalanceWithoutTax(provider, walletBalance.getSellerCode(), walletBalance.getUserAccountCode(),
+					return walletReservationService.getCurrentBalanceWithoutTax(provider,
+							walletBalance.getSellerCode(), walletBalance.getUserAccountCode(),
 							walletBalance.getStartDate(), walletBalance.getEndDate());
 				}
 			} catch (BusinessException e) {
@@ -117,13 +123,16 @@ public class WalletApi extends BaseApi {
 	}
 
 	public BigDecimal getReservedAmount(WalletBalanceDto walletBalance, Provider provider) throws MeveoApiException {
-		if (!StringUtils.isBlank(walletBalance.getSellerCode()) && !StringUtils.isBlank(walletBalance.getUserAccountCode())) {
+		if (!StringUtils.isBlank(walletBalance.getSellerCode())
+				&& !StringUtils.isBlank(walletBalance.getUserAccountCode())) {
 			try {
 				if (walletBalance.isAmountWithTax()) {
-					return walletReservationService.getReservedBalanceWithTax(provider, walletBalance.getSellerCode(), walletBalance.getUserAccountCode(),
-							walletBalance.getStartDate(), walletBalance.getEndDate());
+					return walletReservationService.getReservedBalanceWithTax(provider, walletBalance.getSellerCode(),
+							walletBalance.getUserAccountCode(), walletBalance.getStartDate(),
+							walletBalance.getEndDate());
 				} else {
-					return walletReservationService.getReservedBalanceWithoutTax(provider, walletBalance.getSellerCode(), walletBalance.getUserAccountCode(),
+					return walletReservationService.getReservedBalanceWithoutTax(provider,
+							walletBalance.getSellerCode(), walletBalance.getUserAccountCode(),
 							walletBalance.getStartDate(), walletBalance.getEndDate());
 				}
 			} catch (BusinessException e) {
@@ -150,15 +159,18 @@ public class WalletApi extends BaseApi {
 	}
 
 	public BigDecimal getOpenAmount(WalletBalanceDto walletBalance, Provider provider) throws MeveoApiException {
-		if (!StringUtils.isBlank(walletBalance.getSellerCode()) && !StringUtils.isBlank(walletBalance.getUserAccountCode())) {
+		if (!StringUtils.isBlank(walletBalance.getSellerCode())
+				&& !StringUtils.isBlank(walletBalance.getUserAccountCode())) {
 
 			try {
 				if (walletBalance.isAmountWithTax()) {
-					return walletReservationService.getOpenBalanceWithoutTax(provider, walletBalance.getSellerCode(), walletBalance.getUserAccountCode(),
-							walletBalance.getStartDate(), walletBalance.getEndDate());
+					return walletReservationService.getOpenBalanceWithoutTax(provider, walletBalance.getSellerCode(),
+							walletBalance.getUserAccountCode(), walletBalance.getStartDate(),
+							walletBalance.getEndDate());
 				} else {
-					return walletReservationService.getOpenBalanceWithTax(provider, walletBalance.getSellerCode(), walletBalance.getUserAccountCode(),
-							walletBalance.getStartDate(), walletBalance.getEndDate());
+					return walletReservationService.getOpenBalanceWithTax(provider, walletBalance.getSellerCode(),
+							walletBalance.getUserAccountCode(), walletBalance.getStartDate(),
+							walletBalance.getEndDate());
 				}
 			} catch (BusinessException e) {
 				throw new MeveoApiException(e.getMessage());
@@ -186,13 +198,18 @@ public class WalletApi extends BaseApi {
 
 	public Long createReservation(WalletReservationDto walletReservation, Provider provider) throws MeveoApiException {
 
-		if (!StringUtils.isBlank(walletReservation.getSellerCode()) && !StringUtils.isBlank(walletReservation.getOfferCode())
-				&& !StringUtils.isBlank(walletReservation.getUserAccountCode()) && walletReservation.getSubscriptionDate() != null && walletReservation.getCreditLimit() != null) {
+		if (!StringUtils.isBlank(walletReservation.getSellerCode())
+				&& !StringUtils.isBlank(walletReservation.getOfferCode())
+				&& !StringUtils.isBlank(walletReservation.getUserAccountCode())
+				&& walletReservation.getSubscriptionDate() != null && walletReservation.getCreditLimit() != null) {
 
 			try {
-				return reservationService.createReservation(provider, walletReservation.getSellerCode(), walletReservation.getOfferCode(), walletReservation.getUserAccountCode(),
-						walletReservation.getSubscriptionDate(), walletReservation.getExpirationDate(), walletReservation.getCreditLimit(), walletReservation.getParam1(),
-						walletReservation.getParam2(), walletReservation.getParam3(), walletReservation.isAmountWithTax());
+				return reservationService.createReservation(provider, walletReservation.getSellerCode(),
+						walletReservation.getOfferCode(), walletReservation.getUserAccountCode(),
+						walletReservation.getSubscriptionDate(), walletReservation.getExpirationDate(),
+						walletReservation.getCreditLimit(), walletReservation.getParam1(),
+						walletReservation.getParam2(), walletReservation.getParam3(),
+						walletReservation.isAmountWithTax());
 			} catch (BusinessException e) {
 				throw new MeveoApiException(e.getMessage());
 			}
@@ -228,13 +245,18 @@ public class WalletApi extends BaseApi {
 	}
 
 	public void updateReservation(WalletReservationDto walletReservation, Provider provider) throws MeveoApiException {
-		if (!StringUtils.isBlank(walletReservation.getSellerCode()) && !StringUtils.isBlank(walletReservation.getOfferCode())
-				&& !StringUtils.isBlank(walletReservation.getUserAccountCode()) && walletReservation.getSubscriptionDate() != null && walletReservation.getCreditLimit() != null) {
+		if (!StringUtils.isBlank(walletReservation.getSellerCode())
+				&& !StringUtils.isBlank(walletReservation.getOfferCode())
+				&& !StringUtils.isBlank(walletReservation.getUserAccountCode())
+				&& walletReservation.getSubscriptionDate() != null && walletReservation.getCreditLimit() != null) {
 
 			try {
-				reservationService.updateReservation(walletReservation.getReservationId(), provider, walletReservation.getSellerCode(), walletReservation.getOfferCode(),
-						walletReservation.getUserAccountCode(), walletReservation.getSubscriptionDate(), walletReservation.getExpirationDate(), walletReservation.getCreditLimit(),
-						walletReservation.getParam1(), walletReservation.getParam2(), walletReservation.getParam3(), walletReservation.isAmountWithTax());
+				reservationService.updateReservation(walletReservation.getReservationId(), provider,
+						walletReservation.getSellerCode(), walletReservation.getOfferCode(),
+						walletReservation.getUserAccountCode(), walletReservation.getSubscriptionDate(),
+						walletReservation.getExpirationDate(), walletReservation.getCreditLimit(),
+						walletReservation.getParam1(), walletReservation.getParam2(), walletReservation.getParam3(),
+						walletReservation.isAmountWithTax());
 			} catch (BusinessException e) {
 				throw new MeveoApiException(e.getMessage());
 			}
@@ -278,7 +300,8 @@ public class WalletApi extends BaseApi {
 		if (reservation == null) {
 			throw new MeveoApiException("Reservation with id=" + reservationId + " does not exists.");
 		} else if (!reservation.getProvider().getCode().equals(provider.getCode())) {
-			throw new MeveoApiException("Reservation with id=" + reservationId + " does not belong to current provider.");
+			throw new MeveoApiException("Reservation with id=" + reservationId
+					+ " does not belong to current provider.");
 		}
 
 		try {
@@ -288,14 +311,17 @@ public class WalletApi extends BaseApi {
 		}
 	}
 
-	public BigDecimal confirmReservation(WalletReservationDto walletReservation, Provider provider) throws MeveoApiException {
-		if (walletReservation.getReservationId() != null && !StringUtils.isBlank(walletReservation.getSellerCode()) && !StringUtils.isBlank(walletReservation.getOfferCode())
+	public BigDecimal confirmReservation(WalletReservationDto walletReservation, Provider provider)
+			throws MeveoApiException {
+		if (walletReservation.getReservationId() != null && !StringUtils.isBlank(walletReservation.getSellerCode())
+				&& !StringUtils.isBlank(walletReservation.getOfferCode())
 				&& walletReservation.getSubscriptionDate() != null && walletReservation.getCreditLimit() != null) {
 
 			try {
-				return reservationService.confirmReservation(walletReservation.getReservationId(), provider, walletReservation.getSellerCode(), walletReservation.getOfferCode(),
-						walletReservation.getSubscriptionDate(), walletReservation.getTerminationDate(), walletReservation.getParam1(), walletReservation.getParam2(),
-						walletReservation.getParam3());
+				return reservationService.confirmReservation(walletReservation.getReservationId(), provider,
+						walletReservation.getSellerCode(), walletReservation.getOfferCode(),
+						walletReservation.getSubscriptionDate(), walletReservation.getTerminationDate(),
+						walletReservation.getParam1(), walletReservation.getParam2(), walletReservation.getParam3());
 			} catch (BusinessException e) {
 				throw new MeveoApiException(e.getMessage());
 			}
@@ -332,8 +358,10 @@ public class WalletApi extends BaseApi {
 	}
 
 	public void createOperation(WalletOperationDto postData, User currentUser) throws MeveoApiException {
-		if (!StringUtils.isBlank(postData.getCode()) && !StringUtils.isBlank(postData.getDescription()) && !StringUtils.isBlank(postData.getUserAccount())
-				&& !StringUtils.isBlank(postData.getChargeInstance()) && !StringUtils.isBlank(postData.getSubscription()) && !StringUtils.isBlank(postData.getSeller())) {
+		if (!StringUtils.isBlank(postData.getCode()) && !StringUtils.isBlank(postData.getDescription())
+				&& !StringUtils.isBlank(postData.getUserAccount())
+				&& !StringUtils.isBlank(postData.getChargeInstance())
+				&& !StringUtils.isBlank(postData.getSubscription()) && !StringUtils.isBlank(postData.getSeller())) {
 			Provider provider = currentUser.getProvider();
 
 			UserAccount userAccount = userAccountService.findByCode(postData.getUserAccount(), provider);
@@ -366,7 +394,8 @@ public class WalletApi extends BaseApi {
 				walletTemplate.setCode(WalletTemplate.PRINCIPAL);
 			}
 
-			WalletInstance walletInstance = walletService.getWalletInstance(userAccount, walletTemplate, currentUser, provider);
+			WalletInstance walletInstance = walletService.getWalletInstance(userAccount, walletTemplate, currentUser,
+					provider);
 			if (walletInstance == null) {
 				throw new EntityDoesNotExistsException(WalletInstance.class, walletTemplate.getCode());
 			}
@@ -381,7 +410,8 @@ public class WalletApi extends BaseApi {
 				throw new EntityDoesNotExistsException(Currency.class, postData.getCurrency());
 			}
 
-			ChargeInstance chargeInstance = chargeInstanceService.findByCodeAndSubscription(postData.getChargeInstance(), subscription, provider);
+			ChargeInstance chargeInstance = chargeInstanceService.findByCodeAndSubscription(
+					postData.getChargeInstance(), subscription, provider);
 			if (chargeInstance == null) {
 				throw new EntityDoesNotExistsException(ChargeInstance.class, postData.getChargeInstance());
 			}
@@ -422,7 +452,8 @@ public class WalletApi extends BaseApi {
 			walletOperation.setStartDate(postData.getStartDate());
 			walletOperation.setEndDate(postData.getEndDate());
 			walletOperation.setSubscriptionDate(postData.getSubscriptionDate());
-			walletOperation.setOperationDate(postData.getOperationDate() == null ? new Date() : postData.getOperationDate());
+			walletOperation.setOperationDate(postData.getOperationDate() == null ? new Date() : postData
+					.getOperationDate());
 			if (chargeInstance.getInvoicingCalendar() != null) {
 				Calendar cal = chargeInstance.getInvoicingCalendar();
 				cal.setInitDate(postData.getSubscriptionDate());
@@ -454,7 +485,8 @@ public class WalletApi extends BaseApi {
 		}
 	}
 
-	public FindWalletOperationsResponseDto findOperations(FindWalletOperationsDto postData, Provider provider) throws MeveoApiException {
+	public FindWalletOperationsResponseDto findOperations(FindWalletOperationsDto postData, Provider provider)
+			throws MeveoApiException {
 		FindWalletOperationsResponseDto result = new FindWalletOperationsResponseDto();
 
 		if (!StringUtils.isBlank(postData.getUserAccount())) {
@@ -468,7 +500,8 @@ public class WalletApi extends BaseApi {
 				throw new EntityDoesNotExistsException(UserAccount.class, postData.getUserAccount());
 			}
 
-			if (!StringUtils.isBlank(postData.getWalletTemplate()) && !postData.getWalletTemplate().equals(WalletTemplate.PRINCIPAL)) {
+			if (!StringUtils.isBlank(postData.getWalletTemplate())
+					&& !postData.getWalletTemplate().equals(WalletTemplate.PRINCIPAL)) {
 				walletTemplate = walletTemplateService.findByCode(postData.getWalletTemplate(), provider);
 				if (walletTemplate == null) {
 					throw new EntityDoesNotExistsException(WalletTemplate.class, postData.getWalletTemplate());
@@ -485,8 +518,8 @@ public class WalletApi extends BaseApi {
 				}
 			}
 
-			List<WalletOperation> walletOperations = walletOperationService.findWalletOperation(status, walletTemplate, walletInstance, userAccount, Arrays.asList("wallet"),
-					provider, 1000);
+			List<WalletOperation> walletOperations = walletOperationService.findWalletOperation(status, walletTemplate,
+					walletInstance, userAccount, Arrays.asList("wallet"), provider, 1000);
 
 			for (WalletOperation wo : walletOperations) {
 				result.getWalletOperations().add(new WalletOperationDto(wo));
@@ -499,4 +532,36 @@ public class WalletApi extends BaseApi {
 			throw new MissingParameterException(getMissingParametersExceptionMessage());
 		}
 	}
+
+	public void create(WalletTemplateDto postData, User currentUser) throws MeveoApiException {
+		if (!StringUtils.isBlank(postData.getCode()) && !StringUtils.isBlank(postData.getDescription())) {
+			if (walletTemplateService.findByCode(postData.getCode(), currentUser.getProvider()) != null) {
+				throw new EntityAlreadyExistsException(WalletTemplate.class, postData.getCode());
+			}
+			
+			WalletTemplate wt = new WalletTemplate();
+			wt.setCode(postData.getCode());
+			wt.setDescription(postData.getDescription());
+			try {
+				wt.setWalletType(BillingWalletTypeEnum.valueOf(postData.getWalletType()));
+			} catch (IllegalArgumentException e) {
+				throw new InvalidEnumValue(BillingWalletTypeEnum.class.getName(), postData.getWalletType());
+			}
+			wt.setConsumptionAlertSet(postData.isConsumptionAlertSet());
+			wt.setFastRatingLevel(postData.getFastRatingLevel());
+			wt.setLowBalanceLevel(postData.getLowBalanceLevel());
+
+			walletTemplateService.create(wt, currentUser, currentUser.getProvider());
+		} else {
+			if (StringUtils.isBlank(postData.getCode())) {
+				missingParameters.add("code");
+			}
+			if (StringUtils.isBlank(postData.getDescription())) {
+				missingParameters.add("description");
+			}
+
+			throw new MissingParameterException(getMissingParametersExceptionMessage());
+		}
+	}
+
 }

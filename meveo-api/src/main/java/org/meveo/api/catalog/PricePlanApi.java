@@ -1,5 +1,8 @@
 package org.meveo.api.catalog;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
@@ -235,7 +238,7 @@ public class PricePlanApi extends BaseApi {
 			throw new MissingParameterException(getMissingParametersExceptionMessage());
 		}
 	}
-
+	
 	public PricePlanDto find(String pricePlanCode, Provider provider) throws MeveoApiException {
 		if (!StringUtils.isBlank(pricePlanCode)) {
 			PricePlanMatrix pricePlanMatrix = pricePlanMatrixService.findByCode(pricePlanCode, provider);
@@ -261,6 +264,26 @@ public class PricePlanApi extends BaseApi {
 			pricePlanMatrixService.remove(pricePlanMatrix);
 		} else {
 			missingParameters.add("code");
+
+			throw new MissingParameterException(getMissingParametersExceptionMessage());
+		}
+	}
+	
+	public List<PricePlanDto> list(String eventCode, Provider provider) throws MeveoApiException {
+		if (!StringUtils.isBlank(eventCode)) {
+			List<PricePlanMatrix> pricePlanMatrixes = pricePlanMatrixService.listByEventCode(eventCode, provider);
+			if (pricePlanMatrixes == null) {
+				throw new EntityDoesNotExistsException(PricePlanMatrix.class, eventCode);
+			}
+			
+			List<PricePlanDto> pricePlanDtos = new ArrayList<>();
+			for(PricePlanMatrix pricePlanMatrix : pricePlanMatrixes) {
+				pricePlanDtos.add(new PricePlanDto(pricePlanMatrix));
+			}
+			
+			return pricePlanDtos;
+		} else {
+			missingParameters.add("pricePlanCode");
 
 			throw new MissingParameterException(getMissingParametersExceptionMessage());
 		}

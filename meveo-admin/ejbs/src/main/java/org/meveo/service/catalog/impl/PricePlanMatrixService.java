@@ -494,8 +494,6 @@ public class PricePlanMatrixService extends PersistenceService<PricePlanMatrix> 
             updateNoCheck(pricePlan);
         }
     }
-    
-
 
     public PricePlanMatrix findByCode(String code, Provider provider) {
         QueryBuilder qb = new QueryBuilder(PricePlanMatrix.class, "m", null, provider);
@@ -530,4 +528,17 @@ public class PricePlanMatrixService extends PersistenceService<PricePlanMatrix> 
 			return null;
 		}
 	}
+    
+	@SuppressWarnings("unchecked")
+	public List<PricePlanMatrix> listByEventCode(String eventCode, Provider provider) {
+		QueryBuilder qb = new QueryBuilder(PricePlanMatrix.class, "m", null, provider);
+		qb.addCriterion("eventCode", "=", eventCode, true);
+
+		try {
+			return (List<PricePlanMatrix>) qb.getQuery(getEntityManager()).getResultList();
+		} catch (NoResultException e) {
+			return null;
+		}
+	}
+    
 }
