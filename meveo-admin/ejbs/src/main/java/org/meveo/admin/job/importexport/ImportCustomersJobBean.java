@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
@@ -65,7 +66,7 @@ public class ImportCustomersJobBean {
 	@Inject
 	private CustomerImportHistoService customerImportHistoService;
 
-	@Inject
+	@EJB
 	private CustomerImportService customerImportService;
 
 	@Inject
@@ -362,7 +363,7 @@ public class ImportCustomersJobBean {
 		CustomerAccount customerAccountTmp = null;
 
 		try {
-			//customerAccountTmp = customerAccountService.findByCode(custAcc.getCode(), currentUser.getProvider(), Arrays.asList("customer"));
+			customerAccountTmp = customerAccountService.findByCode(custAcc.getCode(), currentUser.getProvider(), Arrays.asList("customer"));
 		} catch (Exception e) {
 			log.error("failed to create customer account",e);
 		}
