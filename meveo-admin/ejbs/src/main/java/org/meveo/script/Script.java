@@ -4,22 +4,13 @@ import java.util.Map;
 import javax.naming.InitialContext;
 import org.meveo.commons.utils.ParamBean;
 
-/**
- * 
- * @author anasseh
- * @created 16.06.2015
- */
+
 
 public abstract class Script  implements ScriptInterface{
 
 	@Override
-	public abstract void setup(Map<String, Object> initContext);
-	
-	@Override
 	public abstract void execute(Map<String, Object> methodContext);
 
-	@Override
-	public abstract void teardown(Map<String, Object> endContext);
 
 	public  Object getServiceInterface(String serviceInterfaceName){
 		try {

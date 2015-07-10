@@ -34,10 +34,8 @@ public class ScriptingJob extends Job {
 
         String scriptCode = jobInstance.getStringCustomValue("ScriptingJob_scriptCode");
     	ScriptInterface scriptInterface = javaCompilerManager.getAllScriptInterfaces().get(scriptCode);
-    	scriptInterface.setup(null);
     	scriptInterface.execute(null);
-    	scriptInterface.teardown(null);
-       
+    	
     }
 
     @Override

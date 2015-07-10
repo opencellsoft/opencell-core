@@ -74,9 +74,9 @@ public class JavaCompilerManager  {
 	public void compileScript(String scriptInstanceCode){
 		ScriptInstance scriptInstance = scriptInstanceService.findByCode(scriptInstanceCode);
 		if(scriptInstance == null){
-			log.error("compileScript  cannot found scriptInstance by code:"+scriptInstanceCode);
+			log.error("compileScript cannot find scriptInstance by code:"+scriptInstanceCode);
 		}else{
-		compileScript(scriptInstance);
+			compileScript(scriptInstance);
 		}
 	}
 

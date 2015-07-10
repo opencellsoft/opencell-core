@@ -48,21 +48,6 @@
 				outcome="roles"
 				rendered="#{identity.hasPermission('administration','administrationVisualization')}" />
 
-<!--
-			<p:submenu id="categories" label="#{messages['menu.invoicing']}"
-				rendered="#{identity.hasPermission('administration','administrationVisualization') or identity.hasPermission('catalog','catalogVisualization')}">
-	
-
-			</p:submenu>
-
-			
-			<rich:menuItem id="messages" rendered="#{identity.hasPermission('administration','administrationVisualization')}">
-				<h:link outcome="messages">
-					<h:outputText value="#{messages['menu.messages']}" />
-				</h:link>
-			</rich:menuItem>
-			-->
-
 			<p:submenu id="provider" label="#{messages['menu.provider']}"
 				rendered="#{identity.hasPermission('administration','administrationVisualization')}">
 
@@ -163,112 +148,10 @@
 
                 <p:menuitem id="export" outcome="export" value="#{messages['menu.export']}" />
                 <p:menuitem id="import" outcome="import" value="#{messages['menu.import']}" />
-                 <p:menuitem id="scriptInstances" outcome="scriptInstances" value="#{messages['menu.scriptInstances']}" />
 
             </p:submenu>
            <p:menuitem id="MeveoInstances" outcome="meveoInstances"
 				value="#{messages['menu.meveoInstance']}" />
-            <!--
-			<rich:menuGroup id="history" label="#{messages['menu.history']}"
-				rendered="#{identity.hasPermission('administration','administrationVisualization')}">
-				<rich:menuItem id="accountImportHisto">
-					<h:link outcome="accountImportHisto">
-						<h:outputText value="#{messages['menu.accountImportHisto']}" />
-					</h:link>
-				</rich:menuItem>
-				<rich:menuItem id="customerImportHisto">
-					<h:link outcome="customerImportHisto">
-						<h:outputText value="#{messages['menu.customerImportHisto']}" />
-					</h:link>
-				</rich:menuItem>
-				<rich:menuItem id="subscriptionImportHisto">
-					<h:link outcome="subscriptionImportHisto">
-						<h:outputText value="#{messages['menu.subscriptionImportHisto']}" />
-					</h:link>
-				</rich:menuItem>
-				<rich:menuItem id="dunningHisto">
-					<h:link outcome="dunningHisto">
-						<h:outputText value="#{messages['menu.dunningHisto']}" />
-					</h:link>
-				</rich:menuItem>
-				<rich:menuItem id="crmRejectedFiles">
-					<h:link outcome="crmRejectedFiles">
-						<h:outputText value="#{messages['menu.crmRejectedFiles']}" />
-					</h:link>
-				</rich:menuItem>
-			</rich:menuGroup>
-
-			<rich:menuSeparator></rich:menuSeparator>
-
-			<rich:menuGroup label="#{messages['menu.vertina']}" rendered="#{identity.hasPermission('administration','administrationVisualization')}">
-
-				<rich:menuItem id="vertina">
-					<h:link outcome="vertinaInputs">
-						<h:outputText value="#{messages['menu.vertinaInputs']}" />
-					</h:link>
-				</rich:menuItem>
-				<rich:menuItem id="vertinaManagement">
-					<h:link outcome="vertinaManagement">
-						<h:outputText value="#{messages['menu.management']}" />
-					</h:link>
-				</rich:menuItem>
-				<rich:menuItem id="vertinaConfigurations">
-					<h:link outcome="vertinaConfigurations">
-						<h:outputText value="#{messages['vertinaConfiguration.title']}" />
-					</h:link>
-				</rich:menuItem>
-			</rich:menuGroup>
-
-			<rich:menuSeparator></rich:menuSeparator>
-
-			<rich:menuGroup label="#{messages['menu.oudaya']}" rendered="#{identity.hasPermission('administration','administrationVisualization')}">
-				<rich:menuItem id="oudaya">
-					<h:link outcome="oudayaInputs">
-						<h:outputText value="#{messages['menu.oudayaInputs']}" />
-					</h:link>
-				</rich:menuItem>
-
-				<rich:menuItem id="oudayaConfigurations">
-					<h:link outcome="oudayaConfigurations">
-						<h:outputText value="#{messages['oudayaConfiguration.title']}" />
-					</h:link>
-				</rich:menuItem>
-			</rich:menuGroup>
-
-			<rich:menuSeparator></rich:menuSeparator>
-
-			<rich:menuGroup id="grieg" label="#{messages['menu.grieg']}" rendered="#{identity.hasPermission('administration','administrationVisualization')}">
-				<rich:menuItem id="griegDunningInputs">
-					<h:link outcome="griegDunningInputs">
-						<h:outputText value="#{messages['menu.griegDunningInputs']}" />
-					</h:link>
-				</rich:menuItem>
-				<rich:menuItem id="griegConverterInputs">
-					<h:link outcome="griegConverterInputs">
-						<h:outputText value="#{messages['menu.griegConverterInputs']}" />
-					</h:link>
-				</rich:menuItem>
-				<rich:menuItem id="griegValidatedInputs">
-					<h:link outcome="griegValidatedInputs">
-						<h:outputText value="#{messages['menu.griegValidatedInputs']}" />
-					</h:link>
-				</rich:menuItem>
-			</rich:menuGroup>
-
-			<rich:menuSeparator></rich:menuSeparator>
-			<rich:menuGroup id="bayad" label="#{messages['menu.bayad']}" rendered="#{identity.hasPermission('administration','administrationVisualization')}">
-				<rich:menuItem id="bayadInvoicingInputs">
-					<h:link outcome="bayadInvoicingInputs">
-						<h:outputText value="#{messages['menu.bayadInvoicingInputs']}" />
-					</h:link>
-				</rich:menuItem>
-				<rich:menuItem id="bayadDunningInputs">
-					<h:link outcome="bayadDunningInputs">
-						<h:outputText value="#{messages['menu.bayadDunningInputs']}" />
-					</h:link>
-				</rich:menuItem>
-			</rich:menuGroup>
-			-->
 		</p:submenu>
 
 		<p:submenu id="catalog" label="#{messages['menu.catalog']}"
@@ -307,10 +190,6 @@
 				outcome="triggeredEdrTemplates"
 				value="#{messages['menu.triggeredEdrTemplates']}" />
 
-			<!-- <p:menuitem id="serviceParameterTemplates"
-				outcome="serviceParameterTemplates"
-				value="#{messages['menu.serviceParameterTemplates']}" /> -->
-
 		</p:submenu>
 
 		<p:submenu id="crm" label="#{messages['menu.crm']}"
@@ -345,129 +224,20 @@
 			<p:menuitem id="accessPoints"
 				rendered="#{identity.hasPermission('account','accountVisualization')}"
 				outcome="access" value="#{messages['menu.accessPoints']}" />
-
-			<!--
-			<rich:menuItem id="syntheseClient"
-				rendered="#{identity.hasPermission('account','accountVisualization') or identity.hasPermission('customerSummary','customerSummaryVisualization')}">
-				<h:link outcome="syntheseClient">
-					<h:outputText value="#{messages['menu.syntheseClient']}" />
-				</h:link>
-			</rich:menuItem>
-			-->
 		</p:submenu>
 
-		<!--
-		<rich:dropDownMenu value="#{messages['menu.resource']}" rendered="#{identity.hasPermission('resource','resourceManagement')}">
-
-			<rich:menuItem id="offerInstances">
-				<h:link outcome="offerInstances">
-					<h:outputText value="#{messages['menu.offerInstances']}" />
-				</h:link>
-			</rich:menuItem>
-			<rich:menuItem id="serviceInstances">
-				<h:link outcome="serviceInstances">
-					<h:outputText value="#{messages['menu.serviceInstances']}" />
-				</h:link>
-			</rich:menuItem>
-			<rich:menuItem id="serviceParameterInstances">
-				<h:link outcome="serviceParameterInstances">
-					<h:outputText value="#{messages['menu.serviceParameterInstances']}" />
-				</h:link>
-			</rich:menuItem>
-
-		</rich:dropDownMenu>
-		-->
-
-		<!--
-		<rich:dropDownMenu id="ratingDM" value="#{messages['menu.rating']}" rendered="#{identity.hasPermission('billing','billingManagement')}">
-
-			<rich:menuItem id="usageTypes">
-				<h:link outcome="usageTypes">
-					<h:outputText value="#{messages['menu.usageTypes']}" />
-				</h:link>
-			</rich:menuItem>
-			<rich:menuItem id="transactions">
-				<h:link outcome="transactions">
-					<h:outputText value="#{messages['menu.transactions']}" />
-				</h:link>
-			</rich:menuItem>
-			<rich:menuItem id="transactionsImport">
-				<h:link outcome="transactionsImport">
-					<h:outputText value="#{messages['menu.transactionsImport']}" />
-				</h:link>
-			</rich:menuItem>
-			<rich:menuItem id="matrixes">
-				<h:link outcome="matrixes">
-					<h:outputText value="#{messages['menu.matrixes']}" />
-				</h:link>
-			</rich:menuItem>
-			<rich:menuItem id="matrixEntries">
-				<h:link outcome="matrixEntries">
-					<h:outputText value="#{messages['menu.matrixEntries']}" />
-				</h:link>
-			</rich:menuItem>
-		</rich:dropDownMenu>
-		-->
-
-		<!--
-		<rich:dropDownMenu rendered="#{identity.hasPermission('billing','billingManagement') or identity.hasPermission('billing','billingVisualization')}">
-			<f:facet name="label">
-				<h:panelGrid>
-					<h:outputText value="#{messages['menu.medina']}" />
-				</h:panelGrid>
-			</f:facet>
-
-			<rich:menuItem id="access">
-				<h:link outcome="access">
-					<h:outputText value="#{messages['menu.access']}" />
-				</h:link>
-			</rich:menuItem>
-
-			<rich:menuItem id="zonningPlans">
-				<h:link outcome="zonningPlans">
-					<h:outputText value="#{messages['menu.zoning']}" />
-				</h:link>
-			</rich:menuItem>
-
-			<rich:menuItem id="timePlans">
-				<h:link outcome="timePlans">
-					<h:outputText value="#{messages['menu.time']}" />
-				</h:link>
-			</rich:menuItem>
-
-			<rich:menuItem id="numberingPlans">
-				<h:link outcome="numberingPlans">
-					<h:outputText value="#{messages['menu.numbering']}" />
-				</h:link>
-			</rich:menuItem>
-
-			<rich:menuItem id="priceCodes">
-				<h:link outcome="priceCodes">
-					<h:outputText value="#{messages['menu.priceCode']}" />
-				</h:link>
-			</rich:menuItem>
-
-			<rich:menuItem id="usagePricePlanItems" rendered="#{identity.hasPermission('catalog','catalogVisualization')}">
-				<h:link outcome="usagePricePlanItems">
-					<h:outputText value="#{messages['menu.usagePricePlanItem']}" />
-				</h:link>
-			</rich:menuItem>
-
-			<rich:menuItem id="usageDiscountPlanItems" rendered="#{identity.hasPermission('catalog','catalogVisualization')}">
-				<h:link outcome="usageDiscountPlanItems">
-					<h:outputText value="#{messages['menu.usageDiscountPlanItem']}" />
-				</h:link>
-			</rich:menuItem>
-		</rich:dropDownMenu>
-		-->
+		<p:submenu id="mediation" label="#{messages['menu.mediation']}"
+			rendered="#{identity.hasPermission('billing','billingVisualization')}">
+            <p:menuitem id="scriptInstances" outcome="scriptInstances" value="#{messages['menu.scriptInstances']}" />
+			<p:menuitem id="edr" outcome="edr" value="#{messages['menu.edr']}" />
+		</p:submenu>
 
 		<p:submenu id="rating" label="#{messages['menu.rating']}"
-			rendered="#{identity.hasPermission('catalog','catalogVisualization')}">
+			rendered="#{identity.hasPermission('billing','billingVisualization')}">
 			<p:menuitem id="pricePlanMatrixes" outcome="pricePlanMatrixes"
 				value="#{messages['menu.pricePlanMatrixes']}" />
 			<p:menuitem id="discountPlans" outcome="discountPlans"
 				value="#{messages['menu.discountPlans']}" />
-			<p:menuitem id="edr" outcome="edr" value="#{messages['menu.edr']}" />
 			<p:menuitem id="walletOperations" outcome="walletOperations"
 				value="#{messages['menu.walletOperations']}" />
 		</p:submenu>
@@ -485,116 +255,6 @@
 				value="#{messages['menu.billingRuns']}" />
 
 		</p:submenu>
-		<!-- 		<p:submenu id="billing" -->
-		<!-- 			rendered="#{identity.hasPermission('billing','billingVisualization')}" -->
-		<!-- 			label="#{messages['menu.billing']}"> -->
-
-		<!-- 
-			<p:submenu id="crmConnectors"
-				label="#{messages['menu.crm.connector']}">
-
-				<p:menuitem id="customerImportHisto" outcome="customerImportHisto"
-					value="#{messages['menu.customerImportHisto']}" />
-
-				<p:menuitem id="accountImportHisto" outcome="accountImportHisto"
-					value="#{messages['menu.accountImportHisto']}" />
-
-				<p:menuitem id="subscriptionImportHisto"
-					outcome="subscriptionImportHisto"
-					value="#{messages['menu.subscriptionImportHisto']}" />
-
-			</p:submenu>
- 			-->
-
-		<!--
-			<rich:menuItem id="invoices" rendered="#{identity.hasPermission('billing','billingVisualization')}">
-				<h:link outcome="invoices">
-					<h:outputText value="#{messages['menu.invoices']}" />
-				</h:link>
-			</rich:menuItem>
-			<rich:menuItem id="invoiceTasks" rendered="#{identity.hasPermission('billing','billingVisualization')}">
-				<h:link outcome="invoiceTasks">
-					<h:outputText value="#{messages['menu.invoiceTasks']}" />
-				</h:link>
-			</rich:menuItem>
-			<rich:menuItem id="wallets" rendered="#{identity.hasPermission('billing','billingVisualization')}">
-				<h:link outcome="wallets">
-					<h:outputText value="#{messages['menu.wallets']}" />
-				</h:link>
-			</rich:menuItem>
-			-->
-
-		<!-- <p:submenu id="rating" label="#{messages['menu.rating']}"
-				rendered="#{identity.hasPermission('billing','billingVisualization')}">
-
-				<p:menuitem id="recurringRating" outcome="recurringRating"
-					value="#{messages['menu.globalExecution']}" />
-
-				<p:menuitem id="exceptionalRating" outcome="exceptionalRating"
-					value="#{messages['menu.exceptionalExecution']}" />
-
-				<p:menuitem id="ratingRuns" outcome="ratingRuns"
-					value="#{messages['menu.history']}" />
-
-			</p:submenu> -->
-
-
-		<!--
-			<p:submenu id="reports" label="#{messages['menu.reports']}"
-				rendered="#{identity.hasPermission('billing','billingVisualization')}">
-
-				<p:menuitem id="reportsExecution"
-					rendered="#{identity.hasPermission('reporting','reportingVisualization')}"
-					outcome="reports" value="#{messages['menu.reportsExecution']}" />
-
-				<p:menuitem id="reportsHistory"
-					rendered="#{identity.hasPermission('billing','billingVisualization')}"
-					outcome="reportsHistory" value="#{messages['menu.history']}" />
-
-				<p:menuitem id="documents"
-					rendered="#{identity.hasPermission('reporting','reportingVisualization')}"
-					outcome="documents" value="#{messages['menu.documents']}" />
-
-			</p:submenu> -->
-
-		<!-- 			<p:menuitem id="timers" outcome="timers" -->
-		<!-- 				value="#{messages['menu.activeTimers']}" /> -->
-
-		<!--
-			<rich:dropDownMenu value="#{messages['menu.payments']}" rendered="#{identity.hasPermission('billing','billingManagement')}">
-				<f:facet name="label">
-					<h:panelGrid>
-						<h:outputText value="#{messages['menu.medina']}" />
-					</h:panelGrid>
-				</f:facet>
-
-				<rich:menuItem id="dunningPlan">
-					<h:link outcome="dunningPlan">
-						<h:outputText value="#{messages['menu.dunningPlan']}" />
-					</h:link>
-				</rich:menuItem>
-
-				<rich:menuItem id="matchingCode">
-					<h:link outcome="matchingCodes">
-						<h:outputText value="#{messages['menu.matchingCode']}" />
-					</h:link>
-				</rich:menuItem>
-
-				<rich:menuItem id="ddrequestLot">
-					<h:link outcome="ddrequestLot">
-						<h:outputText value="#{messages['menu.ddrequestLot']}" />
-					</h:link>
-				</rich:menuItem>
-
-				<rich:menuItem id="ddrequestLotOps">
-					<h:link outcome="ddrequestLotOps">
-						<h:outputText value="#{messages['menu.ddrequestLotOp']}" />
-					</h:link>
-				</rich:menuItem>
-			</rich:dropDownMenu>
-			-->
-
-		<!-- 		</p:submenu> -->
 
 		<p:submenu id="payment" label="#{messages['menu.payments']}"
 			rendered="#{identity.hasPermission('billing','billingManagement')}">
@@ -606,8 +266,6 @@
 			<p:menuitem id="ddrequestLots" outcome="ddrequestLots"
 				value="#{messages['menu.ddrequestLot']}" />
 		</p:submenu>
-
-
 
 
 		<p:submenu id="reporting" label="#{messages['menu.reporting']}"
@@ -654,19 +312,5 @@
                 rendered="#{identity.hasPermission('administration','administrationVisualization')}"
                 outcome="caches" value="#{messages['menu.cacheInfo']}" />
 		</p:submenu>
-
-		<!-- 
-		<rich:menuItem id="paymentTerms" rendered="#{identity.hasPermission('billing','billingVisualization')}">
-			<h:link outcome="paymentTerms">
-				<h:outputText value="#{messages['menu.paymentTerm']}" />
-			</h:link>
-		</rich:menuItem>
-
-		<rich:menuItem id="ponctualChargeInstances" rendered="#{identity.hasPermission('billing','billingVisualization')}">
-			<h:link outcome="ponctualChargeInstances">
-				<h:outputText value="#{messages['menu.ponctualChargeInstances']}" />
-			</h:link>
-		</rich:menuItem>
-		-->
 	</p:menubar>
 </h:form>
