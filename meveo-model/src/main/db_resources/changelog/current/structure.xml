@@ -790,5 +790,17 @@
      <changeSet id="797_20150706" author="Mbarek"> 
      <sql>update CRM_CUSTOM_FIELD_INST set PROVIDER_ID=null</sql> 
     </changeSet>
+    
+    <changeSet id="#941_20150710" author="smichea">
+		<addColumn tableName="RATING_EDR">
+			<column name="HEADER_EDR_ID" type="BIGINT">
+				<constraints nullable="true" />
+			</column>
+	    </addColumn>
+		<addForeignKeyConstraint baseColumnNames="HEADER_EDR_ID"
+			baseTableName="RATING_EDR" constraintName="fk_headeredrid"
+			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="RATING_EDR" />
+    </changeSet>
    
 </databaseChangeLog>

@@ -151,6 +151,10 @@ public class EDR extends BaseEntity {
 	
 	@Column(name = "ACCESS_CODE")
 	private String accessCode;
+	
+	@Column(name = "HEADER_EDR_ID")
+	@ManyToOne()
+	private EDR headerEDR;
 
 	public Subscription getSubscription() {
 		return subscription;
@@ -386,6 +390,14 @@ public class EDR extends BaseEntity {
 		this.accessCode = accessCode;
 	}
 
+	public EDR getHeaderEDR() {
+		return headerEDR;
+	}
+
+	public void setHeaderEDR(EDR headerEDR) {
+		this.headerEDR = headerEDR;
+	}
+
 	@Override
 	public String toString() {
 		return "EDR [subscription=" + subscription + ", originBatch="
@@ -401,6 +413,7 @@ public class EDR extends BaseEntity {
 				+ ", dateParam5=" + dateParam5+ ", decimalParam1=" + decimalParam1
 				+ ", dateParam2=" + dateParam2+ ", decimalParam3=" + decimalParam3
 				+ ", dateParam4=" + dateParam4+ ", decimalParam5=" + decimalParam5
+				+ ", headerEDR=" + headerEDR==null?"null":headerEDR.getId()
 				+ ", status=" + status + ", rejectReason=" + rejectReason
 				+ ", created=" + created + ", lastUpdate=" + lastUpdate + "]";
 	}
