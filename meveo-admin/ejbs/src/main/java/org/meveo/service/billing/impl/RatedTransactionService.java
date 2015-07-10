@@ -334,7 +334,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 
 						if (tax.getPercent().compareTo(BigDecimal.ZERO) == 0 || exoneratedFromTaxes) {
 							invoiceAgregateTax.addAmountWithoutTax(invoiceAgregateSubcat.getAmountWithoutTax());
-							invoiceAgregateTax.addAmountTax(invoiceAgregateSubcat.getAmountWithoutTax().multiply(tax.getPercent()).divide(new BigDecimal("100")));
+							invoiceAgregateTax.setAmountTax(BigDecimal.ZERO);
 							//invoiceAgregateTax.addAmountWithTax(invoiceAgregateSubcat.getAmountWithTax());
 
 							invoiceAgregateTax.setTaxPercent(BigDecimal.ZERO);
