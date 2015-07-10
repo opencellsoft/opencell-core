@@ -119,6 +119,14 @@ public class AccessService extends PersistenceService<Access> {
         super.remove(access);
         cdrEdrProcessingCacheContainerProvider.removeAccessFromCache(access);
     }
+    
+    @Override
+    public void remove(Long id) {
+    	Access e = findById(id);
+        if (e != null) {
+            remove(e);
+        }
+    }
 
     @Override
     public Access disable(Access access) {

@@ -421,7 +421,7 @@ public class UsageRatingService {
 		WalletOperation walletOperation = new WalletOperation();
 		if (edr.getSubscription() == null) {
 			edr.setStatus(EDRStatusEnum.REJECTED);
-			edr.setRejectReason("Subscription is null");
+			edr.setRejectReason("NULL_SUBSCRIPTION");
 		} else {
 			boolean edrIsRated = false;
 

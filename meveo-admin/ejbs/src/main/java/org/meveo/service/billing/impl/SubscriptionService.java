@@ -235,7 +235,7 @@ public class SubscriptionService extends BusinessService<Subscription> {
 		}
 		for (Access access : subscription.getAccessPoints()) {
 			access.setEndDate(terminationDate);
-			accessService.update(access);
+			accessService.update(access, user);
 		}
 		if (terminationReason != null) {
 			subscription.setSubscriptionTerminationReason(terminationReason);
