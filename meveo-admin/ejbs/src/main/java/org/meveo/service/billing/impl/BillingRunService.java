@@ -328,6 +328,11 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 		return amount;
 	}
 
+	public void cancel(BillingRun billingRun) {
+		billingRun.setStatus(BillingRunStatusEnum.CANCELED);
+		update(billingRun);
+	}
+	
 	@SuppressWarnings("unchecked")
 	public void cleanBillingRun(BillingRun billingRun) {
 		Query queryTrans = getEntityManager()
