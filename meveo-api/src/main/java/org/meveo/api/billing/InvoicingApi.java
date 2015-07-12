@@ -5,8 +5,12 @@ import java.util.List;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.jws.WebMethod;
+import javax.jws.WebParam;
 
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.BaseApi;
+import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.account.BillingAccountDto;
 import org.meveo.api.dto.account.BillingAccountsDto;
 import org.meveo.api.dto.billing.BillingRunDto;
@@ -22,6 +26,8 @@ import org.meveo.model.billing.BillingCycle;
 import org.meveo.model.billing.BillingProcessTypesEnum;
 import org.meveo.model.billing.BillingRun;
 import org.meveo.model.billing.BillingRunStatusEnum;
+import org.meveo.model.billing.PostInvoicingReportsDTO;
+import org.meveo.model.billing.PreInvoicingReportsDTO;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.billing.impl.BillingCycleService;
@@ -116,7 +122,7 @@ public class InvoicingApi extends BaseApi {
 	
 	
 	
-	private BillingRun getBillingRun(Long billingRunId) throws MissingParameterException, BusinessApiException, EntityDoesNotExistsException{
+	private BillingRun getBillingRun(Long billingRunId) throws MissingParameterException, EntityDoesNotExistsException, BusinessApiException{
 		if(billingRunId == null || billingRunId.longValue() ==0){
 			missingParameters.add("billingRunId");
 			throw new MissingParameterException(getMissingParametersExceptionMessage());
@@ -132,4 +138,29 @@ public class InvoicingApi extends BaseApi {
 		}
 		return billingRunEntity;
 	}
+	
+	
+	public PreInvoicingReportsDTO getPreInvoicingReport(Long billingRunId) throws MissingParameterException, BusinessApiException, EntityDoesNotExistsException, BusinessException{
+		BillingRun billingRun  = getBillingRun( billingRunId);
+		PreInvoicingReportsDTO preInvoicingReportsDTO = billingRunService.generatePreInvoicingReports(billingRun);
+		return preInvoicingReportsDTO;
+	}
+	
+	public PostInvoicingReportsDTO getPostInvoicingReport(Long billingRunId) throws MissingParameterException, BusinessApiException, EntityDoesNotExistsException, BusinessException{
+		BillingRun billingRun  = getBillingRun( billingRunId);
+		PostInvoicingReportsDTO postInvoicingReportsDTO = billingRunService.generatePostInvoicingReports(billingRun);
+		return postInvoicingReportsDTO;
+	}
+	
+	public void validateBillingRun(Long billingRunId,User currentUser) throws MissingParameterException, EntityDoesNotExistsException, BusinessApiException{
+		BillingRun billingRun  = getBillingRun( billingRunId);
+		billingRunService.validate(billingRun, currentUser);
+	}
+	
+	public void cancelBillingRun(Long billingRunId,User currentUser) throws MissingParameterException, EntityDoesNotExistsException, BusinessApiException{
+		BillingRun billingRun  = getBillingRun( billingRunId);
+		billingRunService.cancel(billingRun);
+		billingRunService.cleanBillingRun(billingRun);
+	}
+	
 }

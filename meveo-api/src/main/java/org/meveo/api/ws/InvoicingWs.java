@@ -8,6 +8,8 @@ import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.billing.CreateBillingRunDto;
 import org.meveo.api.dto.response.billing.GetBillingAccountListInRunResponseDto;
 import org.meveo.api.dto.response.billing.GetBillingRunInfoResponseDto;
+import org.meveo.api.dto.response.billing.GetPostInvoicingReportsResponseDto;
+import org.meveo.api.dto.response.billing.GetPreInvoicingReportsResponseDto;
 
 /**
  * @author anasseh
@@ -21,24 +23,24 @@ public interface InvoicingWs extends IBaseWs {
 	ActionStatus createBillingRun(@WebParam(name = "createBillingRunRequest") CreateBillingRunDto createBillingRunDto);
 	
 	@WebMethod
-	GetBillingRunInfoResponseDto getBillingRunInfo(@WebParam(name = "getBillingRunInfoRequest") Long billingRunId);
+	GetBillingRunInfoResponseDto getBillingRunInfo(@WebParam(name = "billingRunId") Long billingRunId);
 	
 	@WebMethod
-	GetBillingAccountListInRunResponseDto getBillingAccountListInRun(@WebParam(name = "getBillingAccountListInRunRequest") Long billingRunId);
+	GetBillingAccountListInRunResponseDto getBillingAccountListInRun(@WebParam(name = "billingRunId") Long billingRunId);
 	
-//	@WebMethod
-//	ActionStatus getPreinvoicingReport(@WebParam(name = "getPreinvoicingReportRequest") long billingRunId);
-//	
-//	@WebMethod
-//	ActionStatus getPostInvoicingReport(@WebParam(name = "getPostInvoicingReportRunRequest") long billingRunId);
-//	
+    @WebMethod
+    GetPreInvoicingReportsResponseDto getPreInvoicingReport(@WebParam(name = "billingRunId") Long billingRunId);
+	
+	@WebMethod
+	GetPostInvoicingReportsResponseDto getPostInvoicingReport(@WebParam(name = "billingRunId") Long billingRunId);
+	
 //	@WebMethod
 //	ActionStatus excludeBillingAccountListFromRun(@WebParam(name = "excludeBillingAccountListFromRunRequest") ExcludeBillingAccountListFromRunDto excludeBillingAccountListFromRunDto);
 //
-//	@WebMethod
-//	ActionStatus validateBillingRun(@WebParam(name = "validateBillingRunRequest") long billingRunId);
-//	
-//	@WebMethod
-//	ActionStatus cancelBillingRun(@WebParam(name = "cancelBillingRunRequest") long billingRunId);
-//		
+	@WebMethod
+	ActionStatus validateBillingRun(@WebParam(name = "billingRunId") Long billingRunId);
+	
+	@WebMethod
+	ActionStatus cancelBillingRun(@WebParam(name = "billingRunId") Long billingRunId);
+		
 }

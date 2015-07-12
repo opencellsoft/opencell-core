@@ -1,7 +1,5 @@
 package org.meveo.api.rest.invoice;
 
-import javax.jws.WebMethod;
-import javax.jws.WebParam;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
