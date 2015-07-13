@@ -56,7 +56,7 @@ public class UnitRecurringRatingJobBean implements Serializable {
 		try {
 
 			RecurringChargeInstance activeRecurringChargeInstance = recurringChargeInstanceService
-					.findById(ID_activeRecurringChargeInstance);
+					.findById(ID_activeRecurringChargeInstance, currentUser.getProvider());
 
 			RecurringChargeTemplate recurringChargeTemplate = (RecurringChargeTemplate) activeRecurringChargeInstance
 					.getRecurringChargeTemplate();

@@ -429,7 +429,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 		String meveoDir = paramBean.getProperty("providers.rootDir",
 				"/tmp/meveo/")
 				+ File.separator
-				+ invoice.getProvider().getCode() + File.separator;
+				+ currentUser.getProvider().getCode() + File.separator;
 		String pdfDirectory = meveoDir + "invoices" + File.separator
 				+ "pdf" + File.separator;
 

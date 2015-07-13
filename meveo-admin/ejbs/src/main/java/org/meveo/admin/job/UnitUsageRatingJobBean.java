@@ -43,7 +43,7 @@ public class UnitUsageRatingJobBean {
     	log.debug("Running for user={}, edrId={}", currentUser, edrId);
 
     	try {
-            EDR edr = edrService.findById(edrId);
+            EDR edr = edrService.findById(edrId, currentUser.getProvider());
             usageRatingService.ratePostpaidUsage(edr, currentUser);
             
             edrService.updateNoCheck(edr);

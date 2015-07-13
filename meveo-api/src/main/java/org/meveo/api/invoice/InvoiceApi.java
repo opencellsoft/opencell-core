@@ -431,7 +431,7 @@ public class InvoiceApi extends BaseApi {
 		if (generateInvoiceRequestDto.getBillingAccountId() == null || generateInvoiceRequestDto.getBillingAccountId().longValue() <=0 ) {
 			missingParameters.add("billingAccountId");
 		}
-		BillingAccount billingAccount = billingAccountService.findById(generateInvoiceRequestDto.getBillingAccountId());
+		BillingAccount billingAccount = billingAccountService.findById(generateInvoiceRequestDto.getBillingAccountId(), currentUser.getProvider());
 		if(billingAccount == null){
 			throw new EntityDoesNotExistsException(BillingAccount.class,generateInvoiceRequestDto.getBillingAccountId());
 		}
@@ -480,7 +480,7 @@ public class InvoiceApi extends BaseApi {
 		billingRunService.commit();
 		log.info("billingRunService.validate ok");
 
-		billingRun = billingRunService.findById(billingRunId);
+		billingRun = billingRunService.findById(billingRunId, currentUser.getProvider());
 		
 		log.info(( billingRun.getInvoices()==null)?"getInvoice is null" : "size="+ billingRun.getInvoices().size());
 
@@ -494,7 +494,7 @@ public class InvoiceApi extends BaseApi {
 			missingParameters.add("invoiceId");
 			throw new MissingParameterException(getMissingParametersExceptionMessage());
 		}
-		Invoice invoice = invoiceService.findById(invoiceId);
+		Invoice invoice = invoiceService.findById(invoiceId, currentUser.getProvider());
 		if(invoice == null){
 			throw new EntityDoesNotExistsException(Invoice.class,invoiceId);
 		}
@@ -518,12 +518,12 @@ public class InvoiceApi extends BaseApi {
 			missingParameters.add("invoiceId");
 			throw new MissingParameterException(getMissingParametersExceptionMessage());
 		}
-		Invoice invoice = invoiceService.findById(invoiceId);
+		Invoice invoice = invoiceService.findById(invoiceId, currentUser.getProvider());
 		if(invoice == null){
 			throw new EntityDoesNotExistsException(Invoice.class,invoiceId);
 		}
 		if(invoice.getPdf() == null){
-			Map<String, Object> parameters = pDFParametersConstruction.constructParameters(invoiceId);
+			Map<String, Object> parameters = pDFParametersConstruction.constructParameters(invoiceId, currentUser.getProvider());
 			invoiceService.producePdf(parameters, currentUser);
 			invoiceService.commit();
 		}

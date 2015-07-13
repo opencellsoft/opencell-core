@@ -296,7 +296,7 @@ public class WalletApi extends BaseApi {
 	}
 
 	public void cancelReservation(Long reservationId, Provider provider) throws MeveoApiException {
-		Reservation reservation = reservationService.findById(reservationId);
+		Reservation reservation = reservationService.findById(reservationId, provider);
 		if (reservation == null) {
 			throw new MeveoApiException("Reservation with id=" + reservationId + " does not exists.");
 		} else if (!reservation.getProvider().getCode().equals(provider.getCode())) {

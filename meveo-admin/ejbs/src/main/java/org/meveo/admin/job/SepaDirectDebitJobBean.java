@@ -55,7 +55,7 @@ public class SepaDirectDebitJobBean {
 						sepaService.createDDRquestLot(ddrequestLotOp.getFromDueDate(), ddrequestLotOp.getToDueDate(),
 								currentUser, currentProvider);
 					} else if (ddrequestLotOp.getDdrequestOp() == DDRequestOpEnum.FILE) {
-						sepaService.exportDDRequestLot(ddrequestLotOp.getDdrequestLOT().getId());
+						sepaService.exportDDRequestLot(ddrequestLotOp.getDdrequestLOT().getId(), currentUser);
 					}
 
 					ddrequestLotOp.setStatus(DDRequestOpStatusEnum.PROCESSED);

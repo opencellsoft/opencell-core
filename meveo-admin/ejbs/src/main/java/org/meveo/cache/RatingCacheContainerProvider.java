@@ -274,7 +274,7 @@ public class RatingCacheContainerProvider {
         CachedUsageChargeInstance cachedCharge = new CachedUsageChargeInstance();
         // UsageChargeTemplate usageChargeTemplate=(UsageChargeTemplate)
         // usageChargeInstance.getChargeTemplate();
-        UsageChargeTemplate usageChargeTemplate = usageChargeTemplateService.findById(usageChargeInstance.getChargeTemplate().getId());
+        UsageChargeTemplate usageChargeTemplate = usageChargeTemplateService.findByIdNoCheck(usageChargeInstance.getChargeTemplate().getId());
         Long subscriptionId = usageChargeInstance.getServiceInstance().getSubscription().getId();
         log.info("Updating usageChargeInstance cache with usageChargeInstance: subscription Id: {}, charge id={}, usageChargeTemplate id: {}", subscriptionId,
             usageChargeInstance.getId(), usageChargeTemplate.getId());

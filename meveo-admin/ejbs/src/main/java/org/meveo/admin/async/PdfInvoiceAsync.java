@@ -43,7 +43,7 @@ public class PdfInvoiceAsync {
     public Future<String> launchAndForget(List<Invoice> invoices, User currentUser, JobExecutionResultImpl result) {
         for (Invoice invoice : invoices) {
             try {
-                Map<String, Object> parameters = pDFParametersConstruction.constructParameters(invoice.getId());
+                Map<String, Object> parameters = pDFParametersConstruction.constructParameters(invoice.getId(), currentUser.getProvider());
                 invoiceService.producePdf(parameters, currentUser);
                 result.registerSucces();                              
             } catch (Exception e) {
