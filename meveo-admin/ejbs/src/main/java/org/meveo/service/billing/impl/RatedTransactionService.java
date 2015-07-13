@@ -748,7 +748,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 
 
 	public void createRatedTransaction(Long walletOperationId,User currentUser )throws Exception{
-		WalletOperation walletOperation = walletOperationService.findById(walletOperationId) ;
+		WalletOperation walletOperation = walletOperationService.findById(walletOperationId, currentUser.getProvider()) ;
 
 		BigDecimal amountWithTAx = walletOperation.getAmountWithTax();
 		BigDecimal amountTax = walletOperation.getAmountTax();

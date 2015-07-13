@@ -97,7 +97,7 @@ public class AccountingDetail extends FileProducer implements Reporting {
 				}
 				if (accountOperationTransformation.getStatus() == 2) {
 					AccountOperation accountOperation = accountOperationService
-							.findById(accountOperationTransformation.getId());
+							.findByIdNoCheck(accountOperationTransformation.getId());
 					amount = accountOperation.getUnMatchingAmount();
 				} else {
 					amount = accountOperationTransformation.getAmount();

@@ -259,4 +259,14 @@ public interface IPersistenceService<E extends IEntity> {
 	public void commit();
 
 	public EntityManager getEntityManager();
+
+	E findByIdNoCheck(Long id);
+
+	E findByIdNoCheck(Long id, boolean refresh);
+
+	E findByIdNoCheck(EntityManager em, Long id, boolean refresh);
+
+	E findById(Long id, Provider provider, boolean refresh);
+
+	E findById(Long id, Provider provider);
 }

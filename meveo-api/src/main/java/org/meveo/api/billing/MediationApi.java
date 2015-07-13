@@ -127,7 +127,7 @@ public class MediationApi extends BaseApi {
 	private void reservationExpired(Timer timer) {
 		Object[] objs = (Object[]) timer.getInfo();
 		try {
-			Reservation reservation = reservationService.findById((Long) objs[0]);
+			Reservation reservation = reservationService.findByIdNoCheck((Long) objs[0]);
 			reservationService.cancelPrepaidReservationInNewTransaction(reservation);
 		} catch (BusinessException e) {
 			log.error("Failed to cancel Prepaid Reservation In New Transaction",e);

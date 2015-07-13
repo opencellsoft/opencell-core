@@ -233,13 +233,13 @@ public class SepaService extends PersistenceService<DDRequestItem> {
 		return outputDir + File.separator + fileName;
 	}
 
-	public String exportDDRequestLot(Long ddRequestLotId) throws Exception {
+	public String exportDDRequestLot(Long ddRequestLotId, User currentUser) throws Exception {
 		logger.info("exportDDRequestLot ddRequestLotId:" + ddRequestLotId);
 		if (ddRequestLotId == null) {
 			throw new Exception("ddRequestLotId is null!");
 		}
 		DDRequestLOT ddRequestLOT = (DDRequestLOT) dDRequestLOTService
-				.findById(ddRequestLotId);
+				.findById(ddRequestLotId, currentUser.getProvider());
 		if (ddRequestLOT == null) {
 			throw new Exception("ddRequestLotId doesn't exist");
 		}
@@ -435,7 +435,7 @@ public class SepaService extends PersistenceService<DDRequestItem> {
 		String[] dDRequestLOTrefSplited = dDRequestLOTref.split("-");
 
 		DDRequestLOT dDRequestLOT = dDRequestLOTService.findById(Long
-				.valueOf(dDRequestLOTrefSplited[1]));
+				.valueOf(dDRequestLOTrefSplited[1]), currentUser.getProvider());
 		if (dDRequestLOT == null) {
 			throw new Exception("DDRequestLOT doesn't exist. id="
 					+ dDRequestLOTrefSplited[1]);

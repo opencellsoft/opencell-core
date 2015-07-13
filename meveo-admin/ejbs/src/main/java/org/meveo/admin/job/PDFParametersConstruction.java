@@ -76,21 +76,20 @@ public class PDFParametersConstruction {
 					.getResource("reports/fonts.jar") });
 
 	public Map<String, Object> constructParameters(Invoice invoice) {
-		return constructParameters(invoice.getId());
+		return constructParameters(invoice.getId(), invoice.getProvider());
 	}
 	
 	@SuppressWarnings("deprecation")
-	public Map<String, Object> constructParameters(Long invoiceId) {
+	public Map<String, Object> constructParameters(Long invoiceId, Provider provider) {
 		try {
 			currencyFormat.setMinimumFractionDigits(2);
-			Invoice invoice = invoiceService.findById(invoiceId);
+			Invoice invoice = invoiceService.findById(invoiceId, provider);
 			Map<String, Object> parameters = new HashMap<String, Object>();
 			parameters.put(JRParameter.REPORT_CLASS_LOADER, cl);
 
 			BillingCycle billingCycle = invoice.getBillingRun()
 					.getBillingCycle();
-			BillingAccount billingAccount = invoice.getBillingAccount();
-			Provider provider = invoice.getProvider();
+			BillingAccount billingAccount = invoice.getBillingAccount();			
 			String billingTemplateName = billingCycle != null
 					&& billingCycle.getBillingTemplateName() != null ? billingCycle
 					.getBillingTemplateName() : "default";

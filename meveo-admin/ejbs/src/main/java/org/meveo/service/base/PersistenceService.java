@@ -155,6 +155,26 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
     public E findById(Long id) {
         return findById(id, false);
     }
+    
+    /**
+     * Use by API.
+     */
+    @Override
+    public E findById(Long id, Provider provider, boolean refresh) {
+    	log.debug("start of find {} by id (id={}) ..", getEntityClass().getSimpleName(), id);
+        final Class<? extends E> productClass = getEntityClass();
+        E e = getEntityManager().find(productClass, id);
+        if(e != null) {
+        	checkProvider(e, provider);
+        	if (refresh) {
+	            log.debug("refreshing loaded entity");
+	            getEntityManager().refresh(e);
+	        }
+        }
+        log.debug("end of find {} by id (id={}). Result found={}.", getEntityClass().getSimpleName(), id, e != null);
+        return e;
+    }
+
 
     /**
 	 * @see org.meveo.service.base.local.IPersistenceService#findById(java.lang.Long,
@@ -165,26 +185,20 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
         return findById(id, fetchFields, false);
     }
 
-    @Override
-    public E findById(Long id, boolean refresh) {
-        return findById(getEntityManager(), id, refresh);
-    }
-
-    public E findById(EntityManager em, Long id) {
-        return findById(em, id, false);
-    }
-
     /**
 	 * @see org.meveo.service.base.local.IPersistenceService#findById(java.lang.Long,
 	 *      boolean)
      */
-    public E findById(EntityManager em, Long id, boolean refresh) {
+    public E findById(Long id, boolean refresh) {
         log.debug("start of find {} by id (id={}) ..", getEntityClass().getSimpleName(), id);
         final Class<? extends E> productClass = getEntityClass();
-        E e = em.find(productClass, id);
-        if (refresh) {
-            log.debug("refreshing loaded entity");
-            em.refresh(e);
+        E e = getEntityManager().find(productClass, id);
+        if(e != null) {
+        	checkProvider(e);
+	        if (refresh) {
+	            log.debug("refreshing loaded entity");
+	            getEntityManager().refresh(e);
+	        }
         }
         log.debug("end of find {} by id (id={}). Result found={}.", getEntityClass().getSimpleName(), id, e != null);
         return e;
@@ -219,9 +233,37 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 
         E e = (E) query.getResultList().get(0);
 
-        if (refresh) {
-            log.debug("refreshing loaded entity");
-            getEntityManager().refresh(e);
+        if(e != null) {
+        	checkProvider(e);
+	        if (refresh) {
+	            log.debug("refreshing loaded entity");
+	            getEntityManager().refresh(e);
+	        }
+        }
+        log.debug("end of find {} by id (id={}). Result found={}.", getEntityClass().getSimpleName(), id, e != null);
+        return e;
+    }
+    
+    @Override
+    public E findByIdNoCheck(Long id) {
+        return findByIdNoCheck(id, false);
+    } 
+    
+    @Override
+    public E findByIdNoCheck(Long id, boolean refresh) {
+    	return findByIdNoCheck(getEntityManager(), id, refresh);
+    }
+    
+    @Override
+    public E findByIdNoCheck(EntityManager em, Long id, boolean refresh) {
+        log.debug("start of find {} by id (id={}) ..", getEntityClass().getSimpleName(), id);
+        final Class<? extends E> productClass = getEntityClass();
+        E e = em.find(productClass, id);
+        if(e != null) {
+	        if (refresh) {
+	            log.debug("refreshing loaded entity");
+	            em.refresh(e);
+	        }
         }
         log.debug("end of find {} by id (id={}). Result found={}.", getEntityClass().getSimpleName(), id, e != null);
         return e;
@@ -672,12 +714,25 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 	 * modify (update or delete) entity.
 	 */
 	protected void checkProvider(E e) {
-		if (getCurrentProvider() != null) {
+		if (isConversationScoped() && getCurrentProvider() != null) {
 			if (e instanceof BaseEntity) {
 				boolean notSameProvider = !((BaseEntity) e).doesProviderMatch(getCurrentProvider());
 				if (notSameProvider) {
 					log.debug("CheckProvider getCurrentProvider() id={}, entityProvider id={}", new Object[] {
 							getCurrentProvider().getId(), ((BaseEntity) e).getProvider().getId() });
+                    throw new ProviderNotAllowedException();
+                }
+            }
+        }
+    }
+	
+	protected void checkProvider(E e, Provider provider) {
+		if (getCurrentProvider() != null) {
+			if (e instanceof BaseEntity) {
+				boolean notSameProvider = !((BaseEntity) e).doesProviderMatch(provider);
+				if (notSameProvider) {
+					log.debug("CheckProvider currentUser.getProvider() id={}, entityProvider id={}", new Object[] {
+							provider.getId(), ((BaseEntity) e).getProvider().getId() });
                     throw new ProviderNotAllowedException();
                 }
             }
@@ -703,6 +758,18 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 
     public BaseEntity attach(BaseEntity e) {
         return (BaseEntity) getEntityManager().merge(e);
+    }
+    
+    private boolean isConversationScoped() {
+    	if (conversation != null) {
+            try {
+                conversation.isTransient();
+                return true;
+            } catch (Exception e) {
+            }
+        }
+    	
+    	return false;
     }
 
     public EntityManager getEntityManager() {

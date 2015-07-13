@@ -120,7 +120,7 @@ public class InvoicingJobBean {
 
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public void updateBillingRun(Long billingRunId ,User currentUser,Integer sizeBA,Integer billableBA,BillingRunStatusEnum status,Date dateStatus) {
-		BillingRun billingRun = billingRunService.findById(billingRunId);
+		BillingRun billingRun = billingRunService.findById(billingRunId, currentUser.getProvider());
 
 		if(sizeBA != null){
 			billingRun.setBillingAccountNumber(sizeBA);

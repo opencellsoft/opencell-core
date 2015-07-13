@@ -126,7 +126,7 @@ public class XMLInvoiceGenerationJobBean {
 
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public void updateBillingRun(Long billingRunId ,User currentUser) {
-		BillingRun billingRun = billingRunService.findById(billingRunId);
+		BillingRun billingRun = billingRunService.findById(billingRunId, currentUser.getProvider());
 		billingRun.setXmlInvoiceGenerated(true);
 		billingRun.updateAudit(currentUser);
 		billingRunService.updateNoCheck(billingRun);

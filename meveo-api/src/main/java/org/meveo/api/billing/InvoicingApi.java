@@ -5,12 +5,9 @@ import java.util.List;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-import javax.jws.WebMethod;
-import javax.jws.WebParam;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.BaseApi;
-import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.account.BillingAccountDto;
 import org.meveo.api.dto.account.BillingAccountsDto;
 import org.meveo.api.dto.billing.BillingRunDto;
@@ -100,16 +97,16 @@ public class InvoicingApi extends BaseApi {
 	}
 	
 	
-	public BillingRunDto getBillingRunInfo(Long billingRunId) throws MissingParameterException, BusinessApiException, EntityDoesNotExistsException{
-		BillingRun billingRunEntity   = getBillingRun(billingRunId);
+	public BillingRunDto getBillingRunInfo(Long billingRunId, User currentUser) throws MissingParameterException, BusinessApiException, EntityDoesNotExistsException{
+		BillingRun billingRunEntity   = getBillingRun(billingRunId, currentUser);
 		
 		BillingRunDto billingRunDtoResult = new BillingRunDto();
 		billingRunDtoResult.setFromEntity(billingRunEntity);
 		return billingRunDtoResult;
 	}
 	 
-	public BillingAccountsDto getBillingAccountListInRun( Long billingRunId) throws MissingParameterException, BusinessApiException, EntityDoesNotExistsException{
-		BillingRun billingRunEntity   = getBillingRun(billingRunId);
+	public BillingAccountsDto getBillingAccountListInRun(Long billingRunId, User currentUser) throws MissingParameterException, BusinessApiException, EntityDoesNotExistsException{
+		BillingRun billingRunEntity   = getBillingRun(billingRunId, currentUser);
 		BillingAccountsDto billingAccountsDtoResult = new BillingAccountsDto();
 		List<BillingAccount> baEntities = billingRunEntity.getBillableBillingAccounts();
 		if(baEntities != null && !baEntities.isEmpty()){
@@ -122,7 +119,7 @@ public class InvoicingApi extends BaseApi {
 	
 	
 	
-	private BillingRun getBillingRun(Long billingRunId) throws MissingParameterException, EntityDoesNotExistsException, BusinessApiException{
+	private BillingRun getBillingRun(Long billingRunId, User currentUser) throws MissingParameterException, EntityDoesNotExistsException, BusinessApiException{
 		if(billingRunId == null || billingRunId.longValue() ==0){
 			missingParameters.add("billingRunId");
 			throw new MissingParameterException(getMissingParametersExceptionMessage());
@@ -132,7 +129,7 @@ public class InvoicingApi extends BaseApi {
 			throw new BusinessApiException("The billingRunId should be a positive value");
 		}
 		
-		BillingRun billingRunEntity = billingRunService.findById(billingRunId);
+		BillingRun billingRunEntity = billingRunService.findById(billingRunId, currentUser.getProvider());
 		if(billingRunEntity == null){
 			throw new EntityDoesNotExistsException(BillingRun.class, billingRunId);
 		}
@@ -140,25 +137,25 @@ public class InvoicingApi extends BaseApi {
 	}
 	
 	
-	public PreInvoicingReportsDTO getPreInvoicingReport(Long billingRunId) throws MissingParameterException, BusinessApiException, EntityDoesNotExistsException, BusinessException{
-		BillingRun billingRun  = getBillingRun( billingRunId);
+	public PreInvoicingReportsDTO getPreInvoicingReport(Long billingRunId, User currentUser) throws MissingParameterException, BusinessApiException, EntityDoesNotExistsException, BusinessException{
+		BillingRun billingRun  = getBillingRun( billingRunId, currentUser);
 		PreInvoicingReportsDTO preInvoicingReportsDTO = billingRunService.generatePreInvoicingReports(billingRun);
 		return preInvoicingReportsDTO;
 	}
 	
-	public PostInvoicingReportsDTO getPostInvoicingReport(Long billingRunId) throws MissingParameterException, BusinessApiException, EntityDoesNotExistsException, BusinessException{
-		BillingRun billingRun  = getBillingRun( billingRunId);
+	public PostInvoicingReportsDTO getPostInvoicingReport(Long billingRunId, User currentUser) throws MissingParameterException, BusinessApiException, EntityDoesNotExistsException, BusinessException{
+		BillingRun billingRun  = getBillingRun( billingRunId, currentUser);
 		PostInvoicingReportsDTO postInvoicingReportsDTO = billingRunService.generatePostInvoicingReports(billingRun);
 		return postInvoicingReportsDTO;
 	}
 	
-	public void validateBillingRun(Long billingRunId,User currentUser) throws MissingParameterException, EntityDoesNotExistsException, BusinessApiException{
-		BillingRun billingRun  = getBillingRun( billingRunId);
+	public void validateBillingRun(Long billingRunId, User currentUser) throws MissingParameterException, EntityDoesNotExistsException, BusinessApiException{
+		BillingRun billingRun  = getBillingRun( billingRunId, currentUser);
 		billingRunService.validate(billingRun, currentUser);
 	}
 	
-	public void cancelBillingRun(Long billingRunId,User currentUser) throws MissingParameterException, EntityDoesNotExistsException, BusinessApiException{
-		BillingRun billingRun  = getBillingRun( billingRunId);
+	public void cancelBillingRun(Long billingRunId, User currentUser) throws MissingParameterException, EntityDoesNotExistsException, BusinessApiException{
+		BillingRun billingRun  = getBillingRun( billingRunId, currentUser);
 		billingRunService.cancel(billingRun);
 		billingRunService.cleanBillingRun(billingRun);
 	}
