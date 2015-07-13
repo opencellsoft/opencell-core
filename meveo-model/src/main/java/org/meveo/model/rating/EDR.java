@@ -152,7 +152,7 @@ public class EDR extends BaseEntity {
 	@Column(name = "ACCESS_CODE")
 	private String accessCode;
 	
-	@Column(name = "HEADER_EDR_ID")
+	@JoinColumn(name = "HEADER_EDR_ID")
 	@ManyToOne()
 	private EDR headerEDR;
 
