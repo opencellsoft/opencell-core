@@ -326,15 +326,14 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 
 							taxInvoiceAgregateMap.put(taxId, invoiceAgregateTax);
 						}
-
+ 
 						if (tax.getPercent().compareTo(BigDecimal.ZERO) == 0 || exoneratedFromTaxes) {
 							invoiceAgregateTax.addAmountWithoutTax(invoiceAgregateSubcat.getAmountWithoutTax());
-							invoiceAgregateTax.addAmountTax(invoiceAgregateSubcat.getAmountWithoutTax().multiply(tax.getPercent()).divide(new BigDecimal("100")));
-							//invoiceAgregateTax.addAmountWithTax(invoiceAgregateSubcat.getAmountWithTax());
-							
+							invoiceAgregateTax.setAmountTax(BigDecimal.ZERO);
+							invoiceAgregateTax.addAmountWithTax(invoiceAgregateSubcat.getAmountWithoutTax());
 							invoiceAgregateTax.setTaxPercent(BigDecimal.ZERO);
 						}
-
+						
 						fillAgregates(invoiceAgregateTax, wallet);
 						if (tax.getPercent().compareTo(BigDecimal.ZERO) != 0 && !exoneratedFromTaxes) {
 							invoiceAgregateTax.setTaxPercent(tax.getPercent());
@@ -445,7 +444,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 					invoice.setAmountWithTax(invoice.getAmountWithoutTax().add(invoice.getAmountTax()));
 				}
 				BigDecimal balance=BigDecimal.ZERO;
-				if (!entreprise && biggestSubCat != null) {
+				if (!entreprise && biggestSubCat != null && !exoneratedFromTaxes)  {
 					BigDecimal delta = nonEnterprisePriceWithTax.subtract(invoice.getAmountWithTax());
 					log.debug("delta= " + nonEnterprisePriceWithTax + " - " + invoice.getAmountWithTax() + "=" + delta);
 					biggestSubCat.setAmountWithoutTax(biggestSubCat.getAmountWithoutTax().add(delta)
