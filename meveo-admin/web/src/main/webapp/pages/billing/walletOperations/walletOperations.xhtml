@@ -69,8 +69,8 @@
 			header="#{messages['pricePlan.title']}"
 			backingBean="#{pricePlanMatrixBean}"
 			searchField1Label="#{messages['pricePlanMatrix.table.eventCode']}"
-			searchField1="eventCode" 
-			column1Label="#{messages['BusinessEntity.code']}" column1="eventCode" 
+			searchField1="code" 
+			column1Label="#{messages['BusinessEntity.code']}" column1="code" 
 			selection="#{walletOperationBean.filters['priceplan']}" 
 			updateField=":searchPanel:searchForm:priceplan">
 		</hftl:entityPopup> 
@@ -153,7 +153,7 @@
                 popupId="searchChargeInstancePopup" clearButton="true" />
             <hf:searchField label="#{messages['counterTemplate.title']}" id="counter" field="counter" valueLabelField="code" popup="true" popupId="searchCounterInstancePopup"
                 clearButton="true" />
-            <hf:searchField label="#{messages['pricePlan.title']}" id="priceplan" field="priceplan" valueLabelField="eventCode" popup="true" popupId="searchPricePlanPopup"
+            <hf:searchField label="#{messages['pricePlan.title']}" id="priceplan" field="priceplan" valueLabelField="code" popup="true" popupId="searchPricePlanPopup"
                 clearButton="true" />
             <hf:searchField id="seller" label="#{messages['seller.title']}" field="seller" valueLabelField="description" popup="true" popupId="searchSellerPopup" clearButton="true" />
             <hf:searchField label="#{messages['walletOperation.param1']}" field="parameter1" />
