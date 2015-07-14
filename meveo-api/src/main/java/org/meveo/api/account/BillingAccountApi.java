@@ -117,35 +117,6 @@ public class BillingAccountApi extends AccountApi {
 			billingAccount.setElectronicBilling(postData.getElectronicBilling());
 			billingAccount.setEmail(postData.getEmail());
 
-			if (paymentMethod.equals(PaymentMethodEnum.DIRECTDEBIT)) {
-				if (postData.getBankCoordinates() == null) {
-					throw new MeveoApiException(MeveoApiErrorCode.BUSINESS_API_EXCEPTION,
-							"BankCoordinates is required for paymentMethod=" + paymentMethod);
-				}
-
-				if (postData.getBankCoordinates() != null) {
-					if (StringUtils.isBlank(postData.getBankCoordinates().getBankCode())
-							|| StringUtils.isBlank(postData.getBankCoordinates().getBranchCode())
-							|| StringUtils.isBlank(postData.getBankCoordinates().getAccountNumber())
-							|| StringUtils.isBlank(postData.getBankCoordinates().getKey())) {
-						if (StringUtils.isBlank(postData.getBankCoordinates().getBankCode())) {
-							missingParameters.add("bankCoordinates.bankCode");
-						}
-						if (StringUtils.isBlank(postData.getBankCoordinates().getBranchCode())) {
-							missingParameters.add("bankCoordinates.branchCode");
-						}
-						if (StringUtils.isBlank(postData.getBankCoordinates().getAccountNumber())) {
-							missingParameters.add("bankCoordinates.accountNumber");
-						}
-						if (StringUtils.isBlank(postData.getBankCoordinates().getKey())) {
-							missingParameters.add("bankCoordinates.key");
-						}
-
-						throw new MissingParameterException(getMissingParametersExceptionMessage());
-					}
-				}
-			}
-
 			if (postData.getBankCoordinates() != null) {
 				billingAccount.getBankCoordinates().setBankCode(postData.getBankCoordinates().getBankCode());
 				billingAccount.getBankCoordinates().setBranchCode(postData.getBankCoordinates().getBranchCode());
@@ -248,37 +219,6 @@ public class BillingAccountApi extends AccountApi {
 							"Enum for PaymentMethod with name=" + postData.getPaymentMethod() + " does not exists.");
 				}
 				
-				if (paymentMethod.equals(PaymentMethodEnum.DIRECTDEBIT)) {
-					if (postData.getBankCoordinates() == null) {
-						throw new MeveoApiException(MeveoApiErrorCode.BUSINESS_API_EXCEPTION,
-								"BankCoordinates is required for paymentMethod=" + paymentMethod);
-					}
-
-					if (postData.getBankCoordinates() != null) {
-						if (StringUtils.isBlank(postData.getBankCoordinates().getBankCode())
-								|| StringUtils.isBlank(postData.getBankCoordinates().getBranchCode())
-								|| StringUtils.isBlank(postData.getBankCoordinates().getAccountNumber())
-								|| StringUtils.isBlank(postData.getBankCoordinates().getKey())) {
-							if (StringUtils.isBlank(postData.getBankCoordinates().getBankCode())) {
-								missingParameters.add("bankCoordinates.bankCode");
-							}
-							if (StringUtils.isBlank(postData.getBankCoordinates().getBranchCode())) {
-								missingParameters.add("bankCoordinates.branchCode");
-							}
-							if (StringUtils.isBlank(postData.getBankCoordinates().getAccountNumber())) {
-								missingParameters.add("bankCoordinates.accountNumber");
-							}
-							if (StringUtils.isBlank(postData.getBankCoordinates().getKey())) {
-								missingParameters.add("bankCoordinates.key");
-							}
-
-							throw new MissingParameterException(getMissingParametersExceptionMessage());
-						} else {
-							
-						}
-					}
-				}
-
 				billingAccount.setPaymentMethod(paymentMethod);
 			}
 
