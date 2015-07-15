@@ -35,7 +35,8 @@
 								<p:inputText id="label" value="#{cft.instance.label}"
 									required="true" />
 							</hftl:decorateFormField>
-							<hftl:decorateFormField label="#{cft.description} #{cft.valueRequired?'*':''}">
+							<hftl:decorateFormField label="#{cft.description} #{cft.valueRequired?'*':''}" 
+							rendered="#{cft.storageType==CustomFieldStorageTypeEnum.LIST or cft.storageType==CustomFieldStorageTypeEnum.MAP}">
 								<hftl:customFieldValueField edit="true" cft="#{cft}"
 									field="#{cft.instance.businessEntity}" />
 							</hftl:decorateFormField>
@@ -73,7 +74,8 @@
 								<p:inputText id="label" value="#{cft.instance.label}"
 									required="true" />
 							</hftl:decorateFormField>
-							<hftl:decorateFormField label="#{cft.description} #{cft.valueRequired?'*':''}">
+							<hftl:decorateFormField label="#{cft.description} #{cft.valueRequired?'*':''}"  
+							rendered="#{cft.storageType==CustomFieldStorageTypeEnum.LIST or cft.storageType==CustomFieldStorageTypeEnum.MAP}">
 								<hftl:customFieldValueField edit="true" cft="#{cft}" field="#{cft.instance}"/>
 							</hftl:decorateFormField>
 							<h:panelGroup layout="block" styleClass="search-panel-actions">
@@ -109,7 +111,8 @@
 								<p:inputText id="label" value="#{cft.instance.label}"
 									required="true" />
 							</hftl:decorateFormField>
-							<hftl:decorateFormField label="#{cft.description} #{cft.valueRequired?'*':''}">
+							<hftl:decorateFormField label="#{cft.description} #{cft.valueRequired?'*':''}" 
+							rendered="#{cft.storageType==CustomFieldStorageTypeEnum.LIST or cft.storageType==CustomFieldStorageTypeEnum.MAP}">
 								<hftl:customFieldValueField edit="true" cft="#{cft}" field="#{cft.instance}"/>
 							</hftl:decorateFormField>
 							<h:panelGroup layout="block" styleClass="search-panel-actions">
@@ -146,7 +149,8 @@
 								<p:inputText id="label" value="#{cft.instance.label}"
 									required="true" />
 							</hftl:decorateFormField>
-							<hftl:decorateFormField label="#{cft.description} #{cft.valueRequired?'*':''}">
+							<hftl:decorateFormField label="#{cft.description} #{cft.valueRequired?'*':''}" 
+							rendered="#{cft.storageType==CustomFieldStorageTypeEnum.LIST or cft.storageType==CustomFieldStorageTypeEnum.MAP}">
 								<hftl:customFieldValueField edit="true" cft="#{cft}" field="#{cft.instance}"/>
 							</hftl:decorateFormField>
 							<h:panelGroup layout="block" styleClass="search-panel-actions">
@@ -182,7 +186,8 @@
 								<p:inputText id="label" value="#{cft.instance.label}"
 									required="true" />
 							</hftl:decorateFormField>
-							<hftl:decorateFormField label="#{cft.description} #{cft.valueRequired?' *':''}">
+							<hftl:decorateFormField label="#{cft.description} #{cft.valueRequired?' *':''}" 
+							rendered="#{cft.storageType==CustomFieldStorageTypeEnum.LIST or cft.storageType==CustomFieldStorageTypeEnum.MAP}">
 								<hftl:customFieldValueField edit="true" cft="#{cft}" field="#{cft.instance}"/>
 							</hftl:decorateFormField>
 							<h:panelGroup layout="block" styleClass="search-panel-actions">
