@@ -230,6 +230,8 @@ public class RatingCacheContainerProvider {
             }
             index++;
         }
+        
+        pricePlanCache.replace(cacheKey, chargePriceList);
     }
 
     public void updatePricePlanInCache(PricePlanMatrix pricePlan) {
