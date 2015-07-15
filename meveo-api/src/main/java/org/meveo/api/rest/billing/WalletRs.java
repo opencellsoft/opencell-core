@@ -2,11 +2,13 @@ package org.meveo.api.rest.billing;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 import org.meveo.api.dto.ActionStatus;
@@ -16,6 +18,7 @@ import org.meveo.api.dto.billing.WalletOperationDto;
 import org.meveo.api.dto.billing.WalletReservationDto;
 import org.meveo.api.dto.billing.WalletTemplateDto;
 import org.meveo.api.dto.response.billing.FindWalletOperationsResponseDto;
+import org.meveo.api.dto.response.billing.GetWalletTemplateResponseDto;
 import org.meveo.api.rest.IBaseRs;
 import org.meveo.api.rest.security.RSSecured;
 
@@ -31,6 +34,18 @@ public interface WalletRs extends IBaseRs {
 	@POST
 	@Path("/template")	
 	ActionStatus createWalletTemplate(WalletTemplateDto postData);
+	
+	@PUT
+	@Path("/template")	
+	ActionStatus updateWalletTemplate(WalletTemplateDto postData);
+	
+	@DELETE
+	@Path("/template/{walletTemplateCode}")	
+	ActionStatus removeWalletTemplate(@PathParam("walletTemplateCode") String walletTemplateCode);
+	
+	@GET
+	@Path("/template")	
+	GetWalletTemplateResponseDto findWalletTemplate(@QueryParam("walletTemplateCode") String walletTemplateCode);
 
 	@POST
 	@Path("/balance/current")

@@ -8,6 +8,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
 
 import org.meveo.api.dto.BaseDto;
+import org.meveo.model.catalog.WalletTemplate;
 
 /**
  * @author Edward P. Legaspi
@@ -28,6 +29,19 @@ public class WalletTemplateDto extends BaseDto {
 	private boolean consumptionAlertSet;
 	private int fastRatingLevel;
 	private BigDecimal lowBalanceLevel;
+
+	public WalletTemplateDto() {
+		// TODO Auto-generated constructor stub
+	}
+
+	public WalletTemplateDto(WalletTemplate e) {
+		code = e.getCode();
+		description = e.getDescription();
+		walletType = e.getWalletType().name();
+		consumptionAlertSet = e.isConsumptionAlertSet();
+		fastRatingLevel = e.getFastRatingLevel();
+		lowBalanceLevel = e.getLowBalanceLevel();
+	}
 
 	public String getCode() {
 		return code;

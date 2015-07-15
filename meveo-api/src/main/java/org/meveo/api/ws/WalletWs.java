@@ -13,6 +13,7 @@ import org.meveo.api.dto.billing.WalletOperationDto;
 import org.meveo.api.dto.billing.WalletReservationDto;
 import org.meveo.api.dto.billing.WalletTemplateDto;
 import org.meveo.api.dto.response.billing.FindWalletOperationsResponseDto;
+import org.meveo.api.dto.response.billing.GetWalletTemplateResponseDto;
 
 /**
  * @author Edward P. Legaspi
@@ -22,6 +23,15 @@ public interface WalletWs extends IBaseWs {
 	
 	@WebMethod
 	ActionStatus createWalletTemplate(@WebParam(name = "walletTemplate") WalletTemplateDto postData);
+	
+	@WebMethod
+	ActionStatus updateWalletTemplate(@WebParam(name = "walletTemplate") WalletTemplateDto postData);
+	
+	@WebMethod
+	GetWalletTemplateResponseDto findWalletTemplate(@WebParam(name = "walletTemplateCode") String walletTemplateCode);
+	
+	@WebMethod
+	ActionStatus removeWalletTemplate(@WebParam(name = "walletTemplateCode") String walletTemplateCode);
 
 	@WebMethod
 	ActionStatus currentBalance(@WebParam(name = "walletBalance") WalletBalanceDto postData);

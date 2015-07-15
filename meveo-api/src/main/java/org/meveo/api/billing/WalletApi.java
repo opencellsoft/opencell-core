@@ -538,7 +538,7 @@ public class WalletApi extends BaseApi {
 			if (walletTemplateService.findByCode(postData.getCode(), currentUser.getProvider()) != null) {
 				throw new EntityAlreadyExistsException(WalletTemplate.class, postData.getCode());
 			}
-			
+
 			WalletTemplate wt = new WalletTemplate();
 			wt.setCode(postData.getCode());
 			wt.setDescription(postData.getDescription());
@@ -561,6 +561,64 @@ public class WalletApi extends BaseApi {
 			}
 
 			throw new MissingParameterException(getMissingParametersExceptionMessage());
+		}
+	}
+
+	public void update(WalletTemplateDto postData, User currentUser) throws MeveoApiException {
+		if (!StringUtils.isBlank(postData.getCode()) && !StringUtils.isBlank(postData.getDescription())) {
+			if (walletTemplateService.findByCode(postData.getCode(), currentUser.getProvider()) == null) {
+				throw new EntityDoesNotExistsException(WalletTemplate.class, postData.getCode());
+			}
+
+			WalletTemplate wt = new WalletTemplate();
+			wt.setDescription(postData.getDescription());
+			try {
+				wt.setWalletType(BillingWalletTypeEnum.valueOf(postData.getWalletType()));
+			} catch (IllegalArgumentException e) {
+				throw new InvalidEnumValue(BillingWalletTypeEnum.class.getName(), postData.getWalletType());
+			}
+			wt.setConsumptionAlertSet(postData.isConsumptionAlertSet());
+			wt.setFastRatingLevel(postData.getFastRatingLevel());
+			wt.setLowBalanceLevel(postData.getLowBalanceLevel());
+
+			walletTemplateService.update(wt, currentUser);
+		} else {
+			if (StringUtils.isBlank(postData.getCode())) {
+				missingParameters.add("code");
+			}
+			if (StringUtils.isBlank(postData.getDescription())) {
+				missingParameters.add("description");
+			}
+
+			throw new MissingParameterException(getMissingParametersExceptionMessage());
+		}
+	}
+
+	public WalletTemplateDto find(String walletTemplateCode, Provider provider) throws MeveoApiException {
+		if (!StringUtils.isBlank(walletTemplateCode)) {
+			WalletTemplate wt = walletTemplateService.findByCode(walletTemplateCode, provider);
+			if (wt == null) {
+				throw new EntityDoesNotExistsException(WalletTemplate.class, walletTemplateCode);
+			}
+
+			return new WalletTemplateDto(wt);
+		} else {
+			missingParameters.add("walletTemplateCode");
+		}
+
+		return null;
+	}
+
+	public void remove(String walletTemplateCode, Provider provider) throws MeveoApiException {
+		if (!StringUtils.isBlank(walletTemplateCode)) {
+			WalletTemplate wt = walletTemplateService.findByCode(walletTemplateCode, provider);
+			if (wt == null) {
+				throw new EntityDoesNotExistsException(WalletTemplate.class, walletTemplateCode);
+			}
+
+			walletTemplateService.remove(wt);
+		} else {
+			missingParameters.add("walletTemplateCode");
 		}
 	}
 
