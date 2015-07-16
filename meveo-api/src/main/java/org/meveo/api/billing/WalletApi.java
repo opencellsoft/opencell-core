@@ -566,11 +566,11 @@ public class WalletApi extends BaseApi {
 
 	public void update(WalletTemplateDto postData, User currentUser) throws MeveoApiException {
 		if (!StringUtils.isBlank(postData.getCode()) && !StringUtils.isBlank(postData.getDescription())) {
-			if (walletTemplateService.findByCode(postData.getCode(), currentUser.getProvider()) == null) {
+			WalletTemplate wt = walletTemplateService.findByCode(postData.getCode(), currentUser.getProvider());
+			if (wt == null) {
 				throw new EntityDoesNotExistsException(WalletTemplate.class, postData.getCode());
 			}
 
-			WalletTemplate wt = new WalletTemplate();
 			wt.setDescription(postData.getDescription());
 			try {
 				wt.setWalletType(BillingWalletTypeEnum.valueOf(postData.getWalletType()));
