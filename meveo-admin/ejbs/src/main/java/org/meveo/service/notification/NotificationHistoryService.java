@@ -30,7 +30,7 @@ public class NotificationHistoryService extends PersistenceService<NotificationH
         history.setResult(result);
         history.setStatus(status);
         history.setProvider(notification.getProvider());
-        super.create(history);
+        super.create(history,getCurrentUser(),history.getProvider());
 
         return history;
 

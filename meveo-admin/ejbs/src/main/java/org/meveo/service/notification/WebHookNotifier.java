@@ -23,6 +23,7 @@ import org.apache.commons.codec.binary.Base64;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.IEntity;
+import org.meveo.model.billing.ChargeInstance;
 import org.meveo.model.notification.NotificationHistoryStatusEnum;
 import org.meveo.model.notification.WebHook;
 import org.meveo.model.notification.WebHookMethodEnum;
@@ -71,6 +72,9 @@ public class WebHookNotifier {
 		String result = "";
 
 		try {
+		if(e instanceof ChargeInstance){
+		   e=notificationHistoryService.getEntityManager().find(ChargeInstance.class, e.getId()); //to get lazy attached lists like serviceInstance
+		 }
 			String url = webHook.getHost().startsWith("http") ? webHook.getHost() : "http://" + webHook.getHost();
 			if (webHook.getPort() > 0) {
 				url += ":" + webHook.getPort();
