@@ -19,6 +19,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.event.qualifier.InboundRequestReceived;
 import org.meveo.model.notification.InboundRequest;
+import org.meveo.service.crm.impl.ProviderService;
 import org.meveo.service.notification.InboundRequestService;
 import org.slf4j.Logger;
 
@@ -32,7 +33,10 @@ public class InboundServlet extends HttpServlet {
 	
 	@Inject
 	Logger log;
-
+	
+    @Inject
+    ProviderService providerService;
+    
 	@Inject @InboundRequestReceived
 	protected Event<InboundRequest> eventProducer;
 	
@@ -57,7 +61,10 @@ public class InboundServlet extends HttpServlet {
 
 		inReq.setContentLength(req.getContentLength());
 		inReq.setContentType(req.getContentType());
-		
+
+		//TODO : implement a mapping to assign to correct provider
+        inReq.setProvider(providerService.findById(1L));
+        
 		if(req.getParameterNames()!=null){
 			Enumeration<String> parameterNames = req.getParameterNames();
 			while(parameterNames.hasMoreElements()){
