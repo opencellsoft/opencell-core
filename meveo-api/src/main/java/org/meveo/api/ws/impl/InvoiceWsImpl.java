@@ -74,7 +74,7 @@ public class InvoiceWsImpl extends BaseWs implements InvoiceWs {
 		GenerateInvoiceResponseDto result = new GenerateInvoiceResponseDto();
 		try{
 
-			result.setInvoiceNumber(invoiceApi.generateInvoice(generateInvoiceRequestDto, getCurrentUser()));
+			result.setGenerateInvoiceResultDto(invoiceApi.generateInvoice(generateInvoiceRequestDto, getCurrentUser()));
 			result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
 
 		}catch(MissingParameterException mpe){

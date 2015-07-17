@@ -72,9 +72,6 @@ public class WebHookNotifier {
 		String result = "";
 
 		try {
-		if(e instanceof ChargeInstance){
-		   e=notificationHistoryService.getEntityManager().find(ChargeInstance.class, e.getId()); //to get lazy attached lists like serviceInstance
-		 }
 			String url = webHook.getHost().startsWith("http") ? webHook.getHost() : "http://" + webHook.getHost();
 			if (webHook.getPort() > 0) {
 				url += ":" + webHook.getPort();
