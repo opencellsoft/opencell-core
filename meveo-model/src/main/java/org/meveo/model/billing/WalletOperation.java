@@ -48,6 +48,7 @@ import org.meveo.model.admin.Currency;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.PricePlanMatrix;
+import org.meveo.model.rating.EDR;
 
 @Entity
 @Table(name = "BILLING_WALLET_OPERATION")
@@ -212,6 +213,10 @@ public class WalletOperation extends BusinessEntity {
 	
 	@Column(name = "INPUT_QUANTITY", precision = BaseEntity.NB_PRECISION, scale = BaseEntity.NB_DECIMALS)
 	private BigDecimal inputQuantity;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "EDR_ID")
+	private EDR edr;
 	
 	@Transient
 	private BillingAccount billingAccount;
@@ -450,7 +455,15 @@ public class WalletOperation extends BusinessEntity {
 		this.reratedWalletOperation = reratedWalletOperation;
 	}
 
-    @Transient
+    public EDR getEdr() {
+		return edr;
+	}
+
+	public void setEdr(EDR edr) {
+		this.edr = edr;
+	}
+
+	@Transient
 	public WalletOperation getUnratedClone() {
 		WalletOperation result = new WalletOperation();
 		return fillUnratedClone(result);
@@ -493,6 +506,7 @@ public class WalletOperation extends BusinessEntity {
 		result.setInputQuantity(inputQuantity);
 		result.setInputUnitDescription(inputUnitDescription);
 		result.setWallet(wallet);
+		result.setEdr(edr);
 		return result;
 	}
 
