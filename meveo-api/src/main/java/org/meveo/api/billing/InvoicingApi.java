@@ -168,9 +168,6 @@ public class InvoicingApi extends BaseApi {
 		if(BillingRunStatusEnum.VALIDATED.equals(billingRun.getStatus())){
 			throw new BusinessApiException("Cannot cancel a validated billingRun");
 		}
-		if(BillingRunStatusEnum.CANCELED.equals(billingRun.getStatus())){
-			throw new BusinessApiException("Already canceled");
-		}
 		billingRunService.cancel(billingRun);
 		billingRunService.cleanBillingRun(billingRun);
 	}
