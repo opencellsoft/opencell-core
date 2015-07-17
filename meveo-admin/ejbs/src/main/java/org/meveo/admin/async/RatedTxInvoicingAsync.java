@@ -4,9 +4,13 @@
 package org.meveo.admin.async;
 
 import java.util.List;
+import java.util.concurrent.Future;
 
+import javax.ejb.AsyncResult;
 import javax.ejb.Asynchronous;
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
 import org.meveo.model.admin.User;
@@ -29,14 +33,16 @@ public class RatedTxInvoicingAsync {
 	protected Logger log;
 
 	@Asynchronous
-	public void launchAndForget(List<BillingAccount> billingAccounts,Long billingRunId,User currentUser) {
+	@TransactionAttribute(TransactionAttributeType.NEVER)
+	public Future<String> launchAndForget(List<BillingAccount> billingAccounts,Long billingRunId,User currentUser) {
 		
 		for (BillingAccount billingAccount : billingAccounts) {
 			try {
 				invoiceService.createAgregatesAndInvoice(billingAccount, billingRunId, currentUser);
 			} catch (Exception e) {
-				log.error("Error for BA=" + billingAccount.getCode() + " : " + e.getMessage());
+				log.error("Error for BA=" + billingAccount.getCode(), e);
 			}
 		}
+		return new AsyncResult<String>("OK");
 	}
 }

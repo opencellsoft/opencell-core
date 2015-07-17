@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.Future;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -555,33 +556,25 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 	}
 
 	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
-	public void createAgregatesAndInvoice(Long billingRunId,Date lastTransactionDate, User currentUser) throws BusinessException, Exception {
+	public void createAgregatesAndInvoice(Long billingRunId,Date lastTransactionDate, User currentUser,long nbRuns,long waitingMillis) throws BusinessException, Exception {
 		List<BillingAccount> billingAccounts = getEntityManager()
 				.createNamedQuery("BillingAccount.listByBillingRunId", BillingAccount.class)
 				.setParameter("billingRunId", billingRunId)
                 .getResultList();
-		
-		Long nbRuns = null;//timerEntity.getLongCustomValue("nbRuns").longValue();
-    	Long waitingMillis = null;//timerEntity.getLongCustomValue("waitingMillis").longValue();
-		
-    	if(nbRuns == null ){
-    		nbRuns = new Long(8);
-    	}
-    	if(waitingMillis == null ){
-    		waitingMillis = new Long(0);
-    	}
-
-    	SubListCreator subListCreator = new SubListCreator(billingAccounts,nbRuns.intValue());
+    	SubListCreator subListCreator = new SubListCreator(billingAccounts,(int) nbRuns);
+    	List<Future<String>> asyncReturns =  new ArrayList<Future<String>>();
 		while (subListCreator.isHasNext()) {
-			ratedTxInvoicingAsync.launchAndForget((List<BillingAccount>) subListCreator.getNextWorkSet(), billingRunId, currentUser);
+			asyncReturns.add(ratedTxInvoicingAsync.launchAndForget((List<BillingAccount>) subListCreator.getNextWorkSet(), billingRunId, currentUser));
 			try {
-				Thread.sleep(waitingMillis.longValue());
+				Thread.sleep(waitingMillis);
 			} catch (InterruptedException e) {
-				e.printStackTrace();
+				log.error("Failed to create agregates and invoice",e);
 			} 
 		}
-
-		
+		for(Future<String> futureItsNow : asyncReturns){
+			 futureItsNow.get();	
+		}
+	
 	}
 
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)

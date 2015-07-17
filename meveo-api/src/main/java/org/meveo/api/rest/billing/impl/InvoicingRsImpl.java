@@ -63,7 +63,7 @@ public class InvoicingRsImpl extends BaseRs implements InvoicingRs {
 		log.info("getBillingRunInfo request={}",billingRunId);
 		try {
 			
-			result.setBillingRunDto(invoicingApi.getBillingRunInfo(billingRunId));
+			result.setBillingRunDto(invoicingApi.getBillingRunInfo(billingRunId,getCurrentUser()));
 			
 		}catch(MissingParameterException mpe){
 			result.getActionStatus().setErrorCode(mpe.getErrorCode());
@@ -92,7 +92,7 @@ public class InvoicingRsImpl extends BaseRs implements InvoicingRs {
 		log.info("getBillingAccountListInRun request={}",billingRunId);
 		try {
 			
-			result.setBillingAccountsDto(invoicingApi.getBillingAccountListInRun(billingRunId));
+			result.setBillingAccountsDto(invoicingApi.getBillingAccountListInRun(billingRunId,getCurrentUser()));
 			
 		}catch(MissingParameterException mpe){
 			result.getActionStatus().setErrorCode(mpe.getErrorCode());
@@ -121,7 +121,7 @@ public class InvoicingRsImpl extends BaseRs implements InvoicingRs {
 		log.info("getPreInvoicingReport request={}",billingRunId);
 		try {
 			
-			result.setPreInvoicingReportsDTO(invoicingApi.getPreInvoicingReport(billingRunId));
+			result.setPreInvoicingReportsDTO(invoicingApi.getPreInvoicingReport(billingRunId,getCurrentUser()));
 			
 		}catch(MissingParameterException mpe){
 			result.getActionStatus().setErrorCode(mpe.getErrorCode());
@@ -155,7 +155,7 @@ public class InvoicingRsImpl extends BaseRs implements InvoicingRs {
 		log.info("getPreInvoicingReport request={}",billingRunId);
 		try {
 			
-			result.setPostInvoicingReportsDTO(invoicingApi.getPostInvoicingReport(billingRunId));
+			result.setPostInvoicingReportsDTO(invoicingApi.getPostInvoicingReport(billingRunId,getCurrentUser()));
 			
 		}catch(MissingParameterException mpe){
 			result.getActionStatus().setErrorCode(mpe.getErrorCode());

@@ -461,14 +461,14 @@ public class InvoiceApi extends BaseApi {
         baIds.add(generateInvoiceRequestDto.getBillingAccountId());
 
         ratedTransactionService.createRatedTransaction(billingAccount,currentUser);
-        log.info("createRatedTransaction ok");
+        log.debug("createRatedTransaction ok");
 
         BillingRun billingRun = billingRunService.launchExceptionalInvoicing(baIds, generateInvoiceRequestDto.getInvoicingDate(), generateInvoiceRequestDto.getLastTransactionDate(),BillingProcessTypesEnum.AUTOMATIC,currentUser);
         Long billingRunId = billingRun.getId();
         log.info("launchExceptionalInvoicing ok , billingRun.id:"+billingRunId);
 
         billingAccountService.updateBillingAccountTotalAmounts(billingAccount,billingRun,currentUser);
-        log.info("updateBillingAccountTotalAmounts ok");
+        log.debug("updateBillingAccountTotalAmounts ok");
 
         billingRun.setStatus(BillingRunStatusEnum.ON_GOING);
         billingRun.setBillingAccountNumber(1);
@@ -476,24 +476,24 @@ public class InvoiceApi extends BaseApi {
         billingRunService.update(billingRun);
         billingRunService.commit();
 
-        log.info("update billingRun ON_GOING");
+        log.debug("update billingRun ON_GOING");
 
         billingRunService.createAgregatesAndInvoice(billingRun.getId(),billingRun.getLastTransactionDate(), currentUser,1,0);
-        log.info("createAgregatesAndInvoice ok");
+        log.debug("createAgregatesAndInvoice ok");
 
         billingRun.setStatus(BillingRunStatusEnum.TERMINATED);
 
         billingRunService.update(billingRun);
-        log.info("update billingRun TERMINATED");
+        log.debug("update billingRun TERMINATED");
         billingRunService.commit();
 
         billingRunService.validate(billingRun, currentUser);
         billingRunService.commit();
-        log.info("billingRunService.validate ok");
+        log.debug("billingRunService.validate ok");
 
         List<Invoice> invoices = invoiceService.getInvoices(billingRun);
 
-        log.info((invoices==null)?"getInvoice is null" : "size="+ invoices.size());
+        log.debug((invoices==null)?"getInvoice is null" : "size="+ invoices.size());
 
         GenerateInvoiceResultDto generateInvoiceResultDto = new GenerateInvoiceResultDto();
         generateInvoiceResultDto.setInvoiceId(invoices.get(0).getId());
@@ -536,7 +536,7 @@ public class InvoiceApi extends BaseApi {
             throw new EntityDoesNotExistsException(Invoice.class,invoiceId);
         }
         if(invoice.getPdf() == null){
-            Map<String, Object> parameters = pDFParametersConstruction.constructParameters(invoiceId, currentUser.getProvider());
+            Map<String, Object> parameters = pDFParametersConstruction.constructParameters(invoiceId);
             invoiceService.producePdf(parameters, currentUser);
             invoiceService.commit();
         }
