@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<con:soapui-project activeEnvironment="Default" name="Test4.1" resourceRoot="${projectDir}" soapui-version="5.1.3" abortOnError="false" runType="SEQUENTIAL" id="76105cae-19da-46ea-8031-5afcf7dd2308" xmlns:con="http://eviware.com/soapui/config"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.actions.iface.tools.soapui.TestRunnerAction@values-local"><![CDATA[<xml-fragment xmlns:con="http://eviware.com/soapui/config">
+<con:soapui-project activeEnvironment="Default" name="Test4.1" resourceRoot="${projectDir}" soapui-version="5.0.0" abortOnError="false" runType="SEQUENTIAL" id="76105cae-19da-46ea-8031-5afcf7dd2308" xmlns:con="http://eviware.com/soapui/config"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.actions.iface.tools.soapui.TestRunnerAction@values-local"><![CDATA[<xml-fragment xmlns:con="http://eviware.com/soapui/config">
   <con:entry key="Environment" value="Default"/>
   <con:entry key="Global Properties" value=""/>
   <con:entry key="TestSuite" value="#825_Invoicing"/>
@@ -36595,7 +36595,12 @@ Execute mediationJob manually. Need to set custom fields.</con:description><con:
             <paymentTerms>CASH</paymentTerms>
             <electronicBilling>true</electronicBilling>
             <email>613@manaty.net</email>
-            
+            <bankCoordinates>
+                  <bankCode>bpi</bankCode>
+                  <branchCode>bpi</branchCode>
+                  <accountNumber>1234</accountNumber>
+                  <key>12</key>
+            </bankCoordinates>
          </billingAccount>
       </ws:createBillingAccount>
    </soapenv:Body>
@@ -36629,7 +36634,12 @@ Execute mediationJob manually. Need to set custom fields.</con:description><con:
             <paymentTerms>CASH</paymentTerms>
             <electronicBilling>false</electronicBilling>
             <email>manaty@manaty.net</email>
-            
+            <bankCoordinates>
+                  <bankCode>bpi</bankCode>
+                  <branchCode>bpi</branchCode>
+                  <accountNumber>1234</accountNumber>
+                  <key>12</key>
+            </bankCoordinates>
          </billingAccount>
       </ws:updateBillingAccount>
    </soapenv:Body>
