@@ -136,7 +136,7 @@ public class UsageRatingService {
 		walletOperation.setParameter2(edr.getParameter2());
 		walletOperation.setParameter3(edr.getParameter3());
 		walletOperation.setInputQuantity(edr.getQuantity());
-
+		walletOperation.setEdr(edr);
 		walletOperation.setProvider(provider);
 
 		// FIXME: copy those info in chargeInstance instead of performing

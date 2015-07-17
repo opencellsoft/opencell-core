@@ -71,7 +71,7 @@ public class RatedTransactionsJobBean {
 									.getInvoiceSubCategory(), walletOperation.getParameter1(),
 							walletOperation.getParameter2(), walletOperation.getParameter3(),
 							walletOperation.getRatingUnitDescription(), walletOperation.getPriceplan(),
-							walletOperation.getOfferCode());
+							walletOperation.getOfferCode(),walletOperation.getEdr());
 					ratedTransactionService.create(ratedTransaction, currentUser, currentUser.getProvider());
 
 					walletOperation.setStatus(WalletOperationStatusEnum.TREATED);

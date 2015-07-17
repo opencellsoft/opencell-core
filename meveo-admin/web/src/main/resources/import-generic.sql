@@ -1,5 +1,5 @@
 /* LANGUAGE */
-INSERT INTO ADM_LANGUAGE (id, version, created, updated, language_code, description_en, creator_id,  updater_id) VALUES (1, 1, CURRENT_TIMESTAMP, NULL, 'DEU', 'allemand', NULL, NULL);
+INSERT INTO ADM_LANGUAGE (id, version, created, updated, language_code, description_en, creator_id,  updater_id) VALUES (1, 1, CURRENT_TIMESTAMP, NULL, 'DEU', 'deutsh', NULL, NULL);
 INSERT INTO ADM_LANGUAGE (id, version, created, updated, language_code, description_en, creator_id,  updater_id) VALUES (2, 1, CURRENT_TIMESTAMP, NULL, 'ENG','anglais', NULL, NULL);
 INSERT INTO ADM_LANGUAGE (id, version, created, updated, language_code, description_en, creator_id,  updater_id) VALUES (3, 1, CURRENT_TIMESTAMP, NULL, 'ARA','arabe', NULL, NULL);
 INSERT INTO ADM_LANGUAGE (id, version, created, updated, language_code, description_en, creator_id,  updater_id) VALUES (4, 1, CURRENT_TIMESTAMP, NULL, 'BUL','bulgare', NULL, NULL);
@@ -31,7 +31,7 @@ INSERT INTO ADM_LANGUAGE (id, version, created, updated, language_code, descript
 INSERT INTO ADM_LANGUAGE (id, version, created, updated, language_code, description_en, creator_id,  updater_id) VALUES (30, 1, CURRENT_TIMESTAMP, NULL, 'SWE','suédois', NULL, NULL);
 INSERT INTO ADM_LANGUAGE (id, version, created, updated, language_code, description_en, creator_id,  updater_id) VALUES (31, 1, CURRENT_TIMESTAMP, NULL, 'CES','tchèque', NULL, NULL);
 INSERT INTO ADM_LANGUAGE (id, version, created, updated, language_code, description_en, creator_id,  updater_id) VALUES (32, 1, CURRENT_TIMESTAMP, NULL, 'TUR','turc', NULL, NULL);
-INSERT INTO ADM_LANGUAGE (id, version, created, updated, language_code, description_en, creator_id,  updater_id) VALUES (33, 1, CURRENT_TIMESTAMP, NULL, ‘GLE’,’irlandais’, NULL, NULL);
+INSERT INTO ADM_LANGUAGE (id, version, created, updated, language_code, description_en, creator_id,  updater_id) VALUES (33, 1, CURRENT_TIMESTAMP, NULL, 'GLE','irlandais', NULL, NULL);
 
 
 /* CURRENCY */
@@ -445,7 +445,19 @@ INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, descriptio
 
 /* CRM PROVIDER */
 
-INSERT INTO CRM_PROVIDER (id, version, disabled, created, updated, code, description, multicountry_flag, multicurrency_flag, multilanguage_flag, payment_methods, logo, invoice_prefix, current_invoice_nb, rating_rounding, bank_code, branch_code, account_number, hash_key, iban, bic, account_owner, bank_name, bank_id, issuer_number, issuer_name, entreprise, automatic_invoicing, display_free_tx_in_invoice, nne, address_1, address_2, address_3, address_zipcode, address_city, address_country, address_state, amount_validation, level_duplication, email, country_id, provider_id, currency_id, updater_id,creator_id,language_id,prepaid_resrv_delay_ms) VALUES (1, 1, false, CURRENT_TIMESTAMP, NULL, 'DEMO', NULL, true, true, true, NULL, NULL, NULL, NULL, NULL, 'SGMB', '12345', '33333333333', '11', '11', '11', 'owner', 'SGMB', '11', '1111', 'DEMO', false, false, true, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, false, false, NULL, 1, NULL, 1, NULL,NULL, 1,60000);
+INSERT INTO CRM_PROVIDER (id, version, disabled, created, updated, code, description,
+ multicountry_flag, multicurrency_flag, multilanguage_flag, payment_methods,
+  logo, invoice_prefix, current_invoice_nb, rating_rounding, bank_code,
+   branch_code, account_number, hash_key, iban, bic, account_owner, bank_name,
+    bank_id, issuer_number, issuer_name, entreprise, automatic_invoicing,
+     display_free_tx_in_invoice, nne, address_1, address_2, address_3, address_zipcode,
+      address_city, address_country, address_state, amount_validation, level_duplication,
+       email, country_id, currency_id, updater_id,creator_id,language_id,
+       prepaid_resrv_delay_ms) 
+  VALUES (1, 1, false, CURRENT_TIMESTAMP, NULL, 'DEMO', NULL, true, true, true, 
+  NULL, NULL, NULL, NULL, NULL, 'SGMB', '12345', '33333333333', '11', '11', '11',
+   'owner', 'SGMB', '11', '1111', 'DEMO', false, false, true, NULL, NULL, NULL, NULL, NULL,
+    NULL, NULL, NULL, false, false, NULL, 1, 1, NULL,NULL, 1,60000);
 
 /* ADM_TITLE */
 
@@ -949,10 +961,10 @@ insert into BILLING_INVOICE_CAT (id, version, disabled, created, provider_id, cr
 insert into BILLING_INVOICE_SUB_CAT (id, version, disabled, created, provider_id, creator_id, code, description, accounting_code, discount, invoice_category_id) values (1, 0, false, CURRENT_TIMESTAMP, 1, 1, 'CMP_DATA', 'Consumption Data', '120.121.21.2', 0, 1);
 insert into BILLING_INVOICE_SUB_CAT (id, version, disabled, created, provider_id, creator_id, code, description, accounting_code, discount, invoice_category_id) values (2, 0, false, CURRENT_TIMESTAMP, 1, 1, 'SUB_DATA', 'Subscription Data', '120.121.21.4', 0, 2);
 
-insert into BILLING_INV_SUB_CAT_COUNTRY (id, version, disabled, created, provider_id, creator_id, discount_code, invoice_sub_category_id, tax_id, trading_country_id) values (1, 0, false, CURRENT_TIMESTAMP, 1, 1, '', 1, 1, 1);
-insert into BILLING_INV_SUB_CAT_COUNTRY (id, version, disabled, created, provider_id, creator_id, discount_code, invoice_sub_category_id, tax_id, trading_country_id) values (2, 0, false, CURRENT_TIMESTAMP, 1, 1, '', 1, 2, 2);
-insert into BILLING_INV_SUB_CAT_COUNTRY (id, version, disabled, created, provider_id, creator_id, discount_code, invoice_sub_category_id, tax_id, trading_country_id) values (3, 0, false, CURRENT_TIMESTAMP, 1, 1, '', 2, 1, 1);
-insert into BILLING_INV_SUB_CAT_COUNTRY (id, version, disabled, created, provider_id, creator_id, discount_code, invoice_sub_category_id, tax_id, trading_country_id) values (4, 0, false, CURRENT_TIMESTAMP, 1, 1, '', 2, 2, 2);
+insert into BILLING_INV_SUB_CAT_COUNTRY (id, version, disabled, created, provider_id, creator_id, invoice_sub_category_id, tax_id, trading_country_id) values (1, 0, false, CURRENT_TIMESTAMP, 1, 1, 1, 1, 1);
+insert into BILLING_INV_SUB_CAT_COUNTRY (id, version, disabled, created, provider_id, creator_id, invoice_sub_category_id, tax_id, trading_country_id) values (2, 0, false, CURRENT_TIMESTAMP, 1, 1, 1, 2, 2);
+insert into BILLING_INV_SUB_CAT_COUNTRY (id, version, disabled, created, provider_id, creator_id, invoice_sub_category_id, tax_id, trading_country_id) values (3, 0, false, CURRENT_TIMESTAMP, 1, 1, 2, 1, 1);
+insert into BILLING_INV_SUB_CAT_COUNTRY (id, version, disabled, created, provider_id, creator_id, invoice_sub_category_id, tax_id, trading_country_id) values (4, 0, false, CURRENT_TIMESTAMP, 1, 1, 2, 2, 2);
 
 /* Billing Cycle */
 insert into BILLING_CYCLE (id, version, disabled, created, provider_id, creator_id, code, description, billing_template_name, due_date_delay, invoice_date_delay, calendar) values (1, 0, false, CURRENT_TIMESTAMP, 1, 1, 'CYC_INV_MT_1', 'Monthly Invoice Cycle 1', '1', 2, 4, 1);

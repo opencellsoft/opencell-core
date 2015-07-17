@@ -248,7 +248,7 @@ public class InvoiceApi extends BaseApi {
 								ratedTransaction.getAmountTax(),
 								RatedTransactionStatusEnum.BILLED, provider,
 								null, billingAccount, invoiceSubCategory, null,
-								null, null, null,null,null);
+								null, null, null,null,null,null);
 						meveoRatedTransaction.setCode(ratedTransaction
 								.getCode());
 						meveoRatedTransaction.setDescription(ratedTransaction
