@@ -139,12 +139,18 @@ public class InvoicingApi extends BaseApi {
 	
 	public PreInvoicingReportsDTO getPreInvoicingReport(Long billingRunId, User currentUser) throws MissingParameterException, BusinessApiException, EntityDoesNotExistsException, BusinessException{
 		BillingRun billingRun  = getBillingRun( billingRunId, currentUser);
+		if( !BillingRunStatusEnum.WAITING.equals(billingRun.getStatus()) ){
+			throw new BusinessApiException("BillingRun is not at the WAITING status");
+		}
 		PreInvoicingReportsDTO preInvoicingReportsDTO = billingRunService.generatePreInvoicingReports(billingRun);
 		return preInvoicingReportsDTO;
 	}
 	
 	public PostInvoicingReportsDTO getPostInvoicingReport(Long billingRunId, User currentUser) throws MissingParameterException, BusinessApiException, EntityDoesNotExistsException, BusinessException{
 		BillingRun billingRun  = getBillingRun( billingRunId, currentUser);
+		if( !BillingRunStatusEnum.TERMINATED.equals(billingRun.getStatus()) ){
+			throw new BusinessApiException("BillingRun is not at the TERMINATED status");
+		}
 		PostInvoicingReportsDTO postInvoicingReportsDTO = billingRunService.generatePostInvoicingReports(billingRun);
 		return postInvoicingReportsDTO;
 	}
@@ -156,6 +162,15 @@ public class InvoicingApi extends BaseApi {
 	
 	public void cancelBillingRun(Long billingRunId, User currentUser) throws MissingParameterException, EntityDoesNotExistsException, BusinessApiException{
 		BillingRun billingRun  = getBillingRun( billingRunId, currentUser);
+		if( BillingRunStatusEnum.CONFIRMED.equals(billingRun.getStatus()) ){
+			throw new BusinessApiException("Cannot cancel a confirmed billingRun");
+		}
+		if(BillingRunStatusEnum.VALIDATED.equals(billingRun.getStatus())){
+			throw new BusinessApiException("Cannot cancel a validated billingRun");
+		}
+		if(BillingRunStatusEnum.CANCELED.equals(billingRun.getStatus())){
+			throw new BusinessApiException("Already canceled");
+		}
 		billingRunService.cancel(billingRun);
 		billingRunService.cleanBillingRun(billingRun);
 	}

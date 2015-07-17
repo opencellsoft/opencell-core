@@ -17,8 +17,10 @@ import org.meveo.admin.job.PDFParametersConstruction;
 import org.meveo.api.BaseApi;
 import org.meveo.api.dto.RatedTransactionDto;
 import org.meveo.api.dto.SubCategoryInvoiceAgregateDto;
+import org.meveo.api.dto.billing.GenerateInvoiceResultDto;
 import org.meveo.api.dto.invoice.GenerateInvoiceRequestDto;
 import org.meveo.api.dto.invoice.InvoiceDto;
+import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
@@ -422,7 +424,7 @@ public class InvoiceApi extends BaseApi {
 	}
 
 
-	public String generateInvoice(GenerateInvoiceRequestDto generateInvoiceRequestDto,User currentUser) throws MissingParameterException, EntityDoesNotExistsException, BusinessException,Exception{
+	public GenerateInvoiceResultDto generateInvoice(GenerateInvoiceRequestDto generateInvoiceRequestDto,User currentUser) throws MissingParameterException, EntityDoesNotExistsException, BusinessException,BusinessApiException, Exception{
 
 		if (generateInvoiceRequestDto == null) {
 			missingParameters.add("generateInvoiceRequest");
@@ -436,6 +438,15 @@ public class InvoiceApi extends BaseApi {
 			throw new EntityDoesNotExistsException(BillingAccount.class,generateInvoiceRequestDto.getBillingAccountId());
 		}
 
+		if(billingAccount.getBillingRun() != null && (
+			billingAccount.getStatus().equals(BillingRunStatusEnum.NEW) ||
+			billingAccount.getStatus().equals(BillingRunStatusEnum.ON_GOING) ||
+			billingAccount.getStatus().equals(BillingRunStatusEnum.TERMINATED) ||
+			billingAccount.getStatus().equals(BillingRunStatusEnum.WAITING))){
+			
+				throw new BusinessApiException("BillingAccount already in an invoicing");
+		}
+		
 		if (generateInvoiceRequestDto.getInvoicingDate() == null  ) {
 			missingParameters.add("invoicingDate");
 		}
@@ -479,13 +490,15 @@ public class InvoiceApi extends BaseApi {
 		billingRunService.validate(billingRun, currentUser);
 		billingRunService.commit();
 		log.info("billingRunService.validate ok");
-
-		billingRun = billingRunService.findById(billingRunId, currentUser.getProvider());
 		
-		log.info(( billingRun.getInvoices()==null)?"getInvoice is null" : "size="+ billingRun.getInvoices().size());
+		List<Invoice> invoices = invoiceService.getInvoices(billingRun);
 
-		//FIXEME 
-		return  null;// billingRun.getInvoices().get(0).getInvoiceNumber();		
+		log.info((invoices==null)?"getInvoice is null" : "size="+ invoices.size());
+
+		GenerateInvoiceResultDto generateInvoiceResultDto = new GenerateInvoiceResultDto();
+		generateInvoiceResultDto.setInvoiceId(invoices.get(0).getId());
+		generateInvoiceResultDto.setInvoiceNumber(invoices.get(0).getInvoiceNumber());
+		return  generateInvoiceResultDto;		
 	}
 
 	public String getXMLInvoice(Long invoiceId,User currentUser) throws  FileNotFoundException, MissingParameterException, EntityDoesNotExistsException, BusinessException {

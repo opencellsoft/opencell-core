@@ -4,34 +4,43 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.meveo.api.dto.billing.GenerateInvoiceResultDto;
 import org.meveo.api.dto.response.BaseResponse;
 
-
+/**
+ * @author Edward P. Legaspi
+ **/
 @XmlRootElement(name = "GenerateInvoiceResponse")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class GenerateInvoiceResponseDto extends BaseResponse{
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
-	private String invoiceNumber;
+public class GenerateInvoiceResponseDto extends BaseResponse {
+
+	private static final long serialVersionUID = 5811304676103235597L;
+	
+	private GenerateInvoiceResultDto generateInvoiceResultDto;
 	
 	public GenerateInvoiceResponseDto(){
 		
 	}
 
 	/**
-	 * @return the invoiceNumber
+	 * @return the generateInvoiceResultDto
 	 */
-	public String getInvoiceNumber() {
-		return invoiceNumber;
+	public GenerateInvoiceResultDto getGenerateInvoiceResultDto() {
+		return generateInvoiceResultDto;
 	}
 
 	/**
-	 * @param invoiceNumber the invoiceNumber to set
+	 * @param generateInvoiceResultDto the generateInvoiceResultDto to set
 	 */
-	public void setInvoiceNumber(String invoiceNumber) {
-		this.invoiceNumber = invoiceNumber;
+	public void setGenerateInvoiceResultDto(GenerateInvoiceResultDto generateInvoiceResultDto) {
+		this.generateInvoiceResultDto = generateInvoiceResultDto;
+	}
+
+	/**
+	 * @return the serialversionuid
+	 */
+	public static long getSerialversionuid() {
+		return serialVersionUID;
 	}
 
 	/* (non-Javadoc)
@@ -39,9 +48,6 @@ public class GenerateInvoiceResponseDto extends BaseResponse{
 	 */
 	@Override
 	public String toString() {
-		return "GenerateInvoiceResponseDto [invoiceNumber=" + invoiceNumber + "]";
+		return "GenerateInvoiceResponseDto [generateInvoiceResultDto=" + generateInvoiceResultDto + "]";
 	}
-
-	
-	
 }
