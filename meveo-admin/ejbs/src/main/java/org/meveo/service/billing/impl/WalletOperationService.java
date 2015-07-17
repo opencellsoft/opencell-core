@@ -195,7 +195,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 
 			result = (BigDecimal) query.getSingleResult();
 		} catch (Exception e) {
-			log.error(e.getMessage());
+			log.error("failed to get Rated Amount",e);
 		}
 
 		if (result == null)
@@ -329,7 +329,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 
 			result = (BigDecimal) query.getSingleResult();
 		} catch (Exception e) {
-			log.error(e.getMessage());
+			log.error("failed to get balance amount ",e);
 		}
 
 		if (result == null)
@@ -1045,7 +1045,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 					walletOperations != null ? walletOperations.size() : 0 });
 
 		} catch (Exception e) {
-			log.error("findByStatus error={} ", e.getMessage());
+			log.error("findByStatus error={} ", e);
 		}
 		return walletOperations;
 	}
@@ -1057,12 +1057,23 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 			walletOperations = getEntityManager().createNamedQuery("WalletOperation.listToInvoice").setParameter("invoicingDate", invoicingDate).setParameter("provider", provider)
 					.getResultList();
 		} catch (Exception e) {
-			e.printStackTrace();
-			log.error("listToInvoice error={} ", e.getMessage());
+			log.error("listToInvoice error={} ", e);
 		}
 		return walletOperations;
 	}
-
+	
+	@SuppressWarnings("unchecked")
+	public List<WalletOperation> listToInvoiceByUserAccount(Date invoicingDate, Provider provider,UserAccount userAccount) {
+		List<WalletOperation> walletOperations = null;
+		try {
+			walletOperations = getEntityManager().createNamedQuery("WalletOperation.listToInvoiceByUA").setParameter("invoicingDate", invoicingDate).setParameter("provider", provider)
+					.setParameter("userAccount", userAccount).getResultList();
+		} catch (Exception e) {
+			log.error("listToInvoiceByUserAccount error ",e);
+		}
+		return walletOperations;
+	}
+	
 	@SuppressWarnings("unchecked")
 	public List<WalletOperation> listByChargeInstance(ChargeInstance chargeInstance) {
 		QueryBuilder qb = new QueryBuilder(WalletOperation.class, "c");

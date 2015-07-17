@@ -61,6 +61,11 @@ import org.meveo.model.rating.EDR;
 					query = "SELECT o FROM WalletOperation o WHERE (o.invoicingDate is NULL or o.invoicingDate<:invoicingDate ) "
 							+ " AND o.status=org.meveo.model.billing.WalletOperationStatusEnum.OPEN"
 							+ " AND o.provider=:provider"),
+	@NamedQuery(name = "WalletOperation.listToInvoiceByUA", 
+					query = "SELECT o FROM WalletOperation o WHERE (o.invoicingDate is NULL or o.invoicingDate<:invoicingDate ) "
+									+ " AND o.status=org.meveo.model.billing.WalletOperationStatusEnum.OPEN"
+									+ " AND o.provider=:provider"
+									+ " AND o.wallet.userAccount=:userAccount"),							
 	@NamedQuery(name = "WalletOperation.getBalance", 
 			query = "SELECT sum(o.amountWithTax)*-1 FROM WalletOperation o WHERE o.wallet.id=:walletId and "
 					+ "o.status=org.meveo.model.billing.WalletOperationStatusEnum.OPEN"),
