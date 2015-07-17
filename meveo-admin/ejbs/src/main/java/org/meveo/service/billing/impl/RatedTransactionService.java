@@ -780,11 +780,11 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 		walletOperationService.updateNoCheck(walletOperation);
 	}
 
-	public void createRatedTransaction(BillingAccount billingAccount,User currentUser )throws Exception{
+	public void createRatedTransaction(BillingAccount billingAccount,User currentUser,Date invoicingDate )throws Exception{
 		List<UserAccount> userAccounts = billingAccount.getUsersAccounts();
 		List<WalletOperation> walletOps = new ArrayList<WalletOperation>();
 		for(UserAccount ua:userAccounts){
-			walletOps.addAll(ua.getWallet().getOperations());
+			walletOps.addAll(walletOperationService.listToInvoiceByUserAccount(invoicingDate, currentUser.getProvider(), ua));
 		}
 		for(WalletOperation walletOp:walletOps){
 			createRatedTransaction(walletOp.getId(),currentUser);
