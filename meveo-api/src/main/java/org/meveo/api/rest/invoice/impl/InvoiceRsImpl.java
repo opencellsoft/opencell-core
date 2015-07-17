@@ -80,7 +80,7 @@ public class InvoiceRsImpl extends BaseRs implements InvoiceRs {
 		GenerateInvoiceResponseDto result = new GenerateInvoiceResponseDto();
 		try{
 
-			result.setInvoiceNumber(invoiceApi.generateInvoice(generateInvoiceRequestDto, getCurrentUser()));
+			result.setGenerateInvoiceResultDto(invoiceApi.generateInvoice(generateInvoiceRequestDto, getCurrentUser()));
 			result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
 
 		}catch(MissingParameterException mpe){
