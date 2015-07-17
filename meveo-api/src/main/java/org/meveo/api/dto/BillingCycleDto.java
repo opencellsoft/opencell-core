@@ -31,12 +31,12 @@ public class BillingCycleDto extends BaseDto {
 	@XmlElement(required = true)
 	private Integer dueDateDelay;
 
-    @XmlElement(required = false)
-    private Integer invoiceDateProductionDelay;
-    
-    @XmlElement(required = false)
-    private Integer transactionDateDelay;
-    
+	@XmlElement(required = false)
+	private Integer invoiceDateProductionDelay;
+
+	@XmlElement(required = false)
+	private Integer transactionDateDelay;
+
 	@XmlElement(required = true)
 	private String calendar;
 
@@ -44,17 +44,19 @@ public class BillingCycleDto extends BaseDto {
 
 	}
 
-	public BillingCycleDto(BillingCycle e) {
-		code = e.getCode();
-		description = e.getDescription();
-		billingTemplateName = e.getBillingTemplateName();
-        invoiceDateDelay = e.getInvoiceDateDelay();
-        dueDateDelay = e.getDueDateDelay();
-        invoiceDateProductionDelay = e.getInvoiceDateProductionDelay();
-        transactionDateDelay = e.getTransactionDateDelay();
+	public BillingCycleDto(BillingCycle billingCycleEntity) {
+		if(billingCycleEntity != null){
+			code = billingCycleEntity.getCode();
+			description = billingCycleEntity.getDescription();
+			billingTemplateName = billingCycleEntity.getBillingTemplateName();
+			invoiceDateDelay = billingCycleEntity.getInvoiceDateDelay();
+			dueDateDelay = billingCycleEntity.getDueDateDelay();
+			invoiceDateProductionDelay = billingCycleEntity.getInvoiceDateProductionDelay();
+			transactionDateDelay = billingCycleEntity.getTransactionDateDelay();
 
-		if (e.getCalendar() != null) {
-			calendar = e.getCalendar().getCode();
+			if (billingCycleEntity.getCalendar() != null) {
+				calendar = billingCycleEntity.getCalendar().getCode();
+			}
 		}
 	}
 
@@ -99,22 +101,22 @@ public class BillingCycleDto extends BaseDto {
 	}
 
 	public Integer getInvoiceDateProductionDelay() {
-        return invoiceDateProductionDelay;
-    }
+		return invoiceDateProductionDelay;
+	}
 
-    public void setInvoiceDateProductionDelay(Integer invoiceDateProductionDelay) {
-        this.invoiceDateProductionDelay = invoiceDateProductionDelay;
-    }
+	public void setInvoiceDateProductionDelay(Integer invoiceDateProductionDelay) {
+		this.invoiceDateProductionDelay = invoiceDateProductionDelay;
+	}
 
-    public Integer getTransactionDateDelay() {
-        return transactionDateDelay;
-    }
+	public Integer getTransactionDateDelay() {
+		return transactionDateDelay;
+	}
 
-    public void setTransactionDateDelay(Integer transactionDateDelay) {
-        this.transactionDateDelay = transactionDateDelay;
-    }
+	public void setTransactionDateDelay(Integer transactionDateDelay) {
+		this.transactionDateDelay = transactionDateDelay;
+	}
 
-    public String getCalendar() {
+	public String getCalendar() {
 		return calendar;
 	}
 

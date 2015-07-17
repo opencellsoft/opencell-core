@@ -49,6 +49,17 @@ public class InvoicingJobBean {
 						BillingRunStatusEnum.ON_GOING, BillingRunStatusEnum.CONFIRMED);
 
 				log.info("billingRuns to process={}", billingRuns.size());
+				Long nbRuns = new Long(1);		
+				Long waitingMillis = new Long(0);
+				try{
+					nbRuns = timerEntity.getLongCustomValue("InvoicingJob_nbRuns").longValue();  			
+					waitingMillis = timerEntity.getLongCustomValue("InvoicingJob_waitingMillis").longValue();
+					if(nbRuns == -1){
+						nbRuns  = (long) Runtime.getRuntime().availableProcessors();
+					}
+				}catch(Exception e){
+					log.warn("Cant get customFields for "+timerEntity.getJobName());
+				}
 
 				for (BillingRun billingRun : billingRuns) {
 						try {
@@ -59,19 +70,6 @@ public class InvoicingJobBean {
 
 								if (billingAccounts != null && billingAccounts.size() > 0) {
 									int billableBA = 0;
-
-									Long nbRuns = new Long(1);		
-									Long waitingMillis = new Long(0);
-									try{
-										nbRuns = timerEntity.getLongCustomValue("InvoicingJob_nbRuns").longValue();  			
-										waitingMillis = timerEntity.getLongCustomValue("InvoicingJob_waitingMillis").longValue();
-										if(nbRuns == -1){
-											nbRuns  = (long) Runtime.getRuntime().availableProcessors();
-										}
-									}catch(Exception e){
-										log.warn("Cant get customFields for "+timerEntity.getJobName());
-									}
-
 									SubListCreator subListCreator = new SubListCreator(billingAccounts,nbRuns.intValue());
 									List<Future<Integer>> asyncReturns = new ArrayList<Future<Integer>>();
 									while (subListCreator.isHasNext()) {
@@ -99,7 +97,7 @@ public class InvoicingJobBean {
 
 									if (billingRun.getProcessType() == BillingProcessTypesEnum.AUTOMATIC
 											|| currentUser.getProvider().isAutomaticInvoicing()) {
-										billingRunService.createAgregatesAndInvoice(billingRun.getId(),billingRun.getLastTransactionDate(), currentUser);
+										billingRunService.createAgregatesAndInvoice(billingRun.getId(),billingRun.getLastTransactionDate(), currentUser,nbRuns,waitingMillis);
 										billingRun = billingRunService.findById(billingRun.getId());
 										billingRun.setStatus(BillingRunStatusEnum.TERMINATED);
 										billingRunService.updateNoCheck(billingRun);
@@ -107,7 +105,7 @@ public class InvoicingJobBean {
 								}
 								result.registerSucces();
 							} else if (BillingRunStatusEnum.ON_GOING.equals(billingRun.getStatus())) {
-								billingRunService.createAgregatesAndInvoice(billingRun.getId(),billingRun.getLastTransactionDate(), currentUser);
+								billingRunService.createAgregatesAndInvoice(billingRun.getId(),billingRun.getLastTransactionDate(), currentUser,nbRuns,waitingMillis);
 								billingRun = billingRunService.findById(billingRun.getId());
 								billingRun.setStatus(BillingRunStatusEnum.TERMINATED);
 								billingRunService.updateNoCheck(billingRun);

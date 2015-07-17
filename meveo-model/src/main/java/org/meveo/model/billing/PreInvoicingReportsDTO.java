@@ -17,9 +17,7 @@
 package org.meveo.model.billing;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 public class PreInvoicingReportsDTO {
 
@@ -43,7 +41,7 @@ public class PreInvoicingReportsDTO {
     private BigDecimal directDebitBillableBAAmountHT;
     private BigDecimal tipBillableBAAmountHT;
     private BigDecimal wiretransferBillableBAAmountHT;
-    List<InvoiceSubCategory> InvoiceSubCategories = new ArrayList<InvoiceSubCategory>();
+   // List<InvoiceSubCategory> InvoiceSubCategories = new ArrayList<InvoiceSubCategory>();
 
     private BigDecimal SubCategoriesAmountHT = new BigDecimal(0);
     private BigDecimal TaxesAmount = new BigDecimal(0);
@@ -162,9 +160,7 @@ public class PreInvoicingReportsDTO {
         this.wiretransferBillableBANumber = wiretransferBillableBANumber;
     }
 
-    public List<InvoiceSubCategory> getInvoiceSubCategories() {
-        return InvoiceSubCategories;
-    }
+  
 
     public BigDecimal getCheckBillableBAAmountHT() {
         return checkBillableBAAmountHT;
@@ -198,9 +194,7 @@ public class PreInvoicingReportsDTO {
         this.wiretransferBillableBAAmountHT = wiretransferBillableBAAmountHT;
     }
 
-    public void setInvoiceSubCategories(List<InvoiceSubCategory> invoiceSubCategories) {
-        InvoiceSubCategories = invoiceSubCategories;
-    }
+   
 
     public BigDecimal getSubCategoriesAmountHT() {
         return SubCategoriesAmountHT;

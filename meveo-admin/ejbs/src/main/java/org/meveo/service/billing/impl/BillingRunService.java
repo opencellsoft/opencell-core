@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.Future;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -35,10 +36,13 @@ import javax.persistence.Query;
 import org.meveo.admin.async.RatedTxInvoicingAsync;
 import org.meveo.admin.async.SubListCreator;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.util.ResourceBundle;
+import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingCycle;
+import org.meveo.model.billing.BillingProcessTypesEnum;
 import org.meveo.model.billing.BillingRun;
 import org.meveo.model.billing.BillingRunStatusEnum;
 import org.meveo.model.billing.Invoice;
@@ -67,6 +71,14 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 	
 	@Inject
 	private RatedTxInvoicingAsync ratedTxInvoicingAsync;
+	
+	@Inject
+	private RatedTransactionService ratedTransactionService;
+
+
+	@Inject
+	private ResourceBundle resourceMessages;
+
 
 	public PreInvoicingReportsDTO generatePreInvoicingReports(BillingRun billingRun) throws BusinessException {
 		log.debug("start generatePreInvoicingReports.......");
@@ -316,6 +328,11 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 		return amount;
 	}
 
+	public void cancel(BillingRun billingRun) {
+		billingRun.setStatus(BillingRunStatusEnum.CANCELED);
+		update(billingRun);
+	}
+	
 	@SuppressWarnings("unchecked")
 	public void cleanBillingRun(BillingRun billingRun) {
 		Query queryTrans = getEntityManager()
@@ -539,33 +556,25 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 	}
 
 	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
-	public void createAgregatesAndInvoice(Long billingRunId,Date lastTransactionDate, User currentUser) throws BusinessException, Exception {
+	public void createAgregatesAndInvoice(Long billingRunId,Date lastTransactionDate, User currentUser,long nbRuns,long waitingMillis) throws BusinessException, Exception {
 		List<BillingAccount> billingAccounts = getEntityManager()
 				.createNamedQuery("BillingAccount.listByBillingRunId", BillingAccount.class)
 				.setParameter("billingRunId", billingRunId)
                 .getResultList();
-		
-		Long nbRuns = null;//timerEntity.getLongCustomValue("nbRuns").longValue();
-    	Long waitingMillis = null;//timerEntity.getLongCustomValue("waitingMillis").longValue();
-		
-    	if(nbRuns == null ){
-    		nbRuns = new Long(8);
-    	}
-    	if(waitingMillis == null ){
-    		waitingMillis = new Long(0);
-    	}
-
-    	SubListCreator subListCreator = new SubListCreator(billingAccounts,nbRuns.intValue());
+    	SubListCreator subListCreator = new SubListCreator(billingAccounts,(int) nbRuns);
+    	List<Future<String>> asyncReturns =  new ArrayList<Future<String>>();
 		while (subListCreator.isHasNext()) {
-			ratedTxInvoicingAsync.launchAndForget((List<BillingAccount>) subListCreator.getNextWorkSet(), billingRunId, currentUser);
+			asyncReturns.add(ratedTxInvoicingAsync.launchAndForget((List<BillingAccount>) subListCreator.getNextWorkSet(), billingRunId, currentUser));
 			try {
-				Thread.sleep(waitingMillis.longValue());
+				Thread.sleep(waitingMillis);
 			} catch (InterruptedException e) {
-				e.printStackTrace();
+				log.error("Failed to create agregates and invoice",e);
 			} 
 		}
-
-		
+		for(Future<String> futureItsNow : asyncReturns){
+			 futureItsNow.get();	
+		}
+	
 	}
 
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
@@ -588,4 +597,54 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 		billingRun.updateAudit(user);
 	}
 
+	public BillingRun launchExceptionalInvoicing(List<Long> billingAccountIds, Date invoiceDate,Date lastTransactionDate,BillingProcessTypesEnum processType,User currentUser) throws BusinessException{
+		log.info("launchExceptionelInvoicing...");
+		Provider currentProvider = currentUser.getProvider();
+
+		ParamBean param = ParamBean.getInstance();
+		String allowManyInvoicing = param.getProperty("billingRun.allowManyInvoicing", "true");
+		boolean isAllowed = Boolean.parseBoolean(allowManyInvoicing);
+		log.info("launchInvoicing allowManyInvoicing=#", isAllowed);
+		if (isActiveBillingRunsExist(currentProvider) && !isAllowed) {
+			throw new BusinessException(resourceMessages.getString("error.invoicing.alreadyLunched"));				
+		}
+		
+		BillingRun billingRun = new BillingRun();
+		billingRun.setStatus(BillingRunStatusEnum.NEW);
+		billingRun.setProcessDate(new Date());
+		billingRun.setProcessType(processType);
+		billingRun.setProvider(currentProvider);
+		String selectedBillingAccounts = "";
+		String sep = "";
+		boolean isBillable = false;
+
+		if(lastTransactionDate == null){
+			lastTransactionDate = new Date();
+		}
+
+		BillingAccount currentBA = null;
+		for (Long baId : billingAccountIds) {
+			currentBA = billingAccountService.findById(baId);
+			if(currentBA == null){
+				throw new BusinessException("BillingAccount whit id="+baId+" does not exists");
+			}
+			selectedBillingAccounts = selectedBillingAccounts + sep + baId;
+			sep = ",";
+			if (!isBillable && ratedTransactionService.isBillingAccountBillable(currentBA, lastTransactionDate)) {
+				isBillable = true;
+			}
+		}
+
+		if (!isBillable) {
+			throw new BusinessException(resourceMessages.getString("error.invoicing.noTransactions"));				
+		}
+		log.info("selectedBillingAccounts=" + selectedBillingAccounts);
+		billingRun.setSelectedBillingAccounts(selectedBillingAccounts);
+
+		billingRun.setInvoiceDate(invoiceDate);
+		billingRun.setLastTransactionDate(lastTransactionDate);
+		create(billingRun, currentUser, currentProvider);
+		commit();
+		return billingRun;
+	}
 }

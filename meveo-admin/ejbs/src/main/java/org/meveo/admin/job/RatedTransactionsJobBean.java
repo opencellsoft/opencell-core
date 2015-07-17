@@ -1,6 +1,5 @@
 package org.meveo.admin.job;
 
-import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
@@ -13,10 +12,7 @@ import javax.interceptor.Interceptors;
 import org.meveo.admin.job.logging.JobLoggingInterceptor;
 import org.meveo.interceptor.PerformanceInterceptor;
 import org.meveo.model.admin.User;
-import org.meveo.model.billing.RatedTransaction;
-import org.meveo.model.billing.RatedTransactionStatusEnum;
 import org.meveo.model.billing.WalletOperation;
-import org.meveo.model.billing.WalletOperationStatusEnum;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.jobs.JobExecutionResult;
 import org.meveo.model.jobs.JobExecutionResultImpl;
@@ -49,33 +45,7 @@ public class RatedTransactionsJobBean {
 
 			for (WalletOperation walletOperation : walletOperations) {
 				try {
-					BigDecimal amountWithTAx = walletOperation.getAmountWithTax();
-					BigDecimal amountTax = walletOperation.getAmountTax();
-					BigDecimal unitAmountWithTax = walletOperation.getUnitAmountWithTax();
-					BigDecimal unitAmountTax = walletOperation.getUnitAmountTax();
-
-					/*if (walletOperation.getChargeInstance().getSubscription().getUserAccount().getBillingAccount()
-							.getCustomerAccount().getCustomer().getCustomerCategory().getExoneratedFromTaxes()) {
-						amountWithTAx = walletOperation.getAmountWithoutTax();
-						amountTax = BigDecimal.ZERO;
-						unitAmountWithTax = walletOperation.getUnitAmountWithoutTax();
-						unitAmountTax = BigDecimal.ZERO;
-					}*/
-					RatedTransaction ratedTransaction = new RatedTransaction(walletOperation.getId(),
-							walletOperation.getOperationDate(), walletOperation.getUnitAmountWithoutTax(),
-							unitAmountWithTax, unitAmountTax, walletOperation.getQuantity(),
-							walletOperation.getAmountWithoutTax(), amountWithTAx, amountTax,
-							RatedTransactionStatusEnum.OPEN, walletOperation.getProvider(),
-							walletOperation.getWallet(), walletOperation.getWallet().getUserAccount()
-									.getBillingAccount(), walletOperation.getChargeInstance().getChargeTemplate()
-									.getInvoiceSubCategory(), walletOperation.getParameter1(),
-							walletOperation.getParameter2(), walletOperation.getParameter3(),
-							walletOperation.getRatingUnitDescription(), walletOperation.getPriceplan(),
-							walletOperation.getOfferCode(),walletOperation.getEdr());
-					ratedTransactionService.create(ratedTransaction, currentUser, currentUser.getProvider());
-
-					walletOperation.setStatus(WalletOperationStatusEnum.TREATED);
-					walletOperation.updateAudit(currentUser);
+					ratedTransactionService.createRatedTransaction(walletOperation.getId(), currentUser);
 				} catch (Exception e) {
 					log.error("Failed to rate transaction for wallet operation {}", walletOperation.getId(), e);
 					result.registerError(e.getMessage());

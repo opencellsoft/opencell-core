@@ -15,14 +15,14 @@ import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.admin.User;
 import org.meveo.util.MeveoParamBean;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author Edward P. Legaspi
  **/
 public abstract class BaseRs implements IBaseRs {
 
-	@Inject
-	private Logger log;
+	protected Logger log = LoggerFactory.getLogger(this.getClass());
 
 	@Inject
 	@MeveoParamBean

@@ -3,11 +3,15 @@ package org.meveo.api;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * @author Edward P. Legaspi
  * @since Oct 15, 2013
  **/
 public abstract class BaseApi {
+	 protected Logger log = LoggerFactory.getLogger(this.getClass());
 
 	protected List<String> missingParameters = new ArrayList<String>();
 

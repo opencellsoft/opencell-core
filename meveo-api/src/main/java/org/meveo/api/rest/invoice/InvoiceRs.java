@@ -8,6 +8,10 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
+import org.meveo.api.dto.invoice.GenerateInvoiceRequestDto;
+import org.meveo.api.dto.invoice.GenerateInvoiceResponseDto;
+import org.meveo.api.dto.invoice.GetPdfInvoiceResponseDto;
+import org.meveo.api.dto.invoice.GetXmlInvoiceResponseDto;
 import org.meveo.api.dto.invoice.InvoiceDto;
 import org.meveo.api.dto.response.CustomerInvoicesResponse;
 import org.meveo.api.dto.response.InvoiceCreationResponse;
@@ -44,5 +48,20 @@ public interface InvoiceRs extends IBaseRs {
 	@Path("/")
 	public CustomerInvoicesResponse find(
 			@QueryParam("customerAccountCode") String customerAccountCode);
+	
+	
+	@POST
+	@Path("/generateInvoice")
+	public GenerateInvoiceResponseDto generateInvoice(GenerateInvoiceRequestDto generateInvoiceRequestDto);
+	
+	
+	@POST
+	@Path("/getXMLInvoice")
+	public GetXmlInvoiceResponseDto getXMLInvoice(Long invoiceId);
+	
+	@POST
+	@Path("/getPdfInvoice")
+	public GetPdfInvoiceResponseDto getPdfInvoice(Long invoiceId);
+
 
 }

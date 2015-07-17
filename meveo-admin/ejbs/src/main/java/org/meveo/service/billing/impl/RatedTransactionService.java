@@ -62,6 +62,8 @@ import org.meveo.model.billing.Tax;
 import org.meveo.model.billing.TaxInvoiceAgregate;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.billing.WalletInstance;
+import org.meveo.model.billing.WalletOperation;
+import org.meveo.model.billing.WalletOperationStatusEnum;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.catalog.DiscountPlanItem;
 import org.meveo.model.payments.CustomerAccount;
@@ -86,6 +88,9 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 
 	@Inject
 	private CustomerAccountService customerAccountService;
+	
+	@Inject
+	private WalletOperationService walletOperationService;
 	
 	private static final BigDecimal HUNDRED = new BigDecimal("100");
 
@@ -740,5 +745,50 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 		return (List<RatedTransaction>)getEntityManager().createNamedQuery("RatedTransaction.getListByInvoiceAndSubCategory",RatedTransaction.class)
 				.setParameter("invoice", invoice).setParameter("invoiceSubCategory", invoiceSubCategory).getResultList();
 	}
+	
+	public void createRatedTransaction(Long walletOperationId,User currentUser )throws Exception{
+		WalletOperation walletOperation = walletOperationService.findById(walletOperationId, currentUser.getProvider()) ;
+
+		BigDecimal amountWithTAx = walletOperation.getAmountWithTax();
+		BigDecimal amountTax = walletOperation.getAmountTax();
+		BigDecimal unitAmountWithTax = walletOperation.getUnitAmountWithTax();
+		BigDecimal unitAmountTax = walletOperation.getUnitAmountTax();
+
+		/*if (walletOperation.getChargeInstance().getSubscription().getUserAccount().getBillingAccount()
+						.getCustomerAccount().getCustomer().getCustomerCategory().getExoneratedFromTaxes()) {
+					amountWithTAx = walletOperation.getAmountWithoutTax();
+					amountTax = BigDecimal.ZERO;
+					unitAmountWithTax = walletOperation.getUnitAmountWithoutTax();
+					unitAmountTax = BigDecimal.ZERO;
+				}*/
+		RatedTransaction ratedTransaction = new RatedTransaction(walletOperation.getId(),
+				walletOperation.getOperationDate(), walletOperation.getUnitAmountWithoutTax(),
+				unitAmountWithTax, unitAmountTax, walletOperation.getQuantity(),
+				walletOperation.getAmountWithoutTax(), amountWithTAx, amountTax,
+				RatedTransactionStatusEnum.OPEN, walletOperation.getProvider(),
+				walletOperation.getWallet(), walletOperation.getWallet().getUserAccount()
+				.getBillingAccount(), walletOperation.getChargeInstance().getChargeTemplate()
+				.getInvoiceSubCategory(), walletOperation.getParameter1(),
+				walletOperation.getParameter2(), walletOperation.getParameter3(),
+				walletOperation.getRatingUnitDescription(), walletOperation.getPriceplan(),
+				walletOperation.getOfferCode());
+		create(ratedTransaction, currentUser, currentUser.getProvider());
+
+		walletOperation.setStatus(WalletOperationStatusEnum.TREATED);
+		walletOperation.updateAudit(currentUser);
+		walletOperationService.updateNoCheck(walletOperation);
+	}
+
+	public void createRatedTransaction(BillingAccount billingAccount,User currentUser )throws Exception{
+		List<UserAccount> userAccounts = billingAccount.getUsersAccounts();
+		List<WalletOperation> walletOps = new ArrayList<WalletOperation>();
+		for(UserAccount ua:userAccounts){
+			walletOps.addAll(ua.getWallet().getOperations());
+		}
+		for(WalletOperation walletOp:walletOps){
+			createRatedTransaction(walletOp.getId(),currentUser);
+		}
+	}
+	
 	}
 	
