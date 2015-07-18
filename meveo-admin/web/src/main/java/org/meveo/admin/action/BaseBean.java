@@ -367,6 +367,18 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 
         return outcome;
     }
+    
+    public String saveOrUpdateWithMessage(boolean killConversation) throws BusinessException {
+    	 boolean result = true;
+         try {
+        	 return this.saveOrUpdate(killConversation);
+         } catch (Exception e) {
+             result = false;
+         }
+         RequestContext requestContext = RequestContext.getCurrentInstance();
+         requestContext.addCallbackParam("result", result);
+         return null;
+    }
 
     /**
      * Save or update entity depending on if entity is transient.

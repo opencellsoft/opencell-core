@@ -37,7 +37,7 @@
 
 		<hf:formPanel id="panelUsage" formId="usageChargeId"
 			label="#{messages['usageChargeTemplate.title']}"
-			backingBean="#{usageChargeTemplateBean}" showEnableDisableButton="true" addCustomFieldDialog="true">
+			backingBean="#{usageChargeTemplateBean}" showEnableDisableButton="true" addCustomFieldDialog="true" updateConfirmationMessage="#{usageChargeTemplateBean.usedInSubscription ? messages['confirmationMessage.confirmUpdate'] : ''}">
 
 			<p:tabView id="tabView">
 

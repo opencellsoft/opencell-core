@@ -37,7 +37,7 @@
 
 		<hf:formPanel id="formPanel" formId="reccuringChargeId"
 			label="#{messages['recurringChargeTemplate.chargeTemplatePanel']}"
-			backingBean="#{recurringChargeTemplateBean}" showEnableDisableButton="true" addCustomFieldDialog="true">
+			backingBean="#{recurringChargeTemplateBean}" showEnableDisableButton="true" addCustomFieldDialog="true" updateConfirmationMessage="#{recurringChargeTemplateBean.usedInSubscription ? messages['confirmationMessage.confirmUpdate'] : ''}">
 
 			<p:tabView id="tabView">
 

@@ -170,4 +170,10 @@ public class UsageChargeTemplateBean extends BaseBean<UsageChargeTemplate> {
 			}
 		}
 	}
+	
+	public boolean isUsedInSubscription() {
+		return (getEntity() != null && !getEntity().isTransient() && (usageChargeTemplateService.findByCode(getEntity()
+				.getCode(), getCurrentProvider()) != null)) ? true : false;
+	}
+	
 }

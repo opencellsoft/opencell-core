@@ -36,7 +36,7 @@
 
 		<hf:formPanel id="formPanel"
 			label="#{messages['oneShotChargeTemplate.chargeTemplatePanel']}"
-			backingBean="#{oneShotChargeTemplateBean}" columns="2" showEnableDisableButton="true" addCustomFieldDialog="true">
+			backingBean="#{oneShotChargeTemplateBean}" columns="2" showEnableDisableButton="true" addCustomFieldDialog="true" updateConfirmationMessage="#{oneShotChargeTemplateBean.usedInSubscription ? messages['confirmationMessage.confirmUpdate'] : ''}">
 
 			<p:tabView id="tabView">
 

@@ -212,4 +212,10 @@ public class OneShotChargeTemplateBean extends BaseBean<OneShotChargeTemplate> {
 			}
 		}
 	}
+	
+	public boolean isUsedInSubscription() {
+		return (getEntity() != null && !getEntity().isTransient() && (oneShotChargeTemplateService.findByCode(
+				getEntity().getCode(), getCurrentProvider()) != null)) ? true : false;
+	}
+	
 }

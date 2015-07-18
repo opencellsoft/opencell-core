@@ -22,26 +22,31 @@
 			</h:form>
 		</p:panel>
 
-		<hf:formPanel id="formPanel" label="#{messages['offerTemplate.offerTemplatePanel']}"
-			backingBean="#{offerTemplateBean}" showEnableDisableButton="true" addCustomFieldDialog="true">
+		<hf:formPanel id="formPanel"
+			label="#{messages['offerTemplate.offerTemplatePanel']}"
+			backingBean="#{offerTemplateBean}" showEnableDisableButton="true"
+			addCustomFieldDialog="true"
+			updateConfirmationMessage="#{offerTemplateBean.usedInSubscription ? messages['confirmationMessage.confirmUpdate'] : ''}">
 
 			<p:tabView id="tabView">
 
 				<p:tab title="#{messages['customer.tab.information']}">
-						<hf:formField label="#{messages['offerTemplate.code']}"
-							field="code" required="true" validateUnique="true" />
-						<hf:formField label="#{messages['offerTemplate.description']}"
-							field="description" required="true" useConverter="false"
-							id="description" maxlength="50" />
-						<hf:formField label="#{messages['enableEntity.disabled']}" doNotShowOnNew="true" allowEdit="false"
-							field="disabled" isMessage="true" />
-						<hf:formField
-							label="#{messages['offerTemplate.serviceTemplates']}"
-							field="serviceTemplates" listType="pickUpList" valueLabelField="code" newLine="true" />
+					<hf:formField label="#{messages['offerTemplate.code']}"
+						field="code" required="true" validateUnique="true" />
+					<hf:formField label="#{messages['offerTemplate.description']}"
+						field="description" required="true" useConverter="false"
+						id="description" maxlength="50" />
+					<hf:formField label="#{messages['enableEntity.disabled']}"
+						doNotShowOnNew="true" allowEdit="false" field="disabled"
+						isMessage="true" />
+					<hf:formField label="#{messages['offerTemplate.serviceTemplates']}"
+						field="serviceTemplates" listType="pickUpList"
+						valueLabelField="code" newLine="true" />
 				</p:tab>
 
 				<p:tab title="#{messages['customFieldTemplate.panel']}">
-					<hf:customFields id="customFields" messagesId=":formPanel:formId:messages"/>
+					<hf:customFields id="customFields"
+						messagesId=":formPanel:formId:messages" />
 				</p:tab>
 
 			</p:tabView>

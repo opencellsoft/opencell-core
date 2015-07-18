@@ -193,4 +193,10 @@ public class RecurringChargeTemplateBean extends
 			}
 		}
 	}
+	
+	public boolean isUsedInSubscription() {
+		return (getEntity() != null && !getEntity().isTransient() && (recurringChargeTemplateService.findByCode(
+				getEntity().getCode(), getCurrentProvider()) != null)) ? true : false;
+	}
+	
 }
