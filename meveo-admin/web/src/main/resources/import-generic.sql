@@ -454,6 +454,19 @@ multicurrency_flag, multilanguage_flag, payment_methods, logo, invoice_prefix, c
     VALUES (1, 1, false, CURRENT_TIMESTAMP, NULL, 'DEMO', NULL, true, true, true, NULL, NULL, NULL, NULL, NULL,
      'SGMB', '12345', '33333333333', '11', '11', '11', 'owner', 'SGMB', '11', '1111', 'DEMO', false, false, true,
       NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, false, false, NULL, 1, 1, NULL,NULL, 1,60000);
+INSERT INTO CRM_PROVIDER (id, version, disabled, created, updated, code, description,
+ multicountry_flag, multicurrency_flag, multilanguage_flag, payment_methods,
+  logo, invoice_prefix, current_invoice_nb, rating_rounding, bank_code,
+   branch_code, account_number, hash_key, iban, bic, account_owner, bank_name,
+    bank_id, issuer_number, issuer_name, entreprise, automatic_invoicing,
+     display_free_tx_in_invoice, nne, address_1, address_2, address_3, address_zipcode,
+      address_city, address_country, address_state, amount_validation, level_duplication,
+       email, country_id, currency_id, updater_id,creator_id,language_id,
+       prepaid_resrv_delay_ms) 
+  VALUES (1, 1, false, CURRENT_TIMESTAMP, NULL, 'DEMO', NULL, true, true, true, 
+  NULL, NULL, NULL, NULL, NULL, 'SGMB', '12345', '33333333333', '11', '11', '11',
+   'owner', 'SGMB', '11', '1111', 'DEMO', false, false, true, NULL, NULL, NULL, NULL, NULL,
+    NULL, NULL, NULL, false, false, NULL, 1, 1, NULL,NULL, 1,60000);
 
 /* ADM_TITLE */
 

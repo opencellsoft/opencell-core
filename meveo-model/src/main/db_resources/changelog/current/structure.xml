@@ -802,5 +802,25 @@
 			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
 			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="RATING_EDR" />
     </changeSet>
-   
+    
+    <changeSet id="#950_20150717" author="smichea">
+        <addColumn tableName="BILLING_WALLET_OPERATION">
+            <column name="EDR_ID" type="BIGINT">
+                <constraints nullable="true" />
+            </column>
+        </addColumn>
+        <addForeignKeyConstraint baseColumnNames="EDR_ID"
+            baseTableName="BILLING_WALLET_OPERATION" constraintName="fk_wopEdrId"
+            deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="RATING_EDR" />
+        <addColumn tableName="BILLING_RATED_TRANSACTION">
+            <column name="EDR_ID" type="BIGINT">
+                <constraints nullable="true" />
+            </column>
+        </addColumn>
+        <addForeignKeyConstraint baseColumnNames="EDR_ID"
+            baseTableName="BILLING_RATED_TRANSACTION" constraintName="fk_ropEdrId"
+            deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="RATING_EDR" />
+    </changeSet>
 </databaseChangeLog>
