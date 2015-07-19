@@ -110,8 +110,8 @@ public class CustomFieldInstance extends ProviderlessEntity {
     @Column(name = "VERSIONABLE")
     private boolean versionable;
     
-    @Lob
-    @Basic(fetch=FetchType.LAZY)
+  //  @Lob
+    //@Basic(fetch=FetchType.LAZY)
     @Column(name="ENTITY_VALUE",nullable=true)
     private String entityValue;
     
