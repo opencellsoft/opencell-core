@@ -761,6 +761,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 					unitAmountWithTax = walletOperation.getUnitAmountWithoutTax();
 					unitAmountTax = BigDecimal.ZERO;
 				}*/
+		//TODO: use empty constructor and setters
 		RatedTransaction ratedTransaction = new RatedTransaction(walletOperation.getId(),
 				walletOperation.getOperationDate(), walletOperation.getUnitAmountWithoutTax(),
 				unitAmountWithTax, unitAmountTax, walletOperation.getQuantity(),
@@ -771,7 +772,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 				.getInvoiceSubCategory(), walletOperation.getParameter1(),
 				walletOperation.getParameter2(), walletOperation.getParameter3(),
 				walletOperation.getRatingUnitDescription(), walletOperation.getPriceplan(),
-				walletOperation.getOfferCode());
+				walletOperation.getOfferCode(),null);
 		create(ratedTransaction, currentUser, currentUser.getProvider());
 
 		walletOperation.setStatus(WalletOperationStatusEnum.TREATED);
