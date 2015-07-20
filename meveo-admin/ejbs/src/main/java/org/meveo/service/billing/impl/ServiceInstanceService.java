@@ -155,7 +155,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 		serviceInstance.setCode(serviceCode);
 		serviceInstance.setInvoicingCalendar(serviceInstance.getServiceTemplate().getInvoicingCalendar());
 		create(serviceInstance, creator, subscription.getProvider());
-
+		subscription.getServiceInstances().add(serviceInstance);
 		ServiceTemplate serviceTemplate = serviceInstance.getServiceTemplate();
 
 		for (ServiceChargeTemplate<RecurringChargeTemplate> serviceChargeTemplate : serviceTemplate
