@@ -48,7 +48,7 @@
 		<hftl:dataList label="#{messages['access.title']}"
 			backingBean="#{accessListBean}" sortBy="accessUserId">
 			<hftl:column label="#{messages['access.accessUserId']}"
-				valueIdField="id" propagateConversation="true"
+				valueIdField="id" propagateConversation="true" useCustomIdParam="true"
 				field="accessUserId" entityView="accessDetail"/>
 			<hftl:column label="#{messages['access.subscription']}" 
 				field="subscription.code" valueIdField="subscription.id" propagateConversation="false"

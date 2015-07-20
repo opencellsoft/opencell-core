@@ -91,6 +91,10 @@ public class CustomerTreeBean extends BaseBean<AccountEntity> {
 	@Inject
 	@RequestParam
 	private Instance<Long> subscriptionId;
+	
+	@Inject
+	@RequestParam
+	private Instance<Long> accessId;
 
 	@Inject
 	private CustomerAccountService customerAccountService;
@@ -163,8 +167,13 @@ public class CustomerTreeBean extends BaseBean<AccountEntity> {
 					&& s.getUserAccount().getBillingAccount().getCustomerAccount() != null) {
 				customer = s.getUserAccount().getBillingAccount().getCustomerAccount().getCustomer();
 			}
-		}
-
+		} else if (entity instanceof Access) {
+			Access access = (Access) entity;
+			if (access.getSubscription() !=null && access.getSubscription().getUserAccount() != null && access.getSubscription().getUserAccount().getBillingAccount()!=null
+				&& access.getSubscription().getUserAccount().getBillingAccount().getCustomerAccount() != null) {
+				customer =  access.getSubscription().getUserAccount().getBillingAccount().getCustomerAccount().getCustomer();
+				}
+			}
 		if (customer != null && customer.getCode() != null) {
 			return build(customer);
 		} else {
@@ -295,8 +304,8 @@ public class CustomerTreeBean extends BaseBean<AccountEntity> {
 			return parent;
 		} else if (entity instanceof Access) {
 			Access access = (Access) entity;
-			TreeNodeData treeNodeData = new TreeNodeData(access.getSubscription().getId(), access.getAccessUserId(),
-					null, null, false, ACCESS_KEY, access.getSubscription().getId().equals(subscriptionId.get()));
+			TreeNodeData treeNodeData = new TreeNodeData(access.getId(), access.getAccessUserId(),
+					null, null, false, ACCESS_KEY, access.getId().equals(accessId.get()));
 			TreeNode treeNode = new DefaultTreeNode(ACCESS_KEY, treeNodeData, parent);
 
 			if (treeNodeData.isSelected()) {
