@@ -81,9 +81,9 @@ public class DunningPlanTransitionBean extends BaseBean<DunningPlanTransition> {
 						"message.exception.business"));
 			}
 		}
-		super.initEntity();
-		entity.setDunningPlan(dunningPlan);
-		return entity;
+		DunningPlanTransition dunningPlanTransition = super.initEntity();
+		dunningPlanTransition.setDunningPlan(dunningPlan);
+		return dunningPlanTransition;
 	}
 
 	/*
