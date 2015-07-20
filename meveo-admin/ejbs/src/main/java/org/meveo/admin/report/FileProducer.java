@@ -76,7 +76,6 @@ public class FileProducer {
                 JasperExportManager.exportReportToPdfFile(jasperPrint, fileName);
             }
         } catch (JRException e) {
-            // TODO Auto-generated catch block
             log.error("failed to generate PDF file",e);
         } catch (FileNotFoundException e) {
             throw new NoTemplateException();

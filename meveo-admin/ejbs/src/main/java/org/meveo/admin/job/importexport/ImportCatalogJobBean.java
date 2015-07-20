@@ -68,7 +68,6 @@ public class ImportCatalogJobBean {
 			outputDir = catalogDir + "output";
 			rejectDir = catalogDir + "reject";
 
-			// TODO creer les reps
 			File f = new File(inputDir);
 			if (!f.exists()) {
 				f.mkdirs();
@@ -95,7 +94,6 @@ public class ImportCatalogJobBean {
 				int processed = 0;
 				Workbook workbook;
 
-				// TODO cache entities
 				try {
 					workbook = WorkbookFactory.create(excelInputStream);
 					Sheet sheet = workbook.getSheetAt(0);

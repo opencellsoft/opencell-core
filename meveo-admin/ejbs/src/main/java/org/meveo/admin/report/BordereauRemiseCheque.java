@@ -121,7 +121,6 @@ public class BordereauRemiseCheque {
 					os.close();
 					context.responseComplete();
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
 					log.error("failed to export report too PdfStream",e);
 				}
 
@@ -129,10 +128,8 @@ public class BordereauRemiseCheque {
 			    messages.info(new BundleKey("messages", "bordereauRemiseCheque.noData"));
 			}
 		} catch (JRException e) {
-			// TODO Auto-generated catch block
 			log.error("JR exception ",e);
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
 			log.error("file not found exception ",e);
 		}
 	}
@@ -184,7 +181,6 @@ public class BordereauRemiseCheque {
 			writer.close();
 			return temp;
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			log.error("failed to generate data file",e);
 		}
 		return null;
