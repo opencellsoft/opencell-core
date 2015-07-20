@@ -20,7 +20,6 @@ public class AccountOperationsGenerationJob extends Job {
 
     @Override
     protected void execute(JobExecutionResultImpl result, JobInstance jobInstance, User currentUser) throws BusinessException {
-
         accountOperationsGenerationJobBean.execute(result, jobInstance.getParametres(), currentUser);
     }
 

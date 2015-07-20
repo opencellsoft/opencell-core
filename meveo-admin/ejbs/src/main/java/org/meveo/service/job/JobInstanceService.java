@@ -23,6 +23,7 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.annotation.Resource;
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ejb.Timer;
 import javax.ejb.TimerService;
@@ -41,6 +42,7 @@ import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.admin.User;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.jobs.JobCategoryEnum;
+import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.model.jobs.JobInstanceInfoDto;
 import org.meveo.service.admin.impl.UserService;
@@ -58,6 +60,9 @@ public class JobInstanceService extends PersistenceService<JobInstance> {
 
 	@Inject
 	private UserService userService;
+	
+	@EJB
+	private JobExecutionService jobExecutionService;
 
 	private static Logger log = LoggerFactory.getLogger(JobInstanceService.class);
 
@@ -280,7 +285,7 @@ public class JobInstanceService extends PersistenceService<JobInstance> {
 		}
 	}
 
-	public void executeAPITimer(JobInstanceInfoDto jobInstanceInfoDTO, User currentUser) throws BusinessException {
+	public Long executeAPITimer(JobInstanceInfoDto jobInstanceInfoDTO, User currentUser) throws BusinessException {
 		log.info("execute timer={} via api", jobInstanceInfoDTO.getTimerName());
 		JobInstance entity = null;
 		try {
@@ -297,6 +302,7 @@ public class JobInstanceService extends PersistenceService<JobInstance> {
 			throw new JobDoesNotExistsException(jobInstanceInfoDTO.getTimerName());
 		}
 		
+		JobExecutionResultImpl result = new JobExecutionResultImpl();
 		InitialContext ic;
 		try {
 			ic = new InitialContext();
@@ -313,8 +319,9 @@ public class JobInstanceService extends PersistenceService<JobInstance> {
 					}
 					if(jobInstanceInfoDTO.getBillingCycle()!=null){
 						entity.setStringCustomValue("BillingRunJob_billingCycle",jobInstanceInfoDTO.getBillingCycle());
-					}
-					job.execute(entity, currentUser);
+					}					
+					jobExecutionService.create(result, currentUser, currentUser.getProvider());
+					job.execute(entity, result, currentUser);
 				}
 			} else {
 				throw new BusinessException("cannot find job category " + entity.getJobCategoryEnum());
@@ -322,6 +329,8 @@ public class JobInstanceService extends PersistenceService<JobInstance> {
 		} catch (NamingException e) {
 			log.error("failed to execute API timer",e);
 		}
+		
+		return result.getId();
 	}
 
 	public JobInstance getByTimer(Timer timer) {

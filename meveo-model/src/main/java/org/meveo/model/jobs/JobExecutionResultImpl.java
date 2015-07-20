@@ -112,7 +112,23 @@ public class JobExecutionResultImpl extends BaseEntity implements
 		result.setReport(res.getReport());
 		result.setWarnings(res.getWarnings());
 		result.setDone(res.isDone());
+		result.setId(res.getId());
 		return result;
+	}
+	
+	public static void updateFromInterface(String jobName, JobExecutionResult source, JobExecutionResultImpl result) {
+		result.setJobName(jobName);
+		result.setEndDate(source.getEndDate());
+		result.setStartDate(source.getStartDate());
+		result.setErrors(source.getErrors());
+		result.setNbItemsCorrectlyProcessed(source.getNbItemsCorrectlyProcessed());
+		result.setNbItemsProcessedWithError(source.getNbItemsProcessedWithError());
+		result.setNbItemsProcessedWithWarning(source.getNbItemsProcessedWithWarning());
+		result.setNbItemsToProcess(source.getNbItemsToProcess());
+		result.setReport(source.getReport());
+		result.setWarnings(source.getWarnings());
+		result.setDone(source.isDone());
+		result.setId(source.getId());
 	}
 
 	// Getter & setters

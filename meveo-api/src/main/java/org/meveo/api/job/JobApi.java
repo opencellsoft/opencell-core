@@ -29,13 +29,13 @@ public class JobApi extends BaseApi {
 	 * @throws Exception
 	 */
 
-	public void executeJob(JobInstanceInfoDto timerInfoDTO, User currentUser) throws MeveoApiException {
+	public Long executeJob(JobInstanceInfoDto timerInfoDTO, User currentUser) throws MeveoApiException {
 		if (StringUtils.isBlank(timerInfoDTO.getTimerName())) {
 			missingParameters.add("timerName");
 			throw new MissingParameterException(getMissingParametersExceptionMessage());
 		} else {
 			try {
-				jobInstanceService.executeAPITimer(timerInfoDTO, currentUser);
+				return jobInstanceService.executeAPITimer(timerInfoDTO, currentUser);
 			} catch (BusinessException e) {
 				throw new MeveoApiException(e.getMessage());
 			}

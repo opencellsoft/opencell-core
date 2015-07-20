@@ -61,15 +61,21 @@ public class JobExecutionService extends PersistenceService<JobExecutionResultIm
 			log.info("JobExecutionService persistResult...");
 			JobExecutionResultImpl entity = JobExecutionResultImpl.createFromInterface(job.getClass().getSimpleName(), result);
 			if (!entity.isDone() || (entity.getNbItemsCorrectlyProcessed() + entity.getNbItemsProcessedWithError() + entity.getNbItemsProcessedWithWarning()) > 0) {
-
-				create(entity, currentUser, currentUser.getProvider());
+				if (entity.isTransient()) {
+					create(entity, currentUser, currentUser.getProvider());
+				} else {
+					//search for job execution result
+					JobExecutionResultImpl updateEntity = findById(result.getId());
+					JobExecutionResultImpl.updateFromInterface(job.getClass().getSimpleName(), result, updateEntity);					
+				}
+				result.setId(entity.getId());
 				log.info("PersistResult entity.isDone()=" + entity.isDone());
 				if (!entity.isDone()) {
 					executeJob(job.getClass().getSimpleName(), jobInstance, currentUser, jobCategory);
 				} else if (jobInstance.getFollowingJob() != null) {
 					try {
-							executeJob(jobInstance.getFollowingJob().getJobTemplate(), jobInstance.getFollowingJob(), currentUser, jobInstance.getFollowingJob().getJobCategoryEnum());
-						
+						executeJob(jobInstance.getFollowingJob().getJobTemplate(), jobInstance.getFollowingJob(),
+								currentUser, jobInstance.getFollowingJob().getJobCategoryEnum());
 					} catch (Exception e) {
 						log.warn("PersistResult cannot excute the following jobs.");
 					}

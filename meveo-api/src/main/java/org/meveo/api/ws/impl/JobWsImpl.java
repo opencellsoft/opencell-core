@@ -35,7 +35,8 @@ public class JobWsImpl extends BaseWs implements JobWs {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 		try {
-			jobApi.executeJob(jobInstanceInfoDto, getCurrentUser());
+			Long resultId = jobApi.executeJob(jobInstanceInfoDto, getCurrentUser());
+			result.setMessage(resultId == null ? "NOTHING_TO_DO" : String.valueOf(resultId));
 		} catch (MeveoApiException e) {
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
