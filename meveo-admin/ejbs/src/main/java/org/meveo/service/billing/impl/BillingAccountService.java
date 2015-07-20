@@ -244,7 +244,9 @@ public class BillingAccountService extends AccountService<BillingAccount> {
 		billingAccount = findById(billingAccount.getId(), true);
 		
 		//FIXE ME : api caller
-		billingRun = billingRunService.findById(billingRun.getId());
+		log.debug("billingRun.id:"+((billingRun==null)?"null":billingRun.getId()));
+		billingRun = billingRunService.findById(billingRun.getId(),true);
+		log.debug(" refresh billingRun.id:"+((billingRun==null)?"null":billingRun.getId()));
 
 			Query q = null;
 			if (billingAccount.getProvider().isDisplayFreeTransacInInvoice()) {
