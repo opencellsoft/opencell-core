@@ -143,7 +143,6 @@ public class AccountingDetail extends FileProducer implements Reporting {
 				generatePDFfile(file, sb.toString(), templateFilename, parameters);
 			}
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			log.error("failed to generate accounting detail File",e);
 		}
 
