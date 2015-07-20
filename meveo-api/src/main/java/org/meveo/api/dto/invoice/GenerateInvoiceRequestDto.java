@@ -13,7 +13,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class GenerateInvoiceRequestDto {
 	
 	@XmlElement(required = true)
-	private Long billingAccountId;
+	private String billingAccountCode;
 	
 	@XmlElement(required = true)
 	private Date invoicingDate;
@@ -25,19 +25,25 @@ public class GenerateInvoiceRequestDto {
 		
 	}
 
-	/**
-	 * @return the billingAccountId
-	 */
-	public Long getBillingAccountId() {
-		return billingAccountId;
-	}
+	
 
 	/**
-	 * @param billingAccountId the billingAccountId to set
+	 * @return the billingAccountCode
 	 */
-	public void setBillingAccountId(Long billingAccountId) {
-		this.billingAccountId = billingAccountId;
+	public String getBillingAccountCode() {
+		return billingAccountCode;
 	}
+
+
+
+	/**
+	 * @param billingAccountCode the billingAccountCode to set
+	 */
+	public void setBillingAccountCode(String billingAccountCode) {
+		this.billingAccountCode = billingAccountCode;
+	}
+
+
 
 	/**
 	 * @return the invoicingDate
@@ -72,7 +78,7 @@ public class GenerateInvoiceRequestDto {
 	 */
 	@Override
 	public String toString() {
-		return "GenerateInvoiceRequestDto [billingAccountId=" + billingAccountId + ", invoicingDate=" + invoicingDate + ", lastTransactionDate=" + lastTransactionDate + "]";
+		return "GenerateInvoiceRequestDto [billingAccountCode=" + billingAccountCode + ", invoicingDate=" + invoicingDate + ", lastTransactionDate=" + lastTransactionDate + "]";
 	}
 
 	

@@ -92,6 +92,9 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 	@Inject
 	private WalletOperationService walletOperationService;
 	
+	@Inject
+	private BillingAccountService billingAccountService;
+
 	private static final BigDecimal HUNDRED = new BigDecimal("100");
 
 	public List<RatedTransaction> getRatedTransactionsInvoiced(UserAccount userAccount) {
@@ -780,7 +783,8 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 		walletOperationService.updateNoCheck(walletOperation);
 	}
 
-	public void createRatedTransaction(BillingAccount billingAccount,User currentUser ,Date invoicingDate)throws Exception{
+	public void createRatedTransaction(Long billingAccountId,User currentUser,Date invoicingDate )throws Exception{
+		BillingAccount billingAccount = billingAccountService.findById(billingAccountId, true);
 		List<UserAccount> userAccounts = billingAccount.getUsersAccounts();
 		List<WalletOperation> walletOps = new ArrayList<WalletOperation>();
 		for(UserAccount ua:userAccounts){
@@ -789,7 +793,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 		for(WalletOperation walletOp:walletOps){
 			createRatedTransaction(walletOp.getId(),currentUser);
 		}
+
 	}
 	
-	}
-	
+}

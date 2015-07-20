@@ -227,7 +227,7 @@ public class BillingAccountService extends AccountService<BillingAccount> {
 
 			return (List<BillingAccount>) qb.getQuery(getEntityManager()).getResultList();
 		} catch (Exception ex) {
-			log.error(ex.getMessage());
+			log.error("failed to find billing accounts",ex);
 		}
 
 		return null;
@@ -282,7 +282,7 @@ public class BillingAccountService extends AccountService<BillingAccount> {
 		try {
 			return (List<BillingAccount>) qb.getQuery(getEntityManager()).getResultList();
 		} catch (NoResultException e) {
-			log.warn(e.getMessage());
+			log.warn("error while getting list by customer account",e);
 			return null;
 		}
 	}
