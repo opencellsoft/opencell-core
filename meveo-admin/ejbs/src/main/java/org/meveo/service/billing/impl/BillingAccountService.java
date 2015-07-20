@@ -232,6 +232,8 @@ public class BillingAccountService extends AccountService<BillingAccount> {
 
 		return null;
 	}
+	
+	
 
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public boolean updateBillingAccountTotalAmounts(BillingAccount billingAccount, BillingRun billingRun,
@@ -240,6 +242,9 @@ public class BillingAccountService extends AccountService<BillingAccount> {
 		log.debug("updateBillingAccountTotalAmounts  billingAccount:" + billingAccount.getCode());
 
 		billingAccount = findById(billingAccount.getId(), true);
+		
+		//FIXE ME : api caller
+		billingRun = billingRunService.findById(billingRun.getId());
 
 			Query q = null;
 			if (billingAccount.getProvider().isDisplayFreeTransacInInvoice()) {

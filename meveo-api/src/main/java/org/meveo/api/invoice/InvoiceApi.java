@@ -473,7 +473,7 @@ public class InvoiceApi extends BaseApi {
 		billingRun.setStatus(BillingRunStatusEnum.ON_GOING);
 		billingRun.setBillingAccountNumber(1);
 		billingRun.setBillableBillingAcountNumber(1);
-		billingRunService.update(billingRun);
+		billingRun = billingRunService.update(billingRun);
 		billingRunService.commit();
 
 		log.debug("update billingRun ON_GOING");
@@ -483,7 +483,7 @@ public class InvoiceApi extends BaseApi {
 
 		billingRun.setStatus(BillingRunStatusEnum.TERMINATED);
 
-		billingRunService.update(billingRun);
+		billingRun = billingRunService.update(billingRun);
 		log.debug("update billingRun TERMINATED");
 		billingRunService.commit();
 
