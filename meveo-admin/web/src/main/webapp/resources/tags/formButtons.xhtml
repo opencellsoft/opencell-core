@@ -25,7 +25,8 @@
         showBackButton - show a default "navigate back" button
         showEditButton - show a default "edit" button
         showEnableDisableButton - show a default "enable/disable" button
-        useCustomIdParam and objectIdParamName - should a custom parameter id instead of a default "objectId" be used for navigation 
+        useCustomIdParam and objectIdParamName - should a custom parameter id instead of a default "objectId" be used for navigation
+        updateConfirmationMessage - if not empty, update will show a confirmation dialog with this message  
         
 -->
 
@@ -44,6 +45,7 @@
 	<cc:attribute name="useCustomIdParam" default="false" />
 	<cc:attribute name="objectIdParamName"
 		default="#{cc.attrs.useCustomIdParam?cc.attrs.backingBean.idParameterName:'objectId'}" />
+	<cc:attribute name="updateConfirmationMessage" default="" />
 </cc:interface>
 
 <cc:implementation>
@@ -78,12 +80,39 @@
 		</p:commandButton>
 
 		<p:commandButton id="saveButton"
-			rendered="#{cc.attrs.edit and !empty(cc.attrs.backingBean.objectId)}"
+			rendered="#{cc.attrs.edit and !empty(cc.attrs.backingBean.objectId) and empty(cc.attrs.updateConfirmationMessage)}"
 			value="#{messages['action.save']}"
 			action="#{cc.attrs.backingBean.saveOrUpdate(cc.attrs.killConversationOnSave)}"
 			icon="ui-icon-check" ajax="#{cc.attrs.ajaxSubmit}">
 			<f:param name="edit" value="#{cc.attrs.edit}" />
 		</p:commandButton>
+
+		<!-- Update with message -->
+		<p:remoteCommand id="remoteUpdateWithMessageButton"
+			action="#{cc.attrs.backingBean.saveOrUpdateWithMessage(cc.attrs.killConversationOnSave)}"
+			name="updateWithMessage" oncomplete="handleUpdateWithMessageComplete(xhr,status,args)" />
+		<p:commandButton id="#{resultsId}saveButtonWithMessage"
+			rendered="#{cc.attrs.edit and !empty(cc.attrs.backingBean.objectId) and !empty(cc.attrs.updateConfirmationMessage)}"
+			value="#{messages['action.save']}" icon="ui-icon-check"
+			oncomplete="PF('saveButtonWithMessageDialog').show()">
+			<f:setPropertyActionListener value="#{cc.attrs.edit}"
+				target="#{cc.attrs.backingBean.edit}"></f:setPropertyActionListener>
+		</p:commandButton>
+		<!-- Update the message handling when  -->
+		<p:confirmDialog id="confirmUpdateWithMessage" appendTo="@(body)"
+			widgetVar="saveButtonWithMessageDialog" showEffect="fade"
+			hideEffect="fade" severity="alert"
+			message="#{(cc.attrs.updateConfirmationMessage eq '') ? messages['confirmationMessage.confirmUpdate'] : cc.attrs.updateConfirmationMessage}">
+			<p:commandButton id="updateOk" value="#{messages['commons.yes']}"
+				styleClass="ui-confirmdialog-yes" icon="ui-icon-check"
+				oncomplete="updateWithMessage()"
+				onclick="PF('saveButtonWithMessageDialog').hide()">
+			</p:commandButton>
+			<p:commandButton id="updateKO" value="#{messages['commons.no']}"
+				type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close"
+				onclick="PF('saveButtonWithMessageDialog').hide()" />
+		</p:confirmDialog>
+		<!-- Update with message -->
 
 		<cc:insertChildren />
 
@@ -106,7 +135,14 @@
 				function handleDeleteComplete(xhr, status, args) {
 					var result = args.result;
 					if(typeof(result)!="undefined" && !result){
-						PF('confirmCanotDeleteWidget').show();
+						
+					}
+				}
+
+				function handleUpdateWithMessageComplete(xhr, status, args) {
+					var result = args.result;
+					if(typeof(result)!="undefined" && !result){
+						PF('confirmCannotUpdateWithMessageDialog').show();
 					}
 				}
 			//]]>
@@ -133,6 +169,14 @@
 			<p:panel styleClass="confirm-dialog-content">
 				<p:commandButton id="canotdeleteOk" value="#{messages['commons.ok']}"
 					oncomplete="PF('confirmCanotDeleteWidget').hide()" update="@this" />
+			</p:panel>
+		</p:confirmDialog>
+		<p:confirmDialog id="confirmCannotUpdateWithMessageDialog" styleClass="confirm-dialog"
+			message="#{messages['message.confirm.cannotUpdate']}" header=""
+			severity="alert" widgetVar="confirmCannotUpdateWithMessageDialog" appendTo="@(body)">
+			<p:panel styleClass="confirm-dialog-content">
+				<p:commandButton id="cannotUpdateWithMessage" value="#{messages['commons.ok']}"
+					oncomplete="PF('confirmCannotUpdateWithMessageDialog').hide()" update="@this" />
 			</p:panel>
 		</p:confirmDialog>
 

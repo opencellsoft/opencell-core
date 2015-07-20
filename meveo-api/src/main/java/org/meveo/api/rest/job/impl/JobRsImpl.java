@@ -38,7 +38,8 @@ public class JobRsImpl extends BaseRs implements JobRs {
 	public ActionStatus execute(JobInstanceInfoDto postData) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 		try {
-			jobApi.executeJob(postData, getCurrentUser());
+			Long resultId = jobApi.executeJob(postData, getCurrentUser());
+			result.setMessage(resultId == null ? "NOTHING_TO_DO" : String.valueOf(resultId));
 		} catch (MeveoApiException e) {
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());

@@ -29,7 +29,8 @@
             showBackButton - show a default "navigate back" button
             showEditButton - show a default "edit" button
             showEnableDisableButton - show a default "enable/disable" button
-            useCustomIdParam and objectIdParamName - should a custom parameter id instead of a default "objectId" be used for navigation 
+            useCustomIdParam and objectIdParamName - should a custom parameter id instead of a default "objectId" be used for navigation
+            updateConfirmationMessage - if not empty, update will show a confirmation dialog with this message 
         
     Facets
         buttons - additional buttons to include    
@@ -53,6 +54,7 @@
     <cc:attribute name="useCustomIdParam" default="false" />
     <cc:attribute name="objectIdParamName" />
     <cc:attribute name="addCustomFieldDialog" default="false" />
+    <cc:attribute name="updateConfirmationMessage" default="" />
     <cc:facet name="buttons"/>
 </cc:interface>
 
@@ -81,7 +83,8 @@
     				showBackButton="#{cc.attrs.showBackButton}"
     				showEditButton="#{cc.attrs.showEditButton}" 
                     showEnableDisableButton="#{cc.attrs.showEnableDisableButton}"
-                    showDeleteButton="#{cc.attrs.showDeleteButton}"/>
+                    showDeleteButton="#{cc.attrs.showDeleteButton}"
+                    updateConfirmationMessage="#{cc.attrs.updateConfirmationMessage}" />
     
                 <h:panelGroup layout="block" styleClass="form-panel-actions" rendered="#{not empty cc.facets.buttons}">
                     <cc:renderFacet name="buttons"/>

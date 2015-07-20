@@ -267,7 +267,7 @@ public class InvoiceApi extends BaseApi {
 								ratedTransaction.getAmountTax(),
 								RatedTransactionStatusEnum.BILLED, provider,
 								null, billingAccount, invoiceSubCategory, null,
-								null, null, null,null,null);
+								null, null, null,null,null,null);
 						meveoRatedTransaction.setCode(ratedTransaction
 								.getCode());
 						meveoRatedTransaction.setDescription(ratedTransaction
@@ -460,7 +460,7 @@ public class InvoiceApi extends BaseApi {
 		List<Long> baIds = new ArrayList<Long>();
 		baIds.add(generateInvoiceRequestDto.getBillingAccountId());
 
-		ratedTransactionService.createRatedTransaction(billingAccount,currentUser);
+		ratedTransactionService.createRatedTransaction(billingAccount,currentUser,generateInvoiceRequestDto.getInvoicingDate());
 		log.debug("createRatedTransaction ok");
 
 		BillingRun billingRun = billingRunService.launchExceptionalInvoicing(baIds, generateInvoiceRequestDto.getInvoicingDate(), generateInvoiceRequestDto.getLastTransactionDate(),BillingProcessTypesEnum.AUTOMATIC,currentUser);

@@ -111,7 +111,6 @@ public class WalletCacheContainerProvider {
     }
 
     public void updateCache(UsageChargeInstance charge) {
-        // TODO:: make sure ordering is correct
         List<WalletInstance> wallets = charge.getWalletInstances();
         List<Long> walletIds = new ArrayList<>();
 

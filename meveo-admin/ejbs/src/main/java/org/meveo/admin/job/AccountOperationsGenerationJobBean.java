@@ -164,7 +164,7 @@ public class AccountOperationsGenerationJobBean {
 				invoice.setRecordedInvoice(recordedInvoice);
 				invoice.updateAudit(currentUser);
 				invoiceService.updateNoCheck(invoice);
-				
+				result.registerSucces();
 			} catch (Exception e) {
 				log.error("Failed to generate acount operations", e);
 				result.registerError(e.getMessage());

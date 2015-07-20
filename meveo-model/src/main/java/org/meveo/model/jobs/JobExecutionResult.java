@@ -38,4 +38,9 @@ public interface JobExecutionResult {
      * @return general report displayed in GUI, put here info that do not fit other places
      */
     public String getReport();
+    
+    public Long getId();
+    
+    public void setId(Long id);
+    
 }

@@ -35,6 +35,7 @@ import org.meveo.model.crm.AccountLevelEnum;
 import org.meveo.model.crm.CustomFieldInstance;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
+import org.meveo.service.billing.impl.SubscriptionService;
 import org.meveo.service.catalog.impl.OfferTemplateService;
 import org.meveo.service.catalog.impl.ServiceTemplateService;
 import org.omnifaces.cdi.ViewScoped;
@@ -53,6 +54,9 @@ import org.primefaces.model.DualListModel;
 public class OfferTemplateBean extends BaseBean<OfferTemplate> {
 
 	private static final long serialVersionUID = 1L;
+	
+	@Inject
+	private SubscriptionService subscriptionService;
 
 	/**
 	 * Injected @{link OfferTemplate} service. Extends
@@ -158,5 +162,10 @@ public class OfferTemplateBean extends BaseBean<OfferTemplate> {
 		}
 	}
 	
+	public boolean isUsedInSubscription() {
+		return (getEntity() != null && !getEntity().isTransient() && (subscriptionService
+				.findByOfferTemplate(getEntity()) != null) && subscriptionService
+				.findByOfferTemplate(getEntity()).size() > 0) ? true : false;
+	}
 	
 }

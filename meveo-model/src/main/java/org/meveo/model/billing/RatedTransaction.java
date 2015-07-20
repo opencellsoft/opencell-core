@@ -38,6 +38,7 @@ import javax.validation.constraints.Size;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.model.crm.Provider;
+import org.meveo.model.rating.EDR;
 
 @Entity
 @Table(name = "BILLING_RATED_TRANSACTION")
@@ -201,6 +202,10 @@ public class RatedTransaction extends BaseEntity {
 	@Size(max = 35, min = 1)
 	protected String offerCode;
 	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "EDR_ID")
+	private EDR edr;
+	
 	public RatedTransaction() {
 		super();
 	}
@@ -209,7 +214,7 @@ public class RatedTransaction extends BaseEntity {
 			BigDecimal unitAmountWithTax, BigDecimal unitAmountTax, BigDecimal quantity, BigDecimal amountWithoutTax,
 			BigDecimal amountWithTax, BigDecimal amountTax, RatedTransactionStatusEnum status, Provider provider,
 			WalletInstance wallet, BillingAccount billingAccount, InvoiceSubCategory invoiceSubCategory,
-			String parameter1, String parameter2, String parameter3, String unityDescription,PricePlanMatrix priceplan,String offerCode) {
+			String parameter1, String parameter2, String parameter3, String unityDescription,PricePlanMatrix priceplan,String offerCode,EDR edr) {
 		super();
 		this.walletOperationId = walletOperationId;
 		this.usageDate = usageDate;
@@ -230,6 +235,7 @@ public class RatedTransaction extends BaseEntity {
 		this.priceplan = priceplan;
 		this.offerCode=offerCode;
 		this.unityDescription = unityDescription;
+		this.edr=edr;
 		setProvider(provider);
 	}
 
@@ -449,6 +455,13 @@ public class RatedTransaction extends BaseEntity {
 		this.offerCode = offerCode;
 	}
 
-	
+    public EDR getEdr() {
+		return edr;
+	}
+
+	public void setEdr(EDR edr) {
+		this.edr = edr;
+	}
+
 
 }

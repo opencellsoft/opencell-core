@@ -94,7 +94,6 @@ public final class FileUtils {
 	}
 
 	/**
-	 * TODO
 	 * 
 	 * @param file
 	 * @param newName

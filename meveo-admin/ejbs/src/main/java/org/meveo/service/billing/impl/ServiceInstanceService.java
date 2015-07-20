@@ -222,7 +222,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 		if (serviceInstance.getStatus() == InstanceStatusEnum.ACTIVE) {
 			throw new IncorrectServiceInstanceException("ServiceInstance is " + serviceInstance.getStatus());
 		}
-		
+
 		subscription.setStatus(SubscriptionStatusEnum.ACTIVE);
 
 		if (serviceInstance.getSubscriptionDate() == null) {
@@ -298,8 +298,8 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 		update(serviceInstance, user);
 	}
 
-	public void terminateService(ServiceInstance serviceInstance, Date terminationDate,
-			boolean applyAgreement, boolean applyReimbursment, boolean applyTerminationCharges, User user)
+	public void terminateService(ServiceInstance serviceInstance, Date terminationDate, boolean applyAgreement,
+			boolean applyReimbursment, boolean applyTerminationCharges, User user)
 			throws IncorrectSusbcriptionException, IncorrectServiceInstanceException, BusinessException {
 
 		if (serviceInstance.getId() != null) {
@@ -326,7 +326,8 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 			Date nextChargeDate = recurringChargeInstance.getNextChargeDate();
 			Date storedNextChargeDate = recurringChargeInstance.getNextChargeDate();
 
-			if (recurringChargeInstance.getRecurringChargeTemplate().getApplyInAdvance() != null && recurringChargeInstance.getRecurringChargeTemplate().getApplyInAdvance()) {
+			if (recurringChargeInstance.getRecurringChargeTemplate().getApplyInAdvance() != null
+					&& recurringChargeInstance.getRecurringChargeTemplate().getApplyInAdvance()) {
 				nextChargeDate = recurringChargeInstance.getChargeDate();
 			}
 
@@ -365,14 +366,14 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 
 		if (applyTerminationCharges) {
 			for (OneShotChargeInstance oneShotChargeInstance : serviceInstance.getTerminationChargeInstances()) {
-				if(oneShotChargeInstance.getStatus()==InstanceStatusEnum.INACTIVE){
-					log.debug("applying the termination charge {}",oneShotChargeInstance.getCode());
+				if (oneShotChargeInstance.getStatus() == InstanceStatusEnum.INACTIVE) {
+					log.debug("applying the termination charge {}", oneShotChargeInstance.getCode());
 					oneShotChargeInstanceService.oneShotChargeApplication(subscription, oneShotChargeInstance,
 							terminationDate, serviceInstance.getQuantity(), user);
 					oneShotChargeInstance.setStatus(InstanceStatusEnum.CLOSED);
 				} else {
-					log.debug("we do not apply the termination charge because of its status {}",oneShotChargeInstance.getCode()
-							,oneShotChargeInstance.getStatus());
+					log.debug("we do not apply the termination charge because of its status {}",
+							oneShotChargeInstance.getCode(), oneShotChargeInstance.getStatus());
 				}
 			}
 		}
@@ -503,6 +504,14 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 		} catch (NoResultException e) {
 			return null;
 		}
+	}
+	
+	public List<ServiceInstance> findByServiceTemplate(ServiceTemplate serviceTemplate) {
+		return findByServiceTemplate(getEntityManager(), serviceTemplate, getCurrentProvider());
+	}
+
+	public List<ServiceInstance> findByServiceTemplate(ServiceTemplate serviceTemplate, Provider provider) {
+		return findByServiceTemplate(getEntityManager(), serviceTemplate, provider);
 	}
 
 	@SuppressWarnings("unchecked")

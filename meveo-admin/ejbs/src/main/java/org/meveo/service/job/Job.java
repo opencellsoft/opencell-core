@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
+import javax.ejb.Asynchronous;
 import javax.ejb.ScheduleExpression;
 import javax.ejb.Timeout;
 import javax.ejb.Timer;
@@ -89,6 +90,43 @@ public abstract class Job {
     }
 
     protected abstract void execute(JobExecutionResultImpl result, JobInstance jobInstance, User currentUser) throws BusinessException;
+    
+    /**
+     * This method is called by the api to return the execution result id.
+     * @param jobInstance
+     * @param result
+     * @param currentUser
+     */
+	@Asynchronous
+	@TransactionAttribute(TransactionAttributeType.NEVER)
+    public void execute(JobInstance jobInstance, JobExecutionResultImpl result, User currentUser) {    
+        if (!jobInstance.isRunning() && (jobInstance.isActive() || currentUser != null)) {
+            log.debug("Job {} of type {} execution start, info={}, currentUser={}", jobInstance.getCode(), jobInstance.getJobTemplate(), jobInstance, currentUser);
+
+            try {
+            	jobInstance.setRunning(true);
+                if (currentUser == null) {
+                    currentUser = userService.findByIdLoadProvider(jobInstance.getUserId());
+                }
+                execute(result, jobInstance, currentUser);
+                result.close();
+
+                log.trace("Job {} of type {} executed. Persisting job execution results", jobInstance.getCode(), jobInstance.getJobTemplate());
+                jobExecutionService.persistResult(this, result, jobInstance, currentUser, getJobCategory());
+
+                log.debug("Job {} of type {} execution finished", jobInstance.getCode(), jobInstance.getJobTemplate());
+
+            } catch (Exception e) {
+                log.error("Failed to execute a job {} of type {}", jobInstance.getJobTemplate(), jobInstance.getJobTemplate(), e);
+
+            } finally {
+                jobInstance.setRunning(false);
+            }
+        } else {
+            log.trace("Job {} of type {} execution will be skipped. Reason: isRunning={}, isActive={}, currentUser={}", jobInstance.getCode(), jobInstance.getJobTemplate(),
+            		jobInstance.isRunning(), jobInstance.isActive(), currentUser != null);
+        }
+    }
 
     public Timer createTimer(ScheduleExpression scheduleExpression, JobInstance jobInstance) {
         TimerConfig timerConfig = new TimerConfig();

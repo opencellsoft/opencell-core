@@ -39,6 +39,7 @@ import org.meveo.model.crm.AccountLevelEnum;
 import org.meveo.model.crm.CustomFieldInstance;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
+import org.meveo.service.billing.impl.ServiceInstanceService;
 import org.meveo.service.billing.impl.WalletTemplateService;
 import org.meveo.service.catalog.impl.ServiceChargeTemplateRecurringService;
 import org.meveo.service.catalog.impl.ServiceChargeTemplateSubscriptionService;
@@ -54,6 +55,9 @@ import org.primefaces.model.DualListModel;
 public class ServiceTemplateBean extends BaseBean<ServiceTemplate> {
 
 	private static final long serialVersionUID = 1L;
+	
+	@Inject
+	private ServiceInstanceService serviceInstanceService;
 
 	private ServiceChargeTemplateRecurring serviceChargeTemplateRecurring = new ServiceChargeTemplateRecurring();
 
@@ -479,7 +483,13 @@ public class ServiceTemplateBean extends BaseBean<ServiceTemplate> {
 				log.error("error when duplicate service#{0}:#{1}",entity.getCode(),e);
 			}
 		}
-		System.out.println("Entity ID###"+(entity!=null?entity.getId():"null"));
+		log.debug("Entity ID###" + (entity != null ? entity.getId() : "null"));
+	}
+	
+	public boolean isUsedInSubscription() {
+		return (getEntity() != null && !getEntity().isTransient()
+				&& (serviceInstanceService.findByServiceTemplate(getEntity()) != null) && serviceInstanceService
+				.findByServiceTemplate(getEntity()).size() > 0) ? true : false;
 	}
 
 }
