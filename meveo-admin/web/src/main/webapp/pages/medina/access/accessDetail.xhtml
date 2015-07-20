@@ -8,7 +8,14 @@
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:e="http://primefaces.org/extension"
 	template="/layout/template.xhtml">
-
+	
+    <ui:define name="metadata">
+		<f:metadata>
+		<f:viewParam name="accessId"
+				value="#{accessBean.objectId}" /> 
+		</f:metadata>
+	</ui:define>
+	
 	<ui:define name="navigation">
 		<ui:include src="/layout/navigation.xhtml" />
 	</ui:define>
@@ -34,12 +41,17 @@
 			column1="code" column2Label="#{messages['subscription.description']}"
 			column2="description">
 		</hftl:entityPopup>
-
-
+		
+		
+		<h:panelGroup styleClass="col2-set">
+            <h:panelGroup styleClass="col1">
+					<hf:hierarchyPanel
+						treeValue="#{customerTreeBean.buildAccountsHierarchy(accessBean.entity)}"
+						entity="#{accessBean.entity}" />
+            </h:panelGroup>
+		<h:panelGroup styleClass="col2">
 			<hf:formPanel id="formPanel" backingBean="#{accessBean}" label="#{messages['access.accessPanel']}" showEnableDisableButton="true" addCustomFieldDialog="true">
-
 				<p:tabView id="tabView">
-
 					<p:tab title="#{messages['customer.tab.information']}">
 							<hf:formField label="#{messages['access.accessUserId']}"
 								field="accessUserId" required="true" />
@@ -53,15 +65,14 @@
 								field="endDate" />
 							<hf:formField label="#{messages['enableEntity.disabled']}" allowEdit="false" doNotShowOnNew="true"
 								field="disabled" isMessage="true"/>
-					</p:tab>
-
+					     </p:tab>
 					<p:tab title="#{messages['customFieldTemplate.panel']}">
 						<hf:customFields id="customFields" messagesId=":formPanel:formId:messages"/>
 					</p:tab>
 				</p:tabView>
-
 			</hf:formPanel>
-            
+			</h:panelGroup >
+              </h:panelGroup>
 
 	</ui:define>
 
