@@ -10,6 +10,8 @@ import java.util.Map;
 import java.util.Scanner;
 
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
@@ -424,6 +426,41 @@ public class InvoiceApi extends BaseApi {
 	}
 
 
+	public BillingRun launchExceptionalInvoicing(GenerateInvoiceRequestDto generateInvoiceRequestDto,User currentUser,List<Long> BAids) throws MissingParameterException, EntityDoesNotExistsException, BusinessException,BusinessApiException, Exception{
+		return   billingRunService.launchExceptionalInvoicing(BAids, generateInvoiceRequestDto.getInvoicingDate(), generateInvoiceRequestDto.getLastTransactionDate(),BillingProcessTypesEnum.AUTOMATIC,currentUser);
+	}
+	
+	public void  updateBAtotalAmount(BillingAccount billingAccount,BillingRun billingRun,User currentUser){
+		billingAccountService.updateBillingAccountTotalAmounts(billingAccount,billingRun,currentUser); 
+		log.debug("updateBillingAccountTotalAmounts ok");
+	}
+	
+	public void createRatedTransaction(Long billingAccountId,User currentUser, Date invoicingDate) throws Exception{
+		ratedTransactionService.createRatedTransaction(billingAccountId, currentUser, invoicingDate);
+	}
+
+	
+	public BillingRun updateBR(BillingRun billingRun,BillingRunStatusEnum status,Integer billingAccountNumber,Integer billableBillingAcountNumber ){
+		billingRun.setStatus(status);
+		if(billingAccountNumber != null){
+			billingRun.setBillingAccountNumber(billingAccountNumber);
+		}
+		if(billableBillingAcountNumber != null){
+			billingRun.setBillableBillingAcountNumber(billableBillingAcountNumber);
+		}
+		return billingRunService.update(billingRun);
+	}
+	
+	public void validateBR(BillingRun billingRun,User user){
+		billingRunService.validate(billingRun, user);
+	}
+	
+	public void createAgregatesAndInvoice(Long billingRunId, Date lastTransactionDate, User currentUser) throws BusinessException, Exception{
+		billingRunService.createAgregatesAndInvoice(billingRunId, lastTransactionDate, currentUser, 1, 0);
+	}
+	
+	
+	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
 	public GenerateInvoiceResultDto generateInvoice(GenerateInvoiceRequestDto generateInvoiceRequestDto,User currentUser) throws MissingParameterException, EntityDoesNotExistsException, BusinessException,BusinessApiException, Exception{
 
 		if (generateInvoiceRequestDto == null) {
@@ -460,40 +497,30 @@ public class InvoiceApi extends BaseApi {
 		List<Long> baIds = new ArrayList<Long>();
 		baIds.add(generateInvoiceRequestDto.getBillingAccountId());
 
-		ratedTransactionService.createRatedTransaction(billingAccount,currentUser,generateInvoiceRequestDto.getInvoicingDate());
-		log.debug("createRatedTransaction ok");
-
-		BillingRun billingRun = billingRunService.launchExceptionalInvoicing(baIds, generateInvoiceRequestDto.getInvoicingDate(), generateInvoiceRequestDto.getLastTransactionDate(),BillingProcessTypesEnum.AUTOMATIC,currentUser);
+		createRatedTransaction(billingAccount.getId(),currentUser,generateInvoiceRequestDto.getInvoicingDate());
+		log.info("createRatedTransaction ok");
+		
+		BillingRun billingRun = launchExceptionalInvoicing(generateInvoiceRequestDto, currentUser, baIds);
 		Long billingRunId = billingRun.getId();
-		log.debug("launchExceptionalInvoicing ok , billingRun.id:"+billingRunId);
+		log.info("launchExceptionalInvoicing ok , billingRun.id:"+billingRunId);
 
-		billingAccountService.updateBillingAccountTotalAmounts(billingAccount,billingRun,currentUser); 
-		log.debug("updateBillingAccountTotalAmounts ok");
+		updateBAtotalAmount(billingAccount,billingRun,currentUser); 
+		log.info("updateBillingAccountTotalAmounts ok");
 
-		billingRun.setStatus(BillingRunStatusEnum.ON_GOING);
-		billingRun.setBillingAccountNumber(1);
-		billingRun.setBillableBillingAcountNumber(1);
-		billingRun = billingRunService.update(billingRun);
-		billingRunService.commit();
+		billingRun = updateBR(billingRun, BillingRunStatusEnum.ON_GOING,1,1);
+		log.info("update billingRun ON_GOING");
 
-		log.debug("update billingRun ON_GOING");
-
-		billingRunService.createAgregatesAndInvoice(billingRun.getId(),billingRun.getLastTransactionDate(), currentUser,1,0);	
-		log.debug("createAgregatesAndInvoice ok");
-
-		billingRun.setStatus(BillingRunStatusEnum.TERMINATED);
-
-		billingRun = billingRunService.update(billingRun);
-		log.debug("update billingRun TERMINATED");
-		billingRunService.commit();
-
-		billingRunService.validate(billingRun, currentUser);
-		billingRunService.commit();
-		log.debug("billingRunService.validate ok");
+		createAgregatesAndInvoice(billingRun.getId(),billingRun.getLastTransactionDate(), currentUser);	
+		log.info("createAgregatesAndInvoice ok");
+	
+		billingRun = updateBR(billingRun, BillingRunStatusEnum.TERMINATED,null,null);
+		log.info("update billingRun TERMINATED");
+	
+		validateBR(billingRun, currentUser);	
+		log.info("billingRunService.validate ok");
 		
 		List<Invoice> invoices = invoiceService.getInvoices(billingRun);
-
-		log.debug((invoices==null)?"getInvoice is null" : "size="+ invoices.size());
+		log.info((invoices==null)?"getInvoice is null" : "size="+ invoices.size());
 
 		GenerateInvoiceResultDto generateInvoiceResultDto = new GenerateInvoiceResultDto();
 		generateInvoiceResultDto.setInvoiceId(invoices.get(0).getId());
