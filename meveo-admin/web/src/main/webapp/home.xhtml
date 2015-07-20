@@ -91,7 +91,7 @@
 					</h:form>
 				</ui:repeat>
 			</h:panelGrid>
-			<h:panelGrid columns="2" columnClasses="panelGrid-column50,panelGrid-column50" styleClass="panelGrid-column100" rendered="#{identity.hasPermission('administration','administrationVisualization')">
+			<h:panelGrid columns="2" columnClasses="panelGrid-column50,panelGrid-column50" styleClass="panelGrid-column100" rendered="#{identity.hasPermission('administration','administrationVisualization')}">
 			<h:panelGrid styleClass="panelGrid-column100">
 			<p:accordionPanel activeIndex="null" dynamic="true" cache="false">
 			<p:ajax event="tabChange" listener="#{configIssuesReportingBean.constructChargesWithNotPricePlan}" />>
