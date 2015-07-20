@@ -467,21 +467,8 @@ public class InvoiceApi extends BaseApi {
 			missingParameters.add("generateInvoiceRequest");
 			throw new MissingParameterException(getMissingParametersExceptionMessage());
 		}
-		if (generateInvoiceRequestDto.getBillingAccountId() == null || generateInvoiceRequestDto.getBillingAccountId().longValue() <=0 ) {
-			missingParameters.add("billingAccountId");
-		}
-		BillingAccount billingAccount = billingAccountService.findById(generateInvoiceRequestDto.getBillingAccountId(), currentUser.getProvider());
-		if(billingAccount == null){
-			throw new EntityDoesNotExistsException(BillingAccount.class,generateInvoiceRequestDto.getBillingAccountId());
-		}
-
-		if(billingAccount.getBillingRun() != null && (
-			billingAccount.getStatus().equals(BillingRunStatusEnum.NEW) ||
-			billingAccount.getStatus().equals(BillingRunStatusEnum.ON_GOING) ||
-			billingAccount.getStatus().equals(BillingRunStatusEnum.TERMINATED) ||
-			billingAccount.getStatus().equals(BillingRunStatusEnum.WAITING))){
-			
-				throw new BusinessApiException("BillingAccount already in an invoicing");
+		if (StringUtils.isBlank(generateInvoiceRequestDto.getBillingAccountCode()) ) {
+			missingParameters.add("billingAccountCode");
 		}
 		
 		if (generateInvoiceRequestDto.getInvoicingDate() == null  ) {
@@ -493,9 +480,23 @@ public class InvoiceApi extends BaseApi {
 		if(!missingParameters.isEmpty()){
 			throw new MissingParameterException(getMissingParametersExceptionMessage());
 		}
+		
+		BillingAccount billingAccount = billingAccountService.findByCode(generateInvoiceRequestDto.getBillingAccountCode(), currentUser.getProvider());
+		if(billingAccount == null){
+			throw new EntityDoesNotExistsException(BillingAccount.class,generateInvoiceRequestDto.getBillingAccountCode());
+		}
 
+		if(billingAccount.getBillingRun() != null && (
+			billingAccount.getStatus().equals(BillingRunStatusEnum.NEW) ||
+			billingAccount.getStatus().equals(BillingRunStatusEnum.ON_GOING) ||
+			billingAccount.getStatus().equals(BillingRunStatusEnum.TERMINATED) ||
+			billingAccount.getStatus().equals(BillingRunStatusEnum.WAITING))){
+			
+				throw new BusinessApiException("BillingAccount already in an invoicing");
+		}
+		
 		List<Long> baIds = new ArrayList<Long>();
-		baIds.add(generateInvoiceRequestDto.getBillingAccountId());
+		baIds.add(billingAccount.getId());
 
 		createRatedTransaction(billingAccount.getId(),currentUser,generateInvoiceRequestDto.getInvoicingDate());
 		log.info("createRatedTransaction ok");
