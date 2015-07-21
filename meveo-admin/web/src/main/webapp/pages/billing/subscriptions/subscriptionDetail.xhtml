@@ -148,7 +148,7 @@
 		</p:dialog>
 
         <h:panelGroup styleClass="col2-set">
-            <h:panelGroup styleClass="col1">
+            <h:panelGroup styleClass="col1" id="hierarchyGroup">
 					<hf:hierarchyPanel
 						treeValue="#{customerTreeBean.buildAccountsHierarchy(subscriptionBean.entity)}"
 						entity="#{subscriptionBean.entity}" />
@@ -809,6 +809,7 @@
 							<p:tab id="medinaAccessTab"
 								title="#{messages['menu.accessPoints']}"
 								rendered="#{not empty subscriptionBean.entity.id}">
+								<p:messages id="medinaAccessMessage"></p:messages>
 
 								<hf:formPanel formId="form4" backingBean="#{subscriptionBean}"
 									showFormButtons="false" edit="false">
@@ -844,8 +845,11 @@
 												</f:facet>
 												<p:commandButton id="accessDeletelink"
 													action="#{accessBean.delete(entity.id)}"
-													update=":#{p:component('medinaAccessPanel')}"
-													icon="ui-icon-trash" ajax="true" />
+													update=":hierarchyGroup,#{p:component('medinaAccessPanel')},:#{p:component('medinaAccessMessage')}"
+													icon="ui-icon-trash" ajax="true" >
+													<f:param name="subscriptionId"
+														value="#{subscriptionBean.entity.id}"/>
+													</p:commandButton>	
 												<p:tooltip for="accessDeletelink"
 													value="#{messages['commons.delete']}" showEffect="slide"
 													hideEffect="slide" />
@@ -867,10 +871,10 @@
 
             </h:panelGroup>
         </h:panelGroup>
-
+	  
 		<p:dialog id="accessDialog" widgetVar="accessWidget" dynamic="true"
 			width="900" modal="false" >
-			<p:messages id="medinaAccessMessage"></p:messages>
+			
 
 
 				<hf:formPanel id="formPanel" backingBean="#{accessBean}"
@@ -893,15 +897,14 @@
 					<f:facet name="buttons">
 						<p:commandButton id="saveButton"
 							value="#{messages['action.save']}"
-							update=":#{p:component('medinaAccessPanel')} :medinaAccessMessage"
+							update=":hierarchyGroup,:#{p:component('medinaAccessPanel')},:#{p:component('medinaAccessMessage')}"
 							icon="ui-icon-check" ajax="true"
 							action="#{accessBean.saveOrUpdate()}"
 							oncomplete="handleDialogSubmit(xhr, status, args)">
 							<f:param name="subscriptionId"
 								value="#{subscriptionBean.entity.id}"></f:param>
 						</p:commandButton>
-					</f:facet>
-
+					</f:facet>	
 				</hf:formPanel>
 		</p:dialog>
 
