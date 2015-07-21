@@ -123,7 +123,7 @@ public class AccessBean extends BaseBean<Access> {
 
 		return "";
 	}
-
+	
 	public String saveOrUpdate(boolean killConversation) throws BusinessException {
 		String result = "";
 		Subscription subscription = subscriptionService.findById(entity.getSubscription().getId());
@@ -135,10 +135,12 @@ public class AccessBean extends BaseBean<Access> {
 				return result;
 			}
 		}
-
-		return super.saveOrUpdate(killConversation);
+		super.saveOrUpdate(killConversation);
+		
+		return "/pages/medina/access/accessDetail.xhtml?edit=true&accessId=" + entity.getId()
+				+ "&faces-redirect=true";
 	}
-
+	
 	public void resetEntity() {
 		entity = new Access();
 
