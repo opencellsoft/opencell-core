@@ -95,8 +95,6 @@
 			rendered="#{cc.attrs.edit and !empty(cc.attrs.backingBean.objectId) and !empty(cc.attrs.updateConfirmationMessage)}"
 			value="#{messages['action.save']}" icon="ui-icon-check"
 			oncomplete="PF('saveButtonWithMessageDialog').show()">
-			<f:setPropertyActionListener value="#{cc.attrs.edit}"
-				target="#{cc.attrs.backingBean.edit}"></f:setPropertyActionListener>
 		</p:commandButton>
 		<!-- Update the message handling when  -->
 		<p:confirmDialog id="confirmUpdateWithMessage" appendTo="@(body)"
@@ -107,6 +105,7 @@
 				styleClass="ui-confirmdialog-yes" icon="ui-icon-check"
 				oncomplete="updateWithMessage()"
 				onclick="PF('saveButtonWithMessageDialog').hide()">
+				<f:param name="edit" value="#{cc.attrs.edit}" />
 			</p:commandButton>
 			<p:commandButton id="updateKO" value="#{messages['commons.no']}"
 				type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close"
