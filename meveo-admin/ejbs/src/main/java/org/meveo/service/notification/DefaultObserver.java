@@ -3,10 +3,8 @@ package org.meveo.service.notification;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.math.BigDecimal;
-import java.net.Inet4Address;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import javax.ejb.Singleton;
@@ -19,6 +17,8 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.cache.NotificationCacheContainerProvider;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.event.CFEndPeriodEvent;
+import org.meveo.event.logging.LoggedEvent;
 import org.meveo.event.monitoring.BusinessExceptionEvent;
 import org.meveo.event.qualifier.Created;
 import org.meveo.event.qualifier.Disabled;
@@ -58,6 +58,7 @@ import org.slf4j.Logger;
 
 @Singleton
 @Startup
+@LoggedEvent
 public class DefaultObserver {
 
     @Inject
@@ -302,4 +303,9 @@ public class DefaultObserver {
 		//if pertinent, if need logs
       
    }
+   
+	public void customFieldEndPeriodEvent(@Observes CFEndPeriodEvent event) {
+		log.debug("DefaultObserver.customFieldEndPeriodEvent : {}", event);
+	}
+   
 }

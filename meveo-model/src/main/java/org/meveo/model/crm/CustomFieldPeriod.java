@@ -255,6 +255,10 @@ public class CustomFieldPeriod extends BaseProviderlessEntity {
             break;
         case ENTITY:
         	businessEntity=(BusinessEntity)value;
+		case TEXT_AREA:
+			break;
+		default:
+			break;
         }
     }
 

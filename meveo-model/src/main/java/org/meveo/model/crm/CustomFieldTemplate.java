@@ -60,6 +60,9 @@ public class CustomFieldTemplate extends BusinessEntity {
     @Column(name="STORAGE_TYPE")
     @Enumerated(EnumType.STRING)
     private CustomFieldStorageTypeEnum storageType=CustomFieldStorageTypeEnum.SINGLE;
+    
+    @Column(name = "TRIGGER_END_PERIOD_EVENT", nullable = false)
+	private boolean triggerEndPeriodEvent;
 
     @Transient
     private CustomFieldInstance instance;
@@ -160,6 +163,14 @@ public class CustomFieldTemplate extends BusinessEntity {
 		if(storageType==CustomFieldStorageTypeEnum.LIST){
 			valueRequired=true;
 		}
+	}
+
+	public boolean isTriggerEndPeriodEvent() {
+		return triggerEndPeriodEvent;
+	}
+
+	public void setTriggerEndPeriodEvent(boolean triggerEndPeriodEvent) {
+		this.triggerEndPeriodEvent = triggerEndPeriodEvent;
 	}
     
 }

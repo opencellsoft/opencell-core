@@ -823,4 +823,16 @@
             deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
             onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="RATING_EDR" />
     </changeSet>
+
+	<changeSet id="#947_20150721" author="EdwardLegaspi">
+		<addColumn tableName="CRM_CUSTOM_FIELD_INST">
+			<column name="TRIGGER_END_PERIOD_EVENT" type="boolean"
+				defaultValueBoolean="false" />
+		</addColumn>
+		<addColumn tableName="CRM_CUSTOM_FIELD_TMPL">
+			<column name="TRIGGER_END_PERIOD_EVENT" type="boolean"
+				defaultValueBoolean="false" />
+		</addColumn>
+	</changeSet>
+	
 </databaseChangeLog>

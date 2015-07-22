@@ -69,6 +69,7 @@ import org.meveo.security.MeveoUser;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.catalog.impl.CatMessagesService;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
+import org.meveo.service.crm.impl.CustomFieldJob;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.meveo.util.serializable.SerializableUtil;
 import org.primefaces.component.datatable.DataTable;
@@ -110,6 +111,9 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 
     @Inject
     private CatMessagesService catMessagesService;
+    
+    @Inject
+    private CustomFieldJob customFieldJob;
 
     /** Search filters. */
     protected Map<String, Object> filters = new HashMap<String, Object>();
@@ -1324,10 +1328,17 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
             period = customFieldSelectedTemplate.getInstance().addValuePeriod(customFieldNewPeriod.getPeriodStartDate(), customFieldNewPeriod.getPeriodEndDate(),
                 customFieldNewPeriod.getValue(), customFieldSelectedTemplate.getFieldType());
         }
-       
+        
+        if (customFieldSelectedTemplate.isVersionable()
+				&& customFieldSelectedTemplate.getCalendar() != null
+				&& customFieldSelectedTemplate.isTriggerEndPeriodEvent()) {
+			// create a timer
+			customFieldJob.triggerEndPeriodEvent(customFieldSelectedTemplate.getInstance(),
+					customFieldNewPeriod.getPeriodEndDate());
+		}
+        
         customFieldNewPeriod = null;
         customFieldPeriodMatched = false;
-        
     }
 
     /**

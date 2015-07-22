@@ -9,13 +9,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
-import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
@@ -158,6 +156,9 @@ public class CustomFieldInstance extends ProviderlessEntity {
     
     @Column(name = "DISABLED", nullable = false)
 	private boolean disabled;
+    
+    @Column(name = "TRIGGER_END_PERIOD_EVENT", nullable = false)
+	private boolean triggerEndPeriodEvent;
 
 	public boolean isDisabled() {
 		return disabled;
@@ -689,6 +690,7 @@ public class CustomFieldInstance extends ProviderlessEntity {
         if (!template.isVersionable()) {
             cfi.setValue(template.getDefaultValueConverted(), template.getFieldType());
         }
+        cfi.setTriggerEndPeriodEvent(template.isTriggerEndPeriodEvent());
 
         return cfi;
     }
@@ -747,6 +749,10 @@ public class CustomFieldInstance extends ProviderlessEntity {
         case ENTITY:
         	this.entityValue=(String)value;
         	break;
+		case TEXT_AREA:
+			break;
+		default:
+			break;
         }
     }
 
@@ -987,6 +993,14 @@ public class CustomFieldInstance extends ProviderlessEntity {
 
 	public void setProvider(Provider provider) {
 		this.provider = provider;
+	}
+
+	public boolean isTriggerEndPeriodEvent() {
+		return triggerEndPeriodEvent;
+	}
+
+	public void setTriggerEndPeriodEvent(boolean triggerEndPeriodEvent) {
+		this.triggerEndPeriodEvent = triggerEndPeriodEvent;
 	}
 	
 	
