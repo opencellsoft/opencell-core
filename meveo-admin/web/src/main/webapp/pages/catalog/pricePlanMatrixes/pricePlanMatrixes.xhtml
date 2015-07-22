@@ -115,6 +115,11 @@
 			editable="true" editMode="cell" scrollable="#{pricePlanMatrixListBean.lazyDataModel.size==0?'true':'false'}"
 			exportButton="false" exportXlsxButton="true" checkMany="false"
 			backingBean="#{pricePlanMatrixListBean}">
+
+			<p:ajax event="cellEdit"
+				listener="#{pricePlanMatrixListBean.onCellEdit(entity)}"
+				update=":searchPanel:searchForm:search_messages datatable_results" />
+
 			<f:facet name="header">
 				<p:commandButton id="toggler" type="button" style="float:right" disabled="#{backingBean.lazyDataModel.size==0?'true':'false'}"
 					icon="ui-icon-calculator"/>

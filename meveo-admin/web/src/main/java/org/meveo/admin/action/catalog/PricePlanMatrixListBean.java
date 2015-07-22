@@ -20,11 +20,22 @@ import javax.enterprise.context.ConversationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.jboss.solder.servlet.http.RequestParam;
+import org.jboss.seam.international.status.builder.BundleKey;
+import org.meveo.cache.RatingCacheContainerProvider;
+import org.meveo.model.catalog.PricePlanMatrix;
 
 @Named
 @ConversationScoped
 public class PricePlanMatrixListBean extends PricePlanMatrixBean {
 
-    private static final long serialVersionUID = -3037867704912788027L;
+	private static final long serialVersionUID = -3037867704912788027L;
+	
+	@Inject
+	private RatingCacheContainerProvider ratingCacheContainerProvider;
+
+	public void onCellEdit(PricePlanMatrix entity) {
+		ratingCacheContainerProvider.updatePricePlanInCache(entity);
+		messages.info(new BundleKey("messages", "update.successful"));
+	}
+
 }
