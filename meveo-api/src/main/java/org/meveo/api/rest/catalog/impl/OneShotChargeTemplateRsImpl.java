@@ -75,7 +75,7 @@ public class OneShotChargeTemplateRsImpl extends BaseRs implements OneShotCharge
 	public OneShotChargeTemplateWithPriceListDto listOneShotChargeTemplates(
 			@QueryParam("languageCode") String languageCode, @QueryParam("countryCode") String countryCode,
 			@QueryParam("currencyCode") String currencyCode, @QueryParam("sellerCode") String sellerCode,
-			@QueryParam("date") String date) {
+			@QueryParam("date") String date) throws MeveoApiException {
 
 		Date subscriptionDate = DateUtils.parseDateWithPattern(date, "yyyy-MM-dd");
 

@@ -10,12 +10,13 @@ import javax.xml.ws.WebServiceContext;
 import javax.xml.ws.handler.MessageContext;
 
 import org.apache.commons.codec.binary.Base64;
-import org.meveo.admin.exception.LoginException;
 import org.meveo.api.MeveoApiErrorCode;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
+import org.meveo.api.exception.LoginException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.User;
+import org.meveo.model.security.Role;
 import org.meveo.service.admin.impl.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,8 +26,8 @@ import org.slf4j.LoggerFactory;
  **/
 public abstract class BaseWs {
 
-    protected Logger log = LoggerFactory.getLogger(this.getClass());
-    
+	protected Logger log = LoggerFactory.getLogger(this.getClass());
+
 	@Resource
 	private WebServiceContext webServiceContext;
 
@@ -77,7 +78,34 @@ public abstract class BaseWs {
 			throw new LoginException("Username and password are required.");
 		}
 
-		User user = userService.loginChecks(username, password);
+		User user = null;
+		try {
+			user = userService.loginChecks(username, password);
+		} catch (org.meveo.admin.exception.LoginException e) {
+			throw new LoginException(e.getMessage());
+		}
+
+		if (user == null) {
+			throw new LoginException("Authentication failed! User does not exists!");
+		}
+
+		// check if has api permission
+		boolean isAllowed = false;
+
+		if (user.getRoles() != null && user.getRoles().size() > 0) {
+			for (Role role : user.getRoles()) {
+				if (role.hasPermission("user", "apiAccess")) {
+					isAllowed = true;
+					break;
+				}
+			}
+		} else {
+			throw new LoginException(user.getUserName(), "Authentication failed! Insufficient privilege!");
+		}
+
+		if (!isAllowed) {
+			throw new LoginException(user.getUserName(), "Authentication failed! Insufficient privilege!");
+		}
 
 		return user;
 	}

@@ -15,6 +15,7 @@ import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.catalog.OneShotChargeTemplateDto;
 import org.meveo.api.dto.catalog.OneShotChargeTemplateWithPriceListDto;
 import org.meveo.api.dto.response.catalog.GetOneShotChargeTemplateResponseDto;
+import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.rest.IBaseRs;
 import org.meveo.api.rest.security.RSSecured;
 
@@ -70,6 +71,7 @@ public interface OneShotChargeTemplateRs extends IBaseRs {
 	 * @param sellerCode
 	 * @param date
 	 * @return
+	 * @throws MeveoApiException 
 	 */
 	@GET
 	@Path("/")
@@ -78,7 +80,7 @@ public interface OneShotChargeTemplateRs extends IBaseRs {
 			@QueryParam("countryCode") String countryCode,
 			@QueryParam("currencyCode") String currencyCode,
 			@QueryParam("sellerCode") String sellerCode,
-			@QueryParam("date") String date);
+			@QueryParam("date") String date) throws MeveoApiException;
 
 	/**
 	 * Remove one shot charge template with a given code.

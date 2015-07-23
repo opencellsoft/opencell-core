@@ -276,4 +276,19 @@
 </file-format>' where string_value like '<?xml%' ;
     	]]></sql>
     </changeSet>
+    
+    <changeSet id="#911_20150723" author="EdwardLegaspi">
+    	<insert tableName="adm_permission">
+			<column name="id" valueNumeric="14" />
+			<column name="name" value="API User" />
+			<column name="permission" value="apiAccess" />
+			<column name="ressource" value="user" />
+		</insert>
+		
+		<insert tableName="adm_role_permission">
+			<column name="role_id" valueNumeric="1" />
+			<column name="permission_id" valueNumeric="14" />
+		</insert>
+    </changeSet>
+    
 </databaseChangeLog>
