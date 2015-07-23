@@ -44,10 +44,12 @@ import org.meveo.model.MultilanguageEntity;
 @NamedQueries({			
 @NamedQuery(name = "invoiceSubCategory.getNbrInvoiceSubCatNotAssociated", 
 	           query = "select count(*) from InvoiceSubCategory v where v.id not in (select c.invoiceSubCategory.id from ChargeTemplate c where c.invoiceSubCategory.id is not null)"
+	        		   + " and v.id not in (select inv.invoiceSubCategory.id from InvoiceSubcategoryCountry inv where inv.invoiceSubCategory.id is not null)"
 	           		+ " and v.provider=:provider"),
 	           
 @NamedQuery(name = "invoiceSubCategory.getInvoiceSubCatNotAssociated", 
-               query = "from InvoiceSubCategory v where v.id not in (select c.invoiceSubCategory.id from ChargeTemplate c where c.invoiceSubCategory.id is not null)"
+               query = "from InvoiceSubCategory v where v.id not in (select c.invoiceSubCategory.id from ChargeTemplate c where c.invoiceSubCategory.id is not null) "
+               		+ " and v.id not in (select inv.invoiceSubCategory.id from InvoiceSubcategoryCountry inv where inv.invoiceSubCategory.id is not null)"
    		            + " and v.provider=:provider")	           	                  	         
 })
 public class InvoiceSubCategory extends BusinessEntity {

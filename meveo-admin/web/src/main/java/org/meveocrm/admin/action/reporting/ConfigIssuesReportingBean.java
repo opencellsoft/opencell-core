@@ -4,11 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
-import javax.faces.bean.RequestScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.action.admin.CurrentProvider;
+import org.meveo.model.BaseEntity;
 import org.meveo.model.billing.InvoiceCategory;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.Tax;
@@ -21,6 +22,7 @@ import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.catalog.UsageChargeTemplate;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.rating.EDRStatusEnum;
+import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.TradingLanguageService;
 import org.meveo.service.billing.impl.WalletOperationService;
 import org.meveo.service.catalog.impl.CounterTemplateService;
@@ -31,11 +33,18 @@ import org.meveo.service.catalog.impl.RecurringChargeTemplateService;
 import org.meveo.service.catalog.impl.ServiceTemplateService;
 import org.meveo.service.catalog.impl.TaxService;
 import org.meveo.service.catalog.impl.UsageChargeTemplateService;
+import org.omnifaces.cdi.ViewScoped;
 import org.primefaces.event.TabChangeEvent;
  
 @Named
-@RequestScoped
-public class ConfigIssuesReportingBean{
+@ViewScoped
+public class ConfigIssuesReportingBean extends BaseBean<BaseEntity>{
+
+		/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 
 		@Inject
 		private WalletOperationService walletOperationService;
@@ -150,8 +159,6 @@ public class ConfigIssuesReportingBean{
 	        @PostConstruct
             public void init(){;
 		    reportConfigDto = new ConfigIssuesReportingDTO();
-		    reportConfigDto.setNbrChargesWithNotPricePlan(getNbrRecurringWithNotPricePlan()+getNbrUsagesWithNotPricePlan()+getNbrOneShotWithNotPricePlan());
-		    
 		    reportConfigDto.setNbrWalletOpOpen(walletOperationService.getNbrWalletOperationByStatus(WalletOperationStatusEnum.OPEN, currentProvider).intValue());
 		    reportConfigDto.setNbrWalletOpRerated(walletOperationService.getNbrWalletOperationByStatus(WalletOperationStatusEnum.RERATED, currentProvider).intValue());
 		    reportConfigDto.setNbrWalletOpReserved(walletOperationService.getNbrWalletOperationByStatus(WalletOperationStatusEnum.RESERVED, currentProvider).intValue());
@@ -161,23 +168,45 @@ public class ConfigIssuesReportingBean{
 		    reportConfigDto.setNbrEdrOpen(walletOperationService.getNbrEdrByStatus(EDRStatusEnum.OPEN, currentProvider).intValue());
 		    reportConfigDto.setNbrEdrRated(walletOperationService.getNbrEdrByStatus(EDRStatusEnum.RATED, currentProvider).intValue());
 		    reportConfigDto.setNbrEdrRejected(walletOperationService.getNbrEdrByStatus(EDRStatusEnum.REJECTED, currentProvider).intValue());
-		    
-		    reportConfigDto.setNbrTaxesNotAssociated(taxService.getNbTaxesNotAssociated(currentProvider));
-		    reportConfigDto.setNbrLanguagesNotAssociated(tradingLanguageService.getNbLanguageNotAssociated(currentProvider));
-		    reportConfigDto.setNbrInvoiceCatNotAssociated(invoiceCategoryService.getNbInvCatNotAssociated(currentProvider));
-		    reportConfigDto.setNbrInvoiceSubCatNotAssociated(invoiceSubCategoryService.getNbInvSubCatNotAssociated(currentProvider));
-		    
-		    reportConfigDto.setNbrServicesWithNotOffer(serviceTemplateService.getNbServiceWithNotOffer(currentProvider));
-		    
-		    reportConfigDto.setNbrUsagesChrgNotAssociated(usageChargeTemplateService.getNbrUsagesChrgNotAssociated(currentProvider));
-		    reportConfigDto.setNbrCountersNotAssociated(counterTemplateService.getNbrCounterWithNotService(currentProvider));
-		    
-		    reportConfigDto.setNbrRecurringChrgNotAssociated(recurringChargeTemplateService.getNbrRecurringChrgNotAssociated(currentProvider));
-
-		    reportConfigDto.setNbrTerminationChrgNotAssociated(oneShotChargeTemplateService.getNbrTerminationChrgNotAssociated(currentProvider));
-		    reportConfigDto.setNbrSubChrgNotAssociated(oneShotChargeTemplateService.getNbrSubscriptionChrgNotAssociated(currentProvider));
 	        }
 	        
+	        public Integer getNbrChargesWithNotPricePlan(){
+				return getNbrUsagesWithNotPricePlan()+getNbrRecurringWithNotPricePlan()+getNbrOneShotWithNotPricePlan();
+			}
+	        
+	        public Integer getNbTaxesNotAssociated(){
+				return taxService.getNbTaxesNotAssociated(currentProvider);
+			}
+	        public Integer getNbLanguageNotAssociated(){
+				return tradingLanguageService.getNbLanguageNotAssociated(currentProvider);
+			}
+	        
+	        public Integer getNbInvCatNotAssociated(){
+				return invoiceCategoryService.getNbInvCatNotAssociated(currentProvider);
+			}
+	        
+	        public Integer getNbInvSubCatNotAssociated(){
+				return invoiceSubCategoryService.getNbInvSubCatNotAssociated(currentProvider);
+			}
+	        
+	        public Integer getNbServiceWithNotOffer(){
+				return serviceTemplateService.getNbServiceWithNotOffer(currentProvider);
+			}
+	        public Integer getNbrUsagesChrgNotAssociated(){
+				return usageChargeTemplateService.getNbrUsagesChrgNotAssociated(currentProvider);
+			}
+	        public Integer getNbrCounterWithNotService(){
+				return counterTemplateService.getNbrCounterWithNotService(currentProvider);
+			}
+	        public Integer getNbrRecurringChrgNotAssociated(){
+				return recurringChargeTemplateService.getNbrRecurringChrgNotAssociated(currentProvider);
+			}
+	        public Integer getNbrTerminationChrgNotAssociated(){
+				return oneShotChargeTemplateService.getNbrTerminationChrgNotAssociated(currentProvider);
+			}
+	        public Integer getNbrSubscriptionChrgNotAssociated(){
+				return oneShotChargeTemplateService.getNbrSubscriptionChrgNotAssociated(currentProvider);
+			}
 	   
 			public ConfigIssuesReportingDTO getReportConfigDto() {
 				return reportConfigDto;
@@ -222,4 +251,19 @@ public class ConfigIssuesReportingBean{
 			public List<OneShotChargeTemplate> getSubNotAssociatedList() {
 				return subNotAssociatedList;
 			}
+			
+			
+			
+			@Override
+			public IPersistenceService<BaseEntity> getPersistenceService() {
+				return getPersistenceService();
+			}
+			@Override
+			public String getEditViewName() {
+				return "";
+			}
+			
+			
+			
+			
 }
