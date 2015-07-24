@@ -80,27 +80,7 @@ public class NotificationBean extends BaseBean<Notification> {
 		return Arrays.asList("provider");
 	}
 
-	public void exportToFile() throws Exception {
-		CsvBuilder csv = new CsvBuilder();
-		csv.appendValue("Code");
-		csv.appendValue("Classename filter");
-		csv.appendValue("El filter");
-		csv.appendValue("Active");
-		csv.appendValue("El action");
-		csv.appendValue("Event type filter");
-		csv.startNewLine();
-		for (Notification notification :(!filters.isEmpty()&& filters.size()>0) ? getLazyDataModel():notificationService.list()) {
-			csv.appendValue(notification.getCode());
-			csv.appendValue(notification.getClassNameFilter());
-			csv.appendValue(notification.getElFilter());
-			csv.appendValue(notification.isDisabled() + "");
-			csv.appendValue(notification.getElAction());
-			csv.appendValue(notification.getEventTypeFilter() + "");
-			csv.startNewLine();
-		}
-		InputStream inputStream = new ByteArrayInputStream(csv.toString().getBytes());
-		csv.download(inputStream, "Notifications.csv");
-	}
+
 
     public void handleFileUpload(FileUploadEvent event) throws Exception {
         try {

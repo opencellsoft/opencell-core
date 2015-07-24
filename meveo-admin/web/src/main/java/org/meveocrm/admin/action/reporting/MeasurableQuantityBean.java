@@ -100,38 +100,6 @@ public class MeasurableQuantityBean extends BaseBean<MeasurableQuantity> {
 		return Arrays.asList("provider");
 	}
 	
-	
-	
-	public void exportToFile() throws Exception {
-
-		CsvBuilder csv = new CsvBuilder();
-		    
-		csv.appendValue("Code");
-		csv.appendValue("Dimension 1");
-		csv.appendValue("Dimension 2");
-		csv.appendValue("Dimension 3");
-		csv.appendValue("Dimension 4");
-		csv.appendValue("SQL Query ");
-		csv.appendValue("Measurement period");
-		csv.appendValue("Last measure date");
-		csv.appendValue("Editable");
-		csv.startNewLine();
-		for (MeasurableQuantity measurableQuantity :(!filters.isEmpty()&& filters.size()>0) ? getLazyDataModel():measurableQuantityService.list()) {
-			csv.appendValue(measurableQuantity.getCode());
-			csv.appendValue(measurableQuantity.getDimension1());
-			csv.appendValue(measurableQuantity.getDimension2());
-			csv.appendValue(measurableQuantity.getDimension3());
-			csv.appendValue(measurableQuantity.getDimension4());
-			csv.appendValue(measurableQuantity.getSqlQuery());
-			csv.appendValue(measurableQuantity.getMeasurementPeriod()!=null?measurableQuantity.getMeasurementPeriod()+"":null );
-			csv.appendValue(DateUtils.formatDateWithPattern(measurableQuantity.getLastMeasureDate(), "dd/MM/yyyy"));
-			csv.appendValue(measurableQuantity.isEditable()+"");
-			csv.startNewLine();
-		}
-		InputStream inputStream = new ByteArrayInputStream(csv.toString()
-				.getBytes());
-		csv.download(inputStream, "MeasurableQuantity.csv");
-	}
 
     public void handleFileUpload(FileUploadEvent event) throws Exception {
         try {

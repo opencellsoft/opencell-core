@@ -1,9 +1,7 @@
 package org.meveo.admin.action.notification;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
@@ -103,57 +101,6 @@ public class InstantMessagingNotificationBean extends BaseBean<InstantMessagingN
 		return Arrays.asList("provider");
 	}
 	
-
-	public void exportToFile() throws Exception {
-		CsvBuilder csv = new CsvBuilder();
-		csv.appendValue("Code");
-		csv.appendValue("Classename filter");
-		csv.appendValue("Event type filter");
-		csv.appendValue("El filter");
-		csv.appendValue("El action");
-		csv.appendValue("Active");
-		csv.appendValue("IM provider");
-		csv.appendValue("IM identifier EL");
-		csv.appendValue("IM identifiers list");
-		csv.appendValue("Users list");
-		csv.appendValue("Message");
-		csv.appendValue("Counter template");
-		csv.startNewLine();
-		for (InstantMessagingNotification imNotification : imNotificationService.list()) {
-			csv.appendValue(imNotification.getCode());
-			csv.appendValue(imNotification.getClassNameFilter());
-			csv.appendValue(imNotification.getEventTypeFilter() + "");
-			csv.appendValue(imNotification.getElFilter());
-			csv.appendValue(imNotification.getElAction());
-			csv.appendValue(imNotification.isDisabled() + "");
-			csv.appendValue(imNotification.getImProvider() + "");
-			csv.appendValue(imNotification.getIdEl());
-
-			String sep = "";
-			StringBuffer ids = new StringBuffer();
-			for (String id : imNotification.getIds()) {
-				ids.append(sep).append(id);
-				sep = ",";
-			}
-
-			csv.appendValue(ids.toString());
-
-			String sepUser = "";
-			StringBuffer users = new StringBuffer();
-			for (User user : imNotification.getUsers()) {
-				users.append(sepUser).append(user.getId());
-				sepUser = ",";
-			}
-			csv.appendValue(users.toString());
-			csv.appendValue(imNotification.getMessage());
-			csv.appendValue(imNotification.getCounterTemplate()!=null?  imNotification.getCounterTemplate().getCode(): null);
-			csv.startNewLine();
-		}
-		
-		InputStream inputStream = new ByteArrayInputStream(csv.toString()
-				.getBytes());
-		csv.download(inputStream, "InstantMessagingNotification.csv");
-	}
 
     public void handleFileUpload(FileUploadEvent event) throws Exception {
         try {

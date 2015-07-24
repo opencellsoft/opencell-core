@@ -106,66 +106,7 @@ public class WebHookBean extends BaseBean<WebHook> {
 
         return super.saveOrUpdate(killConversation);
     }
-    
-	public void exportToFile() throws Exception {
-		CsvBuilder csv = new CsvBuilder();
-		csv.appendValue("Code");
-		csv.appendValue("Classename filter");
-		csv.appendValue("Event type filter");
-		csv.appendValue("El filter");
-		csv.appendValue("Active");
-		csv.appendValue("El action");
-		csv.appendValue("Host");
-		csv.appendValue("Port");
-		csv.appendValue("Page");
-		csv.appendValue("HTTP method");
-		csv.appendValue("Username");
-		csv.appendValue("Password");
-		csv.appendValue("Headers");
-		csv.appendValue("Parameters");
-		csv.appendValue("Counter template");
-		csv.startNewLine();
-		for (WebHook webHook :(!filters.isEmpty()&& filters.size()>0) ? getLazyDataModel():webHookService.list()) {
-			csv.appendValue(webHook.getCode());
-			csv.appendValue(webHook.getClassNameFilter());
-			csv.appendValue(webHook.getEventTypeFilter() + "");
-			csv.appendValue(webHook.getElFilter());
-			csv.appendValue(webHook.isDisabled() + "");
-			csv.appendValue(webHook.getElAction());
-			csv.appendValue(webHook.getHost());
-			csv.appendValue(webHook.getPort() + "");
-			csv.appendValue(webHook.getPage());
-			csv.appendValue(webHook.getHttpMethod() + "");
-			csv.appendValue(webHook.getUsername());
-			csv.appendValue(webHook.getPassword());
-			
-			StringBuffer headers=new StringBuffer();
-			if(webHook.getHeaders()!=null){
-				String sep="";
-				for(String key:webHook.getHeaders().keySet()){
-					String valueHeaders=webHook.getHeaders().get(key);
-					headers.append(sep).append(key).append(":").append(Base64.encodeBase64String(valueHeaders.getBytes()));
-					sep="|";
-					}
-				csv.appendValue(headers.toString());	
-			}
-			StringBuffer params=new StringBuffer(); 
-			if(webHook.getParams()!=null){
-				String sep="";
-				for(String key:webHook.getParams().keySet()){
-					String valueParams=webHook.getParams().get(key);
-					params.append(sep).append(key).append(":").append(Base64.encodeBase64String(valueParams.getBytes()));
-					sep="|";
-					}
-				csv.appendValue(params.toString());
-			    }
-				csv.appendValue(webHook.getCounterTemplate()!=null?  webHook.getCounterTemplate().getCode(): null);
-				csv.startNewLine();
-			}
-		InputStream inputStream = new ByteArrayInputStream(csv.toString()
-				.getBytes());
-		csv.download(inputStream, "WebHooks.csv");
-	}
+
 
     public void handleFileUpload(FileUploadEvent event) throws Exception {
         try {
