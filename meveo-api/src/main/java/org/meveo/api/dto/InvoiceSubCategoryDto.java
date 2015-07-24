@@ -27,6 +27,9 @@ public class InvoiceSubCategoryDto extends BaseDto {
 
 	@XmlElement(required = true)
 	private String invoiceCategory;
+	
+	@XmlElement(required = true)
+	private String accountingCode;
 
 	private List<LanguageDescriptionDto> languageDescriptions;
 
@@ -38,6 +41,7 @@ public class InvoiceSubCategoryDto extends BaseDto {
 		code = invoiceSubCategory.getCode();
 		description = invoiceSubCategory.getDescription();
 		invoiceCategory = invoiceSubCategory.getInvoiceCategory().getCode();
+		accountingCode=invoiceSubCategory.getAccountingCode();
 	}
 
 	public String getCode() {
@@ -71,11 +75,19 @@ public class InvoiceSubCategoryDto extends BaseDto {
 	public void setLanguageDescriptions(List<LanguageDescriptionDto> languageDescriptions) {
 		this.languageDescriptions = languageDescriptions;
 	}
+	
+	public String getAccountingCode() {
+		return accountingCode;
+	}
+
+	public void setAccountingCode(String accountingCode) {
+		this.accountingCode = accountingCode;
+	}
 
 	@Override
 	public String toString() {
 		return "InvoiceSubCategoryDto [code=" + code + ", description=" + description + ", invoiceCategory="
-				+ invoiceCategory + ", languageDescriptions=" + languageDescriptions + "]";
+				+ invoiceCategory + ", languageDescriptions=" + languageDescriptions + ", accountingCode=" + accountingCode + " ]";
 	}
 
 }
