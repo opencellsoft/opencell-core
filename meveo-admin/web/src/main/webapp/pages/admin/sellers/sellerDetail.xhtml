@@ -73,9 +73,7 @@
 		</p:panel>
 		<hf:formPanel id="sellerFormPanel" formId="sellerFormId"
 				label="#{messages['seller.title']}" backingBean="#{sellerBean}">
-
-				<p:tabView id="sellerTab">
-					<p:tab title="#{messages['billingAccount.tab.account']}">
+				
 						<div class="alert-box alert-box-notice">#{messages['message.info.seller.invoicePrefixRequiredWhenInvoiceNoSet']}</div>
 						
 							<hf:formField label="#{messages['businessEntity.code']}"
@@ -111,7 +109,6 @@
 								label="#{messages['seller.parent']}" field="seller"
 								valueLabelField="code" popup="true" popupId="sellerParentPopup" />
 						
-					</p:tab>
 					<!-- <p:tab title="#{messages['billingAccount.tab.information']}">
 							<hf:formField label="#{messages['address.address1']}"
 								field="address" id="address1" childField="address1"
@@ -134,7 +131,6 @@
 								listBean="#{countryBean}"/>
 
 					</p:tab> -->
-				</p:tabView>
 
 			</hf:formPanel>
 

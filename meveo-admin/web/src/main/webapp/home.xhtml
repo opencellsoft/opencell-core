@@ -93,21 +93,21 @@
 			</h:panelGrid>
 			<h:panelGrid columns="2" columnClasses="panelGrid-column50,panelGrid-column50" styleClass="panelGrid-column100" rendered="#{identity.hasPermission('administration','administrationVisualization')}">
 			<h:panelGrid styleClass="panelGrid-column100">
-			<p:accordionPanel activeIndex="null" dynamic="true" cache="false">
+			<p:accordionPanel activeIndex="null" dynamic="true" cache="false" id="chargeTemplate">
 			<p:ajax event="tabChange" listener="#{configIssuesReportingBean.constructChargesWithNotPricePlan}" />>
 			<p:tab>  	
 			 <f:facet name="title">
                <h:outputText value="#{messages['configIssuesReporting.chargesWithNotPricePlan']} : "/>
-			   <h:outputText value="#{configIssuesReportingBean.reportConfigDto.nbrChargesWithNotPricePlan}" style="color:#3FCA21"
-				rendered="#{configIssuesReportingBean.reportConfigDto.nbrChargesWithNotPricePlan==0}"/>
-				<h:outputText value="#{configIssuesReportingBean.reportConfigDto.nbrChargesWithNotPricePlan}" style="color:red"
-				rendered="#{configIssuesReportingBean.reportConfigDto.nbrChargesWithNotPricePlan!=0}"/>
+			   <h:outputText value="#{configIssuesReportingBean.getNbrChargesWithNotPricePlan}" style="color:#3FCA21"
+				rendered="#{configIssuesReportingBean.getNbrChargesWithNotPricePlan==0}"/>
+				<h:outputText value="#{configIssuesReportingBean.getNbrChargesWithNotPricePlan}" style="color:red"
+				rendered="#{configIssuesReportingBean.getNbrChargesWithNotPricePlan!=0}"/>
             </f:facet>
 			
 			<h:panelGrid columns="1" rendered="#{configIssuesReportingBean.getNbrUsagesWithNotPricePlan()!=0}" >
 			<h:outputLabel value="#{messages['menu.usageChargeTemplates']}"/>
 			<hftl:dataList label="#{messages['usageChargeTemplate.title']}" resultsId="usages_panel" sortBy="code"
-			 backingBean="#{usageChargeTemplateBean}" checkMany="false" dataModel="#{configIssuesReportingBean.usagesWithNotPricePlList}">
+			 backingBean="#{usageChargeTemplateBean}" checkMany="true" dataModel="#{configIssuesReportingBean.usagesWithNotPricePlList}">
 			<hftl:column label="#{messages['chargeTemplate.code']}" field="code" />
 			<hftl:column label="#{messages['chargeTemplate.description']}"
 				field="description" />
@@ -135,13 +135,17 @@
 				<f:param name="objectId" value="#{entity.id}" />
 				<f:param name="edit" value="true" /> 
 				</p:button>
+			<p:commandButton icon="ui-icon-trash"
+			action="#{usageChargeTemplateBean.deleteInlist}" update=":#{p:component('chargeTemplate')}" onclick="if(confirm('#{messages['commons.confirmDelete']}')){return true;}else{return false;}">
+			<f:setPropertyActionListener target="#{usageChargeTemplateBean.entity}" value="#{entity}"></f:setPropertyActionListener>
+			</p:commandButton>
 				</p:column>
 			 </hftl:dataList>
 			</h:panelGrid>
 
 			<h:panelGrid columns="1" rendered="#{configIssuesReportingBean.getNbrRecurringWithNotPricePlan!=0}">
 			<h:outputLabel value="#{messages['recurringChargeTemplate.title']}"/>
-			<hftl:dataList resultsId="recurring_panel" checkMany="false"
+			<hftl:dataList resultsId="recurring_panel" checkMany="true"
 			 backingBean="#{recurringChargeTemplateBean}" sortBy="code" dataModel="#{configIssuesReportingBean.recurringWithNotPricePlanList}">
 			<hftl:column label="#{messages['chargeTemplate.code']}" field="code" />
 			<hftl:column label="#{messages['chargeTemplate.description']}"
@@ -170,13 +174,17 @@
 				<f:param name="objectId" value="#{entity.id}" />
 				<f:param name="edit" value="true" /> 
 				</p:button>
+			<p:commandButton icon="ui-icon-trash"
+			action="#{recurringChargeTemplateBean.deleteInlist}" update=":#{p:component('chargeTemplate')}" onclick="if(confirm('#{messages['commons.confirmDelete']}')){return true;}else{return false;}">
+			<f:setPropertyActionListener target="#{recurringChargeTemplateBean.entity}" value="#{entity}"></f:setPropertyActionListener>
+			</p:commandButton>
 				</p:column>
 		</hftl:dataList>
 	   </h:panelGrid>
 	   
 	   <h:panelGrid columns="1" rendered="#{configIssuesReportingBean.getNbrOneShotWithNotPricePlan!=0}">
 			<h:outputLabel value="#{messages['oneShotChargeTemplate.title']}" />
-	 <hftl:dataList label="#{messages['oneShotChargeTemplate.title']}" checkMany="false"  resultsId="onshot_panel" 
+	 <hftl:dataList label="#{messages['oneShotChargeTemplate.title']}" checkMany="true"  resultsId="onshot_panel" 
 			  noClose="false" sortBy="code"
 			backingBean="#{oneShotChargeTemplateListBean}" dataModel="#{configIssuesReportingBean.oneShotChrgWithNotPricePlanList}" >
 			<hftl:column label="#{messages['chargeTemplate.code']}" field="code" />
@@ -207,23 +215,27 @@
 				<f:param name="objectId" value="#{entity.id}" />
 				<f:param name="edit" value="true" /> 
 				</p:button>
-				</p:column>
+			<p:commandButton icon="ui-icon-trash"
+			action="#{oneShotChargeTemplateListBean.deleteInlist}" update=":#{p:component('chargeTemplate')}" onclick="if(confirm('#{messages['commons.confirmDelete']}')){return true;}else{return false;}">
+			<f:setPropertyActionListener target="#{oneShotChargeTemplateListBean.entity}" value="#{entity}"></f:setPropertyActionListener>
+			</p:commandButton>
+			</p:column>
 		</hftl:dataList>
 	   </h:panelGrid>
            </p:tab>
 		   </p:accordionPanel>
-		   <p:accordionPanel activeIndex="null" dynamic="true" cache="false">
+		   <p:accordionPanel activeIndex="null" dynamic="true" cache="false" id="accordionTax">
 		   <p:ajax event="tabChange" listener="#{configIssuesReportingBean.constructTaxesNotAssociated}" />
 		   <p:tab> 
              <f:facet name="title">
                <h:outputText value="#{messages['configIssuesReporting.taxesNotAssociated']} : "/>
-			   <h:outputText value="#{configIssuesReportingBean.reportConfigDto.nbrTaxesNotAssociated}" style="color:#3FCA21"
-				rendered="#{configIssuesReportingBean.reportConfigDto.nbrTaxesNotAssociated==0}"/>
-				<h:outputText value="#{configIssuesReportingBean.reportConfigDto.nbrTaxesNotAssociated}" style="color:red"
-				rendered="#{configIssuesReportingBean.reportConfigDto.nbrTaxesNotAssociated!=0}"/>
+			   <h:outputText value="#{configIssuesReportingBean.getNbTaxesNotAssociated}" style="color:#3FCA21"
+				rendered="#{configIssuesReportingBean.getNbTaxesNotAssociated==0}"/>
+				<h:outputText value="#{configIssuesReportingBean.getNbTaxesNotAssociated}" style="color:red"
+				rendered="#{configIssuesReportingBean.getNbTaxesNotAssociated!=0}"/>
             </f:facet>	
-			<h:panelGrid columns="1" rendered="#{configIssuesReportingBean.reportConfigDto.nbrTaxesNotAssociated!=0}">
-			<hftl:dataList label="#{messages['tax.title']}" resultsId="taxes_panel" checkMany="false"
+			<h:panelGrid columns="1" rendered="#{configIssuesReportingBean.getNbTaxesNotAssociated!=0}">
+			<hftl:dataList label="#{messages['tax.title']}" resultsId="taxes_panel" checkMany="true"
 			backingBean="#{taxListBean}" sortBy="code" dataModel="#{configIssuesReportingBean.taxesNotAssociatedList}">
 			<hftl:column label="#{messages['tax.code']}" field="code" />
 			<hftl:column label="#{messages['tax.description']}"
@@ -239,23 +251,27 @@
 				<f:param name="objectId" value="#{entity.id}" />
 				<f:param name="edit" value="true" /> 
 				</p:button>
+				<p:commandButton icon="ui-icon-trash"
+				action="#{taxBean.deleteInlist}" update=":#{p:component('accordionTax')}" onclick="if(confirm('#{messages['commons.confirmDelete']}')){return true;}else{return false;}">
+				<f:setPropertyActionListener target="#{taxBean.entity}" value="#{entity}"></f:setPropertyActionListener>
+				</p:commandButton>
 				</p:column>
 		  </hftl:dataList> 
 			</h:panelGrid>
 		    </p:tab>
 			 </p:accordionPanel>
-		   <p:accordionPanel activeIndex="null" dynamic="true" cache="false">
+		   <p:accordionPanel activeIndex="null" dynamic="true" cache="false" id="languages">
 		   <p:ajax event="tabChange" listener="#{configIssuesReportingBean.constructLanguagesNotAssociated}" />
             <p:tab> 
 			<f:facet name="title">
                <h:outputText value="#{messages['configIssuesReporting.languagesNotAssociated']} : "/>
-			   <h:outputText value="#{configIssuesReportingBean.reportConfigDto.nbrLanguagesNotAssociated}" style="color:#3FCA21"
-				rendered="#{configIssuesReportingBean.reportConfigDto.nbrLanguagesNotAssociated==0}"/>
-				<h:outputText value="#{configIssuesReportingBean.reportConfigDto.nbrLanguagesNotAssociated}" style="color:red"
-				rendered="#{configIssuesReportingBean.reportConfigDto.nbrLanguagesNotAssociated!=0}"/>
+			   <h:outputText value="#{configIssuesReportingBean.getNbLanguageNotAssociated}" style="color:#3FCA21"
+				rendered="#{configIssuesReportingBean.getNbLanguageNotAssociated==0}"/>
+				<h:outputText value="#{configIssuesReportingBean.getNbLanguageNotAssociated}" style="color:red"
+				rendered="#{configIssuesReportingBean.getNbLanguageNotAssociated!=0}"/>
             </f:facet>
-			<h:panelGrid columns="1" rendered="#{configIssuesReportingBean.reportConfigDto.nbrLanguagesNotAssociated!=0}">
-			<hftl:dataList label="#{messages['comLanguage.title']}" resultsId="languages_panel" checkMany="false"
+			<h:panelGrid columns="1" rendered="#{configIssuesReportingBean.getNbLanguageNotAssociated!=0}">
+			<hftl:dataList label="#{messages['comLanguage.title']}" resultsId="languages_panel" checkMany="true"
 			backingBean="#{tradingLanguageListBean}" dataModel="#{configIssuesReportingBean.languagesNotAssociatedList}">
 			<hftl:column label="#{messages['tradingLanguage.languageCode']}"
 				field="language.languageCode" width="10%" />
@@ -272,24 +288,28 @@
 				<f:param name="objectId" value="#{entity.id}" />
 				<f:param name="edit" value="true" /> 
 				</p:button>
+			<p:commandButton icon="ui-icon-trash"
+			action="#{tradingLanguageListBean.deleteInlist}" update=":#{p:component('languages')}" onclick="if(confirm('#{messages['commons.confirmDelete']}')){return true;}else{return false;}">
+			<f:setPropertyActionListener target="#{tradingLanguageListBean.entity}" value="#{entity}"></f:setPropertyActionListener>
+			</p:commandButton>
 				</p:column>
 		  </hftl:dataList> 
 			</h:panelGrid>
 		    </p:tab>
 			 </p:accordionPanel>
-		   <p:accordionPanel activeIndex="null" dynamic="true" cache="false">
+		   <p:accordionPanel activeIndex="null" dynamic="true" cache="false" id="invoiceCats">
 		   <p:ajax event="tabChange" listener="#{configIssuesReportingBean.constructInvoiceCatNotAssociated}" />
 			<p:tab> 
 			<f:facet name="title">
                <h:outputText value="#{messages['configIssuesReporting.invoiceCategoryNotAssociated']} : "/>
-			   <h:outputText value="#{configIssuesReportingBean.reportConfigDto.nbrInvoiceCatNotAssociated}" style="color:#3FCA21"
-				rendered="#{configIssuesReportingBean.reportConfigDto.nbrInvoiceCatNotAssociated==0}"/>
-				<h:outputText value="#{configIssuesReportingBean.reportConfigDto.nbrInvoiceCatNotAssociated}" style="color:red"
-				rendered="#{configIssuesReportingBean.reportConfigDto.nbrInvoiceCatNotAssociated!=0}"/>
+			   <h:outputText value="#{configIssuesReportingBean.getNbInvCatNotAssociated}" style="color:#3FCA21"
+				rendered="#{configIssuesReportingBean.getNbInvCatNotAssociated==0}"/>
+				<h:outputText value="#{configIssuesReportingBean.getNbInvCatNotAssociated}" style="color:red"
+				rendered="#{configIssuesReportingBean.getNbInvCatNotAssociated!=0}"/>
             </f:facet>
-			<h:panelGrid columns="1" rendered="#{configIssuesReportingBean.reportConfigDto.nbrInvoiceCatNotAssociated!=0}">
+			<h:panelGrid columns="1" rendered="#{configIssuesReportingBean.getNbInvCatNotAssociated!=0}">
 			 <hftl:dataList label="#{messages['invoiceCategory.title']}"  resultsId="invoiceCat_panel" dataModel="#{configIssuesReportingBean.invoiceCatNotAssociatedList}"
-			backingBean="#{invoiceCategoryListBean}" checkMany="false" sortBy="code"  >
+			backingBean="#{invoiceCategoryListBean}" checkMany="true" sortBy="code"  >
 			<hftl:column label="#{messages['invoiceCategory.code']}" field="code" />
 			<hftl:column label="#{messages['invoiceCategory.description']}"
 				field="description" />
@@ -301,23 +321,27 @@
 				<f:param name="objectId" value="#{entity.id}" />
 				<f:param name="edit" value="true" /> 
 				</p:button>
+				<p:commandButton icon="ui-icon-trash"
+			action="#{invoiceCategoryListBean.deleteInlist}" update=":#{p:component('invoiceCats')}" onclick="if(confirm('#{messages['commons.confirmDelete']}')){return true;}else{return false;}">
+			<f:setPropertyActionListener target="#{invoiceCategoryListBean.entity}" value="#{entity}"></f:setPropertyActionListener>
+			</p:commandButton>
 				</p:column>
 		  </hftl:dataList>
 			</h:panelGrid>
 		    </p:tab>
 			 </p:accordionPanel>
-		   <p:accordionPanel activeIndex="null" dynamic="true" cache="false">
+		   <p:accordionPanel activeIndex="null" dynamic="true" cache="false" id="invoiceSubs">
 		   <p:ajax event="tabChange" listener="#{configIssuesReportingBean.constructInvoiceSubCatNotAssociated}" />
 			<p:tab> 
 			<f:facet name="title">
                <h:outputText value="#{messages['configIssuesReporting.invoiceSubCategoryNotAssociated']} : "/>
-			   <h:outputText value="#{configIssuesReportingBean.reportConfigDto.nbrInvoiceSubCatNotAssociated}" style="color:#3FCA21"
-				rendered="#{configIssuesReportingBean.reportConfigDto.nbrInvoiceSubCatNotAssociated==0}"/>
-				<h:outputText value="#{configIssuesReportingBean.reportConfigDto.nbrInvoiceSubCatNotAssociated}" style="color:red"
-				rendered="#{configIssuesReportingBean.reportConfigDto.nbrInvoiceSubCatNotAssociated!=0}"/>
+			   <h:outputText value="#{configIssuesReportingBean.getNbInvSubCatNotAssociated}" style="color:#3FCA21"
+				rendered="#{configIssuesReportingBean.getNbInvSubCatNotAssociated==0}"/>
+				<h:outputText value="#{configIssuesReportingBean.getNbInvSubCatNotAssociated}" style="color:red"
+				rendered="#{configIssuesReportingBean.getNbInvSubCatNotAssociated!=0}"/>
             </f:facet>
-			<h:panelGrid columns="1" rendered="#{configIssuesReportingBean.reportConfigDto.nbrInvoiceSubCatNotAssociated!=0}">	
-			<hftl:dataList label="#{messages['invoiceSubCategory.title']}" checkMany="false" resultsId="invoiceSubCat_panel" dataModel="#{configIssuesReportingBean.invoiceSubCatNotAssociatedList}"
+			<h:panelGrid columns="1" rendered="#{configIssuesReportingBean.getNbInvSubCatNotAssociated!=0}">	
+			<hftl:dataList label="#{messages['invoiceSubCategory.title']}" checkMany="true" resultsId="invoiceSubCat_panel" dataModel="#{configIssuesReportingBean.invoiceSubCatNotAssociatedList}"
 			backingBean="#{invoiceSubCategoryListBean}" sortBy="code">
 			<hftl:column label="#{messages['invoiceSubCategory.code']}"
 				field="code" />
@@ -337,23 +361,27 @@
 				<f:param name="edit" value="true" /> 
 				</p:button>
 				</p:column>
+			<p:commandButton icon="ui-icon-trash"
+			action="#{invoiceSubCategoryListBean.deleteInlist}" update=":#{p:component('invoiceSubs')}" onclick="if(confirm('#{messages['commons.confirmDelete']}')){return true;}else{return false;}">
+			<f:setPropertyActionListener target="#{invoiceSubCategoryListBean.entity}" value="#{entity}"></f:setPropertyActionListener>
+			</p:commandButton>
 		  </hftl:dataList>
 			</h:panelGrid>
 		    </p:tab>
 		 </p:accordionPanel>
-		 <p:accordionPanel activeIndex="null" dynamic="true" cache="false">
+		 <p:accordionPanel activeIndex="null" dynamic="true" cache="false" id="servicesTmpl">
 		 <p:ajax event="tabChange" listener="#{configIssuesReportingBean.constructServicesWithNotOffer}" />
 			<p:tab> 
 			<f:facet name="title">
                <h:outputText value="#{messages['configIssuesReporting.servicesWithNotOffer']} : "/>
-			   <h:outputText value="#{configIssuesReportingBean.reportConfigDto.nbrServicesWithNotOffer}" style="color:#3FCA21"
-				rendered="#{configIssuesReportingBean.reportConfigDto.nbrServicesWithNotOffer==0}"/>
-				<h:outputText value="#{configIssuesReportingBean.reportConfigDto.nbrServicesWithNotOffer}" style="color:red"
-				rendered="#{configIssuesReportingBean.reportConfigDto.nbrServicesWithNotOffer!=0}"/>
+			   <h:outputText value="#{configIssuesReportingBean.getNbServiceWithNotOffer}" style="color:#3FCA21"
+				rendered="#{configIssuesReportingBean.getNbServiceWithNotOffer==0}"/>
+				<h:outputText value="#{configIssuesReportingBean.getNbServiceWithNotOffer}" style="color:red"
+				rendered="#{configIssuesReportingBean.getNbServiceWithNotOffer!=0}"/>
             </f:facet>
-			<h:panelGrid columns="1" rendered="#{configIssuesReportingBean.reportConfigDto.nbrServicesWithNotOffer!=0}">
+			<h:panelGrid columns="1" rendered="#{configIssuesReportingBean.getNbServiceWithNotOffer!=0}">
              <hftl:dataList label="#{messages['serviceTemplate.title']}"
-			checkMany="false" noClose="false" sortBy="code"  
+			checkMany="true" noClose="false" sortBy="code"  
 			backingBean="#{serviceTemplateListBean}" dataModel="#{configIssuesReportingBean.servicesWithNotOfferList}" resultsId="servicesOffer_panel">
 			<hftl:column label="#{messages['serviceTemplate.code']}" field="code" />
 			<hftl:column label="#{messages['serviceTemplate.description']}"
@@ -387,25 +415,29 @@
 				<f:param name="objectId" value="#{entity.id}" />
 				<f:param name="edit" value="true" /> 
 				</p:button>
+			<p:commandButton icon="ui-icon-trash"
+			action="#{serviceTemplateListBean.deleteInlist}" update=":#{p:component('servicesTmpl')}" onclick="if(confirm('#{messages['commons.confirmDelete']}')){return true;}else{return false;}">
+			<f:setPropertyActionListener target="#{serviceTemplateListBean.entity}" value="#{entity}"></f:setPropertyActionListener>
+			</p:commandButton>
 				</p:column>
 		  </hftl:dataList>		
 			</h:panelGrid>
 		    </p:tab>
 		  </p:accordionPanel>
 		  
-		   <p:accordionPanel activeIndex="null" dynamic="true" cache="false">
+		   <p:accordionPanel activeIndex="null" dynamic="true" cache="false" id="usagesTempl">
 		    <p:ajax event="tabChange" listener="#{configIssuesReportingBean.constructUsagesChrgNotAssociated}" />
 			<p:tab> 
 			<f:facet name="title">
                <h:outputText value="#{messages['configIssuesReporting.usagesChrgWithNotAssociated']} : "/>
-			   <h:outputText value="#{configIssuesReportingBean.reportConfigDto.nbrUsagesChrgNotAssociated}" style="color:#3FCA21"
-				rendered="#{configIssuesReportingBean.reportConfigDto.nbrUsagesChrgNotAssociated==0}"/>
-				<h:outputText value="#{configIssuesReportingBean.reportConfigDto.nbrUsagesChrgNotAssociated}" style="color:red"
-				rendered="#{configIssuesReportingBean.reportConfigDto.nbrUsagesChrgNotAssociated!=0}"/>
+			   <h:outputText value="#{configIssuesReportingBean.getNbrUsagesChrgNotAssociated}" style="color:#3FCA21"
+				rendered="#{configIssuesReportingBean.getNbrUsagesChrgNotAssociated==0}"/>
+				<h:outputText value="#{configIssuesReportingBean.getNbrUsagesChrgNotAssociated}" style="color:red"
+				rendered="#{configIssuesReportingBean.getNbrUsagesChrgNotAssociated!=0}"/>
             </f:facet>
-			<h:panelGrid columns="1" rendered="#{configIssuesReportingBean.reportConfigDto.nbrUsagesChrgNotAssociated!=0}">	
+			<h:panelGrid columns="1" rendered="#{configIssuesReportingBean.getNbrUsagesChrgNotAssociated!=0}">	
 			<hftl:dataList  label="#{messages['usageChargeTemplate.title']}" resultsId="usageCharges_panel" sortBy="code"
-			checkMany="false" backingBean="#{usageChargeTemplateListBean}" dataModel="#{configIssuesReportingBean.usagesChrgNotAssociatedList}">
+			checkMany="true" backingBean="#{usageChargeTemplateListBean}" dataModel="#{configIssuesReportingBean.usagesChrgNotAssociatedList}">
 			<hftl:column label="#{messages['chargeTemplate.code']}" field="code" />
 			<hftl:column label="#{messages['chargeTemplate.description']}"
 				field="description" />
@@ -433,26 +465,31 @@
 				<f:param name="objectId" value="#{entity.id}" />
 				<f:param name="edit" value="true" /> 
 				</p:button>
+				<p:commandButton icon="ui-icon-trash"
+			action="#{usageChargeTemplateListBean.deleteInlist}" update=":#{p:component('usagesTempl')}" onclick="if(confirm('#{messages['commons.confirmDelete']}')){return true;}else{return false;}">
+			<f:setPropertyActionListener target="#{usageChargeTemplateListBean.entity}" value="#{entity}"></f:setPropertyActionListener>
+			</p:commandButton>
 				</p:column>
+
 			 </hftl:dataList>
 			</h:panelGrid>
 		    </p:tab>
 			</p:accordionPanel>
 			</h:panelGrid>
 		 <h:panelGrid styleClass="panelGrid-column100">
-		   <p:accordionPanel activeIndex="null" dynamic="true" cache="false" >
+		   <p:accordionPanel activeIndex="null" dynamic="true" cache="false" id="counters" >
 		   <p:ajax event="tabChange" listener="#{configIssuesReportingBean.constructCounterWithNotService}" />
 			<p:tab> 
 			<f:facet name="title">
                <h:outputText value="#{messages['configIssuesReporting.countersWithNotServices']} : "/>
-			   <h:outputText value="#{configIssuesReportingBean.reportConfigDto.nbrCountersNotAssociated}" style="color:#3FCA21"
-				rendered="#{configIssuesReportingBean.reportConfigDto.nbrCountersNotAssociated==0}"/>
-				<h:outputText value="#{configIssuesReportingBean.reportConfigDto.nbrCountersNotAssociated}" style="color:red"
-				rendered="#{configIssuesReportingBean.reportConfigDto.nbrCountersNotAssociated!=0}"/>
+			   <h:outputText value="#{configIssuesReportingBean.getNbrCounterWithNotService}" style="color:#3FCA21"
+				rendered="#{configIssuesReportingBean.getNbrCounterWithNotService==0}"/>
+				<h:outputText value="#{configIssuesReportingBean.getNbrCounterWithNotService}" style="color:red"
+				rendered="#{configIssuesReportingBean.getNbrCounterWithNotService!=0}"/>
             </f:facet>
-			<h:panelGrid columns="1" rendered="#{configIssuesReportingBean.reportConfigDto.nbrCountersNotAssociated!=0}">	
+			<h:panelGrid columns="1" rendered="#{configIssuesReportingBean.getNbrCounterWithNotService!=0}">	
 			 <hftl:dataList label="#{messages['counterTemplate.title']}" resultsId="counters_panel" sortBy="code" dataModel="#{configIssuesReportingBean.counterWithNotServicList}"
-			checkMany="false" backingBean="#{counterTemplateListBean}" >
+			checkMany="true" backingBean="#{counterTemplateListBean}" >
 			<hftl:column label="#{messages['businessEntity.code']}" field="code" />
 			<hftl:column label="#{messages['businessEntity.description']}"
 				field="description" />
@@ -476,24 +513,28 @@
 				<f:param name="objectId" value="#{entity.id}" />
 				<f:param name="edit" value="true" /> 
 				</p:button>
+			<p:commandButton icon="ui-icon-trash"
+			action="#{counterTemplateListBean.deleteInlist}" update=":#{p:component('counters')}" onclick="if(confirm('#{messages['commons.confirmDelete']}')){return true;}else{return false;}">
+			<f:setPropertyActionListener target="#{counterTemplateListBean.entity}" value="#{entity}"></f:setPropertyActionListener>
+			</p:commandButton>
 				</p:column>
 		</hftl:dataList>
 			</h:panelGrid>
 		    </p:tab>
 	    </p:accordionPanel>
-		 <p:accordionPanel activeIndex="null" dynamic="true" cache="false">
+		 <p:accordionPanel activeIndex="null" dynamic="true" cache="false" id="recurrings">
 		 <p:ajax event="tabChange" listener="#{configIssuesReportingBean.constructRecurringNotAssociated}" />
 			<p:tab> 
 			<f:facet name="title">
                <h:outputText value="#{messages['configIssuesReporting.recurringWithNotAssociated']} : "/>
-			   <h:outputText value="#{configIssuesReportingBean.reportConfigDto.nbrRecurringChrgNotAssociated}" style="color:#3FCA21"
-				rendered="#{configIssuesReportingBean.reportConfigDto.nbrRecurringChrgNotAssociated==0}"/>
-				<h:outputText value="#{configIssuesReportingBean.reportConfigDto.nbrRecurringChrgNotAssociated}" style="color:red"
-				rendered="#{configIssuesReportingBean.reportConfigDto.nbrRecurringChrgNotAssociated!=0}"/>
+			   <h:outputText value="#{configIssuesReportingBean.getNbrRecurringChrgNotAssociated}" style="color:#3FCA21"
+				rendered="#{configIssuesReportingBean.getNbrRecurringChrgNotAssociated==0}"/>
+				<h:outputText value="#{configIssuesReportingBean.getNbrRecurringChrgNotAssociated}" style="color:red"
+				rendered="#{configIssuesReportingBean.getNbrRecurringChrgNotAssociated!=0}"/>
             </f:facet>
-			<h:panelGrid columns="1" rendered="#{configIssuesReportingBean.reportConfigDto.nbrRecurringChrgNotAssociated!=0}">	
+			<h:panelGrid columns="1" rendered="#{configIssuesReportingBean.getNbrRecurringChrgNotAssociated!=0}">	
 			 <hftl:dataList resultsId="recCh_panel"
-			checkMany="false" backingBean="#{recurringChargeTemplateListBean}" sortBy="code" dataModel="#{configIssuesReportingBean.recurringNotAssociatedList}">
+			checkMany="true" backingBean="#{recurringChargeTemplateListBean}" sortBy="code" dataModel="#{configIssuesReportingBean.recurringNotAssociatedList}">
 			<hftl:column label="#{messages['chargeTemplate.code']}" field="code" />
 			<hftl:column label="#{messages['chargeTemplate.description']}"
 				field="description" />
@@ -518,24 +559,28 @@
 				<f:param name="objectId" value="#{entity.id}" />
 				<f:param name="edit" value="true" /> 
 				</p:button>
-				</p:column>
+			<p:commandButton icon="ui-icon-trash"
+			action="#{recurringChargeTemplateListBean.deleteInlist}"  update=":#{p:component('recurrings')}" onclick="if(confirm('#{messages['commons.confirmDelete']}')){return true;}else{return false;}">
+			<f:setPropertyActionListener target="#{recurringChargeTemplateListBean.entity}" value="#{entity}"></f:setPropertyActionListener>
+			</p:commandButton>
+			</p:column>
 		</hftl:dataList>
 			</h:panelGrid>
 		    </p:tab>
 		</p:accordionPanel>
-		   <p:accordionPanel activeIndex="null" dynamic="true" cache="false">
+		   <p:accordionPanel activeIndex="null" dynamic="true" cache="false" id="termCharges">
 		   <p:ajax event="tabChange" listener="#{configIssuesReportingBean.constructTermChrgNotAssociated}" />
 			<p:tab> 
 			<f:facet name="title">
                <h:outputText value="#{messages['configIssuesReporting.termChrgNotAssociated']} : "/>
-			   <h:outputText value="#{configIssuesReportingBean.reportConfigDto.nbrTerminationChrgNotAssociated}" style="color:#3FCA21"
-				rendered="#{configIssuesReportingBean.reportConfigDto.nbrTerminationChrgNotAssociated==0}"/>
-				<h:outputText value="#{configIssuesReportingBean.reportConfigDto.nbrTerminationChrgNotAssociated}" style="color:red"
-				rendered="#{configIssuesReportingBean.reportConfigDto.nbrTerminationChrgNotAssociated!=0}"/>
+			   <h:outputText value="#{configIssuesReportingBean.getNbrTerminationChrgNotAssociated}" style="color:#3FCA21"
+				rendered="#{configIssuesReportingBean.getNbrTerminationChrgNotAssociated==0}"/>
+				<h:outputText value="#{configIssuesReportingBean.getNbrTerminationChrgNotAssociated}" style="color:red"
+				rendered="#{configIssuesReportingBean.getNbrTerminationChrgNotAssociated!=0}"/>
             </f:facet>
-			<h:panelGrid columns="1" rendered="#{configIssuesReportingBean.reportConfigDto.nbrTerminationChrgNotAssociated!=0}">	
+			<h:panelGrid columns="1" rendered="#{configIssuesReportingBean.getNbrTerminationChrgNotAssociated!=0}">	
 			<hftl:dataList label="#{messages['oneShotChargeTemplate.title']}"  resultsId="termination_panel" 
-			checkMany="false" noClose="false" sortBy="code"
+			checkMany="true" noClose="false" sortBy="code"
 			backingBean="#{serviceChargeTemplateTerminationBean}" dataModel="#{configIssuesReportingBean.terminationNotAssociatedList}" >
 			<hftl:column label="#{messages['chargeTemplate.code']}" field="code" />
 			<hftl:column label="#{messages['chargeTemplate.description']}"
@@ -561,23 +606,27 @@
 				<f:param name="edit" value="true" /> 
 				</p:button>
 				</p:column>
+			<p:commandButton icon="ui-icon-trash"
+			action="#{oneShotChargeTemplateBean.deleteInlist}"  update=":#{p:component('termCharges')}" onclick="if(confirm('#{messages['commons.confirmDelete']}')){return true;}else{return false;}">
+			<f:setPropertyActionListener target="#{oneShotChargeTemplateBean.entity}" value="#{entity}"></f:setPropertyActionListener>
+			</p:commandButton>
 		</hftl:dataList>
 			</h:panelGrid>
 		    </p:tab>
 			 </p:accordionPanel>
-		   <p:accordionPanel activeIndex="null" dynamic="true" cache="false">
+		   <p:accordionPanel activeIndex="null" dynamic="true" cache="false" id="subCharges">
 		   <p:ajax event="tabChange" listener="#{configIssuesReportingBean.constructSubChrgNotAssociated}" />
 			<p:tab> 
 			<f:facet name="title">
                <h:outputText value="#{messages['configIssuesReporting.subChrgNotAssociated']} : "/>
-			   <h:outputText value="#{configIssuesReportingBean.reportConfigDto.nbrSubChrgNotAssociated}" style="color:#3FCA21"
-				rendered="#{configIssuesReportingBean.reportConfigDto.nbrSubChrgNotAssociated==0}"/>
-				<h:outputText value="#{configIssuesReportingBean.reportConfigDto.nbrSubChrgNotAssociated}" style="color:red"
-				rendered="#{configIssuesReportingBean.reportConfigDto.nbrSubChrgNotAssociated!=0}"/>
+			   <h:outputText value="#{configIssuesReportingBean.getNbrSubscriptionChrgNotAssociated}" style="color:#3FCA21"
+				rendered="#{configIssuesReportingBean.getNbrSubscriptionChrgNotAssociated==0}"/>
+				<h:outputText value="#{configIssuesReportingBean.getNbrSubscriptionChrgNotAssociated}" style="color:red"
+				rendered="#{configIssuesReportingBean.getNbrSubscriptionChrgNotAssociated!=0}"/>
             </f:facet>
-			<h:panelGrid columns="1" rendered="#{configIssuesReportingBean.reportConfigDto.nbrSubChrgNotAssociated!=0}">	
+			<h:panelGrid columns="1" rendered="#{configIssuesReportingBean.getNbrSubscriptionChrgNotAssociated!=0}">	
 			<hftl:dataList label="#{messages['oneShotChargeTemplate.title']}"  resultsId="subscription_panel" 
-			checkMany="false" noClose="false" sortBy="code"
+			checkMany="true" noClose="false" sortBy="code"
 			backingBean="#{serviceChargeTemplateSubscriptionBean}" dataModel="#{configIssuesReportingBean.subNotAssociatedList}" >
 			<hftl:column label="#{messages['chargeTemplate.code']}" field="code" />
 			<hftl:column label="#{messages['chargeTemplate.description']}"
@@ -602,6 +651,10 @@
 				<f:param name="objectId" value="#{entity.id}" />
 				<f:param name="edit" value="true" /> 
 				</p:button>
+				<p:commandButton icon="ui-icon-trash"
+				action="#{oneShotChargeTemplateBean.deleteInlist}"  update=":#{p:component('subCharges')}" onclick="if(confirm('#{messages['commons.confirmDelete']}')){return true;}else{return false;}">
+				<f:setPropertyActionListener target="#{oneShotChargeTemplateBean.entity}" value="#{entity}"></f:setPropertyActionListener>
+				</p:commandButton>
 				</p:column>
 		</hftl:dataList>
 			</h:panelGrid>

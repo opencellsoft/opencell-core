@@ -23,17 +23,6 @@ public class ConfigIssuesReportingDTO implements Serializable {
 
     private static final long serialVersionUID = 8775799547993130837L;
 
-    private Integer nbrLanguagesNotAssociated;
-    private Integer nbrTaxesNotAssociated;
-    private Integer nbrInvoiceCatNotAssociated;
-    private Integer nbrInvoiceSubCatNotAssociated;
-    private Integer nbrUsagesChrgNotAssociated;
-    private Integer nbrCountersNotAssociated;
-    private Integer nbrRecurringChrgNotAssociated;
-    private Integer nbrSubChrgNotAssociated;
-    private Integer nbrTerminationChrgNotAssociated;
-    private Integer nbrServicesWithNotOffer;
-    private Integer nbrChargesWithNotPricePlan;
     private Integer nbrRejectedEDR;
     private Integer nbrWalletOpOpen;
     private Integer nbrWalletOpTreated;
@@ -50,8 +39,7 @@ public class ConfigIssuesReportingDTO implements Serializable {
 		super();
 	}
 
-
-	public ConfigIssuesReportingDTO(Integer nbrLanguagesNotAssociated,
+   public ConfigIssuesReportingDTO(Integer nbrLanguagesNotAssociated,
 			Integer nbrTaxesNotAssociated, Integer nbrInvoiceCatNotAssociated,
 			Integer nbrInvoiceSubCatNotAssociated,
 			Integer nbrUsagesChrgNotAssociated,
@@ -66,17 +54,6 @@ public class ConfigIssuesReportingDTO implements Serializable {
 			Integer nbrWalletOpTorerate, Integer nbrWalletOpRerated,
 			Integer nbrEdrRejected, Integer nbrEdrRated, Integer nbrEdrOpen) {
 		super();
-		this.nbrLanguagesNotAssociated = nbrLanguagesNotAssociated;
-		this.nbrTaxesNotAssociated = nbrTaxesNotAssociated;
-		this.nbrInvoiceCatNotAssociated = nbrInvoiceCatNotAssociated;
-		this.nbrInvoiceSubCatNotAssociated = nbrInvoiceSubCatNotAssociated;
-		this.nbrUsagesChrgNotAssociated = nbrUsagesChrgNotAssociated;
-		this.nbrCountersNotAssociated = nbrCountersNotAssociated;
-		this.nbrRecurringChrgNotAssociated = nbrRecurringChrgNotAssociated;
-		this.nbrSubChrgNotAssociated = nbrSubChrgNotAssociated;
-		this.nbrTerminationChrgNotAssociated = nbrTerminationChrgNotAssociated;
-		this.nbrServicesWithNotOffer = nbrServicesWithNotOffer;
-		this.nbrChargesWithNotPricePlan = nbrChargesWithNotPricePlan;
 		this.nbrRejectedEDR = nbrRejectedEDR;
 		this.nbrWalletOpOpen = nbrWalletOpOpen;
 		this.nbrWalletOpTreated = nbrWalletOpTreated;
@@ -88,120 +65,6 @@ public class ConfigIssuesReportingDTO implements Serializable {
 		this.nbrEdrRated = nbrEdrRated;
 		this.nbrEdrOpen = nbrEdrOpen;
 	}
-
-
-	public Integer getNbrLanguagesNotAssociated() {
-		return nbrLanguagesNotAssociated;
-	}
-
-
-	public void setNbrLanguagesNotAssociated(Integer nbrLanguagesNotAssociated) {
-		this.nbrLanguagesNotAssociated = nbrLanguagesNotAssociated;
-	}
-
-
-	public Integer getNbrTaxesNotAssociated() {
-		return nbrTaxesNotAssociated;
-	}
-
-
-	public void setNbrTaxesNotAssociated(Integer nbrTaxesNotAssociated) {
-		this.nbrTaxesNotAssociated = nbrTaxesNotAssociated;
-	}
-
-
-	public Integer getNbrInvoiceCatNotAssociated() {
-		return nbrInvoiceCatNotAssociated;
-	}
-
-
-	public void setNbrInvoiceCatNotAssociated(Integer nbrInvoiceCatNotAssociated) {
-		this.nbrInvoiceCatNotAssociated = nbrInvoiceCatNotAssociated;
-	}
-
-
-	public Integer getNbrInvoiceSubCatNotAssociated() {
-		return nbrInvoiceSubCatNotAssociated;
-	}
-
-
-	public void setNbrInvoiceSubCatNotAssociated(
-			Integer nbrInvoiceSubCatNotAssociated) {
-		this.nbrInvoiceSubCatNotAssociated = nbrInvoiceSubCatNotAssociated;
-	}
-
-
-	public Integer getNbrUsagesChrgNotAssociated() {
-		return nbrUsagesChrgNotAssociated;
-	}
-
-
-	public void setNbrUsagesChrgNotAssociated(Integer nbrUsagesChrgNotAssociated) {
-		this.nbrUsagesChrgNotAssociated = nbrUsagesChrgNotAssociated;
-	}
-
-
-	public Integer getNbrCountersNotAssociated() {
-		return nbrCountersNotAssociated;
-	}
-
-
-	public void setNbrCountersNotAssociated(Integer nbrCountersNotAssociated) {
-		this.nbrCountersNotAssociated = nbrCountersNotAssociated;
-	}
-
-
-	public Integer getNbrRecurringChrgNotAssociated() {
-		return nbrRecurringChrgNotAssociated;
-	}
-
-
-	public void setNbrRecurringChrgNotAssociated(
-			Integer nbrRecurringChrgNotAssociated) {
-		this.nbrRecurringChrgNotAssociated = nbrRecurringChrgNotAssociated;
-	}
-
-
-	public Integer getNbrSubChrgNotAssociated() {
-		return nbrSubChrgNotAssociated;
-	}
-
-
-	public void setNbrSubChrgNotAssociated(Integer nbrSubChrgNotAssociated) {
-		this.nbrSubChrgNotAssociated = nbrSubChrgNotAssociated;
-	}
-
-
-	public Integer getNbrTerminationChrgNotAssociated() {
-		return nbrTerminationChrgNotAssociated;
-	}
-
-
-	public void setNbrTerminationChrgNotAssociated(
-			Integer nbrTerminationChrgNotAssociated) {
-		this.nbrTerminationChrgNotAssociated = nbrTerminationChrgNotAssociated;
-	}
-
-
-	public Integer getNbrServicesWithNotOffer() {
-		return nbrServicesWithNotOffer;
-	}
-
-
-	public void setNbrServicesWithNotOffer(Integer nbrServicesWithNotOffer) {
-		this.nbrServicesWithNotOffer = nbrServicesWithNotOffer;
-	}
-
-
-	public Integer getNbrChargesWithNotPricePlan() {
-		return nbrChargesWithNotPricePlan;
-	}
-
-
-	public void setNbrChargesWithNotPricePlan(Integer nbrChargesWithNotPricePlan) {
-		this.nbrChargesWithNotPricePlan = nbrChargesWithNotPricePlan;
-	}
-
 
 	public Integer getNbrRejectedEDR() {
 		return nbrRejectedEDR;
