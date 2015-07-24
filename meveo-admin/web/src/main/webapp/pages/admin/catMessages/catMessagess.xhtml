@@ -29,8 +29,8 @@
 				listValues="#{tradingLanguageListBean.languageCodes}" />
 		</hf:searchPanel>
 
-		<hftl:dataList label="#{messages['catMessages.title']}"
-			editable="true" backingBean="#{catMessagesListBean}"
+		<hftl:dataList label="#{messages['catMessages.title']}" fileName="CatMessages"
+			editable="true" backingBean="#{catMessagesListBean}" 
 			rowsPerPage="10,20,50,100" exportButton="false" exportToCsv="true" importCsv="true">
 			<p:column exportable="true">
 				<f:facet name="header">

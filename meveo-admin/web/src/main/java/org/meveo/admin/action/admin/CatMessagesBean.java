@@ -16,9 +16,7 @@
  */
 package org.meveo.admin.action.admin;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.Map;
@@ -29,7 +27,6 @@ import javax.inject.Named;
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.commons.utils.CsvBuilder;
 import org.meveo.commons.utils.CsvReader;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.billing.CatMessages;
@@ -53,7 +50,6 @@ import org.meveo.service.catalog.impl.TaxService;
 import org.meveo.service.catalog.impl.TitleService;
 import org.meveo.service.catalog.impl.UsageChargeTemplateService;
 import org.omnifaces.cdi.ViewScoped;
-import org.primefaces.context.RequestContext;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.UploadedFile;
 
@@ -167,26 +163,6 @@ public class CatMessagesBean extends BaseBean<CatMessages> {
 		result.put("*ChargeTemplate_*","Charges");
 		result.put("PricePlanMatrix_*","Price plans");
 		return result;
-	}
-
-	public void exportToFile() throws Exception {
-		CsvBuilder csv = new CsvBuilder();
-		csv.appendValue("Object type");
-		csv.appendValue("Code");
-		csv.appendValue("Basic description");
-		csv.appendValue("Language");
-		csv.appendValue("Description translation");
-		csv.startNewLine();
-		for (CatMessages catMessages : (!filters.isEmpty()&& filters.size()>0) ? getLazyDataModel():catMessagesService.list()) {
-			csv.appendValue(catMessages.getObjectType());
-			csv.appendValue(getObject(catMessages).getCode());
-			csv.appendValue(getObject(catMessages).getDescription());
-			csv.appendValue(catMessages.getLanguageCode());
-			csv.appendValue(catMessages.getDescription()); 
-			csv.startNewLine();
-		}
-		InputStream inputStream = new ByteArrayInputStream(csv.toString().getBytes());
-		csv.download(inputStream, "CatMessages.csv");
 	}
 	
     public void handleFileUpload(FileUploadEvent event) throws Exception {
