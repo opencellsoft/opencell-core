@@ -413,7 +413,7 @@ public class EDR extends BaseEntity {
 				+ ", dateParam5=" + dateParam5+ ", decimalParam1=" + decimalParam1
 				+ ", dateParam2=" + dateParam2+ ", decimalParam3=" + decimalParam3
 				+ ", dateParam4=" + dateParam4+ ", decimalParam5=" + decimalParam5
-				+ ", headerEDR=" + headerEDR==null?"null":headerEDR.getId()
+				+ ", headerEDR=" + ((headerEDR==null)?"null":headerEDR.getId())
 				+ ", status=" + status + ", rejectReason=" + rejectReason
 				+ ", created=" + created + ", lastUpdate=" + lastUpdate + "]";
 	}

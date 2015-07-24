@@ -192,6 +192,12 @@ public class RatingCacheContainerProvider {
         if (pricePlan.getCriteriaEL() != null && pricePlan.getCriteriaEL().length() == 0) {
             pricePlan.setCriteriaEL(null);
         }
+        if (pricePlan.getAmountWithoutTaxEL() != null && pricePlan.getAmountWithoutTaxEL().length() == 0) {
+            pricePlan.setAmountWithoutTaxEL(null);
+        }
+        if (pricePlan.getAmountWithTaxEL() != null && pricePlan.getAmountWithTaxEL().length() == 0) {
+            pricePlan.setAmountWithTaxEL(null);
+        }
 
         // Lazy loading workaround
         if (pricePlan.getOfferTemplate() != null) {

@@ -47,6 +47,8 @@ public class PricePlanDto implements Serializable {
 
 	private BigDecimal amountWithoutTax;
 	private BigDecimal amountWithTax;
+	private String amountWithoutTaxEL;
+	private String amountWithTaxEL;
 
 	private int priority;
 
@@ -216,6 +218,22 @@ public class PricePlanDto implements Serializable {
 		this.amountWithTax = amountWithTax;
 	}
 
+	public String getAmountWithoutTaxEL() {
+		return amountWithoutTaxEL;
+	}
+
+	public void setAmountWithoutTaxEL(String amountWithoutTaxEL) {
+		this.amountWithoutTaxEL = amountWithoutTaxEL;
+	}
+
+	public String getAmountWithTaxEL() {
+		return amountWithTaxEL;
+	}
+
+	public void setAmountWithTaxEL(String amountWithTaxEL) {
+		this.amountWithTaxEL = amountWithTaxEL;
+	}
+
 	public int getPriority() {
 		return priority;
 	}
@@ -254,7 +272,8 @@ public class PricePlanDto implements Serializable {
 				+ currency + ", minQuantity=" + minQuantity + ", maxQuantity=" + maxQuantity + ", offerTemplate=" + offerTemplate + ", startSubscriptionDate="
 				+ startSubscriptionDate + ", endSubscriptionDate=" + endSubscriptionDate + ", startRatingDate=" + startRatingDate + ", endRatingDate=" + endRatingDate
 				+ ", minSubscriptionAgeInMonth=" + minSubscriptionAgeInMonth + ", maxSubscriptionAgeInMonth=" + maxSubscriptionAgeInMonth + ", amountWithoutTax="
-				+ amountWithoutTax + ", amountWithTax=" + amountWithTax + ", priority=" + priority + ", criteria1=" + criteria1 + ", criteria2=" + criteria2 + ", criteria3="
+				+ amountWithoutTax + ", amountWithTax=" + amountWithTax + ", amountWithoutTaxEL=" + amountWithoutTaxEL + ", amountWithTaxEL=" + amountWithTaxEL  
+				+ ", priority=" + priority + ", criteria1=" + criteria1 + ", criteria2=" + criteria2 + ", criteria3="
 				+ criteria3 + ", validityCalendarCode=" + validityCalendarCode + "]";
 	}
 
@@ -289,5 +308,4 @@ public class PricePlanDto implements Serializable {
 	public void setCriteriaEL(String criteriaEL) {
 		this.criteriaEL = criteriaEL;
 	}
-
 }

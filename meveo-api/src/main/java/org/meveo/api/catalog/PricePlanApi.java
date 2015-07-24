@@ -125,6 +125,8 @@ public class PricePlanApi extends BaseApi {
 			pricePlanMatrix.setMaxSubscriptionAgeInMonth(postData.getMaxSubscriptionAgeInMonth());
 			pricePlanMatrix.setAmountWithoutTax(postData.getAmountWithoutTax());
 			pricePlanMatrix.setAmountWithTax(postData.getAmountWithTax());
+			pricePlanMatrix.setAmountWithoutTaxEL(postData.getAmountWithoutTaxEL());
+			pricePlanMatrix.setAmountWithTaxEL(postData.getAmountWithTaxEL());
 			pricePlanMatrix.setPriority(postData.getPriority());
 			pricePlanMatrix.setCriteria1Value(postData.getCriteria1());
 			pricePlanMatrix.setCriteria2Value(postData.getCriteria2());
@@ -216,6 +218,8 @@ public class PricePlanApi extends BaseApi {
 			pricePlanMatrix.setMaxSubscriptionAgeInMonth(postData.getMaxSubscriptionAgeInMonth());
 			pricePlanMatrix.setAmountWithoutTax(postData.getAmountWithoutTax());
 			pricePlanMatrix.setAmountWithTax(postData.getAmountWithTax());
+			pricePlanMatrix.setAmountWithoutTaxEL(postData.getAmountWithoutTaxEL());
+			pricePlanMatrix.setAmountWithTaxEL(postData.getAmountWithTaxEL());
 			pricePlanMatrix.setPriority(postData.getPriority());
 			pricePlanMatrix.setCriteria1Value(postData.getCriteria1());
 			pricePlanMatrix.setCriteria2Value(postData.getCriteria2());

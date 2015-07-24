@@ -240,6 +240,36 @@
 					</f:facet>
 				</p:cellEditor>
 			</p:column>
+			
+			<p:column exportable="true" visible="false">
+				<f:facet name="header">
+					<h:outputText value="#{messages['pricePlanMatrix.amountWithoutTax']} EL" />
+				</f:facet>
+				<p:cellEditor>
+					<f:facet name="output">
+						<h:outputText value="#{entity.amountWithoutTaxEL}" />
+					</f:facet>
+					<f:facet name="input">
+						<p:inputText value="#{entity.amountWithoutTaxEL}" size="20"
+							maxlength="2000" />
+					</f:facet>
+				</p:cellEditor>
+			</p:column>
+			
+			<p:column exportable="true" visible="false">
+				<f:facet name="header">
+					<h:outputText value="#{messages['pricePlanMatrix.amountWithTax']} EL" />
+				</f:facet>
+				<p:cellEditor>
+					<f:facet name="output">
+						<h:outputText value="#{entity.amountWithTaxEL}" />
+					</f:facet>
+					<f:facet name="input">
+						<p:inputText value="#{entity.amountWithTaxEL}" size="20"
+							maxlength="2000" />
+					</f:facet>
+				</p:cellEditor>
+			</p:column>
 			<p:column exportable="true" visible="false">
 				<f:facet name="header">
 					<h:outputText value="#{messages['pricePlanMatrix.ratingDate']}" />
@@ -279,7 +309,7 @@
 					</f:facet>
 					<f:facet name="input">
 						<p:inputText value="#{entity.criteriaEL}" size="20"
-							maxlength="255" />
+							maxlength="2000" />
 					</f:facet>
 				</p:cellEditor>
 			</p:column>

@@ -210,6 +210,8 @@ public class PricePlanMatrixService extends PersistenceService<PricePlanMatrix> 
         String priority = getCellAsString((Cell) cellsObj[i++]);
         String amountWOTax = getCellAsString((Cell) cellsObj[i++]);
         String amountWithTax = getCellAsString((Cell) cellsObj[i++]);
+        String amountWOTaxEL = getCellAsString((Cell) cellsObj[i++]);
+        String amountWithTaxEL = getCellAsString((Cell) cellsObj[i++]);
         String minQuantity = getCellAsString((Cell) cellsObj[i++]);
         String maxQuantity = getCellAsString((Cell) cellsObj[i++]);
         String criteria1 = getCellAsString((Cell) cellsObj[i++]);
@@ -233,11 +235,11 @@ public class PricePlanMatrixService extends PersistenceService<PricePlanMatrix> 
         String validityCalendarCode = getCellAsString((Cell) cellsObj[i++]);
         log.debug(
             "priceplanCode={}, priceplanDescription= {}, chargeCode={} sellerCode={}, countryCode={}, currencyCode={},"
-                    + " startSub={}, endSub={}, offerCode={}, priority={}, amountWOTax={}, amountWithTax={},"
+                    + " startSub={}, endSub={}, offerCode={}, priority={}, amountWOTax={}, amountWithTax={},amountWOTaxEL={}, amountWithTaxEL={},"
                     + " minQuantity={}, maxQuantity={}, criteria1={}, criteria2={}, criteria3={}, criteriaEL={},"
                     + " startRating={}, endRating={}, minSubAge={}, maxSubAge={}, validityCalendarCode={}",
                     new Object[] { pricePlanCode, pricePlanDescription,eventCode, sellerCode, countryCode,
-                    currencyCode, pricePlan.getStartSubscriptionDate(), pricePlan.getEndSubscriptionDate(), offerCode, priority, amountWOTax, amountWithTax, minQuantity,
+                    currencyCode, pricePlan.getStartSubscriptionDate(), pricePlan.getEndSubscriptionDate(), offerCode, priority, amountWOTax, amountWithTax,amountWOTaxEL, amountWithTaxEL, minQuantity,
                     maxQuantity, criteria1, criteria2, criteria3, criteriaEL,
                     pricePlan.getStartRatingDate(),pricePlan.getEndRatingDate(), minSubAge, maxSubAge,validityCalendarCode });
 
@@ -397,6 +399,17 @@ public class PricePlanMatrixService extends PersistenceService<PricePlanMatrix> 
             pricePlan.setAmountWithTax(null);
         }
 
+        if (!StringUtils.isBlank(amountWOTaxEL)) {
+            pricePlan.setAmountWithoutTaxEL(amountWOTaxEL);
+        } else {
+            pricePlan.setAmountWithoutTaxEL(null);
+        }
+        
+        if (!StringUtils.isBlank(amountWithTaxEL)) {
+            pricePlan.setAmountWithTaxEL(amountWithTaxEL);
+        } else {
+            pricePlan.setAmountWithTaxEL(null);
+        }
         // minQuantity
         if (!StringUtils.isBlank(minQuantity)) {
             try {

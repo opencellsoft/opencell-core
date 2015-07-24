@@ -835,4 +835,16 @@
 		</addColumn>
 	</changeSet>
 	
+	<changeSet id="#948_20150723" author="smichea">
+        <addColumn tableName="CAT_PRICE_PLAN_MATRIX">
+            <column name="AMOUNT_WITHOUT_TAX_EL" type="VARCHAR(2000)">
+                <constraints nullable="true" />
+            </column>
+        </addColumn>
+        <addColumn tableName="CAT_PRICE_PLAN_MATRIX">
+            <column name="AMOUNT_WITH_TAX_EL" type="VARCHAR(2000)">
+                <constraints nullable="true" />
+            </column>
+        </addColumn>
+   	</changeSet>
 </databaseChangeLog>

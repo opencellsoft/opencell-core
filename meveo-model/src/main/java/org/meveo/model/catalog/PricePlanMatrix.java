@@ -110,6 +110,12 @@ public class PricePlanMatrix extends BusinessEntity implements Comparable<PriceP
 	@Digits(integer = 23, fraction = 12)
 	private BigDecimal amountWithTax;
 
+	@Column(name = "AMOUNT_WITHOUT_TAX_EL",length=2000)
+	private String amountWithoutTaxEL;
+
+	@Column(name = "AMOUNT_WITH_TAX_EL",length=2000)
+	private String amountWithTaxEL;
+	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "TRADING_CURRENCY_ID")
 	private TradingCurrency tradingCurrency;
@@ -255,6 +261,22 @@ public class PricePlanMatrix extends BusinessEntity implements Comparable<PriceP
 
 	public void setAmountWithTax(BigDecimal amountWithTax) {
 		this.amountWithTax = amountWithTax;
+	}
+
+	public String getAmountWithoutTaxEL() {
+		return amountWithoutTaxEL;
+	}
+
+	public void setAmountWithoutTaxEL(String amountWithoutTaxEL) {
+		this.amountWithoutTaxEL = amountWithoutTaxEL;
+	}
+
+	public String getAmountWithTaxEL() {
+		return amountWithTaxEL;
+	}
+
+	public void setAmountWithTaxEL(String amountWithTaxEL) {
+		this.amountWithTaxEL = amountWithTaxEL;
 	}
 
 	public TradingCurrency getTradingCurrency() {

@@ -324,10 +324,16 @@ public class RatingService extends BusinessService<WalletOperation>{
 				throw new BusinessException("Invalid price plan for provider " + providerCode + " and charge code "
 						+ bareWalletOperation.getCode());
 			} else {
-				log.info("found ratePrice:" + ratePrice.getId() + " priceHT=" + ratePrice.getAmountWithoutTax()
-						+ " priceTTC=" + ratePrice.getAmountWithTax());
+				log.debug("found ratePrice:" + ratePrice.getId());
 				unitPriceWithoutTax = ratePrice.getAmountWithoutTax();
 				unitPriceWithTax = ratePrice.getAmountWithTax();
+				if(ratePrice.getAmountWithoutTaxEL()!=null){
+					unitPriceWithoutTax = getExpressionValue(ratePrice.getAmountWithoutTaxEL(),ratePrice, bareWalletOperation, bareWalletOperation.getWallet().getUserAccount(),unitPriceWithoutTax);
+				}
+				if(ratePrice.getAmountWithTaxEL()!=null){
+					unitPriceWithTax = getExpressionValue(ratePrice.getAmountWithTaxEL(),ratePrice, bareWalletOperation, bareWalletOperation.getWallet().getUserAccount(),unitPriceWithoutTax);
+				}
+
 			}
 
 		}
@@ -570,6 +576,16 @@ public class RatingService extends BusinessService<WalletOperation>{
 							.getAmountWithoutTax());
 					operation.setUnitAmountWithTax(operation.getPriceplan()
 							.getAmountWithTax());
+					if(operation.getPriceplan().getAmountWithoutTaxEL()!=null){
+						operation.setUnitAmountWithoutTax(getExpressionValue(operation.getPriceplan().getAmountWithoutTaxEL(),operation.getPriceplan(), 
+								operation, operation.getWallet().getUserAccount(),operation.getUnitAmountWithoutTax()));
+						
+					}
+					if(operation.getPriceplan().getAmountWithTaxEL()!=null){
+						operation.setUnitAmountWithTax(getExpressionValue(operation.getPriceplan().getAmountWithTaxEL(),operation.getPriceplan(), 
+								operation, operation.getWallet().getUserAccount(),operation.getUnitAmountWithoutTax()));
+						
+					}
 					if (operation.getUnitAmountTax() != null
 							&& operation.getUnitAmountWithTax() != null) {
 						operation.setUnitAmountTax(operation
@@ -616,6 +632,56 @@ public class RatingService extends BusinessService<WalletOperation>{
 		log.debug("end rerate wallet operation");
 	}
 	
+	private BigDecimal getExpressionValue(String expression,PricePlanMatrix priceplan, WalletOperation bareOperation, UserAccount ua,BigDecimal amount){
+		BigDecimal result=null;
+		if (StringUtils.isBlank(expression)) {
+			return result;
+		}
+		Map<Object, Object> userMap = new HashMap<Object, Object>();
+		userMap.put("op", bareOperation);
+		userMap.put("pp",priceplan);
+		if(amount!=null){
+			userMap.put("amount",amount);
+		}
+		if(expression.indexOf("charge") >= 0){
+			ChargeTemplate charge=bareOperation.getChargeInstance().getChargeTemplate();
+			userMap.put("charge",charge);
+			charge.getCustomFields();
+		}
+		if(expression.indexOf("offer") >= 0){
+			OfferTemplate offer=bareOperation.getChargeInstance().getSubscription().getOffer();
+			offer.getCustomFields();
+			userMap.put("offer",offer);
+		}
+		if (expression.indexOf("ua.") >= 0) {
+			userMap.put("ua", ua);
+		}
+		if (expression.indexOf("ba.") >= 0) {
+			userMap.put("ba", ua.getBillingAccount());
+		}
+		if (expression.indexOf("ca.") >= 0) {
+			userMap.put("ca", ua.getBillingAccount().getCustomerAccount());
+		}
+		if (expression.indexOf("c.") >= 0) {
+			userMap.put("c", ua.getBillingAccount().getCustomerAccount().getCustomer());
+		}
+		if (expression.indexOf("prov.") >= 0) {
+			userMap.put("prov", ua.getProvider());
+		}
+		Object res=null;
+		try {
+			res = ValueExpressionWrapper.evaluateExpression(expression, userMap, BigDecimal.class);
+		} catch (BusinessException e1) {
+			log.error("Amount Expression " + expression + " error in price plan "+priceplan+ " e="+e1.getMessage());
+		}
+		try {
+			result = (BigDecimal) res;
+		} catch (Exception e) {
+			log.error("Amount Expression " + expression + " do not evaluate to bigDecimal but " + res);
+		}
+		return result;
+	}
+	
 	private boolean matchExpression(String expression, WalletOperation bareOperation, UserAccount ua)
 			throws BusinessException {
 		Boolean result = true;
@@ -645,6 +711,9 @@ public class RatingService extends BusinessService<WalletOperation>{
 		}
 		if (expression.indexOf("c.") >= 0) {
 			userMap.put("c", ua.getBillingAccount().getCustomerAccount().getCustomer());
+		}
+		if (expression.indexOf("prov.") >= 0) {
+			userMap.put("prov", ua.getProvider());
 		}
 		Object res = ValueExpressionWrapper.evaluateExpression(expression, userMap, Boolean.class);
 		try {
@@ -684,6 +753,9 @@ public class RatingService extends BusinessService<WalletOperation>{
 		}
 		if (expression.indexOf("c.") >= 0) {
 			userMap.put("c", ua.getBillingAccount().getCustomerAccount().getCustomer());
+		}
+		if (expression.indexOf("prov.") >= 0) {
+			userMap.put("prov", ua.getProvider());
 		}
 
 		Object res = ValueExpressionWrapper.evaluateExpression(expression, userMap, String.class);
@@ -729,6 +801,9 @@ public class RatingService extends BusinessService<WalletOperation>{
 		}
 		if (expression.indexOf("c.") >= 0) {
 			userMap.put("c", ua.getBillingAccount().getCustomerAccount().getCustomer());
+		}
+		if (expression.indexOf("prov.") >= 0) {
+			userMap.put("prov", ua.getProvider());
 		}
 
 		Object res = ValueExpressionWrapper.evaluateExpression(expression, userMap, Double.class);
