@@ -1,0 +1,113 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html" xmlns:hftl="http://hftl.org"
+	xmlns:hf="http://java.sun.com/jsf/composite/tags"
+	xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
+
+	<ui:define name="navigation">
+		<ui:include src="/layout/navigation.xhtml" />
+	</ui:define>
+
+	<ui:define name="body">
+
+		<p:panel>
+			<h:form id="crumbmenuForm">
+				<p:breadCrumb homeDisplay="text" id="crumbmenu">
+					<p:menuitem value="#{messages['menu.catalog']}" disabled="true" />
+					<p:menuitem outcome="filters" value="#{messages['menu.filters']}" />
+				</p:breadCrumb>
+			</h:form>
+		</p:panel>
+
+		<p:panel header="#{messages['menu.filters']}">
+			<p:tabView id="tabView">
+				<p:tab title="#{messages['filter.info']}">
+
+					<hf:formPanel backingBean="#{filterBean}" columns="1"
+						showEnableDisableButton="true">
+
+						<hf:formField label="#{messages['BusinessEntity.code']}"
+							field="code" required="true" validateUnique="true" />
+						<hf:formField label="#{messages['BusinessEntity.description']}"
+							field="description" required="true" useConverter="false"
+							size="50" maxlength="50" />
+						<hf:formField
+							label="#{messages['entity.notification.classNameFilter']}"
+							field="targetEntity" required="true" size="60" maxlength="255"
+							autocompleteMethod="#{notificationBean.autocompleteClassNames}"
+							isAutocomplete="true" />
+					</hf:formPanel>
+
+				</p:tab>
+
+				<p:tab title="#{messages['filterCondition.info']}" id="tab2"
+					rendered="#{!filterBean.entity.isTransient()}">
+
+					<h:panelGroup id="filterConditionListPanel">
+						<hftl:dataList id="filterConditionList"
+							backingBean="#{filterConditionBean}"
+							dataModel="#{filterBean.getFilterConditions()}"
+							resultsId="filterCondition_resultId" checkMany="false">
+							<hftl:column label="#{messages['filterCondition.fieldName']}"
+								field="fieldName" />
+							<hftl:column label="#{messages['filterCondition.operand']}"
+								field="operand" />
+							<hftl:column label="#{messages['filterCondition.el']}" field="el" />
+
+							<p:column styleClass="actions-column"
+								rendered="#{filterBean.edit}">
+								<f:facet name="header">
+									<h:outputText value="#{messages['commons.actions']}" />
+								</f:facet>
+								<p:commandButton
+									update=":tabView:filterConditionListPanel :tabView:filterConditionFormPanel"
+									action="#{filterBean.editFilterCondition(entity)}"
+									icon="ui-icon-document" />
+								<p:commandButton
+									action="#{filterBean.deleteFilterCondition(entity)}"
+									icon="ui-icon-trash" ajax="true"
+									update=":tabView:filterConditionListPanel :tabView:filterConditionFormPanel" />
+							</p:column>
+						</hftl:dataList>
+					</h:panelGroup>
+
+					<p:panel id="filterConditionFormPanel"
+						rendered="#{filterBean.edit}">
+						<hf:formPanel id="filterConditionForm"
+							formId="filterConditionForm" edit="#{filterBean.edit}"
+							backingBean="#{filterBean}"
+							entity="#{filterBean.filterCondition}" showFormButtons="false"
+							ajaxSubmit="true">
+							<hf:formField id="fieldName" required="true"
+								label="#{messages['filterCondition.fieldName']}"
+								field="fieldName" />
+							<hf:formField id="operand" required="true"
+								label="#{messages['filterCondition.operand']}" field="operand" />
+							<hf:formField id="el" textArea="=true"
+								label="#{messages['filterCondition.el']}" field="el" />
+							<hf:formField id="sql" textArea="true"
+								label="#{messages['filterCondition.sql']}" field="sql" />
+
+							<f:facet name="buttons">
+								<p:commandButton rendered="#{entity.filterCondition.id==null}"
+									action="#{filterBean.saveFilterCondition()}"
+									value="#{messages['action.addSave']}"
+									update=":tabView:filterConditionListPanel :tabView:filterConditionFormPanel" />
+								<p:commandButton value="#{messages['action.cancel']}"
+									action="#{filterBean.newFilterCondition()}"
+									update=":tabView:filterConditionFormPanel" />
+								<p:button id="buttonBack" value="#{messages['action.back']}"
+									outcome="#{filterBean.back()}" includeViewParams="true">
+									<f:param name="cid" value="#{javax.enterprise.context.conversation.id}" />
+								</p:button>
+							</f:facet>
+						</hf:formPanel>
+					</p:panel>
+
+				</p:tab>
+			</p:tabView>
+		</p:panel>
+	</ui:define>
+
+</ui:composition>
