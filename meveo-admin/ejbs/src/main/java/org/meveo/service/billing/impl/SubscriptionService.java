@@ -173,39 +173,6 @@ public class SubscriptionService extends BusinessService<Subscription> {
 		update(subscription, updater);
 	}
 
-	public void subscriptionOffer(String subscriptionCode, String offerCode,
-			Date subscriptionDate, User updater, Provider provider)
-			throws IncorrectSusbcriptionException, BusinessException {
-		if (subscriptionDate == null) {
-			subscriptionDate = new Date();
-		}
-		Subscription subscription = findByCode(subscriptionCode, provider);
-		if (subscription == null) {
-			throw new IncorrectSusbcriptionException(
-					"subscription does not exist. code=" + subscriptionCode);
-		}
-		if (subscription.getStatus() != SubscriptionStatusEnum.CREATED) {
-			throw new BusinessException(
-					"subscription has not a created status. code="
-							+ subscriptionCode);
-		}
-		if (subscription.getOffer() != null) {
-			throw new BusinessException(
-					"subscription has already an offer. code="
-							+ subscriptionCode);
-		}
-		OfferTemplate offer = offerTemplateService.findByCode(offerCode,
-				provider);
-		if (offer == null) {
-			throw new BusinessException("offer does not exist. code="
-					+ offerCode);
-		}
-		subscription.setOffer(offer);
-		subscription.setStatus(SubscriptionStatusEnum.ACTIVE);
-		subscription.setStatusDate(new Date());
-		subscription.setSubscriptionDate(subscriptionDate);
-		update(subscription, updater);
-	}
 
 	private void terminateSubscription(Subscription subscription,
 			Date terminationDate,

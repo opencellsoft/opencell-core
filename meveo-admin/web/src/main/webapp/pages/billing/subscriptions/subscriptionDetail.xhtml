@@ -928,8 +928,7 @@
 					backingBean="#{subscriptionBean}" columns="1"
 					entity="#{subscriptionBean.usageChargeInstance}"
 					formId="usageChgForm1" showFormButtons="false" ajaxSubmit="true">
-
-						<hf:formField label="#{messages['businessEntity.code']}"
+						<hf:formField id="USchargeTemplateSelectId" label="#{messages['businessEntity.code']}"
 							field="chargeTemplate" valueLabelField="code" disabled="true" />
 						<hf:formField label="#{messages['businessEntity.description']}"
 							field="description" disabled="true" />
@@ -940,20 +939,20 @@
 						<hf:formField
 							label="#{messages['oneShotChargeInstance.amountWithoutTax']}"
 							field="amountWithoutTax" edit="true" newLine="#{subscriptionBean.entity.provider.entreprise}"/>
-						<hf:formField
+						<!--<hf:formField
 							label="#{messages['oneShotChargeInstance.criteria1']}"
-							field="criteria1" edit="true" isMessage="false" />
+							field="criteria1" edit="false" isMessage="false" />
 						<hf:formField
 							label="#{messages['oneShotChargeInstance.criteria2']}"
-							field="criteria2" edit="true" isMessage="false" />
+							field="criteria2" edit="false" isMessage="false" />
 						<hf:formField
 							label="#{messages['oneShotChargeInstance.criteria3']}"
-							field="criteria3" edit="true" isMessage="false" />
+							field="criteria3" edit="false" isMessage="false" />-->
 						<hf:formField label="#{messages['counterTemplate.title']}"
 							field="counter" valueLabelField="description" edit="false" />
                         <f:facet name="buttons">
 						<p:commandButton
-							action="#{subscriptionBean.saveRecurringChargeIns}"
+							action="#{subscriptionBean.saveUsageChargeIns}"
 							value="#{messages['action.save']}"
 							update=":#{p:component('OS_usage_results_form')}"
 							oncomplete="PF('dlg_usageChgPopup').hide()" />
@@ -988,7 +987,6 @@
 							<p:inputText id="RCamountWithoutTax"
 								value="#{subscriptionBean.recurringChargeInstance.amountWithoutTax}"
 								size="5" converter="bigDecimalConverter"
-								onkeyup="validateAmountsRC(#{subscriptionBean.entity.id});"
 								disabled="#{subscriptionBean.recurringChargeInstance.id!=null and !subscriptionBean.recurringChargeInstance.chargeTemplate.amountEditable}">
 							</p:inputText>
                         </hftl:decorateFormField>
@@ -996,22 +994,18 @@
 							<p:inputText id="RCamountWithTax"
 								value="#{subscriptionBean.recurringChargeInstance.amountWithTax}"
 								size="5" converter="bigDecimalConverter"
-								onkeyup="validateAmountsRC(#{subscriptionBean.entity.id});"
 								disabled="#{!subscriptionBean.recurringChargeInstance.chargeTemplate.amountEditable}">
 							</p:inputText>
 						</hftl:decorateFormField>
 						<hf:formField
 							label="#{messages['recurringChargeInstance.criteria1']}"
-							field="criteria1" edit="true"
-							disabled="#{!subscriptionBean.recurringChargeInstance.chargeTemplate.amountEditable}" />
+							field="criteria1" edit="true" />
 						<hf:formField
 							label="#{messages['recurringChargeInstance.criteria2']}"
-							field="criteria2" edit="true"
-							disabled="#{!subscriptionBean.recurringChargeInstance.chargeTemplate.amountEditable}" />
+							field="criteria2" edit="true" />
 						<hf:formField
 							label="#{messages['recurringChargeInstance.criteria3']}"
-							field="criteria3" edit="true"
-							disabled="#{!subscriptionBean.recurringChargeInstance.chargeTemplate.amountEditable}" />
+							field="criteria3" edit="true" />
 						<hf:formField
 							label="#{messages['oneShotChargeInstance.chargeDate']}"
 							field="chargeDate" edit="false" />
@@ -1019,119 +1013,11 @@
 							label="#{messages['recurringChargeInstance.nextChargeDate']}"
 							field="nextChargeDate" edit="false" />
 
-					<script type="text/javascript">
-    //<![CDATA[
-
-    var validAmountRC;
-    var amountWithoutTaxRC;
-    var chargeTemplateRC;
-    var amountWithTaxRC;
-    var calculatedAmountRC;
-    var calculatedAmountWithoutTaxRC;
-    var formatedValueRC;
-    var formatedValueHTRC;
-
-    function caseTTCamountRC(){
-//     	if ((document.getElementById('{rich:clientId('RCamountWithTax')}').value!='')&&(document.getElementById('{rich:clientId('RCamountWithoutTax')}').value=='')) 
-//     	{return true;} else {return false;}
-    }
-    function caseHTamountRC(){
-//     	if ((document.getElementById('{rich:clientId('RCamountWithTax')}').value=='')&&(document.getElementById('{rich:clientId('RCamountWithoutTax')}').value!='')) 
-//     	{return true;} else {return false;}
-    }
-    function caseHTandTTCamoutsRC(){
-//     	if ((document.getElementById('{rich:clientId('RCamountWithTax')}').value!='')&&(document.getElementById('{rich:clientId('RCamountWithoutTax')}').value!='')) 
-//     	{return true;} else {return false;}
-    }
-	
-    function getValidAmoutRC(){
-    	validateAmountsRC();
-       	return validAmountRC;
-    }
-    function getValidFormatRC(amountRC){
-    	Seam.Component.getInstance("javaScriptAction").getFormatedAmountString(amountRC,function(result) {formatedValueRC=result;});
-    }
-    function getValidFormatHTRC(amountRC){
-    	Seam.Component.getInstance("javaScriptAction").getFormatedAmountString(amountRC,function(result) {formatedValueHTRC=result;});
-    }
-
-	function getAlertTextForCaseHTandTTCamoutsRC(){
-		var text =  'Attention : pour le Montant HT '+amountWithoutTaxRC +', le Montant TTC attendu est '+calculatedAmountRC+'. Confirmez-vous les montants saisis ?';
-		return text;
-	}
-	function getAlertTextForCaseTTCamountRC(){
-		var text =  'Attention : pour le Montant TTC '+amountWithTaxRC +', le Montant HT attendu est '+calculatedAmountWithoutTaxRC;
-		return text;
-	}
-	function getAlertTextForCaseHTamountRC(){
-		var text =  'Attention : pour le Montant HT '+amountWithoutTaxRC+', le Montant TTC attendu est '+calculatedAmountRC;
-		return text;
-	}
-
-	var exceptionHandler = function(ex) { alert("Error: " + ex.getMessage()); };
-	
-	function validateAmountsRC(){
-//        	amountWithoutTaxRC = document.getElementById('{rich:clientId('RCamountWithoutTax')}').value; 
-//     	chargeTemplateRC = document.getElementById('{rich:clientId('RCchargeTemplateSelectId')}').value;
-//     	amountWithTaxRC = document.getElementById('{rich:clientId('RCamountWithTax')}').value;
-//     	if ((document.getElementById('{rich:clientId('RCamountWithTax')}').value=='')&&(document.getElementById('{rich:clientId('RCamountWithoutTax')}').value=='')) 
-//     	{validAmountRC = true;}
-//     	else {
-//     		if(document.getElementById('{rich:clientId('RCamountWithoutTax')}').value!='') {
-//     	Seam.Component.getInstance("javaScriptAction").calculateOneShotChargeInstanceAmount(chargeTemplateRC, amountWithoutTaxRC,function(result) {calculatedAmountRC=result;}, exceptionHandler);
-//     	getValidFormatRC(amountWithoutTaxRC);
-// 		amountWithoutTaxRC = formatedValueHTRC;
-// 		}
-//     	if(document.getElementById('{rich:clientId('RCamountWithTax')}').value!='') {
-//     	Seam.Component.getInstance("javaScriptAction").calculateOneShotChargeInstanceAmountWithoutTax(chargeTemplateRC, amountWithTaxRC, function(result) {calculatedAmountWithoutTaxRC=result;}, exceptionHandler);
-//     	getValidFormatRC(amountWithTaxRC);
-// 		amountWithTaxRC = formatedValueRC;
-//     	}
-//     	if (calculatedAmountRC==amountWithTaxRC)
-// 		 {validAmountRC = true;}
-// 		 else {validAmountRC = false;}
-//     	}
-	}
-	
-	function validationRC(){
-		var resultValidAmoutRC=getValidAmoutRC();
-		if(resultValidAmoutRC==false){
-            if(caseTTCamountRC()==true){
-                alert(getAlertTextForCaseTTCamountRC());
-                return false;
-            }
-            if(caseHTamountRC()==true){
-                alert(getAlertTextForCaseHTamountRC());
-                return false;
-            }
-            if(caseHTandTTCamoutsRC()==true){
-                if(!confirm(getAlertTextForCaseHTandTTCamoutsRC())){
-                    return false;}
-                }
-            }
-		else {
-			return true;
-		}
-	}
-
-	
-    // ]]>
-  </script>
 					<f:facet name="buttons">
 						<p:commandButton
 							action="#{subscriptionBean.saveRecurringChargeIns}"
-							value="#{messages['action.save']}"
-							rendered="#{currentProvider.amountValidation}"
-							onclick="return validationRC();"
-							update=":#{p:component('OS_recurring_results_form')}"
+							value="#{messages['action.save']}" 
 							oncomplete="PF('dlg_recurringChgPopup').hide()" />
-						<p:commandButton
-							action="#{subscriptionBean.saveRecurringChargeIns}"
-							value="#{messages['action.save']}"
-							rendered="#{!currentProvider.amountValidation}"
-							update=":#{p:component('OS_recurring_results_form')}"
-							oncomplete="PF('dlg_recurringChgPopup').hide()" />
-
 						<p:button value="#{messages['action.cancel']}"
 							onclick="PF('dlg_recurringChgPopup').hide();return false;" />
 					</f:facet>

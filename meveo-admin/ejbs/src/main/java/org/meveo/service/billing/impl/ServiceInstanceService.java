@@ -62,7 +62,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 	private UsageChargeInstanceService usageChargeInstanceService;
 
 	@Inject
-	private WalletOperationService chargeApplicationService;
+	private WalletOperationService walletOperationService;
 
 	public ServiceInstance findByCodeAndSubscription(String code, Subscription subscription) {
 		return findByCodeAndSubscription(getEntityManager(), code, subscription);
@@ -244,13 +244,15 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 			recurringChargeInstance.setStatus(InstanceStatusEnum.ACTIVE);
 			recurringChargeInstance.setStatusDate(new Date());
 			recurringChargeInstanceService.update(recurringChargeInstance, creator);
-			recurringChargeInstanceService.recurringChargeApplication(recurringChargeInstance, creator);
+			walletOperationService.chargeSubscription(recurringChargeInstance, creator);
 
 			if (recurringChargeInstance.getRecurringChargeTemplate().getDurationTermInMonth() != null) {
 				if (recurringChargeInstance.getRecurringChargeTemplate().getDurationTermInMonth() > agreementMonthTerm) {
 					agreementMonthTerm = recurringChargeInstance.getRecurringChargeTemplate().getDurationTermInMonth();
 				}
 			}
+			int nbRating=recurringChargeInstanceService.applyRecurringCharge(recurringChargeInstance.getId(),new Date(),creator);
+			log.debug("rated "+nbRating+" missing periods during activation");
 		}
 
 		// set end Agreement Date
@@ -335,7 +337,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 				Date endAgrementDate = serviceInstance.getEndAgrementDate();
 				if (endAgrementDate != null && terminationDate.before(endAgrementDate)) {
 					if (endAgrementDate.after(nextChargeDate)) {
-						chargeApplicationService.applyChargeAgreement(recurringChargeInstance,
+						walletOperationService.applyChargeAgreement(recurringChargeInstance,
 								recurringChargeInstance.getRecurringChargeTemplate(), user);
 					}
 
@@ -347,12 +349,12 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 				if (applyAgreement && endAgrementDate != null && terminationDate.before(endAgrementDate)) {
 					if (endAgrementDate.before(nextChargeDate)) {
 						recurringChargeInstance.setTerminationDate(endAgrementDate);
-						chargeApplicationService.applyReimbursment(recurringChargeInstance, user);
+						walletOperationService.applyReimbursment(recurringChargeInstance, user);
 					}
 
 				} else if (terminationDate.before(storedNextChargeDate)) {
 					recurringChargeInstance.setTerminationDate(terminationDate);
-					chargeApplicationService.applyReimbursment(recurringChargeInstance, user);
+					walletOperationService.applyReimbursment(recurringChargeInstance, user);
 				}
 
 			}

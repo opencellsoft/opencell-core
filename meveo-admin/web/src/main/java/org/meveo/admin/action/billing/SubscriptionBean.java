@@ -341,30 +341,15 @@ public class SubscriptionBean extends BaseBean<Subscription> {
 	public void saveRecurringChargeIns() {
 		log.debug("saveRecurringChargeIns getObjectId={}", getObjectId());
 		try {
-			if (recurringChargeInstance != null) {
-				if (recurringChargeInstance.getId() != null) {
+			if ((recurringChargeInstance != null) && (recurringChargeInstance.getId() != null)) {
 					log.debug("update RecurringChargeIns {}, id={}", recurringChargeInstance,
 							recurringChargeInstance.getId());
 					recurringChargeInstanceService.update(recurringChargeInstance);
-				} else {
-					log.debug("save RecurringChargeIns {}", recurringChargeInstance);
-
-					recurringChargeInstance.setSubscription(entity);
-					Long id = recurringChargeInstanceService.recurringChargeApplication(entity,
-							(RecurringChargeTemplate) recurringChargeInstance.getChargeTemplate(),
-							recurringChargeInstance.getChargeDate(), recurringChargeInstance.getAmountWithoutTax(),
-							recurringChargeInstance.getAmountWithTax(), 1, recurringChargeInstance.getCriteria1(),
-							recurringChargeInstance.getCriteria2(), recurringChargeInstance.getCriteria3(),
-							getCurrentUser());
-					recurringChargeInstance.setId(id);
-					recurringChargeInstance.setProvider(recurringChargeInstance.getChargeTemplate().getProvider());
-				}
+				
 				messages.info(new BundleKey("messages", "save.successful"));
 				recurringChargeInstance = new RecurringChargeInstance();
 				clearObjectId();
 			}
-		} catch (BusinessException e1) {
-			messages.error(e1.getMessage());
 		} catch (Exception e) {
 			log.error("exception when applying recurring charge!", e);
 			messages.error(e.getMessage());

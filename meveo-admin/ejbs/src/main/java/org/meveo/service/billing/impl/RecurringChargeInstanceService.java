@@ -16,19 +16,21 @@
  */
 package org.meveo.service.billing.impl;
 
-import java.math.BigDecimal;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 import javax.ejb.Stateless;
+import javax.enterprise.event.Event;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.admin.util.NumberUtil;
+import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.QueryBuilder;
+import org.meveo.event.qualifier.Rejected;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.BillingWalletTypeEnum;
@@ -43,6 +45,7 @@ import org.meveo.model.catalog.RecurringChargeTemplate;
 import org.meveo.model.catalog.ServiceChargeTemplateRecurring;
 import org.meveo.model.catalog.WalletTemplate;
 import org.meveo.model.crm.Provider;
+import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.BusinessService;
 
 @Stateless
@@ -50,13 +53,14 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
 
 	@Inject
 	private WalletService walletService;
+	
+	@Inject
+	private WalletOperationService walletOperationService;
+	
 
 	@Inject
-	private WalletOperationService chargeApplicationService;
-
-	// @Inject
-	// private RecurringChargeTemplateServiceLocal
-	// recurringChargeTemplateService;
+	@Rejected
+	Event<Serializable> rejectededChargeProducer;
 
 	public ChargeInstance findByCodeAndService(String code, Long subscriptionId) {
 		ChargeInstance chargeInstance = null;
@@ -115,41 +119,6 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
 			log.error("findByStatus error={} ", e);
 		}
 		return recurringChargeInstances;
-	}
-
-	public Long recurringChargeApplication(Subscription subscription, RecurringChargeTemplate chargeTemplate,
-			Date effetDate, BigDecimal amoutWithoutTax, BigDecimal amoutWithoutTx2, Integer quantity, String criteria1,
-			String criteria2, String criteria3, User creator) throws BusinessException {
-
-		if (quantity == null) {
-			quantity = 1;
-		}
-		
-		BigDecimal inputQuantity = new BigDecimal(quantity);
-		quantity = NumberUtil.getInChargeUnit(new BigDecimal(quantity), chargeTemplate.getUnitMultiplicator(), chargeTemplate.getUnitNbDecimal()).intValue();
-		
-		RecurringChargeInstance recurringChargeInstance = new RecurringChargeInstance(chargeTemplate.getCode(),
-				chargeTemplate.getDescription(), effetDate, amoutWithoutTax, amoutWithoutTx2, subscription,
-				chargeTemplate, null);
-		recurringChargeInstance.setCriteria1(criteria1);
-		recurringChargeInstance.setCriteria2(criteria2);
-		recurringChargeInstance.setCriteria3(criteria3);
-		recurringChargeInstance.setCountry(subscription.getUserAccount().getBillingAccount().getTradingCountry());
-		recurringChargeInstance.setCurrency(subscription.getUserAccount().getBillingAccount().getCustomerAccount()
-				.getTradingCurrency());
-		// TODO : should choose wallet from GUI
-		recurringChargeInstance.setPrepaid(false);
-		recurringChargeInstance.getWalletInstances().add(subscription.getUserAccount().getWallet());
-
-		create(recurringChargeInstance, creator, chargeTemplate.getProvider());
-
-		chargeApplicationService.recurringWalletOperation(subscription, recurringChargeInstance, inputQuantity, quantity, effetDate, creator);
-		return recurringChargeInstance.getId();
-	}
-
-	public void recurringChargeApplication(RecurringChargeInstance chargeInstance, User creator)
-			throws BusinessException {
-		chargeApplicationService.chargeSubscription(chargeInstance, creator);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -274,6 +243,59 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
 			update(recurringChargeInstance);
 		}
 
+	}
+
+	public int applyRecurringCharge(Long chargeInstanceId, Date maxDate,User user) throws BusinessException {
+		int MaxRecurringRatingHistory=Integer.parseInt(ParamBean.getInstance().getProperty("rating.recurringMaxRetry", "100"));
+		int nbRating=0;
+		try {
+
+			RecurringChargeInstance activeRecurringChargeInstance = findById(chargeInstanceId, user.getProvider());
+
+			RecurringChargeTemplate recurringChargeTemplate = (RecurringChargeTemplate) activeRecurringChargeInstance
+					.getRecurringChargeTemplate();
+			if (recurringChargeTemplate.getCalendar() == null) {
+				// FIXME : should not stop the method execution
+				rejectededChargeProducer.fire(recurringChargeTemplate);
+				log.error("Recurring charge template has no calendar: code="
+						+ recurringChargeTemplate.getCode());
+				throw new BusinessException("Recurring charge template has no calendar: code="
+						+ recurringChargeTemplate.getCode());
+			}
+
+			Date applicationDate = null;
+			if (recurringChargeTemplate.getApplyInAdvance()) {
+				applicationDate = activeRecurringChargeInstance.getNextChargeDate();
+			} else {
+				applicationDate = activeRecurringChargeInstance.getChargeDate();
+			}
+
+			while (nbRating<MaxRecurringRatingHistory && (applicationDate.getTime() <= maxDate.getTime())) {
+				nbRating++;
+				log.info("applicationDate={}", applicationDate);
+				applicationDate = DateUtils.setTimeToZero(applicationDate);
+				if (!recurringChargeTemplate.getApplyInAdvance()) {
+					walletOperationService
+							.applyNotAppliedinAdvanceReccuringCharge(activeRecurringChargeInstance, false,recurringChargeTemplate, user);
+				} else {
+					walletOperationService.applyReccuringCharge(activeRecurringChargeInstance, false,recurringChargeTemplate, user);
+				}
+				log.debug("nextChargeDate {}, chargeDate {}.",activeRecurringChargeInstance.getChargeDate(),activeRecurringChargeInstance.getNextChargeDate());
+				if (recurringChargeTemplate.getApplyInAdvance()) {
+					applicationDate = activeRecurringChargeInstance.getNextChargeDate();
+				} else {
+					applicationDate = activeRecurringChargeInstance.getChargeDate();
+				}
+			} 
+			if(nbRating>0){
+				activeRecurringChargeInstance.updateAudit(user);
+				updateNoCheck(activeRecurringChargeInstance);
+			}
+		} catch (Exception e) {
+            rejectededChargeProducer.fire("RecurringCharge " + chargeInstanceId);
+            throw new BusinessException(e);
+        }
+		return nbRating;
 	}
 
 }
