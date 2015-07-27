@@ -265,4 +265,19 @@ public class User extends AuditableEntity {
 //        }
         return false;
     }
+    
+    public boolean hasPermission(String resource, String permission) {
+    	boolean isAllowed = false;
+    	
+    	if (getRoles() != null && getRoles().size() > 0) {
+			for (Role role : getRoles()) {
+				if (role.hasPermission("user", "apiAccess")) {
+					isAllowed = true;
+					break;
+				}
+			}
+		}
+    	
+    	return isAllowed;
+    }
 }

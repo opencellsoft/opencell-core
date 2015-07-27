@@ -729,6 +729,10 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
 
 		try {
 			result = sellerApi.listSellerCodes(getCurrentUser().getProvider());
+		} catch (MeveoApiException e) {
+			result.getActionStatus().setErrorCode(e.getErrorCode());
+			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
+			result.getActionStatus().setMessage(e.getMessage());
 		} catch (Exception e) {
 			result.getActionStatus().setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);

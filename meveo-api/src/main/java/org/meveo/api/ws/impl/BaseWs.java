@@ -16,7 +16,6 @@ import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.exception.LoginException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.User;
-import org.meveo.model.security.Role;
 import org.meveo.service.admin.impl.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -90,18 +89,7 @@ public abstract class BaseWs {
 		}
 
 		// check if has api permission
-		boolean isAllowed = false;
-
-		if (user.getRoles() != null && user.getRoles().size() > 0) {
-			for (Role role : user.getRoles()) {
-				if (role.hasPermission("user", "apiAccess")) {
-					isAllowed = true;
-					break;
-				}
-			}
-		} else {
-			throw new LoginException(user.getUserName(), "Authentication failed! Insufficient privilege!");
-		}
+		boolean isAllowed = user.hasPermission("user", "apiAccess");
 
 		if (!isAllowed) {
 			throw new LoginException(user.getUserName(), "Authentication failed! Insufficient privilege!");
