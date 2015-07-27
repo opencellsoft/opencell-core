@@ -64,6 +64,7 @@ public class InvoiceSubCategoryApi extends BaseApi {
 			invoiceSubCategory.setInvoiceCategory(invoiceCategory);
 			invoiceSubCategory.setCode(postData.getCode());
 			invoiceSubCategory.setDescription(postData.getDescription());
+			invoiceSubCategory.setAccountingCode(postData.getAccountingCode());
 
 			if (provider.getTradingLanguages() != null) {
 				if (postData.getLanguageDescriptions() != null) {
@@ -146,6 +147,7 @@ public class InvoiceSubCategoryApi extends BaseApi {
 
 			invoiceSubCategory.setInvoiceCategory(invoiceCategory);
 			invoiceSubCategory.setDescription(postData.getDescription());
+			invoiceSubCategory.setAccountingCode(postData.getAccountingCode());
 
 			if (provider.getTradingLanguages() != null) {
 				if (postData.getLanguageDescriptions() != null) {
