@@ -1,0 +1,46 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html" xmlns:hftl="http://hftl.org"
+	xmlns:hf="http://java.sun.com/jsf/composite/tags"
+	template="/layout/template.xhtml">
+
+	<ui:define name="metadata">
+		<f:metadata>
+			<f:event type="preRenderView"
+				listener="#{filterListBean.preRenderView}" />
+		</f:metadata>
+	</ui:define>
+	<ui:define name="navigation">
+		<ui:include src="/layout/navigation.xhtml" />
+	</ui:define>
+
+	<ui:define name="body">
+
+		<hf:searchPanel label="#{messages['filter.search']}"
+			backingBean="#{filterListBean}">
+			<hf:searchField label="#{messages['BusinessEntity.code']}"
+				field="code" />
+			<hf:searchField label="#{messages['BusinessEntity.description']}"
+				id="description" field="description" />
+			<hf:searchField label="#{messages['filter.targetEntity']}"
+				field="targetEntity" size="50"
+				autocompleteMethod="#{notificationBean.autocompleteClassNames}"
+				isAutocomplete="true" />
+		</hf:searchPanel>
+
+		<hftl:dataList label="#{messages['filter.title']}" checkMany="false"
+			noClose="false" backingBean="#{filterListBean}">
+			<hftl:column label="#{messages['BusinessEntity.code']}" field="code" />
+			<hftl:column label="#{messages['BusinessEntity.description']}"
+				field="description" />
+			<hftl:column label="#{messages['filter.targetEntity']}"
+				field="targetEntity" />
+
+			<hftl:actionsColumn
+				permission="#{identity.hasPermission('administration','administrationManagement')}" />
+		</hftl:dataList>
+
+	</ui:define>
+
+</ui:composition>

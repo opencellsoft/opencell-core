@@ -1611,6 +1611,30 @@
 			<redirect />
 		</navigation-case>
 	</navigation-rule>
+	
+	<!-- Filters -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>filters</from-outcome>
+			<to-view-id>/pages/admin/filters/filters/filters.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>filterDetail</from-outcome>
+			<to-view-id>/pages/admin/filters/filters/filterDetail.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>projectors</from-outcome>
+			<to-view-id>/pages/admin/filters/projectors/projectors.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>projectorDetail</from-outcome>
+			<to-view-id>/pages/admin/filters/projectors/projectorDetail.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+	</navigation-rule>
 
 
 	<!-- Exception handling -->
