@@ -21,16 +21,18 @@ import java.util.List;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.Stateless;
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
+import javax.persistence.Query;
 
+import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.QueryBuilder.QueryLikeStyleEnum;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.IEntity;
 import org.meveo.model.billing.CatMessages;
-import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.model.crm.Provider;
 import org.meveo.service.base.PersistenceService;
 
@@ -44,6 +46,23 @@ public class CatMessagesService extends PersistenceService<CatMessages> {
 	private void init() {
 
 	}
+	
+	@Inject
+	private TitleService titleService;
+	@Inject
+	private TaxService taxService;
+	@Inject
+	private InvoiceCategoryService invoiceCategoryService;
+	@Inject
+	private InvoiceSubCategoryService invoiceSubCategoryService;
+	@Inject 
+	private UsageChargeTemplateService usageChargeTemplateService;
+	@Inject
+	private OneShotChargeTemplateService oneShotChargeTemplateService;
+	@Inject
+	private RecurringChargeTemplateService recurringChargeTemplateService;
+	@Inject
+	private PricePlanMatrixService pricePlanMatrixService;
 
 	public String getMessageDescription(BusinessEntity businessEntity,
 			String languageCode) {
@@ -182,4 +201,57 @@ public class CatMessagesService extends PersistenceService<CatMessages> {
             return null;
         }
 	}
+	 
+	 /**
+		 * @see org.meveo.service.base.local.IPersistenceService#list(org.meveo.admin.util.pagination.PaginationConfiguration)
+		 */
+	    @SuppressWarnings({ "unchecked" })
+	    @Override
+	    public List<CatMessages> list(PaginationConfiguration config) {
+	        List<CatMessages> catMessages=super.list(config);
+	        for(CatMessages catMsg:catMessages){
+	        	BusinessEntity obj=getObject(catMsg);
+	        	catMsg.setEntityCode(obj.getCode());
+	        	catMsg.setEntityDescription(obj.getDescription());
+	        } 
+	        return catMessages;
+	    }
+	    private BusinessEntity getObject(CatMessages catMessages){
+			if(catMessages==null){
+				return null;
+			}
+			BusinessEntity object=null;
+			String messagesCode=catMessages.getMessageCode();
+			String[] codes=messagesCode.split("_");
+			
+			if(codes!=null&&codes.length==2){
+				Long id=null;
+				try{
+					id=Long.valueOf(codes[1]);
+				}catch(Exception e){
+					return null;
+				}
+				if("Title".equals(codes[0])){
+					object= titleService.findById(id);
+				}else if("Tax".equals(codes[0])){
+					object= taxService.findById(id);
+				}else if("InvoiceCategory".equals(codes[0])){
+					object= invoiceCategoryService.findById(id);
+				}else if("InvoiceSubCategory".equals(codes[0])){
+					object= invoiceSubCategoryService.findById(id);
+				}else if("UsageChargeTemplate".equals(codes[0])){
+					object= usageChargeTemplateService.findById(id);
+				}else if("OneShotChargeTemplate".equals(codes[0])){
+					object= oneShotChargeTemplateService.findById(id);
+				}else if("RecurringChargeTemplate".equals(codes[0])){
+					object= recurringChargeTemplateService.findById(id);
+				}else if("PricePlanMatrix".equals(codes[0])){
+					object= pricePlanMatrixService.findById(id);
+				}
+			}if(catMessages!=null){
+				catMessages.setEntityCode(object.getCode());
+				catMessages.setEntityDescription(object.getDescription());	
+			}
+			return object;
+		}
 }

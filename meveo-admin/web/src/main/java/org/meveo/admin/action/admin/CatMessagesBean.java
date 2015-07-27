@@ -117,42 +117,7 @@ public class CatMessagesBean extends BaseBean<CatMessages> {
 	protected String getListViewName() {
 		return "catMessagess";
 	}
-	
-	protected BusinessEntity getObject(CatMessages catMessages){
-		if(catMessages==null){
-			return null;
-		}
-		String messagesCode=catMessages.getMessageCode();
-		String[] codes=messagesCode.split("_");
-		
-		if(codes!=null&&codes.length==2){
-			Long id=null;
-			try{
-				id=Long.valueOf(codes[1]);
-			}catch(Exception e){
-				return null;
-			}
-			if("Title".equals(codes[0])){
-				return titleService.findById(id);
-			}else if("Tax".equals(codes[0])){
-				return taxService.findById(id);
-			}else if("InvoiceCategory".equals(codes[0])){
-				return invoiceCategoryService.findById(id);
-			}else if("InvoiceSubCategory".equals(codes[0])){
-				return invoiceSubCategoryService.findById(id);
-			}else if("UsageChargeTemplate".equals(codes[0])){
-				return usageChargeTemplateService.findById(id);
-			}else if("OneShotChargeTemplate".equals(codes[0])){
-				return oneShotChargeTemplateService.findById(id);
-			}else if("RecurringChargeTemplate".equals(codes[0])){
-				return recurringChargeTemplateService.findById(id);
-			}else if("PricePlanMatrix".equals(codes[0])){
-				return pricePlanMatrixService.findById(id);
-			}
-		}
-		
-		return null;
-	}
+
 	
 	protected Map<String,String> getObjectTypes(){
 		Map<String,String> result=new HashMap<String,String>();

@@ -38,17 +38,17 @@
 				</f:facet>
 				<h:outputText value="#{entity.objectType}" />
 			</p:column>
-			<p:column exportable="false">
+			<p:column exportable="true" >
 				<f:facet name="header">
 					<h:outputText value="#{messages['catMessages.messageCode']}" />
 				</f:facet>
-				<h:outputText value="#{backingBean.getObject(entity).code}" />
+				<h:outputText value="#{entity.entityCode}" />
 			</p:column>
-			<p:column exportable="false">
+			<p:column exportable="true">
 				<f:facet name="header">
 					<h:outputText value="#{messages['catMessages.basicDescription']}" />
 				</f:facet>
-				<h:outputText value="#{backingBean.getObject(entity).description}" />
+				<h:outputText value="#{entity.entityDescription}" />
 			</p:column>
 			<p:column exportable="true" sortBy="languageCode">
 				<f:facet name="header">
