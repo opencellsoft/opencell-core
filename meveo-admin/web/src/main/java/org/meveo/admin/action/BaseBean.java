@@ -1210,7 +1210,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 	
 	 public CSVExportOptions csvOptions(){
 	    ParamBean param = ParamBean.getInstance();
-		String characterEncoding = param.getProperty("meveo.characterEncoding","iso-8859-1");
+		String characterEncoding = param.getProperty("csv.characterEncoding","iso-8859-1");
 		CSVExportOptions csvOption=new CSVExportOptions();
 		csvOption.setSeparatorCharacter(';');
 		csvOption.setCharacterEncoding(characterEncoding);
