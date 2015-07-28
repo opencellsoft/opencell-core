@@ -60,8 +60,8 @@
 			<hf:searchField
 				label="#{messages['entity.measuredvalue.measurableQuantity']}"
 				field="measurableQuantity.code" />
-
-            <f:facet name="buttons">
+             </hf:searchPanel>
+            <p:panel styleClass="action-buttons">
     			<p:button id="buttonNewBar"
     				value="#{messages['entity.barChart.new']}" outcome="barChartDetail">
     				<f:param name="cid"
@@ -81,8 +81,8 @@
     					value="#{javax.enterprise.context.conversation.id}" />
     				<f:param name="edit" value="true" />
     			</p:button>
-			</f:facet>
-        </hf:searchPanel>
+			</p:panel>
+       
 
 		<!-- ===================================== SEARCH USERS RESULTS ================================= -->
 
