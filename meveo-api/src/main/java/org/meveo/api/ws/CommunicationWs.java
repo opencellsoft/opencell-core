@@ -5,7 +5,7 @@ import javax.jws.WebParam;
 import javax.jws.WebService;
 
 import org.meveo.api.dto.ActionStatus;
-import org.meveo.api.dto.CommDto;
+import org.meveo.api.dto.communication.CommunicationRequestDto;
 
 
 /**
@@ -15,5 +15,5 @@ import org.meveo.api.dto.CommDto;
 public interface CommunicationWs extends IBaseWs {
 
 	@WebMethod
-	public ActionStatus communicate(@WebParam(name = "communicate") CommDto commDto);
+	 public ActionStatus inboundCommunication(@WebParam(name = "communicationRequest")CommunicationRequestDto communicationRequest);
 }
