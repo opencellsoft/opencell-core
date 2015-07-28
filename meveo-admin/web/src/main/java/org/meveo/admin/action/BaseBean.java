@@ -40,6 +40,7 @@ import org.jboss.solder.servlet.http.RequestParam;
 import org.meveo.admin.action.admin.CurrentProvider;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
+import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.AccountEntity;
 import org.meveo.model.AuditableEntity;
 import org.meveo.model.BaseEntity;
@@ -1208,9 +1209,11 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 	}
 	
 	 public CSVExportOptions csvOptions(){
-	    	CSVExportOptions csvOption=new CSVExportOptions();
-	    	csvOption.setSeparatorCharacter(';');
-	    	csvOption.setCharacterEncoding("iso-8859-1");
-	    	return csvOption;
+	    ParamBean param = ParamBean.getInstance();
+		String characterEncoding = param.getProperty("meveo.characterEncoding","iso-8859-1");
+		CSVExportOptions csvOption=new CSVExportOptions();
+		csvOption.setSeparatorCharacter(';');
+		csvOption.setCharacterEncoding(characterEncoding);
+		return csvOption;
 	    }
 }
