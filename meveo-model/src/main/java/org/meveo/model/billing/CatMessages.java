@@ -21,6 +21,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import org.meveo.model.Auditable;
 import org.meveo.model.AuditableEntity;
@@ -41,6 +42,12 @@ public class CatMessages extends AuditableEntity {
 
 	@Column(name = "DESCRIPTION", length = 100)
 	private String description;
+	
+	@Transient
+	private String entityCode;
+	
+	@Transient
+	private String entityDescription;
 
 	public CatMessages() {
 		super();
@@ -132,4 +139,22 @@ public class CatMessages extends AuditableEntity {
 		}
 		return "";
 	}
+
+	public String getEntityCode() {
+		return entityCode;
+	}
+
+	public void setEntityCode(String entityCode) {
+		this.entityCode = entityCode;
+	}
+
+	public String getEntityDescription() {
+		return entityDescription;
+	}
+
+	public void setEntityDescription(String entityDescription) {
+		this.entityDescription = entityDescription;
+	}
+    
+    
 }

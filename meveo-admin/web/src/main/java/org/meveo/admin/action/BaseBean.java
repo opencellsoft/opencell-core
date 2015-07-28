@@ -80,6 +80,8 @@ import org.primefaces.model.LazyDataModel;
 import org.primefaces.model.SortOrder;
 import org.slf4j.LoggerFactory;
 
+import com.lapis.jsfexporter.csv.CSVExportOptions;
+
 /**
  * Base bean class. Other seam backing beans extends this class if they need functionality it provides.
  */
@@ -1351,5 +1353,12 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
         List<CustomFieldTemplate> result= customFieldTemplateService.findByAccountLevel(accountLevel);
         log.debug("find {} by fieldType={} for {}",result.size(),accountLevel,this.getClass());
         return result;
+    }
+    
+    public CSVExportOptions csvOptions(){
+    	CSVExportOptions csvOption=new CSVExportOptions();
+    	csvOption.setSeparatorCharacter(';');
+    	csvOption.setCharacterEncoding("iso-8859-1");
+    	return csvOption;
     }
 }

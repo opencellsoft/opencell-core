@@ -254,6 +254,24 @@
 			<artifactId>seam-security</artifactId>
 			<scope>compile</scope>
 		</dependency>
+		
+		<dependency>
+		  <groupId>com.lapis.jsfexporter</groupId>
+		    <artifactId>jsf-exporter-core</artifactId>
+		    <version>1.0.2.Final</version>
+		</dependency>
+		
+		<dependency>
+		    <groupId>com.lapis.jsfexporter</groupId>
+		    <artifactId>export-type-csv</artifactId>
+		    <version>1.0.2.Final</version>
+		</dependency>
+		
+		<dependency>
+		    <groupId>com.lapis.jsfexporter</groupId>
+		    <artifactId>export-source-primefaces</artifactId>
+		    <version>1.0.2.Final</version>
+		</dependency>
 
 		<!-- rest core library -->
         <dependency>

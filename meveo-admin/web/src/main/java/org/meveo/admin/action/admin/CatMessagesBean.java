@@ -126,42 +126,6 @@ public class CatMessagesBean extends BaseBean<CatMessages> {
 		return "catMessagess";
 	}
 	
-	protected BusinessEntity getObject(CatMessages catMessages){
-		if(catMessages==null){
-			return null;
-		}
-		String messagesCode=catMessages.getMessageCode();
-		String[] codes=messagesCode.split("_");
-		
-		if(codes!=null&&codes.length==2){
-			Long id=null;
-			try{
-				id=Long.valueOf(codes[1]);
-			}catch(Exception e){
-				return null;
-			}
-			if("Title".equals(codes[0])){
-				return titleService.findById(id);
-			}else if("Tax".equals(codes[0])){
-				return taxService.findById(id);
-			}else if("InvoiceCategory".equals(codes[0])){
-				return invoiceCategoryService.findById(id);
-			}else if("InvoiceSubCategory".equals(codes[0])){
-				return invoiceSubCategoryService.findById(id);
-			}else if("UsageChargeTemplate".equals(codes[0])){
-				return usageChargeTemplateService.findById(id);
-			}else if("OneShotChargeTemplate".equals(codes[0])){
-				return oneShotChargeTemplateService.findById(id);
-			}else if("RecurringChargeTemplate".equals(codes[0])){
-				return recurringChargeTemplateService.findById(id);
-			}else if("PricePlanMatrix".equals(codes[0])){
-				return pricePlanMatrixService.findById(id);
-			}
-		}
-		
-		return null;
-	}
-	
 	protected Map<String,String> getObjectTypes(){
 		Map<String,String> result=new HashMap<String,String>();
 		result.put("Title_*","Titles and civilities");
@@ -173,25 +137,6 @@ public class CatMessagesBean extends BaseBean<CatMessages> {
 		return result;
 	}
 
-	public void exportToFile() throws Exception {
-		CsvBuilder csv = new CsvBuilder();
-		csv.appendValue("Object type");
-		csv.appendValue("Code");
-		csv.appendValue("Basic description");
-		csv.appendValue("Language");
-		csv.appendValue("Description translation");
-		csv.startNewLine();
-		for (CatMessages catMessages : (!filters.isEmpty()&& filters.size()>0) ? getLazyDataModel():catMessagesService.list()) {
-			csv.appendValue(catMessages.getObjectType());
-			csv.appendValue(getObject(catMessages).getCode());
-			csv.appendValue(getObject(catMessages).getDescription());
-			csv.appendValue(catMessages.getLanguageCode());
-			csv.appendValue(catMessages.getDescription()); 
-			csv.startNewLine();
-		}
-		InputStream inputStream = new ByteArrayInputStream(csv.toString().getBytes());
-		csv.download(inputStream, "CatMessages.csv");
-	}
 	
     public void handleFileUpload(FileUploadEvent event) throws Exception {
         try {
