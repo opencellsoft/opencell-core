@@ -943,4 +943,26 @@
    		</createTable>
    		<addForeignKeyConstraint baseColumnNames="projector_id" baseTableName="MEVEO_PROJECTOR_IGNORE_FIELD" constraintName="fk_MEVEO_PROJECTOR_IGNORE_FIELD_meveo_projector" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="meveo_projector"/>
    	</changeSet>
+   	
+   	
+   	<changeSet id="#953_20150727" author="smichea">
+        <dropSequence sequenceName="billing_priceplan_inst_seq"/>
+   		<dropTable tableName="billing_priceplan_inst"/>
+        <dropSequence sequenceName="billing_serv_param_inst_seq"/>
+   		<dropTable cascadeConstraints="true" tableName="billing_serv_param_inst"/>
+        <dropSequence sequenceName="medina_cdr_file_seq"/>
+   		<dropTable cascadeConstraints="true" tableName="medina_cdr_file"/>
+        <dropSequence sequenceName="medina_cdr_seq"/>
+   		<dropTable cascadeConstraints="true" tableName="medina_cdr"/>
+        <dropSequence sequenceName="medina_number_plan_seq"/>
+   		<dropTable cascadeConstraints="true" tableName="medina_number_plan"/>
+        <dropSequence sequenceName="medina_rejected_cdr_seq"/>
+   		<dropTable cascadeConstraints="true" tableName="medina_rejected_cdr"/>
+        <dropSequence sequenceName="medina_time_plan_seq"/>
+   		<dropTable cascadeConstraints="true" tableName="medina_time_plan"/>
+        <dropSequence sequenceName="medina_zonning_plan_seq"/>
+   		<dropTable cascadeConstraints="true" tableName="medina_zonning_plan"/>
+        <dropSequence sequenceName="mediation_magic_numbers_seq"/>
+   		<dropTable cascadeConstraints="true" tableName="mediation_magic_numbers"/>
+   	</changeSet>
 </databaseChangeLog>
