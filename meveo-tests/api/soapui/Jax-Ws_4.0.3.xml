@@ -1727,7 +1727,7 @@
          </serviceTemplate>
       </ws:createServiceTemplate>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/CatalogWs/createServiceTemplate"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation isOneWay="false" action="" name="createUsageChargeTemplate" bindingOperationName="createUsageChargeTemplate" type="Request-Response" outputName="createUsageChargeTemplateResponse" inputName="createUsageChargeTemplate" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/meveo/CatalogWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/CatalogWs/createServiceTemplate"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation isOneWay="false" action="" name="createUsageChargeTemplate" bindingOperationName="createUsageChargeTemplate" type="Request-Response" outputName="createUsageChargeTemplateResponse" inputName="createUsageChargeTemplate" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/meveo/CatalogWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createUsageChargeTemplate>
@@ -1745,12 +1745,31 @@
                <description>?</description>
             </languageDescriptions>
             <!--Optional:-->
-            <unityMultiplicator>?</unityMultiplicator>
+            <inputUnitDescription>?</inputUnitDescription>
             <!--Optional:-->
-            <unityDescription>?</unityDescription>
+            <ratingUnitDescription>?</ratingUnitDescription>
             <!--Optional:-->
-            <unityFormatter>?</unityFormatter>
-            <unityNbDecimal>?</unityNbDecimal>
+            <unitMultiplicator>?</unitMultiplicator>
+            <unitNbDecimal>?</unitNbDecimal>
+            <!--Optional:-->
+            <triggeredEdrs>
+               <!--Zero or more repetitions:-->
+               <triggeredEdr code="?" description="?">
+                  <!--Optional:-->
+                  <subscriptionEl>?</subscriptionEl>
+                  <!--Optional:-->
+                  <conditionEl>?</conditionEl>
+                  <quantityEl>?</quantityEl>
+                  <!--Optional:-->
+                  <param1El>?</param1El>
+                  <!--Optional:-->
+                  <param2El>?</param2El>
+                  <!--Optional:-->
+                  <param3El>?</param3El>
+                  <!--Optional:-->
+                  <param4El>?</param4El>
+               </triggeredEdr>
+            </triggeredEdrs>
             <!--Optional:-->
             <filterParam1>?</filterParam1>
             <!--Optional:-->
