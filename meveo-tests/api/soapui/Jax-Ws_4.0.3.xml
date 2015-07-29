@@ -1584,12 +1584,12 @@
          </oneShotChargeTemplate>
       </ws:createOneShotChargeTemplate>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/CatalogWs/createOneShotChargeTemplate"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation isOneWay="false" action="" name="createPricePlan" bindingOperationName="createPricePlan" type="Request-Response" outputName="createPricePlanResponse" inputName="createPricePlan" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/meveo/CatalogWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/CatalogWs/createOneShotChargeTemplate"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation isOneWay="false" action="" name="createPricePlan" bindingOperationName="createPricePlan" type="Request-Response" outputName="createPricePlanResponse" inputName="createPricePlan" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/meveo/CatalogWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createPricePlan>
          <!--Optional:-->
-         <pricePlan code="?">
+         <pricePlan code="?" description="?">
             <eventCode>?</eventCode>
             <!--Optional:-->
             <seller>?</seller>
@@ -1626,6 +1626,8 @@
             <criteria2>?</criteria2>
             <!--Optional:-->
             <criteria3>?</criteria3>
+            <!--Optional:-->
+            <criteriaEL>?</criteriaEL>
             <!--Optional:-->
             <validityCalendarCode>?</validityCalendarCode>
          </pricePlan>
