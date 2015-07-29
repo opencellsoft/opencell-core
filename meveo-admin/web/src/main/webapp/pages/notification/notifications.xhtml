@@ -31,16 +31,24 @@
 
 			<!-- ===================================== SEARCH USERS RESULTS ================================= -->
 
-			<hftl:dataList backingBean="#{notificationListBean}" exportButton="false" fileName="Notifications" exportToCsv="true" importCsv="true" importStrategy="true" sortBy="code">
+			<hftl:dataList backingBean="#{notificationListBean}" exportButton="false" exportToCsv="true" fileName="Notifications" importCsv="true" importStrategy="true" sortBy="code">
 			    <hftl:column label="#{messages['entity.code']}"
 					field="code" />
 				<hftl:column
 					label="#{messages['entity.notification.classNameFilter']}"
 					field="classNameFilter" />
+					<hftl:column style="display:none"
+					label="#{messages['entity.notification.elFilter']}"
+					field="elFilter" />
+				<hftl:column label="#{messages['enableEntity.active']}" field="active" isMessage="true" />	
+				<hftl:column style="display:none"
+					label="#{messages['entity.notification.elAction']}"
+					field="elAction" />
 				<hftl:column
 					label="#{messages['entity.notification.eventTypeFilter']}"
 					field="eventTypeFilter" />
-				<hftl:column label="#{messages['enableEntity.active']}" field="active" isMessage="true" />
+				
+				
 				<p:column style="width: 100px;" exportable="false">
 					<f:facet name="header">
 						<h:outputText value="#{messages['commons.actions']}" />

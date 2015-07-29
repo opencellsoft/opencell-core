@@ -39,6 +39,8 @@
             <p:column headerText="#{messages['entity.notification.result']}" width="20%">
             	<h:outputText value="#{entity.result}"></h:outputText>
             </p:column>
-        </hftl:dataList>
+			<hftl:column  label="#{messages['entity.notification.entityCode']}"  style="display:none" field="entityCode" />
+			<hftl:column  label="#{messages['entity.notification.serializedEntity']}"  style="display:none" field="serializedEntity" />
+			</hftl:dataList>
     </ui:define>
 </ui:composition>

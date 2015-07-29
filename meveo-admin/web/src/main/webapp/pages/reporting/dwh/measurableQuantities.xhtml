@@ -35,12 +35,6 @@
 			    <hftl:column label="#{messages['entity.measurablequantity.code']}"
 					field="code" />
 				<hftl:column
-					label="#{messages['entity.measurablequantity.sqlQuery']}"
-					field="sqlQuery" />
-				<hftl:column
-					label="#{messages['entity.measurablequantity.lastMeasureDate']}"
-					field="lastMeasureDate" isDate="true"/>
-				<hftl:column
 					label="#{messages['entity.measurablequantity.dimension1']}"
 					field="dimension1" />
 				<hftl:column
@@ -51,7 +45,16 @@
 					field="dimension3" />
 				<hftl:column
 					label="#{messages['entity.measurablequantity.dimension4']}"
-					field="dimension4" />
+					field="dimension4" />	
+				<hftl:column
+					label="#{messages['entity.measurablequantity.sqlQuery']}"
+					field="sqlQuery" />
+				<hftl:column
+					label="#{messages['entity.measuredvalue.measurementPeriod']}"
+					field="measurementPeriod" style="display:none" />
+				<hftl:column
+					label="#{messages['entity.measurablequantity.lastMeasureDate']}"
+					field="lastMeasureDate" isDate="true"/>
 				<hftl:column
 					label="#{messages['entity.measurablequantity.editable']}"
 					field="editable" isMessage="true" />

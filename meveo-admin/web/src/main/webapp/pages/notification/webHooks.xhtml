@@ -39,16 +39,40 @@
 				<hftl:column
 					label="#{messages['entity.notification.eventTypeFilter']}"
 					field="eventTypeFilter" />
-				<hftl:column
-					label="#{messages['entity.webHook.httpMethod']}"
-					field="httpMethod"  />
-				<hftl:column
+				<hftl:column style="display:none"
+					label="#{messages['entity.notification.elFilter']}"
+					field="elFilter" />
+               <hftl:column label="#{messages['enableEntity.active']}" field="active" isMessage="true" />
+               <hftl:column style="display:none"
+					label="#{messages['entity.notification.elAction']}"
+					field="elAction" />	
+			  <hftl:column
 					label="#{messages['entity.webHook.host']}"
 					field="host" />
-				<hftl:column
+			<hftl:column style="display:none"
+					label="#{messages['entity.webHook.port']}"
+					field="port"  />
+			<hftl:column
 					label="#{messages['entity.webHook.page']}"
-					field="page" />
-				<hftl:column label="#{messages['enableEntity.active']}" field="active" isMessage="true" />
+					field="page" />		
+			<hftl:column
+					label="#{messages['entity.webHook.httpMethod']}"
+					field="httpMethod"  />
+			<hftl:column style="display:none"
+					label="#{messages['entity.webHook.username']}"
+					field="username"  />
+			<hftl:column style="display:none"
+					label="#{messages['entity.webHook.password']}"
+					field="password"  />
+             <hftl:column style="display:none" exportable="true"
+					label="#{messages['entity.webHook.headers']}"
+					field="encodedHeaders"  />	
+			<hftl:column style="display:none" exportable="true"
+					label="#{messages['entity.webHook.params']}"
+					field="encodedParams"  />
+			<hftl:column style="display:none"
+					label="#{messages['counterTemplate.title']}"
+					field="counterTemplate.code" />						
 			</hftl:dataList>
 	</ui:define>
 </ui:composition>
