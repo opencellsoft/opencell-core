@@ -436,7 +436,7 @@
 						</p:tab>
 
 						<p:tab title="#{messages['billingAccount.tab.invoices']}"
-							rendered="#{!billingAccountBean.edit}">
+							 rendered="#{not empty billingAccountBean.entity.id}">
 							<hf:formPanel formId="form3" backingBean="#{billingAccountBean}"
 								showFormButtons="false">
 									<hf:formField label="#{messages['businessEntity.code']}"
