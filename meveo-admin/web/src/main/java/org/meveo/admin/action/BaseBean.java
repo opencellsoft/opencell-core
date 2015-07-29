@@ -1356,9 +1356,11 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     }
     
     public CSVExportOptions csvOptions(){
-    	CSVExportOptions csvOption=new CSVExportOptions();
-    	csvOption.setSeparatorCharacter(';');
-    	csvOption.setCharacterEncoding("iso-8859-1");
-    	return csvOption;
-    }
+	    ParamBean param = ParamBean.getInstance();
+		String characterEncoding = param.getProperty("csv.characterEncoding","iso-8859-1");
+		CSVExportOptions csvOption=new CSVExportOptions();
+		csvOption.setSeparatorCharacter(';');
+		csvOption.setCharacterEncoding(characterEncoding);
+		return csvOption;
+	    }
 }
