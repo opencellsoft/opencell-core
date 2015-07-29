@@ -149,7 +149,7 @@
 							<p:cellEditor
 								rendered="#{measurementBean.measurableQuantity.editable}">
 								<f:facet name="output">
-									<h:outputText value="#{meas.value}" />
+									<h:outputText value="#{meas.value}" converter="bigDecimal4DigitsConverter"/>
 								</f:facet>
 								<f:facet name="input">
 									<p:inputText value="#{meas.value}">
