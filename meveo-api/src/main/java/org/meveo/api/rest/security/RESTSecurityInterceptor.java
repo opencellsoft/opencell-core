@@ -7,6 +7,7 @@ import java.util.StringTokenizer;
 
 import javax.annotation.security.DenyAll;
 import javax.annotation.security.PermitAll;
+import javax.enterprise.context.RequestScoped;
 import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 import javax.ws.rs.container.ContainerRequestContext;
@@ -101,6 +102,8 @@ public class RESTSecurityInterceptor implements ContainerRequestFilter, Exceptio
 
 			try {
 				currentUser = userService.loginChecks(username, password, false);
+				log.debug("REST login successfull with username={}", username);
+				
 			} catch (LoginException e) {
 				log.error("Login failed for the user {} for reason {} {}", new Object[] { username,
 						e.getClass().getName(), e.getMessage() });
@@ -134,8 +137,8 @@ public class RESTSecurityInterceptor implements ContainerRequestFilter, Exceptio
 
 	@Produces
 	@RSUser
+	@RequestScoped
 	public User getCurrentUser() {
 		return currentUser;
 	}
-
 }

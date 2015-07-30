@@ -78,6 +78,7 @@ import org.jboss.resteasy.client.jaxrs.ResteasyClient;
 import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
 import org.jboss.resteasy.client.jaxrs.ResteasyWebTarget;
 import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataOutput;
+import org.meveo.api.MeveoApiErrorCode;
 import org.meveo.api.dto.response.utilities.ImportExportResponseDto;
 import org.meveo.cache.CdrEdrProcessingCacheContainerProvider;
 import org.meveo.cache.NotificationCacheContainerProvider;
@@ -265,7 +266,7 @@ public class EntityExportImportService implements Serializable {
             // Check that authentication username and password are provided
             if (((MeveoInstance) parameters.get(EXPORT_PARAM_REMOTE_INSTANCE)).getAuthUsername() == null
                     || ((MeveoInstance) parameters.get(EXPORT_PARAM_REMOTE_INSTANCE)).getAuthPassword() == null) {
-                exportStats.setErrorMessage("export.remoteImportNoAuth");
+                exportStats.setErrorMessageKey("export.remoteImportNoAuth");
                 return exportStats;
             }
         }
@@ -325,6 +326,10 @@ public class EntityExportImportService implements Serializable {
                 String remoteExecutionId = uploadFileToRemoteMeveoInstance(filename, (MeveoInstance) parameters.get(EXPORT_PARAM_REMOTE_INSTANCE));
                 exportStats.setRemoteImportExecutionId(remoteExecutionId);
             }
+
+        } catch (RemoteAuthenticationException e) {
+            log.error("Failed to authenticate to a remote Meveo instance {}: {}", ((MeveoInstance) parameters.get(EXPORT_PARAM_REMOTE_INSTANCE)).getCode(), e.getMessage());
+            exportStats.setErrorMessageKey("export.remoteImportFailedAuth");
 
         } catch (Exception e) {
             log.error("Failed to export data to a file {}", filename, e);
@@ -1814,6 +1819,12 @@ public class EntityExportImportService implements Serializable {
 
             Response response = target.request().post(Entity.entity(entity, MediaType.MULTIPART_FORM_DATA_TYPE));
             ImportExportResponseDto resultDto = response.readEntity(ImportExportResponseDto.class);
+            if (resultDto.isFailed()) {
+                if (MeveoApiErrorCode.AUTHENTICATION_AUTHORIZATION_EXCEPTION.equals(resultDto.getActionStatus().getErrorCode())) {
+                    throw new RemoteAuthenticationException(resultDto.getFailureMessage());
+                }
+                throw new Exception(resultDto.getFailureMessage());
+            }
 
             String executionId = resultDto.getExecutionId();
             log.info("Export file {} uploaded to a remote meveo instance {} with execution id {}", filename, remoteInstance.getCode(), executionId);

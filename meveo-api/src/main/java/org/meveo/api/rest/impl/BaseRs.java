@@ -30,8 +30,8 @@ public abstract class BaseRs implements IBaseRs {
 	@MeveoParamBean
 	protected ParamBean paramBean;
 
-	//@Inject
-	//@RSUser
+	@Inject
+	@RSUser
 	private User currentUser;
 
 	@Context

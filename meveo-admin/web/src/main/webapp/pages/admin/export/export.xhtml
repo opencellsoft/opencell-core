@@ -141,8 +141,8 @@
                                         <li><h:outputText value="&amp;nbsp;" escape="false" /></li>
                                         <li><h:outputText value="#{entityExportImportBean.exportImportFuture.get().exception.message}"
                                                 rendered="#{entityExportImportBean.exportImportFuture.get().exception!=null}" /> <h:outputText
-                                                value="#{messages[entityExportImportBean.exportImportFuture.get().errorMessage]}"
-                                                rendered="#{entityExportImportBean.exportImportFuture.get().errorMessage!=null}" /></li>
+                                                value="#{messages[entityExportImportBean.exportImportFuture.get().errorMessageKey]}"
+                                                rendered="#{entityExportImportBean.exportImportFuture.get().errorMessageKey!=null}" /></li>
                                     </ul>
                                 </div>
                             </div>
@@ -205,10 +205,10 @@
                                                 <ul>
                                                     <li><h:outputText value="#{messages['export.importFailed.partial']}" styleClass="ui-messages-error-summary" /></li>
                                                     <li><h:outputText value="&amp;nbsp;" escape="false" /></li>
-                                                    <li><h:outputText value="#{entityExportImportBean.remoteImportResult.exception.message}"
-                                                            rendered="#{entityExportImportBean.remoteImportResult.exception!=null}" /> <h:outputText
-                                                            value="#{messages[entityExportImportBean.remoteImportResult.errorMessage]}"
-                                                            rendered="#{entityExportImportBean.remoteImportResult.errorMessage!=null}" /></li>
+                                                    <li><h:outputText value="#{entityExportImportBean.remoteImportResult.failureMessage}"
+                                                            rendered="#{entityExportImportBean.remoteImportResult.failureMessage!=null}" /> <h:outputText
+                                                            value="#{messages[entityExportImportBean.remoteImportResult.failureMessageKey]}"
+                                                            rendered="#{entityExportImportBean.remoteImportResult.failureMessageKey!=null}" /></li>
                                                 </ul>
                                             </div>
                                         </div>
