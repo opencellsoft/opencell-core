@@ -30,6 +30,7 @@ import javax.inject.Named;
 
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
+import org.meveo.admin.action.CustomFieldBean;
 import org.meveo.admin.action.CustomFieldEnabledBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.EntityListDataModelPF;
@@ -44,7 +45,6 @@ import org.meveo.model.billing.UsageChargeInstance;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.catalog.OneShotChargeTemplate;
-import org.meveo.model.catalog.RecurringChargeTemplate;
 import org.meveo.model.catalog.ServiceChargeTemplateSubscription;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.catalog.WalletTemplate;
@@ -73,7 +73,7 @@ import org.slf4j.Logger;
 @Named
 @ViewScoped
 @CustomFieldEnabledBean(accountLevel=AccountLevelEnum.SUB)
-public class SubscriptionBean extends BaseBean<Subscription> {
+public class SubscriptionBean extends CustomFieldBean<Subscription> {
 
 	private static final long serialVersionUID = 1L;
 

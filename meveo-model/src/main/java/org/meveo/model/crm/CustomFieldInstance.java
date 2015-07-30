@@ -23,6 +23,7 @@ import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.apache.commons.lang.builder.ReflectionToStringBuilder;
 import org.meveo.model.AccountEntity;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.ExportIdentifier;
@@ -119,7 +120,7 @@ public class CustomFieldInstance extends ProviderlessEntity {
     private BusinessEntity businessEntity;
     
     @Transient
-    private List<BusinessEntity> entityList=new ArrayList<BusinessEntity>();
+    private Set<BusinessEntity> entityList=new HashSet<BusinessEntity>();
     @Transient
     private Map<String,BusinessEntity> entityMap=new HashMap<String,BusinessEntity>();
     
@@ -577,15 +578,21 @@ public class CustomFieldInstance extends ProviderlessEntity {
 		return true;
 	}
 
-    public CustomFieldPeriod addValuePeriod(Date date, Object value, CustomFieldTypeEnum fieldType) {
+    public CustomFieldPeriod addValuePeriod(Date date, Object value, CustomFieldTypeEnum fieldType,String label,CustomFieldStorageTypeEnum storageType) {
         CustomFieldPeriod period = getValuePeriod(date, true);
         period.setValue(value, fieldType);
+        if(CustomFieldStorageTypeEnum.MAP.equals(storageType)){
+        	period.setLabel(label);
+        }
         return period;
     }
 
-    public CustomFieldPeriod addValuePeriod(Date startDate, Date endDate, Object value, CustomFieldTypeEnum fieldType) {
+    public CustomFieldPeriod addValuePeriod(Date startDate, Date endDate, Object value, CustomFieldTypeEnum fieldType,String label,CustomFieldStorageTypeEnum storageType) {
         CustomFieldPeriod period = getValuePeriod(startDate, endDate, true, true);
         period.setValue(value, fieldType);
+        if(CustomFieldStorageTypeEnum.MAP.equals(storageType)){
+        	period.setLabel(label);
+        }
         return period;
     }
 
@@ -757,28 +764,32 @@ public class CustomFieldInstance extends ProviderlessEntity {
     }
 
     public boolean isValueEmpty() {
-        return (!isVersionable() && (stringValue == null && dateValue == null && longValue == null && doubleValue == null&&entityValue==null))
+        return (!isVersionable() && stringValue == null&&stringList.size()==0&&stringMap.size()==0 && 
+        		dateValue == null&&dateList.size()==0&&dateMap.size()==0 && longValue == null&&longList.size()==0
+        		&&longMap.size()==0&& doubleValue == null&&doubleList.size()==0&&doubleMap.size()==0&&entityValue==null
+        		&&entityList.size()==0&&entityMap.size()==0)
         		|| (isVersionable() && valuePeriods.isEmpty());
         // TODO check that period values are empty
     }
 
     @Override
     public String toString() {
-        final int maxLen = 10;
-        return String
-            .format(
-                "CustomFieldInstance [%s, account=%s, subscription=%s, chargeTemplate=%s, serviceTemplate=%s, offerTemplate=%s, access=%s, jobInstance=%s, stringValue=%s, dateValue=%s, longValue=%s, doubleValue=%s, versionable=%s, calendar=%s, valuePeriods=%s]",
-                super.toString(), account != null ? account.getId() : null, subscription != null ? subscription.getId() : null, chargeTemplate != null ? chargeTemplate.getId()
-                        : null, serviceTemplate != null ? serviceTemplate.getId() : null, offerTemplate != null ? offerTemplate.getId() : null, access != null ? access.getId()
-                        : null, jobInstance != null ? jobInstance.getId() : null, stringValue, dateValue, longValue, doubleValue, versionable,
-                calendar != null ? calendar.getCode() : null, valuePeriods != null ? valuePeriods.subList(0, Math.min(valuePeriods.size(), maxLen)) : null);
+    	return ReflectionToStringBuilder.toString(this);
+//        final int maxLen = 10;
+//        return String.format("CustomFieldInstance [%s, account=%s, subscription=%s, chargeTemplate=%s, serviceTemplate=%s, offerTemplate=%s, access=%s, jobInstance=%s, stringValue=%s, dateValue=%s, longValue=%s, doubleValue=%s, versionable=%s, calendar=%s, valuePeriods=%s, "
+//        		+ "stringList %s, stringMap %s, doubleList %s, doubleMap %s, longList %s, longMap %s, dateList %s, dateMap %s, entityList %s, entityMap %s ]",
+//                super.toString(), account != null ? account.getId() : null, subscription != null ? subscription.getId() : null, chargeTemplate != null ? chargeTemplate.getId()
+//                        : null, serviceTemplate != null ? serviceTemplate.getId() : null, offerTemplate != null ? offerTemplate.getId() : null, access != null ? access.getId()
+//                        : null, jobInstance != null ? jobInstance.getId() : null, stringValue, dateValue, longValue, doubleValue, versionable,
+//                calendar != null ? calendar.getCode() : null, valuePeriods != null ? valuePeriods.subList(0, Math.min(valuePeriods.size(), maxLen)) : null,
+//                stringList,stringMap.values(),doubleList,doubleMap.values(),longList,longMap.values(),dateList,dateMap.values(),entityList,entityMap.values());
     }
 
-	public List<BusinessEntity> getEntityList() {
+	public Set<BusinessEntity> getEntityList() {
 		return entityList;
 	}
 
-	public void setEntityList(List<BusinessEntity> entityList) {
+	public void setEntityList(Set<BusinessEntity> entityList) {
 		this.entityList = entityList;
 	}
 
