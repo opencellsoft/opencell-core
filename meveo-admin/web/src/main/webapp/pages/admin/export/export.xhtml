@@ -132,19 +132,22 @@
 
                     <h:panelGroup rendered="#{entityExportImportBean.exportImportFuture!=null and entityExportImportBean.exportImportFuture.isDone()}">
 
-                        <h:panelGroup rendered="#{entityExportImportBean.exportImportFuture.get().exception!=null}">
+                        <h:panelGroup rendered="#{entityExportImportBean.exportImportFuture.get().failed}">
                             <div class="ui-messages ui-widget">
                                 <div class="ui-messages-error ui-corner-all">
                                     <span class="ui-messages-error-icon"></span>
                                     <ul>
                                         <li><h:outputText value="#{messages['export.exportFailed.partial']}" styleClass="ui-messages-error-summary" /></li>
                                         <li><h:outputText value="&amp;nbsp;" escape="false" /></li>
-                                        <li><h:outputText value="#{entityExportImportBean.exportImportFuture.get().exception.message}" /></li>
+                                        <li><h:outputText value="#{entityExportImportBean.exportImportFuture.get().exception.message}"
+                                                rendered="#{entityExportImportBean.exportImportFuture.get().exception!=null}" /> <h:outputText
+                                                value="#{messages[entityExportImportBean.exportImportFuture.get().errorMessage]}"
+                                                rendered="#{entityExportImportBean.exportImportFuture.get().errorMessage!=null}" /></li>
                                     </ul>
                                 </div>
                             </div>
                         </h:panelGroup>
-                        <h:panelGroup rendered="#{entityExportImportBean.exportImportFuture.get().exception==null}">
+                        <h:panelGroup rendered="#{! entityExportImportBean.exportImportFuture.get().failed}">
                             <div class="ui-messages ui-widget">
                                 <div class="ui-messages-info ui-corner-all">
                                     <span class="ui-messages-info-icon"></span>
@@ -195,19 +198,22 @@
 
                                 <p:panel styleClass="search-panel" header="#{messages['export.remoteImportResults']}">
 
-                                    <h:panelGroup rendered="#{entityExportImportBean.remoteImportResult.exception!=null}">
+                                    <h:panelGroup rendered="#{entityExportImportBean.remoteImportResult.failed}">
                                         <div class="ui-messages ui-widget">
                                             <div class="ui-messages-error ui-corner-all">
                                                 <span class="ui-messages-error-icon"></span>
                                                 <ul>
                                                     <li><h:outputText value="#{messages['export.importFailed.partial']}" styleClass="ui-messages-error-summary" /></li>
                                                     <li><h:outputText value="&amp;nbsp;" escape="false" /></li>
-                                                    <li><h:outputText value="#{entityExportImportBean.remoteImportResult.exception.message}" /></li>
+                                                    <li><h:outputText value="#{entityExportImportBean.remoteImportResult.exception.message}"
+                                                            rendered="#{entityExportImportBean.remoteImportResult.exception!=null}" /> <h:outputText
+                                                            value="#{messages[entityExportImportBean.remoteImportResult.errorMessage]}"
+                                                            rendered="#{entityExportImportBean.remoteImportResult.errorMessage!=null}" /></li>
                                                 </ul>
                                             </div>
                                         </div>
                                     </h:panelGroup>
-                                    <h:panelGroup rendered="#{entityExportImportBean.remoteImportResult.exception==null}">
+                                    <h:panelGroup rendered="#{! entityExportImportBean.remoteImportResult.failed}">
                                         <div class="ui-messages ui-widget">
                                             <div class="ui-messages-info ui-corner-all">
                                                 <span class="ui-messages-info-icon"></span>

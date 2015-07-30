@@ -965,4 +965,12 @@
         <dropSequence sequenceName="mediation_magic_numbers_seq"/>
    		<dropTable cascadeConstraints="true" tableName="mediation_magic_numbers"/>
    	</changeSet>
+    
+    <changeSet id="#910_20150729" author="AndriusKarpavicius">
+        <addColumn tableName="COM_MEVEO_INSTANCE">
+            <column name="AUTH_USERNAME" type="VARCHAR(60)"/>
+            <column name="AUTH_PASSWORD" type="VARCHAR(60)"/>
+        </addColumn>
+    
+    </changeSet>
 </databaseChangeLog>

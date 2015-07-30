@@ -40,6 +40,11 @@ public class ImportExportResponseDto extends BaseResponse {
      */
     private Throwable exception;
 
+    /**
+     * Occurred error message
+     */    
+    private String errorMessage;
+    
     public ImportExportResponseDto() {
         super();
     }
@@ -58,6 +63,8 @@ public class ImportExportResponseDto extends BaseResponse {
         super();
         this.executionId = executionId;
         this.exception = statistics.getException();
+        this.errorMessage = statistics.getErrorMessage();
+        
         this.fieldsNotImported = statistics.getFieldsNotImported();
         
         this.summary = new HashMap<String, Integer>();
@@ -121,5 +128,10 @@ public class ImportExportResponseDto extends BaseResponse {
         }
         builder.append("]");
         return builder.toString();
+    }
+    
+
+    public boolean isFailed() {
+        return exception != null || errorMessage != null;
     }
 }

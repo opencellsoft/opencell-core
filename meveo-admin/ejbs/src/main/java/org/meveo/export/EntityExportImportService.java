@@ -256,12 +256,19 @@ public class EntityExportImportService implements Serializable {
             parameters = new HashMap<String, Object>();
         }
 
+        ExportImportStatistics exportStats = new ExportImportStatistics();
+
         // When exporting to a remote meveo instance - always export to zip
         if (parameters.get(EXPORT_PARAM_REMOTE_INSTANCE) != null) {
             parameters.put(EXPORT_PARAM_ZIP, true);
-        }
 
-        ExportImportStatistics exportStats = new ExportImportStatistics();
+            // Check that authentication username and password are provided
+            if (((MeveoInstance) parameters.get(EXPORT_PARAM_REMOTE_INSTANCE)).getAuthUsername() == null
+                    || ((MeveoInstance) parameters.get(EXPORT_PARAM_REMOTE_INSTANCE)).getAuthPassword() == null) {
+                exportStats.setErrorMessage("export.remoteImportNoAuth");
+                return exportStats;
+            }
+        }
 
         String shortFilename = exportTemplate.getName() + DateUtils.formatDateWithPattern(new Date(), "_yyyy-MM-dd_HH-mm-ss");
         boolean asZip = (parameters.get(EXPORT_PARAM_ZIP) != null && ((boolean) parameters.get(EXPORT_PARAM_ZIP)));
@@ -1643,10 +1650,10 @@ public class EntityExportImportService implements Serializable {
 
     private void refreshCaches() {
         log.info("Initiating cache reload after import ");
-         walletCacheContainerProvider.refreshCache(null);
-         cdrEdrProcessingCacheContainerProvider.refreshCache(null);
-         notificationCacheContainerProvider.refreshCache(null);
-         ratingCacheContainerProvider.refreshCache(null);
+        walletCacheContainerProvider.refreshCache(null);
+        cdrEdrProcessingCacheContainerProvider.refreshCache(null);
+        notificationCacheContainerProvider.refreshCache(null);
+        ratingCacheContainerProvider.refreshCache(null);
     }
 
     /**
@@ -1797,7 +1804,7 @@ public class EntityExportImportService implements Serializable {
             ResteasyClient client = new ResteasyClientBuilder().build();
             ResteasyWebTarget target = client.target(remoteInstance.getUrl() + (remoteInstance.getUrl().endsWith("/") ? "" : "/") + "api/rest/importExport/importData");
 
-            BasicAuthentication basicAuthentication = new BasicAuthentication("meveo.admin", "meveo.admin");
+            BasicAuthentication basicAuthentication = new BasicAuthentication(remoteInstance.getAuthUsername(), remoteInstance.getAuthPassword());
             target.register(basicAuthentication);
 
             MultipartFormDataOutput mdo = new MultipartFormDataOutput();
@@ -1834,7 +1841,7 @@ public class EntityExportImportService implements Serializable {
         ResteasyWebTarget target = client.target(remoteInstance.getUrl() + (remoteInstance.getUrl().endsWith("/") ? "" : "/")
                 + "api/rest/importExport/checkImportDataResult?executionId=" + executionId);
 
-        BasicAuthentication basicAuthentication = new BasicAuthentication("meveo.admin", "meveo.admin");
+        BasicAuthentication basicAuthentication = new BasicAuthentication(remoteInstance.getAuthUsername(), remoteInstance.getAuthPassword());
         target.register(basicAuthentication);
 
         Response response = target.request().get();// post(Entity.entity(entity, MediaType.MULTIPART_FORM_DATA_TYPE));
