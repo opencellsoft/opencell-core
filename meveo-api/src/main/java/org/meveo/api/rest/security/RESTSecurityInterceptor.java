@@ -7,7 +7,6 @@ import java.util.StringTokenizer;
 
 import javax.annotation.security.DenyAll;
 import javax.annotation.security.PermitAll;
-import javax.enterprise.context.RequestScoped;
 import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 import javax.ws.rs.container.ContainerRequestContext;
@@ -137,7 +136,6 @@ public class RESTSecurityInterceptor implements ContainerRequestFilter, Exceptio
 
 	@Produces
 	@RSUser
-	@RequestScoped
 	public User getCurrentUser() {
 		return currentUser;
 	}
