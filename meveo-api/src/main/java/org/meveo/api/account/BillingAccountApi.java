@@ -115,7 +115,11 @@ public class BillingAccountApi extends AccountApi {
 			billingAccount.setNextInvoiceDate(postData.getNextInvoiceDate());
 			billingAccount.setSubscriptionDate(postData.getSubscriptionDate());
 			billingAccount.setTerminationDate(postData.getTerminationDate());
-			billingAccount.setElectronicBilling(postData.getElectronicBilling());
+			if (postData.getElectronicBilling() == null) {
+				billingAccount.setElectronicBilling(false);
+			} else {
+				billingAccount.setElectronicBilling(postData.getElectronicBilling());
+			}
 			billingAccount.setEmail(postData.getEmail());
 
 			if (postData.getBankCoordinates() != null) {
