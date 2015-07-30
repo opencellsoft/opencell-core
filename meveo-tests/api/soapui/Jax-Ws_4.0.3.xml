@@ -1755,22 +1755,7 @@
             <unitNbDecimal>?</unitNbDecimal>
             <!--Optional:-->
             <triggeredEdrs>
-               <!--Zero or more repetitions:-->
-               <triggeredEdr code="?" description="?">
-                  <!--Optional:-->
-                  <subscriptionEl>?</subscriptionEl>
-                  <!--Optional:-->
-                  <conditionEl>?</conditionEl>
-                  <quantityEl>?</quantityEl>
-                  <!--Optional:-->
-                  <param1El>?</param1El>
-                  <!--Optional:-->
-                  <param2El>?</param2El>
-                  <!--Optional:-->
-                  <param3El>?</param3El>
-                  <!--Optional:-->
-                  <param4El>?</param4El>
-               </triggeredEdr>
+             <triggeredEdr code="?"> </triggeredEdr>
             </triggeredEdrs>
             <!--Optional:-->
             <filterParam1>?</filterParam1>
