@@ -22,6 +22,7 @@ import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataInput;
 import org.meveo.api.MeveoApiErrorCode;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.response.utilities.ImportExportResponseDto;
+import org.meveo.api.exception.LoginException;
 import org.meveo.api.logging.LoggingInterceptor;
 import org.meveo.api.rest.impl.BaseRs;
 import org.meveo.api.rest.importExport.ImportExportRs;
@@ -44,20 +45,23 @@ public class ImportExportRsImpl extends BaseRs implements ImportExportRs {
     @Override
     public ImportExportResponseDto importData(MultipartFormDataInput input) {
 
-        cleanupImportResults();
-
-        Map<String, List<InputPart>> uploadForm = input.getFormDataMap();
-        List<InputPart> inputParts = uploadForm.get("file");
-        if (inputParts == null) {
-            return new ImportExportResponseDto(ActionStatusEnum.FAIL, MeveoApiErrorCode.MISSING_PARAMETER, "Missing a file. File is expected as part name 'file'");
-        }
-        InputPart inputPart = inputParts.get(0);
-        String fileName = getFileName(inputPart.getHeaders());
-        if (fileName == null) {
-            return new ImportExportResponseDto(ActionStatusEnum.FAIL, MeveoApiErrorCode.MISSING_PARAMETER, "Missing a file name");
-        }
-
         try {
+            // Only for authentication check
+            getCurrentUser();
+
+            cleanupImportResults();
+
+            Map<String, List<InputPart>> uploadForm = input.getFormDataMap();
+            List<InputPart> inputParts = uploadForm.get("file");
+            if (inputParts == null) {
+                return new ImportExportResponseDto(ActionStatusEnum.FAIL, MeveoApiErrorCode.MISSING_PARAMETER, "Missing a file. File is expected as part name 'file'");
+            }
+            InputPart inputPart = inputParts.get(0);
+            String fileName = getFileName(inputPart.getHeaders());
+            if (fileName == null) {
+                return new ImportExportResponseDto(ActionStatusEnum.FAIL, MeveoApiErrorCode.MISSING_PARAMETER, "Missing a file name");
+            }
+
             // Convert the uploaded file from inputstream to a file
 
             File tempFile = null;
@@ -77,6 +81,10 @@ public class ImportExportRsImpl extends BaseRs implements ImportExportRs {
 
             executionResults.put(executionId, exportImportFuture);
             return new ImportExportResponseDto(executionId);
+
+        } catch (LoginException e) {
+            log.error("Failed to authenticate for a rest call", e);
+            return new ImportExportResponseDto(ActionStatusEnum.FAIL, MeveoApiErrorCode.AUTHENTICATION_AUTHORIZATION_EXCEPTION, e.getMessage());
 
         } catch (Exception e) {
             log.error("Failed to import data from rest call", e);
@@ -117,7 +125,7 @@ public class ImportExportRsImpl extends BaseRs implements ImportExportRs {
             try {
                 log.info("Remote import execution {} status is {}", executionId, future.get());
                 return new ImportExportResponseDto(executionId, future.get());
-                
+
             } catch (InterruptedException | ExecutionException e) {
                 return new ImportExportResponseDto(ActionStatusEnum.FAIL, MeveoApiErrorCode.GENERIC_API_EXCEPTION, "Failed while executing import " + e.getClass().getName() + " "
                         + e.getMessage());

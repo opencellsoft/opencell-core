@@ -1,5 +1,6 @@
 package org.meveo.api.rest.impl;
 
+import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -30,9 +31,9 @@ public abstract class BaseRs implements IBaseRs {
 	@MeveoParamBean
 	protected ParamBean paramBean;
 
-	//@Inject
-	//@RSUser
-	private User currentUser;
+	@Inject
+	@RSUser
+	private Instance<User> currentUserInstance;
 
 	@Context
 	protected HttpServletRequest httpServletRequest;
@@ -64,20 +65,19 @@ public abstract class BaseRs implements IBaseRs {
 		return result;
 	}
 
-	public User getCurrentUser() throws MeveoApiException {
-		log.debug("Injected REST user is={}", currentUser);
-		
-		if (currentUser == null) {
-			throw new LoginException("Authentication failed! User does not exists!");
-		}
+    public User getCurrentUser() throws MeveoApiException {
 
-		boolean isAllowed = currentUser.hasPermission("user", "apiAccess");
+        if (currentUserInstance.isUnsatisfied() || currentUserInstance.get() == null) {
+            throw new LoginException("Authentication failed! User does not exists!");
+        }
 
-		if (!isAllowed) {
-			throw new LoginException(currentUser.getUserName(), "Authentication failed! Insufficient privilege!");
-		}
+        User currentUser = currentUserInstance.get();
+        boolean isAllowed = currentUser.hasPermission("user", "apiAccess");
 
-		return currentUser;
-	}
+        if (!isAllowed) {
+            throw new LoginException(currentUser.getUserName(), "Authentication failed! Insufficient privilege!");
+        }
 
+        return currentUser;
+    }
 }

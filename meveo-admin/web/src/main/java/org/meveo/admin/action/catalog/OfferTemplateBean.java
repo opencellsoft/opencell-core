@@ -26,6 +26,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.meveo.admin.action.BaseBean;
+import org.meveo.admin.action.CustomFieldBean;
 import org.meveo.admin.action.CustomFieldEnabledBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
@@ -51,7 +52,7 @@ import org.primefaces.model.DualListModel;
 @Named
 @ViewScoped
 @CustomFieldEnabledBean(accountLevel = AccountLevelEnum.OFFER)
-public class OfferTemplateBean extends BaseBean<OfferTemplate> {
+public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 
 	private static final long serialVersionUID = 1L;
 	

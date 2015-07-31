@@ -35,8 +35,7 @@
 								<p:inputText id="label" value="#{cft.instance.label}"
 									required="true" />
 							</hftl:decorateFormField>
-							<hftl:decorateFormField label="#{cft.description} #{cft.valueRequired?'*':''}" 
-							rendered="#{cft.storageType==CustomFieldStorageTypeEnum.LIST or cft.storageType==CustomFieldStorageTypeEnum.MAP}">
+							<hftl:decorateFormField label="#{cft.description} #{cft.valueRequired?'*':''}" >
 								<hftl:customFieldValueField edit="true" cft="#{cft}"
 									field="#{cft.instance.businessEntity}" />
 							</hftl:decorateFormField>
@@ -74,8 +73,7 @@
 								<p:inputText id="label" value="#{cft.instance.label}"
 									required="true" />
 							</hftl:decorateFormField>
-							<hftl:decorateFormField label="#{cft.description} #{cft.valueRequired?'*':''}"  
-							rendered="#{cft.storageType==CustomFieldStorageTypeEnum.LIST or cft.storageType==CustomFieldStorageTypeEnum.MAP}">
+							<hftl:decorateFormField label="#{cft.description} #{cft.valueRequired?'*':''}">
 								<hftl:customFieldValueField edit="true" cft="#{cft}" field="#{cft.instance}"/>
 							</hftl:decorateFormField>
 							<h:panelGroup layout="block" styleClass="search-panel-actions">
@@ -111,8 +109,7 @@
 								<p:inputText id="label" value="#{cft.instance.label}"
 									required="true" />
 							</hftl:decorateFormField>
-							<hftl:decorateFormField label="#{cft.description} #{cft.valueRequired?'*':''}" 
-							rendered="#{cft.storageType==CustomFieldStorageTypeEnum.LIST or cft.storageType==CustomFieldStorageTypeEnum.MAP}">
+							<hftl:decorateFormField label="#{cft.description} #{cft.valueRequired?'*':''}">
 								<hftl:customFieldValueField edit="true" cft="#{cft}" field="#{cft.instance}"/>
 							</hftl:decorateFormField>
 							<h:panelGroup layout="block" styleClass="search-panel-actions">
@@ -149,8 +146,7 @@
 								<p:inputText id="label" value="#{cft.instance.label}"
 									required="true" />
 							</hftl:decorateFormField>
-							<hftl:decorateFormField label="#{cft.description} #{cft.valueRequired?'*':''}" 
-							rendered="#{cft.storageType==CustomFieldStorageTypeEnum.LIST or cft.storageType==CustomFieldStorageTypeEnum.MAP}">
+							<hftl:decorateFormField label="#{cft.description} #{cft.valueRequired?'*':''}">
 								<hftl:customFieldValueField edit="true" cft="#{cft}" field="#{cft.instance}"/>
 							</hftl:decorateFormField>
 							<h:panelGroup layout="block" styleClass="search-panel-actions">
@@ -186,8 +182,7 @@
 								<p:inputText id="label" value="#{cft.instance.label}"
 									required="true" />
 							</hftl:decorateFormField>
-							<hftl:decorateFormField label="#{cft.description} #{cft.valueRequired?' *':''}" 
-							rendered="#{cft.storageType==CustomFieldStorageTypeEnum.LIST or cft.storageType==CustomFieldStorageTypeEnum.MAP}">
+							<hftl:decorateFormField label="#{cft.description} #{cft.valueRequired?' *':''}">
 								<hftl:customFieldValueField edit="true" cft="#{cft}" field="#{cft.instance}"/>
 							</hftl:decorateFormField>
 							<h:panelGroup layout="block" styleClass="search-panel-actions">
@@ -212,7 +207,7 @@
 			</c:if>
 		</c:if>
 		<c:if
-			test="#{cft.storageType == CustomFieldStorageTypeEnum.SINGLE and cft.fieldType eq CustomFieldTypeEnum.ENTITY}">
+			test="#{cft.fieldType eq CustomFieldTypeEnum.ENTITY}">
 			<c:if test="#{cft.entityClazz eq 'org.meveo.model.billing.Tax'}">
 				<hftl:entityPopup id="cft_entity_#{cft.id}"
 					header="#{messages['tax.search']}" backingBean="#{taxBean}"

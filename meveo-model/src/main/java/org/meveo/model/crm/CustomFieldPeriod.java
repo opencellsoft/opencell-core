@@ -60,6 +60,12 @@ public class CustomFieldPeriod extends BaseProviderlessEntity {
     @Column(name="ENTITY_VALUE",nullable=true)
     private String entityValue;
     
+    /**
+     * label for map
+     */
+    @Column(name="LABEL")
+    private String label;
+    
     @Transient
     private BusinessEntity businessEntity;
 
@@ -143,6 +149,14 @@ public class CustomFieldPeriod extends BaseProviderlessEntity {
 
 	public void setBusinessEntity(BusinessEntity businessEntity) {
 		this.businessEntity = businessEntity;
+	}
+
+	public String getLabel() {
+		return label;
+	}
+
+	public void setLabel(String label) {
+		this.label = label;
 	}
 
 	/**

@@ -977,6 +977,11 @@
     <changeSet id="#995_20150730" author="EdwardLegaspi">
 		<sql>update billing_billing_account set electronic_billing=false where electronic_billing is null</sql>
 	</changeSet>
+	<changeSet id="#789_20150730" author="TyshanShi">
+		<addColumn tableName="CRM_CUSTOM_FIELD_PERIOD">
+			<column name="LABEL" type="VARCHAR(255)"/>
+		</addColumn>
+	</changeSet>
 	
 	<changeSet id="#971_20150729" author="EdwardLegaspi">
 

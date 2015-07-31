@@ -49,7 +49,9 @@
                                     value="#{cc.backingBeanFromParentOrCurrent.customFieldNewPeriod.periodEndDate}">
                                 </p:calendar>
                             </hf:formDecorateField>
-
+                             <hf:formDecorateField fieldId="period_label" label="#{messages['customFieldTemplate.label']}" rendered="#{cc.attrs.cft.storageType=='MAP'}">
+                                <p:inputText id="period_label" value="#{cc.backingBeanFromParentOrCurrent.customFieldNewPeriod.label}" required="true"/>
+                            </hf:formDecorateField>
                             <hftl:decorateFormField label="#{messages['customFieldTemplate.periodValue']}#{cc.attrs.cft.valueRequired?' *':''}">
                                 <hftl:customFieldValueField edit="#{cc.attrs.edit}" cft="#{cc.attrs.cft}" field="#{cc.backingBeanFromParentOrCurrent.customFieldNewPeriod}" />
                             </hftl:decorateFormField>

@@ -47,7 +47,7 @@ public class ExportImportStatistics {
     /**
      * Occurred error message
      */
-    private String errorMessage;
+    private String errorMessageKey;
 
     /**
      * Execution id of remote meveo instance import call
@@ -189,15 +189,15 @@ public class ExportImportStatistics {
         this.remoteImportExecutionId = remoteImportExecutionId;
     }
 
-    public void setErrorMessage(String errorMessage) {
-        this.errorMessage = errorMessage;
+    public void setErrorMessageKey(String errorMessageKey) {
+        this.errorMessageKey = errorMessageKey;
     }
 
-    public String getErrorMessage() {
-        return errorMessage;
+    public String getErrorMessageKey() {
+        return errorMessageKey;
     }
 
     public boolean isFailed() {
-        return exception != null || errorMessage != null;
+        return exception != null || errorMessageKey != null;
     }
 }

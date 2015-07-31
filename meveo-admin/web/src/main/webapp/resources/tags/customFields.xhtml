@@ -42,7 +42,7 @@
                     </hftl:decorateFormField>
                 </h:panelGroup>
                 <h:panelGroup rendered="#{cft.storageType eq CustomFieldStorageTypeEnum.MAP or cft.storageType eq CustomFieldStorageTypeEnum.LIST}">
-                	<hftl:customFieldListTable cft="#{cft}" />
+                	<hftl:customFieldListTable cft="#{cft}" backingBean="#{cc.backingBeanFromParentOrCurrent}"/>
                 </h:panelGroup>
 
                     <c:set var="InheritedStringValue" value="#{cc.backingBeanFromParentOrCurrent.entity.getICsv(cft.code)}" />
@@ -95,6 +95,16 @@
                                 <h:outputText value="#{period.periodEndDate}">
                                     <f:convertDateTime type="date" pattern="#{cc.attrs.datePattern}" />
                                 </h:outputText>
+                            </p:column>
+                            <p:column headerText="#{messages['customFieldTemplate.label']}" rendered="#{cft.storageType=='MAP'}">
+                                <p:cellEditor>
+                                    <f:facet name="output">
+                                        <h:outputText value="#{period.label}"/>
+                                    </f:facet>
+                                    <f:facet name="input">
+                                        <p:inputText value="#{period.label}" required="true"/>
+                                    </f:facet>
+                                </p:cellEditor>
                             </p:column>
                             <p:column headerText="#{messages['customFieldTemplate.periodValue']}" rendered="#{cft.fieldType!='ENTITY'}">
                                 <p:cellEditor>

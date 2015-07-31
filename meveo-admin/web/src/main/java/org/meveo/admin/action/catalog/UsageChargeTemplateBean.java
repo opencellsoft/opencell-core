@@ -27,6 +27,7 @@ import javax.inject.Named;
 
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
+import org.meveo.admin.action.CustomFieldBean;
 import org.meveo.admin.action.CustomFieldEnabledBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.catalog.TriggeredEDRTemplate;
@@ -45,7 +46,7 @@ import org.primefaces.model.DualListModel;
 @Named
 @ViewScoped
 @CustomFieldEnabledBean(accountLevel = AccountLevelEnum.CHARGE)
-public class UsageChargeTemplateBean extends BaseBean<UsageChargeTemplate> {
+public class UsageChargeTemplateBean extends CustomFieldBean<UsageChargeTemplate> {
 	private static final long serialVersionUID = 1L;
 
 	@Inject

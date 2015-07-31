@@ -20,7 +20,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.jboss.seam.international.status.builder.BundleKey;
-import org.meveo.admin.action.BaseBean;
+import org.meveo.admin.action.CustomFieldBean;
 import org.meveo.admin.action.CustomFieldEnabledBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.ParamBean;
@@ -41,7 +41,7 @@ import org.primefaces.event.SelectEvent;
 @Named
 @ViewScoped
 @CustomFieldEnabledBean(accountLevel=AccountLevelEnum.PROVIDER)
-public class ProviderBean extends BaseBean<Provider> {
+public class ProviderBean extends CustomFieldBean<Provider> {
 
     private static final long serialVersionUID = 1L;
 

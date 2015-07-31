@@ -5,7 +5,7 @@ import org.primefaces.component.tabview.Tab;
 import org.primefaces.event.TabChangeEvent;
 
 public abstract class AccountBean<T extends AccountEntity> extends
-		BaseBean<T> {
+		CustomFieldBean<T> {
 
 	private static final long serialVersionUID = 3407699633028715707L;
 	
