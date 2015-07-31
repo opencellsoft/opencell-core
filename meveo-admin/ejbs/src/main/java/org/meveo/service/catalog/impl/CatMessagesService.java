@@ -202,18 +202,19 @@ public class CatMessagesService extends PersistenceService<CatMessages> {
         }
 	}
 	 
-	 
 	    @SuppressWarnings({ "unchecked" })
 	    @Override
 	    public List<CatMessages> list(PaginationConfiguration config) {
 	        List<CatMessages> catMessages=super.list(config);
 	        for(CatMessages catMsg:catMessages){
 	        	BusinessEntity obj=getObject(catMsg);
+	        	if(obj!=null){
 	        	catMsg.setEntityCode(obj.getCode());
-	        	catMsg.setEntityDescription(obj.getDescription());
+		        catMsg.setEntityDescription(obj.getDescription());
+	        	}	
 	        } 
 	        return catMessages;
-	    }
+	    	}
 	 
 	 private BusinessEntity getObject(CatMessages catMessages){
 			if(catMessages==null){
