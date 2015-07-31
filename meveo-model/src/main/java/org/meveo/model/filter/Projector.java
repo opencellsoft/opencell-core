@@ -8,6 +8,7 @@ import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
@@ -36,17 +37,25 @@ public class Projector extends BusinessEntity {
 	 * List of field names to display or export.
 	 */
 	@ElementCollection(fetch = FetchType.LAZY)
-	@CollectionTable(name = "MEVEO_PROJECTOR_FIELD_NAME", joinColumns = @JoinColumn(name = "PROJECTOR_ID"))
-	@Column(name = "FIELD_NAME")
-	private List<String> fieldNames;
+	@CollectionTable(name = "MEVEO_PROJECTOR_DISPLAY_FIELDS", joinColumns = @JoinColumn(name = "PROJECTOR_ID"))
+	@Column(name = "DISPLAY_FIELD")
+	private List<String> displayFields;
+
+	@ElementCollection(fetch = FetchType.LAZY)
+	@CollectionTable(name = "MEVEO_PROJECTOR_EXPORT_FIELDS", joinColumns = @JoinColumn(name = "PROJECTOR_ID"))
+	@Column(name = "EXPORT_FIELD")
+	private List<String> exportFields;
 
 	/**
 	 * List of fields to ignore if foreign key not found.
 	 */
 	@ElementCollection(fetch = FetchType.LAZY)
-	@CollectionTable(name = "MEVEO_PROJECTOR_IGNORE_FIELD", joinColumns = @JoinColumn(name = "PROJECTOR_ID"))
+	@CollectionTable(name = "MEVEO_PROJECTOR_IGNORE_FIELDS", joinColumns = @JoinColumn(name = "PROJECTOR_ID"))
 	@Column(name = "IGNORED_FIELD")
 	private List<String> ignoreIfNotFoundForeignKey;
+
+	@OneToOne(mappedBy = "projector")
+	public FilterSelector filterSelector;
 
 	public String getTargetEntity() {
 		return targetEntity;
@@ -56,12 +65,20 @@ public class Projector extends BusinessEntity {
 		this.targetEntity = targetEntity;
 	}
 
-	public List<String> getFieldNames() {
-		return fieldNames;
+	public List<String> getDisplayFields() {
+		return displayFields;
 	}
 
-	public void setFieldNames(List<String> fieldNames) {
-		this.fieldNames = fieldNames;
+	public void setDisplayFields(List<String> displayFields) {
+		this.displayFields = displayFields;
+	}
+
+	public List<String> getExportFields() {
+		return exportFields;
+	}
+
+	public void setExportFields(List<String> exportFields) {
+		this.exportFields = exportFields;
 	}
 
 	public List<String> getIgnoreIfNotFoundForeignKey() {
@@ -70,6 +87,14 @@ public class Projector extends BusinessEntity {
 
 	public void setIgnoreIfNotFoundForeignKey(List<String> ignoreIfNotFoundForeignKey) {
 		this.ignoreIfNotFoundForeignKey = ignoreIfNotFoundForeignKey;
+	}
+
+	public FilterSelector getFilterSelector() {
+		return filterSelector;
+	}
+
+	public void setFilterSelector(FilterSelector filterSelector) {
+		this.filterSelector = filterSelector;
 	}
 
 }

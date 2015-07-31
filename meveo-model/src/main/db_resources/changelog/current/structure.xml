@@ -983,4 +983,313 @@
 		</addColumn>
 	</changeSet>
 	
+	<changeSet id="#971_20150729" author="EdwardLegaspi">
+
+		<dropAllForeignKeyConstraints baseTableName="meveo_filter_condition" />
+		<dropAllForeignKeyConstraints baseTableName="meveo_filter" />
+		<dropAllForeignKeyConstraints baseTableName="meveo_projector_seq"/>
+		<dropAllForeignKeyConstraints baseTableName="MEVEO_PROJECTOR_FIELD_NAME"/>
+		<dropAllForeignKeyConstraints baseTableName="MEVEO_PROJECTOR_IGNORE_FIELD"/>
+		<dropSequence sequenceName="meveo_filter_condition_seq"/>
+		<dropSequence sequenceName="meveo_filter_seq" />
+		<dropSequence sequenceName="meveo_projector_seq"/>
+		<dropTable tableName="MEVEO_PROJECTOR_IGNORE_FIELD"/>
+		<dropTable tableName="MEVEO_PROJECTOR_FIELD_NAME"/>
+		<dropTable tableName="meveo_filter_condition"/>
+		<dropTable tableName="meveo_filter" />
+		<dropTable tableName="meveo_projector"/>
+	
+		<createTable tableName="meveo_filter_condition">
+			<column name="id" type="BIGINT">
+				<constraints nullable="false" />
+			</column>
+			<column name="version" type="INT4" />
+			<column name="provider_id" type="BIGINT" />
+			<column name="composite_and_filter_condition_id" type="BIGINT" />
+			<column name="composite_or_filter_condition_id" type="BIGINT" />
+		</createTable>
+		<addPrimaryKey columnNames="id" constraintName="meveo_filter_condition_pkey"
+			tableName="meveo_filter_condition" />
+		<addForeignKeyConstraint baseColumnNames="provider_id"
+			baseTableName="meveo_filter_condition" constraintName="fk_meveo_filter_condition_crm_provider"
+			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_provider" />
+
+		<createSequence sequenceName="meveo_filter_condition_seq"
+			startValue="1" />
+
+		<createTable tableName="meveo_filter_oc_field_names">
+			<column name="field_name" type="VARCHAR(100)" />
+			<column name="order_condition_id" type="BIGINT" />
+		</createTable>
+		
+		<createTable tableName="meveo_filter_order_condition">
+			<column name="id" type="BIGINT">
+				<constraints nullable="false" />
+			</column>
+			<column name="version" type="INT4" />
+			<column name="provider_id" type="BIGINT" />
+			<column name="ascending" type="boolean" />
+		</createTable>
+
+		<addPrimaryKey columnNames="id"
+			constraintName="meveo_filter_order_condition_pkey" tableName="meveo_filter_order_condition" />
+		<addForeignKeyConstraint baseColumnNames="provider_id"
+			baseTableName="meveo_filter_order_condition" constraintName="fk_meveo_filter_order_condition_crm_provider"
+			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_provider" />
+		<addForeignKeyConstraint baseColumnNames="order_condition_id"
+			baseTableName="meveo_filter_oc_field_names" constraintName="fk_meveo_filter_order_condition_field_names"
+			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+			onUpdate="NO ACTION" referencedColumnNames="id"
+			referencedTableName="meveo_filter_order_condition" />
+		<createSequence sequenceName="meveo_filter_order_condition_seq"
+			startValue="1" />
+
+		<createTable tableName="meveo_primitive_filter_condition">
+			<column name="id" type="BIGINT">
+				<constraints nullable="false" />
+			</column>
+			<column name="version" type="INT4" />
+			<column name="provider_id" type="BIGINT" />
+			<column name="field_name" type="VARCHAR(60)" />
+			<column name="operator" type="VARCHAR(60)" />
+			<column name="operand" type="VARCHAR(60)" />
+		</createTable>
+
+		<addPrimaryKey columnNames="id"
+			constraintName="meveo_primitive_filter_condition_pkey" tableName="meveo_primitive_filter_condition" />
+		<addForeignKeyConstraint baseColumnNames="provider_id"
+			baseTableName="meveo_primitive_filter_condition" constraintName="fk_meveo_primitive_filter_condition_crm_provider"
+			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_provider" />
+		<createSequence sequenceName="meveo_primitive_filter_condition_seq"
+			startValue="1" />
+
+		<createTable tableName="meveo_native_filter_condition">
+			<column name="id" type="BIGINT">
+				<constraints nullable="false" />
+			</column>
+			<column name="version" type="INT4" />
+			<column name="provider_id" type="BIGINT" />
+			<column name="el" type="VARCHAR(2000)" />
+			<column name="jpql" type="VARCHAR(2000)" />
+		</createTable>
+
+		<addPrimaryKey columnNames="id"
+			constraintName="meveo_native_filter_condition_pkey" tableName="meveo_native_filter_condition" />
+		<addForeignKeyConstraint baseColumnNames="provider_id"
+			baseTableName="meveo_native_filter_condition" constraintName="fk_meveo_native_filter_condition_crm_provider"
+			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_provider" />
+		<createSequence sequenceName="meveo_native_filter_condition_seq"
+			startValue="1" />
+
+		<createTable tableName="meveo_projector">
+			<column name="id" type="BIGINT">
+				<constraints nullable="false" />
+			</column>
+			<column name="version" type="INT4" />
+			<column name="disabled" type="BOOL">
+				<constraints nullable="false" />
+			</column>
+			<column name="created" type="TIMESTAMP WITHOUT TIME ZONE">
+				<constraints nullable="false" />
+			</column>
+			<column name="updated" type="TIMESTAMP WITHOUT TIME ZONE" />
+			<column name="code" type="VARCHAR(60)">
+				<constraints nullable="false" />
+			</column>
+			<column name="description" type="VARCHAR(100)" />
+			<column name="provider_id" type="BIGINT" />
+			<column name="creator_id" type="BIGINT" />
+			<column name="updater_id" type="BIGINT" />
+			<column name="target_entity" type="VARCHAR(100)">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+	
+		<addPrimaryKey columnNames="id" constraintName="meveo_projector_pkey"
+			tableName="meveo_projector" />
+		<addUniqueConstraint columnNames="code, provider_id"
+			constraintName="uk_meveo_projector_provider" deferrable="false"
+			disabled="false" initiallyDeferred="false" tableName="meveo_projector" />
+		<addForeignKeyConstraint baseColumnNames="provider_id"
+			baseTableName="meveo_projector" constraintName="fk_meveo_projector_crm_provider"
+			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_provider" />
+		<addForeignKeyConstraint baseColumnNames="creator_id"
+			baseTableName="meveo_projector" constraintName="fk_meveo_projector_adm_user_creator"
+			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_user" />
+		<addForeignKeyConstraint baseColumnNames="updater_id"
+			baseTableName="meveo_projector" constraintName="fk_meveo_projector_adm_user_updater"
+			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_user" />
+		<createSequence sequenceName="meveo_projector_seq"
+			startValue="1" />
+
+		<createTable tableName="meveo_projector_display_fields">
+			<column name="projector_id" type="BIGINT">
+				<constraints nullable="false" />
+			</column>
+			<column name="display_field" type="VARCHAR(100)"></column>
+		</createTable>
+		<addForeignKeyConstraint baseColumnNames="projector_id"
+			baseTableName="meveo_projector_display_fields" constraintName="fk_meveo_projector_display_fields_meveo_projector"
+			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="meveo_projector" />
+
+		<createTable tableName="meveo_projector_export_fields">
+			<column name="projector_id" type="BIGINT">
+				<constraints nullable="false" />
+			</column>
+			<column name="export_field" type="VARCHAR(100)"></column>
+		</createTable>
+		<addForeignKeyConstraint baseColumnNames="projector_id"
+			baseTableName="meveo_projector_export_fields" constraintName="fk_meveo_projector_export_fields_meveo_projector"
+			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="meveo_projector" />
+
+		<createTable tableName="meveo_projector_ignore_fields">
+			<column name="projector_id" type="BIGINT">
+				<constraints nullable="false" />
+			</column>
+			<column name="ignored_field" type="VARCHAR(100)"></column>
+		</createTable>
+		<addForeignKeyConstraint baseColumnNames="projector_id"
+			baseTableName="meveo_projector_ignore_fields" constraintName="fk_meveo_projector_ignore_fields_meveo_projector"
+			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="meveo_projector" />
+
+		<createTable tableName="meveo_filter">
+			<column name="id" type="BIGINT">
+				<constraints nullable="false" />
+			</column>
+			<column name="version" type="INT4" />
+			<column name="disabled" type="BOOL">
+				<constraints nullable="false" />
+			</column>
+			<column name="created" type="TIMESTAMP WITHOUT TIME ZONE">
+				<constraints nullable="false" />
+			</column>
+			<column name="updated" type="TIMESTAMP WITHOUT TIME ZONE" />
+			<column name="code" type="VARCHAR(60)">
+				<constraints nullable="false" />
+			</column>
+			<column name="description" type="VARCHAR(100)" />
+			<column name="provider_id" type="BIGINT" />
+			<column name="creator_id" type="BIGINT" />
+			<column name="updater_id" type="BIGINT" />
+			
+			<column name="filter_condition_id" type="BIGINT" />
+			<column name="order_condition_id" type="BIGINT" />
+			<column name="primary_selector_id" type="BIGINT" />
+			<column name="input_xml" type="text" />
+		</createTable>
+		<addPrimaryKey columnNames="id" constraintName="meveo_filter_pkey"
+			tableName="meveo_filter" />
+		<addUniqueConstraint columnNames="code, provider_id"
+			constraintName="uk_meveo_filter_provider" deferrable="false"
+			disabled="false" initiallyDeferred="false" tableName="meveo_filter" />
+		<addForeignKeyConstraint baseColumnNames="updater_id"
+			baseTableName="meveo_filter" constraintName="fk_meveo_filter_adm_user_updater"
+			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_user" />
+		<addForeignKeyConstraint baseColumnNames="provider_id"
+			baseTableName="meveo_filter" constraintName="fk_meveo_filter_crm_provider"
+			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_provider" />
+		<addForeignKeyConstraint baseColumnNames="creator_id"
+			baseTableName="meveo_filter" constraintName="fk_meveo_filter_adm_user_creator"
+			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_user" />
+		<addForeignKeyConstraint baseColumnNames="filter_condition_id"
+			baseTableName="meveo_filter" constraintName="fk_meveo_filter_filter_condition"
+			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="meveo_filter_condition" />
+		<addForeignKeyConstraint baseColumnNames="order_condition_id"
+			baseTableName="meveo_filter" constraintName="fk_meveo_filter_order_condition"
+			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+			onUpdate="NO ACTION" referencedColumnNames="id"
+			referencedTableName="meveo_filter_order_condition" />
+		<createSequence sequenceName="meveo_filter_seq"
+			startValue="1" />
+
+		<createTable tableName="meveo_filter_selector">
+			<column name="id" type="BIGINT">
+				<constraints nullable="false" />
+			</column>
+			<column name="version" type="INT4" />
+			<column name="provider_id" type="BIGINT" />
+			<column name="target_entity" type="VARCHAR(100)">
+				<constraints nullable="false" />
+			</column>
+			<column name="alias" type="VARCHAR(50)" />
+			<column name="projector_id" type="BIGINT" />
+			<column name="filter_id" type="BIGINT" />
+		</createTable>
+
+		<addPrimaryKey columnNames="id" constraintName="meveo_filter_selector_pkey"
+			tableName="meveo_filter_selector" />
+		<addForeignKeyConstraint baseColumnNames="provider_id"
+			baseTableName="meveo_filter_selector" constraintName="fk_meveo_filter_selector_provider"
+			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_provider" />
+		<addForeignKeyConstraint baseColumnNames="projector_id"
+			baseTableName="meveo_filter_selector" constraintName="fk_meveo_filter_selector_meveo_projector"
+			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="meveo_projector" />
+		<addForeignKeyConstraint baseColumnNames="filter_id"
+			baseTableName="meveo_filter_selector" constraintName="fk_meveo_filter_secondary_selector"
+			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="meveo_filter" />
+		<addForeignKeyConstraint baseColumnNames="primary_selector_id"
+			baseTableName="meveo_filter" constraintName="fk_meveo_filter_primary_selector"
+			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="meveo_filter_selector" />
+		<createSequence sequenceName="meveo_filter_selector_seq"
+			startValue="1" />
+
+		<createTable tableName="meveo_or_composite_filter_condition">
+			<column name="id" type="BIGINT">
+				<constraints nullable="false" />
+			</column>
+			<column name="version" type="INT4" />
+			<column name="provider_id" type="BIGINT" />
+		</createTable>
+
+		<addPrimaryKey columnNames="id"
+			constraintName="meveo_or_composite_filter_condition_pkey" tableName="meveo_or_composite_filter_condition" />
+		<addForeignKeyConstraint baseColumnNames="provider_id"
+			baseTableName="meveo_or_composite_filter_condition" constraintName="fk_meveo_or_composite_filter_condition_provider"
+			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_provider" />
+		<addForeignKeyConstraint baseColumnNames="composite_or_filter_condition_id"
+			baseTableName="meveo_filter_condition" constraintName="fk_meveo_or_composite_filter_condition_or"
+			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+			onUpdate="NO ACTION" referencedColumnNames="id"
+			referencedTableName="meveo_or_composite_filter_condition" />
+
+		<createTable tableName="meveo_and_composite_filter_condition">
+			<column name="id" type="BIGINT">
+				<constraints nullable="false" />
+			</column>
+			<column name="version" type="INT4" />
+			<column name="provider_id" type="BIGINT" />
+		</createTable>
+
+		<addPrimaryKey columnNames="id"
+			constraintName="meveo_and_composite_filter_condition_pkey" tableName="meveo_and_composite_filter_condition" />
+		<addForeignKeyConstraint baseColumnNames="provider_id"
+			baseTableName="meveo_and_composite_filter_condition" constraintName="fk_meveo_and_composite_filter_condition_provider"
+			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_provider" />
+		<addForeignKeyConstraint baseColumnNames="composite_and_filter_condition_id"
+			baseTableName="meveo_filter_condition" constraintName="fk_meveo_and_composite_filter_condition_and"
+			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+			onUpdate="NO ACTION" referencedColumnNames="id"
+			referencedTableName="meveo_and_composite_filter_condition" />
+	</changeSet>
+	
 </databaseChangeLog>
