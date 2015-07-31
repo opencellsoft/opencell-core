@@ -18,7 +18,6 @@ package org.meveo.admin.action;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -42,37 +41,21 @@ import org.meveo.admin.action.admin.CurrentProvider;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.commons.utils.ParamBean;
-import org.meveo.model.AccountEntity;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.BusinessEntity;
-import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.IEntity;
 import org.meveo.model.MultilanguageEntity;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.CatMessages;
-import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.TradingLanguage;
-import org.meveo.model.catalog.ChargeTemplate;
-import org.meveo.model.catalog.OfferTemplate;
-import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.crm.AccountLevelEnum;
-import org.meveo.model.crm.CustomFieldInstance;
-import org.meveo.model.crm.CustomFieldPeriod;
-import org.meveo.model.crm.CustomFieldStorageTypeEnum;
 import org.meveo.model.crm.CustomFieldTemplate;
-import org.meveo.model.crm.CustomFieldTypeEnum;
 import org.meveo.model.crm.Provider;
-import org.meveo.model.jobs.JobInstance;
-import org.meveo.model.mediation.Access;
-import org.meveo.model.shared.DateUtils;
 import org.meveo.security.MeveoUser;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.catalog.impl.CatMessagesService;
-import org.meveo.service.crm.impl.CustomEntitySearchService;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
-import org.meveo.service.crm.impl.CustomFieldJob;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
-import org.meveo.util.serializable.SerializableUtil;
 import org.primefaces.component.datatable.DataTable;
 import org.primefaces.context.RequestContext;
 import org.primefaces.event.SelectEvent;
@@ -1376,5 +1359,8 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 		csvOption.setSeparatorCharacter(';');
 		csvOption.setCharacterEncoding(characterEncoding);
 		return csvOption;
-	    }
+	}
+    public List<CustomFieldTemplate> getCustomFieldTemplates() {
+    	return null;
+    }
 }
