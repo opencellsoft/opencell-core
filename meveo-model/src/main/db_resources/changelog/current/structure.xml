@@ -1007,6 +1007,9 @@
 			<column name="provider_id" type="BIGINT" />
 			<column name="composite_and_filter_condition_id" type="BIGINT" />
 			<column name="composite_or_filter_condition_id" type="BIGINT" />
+			 <column name="filter_condition_type" type="VARCHAR(50)">
+            	 <constraints nullable="false"/>
+             </column>
 		</createTable>
 		<addPrimaryKey columnNames="id" constraintName="meveo_filter_condition_pkey"
 			tableName="meveo_filter_condition" />
@@ -1040,8 +1043,8 @@
 			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_provider" />
 		<addForeignKeyConstraint baseColumnNames="order_condition_id"
 			baseTableName="meveo_filter_oc_field_names" constraintName="fk_meveo_filter_order_condition_field_names"
-			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
-			onUpdate="NO ACTION" referencedColumnNames="id"
+			deferrable="false" initiallyDeferred="false" onDelete="CASCADE"
+			onUpdate="CASCADE" referencedColumnNames="id"
 			referencedTableName="meveo_filter_order_condition" />
 		<createSequence sequenceName="meveo_filter_order_condition_seq"
 			startValue="1" />
@@ -1137,8 +1140,8 @@
 		</createTable>
 		<addForeignKeyConstraint baseColumnNames="projector_id"
 			baseTableName="meveo_projector_display_fields" constraintName="fk_meveo_projector_display_fields_meveo_projector"
-			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
-			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="meveo_projector" />
+			deferrable="false" initiallyDeferred="false" onDelete="CASCADE"
+			onUpdate="CASCADE" referencedColumnNames="id" referencedTableName="meveo_projector" />
 
 		<createTable tableName="meveo_projector_export_fields">
 			<column name="projector_id" type="BIGINT">
@@ -1148,8 +1151,8 @@
 		</createTable>
 		<addForeignKeyConstraint baseColumnNames="projector_id"
 			baseTableName="meveo_projector_export_fields" constraintName="fk_meveo_projector_export_fields_meveo_projector"
-			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
-			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="meveo_projector" />
+			deferrable="false" initiallyDeferred="false" onDelete="CASCADE"
+			onUpdate="CASCADE" referencedColumnNames="id" referencedTableName="meveo_projector" />
 
 		<createTable tableName="meveo_projector_ignore_fields">
 			<column name="projector_id" type="BIGINT">
@@ -1159,8 +1162,8 @@
 		</createTable>
 		<addForeignKeyConstraint baseColumnNames="projector_id"
 			baseTableName="meveo_projector_ignore_fields" constraintName="fk_meveo_projector_ignore_fields_meveo_projector"
-			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
-			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="meveo_projector" />
+			deferrable="false" initiallyDeferred="false" onDelete="CASCADE"
+			onUpdate="CASCADE" referencedColumnNames="id" referencedTableName="meveo_projector" />
 
 		<createTable tableName="meveo_filter">
 			<column name="id" type="BIGINT">
@@ -1206,12 +1209,12 @@
 			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_user" />
 		<addForeignKeyConstraint baseColumnNames="filter_condition_id"
 			baseTableName="meveo_filter" constraintName="fk_meveo_filter_filter_condition"
-			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
-			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="meveo_filter_condition" />
+			deferrable="false" initiallyDeferred="false" onDelete="CASCADE"
+			onUpdate="CASCADE" referencedColumnNames="id" referencedTableName="meveo_filter_condition" />
 		<addForeignKeyConstraint baseColumnNames="order_condition_id"
 			baseTableName="meveo_filter" constraintName="fk_meveo_filter_order_condition"
-			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
-			onUpdate="NO ACTION" referencedColumnNames="id"
+			deferrable="false" initiallyDeferred="false" onDelete="CASCADE"
+			onUpdate="CASCADE" referencedColumnNames="id"
 			referencedTableName="meveo_filter_order_condition" />
 		<createSequence sequenceName="meveo_filter_seq"
 			startValue="1" />
@@ -1242,12 +1245,12 @@
 			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="meveo_projector" />
 		<addForeignKeyConstraint baseColumnNames="filter_id"
 			baseTableName="meveo_filter_selector" constraintName="fk_meveo_filter_secondary_selector"
-			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
-			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="meveo_filter" />
+			deferrable="false" initiallyDeferred="false" onDelete="CASCADE"
+			onUpdate="CASCADE" referencedColumnNames="id" referencedTableName="meveo_filter" />
 		<addForeignKeyConstraint baseColumnNames="primary_selector_id"
 			baseTableName="meveo_filter" constraintName="fk_meveo_filter_primary_selector"
-			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
-			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="meveo_filter_selector" />
+			deferrable="false" initiallyDeferred="false" onDelete="CASCADE"
+			onUpdate="CASCADE" referencedColumnNames="id" referencedTableName="meveo_filter_selector" />
 		<createSequence sequenceName="meveo_filter_selector_seq"
 			startValue="1" />
 
@@ -1267,8 +1270,8 @@
 			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_provider" />
 		<addForeignKeyConstraint baseColumnNames="composite_or_filter_condition_id"
 			baseTableName="meveo_filter_condition" constraintName="fk_meveo_or_composite_filter_condition_or"
-			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
-			onUpdate="NO ACTION" referencedColumnNames="id"
+			deferrable="false" initiallyDeferred="false" onDelete="CASCADE"
+			onUpdate="CASCADE" referencedColumnNames="id"
 			referencedTableName="meveo_or_composite_filter_condition" />
 
 		<createTable tableName="meveo_and_composite_filter_condition">
@@ -1287,8 +1290,8 @@
 			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_provider" />
 		<addForeignKeyConstraint baseColumnNames="composite_and_filter_condition_id"
 			baseTableName="meveo_filter_condition" constraintName="fk_meveo_and_composite_filter_condition_and"
-			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
-			onUpdate="NO ACTION" referencedColumnNames="id"
+			deferrable="false" initiallyDeferred="false" onDelete="CASCADE"
+			onUpdate="CASCADE" referencedColumnNames="id"
 			referencedTableName="meveo_and_composite_filter_condition" />
 	</changeSet>
 	

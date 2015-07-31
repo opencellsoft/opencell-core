@@ -1,5 +1,6 @@
 package org.meveo.model.filter;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.CollectionTable;
@@ -22,15 +23,15 @@ import org.meveo.model.BaseEntity;
 public class OrderCondition extends BaseEntity {
 
 	private static final long serialVersionUID = 1523437333405252113L;
-	
+
 	@ElementCollection
 	@CollectionTable(name = "MEVEO_FILTER_OC_FIELD_NAMES", joinColumns = @JoinColumn(name = "ORDER_CONDITION_ID"))
 	@Column(name = "FIELD_NAME")
-	private List<String> fieldNames;
+	private List<String> fieldNames = new ArrayList<String>();
 
 	@Column(name = "ASCENDING")
 	private boolean ascending;
-	
+
 	@OneToOne(mappedBy = "orderCondition")
 	public Filter filter;
 
@@ -56,6 +57,15 @@ public class OrderCondition extends BaseEntity {
 
 	public void setFilter(Filter filter) {
 		this.filter = filter;
+	}
+	
+	@Override
+	public boolean equals(Object other) {
+		if (other == null || !(other instanceof FilterSelector)) {
+			return false;
+		}
+		OrderCondition o = (OrderCondition) other;
+		return (o.getId() != null) && o.getId().equals(this.getId());
 	}
 
 }

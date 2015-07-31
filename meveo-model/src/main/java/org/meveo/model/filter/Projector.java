@@ -1,5 +1,6 @@
 package org.meveo.model.filter;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.CollectionTable;
@@ -28,9 +29,9 @@ public class Projector extends BusinessEntity {
 	private static final long serialVersionUID = -6179228494065206254L;
 
 	@ClassName
-	@Size(max = 255)
+	@Size(max = 100)
 	@NotNull
-	@Column(name = "TARGET_ENTITY", length = 255, nullable = false)
+	@Column(name = "TARGET_ENTITY", length = 100, nullable = false)
 	private String targetEntity;
 
 	/**
@@ -39,12 +40,12 @@ public class Projector extends BusinessEntity {
 	@ElementCollection(fetch = FetchType.LAZY)
 	@CollectionTable(name = "MEVEO_PROJECTOR_DISPLAY_FIELDS", joinColumns = @JoinColumn(name = "PROJECTOR_ID"))
 	@Column(name = "DISPLAY_FIELD")
-	private List<String> displayFields;
+	private List<String> displayFields = new ArrayList<String>();
 
 	@ElementCollection(fetch = FetchType.LAZY)
 	@CollectionTable(name = "MEVEO_PROJECTOR_EXPORT_FIELDS", joinColumns = @JoinColumn(name = "PROJECTOR_ID"))
 	@Column(name = "EXPORT_FIELD")
-	private List<String> exportFields;
+	private List<String> exportFields = new ArrayList<String>();
 
 	/**
 	 * List of fields to ignore if foreign key not found.
@@ -52,7 +53,7 @@ public class Projector extends BusinessEntity {
 	@ElementCollection(fetch = FetchType.LAZY)
 	@CollectionTable(name = "MEVEO_PROJECTOR_IGNORE_FIELDS", joinColumns = @JoinColumn(name = "PROJECTOR_ID"))
 	@Column(name = "IGNORED_FIELD")
-	private List<String> ignoreIfNotFoundForeignKey;
+	private List<String> ignoreIfNotFoundForeignKeys = new ArrayList<String>();
 
 	@OneToOne(mappedBy = "projector")
 	public FilterSelector filterSelector;
@@ -81,20 +82,20 @@ public class Projector extends BusinessEntity {
 		this.exportFields = exportFields;
 	}
 
-	public List<String> getIgnoreIfNotFoundForeignKey() {
-		return ignoreIfNotFoundForeignKey;
-	}
-
-	public void setIgnoreIfNotFoundForeignKey(List<String> ignoreIfNotFoundForeignKey) {
-		this.ignoreIfNotFoundForeignKey = ignoreIfNotFoundForeignKey;
-	}
-
 	public FilterSelector getFilterSelector() {
 		return filterSelector;
 	}
 
 	public void setFilterSelector(FilterSelector filterSelector) {
 		this.filterSelector = filterSelector;
+	}
+
+	public List<String> getIgnoreIfNotFoundForeignKeys() {
+		return ignoreIfNotFoundForeignKeys;
+	}
+
+	public void setIgnoreIfNotFoundForeignKeys(List<String> ignoreIfNotFoundForeignKeys) {
+		this.ignoreIfNotFoundForeignKeys = ignoreIfNotFoundForeignKeys;
 	}
 
 }

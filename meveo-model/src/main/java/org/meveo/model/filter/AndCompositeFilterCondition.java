@@ -2,6 +2,7 @@ package org.meveo.model.filter;
 
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
@@ -18,7 +19,7 @@ public class AndCompositeFilterCondition extends FilterCondition {
 
 	private static final long serialVersionUID = 8683573995597386129L;
 
-	@OneToMany(orphanRemoval = true)
+	@OneToMany(orphanRemoval = true, cascade = CascadeType.ALL)
 	@JoinColumn(name = "COMPOSITE_AND_FILTER_CONDITION_ID")
 	private List<FilterCondition> filterConditions;
 

@@ -3,6 +3,7 @@ package org.meveo.model.filter;
 import java.util.List;
 
 import javax.persistence.Column;
+import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
@@ -14,6 +15,7 @@ import org.meveo.model.BaseEntity;
  **/
 @Entity
 @Table(name = "MEVEO_PRIMITIVE_FILTER_CONDITION")
+@DiscriminatorValue(value = "PRIMITIVE")
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "MEVEO_PRIMITIVE_FILTER_CONDITION_SEQ")
 public class PrimitiveFilterCondition extends FilterCondition {
 
