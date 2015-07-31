@@ -36,7 +36,7 @@ public class PermissionService extends PersistenceService<Permission> {
 	 @Override
 	 public List<Permission> list() { 
         QueryBuilder qb = new QueryBuilder("from Permission p");
-        boolean superAdmin = getCurrentUser().hasRole("superAdministrateur"); 
+        boolean superAdmin = identity.hasPermission("superAdmin", "superAdminManagement");
         if(!superAdmin){
         	qb.addSqlCriterion("p.resource != :resource", "resource", "superAdmin");
         	qb.addSqlCriterion("p.resource != :permission", "permission", "superAdminManagement");	
