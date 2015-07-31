@@ -211,8 +211,10 @@ public class CatMessagesService extends PersistenceService<CatMessages> {
 	        List<CatMessages> catMessages=super.list(config);
 	        for(CatMessages catMsg:catMessages){
 	        	BusinessEntity obj=getObject(catMsg);
+	        	if(obj!=null){
 	        	catMsg.setEntityCode(obj.getCode());
-	        	catMsg.setEntityDescription(obj.getDescription());
+		        catMsg.setEntityDescription(obj.getDescription());
+	        	}	
 	        } 
 	        return catMessages;
 	    }
@@ -220,7 +222,6 @@ public class CatMessagesService extends PersistenceService<CatMessages> {
 			if(catMessages==null){
 				return null;
 			}
-			BusinessEntity object=null;
 			String messagesCode=catMessages.getMessageCode();
 			String[] codes=messagesCode.split("_");
 			
@@ -232,26 +233,23 @@ public class CatMessagesService extends PersistenceService<CatMessages> {
 					return null;
 				}
 				if("Title".equals(codes[0])){
-					object= titleService.findById(id);
+					return titleService.findById(id);
 				}else if("Tax".equals(codes[0])){
-					object= taxService.findById(id);
+					return taxService.findById(id);
 				}else if("InvoiceCategory".equals(codes[0])){
-					object= invoiceCategoryService.findById(id);
+					return invoiceCategoryService.findById(id);
 				}else if("InvoiceSubCategory".equals(codes[0])){
-					object= invoiceSubCategoryService.findById(id);
+					return invoiceSubCategoryService.findById(id);
 				}else if("UsageChargeTemplate".equals(codes[0])){
-					object= usageChargeTemplateService.findById(id);
+					return usageChargeTemplateService.findById(id);
 				}else if("OneShotChargeTemplate".equals(codes[0])){
-					object= oneShotChargeTemplateService.findById(id);
+					return oneShotChargeTemplateService.findById(id);
 				}else if("RecurringChargeTemplate".equals(codes[0])){
-					object= recurringChargeTemplateService.findById(id);
+					return recurringChargeTemplateService.findById(id);
 				}else if("PricePlanMatrix".equals(codes[0])){
-					object= pricePlanMatrixService.findById(id);
+					return pricePlanMatrixService.findById(id);
 				}
-			}if(catMessages!=null){
-				catMessages.setEntityCode(object.getCode());
-				catMessages.setEntityDescription(object.getDescription());	
 			}
-			return object;
+			  return null;
 		}
 }
