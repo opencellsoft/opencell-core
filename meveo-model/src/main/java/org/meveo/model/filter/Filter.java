@@ -1,7 +1,9 @@
 package org.meveo.model.filter;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
@@ -22,21 +24,21 @@ public class Filter extends BusinessEntity {
 
 	private static final long serialVersionUID = -6150352877726034654L;
 
-	@OneToOne
+	@OneToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "FILTER_CONDITION_ID")
 	private FilterCondition filterCondition;
 
-	@OneToOne
+	@OneToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "ORDER_CONDITION_ID")
 	private OrderCondition orderCondition;
 
-	@OneToOne
+	@OneToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "PRIMARY_SELECTOR_ID")
 	private FilterSelector primarySelector;
 
-	@OneToMany(orphanRemoval = true)
+	@OneToMany(orphanRemoval = true, cascade = CascadeType.ALL)
 	@JoinColumn(name = "FILTER_ID")
-	private List<FilterSelector> secondarySelectors;
+	private List<FilterSelector> secondarySelectors = new ArrayList<FilterSelector>();
 
 	@Column(name = "INPUT_XML", columnDefinition = "TEXT")
 	private String inputXml;
