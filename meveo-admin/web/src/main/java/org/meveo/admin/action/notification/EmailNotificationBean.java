@@ -74,8 +74,7 @@ public class EmailNotificationBean extends BaseBean<EmailNotification> {
     private static final int SUBJECT= 9;
     private static final int TEXT_BODY= 10;
     private static final int HTML_BODY= 11;
-    private static final int ATTACHEEMENTS_EL= 12;
-    private static final int COUNTER_TEMPLATE= 13;
+    private static final int COUNTER_TEMPLATE= 12;
     
 	public EmailNotificationBean() {
 		super(EmailNotification.class);
@@ -151,18 +150,6 @@ public class EmailNotificationBean extends BaseBean<EmailNotification> {
                 emailNotif.setSubject(values[SUBJECT]);
                 emailNotif.setBody(values[TEXT_BODY]);
                 emailNotif.setElAction(values[HTML_BODY]);
-                String attachements = values[ATTACHEEMENTS_EL].replace("[","").replace("]","");
-                if (!StringUtils.isBlank(attachements)) {
-                    String[] attachementList = attachements.split(",");
-                    List<String> listAttachement = Arrays.asList(attachementList);
-                    for (String attachement : listAttachement) {
-                    	    attachement=attachement.trim();
-                        if (emailNotif.getAttachmentExpressions() == null) {
-                            emailNotif.setAttachmentExpressions(new HashSet<String>());
-                        }
-                        emailNotif.getAttachmentExpressions().add(attachement);
-                    }
-                }
                 if (!StringUtils.isBlank(values[COUNTER_TEMPLATE])) {
                     CounterTemplate counterTemplate = counterTemplateService.findByCode(values[COUNTER_TEMPLATE], getCurrentProvider());
                     emailNotif.setCounterTemplate(counterTemplate != null ? counterTemplate : null);
@@ -203,18 +190,6 @@ public class EmailNotificationBean extends BaseBean<EmailNotification> {
 			existingEntity.setSubject(values[SUBJECT]);
 			existingEntity.setBody(values[TEXT_BODY]);
 			existingEntity.setElAction(values[HTML_BODY]);
-			 String attachements = values[ATTACHEEMENTS_EL].replace("[","").replace("]",""); ;
-             if (!StringUtils.isBlank(attachements)) {
-                 String[] attachementList = attachements.split(",");
-                 List<String> listAttachement = Arrays.asList(attachementList);
-                 for (String attachement : listAttachement) {
-                	     attachement=attachement.trim();
-                     if (existingEntity.getAttachmentExpressions() == null) {
-                    	 existingEntity.setAttachmentExpressions(new HashSet<String>());
-                     }
-                     existingEntity.getAttachmentExpressions().add(attachement);
-                 }
-             }
 			if(!StringUtils.isBlank(values[COUNTER_TEMPLATE])){
 				CounterTemplate counterTemplate=counterTemplateService.findByCode(values[COUNTER_TEMPLATE], getCurrentProvider());
 				existingEntity.setCounterTemplate(counterTemplate!=null ?counterTemplate: null);
@@ -238,7 +213,6 @@ public class EmailNotificationBean extends BaseBean<EmailNotification> {
 				csv.appendValue("Subject");
 				csv.appendValue("Text body");
 				csv.appendValue("HTML body");
-				csv.appendValue("Attachments EL");
 				csv.appendValue("Counter template");
 			}
 			csv.startNewLine();
