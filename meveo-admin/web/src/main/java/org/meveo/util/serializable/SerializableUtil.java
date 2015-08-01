@@ -5,16 +5,15 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
 import org.apache.commons.codec.binary.Base64;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.BusinessEntity;
+import org.meveo.model.crm.BusinessEntityWrapper;
 import org.meveo.service.crm.impl.CustomEntitySearchService;
 
 public class SerializableUtil {
@@ -65,42 +64,21 @@ public class SerializableUtil {
 	}
 
 	/**
-	 * decode a base64 string value into a set collection
+	 * decode a base64 string value into a list collection
 	 * @param cfService
 	 * @param clazzName
 	 * @param str
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
-	public static Set<BusinessEntity> decodeList(
+	public static List<BusinessEntityWrapper> decodeList(
 			CustomEntitySearchService cfService, String clazzName, String str) {
-		Set<BusinessEntity> entities = (HashSet<BusinessEntity>) decode(str);
-		Set<BusinessEntity> result = new HashSet<BusinessEntity>();
+		List<BusinessEntityWrapper> entities = (ArrayList<BusinessEntityWrapper>) decode(str);
+		List<BusinessEntityWrapper> result = new ArrayList<BusinessEntityWrapper>();
 		BusinessEntity temp = null;
-		for (BusinessEntity entity : entities) {
-			temp = cfService.findCustomEntity(clazzName, entity.getId());
-			result.add(temp);
-		}
-		return result;
-	}
-
-	/**
-	 * decode a base64 string value into a map collection
-	 * @param cfService
-	 * @param clazzName
-	 * @param str
-	 * @return
-	 */
-	@SuppressWarnings("unchecked")
-	public static Map<String, BusinessEntity> decodeMap(
-			CustomEntitySearchService cfService, String clazzName, String str) {
-		Map<String, BusinessEntity> entities = (Map<String, BusinessEntity>) decode(str);
-		Map<String, BusinessEntity> result = new HashMap<String, BusinessEntity>();
-		BusinessEntity temp = null;
-		for (Map.Entry<String, BusinessEntity> entry : entities.entrySet()) {
-			temp = cfService.findCustomEntity(clazzName, entry.getValue()
-					.getId());
-			result.put(entry.getKey(), temp);
+		for (BusinessEntityWrapper wrapper : entities) {
+			temp = cfService.findCustomEntity(clazzName, wrapper.getBusinessEntity().getId());
+			result.add(new BusinessEntityWrapper(wrapper.getLabel(),temp));
 		}
 		return result;
 	}

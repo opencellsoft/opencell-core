@@ -1,12 +1,7 @@
 package org.meveo.admin.action;
 
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 import javax.faces.context.FacesContext;
 import javax.inject.Inject;
@@ -22,7 +17,12 @@ import org.meveo.model.billing.Subscription;
 import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.ServiceTemplate;
+import org.meveo.model.crm.BusinessEntityWrapper;
 import org.meveo.model.crm.CustomFieldInstance;
+import org.meveo.model.crm.CustomFieldInstance.DateWrapper;
+import org.meveo.model.crm.CustomFieldInstance.DoubleWrapper;
+import org.meveo.model.crm.CustomFieldInstance.LongWrapper;
+import org.meveo.model.crm.CustomFieldInstance.StringWrapper;
 import org.meveo.model.crm.CustomFieldPeriod;
 import org.meveo.model.crm.CustomFieldStorageTypeEnum;
 import org.meveo.model.crm.CustomFieldTemplate;
@@ -36,6 +36,11 @@ import org.meveo.service.crm.impl.CustomEntitySearchService;
 import org.meveo.service.crm.impl.CustomFieldJob;
 import org.meveo.util.serializable.SerializableUtil;
 
+/**
+ * support custom field instances
+ *
+ * @param <T>
+ */
 public abstract class CustomFieldBean<T extends IEntity> extends BaseBean<T> {
 
 	private static final long serialVersionUID = 1L;
@@ -111,34 +116,20 @@ public abstract class CustomFieldBean<T extends IEntity> extends BaseBean<T> {
                	 				}
                	 			}
                	 		}else{
-               	 			if(CustomFieldStorageTypeEnum.LIST.equals(cf.getStorageType())){
-               	 				if(CustomFieldTypeEnum.ENTITY.equals(cf.getFieldType())){
-               	 					cfi.setEntityList(SerializableUtil.decodeList(cfSearchService,cf.getEntityClazz(),cfi.getEntityValue()));
-               	 				}else if(CustomFieldTypeEnum.STRING.equals(cf.getFieldType())){
-               	 					cfi.setStringList((Set<String>)SerializableUtil.decode(cfi.getEntityValue()));
-               	 				}else if(CustomFieldTypeEnum.LONG.equals(cf.getFieldType())){
-               	 					cfi.setLongList((Set<Long>)SerializableUtil.decode(cfi.getEntityValue()));
-               	 				}else if(CustomFieldTypeEnum.DOUBLE.equals(cf.getFieldType())){
-               	 					cfi.setDoubleList((Set<Double>)SerializableUtil.decode(cfi.getEntityValue()));
-               	 				}else if(CustomFieldTypeEnum.DATE.equals(cf.getFieldType())){
-               	 					cfi.setDateList((Set<Date>)SerializableUtil.decode(cfi.getEntityValue()));
-               	 				}
-               	 			}else if(CustomFieldStorageTypeEnum.MAP.equals(cf.getStorageType())){
-               	 				if(CustomFieldTypeEnum.ENTITY.equals(cf.getFieldType())){
-               	 					cfi.setEntityMap((Map<String,BusinessEntity>)SerializableUtil.decodeMap(cfSearchService,cf.getEntityClazz(),cfi.getEntityValue()));
-               	 				}else if(CustomFieldTypeEnum.STRING.equals(cf.getFieldType())){
-               	 					cfi.setStringMap((Map<String,String>)SerializableUtil.decode(cfi.getEntityValue()));
-               	 				}else if(CustomFieldTypeEnum.LONG.equals(cf.getFieldType())){
-               	 					cfi.setLongMap((Map<String,Long>)SerializableUtil.decode(cfi.getEntityValue()));
-               	 				}else if(CustomFieldTypeEnum.DOUBLE.equals(cf.getFieldType())){
-               	 					cfi.setDoubleMap((Map<String,Double>)SerializableUtil.decode(cfi.getEntityValue()));
-               	 				}else if(CustomFieldTypeEnum.DATE.equals(cf.getFieldType())){
-               	 					cfi.setDateMap((Map<String,Date>)SerializableUtil.decode(cfi.getEntityValue()));
-               	 				}
+               	 			if(CustomFieldTypeEnum.ENTITY.equals(cf.getFieldType())){
+               	 				cfi.setEntityList(SerializableUtil.decodeList(cfSearchService,cf.getEntityClazz(),cfi.getEntityValue()));
+               	 			}else if(CustomFieldTypeEnum.STRING.equals(cf.getFieldType())){
+               	 				cfi.setStringList((List<StringWrapper>)SerializableUtil.decode(cfi.getEntityValue()));
+               	 			}else if(CustomFieldTypeEnum.LONG.equals(cf.getFieldType())){
+               	 				cfi.setLongList((List<LongWrapper>)SerializableUtil.decode(cfi.getEntityValue()));
+               	 			}else if(CustomFieldTypeEnum.DOUBLE.equals(cf.getFieldType())){
+               	 				cfi.setDoubleList((List<DoubleWrapper>)SerializableUtil.decode(cfi.getEntityValue()));
+               	 			}else if(CustomFieldTypeEnum.DATE.equals(cf.getFieldType())){
+               	 				cfi.setDateList((List<DateWrapper>)SerializableUtil.decode(cfi.getEntityValue()));
                	 			}
                	 		}
+               	 		cf.setInstance(cfi);
                	 	}
-                    cf.setInstance(cfi);
                 }
             }
         }
@@ -171,14 +162,14 @@ public abstract class CustomFieldBean<T extends IEntity> extends BaseBean<T> {
        	 					}
        	 				}
        	 			}
-       	 		}else if(CustomFieldStorageTypeEnum.LIST.equals(cf.getStorageType())){
+       	 		}else {
 	 				if(CustomFieldTypeEnum.ENTITY.equals(cf.getFieldType())){
-	 					Set<BusinessEntity> result=new HashSet<BusinessEntity>();
+	 					List<BusinessEntityWrapper> result=new ArrayList<BusinessEntityWrapper>();
 	 					BusinessEntity temp=null;
-	 					for(BusinessEntity list:cfi.getEntityList()){
+	 					for(BusinessEntityWrapper wrapper:cfi.getEntityList()){
 	 						temp=new BusinessEntity();
-	 						temp.setId(list.getId());
-	 						result.add(temp);
+	 						temp.setId(wrapper.getBusinessEntity().getId());
+	 						result.add(new BusinessEntityWrapper(wrapper.getLabel(),temp));
 	 					}
 	 					cfi.setEntityValue(cfi.getEntityList().size()==0?null:SerializableUtil.encode(result));
 	 				}else if(CustomFieldTypeEnum.STRING.equals(cf.getFieldType())){
@@ -192,29 +183,6 @@ public abstract class CustomFieldBean<T extends IEntity> extends BaseBean<T> {
 	 					cfi.setDoubleValue(null);
 	 				}else if(CustomFieldTypeEnum.DATE.equals(cf.getFieldType())){
 	 					cfi.setEntityValue(cfi.getDateList().size()==0?null:SerializableUtil.encode(cfi.getDateList()));
-	 					cfi.setDateValue(null);
-	 				}
-	 			}else if(CustomFieldStorageTypeEnum.MAP.equals(cf.getStorageType())){
-	 				if(CustomFieldTypeEnum.ENTITY.equals(cf.getFieldType())){
-	 					Map<String,BusinessEntity> result=new HashMap<String,BusinessEntity>();
-	 					BusinessEntity temp=null;
-	 					for(Map.Entry<String, BusinessEntity> entry:cfi.getEntityMap().entrySet()){
-	 						temp=new BusinessEntity();
-	 						temp.setId(entry.getValue().getId());
-	 						result.put(entry.getKey(),temp);
-	 					}
-	 					cfi.setEntityValue(cfi.getEntityMap().size()==0?null:SerializableUtil.encode(result));
-	 				}else if(CustomFieldTypeEnum.STRING.equals(cf.getFieldType())){
-	 					cfi.setEntityValue(cfi.getStringMap().size()==0?null:SerializableUtil.encode(cfi.getStringMap()));
-	 					cfi.setStringValue(null);
-	 				}else if(CustomFieldTypeEnum.LONG.equals(cf.getFieldType())){
-	 					cfi.setEntityValue(cfi.getLongMap().size()==0?null:SerializableUtil.encode(cfi.getLongMap()));
-	 					cfi.setLongValue(null);
-	 				}else if(CustomFieldTypeEnum.DOUBLE.equals(cf.getFieldType())){
-	 					cfi.setEntityValue(cfi.getDoubleMap().size()==0?null:SerializableUtil.encode(cfi.getDoubleMap()));
-	 					cfi.setDoubleValue(null);
-	 				}else if(CustomFieldTypeEnum.DATE.equals(cf.getFieldType())){
-	 					cfi.setEntityValue(cfi.getDateMap().size()==0?null:SerializableUtil.encode(cfi.getDateMap()));
 	 					cfi.setDateValue(null);
 	 				}
 	 			}

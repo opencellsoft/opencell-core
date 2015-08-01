@@ -28,15 +28,16 @@
         <c:set var="datePattern" value="#{paramBean.getProperty('meveo.dateFormat','dd/MM/yyyy')}" />
     </c:if>
     <o:importConstants type="org.meveo.model.crm.CustomFieldTypeEnum" />
+    <o:importConstants type="org.meveo.model.crm.CustomFieldStorageTypeEnum" />
     <h:panelGroup rendered="#{cft.fieldType eq CustomFieldTypeEnum.STRING}">
         <h:outputText value="#{field}" rendered="#{! edit}"></h:outputText>
         <p:inputText value="#{field}" required="#{cft.valueRequired}" rendered="#{edit}" label="#{cft.description}" />
     </h:panelGroup>
     <h:panelGroup rendered="#{cft.fieldType eq CustomFieldTypeEnum.DATE}">
-        <h:outputText value="#{field}" rendered="#{! edit}">
+        <h:outputText value="#{field.dateValue}" rendered="#{! edit}">
             <f:convertDateTime type="date" pattern="#{datePattern}" />
         </h:outputText>
-        <p:calendar showButtonPanel="true" pattern="#{datePattern}" value="#{field}" required="#{cft.valueRequired}" rendered="#{edit}" label="#{cft.description}" />
+        <p:calendar showButtonPanel="true" pattern="#{datePattern}" value="#{field.dateValue}" required="#{cft.valueRequired}" rendered="#{edit}" label="#{cft.description}" />
     </h:panelGroup>
     <h:panelGroup rendered="#{cft.fieldType eq CustomFieldTypeEnum.DOUBLE}">
         <h:outputText value="#{field}" rendered="#{! edit}"></h:outputText>
@@ -50,6 +51,14 @@
             <f:convertNumber integerOnly="true" />
         </p:inputText>
     </h:panelGroup>
+    <h:panelGroup rendered="#{cft.fieldType eq CustomFieldTypeEnum.ENTITY and (cft.storageType!= CustomFieldStorageTypeEnum.SINGLE and !cft.versionable)}">
+		<hftl:autocompleteCustomFieldEntity cft="#{cft}" field="#{field}" edit="#{edit}" />
+		<h:outputText value="#{field.code}" rendered="#{!edit}"/>
+	 </h:panelGroup>
+	 <h:panelGroup rendered="#{cft.fieldType eq CustomFieldTypeEnum.ENTITY and (cft.storageType!= CustomFieldStorageTypeEnum.SINGLE and cft.versionable)}">
+		<hftl:autocompleteCustomFieldEntity cft="#{cft}" field="#{field}" edit="#{edit}" />
+		<h:outputText value="#{field.businessEntity.code}" rendered="#{!edit}"/>
+	 </h:panelGroup>
 
 </ui:composition>
 
