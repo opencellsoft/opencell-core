@@ -1360,6 +1360,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 		csvOption.setCharacterEncoding(characterEncoding);
 		return csvOption;
 	}
+    //dummy codes for avoiding to get custom field templates
     public List<CustomFieldTemplate> getCustomFieldTemplates() {
     	return null;
     }

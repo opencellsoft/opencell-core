@@ -9,7 +9,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.jboss.seam.international.status.builder.BundleKey;
-import org.meveo.admin.action.CustomFieldBean;
+import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.crm.AccountLevelEnum;
 import org.meveo.model.crm.CustomFieldStorageTypeEnum;
@@ -20,7 +20,7 @@ import org.omnifaces.cdi.ViewScoped;
 
 @Named
 @ViewScoped
-public class CustomFieldTemplateBean extends CustomFieldBean<CustomFieldTemplate> {
+public class CustomFieldTemplateBean extends BaseBean<CustomFieldTemplate> {
 
     private static final long serialVersionUID = 9099292371182275568L;
 

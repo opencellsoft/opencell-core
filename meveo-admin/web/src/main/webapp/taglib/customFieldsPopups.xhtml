@@ -18,6 +18,464 @@
 	<o:importConstants type="org.meveo.model.crm.CustomFieldTypeEnum" />
 	<o:importConstants
 		type="org.meveo.model.crm.CustomFieldStorageTypeEnum" />
-	
+	<c:forEach items="#{customFieldTemplates}" var="cft">
+		<c:if
+			test="#{cft.storageType == CustomFieldStorageTypeEnum.LIST or cft.storageType == CustomFieldStorageTypeEnum.MAP}">
+			<c:if test="#{cft.fieldType == CustomFieldTypeEnum.ENTITY}">
+				<p:dialog id="cft_entitylist_#{cft.id}"
+					header="#{messages['customFieldInstance.addEntity']}"
+					widgetVar="dlg_cft_entitylist_#{cft.id}" dynamic="true"
+					modal="true" styleClass="form-dialog" closeOnEscape="true"
+					width="500">
+					<h:form id="cft_entitylist_#{cft.id}popupForm">
+						<h:panelGroup layout="block" styleClass="search-panel">
+							<p:messages />
+							<hftl:decorateFormField label="#{messages['commons.label']} *"
+								rendered="#{cft.storageType==CustomFieldStorageTypeEnum.MAP}">
+								<p:inputText id="label" value="#{cft.instance.label}"
+									required="true" />
+							</hftl:decorateFormField>
+							<hftl:decorateFormField label="#{cft.description} #{cft.valueRequired?'*':''}" >
+								<hftl:customFieldValueField edit="true" cft="#{cft}"
+									field="#{cft.instance.businessEntity}" />
+							</hftl:decorateFormField>
+							<h:panelGroup layout="block" styleClass="search-panel-actions">
+								<p:commandButton id="entityListSave"
+									action="#{cft.instance.addEntityTolist}" ajax="true"
+									partialSubmit="true" process="@form"
+									value="#{messages['commons.add']}"
+									update="@form @([id$='customFields_entitylist'])"
+									rendered="#{cft.storageType == CustomFieldStorageTypeEnum.LIST}"
+									oncomplete="if (args &amp;&amp; !args.validationFailed) PF('dlg_cft_entitylist_#{cft.id}').hide()" />
+								<p:commandButton id="entityMapSave"
+									action="#{cft.instance.addEntityTomap}" ajax="true"
+									partialSubmit="true" process="@form"
+									value="#{messages['commons.add']}"
+									update="@form @([id$='customFields_entitymap'])"
+									rendered="#{cft.storageType == CustomFieldStorageTypeEnum.MAP}"
+									oncomplete="if (args &amp;&amp; !args.validationFailed) PF('dlg_cft_entitylist_#{cft.id}').hide()" />
+							</h:panelGroup>
+						</h:panelGroup>
+					</h:form>
+				</p:dialog>
+			</c:if>
+			<c:if test="#{cft.fieldType == CustomFieldTypeEnum.STRING}">
+				<p:dialog id="cft_stringlist_#{cft.id}"
+					header="#{messages['customFieldInstance.addString']}"
+					widgetVar="dlg_cft_stringlist_#{cft.id}" dynamic="true"
+					modal="true" styleClass="form-dialog" closeOnEscape="true"
+					width="500">
+					<h:form id="cft_stringlist_#{cft.id}popupForm">
+						<h:panelGroup layout="block" styleClass="search-panel">
+							<p:messages />
+							<hftl:decorateFormField label="#{messages['commons.label']} *"
+								rendered="#{cft.storageType==CustomFieldStorageTypeEnum.MAP}">
+								<p:inputText id="label" value="#{cft.instance.label}"
+									required="true" />
+							</hftl:decorateFormField>
+							<hftl:decorateFormField label="#{cft.description} #{cft.valueRequired?'*':''}">
+								<hftl:customFieldValueField edit="true" cft="#{cft}" field="#{cft.instance}"/>
+							</hftl:decorateFormField>
+							<h:panelGroup layout="block" styleClass="search-panel-actions">
+								<p:commandButton id="stringListSave"
+									action="#{cft.instance.addStringTolist}" ajax="true"
+									partialSubmit="true" process="@form"
+									value="#{messages['commons.add']}"
+									update="@form @([id$='customFields_stringlist'])"
+									rendered="#{cft.storageType == CustomFieldStorageTypeEnum.LIST}"
+									oncomplete="if (args &amp;&amp; !args.validationFailed) PF('dlg_cft_stringlist_#{cft.id}').hide()" />
+								<p:commandButton id="stringMapSave"
+									action="#{cft.instance.addStringTomap}" ajax="true"
+									partialSubmit="true" process="@form"
+									value="#{messages['commons.add']}"
+									update="@form @([id$='customFields_stringmap'])"
+									rendered="#{cft.storageType == CustomFieldStorageTypeEnum.MAP}"
+									oncomplete="if (args &amp;&amp; !args.validationFailed) PF('dlg_cft_stringlist_#{cft.id}').hide()" />
+							</h:panelGroup>
+						</h:panelGroup>
+					</h:form>
+				</p:dialog>
+			</c:if>
+			<c:if test="#{cft.fieldType == CustomFieldTypeEnum.LONG}">
+				<p:dialog id="cft_longlist_#{cft.id}"
+					header="#{messages['customFieldInstance.addLong']}"
+					widgetVar="dlg_cft_longlist_#{cft.id}" dynamic="true" modal="true"
+					styleClass="form-dialog" closeOnEscape="true" width="500">
+					<h:form id="cft_longlist_#{cft.id}popupForm">
+						<h:panelGroup layout="block" styleClass="search-panel">
+							<p:messages />
+							<hftl:decorateFormField label="#{messages['commons.label']} *"
+								rendered="#{cft.storageType==CustomFieldStorageTypeEnum.MAP}">
+								<p:inputText id="label" value="#{cft.instance.label}"
+									required="true" />
+							</hftl:decorateFormField>
+							<hftl:decorateFormField label="#{cft.description} #{cft.valueRequired?'*':''}">
+								<hftl:customFieldValueField edit="true" cft="#{cft}" field="#{cft.instance}"/>
+							</hftl:decorateFormField>
+							<h:panelGroup layout="block" styleClass="search-panel-actions">
+								<p:commandButton id="longListSave"
+									action="#{cft.instance.addLongTolist}" ajax="true"
+									partialSubmit="true" process="@form"
+									value="#{messages['commons.add']}"
+									update="@form @([id$='customFields_longlist'])"
+									rendered="#{cft.storageType == CustomFieldStorageTypeEnum.LIST}"
+									oncomplete="if (args &amp;&amp; !args.validationFailed) PF('dlg_cft_longlist_#{cft.id}').hide()" />
+								<p:commandButton id="longMapSave"
+									action="#{cft.instance.addLongTomap}" ajax="true"
+									partialSubmit="true" process="@form"
+									value="#{messages['commons.add']}"
+									update="@form @([id$='customFields_longmap'])"
+									rendered="#{cft.storageType == CustomFieldStorageTypeEnum.MAP}"
+									oncomplete="if (args &amp;&amp; !args.validationFailed) PF('dlg_cft_longlist_#{cft.id}').hide()" />
+							</h:panelGroup>
+						</h:panelGroup>
+					</h:form>
+				</p:dialog>
+			</c:if>
+			<c:if test="#{cft.fieldType == CustomFieldTypeEnum.DOUBLE}">
+				<p:dialog id="cft_doublelist_#{cft.id}"
+					header="#{messages['customFieldInstance.addDouble']}"
+					widgetVar="dlg_cft_doublelist_#{cft.id}" dynamic="true"
+					modal="true" styleClass="form-dialog" closeOnEscape="true"
+					width="500">
+					<h:form id="cft_doublelist_#{cft.id}popupForm">
+						<h:panelGroup layout="block" styleClass="search-panel">
+							<p:messages />
+							<hftl:decorateFormField label="#{messages['commons.label']} *"
+								rendered="#{cft.storageType==CustomFieldStorageTypeEnum.MAP}">
+								<p:inputText id="label" value="#{cft.instance.label}"
+									required="true" />
+							</hftl:decorateFormField>
+							<hftl:decorateFormField label="#{cft.description} #{cft.valueRequired?'*':''}">
+								<hftl:customFieldValueField edit="true" cft="#{cft}" field="#{cft.instance}"/>
+							</hftl:decorateFormField>
+							<h:panelGroup layout="block" styleClass="search-panel-actions">
+								<p:commandButton id="doubleListSave"
+									action="#{cft.instance.addDoubleTolist}" ajax="true"
+									partialSubmit="true" process="@form"
+									value="#{messages['commons.add']}"
+									update="@form @([id$='customFields_doublelist'])"
+									rendered="#{cft.storageType == CustomFieldStorageTypeEnum.LIST}"
+									oncomplete="if (args &amp;&amp; !args.validationFailed) PF('dlg_cft_doublelist_#{cft.id}').hide()" />
+								<p:commandButton id="doubleMapSave"
+									action="#{cft.instance.addDoubleTomap}" ajax="true"
+									partialSubmit="true" process="@form"
+									value="#{messages['commons.add']}"
+									update="@form @([id$='customFields_doublemap'])"
+									rendered="#{cft.storageType == CustomFieldStorageTypeEnum.MAP}"
+									oncomplete="if (args &amp;&amp; !args.validationFailed) PF('dlg_cft_doublelist_#{cft.id}').hide()" />
+							</h:panelGroup>
+						</h:panelGroup>
+					</h:form>
+				</p:dialog>
+			</c:if>
+			<c:if test="#{cft.fieldType == CustomFieldTypeEnum.DATE}">
+				<p:dialog id="cft_datelist_#{cft.id}"
+					header="#{messages['customFieldInstance.addDate']}"
+					widgetVar="dlg_cft_datelist_#{cft.id}" dynamic="true" modal="true"
+					styleClass="form-dialog" closeOnEscape="true" width="500">
+					<h:form id="cft_datelist_#{cft.id}popupForm">
+						<h:panelGroup layout="block" styleClass="search-panel">
+							<p:messages />
+							<hftl:decorateFormField label="#{messages['commons.label']} *"
+								rendered="#{cft.storageType==CustomFieldStorageTypeEnum.MAP}">
+								<p:inputText id="label" value="#{cft.instance.label}"
+									required="true" />
+							</hftl:decorateFormField>
+							<hftl:decorateFormField label="#{cft.description} #{cft.valueRequired?' *':''}">
+								<hftl:customFieldValueField edit="true" cft="#{cft}" field="#{cft.instance}"/>
+							</hftl:decorateFormField>
+							<h:panelGroup layout="block" styleClass="search-panel-actions">
+								<p:commandButton id="dateListSave"
+									action="#{cft.instance.addDateTolist}" ajax="true"
+									partialSubmit="true" process="@form"
+									value="#{messages['commons.add']}"
+									update="@form @([id$='customFields_datelist'])"
+									rendered="#{cft.storageType == CustomFieldStorageTypeEnum.LIST}"
+									oncomplete="if (args &amp;&amp; !args.validationFailed) PF('dlg_cft_datelist_#{cft.id}').hide()" />
+								<p:commandButton id="dateMapSave"
+									action="#{cft.instance.addDateTomap}" ajax="true"
+									partialSubmit="true" process="@form"
+									value="#{messages['commons.add']}"
+									update="@form @([id$='customFields_datemap'])"
+									rendered="#{cft.storageType == CustomFieldStorageTypeEnum.MAP}"
+									oncomplete="if (args &amp;&amp; !args.validationFailed) PF('dlg_cft_datelist_#{cft.id}').hide()" />
+							</h:panelGroup>
+						</h:panelGroup>
+					</h:form>
+				</p:dialog>
+			</c:if>
+		</c:if>
+		<c:if
+			test="#{cft.fieldType eq CustomFieldTypeEnum.ENTITY}">
+			<c:if test="#{cft.entityClazz eq 'org.meveo.model.billing.Tax'}">
+				<hftl:entityPopup id="cft_entity_#{cft.id}"
+					header="#{messages['tax.search']}" backingBean="#{taxBean}"
+					searchField1Label="#{messages['BusinessEntity.code']}"
+					searchField1="code"
+					column1Label="#{messages['BusinessEntity.code']}" column1="code"
+					selection="#{cft.instance.businessEntity}"
+					column2Label="#{messages['BusinessEntity.description']}"
+					column2="description" updateField="@form @([id$='customFields'])">
+				</hftl:entityPopup>
+			</c:if>
+			<c:if test="#{cft.entityClazz eq 'org.meveo.model.admin.Seller'}">
+				<hftl:entityPopup id="cft_entity_#{cft.id}"
+					header="#{messages['seller.search']}" backingBean="#{sellerBean}"
+					searchField1Label="#{messages['BusinessEntity.code']}"
+					searchField1="code"
+					column1Label="#{messages['BusinessEntity.code']}" column1="code"
+					selection="#{cft.instance.businessEntity}"
+					column2Label="#{messages['BusinessEntity.description']}"
+					column2="description" updateField="@form @([id$='customFields'])">
+				</hftl:entityPopup>
+			</c:if>
+			<c:if
+				test="#{cft.entityClazz eq 'org.meveo.model.catalog.OfferTemplate'}">
+				<hftl:entityPopup id="cft_entity_#{cft.id}"
+					header="#{messages['offerTemplate.search']}"
+					backingBean="#{offerTemplateBean}"
+					searchField1Label="#{messages['BusinessEntity.code']}"
+					searchField1="code"
+					column1Label="#{messages['BusinessEntity.code']}" column1="code"
+					selection="#{cft.instance.businessEntity}"
+					column2Label="#{messages['BusinessEntity.description']}"
+					column2="description" updateField="@form @([id$='customFields'])">
+				</hftl:entityPopup>
+			</c:if>
+			<c:if
+				test="#{cft.entityClazz eq 'org.meveo.model.billing.UserAccount'}">
+				<hftl:entityPopup id="cft_entity_#{cft.id}"
+					header="#{messages['userAccount.popup.header']}"
+					backingBean="#{userAccountBean}"
+					searchField1Label="#{messages['BusinessEntity.code']}"
+					searchField1="code"
+					column1Label="#{messages['BusinessEntity.code']}" column1="code"
+					selection="#{cft.instance.businessEntity}"
+					column2Label="#{messages['BusinessEntity.description']}"
+					column2="description" updateField="@form @([id$='customFields'])">
+				</hftl:entityPopup>
+			</c:if>
+			<c:if
+				test="#{cft.entityClazz eq 'org.meveo.model.billing.BillingAccount'}">
+				<hftl:entityPopup id="cft_entity_#{cft.id}"
+					header="#{messages['billingAccount.search']}"
+					backingBean="#{billingAccountBean}"
+					searchField1Label="#{messages['BusinessEntity.code']}"
+					searchField1="code"
+					column1Label="#{messages['BusinessEntity.code']}" column1="code"
+					selection="#{cft.instance.businessEntity}"
+					column2Label="#{messages['BusinessEntity.description']}"
+					column2="description" updateField="@form @([id$='customFields'])">
+				</hftl:entityPopup>
+			</c:if>
+			<c:if
+				test="#{cft.entityClazz eq 'org.meveo.model.catalog.PricePlanMatrix'}">
+				<hftl:entityPopup id="cft_entity_#{cft.id}"
+					header="#{messages['pricePlanMatrix.search']}"
+					backingBean="#{pricePlanMatrixBean}"
+					searchField1Label="#{messages['BusinessEntity.code']}"
+					searchField1="code"
+					column1Label="#{messages['BusinessEntity.code']}" column1="code"
+					selection="#{cft.instance.businessEntity}"
+					column2Label="#{messages['BusinessEntity.description']}"
+					column2="description" updateField="@form @([id$='customFields'])">
+				</hftl:entityPopup>
+			</c:if>
+			<c:if
+				test="#{cft.entityClazz eq 'org.meveo.model.payments.CustomerAccount'}">
+				<hftl:entityPopup id="cft_entity_#{cft.id}"
+					header="#{messages['customerAccount.search']}"
+					backingBean="#{customerAccountBean}"
+					searchField1Label="#{messages['BusinessEntity.code']}"
+					searchField1="code"
+					column1Label="#{messages['BusinessEntity.code']}" column1="code"
+					selection="#{cft.instance.businessEntity}"
+					column2Label="#{messages['BusinessEntity.description']}"
+					column2="description" updateField="@form @([id$='customFields'])">
+				</hftl:entityPopup>
+			</c:if>
+			<c:if
+				test="#{cft.entityClazz eq 'org.meveo.model.catalog.OneShotChargeTemplate'}">
+				<hftl:entityPopup id="cft_entity_#{cft.id}"
+					header="#{messages['oneShotChargeTemplate.search']}"
+					backingBean="#{oneShotChargeTemplateBean}"
+					searchField1Label="#{messages['BusinessEntity.code']}"
+					searchField1="code"
+					column1Label="#{messages['BusinessEntity.code']}" column1="code"
+					selection="#{cft.instance.businessEntity}"
+					column2Label="#{messages['BusinessEntity.description']}"
+					column2="description" updateField="@form @([id$='customFields'])">
+				</hftl:entityPopup>
+			</c:if>
+			<c:if
+				test="#{cft.entityClazz eq 'org.meveo.model.catalog.ServiceTemplate'}">
+				<hftl:entityPopup id="cft_entity_#{cft.id}"
+					header="#{messages['serviceTemplate.title']}"
+					backingBean="#{serviceTemplateBean}"
+					searchField1Label="#{messages['BusinessEntity.code']}"
+					searchField1="code"
+					column1Label="#{messages['BusinessEntity.code']}" column1="code"
+					selection="#{cft.instance.businessEntity}"
+					column2Label="#{messages['BusinessEntity.description']}"
+					column2="description" updateField="@form @([id$='customFields'])">
+				</hftl:entityPopup>
+			</c:if>
+			<c:if
+				test="#{cft.entityClazz eq 'org.meveo.model.catalog.WalletTemplate'}">
+				<hftl:entityPopup id="cft_entity_#{cft.id}"
+					header="#{messages['walletTemplate.title']}"
+					backingBean="#{walletTemplateBean}"
+					searchField1Label="#{messages['BusinessEntity.code']}"
+					searchField1="code"
+					column1Label="#{messages['BusinessEntity.code']}" column1="code"
+					selection="#{cft.instance.businessEntity}"
+					column2Label="#{messages['BusinessEntity.description']}"
+					column2="description" updateField="@form @([id$='customFields'])">
+				</hftl:entityPopup>
+			</c:if>
+			<c:if
+				test="#{cft.entityClazz eq 'org.meveo.model.billing.Subscription'}">
+				<hftl:entityPopup id="cft_entity_#{cft.id}"
+					header="#{messages['subscription.search']}"
+					backingBean="#{subscriptionBean}"
+					searchField1Label="#{messages['BusinessEntity.code']}"
+					searchField1="code"
+					column1Label="#{messages['BusinessEntity.code']}" column1="code"
+					selection="#{cft.instance.businessEntity}"
+					column2Label="#{messages['BusinessEntity.description']}"
+					column2="description" updateField="@form @([id$='customFields'])">
+				</hftl:entityPopup>
+			</c:if>
+			<c:if
+				test="#{cft.entityClazz eq 'org.meveo.model.catalog.RecurringChargeTemplate'}">
+				<hftl:entityPopup id="cft_entity_#{cft.id}"
+					header="#{messages['recurringChargeTemplate.title']}"
+					backingBean="#{recurringChargeTemplateBean}"
+					searchField1Label="#{messages['BusinessEntity.code']}"
+					searchField1="code"
+					column1Label="#{messages['BusinessEntity.code']}" column1="code"
+					selection="#{cft.instance.businessEntity}"
+					column2Label="#{messages['BusinessEntity.description']}"
+					column2="description" updateField="@form @([id$='customFields'])">
+				</hftl:entityPopup>
+			</c:if>
+<!-- 			<c:if -->
+<!-- 				test="#{cft.entityClazz eq 'org.meveo.model.billing.ServiceInstance'}"> -->
+<!-- 				<hftl:entityPopup id="cft_entity_#{cft.id}" -->
+<!-- 					header="#{messages['serviceInstance.title']}" -->
+<!-- 					backingBean="#{serviceInstanceBean}" -->
+<!-- 					searchField1Label="#{messages['BusinessEntity.code']}" -->
+<!-- 					searchField1="code" -->
+<!-- 					column1Label="#{messages['BusinessEntity.code']}" column1="code" -->
+<!-- 					selection="#{cft.instance.businessEntity}" -->
+<!-- 					column2Label="#{messages['BusinessEntity.description']}" -->
+<!-- 					column2="description" updateField="@form @([id$='customFields'])"> -->
+<!-- 				</hftl:entityPopup> -->
+<!-- 			</c:if> -->
+			<c:if test="#{cft.entityClazz eq 'org.meveo.model.crm.Customer'}">
+				<hftl:entityPopup id="cft_entity_#{cft.id}"
+					header="#{messages['customer.search']}"
+					backingBean="#{customerBean}"
+					searchField1Label="#{messages['BusinessEntity.code']}"
+					searchField1="code"
+					column1Label="#{messages['BusinessEntity.code']}" column1="code"
+					selection="#{cft.instance.businessEntity}"
+					column2Label="#{messages['BusinessEntity.description']}"
+					column2="description" updateField="@form @([id$='customFields'])">
+				</hftl:entityPopup>
+			</c:if>
+			<c:if
+				test="#{cft.entityClazz eq 'org.meveo.model.catalog.UsageChargeTemplate'}">
+				<hftl:entityPopup id="cft_entity_#{cft.id}"
+					header="#{messages['usageChargeTemplate.title']}"
+					backingBean="#{usageChargeTemplateBean}"
+					searchField1Label="#{messages['BusinessEntity.code']}"
+					searchField1="code"
+					column1Label="#{messages['BusinessEntity.code']}" column1="code"
+					selection="#{cft.instance.businessEntity}"
+					column2Label="#{messages['BusinessEntity.description']}"
+					column2="description" updateField="@form @([id$='customFields'])">
+				</hftl:entityPopup>
+			</c:if>
+			<c:if
+				test="#{cft.entityClazz eq 'org.meveo.model.catalog.TriggeredEDRTemplate'}">
+				<hftl:entityPopup id="cft_entity_#{cft.id}"
+					header="#{messages['triggeredEdrTemplate.search']}"
+					backingBean="#{triggeredEDRTemplateBean}"
+					searchField1Label="#{messages['BusinessEntity.code']}"
+					searchField1="code"
+					column1Label="#{messages['BusinessEntity.code']}" column1="code"
+					selection="#{cft.instance.businessEntity}"
+					column2Label="#{messages['BusinessEntity.description']}"
+					column2="description" updateField="@form @([id$='customFields'])">
+				</hftl:entityPopup>
+			</c:if>
+			<c:if
+				test="#{cft.entityClazz eq 'org.meveo.model.catalog.CounterTemplate'}">
+				<hftl:entityPopup id="cft_entity_#{cft.id}"
+					header="#{messages['counterTemplate.search']}"
+					backingBean="#{counterTemplateBean}"
+					searchField1Label="#{messages['BusinessEntity.code']}"
+					searchField1="code"
+					column1Label="#{messages['BusinessEntity.code']}" column1="code"
+					selection="#{cft.instance.businessEntity}"
+					column2Label="#{messages['BusinessEntity.description']}"
+					column2="description" updateField="@form @([id$='customFields'])">
+				</hftl:entityPopup>
+			</c:if>
+			<c:if test="#{cft.entityClazz eq 'org.meveo.model.calalog.Calendar'}">
+				<hftl:entityPopup id="cft_entity_#{cft.id}"
+					header="#{messages['calendar.search']}"
+					backingBean="#{calendarBean}"
+					searchField1Label="#{messages['BusinessEntity.code']}"
+					searchField1="code"
+					column1Label="#{messages['BusinessEntity.code']}" column1="code"
+					selection="#{cft.instance.businessEntity}"
+					column2Label="#{messages['BusinessEntity.description']}"
+					column2="description" updateField="@form @([id$='customFields'])">
+				</hftl:entityPopup>
+			</c:if>
+			<c:if
+				test="#{cft.entityClazz eq 'org.meveo.model.crm.ProviderContact'}">
+				<hftl:entityPopup id="cft_entity_#{cft.id}"
+					header="#{messages['providerContact.search']}"
+					backingBean="#{providerContactBean}"
+					searchField1Label="#{messages['BusinessEntity.code']}"
+					searchField1="code"
+					column1Label="#{messages['BusinessEntity.code']}" column1="code"
+					selection="#{cft.instance.businessEntity}"
+					column2Label="#{messages['BusinessEntity.description']}"
+					column2="description" updateField="@form @([id$='customFields'])">
+				</hftl:entityPopup>
+			</c:if>
+			<c:if
+				test="#{cft.entityClazz eq 'org.meveo.model.catalog.DiscountPlan'}">
+				<hftl:entityPopup id="cft_entity_#{cft.id}"
+					header="#{messages['discountPlan.title']}"
+					backingBean="#{discountPlanBean}"
+					searchField1Label="#{messages['BusinessEntity.code']}"
+					searchField1="code"
+					column1Label="#{messages['BusinessEntity.code']}" column1="code"
+					selection="#{cft.instance.businessEntity}"
+					column2Label="#{messages['BusinessEntity.description']}"
+					column2="description" updateField="@form @([id$='customFields'])">
+				</hftl:entityPopup>
+			</c:if>
+			<c:if
+				test="#{cft.entityClazz eq 'org.meveo.model.communication.email.EmailTemplate'}">
+				<hftl:entityPopup id="cft_entity_#{cft.id}"
+					header="#{messages['emailTemplate.search']}"
+					backingBean="#{emailTemplateBean}"
+					searchField1Label="#{messages['BusinessEntity.code']}"
+					searchField1="code"
+					column1Label="#{messages['BusinessEntity.code']}" column1="code"
+					selection="#{cft.instance.businessEntity}"
+					column2Label="#{messages['BusinessEntity.description']}"
+					column2="description" updateField="@form @([id$='customFields'])">
+				</hftl:entityPopup>
+			</c:if>
+		</c:if>
+	</c:forEach>
 </ui:composition>
 </html>
