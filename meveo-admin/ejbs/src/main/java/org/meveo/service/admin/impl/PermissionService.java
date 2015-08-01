@@ -16,8 +16,11 @@
  */
 package org.meveo.service.admin.impl;
 
+import java.util.List;
+
 import javax.ejb.Stateless;
 
+import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.security.Permission;
 import org.meveo.service.base.PersistenceService;
 
@@ -27,5 +30,19 @@ import org.meveo.service.base.PersistenceService;
  */
 @Stateless
 public class PermissionService extends PersistenceService<Permission> {
+	
+
+	 @SuppressWarnings("unchecked")
+	 @Override
+	 public List<Permission> list() { 
+        QueryBuilder qb = new QueryBuilder("from Permission p");
+        boolean superAdmin = identity.hasPermission("superAdmin", "superAdminManagement");
+        if(!superAdmin){
+        	qb.addSqlCriterion("p.resource != :resource", "resource", "superAdmin");
+        	qb.addSqlCriterion("p.resource != :permission", "permission", "superAdminManagement");	
+        } 
+        return qb.getQuery(getEntityManager()).getResultList();
+        }
+	 
 
 }
