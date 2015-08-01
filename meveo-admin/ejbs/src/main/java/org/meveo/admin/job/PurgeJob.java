@@ -66,7 +66,7 @@ public class PurgeJob extends Job {
         cft.setCode("PurgeJob_counterPeriod_nbDays");
         cft.setAccountLevel(AccountLevelEnum.TIMER);
         cft.setActive(true);
-        cft.setDescription("Purge counter periods: older then (in days)");
+        cft.setDescription("Purge counter periods: period end date older then (in days)");
         cft.setFieldType(CustomFieldTypeEnum.LONG);
         cft.setValueRequired(false);
         result.add(cft);
