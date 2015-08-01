@@ -109,44 +109,61 @@ public class JobExecutionService extends PersistenceService<JobExecutionResultIm
 
 		return qb;
 	}
+	
+    /**
+     * Count job execution history records which end date is older then a given date
+     * 
+     * @param date Date to check
+     * @param provider Provider
+     * @return A number of job execution history records which is older then a given date
+     */
+    public long countJobExecutionHistoryToDelete(String jobName, Date date, Provider currentProvider) {
+        long result = 0;
+        if (date != null) {
+            String sql = "select t from JobExecutionResultImpl t";
+            QueryBuilder qb = new QueryBuilder(sql);// FIXME:.cacheable();
+            if (!StringUtils.isEmpty(jobName)) {
+                qb.addCriterion("t.jobName", "=", jobName, false);
+            }
+            qb.addCriterion("t.startDate", "<", date, false);
+            qb.addCriterionEntity("t.provider", currentProvider);
+            result = qb.count(getEntityManager());
+        }
 
-	public long countJobsToDelete(String jobName, Date date,Provider currentProvider) {
-		long result = 0;
-		if (date != null) {
-			String sql = "select t from JobExecutionResultImpl t";
-			QueryBuilder qb = new QueryBuilder(sql);// FIXME:.cacheable();
-			if (!StringUtils.isEmpty(jobName)) {
-				qb.addCriterion("t.jobName", "=", jobName, false);
-			}
-			qb.addCriterion("t.startDate", "<", date, false);
-			qb.addCriterionEntity("t.provider", currentProvider);
-			result = qb.count(getEntityManager());
-		}
+        return result;
+    }
 
-		return result;
-	}
+    /**
+     * Remove job execution history older then a given date
+     * 
+     * @param jobName Job name to match
+     * @param date Date to check
+     * @param provider Provider
+     * @return A number of records that were removed
+     */
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public int deleteJobExecutionHistory(String jobName, Date date, Provider provider) {
+        log.info("Removing job execution history older then a {} date for provider {}", date, provider);
 
-	public int delete(String jobName, Date date,Provider provider) {
-		String sql = "delete from JobExecutionResultImpl t";
-		QueryBuilder qb = new QueryBuilder(sql);// FIXME:.cacheable();
-		qb.addCriterion("t.jobName", "=", jobName, false);
-		qb.addCriterionDateRangeToTruncatedToDay("t.startDate", date);
-		qb.addCriterionEntity("t.provider", provider);
+        String sql = "delete from JobExecutionResultImpl t";
+        QueryBuilder qb = new QueryBuilder(sql);// FIXME:.cacheable();
+        qb.addCriterion("t.jobName", "=", jobName, false);
+        qb.addCriterionDateRangeToTruncatedToDay("t.startDate", date);
+        qb.addCriterionEntity("t.provider", provider);
 
-		return qb.getQuery(getEntityManager()).executeUpdate();
-	}
+        return qb.getQuery(getEntityManager()).executeUpdate();
+    }
 
-	@SuppressWarnings("unchecked")
-	public List<JobExecutionResultImpl> find(String jobName, PaginationConfiguration configuration) {
-		return getFindQuery(jobName, configuration).find(getEntityManager());
-	}
+    @SuppressWarnings("unchecked")
+    public List<JobExecutionResultImpl> find(String jobName, PaginationConfiguration configuration) {
+        return getFindQuery(jobName, configuration).find(getEntityManager());
+    }
 
-	public long count(String jobName, PaginationConfiguration configuration) {
-		return getFindQuery(jobName, configuration).count(getEntityManager());
-	}
+    public long count(String jobName, PaginationConfiguration configuration) {
+        return getFindQuery(jobName, configuration).count(getEntityManager());
+    }
 
-	public JobInstanceService getJobInstanceService() {
-		return jobInstanceService;
-	}
-
+    public JobInstanceService getJobInstanceService() {
+        return jobInstanceService;
+    }
 }
