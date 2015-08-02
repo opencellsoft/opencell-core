@@ -58,7 +58,7 @@
 
                         </p:outputPanel>
                         <h:panelGroup layout="block" styleClass="form-panel-actions">
-                            <p:commandButton value="#{messages['commons.add']}" ajax="true" partialSubmit="true" process="@form" update="@form @([id$='periodTable'])"
+                            <p:commandButton value="#{messages['commons.add']}" ajax="true" partialSubmit="true" process="@form" update="@form @([id$='periodTable#{cc.attrs.cft.storageType=='MAP'?'Map':'List'}'])"
                                 action="#{cc.backingBeanFromParentOrCurrent.addNewCustomFieldPeriod}"
                                 disabled="#{cc.backingBeanFromParentOrCurrent.customFieldPeriodMatched and cc.attrs.cfi.calendar!=null}"
                                 oncomplete="if (args &amp;&amp; !args.validationFailed) PF('#{cc.attrs.periodDialogWidget}').hide()" />

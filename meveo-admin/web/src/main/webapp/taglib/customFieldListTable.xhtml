@@ -84,8 +84,8 @@
 			<p:ajax event="cellEdit"/>
 			<p:column headerText="#{messages['commons.value']}" sortBy="#{w.dateValue}">
 				<p:cellEditor>
-               		<f:facet name="output"><hftl:customFieldValueMuteField cft="#{cft}" field="#{w}" edit="false"/></f:facet>
-               		<f:facet name="input"><hftl:customFieldValueMuteField cft="#{cft}" field="#{w}" edit="true"/></f:facet>
+               		<f:facet name="output"><hftl:customFieldValueMuteField cft="#{cft}" field="#{w.dateValue}" edit="false"/></f:facet>
+               		<f:facet name="input"><hftl:customFieldValueMuteField cft="#{cft}" field="#{w.dateValue}" edit="true"/></f:facet>
            		</p:cellEditor>
 			</p:column>
 			<p:column headerText="#{messages['commons.actions']}" width="10%">
@@ -238,8 +238,8 @@
 			</p:column>
 			<p:column headerText="#{messages['commons.value']}" sortBy="#{m.dateValue}">
 				<p:cellEditor>
-					<f:facet name="output"><hftl:customFieldValueMuteField cft="#{cft}" field="#{m}" edit="false"/></f:facet>
-               		<f:facet name="input"><hftl:customFieldValueMuteField cft="#{cft}" field="#{m}" edit="true"/></f:facet>
+					<f:facet name="output"><hftl:customFieldValueMuteField cft="#{cft}" field="#{m.dateValue}" edit="false"/></f:facet>
+               		<f:facet name="input"><hftl:customFieldValueMuteField cft="#{cft}" field="#{m.dateValue}" edit="true"/></f:facet>
                	</p:cellEditor>
 			</p:column>
 			<p:column headerText="#{messages['commons.actions']}" width="10%">

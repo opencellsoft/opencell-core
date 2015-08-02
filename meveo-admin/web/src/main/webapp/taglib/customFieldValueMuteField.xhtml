@@ -34,10 +34,10 @@
         <p:inputText value="#{field}" required="#{cft.valueRequired}" rendered="#{edit}" label="#{cft.description}" />
     </h:panelGroup>
     <h:panelGroup rendered="#{cft.fieldType eq CustomFieldTypeEnum.DATE}">
-        <h:outputText value="#{field.dateValue}" rendered="#{! edit}">
+        <h:outputText value="#{field}" rendered="#{! edit}">
             <f:convertDateTime type="date" pattern="#{datePattern}" />
         </h:outputText>
-        <p:calendar showButtonPanel="true" pattern="#{datePattern}" value="#{field.dateValue}" required="#{cft.valueRequired}" rendered="#{edit}" label="#{cft.description}" />
+        <p:calendar showButtonPanel="true" pattern="#{datePattern}" value="#{field}" required="#{cft.valueRequired}" rendered="#{edit}" label="#{cft.description}" />
     </h:panelGroup>
     <h:panelGroup rendered="#{cft.fieldType eq CustomFieldTypeEnum.DOUBLE}">
         <h:outputText value="#{field}" rendered="#{! edit}"></h:outputText>

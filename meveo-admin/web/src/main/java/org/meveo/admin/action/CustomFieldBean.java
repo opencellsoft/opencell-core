@@ -128,8 +128,8 @@ public abstract class CustomFieldBean<T extends IEntity> extends BaseBean<T> {
                	 				cfi.setDateList((List<DateWrapper>)SerializableUtil.decode(cfi.getEntityValue()));
                	 			}
                	 		}
-               	 		cf.setInstance(cfi);
                	 	}
+       	 			cf.setInstance(cfi);
                 }
             }
         }
@@ -144,7 +144,7 @@ public abstract class CustomFieldBean<T extends IEntity> extends BaseBean<T> {
         for (CustomFieldTemplate cf : customFieldTemplates) {
             CustomFieldInstance cfi = cf.getInstance();
        	 	if(CustomFieldStorageTypeEnum.SINGLE.equals(cf.getStorageType())){
-       	 		if(CustomFieldTypeEnum.ENTITY.equals(cf.getFieldType())){
+       	 		if(CustomFieldTypeEnum.ENTITY.equals(cf.getFieldType())&&cfi.getBusinessEntity()!=null&&!cfi.getBusinessEntity().isTransient()){
        	 			BusinessEntity temp=cfi.getBusinessEntity();
        	 			BusinessEntity result=new BusinessEntity();
        	 			result.setId(temp.getId());
