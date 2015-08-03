@@ -15,8 +15,10 @@ import javax.persistence.InheritanceType;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 
+import org.apache.commons.codec.binary.Base64;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.ExportIdentifier;
 
@@ -96,6 +98,21 @@ public class InboundRequest extends BusinessEntity {
 	@CollectionTable(name="ADM_INBOUND_RESP_HEADERS")
 	private Map<String,String> responseHeaders = new HashMap<String, String>();
 
+	
+	@Transient
+    private StringBuffer encodedParams = new StringBuffer();
+	
+	@Transient
+    private StringBuffer encodedCookies = new StringBuffer();
+   
+	@Transient
+    private StringBuffer encodedHeaders = new StringBuffer();
+	
+	@Transient
+    private StringBuffer encodedRespCookies = new StringBuffer();
+	
+	@Transient
+    private StringBuffer encodedRespHeaders = new StringBuffer();
 	
 	
 	public int getContentLength() {
@@ -265,4 +282,74 @@ public class InboundRequest extends BusinessEntity {
 	public void setResponseEncoding(String responseEncoding) {
         this.responseEncoding = responseEncoding;
     }
+	public StringBuffer getEncodedParams() {
+		StringBuffer params=new StringBuffer();
+		if(getHeaders()!=null){
+			String sep="";
+		for(String key:getParameters().keySet()){
+			String valueParams=getParameters().get(key);
+			params.append(sep).append(key).append(":").append(Base64.encodeBase64String(valueParams.getBytes()));
+			sep="|";
+			}	
+			}
+		return params;
+	}
+	
+	public StringBuffer getEncodedCookies() {
+		StringBuffer cookies=new StringBuffer();
+		if(getHeaders()!=null){
+			String sep="";
+		for(String key:getCoockies().keySet()){
+			String valueCookies=getCoockies().get(key);
+			cookies.append(sep).append(key).append(":").append(Base64.encodeBase64String(valueCookies.getBytes()));
+			sep="|";
+			}	
+			}
+		return cookies;
+	}
+	
+	public StringBuffer getEncodedHeaders() {
+		StringBuffer headers=new StringBuffer();
+		if(getHeaders()!=null){
+			String sep="";
+		for(String key:getHeaders().keySet()){
+			String valueHeaders=getHeaders().get(key);
+			headers.append(sep).append(key).append(":").append(Base64.encodeBase64String(valueHeaders.getBytes()));
+			sep="|";
+			}
+		}
+		return headers;
+	}
+	
+	public StringBuffer getEncodedRespCookies() {
+		 StringBuffer responseCoockies=new StringBuffer();
+		if(getResponseCoockies()!=null){
+	        String sep="";
+		for(String key:getResponseCoockies().keySet()){
+			String valueRespCookies=getResponseCoockies().get(key);
+			responseCoockies.append(sep).append(key).append(":").append(Base64.encodeBase64String(valueRespCookies.getBytes()));
+			sep="|";
+			}
+	      }
+		return responseCoockies;
+	}
+	
+	public StringBuffer getEncodedRespHeaders() {
+	 StringBuffer responseHeaders=new StringBuffer(); 
+	  if(getResponseHeaders()!=null){
+	    String sep="";
+		for(String key:getResponseHeaders().keySet()){
+			String valueRespHeaders=getResponseHeaders().get(key);
+			responseHeaders.append(sep).append(key).append(":").append(Base64.encodeBase64String(valueRespHeaders.getBytes()));
+			sep="|";
+			}
+		   }
+		return responseHeaders;
+	}
+	
+	
+	
+	
+	
 }
+
