@@ -22,18 +22,25 @@
 
 		<p:panel header="#{messages['menu.filters']}">
 
-			<hf:formPanel backingBean="#{filterBean}" columns="1"
-				showEnableDisableButton="true">
+			<p:tabView id="tabView">
+				<p:tab title="#{messages['filter.info']}">
 
-				<hf:formField label="#{messages['BusinessEntity.code']}"
-					field="code" required="true" validateUnique="true" />
-				<hf:formField label="#{messages['BusinessEntity.description']}"
-					field="description" required="true" useConverter="false" size="50"
-					maxlength="50" />
-				<hf:formField label="#{messages['filter.inputXml']}"
-					maxlength="5000" field="inputXml" required="true" rows="5"
-					cols="80" textArea="true" />
-			</hf:formPanel>
+					<hf:formPanel backingBean="#{filterBean}" columns="1"
+						showEnableDisableButton="true">
+
+						<hf:formField label="#{messages['BusinessEntity.code']}"
+							field="code" required="true" validateUnique="true" />
+						<hf:formField label="#{messages['BusinessEntity.description']}"
+							field="description" required="true" useConverter="false"
+							size="50" maxlength="50" />
+						<hf:formField field="shared" label="#{messages['filter.shared']}"></hf:formField>
+						<hf:formField label="#{messages['filter.inputXml']}"
+							maxlength="5000" field="inputXml" required="true" rows="5"
+							cols="80" textArea="true" />
+					</hf:formPanel>
+
+				</p:tab>
+			</p:tabView>
 
 		</p:panel>
 	</ui:define>
