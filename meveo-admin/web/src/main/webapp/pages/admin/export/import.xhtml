@@ -17,12 +17,14 @@
                     <h:outputText value="#{messages['export.import']}" />
                 </f:facet>
                 <p:messages id="messages" autoUpdate="true" />
-                <hftl:decorateFormField fieldId="import_requireFK" label="#{messages['export.requireFK']}" displayOneLine="true" labelWidth="60" componentWidth="20">
+                <hftl:decorateFormField fieldId="import_requireFK" label="#{messages['export.requireFK']}" displayOneLine="true" labelWidth="65" componentWidth="20">
+                    <p:tooltip for="import_requireFK">#{messages['export.requireFK.help']}</p:tooltip>
                     <p:selectBooleanCheckbox id="import_requireFK" value="#{entityExportImportBean.requireFK}">
                         <p:ajax event="change" />
                     </p:selectBooleanCheckbox>
                 </hftl:decorateFormField>
                 <hftl:decorateFormField fieldId="import_forceToProvider" label="#{messages['export.forceToProvider']}" displayOneLine="true" labelWidth="40">
+                    <p:tooltip for="import_forceToProvider">#{messages['export.forceToProvider.help']}</p:tooltip>
                     <p:selectOneMenu id="import_forceToProvider" value="#{entityExportImportBean.forceToProvider}" converter="org.jboss.seam.faces.conversion.ObjectConverter" rendered="#{!identity.hasPermission('superAdmin','superAdminManagement')}">
                         <f:selectItem />
                         <f:selectItem itemValue="#{identity.user.currentProvider}" itemLabel="#{identity.user.currentProvider.code}"/>
@@ -35,8 +37,8 @@
                     </p:selectOneMenu>                    
                 </hftl:decorateFormField>
                 <hftl:decorateFormField fieldId="import_file" label="#{messages['export.importFile']}" newLine="true" componentWidth="100" labelWidth="10" displayOneLine="true">
-                    <p:fileUpload id="import_file" mode="advanced" fileUploadListener="#{entityExportImportBean.uploadImportFile}" allowTypes="/(\.|\/)(xml|zip)$/" auto="false"
-                        update=":importSummary" />
+                    <p:fileUpload id="import_file"  fileUploadListener="#{entityExportImportBean.uploadImportFile}" allowTypes="/(\.|\/)(xml|zip)$/" auto="false"
+                        update=":importSummary" label="#{messages['export.importFile.selectFile']}" uploadLabel="#{messages['export.importFile.upload']}" multiple="false" />
                 </hftl:decorateFormField>
             </p:panel>
         </h:form>
