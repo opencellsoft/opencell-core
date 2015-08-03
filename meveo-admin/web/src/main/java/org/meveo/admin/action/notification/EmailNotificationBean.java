@@ -1,3 +1,4 @@
+
 package org.meveo.admin.action.notification;
 
 import java.io.ByteArrayInputStream;
@@ -149,7 +150,7 @@ public class EmailNotificationBean extends BaseBean<EmailNotification> {
                 }
                 emailNotif.setSubject(values[SUBJECT]);
                 emailNotif.setBody(values[TEXT_BODY]);
-                emailNotif.setElAction(values[HTML_BODY]);
+                emailNotif.setHtmlBody(values[HTML_BODY]);
                 if (!StringUtils.isBlank(values[COUNTER_TEMPLATE])) {
                     CounterTemplate counterTemplate = counterTemplateService.findByCode(values[COUNTER_TEMPLATE], getCurrentProvider());
                     emailNotif.setCounterTemplate(counterTemplate != null ? counterTemplate : null);
