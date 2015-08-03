@@ -13,7 +13,7 @@ import java.util.zip.GZIPOutputStream;
 import org.apache.commons.codec.binary.Base64;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.BusinessEntity;
-import org.meveo.model.crm.BusinessEntityWrapper;
+import org.meveo.model.crm.wrapper.BusinessEntityWrapper;
 import org.meveo.service.crm.impl.CustomEntitySearchService;
 
 public class SerializableUtil {
