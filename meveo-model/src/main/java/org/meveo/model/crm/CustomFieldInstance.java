@@ -1,6 +1,5 @@
 package org.meveo.model.crm;
 
-import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -29,6 +28,11 @@ import org.meveo.model.catalog.Calendar;
 import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.ServiceTemplate;
+import org.meveo.model.crm.wrapper.BusinessEntityWrapper;
+import org.meveo.model.crm.wrapper.DateWrapper;
+import org.meveo.model.crm.wrapper.DoubleWrapper;
+import org.meveo.model.crm.wrapper.LongWrapper;
+import org.meveo.model.crm.wrapper.StringWrapper;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.model.mediation.Access;
 
@@ -935,126 +939,7 @@ public class CustomFieldInstance extends ProviderlessEntity {
 		this.triggerEndPeriodEvent = triggerEndPeriodEvent;
 	}
 	
-	public class StringWrapper implements Serializable{
-		/**
-		 * 
-		 */
-		private static final long serialVersionUID = 1L;
-		private String stringValue;
-		private String label;
-		public StringWrapper(){}
-		public StringWrapper(String stringValue){
-			this.stringValue=stringValue;
-		}
-		public StringWrapper(String label,String stringValue){
-			this(stringValue);
-			this.label=label;
-		}
-		public String getStringValue() {
-			return stringValue;
-		}
-
-		public void setStringValue(String stringValue) {
-			this.stringValue = stringValue;
-		}
-		public String getLabel() {
-			return label;
-		}
-		public void setLabel(String label) {
-			this.label = label;
-		}
-	}
 	
-	public class DateWrapper implements Serializable{
-
-		/**
-		 * 
-		 */
-		private static final long serialVersionUID = 1L;
-		private Date dateValue;
-		private String label;
-		public DateWrapper(){}
-		public DateWrapper(String label,Date dateValue){
-			this(dateValue);
-			this.label=label;
-		}
-		public DateWrapper(Date dateValue){
-			this.dateValue=dateValue;
-		}
-		public Date getDateValue() {
-			return dateValue;
-		}
-		public void setDateValue(Date dateValue) {
-			this.dateValue = dateValue;
-		}
-		public String getLabel() {
-			return label;
-		}
-		public void setLabel(String label) {
-			this.label = label;
-		}
-		@Override
-		public String toString() {
-			return this.dateValue.toString();
-		}
-		
-	}
-	public class LongWrapper implements Serializable{
-		/**
-		 * 
-		 */
-		private static final long serialVersionUID = 1L;
-		private Long longValue;
-		private String label;
-		public LongWrapper(){}
-		public LongWrapper(Long longValue){
-			this.longValue=longValue;
-		}
-		public LongWrapper(String label,Long longValue){
-			this(longValue);
-			this.label=label;
-		}
-		public Long getLongValue() {
-			return longValue;
-		}
-		public void setLongValue(Long longValue) {
-			this.longValue = longValue;
-		}
-		public String getLabel() {
-			return label;
-		}
-		public void setLabel(String label) {
-			this.label = label;
-		}
-		
-	}
-	public class DoubleWrapper implements Serializable{
-		/**
-		 * 
-		 */
-		private static final long serialVersionUID = 1L;
-		private Double doubleValue;
-		private String label;
-		public DoubleWrapper(){}
-		public DoubleWrapper(Double doubleValue){
-			this.doubleValue=doubleValue;
-		}
-		public DoubleWrapper(String label,Double doubleValue){
-			this(doubleValue);
-			this.label=label;
-		}
-		public Double getDoubleValue() {
-			return doubleValue;
-		}
-		public void setDoubleValue(Double doubleValue) {
-			this.doubleValue = doubleValue;
-		}
-		public String getLabel() {
-			return label;
-		}
-		public void setLabel(String label) {
-			this.label = label;
-		}
-		
-	}
+	
+	
 }
