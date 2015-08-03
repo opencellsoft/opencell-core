@@ -43,6 +43,9 @@ public class Filter extends BusinessEntity {
 	@Column(name = "INPUT_XML", columnDefinition = "TEXT")
 	private String inputXml;
 
+	@Column(name = "SHARED")
+	private Boolean shared;
+
 	public FilterCondition getFilterCondition() {
 		return filterCondition;
 	}
@@ -81,6 +84,14 @@ public class Filter extends BusinessEntity {
 
 	public void setInputXml(String inputXml) {
 		this.inputXml = inputXml;
+	}
+
+	public Boolean getShared() {
+		return shared;
+	}
+
+	public void setShared(Boolean shared) {
+		this.shared = shared;
 	}
 
 }

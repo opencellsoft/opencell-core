@@ -195,7 +195,7 @@ public class ProviderApi extends BaseApi {
 				return new ProviderDto(provider);
 			}
 
-			throw new EntityDoesNotExistsException(Country.class, providerCode);
+			throw new EntityDoesNotExistsException(Provider.class, providerCode);
 		} else {
 			if (StringUtils.isBlank(providerCode)) {
 				missingParameters.add("providerCode");
