@@ -56,8 +56,10 @@ public class UserDto extends BaseDto {
 	}
 
 	public UserDto(User user) {
+		if(user.getName()!=null){
 		firstName = user.getName().getFirstName();
 		lastName = user.getName().getLastName();
+		}
 		username = user.getUserName();
 		provider = user.getProvider().getCode();
 
