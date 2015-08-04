@@ -1189,7 +1189,6 @@
 			<column name="order_condition_id" type="BIGINT" />
 			<column name="primary_selector_id" type="BIGINT" />
 			<column name="input_xml" type="text" />
-			<column name="shared" type="BOOL" defaultValueBoolean="false"></column>
 		</createTable>
 		<addPrimaryKey columnNames="id" constraintName="meveo_filter_pkey"
 			tableName="meveo_filter" />
@@ -1294,6 +1293,12 @@
 			deferrable="false" initiallyDeferred="false" onDelete="CASCADE"
 			onUpdate="CASCADE" referencedColumnNames="id"
 			referencedTableName="meveo_and_composite_filter_condition" />
+	</changeSet>
+	
+	<changeSet id="#971_20150804" author="EdwardLegaspi">
+		<addColumn tableName="meveo_filter">
+			<column name="shared" type="BOOL" defaultValueBoolean="false"></column>
+		</addColumn>
 	</changeSet>
 	
 </databaseChangeLog>
